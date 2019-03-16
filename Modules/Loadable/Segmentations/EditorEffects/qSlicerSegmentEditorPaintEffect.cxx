@@ -154,15 +154,15 @@ public:
     this->FeedbackActor->SetMapper(this->FeedbackMapper);
     this->FeedbackActor->VisibilityOff();
     };
-  ~BrushPipeline2D()
+  ~BrushPipeline2D() override
     {
     };
 
-  void SetBrushVisibility(bool visibility)
+  void SetBrushVisibility(bool visibility) override
     {
     this->BrushActor->SetVisibility(visibility);
     };
-  void SetFeedbackVisibility(bool visibility)
+  void SetFeedbackVisibility(bool visibility) override
     {
     this->FeedbackActor->SetVisibility(visibility);
     };
@@ -197,14 +197,14 @@ public:
     this->FeedbackActor->SetMapper(this->FeedbackMapper);
     this->FeedbackActor->VisibilityOff();
     };
-  ~BrushPipeline3D()
+  ~BrushPipeline3D() override
     {
     };
-  void SetBrushVisibility(bool visibility)
+  void SetBrushVisibility(bool visibility) override
     {
     this->BrushActor->SetVisibility(visibility);
     };
-  void SetFeedbackVisibility(bool visibility)
+  void SetFeedbackVisibility(bool visibility) override
     {
     this->FeedbackActor->SetVisibility(visibility);
     };

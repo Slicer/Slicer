@@ -59,7 +59,7 @@ protected:
   qSlicerSubjectHierarchySegmentationsPlugin* const q_ptr;
 public:
   qSlicerSubjectHierarchySegmentationsPluginPrivate(qSlicerSubjectHierarchySegmentationsPlugin& object);
-  ~qSlicerSubjectHierarchySegmentationsPluginPrivate();
+  ~qSlicerSubjectHierarchySegmentationsPluginPrivate() override;
   void init();
 public:
   QIcon SegmentationIcon;

@@ -59,7 +59,7 @@ protected:
   qSlicerSubjectHierarchyModelsPlugin* const q_ptr;
 public:
   qSlicerSubjectHierarchyModelsPluginPrivate(qSlicerSubjectHierarchyModelsPlugin& object);
-  ~qSlicerSubjectHierarchyModelsPluginPrivate();
+  ~qSlicerSubjectHierarchyModelsPluginPrivate() override;
   void init();
 public:
   QIcon ModelIcon;

@@ -69,7 +69,7 @@ public:
   /// Constructor
   explicit qMRMLSegmentsTableView(QWidget* parent = nullptr);
   /// Destructor
-  virtual ~qMRMLSegmentsTableView();
+  ~qMRMLSegmentsTableView() override;
 
   /// Get segmentation MRML node
   Q_INVOKABLE vtkMRMLNode* segmentationNode();
@@ -109,7 +109,7 @@ public slots:
   /// Set segmentation MRML node
   void setSegmentationNode(vtkMRMLNode* node);
 
-  virtual void setMRMLScene(vtkMRMLScene* newScene);
+  void setMRMLScene(vtkMRMLScene* newScene) override;
 
   /// Set selection mode in the table. Input value is int for Python compatibility. Actual values are
   /// defined in QAbstractItemView::SelectionMode. For example, QAbstractItemView::NoSelection,
@@ -174,10 +174,10 @@ protected:
   void setSegmentVisibility(QObject* senderObject, int visible, int visible3D, int visible2DFill, int visible2DOutline);
 
   /// To prevent accidentally moving out of the widget when pressing up/down arrows
-  virtual bool eventFilter(QObject* target, QEvent* event);
+  bool eventFilter(QObject* target, QEvent* event) override;
 
   /// Handle context menu events
-  virtual void contextMenuEvent(QContextMenuEvent* event);
+  void contextMenuEvent(QContextMenuEvent* event) override;
 
 protected:
   QScopedPointer<qMRMLSegmentsTableViewPrivate> d_ptr;

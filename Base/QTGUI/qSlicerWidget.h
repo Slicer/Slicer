@@ -41,10 +41,10 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWidget : public QWidget, public virtual 
   QVTK_OBJECT
 public:
   qSlicerWidget(QWidget *parent=nullptr, Qt::WindowFlags f=nullptr);
-  virtual ~qSlicerWidget();
+  ~qSlicerWidget() override;
 
 public slots:
-  virtual void setMRMLScene(vtkMRMLScene* scene);
+  void setMRMLScene(vtkMRMLScene* scene) override;
 
 signals:
   void mrmlSceneChanged(vtkMRMLScene*);

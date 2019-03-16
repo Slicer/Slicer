@@ -75,7 +75,7 @@ public:
   };
 protected:
   vtkFSSurfaceAnnotationReader();
-  ~vtkFSSurfaceAnnotationReader();
+  ~vtkFSSurfaceAnnotationReader() override;
 
   vtkIntArray    *Labels;
   vtkLookupTable *Colors;

@@ -105,14 +105,14 @@ public:
 
 protected:
   /// Called each time a new scene is set
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
   /// Called every time the scene has been significantly changed.
-  virtual void UpdateFromMRMLScene() override;
+  void UpdateFromMRMLScene() override;
 
 protected:
   vtkSlicerSubjectHierarchyModuleLogic();
-  virtual ~vtkSlicerSubjectHierarchyModuleLogic();
+  ~vtkSlicerSubjectHierarchyModuleLogic() override;
 
 private:
   vtkSlicerSubjectHierarchyModuleLogic(const vtkSlicerSubjectHierarchyModuleLogic&); // Not implemented

@@ -35,27 +35,27 @@ public:
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "FreeSurferProceduralColor";};
+  const char* GetNodeTagName() override {return "FreeSurferProceduralColor";};
 
   ///
   ///
-  virtual void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene *scene) override;
 
   ///
   /// Set the lookup table as a freesurfer lookup table, and get it as a
@@ -63,7 +63,7 @@ public:
   vtkLookupTable *GetLookupTable() override;
   vtkFSLookupTable *GetFSLookupTable();
   virtual void SetLookupTable(vtkFSLookupTable* newLookupTable);
-  virtual vtkScalarsToColors* GetScalarsToColors() override;
+  vtkScalarsToColors* GetScalarsToColors() override;
 
   ///
   /// Get/Set for Type
@@ -121,12 +121,12 @@ public:
   vtkGetStringMacro(LabelsFileName);
   vtkSetStringMacro(LabelsFileName);
 
-  virtual int GetNumberOfColors() override;
-  virtual bool GetColor(int entry, double color[4]) override;
+  int GetNumberOfColors() override;
+  bool GetColor(int entry, double color[4]) override;
 
 protected:
   vtkMRMLFreeSurferProceduralColorNode();
-  ~vtkMRMLFreeSurferProceduralColorNode();
+  ~vtkMRMLFreeSurferProceduralColorNode() override;
   vtkMRMLFreeSurferProceduralColorNode(const vtkMRMLFreeSurferProceduralColorNode&);
   void operator=(const vtkMRMLFreeSurferProceduralColorNode&);
 

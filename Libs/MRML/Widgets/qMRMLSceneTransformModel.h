@@ -31,20 +31,20 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneTransformModel : public qMRMLSceneModel
 
 public:
   qMRMLSceneTransformModel(QObject *parent=nullptr);
-  virtual ~qMRMLSceneTransformModel();
+  ~qMRMLSceneTransformModel() override;
 
   ///
-  virtual vtkMRMLNode* parentNode(vtkMRMLNode* node)const;
+  vtkMRMLNode* parentNode(vtkMRMLNode* node)const override;
   //virtual int          nodeIndex(vtkMRMLNode* node)const;
   /// fast function that only check the type of the node to know if it can be a child.
-  virtual bool         canBeAChild(vtkMRMLNode* node)const;
+  bool         canBeAChild(vtkMRMLNode* node)const override;
   /// fast function that only check the type of the node to know if it can be a parent.
-  virtual bool         canBeAParent(vtkMRMLNode* node)const;
+  bool         canBeAParent(vtkMRMLNode* node)const override;
   /// if newParent == 0, set the node into the vtkMRMLScene
-  virtual bool         reparent(vtkMRMLNode* node, vtkMRMLNode* newParent);
+  bool         reparent(vtkMRMLNode* node, vtkMRMLNode* newParent) override;
 
 
-  virtual Qt::DropActions supportedDropActions()const;
+  Qt::DropActions supportedDropActions()const override;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneTransformModel);

@@ -103,7 +103,7 @@ public:
 protected:
 
   InitialImageToImageRegistrationMethod( void );
-  virtual ~InitialImageToImageRegistrationMethod( void );
+  ~InitialImageToImageRegistrationMethod( void ) override;
 
   void PrintSelf( std::ostream & os, Indent indent ) const override;
 

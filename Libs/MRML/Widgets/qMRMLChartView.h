@@ -47,7 +47,7 @@ public:
 
   /// Constructors
   explicit qMRMLChartView(QWidget* parent = nullptr);
-  virtual ~qMRMLChartView();
+  ~qMRMLChartView() override;
 
   /// Return a pointer on the current MRML scene
   vtkMRMLScene* mrmlScene() const;
@@ -63,7 +63,7 @@ public:
   vtkMRMLColorLogic* colorLogic()const;
 
   /// Redefine the sizeHint so layouts work properly.
-  virtual QSize sizeHint() const;
+  QSize sizeHint() const override;
 
 public slots:
 

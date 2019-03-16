@@ -121,7 +121,7 @@ public:
 
 protected:
   vtkSegmentationConverterRule();
-  ~vtkSegmentationConverterRule();
+  ~vtkSegmentationConverterRule() override;
   void operator=(const vtkSegmentationConverterRule&);
 
 protected:

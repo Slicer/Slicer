@@ -39,23 +39,23 @@ public:
 
   typedef qSlicerCoreModule Superclass;
   qSlicerEventBrokerModule(QObject *parent=nullptr);
-  virtual ~qSlicerEventBrokerModule();
+  ~qSlicerEventBrokerModule() override;
 
-  virtual QStringList categories()const;
+  QStringList categories()const override;
 
   /// Display name for the module
   qSlicerGetTitleMacro("Event Broker");
 
-  virtual QString helpText()const;
-  virtual QString acknowledgementText()const;
-  virtual QStringList contributors()const;
+  QString helpText()const override;
+  QString acknowledgementText()const override;
+  QStringList contributors()const override;
 
 protected:
   /// Create and return the widget representation associated to this module
-  virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
+  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
-  virtual vtkMRMLAbstractLogic* createLogic();
+  vtkMRMLAbstractLogic* createLogic() override;
 
   QScopedPointer<qSlicerEventBrokerModulePrivate> d_ptr;
 private:

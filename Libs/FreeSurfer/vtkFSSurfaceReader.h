@@ -51,7 +51,7 @@ public:
 
 protected:
   vtkFSSurfaceReader();
-  ~vtkFSSurfaceReader();
+  ~vtkFSSurfaceReader() override;
 
   int RequestData(
     vtkInformation *,

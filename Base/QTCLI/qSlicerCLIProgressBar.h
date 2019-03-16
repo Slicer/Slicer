@@ -59,7 +59,7 @@ public:
 
   typedef QWidget Superclass;
   qSlicerCLIProgressBar(QWidget *parent=nullptr);
-  virtual ~qSlicerCLIProgressBar();
+  ~qSlicerCLIProgressBar() override;
 
   /// Get the \a commandLineModuleNode
   Q_INVOKABLE vtkMRMLCommandLineModuleNode * commandLineModuleNode()const;

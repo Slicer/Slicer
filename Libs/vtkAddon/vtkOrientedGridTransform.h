@@ -26,7 +26,7 @@ class VTK_ADDON_EXPORT vtkOrientedGridTransform : public vtkGridTransform
 public:
   static vtkOrientedGridTransform *New();
   vtkTypeMacro(vtkOrientedGridTransform,vtkGridTransform);
-  virtual void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Set/Get the b-spline grid axis directions.
@@ -50,7 +50,7 @@ public:
 
 protected:
   vtkOrientedGridTransform();
-  ~vtkOrientedGridTransform();
+  ~vtkOrientedGridTransform() override;
 
   // Description:
   // Update the displacement grid.

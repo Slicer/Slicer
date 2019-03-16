@@ -47,31 +47,31 @@ public:
 public:
   typedef qSlicerSegmentEditorAbstractEffect Superclass;
   qSlicerSegmentEditorAbstractLabelEffect(QObject* parent = nullptr);
-  virtual ~qSlicerSegmentEditorAbstractLabelEffect();
+  ~qSlicerSegmentEditorAbstractLabelEffect() override;
 
 public:
   /// Clone editor effect
   /// (redefinition of pure virtual function to allow python wrapper to identify this as abstract class)
-  virtual qSlicerSegmentEditorAbstractEffect* clone() = 0;
+  qSlicerSegmentEditorAbstractEffect* clone() override = 0;
 
   /// Create options frame widgets, make connections, and add them to the main options frame using \sa addOptionsWidget
-  virtual void setupOptionsFrame();
+  void setupOptionsFrame() override;
 
   /// Set default parameters in the parameter MRML node
-  virtual void setMRMLDefaults();
+  void setMRMLDefaults() override;
 
   /// Perform actions needed on reference geometry change
-  virtual void referenceGeometryChanged();
+  void referenceGeometryChanged() override;
 
   /// Perform actions needed on master volume change
-  virtual void masterVolumeNodeChanged();
+  void masterVolumeNodeChanged() override;
 
 public slots:
   /// Update user interface from parameter set node
-  virtual void updateGUIFromMRML();
+  void updateGUIFromMRML() override;
 
   /// Update parameter set node from user interface
-  virtual void updateMRMLFromGUI();
+  void updateMRMLFromGUI() override;
 
 // Utility functions
 public:

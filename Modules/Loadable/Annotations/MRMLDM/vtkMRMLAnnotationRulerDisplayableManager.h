@@ -42,23 +42,23 @@ public:
 protected:
 
   vtkMRMLAnnotationRulerDisplayableManager(){this->m_Focus="vtkMRMLAnnotationRulerNode";}
-  virtual ~vtkMRMLAnnotationRulerDisplayableManager(){}
+  ~vtkMRMLAnnotationRulerDisplayableManager() override{}
 
   /// Callback for click in RenderWindow
-  virtual void OnClickInRenderWindow(double x, double y, const char *associatedNodeID) override;
+  void OnClickInRenderWindow(double x, double y, const char *associatedNodeID) override;
   /// Create a widget.
-  virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node) override;
+  vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node) override;
 
   /// Gets called when widget was created
-  virtual void OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node) override;
+  void OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node) override;
 
   /// Propagate properties of MRML node to widget.
-  virtual void PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget) override;
+  void PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget) override;
   /// Propagate properties of widget to MRML node.
-  virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node) override;
+  void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node) override;
 
   // update the ruler end point positions from the MRML node
-  virtual void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node) override;
+  void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node) override;
 
   // Get the label from the node and unit node
   std::string GetLabelFormat(vtkMRMLAnnotationRulerNode* rulerNode);
@@ -72,7 +72,7 @@ protected:
 
   /// When the unit has changed, modify the ruler nodes to refresh the label.
   /// \sa AddObserversToSelectionNode(), RemoveObserversFromSelectionNode()
-  virtual void OnMRMLSelectionNodeUnitModifiedEvent(vtkMRMLSelectionNode* selectionNode) override;
+  void OnMRMLSelectionNodeUnitModifiedEvent(vtkMRMLSelectionNode* selectionNode) override;
 
 private:
 

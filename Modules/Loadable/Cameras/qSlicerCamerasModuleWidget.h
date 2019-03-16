@@ -37,17 +37,17 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerCamerasModuleWidget(QWidget *parent=nullptr);
-  virtual ~qSlicerCamerasModuleWidget();
+  ~qSlicerCamerasModuleWidget() override;
 
-  virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
+  bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
 
 public slots:
   ///
   /// Inherited from qSlicerWidget. Reimplemented for refresh issues.
-  virtual void setMRMLScene(vtkMRMLScene*);
+  void setMRMLScene(vtkMRMLScene*) override;
 
 protected:
-  virtual void setup();
+  void setup() override;
   void synchronizeCameraWithView(vtkMRMLViewNode* currentViewNode);
 
 protected slots:

@@ -85,7 +85,7 @@ class VTK_MRML_EXPORT vtkObserverManager : public vtkObject
   int GetObservationsCount(vtkObject* nodePtr, unsigned long event = 0);
 protected:
   vtkObserverManager();
-  virtual ~vtkObserverManager();
+  ~vtkObserverManager() override;
   vtkObserverManager(const vtkObserverManager&);
   void operator=(const vtkObserverManager&);
 

@@ -41,7 +41,7 @@ class qSlicerCLILoadableModuleFactoryItem
 public:
   typedef ctkFactoryLibraryItem<qSlicerAbstractCoreModule> Superclass;
   qSlicerCLILoadableModuleFactoryItem(const QString& newTempDirectory);
-  virtual bool load();
+  bool load() override;
 
   static void loadLibraryAndResolveSymbols(
       void* libraryLoader,  ModuleDescription& desc);
@@ -50,7 +50,7 @@ protected:
   /// Return path of the expected XML file.
   QString xmlModuleDescriptionFilePath()const;
 
-  virtual qSlicerAbstractCoreModule* instanciator();
+  qSlicerAbstractCoreModule* instanciator() override;
   QString resolveXMLModuleDescriptionSymbol();
   bool resolveSymbols(ModuleDescription& desc);
   static bool updateLogo(qSlicerCLILoadableModuleFactoryItem* item, ModuleLogo& logo);
@@ -67,10 +67,10 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLILoadableModuleFactory :
 public:
   typedef ctkAbstractLibraryFactory<qSlicerAbstractCoreModule> Superclass;
   qSlicerCLILoadableModuleFactory();
-  virtual ~qSlicerCLILoadableModuleFactory();
+  ~qSlicerCLILoadableModuleFactory() override;
 
   /// Reimplemented to scan the directory of the command line modules
-  virtual void registerItems();
+  void registerItems() override;
 
   /// Extract module name given \a libraryName
   /// For example:
@@ -78,15 +78,15 @@ public:
   ///  libThresholdLib.{dylib, bundle, so} -> threshold
   ///  ThresholdLib.dll -> threshold
   /// \sa qSlicerUtils::extractModuleNameFromLibraryName
-  QString fileNameToKey(const QString& fileName)const;
+  QString fileNameToKey(const QString& fileName)const override;
 
   void setTempDirectory(const QString& newTempDirectory);
 
 protected:
-  virtual ctkAbstractFactoryItem<qSlicerAbstractCoreModule>*
-    createFactoryFileBasedItem();
+  ctkAbstractFactoryItem<qSlicerAbstractCoreModule>*
+    createFactoryFileBasedItem() override;
 
-  virtual bool isValidFile(const QFileInfo& file)const;
+  bool isValidFile(const QFileInfo& file)const override;
 
 protected:
 

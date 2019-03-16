@@ -176,7 +176,7 @@ protected:
 
 protected:
   vtkStreamingVolumeCodec();
-  ~vtkStreamingVolumeCodec();
+  ~vtkStreamingVolumeCodec() override;
 
 private:
   vtkStreamingVolumeCodec(const vtkStreamingVolumeCodec&);

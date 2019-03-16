@@ -41,13 +41,13 @@ public:
   vtkTypeMacro(vtkMRMLTableSQLiteStorageNode,vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName() override {return "TableSQLightStorage";}
+  const char* GetNodeTagName() override {return "TableSQLightStorage";}
 
   /// Return true if the node can be read in
-  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
 
   /// SQLight Database password
   vtkSetStringMacro(Password);
@@ -62,21 +62,21 @@ public:
 
 protected:
   vtkMRMLTableSQLiteStorageNode();
-  ~vtkMRMLTableSQLiteStorageNode();
+  ~vtkMRMLTableSQLiteStorageNode() override;
   vtkMRMLTableSQLiteStorageNode(const vtkMRMLTableSQLiteStorageNode&);
   void operator=(const vtkMRMLTableSQLiteStorageNode&);
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedReadFileTypes() override;
+  void InitializeSupportedReadFileTypes() override;
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes() override;
+  void InitializeSupportedWriteFileTypes() override;
 
   /// Read data and set it in the referenced node. Returns 0 on failure.
-  virtual int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode *refNode) override;
 
   /// Write data from a  referenced node. Returns 0 on failure.
-  virtual int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode *refNode) override;
 
   char *TableName;
   char *Password;

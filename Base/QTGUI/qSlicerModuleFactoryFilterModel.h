@@ -57,7 +57,7 @@ public:
   explicit qSlicerModuleFactoryFilterModel(QObject* parent = nullptr);
 
   /// Destructor
-  virtual ~qSlicerModuleFactoryFilterModel();
+  ~qSlicerModuleFactoryFilterModel() override;
 
   bool showToLoad()const;
   bool showToIgnore()const;
@@ -69,9 +69,9 @@ public:
 
   bool hideAllWhenShowModulesIsEmpty()const;
   void setHideAllWhenShowModulesIsEmpty(bool hide);
-  virtual Qt::DropActions supportedDropActions()const;
-  virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action,
-                            int row, int column, const QModelIndex &parent);
+  Qt::DropActions supportedDropActions()const override;
+  bool dropMimeData(const QMimeData *data, Qt::DropAction action,
+                            int row, int column, const QModelIndex &parent) override;
 
 public slots:
   void setShowToLoad(bool show);
@@ -87,9 +87,9 @@ signals:
 protected:
   QScopedPointer<qSlicerModuleFactoryFilterModelPrivate> d_ptr;
 
-  virtual bool lessThan(const QModelIndex& leftIndex,
-                        const QModelIndex& rightIndex)const;
-  virtual bool filterAcceptsRow(int source_row, const QModelIndex& source_parent)const;
+  bool lessThan(const QModelIndex& leftIndex,
+                        const QModelIndex& rightIndex)const override;
+  bool filterAcceptsRow(int source_row, const QModelIndex& source_parent)const override;
 
 private:
   Q_DECLARE_PRIVATE(qSlicerModuleFactoryFilterModel);

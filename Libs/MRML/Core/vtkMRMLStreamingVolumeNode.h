@@ -49,28 +49,28 @@ public:
   vtkTypeMacro(vtkMRMLStreamingVolumeNode,vtkMRMLVectorVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
-  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) override;
 
   /// Set node attributes
-  virtual void ReadXMLAttributes(const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override
+  const char* GetNodeTagName() override
   {return "StreamingVolume";}
 
   /// Set/Get the observed image data object and and image data connections
   /// \sa vtkMRMLVolumeNode::SetAndObserveImageData(), vtkMRMLVolumeNode::GetImageData(), vtkMRMLVolumeNode::GetImageDataConnection()
-  virtual void SetAndObserveImageData(vtkImageData* imageData) override;
-  virtual vtkImageData* GetImageData() override;
-  virtual vtkAlgorithmOutput* GetImageDataConnection() override;
+  void SetAndObserveImageData(vtkImageData* imageData) override;
+  vtkImageData* GetImageData() override;
+  vtkAlgorithmOutput* GetImageDataConnection() override;
 
   /// Set and observe the frame object containing the compressed image data
   /// \param frame Object containing the compressed video frame info
@@ -115,7 +115,7 @@ public:
 
 protected:
   vtkMRMLStreamingVolumeNode();
-  ~vtkMRMLStreamingVolumeNode();
+  ~vtkMRMLStreamingVolumeNode() override;
   vtkMRMLStreamingVolumeNode(const vtkMRMLStreamingVolumeNode&);
   void operator=(const vtkMRMLStreamingVolumeNode&);
 

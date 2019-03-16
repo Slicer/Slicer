@@ -37,27 +37,27 @@ public:
   vtkTypeMacro(vtkMRMLTransformNode,vtkMRMLDisplayableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "Transform";};
+  const char* GetNodeTagName() override {return "Transform";};
 
   ///
   /// Finds the storage node and read the data
-  virtual void UpdateScene(vtkMRMLScene *scene) override
+  void UpdateScene(vtkMRMLScene *scene) override
     {
      Superclass::UpdateScene(scene);
     };
@@ -222,7 +222,7 @@ public:
   /// linear transform.
   /// If the current transformation was non-linear then the method
   /// is equivalent to ApplyTransform (creates a composite transform).
-  virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix) override;
+  void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix) override;
 
   ///
   /// Set a new matrix transform of this node to parent node.
@@ -237,9 +237,9 @@ public:
   virtual int SetAndObserveMatrixTransformFromParent(vtkMatrix4x4 *matrix);
 
   /// Reimplemented from vtkMRMLTransformableNode
-  virtual bool CanApplyNonLinearTransforms()const override;
+  bool CanApplyNonLinearTransforms()const override;
   /// Reimplemented from vtkMRMLTransformableNode
-  virtual void ApplyTransform(vtkAbstractTransform* transform) override;
+  void ApplyTransform(vtkAbstractTransform* transform) override;
 
   /// Split a composite transform to its components. The components are inserted to the scene between this transform and its parent.
   /// A composite transform can be created by hardening different types of transforms on each other.
@@ -248,11 +248,11 @@ public:
 
   ///
   /// Create default storage node or nullptr if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   ///
   /// Create and observe default display node
-  virtual void CreateDefaultDisplayNodes() override;
+  void CreateDefaultDisplayNodes() override;
 
   /// Get/Set for ReadAsTransformToParent
   /// Indicates that the transform in the storage node has to be interpreted as
@@ -274,7 +274,7 @@ public:
     this->InvokeCustomModifiedEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
     }
 
-  virtual bool GetModifiedSinceRead() override;
+  bool GetModifiedSinceRead() override;
 
   ///
   /// Retrieves the transform as the specified transform class.
@@ -305,7 +305,7 @@ public:
   void SetAndObserveTransformFromParent(vtkAbstractTransform *transform);
 
   /// alternative method to propagate events generated in Transform nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+  void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) override;
 
@@ -355,7 +355,7 @@ public:
 
 protected:
   vtkMRMLTransformNode();
-  ~vtkMRMLTransformNode();
+  ~vtkMRMLTransformNode() override;
   vtkMRMLTransformNode(const vtkMRMLTransformNode&);
   void operator=(const vtkMRMLTransformNode&);
 

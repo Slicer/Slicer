@@ -166,19 +166,19 @@ public:
 
   ///
   /// These are methods that satisfy vtkWidgetRepresentation's API.
-  virtual void PlaceWidget(double bounds[6]) override;
-  virtual void BuildRepresentation() override;
-  virtual int ComputeInteractionState(int X, int Y, int modify=0) override;
-  virtual void StartWidgetInteraction(double e[2]) override;
-  virtual void WidgetInteraction(double e[2]) override;
-  virtual double *GetBounds() override;
+  void PlaceWidget(double bounds[6]) override;
+  void BuildRepresentation() override;
+  int ComputeInteractionState(int X, int Y, int modify=0) override;
+  void StartWidgetInteraction(double e[2]) override;
+  void WidgetInteraction(double e[2]) override;
+  double *GetBounds() override;
 
   ///
   /// Methods supporting, and required by, the rendering process.
-  virtual void ReleaseGraphicsResources(vtkWindow*) override;
-  virtual int RenderOpaqueGeometry(vtkViewport*) override;
-  virtual int RenderTranslucentPolygonalGeometry(vtkViewport*) override;
-  virtual int HasTranslucentPolygonalGeometry() override;
+  void ReleaseGraphicsResources(vtkWindow*) override;
+  int RenderOpaqueGeometry(vtkViewport*) override;
+  int RenderTranslucentPolygonalGeometry(vtkViewport*) override;
+  int HasTranslucentPolygonalGeometry() override;
 
   enum {Outside=0,MoveF0,MoveF1,MoveF2,MoveF3,MoveF4,MoveF5,Translating,Rotating,Scaling};
 
@@ -200,12 +200,12 @@ public:
   /// get 3 extents along sides of the box
   void GetExtents(double bounds[]);
 
-  virtual void GetActors(vtkPropCollection *actors) override;
+  void GetActors(vtkPropCollection *actors) override;
 
 
 protected:
   vtkAnnotationROIRepresentation();
-  ~vtkAnnotationROIRepresentation();
+  ~vtkAnnotationROIRepresentation() override;
 
   /// Manage how the representation appears
   double LastEventPosition[4];

@@ -60,9 +60,9 @@ class qMRMLTableViewControllerWidgetPrivate
 public:
   typedef qMRMLViewControllerBarPrivate Superclass;
   qMRMLTableViewControllerWidgetPrivate(qMRMLTableViewControllerWidget& object);
-  virtual ~qMRMLTableViewControllerWidgetPrivate();
+  ~qMRMLTableViewControllerWidgetPrivate() override;
 
-  virtual void init();
+  void init() override;
 
   vtkWeakPointer<vtkMRMLTableNode> TableNode;
   vtkWeakPointer<vtkMRMLTableViewNode> TableViewNode;
@@ -88,7 +88,7 @@ public slots:
   void plotSelection();
 
 protected:
-  virtual void setupPopupUi();
+  void setupPopupUi() override;
 
 public:
 

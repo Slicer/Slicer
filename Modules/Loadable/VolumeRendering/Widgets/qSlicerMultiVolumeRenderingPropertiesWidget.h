@@ -35,7 +35,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerMultiVolumeRendering
 public:
   typedef qSlicerVolumeRenderingPropertiesWidget Superclass;
   qSlicerMultiVolumeRenderingPropertiesWidget(QWidget *parent=nullptr);
-  virtual ~qSlicerMultiVolumeRenderingPropertiesWidget();
+  ~qSlicerMultiVolumeRenderingPropertiesWidget() override;
 
   vtkMRMLMultiVolumeRenderingDisplayNode* mrmlDisplayNode();
 
@@ -44,7 +44,7 @@ public slots:
   void setSurfaceSmoothing(bool on);
 
 protected slots:
-  virtual void updateWidgetFromMRML();
+  void updateWidgetFromMRML() override;
 
 protected:
   QScopedPointer<qSlicerMultiVolumeRenderingPropertiesWidgetPrivate> d_ptr;

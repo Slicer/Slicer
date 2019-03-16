@@ -49,7 +49,7 @@ public:
   explicit qSlicerVolumeRenderingSettingsPanel(QWidget* parent = nullptr);
 
   /// Destructor
-  virtual ~qSlicerVolumeRenderingSettingsPanel();
+  ~qSlicerVolumeRenderingSettingsPanel() override;
 
   /// Volume rendering logic is synchronized with the settings.
   /// \sa vtkSlicerVolumeRenderingLogic::SetDefaultRenderingMethod

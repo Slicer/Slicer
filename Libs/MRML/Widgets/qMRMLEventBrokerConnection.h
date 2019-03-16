@@ -35,11 +35,11 @@ Q_OBJECT
 public:
   typedef ctkVTKConnection Superclass;
   explicit qMRMLEventBrokerConnection(QObject* parent);
-  virtual ~qMRMLEventBrokerConnection();
+  ~qMRMLEventBrokerConnection() override;
 
 protected:
-  virtual void addObserver(vtkObject* caller, unsigned long vtk_event, vtkCallbackCommand* callback, float priority=0.0f);
-  virtual void removeObserver(vtkObject* caller, unsigned long vtk_event, vtkCallbackCommand* callback);
+  void addObserver(vtkObject* caller, unsigned long vtk_event, vtkCallbackCommand* callback, float priority=0.0f) override;
+  void removeObserver(vtkObject* caller, unsigned long vtk_event, vtkCallbackCommand* callback) override;
 
 private:
   Q_DISABLE_COPY(qMRMLEventBrokerConnection);
@@ -49,7 +49,7 @@ private:
 class QMRML_WIDGETS_EXPORT qMRMLConnectionFactory: public ctkVTKConnectionFactory
 {
 public:
-  virtual ctkVTKConnection* createConnection(ctkVTKObjectEventsObserver*)const;
+  ctkVTKConnection* createConnection(ctkVTKObjectEventsObserver*)const override;
 };
 
 #endif

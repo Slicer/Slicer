@@ -42,11 +42,11 @@ public:
 
   qMRMLWidgetsAbstractPlugin();
   // Don't reimplement this method.
-  QString group() const;
+  QString group() const override;
   // You can reimplement these methods
-  virtual QIcon icon() const;
-  virtual QString toolTip() const;
-  virtual QString whatsThis() const;
+  QIcon icon() const override;
+  QString toolTip() const override;
+  QString whatsThis() const override;
 
 };
 

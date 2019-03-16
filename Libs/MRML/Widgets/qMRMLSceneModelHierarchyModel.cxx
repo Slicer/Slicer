@@ -42,7 +42,7 @@ public:
   typedef qMRMLSceneDisplayableModelPrivate Superclass;
   qMRMLSceneModelHierarchyModelPrivate(qMRMLSceneModelHierarchyModel& object);
 
-  virtual vtkMRMLHierarchyNode* CreateHierarchyNode()const;
+  vtkMRMLHierarchyNode* CreateHierarchyNode()const override;
 
 };
 

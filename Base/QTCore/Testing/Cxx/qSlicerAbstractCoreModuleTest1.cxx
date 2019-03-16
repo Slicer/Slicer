@@ -36,7 +36,7 @@ public:
   {
     ++Count;
   }
-  virtual ~AModuleWidgetRepresentation()
+  ~AModuleWidgetRepresentation() override
   {
     --Count;
   }
@@ -44,7 +44,7 @@ public:
   static int Count;
 
 protected:
-  virtual void setup () {}
+  void setup () override {}
 
 };
 
@@ -54,18 +54,18 @@ int AModuleWidgetRepresentation::Count = 0;
 class AModule: public qSlicerAbstractCoreModule
 {
 public:
-  virtual QString title()const { return "A Title";}
-  virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation()
+  QString title()const override { return "A Title";}
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override
   {
     return new AModuleWidgetRepresentation();
   }
 
-  virtual vtkMRMLAbstractLogic* createLogic()
+  vtkMRMLAbstractLogic* createLogic() override
   {
     return nullptr;
   }
 protected:
-  virtual void setup () {}
+  void setup () override {}
 };
 
 //-----------------------------------------------------------------------------

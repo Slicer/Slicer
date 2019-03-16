@@ -47,7 +47,7 @@ public:
   /// Title is the name of the toolbar (can appear using right click on the toolbar area)
   qSlicerViewersToolBar(const QString& title, QWidget* parent = nullptr);
   qSlicerViewersToolBar(QWidget* parent = nullptr);
-  virtual ~qSlicerViewersToolBar();
+  ~qSlicerViewersToolBar() override;
 
 public slots:
 

@@ -51,7 +51,7 @@ protected:
   qMRMLTableWidget* const q_ptr;
 public:
   qMRMLTableWidgetPrivate(qMRMLTableWidget& object);
-  ~qMRMLTableWidgetPrivate();
+  ~qMRMLTableWidgetPrivate() override;
 
   void init();
 

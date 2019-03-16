@@ -67,7 +67,7 @@ public:
 
 protected:
   vtkSlicerDICOMExportable();
-  ~vtkSlicerDICOMExportable();
+  ~vtkSlicerDICOMExportable() override;
   vtkSlicerDICOMExportable(const vtkSlicerDICOMExportable&);
   void operator=(const vtkSlicerDICOMExportable&);
 

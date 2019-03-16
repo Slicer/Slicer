@@ -46,7 +46,7 @@ public:
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
   qSlicerSubjectHierarchyVolumeRenderingPlugin(QObject* parent = nullptr);
-  virtual ~qSlicerSubjectHierarchyVolumeRenderingPlugin();
+  ~qSlicerSubjectHierarchyVolumeRenderingPlugin() override;
 
 public:
   /// Set volume rendering module logic. Required for accessing display nodes and setting up volume rendering related nodes.
@@ -54,11 +54,11 @@ public:
 
   /// Get visibility context menu item actions to add to tree view.
   /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
-  virtual QList<QAction*> visibilityContextMenuActions()const;
+  QList<QAction*> visibilityContextMenuActions()const override;
 
   /// Show visibility context menu actions valid for a given subject hierarchy item.
   /// \param itemID Subject Hierarchy item to show the visibility context menu items for
-  virtual void showVisibilityContextMenuActionsForItem(vtkIdType itemID);
+  void showVisibilityContextMenuActionsForItem(vtkIdType itemID) override;
 
 protected slots:
   /// Toggle volume rendering option for current volume item

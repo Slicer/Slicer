@@ -80,7 +80,7 @@ public:
 
 protected:
   vtkTransformVisualizerGlyph3D();
-  ~vtkTransformVisualizerGlyph3D() {};
+  ~vtkTransformVisualizerGlyph3D() override {};
 
   bool ScaleDirectional;
 
@@ -88,7 +88,7 @@ protected:
   double MagnitudeThresholdLower;
   double MagnitudeThresholdUpper;
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 private:
   vtkTransformVisualizerGlyph3D(const vtkTransformVisualizerGlyph3D&);  // Not implemented.

@@ -40,7 +40,7 @@ public:
   /// Constructors
   typedef qMRMLVolumeWidget Superclass;
   explicit qMRMLWindowLevelWidget(QWidget* parentWidget = nullptr);
-  virtual ~qMRMLWindowLevelWidget();
+  ~qMRMLWindowLevelWidget() override;
 
   enum ControlMode
   {
@@ -101,7 +101,7 @@ public slots:
 
 protected:
   /// Update the widget from volume display node properties.
-  virtual void updateWidgetFromMRMLDisplayNode();
+  void updateWidgetFromMRMLDisplayNode() override;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLWindowLevelWidget);

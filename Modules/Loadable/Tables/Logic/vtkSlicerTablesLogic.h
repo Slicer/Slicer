@@ -57,7 +57,7 @@ public:
 
 protected:
   vtkSlicerTablesLogic();
-  virtual ~vtkSlicerTablesLogic();
+  ~vtkSlicerTablesLogic() override;
 
 private:
   vtkSlicerTablesLogic(const vtkSlicerTablesLogic&); // Not implemented

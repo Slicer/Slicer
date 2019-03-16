@@ -272,7 +272,7 @@ public:
 
 protected:
   vtkDiffusionTensorMathematics();
-  ~vtkDiffusionTensorMathematics();
+  ~vtkDiffusionTensorMathematics() override;
 
   int Operation; /// math operation to perform
   double ScaleFactor; /// Scale factor for output scalars
@@ -285,11 +285,11 @@ protected:
   vtkMatrix4x4 *TensorRotationMatrix;
   int FixNegativeEigenvalues;
 
-  virtual int RequestInformation (vtkInformation*,
+  int RequestInformation (vtkInformation*,
                                   vtkInformationVector**,
                                   vtkInformationVector*) override;
 
-  virtual void ThreadedRequestData(vtkInformation *request,
+  void ThreadedRequestData(vtkInformation *request,
                                    vtkInformationVector **inputVector,
                                    vtkInformationVector *outputVector,
                                    vtkImageData ***inData,
@@ -299,7 +299,7 @@ protected:
   int FillInputPortInformation(int port, vtkInformation* info) override;
 
   // Reimplemented to delete the tensor array of the output.
-  virtual int RequestData(vtkInformation* request,
+  int RequestData(vtkInformation* request,
                           vtkInformationVector** inputVector,
                           vtkInformationVector* outputVector) override;
 private:

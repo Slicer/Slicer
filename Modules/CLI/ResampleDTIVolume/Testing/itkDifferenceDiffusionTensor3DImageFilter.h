@@ -99,7 +99,7 @@ protected:
   MatrixType GetMetaDataDictionary( const InputImageType* image );
 
   DifferenceDiffusionTensor3DImageFilter();
-  virtual ~DifferenceDiffusionTensor3DImageFilter()
+  ~DifferenceDiffusionTensor3DImageFilter() override
   {
   }
 

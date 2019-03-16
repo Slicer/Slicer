@@ -47,7 +47,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTableView : public QTableView
   Q_PROPERTY(bool firstColumnLocked READ firstColumnLocked WRITE setFirstColumnLocked)
 public:
   qMRMLTableView(QWidget *parent=nullptr);
-  virtual ~qMRMLTableView();
+  ~qMRMLTableView() override;
 
   /// Return a pointer on the current MRML scene
   Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
@@ -108,11 +108,11 @@ signals:
   void selectionChanged();
 
 protected:
-  virtual void keyPressEvent(QKeyEvent* event);
+  void keyPressEvent(QKeyEvent* event) override;
 
   QScopedPointer<qMRMLTableViewPrivate> d_ptr;
 
-  virtual void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
+  void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected) override;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLTableView);

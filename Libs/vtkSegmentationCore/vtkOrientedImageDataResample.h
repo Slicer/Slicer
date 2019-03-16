@@ -162,7 +162,7 @@ public:
 
 protected:
   vtkOrientedImageDataResample();
-  ~vtkOrientedImageDataResample();
+  ~vtkOrientedImageDataResample() override;
 
 private:
   vtkOrientedImageDataResample(const vtkOrientedImageDataResample&);  // Not implemented.

@@ -47,7 +47,7 @@ class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsWidget : publi
 public:
   /// Standard methods for a VTK class.
   vtkTypeMacro(vtkSlicerMarkupsWidget, vtkMRMLAbstractWidget);
-  virtual void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Create the default widget representation and initializes the widget and representation.
   virtual void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) = 0;

@@ -118,7 +118,7 @@ public:
 protected:
 
   RigidImageToImageRegistrationMethod( void );
-  virtual ~RigidImageToImageRegistrationMethod( void );
+  ~RigidImageToImageRegistrationMethod( void ) override;
 
   void PrintSelf( std::ostream & os, Indent indent ) const override;
 

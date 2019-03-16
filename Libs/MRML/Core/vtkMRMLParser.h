@@ -42,12 +42,12 @@ public:
 
 protected:
   vtkMRMLParser() : MRMLScene(nullptr),NodeCollection(nullptr){};
-  ~vtkMRMLParser() {};
+  ~vtkMRMLParser() override {};
   vtkMRMLParser(const vtkMRMLParser&);
   void operator=(const vtkMRMLParser&);
 
-  virtual void StartElement(const char* name, const char** atts) override;
-  virtual void EndElement (const char *name) override;
+  void StartElement(const char* name, const char** atts) override;
+  void EndElement (const char *name) override;
 
 private:
   vtkMRMLScene* MRMLScene;

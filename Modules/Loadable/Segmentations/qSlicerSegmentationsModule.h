@@ -43,44 +43,44 @@ class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsModule :
 public:
   typedef qSlicerLoadableModule Superclass;
   explicit qSlicerSegmentationsModule(QObject *parent=nullptr);
-  virtual ~qSlicerSegmentationsModule();
+  ~qSlicerSegmentationsModule() override;
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
   /// Help to use the module
-  virtual QString helpText()const;
+  QString helpText()const override;
 
   /// Return acknowledgments
-  virtual QString acknowledgementText()const;
+  QString acknowledgementText()const override;
 
   /// Return the authors of the module
-  virtual QStringList  contributors()const;
+  QStringList  contributors()const override;
 
   /// Return module dependencies
-  virtual QStringList dependencies()const;
+  QStringList dependencies()const override;
 
   /// Return a custom icon for the module
-  virtual QIcon icon()const;
+  QIcon icon()const override;
 
   /// Return the categories for the module
-  virtual QStringList categories()const;
+  QStringList categories()const override;
 
   /// Define associated node types
-  virtual QStringList associatedNodeTypes()const;
+  QStringList associatedNodeTypes()const override;
 
 public slots:
   /// Set up MRML scene events
-  virtual void setMRMLScene(vtkMRMLScene* scene);
+  void setMRMLScene(vtkMRMLScene* scene) override;
 
 protected:
   /// Initialize the module. Register the volumes reader/writer
-  virtual void setup();
+  void setup() override;
 
   /// Create and return the logic associated to this module
-  virtual vtkMRMLAbstractLogic* createLogic();
+  vtkMRMLAbstractLogic* createLogic() override;
 
   /// Create and return the widget representation associated to this module
-  virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
+  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
 
 protected slots:
   /// Called when a node is added to the scene. Makes connections to enable

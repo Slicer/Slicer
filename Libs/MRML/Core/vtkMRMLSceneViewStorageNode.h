@@ -27,36 +27,36 @@ public:
   vtkTypeMacro(vtkMRMLSceneViewStorageNode,vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName() override {return "SceneViewStorage";}
+  const char* GetNodeTagName() override {return "SceneViewStorage";}
 
   /// Initialize all the supported read file types
-  virtual void InitializeSupportedReadFileTypes() override;
+  void InitializeSupportedReadFileTypes() override;
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes() override;
+  void InitializeSupportedWriteFileTypes() override;
 
   /// Return true if the node can be read in
-  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
 
 protected:
   vtkMRMLSceneViewStorageNode();
-  ~vtkMRMLSceneViewStorageNode();
+  ~vtkMRMLSceneViewStorageNode() override;
   vtkMRMLSceneViewStorageNode(const vtkMRMLSceneViewStorageNode&);
   void operator=(const vtkMRMLSceneViewStorageNode&);
 
   ///
   /// Read data and set it in the referenced node
   /// NOTE: Subclasses should implement this method
-  virtual int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode *refNode) override;
 
   ///
   /// Write data from a  referenced node
   /// NOTE: Subclasses should implement this method
-  virtual int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode *refNode) override;
 
 };
 

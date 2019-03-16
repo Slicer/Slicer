@@ -44,7 +44,7 @@ public:
 
   /// Constructors
   explicit qMRMLSceneViewMenu(QWidget* newParent = nullptr);
-  virtual ~qMRMLSceneViewMenu();
+  ~qMRMLSceneViewMenu() override;
 
   /// Return a pointer on the current MRML scene
   vtkMRMLScene* mrmlScene() const;

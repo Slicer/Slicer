@@ -40,16 +40,16 @@ public:
   qSlicerTablesReader(QObject* parent = nullptr);
   qSlicerTablesReader(vtkSlicerTablesLogic* logic,
                        QObject* parent = nullptr);
-  virtual ~qSlicerTablesReader();
+  ~qSlicerTablesReader() override;
 
   vtkSlicerTablesLogic* logic()const;
   void setLogic(vtkSlicerTablesLogic* logic);
 
-  virtual QString description()const;
-  virtual IOFileType fileType()const;
-  virtual QStringList extensions()const;
+  QString description()const override;
+  IOFileType fileType()const override;
+  QStringList extensions()const override;
 
-  virtual bool load(const IOProperties& properties);
+  bool load(const IOProperties& properties) override;
 protected:
   QScopedPointer<qSlicerTablesReaderPrivate> d_ptr;
 

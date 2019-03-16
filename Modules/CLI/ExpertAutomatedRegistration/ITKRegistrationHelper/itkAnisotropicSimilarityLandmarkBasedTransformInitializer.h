@@ -150,7 +150,7 @@ public:
 
 protected:
   AnisotropicSimilarityLandmarkBasedTransformInitializer();
-  ~AnisotropicSimilarityLandmarkBasedTransformInitializer()
+  ~AnisotropicSimilarityLandmarkBasedTransformInitializer() override
   {
   }
 

@@ -65,7 +65,7 @@ protected:
   qSlicerSubjectHierarchyMarkupsPlugin* const q_ptr;
 public:
   qSlicerSubjectHierarchyMarkupsPluginPrivate(qSlicerSubjectHierarchyMarkupsPlugin& object);
-  ~qSlicerSubjectHierarchyMarkupsPluginPrivate();
+  ~qSlicerSubjectHierarchyMarkupsPluginPrivate() override;
   void init();
 public:
   QIcon MarkupIcon;

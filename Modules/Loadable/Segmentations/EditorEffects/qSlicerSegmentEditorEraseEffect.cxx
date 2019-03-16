@@ -29,7 +29,7 @@ protected:
   qSlicerSegmentEditorEraseEffect* const q_ptr;
 public:
   qSlicerSegmentEditorEraseEffectPrivate(qSlicerSegmentEditorEraseEffect& object);
-  ~qSlicerSegmentEditorEraseEffectPrivate();
+  ~qSlicerSegmentEditorEraseEffectPrivate() override;
 public:
   QIcon EraseIcon;
 };

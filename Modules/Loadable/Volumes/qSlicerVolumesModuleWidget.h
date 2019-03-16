@@ -39,12 +39,12 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerVolumesModuleWidget(QWidget *parent=nullptr);
-  virtual ~qSlicerVolumesModuleWidget();
+  ~qSlicerVolumesModuleWidget() override;
 
-  virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
+  bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
 
 protected:
-  virtual void setup();
+  void setup() override;
 
 protected slots:
   void nodeSelectionChanged(vtkMRMLNode*);

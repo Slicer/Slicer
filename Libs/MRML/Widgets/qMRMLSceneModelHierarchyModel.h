@@ -32,18 +32,18 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModelHierarchyModel : public qMRMLSceneDisp
 public:
   typedef qMRMLSceneDisplayableModel Superclass;
   qMRMLSceneModelHierarchyModel(QObject *parent=nullptr);
-  virtual ~qMRMLSceneModelHierarchyModel();
+  ~qMRMLSceneModelHierarchyModel() override;
 
   ///
-  virtual vtkMRMLNode* parentNode(vtkMRMLNode* node)const;
+  vtkMRMLNode* parentNode(vtkMRMLNode* node)const override;
 
   //virtual int          nodeIndex(vtkMRMLNode* node)const;
 
   /// Fast function that only check the type of the node to know if it can be a child.
-  virtual bool         canBeAChild(vtkMRMLNode* node)const;
+  bool         canBeAChild(vtkMRMLNode* node)const override;
 
   /// Fast function that only check the type of the node to know if it can be a parent.
-  virtual bool         canBeAParent(vtkMRMLNode* node)const;
+  bool         canBeAParent(vtkMRMLNode* node)const override;
 
   /// If newParent == 0, set the node into the vtkMRMLScene
  // virtual bool         reparent(vtkMRMLNode* node, vtkMRMLNode* newParent);

@@ -95,7 +95,7 @@ public:
 
 protected:
   vtkSegmentationConverterFactory();
-  ~vtkSegmentationConverterFactory();
+  ~vtkSegmentationConverterFactory() override;
   vtkSegmentationConverterFactory(const vtkSegmentationConverterFactory&);
   void operator=(const vtkSegmentationConverterFactory&);
 

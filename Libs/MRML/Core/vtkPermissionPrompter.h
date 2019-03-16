@@ -58,7 +58,7 @@ class VTK_MRML_EXPORT vtkPermissionPrompter : public vtkObject
 
  protected:
   vtkPermissionPrompter();
-  virtual ~vtkPermissionPrompter();
+  ~vtkPermissionPrompter() override;
   vtkPermissionPrompter(const vtkPermissionPrompter&);
   void operator=(const vtkPermissionPrompter&);
 

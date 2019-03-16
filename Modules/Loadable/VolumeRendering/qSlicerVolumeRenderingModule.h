@@ -43,34 +43,34 @@ public:
 
   typedef qSlicerLoadableModule Superclass;
   explicit qSlicerVolumeRenderingModule(QObject *parent=nullptr);
-  virtual ~qSlicerVolumeRenderingModule();
+  ~qSlicerVolumeRenderingModule() override;
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
   /// Help of the module
-  virtual QString helpText()const;
+  QString helpText()const override;
   /// Acknowledgement for the module
-  virtual QString acknowledgementText()const;
+  QString acknowledgementText()const override;
   /// Contributors of the module.
-  virtual QStringList contributors()const;
+  QStringList contributors()const override;
 
   /// Return a custom icon for the module
-  virtual QIcon icon()const;
+  QIcon icon()const override;
 
-  virtual QStringList categories()const;
+  QStringList categories()const override;
 
   /// Specify editable node types
-  virtual QStringList associatedNodeTypes()const;
+  QStringList associatedNodeTypes()const override;
 
 protected:
   /// Initialize the module. Register the volumes reader/writer
-  virtual void setup();
+  void setup() override;
 
   /// Create and return the widget representation associated to this module
-  virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
+  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
-  virtual vtkMRMLAbstractLogic* createLogic();
+  vtkMRMLAbstractLogic* createLogic() override;
 
 protected:
   QScopedPointer<qSlicerVolumeRenderingModulePrivate> d_ptr;

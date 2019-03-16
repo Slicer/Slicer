@@ -41,15 +41,15 @@ public:
 protected:
 
   vtkMRMLOrientationMarkerDisplayableManager();
-  virtual ~vtkMRMLOrientationMarkerDisplayableManager();
+  ~vtkMRMLOrientationMarkerDisplayableManager() override;
 
   /// Observe the View node and initialize the renderer accordingly.
-  virtual void Create() override;
+  void Create() override;
 
   /// Called each time the view node is modified.
   /// Internally update the renderer from the view node.
   /// \sa UpdateFromMRMLViewNode()
-  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;
+  void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;
 
   /// Update the renderer from the view node properties.
   void UpdateFromViewNode();

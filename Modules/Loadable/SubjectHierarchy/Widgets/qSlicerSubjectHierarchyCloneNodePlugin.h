@@ -45,18 +45,18 @@ public:
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
   qSlicerSubjectHierarchyCloneNodePlugin(QObject* parent = nullptr);
-  virtual ~qSlicerSubjectHierarchyCloneNodePlugin();
+  ~qSlicerSubjectHierarchyCloneNodePlugin() override;
 
 public:
   Q_INVOKABLE static const QString getCloneNodeNamePostfix();
 
 public:
   /// Get item context menu item actions to add to tree view
-  virtual QList<QAction*> itemContextMenuActions()const;
+  QList<QAction*> itemContextMenuActions()const override;
 
   /// Show context menu actions valid for  given subject hierarchy node.
   /// \param node Subject Hierarchy node to show the context menu items for. If nullptr, then shows menu items for the scene
-  virtual void showContextMenuActionsForItem(vtkIdType itemID);
+  void showContextMenuActionsForItem(vtkIdType itemID) override;
 
 protected slots:
   /// Clone currently selected subject hierarchy entry and associated data node

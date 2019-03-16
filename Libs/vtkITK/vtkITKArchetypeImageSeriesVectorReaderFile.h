@@ -29,7 +29,7 @@ class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesVectorReaderFile : public vtkITKA
 
  protected:
   vtkITKArchetypeImageSeriesVectorReaderFile();
-  ~vtkITKArchetypeImageSeriesVectorReaderFile();
+  ~vtkITKArchetypeImageSeriesVectorReaderFile() override;
 
   void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo) override;
   static void ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&, void* data);

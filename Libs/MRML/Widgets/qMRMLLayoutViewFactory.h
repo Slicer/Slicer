@@ -56,7 +56,7 @@ public:
 
   /// Constructors
   explicit qMRMLLayoutViewFactory(QObject* parent=nullptr);
-  virtual ~qMRMLLayoutViewFactory();
+  ~qMRMLLayoutViewFactory() override;
 
   /// Returns the viewClassName property value.
   /// Returns QString() by default. \note To be reimplemented in derived
@@ -66,7 +66,7 @@ public:
 
   /// Returns true if the layoutElement matches the viewClassName
   /// \sa viewClassName, isViewNodeSupported()
-  virtual bool isElementSupported(QDomElement layoutElement)const;
+  bool isElementSupported(QDomElement layoutElement)const override;
 
   /// Returns true if the viewNode matches the viewClassName.
   /// \sa viewClassName, isElementSupported()
@@ -91,7 +91,7 @@ public:
   Q_INVOKABLE QWidget* viewWidgetByLayoutLabel(const QString& layoutLabel)const;
   Q_INVOKABLE int viewCount()const;
 
-  virtual void beginSetupLayout();
+  void beginSetupLayout() override;
 
   vtkMRMLAbstractViewNode* viewNode(QWidget* widget)const;
 
@@ -132,12 +132,12 @@ Q_SIGNALS:
 protected:
   QScopedPointer<qMRMLLayoutViewFactoryPrivate> d_ptr;
 
-  virtual void setupView(QDomElement viewElement, QWidget* view);
+  void setupView(QDomElement viewElement, QWidget* view) override;
   /// Reimplemented to search view node matching QDomElement.
   /// \sa viewFromXML(), createViewFromNode()
-  virtual QWidget* createViewFromXML(QDomElement layoutElement);
+  QWidget* createViewFromXML(QDomElement layoutElement) override;
   /// Reimplemented to support
-  virtual QList<QWidget*> createViewsFromXML(QDomElement layoutElement);
+  QList<QWidget*> createViewsFromXML(QDomElement layoutElement) override;
 
   virtual vtkMRMLAbstractViewNode* viewNodeFromXML(QDomElement viewElement)const;
   virtual QList<vtkMRMLAbstractViewNode*> viewNodesFromXML(QDomElement viewElement)const;

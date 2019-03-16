@@ -52,11 +52,11 @@ public:
     return this->NodeReferences;
     }
 
-  virtual vtkMRMLNode* CreateNodeInstance() override
+  vtkMRMLNode* CreateNodeInstance() override
     {
     return vtkMRMLNodeTestHelper1::New();
     }
-  virtual const char* GetNodeTagName() override
+  const char* GetNodeTagName() override
     {
     return "vtkMRMLNodeTestHelper1";
     }
@@ -68,7 +68,7 @@ public:
       }
     return this->NodeReferences[std::string(refrole)].size();
     }
-  virtual void ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData ) override
+  void ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData ) override
     {
     Superclass::ProcessMRMLEvents(caller, event, callData);
     this->LastMRMLEventCaller = caller;
@@ -87,10 +87,10 @@ public:
   vtkSetStdVectorMacro(TestingFloatVector, std::vector<float>);
   vtkGetStdVectorMacro(TestingFloatVector, std::vector<float>);
 
-  virtual void SetSceneReferences() override;
-  virtual void UpdateReferenceID(const char *oldID, const char *newID) override;
-  virtual void WriteXML(ostream& of, int nIndent) override;
-  virtual void ReadXMLAttributes(const char** atts) override;
+  void SetSceneReferences() override;
+  void UpdateReferenceID(const char *oldID, const char *newID) override;
+  void WriteXML(ostream& of, int nIndent) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   char*                     OtherNodeID;
   std::vector<std::string>  TestingStringVector;
@@ -107,7 +107,7 @@ private:
     this->LastMRMLEventCaller = nullptr;
     this->LastMRMLEventId = 0;
     }
-  ~vtkMRMLNodeTestHelper1()
+  ~vtkMRMLNodeTestHelper1() override
     {
     this->SetOtherNodeID(nullptr);
     }
@@ -124,11 +124,11 @@ public:
 
   vtkTypeMacro(vtkMRMLStorageNodeTestHelper,vtkMRMLStorageNode);
 
-  virtual vtkMRMLNode* CreateNodeInstance() override
+  vtkMRMLNode* CreateNodeInstance() override
     {
     return vtkMRMLStorageNodeTestHelper::New();
     }
-  virtual const char* GetNodeTagName() override
+  const char* GetNodeTagName() override
     {
     return "vtkMRMLStorageNodeTestHelper";
     }
@@ -136,25 +136,25 @@ public:
   void SetOtherNodeID(const char* id);
   vtkGetStringMacro(OtherNodeID);
 
-  virtual void SetSceneReferences() override;
-  virtual void UpdateReferenceID(const char *oldID, const char *newID) override;
-  virtual void WriteXML(ostream& of, int nIndent) override;
-  virtual void ReadXMLAttributes(const char** atts) override;
+  void SetSceneReferences() override;
+  void UpdateReferenceID(const char *oldID, const char *newID) override;
+  void WriteXML(ostream& of, int nIndent) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   // Implemented to satisfy the storage node interface
-  virtual bool CanReadInReferenceNode(vtkMRMLNode* refNode) override
+  bool CanReadInReferenceNode(vtkMRMLNode* refNode) override
     {
     return refNode->IsA("vtkMRMLNodeTestHelper1");
     }
-  virtual bool CanWriteFromReferenceNode(vtkMRMLNode* refNode) override
+  bool CanWriteFromReferenceNode(vtkMRMLNode* refNode) override
     {
     return refNode->IsA("vtkMRMLNodeTestHelper1");
     }
-  virtual void InitializeSupportedWriteFileTypes() override
+  void InitializeSupportedWriteFileTypes() override
     {
     this->SupportedWriteFileTypes->InsertNextValue(".noop");
     }
-  virtual int ReadDataInternal(vtkMRMLNode *refNode) override
+  int ReadDataInternal(vtkMRMLNode *refNode) override
     {
     vtkMRMLNodeTestHelper1 * node = vtkMRMLNodeTestHelper1::SafeDownCast(refNode);
     if(!node)
@@ -164,7 +164,7 @@ public:
       }
     return 1;
     }
-  virtual int WriteDataInternal(vtkMRMLNode *refNode) override
+  int WriteDataInternal(vtkMRMLNode *refNode) override
     {
     vtkMRMLNodeTestHelper1 * node = vtkMRMLNodeTestHelper1::SafeDownCast(refNode);
     if(!node)
@@ -183,7 +183,7 @@ private:
     this->OtherNodeID = nullptr;
     this->DefaultWriteFileExtension = "noop";
     }
-  ~vtkMRMLStorageNodeTestHelper()
+  ~vtkMRMLStorageNodeTestHelper() override
     {
     this->SetOtherNodeID(nullptr);
     }

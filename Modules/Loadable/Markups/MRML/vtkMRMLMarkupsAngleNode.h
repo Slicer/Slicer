@@ -41,28 +41,28 @@ public:
   /// Print out the node information to the output stream
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual const char* GetIcon() override {return ":/Icons/MarkupsAngleMouseModePlace.png";}
+  const char* GetIcon() override {return ":/Icons/MarkupsAngleMouseModePlace.png";}
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "MarkupsAngle";}
+  const char* GetNodeTagName() override {return "MarkupsAngle";}
 
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
 protected:
   vtkMRMLMarkupsAngleNode();
-  ~vtkMRMLMarkupsAngleNode();
+  ~vtkMRMLMarkupsAngleNode() override;
   vtkMRMLMarkupsAngleNode(const vtkMRMLMarkupsAngleNode&);
   void operator=(const vtkMRMLMarkupsAngleNode&);
 

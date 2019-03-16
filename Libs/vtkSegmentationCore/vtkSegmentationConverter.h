@@ -169,7 +169,7 @@ protected:
 
 protected:
   vtkSegmentationConverter();
-  ~vtkSegmentationConverter();
+  ~vtkSegmentationConverter() override;
   void operator=(const vtkSegmentationConverter&);
 
 protected:

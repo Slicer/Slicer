@@ -342,10 +342,10 @@ public:
   void SetTerminologiesLogic(vtkSlicerTerminologiesModuleLogic* terminologiesLogic);
 
 protected:
-  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
 
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
-  virtual void RegisterNodes() override;
+  void RegisterNodes() override;
 
   /// Callback function observing UID added events for subject hierarchy nodes.
   /// In case the newly added UID is a volume node referenced from a segmentation,
@@ -355,7 +355,7 @@ protected:
   static void OnSubjectHierarchyUIDAdded(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
 
   /// Handle MRML node added events
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
 
   static bool ExportSegmentsClosedSurfaceRepresentationToStlFiles(std::string destinationFolder,
     vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, bool lps, double sizeScale, bool merge);
@@ -369,7 +369,7 @@ protected:
 
 protected:
   vtkSlicerSegmentationsModuleLogic();
-  virtual ~vtkSlicerSegmentationsModuleLogic();
+  ~vtkSlicerSegmentationsModuleLogic() override;
 
   /// Command handling subject hierarchy UID added events
   vtkCallbackCommand* SubjectHierarchyUIDCallbackCommand;

@@ -40,25 +40,25 @@ public:
 
   // the following functions must be public to be accessible by the callback
   /// Propagate properties of MRML node to widget.
-  virtual void PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget) override;
+  void PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget) override;
   /// Propagate properties of widget to MRML node.
-  virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node) override;
+  void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node) override;
   // update just the position, called from PropagateMRMLToWidget and in
   // response to slice node modified events
-  virtual void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node) override;
+  void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node) override;
 
 protected:
 
   vtkMRMLAnnotationBidimensionalDisplayableManager(){this->m_Focus="vtkMRMLAnnotationBidimensionalNode";}
-  virtual ~vtkMRMLAnnotationBidimensionalDisplayableManager(){}
+  ~vtkMRMLAnnotationBidimensionalDisplayableManager() override{}
 
   /// Callback for click in RenderWindow
-  virtual void OnClickInRenderWindow(double x, double y, const char *associatedNodeID) override;
+  void OnClickInRenderWindow(double x, double y, const char *associatedNodeID) override;
   /// Create a widget.
-  virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node) override;
+  vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node) override;
 
   /// Gets called when widget was created
-  virtual void OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node) override;
+  void OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node) override;
 
 private:
 

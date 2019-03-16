@@ -93,7 +93,7 @@ public:
 
 protected:
   vtkImageStash();
-  ~vtkImageStash();
+  ~vtkImageStash() override;
 
   vtkImageData *StashImage;
   vtkUnsignedCharArray *StashedScalars;

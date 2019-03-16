@@ -42,7 +42,7 @@ class VTK_SLICER_DATAPROBELIB_MODULE_LOGIC_EXPORT vtkPVScalarBarActor : public v
 {
 public:
   vtkTypeMacro(vtkPVScalarBarActor, vtkScalarBarActor);
-  virtual void PrintSelf(ostream &os, vtkIndent indent) override;
+  void PrintSelf(ostream &os, vtkIndent indent) override;
   static vtkPVScalarBarActor *New();
 
   // Description:
@@ -94,32 +94,32 @@ public:
   // Release any graphics resources that are being consumed by this actor.
   // The parameter window could be used to determine which graphic
   // resources to release.
-  virtual void ReleaseGraphicsResources(vtkWindow*) override;
+  void ReleaseGraphicsResources(vtkWindow*) override;
 
   // Description:
   // Draw the scalar bar and annotation text to the screen.
-  virtual int RenderOverlay(vtkViewport* viewport) override;
+  int RenderOverlay(vtkViewport* viewport) override;
 
 protected:
   vtkPVScalarBarActor();
-  ~vtkPVScalarBarActor();
+  ~vtkPVScalarBarActor() override;
 
   // Description:
   // These methods override the subclass implementation.
-  virtual void PrepareTitleText() override;
-  virtual void ComputeScalarBarThickness() override;
-  virtual void LayoutTitle() override;
-  virtual void ComputeScalarBarLength() override;
-  virtual void LayoutTicks() override;
-  virtual void ConfigureAnnotations() override;
-  virtual void ConfigureTitle() override;
-  virtual void ConfigureTicks() override;
+  void PrepareTitleText() override;
+  void ComputeScalarBarThickness() override;
+  void LayoutTitle() override;
+  void ComputeScalarBarLength() override;
+  void LayoutTicks() override;
+  void ConfigureAnnotations() override;
+  void ConfigureTitle() override;
+  void ConfigureTicks() override;
 
   // Description:
   // Annotate the min/max values on the scalar bar (in interval/ratio mode).
   //
   // This overrides the subclass implementation.
-  virtual void EditAnnotations() override;
+  void EditAnnotations() override;
 
   // Description:
   // Set up the ScalarBar, ScalarBarMapper, and ScalarBarActor based on the

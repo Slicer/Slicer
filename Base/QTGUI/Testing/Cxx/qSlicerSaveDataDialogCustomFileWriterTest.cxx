@@ -45,13 +45,13 @@ public:
     : qSlicerFileWriter(parent)
     , FileType(fileType)
     {}
-  virtual ~qSlicerDummyFileWriter(){}
+  ~qSlicerDummyFileWriter() override{}
   virtual QStringList nodeTags()const {return QStringList() << "LinearTransform";}
-  virtual QString description()const{return "Dummy";}
-  virtual qSlicerIO::IOFileType fileType()const{return this->FileType;}
-  virtual QStringList extensions(vtkObject*)const{return QStringList(QString("MyType(*.mhd *.vtk)"));}
+  QString description()const override{return "Dummy";}
+  qSlicerIO::IOFileType fileType()const override{return this->FileType;}
+  QStringList extensions(vtkObject*)const override{return QStringList(QString("MyType(*.mhd *.vtk)"));}
 
-  virtual bool write(const IOProperties& properties);
+  bool write(const IOProperties& properties) override;
 
   qSlicerIO::IOFileType FileType;
 };

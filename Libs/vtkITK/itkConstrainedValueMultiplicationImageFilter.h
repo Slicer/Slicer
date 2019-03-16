@@ -125,7 +125,7 @@ public:
 
 protected:
   ConstrainedValueMultiplicationImageFilter() {}
-  virtual ~ConstrainedValueMultiplicationImageFilter() {}
+  ~ConstrainedValueMultiplicationImageFilter() override {}
 
 private:
   ConstrainedValueMultiplicationImageFilter(const Self&); //purposely not implemented

@@ -40,7 +40,7 @@ public:
   /// Constructors
   typedef qMRMLNodeComboBox Superclass;
   explicit qSlicerPresetComboBox(QWidget* parent=nullptr);
-  virtual ~qSlicerPresetComboBox();
+  ~qSlicerPresetComboBox() override;
 
   bool showIcons()const;
   void setShowIcons(bool show);

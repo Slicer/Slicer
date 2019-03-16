@@ -35,8 +35,8 @@ public:
   // Provide a concrete New.
   static vtkMRMLTestVolumeNode *New();
   vtkTypeMacro(vtkMRMLTestVolumeNode,vtkMRMLVolumeNode);
-  virtual vtkMRMLNode* CreateNodeInstance() override {return  vtkMRMLTestVolumeNode::New();}
-  virtual const char* GetNodeTagName() override {return "vtkMRMLTestVolumeNode";}
+  vtkMRMLNode* CreateNodeInstance() override {return  vtkMRMLTestVolumeNode::New();}
+  const char* GetNodeTagName() override {return "vtkMRMLTestVolumeNode";}
 };
 vtkStandardNewMacro(vtkMRMLTestVolumeNode);
 

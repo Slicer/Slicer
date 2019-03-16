@@ -44,7 +44,7 @@ protected:
   qMRMLChartView* const q_ptr;
 public:
   qMRMLChartViewPrivate(qMRMLChartView& object);
-  ~qMRMLChartViewPrivate();
+  ~qMRMLChartViewPrivate() override;
 
   virtual void init();
 

@@ -91,7 +91,7 @@ public:
 
   /// Destructor, Deallocates resources
   /// Unregister (and delete) all registered factories.
-  virtual ~qSlicerAbstractModuleFactoryManager();
+  ~qSlicerAbstractModuleFactoryManager() override;
 
   /// Print internal state using qDebug()
   virtual void printAdditionalInfo();

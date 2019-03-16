@@ -73,7 +73,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyAbs
 public:
   typedef QObject Superclass;
   qSlicerSubjectHierarchyAbstractPlugin(QObject* parent = nullptr);
-  virtual ~qSlicerSubjectHierarchyAbstractPlugin();
+  ~qSlicerSubjectHierarchyAbstractPlugin() override;
 
 // Role-related virtual methods
 // If the subclass plugin does not offer a role, these do not need to be overridden

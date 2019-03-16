@@ -213,9 +213,9 @@ public:
 
 protected:
   vtkSlicerTerminologiesModuleLogic();
-  virtual ~vtkSlicerTerminologiesModuleLogic();
+  ~vtkSlicerTerminologiesModuleLogic() override;
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
   /// Load default terminology dictionaries from JSON into \sa LoadedTerminologies
   void LoadDefaultTerminologies();

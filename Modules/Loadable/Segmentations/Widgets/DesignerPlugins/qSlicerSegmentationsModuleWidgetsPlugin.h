@@ -43,7 +43,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_PLUGINS_EXPORT qSlicerSegmentationsM
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
 
 public:
-  QList<QDesignerCustomWidgetInterface*> customWidgets() const
+  QList<QDesignerCustomWidgetInterface*> customWidgets() const override
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qMRMLSegmentsTableViewPlugin

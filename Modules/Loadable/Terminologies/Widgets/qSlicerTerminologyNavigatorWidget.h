@@ -70,7 +70,7 @@ public:
   /// Constructor
   explicit qSlicerTerminologyNavigatorWidget(QWidget* parent = nullptr);
   /// Destructor
-  virtual ~qSlicerTerminologyNavigatorWidget();
+  ~qSlicerTerminologyNavigatorWidget() override;
 
   class TerminologyInfoBundle
   {

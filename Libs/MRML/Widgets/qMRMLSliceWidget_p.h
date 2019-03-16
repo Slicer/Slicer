@@ -58,7 +58,7 @@ protected:
   qMRMLSliceWidget* const q_ptr;
 public:
   qMRMLSliceWidgetPrivate(qMRMLSliceWidget& object);
-  ~qMRMLSliceWidgetPrivate();
+  ~qMRMLSliceWidgetPrivate() override;
 
   void init();
 

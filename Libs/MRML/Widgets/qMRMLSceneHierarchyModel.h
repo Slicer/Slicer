@@ -40,38 +40,38 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneHierarchyModel : public qMRMLSceneModel
 public:
   typedef qMRMLSceneModel Superclass;
   qMRMLSceneHierarchyModel(QObject *parent=nullptr);
-  virtual ~qMRMLSceneHierarchyModel();
+  ~qMRMLSceneHierarchyModel() override;
 
   int expandColumn()const;
   void setExpandColumn(int column);
 
-  virtual Qt::DropActions supportedDropActions()const;
+  Qt::DropActions supportedDropActions()const override;
 
   ///
-  virtual vtkMRMLNode* parentNode(vtkMRMLNode* node)const;
-  virtual int          nodeIndex(vtkMRMLNode* node)const;
+  vtkMRMLNode* parentNode(vtkMRMLNode* node)const override;
+  int          nodeIndex(vtkMRMLNode* node)const override;
   /// fast function that only check the type of the node to know if it can be a child.
-  virtual bool         canBeAChild(vtkMRMLNode* node)const;
+  bool         canBeAChild(vtkMRMLNode* node)const override;
   /// fast function that only check the type of the node to know if it can be a parent.
-  virtual bool         canBeAParent(vtkMRMLNode* node)const;
+  bool         canBeAParent(vtkMRMLNode* node)const override;
   /// if newParent == 0, set the node into the vtkMRMLScene
-  virtual bool         reparent(vtkMRMLNode* node, vtkMRMLNode* newParent);
+  bool         reparent(vtkMRMLNode* node, vtkMRMLNode* newParent) override;
 
 protected:
   qMRMLSceneHierarchyModel(qMRMLSceneHierarchyModelPrivate* pimpl,
                            QObject *parent=nullptr);
-  virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
+  QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const override;
 
-  virtual void observeNode(vtkMRMLNode* node);
-
-  /// Reimplemented to add expandColumn support
-  void updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
+  void observeNode(vtkMRMLNode* node) override;
 
   /// Reimplemented to add expandColumn support
-  void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item);
+  void updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column) override;
+
+  /// Reimplemented to add expandColumn support
+  void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item) override;
 
   /// Must be reimplemented in subclasses that add new column types
-  virtual int maxColumnId()const;
+  int maxColumnId()const override;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneHierarchyModel);

@@ -54,7 +54,7 @@ protected:
   qMRMLThreeDView* const q_ptr;
 public:
   qMRMLThreeDViewPrivate(qMRMLThreeDView& object);
-  ~qMRMLThreeDViewPrivate();
+  ~qMRMLThreeDViewPrivate() override;
 
   virtual void init();
 

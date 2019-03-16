@@ -53,21 +53,21 @@ protected:
   /// Reimplemented to force the highlight in case the item is not selectable
   /// but current. The highlight color used is then slightly different from
   /// the default color
-  virtual void paint(QPainter *painter,
+  void paint(QPainter *painter,
                      const QStyleOptionViewItem &option,
-                     const QModelIndex &index) const;
+                     const QModelIndex &index) const override;
 
-  virtual QSize sizeHint(const QStyleOptionViewItem &option,
-                         const QModelIndex &index) const;
+  QSize sizeHint(const QStyleOptionViewItem &option,
+                         const QModelIndex &index) const override;
 
-  virtual void drawDisplay(QPainter *painter,
+  void drawDisplay(QPainter *painter,
                            const QStyleOptionViewItem &option,
                            const QRect &rect,
-                           const QString &text) const;
+                           const QString &text) const override;
 
-  virtual void drawFocus(QPainter *painter,
+  void drawFocus(QPainter *painter,
                          const QStyleOptionViewItem &option,
-                         const QRect &rect) const;
+                         const QRect &rect) const override;
 
 private:
   QComboBox* mCombo;

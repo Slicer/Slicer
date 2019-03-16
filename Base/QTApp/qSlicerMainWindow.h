@@ -48,7 +48,7 @@ public:
   typedef QMainWindow Superclass;
 
   qSlicerMainWindow(QWidget *parent=nullptr);
-  virtual ~qSlicerMainWindow();
+  ~qSlicerMainWindow() override;
 
   /// Return a pointer to the module selector toolbar that can change the
   /// current module.
@@ -141,11 +141,11 @@ protected:
   /// Forward the dragEnterEvent to the IOManager which will
   /// decide if it could accept a drag/drop or not.
   /// \sa dropEvent()
-  virtual void dragEnterEvent(QDragEnterEvent *event);
+  void dragEnterEvent(QDragEnterEvent *event) override;
 
   /// Forward the dropEvent to the IOManager.
   /// \sa dragEnterEvent()
-  virtual void dropEvent(QDropEvent *event);
+  void dropEvent(QDropEvent *event) override;
 
   /// Reimplemented to catch activationChange/show/hide events.
   /// More specifically it allows to:
@@ -153,10 +153,10 @@ protected:
   ///  associated dialog are visible or not.
   ///  2. set the state of ErrorLog button based on the activation state of
   ///  the error log dialog.
-  virtual bool eventFilter(QObject* object, QEvent* event);
+  bool eventFilter(QObject* object, QEvent* event) override;
 
-  virtual void closeEvent(QCloseEvent *event);
-  virtual void showEvent(QShowEvent *event);
+  void closeEvent(QCloseEvent *event) override;
+  void showEvent(QShowEvent *event) override;
 
 protected:
   QScopedPointer<qSlicerMainWindowPrivate> d_ptr;

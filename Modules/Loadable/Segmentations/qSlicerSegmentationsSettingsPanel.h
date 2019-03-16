@@ -51,7 +51,7 @@ public:
   vtkSlicerSegmentationsModuleLogic* segmentationsLogic()const;
 
   /// Destructor
-  virtual ~qSlicerSegmentationsSettingsPanel();
+  ~qSlicerSegmentationsSettingsPanel() override;
 
 public slots:
 

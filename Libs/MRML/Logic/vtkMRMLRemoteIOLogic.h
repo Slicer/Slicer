@@ -36,7 +36,7 @@ public:
   /// The Usual vtk class functions
   static vtkMRMLRemoteIOLogic *New();
   vtkTypeMacro(vtkMRMLRemoteIOLogic,vtkMRMLAbstractLogic);
-  virtual void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   void AddDataIOToScene();
   void RemoveDataIOFromScene();
@@ -55,7 +55,7 @@ public:
 
 protected:
   vtkMRMLRemoteIOLogic();
-  virtual ~vtkMRMLRemoteIOLogic();
+  ~vtkMRMLRemoteIOLogic() override;
   // disable copy constructor and operator
   vtkMRMLRemoteIOLogic(const vtkMRMLRemoteIOLogic&);
   void operator=(const vtkMRMLRemoteIOLogic&);

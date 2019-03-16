@@ -411,7 +411,7 @@ protected:
 
 protected:
   vtkSegmentation();
-  ~vtkSegmentation();
+  ~vtkSegmentation() override;
   void operator=(const vtkSegmentation&);
 
 protected:

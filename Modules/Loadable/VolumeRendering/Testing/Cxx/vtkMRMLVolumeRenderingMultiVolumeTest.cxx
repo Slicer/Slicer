@@ -138,7 +138,7 @@ class vtkChangeImageCallback : public vtkCommand
 public:
   static vtkChangeImageCallback *New(){return new vtkChangeImageCallback;}
   vtkChangeImageCallback();
-  virtual void Execute(vtkObject *caller, unsigned long, void*);
+  void Execute(vtkObject *caller, unsigned long, void*) override;
 
   enum ChangeImageBehavior
   {

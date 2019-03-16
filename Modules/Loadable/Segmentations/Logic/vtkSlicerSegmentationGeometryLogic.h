@@ -85,7 +85,7 @@ public:
 
 protected:
   vtkSlicerSegmentationGeometryLogic();
-  virtual ~vtkSlicerSegmentationGeometryLogic();
+  ~vtkSlicerSegmentationGeometryLogic() override;
 
 protected:
   /// Input segmentation MRML node to modify the labelmap geometry of

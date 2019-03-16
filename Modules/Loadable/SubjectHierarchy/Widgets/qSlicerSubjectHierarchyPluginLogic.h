@@ -53,11 +53,11 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPlu
 public:
   typedef QObject Superclass;
   qSlicerSubjectHierarchyPluginLogic(QObject *parent=nullptr);
-  virtual ~qSlicerSubjectHierarchyPluginLogic();
+  ~qSlicerSubjectHierarchyPluginLogic() override;
 
 public:
   /// Set the current MRML scene to the logic
-  virtual void setMRMLScene(vtkMRMLScene* scene);
+  void setMRMLScene(vtkMRMLScene* scene) override;
 
   /// Assessor function for getting subject hierarchy plugin by name (for python)
   Q_INVOKABLE qSlicerSubjectHierarchyAbstractPlugin* subjectHierarchyPluginByName(QString name)const;

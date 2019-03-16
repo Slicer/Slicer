@@ -56,7 +56,7 @@ public:
 
   itkNewMacro( Self );
   using Superclass::EvaluateTransformedTensor;
-  virtual TensorDataType EvaluateTransformedTensor( TensorDataType & tensor ) override;
+  TensorDataType EvaluateTransformedTensor( TensorDataType & tensor ) override;
 
   void SetMatrix( MatrixTransformType & matrix );
 

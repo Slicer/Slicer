@@ -41,33 +41,33 @@ public:
 protected:
 
   vtkMRMLAnnotationFiducialDisplayableManager(){this->m_Focus="vtkMRMLAnnotationFiducialNode";}
-  virtual ~vtkMRMLAnnotationFiducialDisplayableManager(){}
+  ~vtkMRMLAnnotationFiducialDisplayableManager() override{}
 
   /// Callback for click in RenderWindow
-  virtual void OnClickInRenderWindow(double x, double y, const char *associatedNodeID) override;
+  void OnClickInRenderWindow(double x, double y, const char *associatedNodeID) override;
   /// Create a widget.
-  virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node) override;
+  vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node) override;
 
   /// Gets called when widget was created
-  virtual void OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node) override;
+  void OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node) override;
 
   /// Propagate properties of MRML node to widget.
-  virtual void PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget) override;
+  void PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget) override;
   /// Propagate properties of widget to MRML node.
-  virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node) override;
+  void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node) override;
 
   /// set up an observer on the interactor style to watch for key press events
   virtual void AdditionnalInitializeStep();
   /// respond to the interactor style event
-  virtual void OnInteractorStyleEvent(int eventid) override;
+  void OnInteractorStyleEvent(int eventid) override;
 
   // respond to control point modified events
-  virtual void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node) override;
+  void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node) override;
 
   std::map<vtkMRMLNode*, int> NodeGlyphTypes;
 
   // clean up when scene closes
-  virtual void OnMRMLSceneEndClose() override;
+  void OnMRMLSceneEndClose() override;
 
 private:
 

@@ -11,7 +11,7 @@ class qSlicerAnnotationModuleReportDialog : public QDialog
   Q_OBJECT
 public:
   qSlicerAnnotationModuleReportDialog();
-  ~qSlicerAnnotationModuleReportDialog();
+  ~qSlicerAnnotationModuleReportDialog() override;
 
   Ui::qSlicerAnnotationModuleReportDialog getReportDialogUi();
 

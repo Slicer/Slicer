@@ -146,7 +146,7 @@ protected:
   DiffusionTensor3DNearestCorrectionFilter()
   {
   }
-  virtual ~DiffusionTensor3DNearestCorrectionFilter()
+  ~DiffusionTensor3DNearestCorrectionFilter() override
   {
   }
 private:

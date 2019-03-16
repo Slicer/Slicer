@@ -108,7 +108,7 @@ public:
 
 protected:
   vtkSlicerMarkupsWidgetRepresentation();
-  ~vtkSlicerMarkupsWidgetRepresentation() VTK_OVERRIDE;
+  ~vtkSlicerMarkupsWidgetRepresentation() override;
 
   class ControlPointsPipeline
   {

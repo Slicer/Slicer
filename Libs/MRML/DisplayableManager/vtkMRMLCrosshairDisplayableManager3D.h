@@ -38,23 +38,23 @@ public:
 
 protected:
   vtkMRMLCrosshairDisplayableManager3D();
-  virtual ~vtkMRMLCrosshairDisplayableManager3D();
+  ~vtkMRMLCrosshairDisplayableManager3D() override;
 
   /// Initialize the displayable manager based on its associated
   /// vtkMRMLSliceNode
-  virtual void Create() override;
+  void Create() override;
 
   /// Method to perform additional initialization
-  virtual void AdditionalInitializeStep() override;
+  void AdditionalInitializeStep() override;
 
 private:
   vtkMRMLCrosshairDisplayableManager3D(const vtkMRMLCrosshairDisplayableManager3D&);// Not implemented
   void operator=(const vtkMRMLCrosshairDisplayableManager3D&);                     // Not Implemented
 
-  virtual void UnobserveMRMLScene() override;
-  virtual void ObserveMRMLScene() override;
-  virtual void UpdateFromMRMLScene() override;
-  virtual void OnMRMLNodeModified(vtkMRMLNode* node) override;
+  void UnobserveMRMLScene() override;
+  void ObserveMRMLScene() override;
+  void UpdateFromMRMLScene() override;
+  void OnMRMLNodeModified(vtkMRMLNode* node) override;
 
   class vtkInternal;
   vtkInternal * Internal;

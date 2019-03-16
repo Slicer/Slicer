@@ -36,7 +36,7 @@ class qSlicerSaveDataDialogPrivate
 public:
   typedef qSlicerSaveDataDialogPrivate Self;
   explicit qSlicerSaveDataDialogPrivate(QWidget* _parent=nullptr);
-  virtual ~qSlicerSaveDataDialogPrivate();
+  ~qSlicerSaveDataDialogPrivate() override;
 
   void populateItems();
 
@@ -55,7 +55,7 @@ public slots:
   bool save();
   /// Reimplemented from QDialog::accept(), only accept the dialog if
   /// save() is successful.
-  virtual void accept();
+  void accept() override;
 
 protected slots:
   void formatChanged();
@@ -132,12 +132,12 @@ class qSlicerFileNameItemDelegate : public QStyledItemDelegate
 public:
   typedef QStyledItemDelegate Superclass;
   qSlicerFileNameItemDelegate( QObject * parent = nullptr );
-  virtual QWidget* createEditor( QWidget * parent,
+  QWidget* createEditor( QWidget * parent,
                                  const QStyleOptionViewItem & option,
-                                 const QModelIndex & index ) const;
-  virtual void setModelData(QWidget *editor,
+                                 const QModelIndex & index ) const override;
+  void setModelData(QWidget *editor,
                             QAbstractItemModel *model,
-                            const QModelIndex &index) const;
+                            const QModelIndex &index) const override;
   static QString fixupFileName(const QString& fileName, const QString& extension,
                                vtkMRMLScene *mrmlScene, const QString &nodeID);
   /// Generate a regular expression that can ensure a filename has a valid

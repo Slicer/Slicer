@@ -53,7 +53,7 @@ class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorScriptedLabelEff
 public:
   typedef qSlicerSegmentEditorAbstractLabelEffect Superclass;
   qSlicerSegmentEditorScriptedLabelEffect(QObject* parent = nullptr);
-  virtual ~qSlicerSegmentEditorScriptedLabelEffect();
+  ~qSlicerSegmentEditorScriptedLabelEffect() override;
 
   Q_INVOKABLE QString pythonSource()const;
 
@@ -66,64 +66,64 @@ public:
 
   /// Set the name property value.
   /// \sa name
-  virtual void setName(QString name);
+  void setName(QString name) override;
 
   /// Set flag indicating whether effect operates on segments (true) or the whole segmentation (false).
-  virtual void setPerSegment(bool perSegment);
+  void setPerSegment(bool perSegment) override;
 
 // API: Methods that are to be reimplemented in the effect subclasses
 public:
   /// Get icon for effect to be displayed in segment editor
-  virtual QIcon icon();
+  QIcon icon() override;
 
   /// Get help text for effect to be displayed in the help box
-  virtual const QString helpText()const;
+  const QString helpText()const override;
 
   /// Clone editor effect. Override to return a new instance of the effect sub-class
-  virtual qSlicerSegmentEditorAbstractEffect* clone();
+  qSlicerSegmentEditorAbstractEffect* clone() override;
 
   /// Perform actions to activate the effect (show options frame, etc.)
-  virtual void activate();
+  void activate() override;
 
   /// Perform actions to deactivate the effect (hide options frame, destroy actors, etc.)
-  virtual void deactivate();
+  void deactivate() override;
 
   /// Create options frame widgets, make connections, and add them to the main options frame using \sa addOptionsWidget
-  virtual void setupOptionsFrame();
+  void setupOptionsFrame() override;
 
   /// Create a cursor customized for the given effect, potentially for each view
-  virtual QCursor createCursor(qMRMLWidget* viewWidget);
+  QCursor createCursor(qMRMLWidget* viewWidget) override;
 
   /// Callback function invoked when interaction happens
   /// \param callerInteractor Interactor object that was observed to catch the event
   /// \param eid Event identifier
   /// \param viewWidget Widget of the Slicer layout view. Can be \sa qMRMLSliceWidget or \sa qMRMLThreeDWidget
-  virtual bool processInteractionEvents(vtkRenderWindowInteractor* callerInteractor, unsigned long eid, qMRMLWidget* viewWidget);
+  bool processInteractionEvents(vtkRenderWindowInteractor* callerInteractor, unsigned long eid, qMRMLWidget* viewWidget) override;
 
   /// Callback function invoked when view node is modified
   /// \param callerViewNode View node that was observed to catch the event. Can be either \sa vtkMRMLSliceNode or \sa vtkMRMLViewNode
   /// \param eid Event identifier
   /// \param viewWidget Widget of the Slicer layout view. Can be \sa qMRMLSliceWidget or \sa qMRMLThreeDWidget
-  virtual void processViewNodeEvents(vtkMRMLAbstractViewNode* callerViewNode, unsigned long eid, qMRMLWidget* viewWidget);
+  void processViewNodeEvents(vtkMRMLAbstractViewNode* callerViewNode, unsigned long eid, qMRMLWidget* viewWidget) override;
 
   /// Set default parameters in the parameter MRML node
-  virtual void setMRMLDefaults();
+  void setMRMLDefaults() override;
 
   /// Simple mechanism to let the effects know that reference geometry change has changed
-  virtual void referenceGeometryChanged();
+  void referenceGeometryChanged() override;
   /// Simple mechanism to let the effects know that master volume has changed
-  virtual void masterVolumeNodeChanged();
+  void masterVolumeNodeChanged() override;
   /// Simple mechanism to let the effects know that the layout has changed
-  virtual void layoutChanged();
+  void layoutChanged() override;
   /// Let the effect know that the interaction node is modified
-  virtual void interactionNodeModified(vtkMRMLInteractionNode* interactionNode);
+  void interactionNodeModified(vtkMRMLInteractionNode* interactionNode) override;
 
 public slots:
   /// Update user interface from parameter set node
-  virtual void updateGUIFromMRML();
+  void updateGUIFromMRML() override;
 
   /// Update parameter set node from user interface
-  virtual void updateMRMLFromGUI();
+  void updateMRMLFromGUI() override;
 
 protected:
   QScopedPointer<qSlicerSegmentEditorScriptedLabelEffectPrivate> d_ptr;

@@ -75,7 +75,7 @@ protected:
     ConnectPipelines ( this->itkExporter, this->vtkImporter );
     this->itkExporter->SetInput ( m_Filter->GetOutput() );
     };
-  ~vtkITKTimeSeriesDatabase()
+  ~vtkITKTimeSeriesDatabase() override
     {
     this->vtkImporter->Delete();
     }
@@ -90,9 +90,9 @@ protected:
   ImageExportType::Pointer itkExporter;
   vtkImageImport* vtkImporter;
 
-  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   /// defined in the subclasses
-  virtual void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo) override;
+  void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo) override;
 
 private:
   vtkITKTimeSeriesDatabase(const vtkITKTimeSeriesDatabase&);  /// Not implemented.

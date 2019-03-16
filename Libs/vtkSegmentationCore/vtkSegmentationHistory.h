@@ -98,7 +98,7 @@ protected:
 
 protected:
   vtkSegmentationHistory();
-  ~vtkSegmentationHistory();
+  ~vtkSegmentationHistory() override;
   void operator=(const vtkSegmentationHistory&);
 
   /// Deep copies source segment to destination segment. If the same representation is found in baseline

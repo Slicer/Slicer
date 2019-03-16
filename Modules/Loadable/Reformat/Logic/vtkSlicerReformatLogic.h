@@ -64,7 +64,7 @@ public:
 
 protected:
   vtkSlicerReformatLogic();
-  virtual ~vtkSlicerReformatLogic();
+  ~vtkSlicerReformatLogic() override;
 
 private:
 

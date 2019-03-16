@@ -38,17 +38,17 @@ public:
 public:
   typedef qSlicerSegmentEditorPaintEffect Superclass;
   qSlicerSegmentEditorEraseEffect(QObject* parent = nullptr);
-  virtual ~qSlicerSegmentEditorEraseEffect();
+  ~qSlicerSegmentEditorEraseEffect() override;
 
 public:
   /// Get icon for effect to be displayed in segment editor
-  virtual QIcon icon();
+  QIcon icon() override;
 
   /// Get help text for effect to be displayed in the help box
-  Q_INVOKABLE virtual const QString helpText()const;
+  Q_INVOKABLE const QString helpText()const override;
 
   /// Clone editor effect
-  virtual qSlicerSegmentEditorAbstractEffect* clone();
+  qSlicerSegmentEditorAbstractEffect* clone() override;
 
 protected:
   QScopedPointer<qSlicerSegmentEditorEraseEffectPrivate> d_ptr;

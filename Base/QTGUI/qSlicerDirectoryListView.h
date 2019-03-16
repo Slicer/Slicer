@@ -43,7 +43,7 @@ public:
   explicit qSlicerDirectoryListView(QWidget* parent = nullptr);
 
   /// Destructor
-  virtual ~qSlicerDirectoryListView();
+  ~qSlicerDirectoryListView() override;
 
   /// Return True if the \a path has already been added
   bool hasDirectory(const QString& path)const;
@@ -52,8 +52,8 @@ public:
 
   QStringList selectedDirectoryList(bool absolutePath = false)const;
 
-  void dragEnterEvent(QDragEnterEvent *event);
-  virtual void dropEvent(QDropEvent *event);
+  void dragEnterEvent(QDragEnterEvent *event) override;
+  void dropEvent(QDropEvent *event) override;
 
 public slots:
 

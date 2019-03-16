@@ -117,7 +117,7 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
 
  protected:
   vtkDataIOManager();
-  virtual ~vtkDataIOManager();
+  ~vtkDataIOManager() override;
   vtkDataIOManager(const vtkDataIOManager&);
   void operator=(const vtkDataIOManager&);
 

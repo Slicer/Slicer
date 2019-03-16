@@ -36,7 +36,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerActionsDialog: public QDialog
 public:
   typedef QDialog Superclass;
   qSlicerActionsDialog(QWidget* parentWidget =nullptr);
-  virtual ~qSlicerActionsDialog();
+  ~qSlicerActionsDialog() override;
 
   void addAction(QAction* action, const QString& group=QString());
   void addActions(const QList<QAction*>& actions, const QString& group=QString());

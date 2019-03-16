@@ -61,26 +61,26 @@ public:
   ///
   /// Event bindings controlling the effects of pressing mouse buttons
   /// or moving the mouse.
-  virtual void OnMouseMove() override;
-  virtual void OnEnter() override;
-  virtual void OnLeave() override;
-  virtual void OnLeftButtonDown() override;
-  virtual void OnLeftButtonUp() override;
-  virtual void OnMiddleButtonDown() override;
-  virtual void OnMiddleButtonUp() override;
-  virtual void OnRightButtonDown() override;
-  virtual void OnRightButtonUp() override;
-  virtual void OnMouseWheelForward() override;
-  virtual void OnMouseWheelBackward() override;
+  void OnMouseMove() override;
+  void OnEnter() override;
+  void OnLeave() override;
+  void OnLeftButtonDown() override;
+  void OnLeftButtonUp() override;
+  void OnMiddleButtonDown() override;
+  void OnMiddleButtonUp() override;
+  void OnRightButtonDown() override;
+  void OnRightButtonUp() override;
+  void OnMouseWheelForward() override;
+  void OnMouseWheelBackward() override;
 
   /// Keyboard functions
-  virtual void OnChar() override;
-  virtual void OnKeyPress() override;
-  virtual void OnKeyRelease() override;
+  void OnChar() override;
+  void OnKeyPress() override;
+  void OnKeyRelease() override;
 
   /// These are more esoteric events, but are useful in some cases.
-  virtual void OnExpose() override;
-  virtual void OnConfigure() override;
+  void OnExpose() override;
+  void OnConfigure() override;
 
   void SetDisplayableManagers(vtkMRMLDisplayableManagerGroup* displayableManagers);
 
@@ -95,7 +95,7 @@ public:
 
   ///
   /// Reimplemented to set the default interactive update rate
-  virtual void SetInteractor(vtkRenderWindowInteractor *interactor) override;
+  void SetInteractor(vtkRenderWindowInteractor *interactor) override;
 
   ///
   /// Get/Set the ModelDisplayableManager, for picking
@@ -105,16 +105,16 @@ public:
   /// are overridden in subclasses to perform the correct motion. Since
   /// they are called by OnTimer, they do not have mouse coord parameters
   /// (use interactor's GetEventPosition and GetLastEventPosition)
-  virtual void Rotate() override;
-  virtual void Spin() override;
-  virtual void Pan() override;
-  virtual void Dolly() override;
+  void Rotate() override;
+  void Spin() override;
+  void Pan() override;
+  void Dolly() override;
   virtual void Dolly(double factor);
 
 
 protected:
   vtkThreeDViewInteractorStyle();
-  ~vtkThreeDViewInteractorStyle();
+  ~vtkThreeDViewInteractorStyle() override;
 
   static void ThreeDViewProcessEvents(vtkObject* object, unsigned long event, void* clientdata, void* calldata);
 

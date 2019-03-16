@@ -37,13 +37,13 @@ public:
   {
   }
 
-  virtual void operator =(FibHeapNode& RHS)
+  void operator =(FibHeapNode& RHS) override
   {
     FHN_Assign(RHS);
     m_Key = ((HeapNode&)RHS).m_Key;
   }
 
-  virtual int operator ==(FibHeapNode& RHS)
+  int operator ==(FibHeapNode& RHS) override
   {
     if (FHN_Cmp(RHS))
       {
@@ -52,7 +52,7 @@ public:
     return m_Key == ((HeapNode&)RHS).m_Key ? 1 : 0;
   }
 
-  virtual int operator <(FibHeapNode& RHS)
+  int operator <(FibHeapNode& RHS) override
   {
     int x = FHN_Cmp(RHS);
     if (x != 0)

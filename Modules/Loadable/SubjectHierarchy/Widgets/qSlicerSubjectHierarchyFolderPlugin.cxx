@@ -56,7 +56,7 @@ protected:
   qSlicerSubjectHierarchyFolderPlugin* const q_ptr;
 public:
   qSlicerSubjectHierarchyFolderPluginPrivate(qSlicerSubjectHierarchyFolderPlugin& object);
-  ~qSlicerSubjectHierarchyFolderPluginPrivate();
+  ~qSlicerSubjectHierarchyFolderPluginPrivate() override;
   void init();
 public:
   QIcon FolderIcon;

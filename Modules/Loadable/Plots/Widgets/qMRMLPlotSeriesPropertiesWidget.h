@@ -45,7 +45,7 @@ public:
 
   /// Constructors
   explicit qMRMLPlotSeriesPropertiesWidget(QWidget* parent = nullptr);
-  virtual ~qMRMLPlotSeriesPropertiesWidget();
+  ~qMRMLPlotSeriesPropertiesWidget() override;
 
   /// Get \a PlotViewNode
   vtkMRMLPlotSeriesNode* mrmlPlotSeriesNode()const;

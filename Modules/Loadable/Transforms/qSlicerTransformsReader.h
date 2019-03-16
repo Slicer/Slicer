@@ -36,16 +36,16 @@ class qSlicerTransformsReader
 public:
   typedef qSlicerFileReader Superclass;
   qSlicerTransformsReader(vtkSlicerTransformLogic* transformLogic, QObject* parent = nullptr);
-  virtual ~qSlicerTransformsReader();
+  ~qSlicerTransformsReader() override;
 
   void setTransformLogic(vtkSlicerTransformLogic* transformLogic);
   vtkSlicerTransformLogic* transformLogic()const;
 
-  virtual QString description()const;
-  virtual IOFileType fileType()const;
-  virtual QStringList extensions()const;
+  QString description()const override;
+  IOFileType fileType()const override;
+  QStringList extensions()const override;
 
-  virtual bool load(const IOProperties& properties);
+  bool load(const IOProperties& properties) override;
 
 protected:
   QScopedPointer<qSlicerTransformsReaderPrivate> d_ptr;

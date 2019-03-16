@@ -70,7 +70,7 @@ protected:
 
 protected:
   vtkSlicerDICOMLoadable();
-  ~vtkSlicerDICOMLoadable();
+  ~vtkSlicerDICOMLoadable() override;
   vtkSlicerDICOMLoadable(const vtkSlicerDICOMLoadable&);
   void operator=(const vtkSlicerDICOMLoadable&);
 

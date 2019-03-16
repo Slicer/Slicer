@@ -87,9 +87,9 @@ public:
 
 protected:
   vtkTeemNRRDWriter();
-  ~vtkTeemNRRDWriter();
+  ~vtkTeemNRRDWriter() override;
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info) override;
+  int FillInputPortInformation(int port, vtkInformation *info) override;
 
   ///
   /// Write method. It is called by vtkWriter::Write();

@@ -39,7 +39,7 @@ class QMRML_WIDGETS_EXPORT qMRMLColorListView : public QListView
   Q_PROPERTY(bool showOnlyNamedColors READ showOnlyNamedColors WRITE setShowOnlyNamedColors)
 public:
   qMRMLColorListView(QWidget *parent=nullptr);
-  virtual ~qMRMLColorListView();
+  ~qMRMLColorListView() override;
 
   vtkMRMLColorNode* mrmlColorNode()const;
   qMRMLColorModel* colorModel()const;
@@ -62,7 +62,7 @@ signals:
   void colorSelected(const QString& name);
 
 protected slots:
-  virtual void currentChanged(const QModelIndex&, const QModelIndex&);
+  void currentChanged(const QModelIndex&, const QModelIndex&) override;
 
 protected:
   QScopedPointer<qMRMLColorListViewPrivate> d_ptr;

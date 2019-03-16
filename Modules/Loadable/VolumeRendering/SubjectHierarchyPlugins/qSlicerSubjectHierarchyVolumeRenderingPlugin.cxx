@@ -57,7 +57,7 @@ protected:
   qSlicerSubjectHierarchyVolumeRenderingPlugin* const q_ptr;
 public:
   qSlicerSubjectHierarchyVolumeRenderingPluginPrivate(qSlicerSubjectHierarchyVolumeRenderingPlugin& object);
-  ~qSlicerSubjectHierarchyVolumeRenderingPluginPrivate();
+  ~qSlicerSubjectHierarchyVolumeRenderingPluginPrivate() override;
   void init();
 public:
   vtkWeakPointer<vtkSlicerVolumeRenderingLogic> VolumeRenderingLogic;

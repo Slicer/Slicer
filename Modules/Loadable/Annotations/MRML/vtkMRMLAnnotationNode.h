@@ -41,45 +41,45 @@ public:
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "Annotation";}
+  const char* GetNodeTagName() override {return "Annotation";}
 
   // Description:
   // Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
 
   // Description:
   // Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
 
   void UpdateScene(vtkMRMLScene *scene) override;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+  void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) override;
 
   // vtkMRMLModelNode overrides it and it handles models only, while in annotations
   // we have all kinds of nodes (e.g., screenshot), so we need to revert to the generic
   // storable node implementation.
-  virtual std::string GetDefaultStorageNodeClassName(const char* filename /* =nullptr */) override;
+  std::string GetDefaultStorageNodeClassName(const char* filename /* =nullptr */) override;
 
   // Description:
   // Create default storage node or nullptr if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   /// Returns false since in general cannot apply non linear transforms
   /// \sa ApplyTransformMatrix, ApplyTransform
-  virtual bool CanApplyNonLinearTransforms()const override {return false;}
+  bool CanApplyNonLinearTransforms()const override {return false;}
 
   int AddText(const char *newText,int selectedFlag, int visibleFlag);
   void SetText(int id, const char *newText,int selectedFlag, int visibleFlag);
@@ -147,7 +147,7 @@ public:
 
 protected:
   vtkMRMLAnnotationNode();
-  ~vtkMRMLAnnotationNode();
+  ~vtkMRMLAnnotationNode() override;
   vtkMRMLAnnotationNode(const vtkMRMLAnnotationNode&);
   void operator=(const vtkMRMLAnnotationNode&);
 

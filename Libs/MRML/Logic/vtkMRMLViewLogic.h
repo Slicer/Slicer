@@ -106,13 +106,13 @@ public:
 
 protected:
   vtkMRMLViewLogic();
-  virtual ~vtkMRMLViewLogic();
+  ~vtkMRMLViewLogic() override;
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
-  virtual void UpdateFromMRMLScene() override;
+  void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
+  void UpdateFromMRMLScene() override;
 
   void UpdateMRMLNodes();
 

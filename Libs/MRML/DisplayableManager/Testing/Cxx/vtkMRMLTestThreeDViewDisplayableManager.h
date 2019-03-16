@@ -41,18 +41,18 @@ public:
 protected:
 
   vtkMRMLTestThreeDViewDisplayableManager();
-  virtual ~vtkMRMLTestThreeDViewDisplayableManager();
+  ~vtkMRMLTestThreeDViewDisplayableManager() override;
 
   virtual void AdditionnalInitializeStep();
 
-  virtual void Create() override;
+  void Create() override;
 
 //  virtual void OnMRMLSceneAboutToBeClosedEvent(){}
 //  virtual void OnMRMLSceneClosedEvent(){}
 //  virtual void OnMRMLSceneAboutToBeImportedEvent(){}
 //  virtual void OnMRMLSceneImportedEvent(){}
 //  virtual void OnMRMLSceneRestoredEvent(){}
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
 //  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* /*node*/){}
 
 private:

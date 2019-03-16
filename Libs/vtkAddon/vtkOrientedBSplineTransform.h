@@ -36,7 +36,7 @@ class VTK_ADDON_EXPORT vtkOrientedBSplineTransform : public vtkBSplineTransform
 public:
   static vtkOrientedBSplineTransform *New();
   vtkTypeMacro(vtkOrientedBSplineTransform,vtkBSplineTransform);
-  virtual void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Make another transform of the same type.
@@ -58,7 +58,7 @@ public:
 
 protected:
   vtkOrientedBSplineTransform();
-  ~vtkOrientedBSplineTransform();
+  ~vtkOrientedBSplineTransform() override;
 
   // Description:
   // Update the displacement grid.

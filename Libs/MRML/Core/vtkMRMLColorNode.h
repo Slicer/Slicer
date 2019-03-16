@@ -55,32 +55,32 @@ public:
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "Color";};
+  const char* GetNodeTagName() override {return "Color";};
 
   ///
   /// Reset node attributes to the initilal state as defined in the constructor.
   /// NOTE:   it preserves values several dynamic attributes that may be set by an application: type, name
-  virtual void Reset(vtkMRMLNode* defaultNode) override;
+  void Reset(vtkMRMLNode* defaultNode) override;
 
   ///
   ///
-  virtual void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene *scene) override;
 
   ///
   /// Set Type to type, then build colours and set names
@@ -186,7 +186,7 @@ public:
   void SetNamesFromColors();
 
   /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
-  virtual bool GetModifiedSinceRead() override;
+  bool GetModifiedSinceRead() override;
 
   /// The list of valid color node types, added to in subclasses
   /// For backward compatibility, User and File keep the numbers that
@@ -202,7 +202,7 @@ public:
 
 protected:
   vtkMRMLColorNode();
-  virtual ~vtkMRMLColorNode();
+  ~vtkMRMLColorNode() override;
   vtkMRMLColorNode(const vtkMRMLColorNode&);
   void operator=(const vtkMRMLColorNode&);
 

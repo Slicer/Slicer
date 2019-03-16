@@ -34,13 +34,13 @@ public:
   vtkGetVector3Macro(XAxis, double);
   vtkGetVector3Macro(YAxis, double);
   vtkGetVector3Macro(ZAxis, double);
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
   vtkPrincipalAxesAlign();
-  ~vtkPrincipalAxesAlign();
+  ~vtkPrincipalAxesAlign() override;
 private:
   vtkPrincipalAxesAlign(vtkPrincipalAxesAlign &);
   void operator=(const vtkPrincipalAxesAlign &);

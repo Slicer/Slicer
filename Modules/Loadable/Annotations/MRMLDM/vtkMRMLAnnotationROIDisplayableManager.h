@@ -40,37 +40,37 @@ public:
 protected:
 
   vtkMRMLAnnotationROIDisplayableManager(){this->m_Focus="vtkMRMLAnnotationROINode";}
-  virtual ~vtkMRMLAnnotationROIDisplayableManager();
+  ~vtkMRMLAnnotationROIDisplayableManager() override;
 
   /// Callback for click in RenderWindow
-  virtual void OnClickInRenderWindow(double x, double y, const char *associatedNodeID) override;
+  void OnClickInRenderWindow(double x, double y, const char *associatedNodeID) override;
   /// Create a widget.
-  virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node) override;
+  vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node) override;
 
   /// Gets called when widget was created
-  virtual void OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node) override;
+  void OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node) override;
 
   /// Propagate properties of MRML node to widget.
-  virtual void PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget) override;
+  void PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget) override;
   virtual void PropagateMRMLToWidget2D(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget);
 
   /// Propagate properties of widget to MRML node.
-  virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node) override;
+  void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node) override;
 
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
+  void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
 
   /// Handler for specific SliceView actions
-  virtual void OnMRMLSliceNodeModifiedEvent(vtkMRMLSliceNode * sliceNode) override;
+  void OnMRMLSliceNodeModifiedEvent(vtkMRMLSliceNode * sliceNode) override;
 
 
   /// Update just the position for the widget, implemented by subclasses.
-  virtual void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node) override;
+  void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node) override;
 
   /// Check, if the widget is displayable in the current slice geometry
-  virtual bool IsWidgetDisplayable(vtkMRMLSliceNode *sliceNode, vtkMRMLAnnotationNode* node) override;
+  bool IsWidgetDisplayable(vtkMRMLSliceNode *sliceNode, vtkMRMLAnnotationNode* node) override;
 
   /// Set mrml parent transform to widgets
-  virtual void SetParentTransformToWidget(vtkMRMLAnnotationNode *node, vtkAbstractWidget *widget) override;
+  void SetParentTransformToWidget(vtkMRMLAnnotationNode *node, vtkAbstractWidget *widget) override;
 
 private:
 

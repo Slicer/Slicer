@@ -50,7 +50,7 @@ public:
   /// Constructors
   typedef QWidget Superclass;
   explicit qMRMLVolumePropertyNodeWidget(QWidget* parent=nullptr);
-  virtual ~qMRMLVolumePropertyNodeWidget();
+  ~qMRMLVolumePropertyNodeWidget() override;
 
   /// Return the VTK volume property associated with the MRML volume property
   /// node.

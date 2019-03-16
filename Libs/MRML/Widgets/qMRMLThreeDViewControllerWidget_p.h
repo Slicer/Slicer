@@ -61,9 +61,9 @@ class qMRMLThreeDViewControllerWidgetPrivate
 public:
   typedef qMRMLViewControllerBarPrivate Superclass;
   qMRMLThreeDViewControllerWidgetPrivate(qMRMLThreeDViewControllerWidget& object);
-  virtual ~qMRMLThreeDViewControllerWidgetPrivate();
+  ~qMRMLThreeDViewControllerWidgetPrivate() override;
 
-  virtual void init();
+  void init() override;
 
   vtkMRMLViewLogic* viewNodeLogic(vtkMRMLViewNode* node);
 
@@ -84,7 +84,7 @@ public:
   QToolButton*                        CenterToolButton;
 
 protected:
-  virtual void setupPopupUi();
+  void setupPopupUi() override;
 };
 
 #endif

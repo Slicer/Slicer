@@ -40,33 +40,33 @@ class Q_SLICER_QTMODULES_COLORS_EXPORT qSlicerColorsModule
 public:
   typedef qSlicerLoadableModule Superclass;
   qSlicerColorsModule(QObject *parent=nullptr);
-  virtual ~qSlicerColorsModule();
+  ~qSlicerColorsModule() override;
 
-  virtual QStringList categories()const;
-  virtual QIcon icon()const;
+  QStringList categories()const override;
+  QIcon icon()const override;
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
   /// Return help/acknowledgement text
-  virtual QString helpText()const;
-  virtual QString acknowledgementText()const;
-  virtual QStringList contributors()const;
-  virtual bool isHidden()const;
+  QString helpText()const override;
+  QString acknowledgementText()const override;
+  QStringList contributors()const override;
+  bool isHidden()const override;
 
   /// Specify editable node types
-  virtual QStringList associatedNodeTypes()const;
+  QStringList associatedNodeTypes()const override;
 
-  virtual void setMRMLScene(vtkMRMLScene* newMRMLScene);
+  void setMRMLScene(vtkMRMLScene* newMRMLScene) override;
 
 protected:
   /// Reimplemented to initialize the color logic
-  virtual void setup();
+  void setup() override;
 
   /// Create and return the widget representation associated to this module
-  virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
+  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
-  virtual vtkMRMLAbstractLogic* createLogic();
+  vtkMRMLAbstractLogic* createLogic() override;
 
 protected:
   QScopedPointer<qSlicerColorsModulePrivate> d_ptr;

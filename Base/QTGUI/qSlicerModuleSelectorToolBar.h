@@ -51,7 +51,7 @@ public:
   /// toolbar area)
   qSlicerModuleSelectorToolBar(const QString& title, QWidget* parent = nullptr);
   qSlicerModuleSelectorToolBar(QWidget* parent = nullptr);
-  virtual ~qSlicerModuleSelectorToolBar();
+  ~qSlicerModuleSelectorToolBar() override;
 
   /// Returns a pointer to the modules menu used to populate the list of modules
   qSlicerModulesMenu* modulesMenu()const;

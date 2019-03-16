@@ -34,23 +34,23 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionImageVolumeNode : public vtkMRMLTensorVolu
   vtkTypeMacro(vtkMRMLDiffusionImageVolumeNode,vtkMRMLTensorVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "DiffusionImageVolume";}
+  const char* GetNodeTagName() override {return "DiffusionImageVolume";}
 
  /// Description:
   /// String ID of the storage MRML node
@@ -85,7 +85,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionImageVolumeNode : public vtkMRMLTensorVolu
 
   ///
   /// Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID) override;
+  void UpdateReferenceID(const char *oldID, const char *newID) override;
 
    ///
   /// Finds the storage node and read the data
@@ -99,20 +99,20 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionImageVolumeNode : public vtkMRMLTensorVolu
 
   ///
   /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+  void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) override;
 
   ///
   /// Create default storage node or nullptr if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override
     {
     return Superclass::CreateDefaultStorageNode();
     }
 
 protected:
   vtkMRMLDiffusionImageVolumeNode();
-  ~vtkMRMLDiffusionImageVolumeNode();
+  ~vtkMRMLDiffusionImageVolumeNode() override;
   vtkMRMLDiffusionImageVolumeNode(const vtkMRMLDiffusionImageVolumeNode&);
   void operator=(const vtkMRMLDiffusionImageVolumeNode&);
 

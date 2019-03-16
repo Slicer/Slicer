@@ -132,24 +132,24 @@ public:
 
 protected:
   vtkMRMLSliceLayerLogic();
-  virtual ~vtkMRMLSliceLayerLogic();
+  ~vtkMRMLSliceLayerLogic() override;
   vtkMRMLSliceLayerLogic(const vtkMRMLSliceLayerLogic&);
   void operator=(const vtkMRMLSliceLayerLogic&);
 
   // Initialize listening to MRML events
-  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
 
   ///
   /// provide the virtual method that updates this Logic based
   /// on mrml changes
-  virtual void ProcessMRMLSceneEvents(vtkObject* caller,
+  void ProcessMRMLSceneEvents(vtkObject* caller,
                                       unsigned long event,
                                       void* callData) override;
-  virtual void ProcessMRMLNodesEvents(vtkObject* caller,
+  void ProcessMRMLNodesEvents(vtkObject* caller,
                                       unsigned long event,
                                       void* callData) override;
   void UpdateLogic();
-  virtual void OnMRMLNodeModified(vtkMRMLNode* node) override;
+  void OnMRMLNodeModified(vtkMRMLNode* node) override;
   vtkAlgorithmOutput* GetSliceImageDataConnection();
   vtkAlgorithmOutput* GetSliceImageDataConnectionUVW();
 

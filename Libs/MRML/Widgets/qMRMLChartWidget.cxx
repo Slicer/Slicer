@@ -47,7 +47,7 @@ protected:
   qMRMLChartWidget* const q_ptr;
 public:
   qMRMLChartWidgetPrivate(qMRMLChartWidget& object);
-  ~qMRMLChartWidgetPrivate();
+  ~qMRMLChartWidgetPrivate() override;
 
   void init();
 

@@ -50,7 +50,7 @@ public:
 
   /// Constructors
   explicit qMRMLPlotWidget(QWidget* parent = nullptr);
-  virtual ~qMRMLPlotWidget();
+  ~qMRMLPlotWidget() override;
 
   /// Get the Plot node observed by view.
   Q_INVOKABLE vtkMRMLPlotViewNode* mrmlPlotViewNode()const;

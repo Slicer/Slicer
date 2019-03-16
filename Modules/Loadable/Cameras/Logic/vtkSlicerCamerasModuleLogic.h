@@ -55,10 +55,10 @@ public:
 
 protected:
   vtkSlicerCamerasModuleLogic();
-  virtual ~vtkSlicerCamerasModuleLogic();
+  ~vtkSlicerCamerasModuleLogic() override;
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
-  virtual void ProcessMRMLSceneEvents(vtkObject *, unsigned long, void *) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
+  void ProcessMRMLSceneEvents(vtkObject *, unsigned long, void *) override;
 
   bool CopyImportedCameras;
 

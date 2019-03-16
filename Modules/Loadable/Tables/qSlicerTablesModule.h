@@ -42,30 +42,30 @@ public:
 
   typedef qSlicerLoadableModule Superclass;
   explicit qSlicerTablesModule(QObject *parent=nullptr);
-  virtual ~qSlicerTablesModule();
+  ~qSlicerTablesModule() override;
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
-  virtual QIcon icon()const;
-  virtual QString helpText()const;
-  virtual QString acknowledgementText()const;
-  virtual QStringList contributors()const;
+  QIcon icon()const override;
+  QString helpText()const override;
+  QString acknowledgementText()const override;
+  QStringList contributors()const override;
 
-  virtual QStringList categories()const;
-  virtual QStringList dependencies()const;
+  QStringList categories()const override;
+  QStringList dependencies()const override;
 
-  virtual QStringList associatedNodeTypes()const;
+  QStringList associatedNodeTypes()const override;
 
 protected:
 
   /// Initialize the module. Register the volumes reader/writer
-  virtual void setup();
+  void setup() override;
 
   /// Create and return the widget representation associated to this module
-  virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
+  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
-  virtual vtkMRMLAbstractLogic* createLogic();
+  vtkMRMLAbstractLogic* createLogic() override;
 
 protected:
   QScopedPointer<qSlicerTablesModulePrivate> d_ptr;

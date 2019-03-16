@@ -53,7 +53,7 @@ protected:
   qSlicerSubjectHierarchyParseLocalDataPlugin* const q_ptr;
 public:
   qSlicerSubjectHierarchyParseLocalDataPluginPrivate(qSlicerSubjectHierarchyParseLocalDataPlugin& object);
-  ~qSlicerSubjectHierarchyParseLocalDataPluginPrivate();
+  ~qSlicerSubjectHierarchyParseLocalDataPluginPrivate() override;
   void init();
 public:
   QAction* CreateHierarchyFromLoadedLocalDirectoriesAction;

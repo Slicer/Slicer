@@ -17,27 +17,27 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     //--------------------------------------------------------------------------
     /// MRMLNode methods
     //--------------------------------------------------------------------------
-    virtual vtkMRMLNode* CreateNodeInstance() override;
+    vtkMRMLNode* CreateNodeInstance() override;
 
     ///
     /// Set node attributes
-    virtual void ReadXMLAttributes( const char** atts) override;
+    void ReadXMLAttributes( const char** atts) override;
 
     ///
     /// Write this node's information to a MRML file in XML format.
-    virtual void WriteXML(ostream& of, int indent) override;
+    void WriteXML(ostream& of, int indent) override;
 
     ///
     /// Copy the node's attributes to this object
-    virtual void Copy(vtkMRMLNode *node) override;
+    void Copy(vtkMRMLNode *node) override;
 
     ///
     /// Get node XML tag name (like Volume, Model)
-    virtual const char* GetNodeTagName() override {return "ROIList";}
+    const char* GetNodeTagName() override {return "ROIList";}
 
     ///
     ///
-    virtual void UpdateScene(vtkMRMLScene *scene) override;
+    void UpdateScene(vtkMRMLScene *scene) override;
 
     ///
     /// update display node ids
@@ -172,7 +172,7 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
 
   protected:
     vtkMRMLROIListNode();
-    ~vtkMRMLROIListNode();
+    ~vtkMRMLROIListNode() override;
 
     vtkMRMLROIListNode(const vtkMRMLROIListNode&);
     void operator=(const vtkMRMLROIListNode&);

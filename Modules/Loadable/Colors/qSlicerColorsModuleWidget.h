@@ -39,9 +39,9 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerColorsModuleWidget(QWidget *parent=nullptr);
-  virtual ~qSlicerColorsModuleWidget();
+  ~qSlicerColorsModuleWidget() override;
 
-  virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
+  bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
 
   /// Get scalar bar actor displayed in 3D views.
   Q_INVOKABLE virtual vtkScalarBarWidget* scalarBar();
@@ -58,8 +58,8 @@ protected slots:
   void onMRMLColorNodeChanged(vtkMRMLNode* newColorNode);
 
 protected:
-  virtual void setup();
-  virtual void setMRMLScene(vtkMRMLScene *scene);
+  void setup() override;
+  void setMRMLScene(vtkMRMLScene *scene) override;
 
 protected:
   QScopedPointer<qSlicerColorsModuleWidgetPrivate> d_ptr;

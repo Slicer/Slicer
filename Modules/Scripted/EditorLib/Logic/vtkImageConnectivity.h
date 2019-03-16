@@ -77,7 +77,7 @@ public:
 
 protected:
   vtkImageConnectivity();
-  ~vtkImageConnectivity(){};
+  ~vtkImageConnectivity() override{};
 
   short Background;
   short MinForeground;
@@ -90,7 +90,7 @@ protected:
   int Function;
   int SliceBySlice;
 
-  virtual void ExecuteDataWithInformation(vtkDataObject *, vtkInformation *) override;
+  void ExecuteDataWithInformation(vtkDataObject *, vtkInformation *) override;
 
 private:
   vtkImageConnectivity(const vtkImageConnectivity&);

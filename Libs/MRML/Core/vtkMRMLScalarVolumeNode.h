@@ -38,23 +38,23 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
   vtkTypeMacro(vtkMRMLScalarVolumeNode,vtkMRMLVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "Volume";}
+  const char* GetNodeTagName() override {return "Volume";}
 
   ///
   /// Make a 'None' volume node with blank image data
@@ -66,11 +66,11 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
 
   ///
   /// Create default storage node or nullptr if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   ///
   /// Create and observe default display node
-  virtual void CreateDefaultDisplayNodes() override;
+  void CreateDefaultDisplayNodes() override;
 
   /// Measured quantity of voxel values, specified as a standard coded entry.
   /// For example: (DCM, 112031, "Attenuation Coefficient")
@@ -86,7 +86,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
 
 protected:
   vtkMRMLScalarVolumeNode();
-  ~vtkMRMLScalarVolumeNode();
+  ~vtkMRMLScalarVolumeNode() override;
   vtkMRMLScalarVolumeNode(const vtkMRMLScalarVolumeNode&);
   void operator=(const vtkMRMLScalarVolumeNode&);
 

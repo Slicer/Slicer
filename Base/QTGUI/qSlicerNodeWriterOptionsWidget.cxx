@@ -35,7 +35,7 @@ class qSlicerNodeWriterOptionsWidgetPrivate
   , public Ui_qSlicerNodeWriterOptionsWidget
 {
 public:
-  virtual ~qSlicerNodeWriterOptionsWidgetPrivate();
+  ~qSlicerNodeWriterOptionsWidgetPrivate() override;
   virtual void setupUi(QWidget* widget);
 };
 

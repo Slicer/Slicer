@@ -243,7 +243,7 @@ public:
 
 protected:
   vtkEventBroker();
-  virtual ~vtkEventBroker();
+  ~vtkEventBroker() override;
   vtkEventBroker(const vtkEventBroker&);
   void operator=(const vtkEventBroker&);
 

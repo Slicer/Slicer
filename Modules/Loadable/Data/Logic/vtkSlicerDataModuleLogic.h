@@ -48,17 +48,17 @@ public:
 
 protected:
   vtkSlicerDataModuleLogic();
-  virtual ~vtkSlicerDataModuleLogic();
+  ~vtkSlicerDataModuleLogic() override;
 
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
-  virtual void RegisterNodes() override;
+  void RegisterNodes() override;
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
-  virtual void UpdateFromMRMLScene() override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
+  void UpdateFromMRMLScene() override;
 
   /// Reimplemented to delete the storage/display nodes when a displayable
   /// node is being removed.
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* removedNode) override;
+  void OnMRMLSceneNodeRemoved(vtkMRMLNode* removedNode) override;
 
   ///
   /// This property controls whether the removal from the scene of a model node

@@ -67,7 +67,7 @@ protected:
   qMRMLPlotView* const q_ptr;
 public:
   qMRMLPlotViewPrivate(qMRMLPlotView& object);
-  ~qMRMLPlotViewPrivate();
+  ~qMRMLPlotViewPrivate() override;
 
   virtual void init();
 

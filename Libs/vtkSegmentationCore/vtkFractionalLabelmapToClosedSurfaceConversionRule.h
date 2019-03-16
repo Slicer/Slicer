@@ -42,32 +42,32 @@ public:
 public:
   static vtkFractionalLabelmapToClosedSurfaceConversionRule* New();
   vtkTypeMacro(vtkFractionalLabelmapToClosedSurfaceConversionRule, vtkBinaryLabelmapToClosedSurfaceConversionRule);
-  virtual vtkSegmentationConverterRule* CreateRuleInstance() override;
+  vtkSegmentationConverterRule* CreateRuleInstance() override;
 
   /// Constructs representation object from representation name for the supported representation classes
   /// (typically source and target representation VTK classes, subclasses of vtkDataObject)
   /// Note: Need to take ownership of the created object! For example using vtkSmartPointer<vtkDataObject>::Take
-  virtual vtkDataObject* ConstructRepresentationObjectByRepresentation(std::string representationName) override;
+  vtkDataObject* ConstructRepresentationObjectByRepresentation(std::string representationName) override;
 
   /// Constructs representation object from class name for the supported representation classes
   /// (typically source and target representation VTK classes, subclasses of vtkDataObject)
   /// Note: Need to take ownership of the created object! For example using vtkSmartPointer<vtkDataObject>::Take
-  virtual vtkDataObject* ConstructRepresentationObjectByClass(std::string className) override;
+  vtkDataObject* ConstructRepresentationObjectByClass(std::string className) override;
 
   /// Update the target representation based on the source representation
-  virtual bool Convert(vtkDataObject* sourceRepresentation, vtkDataObject* targetRepresentation) override;
+  bool Convert(vtkDataObject* sourceRepresentation, vtkDataObject* targetRepresentation) override;
 
   /// Get the cost of the conversion.
-  virtual unsigned int GetConversionCost(vtkDataObject* sourceRepresentation=nullptr, vtkDataObject* targetRepresentation=nullptr) override;
+  unsigned int GetConversionCost(vtkDataObject* sourceRepresentation=nullptr, vtkDataObject* targetRepresentation=nullptr) override;
 
   /// Human-readable name of the converter rule
-  virtual const char* GetName() override { return "Fractional labelmap to closed surface"; };
+  const char* GetName() override { return "Fractional labelmap to closed surface"; };
 
   /// Human-readable name of the source representation
-  virtual const char* GetSourceRepresentationName() override { return vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName(); };
+  const char* GetSourceRepresentationName() override { return vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName(); };
 
   /// Human-readable name of the target representation
-  virtual const char* GetTargetRepresentationName() override { return vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(); };
+  const char* GetTargetRepresentationName() override { return vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(); };
 
 protected:
   /// This function adds a border around the image that contains the paddingConstant value
@@ -77,7 +77,7 @@ protected:
 
 protected:
   vtkFractionalLabelmapToClosedSurfaceConversionRule();
-  ~vtkFractionalLabelmapToClosedSurfaceConversionRule();
+  ~vtkFractionalLabelmapToClosedSurfaceConversionRule() override;
   void operator=(const vtkFractionalLabelmapToClosedSurfaceConversionRule&);
 };
 

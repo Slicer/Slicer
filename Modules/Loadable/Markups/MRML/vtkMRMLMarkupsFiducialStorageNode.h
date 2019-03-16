@@ -39,22 +39,22 @@ public:
   vtkTypeMacro(vtkMRMLMarkupsFiducialStorageNode,vtkMRMLMarkupsStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName() override {return "MarkupsFiducialStorage";};
+  const char* GetNodeTagName() override {return "MarkupsFiducialStorage";};
 
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
-  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
 
   virtual bool SetPointFromString(vtkMRMLMarkupsNode *markupsNode, int pointIndex, const char* str);
 
@@ -68,18 +68,18 @@ public:
 
 protected:
   vtkMRMLMarkupsFiducialStorageNode();
-  ~vtkMRMLMarkupsFiducialStorageNode();
+  ~vtkMRMLMarkupsFiducialStorageNode() override;
   vtkMRMLMarkupsFiducialStorageNode(const vtkMRMLMarkupsFiducialStorageNode&);
   void operator=(const vtkMRMLMarkupsFiducialStorageNode&);
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedReadFileTypes() override;
+  void InitializeSupportedReadFileTypes() override;
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes() override;
+  void InitializeSupportedWriteFileTypes() override;
 
   /// Read data and set it in the referenced node
-  virtual int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode *refNode) override;
 
   /// Write data from a  referenced node.
   /// Assumes 1 point per markup for a fiducial referenced node:
@@ -89,7 +89,7 @@ protected:
   /// x,y,z,ow,ox,oy,oz,vis,sel,lock,label,id,,
   /// label can have spaces, everything up to next comma is used, no quotes
   /// necessary, same with the description
-  virtual int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode *refNode) override;
 
   std::string FieldDelimiterCharacters;
 };

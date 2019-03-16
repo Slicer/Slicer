@@ -43,14 +43,14 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerCLIModuleWidget(QWidget *parent=nullptr);
-  virtual ~qSlicerCLIModuleWidget();
+  ~qSlicerCLIModuleWidget() override;
 
   /// Get the current \a commandLineModuleNode
   Q_INVOKABLE vtkMRMLCommandLineModuleNode * currentCommandLineModuleNode()const;
 
   // Node editing
-  virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
-  virtual double nodeEditable(vtkMRMLNode* node);
+  bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
+  double nodeEditable(vtkMRMLNode* node) override;
 
 public slots:
   /// Set the current \a commandLineModuleNode
@@ -67,10 +67,10 @@ public slots:
   void setAutoRunCancelsRunningProcess(bool enable);
 protected:
   ///
-  virtual void setup();
+  void setup() override;
 
   /// Set up the GUI from mrml when entering
-  virtual void enter();
+  void enter() override;
 
   /// Run a command line module given \a parameterNode
   /// If \a waitForCompletion is True, the call will return only upon completion of

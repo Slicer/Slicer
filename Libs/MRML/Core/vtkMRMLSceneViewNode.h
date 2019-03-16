@@ -30,31 +30,31 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
   vtkTypeMacro(vtkMRMLSceneViewNode,vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Write this node's body to a MRML file in XML format.
-  virtual void WriteNodeBodyXML(ostream& of, int indent) override;
+  void WriteNodeBodyXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "SceneView";}
+  const char* GetNodeTagName() override {return "SceneView";}
 
   ///
   /// Updates scene nodes
-  virtual void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene *scene) override;
 
   ///
   /// Updates internal nodes
@@ -63,7 +63,7 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
   ///
   /// Set dependencies between this node and a child node
   /// when parsing XML file
-  virtual void ProcessChildNode(vtkMRMLNode *node) override;
+  void ProcessChildNode(vtkMRMLNode *node) override;
 
   /// \sa StoreScene() RestoreScene()
   vtkMRMLScene* GetStoredScene();
@@ -109,7 +109,7 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
 
   ///
   /// Create default storage node or nullptr if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   /// Get vector of nodes of a specified class in the scene.
   /// Returns 0 on failure, number of nodes on success.
@@ -130,7 +130,7 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
 
 protected:
   vtkMRMLSceneViewNode();
-  ~vtkMRMLSceneViewNode();
+  ~vtkMRMLSceneViewNode() override;
   vtkMRMLSceneViewNode(const vtkMRMLSceneViewNode&);
   void operator=(const vtkMRMLSceneViewNode&);
 

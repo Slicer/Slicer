@@ -38,7 +38,7 @@ public:
     { this->Renderer =  renderer; }
   int GetRenderRequestCount()
     { return this->RenderRequestCount; }
-  virtual void Execute(vtkObject*, unsigned long , void* )
+  void Execute(vtkObject*, unsigned long , void* ) override
     {
     this->Renderer->GetRenderWindow()->Render();
     this->RenderRequestCount++;

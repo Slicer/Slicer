@@ -45,7 +45,7 @@ public:
   bool editorEvent(QEvent *event,
     QAbstractItemModel *model,
     const QStyleOptionViewItem &option,
-    const QModelIndex &index)
+    const QModelIndex &index) override
   {
     bool isEnabled = index.data(qSlicerRestoreExtensions::EnabledRole).toBool();
 
@@ -60,7 +60,7 @@ public:
   }
 
   // --------------------------------------------------------------------------
-  void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
+  void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override
   {
     QRect r = option.rect;
 
@@ -102,7 +102,7 @@ public:
 
     QApplication::style()->drawControl(QStyle::CE_CheckBox, &cbOpt, painter);
   }
-  QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
+  QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const override
   {
     Q_UNUSED(option);
     Q_UNUSED(index);

@@ -45,7 +45,7 @@ public:
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
   qSlicerSubjectHierarchyDefaultPlugin(QObject* parent = nullptr);
-  virtual ~qSlicerSubjectHierarchyDefaultPlugin();
+  ~qSlicerSubjectHierarchyDefaultPlugin() override;
 
 public:
   /// Determines if the actual plugin can handle a subject hierarchy item. The plugin with
@@ -54,29 +54,29 @@ public:
   /// \param item Item to handle in the subject hierarchy tree
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier attribute)
-  virtual double canOwnSubjectHierarchyItem(vtkIdType itemID)const;
+  double canOwnSubjectHierarchyItem(vtkIdType itemID)const override;
 
   /// Get role that the plugin assigns to the subject hierarchy node.
   ///   Each plugin should provide only one role.
-  Q_INVOKABLE virtual const QString roleForPlugin()const;
+  Q_INVOKABLE const QString roleForPlugin()const override;
 
   /// Get help text for plugin to be added in subject hierarchy module widget help box
-  virtual const QString helpText()const;
+  const QString helpText()const override;
 
   /// Get icon of an owned subject hierarchy item
   /// \return Icon to set, nullptr if nothing to set
-  virtual QIcon icon(vtkIdType itemID);
+  QIcon icon(vtkIdType itemID) override;
 
   /// Get visibility icon for a visibility state
-  virtual QIcon visibilityIcon(int visible);
+  QIcon visibilityIcon(int visible) override;
 
   /// Get visibility context menu item actions to add to tree view.
   /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
-  virtual QList<QAction*> visibilityContextMenuActions()const;
+  QList<QAction*> visibilityContextMenuActions()const override;
 
   /// Show visibility context menu actions valid for a given subject hierarchy item.
   /// \param itemID Subject Hierarchy item to show the visibility context menu items for
-  virtual void showVisibilityContextMenuActionsForItem(vtkIdType itemID);
+  void showVisibilityContextMenuActionsForItem(vtkIdType itemID) override;
 
 public:
   /// Set default visibility icons owned by the scene model so that the default plugin can set them

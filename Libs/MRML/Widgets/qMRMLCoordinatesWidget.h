@@ -80,7 +80,7 @@ public:
 
   /// Construct an empty qMRMLSliderWidget with a null scene.
   explicit qMRMLCoordinatesWidget(QWidget* parent = nullptr);
-  virtual ~qMRMLCoordinatesWidget();
+  ~qMRMLCoordinatesWidget() override;
 
   enum UnitAwareProperty
     {

@@ -28,7 +28,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkDataIOManagerLogic : public vtkSlicerModul
   /// The Usual vtk class functions
   static vtkDataIOManagerLogic *New();
   vtkTypeMacro(vtkDataIOManagerLogic,vtkSlicerModuleLogic);
-  virtual void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkGetObjectMacro ( DataIOManager, vtkDataIOManager );
   virtual void SetAndObserveDataIOManager ( vtkDataIOManager *);
@@ -62,7 +62,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkDataIOManagerLogic : public vtkSlicerModul
 
  protected:
   vtkDataIOManagerLogic();
-  virtual ~vtkDataIOManagerLogic();
+  ~vtkDataIOManagerLogic() override;
   vtkDataIOManagerLogic(const vtkDataIOManagerLogic&);
   void operator=(const vtkDataIOManagerLogic&);
 

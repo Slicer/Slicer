@@ -36,22 +36,22 @@ public:
   typedef qSlicerFileReader Superclass;
   qSlicerVolumesReader(QObject* parent = nullptr);
   qSlicerVolumesReader(vtkSlicerVolumesLogic* logic, QObject* parent = nullptr);
-  virtual ~qSlicerVolumesReader();
+  ~qSlicerVolumesReader() override;
 
   vtkSlicerVolumesLogic* logic()const;
   void setLogic(vtkSlicerVolumesLogic* logic);
 
-  virtual QString description()const;
-  virtual IOFileType fileType()const;
-  virtual QStringList extensions()const;
-  virtual qSlicerIOOptions* options()const;
+  QString description()const override;
+  IOFileType fileType()const override;
+  QStringList extensions()const override;
+  qSlicerIOOptions* options()const override;
 
-  virtual bool load(const IOProperties& properties);
+  bool load(const IOProperties& properties) override;
 
   /// Implements the file list examination for the corresponding method in the core
   /// IO manager.
   /// \sa qSlicerCoreIOManager
-  virtual bool examineFileInfoList(QFileInfoList &fileInfoList, QFileInfo &archetypeFileInfo, qSlicerIO::IOProperties &ioProperties)const;
+  bool examineFileInfoList(QFileInfoList &fileInfoList, QFileInfo &archetypeFileInfo, qSlicerIO::IOProperties &ioProperties)const override;
 
 protected:
   QScopedPointer<qSlicerVolumesReaderPrivate> d_ptr;

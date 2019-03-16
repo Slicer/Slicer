@@ -46,7 +46,7 @@ public:
 
   /// Constructors
   explicit qMRMLNavigationView(QWidget* parent = nullptr);
-  virtual ~qMRMLNavigationView();
+  ~qMRMLNavigationView() override;
 
 public slots:
 

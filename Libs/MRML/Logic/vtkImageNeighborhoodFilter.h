@@ -55,7 +55,7 @@ public:
 
 protected:
   vtkImageNeighborhoodFilter();
-  ~vtkImageNeighborhoodFilter();
+  ~vtkImageNeighborhoodFilter() override;
 
   ///
   /// set size of neighborhood of each pixel

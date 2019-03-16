@@ -42,16 +42,16 @@ public:
 protected:
 
   vtkMRMLVolumeGlyphSliceDisplayableManager();
-  virtual ~vtkMRMLVolumeGlyphSliceDisplayableManager();
+  ~vtkMRMLVolumeGlyphSliceDisplayableManager() override;
 
-  virtual void UnobserveMRMLScene() override;
-  virtual void UpdateFromMRMLScene() override;
-  virtual void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
-  virtual void OnMRMLSceneStartClose() override;
+  void UnobserveMRMLScene() override;
+  void UpdateFromMRMLScene() override;
+  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
+  void OnMRMLSceneStartClose() override;
 
   /// Initialize the displayable manager based on its associated
   /// vtkMRMLSliceNode
-  virtual void Create() override;
+  void Create() override;
 
 private:
 

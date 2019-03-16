@@ -41,26 +41,26 @@ public:
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance (  ) override;
+  vtkMRMLNode* CreateNodeInstance (  ) override;
 
   // Read node attributes from XML (MRML) file
-  virtual void ReadXMLAttributes ( const char** atts ) override;
+  void ReadXMLAttributes ( const char** atts ) override;
 
   // Write this node's information to a MRML file in XML format.
-  virtual void WriteXML ( ostream& of, int indent ) override;
+  void WriteXML ( ostream& of, int indent ) override;
 
 
   // Copy the node's attributes to this object
-  virtual void Copy ( vtkMRMLNode *node ) override;
+  void Copy ( vtkMRMLNode *node ) override;
 
   // Get node XML tag name (like Volume, Markups)
-  virtual const char* GetNodeTagName() override {return "MarkupsDisplay";};
+  const char* GetNodeTagName() override {return "MarkupsDisplay";};
 
   // Finds the storage node and read the data
-  virtual void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene *scene) override;
 
   // Alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+  void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) override;
 
@@ -223,7 +223,7 @@ public:
 
 protected:
   vtkMRMLMarkupsDisplayNode();
-  ~vtkMRMLMarkupsDisplayNode();
+  ~vtkMRMLMarkupsDisplayNode() override;
   vtkMRMLMarkupsDisplayNode( const vtkMRMLMarkupsDisplayNode& );
   void operator= ( const vtkMRMLMarkupsDisplayNode& );
 

@@ -43,24 +43,24 @@ public:
 
   /** CreateAnother method will clone the existing instance of this type,
    * including its internal member variables. */
-  virtual::itk::LightObject::Pointer CreateAnother(void) const override;
+  ::itk::LightObject::Pointer CreateAnother(void) const override;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(WarpTransform3D, Transform);
 
   OutputPointType TransformPoint( const InputPointType & inputPoint ) const override;
 
-  virtual void ComputeJacobianWithRespectToParameters(const InputPointType  & p,
+  void ComputeJacobianWithRespectToParameters(const InputPointType  & p,
       JacobianType & jacobian ) const override;
 
-  virtual void ComputeJacobianWithRespectToPosition(
+  void ComputeJacobianWithRespectToPosition(
     const InputPointType & itkNotUsed(x),
     JacobianType & itkNotUsed(j) ) const override
   {
     itkExceptionMacro("ComputeJacobianWithRespectToPosition is not implemented for WarpTransform3D");
   }
 
-  virtual void ComputeJacobianWithRespectToPosition(
+  void ComputeJacobianWithRespectToPosition(
     const InputPointType & itkNotUsed(x),
     JacobianPositionType & itkNotUsed(j) ) const override
   {
@@ -76,20 +76,20 @@ public:
 
   using Superclass::TransformVector;
   /**  Method to transform a vector. */
-  virtual OutputVectorType    TransformVector(const InputVectorType &) const override
+  OutputVectorType    TransformVector(const InputVectorType &) const override
   {
     itkExceptionMacro("TransformVector(const InputVectorType &) is not implemented for WarpTransform3D");
   }
 
   /**  Method to transform a vnl_vector. */
-  virtual OutputVnlVectorType TransformVector(const InputVnlVectorType &) const override
+  OutputVnlVectorType TransformVector(const InputVnlVectorType &) const override
   {
     itkExceptionMacro("TransformVector(const InputVnlVectorType &) is not implemented for WarpTransform3D");
   }
 
   using Superclass::TransformCovariantVector;
   /**  Method to transform a CovariantVector. */
-  virtual OutputCovariantVectorType TransformCovariantVector(const InputCovariantVectorType &) const  override
+  OutputCovariantVectorType TransformCovariantVector(const InputCovariantVectorType &) const  override
   {
     itkExceptionMacro(
       "TransformCovariantVector(const InputCovariantVectorType & is not implemented for WarpTransform3D");
@@ -103,13 +103,13 @@ protected:
   /**This is a dummy function. This class does not allow to set the
    * transform parameters through this function. Use
    * SetDeformationField() to set the transform.*/
-  virtual void  SetParameters(const ParametersType &) override
+  void  SetParameters(const ParametersType &) override
   {
   }
   /**This is a dummy function. This class does not allow to set the
    * transform fixed parameters through this function. Use
    * SetDeformationField() to set the transform */
-  virtual void  SetFixedParameters(const ParametersType &) override
+  void  SetFixedParameters(const ParametersType &) override
   {
   }
 

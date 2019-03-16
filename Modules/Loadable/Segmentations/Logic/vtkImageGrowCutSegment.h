@@ -31,10 +31,10 @@ public:
 
 protected:
   vtkImageGrowCutSegment();
-  virtual ~vtkImageGrowCutSegment();
+  ~vtkImageGrowCutSegment() override;
 
-  virtual void ExecuteDataWithInformation(vtkDataObject *outData, vtkInformation *outInfo) override;
-  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  void ExecuteDataWithInformation(vtkDataObject *outData, vtkInformation *outInfo) override;
+  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 private:
   class vtkInternal;

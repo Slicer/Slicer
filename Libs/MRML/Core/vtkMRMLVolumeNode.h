@@ -43,19 +43,19 @@ public:
   vtkTypeMacro(vtkMRMLVolumeNode,vtkMRMLDisplayableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override = 0;
+  vtkMRMLNode* CreateNodeInstance() override = 0;
 
   ///
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Copy the node's attributes to this object
@@ -64,11 +64,11 @@ public:
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override = 0;
+  const char* GetNodeTagName() override = 0;
 
   ///
   /// Finds the storage node and read the data
-  virtual void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene *scene) override;
 
   //--------------------------------------------------------------------------
   /// RAS->IJK Matrix Calculation
@@ -143,12 +143,12 @@ public:
   /// be applied to it.
   /// \sa GetSliceBounds(), GetIJKToRASMatrix(), vtkMRMLSliceLogic::GetVolumeSliceBounds()
   /// \sa GetNodeBounds()
-  virtual void GetRASBounds(double bounds[6]) override;
+  void GetRASBounds(double bounds[6]) override;
 
   /// Get bounding box in global RAS form (xmin,xmax, ymin,ymax, zmin,zmax).
   /// This method always returns the bounds of the untransformed object.
   /// \sa GetRASBounds()
-  virtual void GetBounds(double bounds[6]) override;
+  void GetBounds(double bounds[6]) override;
 
   ///
   /// Get bounding box in slice form (xmin,xmax, ymin,ymax, zmin,zmax).
@@ -187,7 +187,7 @@ public:
 
   ///
   /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+  void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) override;
 
@@ -202,15 +202,15 @@ public:
   void SetMetaDataDictionary( const itk::MetaDataDictionary& );
   const itk::MetaDataDictionary& GetMetaDataDictionary() const;
 
-  virtual bool CanApplyNonLinearTransforms()const override;
+  bool CanApplyNonLinearTransforms()const override;
 
-  virtual void ApplyTransform(vtkAbstractTransform* transform) override;
+  void ApplyTransform(vtkAbstractTransform* transform) override;
 
-  virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix) override;
+  void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix) override;
 
   virtual void ApplyNonLinearTransform(vtkAbstractTransform* transform);
 
-  virtual bool GetModifiedSinceRead() override;
+  bool GetModifiedSinceRead() override;
 
   ///
   /// Get background voxel value of the image. It can be used for assigning
@@ -220,7 +220,7 @@ public:
 
 protected:
   vtkMRMLVolumeNode();
-  ~vtkMRMLVolumeNode();
+  ~vtkMRMLVolumeNode() override;
   vtkMRMLVolumeNode(const vtkMRMLVolumeNode&);
   void operator=(const vtkMRMLVolumeNode&);
 
@@ -234,11 +234,11 @@ protected:
 
   ///
   /// Called when a node reference ID is added (list size increased).
-  virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceAdded(vtkMRMLNodeReference *reference) override;
 
   ///
   /// Called when a node reference ID is modified.
-  virtual void OnNodeReferenceModified(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceModified(vtkMRMLNodeReference *reference) override;
 
   ///
   /// Return the bounds of the node transformed or not depending on

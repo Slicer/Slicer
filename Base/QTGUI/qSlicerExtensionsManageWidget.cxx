@@ -119,8 +119,8 @@ public:
     : QStyledItemDelegate(parent), List(list) {}
 
   // --------------------------------------------------------------------------
-  virtual void paint(QPainter * painter, const QStyleOptionViewItem& option,
-                     const QModelIndex& index) const
+  void paint(QPainter * painter, const QStyleOptionViewItem& option,
+                     const QModelIndex& index) const override
   {
     QStyleOptionViewItem modifiedOption = option;
     QListWidgetItem * const item = this->List->itemFromIndex(index);
@@ -354,7 +354,7 @@ public:
   }
 
   // --------------------------------------------------------------------------
-  virtual QSize sizeHint() const
+  QSize sizeHint() const override
   {
     QSize hint = this->Superclass::sizeHint();
     hint.setHeight(qRound(this->Text.size().height() + 0.5) +
@@ -363,7 +363,7 @@ public:
   }
 
   // --------------------------------------------------------------------------
-  virtual void paintEvent(QPaintEvent *)
+  void paintEvent(QPaintEvent *) override
   {
     QPainter painter(this);
     const QRect cr = this->contentsRect();
@@ -417,7 +417,7 @@ public:
   }
 
   // --------------------------------------------------------------------------
-  virtual void mouseMoveEvent(QMouseEvent * e)
+  void mouseMoveEvent(QMouseEvent * e) override
   {
     Superclass::mouseMoveEvent(e);
 
@@ -438,7 +438,7 @@ public:
   }
 
   // --------------------------------------------------------------------------
-  virtual void mouseReleaseEvent(QMouseEvent * e)
+  void mouseReleaseEvent(QMouseEvent * e) override
   {
     Superclass::mouseReleaseEvent(e);
 

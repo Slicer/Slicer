@@ -709,7 +709,7 @@ protected:
   typedef std::map< std::string, std::set<std::string> > NodeReferencesType;
 
   vtkMRMLScene();
-  virtual ~vtkMRMLScene();
+  ~vtkMRMLScene() override;
 
   void PushIntoUndoStack();
   void PushIntoRedoStack();

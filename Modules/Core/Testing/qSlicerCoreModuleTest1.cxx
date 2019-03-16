@@ -24,15 +24,15 @@
 class ACoreModule: public qSlicerCoreModule
 {
 public:
-  virtual QString title()const
+  QString title()const override
   {
     return "A title \n\t#$%^&*";
   }
-  virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation()
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override
   {
     return nullptr;
   }
-  vtkMRMLAbstractLogic* createLogic()
+  vtkMRMLAbstractLogic* createLogic() override
   {
     return nullptr;
   }

@@ -28,7 +28,7 @@ public:
   vtkTypeMacro(vtkMRMLFreeSurferModelOverlayStorageNode,vtkMRMLModelStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Copy data from a  referenced node's filename to new location.
@@ -38,32 +38,32 @@ public:
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName() override {return "FreeSurferModelOverlayStorage";}
+  const char* GetNodeTagName() override {return "FreeSurferModelOverlayStorage";}
 
   /// Return true if reference node can be written from
-  virtual bool CanWriteFromReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanWriteFromReferenceNode(vtkMRMLNode *refNode) override;
 
 protected:
   vtkMRMLFreeSurferModelOverlayStorageNode();
-  ~vtkMRMLFreeSurferModelOverlayStorageNode();
+  ~vtkMRMLFreeSurferModelOverlayStorageNode() override;
   vtkMRMLFreeSurferModelOverlayStorageNode(const vtkMRMLFreeSurferModelOverlayStorageNode&);
   void operator=(const vtkMRMLFreeSurferModelOverlayStorageNode&);
 
   /// Initialize all the supported read file types
-  virtual void InitializeSupportedReadFileTypes() override;
+  void InitializeSupportedReadFileTypes() override;
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes() override;
+  void InitializeSupportedWriteFileTypes() override;
 
   ///
   /// Read data and set it in the referenced node
   /// NOTE: Subclasses should implement this method
-  virtual int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode *refNode) override;
 
   ///
   /// Write data from a  referenced node
   /// NOTE: Subclasses should implement this method
-  virtual int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode *refNode) override;
 
   bool ReadScalarOverlay(const std::string& fullName, vtkMRMLModelNode* modelNode);
   bool ReadScalarOverlayAnnot(const std::string& fullName, vtkMRMLModelNode* modelNode);

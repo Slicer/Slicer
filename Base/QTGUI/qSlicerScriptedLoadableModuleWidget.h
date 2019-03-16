@@ -42,7 +42,7 @@ public:
   typedef qSlicerAbstractModuleWidget Superclass;
   typedef qSlicerScriptedLoadableModuleWidgetPrivate Pimpl;
   qSlicerScriptedLoadableModuleWidget(QWidget * parentWidget=nullptr);
-  virtual ~qSlicerScriptedLoadableModuleWidget();
+  ~qSlicerScriptedLoadableModuleWidget() override;
 
   QString pythonSource()const;
   bool setPythonSource(const QString& newPythonSource, const QString& className = QLatin1String(""));
@@ -50,14 +50,14 @@ public:
   /// Convenience method allowing to retrieve the associated scripted instance
   Q_INVOKABLE PyObject* self() const;
 
-  virtual void enter();
-  virtual void exit();
+  void enter() override;
+  void exit() override;
 
-  virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
-  virtual double nodeEditable(vtkMRMLNode* node);
+  bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
+  double nodeEditable(vtkMRMLNode* node) override;
 
 protected:
-  virtual void setup();
+  void setup() override;
 
 protected:
   QScopedPointer<qSlicerScriptedLoadableModuleWidgetPrivate> d_ptr;

@@ -42,14 +42,14 @@ public:
 protected:
 
   vtkMRMLTestCustomDisplayableManager();
-  virtual ~vtkMRMLTestCustomDisplayableManager();
+  ~vtkMRMLTestCustomDisplayableManager() override;
 
   virtual void AdditionnalInitializeStep();
-  virtual void OnInteractorStyleEvent(int eventid) override;
+  void OnInteractorStyleEvent(int eventid) override;
 
-  virtual void Create() override;
+  void Create() override;
 
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
 
 private:
 

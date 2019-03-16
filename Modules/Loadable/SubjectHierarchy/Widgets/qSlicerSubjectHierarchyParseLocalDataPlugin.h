@@ -45,17 +45,17 @@ public:
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
   qSlicerSubjectHierarchyParseLocalDataPlugin(QObject* parent = nullptr);
-  virtual ~qSlicerSubjectHierarchyParseLocalDataPlugin();
+  ~qSlicerSubjectHierarchyParseLocalDataPlugin() override;
 
 public:
   /// Get scene context menu item actions to add to tree view
   /// Separate method is needed for the scene, as its actions are set to the
   /// tree by a different method \sa itemContextMenuActions
-  virtual QList<QAction*> sceneContextMenuActions()const;
+  QList<QAction*> sceneContextMenuActions()const override;
 
   /// Show context menu actions valid for a given subject hierarchy item.
   /// \param itemID Subject Hierarchy item to show the context menu items for
-  virtual void showContextMenuActionsForItem(vtkIdType itemID);
+  void showContextMenuActionsForItem(vtkIdType itemID) override;
 
 protected slots:
   /// Create subject hierarchy from loaded local directories.

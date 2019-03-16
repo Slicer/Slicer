@@ -29,31 +29,31 @@ public:
   vtkTypeMacro(vtkMRMLHierarchyStorageNode,vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   // Description:
   // Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName() override {return "HierarchyStorage";}
+  const char* GetNodeTagName() override {return "HierarchyStorage";}
 
   /// Return true if reference node can be read in
-  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
 protected:
   vtkMRMLHierarchyStorageNode();
-  ~vtkMRMLHierarchyStorageNode();
+  ~vtkMRMLHierarchyStorageNode() override;
   vtkMRMLHierarchyStorageNode(const vtkMRMLHierarchyStorageNode&);
   void operator=(const vtkMRMLHierarchyStorageNode&);
 
   // Initialize all the supported read file types
-  virtual void InitializeSupportedReadFileTypes() override;
+  void InitializeSupportedReadFileTypes() override;
 
   // Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes() override;
+  void InitializeSupportedWriteFileTypes() override;
 
   // Read data and set it in the referenced node
-  virtual int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode *refNode) override;
 
   // Write data from a  referenced node
-  virtual int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode *refNode) override;
 };
 
 #endif

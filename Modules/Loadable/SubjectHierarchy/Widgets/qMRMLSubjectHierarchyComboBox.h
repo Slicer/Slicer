@@ -60,7 +60,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyCombo
 public:
   typedef ctkComboBox Superclass;
   qMRMLSubjectHierarchyComboBox(QWidget *parent=nullptr);
-  virtual ~qMRMLSubjectHierarchyComboBox();
+  ~qMRMLSubjectHierarchyComboBox() override;
 
 public:
   Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
@@ -103,7 +103,7 @@ public:
 
 public:
   /// Provides customized popup window for the tree view
-  virtual void showPopup();
+  void showPopup() override;
 
 public slots:
   /// Set MRML scene
@@ -136,7 +136,7 @@ protected slots:
 
 protected:
   /// Handle mouse press event (disable context menu)
-  virtual void mousePressEvent(QMouseEvent* event);
+  void mousePressEvent(QMouseEvent* event) override;
 
 protected:
   QScopedPointer<qMRMLSubjectHierarchyComboBoxPrivate> d_ptr;

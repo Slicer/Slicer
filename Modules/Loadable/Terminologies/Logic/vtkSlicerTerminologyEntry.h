@@ -67,7 +67,7 @@ protected:
 
 protected:
   vtkSlicerTerminologyEntry();
-  ~vtkSlicerTerminologyEntry();
+  ~vtkSlicerTerminologyEntry() override;
   vtkSlicerTerminologyEntry(const vtkSlicerTerminologyEntry&);
   void operator=(const vtkSlicerTerminologyEntry&);
 

@@ -29,11 +29,11 @@ public:
 
 protected:
   vtkITKLevelTracing3DImageFilter();
-  ~vtkITKLevelTracing3DImageFilter();
+  ~vtkITKLevelTracing3DImageFilter() override;
 
-  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
-  virtual int FillInputPortInformation(int port, vtkInformation *info) override;
+  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int FillInputPortInformation(int port, vtkInformation *info) override;
 
   int Seed[3];
 

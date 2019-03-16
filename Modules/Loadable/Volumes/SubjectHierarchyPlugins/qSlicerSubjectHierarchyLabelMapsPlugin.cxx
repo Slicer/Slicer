@@ -62,7 +62,7 @@ protected:
   qSlicerSubjectHierarchyLabelMapsPlugin* const q_ptr;
 public:
   qSlicerSubjectHierarchyLabelMapsPluginPrivate(qSlicerSubjectHierarchyLabelMapsPlugin& object);
-  ~qSlicerSubjectHierarchyLabelMapsPluginPrivate();
+  ~qSlicerSubjectHierarchyLabelMapsPluginPrivate() override;
   void init();
 public:
   QIcon LabelmapIcon;

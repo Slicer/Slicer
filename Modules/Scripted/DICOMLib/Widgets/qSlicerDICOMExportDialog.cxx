@@ -78,7 +78,7 @@ protected:
   qSlicerDICOMExportDialog* const q_ptr;
 public:
   qSlicerDICOMExportDialogPrivate(qSlicerDICOMExportDialog& object);
-  virtual ~qSlicerDICOMExportDialogPrivate();
+  ~qSlicerDICOMExportDialogPrivate() override;
 public:
   void init();
 private:

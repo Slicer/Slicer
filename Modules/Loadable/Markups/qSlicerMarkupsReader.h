@@ -34,16 +34,16 @@ public:
   typedef qSlicerFileReader Superclass;
   qSlicerMarkupsReader(QObject* parent = nullptr);
   qSlicerMarkupsReader(vtkSlicerMarkupsLogic* logic, QObject* parent = nullptr);
-  virtual ~qSlicerMarkupsReader();
+  ~qSlicerMarkupsReader() override;
 
   vtkSlicerMarkupsLogic* markupsLogic()const;
   void setMarkupsLogic(vtkSlicerMarkupsLogic* logic);
 
-  virtual QString description()const;
-  virtual IOFileType fileType()const;
-  virtual QStringList extensions()const;
+  QString description()const override;
+  IOFileType fileType()const override;
+  QStringList extensions()const override;
 
-  virtual bool load(const IOProperties& properties);
+  bool load(const IOProperties& properties) override;
 
 protected:
   QScopedPointer<qSlicerMarkupsReaderPrivate> d_ptr;

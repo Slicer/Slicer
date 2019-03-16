@@ -57,7 +57,7 @@ public:
   explicit qSlicerWebWidget(QWidget* parent = nullptr);
 
   /// Destructor
-  virtual ~qSlicerWebWidget();
+  ~qSlicerWebWidget() override;
 
   /// \brief Return true if external URL should be open with desktop service.
   ///
@@ -122,7 +122,7 @@ protected:
 
   /// Event filter used to capture WebView Show and Hide events in order to both set
   /// "document.webkitHidden" property and trigger the associated event.
-  bool eventFilter(QObject *obj, QEvent *event);
+  bool eventFilter(QObject *obj, QEvent *event) override;
 
   virtual bool acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame);
 

@@ -44,7 +44,7 @@ class VTK_MRML_EXPORT vtkDataFileFormatHelper : public vtkObject
 
  protected:
   vtkDataFileFormatHelper();
-  virtual ~vtkDataFileFormatHelper();
+  ~vtkDataFileFormatHelper() override;
 
   vtkStringArray* SupportedWriteFileExtensions;
   vtkStringArray* SupportedWriteFileGenericNames;

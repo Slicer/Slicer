@@ -36,13 +36,13 @@ class qSlicerAnnotationsIOOptionsWidget :
   Q_OBJECT
 public:
   qSlicerAnnotationsIOOptionsWidget(QWidget *parent=nullptr);
-  virtual ~qSlicerAnnotationsIOOptionsWidget();
+  ~qSlicerAnnotationsIOOptionsWidget() override;
 
   QButtonGroup* FileTypeButtonGroup;
 
 public slots:
-  virtual void setFileName(const QString& fileName);
-  virtual void setFileNames(const QStringList& fileNames);
+  void setFileName(const QString& fileName) override;
+  void setFileNames(const QStringList& fileNames) override;
 
 protected slots:
   void updateProperties();

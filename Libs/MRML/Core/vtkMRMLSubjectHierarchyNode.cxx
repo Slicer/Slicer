@@ -232,7 +232,7 @@ public:
 
 public:
   vtkSubjectHierarchyItem();
-  ~vtkSubjectHierarchyItem();
+  ~vtkSubjectHierarchyItem() override;
 
 private:
   /// Incremental ID used to uniquely identify subject hierarchy items

@@ -33,28 +33,28 @@ class VTK_MRML_EXPORT vtkMRMLSnapshotClipNode : public vtkMRMLNode
   vtkTypeMacro(vtkMRMLSnapshotClipNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "SnapshotClip";}
+  const char* GetNodeTagName() override {return "SnapshotClip";}
 
    ///
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
-  virtual void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene *scene) override;
 
   ///
   /// Add SceneSnapshot node
@@ -69,7 +69,7 @@ class VTK_MRML_EXPORT vtkMRMLSnapshotClipNode : public vtkMRMLNode
 
 protected:
   vtkMRMLSnapshotClipNode();
-  ~vtkMRMLSnapshotClipNode();
+  ~vtkMRMLSnapshotClipNode() override;
   vtkMRMLSnapshotClipNode(const vtkMRMLSnapshotClipNode&);
   void operator=(const vtkMRMLSnapshotClipNode&);
 

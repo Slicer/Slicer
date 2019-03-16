@@ -39,18 +39,18 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerDataDialog : public qSlicerFileDialog
 public:
   typedef qSlicerFileDialog Superclass;
   qSlicerDataDialog(QObject* parent =nullptr);
-  virtual ~qSlicerDataDialog();
+  ~qSlicerDataDialog() override;
 
-  virtual qSlicerIO::IOFileType fileType()const;
-  virtual QString description()const;
-  virtual qSlicerFileDialog::IOAction action()const;
+  qSlicerIO::IOFileType fileType()const override;
+  QString description()const override;
+  qSlicerFileDialog::IOAction action()const override;
 
-  virtual bool isMimeDataAccepted(const QMimeData* mimeData)const;
-  virtual void dropEvent(QDropEvent *event);
+  bool isMimeDataAccepted(const QMimeData* mimeData)const override;
+  void dropEvent(QDropEvent *event) override;
 
   /// run the dialog to select the file/files/directory
-  Q_INVOKABLE virtual bool exec(const qSlicerIO::IOProperties& readerProperties =
-                    qSlicerIO::IOProperties());
+  Q_INVOKABLE bool exec(const qSlicerIO::IOProperties& readerProperties =
+                    qSlicerIO::IOProperties()) override;
 
 public Q_SLOTS:
   /// for programmatic population of dialog

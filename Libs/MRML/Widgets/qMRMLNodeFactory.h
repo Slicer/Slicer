@@ -48,7 +48,7 @@ public:
   /// Constructors
   typedef QObject Superclass;
   explicit qMRMLNodeFactory(QObject* parent = nullptr);
-  virtual ~qMRMLNodeFactory();
+  ~qMRMLNodeFactory() override;
 
   /// Get MRML scene.
   /// By default, there is no scene.

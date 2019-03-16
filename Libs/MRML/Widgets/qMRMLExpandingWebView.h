@@ -41,13 +41,13 @@ public:
 
   /// Constructors
   explicit qMRMLExpandingWebView(QWidget* parent = nullptr);
-  virtual ~qMRMLExpandingWebView();
+  ~qMRMLExpandingWebView() override;
 
   /// Return a pointer on the current MRML scene
   vtkMRMLScene* mrmlScene() const;
 
   // Redefine the sizeHint so layouts work properly.
-  virtual QSize sizeHint() const;
+  QSize sizeHint() const override;
 
 public slots:
 

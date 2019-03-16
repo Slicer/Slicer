@@ -312,11 +312,11 @@ public:
 
 protected:
   vtkSlicerVolumeRenderingLogic();
-  virtual ~vtkSlicerVolumeRenderingLogic();
+  ~vtkSlicerVolumeRenderingLogic() override;
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* scene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* scene) override;
   // Register local MRML nodes
-  virtual void RegisterNodes() override;
+  void RegisterNodes() override;
 
   /// Reimplemented to initialize display nodes in the scene.
   void ObserveMRMLScene() override;

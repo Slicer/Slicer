@@ -48,7 +48,7 @@ protected:
   qMRMLPlotWidget* const q_ptr;
 public:
   qMRMLPlotWidgetPrivate(qMRMLPlotWidget& object);
-  ~qMRMLPlotWidgetPrivate();
+  ~qMRMLPlotWidgetPrivate() override;
 
   void init();
 

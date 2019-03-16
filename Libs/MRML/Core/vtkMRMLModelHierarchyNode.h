@@ -31,37 +31,37 @@ public:
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, ModelHierarchy)
-  virtual const char* GetNodeTagName() override {return "ModelHierarchy";}
+  const char* GetNodeTagName() override {return "ModelHierarchy";}
 
    ///
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
-  virtual void UpdateReferences() override;
+  void UpdateReferences() override;
 
   ///
   /// Finds the model node and read the data
-  virtual void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene *scene) override;
 
   ///
   /// Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID) override;
+  void UpdateReferenceID(const char *oldID, const char *newID) override;
 
   ///
   /// String ID of the model MRML node
@@ -100,14 +100,14 @@ public:
 
   ///
   /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+  void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) override;
 
 
 protected:
   vtkMRMLModelHierarchyNode();
-  ~vtkMRMLModelHierarchyNode();
+  ~vtkMRMLModelHierarchyNode() override;
   vtkMRMLModelHierarchyNode(const vtkMRMLModelHierarchyNode&);
   void operator=(const vtkMRMLModelHierarchyNode&);
 

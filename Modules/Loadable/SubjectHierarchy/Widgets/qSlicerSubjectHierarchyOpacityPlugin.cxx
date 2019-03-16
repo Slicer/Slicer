@@ -53,7 +53,7 @@ protected:
   qSlicerSubjectHierarchyOpacityPlugin* const q_ptr;
 public:
   qSlicerSubjectHierarchyOpacityPluginPrivate(qSlicerSubjectHierarchyOpacityPlugin& object);
-  ~qSlicerSubjectHierarchyOpacityPluginPrivate();
+  ~qSlicerSubjectHierarchyOpacityPluginPrivate() override;
   void init();
 public:
   QAction* OpacityAction;

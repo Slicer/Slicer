@@ -36,23 +36,23 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
       CursorPositionModifiedEvent = 22000
     };
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "Crosshair";};
+  const char* GetNodeTagName() override {return "Crosshair";};
 
   ///
   /// configures the crosshair appearance and behavior
@@ -153,7 +153,7 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
 
 protected:
   vtkMRMLCrosshairNode();
-  ~vtkMRMLCrosshairNode();
+  ~vtkMRMLCrosshairNode() override;
   vtkMRMLCrosshairNode(const vtkMRMLCrosshairNode&);
   void operator=(const vtkMRMLCrosshairNode&);
 

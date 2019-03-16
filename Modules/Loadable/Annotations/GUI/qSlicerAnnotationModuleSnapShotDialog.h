@@ -12,7 +12,7 @@ class qSlicerAnnotationModuleSnapShotDialog : public qMRMLScreenShotDialog
 public:
   typedef qMRMLScreenShotDialog Superclass;
   qSlicerAnnotationModuleSnapShotDialog(QWidget* parent = nullptr);
-  virtual ~qSlicerAnnotationModuleSnapShotDialog();
+  ~qSlicerAnnotationModuleSnapShotDialog() override;
 
   /// Set the Annotation module logic.
   void setLogic(vtkSlicerAnnotationModuleLogic* logic);
@@ -22,7 +22,7 @@ public:
   /// Reset the dialog and give it a unique name.
   void reset();
 
-  virtual void accept();
+  void accept() override;
 
 private:
     vtkSlicerAnnotationModuleLogic* m_Logic;

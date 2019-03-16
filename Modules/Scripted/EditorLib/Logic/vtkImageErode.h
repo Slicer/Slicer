@@ -36,7 +36,7 @@ public:
 
 protected:
   vtkImageErode();
-  ~vtkImageErode();
+  ~vtkImageErode() override;
 
   float Background;
   float Foreground;

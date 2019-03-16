@@ -143,7 +143,7 @@ public:
 
 protected:
   vtkImageSlicePaint();
-  ~vtkImageSlicePaint();
+  ~vtkImageSlicePaint() override;
 
   int TopLeft[3];
   int TopRight[3];

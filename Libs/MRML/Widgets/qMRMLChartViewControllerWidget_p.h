@@ -55,9 +55,9 @@ class qMRMLChartViewControllerWidgetPrivate
 public:
   typedef qMRMLViewControllerBarPrivate Superclass;
   qMRMLChartViewControllerWidgetPrivate(qMRMLChartViewControllerWidget& object);
-  virtual ~qMRMLChartViewControllerWidgetPrivate();
+  ~qMRMLChartViewControllerWidgetPrivate() override;
 
-  virtual void init();
+  void init() override;
 
   vtkWeakPointer<vtkMRMLChartViewNode>  ChartViewNode;
   qMRMLChartView*                       ChartView;
@@ -78,7 +78,7 @@ public slots:
   void onChartTypeSelected(const QString&);
 
 protected:
-  virtual void setupPopupUi();
+  void setupPopupUi() override;
 
 public:
 

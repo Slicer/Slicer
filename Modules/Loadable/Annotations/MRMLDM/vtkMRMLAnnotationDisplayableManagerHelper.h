@@ -142,7 +142,7 @@ public:
 protected:
 
   vtkMRMLAnnotationDisplayableManagerHelper();
-  virtual ~vtkMRMLAnnotationDisplayableManagerHelper();
+  ~vtkMRMLAnnotationDisplayableManagerHelper() override;
 
 private:
 

@@ -41,12 +41,12 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerTerminologiesModuleWidget(QWidget *parent=nullptr);
-  virtual ~qSlicerTerminologiesModuleWidget();
+  ~qSlicerTerminologiesModuleWidget() override;
 
 protected:
   QScopedPointer<qSlicerTerminologiesModuleWidgetPrivate> d_ptr;
   
-  virtual void setup();
+  void setup() override;
 
 private:
   Q_DECLARE_PRIVATE(qSlicerTerminologiesModuleWidget);

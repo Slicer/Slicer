@@ -78,7 +78,7 @@ public:
 
   /// Construct an empty qMRMLSliderWidget with a null scene.
   explicit qMRMLSliderWidget(QWidget* parent = nullptr);
-  virtual ~qMRMLSliderWidget();
+  ~qMRMLSliderWidget() override;
 
   enum UnitAwareProperty
     {
@@ -108,9 +108,9 @@ public:
   /// Reimplemented for internal reasons.
   /// \sa ctkSliderWidget::setMinimum(), ctkSliderWidget::setMaximum(),
   /// ctkSliderWidget::setRange()
-  virtual void setMinimum(double);
-  virtual void setMaximum(double);
-  virtual void setRange(double, double);
+  void setMinimum(double) override;
+  void setMaximum(double) override;
+  void setRange(double, double) override;
 
 public slots:
   void setQuantity(const QString& baseName);

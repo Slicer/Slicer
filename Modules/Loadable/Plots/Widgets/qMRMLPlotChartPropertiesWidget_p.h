@@ -62,7 +62,7 @@ protected:
   qMRMLPlotChartPropertiesWidget* const q_ptr;
 public:
   qMRMLPlotChartPropertiesWidgetPrivate(qMRMLPlotChartPropertiesWidget& object);
-  ~qMRMLPlotChartPropertiesWidgetPrivate();
+  ~qMRMLPlotChartPropertiesWidgetPrivate() override;
 
   void setupUi(qMRMLWidget* widget);
 

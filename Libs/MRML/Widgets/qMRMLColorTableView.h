@@ -46,7 +46,7 @@ class QMRML_WIDGETS_EXPORT qMRMLColorTableView : public QTableView
   Q_PROPERTY(bool showOnlyNamedColors READ showOnlyNamedColors WRITE setShowOnlyNamedColors)
 public:
   qMRMLColorTableView(QWidget *parent=nullptr);
-  virtual ~qMRMLColorTableView();
+  ~qMRMLColorTableView() override;
 
   Q_INVOKABLE vtkMRMLColorNode* mrmlColorNode()const;
   Q_INVOKABLE qMRMLColorModel* colorModel()const;

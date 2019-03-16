@@ -35,11 +35,11 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerIOOptionsWidget
 public:
   typedef qSlicerIOOptions Superclass;
   explicit qSlicerIOOptionsWidget(QWidget* parent = nullptr);
-  virtual ~qSlicerIOOptionsWidget();
+  ~qSlicerIOOptionsWidget() override;
 
   /// Returns true if the options have been set and if they are
   /// meaningful
-  virtual bool isValid()const;
+  bool isValid()const override;
 
   // Update GUI widgets based on properties.
   // Derived classes can override this method to set default
@@ -57,7 +57,7 @@ protected:
   using Superclass::d_ptr;
   Q_DECLARE_PRIVATE_D(qGetPtrHelper(qSlicerIOOptions::d_ptr), qSlicerIOOptions);
   qSlicerIOOptionsWidget(qSlicerIOOptionsPrivate* pimpl, QWidget* parent);
-  virtual void updateValid();
+  void updateValid() override;
 };
 
 #endif

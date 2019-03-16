@@ -41,9 +41,9 @@ public:
 protected:
 
   vtkAnnotationRulerRepresentation();
-  virtual ~vtkAnnotationRulerRepresentation();
+  ~vtkAnnotationRulerRepresentation() override;
 
-  virtual void BuildRepresentation() override;
+  void BuildRepresentation() override;
 
 private:
 

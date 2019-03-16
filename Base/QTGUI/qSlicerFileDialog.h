@@ -49,7 +49,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerFileDialog : public QObject
 public:
   typedef QObject Superclass;
   qSlicerFileDialog(QObject* parent =nullptr);
-  virtual ~qSlicerFileDialog();
+  ~qSlicerFileDialog() override;
 
   virtual qSlicerIO::IOFileType fileType()const = 0;
 
@@ -114,27 +114,27 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerStandardFileDialog
 
 public:
   qSlicerStandardFileDialog(QObject* parent=nullptr);
-  virtual ~qSlicerStandardFileDialog();
+  ~qSlicerStandardFileDialog() override;
 
   /// Reimplemented to return the fileType set by setFileType()
   /// \sa fileType, setFileType()
-  virtual qSlicerIO::IOFileType fileType()const;
+  qSlicerIO::IOFileType fileType()const override;
   virtual void setFileType(qSlicerIO::IOFileType fileType);
 
   /// Reimplemented to return the description set by setDescription()
   /// \sa description, setDescription()
-  virtual QString description() const;
+  QString description() const override;
   virtual void setDescription(const QString& description);
 
   /// Reimplemented to return the IOAction set by setAction()
   /// \sa action, setAction()
-  virtual qSlicerFileDialog::IOAction action()const;
+  qSlicerFileDialog::IOAction action()const override;
   /// Set the action of the file dialog. To be called by python.
   /// \sa action, action()
   void setAction(IOAction action);
 
-  virtual bool exec(const qSlicerIO::IOProperties& ioProperties =
-                    qSlicerIO::IOProperties());
+  bool exec(const qSlicerIO::IOProperties& ioProperties =
+                    qSlicerIO::IOProperties()) override;
 
   /// Properties availables with IOPorperties: fileMode, multipleFiles, fileType.
   static QStringList getOpenFileName(qSlicerIO::IOProperties ioProperties =
@@ -143,7 +143,7 @@ public:
                                       qSlicerIO::IOProperties());
 
   /// Return the list of nodes created by exec().
-  virtual QStringList loadedNodes()const;
+  QStringList loadedNodes()const override;
 
 protected:
   static ctkFileDialog* createFileDialog(const qSlicerIO::IOProperties& ioProperties =

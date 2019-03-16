@@ -69,7 +69,7 @@ public:
   // TensorDataType Evaluate( const PointType &point ) ;
   TensorDataType EvaluateAtContinuousIndex( const ContinuousIndexType & index ) const override;
 
-  virtual void SetInputImage( const DiffusionImageType *inputImage ) override;
+  void SetInputImage( const DiffusionImageType *inputImage ) override;
 
   itkSetMacro( NumberOfThreads, int );
 protected:

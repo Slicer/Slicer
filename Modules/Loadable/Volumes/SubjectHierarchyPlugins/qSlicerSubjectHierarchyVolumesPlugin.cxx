@@ -58,7 +58,7 @@ protected:
   qSlicerSubjectHierarchyVolumesPlugin* const q_ptr;
 public:
   qSlicerSubjectHierarchyVolumesPluginPrivate(qSlicerSubjectHierarchyVolumesPlugin& object);
-  ~qSlicerSubjectHierarchyVolumesPluginPrivate();
+  ~qSlicerSubjectHierarchyVolumesPluginPrivate() override;
   void init();
 
 public:

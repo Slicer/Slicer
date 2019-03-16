@@ -40,10 +40,10 @@ public:
 
   /// Constructors
   qSlicerStylePlugin();
-  virtual ~qSlicerStylePlugin();
+  ~qSlicerStylePlugin() override;
 
   // QStyle plugin classes to overloaded when creating custom style plugins
-  virtual QStyle* create(const QString & key);
+  QStyle* create(const QString & key) override;
   virtual QStringList keys() const;
 };
 

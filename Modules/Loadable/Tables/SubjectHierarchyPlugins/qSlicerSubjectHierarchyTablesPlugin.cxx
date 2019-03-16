@@ -66,7 +66,7 @@ protected:
   qSlicerSubjectHierarchyTablesPlugin* const q_ptr;
 public:
   qSlicerSubjectHierarchyTablesPluginPrivate(qSlicerSubjectHierarchyTablesPlugin& object);
-  ~qSlicerSubjectHierarchyTablesPluginPrivate();
+  ~qSlicerSubjectHierarchyTablesPluginPrivate() override;
   void init();
 public:
   QIcon TableIcon;

@@ -43,25 +43,25 @@ public:
 
   typedef qSlicerLoadableModule Superclass;
   qSlicerWelcomeModule(QObject *parent=nullptr);
-  virtual ~qSlicerWelcomeModule();
+  ~qSlicerWelcomeModule() override;
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
-  virtual QStringList categories()const;
-  virtual QIcon icon()const;
+  QStringList categories()const override;
+  QIcon icon()const override;
 
   /// Help to use the module
-  virtual QString helpText()const;
-  virtual QString acknowledgementText()const;
-  virtual QStringList contributors()const;
+  QString helpText()const override;
+  QString acknowledgementText()const override;
+  QStringList contributors()const override;
 
 protected:
 
   /// Create and return the widget representation associated to this module
-  virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
+  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
-  virtual vtkMRMLAbstractLogic* createLogic();
+  vtkMRMLAbstractLogic* createLogic() override;
 
 protected:
   QScopedPointer<qSlicerWelcomeModulePrivate> d_ptr;

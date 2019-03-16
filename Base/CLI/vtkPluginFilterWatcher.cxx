@@ -11,9 +11,9 @@ public:
   static vtkPluginWatcherStart *New()
   { return new vtkPluginWatcherStart; }
 
-  virtual void Execute(vtkObject *vtkNotUsed(caller),
+  void Execute(vtkObject *vtkNotUsed(caller),
                        unsigned long event,
-                       void* vtkNotUsed(v))
+                       void* vtkNotUsed(v)) override
   {
     if (event == vtkCommand::StartEvent && this->Watcher)
       {
@@ -70,9 +70,9 @@ public:
     return new vtkPluginWatcherEnd;
   }
 
-  virtual void Execute(vtkObject *vtkNotUsed(caller),
+  void Execute(vtkObject *vtkNotUsed(caller),
                        unsigned long event,
-                       void* vtkNotUsed(v))
+                       void* vtkNotUsed(v)) override
   {
     if (event == vtkCommand::EndEvent && this->Watcher)
       {
@@ -119,9 +119,9 @@ public:
     return new vtkPluginWatcherProgress;
   }
 
-  virtual void Execute(vtkObject *vtkNotUsed(caller),
+  void Execute(vtkObject *vtkNotUsed(caller),
                        unsigned long event,
-                       void* vtkNotUsed(v))
+                       void* vtkNotUsed(v)) override
   {
     if (event == vtkCommand::ProgressEvent && this->Watcher)
       {

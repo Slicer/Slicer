@@ -46,7 +46,7 @@ public:
   explicit qSlicerSubjectHierarchySettingsPanel(QWidget* parent = nullptr);
 
   /// Destructor
-  virtual ~qSlicerSubjectHierarchySettingsPanel();
+  ~qSlicerSubjectHierarchySettingsPanel() override;
 
 public slots:
 

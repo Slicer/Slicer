@@ -65,7 +65,7 @@ protected:
     this->vtkCast->SetOutputScalarTypeToFloat();
   };
 
-  ~vtkITKImageToImageFilterFF()
+  ~vtkITKImageToImageFilterFF() override
   {
   };
 

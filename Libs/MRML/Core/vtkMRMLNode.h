@@ -431,7 +431,7 @@ public:
   /// of the instance variables).
   ///
   /// \sa GetDisableModifiedEvent()
-  virtual void Modified() override
+  void Modified() override
     {
     if (!this->GetDisableModifiedEvent())
       {
@@ -768,7 +768,7 @@ protected:
 
   protected:
     vtkMRMLNodeReference();
-    virtual ~vtkMRMLNodeReference();
+    ~vtkMRMLNodeReference() override;
 
     vtkMRMLNodeReference(const vtkMRMLNodeReference&);
     void operator=(const vtkMRMLNodeReference&);
@@ -791,7 +791,7 @@ protected:
 
   vtkMRMLNode();
   /// critical to have a virtual destructor!
-  virtual ~vtkMRMLNode();
+  ~vtkMRMLNode() override;
   vtkMRMLNode(const vtkMRMLNode&);
   void operator=(const vtkMRMLNode&);
 

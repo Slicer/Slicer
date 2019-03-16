@@ -35,15 +35,15 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSaveDataDialog : public qSlicerFileDialo
 public:
   typedef QObject Superclass;
   qSlicerSaveDataDialog(QObject* parent = nullptr);
-  virtual ~qSlicerSaveDataDialog();
+  ~qSlicerSaveDataDialog() override;
 
-  virtual qSlicerIO::IOFileType fileType()const;
-  virtual QString description()const;
-  virtual qSlicerFileDialog::IOAction action()const;
+  qSlicerIO::IOFileType fileType()const override;
+  QString description()const override;
+  qSlicerFileDialog::IOAction action()const override;
 
   /// Open the data dialog and save the nodes/scene
-  virtual bool exec(const qSlicerIO::IOProperties& readerProperties =
-                    qSlicerIO::IOProperties());
+  bool exec(const qSlicerIO::IOProperties& readerProperties =
+                    qSlicerIO::IOProperties()) override;
 
 protected:
   QScopedPointer<qSlicerSaveDataDialogPrivate> d_ptr;

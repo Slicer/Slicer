@@ -33,16 +33,16 @@ public:
 
   vtkTypeMacro(vtkMRMLVolumeNodeTestHelper1,vtkMRMLVolumeNode);
 
-  virtual vtkMRMLNode* CreateNodeInstance() override
+  vtkMRMLNode* CreateNodeInstance() override
     {
     return vtkMRMLVolumeNodeTestHelper1::New();
     }
-  virtual const char* GetNodeTagName() override
+  const char* GetNodeTagName() override
     {
     return "vtkMRMLVolumeNodeTestHelper1";
     }
 
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override { return vtkMRMLVolumeArchetypeStorageNode::New(); }
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override { return vtkMRMLVolumeArchetypeStorageNode::New(); }
 };
 vtkStandardNewMacro(vtkMRMLVolumeNodeTestHelper1);
 

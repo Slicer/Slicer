@@ -173,7 +173,7 @@ class VTK_SLICER_TRANSFORMS_MODULE_LOGIC_EXPORT vtkSlicerTransformLogic : public
 
 protected:
   vtkSlicerTransformLogic();
-  virtual ~vtkSlicerTransformLogic();
+  ~vtkSlicerTransformLogic() override;
   vtkSlicerTransformLogic(const vtkSlicerTransformLogic&);
   void operator=(const vtkSlicerTransformLogic&);
 

@@ -108,12 +108,12 @@ public:
 
 protected:
   vtkPolyDataToFractionalLabelmapFilter();
-  ~vtkPolyDataToFractionalLabelmapFilter();
+  ~vtkPolyDataToFractionalLabelmapFilter() override;
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **,
+  int RequestData(vtkInformation *, vtkInformationVector **,
                           vtkInformationVector *) override;
   vtkOrientedImageData *AllocateOutputData(vtkDataObject *out, int* updateExt);
-  virtual int FillOutputPortInformation(int, vtkInformation*) override;
+  int FillOutputPortInformation(int, vtkInformation*) override;
 
   /// Create a binary image stencil for the closed surface within the current extent
   /// This method is a modified version of vtkPolyDataToImageStencil::ThreadedExecute

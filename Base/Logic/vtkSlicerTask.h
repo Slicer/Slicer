@@ -50,7 +50,7 @@ public:
 
 protected:
   vtkSlicerTask();
-  virtual ~vtkSlicerTask();
+  ~vtkSlicerTask() override;
   vtkSlicerTask(const vtkSlicerTask&);
   void operator=(const vtkSlicerTask&);
 

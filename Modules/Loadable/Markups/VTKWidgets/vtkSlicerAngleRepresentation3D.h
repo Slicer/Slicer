@@ -68,7 +68,7 @@ public:
   /// Return the bounds of the representation
   double *GetBounds() override;
 
-  virtual bool GetTransformationReferencePoint(double referencePointWorld[3]) override;
+  bool GetTransformationReferencePoint(double referencePointWorld[3]) override;
 
   void CanInteract(const int displayPosition[2], const double worldPosition[3],
     int &foundComponentType, int &foundComponentIndex, double &closestDistance2) override;

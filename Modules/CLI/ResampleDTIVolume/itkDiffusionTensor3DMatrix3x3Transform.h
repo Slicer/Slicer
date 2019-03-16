@@ -72,7 +72,7 @@ public:
   // /Evaluate the transformed tensor
   virtual TensorDataType EvaluateTransformedTensor( TensorDataType & tensor );
 
-  virtual TensorDataType EvaluateTransformedTensor( TensorDataType & tensor, PointType & outputPosition ) override; // dummy
+  TensorDataType EvaluateTransformedTensor( TensorDataType & tensor, PointType & outputPosition ) override; // dummy
                                                                                                            // output
                                                                                                            // position;
                                                                                                            // to be
@@ -81,7 +81,7 @@ public:
                                                                                                            // non-rigid
                                                                                                            // transforms
 
-  virtual typename Transform<double, 3, 3>::Pointer GetTransform() override;
+  typename Transform<double, 3, 3>::Pointer GetTransform() override;
 
 protected:
   void ComputeOffset();

@@ -222,9 +222,9 @@ public:
 protected:
 
   vtkMRMLApplicationLogic();
-  virtual ~vtkMRMLApplicationLogic();
+  ~vtkMRMLApplicationLogic() override;
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene *newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene *newScene) override;
 
   void SetSelectionNode(vtkMRMLSelectionNode* );
   void SetInteractionNode(vtkMRMLInteractionNode* );

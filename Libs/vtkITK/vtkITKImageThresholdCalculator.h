@@ -79,11 +79,11 @@ public:
   /// to avoid hiding Update override.
   using vtkAlgorithm::Update;
   /// The main interface which triggers the writer to start.
-  virtual void Update() override;
+  void Update() override;
 
 protected:
   vtkITKImageThresholdCalculator();
-  ~vtkITKImageThresholdCalculator();
+  ~vtkITKImageThresholdCalculator() override;
 
   int Method;
   double Threshold;

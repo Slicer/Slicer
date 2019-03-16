@@ -60,7 +60,7 @@ protected:
   qMRMLThreeDViewInformationWidget* const q_ptr;
 public:
   qMRMLThreeDViewInformationWidgetPrivate(qMRMLThreeDViewInformationWidget& object);
-  ~qMRMLThreeDViewInformationWidgetPrivate();
+  ~qMRMLThreeDViewInformationWidgetPrivate() override;
 
   void setupUi(qMRMLWidget* widget);
 

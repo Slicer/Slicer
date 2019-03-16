@@ -51,7 +51,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreIOManager:public QObject
 
 public:
   qSlicerCoreIOManager(QObject* parent = nullptr);
-  virtual ~qSlicerCoreIOManager();
+  ~qSlicerCoreIOManager() override;
 
   /// Return the file type associated with a \a file
   Q_INVOKABLE qSlicerIO::IOFileType fileType(const QString& file)const;

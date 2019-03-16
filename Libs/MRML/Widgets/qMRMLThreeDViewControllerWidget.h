@@ -50,7 +50,7 @@ public:
 
   /// Constructors
   explicit qMRMLThreeDViewControllerWidget(QWidget* parent = nullptr);
-  virtual ~qMRMLThreeDViewControllerWidget();
+  ~qMRMLThreeDViewControllerWidget() override;
 
   /// Set the label for the 3D view (abbreviation for the view
   /// name)
@@ -81,7 +81,7 @@ public:
 
 public slots:
 
-  virtual void setMRMLScene(vtkMRMLScene* newScene);
+  void setMRMLScene(vtkMRMLScene* newScene) override;
 
   void setThreeDView(qMRMLThreeDView* threeDView);
   void setMRMLViewNode(vtkMRMLViewNode* viewNode);

@@ -42,13 +42,13 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerMarkupsModuleWidget(QWidget *parent=nullptr);
-  virtual ~qSlicerMarkupsModuleWidget();
+  ~qSlicerMarkupsModuleWidget() override;
 
   /// Set up the GUI from mrml when entering
   /// \sa updateMaximumScaleFromVolumes()
-  virtual void enter();
+  void enter() override;
   /// Disconnect from scene when exiting
-  virtual void exit();
+  void exit() override;
 
   /// Manage short cuts that allow key bindings for certain functions
   void installShortcuts();
@@ -89,8 +89,8 @@ public:
   /// the slice composite nodes
   bool sliceIntersectionsVisible();
 
-  virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
-  virtual double nodeEditable(vtkMRMLNode* node);
+  bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
+  double nodeEditable(vtkMRMLNode* node) override;
 
 public slots:
 
@@ -239,7 +239,7 @@ public slots:
 protected:
   QScopedPointer<qSlicerMarkupsModuleWidgetPrivate> d_ptr;
 
-  virtual void setup();
+  void setup() override;
 
   /// A multiplication factor to apply to the maximum volume slice spacing when determining what the maximum value for the scale sliders should be.
   /// \sa updateMaximumScaleFromVolumes

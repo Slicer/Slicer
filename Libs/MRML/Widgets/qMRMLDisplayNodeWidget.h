@@ -40,7 +40,7 @@ class QMRML_WIDGETS_EXPORT qMRMLDisplayNodeWidget : public QWidget
   QVTK_OBJECT
 public:
   qMRMLDisplayNodeWidget(QWidget *parent=nullptr);
-  virtual ~qMRMLDisplayNodeWidget();
+  ~qMRMLDisplayNodeWidget() override;
 
   vtkMRMLDisplayNode* mrmlDisplayNode()const;
 

@@ -51,7 +51,7 @@ protected:
 
 public:
   qMRMLVolumeWidgetPrivate(qMRMLVolumeWidget& object);
-  virtual ~qMRMLVolumeWidgetPrivate();
+  ~qMRMLVolumeWidgetPrivate() override;
 
   virtual void init();
 

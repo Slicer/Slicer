@@ -120,7 +120,7 @@ public:
   typedef QTreeView Superclass;
 
   qMRMLTreeView(QWidget *parent=nullptr);
-  virtual ~qMRMLTreeView();
+  ~qMRMLTreeView() override;
 
   vtkMRMLScene* mrmlScene()const;
 
@@ -234,11 +234,11 @@ public:
   /// Remove indexes that have at least one ancestor in the list
   static QModelIndexList removeChildren(const QModelIndexList& indexes);
 
-  virtual QSize minimumSizeHint()const;
-  virtual QSize sizeHint()const;
+  QSize minimumSizeHint()const override;
+  QSize sizeHint()const override;
 
-  virtual void showEvent(QShowEvent* show);
-  virtual bool eventFilter(QObject* object, QEvent* e);
+  void showEvent(QShowEvent* show) override;
+  bool eventFilter(QObject* object, QEvent* e) override;
 
   virtual bool clickDecoration(const QModelIndex& index);
 
@@ -323,10 +323,10 @@ protected:
   QScopedPointer<qMRMLTreeViewPrivate> d_ptr;
 
   // reimplemented for performance issues
-  virtual void updateGeometries();
-  virtual void mousePressEvent(QMouseEvent* event);
-  virtual void mouseReleaseEvent(QMouseEvent* event);
-  virtual void keyPressEvent(QKeyEvent* event);
+  void updateGeometries() override;
+  void mousePressEvent(QMouseEvent* event) override;
+  void mouseReleaseEvent(QMouseEvent* event) override;
+  void keyPressEvent(QKeyEvent* event) override;
 
   virtual void toggleVisibility(const QModelIndex& index);
 

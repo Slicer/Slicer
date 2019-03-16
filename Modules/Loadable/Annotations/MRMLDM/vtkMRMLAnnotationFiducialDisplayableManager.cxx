@@ -62,7 +62,7 @@ public:
   {
   }
 
-  virtual void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void*)
+  void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void*) override
   {
 
     // mark the Node with an attribute to indicate if it is currently being interacted with

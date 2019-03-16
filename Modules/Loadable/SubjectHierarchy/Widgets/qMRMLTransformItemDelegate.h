@@ -41,27 +41,27 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLTransformItemDelegate
   Q_OBJECT
 public:
   qMRMLTransformItemDelegate(QObject *parent = nullptr);
-  virtual ~qMRMLTransformItemDelegate();
+  ~qMRMLTransformItemDelegate() override;
 
   void setMRMLScene(vtkMRMLScene* scene);
 
   /// Determine if the current index contains a transform
   bool isTransform(const QModelIndex& index)const;
 
-  virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-    const QModelIndex &index) const;
+  QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+    const QModelIndex &index) const override;
 
-  virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;
-  virtual void setModelData(QWidget *editor, QAbstractItemModel *model,
-                    const QModelIndex &index) const;
+  void setEditorData(QWidget *editor, const QModelIndex &index) const override;
+  void setModelData(QWidget *editor, QAbstractItemModel *model,
+                    const QModelIndex &index) const override;
 
-  virtual QSize sizeHint(const QStyleOptionViewItem &option,
-                         const QModelIndex &index) const;
+  QSize sizeHint(const QStyleOptionViewItem &option,
+                         const QModelIndex &index) const override;
 
   void updateEditorGeometry(QWidget *editor,
-    const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
-  virtual bool eventFilter(QObject *object, QEvent *event);
+  bool eventFilter(QObject *object, QEvent *event) override;
 
   /// Set a fixed row height. Useful if uniform row heights is turned on, but the
   /// desired row height is different than that of the first row (often scene).
@@ -101,7 +101,7 @@ public:
   explicit DelegateMenu(QWidget* parent = nullptr);
   QString SelectedTransformNodeID;
 protected:
-  virtual void showEvent(QShowEvent* event);
+  void showEvent(QShowEvent* event) override;
 signals:
   void closed();
 };

@@ -42,7 +42,7 @@ public:
   typedef qSlicerApplicationHelper Self;
 
   qSlicerApplicationHelper(QObject * parent = nullptr);
-  virtual ~qSlicerApplicationHelper();
+  ~qSlicerApplicationHelper() override;
 
   static void preInitializeApplication(const char* argv0, ctkProxyStyle* style);
 

@@ -34,7 +34,7 @@ protected:
   qMRMLExpandingWebView* const q_ptr;
 public:
   qMRMLExpandingWebViewPrivate(qMRMLExpandingWebView& object);
-  ~qMRMLExpandingWebViewPrivate();
+  ~qMRMLExpandingWebViewPrivate() override;
 
   virtual void init();
 

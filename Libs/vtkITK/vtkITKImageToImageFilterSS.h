@@ -36,7 +36,7 @@ public:
   ///
   /// Portion of the SetReleaseDataFlag implementation can be
   /// implemented at this level of the hierarchy.
-  virtual void SetReleaseDataFlag(int f) override
+  void SetReleaseDataFlag(int f) override
     {
       Superclass::SetReleaseDataFlag(f);
       m_Filter->SetReleaseDataFlag(f);
@@ -74,7 +74,7 @@ protected:
     this->vtkCast->SetOutputScalarTypeToShort();
   };
 
-  ~vtkITKImageToImageFilterSS()
+  ~vtkITKImageToImageFilterSS() override
   {
   };
 

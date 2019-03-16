@@ -82,7 +82,7 @@ public:
 public:
   typedef QObject Superclass;
   qSlicerSegmentEditorAbstractEffect(QObject* parent = nullptr);
-  virtual ~qSlicerSegmentEditorAbstractEffect();
+  ~qSlicerSegmentEditorAbstractEffect() override;
 
 // API: Methods that are to be reimplemented in the effect subclasses
 public:

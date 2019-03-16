@@ -37,16 +37,16 @@ class qSlicerTerminologiesReader
 public:
   typedef qSlicerFileReader Superclass;
   qSlicerTerminologiesReader(vtkSlicerTerminologiesModuleLogic* terminologiesLogic = nullptr, QObject* parent = nullptr);
-  virtual ~qSlicerTerminologiesReader();
+  ~qSlicerTerminologiesReader() override;
 
   void setTerminologiesLogic(vtkSlicerTerminologiesModuleLogic* terminologiesLogic);
   vtkSlicerTerminologiesModuleLogic* terminologiesLogic()const;
 
-  virtual QString description()const;
-  virtual IOFileType fileType()const;
-  virtual QStringList extensions()const;
+  QString description()const override;
+  IOFileType fileType()const override;
+  QStringList extensions()const override;
 
-  virtual bool load(const IOProperties& properties);
+  bool load(const IOProperties& properties) override;
 
 protected:
   QScopedPointer<qSlicerTerminologiesReaderPrivate> d_ptr;

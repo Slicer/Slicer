@@ -40,22 +40,22 @@ class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneReader
 public:
   typedef qSlicerFileReader Superclass;
   qSlicerSceneReader(vtkSlicerCamerasModuleLogic* camerasLogic, QObject* _parent = nullptr);
-  virtual ~qSlicerSceneReader();
+  ~qSlicerSceneReader() override;
 
-  virtual QString description()const;
+  QString description()const override;
   /// Support QString("SceneFile")
-  virtual qSlicerIO::IOFileType fileType()const;
+  qSlicerIO::IOFileType fileType()const override;
 
   /// Support only .mrml files
-  virtual QStringList extensions()const;
+  QStringList extensions()const override;
 
   /// Options to control scene loading
-  virtual qSlicerIOOptions* options()const;
+  qSlicerIOOptions* options()const override;
 
   /// the supported properties are:
   /// QString fileName: the path of the mrml scene to load
   /// bool clear: whether the current should be cleared or not
-  virtual bool load(const qSlicerIO::IOProperties& properties);
+  bool load(const qSlicerIO::IOProperties& properties) override;
 protected:
   QScopedPointer<qSlicerSceneReaderPrivate> d_ptr;
 

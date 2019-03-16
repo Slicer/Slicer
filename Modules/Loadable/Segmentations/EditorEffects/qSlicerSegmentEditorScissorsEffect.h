@@ -39,39 +39,39 @@ public:
 public:
   typedef qSlicerSegmentEditorAbstractLabelEffect Superclass;
   qSlicerSegmentEditorScissorsEffect(QObject* parent = nullptr);
-  virtual ~qSlicerSegmentEditorScissorsEffect();
+  ~qSlicerSegmentEditorScissorsEffect() override;
 
 public:
   /// Get icon for effect to be displayed in segment editor
-  virtual QIcon icon();
+  QIcon icon() override;
 
   /// Get help text for effect to be displayed in the help box
-  Q_INVOKABLE virtual const QString helpText()const;
+  Q_INVOKABLE const QString helpText()const override;
 
   /// Create options frame widgets, make connections, and add them to the main options frame using \sa addOptionsWidget
-  virtual void setupOptionsFrame();
+  void setupOptionsFrame() override;
 
   /// Set default parameters in the parameter MRML node
-  virtual void setMRMLDefaults();
+  void setMRMLDefaults() override;
 
   /// Clone editor effect
-  virtual qSlicerSegmentEditorAbstractEffect* clone();
+  qSlicerSegmentEditorAbstractEffect* clone() override;
 
   /// Callback function invoked when interaction happens
   /// \param callerInteractor Interactor object that was observed to catch the event
   /// \param eid Event identifier
   /// \param viewWidget Widget of the Slicer layout view. Can be \sa qMRMLSliceWidget or \sa qMRMLThreeDWidget
-  virtual bool processInteractionEvents(vtkRenderWindowInteractor* callerInteractor, unsigned long eid, qMRMLWidget* viewWidget);
+  bool processInteractionEvents(vtkRenderWindowInteractor* callerInteractor, unsigned long eid, qMRMLWidget* viewWidget) override;
 
   /// Perform actions to deactivate the effect (such as destroy actors, etc.)
-  Q_INVOKABLE virtual void deactivate();
+  Q_INVOKABLE void deactivate() override;
 
 public slots:
   /// Update user interface from parameter set node
-  virtual void updateGUIFromMRML();
+  void updateGUIFromMRML() override;
 
   /// Update parameter set node from user interface
-  virtual void updateMRMLFromGUI();
+  void updateMRMLFromGUI() override;
 
   virtual void setOperation(int operationIndex);
   virtual void setShape(int shapeIndex);

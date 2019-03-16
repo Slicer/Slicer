@@ -109,15 +109,15 @@ public:
 //     { this->LazyEvaluateModuleTarget(node->GetModuleDescription()); }
 
   /// Set the application logic
-  virtual void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* logic) override;
+  void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* logic) override;
 
 protected:
   /// Reimplemented to observe NodeAddedEvent.
-  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
   /// Reimplemented for AutoRun mode.
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   /// Reimplemented to observe CLI node.
-  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event,
+  void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event,
                                       void *callData) override;
   /// Reimplemented to observe vtkSlicerApplicationLogic.
   void ProcessMRMLLogicsEvents(vtkObject*, long unsigned int, void*) override;
@@ -158,7 +158,7 @@ protected:
 
 private:
   vtkSlicerCLIModuleLogic();
-  virtual ~vtkSlicerCLIModuleLogic();
+  ~vtkSlicerCLIModuleLogic() override;
   vtkSlicerCLIModuleLogic(const vtkSlicerCLIModuleLogic&);
   void operator=(const vtkSlicerCLIModuleLogic&);
 

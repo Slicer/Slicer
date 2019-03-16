@@ -44,10 +44,10 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Reset state of object
-  virtual void Initialize() override;
+  void Initialize() override;
 
   /// Copy one category into another
-  virtual void Copy(vtkCodedEntry* aCategory) override;
+  void Copy(vtkCodedEntry* aCategory) override;
 
 public:
   vtkGetStringMacro(SNOMEDCTConceptID);
@@ -65,7 +65,7 @@ public:
 
 protected:
   vtkSlicerTerminologyCategory();
-  ~vtkSlicerTerminologyCategory();
+  ~vtkSlicerTerminologyCategory() override;
   vtkSlicerTerminologyCategory(const vtkSlicerTerminologyCategory&);
   void operator=(const vtkSlicerTerminologyCategory&);
 

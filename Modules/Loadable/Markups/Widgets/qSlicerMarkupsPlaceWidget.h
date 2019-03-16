@@ -54,7 +54,7 @@ qSlicerMarkupsPlaceWidget : public qSlicerWidget
 public:
   typedef qSlicerWidget Superclass;
   qSlicerMarkupsPlaceWidget(QWidget *parent=nullptr);
-  virtual ~qSlicerMarkupsPlaceWidget();
+  ~qSlicerMarkupsPlaceWidget() override;
 
   enum PlaceMultipleMarkupsType
   {
@@ -103,7 +103,7 @@ public:
 
 public slots:
 
-  void setMRMLScene(vtkMRMLScene* scene);
+  void setMRMLScene(vtkMRMLScene* scene) override;
 
   /// Set the currently selected markups node.
   void setCurrentNode(vtkMRMLNode* currentNode);

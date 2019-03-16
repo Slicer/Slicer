@@ -37,10 +37,10 @@ public:
 
 protected:
   vtkITKLevelTracingImageFilter();
-  ~vtkITKLevelTracingImageFilter();
+  ~vtkITKLevelTracingImageFilter() override;
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
-  virtual int FillInputPortInformation(int port, vtkInformation *info) override;
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int FillInputPortInformation(int port, vtkInformation *info) override;
 
   int Seed[3];
   int Plane;

@@ -51,26 +51,26 @@ public:
   /// and composite node (sometimes using the logic's methods) or
   /// they are passed to the vtkInteractorStyleUser, which conditionally
   /// passes them to observers if there are any.
-  virtual void OnMouseMove() override;
-  virtual void OnEnter() override;
-  virtual void OnLeave() override;
-  virtual void OnLeftButtonDown() override;
-  virtual void OnLeftButtonUp() override;
-  virtual void OnMiddleButtonDown() override;
-  virtual void OnMiddleButtonUp() override;
-  virtual void OnRightButtonDown() override;
-  virtual void OnRightButtonUp() override;
-  virtual void OnMouseWheelForward() override;
-  virtual void OnMouseWheelBackward() override;
+  void OnMouseMove() override;
+  void OnEnter() override;
+  void OnLeave() override;
+  void OnLeftButtonDown() override;
+  void OnLeftButtonUp() override;
+  void OnMiddleButtonDown() override;
+  void OnMiddleButtonUp() override;
+  void OnRightButtonDown() override;
+  void OnRightButtonUp() override;
+  void OnMouseWheelForward() override;
+  void OnMouseWheelBackward() override;
 
   /// Keyboard functions
-  virtual void OnChar() override;
-  virtual void OnKeyPress() override;
-  virtual void OnKeyRelease() override;
+  void OnChar() override;
+  void OnKeyPress() override;
+  void OnKeyRelease() override;
 
   /// These are more esoteric events, but are useful in some cases.
-  virtual void OnExpose() override;
-  virtual void OnConfigure() override;
+  void OnExpose() override;
+  void OnConfigure() override;
 
   void SetDisplayableManagers(vtkMRMLDisplayableManagerGroup* displayableManagers);
 
@@ -121,7 +121,7 @@ public:
 
 protected:
   vtkSliceViewInteractorStyle();
-  ~vtkSliceViewInteractorStyle();
+  ~vtkSliceViewInteractorStyle() override;
 
   vtkMRMLSliceLogic *SliceLogic;
 

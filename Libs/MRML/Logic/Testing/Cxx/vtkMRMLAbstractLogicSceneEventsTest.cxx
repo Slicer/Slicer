@@ -42,23 +42,23 @@ public:
   vtkTypeMacro(vtkMRMLTestLogic, vtkMRMLAbstractLogic);
   static vtkMRMLTestLogic *New();
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* scene) override;
-  virtual void UnobserveMRMLScene() override;
-  virtual void ObserveMRMLScene() override;
-  virtual void RegisterNodes() override;
-  virtual void UpdateFromMRMLScene() override;
+  void SetMRMLSceneInternal(vtkMRMLScene* scene) override;
+  void UnobserveMRMLScene() override;
+  void ObserveMRMLScene() override;
+  void RegisterNodes() override;
+  void UpdateFromMRMLScene() override;
 
-  virtual void OnMRMLSceneStartBatchProcess() override;
-  virtual void OnMRMLSceneEndBatchProcess() override;
-  virtual void OnMRMLSceneStartClose() override;
-  virtual void OnMRMLSceneEndClose() override;
-  virtual void OnMRMLSceneStartImport() override;
-  virtual void OnMRMLSceneEndImport() override;
-  virtual void OnMRMLSceneStartRestore() override;
-  virtual void OnMRMLSceneEndRestore() override;
-  virtual void OnMRMLSceneNew() override;
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* nodeAdded) override;
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* nodeRemoved) override;
+  void OnMRMLSceneStartBatchProcess() override;
+  void OnMRMLSceneEndBatchProcess() override;
+  void OnMRMLSceneStartClose() override;
+  void OnMRMLSceneEndClose() override;
+  void OnMRMLSceneStartImport() override;
+  void OnMRMLSceneEndImport() override;
+  void OnMRMLSceneStartRestore() override;
+  void OnMRMLSceneEndRestore() override;
+  void OnMRMLSceneNew() override;
+  void OnMRMLSceneNodeAdded(vtkMRMLNode* nodeAdded) override;
+  void OnMRMLSceneNodeRemoved(vtkMRMLNode* nodeRemoved) override;
 
   enum MethodType{
     Set = 0,
@@ -73,7 +73,7 @@ public:
   std::map<unsigned long, int> CalledMethods;
 protected:
   vtkMRMLTestLogic(){}
-  virtual ~vtkMRMLTestLogic(){}
+  ~vtkMRMLTestLogic() override{}
 };
 
 vtkStandardNewMacro(vtkMRMLTestLogic);

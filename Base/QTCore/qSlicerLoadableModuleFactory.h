@@ -39,7 +39,7 @@ class qSlicerLoadableModuleFactoryItem
 public:
   qSlicerLoadableModuleFactoryItem();
 protected:
-  virtual qSlicerAbstractCoreModule* instanciator();
+  qSlicerAbstractCoreModule* instanciator() override;
 };
 
 //-----------------------------------------------------------------------------
@@ -50,22 +50,22 @@ public:
 
   typedef ctkAbstractPluginFactory<qSlicerAbstractCoreModule> Superclass;
   qSlicerLoadableModuleFactory();
-  virtual ~qSlicerLoadableModuleFactory();
+  ~qSlicerLoadableModuleFactory() override;
 
   ///
-  virtual void registerItems();
+  void registerItems() override;
 
   ///
-  virtual QString fileNameToKey(const QString& fileName)const;
+  QString fileNameToKey(const QString& fileName)const override;
 
   /// Extract module name given \a libraryName
   /// \sa qSlicerUtils::extractModuleNameFromLibraryName
   static QString extractModuleName(const QString& libraryName);
 
 protected:
-  virtual qSlicerLoadableModuleFactoryItem* createFactoryFileBasedItem();
+  qSlicerLoadableModuleFactoryItem* createFactoryFileBasedItem() override;
 
-  virtual bool isValidFile(const QFileInfo& file)const;
+  bool isValidFile(const QFileInfo& file)const override;
 
 protected:
   QScopedPointer<qSlicerLoadableModuleFactoryPrivate> d_ptr;

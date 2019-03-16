@@ -45,7 +45,7 @@ public:
   explicit qSlicerSettingsPythonPanel(QWidget* parent = nullptr);
 
   /// Destructor
-  virtual ~qSlicerSettingsPythonPanel();
+  ~qSlicerSettingsPythonPanel() override;
 
 protected slots:
 

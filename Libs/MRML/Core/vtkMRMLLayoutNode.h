@@ -15,7 +15,7 @@ class VTK_MRML_EXPORT vtkMRMLLayoutNode : public vtkMRMLAbstractLayoutNode
 public:
   static vtkMRMLLayoutNode *New();
   vtkTypeMacro(vtkMRMLLayoutNode,vtkMRMLAbstractLayoutNode);
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
@@ -23,13 +23,13 @@ public:
   //--------------------------------------------------------------------------
 
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   /// Get/Set for Current layout
   vtkGetMacro(ViewArrangement, int);
@@ -73,7 +73,7 @@ public:
   vtkSetStringMacro(SelectedModule);
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "Layout";}
+  const char* GetNodeTagName() override {return "Layout";}
 
   enum SlicerLayout
     {
@@ -162,7 +162,7 @@ protected:
 
 protected:
   vtkMRMLLayoutNode();
-  ~vtkMRMLLayoutNode();
+  ~vtkMRMLLayoutNode() override;
   vtkMRMLLayoutNode(const vtkMRMLLayoutNode&);
   void operator=(const vtkMRMLLayoutNode&);
 

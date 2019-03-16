@@ -20,18 +20,18 @@ public:
   vtkTypeMacro(vtkMRMLAnnotationControlPointsStorageNode,vtkMRMLAnnotationStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   // Description:
   // Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName() override {return "AnnotationControlPointsStorage";}
+  const char* GetNodeTagName() override {return "AnnotationControlPointsStorage";}
 
   // Initialize all the supported write file types
-  virtual bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
 protected:
   vtkMRMLAnnotationControlPointsStorageNode();
-  ~vtkMRMLAnnotationControlPointsStorageNode();
+  ~vtkMRMLAnnotationControlPointsStorageNode() override;
   vtkMRMLAnnotationControlPointsStorageNode(const vtkMRMLAnnotationControlPointsStorageNode&);
   void operator=(const vtkMRMLAnnotationControlPointsStorageNode&);
 
@@ -49,9 +49,9 @@ protected:
                         int& xColumn,    int& yColumn,     int& zColumn, int& selColumn, int& visColumn, int& numColumns);
 
   /// Read data and set it in the referenced node
-  virtual int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode *refNode) override;
 
-  virtual int WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream &of) override;
+  int WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream &of) override;
 };
 
 #endif

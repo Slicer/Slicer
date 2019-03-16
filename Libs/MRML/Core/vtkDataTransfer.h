@@ -104,7 +104,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
 
  protected:
   vtkDataTransfer();
-  virtual ~vtkDataTransfer();
+  ~vtkDataTransfer() override;
   vtkDataTransfer(const vtkDataTransfer&);
   void operator=(const vtkDataTransfer&);
 

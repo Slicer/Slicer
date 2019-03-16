@@ -22,31 +22,31 @@ public:
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "AnnotationBidimensional";}
+  const char* GetNodeTagName() override {return "AnnotationBidimensional";}
 
-  virtual const char* GetIcon() override {return ":/Icons/AnnotationBidimensional.png";}
+  const char* GetIcon() override {return ":/Icons/AnnotationBidimensional.png";}
 
   // Description:
   // Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
 
   // Description:
   // Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   void UpdateScene(vtkMRMLScene *scene) override;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+  void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) override;
 
@@ -86,7 +86,7 @@ public:
 
 protected:
   vtkMRMLAnnotationBidimensionalNode();
-  ~vtkMRMLAnnotationBidimensionalNode();
+  ~vtkMRMLAnnotationBidimensionalNode() override;
   vtkMRMLAnnotationBidimensionalNode(const vtkMRMLAnnotationBidimensionalNode&);
   void operator=(const vtkMRMLAnnotationBidimensionalNode&);
 

@@ -39,23 +39,23 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
   vtkTypeMacro(vtkMRMLVectorVolumeDisplayNode,vtkMRMLGlyphableVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "VectorVolumeDisplay";}
+  const char* GetNodeTagName() override {return "VectorVolumeDisplay";}
 
   //--------------------------------------------------------------------------
   /// Display Information
@@ -89,23 +89,23 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
 
   //virtual vtkPolyData* ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* ) {return nullptr;};
 
-  virtual void SetDefaultColorMap() override {}
+  void SetDefaultColorMap() override {}
 
   ///
   /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+  void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) override;
 
   /// Get the input of the pipeline
-  virtual vtkAlgorithmOutput* GetInputImageDataConnection() override;
+  vtkAlgorithmOutput* GetInputImageDataConnection() override;
 
-  virtual void UpdateImageDataPipeline() override;
+  void UpdateImageDataPipeline() override;
 
   ///
   /// get associated slice glyph display node
   /// TODO: return empty list for now, later add glyphs
-  virtual std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*>
+  std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*>
     GetSliceGlyphDisplayNodes( vtkMRMLVolumeNode* vtkNotUsed(node) ) override
     {
     return std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*>();
@@ -121,13 +121,13 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
 
 protected:
   vtkMRMLVectorVolumeDisplayNode();
-  ~vtkMRMLVectorVolumeDisplayNode();
+  ~vtkMRMLVectorVolumeDisplayNode() override;
   vtkMRMLVectorVolumeDisplayNode(const vtkMRMLVectorVolumeDisplayNode&);
   void operator=(const vtkMRMLVectorVolumeDisplayNode&);
 
   /// Set the input of the pipeline
-  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection) override;
-  virtual vtkAlgorithmOutput* GetScalarImageDataConnection() override;
+  void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection) override;
+  vtkAlgorithmOutput* GetScalarImageDataConnection() override;
 
   int ScalarMode;
   int GlyphMode;

@@ -75,7 +75,7 @@ public:
   qSlicerSegmentEditorEffectFactory(QObject* parent=nullptr);
 
   /// Private destructor made public to enable python wrapping
-  virtual ~qSlicerSegmentEditorEffectFactory();
+  ~qSlicerSegmentEditorEffectFactory() override;
 
 private:
   Q_DISABLE_COPY(qSlicerSegmentEditorEffectFactory);

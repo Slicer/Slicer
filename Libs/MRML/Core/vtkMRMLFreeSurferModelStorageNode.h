@@ -29,11 +29,11 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelSto
   vtkTypeMacro(vtkMRMLFreeSurferModelStorageNode,vtkMRMLModelStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Copy data from a  referenced node's filename to new location.
@@ -43,15 +43,15 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelSto
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName() override  {return "FreeSurferModelStorage";};
+  const char* GetNodeTagName() override  {return "FreeSurferModelStorage";};
 
   ///
   /// Control use of the triangle stipper when reading the polydata
@@ -60,15 +60,15 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelSto
 
 protected:
   vtkMRMLFreeSurferModelStorageNode();
-  ~vtkMRMLFreeSurferModelStorageNode();
+  ~vtkMRMLFreeSurferModelStorageNode() override;
   vtkMRMLFreeSurferModelStorageNode(const vtkMRMLFreeSurferModelStorageNode&);
   void operator=(const vtkMRMLFreeSurferModelStorageNode&);
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedReadFileTypes() override;
+  void InitializeSupportedReadFileTypes() override;
 
   /// Read data and set it in the referenced node
-  virtual int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode *refNode) override;
 
   int UseStripper;
 };

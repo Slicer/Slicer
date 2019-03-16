@@ -28,7 +28,7 @@ public:
 
   vtkTypeMacro(vtkMRMLColorNodeTestHelper1,vtkMRMLColorNode);
 
-  virtual vtkMRMLNode* CreateNodeInstance() override
+  vtkMRMLNode* CreateNodeInstance() override
     {
     return vtkMRMLColorNodeTestHelper1::New();
     }
@@ -43,8 +43,8 @@ public:
     std::cout << "vtkMRMLColorNodeTestHelper1 pretending to read a file " << std::endl;
     return EXIT_SUCCESS;
     }
-  virtual int GetNumberOfColors() override {return 1;}
-  virtual bool GetColor(int vtkNotUsed(ind), double color[4]) override
+  int GetNumberOfColors() override {return 1;}
+  bool GetColor(int vtkNotUsed(ind), double color[4]) override
     {
     color[0] = 10;
     color[1] = 100;

@@ -48,20 +48,20 @@ public:
 protected:
 
   vtkMRMLSliceLinkLogic();
-  virtual ~vtkMRMLSliceLinkLogic();
+  ~vtkMRMLSliceLinkLogic() override;
 
   // On a change in scene, we need to manage the observations.
-  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
 
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
-  virtual void OnMRMLNodeModified(vtkMRMLNode* node) override;
-  virtual void OnMRMLSceneStartBatchProcess() override;
-  virtual void OnMRMLSceneEndBatchProcess() override;
-  virtual void OnMRMLSceneStartImport() override;
-  virtual void OnMRMLSceneEndImport() override;
-  virtual void OnMRMLSceneStartRestore() override;
-  virtual void OnMRMLSceneEndRestore() override;
+  void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
+  void OnMRMLNodeModified(vtkMRMLNode* node) override;
+  void OnMRMLSceneStartBatchProcess() override;
+  void OnMRMLSceneEndBatchProcess() override;
+  void OnMRMLSceneStartImport() override;
+  void OnMRMLSceneEndImport() override;
+  void OnMRMLSceneStartRestore() override;
+  void OnMRMLSceneEndRestore() override;
 
   // Used internally to control whether we are in the process of
   // broadcasting events. PIMPL it?

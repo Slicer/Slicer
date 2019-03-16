@@ -23,35 +23,35 @@ public:
   // void PrintSelf(ostream& os, vtkIndent indent);
   // Description:
   // Just prints short summary
-  virtual void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1) override;
+  void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1) override;
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "AnnotationLines";}
+  const char* GetNodeTagName() override {return "AnnotationLines";}
 
   // Description:
   // Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
 
   // Description:
   // Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   void UpdateScene(vtkMRMLScene *scene) override;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+  void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) override;
 
@@ -62,7 +62,7 @@ public:
 
   // Description:
   // Create default storage node or nullptr if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   // Define line between control points
   int  AddLine(int ctrlPtIdStart, int ctrlPtIdEnd,int selectedFlag, int visibleFlag);
@@ -96,13 +96,13 @@ public:
 
   // Description:
   // Initializes all variables associated with annotations
-  virtual void ResetAnnotations() override;
+  void ResetAnnotations() override;
 
   void Initialize(vtkMRMLScene* mrmlScene) override;
 
 protected:
   vtkMRMLAnnotationLinesNode();
-  ~vtkMRMLAnnotationLinesNode();
+  ~vtkMRMLAnnotationLinesNode() override;
   vtkMRMLAnnotationLinesNode(const vtkMRMLAnnotationLinesNode&);
   void operator=(const vtkMRMLAnnotationLinesNode&);
 

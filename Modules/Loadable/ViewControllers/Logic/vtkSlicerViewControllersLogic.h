@@ -70,10 +70,10 @@ public:
 
 protected:
   vtkSlicerViewControllersLogic();
-  virtual ~vtkSlicerViewControllersLogic();
+  ~vtkSlicerViewControllersLogic() override;
 
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
-  virtual void RegisterNodes() override;
+  void RegisterNodes() override;
 
 private:
   vtkSlicerViewControllersLogic(const vtkSlicerViewControllersLogic&); // Not implemented

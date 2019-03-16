@@ -174,7 +174,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
 
  protected:
   vtkCacheManager();
-  virtual ~vtkCacheManager();
+  ~vtkCacheManager() override;
   vtkCacheManager(const vtkCacheManager&);
   void operator=(const vtkCacheManager&);
 

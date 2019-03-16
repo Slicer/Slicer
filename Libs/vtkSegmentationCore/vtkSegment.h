@@ -126,7 +126,7 @@ public:
 
 protected:
   vtkSegment();
-  ~vtkSegment();
+  ~vtkSegment() override;
   void operator=(const vtkSegment&);
 
 protected:

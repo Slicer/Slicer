@@ -40,7 +40,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerCommandOptions : public qSlicerCoreComma
 public:
   typedef qSlicerCoreCommandOptions Superclass;
   qSlicerCommandOptions();
-  virtual ~qSlicerCommandOptions(){}
+  ~qSlicerCommandOptions() override{}
 
   bool noSplash()const;
 
@@ -55,7 +55,7 @@ public:
   bool exitAfterStartup()const;
 
 protected:
-  virtual void addArguments();
+  void addArguments() override;
 
 };
 

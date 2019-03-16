@@ -39,7 +39,7 @@ class QMRML_WIDGETS_EXPORT qMRMLEventLogger: public QObject
 public:
   typedef QObject Superclass;
   explicit qMRMLEventLogger(QObject* parent = nullptr);
-  virtual ~qMRMLEventLogger();
+  ~qMRMLEventLogger() override;
 
   ///
   /// Set the MRML \a scene that should be listened for events

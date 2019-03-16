@@ -72,7 +72,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkMRMLAbstr
 
 protected:
   vtkSlicerFiducialsLogic();
-  ~vtkSlicerFiducialsLogic();
+  ~vtkSlicerFiducialsLogic() override;
   vtkSlicerFiducialsLogic(const vtkSlicerFiducialsLogic&);
   void operator=(const vtkSlicerFiducialsLogic&);
 };

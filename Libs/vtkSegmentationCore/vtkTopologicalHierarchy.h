@@ -99,7 +99,7 @@ protected:
 
 protected:
   vtkTopologicalHierarchy();
-  ~vtkTopologicalHierarchy();
+  ~vtkTopologicalHierarchy() override;
 
 private:
   vtkTopologicalHierarchy(const vtkTopologicalHierarchy&); // Not implemented

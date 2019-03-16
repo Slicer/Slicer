@@ -34,7 +34,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerFileWriterOptionsWidget
 public:
   typedef qSlicerIOOptionsWidget Superclass;
   explicit qSlicerFileWriterOptionsWidget(QWidget* parent = nullptr);
-  virtual ~qSlicerFileWriterOptionsWidget();
+  ~qSlicerFileWriterOptionsWidget() override;
 
 public slots:
   /// Set the object to write (typically a scene or a MRML node)

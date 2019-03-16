@@ -39,10 +39,10 @@ public:
 
   typedef qSlicerAbstractModule Superclass;
   qSlicerCoreModule(QObject *parent=nullptr);
-  virtual ~qSlicerCoreModule();
+  ~qSlicerCoreModule() override;
 
 protected:
-  virtual void setup();
+  void setup() override;
 
 protected:
   QScopedPointer<qSlicerCoreModulePrivate> d_ptr;

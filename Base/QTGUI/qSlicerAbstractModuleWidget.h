@@ -45,7 +45,7 @@ public:
   /// Constructor
   /// \sa QWidget
   qSlicerAbstractModuleWidget(QWidget *parent=nullptr);
-  virtual ~qSlicerAbstractModuleWidget();
+  ~qSlicerAbstractModuleWidget() override;
 
   /// The enter and exit methods are called when the module panel changes.
   /// These give the module a chance to do any setup or shutdown operations
@@ -58,13 +58,13 @@ public:
   bool isEntered()const;
 
   /// Node editing
-  Q_INVOKABLE virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
-  Q_INVOKABLE virtual double nodeEditable(vtkMRMLNode* node);
+  Q_INVOKABLE bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
+  Q_INVOKABLE double nodeEditable(vtkMRMLNode* node) override;
 
 protected:
   QScopedPointer<qSlicerAbstractModuleWidgetPrivate> d_ptr;
 
-  virtual void setup();
+  void setup() override;
 
 private:
   Q_DECLARE_PRIVATE(qSlicerAbstractModuleWidget);

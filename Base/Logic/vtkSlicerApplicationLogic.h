@@ -214,7 +214,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
 protected:
 
   vtkSlicerApplicationLogic();
-  ~vtkSlicerApplicationLogic();
+  ~vtkSlicerApplicationLogic() override;
 
    /// Callback used by a MultiThreader to start a processing thread
   static itk::ITK_THREAD_RETURN_TYPE ProcessingThreaderCallback( void * );

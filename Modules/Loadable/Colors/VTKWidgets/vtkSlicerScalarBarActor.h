@@ -65,7 +65,7 @@ public:
 
 protected:
   vtkSlicerScalarBarActor();
-  ~vtkSlicerScalarBarActor();
+  ~vtkSlicerScalarBarActor() override;
 
   // Description:
   // Determine the size and placement of any tick marks to be rendered.
@@ -78,11 +78,11 @@ protected:
   //
   // It centers labels on color swatches instead of placing labels
   // at the edge.
-  virtual void LayoutTicks() override;
+  void LayoutTicks() override;
 
   // It centers labels on color swatches instead of placing labels
   // at the edge.
-  virtual void ConfigureTicks() override;
+  void ConfigureTicks() override;
 
   /// flag for setting color name as label
   int UseAnnotationAsLabel;

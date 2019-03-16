@@ -53,7 +53,7 @@ protected:
   qSlicerSubjectHierarchyChartsPlugin* const q_ptr;
 public:
   qSlicerSubjectHierarchyChartsPluginPrivate(qSlicerSubjectHierarchyChartsPlugin& object);
-  ~qSlicerSubjectHierarchyChartsPluginPrivate();
+  ~qSlicerSubjectHierarchyChartsPluginPrivate() override;
   void init();
 public:
   QIcon ChartIcon;

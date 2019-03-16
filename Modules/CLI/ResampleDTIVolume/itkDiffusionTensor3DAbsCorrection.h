@@ -129,7 +129,7 @@ protected:
   DiffusionTensor3DAbsCorrectionFilter()
   {
   }
-  virtual ~DiffusionTensor3DAbsCorrectionFilter()
+  ~DiffusionTensor3DAbsCorrectionFilter() override
   {
   }
 private:

@@ -66,14 +66,14 @@ public:
     this->LastNode = nullptr;
   }
 
-  virtual ~qSlicerLayoutCustomSliceViewFactory()
+  ~qSlicerLayoutCustomSliceViewFactory() override
   {
   }
 
   vtkWeakPointer<vtkMRMLSliceNode> LastNode;
 
 protected:
-  virtual QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode)
+  QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode) override
   {
     if (!this->layoutManager() || !viewNode)
       {// can't create a slice widget if there is no parent widget
@@ -131,17 +131,17 @@ public:
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override
+  const char* GetNodeTagName() override
   {
     return "CustomView";
   }
 
 protected:
   vtkMRMLCustomViewNode(){}
-  ~vtkMRMLCustomViewNode(){}
+  ~vtkMRMLCustomViewNode() override{}
   vtkMRMLCustomViewNode(const vtkMRMLCustomViewNode&);
   void operator=(const vtkMRMLCustomViewNode&);
 };
@@ -160,9 +160,9 @@ public:
   {
     this->LastNode = nullptr;
   }
-  virtual ~qMRMLLayoutCustomViewFactory(){}
+  ~qMRMLLayoutCustomViewFactory() override{}
 
-  virtual QString viewClassName()const
+  QString viewClassName()const override
   {
     return "vtkMRMLCustomViewNode";
   }
@@ -171,7 +171,7 @@ public:
 
 protected:
 
-  virtual QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode)
+  QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode) override
   {
     if (!viewNode || !this->layoutManager() || !this->layoutManager()->viewport())
       {

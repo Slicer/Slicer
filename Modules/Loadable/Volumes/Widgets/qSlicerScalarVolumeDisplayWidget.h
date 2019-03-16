@@ -29,7 +29,7 @@ public:
   /// Constructors
   typedef qSlicerWidget Superclass;
   explicit qSlicerScalarVolumeDisplayWidget(QWidget* parent);
-  virtual ~qSlicerScalarVolumeDisplayWidget();
+  ~qSlicerScalarVolumeDisplayWidget() override;
 
   vtkMRMLScalarVolumeNode* volumeNode()const;
   vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode()const;
@@ -59,7 +59,7 @@ protected slots:
   void onHistogramSectionExpanded(bool);
 
 protected:
-  void showEvent(QShowEvent * event);
+  void showEvent(QShowEvent * event) override;
 protected:
   QScopedPointer<qSlicerScalarVolumeDisplayWidgetPrivate> d_ptr;
 

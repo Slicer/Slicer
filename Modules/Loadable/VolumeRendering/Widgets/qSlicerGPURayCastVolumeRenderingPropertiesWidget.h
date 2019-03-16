@@ -34,7 +34,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerGPURayCastVolumeRend
 public:
   typedef qSlicerVolumeRenderingPropertiesWidget Superclass;
   qSlicerGPURayCastVolumeRenderingPropertiesWidget(QWidget *parent=nullptr);
-  virtual ~qSlicerGPURayCastVolumeRenderingPropertiesWidget();
+  ~qSlicerGPURayCastVolumeRenderingPropertiesWidget() override;
 
   vtkMRMLGPURayCastVolumeRenderingDisplayNode* mrmlGPURayCastDisplayNode();
 
@@ -43,7 +43,7 @@ public slots:
   void setSurfaceSmoothing(bool on);
 
 protected slots:
-  virtual void updateWidgetFromMRML();
+  void updateWidgetFromMRML() override;
 
 protected:
   QScopedPointer<qSlicerGPURayCastVolumeRenderingPropertiesWidgetPrivate> d_ptr;

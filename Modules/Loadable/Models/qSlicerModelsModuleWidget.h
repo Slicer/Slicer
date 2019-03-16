@@ -42,16 +42,16 @@ class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerModelsModuleWidget : public qSlice
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerModelsModuleWidget(QWidget *parent=nullptr);
-  virtual ~qSlicerModelsModuleWidget();
+  ~qSlicerModelsModuleWidget() override;
 
-  virtual void enter();
-  virtual void exit();
-  virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
+  void enter() override;
+  void exit() override;
+  bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
 
   vtkMRMLSelectionNode* getSelectionNode();
 
 public slots:
-  virtual void setMRMLScene(vtkMRMLScene* scene);
+  void setMRMLScene(vtkMRMLScene* scene) override;
 
   /// Set current node associated to the selected subject hierarchy item to the widgets
   void setCurrentNodeFromSubjectHierarchyItem(vtkIdType itemID);
@@ -75,7 +75,7 @@ protected slots:
   void onSubjectHierarchyItemModified(vtkObject* caller, void* callData);
 
 protected:
-  virtual void setup();
+  void setup() override;
 
   void updateWidgetFromSelectionNode();
 

@@ -38,17 +38,17 @@ public:
   typedef qSlicerFileReader Superclass;
   qSlicerVolumeRenderingReader(QObject* parent = nullptr);
   qSlicerVolumeRenderingReader(vtkSlicerVolumeRenderingLogic* logic, QObject* parent = nullptr);
-  virtual ~qSlicerVolumeRenderingReader();
+  ~qSlicerVolumeRenderingReader() override;
 
   void setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* logic);
   vtkSlicerVolumeRenderingLogic* volumeRenderingLogic()const;
 
   // Reimplemented for IO specific description
-  virtual QString description()const;
-  virtual IOFileType fileType()const;
-  virtual QStringList extensions()const;
+  QString description()const override;
+  IOFileType fileType()const override;
+  QStringList extensions()const override;
 
-  virtual bool load(const IOProperties& properties);
+  bool load(const IOProperties& properties) override;
 
 protected:
   QScopedPointer<qSlicerVolumeRenderingReaderPrivate> d_ptr;

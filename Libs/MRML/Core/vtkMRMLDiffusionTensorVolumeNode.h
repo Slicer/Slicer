@@ -35,10 +35,10 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeNode : public vtkMRMLDiffusion
   vtkTypeMacro(vtkMRMLDiffusionTensorVolumeNode,vtkMRMLDiffusionImageVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override { return "DiffusionTensorVolume"; }
+  const char* GetNodeTagName() override { return "DiffusionTensorVolume"; }
 
   /// Associated volume display MRML node
   virtual void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
@@ -47,14 +47,14 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeNode : public vtkMRMLDiffusion
   virtual vtkMRMLDiffusionTensorVolumeDisplayNode* GetDiffusionTensorVolumeDisplayNode();
 
   /// Create default storage node or nullptr if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   /// Create and observe default display node
-  virtual void CreateDefaultDisplayNodes() override;
+  void CreateDefaultDisplayNodes() override;
 
 protected:
   vtkMRMLDiffusionTensorVolumeNode();
-  ~vtkMRMLDiffusionTensorVolumeNode();
+  ~vtkMRMLDiffusionTensorVolumeNode() override;
 
   vtkMRMLDiffusionTensorVolumeNode(const vtkMRMLDiffusionTensorVolumeNode&);
   void operator=(const vtkMRMLDiffusionTensorVolumeNode&);

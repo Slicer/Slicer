@@ -36,9 +36,9 @@ class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerDataModuleWidget :
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerDataModuleWidget(QWidget *parentWidget = nullptr);
-  virtual ~qSlicerDataModuleWidget();
+  ~qSlicerDataModuleWidget() override;
 
-  virtual void enter();
+  void enter() override;
 
   enum
     {
@@ -49,7 +49,7 @@ public:
 
 public slots:
   /// Reimplemented for internal reasons
-  virtual void setMRMLScene(vtkMRMLScene* scene);
+  void setMRMLScene(vtkMRMLScene* scene) override;
 
   /// Change visibility of the MRML node ID columns
   void setMRMLIDsVisible(bool visible);
@@ -82,7 +82,7 @@ protected slots:
   void onHelpButtonClicked();
 
 protected:
-  virtual void setup();
+  void setup() override;
 
 protected:
   QScopedPointer<qSlicerDataModuleWidgetPrivate> d_ptr;

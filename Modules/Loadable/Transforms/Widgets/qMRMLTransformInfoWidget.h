@@ -48,7 +48,7 @@ qMRMLTransformInfoWidget
 public:
   typedef qMRMLWidget Superclass;
   qMRMLTransformInfoWidget(QWidget *parent=nullptr);
-  virtual ~qMRMLTransformInfoWidget();
+  ~qMRMLTransformInfoWidget() override;
 
   vtkMRMLTransformNode* mrmlTransformNode()const;
 
@@ -60,7 +60,7 @@ public slots:
   /// Note that setting transformNode to 0 will disable the widget
   void setMRMLTransformNode(vtkMRMLTransformNode* transformNode);
 
-  void setMRMLScene(vtkMRMLScene* scene);
+  void setMRMLScene(vtkMRMLScene* scene) override;
 
   /// Utility function that calls setMRMLTransformNode(vtkMRMLTransformNode* transformNode)
   /// It's useful to connect to vtkMRMLNode* signals
@@ -75,7 +75,7 @@ protected slots:
 
 protected:
 
-  virtual void showEvent(QShowEvent *);
+  void showEvent(QShowEvent *) override;
 
   QScopedPointer<qMRMLTransformInfoWidgetPrivate> d_ptr;
 

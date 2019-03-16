@@ -85,19 +85,19 @@ public:
   /// Standard methods for MRML nodes
   //----------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes.
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Get node XML tag name (like Volume, Model).
-  virtual const char* GetNodeTagName() override { return "PlotSeries"; };
+  const char* GetNodeTagName() override { return "PlotSeries"; };
 
   ///
   /// Set and observe Table node ID.
@@ -116,7 +116,7 @@ public:
 
   ///
   /// Method to propagate events generated in Plot nodes.
-  virtual void ProcessMRMLEvents (vtkObject *caller,
+  void ProcessMRMLEvents (vtkObject *caller,
                                   unsigned long event,
                                   void *callData) override;
 
@@ -228,7 +228,7 @@ public:
   //----------------------------------------------------------------
 protected:
   vtkMRMLPlotSeriesNode();
-  ~vtkMRMLPlotSeriesNode();
+  ~vtkMRMLPlotSeriesNode() override;
   vtkMRMLPlotSeriesNode(const vtkMRMLPlotSeriesNode&);
   void operator=(const vtkMRMLPlotSeriesNode&);
 
@@ -240,7 +240,7 @@ protected:
 
   ///
   /// Called when a node reference ID is added (list size increased).
-  virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference) override
+  void OnNodeReferenceAdded(vtkMRMLNodeReference *reference) override
   {
     Superclass::OnNodeReferenceAdded(reference);
     if (std::string(reference->GetReferenceRole()) == this->TableNodeReferenceRole)
@@ -251,7 +251,7 @@ protected:
 
   ///
   /// Called when a node reference ID is modified.
-  virtual void OnNodeReferenceModified(vtkMRMLNodeReference *reference) override
+  void OnNodeReferenceModified(vtkMRMLNodeReference *reference) override
   {
     Superclass::OnNodeReferenceModified(reference);
     if (std::string(reference->GetReferenceRole()) == this->TableNodeReferenceRole)
@@ -262,7 +262,7 @@ protected:
 
   ///
   /// Called after a node reference ID is removed (list size decreased).
-  virtual void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference) override
+  void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference) override
   {
     Superclass::OnNodeReferenceRemoved(reference);
     if (std::string(reference->GetReferenceRole()) == this->TableNodeReferenceRole)
@@ -275,7 +275,7 @@ protected:
   /// Copy the node's attributes to this object
   /// This is used only internally.
   /// Externally CopyWithScene has to be called.
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   //----------------------------------------------------------------
   /// Data

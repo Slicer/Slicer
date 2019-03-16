@@ -71,7 +71,7 @@ public:
 
 protected:
   NewOtsuThresholdImageCalculator();
-  virtual ~NewOtsuThresholdImageCalculator() {};
+  ~NewOtsuThresholdImageCalculator() override {};
   void PrintSelf(std::ostream& os, Indent indent) const override;
 
 private:

@@ -34,27 +34,27 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVo
   vtkTypeMacro(vtkMRMLGlyphableVolumeDisplayNode,vtkMRMLScalarVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "GlyphableVolumeDisplay";}
+  const char* GetNodeTagName() override {return "GlyphableVolumeDisplay";}
 
   ///
   /// Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID) override;
+  void UpdateReferenceID(const char *oldID, const char *newID) override;
 
   //--------------------------------------------------------------------------
   /// Display Information
@@ -84,16 +84,16 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVo
   };
 
   /// Set Glyph color node ID as reference to the scene
-  virtual void SetSceneReferences() override;
+  void SetSceneReferences() override;
 
   ///
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
-  virtual void UpdateReferences() override;
+  void UpdateReferences() override;
 
   ///
   /// Finds the storage node and read the data
-  virtual void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene *scene) override;
 
   ///
   /// String ID of the color MRML node
@@ -107,7 +107,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVo
 
   ///
   /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+  void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) override;
   ///
@@ -134,14 +134,14 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVo
   ///
   /// Defines the expected range of the output data for given imageData after
   /// having been mapped through the current display options
-  virtual void GetDisplayScalarRange(double range[2]) override
+  void GetDisplayScalarRange(double range[2]) override
     {
     this->Superclass::GetDisplayScalarRange(range);
     }
 
 protected:
   vtkMRMLGlyphableVolumeDisplayNode();
-  ~vtkMRMLGlyphableVolumeDisplayNode();
+  ~vtkMRMLGlyphableVolumeDisplayNode() override;
   vtkMRMLGlyphableVolumeDisplayNode(const vtkMRMLGlyphableVolumeDisplayNode&);
   void operator=(const vtkMRMLGlyphableVolumeDisplayNode&);
 

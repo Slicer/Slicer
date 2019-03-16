@@ -36,9 +36,9 @@ public:
 
   /// Constructors
   explicit qMRMLCollapsibleButton(QWidget* parent = nullptr);
-  virtual ~qMRMLCollapsibleButton(){}
+  ~qMRMLCollapsibleButton() override{}
 protected:
-  virtual void changeEvent(QEvent* event);
+  void changeEvent(QEvent* event) override;
   void computePalette();
 };
 

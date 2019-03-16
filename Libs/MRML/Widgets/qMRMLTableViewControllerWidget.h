@@ -51,7 +51,7 @@ public:
 
   /// Constructors
   explicit qMRMLTableViewControllerWidget(QWidget* parent = nullptr);
-  virtual ~qMRMLTableViewControllerWidget();
+  ~qMRMLTableViewControllerWidget() override;
 
   /// Set the label for the table view (abbreviation for the view
   /// name)
@@ -62,7 +62,7 @@ public:
 
 public slots:
   /// Set the scene
-  virtual void setMRMLScene(vtkMRMLScene* newScene);
+  void setMRMLScene(vtkMRMLScene* newScene) override;
 
   /// Set the TableView with which this controller interacts
   void setTableView(qMRMLTableView* TableView);

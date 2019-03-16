@@ -46,7 +46,7 @@ protected:
   qSlicerSubjectHierarchyDefaultPlugin* const q_ptr;
 public:
   qSlicerSubjectHierarchyDefaultPluginPrivate(qSlicerSubjectHierarchyDefaultPlugin& object);
-  ~qSlicerSubjectHierarchyDefaultPluginPrivate();
+  ~qSlicerSubjectHierarchyDefaultPluginPrivate() override;
   void init();
 public:
   QIcon UnknownIcon;

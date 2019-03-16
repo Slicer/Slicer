@@ -193,7 +193,7 @@ public:
   /// is initialized (module manager, iomanager...). Most of the
   /// initialization must be done in qSlicerAbstractCoreModule::setup()
   qSlicerAbstractCoreModule(QObject *parent=nullptr);
-  virtual ~qSlicerAbstractCoreModule();
+  ~qSlicerAbstractCoreModule() override;
 
   virtual void printAdditionalInfo();
 

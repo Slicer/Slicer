@@ -26,12 +26,12 @@ public:
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "AnnotationSnapshot";}
+  const char* GetNodeTagName() override {return "AnnotationSnapshot";}
 
-  virtual const char* GetIcon() override {return ":/Icons/ViewCamera.png";}
+  const char* GetIcon() override {return ":/Icons/ViewCamera.png";}
 
   void SetSnapshotDescription(const vtkStdString& newDescription);
   vtkGetMacro(SnapshotDescription, vtkStdString)
@@ -58,7 +58,7 @@ public:
   vtkGetMacro(ScreenShotType, int);
 
   /// Create default storage node or nullptr if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   enum
   {
@@ -68,7 +68,7 @@ public:
 
 protected:
   vtkMRMLAnnotationSnapshotNode();
-  ~vtkMRMLAnnotationSnapshotNode();
+  ~vtkMRMLAnnotationSnapshotNode() override;
   vtkMRMLAnnotationSnapshotNode(const vtkMRMLAnnotationSnapshotNode&);
   void operator=(const vtkMRMLAnnotationSnapshotNode&);
 

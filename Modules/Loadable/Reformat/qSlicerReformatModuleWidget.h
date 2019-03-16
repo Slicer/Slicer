@@ -38,7 +38,7 @@ qSlicerReformatModuleWidget : public qSlicerAbstractModuleWidget
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerReformatModuleWidget(QWidget *parent=nullptr);
-  virtual ~qSlicerReformatModuleWidget();
+  ~qSlicerReformatModuleWidget() override;
 
   enum OriginReferenceType {ONPLANE, INVOLUME};
   enum AxesReferenceType {axisX=0, axisY, axisZ};
@@ -46,10 +46,10 @@ public:
   /// Utility function that sets the normal of the slice plane.
   void setSliceNormal(double x, double y, double z);
 
-  virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
+  bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
 
 protected:
-  virtual void setup();
+  void setup() override;
 
 public slots:
   /// Set the position of the slice in world coordinates

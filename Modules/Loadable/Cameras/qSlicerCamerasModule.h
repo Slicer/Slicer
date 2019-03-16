@@ -40,28 +40,28 @@ class Q_SLICER_QTMODULES_CAMERAS_EXPORT qSlicerCamerasModule
 public:
   typedef qSlicerLoadableModule Superclass;
   qSlicerCamerasModule(QObject *parent=nullptr);
-  virtual ~qSlicerCamerasModule();
+  ~qSlicerCamerasModule() override;
 
-  virtual QStringList categories()const;
-  virtual QIcon icon()const;
+  QStringList categories()const override;
+  QIcon icon()const override;
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
   /// Return help/acknowledgement text
-  virtual QString helpText()const;
-  virtual QString acknowledgementText()const;
-  virtual QStringList contributors()const;
+  QString helpText()const override;
+  QString acknowledgementText()const override;
+  QStringList contributors()const override;
 
   /// Specify editable node types
-  virtual QStringList associatedNodeTypes()const;
+  QStringList associatedNodeTypes()const override;
 
 protected:
 
   /// Create and return the widget representation associated to this module
-  virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
+  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
-  virtual vtkMRMLAbstractLogic* createLogic();
+  vtkMRMLAbstractLogic* createLogic() override;
 
 protected:
   QScopedPointer<qSlicerCamerasModulePrivate> d_ptr;

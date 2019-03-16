@@ -60,7 +60,7 @@ public:
 
   /// Constructors
   explicit qMRMLSliceWidget(QWidget* parent = nullptr);
-  virtual ~qMRMLSliceWidget();
+  ~qMRMLSliceWidget() override;
 
   /// Get slice controller
   Q_INVOKABLE qMRMLSliceControllerWidget* sliceController()const;
@@ -125,7 +125,7 @@ public:
   Q_INVOKABLE qMRMLSliceView* sliceView()const;
 
 public slots:
-  void setMRMLScene(vtkMRMLScene * newScene);
+  void setMRMLScene(vtkMRMLScene * newScene) override;
 
   /// \sa qMRMLSliceControllerWidget::setMRMLSliceNode()
   /// \sa mrmlSliceNode()
@@ -147,7 +147,7 @@ signals:
   void nodeAboutToBeEdited(vtkMRMLNode* node);
 
 protected:
-  virtual void showEvent(QShowEvent *);
+  void showEvent(QShowEvent *) override;
 
   QScopedPointer<qMRMLSliceWidgetPrivate> d_ptr;
 

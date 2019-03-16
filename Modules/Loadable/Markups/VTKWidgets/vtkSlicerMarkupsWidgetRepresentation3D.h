@@ -89,7 +89,7 @@ protected:
   {
   public:
     ControlPointsPipeline3D();
-    virtual ~ControlPointsPipeline3D();
+    ~ControlPointsPipeline3D() override;
 
     vtkSmartPointer<vtkSelectVisiblePoints> SelectVisiblePoints;
     vtkSmartPointer<vtkActor> Actor;

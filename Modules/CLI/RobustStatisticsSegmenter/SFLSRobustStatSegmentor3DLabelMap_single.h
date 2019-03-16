@@ -61,9 +61,9 @@ public:
 
   void setInputLabelImage(TLabelImagePointer l);
 
-  void doSegmenation();
+  void doSegmenation() override;
 
-  void computeForce();
+  void computeForce() override;
 
   void setKernelWidthFactor(double f);
 

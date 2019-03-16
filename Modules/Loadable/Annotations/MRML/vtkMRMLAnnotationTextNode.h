@@ -26,12 +26,12 @@ public:
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "AnnotationText";}
+  const char* GetNodeTagName() override {return "AnnotationText";}
 
-  virtual const char* GetIcon() override {return ":/Icons/AnnotationText.png";}
+  const char* GetIcon() override {return ":/Icons/AnnotationText.png";}
 
   int SetTextCoordinates(double newCoord[3]) {return this->SetControlPoint(0,newCoord,1,1);}
   double* GetTextCoordinates() {return this->GetControlPointCoordinates(0);}
@@ -52,7 +52,7 @@ public:
 
 protected:
   vtkMRMLAnnotationTextNode();
-  ~vtkMRMLAnnotationTextNode() { }
+  ~vtkMRMLAnnotationTextNode() override { }
   vtkMRMLAnnotationTextNode(const vtkMRMLAnnotationTextNode&);
   void operator=(const vtkMRMLAnnotationTextNode&);
 

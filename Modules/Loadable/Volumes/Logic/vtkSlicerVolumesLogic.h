@@ -288,11 +288,11 @@ public:
 
 protected:
   vtkSlicerVolumesLogic();
-  virtual ~vtkSlicerVolumesLogic();
+  ~vtkSlicerVolumesLogic() override;
   vtkSlicerVolumesLogic(const vtkSlicerVolumesLogic&);
   void operator=(const vtkSlicerVolumesLogic&);
 
-  virtual void ProcessMRMLNodesEvents(vtkObject * caller,
+  void ProcessMRMLNodesEvents(vtkObject * caller,
                                   unsigned long event,
                                   void * callData) override;
 

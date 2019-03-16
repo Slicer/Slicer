@@ -50,7 +50,7 @@ public:
   /// Constructor
   explicit qMRMLSegmentationDisplayNodeWidget(QWidget* parent = nullptr);
   /// Destructor
-  virtual ~qMRMLSegmentationDisplayNodeWidget();
+  ~qMRMLSegmentationDisplayNodeWidget() override;
 
   /// Get current segmentation display node
   Q_INVOKABLE vtkMRMLSegmentationDisplayNode* segmentationDisplayNode() const;

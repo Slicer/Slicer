@@ -64,7 +64,7 @@ protected:
   qSlicerSubjectHierarchyRegisterPlugin* const q_ptr;
 public:
   qSlicerSubjectHierarchyRegisterPluginPrivate(qSlicerSubjectHierarchyRegisterPlugin& object);
-  ~qSlicerSubjectHierarchyRegisterPluginPrivate();
+  ~qSlicerSubjectHierarchyRegisterPluginPrivate() override;
   void init();
 public:
   QAction* RegisterThisAction;

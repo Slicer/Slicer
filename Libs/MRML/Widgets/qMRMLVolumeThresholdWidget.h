@@ -34,7 +34,7 @@ public:
   /// Constructors
   typedef qMRMLVolumeWidget Superclass;
   explicit qMRMLVolumeThresholdWidget(QWidget* parent=nullptr);
-  virtual ~qMRMLVolumeThresholdWidget();
+  ~qMRMLVolumeThresholdWidget() override;
 
   enum ControlMode
   {
@@ -83,7 +83,7 @@ public slots:
 
 protected:
   /// Update the widget from volume display node properties.
-  virtual void updateWidgetFromMRMLDisplayNode();
+  void updateWidgetFromMRMLDisplayNode() override;
 
   ///
   /// Set sliders range

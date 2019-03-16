@@ -40,7 +40,7 @@ public:
   /// Constructors
   typedef QComboBox Superclass;
   explicit qSlicerGPUMemoryComboBox(QWidget* parent=nullptr);
-  virtual ~qSlicerGPUMemoryComboBox();
+  ~qSlicerGPUMemoryComboBox() override;
 
   /// Return total memory available in the GPU
   Q_INVOKABLE int totalGPUMemoryInMB()const;

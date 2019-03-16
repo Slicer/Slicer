@@ -98,7 +98,7 @@ class VTK_MRML_EXPORT vtkTagTable : public vtkObject
 
  protected:
   vtkTagTable();
-  virtual ~vtkTagTable();
+  ~vtkTagTable() override;
   vtkTagTable(const vtkTagTable&);
   void operator=(const vtkTagTable&);
 

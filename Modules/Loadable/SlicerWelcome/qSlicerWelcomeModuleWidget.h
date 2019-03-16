@@ -40,7 +40,7 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerWelcomeModuleWidget(QWidget *parent=nullptr);
-  virtual ~qSlicerWelcomeModuleWidget();
+  ~qSlicerWelcomeModuleWidget() override;
 
 
 public slots:
@@ -53,7 +53,7 @@ public slots:
   bool exploreLoadedData();
 
 protected:
-  virtual void setup();
+  void setup() override;
 
 protected slots:
   void loadSource(QWidget*);

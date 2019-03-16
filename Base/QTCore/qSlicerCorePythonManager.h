@@ -40,7 +40,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCorePythonManager : public ctkAbstractP
 public:
   typedef ctkAbstractPythonManager Superclass;
   qSlicerCorePythonManager(QObject* parent=nullptr);
-  ~qSlicerCorePythonManager();
+  ~qSlicerCorePythonManager() override;
 
   /// Convenient function allowing to add a VTK object to the interpreter main module
   Q_INVOKABLE void addVTKObjectToPythonMain(const QString& name, vtkObject * object);
@@ -54,7 +54,7 @@ public:
   Q_INVOKABLE void appendPythonPaths(const QStringList& paths);
 
   /// List of directories containing Python modules.
-  virtual QStringList pythonPaths();
+  QStringList pythonPaths() override;
 
   /// Convert a string to a safe python string literal.
   /// Backslash, single-quote characters are escaped
@@ -69,7 +69,7 @@ public:
 
 protected:
 
-  virtual void preInitialization();
+  void preInitialization() override;
   ctkVTKPythonQtWrapperFactory* Factory;
 
 };

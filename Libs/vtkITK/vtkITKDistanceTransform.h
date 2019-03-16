@@ -40,9 +40,9 @@ public:
 
 protected:
   vtkITKDistanceTransform();
-  ~vtkITKDistanceTransform();
+  ~vtkITKDistanceTransform() override;
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
+  void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
   int SquaredDistance;
   int InsideIsPositive;

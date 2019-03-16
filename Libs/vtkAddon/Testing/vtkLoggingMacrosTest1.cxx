@@ -43,7 +43,7 @@ public:
     }
 protected:
   vtkLoggingMacroTester() {};
-  ~vtkLoggingMacroTester() {};
+  ~vtkLoggingMacroTester() override {};
   vtkLoggingMacroTester(const vtkLoggingMacroTester&);
   void operator=(const vtkLoggingMacroTester&);
 };

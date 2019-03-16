@@ -46,7 +46,7 @@ public:
   explicit qSlicerExtensionsManagerWidget(QWidget* parent = nullptr);
 
   /// Destructor
-  virtual ~qSlicerExtensionsManagerWidget();
+  ~qSlicerExtensionsManagerWidget() override;
 
   Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel()const;
   Q_INVOKABLE void setExtensionsManagerModel(qSlicerExtensionsManagerModel* model);
@@ -69,7 +69,7 @@ protected slots:
   void onMessageLogged(const QString& text, ctkErrorLogLevel::LogLevels level);
 
 protected:
-  virtual void timerEvent(QTimerEvent*);
+  void timerEvent(QTimerEvent*) override;
 
   QScopedPointer<qSlicerExtensionsManagerWidgetPrivate> d_ptr;
 

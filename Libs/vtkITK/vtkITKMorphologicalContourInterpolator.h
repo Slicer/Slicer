@@ -46,9 +46,9 @@ public:
 
 protected:
   vtkITKMorphologicalContourInterpolator();
-  ~vtkITKMorphologicalContourInterpolator();
+  ~vtkITKMorphologicalContourInterpolator() override;
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
+  void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
   long Label;
   int Axis;

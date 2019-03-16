@@ -45,7 +45,7 @@ public:
 
   /// Constructors
   explicit qMRMLThreeDView(QWidget* parent = nullptr);
-  virtual ~qMRMLThreeDView();
+  ~qMRMLThreeDView() override;
 
   /// Add a displayable manager to the view,
   /// the displayable manager is proper to the 3D view and is not shared

@@ -104,10 +104,10 @@ public:
 
     // Description:
     // Get the number of available colors for mapping to.
-    virtual vtkIdType GetNumberOfAvailableColors() override;
+    vtkIdType GetNumberOfAvailableColors() override;
 protected:
     vtkFSLookupTable();
-    ~vtkFSLookupTable();
+    ~vtkFSLookupTable() override;
 
     ///
     /// Low cut off, values passed in that are below this level are mapped to

@@ -37,17 +37,17 @@ public:
   typedef qSlicerFileReader Superclass;
   qSlicerAnnotationsReader(QObject* parent = nullptr);
   qSlicerAnnotationsReader(vtkSlicerAnnotationModuleLogic* logic, QObject* parent = nullptr);
-  virtual ~qSlicerAnnotationsReader();
+  ~qSlicerAnnotationsReader() override;
 
   vtkSlicerAnnotationModuleLogic* annotationLogic()const;
   void setAnnotationLogic(vtkSlicerAnnotationModuleLogic* logic);
 
-  virtual QString description()const;
-  virtual IOFileType fileType()const;
-  virtual QStringList extensions()const;
-  virtual qSlicerIOOptions* options()const;
+  QString description()const override;
+  IOFileType fileType()const override;
+  QStringList extensions()const override;
+  qSlicerIOOptions* options()const override;
 
-  virtual bool load(const IOProperties& properties);
+  bool load(const IOProperties& properties) override;
 protected:
   QScopedPointer<qSlicerAnnotationsReaderPrivate> d_ptr;
 

@@ -20,9 +20,9 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerCropVolumeModuleWidget(QWidget *parent=nullptr);
-  virtual ~qSlicerCropVolumeModuleWidget();
+  ~qSlicerCropVolumeModuleWidget() override;
 
-  virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
+  bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
 
 public slots:
   void setParametersNode(vtkMRMLNode* node);
@@ -30,9 +30,9 @@ public slots:
 protected:
   QScopedPointer<qSlicerCropVolumeModuleWidgetPrivate> d_ptr;
 
-  virtual void setup();
-  virtual void enter();
-  virtual void setMRMLScene(vtkMRMLScene*);
+  void setup() override;
+  void enter() override;
+  void setMRMLScene(vtkMRMLScene*) override;
 
 protected slots:
   void setInputVolume(vtkMRMLNode*);

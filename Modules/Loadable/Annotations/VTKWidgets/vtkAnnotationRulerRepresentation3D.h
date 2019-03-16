@@ -36,7 +36,7 @@ public:
 
   // Description:
   // Get the line actor property
-  virtual vtkProperty *GetLineProperty() override;
+  vtkProperty *GetLineProperty() override;
 
   // Description:
   // Set/Get position of the label title. 0 is at the start of the
@@ -56,14 +56,14 @@ public:
   // Required by the rendering process, check if the glyph and label actors
   // have translucency and return true if so. Fixes a bug when the label
   // was set to a non 1 opacity but was not being rendered.
-  virtual int HasTranslucentPolygonalGeometry() override;
+  int HasTranslucentPolygonalGeometry() override;
 
 protected:
 
   vtkAnnotationRulerRepresentation3D();
-  virtual ~vtkAnnotationRulerRepresentation3D();
+  ~vtkAnnotationRulerRepresentation3D() override;
 
-  virtual void BuildRepresentation() override;
+  void BuildRepresentation() override;
 
   // Internal use: set the label actor's position from current world point 1
   // and 2 positions and label position factor

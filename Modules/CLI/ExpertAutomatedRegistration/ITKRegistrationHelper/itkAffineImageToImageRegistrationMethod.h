@@ -98,7 +98,7 @@ public:
 protected:
 
   AffineImageToImageRegistrationMethod( void );
-  virtual ~AffineImageToImageRegistrationMethod( void );
+  ~AffineImageToImageRegistrationMethod( void ) override;
 
   void PrintSelf( std::ostream & os, Indent indent ) const override;
 

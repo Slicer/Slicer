@@ -66,7 +66,7 @@ public:
   // Methods from Superclass
   //
 
-  virtual void GenerateData( void ) override;
+  void GenerateData( void ) override;
 
   //
   // Custom Methods
@@ -106,18 +106,18 @@ public:
 protected:
 
   BSplineImageToImageRegistrationMethod( void );
-  virtual ~BSplineImageToImageRegistrationMethod( void );
+  ~BSplineImageToImageRegistrationMethod( void ) override;
 
   typedef InterpolateImageFunction<TImage, double> InterpolatorType;
   typedef ImageToImageMetric<TImage, TImage>       MetricType;
 
-  virtual void Optimize( MetricType * metric, InterpolatorType * interpolator ) override;
+  void Optimize( MetricType * metric, InterpolatorType * interpolator ) override;
 
   virtual void GradientOptimize( MetricType * metric, InterpolatorType * interpolator );
 
   virtual void MultiResolutionOptimize( MetricType * metric, InterpolatorType * interpolator );
 
-  virtual void PrintSelf( std::ostream & os, Indent indent ) const override;
+  void PrintSelf( std::ostream & os, Indent indent ) const override;
 
 private:
 

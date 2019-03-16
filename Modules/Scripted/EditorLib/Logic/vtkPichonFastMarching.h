@@ -98,7 +98,7 @@ public:
 
 protected:
   vtkPichonFastMarching();
-  ~vtkPichonFastMarching();
+  ~vtkPichonFastMarching() override;
 
   void ExecuteDataWithInformation(vtkDataObject *, vtkInformation *) override;
 

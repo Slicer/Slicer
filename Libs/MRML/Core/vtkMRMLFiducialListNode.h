@@ -57,23 +57,23 @@ public:
   /// MRMLNode methods
   ///--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "FiducialList";}
+  const char* GetNodeTagName() override {return "FiducialList";}
 
   ///
-  virtual void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene *scene) override;
 
   /// update display node ids
   void UpdateReferences() override;
@@ -252,11 +252,11 @@ public:
   void SetGlyphTypeFromString(const char *glyphString);
 
   /// transform utility functions
-  virtual bool CanApplyNonLinearTransforms()const override;
-  virtual void ApplyTransform(vtkAbstractTransform* transform) override;
+  bool CanApplyNonLinearTransforms()const override;
+  void ApplyTransform(vtkAbstractTransform* transform) override;
 
   /// Create default storage node or nullptr if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   /// move a fiducial point in the collection, one up/down
   /// returns -1 on failure (current index is out of bounds, the fid is already
@@ -303,7 +303,7 @@ public:
 
 protected:
   vtkMRMLFiducialListNode();
-  ~vtkMRMLFiducialListNode();
+  ~vtkMRMLFiducialListNode() override;
   vtkMRMLFiducialListNode(const vtkMRMLFiducialListNode&);
   void operator=(const vtkMRMLFiducialListNode&);
 

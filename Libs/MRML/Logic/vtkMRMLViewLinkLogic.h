@@ -51,14 +51,14 @@ public:
 
 protected:
   vtkMRMLViewLinkLogic();
-  virtual ~vtkMRMLViewLinkLogic();
+  ~vtkMRMLViewLinkLogic() override;
 
   // On a change in scene, we need to manage the observations.
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
-  virtual void OnMRMLNodeModified(vtkMRMLNode* node) override;
+  void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
+  void OnMRMLNodeModified(vtkMRMLNode* node) override;
 
   /// Broadcast a view node to other view nodes.
   void BroadcastViewNodeEvent(vtkMRMLViewNode* viewNode);

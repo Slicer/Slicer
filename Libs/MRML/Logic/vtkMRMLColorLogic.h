@@ -221,13 +221,13 @@ public:
 
 protected:
   vtkMRMLColorLogic();
-  virtual ~vtkMRMLColorLogic();
+  ~vtkMRMLColorLogic() override;
   // disable copy constructor and operator
   vtkMRMLColorLogic(const vtkMRMLColorLogic&);
   void operator=(const vtkMRMLColorLogic&);
 
   /// Reimplemented to listen to specific scene events
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
   /// Called when the scene fires vtkMRMLScene::NewSceneEvent.
   /// We add the default LUTs.

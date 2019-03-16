@@ -167,7 +167,7 @@ public:
 
 protected:
   vtkCurveGenerator();
-  ~vtkCurveGenerator();
+  ~vtkCurveGenerator() override;
 
 private:
   // inputs

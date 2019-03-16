@@ -801,7 +801,7 @@ public:
 
 protected:
   vtkITKArchetypeImageSeriesReader();
-  ~vtkITKArchetypeImageSeriesReader();
+  ~vtkITKArchetypeImageSeriesReader() override;
 
   /// Get MetaData from dictionary, removing all whitespaces from the string.
   static std::string GetMetaDataWithoutSpaces(const itk::MetaDataDictionary &dict, const std::string& tag);
@@ -852,7 +852,7 @@ protected:
   std::vector<std::string> FileNames;
   std::vector<std::pair <double, int> > FileNameSliceKey;
   CoordinateOrientationCode DesiredCoordinateOrientation;
-  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   itk::MetaDataDictionary Dictionary;
 

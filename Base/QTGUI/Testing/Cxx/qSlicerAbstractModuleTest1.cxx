@@ -25,18 +25,18 @@
 class AModule: public qSlicerAbstractModule
 {
 public:
-  virtual QString title()const { return "A Title";}
-  virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation()
+  QString title()const override { return "A Title";}
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override
   {
     return nullptr;
   }
 
-  virtual vtkMRMLAbstractLogic* createLogic()
+  vtkMRMLAbstractLogic* createLogic() override
   {
     return nullptr;
   }
 protected:
-  virtual void setup () {}
+  void setup () override {}
 };
 
 int qSlicerAbstractModuleTest1(int, char * [] )

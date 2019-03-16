@@ -84,34 +84,34 @@ public:
 protected:
 
   vtkMRMLMarkupsDisplayableManager();
-  virtual ~vtkMRMLMarkupsDisplayableManager();
+  ~vtkMRMLMarkupsDisplayableManager() override;
 
   vtkSlicerMarkupsWidget* FindClosestWidget(vtkMRMLInteractionEventData *callData, double &closestDistance2);
 
-  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) override;
 
   /// Wrap the superclass render request in a check for batch processing
   virtual void RequestRender();
 
   /// Called from RequestRender method if UpdateFromMRMLRequested is true
   /// \sa RequestRender() SetUpdateFromMRMLRequested()
-  virtual void UpdateFromMRML() override;
+  void UpdateFromMRML() override;
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
   /// Called after the corresponding MRML event is triggered, from AbstractDisplayableManager
   /// \sa ProcessMRMLSceneEvents
-  virtual void UpdateFromMRMLScene() override;
-  virtual void OnMRMLSceneEndClose() override;
-  virtual void OnMRMLSceneEndImport() override;
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
+  void UpdateFromMRMLScene() override;
+  void OnMRMLSceneEndClose() override;
+  void OnMRMLSceneEndImport() override;
+  void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
 
   /// Create a widget.
   vtkSlicerMarkupsWidget* CreateWidget(vtkMRMLMarkupsDisplayNode* node);
 
   /// Called after the corresponding MRML View container was modified
-  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;
+  void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;
 
   /// Handler for specific SliceView actions, iterate over the widgets in the helper
   virtual void OnMRMLSliceNodeModifiedEvent();
@@ -141,7 +141,7 @@ protected:
   std::set<std::string> Focus;
 
   /// Respond to interactor style events
-  virtual void OnInteractorStyleEvent(int eventid) override;
+  void OnInteractorStyleEvent(int eventid) override;
 
   /// Accessor for internal flag that disables interactor style event processing
   vtkGetMacro(DisableInteractorStyleEventsProcessing, int);

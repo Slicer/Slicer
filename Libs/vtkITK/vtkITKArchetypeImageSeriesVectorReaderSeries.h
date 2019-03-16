@@ -35,7 +35,7 @@ public:
                                    void* data);
 protected:
   vtkITKArchetypeImageSeriesVectorReaderSeries();
-  ~vtkITKArchetypeImageSeriesVectorReaderSeries();
+  ~vtkITKArchetypeImageSeriesVectorReaderSeries() override;
 
   void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo) override;
 };

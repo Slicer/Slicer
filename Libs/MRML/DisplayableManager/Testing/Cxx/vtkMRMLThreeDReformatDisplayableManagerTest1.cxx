@@ -874,9 +874,9 @@ class vtkAbortCommand: public vtkCommand
 {
 public:
   static vtkAbortCommand *New(){ return new vtkAbortCommand; }
-  virtual void Execute (vtkObject* vtkNotUsed(caller),
+  void Execute (vtkObject* vtkNotUsed(caller),
                         unsigned long vtkNotUsed(eventId),
-                        void* vtkNotUsed(callData))
+                        void* vtkNotUsed(callData)) override
     {
     this->SetAbortFlag(1);
     }

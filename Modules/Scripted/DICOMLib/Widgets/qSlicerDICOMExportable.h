@@ -70,7 +70,7 @@ class Q_SLICER_MODULE_DICOMLIB_WIDGETS_EXPORT qSlicerDICOMExportable : public QO
 public:
   typedef QObject Superclass;
   qSlicerDICOMExportable(QObject *parent = nullptr);
-  virtual ~qSlicerDICOMExportable();
+  ~qSlicerDICOMExportable() override;
 
   virtual QString name()const;
   void setName(const QString& newName);

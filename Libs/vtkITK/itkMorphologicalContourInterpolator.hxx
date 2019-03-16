@@ -89,7 +89,7 @@ protected:
   MorphologicalContourInterpolatorParallelInvoker() {}
 
 private:
-  virtual void
+  void
   ThreadedExecution( const DomainType& subDomain, const ThreadIdType threadId ) override
   {
     // Look only at the range of cells by the set of indices in the subDomain.

@@ -93,7 +93,7 @@ public:
 protected:
 
   vtkMRMLMarkupsDisplayableManagerHelper();
-  virtual ~vtkMRMLMarkupsDisplayableManagerHelper();
+  ~vtkMRMLMarkupsDisplayableManagerHelper() override;
 
 private:
 

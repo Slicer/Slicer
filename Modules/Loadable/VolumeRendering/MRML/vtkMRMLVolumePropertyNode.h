@@ -138,36 +138,36 @@ public:
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   /// Copy only the parameter set (like volume properties, piecewise functions
   /// etc. as deep copy, but no references etc.)
   void CopyParameterSet(vtkMRMLNode *node);
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "VolumeProperty";}
+  const char* GetNodeTagName() override {return "VolumeProperty";}
 
   /// Reimplemented for internal reasons.
-  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData) override;
 
   /// Create default storage node or nullptr if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
-  virtual bool GetModifiedSinceRead() override;
+  bool GetModifiedSinceRead() override;
 
 protected:
   vtkMRMLVolumePropertyNode(void);
-  ~vtkMRMLVolumePropertyNode(void);
+  ~vtkMRMLVolumePropertyNode(void) override;
 
   static int NodesFromString(const std::string& dataString, double* &data, int nodeSize);
   static int DataFromString(const std::string& dataString, double* &data);

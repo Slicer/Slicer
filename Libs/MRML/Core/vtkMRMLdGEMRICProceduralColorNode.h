@@ -33,32 +33,32 @@ public:
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "dGEMRICProceduralColor";}
+  const char* GetNodeTagName() override {return "dGEMRICProceduralColor";}
 
   ///
   ///
-  virtual void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene *scene) override;
 
   ///
   /// Get/Set for Type. In SetType, set up the custom colour options for this
   /// set of colours
-  virtual void SetType(int type) override;
+  void SetType(int type) override;
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
 
@@ -76,7 +76,7 @@ public:
 
   ///
   /// Create default storage node or nullptr if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override
     {
     return Superclass::CreateDefaultStorageNode();
     }
@@ -100,7 +100,7 @@ public:
 
 protected:
   vtkMRMLdGEMRICProceduralColorNode();
-  ~vtkMRMLdGEMRICProceduralColorNode();
+  ~vtkMRMLdGEMRICProceduralColorNode() override;
   vtkMRMLdGEMRICProceduralColorNode(const vtkMRMLdGEMRICProceduralColorNode&);
   void operator=(const vtkMRMLdGEMRICProceduralColorNode&);
 };

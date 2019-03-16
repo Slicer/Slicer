@@ -78,7 +78,7 @@ public:
 
 protected:
   vtkFSSurfaceLabelReader();
-  ~vtkFSSurfaceLabelReader();
+  ~vtkFSSurfaceLabelReader() override;
 
   vtkFloatArray *Scalars;
 

@@ -102,11 +102,11 @@ public:
 
   static bool IsROIAlignedWithInputVolume(vtkMRMLCropVolumeParametersNode* parametersNode);
 
-  virtual void RegisterNodes() override;
+  void RegisterNodes() override;
 
 protected:
   vtkSlicerCropVolumeLogic();
-  virtual ~vtkSlicerCropVolumeLogic();
+  ~vtkSlicerCropVolumeLogic() override;
 
 private:
   vtkSlicerCropVolumeLogic(const vtkSlicerCropVolumeLogic&); // Not implemented

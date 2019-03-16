@@ -39,7 +39,7 @@ public:
 protected:
 
   vtkSlicerModuleLogic();
-  virtual ~vtkSlicerModuleLogic();
+  ~vtkSlicerModuleLogic() override;
 
 private:
 

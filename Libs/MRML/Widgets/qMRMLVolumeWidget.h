@@ -44,7 +44,7 @@ public:
   /// Constructors
   typedef QWidget Superclass;
   explicit qMRMLVolumeWidget(QWidget* parentWidget = nullptr);
-  virtual ~qMRMLVolumeWidget();
+  ~qMRMLVolumeWidget() override;
 
   ///
   /// Return the current MRML node of interest

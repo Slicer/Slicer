@@ -38,13 +38,13 @@ public:
 
   typedef ctkAbstractQObjectFactory<qSlicerAbstractCoreModule> Superclass;
   qSlicerCoreModuleFactory();
-  virtual ~qSlicerCoreModuleFactory();
+  ~qSlicerCoreModuleFactory() override;
 
   ///
-  virtual void registerItems();
+  void registerItems() override;
 
   ///
-  virtual QString objectNameToKey(const QString& objectName);
+  QString objectNameToKey(const QString& objectName) override;
 
   /// Extract module name given a core module \a className
   /// For example:

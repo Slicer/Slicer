@@ -112,7 +112,7 @@ public:
 protected:
 
   vtkMRMLAbstractDisplayableManager();
-  virtual ~vtkMRMLAbstractDisplayableManager();
+  ~vtkMRMLAbstractDisplayableManager() override;
 
   /// Get MRML Displayable Node
   vtkMRMLNode * GetMRMLDisplayableNode();
@@ -137,7 +137,7 @@ protected:
   /// the mouse moves set this to include Place and ViewTransform
   virtual int ActiveInteractionModes();
 
-  virtual void ProcessMRMLNodesEvents(vtkObject* caller,
+  void ProcessMRMLNodesEvents(vtkObject* caller,
                                       unsigned long event,
                                       void * callData) override;
 
@@ -170,7 +170,7 @@ protected:
   /// Called by SetMRMLScene - Used to initialize the Scene
   /// Observe all the events of the scene and call OnMRMLSceneEndClose()
   /// or OnMRMLSceneEndImport() if the new scene is valid
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
   /// ProcessMRMLNodesEvents calls OnMRMLDisplayableNodeModifiedEvent when the
   /// displayable node (e.g. vtkMRMLSliceNode, vtkMRMLViewNode) is Modified.

@@ -50,20 +50,20 @@ public:
 
   ///
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes(const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "ModelDisplay";}
+  const char* GetNodeTagName() override {return "ModelDisplay";}
 
   /// Set and observe mesh for this model. It should be the output
   /// mesh connection of the model node.
@@ -106,11 +106,11 @@ public:
   /// are removed, therefore if a GUI or other component observes the mesh, then it will detect that
   /// the scalar is deleted and so it may deactivate the selected scalar.
   /// \sa SetActiveAttributeLocation()
-  virtual void SetActiveScalarName(const char *scalarName) override;
+  void SetActiveScalarName(const char *scalarName) override;
 
   /// Reimplemented to update pipeline with new value
   /// \sa SetActiveScalarName()
-  virtual void SetActiveAttributeLocation(int location) override;
+  void SetActiveAttributeLocation(int location) override;
 
   /// Sets active scalar name and attribute location in one step.
   /// It is preferable to use this method instead of calling SetActiveScalarName
@@ -120,7 +120,7 @@ public:
 
   /// Reimplemented to update scalar range accordingly
   /// \sa SetActiveScalarName()
-  virtual void SetScalarRangeFlag(int flag) override;
+  void SetScalarRangeFlag(int flag) override;
 
   /// Set whether to threshold the model display node.
   /// \sa ThresholdEnabled, GetThresholdEnabled()
@@ -172,11 +172,11 @@ public:
 
 protected:
   vtkMRMLModelDisplayNode();
-  ~vtkMRMLModelDisplayNode();
+  ~vtkMRMLModelDisplayNode() override;
   vtkMRMLModelDisplayNode(const vtkMRMLModelDisplayNode&);
   void operator=(const vtkMRMLModelDisplayNode&);
 
-  virtual void ProcessMRMLEvents(vtkObject *caller,
+  void ProcessMRMLEvents(vtkObject *caller,
                                  unsigned long event,
                                  void *callData) override;
 

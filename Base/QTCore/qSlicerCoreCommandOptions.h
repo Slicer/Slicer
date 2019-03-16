@@ -63,7 +63,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkCommandL
 public:
   typedef ctkCommandLineParser Superclass;
   qSlicerCoreCommandOptions();
-  virtual ~qSlicerCoreCommandOptions();
+  ~qSlicerCoreCommandOptions() override;
 
   /// Convenient method allowing to parse arguments
   bool parse(const QStringList& arguments);

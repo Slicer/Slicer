@@ -99,7 +99,7 @@ public:
 
   typedef QApplication Superclass;
   qSlicerCoreApplication(int &argc, char **argv);
-  virtual ~qSlicerCoreApplication();
+  ~qSlicerCoreApplication() override;
 
   /// Return a reference to the application singleton
   static qSlicerCoreApplication* application();

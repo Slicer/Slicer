@@ -88,32 +88,32 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationDisplayNode : 
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance () override;
+  vtkMRMLNode* CreateNodeInstance () override;
 
   // Description:
   // Read node attributes from XML (MRML) file
-  virtual void ReadXMLAttributes ( const char** atts ) override;
+  void ReadXMLAttributes ( const char** atts ) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
-  virtual void WriteXML ( ostream& of, int indent ) override;
+  void WriteXML ( ostream& of, int indent ) override;
 
 
   // Description:
   // Copy the node's attributes to this object
-  virtual void Copy ( vtkMRMLNode *node ) override;
+  void Copy ( vtkMRMLNode *node ) override;
 
   // Description:
   // Get node XML tag name (like Volume, Annotation)
-  virtual const char* GetNodeTagName() override {return "AnnotationDisplay";}
+  const char* GetNodeTagName() override {return "AnnotationDisplay";}
 
   // Description:
   // Finds the storage node and read the data
-  virtual void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene *scene) override;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+  void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) override;
 
@@ -189,7 +189,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationDisplayNode : 
 
  protected:
   vtkMRMLAnnotationDisplayNode();
-  ~vtkMRMLAnnotationDisplayNode();
+  ~vtkMRMLAnnotationDisplayNode() override;
   vtkMRMLAnnotationDisplayNode( const vtkMRMLAnnotationDisplayNode& );
   void operator= ( const vtkMRMLAnnotationDisplayNode& );
 

@@ -45,7 +45,7 @@ public:
   /// Constructors
   typedef ctkVTKAbstractMatrixWidget Superclass;
   explicit qMRMLMatrixWidget(QWidget* parent);
-  virtual ~qMRMLMatrixWidget();
+  ~qMRMLMatrixWidget() override;
 
   ///
   /// Set/Get Coordinate system

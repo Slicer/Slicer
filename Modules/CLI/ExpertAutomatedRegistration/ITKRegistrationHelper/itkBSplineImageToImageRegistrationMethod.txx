@@ -111,7 +111,7 @@ protected:
     m_UpdateInterval = 1;
     m_DontShowParameters = false;
   }
-  ~BSplineImageRegistrationViewer()
+  ~BSplineImageRegistrationViewer() override
   {
   }
 

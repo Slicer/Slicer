@@ -61,9 +61,9 @@ class VTK_ITK_EXPORT vtkITKIslandMath : public vtkSimpleImageToImageFilter
 
 protected:
   vtkITKIslandMath();
-  ~vtkITKIslandMath();
+  ~vtkITKIslandMath() override;
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
+  void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
   int FullyConnected;
   int SliceBySlice;

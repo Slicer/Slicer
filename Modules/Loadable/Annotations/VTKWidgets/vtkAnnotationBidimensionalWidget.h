@@ -32,12 +32,12 @@ public:
   vtkTypeMacro(vtkAnnotationBidimensionalWidget, vtkBiDimensionalWidget);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual void CreateDefaultRepresentation() override;
+  void CreateDefaultRepresentation() override;
 
 protected:
 
   vtkAnnotationBidimensionalWidget();
-  virtual ~vtkAnnotationBidimensionalWidget();
+  ~vtkAnnotationBidimensionalWidget() override;
 
 private:
 

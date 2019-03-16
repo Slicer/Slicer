@@ -20,18 +20,18 @@ public:
   vtkTypeMacro(vtkMRMLAnnotationAngleStorageNode,vtkMRMLAnnotationLinesStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   // Description:
   // Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName() override {return "AnnotationAngleStorage";}
+  const char* GetNodeTagName() override {return "AnnotationAngleStorage";}
 
   /// Return true if the node can be read in
-  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
 
 protected:
   vtkMRMLAnnotationAngleStorageNode();
-  ~vtkMRMLAnnotationAngleStorageNode();
+  ~vtkMRMLAnnotationAngleStorageNode() override;
   vtkMRMLAnnotationAngleStorageNode(const vtkMRMLAnnotationAngleStorageNode&);
   void operator=(const vtkMRMLAnnotationAngleStorageNode&);
 
@@ -47,10 +47,10 @@ protected:
   int ReadAnnotationAngleProperties(vtkMRMLAnnotationAngleNode *refNode, char line[1024], int &typeColumn, int& line1IDColumn,    int& line2Column, int& selColumn, int& visColumn, int& numColumns);
 
   /// Read data and set it in the referenced node
-  virtual int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode *refNode) override;
 
   /// Write data from a referenced node to the stream
-  virtual int WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream & of) override;
+  int WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream & of) override;
 };
 
 #endif

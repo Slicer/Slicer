@@ -43,7 +43,7 @@ public:
 protected:
 
   vtkSlicerScriptedLoadableModuleLogic();
-  virtual ~vtkSlicerScriptedLoadableModuleLogic();
+  ~vtkSlicerScriptedLoadableModuleLogic() override;
 
 //  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
 

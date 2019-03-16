@@ -96,7 +96,7 @@ protected:
   vtkSmartPointer<vtkRenderWindow> NewOffscreenRenderWindow();
 
   vtkSystemInformation();
-  virtual ~vtkSystemInformation();
+  ~vtkSystemInformation() override;
   vtkSystemInformation(const vtkSystemInformation&);
   void operator=(const vtkSystemInformation&);
 

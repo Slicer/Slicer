@@ -64,28 +64,28 @@ class VTK_MRML_EXPORT vtkMRMLTransformDisplayNode : public vtkMRMLDisplayNode
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance () override;
+  vtkMRMLNode* CreateNodeInstance () override;
 
   ///
   /// Read node attributes from XML (MRML) file
-  virtual void ReadXMLAttributes ( const char** atts ) override;
+  void ReadXMLAttributes ( const char** atts ) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML ( ostream& of, int indent ) override;
+  void WriteXML ( ostream& of, int indent ) override;
 
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy ( vtkMRMLNode *node ) override;
+  void Copy ( vtkMRMLNode *node ) override;
 
   ///
   /// Get node XML tag name (like Volume, UnstructuredGrid)
-  virtual const char* GetNodeTagName ( ) override {return "TransformDisplayNode";}
+  const char* GetNodeTagName ( ) override {return "TransformDisplayNode";}
 
   ///
   /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+  void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) override;
 
@@ -244,7 +244,7 @@ protected:
 
  protected:
   vtkMRMLTransformDisplayNode ( );
-  ~vtkMRMLTransformDisplayNode ( );
+  ~vtkMRMLTransformDisplayNode ( ) override;
   vtkMRMLTransformDisplayNode ( const vtkMRMLTransformDisplayNode& );
   void operator= ( const vtkMRMLTransformDisplayNode& );
 

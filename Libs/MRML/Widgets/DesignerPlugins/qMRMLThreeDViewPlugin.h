@@ -12,12 +12,12 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLThreeDViewPlugin :
 public:
   qMRMLThreeDViewPlugin(QObject *_parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent);
-  QString  domXml() const;
+  QWidget *createWidget(QWidget *_parent) override;
+  QString  domXml() const override;
 //   QIcon    icon() const;
-  QString  includeFile() const;
-  bool     isContainer() const;
-  QString  name() const;
+  QString  includeFile() const override;
+  bool     isContainer() const override;
+  QString  name() const override;
 
 };
 

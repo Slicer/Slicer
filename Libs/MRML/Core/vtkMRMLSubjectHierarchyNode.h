@@ -85,20 +85,20 @@ public:
   vtkTypeMacro(vtkMRMLSubjectHierarchyNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   /// Read item from XML
   virtual void ReadItemFromXML(const char** atts);
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
   /// Write this node's body to a MRML file in XML format.
-  virtual void WriteNodeBodyXML(ostream& of, int indent) override;
+  void WriteNodeBodyXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   /// Get node XML tag name (like Volume, Contour)
-  virtual const char* GetNodeTagName() override;
+  const char* GetNodeTagName() override;
 
 // Get/Set methods
 public:
@@ -361,7 +361,7 @@ protected:
 
 protected:
   vtkMRMLSubjectHierarchyNode();
-  ~vtkMRMLSubjectHierarchyNode();
+  ~vtkMRMLSubjectHierarchyNode() override;
   vtkMRMLSubjectHierarchyNode(const vtkMRMLSubjectHierarchyNode&);
   void operator=(const vtkMRMLSubjectHierarchyNode&);
 

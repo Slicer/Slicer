@@ -30,11 +30,11 @@ public:
 
   vtkTypeMacro(vtkMRMLTransformableNodeTestHelper1,vtkMRMLTransformableNode);
 
-  virtual vtkMRMLNode* CreateNodeInstance() override
+  vtkMRMLNode* CreateNodeInstance() override
     {
     return vtkMRMLTransformableNodeTestHelper1::New();
     }
-  virtual const char* GetNodeTagName() override
+  const char* GetNodeTagName() override
     {
     return "vtkMRMLTransformableNodeTestHelper1";
     }

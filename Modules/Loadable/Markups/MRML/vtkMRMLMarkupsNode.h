@@ -123,38 +123,38 @@ public:
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "Markups";};
+  const char* GetNodeTagName() override {return "Markups";};
 
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   /// Write this node's information to a vector of strings for passing to a CLI,
   /// precede each datum with the prefix if not an empty string
   /// coordinateSystemFlag = 0 for RAS, 1 for LPS
   /// multipleFlag = 1 for the whole list, 1 for the first selected control point
-  virtual void WriteCLI(std::vector<std::string>& commandLine,
+  void WriteCLI(std::vector<std::string>& commandLine,
                         std::string prefix, int coordinateSystem = 0,
                         int multipleFlag = 1) override;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   /// Alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+  void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) override;
 
 
   /// Create default storage node or nullptr if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   /// Create and observe default display node(s)
-  virtual void CreateDefaultDisplayNodes() override;
+  void CreateDefaultDisplayNodes() override;
 
   /// Access to a VTK string array, not currently used
   int AddText(const char *newText);
@@ -413,10 +413,10 @@ public:
 
   /// Returns true since can apply non linear transforms
   /// \sa ApplyTransform
-  virtual bool CanApplyNonLinearTransforms()const override;
+  bool CanApplyNonLinearTransforms()const override;
   /// Apply the passed transformation to all of the control points
   /// \sa CanApplyNonLinearTransforms
-  virtual void ApplyTransform(vtkAbstractTransform* transform) override;
+  void ApplyTransform(vtkAbstractTransform* transform) override;
 
   /// Get the markup node label format string that defines the markup names.
   /// \sa SetMarkupLabelFormat
@@ -445,7 +445,7 @@ public:
   /// So if you invoke class specific modified events without calling Modified() on the
   /// markups, GetModifiedSinceRead() won't return true.
   /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
-  virtual bool GetModifiedSinceRead() override;
+  bool GetModifiedSinceRead() override;
 
   /// Reset the id of the Nth control point according to the local policy
   /// Called after an already initialised markup has been added to the
@@ -481,12 +481,12 @@ public:
 
   int GetControlPointIndexFromInterpolatedPointIndex(vtkIdType interpolatedPointIndex);
 
-  virtual void GetRASBounds(double bounds[6]) override;
-  virtual void GetBounds(double bounds[6]) override;
+  void GetRASBounds(double bounds[6]) override;
+  void GetBounds(double bounds[6]) override;
 
 protected:
   vtkMRMLMarkupsNode();
-  ~vtkMRMLMarkupsNode();
+  ~vtkMRMLMarkupsNode() override;
   vtkMRMLMarkupsNode(const vtkMRMLMarkupsNode&);
   void operator=(const vtkMRMLMarkupsNode&);
 

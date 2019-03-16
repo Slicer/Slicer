@@ -43,7 +43,7 @@ public:
 
   /// Constructors
   explicit qMRMLLayoutWidget(QWidget* widget);
-  virtual ~qMRMLLayoutWidget();
+  ~qMRMLLayoutWidget() override;
 
   /// Layout manager
   Q_INVOKABLE qMRMLLayoutManager* layoutManager()const;

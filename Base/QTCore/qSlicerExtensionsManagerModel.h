@@ -67,7 +67,7 @@ public:
   explicit qSlicerExtensionsManagerModel(QObject* parent = nullptr);
 
   /// Destructor
-  virtual ~qSlicerExtensionsManagerModel();
+  ~qSlicerExtensionsManagerModel() override;
 
   /// \brief Extension metadata typedef
   typedef QVariantMap ExtensionMetadataType;

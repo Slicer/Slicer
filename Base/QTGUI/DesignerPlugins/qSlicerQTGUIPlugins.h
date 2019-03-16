@@ -41,7 +41,7 @@ class Q_SLICER_DESIGNER_PLUGINS_EXPORT qSlicerQTGUIPlugins
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
 
 public:
-  QList<QDesignerCustomWidgetInterface*> customWidgets() const
+  QList<QDesignerCustomWidgetInterface*> customWidgets() const override
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qSlicerWidgetPlugin;

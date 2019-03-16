@@ -48,13 +48,13 @@ public:
 
   static vtkSlicerSceneViewsModuleLogic *New();
   vtkTypeMacro(vtkSlicerSceneViewsModuleLogic,vtkSlicerModuleLogic);
-  virtual void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Initialize listening to MRML events
-  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
 
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
-  virtual void RegisterNodes() override;
+  void RegisterNodes() override;
 
   /// Create a sceneView..
   void CreateSceneView(const char* name, const char* description, int screenshotType, vtkImageData* screenshot);
@@ -92,14 +92,14 @@ protected:
 
   vtkSlicerSceneViewsModuleLogic();
 
-  virtual ~vtkSlicerSceneViewsModuleLogic();
+  ~vtkSlicerSceneViewsModuleLogic() override;
 
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
-  virtual void OnMRMLSceneEndImport() override;
-  virtual void OnMRMLSceneEndRestore() override;
-  virtual void OnMRMLSceneEndClose() override;
+  void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  void OnMRMLSceneEndImport() override;
+  void OnMRMLSceneEndRestore() override;
+  void OnMRMLSceneEndClose() override;
 
-  virtual void OnMRMLNodeModified(vtkMRMLNode* node) override;
+  void OnMRMLNodeModified(vtkMRMLNode* node) override;
 
 private:
 

@@ -41,23 +41,23 @@ public:
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override;
+  const char* GetNodeTagName() override;
 
   ///
   /// Set the Table node id displayed in this Table View
@@ -83,7 +83,7 @@ public:
 
 protected:
   vtkMRMLTableViewNode();
-  ~vtkMRMLTableViewNode();
+  ~vtkMRMLTableViewNode() override;
   vtkMRMLTableViewNode(const vtkMRMLTableViewNode&);
   void operator=(const vtkMRMLTableViewNode&);
 

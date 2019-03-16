@@ -38,9 +38,9 @@ public:
 protected:
 
   vtkAnnotationBidimensionalRepresentation();
-  virtual ~vtkAnnotationBidimensionalRepresentation();
+  ~vtkAnnotationBidimensionalRepresentation() override;
 
-  virtual void BuildRepresentation() override;
+  void BuildRepresentation() override;
 
 private:
 

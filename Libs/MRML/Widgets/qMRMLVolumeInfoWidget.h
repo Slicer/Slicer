@@ -45,7 +45,7 @@ public:
   typedef qMRMLWidget Superclass;
 
   qMRMLVolumeInfoWidget(QWidget *parent=nullptr);
-  virtual ~qMRMLVolumeInfoWidget();
+  ~qMRMLVolumeInfoWidget() override;
 
   vtkMRMLVolumeNode* volumeNode()const;
   // Depends on the dimension, spacing and origin of the volume

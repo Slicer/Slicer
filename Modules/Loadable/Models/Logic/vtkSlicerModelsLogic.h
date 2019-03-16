@@ -94,16 +94,16 @@ class VTK_SLICER_MODELS_MODULE_LOGIC_EXPORT vtkSlicerModelsLogic
 
 protected:
   vtkSlicerModelsLogic();
-  ~vtkSlicerModelsLogic();
+  ~vtkSlicerModelsLogic() override;
   vtkSlicerModelsLogic(const vtkSlicerModelsLogic&);
   void operator=(const vtkSlicerModelsLogic&);
 
   /// Reimplemented to observe the NodeRemovedEvent scene event.
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
   /// Reimplemented to make sure the singleton vtkMRMLClipModelsNode is
   /// instantiated.
-  virtual void ObserveMRMLScene() override;
+  void ObserveMRMLScene() override;
 
   //
   vtkMRMLModelNode *ActiveModelNode;

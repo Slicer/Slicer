@@ -78,7 +78,7 @@ public:
 
   /// Construct an empty qMRMLSpinBox with a null scene.
   explicit qMRMLSpinBox(QWidget* parent = nullptr);
-  virtual ~qMRMLSpinBox();
+  ~qMRMLSpinBox() override;
 
   enum UnitAwareProperty
     {

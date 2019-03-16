@@ -55,14 +55,14 @@ public:
   // List of node that should be updated when NodeAddedEvent is caught
   std::vector<std::string> NodeAddedClassNames;
 
-  virtual void ResetNumberOfEvents()
+  void ResetNumberOfEvents() override
     {
     vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback::ResetNumberOfEvents();
     this->NumberOfSingletonNodes = 0;
     this->NodeAddedClassNames.clear();
     }
 
-  virtual void Execute(vtkObject* caller, unsigned long eid, void *calldata)
+  void Execute(vtkObject* caller, unsigned long eid, void *calldata) override
     {
     vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback::Execute(caller, eid, calldata);
 
@@ -175,7 +175,7 @@ protected:
     {
     this->NumberOfSingletonNodes = 0;
     }
-  ~vtkMRMLSceneCallback() {};
+  ~vtkMRMLSceneCallback() override {};
 
 }; // class vtkMRMLSceneCallback
 

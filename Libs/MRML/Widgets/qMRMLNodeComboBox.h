@@ -90,7 +90,7 @@ public:
   /// Construct an empty qMRMLNodeComboBox with a null scene,
   /// no nodeType, where the hidden nodes are not forced on display.
   explicit qMRMLNodeComboBox(QWidget* parent = nullptr);
-  virtual ~qMRMLNodeComboBox();
+  ~qMRMLNodeComboBox() override;
 
   /// Get MRML scene that has been set by setMRMLScene(), there is no scene
   /// by default (0).
@@ -370,7 +370,7 @@ protected:
   /// QComboBox view or item delegate.
   QComboBox* comboBox()const;
 
-  virtual void changeEvent(QEvent* event);
+  void changeEvent(QEvent* event) override;
 
 protected slots:
   void activateExtraItem(const QModelIndex& index);

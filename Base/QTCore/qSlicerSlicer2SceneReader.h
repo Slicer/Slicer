@@ -37,16 +37,16 @@ public:
   typedef qSlicerFileReader Superclass;
   qSlicerSlicer2SceneReader(QObject* parent = nullptr);
   qSlicerSlicer2SceneReader(vtkSlicerApplicationLogic* logic, QObject* parent = nullptr);
-  virtual ~qSlicerSlicer2SceneReader();
+  ~qSlicerSlicer2SceneReader() override;
 
   vtkSlicerApplicationLogic* applicationLogic()const;
   void setApplicationLogic(vtkSlicerApplicationLogic* logic);
 
-  virtual QString description()const;
-  virtual IOFileType fileType()const;
-  virtual QStringList extensions()const;
+  QString description()const override;
+  IOFileType fileType()const override;
+  QStringList extensions()const override;
 
-  virtual bool load(const IOProperties& properties);
+  bool load(const IOProperties& properties) override;
 protected:
   QScopedPointer<qSlicerSlicer2SceneReaderPrivate> d_ptr;
 

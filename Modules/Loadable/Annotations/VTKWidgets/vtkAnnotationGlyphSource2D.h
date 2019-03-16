@@ -144,7 +144,7 @@ public:
 
 protected:
   vtkAnnotationGlyphSource2D();
-  ~vtkAnnotationGlyphSource2D() {};
+  ~vtkAnnotationGlyphSource2D() override {};
 
   int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 

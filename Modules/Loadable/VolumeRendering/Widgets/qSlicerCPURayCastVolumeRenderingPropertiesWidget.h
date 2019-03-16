@@ -34,7 +34,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerCPURayCastVolumeRend
 public:
   typedef qSlicerVolumeRenderingPropertiesWidget Superclass;
   qSlicerCPURayCastVolumeRenderingPropertiesWidget(QWidget *parent=nullptr);
-  virtual ~qSlicerCPURayCastVolumeRenderingPropertiesWidget();
+  ~qSlicerCPURayCastVolumeRenderingPropertiesWidget() override;
 
   vtkMRMLCPURayCastVolumeRenderingDisplayNode* mrmlCPURayCastDisplayNode();
 
@@ -42,7 +42,7 @@ public slots:
   void setRenderingTechnique(int index);
 
 protected slots:
-  virtual void updateWidgetFromMRML();
+  void updateWidgetFromMRML() override;
 
 protected:
   QScopedPointer<qSlicerCPURayCastVolumeRenderingPropertiesWidgetPrivate> d_ptr;

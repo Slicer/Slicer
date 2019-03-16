@@ -53,7 +53,7 @@ public:
 
   /// Constructors
   explicit qMRMLThreeDWidget(QWidget* parent = nullptr);
-  virtual ~qMRMLThreeDWidget();
+  ~qMRMLThreeDWidget() override;
 
   /// Get slice controller
   Q_INVOKABLE qMRMLThreeDViewControllerWidget* threeDController()const;
@@ -96,7 +96,7 @@ public:
   Q_INVOKABLE void setViewLogics(vtkCollection* logics);
 
 public slots:
-  void setMRMLScene(vtkMRMLScene* newScene);
+  void setMRMLScene(vtkMRMLScene* newScene) override;
 
   /// Set the current \a viewNode to observe
   void setMRMLViewNode(vtkMRMLViewNode* newViewNode);

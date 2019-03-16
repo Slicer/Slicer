@@ -40,7 +40,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedFileWriter
 public:
   typedef qSlicerFileWriter Superclass;
   qSlicerScriptedFileWriter(QObject* parent = nullptr);
-  virtual ~qSlicerScriptedFileWriter();
+  ~qSlicerScriptedFileWriter() override;
 
   QString pythonSource()const;
 
@@ -52,23 +52,23 @@ public:
 
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerIO::description()
-  virtual QString description()const;
+  QString description()const override;
 
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerIO::fileType()
-  virtual IOFileType fileType()const;
+  IOFileType fileType()const override;
 
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerFileWriter::canWriteObject()
-  virtual bool canWriteObject(vtkObject* object)const;
+  bool canWriteObject(vtkObject* object)const override;
 
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerFileWriter::extensions()
-  virtual QStringList extensions(vtkObject* object)const;
+  QStringList extensions(vtkObject* object)const override;
 
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerFileWriter::write()
-  virtual bool write(const qSlicerIO::IOProperties& properties);
+  bool write(const qSlicerIO::IOProperties& properties) override;
 
 protected:
   QScopedPointer<qSlicerScriptedFileWriterPrivate> d_ptr;

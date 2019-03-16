@@ -44,7 +44,7 @@ public:
 
 protected:
   vtkImageLabelOutline();
-  ~vtkImageLabelOutline();
+  ~vtkImageLabelOutline() override;
 
   float Background;
   int Outline;

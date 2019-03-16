@@ -225,7 +225,7 @@ public:
   qSlicerSubjectHierarchyPluginHandler(QObject* parent=nullptr);
 
   /// Private destructor made public to enable python wrapping
-  virtual ~qSlicerSubjectHierarchyPluginHandler();
+  ~qSlicerSubjectHierarchyPluginHandler() override;
 
 private:
   Q_DISABLE_COPY(qSlicerSubjectHierarchyPluginHandler);

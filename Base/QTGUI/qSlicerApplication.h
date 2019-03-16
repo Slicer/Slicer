@@ -59,7 +59,7 @@ public:
 
   typedef qSlicerCoreApplication Superclass;
   qSlicerApplication(int &argc, char **argv);
-  virtual ~qSlicerApplication();
+  ~qSlicerApplication() override;
 
   /// Return a reference to the application singleton
   static qSlicerApplication* application();
@@ -75,7 +75,7 @@ public:
   ///
   /// http://stackoverflow.com/questions/13878373/where-am-i-supposed-to-reimplement-qapplicationnotify-function
   ///
-  virtual bool notify(QObject * receiver, QEvent * event);
+  bool notify(QObject * receiver, QEvent * event) override;
 
   /// Get errorLogModel
   Q_INVOKABLE ctkErrorLogModel* errorLogModel()const;
@@ -207,9 +207,9 @@ signals:
 
 protected:
   /// Reimplemented from qSlicerCoreApplication
-  virtual void handlePreApplicationCommandLineArguments();
-  virtual void handleCommandLineArguments();
-  virtual void onSlicerApplicationLogicModified();
+  void handlePreApplicationCommandLineArguments() override;
+  void handleCommandLineArguments() override;
+  void onSlicerApplicationLogicModified() override;
 
   /// Set up file logging. Creates and sets new log file and deletes the oldest
   /// one from the stored queue

@@ -77,7 +77,7 @@ protected:
 public:
   typedef QObject Superclass;
   qSlicerSegmentEditorPaintEffectPrivate(qSlicerSegmentEditorPaintEffect& object);
-  ~qSlicerSegmentEditorPaintEffectPrivate();
+  ~qSlicerSegmentEditorPaintEffectPrivate() override;
 
   /// Depending on the \sa DelayedPaint mode, either paint the given point or queue
   /// it up with a marker for later painting

@@ -83,7 +83,7 @@ public:
 
 protected:
   vtkCenteredAxesActor() {};
-  ~vtkCenteredAxesActor() {};
+  ~vtkCenteredAxesActor() override {};
 };
 
 vtkStandardNewMacro(vtkCenteredAxesActor);
@@ -100,7 +100,7 @@ public:
     {
     this->DisplayableManager = nullptr;
     }
-  virtual void Execute(vtkObject* vtkNotUsed(wdg), unsigned long vtkNotUsed(event), void* vtkNotUsed(calldata))
+  void Execute(vtkObject* vtkNotUsed(wdg), unsigned long vtkNotUsed(event), void* vtkNotUsed(calldata)) override
     {
     if (this->DisplayableManager)
       {

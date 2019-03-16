@@ -45,7 +45,7 @@ public:
   explicit qSlicerSettingsDeveloperPanel(QWidget* parent = nullptr);
 
   /// Destructor
-  virtual ~qSlicerSettingsDeveloperPanel();
+  ~qSlicerSettingsDeveloperPanel() override;
 
 public slots:
 

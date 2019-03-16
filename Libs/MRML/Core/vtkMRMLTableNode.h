@@ -56,27 +56,27 @@ public:
   /// Standard methods for MRML nodes
   //----------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override { return "Table"; }
+  const char* GetNodeTagName() override { return "Table"; }
 
   ///
   /// Method to propagate events generated in mrml
-  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) override;
 
   //----------------------------------------------------------------
   /// Get and Set Macros
@@ -119,7 +119,7 @@ public:
 
   ///
   /// Create default storage node or nullptr if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   ///
   /// Add an array to the table as a new column.
@@ -296,7 +296,7 @@ public:
   //----------------------------------------------------------------
  protected:
   vtkMRMLTableNode();
-  ~vtkMRMLTableNode();
+  ~vtkMRMLTableNode() override;
   vtkMRMLTableNode(const vtkMRMLTableNode&);
   void operator=(const vtkMRMLTableNode&);
 

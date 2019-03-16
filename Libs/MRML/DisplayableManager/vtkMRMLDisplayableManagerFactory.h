@@ -86,7 +86,7 @@ public:
 protected:
 
   vtkMRMLDisplayableManagerFactory();
-  virtual ~vtkMRMLDisplayableManagerFactory();
+  ~vtkMRMLDisplayableManagerFactory() override;
 
   class vtkInternal;
   vtkInternal* Internal;

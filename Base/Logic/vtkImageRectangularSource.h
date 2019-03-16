@@ -81,7 +81,7 @@ public:
 
 protected:
   vtkImageRectangularSource();
-  ~vtkImageRectangularSource();
+  ~vtkImageRectangularSource() override;
 
   int **Corners;
 
@@ -93,8 +93,8 @@ protected:
   int OutputScalarType;
   int InsideGraySlopeFlag;
 
-  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
-  virtual void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo) override;
+  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo) override;
 private:
   vtkImageRectangularSource(const vtkImageRectangularSource&);  /// Not implemented.
   void operator=(const vtkImageRectangularSource&);  /// Not implemented.

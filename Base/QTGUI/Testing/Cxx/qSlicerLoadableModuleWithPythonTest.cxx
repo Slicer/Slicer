@@ -33,22 +33,22 @@ public:
 
   typedef qSlicerLoadableModule Superclass;
   qSlicerLoadableHelloWorldModule(QObject *parent=nullptr):Superclass(parent){}
-  virtual ~qSlicerLoadableHelloWorldModule(){}
+  ~qSlicerLoadableHelloWorldModule() override{}
 
-  virtual QString helpText()const { return QString("helpText"); }
-  virtual QString acknowledgementText()const { return QString("acknowledgementText"); }
+  QString helpText()const override { return QString("helpText"); }
+  QString acknowledgementText()const override { return QString("acknowledgementText"); }
 
   qSlicerGetTitleMacro("Loadable Hello world");
 
 protected:
   /// Create and return the widget representation associated to this module
-  virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation()
+  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override
   {
     return nullptr;
   }
 
   /// Create and return the logic associated to this module
-  virtual vtkMRMLAbstractLogic* createLogic()
+  vtkMRMLAbstractLogic* createLogic() override
   {
     return nullptr;
   }

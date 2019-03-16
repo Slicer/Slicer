@@ -263,7 +263,7 @@ template<class TInputImage,
  protected:
 
   GrowCutSegmentationImageFilter();
-  ~GrowCutSegmentationImageFilter() {};
+  ~GrowCutSegmentationImageFilter() override {};
 
    // Override since the filter needs all the data for the algorithm
   void GenerateInputRequestedRegion() override;

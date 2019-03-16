@@ -13,7 +13,7 @@ public:
   typedef qMRMLScreenShotDialog Superclass;
 
   qSlicerSceneViewsModuleDialog();
-  ~qSlicerSceneViewsModuleDialog();
+  ~qSlicerSceneViewsModuleDialog() override;
 
   /// Set the SceneViews module logic.
   void setLogic(vtkSlicerSceneViewsModuleLogic* logic);
@@ -23,7 +23,7 @@ public:
   /// Reset the dialog and give it a unique name.
   void reset();
 
-  virtual void accept();
+  void accept() override;
 
 private:
     vtkSlicerSceneViewsModuleLogic* m_Logic;

@@ -46,7 +46,7 @@ public:
 
   /// Constructors
   explicit qMRMLChartViewControllerWidget(QWidget* parent = nullptr);
-  virtual ~qMRMLChartViewControllerWidget();
+  ~qMRMLChartViewControllerWidget() override;
 
   /// Set the label for the chart view (abbreviation for the view
   /// name)
@@ -57,7 +57,7 @@ public:
 
 public slots:
   /// Set the scene
-  virtual void setMRMLScene(vtkMRMLScene* newScene);
+  void setMRMLScene(vtkMRMLScene* newScene) override;
 
   /// Set the ChartView with which this controller interacts
   void setChartView(qMRMLChartView* ChartView);

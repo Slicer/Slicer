@@ -57,7 +57,7 @@ protected:
 public:
   typedef QObject Superclass;
   qMRMLViewControllerBarPrivate(qMRMLViewControllerBar& object);
-  virtual ~qMRMLViewControllerBarPrivate();
+  ~qMRMLViewControllerBarPrivate() override;
 
   virtual void init();
   virtual void setColor(QColor color);
@@ -72,7 +72,7 @@ public:
   qMRMLViewControllerBar::LayoutBehavior  LayoutBehavior;
   QColor                           BarColor;
 
-  virtual bool eventFilter(QObject* object, QEvent* event);
+  bool eventFilter(QObject* object, QEvent* event) override;
 
 protected:
   virtual void setupPopupUi();

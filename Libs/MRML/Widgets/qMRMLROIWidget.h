@@ -42,7 +42,7 @@ class QMRML_WIDGETS_EXPORT qMRMLROIWidget : public QWidget
 public:
   /// Constructors
   explicit qMRMLROIWidget(QWidget* parent);
-  virtual ~qMRMLROIWidget();
+  ~qMRMLROIWidget() override;
 
   /// Returns the current MRML ROI node
   vtkMRMLROINode* mrmlROINode()const;

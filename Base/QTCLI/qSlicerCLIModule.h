@@ -44,7 +44,7 @@ public:
 
   typedef qSlicerAbstractModule Superclass;
   qSlicerCLIModule(QWidget *parent=nullptr);
-  virtual ~qSlicerCLIModule();
+  ~qSlicerCLIModule() override;
 
   ///
   /// Assign the module XML description.
@@ -52,12 +52,12 @@ public:
   void setXmlModuleDescription(const QString& xmlModuleDescription);
 
   /// Optionally set in the module XML description
-  virtual int index() const;
+  int index() const override;
 
   ///
   /// Return help/acknowledgement text
-  virtual QString helpText() const;
-  virtual QString acknowledgementText() const;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
 
   /// Set temporary directory associated with the module
   void setTempDirectory(const QString& tempDirectory);
@@ -78,18 +78,18 @@ public:
   /// 'createLogic' method.
   Q_INVOKABLE vtkSlicerCLIModuleLogic* cliModuleLogic();
 
-  virtual QString title() const;
+  QString title() const override;
 
   /// Extracted from the "category" field
-  virtual QStringList categories() const;
+  QStringList categories() const override;
 
   /// Extracted from the "contributor" field
-  virtual QStringList contributors() const;
+  QStringList contributors() const override;
 
   /// Specify editable node types
-  virtual QStringList associatedNodeTypes()const;
+  QStringList associatedNodeTypes()const override;
 
-  virtual QImage logo() const;
+  QImage logo() const override;
   void setLogo(const ModuleLogo& logo);
 
   /// Convert a ModuleLogo into a QIcon
@@ -102,15 +102,15 @@ public:
 
 protected:
   ///
-  virtual void setup();
+  void setup() override;
 
   ///
   /// Create and return the widget representation associated to this module
-  virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
+  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
 
   ///
   /// Create and return the logic associated to this module
-  virtual vtkMRMLAbstractLogic* createLogic();
+  vtkMRMLAbstractLogic* createLogic() override;
 
 protected:
   QScopedPointer<qSlicerCLIModulePrivate> d_ptr;

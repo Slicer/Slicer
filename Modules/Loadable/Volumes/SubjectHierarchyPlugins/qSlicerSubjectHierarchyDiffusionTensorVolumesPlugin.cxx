@@ -63,7 +63,7 @@ protected:
   qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin* const q_ptr;
 public:
   qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin& object);
-  ~qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate();
+  ~qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate() override;
   void init();
 public:
   QIcon DiffusionTensorVolumeIcon;

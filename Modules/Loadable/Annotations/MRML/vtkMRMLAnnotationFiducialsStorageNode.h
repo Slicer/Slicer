@@ -19,22 +19,22 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationFiducialsStora
   static vtkMRMLAnnotationFiducialsStorageNode *New();
   vtkTypeMacro(vtkMRMLAnnotationFiducialsStorageNode,vtkMRMLAnnotationControlPointsStorageNode);
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   // Description:
   // Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName() override {return "AnnotationFiducialsStorage";}
+  const char* GetNodeTagName() override {return "AnnotationFiducialsStorage";}
 
   /// utility method called by the annotation hierarchy node to let this
   /// storage node read a single fiducial's data from an already open file
   int ReadOneFiducial(fstream & fstr, vtkMRMLAnnotationFiducialNode *fiducialNode);
 
   /// Return true if the node can be read in
-  virtual bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
 protected:
   vtkMRMLAnnotationFiducialsStorageNode() { }
-  ~vtkMRMLAnnotationFiducialsStorageNode() { }
+  ~vtkMRMLAnnotationFiducialsStorageNode() override { }
   vtkMRMLAnnotationFiducialsStorageNode(const vtkMRMLAnnotationFiducialsStorageNode&);
   void operator=(const vtkMRMLAnnotationFiducialsStorageNode&);
 
@@ -46,10 +46,10 @@ protected:
 
   // Description:
   // Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes() override;
+  void InitializeSupportedWriteFileTypes() override;
 
   // Read data and set it in the referenced node
-  virtual int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode *refNode) override;
 
 };
 

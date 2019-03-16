@@ -45,15 +45,15 @@ public:
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
   qSlicerSubjectHierarchyRegisterPlugin(QObject* parent = nullptr);
-  virtual ~qSlicerSubjectHierarchyRegisterPlugin();
+  ~qSlicerSubjectHierarchyRegisterPlugin() override;
 
 public:
   /// Get item context menu item actions to add to tree view
-  virtual QList<QAction*> itemContextMenuActions()const;
+  QList<QAction*> itemContextMenuActions()const override;
 
   /// Show context menu actions valid for a given subject hierarchy item.
   /// \param itemID Subject Hierarchy item to show the context menu items for
-  virtual void showContextMenuActionsForItem(vtkIdType itemID);
+  void showContextMenuActionsForItem(vtkIdType itemID) override;
 
 protected slots:
   /// Start registration process by selecting the current item as the 'from' item.

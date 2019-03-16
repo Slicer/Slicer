@@ -37,24 +37,24 @@ public:
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode* node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "Camera";};
+  const char* GetNodeTagName() override {return "Camera";};
 
   ///
   /// Set the camera active tag, i.e. the tag for which object (view) this
@@ -133,7 +133,7 @@ public:
 
   ///
   /// alternative method to propagate events generated in Camera nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+  void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) override;
 
@@ -154,16 +154,16 @@ public:
   };
 
   /// Mark the active tag node as references.
-  virtual void SetSceneReferences() override;
+  void SetSceneReferences() override;
 
   ///
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
-  virtual void UpdateReferences() override;
+  void UpdateReferences() override;
 
   ///
   /// Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char* oldID, const char* newID) override;
+  void UpdateReferenceID(const char* oldID, const char* newID) override;
 
   /// Reset the clipping range just based on its position and focal point
   void ResetClippingRange();
@@ -250,7 +250,7 @@ public:
 
 protected:
   vtkMRMLCameraNode();
-  ~vtkMRMLCameraNode();
+  ~vtkMRMLCameraNode() override;
   vtkMRMLCameraNode(const vtkMRMLCameraNode&);
   void operator=(const vtkMRMLCameraNode&);
 

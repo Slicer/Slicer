@@ -46,7 +46,7 @@ public:
   static vtkSlicerUnitsLogic *New();
   typedef vtkSlicerUnitsLogic Self;
   vtkTypeMacro(vtkSlicerUnitsLogic, vtkMRMLAbstractLogic);
-  virtual void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Add unit node to the scene.
   /// Returns nullptr if the logic has no scene.
@@ -128,16 +128,16 @@ public:
 
 protected:
   vtkSlicerUnitsLogic();
-  virtual ~vtkSlicerUnitsLogic();
+  ~vtkSlicerUnitsLogic() override;
 
   /// Reimplemented to initialize the scene with unit nodes.
-  virtual void ObserveMRMLScene() override;
+  void ObserveMRMLScene() override;
   /// Reimplemented to save the selection node unit nodes.
   /// \sa SaveDefaultUnits(), RestoreDefaultUnits()
-  virtual void OnMRMLSceneStartBatchProcess() override;
+  void OnMRMLSceneStartBatchProcess() override;
   /// Reimplemented to restore the selection node unit nodes.
   /// \sa SaveDefaultUnits(), RestoreDefaultUnits()
-  virtual void OnMRMLNodeModified(vtkMRMLNode* modifiedNode) override;
+  void OnMRMLNodeModified(vtkMRMLNode* modifiedNode) override;
 
   /// Add the built in units in the units logic scene.
   virtual void AddDefaultsUnits();
@@ -146,12 +146,12 @@ protected:
   virtual void AddBuiltInUnits(vtkMRMLScene* scene);
 
   /// Overloaded to add the defaults units in the application scene.
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
   /// Register MRML Node classes to Scene.
   /// Gets called automatically when the MRMLScene is attached to this
   /// logic class.
-  virtual void RegisterNodes() override;
+  void RegisterNodes() override;
   virtual void RegisterNodesInternal(vtkMRMLScene* scene);
 
   /// \brief Add a unit node to the given scene.

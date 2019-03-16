@@ -55,7 +55,7 @@ protected:
 public:
   typedef QObject Superclass;
   qSlicerSegmentEditorAbstractLabelEffectPrivate(qSlicerSegmentEditorAbstractLabelEffect& object);
-  ~qSlicerSegmentEditorAbstractLabelEffectPrivate();
+  ~qSlicerSegmentEditorAbstractLabelEffectPrivate() override;
 
 protected slots:
 

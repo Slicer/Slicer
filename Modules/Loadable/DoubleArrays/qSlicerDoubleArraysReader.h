@@ -37,16 +37,16 @@ public:
   qSlicerDoubleArraysReader(QObject* parent = nullptr);
   qSlicerDoubleArraysReader(vtkSlicerDoubleArraysLogic* logic,
                        QObject* parent = nullptr);
-  virtual ~qSlicerDoubleArraysReader();
+  ~qSlicerDoubleArraysReader() override;
 
   vtkSlicerDoubleArraysLogic* logic()const;
   void setLogic(vtkSlicerDoubleArraysLogic* logic);
 
-  virtual QString description()const;
-  virtual IOFileType fileType()const;
-  virtual QStringList extensions()const;
+  QString description()const override;
+  IOFileType fileType()const override;
+  QStringList extensions()const override;
 
-  virtual bool load(const IOProperties& properties);
+  bool load(const IOProperties& properties) override;
 protected:
   QScopedPointer<qSlicerDoubleArraysReaderPrivate> d_ptr;
 

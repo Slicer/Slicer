@@ -39,7 +39,7 @@ protected:
   qMRMLSegmentationGeometryDialog* const q_ptr;
 public:
   qMRMLSegmentationGeometryDialogPrivate(qMRMLSegmentationGeometryDialog& object);
-  virtual ~qMRMLSegmentationGeometryDialogPrivate();
+  ~qMRMLSegmentationGeometryDialogPrivate() override;
 public:
   void init();
 private:

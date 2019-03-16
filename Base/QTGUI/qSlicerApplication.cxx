@@ -114,15 +114,15 @@ public:
   qSlicerApplicationPrivate(qSlicerApplication& object,
                             qSlicerCommandOptions * commandOptions,
                             qSlicerIOManager * ioManager);
-  virtual ~qSlicerApplicationPrivate();
+  ~qSlicerApplicationPrivate() override;
 
   /// Convenient method regrouping all initialization code
-  virtual void init();
+  void init() override;
 
   /// Initialize application style
   void initStyle();
 
-  virtual QSettings* newSettings();
+  QSettings* newSettings() override;
 
   /// ErrorLogModel - It should exist only one instance of the ErrorLogModel
   QSharedPointer<ctkErrorLogModel>            ErrorLogModel;

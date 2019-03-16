@@ -51,7 +51,7 @@ protected:
   qSlicerSubjectHierarchyCloneNodePlugin* const q_ptr;
 public:
   qSlicerSubjectHierarchyCloneNodePluginPrivate(qSlicerSubjectHierarchyCloneNodePlugin& object);
-  ~qSlicerSubjectHierarchyCloneNodePluginPrivate();
+  ~qSlicerSubjectHierarchyCloneNodePluginPrivate() override;
   void init();
 public:
   QAction* CloneItemAction;

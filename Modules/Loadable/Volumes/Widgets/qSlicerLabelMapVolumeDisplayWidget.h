@@ -46,7 +46,7 @@ public:
   /// Constructors
   typedef qSlicerWidget Superclass;
   explicit qSlicerLabelMapVolumeDisplayWidget(QWidget* parent);
-  virtual ~qSlicerLabelMapVolumeDisplayWidget();
+  ~qSlicerLabelMapVolumeDisplayWidget() override;
 
   vtkMRMLScalarVolumeNode* volumeNode()const;
   vtkMRMLLabelMapVolumeDisplayNode* volumeDisplayNode()const;

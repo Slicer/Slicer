@@ -46,7 +46,7 @@ public:
   /// Constructor
   explicit qMRMLNodeAttributeTableView(QWidget* parent = nullptr);
   /// Destructor
-  virtual ~qMRMLNodeAttributeTableView();
+  ~qMRMLNodeAttributeTableView() override;
 
   /// Set the inspected MRML node
   void setInspectedNode(vtkMRMLNode* node);

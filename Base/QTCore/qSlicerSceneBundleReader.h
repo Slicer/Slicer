@@ -38,17 +38,17 @@ public:
   typedef qSlicerFileReader Superclass;
   qSlicerSceneBundleReader(QObject* _parent = nullptr);
 
-  virtual QString description()const;
+  QString description()const override;
   /// Support QString("SceneFile")
-  virtual qSlicerIO::IOFileType fileType()const;
+  qSlicerIO::IOFileType fileType()const override;
 
   /// Support only .mrb files
-  virtual QStringList extensions()const;
+  QStringList extensions()const override;
 
   /// the supported properties are:
   /// QString fileName: the path of the mrml scene to load
   /// bool clear: whether the current should be cleared or not
-  virtual bool load(const qSlicerIO::IOProperties& properties);
+  bool load(const qSlicerIO::IOProperties& properties) override;
 };
 
 

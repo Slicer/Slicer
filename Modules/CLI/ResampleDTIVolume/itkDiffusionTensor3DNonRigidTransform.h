@@ -53,7 +53,7 @@ public:
   PointType EvaluateTensorPosition( const PointType & point ) override;
 
   // /Evaluate the transformed tensor
-  virtual TensorDataType EvaluateTransformedTensor( TensorDataType & tensor, PointType & outputPosition ) override;
+  TensorDataType EvaluateTransformedTensor( TensorDataType & tensor, PointType & outputPosition ) override;
 
   void SetAffineTransformType(typename AffineTransform::Pointer transform);
 protected:

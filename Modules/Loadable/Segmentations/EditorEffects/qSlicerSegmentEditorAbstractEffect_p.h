@@ -63,7 +63,7 @@ protected:
   qSlicerSegmentEditorAbstractEffect* const q_ptr;
 public:
   qSlicerSegmentEditorAbstractEffectPrivate(qSlicerSegmentEditorAbstractEffect& object);
-  ~qSlicerSegmentEditorAbstractEffectPrivate();
+  ~qSlicerSegmentEditorAbstractEffectPrivate() override;
 signals:
   // Signals that are used for effects to request operations from the editor
   // without having any dependency on the editor.

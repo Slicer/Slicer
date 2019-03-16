@@ -48,10 +48,10 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Reset state of object
-  virtual void Initialize() override;
+  void Initialize() override;
 
   /// Copy one type into another
-  virtual void Copy(vtkCodedEntry* aType) override;
+  void Copy(vtkCodedEntry* aType) override;
 
 public:
   vtkGetVector3Macro(RecommendedDisplayRGBValue, unsigned char);
@@ -73,7 +73,7 @@ public:
 
 protected:
   vtkSlicerTerminologyType();
-  ~vtkSlicerTerminologyType();
+  ~vtkSlicerTerminologyType() override;
   vtkSlicerTerminologyType(const vtkSlicerTerminologyType&);
   void operator=(const vtkSlicerTerminologyType&);
 

@@ -40,7 +40,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedFileDialog
 public:
   typedef qSlicerStandardFileDialog Superclass;
   qSlicerScriptedFileDialog(QObject* parent = nullptr);
-  virtual ~qSlicerScriptedFileDialog();
+  ~qSlicerScriptedFileDialog() override;
 
   QString pythonSource()const;
 
@@ -51,12 +51,12 @@ public:
   Q_INVOKABLE PyObject* self() const;
 
   /// Reimplemented to propagate to python methods
-  virtual bool isMimeDataAccepted(const QMimeData* mimeData)const;
+  bool isMimeDataAccepted(const QMimeData* mimeData)const override;
   /// Reimplemented to propagate to python methods
-  virtual void dropEvent(QDropEvent* event);
+  void dropEvent(QDropEvent* event) override;
   /// Reimplemented to propagate to python methods
-  virtual bool exec(const qSlicerIO::IOProperties& ioProperties =
-                    qSlicerIO::IOProperties());
+  bool exec(const qSlicerIO::IOProperties& ioProperties =
+                    qSlicerIO::IOProperties()) override;
 
   /// Return the ioProperties when exec() is being called.
   /// \sa exec()

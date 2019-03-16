@@ -50,7 +50,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTableModel : public QStandardItemModel
 public:
   typedef QAbstractItemModel Superclass;
   qMRMLTableModel(QObject *parent=nullptr);
-  virtual ~qMRMLTableModel();
+  ~qMRMLTableModel() override;
 
   enum ItemDataRole{
     SortRole = Qt::UserRole + 1

@@ -81,7 +81,7 @@ public:
   /// Constructor
   explicit qMRMLSegmentEditorWidget(QWidget* parent = nullptr);
   /// Destructor
-  virtual ~qMRMLSegmentEditorWidget();
+  ~qMRMLSegmentEditorWidget() override;
 
   /// Get the segment editor parameter set node
   Q_INVOKABLE vtkMRMLSegmentEditorNode* mrmlSegmentEditorNode()const;
@@ -196,7 +196,7 @@ public:
 
 public slots:
   /// Set the MRML \a scene associated with the widget
-  virtual void setMRMLScene(vtkMRMLScene* newScene);
+  void setMRMLScene(vtkMRMLScene* newScene) override;
 
   /// Set the segment editor parameter set node
   void setMRMLSegmentEditorNode(vtkMRMLSegmentEditorNode* newSegmentEditorNode);

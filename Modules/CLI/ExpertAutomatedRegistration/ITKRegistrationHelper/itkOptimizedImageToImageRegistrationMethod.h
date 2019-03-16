@@ -77,7 +77,7 @@ public:
   //
   // Methods from Superclass
   //
-  virtual void GenerateData( void ) override;
+  void GenerateData( void ) override;
 
   //
   // Custom Methods
@@ -133,7 +133,7 @@ public:
 protected:
 
   OptimizedImageToImageRegistrationMethod( void );
-  virtual ~OptimizedImageToImageRegistrationMethod( void );
+  ~OptimizedImageToImageRegistrationMethod( void ) override;
 
   itkSetMacro( FinalMetricValue, double );
 
@@ -144,7 +144,7 @@ protected:
 
   virtual void Optimize( MetricType * metric, InterpolatorType * interpolator );
 
-  virtual void PrintSelf( std::ostream & os, Indent indent ) const override;
+  void PrintSelf( std::ostream & os, Indent indent ) const override;
 
 private:
 

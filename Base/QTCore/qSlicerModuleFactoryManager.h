@@ -43,9 +43,9 @@ public:
   qSlicerModuleFactoryManager(QObject* newParent = nullptr);
 
   /// Unloads all the modules previously loaded.
-  virtual ~qSlicerModuleFactoryManager();
+  ~qSlicerModuleFactoryManager() override;
 
-  virtual void printAdditionalInfo();
+  void printAdditionalInfo() override;
 
   /// Load all the instantiated modules.
   /// To register and initialize modules, please use
@@ -116,7 +116,7 @@ protected:
   void unloadModule(const QString& name);
 
   /// Uninstantiate a module given its \a moduleName
-  virtual void uninstantiateModule(const QString& moduleName);
+  void uninstantiateModule(const QString& moduleName) override;
 
   /// Reimplemented to ensure order
   virtual void uninstantiateModules();

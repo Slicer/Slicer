@@ -34,7 +34,7 @@ public:
   typedef qSlicerMainWindow Superclass;
 
   qSlicerAppMainWindow(QWidget *parent=nullptr);
-  virtual ~qSlicerAppMainWindow();
+  ~qSlicerAppMainWindow() override;
 
 public slots:
   void on_HelpKeyboardShortcutsAction_triggered();

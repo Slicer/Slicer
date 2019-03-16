@@ -34,9 +34,9 @@ public:
 
   /// Constructors
   qSlicerDarkStyle();
-  virtual ~qSlicerDarkStyle();
+  ~qSlicerDarkStyle() override;
 
-  virtual QPalette standardPalette() const;
+  QPalette standardPalette() const override;
 };
 
 #endif

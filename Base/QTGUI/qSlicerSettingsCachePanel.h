@@ -47,7 +47,7 @@ public:
   explicit qSlicerSettingsCachePanel(QWidget* parent = nullptr);
 
   /// Destructor
-  virtual ~qSlicerSettingsCachePanel();
+  ~qSlicerSettingsCachePanel() override;
 
   virtual void setCacheManager(vtkCacheManager* cacheManager);
 

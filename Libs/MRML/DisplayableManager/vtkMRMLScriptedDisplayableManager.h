@@ -39,22 +39,22 @@ public:
 
 protected:
   vtkMRMLScriptedDisplayableManager();
-  virtual ~vtkMRMLScriptedDisplayableManager();
+  ~vtkMRMLScriptedDisplayableManager() override;
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
-  virtual void ProcessMRMLSceneEvents(vtkObject *caller, unsigned long event, void *callData) override;
-  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLSceneEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) override;
 
-  virtual void Create() override;
+  void Create() override;
 
-  virtual void RemoveMRMLObservers() override;
+  void RemoveMRMLObservers() override;
 
-  virtual void UpdateFromMRML() override;
+  void UpdateFromMRML() override;
 
-  virtual void OnInteractorStyleEvent(int eventid) override;
+  void OnInteractorStyleEvent(int eventid) override;
 
-  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;
+  void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;
 
 private:
   vtkMRMLScriptedDisplayableManager(const vtkMRMLScriptedDisplayableManager&);// Not implemented

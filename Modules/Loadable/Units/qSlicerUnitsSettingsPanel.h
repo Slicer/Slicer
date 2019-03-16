@@ -52,7 +52,7 @@ public:
   qSlicerUnitsSettingsPanel(QWidget* parent = nullptr);
 
   /// Destructor
-  virtual ~qSlicerUnitsSettingsPanel();
+  ~qSlicerUnitsSettingsPanel() override;
 
   /// Set the units logic. The logic is observed to get the application
   /// scene and used to set the defaults units.

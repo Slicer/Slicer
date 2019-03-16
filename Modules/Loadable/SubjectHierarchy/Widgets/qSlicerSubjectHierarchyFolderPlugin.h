@@ -96,7 +96,7 @@ public:
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
   qSlicerSubjectHierarchyFolderPlugin(QObject* parent = nullptr);
-  virtual ~qSlicerSubjectHierarchyFolderPlugin();
+  ~qSlicerSubjectHierarchyFolderPlugin() override;
 
 public:
   /// Determines if the actual plugin can handle a subject hierarchy item. The plugin with
@@ -105,60 +105,60 @@ public:
   /// \param item Item to handle in the subject hierarchy tree
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier attribute)
-  virtual double canOwnSubjectHierarchyItem(vtkIdType itemID)const;
+  double canOwnSubjectHierarchyItem(vtkIdType itemID)const override;
 
   /// Get role that the plugin assigns to the subject hierarchy item.
   ///   Each plugin should provide only one role.
-  Q_INVOKABLE virtual const QString roleForPlugin()const;
+  Q_INVOKABLE const QString roleForPlugin()const override;
 
   /// Get icon of an owned subject hierarchy item
   /// \return Icon to set, nullptr if nothing to set
-  virtual QIcon icon(vtkIdType itemID);
+  QIcon icon(vtkIdType itemID) override;
 
   /// Get visibility icon for a visibility state
-  virtual QIcon visibilityIcon(int visible);
+  QIcon visibilityIcon(int visible) override;
 
   /// Open module belonging to item and set inputs in opened module
-  virtual void editProperties(vtkIdType itemID);
+  void editProperties(vtkIdType itemID) override;
 
   /// Set display visibility of an owned subject hierarchy item
-  virtual void setDisplayVisibility(vtkIdType itemID, int visible);
+  void setDisplayVisibility(vtkIdType itemID, int visible) override;
 
   /// Get display visibility of an owned subject hierarchy item
   /// \return Display visibility (0: hidden, 1: shown, 2: partially shown)
-  virtual int getDisplayVisibility(vtkIdType itemID)const;
+  int getDisplayVisibility(vtkIdType itemID)const override;
 
   /// Set display color of an owned subject hierarchy item
   /// In case of folders only color is set but no terminology. The properties are not used directly,
   /// but only if applied to the branch (similarly to how it worked in model hierarchies).
   /// \param color Display color to set
   /// \param terminologyMetaData Map containing terminology meta data. Not used in this plugin
-  virtual void setDisplayColor(vtkIdType itemID, QColor color, QMap<int, QVariant> terminologyMetaData);
+  void setDisplayColor(vtkIdType itemID, QColor color, QMap<int, QVariant> terminologyMetaData) override;
 
   /// Get display color of an owned subject hierarchy item
   /// In case of folders only color is set but no terminology. The properties are not used directly,
   /// but only if applied to the branch (similarly to how it worked in model hierarchies).
-  virtual QColor getDisplayColor(vtkIdType itemID, QMap<int, QVariant> &terminologyMetaData)const;
+  QColor getDisplayColor(vtkIdType itemID, QMap<int, QVariant> &terminologyMetaData)const override;
 
   /// Get item context menu item actions to add to tree view
-  virtual QList<QAction*> itemContextMenuActions()const;
+  QList<QAction*> itemContextMenuActions()const override;
 
   /// Get scene context menu item actions to add to tree view
   /// Separate method is needed for the scene, as its actions are set to the
   /// tree by a different method \sa itemContextMenuActions
-  virtual QList<QAction*> sceneContextMenuActions()const;
+  QList<QAction*> sceneContextMenuActions()const override;
 
   /// Show context menu actions valid for a given subject hierarchy item.
   /// \param itemID Subject Hierarchy item to show the context menu items for
-  virtual void showContextMenuActionsForItem(vtkIdType itemID);
+  void showContextMenuActionsForItem(vtkIdType itemID) override;
 
   /// Get visibility context menu item actions to add to tree view.
   /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
-  virtual QList<QAction*> visibilityContextMenuActions()const;
+  QList<QAction*> visibilityContextMenuActions()const override;
 
   /// Show visibility context menu actions valid for a given subject hierarchy item.
   /// \param itemID Subject Hierarchy item to show the visibility context menu items for
-  virtual void showVisibilityContextMenuActionsForItem(vtkIdType itemID);
+  void showVisibilityContextMenuActionsForItem(vtkIdType itemID) override;
 
 public:
   /// Determines if a data node can be placed in the hierarchy using the actual plugin,
@@ -168,16 +168,16 @@ public:
   ///   Default value is invalid. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
-  virtual double canAddNodeToSubjectHierarchy(
+  double canAddNodeToSubjectHierarchy(
     vtkMRMLNode* node,
-    vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const;
+    vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const override;
 
   /// Add a node to subject hierarchy under a specified parent. This is basically a convenience function to
   /// call \sa vtkMRMLSubjectHierarchyNode::CreateItem
   /// \param node Node to add to subject hierarchy
   /// \param parentItemID Parent item of the added node
   /// \return True if added successfully, false otherwise
-  virtual bool addNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID);
+  bool addNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID) override;
 
   /// Determines if a subject hierarchy item can be reparented in the hierarchy using the current plugin,
   /// and gets a confidence value for the reparented item.
@@ -187,11 +187,11 @@ public:
   /// \param parentItemID Prospective parent of the item to reparent.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   item, and 1 means that the plugin is the only one that can handle the item
-  virtual double canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)const;
+  double canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)const override;
 
   /// Reparent an item that was already in the subject hierarchy under a new parent.
   /// \return True if reparented successfully, false otherwise
-  virtual bool reparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID);
+  bool reparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID) override;
 
 public:
   /// Create folder under specified item

@@ -120,7 +120,7 @@ public:
 protected:
 
   vtkMRMLDisplayableManagerGroup();
-  virtual ~vtkMRMLDisplayableManagerGroup();
+  ~vtkMRMLDisplayableManagerGroup() override;
 
   typedef vtkMRMLDisplayableManagerGroup Self;
   static void DoCallback(vtkObject* vtk_obj, unsigned long event,

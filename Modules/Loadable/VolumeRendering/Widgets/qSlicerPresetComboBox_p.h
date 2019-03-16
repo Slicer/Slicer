@@ -53,7 +53,7 @@ public:
   explicit qSlicerIconComboBox(QWidget* parent=nullptr);
 
 public:
-  virtual void showPopup();
+  void showPopup() override;
 
 private:
   Q_DISABLE_COPY(qSlicerIconComboBox);

@@ -53,13 +53,13 @@ public:
   // it changes the output window to that.
   static vtkTestingOutputWindow* GetInstance();
 
-  virtual void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual void DisplayText(const char* text) override;
-  virtual void DisplayErrorText(const char* text) override;
-  virtual void DisplayWarningText(const char* text) override;
-  virtual void DisplayGenericWarningText(const char* text) override;
-  virtual void DisplayDebugText(const char* text) override;
+  void DisplayText(const char* text) override;
+  void DisplayErrorText(const char* text) override;
+  void DisplayWarningText(const char* text) override;
+  void DisplayGenericWarningText(const char* text) override;
+  void DisplayDebugText(const char* text) override;
 
   // Sets number of warning and error messages to zero
   virtual void ResetNumberOfLoggedMessages();
@@ -81,7 +81,7 @@ public:
   
 protected:
   vtkTestingOutputWindow(); 
-  virtual ~vtkTestingOutputWindow(); 
+  ~vtkTestingOutputWindow() override; 
   
   int NumberOfLoggedWarningMessages;
   int NumberOfLoggedErrorMessages;

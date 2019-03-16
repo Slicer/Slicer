@@ -45,30 +45,30 @@ public:
 protected:
 
   vtkMRMLSegmentationsDisplayableManager3D();
-  virtual ~vtkMRMLSegmentationsDisplayableManager3D();
+  ~vtkMRMLSegmentationsDisplayableManager3D() override;
 
-  virtual void UnobserveMRMLScene() override;
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
-  virtual void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
+  void UnobserveMRMLScene() override;
+  void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
+  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Update actors based on segmentations in the scene
-  virtual void UpdateFromMRML() override;
+  void UpdateFromMRML() override;
 
-  virtual void OnMRMLSceneStartClose() override;
-  virtual void OnMRMLSceneEndClose() override;
+  void OnMRMLSceneStartClose() override;
+  void OnMRMLSceneEndClose() override;
 
-  virtual void OnMRMLSceneEndBatchProcess() override;
+  void OnMRMLSceneEndBatchProcess() override;
 
   /// Initialize the displayable manager
-  virtual void Create() override;
+  void Create() override;
 
   /// Find display node managed by the displayable manager at a specified world RAS position.
   /// \return Non-zero in case a node is found at the position, 0 otherwise
-  virtual int Pick3D(double ras[3]) override;
+  int Pick3D(double ras[3]) override;
 
   /// Get the MRML ID of the picked node, returns empty string if no pick
-  virtual const char* GetPickedNodeID() override;
+  const char* GetPickedNodeID() override;
 
   /// Get the ID of the picked segment, returns empty string if no pick
   virtual const char* GetPickedSegmentID();

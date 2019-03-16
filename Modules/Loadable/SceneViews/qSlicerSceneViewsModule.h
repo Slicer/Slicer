@@ -23,19 +23,19 @@ public:
 
   typedef qSlicerLoadableModule Superclass;
   qSlicerSceneViewsModule(QObject *parent=nullptr);
-  virtual ~qSlicerSceneViewsModule();
+  ~qSlicerSceneViewsModule() override;
 
   /// Return the help and acknowledgement text for the SceneViews module.
-  virtual QString helpText()const ;
-  virtual QString acknowledgementText()const;
-  virtual QStringList contributors()const;
+  QString helpText()const override ;
+  QString acknowledgementText()const override;
+  QStringList contributors()const override;
 
   /// Return the icon of the SceneViews module.
-  virtual QIcon icon()const;
-  virtual QStringList categories()const;
+  QIcon icon()const override;
+  QStringList categories()const override;
 
   /// Specify editable node types
-  virtual QStringList associatedNodeTypes()const;
+  QStringList associatedNodeTypes()const override;
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
@@ -49,15 +49,15 @@ public slots:
 protected:
 
   /// All initialization code should be done in the setup
-  virtual void setup();
+  void setup() override;
 
   // Description:
   // Create and return the widget representation associated to this module
-  virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation();
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   // Description:
   // Create and return the logic associated to this module
-  virtual vtkMRMLAbstractLogic* createLogic();
+  vtkMRMLAbstractLogic* createLogic() override;
 
 protected:
   QScopedPointer<qSlicerSceneViewsModulePrivate> d_ptr;

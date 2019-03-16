@@ -47,7 +47,7 @@ public:
                                          const char* name = nullptr);
 protected:
   vtkSlicerDoubleArraysLogic();
-  virtual ~vtkSlicerDoubleArraysLogic();
+  ~vtkSlicerDoubleArraysLogic() override;
 
 private:
   vtkSlicerDoubleArraysLogic(const vtkSlicerDoubleArraysLogic&); // Not implemented

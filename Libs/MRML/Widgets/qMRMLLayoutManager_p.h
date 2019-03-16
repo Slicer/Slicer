@@ -85,7 +85,7 @@ protected:
 
 public:
   qMRMLLayoutManagerPrivate(qMRMLLayoutManager& object);
-  virtual ~qMRMLLayoutManagerPrivate();
+  ~qMRMLLayoutManagerPrivate() override;
 
   virtual void init();
 
@@ -162,16 +162,16 @@ class QMRML_WIDGETS_EXPORT qMRMLLayoutThreeDViewFactory
 public:
   typedef qMRMLLayoutViewFactory Superclass;
   qMRMLLayoutThreeDViewFactory(QObject* parent = nullptr);
-  virtual ~qMRMLLayoutThreeDViewFactory();
+  ~qMRMLLayoutThreeDViewFactory() override;
 
-  virtual QString viewClassName()const;
+  QString viewClassName()const override;
 
   vtkCollection* viewLogics()const;
   void setViewLogics(vtkCollection* viewLogics);
 
 protected:
-  virtual QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode);
-  virtual void deleteView(vtkMRMLAbstractViewNode* viewNode);
+  QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode) override;
+  void deleteView(vtkMRMLAbstractViewNode* viewNode) override;
 
   vtkCollection* ViewLogics;
 };
@@ -185,13 +185,13 @@ public:
   typedef qMRMLLayoutViewFactory Superclass;
   qMRMLLayoutChartViewFactory(QObject* parent = nullptr);
 
-  virtual QString viewClassName()const;
+  QString viewClassName()const override;
 
   vtkMRMLColorLogic* colorLogic()const;
   void setColorLogic(vtkMRMLColorLogic* colorLogic);
 
 protected:
-  virtual QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode);
+  QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode) override;
   vtkMRMLColorLogic* ColorLogic;
 };
 
@@ -204,10 +204,10 @@ public:
   typedef qMRMLLayoutViewFactory Superclass;
   qMRMLLayoutTableViewFactory(QObject* parent = nullptr);
 
-  virtual QString viewClassName()const;
+  QString viewClassName()const override;
 
 protected:
-  virtual QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode);
+  QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode) override;
 };
 
 //------------------------------------------------------------------------------
@@ -219,10 +219,10 @@ public:
   typedef qMRMLLayoutViewFactory Superclass;
   qMRMLLayoutPlotViewFactory(QObject* parent = nullptr);
 
-  virtual QString viewClassName()const;
+  QString viewClassName()const override;
 
 protected:
-  virtual QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode);
+  QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode) override;
   vtkMRMLColorLogic* ColorLogic;
 };
 
@@ -234,16 +234,16 @@ class QMRML_WIDGETS_EXPORT qMRMLLayoutSliceViewFactory
 public:
   typedef qMRMLLayoutViewFactory Superclass;
   qMRMLLayoutSliceViewFactory(QObject* parent = nullptr);
-  virtual ~qMRMLLayoutSliceViewFactory();
+  ~qMRMLLayoutSliceViewFactory() override;
 
-  virtual QString viewClassName()const;
+  QString viewClassName()const override;
 
   vtkCollection* sliceLogics()const;
   void setSliceLogics(vtkCollection* sliceLogics);
 
 protected:
-  virtual QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode);
-  virtual void deleteView(vtkMRMLAbstractViewNode* viewNode);
+  QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode) override;
+  void deleteView(vtkMRMLAbstractViewNode* viewNode) override;
 
   QButtonGroup* SliceControllerButtonGroup;
   vtkCollection* SliceLogics;

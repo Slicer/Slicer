@@ -53,15 +53,15 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLDisplayableHierarchyLogic : public vtkMRMLAbs
 
 protected:
   vtkMRMLDisplayableHierarchyLogic();
-  ~vtkMRMLDisplayableHierarchyLogic();
+  ~vtkMRMLDisplayableHierarchyLogic() override;
   vtkMRMLDisplayableHierarchyLogic(const vtkMRMLDisplayableHierarchyLogic&);
   void operator=(const vtkMRMLDisplayableHierarchyLogic&);
 
   /// Reimplemented to observe the scene
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
   /// Delete the hierarchy node when a node is removed from the scene
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* removedNode) override;
+  void OnMRMLSceneNodeRemoved(vtkMRMLNode* removedNode) override;
 
 };
 

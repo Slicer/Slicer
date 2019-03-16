@@ -60,7 +60,7 @@ protected:
   qSlicerSubjectHierarchyTransformsPlugin* const q_ptr;
 public:
   qSlicerSubjectHierarchyTransformsPluginPrivate(qSlicerSubjectHierarchyTransformsPlugin& object);
-  ~qSlicerSubjectHierarchyTransformsPluginPrivate();
+  ~qSlicerSubjectHierarchyTransformsPluginPrivate() override;
   void init();
 public:
   QIcon TransformIcon;

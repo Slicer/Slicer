@@ -45,7 +45,7 @@ public:
 
   typedef qSlicerObject Superclass;
   qSlicerAbstractModuleRepresentation();
-  virtual ~qSlicerAbstractModuleRepresentation();
+  ~qSlicerAbstractModuleRepresentation() override;
 
   /// Set/Get module name
   QString moduleName()const;

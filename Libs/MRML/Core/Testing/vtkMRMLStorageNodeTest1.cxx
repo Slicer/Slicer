@@ -30,11 +30,11 @@ public:
 
   vtkTypeMacro(vtkMRMLStorageNodeTestHelper1,vtkMRMLStorageNode);
 
-  virtual vtkMRMLNode* CreateNodeInstance() override
+  vtkMRMLNode* CreateNodeInstance() override
     {
     return vtkMRMLStorageNodeTestHelper1::New();
     }
-  virtual const char* GetNodeTagName() override
+  const char* GetNodeTagName() override
     {
     return "vtkMRMLStorageNodeTestHelper1";
     }

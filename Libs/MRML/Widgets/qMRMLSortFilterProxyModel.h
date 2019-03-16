@@ -120,7 +120,7 @@ public:
 
   typedef QSortFilterProxyModel Superclass;
   qMRMLSortFilterProxyModel(QObject *parent=nullptr);
-  virtual ~qMRMLSortFilterProxyModel();
+  ~qMRMLSortFilterProxyModel() override;
 
   /// Retrieve the associated MRML scene
   vtkMRMLScene* mrmlScene()const;
@@ -259,8 +259,8 @@ protected:
   /// If for some reason a node has not been observed but its visibility has
   /// changed, the filter can be refresh by calling a\ invalidate()
   /// \sa filterAcceptsNode(), AcceptType, invalidate()
-  virtual bool filterAcceptsRow(int source_row,
-                                const QModelIndex &source_parent)const;
+  bool filterAcceptsRow(int source_row,
+                                const QModelIndex &source_parent)const override;
   /// This method returns whether the \a node should be visible or hidden
   /// from the view.
   /// It returns the behavior of the node with regard to the filters.

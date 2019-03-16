@@ -43,41 +43,41 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance () override;
+  vtkMRMLNode* CreateNodeInstance () override;
 
   ///
   /// Read node attributes from XML (MRML) file
-  virtual void ReadXMLAttributes ( const char** atts ) override;
+  void ReadXMLAttributes ( const char** atts ) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML ( ostream& of, int indent ) override;
+  void WriteXML ( ostream& of, int indent ) override;
 
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy ( vtkMRMLNode *node ) override;
+  void Copy ( vtkMRMLNode *node ) override;
 
   ///
   /// Get node XML tag name (like Volume, UnstructuredGrid)
-  virtual const char* GetNodeTagName () override {return "GlyphableVolumeSliceDisplayNode";}
+  const char* GetNodeTagName () override {return "GlyphableVolumeSliceDisplayNode";}
 
   ///
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
-  virtual void UpdateReferences() override;
+  void UpdateReferences() override;
 
-  virtual void UpdateReferenceID(const char *oldID, const char *newID) override
+  void UpdateReferenceID(const char *oldID, const char *newID) override
     { Superclass::UpdateReferenceID(oldID, newID); }
 
   ///
   /// Finds the storage node and read the data
-  virtual void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene *scene) override;
 
 
   ///
   /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+  void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) override;
 
@@ -86,13 +86,13 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   /// The output is connected as the input of the slice transform.
   /// It must be reimplemented in subclasses.
   /// \sa GetOutputPolyData(), GetSliceOutputPort()
-  virtual vtkAlgorithmOutput* GetOutputMeshConnection() override;
+  vtkAlgorithmOutput* GetOutputMeshConnection() override;
 
   /// Return the glyph polydata for the input slice image.
   /// This is the polydata to use in a 3D view.
   /// Reimplemented to by-pass the check on the input polydata.
   /// \sa GetSliceOutputPolyData(), GetOutputPolyDataConnection()
-  virtual vtkPolyData* GetOutputMesh() override;
+  vtkPolyData* GetOutputMesh() override;
 
   /// Return the glyph polyData transformed to slice XY.
   /// This is the polydata to use in a 2D slice.
@@ -101,7 +101,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
 
   ///
   /// Update the pipeline based on this node attributes
-  virtual void UpdateAssignedAttribute() override;
+  void UpdateAssignedAttribute() override;
 
   ///
   /// Set imageData of a volume slice. This is used as the input of the display
@@ -192,7 +192,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   //--------------------------------------------------------------------------
  protected:
   vtkMRMLGlyphableVolumeSliceDisplayNode ( );
-  ~vtkMRMLGlyphableVolumeSliceDisplayNode ( );
+  ~vtkMRMLGlyphableVolumeSliceDisplayNode ( ) override;
   vtkMRMLGlyphableVolumeSliceDisplayNode ( const vtkMRMLGlyphableVolumeSliceDisplayNode& );
   void operator= ( const vtkMRMLGlyphableVolumeSliceDisplayNode& );
 

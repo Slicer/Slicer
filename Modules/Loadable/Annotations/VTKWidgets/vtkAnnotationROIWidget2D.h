@@ -115,7 +115,7 @@ public:
   /// Specify an instance of vtkWidgetRepresentation used to represent this
   /// widget in the scene. Note that the representation is a subclass of vtkProp
   /// so it can be added to the renderer independent of the widget.
-  virtual void SetRepresentation(vtkAnnotationROIRepresentation *r) override
+  void SetRepresentation(vtkAnnotationROIRepresentation *r) override
     {
     this->Superclass::SetWidgetRepresentation(reinterpret_cast<vtkWidgetRepresentation*>(r));
     }
@@ -123,11 +123,11 @@ public:
   ///
   /// Create the default widget representation if one is not set. By default,
   /// this is an instance of the vtkAnnotationROIRepresentation class.
-  virtual void CreateDefaultRepresentation() override;
+  void CreateDefaultRepresentation() override;
 
 protected:
   vtkAnnotationROIWidget2D();
-  ~vtkAnnotationROIWidget2D();
+  ~vtkAnnotationROIWidget2D() override;
 
 private:
   vtkAnnotationROIWidget2D(const vtkAnnotationROIWidget2D&);  //Not implemented

@@ -51,7 +51,7 @@ public:
 
   /// Constructors
   explicit qMRMLPlotView(QWidget* parent = nullptr);
-  virtual ~qMRMLPlotView();
+  ~qMRMLPlotView() override;
 
   /// Return a pointer on the current MRML scene.
   vtkMRMLScene* mrmlScene() const;
@@ -60,7 +60,7 @@ public:
   vtkMRMLPlotViewNode* mrmlPlotViewNode()const;
 
   /// Redefine the sizeHint so layouts work properly.
-  virtual QSize sizeHint() const;
+  QSize sizeHint() const override;
 
 public slots:
 
@@ -100,9 +100,9 @@ protected:
   QScopedPointer<qMRMLPlotViewPrivate> d_ptr;
 
   /// Handle keyboard events
-  virtual void keyPressEvent(QKeyEvent* event);
+  void keyPressEvent(QKeyEvent* event) override;
 
-  virtual void keyReleaseEvent(QKeyEvent* event);
+  void keyReleaseEvent(QKeyEvent* event) override;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLPlotView);

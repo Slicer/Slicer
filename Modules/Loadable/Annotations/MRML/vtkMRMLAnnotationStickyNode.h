@@ -28,10 +28,10 @@ public:
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "AnnotationSticky";}
+  const char* GetNodeTagName() override {return "AnnotationSticky";}
 
 
   int  SetSticky(const char* text,int selectedFlag);
@@ -47,7 +47,7 @@ public:
 
 protected:
   vtkMRMLAnnotationStickyNode() { };
-  ~vtkMRMLAnnotationStickyNode() { };
+  ~vtkMRMLAnnotationStickyNode() override { };
   vtkMRMLAnnotationStickyNode(const vtkMRMLAnnotationStickyNode&);
   void operator=(const vtkMRMLAnnotationStickyNode&);
 

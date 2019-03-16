@@ -348,28 +348,28 @@ public:
 protected:
 
   vtkMRMLSliceLogic();
-  virtual ~vtkMRMLSliceLogic();
+  ~vtkMRMLSliceLogic() override;
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
 
   ///
   /// process logic events
-  virtual void ProcessMRMLLogicsEvents(vtkObject * caller,
+  void ProcessMRMLLogicsEvents(vtkObject * caller,
                                        unsigned long event,
                                        void * callData) override;
   void ProcessMRMLLogicsEvents();
 
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
-  virtual void UpdateFromMRMLScene() override;
-  virtual void OnMRMLSceneStartClose() override;
-  virtual void OnMRMLSceneEndImport() override;
-  virtual void OnMRMLSceneEndRestore() override;
+  void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
+  void UpdateFromMRMLScene() override;
+  void OnMRMLSceneStartClose() override;
+  void OnMRMLSceneEndImport() override;
+  void OnMRMLSceneEndRestore() override;
 
   void UpdateSliceNodes();
   void SetupCrosshairNode();
 
-  virtual void OnMRMLNodeModified(vtkMRMLNode* node) override;
+  void OnMRMLNodeModified(vtkMRMLNode* node) override;
   static vtkMRMLSliceCompositeNode* GetSliceCompositeNode(vtkMRMLScene* scene,
                                                           const char* layoutName);
   static vtkMRMLSliceNode* GetSliceNode(vtkMRMLScene* scene,

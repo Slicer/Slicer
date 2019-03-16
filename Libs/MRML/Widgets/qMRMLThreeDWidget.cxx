@@ -50,7 +50,7 @@ protected:
   qMRMLThreeDWidget* const q_ptr;
 public:
   qMRMLThreeDWidgetPrivate(qMRMLThreeDWidget& object);
-  ~qMRMLThreeDWidgetPrivate();
+  ~qMRMLThreeDWidgetPrivate() override;
 
   void init();
 

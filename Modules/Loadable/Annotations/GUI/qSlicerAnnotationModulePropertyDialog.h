@@ -27,7 +27,7 @@ class qSlicerAnnotationModulePropertyDialog : public QDialog
 
 public:
   qSlicerAnnotationModulePropertyDialog(const char * id, vtkSlicerAnnotationModuleLogic* logic);
-  ~qSlicerAnnotationModulePropertyDialog();
+  ~qSlicerAnnotationModulePropertyDialog() override;
 
   const char * GetID() { return this->m_id; }
 

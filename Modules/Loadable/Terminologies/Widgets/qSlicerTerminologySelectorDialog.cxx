@@ -41,7 +41,7 @@ protected:
   qSlicerTerminologySelectorDialog* const q_ptr;
 public:
   qSlicerTerminologySelectorDialogPrivate(qSlicerTerminologySelectorDialog& object);
-  virtual ~qSlicerTerminologySelectorDialogPrivate();
+  ~qSlicerTerminologySelectorDialogPrivate() override;
 public:
   void init();
 private:

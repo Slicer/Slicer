@@ -104,7 +104,7 @@ public:
     outlinePropertyThin->SetLineStipplePattern(0xff00); // Note: line stipple may not be supported in VTK OpenGL2 backend
     outlinePropertyThin->SetLineWidth(1);
     };
-  ~ScissorsPipeline()
+  ~ScissorsPipeline() override
     {
     };
 public:
@@ -125,7 +125,7 @@ protected:
   qSlicerSegmentEditorScissorsEffect* const q_ptr;
 public:
   qSlicerSegmentEditorScissorsEffectPrivate(qSlicerSegmentEditorScissorsEffect& object);
-  ~qSlicerSegmentEditorScissorsEffectPrivate();
+  ~qSlicerSegmentEditorScissorsEffectPrivate() override;
 public:
   enum
     {

@@ -38,7 +38,7 @@ protected:
 public:
   typedef qMRMLSceneDisplayableModelPrivate Superclass;
   qMRMLSceneAnnotationModelPrivate(qMRMLSceneAnnotationModel& object);
-  virtual void init();
+  void init() override;
 
   bool AnnotationsAreParent;
 

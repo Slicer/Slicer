@@ -68,7 +68,7 @@ public:
 
   vtkSlicerMarkupsLogicCallback(){}
 
-  virtual void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void*)
+  void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void*) override
   {
     if (event == vtkCommand::ModifiedEvent)
       {

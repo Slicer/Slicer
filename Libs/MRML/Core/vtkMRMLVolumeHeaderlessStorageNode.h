@@ -30,23 +30,23 @@ public:
   vtkTypeMacro(vtkMRMLVolumeHeaderlessStorageNode,vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName() override {return "VolumeHeaderlessStorage";}
+  const char* GetNodeTagName() override {return "VolumeHeaderlessStorage";}
 
   ///
   /// Scan order in the file
@@ -114,24 +114,24 @@ public:
   vtkSetMacro(CenterImage, int);
 
   /// Return true if node can be read in
-  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
-  virtual bool CanWriteFromReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanWriteFromReferenceNode(vtkMRMLNode *refNode) override;
 
 protected:
 
   vtkMRMLVolumeHeaderlessStorageNode();
-  ~vtkMRMLVolumeHeaderlessStorageNode();
+  ~vtkMRMLVolumeHeaderlessStorageNode() override;
   vtkMRMLVolumeHeaderlessStorageNode(const vtkMRMLVolumeHeaderlessStorageNode&);
   void operator=(const vtkMRMLVolumeHeaderlessStorageNode&);
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes() override;
+  void InitializeSupportedWriteFileTypes() override;
 
   /// Read data and set it in the referenced node
-  virtual int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode *refNode) override;
 
   /// Write data from a  referenced node
-  virtual int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode *refNode) override;
 
   char *FileScanOrder;
   int FileScalarType;

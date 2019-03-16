@@ -92,7 +92,7 @@ protected:
 
 protected:
   vtkStreamingVolumeFrame();
-  ~vtkStreamingVolumeFrame();
+  ~vtkStreamingVolumeFrame() override;
 
 private:
   vtkStreamingVolumeFrame(const vtkStreamingVolumeFrame&);

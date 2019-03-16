@@ -34,23 +34,23 @@ public:
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "ColorTable";}
+  const char* GetNodeTagName() override {return "ColorTable";}
 
   /// Access lookup table object that stores table values.
   /// \sa SetAndObserveLookupTable()
@@ -190,7 +190,7 @@ public:
 
   ///
   /// return a text string describing the colour look up table type
-  virtual const char * GetTypeAsString() override;
+  const char * GetTypeAsString() override;
 
   ///
   /// Set the size of the colour table if it's a User table
@@ -198,7 +198,7 @@ public:
 
   ///
   /// Set the size of the colour table if it's a User table
-  virtual int GetNumberOfColors() override;
+  int GetNumberOfColors() override;
 
   ///
   /// keep track of where we last added a colour
@@ -219,7 +219,7 @@ public:
 
   /// Retrieve the color associated to the index
   /// Return true if the color exists, false otherwise
-  virtual bool GetColor(int entry, double color[4]) override;
+  bool GetColor(int entry, double color[4]) override;
 
   ///
   /// clear out the names list
@@ -227,15 +227,15 @@ public:
 
   ///
   /// reset when close the scene
-  virtual void Reset(vtkMRMLNode* defaultNode) override;
+  void Reset(vtkMRMLNode* defaultNode) override;
 
   ///
   /// Create default storage node or nullptr if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
 protected:
   vtkMRMLColorTableNode();
-  virtual ~vtkMRMLColorTableNode();
+  ~vtkMRMLColorTableNode() override;
   vtkMRMLColorTableNode(const vtkMRMLColorTableNode&);
   void operator=(const vtkMRMLColorTableNode&);
 

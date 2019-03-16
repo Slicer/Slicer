@@ -39,16 +39,16 @@ class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesIOOptionsWidget :
   Q_OBJECT
 public:
   qSlicerVolumesIOOptionsWidget(QWidget *parent=nullptr);
-  virtual ~qSlicerVolumesIOOptionsWidget();
+  ~qSlicerVolumesIOOptionsWidget() override;
 
   /// Allows custom handling of image sets as volumes
   /// \sa qSlicerVolumesReader
   /// \sa qSlicerDataDialog::addDirectory
-  void updateGUI(const qSlicerIO::IOProperties& ioProperties);
+  void updateGUI(const qSlicerIO::IOProperties& ioProperties) override;
 
 public slots:
-  virtual void setFileName(const QString& fileName);
-  virtual void setFileNames(const QStringList& fileNames);
+  void setFileName(const QString& fileName) override;
+  void setFileNames(const QStringList& fileNames) override;
 
 protected slots:
   /// Update the name, labelmap, center, singleFile, discardOrientation,

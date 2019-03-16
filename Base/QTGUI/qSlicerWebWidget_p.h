@@ -42,10 +42,10 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebEnginePage: public QWebEnginePage
   friend class qSlicerWebWidgetPrivate;
 public:
   qSlicerWebEnginePage(QWebEngineProfile *profile, QObject *parent = nullptr);
-  virtual ~qSlicerWebEnginePage();
+  ~qSlicerWebEnginePage() override;
 
 protected:
-  virtual bool acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame)
+  bool acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame) override
   {
     Q_ASSERT(this->WebWidget);
     return this->WebWidget->acceptNavigationRequest(url, type, isMainFrame);
@@ -56,14 +56,14 @@ protected:
     return this->QWebEnginePage::acceptNavigationRequest(url, type, isMainFrame);
   }
 
-  virtual QWebEnginePage *createWindow(QWebEnginePage::WebWindowType type)
+  QWebEnginePage *createWindow(QWebEnginePage::WebWindowType type) override
   {
     Q_UNUSED(type);
     qWarning() << "qSlicerWebEnginePage: createWindow not implemented";
     return nullptr;
   }
 
-  virtual bool certificateError(const QWebEngineCertificateError &certificateError)
+  bool certificateError(const QWebEngineCertificateError &certificateError) override
   {
     qDebug() << "[SSL] [" << qPrintable(certificateError.url().host().trimmed()) << "]"
              << qPrintable(certificateError.errorDescription());
@@ -83,7 +83,7 @@ protected:
 
 public:
   qSlicerWebWidgetPrivate(qSlicerWebWidget& object);
-  virtual ~qSlicerWebWidgetPrivate();
+  ~qSlicerWebWidgetPrivate() override;
 
   virtual void init();
 

@@ -50,17 +50,17 @@ public:
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override = 0;
+  vtkMRMLNode* CreateNodeInstance() override = 0;
 
-  virtual const char* GetNodeTagName() override = 0;
+  const char* GetNodeTagName() override = 0;
 
   ///
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   /// Write this node's information to a vector of strings for passing to a CLI.
   /// If the prefix is not an empty string, it gets pushed onto the vector
@@ -74,7 +74,7 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Convenience method that sets the first display node ID.
@@ -158,7 +158,7 @@ public:
 
   ///
   /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+  void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) override;
 
@@ -209,11 +209,11 @@ public:
   ///
   /// Override default selectable setting to notify display node
   /// about the change.
-  virtual void SetSelectable(int) override;
+  void SetSelectable(int) override;
 
  protected:
   vtkMRMLDisplayableNode();
-  ~vtkMRMLDisplayableNode();
+  ~vtkMRMLDisplayableNode() override;
   vtkMRMLDisplayableNode(const vtkMRMLDisplayableNode&);
   void operator=(const vtkMRMLDisplayableNode&);
 
@@ -224,15 +224,15 @@ public:
 
   ///
   /// Called when a node reference ID is added (list size increased).
-  virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceAdded(vtkMRMLNodeReference *reference) override;
 
   ///
   /// Called when a node reference ID is modified.
-  virtual void OnNodeReferenceModified(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceModified(vtkMRMLNodeReference *reference) override;
 
   ///
   /// Called after a node reference ID is removed (list size decreased).
-  virtual void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference) override;
 
  private:
 

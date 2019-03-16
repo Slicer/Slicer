@@ -40,19 +40,19 @@ public:
   vtkTypeMacro(vtkMRMLCropVolumeParametersNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   /// Set node attributes from XML attributes
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "CropVolumeParameters";}
+  const char* GetNodeTagName() override {return "CropVolumeParameters";}
 
   /// Set volume node to be cropped
   void SetInputVolumeNodeID(const char *nodeID);
@@ -98,7 +98,7 @@ public:
 
 protected:
   vtkMRMLCropVolumeParametersNode();
-  ~vtkMRMLCropVolumeParametersNode();
+  ~vtkMRMLCropVolumeParametersNode() override;
 
   vtkMRMLCropVolumeParametersNode(const vtkMRMLCropVolumeParametersNode&);
   void operator=(const vtkMRMLCropVolumeParametersNode&);

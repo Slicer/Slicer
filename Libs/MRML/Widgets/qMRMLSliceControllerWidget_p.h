@@ -80,10 +80,10 @@ public:
   typedef qMRMLSliceControllerWidgetPrivate Self;
   typedef qMRMLViewControllerBarPrivate Superclass;
   qMRMLSliceControllerWidgetPrivate(qMRMLSliceControllerWidget& object);
-  virtual ~qMRMLSliceControllerWidgetPrivate();
+  ~qMRMLSliceControllerWidgetPrivate() override;
 
-  virtual void init();
-  virtual void setColor(QColor color);
+  void init() override;
+  void setColor(QColor color) override;
 
   void setupLinkedOptionsMenu();
   void setupReformatOptionsMenu();
@@ -161,7 +161,7 @@ public slots:
   void applyCustomLightbox();
 
 protected:
-  virtual void setupPopupUi();
+  void setupPopupUi() override;
   virtual void setMRMLSliceNodeInternal(vtkMRMLSliceNode* sliceNode);
   void setMRMLSliceCompositeNodeInternal(vtkMRMLSliceCompositeNode* sliceComposite);
 

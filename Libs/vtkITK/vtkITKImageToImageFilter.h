@@ -135,7 +135,7 @@ public:
   ///
   /// This method returns the cache to make a connection
   /// It justs feeds the request to the sub filter.
-  virtual void SetOutput ( vtkDataObject* d ) override { this->vtkImporter->SetOutput ( d ); };
+  void SetOutput ( vtkDataObject* d ) override { this->vtkImporter->SetOutput ( d ); };
   virtual vtkImageData *GetOutput() { return this->vtkImporter->GetOutput(); };
   virtual vtkImageData *GetOutput(int idx)
   {
@@ -149,12 +149,12 @@ public:
     this->vtkCast->SetInputData(Input);
   };
 
-  virtual void SetInputConnection(vtkAlgorithmOutput* input) override
+  void SetInputConnection(vtkAlgorithmOutput* input) override
   {
     this->vtkCast->SetInputConnection(input);
   };
 
-  virtual void SetInputConnection(int port, vtkAlgorithmOutput* input) override
+  void SetInputConnection(int port, vtkAlgorithmOutput* input) override
   {
     this->vtkCast->SetInputConnection(port, input);
   };
@@ -169,12 +169,12 @@ public:
   ///  Override vtkSource's Update so that we can access
   /// this class's GetOutput(). vtkSource's GetOutput is not virtual.
   using vtkAlgorithm::Update;
-  virtual void Update() override
+  void Update() override
     {
       this->vtkCast->Update();
       this->vtkImporter->Update();
     }
-  virtual void Update(int port) override
+  void Update(int port) override
     {
       this->vtkCast->Update();
       this->vtkImporter->Update(port);
@@ -221,7 +221,7 @@ public:
     this->m_EndEventCommand = MemberCommand::New();
     this->m_EndEventCommand->SetCallbackFunction ( this, &vtkITKImageToImageFilter::HandleEndEvent );
   };
-  ~vtkITKImageToImageFilter()
+  ~vtkITKImageToImageFilter() override
   {
     vtkDebugMacro ("Destructing vtkITKImageToImageFilter");
     this->vtkExporter->Delete();

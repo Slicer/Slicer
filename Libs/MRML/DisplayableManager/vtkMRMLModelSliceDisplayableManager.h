@@ -49,21 +49,21 @@ public:
 protected:
 
   vtkMRMLModelSliceDisplayableManager();
-  virtual ~vtkMRMLModelSliceDisplayableManager();
+  ~vtkMRMLModelSliceDisplayableManager() override;
 
-  virtual void UnobserveMRMLScene() override;
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
-  virtual void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
+  void UnobserveMRMLScene() override;
+  void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
+  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
-  virtual void UpdateFromMRML() override;
-  virtual void OnMRMLSceneStartClose() override;
-  virtual void OnMRMLSceneEndClose() override;
-  virtual void OnMRMLSceneEndBatchProcess() override;
+  void UpdateFromMRML() override;
+  void OnMRMLSceneStartClose() override;
+  void OnMRMLSceneEndClose() override;
+  void OnMRMLSceneEndBatchProcess() override;
 
   /// Initialize the displayable manager based on its associated
   /// vtkMRMLSliceNode
-  virtual void Create() override;
+  void Create() override;
   int AddingDisplayableNode;
 
 private:

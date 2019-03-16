@@ -48,7 +48,7 @@ public:
   /// Constructors
   typedef qSlicerWidget Superclass;
   explicit qSlicerDiffusionWeightedVolumeDisplayWidget(QWidget* parent = nullptr);
-  virtual ~qSlicerDiffusionWeightedVolumeDisplayWidget();
+  ~qSlicerDiffusionWeightedVolumeDisplayWidget() override;
 
   vtkMRMLDiffusionWeightedVolumeNode* volumeNode()const;
   vtkMRMLDiffusionWeightedVolumeDisplayNode* volumeDisplayNode()const;

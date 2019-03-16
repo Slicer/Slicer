@@ -103,33 +103,33 @@ public:
 protected:
 
   vtkMRMLAnnotationDisplayableManager();
-  virtual ~vtkMRMLAnnotationDisplayableManager();
+  ~vtkMRMLAnnotationDisplayableManager() override;
 
-  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) override;
 
-  virtual void Create() override;
+  void Create() override;
 
   /// wrap the superclass render request in a check for batch processing
   virtual void RequestRender();
 
   /// Remove MRML observers
-  virtual void RemoveMRMLObservers() override;
+  void RemoveMRMLObservers() override;
 
   /// Called from RequestRender method if UpdateFromMRMLRequested is true
   /// \sa RequestRender() SetUpdateFromMRMLRequested()
-  virtual void UpdateFromMRML() override;
+  void UpdateFromMRML() override;
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
   /// Called after the corresponding MRML event is triggered, from AbstractDisplayableManager
   /// \sa ProcessMRMLSceneEvents
-  virtual void UpdateFromMRMLScene() override;
-  virtual void OnMRMLSceneEndClose() override;
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
+  void UpdateFromMRMLScene() override;
+  void OnMRMLSceneEndClose() override;
+  void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
 
   /// Called after the corresponding MRML View container was modified
-  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;
+  void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;
 
   /// Handler for specific SliceView actions
   virtual void OnMRMLSliceNodeModifiedEvent(vtkMRMLSliceNode * sliceNode);
@@ -232,7 +232,7 @@ protected:
   int m_Updating;
 
   /// Respond to interactor style events
-  virtual void OnInteractorStyleEvent(int eventid) override;
+  void OnInteractorStyleEvent(int eventid) override;
 
   /// Accessor for internal flag that disables interactor style event processing
   vtkGetMacro(DisableInteractorStyleEventsProcessing, int);

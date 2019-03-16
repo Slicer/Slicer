@@ -122,7 +122,7 @@ public:
 
 protected:
   vtkMarkupsGlyphSource2D();
-  ~vtkMarkupsGlyphSource2D() {};
+  ~vtkMarkupsGlyphSource2D() override {};
 
   int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 

@@ -47,7 +47,7 @@ public:
   vtkTypeMacro(vtkSlicerMarkupsLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual void ProcessMRMLNodesEvents(vtkObject *caller,
+  void ProcessMRMLNodesEvents(vtkObject *caller,
                                       unsigned long event,
                                       void *callData ) override;
 
@@ -216,17 +216,17 @@ public:
 
 protected:
   vtkSlicerMarkupsLogic();
-  virtual ~vtkSlicerMarkupsLogic();
+  ~vtkSlicerMarkupsLogic() override;
 
   /// Initialize listening to MRML events
-  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
-  virtual void ObserveMRMLScene() override;
+  void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
+  void ObserveMRMLScene() override;
 
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
-  virtual void RegisterNodes() override;
-  virtual void UpdateFromMRMLScene() override;
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
+  void RegisterNodes() override;
+  void UpdateFromMRMLScene() override;
+  void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
+  void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
 
 private:
 

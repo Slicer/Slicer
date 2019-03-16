@@ -76,7 +76,7 @@ class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_EXPORT qMRMLSceneAnnotationModel
 public:
   typedef qMRMLSceneDisplayableModel Superclass;
   qMRMLSceneAnnotationModel(QObject *parent=nullptr);
-  virtual ~qMRMLSceneAnnotationModel();
+  ~qMRMLSceneAnnotationModel() override;
 
   // Register the logic
   void setLogic(vtkSlicerAnnotationModuleLogic* logic);
@@ -122,19 +122,19 @@ public:
   /// hierarchy node.
   /// \sa annotationsAreParent
   virtual vtkMRMLNode* activeHierarchyNode(vtkMRMLNode* mrmlNode)const;
-  virtual vtkMRMLNode* parentNode(vtkMRMLNode* node)const;
-  virtual bool canBeAParent(vtkMRMLNode* node)const;
+  vtkMRMLNode* parentNode(vtkMRMLNode* node)const override;
+  bool canBeAParent(vtkMRMLNode* node)const override;
 
 protected:
   qMRMLSceneAnnotationModel(qMRMLSceneAnnotationModelPrivate* pimpl,
                              QObject *parent=nullptr);
 
-  virtual void updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
+  void updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column) override;
 
-  virtual void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item);
+  void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item) override;
 
-  virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
-  virtual int maxColumnId()const;
+  QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const override;
+  int maxColumnId()const override;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneAnnotationModel);

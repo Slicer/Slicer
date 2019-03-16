@@ -57,9 +57,9 @@ class qMRMLPlotViewControllerWidgetPrivate
 public:
   typedef qMRMLViewControllerBarPrivate Superclass;
   qMRMLPlotViewControllerWidgetPrivate(qMRMLPlotViewControllerWidget& object);
-  virtual ~qMRMLPlotViewControllerWidgetPrivate();
+  ~qMRMLPlotViewControllerWidgetPrivate() override;
 
-  virtual void init();
+  void init() override;
 
   vtkWeakPointer<vtkMRMLPlotChartNode>   PlotChartNode;
   vtkWeakPointer<vtkMRMLPlotViewNode>    PlotViewNode;
@@ -91,7 +91,7 @@ public slots:
   void onInteractionModeChanged(int);
 
 protected:
-  virtual void setupPopupUi();
+  void setupPopupUi() override;
 
 public:
 

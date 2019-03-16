@@ -138,11 +138,11 @@ public:
   ///
   /// Create the default widget representation if one is not set. By default,
   /// this is an instance of the vtkAnnotationROIRepresentation class.
-  virtual void CreateDefaultRepresentation() override;
+  void CreateDefaultRepresentation() override;
 
 protected:
   vtkAnnotationROIWidget();
-  ~vtkAnnotationROIWidget();
+  ~vtkAnnotationROIWidget() override;
 
   int WidgetState;
   enum _WidgetState {Start=0,Active};

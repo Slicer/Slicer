@@ -43,23 +43,23 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from a MRML file in XML format.
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object.
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "DiffusionTensorDisplayProperties";}
+  const char* GetNodeTagName() override {return "DiffusionTensorDisplayProperties";}
 
   //--------------------------------------------------------------------------
   /// Display Information: Types of scalars that may be generated from tensors.
@@ -448,13 +448,13 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
 
   ///
   /// Create default storage node or nullptr if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override {
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override {
     return nullptr;
   }
 
  protected:
   vtkMRMLDiffusionTensorDisplayPropertiesNode();
-  ~vtkMRMLDiffusionTensorDisplayPropertiesNode();
+  ~vtkMRMLDiffusionTensorDisplayPropertiesNode() override;
   vtkMRMLDiffusionTensorDisplayPropertiesNode(const vtkMRMLDiffusionTensorDisplayPropertiesNode&);
   void operator=(const vtkMRMLDiffusionTensorDisplayPropertiesNode&);
 

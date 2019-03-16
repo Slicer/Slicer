@@ -66,7 +66,7 @@ protected:
   qMRMLTableView* const q_ptr;
 public:
   qMRMLTableViewPrivate(qMRMLTableView& object);
-  ~qMRMLTableViewPrivate();
+  ~qMRMLTableViewPrivate() override;
 
   virtual void init();
 

@@ -79,25 +79,25 @@ public:
   /// Get Intersection transform to 2D coordinate system
   vtkGetObjectMacro(IntersectionPlaneTransform,vtkTransform);
 
-  virtual void GetActors2D(vtkPropCollection *actors) override;
+  void GetActors2D(vtkPropCollection *actors) override;
 
   void GetIntersectionActors(vtkPropCollection *actors);
 
-  virtual int ComputeInteractionState(int X, int Y, int modify=0) override;
-  virtual void StartWidgetInteraction(double e[2]) override;
-  virtual void WidgetInteraction(double e[2]) override;
-  virtual void SetInteractionState(int state) override;
+  int ComputeInteractionState(int X, int Y, int modify=0) override;
+  void StartWidgetInteraction(double e[2]) override;
+  void WidgetInteraction(double e[2]) override;
+  void SetInteractionState(int state) override;
 
   ///
   /// Methods supporting, and required by, the rendering process.
-  virtual void ReleaseGraphicsResources(vtkWindow*) override;
-  virtual int RenderOpaqueGeometry(vtkViewport*) override;
-  virtual int RenderTranslucentPolygonalGeometry(vtkViewport*) override;
-  virtual int RenderOverlay(vtkViewport *viewport) override;
+  void ReleaseGraphicsResources(vtkWindow*) override;
+  int RenderOpaqueGeometry(vtkViewport*) override;
+  int RenderTranslucentPolygonalGeometry(vtkViewport*) override;
+  int RenderOverlay(vtkViewport *viewport) override;
 
-  virtual int HasTranslucentPolygonalGeometry() override;
+  int HasTranslucentPolygonalGeometry() override;
 
-  virtual void SizeHandles() override;
+  void SizeHandles() override;
 
   vtkGetMacro(SliceIntersectionVisibility, int);
   vtkSetMacro(SliceIntersectionVisibility, int);
@@ -105,8 +105,8 @@ public:
   vtkGetMacro(HandlesVisibility, int);
   vtkSetMacro(HandlesVisibility, int);
 
-  virtual int HighlightHandle(vtkProp *prop) override;
-  virtual void HighlightFace(int cellId) override;
+  int HighlightHandle(vtkProp *prop) override;
+  void HighlightFace(int cellId) override;
 
   ///
   /// Set/Get the handle diameter as a fraction of the window diagonal.
@@ -118,7 +118,7 @@ public:
 
 protected:
   vtkAnnotationROIRepresentation2D();
-  ~vtkAnnotationROIRepresentation2D();
+  ~vtkAnnotationROIRepresentation2D() override;
 
   // Compute intersection line of the inputIntersectionFace and the slice plane
   // It is 50x faster than computing the intersection using vtkCutter
@@ -153,8 +153,8 @@ protected:
 
   double ComputeHandleRadiusInWorldCoordinates(double radInPixels);
 
-  virtual void CreateDefaultProperties() override;
-  virtual void PositionHandles() override;
+  void CreateDefaultProperties() override;
+  void PositionHandles() override;
 
   int SliceIntersectionVisibility;
 

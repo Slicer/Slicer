@@ -39,11 +39,11 @@ class qMRMLCheckableNodeComboBoxPrivate: public qMRMLNodeComboBoxPrivate
   Q_DECLARE_PUBLIC(qMRMLCheckableNodeComboBox);
 protected:
   qMRMLCheckableNodeComboBox* const q_ptr;
-  virtual void setModel(QAbstractItemModel* model);
+  void setModel(QAbstractItemModel* model) override;
 public:
   qMRMLCheckableNodeComboBoxPrivate(qMRMLCheckableNodeComboBox& object);
-  virtual ~qMRMLCheckableNodeComboBoxPrivate();
-  virtual void init(QAbstractItemModel* model);
+  ~qMRMLCheckableNodeComboBoxPrivate() override;
+  void init(QAbstractItemModel* model) override;
 };
 
 // -----------------------------------------------------------------------------

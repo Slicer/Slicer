@@ -69,7 +69,7 @@ public:
 
 protected:
   vtkITKImageWriter();
-  ~vtkITKImageWriter();
+  ~vtkITKImageWriter() override;
 
   char *FileName;
   vtkMatrix4x4* RasToIJKMatrix;

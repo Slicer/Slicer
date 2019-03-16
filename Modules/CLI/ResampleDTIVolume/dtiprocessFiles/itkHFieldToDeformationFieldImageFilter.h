@@ -83,7 +83,7 @@ protected:
   HFieldToDeformationFieldImageFilter()
   {
   }
-  virtual ~HFieldToDeformationFieldImageFilter()
+  ~HFieldToDeformationFieldImageFilter() override
   {
   }
 private:

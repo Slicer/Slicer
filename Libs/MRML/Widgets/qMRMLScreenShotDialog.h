@@ -51,7 +51,7 @@ public:
     };
 
   qMRMLScreenShotDialog(QWidget *parent = nullptr);
-  ~qMRMLScreenShotDialog();
+  ~qMRMLScreenShotDialog() override;
 
   void setLayoutManager(qMRMLLayoutManager* newlayoutManager);
   qMRMLLayoutManager* layoutManager()const;

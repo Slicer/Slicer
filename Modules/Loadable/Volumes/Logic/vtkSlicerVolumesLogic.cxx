@@ -198,7 +198,7 @@ public:
 
 protected:
   vtkSlicerErrorSink();
-  virtual ~vtkSlicerErrorSink(){}
+  ~vtkSlicerErrorSink() override{}
 
 private:
   static void CallbackFunction(vtkObject*, long unsigned int,

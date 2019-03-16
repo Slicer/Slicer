@@ -42,7 +42,7 @@ class QMRML_WIDGETS_EXPORT qMRMLItemDelegate: public QStyledItemDelegate
   Q_OBJECT
 public:
   qMRMLItemDelegate(QObject *parent = nullptr);
-  virtual ~qMRMLItemDelegate();
+  ~qMRMLItemDelegate() override;
   typedef QStyledItemDelegate Superclass;
 
   bool isColor(const QModelIndex& index)const;
@@ -50,19 +50,19 @@ public:
   bool is0To1Value(const QModelIndex& index)const;
 
   QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-                          const QModelIndex &index) const;
+                          const QModelIndex &index) const override;
 
-  void setEditorData(QWidget *editor, const QModelIndex &index) const;
+  void setEditorData(QWidget *editor, const QModelIndex &index) const override;
   void setModelData(QWidget *editor, QAbstractItemModel *model,
-                    const QModelIndex &index) const;
+                    const QModelIndex &index) const override;
 
-  virtual QSize sizeHint(const QStyleOptionViewItem &option,
-                         const QModelIndex &index) const;
+  QSize sizeHint(const QStyleOptionViewItem &option,
+                         const QModelIndex &index) const override;
 
   void updateEditorGeometry(QWidget *editor,
-    const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
-  virtual bool eventFilter(QObject *object, QEvent *event);
+  bool eventFilter(QObject *object, QEvent *event) override;
 
   // We make initStyleOption public so it can be used by qMRMLTreeView
   using QStyledItemDelegate::initStyleOption;

@@ -29,38 +29,38 @@ public:
   vtkTypeMacro(vtkMRMLModelStorageNode,vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName() override  {return "ModelStorage";}
+  const char* GetNodeTagName() override  {return "ModelStorage";}
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   /// Return true if the reference node can be read in
-  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
 
 protected:
   vtkMRMLModelStorageNode();
-  ~vtkMRMLModelStorageNode();
+  ~vtkMRMLModelStorageNode() override;
   vtkMRMLModelStorageNode(const vtkMRMLModelStorageNode&);
   void operator=(const vtkMRMLModelStorageNode&);
 
   /// Initialize all the supported read file types
-  virtual void InitializeSupportedReadFileTypes() override;
+  void InitializeSupportedReadFileTypes() override;
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes() override;
+  void InitializeSupportedWriteFileTypes() override;
 
   /// Get data node that is associated with this storage node
   vtkMRMLModelNode* GetAssociatedDataNode();
 
   /// Read data and set it in the referenced node
-  virtual int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode *refNode) override;
 
   /// Write data from a  referenced node
-  virtual int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode *refNode) override;
 
 };
 

@@ -215,7 +215,7 @@ public:
 
 protected:
   MorphologicalContourInterpolator();
-  ~MorphologicalContourInterpolator() {}
+  ~MorphologicalContourInterpolator() override {}
   typename TImage::PixelType m_Label;
   int                        m_Axis;
   bool                       m_HeuristicAlignment;
@@ -237,7 +237,7 @@ protected:
   ImagesEqual( typename BoolSliceType::Pointer& a, typename BoolSliceType::Pointer& b );
 
   /** Does the real work. */
-  virtual void
+  void
   GenerateData() override;
 
   /** Determines correspondances between two slices and calls appropriate methods. */
@@ -338,7 +338,7 @@ protected:
   CardSymDifference( typename BoolSliceType::Pointer& shape1, typename BoolSliceType::Pointer& shape2 );
 
   /** Copied from ImageSource and changed to allocate a cleared buffer. */
-  virtual void
+  void
   AllocateOutputs() override;
 
   /** Returns the centroid of given regions */

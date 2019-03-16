@@ -169,9 +169,9 @@ public:
 
 protected:
   vtkDiffusionTensorGlyph();
-  ~vtkDiffusionTensorGlyph();
+  ~vtkDiffusionTensorGlyph() override;
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   void ColorGlyphsBy(int measure);
 

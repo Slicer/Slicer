@@ -56,7 +56,7 @@ public:
 protected:
 
   vtkMRMLThreeDViewDisplayableManagerFactory();
-  virtual ~vtkMRMLThreeDViewDisplayableManagerFactory();
+  ~vtkMRMLThreeDViewDisplayableManagerFactory() override;
 
   VTK_SINGLETON_DECLARE(vtkMRMLThreeDViewDisplayableManagerFactory);
 

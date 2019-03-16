@@ -23,36 +23,36 @@ public:
 
   typedef qSlicerLoadableModule Superclass;
   qSlicerAnnotationsModule(QObject *parent=nullptr);
-  virtual ~qSlicerAnnotationsModule();
+  ~qSlicerAnnotationsModule() override;
 
   /// Return the help and acknowledgement text for the Annotation module.
-  virtual QString helpText()const;
-  virtual QString acknowledgementText()const;
-  virtual QStringList contributors()const;
-  virtual QStringList dependencies() const;
+  QString helpText()const override;
+  QString acknowledgementText()const override;
+  QStringList contributors()const override;
+  QStringList dependencies() const override;
 
   /// Return the icon of the Annotation module.
-  virtual QIcon icon()const;
+  QIcon icon()const override;
 
-  virtual QStringList categories()const;
+  QStringList categories()const override;
 
   /// Specify editable node types
-  virtual QStringList associatedNodeTypes()const;
+  QStringList associatedNodeTypes()const override;
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
 protected:
 
   /// All initialization code should be done in the setup
-  virtual void setup();
+  void setup() override;
 
   // Description:
   // Create and return the widget representation associated to this module
-  virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation();
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   // Description:
   // Create and return the logic associated to this module
-  virtual vtkMRMLAbstractLogic* createLogic();
+  vtkMRMLAbstractLogic* createLogic() override;
 
 public slots:
   /// a public slot to open up the screen  capture

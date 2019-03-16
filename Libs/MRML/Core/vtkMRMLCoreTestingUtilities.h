@@ -117,9 +117,9 @@ class VTK_MRML_EXPORT vtkMRMLNodeCallback : public vtkCallbackCommand
 {
 public:
   static vtkMRMLNodeCallback *New() {return new vtkMRMLNodeCallback;}
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual void Execute(vtkObject* caller, unsigned long eid, void *callData);
+  void Execute(vtkObject* caller, unsigned long eid, void *callData) override;
   virtual void ResetNumberOfEvents();
 
   void SetMRMLNode(vtkMRMLNode*);
@@ -135,7 +135,7 @@ public:
 
 protected:
   vtkMRMLNodeCallback();
-  ~vtkMRMLNodeCallback();
+  ~vtkMRMLNodeCallback() override;
 
   void SetErrorString(const char* error);
 

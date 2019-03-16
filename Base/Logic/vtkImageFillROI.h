@@ -81,7 +81,7 @@ public:
 
 protected:
   vtkImageFillROI();
-  ~vtkImageFillROI();
+  ~vtkImageFillROI() override;
 
   vtkPoints *Points;
   double Value;
@@ -90,7 +90,7 @@ protected:
 
   /// Reimplemented.
   /// Not threaded because too simple a filter
-  virtual int RequestData(vtkInformation* request,
+  int RequestData(vtkInformation* request,
                           vtkInformationVector** inputVectors,
                           vtkInformationVector* outputVector) override;
 

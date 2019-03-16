@@ -16,35 +16,35 @@ public:
   vtkTypeMacro(vtkMRMLAnnotationAngleNode,vtkMRMLAnnotationLinesNode);
   // Description:
   // Just prints short summary
-  virtual void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1) override;
+  void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1) override;
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "AnnotationAngle";}
+  const char* GetNodeTagName() override {return "AnnotationAngle";}
 
   // Description:
   // Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
 
   // Description:
   // Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   void UpdateScene(vtkMRMLScene *scene) override;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+  void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) override;
 
@@ -124,11 +124,11 @@ public:
 
  // Description:
   // transform utility functions
-  virtual void ApplyTransform(vtkAbstractTransform* transform) override;
+  void ApplyTransform(vtkAbstractTransform* transform) override;
 
   // Description:
   // Create default storage node or nullptr if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   //  void Initialize(vtkMRMLScene* mrmlScene);
 
@@ -152,7 +152,7 @@ public:
 
 protected:
   vtkMRMLAnnotationAngleNode();
-  ~vtkMRMLAnnotationAngleNode();
+  ~vtkMRMLAnnotationAngleNode() override;
   vtkMRMLAnnotationAngleNode(const vtkMRMLAnnotationAngleNode&);
   void operator=(const vtkMRMLAnnotationAngleNode&);
 

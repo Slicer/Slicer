@@ -64,7 +64,7 @@ protected:
   qMRMLSliceInformationWidget* const q_ptr;
 public:
   qMRMLSliceInformationWidgetPrivate(qMRMLSliceInformationWidget& object);
-  ~qMRMLSliceInformationWidgetPrivate();
+  ~qMRMLSliceInformationWidgetPrivate() override;
 
   void setupUi(qMRMLWidget* widget);
 

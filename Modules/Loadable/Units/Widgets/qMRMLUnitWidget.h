@@ -86,7 +86,7 @@ class Q_SLICER_MODULE_UNITS_WIDGETS_EXPORT qMRMLUnitWidget : public qMRMLWidget
 public:
   typedef qMRMLWidget Superclass;
   qMRMLUnitWidget(QWidget *parent=nullptr);
-  virtual ~qMRMLUnitWidget();
+  ~qMRMLUnitWidget() override;
 
   /// Return the name property value.
   /// \sa name
@@ -141,7 +141,7 @@ public:
   UnitProperties editableProperties() const;
 
   /// Set the units logic scene for the preset comboxes
-  virtual void setMRMLScene(vtkMRMLScene* unitsLogicScene);
+  void setMRMLScene(vtkMRMLScene* unitsLogicScene) override;
 
   Q_INVOKABLE vtkMRMLNode* currentNode() const;
 

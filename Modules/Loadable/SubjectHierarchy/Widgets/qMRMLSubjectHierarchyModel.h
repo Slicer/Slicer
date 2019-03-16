@@ -73,7 +73,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyModel
 public:
   typedef QStandardItemModel Superclass;
   qMRMLSubjectHierarchyModel(QObject *parent=nullptr);
-  virtual ~qMRMLSubjectHierarchyModel();
+  ~qMRMLSubjectHierarchyModel() override;
 
   enum ItemDataRole
     {
@@ -103,10 +103,10 @@ public:
   int idColumn()const;
   void setIDColumn(int column);
 
-  virtual Qt::DropActions supportedDropActions()const;
-  virtual QMimeData* mimeData(const QModelIndexList& indexes)const;
-  virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action,
-                            int row, int column, const QModelIndex &parent);
+  Qt::DropActions supportedDropActions()const override;
+  QMimeData* mimeData(const QModelIndexList& indexes)const override;
+  bool dropMimeData(const QMimeData *data, Qt::DropAction action,
+                            int row, int column, const QModelIndex &parent) override;
 
   Q_INVOKABLE virtual void setMRMLScene(vtkMRMLScene* scene);
   Q_INVOKABLE vtkMRMLScene* mrmlScene()const;

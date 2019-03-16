@@ -45,7 +45,7 @@ public:
   /// Constructor
   explicit qMRMLSegmentationRepresentationsListView(QWidget* parent = nullptr);
   /// Destructor
-  virtual ~qMRMLSegmentationRepresentationsListView();
+  ~qMRMLSegmentationRepresentationsListView() override;
 
   /// Get segmentation MRML node
   vtkMRMLNode* segmentationNode();

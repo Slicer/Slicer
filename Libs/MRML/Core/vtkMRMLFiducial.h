@@ -89,7 +89,7 @@ public:
 
 protected:
   vtkMRMLFiducial();
-  ~vtkMRMLFiducial();
+  ~vtkMRMLFiducial() override;
   vtkMRMLFiducial(const vtkMRMLFiducial&);
   void operator=(const vtkMRMLFiducial&);
 

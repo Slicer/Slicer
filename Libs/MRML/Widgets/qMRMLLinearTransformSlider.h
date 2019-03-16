@@ -44,7 +44,7 @@ public:
   /// Constructors
   typedef qMRMLSliderWidget Superclass;
   explicit qMRMLLinearTransformSlider(QWidget* parent);
-  virtual ~qMRMLLinearTransformSlider();
+  ~qMRMLLinearTransformSlider() override;
 
   ///
   /// Set/Get Transform type

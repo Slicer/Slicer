@@ -24,31 +24,31 @@ public:
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
   /// Description:
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "AnnotationROI";}
+  const char* GetNodeTagName() override {return "AnnotationROI";}
 
-  virtual const char* GetIcon() override {return ":/Icons/AnnotationROI.png";}
+  const char* GetIcon() override {return ":/Icons/AnnotationROI.png";}
 
   // Description:
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   /// Description:
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
 
   /// Description:
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   void UpdateScene(vtkMRMLScene *scene) override;
 
   /// Description:
   /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+  void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) override;
 
@@ -94,8 +94,8 @@ public:
 
   /// Description:
   /// transform utility functions
-  virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix) override;
-  virtual void ApplyTransform(vtkAbstractTransform* transform) override;
+  void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix) override;
+  void ApplyTransform(vtkAbstractTransform* transform) override;
   virtual void GetTransformedPlanes(vtkPlanes *planes);
 
   /// Description:
@@ -154,12 +154,12 @@ public:
   /// The default implementation in the model node would not work correctly, as the polydata
   /// in this class is used for storing the centerpoint position and radius.
   /// \sa GetBounds()
-  virtual void GetRASBounds(double bounds[6]) override;
+  void GetRASBounds(double bounds[6]) override;
 
   /// Get bounding box in global RAS form (xmin,xmax, ymin,ymax, zmin,zmax).
   /// This method always returns the bounds of the untransformed object.
   /// \sa GetRASBounds()
-  virtual void GetBounds(double bounds[6]) override;
+  void GetBounds(double bounds[6]) override;
 
   enum
   {
@@ -170,7 +170,7 @@ public:
 
 protected:
   vtkMRMLAnnotationROINode();
-  ~vtkMRMLAnnotationROINode();
+  ~vtkMRMLAnnotationROINode() override;
   vtkMRMLAnnotationROINode(const vtkMRMLAnnotationROINode&);
   void operator=(const vtkMRMLAnnotationROINode&);
 

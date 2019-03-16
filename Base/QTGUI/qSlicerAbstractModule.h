@@ -49,7 +49,7 @@ public:
 
   typedef qSlicerAbstractCoreModule Superclass;
   qSlicerAbstractModule(QObject *parent=nullptr);
-  virtual ~qSlicerAbstractModule();
+  ~qSlicerAbstractModule() override;
 
   /// Icon of the module. Anytime a graphical representation of the module
   /// is needed, the icon is used. It's the icon shown in the module selector

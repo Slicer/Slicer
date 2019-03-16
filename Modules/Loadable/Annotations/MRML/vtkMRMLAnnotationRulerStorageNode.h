@@ -20,24 +20,24 @@ public:
   vtkTypeMacro(vtkMRMLAnnotationRulerStorageNode,vtkMRMLAnnotationLinesStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
 
   // Description:
   // Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   // Description:
   // Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   // Description:
   // Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName() override {return "AnnotationRulerStorage";}
+  const char* GetNodeTagName() override {return "AnnotationRulerStorage";}
 
   /// Read a single ruler from an open list file, called by the hierarchy
   /// storage node
@@ -48,7 +48,7 @@ public:
 
 protected:
   vtkMRMLAnnotationRulerStorageNode();
-  ~vtkMRMLAnnotationRulerStorageNode();
+  ~vtkMRMLAnnotationRulerStorageNode() override;
   vtkMRMLAnnotationRulerStorageNode(const vtkMRMLAnnotationRulerStorageNode&);
   void operator=(const vtkMRMLAnnotationRulerStorageNode&);
 
@@ -62,10 +62,10 @@ protected:
   int ReadAnnotationRulerProperties(vtkMRMLAnnotationRulerNode *refNode, char line[1024], int &typeColumn, int& line1IDColumn, int& selColumn, int& visColumn, int& numColumns);
 
   /// Read data and set it in the referenced node
-  virtual int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode *refNode) override;
 
   /// Write data from the referenced node into the stream
-  virtual int WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream & of) override;
+  int WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream & of) override;
 };
 
 #endif

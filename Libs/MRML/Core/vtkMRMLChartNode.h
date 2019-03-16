@@ -43,28 +43,28 @@ class VTK_MRML_EXPORT vtkMRMLChartNode : public vtkMRMLNode
 
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override
+  const char* GetNodeTagName() override
     {return "Chart";}
 
   ///
   /// Method to propagate events generated in mrml
-  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
+  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
 
   //----------------------------------------------------------------
   /// Access methods
@@ -158,23 +158,23 @@ class VTK_MRML_EXPORT vtkMRMLChartNode : public vtkMRMLNode
 
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
-  virtual void SetSceneReferences() override;
+  void SetSceneReferences() override;
 
   ///
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
-  virtual void UpdateReferences() override;
+  void UpdateReferences() override;
 
   ///
   /// Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID) override;
+  void UpdateReferenceID(const char *oldID, const char *newID) override;
 
  protected:
   //----------------------------------------------------------------
   /// Constructor and destroctor
   //----------------------------------------------------------------
   vtkMRMLChartNode();
-  ~vtkMRMLChartNode();
+  ~vtkMRMLChartNode() override;
   vtkMRMLChartNode(const vtkMRMLChartNode&);
   void operator=(const vtkMRMLChartNode&);
 

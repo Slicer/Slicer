@@ -36,13 +36,13 @@ public:
   explicit qSlicerSettingsUserInformationPanel(QWidget* parent = nullptr);
 
   /// Destructor
-  virtual ~qSlicerSettingsUserInformationPanel();
+  ~qSlicerSettingsUserInformationPanel() override;
 
   virtual void setUserInformation(vtkPersonInformation* userInfo);
 
 public Q_SLOTS:
-  virtual void resetSettings();
-  virtual void applySettings();
+  void resetSettings() override;
+  void applySettings() override;
 
   void updateFromUserInformation();
   void onNameChanged();

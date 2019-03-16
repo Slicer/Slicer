@@ -80,7 +80,7 @@ public:
 
 protected:
   vtkCodedEntry();
-  ~vtkCodedEntry();
+  ~vtkCodedEntry() override;
   vtkCodedEntry(const vtkCodedEntry&);
   void operator=(const vtkCodedEntry&);
 

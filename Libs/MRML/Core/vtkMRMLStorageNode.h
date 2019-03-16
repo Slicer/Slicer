@@ -36,7 +36,7 @@ public:
   vtkTypeMacro(vtkMRMLStorageNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() override = 0;
+  vtkMRMLNode* CreateNodeInstance() override = 0;
 
   /// Returns the first storable node that is associated to this storage node
   /// \sa vtkMRMLStorableNode
@@ -44,7 +44,7 @@ public:
 
   ///
   /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Read data from \a FileName and set it in the referenced node.
@@ -65,15 +65,15 @@ public:
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName() override = 0;
+  const char* GetNodeTagName() override = 0;
 
   /// A file name or the archetype file name for a series used for read or write
   /// \sa ReadData(), WriteData()
@@ -107,7 +107,7 @@ public:
 
   ///
   /// Propagate Progress Event generated in ReadData
-  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
+  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
 
   ///
   /// Possible Read and Write states
@@ -347,7 +347,7 @@ public:
 
 protected:
   vtkMRMLStorageNode();
-  ~vtkMRMLStorageNode();
+  ~vtkMRMLStorageNode() override;
   vtkMRMLStorageNode(const vtkMRMLStorageNode&);
   void operator=(const vtkMRMLStorageNode&);
 

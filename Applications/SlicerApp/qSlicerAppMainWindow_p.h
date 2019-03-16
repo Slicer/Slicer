@@ -37,11 +37,11 @@ class Q_SLICER_APP_EXPORT qSlicerAppMainWindowPrivate
 public:
   typedef qSlicerMainWindowPrivate Superclass;
   qSlicerAppMainWindowPrivate(qSlicerAppMainWindow& object);
-  virtual ~qSlicerAppMainWindowPrivate();
+  ~qSlicerAppMainWindowPrivate() override;
 
-  virtual void init();
+  void init() override;
   /// Reimplemented for custom behavior
-  virtual void setupUi(QMainWindow * mainWindow);
+  void setupUi(QMainWindow * mainWindow) override;
 };
 
 #endif

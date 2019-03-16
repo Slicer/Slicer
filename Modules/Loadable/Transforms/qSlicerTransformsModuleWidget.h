@@ -40,12 +40,12 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerTransformsModuleWidget(QWidget *parent=nullptr);
-  virtual ~qSlicerTransformsModuleWidget();
+  ~qSlicerTransformsModuleWidget() override;
 
   /// Reimplemented for internal reasons
-  void setMRMLScene(vtkMRMLScene* scene);
+  void setMRMLScene(vtkMRMLScene* scene) override;
 
-  virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
+  bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
 
 public slots:
 
@@ -61,7 +61,7 @@ public slots:
 
 protected:
 
-  virtual void setup();
+  void setup() override;
 
 protected slots:
 

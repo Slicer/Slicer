@@ -44,7 +44,7 @@ protected:
 
 //-----------------------------------------------------------------------------
 /** Callback method to show the ProgressEvent */
-virtual void ShowProgress()
+void ShowProgress() override
 {
   if (this->GetProcess())
     {
@@ -109,7 +109,7 @@ virtual void ShowProgress()
 
 //-----------------------------------------------------------------------------
 /** Callback method to show the StartEvent */
-virtual void StartFilter()
+void StartFilter() override
 {
   this->SetSteps(0);
   this->SetIterations(0);
@@ -151,7 +151,7 @@ virtual void StartFilter()
 
 //-----------------------------------------------------------------------------
 /** Callback method to show the EndEvent */
-virtual void EndFilter()
+void EndFilter() override
 {
   this->GetTimeProbe().Stop();
   if (!this->GetQuiet())

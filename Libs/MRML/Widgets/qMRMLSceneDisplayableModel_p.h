@@ -53,9 +53,9 @@ protected:
 public:
   typedef qMRMLSceneHierarchyModelPrivate Superclass;
   qMRMLSceneDisplayableModelPrivate(qMRMLSceneDisplayableModel& object);
-  virtual void init();
+  void init() override;
 
-  virtual vtkMRMLHierarchyNode* CreateHierarchyNode()const;
+  vtkMRMLHierarchyNode* CreateHierarchyNode()const override;
   vtkMRMLDisplayNode* displayNode(vtkMRMLNode* node)const;
 
   int ColorColumn;

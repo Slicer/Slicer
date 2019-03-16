@@ -37,17 +37,17 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
 protected:
   vtkMRMLAbstractLayoutNode();
-  ~vtkMRMLAbstractLayoutNode();
+  ~vtkMRMLAbstractLayoutNode() override;
 
   vtkMRMLAbstractLayoutNode(const vtkMRMLAbstractLayoutNode&);
   void operator=(const vtkMRMLAbstractLayoutNode&);

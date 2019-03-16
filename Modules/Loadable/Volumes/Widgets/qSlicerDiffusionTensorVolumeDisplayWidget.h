@@ -48,7 +48,7 @@ public:
   /// Constructors
   typedef qSlicerWidget Superclass;
   explicit qSlicerDiffusionTensorVolumeDisplayWidget(QWidget* parent = nullptr);
-  virtual ~qSlicerDiffusionTensorVolumeDisplayWidget();
+  ~qSlicerDiffusionTensorVolumeDisplayWidget() override;
 
   vtkMRMLDiffusionTensorVolumeNode* volumeNode()const;
   vtkMRMLDiffusionTensorVolumeDisplayNode* volumeDisplayNode()const;

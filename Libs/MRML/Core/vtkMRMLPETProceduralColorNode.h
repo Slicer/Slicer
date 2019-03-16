@@ -14,32 +14,32 @@ public:
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "PETProceduralColor";}
+  const char* GetNodeTagName() override {return "PETProceduralColor";}
 
   ///
   ///
-  virtual void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene *scene) override;
 
   ///
   /// Get/Set for Type. In SetType, set up the custom colour options for this
   /// set of colours
-  virtual void SetType(int type) override;
+  void SetType(int type) override;
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
 
@@ -77,7 +77,7 @@ public:
 
 protected:
   vtkMRMLPETProceduralColorNode();
-  ~vtkMRMLPETProceduralColorNode();
+  ~vtkMRMLPETProceduralColorNode() override;
   vtkMRMLPETProceduralColorNode(const vtkMRMLPETProceduralColorNode&);
   void operator=(const vtkMRMLPETProceduralColorNode&);
 };

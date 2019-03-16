@@ -84,9 +84,9 @@ public:
 protected:
 
   vtkMRMLAbstractSliceViewDisplayableManager();
-  virtual ~vtkMRMLAbstractSliceViewDisplayableManager();
+  ~vtkMRMLAbstractSliceViewDisplayableManager() override;
 
-  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;
+  void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;
 
   /// Could be overloaded if DisplayableManager subclass
   virtual void OnMRMLSliceNodeModifiedEvent(){}

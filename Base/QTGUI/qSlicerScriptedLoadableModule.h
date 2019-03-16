@@ -52,57 +52,57 @@ public:
   typedef qSlicerLoadableModule Superclass;
   typedef qSlicerScriptedLoadableModulePrivate Pimpl;
   qSlicerScriptedLoadableModule(QObject *parent=nullptr);
-  virtual ~qSlicerScriptedLoadableModule();
+  ~qSlicerScriptedLoadableModule() override;
 
   QString pythonSource()const;
   bool setPythonSource(const QString& newPythonSource);
 
-  virtual QString title()const ;
+  QString title()const override ;
   void setTitle(const QString& newTitle);
 
-  virtual QStringList categories()const;
+  QStringList categories()const override;
   void setCategories(const QStringList& newCategories);
 
-  virtual QStringList contributors()const;
+  QStringList contributors()const override;
   void setContributors(const QStringList& newContributors);
 
-  virtual QStringList associatedNodeTypes()const;
+  QStringList associatedNodeTypes()const override;
   void setAssociatedNodeTypes(const QStringList& newAssociatedNodeTypes);
 
-  virtual QString helpText()const;
+  QString helpText()const override;
   void setHelpText(const QString& newHelpText);
 
-  virtual QString acknowledgementText()const;
+  QString acknowledgementText()const override;
   void setAcknowledgementText(const QString& newAcknowledgementText);
 
   virtual QVariantMap extensions()const;
   void setExtensions(const QVariantMap& extensions);
 
-  virtual QIcon icon()const;
+  QIcon icon()const override;
   void setIcon(const QIcon& newIcon);
 
-  virtual QStringList dependencies() const;
+  QStringList dependencies() const override;
   void setDependencies(const QStringList& dependencies);
 
-  virtual int index() const;
+  int index() const override;
   void setIndex(const int index);
 
   /// Enable/Disable hide state of the module
   /// Needs to be hidden before the module menu is created.
-  virtual bool isHidden()const;
+  bool isHidden()const override;
   void setHidden(bool hidden);
 
 protected:
 
-  virtual void setup();
+  void setup() override;
 
   void registerFileDialog();
 
   void registerIO();
 
-  virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation();
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
-  virtual vtkMRMLAbstractLogic* createLogic();
+  vtkMRMLAbstractLogic* createLogic() override;
 
 protected:
   QScopedPointer<qSlicerScriptedLoadableModulePrivate> d_ptr;

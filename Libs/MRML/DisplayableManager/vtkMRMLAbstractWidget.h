@@ -61,7 +61,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractWidget : public vtkObjec
 public:
   /// Standard methods for a VTK class.
   vtkTypeMacro(vtkMRMLAbstractWidget, vtkObject);
-  virtual void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   virtual void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* applicationLogic);
   vtkMRMLApplicationLogic* GetMRMLApplicationLogic();

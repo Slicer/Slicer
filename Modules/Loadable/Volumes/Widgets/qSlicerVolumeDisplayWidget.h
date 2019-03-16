@@ -23,7 +23,7 @@ public:
   /// Constructors
   typedef QStackedWidget Superclass;
   explicit qSlicerVolumeDisplayWidget(QWidget* parent=nullptr);
-  virtual ~qSlicerVolumeDisplayWidget();
+  ~qSlicerVolumeDisplayWidget() override;
 
 public slots:
   /// Set the MRML node of interest

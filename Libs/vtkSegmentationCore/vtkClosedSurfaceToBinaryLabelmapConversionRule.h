@@ -47,32 +47,32 @@ public:
 public:
   static vtkClosedSurfaceToBinaryLabelmapConversionRule* New();
   vtkTypeMacro(vtkClosedSurfaceToBinaryLabelmapConversionRule, vtkSegmentationConverterRule);
-  virtual vtkSegmentationConverterRule* CreateRuleInstance() override;
+  vtkSegmentationConverterRule* CreateRuleInstance() override;
 
   /// Constructs representation object from representation name for the supported representation classes
   /// (typically source and target representation VTK classes, subclasses of vtkDataObject)
   /// Note: Need to take ownership of the created object! For example using vtkSmartPointer<vtkDataObject>::Take
-  virtual vtkDataObject* ConstructRepresentationObjectByRepresentation(std::string representationName)  override;
+  vtkDataObject* ConstructRepresentationObjectByRepresentation(std::string representationName)  override;
 
   /// Constructs representation object from class name for the supported representation classes
   /// (typically source and target representation VTK classes, subclasses of vtkDataObject)
   /// Note: Need to take ownership of the created object! For example using vtkSmartPointer<vtkDataObject>::Take
-  virtual vtkDataObject* ConstructRepresentationObjectByClass(std::string className) override;
+  vtkDataObject* ConstructRepresentationObjectByClass(std::string className) override;
 
   /// Update the target representation based on the source representation
-  virtual bool Convert(vtkDataObject* sourceRepresentation, vtkDataObject* targetRepresentation) override;
+  bool Convert(vtkDataObject* sourceRepresentation, vtkDataObject* targetRepresentation) override;
 
   /// Get the cost of the conversion.
-  virtual unsigned int GetConversionCost(vtkDataObject* sourceRepresentation=nullptr, vtkDataObject* targetRepresentation=nullptr) override;
+  unsigned int GetConversionCost(vtkDataObject* sourceRepresentation=nullptr, vtkDataObject* targetRepresentation=nullptr) override;
 
   /// Human-readable name of the converter rule
-  virtual const char* GetName() override { return "Closed surface to binary labelmap (simple image stencil)"; };
+  const char* GetName() override { return "Closed surface to binary labelmap (simple image stencil)"; };
 
   /// Human-readable name of the source representation
-  virtual const char* GetSourceRepresentationName() override { return vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(); };
+  const char* GetSourceRepresentationName() override { return vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(); };
 
   /// Human-readable name of the target representation
-  virtual const char* GetTargetRepresentationName() override { return vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName(); };
+  const char* GetTargetRepresentationName() override { return vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName(); };
 
   vtkSetMacro(UseOutputImageDataGeometry, bool);
 
@@ -101,7 +101,7 @@ protected:
 
 protected:
   vtkClosedSurfaceToBinaryLabelmapConversionRule();
-  ~vtkClosedSurfaceToBinaryLabelmapConversionRule();
+  ~vtkClosedSurfaceToBinaryLabelmapConversionRule() override;
   void operator=(const vtkClosedSurfaceToBinaryLabelmapConversionRule&);
 };
 

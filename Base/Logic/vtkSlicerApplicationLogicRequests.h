@@ -51,7 +51,7 @@ public:
     m_DeleteFile = deleteFile;
   }
 
-  void Execute(vtkSlicerApplicationLogic* appLogic)
+  void Execute(vtkSlicerApplicationLogic* appLogic) override
   {
     // This method needs to read the data into the specific type of node and set up an
     // appropriate storage and display node.
@@ -252,7 +252,7 @@ public:
     m_DeleteFile = deleteFile;
   }
 
-  void Execute(vtkSlicerApplicationLogic* appLogic)
+  void Execute(vtkSlicerApplicationLogic* appLogic) override
   {
     if (m_SourceNodes.size() != m_TargetNodes.size())
       {
@@ -513,7 +513,7 @@ public:
     m_ParentTransformNode = parentTransformNode;
   }
 
-  void Execute(vtkSlicerApplicationLogic* appLogic)
+  void Execute(vtkSlicerApplicationLogic* appLogic) override
   {
     vtkMRMLScene* scene = appLogic->GetMRMLScene();
     vtkMRMLTransformableNode* node = vtkMRMLTransformableNode::SafeDownCast(
@@ -541,7 +541,7 @@ public:
     m_SubjectHierarchySiblingNode = siblingNode;
   }
 
-  void Execute(vtkSlicerApplicationLogic* appLogic)
+  void Execute(vtkSlicerApplicationLogic* appLogic) override
   {
     vtkMRMLScene* scene = appLogic->GetMRMLScene();
 
@@ -595,7 +595,7 @@ public:
     m_Filename = filename;
   }
 
-  void Execute(vtkSlicerApplicationLogic* appLogic)
+  void Execute(vtkSlicerApplicationLogic* appLogic) override
   {
     if (m_SourceNodes.size() != m_TargetNodes.size())
       {

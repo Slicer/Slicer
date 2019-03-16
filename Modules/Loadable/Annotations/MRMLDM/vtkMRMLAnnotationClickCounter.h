@@ -47,7 +47,7 @@ public:
 protected:
 
   vtkMRMLAnnotationClickCounter();
-  virtual ~vtkMRMLAnnotationClickCounter();
+  ~vtkMRMLAnnotationClickCounter() override;
 
 private:
 

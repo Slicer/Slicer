@@ -65,7 +65,7 @@ public:
 
 protected:
   vtkSlicerPlotsLogic();
-  virtual ~vtkSlicerPlotsLogic();
+  ~vtkSlicerPlotsLogic() override;
 
 private:
   vtkSlicerPlotsLogic(const vtkSlicerPlotsLogic&); // Not implemented

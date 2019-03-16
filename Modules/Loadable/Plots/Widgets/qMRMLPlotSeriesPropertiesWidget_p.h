@@ -63,7 +63,7 @@ protected:
   qMRMLPlotSeriesPropertiesWidget* const q_ptr;
 public:
   qMRMLPlotSeriesPropertiesWidgetPrivate(qMRMLPlotSeriesPropertiesWidget& object);
-  ~qMRMLPlotSeriesPropertiesWidgetPrivate();
+  ~qMRMLPlotSeriesPropertiesWidgetPrivate() override;
 
   void setupUi(qMRMLWidget* widget);
 

@@ -125,7 +125,7 @@ public:
 protected:
 
   ImageToImageRegistrationMethod( void );
-  virtual ~ImageToImageRegistrationMethod( void );
+  ~ImageToImageRegistrationMethod( void ) override;
 
   virtual void    Initialize( void );
 
@@ -142,7 +142,7 @@ protected:
   itkGetConstObjectMacro( Transform, TransformType );
 
   using Superclass::MakeOutput;
-  virtual DataObjectPointer   MakeOutput( DataObjectPointerArraySizeType idx ) override;
+  DataObjectPointer   MakeOutput( DataObjectPointerArraySizeType idx ) override;
 
   unsigned long               GetMTime( void ) const override;
 

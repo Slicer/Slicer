@@ -54,7 +54,7 @@ protected:
   qSlicerSubjectHierarchyPlotsPlugin* const q_ptr;
 public:
   qSlicerSubjectHierarchyPlotsPluginPrivate(qSlicerSubjectHierarchyPlotsPlugin& object);
-  ~qSlicerSubjectHierarchyPlotsPluginPrivate();
+  ~qSlicerSubjectHierarchyPlotsPluginPrivate() override;
   void init();
 public:
   QIcon PlotChartIcon;

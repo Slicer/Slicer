@@ -41,11 +41,11 @@ public:
   typedef qSlicerLoadableModule Self;
   typedef qSlicerAbstractModule Superclass;
   qSlicerLoadableModule(QObject *parent=nullptr);
-  virtual ~qSlicerLoadableModule();
+  ~qSlicerLoadableModule() override;
 
   /// Return help/acknowledgement text
-  virtual QString helpText()const;
-  virtual QString acknowledgementText()const;
+  QString helpText()const override;
+  QString acknowledgementText()const override;
 
   /// \brief Import python extensions associated with \a modulePath.
   ///
@@ -81,7 +81,7 @@ public:
                                                const QString& moduleName);
 
 protected:
-  virtual void setup();
+  void setup() override;
 
 protected:
   QScopedPointer<qSlicerLoadableModulePrivate> d_ptr;

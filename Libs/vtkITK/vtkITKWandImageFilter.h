@@ -28,9 +28,9 @@ public:
 
 protected:
   vtkITKWandImageFilter();
-  ~vtkITKWandImageFilter();
+  ~vtkITKWandImageFilter() override;
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
+  void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
   int Seed[3];
   double DynamicRangePercentage;

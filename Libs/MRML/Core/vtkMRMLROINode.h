@@ -19,29 +19,29 @@ public:
   //--------------------------------------------------------------------------
   /// MRML methods
   //--------------------------------------------------------------------------
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes( const char** atts) override;
 
   virtual void ReadXMLString( const char *keyValuePairs);
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode *node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override {return "MRMLROINode";}
+  const char* GetNodeTagName() override {return "MRMLROINode";}
 
   ///
   ///
-  virtual void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene *scene) override;
 
   ///
   /// update display node ids
@@ -105,8 +105,8 @@ public:
 
   ///
   /// transform utility functions
-  virtual bool CanApplyNonLinearTransforms()const override;
-  virtual void ApplyTransform(vtkAbstractTransform* transform) override;
+  bool CanApplyNonLinearTransforms()const override;
+  void ApplyTransform(vtkAbstractTransform* transform) override;
 
   /// Description
   /// get transformed planes for the ROI region
@@ -114,7 +114,7 @@ public:
 
 protected:
   vtkMRMLROINode();
-  ~vtkMRMLROINode();
+  ~vtkMRMLROINode() override;
   vtkMRMLROINode(const vtkMRMLROINode&);
   void operator=(const vtkMRMLROINode&);
   int Visibility;

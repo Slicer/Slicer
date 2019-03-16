@@ -57,7 +57,7 @@ protected:
   qSlicerSubjectHierarchyDICOMPlugin* const q_ptr;
 public:
   qSlicerSubjectHierarchyDICOMPluginPrivate(qSlicerSubjectHierarchyDICOMPlugin& object);
-  ~qSlicerSubjectHierarchyDICOMPluginPrivate();
+  ~qSlicerSubjectHierarchyDICOMPluginPrivate() override;
   void init();
 public:
   QIcon PatientIcon;

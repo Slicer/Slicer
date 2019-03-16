@@ -52,13 +52,13 @@ class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsModuleWidget :
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerSegmentationsModuleWidget(QWidget *parent=nullptr);
-  virtual ~qSlicerSegmentationsModuleWidget();
+  ~qSlicerSegmentationsModuleWidget() override;
 
-  virtual void enter();
-  virtual void exit();
+  void enter() override;
+  void exit() override;
 
   /// Support of node editing. Selects node in user interface that the user wants to edit
-  virtual bool setEditedNode(vtkMRMLNode* node, QString role=QString(), QString context=QString());
+  bool setEditedNode(vtkMRMLNode* node, QString role=QString(), QString context=QString()) override;
 
   /// Set Terminologies module logic
   void setTerminologiesLogic(vtkSlicerTerminologiesModuleLogic* logic);
@@ -71,7 +71,7 @@ public slots:
   void selectSegmentationNode(vtkMRMLSegmentationNode* segmentationNode);
 
 protected:
-  virtual void setup();
+  void setup() override;
   void onEnter();
 
   /// Initialization function to enable automatic testing

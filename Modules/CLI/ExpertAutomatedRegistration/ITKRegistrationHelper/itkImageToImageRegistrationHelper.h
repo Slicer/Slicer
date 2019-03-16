@@ -423,7 +423,7 @@ public:
 protected:
 
   ImageToImageRegistrationHelper( void );
-  virtual ~ImageToImageRegistrationHelper( void );
+  ~ImageToImageRegistrationHelper( void ) override;
 
   void PrintSelfHelper( std::ostream & os, Indent indent, const std::string basename, MetricMethodEnumType metric,
                         InterpolationMethodEnumType interpolation ) const;

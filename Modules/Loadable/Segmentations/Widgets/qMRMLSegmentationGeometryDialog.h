@@ -52,7 +52,7 @@ public:
 public:
   typedef QObject Superclass;
   qMRMLSegmentationGeometryDialog(vtkMRMLSegmentationNode* segmentationNode, QObject* parent=nullptr);
-  virtual ~qMRMLSegmentationGeometryDialog();
+  ~qMRMLSegmentationGeometryDialog() override;
 
 public:
   /// Show dialog

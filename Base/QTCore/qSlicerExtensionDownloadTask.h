@@ -46,7 +46,7 @@ public:
                                         QObject* parent = nullptr);
 
   /// Destructor.
-  virtual ~qSlicerExtensionDownloadTask();
+  ~qSlicerExtensionDownloadTask() override;
 
   /// Get extension metadata.
   QVariantMap metadata() const;

@@ -123,7 +123,7 @@ protected:
 
 protected:
   vtkCalculateOversamplingFactor();
-  virtual ~vtkCalculateOversamplingFactor();
+  ~vtkCalculateOversamplingFactor() override;
 
 private:
   vtkCalculateOversamplingFactor(const vtkCalculateOversamplingFactor&); // Not implemented

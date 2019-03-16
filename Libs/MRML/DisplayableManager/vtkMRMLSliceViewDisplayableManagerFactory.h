@@ -56,7 +56,7 @@ public:
 protected:
 
   vtkMRMLSliceViewDisplayableManagerFactory();
-  virtual ~vtkMRMLSliceViewDisplayableManagerFactory();
+  ~vtkMRMLSliceViewDisplayableManagerFactory() override;
 
   VTK_SINGLETON_DECLARE(vtkMRMLSliceViewDisplayableManagerFactory);
 

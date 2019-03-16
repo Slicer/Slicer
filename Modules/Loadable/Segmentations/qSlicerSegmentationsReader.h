@@ -37,17 +37,17 @@ class qSlicerSegmentationsReader
 public:
   typedef qSlicerFileReader Superclass;
   qSlicerSegmentationsReader(vtkSlicerSegmentationsModuleLogic* segmentationsLogic = nullptr, QObject* parent = nullptr);
-  virtual ~qSlicerSegmentationsReader();
+  ~qSlicerSegmentationsReader() override;
 
   void setSegmentationsLogic(vtkSlicerSegmentationsModuleLogic* segmentationsLogic);
   vtkSlicerSegmentationsModuleLogic* segmentationsLogic()const;
 
-  virtual QString description()const;
-  virtual IOFileType fileType()const;
-  virtual QStringList extensions()const;
-  virtual qSlicerIOOptions* options()const;
+  QString description()const override;
+  IOFileType fileType()const override;
+  QStringList extensions()const override;
+  qSlicerIOOptions* options()const override;
 
-  virtual bool load(const IOProperties& properties);
+  bool load(const IOProperties& properties) override;
 
 protected:
   QScopedPointer<qSlicerSegmentationsReaderPrivate> d_ptr;

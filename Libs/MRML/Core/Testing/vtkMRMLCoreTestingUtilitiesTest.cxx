@@ -51,11 +51,11 @@ class vtkMRMLCoreTestingUtilitiesNode : public vtkMRMLNode
 public:
   static vtkMRMLCoreTestingUtilitiesNode *New();
   vtkTypeMacro(vtkMRMLCoreTestingUtilitiesNode, vtkMRMLNode);
-  virtual vtkMRMLNode* CreateNodeInstance() override
+  vtkMRMLNode* CreateNodeInstance() override
     {
     return vtkMRMLCoreTestingUtilitiesNode::New();
     }
-  virtual const char* GetNodeTagName() override
+  const char* GetNodeTagName() override
     {
     return "Testing";
     }

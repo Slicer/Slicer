@@ -70,7 +70,7 @@ public:
 
 protected:
   vtkImageBimodalAnalysis();
-  ~vtkImageBimodalAnalysis() {};
+  ~vtkImageBimodalAnalysis() override {};
 
   int Modality;
 
@@ -84,7 +84,7 @@ protected:
 
   int Offset;
 
-  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   void ExecuteDataWithInformation(vtkDataObject *, vtkInformation*) override;
 
 private:

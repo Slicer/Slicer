@@ -97,7 +97,7 @@ public:
   /// Constructors
   explicit qMRMLLayoutManager(QObject* parent=nullptr);
   explicit qMRMLLayoutManager(QWidget* viewport, QObject* parent);
-  virtual ~qMRMLLayoutManager();
+  ~qMRMLLayoutManager() override;
 
   /// Return the enabled property value.
   /// \sa enabled
@@ -275,7 +275,7 @@ protected:
   QScopedPointer<qMRMLLayoutManagerPrivate> d_ptr;
   qMRMLLayoutManager(qMRMLLayoutManagerPrivate* obj, QWidget* viewport, QObject* parent);
 
-  virtual void onViewportChanged();
+  void onViewportChanged() override;
 
   using ctkLayoutManager::setLayout;
 private:

@@ -85,7 +85,7 @@ public:
 
  protected:
   vtkURIHandler();
-  virtual ~vtkURIHandler();
+  ~vtkURIHandler() override;
   vtkURIHandler(const vtkURIHandler&);
   void operator=(const vtkURIHandler&);
 

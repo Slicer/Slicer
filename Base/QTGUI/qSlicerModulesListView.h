@@ -51,7 +51,7 @@ public:
   explicit qSlicerModulesListView(QWidget* parent = nullptr);
 
   /// Destructor
-  virtual ~qSlicerModulesListView();
+  ~qSlicerModulesListView() override;
 
   /// Set the module factory manager that contains the list of modules
   /// and modules to ignore
@@ -105,7 +105,7 @@ protected slots:
 protected:
   QScopedPointer<qSlicerModulesListViewPrivate> d_ptr;
 
-  virtual void keyPressEvent(QKeyEvent * event);
+  void keyPressEvent(QKeyEvent * event) override;
 
 private:
   Q_DECLARE_PRIVATE(qSlicerModulesListView);

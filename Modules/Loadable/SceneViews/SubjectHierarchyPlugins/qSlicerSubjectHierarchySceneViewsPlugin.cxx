@@ -51,7 +51,7 @@ protected:
   qSlicerSubjectHierarchySceneViewsPlugin* const q_ptr;
 public:
   qSlicerSubjectHierarchySceneViewsPluginPrivate(qSlicerSubjectHierarchySceneViewsPlugin& object);
-  ~qSlicerSubjectHierarchySceneViewsPluginPrivate();
+  ~qSlicerSubjectHierarchySceneViewsPluginPrivate() override;
   void init();
 public:
   QIcon SceneViewIcon;

@@ -34,22 +34,22 @@ class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneWriter
 public:
   typedef qSlicerFileWriter Superclass;
   qSlicerSceneWriter(QObject* parent = nullptr);
-  virtual ~qSlicerSceneWriter();
+  ~qSlicerSceneWriter() override;
 
-  virtual QString description()const;
-  virtual IOFileType fileType()const;
+  QString description()const override;
+  IOFileType fileType()const override;
 
   /// Return true if the object is handled by the writer.
-  virtual bool canWriteObject(vtkObject* object)const;
+  bool canWriteObject(vtkObject* object)const override;
 
   /// Return  a list of the supported extensions for a particuliar object.
   /// Please read QFileDialog::nameFilters for the allowed formats
   /// Example: "Image (*.jpg *.png *.tiff)", "Model (*.vtk)"
-  virtual QStringList extensions(vtkObject* object)const;
+  QStringList extensions(vtkObject* object)const override;
 
   /// Write the node identified by nodeID into the fileName file.
   /// Returns true on success.
-  virtual bool write(const qSlicerIO::IOProperties& properties);
+  bool write(const qSlicerIO::IOProperties& properties) override;
 
 protected:
   bool writeToMRML(const qSlicerIO::IOProperties& properties);

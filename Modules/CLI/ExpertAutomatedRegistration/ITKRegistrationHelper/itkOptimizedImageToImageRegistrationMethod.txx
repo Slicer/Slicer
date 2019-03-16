@@ -126,7 +126,7 @@ protected:
     m_UpdateInterval = 1;
     m_DontShowParameters = false;
   }
-  ~ImageRegistrationViewer()
+  ~ImageRegistrationViewer() override
   {
   }
 

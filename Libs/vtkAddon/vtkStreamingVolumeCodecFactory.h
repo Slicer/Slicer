@@ -84,7 +84,7 @@ public:
 
 protected:
   vtkStreamingVolumeCodecFactory();
-  ~vtkStreamingVolumeCodecFactory();
+  ~vtkStreamingVolumeCodecFactory() override;
   vtkStreamingVolumeCodecFactory(const vtkStreamingVolumeCodecFactory&);
   void operator=(const vtkStreamingVolumeCodecFactory&);
 

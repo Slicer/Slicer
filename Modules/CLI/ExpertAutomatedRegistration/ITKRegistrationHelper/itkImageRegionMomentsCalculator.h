@@ -221,7 +221,7 @@ public:
 
 protected:
   ImageRegionMomentsCalculator();
-  virtual ~ImageRegionMomentsCalculator();
+  ~ImageRegionMomentsCalculator() override;
   void PrintSelf(std::ostream& os, Indent indent) const override;
 
 private:

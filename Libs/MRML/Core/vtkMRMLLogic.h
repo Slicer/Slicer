@@ -52,7 +52,7 @@ public:
 
 protected:
   vtkMRMLLogic();
-  virtual ~vtkMRMLLogic();
+  ~vtkMRMLLogic() override;
   vtkMRMLLogic(const vtkMRMLLogic&);
   void operator=(const vtkMRMLLogic&);
 

@@ -46,7 +46,7 @@ public:
     };
 protected:
   vtkFSSurfaceScalarReader();
-  ~vtkFSSurfaceScalarReader();
+  ~vtkFSSurfaceScalarReader() override;
 
   vtkFloatArray * Scalars;
 

@@ -23,7 +23,7 @@ class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT qSlicerAnnotationModuleWidget :
 public:
     typedef qSlicerAbstractModuleWidget Superclass;
     qSlicerAnnotationModuleWidget(QWidget *parent=nullptr);
-    ~qSlicerAnnotationModuleWidget();
+    ~qSlicerAnnotationModuleWidget() override;
 
     /// Different Annotation Types
     enum
@@ -44,7 +44,7 @@ public:
     /// get it from the scene.
     void updateWidgetFromInteractionMode(vtkMRMLInteractionNode *interactionNode);
 
-    virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
+    bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
 
 protected:
 
@@ -119,7 +119,7 @@ private:
   Q_DECLARE_PRIVATE(qSlicerAnnotationModuleWidget);
   Q_DISABLE_COPY(qSlicerAnnotationModuleWidget);
 
-  virtual void setup();
+  void setup() override;
 
   qSlicerAnnotationModulePropertyDialog* m_PropertyDialog;
   qSlicerAnnotationModuleReportDialog* m_ReportDialog;

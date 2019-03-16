@@ -52,22 +52,22 @@ public:
 
 protected:
   vtkImageLabelCombine();
-  ~vtkImageLabelCombine() {};
+  ~vtkImageLabelCombine() override {};
 
   int OverwriteInput;
 
-  virtual int RequestInformation (vtkInformation *,
+  int RequestInformation (vtkInformation *,
                                   vtkInformationVector **,
                                   vtkInformationVector *) override;
 
-  virtual void ThreadedRequestData(vtkInformation *request,
+  void ThreadedRequestData(vtkInformation *request,
                                    vtkInformationVector **inputVector,
                                    vtkInformationVector *outputVector,
                                    vtkImageData ***inData,
                                    vtkImageData **outData,
                                    int extent[6], int threadId) override;
 
-  virtual int FillInputPortInformation(int port, vtkInformation* info) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
 private:
   vtkImageLabelCombine(const vtkImageLabelCombine&);  /// Not implemented.

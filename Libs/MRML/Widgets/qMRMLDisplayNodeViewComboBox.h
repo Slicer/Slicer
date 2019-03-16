@@ -49,7 +49,7 @@ public:
   /// Construct an empty qMRMLDisplayNodeViewComboBox with a null scene,
   /// no nodeType, where the hidden nodes are not forced on display.
   explicit qMRMLDisplayNodeViewComboBox(QWidget* parent = nullptr);
-  virtual ~qMRMLDisplayNodeViewComboBox();
+  ~qMRMLDisplayNodeViewComboBox() override;
 
   vtkMRMLDisplayNode* mrmlDisplayNode()const;
 

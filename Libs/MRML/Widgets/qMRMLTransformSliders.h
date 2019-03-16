@@ -58,7 +58,7 @@ public:
   /// Constructors
   typedef qMRMLWidget Superclass;
   explicit qMRMLTransformSliders(QWidget* parent);
-  virtual ~qMRMLTransformSliders();
+  ~qMRMLTransformSliders() override;
 
   ///
   /// Set/Get Coordinate system

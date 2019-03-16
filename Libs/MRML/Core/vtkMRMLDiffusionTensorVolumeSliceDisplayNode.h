@@ -40,63 +40,63 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  virtual vtkMRMLNode* CreateNodeInstance () override;
+  vtkMRMLNode* CreateNodeInstance () override;
 
   ///
   /// Read node attributes from XML (MRML) file
-  virtual void ReadXMLAttributes ( const char** atts ) override;
+  void ReadXMLAttributes ( const char** atts ) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML ( ostream& of, int indent ) override;
+  void WriteXML ( ostream& of, int indent ) override;
 
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy ( vtkMRMLNode *node ) override;
+  void Copy ( vtkMRMLNode *node ) override;
 
   ///
   /// Get node XML tag name (like Volume, UnstructuredGrid)
-  virtual const char* GetNodeTagName () override {return "DiffusionTensorVolumeSliceDisplayNode";}
+  const char* GetNodeTagName () override {return "DiffusionTensorVolumeSliceDisplayNode";}
 
   ///
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
-  virtual void UpdateReferences() override;
+  void UpdateReferences() override;
 
   ///
   /// Finds the storage node and read the data
-  virtual void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene *scene) override;
 
   ///
   /// Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID) override;
+  void UpdateReferenceID(const char *oldID, const char *newID) override;
 
   ///
   /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+  void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) override;
 
   /// Return the glyph producer output for the input image data.
   /// \sa GetOutputPolyData()
-  virtual vtkAlgorithmOutput* GetOutputMeshConnection() override;
+  vtkAlgorithmOutput* GetOutputMeshConnection() override;
 
   ///
   /// Update the pipeline based on this node attributes
-  virtual void UpdateAssignedAttribute() override;
+  void UpdateAssignedAttribute() override;
 
   ///
   /// Set ImageData for a volume slice
-  virtual void SetSliceImagePort(vtkAlgorithmOutput *imagePort) override;
+  void SetSliceImagePort(vtkAlgorithmOutput *imagePort) override;
 
   ///
   /// Set slice to RAS transformation
-  virtual void SetSlicePositionMatrix(vtkMatrix4x4 *matrix) override;
+  void SetSlicePositionMatrix(vtkMatrix4x4 *matrix) override;
 
   ///
   /// Set slice to IJK transformation
-  virtual void SetSliceGlyphRotationMatrix(vtkMatrix4x4 *matrix) override;
+  void SetSliceGlyphRotationMatrix(vtkMatrix4x4 *matrix) override;
 
   //--------------------------------------------------------------------------
   /// Display Information: Geometry to display (not mutually exclusive)
@@ -187,7 +187,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode
 
  protected:
   vtkMRMLDiffusionTensorVolumeSliceDisplayNode ( );
-  ~vtkMRMLDiffusionTensorVolumeSliceDisplayNode ( );
+  ~vtkMRMLDiffusionTensorVolumeSliceDisplayNode ( ) override;
   vtkMRMLDiffusionTensorVolumeSliceDisplayNode ( const vtkMRMLDiffusionTensorVolumeSliceDisplayNode& );
   void operator= ( const vtkMRMLDiffusionTensorVolumeSliceDisplayNode& );
 

@@ -85,7 +85,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLWidgetsPlugin
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
 
 public:
-  QList<QDesignerCustomWidgetInterface*> customWidgets() const
+  QList<QDesignerCustomWidgetInterface*> customWidgets() const override
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qMRMLCheckableNodeComboBoxPlugin

@@ -166,7 +166,7 @@ public:
 protected:
 
   vtkMRMLAbstractLogic();
-  virtual ~vtkMRMLAbstractLogic();
+  ~vtkMRMLAbstractLogic() override;
 
   /// Receives all the events fired by the scene.
   /// By default, it calls OnMRMLScene*Event based on the event passed.
@@ -427,7 +427,7 @@ protected:
   /// would be to disable modified events, call a series of Set* operations, and then re-enable
   /// modified events and call InvokePendingModifiedEvent to invoke the event (if any of the Set*
   /// calls actually changed the values of the instance variables).
-  virtual void Modified() override;
+  void Modified() override;
 
   /// Invokes any modified events that are 'pending', meaning they were generated
   /// while the DisableModifiedEvent flag was nonzero.

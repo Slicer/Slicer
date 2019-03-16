@@ -75,7 +75,7 @@ public:
   /// The Usual vtk class functions
   static vtkMRMLLayoutLogic *New();
   vtkTypeMacro(vtkMRMLLayoutLogic,vtkMRMLAbstractLogic);
-  virtual void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   typedef std::map<std::string, std::string> ViewAttributes;
   typedef ViewAttributes ViewProperty;
@@ -124,20 +124,20 @@ protected:
   /// Logic constructor
   vtkMRMLLayoutLogic();
   /// Logic destructor
-  virtual ~vtkMRMLLayoutLogic();
+  ~vtkMRMLLayoutLogic() override;
   // disable copy constructor and operator
   vtkMRMLLayoutLogic(const vtkMRMLLayoutLogic&);
   void operator=(const vtkMRMLLayoutLogic&);
 
   /// Reimplemented to listen to specific scene events
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
-  virtual void OnMRMLNodeModified(vtkMRMLNode* node) override;
-  virtual void OnMRMLSceneStartRestore() override;
-  virtual void OnMRMLSceneEndRestore() override;
+  void OnMRMLNodeModified(vtkMRMLNode* node) override;
+  void OnMRMLSceneStartRestore() override;
+  void OnMRMLSceneEndRestore() override;
 
-  virtual void UnobserveMRMLScene() override;
-  virtual void UpdateFromMRMLScene() override;
+  void UnobserveMRMLScene() override;
+  void UpdateFromMRMLScene() override;
 
   /// Makes sure there is at least one 3D view node and three slice nodes (red,
   /// yellow and green)

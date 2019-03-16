@@ -89,7 +89,7 @@ public:
   {
     return new vtkSlicerCLIRescheduleCallback;
   }
-  virtual void Execute(vtkObject* caller, unsigned long eid, void *callData)
+  void Execute(vtkObject* caller, unsigned long eid, void *callData) override
   {
     if (std::find(this->ThreadIDs.begin(), this->ThreadIDs.end(),
                   vtkMultiThreader::GetCurrentThreadID()) != this->ThreadIDs.end())
@@ -143,7 +143,7 @@ protected:
     this->CLIModuleLogic = nullptr;
     this->Delay = 0;
   }
-  ~vtkSlicerCLIRescheduleCallback()
+  ~vtkSlicerCLIRescheduleCallback() override
   {
     this->SetCLIModuleLogic(nullptr);
   }
@@ -166,7 +166,7 @@ public:
   {
     return new vtkSlicerCLIOneShotCallbackCallback;
   }
-  virtual void Execute(vtkObject* caller, unsigned long eid, void *callData)
+  void Execute(vtkObject* caller, unsigned long eid, void *callData) override
   {
     if (callData)
     {
@@ -188,7 +188,7 @@ public:
   }
   protected:
   vtkSlicerCLIOneShotCallbackCallback() {}
-  ~vtkSlicerCLIOneShotCallbackCallback() {}
+  ~vtkSlicerCLIOneShotCallbackCallback() override {}
 };
 
 //----------------------------------------------------------------------------

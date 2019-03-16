@@ -88,15 +88,15 @@ public:
 
 protected:
   vtkMRMLModelHierarchyLogic();
-  ~vtkMRMLModelHierarchyLogic();
+  ~vtkMRMLModelHierarchyLogic() override;
   vtkMRMLModelHierarchyLogic(const vtkMRMLModelHierarchyLogic&);
   void operator=(const vtkMRMLModelHierarchyLogic&);
 
   /// Reimplemented to observe the scene
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
   /// Delete the hierarchy node when a model is removed from the scene
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* removedNode) override;
+  void OnMRMLSceneNodeRemoved(vtkMRMLNode* removedNode) override;
 
   ///
   /// Create model to hierarchy map,
