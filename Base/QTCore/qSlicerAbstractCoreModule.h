@@ -40,7 +40,7 @@ class qSlicerAbstractCoreModulePrivate;
 
 #define qSlicerGetTitleMacro(_TITLE)               \
   static QString staticTitle() { return _TITLE; }  \
-  virtual QString title()const { return _TITLE; }
+  QString title() const override { return _TITLE; }
 
 /// \brief qSlicerAbstractCoreModule is the base class of any module in Slicer.
 //
