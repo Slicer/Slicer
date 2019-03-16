@@ -238,8 +238,8 @@ private:
   /// Incremental ID used to uniquely identify subject hierarchy items
   static vtkIdType NextSubjectHierarchyItemID;
 
-  vtkSubjectHierarchyItem(const vtkSubjectHierarchyItem&); // Not implemented
-  void operator=(const vtkSubjectHierarchyItem&);          // Not implemented
+  vtkSubjectHierarchyItem(const vtkSubjectHierarchyItem&) = delete;
+  void operator=(const vtkSubjectHierarchyItem&) = delete;
 };
 
 //----------------------------------------------------------------------------

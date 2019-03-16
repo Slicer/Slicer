@@ -50,8 +50,8 @@ protected:
   double BackgroundValue;
 
 private:
-  vtkITKDistanceTransform(const vtkITKDistanceTransform&);  /// Not implemented.
-  void operator=(const vtkITKDistanceTransform&);  /// Not implemented.
+  vtkITKDistanceTransform(const vtkITKDistanceTransform&) = delete;
+  void operator=(const vtkITKDistanceTransform&) = delete;
 };
 
 #endif

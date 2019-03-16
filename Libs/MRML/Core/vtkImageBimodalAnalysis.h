@@ -88,8 +88,8 @@ protected:
   void ExecuteDataWithInformation(vtkDataObject *, vtkInformation*) override;
 
 private:
-  vtkImageBimodalAnalysis(const vtkImageBimodalAnalysis&);
-  void operator=(const vtkImageBimodalAnalysis&);
+  vtkImageBimodalAnalysis(const vtkImageBimodalAnalysis&) = delete;
+  void operator=(const vtkImageBimodalAnalysis&) = delete;
 };
 
 #endif

@@ -87,8 +87,8 @@ protected:
   {
   }
 private:
-  HFieldToDeformationFieldImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);                      // purposely not implemented
+  HFieldToDeformationFieldImageFilter(const Self &) = delete;
+  void operator=(const Self &) = delete;
 
 };
 

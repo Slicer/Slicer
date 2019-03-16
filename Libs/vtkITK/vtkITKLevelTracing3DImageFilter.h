@@ -38,8 +38,8 @@ protected:
   int Seed[3];
 
 private:
-  vtkITKLevelTracing3DImageFilter(const vtkITKLevelTracing3DImageFilter&);  /// Not implemented.
-  void operator=(const vtkITKLevelTracing3DImageFilter&);  /// Not implemented.
+  vtkITKLevelTracing3DImageFilter(const vtkITKLevelTracing3DImageFilter&) = delete;
+  void operator=(const vtkITKLevelTracing3DImageFilter&) = delete;
 };
 
 #endif

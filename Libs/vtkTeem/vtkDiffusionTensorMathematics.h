@@ -303,8 +303,8 @@ protected:
                           vtkInformationVector** inputVector,
                           vtkInformationVector* outputVector) override;
 private:
-  vtkDiffusionTensorMathematics(const vtkDiffusionTensorMathematics&);
-  void operator=(const vtkDiffusionTensorMathematics&);
+  vtkDiffusionTensorMathematics(const vtkDiffusionTensorMathematics&) = delete;
+  void operator=(const vtkDiffusionTensorMathematics&) = delete;
 };
 
 #endif

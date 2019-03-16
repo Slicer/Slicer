@@ -187,8 +187,8 @@ protected:
   vtkImageData *Mask;  /// display glyphs at points where mask is nonzero
 
 private:
-  vtkDiffusionTensorGlyph(const vtkDiffusionTensorGlyph&);  /// Not implemented.
-  void operator=(const vtkDiffusionTensorGlyph&);  /// Not implemented.
+  vtkDiffusionTensorGlyph(const vtkDiffusionTensorGlyph&) = delete;
+  void operator=(const vtkDiffusionTensorGlyph&) = delete;
 };
 
 #endif

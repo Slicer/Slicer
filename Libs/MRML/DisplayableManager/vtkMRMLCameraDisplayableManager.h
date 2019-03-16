@@ -79,8 +79,8 @@ protected:
 
 private:
 
-  vtkMRMLCameraDisplayableManager(const vtkMRMLCameraDisplayableManager&);// Not implemented
-  void operator=(const vtkMRMLCameraDisplayableManager&);                     // Not Implemented
+  vtkMRMLCameraDisplayableManager(const vtkMRMLCameraDisplayableManager&) = delete;
+  void operator=(const vtkMRMLCameraDisplayableManager&) = delete;
 
   class vtkInternal;
   vtkInternal * Internal;

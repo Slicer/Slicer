@@ -148,8 +148,8 @@ protected:
   ~vtkMRMLSegmentationStorageNode() override;
 
 private:
-  vtkMRMLSegmentationStorageNode(const vtkMRMLSegmentationStorageNode&);  /// Not implemented.
-  void operator=(const vtkMRMLSegmentationStorageNode&);  /// Not implemented.
+  vtkMRMLSegmentationStorageNode(const vtkMRMLSegmentationStorageNode&) = delete;
+  void operator=(const vtkMRMLSegmentationStorageNode&) = delete;
 };
 
 #endif

@@ -93,8 +93,8 @@ protected:
 
 private:
 
-  vtkMRMLAbstractSliceViewDisplayableManager(const vtkMRMLAbstractSliceViewDisplayableManager&); // Not implemented
-  void operator=(const vtkMRMLAbstractSliceViewDisplayableManager&);                    // Not implemented
+  vtkMRMLAbstractSliceViewDisplayableManager(const vtkMRMLAbstractSliceViewDisplayableManager&) = delete;
+  void operator=(const vtkMRMLAbstractSliceViewDisplayableManager&) = delete;
 };
 
 #endif

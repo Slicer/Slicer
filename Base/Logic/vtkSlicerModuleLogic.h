@@ -43,8 +43,8 @@ protected:
 
 private:
 
-  vtkSlicerModuleLogic(const vtkSlicerModuleLogic&); // Not implemented
-  void operator=(const vtkSlicerModuleLogic&);       // Not implemented
+  vtkSlicerModuleLogic(const vtkSlicerModuleLogic&) = delete;
+  void operator=(const vtkSlicerModuleLogic&) = delete;
 
   std::string ModuleShareDirectory;
 };

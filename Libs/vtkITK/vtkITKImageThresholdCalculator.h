@@ -89,8 +89,8 @@ protected:
   double Threshold;
 
 private:
-  vtkITKImageThresholdCalculator(const vtkITKImageThresholdCalculator&);  /// Not implemented.
-  void operator=(const vtkITKImageThresholdCalculator&);  /// Not implemented.
+  vtkITKImageThresholdCalculator(const vtkITKImageThresholdCalculator&) = delete;
+  void operator=(const vtkITKImageThresholdCalculator&) = delete;
 };
 
 //vtkStandardNewMacro(vtkITKImageThresholdCalculator)

@@ -168,8 +168,8 @@ protected:
   int PaintOver;
 
 private:
-  vtkImageSlicePaint(const vtkImageSlicePaint&);  /// Not implemented.
-  void operator=(const vtkImageSlicePaint&);  /// Not implemented.
+  vtkImageSlicePaint(const vtkImageSlicePaint&) = delete;
+  void operator=(const vtkImageSlicePaint&) = delete;
 };
 
 #endif

@@ -298,8 +298,8 @@ protected:
 private:
   vtkMRMLCommandLineModuleNode();
   ~vtkMRMLCommandLineModuleNode() override;
-  vtkMRMLCommandLineModuleNode(const vtkMRMLCommandLineModuleNode&);
-  void operator=(const vtkMRMLCommandLineModuleNode&);
+  vtkMRMLCommandLineModuleNode(const vtkMRMLCommandLineModuleNode&) = delete;
+  void operator=(const vtkMRMLCommandLineModuleNode&) = delete;
 
   class vtkInternal;
   vtkInternal * Internal;

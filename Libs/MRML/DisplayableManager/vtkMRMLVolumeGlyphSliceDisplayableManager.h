@@ -55,8 +55,8 @@ protected:
 
 private:
 
-  vtkMRMLVolumeGlyphSliceDisplayableManager(const vtkMRMLVolumeGlyphSliceDisplayableManager&);// Not implemented
-  void operator=(const vtkMRMLVolumeGlyphSliceDisplayableManager&);                     // Not Implemented
+  vtkMRMLVolumeGlyphSliceDisplayableManager(const vtkMRMLVolumeGlyphSliceDisplayableManager&) = delete;
+  void operator=(const vtkMRMLVolumeGlyphSliceDisplayableManager&) = delete;
 
   class vtkInternal;
   vtkInternal * Internal;

@@ -94,8 +94,8 @@ protected:
   vtkMatrix4x4* InverseBulkTransformMatrixCached;
 
 private:
-  vtkOrientedBSplineTransform(const vtkOrientedBSplineTransform&);  // Not implemented.
-  void operator=(const vtkOrientedBSplineTransform&);  // Not implemented.
+  vtkOrientedBSplineTransform(const vtkOrientedBSplineTransform&) = delete;
+  void operator=(const vtkOrientedBSplineTransform&) = delete;
 };
 
 #endif

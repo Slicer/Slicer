@@ -155,8 +155,8 @@ protected:
   vtkWeakPointer<vtkSlicerMarkupsWidget> LastActiveWidget;
 
 private:
-  vtkMRMLMarkupsDisplayableManager(const vtkMRMLMarkupsDisplayableManager&); /// Not implemented
-  void operator=(const vtkMRMLMarkupsDisplayableManager&); /// Not Implemented
+  vtkMRMLMarkupsDisplayableManager(const vtkMRMLMarkupsDisplayableManager&) = delete;
+  void operator=(const vtkMRMLMarkupsDisplayableManager&) = delete;
 
   int DisableInteractorStyleEventsProcessing;
 

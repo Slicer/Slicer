@@ -128,8 +128,8 @@ protected:
   ~ConstrainedValueMultiplicationImageFilter() override {}
 
 private:
-  ConstrainedValueMultiplicationImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  ConstrainedValueMultiplicationImageFilter(const Self&) = delete;
+  void operator=(const Self&) = delete;
 
 };
 

@@ -401,9 +401,9 @@ protected:
   typename ConnectedComponentsType::Pointer m_ConnectedComponents;
 
 private:
-  MorphologicalContourInterpolator( const Self & ) ITK_DELETED_FUNCTION;
+  MorphologicalContourInterpolator( const Self & ) = delete;
   void
-  operator=( const Self & ) ITK_DELETED_FUNCTION;
+  operator=( const Self & ) = delete;
 };
 } // namespace itk
 

@@ -96,8 +96,8 @@ protected:
   int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo) override;
 private:
-  vtkImageRectangularSource(const vtkImageRectangularSource&);  /// Not implemented.
-  void operator=(const vtkImageRectangularSource&);  /// Not implemented.
+  vtkImageRectangularSource(const vtkImageRectangularSource&) = delete;
+  void operator=(const vtkImageRectangularSource&) = delete;
 };
 
 

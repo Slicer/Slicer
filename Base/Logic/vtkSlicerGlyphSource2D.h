@@ -179,8 +179,8 @@ protected:
                        vtkCellArray *polys, vtkUnsignedCharArray *colors, double scale);
 
 private:
-  vtkSlicerGlyphSource2D(const vtkSlicerGlyphSource2D&);  /// Not implemented.
-  void operator=(const vtkSlicerGlyphSource2D&);  /// Not implemented.
+  vtkSlicerGlyphSource2D(const vtkSlicerGlyphSource2D&) = delete;
+  void operator=(const vtkSlicerGlyphSource2D&) = delete;
 };
 
 #endif

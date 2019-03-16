@@ -117,8 +117,8 @@ protected:
   int VectorAxisKind;
 
 private:
-  vtkTeemNRRDWriter(const vtkTeemNRRDWriter&);  /// Not implemented.
-  void operator=(const vtkTeemNRRDWriter&);  /// Not implemented.
+  vtkTeemNRRDWriter(const vtkTeemNRRDWriter&) = delete;
+  void operator=(const vtkTeemNRRDWriter&) = delete;
   void vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &nrrdKind, size_t &numComp, int &vtkType, void **buffer);
   int VTKToNrrdPixelType( const int vtkPixelType );
   int DiffusionWeightedData;

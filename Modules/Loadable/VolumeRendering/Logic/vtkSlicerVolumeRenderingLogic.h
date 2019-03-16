@@ -345,8 +345,8 @@ protected:
   vtkMRMLScene* PresetsScene;
 
 private:
-  vtkSlicerVolumeRenderingLogic(const vtkSlicerVolumeRenderingLogic&); // Not implemented
-  void operator=(const vtkSlicerVolumeRenderingLogic&);               // Not implemented
+  vtkSlicerVolumeRenderingLogic(const vtkSlicerVolumeRenderingLogic&) = delete;
+  void operator=(const vtkSlicerVolumeRenderingLogic&) = delete;
 };
 
 #endif

@@ -239,8 +239,8 @@ private:
   /// from GetNthFileName(n)
   std::map<vtkMRMLStorageNode*, std::vector<std::string> > OriginalStorageNodeFileNames;
 
-  vtkMRMLApplicationLogic(const vtkMRMLApplicationLogic&);
-  void operator=(const vtkMRMLApplicationLogic&);
+  vtkMRMLApplicationLogic(const vtkMRMLApplicationLogic&) = delete;
+  void operator=(const vtkMRMLApplicationLogic&) = delete;
 
   class vtkInternal;
   vtkInternal* Internal;

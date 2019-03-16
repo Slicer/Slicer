@@ -60,8 +60,8 @@ protected:
   ~vtkSlicerTablesLogic() override;
 
 private:
-  vtkSlicerTablesLogic(const vtkSlicerTablesLogic&); // Not implemented
-  void operator=(const vtkSlicerTablesLogic&);               // Not implemented
+  vtkSlicerTablesLogic(const vtkSlicerTablesLogic&) = delete;
+  void operator=(const vtkSlicerTablesLogic&) = delete;
 };
 
 #endif

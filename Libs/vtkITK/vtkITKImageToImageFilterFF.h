@@ -70,8 +70,8 @@ protected:
   };
 
 private:
-  vtkITKImageToImageFilterFF(const vtkITKImageToImageFilterFF&);  /// Not implemented.
-  void operator=(const vtkITKImageToImageFilterFF&);  /// Not implemented.
+  vtkITKImageToImageFilterFF(const vtkITKImageToImageFilterFF&) = delete;
+  void operator=(const vtkITKImageToImageFilterFF&) = delete;
 };
 
 #endif

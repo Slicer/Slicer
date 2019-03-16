@@ -378,8 +378,8 @@ protected:
   vtkSlicerTerminologiesModuleLogic* TerminologiesLogic;
 
 private:
-  vtkSlicerSegmentationsModuleLogic(const vtkSlicerSegmentationsModuleLogic&); // Not implemented
-  void operator=(const vtkSlicerSegmentationsModuleLogic&);               // Not implemented
+  vtkSlicerSegmentationsModuleLogic(const vtkSlicerSegmentationsModuleLogic&) = delete;
+  void operator=(const vtkSlicerSegmentationsModuleLogic&) = delete;
 };
 
 #endif

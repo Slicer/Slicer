@@ -36,8 +36,8 @@ protected:
   double DynamicRangePercentage;
 
 private:
-  vtkITKWandImageFilter(const vtkITKWandImageFilter&);  /// Not implemented.
-  void operator=(const vtkITKWandImageFilter&);  /// Not implemented.
+  vtkITKWandImageFilter(const vtkITKWandImageFilter&) = delete;
+  void operator=(const vtkITKWandImageFilter&) = delete;
 };
 
 #endif

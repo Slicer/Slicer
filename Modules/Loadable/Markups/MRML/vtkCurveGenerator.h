@@ -207,8 +207,8 @@ private:
   static void SortByIndex(vtkPoints*, vtkDoubleArray*);
   static void SortByMinimumSpanningTreePosition(vtkPoints*, vtkDoubleArray*);
 
-  vtkCurveGenerator(const vtkCurveGenerator&); // Not implemented.
-  void operator=(const vtkCurveGenerator&); // Not implemented.
+  vtkCurveGenerator(const vtkCurveGenerator&) = delete;
+  void operator=(const vtkCurveGenerator&) = delete;
 };
 
 #endif

@@ -49,8 +49,8 @@ protected:
 
 private:
 
-  vtkSlicerScriptedLoadableModuleLogic(const vtkSlicerScriptedLoadableModuleLogic&); // Not implemented
-  void operator=(const vtkSlicerScriptedLoadableModuleLogic&);       // Not implemented
+  vtkSlicerScriptedLoadableModuleLogic(const vtkSlicerScriptedLoadableModuleLogic&) = delete;
+  void operator=(const vtkSlicerScriptedLoadableModuleLogic&) = delete;
 
   class vtkInternal;
   vtkInternal * Internal;

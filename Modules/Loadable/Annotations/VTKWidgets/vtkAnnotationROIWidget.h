@@ -160,8 +160,8 @@ protected:
   int RotationEnabled;
 
 private:
-  vtkAnnotationROIWidget(const vtkAnnotationROIWidget&);  //Not implemented
-  void operator=(const vtkAnnotationROIWidget&);  //Not implemented
+  vtkAnnotationROIWidget(const vtkAnnotationROIWidget&) = delete;
+  void operator=(const vtkAnnotationROIWidget&) = delete;
 };
 
 #endif

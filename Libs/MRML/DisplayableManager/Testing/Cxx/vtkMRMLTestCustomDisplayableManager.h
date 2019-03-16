@@ -53,8 +53,8 @@ protected:
 
 private:
 
-  vtkMRMLTestCustomDisplayableManager(const vtkMRMLTestCustomDisplayableManager&);// Not implemented
-  void operator=(const vtkMRMLTestCustomDisplayableManager&);                     // Not Implemented
+  vtkMRMLTestCustomDisplayableManager(const vtkMRMLTestCustomDisplayableManager&) = delete;
+  void operator=(const vtkMRMLTestCustomDisplayableManager&) = delete;
 
   class vtkInternal;
   vtkInternal * Internal;

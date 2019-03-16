@@ -135,8 +135,8 @@ protected:
   MatrixType            m_MeasurementFrameValid;
   MatrixType            m_MeasurementFrameTest;
 private:
-  DifferenceDiffusionTensor3DImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);                         // purposely not implemented
+  DifferenceDiffusionTensor3DImageFilter(const Self &) = delete;
+  void operator=(const Self &) = delete;
 
   bool m_IgnoreBoundaryPixels;
 };

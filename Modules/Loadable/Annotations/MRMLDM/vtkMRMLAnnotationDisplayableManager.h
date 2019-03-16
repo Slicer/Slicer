@@ -243,8 +243,8 @@ protected:
 
 private:
 
-  vtkMRMLAnnotationDisplayableManager(const vtkMRMLAnnotationDisplayableManager&); /// Not implemented
-  void operator=(const vtkMRMLAnnotationDisplayableManager&); /// Not Implemented
+  vtkMRMLAnnotationDisplayableManager(const vtkMRMLAnnotationDisplayableManager&) = delete;
+  void operator=(const vtkMRMLAnnotationDisplayableManager&) = delete;
 
 
   int DisableInteractorStyleEventsProcessing;

@@ -57,8 +57,8 @@ protected:
   bool UseBallStructuringElement;
 
 private:
-  vtkITKMorphologicalContourInterpolator(const vtkITKMorphologicalContourInterpolator&);  /// Not implemented.
-  void operator=(const vtkITKMorphologicalContourInterpolator&);  /// Not implemented.
+  vtkITKMorphologicalContourInterpolator(const vtkITKMorphologicalContourInterpolator&) = delete;
+  void operator=(const vtkITKMorphologicalContourInterpolator&) = delete;
 };
 
 #endif

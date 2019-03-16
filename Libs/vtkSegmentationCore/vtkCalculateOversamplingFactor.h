@@ -126,8 +126,8 @@ protected:
   ~vtkCalculateOversamplingFactor() override;
 
 private:
-  vtkCalculateOversamplingFactor(const vtkCalculateOversamplingFactor&); // Not implemented
-  void operator=(const vtkCalculateOversamplingFactor&);               // Not implemented
+  vtkCalculateOversamplingFactor(const vtkCalculateOversamplingFactor&) = delete;
+  void operator=(const vtkCalculateOversamplingFactor&) = delete;
   //ETX
 };
 

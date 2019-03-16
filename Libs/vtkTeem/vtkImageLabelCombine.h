@@ -70,8 +70,8 @@ protected:
   int FillInputPortInformation(int port, vtkInformation* info) override;
 
 private:
-  vtkImageLabelCombine(const vtkImageLabelCombine&);  /// Not implemented.
-  void operator=(const vtkImageLabelCombine&);  /// Not implemented.
+  vtkImageLabelCombine(const vtkImageLabelCombine&) = delete;
+  void operator=(const vtkImageLabelCombine&) = delete;
 };
 
 #endif

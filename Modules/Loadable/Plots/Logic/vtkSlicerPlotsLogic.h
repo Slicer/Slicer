@@ -68,8 +68,8 @@ protected:
   ~vtkSlicerPlotsLogic() override;
 
 private:
-  vtkSlicerPlotsLogic(const vtkSlicerPlotsLogic&); // Not implemented
-  void operator=(const vtkSlicerPlotsLogic&);               // Not implemented
+  vtkSlicerPlotsLogic(const vtkSlicerPlotsLogic&) = delete;
+  void operator=(const vtkSlicerPlotsLogic&) = delete;
 };
 
 #endif

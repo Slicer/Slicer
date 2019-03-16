@@ -63,8 +63,8 @@ protected:
   bool CopyImportedCameras;
 
 private:
-  vtkSlicerCamerasModuleLogic(const vtkSlicerCamerasModuleLogic&); // Not implemented
-  void operator=(const vtkSlicerCamerasModuleLogic&);              // Not implemented
+  vtkSlicerCamerasModuleLogic(const vtkSlicerCamerasModuleLogic&) = delete;
+  void operator=(const vtkSlicerCamerasModuleLogic&) = delete;
 };
 
 #endif

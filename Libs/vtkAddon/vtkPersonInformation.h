@@ -100,8 +100,8 @@ protected:
   std::map<std::string, std::string> Data;
 
 private:
-  vtkPersonInformation(const vtkPersonInformation&);  // Not implemented.
-  void operator=(const vtkPersonInformation&);  // Not implemented.
+  vtkPersonInformation(const vtkPersonInformation&) = delete;
+  void operator=(const vtkPersonInformation&) = delete;
 };
 
 #endif

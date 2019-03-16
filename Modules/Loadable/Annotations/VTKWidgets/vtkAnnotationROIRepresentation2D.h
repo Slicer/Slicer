@@ -162,8 +162,8 @@ protected:
   int HandlesVisibility;
 
 private:
-  vtkAnnotationROIRepresentation2D(const vtkAnnotationROIRepresentation2D&);  //Not implemented
-  void operator=(const vtkAnnotationROIRepresentation2D&);  //Not implemented
+  vtkAnnotationROIRepresentation2D(const vtkAnnotationROIRepresentation2D&) = delete;
+  void operator=(const vtkAnnotationROIRepresentation2D&) = delete;
 };
 
 #endif

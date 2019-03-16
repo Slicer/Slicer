@@ -56,8 +56,8 @@ protected:
   std::string GetParameterDescription(std::string vtkNotUsed(parameterName)) override { return ""; };
 
 private:
-  vtkRawRGBVolumeCodec(const vtkRawRGBVolumeCodec&);
-  void operator=(const vtkRawRGBVolumeCodec&);
+  vtkRawRGBVolumeCodec(const vtkRawRGBVolumeCodec&) = delete;
+  void operator=(const vtkRawRGBVolumeCodec&) = delete;
 };
 
 #endif

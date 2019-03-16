@@ -78,8 +78,8 @@ protected:
   char* ImageIOClassName;
 
 private:
-  vtkITKImageWriter(const vtkITKImageWriter&);  /// Not implemented.
-  void operator=(const vtkITKImageWriter&);  /// Not implemented.
+  vtkITKImageWriter(const vtkITKImageWriter&) = delete;
+  void operator=(const vtkITKImageWriter&) = delete;
 };
 
 //vtkStandardNewMacro(vtkITKImageWriter)

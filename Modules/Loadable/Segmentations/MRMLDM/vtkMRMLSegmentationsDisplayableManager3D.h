@@ -75,8 +75,8 @@ protected:
 
 private:
 
-  vtkMRMLSegmentationsDisplayableManager3D(const vtkMRMLSegmentationsDisplayableManager3D&); // Not implemented
-  void operator=(const vtkMRMLSegmentationsDisplayableManager3D&);                 // Not Implemented
+  vtkMRMLSegmentationsDisplayableManager3D(const vtkMRMLSegmentationsDisplayableManager3D&) = delete;
+  void operator=(const vtkMRMLSegmentationsDisplayableManager3D&) = delete;
 
   class vtkInternal;
   vtkInternal* Internal;

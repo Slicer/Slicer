@@ -95,8 +95,8 @@ protected:
   ~vtkStreamingVolumeFrame() override;
 
 private:
-  vtkStreamingVolumeFrame(const vtkStreamingVolumeFrame&);
-  void operator=(const vtkStreamingVolumeFrame&);
+  vtkStreamingVolumeFrame(const vtkStreamingVolumeFrame&) = delete;
+  void operator=(const vtkStreamingVolumeFrame&) = delete;
 
 };
 #endif

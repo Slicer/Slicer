@@ -59,8 +59,8 @@ protected:
 
 private:
 
-  vtkMRMLOrientationMarkerDisplayableManager(const vtkMRMLOrientationMarkerDisplayableManager&);// Not implemented
-  void operator=(const vtkMRMLOrientationMarkerDisplayableManager&); // Not Implemented
+  vtkMRMLOrientationMarkerDisplayableManager(const vtkMRMLOrientationMarkerDisplayableManager&) = delete;
+  void operator=(const vtkMRMLOrientationMarkerDisplayableManager&) = delete;
 
   class vtkInternal;
   vtkInternal * Internal;

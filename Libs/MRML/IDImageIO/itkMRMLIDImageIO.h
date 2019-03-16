@@ -122,8 +122,8 @@ protected:
                        MetaDataDictionary &dict);
 
 private:
-  MRMLIDImageIO(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  MRMLIDImageIO(const Self&) = delete;
+  void operator=(const Self&) = delete;
 
   bool IsAVolumeNode(const char*);
   vtkMRMLVolumeNode* FileNameToVolumeNodePtr(const char*);

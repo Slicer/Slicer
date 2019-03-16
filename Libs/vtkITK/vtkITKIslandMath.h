@@ -74,8 +74,8 @@ protected:
   unsigned long OriginalNumberOfIslands;
 
 private:
-  vtkITKIslandMath(const vtkITKIslandMath&);  /// Not implemented.
-  void operator=(const vtkITKIslandMath&);  /// Not implemented.
+  vtkITKIslandMath(const vtkITKIslandMath&) = delete;
+  void operator=(const vtkITKIslandMath&) = delete;
 };
 
 #endif

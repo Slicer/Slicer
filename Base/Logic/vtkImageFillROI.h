@@ -95,8 +95,8 @@ protected:
                           vtkInformationVector* outputVector) override;
 
 private:
-  vtkImageFillROI(const vtkImageFillROI&);
-  void operator=(const vtkImageFillROI&);
+  vtkImageFillROI(const vtkImageFillROI&) = delete;
+  void operator=(const vtkImageFillROI&) = delete;
 };
 
 #endif

@@ -142,8 +142,8 @@ protected:
   vtkMRMLAbstractDisplayableManager* FocusedDisplayableManager;
 
 private:
-  vtkThreeDViewInteractorStyle(const vtkThreeDViewInteractorStyle&);  /// Not implemented.
-  void operator=(const vtkThreeDViewInteractorStyle&);  /// Not implemented.
+  vtkThreeDViewInteractorStyle(const vtkThreeDViewInteractorStyle&) = delete;
+  void operator=(const vtkThreeDViewInteractorStyle&) = delete;
 };
 
 #endif

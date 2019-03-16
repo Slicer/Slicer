@@ -152,8 +152,8 @@ protected:
   ~vtkOpenGLTextureImage() override;
 
 private:
-  vtkOpenGLTextureImage(const vtkOpenGLTextureImage&);  // Not implemented.
-  void operator=(const vtkOpenGLTextureImage&);  // Not implemented.
+  vtkOpenGLTextureImage(const vtkOpenGLTextureImage&) = delete;
+  void operator=(const vtkOpenGLTextureImage&) = delete;
 
   vtkOpenGLShaderComputation *ShaderComputation;
   vtkImageData *ImageData;

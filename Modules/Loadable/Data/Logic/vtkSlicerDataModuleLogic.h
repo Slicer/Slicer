@@ -71,8 +71,8 @@ protected:
   bool AutoRemoveDisplayAndStorageNodes;
 
 private:
-  vtkSlicerDataModuleLogic(const vtkSlicerDataModuleLogic&); // Not implemented
-  void operator=(const vtkSlicerDataModuleLogic&);               // Not implemented
+  vtkSlicerDataModuleLogic(const vtkSlicerDataModuleLogic&) = delete;
+  void operator=(const vtkSlicerDataModuleLogic&) = delete;
 
 protected:
   /// Flag indicating if the scene has recently changed (update of the module GUI if needed)

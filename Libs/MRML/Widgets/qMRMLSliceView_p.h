@@ -111,8 +111,8 @@ protected:
   ~vtkInternalLightBoxRendererManagerProxy() override;
 
 private:
-  vtkInternalLightBoxRendererManagerProxy(const vtkInternalLightBoxRendererManagerProxy&); // Not implemented
-  void operator=(const vtkInternalLightBoxRendererManagerProxy&);                    // Not implemented
+  vtkInternalLightBoxRendererManagerProxy(const vtkInternalLightBoxRendererManagerProxy&) = delete;
+  void operator=(const vtkInternalLightBoxRendererManagerProxy&) = delete;
 
   vtkWeakPointer<vtkLightBoxRendererManager> LightBoxRendererManager;
 

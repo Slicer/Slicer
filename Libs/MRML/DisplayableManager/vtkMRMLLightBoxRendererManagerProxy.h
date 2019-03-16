@@ -46,8 +46,8 @@ protected:
   ~vtkMRMLLightBoxRendererManagerProxy() override ;
 
 private:
-  vtkMRMLLightBoxRendererManagerProxy(const vtkMRMLLightBoxRendererManagerProxy&); // Not implemented
-  void operator=(const vtkMRMLLightBoxRendererManagerProxy&);                    // Not implemented
+  vtkMRMLLightBoxRendererManagerProxy(const vtkMRMLLightBoxRendererManagerProxy&) = delete;
+  void operator=(const vtkMRMLLightBoxRendererManagerProxy&) = delete;
 
 
 };

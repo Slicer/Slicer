@@ -272,8 +272,8 @@ protected:
 
 private:
 
-  vtkMRMLAbstractDisplayableManager(const vtkMRMLAbstractDisplayableManager&); // Not implemented
-  void operator=(const vtkMRMLAbstractDisplayableManager&);                    // Not implemented
+  vtkMRMLAbstractDisplayableManager(const vtkMRMLAbstractDisplayableManager&) = delete;
+  void operator=(const vtkMRMLAbstractDisplayableManager&) = delete;
 
   class vtkInternal;
   vtkInternal* Internal;

@@ -57,8 +57,8 @@ protected:
 
 private:
 
-  vtkMRMLTestSliceViewDisplayableManager(const vtkMRMLTestSliceViewDisplayableManager&);// Not implemented
-  void operator=(const vtkMRMLTestSliceViewDisplayableManager&);                     // Not Implemented
+  vtkMRMLTestSliceViewDisplayableManager(const vtkMRMLTestSliceViewDisplayableManager&) = delete;
+  void operator=(const vtkMRMLTestSliceViewDisplayableManager&) = delete;
 
   class vtkInternal;
   vtkInternal * Internal;

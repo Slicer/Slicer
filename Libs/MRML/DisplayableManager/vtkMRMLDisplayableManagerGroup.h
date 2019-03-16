@@ -135,8 +135,8 @@ protected:
 
 private:
 
-  vtkMRMLDisplayableManagerGroup(const vtkMRMLDisplayableManagerGroup&);
-  void operator=(const vtkMRMLDisplayableManagerGroup&);
+  vtkMRMLDisplayableManagerGroup(const vtkMRMLDisplayableManagerGroup&) = delete;
+  void operator=(const vtkMRMLDisplayableManagerGroup&) = delete;
 
 };
 

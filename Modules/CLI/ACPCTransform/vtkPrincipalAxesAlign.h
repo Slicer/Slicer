@@ -42,8 +42,8 @@ protected:
   vtkPrincipalAxesAlign();
   ~vtkPrincipalAxesAlign() override;
 private:
-  vtkPrincipalAxesAlign(vtkPrincipalAxesAlign &);
-  void operator=(const vtkPrincipalAxesAlign &);
+  vtkPrincipalAxesAlign(vtkPrincipalAxesAlign &) = delete;
+  void operator=(const vtkPrincipalAxesAlign &) = delete;
 
   double* Center;
   double* XAxis;

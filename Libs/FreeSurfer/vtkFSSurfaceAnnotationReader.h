@@ -95,8 +95,8 @@ protected:
 
 
 private:
-  vtkFSSurfaceAnnotationReader(const vtkFSSurfaceAnnotationReader&);  /// Not implemented.
-  void operator=(const vtkFSSurfaceAnnotationReader&);  /// Not implemented.
+  vtkFSSurfaceAnnotationReader(const vtkFSSurfaceAnnotationReader&) = delete;
+  void operator=(const vtkFSSurfaceAnnotationReader&) = delete;
 };
 
 #endif

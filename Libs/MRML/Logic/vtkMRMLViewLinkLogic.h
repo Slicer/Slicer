@@ -67,8 +67,8 @@ protected:
   void BroadcastCameraNodeEvent(vtkMRMLCameraNode* cameraNode);
 
 private:
-  vtkMRMLViewLinkLogic(const vtkMRMLViewLinkLogic&);
-  void operator=(const vtkMRMLViewLinkLogic&);
+  vtkMRMLViewLinkLogic(const vtkMRMLViewLinkLogic&) = delete;
+  void operator=(const vtkMRMLViewLinkLogic&) = delete;
 
 };
 

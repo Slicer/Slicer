@@ -41,8 +41,8 @@ protected:
 
 private:
 
-  vtkAnnotationBidimensionalWidget(const vtkAnnotationBidimensionalWidget&); /// Not implemented
-  void operator=(const vtkAnnotationBidimensionalWidget&); /// Not Implemented
+  vtkAnnotationBidimensionalWidget(const vtkAnnotationBidimensionalWidget&) = delete;
+  void operator=(const vtkAnnotationBidimensionalWidget&) = delete;
 
 };
 

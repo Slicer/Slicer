@@ -205,8 +205,8 @@ protected:
   // Variables
   vtkMRMLScene* UnitsScene;
 private:
-  vtkSlicerUnitsLogic(const vtkSlicerUnitsLogic&); // Not implemented
-  void operator=(const vtkSlicerUnitsLogic&); // Not implemented
+  vtkSlicerUnitsLogic(const vtkSlicerUnitsLogic&) = delete;
+  void operator=(const vtkSlicerUnitsLogic&) = delete;
 
   /// This variable contains the units of the singleton before the last scene
   /// batch process.

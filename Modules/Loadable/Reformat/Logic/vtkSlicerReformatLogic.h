@@ -68,8 +68,8 @@ protected:
 
 private:
 
-  vtkSlicerReformatLogic(const vtkSlicerReformatLogic&);  // Not implemented
-  void operator=(const vtkSlicerReformatLogic&);                    // Not implemented
+  vtkSlicerReformatLogic(const vtkSlicerReformatLogic&) = delete;
+  void operator=(const vtkSlicerReformatLogic&) = delete;
 };
 
 #endif

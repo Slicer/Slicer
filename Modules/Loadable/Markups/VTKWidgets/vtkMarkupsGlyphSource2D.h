@@ -166,8 +166,8 @@ protected:
                        vtkCellArray *polys, vtkUnsignedCharArray *colors);
 
 private:
-  vtkMarkupsGlyphSource2D(const vtkMarkupsGlyphSource2D&);  /// Not implemented.
-  void operator=(const vtkMarkupsGlyphSource2D&);  /// Not implemented.
+  vtkMarkupsGlyphSource2D(const vtkMarkupsGlyphSource2D&) = delete;
+  void operator=(const vtkMarkupsGlyphSource2D&) = delete;
 };
 
 #endif

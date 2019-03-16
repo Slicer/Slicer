@@ -65,8 +65,8 @@ protected:
 
 private:
 
-  vtkMRMLTransformsDisplayableManager3D(const vtkMRMLTransformsDisplayableManager3D&); // Not implemented
-  void operator=(const vtkMRMLTransformsDisplayableManager3D&);                 // Not Implemented
+  vtkMRMLTransformsDisplayableManager3D(const vtkMRMLTransformsDisplayableManager3D&) = delete;
+  void operator=(const vtkMRMLTransformsDisplayableManager3D&) = delete;
 
   class vtkInternal;
   vtkInternal* Internal;

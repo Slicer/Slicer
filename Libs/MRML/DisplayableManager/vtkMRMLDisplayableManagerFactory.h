@@ -95,8 +95,8 @@ protected:
 
 private:
 
-  vtkMRMLDisplayableManagerFactory(const vtkMRMLDisplayableManagerFactory&);
-  void operator=(const vtkMRMLDisplayableManagerFactory&);
+  vtkMRMLDisplayableManagerFactory(const vtkMRMLDisplayableManagerFactory&) = delete;
+  void operator=(const vtkMRMLDisplayableManagerFactory&) = delete;
 
 };
 

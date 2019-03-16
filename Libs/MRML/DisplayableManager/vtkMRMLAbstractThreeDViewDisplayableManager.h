@@ -66,8 +66,8 @@ protected:
 
 private:
 
-  vtkMRMLAbstractThreeDViewDisplayableManager(const vtkMRMLAbstractThreeDViewDisplayableManager&); // Not implemented
-  void operator=(const vtkMRMLAbstractThreeDViewDisplayableManager&);                    // Not implemented
+  vtkMRMLAbstractThreeDViewDisplayableManager(const vtkMRMLAbstractThreeDViewDisplayableManager&) = delete;
+  void operator=(const vtkMRMLAbstractThreeDViewDisplayableManager&) = delete;
 };
 
 #endif

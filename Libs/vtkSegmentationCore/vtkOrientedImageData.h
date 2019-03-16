@@ -94,8 +94,8 @@ protected:
   double Directions[3][3];
 
 private:
-  vtkOrientedImageData(const vtkOrientedImageData&);  // Not implemented.
-  void operator=(const vtkOrientedImageData&);  // Not implemented.
+  vtkOrientedImageData(const vtkOrientedImageData&) = delete;
+  void operator=(const vtkOrientedImageData&) = delete;
 };
 
 #endif

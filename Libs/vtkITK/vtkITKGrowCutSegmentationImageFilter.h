@@ -58,8 +58,8 @@ protected:
   int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 private:
-  vtkITKGrowCutSegmentationImageFilter(const vtkITKGrowCutSegmentationImageFilter&);  // Not implemented.
-  void operator=(const vtkITKGrowCutSegmentationImageFilter&);  // Not implemented.
+  vtkITKGrowCutSegmentationImageFilter(const vtkITKGrowCutSegmentationImageFilter&) = delete;
+  void operator=(const vtkITKGrowCutSegmentationImageFilter&) = delete;
 
 };
 

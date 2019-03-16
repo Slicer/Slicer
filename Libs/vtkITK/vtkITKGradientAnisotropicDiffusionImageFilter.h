@@ -65,8 +65,8 @@ protected:
 
 
 private:
-  vtkITKGradientAnisotropicDiffusionImageFilter(const vtkITKGradientAnisotropicDiffusionImageFilter&);  /// Not implemented.
-  void operator=(const vtkITKGradientAnisotropicDiffusionImageFilter&);  /// Not implemented.
+  vtkITKGradientAnisotropicDiffusionImageFilter(const vtkITKGradientAnisotropicDiffusionImageFilter&) = delete;
+  void operator=(const vtkITKGradientAnisotropicDiffusionImageFilter&) = delete;
 };
 
 #endif

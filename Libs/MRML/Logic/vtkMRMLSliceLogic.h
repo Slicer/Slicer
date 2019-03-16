@@ -408,8 +408,8 @@ protected:
 
 private:
 
-  vtkMRMLSliceLogic(const vtkMRMLSliceLogic&);
-  void operator=(const vtkMRMLSliceLogic&);
+  vtkMRMLSliceLogic(const vtkMRMLSliceLogic&) = delete;
+  void operator=(const vtkMRMLSliceLogic&) = delete;
 
 };
 

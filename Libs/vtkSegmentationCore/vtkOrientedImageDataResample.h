@@ -165,8 +165,8 @@ protected:
   ~vtkOrientedImageDataResample() override;
 
 private:
-  vtkOrientedImageDataResample(const vtkOrientedImageDataResample&);  // Not implemented.
-  void operator=(const vtkOrientedImageDataResample&);  // Not implemented.
+  vtkOrientedImageDataResample(const vtkOrientedImageDataResample&) = delete;
+  void operator=(const vtkOrientedImageDataResample&) = delete;
 };
 
 #endif

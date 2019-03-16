@@ -72,8 +72,8 @@ protected:
 
 private:
 
-  vtkAnnotationRulerRepresentation3D(const vtkAnnotationRulerRepresentation3D&); /// Not implemented
-  void operator=(const vtkAnnotationRulerRepresentation3D&); /// Not Implemented
+  vtkAnnotationRulerRepresentation3D(const vtkAnnotationRulerRepresentation3D&) = delete;
+  void operator=(const vtkAnnotationRulerRepresentation3D&) = delete;
 
   double m_Distance;
 

@@ -80,8 +80,8 @@ protected:
 
 private:
 
-  vtkMRMLSliceLinkLogic(const vtkMRMLSliceLinkLogic&);
-  void operator=(const vtkMRMLSliceLinkLogic&);
+  vtkMRMLSliceLinkLogic(const vtkMRMLSliceLinkLogic&) = delete;
+  void operator=(const vtkMRMLSliceLinkLogic&) = delete;
 
   vtkMRMLSliceCompositeNode* GetCompositeNode(vtkMRMLSliceNode*);
   void BroadcastLastRotation(vtkMRMLSliceNode*, vtkMRMLSliceNode*);

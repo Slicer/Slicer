@@ -100,8 +100,8 @@ protected:
   int ReadFloat (FILE* iFile, float& oInt);
 */
 private:
-  vtkFSSurfaceLabelReader(const vtkFSSurfaceLabelReader&);  /// Not implemented.
-  void operator=(const vtkFSSurfaceLabelReader&);  /// Not implemented.
+  vtkFSSurfaceLabelReader(const vtkFSSurfaceLabelReader&) = delete;
+  void operator=(const vtkFSSurfaceLabelReader&) = delete;
 };
 
 #endif

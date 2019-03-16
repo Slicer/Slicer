@@ -230,8 +230,8 @@ protected:
 
 private:
 
-  vtkSlicerMarkupsLogic(const vtkSlicerMarkupsLogic&); // Not implemented
-  void operator=(const vtkSlicerMarkupsLogic&);               // Not implemented
+  vtkSlicerMarkupsLogic(const vtkSlicerMarkupsLogic&) = delete;
+  void operator=(const vtkSlicerMarkupsLogic&) = delete;
 
   /// keep a markups display node with default values that can be updated from
   /// the application settings

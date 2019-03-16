@@ -88,8 +88,8 @@ protected:
   int NumberOfLoggedMessages;
 
 private:
-  vtkTestingOutputWindow(const vtkTestingOutputWindow&);  // Not implemented.
-  void operator=(const vtkTestingOutputWindow&);  // Not implemented.
+  vtkTestingOutputWindow(const vtkTestingOutputWindow&) = delete;
+  void operator=(const vtkTestingOutputWindow&) = delete;
 };
 
 

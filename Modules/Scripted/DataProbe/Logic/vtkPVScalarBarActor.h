@@ -175,8 +175,8 @@ protected:
   int AddRangeAnnotations;
 
 private:
-  vtkPVScalarBarActor(const vtkPVScalarBarActor &);     // Not implemented.
-  void operator=(const vtkPVScalarBarActor &);          // Not implemented.
+  vtkPVScalarBarActor(const vtkPVScalarBarActor &) = delete;
+  void operator=(const vtkPVScalarBarActor &) = delete;
 };
 
 #endif //__vtkPVScalarBarActor_h

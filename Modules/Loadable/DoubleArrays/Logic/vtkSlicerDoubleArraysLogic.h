@@ -50,8 +50,8 @@ protected:
   ~vtkSlicerDoubleArraysLogic() override;
 
 private:
-  vtkSlicerDoubleArraysLogic(const vtkSlicerDoubleArraysLogic&); // Not implemented
-  void operator=(const vtkSlicerDoubleArraysLogic&);               // Not implemented
+  vtkSlicerDoubleArraysLogic(const vtkSlicerDoubleArraysLogic&) = delete;
+  void operator=(const vtkSlicerDoubleArraysLogic&) = delete;
 };
 
 #endif

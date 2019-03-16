@@ -90,8 +90,8 @@ protected:
   bool CenterLabel;
 
 private:
-  vtkSlicerScalarBarActor(const vtkSlicerScalarBarActor&);  // Not implemented.
-  void operator=(const vtkSlicerScalarBarActor&);  // Not implemented.
+  vtkSlicerScalarBarActor(const vtkSlicerScalarBarActor&) = delete;
+  void operator=(const vtkSlicerScalarBarActor&) = delete;
 };
 
 #endif

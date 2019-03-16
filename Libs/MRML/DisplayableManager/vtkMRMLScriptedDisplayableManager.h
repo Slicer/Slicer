@@ -57,8 +57,8 @@ protected:
   void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;
 
 private:
-  vtkMRMLScriptedDisplayableManager(const vtkMRMLScriptedDisplayableManager&);// Not implemented
-  void operator=(const vtkMRMLScriptedDisplayableManager&);                   // Not Implemented
+  vtkMRMLScriptedDisplayableManager(const vtkMRMLScriptedDisplayableManager&) = delete;
+  void operator=(const vtkMRMLScriptedDisplayableManager&) = delete;
 
   class vtkInternal;
   vtkInternal * Internal;

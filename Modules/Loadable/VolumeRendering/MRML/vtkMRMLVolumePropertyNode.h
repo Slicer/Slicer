@@ -211,8 +211,8 @@ protected:
 
 private:
   /// Caution: Not implemented
-  vtkMRMLVolumePropertyNode(const vtkMRMLVolumePropertyNode&);//Not implemented
-  void operator=(const vtkMRMLVolumePropertyNode&);// Not implemented
+  vtkMRMLVolumePropertyNode(const vtkMRMLVolumePropertyNode&) = delete;
+  void operator=(const vtkMRMLVolumePropertyNode&) = delete;
 
 };
 

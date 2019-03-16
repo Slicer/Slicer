@@ -115,8 +115,8 @@ protected:
   ~vtkSlicerSubjectHierarchyModuleLogic() override;
 
 private:
-  vtkSlicerSubjectHierarchyModuleLogic(const vtkSlicerSubjectHierarchyModuleLogic&); // Not implemented
-  void operator=(const vtkSlicerSubjectHierarchyModuleLogic&); // Not implemented
+  vtkSlicerSubjectHierarchyModuleLogic(const vtkSlicerSubjectHierarchyModuleLogic&) = delete;
+  void operator=(const vtkSlicerSubjectHierarchyModuleLogic&) = delete;
 };
 
 #endif

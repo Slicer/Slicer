@@ -133,8 +133,8 @@ protected:
   vtkMRMLAbstractDisplayableManager* FocusedDisplayableManager;
 
 private:
-  vtkSliceViewInteractorStyle(const vtkSliceViewInteractorStyle&);  /// Not implemented.
-  void operator=(const vtkSliceViewInteractorStyle&);  /// Not implemented.
+  vtkSliceViewInteractorStyle(const vtkSliceViewInteractorStyle&) = delete;
+  void operator=(const vtkSliceViewInteractorStyle&) = delete;
 };
 
 #endif

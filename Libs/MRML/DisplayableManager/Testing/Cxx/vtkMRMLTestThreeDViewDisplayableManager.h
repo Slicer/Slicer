@@ -57,8 +57,8 @@ protected:
 
 private:
 
-  vtkMRMLTestThreeDViewDisplayableManager(const vtkMRMLTestThreeDViewDisplayableManager&);// Not implemented
-  void operator=(const vtkMRMLTestThreeDViewDisplayableManager&);                     // Not Implemented
+  vtkMRMLTestThreeDViewDisplayableManager(const vtkMRMLTestThreeDViewDisplayableManager&) = delete;
+  void operator=(const vtkMRMLTestThreeDViewDisplayableManager&) = delete;
 
   class vtkInternal;
   vtkInternal * Internal;

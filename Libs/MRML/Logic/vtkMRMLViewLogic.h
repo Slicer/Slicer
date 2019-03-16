@@ -121,8 +121,8 @@ protected:
   vtkMRMLCameraNode* CameraNode;
 
 private:
-  vtkMRMLViewLogic(const vtkMRMLViewLogic&);
-  void operator=(const vtkMRMLViewLogic&);
+  vtkMRMLViewLogic(const vtkMRMLViewLogic&) = delete;
+  void operator=(const vtkMRMLViewLogic&) = delete;
 
 };
 

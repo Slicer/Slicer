@@ -46,8 +46,8 @@ protected:
   int Plane;
 
 private:
-  vtkITKLevelTracingImageFilter(const vtkITKLevelTracingImageFilter&);  /// Not implemented.
-  void operator=(const vtkITKLevelTracingImageFilter&);  /// Not implemented.
+  vtkITKLevelTracingImageFilter(const vtkITKLevelTracingImageFilter&) = delete;
+  void operator=(const vtkITKLevelTracingImageFilter&) = delete;
 };
 
 #endif

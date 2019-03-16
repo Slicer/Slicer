@@ -64,8 +64,8 @@ protected:
   void BestGuessForNewCaptionCoordinates(double bestGuess[2]);
 private:
 
-  vtkMRMLAnnotationTextDisplayableManager(const vtkMRMLAnnotationTextDisplayableManager&); /// Not implemented
-  void operator=(const vtkMRMLAnnotationTextDisplayableManager&); /// Not Implemented
+  vtkMRMLAnnotationTextDisplayableManager(const vtkMRMLAnnotationTextDisplayableManager&) = delete;
+  void operator=(const vtkMRMLAnnotationTextDisplayableManager&) = delete;
 
 };
 

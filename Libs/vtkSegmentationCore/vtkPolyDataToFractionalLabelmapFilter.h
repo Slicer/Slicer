@@ -136,8 +136,8 @@ protected:
                              double z);
 
 private:
-  vtkPolyDataToFractionalLabelmapFilter(const vtkPolyDataToFractionalLabelmapFilter&);  // Not implemented.
-  void operator=(const vtkPolyDataToFractionalLabelmapFilter&);  // Not implemented.
+  vtkPolyDataToFractionalLabelmapFilter(const vtkPolyDataToFractionalLabelmapFilter&) = delete;
+  void operator=(const vtkPolyDataToFractionalLabelmapFilter&) = delete;
 };
 
 #endif

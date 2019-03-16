@@ -146,8 +146,8 @@ protected:
 
 private:
 
-  vtkMRMLAnnotationDisplayableManagerHelper(const vtkMRMLAnnotationDisplayableManagerHelper&); /// Not implemented
-  void operator=(const vtkMRMLAnnotationDisplayableManagerHelper&); /// Not Implemented
+  vtkMRMLAnnotationDisplayableManagerHelper(const vtkMRMLAnnotationDisplayableManagerHelper&) = delete;
+  void operator=(const vtkMRMLAnnotationDisplayableManagerHelper&) = delete;
 
   /// SeedWidget for point placement
   vtkSmartPointer<vtkSeedWidget> SeedWidget;

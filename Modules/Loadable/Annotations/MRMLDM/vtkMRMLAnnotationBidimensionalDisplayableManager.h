@@ -62,8 +62,8 @@ protected:
 
 private:
 
-  vtkMRMLAnnotationBidimensionalDisplayableManager(const vtkMRMLAnnotationBidimensionalDisplayableManager&); /// Not implemented
-  void operator=(const vtkMRMLAnnotationBidimensionalDisplayableManager&); /// Not Implemented
+  vtkMRMLAnnotationBidimensionalDisplayableManager(const vtkMRMLAnnotationBidimensionalDisplayableManager&) = delete;
+  void operator=(const vtkMRMLAnnotationBidimensionalDisplayableManager&) = delete;
 
 };
 

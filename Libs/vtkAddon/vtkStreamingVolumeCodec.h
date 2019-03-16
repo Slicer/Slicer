@@ -179,8 +179,8 @@ protected:
   ~vtkStreamingVolumeCodec() override;
 
 private:
-  vtkStreamingVolumeCodec(const vtkStreamingVolumeCodec&);
-  void operator=(const vtkStreamingVolumeCodec&);
+  vtkStreamingVolumeCodec(const vtkStreamingVolumeCodec&) = delete;
+  void operator=(const vtkStreamingVolumeCodec&) = delete;
 
 protected:
   std::vector<std::string>                  AvailiableParameterNames;

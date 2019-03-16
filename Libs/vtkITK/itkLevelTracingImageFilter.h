@@ -115,8 +115,8 @@ protected:
   virtual void Trace( const DispatchBase &);
 
 private:
-  LevelTracingImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  LevelTracingImageFilter(const Self&) = delete;
+  void operator=(const Self&) = delete;
 
   IndexType           m_Seed;
   InputImagePixelType m_Max;

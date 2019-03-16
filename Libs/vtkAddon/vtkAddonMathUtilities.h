@@ -80,8 +80,8 @@ protected:
   ~vtkAddonMathUtilities() override;
 
 private:
-  vtkAddonMathUtilities(const vtkAddonMathUtilities&);  // Not implemented.
-  void operator=(const vtkAddonMathUtilities&);  // Not implemented.
+  vtkAddonMathUtilities(const vtkAddonMathUtilities&) = delete;
+  void operator=(const vtkAddonMathUtilities&) = delete;
 };
 
 #endif

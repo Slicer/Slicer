@@ -113,8 +113,8 @@ protected:
   ~vtkOpenGLShaderComputation() override;
 
 private:
-  vtkOpenGLShaderComputation(const vtkOpenGLShaderComputation&);  // Not implemented.
-  void operator=(const vtkOpenGLShaderComputation&);  // Not implemented.
+  vtkOpenGLShaderComputation(const vtkOpenGLShaderComputation&) = delete;
+  void operator=(const vtkOpenGLShaderComputation&) = delete;
 
   bool Initialized;
   bool ErrorOccurred;

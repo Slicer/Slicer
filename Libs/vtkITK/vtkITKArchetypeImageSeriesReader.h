@@ -895,8 +895,8 @@ protected:
   std::vector<long int> IndexImagePositionPatient;
 
 private:
-  vtkITKArchetypeImageSeriesReader(const vtkITKArchetypeImageSeriesReader&);  /// Not implemented.
-  void operator=(const vtkITKArchetypeImageSeriesReader&);  /// Not implemented.
+  vtkITKArchetypeImageSeriesReader(const vtkITKArchetypeImageSeriesReader&) = delete;
+  void operator=(const vtkITKArchetypeImageSeriesReader&) = delete;
 };
 
 #endif

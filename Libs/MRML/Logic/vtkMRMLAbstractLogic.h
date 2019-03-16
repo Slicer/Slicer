@@ -437,8 +437,8 @@ protected:
 
 private:
 
-  vtkMRMLAbstractLogic(const vtkMRMLAbstractLogic&); // Not implemented
-  void operator=(const vtkMRMLAbstractLogic&);       // Not implemented
+  vtkMRMLAbstractLogic(const vtkMRMLAbstractLogic&) = delete;
+  void operator=(const vtkMRMLAbstractLogic&) = delete;
 
   class vtkInternal;
   vtkInternal * Internal;

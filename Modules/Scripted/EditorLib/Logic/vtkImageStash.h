@@ -107,8 +107,8 @@ protected:
 private:
   int StashingThreadID;
 
-  vtkImageStash(const vtkImageStash&);  /// Not implemented.
-  void operator=(const vtkImageStash&);  /// Not implemented.
+  vtkImageStash(const vtkImageStash&) = delete;
+  void operator=(const vtkImageStash&) = delete;
 };
 
 

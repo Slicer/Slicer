@@ -91,8 +91,8 @@ protected:
   int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 private:
-  vtkTransformVisualizerGlyph3D(const vtkTransformVisualizerGlyph3D&);  // Not implemented.
-  void operator=(const vtkTransformVisualizerGlyph3D&);  // Not implemented.
+  vtkTransformVisualizerGlyph3D(const vtkTransformVisualizerGlyph3D&) = delete;
+  void operator=(const vtkTransformVisualizerGlyph3D&) = delete;
 };
 
 #endif

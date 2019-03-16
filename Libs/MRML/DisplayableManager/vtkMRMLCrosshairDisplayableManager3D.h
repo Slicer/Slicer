@@ -48,8 +48,8 @@ protected:
   void AdditionalInitializeStep() override;
 
 private:
-  vtkMRMLCrosshairDisplayableManager3D(const vtkMRMLCrosshairDisplayableManager3D&);// Not implemented
-  void operator=(const vtkMRMLCrosshairDisplayableManager3D&);                     // Not Implemented
+  vtkMRMLCrosshairDisplayableManager3D(const vtkMRMLCrosshairDisplayableManager3D&) = delete;
+  void operator=(const vtkMRMLCrosshairDisplayableManager3D&) = delete;
 
   void UnobserveMRMLScene() override;
   void ObserveMRMLScene() override;

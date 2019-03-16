@@ -74,8 +74,8 @@ protected:
   ~vtkMRMLSegmentationsDisplayableManager2D() override;
 
 private:
-  vtkMRMLSegmentationsDisplayableManager2D(const vtkMRMLSegmentationsDisplayableManager2D&);// Not implemented
-  void operator=(const vtkMRMLSegmentationsDisplayableManager2D&);                     // Not Implemented
+  vtkMRMLSegmentationsDisplayableManager2D(const vtkMRMLSegmentationsDisplayableManager2D&) = delete;
+  void operator=(const vtkMRMLSegmentationsDisplayableManager2D&) = delete;
 
   class vtkInternal;
   vtkInternal * Internal;

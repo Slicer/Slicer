@@ -51,8 +51,8 @@ protected:
 
 private:
 
-  vtkMRMLAnnotationClickCounter(const vtkMRMLAnnotationClickCounter&); /// Not implemented
-  void operator=(const vtkMRMLAnnotationClickCounter&); /// Not Implemented
+  vtkMRMLAnnotationClickCounter(const vtkMRMLAnnotationClickCounter&) = delete;
+  void operator=(const vtkMRMLAnnotationClickCounter&) = delete;
 
   int m_Clicks;
 

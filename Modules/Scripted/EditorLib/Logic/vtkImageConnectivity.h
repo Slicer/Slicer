@@ -93,8 +93,8 @@ protected:
   void ExecuteDataWithInformation(vtkDataObject *, vtkInformation *) override;
 
 private:
-  vtkImageConnectivity(const vtkImageConnectivity&);
-  void operator=(const vtkImageConnectivity&);
+  vtkImageConnectivity(const vtkImageConnectivity&) = delete;
+  void operator=(const vtkImageConnectivity&) = delete;
 };
 
 #endif

@@ -48,8 +48,8 @@ protected:
 
 private:
 
-  vtkAnnotationRulerWidget(const vtkAnnotationRulerWidget&); /// Not implemented
-  void operator=(const vtkAnnotationRulerWidget&); /// Not Implemented
+  vtkAnnotationRulerWidget(const vtkAnnotationRulerWidget&) = delete;
+  void operator=(const vtkAnnotationRulerWidget&) = delete;
 
 };
 

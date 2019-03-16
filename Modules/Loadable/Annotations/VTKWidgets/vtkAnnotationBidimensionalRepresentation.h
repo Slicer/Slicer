@@ -44,8 +44,8 @@ protected:
 
 private:
 
-  vtkAnnotationBidimensionalRepresentation(const vtkAnnotationBidimensionalRepresentation&); /// Not implemented
-  void operator=(const vtkAnnotationBidimensionalRepresentation&); /// Not Implemented
+  vtkAnnotationBidimensionalRepresentation(const vtkAnnotationBidimensionalRepresentation&) = delete;
+  void operator=(const vtkAnnotationBidimensionalRepresentation&) = delete;
 
   double m_Distance1;
   double m_Distance2;

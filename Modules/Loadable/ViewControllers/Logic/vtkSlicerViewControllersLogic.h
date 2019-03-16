@@ -76,8 +76,8 @@ protected:
   void RegisterNodes() override;
 
 private:
-  vtkSlicerViewControllersLogic(const vtkSlicerViewControllersLogic&); // Not implemented
-  void operator=(const vtkSlicerViewControllersLogic&);               // Not implemented
+  vtkSlicerViewControllersLogic(const vtkSlicerViewControllersLogic&) = delete;
+  void operator=(const vtkSlicerViewControllersLogic&) = delete;
 
 };
 

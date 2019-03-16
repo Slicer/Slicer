@@ -188,8 +188,8 @@ protected:
                        vtkCellArray *polys, vtkUnsignedCharArray *colors, double scale);
 
 private:
-  vtkAnnotationGlyphSource2D(const vtkAnnotationGlyphSource2D&);  /// Not implemented.
-  void operator=(const vtkAnnotationGlyphSource2D&);  /// Not implemented.
+  vtkAnnotationGlyphSource2D(const vtkAnnotationGlyphSource2D&) = delete;
+  void operator=(const vtkAnnotationGlyphSource2D&) = delete;
 };
 
 #endif

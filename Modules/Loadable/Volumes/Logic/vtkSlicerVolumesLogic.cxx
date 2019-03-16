@@ -207,8 +207,8 @@ private:
   std::vector<std::string> ErrorList;
 
 private:
-  vtkSlicerErrorSink(const vtkSlicerErrorSink&); // Not implemented
-  void operator=(const vtkSlicerErrorSink&);     // Not implemented
+  vtkSlicerErrorSink(const vtkSlicerErrorSink&) = delete;
+  void operator=(const vtkSlicerErrorSink&) = delete;
 };
 
 //----------------------------------------------------------------------------

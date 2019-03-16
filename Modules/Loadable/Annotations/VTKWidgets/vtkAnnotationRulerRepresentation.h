@@ -47,8 +47,8 @@ protected:
 
 private:
 
-  vtkAnnotationRulerRepresentation(const vtkAnnotationRulerRepresentation&); /// Not implemented
-  void operator=(const vtkAnnotationRulerRepresentation&); /// Not Implemented
+  vtkAnnotationRulerRepresentation(const vtkAnnotationRulerRepresentation&) = delete;
+  void operator=(const vtkAnnotationRulerRepresentation&) = delete;
 
   double m_Distance;
 

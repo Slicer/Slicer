@@ -159,8 +159,8 @@ protected:
 private:
   vtkSlicerCLIModuleLogic();
   ~vtkSlicerCLIModuleLogic() override;
-  vtkSlicerCLIModuleLogic(const vtkSlicerCLIModuleLogic&);
-  void operator=(const vtkSlicerCLIModuleLogic&);
+  vtkSlicerCLIModuleLogic(const vtkSlicerCLIModuleLogic&) = delete;
+  void operator=(const vtkSlicerCLIModuleLogic&) = delete;
 
   class vtkInternal;
   vtkInternal * Internal;

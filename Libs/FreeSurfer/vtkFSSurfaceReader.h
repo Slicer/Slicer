@@ -59,8 +59,8 @@ protected:
     vtkInformationVector *outputVector) override;
 
 private:
-  vtkFSSurfaceReader(const vtkFSSurfaceReader&);  /// Not implemented.
-  void operator=(const vtkFSSurfaceReader&);  /// Not implemented.
+  vtkFSSurfaceReader(const vtkFSSurfaceReader&) = delete;
+  void operator=(const vtkFSSurfaceReader&) = delete;
 };
 
 

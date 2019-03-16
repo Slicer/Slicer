@@ -229,8 +229,8 @@ protected:
   char* UserContextsPath;
 
 private:
-  vtkSlicerTerminologiesModuleLogic(const vtkSlicerTerminologiesModuleLogic&); // Not implemented
-  void operator=(const vtkSlicerTerminologiesModuleLogic&);              // Not implemented
+  vtkSlicerTerminologiesModuleLogic(const vtkSlicerTerminologiesModuleLogic&) = delete;
+  void operator=(const vtkSlicerTerminologiesModuleLogic&) = delete;
 
   class vtkInternal;
   vtkInternal* Internal;

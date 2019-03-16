@@ -62,8 +62,8 @@ protected:
 
 private:
 
-  vtkMRMLThreeDViewDisplayableManagerFactory(const vtkMRMLThreeDViewDisplayableManagerFactory&);
-  void operator=(const vtkMRMLThreeDViewDisplayableManagerFactory&);
+  vtkMRMLThreeDViewDisplayableManagerFactory(const vtkMRMLThreeDViewDisplayableManagerFactory&) = delete;
+  void operator=(const vtkMRMLThreeDViewDisplayableManagerFactory&) = delete;
 
 };
 

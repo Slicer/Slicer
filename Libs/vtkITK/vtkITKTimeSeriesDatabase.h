@@ -95,8 +95,8 @@ protected:
   void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo) override;
 
 private:
-  vtkITKTimeSeriesDatabase(const vtkITKTimeSeriesDatabase&);  /// Not implemented.
-  void operator=(const vtkITKTimeSeriesDatabase&);  /// Not implemented.
+  vtkITKTimeSeriesDatabase(const vtkITKTimeSeriesDatabase&) = delete;
+  void operator=(const vtkITKTimeSeriesDatabase&) = delete;
 
 };
 

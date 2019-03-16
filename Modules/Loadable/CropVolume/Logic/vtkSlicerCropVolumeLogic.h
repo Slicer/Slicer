@@ -109,8 +109,8 @@ protected:
   ~vtkSlicerCropVolumeLogic() override;
 
 private:
-  vtkSlicerCropVolumeLogic(const vtkSlicerCropVolumeLogic&); // Not implemented
-  void operator=(const vtkSlicerCropVolumeLogic&);           // Not implemented
+  vtkSlicerCropVolumeLogic(const vtkSlicerCropVolumeLogic&) = delete;
+  void operator=(const vtkSlicerCropVolumeLogic&) = delete;
 
   class vtkInternal;
   vtkInternal* Internal;

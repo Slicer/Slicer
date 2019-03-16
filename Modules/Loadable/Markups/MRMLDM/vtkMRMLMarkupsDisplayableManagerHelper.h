@@ -97,8 +97,8 @@ protected:
 
 private:
 
-  vtkMRMLMarkupsDisplayableManagerHelper(const vtkMRMLMarkupsDisplayableManagerHelper&); /// Not implemented
-  void operator=(const vtkMRMLMarkupsDisplayableManagerHelper&); /// Not Implemented
+  vtkMRMLMarkupsDisplayableManagerHelper(const vtkMRMLMarkupsDisplayableManagerHelper&) = delete;
+  void operator=(const vtkMRMLMarkupsDisplayableManagerHelper&) = delete;
 
   /// Keep a record of the current glyph type for the handles in the widget
   /// associated with this node, prevents changing them unnecessarily

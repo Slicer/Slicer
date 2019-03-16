@@ -154,8 +154,8 @@ protected:
   ~LevelTracingImageFunction() override{}
 
 private:
-  LevelTracingImageFunction( const Self& ); //purposely not implemented
-  void operator=( const Self& ); //purposely not implemented
+  LevelTracingImageFunction( const Self& ) = delete;
+  void operator=( const Self& ) = delete;
 
   PixelType     m_Threshold;
   InputSizeType m_Radius;

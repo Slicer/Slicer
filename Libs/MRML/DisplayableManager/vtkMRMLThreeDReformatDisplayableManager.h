@@ -56,8 +56,8 @@ protected:
   void OnMRMLNodeModified(vtkMRMLNode* node) override;
 
 private:
-  vtkMRMLThreeDReformatDisplayableManager(const vtkMRMLThreeDReformatDisplayableManager&);// Not implemented
-  void operator=(const vtkMRMLThreeDReformatDisplayableManager&);                         // Not Implemented
+  vtkMRMLThreeDReformatDisplayableManager(const vtkMRMLThreeDReformatDisplayableManager&) = delete;
+  void operator=(const vtkMRMLThreeDReformatDisplayableManager&) = delete;
 
   class vtkInternal;
   vtkInternal* Internal;

@@ -256,8 +256,8 @@ public:
   vtkImageExport* vtkExporter;
 
 private:
-  vtkITKImageToImageFilter(const vtkITKImageToImageFilter&);  /// Not implemented.
-  void operator=(const vtkITKImageToImageFilter&);  /// Not implemented.
+  vtkITKImageToImageFilter(const vtkITKImageToImageFilter&) = delete;
+  void operator=(const vtkITKImageToImageFilter&) = delete;
 };
 
 #endif

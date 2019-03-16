@@ -93,8 +93,8 @@ protected:
   vtkMTimeType LastWarningMTime;
 
 private:
-  vtkOrientedGridTransform(const vtkOrientedGridTransform&);  // Not implemented.
-  void operator=(const vtkOrientedGridTransform&);  // Not implemented.
+  vtkOrientedGridTransform(const vtkOrientedGridTransform&) = delete;
+  void operator=(const vtkOrientedGridTransform&) = delete;
 };
 
 #endif

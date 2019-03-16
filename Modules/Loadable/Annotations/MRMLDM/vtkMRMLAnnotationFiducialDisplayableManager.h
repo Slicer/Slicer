@@ -71,8 +71,8 @@ protected:
 
 private:
 
-  vtkMRMLAnnotationFiducialDisplayableManager(const vtkMRMLAnnotationFiducialDisplayableManager&); /// Not implemented
-  void operator=(const vtkMRMLAnnotationFiducialDisplayableManager&); /// Not Implemented
+  vtkMRMLAnnotationFiducialDisplayableManager(const vtkMRMLAnnotationFiducialDisplayableManager&) = delete;
+  void operator=(const vtkMRMLAnnotationFiducialDisplayableManager&) = delete;
 
 };
 

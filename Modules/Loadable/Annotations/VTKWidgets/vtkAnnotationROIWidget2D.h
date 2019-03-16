@@ -130,8 +130,8 @@ protected:
   ~vtkAnnotationROIWidget2D() override;
 
 private:
-  vtkAnnotationROIWidget2D(const vtkAnnotationROIWidget2D&);  //Not implemented
-  void operator=(const vtkAnnotationROIWidget2D&);  //Not implemented
+  vtkAnnotationROIWidget2D(const vtkAnnotationROIWidget2D&) = delete;
+  void operator=(const vtkAnnotationROIWidget2D&) = delete;
 };
 
 #endif

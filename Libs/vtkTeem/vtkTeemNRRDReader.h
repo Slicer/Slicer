@@ -269,8 +269,8 @@ protected:
   int tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double SD[9]);
 
 private:
-  vtkTeemNRRDReader(const vtkTeemNRRDReader&);  /// Not implemented.
-  void operator=(const vtkTeemNRRDReader&);  /// Not implemented.
+  vtkTeemNRRDReader(const vtkTeemNRRDReader&) = delete;
+  void operator=(const vtkTeemNRRDReader&) = delete;
 
 };
 

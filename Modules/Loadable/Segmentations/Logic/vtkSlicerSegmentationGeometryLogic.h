@@ -117,8 +117,8 @@ protected:
   int SourceAxisIndexForInputAxis[3];
 
 private:
-  vtkSlicerSegmentationGeometryLogic(const vtkSlicerSegmentationGeometryLogic&); // Not implemented
-  void operator=(const vtkSlicerSegmentationGeometryLogic&);               // Not implemented
+  vtkSlicerSegmentationGeometryLogic(const vtkSlicerSegmentationGeometryLogic&) = delete;
+  void operator=(const vtkSlicerSegmentationGeometryLogic&) = delete;
 };
 
 #endif

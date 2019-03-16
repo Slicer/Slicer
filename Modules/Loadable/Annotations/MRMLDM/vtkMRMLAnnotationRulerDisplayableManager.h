@@ -76,8 +76,8 @@ protected:
 
 private:
 
-  vtkMRMLAnnotationRulerDisplayableManager(const vtkMRMLAnnotationRulerDisplayableManager&); /// Not implemented
-  void operator=(const vtkMRMLAnnotationRulerDisplayableManager&); /// Not Implemented
+  vtkMRMLAnnotationRulerDisplayableManager(const vtkMRMLAnnotationRulerDisplayableManager&) = delete;
+  void operator=(const vtkMRMLAnnotationRulerDisplayableManager&) = delete;
 
 };
 

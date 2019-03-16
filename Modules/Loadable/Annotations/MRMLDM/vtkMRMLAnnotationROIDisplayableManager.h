@@ -74,8 +74,8 @@ protected:
 
 private:
 
-  vtkMRMLAnnotationROIDisplayableManager(const vtkMRMLAnnotationROIDisplayableManager&); /// Not implemented
-  void operator=(const vtkMRMLAnnotationROIDisplayableManager&); /// Not Implemented
+  vtkMRMLAnnotationROIDisplayableManager(const vtkMRMLAnnotationROIDisplayableManager&) = delete;
+  void operator=(const vtkMRMLAnnotationROIDisplayableManager&) = delete;
 
 };
 

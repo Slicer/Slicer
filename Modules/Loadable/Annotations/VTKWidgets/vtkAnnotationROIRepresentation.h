@@ -298,8 +298,8 @@ protected:
 
 
 private:
-  vtkAnnotationROIRepresentation(const vtkAnnotationROIRepresentation&);  //Not implemented
-  void operator=(const vtkAnnotationROIRepresentation&);  //Not implemented
+  vtkAnnotationROIRepresentation(const vtkAnnotationROIRepresentation&) = delete;
+  void operator=(const vtkAnnotationROIRepresentation&) = delete;
 };
 
 #endif

@@ -62,8 +62,8 @@ protected:
 
 private:
 
-  vtkMRMLSliceViewDisplayableManagerFactory(const vtkMRMLSliceViewDisplayableManagerFactory&);
-  void operator=(const vtkMRMLSliceViewDisplayableManagerFactory&);
+  vtkMRMLSliceViewDisplayableManagerFactory(const vtkMRMLSliceViewDisplayableManagerFactory&) = delete;
+  void operator=(const vtkMRMLSliceViewDisplayableManagerFactory&) = delete;
 
 };
 

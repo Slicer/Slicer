@@ -58,8 +58,8 @@ class VTK_MRML_EXPORT vtkDataFileFormatHelper : public vtkObject
      ITKImageFileFormat& structFileFormat);
 
 private:
-  vtkDataFileFormatHelper(const vtkDataFileFormatHelper&);
-  void operator=(const vtkDataFileFormatHelper&);
+  vtkDataFileFormatHelper(const vtkDataFileFormatHelper&) = delete;
+  void operator=(const vtkDataFileFormatHelper&) = delete;
 };
 
 #endif
