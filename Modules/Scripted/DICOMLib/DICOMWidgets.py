@@ -412,6 +412,9 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
     """The dicom browser will emit multiple directoryImported
     signals during the same operation, so we collapse them
     into a single check for compatible extensions."""
+    if not hasattr(slicer.app, 'extensionsManagerModel'):
+      # Slicer may not be built with extension manager support
+      return
     if not self.extensionCheckPending:
       self.extensionCheckPending = True
       def timerCallback():
