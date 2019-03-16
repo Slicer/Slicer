@@ -251,8 +251,7 @@ qMRMLVolumeWidget
 
 // --------------------------------------------------------------------------
 qMRMLVolumeWidget::~qMRMLVolumeWidget()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 void qMRMLVolumeWidget

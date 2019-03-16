@@ -61,8 +61,7 @@ vtkMRMLPlotViewNode::vtkMRMLPlotViewNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLPlotViewNode::~vtkMRMLPlotViewNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLPlotViewNode::WriteXML(ostream& of, int nIndent)

@@ -59,7 +59,7 @@ vtkParametricPolynomialApproximation::vtkParametricPolynomialApproximation()
 }
 
 //----------------------------------------------------------------------------
-vtkParametricPolynomialApproximation::~vtkParametricPolynomialApproximation() {}
+vtkParametricPolynomialApproximation::~vtkParametricPolynomialApproximation()  = default;
 
 //----------------------------------------------------------------------------
 void vtkParametricPolynomialApproximation::SetPoints(vtkPoints* points)

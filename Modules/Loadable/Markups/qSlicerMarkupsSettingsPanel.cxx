@@ -83,8 +83,7 @@ qSlicerMarkupsSettingsPanel::qSlicerMarkupsSettingsPanel(QWidget* _parent)
 
 // --------------------------------------------------------------------------
 qSlicerMarkupsSettingsPanel::~qSlicerMarkupsSettingsPanel()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 vtkSlicerMarkupsLogic* qSlicerMarkupsSettingsPanel

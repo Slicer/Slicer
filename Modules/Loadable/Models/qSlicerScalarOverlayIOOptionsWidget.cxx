@@ -50,8 +50,7 @@ qSlicerScalarOverlayIOOptionsWidget::qSlicerScalarOverlayIOOptionsWidget(QWidget
 
 //-----------------------------------------------------------------------------
 qSlicerScalarOverlayIOOptionsWidget::~qSlicerScalarOverlayIOOptionsWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 bool qSlicerScalarOverlayIOOptionsWidget::isValid()const

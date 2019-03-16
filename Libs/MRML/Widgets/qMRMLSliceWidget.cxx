@@ -52,8 +52,7 @@ qMRMLSliceWidgetPrivate::qMRMLSliceWidgetPrivate(qMRMLSliceWidget& object)
 
 //---------------------------------------------------------------------------
 qMRMLSliceWidgetPrivate::~qMRMLSliceWidgetPrivate()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 void qMRMLSliceWidgetPrivate::init()
@@ -125,8 +124,7 @@ qMRMLSliceWidget::qMRMLSliceWidget(qMRMLSliceWidgetPrivate* pimpl,
 
 // --------------------------------------------------------------------------
 qMRMLSliceWidget::~qMRMLSliceWidget()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 void qMRMLSliceWidget::setMRMLScene(vtkMRMLScene* newScene)

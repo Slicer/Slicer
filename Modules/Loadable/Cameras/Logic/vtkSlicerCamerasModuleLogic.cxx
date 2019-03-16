@@ -46,8 +46,7 @@ vtkSlicerCamerasModuleLogic::vtkSlicerCamerasModuleLogic()
 
 //----------------------------------------------------------------------------
 vtkSlicerCamerasModuleLogic::~vtkSlicerCamerasModuleLogic()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkSlicerCamerasModuleLogic::PrintSelf(ostream& os, vtkIndent indent)

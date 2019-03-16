@@ -52,13 +52,11 @@ vtkAOSDataArrayTemplate<T>* DownCast(vtkAbstractArray* a)
 
 //----------------------------------------------------------------------------
 vtkITKArchetypeImageSeriesVectorReaderSeries::vtkITKArchetypeImageSeriesVectorReaderSeries()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkITKArchetypeImageSeriesVectorReaderSeries::~vtkITKArchetypeImageSeriesVectorReaderSeries()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkITKArchetypeImageSeriesVectorReaderSeries::PrintSelf(ostream& os, vtkIndent indent)

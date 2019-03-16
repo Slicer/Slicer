@@ -114,8 +114,7 @@ qMRMLSegmentationRepresentationsListView::qMRMLSegmentationRepresentationsListVi
 
 // --------------------------------------------------------------------------
 qMRMLSegmentationRepresentationsListView::~qMRMLSegmentationRepresentationsListView()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qMRMLSegmentationRepresentationsListView::setSegmentationNode(vtkMRMLNode* node)

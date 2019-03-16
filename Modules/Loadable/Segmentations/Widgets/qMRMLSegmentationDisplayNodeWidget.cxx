@@ -138,8 +138,7 @@ qMRMLSegmentationDisplayNodeWidget::qMRMLSegmentationDisplayNodeWidget(QWidget* 
 
 //-----------------------------------------------------------------------------
 qMRMLSegmentationDisplayNodeWidget::~qMRMLSegmentationDisplayNodeWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 vtkMRMLSegmentationDisplayNode* qMRMLSegmentationDisplayNodeWidget::segmentationDisplayNode() const

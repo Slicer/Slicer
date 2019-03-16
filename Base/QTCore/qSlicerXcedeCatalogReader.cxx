@@ -1258,8 +1258,7 @@ qSlicerXcedeCatalogReader::qSlicerXcedeCatalogReader(vtkMRMLColorLogic* logic, Q
 
 //------------------------------------------------------------------------------
 qSlicerXcedeCatalogReader::~qSlicerXcedeCatalogReader()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 vtkMRMLColorLogic* qSlicerXcedeCatalogReader::colorLogic()const

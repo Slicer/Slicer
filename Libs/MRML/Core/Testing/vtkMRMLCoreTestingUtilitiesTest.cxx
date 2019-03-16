@@ -60,7 +60,7 @@ public:
     return "Testing";
     }
 private:
-  vtkMRMLCoreTestingUtilitiesNode(){}
+  vtkMRMLCoreTestingUtilitiesNode() = default;
 };
 vtkStandardNewMacro(vtkMRMLCoreTestingUtilitiesNode);
 

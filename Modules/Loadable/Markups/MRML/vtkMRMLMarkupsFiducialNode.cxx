@@ -35,13 +35,11 @@ vtkMRMLNodeNewMacro(vtkMRMLMarkupsFiducialNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsFiducialNode::vtkMRMLMarkupsFiducialNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsFiducialNode::~vtkMRMLMarkupsFiducialNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialNode::WriteXML(ostream& of, int nIndent)

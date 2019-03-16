@@ -37,8 +37,7 @@ public:
   typedef Matrix<DataType, 3, 3>      MatrixType;
 
   DiffusionTensor3DExtended()
-  {
-  }
+   = default;
   DiffusionTensor3DExtended( const Superclass & tensor );
   // /Get a Symmetric matrix representing the tensor
   MatrixType GetTensor2Matrix();

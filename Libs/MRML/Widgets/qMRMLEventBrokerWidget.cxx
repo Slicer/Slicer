@@ -299,8 +299,7 @@ qMRMLEventBrokerWidget::qMRMLEventBrokerWidget(QWidget* parentWidget)
 
 //------------------------------------------------------------------------------
 qMRMLEventBrokerWidget::~qMRMLEventBrokerWidget()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 void qMRMLEventBrokerWidget::refresh()

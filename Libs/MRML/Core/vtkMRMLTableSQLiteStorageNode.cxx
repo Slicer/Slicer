@@ -53,8 +53,7 @@ vtkMRMLTableSQLiteStorageNode::vtkMRMLTableSQLiteStorageNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLTableSQLiteStorageNode::~vtkMRMLTableSQLiteStorageNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLTableSQLiteStorageNode::PrintSelf(ostream& os, vtkIndent indent)

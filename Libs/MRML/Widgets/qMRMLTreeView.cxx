@@ -316,8 +316,7 @@ qMRMLTreeView::qMRMLTreeView(qMRMLTreeViewPrivate* pimpl, QWidget *parentObject)
 
 //------------------------------------------------------------------------------
 qMRMLTreeView::~qMRMLTreeView()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 void qMRMLTreeView::setMRMLScene(vtkMRMLScene* scene)

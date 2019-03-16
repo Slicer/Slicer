@@ -68,8 +68,7 @@ vtkClosedSurfaceToBinaryLabelmapConversionRule::vtkClosedSurfaceToBinaryLabelmap
 
 //----------------------------------------------------------------------------
 vtkClosedSurfaceToBinaryLabelmapConversionRule::~vtkClosedSurfaceToBinaryLabelmapConversionRule()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 unsigned int vtkClosedSurfaceToBinaryLabelmapConversionRule::GetConversionCost(

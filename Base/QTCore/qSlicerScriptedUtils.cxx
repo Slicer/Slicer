@@ -98,8 +98,7 @@ bool qSlicerScriptedUtils::setModuleAttribute(const QString& moduleName,
 
 //-----------------------------------------------------------------------------
 qSlicerPythonCppAPI::qSlicerPythonCppAPI()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 qSlicerPythonCppAPI::~qSlicerPythonCppAPI()

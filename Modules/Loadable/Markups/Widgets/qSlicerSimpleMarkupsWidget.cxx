@@ -81,8 +81,7 @@ qSlicerSimpleMarkupsWidgetPrivate::qSlicerSimpleMarkupsWidgetPrivate( qSlicerSim
 
 //-----------------------------------------------------------------------------
 qSlicerSimpleMarkupsWidgetPrivate::~qSlicerSimpleMarkupsWidgetPrivate()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 void qSlicerSimpleMarkupsWidgetPrivate::setupUi(qSlicerSimpleMarkupsWidget* widget)

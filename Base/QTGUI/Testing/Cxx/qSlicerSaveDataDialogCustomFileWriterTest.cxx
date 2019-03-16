@@ -45,7 +45,7 @@ public:
     : qSlicerFileWriter(parent)
     , FileType(fileType)
     {}
-  ~qSlicerDummyFileWriter() override{}
+  ~qSlicerDummyFileWriter() override = default;
   virtual QStringList nodeTags()const {return QStringList() << "LinearTransform";}
   QString description()const override{return "Dummy";}
   qSlicerIO::IOFileType fileType()const override{return this->FileType;}

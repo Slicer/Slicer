@@ -24,8 +24,7 @@
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyModuleWidgetsAbstractPlugin::qSlicerSubjectHierarchyModuleWidgetsAbstractPlugin()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerSubjectHierarchyModuleWidgetsAbstractPlugin::group() const

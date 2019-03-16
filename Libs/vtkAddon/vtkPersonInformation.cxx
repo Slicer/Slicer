@@ -55,13 +55,11 @@ vtkGetSetStringInformationCxxMacro(ProcedureRole);
 
 //----------------------------------------------------------------------------
 vtkPersonInformation::vtkPersonInformation()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkPersonInformation::~vtkPersonInformation()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkPersonInformation::PrintSelf(ostream& os, vtkIndent indent)

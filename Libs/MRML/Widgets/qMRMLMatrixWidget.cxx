@@ -65,8 +65,7 @@ qMRMLMatrixWidget::qMRMLMatrixWidget(QWidget* _parent)
 
 // --------------------------------------------------------------------------
 qMRMLMatrixWidget::~qMRMLMatrixWidget()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 void qMRMLMatrixWidget::setCoordinateReference(CoordinateReferenceType _coordinateReference)

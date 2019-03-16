@@ -40,13 +40,11 @@ vtkStandardNewMacro(vtkSlicerViewControllersLogic);
 
 //----------------------------------------------------------------------------
 vtkSlicerViewControllersLogic::vtkSlicerViewControllersLogic()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkSlicerViewControllersLogic::~vtkSlicerViewControllersLogic()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkSlicerViewControllersLogic::PrintSelf(ostream& os, vtkIndent indent)

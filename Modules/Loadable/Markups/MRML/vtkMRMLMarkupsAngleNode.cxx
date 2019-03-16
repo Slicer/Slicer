@@ -41,9 +41,7 @@ vtkMRMLMarkupsAngleNode::vtkMRMLMarkupsAngleNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsAngleNode::~vtkMRMLMarkupsAngleNode()
-{
-
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsAngleNode::WriteXML(ostream& of, int nIndent)

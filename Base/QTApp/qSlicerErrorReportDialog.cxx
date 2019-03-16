@@ -71,8 +71,7 @@ qSlicerErrorReportDialog::qSlicerErrorReportDialog(QWidget* parentWidget)
 
 //-----------------------------------------------------------------------------
 qSlicerErrorReportDialog::~qSlicerErrorReportDialog()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 void qSlicerErrorReportDialog::onLogCopy()

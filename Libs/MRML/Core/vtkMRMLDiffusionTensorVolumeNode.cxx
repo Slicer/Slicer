@@ -47,8 +47,7 @@ void vtkMRMLDiffusionTensorVolumeNode::SetAndObserveDisplayNodeID(const char *di
 
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeNode::~vtkMRMLDiffusionTensorVolumeNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeNode::PrintSelf(ostream& os, vtkIndent indent)

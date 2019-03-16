@@ -41,8 +41,7 @@ qMRMLLayoutWidget::qMRMLLayoutWidget(QWidget* widget)
 
 // --------------------------------------------------------------------------
 qMRMLLayoutWidget::~qMRMLLayoutWidget()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 qMRMLLayoutManager* qMRMLLayoutWidget::layoutManager()const

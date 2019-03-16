@@ -36,8 +36,7 @@ vtkMRMLProceduralColorStorageNode::vtkMRMLProceduralColorStorageNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLProceduralColorStorageNode::~vtkMRMLProceduralColorStorageNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLProceduralColorStorageNode::PrintSelf(ostream& os, vtkIndent indent)

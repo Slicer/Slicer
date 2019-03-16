@@ -61,8 +61,7 @@ vtkMRMLVolumeArchetypeStorageNode::vtkMRMLVolumeArchetypeStorageNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeArchetypeStorageNode::~vtkMRMLVolumeArchetypeStorageNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeArchetypeStorageNode::WriteXML(ostream& of, int nIndent)

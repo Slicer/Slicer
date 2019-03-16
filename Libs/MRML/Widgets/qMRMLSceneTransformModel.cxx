@@ -139,8 +139,7 @@ qMRMLSceneTransformModel::qMRMLSceneTransformModel(QObject *vparent)
 
 //------------------------------------------------------------------------------
 qMRMLSceneTransformModel::~qMRMLSceneTransformModel()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 Qt::DropActions qMRMLSceneTransformModel::supportedDropActions()const

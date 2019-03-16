@@ -52,7 +52,7 @@ public:
 
 protected:
   vtkITKGrowCutSegmentationImageFilter();
-  ~vtkITKGrowCutSegmentationImageFilter() override{}
+  ~vtkITKGrowCutSegmentationImageFilter() override = default;
 
   void ExecuteDataWithInformation(vtkDataObject *outData, vtkInformation *outInfo) override;
   int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;

@@ -50,7 +50,7 @@ public:
 protected:
 
   vtkMRMLAnnotationBidimensionalDisplayableManager(){this->m_Focus="vtkMRMLAnnotationBidimensionalNode";}
-  ~vtkMRMLAnnotationBidimensionalDisplayableManager() override{}
+  ~vtkMRMLAnnotationBidimensionalDisplayableManager() override = default;
 
   /// Callback for click in RenderWindow
   void OnClickInRenderWindow(double x, double y, const char *associatedNodeID) override;

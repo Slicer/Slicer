@@ -53,8 +53,7 @@ qMRMLPlotSeriesPropertiesWidgetPrivate::qMRMLPlotSeriesPropertiesWidgetPrivate(q
 
 //---------------------------------------------------------------------------
 qMRMLPlotSeriesPropertiesWidgetPrivate::~qMRMLPlotSeriesPropertiesWidgetPrivate()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 void qMRMLPlotSeriesPropertiesWidgetPrivate::setupUi(qMRMLWidget* widget)
@@ -403,8 +402,7 @@ qMRMLPlotSeriesPropertiesWidget::qMRMLPlotSeriesPropertiesWidget(QWidget* _paren
 
 // --------------------------------------------------------------------------
 qMRMLPlotSeriesPropertiesWidget::~qMRMLPlotSeriesPropertiesWidget()
-{
-}
+= default;
 
 
 //---------------------------------------------------------------------------

@@ -109,8 +109,7 @@ qSlicerTransformsModuleWidget::qSlicerTransformsModuleWidget(QWidget* _parentWid
 
 //-----------------------------------------------------------------------------
 qSlicerTransformsModuleWidget::~qSlicerTransformsModuleWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModuleWidget::setup()

@@ -122,8 +122,7 @@ void qSlicerSubjectHierarchyRegisterPluginPrivate::init()
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyRegisterPluginPrivate::~qSlicerSubjectHierarchyRegisterPluginPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyRegisterPlugin methods
@@ -142,8 +141,7 @@ qSlicerSubjectHierarchyRegisterPlugin::qSlicerSubjectHierarchyRegisterPlugin(QOb
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyRegisterPlugin::~qSlicerSubjectHierarchyRegisterPlugin()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 QList<QAction*> qSlicerSubjectHierarchyRegisterPlugin::itemContextMenuActions()const

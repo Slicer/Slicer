@@ -216,8 +216,7 @@ qSlicerSettingsStylesPanel::qSlicerSettingsStylesPanel(QWidget* _parent)
 
 // --------------------------------------------------------------------------
 qSlicerSettingsStylesPanel::~qSlicerSettingsStylesPanel()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 void qSlicerSettingsStylesPanel::onAdditionalStylePathsChanged()

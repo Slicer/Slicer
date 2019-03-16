@@ -1266,8 +1266,7 @@ qSlicerSlicer2SceneReader::qSlicerSlicer2SceneReader(vtkSlicerApplicationLogic* 
 
 //-----------------------------------------------------------------------------
 qSlicerSlicer2SceneReader::~qSlicerSlicer2SceneReader()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 vtkSlicerApplicationLogic* qSlicerSlicer2SceneReader::applicationLogic()const

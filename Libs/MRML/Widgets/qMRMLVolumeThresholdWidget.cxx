@@ -114,8 +114,7 @@ qMRMLVolumeThresholdWidget::qMRMLVolumeThresholdWidget(QWidget* parentWidget)
 
 // --------------------------------------------------------------------------
 qMRMLVolumeThresholdWidget::~qMRMLVolumeThresholdWidget()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 void qMRMLVolumeThresholdWidget::setAutoThreshold(int autoThreshold)

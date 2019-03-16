@@ -206,7 +206,7 @@ protected:
     this->LastRotation = 0.0;
     }
 
-  ~vtkMRMLInteractionEventData() override {}
+  ~vtkMRMLInteractionEventData() override  = default;
 
 private:
   vtkMRMLInteractionEventData(const vtkMRMLInteractionEventData& c) = delete;

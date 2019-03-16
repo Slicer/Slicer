@@ -47,8 +47,7 @@ vtkMRMLCrosshairNode::vtkMRMLCrosshairNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLCrosshairNode::~vtkMRMLCrosshairNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLCrosshairNode::WriteXML(ostream& of, int nIndent)

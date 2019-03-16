@@ -63,7 +63,7 @@ public:
   static vtkAnnotationRulerWidgetCallback *New()
   { return new vtkAnnotationRulerWidgetCallback; }
 
-  vtkAnnotationRulerWidgetCallback(){}
+  vtkAnnotationRulerWidgetCallback() = default;
 
   void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void*) override
   {

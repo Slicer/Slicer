@@ -95,8 +95,7 @@ qMRMLTransformSliders::qMRMLTransformSliders(QWidget* slidersParent)
 
 // --------------------------------------------------------------------------
 qMRMLTransformSliders::~qMRMLTransformSliders()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::setCoordinateReference(CoordinateReferenceType _coordinateReference)

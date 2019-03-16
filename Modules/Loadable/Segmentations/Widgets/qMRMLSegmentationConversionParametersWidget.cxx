@@ -140,8 +140,7 @@ qMRMLSegmentationConversionParametersWidget::qMRMLSegmentationConversionParamete
 
 // --------------------------------------------------------------------------
 qMRMLSegmentationConversionParametersWidget::~qMRMLSegmentationConversionParametersWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qMRMLSegmentationConversionParametersWidget::setSegmentationNode(vtkMRMLNode* node)

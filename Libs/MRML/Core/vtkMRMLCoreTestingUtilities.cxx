@@ -603,8 +603,7 @@ vtkMRMLNodeCallback::vtkMRMLNodeCallback()
 
 //---------------------------------------------------------------------------
 vtkMRMLNodeCallback::~vtkMRMLNodeCallback()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 void vtkMRMLNodeCallback::ResetNumberOfEvents()

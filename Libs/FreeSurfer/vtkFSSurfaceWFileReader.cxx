@@ -32,8 +32,7 @@ vtkFSSurfaceWFileReader::vtkFSSurfaceWFileReader()
 
 //-------------------------------------------------------------------------
 vtkFSSurfaceWFileReader::~vtkFSSurfaceWFileReader()
-{
-}
+= default;
 
 //-------------------------------------------------------------------------
 vtkFloatArray * vtkFSSurfaceWFileReader::GetOutput()

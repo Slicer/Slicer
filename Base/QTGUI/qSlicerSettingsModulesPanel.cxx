@@ -204,8 +204,7 @@ qSlicerSettingsModulesPanel::qSlicerSettingsModulesPanel(QWidget* _parent)
 
 // --------------------------------------------------------------------------
 qSlicerSettingsModulesPanel::~qSlicerSettingsModulesPanel()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerSettingsModulesPanel::setModulesToAlwaysIgnore(const QStringList& moduleNames)

@@ -42,8 +42,8 @@ public:
 
 private:
   /// Not implemented
-  qSlicerCLIModuleFactoryHelper(){}
-  virtual ~qSlicerCLIModuleFactoryHelper(){}
+  qSlicerCLIModuleFactoryHelper() = default;
+  virtual ~qSlicerCLIModuleFactoryHelper() = default;
 };
 
 #endif

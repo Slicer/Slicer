@@ -75,8 +75,7 @@ qSlicerScriptedFileDialogPrivate::qSlicerScriptedFileDialogPrivate()
 
 //-----------------------------------------------------------------------------
 qSlicerScriptedFileDialogPrivate::~qSlicerScriptedFileDialogPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerScriptedFileDialog methods

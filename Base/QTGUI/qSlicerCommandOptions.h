@@ -40,7 +40,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerCommandOptions : public qSlicerCoreComma
 public:
   typedef qSlicerCoreCommandOptions Superclass;
   qSlicerCommandOptions();
-  ~qSlicerCommandOptions() override{}
+  ~qSlicerCommandOptions() override = default;
 
   bool noSplash()const;
 

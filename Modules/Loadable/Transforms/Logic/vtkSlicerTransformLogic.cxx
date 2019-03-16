@@ -81,13 +81,11 @@ vtkStandardNewMacro(vtkSlicerTransformLogic);
 
 //----------------------------------------------------------------------------
 vtkSlicerTransformLogic::vtkSlicerTransformLogic()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkSlicerTransformLogic::~vtkSlicerTransformLogic()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerTransformLogic::hardenTransform(vtkMRMLTransformableNode* transformableNode)

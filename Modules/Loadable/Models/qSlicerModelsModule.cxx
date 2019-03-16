@@ -55,8 +55,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerModelsModulePrivate::qSlicerModelsModulePrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerModelsModule methods
@@ -70,8 +69,7 @@ qSlicerModelsModule::qSlicerModelsModule(QObject* _parent)
 
 //-----------------------------------------------------------------------------
 qSlicerModelsModule::~qSlicerModelsModule()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerModelsModule::helpText()const

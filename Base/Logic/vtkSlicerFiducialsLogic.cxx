@@ -29,15 +29,11 @@ vtkStandardNewMacro(vtkSlicerFiducialsLogic);
 
 //----------------------------------------------------------------------------
 vtkSlicerFiducialsLogic::vtkSlicerFiducialsLogic()
-{
-
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkSlicerFiducialsLogic::~vtkSlicerFiducialsLogic()
-{
-
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkSlicerFiducialsLogic::PrintSelf(ostream& os, vtkIndent indent)

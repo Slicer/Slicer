@@ -482,8 +482,7 @@ qSlicerExtensionsRestoreWidget
 // --------------------------------------------------------------------------
 qSlicerExtensionsRestoreWidget
 ::~qSlicerExtensionsRestoreWidget()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsManagerModel* qSlicerExtensionsRestoreWidget

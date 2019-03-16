@@ -301,8 +301,7 @@ qSlicerCLILoadableModuleFactory::qSlicerCLILoadableModuleFactory()
 
 //-----------------------------------------------------------------------------
 qSlicerCLILoadableModuleFactory::~qSlicerCLILoadableModuleFactory()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerCLILoadableModuleFactory::registerItems()

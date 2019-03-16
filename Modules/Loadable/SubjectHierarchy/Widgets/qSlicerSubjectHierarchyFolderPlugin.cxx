@@ -99,8 +99,7 @@ void qSlicerSubjectHierarchyFolderPluginPrivate::init()
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyFolderPluginPrivate::~qSlicerSubjectHierarchyFolderPluginPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyFolderPlugin methods
@@ -118,8 +117,7 @@ qSlicerSubjectHierarchyFolderPlugin::qSlicerSubjectHierarchyFolderPlugin(QObject
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyFolderPlugin::~qSlicerSubjectHierarchyFolderPlugin()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 double qSlicerSubjectHierarchyFolderPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const

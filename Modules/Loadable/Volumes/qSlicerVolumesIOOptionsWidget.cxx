@@ -104,8 +104,7 @@ qSlicerVolumesIOOptionsWidget::qSlicerVolumesIOOptionsWidget(QWidget* parentWidg
 
 //-----------------------------------------------------------------------------
 qSlicerVolumesIOOptionsWidget::~qSlicerVolumesIOOptionsWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerVolumesIOOptionsWidget::updateProperties()

@@ -62,8 +62,7 @@ qSlicerDataModule::qSlicerDataModule(QObject* parentObject)
 
 //-----------------------------------------------------------------------------
 qSlicerDataModule::~qSlicerDataModule()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QIcon qSlicerDataModule::icon()const

@@ -78,8 +78,7 @@ qSlicerVolumeRenderingPresetComboBoxPrivate::qSlicerVolumeRenderingPresetComboBo
 
 //-----------------------------------------------------------------------------
 qSlicerVolumeRenderingPresetComboBoxPrivate::~qSlicerVolumeRenderingPresetComboBoxPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerVolumeRenderingPresetComboBoxPrivate::init()
@@ -139,8 +138,7 @@ qSlicerVolumeRenderingPresetComboBox::qSlicerVolumeRenderingPresetComboBox(QWidg
 
 // --------------------------------------------------------------------------
 qSlicerVolumeRenderingPresetComboBox::~qSlicerVolumeRenderingPresetComboBox()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 vtkMRMLNode* qSlicerVolumeRenderingPresetComboBox::currentNode()const

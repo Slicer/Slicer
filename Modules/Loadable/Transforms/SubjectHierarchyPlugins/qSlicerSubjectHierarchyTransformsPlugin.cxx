@@ -96,8 +96,7 @@ void qSlicerSubjectHierarchyTransformsPluginPrivate::init()
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyTransformsPluginPrivate::~qSlicerSubjectHierarchyTransformsPluginPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyTransformsPlugin methods
@@ -115,8 +114,7 @@ qSlicerSubjectHierarchyTransformsPlugin::qSlicerSubjectHierarchyTransformsPlugin
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyTransformsPlugin::~qSlicerSubjectHierarchyTransformsPlugin()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyTransformsPlugin::canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)const

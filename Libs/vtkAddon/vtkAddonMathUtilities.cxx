@@ -31,13 +31,11 @@ vtkStandardNewMacro(vtkAddonMathUtilities);
 
 //----------------------------------------------------------------------------
 vtkAddonMathUtilities::vtkAddonMathUtilities()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkAddonMathUtilities::~vtkAddonMathUtilities()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkAddonMathUtilities::PrintSelf(ostream& os, vtkIndent indent)

@@ -102,8 +102,7 @@ void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyVolumesPluginPrivate::~qSlicerSubjectHierarchyVolumesPluginPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyVolumesPlugin methods
@@ -121,8 +120,7 @@ qSlicerSubjectHierarchyVolumesPlugin::qSlicerSubjectHierarchyVolumesPlugin(QObje
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyVolumesPlugin::~qSlicerSubjectHierarchyVolumesPlugin()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyVolumesPlugin::canAddNodeToSubjectHierarchy(

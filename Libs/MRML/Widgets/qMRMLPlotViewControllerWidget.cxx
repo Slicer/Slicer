@@ -81,8 +81,7 @@ qMRMLPlotViewControllerWidgetPrivate::qMRMLPlotViewControllerWidgetPrivate(
 
 //---------------------------------------------------------------------------
 qMRMLPlotViewControllerWidgetPrivate::~qMRMLPlotViewControllerWidgetPrivate()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 void qMRMLPlotViewControllerWidgetPrivate::setupPopupUi()

@@ -57,8 +57,7 @@ vtkMRMLTestSliceViewDisplayableManager::vtkInternal::vtkInternal(vtkMRMLTestSlic
 
 //---------------------------------------------------------------------------
 vtkMRMLTestSliceViewDisplayableManager::vtkInternal::~vtkInternal()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 // vtkMRMLTestSliceViewDisplayableManager methods

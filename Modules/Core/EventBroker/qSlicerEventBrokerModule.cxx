@@ -37,8 +37,7 @@ qSlicerEventBrokerModule::qSlicerEventBrokerModule(QObject* _parent)
 
 //-----------------------------------------------------------------------------
 qSlicerEventBrokerModule::~qSlicerEventBrokerModule()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation * qSlicerEventBrokerModule::createWidgetRepresentation()

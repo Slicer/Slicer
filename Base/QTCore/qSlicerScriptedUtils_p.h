@@ -67,8 +67,8 @@ public:
 
 private:
   /// Not implemented
-  qSlicerScriptedUtils(){}
-  virtual ~qSlicerScriptedUtils(){}
+  qSlicerScriptedUtils() = default;
+  virtual ~qSlicerScriptedUtils() = default;
 
 };
 

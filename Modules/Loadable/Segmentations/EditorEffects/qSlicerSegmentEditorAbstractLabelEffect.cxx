@@ -65,8 +65,7 @@ qSlicerSegmentEditorAbstractLabelEffectPrivate::qSlicerSegmentEditorAbstractLabe
 
 //-----------------------------------------------------------------------------
 qSlicerSegmentEditorAbstractLabelEffectPrivate::~qSlicerSegmentEditorAbstractLabelEffectPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 
@@ -83,8 +82,7 @@ qSlicerSegmentEditorAbstractLabelEffect::qSlicerSegmentEditorAbstractLabelEffect
 
 //----------------------------------------------------------------------------
 qSlicerSegmentEditorAbstractLabelEffect::~qSlicerSegmentEditorAbstractLabelEffect()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractLabelEffect::referenceGeometryChanged()

@@ -41,8 +41,7 @@ vtkMRMLMarkupsLineNode::vtkMRMLMarkupsLineNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsLineNode::~vtkMRMLMarkupsLineNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsLineNode::WriteXML(ostream& of, int nIndent)

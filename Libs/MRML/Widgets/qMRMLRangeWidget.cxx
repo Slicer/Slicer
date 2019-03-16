@@ -252,8 +252,7 @@ qMRMLRangeSlider::qMRMLRangeSlider(QWidget* parentWidget)
 
 // --------------------------------------------------------------------------
 qMRMLRangeSlider::~qMRMLRangeSlider()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 QPalette qMRMLRangeSlider::minimumHandlePalette()const

@@ -82,8 +82,7 @@ void qSlicerSubjectHierarchyChartsPluginPrivate::init()
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyChartsPluginPrivate::~qSlicerSubjectHierarchyChartsPluginPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyChartsPlugin methods
@@ -101,8 +100,7 @@ qSlicerSubjectHierarchyChartsPlugin::qSlicerSubjectHierarchyChartsPlugin(QObject
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyChartsPlugin::~qSlicerSubjectHierarchyChartsPlugin()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyChartsPlugin::canAddNodeToSubjectHierarchy(

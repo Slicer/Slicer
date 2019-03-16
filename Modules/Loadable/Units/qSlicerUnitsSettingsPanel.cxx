@@ -255,8 +255,7 @@ qSlicerUnitsSettingsPanel::qSlicerUnitsSettingsPanel(QWidget* _parent)
 
 // --------------------------------------------------------------------------
 qSlicerUnitsSettingsPanel::~qSlicerUnitsSettingsPanel()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 void qSlicerUnitsSettingsPanel::setUnitsLogic(vtkSlicerUnitsLogic* logic)

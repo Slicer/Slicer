@@ -103,8 +103,7 @@ qSlicerDataModuleWidget::qSlicerDataModuleWidget(QWidget* parentWidget)
 
 //-----------------------------------------------------------------------------
 qSlicerDataModuleWidget::~qSlicerDataModuleWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerDataModuleWidget::enter()

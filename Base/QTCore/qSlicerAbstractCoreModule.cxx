@@ -91,8 +91,7 @@ qSlicerAbstractCoreModule::qSlicerAbstractCoreModule(QObject* _parent)
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractCoreModule::~qSlicerAbstractCoreModule()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerAbstractCoreModule::initialize(vtkSlicerApplicationLogic* _appLogic)

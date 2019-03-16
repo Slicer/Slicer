@@ -23,8 +23,7 @@
 
 //------------------------------------------------------------------------------
 qSlicerIOOptionsPrivate::~qSlicerIOOptionsPrivate()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 qSlicerIOOptions::qSlicerIOOptions()
@@ -40,8 +39,7 @@ qSlicerIOOptions::qSlicerIOOptions(qSlicerIOOptionsPrivate* pimpl)
 
 //------------------------------------------------------------------------------
 qSlicerIOOptions::~qSlicerIOOptions()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 bool qSlicerIOOptions::isValid()const

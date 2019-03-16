@@ -86,7 +86,7 @@ public:
 
 protected:
   // We need a constructor for the itkNewMacro.
-  MorphologicalContourInterpolatorParallelInvoker() {}
+  MorphologicalContourInterpolatorParallelInvoker()  = default;
 
 private:
   void
@@ -891,7 +891,7 @@ class MatchesID
   typename TImage::PixelType m_ID;
 
 public:
-  MatchesID() {}
+  MatchesID()  = default;
   MatchesID( typename TImage::PixelType id )
     : m_ID( id )
   {}

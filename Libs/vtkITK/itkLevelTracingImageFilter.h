@@ -92,7 +92,7 @@ public:
 
 protected:
   LevelTracingImageFilter();
-  ~LevelTracingImageFilter() override{}
+  ~LevelTracingImageFilter() override = default;
 
   /// Override since the filter needs all the data for the algorithm
   void GenerateInputRequestedRegion() override;

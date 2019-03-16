@@ -21,8 +21,7 @@
 #include "qSlicerQTCLIAbstractPlugin.h"
 
 qSlicerQTCLIAbstractPlugin::qSlicerQTCLIAbstractPlugin()
-{
-}
+= default;
 
 QString qSlicerQTCLIAbstractPlugin::group() const
 {

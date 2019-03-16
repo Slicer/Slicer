@@ -32,8 +32,7 @@ vtkITKDistanceTransform::vtkITKDistanceTransform()
 }
 
 vtkITKDistanceTransform::~vtkITKDistanceTransform()
-{
-}
+= default;
 
 
 template <class T>

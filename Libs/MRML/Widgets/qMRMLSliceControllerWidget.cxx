@@ -115,8 +115,7 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceC
 
 //---------------------------------------------------------------------------
 qMRMLSliceControllerWidgetPrivate::~qMRMLSliceControllerWidgetPrivate()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::setColor(QColor barColor)
@@ -1592,8 +1591,7 @@ qMRMLSliceControllerWidget::qMRMLSliceControllerWidget(
 
 // --------------------------------------------------------------------------
 qMRMLSliceControllerWidget::~qMRMLSliceControllerWidget()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 vtkMRMLSliceNode* qMRMLSliceControllerWidget::mrmlSliceNode()const

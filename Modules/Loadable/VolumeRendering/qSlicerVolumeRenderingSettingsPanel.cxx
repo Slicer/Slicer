@@ -179,8 +179,7 @@ qSlicerVolumeRenderingSettingsPanel::qSlicerVolumeRenderingSettingsPanel(QWidget
 
 // --------------------------------------------------------------------------
 qSlicerVolumeRenderingSettingsPanel::~qSlicerVolumeRenderingSettingsPanel()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 vtkSlicerVolumeRenderingLogic* qSlicerVolumeRenderingSettingsPanel::volumeRenderingLogic()const

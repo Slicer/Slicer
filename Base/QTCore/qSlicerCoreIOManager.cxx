@@ -67,13 +67,11 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerCoreIOManagerPrivate::qSlicerCoreIOManagerPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 qSlicerCoreIOManagerPrivate::~qSlicerCoreIOManagerPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 vtkMRMLScene* qSlicerCoreIOManagerPrivate::currentScene()const
@@ -196,8 +194,7 @@ qSlicerCoreIOManager::qSlicerCoreIOManager(QObject* _parent)
 
 //-----------------------------------------------------------------------------
 qSlicerCoreIOManager::~qSlicerCoreIOManager()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerCoreIOManager::fileType(const QString& fileName)const

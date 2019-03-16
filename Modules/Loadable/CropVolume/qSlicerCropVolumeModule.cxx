@@ -28,8 +28,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerCropVolumeModulePrivate::qSlicerCropVolumeModulePrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerCropVolumeModule methods
@@ -43,8 +42,7 @@ qSlicerCropVolumeModule::qSlicerCropVolumeModule(QObject* _parent)
 
 //-----------------------------------------------------------------------------
 qSlicerCropVolumeModule::~qSlicerCropVolumeModule()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerCropVolumeModule::helpText()const

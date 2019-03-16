@@ -127,8 +127,7 @@ qMRMLSegmentSelectorWidget::qMRMLSegmentSelectorWidget(QWidget* _parent)
 
 //-----------------------------------------------------------------------------
 qMRMLSegmentSelectorWidget::~qMRMLSegmentSelectorWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qMRMLSegmentSelectorWidget::onCurrentNodeChanged(vtkMRMLNode* node)

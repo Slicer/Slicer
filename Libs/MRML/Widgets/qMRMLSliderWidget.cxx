@@ -122,8 +122,7 @@ qMRMLSliderWidget::qMRMLSliderWidget(QWidget* parentWidget)
 
 // --------------------------------------------------------------------------
 qMRMLSliderWidget::~qMRMLSliderWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qMRMLSliderWidget::setQuantity(const QString& quantity)

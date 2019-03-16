@@ -194,8 +194,7 @@ qSlicerCLIProgressBar::qSlicerCLIProgressBar(QWidget* _parent)
 
 //-----------------------------------------------------------------------------
 qSlicerCLIProgressBar::~qSlicerCLIProgressBar()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 vtkMRMLCommandLineModuleNode * qSlicerCLIProgressBar::commandLineModuleNode()const

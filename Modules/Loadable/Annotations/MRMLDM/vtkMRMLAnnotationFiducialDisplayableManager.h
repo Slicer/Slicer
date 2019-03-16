@@ -41,7 +41,7 @@ public:
 protected:
 
   vtkMRMLAnnotationFiducialDisplayableManager(){this->m_Focus="vtkMRMLAnnotationFiducialNode";}
-  ~vtkMRMLAnnotationFiducialDisplayableManager() override{}
+  ~vtkMRMLAnnotationFiducialDisplayableManager() override = default;
 
   /// Callback for click in RenderWindow
   void OnClickInRenderWindow(double x, double y, const char *associatedNodeID) override;

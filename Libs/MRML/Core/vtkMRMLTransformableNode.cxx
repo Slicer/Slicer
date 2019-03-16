@@ -47,8 +47,7 @@ vtkMRMLTransformableNode::vtkMRMLTransformableNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLTransformableNode::~vtkMRMLTransformableNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 const char* vtkMRMLTransformableNode::GetTransformNodeReferenceRole()

@@ -45,8 +45,7 @@ qMRMLWidget::qMRMLWidget(QWidget * _parent, Qt::WindowFlags f):Superclass(_paren
 
 //-----------------------------------------------------------------------------
 qMRMLWidget::~qMRMLWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qMRMLWidget::setMRMLScene(vtkMRMLScene* newScene)

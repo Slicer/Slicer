@@ -42,7 +42,7 @@ public:
 protected:
 
   vtkMRMLAnnotationRulerDisplayableManager(){this->m_Focus="vtkMRMLAnnotationRulerNode";}
-  ~vtkMRMLAnnotationRulerDisplayableManager() override{}
+  ~vtkMRMLAnnotationRulerDisplayableManager() override = default;
 
   /// Callback for click in RenderWindow
   void OnClickInRenderWindow(double x, double y, const char *associatedNodeID) override;

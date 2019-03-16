@@ -68,8 +68,7 @@ vtkMRMLSliceViewDisplayableManagerFactory::
 
 //----------------------------------------------------------------------------
 vtkMRMLSliceViewDisplayableManagerFactory::~vtkMRMLSliceViewDisplayableManagerFactory()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceViewDisplayableManagerFactory::PrintSelf(ostream& os, vtkIndent indent)

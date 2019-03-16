@@ -43,8 +43,7 @@ vtkMRMLModelHierarchyLogic::vtkMRMLModelHierarchyLogic()
 
 //----------------------------------------------------------------------------
 vtkMRMLModelHierarchyLogic::~vtkMRMLModelHierarchyLogic()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLModelHierarchyLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)

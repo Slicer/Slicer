@@ -36,8 +36,7 @@ vtkFSSurfaceLabelReader::vtkFSSurfaceLabelReader()
 
 //-------------------------------------------------------------------------
 vtkFSSurfaceLabelReader::~vtkFSSurfaceLabelReader()
-{
-}
+= default;
 
 //-------------------------------------------------------------------------
 // Returns error codes depending on failure

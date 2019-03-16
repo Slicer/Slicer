@@ -38,7 +38,7 @@ public:
 
 protected:
     vtkImageLabelChange();
-    ~vtkImageLabelChange() override {};
+    ~vtkImageLabelChange() override  = default;
     vtkImageLabelChange(const vtkImageLabelChange&);
     void operator=(const vtkImageLabelChange&);
 

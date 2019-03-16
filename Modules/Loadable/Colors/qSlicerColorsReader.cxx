@@ -50,8 +50,7 @@ qSlicerColorsReader::qSlicerColorsReader(
 
 //-----------------------------------------------------------------------------
 qSlicerColorsReader::~qSlicerColorsReader()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerColorsReader::setColorLogic(vtkSlicerColorLogic* newColorLogic)

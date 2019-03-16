@@ -40,8 +40,7 @@ vtkStreamingVolumeCodec::vtkStreamingVolumeCodec()
 
 //---------------------------------------------------------------------------
 vtkStreamingVolumeCodec::~vtkStreamingVolumeCodec()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 bool vtkStreamingVolumeCodec::DecodeFrame(vtkStreamingVolumeFrame* streamingFrame, vtkImageData* outputImageData)

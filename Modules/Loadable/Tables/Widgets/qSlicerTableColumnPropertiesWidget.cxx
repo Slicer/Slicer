@@ -77,8 +77,7 @@ qSlicerTableColumnPropertiesWidgetPrivate::qSlicerTableColumnPropertiesWidgetPri
 
 //-----------------------------------------------------------------------------
 qSlicerTableColumnPropertiesWidgetPrivate::~qSlicerTableColumnPropertiesWidgetPrivate()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 void qSlicerTableColumnPropertiesWidgetPrivate::setupUi(qSlicerTableColumnPropertiesWidget* widget)

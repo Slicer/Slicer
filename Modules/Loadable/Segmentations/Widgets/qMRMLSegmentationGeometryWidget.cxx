@@ -174,8 +174,7 @@ qMRMLSegmentationGeometryWidget::qMRMLSegmentationGeometryWidget(QWidget* _paren
 
 //-----------------------------------------------------------------------------
 qMRMLSegmentationGeometryWidget::~qMRMLSegmentationGeometryWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 vtkMRMLSegmentationNode* qMRMLSegmentationGeometryWidget::segmentationNode()const

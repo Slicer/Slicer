@@ -9,8 +9,7 @@
 vtkStandardNewMacro ( vtkTagTableCollection );
 
 //---------------------------------------------------------------------------
-vtkTagTableCollection::vtkTagTableCollection ( ) {
-}
+vtkTagTableCollection::vtkTagTableCollection ( )  = default;
 
 
 //----------------------------------------------------------------------------

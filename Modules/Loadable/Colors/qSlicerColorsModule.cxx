@@ -65,8 +65,7 @@ qSlicerColorsModule::qSlicerColorsModule(QObject* _parent)
 
 //-----------------------------------------------------------------------------
 qSlicerColorsModule::~qSlicerColorsModule()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QStringList qSlicerColorsModule::categories()const

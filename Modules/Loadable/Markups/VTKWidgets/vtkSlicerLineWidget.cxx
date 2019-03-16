@@ -38,8 +38,7 @@ vtkSlicerLineWidget::vtkSlicerLineWidget()
 
 //----------------------------------------------------------------------
 vtkSlicerLineWidget::~vtkSlicerLineWidget()
-{
-}
+= default;
 
 //----------------------------------------------------------------------
 void vtkSlicerLineWidget::CreateDefaultRepresentation(

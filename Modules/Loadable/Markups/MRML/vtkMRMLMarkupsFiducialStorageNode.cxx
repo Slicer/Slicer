@@ -45,7 +45,7 @@ class CsvCodec
 {
 public:
   CsvCodec() : Separator(',') {}
-  ~CsvCodec() {}
+  ~CsvCodec()  = default;
 
   void ReadFromString(const std::string &row)
     {
@@ -224,8 +224,7 @@ vtkMRMLMarkupsFiducialStorageNode::vtkMRMLMarkupsFiducialStorageNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsFiducialStorageNode::~vtkMRMLMarkupsFiducialStorageNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialStorageNode::WriteXML(ostream& of, int nIndent)

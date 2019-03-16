@@ -39,8 +39,7 @@ public:
 
 // -----------------------------------------------------------------------------
 qMRMLSortFilterHierarchyProxyModelPrivate::qMRMLSortFilterHierarchyProxyModelPrivate()
-{
-}
+= default;
 
 // -----------------------------------------------------------------------------
 // qMRMLSortFilterHierarchyProxyModel
@@ -54,8 +53,7 @@ qMRMLSortFilterHierarchyProxyModel::qMRMLSortFilterHierarchyProxyModel(QObject *
 
 //------------------------------------------------------------------------------
 qMRMLSortFilterHierarchyProxyModel::~qMRMLSortFilterHierarchyProxyModel()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterHierarchyProxyModel

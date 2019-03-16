@@ -48,8 +48,7 @@ vtkSlicerDataModuleLogic::vtkSlicerDataModuleLogic()
 
 //----------------------------------------------------------------------------
 vtkSlicerDataModuleLogic::~vtkSlicerDataModuleLogic()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkSlicerDataModuleLogic::PrintSelf(ostream& os, vtkIndent indent)

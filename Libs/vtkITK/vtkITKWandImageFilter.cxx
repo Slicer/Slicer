@@ -35,8 +35,7 @@ vtkITKWandImageFilter::vtkITKWandImageFilter()
 }
 
 vtkITKWandImageFilter::~vtkITKWandImageFilter()
-{
-}
+= default;
 
 
 template <class T>

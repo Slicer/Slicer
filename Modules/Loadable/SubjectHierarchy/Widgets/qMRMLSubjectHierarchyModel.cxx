@@ -217,8 +217,7 @@ qMRMLSubjectHierarchyModel::qMRMLSubjectHierarchyModel(qMRMLSubjectHierarchyMode
 
 //------------------------------------------------------------------------------
 qMRMLSubjectHierarchyModel::~qMRMLSubjectHierarchyModel()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyModel::setMRMLScene(vtkMRMLScene* scene)

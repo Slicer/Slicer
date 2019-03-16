@@ -15,8 +15,7 @@ vtkSlicerTask::vtkSlicerTask()
 }
 //----------------------------------------------------------------------------
 vtkSlicerTask::~vtkSlicerTask()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkSlicerTask::SetTaskFunction(vtkMRMLAbstractLogic *object,

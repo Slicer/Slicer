@@ -48,8 +48,7 @@ vtkSlicerDICOMExportable::vtkSlicerDICOMExportable()
 
 //----------------------------------------------------------------------------
 vtkSlicerDICOMExportable::~vtkSlicerDICOMExportable()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkSlicerDICOMExportable::PrintSelf(ostream& os, vtkIndent indent)

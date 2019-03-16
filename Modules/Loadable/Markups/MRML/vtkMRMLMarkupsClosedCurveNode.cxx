@@ -36,5 +36,4 @@ vtkMRMLMarkupsClosedCurveNode::vtkMRMLMarkupsClosedCurveNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsClosedCurveNode::~vtkMRMLMarkupsClosedCurveNode()
-{
-}
+= default;

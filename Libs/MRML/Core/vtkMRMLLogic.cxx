@@ -26,8 +26,7 @@ vtkMRMLLogic::vtkMRMLLogic()
 
 //------------------------------------------------------------------------------
 vtkMRMLLogic::~vtkMRMLLogic()
-{
-}
+= default;
 
 void vtkMRMLLogic::RemoveUnreferencedStorageNodes()
 {

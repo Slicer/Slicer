@@ -123,8 +123,7 @@ qMRMLColorModel::qMRMLColorModel(qMRMLColorModelPrivate* pimpl, QObject *parentO
 
 //------------------------------------------------------------------------------
 qMRMLColorModel::~qMRMLColorModel()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 void qMRMLColorModel::setMRMLColorNode(vtkMRMLColorNode* colorNode)

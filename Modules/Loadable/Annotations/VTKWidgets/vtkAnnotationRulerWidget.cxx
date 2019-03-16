@@ -24,8 +24,7 @@ vtkAnnotationRulerWidget::vtkAnnotationRulerWidget()
 
 //---------------------------------------------------------------------------
 vtkAnnotationRulerWidget::~vtkAnnotationRulerWidget()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 void vtkAnnotationRulerWidget::CreateDefaultRepresentation()

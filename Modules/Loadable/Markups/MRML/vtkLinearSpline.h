@@ -61,7 +61,7 @@ public:
 
 protected:
   vtkLinearSpline();
-  ~vtkLinearSpline() override {}
+  ~vtkLinearSpline() override  = default;
 
 private:
   vtkLinearSpline(const vtkLinearSpline&) = delete;

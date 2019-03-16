@@ -183,8 +183,7 @@ qSlicerExtensionsInstallWidget::qSlicerExtensionsInstallWidget(QWidget* _parent)
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsInstallWidget::~qSlicerExtensionsInstallWidget()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsManagerModel* qSlicerExtensionsInstallWidget::extensionsManagerModel()const

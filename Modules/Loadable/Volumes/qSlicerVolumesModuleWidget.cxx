@@ -51,8 +51,7 @@ qSlicerVolumesModuleWidget::qSlicerVolumesModuleWidget(QWidget* _parent)
 
 //-----------------------------------------------------------------------------
 qSlicerVolumesModuleWidget::~qSlicerVolumesModuleWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerVolumesModuleWidget::setup()

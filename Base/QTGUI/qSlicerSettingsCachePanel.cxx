@@ -97,8 +97,7 @@ qSlicerSettingsCachePanel::qSlicerSettingsCachePanel(QWidget* _parent)
 
 // --------------------------------------------------------------------------
 qSlicerSettingsCachePanel::~qSlicerSettingsCachePanel()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 void qSlicerSettingsCachePanel::setCacheManager(vtkCacheManager* cacheManager)

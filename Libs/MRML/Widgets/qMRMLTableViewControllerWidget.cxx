@@ -74,8 +74,7 @@ qMRMLTableViewControllerWidgetPrivate::qMRMLTableViewControllerWidgetPrivate(
 
 //---------------------------------------------------------------------------
 qMRMLTableViewControllerWidgetPrivate::~qMRMLTableViewControllerWidgetPrivate()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 void qMRMLTableViewControllerWidgetPrivate::setupPopupUi()

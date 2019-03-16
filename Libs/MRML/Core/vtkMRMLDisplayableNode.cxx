@@ -47,8 +47,7 @@ vtkMRMLDisplayableNode::vtkMRMLDisplayableNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableNode::~vtkMRMLDisplayableNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 const char* vtkMRMLDisplayableNode::GetDisplayNodeReferenceRole()

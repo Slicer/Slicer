@@ -82,9 +82,7 @@ qSlicerAnnotationModuleWidgetPrivate::qSlicerAnnotationModuleWidgetPrivate(qSlic
 
 //-----------------------------------------------------------------------------
 qSlicerAnnotationModuleWidgetPrivate::~qSlicerAnnotationModuleWidgetPrivate()
-{
-
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerAnnotationModuleWidgetPrivate methods

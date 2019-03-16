@@ -214,8 +214,7 @@ qMRMLCaptureToolBar::qMRMLCaptureToolBar(QWidget* _parent)
 
 //---------------------------------------------------------------------------
 qMRMLCaptureToolBar::~qMRMLCaptureToolBar()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 void qMRMLCaptureToolBar::setMRMLScene(vtkMRMLScene* scene)

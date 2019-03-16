@@ -131,8 +131,7 @@ qMRMLEventLogger::qMRMLEventLogger(QObject* _parent)
 
 //------------------------------------------------------------------------------
 qMRMLEventLogger::~qMRMLEventLogger()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 void qMRMLEventLogger::setMRMLScene(vtkMRMLScene* scene)

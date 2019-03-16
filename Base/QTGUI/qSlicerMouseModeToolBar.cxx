@@ -391,8 +391,7 @@ qSlicerMouseModeToolBar::qSlicerMouseModeToolBar(QWidget* parentWidget):Supercla
 
 //---------------------------------------------------------------------------
 qSlicerMouseModeToolBar::~qSlicerMouseModeToolBar()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBar::setApplicationLogic(vtkSlicerApplicationLogic* appLogic)

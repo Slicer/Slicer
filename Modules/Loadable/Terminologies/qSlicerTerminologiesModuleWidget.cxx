@@ -37,8 +37,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerTerminologiesModuleWidgetPrivate::qSlicerTerminologiesModuleWidgetPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerTerminologiesModuleWidget methods
@@ -52,8 +51,7 @@ qSlicerTerminologiesModuleWidget::qSlicerTerminologiesModuleWidget(QWidget* _par
 
 //-----------------------------------------------------------------------------
 qSlicerTerminologiesModuleWidget::~qSlicerTerminologiesModuleWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologiesModuleWidget::setup()

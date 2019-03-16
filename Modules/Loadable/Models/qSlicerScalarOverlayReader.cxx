@@ -54,8 +54,7 @@ qSlicerScalarOverlayReader::qSlicerScalarOverlayReader(
 
 //-----------------------------------------------------------------------------
 qSlicerScalarOverlayReader::~qSlicerScalarOverlayReader()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerScalarOverlayReader::setModelsLogic(vtkSlicerModelsLogic* newModelsLogic)

@@ -66,8 +66,7 @@ vtkMRMLCropVolumeParametersNode::vtkMRMLCropVolumeParametersNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLCropVolumeParametersNode::~vtkMRMLCropVolumeParametersNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLCropVolumeParametersNode::ReadXMLAttributes(const char** atts)

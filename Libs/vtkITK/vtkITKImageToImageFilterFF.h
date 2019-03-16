@@ -66,8 +66,7 @@ protected:
   };
 
   ~vtkITKImageToImageFilterFF() override
-  {
-  };
+   = default;
 
 private:
   vtkITKImageToImageFilterFF(const vtkITKImageToImageFilterFF&) = delete;

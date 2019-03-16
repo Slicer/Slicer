@@ -174,8 +174,7 @@ qSlicerSettingsGeneralPanel::qSlicerSettingsGeneralPanel(QWidget* _parent)
 
 // --------------------------------------------------------------------------
 qSlicerSettingsGeneralPanel::~qSlicerSettingsGeneralPanel()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 void qSlicerSettingsGeneralPanel::setDefaultScenePath(const QString& path)

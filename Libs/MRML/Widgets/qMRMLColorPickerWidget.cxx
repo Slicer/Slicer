@@ -96,8 +96,7 @@ qMRMLColorPickerWidget::qMRMLColorPickerWidget(QWidget *_parent)
 
 //------------------------------------------------------------------------------
 qMRMLColorPickerWidget::~qMRMLColorPickerWidget()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 void qMRMLColorPickerWidget::setMRMLColorLogic(vtkMRMLColorLogic* colorLogic)

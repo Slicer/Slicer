@@ -101,8 +101,7 @@ qSlicerSettingsDeveloperPanel::qSlicerSettingsDeveloperPanel(QWidget* _parent)
 
 // --------------------------------------------------------------------------
 qSlicerSettingsDeveloperPanel::~qSlicerSettingsDeveloperPanel()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 void qSlicerSettingsDeveloperPanel::enableDeveloperMode(bool value)

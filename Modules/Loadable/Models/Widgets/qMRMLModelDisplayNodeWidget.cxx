@@ -173,8 +173,7 @@ qMRMLModelDisplayNodeWidget::qMRMLModelDisplayNodeWidget(QWidget *_parent)
 
 //------------------------------------------------------------------------------
 qMRMLModelDisplayNodeWidget::~qMRMLModelDisplayNodeWidget()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 vtkMRMLModelDisplayNode* qMRMLModelDisplayNodeWidget::mrmlModelDisplayNode()const

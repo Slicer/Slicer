@@ -94,8 +94,7 @@ void qSlicerSubjectHierarchyVolumeRenderingPluginPrivate::init()
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyVolumeRenderingPluginPrivate::~qSlicerSubjectHierarchyVolumeRenderingPluginPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyVolumeRenderingPlugin methods
@@ -113,8 +112,7 @@ qSlicerSubjectHierarchyVolumeRenderingPlugin::qSlicerSubjectHierarchyVolumeRende
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyVolumeRenderingPlugin::~qSlicerSubjectHierarchyVolumeRenderingPlugin()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyVolumeRenderingPlugin::setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* volumeRenderingLogic)

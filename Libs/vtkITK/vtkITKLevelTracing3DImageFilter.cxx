@@ -39,8 +39,7 @@ vtkITKLevelTracing3DImageFilter::vtkITKLevelTracing3DImageFilter()
 }
 
 vtkITKLevelTracing3DImageFilter::~vtkITKLevelTracing3DImageFilter()
-{
-}
+= default;
 
 
 template <class T>

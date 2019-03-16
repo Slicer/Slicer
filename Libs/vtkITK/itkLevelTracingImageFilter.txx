@@ -151,7 +151,7 @@ protected:
       m_Threshold = NumericTraits<PixelType>::min();
       m_Radius.Fill(1);
     }
-  ~LevelTracingImageFunction() override{}
+  ~LevelTracingImageFunction() override = default;
 
 private:
   LevelTracingImageFunction( const Self& ) = delete;

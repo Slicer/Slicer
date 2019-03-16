@@ -66,7 +66,7 @@ public:
   static vtkSlicerMarkupsLogicCallback *New()
   { return new vtkSlicerMarkupsLogicCallback; }
 
-  vtkSlicerMarkupsLogicCallback(){}
+  vtkSlicerMarkupsLogicCallback() = default;
 
   void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void*) override
   {

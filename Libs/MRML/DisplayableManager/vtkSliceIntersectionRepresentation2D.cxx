@@ -195,8 +195,7 @@ vtkSliceIntersectionRepresentation2D::vtkInternal
 
 //---------------------------------------------------------------------------
 vtkSliceIntersectionRepresentation2D::vtkInternal::~vtkInternal()
-{
-}
+= default;
 
 
 //---------------------------------------------------------------------------

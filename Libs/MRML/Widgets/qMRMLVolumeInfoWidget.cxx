@@ -153,8 +153,7 @@ qMRMLVolumeInfoWidget::qMRMLVolumeInfoWidget(QWidget *_parent)
 
 //------------------------------------------------------------------------------
 qMRMLVolumeInfoWidget::~qMRMLVolumeInfoWidget()
-{
-}
+= default;
 
 
 //------------------------------------------------------------------------------

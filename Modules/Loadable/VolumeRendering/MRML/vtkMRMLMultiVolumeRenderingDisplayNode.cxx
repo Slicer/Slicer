@@ -33,13 +33,11 @@ vtkMRMLNodeNewMacro(vtkMRMLMultiVolumeRenderingDisplayNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLMultiVolumeRenderingDisplayNode::vtkMRMLMultiVolumeRenderingDisplayNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkMRMLMultiVolumeRenderingDisplayNode::~vtkMRMLMultiVolumeRenderingDisplayNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLMultiVolumeRenderingDisplayNode::ReadXMLAttributes(const char** atts)

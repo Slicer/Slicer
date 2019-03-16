@@ -59,7 +59,7 @@ public:
   static vtkAnnotationROIWidgetCallback *New()
   { return new vtkAnnotationROIWidgetCallback; }
 
-  vtkAnnotationROIWidgetCallback(){}
+  vtkAnnotationROIWidgetCallback() = default;
 
 
   void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void*) override
@@ -115,8 +115,7 @@ public:
 
 //---------------------------------------------------------------------------
 vtkMRMLAnnotationROIDisplayableManager::~vtkMRMLAnnotationROIDisplayableManager()
-{
-}
+= default;
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationROIDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 {

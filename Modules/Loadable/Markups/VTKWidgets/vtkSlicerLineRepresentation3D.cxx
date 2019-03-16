@@ -71,8 +71,7 @@ vtkSlicerLineRepresentation3D::vtkSlicerLineRepresentation3D()
 
 //----------------------------------------------------------------------
 vtkSlicerLineRepresentation3D::~vtkSlicerLineRepresentation3D()
-{
-}
+= default;
 
 //----------------------------------------------------------------------
 void vtkSlicerLineRepresentation3D::GetActors(vtkPropCollection *pc)

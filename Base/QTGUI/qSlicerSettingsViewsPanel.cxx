@@ -148,8 +148,7 @@ qSlicerSettingsViewsPanel::qSlicerSettingsViewsPanel(QWidget* _parent)
 
 // --------------------------------------------------------------------------
 qSlicerSettingsViewsPanel::~qSlicerSettingsViewsPanel()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 void qSlicerSettingsViewsPanel::onMSAAChanged(const QString& text)

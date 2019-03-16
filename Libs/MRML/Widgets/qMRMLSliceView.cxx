@@ -267,8 +267,7 @@ qMRMLSliceView::qMRMLSliceView(QWidget* _parent) : Superclass(_parent)
 
 // --------------------------------------------------------------------------
 qMRMLSliceView::~qMRMLSliceView()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 void qMRMLSliceView::addDisplayableManager(const QString& displayableManagerName)

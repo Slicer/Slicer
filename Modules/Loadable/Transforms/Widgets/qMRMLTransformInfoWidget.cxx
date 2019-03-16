@@ -103,8 +103,7 @@ qMRMLTransformInfoWidget::qMRMLTransformInfoWidget(QWidget *_parent)
 
 //------------------------------------------------------------------------------
 qMRMLTransformInfoWidget::~qMRMLTransformInfoWidget()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 void qMRMLTransformInfoWidget::processEvent(

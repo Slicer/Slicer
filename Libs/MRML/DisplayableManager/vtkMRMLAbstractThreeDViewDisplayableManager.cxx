@@ -40,13 +40,11 @@ vtkStandardNewMacro(vtkMRMLAbstractThreeDViewDisplayableManager);
 
 //----------------------------------------------------------------------------
 vtkMRMLAbstractThreeDViewDisplayableManager::vtkMRMLAbstractThreeDViewDisplayableManager()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkMRMLAbstractThreeDViewDisplayableManager::~vtkMRMLAbstractThreeDViewDisplayableManager()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLAbstractThreeDViewDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)

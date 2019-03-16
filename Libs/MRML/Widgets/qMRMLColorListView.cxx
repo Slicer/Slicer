@@ -77,8 +77,7 @@ qMRMLColorListView::qMRMLColorListView(QWidget *_parent)
 
 //------------------------------------------------------------------------------
 qMRMLColorListView::~qMRMLColorListView()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 qMRMLColorModel* qMRMLColorListView::colorModel()const

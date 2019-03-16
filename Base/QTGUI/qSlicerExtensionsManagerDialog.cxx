@@ -98,8 +98,7 @@ qSlicerExtensionsManagerDialog::qSlicerExtensionsManagerDialog(QWidget *_parent)
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsManagerDialog::~qSlicerExtensionsManagerDialog()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsManagerModel* qSlicerExtensionsManagerDialog::extensionsManagerModel()const

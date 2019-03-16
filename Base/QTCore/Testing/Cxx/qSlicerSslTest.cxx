@@ -42,8 +42,7 @@ class SslEventLoop : public QEventLoop
   Q_OBJECT
 public:
   SslEventLoop()
-  {
-  }
+   = default;
 public slots:
   void onSslErrors(QNetworkReply* reply, const QList<QSslError>& sslErrors)
   {

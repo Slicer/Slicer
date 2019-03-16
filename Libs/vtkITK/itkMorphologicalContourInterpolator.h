@@ -215,7 +215,7 @@ public:
 
 protected:
   MorphologicalContourInterpolator();
-  ~MorphologicalContourInterpolator() override {}
+  ~MorphologicalContourInterpolator() override  = default;
   typename TImage::PixelType m_Label;
   int                        m_Axis;
   bool                       m_HeuristicAlignment;

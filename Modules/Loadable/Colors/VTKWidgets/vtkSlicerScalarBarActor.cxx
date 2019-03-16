@@ -56,8 +56,7 @@ vtkSlicerScalarBarActor::vtkSlicerScalarBarActor()
 
 //----------------------------------------------------------------------------
 vtkSlicerScalarBarActor::~vtkSlicerScalarBarActor()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkSlicerScalarBarActor::PrintSelf(ostream& os, vtkIndent indent)

@@ -138,8 +138,7 @@ qMRMLScreenShotDialog::qMRMLScreenShotDialog(QWidget * _parent)
 
 //-----------------------------------------------------------------------------
 qMRMLScreenShotDialog::~qMRMLScreenShotDialog()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qMRMLScreenShotDialog::setLayoutManager(qMRMLLayoutManager* newlayoutManager)

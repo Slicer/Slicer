@@ -268,8 +268,7 @@ qSlicerDICOMTagEditorWidget::qSlicerDICOMTagEditorWidget(QWidget *parent)
 
 //------------------------------------------------------------------------------
 qSlicerDICOMTagEditorWidget::~qSlicerDICOMTagEditorWidget()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 void qSlicerDICOMTagEditorWidget::setMRMLScene(vtkMRMLScene* scene)

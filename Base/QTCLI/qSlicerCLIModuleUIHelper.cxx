@@ -54,8 +54,7 @@ qSlicerWidgetValueWrapper::qSlicerWidgetValueWrapper(const QString& _name,
 
 //-----------------------------------------------------------------------------
 qSlicerWidgetValueWrapper::~qSlicerWidgetValueWrapper()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 #define WIDGET_VALUE_WRAPPER(_NAME, _WIDGET, _GETTER, _SETTER, _CONVERTER, _NOTIFY) \
@@ -992,8 +991,7 @@ qSlicerCLIModuleUIHelper::qSlicerCLIModuleUIHelper(qSlicerCLIModuleWidget* cliMo
 
 //-----------------------------------------------------------------------------
 qSlicerCLIModuleUIHelper::~qSlicerCLIModuleUIHelper()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QWidget* qSlicerCLIModuleUIHelper::createTagWidget(const ModuleParameter& moduleParameter)

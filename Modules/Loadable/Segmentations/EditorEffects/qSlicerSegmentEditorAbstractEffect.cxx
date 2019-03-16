@@ -122,8 +122,7 @@ qSlicerSegmentEditorAbstractEffect::qSlicerSegmentEditorAbstractEffect(QObject* 
 
 //----------------------------------------------------------------------------
 qSlicerSegmentEditorAbstractEffect::~qSlicerSegmentEditorAbstractEffect()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerSegmentEditorAbstractEffect::name()const

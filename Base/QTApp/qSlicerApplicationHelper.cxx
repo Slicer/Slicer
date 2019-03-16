@@ -85,8 +85,7 @@ qSlicerApplicationHelper::qSlicerApplicationHelper(QObject * parent) : Superclas
 
 //----------------------------------------------------------------------------
 qSlicerApplicationHelper::~qSlicerApplicationHelper()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void qSlicerApplicationHelper::preInitializeApplication(

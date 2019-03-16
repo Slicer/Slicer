@@ -11,13 +11,11 @@ vtkMRMLNodeNewMacro(vtkMRMLAnnotationLinesStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationLinesStorageNode::vtkMRMLAnnotationLinesStorageNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationLinesStorageNode::~vtkMRMLAnnotationLinesStorageNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationLinesStorageNode::WriteXML(ostream& of, int nIndent)

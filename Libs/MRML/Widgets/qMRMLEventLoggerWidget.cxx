@@ -81,8 +81,7 @@ qMRMLEventLoggerWidget::qMRMLEventLoggerWidget(QWidget *_parent):Superclass(_par
 
 //------------------------------------------------------------------------------
 qMRMLEventLoggerWidget::~qMRMLEventLoggerWidget()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 void qMRMLEventLoggerWidget::setMRMLScene(vtkMRMLScene* scene)

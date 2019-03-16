@@ -70,8 +70,7 @@ qSlicerScriptedFileWriterPrivate::qSlicerScriptedFileWriterPrivate()
 
 //-----------------------------------------------------------------------------
 qSlicerScriptedFileWriterPrivate::~qSlicerScriptedFileWriterPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerScriptedFileWriter methods

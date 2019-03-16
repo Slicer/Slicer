@@ -30,8 +30,7 @@ MRMLIDImageIOFactory::MRMLIDImageIOFactory()
 }
 
 MRMLIDImageIOFactory::~MRMLIDImageIOFactory()
-{
-}
+= default;
 
 const char*
 MRMLIDImageIOFactory::GetITKSourceVersion(void) const

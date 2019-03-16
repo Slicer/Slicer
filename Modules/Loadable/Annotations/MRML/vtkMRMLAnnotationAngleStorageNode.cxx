@@ -10,13 +10,11 @@ vtkMRMLNodeNewMacro(vtkMRMLAnnotationAngleStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationAngleStorageNode::vtkMRMLAnnotationAngleStorageNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationAngleStorageNode::~vtkMRMLAnnotationAngleStorageNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationAngleStorageNode::PrintSelf(ostream& os, vtkIndent indent)

@@ -54,8 +54,7 @@ qSlicerSingletonViewFactoryPrivate
 
 //-----------------------------------------------------------------------------
 qSlicerSingletonViewFactoryPrivate::~qSlicerSingletonViewFactoryPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerSingletonViewFactoryPrivate::init()
@@ -77,8 +76,7 @@ qSlicerSingletonViewFactory::qSlicerSingletonViewFactory(QObject* parent)
 
 //-----------------------------------------------------------------------------
 qSlicerSingletonViewFactory::~qSlicerSingletonViewFactory()
-{
-}
+= default;
 
 
 //-----------------------------------------------------------------------------

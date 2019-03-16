@@ -77,7 +77,7 @@ public:
 
 protected:
   vtkImageConnectivity();
-  ~vtkImageConnectivity() override{};
+  ~vtkImageConnectivity() override = default;
 
   short Background;
   short MinForeground;

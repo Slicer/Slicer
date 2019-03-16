@@ -22,10 +22,8 @@ vtkStandardNewMacro(vtkSlicerPointsRepresentation3D);
 
 //----------------------------------------------------------------------
 vtkSlicerPointsRepresentation3D::vtkSlicerPointsRepresentation3D()
-{
-}
+= default;
 
 //----------------------------------------------------------------------
 vtkSlicerPointsRepresentation3D::~vtkSlicerPointsRepresentation3D()
-{
-}
+= default;

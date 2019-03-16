@@ -42,8 +42,7 @@ vtkStreamingVolumeFrame::vtkStreamingVolumeFrame()
 
 //---------------------------------------------------------------------------
 vtkStreamingVolumeFrame::~vtkStreamingVolumeFrame()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 void vtkStreamingVolumeFrame::SetFrameData(vtkUnsignedCharArray* frameData)

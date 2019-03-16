@@ -79,8 +79,7 @@ qMRMLSortFilterProxyModel::qMRMLSortFilterProxyModel(QObject *vparent)
 
 //------------------------------------------------------------------------------
 qMRMLSortFilterProxyModel::~qMRMLSortFilterProxyModel()
-{
-}
+= default;
 
 // -----------------------------------------------------------------------------
 QStandardItem* qMRMLSortFilterProxyModel::sourceItem(const QModelIndex& sourceIndex)const

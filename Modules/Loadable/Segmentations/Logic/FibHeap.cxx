@@ -68,7 +68,7 @@ using namespace std;
 // calls derived class destructors.
 //=========================================================
 
-FibHeapNode::~FibHeapNode() {}
+FibHeapNode::~FibHeapNode()  = default;
 
 //=========================================================
 // FHN_Assign()

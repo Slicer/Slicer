@@ -70,7 +70,7 @@ public:
 protected:
   typedef itk::NewOtsuThresholdImageFilter<Superclass::InputImageType, Superclass::OutputImageType> ImageFilterType;
   vtkITKNewOtsuThresholdImageFilter() : Superclass ( ImageFilterType::New() ){};
-  ~vtkITKNewOtsuThresholdImageFilter() override {};
+  ~vtkITKNewOtsuThresholdImageFilter() override  = default;
   ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*> ( m_Filter.GetPointer() ); }
 
 private:

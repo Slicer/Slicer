@@ -32,8 +32,7 @@ vtkMRMLFiducialListStorageNode::vtkMRMLFiducialListStorageNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLFiducialListStorageNode::~vtkMRMLFiducialListStorageNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLFiducialListStorageNode::PrintSelf(ostream& os, vtkIndent indent)

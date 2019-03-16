@@ -198,7 +198,7 @@ public:
 
 protected:
   vtkSlicerErrorSink();
-  ~vtkSlicerErrorSink() override{}
+  ~vtkSlicerErrorSink() override = default;
 
 private:
   static void CallbackFunction(vtkObject*, long unsigned int,
@@ -481,8 +481,7 @@ vtkSlicerVolumesLogic::vtkSlicerVolumesLogic()
 
 //----------------------------------------------------------------------------
 vtkSlicerVolumesLogic::~vtkSlicerVolumesLogic()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkSlicerVolumesLogic::ProcessMRMLNodesEvents(vtkObject *vtkNotUsed(caller),

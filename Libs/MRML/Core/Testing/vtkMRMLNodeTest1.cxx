@@ -2945,8 +2945,7 @@ public:
 
 protected:
   vtkMRMLTestScene()
-  {
-  }
+   = default;
 };
 vtkStandardNewMacro(vtkMRMLTestScene);
 

@@ -33,13 +33,11 @@ vtkStandardNewMacro(vtkSlicerColorLogic);
 
 //----------------------------------------------------------------------------
 vtkSlicerColorLogic::vtkSlicerColorLogic()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkSlicerColorLogic::~vtkSlicerColorLogic()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkSlicerColorLogic::PrintSelf(ostream& os, vtkIndent indent)

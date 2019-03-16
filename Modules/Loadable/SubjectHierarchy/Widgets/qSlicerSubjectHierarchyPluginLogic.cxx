@@ -67,8 +67,7 @@ qSlicerSubjectHierarchyPluginLogicPrivate::qSlicerSubjectHierarchyPluginLogicPri
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyPluginLogicPrivate::~qSlicerSubjectHierarchyPluginLogicPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyPluginLogic methods
@@ -84,8 +83,7 @@ qSlicerSubjectHierarchyPluginLogic::qSlicerSubjectHierarchyPluginLogic(QObject* 
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyPluginLogic::~qSlicerSubjectHierarchyPluginLogic()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginLogic::registerCorePlugins()

@@ -121,8 +121,7 @@ qMRMLSceneDisplayableModel::qMRMLSceneDisplayableModel(
 
 //------------------------------------------------------------------------------
 qMRMLSceneDisplayableModel::~qMRMLSceneDisplayableModel()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSceneDisplayableModel::parentNode(vtkMRMLNode* node)const

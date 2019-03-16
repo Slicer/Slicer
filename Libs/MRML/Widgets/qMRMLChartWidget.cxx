@@ -66,8 +66,7 @@ qMRMLChartWidgetPrivate::qMRMLChartWidgetPrivate(qMRMLChartWidget& object)
 
 //---------------------------------------------------------------------------
 qMRMLChartWidgetPrivate::~qMRMLChartWidgetPrivate()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 void qMRMLChartWidgetPrivate::init()

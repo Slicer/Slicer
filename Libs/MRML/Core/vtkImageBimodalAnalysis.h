@@ -70,7 +70,7 @@ public:
 
 protected:
   vtkImageBimodalAnalysis();
-  ~vtkImageBimodalAnalysis() override {};
+  ~vtkImageBimodalAnalysis() override  = default;
 
   int Modality;
 

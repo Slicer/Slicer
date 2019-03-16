@@ -48,13 +48,11 @@ vtkStandardNewMacro(vtkMRMLViewLinkLogic);
 
 //----------------------------------------------------------------------------
 vtkMRMLViewLinkLogic::vtkMRMLViewLinkLogic()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkMRMLViewLinkLogic::~vtkMRMLViewLinkLogic()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLViewLinkLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)

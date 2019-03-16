@@ -71,8 +71,7 @@ qMRMLSceneModelHierarchyModel::qMRMLSceneModelHierarchyModel(QObject *vparent)
 
 //------------------------------------------------------------------------------
 qMRMLSceneModelHierarchyModel::~qMRMLSceneModelHierarchyModel()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSceneModelHierarchyModel::parentNode(vtkMRMLNode* node)const

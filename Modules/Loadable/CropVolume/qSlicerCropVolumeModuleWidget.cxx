@@ -72,8 +72,7 @@ qSlicerCropVolumeModuleWidgetPrivate::qSlicerCropVolumeModuleWidgetPrivate(qSlic
 
 //-----------------------------------------------------------------------------
 qSlicerCropVolumeModuleWidgetPrivate::~qSlicerCropVolumeModuleWidgetPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 vtkSlicerCropVolumeLogic* qSlicerCropVolumeModuleWidgetPrivate::logic() const
@@ -204,8 +203,7 @@ qSlicerCropVolumeModuleWidget::qSlicerCropVolumeModuleWidget(QWidget* _parent)
 
 //-----------------------------------------------------------------------------
 qSlicerCropVolumeModuleWidget::~qSlicerCropVolumeModuleWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerCropVolumeModuleWidget::setup()

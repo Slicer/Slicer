@@ -210,8 +210,7 @@ qSlicerSceneViewsModuleWidget::qSlicerSceneViewsModuleWidget(QWidget* parent) :
 
 //-----------------------------------------------------------------------------
 qSlicerSceneViewsModuleWidget::~qSlicerSceneViewsModuleWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerSceneViewsModuleWidget::setup()

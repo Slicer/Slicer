@@ -129,7 +129,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNod
   std::string GetLineWrappedText(std::string inputText);
 protected:
   vtkMRMLAnnotationTextDisplayNode();
-  ~vtkMRMLAnnotationTextDisplayNode() override { }
+  ~vtkMRMLAnnotationTextDisplayNode() override  = default;
   vtkMRMLAnnotationTextDisplayNode( const vtkMRMLAnnotationTextDisplayNode& );
   void operator= ( const vtkMRMLAnnotationTextDisplayNode& );
 

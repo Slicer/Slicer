@@ -54,8 +54,7 @@ qSlicerLoadableModule::qSlicerLoadableModule(QObject* _parentObject)
 
 //-----------------------------------------------------------------------------
 qSlicerLoadableModule::~qSlicerLoadableModule()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 bool qSlicerLoadableModule::importModulePythonExtensions(

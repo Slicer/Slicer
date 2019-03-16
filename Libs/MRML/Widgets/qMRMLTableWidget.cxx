@@ -70,8 +70,7 @@ qMRMLTableWidgetPrivate::qMRMLTableWidgetPrivate(qMRMLTableWidget& object)
 
 //---------------------------------------------------------------------------
 qMRMLTableWidgetPrivate::~qMRMLTableWidgetPrivate()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 void qMRMLTableWidgetPrivate::init()

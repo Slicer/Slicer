@@ -99,8 +99,7 @@ qSlicerSegmentEditorScriptedLabelEffectPrivate::qSlicerSegmentEditorScriptedLabe
 
 //-----------------------------------------------------------------------------
 qSlicerSegmentEditorScriptedLabelEffectPrivate::~qSlicerSegmentEditorScriptedLabelEffectPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSegmentEditorScriptedLabelEffect methods
@@ -115,8 +114,7 @@ qSlicerSegmentEditorScriptedLabelEffect::qSlicerSegmentEditorScriptedLabelEffect
 
 //-----------------------------------------------------------------------------
 qSlicerSegmentEditorScriptedLabelEffect::~qSlicerSegmentEditorScriptedLabelEffect()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerSegmentEditorScriptedLabelEffect::pythonSource()const

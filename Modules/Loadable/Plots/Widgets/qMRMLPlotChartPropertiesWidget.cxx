@@ -55,8 +55,7 @@ qMRMLPlotChartPropertiesWidgetPrivate::qMRMLPlotChartPropertiesWidgetPrivate(qMR
 
 //---------------------------------------------------------------------------
 qMRMLPlotChartPropertiesWidgetPrivate::~qMRMLPlotChartPropertiesWidgetPrivate()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 void qMRMLPlotChartPropertiesWidgetPrivate::setupUi(qMRMLWidget* widget)
@@ -369,8 +368,7 @@ qMRMLPlotChartPropertiesWidget::qMRMLPlotChartPropertiesWidget(QWidget* _parent)
 
 // --------------------------------------------------------------------------
 qMRMLPlotChartPropertiesWidget::~qMRMLPlotChartPropertiesWidget()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
  vtkMRMLPlotChartNode* qMRMLPlotChartPropertiesWidget::mrmlPlotChartNode()const

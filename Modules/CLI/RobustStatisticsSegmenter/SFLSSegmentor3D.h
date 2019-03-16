@@ -43,8 +43,7 @@ public:
 
   CSFLSSegmentor3D();
   virtual ~CSFLSSegmentor3D()
-  {
-  }
+   = default;
 
   /* New */
   // static Pointer New() { return Pointer(new Self); }

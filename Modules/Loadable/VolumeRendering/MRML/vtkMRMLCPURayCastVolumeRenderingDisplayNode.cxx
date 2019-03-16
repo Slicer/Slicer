@@ -32,13 +32,11 @@ vtkMRMLNodeNewMacro(vtkMRMLCPURayCastVolumeRenderingDisplayNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLCPURayCastVolumeRenderingDisplayNode::vtkMRMLCPURayCastVolumeRenderingDisplayNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkMRMLCPURayCastVolumeRenderingDisplayNode::~vtkMRMLCPURayCastVolumeRenderingDisplayNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLCPURayCastVolumeRenderingDisplayNode::ReadXMLAttributes(const char** atts)

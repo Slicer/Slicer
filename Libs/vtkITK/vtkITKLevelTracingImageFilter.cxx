@@ -41,8 +41,7 @@ vtkITKLevelTracingImageFilter::vtkITKLevelTracingImageFilter()
 }
 
 vtkITKLevelTracingImageFilter::~vtkITKLevelTracingImageFilter()
-{
-}
+= default;
 
 
 template <class T>

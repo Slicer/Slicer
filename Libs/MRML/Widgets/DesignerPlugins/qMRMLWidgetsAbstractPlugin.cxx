@@ -21,8 +21,7 @@
 #include "qMRMLWidgetsAbstractPlugin.h"
 
 qMRMLWidgetsAbstractPlugin::qMRMLWidgetsAbstractPlugin()
-{
-}
+= default;
 
 QString qMRMLWidgetsAbstractPlugin::group() const
 {

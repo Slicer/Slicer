@@ -103,8 +103,7 @@ qSlicerTablesModuleWidget::qSlicerTablesModuleWidget(QWidget* _parentWidget)
 
 //-----------------------------------------------------------------------------
 qSlicerTablesModuleWidget::~qSlicerTablesModuleWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerTablesModuleWidget::setup()

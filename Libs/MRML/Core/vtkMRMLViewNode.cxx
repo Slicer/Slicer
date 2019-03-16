@@ -68,8 +68,7 @@ vtkMRMLViewNode::vtkMRMLViewNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLViewNode::~vtkMRMLViewNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 const char* vtkMRMLViewNode::GetNodeTagName()

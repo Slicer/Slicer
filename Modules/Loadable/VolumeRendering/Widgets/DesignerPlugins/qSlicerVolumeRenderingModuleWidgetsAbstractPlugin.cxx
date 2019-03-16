@@ -22,8 +22,7 @@
 
 //-----------------------------------------------------------------------------
 qSlicerVolumeRenderingModuleWidgetsAbstractPlugin::qSlicerVolumeRenderingModuleWidgetsAbstractPlugin()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerVolumeRenderingModuleWidgetsAbstractPlugin::group() const

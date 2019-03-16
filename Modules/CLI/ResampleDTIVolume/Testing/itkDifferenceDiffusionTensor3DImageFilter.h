@@ -100,8 +100,7 @@ protected:
 
   DifferenceDiffusionTensor3DImageFilter();
   ~DifferenceDiffusionTensor3DImageFilter() override
-  {
-  }
+   = default;
 
   void PrintSelf(std::ostream& os, Indent indent) const override;
 

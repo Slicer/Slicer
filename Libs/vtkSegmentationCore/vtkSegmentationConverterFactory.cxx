@@ -91,13 +91,11 @@ vtkSegmentationConverterFactory* vtkSegmentationConverterFactory::GetInstance()
 
 //----------------------------------------------------------------------------
 vtkSegmentationConverterFactory::vtkSegmentationConverterFactory()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkSegmentationConverterFactory::~vtkSegmentationConverterFactory()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkSegmentationConverterFactory::PrintSelf(ostream& os, vtkIndent indent)

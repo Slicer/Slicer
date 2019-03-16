@@ -62,8 +62,7 @@ qSlicerVolumeRenderingReader::qSlicerVolumeRenderingReader(vtkSlicerVolumeRender
 
 //-----------------------------------------------------------------------------
 qSlicerVolumeRenderingReader::~qSlicerVolumeRenderingReader()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerVolumeRenderingReader::setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* logic)

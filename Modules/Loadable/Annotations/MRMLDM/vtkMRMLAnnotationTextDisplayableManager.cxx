@@ -47,7 +47,7 @@ public:
   static vtkAnnotationTextWidgetCallback *New()
   { return new vtkAnnotationTextWidgetCallback; }
 
-  vtkAnnotationTextWidgetCallback(){}
+  vtkAnnotationTextWidgetCallback() = default;
 
   void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void*) override
   {

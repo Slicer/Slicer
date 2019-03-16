@@ -52,8 +52,7 @@ qSlicerSubjectHierarchyAbstractPlugin::qSlicerSubjectHierarchyAbstractPlugin(QOb
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyAbstractPlugin::~qSlicerSubjectHierarchyAbstractPlugin()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerSubjectHierarchyAbstractPlugin::name()const

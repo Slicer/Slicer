@@ -41,8 +41,7 @@ qSlicerAnnotationsModule::qSlicerAnnotationsModule(QObject* _parent)
 
 //-----------------------------------------------------------------------------
 qSlicerAnnotationsModule::~qSlicerAnnotationsModule()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationsModule::setup()

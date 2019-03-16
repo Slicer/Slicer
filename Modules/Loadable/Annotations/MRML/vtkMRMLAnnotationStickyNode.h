@@ -46,8 +46,8 @@ public:
 
 
 protected:
-  vtkMRMLAnnotationStickyNode() { };
-  ~vtkMRMLAnnotationStickyNode() override { };
+  vtkMRMLAnnotationStickyNode()  = default;
+  ~vtkMRMLAnnotationStickyNode() override  = default;
   vtkMRMLAnnotationStickyNode(const vtkMRMLAnnotationStickyNode&);
   void operator=(const vtkMRMLAnnotationStickyNode&);
 

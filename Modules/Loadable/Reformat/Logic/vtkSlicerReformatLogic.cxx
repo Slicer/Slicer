@@ -44,13 +44,11 @@ vtkStandardNewMacro(vtkSlicerReformatLogic);
 
 //------------------------------------------------------------------------------
 vtkSlicerReformatLogic::vtkSlicerReformatLogic()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 vtkSlicerReformatLogic::~vtkSlicerReformatLogic()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 void vtkSlicerReformatLogic::PrintSelf(ostream& os, vtkIndent indent)

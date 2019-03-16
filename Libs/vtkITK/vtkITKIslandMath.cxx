@@ -39,8 +39,7 @@ vtkITKIslandMath::vtkITKIslandMath()
 }
 
 vtkITKIslandMath::~vtkITKIslandMath()
-{
-}
+= default;
 
 void vtkITKIslandMath::PrintSelf(ostream& os, vtkIndent indent)
 {

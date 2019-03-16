@@ -27,7 +27,7 @@ public:
     m_UID = uid;
   }
 
-  virtual ~DataRequest(){}
+  virtual ~DataRequest()  = default;
 
   virtual void Execute(vtkSlicerApplicationLogic*) {};
 

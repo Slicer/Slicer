@@ -91,8 +91,7 @@ qMRMLSortFilterSubjectHierarchyProxyModel::qMRMLSortFilterSubjectHierarchyProxyM
 
 //------------------------------------------------------------------------------
 qMRMLSortFilterSubjectHierarchyProxyModel::~qMRMLSortFilterSubjectHierarchyProxyModel()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 vtkMRMLScene* qMRMLSortFilterSubjectHierarchyProxyModel::mrmlScene()const

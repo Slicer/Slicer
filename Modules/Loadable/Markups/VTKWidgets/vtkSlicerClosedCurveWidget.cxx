@@ -39,8 +39,7 @@ vtkSlicerClosedCurveWidget::vtkSlicerClosedCurveWidget()
 
 //----------------------------------------------------------------------
 vtkSlicerClosedCurveWidget::~vtkSlicerClosedCurveWidget()
-{
-}
+= default;
 
 //----------------------------------------------------------------------
 void vtkSlicerClosedCurveWidget::CreateDefaultRepresentation(

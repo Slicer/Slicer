@@ -94,8 +94,7 @@ vtkSlicerAngleRepresentation2D::vtkSlicerAngleRepresentation2D()
 
 //----------------------------------------------------------------------
 vtkSlicerAngleRepresentation2D::~vtkSlicerAngleRepresentation2D()
-{
-}
+= default;
 
 //----------------------------------------------------------------------
 bool vtkSlicerAngleRepresentation2D::GetTransformationReferencePoint(double referencePointWorld[3])

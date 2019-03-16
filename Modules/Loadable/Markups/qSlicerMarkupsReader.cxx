@@ -56,8 +56,7 @@ qSlicerMarkupsReader::qSlicerMarkupsReader(vtkSlicerMarkupsLogic* logic, QObject
 
 //-----------------------------------------------------------------------------
 qSlicerMarkupsReader::~qSlicerMarkupsReader()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsReader::setMarkupsLogic(vtkSlicerMarkupsLogic* logic)

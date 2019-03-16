@@ -53,8 +53,7 @@ qSlicerSceneWriter::qSlicerSceneWriter(QObject* parentObject)
 
 //----------------------------------------------------------------------------
 qSlicerSceneWriter::~qSlicerSceneWriter()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 QString qSlicerSceneWriter::description()const

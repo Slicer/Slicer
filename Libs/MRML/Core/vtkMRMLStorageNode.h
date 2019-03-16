@@ -329,8 +329,7 @@ public:
   struct CompressionPreset
   {
     CompressionPreset()
-    {
-    }
+     = default;
 
     CompressionPreset(const std::string &parameter, const std::string &name)
       : CompressionParameter(parameter)

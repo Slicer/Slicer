@@ -25,13 +25,11 @@ vtkCodecNewMacro(vtkRawRGBVolumeCodec);
 
 //---------------------------------------------------------------------------
 vtkRawRGBVolumeCodec::vtkRawRGBVolumeCodec()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 vtkRawRGBVolumeCodec::~vtkRawRGBVolumeCodec()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 bool vtkRawRGBVolumeCodec::DecodeFrameInternal(vtkStreamingVolumeFrame* inputFrame, vtkImageData* outputImageData, bool vtkNotUsed(saveDecodedImage))

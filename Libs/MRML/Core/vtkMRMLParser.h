@@ -42,7 +42,7 @@ public:
 
 protected:
   vtkMRMLParser() : MRMLScene(nullptr),NodeCollection(nullptr){};
-  ~vtkMRMLParser() override {};
+  ~vtkMRMLParser() override  = default;
   vtkMRMLParser(const vtkMRMLParser&);
   void operator=(const vtkMRMLParser&);
 

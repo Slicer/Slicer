@@ -135,7 +135,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNod
 
 protected:
   vtkMRMLAnnotationLineDisplayNode();
-  ~vtkMRMLAnnotationLineDisplayNode() override { };
+  ~vtkMRMLAnnotationLineDisplayNode() override  = default;
   vtkMRMLAnnotationLineDisplayNode( const vtkMRMLAnnotationLineDisplayNode& );
   void operator= ( const vtkMRMLAnnotationLineDisplayNode& );
 

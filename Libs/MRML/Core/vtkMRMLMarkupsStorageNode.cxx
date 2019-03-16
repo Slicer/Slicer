@@ -39,8 +39,7 @@ vtkMRMLMarkupsStorageNode::vtkMRMLMarkupsStorageNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsStorageNode::~vtkMRMLMarkupsStorageNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsStorageNode::ReadXMLAttributes(const char** atts)

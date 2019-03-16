@@ -259,8 +259,7 @@ qMRMLSceneViewMenu::qMRMLSceneViewMenu(QWidget* newParent) : Superclass(newParen
 
 // --------------------------------------------------------------------------
 qMRMLSceneViewMenu::~qMRMLSceneViewMenu()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qMRMLSceneViewMenu::setMRMLScene(vtkMRMLScene* scene)

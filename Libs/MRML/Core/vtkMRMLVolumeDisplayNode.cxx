@@ -37,8 +37,7 @@ vtkMRMLVolumeDisplayNode::vtkMRMLVolumeDisplayNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeDisplayNode::~vtkMRMLVolumeDisplayNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeDisplayNode::WriteXML(ostream& of, int nIndent)

@@ -78,8 +78,7 @@ vtkSlicerCurveRepresentation3D::vtkSlicerCurveRepresentation3D()
 
 //----------------------------------------------------------------------
 vtkSlicerCurveRepresentation3D::~vtkSlicerCurveRepresentation3D()
-{
-}
+= default;
 
 //----------------------------------------------------------------------
 void vtkSlicerCurveRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)

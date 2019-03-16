@@ -36,9 +36,7 @@ vtkAnnotationBidimensionalRepresentation::vtkAnnotationBidimensionalRepresentati
 
 //---------------------------------------------------------------------------
 vtkAnnotationBidimensionalRepresentation::~vtkAnnotationBidimensionalRepresentation()
-{
-
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkAnnotationBidimensionalRepresentation::BuildRepresentation()

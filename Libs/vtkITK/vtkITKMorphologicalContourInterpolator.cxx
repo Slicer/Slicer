@@ -33,8 +33,7 @@ vtkITKMorphologicalContourInterpolator::vtkITKMorphologicalContourInterpolator()
 }
 
 vtkITKMorphologicalContourInterpolator::~vtkITKMorphologicalContourInterpolator()
-{
-}
+= default;
 
 
 template <class T>

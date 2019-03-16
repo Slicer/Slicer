@@ -103,8 +103,7 @@ qSlicerPlotsModuleWidget::qSlicerPlotsModuleWidget(QWidget* _parentWidget)
 
 //-----------------------------------------------------------------------------
 qSlicerPlotsModuleWidget::~qSlicerPlotsModuleWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerPlotsModuleWidget::setup()

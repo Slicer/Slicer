@@ -67,8 +67,7 @@ public:
   }
 
   ~qSlicerLayoutCustomSliceViewFactory() override
-  {
-  }
+   = default;
 
   vtkWeakPointer<vtkMRMLSliceNode> LastNode;
 
@@ -140,8 +139,8 @@ public:
   }
 
 protected:
-  vtkMRMLCustomViewNode(){}
-  ~vtkMRMLCustomViewNode() override{}
+  vtkMRMLCustomViewNode() = default;
+  ~vtkMRMLCustomViewNode() override = default;
   vtkMRMLCustomViewNode(const vtkMRMLCustomViewNode&);
   void operator=(const vtkMRMLCustomViewNode&);
 };
@@ -160,7 +159,7 @@ public:
   {
     this->LastNode = nullptr;
   }
-  ~qMRMLLayoutCustomViewFactory() override{}
+  ~qMRMLLayoutCustomViewFactory() override = default;
 
   QString viewClassName()const override
   {

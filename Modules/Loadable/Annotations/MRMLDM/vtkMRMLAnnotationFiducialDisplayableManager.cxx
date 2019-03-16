@@ -59,8 +59,7 @@ public:
   { return new vtkAnnotationFiducialWidgetCallback; }
 
   vtkAnnotationFiducialWidgetCallback()
-  {
-  }
+   = default;
 
   void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void*) override
   {

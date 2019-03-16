@@ -30,13 +30,11 @@
 
 // --------------------------------------------------------------------------
 qSlicerDarkStyle::qSlicerDarkStyle()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 qSlicerDarkStyle::~qSlicerDarkStyle()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 QPalette qSlicerDarkStyle::standardPalette()const

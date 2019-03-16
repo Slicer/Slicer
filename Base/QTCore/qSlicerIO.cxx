@@ -31,8 +31,7 @@ qSlicerIO::qSlicerIO(QObject* parentObject)
 
 //----------------------------------------------------------------------------
 qSlicerIO::~qSlicerIO()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 qSlicerIOOptions* qSlicerIO::options()const

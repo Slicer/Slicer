@@ -49,7 +49,7 @@ public:
   static vtkAnnotationBidimensionalWidgetCallback *New()
   { return new vtkAnnotationBidimensionalWidgetCallback; }
 
-  vtkAnnotationBidimensionalWidgetCallback(){}
+  vtkAnnotationBidimensionalWidgetCallback() = default;
 
   void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void*) override
   {

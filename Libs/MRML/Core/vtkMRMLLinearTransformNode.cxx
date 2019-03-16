@@ -35,8 +35,7 @@ vtkMRMLLinearTransformNode::vtkMRMLLinearTransformNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLLinearTransformNode::~vtkMRMLLinearTransformNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLLinearTransformNode::WriteXML(ostream& of, int nIndent)

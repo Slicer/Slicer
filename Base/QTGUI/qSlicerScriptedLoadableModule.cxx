@@ -77,8 +77,7 @@ qSlicerScriptedLoadableModulePrivate::qSlicerScriptedLoadableModulePrivate()
 
 //-----------------------------------------------------------------------------
 qSlicerScriptedLoadableModulePrivate::~qSlicerScriptedLoadableModulePrivate()
-{
-}
+= default;
 
 
 //-----------------------------------------------------------------------------

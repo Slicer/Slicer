@@ -22,8 +22,7 @@
 
 //-----------------------------------------------------------------------------
 qSlicerSegmentationsModuleWidgetsAbstractPlugin::qSlicerSegmentationsModuleWidgetsAbstractPlugin()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerSegmentationsModuleWidgetsAbstractPlugin::group() const

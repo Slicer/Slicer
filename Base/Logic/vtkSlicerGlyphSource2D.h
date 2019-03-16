@@ -135,7 +135,7 @@ public:
 
 protected:
   vtkSlicerGlyphSource2D();
-  ~vtkSlicerGlyphSource2D() override {};
+  ~vtkSlicerGlyphSource2D() override  = default;
 
   int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 

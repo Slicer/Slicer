@@ -201,8 +201,8 @@ public:
 
 private:
   /// Not implemented
-  qSlicerUtils(){}
-  virtual ~qSlicerUtils(){}
+  qSlicerUtils() = default;
+  virtual ~qSlicerUtils() = default;
 
 };
 

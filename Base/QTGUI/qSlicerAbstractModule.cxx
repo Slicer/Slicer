@@ -46,8 +46,7 @@ qSlicerAbstractModule::qSlicerAbstractModule(QObject* parentObject)
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModule::~qSlicerAbstractModule()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QIcon qSlicerAbstractModule::icon()const

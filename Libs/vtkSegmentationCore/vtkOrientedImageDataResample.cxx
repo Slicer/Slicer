@@ -252,13 +252,11 @@ void MergeImageGeneric(
 
 //----------------------------------------------------------------------------
 vtkOrientedImageDataResample::vtkOrientedImageDataResample()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkOrientedImageDataResample::~vtkOrientedImageDataResample()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* referenceImage, vtkOrientedImageData* outputImage, bool linearInterpolation/*=false*/, bool padImage/*=false*/, vtkAbstractTransform* inputImageTransform/*=nullptr*/, double backgroundValue/*=0*/)

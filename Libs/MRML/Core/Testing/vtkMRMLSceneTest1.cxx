@@ -39,7 +39,7 @@ public:
 
 protected:
   vtkMRMLCustomNode():ResetCount(0){}
-  ~vtkMRMLCustomNode() override{}
+  ~vtkMRMLCustomNode() override = default;
   vtkMRMLCustomNode(const vtkMRMLCustomNode&);
   void operator=(const vtkMRMLCustomNode&);
 };
@@ -59,8 +59,8 @@ public:
   const char* GetNodeTagName() override { return "AnotherCustom"; }
 
 protected:
-  vtkMRMLAnotherCustomNode(){}
-  ~vtkMRMLAnotherCustomNode() override{}
+  vtkMRMLAnotherCustomNode() = default;
+  ~vtkMRMLAnotherCustomNode() override = default;
   vtkMRMLAnotherCustomNode(const vtkMRMLAnotherCustomNode&);
   void operator=(const vtkMRMLAnotherCustomNode&);
 };

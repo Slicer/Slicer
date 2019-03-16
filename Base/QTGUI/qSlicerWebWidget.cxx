@@ -55,7 +55,7 @@ class qSlicerWebEngineView : public QWebEngineView
 {
 public:
   qSlicerWebEngineView(QWidget *parent = Q_NULLPTR) : QWebEngineView(parent){}
-  ~qSlicerWebEngineView() override{}
+  ~qSlicerWebEngineView() override = default;
   QSize sizeHint() const override
   {
     // arbitrary values to address https://issues.slicer.org/view.php?id=4613
@@ -73,8 +73,7 @@ qSlicerWebEnginePage::qSlicerWebEnginePage(QWebEngineProfile *profile, QObject *
 
 // --------------------------------------------------------------------------
 qSlicerWebEnginePage::~qSlicerWebEnginePage()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 qSlicerWebWidgetPrivate::qSlicerWebWidgetPrivate(qSlicerWebWidget& object)
@@ -86,8 +85,7 @@ qSlicerWebWidgetPrivate::qSlicerWebWidgetPrivate(qSlicerWebWidget& object)
 
 // --------------------------------------------------------------------------
 qSlicerWebWidgetPrivate::~qSlicerWebWidgetPrivate()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 void qSlicerWebWidgetPrivate::initializeWebChannel(QWebChannel* webChannel)
@@ -259,8 +257,7 @@ qSlicerWebWidget::qSlicerWebWidget(
 
 // --------------------------------------------------------------------------
 qSlicerWebWidget::~qSlicerWebWidget()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 bool qSlicerWebWidget::handleExternalUrlWithDesktopService() const

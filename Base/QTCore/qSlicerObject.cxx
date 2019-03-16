@@ -41,8 +41,7 @@ qSlicerObject::qSlicerObject(): d_ptr(new qSlicerObjectPrivate)
 
 //-----------------------------------------------------------------------------
 qSlicerObject::~qSlicerObject()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerObject::setMRMLScene(vtkMRMLScene* scene)

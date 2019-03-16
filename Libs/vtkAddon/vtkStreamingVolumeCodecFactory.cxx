@@ -95,13 +95,11 @@ vtkStreamingVolumeCodecFactory* vtkStreamingVolumeCodecFactory::GetInstance()
 
 //----------------------------------------------------------------------------
 vtkStreamingVolumeCodecFactory::vtkStreamingVolumeCodecFactory()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkStreamingVolumeCodecFactory::~vtkStreamingVolumeCodecFactory()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkStreamingVolumeCodecFactory::PrintSelf(ostream& os, vtkIndent indent)

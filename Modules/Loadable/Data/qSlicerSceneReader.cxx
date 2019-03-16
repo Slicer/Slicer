@@ -52,8 +52,7 @@ qSlicerSceneReader::qSlicerSceneReader(vtkSlicerCamerasModuleLogic* camerasLogic
 
 //-----------------------------------------------------------------------------
 qSlicerSceneReader::~qSlicerSceneReader()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerSceneReader::description()const

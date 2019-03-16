@@ -79,8 +79,7 @@ qMRMLSceneAnnotationModel::qMRMLSceneAnnotationModel(
 
 //------------------------------------------------------------------------------
 qMRMLSceneAnnotationModel::~qMRMLSceneAnnotationModel()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 bool qMRMLSceneAnnotationModel::areAnnotationsParent()const

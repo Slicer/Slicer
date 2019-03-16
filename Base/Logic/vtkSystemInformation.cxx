@@ -10,8 +10,7 @@ vtkSystemInformation::vtkSystemInformation()
 }
 
 vtkSystemInformation::~vtkSystemInformation()
-{
-}
+= default;
 
 const char * vtkSystemInformation::GetVendorString()
 {

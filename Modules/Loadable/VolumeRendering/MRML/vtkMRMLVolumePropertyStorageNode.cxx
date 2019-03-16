@@ -35,8 +35,7 @@ vtkMRMLVolumePropertyStorageNode::vtkMRMLVolumePropertyStorageNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumePropertyStorageNode::~vtkMRMLVolumePropertyStorageNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumePropertyStorageNode::PrintSelf(ostream& os, vtkIndent indent)

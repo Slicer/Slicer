@@ -190,8 +190,7 @@ qSlicerModuleSelectorToolBar::qSlicerModuleSelectorToolBar(QWidget* parentWidget
 
 //---------------------------------------------------------------------------
 qSlicerModuleSelectorToolBar::~qSlicerModuleSelectorToolBar()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 qSlicerModulesMenu* qSlicerModuleSelectorToolBar::modulesMenu()const

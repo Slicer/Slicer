@@ -52,8 +52,7 @@ qSlicerModelsReader::qSlicerModelsReader(vtkSlicerModelsLogic* _modelsLogic, QOb
 
 //-----------------------------------------------------------------------------
 qSlicerModelsReader::~qSlicerModelsReader()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerModelsReader::setModelsLogic(vtkSlicerModelsLogic* newModelsLogic)

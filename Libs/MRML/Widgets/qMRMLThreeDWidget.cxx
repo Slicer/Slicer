@@ -69,8 +69,7 @@ qMRMLThreeDWidgetPrivate::qMRMLThreeDWidgetPrivate(qMRMLThreeDWidget& object)
 
 //---------------------------------------------------------------------------
 qMRMLThreeDWidgetPrivate::~qMRMLThreeDWidgetPrivate()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 void qMRMLThreeDWidgetPrivate::init()
@@ -111,8 +110,7 @@ qMRMLThreeDWidget::qMRMLThreeDWidget(QWidget* parentWidget)
 
 // --------------------------------------------------------------------------
 qMRMLThreeDWidget::~qMRMLThreeDWidget()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 void qMRMLThreeDWidget::addDisplayableManager(const QString& dManager)

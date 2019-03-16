@@ -38,8 +38,7 @@ vtkMRMLClipModelsNode::vtkMRMLClipModelsNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLClipModelsNode::~vtkMRMLClipModelsNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLClipModelsNode::WriteXML(ostream& of, int nIndent)

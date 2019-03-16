@@ -37,7 +37,7 @@ class qSlicerDummyIOOptionsWidget
 {
 public:
   qSlicerDummyIOOptionsWidget(QWidget *parent=nullptr): qSlicerIOOptionsWidget(parent){}
-  ~qSlicerDummyIOOptionsWidget() override{};
+  ~qSlicerDummyIOOptionsWidget() override = default;
   QSize minimumSizeHint()const override {return QSize(300, 30);}
   QSize sizeHint()const override{return QSize(500,30);}
 
@@ -51,7 +51,7 @@ class qSlicerDummyIO: public qSlicerIO
 {
 public:
   qSlicerDummyIO(QObject* parent = nullptr):qSlicerIO(parent){}
-  ~qSlicerDummyIO() override{}
+  ~qSlicerDummyIO() override = default;
   QString description()const override{return "Dummy";}
   IOFileType fileType()const override{return QString("UserFile");}
   virtual QStringList extensions()const{return QStringList(QString("All Files(*)"));}

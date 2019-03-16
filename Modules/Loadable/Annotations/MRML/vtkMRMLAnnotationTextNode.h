@@ -52,7 +52,7 @@ public:
 
 protected:
   vtkMRMLAnnotationTextNode();
-  ~vtkMRMLAnnotationTextNode() override { }
+  ~vtkMRMLAnnotationTextNode() override  = default;
   vtkMRMLAnnotationTextNode(const vtkMRMLAnnotationTextNode&);
   void operator=(const vtkMRMLAnnotationTextNode&);
 

@@ -26,8 +26,7 @@
 
 //----------------------------------------------------------------------------
 vtkSegmentationConverterRule::vtkSegmentationConverterRule()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkSegmentationConverterRule::~vtkSegmentationConverterRule()

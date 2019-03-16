@@ -36,9 +36,7 @@
 
 //-----------------------------------------------------------------------------
 qSlicerLoadableModuleFactoryItem::qSlicerLoadableModuleFactoryItem()
-{
-
-}
+= default;
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractCoreModule* qSlicerLoadableModuleFactoryItem::instanciator()
@@ -111,8 +109,7 @@ qSlicerLoadableModuleFactory::qSlicerLoadableModuleFactory()
 
 //-----------------------------------------------------------------------------
 qSlicerLoadableModuleFactory::~qSlicerLoadableModuleFactory()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerLoadableModuleFactory::registerItems()

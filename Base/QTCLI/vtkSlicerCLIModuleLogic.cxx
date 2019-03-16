@@ -187,8 +187,8 @@ public:
     }
   }
   protected:
-  vtkSlicerCLIOneShotCallbackCallback() {}
-  ~vtkSlicerCLIOneShotCallbackCallback() override {}
+  vtkSlicerCLIOneShotCallbackCallback()  = default;
+  ~vtkSlicerCLIOneShotCallbackCallback() override  = default;
 };
 
 //----------------------------------------------------------------------------

@@ -102,8 +102,7 @@ qSlicerSegmentationsSettingsPanel::qSlicerSegmentationsSettingsPanel(QWidget* _p
 
 // --------------------------------------------------------------------------
 qSlicerSegmentationsSettingsPanel::~qSlicerSegmentationsSettingsPanel()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 vtkSlicerSegmentationsModuleLogic* qSlicerSegmentationsSettingsPanel::segmentationsLogic()const

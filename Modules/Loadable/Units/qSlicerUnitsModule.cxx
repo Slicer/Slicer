@@ -39,8 +39,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerUnitsModulePrivate
 ::qSlicerUnitsModulePrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerUnitsModule methods
@@ -55,8 +54,7 @@ qSlicerUnitsModule
 
 //-----------------------------------------------------------------------------
 qSlicerUnitsModule::~qSlicerUnitsModule()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerUnitsModule::helpText()const

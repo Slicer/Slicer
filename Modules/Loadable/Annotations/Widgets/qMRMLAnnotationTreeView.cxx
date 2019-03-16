@@ -111,8 +111,7 @@ qMRMLAnnotationTreeView::qMRMLAnnotationTreeView(QWidget *_parent)
 
 //------------------------------------------------------------------------------
 qMRMLAnnotationTreeView::~qMRMLAnnotationTreeView()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 //

@@ -42,8 +42,8 @@ public:
     vtkErrorMacro("This is a error message printed from inside a VTK object");
     }
 protected:
-  vtkLoggingMacroTester() {};
-  ~vtkLoggingMacroTester() override {};
+  vtkLoggingMacroTester()  = default;
+  ~vtkLoggingMacroTester() override  = default;
   vtkLoggingMacroTester(const vtkLoggingMacroTester&);
   void operator=(const vtkLoggingMacroTester&);
 };

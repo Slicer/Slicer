@@ -125,8 +125,7 @@ qMRMLLabelComboBox::qMRMLLabelComboBox(QWidget* newParent)
 
 // --------------------------------------------------------------------------
 qMRMLLabelComboBox::~qMRMLLabelComboBox()
-{
-}
+= default;
 
 // ----------------------------------------------------------------
 void qMRMLLabelComboBox::printAdditionalInfo()

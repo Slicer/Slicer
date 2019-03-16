@@ -66,8 +66,7 @@ qMRMLThreeDViewControllerWidgetPrivate::qMRMLThreeDViewControllerWidgetPrivate(
 
 //---------------------------------------------------------------------------
 qMRMLThreeDViewControllerWidgetPrivate::~qMRMLThreeDViewControllerWidgetPrivate()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
@@ -300,8 +299,7 @@ qMRMLThreeDViewControllerWidget::qMRMLThreeDViewControllerWidget(QWidget* parent
 
 // --------------------------------------------------------------------------
 qMRMLThreeDViewControllerWidget::~qMRMLThreeDViewControllerWidget()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewControllerWidget::setThreeDView(qMRMLThreeDView* view)

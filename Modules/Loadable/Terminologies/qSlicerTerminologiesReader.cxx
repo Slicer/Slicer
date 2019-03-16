@@ -48,8 +48,7 @@ qSlicerTerminologiesReader::qSlicerTerminologiesReader(vtkSlicerTerminologiesMod
 
 //-----------------------------------------------------------------------------
 qSlicerTerminologiesReader::~qSlicerTerminologiesReader()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologiesReader::setTerminologiesLogic(vtkSlicerTerminologiesModuleLogic* newTerminologiesLogic)

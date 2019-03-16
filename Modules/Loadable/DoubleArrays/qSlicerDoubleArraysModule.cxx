@@ -40,8 +40,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerDoubleArraysModulePrivate::qSlicerDoubleArraysModulePrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerDoubleArraysModule methods
@@ -55,8 +54,7 @@ qSlicerDoubleArraysModule::qSlicerDoubleArraysModule(QObject* _parent)
 
 //-----------------------------------------------------------------------------
 qSlicerDoubleArraysModule::~qSlicerDoubleArraysModule()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerDoubleArraysModule::helpText()const

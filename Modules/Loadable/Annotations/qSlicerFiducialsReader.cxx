@@ -62,8 +62,7 @@ qSlicerFiducialsReader::qSlicerFiducialsReader(vtkSlicerAnnotationModuleLogic* l
 
 //-----------------------------------------------------------------------------
 qSlicerFiducialsReader::~qSlicerFiducialsReader()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerFiducialsReader::setAnnotationLogic(vtkSlicerAnnotationModuleLogic* logic)

@@ -33,7 +33,7 @@ public:
 
   typedef qSlicerLoadableModule Superclass;
   qSlicerLoadableHelloWorldModule(QObject *parent=nullptr):Superclass(parent){}
-  ~qSlicerLoadableHelloWorldModule() override{}
+  ~qSlicerLoadableHelloWorldModule() override = default;
 
   QString helpText()const override { return QString("helpText"); }
   QString acknowledgementText()const override { return QString("acknowledgementText"); }

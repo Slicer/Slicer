@@ -44,8 +44,7 @@ vtkTestingOutputWindow::vtkTestingOutputWindow()
 
 //-------------------------------------------------------
 vtkTestingOutputWindow::~vtkTestingOutputWindow()
-{
-}
+= default;
 
 //-------------------------------------------------------
 void vtkTestingOutputWindow::DisplayText(const char* text)

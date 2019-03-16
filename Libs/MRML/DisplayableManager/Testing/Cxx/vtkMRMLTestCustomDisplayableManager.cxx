@@ -60,8 +60,7 @@ vtkMRMLTestCustomDisplayableManager::vtkInternal::vtkInternal(vtkMRMLTestCustomD
 
 //---------------------------------------------------------------------------
 vtkMRMLTestCustomDisplayableManager::vtkInternal::~vtkInternal()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 // vtkMRMLTestCustomDisplayableManager methods

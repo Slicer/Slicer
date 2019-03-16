@@ -150,8 +150,7 @@ qSlicerScriptedLoadableModuleFactory::qSlicerScriptedLoadableModuleFactory()
 
 //-----------------------------------------------------------------------------
 qSlicerScriptedLoadableModuleFactory::~qSlicerScriptedLoadableModuleFactory()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 bool qSlicerScriptedLoadableModuleFactory::isValidFile(const QFileInfo& file)const

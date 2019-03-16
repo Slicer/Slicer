@@ -124,8 +124,7 @@ qMRMLSpinBox::qMRMLSpinBox(QWidget* parentWidget)
 
 // --------------------------------------------------------------------------
 qMRMLSpinBox::~qMRMLSpinBox()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qMRMLSpinBox::setQuantity(const QString& quantity)

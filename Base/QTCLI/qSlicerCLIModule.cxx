@@ -54,8 +54,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerCLIModulePrivate::qSlicerCLIModulePrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerCLIModule methods
@@ -68,8 +67,7 @@ qSlicerCLIModule::qSlicerCLIModule(QWidget* _parent):Superclass(_parent)
 
 //-----------------------------------------------------------------------------
 qSlicerCLIModule::~qSlicerCLIModule()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModule::setup()

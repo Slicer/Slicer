@@ -17,13 +17,11 @@ void vtkAnnotationBidimensionalWidget::PrintSelf(ostream& os, vtkIndent indent)
 
 //---------------------------------------------------------------------------
 vtkAnnotationBidimensionalWidget::vtkAnnotationBidimensionalWidget()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 vtkAnnotationBidimensionalWidget::~vtkAnnotationBidimensionalWidget()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 void vtkAnnotationBidimensionalWidget::CreateDefaultRepresentation()

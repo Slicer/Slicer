@@ -24,8 +24,7 @@
 
 //-----------------------------------------------------------------------------
 qSlicerDICOMLibModuleWidgetsAbstractPlugin::qSlicerDICOMLibModuleWidgetsAbstractPlugin()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerDICOMLibModuleWidgetsAbstractPlugin::group() const

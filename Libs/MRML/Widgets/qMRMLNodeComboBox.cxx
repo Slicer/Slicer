@@ -61,8 +61,7 @@ qMRMLNodeComboBoxPrivate::qMRMLNodeComboBoxPrivate(qMRMLNodeComboBox& object)
 
 // --------------------------------------------------------------------------
 qMRMLNodeComboBoxPrivate::~qMRMLNodeComboBoxPrivate()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
@@ -381,8 +380,7 @@ qMRMLNodeComboBox::qMRMLNodeComboBox(qMRMLNodeComboBoxPrivate* pimpl, QWidget* p
 
 // --------------------------------------------------------------------------
 qMRMLNodeComboBox::~qMRMLNodeComboBox()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 void qMRMLNodeComboBox::activateExtraItem(const QModelIndex& index)

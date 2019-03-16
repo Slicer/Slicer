@@ -80,8 +80,7 @@ qMRMLColorTableView::qMRMLColorTableView(QWidget *_parent)
 
 //------------------------------------------------------------------------------
 qMRMLColorTableView::~qMRMLColorTableView()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 qMRMLColorModel* qMRMLColorTableView::colorModel()const

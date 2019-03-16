@@ -44,13 +44,11 @@ vtkStandardNewMacro(vtkSlicerTablesLogic);
 
 //----------------------------------------------------------------------------
 vtkSlicerTablesLogic::vtkSlicerTablesLogic()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkSlicerTablesLogic::~vtkSlicerTablesLogic()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkSlicerTablesLogic::PrintSelf(ostream& os, vtkIndent indent)

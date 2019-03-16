@@ -58,8 +58,7 @@ qSlicerSceneIOOptionsWidget::qSlicerSceneIOOptionsWidget(QWidget* parentWidget)
 
 //-----------------------------------------------------------------------------
 qSlicerSceneIOOptionsWidget::~qSlicerSceneIOOptionsWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerSceneIOOptionsWidget::updateProperties()

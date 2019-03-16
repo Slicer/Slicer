@@ -48,8 +48,7 @@ vtkMRMLSliceLinkLogic::vtkMRMLSliceLinkLogic()
 
 //----------------------------------------------------------------------------
 vtkMRMLSliceLinkLogic::~vtkMRMLSliceLinkLogic()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLinkLogic::BroadcastingEventsOn()

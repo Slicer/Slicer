@@ -69,8 +69,7 @@ qMRMLSceneHierarchyModel::qMRMLSceneHierarchyModel(
 
 //------------------------------------------------------------------------------
 qMRMLSceneHierarchyModel::~qMRMLSceneHierarchyModel()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 int qMRMLSceneHierarchyModel::expandColumn()const

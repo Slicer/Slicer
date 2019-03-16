@@ -72,8 +72,8 @@ public:
   /// or vtkMRMLScene::SceneEventType
   std::map<unsigned long, int> CalledMethods;
 protected:
-  vtkMRMLTestLogic(){}
-  ~vtkMRMLTestLogic() override{}
+  vtkMRMLTestLogic() = default;
+  ~vtkMRMLTestLogic() override = default;
 };
 
 vtkStandardNewMacro(vtkMRMLTestLogic);

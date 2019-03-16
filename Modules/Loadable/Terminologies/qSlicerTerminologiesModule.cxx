@@ -48,8 +48,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerTerminologiesModulePrivate::qSlicerTerminologiesModulePrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerTerminologiesModule methods
@@ -63,8 +62,7 @@ qSlicerTerminologiesModule::qSlicerTerminologiesModule(QObject* _parent)
 
 //-----------------------------------------------------------------------------
 qSlicerTerminologiesModule::~qSlicerTerminologiesModule()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerTerminologiesModule::helpText()const

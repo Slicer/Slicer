@@ -18,8 +18,7 @@ vtkStandardNewMacro(vtkSlicerModuleLogic);
 
 //----------------------------------------------------------------------------
 vtkSlicerModuleLogic::vtkSlicerModuleLogic()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkSlicerModuleLogic::~vtkSlicerModuleLogic()

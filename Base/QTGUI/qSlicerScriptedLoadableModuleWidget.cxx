@@ -70,8 +70,7 @@ qSlicerScriptedLoadableModuleWidgetPrivate::qSlicerScriptedLoadableModuleWidgetP
 
 //-----------------------------------------------------------------------------
 qSlicerScriptedLoadableModuleWidgetPrivate::~qSlicerScriptedLoadableModuleWidgetPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerScriptedLoadableModuleWidget methods

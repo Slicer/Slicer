@@ -36,8 +36,7 @@ class qSlicerBaseQTAppPythonQtDecorators : public QObject
 public:
 
   qSlicerBaseQTAppPythonQtDecorators()
-    {
-    }
+     = default;
 
 public slots:
 

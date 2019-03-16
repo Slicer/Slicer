@@ -58,8 +58,7 @@ qSlicerDoubleArraysReader
 
 //-----------------------------------------------------------------------------
 qSlicerDoubleArraysReader::~qSlicerDoubleArraysReader()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerDoubleArraysReader::setLogic(vtkSlicerDoubleArraysLogic* logic)

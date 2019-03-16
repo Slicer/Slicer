@@ -151,8 +151,7 @@ qSlicerColorsModuleWidget::qSlicerColorsModuleWidget(QWidget* _parent)
 
 //-----------------------------------------------------------------------------
 qSlicerColorsModuleWidget::~qSlicerColorsModuleWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerColorsModuleWidget::setup()

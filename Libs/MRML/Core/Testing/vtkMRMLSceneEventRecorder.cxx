@@ -30,13 +30,11 @@ vtkMRMLSceneEventRecorder *vtkMRMLSceneEventRecorder ::New()
 
 //---------------------------------------------------------------------------
 vtkMRMLSceneEventRecorder::vtkMRMLSceneEventRecorder()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 vtkMRMLSceneEventRecorder::~vtkMRMLSceneEventRecorder()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 void vtkMRMLSceneEventRecorder::Execute(

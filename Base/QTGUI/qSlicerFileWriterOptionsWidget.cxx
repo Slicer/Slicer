@@ -40,8 +40,7 @@ qSlicerFileWriterOptionsWidget
 
 //------------------------------------------------------------------------------
 qSlicerFileWriterOptionsWidget::~qSlicerFileWriterOptionsWidget()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 void qSlicerFileWriterOptionsWidget::setObject(vtkObject* object)

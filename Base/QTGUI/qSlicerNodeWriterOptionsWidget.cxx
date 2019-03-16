@@ -41,8 +41,7 @@ public:
 
 //------------------------------------------------------------------------------
 qSlicerNodeWriterOptionsWidgetPrivate::~qSlicerNodeWriterOptionsWidgetPrivate()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 void qSlicerNodeWriterOptionsWidgetPrivate::setupUi(QWidget* widget)
@@ -64,8 +63,7 @@ qSlicerNodeWriterOptionsWidget::qSlicerNodeWriterOptionsWidget(QWidget* parentWi
 
 //------------------------------------------------------------------------------
 qSlicerNodeWriterOptionsWidget::~qSlicerNodeWriterOptionsWidget()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 bool qSlicerNodeWriterOptionsWidget::isValid()const

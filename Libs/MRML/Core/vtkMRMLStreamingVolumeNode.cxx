@@ -53,8 +53,7 @@ vtkMRMLStreamingVolumeNode::vtkMRMLStreamingVolumeNode()
 
 //-----------------------------------------------------------------------------
 vtkMRMLStreamingVolumeNode::~vtkMRMLStreamingVolumeNode()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 void vtkMRMLStreamingVolumeNode::FrameModifiedCallback(vtkObject *caller, unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))

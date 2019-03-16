@@ -78,8 +78,7 @@ qSlicerSubjectHierarchyModule::qSlicerSubjectHierarchyModule(QObject* _parent)
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyModule::~qSlicerSubjectHierarchyModule()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerSubjectHierarchyModule::helpText()const

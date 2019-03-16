@@ -106,8 +106,7 @@ vtkMRMLApplicationLogic::vtkInternal::vtkInternal(vtkMRMLApplicationLogic* exter
 
 //----------------------------------------------------------------------------
 vtkMRMLApplicationLogic::vtkInternal::~vtkInternal()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::vtkInternal::PropagateVolumeSelection(int layer, int fit)

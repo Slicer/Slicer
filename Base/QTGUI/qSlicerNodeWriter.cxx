@@ -68,8 +68,7 @@ qSlicerNodeWriter::qSlicerNodeWriter(const QString& description,
 
 //----------------------------------------------------------------------------
 qSlicerNodeWriter::~qSlicerNodeWriter()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 QString qSlicerNodeWriter::description()const

@@ -53,8 +53,7 @@ qSlicerSubjectHierarchyModuleWidgetPrivate::qSlicerSubjectHierarchyModuleWidgetP
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyModuleWidgetPrivate::~qSlicerSubjectHierarchyModuleWidgetPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyModuleWidget methods
@@ -68,8 +67,7 @@ qSlicerSubjectHierarchyModuleWidget::qSlicerSubjectHierarchyModuleWidget(QWidget
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyModuleWidget::~qSlicerSubjectHierarchyModuleWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyPluginLogic* qSlicerSubjectHierarchyModuleWidget::pluginLogic()

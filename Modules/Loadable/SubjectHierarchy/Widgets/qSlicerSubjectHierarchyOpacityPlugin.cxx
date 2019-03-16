@@ -95,8 +95,7 @@ void qSlicerSubjectHierarchyOpacityPluginPrivate::init()
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyOpacityPluginPrivate::~qSlicerSubjectHierarchyOpacityPluginPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyOpacityPlugin methods
@@ -114,8 +113,7 @@ qSlicerSubjectHierarchyOpacityPlugin::qSlicerSubjectHierarchyOpacityPlugin(QObje
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyOpacityPlugin::~qSlicerSubjectHierarchyOpacityPlugin()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 QList<QAction*> qSlicerSubjectHierarchyOpacityPlugin::visibilityContextMenuActions()const

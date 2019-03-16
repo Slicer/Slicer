@@ -94,8 +94,7 @@ qMRMLNodeAttributeTableView::qMRMLNodeAttributeTableView(QWidget* _parent)
 
 // --------------------------------------------------------------------------
 qMRMLNodeAttributeTableView::~qMRMLNodeAttributeTableView()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableView::setInspectedNode(vtkMRMLNode* node)

@@ -84,7 +84,7 @@ public:
       this->VolumeActor = vtkSmartPointer<vtkVolume>::New();
       this->IJKToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
     }
-    virtual ~Pipeline() { };
+    virtual ~Pipeline()  = default;
 
     vtkSmartPointer<vtkVolume> VolumeActor;
     vtkSmartPointer<vtkMatrix4x4> IJKToWorldMatrix;

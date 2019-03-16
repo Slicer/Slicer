@@ -163,8 +163,7 @@ qMRMLTableModel::qMRMLTableModel(qMRMLTableModelPrivate* pimpl, QObject *parentO
 
 //------------------------------------------------------------------------------
 qMRMLTableModel::~qMRMLTableModel()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 void qMRMLTableModel::setMRMLTableNode(vtkMRMLTableNode* tableNode)

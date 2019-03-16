@@ -175,7 +175,7 @@ protected:
     {
     this->NumberOfSingletonNodes = 0;
     }
-  ~vtkMRMLSceneCallback() override {};
+  ~vtkMRMLSceneCallback() override  = default;
 
 }; // class vtkMRMLSceneCallback
 

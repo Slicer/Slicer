@@ -105,8 +105,7 @@ public:
     outlinePropertyThin->SetLineWidth(1);
     };
   ~ScissorsPipeline() override
-    {
-    };
+     = default;
 public:
   bool IsDragging;
   vtkSmartPointer<vtkActor2D> Actor;
@@ -1066,8 +1065,7 @@ qSlicerSegmentEditorScissorsEffect::qSlicerSegmentEditorScissorsEffect(QObject* 
 
 //----------------------------------------------------------------------------
 qSlicerSegmentEditorScissorsEffect::~qSlicerSegmentEditorScissorsEffect()
-{
-}
+= default;
 
 //---------------------------------------------------------------------------
 QIcon qSlicerSegmentEditorScissorsEffect::icon()

@@ -65,8 +65,7 @@ vtkSlicerMarkupsWidget::vtkSlicerMarkupsWidget()
 
 //----------------------------------------------------------------------
 vtkSlicerMarkupsWidget::~vtkSlicerMarkupsWidget()
-{
-}
+= default;
 
 //-------------------------------------------------------------------------
 bool vtkSlicerMarkupsWidget::ProcessControlPointMoveStart(vtkMRMLInteractionEventData* eventData)

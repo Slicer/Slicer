@@ -88,13 +88,11 @@ vtkMRMLNodeNewMacro(vtkMRMLSegmentationStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLSegmentationStorageNode::vtkMRMLSegmentationStorageNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkMRMLSegmentationStorageNode::~vtkMRMLSegmentationStorageNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationStorageNode::PrintSelf(ostream& os, vtkIndent indent)

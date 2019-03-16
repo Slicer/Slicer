@@ -57,8 +57,8 @@ template< class TInput1, class TInput2, class TOutput>
 class ConstrainedValueMultiplication
 {
 public:
-  ConstrainedValueMultiplication() {};
-  ~ConstrainedValueMultiplication() {};
+  ConstrainedValueMultiplication()  = default;
+  ~ConstrainedValueMultiplication()  = default;
   bool operator!=( const ConstrainedValueMultiplication & ) const
     {
     return false;
@@ -124,8 +124,8 @@ public:
 #endif
 
 protected:
-  ConstrainedValueMultiplicationImageFilter() {}
-  ~ConstrainedValueMultiplicationImageFilter() override {}
+  ConstrainedValueMultiplicationImageFilter()  = default;
+  ~ConstrainedValueMultiplicationImageFilter() override  = default;
 
 private:
   ConstrainedValueMultiplicationImageFilter(const Self&) = delete;

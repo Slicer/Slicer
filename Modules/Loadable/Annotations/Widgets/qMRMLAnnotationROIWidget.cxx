@@ -90,8 +90,7 @@ qMRMLAnnotationROIWidget::qMRMLAnnotationROIWidget(QWidget* _parent)
 
 // --------------------------------------------------------------------------
 qMRMLAnnotationROIWidget::~qMRMLAnnotationROIWidget()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 vtkMRMLAnnotationROINode* qMRMLAnnotationROIWidget::mrmlROINode()const

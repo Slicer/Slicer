@@ -45,13 +45,11 @@ vtkStandardNewMacro(vtkSlicerSubjectHierarchyModuleLogic);
 
 //----------------------------------------------------------------------------
 vtkSlicerSubjectHierarchyModuleLogic::vtkSlicerSubjectHierarchyModuleLogic()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkSlicerSubjectHierarchyModuleLogic::~vtkSlicerSubjectHierarchyModuleLogic()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkSlicerSubjectHierarchyModuleLogic::PrintSelf(ostream& os, vtkIndent indent)

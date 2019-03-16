@@ -75,8 +75,7 @@ qSlicerCoreCommandOptions::qSlicerCoreCommandOptions():Superclass()
 
 //-----------------------------------------------------------------------------
 qSlicerCoreCommandOptions::~qSlicerCoreCommandOptions()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::parse(const QStringList& arguments)

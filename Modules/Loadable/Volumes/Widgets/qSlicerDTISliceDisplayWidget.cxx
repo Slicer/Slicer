@@ -59,8 +59,7 @@ qSlicerDTISliceDisplayWidgetPrivate
 //-----------------------------------------------------------------------------
 qSlicerDTISliceDisplayWidgetPrivate
 ::~qSlicerDTISliceDisplayWidgetPrivate()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerDTISliceDisplayWidgetPrivate::init()
@@ -138,8 +137,7 @@ qSlicerDTISliceDisplayWidget
 // --------------------------------------------------------------------------
 qSlicerDTISliceDisplayWidget
 ::~qSlicerDTISliceDisplayWidget()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 vtkMRMLDiffusionTensorDisplayPropertiesNode* qSlicerDTISliceDisplayWidget

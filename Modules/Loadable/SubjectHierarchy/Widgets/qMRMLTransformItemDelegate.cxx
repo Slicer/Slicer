@@ -73,8 +73,7 @@ qMRMLTransformItemDelegate::qMRMLTransformItemDelegate(QObject *parent)
 
 //------------------------------------------------------------------------------
 qMRMLTransformItemDelegate::~qMRMLTransformItemDelegate()
-{
-}
+= default;
 
 //------------------------------------------------------------------------------
 void qMRMLTransformItemDelegate::setMRMLScene(vtkMRMLScene* scene)
