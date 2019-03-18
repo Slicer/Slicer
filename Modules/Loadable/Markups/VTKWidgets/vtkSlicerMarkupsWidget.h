@@ -74,7 +74,7 @@ public:
   bool IsPointPreviewed();
 
   /// Add/update a point preview to the current active Markup at the specified position.
-  void UpdatePreviewPoint(const int displayPos[2], const double worldPos[3], const char* associatedNodeID);
+  void UpdatePreviewPoint(const int displayPos[2], const double worldPos[3], const char* associatedNodeID, int positionStatus);
 
   /// Remove the point preview to the current active Markup.
   /// Returns true is preview point existed and now it is removed.

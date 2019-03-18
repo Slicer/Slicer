@@ -245,6 +245,9 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
      << this->SliceProjectionColor[1] << ","
      << this->SliceProjectionColor[2] << ")" << "\n";
   os << indent << "Slice projection Opacity: " << this->SliceProjectionOpacity << "\n";
+
+  os << indent << "Active component type: " << this->ActiveComponentType << "\n";
+  os << indent << "Active component index: " << this->ActiveComponentIndex << "\n";
 }
 
 //---------------------------------------------------------------------------
@@ -324,7 +327,7 @@ void vtkMRMLMarkupsDisplayNode::SetActiveControlPoint(int controlPointIndex)
 int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
   int controlPointIndex, double pointWorld[3],
   double orientationMatrixWorld[9], const char* viewNodeID,
-  const char* associatedNodeID)
+  const char* associatedNodeID, int positionStatus)
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode)
@@ -357,10 +360,18 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
   // to add a new point with a minimum number of events.
   bool wasDisabled = markupsNode->GetDisableModifiedEvent();
   markupsNode->DisableModifiedEventOn();
-  markupsNode->SetAttribute("Markups.MovingInSliceView", viewNodeID);
-  std::ostringstream controlPointIndexStr;
-  controlPointIndexStr << controlPointIndex;
-  markupsNode->SetAttribute("Markups.MovingMarkupIndex", controlPointIndexStr.str().c_str());
+  if (positionStatus == vtkMRMLMarkupsNode::PositionPreview)
+    {
+    markupsNode->SetAttribute("Markups.MovingInSliceView", viewNodeID);
+    std::ostringstream controlPointIndexStr;
+    controlPointIndexStr << controlPointIndex;
+    markupsNode->SetAttribute("Markups.MovingMarkupIndex", controlPointIndexStr.str().c_str());
+  }
+  else
+    {
+    markupsNode->SetAttribute("Markups.MovingInSliceView", "");
+    markupsNode->SetAttribute("Markups.MovingMarkupIndex", "");
+    }
   markupsNode->SetDisableModifiedEvent(wasDisabled);
 
   if (addNewControlPoint)
@@ -374,6 +385,7 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
       {
       controlPoint->AssociatedNodeID = associatedNodeID;
       }
+    controlPoint->PositionStatus = positionStatus;
 
     markupsNode->AddControlPoint(controlPoint);
   }
@@ -381,7 +393,7 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
     {
     // Update existing control point
     markupsNode->SetNthControlPointPositionOrientationWorldFromArray(controlPointIndex,
-      pointWorld, orientationMatrixWorld, associatedNodeID);
+      pointWorld, orientationMatrixWorld, associatedNodeID, positionStatus);
   }
 
   if (activeComponentChanged)

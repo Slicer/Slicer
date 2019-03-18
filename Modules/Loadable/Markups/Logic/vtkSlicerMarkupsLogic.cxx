@@ -439,18 +439,15 @@ std::string vtkSlicerMarkupsLogic::AddNewDisplayNodeForMarkupsNode(vtkMRMLNode *
   // create the display node
   vtkMRMLMarkupsDisplayNode *displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(
     mrmlNode->GetScene()->AddNewNodeByClass("vtkMRMLMarkupsDisplayNode"));
+  if (!displayNode)
+    {
+    vtkErrorMacro("AddNewDisplayNodeForMarkupsNode: error creating new display node");
+    return id;
+    }
+
   // set it from the defaults
   this->SetDisplayNodeToDefaults(displayNode);
   vtkDebugMacro("AddNewDisplayNodeForMarkupsNode: set display node to defaults");
-
-  // add it to the scene
-  //mrmlNode->GetScene()->AddNode(displayNode);
-  vtkMRMLNode *n = mrmlNode->GetScene()->InsertBeforeNode(mrmlNode, displayNode);
-  if (!n)
-    {
-    vtkErrorMacro("AddNewDisplayNodeForMarkupsNode: error on insert before node");
-    return id;
-    }
 
   // get the node id to return
   id = std::string(displayNode->GetID());
@@ -464,9 +461,6 @@ std::string vtkSlicerMarkupsLogic::AddNewDisplayNodeForMarkupsNode(vtkMRMLNode *
     markupsNode->AddAndObserveDisplayNodeID(id.c_str());
     markupsNode->DisableModifiedEventOff();
     }
-
-  // clean up
-  displayNode->Delete();
 
   return id;
 }

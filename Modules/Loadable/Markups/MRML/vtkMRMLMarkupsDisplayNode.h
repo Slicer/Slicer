@@ -93,7 +93,8 @@ public:
   /// updates its position and orientation.
   /// Returns the control point index (different from the input if the input was < 0).
   int UpdateActiveControlPointWorld(int controlPointIndex, double accurateWorldPos[3],
-    double accurateWorldOrientationMatrix[9], const char* viewNodeID, const char* associatedNodeID);
+    double accurateWorldOrientationMatrix[9], const char* viewNodeID,
+    const char* associatedNodeID, int positionStatus);
 
   /// Returns index of active control point if active component type is ComponentControlPoint,
   /// -1 otherwise.

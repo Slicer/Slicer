@@ -154,7 +154,7 @@ bool vtkSlicerMarkupsWidget::ProcessMouseMove(vtkMRMLInteractionEventData* event
   if (state == vtkSlicerMarkupsWidget::WidgetStateDefine)
     {
     const char* associatedNodeID = this->GetAssociatedNodeID(eventData);
-    this->UpdatePreviewPoint(eventData->GetDisplayPosition(), eventData->GetWorldPosition(), associatedNodeID);
+    this->UpdatePreviewPoint(eventData->GetDisplayPosition(), eventData->GetWorldPosition(), associatedNodeID, vtkMRMLMarkupsNode::PositionPreview);
     }
   else if (state == WidgetStateIdle || state == WidgetStateOnWidget)
     {
@@ -359,7 +359,7 @@ bool vtkSlicerMarkupsWidget::ConvertDisplayPositionToWorld(const int displayPos[
 }
 
 //-------------------------------------------------------------------------
-void vtkSlicerMarkupsWidget::UpdatePreviewPoint(const int displayPos[2], const double worldPos[3], const char* associatedNodeID)
+void vtkSlicerMarkupsWidget::UpdatePreviewPoint(const int displayPos[2], const double worldPos[3], const char* associatedNodeID, int positionStatus)
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode)
@@ -386,7 +386,8 @@ void vtkSlicerMarkupsWidget::UpdatePreviewPoint(const int displayPos[2], const d
     }
 
   this->PreviewPointIndex = this->GetMarkupsDisplayNode()->UpdateActiveControlPointWorld(
-    this->PreviewPointIndex, accurateWorldPos, accurateWorldOrientationMatrix, viewNodeID, associatedNodeID);
+    this->PreviewPointIndex, accurateWorldPos, accurateWorldOrientationMatrix, viewNodeID,
+    associatedNodeID, positionStatus);
 }
 
 //-------------------------------------------------------------------------
@@ -1067,7 +1068,7 @@ bool vtkSlicerMarkupsWidget::PlacePoint(vtkMRMLInteractionEventData* eventData)
 
   // Add/update preview point
   const char* associatedNodeID = this->GetAssociatedNodeID(eventData);
-  this->UpdatePreviewPoint(eventData->GetDisplayPosition(), eventData->GetWorldPosition(), associatedNodeID);
+  this->UpdatePreviewPoint(eventData->GetDisplayPosition(), eventData->GetWorldPosition(), associatedNodeID, vtkMRMLMarkupsNode::PositionDefined);
   int controlPointIndex = this->PreviewPointIndex;
   // Convert the preview point to a proper control point
   this->PreviewPointIndex = -1;

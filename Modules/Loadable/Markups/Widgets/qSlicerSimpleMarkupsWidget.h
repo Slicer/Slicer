@@ -155,6 +155,9 @@ protected slots:
   /// Update the GUI to reflect the currently selected markups node.
   void updateWidget();
 
+  /// Update the GUI to reflect the currently selected markups node.
+  void onPointAdded();
+
 signals:
 
   /// The signal is emitted when a different markup node is selected.

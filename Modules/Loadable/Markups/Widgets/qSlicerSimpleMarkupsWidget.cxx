@@ -179,7 +179,8 @@ void qSlicerSimpleMarkupsWidget::setCurrentNode(vtkMRMLNode* currentNode)
 
   // Reconnect the appropriate nodes
   this->qvtkReconnect(d->CurrentMarkupsNode, currentMarkupsNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidget()));
-  this->qvtkReconnect(d->CurrentMarkupsNode, currentMarkupsNode, vtkMRMLMarkupsNode::PointAddedEvent, d->MarkupsFiducialTableWidget, SLOT(scrollToBottom()));
+  this->qvtkReconnect(d->CurrentMarkupsNode, currentMarkupsNode, vtkMRMLMarkupsNode::PointAddedEvent, this, SLOT(onPointAdded()));
+  this->qvtkReconnect(d->CurrentMarkupsNode, currentMarkupsNode, vtkMRMLMarkupsNode::PointRemovedEvent, this, SLOT(updateWidget()));
   d->CurrentMarkupsNode = currentMarkupsNode;
 
   this->updateWidget();
@@ -604,6 +605,15 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
 
   emit updateFinished();
 }
+
+//-----------------------------------------------------------------------------
+void qSlicerSimpleMarkupsWidget::onPointAdded()
+{
+  Q_D(qSlicerSimpleMarkupsWidget);
+  this->updateWidget();
+  d->MarkupsFiducialTableWidget->scrollToBottom();
+}
+
 
 //------------------------------------------------------------------------------
 void qSlicerSimpleMarkupsWidget::setMRMLScene(vtkMRMLScene* scene)

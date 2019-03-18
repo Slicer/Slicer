@@ -90,6 +90,7 @@ public:
       Selected = true;
       Locked = false;
       Visibility = true;
+      PositionStatus = PositionUndefined;
       }
 
     // Positions and orientation in local coordinates.
@@ -108,6 +109,7 @@ public:
     bool Selected;
     bool Locked;
     bool Visibility;
+    int PositionStatus;
     };
 
   typedef std::vector<ControlPoint*> ControlPointsListType;
@@ -165,34 +167,47 @@ public:
   void RemoveAllTexts();
 
   /// Invoke events when control points change, passing the control point index if applicable.
-  /// Invoke the LockModifiedEvent when a markupNode lock status is changed.
-  /// Invoke the LabelFormatModifiedEvent when markupNode label format changes.
-  /// Invoke the PointAddedEvent when adding a new control point to a markups node, event callData is control point index address (int*).
-  /// Invoke the PointRemovedEvent when removing one control point, event callData is control point index address (int*).
-  /// Invoke the AllPointsRemovedEvent when removing all control points.
-  //  Invoke the PointModifiedEvent when any property of a control point is modified, event callData is control point index address (int*).
-  /// Invoke the PointStartInteractionEvent when starting interacting with a control point.
-  /// Invoke the PointEndInteractionEvent when an interaction eith a control point process finishes.
-  /// Invoke the point clicked events when user clicked a control point.
-  /// (caught by the displayable manager to make sure the widgets match the node).
+  /// - LockModifiedEvent: markups node lock status is changed. Modified event is invoked, too.
+  /// - LabelFormatModifiedEvent: markups node label format changed. Modified event is invoked, too.
+  /// - PointAddedEvent: new control point(s) added. Modified event is NOT invoked.
+  /// - PointRemovedEvent: control point(s) deleted. Modified event is NOT invoked.
+  /// - PointModifiedEvent: existing control point(s) modified. Modified event is NOT invoked.
+  /// - PointStartInteractionEvent when starting interacting with a control point.
+  /// - PointEndInteractionEvent when an interaction eith a control point process finishes.
+  /// - PointClickedEvent: Invoke the point clicked events when user clicked a control point.
+  ///
+  /// Event data for Point* events: Event callData is control point index address (int*). If the pointer is nullptr
+  /// then one or more points are added/removed/modified. If the value is -1 then it is not a control point
+  /// but the center point.
+  ///
   enum
   {
     LockModifiedEvent = 19000,
     LabelFormatModifiedEvent,
     PointAddedEvent,
     PointRemovedEvent,
-    AllPointsRemovedEvent,
     PointModifiedEvent,
-    PointStartInteractionEvent, // deprecated (GUI events are moved to display node)
-    PointEndInteractionEvent, // deprecated (GUI events are moved to display node)
-    PointClickedEvent, // deprecated (GUI events are moved to display node)
-    // Event IDs related to markups but used outside
-    MarkupAddedEvent,
-    MarkupRemovedEvent,
+    PointStartInteractionEvent,
+    PointEndInteractionEvent,
+    PointClickedEvent,
+  };
+
+  /// Placement status of a control point.
+  /// - Undefined: position is undefined (coordinate values must not be used).
+  /// - Preview: point is being placed, position is tentative.
+  /// - Defined: position is specified.
+  enum
+  {
+    PositionUndefined,
+    PositionPreview,
+    PositionDefined
   };
 
   /// Clear out the node of all control points
   virtual void RemoveAllControlPoints();
+
+  /// Deprecated. Use RemoveAllControlPoints instead.
+  void RemoveAllMarkups() { this->RemoveAllControlPoints(); };
 
   /// Get the Locked property on the markupNode/list of control points.
   vtkGetMacro(Locked, int);
@@ -211,14 +226,19 @@ public:
   /// Return a cast display node, returns null if none
   vtkMRMLMarkupsDisplayNode *GetMarkupsDisplayNode();
 
-  /// Return true if n is a valid control point, false otherwise
-  /// If failedMethodName is specified and the control point does not exist
-  /// then an error is logged.
-  bool ControlPointExists(int n, const char* failedMethodName = nullptr);
+  /// Return true if n is a valid control point, false otherwise.
+  bool ControlPointExists(int n);
+
+  /// Depreceated. Use ControlPointExists instead.
+  bool MarkupExists(int n) { return this->ControlPointExists(n); }
   /// Return the number of control points that are stored in this node
   int GetNumberOfControlPoints();
+  /// Return the number of control points that are already placed (not being previewed or undefined).
+  int GetNumberOfDefinedControlPoints();
   /// Deprecated. Use GetNumberOfControlPoints() instead.
   int GetNumberOfMarkups() { return this->GetNumberOfControlPoints(); };
+  /// Deprecated. Use GetNumberOfControlPoints() instead.
+  int GetNumberOfPointsInNthMarkup(int) { return this->GetNumberOfControlPoints(); };
   /// Return a pointer to the Nth control point stored in this node, null if n is out of bounds
   ControlPoint* GetNthControlPoint(int n);
   /// Return a pointer to the std::vector of control points stored in this node
@@ -251,9 +271,16 @@ public:
   /// Get the position of the Nth control point
   /// setting the elements of point
   void GetNthControlPointPosition(int pointIndex, double point[3]);
+  double* GetNthControlPointPosition(int pointIndex);
   /// Get the position of the Nth control point in World coordinate system
   /// Returns 0 on failure, 1 on success.
   int GetNthControlPointPositionWorld(int pointIndex, double worldxyz[3]);
+
+  /// Get control point position status (PositionUndefined, PositionPreview, PositionDefined)
+  int GetNthControlPointPositionStatus(int pointIndex);
+
+  /// Set control point status to undefined.
+  void UnsetNthControlPointPosition(int pointIndex);
 
   /// Remove Nth Control Point
   void RemoveNthControlPoint(int pointIndex);
@@ -277,21 +304,21 @@ public:
   void SetNthControlPointPositionFromPointer(const int pointIndex, const double *pos);
   /// Set of the Nth control point position from an array
   /// \sa SetNthControlPointPosition
-  void SetNthControlPointPositionFromArray(const int pointIndex, const double pos[3]);
+  void SetNthControlPointPositionFromArray(const int pointIndex, const double pos[3], int positionStatus = PositionDefined);
   /// Set of the Nth control point position from coordinates
   /// \sa SetNthControlPointPositionFromPointer, SetNthControlPointPositionFromArray
-  void SetNthControlPointPosition(const int pointIndex, const double x, const double y, const double z);
+  void SetNthControlPointPosition(const int pointIndex, const double x, const double y, const double z, int positionStatus = PositionDefined);
   /// Set of the Nth control point position using World coordinate system
   /// Calls SetNthControlPointPosition after transforming the passed in coordinate
   /// \sa SetNthControlPointPosition
   void SetNthControlPointPositionWorld(const int pointIndex, const double x, const double y, const double z);
   /// Set of the Nth control point position from an array using World coordinate system
   /// \sa SetNthControlPointPosition
-  void SetNthControlPointPositionWorldFromArray(const int pointIndex, const double pos[3]);
+  void SetNthControlPointPositionWorldFromArray(const int pointIndex, const double pos[3], int positionStatus = PositionDefined);
   /// Set of the Nth control point position and orientation from an array using World coordinate system.
   /// \sa SetNthControlPointPosition
   void SetNthControlPointPositionOrientationWorldFromArray(const int pointIndex,
-    const double pos[3], const double orientationMatrix[9], const char* associatedNodeID);
+    const double pos[3], const double orientationMatrix[9], const char* associatedNodeID, int positionStatus = PositionDefined);
 
   /// Get the position of the center
   /// returning it as a vtkVector3d, return (0,0,0) if not found
@@ -352,7 +379,11 @@ public:
   void SetNthMarkupAssociatedNodeID(int n, std::string id) { this->SetNthControlPointAssociatedNodeID(n,id); }
 
   /// Get the id for the Nth control point
-  std::string GetNthControlPointID(int n = 0);
+  std::string GetNthControlPointID(int n);
+
+  /// Deprecated. Use GetNthControlPointID instead.
+  std::string GetNthMarkupID(int n = 0) { return this->GetNthControlPointID(n); }
+
   /// Get the Nth control point index based on it's ID
   int GetNthControlPointIndexByID(const char* controlPointID);
   /// Get the Nth control point based on it's ID
@@ -375,7 +406,6 @@ public:
   /// list as a whole is turned unlocked.
   /// \sa vtMRMLMarkupsNode::SetLocked
   void SetNthControlPointLocked(int n, bool flag);
-
 
   /// Deprecated. Use GetNthControlPointLocked instead.
   bool GetNthMarkupLocked(int n = 0) { return this->GetNthControlPointLocked(n); };
@@ -491,6 +521,11 @@ protected:
   void operator=(const vtkMRMLMarkupsNode&);
 
   vtkSmartPointer<vtkStringArray> TextList;
+
+  /// Utility function to be used internally for safe access to a control point's data.
+  /// Return a pointer to the Nth control point stored in this node, nullptr if n is out of bounds
+  /// If control point does not exist then an error is logged with the supplied failedMethodName.
+  ControlPoint* GetNthControlPointCustomLog(int n, const char* failedMethodName);
 
   /// Set the id of the nth control point.
   /// The goal is to keep this ID unique, so it's

@@ -1213,9 +1213,10 @@ vtkMRMLNode* vtkMRMLScene::AddNode(vtkMRMLNode *n)
   // The caller should make sure the node has not been added yet.
   if (this->IsNodePresent(n) != 0)
     {
-    vtkErrorMacro("AddNode: Node " << n->GetClassName()<< "/"
-                    << n->GetName() << "/" << n->GetID()
-                    << "[" << n << "]" << " already added");
+    vtkErrorMacro("AddNode: Node " << n->GetClassName() << "/"
+      << (n->GetName() ? n->GetName() : "(undefined)") << "/"
+      << (n->GetID() ? n->GetID() : "(undefined)")
+      << "[" << n << "]" << " already added");
     }
 #endif
   // We need to know if the node will be actually added to the scene before
@@ -1950,6 +1951,19 @@ vtkMRMLNode* vtkMRMLScene::InsertAfterNode(vtkMRMLNode *item, vtkMRMLNode *n)
     {
     return nullptr;
     }
+#ifndef NDEBUG
+  // Since calling IsNodePresent is costly, a "developer hint" is printed only
+  // if build as debug. We can't exit here as the release would then be
+  // different from debug.
+  // The caller should make sure the node has not been added yet.
+  if (this->IsNodePresent(n) != 0)
+    {
+    vtkErrorMacro("InsertAfterNode: Node " << n->GetClassName() << "/"
+      << (n->GetName() ? n->GetName() : "(undefined)") << "/"
+      << (n->GetID() ? n->GetID() : "(undefined)")
+      << "[" << n << "]" << " already added");
+    }
+#endif
   if (n->GetSingletonTag() != nullptr)
     {
     vtkDebugMacro("InsertAfterNode: node is a singleton, not inserting after item, just calling AddNode");
@@ -2033,6 +2047,19 @@ vtkMRMLNode* vtkMRMLScene::InsertBeforeNode(vtkMRMLNode *item, vtkMRMLNode *n)
     {
     return nullptr;
     }
+#ifndef NDEBUG
+  // Since calling IsNodePresent is costly, a "developer hint" is printed only
+  // if build as debug. We can't exit here as the release would then be
+  // different from debug.
+  // The caller should make sure the node has not been added yet.
+  if (this->IsNodePresent(n) != 0)
+    {
+    vtkErrorMacro("InsertBeforeNode: Node " << n->GetClassName() << "/"
+      << (n->GetName() ? n->GetName() : "(undefined)") << "/"
+      << (n->GetID() ? n->GetID() : "(undefined)")
+      << "[" << n << "]" << " already added");
+    }
+#endif
   if (n->GetSingletonTag() != nullptr)
     {
     vtkDebugMacro("InsertBeforeNode: node is a singleton, not inserting before item, just calling AddNode");

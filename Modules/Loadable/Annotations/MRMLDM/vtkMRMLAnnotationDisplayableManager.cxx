@@ -319,6 +319,8 @@ void vtkMRMLAnnotationDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* new
 
   if (newScene)
     {
+    this->RemoveObserversFromInteractionNode();
+    this->RemoveObserversFromSelectionNode();
     this->AddObserversToInteractionNode();
     this->AddObserversToSelectionNode();
     }
@@ -427,6 +429,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node
 
   if (node->IsA("vtkMRMLInteractionNode"))
     {
+    this->RemoveObserversFromInteractionNode();
     this->AddObserversToInteractionNode();
     return;
     }
