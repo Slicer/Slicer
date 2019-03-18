@@ -2533,7 +2533,6 @@ void vtkSlicerAnnotationModuleLogic::JumpSlicesToAnnotationCoordinate(const char
     return;
     }
 
-  this->GetMRMLScene()->SaveStateForUndo();
   // TODO for now only consider the first control point
   double *rasCoordinates = controlpointsNode->GetControlPointCoordinates(0);
   if (rasCoordinates)

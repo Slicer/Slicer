@@ -267,7 +267,6 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::LoadSegmentationFrom
   segmentationNode->SetName(uname.c_str());
   std::string storageUName = uname + "_Storage";
   storageNode->SetName(storageUName.c_str());
-  this->GetMRMLScene()->SaveStateForUndo();
   this->GetMRMLScene()->AddNode(storageNode.GetPointer());
 
   segmentationNode->SetScene(this->GetMRMLScene());

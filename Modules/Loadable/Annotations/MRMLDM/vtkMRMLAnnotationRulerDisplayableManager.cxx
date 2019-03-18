@@ -128,7 +128,7 @@ public:
         // PropagateWidgetToMRML to update the node one last time
         if (this->m_Node->GetScene())
           {
-          this->m_Node->GetScene()->SaveStateForUndo(this->m_Node);
+          this->m_Node->GetScene()->SaveStateForUndo();
           }
         }
       // the interaction with the widget ended, now propagate the changes to MRML

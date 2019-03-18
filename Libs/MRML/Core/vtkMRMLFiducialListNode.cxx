@@ -1812,11 +1812,6 @@ void vtkMRMLFiducialListNode::RenumberFiducials(int startFrom)
     return;
     }
 
-  // save state for undo
-  if (this->GetScene())
-    {
-    this->GetScene()->SaveStateForUndo(this);
-    }
   for (int p = 0, n = startFrom; p < this->GetNumberOfFiducials(); p++, n++)
     {
     std::string oldName = this->GetNthFiducialLabelText(p);
@@ -1843,11 +1838,6 @@ void vtkMRMLFiducialListNode::RenameFiducials(const char *newName)
     return;
     }
 
-  // save state for undo
-  if (this->GetScene())
-    {
-    this->GetScene()->SaveStateForUndo(this);
-    }
   for (int p = 0; p < this->GetNumberOfFiducials(); p++)
     {
     std::string oldName = this->GetNthFiducialLabelText(p);

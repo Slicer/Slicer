@@ -340,8 +340,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     /*
    this->setWindowTitle(
    "Annotation Properties");
-   this->SaveStateForUndo(
-   node);
+   this->SaveStateForUndo();
 
    // COORDINATES
    QDoubleValidator *doubleVal = new QDoubleValidator(
@@ -1080,11 +1079,7 @@ void qSlicerAnnotationModulePropertyDialog::SaveStateForUndo(vtkMRMLNode* node)
    vtkMRMLAnnotationFiducialNode::SafeDownCast(node);
    fiducialNode->CreateAnnotationTextDisplayNode();
    fiducialNode->CreateAnnotationPointDisplayNode();
-   fiducialNode->GetScene()->SaveStateForUndo(fiducialNode);
-   fiducialNode->GetAnnotationTextDisplayNode()->GetScene()->SaveStateForUndo(
-   fiducialNode->GetAnnotationTextDisplayNode());
-   fiducialNode->GetAnnotationPointDisplayNode()->GetScene()->SaveStateForUndo(
-   fiducialNode->GetAnnotationPointDisplayNode());
+   fiducialNode->GetScene()->SaveStateForUndo();
    }
    */
 }

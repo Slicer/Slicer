@@ -83,7 +83,6 @@ void vtkSlicerFiducialsLogic::AddFiducialListSelected()
             this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   if (selnode && node)
     {
-    this->GetMRMLScene()->SaveStateForUndo(selnode);
     selnode->SetActiveFiducialListID(node->GetID());
     }
   else
@@ -95,8 +94,6 @@ void vtkSlicerFiducialsLogic::AddFiducialListSelected()
 //----------------------------------------------------------------------------
 vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::AddFiducialList()
 {
-  this->GetMRMLScene()->SaveStateForUndo();
-
   vtkSmartPointer<vtkMRMLNode> node = vtkSmartPointer<vtkMRMLNode>::Take(
     this->GetMRMLScene()->CreateNodeByClass("vtkMRMLFiducialListNode"));
   vtkMRMLFiducialListNode* fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(node);
@@ -140,7 +137,6 @@ int vtkSlicerFiducialsLogic::AddFiducialSelected (float x, float y, float z, int
     }
 
   // add a fiducial to the selected list
-  this->GetMRMLScene()->SaveStateForUndo(flist);
   vtkDebugMacro("AddFiducialSelected: calling add fiducial on list " << flist->GetName());
   index = flist->AddFiducialWithXYZ(x, y, z, selected);
   if (index < 0)
@@ -194,8 +190,6 @@ int vtkSlicerFiducialsLogic::AddFiducialPicked (float x, float y, float z, int s
 //----------------------------------------------------------------------------
 vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::LoadFiducialList(const char* path)
 {
-  this->GetMRMLScene()->SaveStateForUndo();
-
   vtkSmartPointer<vtkMRMLNode> node = vtkSmartPointer<vtkMRMLNode>::Take(
     this->GetMRMLScene()->CreateNodeByClass("vtkMRMLFiducialListNode"));
   vtkMRMLFiducialListNode *listNode = vtkMRMLFiducialListNode::SafeDownCast(node);

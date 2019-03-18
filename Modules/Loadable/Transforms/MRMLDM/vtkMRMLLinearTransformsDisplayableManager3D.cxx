@@ -56,6 +56,69 @@ const double DEFAULT_SCALE[3] = {100.0, 100.0, 100.0};
 vtkStandardNewMacro ( vtkMRMLLinearTransformsDisplayableManager3D );
 
 //---------------------------------------------------------------------------
+// vtkMRMLLinearTransformsDisplayableManager3D Callback
+class vtkLinearTransformWidgetCallback : public vtkCommand
+{
+public:
+  static vtkLinearTransformWidgetCallback *New()
+  { return new vtkLinearTransformWidgetCallback; }
+
+  vtkLinearTransformWidgetCallback()
+    : Widget(NULL)
+    , Node(NULL)
+    , DisplayableManager(NULL)
+  {
+  }
+
+  virtual void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void *callData)
+  {
+    if ((event == vtkCommand::StartInteractionEvent) || (event == vtkCommand::EndInteractionEvent) || (event == vtkCommand::InteractionEvent))
+      {
+      // sanity checks
+      if (!this->DisplayableManager)
+        {
+        return;
+        }
+      if (!this->Node)
+        {
+        return;
+        }
+      if (!this->Widget)
+        {
+        return;
+        }
+      // sanity checks end
+      }
+
+    if (event == vtkCommand::StartInteractionEvent)
+      {
+      // save the state of the node when starting interaction
+      if (this->Node->GetScene())
+        {
+        this->Node->GetScene()->SaveStateForUndo();
+        }
+      }
+  }
+
+  void SetWidget(vtkAbstractWidget *w)
+    {
+    this->Widget = w;
+    }
+  void SetNode(vtkMRMLTransformNode *n)
+    {
+    this->Node = n;
+    }
+  void SetDisplayableManager(vtkMRMLLinearTransformsDisplayableManager3D* dm)
+    {
+    this->DisplayableManager = dm;
+    }
+
+  vtkAbstractWidget * Widget;
+  vtkMRMLTransformNode* Node;
+  vtkMRMLLinearTransformsDisplayableManager3D* DisplayableManager;
+};
+
+//---------------------------------------------------------------------------
 class vtkMRMLLinearTransformsDisplayableManager3D::vtkInternal
 {
 public:
@@ -282,6 +345,16 @@ void vtkMRMLLinearTransformsDisplayableManager3D::vtkInternal::AddDisplayNode(vt
   pipeline->Widget->SetInteractor(this->External->GetInteractor());
   pipeline->Widget->SetCurrentRenderer(this->External->GetRenderer());
   this->WidgetMap.insert( std::make_pair(pipeline->Widget, displayNode) );
+
+  // add the callback
+  vtkLinearTransformWidgetCallback *widgetCallback = vtkLinearTransformWidgetCallback::New();
+  widgetCallback->SetNode(mNode);
+  widgetCallback->SetWidget(pipeline->Widget);
+  widgetCallback->SetDisplayableManager(this->External);
+  pipeline->Widget->AddObserver(vtkCommand::StartInteractionEvent, widgetCallback);
+  pipeline->Widget->AddObserver(vtkCommand::EndInteractionEvent, widgetCallback);
+  pipeline->Widget->AddObserver(vtkCommand::InteractionEvent, widgetCallback);
+  widgetCallback->Delete();
 
   // Update cached matrices. Calls UpdateDisplayNodePipeline
   this->UpdateDisplayableTransforms(mNode, true);

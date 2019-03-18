@@ -296,8 +296,6 @@ void vtkSlicerSceneViewsModuleLogic::RestoreSceneView(const char* id, bool remov
     return;
     }
 
-  this->GetMRMLScene()->SaveStateForUndo();
-
   viewNode->RestoreScene(removeNodes);
 }
 

@@ -214,6 +214,10 @@ public:
   /// Get the index of teh closest control point to the world coordinates
   int GetClosestControlPointIndexToPositionWorld(vtkMRMLMarkupsNode *markupsNode, double pos[3]);
 
+  vtkSetMacro(AutoCreateDisplayNodes, bool);
+  vtkGetMacro(AutoCreateDisplayNodes, bool);
+  vtkBooleanMacro(AutoCreateDisplayNodes, bool);
+
 protected:
   vtkSlicerMarkupsLogic();
   ~vtkSlicerMarkupsLogic() override;
@@ -236,6 +240,8 @@ private:
   /// keep a markups display node with default values that can be updated from
   /// the application settings
   vtkMRMLMarkupsDisplayNode *DefaultMarkupsDisplayNode;
+
+  bool AutoCreateDisplayNodes;
 };
 
 #endif

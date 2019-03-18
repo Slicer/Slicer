@@ -226,8 +226,6 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
     std::string uname( this->GetMRMLScene()->GetUniqueNameByString(baseName.c_str()));
     modelNode->SetName(uname.c_str());
 
-    this->GetMRMLScene()->SaveStateForUndo();
-
     this->GetMRMLScene()->AddNode(storageNode.GetPointer());
     this->GetMRMLScene()->AddNode(displayNode.GetPointer());
 
@@ -356,8 +354,6 @@ bool vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *mod
     {
     return false;
     }
-
-  this->GetMRMLScene()->SaveStateForUndo();
 
   this->GetMRMLScene()->AddNode(storageNode.GetPointer());
 

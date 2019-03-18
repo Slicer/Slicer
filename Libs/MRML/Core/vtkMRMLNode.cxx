@@ -48,7 +48,7 @@ vtkMRMLNode::vtkMRMLNode()
   , SingletonTag(nullptr)
   , DisableModifiedEvent(0)
   , ModifiedEventPending(0)
-
+  , UndoEnabled(false)
 {
   // Set up callbacks
   this->MRMLCallbackCommand = vtkCallbackCommand::New();
@@ -133,7 +133,7 @@ void vtkMRMLNode::Copy(vtkMRMLNode *node)
     {
     vtkMRMLCopyStringMacro(SingletonTag);
     }
-
+  vtkMRMLCopyBooleanMacro(UndoEnabled);
   vtkMRMLCopyEndMacro();
 
   this->Attributes = node->Attributes;
@@ -303,6 +303,7 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBooleanMacro(HideFromEditors);
   vtkMRMLPrintBooleanMacro(Selectable);
   vtkMRMLPrintBooleanMacro(Selected);
+  vtkMRMLPrintBooleanMacro(UndoEnabled)
   vtkMRMLPrintEndMacro();
 
   if (!this->Attributes.empty())
@@ -363,6 +364,7 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(selectable, Selectable);
   vtkMRMLReadXMLBooleanMacro(selected, Selected);
   vtkMRMLReadXMLStringMacro(singletonTag, SingletonTag);
+  vtkMRMLReadXMLBooleanMacro(undoEnabled, UndoEnabled)
   vtkMRMLReadXMLEndMacro();
 
   std::map<std::string, std::string> references;
@@ -469,6 +471,12 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(selectable, Selectable);
   vtkMRMLWriteXMLBooleanMacro(selected, Selected);
   vtkMRMLWriteXMLStringMacro(singletonTag, SingletonTag);
+  if (this->UndoEnabled)
+    {
+    // Only write out UndoEnabled flag in case of non-default value is used,
+    // to keep the written XML file cleaner.
+    vtkMRMLWriteXMLBooleanMacro(undoEnabled, UndoEnabled);
+    }
   vtkMRMLWriteXMLEndMacro();
 
   if (this->Attributes.size())

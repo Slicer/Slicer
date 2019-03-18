@@ -1036,8 +1036,6 @@ vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic::AddVolumePropertyFromF
 
     vpNode->SetName(uname.c_str());
 
-    this->GetMRMLScene()->SaveStateForUndo();
-
     vpNode->SetScene(this->GetMRMLScene());
     vpStorageNode->SetScene(this->GetMRMLScene());
 

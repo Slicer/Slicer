@@ -91,6 +91,7 @@ public:
 //----------------------------------------------------------------------------
 vtkSlicerMarkupsLogic::vtkSlicerMarkupsLogic()
 {
+  this->AutoCreateDisplayNodes = true;
   this->DefaultMarkupsDisplayNode = vtkMRMLMarkupsDisplayNode::New();
   // link an observation of the modified event on the display node to trigger
   // a modified event on the logic so any settings panel can get updated
@@ -270,7 +271,7 @@ void vtkSlicerMarkupsLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
     return;
     }
 
-  if (markupsNode->GetDisplayNode() == nullptr)
+  if (markupsNode->GetDisplayNode() == nullptr && this->AutoCreateDisplayNodes)
     {
     // add a display node
     int modifyFlag = markupsNode->StartModify();
@@ -436,7 +437,8 @@ std::string vtkSlicerMarkupsLogic::AddNewDisplayNodeForMarkupsNode(vtkMRMLNode *
     }
 
   // create the display node
-  vtkMRMLMarkupsDisplayNode *displayNode = vtkMRMLMarkupsDisplayNode::New();
+  vtkMRMLMarkupsDisplayNode *displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(
+    mrmlNode->GetScene()->AddNewNodeByClass("vtkMRMLMarkupsDisplayNode"));
   // set it from the defaults
   this->SetDisplayNodeToDefaults(displayNode);
   vtkDebugMacro("AddNewDisplayNodeForMarkupsNode: set display node to defaults");
@@ -579,7 +581,6 @@ void vtkSlicerMarkupsLogic::JumpSlicesToLocation(double x, double y, double z, b
     }
 
   // save the whole state as iterating over all slice nodes
-  this->GetMRMLScene()->SaveStateForUndo();
   int jumpMode = centered ? vtkMRMLSliceNode::CenteredJumpSlice: vtkMRMLSliceNode::OffsetJumpSlice;
   vtkMRMLSliceNode::JumpAllSlices(this->GetMRMLScene(), x, y, z, jumpMode, viewGroup, exclude);
 }
