@@ -269,6 +269,7 @@ class ScriptedLoadableModuleLogic():
       return
 
     node = slicer.mrmlScene.CreateNodeByClass("vtkMRMLScriptedModuleNode")
+    node.UnRegister(None) # object is owned by the Python variable now
     if self.isSingletonParameterNode:
       node.SetSingletonTag( self.moduleName )
     # Add module name in an attribute to allow filtering in node selector widgets
