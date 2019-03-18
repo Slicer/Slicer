@@ -379,9 +379,10 @@ bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UseDisplayNode(vtkMR
 //---------------------------------------------------------------------------
 bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::IsVisible(vtkMRMLSegmentationDisplayNode* displayNode)
 {
-  return displayNode
+  return displayNode && displayNode->GetVisibility() && displayNode->GetVisibility2D()
       && displayNode->GetVisibility(this->External->GetMRMLSliceNode()->GetID())
-      && (displayNode->GetVisibility2DOutline() || displayNode->GetVisibility2DFill());
+      && (displayNode->GetVisibility2DOutline() || displayNode->GetVisibility2DFill())
+      && (displayNode->GetOpacity2DOutline() > 0 || displayNode->GetOpacity2DFill() > 0);
 }
 
 //---------------------------------------------------------------------------

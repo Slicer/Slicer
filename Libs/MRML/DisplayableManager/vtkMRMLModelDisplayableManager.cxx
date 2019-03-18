@@ -880,7 +880,8 @@ bool vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
       updateMRML = true;
       break;
       }
-    bool visible = (dnode->GetVisibility() == 1) && this->IsModelDisplayable(dnode);
+    bool visible =
+      (dnode->GetVisibility() == 1) && (dnode->GetVisibility3D() == 1) && this->IsModelDisplayable(dnode);
     bool hasActor =
       this->Internal->DisplayedActors.find(dnode->GetID()) != this->Internal->DisplayedActors.end();
     // If the displayNode is visible and doesn't have actors yet, then request
@@ -1102,7 +1103,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelMesh(vtkMRMLDisplayableNode *dis
     vtkProp3D* prop = nullptr;
 
     int clipping = displayNode->GetClipping();
-    int visibility = displayNode->GetVisibility();
+    int visibility = (displayNode->GetVisibility() == 1 && displayNode->GetVisibility3D() == 1 ? 1 : 0);
     vtkAlgorithmOutput *meshConnection = nullptr;
     if (this->IsModelDisplayable(modelDisplayNode))
       {
@@ -1379,7 +1380,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelHierarchies()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::UpdateModelHierarchyVisibility(vtkMRMLModelHierarchyNode* mhnode, int visibility )
+void vtkMRMLModelDisplayableManager::UpdateModelHierarchyVisibility(vtkMRMLModelHierarchyNode* mhnode, int visibility)
 {
   if (!mhnode)
     {
@@ -1726,7 +1727,8 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
     vtkImageActor *imageActor = vtkImageActor::SafeDownCast(prop);
     prop->SetUserMatrix(matrixTransformToWorld.GetPointer());
 
-    bool visible = modelDisplayNode->GetVisibility(this->GetMRMLViewNode()->GetID());
+    bool visible = modelDisplayNode->GetVisibility(this->GetMRMLViewNode()->GetID())
+      && modelDisplayNode->GetVisibility() && modelDisplayNode->GetVisibility3D();
     prop->SetVisibility(visible);
     this->Internal->DisplayedVisibility[modelDisplayNode->GetID()] = visible;
 

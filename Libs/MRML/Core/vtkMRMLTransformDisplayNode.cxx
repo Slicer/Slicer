@@ -57,7 +57,9 @@ vtkMRMLTransformDisplayNode::vtkMRMLTransformDisplayNode()
   // Don't show transform nodes by default
   // to allow the users to adjust visualization parameters first
   this->Visibility = 0;
-  this->SliceIntersectionVisibility = 0;
+  this->Visibility2D = 0;
+  // If global visibility is turned on then 3D will show up
+  this->Visibility3D = 1;
 
   this->ScalarVisibility=1;
   this->SetActiveScalarName(DISPLACEMENT_MAGNITUDE_SCALAR_NAME);
@@ -299,7 +301,7 @@ void vtkMRMLTransformDisplayNode::ProcessMRMLEvents ( vtkObject *caller, unsigne
     && (event==vtkCommand::ModifiedEvent || event==vtkMRMLTransformableNode::TransformModifiedEvent)
     && caller==GetGlyphPointsNode()
     && this->VisualizationMode == VIS_MODE_GLYPH
-    && (this->Visibility || this->GetSliceIntersectionVisibility()) )
+    && (this->Visibility || this->GetVisibility2D()) )
     {
     // update visualization if glyph points are changed
     this->Modified();

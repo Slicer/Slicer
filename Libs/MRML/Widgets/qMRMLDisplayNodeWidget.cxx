@@ -68,6 +68,8 @@ void qMRMLDisplayNodeWidgetPrivate::init()
                    q, SLOT(setSelected(bool)));
   QObject::connect(this->ClippingCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setClipping(bool)));
+  QObject::connect(this->ThreeDVisibilityCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(set3DVisible(bool)));
   QObject::connect(this->SliceIntersectionVisibilityCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setSliceIntersectionVisible(bool)));
   QObject::connect(this->SliceIntersectionThicknessSpinBox, SIGNAL(valueChanged(int)),
@@ -203,6 +205,17 @@ void qMRMLDisplayNodeWidget::setClippingVisible(bool visible)
 }
 
 //------------------------------------------------------------------------------
+void qMRMLDisplayNodeWidget::setThreeDVisible(bool visible)
+{
+  Q_D(qMRMLDisplayNodeWidget);
+  if (!d->MRMLDisplayNode.GetPointer())
+    {
+    return;
+    }
+  d->MRMLDisplayNode->SetVisibility3D(visible);
+}
+
+//------------------------------------------------------------------------------
 void qMRMLDisplayNodeWidget::setSliceIntersectionVisible(bool visible)
 {
   Q_D(qMRMLDisplayNodeWidget);
@@ -210,7 +223,14 @@ void qMRMLDisplayNodeWidget::setSliceIntersectionVisible(bool visible)
     {
     return;
     }
-  d->MRMLDisplayNode->SetSliceIntersectionVisibility(visible);
+  d->MRMLDisplayNode->SetVisibility2D(visible);
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLDisplayNodeWidget::threeDVisible()const
+{
+  Q_D(const qMRMLDisplayNodeWidget);
+  return d->ThreeDVisibilityCheckBox->isChecked();
 }
 
 //------------------------------------------------------------------------------
@@ -218,6 +238,13 @@ bool qMRMLDisplayNodeWidget::sliceIntersectionVisible()const
 {
   Q_D(const qMRMLDisplayNodeWidget);
   return d->SliceIntersectionVisibilityCheckBox->isChecked();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLDisplayNodeWidget::setThreeDVisibleVisible(bool visible)
+{
+  Q_D(qMRMLDisplayNodeWidget);
+  d->ThreeDVisibilityCheckBox->setVisible(visible);
 }
 
 //------------------------------------------------------------------------------
@@ -291,8 +318,10 @@ void qMRMLDisplayNodeWidget::updateWidgetFromMRML()
   d->SelectedCheckBox->setEnabled(d->MRMLDisplayNode->GetSelectable());
   d->SelectedCheckBox->setChecked(d->MRMLDisplayNode->GetSelected());
   d->ClippingCheckBox->setChecked(d->MRMLDisplayNode->GetClipping());
+  d->ThreeDVisibilityCheckBox->setChecked(
+    d->MRMLDisplayNode->GetVisibility3D());
   d->SliceIntersectionVisibilityCheckBox->setChecked(
-    d->MRMLDisplayNode->GetSliceIntersectionVisibility());
+    d->MRMLDisplayNode->GetVisibility2D());
   d->SliceIntersectionThicknessSpinBox->setValue(
     d->MRMLDisplayNode->GetSliceIntersectionThickness());
   d->SliceIntersectionOpacitySlider->setValue(

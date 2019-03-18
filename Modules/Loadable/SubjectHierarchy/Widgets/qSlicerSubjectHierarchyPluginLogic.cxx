@@ -35,6 +35,7 @@
 #include "qSlicerSubjectHierarchyRegisterPlugin.h"
 #include "qSlicerSubjectHierarchyFolderPlugin.h"
 #include "qSlicerSubjectHierarchyOpacityPlugin.h"
+#include "qSlicerSubjectHierarchyVisibilityPlugin.h"
 
 // Qt includes
 #include <QDebug>
@@ -100,6 +101,8 @@ void qSlicerSubjectHierarchyPluginLogic::registerCorePlugins()
     new qSlicerSubjectHierarchyRegisterPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchyOpacityPlugin());
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
+    new qSlicerSubjectHierarchyVisibilityPlugin());
 }
 
 //-----------------------------------------------------------------------------

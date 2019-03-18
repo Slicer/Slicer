@@ -2711,21 +2711,6 @@ void vtkMRMLSubjectHierarchyNode::SetDisplayVisibilityForBranch(vtkIdType itemID
       displayableNode->SetDisplayVisibility(visible);
       this->Internal->EventsDisabled = wereEventsDisabled;
 
-      // Set slice intersection visibility through display node if it's enabled in the default node
-      displayNode = displayableNode->GetDisplayNode();
-      if (displayNode)
-        {
-        bool sliceIntersectionOnByDefault = true;
-        vtkMRMLDisplayNode* defaultDisplayNode = vtkMRMLDisplayNode::SafeDownCast(
-          displayNode->GetScene()->GetDefaultNodeByClass(displayNode->GetClassName()) );
-        if (defaultDisplayNode)
-          {
-          sliceIntersectionOnByDefault = defaultDisplayNode->GetSliceIntersectionVisibility();
-          }
-        displayNode->SetSliceIntersectionVisibility(visible && sliceIntersectionOnByDefault);
-        }
-      displayableNode->Modified();
-
       // Collect all parents
       vtkIdType itemForDisplayableNode = this->GetItemByDataNode(displayableNode);
       if (itemForDisplayableNode == INVALID_ITEM_ID)

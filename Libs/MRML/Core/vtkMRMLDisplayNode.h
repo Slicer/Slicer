@@ -233,6 +233,32 @@ public:
   /// \sa Visibility, ViewNodeIDs
   virtual bool GetVisibility(const char* viewNodeID);
 
+  /// Set the 2D visibility of the display node.
+  /// \sa Visibility2D, GetVisibility2D(),
+  /// Visibility2DOn(), Visibility2DOff()
+  vtkSetMacro(Visibility2D, int);
+  /// Get the 2D visibility of the display node.
+  /// \sa Visibility2D, SetVisibility2D(),
+  /// Visibility2DOn(), Visibility2DOff()
+  vtkGetMacro(Visibility2D, int);
+  /// Set the 2D visibility of the display node.
+  /// \sa Visibility2D, SetVisibility2D(),
+  /// GetVisibility2D(),
+  vtkBooleanMacro(Visibility2D, int);
+
+  /// Set the 3D visibility of the display node.
+  /// \sa Visibility3D, GetVisibility3D(),
+  /// Visibility3DOn(), Visibility3DOff()
+  vtkSetMacro(Visibility3D, int);
+  /// Get the 3D visibility of the display node.
+  /// \sa Visibility3D, SetVisibility3D(),
+  /// Visibility3DOn(), Visibility3DOff()
+  vtkGetMacro(Visibility3D, int);
+  /// Set the 3D visibility of the display node.
+  /// \sa Visibility3D, SetVisibility3D(),
+  /// GetVisibility3D(),
+  vtkBooleanMacro(Visibility3D, int);
+
   /// Set the visibility of the edges.
   /// \sa EdgeVisibility, GetEdgeVisibility()
   vtkSetMacro(EdgeVisibility, int);
@@ -252,17 +278,29 @@ public:
   vtkBooleanMacro(Clipping, int);
 
   /// Set the slice intersection visibility of the display node.
-  /// \sa SliceIntersectionVisibility, GetSliceIntersectionVisibility(),
+  /// Function to manage \sa Visibility2D for backwards compatibility
+  /// \sa Visibility2D, GetSliceIntersectionVisibility(),
   /// SliceIntersectionVisibilityOn(), SliceIntersectionVisibilityOff()
-  vtkSetMacro(SliceIntersectionVisibility, int);
+  /// \deprecated SetSliceIntersectionVisibility
+  void SetSliceIntersectionVisibility(int on);
   /// Get the slice intersection visibility of the display node.
-  /// \sa SliceIntersectionVisibility, SetSliceIntersectionVisibility(),
+  /// Function to manage \sa Visibility2D for backwards compatibility
+  /// \sa Visibility2D, SetSliceIntersectionVisibility(),
   /// SliceIntersectionVisibilityOn(), SliceIntersectionVisibilityOff()
-  vtkGetMacro(SliceIntersectionVisibility, int);
+  /// \deprecated GetSliceIntersectionVisibility
+  int GetSliceIntersectionVisibility();
   /// Set the slice intersection visibility of the display node.
-  /// \sa SliceIntersectionVisibility, SetSliceIntersectionVisibility(),
+  /// Function to manage \sa Visibility2D for backwards compatibility
+  /// \sa Visibility2D, SetSliceIntersectionVisibility(),
   /// GetSliceIntersectionVisibility(),
-  vtkBooleanMacro(SliceIntersectionVisibility, int);
+  /// \deprecated SliceIntersectionVisibilityOn
+  void SliceIntersectionVisibilityOn();
+  /// Set the slice intersection visibility of the display node.
+  /// Function to manage \sa Visibility2D for backwards compatibility
+  /// \sa Visibility2D, SetSliceIntersectionVisibility(),
+  /// GetSliceIntersectionVisibility(),
+  /// \deprecated SliceIntersectionVisibilityOff
+  void SliceIntersectionVisibilityOff();
 
   /// Set the slice intersection thickness of the display node. In voxels.
   /// \sa SliceIntersectionThickness, GetSliceIntersectionThickness()
@@ -499,7 +537,7 @@ protected:
   /// No texture (nullptr) by default.
   /// \sa SetTextureImageDataConnection(), GetTextureImageDataConnection()
   /// InterpolateTexture
-  vtkAlgorithmOutput    *TextureImageDataConnection;
+  vtkAlgorithmOutput *TextureImageDataConnection;
 
   /// String ID of the color MRML node. The color node LUT or Color transfer
   /// function is set to the VTK mappers.
@@ -612,6 +650,14 @@ protected:
   /// \sa SetVisibility(), GetVisibility(), VisibilityOn(), VisibilityOff()
   /// Color, Opacity, Clipping, EdgeVisibility, SliceIntersectionVisibility
   int Visibility;
+  /// Indicates whether the object is visible in the slice views. True by default.
+  /// In order to show 2D, both this and \sa Visibility needs to be enabled.
+  /// \sa SetVisibility2D(), GetVisibility2D(), Visibility2DOn(), Visibility2DOff()
+  int Visibility2D;
+  /// Indicates whether the object is visible in the 3D views. True by default.
+  /// In order to show 3D, both this and \sa Visibility needs to be enabled.
+  /// \sa SetVisibility3D(), GetVisibility3D(), Visibility3DOn(), Visibility3DOff()
+  int Visibility3D;
   /// This property controls the visibility of edges. On some renderers it is
   /// possible to render the edges of geometric primitives separately
   /// from the interior.
@@ -624,13 +670,6 @@ protected:
   /// \sa SetClipping(), GetClipping(), ClippingOn(), ClippingOff()
   /// Visibility, EdgeVisibility, SliceIntersectionVisibility
   int Clipping;
-  /// Specifies whether to show model intersections on slice planes.
-  /// 0 by default.
-  /// \sa SetSliceIntersectionVisibility(), GetSliceIntersectionVisibility(),
-  /// SliceIntersectionVisibilityOn(), SliceIntersectionVisibilityOff(),
-  /// SetSliceIntersectionThickness(), GetSliceIntersectionThickness(),
-  /// Visibility, Clipping, SliceIntersectionThickness, EdgeVisibility
-  int SliceIntersectionVisibility;
   /// Specifies how thick to show the intersections with slice planes if slice
   /// intersection visibility is on
   /// 1 voxel by default.

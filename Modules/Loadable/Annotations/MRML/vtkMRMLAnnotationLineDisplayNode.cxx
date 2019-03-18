@@ -28,7 +28,7 @@ vtkMRMLAnnotationLineDisplayNode::vtkMRMLAnnotationLineDisplayNode()
   this->UnderLineThickness = 1.0;
   this->OverLineThickness = 3.0;
   /// bug 2375: don't show the slice intersection until it's correct
-  this->SliceIntersectionVisibility = 0;
+  this->Visibility2D = 0;
 }
 
 //----------------------------------------------------------------------------

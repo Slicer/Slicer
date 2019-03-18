@@ -171,7 +171,9 @@ bool vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UseDisplayNode(vtkMR
 //---------------------------------------------------------------------------
 bool vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::IsVisible(vtkMRMLSegmentationDisplayNode* displayNode)
 {
-  return displayNode && displayNode->GetVisibility() && displayNode->GetVisibility3D();
+  return displayNode && displayNode->GetVisibility() && displayNode->GetVisibility3D()
+    && displayNode->GetVisibility(this->External->GetMRMLViewNode()->GetID())
+    && displayNode->GetOpacity3D() > 0;
 }
 
 //---------------------------------------------------------------------------
@@ -444,8 +446,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
     {
     return;
     }
-  bool displayNodeVisible = displayNode->GetVisibility3D() && displayNode->GetOpacity3D() > 0
-    && displayNode->GetVisibility(this->External->GetMRMLViewNode()->GetID());
+  bool displayNodeVisible = this->IsVisible(displayNode);
 
   // Determine which representation to show
   std::string shownRepresentationName = displayNode->GetDisplayRepresentationName3D();

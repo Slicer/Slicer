@@ -180,8 +180,7 @@ public:
   /// display nodes.
   virtual void CreateDefaultDisplayNodes();
 
-  /// TODO: Change it to Get/SetVisibility() for consistency with
-  /// vtkMRMLDisplayNode.
+  /// TODO: Remove these functions when removing the Annotations module
   /// Utility to return the visibility of all the display nodes.
   /// Return 0 if they are all hidden, 1 if all are visible and 2 if some are
   /// visible and some are hidden.
@@ -211,7 +210,7 @@ public:
   /// about the change.
   void SetSelectable(int) override;
 
- protected:
+protected:
   vtkMRMLDisplayableNode();
   ~vtkMRMLDisplayableNode() override;
   vtkMRMLDisplayableNode(const vtkMRMLDisplayableNode&);
@@ -234,8 +233,7 @@ public:
   /// Called after a node reference ID is removed (list size decreased).
   void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference) override;
 
- private:
-
+private:
   /// Internally cached list of display nodes used ONLY to return the vector of node in GetDisplayNodes()
   /// DON'T USE this variable anywhere else
   std::vector<vtkMRMLDisplayNode *> DisplayNodes;

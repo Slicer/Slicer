@@ -20,15 +20,15 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerSubjectHierarchyCloneNodePlugin_h
-#define __qSlicerSubjectHierarchyCloneNodePlugin_h
+#ifndef __qSlicerSubjectHierarchyVisibilityPlugin_h
+#define __qSlicerSubjectHierarchyVisibilityPlugin_h
 
 // SubjectHierarchy Plugins includes
 #include "qSlicerSubjectHierarchyAbstractPlugin.h"
 
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
-class qSlicerSubjectHierarchyCloneNodePluginPrivate;
+class qSlicerSubjectHierarchyVisibilityPluginPrivate;
 
 // Due to some reason the Python wrapping of this class fails, therefore
 // put everything between BTX/ETX to exclude from wrapping.
@@ -37,37 +37,37 @@ class qSlicerSubjectHierarchyCloneNodePluginPrivate;
 //BTX
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
-class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyCloneNodePlugin : public qSlicerSubjectHierarchyAbstractPlugin
+class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyVisibilityPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
   Q_OBJECT
 
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
-  qSlicerSubjectHierarchyCloneNodePlugin(QObject* parent = nullptr);
-  ~qSlicerSubjectHierarchyCloneNodePlugin() override;
+  qSlicerSubjectHierarchyVisibilityPlugin(QObject* parent = NULL);
+  virtual ~qSlicerSubjectHierarchyVisibilityPlugin();
 
 public:
-  Q_INVOKABLE static const QString getCloneNodeNamePostfix();
+  /// Get visibility context menu item actions to add to tree view.
+  /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
+  virtual QList<QAction*> visibilityContextMenuActions()const;
 
-public:
-  /// Get item context menu item actions to add to tree view
-  QList<QAction*> itemContextMenuActions()const override;
-
-  /// Show context menu actions valid for  given subject hierarchy node.
-  /// \param node Subject Hierarchy node to show the context menu items for. If nullptr, then shows menu items for the scene
-  void showContextMenuActionsForItem(vtkIdType itemID) override;
+  /// Show visibility context menu actions valid for a given subject hierarchy item.
+  /// \param itemID Subject Hierarchy item to show the visibility context menu items for
+  virtual void showVisibilityContextMenuActionsForItem(vtkIdType itemID);
 
 protected slots:
-  /// Clone currently selected subject hierarchy item and associated data node
-  void cloneCurrentItem();
+  /// Toggle 2D visibility on currently selected subject hierarchy item
+  void toggleCurrentItemVisibility2D(bool on);
+  /// Toggle 3D visibility on currently selected subject hierarchy item
+  void toggleCurrentItemVisibility3D(bool on);
 
 protected:
-  QScopedPointer<qSlicerSubjectHierarchyCloneNodePluginPrivate> d_ptr;
+  QScopedPointer<qSlicerSubjectHierarchyVisibilityPluginPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyCloneNodePlugin);
-  Q_DISABLE_COPY(qSlicerSubjectHierarchyCloneNodePlugin);
+  Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyVisibilityPlugin);
+  Q_DISABLE_COPY(qSlicerSubjectHierarchyVisibilityPlugin);
 };
 
 //ETX

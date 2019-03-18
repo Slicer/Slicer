@@ -55,9 +55,10 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
   this->Shading = 1;
 
   this->Visibility = 1;
+  this->Visibility2D = 0;
+  this->Visibility3D = 1;
   this->EdgeVisibility = 0;
   this->Clipping = 0;
-  this->SliceIntersectionVisibility = 0;
   this->SliceIntersectionThickness = 1;
   this->FrontfaceCulling = 0;
   this->BackfaceCulling = 1;
@@ -143,10 +144,10 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
   of << " shading=\"" << (this->Shading? "true" : "false") << "\"";
 
   of << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
+  of << " visibility2D=\"" << (this->Visibility2D ? "true" : "false") << "\"";
+  of << " visibility3D=\"" << (this->Visibility3D ? "true" : "false") << "\"";
   of << " edgeVisibility=\"" << (this->EdgeVisibility? "true" : "false") << "\"";
   of << " clipping=\"" << (this->Clipping ? "true" : "false") << "\"";
-
-  of << " sliceIntersectionVisibility=\"" << (this->SliceIntersectionVisibility ? "true" : "false") << "\"";
 
   of << " sliceIntersectionThickness=\"" << this->SliceIntersectionThickness << "\"";
 
@@ -386,6 +387,28 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
         this->Visibility = 0;
         }
       }
+    else if (!strcmp(attName, "visibility2D"))
+      {
+      if (!strcmp(attValue,"true"))
+        {
+        this->Visibility2D = 1;
+        }
+      else
+        {
+        this->Visibility2D = 0;
+        }
+      }
+    else if (!strcmp(attName, "visibility3D"))
+      {
+      if (!strcmp(attValue,"true"))
+        {
+        this->Visibility3D = 1;
+        }
+      else
+        {
+        this->Visibility3D = 0;
+        }
+      }
     else if (!strcmp(attName, "edgeVisibility"))
       {
       if (!strcmp(attValue,"true"))
@@ -412,11 +435,11 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
       {
       if (!strcmp(attValue,"true"))
         {
-        this->SliceIntersectionVisibility = 1;
+        this->Visibility2D = 1;
         }
       else
         {
-        this->SliceIntersectionVisibility = 0;
+        this->Visibility2D = 0;
         }
       }
     else if (!strcmp(attName, "sliceIntersectionThickness"))
@@ -576,6 +599,8 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetSpecular(node->Specular);
   this->SetPower(node->Power);
   this->SetVisibility(node->Visibility);
+  this->SetVisibility2D(node->Visibility2D);
+  this->SetVisibility3D(node->Visibility3D);
   this->SetScalarVisibility(node->ScalarVisibility);
   this->SetVectorVisibility(node->VectorVisibility);
   this->SetTensorVisibility(node->TensorVisibility);
@@ -583,7 +608,7 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetScalarRangeFlag(node->ScalarRangeFlag);
   this->SetBackfaceCulling(node->BackfaceCulling);
   this->SetClipping(node->Clipping);
-  this->SetSliceIntersectionVisibility(node->SliceIntersectionVisibility);
+  this->SetVisibility2D(node->GetSliceIntersectionVisibility());
   this->SetSliceIntersectionThickness(node->SliceIntersectionThickness);
   this->SetTextureImageDataConnection(node->TextureImageDataConnection);
   this->SetAndObserveColorNodeID(node->ColorNodeID);
@@ -629,6 +654,8 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Specular:          " << this->Specular << "\n";
   os << indent << "Power:             " << this->Power << "\n";
   os << indent << "Visibility:        " << this->Visibility << "\n";
+  os << indent << "Visibility2D:      " << this->Visibility2D << "\n";
+  os << indent << "Visibility3D:      " << this->Visibility3D << "\n";
   os << indent << "ScalarVisibility:  " << this->ScalarVisibility << "\n";
   os << indent << "VectorVisibility:  " << this->VectorVisibility << "\n";
   os << indent << "TensorVisibility:  " << this->TensorVisibility << "\n";
@@ -636,7 +663,6 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "ScalarRangeFlag:   " << this->GetScalarRangeFlagTypeAsString(this->ScalarRangeFlag) << "\n";
   os << indent << "BackfaceCulling:   " << this->BackfaceCulling << "\n";
   os << indent << "Clipping:          " << this->Clipping << "\n";
-  os << indent << "SliceIntersectionVisibility: " << this->SliceIntersectionVisibility << "\n";
   os << indent << "SliceIntersectionThickness: " << this->SliceIntersectionThickness << "\n";
 
   os << indent << "ScalarRange:       ";
@@ -1092,4 +1118,32 @@ int vtkMRMLDisplayNode::GetAttributeLocationFromString(const char* name)
     }
   // name not found
   return -1;
+}
+
+//-----------------------------------------------------------
+void vtkMRMLDisplayNode::SetSliceIntersectionVisibility(int on)
+{
+  vtkWarningMacro("Deprecated, please use SetVisibility2D instead");
+  this->SetVisibility2D(on);
+}
+
+//-----------------------------------------------------------
+int vtkMRMLDisplayNode::GetSliceIntersectionVisibility()
+{
+  vtkDebugMacro("Deprecated, please use GetVisibility2D instead");
+  return this->GetVisibility2D();
+}
+
+//-----------------------------------------------------------
+void vtkMRMLDisplayNode::SliceIntersectionVisibilityOn()
+{
+  vtkWarningMacro("Deprecated, please use Visibility2DOn instead");
+  this->Visibility2DOn();
+}
+
+//-----------------------------------------------------------
+void vtkMRMLDisplayNode::SliceIntersectionVisibilityOff()
+{
+  vtkWarningMacro("Deprecated, please use Visibility2DOff instead");
+  this->Visibility2DOff();
 }

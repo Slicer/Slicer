@@ -811,7 +811,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
         // compute intersection with slice plane
         // if !=0: mark the intersection
 
-        if(rulerNode->GetAnnotationLineDisplayNode()->GetSliceIntersectionVisibility())
+        if(rulerNode->GetAnnotationLineDisplayNode()->GetVisibility2D())
           {
           //double this->GetSliceNode()->GetSliceOffset() = p1[2] + (p2[2]-p1[2])*t;
           // t = (this->GetSliceNode()->GetSliceOffset() - p1[2]) / (p2[2]-p1[2])
@@ -895,7 +895,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
         if (lineDisplayNode)
           {
           if ((lineDisplayNode->GetSliceProjection() & lineDisplayNode->ProjectionOn) &&
-              lineDisplayNode->GetVisibility())
+              lineDisplayNode->GetVisibility() && lineDisplayNode->GetVisibility2D())
             {
             double overLineWidth = lineDisplayNode->GetOverLineThickness();
             double underLineWidth = lineDisplayNode->GetUnderLineThickness();
@@ -1103,7 +1103,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
           vtkMRMLAnnotationPointDisplayNode::SafeDownCast(fiducialNode->GetAnnotationPointDisplayNode());
 
         if ((pointDisplayNode->GetSliceProjection() & pointDisplayNode->ProjectionOn) &&
-            pointDisplayNode->GetVisibility())
+            pointDisplayNode->GetVisibility() && pointDisplayNode->GetVisibility2D())
           {
           double glyphScale = fiducialNode->GetAnnotationPointDisplayNode()->GetGlyphScale()*2;
           int glyphType = fiducialNode->GetAnnotationPointDisplayNode()->GetGlyphType();
@@ -1250,7 +1250,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
     return 0;
     }
 
-  // down cast the node as a controlpoints node to get the coordinates
+  // down cast the node as a control points node to get the coordinates
   vtkMRMLAnnotationControlPointsNode * controlPointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
 
   if (!controlPointsNode)

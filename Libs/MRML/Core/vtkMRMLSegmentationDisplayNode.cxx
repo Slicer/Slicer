@@ -61,15 +61,14 @@ vtkMRMLSegmentationDisplayNode::vtkMRMLSegmentationDisplayNode()
   , NumberOfGeneratedColors(0)
   , SegmentListUpdateTime(0)
   , SegmentListUpdateSource(nullptr)
-  , Visibility3D(true)
   , Visibility2DFill(true)
   , Visibility2DOutline(true)
   , Opacity3D(1.0)
   , Opacity2DFill(0.5)
   , Opacity2DOutline(1.0)
 {
-  this->SliceIntersectionVisibility = true;
   this->SetBackfaceCulling(0); // segment models are not necessarily closed surfaces (e.g., ribbon models)
+  this->Visibility2D = 1; // show slice intersections by default
 
   this->SegmentationDisplayProperties.clear();
 }
@@ -92,7 +91,6 @@ void vtkMRMLSegmentationDisplayNode::WriteXML(ostream& of, int nIndent)
   of << " PreferredDisplayRepresentationName3D=\""
     << (this->PreferredDisplayRepresentationName3D ? this->PreferredDisplayRepresentationName3D : "NULL") << "\"";
 
-  of << " Visibility3D=\"" << (this->Visibility3D ? "true" : "false") << "\"";
   of << " Visibility2DFill=\"" << (this->Visibility2DFill ? "true" : "false") << "\"";
   of << " Visibility2DOutline=\"" << (this->Visibility2DOutline ? "true" : "false") << "\"";
   of << " Opacity3D=\"" << this->Opacity3D << "\"";
@@ -144,10 +142,6 @@ void vtkMRMLSegmentationDisplayNode::ReadXMLAttributes(const char** atts)
     else if (!strcmp(attName, "PreferredDisplayRepresentationName3D"))
       {
       this->SetPreferredDisplayRepresentationName3D(attValue);
-      }
-    else if (!strcmp(attName, "Visibility3D"))
-      {
-      this->Visibility3D = (strcmp(attValue,"true") ? false : true);
       }
     else if (!strcmp(attName, "Visibility2DFill"))
       {
@@ -242,7 +236,6 @@ void vtkMRMLSegmentationDisplayNode::Copy(vtkMRMLNode *anode)
     {
     this->SetPreferredDisplayRepresentationName2D(node->GetPreferredDisplayRepresentationName2D());
     this->SetPreferredDisplayRepresentationName3D(node->GetPreferredDisplayRepresentationName3D());
-    this->Visibility3D = node->Visibility3D;
     this->Visibility2DFill = node->Visibility2DFill;
     this->Visibility2DOutline = node->Visibility2DOutline;
     this->Opacity3D = node->Opacity3D;
@@ -264,7 +257,6 @@ void vtkMRMLSegmentationDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << " PreferredDisplayRepresentationName2D:   " << (this->PreferredDisplayRepresentationName2D ? this->PreferredDisplayRepresentationName2D : "NULL") << "\n";
   os << indent << " PreferredDisplayRepresentationName3D:   " << (this->PreferredDisplayRepresentationName3D ? this->PreferredDisplayRepresentationName3D : "NULL") << "\n";
 
-  os << indent << " Visibility3D:   " << (this->Visibility3D ? "true" : "false") << "\n";
   os << indent << " Visibility2DFill:   " << (this->Visibility2DFill ? "true" : "false") << "\n";
   os << indent << " Visibility2DOutline:   " << (this->Visibility2DOutline ? "true" : "false") << "\n";
   os << indent << " Opacity3D:   " << this->Opacity3D << "\n";

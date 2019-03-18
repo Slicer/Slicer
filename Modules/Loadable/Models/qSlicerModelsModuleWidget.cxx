@@ -112,7 +112,7 @@ void qSlicerModelsModuleWidget::setup()
   sortFilterProxyModel->setNodeTypes(QStringList() << "vtkMRMLModelNode" << "vtkMRMLModelHierarchyNode" << "vtkMRMLModelDisplayNode");
   d->SubjectHierarchyTreeView->setColumnHidden(d->SubjectHierarchyTreeView->model()->idColumn(), true);
   d->SubjectHierarchyTreeView->setColumnHidden(d->SubjectHierarchyTreeView->model()->transformColumn(), true);
-  d->SubjectHierarchyTreeView->setPluginWhitelist(QStringList() << "Models" << "Folder" << "Opacity");
+  d->SubjectHierarchyTreeView->setPluginWhitelist(QStringList() << "Models" << "Folder" << "Opacity" << "Visibility");
   d->SubjectHierarchyTreeView->setSelectRoleSubMenuVisible(false);
   d->SubjectHierarchyTreeView->expandToDepth(4);
   d->SubjectHierarchyTreeView->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
@@ -151,13 +151,15 @@ void qSlicerModelsModuleWidget::enter()
   Q_D(qSlicerModelsModuleWidget);
 
   // Set minimum models tree height so that it has a reasonable starting size
-  // Calculate full tree view height based on number of displayed items and item height.
   int displayedItemCount = d->SubjectHierarchyTreeView->displayedItemCount();
-  int treeViewHeight = 0;
+  int headerHeight = d->SubjectHierarchyTreeView->header()->sizeHint().height();
+  int treeViewHeight = headerHeight * 3; // Approximately three rows when empty (cannot get row height)
   if (displayedItemCount > 0)
     {
-    treeViewHeight = displayedItemCount * d->SubjectHierarchyTreeView->sizeHintForRow(0);
+    // Calculate full tree view height based on number of displayed items and item height (and add 2 for the borders).
+    treeViewHeight = headerHeight + displayedItemCount * d->SubjectHierarchyTreeView->sizeHintForRow(0) + 2;
     }
+
   // Get height of the whole Models module widget panel
   int panelHeight = this->sizeHint().height();
   // Set tree view minimum height to be the minimum of the calculated full height and half

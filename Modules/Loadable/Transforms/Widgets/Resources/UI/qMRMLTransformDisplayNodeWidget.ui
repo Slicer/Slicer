@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>795</width>
-    <height>878</height>
+    <width>499</width>
+    <height>794</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -225,13 +225,13 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="label_6">
         <property name="text">
-         <string>Visible in slice view:</string>
+         <string>Visible:</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="1" column="1">
        <widget class="QCheckBox" name="Visible2dCheckBox">
         <property name="toolTip">
          <string>Show transform in the slice views</string>
@@ -245,90 +245,20 @@
        </widget>
       </item>
       <item row="1" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Visible in slice view:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
        <widget class="QLabel" name="label_4">
         <property name="text">
          <string>Visible in 3D view:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QCheckBox" name="Visible3dCheckBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-            <horstretch>1</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>Show transform in the 3D views</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="RegionLabel">
-          <property name="toolTip">
-           <string>Reference image for visualizing transform nodes (will only use size, orientation and position)</string>
-          </property>
-          <property name="text">
-           <string>Region:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="qMRMLNodeComboBox" name="RegionNodeComboBox">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-            <horstretch>9</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>Region for visualizing transform nodes (will only use size, orientation and position)</string>
-          </property>
-          <property name="nodeTypes">
-           <stringlist>
-            <string>vtkMRMLSliceNode</string>
-            <string>vtkMRMLModelNode</string>
-            <string>vtkMRMLVolumeNode</string>
-           </stringlist>
-          </property>
-          <property name="baseName">
-           <string/>
-          </property>
-          <property name="noneEnabled">
-           <bool>true</bool>
-          </property>
-          <property name="addEnabled">
-           <bool>false</bool>
-          </property>
-          <property name="removeEnabled">
-           <bool>true</bool>
-          </property>
-          <property name="editEnabled">
-           <bool>true</bool>
-          </property>
-          <property name="renameEnabled">
-           <bool>true</bool>
-          </property>
-          <property name="noneDisplay">
-           <string>Select a node</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="2" column="0" colspan="2">
+      <item row="3" column="0" colspan="2">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
          <widget class="QPushButton" name="GlyphToggle">
@@ -485,7 +415,84 @@
         </item>
        </layout>
       </item>
-      <item row="3" column="0" colspan="2">
+      <item row="2" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QCheckBox" name="Visible3dCheckBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Show transform in the 3D views</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="RegionLabel">
+          <property name="toolTip">
+           <string>Reference image for visualizing transform nodes (will only use size, orientation and position)</string>
+          </property>
+          <property name="text">
+           <string>Region:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="qMRMLNodeComboBox" name="RegionNodeComboBox">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>9</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Region for visualizing transform nodes (will only use size, orientation and position)</string>
+          </property>
+          <property name="nodeTypes">
+           <stringlist>
+            <string>vtkMRMLSliceNode</string>
+            <string>vtkMRMLModelNode</string>
+            <string>vtkMRMLVolumeNode</string>
+           </stringlist>
+          </property>
+          <property name="baseName">
+           <string/>
+          </property>
+          <property name="noneEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="addEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="removeEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="editEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="renameEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="noneDisplay">
+           <string>Select a node</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="4" column="0" colspan="2">
        <widget class="ctkCollapsibleGroupBox" name="ColorsSection">
         <property name="title">
          <string>Colors</string>
@@ -516,7 +523,7 @@
         </layout>
        </widget>
       </item>
-      <item row="4" column="0" colspan="2">
+      <item row="5" column="0" colspan="2">
        <widget class="ctkCollapsibleGroupBox" name="AdvancedParameters">
         <property name="title">
          <string>Advanced</string>
@@ -1221,6 +1228,13 @@
         </layout>
        </widget>
       </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="VisibleCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -1292,12 +1306,12 @@
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>95</x>
-     <y>438</y>
+     <x>110</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
-     <x>231</x>
-     <y>805</y>
+     <x>255</x>
+     <y>514</y>
     </hint>
    </hints>
   </connection>
@@ -1308,12 +1322,12 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>95</x>
-     <y>438</y>
+     <x>110</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
-     <x>231</x>
-     <y>1060</y>
+     <x>255</x>
+     <y>663</y>
     </hint>
    </hints>
   </connection>
@@ -1324,12 +1338,12 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>95</x>
-     <y>438</y>
+     <x>110</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
-     <x>231</x>
-     <y>1231</y>
+     <x>255</x>
+     <y>763</y>
     </hint>
    </hints>
   </connection>
@@ -1340,12 +1354,12 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>481</x>
-     <y>438</y>
+     <x>522</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
-     <x>231</x>
-     <y>805</y>
+     <x>255</x>
+     <y>514</y>
     </hint>
    </hints>
   </connection>
@@ -1356,12 +1370,12 @@
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>481</x>
-     <y>438</y>
+     <x>522</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
-     <x>231</x>
-     <y>1060</y>
+     <x>255</x>
+     <y>663</y>
     </hint>
    </hints>
   </connection>
@@ -1372,12 +1386,12 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>481</x>
-     <y>438</y>
+     <x>522</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
-     <x>231</x>
-     <y>1231</y>
+     <x>255</x>
+     <y>763</y>
     </hint>
    </hints>
   </connection>
@@ -1388,12 +1402,12 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>770</x>
-     <y>438</y>
+     <x>779</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
-     <x>231</x>
-     <y>805</y>
+     <x>255</x>
+     <y>514</y>
     </hint>
    </hints>
   </connection>
@@ -1404,12 +1418,12 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>770</x>
-     <y>438</y>
+     <x>779</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
-     <x>231</x>
-     <y>1060</y>
+     <x>255</x>
+     <y>663</y>
     </hint>
    </hints>
   </connection>
@@ -1420,12 +1434,12 @@
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>770</x>
-     <y>438</y>
+     <x>779</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
-     <x>231</x>
-     <y>1231</y>
+     <x>255</x>
+     <y>763</y>
     </hint>
    </hints>
   </connection>
@@ -1440,8 +1454,8 @@
      <y>450</y>
     </hint>
     <hint type="destinationlabel">
-     <x>681</x>
-     <y>364</y>
+     <x>779</x>
+     <y>206</y>
     </hint>
    </hints>
   </connection>
@@ -1456,8 +1470,8 @@
      <y>648</y>
     </hint>
     <hint type="destinationlabel">
-     <x>516</x>
-     <y>633</y>
+     <x>761</x>
+     <y>394</y>
     </hint>
    </hints>
   </connection>
@@ -1472,8 +1486,8 @@
      <y>613</y>
     </hint>
     <hint type="destinationlabel">
-     <x>523</x>
-     <y>920</y>
+     <x>661</x>
+     <y>551</y>
     </hint>
    </hints>
   </connection>
@@ -1488,8 +1502,8 @@
      <y>610</y>
     </hint>
     <hint type="destinationlabel">
-     <x>494</x>
-     <y>1049</y>
+     <x>632</x>
+     <y>626</y>
     </hint>
    </hints>
   </connection>
@@ -1504,8 +1518,8 @@
      <y>602</y>
     </hint>
     <hint type="destinationlabel">
-     <x>427</x>
-     <y>1094</y>
+     <x>565</x>
+     <y>654</y>
     </hint>
    </hints>
   </connection>
@@ -1520,8 +1534,8 @@
      <y>594</y>
     </hint>
     <hint type="destinationlabel">
-     <x>326</x>
-     <y>1220</y>
+     <x>426</x>
+     <y>726</y>
     </hint>
    </hints>
   </connection>
@@ -1536,8 +1550,8 @@
      <y>663</y>
     </hint>
     <hint type="destinationlabel">
-     <x>403</x>
-     <y>844</y>
+     <x>520</x>
+     <y>500</y>
     </hint>
    </hints>
   </connection>
@@ -1548,12 +1562,12 @@
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>76</x>
-     <y>438</y>
+     <x>91</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
-     <x>117</x>
-     <y>595</y>
+     <x>150</x>
+     <y>366</y>
     </hint>
    </hints>
   </connection>
@@ -1564,12 +1578,12 @@
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>76</x>
-     <y>438</y>
+     <x>91</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
-     <x>487</x>
-     <y>595</y>
+     <x>761</x>
+     <y>366</y>
     </hint>
    </hints>
   </connection>
@@ -1584,8 +1598,8 @@
      <y>337</y>
     </hint>
     <hint type="destinationlabel">
-     <x>487</x>
-     <y>595</y>
+     <x>761</x>
+     <y>366</y>
     </hint>
    </hints>
   </connection>
@@ -1596,12 +1610,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>559</x>
-     <y>74</y>
+     <x>779</x>
+     <y>50</y>
     </hint>
     <hint type="destinationlabel">
-     <x>768</x>
-     <y>142</y>
+     <x>780</x>
+     <y>108</y>
     </hint>
    </hints>
   </connection>

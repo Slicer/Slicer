@@ -110,10 +110,6 @@ public:
   /// Set name of representation that is displayed in the 3D view if exists
   vtkSetStringMacro(PreferredDisplayRepresentationName3D);
 
-  /// Get/Set 3D visibility
-  vtkGetMacro(Visibility3D, bool);
-  vtkSetMacro(Visibility3D, bool);
-  vtkBooleanMacro(Visibility3D, bool);
   /// Get/Set 2D fill visibility
   vtkGetMacro(Visibility2DFill, bool);
   vtkSetMacro(Visibility2DFill, bool);
@@ -306,11 +302,13 @@ protected:
   vtkMTimeType SegmentListUpdateTime;
   vtkSegmentation* SegmentListUpdateSource;
 
-  /// 3D visibility for the whole segmentation
-  bool Visibility3D;
-  /// 2D fill visibility for the whole segmentation
+  /// 2D fill visibility for the whole segmentation.
+  /// In order for the fill to be visible, \sa Visibility, Visibility2D, and Visibility2DFill
+  /// need to be all enabled.
   bool Visibility2DFill;
-  /// 2D outline visibility for the whole segmentation
+  /// 2D outline visibility for the whole segmentation.
+  /// In order for the outline to be visible, \sa Visibility, Visibility2D, and Visibility2DOutline
+  /// need to be all enabled.
   bool Visibility2DOutline;
 
   /// 3D opacity for the whole segmentation

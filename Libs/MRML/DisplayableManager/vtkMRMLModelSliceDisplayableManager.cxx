@@ -155,8 +155,7 @@ vtkMRMLModelSliceDisplayableManager::vtkInternal
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLModelSliceDisplayableManager::vtkInternal
-::UseDisplayNode(vtkMRMLDisplayNode* displayNode)
+bool vtkMRMLModelSliceDisplayableManager::vtkInternal::UseDisplayNode(vtkMRMLDisplayNode* displayNode)
 {
   // Check whether DisplayNode should be shown in this view
   bool show = displayNode
@@ -167,8 +166,7 @@ bool vtkMRMLModelSliceDisplayableManager::vtkInternal
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLModelSliceDisplayableManager::vtkInternal
-::IsVisible(vtkMRMLDisplayNode* displayNode)
+bool vtkMRMLModelSliceDisplayableManager::vtkInternal::IsVisible(vtkMRMLDisplayNode* displayNode)
 {
   if (!displayNode)
     {
@@ -187,9 +185,9 @@ bool vtkMRMLModelSliceDisplayableManager::vtkInternal
     }
   else
     {
-    visibleOnNode = (displayNode->GetVisibility() == 1 ? true : false);
+    visibleOnNode = (displayNode->GetVisibility() == 1);
     }
-  return visibleOnNode && (displayNode->GetSliceIntersectionVisibility() != 0) ;
+  return visibleOnNode && (displayNode->GetVisibility2D() != 0) ;
 }
 
 //---------------------------------------------------------------------------

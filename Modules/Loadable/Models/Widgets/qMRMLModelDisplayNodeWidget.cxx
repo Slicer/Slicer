@@ -501,7 +501,7 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   d->DisplayNodeViewComboBox->setMRMLDisplayNode(d->MRMLModelDisplayNode);
   d->ClippingCheckBox->setChecked(d->MRMLModelDisplayNode->GetClipping());
   d->SliceIntersectionVisibilityCheckBox->setChecked(
-    d->MRMLModelDisplayNode->GetSliceIntersectionVisibility());
+    d->MRMLModelDisplayNode->GetVisibility2D());
   d->SliceIntersectionThicknessSpinBox->setValue(
     d->MRMLModelDisplayNode->GetSliceIntersectionThickness());
   bool showSliceIntersectionThickness =
@@ -784,7 +784,7 @@ void qMRMLModelDisplayNodeWidget::setSliceIntersectionVisible(bool visible)
     {
     return;
     }
-  d->MRMLModelDisplayNode->SetSliceIntersectionVisibility(visible);
+  d->MRMLModelDisplayNode->SetVisibility2D(visible);
 }
 
 //------------------------------------------------------------------------------

@@ -47,6 +47,7 @@ public:
   bool visibility()const;
   bool selected()const;
   bool clipping()const;
+  bool threeDVisible()const;
   bool sliceIntersectionVisible()const;
   int sliceIntersectionThickness()const;
   double sliceIntersectionOpacity()const;
@@ -63,6 +64,7 @@ public slots:
   void setVisibility(bool);
   void setSelected(bool);
   void setClipping(bool);
+  void setThreeDVisible(bool);
   void setSliceIntersectionVisible(bool);
   void setSliceIntersectionThickness(int);
   void setSliceIntersectionOpacity(double);
@@ -73,6 +75,7 @@ public slots:
   void setVisibilityVisible(bool);
   void setSelectedVisible(bool);
   void setClippingVisible(bool);
+  void setThreeDVisibleVisible(bool);
   void setSliceIntersectionVisibleVisible(bool);
   void setSliceIntersectionThicknessVisible(bool);
   void setSliceIntersectionOpacityVisible(bool);

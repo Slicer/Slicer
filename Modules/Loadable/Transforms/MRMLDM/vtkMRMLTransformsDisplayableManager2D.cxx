@@ -148,7 +148,7 @@ bool vtkMRMLTransformsDisplayableManager2D::vtkInternal::UseDisplayNode(vtkMRMLT
 //---------------------------------------------------------------------------
 bool vtkMRMLTransformsDisplayableManager2D::vtkInternal::IsVisible(vtkMRMLTransformDisplayNode* displayNode)
 {
-  return displayNode && (displayNode->GetSliceIntersectionVisibility() != 0);
+  return displayNode && (displayNode->GetVisibility() != 0) && (displayNode->GetVisibility2D() != 0);
 }
 
 //---------------------------------------------------------------------------

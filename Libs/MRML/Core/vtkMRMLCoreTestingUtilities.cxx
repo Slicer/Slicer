@@ -299,8 +299,9 @@ int ExerciseBasicDisplayMRMLMethods(vtkMRMLDisplayNode* node)
   TEST_SET_GET_DOUBLE_RANGE(node, Specular, 0.0, 1.0);
   TEST_SET_GET_DOUBLE_RANGE(node, Power, 0.0, 1.0);
   TEST_SET_GET_BOOLEAN(node, Visibility);
+  TEST_SET_GET_BOOLEAN(node, Visibility2D);
+  TEST_SET_GET_BOOLEAN(node, Visibility3D);
   TEST_SET_GET_BOOLEAN(node, Clipping);
-  TEST_SET_GET_BOOLEAN(node, SliceIntersectionVisibility);
   TEST_SET_GET_INT_RANGE(node, SliceIntersectionThickness, 0, 10);
   TEST_SET_GET_BOOLEAN(node, BackfaceCulling);
   TEST_SET_GET_BOOLEAN(node, ScalarVisibility);

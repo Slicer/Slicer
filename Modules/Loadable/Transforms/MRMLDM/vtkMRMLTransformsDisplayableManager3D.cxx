@@ -133,7 +133,7 @@ bool vtkMRMLTransformsDisplayableManager3D::vtkInternal::UseDisplayNode(vtkMRMLT
 //---------------------------------------------------------------------------
 bool vtkMRMLTransformsDisplayableManager3D::vtkInternal::IsVisible(vtkMRMLTransformDisplayNode* displayNode)
 {
-  return displayNode && (displayNode->GetVisibility() != 0);
+  return displayNode && (displayNode->GetVisibility() != 0) && (displayNode->GetVisibility3D() != 0);
 }
 
 //---------------------------------------------------------------------------

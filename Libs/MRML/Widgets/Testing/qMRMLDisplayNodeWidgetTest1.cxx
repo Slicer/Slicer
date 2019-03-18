@@ -93,7 +93,7 @@ int qMRMLDisplayNodeWidgetTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  bool sliceIntersectionVisible = displayNode->GetSliceIntersectionVisibility();
+  bool sliceIntersectionVisible = displayNode->GetVisibility2D();
   if (displayNodeWidget.sliceIntersectionVisible() != sliceIntersectionVisible)
     {
     std::cerr << "Wrong intersection: "

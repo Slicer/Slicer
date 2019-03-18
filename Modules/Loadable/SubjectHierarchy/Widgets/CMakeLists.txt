@@ -47,6 +47,8 @@ set(${KIT}_SRCS
   qSlicerSubjectHierarchyFolderPlugin.h
   qSlicerSubjectHierarchyOpacityPlugin.cxx
   qSlicerSubjectHierarchyOpacityPlugin.h
+  qSlicerSubjectHierarchyVisibilityPlugin.cxx
+  qSlicerSubjectHierarchyVisibilityPlugin.h
   )
 if(Slicer_USE_PYTHONQT)
   list(APPEND ${KIT}_SRCS
@@ -66,6 +68,7 @@ set(${KIT}_MOC_SRCS
   qSlicerSubjectHierarchyRegisterPlugin.h
   qSlicerSubjectHierarchyFolderPlugin.h
   qSlicerSubjectHierarchyOpacityPlugin.h
+  qSlicerSubjectHierarchyVisibilityPlugin.h
   qMRMLTransformItemDelegate.h
   qMRMLSubjectHierarchyTreeView.h
   qMRMLSubjectHierarchyComboBox.h

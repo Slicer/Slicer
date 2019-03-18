@@ -654,7 +654,7 @@ namespace
       }
 
     // By default Visibility is on, SliceIntersectionVisibility is off. Check this
-    if (model1DisplayNode->GetVisibility() != 1 || model1DisplayNode->GetSliceIntersectionVisibility() != 0)
+    if (model1DisplayNode->GetVisibility() != 1 || model1DisplayNode->GetVisibility2D() != 0)
       {
       std::cerr << "Default visibility settings changed! Test application needs to be reviewed" << std::endl;
       return false;

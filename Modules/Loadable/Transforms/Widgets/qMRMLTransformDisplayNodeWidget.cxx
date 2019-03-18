@@ -122,6 +122,7 @@ void qMRMLTransformDisplayNodeWidgetPrivate
   this->ContourOptions->hide();
   this->GridOptions->hide();
 
+  QObject::connect(this->VisibleCheckBox, SIGNAL(toggled(bool)), q, SLOT(setVisible(bool)));
   QObject::connect(this->Visible2dCheckBox, SIGNAL(toggled(bool)), q, SLOT(setVisible2d(bool)));
   QObject::connect(this->Visible3dCheckBox, SIGNAL(toggled(bool)), q, SLOT(setVisible3d(bool)));
 
@@ -227,15 +228,16 @@ void qMRMLTransformDisplayNodeWidget
 
   // Display
 
-  d->Visible2dCheckBox->setChecked(d->TransformDisplayNode->GetSliceIntersectionVisibility());
-  d->Visible3dCheckBox->setChecked(d->TransformDisplayNode->GetVisibility());
+  d->VisibleCheckBox->setChecked(d->TransformDisplayNode->GetVisibility());
+  d->Visible2dCheckBox->setChecked(d->TransformDisplayNode->GetVisibility2D());
+  d->Visible3dCheckBox->setChecked(d->TransformDisplayNode->GetVisibility3D());
 
   switch (d->TransformDisplayNode->GetVisualizationMode())
-   {
+    {
     case vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH: d->GlyphToggle->setChecked(true); break;
     case vtkMRMLTransformDisplayNode::VIS_MODE_GRID: d->GridToggle->setChecked(true); break;
     case vtkMRMLTransformDisplayNode::VIS_MODE_CONTOUR: d->ContourToggle->setChecked(true); break;
-   }
+    }
 
   d->RegionNodeComboBox->setCurrentNode(d->TransformDisplayNode->GetRegionNode());
 
@@ -269,22 +271,22 @@ void qMRMLTransformDisplayNodeWidget
   std::vector<double> levelsInMRML;
   d->TransformDisplayNode->GetContourLevelsMm(levelsInMRML);
   if (!vtkMRMLTransformDisplayNode::IsContourLevelEqual(levelsInWidget,levelsInMRML))
-  {
+    {
     d->ContourLevelsMm->setText(QLatin1String(d->TransformDisplayNode->GetContourLevelsMmAsString().c_str()));
-  }
+    }
 
   // Update ColorMap
   vtkColorTransferFunction* colorTransferFunctionInNode=d->TransformDisplayNode->GetColorMap();
   if (colorTransferFunctionInNode)
     {
     if (!vtkMRMLProceduralColorNode::IsColorMapEqual(d->ColorTransferFunction,colorTransferFunctionInNode))
-     {
+      {
       // only update the range if the colormap is changed to avoid immediate update,
       // because we don't want to change the colormap plot range while dragging the control point
       d->ColorTransferFunction->DeepCopy(colorTransferFunctionInNode);
       this->colorUpdateRange();
-     }
-   }
+      }
+    }
 
   // Interaction
   d->InteractionVisibleCheckBox->setChecked(d->TransformDisplayNode->GetEditorVisibility());
@@ -340,9 +342,9 @@ void qMRMLTransformDisplayNodeWidget::glyphPointsNodeChanged(vtkMRMLNode* node)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-  {
+    {
     return;
-  }
+    }
   d->TransformDisplayNode->SetAndObserveGlyphPointsNode(node);
 }
 
@@ -487,7 +489,7 @@ void qMRMLTransformDisplayNodeWidget::setGridShowNonWarped(bool show)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-   {
+    {
     return;
     }
   d->TransformDisplayNode->SetGridShowNonWarped(show);
@@ -617,6 +619,17 @@ void qMRMLTransformDisplayNodeWidget::setEditorScalingEnabled(bool enabled)
 }
 
 //-----------------------------------------------------------------------------
+void qMRMLTransformDisplayNodeWidget::setVisible(bool visible)
+{
+  Q_D(qMRMLTransformDisplayNodeWidget);
+  if (!d->TransformDisplayNode)
+    {
+    return;
+    }
+  d->TransformDisplayNode->SetVisibility(visible);
+}
+
+//-----------------------------------------------------------------------------
 void qMRMLTransformDisplayNodeWidget::setVisible2d(bool visible)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
@@ -624,7 +637,7 @@ void qMRMLTransformDisplayNodeWidget::setVisible2d(bool visible)
     {
     return;
     }
-  d->TransformDisplayNode->SetSliceIntersectionVisibility(visible);
+  d->TransformDisplayNode->SetVisibility2D(visible);
 }
 
 //-----------------------------------------------------------------------------
@@ -635,7 +648,7 @@ void qMRMLTransformDisplayNodeWidget::setVisible3d(bool visible)
     {
     return;
     }
-  d->TransformDisplayNode->SetVisibility(visible);
+  d->TransformDisplayNode->SetVisibility3D(visible);
 }
 
 //-----------------------------------------------------------------------------

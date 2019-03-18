@@ -48,11 +48,12 @@ vtkMRMLNodeNewMacro(vtkMRMLMarkupsDisplayNode);
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
 {
-    // model display node settings
-  this->SetVisibility(1);
-  this->SetVectorVisibility(0);
-  this->SetScalarVisibility(0);
-  this->SetTensorVisibility(0);
+  // Markups display node settings
+  this->Visibility = 1;
+  this->Visibility2D = 1;
+  this->VectorVisibility = 0;
+  this->ScalarVisibility = 0;
+  this->TensorVisibility = 0;
 
   this->Color[0] = 0.4;
   this->Color[1] = 1.0;

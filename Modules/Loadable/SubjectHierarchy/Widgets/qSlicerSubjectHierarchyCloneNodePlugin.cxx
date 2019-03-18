@@ -33,9 +33,6 @@
 
 // VTK includes
 #include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
-#include <vtkCollection.h>
-#include <vtksys/SystemTools.hxx>
 
 // Qt includes
 #include <QDebug>

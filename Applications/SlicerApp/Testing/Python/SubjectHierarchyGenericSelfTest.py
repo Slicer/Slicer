@@ -464,7 +464,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
     displayNode = slicer.vtkMRMLModelDisplayNode()
     slicer.mrmlScene.AddNode(displayNode)
-    displayNode.SliceIntersectionVisibilityOn()
+    displayNode.Visibility2DOn()
     displayNode.VisibilityOn()
     displayNode.SetColor(color[0], color[1], color[2])
     modelNode.SetAndObserveDisplayNodeID(displayNode.GetID())

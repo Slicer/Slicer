@@ -417,7 +417,6 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
   // update the location
   if (this->Is2DDisplayableManager())
     {
-
     // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
     vtkAnnotationRulerRepresentation * rep = vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
 
@@ -431,7 +430,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
       // to match with the 3d ruler that doesn't have labels and turns off the measurement
       // with the label visibility is off, toggle the title visibility on the label visibility
       // for the 2d case (also: no text visibility is exposed in the current GUI)
-      rep->GetAxis()->SetTitleVisibility(textDisplayNode->GetVisibility());
+      rep->GetAxis()->SetTitleVisibility(textDisplayNode->GetVisibility() && textDisplayNode->GetVisibility2D());
       }
     // update the distance measurement
     rep->SetDistance(distance);
@@ -478,7 +477,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
         rep->GetAxis()->GetTitleTextProperty()->SetColor(textDisplayNode->GetColor());
         rep->GetAxis()->GetLabelTextProperty()->SetColor(textDisplayNode->GetColor());
         }
-      rep->GetAxis()->SetTitleVisibility(textDisplayNode->GetVisibility());
+      rep->GetAxis()->SetTitleVisibility(textDisplayNode->GetVisibility() && textDisplayNode->GetVisibility2D());
       // TODO: get this working
       rep->GetAxis()->GetTitleTextProperty()->SetFontSize(textDisplayNode->GetTextScale());
       }
@@ -504,7 +503,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
         }
       if (textDisplayNode)
         {
-        if (textDisplayNode->GetVisibility() == 0)
+        if (textDisplayNode->GetVisibility() == 0 || textDisplayNode->GetVisibility2D() == 0)
           {
           // override label visibility if all text is off
           rep->GetAxis()->SetLabelVisibility(0);
@@ -600,7 +599,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
       // if the text node says not to show text, use the label property to set it invisible,
       // otherwise, use the text displaynode's opacity setting (since there are no tick
       // labels in the 3D case, don't sue the line display node label visibility).
-      if (!textDisplayNode->GetVisibility())
+      if (!textDisplayNode->GetVisibility() || !textDisplayNode->GetVisibility3D())
         {
         rep->GetLabelProperty()->SetOpacity(0);
         }
@@ -634,13 +633,13 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
 
     rep->NeedToRenderOn();
     }
+
   // update the label format
   vtkDistanceRepresentation *rep = vtkDistanceRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
   if (rep)
     {
     rep->SetLabelFormat(this->GetLabelFormat(rulerNode).c_str());
     }
-
 
   // update the position
   this->UpdatePosition(widget, node);
@@ -649,7 +648,6 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
 
   // enable processing of modified events
   this->m_Updating = 0;
-
 }
 
 //---------------------------------------------------------------------------
