@@ -60,7 +60,7 @@ public:
   /// \sa GetLookupTable()
   virtual void SetAndObserveLookupTable(vtkLookupTable *newLookupTable);
 
-  /// Deprecated method, kept only for backward compatibility.
+  /// \deprecated Kept only for backward compatibility.
   /// Use SetAndObserveLookupTable method instead.
   /// \sa SetAndObserveLookupTable()
   virtual void SetLookupTable(vtkLookupTable* newLookupTable)

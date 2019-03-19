@@ -110,7 +110,7 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
 
 
   ///
-  /// Deprecated. This member has no effect anymore and will be removed in the future.
+  /// \deprecated This member has no effect anymore and will be removed in the future.
   vtkSetMacro(Navigation, int);
   vtkGetMacro(Navigation, int);
   vtkBooleanMacro(Navigation, int);
@@ -147,8 +147,8 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
       NoAction = 0,
       OffsetJumpSlice = 1,
       CenteredJumpSlice = 2,
-      Normal = 1,   // Deprecated
-      JumpSlice = 1 // Deprecated
+      Normal = 1,   ///< \deprecated Use OffsetJumpSlice instead
+      JumpSlice = 1 ///< \deprecated Use CenterdJumpSlice instead
     };
 
 protected:

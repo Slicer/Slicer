@@ -54,7 +54,7 @@ public:
   /// Get the currently selected markups node.
   Q_INVOKABLE vtkMRMLNode* currentNode() const;
 
-  /// Deprecated. Use currentNode() instead.
+  /// \deprecated Use currentNode() instead.
   Q_INVOKABLE vtkMRMLNode* getCurrentNode();
 
   /// Get interaction node.

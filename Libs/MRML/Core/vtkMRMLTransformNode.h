@@ -86,14 +86,14 @@ public:
 
   ///
   /// Set a new matrix transform of this node to parent node.
-  /// Deprecated! Use GetMatrixTransformToParent(vtkMatrix4x4*) instead.
+  /// \deprecated Use GetMatrixTransformToParent(vtkMatrix4x4*) instead.
   /// The method returns a cached copy of the transform, so modification
   /// of the matrix does not alter the transform node.
   virtual vtkMatrix4x4* GetMatrixTransformToParent();
 
   ///
   /// Set a new matrix transform of this node from parent node.
-  /// Deprecated! Use GetMatrixTransformFromParent(vtkMatrix4x4*) instead.
+  /// \deprecated Use GetMatrixTransformFromParent(vtkMatrix4x4*) instead.
   /// The method returns a cached copy of the transform, so modification
   /// of the matrix does not alter the transform node.
   virtual vtkMatrix4x4* GetMatrixTransformFromParent();
@@ -227,13 +227,13 @@ public:
   ///
   /// Set a new matrix transform of this node to parent node.
   /// Returns 0 if the current transform is not linear.
-  /// Deprecated! Use SetMatrixTransformToParent instead.
+  /// \deprecated Use SetMatrixTransformToParent instead.
   virtual int SetAndObserveMatrixTransformToParent(vtkMatrix4x4 *matrix);
 
   ///
   /// Set a new matrix transform of this node from parent node.
   /// Returns 0 if the current transform is not linear.
-  /// Deprecated! Use SetMatrixTransformToParent instead.
+  /// \deprecated Use SetMatrixTransformToParent instead.
   virtual int SetAndObserveMatrixTransformFromParent(vtkMatrix4x4 *matrix);
 
   /// Reimplemented from vtkMRMLTransformableNode

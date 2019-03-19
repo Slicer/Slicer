@@ -319,11 +319,15 @@ public:
   vtkSetMacro(Selectable, int);
   vtkBooleanMacro(Selectable, int);
 
-  /// Specifies if the state of this node stored in the scene's undo buffer.
+  /// Specifies if the state of this node is stored in the scene's undo buffer.
   /// False by default to make sure that undo can be enabled selectively,
   /// only for nodes that are prepared to work correctly when saved/restored.
   /// Nodes with different UndoEnabled value must not reference to each other,
   /// because restoring states could lead to unresolved node references.
+  /// Therefore, when undo is enabled for a certain node, it must be enabled
+  /// for nodes that it references (for example, if undo is enabled for
+  /// vtkMRMLModelNode then it must be enabled for vtkMRMLModelDisplayNode
+  /// and vtkMRMLModelStorageNode as well).
   vtkGetMacro(UndoEnabled, bool);
   vtkSetMacro(UndoEnabled, bool);
   vtkBooleanMacro(UndoEnabled, bool);

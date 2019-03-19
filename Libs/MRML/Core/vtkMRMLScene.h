@@ -225,7 +225,7 @@ public:
   /// Returns its position in the list.
   int IsNodePresent(vtkMRMLNode *n);
 
-  /// This method is deprecated, kept for backward compatibility but it will be
+  /// \deprecated This method is deprecated, kept for backward compatibility but it will be
   /// removed in the future.
   /// The problem is that it changes the node collection's internal iterator,
   /// which may cause unintended side effects in caller functions that also
@@ -234,7 +234,7 @@ public:
   /// or traverse collection returned by GetNodes() using a collection iterator.
   void InitTraversal();
 
-  /// This method is deprecated, kept for backward compatibility but it will be
+  /// \deprecated This method is deprecated, kept for backward compatibility but it will be
   /// removed in the future.
   /// The problem is that it changes the node collection's internal iterator,
   /// which may cause unintended side effects in caller functions that also
@@ -243,7 +243,7 @@ public:
   /// or traverse collection returned by GetNodes() using a collection iterator.
   vtkMRMLNode *GetNextNode();
 
-  /// This method is deprecated, kept for backward compatibility but it will be
+  /// \deprecated This method is deprecated, kept for backward compatibility but it will be
   /// removed in the future.
   /// The problem is that it changes the node collection's internal iterator,
   /// which may cause unintended side effects in caller functions that also
@@ -371,15 +371,17 @@ public:
   void SaveStateForUndo();
 
   /// Save current state of the node in the undo buffer
-  /// Deprecated! Use SaveStateForUndo() instead.
+  /// \deprecated Use SaveStateForUndo() instead.
   /// Storing of only selected nodes may result in incomplete saving of
-  /// important changes in the scene.
+  /// important changes in the scene. Instead, each node's UndoEnabled flag
+  /// will tell if that node's state must be stored or not.
   void SaveStateForUndo(vtkMRMLNode *node);
 
   /// Save current state of the nodes in the undo buffer
-  /// Deprecated! Use SaveStateForUndo() instead.
+  /// \deprecated Use SaveStateForUndo() instead.
   /// Storing of only selected nodes may result in incomplete saving of
-  /// important changes in the scene.
+  /// important changes in the scene. Instead, each node's UndoEnabled flag
+  /// will tell if that node's state must be stored or not.
   void SaveStateForUndo(vtkCollection *nodes);
   void SaveStateForUndo(std::vector<vtkMRMLNode *> nodes);
 

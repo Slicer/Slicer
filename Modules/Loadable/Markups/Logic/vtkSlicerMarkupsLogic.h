@@ -159,7 +159,7 @@ public:
   bool CopyNthControlPointToNewList(int n, vtkMRMLMarkupsNode *markupsNode,
                               vtkMRMLMarkupsNode *newMarkupsNode);
 
-  /// Deprecated, use CopyNthControlPointToNewList instead.
+  /// \deprecated Use CopyNthControlPointToNewList instead.
   bool CopyNthMarkupToNewList(int n, vtkMRMLMarkupsNode *markupsNode,
                               vtkMRMLMarkupsNode *newMarkupsNode)
     {
@@ -176,7 +176,7 @@ public:
   bool MoveNthControlPointToNewListAtIndex(int n, vtkMRMLMarkupsNode *markupsNode,
                                    vtkMRMLMarkupsNode *newMarkupsNode, int newIndex);
 
-  /// Deprecated, use MoveNthControlPointToNewList instead.
+  /// \deprecated Use MoveNthControlPointToNewList instead.
   bool MoveNthMarkupToNewList(int n, vtkMRMLMarkupsNode *markupsNode,
                               vtkMRMLMarkupsNode *newMarkupsNode, int newIndex)
     {

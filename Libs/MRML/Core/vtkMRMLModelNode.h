@@ -68,9 +68,11 @@ public:
   vtkMRMLModelDisplayNode* GetModelDisplayNode();
 
   /// Set and observe mesh for this model.
-  /// \deprecated
   /// \sa GetMesh()
   virtual void SetAndObserveMesh(vtkPointSet *Mesh);
+
+  /// Set and observe mesh for this model.
+  /// \deprecated Use SetAndObserveMesh instead.
   virtual void SetAndObservePolyData(vtkPolyData *polyData);
 
   /// Return the input mesh.
@@ -133,7 +135,7 @@ public:
   enum
     {
     MeshModifiedEvent = 17001,
-    PolyDataModifiedEvent = 17001 /// \deprecated Use MeshModifiedEvent
+    PolyDataModifiedEvent = 17001 ///< \deprecated Use MeshModifiedEvent
     };
 
   /// Utility function that adds an array to the mesh's point data.

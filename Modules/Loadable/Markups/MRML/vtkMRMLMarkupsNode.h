@@ -206,7 +206,7 @@ public:
   /// Clear out the node of all control points
   virtual void RemoveAllControlPoints();
 
-  /// Deprecated. Use RemoveAllControlPoints instead.
+  /// \deprecated Use RemoveAllControlPoints instead.
   void RemoveAllMarkups() { this->RemoveAllControlPoints(); };
 
   /// Get the Locked property on the markupNode/list of control points.
@@ -235,9 +235,9 @@ public:
   int GetNumberOfControlPoints();
   /// Return the number of control points that are already placed (not being previewed or undefined).
   int GetNumberOfDefinedControlPoints();
-  /// Deprecated. Use GetNumberOfControlPoints() instead.
+  /// \deprecated Use GetNumberOfControlPoints() instead.
   int GetNumberOfMarkups() { return this->GetNumberOfControlPoints(); };
-  /// Deprecated. Use GetNumberOfControlPoints() instead.
+  /// \deprecated Use GetNumberOfControlPoints() instead.
   int GetNumberOfPointsInNthMarkup(int) { return this->GetNumberOfControlPoints(); };
   /// Return a pointer to the Nth control point stored in this node, null if n is out of bounds
   ControlPoint* GetNthControlPoint(int n);
@@ -262,10 +262,10 @@ public:
   /// returning it as a vtkVector3d, return (0,0,0) if not found
   vtkVector3d GetNthControlPointPositionVector(int pointIndex);
 
-  /// Deprecated. Use GetNthControlPointPositionVector() method instead.
+  /// \deprecated Use GetNthControlPointPositionVector() method instead.
   vtkVector3d GetMarkupPointVector(int markupIndex, int) { return this->GetNthControlPointPositionVector(markupIndex); };
 
-  /// Deprecated. Use GetNthControlPointPosition method instead.
+  /// \deprecated Use GetNthControlPointPosition method instead.
   void GetMarkupPoint(int markupIndex, int pointIndex, double point[3]);
 
   /// Get the position of the Nth control point
@@ -285,7 +285,7 @@ public:
   /// Remove Nth Control Point
   void RemoveNthControlPoint(int pointIndex);
 
-  /// Deprecated. Use RemoveNthControlPoint instead.
+  /// \deprecated Use RemoveNthControlPoint instead.
   void RemoveMarkup(int pointIndex) { this->RemoveNthControlPoint(pointIndex); };
 
   /// Insert a control point in this list at targetIndex.
@@ -373,15 +373,15 @@ public:
   std::string GetNthControlPointAssociatedNodeID(int n = 0);
   void SetNthControlPointAssociatedNodeID(int n, std::string id);
 
-  /// Deprecated. Use GetNthControlPointAssociatedNodeID instead.
+  /// \deprecated Use GetNthControlPointAssociatedNodeID instead.
   std::string GetNthMarkupAssociatedNodeID(int n = 0) { return this->GetNthControlPointAssociatedNodeID(n); }
-  /// Deprecated. Use SetNthControlPointAssociatedNodeID instead.
+  /// \deprecated Use SetNthControlPointAssociatedNodeID instead.
   void SetNthMarkupAssociatedNodeID(int n, std::string id) { this->SetNthControlPointAssociatedNodeID(n,id); }
 
   /// Get the id for the Nth control point
   std::string GetNthControlPointID(int n);
 
-  /// Deprecated. Use GetNthControlPointID instead.
+  /// \deprecated Use GetNthControlPointID instead.
   std::string GetNthMarkupID(int n = 0) { return this->GetNthControlPointID(n); }
 
   /// Get the Nth control point index based on it's ID
@@ -407,9 +407,9 @@ public:
   /// \sa vtMRMLMarkupsNode::SetLocked
   void SetNthControlPointLocked(int n, bool flag);
 
-  /// Deprecated. Use GetNthControlPointLocked instead.
+  /// \deprecated Use GetNthControlPointLocked instead.
   bool GetNthMarkupLocked(int n = 0) { return this->GetNthControlPointLocked(n); };
-  /// Deprecated. Use SetNthControlPointLocked instead.
+  /// \deprecated Use SetNthControlPointLocked instead.
   void SetNthMarkupLocked(int n, bool flag) { this->SetNthControlPointLocked(n, flag);  }
 
   /// Get the Visibility flag on the Nth control point,
@@ -430,9 +430,9 @@ public:
   /// Set the Label on the Nth control point
   void SetNthControlPointLabel(int n, std::string label);
 
-  /// Deprecated. Use GetNthControlPointLabel instead.
+  /// \deprecated Use GetNthControlPointLabel instead.
   std::string GetNthMarkupLabel(int n = 0) { return this->GetNthControlPointLabel(n); }
-  /// Deprecated. Use SetNthControlPointLabel instead.
+  /// \deprecated Use SetNthControlPointLabel instead.
   void SetNthMarkupLabel(int n, std::string label) { this->SetNthControlPointLabel(n, label); }
 
   /// Get the Description flag on the Nth control point,

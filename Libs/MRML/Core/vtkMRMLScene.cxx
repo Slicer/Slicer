@@ -2884,8 +2884,6 @@ void vtkMRMLScene::Redo()
       }
     }
 
-  //std::hash_map<std::string, vtkMRMLNode*>::iterator iter;
-  //std::hash_map<std::string, vtkMRMLNode*>::iterator curIter;
   std::map<std::string, vtkWeakPointer<vtkMRMLNode> >::iterator iter;
   std::map<std::string, vtkWeakPointer<vtkMRMLNode> >::iterator curIter;
 

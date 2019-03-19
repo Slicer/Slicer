@@ -140,10 +140,10 @@ public slots:
   /// Delete all points from the current fiducial markups node.
   void deleteAllPoints();
 
-  /// Deprecated. Use deleteLastPoint instead.
+  /// \deprecated Use deleteLastPoint instead.
   void deleteLastMarkup();
 
-  /// Deprecated. Use deleteLastPoint instead.
+  /// \deprecated Use deleteLastPoint instead.
   void deleteAllMarkups();
 
 protected slots:
