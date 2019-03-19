@@ -236,7 +236,7 @@ public:
   void RemoveSegment(const std::string& segmentID);
 
   /// Get position of the segment's center (in the segmentation node's coordinate system)
-  double* GetSegmentCenter(const std::string& segmentID);
+  double* GetSegmentCenter(const std::string& segmentID) VTK_SIZEHINT(3);
   /// Python-accessible version of \sa GetSegmentCenter.
   /// Get position of the segment's center (in the segmentation node's coordinate system)
   void GetSegmentCenter(const std::string& segmentID, double center[3]);
@@ -244,7 +244,7 @@ public:
   /// Get position of the segment's center in world coordinate system.
   /// It is the position returned by \sa GetSegmentCenter() transformed by the segmentation node's
   /// parent transform.
-  double* GetSegmentCenterRAS(const std::string& segmentID);
+  double* GetSegmentCenterRAS(const std::string& segmentID) VTK_SIZEHINT(3);
   /// Python-accessible version of \sa GetSegmentCenterRAS.
   /// Get position of the segment's center in world coordinate system.
   void GetSegmentCenterRAS(const std::string& segmentID, double centerRAS[3]);
