@@ -237,11 +237,17 @@ public:
 
   /// Get position of the segment's center (in the segmentation node's coordinate system)
   double* GetSegmentCenter(const std::string& segmentID);
+  /// Python-accessible version of \sa GetSegmentCenter.
+  /// Get position of the segment's center (in the segmentation node's coordinate system)
+  void GetSegmentCenter(const std::string& segmentID, double center[3]);
 
   /// Get position of the segment's center in world coordinate system.
-  /// It is the position returned by GetSegmentCenter() transformed by the segmentation node's
+  /// It is the position returned by \sa GetSegmentCenter() transformed by the segmentation node's
   /// parent transform.
   double* GetSegmentCenterRAS(const std::string& segmentID);
+  /// Python-accessible version of \sa GetSegmentCenterRAS.
+  /// Get position of the segment's center in world coordinate system.
+  void GetSegmentCenterRAS(const std::string& segmentID, double centerRAS[3]);
 
 protected:
   /// Set segmentation object

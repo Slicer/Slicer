@@ -1149,3 +1149,27 @@ double* vtkMRMLSegmentationNode::GetSegmentCenterRAS(const std::string& segmentI
 
   return this->SegmentCenterTmp;
 }
+
+//---------------------------------------------------------------------------
+void vtkMRMLSegmentationNode::GetSegmentCenter(const std::string& segmentID, double center[3])
+{
+  double* segmentCenterPosition = this->GetSegmentCenter(segmentID);
+  if (segmentCenterPosition)
+    {
+    center[0] = segmentCenterPosition[0];
+    center[1] = segmentCenterPosition[1];
+    center[2] = segmentCenterPosition[2];
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSegmentationNode::GetSegmentCenterRAS(const std::string& segmentID, double centerRAS[3])
+{
+  double* segmentCenterPositionRAS = this->GetSegmentCenterRAS(segmentID);
+  if (segmentCenterPositionRAS)
+    {
+    centerRAS[0] = segmentCenterPositionRAS[0];
+    centerRAS[1] = segmentCenterPositionRAS[1];
+    centerRAS[2] = segmentCenterPositionRAS[2];
+    }
+}
