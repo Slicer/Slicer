@@ -122,9 +122,9 @@ void qMRMLTransformDisplayNodeWidgetPrivate
   this->ContourOptions->hide();
   this->GridOptions->hide();
 
-  QObject::connect(this->VisibleCheckBox, SIGNAL(toggled(bool)), q, SLOT(setVisible(bool)));
-  QObject::connect(this->Visible2dCheckBox, SIGNAL(toggled(bool)), q, SLOT(setVisible2d(bool)));
-  QObject::connect(this->Visible3dCheckBox, SIGNAL(toggled(bool)), q, SLOT(setVisible3d(bool)));
+  QObject::connect(this->VisibleCheckBox, SIGNAL(toggled(bool)), q, SLOT(setVisibility(bool)));
+  QObject::connect(this->Visible2dCheckBox, SIGNAL(toggled(bool)), q, SLOT(setVisibility2d(bool)));
+  QObject::connect(this->Visible3dCheckBox, SIGNAL(toggled(bool)), q, SLOT(setVisibility3d(bool)));
 
   QObject::connect(this->RegionNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(regionNodeChanged(vtkMRMLNode*)));
 
@@ -619,7 +619,7 @@ void qMRMLTransformDisplayNodeWidget::setEditorScalingEnabled(bool enabled)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLTransformDisplayNodeWidget::setVisible(bool visible)
+void qMRMLTransformDisplayNodeWidget::setVisibility(bool visible)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
@@ -630,7 +630,7 @@ void qMRMLTransformDisplayNodeWidget::setVisible(bool visible)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLTransformDisplayNodeWidget::setVisible2d(bool visible)
+void qMRMLTransformDisplayNodeWidget::setVisibility2d(bool visible)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
@@ -641,7 +641,7 @@ void qMRMLTransformDisplayNodeWidget::setVisible2d(bool visible)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLTransformDisplayNodeWidget::setVisible3d(bool visible)
+void qMRMLTransformDisplayNodeWidget::setVisibility3d(bool visible)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
