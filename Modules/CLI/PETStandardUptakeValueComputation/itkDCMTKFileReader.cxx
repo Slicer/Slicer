@@ -30,6 +30,7 @@
 #define INCLUDE_CSTDIO
 #define INCLUDE_CSTRING
 
+#include <dcmtk/dcmdata/dcuid.h>
 #include "dcmtk/dcmdata/dcdict.h"             // For DcmDataDictionary
 #include "dcmtk/dcmdata/dcsequen.h"        /* for DcmSequenceOfItems */
 #include "dcmtk/dcmdata/dcvrcs.h"          /* for DcmCodeString */
@@ -1145,7 +1146,11 @@ DCMTKFileReader
 {
   DcmDataDictionary &dict = dcmDataDict.wrlock();
   dict.addEntry(entry);
+#if OFFIS_DCMTK_VERSION_NUMBER < 364
   dcmDataDict.unlock();
+#else
+  dcmDataDict.rdunlock();
+#endif
 }
 
 unsigned
