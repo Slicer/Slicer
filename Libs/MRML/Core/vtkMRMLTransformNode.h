@@ -353,6 +353,11 @@ public:
   /// \param inputTransform The transform for which information is obtained
   const char* GetTransformInfo(vtkAbstractTransform* inputTransform);
 
+  /// Reference role name from the transform node to the moving volume or fiducial node that participated in registration.
+  static const char* GetMovingNodeReferenceRole() { return "spatialRegistrationMoving"; };
+  /// Reference role name from the transform node to the moving volume or fiducial node that participated in registration
+  static const char* GetFixedNodeReferenceRole() { return "spatialRegistrationFixed"; };
+
 protected:
   vtkMRMLTransformNode();
   ~vtkMRMLTransformNode() override;

@@ -2455,13 +2455,17 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     // same spot of the subject hierarchy as the reference.
     //        (subject, predicate, object) = (reference, setParent, volume/model)
     //
+    // 3. If a node has a forward reference (reference as a child element not an attribute, which
+    // specifies reference from the place where it was defined as opposed to 1. which points
+    // backwards), then a node reference is added from that node to the specified node with a given
+    // role.
+    //        (subject, predicate, object) = (node, addNodeReference, referencedNode)
+    //
     for (pgit = pgbeginit; pgit != pgendit; ++pgit)
       {
       // iterate over each parameter in this group
-      std::vector<ModuleParameter>::const_iterator pbeginit
-        = (*pgit).GetParameters().begin();
-      std::vector<ModuleParameter>::const_iterator pendit
-        = (*pgit).GetParameters().end();
+      std::vector<ModuleParameter>::const_iterator pbeginit = (*pgit).GetParameters().begin();
+      std::vector<ModuleParameter>::const_iterator pendit = (*pgit).GetParameters().end();
       std::vector<ModuleParameter>::const_iterator pit;
 
       for (pit = pbeginit; pit != pendit; ++pit)
@@ -2527,6 +2531,40 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           else
             {
             vtkWarningMacro( << "Referenced parameter unknown: " << (*pit).GetReference() );
+            }
+          }
+        else
+          {
+          std::map<std::string,std::vector<std::string> > forwardReferences;
+          (*pit).GetForwardReferences(forwardReferences);
+          if (forwardReferences.size() > 0)
+            {
+            std::string referencingNodeID = (*pit).GetValue();
+            vtkMRMLNode *referencingNode = this->GetMRMLScene()->GetNodeByID(referencingNodeID.c_str());
+            if (referencingNode)
+              {
+              std::map<std::string,std::vector<std::string> >::const_iterator frit;
+              for (frit = forwardReferences.begin(); frit != forwardReferences.end(); ++frit)
+                {
+                std::string role = frit->first;
+
+                std::vector<std::string>::const_iterator frvit;
+                for (frvit = frit->second.begin(); frvit != frit->second.end(); ++frvit)
+                  {
+                  // does the reference parameter exist?
+                  if (node0->GetModuleDescription().HasParameter(*frvit))
+                    {
+                    // get the id stored in the parameter referenced
+                    std::string referencedNodeID = node0->GetModuleDescription().GetParameterValue(*frvit);
+                    vtkMRMLNode *referencedNode = this->GetMRMLScene()->GetNodeByID(referencedNodeID.c_str());
+                    if (referencedNode)
+                      {
+                      referencingNode->AddNodeReferenceID(role.c_str(), referencedNodeID.c_str());
+                      }
+                    }
+                  } // for frvit (referenced nodes)
+                } // for frit (forward references)
+              }
             }
           }
         } // for pit
