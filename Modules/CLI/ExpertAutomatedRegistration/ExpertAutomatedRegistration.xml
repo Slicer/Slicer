@@ -52,6 +52,8 @@
       <description><![CDATA[Save the transform that results from registration]]></description>
       <longflag>saveTransform</longflag>
       <channel>output</channel>
+      <reference role="spatialRegistrationMoving" parameter="movingImage"/>
+      <reference role="spatialRegistrationFixed" parameter="fixedimage"/>
       <default/>
     </transform>
     <string-enumeration>

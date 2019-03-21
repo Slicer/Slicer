@@ -31,6 +31,8 @@
       <description><![CDATA[Save the transform that results from registration]]></description>
       <longflag>saveTransform</longflag>
       <channel>output</channel>
+      <reference role="spatialRegistrationMoving" parameter="movingLandmarks"/>
+      <reference role="spatialRegistrationFixed" parameter="fixedLandmarks"/>
     </transform>
     <string-enumeration>
       <name>transformType</name>

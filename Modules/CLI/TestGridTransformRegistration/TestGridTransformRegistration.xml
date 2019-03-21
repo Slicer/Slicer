@@ -35,6 +35,8 @@
       <description><![CDATA[The grid transform (deformation vector field).]]></description>
       <label>Output transform</label>
       <channel>output</channel>
+      <reference role="spatialRegistrationMoving" parameter="MovingImageFileName"/>
+      <reference role="spatialRegistrationFixed" parameter="FixedImageFileName"/>
     </transform>
     <image>
       <name>FixedImageFileName</name>
