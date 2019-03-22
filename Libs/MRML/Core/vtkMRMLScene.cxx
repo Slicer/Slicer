@@ -806,7 +806,7 @@ int vtkMRMLScene::Import()
       {
       //double progress = n / (1. * nnodes);
       //this->InvokeEvent(vtkCommand::ProgressEvent,(void *)&progress);
-      vtkDebugMacro("Adding Node: " << node->GetName());
+      vtkDebugMacro("Adding Node: " << (node->GetName() ? node->GetName() : "(undefined)"));
       if (node->GetAddToScene())
         {
         node->UpdateScene(this);
@@ -1093,7 +1093,7 @@ inline bool IsNodeWithoutID(vtkMRMLNode* node)
 //------------------------------------------------------------------------------
 inline bool IsNodeWithoutName(vtkMRMLNode* node)
 {
-  return node->GetName() == nullptr|| node->GetName()[0] == '\0';
+  return node->GetName() == nullptr || node->GetName()[0] == '\0';
 }
 
 }
@@ -1374,14 +1374,15 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
   if (this->IsNodePresent(n) == 0)
     {
     vtkErrorMacro("RemoveNode: Node " << n->GetClassName() << "/"
-                  << n->GetName() << "[" << n << "]" << " already removed");
+                  << (n->GetName() ? n->GetName() : "(undefined)") << "[" << n << "]" << " already removed");
     }
   // As callbacks may want to look for the removed node, the nodeID list should
   // be up to date.
   if (this->GetNodeByID(n->GetID()) == nullptr)
     {
     vtkErrorMacro("RemoveNode: class: " << n->GetClassName() << " name:"
-                  << n->GetName() << " id: " << n->GetID()
+                  << (n->GetName() ? n->GetName() : "(undefined)")
+                  << " id: " << (n->GetID() ? n->GetID() : "(undefined)")
                   << "["  << n << "]" << " can't be found by ID");
     }
 #endif
@@ -1395,7 +1396,7 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
     }
   this->Nodes->vtkCollection::RemoveItem((vtkObject *)n);
 
-  std::string nid=n->GetID();
+  std::string nid = (n->GetID() ? n->GetID() : "");
   this->RemoveNodeID(n->GetID());
 
   this->InvokeEvent(vtkMRMLScene::NodeRemovedEvent, n);
@@ -1532,7 +1533,7 @@ void vtkMRMLScene::RemoveUnusedNodeReferences()
 //------------------------------------------------------------------------------
 void vtkMRMLScene::RemoveReferencesToNode(vtkMRMLNode *n)
 {
-  if (n == nullptr && n->GetID() == nullptr)
+  if (n == nullptr || n->GetID() == nullptr)
     {
     vtkErrorMacro("RemoveReferencesToNode: node is null or has null id, can't remove refs");
     return;
@@ -1804,7 +1805,7 @@ vtkCollection* vtkMRMLScene::GetNodesByName(const char* name)
   for (this->Nodes->InitTraversal(it);
        (node = (vtkMRMLNode*)this->Nodes->GetNextItemAsObject(it)) ;)
     {
-    if (!strcmp(node->GetName(), name))
+    if (node->GetName() != nullptr && !strcmp(node->GetName(), name))
       {
       nodes->AddItem(node);
       }
@@ -1930,7 +1931,7 @@ vtkCollection* vtkMRMLScene::GetNodesByClassByName(const char* className, const 
   for (int n=0; n < this->Nodes->GetNumberOfItems(); n++)
     {
     node = (vtkMRMLNode*)this->Nodes->GetItemAsObject(n);
-    if (!strcmp(node->GetName(), name) && node->IsA(className))
+    if (node->GetName() != nullptr && !strcmp(node->GetName(), name) && node->IsA(className))
       {
       nodes->AddItem(node);
       }
@@ -3339,7 +3340,7 @@ vtkURIHandler * vtkMRMLScene::FindURIHandlerByName(const char *name)
       vtkErrorMacro("FindURIHandlerByName: Got nullptr URIHandler from URIHandlerCollection." );
       return nullptr;
       }
-    if (  !strcmp (u->GetName(), name ) )
+    if (u->GetName() != nullptr && !strcmp(u->GetName(), name))
       {
       vtkDebugMacro("FindURIHandlerByName: found a handler with name " << name << " at index " << i << " in the handler collection");
       return u;
