@@ -16,45 +16,30 @@
 
 =========================================================================*/
 
-#include "vtkSlicerCurveRepresentation2D.h"
-
+// VTK includes
 #include "vtkCellLocator.h"
-#include "vtkCleanPolyData.h"
 #include "vtkDiscretizableColorTransferFunction.h"
-#include "vtkPolyDataMapper2D.h"
-#include "vtkPiecewiseFunction.h"
-#include "vtkActor2D.h"
-#include "vtkAssemblyPath.h"
-#include "vtkRenderer.h"
-#include "vtkRenderWindow.h"
-#include "vtkObjectFactory.h"
-#include "vtkProperty2D.h"
-#include "vtkMath.h"
-#include "vtkInteractorObserver.h"
 #include "vtkLine.h"
-#include "vtkCoordinate.h"
-#include "vtkGlyph2D.h"
-#include "vtkCursor2D.h"
-#include "vtkCylinderSource.h"
-#include "vtkPolyData.h"
-#include "vtkPoints.h"
-#include "vtkDoubleArray.h"
-#include "vtkPointData.h"
-#include "vtkTransformPolyDataFilter.h"
-#include "vtkTransform.h"
-#include "vtkCamera.h"
-#include "vtkPoints.h"
-#include "vtkCellArray.h"
-#include "vtkSphereSource.h"
-#include "vtkAppendPolyData.h"
-#include "vtkTubeFilter.h"
-#include "vtkStringArray.h"
+#include "vtkMath.h"
+#include "vtkObjectFactory.h"
 #include "vtkPlane.h"
-#include "vtkVectorText.h"
-#include "vtkTextActor.h"
-#include "cmath"
-#include "vtkMRMLMarkupsDisplayNode.h"
+#include "vtkPoints.h"
+#include "vtkPointData.h"
+#include "vtkPolyData.h"
+#include "vtkPolyDataMapper2D.h"
+#include "vtkProperty2D.h"
+#include "vtkRenderer.h"
 #include "vtkSampleImplicitFunctionFilter.h"
+#include "vtkSlicerCurveRepresentation2D.h"
+#include "vtkTextActor.h"
+#include "vtkTextProperty.h"
+#include "vtkTransform.h"
+#include "vtkTransformPolyDataFilter.h"
+#include "vtkTubeFilter.h"
+
+// MRML includes
+#include "vtkMRMLMarkupsDisplayNode.h"
+#include "vtkMRMLProceduralColorNode.h"
 
 vtkStandardNewMacro(vtkSlicerCurveRepresentation2D);
 
@@ -64,11 +49,9 @@ vtkSlicerCurveRepresentation2D::vtkSlicerCurveRepresentation2D()
   this->Line = vtkSmartPointer<vtkPolyData>::New();
 
   this->SliceDistance = vtkSmartPointer<vtkSampleImplicitFunctionFilter>::New();
-  this->SlicePlane = vtkSmartPointer<vtkPlane>::New();
   this->SliceDistance->SetImplicitFunction(this->SlicePlane);
 
   this->WorldToSliceTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  this->WorldToSliceTransform = vtkSmartPointer<vtkTransform>::New();
   this->WorldToSliceTransformer->SetTransform(this->WorldToSliceTransform);
   this->WorldToSliceTransformer->SetInputConnection(this->SliceDistance->GetOutputPort());
 
@@ -77,9 +60,10 @@ vtkSlicerCurveRepresentation2D::vtkSlicerCurveRepresentation2D()
   this->TubeFilter->SetNumberOfSides(6);
   this->TubeFilter->SetRadius(1);
 
+  this->LineColorMap = vtkSmartPointer<vtkDiscretizableColorTransferFunction>::New();
+
   this->LineMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
   this->LineMapper->SetInputConnection(this->TubeFilter->GetOutputPort());
-  this->LineColorMap = vtkSmartPointer<vtkDiscretizableColorTransferFunction>::New();
   this->LineMapper->SetLookupTable(this->LineColorMap);
   this->LineMapper->SetScalarVisibility(true);
 
@@ -106,40 +90,11 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
     || !this->MarkupsDisplayNode->GetVisibility()
     || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID())
     )
-  {
+    {
     this->VisibilityOff();
     return;
-  }
-  this->VisibilityOn();
-
-  // Update from slice node
-  if (!caller || caller == this->ViewNode.GetPointer())
-    {
-    vtkMatrix4x4* sliceXYToRAS = this->GetSliceNode()->GetXYToRAS();
-
-    // Update transformation to slice
-    vtkNew<vtkMatrix4x4> rasToSliceXY;
-    vtkMatrix4x4::Invert(sliceXYToRAS, rasToSliceXY.GetPointer());
-    // Project all points to the slice plane (slice Z coordinate = 0)
-    rasToSliceXY->SetElement(2, 0, 0);
-    rasToSliceXY->SetElement(2, 1, 0);
-    rasToSliceXY->SetElement(2, 2, 0);
-    this->WorldToSliceTransform->SetMatrix(rasToSliceXY.GetPointer());
-
-    // Update slice plane (for distance computation)
-    double normal[3];
-    double origin[3];
-    const int planeOrientation = 1; // +/-1: orientation of the normal
-    for (int i = 0; i < 3; i++)
-      {
-      normal[i] = planeOrientation * sliceXYToRAS->GetElement(i, 2);
-      origin[i] = sliceXYToRAS->GetElement(i, 3);
-      }
-    vtkMath::Normalize(normal);
-    this->SlicePlane->SetNormal(normal);
-    this->SlicePlane->SetOrigin(origin);
-    this->SlicePlane->Modified();
     }
+  this->VisibilityOn();
 
   // Line display
 
@@ -150,61 +105,49 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   bool allControlPointsSelected = this->GetAllControlPointsSelected();
   int controlPointType = Active;
   if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentLine)
-  {
+    {
     controlPointType = allControlPointsSelected ? Selected : Unselected;
-  }
+    }
   this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
 
-  // TODO: use color node or display node properties to set up colormap
-  double limit = 10.0;
-  double tolerance = 1.0;
-  vtkPiecewiseFunction* opacityFunction = this->LineColorMap->GetScalarOpacityFunction();
-  if (!opacityFunction)
+  if (this->MarkupsDisplayNode->GetLineColorNode() && this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction())
     {
-    opacityFunction = vtkPiecewiseFunction::New();
-    this->LineColorMap->SetScalarOpacityFunction(opacityFunction);
-    opacityFunction->Delete();
+    // Update the line color mapping from the colorNode stored in the markups display node
+    this->LineMapper->SetLookupTable(this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction());
     }
-  opacityFunction->RemoveAllPoints();
-  opacityFunction->AddPoint(-limit, 0.0);
-  opacityFunction->AddPoint(-tolerance, 1.0);
-  opacityFunction->AddPoint(tolerance, 1.0);
-  opacityFunction->AddPoint(limit, 0.0);
-  vtkColorTransferFunction* colorFunction = this->LineColorMap;
-  colorFunction->RemoveAllPoints();
-  double* lineColorRGB = this->GetControlPointsPipeline(controlPointType)->Property->GetColor();
-  colorFunction->AddRGBPoint(-tolerance*2.0, std::min(lineColorRGB[0]*0.5, 1.0), std::min(lineColorRGB[1] * 0.5, 1.0), std::min(lineColorRGB[2] * 2.0, 1.0));
-  colorFunction->AddRGBPoint(-tolerance, lineColorRGB[0], lineColorRGB[1], lineColorRGB[2]);
-  colorFunction->AddRGBPoint( tolerance, lineColorRGB[0], lineColorRGB[1], lineColorRGB[2]);
-  colorFunction->AddRGBPoint( tolerance*2.0, std::min(lineColorRGB[0] * 2.0, 1.0), std::min(lineColorRGB[1] * 0.5, 1.0), std::min(lineColorRGB[2] * 0.5, 1.0));
-  this->LineColorMap->SetEnableOpacityMapping(true);
-  this->LineColorMap->SetClamping(true);
+  else
+    {
+    // if there is no line color node, build the color mapping from few varibales
+    // (color, opacity, distance fading, saturation and hue offset) stored in the display node
+    this->UpdateDistanceColorMap(this->LineColorMap, this->LineActor->GetProperty()->GetColor());
+    this->LineMapper->SetLookupTable(this->LineColorMap);
+    }
 
   bool allNodesHidden = true;
   for (int controlPointIndex = 0; controlPointIndex < markupsNode->GetNumberOfControlPoints(); controlPointIndex++)
-  {
-    if (markupsNode->GetNthControlPointVisibility(controlPointIndex))
     {
+    if (markupsNode->GetNthControlPointVisibility(controlPointIndex))
+      {
       allNodesHidden = false;
       break;
+      }
     }
-  }
 
   // Display center position
   // It would be cleaner to use a dedicated actor for this instead of using the control points actors
   // as it would give flexibility in what glyph we use, it would not interfere with active control point display, etc.
   if (this->ClosedLoop && markupsNode->GetNumberOfControlPoints() > 2 && this->CenterVisibilityOnSlice && !allNodesHidden)
-  {
+    {
     double centerPosWorld[3], centerPosDisplay[3], orient[3] = { 0 };
     markupsNode->GetCenterPosition(centerPosWorld);
     this->GetWorldToSliceCoordinates(centerPosWorld, centerPosDisplay);
     int centerControlPointType = allControlPointsSelected ? Selected : Unselected;
     if (this->MarkupsDisplayNode->GetActiveComponentType() == vtkMRMLMarkupsDisplayNode::ComponentCenterPoint)
-    {
+      {
       centerControlPointType = Active;
       this->GetControlPointsPipeline(centerControlPointType)->ControlPoints->SetNumberOfPoints(0);
       this->GetControlPointsPipeline(centerControlPointType)->ControlPointsPolyData->GetPointData()->GetNormals()->SetNumberOfTuples(0);
-    }
+      }
     this->GetControlPointsPipeline(centerControlPointType)->ControlPoints->InsertNextPoint(centerPosDisplay);
     this->GetControlPointsPipeline(centerControlPointType)->ControlPointsPolyData->GetPointData()->GetNormals()->InsertNextTuple(orient);
 
@@ -212,11 +155,11 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
     this->GetControlPointsPipeline(centerControlPointType)->ControlPointsPolyData->GetPointData()->GetNormals()->Modified();
     this->GetControlPointsPipeline(centerControlPointType)->ControlPointsPolyData->Modified();
     if (centerControlPointType == Active)
-    {
+      {
       this->GetControlPointsPipeline(centerControlPointType)->Actor->VisibilityOn();
       this->GetControlPointsPipeline(centerControlPointType)->LabelsActor->VisibilityOff();
+      }
     }
-  }
 }
 
 //----------------------------------------------------------------------
@@ -227,15 +170,15 @@ void vtkSlicerCurveRepresentation2D::CanInteract(
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1)
-  {
+    {
     return;
-  }
+    }
   Superclass::CanInteract(displayPosition, worldPosition, foundComponentType, foundComponentIndex, closestDistance2);
   if (foundComponentType != vtkMRMLMarkupsDisplayNode::ComponentNone)
-  {
+    {
     // if mouse is near a control point then select that (ignore the line)
     return;
-  }
+    }
 
   this->CanInteractWithCurve(displayPosition, worldPosition, foundComponentType, foundComponentIndex, closestDistance2);
 }

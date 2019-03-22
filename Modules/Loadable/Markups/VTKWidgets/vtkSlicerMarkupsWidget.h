@@ -67,7 +67,8 @@ public:
     WidgetEventControlPointMoveStart,
     WidgetEventControlPointMoveEnd,
     WidgetEventControlPointDelete,
-    WidgetEventControlPointInsert
+    WidgetEventControlPointInsert,
+    WidgetEventControlPointSnapToSlice
   };
 
   // Returns true if one of the markup points are just being previewed and not placed yet.
@@ -117,7 +118,7 @@ protected:
   void StartWidgetInteraction(vtkMRMLInteractionEventData* eventData);
   void EndWidgetInteraction();
 
-  virtual void TranslatePoint(double eventPos[2]);
+  virtual void TranslatePoint(double eventPos[2], bool snapToSlice = false);
   virtual void TranslateWidget(double eventPos[2]);
   virtual void ScaleWidget(double eventPos[2]);
   virtual void RotateWidget(double eventPos[2]);
@@ -140,6 +141,7 @@ protected:
   // placing the widget.
   // Return true if the event is processed.
   virtual bool ProcessMouseMove(vtkMRMLInteractionEventData* eventData);
+  virtual bool ProcessControlPointSnapToSlice(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessControlPointDelete(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessControlPointInsert(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessControlPointMoveStart(vtkMRMLInteractionEventData* eventData);

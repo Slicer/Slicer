@@ -33,15 +33,11 @@
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
 #include "vtkSlicerMarkupsWidgetRepresentation2D.h"
 
-class vtkActor2D;
-class vtkAppendPolyData;
-class vtkPolyDataMapper2D;
-class vtkPolyData;
-class vtkProperty2D;
-class vtkTubeFilter;
 class vtkArcSource;
+class vtkDiscretizableColorTransferFunction;
+class vtkSampleImplicitFunctionFilter;
 class vtkTextActor;
-class vtkVectorText;
+class vtkTubeFilter;
 
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerAngleRepresentation2D : public vtkSlicerMarkupsWidgetRepresentation2D
 {
@@ -78,22 +74,31 @@ protected:
   vtkSlicerAngleRepresentation2D();
   ~vtkSlicerAngleRepresentation2D() override;
 
-  vtkSmartPointer<vtkPolyData>                  Line;
-  vtkSmartPointer<vtkPolyDataMapper2D>    LineMapper;
-  vtkSmartPointer<vtkActor2D>                   LineActor;
+  void SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode) override;
 
-  vtkSmartPointer<vtkArcSource>                 Arc;
-  vtkSmartPointer<vtkPolyDataMapper2D>    ArcMapper;
-  vtkSmartPointer<vtkActor2D>                   ArcActor;
-
-  vtkSmartPointer<vtkTextActor>           TextActor;
-
-  vtkSmartPointer<vtkTubeFilter>                TubeFilter;
-  vtkSmartPointer<vtkTubeFilter>                ArcTubeFilter;
-
-  std::string LabelFormat;
 
   void BuildArc();
+
+  vtkSmartPointer<vtkPolyData> Line;
+  vtkSmartPointer<vtkPolyDataMapper2D> LineMapper;
+  vtkSmartPointer<vtkActor2D> LineActor;
+  vtkSmartPointer<vtkArcSource> Arc;
+  vtkSmartPointer<vtkPolyDataMapper2D> ArcMapper;
+  vtkSmartPointer<vtkActor2D> ArcActor;
+  vtkSmartPointer<vtkDiscretizableColorTransferFunction> ColorMap;
+
+  vtkSmartPointer<vtkTextActor> TextActor;
+
+  vtkSmartPointer<vtkTubeFilter> TubeFilter;
+  vtkSmartPointer<vtkTubeFilter> ArcTubeFilter;
+
+  vtkSmartPointer<vtkTransformPolyDataFilter> LineWorldToSliceTransformer;
+  vtkSmartPointer<vtkTransformPolyDataFilter> ArcWorldToSliceTransformer;
+
+  vtkSmartPointer<vtkSampleImplicitFunctionFilter> LineSliceDistance;
+  vtkSmartPointer<vtkSampleImplicitFunctionFilter> ArcSliceDistance;
+
+  std::string LabelFormat;
 
 private:
   vtkSlicerAngleRepresentation2D(const vtkSlicerAngleRepresentation2D&) = delete;

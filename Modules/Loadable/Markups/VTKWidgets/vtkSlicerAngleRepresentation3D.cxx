@@ -16,42 +16,21 @@
 
 =========================================================================*/
 
-#include "vtkSlicerAngleRepresentation3D.h"
-#include "vtkCleanPolyData.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkActor.h"
+// VTK includes
 #include "vtkActor2D.h"
-#include "vtkAssemblyPath.h"
-#include "vtkRenderer.h"
-#include "vtkRenderWindow.h"
-#include "vtkObjectFactory.h"
-#include "vtkProperty.h"
-#include "vtkAssemblyPath.h"
-#include "vtkMath.h"
-#include "vtkInteractorObserver.h"
-#include "vtkLine.h"
-#include "vtkCoordinate.h"
-#include "vtkGlyph3D.h"
-#include "vtkCursor2D.h"
-#include "vtkCylinderSource.h"
-#include "vtkPolyData.h"
-#include "vtkPoints.h"
-#include "vtkDoubleArray.h"
-#include "vtkPointData.h"
-#include "vtkTransformPolyDataFilter.h"
-#include "vtkTransform.h"
-#include "vtkCamera.h"
-#include "vtkPoints.h"
-#include "vtkCellArray.h"
-#include "vtkSphereSource.h"
-#include "vtkPropPicker.h"
-#include "vtkAppendPolyData.h"
-#include "vtkStringArray.h"
-#include "vtkTubeFilter.h"
-#include "vtkTextActor.h"
-#include "cmath"
 #include "vtkArcSource.h"
+#include "vtkCellLocator.h"
+#include "vtkGlyph3D.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkPointData.h"
+#include "vtkProperty.h"
+#include "vtkRenderer.h"
+#include "vtkSlicerAngleRepresentation3D.h"
+#include "vtkTextActor.h"
 #include "vtkTextProperty.h"
+#include "vtkTubeFilter.h"
+
+// MRML includes
 #include "vtkMRMLMarkupsDisplayNode.h"
 
 vtkStandardNewMacro(vtkSlicerAngleRepresentation3D);
@@ -92,13 +71,6 @@ vtkSlicerAngleRepresentation3D::vtkSlicerAngleRepresentation3D()
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(Unselected)->TextProperty);
 
   this->LabelFormat = "%-#6.3g";
-
-  //Manage the picking
-  this->LinePicker = vtkSmartPointer<vtkPropPicker>::New();
-  this->LinePicker->PickFromListOn();
-  this->LinePicker->InitializePickList();
-  this->LinePicker->AddPickList(this->LineActor);
-  this->LinePicker->AddPickList(this->ArcActor);
 }
 
 //----------------------------------------------------------------------
@@ -132,64 +104,67 @@ void vtkSlicerAngleRepresentation3D::BuildArc()
     return;
     }
 
-  double p1[3], p2[3], c[3], vector2[3], vector1[3];
-  double l1 = 0.0, l2 = 0.0;
+  double p1[3] = {0.0};
+  double c[3] = {0.0};
+  double p2[3] = {0.0};
   markupsNode->GetNthControlPointPositionWorld(0, p1);
   markupsNode->GetNthControlPointPositionWorld(1, c);
   markupsNode->GetNthControlPointPositionWorld(2, p2);
 
   // Compute the angle (only if necessary since we don't want
   // fluctuations in angle value as the camera moves, etc.)
-  if (fabs(p1[0]-c[0]) < 0.001 || fabs(p2[0]-c[0]) < 0.001)
+  if (((fabs(p1[0] - c[0]) < 0.001) &&
+       (fabs(p1[1] - c[1]) < 0.001) &&
+       (fabs(p1[2] - c[2]) < 0.001)) ||
+      ((fabs(p2[0] - c[0]) < 0.001) &&
+       (fabs(p2[1] - c[1]) < 0.001) &&
+       (fabs(p2[2] - c[2]) < 0.001)))
     {
     return;
     }
 
-  vector1[0] = p1[0] - c[0];
-  vector1[1] = p1[1] - c[1];
-  vector1[2] = p1[2] - c[2];
-  vector2[0] = p2[0] - c[0];
-  vector2[1] = p2[1] - c[1];
-  vector2[2] = p2[2] - c[2];
-  l1 = vtkMath::Normalize(vector1);
-  l2 = vtkMath::Normalize(vector2);
+  double vector1[3] = { p1[0] - c[0], p1[1] - c[1], p1[2] - c[2] };
+  double vector2[3] = { p2[0] - c[0], p2[1] - c[1], p2[2] - c[2] };
+  double l1 = vtkMath::Normalize(vector1);
+  double l2 = vtkMath::Normalize(vector2);
   double angle = acos(vtkMath::Dot(vector1, vector2));
 
   // Place the label and place the arc
   const double length = l1 < l2 ? l1 : l2;
   const double anglePlacementRatio = 0.5;
-  const double l = length * anglePlacementRatio;
-  double arcp1[3] = {l * vector1[0] + c[0],
-                     l * vector1[1] + c[1],
-                     l * vector1[2] + c[2]};
-  double arcp2[3] = {l * vector2[0] + c[0],
-                     l * vector2[1] + c[1],
-                     l * vector2[2] + c[2]};
+  const double angleTextPlacementRatio = 0.7;
+  const double lArc = length * anglePlacementRatio;
+  const double lText = length * angleTextPlacementRatio;
+  double arcp1[3] = { lArc * vector1[0] + c[0],
+                      lArc * vector1[1] + c[1],
+                      lArc * vector1[2] + c[2] };
+  double arcp2[3] = { lArc * vector2[0] + c[0],
+                      lArc * vector2[1] + c[1],
+                      lArc * vector2[2] + c[2] };
 
   this->Arc->SetPoint1(arcp1);
   this->Arc->SetPoint2(arcp2);
   this->Arc->SetCenter(c);
   this->Arc->Update();
 
-  char string[512];
-  snprintf(string, sizeof(string), this->LabelFormat.c_str(), vtkMath::DegreesFromRadians(angle));
-  this->TextActor->SetInput(string);
+  char buf[80] = {0};
+  snprintf(buf, sizeof(buf)-1, this->LabelFormat.c_str(), vtkMath::DegreesFromRadians(angle));
+  this->TextActor->SetInput(buf);
 
-  double textPos[3], vector3[3];
-  vector3[0] = vector1[0] + vector2[0];
-  vector3[1] = vector1[1] + vector2[1];
-  vector3[2] = vector1[2] + vector2[2];
+  double vector3[3] = { vector1[0] + vector2[0],
+                        vector1[1] + vector2[1],
+                        vector1[2] + vector2[2] };
   vtkMath::Normalize(vector3);
-  textPos[0] = c[0] + vector3[0] * length * 0.6;
-  textPos[1] = c[1] + vector3[1] * length * 0.6;
-  textPos[2] = c[2] + vector3[2] * length * 0.6;
+  double textPos[3] = { lText * vector3[0] + c[0],
+                        lText * vector3[1] + c[1],
+                        lText * vector3[2] + c[2]};
+
   this->Renderer->SetWorldPoint(textPos);
   this->Renderer->WorldToDisplay();
   this->Renderer->GetDisplayPoint(textPos);
 
-  int X = static_cast<int>(textPos[0]);
-  int Y = static_cast<int>(textPos[1]);
-  this->TextActor->SetDisplayPosition(X,Y);
+  this->TextActor->SetDisplayPosition(static_cast<int>(textPos[0]),
+                                      static_cast<int>(textPos[1]));
 }
 
 //----------------------------------------------------------------------
@@ -204,10 +179,10 @@ void vtkSlicerAngleRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
     || !this->MarkupsDisplayNode->GetVisibility()
     || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID())
     )
-  {
+    {
     this->VisibilityOff();
     return;
-  }
+    }
 
   this->VisibilityOn();
 
@@ -371,14 +346,14 @@ void vtkSlicerAngleRepresentation3D::CanInteract(
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1)
-  {
+    {
     return;
-  }
+    }
   Superclass::CanInteract(displayPosition, worldPosition, foundComponentType, foundComponentIndex, closestDistance2);
   if (foundComponentType != vtkMRMLMarkupsDisplayNode::ComponentNone)
-  {
+    {
     return;
-  }
+    }
 
   this->CanInteractWithLine(displayPosition, worldPosition, foundComponentType, foundComponentIndex, closestDistance2);
 }

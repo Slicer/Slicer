@@ -16,52 +16,19 @@
 
 =========================================================================*/
 
+// VTK includes
 #include "vtkSlicerMarkupsWidgetRepresentation.h"
-#include "vtkCleanPolyData.h"
-#include "vtkCommand.h"
-#include "vtkGeneralTransform.h"
-#include "vtkMarkupsGlyphSource2D.h"
-#include "vtkMRMLTransformNode.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkActor.h"
-#include "vtkAssemblyPath.h"
-#include "vtkRenderer.h"
-#include "vtkRenderWindow.h"
-#include "vtkObjectFactory.h"
-#include "vtkProperty.h"
-#include "vtkAssemblyPath.h"
-#include "vtkMath.h"
-#include "vtkInteractorObserver.h"
-#include "vtkLine.h"
-#include "vtkCoordinate.h"
-#include "vtkCursor2D.h"
-#include "vtkCylinderSource.h"
-#include "vtkPolyData.h"
-#include "vtkPoints.h"
-#include "vtkDoubleArray.h"
-#include "vtkPointData.h"
-#include "vtkTransformPolyDataFilter.h"
-#include "vtkTransform.h"
 #include "vtkCamera.h"
-#include "vtkPoints.h"
-#include "vtkCellArray.h"
+#include "vtkDoubleArray.h"
 #include "vtkFocalPlanePointPlacer.h"
-#include "vtkSphereSource.h"
-#include "vtkBox.h"
-#include "vtkIntArray.h"
-#include "vtkMatrix4x4.h"
-#include "vtkObjectFactory.h"
-#include "vtkRenderer.h"
-#include "vtkRenderWindow.h"
-#include "vtkWindow.h"
+#include "vtkLine.h"
+#include "vtkMarkupsGlyphSource2D.h"
+#include "vtkPointData.h"
 #include "vtkPointSetToLabelHierarchy.h"
+#include "vtkRenderer.h"
+#include "vtkSphereSource.h"
 #include "vtkStringArray.h"
-#include "vtkLabelHierarchy.h"
 #include "vtkTextProperty.h"
-
-#include <set>
-#include <algorithm>
-#include <iterator>
 
 vtkSlicerMarkupsWidgetRepresentation::ControlPointsPipeline::ControlPointsPipeline()
 {
@@ -534,12 +501,12 @@ bool vtkSlicerMarkupsWidgetRepresentation::GetAllControlPointsVisible()
     }
 
   for (int controlPointIndex = 0; controlPointIndex < markupsNode->GetNumberOfControlPoints(); controlPointIndex++)
-  {
-    if (!markupsNode->GetNthControlPointVisibility(controlPointIndex))
     {
+    if (!markupsNode->GetNthControlPointVisibility(controlPointIndex))
+      {
       return false;
+      }
     }
-  }
   return true;
 }
 
@@ -567,6 +534,7 @@ double* vtkSlicerMarkupsWidgetRepresentation::GetWidgetColor(int controlPointTyp
 {
   static double invalidColor[3] = { 0.5, 0.5, 0.5 }; // gray
   static double activeColor[3] = { 0.4, 1.0, 0. }; // bright green
+  static double color[3];
 
   if (!this->MarkupsDisplayNode)
     {
@@ -575,16 +543,60 @@ double* vtkSlicerMarkupsWidgetRepresentation::GetWidgetColor(int controlPointTyp
 
   switch (controlPointType)
     {
-    case Unselected: return this->MarkupsDisplayNode->GetColor();
-    case Selected: return this->MarkupsDisplayNode->GetSelectedColor();
+    case Unselected:
+      this->MarkupsDisplayNode->GetColor(color);
+      break;
+    case Selected:
+      this->MarkupsDisplayNode->GetSelectedColor(color);
+      break;
     case Active: return activeColor;
+    case Project:
+      if (this->MarkupsDisplayNode->GetSliceProjectionUseFiducialColor())
+        {
+        if (this->GetAllControlPointsSelected())
+          {
+          this->MarkupsDisplayNode->GetSelectedColor(color);
+          }
+        else
+          {
+          this->MarkupsDisplayNode->GetColor(color);
+          }
+        }
+      else
+        {
+        this->MarkupsDisplayNode->GetSliceProjectionColor(color);
+        }
+      break;
+    case ProjectBack:
+      if (this->MarkupsDisplayNode->GetSliceProjectionUseFiducialColor())
+        {
+        if (this->GetAllControlPointsSelected())
+          {
+          this->MarkupsDisplayNode->GetSelectedColor(color);
+          }
+        else
+          {
+          this->MarkupsDisplayNode->GetColor(color);
+          }
+        }
+      else
+        {
+        this->MarkupsDisplayNode->GetSliceProjectionColor(color);
+        }
+      for (int i = 0; i < 3; i++)
+        {
+        if (fabs(color[1] - 1.) > 0.001)
+          {
+          color[i] = 1. - color[i];
+          }
+        }
+      break;
     default:
       return invalidColor;
     }
+
+  return color;
 }
-
-
-
 
 //----------------------------------------------------------------------
 vtkPointPlacer* vtkSlicerMarkupsWidgetRepresentation::GetPointPlacer()

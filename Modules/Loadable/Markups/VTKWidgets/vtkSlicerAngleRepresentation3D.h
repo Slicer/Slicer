@@ -33,14 +33,12 @@
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
 #include "vtkSlicerMarkupsWidgetRepresentation3D.h"
 
-class vtkAppendPolyData;
 class vtkActor;
+class vtkArcSource;
 class vtkPolyDataMapper;
 class vtkPolyData;
-class vtkTubeFilter;
-class vtkPropPicker;
 class vtkTextActor;
-class vtkArcSource;
+class vtkTubeFilter;
 
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerAngleRepresentation3D : public vtkSlicerMarkupsWidgetRepresentation3D
 {
@@ -93,9 +91,6 @@ protected:
   std::string LabelFormat;
 
   void BuildArc();
-
-  // Support picking
-  vtkSmartPointer<vtkPropPicker> LinePicker;
 
 private:
   vtkSlicerAngleRepresentation3D(const vtkSlicerAngleRepresentation3D&) = delete;

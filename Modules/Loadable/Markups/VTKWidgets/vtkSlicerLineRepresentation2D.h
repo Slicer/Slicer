@@ -33,13 +33,8 @@
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
 #include "vtkSlicerMarkupsWidgetRepresentation2D.h"
 
-class vtkActor2D;
-class vtkAppendPolyData;
-class vtkPolyDataMapper2D;
-class vtkPolyData;
-class vtkProperty2D;
 class vtkTubeFilter;
-class vtkPropPicker;
+class vtkSampleImplicitFunctionFilter;
 
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerLineRepresentation2D : public vtkSlicerMarkupsWidgetRepresentation2D
 {
@@ -75,11 +70,17 @@ protected:
   vtkSlicerLineRepresentation2D();
   ~vtkSlicerLineRepresentation2D() override;
 
+  void SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode) override;
+
   vtkSmartPointer<vtkPolyData> Line;
   vtkSmartPointer<vtkPolyDataMapper2D> LineMapper;
   vtkSmartPointer<vtkActor2D> LineActor;
+  vtkSmartPointer<vtkDiscretizableColorTransferFunction> LineColorMap;
 
   vtkSmartPointer<vtkTubeFilter> TubeFilter;
+
+  vtkSmartPointer<vtkTransformPolyDataFilter> WorldToSliceTransformer;
+  vtkSmartPointer<vtkSampleImplicitFunctionFilter> SliceDistance;
 
 private:
   vtkSlicerLineRepresentation2D(const vtkSlicerLineRepresentation2D&) = delete;

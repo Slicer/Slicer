@@ -16,37 +16,31 @@
 
 =========================================================================*/
 
-#include "vtkSlicerLineRepresentation2D.h"
-#include "vtkCleanPolyData.h"
-#include "vtkPolyDataMapper2D.h"
+// VTK includes
 #include "vtkActor2D.h"
-#include "vtkAssemblyPath.h"
-#include "vtkRenderer.h"
-#include "vtkRenderWindow.h"
-#include "vtkObjectFactory.h"
-#include "vtkProperty2D.h"
-#include "vtkMath.h"
-#include "vtkInteractorObserver.h"
+#include "vtkDiscretizableColorTransferFunction.h"
 #include "vtkLine.h"
-#include "vtkCoordinate.h"
-#include "vtkGlyph2D.h"
-#include "vtkCursor2D.h"
-#include "vtkCylinderSource.h"
-#include "vtkPolyData.h"
+#include "vtkMath.h"
+#include "vtkObjectFactory.h"
+#include "vtkPlane.h"
 #include "vtkPoints.h"
-#include "vtkDoubleArray.h"
 #include "vtkPointData.h"
-#include "vtkTransformPolyDataFilter.h"
+#include "vtkPolyData.h"
+#include "vtkPolyDataMapper2D.h"
+#include "vtkProperty2D.h"
+#include "vtkRenderer.h"
+#include "vtkSampleImplicitFunctionFilter.h"
+#include "vtkSlicerLineRepresentation2D.h"
+#include "vtkTextActor.h"
+#include "vtkTextProperty.h"
 #include "vtkTransform.h"
-#include "vtkCamera.h"
-#include "vtkPoints.h"
-#include "vtkCellArray.h"
-#include "vtkSphereSource.h"
-#include "vtkPropPicker.h"
-#include "vtkAppendPolyData.h"
+#include "vtkTransformPolyDataFilter.h"
 #include "vtkTubeFilter.h"
-#include "vtkStringArray.h"
+
+// MRML includes
 #include "vtkMRMLMarkupsDisplayNode.h"
+#include "vtkMRMLProceduralColorNode.h"
+
 
 vtkStandardNewMacro(vtkSlicerLineRepresentation2D);
 
@@ -54,13 +48,25 @@ vtkStandardNewMacro(vtkSlicerLineRepresentation2D);
 vtkSlicerLineRepresentation2D::vtkSlicerLineRepresentation2D()
 {
   this->Line = vtkSmartPointer<vtkPolyData>::New();
+
+  this->SliceDistance = vtkSmartPointer<vtkSampleImplicitFunctionFilter>::New();
+  this->SliceDistance->SetImplicitFunction(this->SlicePlane);
+
+  this->WorldToSliceTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  this->WorldToSliceTransformer->SetTransform(this->WorldToSliceTransform);
+  this->WorldToSliceTransformer->SetInputConnection(this->SliceDistance->GetOutputPort());
+
   this->TubeFilter = vtkSmartPointer<vtkTubeFilter>::New();
-  this->TubeFilter->SetInputData(this->Line);
-  this->TubeFilter->SetNumberOfSides(20);
+  this->TubeFilter->SetInputConnection(this->WorldToSliceTransformer->GetOutputPort());
+  this->TubeFilter->SetNumberOfSides(6);
   this->TubeFilter->SetRadius(1);
+
+  this->LineColorMap = vtkSmartPointer<vtkDiscretizableColorTransferFunction>::New();
 
   this->LineMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
   this->LineMapper->SetInputConnection(this->TubeFilter->GetOutputPort());
+  this->LineMapper->SetLookupTable(this->LineColorMap);
+  this->LineMapper->SetScalarVisibility(true);
 
   this->LineActor = vtkSmartPointer<vtkActor2D>::New();
   this->LineActor->SetMapper(this->LineMapper);
@@ -90,24 +96,33 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned
 
   this->VisibilityOn();
 
-  // Line geometry
-
-  this->BuildLine(this->Line, true);
-
   // Line display
 
   this->TubeFilter->SetRadius(this->ViewScaleFactor * this->ControlPointSize * 0.125);
 
-  bool allNodeVisibile = this->GetAllControlPointsVisible();
-  this->LineActor->SetVisibility(allNodeVisibile);
+  this->LineActor->SetVisibility(markupsNode->GetNumberOfControlPoints() == 2);
 
   int controlPointType = Active;
   if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentLine)
-  {
+    {
     controlPointType = this->GetAllControlPointsSelected() ? Selected : Unselected;
-  }
+    }
   this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
+
+  if (this->MarkupsDisplayNode->GetLineColorNode() && this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction())
+    {
+    // Update the line color mapping from the colorNode stored in the markups display node
+    this->LineMapper->SetLookupTable(this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction());
+    }
+  else
+    {
+    // if there is no line color node, build the color mapping from few varibales
+    // (color, opacity, distance fading, saturation and hue offset) stored in the display node
+    this->UpdateDistanceColorMap(this->LineColorMap, this->LineActor->GetProperty()->GetColor());
+    this->LineMapper->SetLookupTable(this->LineColorMap);
+    }
 }
+
 
 //----------------------------------------------------------------------
 void vtkSlicerLineRepresentation2D::CanInteract(
@@ -117,15 +132,15 @@ void vtkSlicerLineRepresentation2D::CanInteract(
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1)
-  {
+    {
     return;
-  }
+    }
   Superclass::CanInteract(displayPosition, worldPosition, foundComponentType, foundComponentIndex, closestDistance2);
   if (foundComponentType != vtkMRMLMarkupsDisplayNode::ComponentNone)
-  {
+    {
     // if mouse is near a control point then select that (ignore the line)
     return;
-  }
+    }
 
   this->CanInteractWithLine(displayPosition, worldPosition, foundComponentType, foundComponentIndex, closestDistance2);
 }
@@ -213,4 +228,21 @@ void vtkSlicerLineRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << indent << "Line Actor: (none)\n";
     }
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerLineRepresentation2D::SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode)
+{
+  if (this->MarkupsNode != markupsNode)
+    {
+    if (markupsNode)
+      {
+      this->SliceDistance->SetInputConnection(markupsNode->GetCurveWorldConnection());
+      }
+    else
+      {
+      this->SliceDistance->SetInputData(this->Line);
+      }
+    }
+  this->Superclass::SetMarkupsNode(markupsNode);
 }

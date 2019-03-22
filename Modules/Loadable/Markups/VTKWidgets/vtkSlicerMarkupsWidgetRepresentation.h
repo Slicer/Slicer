@@ -47,23 +47,11 @@
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsNode.h"
 
-class vtkMapper;
 class vtkMarkupsGlyphSource2D;
-class vtkPolyData;
-class vtkPoints;
-
 class vtkPointPlacer;
-class vtkPolyData;
-class vtkIdList;
 class vtkPointSetToLabelHierarchy;
 class vtkSphereSource;
-class vtkStringArray;
 class vtkTextProperty;
-
-#include "vtkBoundingBox.h"
-
-class ControlPointsPipeline;
-class vtkMRMLAbstractViewNode;
 
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsWidgetRepresentation : public vtkMRMLAbstractWidgetRepresentation
 {
@@ -164,12 +152,14 @@ protected:
     Unselected,
     Selected,
     Active,
+    Project,
+    ProjectBack,
     NumberOfControlPointTypes
   };
 
   double* GetWidgetColor(int controlPointType);
 
-  ControlPointsPipeline* ControlPoints[3]; // Unselected, Selected, Active
+  ControlPointsPipeline* ControlPoints[5]; // Unselected, Selected, Active, Project, ProjectBehind
 
 private:
   vtkSlicerMarkupsWidgetRepresentation(const vtkSlicerMarkupsWidgetRepresentation&) = delete;

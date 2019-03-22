@@ -15,11 +15,17 @@
 
 ==============================================================================*/
 
-// MRMLMarkups includes
+// MRML includes
 #include "vtkMRMLMarkupsDisplayNode.h"
+#include <vtkMRMLProceduralColorNode.h>
 
 // VTK includes
+#include <vtkCommand.h>
+#include <vtkDiscretizableColorTransferFunction.h>
+#include <vtkIntArray.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkPiecewiseFunction.h>
 
 // STL includes
 #include <sstream>
@@ -41,6 +47,9 @@ const char *vtkMRMLMarkupsDisplayNode::GlyphTypesNames[GlyphMax+2] =
   "StarBurst2D",
   "Sphere3D"
 };
+
+const char* vtkMRMLMarkupsDisplayNode::LineColorNodeReferenceRole = "lineColor";
+const char* vtkMRMLMarkupsDisplayNode::LineColorNodeReferenceMRMLAttributeName = "lineColorNodeRef";
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLMarkupsDisplayNode);
@@ -76,9 +85,9 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->GlyphScale = 3;
 
   // projection settings
-  this->SliceProjection = (vtkMRMLMarkupsDisplayNode::ProjectionOff |
-                           vtkMRMLMarkupsDisplayNode::ProjectionUseFiducialColor |
-                           vtkMRMLMarkupsDisplayNode::ProjectionOutlinedBehindSlicePlane);
+  this->SliceProjection = false;
+  this->SliceProjectionUseFiducialColor = true;
+  this->SliceProjectionOutlinedBehindSlicePlane = false;
   this->SliceProjectionColor[0] = 1.0;
   this->SliceProjectionColor[1] = 1.0;
   this->SliceProjectionColor[2] = 1.0;
@@ -88,6 +97,20 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
 
   this->ActiveComponentType = ComponentNone;
   this->ActiveComponentIndex = -1;
+
+  // Line color variables
+  this->LineColorFadingStart = 1.;
+  this->LineColorFadingEnd = 10.;
+  this->LineColorFadingSaturation = 1.;
+  this->LineColorFadingHueOffset = 0.;
+
+  // Line color node
+  vtkNew<vtkIntArray> events;
+  events->InsertNextValue(vtkCommand::ModifiedEvent);
+
+  this->AddNodeReferenceRole(this->GetLineColorNodeReferenceRole(),
+                             this->GetLineColorNodeReferenceMRMLAttributeName(),
+                             events.GetPointer());
 }
 
 //----------------------------------------------------------------------------
@@ -104,6 +127,8 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
   of << " glyphType=\"" << this->GlyphType << "\"";
 
   of << " sliceProjection=\"" << this->SliceProjection << "\"";
+  of << " SliceProjectionUseFiducialColor=\"" << this->SliceProjectionUseFiducialColor << "\"";
+  of << " SliceProjectionOutlinedBehindSlicePlane=\"" << this->SliceProjectionOutlinedBehindSlicePlane << "\"";
 
   of << " sliceProjectionColor=\"" << this->SliceProjectionColor[0] << " "
      << this->SliceProjectionColor[1] << " "
@@ -150,6 +175,18 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->SliceProjection;
       }
+    else if (!strcmp(attName, "SliceProjectionUseFiducialColor"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->SliceProjectionUseFiducialColor;
+      }
+    else if (!strcmp(attName, "SliceProjectionOutlinedBehindSlicePlane"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->SliceProjectionOutlinedBehindSlicePlane;
+      }
     else if (!strcmp(attName, "sliceProjectionColor") ||
          !strcmp(attName, "projectedColor"))
       {
@@ -183,10 +220,12 @@ void vtkMRMLMarkupsDisplayNode::Copy(vtkMRMLNode *anode)
 
   vtkMRMLMarkupsDisplayNode *node = vtkMRMLMarkupsDisplayNode::SafeDownCast(anode);
 
-  this->SetTextScale(node->TextScale);
-  this->SetGlyphType(node->GlyphType);
-  this->SetGlyphScale(node->GlyphScale);
-  this->SetSliceProjection(node->SliceProjection);
+  this->SetTextScale(node->GetTextScale());
+  this->SetGlyphType(node->GetGlyphType());
+  this->SetGlyphScale(node->GetGlyphScale());
+  this->SetSliceProjection(node->GetSliceProjection());
+  this->SetSliceProjectionUseFiducialColor(node->GetSliceProjectionUseFiducialColor());
+  this->SetSliceProjectionOutlinedBehindSlicePlane(node->GetSliceProjectionOutlinedBehindSlicePlane());
   this->SetSliceProjectionColor(node->GetSliceProjectionColor());
   this->SetSliceProjectionOpacity(node->GetSliceProjectionOpacity());
 
@@ -239,8 +278,11 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << this->GlyphScale << ")\n";
   os << indent << "Glyph type: ";
   os << this->GetGlyphTypeAsString() << " (" << this->GlyphType << ")\n";
-  os << indent << "Slice projection: ";
-  os << this->SliceProjection << "\n";
+  os << indent << "Slice projection: " << this->SliceProjection << "\n";
+  os << indent << "Slice projection use fiducial color: "
+    << this->SliceProjectionUseFiducialColor << "\n";
+  os << indent << "Slice projection outline behind plane: "
+    << this->SliceProjectionOutlinedBehindSlicePlane << "\n";
   os << indent << "Slice projection Color: (";
   os << this->SliceProjectionColor[0] << ","
      << this->SliceProjectionColor[1] << ","
@@ -302,6 +344,36 @@ void vtkMRMLMarkupsDisplayNode::SetGlyphScale(double scale)
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting GlyphScale to " << scale);
   this->GlyphScale = scale;
   this->Modified();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsDisplayNode::SetLineColorNodeID(const char *lineColorNodeID)
+{
+  this->SetNodeReferenceID(this->GetLineColorNodeReferenceRole(), lineColorNodeID);
+}
+
+//---------------------------------------------------------------------------
+const char *vtkMRMLMarkupsDisplayNode::GetLineColorNodeID()
+{
+  return this->GetNodeReferenceID(this->GetLineColorNodeReferenceRole());
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLProceduralColorNode *vtkMRMLMarkupsDisplayNode::GetLineColorNode()
+{
+  return vtkMRMLProceduralColorNode::SafeDownCast(this->GetNodeReference(this->GetLineColorNodeReferenceRole()));
+}
+
+//---------------------------------------------------------------------------
+const char *vtkMRMLMarkupsDisplayNode::GetLineColorNodeReferenceRole()
+{
+  return vtkMRMLMarkupsDisplayNode::LineColorNodeReferenceRole;
+}
+
+//----------------------------------------------------------------------------
+const char *vtkMRMLMarkupsDisplayNode::GetLineColorNodeReferenceMRMLAttributeName()
+{
+  return vtkMRMLMarkupsDisplayNode::LineColorNodeReferenceMRMLAttributeName;
 }
 
 //---------------------------------------------------------------------------

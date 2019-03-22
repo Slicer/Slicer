@@ -16,51 +16,27 @@
 
 =========================================================================*/
 
-#include "vtkSlicerMarkupsWidgetRepresentation3D.h"
-#include "vtkCellPicker.h"
-#include "vtkCleanPolyData.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkActor.h"
-#include "vtkAssemblyPath.h"
-#include "vtkRenderer.h"
-#include "vtkRenderWindow.h"
-#include "vtkObjectFactory.h"
-#include "vtkAssemblyPath.h"
-#include "vtkMath.h"
-#include "vtkInteractorObserver.h"
-#include "vtkIncrementalOctreePointLocator.h"
-#include "vtkLine.h"
-#include "vtkCoordinate.h"
-#include "vtkGlyph3D.h"
-#include "vtkCursor2D.h"
-#include "vtkCylinderSource.h"
-#include "vtkPolyData.h"
-#include "vtkPoints.h"
-#include "vtkDoubleArray.h"
-#include "vtkPointData.h"
-#include "vtkTransformPolyDataFilter.h"
-#include "vtkTransform.h"
+// VTK includes
 #include "vtkCamera.h"
-#include "vtkPoints.h"
-#include "vtkCellArray.h"
-#include "vtkSphereSource.h"
-#include "vtkBox.h"
-#include "vtkIntArray.h"
+#include "vtkCellPicker.h"
+#include "vtkLabelPlacementMapper.h"
+#include "vtkLine.h"
+#include "vtkGlyph3D.h"
+#include "vtkMarkupsGlyphSource2D.h"
+#include "vtkMath.h"
 #include "vtkMatrix4x4.h"
 #include "vtkObjectFactory.h"
-#include "vtkRenderer.h"
-#include "vtkRenderWindow.h"
-#include "vtkWindow.h"
-#include "vtkProperty.h"
-#include "vtkTextProperty.h"
-#include "vtkActor2D.h"
-#include "vtkLabelPlacementMapper.h"
+#include "vtkPointData.h"
 #include "vtkPointSetToLabelHierarchy.h"
-#include "vtkStringArray.h"
-#include "vtkLabelHierarchy.h"
-#include "vtkMRMLMarkupsDisplayNode.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkProperty.h"
+#include "vtkRenderer.h"
 #include "vtkSelectVisiblePoints.h"
-#include "vtkMarkupsGlyphSource2D.h"
+#include "vtkSlicerMarkupsWidgetRepresentation3D.h"
+#include "vtkSphereSource.h"
+#include "vtkStringArray.h"
+#include "vtkTextActor.h"
+#include "vtkTextProperty.h"
 
 vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPipeline3D()
 {
@@ -160,13 +136,13 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateNthPointAndLabelFromMRML(int 
   /*
   TODO: implement this for better performance
   if (markupsNode->GetNumberOfControlPoints() - 1 >= this->PointsVisibilityOnSlice->GetNumberOfValues())
-  {
+    {
     this->PointsVisibilityOnSlice->InsertValue(markupsNode->GetNumberOfControlPoints() - 1, 1);
-  }
+    }
   else
-  {
+    {
     this->PointsVisibilityOnSlice->InsertNextValue(1);
-  }
+    }
   this->UpdateInterpolatedPoints(markupsNode->GetNumberOfControlPoints() - 1);
   */
 }
@@ -194,7 +170,6 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
     this->UpdateRelativeCoincidentTopologyOffsets(controlPoints->Mapper);
     controlPoints->Glypher->SetScaleFactor(this->ControlPointSize);
     }
-
 
   int activeControlPointIndex = this->MarkupsDisplayNode->GetActiveControlPoint();
 
@@ -272,7 +247,6 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
     controlPoints->LabelControlPoints->Modified();
     controlPoints->LabelControlPointsPolyData->GetPointData()->GetNormals()->Modified();
     controlPoints->LabelControlPointsPolyData->Modified();
-
     }
 }
 
@@ -402,8 +376,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller,
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!this->ViewNode || !markupsNode || !this->MarkupsDisplayNode
     || !this->MarkupsDisplayNode->GetVisibility()
-    || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID())
-    )
+    || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID()))
     {
     this->VisibilityOff();
     return;
@@ -461,7 +434,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller,
 void vtkSlicerMarkupsWidgetRepresentation3D::GetActors(vtkPropCollection *pc)
 {
   for (int i = 0; i < NumberOfControlPointTypes; i++)
-    {
+   {
     ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
     controlPoints->Actor->GetActors(pc);
     controlPoints->LabelsActor->GetActors(pc);
@@ -569,11 +542,11 @@ double *vtkSlicerMarkupsWidgetRepresentation3D::GetBounds()
 {
   vtkBoundingBox boundingBox;
   const std::vector<vtkProp*> actors(
-    {
+  {
     reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[Unselected])->Actor,
     reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[Selected])->Actor,
     reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[Active])->Actor
-    });
+  });
   this->AddActorsBounds(boundingBox, actors, Superclass::GetBounds());
   boundingBox.GetBounds(this->Bounds);
   return this->Bounds;

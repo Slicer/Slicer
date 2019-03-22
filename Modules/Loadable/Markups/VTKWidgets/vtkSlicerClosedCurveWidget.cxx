@@ -47,13 +47,13 @@ void vtkSlicerClosedCurveWidget::CreateDefaultRepresentation(
 {
   vtkSmartPointer<vtkSlicerMarkupsWidgetRepresentation> rep = nullptr;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))
-  {
+    {
     rep = vtkSmartPointer<vtkSlicerCurveRepresentation2D>::New();
-  }
+    }
   else
-  {
+    {
     rep = vtkSmartPointer<vtkSlicerCurveRepresentation3D>::New();
-  }
+    }
   this->SetRenderer(renderer);
   this->SetRepresentation(rep);
   rep->SetViewNode(viewNode);

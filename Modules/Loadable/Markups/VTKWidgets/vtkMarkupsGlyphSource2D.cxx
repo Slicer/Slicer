@@ -634,6 +634,7 @@ void vtkMarkupsGlyphSource2D::PrintSelf(ostream& os, vtkIndent indent)
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkMarkupsGlyphSource2D::SetGlyphTypeAsString(const char *type)
 {
   if (type == nullptr)
@@ -691,5 +692,18 @@ void vtkMarkupsGlyphSource2D::SetGlyphTypeAsString(const char *type)
   else if (!strcmp(type, markupsDisplayNode->GetGlyphTypeAsString(vtkMRMLMarkupsDisplayNode::HookedArrow2D)))
     {
     this->SetGlyphTypeToHookedArrow();
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMarkupsGlyphSource2D::SetNextGlyphType()
+{
+  if (this->GlyphType == VTK_STARBURST_GLYPH)
+    {
+    this->SetGlyphTypeToVertex();
+    }
+  else
+    {
+    this->GlyphType++;
     }
 }

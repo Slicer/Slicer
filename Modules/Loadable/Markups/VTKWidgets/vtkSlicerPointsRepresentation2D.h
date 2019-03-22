@@ -33,8 +33,6 @@
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
 #include "vtkSlicerMarkupsWidgetRepresentation2D.h"
 
-class vtkAppendPolyData;
-
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerPointsRepresentation2D : public vtkSlicerMarkupsWidgetRepresentation2D
 {
 public:

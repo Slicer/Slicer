@@ -33,20 +33,10 @@
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
 #include "vtkSlicerMarkupsWidgetRepresentation2D.h"
 
-class vtkActor2D;
-class vtkArcSource;
-class vtkAppendPolyData;
 class vtkCellLocator;
 class vtkDiscretizableColorTransferFunction;
-class vtkPolyDataMapper2D;
-class vtkTextActor;
-class vtkPlane;
-class vtkPolyData;
-class vtkProperty2D;
-class vtkPropPicker;
 class vtkSampleImplicitFunctionFilter;
 class vtkTubeFilter;
-class vtkVectorText;
 
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerCurveRepresentation2D : public vtkSlicerMarkupsWidgetRepresentation2D
 {
@@ -85,19 +75,18 @@ protected:
 
   void SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode) override;
 
-  vtkSmartPointer<vtkPolyData>                  Line;
-  vtkSmartPointer<vtkPolyDataMapper2D>    LineMapper;
-  vtkSmartPointer<vtkActor2D>                   LineActor;
+  void UpdateLineColorMap();
+
+  vtkSmartPointer<vtkPolyData> Line;
+  vtkSmartPointer<vtkPolyDataMapper2D> LineMapper;
+  vtkSmartPointer<vtkActor2D> LineActor;
   vtkSmartPointer<vtkDiscretizableColorTransferFunction> LineColorMap;
 
-  vtkSmartPointer<vtkTubeFilter>                TubeFilter;
+  vtkSmartPointer<vtkTubeFilter> TubeFilter;
 
-  vtkSmartPointer<vtkTransform> WorldToSliceTransform;
   vtkSmartPointer<vtkTransformPolyDataFilter> WorldToSliceTransformer;
   vtkSmartPointer<vtkCellLocator> SliceCurvePointLocator;
 
-
-  vtkSmartPointer<vtkPlane> SlicePlane;
   vtkSmartPointer<vtkSampleImplicitFunctionFilter> SliceDistance;
 
 private:

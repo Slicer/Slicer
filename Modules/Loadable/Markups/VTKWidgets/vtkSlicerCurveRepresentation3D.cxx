@@ -16,43 +16,18 @@
 
 =========================================================================*/
 
-#include "vtkSlicerCurveRepresentation3D.h"
-
-#include "vtkCellLocator.h"
-#include "vtkCleanPolyData.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkActor.h"
+// VTK includes
 #include "vtkActor2D.h"
-#include "vtkAssemblyPath.h"
-#include "vtkRenderer.h"
-#include "vtkRenderWindow.h"
-#include "vtkObjectFactory.h"
-#include "vtkProperty.h"
-#include "vtkAssemblyPath.h"
-#include "vtkMath.h"
-#include "vtkInteractorObserver.h"
-#include "vtkLine.h"
-#include "vtkCoordinate.h"
+#include "vtkCellLocator.h"
 #include "vtkGlyph3D.h"
-#include "vtkCursor2D.h"
-#include "vtkCylinderSource.h"
-#include "vtkPolyData.h"
-#include "vtkPoints.h"
-#include "vtkDoubleArray.h"
+#include "vtkPolyDataMapper.h"
 #include "vtkPointData.h"
-#include "vtkTransformPolyDataFilter.h"
-#include "vtkTransform.h"
-#include "vtkCamera.h"
-#include "vtkPoints.h"
-#include "vtkCellArray.h"
-#include "vtkSphereSource.h"
-#include "vtkPropPicker.h"
-#include "vtkAppendPolyData.h"
-#include "vtkStringArray.h"
+#include "vtkProperty.h"
+#include "vtkRenderer.h"
+#include "vtkSlicerCurveRepresentation3D.h"
 #include "vtkTubeFilter.h"
-#include "vtkTextActor.h"
-#include "cmath"
-#include "vtkTextProperty.h"
+
+// MRML includes
 #include "vtkMRMLMarkupsDisplayNode.h"
 
 vtkStandardNewMacro(vtkSlicerCurveRepresentation3D);
@@ -91,23 +66,23 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   if (!markupsNode || !this->MarkupsDisplayNode
     || !this->MarkupsDisplayNode->GetVisibility()
     || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID()))
-  {
+    {
     this->VisibilityOff();
     return;
-  }
+    }
 
   this->VisibilityOn();
 
   // Line display
 
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
-  {
+    {
     ControlPointsPipeline3D* controlPoints = this->GetControlPointsPipeline(controlPointType);
     controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetTextVisibility());
     controlPoints->Glypher->SetScaleFactor(this->ControlPointSize);
 
     this->UpdateRelativeCoincidentTopologyOffsets(controlPoints->Mapper);
-  }
+    }
 
   this->UpdateRelativeCoincidentTopologyOffsets(this->LineMapper);
 
@@ -118,32 +93,32 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   bool allControlPointsSelected = this->GetAllControlPointsSelected();
   int controlPointType = Active;
   if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentLine)
-  {
+    {
     controlPointType = allControlPointsSelected ? Selected : Unselected;
-  }
+    }
   this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
 
   bool allNodesHidden = true;
   for (int controlPointIndex = 0; controlPointIndex < markupsNode->GetNumberOfControlPoints(); controlPointIndex++)
-  {
-    if (markupsNode->GetNthControlPointVisibility(controlPointIndex))
     {
+    if (markupsNode->GetNthControlPointVisibility(controlPointIndex))
+      {
       allNodesHidden = false;
       break;
+      }
     }
-  }
 
   if (this->ClosedLoop && markupsNode->GetNumberOfControlPoints() > 2 && !allNodesHidden)
-  {
+    {
     double centerPosWorld[3], orient[3] = { 0 };
     markupsNode->GetCenterPosition(centerPosWorld);
     int centerControlPointType = allControlPointsSelected ? Selected : Unselected;
     if (this->MarkupsDisplayNode->GetActiveComponentType() == vtkMRMLMarkupsDisplayNode::ComponentCenterPoint)
-    {
+      {
       centerControlPointType = Active;
       this->GetControlPointsPipeline(centerControlPointType)->ControlPoints->SetNumberOfPoints(0);
       this->GetControlPointsPipeline(centerControlPointType)->ControlPointsPolyData->GetPointData()->GetNormals()->SetNumberOfTuples(0);
-    }
+      }
     this->GetControlPointsPipeline(centerControlPointType)->ControlPoints->InsertNextPoint(centerPosWorld);
     this->GetControlPointsPipeline(centerControlPointType)->ControlPointsPolyData->GetPointData()->GetNormals()->InsertNextTuple(orient);
 
@@ -151,11 +126,11 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
     this->GetControlPointsPipeline(centerControlPointType)->ControlPointsPolyData->GetPointData()->GetNormals()->Modified();
     this->GetControlPointsPipeline(centerControlPointType)->ControlPointsPolyData->Modified();
     if (centerControlPointType == Active)
-    {
+      {
       this->GetControlPointsPipeline(centerControlPointType)->Actor->VisibilityOn();
       this->GetControlPointsPipeline(centerControlPointType)->LabelsActor->VisibilityOff();
+      }
     }
-  }
 }
 
 //----------------------------------------------------------------------
@@ -243,14 +218,14 @@ void vtkSlicerCurveRepresentation3D::CanInteract(
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1)
-  {
+    {
     return;
-  }
+    }
   Superclass::CanInteract(displayPosition, worldPosition, foundComponentType, foundComponentIndex, closestDistance2);
   if (foundComponentType != vtkMRMLMarkupsDisplayNode::ComponentNone)
-  {
+    {
     return;
-  }
+    }
 
   this->CanInteractWithCurve(displayPosition, worldPosition, foundComponentType, foundComponentIndex, closestDistance2);
 }
@@ -275,7 +250,7 @@ void vtkSlicerCurveRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)
 void vtkSlicerCurveRepresentation3D::SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode)
 {
   if (this->MarkupsNode != markupsNode)
-    {
+  {
     if (markupsNode)
       {
       this->TubeFilter->SetInputConnection(markupsNode->GetCurveWorldConnection());
@@ -284,7 +259,7 @@ void vtkSlicerCurveRepresentation3D::SetMarkupsNode(vtkMRMLMarkupsNode *markupsN
       {
       this->TubeFilter->SetInputData(this->Line);
       }
-    }
+  }
   this->Superclass::SetMarkupsNode(markupsNode);
 }
 

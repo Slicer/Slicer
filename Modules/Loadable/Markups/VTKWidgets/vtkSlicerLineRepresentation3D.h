@@ -33,7 +33,6 @@
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
 #include "vtkSlicerMarkupsWidgetRepresentation3D.h"
 
-class vtkAppendPolyData;
 class vtkActor;
 class vtkPolyDataMapper;
 class vtkPolyData;

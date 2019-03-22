@@ -119,6 +119,7 @@ public:
   void SetGlyphTypeToStarBurst() {this->SetGlyphType(VTK_STARBURST_GLYPH);}
 
   void SetGlyphTypeAsString(const char* type);
+  void SetNextGlyphType();
 
 protected:
   vtkMarkupsGlyphSource2D();

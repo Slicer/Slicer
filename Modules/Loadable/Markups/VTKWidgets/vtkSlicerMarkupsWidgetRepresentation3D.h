@@ -30,21 +30,14 @@
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
 #include "vtkSlicerMarkupsWidgetRepresentation.h"
 
-#include "vtkMRMLMarkupsNode.h"
-
-#include <vector> // STL Header; Required for vector
-
+class vtkActor;
 class vtkActor2D;
 class vtkCellPicker;
 class vtkGlyph3D;
 class vtkLabelPlacementMapper;
-class vtkActor;
 class vtkPolyDataMapper;
-class vtkPointSetToLabelHierarchy;
 class vtkProperty;
 class vtkSelectVisiblePoints;
-class vtkStringArray;
-class vtkTextProperty;
 
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsWidgetRepresentation3D : public vtkSlicerMarkupsWidgetRepresentation
 {

@@ -36,9 +36,11 @@
 #include "vtkMRMLSliceNode.h"
 
 class vtkActor2D;
+class vtkDiscretizableColorTransferFunction;
 class vtkGlyph2D;
 class vtkLabelPlacementMapper;
 class vtkMarkupsGlyphSource2D;
+class vtkPlane;
 class vtkPolyDataMapper2D;
 class vtkProperty2D;
 
@@ -96,10 +98,21 @@ protected:
     /// Get MRML view node as slice view node
   vtkMRMLSliceNode *GetSliceNode();
 
+  void UpdatePlaneFromSliceNode();
+
   bool GetAllControlPointsVisible() override;
 
   /// Check, if the point is displayable in the current slice geometry
   virtual bool IsPointDisplayableOnSlice(vtkMRMLMarkupsNode* node, int pointIndex = 0);
+
+  // Update colormap based on provided base color (modulated with settings stored in the display node)
+  void UpdateDistanceColorMap(vtkDiscretizableColorTransferFunction* colormap, double color[3]);
+
+  /// Check, if the point is behind in the current slice geometry
+  virtual bool IsPointBehindSlice(vtkMRMLMarkupsNode* node, int pointIndex = 0);
+
+  /// Check, if the point is in front in the current slice geometry
+  virtual bool IsPointInFrontSlice(vtkMRMLMarkupsNode* node, int pointIndex = 0);
 
   /// Check, if the point is displayable in the current slice geometry
   virtual bool IsCenterDisplayableOnSlice(vtkMRMLMarkupsNode* node);
@@ -127,12 +140,17 @@ protected:
   ControlPointsPipeline2D* GetControlPointsPipeline(int controlPointType);
 
   vtkSmartPointer<vtkIntArray> PointsVisibilityOnSlice;
-  bool                        CenterVisibilityOnSlice;
+  bool                         CenterVisibilityOnSlice;
+
+  vtkSmartPointer<vtkTransform> WorldToSliceTransform;
+  vtkSmartPointer<vtkPlane> SlicePlane;
 
   /// Scale factor for 2d windows
   double ScaleFactor2D;
 
   virtual void UpdateAllPointsAndLabelsFromMRML(double labelsOffset);
+
+  double GetWidgetOpacity(int controlPointType);
 
 private:
   vtkSlicerMarkupsWidgetRepresentation2D(const vtkSlicerMarkupsWidgetRepresentation2D&) = delete;

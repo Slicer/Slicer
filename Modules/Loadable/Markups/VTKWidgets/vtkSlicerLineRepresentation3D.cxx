@@ -16,38 +16,16 @@
 
 =========================================================================*/
 
-#include "vtkSlicerLineRepresentation3D.h"
-#include "vtkCleanPolyData.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkActor.h"
+// VTK includes
 #include "vtkActor2D.h"
-#include "vtkAssemblyPath.h"
-#include "vtkRenderer.h"
-#include "vtkRenderWindow.h"
-#include "vtkObjectFactory.h"
-#include "vtkProperty.h"
-#include "vtkAssemblyPath.h"
-#include "vtkMath.h"
-#include "vtkInteractorObserver.h"
-#include "vtkLine.h"
-#include "vtkCoordinate.h"
 #include "vtkGlyph3D.h"
-#include "vtkCursor2D.h"
-#include "vtkCylinderSource.h"
-#include "vtkPolyData.h"
-#include "vtkPoints.h"
-#include "vtkDoubleArray.h"
-#include "vtkPointData.h"
-#include "vtkTransformPolyDataFilter.h"
-#include "vtkTransform.h"
-#include "vtkCamera.h"
-#include "vtkPoints.h"
-#include "vtkCellArray.h"
-#include "vtkSphereSource.h"
-#include "vtkPropPicker.h"
-#include "vtkAppendPolyData.h"
-#include "vtkStringArray.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkProperty.h"
+#include "vtkRenderer.h"
+#include "vtkSlicerLineRepresentation3D.h"
 #include "vtkTubeFilter.h"
+
+// MRML includes
 #include "vtkMRMLMarkupsDisplayNode.h"
 
 vtkStandardNewMacro(vtkSlicerLineRepresentation3D);
@@ -94,9 +72,9 @@ int vtkSlicerLineRepresentation3D::RenderOverlay(vtkViewport *viewport)
   int count=0;
   count = this->Superclass::RenderOverlay(viewport);
   if (this->LineActor->GetVisibility())
-  {
+    {
     count +=  this->LineActor->RenderOverlay(viewport);
-  }
+    }
   return count;
 }
 
@@ -107,9 +85,9 @@ int vtkSlicerLineRepresentation3D::RenderOpaqueGeometry(
   int count=0;
   count = this->Superclass::RenderOpaqueGeometry(viewport);
   if (this->LineActor->GetVisibility())
-  {
+    {
     count += this->LineActor->RenderOpaqueGeometry(viewport);
-  }
+    }
   return count;
 }
 
@@ -120,9 +98,9 @@ int vtkSlicerLineRepresentation3D::RenderTranslucentPolygonalGeometry(
   int count=0;
   count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
   if (this->LineActor->GetVisibility())
-  {
+    {
     count += this->LineActor->RenderTranslucentPolygonalGeometry(viewport);
-  }
+    }
   return count;
 }
 
@@ -161,10 +139,10 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned
   if (!markupsNode || !this->MarkupsDisplayNode
     || !this->MarkupsDisplayNode->GetVisibility()
     || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID()))
-  {
+    {
     this->VisibilityOff();
     return;
-  }
+    }
 
   this->VisibilityOn();
 
@@ -175,12 +153,12 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned
   // Line display
 
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
-  {
+    {
     ControlPointsPipeline3D* controlPoints = this->GetControlPointsPipeline(controlPointType);
     controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetTextVisibility());
     controlPoints->Glypher->SetScaleFactor(this->ControlPointSize);
     this->UpdateRelativeCoincidentTopologyOffsets(controlPoints->Mapper);
-  }
+    }
 
   this->UpdateRelativeCoincidentTopologyOffsets(this->LineMapper);
 
@@ -203,15 +181,15 @@ void vtkSlicerLineRepresentation3D::CanInteract(
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1)
-  {
+    {
     return;
-  }
+    }
   Superclass::CanInteract(displayPosition, worldPosition, foundComponentType, foundComponentIndex, closestDistance2);
   if (foundComponentType != vtkMRMLMarkupsDisplayNode::ComponentNone)
-  {
+    {
     // if mouse is near a control point then select that (ignore the line)
     return;
-  }
+    }
 
   this->CanInteractWithLine(displayPosition, worldPosition, foundComponentType, foundComponentIndex, closestDistance2);
 }

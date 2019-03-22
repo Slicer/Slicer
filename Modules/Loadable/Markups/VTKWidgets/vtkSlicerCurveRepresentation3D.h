@@ -34,14 +34,11 @@
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
 #include "vtkSlicerMarkupsWidgetRepresentation3D.h"
 
-class vtkAppendPolyData;
-class vtkCellLocator;
 class vtkActor;
+class vtkCellLocator;
 class vtkPolyDataMapper;
 class vtkPolyData;
 class vtkTubeFilter;
-class vtkTextActor;
-class vtkArcSource;
 
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerCurveRepresentation3D : public vtkSlicerMarkupsWidgetRepresentation3D
 {

@@ -49,6 +49,7 @@ vtkSlicerMarkupsWidget::vtkSlicerMarkupsWidget()
     WidgetStateTranslateControlPoint, WidgetEventControlPointMoveStart, WidgetEventControlPointMoveEnd);
   this->SetEventTranslationClickAndDrag(WidgetStateOnWidget, vtkCommand::MiddleButtonPressEvent, vtkEvent::NoModifier,
     WidgetStateTranslate, WidgetEventTranslateStart, WidgetEventTranslateEnd);
+  this->SetKeyboardEventTranslation(WidgetStateOnWidget, vtkEvent::NoModifier, 115, 1, "s", WidgetEventControlPointSnapToSlice);
   this->SetKeyboardEventTranslation(WidgetStateOnWidget, vtkEvent::ShiftModifier, 127, 1, "Delete", WidgetEventReset);
   this->SetKeyboardEventTranslation(WidgetStateOnWidget, vtkEvent::NoModifier, 127, 1, "Delete", WidgetEventControlPointDelete);
   this->SetKeyboardEventTranslation(WidgetStateOnWidget, vtkEvent::NoModifier, 8, 1, "BackSpace", WidgetEventControlPointDelete);
@@ -184,10 +185,10 @@ bool vtkSlicerMarkupsWidget::ProcessMouseMove(vtkMRMLInteractionEventData* event
     // First construct a local coordinate system based on the display coordinates
     // of the widget.
     double eventPos[2]
-      {
+    {
       static_cast<double>(eventData->GetDisplayPosition()[0]),
       static_cast<double>(eventData->GetDisplayPosition()[1]),
-      };
+    };
     if (state == WidgetStateTranslateControlPoint)
       {
       this->TranslatePoint(eventPos);
@@ -254,6 +255,32 @@ bool vtkSlicerMarkupsWidget::ProcessWidgetReset(vtkMRMLInteractionEventData* vtk
 }
 
 //-------------------------------------------------------------------------
+bool vtkSlicerMarkupsWidget::ProcessControlPointSnapToSlice(vtkMRMLInteractionEventData* eventData)
+{
+  vtkSlicerMarkupsWidgetRepresentation2D* rep2d = vtkSlicerMarkupsWidgetRepresentation2D::SafeDownCast(this->WidgetRep);
+  if (!rep2d)
+    {
+    return false;
+    }
+
+  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  if (!markupsNode)
+    {
+    return false;
+    }
+
+  markupsNode->GetScene()->SaveStateForUndo();
+  double eventPos[2]
+  {
+    static_cast<double>(eventData->GetDisplayPosition()[0]),
+    static_cast<double>(eventData->GetDisplayPosition()[1]),
+  };
+  this->StartWidgetInteraction(eventData);
+  this->TranslatePoint(eventPos, true);
+  return true;
+}
+
+//-------------------------------------------------------------------------
 bool vtkSlicerMarkupsWidget::ProcessControlPointDelete(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
 {
   if (this->WidgetState != WidgetStateDefine && this->WidgetState != WidgetStateOnWidget)
@@ -306,6 +333,7 @@ bool vtkSlicerMarkupsWidget::ProcessWidgetJumpCursor(vtkMRMLInteractionEventData
     return false;
     }
   markupsNode->GetScene()->SaveStateForUndo();
+
   vtkNew<vtkMRMLInteractionEventData> jumpToPointEventData;
   jumpToPointEventData->SetType(vtkMRMLMarkupsDisplayNode::JumpToPointEvent);
   jumpToPointEventData->SetComponentType(vtkMRMLMarkupsDisplayNode::ComponentControlPoint);
@@ -429,7 +457,6 @@ bool vtkSlicerMarkupsWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventD
     {
     return false;
     }
-
   int eventid = eventData->GetType();
   if (eventid == vtkCommand::LeftButtonPressEvent
     || eventid == vtkCommand::MiddleButtonPressEvent
@@ -469,55 +496,58 @@ bool vtkSlicerMarkupsWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData
 
   bool processedEvent = false;
   switch (widgetEvent)
-  {
-  case WidgetEventControlPointPlace:
-    processedEvent = this->PlacePoint(eventData);
-    break;
-  case WidgetEventStopPlace:
-    // cancel point placement
-    this->GetInteractionNode()->SwitchToViewTransformMode();
-    processedEvent = true;
-    break;
-  case WidgetEventMouseMove:
-    processedEvent = ProcessMouseMove(eventData);
-    break;
-  case WidgetEventControlPointDelete:
-    processedEvent = ProcessControlPointDelete(eventData);
-    break;
-  case WidgetEventControlPointMoveStart:
-    processedEvent = ProcessControlPointMoveStart(eventData);
-    break;
-  case WidgetEventControlPointInsert:
-    processedEvent = ProcessControlPointInsert(eventData);
-    break;
-  case WidgetEventControlPointMoveEnd:
-    processedEvent = ProcessEndMouseDrag(eventData);
-    break;
-  case WidgetEventTranslateStart:
-    processedEvent = ProcessWidgetTranslateStart(eventData);
-    break;
-  case WidgetEventTranslateEnd:
-    processedEvent = ProcessEndMouseDrag(eventData);
-    break;
-  case WidgetEventRotateStart:
-    processedEvent = ProcessWidgetRotateStart(eventData);
-    break;
-  case WidgetEventRotateEnd:
-    processedEvent = ProcessEndMouseDrag(eventData);
-    break;
-  case WidgetEventScaleStart:
-    processedEvent = ProcessWidgetScaleStart(eventData);
-    break;
-  case WidgetEventScaleEnd:
-    processedEvent = ProcessEndMouseDrag(eventData);
-    break;
-  case WidgetEventReset:
-    processedEvent = ProcessWidgetReset(eventData);
-    break;
-  case WidgetEventJumpCursor:
-    processedEvent = ProcessWidgetJumpCursor(eventData);
-    break;
-  }
+    {
+    case WidgetEventControlPointPlace:
+      processedEvent = this->PlacePoint(eventData);
+      break;
+    case WidgetEventStopPlace:
+      // cancel point placement
+      this->GetInteractionNode()->SwitchToViewTransformMode();
+      processedEvent = true;
+      break;
+    case WidgetEventMouseMove:
+      processedEvent = ProcessMouseMove(eventData);
+      break;
+    case WidgetEventControlPointSnapToSlice:
+      processedEvent = ProcessControlPointSnapToSlice(eventData);
+      break;
+    case WidgetEventControlPointDelete:
+      processedEvent = ProcessControlPointDelete(eventData);
+      break;
+    case WidgetEventControlPointMoveStart:
+      processedEvent = ProcessControlPointMoveStart(eventData);
+      break;
+    case WidgetEventControlPointInsert:
+      processedEvent = ProcessControlPointInsert(eventData);
+      break;
+    case WidgetEventControlPointMoveEnd:
+      processedEvent = ProcessEndMouseDrag(eventData);
+      break;
+    case WidgetEventTranslateStart:
+      processedEvent = ProcessWidgetTranslateStart(eventData);
+      break;
+    case WidgetEventTranslateEnd:
+      processedEvent = ProcessEndMouseDrag(eventData);
+      break;
+    case WidgetEventRotateStart:
+      processedEvent = ProcessWidgetRotateStart(eventData);
+      break;
+    case WidgetEventRotateEnd:
+      processedEvent = ProcessEndMouseDrag(eventData);
+      break;
+    case WidgetEventScaleStart:
+      processedEvent = ProcessWidgetScaleStart(eventData);
+      break;
+    case WidgetEventScaleEnd:
+      processedEvent = ProcessEndMouseDrag(eventData);
+      break;
+    case WidgetEventReset:
+      processedEvent = ProcessWidgetReset(eventData);
+      break;
+    case WidgetEventJumpCursor:
+      processedEvent = ProcessWidgetJumpCursor(eventData);
+      break;
+    }
 
   return processedEvent;
 }
@@ -528,9 +558,9 @@ void vtkSlicerMarkupsWidget::Leave()
   this->RemovePreviewPoint();
   vtkMRMLMarkupsDisplayNode* markupsDisplayNode = this->GetMarkupsDisplayNode();
   if (markupsDisplayNode)
-  {
+    {
     markupsDisplayNode->SetActiveComponent(vtkMRMLMarkupsDisplayNode::ComponentNone, -1);
-  }
+    }
   Superclass::Leave();
 }
 
@@ -559,10 +589,10 @@ void vtkSlicerMarkupsWidget::StartWidgetInteraction(vtkMRMLInteractionEventData*
   //this->GrabFocus(this->EventCallbackCommand);
   //this->StartInteraction();
   double startEventPos[2]
-    {
+  {
     static_cast<double>(eventData->GetDisplayPosition()[0]),
     static_cast<double>(eventData->GetDisplayPosition()[1])
-    };
+  };
 
   // How far is this in pixels from the position of this widget?
   // Maintain this during interaction such as translating (don't
@@ -595,7 +625,7 @@ void vtkSlicerMarkupsWidget::EndWidgetInteraction()
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidget::TranslatePoint(double eventPos[2])
+void vtkSlicerMarkupsWidget::TranslatePoint(double eventPos[2], bool snapToSlice /* = false*/)
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   vtkMRMLMarkupsDisplayNode* markupsDisplayNode = this->GetMarkupsDisplayNode();
@@ -626,6 +656,24 @@ void vtkSlicerMarkupsWidget::TranslatePoint(double eventPos[2])
       {
       return;
       }
+    }
+
+  vtkSlicerMarkupsWidgetRepresentation2D* rep2d = vtkSlicerMarkupsWidgetRepresentation2D::SafeDownCast(this->WidgetRep);
+  if (rep2d && markupsDisplayNode->GetSliceProjection() && !snapToSlice)
+    {
+    double doubleDisplayPos[2], oldWorldPos2[3];
+    rep2d->GetWorldToSliceCoordinates(oldWorldPos, doubleDisplayPos);
+    rep2d->GetSliceToWorldCoordinates(doubleDisplayPos, oldWorldPos2);
+    double worldPosProjDiff[3] =
+    {
+      oldWorldPos[0] - oldWorldPos2[0],
+      oldWorldPos[1] - oldWorldPos2[1],
+      oldWorldPos[2] - oldWorldPos2[2],
+    };
+
+    worldPos[0] += worldPosProjDiff[0];
+    worldPos[1] += worldPosProjDiff[1];
+    worldPos[2] += worldPosProjDiff[2];
     }
 
   markupsNode->SetNthControlPointPositionWorldFromArray(activeControlPointIndex, worldPos);
@@ -685,7 +733,6 @@ void vtkSlicerMarkupsWidget::TranslateWidget(double eventPos[2])
       return;
       }
     }
-
 
   double vector[3];
   vector[0] = worldPos[0] - ref[0];
@@ -762,7 +809,6 @@ void vtkSlicerMarkupsWidget::ScaleWidget(double eventPos[2])
       {
       return;
       }
-
     }
 
   double center[3];
@@ -859,7 +905,6 @@ void vtkSlicerMarkupsWidget::RotateWidget(double eventPos[2])
       return;
       }
     }
-
 
   double d2 = vtkMath::Distance2BetweenPoints(worldPos, center);
   if (d2 < 0.0000001)

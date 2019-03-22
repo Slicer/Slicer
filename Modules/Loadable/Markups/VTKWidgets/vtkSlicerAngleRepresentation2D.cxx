@@ -16,41 +16,33 @@
 
 =========================================================================*/
 
-#include "vtkSlicerAngleRepresentation2D.h"
-#include "vtkCleanPolyData.h"
-#include "vtkPolyDataMapper2D.h"
-#include "vtkActor2D.h"
-#include "vtkAssemblyPath.h"
-#include "vtkRenderer.h"
-#include "vtkRenderWindow.h"
-#include "vtkObjectFactory.h"
-#include "vtkProperty2D.h"
-#include "vtkMath.h"
-#include "vtkInteractorObserver.h"
-#include "vtkLine.h"
-#include "vtkCoordinate.h"
-#include "vtkGlyph2D.h"
-#include "vtkCursor2D.h"
-#include "vtkCylinderSource.h"
-#include "vtkPolyData.h"
-#include "vtkPoints.h"
-#include "vtkDoubleArray.h"
-#include "vtkPointData.h"
-#include "vtkTransformPolyDataFilter.h"
-#include "vtkTransform.h"
-#include "vtkCamera.h"
-#include "vtkPoints.h"
-#include "vtkCellArray.h"
-#include "vtkSphereSource.h"
-#include "vtkAppendPolyData.h"
-#include "vtkTextProperty.h"
-#include "vtkTubeFilter.h"
-#include "vtkStringArray.h"
-#include "vtkVectorText.h"
-#include "vtkTextActor.h"
+// VTK includes
 #include "vtkArcSource.h"
-#include "cmath"
+#include "vtkCellLocator.h"
+#include "vtkDiscretizableColorTransferFunction.h"
+#include "vtkLine.h"
+#include "vtkMath.h"
+#include "vtkMatrix4x4.h"
+#include "vtkObjectFactory.h"
+#include "vtkPlane.h"
+#include "vtkPoints.h"
+#include "vtkPointData.h"
+#include "vtkPolyData.h"
+#include "vtkPolyDataMapper2D.h"
+#include "vtkProperty2D.h"
+#include "vtkRenderer.h"
+#include "vtkSampleImplicitFunctionFilter.h"
+#include "vtkSlicerAngleRepresentation2D.h"
+#include "vtkTextActor.h"
+#include "vtkTextProperty.h"
+#include "vtkTransform.h"
+#include "vtkTransformPolyDataFilter.h"
+#include "vtkTubeFilter.h"
+
+// MRML includes
 #include "vtkMRMLMarkupsDisplayNode.h"
+#include "vtkMRMLProceduralColorNode.h"
+
 
 vtkStandardNewMacro(vtkSlicerAngleRepresentation2D);
 
@@ -61,21 +53,39 @@ vtkSlicerAngleRepresentation2D::vtkSlicerAngleRepresentation2D()
   this->Arc = vtkSmartPointer<vtkArcSource>::New();
   this->Arc->SetResolution(30);
 
+  this->LineSliceDistance = vtkSmartPointer<vtkSampleImplicitFunctionFilter>::New();
+  this->ArcSliceDistance = vtkSmartPointer<vtkSampleImplicitFunctionFilter>::New();
+  this->LineSliceDistance->SetImplicitFunction(this->SlicePlane);
+  this->ArcSliceDistance->SetImplicitFunction(this->SlicePlane);
+
+  this->LineWorldToSliceTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  this->ArcWorldToSliceTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  this->LineWorldToSliceTransformer->SetTransform(this->WorldToSliceTransform);
+  this->ArcWorldToSliceTransformer->SetTransform(this->WorldToSliceTransform);
+  this->LineWorldToSliceTransformer->SetInputConnection(this->LineSliceDistance->GetOutputPort());
+  this->ArcWorldToSliceTransformer->SetInputConnection(this->ArcSliceDistance->GetOutputPort());
+
   this->TubeFilter = vtkSmartPointer<vtkTubeFilter>::New();
-  this->TubeFilter->SetInputData(this->Line);
-  this->TubeFilter->SetNumberOfSides(20);
+  this->TubeFilter->SetInputConnection(this->LineWorldToSliceTransformer->GetOutputPort());
+  this->TubeFilter->SetNumberOfSides(6);
   this->TubeFilter->SetRadius(1);
 
   this->ArcTubeFilter = vtkSmartPointer<vtkTubeFilter>::New();
-  this->ArcTubeFilter->SetInputConnection(this->Arc->GetOutputPort());
-  this->ArcTubeFilter->SetNumberOfSides(20);
+  this->ArcTubeFilter->SetInputConnection(this->ArcWorldToSliceTransformer->GetOutputPort());
+  this->ArcTubeFilter->SetNumberOfSides(6);
   this->ArcTubeFilter->SetRadius(1);
+
+  this->ColorMap = vtkSmartPointer<vtkDiscretizableColorTransferFunction>::New();
 
   this->LineMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
   this->LineMapper->SetInputConnection(this->TubeFilter->GetOutputPort());
+  this->LineMapper->SetLookupTable(this->ColorMap);
+  this->LineMapper->SetScalarVisibility(true);
 
   this->ArcMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
   this->ArcMapper->SetInputConnection(this->ArcTubeFilter->GetOutputPort());
+  this->ArcMapper->SetLookupTable(this->ColorMap);
+  this->ArcMapper->SetScalarVisibility(true);
 
   this->LineActor = vtkSmartPointer<vtkActor2D>::New();
   this->LineActor->SetMapper(this->LineMapper);
@@ -111,69 +121,82 @@ bool vtkSlicerAngleRepresentation2D::GetTransformationReferencePoint(double refe
 //----------------------------------------------------------------------
 void vtkSlicerAngleRepresentation2D::BuildArc()
 {
-  // Build Arc
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || markupsNode->GetNumberOfControlPoints() != 3)
     {
     return;
     }
 
-  double p1[2], p2[2], c[2], vector2[3], vector1[3];
-  double l1 = 0.0, l2 = 0.0;
-  this->GetNthNodeDisplayPosition(0, p1);
-  this->GetNthNodeDisplayPosition(1, c);
-  this->GetNthNodeDisplayPosition(2, p2);
+  double p1[3] = {0.0};
+  double c[3] = {0.0};
+  double p2[3] = {0.0};
+  markupsNode->GetNthControlPointPositionWorld(0, p1);
+  markupsNode->GetNthControlPointPositionWorld(1, c);
+  markupsNode->GetNthControlPointPositionWorld(2, p2);
 
   // Compute the angle (only if necessary since we don't want
   // fluctuations in angle value as the camera moves, etc.)
-  if (fabs(p1[0]-c[0]) < 0.001 || fabs(p2[0]-c[0]) < 0.001)
+  if (((fabs(p1[0] - c[0]) < 0.001) &&
+       (fabs(p1[1] - c[1]) < 0.001) &&
+       (fabs(p1[2] - c[2]) < 0.001)) ||
+      ((fabs(p2[0] - c[0]) < 0.001) &&
+       (fabs(p2[1] - c[1]) < 0.001) &&
+       (fabs(p2[2] - c[2]) < 0.001)))
     {
     return;
     }
 
-  vector1[0] = p1[0] - c[0];
-  vector1[1] = p1[1] - c[1];
-  vector1[2] = 0.;
-  vector2[0] = p2[0] - c[0];
-  vector2[1] = p2[1] - c[1];
-  vector2[2] = 0.;
-  l1 = vtkMath::Normalize(vector1);
-  l2 = vtkMath::Normalize(vector2);
+  double vector1[3] = { p1[0] - c[0], p1[1] - c[1], p1[2] - c[2] };
+  double vector2[3] = { p2[0] - c[0], p2[1] - c[1], p2[2] - c[2] };
+  double l1 = vtkMath::Normalize(vector1);
+  double l2 = vtkMath::Normalize(vector2);
   double angle = acos(vtkMath::Dot(vector1, vector2));
 
   // Place the label and place the arc
-  const double length = l1 < l2 ? l1 : l2;
+  double length = l1 < l2 ? l1 : l2;
   const double anglePlacementRatio = 0.5;
-  const double l = length * anglePlacementRatio;
-  double arcp1[3] = {l * vector1[0] + c[0],
-                     l * vector1[1] + c[1],
-                     0.};
-  double arcp2[3] = {l * vector2[0] + c[0],
-                     l * vector2[1] + c[1],
-                     0.};
-  double arcc[3] = {c[0], c[1], 0.};
+  const double lArc = length * anglePlacementRatio;
+  double arcp1[3] = { lArc * vector1[0] + c[0],
+                      lArc * vector1[1] + c[1],
+                      lArc * vector1[2] + c[2] };
+  double arcp2[3] = { lArc * vector2[0] + c[0],
+                      lArc * vector2[1] + c[1],
+                      lArc * vector2[2] + c[2] };
 
   this->Arc->SetPoint1(arcp1);
   this->Arc->SetPoint2(arcp2);
-  this->Arc->SetCenter(arcc);
+  this->Arc->SetCenter(c);
   this->Arc->Update();
 
-  char buf[80];
-  buf[sizeof(buf) - 1] = 0;
-  snprintf(buf, sizeof(buf), this->LabelFormat.c_str(), vtkMath::DegreesFromRadians(angle));
+  char buf[80] = {0};
+  snprintf(buf, sizeof(buf)-1, this->LabelFormat.c_str(), vtkMath::DegreesFromRadians(angle));
   this->TextActor->SetInput(buf);
 
-  double textPosDisplay[2], vector3[3];
-  vector3[0] = vector1[0] + vector2[0];
-  vector3[1] = vector1[1] + vector2[1];
-  vector3[2] = vector1[2] + vector2[2];
-  vtkMath::Normalize(vector3);
-  textPosDisplay[0] = c[0] + vector3[0] * length * 0.6;
-  textPosDisplay[1] = c[1] + vector3[1] * length * 0.6;
+  this->GetNthNodeDisplayPosition(0, p1);
+  this->GetNthNodeDisplayPosition(1, c);
+  this->GetNthNodeDisplayPosition(2, p2);
 
-  int X = static_cast<int>(textPosDisplay[0]);
-  int Y = static_cast<int>(textPosDisplay[1]);
-  this->TextActor->SetDisplayPosition(X,Y);
+  for (int i = 0; i < 3; ++i)
+    {
+    vector1[i] = p1[i] - c[i];
+    vector2[i] = p2[i] - c[i];
+    }
+
+  l1 = vtkMath::Normalize(vector1);
+  l2 = vtkMath::Normalize(vector2);
+  length = l1 < l2 ? l1 : l2;
+  const double angleTextPlacementRatio = 0.7;
+  const double lText = length * angleTextPlacementRatio;
+  double vector3[3] = { vector1[0] + vector2[0],
+                        vector1[1] + vector2[1],
+                        vector1[2] + vector2[2] };
+  vtkMath::Normalize(vector3);
+  double textPos[3] = { lText * vector3[0] + c[0],
+                        lText * vector3[1] + c[1],
+                        lText * vector3[2] + c[2]};
+
+  this->TextActor->SetDisplayPosition(static_cast<int>(textPos[0]),
+                                      static_cast<int>(textPos[1]));
 }
 
 //----------------------------------------------------------------------
@@ -188,16 +211,14 @@ void vtkSlicerAngleRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
     || !this->MarkupsDisplayNode->GetVisibility()
     || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID())
     )
-  {
+    {
     this->VisibilityOff();
     return;
-  }
+    }
 
   this->VisibilityOn();
 
-  // Update lines geometry
-
-  this->BuildLine(this->Line, true);
+  // Update from slice node
   this->BuildArc();
 
   // Update lines display properties
@@ -208,8 +229,8 @@ void vtkSlicerAngleRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   this->ArcTubeFilter->SetRadius(this->ViewScaleFactor * this->ControlPointSize * 0.125);
 
   bool allNodeVisibile = this->GetAllControlPointsVisible();
-  this->LineActor->SetVisibility(allNodeVisibile);
-  this->ArcActor->SetVisibility(allNodeVisibile && markupsNode->GetNumberOfControlPoints() == 3);
+  this->LineActor->SetVisibility(markupsNode->GetNumberOfControlPoints() >= 2);
+  this->ArcActor->SetVisibility(markupsNode->GetNumberOfControlPoints() == 3);
   this->TextActor->SetVisibility(allNodeVisibile && markupsNode->GetNumberOfControlPoints() == 3);
 
   int controlPointType = Unselected;
@@ -230,6 +251,22 @@ void vtkSlicerAngleRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
   this->ArcActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
+
+  if (this->MarkupsDisplayNode->GetLineColorNode() && this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction())
+    {
+    // Update the line color mapping from the colorNode stored in the markups display node
+    vtkColorTransferFunction* colormap = this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction();
+    this->LineMapper->SetLookupTable(colormap);
+    this->ArcMapper->SetLookupTable(colormap);
+    }
+  else
+    {
+    // if there is no line color node, build the color mapping from few varibales
+    // (color, opacity, distance fading, saturation and hue offset) stored in the display node
+    this->UpdateDistanceColorMap(this->ColorMap, this->LineActor->GetProperty()->GetColor());
+    this->LineMapper->SetLookupTable(this->ColorMap);
+    this->ArcMapper->SetLookupTable(this->ColorMap);
+    }
 }
 
 //----------------------------------------------------------------------
@@ -240,15 +277,15 @@ void vtkSlicerAngleRepresentation2D::CanInteract(
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1)
-  {
+    {
     return;
-  }
+    }
   Superclass::CanInteract(displayPosition, worldPosition, foundComponentType, foundComponentIndex, closestDistance2);
   if (foundComponentType != vtkMRMLMarkupsDisplayNode::ComponentNone)
-  {
+    {
     // if mouse is near a control point then select that (ignore the line)
     return;
-  }
+    }
 
   double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
 
@@ -265,16 +302,16 @@ void vtkSlicerAngleRepresentation2D::CanInteract(
   vtkNew<vtkMatrix4x4> rasToxyMatrix;
   vtkMatrix4x4::Invert(this->GetSliceNode()->GetXYToRAS(), rasToxyMatrix.GetPointer());
   for (int i = 0; i < numberOfPoints-1; i++)
-  {
+    {
     if (!this->PointsVisibilityOnSlice->GetValue(i))
-    {
+      {
       continue;
-    }
+      }
     if (!this->PointsVisibilityOnSlice->GetValue(i+1))
-    {
+      {
       i++; // skip one more, as the next iteration would use (i+1)-th point
       continue;
-    }
+      }
     markupsNode->GetNthControlPointPositionWorld(i, pointWorldPos1);
     rasToxyMatrix->MultiplyPoint(pointWorldPos1, pointDisplayPos1);
     markupsNode->GetNthControlPointPositionWorld(i+1, pointWorldPos2);
@@ -283,12 +320,12 @@ void vtkSlicerAngleRepresentation2D::CanInteract(
     double relativePositionAlongLine = -1.0; // between 0.0-1.0 if between the endpoints of the line segment
     double distance2 = vtkLine::DistanceToLine(displayPosition3, pointDisplayPos1, pointDisplayPos2, relativePositionAlongLine);
     if (distance2 < pixelTolerance2 && distance2 < closestDistance2 && relativePositionAlongLine >= 0 && relativePositionAlongLine <= 1)
-    {
+      {
       closestDistance2 = distance2;
       foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentLine;
       foundComponentIndex = i;
+      }
     }
-  }
 }
 
 //----------------------------------------------------------------------
@@ -438,4 +475,23 @@ void vtkSlicerAngleRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "Label Format: ";
   os << this->LabelFormat << "\n";
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerAngleRepresentation2D::SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode)
+{
+  if (this->MarkupsNode != markupsNode)
+    {
+    if (markupsNode)
+      {
+      this->LineSliceDistance->SetInputConnection(markupsNode->GetCurveWorldConnection());
+      this->ArcSliceDistance->SetInputConnection(this->Arc->GetOutputPort());
+      }
+    else
+      {
+      this->LineSliceDistance->SetInputData(this->Line);
+      this->ArcSliceDistance->SetInputConnection(this->Arc->GetOutputPort());
+      }
+    }
+  this->Superclass::SetMarkupsNode(markupsNode);
 }

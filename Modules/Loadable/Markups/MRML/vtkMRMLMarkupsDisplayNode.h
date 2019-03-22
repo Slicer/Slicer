@@ -29,6 +29,8 @@
 #include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLMarkupsNode.h"
 
+class vtkMRMLProceduralColorNode;
+
 /// \ingroup Slicer_QtModules_Markups
 class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsDisplayNode : public vtkMRMLDisplayNode
 {
@@ -165,14 +167,21 @@ public:
   /// not visible.
   /// Off by default
   /// \sa SliceIntersectionVisibilty, SliceProjectionColor
-  vtkSetMacro(SliceProjection, int);
-  vtkGetMacro(SliceProjection, int);
+  vtkSetMacro(SliceProjection, bool);
+  vtkGetMacro(SliceProjection, bool);
+  vtkBooleanMacro(SliceProjection, bool);
 
-  /// Set SliceProjection to On
-  inline void SliceProjectionOn();
+  /// Set projection color to be the same as the fiducial color
+  /// On by default
+  vtkSetMacro(SliceProjectionUseFiducialColor, bool);
+  vtkGetMacro(SliceProjectionUseFiducialColor, bool);
+  vtkBooleanMacro(SliceProjectionUseFiducialColor, bool);
 
-  /// Set SliceProjection to Off
-  inline void SliceProjectionOff();
+  /// Set projection's view different if under/over/in the plane
+  /// Off by default
+  vtkSetMacro(SliceProjectionOutlinedBehindSlicePlane, bool);
+  vtkGetMacro(SliceProjectionOutlinedBehindSlicePlane, bool);
+  vtkBooleanMacro(SliceProjectionOutlinedBehindSlicePlane, bool);
 
   /// Set color of the projection on the 2D viewers
   /// White (1.0, 1.0, 1.0) by default.
@@ -184,43 +193,38 @@ public:
   vtkSetClampMacro(SliceProjectionOpacity, double, 0.0, 1.0);
   vtkGetMacro(SliceProjectionOpacity, double);
 
-  /// Set projection color to be the same as the fiducial color
-  ///\sa SetSliceProjectionColor
-  inline void SliceProjectionUseFiducialColorOn();
+  /// Configures the line color fading appearance
+  /// Default value = 1.0
+  vtkGetMacro (LineColorFadingStart, double);
+  vtkSetMacro (LineColorFadingStart, double);
 
-  /// Manually set projection color
-  ///\sa SetSliceProjectionColor
-  inline void SliceProjectionUseFiducialColorOff();
+  /// Configures the line color fading appearance
+  /// Default value = 10.0
+  vtkGetMacro (LineColorFadingEnd, double);
+  vtkSetMacro (LineColorFadingEnd, double);
 
-  /// Return true if the slice projection use fiducial color option
-  /// is on, false otherwise
-  inline bool GetSliceProjectionUseFiducialColor();
+  /// Configures the line color fading appearance
+  /// Default value = 1.0
+  vtkSetClampMacro (LineColorFadingSaturation, double, 0.0, 1.0);
+  vtkGetMacro (LineColorFadingSaturation, double);
 
-  /// Set projection's view different if under/over/in the plane
-  ///\sa SetSliceProjectionColor
-  inline void SliceProjectionOutlinedBehindSlicePlaneOn();
+  /// Configures the line color fading appearance
+  /// Default value = 0.0
+  vtkSetClampMacro (LineColorFadingHueOffset, double, 0.0, 1.0);
+  vtkGetMacro (LineColorFadingHueOffset, double);
 
-  /// Set projection's view the same if under/over/in the plane
-  ///\sa SetSliceProjectionColor
-  inline void SliceProjectionOutlinedBehindSlicePlaneOff();
+  /// Set the line color node ID used for the projection on the line actors on the 2D viewers.
+  /// Setting a line color node allows to define any arbitrary color mapping.
+  /// Setting a line color node will overwrite the settings given by the
+  /// color, opacity and LineColorFading variables of the displayNode.
+  virtual void SetLineColorNodeID(const char *lineColorNodeID);
 
-  /// Return true if the outline behind slice plane setting is turned
-  /// on, false otherwise
-  inline bool GetSliceProjectionOutlinedBehindSlicePlane();
+  /// Get the line color node ID used for the projection on the line actors on the 2D viewers.
+  const char* GetLineColorNodeID();
 
-  /// ProjectionUseFiducialColor : Set projection color the same as the
-  /// markup color
-  /// ProjectionOutlinedBehindSlicePlane : Different shape and opacity when
-  /// markup is on top of the slice plane, or under
-  /// Projection Off, UseFiducialColor, OutlinedBehindSlicePlane by default
-  ///\enum SliceProjectionFlag
-  enum SliceProjectionFlag
-  {
-    ProjectionOff = 0x00,
-    ProjectionOn = 0x01,
-    ProjectionUseFiducialColor = 0x02,
-    ProjectionOutlinedBehindSlicePlane = 0x04
-  };
+  /// Get the line color node used for the projection on the line actors on the 2D viewers.
+  vtkMRMLProceduralColorNode* GetLineColorNode();
+  virtual const char* GetLineColorNodeReferenceRole();
 
 protected:
   vtkMRMLMarkupsDisplayNode();
@@ -238,79 +242,20 @@ protected:
   double GlyphScale;
   static const char* GlyphTypesNames[GlyphMax+2];
 
-  int SliceProjection;
+  bool SliceProjection;
+  bool SliceProjectionUseFiducialColor;
+  bool SliceProjectionOutlinedBehindSlicePlane;
   double SliceProjectionColor[3];
   double SliceProjectionOpacity;
+
+  virtual const char* GetLineColorNodeReferenceMRMLAttributeName();
+
+  static const char* LineColorNodeReferenceRole;
+  static const char* LineColorNodeReferenceMRMLAttributeName;
+
+  double LineColorFadingStart;
+  double LineColorFadingEnd;
+  double LineColorFadingSaturation;
+  double LineColorFadingHueOffset;
 };
-
-//----------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayNode::SliceProjectionOn()
-{
-  this->SetSliceProjection( this->GetSliceProjection() |
-                            vtkMRMLMarkupsDisplayNode::ProjectionOn);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayNode::SliceProjectionOff()
-{
-  this->SetSliceProjection( this->GetSliceProjection() &
-                            ~vtkMRMLMarkupsDisplayNode::ProjectionOn);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayNode::SliceProjectionUseFiducialColorOn()
-{
-  this->SetSliceProjection( this->GetSliceProjection() |
-                            vtkMRMLMarkupsDisplayNode::ProjectionUseFiducialColor);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayNode::SliceProjectionUseFiducialColorOff()
-{
-  this->SetSliceProjection( this->GetSliceProjection() &
-                            ~vtkMRMLMarkupsDisplayNode::ProjectionUseFiducialColor);
-}
-
-//----------------------------------------------------------------------------
-bool vtkMRMLMarkupsDisplayNode::GetSliceProjectionUseFiducialColor()
-{
-  if (this->GetSliceProjection() &
-      this->ProjectionUseFiducialColor)
-    {
-    return true;
-    }
-  else
-    {
-    return false;
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayNode::SliceProjectionOutlinedBehindSlicePlaneOn()
-{
-  this->SetSliceProjection( this->GetSliceProjection() |
-                            vtkMRMLMarkupsDisplayNode::ProjectionOutlinedBehindSlicePlane);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayNode::SliceProjectionOutlinedBehindSlicePlaneOff()
-{
-  this->SetSliceProjection( this->GetSliceProjection() &
-                            ~vtkMRMLMarkupsDisplayNode::ProjectionOutlinedBehindSlicePlane);
-}
-
-//----------------------------------------------------------------------------
-bool vtkMRMLMarkupsDisplayNode::GetSliceProjectionOutlinedBehindSlicePlane()
-{
-  if (this->GetSliceProjection() &
-      this->ProjectionOutlinedBehindSlicePlane)
-    {
-    return true;
-    }
-  else
-    {
-    return false;
-    }
-}
-
 #endif

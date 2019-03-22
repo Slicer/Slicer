@@ -768,16 +768,7 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
   d->sliceIntersectionsVisibilityCheckBox->setChecked(this->sliceIntersectionsVisible());
 
   // update the point projections
-  // To DO: update to use also other markups nodes
-  if (markupsNode->IsA("vtkMRMLMarkupsFiducialNode"))
-    {
-    d->pointFiducialProjectionWidget->setMRMLFiducialNode(
-        vtkMRMLMarkupsFiducialNode::SafeDownCast(markupsNode));
-    }
-  else
-    {
-    d->pointFiducialProjectionWidget->setMRMLFiducialNode(nullptr);
-    }
+  d->pointFiducialProjectionWidget->setMRMLMarkupsNode(markupsNode);
 
   // update the list name format
   QString nameFormat = QString(markupsNode->GetMarkupLabelFormat().c_str());
