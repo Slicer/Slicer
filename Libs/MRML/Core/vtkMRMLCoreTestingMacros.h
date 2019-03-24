@@ -97,27 +97,27 @@
 #define TEST_SET_GET_BOOLEAN( object, variable ) \
   object->Set##variable( false ); \
   object->Set##variable( true ); \
-  if( object->Get##variable() != 1 ) \
+  if( object->Get##variable() == 0 ) \
     {   \
-    std::cerr << "Error in Set/Get"#variable << ", Get"#variable << " is " << object->Get##variable() << " instead of 1" << std::endl; \
+    std::cerr << "Error in Set/Get"#variable << ", Get"#variable << " returned zero while it is expected to return non-zero" << std::endl; \
     return EXIT_FAILURE; \
     } \
   object->Set##variable( false ); \
   if( object->Get##variable() != 0 ) \
     {   \
-    std::cerr << "Error in Set/Get"#variable << ", Get"#variable << " is " << object->Get##variable() << " instead of 0" << std::endl; \
+    std::cerr << "Error in Set/Get"#variable << ", Get"#variable << " returned " << object->Get##variable() << " instead of 0" << std::endl; \
     return EXIT_FAILURE; \
     } \
   object->variable##On(); \
-  if( object->Get##variable() != 1 ) \
+  if( object->Get##variable() == 0 ) \
     {   \
-    std::cerr << "Error in On/Get"#variable << ", Get"#variable << " is " << object->Get##variable() << " instead of 1" << std::endl; \
+    std::cerr << "Error in On/Get"#variable << ", Get"#variable << " returned zero while it is expected to return non-zero" << std::endl; \
     return EXIT_FAILURE; \
     } \
   object->variable##Off(); \
   if( object->Get##variable() != 0 ) \
     {   \
-    std::cerr << "Error in Off/Get"#variable << ", Get"#variable << " is " << object->Get##variable() << " instead of 0" << std::endl; \
+    std::cerr << "Error in Off/Get"#variable << ", Get"#variable << " returned " << object->Get##variable() << " while 0 is expected" << std::endl; \
     return EXIT_FAILURE; \
     }
 
