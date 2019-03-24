@@ -923,13 +923,13 @@ void vtkSlicerMarkupsLogic::SetDefaultMarkupsDisplayNodeSelectedColor(double r, 
 }
 
 //---------------------------------------------------------------------------
-int vtkSlicerMarkupsLogic::GetDefaultMarkupsDisplayNodeSliceProjection()
+bool vtkSlicerMarkupsLogic::GetDefaultMarkupsDisplayNodeSliceProjection()
 {
   return this->DefaultMarkupsDisplayNode->GetSliceProjection();
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::SetDefaultMarkupsDisplayNodeSliceProjection(int projection)
+void vtkSlicerMarkupsLogic::SetDefaultMarkupsDisplayNodeSliceProjection(bool projection)
 {
   this->DefaultMarkupsDisplayNode->SetSliceProjection(projection);
 }

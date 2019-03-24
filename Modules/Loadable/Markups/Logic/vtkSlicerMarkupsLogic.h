@@ -139,8 +139,10 @@ public:
   void SetDefaultMarkupsDisplayNodeSelectedColor(double *color);
   void SetDefaultMarkupsDisplayNodeSelectedColor(double r, double g, double b);
 
-  int GetDefaultMarkupsDisplayNodeSliceProjection();
-  void SetDefaultMarkupsDisplayNodeSliceProjection(int projection);
+  bool GetDefaultMarkupsDisplayNodeSliceProjection();
+  void SetDefaultMarkupsDisplayNodeSliceProjection(bool projection);
+  void DefaultMarkupsDisplayNodeSliceProjectionOn() { this->SetDefaultMarkupsDisplayNodeSliceProjection(true); };
+  void DefaultMarkupsDisplayNodeSliceProjectionOff() { this->SetDefaultMarkupsDisplayNodeSliceProjection(false); };
 
   double *GetDefaultMarkupsDisplayNodeSliceProjectionColor();
   void SetDefaultMarkupsDisplayNodeSliceProjectionColor(double *color);
