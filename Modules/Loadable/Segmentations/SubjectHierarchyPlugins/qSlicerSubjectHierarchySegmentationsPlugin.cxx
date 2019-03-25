@@ -188,6 +188,120 @@ bool qSlicerSubjectHierarchySegmentationsPlugin::addNodeToSubjectHierarchy(vtkMR
   return true;
 }
 
+//----------------------------------------------------------------------------
+double qSlicerSubjectHierarchySegmentationsPlugin::canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)const
+{
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return 0.0;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return 0.0;
+    }
+  if (parentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    // Cannot reparent if there is no parent
+    return 0.0;
+    }
+
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(shNode->GetItemDataNode(parentItemID));
+  if (segmentationNode)
+    {
+    // If item is labelmap or model and parent is segmentation then can reparent
+    vtkMRMLLabelMapVolumeNode* labelmapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+    vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+    if (labelmapNode || modelNode)
+      {
+      return 1.0;
+      }
+    }
+
+  return 0.0;
+}
+
+//---------------------------------------------------------------------------
+bool qSlicerSubjectHierarchySegmentationsPlugin::reparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)
+{
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return false;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return false;
+    }
+  if (parentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    // Cannot reparent if there is no parent
+    return false;
+    }
+
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(shNode->GetItemDataNode(parentItemID));
+  vtkMRMLLabelMapVolumeNode* labelmapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  if (!segmentationNode || (!labelmapNode && !modelNode))
+    {
+    // Invalid inputs
+    return false;
+    }
+
+  bool success = false;
+  std::string importedRepresentationName("");
+  if (labelmapNode)
+    {
+    importedRepresentationName = std::string(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
+    success = vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(labelmapNode, segmentationNode);
+    }
+  else
+    {
+    importedRepresentationName = std::string(vtkSegmentationConverter::GetClosedSurfaceRepresentationName());
+    success = vtkSlicerSegmentationsModuleLogic::ImportModelToSegmentationNode(modelNode, segmentationNode);
+    }
+
+  // Notify user if failed to import
+  if (!success)
+    {
+    // Probably master representation has to be changed
+    QString message = QString("Cannot convert source master representation '%1' into target master '%2',"
+      "thus unable to import node '%3' to segmentation '%4'.\n\n"
+      "Would you like to change the master representation of '%4' to '%1'?\n\n"
+      "Note: This may result in unwanted data loss in %4.")
+      .arg(importedRepresentationName.c_str())
+      .arg(segmentationNode->GetSegmentation()->GetMasterRepresentationName().c_str())
+      .arg(labelmapNode ? labelmapNode->GetName() : modelNode->GetName()).arg(segmentationNode->GetName());
+    QMessageBox::StandardButton answer =
+      QMessageBox::question(nullptr, tr("Failed to import data to segmentation"), message,
+      QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+    if (answer == QMessageBox::Yes)
+      {
+      // Convert target segmentation to master representation of source segmentation
+      bool successfulConversion = segmentationNode->GetSegmentation()->CreateRepresentation(importedRepresentationName);
+      if (!successfulConversion)
+        {
+        QString message = QString("Failed to convert %1 to %2").arg(segmentationNode->GetName()).arg(importedRepresentationName.c_str());
+        QMessageBox::warning(nullptr, tr("Conversion failed"), message);
+        return false;
+        }
+
+      // Change master representation of target to that of source
+      segmentationNode->GetSegmentation()->SetMasterRepresentationName(importedRepresentationName);
+
+      // Retry reparenting
+      return this->reparentItemInsideSubjectHierarchy(itemID, parentItemID);
+      }
+    }
+
+  // Real reparenting does not happen, the dragged node will remain where it was
+  return false;
+}
+
 //---------------------------------------------------------------------------
 double qSlicerSubjectHierarchySegmentationsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
 {

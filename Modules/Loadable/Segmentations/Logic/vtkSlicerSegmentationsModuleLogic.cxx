@@ -1177,7 +1177,11 @@ bool vtkSlicerSegmentationsModuleLogic::ImportModelToSegmentationNode(vtkMRMLMod
     }
 
   // Add segment to current segmentation
-  segmentationNode->GetSegmentation()->AddSegment(segment, "", insertBeforeSegmentId);
+  if (!segmentationNode->GetSegmentation()->AddSegment(segment, "", insertBeforeSegmentId))
+    {
+    vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic: Failed to add segment to segmentation");
+    return false;
+    }
 
   return true;
 }
@@ -1335,7 +1339,11 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkMRML
       vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName(),
       labelOrientedImageData );
 
-    segmentationNode->GetSegmentation()->AddSegment(segment, "", insertBeforeSegmentId);
+    if (!segmentationNode->GetSegmentation()->AddSegment(segment, "", insertBeforeSegmentId))
+      {
+      vtkErrorWithObjectMacro(segmentationNode, "ImportLabelmapToSegmentationNode: Failed to add segment to segmentation");
+      return false;
+      }
     } // for each label
 
   segmentationNode->EndModify(segmentationNodeWasModified);
@@ -1416,7 +1424,11 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrie
       vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName(),
       labelOrientedImageData );
 
-    segmentationNode->GetSegmentation()->AddSegment(segment, "", insertBeforeSegmentId);
+    if (!segmentationNode->GetSegmentation()->AddSegment(segment, "", insertBeforeSegmentId))
+      {
+      vtkErrorWithObjectMacro(segmentationNode, "ImportLabelmapToSegmentationNode: Failed to add segment to segmentation");
+      return false;
+      }
     } // for each label
 
   segmentationNode->EndModify(segmentationNodeWasModified);
