@@ -818,6 +818,10 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemModified(
       itemID = *itemIdPtr;
       }
     }
+  if (!itemID)
+    {
+    return;
+    }
 
   if (shNode->HasItemAttribute(itemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName()))
     {
