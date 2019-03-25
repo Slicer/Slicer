@@ -2533,38 +2533,36 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
             vtkWarningMacro( << "Referenced parameter unknown: " << (*pit).GetReference() );
             }
           }
-        else
+        // does parameter have forward references?
+        std::map<std::string,std::vector<std::string> > forwardReferences;
+        (*pit).GetForwardReferences(forwardReferences);
+        if (forwardReferences.size() > 0)
           {
-          std::map<std::string,std::vector<std::string> > forwardReferences;
-          (*pit).GetForwardReferences(forwardReferences);
-          if (forwardReferences.size() > 0)
+          std::string referencingNodeID = (*pit).GetValue();
+          vtkMRMLNode *referencingNode = this->GetMRMLScene()->GetNodeByID(referencingNodeID.c_str());
+          if (referencingNode)
             {
-            std::string referencingNodeID = (*pit).GetValue();
-            vtkMRMLNode *referencingNode = this->GetMRMLScene()->GetNodeByID(referencingNodeID.c_str());
-            if (referencingNode)
+            std::map<std::string,std::vector<std::string> >::const_iterator frit;
+            for (frit = forwardReferences.begin(); frit != forwardReferences.end(); ++frit)
               {
-              std::map<std::string,std::vector<std::string> >::const_iterator frit;
-              for (frit = forwardReferences.begin(); frit != forwardReferences.end(); ++frit)
-                {
-                std::string role = frit->first;
+              std::string role = frit->first;
 
-                std::vector<std::string>::const_iterator frvit;
-                for (frvit = frit->second.begin(); frvit != frit->second.end(); ++frvit)
+              std::vector<std::string>::const_iterator frvit;
+              for (frvit = frit->second.begin(); frvit != frit->second.end(); ++frvit)
+                {
+                // does the reference parameter exist?
+                if (node0->GetModuleDescription().HasParameter(*frvit))
                   {
-                  // does the reference parameter exist?
-                  if (node0->GetModuleDescription().HasParameter(*frvit))
+                  // get the id stored in the parameter referenced
+                  std::string referencedNodeID = node0->GetModuleDescription().GetParameterValue(*frvit);
+                  vtkMRMLNode *referencedNode = this->GetMRMLScene()->GetNodeByID(referencedNodeID.c_str());
+                  if (referencedNode)
                     {
-                    // get the id stored in the parameter referenced
-                    std::string referencedNodeID = node0->GetModuleDescription().GetParameterValue(*frvit);
-                    vtkMRMLNode *referencedNode = this->GetMRMLScene()->GetNodeByID(referencedNodeID.c_str());
-                    if (referencedNode)
-                      {
-                      referencingNode->AddNodeReferenceID(role.c_str(), referencedNodeID.c_str());
-                      }
+                    referencingNode->AddNodeReferenceID(role.c_str(), referencedNodeID.c_str());
                     }
-                  } // for frvit (referenced nodes)
-                } // for frit (forward references)
-              }
+                  }
+                } // for frvit (referenced nodes)
+              } // for frit (forward references)
             }
           }
         } // for pit
