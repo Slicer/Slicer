@@ -26,6 +26,8 @@
 #include "vtkStringArray.h"
 #include <vtksys/SystemTools.hxx>
 
+#include "itkNumberToString.h"
+
 #include <sstream>
 
 // CSV table field indexes
@@ -428,12 +430,16 @@ std::string vtkMRMLMarkupsFiducialStorageNode::GetPointAsString(vtkMRMLMarkupsNo
 
   std::string associatedNodeID = markupsNode->GetNthControlPointAssociatedNodeID(pointIndex);
 
+  // use double-conversion library (via ITK) for better
+  // float64 string representation.
+  itk::NumberToString<double> DoubleConvert;
+
   std::stringstream of;
-  of.precision(3);
   of.setf(std::ios::fixed, std::ios::floatfield);
   of << id.c_str();
-  of << separator << xyz[0] << separator << xyz[1] << separator << xyz[2];
-  of << separator << orientation[0] << separator << orientation[1] << separator << orientation[2] << separator << orientation[3];
+  of << separator << DoubleConvert(xyz[0]) << separator << DoubleConvert(xyz[1]) << separator << DoubleConvert(xyz[2]);
+  of << separator << DoubleConvert(orientation[0]) << separator << DoubleConvert(orientation[1]);
+  of << separator << DoubleConvert(orientation[2]) << separator << DoubleConvert(orientation[3]);
   of << separator << vis << separator << sel << separator << lock;
   of << separator << label;
   of << separator << desc;
