@@ -738,7 +738,7 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
   // The Add button is valid only if the scene is non-empty
   //this->setAddEnabled(scene != 0);
   QString oldCurrentNode = d->ComboBox->itemData(d->ComboBox->currentIndex(), qMRMLSceneModel::UIDRole).toString();
-  bool oldNodeCount = this->nodeCount();
+  bool previousSceneWasValid = (this->nodeCount() > 0);
 
   // Update factory
   d->MRMLNodeFactory->setMRMLScene(scene);
@@ -758,7 +758,7 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
   // set it back. Please consider make it a behavior property if it doesn't fit
   // your need, as this behavior is currently wanted for some cases (
   // vtkMRMLClipModels selector in the Models module)
-  if (oldNodeCount)
+  if (previousSceneWasValid)
     {
     this->setCurrentNodeID(oldCurrentNode);
     }
@@ -767,8 +767,19 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
   // would be selected and "Scene" would be displayed (see vtkMRMLNodeComboboxTest5)
   else
     {
-    this->setCurrentNodeID(this->currentNodeID());
+    QString newNodeID = this->currentNodeID();
+    if (!d->RequestedNodeID.isEmpty())
+      {
+      newNodeID = d->RequestedNodeID;
+      }
+    else if (d->RequestedNode != nullptr && d->RequestedNode->GetID() != nullptr)
+      {
+      newNodeID = d->RequestedNode->GetID();
+      }
+    this->setCurrentNodeID(newNodeID);
     }
+  d->RequestedNodeID.clear();
+  d->RequestedNode = nullptr;
 
   this->setEnabled(scene != nullptr);
 }
@@ -776,6 +787,12 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
 // --------------------------------------------------------------------------
 void qMRMLNodeComboBox::setCurrentNode(vtkMRMLNode* newCurrentNode)
 {
+  Q_D(qMRMLNodeComboBox);
+  if (!this->mrmlScene())
+    {
+    d->RequestedNodeID.clear();
+    d->RequestedNode = newCurrentNode;
+    }
   this->setCurrentNodeID(newCurrentNode ? newCurrentNode->GetID() : "");
 }
 
@@ -790,6 +807,11 @@ void qMRMLNodeComboBox::setCurrentNode(const QString& nodeID)
 void qMRMLNodeComboBox::setCurrentNodeID(const QString& nodeID)
 {
   Q_D(qMRMLNodeComboBox);
+  if (!this->mrmlScene())
+    {
+    d->RequestedNodeID = nodeID;
+    d->RequestedNode = nullptr;
+    }
   // A straight forward implementation of setCurrentNode would be:
   //    int index = !nodeID.isEmpty() ? d->ComboBox->findData(nodeID, qMRMLSceneModel::UIDRole) : -1;
   //    if (index == -1 && d->NoneEnabled)

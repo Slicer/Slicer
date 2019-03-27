@@ -41,6 +41,8 @@ class QComboBox;
 class qMRMLNodeFactory;
 class qMRMLSceneModel;
 
+#include "vtkWeakPointer.h"
+
 // -----------------------------------------------------------------------------
 class qMRMLNodeComboBoxPrivate
 {
@@ -78,6 +80,10 @@ public:
   bool SelectNodeUponCreation;
   QString NoneDisplay;
   bool AutoDefaultText;
+
+  // Store requested node or ID if setCurrentNode(ID) is called before a scene was set.
+  QString RequestedNodeID;
+  vtkWeakPointer<vtkMRMLNode> RequestedNode;
 
   QList<QAction*> UserMenuActions;
 };
