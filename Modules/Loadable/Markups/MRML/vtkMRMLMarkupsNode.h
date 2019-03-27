@@ -543,6 +543,8 @@ protected:
 
   virtual void UpdateCurvePolyFromCurveInputPoly();
 
+  void OnTransformNodeReferenceChanged(vtkMRMLTransformNode* transformNode) override;
+
   // Used for limiting number of markups that may be placed.
   int MaximumNumberOfControlPoints;
   int RequiredNumberOfControlPoints;

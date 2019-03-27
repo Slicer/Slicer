@@ -209,7 +209,7 @@ void vtkMRMLMarkupsNode::ProcessMRMLEvents(vtkObject *caller,
 {
   if (caller != nullptr && event == vtkMRMLTransformableNode::TransformModifiedEvent)
     {
-    vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), nullptr, CurvePolyToWorldTransform);
+    vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), nullptr, this->CurvePolyToWorldTransform);
     }
   Superclass::ProcessMRMLEvents(caller, event, callData);
 }
@@ -1783,4 +1783,11 @@ int vtkMRMLMarkupsNode::GetNumberOfDefinedControlPoints()
       }
     }
   return numberOfDefinedControlPoints;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::OnTransformNodeReferenceChanged(vtkMRMLTransformNode* transformNode)
+{
+  vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), nullptr, this->CurvePolyToWorldTransform);
+  Superclass::OnTransformNodeReferenceChanged(transformNode);
 }

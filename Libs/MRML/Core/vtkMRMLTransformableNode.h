@@ -125,37 +125,18 @@ protected:
 
   ///
   /// Called when a node reference ID is added (list size increased).
-  void OnNodeReferenceAdded(vtkMRMLNodeReference *reference) override
-  {
-    Superclass::OnNodeReferenceAdded(reference);
-    if (std::string(reference->GetReferenceRole()) == this->TransformNodeReferenceRole)
-      {
-      this->InvokeCustomModifiedEvent(vtkMRMLTransformableNode::TransformModifiedEvent, reference->GetReferencedNode());
-      }
-  }
+  void OnNodeReferenceAdded(vtkMRMLNodeReference *reference) override;
 
   ///
   /// Called when a node reference ID is modified.
-  void OnNodeReferenceModified(vtkMRMLNodeReference *reference) override
-  {
-    Superclass::OnNodeReferenceModified(reference);
-    if (std::string(reference->GetReferenceRole()) == this->TransformNodeReferenceRole)
-    {
-      this->InvokeCustomModifiedEvent(vtkMRMLTransformableNode::TransformModifiedEvent, reference->GetReferencedNode());
-    }
-  }
+  void OnNodeReferenceModified(vtkMRMLNodeReference *reference) override;
 
   ///
   /// Called after a node reference ID is removed (list size decreased).
-  void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference) override
-  {
-    Superclass::OnNodeReferenceRemoved(reference);
-    if (std::string(reference->GetReferenceRole()) == this->TransformNodeReferenceRole)
-    {
-      this->InvokeCustomModifiedEvent(vtkMRMLTransformableNode::TransformModifiedEvent, reference->GetReferencedNode());
-    }
-  }
+  void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference) override;
 
+  /// Called when transform node reference added/modified/removed
+  virtual void OnTransformNodeReferenceChanged(vtkMRMLTransformNode* transformNode);
 
 private:
   char* TransformNodeIDInternal;
