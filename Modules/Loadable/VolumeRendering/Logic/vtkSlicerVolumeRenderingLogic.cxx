@@ -852,10 +852,19 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetFirstVolume
   for (int i=0; i<ndnodes; i++)
     {
     vtkMRMLVolumeRenderingDisplayNode *dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(i));
-    if (dnode)
+    if (!dnode)
       {
-      return dnode;
+      // not a volume rendering display node
+      continue;
       }
+    if (dnode->GetVolumeNode() != volumeNode)
+      {
+      // Invalid volume node reference, ignore it (it would show a display node on the GUI that cannot be used to show a volume).
+      // TODO: volume node reference is supposed to be always valid, but in some cases it becomes invalid.
+      //   Mechanism that links volume node to display node would need to be redesigned to be more stable.
+      continue;
+      }
+    return dnode;
     }
   return nullptr;
 }
