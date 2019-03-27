@@ -400,6 +400,12 @@ protected:
   /// state when calling SetMasterRepresentationModifiedEnabled in nested functions.
   bool SetMasterRepresentationModifiedEnabled(bool enabled);
 
+  /// Temporarily enable/disable segment modified event.
+  /// \return Old value of SegmentModifiedEnabled.
+  /// In general, the old value should be restored after modified is temporarily disabled to ensure proper
+  /// state when calling SetSegmentModifiedEnabled in nested functions.
+  bool SetSegmentModifiedEnabled(bool enabled);
+
 protected:
   /// Callback function invoked when segment is modified.
   /// It calls Modified on the segmentation and rebuilds observations on the master representation of each segment
@@ -435,6 +441,9 @@ protected:
 
   /// Modified events of  master representations are observed
   bool MasterRepresentationModifiedEnabled;
+
+  /// Modified events of segments are observed
+  bool SegmentModifiedEnabled;
 
   /// This number is incremented and used for generating the next
   /// segment ID.

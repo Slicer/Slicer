@@ -258,26 +258,28 @@ vtkDataObject* vtkSegment::GetRepresentation(std::string name)
 }
 
 //---------------------------------------------------------------------------
-void vtkSegment::AddRepresentation(std::string name, vtkDataObject* representation)
+bool vtkSegment::AddRepresentation(std::string name, vtkDataObject* representation)
 {
   if (this->GetRepresentation(name) == representation)
     {
-    return;
+    return false;
     }
-
   this->Representations[name] = representation; // Representations stores the pointer in a smart pointer, which makes sure the object is not deleted
   this->Modified();
+  return true;
 }
 
 //---------------------------------------------------------------------------
-void vtkSegment::RemoveRepresentation(std::string name)
+bool vtkSegment::RemoveRepresentation(std::string name)
 {
   vtkDataObject* representation = this->GetRepresentation(name);
-  if (representation)
+  if (!representation)
     {
-    this->Representations.erase(name);
-    this->Modified();
+    return false;
     }
+  this->Representations.erase(name);
+  this->Modified();
+  return true;
 }
 
 //---------------------------------------------------------------------------
