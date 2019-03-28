@@ -773,6 +773,10 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
     # test updating measurements for segments one by one
     self.delayDisplay("Update some segments in the segmentation")
     segmentGeometriesNew = [[5, -6,30,28], [21, 0,65,32]]
+    # We add/remove representations, so we temporarily block segment modifications
+    # to make sure display managers don't try to access data while it is in an
+    # inconsistent state.
+    wasModified = segmentationNode.StartModify()
     for i in range(len(segmentGeometriesNew)):
       segmentGeometry  = segmentGeometriesNew[i]
       sphereSource = vtk.vtkSphereSource()
@@ -784,6 +788,7 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
       closedSurfaceName = vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationClosedSurfaceRepresentationName()
       segment.AddRepresentation(closedSurfaceName,
                                 sphereSource.GetOutput())
+    segmentationNode.EndModify(wasModified)
     self.assertEqual( segStatLogic.getStatistics()["Test","LabelmapSegmentStatisticsPlugin.voxel_count"], 2948)
     self.assertEqual( segStatLogic.getStatistics()["Test_1","LabelmapSegmentStatisticsPlugin.voxel_count"], 23281)
     segStatLogic.updateStatisticsForSegment('Test_1')
