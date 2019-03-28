@@ -230,7 +230,7 @@ class LabelStatisticsWidget(ScriptedLoadableModuleWidget):
     row = 0
     for i in self.logic.labelStats["Labels"]:
       col = 0
-      
+
       color = qt.QColor()
       rgb = lut.GetTableValue(i)
       color.setRgb(rgb[0]*255,rgb[1]*255,rgb[2]*255)
@@ -241,14 +241,14 @@ class LabelStatisticsWidget(ScriptedLoadableModuleWidget):
       self.model.setItem(row,col,item)
       self.items.append(item)
       col += 1
-      
+
       item = qt.QStandardItem()
       item.setData(colorNode.GetColorName(i),qt.Qt.DisplayRole)
       item.setEditable(False)
       self.model.setItem(row,col,item)
       self.items.append(item)
       col += 1
-      
+
       for k in self.logic.keys:
         item = qt.QStandardItem()
         # set data as float with Qt::DisplayRole
@@ -283,14 +283,14 @@ class LabelStatisticsLogic(ScriptedLoadableModuleLogic):
 
   def __init__(self, grayscaleNode, labelNode, colorNode=None, nodeBaseName=None, fileName=None):
     #import numpy
-    
+
     self.keys = ("Index", "Count", "Volume mm^3", "Volume cc", "Min", "Max", "Mean", "Median", "StdDev")
     cubicMMPerVoxel = reduce(lambda x,y: x*y, labelNode.GetSpacing())
     ccPerCubicMM = 0.001
 
     # TODO: progress and status updates
     # this->InvokeEvent(vtkLabelStatisticsLogic::StartLabelStats, (void*)"start label stats")
-    
+
     self.labelNode = labelNode
     self.colorNode = colorNode
 
@@ -300,6 +300,18 @@ class LabelStatisticsLogic(ScriptedLoadableModuleLogic):
 
     self.labelStats = {}
     self.labelStats['Labels'] = []
+
+    if (not labelNode.GetImageData()
+      or not labelNode.GetImageData().GetPointData()
+      or not labelNode.GetImageData().GetPointData().GetScalars()):
+      # No input label data
+      return
+
+    if (not grayscaleNode.GetImageData()
+      or not grayscaleNode.GetImageData().GetPointData()
+      or not grayscaleNode.GetImageData().GetPointData().GetScalars()):
+      # No input grayscale image data
+      return
 
     stataccum = vtk.vtkImageAccumulate()
     stataccum.SetInputConnection(labelNode.GetImageDataConnection())
@@ -462,9 +474,9 @@ class LabelStatisticsLogic(ScriptedLoadableModuleLogic):
     """
     print comma separated value file with header keys in quotes
     """
-    
+
     colorNode = self.getColorNode()
-    
+
     csv = ""
     header = ""
     if colorNode:

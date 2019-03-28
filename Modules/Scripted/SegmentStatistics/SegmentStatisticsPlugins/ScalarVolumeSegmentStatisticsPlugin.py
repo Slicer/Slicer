@@ -27,7 +27,11 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
     if not containsLabelmapRepresentation:
       return {}
 
-    if grayscaleNode is None or grayscaleNode.GetImageData() is None:
+    if (not grayscaleNode
+      or not grayscaleNode.GetImageData()
+      or not grayscaleNode.GetImageData().GetPointData()
+      or not grayscaleNode.GetImageData().GetPointData().GetScalars()):
+      # Input grayscale node does not contain valid image data
       return {}
 
     # Get geometry of grayscale volume node as oriented image data
@@ -49,6 +53,12 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
     segment = segmentationNode.GetSegmentation().GetSegment(segmentID)
     segBinaryLabelName = vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName()
     segmentLabelmap = segment.GetRepresentation(segBinaryLabelName)
+
+    if (not segmentLabelmap
+      or not segmentLabelmap.GetPointData()
+      or not segmentLabelmap.GetPointData().GetScalars()):
+      # No input label data
+      return {}
 
     segmentLabelmap_Reference = vtkSegmentationCore.vtkOrientedImageData()
     vtkSegmentationCore.vtkOrientedImageDataResample.ResampleOrientedImageToReferenceOrientedImage(
@@ -106,10 +116,10 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
     return stats
 
   def getMeasurementInfo(self, key):
-    """Get information (name, description, units, ...) about the measurement for the given key""" 
-    
+    """Get information (name, description, units, ...) about the measurement for the given key"""
+
     scalarVolumeNode = slicer.mrmlScene.GetNodeByID(self.getParameterNode().GetParameter("ScalarVolume"))
-    
+
     scalarVolumeQuantity = scalarVolumeNode.GetVoxelValueQuantity() if scalarVolumeNode else self.createCodedEntry("", "", "")
     scalarVolumeUnits = scalarVolumeNode.GetVoxelValueUnits() if scalarVolumeNode else self.createCodedEntry("", "", "")
     if not scalarVolumeQuantity:
@@ -117,8 +127,8 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
     if not scalarVolumeUnits:
       scalarVolumeUnits = self.createCodedEntry("", "", "")
 
-    info = dict() 
-    
+    info = dict()
+
     # @fedorov could not find any suitable DICOM quantity code for "number of voxels".
     # DCM has "Number of needles" etc., so probably "Number of voxels"
     # should be added too. Need to discuss with @dclunie. For now, a
