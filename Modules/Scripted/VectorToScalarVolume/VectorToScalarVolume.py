@@ -11,11 +11,11 @@ def MyScopedQtPropertySetter(qobject, properties):
   """ Context manager to set/reset properties"""
   # TODO: Move it to slicer.utils and delete it here.
   previousValues = {}
-  for propertyName, propertyValue in properties.items():
+  for propertyName, propertyValue in list(properties.items()):
     previousValues[propertyName] = getattr(qobject, propertyName)
     setattr(qobject, propertyName, propertyValue)
   yield
-  for propertyName in properties.keys():
+  for propertyName in list(properties.keys()):
     setattr(qobject, propertyName, previousValues[propertyName])
 
 @contextmanager

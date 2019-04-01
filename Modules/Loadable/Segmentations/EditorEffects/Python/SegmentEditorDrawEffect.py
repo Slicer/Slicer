@@ -36,7 +36,7 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
 
   def deactivate(self):
     # Clear draw pipelines
-    for sliceWidget, pipeline in self.drawPipelines.iteritems():
+    for sliceWidget, pipeline in self.drawPipelines.items():
       self.scriptedEffect.removeActor2D(sliceWidget, pipeline.actor)
     self.drawPipelines = {}
 

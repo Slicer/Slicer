@@ -283,7 +283,7 @@ def buildProcessArgs(*args, **kwargs):
 
   result = []
 
-  for k, v in kwargs.items():
+  for k, v in list(kwargs.items()):
     if v is None or v is False:
       continue
 

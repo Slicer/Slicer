@@ -206,7 +206,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Add node to subject hierarchy",self.delayMs)
 
     # Get volume previously loaded from DICOM
-    volumeNodes = slicer.util.getNodes('vtkMRMLScalarVolumeNode*').values()
+    volumeNodes = list(slicer.util.getNodes('vtkMRMLScalarVolumeNode*').values())
     ctVolumeNode = volumeNodes[len(volumeNodes)-1]
     self.assertIsNotNone( ctVolumeNode )
 

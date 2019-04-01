@@ -180,7 +180,7 @@ class Wiki(object):
 
   def update_version_info_pages(self, release_version):
     updated_version_info = self.compute_updated_version_info(release_version)
-    for page_short_name, page_name in Wiki.VERSION_INFO_PAGES.items():
+    for page_short_name, page_name in list(Wiki.VERSION_INFO_PAGES.items()):
       # check if update is needed
       current_version = self.version_info(page_name)
       updated_version = updated_version_info[page_short_name]
@@ -318,14 +318,14 @@ def handle_query(wiki, args):
 
   def display_version_info():
     print("Version info:")
-    for page_short_name, page_name in Wiki.VERSION_INFO_PAGES.items():
+    for page_short_name, page_name in list(Wiki.VERSION_INFO_PAGES.items()):
       method = getattr(wiki, "%s_version" % page_short_name)
       print("  %s: %s" % (page_name, method()))
 
   def display_next_version_info():
     print("Next version info:")
     for page_short_name, version in \
-            wiki.compute_updated_version_info(wiki.next_version()).items():
+            list(wiki.compute_updated_version_info(wiki.next_version()).items()):
       page_name = Wiki.VERSION_INFO_PAGES[page_short_name]
       print("  %s: %s" % (page_name, version))
 
@@ -435,13 +435,13 @@ def main():
   parser_query.add_argument(
     "--version-info", action="store_true",
     help="display the version associated with pages %s" % ", ".join(
-      ['%s' % page_name for page_name in Wiki.VERSION_INFO_PAGES.values()])
+      ['%s' % page_name for page_name in list(Wiki.VERSION_INFO_PAGES.values())])
   )
   parser_query.add_argument(
     "--next-version-info", action="store_true",
     help="display what would be the *next* version associated "
          "with pages %s" % ", ".join(
-          ['%s' % page_name for page_name in Wiki.VERSION_INFO_PAGES.values()])
+          ['%s' % page_name for page_name in list(Wiki.VERSION_INFO_PAGES.values())])
   )
   parser_query.add_argument(
     "--version-list", action="store_true",
@@ -477,7 +477,7 @@ def main():
   parser_update.add_argument(
     "--version-info-pages", action="store_true",
     help="update the version associated with pages %s" % ", ".join(
-      ['%s' % page_name for page_name in Wiki.VERSION_INFO_PAGES.values()])
+      ['%s' % page_name for page_name in list(Wiki.VERSION_INFO_PAGES.values())])
   )
   parser_update.add_argument(
     "--redirect-pages", action="store_true",

@@ -341,7 +341,7 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
 
       viewNode = threeDView.mrmlViewNode()
       cameras = slicer.util.getNodes('vtkMRMLCameraNode*')
-      for cameraNode in cameras.values():
+      for cameraNode in list(cameras.values()):
         if cameraNode.GetActiveTag() == viewNode.GetID():
           break
       cameraNode.GetCamera().Azimuth(90)
@@ -384,7 +384,7 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
       redController = redWidget.sliceController()
       viewNode = threeDView.mrmlViewNode()
       cameras = slicer.util.getNodes('vtkMRMLCameraNode*')
-      for cameraNode in cameras.values():
+      for cameraNode in list(cameras.values()):
         if cameraNode.GetActiveTag() == viewNode.GetID():
           break
 
@@ -409,7 +409,7 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
 
       self.delayDisplay('Middle Hepatic')
       models = slicer.util.getNodes('vtkMRMLModelNode*')
-      for modelNode in models.values():
+      for modelNode in list(models.values()):
         modelNode.GetDisplayNode().SetVisibility(0)
 
       segmentVII = slicer.util.getNode('LiverSegment_II')
@@ -451,7 +451,7 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
       redController = redWidget.sliceController()
       viewNode = threeDView.mrmlViewNode()
       cameras = slicer.util.getNodes('vtkMRMLCameraNode*')
-      for cameraNode in cameras.values():
+      for cameraNode in list(cameras.values()):
         if cameraNode.GetActiveTag() == viewNode.GetID():
           break
 

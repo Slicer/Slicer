@@ -128,7 +128,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         # load the data by series UID
         detailsPopup.offerLoadables(dataset['seriesUID'],'Series')
         detailsPopup.examineForLoading()
-        loadable = detailsPopup.getAllSelectedLoadables().keys()[0]
+        loadable = list(detailsPopup.getAllSelectedLoadables().keys())[0]
 
         #
         # try loading using each of the selected readers, fail
@@ -150,9 +150,9 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
             volumesByApproach[readerApproach] = volumeNode
 
             self.delayDisplay('Test quantity and unit')
-            if 'voxelValueQuantity' in dataset.keys():
+            if 'voxelValueQuantity' in list(dataset.keys()):
               self.assertEqual(volumeNode.GetVoxelValueQuantity().GetAsPrintableString(), dataset['voxelValueQuantity'])
-            if 'voxelValueUnits' in dataset.keys():
+            if 'voxelValueUnits' in list(dataset.keys()):
               self.assertEqual(volumeNode.GetVoxelValueUnits().GetAsPrintableString(), dataset['voxelValueUnits'])
 
 
@@ -161,7 +161,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         # to ensure they match in terms of pixel data and metadata
         #
         failedComparisons = {}
-        approachesThatLoaded = volumesByApproach.keys()
+        approachesThatLoaded = list(volumesByApproach.keys())
         print('approachesThatLoaded %s' % approachesThatLoaded)
         for approachIndex in range(len(approachesThatLoaded)):
           firstApproach = approachesThatLoaded[approachIndex]
@@ -175,7 +175,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
               print(('failed: %s', comparison))
               failedComparisons[firstApproach,secondApproach] = comparison
 
-        if len(failedComparisons.keys()) > 0:
+        if len(list(failedComparisons.keys())) > 0:
           raise Exception("Loaded volumes don't match: %s" % failedComparisons)
 
         self.delayDisplay('%s Test passed!' % dataset['name'])
@@ -266,7 +266,7 @@ reloadScriptedModule('DICOMReaders'); import DICOMReaders; tester = DICOMReaders
       # load the data by series UID
       detailsPopup.offerLoadables(seriesUID,'Series')
       detailsPopup.examineForLoading()
-      loadable = detailsPopup.getAllSelectedLoadables().keys()[0]
+      loadable = list(detailsPopup.getAllSelectedLoadables().keys())[0]
 
       if len(loadable.warning) == 0:
         raise Exception("Expected warning about geometry issues due to missing slices!")

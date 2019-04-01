@@ -37,7 +37,7 @@ def setDatabasePrecacheTags(dicomBrowser=None):
   tagsToPrecache = list(slicer.dicomDatabase.tagsToPrecache)
   for pluginClass in slicer.modules.dicomPlugins:
     plugin = slicer.modules.dicomPlugins[pluginClass]()
-    tagsToPrecache += plugin.tags.values()
+    tagsToPrecache += list(plugin.tags.values())
   tagsToPrecache = list(set(tagsToPrecache))  # remove duplicates
   tagsToPrecache.sort()
   slicer.dicomDatabase.tagsToPrecache = tagsToPrecache
@@ -361,7 +361,7 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
 
     # Hide the settings button if all associated widgets should be hidden
     settingsButtonHidden = True
-    for groupName in self.settingsWidgetNames.keys():
+    for groupName in list(self.settingsWidgetNames.keys()):
       settingsButtonHidden = settingsButtonHidden and not settingsValue('DICOM/%s.visible' % groupName, True,
                                                                         converter=toBool)
     self.settingsButton.visible = not settingsButtonHidden
@@ -566,7 +566,7 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
     self.settings.setValue('DICOM/BrowserPersistent', bool(self.browserPersistent))
 
   def onSettingsButton(self, status):
-    for groupName in self.settingsWidgetNames.keys():
+    for groupName in list(self.settingsWidgetNames.keys()):
       visible = settingsValue('DICOM/%s.visible' % groupName, True, converter=toBool)
       for name in self.settingsWidgetNames[groupName]:
         control = self._findChildren(name)
@@ -855,7 +855,7 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
 
     self.addObserver(slicer.mrmlScene, slicer.vtkMRMLScene.NodeAddedEvent, onNodeAdded)
 
-    for step, (loadable, plugin) in enumerate(selectedLoadables.iteritems(), start=1):
+    for step, (loadable, plugin) in enumerate(iter(selectedLoadables.items()), start=1):
       if progress.wasCanceled:
         break
       updateProgress(value=step, text='\nLoading %s' % loadable.name)
@@ -1396,7 +1396,7 @@ class DICOMSendDialog(qt.QDialog):
       "Destination Address": self.sendAddress,
       "Destination Port": self.sendPort
     }
-    for label in self.dicomParameters.keys():
+    for label in list(self.dicomParameters.keys()):
       self.dicomEntries[label] = qt.QLineEdit()
       self.dicomEntries[label].text = self.dicomParameters[label]
       self.dicomFormLayout.addRow(label + ": ", self.dicomEntries[label])

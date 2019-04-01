@@ -239,7 +239,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
       yellowController = yellowWidget.sliceController()
       viewNode = threeDView.mrmlViewNode()
       cameras = slicer.util.getNodes('vtkMRMLCameraNode*')
-      for cameraNode in cameras.values():
+      for cameraNode in list(cameras.values()):
         if cameraNode.GetActiveTag() == viewNode.GetID():
           break
 
@@ -334,7 +334,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
       redController = redWidget.sliceController()
       viewNode = threeDView.mrmlViewNode()
       cameras = slicer.util.getNodes('vtkMRMLCameraNode*')
-      for cameraNode in cameras.values():
+      for cameraNode in list(cameras.values()):
         if cameraNode.GetActiveTag() == viewNode.GetID():
           break
 
@@ -389,8 +389,8 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
       logic.takeScreenshot('ChangeTracker-GoForward','Go Forward',-1)
 
       checkList = changeTracker.analyzeROIStep._ChangeTrackerAnalyzeROIStep__metricCheckboxList
-      index = checkList.values().index('IntensityDifferenceMetric')
-      checkList.keys()[index].checked = True
+      index = list(checkList.values()).index('IntensityDifferenceMetric')
+      list(checkList.keys())[index].checked = True
       logic.takeScreenshot('ChangeTracker-PickMetric','Select the ROI analysis method',-1)
 
       changeTracker.workflow.goForward()

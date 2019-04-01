@@ -197,7 +197,7 @@ class ExtensionDescription(object):
     ``attr`` is ``None``, all attributes are removed.
     """
 
-    for key in self.__dict__.keys() if attr is None else (attr,):
+    for key in list(self.__dict__.keys()) if attr is None else (attr,):
       delattr(self, key)
 
   #---------------------------------------------------------------------------

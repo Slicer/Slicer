@@ -88,9 +88,9 @@ def startupEnvironment():
   if os.name == 'nt':
     # On Windows, subprocess functions expect environment to contain strings
     # and Qt provide us unicode strings, so we need to convert them.
-    return {str(varname): str(startupEnv.value(varname)) for varname in startupEnv.keys()}
+    return {str(varname): str(startupEnv.value(varname)) for varname in list(startupEnv.keys())}
   else:
-    return {varname: startupEnv.value(varname) for varname in startupEnv.keys()}
+    return {varname: startupEnv.value(varname) for varname in list(startupEnv.keys())}
 
 #
 # Custom Import
@@ -221,7 +221,7 @@ def findChildren(widget=None, name="", text="", title="", className=""):
   parents = [widget]
   kwargs = {'name': name, 'text': text, 'title': title, 'className': className}
   expected_matches = []
-  for kwarg in kwargs.iterkeys():
+  for kwarg in kwargs.keys():
     if kwargs[kwarg]:
       expected_matches.append(kwarg)
   while parents:
@@ -708,7 +708,7 @@ def getNode(pattern="*", index=0, scene=None):
   nodes = getNodes(pattern, scene)
   if not nodes:
     raise MRMLNodeNotFoundException("could not find nodes in the scene by name or id '%s'" % (pattern if (type(pattern) == str) else ""))
-  return nodes.values()[index]
+  return list(nodes.values())[index]
 
 def getNodesByClass(className, scene=None):
   """Return all nodes in the scene of the specified class.
@@ -1165,7 +1165,7 @@ def messageBox(text, parent=None, **kwargs):
   import ctk
   mbox = ctk.ctkMessageBox(parent if parent else mainWindow())
   mbox.text = text
-  for key, value in kwargs.iteritems():
+  for key, value in kwargs.items():
     if hasattr(mbox, key):
       setattr(mbox, key, value)
   # Windows 10 peek feature in taskbar shows all hidden but not destroyed windows
@@ -1192,7 +1192,7 @@ def createProgressDialog(parent=None, value=0, maximum=100, labelText="", window
   progressIndicator.value = value
   progressIndicator.windowTitle = windowTitle
   progressIndicator.labelText = labelText
-  for key, value in kwargs.iteritems():
+  for key, value in kwargs.items():
     if hasattr(progressIndicator, key):
       setattr(progressIndicator, key, value)
   return progressIndicator

@@ -816,7 +816,7 @@ class SliceAnnotations(VTKObservationMixin):
 
   def resetTexts(self):
     for i, cornerText in enumerate(self.cornerTexts):
-      for key in cornerText.keys():
+      for key in list(cornerText.keys()):
         self.cornerTexts[i][key]['text'] = ''
 
   def extractDICOMValues(self, uid):
@@ -824,7 +824,7 @@ class SliceAnnotations(VTKObservationMixin):
     # Used cached tags, if found.
     # DICOM objects are not allowed to be changed,
     # so if the UID matches then the content has to match as well
-    if uid in self.extractedDICOMValuesCache.keys():
+    if uid in list(self.extractedDICOMValuesCache.keys()):
       return self.extractedDICOMValuesCache[uid]
 
     p ={}
@@ -846,7 +846,7 @@ class SliceAnnotations(VTKObservationMixin):
     "0018,0080": "Repetition Time",
     "0018,0081": "Echo Time"
     }
-    for tag in tags.keys():
+    for tag in list(tags.keys()):
       value = slicer.dicomDatabase.instanceValue(uid,tag)
       p[tags[tag]] = value
 

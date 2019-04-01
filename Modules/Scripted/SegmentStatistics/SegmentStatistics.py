@@ -578,7 +578,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
       table.SetColumnLongName(columnName, longColumnName)
       measurementInfo = statistics["MeasurementInfo"][key] if key in statistics["MeasurementInfo"] else {}
       if measurementInfo:
-        for mik, miv in measurementInfo.iteritems():
+        for mik, miv in measurementInfo.items():
           if mik=='description':
             table.SetColumnDescription(columnName, str(miv))
           elif mik=='units':

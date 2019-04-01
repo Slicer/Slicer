@@ -93,7 +93,7 @@ class SelfTestsWidget(ScriptedLoadableModuleWidget):
     self.testButtons = {}
     self.testMapper = qt.QSignalMapper()
     self.testMapper.connect('mapped(const QString&)', self.onRun)
-    testKeys = slicer.selfTests.keys()
+    testKeys = list(slicer.selfTests.keys())
     testKeys.sort()
     for test in testKeys:
       self.testButtons[test] = qt.QPushButton(test)
@@ -127,7 +127,7 @@ class SelfTestsLogic:
     self.failed = []
 
   def __str__(self):
-    testsRun = len(self.results.keys())
+    testsRun = len(list(self.results.keys()))
     if testsRun == 0:
       return "No tests run"
     s = "%.0f%% passed (%d of %d)" % (
@@ -140,7 +140,7 @@ class SelfTestsLogic:
 
   def run(self,tests=None,continueCheck=None):
     if not tests:
-      tests = self.selfTests.keys()
+      tests = list(self.selfTests.keys())
 
     for test in tests:
       try:
@@ -157,7 +157,7 @@ class SelfTestsLogic:
 
 def SelfTestsTest():
   if hasattr(slicer,'selfTests'):
-    logic = SelfTestsLogic(slicer.selfTests.keys())
+    logic = SelfTestsLogic(list(slicer.selfTests.keys()))
     logic.run()
   print(logic.results)
   print("SelfTestsTest Passed!")

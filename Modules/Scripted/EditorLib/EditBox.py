@@ -163,7 +163,7 @@ class EditBox(VTKObservationMixin):
     for effect in self.effects:
       self.effectIconFiles[effect] = iconDir + effect + '.png'
 
-      if effect in slicer.modules.editorExtensions.keys():
+      if effect in list(slicer.modules.editorExtensions.keys()):
         extensionEffect = slicer.modules.editorExtensions[effect]()
         module = eval('slicer.modules.%s' % effect.lower())
         iconPath = os.path.join( os.path.dirname(module.path),"%s.png" % effect)
@@ -354,9 +354,9 @@ class EditBox(VTKObservationMixin):
     # look at builtins and extensions
     # - TODO: other effect styles are deprecated
     effectClass = None
-    if effectName in slicer.modules.editorExtensions.keys():
+    if effectName in list(slicer.modules.editorExtensions.keys()):
       effectClass = slicer.modules.editorExtensions[effectName]()
-    elif effectName in self.editorBuiltins.keys():
+    elif effectName in list(self.editorBuiltins.keys()):
       effectClass = self.editorBuiltins[effectName]()
     if effectClass:
       # for effects, create an options gui and an

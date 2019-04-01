@@ -136,7 +136,7 @@ class _ui_DICOMSettingsPanel(object):
 
     # Add settings panel for the plugins
     plugins = slicer.modules.dicomPlugins
-    for pluginName in plugins.keys():
+    for pluginName in list(plugins.keys()):
       if hasattr(plugins[pluginName], 'settingsPanelEntry'):
         pluginGroupBox = ctk.ctkCollapsibleGroupBox()
         pluginGroupBox.title = pluginName

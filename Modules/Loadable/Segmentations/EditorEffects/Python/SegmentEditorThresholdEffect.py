@@ -375,7 +375,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     self.scriptedEffect.selectEffect("")
 
   def clearPreviewDisplay(self):
-    for sliceWidget, pipeline in self.previewPipelines.iteritems():
+    for sliceWidget, pipeline in self.previewPipelines.items():
       self.scriptedEffect.removeActor2D(sliceWidget, pipeline.actor)
     self.previewPipelines = {}
 

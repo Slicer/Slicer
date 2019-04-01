@@ -233,7 +233,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
     mainScreenSize = desktop.availableGeometry(desktop.primaryScreen)
     iconSize = qt.QSize(mainScreenSize.width()/15,mainScreenSize.height()/10)
 
-    categories = slicer.modules.sampleDataSources.keys()
+    categories = list(slicer.modules.sampleDataSources.keys())
     categories.sort()
     if self.logic.builtInCategoryName in categories:
       categories.remove(self.logic.builtInCategoryName)
@@ -532,7 +532,7 @@ class SampleDataLogic(object):
   def sourceForSampleName(self,sampleName):
     """For a given sample name this will search the available sources.
     Returns SampleDataSource instance."""
-    for category in slicer.modules.sampleDataSources.keys():
+    for category in list(slicer.modules.sampleDataSources.keys()):
       for source in slicer.modules.sampleDataSources[category]:
         if sampleName == source.sampleName:
           return source

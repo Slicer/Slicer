@@ -617,7 +617,7 @@ include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScri
       query_data = parsed_request[1]
       self.assertEqual(http_method, expected_http_method)
       self.assertEqual(query_data['method'][0], expected_midas_method)
-      for expected_key, expected_value in expected_params.iteritems():
+      for expected_key, expected_value in expected_params.items():
         self.assertEqual(query_data[expected_key][0], expected_value)
 
     requests = iter(_requests)
@@ -726,7 +726,7 @@ include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScri
 
         self.assertEqual(sorted(query_data.keys()), sorted(expected_query_data.keys()))
 
-        for key, expected_value in expected_query_data.items():
+        for key, expected_value in list(expected_query_data.items()):
           current_value = query_data[key]
           if expected_value is None:
             # XXX For now only consider values that do not change with platform

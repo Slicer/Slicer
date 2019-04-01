@@ -39,7 +39,7 @@ follows the same intensity value back to the starting point within the current s
 
   def deactivate(self):
     # Clear draw pipelines
-    for sliceWidget, pipeline in self.levelTracingPipelines.iteritems():
+    for sliceWidget, pipeline in self.levelTracingPipelines.items():
       self.scriptedEffect.removeActor2D(sliceWidget, pipeline.actor)
     self.levelTracingPipelines = {}
     self.lastXY = None

@@ -327,7 +327,7 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
     for operationRadioButton in self.operationRadioButtons:
       operationRadioButton.blockSignals(True)
     operationName = self.scriptedEffect.parameter("Operation")
-    currentOperationRadioButton = self.widgetToOperationNameMap.keys()[self.widgetToOperationNameMap.values().index(operationName)]
+    currentOperationRadioButton = list(self.widgetToOperationNameMap.keys())[list(self.widgetToOperationNameMap.values()).index(operationName)]
     currentOperationRadioButton.setChecked(True)
     for operationRadioButton in self.operationRadioButtons:
       operationRadioButton.blockSignals(False)
