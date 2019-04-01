@@ -1106,7 +1106,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
                     "-r", str(frameRate),
                     "-start_number", "0",
                     "-i", str(filePathPattern)]
-    ffmpegParams += filter(None, extraOptions.split(' '))
+    ffmpegParams += [_f for _f in extraOptions.split(' ') if _f]
     ffmpegParams.append(outputVideoFilePath)
 
     self.addLog("Start ffmpeg:\n"+' '.join(ffmpegParams))
