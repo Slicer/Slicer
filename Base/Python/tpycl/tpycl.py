@@ -233,14 +233,14 @@ class tpycl(object):
     # if given a file, run it
     if self.file != "":
       fp = open(self.file)
-      while 1:
+      while True:
         cmd = fp.readline()
         if cmd == "":
           break
         self.tcl_eval( cmd[:-1] )
 
     # evaluate stdin until eof
-    while 1:
+    while True:
       sys.stdout.write( "% " )
       cmd = sys.stdin.readline()[:-1]
       if cmd != "":

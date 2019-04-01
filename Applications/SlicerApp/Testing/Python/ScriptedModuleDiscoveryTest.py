@@ -12,7 +12,7 @@ assert not hasattr(__main__, 'ModuleE_WithFileWriter_WithoutWidget')
 from types import ClassType, ModuleType
 import slicer
 
-assert type(slicer.modules) is ModuleType
+assert isinstance(slicer.modules, ModuleType)
 
 # Global variable
 assert slicer.modules.ModuleAInstance.somevar() == 'A'
@@ -35,21 +35,21 @@ import ModuleD_WithFileDialog_WithoutWidget
 import ModuleE_WithFileWriter_WithoutWidget
 
 # Check module type
-assert type(ModuleA) is ModuleType
-assert type(ModuleB) is ModuleType
-assert type(ModuleC_WithoutWidget) is ModuleType
-assert type(ModuleD_WithFileDialog_WithoutWidget) is ModuleType
-assert type(ModuleE_WithFileWriter_WithoutWidget) is ModuleType
+assert isinstance(ModuleA, ModuleType)
+assert isinstance(ModuleB, ModuleType)
+assert isinstance(ModuleC_WithoutWidget, ModuleType)
+assert isinstance(ModuleD_WithFileDialog_WithoutWidget, ModuleType)
+assert isinstance(ModuleE_WithFileWriter_WithoutWidget, ModuleType)
 
 # Check class type
-assert type(ModuleA.ModuleA) is ClassType
-assert type(ModuleB.ModuleB) is ClassType
-assert type(ModuleC_WithoutWidget.ModuleC_WithoutWidget) is ClassType
-assert type(ModuleD_WithFileDialog_WithoutWidget.ModuleD_WithFileDialog_WithoutWidget) is ClassType
-assert type(ModuleE_WithFileWriter_WithoutWidget.ModuleE_WithFileWriter_WithoutWidget) is ClassType
+assert isinstance(ModuleA.ModuleA, ClassType)
+assert isinstance(ModuleB.ModuleB, ClassType)
+assert isinstance(ModuleC_WithoutWidget.ModuleC_WithoutWidget, ClassType)
+assert isinstance(ModuleD_WithFileDialog_WithoutWidget.ModuleD_WithFileDialog_WithoutWidget, ClassType)
+assert isinstance(ModuleE_WithFileWriter_WithoutWidget.ModuleE_WithFileWriter_WithoutWidget, ClassType)
 
-assert type(ModuleA.ModuleAWidget) is ClassType
-assert type(ModuleB.ModuleBWidget) is ClassType
+assert isinstance(ModuleA.ModuleAWidget, ClassType)
+assert isinstance(ModuleB.ModuleBWidget, ClassType)
 assert not hasattr(ModuleC_WithoutWidget, 'ModuleC_WithoutWidgetWidget')
 assert not hasattr(ModuleC_WithoutWidget, 'ModuleD_WithFileDialog_WithoutWidget')
 assert not hasattr(ModuleC_WithoutWidget, 'ModuleE_WithFileWriter_WithoutWidget')

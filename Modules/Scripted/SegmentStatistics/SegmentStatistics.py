@@ -564,7 +564,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
         col = table.AddColumn()
       elif type(measurements[0]) in [int, long]:
         col = table.AddColumn(vtk.vtkLongArray())
-      elif type(measurements[0]) is float:
+      elif isinstance(measurements[0], float):
         col = table.AddColumn(vtk.vtkDoubleArray())
       else: # default
         col = table.AddColumn()

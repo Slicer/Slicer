@@ -38,8 +38,7 @@ def setDatabasePrecacheTags(dicomBrowser=None):
   for pluginClass in slicer.modules.dicomPlugins:
     plugin = slicer.modules.dicomPlugins[pluginClass]()
     tagsToPrecache += list(plugin.tags.values())
-  tagsToPrecache = list(set(tagsToPrecache))  # remove duplicates
-  tagsToPrecache.sort()
+  tagsToPrecache = sorted(set(tagsToPrecache))  # remove duplicates
   slicer.dicomDatabase.tagsToPrecache = tagsToPrecache
   if dicomBrowser:
     dicomBrowser.tagsToPrecache = tagsToPrecache
@@ -693,7 +692,7 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
     """
     loadablesByPlugin = {}
     loadEnabled = False
-    if not type(fileLists) is list or len(fileLists) == 0 or not type(fileLists[0]) in [tuple, list]:
+    if not isinstance(fileLists, list) or len(fileLists) == 0 or not type(fileLists[0]) in [tuple, list]:
       logging.error('File lists must contain a non-empty list of tuples/lists')
       return loadablesByPlugin, loadEnabled
 

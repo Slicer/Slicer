@@ -707,7 +707,7 @@ def getNode(pattern="*", index=0, scene=None):
   """
   nodes = getNodes(pattern, scene)
   if not nodes:
-    raise MRMLNodeNotFoundException("could not find nodes in the scene by name or id '%s'" % (pattern if (type(pattern) == str) else ""))
+    raise MRMLNodeNotFoundException("could not find nodes in the scene by name or id '%s'" % (pattern if (isinstance(pattern, str)) else ""))
   return list(nodes.values())[index]
 
 def getNodesByClass(className, scene=None):
@@ -958,11 +958,11 @@ def updateTableFromArray(tableNode, narrays, columnNames=None):
 
   if tableNode is None:
     tableNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
-  if type(narrays) == np.ndarray and len(narrays.shape) == 1:
+  if isinstance(narrays, np.ndarray) and len(narrays.shape) == 1:
     ncolumns = [narrays]
-  elif type(narrays) == np.ndarray and len(narrays.shape) == 2:
+  elif isinstance(narrays, np.ndarray) and len(narrays.shape) == 2:
     ncolumns = narrays.T
-  elif type(narrays) == tuple or type(narrays) == list:
+  elif isinstance(narrays, tuple) or isinstance(narrays, list):
     ncolumns = narrays
   else:
     raise ValueError('Expected narrays is a numpy ndarray, or tuple or list of numpy ndarrays, got %s instead.' % (str(type(narrays))))

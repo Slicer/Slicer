@@ -117,7 +117,7 @@ def loadPatient(uid=None, name=None, patientID=None):
 def loadSeriesByUID(seriesUIDs):
   """ Load multiple series by UID from DICOM database
   """
-  if not type(seriesUIDs) is list:
+  if not isinstance(seriesUIDs, list):
     logging.error('SeriesUIDs must contain a list')
     return False
   if not hasattr(slicer, 'dicomDatabase') or not hasattr(slicer.modules, 'dicom'):
@@ -127,7 +127,7 @@ def loadSeriesByUID(seriesUIDs):
 
   dicomWidget.detailsPopup.offerLoadables(seriesUIDs, 'SeriesUIDList')
   if len(dicomWidget.detailsPopup.fileLists)==0 or \
-      not type(dicomWidget.detailsPopup.fileLists[0]) is tuple:
+      not isinstance(dicomWidget.detailsPopup.fileLists[0], tuple):
     logging.error('Failed to offer loadables for DICOM series list')
     return False
 

@@ -233,8 +233,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
     mainScreenSize = desktop.availableGeometry(desktop.primaryScreen)
     iconSize = qt.QSize(mainScreenSize.width()/15,mainScreenSize.height()/10)
 
-    categories = list(slicer.modules.sampleDataSources.keys())
-    categories.sort()
+    categories = sorted(slicer.modules.sampleDataSources.keys())
     if self.logic.builtInCategoryName in categories:
       categories.remove(self.logic.builtInCategoryName)
     categories.insert(0,self.logic.builtInCategoryName)

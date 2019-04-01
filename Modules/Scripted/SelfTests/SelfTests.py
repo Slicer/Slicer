@@ -93,8 +93,7 @@ class SelfTestsWidget(ScriptedLoadableModuleWidget):
     self.testButtons = {}
     self.testMapper = qt.QSignalMapper()
     self.testMapper.connect('mapped(const QString&)', self.onRun)
-    testKeys = list(slicer.selfTests.keys())
-    testKeys.sort()
+    testKeys = sorted(slicer.selfTests.keys())
     for test in testKeys:
       self.testButtons[test] = qt.QPushButton(test)
       self.testButtons[test].setToolTip(slicer.selfTests[test].__doc__)

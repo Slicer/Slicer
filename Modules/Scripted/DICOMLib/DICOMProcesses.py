@@ -133,7 +133,7 @@ class DICOMStoreSCPProcess(DICOMProcess):
       os.mkdir(self.incomingDataDir)
 
     if incomingPort:
-      assert type(incomingPort) is int
+      assert isinstance(incomingPort, int)
       self.port = str(incomingPort)
     else:
       settings = qt.QSettings()
