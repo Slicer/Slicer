@@ -619,7 +619,7 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
     for plugin in self.loadablesByPlugin:
       for loadable in self.loadablesByPlugin[plugin]:
         seriesUID = slicer.dicomDatabase.fileValue(loadable.files[0], seriesUIDTag)
-        if not loadablesBySeries.has_key(seriesUID):
+        if seriesUID not in loadablesBySeries:
           loadablesBySeries[seriesUID] = [loadable]
         else:
           loadablesBySeries[seriesUID].append(loadable)
@@ -716,7 +716,7 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
     progress = slicer.util.createProgressDialog(parent=self, value=0, maximum=len(plugins))
 
     for step, pluginClass in enumerate(plugins):
-      if not self.pluginInstances.has_key(pluginClass):
+      if pluginClass not in self.pluginInstances:
         self.pluginInstances[pluginClass] = slicer.modules.dicomPlugins[pluginClass]()
       plugin = self.pluginInstances[pluginClass]
       if progress.wasCanceled:

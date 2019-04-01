@@ -101,7 +101,7 @@ class DICOMPlugin(object):
     """ Helper method to access the results of a previous
     examination of a list of files"""
     key = self.hashFiles(files)
-    if self.loadableCache.has_key(key):
+    if key in self.loadableCache:
       return self.loadableCache[key]
     return None
 

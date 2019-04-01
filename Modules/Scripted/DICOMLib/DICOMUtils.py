@@ -288,13 +288,13 @@ def loadSeriesWithVerification(seriesUIDs, selectedPlugins=None, loadedNodes=Non
     for plugin in loadablesByPlugin:
       for loadable in loadablesByPlugin[plugin]:
         if loadable.selected:
-          if actualSelectedPlugins.has_key(plugin.loadType):
+          if plugin.loadType in actualSelectedPlugins:
             count = int(actualSelectedPlugins[plugin.loadType])
             actualSelectedPlugins[plugin.loadType] = count+1
           else:
             actualSelectedPlugins[plugin.loadType] = 1
     for pluginName in selectedPlugins.keys():
-      if not actualSelectedPlugins.has_key(pluginName):
+      if pluginName not in actualSelectedPlugins:
         logging.error("Expected DICOM plugin '%s' was not selected" % (pluginName))
         success = False
       elif actualSelectedPlugins[pluginName] != selectedPlugins[pluginName]:

@@ -6,7 +6,7 @@ import os
 #from libVolumeRenderingMRMLPython import *
 
 def load_default_volume():
-  if not getNodes().has_key('moving'):
+  if 'moving' not in getNodes():
     fileName = "c:/alexy/Slicer4/Libs/MRML/Core/Testing/TestData/moving.nrrd"
     #fileName = os.environ['SLICER_HOME'] + "/share/MRML/Testing/TestData/moving.nrrd"
     #fileName = os.environ['HOME'] + "/Dropbox/data/faces/neutral.nrrd"

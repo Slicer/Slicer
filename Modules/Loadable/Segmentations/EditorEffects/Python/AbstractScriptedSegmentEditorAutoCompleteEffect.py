@@ -157,7 +157,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         self.onCancel()
         return
       segmentLabelmap = segment.GetRepresentation(vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName())
-      if self.selectedSegmentModifiedTimes.has_key(segmentID) \
+      if segmentID in self.selectedSegmentModifiedTimes \
         and segmentLabelmap.GetMTime() == self.selectedSegmentModifiedTimes[segmentID]:
         # this segment has not changed since last update
         continue

@@ -37,7 +37,7 @@ def parse_nhdr(path):
 
             # careful about precedence -- ":=" must match first
             key, val = [x.strip() for x in re.split(":=|=|:", line)]
-            assert(not kvdict.has_key(key))
+            assert(key not in kvdict)
             kvdict[key] = val
 
             if key.startswith(dwmri_grad_keybase):

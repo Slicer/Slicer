@@ -113,7 +113,7 @@ class tpycl(object):
     """
 
     # only delete if the instanceName exists
-    if globals().has_key(instanceName):
+    if instanceName in globals():
       exec( "del(%s)"%instanceName, globals() )
 
     return None

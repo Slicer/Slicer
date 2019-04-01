@@ -102,7 +102,7 @@ initLogging(logging.getLogger())
 def getSlicerRCFileName():
   """Return slicer resource script file name '~/.slicerrc.py'"""
   import os
-  if os.environ.has_key('SLICERRC'):
+  if 'SLICERRC' in os.environ:
     rcfile = os.environ['SLICERRC']
   else:
     import os.path

@@ -353,7 +353,7 @@ class SampleDataLogic(object):
     except AttributeError:
       slicer.modules.sampleDataSources = {}
 
-    if not slicer.modules.sampleDataSources.has_key(category):
+    if category not in slicer.modules.sampleDataSources:
       slicer.modules.sampleDataSources[category] = []
 
     slicer.modules.sampleDataSources[category].append(SampleDataSource(
@@ -409,7 +409,7 @@ class SampleDataLogic(object):
           ('CTBrain', 'MRBrainT1', 'MRBrainT2')),
         )
 
-    if not slicer.modules.sampleDataSources.has_key(self.builtInCategoryName):
+    if self.builtInCategoryName not in slicer.modules.sampleDataSources:
       slicer.modules.sampleDataSources[self.builtInCategoryName] = []
     for sourceArgument in sourceArguments:
       slicer.modules.sampleDataSources[self.builtInCategoryName].append(SampleDataSource(*sourceArgument))

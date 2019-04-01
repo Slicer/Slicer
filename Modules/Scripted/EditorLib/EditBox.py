@@ -216,7 +216,7 @@ class EditBox(VTKObservationMixin):
         b.objectName = effect + 'ToolButton'
         b.setDefaultAction(a)
         a.setToolTip(effect)
-        if EditBox.displayNames.has_key(effect):
+        if effect in EditBox.displayNames:
           a.setToolTip(EditBox.displayNames[effect])
         hbox.addWidget(b)
 
@@ -296,7 +296,7 @@ class EditBox(VTKObservationMixin):
     self._onParameterNodeModified(EditUtil.getParameterNode())
 
   def setActiveToolLabel(self,name):
-    if EditBox.displayNames.has_key(name):
+    if name in EditBox.displayNames:
       name = EditBox.displayNames[name]
     self.toolsActiveToolName.setText(name)
 

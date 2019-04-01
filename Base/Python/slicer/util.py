@@ -1446,11 +1446,11 @@ def plot(narray, xColumnIndex = -1, columnNames = None, title = None, show = Tru
 
   # Retrieve nodes that must be reused
   if nodes is not None:
-    if nodes.has_key('chart'):
+    if 'chart' in nodes:
       chartNode = nodes['chart']
-    if nodes.has_key('table'):
+    if 'table' in nodes:
       tableNode = nodes['table']
-    if nodes.has_key('series'):
+    if 'series' in nodes:
       seriesNodes = nodes['series']
 
   # Create table node

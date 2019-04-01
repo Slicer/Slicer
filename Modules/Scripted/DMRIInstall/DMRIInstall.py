@@ -118,7 +118,7 @@ class DMRIInstallWidget(ScriptedLoadableModuleWidget):
 
     md = emm.retrieveExtensionMetadataByName("SlicerDMRI")
 
-    if not md or not md.has_key('extension_id'):
+    if not md or 'extension_id' not in md:
       return self.onError()
 
     if emm.downloadAndInstallExtension(md['extension_id']):
