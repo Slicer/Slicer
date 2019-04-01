@@ -1,6 +1,7 @@
 import vtk
 import slicer
 from SegmentStatisticsPlugins import SegmentStatisticsPluginBase
+from functools import reduce
 
 class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
   """Statistical plugin for Labelmaps"""

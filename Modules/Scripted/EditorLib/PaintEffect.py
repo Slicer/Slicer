@@ -9,6 +9,7 @@ from EditUtil import EditUtil
 import LabelEffect
 import numpy
 from math import sqrt
+from functools import reduce
 
 __all__ = [
   'PaintEffectOptions',

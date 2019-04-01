@@ -7,6 +7,7 @@ import slicer
 from EditOptions import HelpButton
 import Effect
 import logging
+from functools import reduce
 
 __all__ = [
   'GrowCutEffectOptions',

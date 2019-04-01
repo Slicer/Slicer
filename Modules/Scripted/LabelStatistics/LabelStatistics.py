@@ -4,6 +4,7 @@ import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 import logging
+from functools import reduce
 
 #
 # LabelStatistics
