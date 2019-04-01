@@ -144,7 +144,7 @@ class SaveIslandEffectLogic(IslandEffect.IslandEffectLogic):
     labelLogic = self.sliceLogic.GetLabelLayer()
     xyToIJK = labelLogic.GetXYToIJKTransform()
     ijk = xyToIJK.TransformDoublePoint( xy + (0,) )
-    ijk = map(lambda v: int(round(v)), ijk)
+    ijk = [int(round(v)) for v in ijk]
 
     connectivity = slicer.vtkImageConnectivity()
     connectivity.SetFunctionToSaveIsland()

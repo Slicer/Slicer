@@ -293,7 +293,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     xyz = [0]*3
     center = [0]*3
     slicer.vtkMRMLSliceLogic.GetVolumeRASBox(tinyVolumeNode, xyz, center)
-    radius = map(lambda x: x/2.0, xyz)
+    radius = [x/2.0 for x in xyz]
     roiNode.SetXYZ(center)
     roiNode.SetRadiusXYZ(radius)
     geometryWidget.setSourceNode(roiNode)

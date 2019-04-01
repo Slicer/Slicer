@@ -150,7 +150,7 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
       it may not be.  So check corners first, and then
       if can't find it, give up and use 1 (to avoid exhaustive search)
     """
-    w,h,d = map(lambda x: x-1, imageData.GetDimensions())
+    w,h,d = [x-1 for x in imageData.GetDimensions()]
 
     corners = [ [0, 0, 0], [w, 0, 0], [0, h, 0], [w, h, 0],
                   [0, 0, d], [w, 0, d], [0, h, d], [w, h, d] ]

@@ -238,7 +238,7 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
         spacing = labelVolume.GetSpacing()
         if self.radiusPixelMode == 'diag':
           from math import sqrt
-          diag = sqrt(reduce(lambda x,y:x+y, map(lambda x: x**2, spacing)))
+          diag = sqrt(reduce(lambda x,y:x+y, [x**2 for x in spacing]))
           mmRadius = diag * radius
         elif self.radiusPixelMode == 'min':
           mmRadius = min(spacing) * radius

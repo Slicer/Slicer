@@ -425,7 +425,7 @@ class EffectLogic(object):
     ijkCorners = []
     for xy in xyCorners:
       ijk = xyToIJK.TransformDoublePoint(xy + (0,))
-      ijkCorners.append(map(round, ijk))
+      ijkCorners.append(list(map(round, ijk)))
 
     if slicePaint:
       slicePaint.SetTopLeft(ijkCorners[0])
