@@ -175,7 +175,7 @@ class tpycl(object):
     self.dprint("callback command is <%s>" % cmd)
     try:
       result = self.tcl.eval(cmd)
-    except Tkinter.TclError,error:
+    except Tkinter.TclError as error:
       print (error)
       errorInfo = self.tcl.eval("set ::errorInfo")
       print (errorInfo)
@@ -196,7 +196,7 @@ class tpycl(object):
       return()
     try:
       result = self.tcl.eval(cmd)
-    except Tkinter.TclError,error:
+    except Tkinter.TclError as error:
       print (error)
       errorInfo = self.tcl.eval("set ::errorInfo")
       print (errorInfo)

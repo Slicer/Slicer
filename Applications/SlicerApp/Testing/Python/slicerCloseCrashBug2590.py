@@ -181,7 +181,7 @@ class slicerCloseCrashBug2590Test(ScriptedLoadableModuleTest):
       self.delayDisplay('Test passed!')
 
       # intentionally do not close the scene -- the issue is reproduced on close
-    except Exception, e:
+    except Exception as e:
       import traceback
       traceback.print_exc()
       self.delayDisplay('Test caused exception!\n' + str(e))

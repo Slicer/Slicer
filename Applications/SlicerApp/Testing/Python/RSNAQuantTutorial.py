@@ -199,7 +199,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
       logic.takeScreenshot('Ruler','Ruler used to measure tumor diameter',-1)
 
       self.delayDisplay('Test passed!')
-    except Exception, e:
+    except Exception as e:
       import traceback
       traceback.print_exc()
       self.delayDisplay('Test caused exception!\n' + str(e))
@@ -296,7 +296,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
       logic.takeScreenshot('PETCT-TumorUptake','No uptake in the area of the primary tumor',-1)
 
       self.delayDisplay('Test passed!')
-    except Exception, e:
+    except Exception as e:
       import traceback
       traceback.print_exc()
       self.delayDisplay('Test caused exception!\n' + str(e))
@@ -422,7 +422,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
       logic.takeScreenshot('ChangeTracker-InspectResults','Inspected results',-1)
 
       self.delayDisplay('Test passed!')
-    except Exception, e:
+    except Exception as e:
       import traceback
       traceback.print_exc()
       self.delayDisplay('Test caused exception!\n' + str(e))

@@ -146,7 +146,7 @@ class SelfTestsLogic:
       try:
         result = self.selfTests[test]()
         self.passed.append(test)
-      except Exception, e:
+      except Exception as e:
         traceback.print_exc()
         result = "Failed with: %s" % e
         self.failed.append(test)

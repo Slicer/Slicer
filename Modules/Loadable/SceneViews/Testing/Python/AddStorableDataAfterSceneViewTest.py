@@ -105,7 +105,7 @@ class AddStorableDataAfterSceneViewTestLogic(ScriptedLoadableModuleLogic):
       evalString = 'AddStorableDataAfterSceneViewTestTest()'
       tester = eval(evalString)
       tester.runTest()
-    except Exception, e:
+    except Exception as e:
       import traceback
       traceback.print_exc()
       errorMessage = "Add storable data after scene view test: Exception!\n\n" + str(e) + "\n\nSee Python Console for Stack Trace"

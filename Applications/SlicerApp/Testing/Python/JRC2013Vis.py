@@ -280,7 +280,7 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
       slicer.util.clickAndDrag(threeDView,button='Right')
 
       self.delayDisplay('Test passed!')
-    except Exception, e:
+    except Exception as e:
       import traceback
       traceback.print_exc()
       self.delayDisplay('Test caused exception!\n' + str(e))
@@ -355,7 +355,7 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
       slicer.util.clickAndDrag(threeDView,button='Right')
 
       self.delayDisplay('Test passed!')
-    except Exception, e:
+    except Exception as e:
       import traceback
       traceback.print_exc()
       self.delayDisplay('Test caused exception!\n' + str(e))
@@ -423,7 +423,7 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
       cameraNode.GetCamera().Elevation(-20)
 
       self.delayDisplay('Test passed!')
-    except Exception, e:
+    except Exception as e:
       import traceback
       traceback.print_exc()
       self.delayDisplay('Test caused exception!\n' + str(e))
@@ -490,7 +490,7 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
             displayNode.SetVisibility(1 if node == showNode else 0)
 
       self.delayDisplay('Test passed!')
-    except Exception, e:
+    except Exception as e:
       import traceback
       traceback.print_exc()
       self.delayDisplay('Test caused exception!\n' + str(e))

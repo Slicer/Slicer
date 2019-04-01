@@ -251,7 +251,7 @@ def importDicom(dicomDataDir, dicomDatabase=None):
       dicomDatabase = slicer.dicomDatabase
     indexer.addDirectory( dicomDatabase, dicomDataDir )
     indexer.waitForImportFinished()
-  except Exception, e:
+  except Exception as e:
     import traceback
     traceback.print_exc()
     logging.error('Failed to import DICOM folder ' + dicomDataDir)

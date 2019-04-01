@@ -203,7 +203,7 @@ class ScriptedLoadableModuleWidget:
       self.onReload()
       test = slicer.selfTests[self.moduleName]
       test(msec=int(slicer.app.userSettings().value("Developer/SelfTestDisplayMessageDelay")), **kwargs)
-    except Exception, e:
+    except Exception as e:
       import traceback
       traceback.print_exc()
       errorMessage = "Reload and Test: Exception!\n\n" + str(e) + "\n\nSee Python Console for Stack Trace"

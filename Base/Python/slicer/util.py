@@ -1296,7 +1296,7 @@ def downloadFile(url, targetFilePath):
     try:
       import urllib
       urllib.urlretrieve(url, targetFilePath)
-    except Exception, e:
+    except Exception as e:
       import traceback
       traceback.print_exc()
       logging.error('Failed to download file from ' + url)

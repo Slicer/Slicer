@@ -383,7 +383,7 @@ class EditBox(VTKObservationMixin):
       try:
         options = eval("%sOptions" % effectName)
         self.currentOption = options(self.optionsFrame)
-      except NameError, AttributeError:
+      except NameError as AttributeError:
         # No options for this effect, skip it
         pass
 

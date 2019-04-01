@@ -12,7 +12,7 @@ import unittest
 
 try:
   import pydas
-except ImportError, e:
+except ImportError as e:
   print(e, "\nInstall pydas or update PYTHONPATH")
 
 class TestVersioning(unittest.TestCase):

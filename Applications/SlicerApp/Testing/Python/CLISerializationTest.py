@@ -224,7 +224,7 @@ if __name__ == '__main__':
     os.remove(serializeSeedsOutFile)
     os.remove(deserializeSeedsOutFile)
     os.remove(json_file)
-  except AttributeError, OSError:
+  except AttributeError as OSError:
     pass
 
   print("\n=> ok")

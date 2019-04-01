@@ -180,7 +180,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
 
         self.delayDisplay('%s Test passed!' % dataset['name'])
 
-      except Exception, e:
+      except Exception as e:
         import traceback
         traceback.print_exc()
         self.delayDisplay('%s Test caused exception!\n' % dataset['name'] + str(e))
@@ -282,7 +282,7 @@ reloadScriptedModule('DICOMReaders'); import DICOMReaders; tester = DICOMReaders
 
       self.delayDisplay('test_MissingSlices passed!')
 
-    except Exception, e:
+    except Exception as e:
       import traceback
       traceback.print_exc()
       self.delayDisplay('Missing Slices Test caused exception!\n' + str(e))

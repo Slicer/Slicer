@@ -732,7 +732,7 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
         if not loadablesByPlugin[plugin]:
           loadablesByPlugin[plugin] = plugin.examine(fileLists)
         loadEnabled = loadEnabled or loadablesByPlugin[plugin] != []
-      except Exception, e:
+      except Exception as e:
         import traceback
         traceback.print_exc()
         slicer.util.warningDisplay("Warning: Plugin failed: %s\n\nSee python console for error message." % pluginClass,

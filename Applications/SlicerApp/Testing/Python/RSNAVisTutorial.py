@@ -287,7 +287,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       logic.takeScreenshot('VolumeRendering-BothKidneys','Rendered both kidneys',-1)
 
       self.delayDisplay('Test passed!')
-    except Exception, e:
+    except Exception as e:
       import traceback
       traceback.print_exc()
       self.delayDisplay('Test caused exception!\n' + str(e))
@@ -389,7 +389,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       logic.takeScreenshot('Head-Zoom','Zoom',-1)
 
       self.delayDisplay('Test passed!')
-    except Exception, e:
+    except Exception as e:
       import traceback
       traceback.print_exc()
       self.delayDisplay('Test caused exception!\n' + str(e))
@@ -463,7 +463,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       logic.takeScreenshot('Liver-MiddleHepatic','Middle Hepatic',-1)
 
       self.delayDisplay('Test passed!')
-    except Exception, e:
+    except Exception as e:
       import traceback
       traceback.print_exc()
       self.delayDisplay('Test caused exception!\n' + str(e))
@@ -536,7 +536,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       logic.takeScreenshot('Lung-Question4','View Question 4',-1)
 
       self.delayDisplay('Test passed!')
-    except Exception, e:
+    except Exception as e:
       import traceback
       traceback.print_exc()
       self.delayDisplay('Test caused exception!\n' + str(e))
