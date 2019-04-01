@@ -46,7 +46,7 @@ for kit in available_kits:
     continue
 
   try:
-    exec "from %s import *" % (kit)
+    exec("from %s import *" % (kit))
   except ImportError as detail:
     print(detail)
 

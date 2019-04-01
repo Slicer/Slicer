@@ -268,7 +268,7 @@ class SurfaceToolboxWidget(ScriptedLoadableModuleWidget):
       def callback(*args):
         current_locals = scope_locals.copy()
         current_locals.update({'args':args})
-        exec cmd in globals(), current_locals
+        exec(cmd, globals(), current_locals)
         updateGUI()
       obj.connect(evt,callback)
 
