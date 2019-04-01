@@ -102,6 +102,7 @@ Example of update
   skipping Template:Documentation/acknowledgments-versionlist: version is 4.6
   skipping Documentation: version 4.6 already added
 """
+from __future__ import print_function
 
 import argparse
 import logging

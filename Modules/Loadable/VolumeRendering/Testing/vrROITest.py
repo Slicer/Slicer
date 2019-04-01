@@ -1,3 +1,4 @@
+from __future__ import print_function
 import slicer
 import qt
 import os
@@ -48,7 +49,7 @@ def viewImageData():
 
 
 def moveROI(x,y,z):
-  print("move roi to" , x,y,z)
+  print(("move roi to" , x,y,z))
   vrdn = getNode('vtkMRMLVolumeRenderingDisplayNode')
   vrdn.SetCroppingEnabled(1)
   roin = vrdn.GetROINode()
@@ -57,7 +58,7 @@ def moveROI(x,y,z):
   v = viewImageData()
 
 def moveROIX(x):
-  print("move roi x to" , x)
+  print(("move roi x to" , x))
   vrdn = getNode('vtkMRMLVolumeRenderingDisplayNode')
   vrdn.SetCroppingEnabled(1)
   roin = vrdn.GetROINode()
@@ -68,7 +69,7 @@ def moveROIX(x):
   v = viewImageData()
 
 def moveROIY(y):
-  print("move roi y to" , y)
+  print(("move roi y to" , y))
   vrdn = getNode('vtkMRMLVolumeRenderingDisplayNode')
   vrdn.SetCroppingEnabled(1)
   roin = vrdn.GetROINode()
@@ -79,7 +80,7 @@ def moveROIY(y):
   v = viewImageData()
 
 def moveROIZ(z):
-  print("move roi z to" , z)
+  print(("move roi z to" , z))
   vrdn = getNode('vtkMRMLVolumeRenderingDisplayNode')
   vrdn.SetCroppingEnabled(1)
   roin = vrdn.GetROINode()
@@ -90,7 +91,7 @@ def moveROIZ(z):
   v = viewImageData()
 
 def sizeROI(x,y,z):
-  print("set roi rad to " , x,y,z)
+  print(("set roi rad to " , x,y,z))
   vrdn = getNode('vtkMRMLVolumeRenderingDisplayNode')
   vrdn.SetCroppingEnabled(1)
   roin = vrdn.GetROINode()
@@ -99,7 +100,7 @@ def sizeROI(x,y,z):
   v = viewImageData()
 
 def sizeROIX(x):
-  print("set roi x rad to " , x)
+  print(("set roi x rad to " , x))
   vrdn = getNode('vtkMRMLVolumeRenderingDisplayNode')
   vrdn.SetCroppingEnabled(1)
   roin = vrdn.GetROINode()
@@ -110,7 +111,7 @@ def sizeROIX(x):
   v = viewImageData()
 
 def sizeROIY(y):
-  print("set roi y rad to " , y)
+  print(("set roi y rad to " , y))
   vrdn = getNode('vtkMRMLVolumeRenderingDisplayNode')
   vrdn.SetCroppingEnabled(1)
   roin = vrdn.GetROINode()
@@ -121,7 +122,7 @@ def sizeROIY(y):
   v = viewImageData()
 
 def sizeROIZ(z):
-  print("set roi z rad to " , z)
+  print(("set roi z rad to " , z))
   vrdn = getNode('vtkMRMLVolumeRenderingDisplayNode')
   vrdn.SetCroppingEnabled(1)
   roin = vrdn.GetROINode()

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import vtk, qt, ctk, slicer
 import EditorLib
@@ -120,7 +121,7 @@ class TemplateKeyEffectTool(LabelEffect.LabelEffectTool):
       sliceLogic = self.sliceWidget.sliceLogic()
       logic = TemplateKeyEffectLogic(sliceLogic)
       logic.apply(xy)
-      print("Got a %s at %s in %s", (event,str(xy),self.sliceWidget.sliceLogic().GetSliceNode().GetName()))
+      print(("Got a %s at %s in %s", (event,str(xy),self.sliceWidget.sliceLogic().GetSliceNode().GetName())))
       self.abortEvent(event)
     else:
       pass

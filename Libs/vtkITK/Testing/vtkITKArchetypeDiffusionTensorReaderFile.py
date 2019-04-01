@@ -1,3 +1,4 @@
+from __future__ import print_function
 #Testing against the NRRD reader
 import unittest
 import slicer
@@ -41,10 +42,10 @@ class vtkITKReaderAgainstNRRDReader(unittest.TestCase):
         )
 
     def test_ras_to_ijk(self):
-        print "ITK Matrix"
-        print self.ritk.GetRasToIjkMatrix(),
-        print "NRRD Reader Matrix"
-        print self.rnrrd.GetRasToIjkMatrix()
+        print("ITK Matrix")
+        print(self.ritk.GetRasToIjkMatrix(), end=' ')
+        print("NRRD Reader Matrix")
+        print(self.rnrrd.GetRasToIjkMatrix())
 
         self.assertTrue(
             compare_vtk_matrix(

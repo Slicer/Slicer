@@ -1,13 +1,14 @@
+from __future__ import print_function
 import time
 
 def TestRulerAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
-  print "numToAdd = ", numToAdd
+  print("numToAdd = ", numToAdd)
   if renameFlag > 0:
-    print "Index\tTime to add ruler\tDelta between adds\tTime to rename ruler\tDelta between renames"
-    print "%(index)04s\t" % {'index': "i"}, "t\tdt\tt\tdt"
+    print("Index\tTime to add ruler\tDelta between adds\tTime to rename ruler\tDelta between renames")
+    print("%(index)04s\t" % {'index': "i"}, "t\tdt\tt\tdt")
   else:
-    print "Index\tTime to add ruler\tDelta between adds"
-    print "%(index)04s\t" % {'index': "i"}, "t\tdt"
+    print("Index\tTime to add ruler\tDelta between adds")
+    print("%(index)04s\t" % {'index': "i"}, "t\tdt")
   r1 = 0
   a1 = 0
   s1 = 0
@@ -39,10 +40,10 @@ def TestRulerAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
       t4 = time.clock()
       timeToRenameThisRuler = t4 - t3
       dt2 = timeToRenameThisRuler - timeToRenameLastRuler
-      print '%(index)04d\t' % {'index': i}, timeToAddThisRuler, "\t", dt, "\t", timeToRenameThisRuler, "\t", dt2
+      print('%(index)04d\t' % {'index': i}, timeToAddThisRuler, "\t", dt, "\t", timeToRenameThisRuler, "\t", dt2)
       timeToRenameLastRuler = timeToRenameThisRuler
     else:
-      print '%(index)04d\t' % {'index': i}, timeToAddThisRuler, "\t", dt
+      print('%(index)04d\t' % {'index': i}, timeToAddThisRuler, "\t", dt)
     r1 = r1 + 1.0
     a1 = a1 + 1.0
     s1 = s1 + 1.0
@@ -55,5 +56,5 @@ testStartTime = time.clock()
 TestRulerAdd()
 testEndTime = time.clock()
 testTime = testEndTime - testStartTime
-print "Test total time = ", testTime
+print("Test total time = ", testTime)
 

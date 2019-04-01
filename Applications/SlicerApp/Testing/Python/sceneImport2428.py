@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import unittest
 import vtk, qt, ctk, slicer
@@ -59,7 +60,7 @@ class sceneImport2428Widget(ScriptedLoadableModuleWidget):
     self.helloWorldButton = helloWorldButton
 
   def onHelloWorldButtonClicked(self):
-    print "Hello World !"
+    print("Hello World !")
 
 
 class sceneImport2428Test(ScriptedLoadableModuleTest):

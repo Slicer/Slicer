@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import vtk, qt, ctk, slicer
 from EditOptions import HelpButton
@@ -136,7 +137,7 @@ class FastMarchingEffectOptions(Effect.EffectOptions):
     labelImage = EditUtil.getLabelImage()
     spacing = labelNode.GetSpacing()
     dim = labelImage.GetDimensions()
-    print dim
+    print(dim)
     totalVolume = spacing[0]*dim[0]+spacing[1]*dim[1]+spacing[2]*dim[2]
 
     percentVolumeStr = "%.5f" % (totalVolume*val/100.)
@@ -209,7 +210,7 @@ class FastMarchingEffectLogic(Effect.EffectLogic):
 
     # collect seeds
     dim = bgImage.GetDimensions()
-    print dim
+    print(dim)
     # initialize the filter
     self.fm = slicer.vtkPichonFastMarching()
     scalarRange = bgImage.GetScalarRange()

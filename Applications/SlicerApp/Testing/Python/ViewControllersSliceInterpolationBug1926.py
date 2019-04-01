@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import unittest
 import vtk, qt, ctk, slicer
@@ -58,7 +59,7 @@ class ViewControllersSliceInterpolationBug1926Widget(ScriptedLoadableModuleWidge
     self.helloWorldButton = helloWorldButton
 
   def onHelloWorldButtonClicked(self):
-    print "Hello World !"
+    print("Hello World !")
 
 
 class ViewControllersSliceInterpolationBug1926Test(ScriptedLoadableModuleTest):

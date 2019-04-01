@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 # Test restoring a scene with multiple lists with different number
 # of fiducials
@@ -70,14 +71,14 @@ sv.RestoreScene()
 numFidNodesAfterRestore = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsFiducialNode')
 
 if numFidNodesAfterRestore != numFidNodesBeforeStore:
-  print "After restoring the scene, expected ", numFidNodesBeforeStore, " fiducial nodes, but have ", numFidNodesAfterRestore
+  print("After restoring the scene, expected ", numFidNodesBeforeStore, " fiducial nodes, but have ", numFidNodesAfterRestore)
   exceptionMessage = "After restoring the scene, expected " + str(numFidNodesBeforeStore) + " fiducial nodes, but have " + str(numFidNodesAfterRestore)
   raise Exception(exceptionMessage)
 
 #fid1AfterRestore = slicer.mrmlScene.GetNodeByID("vtkMRMLMarkupsFiducialNode1")
 fid1AfterRestore = slicer.mrmlScene.GetFirstNodeByName("FidNode1")
 numFidsInList1AfterRestore = fid1AfterRestore.GetNumberOfMarkups()
-print "After restore, list with name FidNode1 has id ", fid1AfterRestore.GetID(), " and num fids = ", numFidsInList1AfterRestore
+print("After restore, list with name FidNode1 has id ", fid1AfterRestore.GetID(), " and num fids = ", numFidsInList1AfterRestore)
 if numFidsInList1AfterRestore != numFidsInList1:
   exceptionMessage = "After restoring list 1, id = " + fid1AfterRestore.GetID()
   exceptionMessage += ", expected " + str(numFidsInList1) + " but got "
@@ -87,7 +88,7 @@ if numFidsInList1AfterRestore != numFidsInList1:
 # fid2AfterRestore = slicer.mrmlScene.GetNodeByID("vtkMRMLMarkupsFiducialNode2")
 fid2AfterRestore = slicer.mrmlScene.GetFirstNodeByName("FidNode2")
 numFidsInList2AfterRestore = fid2AfterRestore.GetNumberOfMarkups()
-print "After restore, list with name FidNode2 has id ", fid2AfterRestore.GetID(), " and num fids = ", numFidsInList2AfterRestore
+print("After restore, list with name FidNode2 has id ", fid2AfterRestore.GetID(), " and num fids = ", numFidsInList2AfterRestore)
 if numFidsInList2AfterRestore != numFidsInList2:
   exceptionMessage = "After restoring list 2,  id = " + fid2AfterRestore.GetID()
   exceptionMessage += ", expected " + str(numFidsInList2) + " but got "
@@ -104,7 +105,7 @@ for i in range(ms.GetNumberOfItems()):
   m = ms.GetItemAsObject(i)
   if m.GetClassName() == "vtkMRMLMarkupsFiducialDisplayableManager3D":
     fidManagerIndex = i
-    print m.GetClassName(), fidManagerIndex
+    print(m.GetClassName(), fidManagerIndex)
 if fidManagerIndex == -1:
   exceptionMessage = "Failed to find markups fiducial displayable manager 3d!"
   raise Exception(exceptionMessage)
@@ -112,11 +113,11 @@ if fidManagerIndex == -1:
 mfm = ms.GetItemAsObject(fidManagerIndex)
 
 h = mfm.GetHelper()
-print 'Helper = ',h
+print('Helper = ',h)
 
 seedWidget1 = h.GetWidget(fid1AfterRestore)
 rep1 = seedWidget1.GetRepresentation()
-print "Seed widget 1 has number of seeds = ",rep1.GetNumberOfSeeds()
+print("Seed widget 1 has number of seeds = ",rep1.GetNumberOfSeeds())
 if rep1.GetNumberOfSeeds() != numFidsInList1AfterRestore:
   exceptionMessage = "After restoring list 1, expected seed widget to have "
   exceptionMessage += str(numFidsInList1AfterRestore) + " seeds, but it has "
@@ -127,7 +128,7 @@ for s in range(numFidsInList1AfterRestore):
   seed = seedWidget1.GetSeed(s)
   handleRep = seed.GetHandleRepresentation()
   worldPos = handleRep.GetWorldPosition()
-  print "seed ",s," world position = ",worldPos
+  print("seed ",s," world position = ",worldPos)
   fidPos = [0.0,0.0,0.0]
   fid1AfterRestore.GetNthFiducialPosition(s,fidPos)
   xdiff = fidPos[0] - worldPos[0]
@@ -141,7 +142,7 @@ for s in range(numFidsInList1AfterRestore):
 
 seedWidget2 = h.GetWidget(fid2AfterRestore)
 rep2 = seedWidget2.GetRepresentation()
-print "Seed widget 2 has number of seeds = ",rep2.GetNumberOfSeeds()
+print("Seed widget 2 has number of seeds = ",rep2.GetNumberOfSeeds())
 if rep2.GetNumberOfSeeds() != numFidsInList2AfterRestore:
   exceptionMessage = "After restoring fid list 2, expected seed widget to have "
   exceptionMessage += str(numFidsInList2AfterRestore) + " seeds, but it has "
@@ -152,7 +153,7 @@ for s in range(numFidsInList2AfterRestore):
   seed = seedWidget2.GetSeed(s)
   handleRep = seed.GetHandleRepresentation()
   worldPos = handleRep.GetWorldPosition()
-  print "seed ",s," world position = ",worldPos
+  print("seed ",s," world position = ",worldPos)
   fidPos = [0.0,0.0,0.0]
   fid2AfterRestore.GetNthFiducialPosition(s,fidPos)
   xdiff = fidPos[0] - worldPos[0]

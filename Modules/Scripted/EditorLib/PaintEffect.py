@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import vtk
 import ctk
@@ -242,7 +243,7 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
         elif self.radiusPixelMode == 'min':
           mmRadius = min(spacing) * radius
         else:
-          print (self,"Unknown pixel mode - using 5mm")
+          print((self,"Unknown pixel mode - using 5mm"))
           mmRadius = 5
       else:
         mmRadius = radius

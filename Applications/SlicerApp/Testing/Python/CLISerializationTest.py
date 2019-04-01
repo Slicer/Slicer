@@ -17,6 +17,7 @@
 #  This file was originally developed by Johan Andruejol, Kitware Inc.
 #
 
+from __future__ import print_function
 import argparse
 import csv
 import json

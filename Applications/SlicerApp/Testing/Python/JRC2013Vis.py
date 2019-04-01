@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import unittest
 import vtk, qt, ctk, slicer
@@ -86,7 +87,7 @@ class JRC2013VisWidget(ScriptedLoadableModuleWidget):
       processCurrentPath = dicomFilesDirectory + '/Dcmtk-db/'
 
       if slicer.util.confirmYesNoDisplay('Do you want to choose local DCMTK database folder?'):
-        print 'Yes'
+        print('Yes')
         dicomFilesDirectory = qt.QFileDialog.getExistingDirectory(None, 'Select DCMTK database folder')
         configFilePath = dicomFilesDirectory + '/dcmqrscp.cfg'
         processCurrentPath = dicomFilesDirectory
@@ -117,11 +118,11 @@ class JRC2013VisWidget(ScriptedLoadableModuleWidget):
         raise( UserWarning("Could not find dcmqrscp executable") )
 
       args = (dcmqrscpExePath, '-c', configFilePath)
-      print 'Start DICOM peer'
+      print('Start DICOM peer')
       self.popen = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=processCurrentPath)
       self.startStopDicomPeerButton.setEnabled(True)
     else:
-      print 'Stop DICOM peer'
+      print('Stop DICOM peer')
       self.popen.kill()
 
 #

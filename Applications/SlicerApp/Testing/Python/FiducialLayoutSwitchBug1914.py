@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import unittest
 import math
@@ -171,9 +172,9 @@ class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
     self.delayDisplay("Red Slice only")
 
     # Switch to conventional layout
-    print 'Calling set layout back to conventional'
+    print('Calling set layout back to conventional')
     lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
-    print 'Done calling set layout back to conventional'
+    print('Done calling set layout back to conventional')
     self.delayDisplay("Conventional layout")
 
     # Get the current seed widget seed location
@@ -202,7 +203,7 @@ class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
       rasDiff = math.pow((seedRAS[0] - volumeRAS[0]),2) + math.pow((seedRAS[1] - volumeRAS[1]),2) + math.pow((seedRAS[2] - volumeRAS[2]),2)
       if rasDiff != 0.0:
         rasDiff = math.sqrt(rasDiff)
-      print 'Checking the difference between fiducial RAS position',seedRAS,'and volume RAS as derived from the fiducial display position',volumeRAS,': ',rasDiff
+      print('Checking the difference between fiducial RAS position',seedRAS,'and volume RAS as derived from the fiducial display position',volumeRAS,': ',rasDiff)
       if rasDiff > self.maximumRASDifference:
         self.delayDisplay("RAS coordinate difference is too large as well!\nExpected < %g but got %g" % (self.maximumRASDifference, rasDiff))
         return False

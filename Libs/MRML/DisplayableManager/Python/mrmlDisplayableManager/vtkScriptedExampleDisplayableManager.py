@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 #
 # ScriptedExampleDisplayableManager
@@ -53,40 +54,40 @@ class vtkScriptedExampleDisplayableManager:
 
   def __init__(self, parent):
     self.Parent = parent
-    print "vtkScriptedExampleDisplayableManager - __init__"
+    print("vtkScriptedExampleDisplayableManager - __init__")
 
   def Create(self):
-    print "vtkScriptedExampleDisplayableManager - Create"
+    print("vtkScriptedExampleDisplayableManager - Create")
     pass
 
   def GetMRMLSceneEventsToObserve(self):
-    print "vtkScriptedExampleDisplayableManager - GetMRMLSceneEventsToObserve"
+    print("vtkScriptedExampleDisplayableManager - GetMRMLSceneEventsToObserve")
     sceneEvents = vtkIntArray()
     sceneEvents.InsertNextValue(slicer.vtkMRMLScene.NodeAddedEvent)
     sceneEvents.InsertNextValue(slicer.vtkMRMLScene.NodeRemovedEvent)
     return sceneEvents
 
   def ProcessMRMLSceneEvents(self, scene, eventid, node):
-    print "vtkScriptedExampleDisplayableManager - ProcessMRMLSceneEvents(eventid,", eventid, ")"
+    print("vtkScriptedExampleDisplayableManager - ProcessMRMLSceneEvents(eventid,", eventid, ")")
     pass
 
   def ProcessMRMLNodesEvents(self, scene, eventid, callData):
-    print "vtkScriptedExampleDisplayableManager - ProcessMRMLNodesEvents(eventid,", eventid, ")"
+    print("vtkScriptedExampleDisplayableManager - ProcessMRMLNodesEvents(eventid,", eventid, ")")
     pass
 
   def RemoveMRMLObservers(self):
-    print "vtkScriptedExampleDisplayableManager - RemoveMRMLObservers"
+    print("vtkScriptedExampleDisplayableManager - RemoveMRMLObservers")
     pass
 
   def UpdateFromMRML(self):
-    print "vtkScriptedExampleDisplayableManager - UpdateFromMRML"
+    print("vtkScriptedExampleDisplayableManager - UpdateFromMRML")
     pass
 
   def OnInteractorStyleEvent(self, eventid):
-    print "vtkScriptedExampleDisplayableManager - OnInteractorStyleEvent(eventid,", eventid, ")"
+    print("vtkScriptedExampleDisplayableManager - OnInteractorStyleEvent(eventid,", eventid, ")")
 
   def OnMRMLDisplayableNodeModifiedEvent(self, viewNode):
-    print "vtkScriptedExampleDisplayableManager - onMRMLDisplayableNodeModifiedEvent"
+    print("vtkScriptedExampleDisplayableManager - onMRMLDisplayableNodeModifiedEvent")
 
 
 

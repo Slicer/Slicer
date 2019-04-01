@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import time
 import unittest
@@ -101,7 +102,7 @@ class AddManyMarkupsFiducialTestLogic(ScriptedLoadableModuleLogic):
     """
     print('Running test to add %s fidicuals' % (numToAdd,))
     print('Index\tTime to add fid\tDelta between adds')
-    print "%(index)04s\t" % {'index': "i"}, "t\tdt'"
+    print("%(index)04s\t" % {'index': "i"}, "t\tdt'")
     r = rOffset
     a = 0
     s = 0
@@ -120,7 +121,7 @@ class AddManyMarkupsFiducialTestLogic(ScriptedLoadableModuleLogic):
     fidNode.SetAndObserveDisplayNodeID(displayNode.GetID())
 
     if usefewerModifyCalls == 1:
-      print "Start modify"
+      print("Start modify")
       mod = fidNode.StartModify()
 
     import random
@@ -144,7 +145,7 @@ class AddManyMarkupsFiducialTestLogic(ScriptedLoadableModuleLogic):
 
     testEndTime = time.clock()
     testTime = testEndTime - testStartTime
-    print "Total time to add ",numToAdd," = ", testTime
+    print("Total time to add ",numToAdd," = ", testTime)
 
     return True
 

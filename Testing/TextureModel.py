@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 import Slicer
 import time
@@ -74,5 +75,5 @@ def texturedPlane():
   endTime = time.time()
   elapsed = endTime - startTime
   hertz = steps/elapsed
-  print 'ran %d iterations in %g seconds (%g hertz)' % (steps, elapsed, hertz)
+  print('ran %d iterations in %g seconds (%g hertz)' % (steps, elapsed, hertz))
 

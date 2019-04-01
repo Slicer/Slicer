@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import unittest
 import vtk, qt, ctk, slicer
@@ -216,13 +217,13 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
       - create the associated model"""
 
     fiducialsNode = self.inputFiducialsNodeSelector.currentNode();
-    print "Calculating Path..."
+    print("Calculating Path...")
     result = EndoscopyComputePath(fiducialsNode)
-    print "-> Computed path contains %d elements" % len(result.path)
+    print("-> Computed path contains %d elements" % len(result.path))
 
-    print "Create Model..."
+    print("Create Model...")
     model = EndoscopyPathModel(result.path, fiducialsNode)
-    print "-> Model created"
+    print("-> Model created")
 
     # Update frame slider range
     self.frameSlider.maximum = len(result.path) - 2

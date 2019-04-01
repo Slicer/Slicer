@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import argparse, sys
 import numpy as np
 
@@ -24,7 +25,7 @@ def main():
     args = parser.parse_args()
     operation = args.operationtype
 
-    print args.outputfile
+    print(args.outputfile)
     if args.outputfile is None:
         raise Exception("Please specify exactly 1 output file name")
 

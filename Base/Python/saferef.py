@@ -74,6 +74,7 @@
 Provides a way to safely weakref any function, including bound methods (which
 aren't handled by the core weakref module).
 """
+from __future__ import print_function
 
 import traceback
 import weakref
@@ -193,9 +194,9 @@ class BoundMethodWeakref(object):
                     try:
                         traceback.print_exc()
                     except AttributeError, err:
-                        print '''Exception during saferef %s cleanup function %s: %s'''%(
+                        print('''Exception during saferef %s cleanup function %s: %s'''%(
                             self, function, e
-                        )
+                        ))
         self.deletionMethods = [onDelete]
         self.key = self.calculateKey( target )
         self.weakSelf = weakref.ref(target.im_self, remove)

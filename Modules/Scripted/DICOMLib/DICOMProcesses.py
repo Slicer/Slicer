@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os, subprocess
 import slicer
 import qt
@@ -61,7 +62,7 @@ class DICOMProcess(object):
     # start the server!
     self.process = qt.QProcess()
     self.process.connect('stateChanged(QProcess::ProcessState)', self.onStateChanged)
-    print ("Starting %s with " % cmd, args)
+    print(("Starting %s with " % cmd, args))
     self.process.start(cmd, args)
 
   def onStateChanged(self, newState):
@@ -99,7 +100,7 @@ class DICOMCommand(DICOMProcess):
   def start(self):
     # run the process!
     self.process = qt.QProcess()
-    print( 'running: ', self.executable, self.args)
+    print(( 'running: ', self.executable, self.args))
     self.process.start(self.executable, self.args)
     self.process.waitForFinished()
     if self.process.exitStatus() == qt.QProcess.CrashExit or self.process.exitCode() != 0:

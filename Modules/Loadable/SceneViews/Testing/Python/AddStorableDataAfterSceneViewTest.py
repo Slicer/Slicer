@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import unittest
 import vtk, qt, ctk, slicer
@@ -196,7 +197,7 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
     self.assertIsNotNone( restoredData )
     slicer.util.delayDisplay('Success: extra storable node NOT removed with scene view restore')
 
-    print 'Scene error code = ' + str(slicer.mrmlScene.GetErrorCode())
-    print '\t' + slicer.mrmlScene.GetErrorMessage()
+    print('Scene error code = ' + str(slicer.mrmlScene.GetErrorCode()))
+    print('\t' + slicer.mrmlScene.GetErrorMessage())
 
     slicer.util.delayDisplay('Test passed!')

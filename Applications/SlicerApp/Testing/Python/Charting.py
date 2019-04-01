@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import unittest
 import math
@@ -64,7 +65,7 @@ class ChartingWidget(ScriptedLoadableModuleWidget):
     self.helloWorldButton = helloWorldButton
 
   def onHelloWorldButtonClicked(self):
-    print "Hello World !"
+    print("Hello World !")
 
 
 class ChartingTest(ScriptedLoadableModuleTest):

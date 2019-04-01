@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 import os
 import vtk, qt, ctk, slicer
@@ -144,15 +145,15 @@ class SlicerMRBMultipleSaveRestoreLoop(ScriptedLoadableModuleTest):
 
       # adjust the fid list location
       self.fiducialPosition = [i, i, i]
-      print(i, ': reset fiducial position array to ', self.fiducialPosition)
+      print((i, ': reset fiducial position array to ', self.fiducialPosition))
       fidNode.SetNthFiducialPositionFromArray(0, self.fiducialPosition)
     self.delayDisplay("Loop Finished")
 
-    print('Fiducial position from loop = ',self.fiducialPosition)
+    print(('Fiducial position from loop = ',self.fiducialPosition))
     fidNode = slicer.util.getNode('F')
     finalFiducialPosition = [ 0,0,0 ]
     fidNode.GetNthFiducialPosition(0, finalFiducialPosition)
-    print('Final fiducial scene pos = ',finalFiducialPosition)
+    print(('Final fiducial scene pos = ',finalFiducialPosition))
     self.assertEqual(self.fiducialPosition, finalFiducialPosition)
 
     self.delayDisplay("Test Finished")

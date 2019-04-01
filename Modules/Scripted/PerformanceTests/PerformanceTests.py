@@ -1,3 +1,4 @@
+from __future__ import print_function
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 
@@ -214,14 +215,14 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
     cvn.SetChartNodeID(cn.GetID())
 
     cn = slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
-    print cn.GetID()
+    print(cn.GetID())
     cn.AddArray('Just one array', dn.GetID())
     cn.SetProperty('default', 'title', 'A simple chart with 1 curve')
     cn.SetProperty('default', 'xAxisLabel', 'Just x')
     cn.SetProperty('default', 'yAxisLabel', 'Just y')
 
     cn = slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
-    print cn.GetID()
+    print(cn.GetID())
     cn.AddArray('The other array', dn2.GetID())
     cn.SetProperty('default', 'title', 'A simple chart with another curve')
     cn.SetProperty('default', 'xAxisLabel', 'time')
@@ -231,7 +232,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
     cn.SetProperty('The other array', 'color', '#fe7d20')
 
     dn3 = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
-    print dn3.GetID()
+    print(dn3.GetID())
     a = dn3.GetArray()
     a.SetNumberOfTuples(12)
     x = range(0, 12)
@@ -241,7 +242,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
         a.SetComponent(i, 2, 0)
 
     cn = slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
-    print cn.GetID()
+    print(cn.GetID())
     cn.AddArray('Periodic', dn3.GetID())
     cn.SetProperty('default', 'title', 'A bar chart')
     cn.SetProperty('default', 'xAxisLabel', 'time')

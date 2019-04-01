@@ -2,6 +2,7 @@
 """ Unit Test for NA-MIC data tree versioning script.
     This test requires the user to enter the Midas server URL, the authentication email, the authentication API key and folder ID of an empty folder. The test first creates a mock data tree in the empty folder provided and runs tests off of that.
     Usage: python midasdata_test.py"""
+from __future__ import print_function
 
 import midasdata
 import re
@@ -12,7 +13,7 @@ import unittest
 try:
   import pydas
 except ImportError, e:
-  print e, "\nInstall pydas or update PYTHONPATH"
+  print(e, "\nInstall pydas or update PYTHONPATH")
 
 class TestVersioning(unittest.TestCase):
 
@@ -49,7 +50,7 @@ class TestVersioning(unittest.TestCase):
   def createFolderStructure(self):
     """ Creates a mock NA-MIC data tree for testing on the server """
     msg = "Creating testing data tree..."
-    print msg
+    print(msg)
     self.ApplicationFolder = self.communicator.create_folder(self.token, "Application", self.data_id)
     self.ModulesFolder = self.communicator.create_folder(self.token, "Modules", self.data_id)
     srcApplication = self.communicator.create_folder(self.token, self.sourceVersion, self.ApplicationFolder["folder_id"])
@@ -59,20 +60,20 @@ class TestVersioning(unittest.TestCase):
       sourceModule = self.communicator.create_folder(self.token, self.sourceVersion, srcModules["folder_id"])
       itemName = "item_" + module
       sourceItem = self.communicator.create_item(self.token, itemName, sourceModule["folder_id"])
-    print msg + "[DONE]"
+    print(msg + "[DONE]")
 
   def cleanUpFolder(self):
     """ Cleaning the mock NA-MIC data tree created for testing """
     msg = "Cleaning up testing data tree..."
-    print msg
+    print(msg)
     self.communicator.delete_folder(self.token, self.ApplicationFolder["folder_id"])
     self.communicator.delete_folder(self.token, self.ModulesFolder["folder_id"])
-    print msg + "[DONE]"
+    print(msg + "[DONE]")
 
   def test_dryRun(self):
     """ Test for the dry run of the script """
     msg = "Testing dry run..."
-    print "\n", msg
+    print("\n", msg)
     self.createFolderStructure()
     sys.stdout = open("logfile","w")
     midasdata.printSourceStructure(self.ModulesFolder["folder_id"], self.ApplicationFolder["folder_id"], self.sourceVersion, self.token, self.communicator)
@@ -87,12 +88,12 @@ class TestVersioning(unittest.TestCase):
     regexp = re.compile(expr)
     self.assertRegexpMatches(lines[14], regexp)
     self.cleanUpFolder()
-    print msg + "[DONE]"
+    print(msg + "[DONE]")
 
   def test_versionAllData(self):
     """ Test for versioning mock data tree """
     msg = "Testing versionData..."
-    print "\n", msg
+    print("\n", msg)
     self.createFolderStructure()
     midasdata.versionData(self.url, self.cur_email, self.cur_apikey, self.sourceVersion, self.destVersion, self.data_id)
     applicationChildren = self.communicator.folder_children(self.token, self.ApplicationFolder["folder_id"])
@@ -101,12 +102,12 @@ class TestVersioning(unittest.TestCase):
     destID = midasdata._getIDfromIndex(applicationChildren, "folder", index)
     self.assertTrue(midasdata.itemExists(destID, "item_Application", self.token, self.communicator))
     self.cleanUpFolder()
-    print msg + "[DONE]"
+    print(msg + "[DONE]")
 
   def test_versionAllData_ignoreModules(self):
     """ Test for ignoring modules while versioning """
     msg = "Testing versionData ignoring modules..."
-    print "\n", msg
+    print("\n", msg)
     self.createFolderStructure()
     midasdata.versionData(self.url, self.cur_email, self.cur_apikey, self.sourceVersion, self.destVersion, self.data_id, ["Module2"], False, False)
     modulesChildren = self.communicator.folder_children(self.token, self.ModulesFolder["folder_id"])
@@ -116,12 +117,12 @@ class TestVersioning(unittest.TestCase):
     module2Children = self.communicator.folder_children(self.token, module2ID)
     self.assertTrue(len(module2Children["folders"]) == 1)
     self.cleanUpFolder()
-    print msg + "[DONE]"
+    print(msg + "[DONE]")
 
   def test_versionAllData_overwrite(self):
     """ Test for overwriting items while versioning """
     msg = "Testing versionData with overwrite..."
-    print "\n", msg
+    print("\n", msg)
     self.createFolderStructure()
     midasdata.versionData(self.url, self.cur_email, self.cur_apikey, self.sourceVersion, self.destVersion, self.data_id)
     midasdata.versionData(self.url, self.cur_email, self.cur_apikey, self.sourceVersion, self.destVersion, self.data_id, [], True, False)
@@ -132,7 +133,7 @@ class TestVersioning(unittest.TestCase):
     dest_items = self.communicator.folder_children(self.token, destID)
     self.assertEqual(len(dest_items["items"]), 1)
     self.cleanUpFolder()
-    print msg + "[DONE]"
+    print(msg + "[DONE]")
 
 if __name__ == "__main__":
   suite = unittest.TestLoader().loadTestsFromTestCase(TestVersioning)

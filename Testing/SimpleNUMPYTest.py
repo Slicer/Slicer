@@ -1,17 +1,18 @@
+from __future__ import print_function
 
 import os
 import sys
 
 # prevents dashboard from truncating output of this test.
-print >> sys.stderr, "Enabling CTEST_FULL_OUTPUT\n"
-print >> sys.stderr, "\nChecking NUMPY..."
+print("Enabling CTEST_FULL_OUTPUT\n", file=sys.stderr)
+print("\nChecking NUMPY...", file=sys.stderr)
 try:
     import numpy
-    print >> sys.stderr, numpy.__version__
-    print >> sys.stderr, "\t----> import numpy WORKS!"
+    print(numpy.__version__, file=sys.stderr)
+    print("\t----> import numpy WORKS!", file=sys.stderr)
 
 except ImportError:
-    print >> sys.stderr, "\t----> import numpy FAILED."
+    print("\t----> import numpy FAILED.", file=sys.stderr)
     os._exit(1)
 
 os._exit(0)

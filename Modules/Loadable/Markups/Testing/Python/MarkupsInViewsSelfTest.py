@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import time
 import unittest
@@ -105,25 +106,25 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
   def printViewNodeIDs(self, displayNode):
     numIDs = displayNode.GetNumberOfViewNodeIDs()
     if numIDs == 0:
-      print 'No view node ids for display node',displayNode.GetID()
+      print('No view node ids for display node',displayNode.GetID())
       return
-    print 'View node ids for display node',displayNode.GetID()
+    print('View node ids for display node',displayNode.GetID())
     for i in range(numIDs):
       id = displayNode.GetNthViewNodeID(i)
-      print id
+      print(id)
 
   def printViewAndSliceNodes(self):
     numViewNodes = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLViewNode')
-    print 'Number of view nodes = ', numViewNodes
+    print('Number of view nodes = ', numViewNodes)
     for vn in range(numViewNodes):
       viewNode = slicer.mrmlScene.GetNthNodeByClass(vn, 'vtkMRMLViewNode')
-      print '\t',viewNode.GetName(),"id =",viewNode.GetID()
+      print('\t',viewNode.GetName(),"id =",viewNode.GetID())
 
     numSliceNodes = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceNode')
-    print 'Number of slice nodes = ', numSliceNodes
+    print('Number of slice nodes = ', numSliceNodes)
     for sn in range(numSliceNodes):
       sliceNode = slicer.mrmlScene.GetNthNodeByClass(sn, 'vtkMRMLSliceNode')
-      print '\t',sliceNode.GetName(),"id =",sliceNode.GetID()
+      print('\t',sliceNode.GetName(),"id =",sliceNode.GetID())
 
   def run(self):
     """
@@ -273,8 +274,8 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     self.delayDisplay('Show only in green slice')
     if self.widgetVisibleOnSlice(fidNode,'vtkMRMLSliceNodeRed') != 0 or self.widgetVisibleOnSlice(fidNode,'vtkMRMLSliceNodeGreen') != 1:
       self.delayDisplay("Test failed: widget not displayed only on green slice")
-      print '\tred = ',self.widgetVisibleOnSlice(fidNode,'vtkMRMLSliceNodeRed')
-      print '\tgreen =',self.widgetVisibleOnSlice(fidNode,'vtkMRMLSliceNodeGreen')
+      print('\tred = ',self.widgetVisibleOnSlice(fidNode,'vtkMRMLSliceNodeRed'))
+      print('\tgreen =',self.widgetVisibleOnSlice(fidNode,'vtkMRMLSliceNodeGreen'))
       self.printViewNodeIDs(displayNode)
       return False
 

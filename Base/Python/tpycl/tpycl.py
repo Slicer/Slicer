@@ -7,6 +7,7 @@
 # the main class is tpycl, and scripts can
 #
 
+from __future__ import print_function
 import sys
 import os
 import Tkinter
@@ -49,24 +50,24 @@ class tpycl(object):
     self.tcl.eval('source "%s/bin/Python/tpycl/tpycl.tcl"' % slicer.app.slicerHome)
 
   def usage(self):
-    print "tpycl [options] [file.tcl] [arg] [arg]"
-    print "-v --verbose : debugging info while parsing"
-    print "-h --help : extra help info"
-    print ""
-    print "tpycl is a tcl shell implemented in python that"
-    print "allows you to import and execute python code from"
-    print "inside tcl (hence the name - an homage to jcw's typcl which"
-    print "allows you to call tcl from python)."
-    print "Not all python constructs supported, but tpycl should be"
-    print "adequate to call many packages."
+    print("tpycl [options] [file.tcl] [arg] [arg]")
+    print("-v --verbose : debugging info while parsing")
+    print("-h --help : extra help info")
+    print("")
+    print("tpycl is a tcl shell implemented in python that")
+    print("allows you to import and execute python code from")
+    print("inside tcl (hence the name - an homage to jcw's typcl which")
+    print("allows you to call tcl from python).")
+    print("Not all python constructs supported, but tpycl should be")
+    print("adequate to call many packages.")
     exit()
 
   def dprint(self, *args):
     """ debug print """
     if self.verbose:
       for arg in args:
-        print arg,
-      print ""
+        print(arg, end=' ')
+      print("")
 
   def py_package(self, packageName):
     """ imports a vtk-wrapped python package
@@ -245,7 +246,7 @@ class tpycl(object):
       if cmd != "":
         result = self.tcl_eval( cmd )
         if result is not None:
-          print result
+          print(result)
 
 if __name__ == "__main__":
   tp = tpycl()

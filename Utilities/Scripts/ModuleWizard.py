@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import sys
 import os
 import fnmatch
@@ -99,11 +100,11 @@ def main(argv):
     target = "Modules/Loadable/" + moduleName
 
   if os.path.exists(target):
-    print (target, "exists - delete it first")
+    print((target, "exists - delete it first"))
     exit()
 
   if not os.path.exists(template):
-    print (template, "does not exist - run from Slicer source dir or specify with --template")
+    print((template, "does not exist - run from Slicer source dir or specify with --template"))
     usage()
     exit()
 

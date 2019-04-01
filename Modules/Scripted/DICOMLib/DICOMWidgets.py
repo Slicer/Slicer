@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os, copy
 import qt
 import vtk
@@ -736,7 +737,7 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
         traceback.print_exc()
         slicer.util.warningDisplay("Warning: Plugin failed: %s\n\nSee python console for error message." % pluginClass,
                                    windowTitle="DICOM", parent=self)
-        print "DICOM Plugin failed: %s" % str(e)
+        print("DICOM Plugin failed: %s" % str(e))
 
     progress.close()
 
@@ -757,7 +758,7 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
         isEqual = True
         for pair in zip(inputFileListCopy, loadableFileListCopy):
           if pair[0] != pair[1]:
-            print "{} != {}".format(pair[0], pair[1])
+            print("{} != {}".format(pair[0], pair[1]))
             isEqual = False
             break
         if not isEqual:
@@ -1358,8 +1359,8 @@ class DICOMRecentActivityWidget(qt.QWidget):
       slicer.util.showStatusMessage(statusMessage, 10000)
 
   def onActivated(self, modelIndex):
-    print 'selected row %d' % modelIndex.row()
-    print self.recentSeries[modelIndex.row()].text
+    print('selected row %d' % modelIndex.row())
+    print(self.recentSeries[modelIndex.row()].text)
     series = self.recentSeries[modelIndex.row()]
     if self.detailsPopup:
       self.detailsPopup.open()

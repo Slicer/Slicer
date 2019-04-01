@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import unittest
 import math
@@ -136,7 +137,7 @@ class WebEngineTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Got the expected result back from JavaScript")
     else:
       self.delayDisplay("Got a result back from JavaScript")
-      print(js, result)
+      print((js, result))
 
 
   def test_WebEngine1(self):

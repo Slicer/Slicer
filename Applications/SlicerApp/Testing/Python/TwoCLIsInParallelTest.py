@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import unittest
 from __main__ import vtk, qt, ctk, slicer
@@ -62,7 +63,7 @@ class TwoCLIsInParallelTestLogic(ScriptedLoadableModuleLogic):
     cliNode = slicer.cli.run(cliModule, cliNode, self.parameters, False)
 
   def onModule1Modified(self, cliNode, event):
-    print "--",cliNode.GetStatusString(),":", cliNode.GetName()
+    print("--",cliNode.GetStatusString(),":", cliNode.GetName())
     if not cliNode.IsBusy():
       self.removeObservers(cliNode, self.StatusModifiedEvent, self.onModule1Modified)
 
@@ -75,7 +76,7 @@ class TwoCLIsInParallelTestLogic(ScriptedLoadableModuleLogic):
 
   def addObserver(self, object, event, method, group = 'none'):
     if self.hasObserver(object, event, method):
-      print object.GetName(),'already has observer'
+      print(object.GetName(),'already has observer')
       return
     tag = object.AddObserver(event, method)
     self.Observations.append([object, event, method, group, tag])

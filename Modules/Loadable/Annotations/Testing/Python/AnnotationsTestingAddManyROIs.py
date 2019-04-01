@@ -1,13 +1,14 @@
+from __future__ import print_function
 import time
 
 def TestROIAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
-  print "numToAdd = ", numToAdd
+  print("numToAdd = ", numToAdd)
   if renameFlag > 0:
-    print "Index\tTime to add roi\tDelta between adds\tTime to rename roi\tDelta between renames"
-    print "%(index)04s\t" % {'index': "i"}, "t\tdt\tt\tdt"
+    print("Index\tTime to add roi\tDelta between adds\tTime to rename roi\tDelta between renames")
+    print("%(index)04s\t" % {'index': "i"}, "t\tdt\tt\tdt")
   else:
-    print "Index\tTime to add roi\tDelta between adds"
-    print "%(index)04s\t" % {'index': "i"}, "t\tdt"
+    print("Index\tTime to add roi\tDelta between adds")
+    print("%(index)04s\t" % {'index': "i"}, "t\tdt")
   cx = 0
   cy = 0
   cz = 0
@@ -39,10 +40,10 @@ def TestROIAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
       t4 = time.clock()
       timeToRenameThisROI = t4 - t3
       dt2 = timeToRenameThisROI - timeToRenameLastROI
-      print '%(index)04d\t' % {'index': i}, timeToAddThisROI, "\t", dt, "\t", timeToRenameThisROI, "\t", dt2
+      print('%(index)04d\t' % {'index': i}, timeToAddThisROI, "\t", dt, "\t", timeToRenameThisROI, "\t", dt2)
       timeToRenameLastROI = timeToRenameThisROI
     else:
-      print '%(index)04d\t' % {'index': i}, timeToAddThisROI, "\t", dt
+      print('%(index)04d\t' % {'index': i}, timeToAddThisROI, "\t", dt)
     rx = rx + 0.5
     ry = ry + 0.5
     rz = rz + 0.5
@@ -55,5 +56,5 @@ testStartTime = time.clock()
 TestROIAdd()
 testEndTime = time.clock()
 testTime = testEndTime - testStartTime
-print "Test total time = ", testTime
+print("Test total time = ", testTime)
 
