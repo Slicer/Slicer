@@ -56,6 +56,7 @@
 #include <algorithm>
 #include <cassert>
 #include <ctime>
+#include <mutex>
 #include <set>
 
 #ifdef _WIN32
@@ -201,7 +202,7 @@ public:
 
   int RedirectModuleStreams;
 
-  itk::MutexLock::Pointer ProcessesKillLock;
+  std::mutex ProcessesKillLock;
   std::vector<itksysProcess*> Processes;
 
   typedef std::vector<std::pair<vtkMTimeType, vtkMRMLCommandLineModuleNode*> > RequestType;
@@ -297,7 +298,6 @@ vtkSlicerCLIModuleLogic::vtkSlicerCLIModuleLogic()
 {
   this->Internal = new vtkInternal();
 
-  this->Internal->ProcessesKillLock = itk::MutexLock::New();
   this->Internal->DeleteTemporaryFiles = 1;
   this->Internal->AllowInMemoryTransfer = 1;
   this->Internal->RedirectModuleStreams = 1;
@@ -677,7 +677,7 @@ void vtkSlicerCLIModuleLogic::ApplyAndWait ( vtkMRMLCommandLineModuleNode* node,
 //-----------------------------------------------------------------------------
 void vtkSlicerCLIModuleLogic::KillProcesses()
 {
-  this->Internal->ProcessesKillLock->Lock();
+  this->Internal->ProcessesKillLock.lock();
   for (std::vector<itksysProcess*>::iterator it = this->Internal->Processes.begin();
        it != this->Internal->Processes.end();
        ++it)
@@ -685,7 +685,7 @@ void vtkSlicerCLIModuleLogic::KillProcesses()
     itksysProcess* process = *it;
     itksysProcess_Kill(process);
     }
-  this->Internal->ProcessesKillLock->Unlock();
+  this->Internal->ProcessesKillLock.unlock();
 }
 
 //-----------------------------------------------------------------------------
@@ -1980,9 +1980,9 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           }
         }
       }
-    this->Internal->ProcessesKillLock->Lock();
+    this->Internal->ProcessesKillLock.lock();
     itksysProcess_WaitForExit(process, nullptr);
-    this->Internal->ProcessesKillLock->Unlock();
+    this->Internal->ProcessesKillLock.unlock();
 
     // remove the embedded XML from the stdout stream
     //
@@ -2143,11 +2143,11 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         }
 
       // clean up
-      this->Internal->ProcessesKillLock->Lock();
+      this->Internal->ProcessesKillLock.lock();
       this->Internal->Processes.erase(
             std::find(this->Internal->Processes.begin(), this->Internal->Processes.end(), process));
       itksysProcess_Delete(process);
-      this->Internal->ProcessesKillLock->Unlock();
+      this->Internal->ProcessesKillLock.unlock();
       }
     }
   else if ( commandType == SharedObjectModule )

@@ -29,7 +29,9 @@
 
 // ITK includes
 #include <itkPlatformMultiThreader.h>
-#include <itkMutexLock.h>
+
+// STL includes
+#include <mutex>
 
 class vtkMRMLSelectionNode;
 class vtkMRMLInteractionNode;
@@ -240,14 +242,14 @@ private:
   void operator=(const vtkSlicerApplicationLogic&);
 
   itk::PlatformMultiThreader::Pointer ProcessingThreader;
-  itk::MutexLock::Pointer ProcessingThreadActiveLock;
-  itk::MutexLock::Pointer ProcessingTaskQueueLock;
-  itk::MutexLock::Pointer ModifiedQueueActiveLock;
-  itk::MutexLock::Pointer ModifiedQueueLock;
-  itk::MutexLock::Pointer ReadDataQueueActiveLock;
-  itk::MutexLock::Pointer ReadDataQueueLock;
-  itk::MutexLock::Pointer WriteDataQueueActiveLock;
-  itk::MutexLock::Pointer WriteDataQueueLock;
+  std::mutex ProcessingThreadActiveLock;
+  std::mutex ProcessingTaskQueueLock;
+  std::mutex ModifiedQueueActiveLock;
+  std::mutex ModifiedQueueLock;
+  std::mutex ReadDataQueueActiveLock;
+  std::mutex ReadDataQueueLock;
+  std::mutex WriteDataQueueActiveLock;
+  std::mutex WriteDataQueueLock;
   vtkTimeStamp RequestTimeStamp;
   int ProcessingThreadId;
   std::vector<int> NetworkingThreadIDs;

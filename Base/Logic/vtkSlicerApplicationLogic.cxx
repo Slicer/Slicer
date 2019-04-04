@@ -69,20 +69,12 @@ vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
   this->ProcessingThreader = itk::PlatformMultiThreader::New();
   this->ProcessingThreadId = -1;
   this->ProcessingThreadActive = false;
-  this->ProcessingThreadActiveLock = itk::MutexLock::New();
-  this->ProcessingTaskQueueLock = itk::MutexLock::New();
 
   this->ModifiedQueueActive = false;
-  this->ModifiedQueueActiveLock = itk::MutexLock::New();
-  this->ModifiedQueueLock = itk::MutexLock::New();
 
   this->ReadDataQueueActive = false;
-  this->ReadDataQueueActiveLock = itk::MutexLock::New();
-  this->ReadDataQueueLock = itk::MutexLock::New();
 
   this->WriteDataQueueActive = false;
-  this->WriteDataQueueActiveLock = itk::MutexLock::New();
-  this->WriteDataQueueLock = itk::MutexLock::New();
 
   this->InternalTaskQueue = new ProcessingTaskQueue;
   this->InternalModifiedQueue = new ModifiedQueue;
@@ -102,9 +94,9 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
   if (this->ProcessingThreadId != -1 && this->ProcessingThreader)
     {
     // Signal the processingThread that we are terminating.
-    this->ProcessingThreadActiveLock->Lock();
+    this->ProcessingThreadActiveLock.lock();
     this->ProcessingThreadActive = false;
-    this->ProcessingThreadActiveLock->Unlock();
+    this->ProcessingThreadActiveLock.unlock();
 
     // Wait for the thread to finish and clean up the state of the threader
     this->ProcessingThreader->TerminateThread( this->ProcessingThreadId );
@@ -114,14 +106,14 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
 
   delete this->InternalTaskQueue;
 
-  this->ModifiedQueueLock->Lock();
+  this->ModifiedQueueLock.lock();
   while (!(*this->InternalModifiedQueue).empty())
     {
     vtkObject *obj = (*this->InternalModifiedQueue).front();
     (*this->InternalModifiedQueue).pop();
     obj->Delete(); // decrement ref count
     }
-  this->ModifiedQueueLock->Unlock();
+  this->ModifiedQueueLock.unlock();
   delete this->InternalModifiedQueue;
   delete this->InternalReadDataQueue;
   delete this->InternalWriteDataQueue;
@@ -195,9 +187,9 @@ void vtkSlicerApplicationLogic::CreateProcessingThread()
 {
   if (this->ProcessingThreadId == -1)
     {
-    this->ProcessingThreadActiveLock->Lock();
+    this->ProcessingThreadActiveLock.lock();
     this->ProcessingThreadActive = true;
-    this->ProcessingThreadActiveLock->Unlock();
+    this->ProcessingThreadActiveLock.unlock();
 
     this->ProcessingThreadId
       = this->ProcessingThreader
@@ -225,15 +217,15 @@ void vtkSlicerApplicationLogic::CreateProcessingThread()
     */
 
     // Setup the communication channel back to the main thread
-    this->ModifiedQueueActiveLock->Lock();
+    this->ModifiedQueueActiveLock.lock();
     this->ModifiedQueueActive = true;
-    this->ModifiedQueueActiveLock->Unlock();
-    this->ReadDataQueueActiveLock->Lock();
+    this->ModifiedQueueActiveLock.unlock();
+    this->ReadDataQueueActiveLock.lock();
     this->ReadDataQueueActive = true;
-    this->ReadDataQueueActiveLock->Unlock();
-    this->WriteDataQueueActiveLock->Lock();
+    this->ReadDataQueueActiveLock.unlock();
+    this->WriteDataQueueActiveLock.lock();
     this->WriteDataQueueActive = true;
-    this->WriteDataQueueActiveLock->Unlock();
+    this->WriteDataQueueActiveLock.unlock();
 
     int delay = 1000;
     this->InvokeEvent(vtkSlicerApplicationLogic::RequestModifiedEvent, &delay);
@@ -247,21 +239,21 @@ void vtkSlicerApplicationLogic::TerminateProcessingThread()
 {
   if (this->ProcessingThreadId != -1)
     {
-    this->ModifiedQueueActiveLock->Lock();
+    this->ModifiedQueueActiveLock.lock();
     this->ModifiedQueueActive = false;
-    this->ModifiedQueueActiveLock->Unlock();
+    this->ModifiedQueueActiveLock.unlock();
 
-    this->ReadDataQueueActiveLock->Lock();
+    this->ReadDataQueueActiveLock.lock();
     this->ReadDataQueueActive = false;
-    this->ReadDataQueueActiveLock->Unlock();
+    this->ReadDataQueueActiveLock.unlock();
 
-    this->WriteDataQueueActiveLock->Lock();
+    this->WriteDataQueueActiveLock.lock();
     this->WriteDataQueueActive = false;
-    this->WriteDataQueueActiveLock->Unlock();
+    this->WriteDataQueueActiveLock.unlock();
 
-    this->ProcessingThreadActiveLock->Lock();
+    this->ProcessingThreadActiveLock.lock();
     this->ProcessingThreadActive = false;
-    this->ProcessingThreadActiveLock->Unlock();
+    this->ProcessingThreadActiveLock.unlock();
 
     this->ProcessingThreader->TerminateThread( this->ProcessingThreadId );
     this->ProcessingThreadId = -1;
@@ -323,14 +315,14 @@ void vtkSlicerApplicationLogic::ProcessProcessingTasks()
   while (active)
     {
     // Check to see if we should be shutting down
-    this->ProcessingThreadActiveLock->Lock();
+    this->ProcessingThreadActiveLock.lock();
     active = this->ProcessingThreadActive;
-    this->ProcessingThreadActiveLock->Unlock();
+    this->ProcessingThreadActiveLock.unlock();
 
     if (active)
       {
       // pull a task off the queue
-      this->ProcessingTaskQueueLock->Lock();
+      this->ProcessingTaskQueueLock.lock();
       if ((*this->InternalTaskQueue).size() > 0)
         {
         // std::cout << "Number of queued tasks: " << (*this->InternalTaskQueue).size() << std::endl;
@@ -346,7 +338,7 @@ void vtkSlicerApplicationLogic::ProcessProcessingTasks()
           task = nullptr;
           }
         }
-      this->ProcessingTaskQueueLock->Unlock();
+      this->ProcessingTaskQueueLock.unlock();
 
       // process the task (should this be in a separate thread?)
       if (task)
@@ -405,14 +397,14 @@ void vtkSlicerApplicationLogic::ProcessNetworkingTasks()
   while (active)
     {
     // Check to see if we should be shutting down
-    this->ProcessingThreadActiveLock->Lock();
+    this->ProcessingThreadActiveLock.lock();
     active = this->ProcessingThreadActive;
-    this->ProcessingThreadActiveLock->Unlock();
+    this->ProcessingThreadActiveLock.unlock();
 
     if (active)
       {
       // pull a task off the queue
-      this->ProcessingTaskQueueLock->Lock();
+      this->ProcessingTaskQueueLock.lock();
       if ((*this->InternalTaskQueue).size() > 0)
         {
         // std::cout << "Number of queued tasks: " << (*this->InternalTaskQueue).size() << std::endl;
@@ -426,7 +418,7 @@ void vtkSlicerApplicationLogic::ProcessNetworkingTasks()
           task = nullptr;
           }
         }
-      this->ProcessingTaskQueueLock->Unlock();
+      this->ProcessingTaskQueueLock.unlock();
 
       // process the task (should this be in a separate thread?)
       if (task)
@@ -445,17 +437,17 @@ void vtkSlicerApplicationLogic::ProcessNetworkingTasks()
 int vtkSlicerApplicationLogic::ScheduleTask( vtkSlicerTask *task )
 {
   // only schedule a task if the processing task is up
-  this->ProcessingThreadActiveLock->Lock();
+  this->ProcessingThreadActiveLock.lock();
   int active = this->ProcessingThreadActive;
-  this->ProcessingThreadActiveLock->Unlock();
+  this->ProcessingThreadActiveLock.unlock();
   if (!active)
     {
     return false;
     }
 
-  this->ProcessingTaskQueueLock->Lock();
+  this->ProcessingTaskQueueLock.lock();
   (*this->InternalTaskQueue).push( task );
-  this->ProcessingTaskQueueLock->Unlock();
+  this->ProcessingTaskQueueLock.unlock();
   return true;
 }
 
@@ -463,9 +455,9 @@ int vtkSlicerApplicationLogic::ScheduleTask( vtkSlicerTask *task )
 vtkMTimeType vtkSlicerApplicationLogic::RequestModified(vtkObject *obj)
 {
   // only request a Modified if the Modified queue is up
-  this->ModifiedQueueActiveLock->Lock();
+  this->ModifiedQueueActiveLock.lock();
   int active = this->ModifiedQueueActive;
-  this->ModifiedQueueActiveLock->Unlock();
+  this->ModifiedQueueActiveLock.unlock();
   if (!active)
     {
     // could not request the Modified
@@ -473,11 +465,11 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestModified(vtkObject *obj)
     }
 
   obj->Register(this);
-  this->ModifiedQueueLock->Lock();
+  this->ModifiedQueueLock.lock();
   this->RequestTimeStamp.Modified();
   vtkMTimeType uid = this->RequestTimeStamp.GetMTime();
   (*this->InternalModifiedQueue).push(obj);
-  this->ModifiedQueueLock->Unlock();
+  this->ModifiedQueueLock.unlock();
   return uid;
 }
 
@@ -485,21 +477,21 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestModified(vtkObject *obj)
 vtkMTimeType vtkSlicerApplicationLogic::RequestReadFile(const char *refNode, const char *filename, int displayData, int deleteFile)
 {
   // only request to read a file if the ReadData queue is up
-  this->ReadDataQueueActiveLock->Lock();
+  this->ReadDataQueueActiveLock.lock();
   int active = this->ReadDataQueueActive;
-  this->ReadDataQueueActiveLock->Unlock();
+  this->ReadDataQueueActiveLock.unlock();
   if (!active)
   {
     // could not request the record be added to the queue
     return 0;
   }
 
-  this->ReadDataQueueLock->Lock();
+  this->ReadDataQueueLock.lock();
   this->RequestTimeStamp.Modified();
   vtkMTimeType uid = this->RequestTimeStamp.GetMTime();
   (*this->InternalReadDataQueue).push(
     new ReadDataRequestFile(refNode, filename, displayData, deleteFile, uid));
-  this->ReadDataQueueLock->Unlock();
+  this->ReadDataQueueLock.unlock();
   return uid;
 }
 
@@ -507,20 +499,20 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestReadFile(const char *refNode, con
 vtkMTimeType vtkSlicerApplicationLogic::RequestUpdateParentTransform(const std::string &refNode, const std::string& parentTransformNode)
 {
   // only request to read a file if the ReadData queue is up
-  this->ReadDataQueueActiveLock->Lock();
+  this->ReadDataQueueActiveLock.lock();
   int active = this->ReadDataQueueActive;
-  this->ReadDataQueueActiveLock->Unlock();
+  this->ReadDataQueueActiveLock.unlock();
   if (!active)
     {
     // could not request the record be added to the queue
     return 0;
     }
 
-  this->ReadDataQueueLock->Lock();
+  this->ReadDataQueueLock.lock();
   this->RequestTimeStamp.Modified();
   vtkMTimeType uid = this->RequestTimeStamp.GetMTime();
   (*this->InternalReadDataQueue).push(new ReadDataRequestUpdateParentTransform(refNode, parentTransformNode, uid));
-  this->ReadDataQueueLock->Unlock();
+  this->ReadDataQueueLock.unlock();
   return uid;
 }
 
@@ -528,20 +520,20 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestUpdateParentTransform(const std::
 vtkMTimeType vtkSlicerApplicationLogic::RequestUpdateSubjectHierarchyLocation(const std::string &updatedNode, const std::string& siblingNode)
 {
   // only request to read a file if the ReadData queue is up
-  this->ReadDataQueueActiveLock->Lock();
+  this->ReadDataQueueActiveLock.lock();
   int active = this->ReadDataQueueActive;
-  this->ReadDataQueueActiveLock->Unlock();
+  this->ReadDataQueueActiveLock.unlock();
   if (!active)
     {
     // could not request the record be added to the queue
     return 0;
     }
 
-  this->ReadDataQueueLock->Lock();
+  this->ReadDataQueueLock.lock();
   this->RequestTimeStamp.Modified();
   vtkMTimeType uid = this->RequestTimeStamp.GetMTime();
   (*this->InternalReadDataQueue).push(new ReadDataRequestUpdateSubjectHierarchyLocation(updatedNode, siblingNode, uid));
-  this->ReadDataQueueLock->Unlock();
+  this->ReadDataQueueLock.unlock();
   return uid;
 }
 
@@ -549,21 +541,21 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestUpdateSubjectHierarchyLocation(co
 vtkMTimeType vtkSlicerApplicationLogic::RequestWriteData(const char *refNode, const char *filename)
 {
   // only request to write a file if the WriteData queue is up
-  this->WriteDataQueueActiveLock->Lock();
+  this->WriteDataQueueActiveLock.lock();
   int active = this->WriteDataQueueActive;
-  this->WriteDataQueueActiveLock->Unlock();
+  this->WriteDataQueueActiveLock.unlock();
   if (!active)
     {
     // could not request the record be added to the queue
     return 0;
     }
 
-  this->WriteDataQueueLock->Lock();
+  this->WriteDataQueueLock.lock();
   this->RequestTimeStamp.Modified();
   vtkMTimeType uid = this->RequestTimeStamp.GetMTime();
   (*this->InternalWriteDataQueue).push(
     new WriteDataRequestFile(refNode, filename, uid) );
-  this->WriteDataQueueLock->Unlock();
+  this->WriteDataQueueLock.unlock();
   return uid;
 }
 
@@ -576,21 +568,21 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestReadScene(
     int displayData, int deleteFile)
 {
   // only request to read a file if the ReadData queue is up
-  this->ReadDataQueueActiveLock->Lock();
+  this->ReadDataQueueActiveLock.lock();
   int active = this->ReadDataQueueActive;
-  this->ReadDataQueueActiveLock->Unlock();
+  this->ReadDataQueueActiveLock.unlock();
   if (!active)
     {
     // could not request the record be added to the queue
     return 0;
     }
 
-  this->ReadDataQueueLock->Lock();
+  this->ReadDataQueueLock.lock();
   this->RequestTimeStamp.Modified();
   vtkMTimeType uid = this->RequestTimeStamp.GetMTime();
   (*this->InternalReadDataQueue).push(
     new ReadDataRequestScene(targetIDs, sourceIDs, filename, displayData, deleteFile, uid));
-  this->ReadDataQueueLock->Unlock();
+  this->ReadDataQueueLock.unlock();
   return uid;
 }
 
@@ -598,9 +590,9 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestReadScene(
 void vtkSlicerApplicationLogic::ProcessModified()
 {
   // Check to see if we should be shutting down
-  this->ModifiedQueueActiveLock->Lock();
+  this->ModifiedQueueActiveLock.lock();
   int active = this->ModifiedQueueActive;
-  this->ModifiedQueueActiveLock->Unlock();
+  this->ModifiedQueueActiveLock.unlock();
   if (!active)
     {
     return;
@@ -608,7 +600,7 @@ void vtkSlicerApplicationLogic::ProcessModified()
 
   vtkSmartPointer<vtkObject> obj = nullptr;
   // pull an object off the queue to modify
-  this->ModifiedQueueLock->Lock();
+  this->ModifiedQueueLock.lock();
   if ((*this->InternalModifiedQueue).size() > 0)
     {
     obj = (*this->InternalModifiedQueue).front();
@@ -622,7 +614,7 @@ void vtkSlicerApplicationLogic::ProcessModified()
       obj->Delete(); // decrement ref count
       }
     }
-  this->ModifiedQueueLock->Unlock();
+  this->ModifiedQueueLock.unlock();
 
   // Modify the object
   //  - decrement reference count that was increased when it was added to the queue
@@ -643,9 +635,9 @@ void vtkSlicerApplicationLogic::ProcessModified()
 void vtkSlicerApplicationLogic::ProcessReadData()
 {
   // Check to see if we should be shutting down
-  this->ReadDataQueueActiveLock->Lock();
+  this->ReadDataQueueActiveLock.lock();
   int active = this->ReadDataQueueActive;
-  this->ReadDataQueueActiveLock->Unlock();
+  this->ReadDataQueueActiveLock.unlock();
   if (!active)
     {
     return;
@@ -653,13 +645,13 @@ void vtkSlicerApplicationLogic::ProcessReadData()
 
   // pull an object off the queue
   DataRequest* req = nullptr;
-  this->ReadDataQueueLock->Lock();
+  this->ReadDataQueueLock.lock();
   if ((*this->InternalReadDataQueue).size() > 0)
     {
     req = (*this->InternalReadDataQueue).front();
     (*this->InternalReadDataQueue).pop();
     }
-  this->ReadDataQueueLock->Unlock();
+  this->ReadDataQueueLock.unlock();
 
   vtkMTimeType uid = 0;
   if (req)
@@ -684,9 +676,9 @@ void vtkSlicerApplicationLogic::ProcessReadData()
 void vtkSlicerApplicationLogic::ProcessWriteData()
 {
   // Check to see if we should be shutting down
-  this->WriteDataQueueActiveLock->Lock();
+  this->WriteDataQueueActiveLock.lock();
   int active = this->WriteDataQueueActive;
-  this->WriteDataQueueActiveLock->Unlock();
+  this->WriteDataQueueActiveLock.unlock();
   if (!active)
     {
     return;
@@ -694,13 +686,13 @@ void vtkSlicerApplicationLogic::ProcessWriteData()
 
   // pull an object off the queue
   DataRequest *req = nullptr;
-  this->WriteDataQueueLock->Lock();
+  this->WriteDataQueueLock.lock();
   if ((*this->InternalWriteDataQueue).size() > 0)
     {
     req = (*this->InternalWriteDataQueue).front();
     (*this->InternalWriteDataQueue).pop();
     }
-  this->WriteDataQueueLock->Unlock();
+  this->WriteDataQueueLock.unlock();
 
   if (req)
   {
