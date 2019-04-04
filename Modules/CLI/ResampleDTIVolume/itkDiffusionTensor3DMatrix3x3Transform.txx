@@ -26,7 +26,6 @@ DiffusionTensor3DMatrix3x3Transform<TData>
   m_TransformMatrix.SetIdentity();
   m_Transform.SetIdentity();
   m_TransformT.SetIdentity();
-  m_Lock = MutexLock::New();
   m_LatestTime = 0;
   m_Translation.Fill( NumericTraits<DataType>::ZeroValue() );
   m_Offset.Fill( NumericTraits<DataType>::ZeroValue() );
@@ -82,12 +81,12 @@ DiffusionTensor3DMatrix3x3Transform<TData>
 {
   if( m_LatestTime < Object::GetMTime() )
     {
-    m_Lock->Lock();
+    m_Lock.lock();
     if( m_LatestTime < Object::GetMTime() )
       {
       PreCompute();
       }
-    m_Lock->Unlock();
+    m_Lock.unlock();
     }
   return m_TransformMatrix * point + m_Offset;
 }
@@ -109,12 +108,12 @@ DiffusionTensor3DMatrix3x3Transform<TData>
 
   if( m_LatestTime < Object::GetMTime() )
     {
-    m_Lock->Lock();
+    m_Lock.lock();
     if( m_LatestTime < Object::GetMTime() )
       {
       PreCompute();
       }
-    m_Lock->Unlock();
+    m_Lock.unlock();
     }
   InternalMatrixDataType      tensorMatrix = internalTensor.GetTensor2Matrix();
   InternalMatrixTransformType mat = this->m_Transform
@@ -132,12 +131,12 @@ DiffusionTensor3DMatrix3x3Transform<TData>::GetMatrix3x3()
 {
   if( m_LatestTime < Object::GetMTime() )
     {
-    m_Lock->Lock();
+    m_Lock.lock();
     if( m_LatestTime < Object::GetMTime() )
       {
       PreCompute();
       }
-    m_Lock->Unlock();
+    m_Lock.unlock();
     }
   return m_TransformMatrix;
 }
@@ -149,12 +148,12 @@ DiffusionTensor3DMatrix3x3Transform<TData>::GetTranslation()
 {
   if( m_LatestTime < Object::GetMTime() )
     {
-    m_Lock->Lock();
+    m_Lock.lock();
     if( m_LatestTime < Object::GetMTime() )
       {
       PreCompute();
       }
-    m_Lock->Unlock();
+    m_Lock.unlock();
     }
   return m_Translation;
 }

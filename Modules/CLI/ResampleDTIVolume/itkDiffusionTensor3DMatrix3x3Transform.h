@@ -17,7 +17,7 @@
 #include "itkDiffusionTensor3DTransform.h"
 #include <itkVector.h>
 #include <itkMatrixOffsetTransformBase.h>
-#include <itkMutexLock.h>
+#include <mutex>
 
 namespace itk
 {
@@ -96,7 +96,7 @@ protected:
   VectorType                  m_Translation;
   VectorType                  m_Offset;
   PointType                   m_Center;
-  MutexLock::Pointer          m_Lock;
+  std::mutex                  m_Lock;
 };
 
 } // end namespace itk

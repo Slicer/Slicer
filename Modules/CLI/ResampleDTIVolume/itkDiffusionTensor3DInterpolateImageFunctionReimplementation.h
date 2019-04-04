@@ -16,21 +16,11 @@
 
 #include "itkDiffusionTensor3DInterpolateImageFunction.h"
 #include <itkImage.h>
-// #include <itkImageRegionIteratorWithIndex.h>
 #include <itkInterpolateImageFunction.h>
 #include "itkSeparateComponentsOfADiffusionTensorImage.h"
-// #include <itkMutexLock.h>
 
 namespace itk
 {
-
-/*struct RegionType
-{
-  ImageRegion< 3 > itkRegion ;
-  bool Done ;
-  Index< 3 > PositionInImage ;
-  bool Stop ;
-};*/
 
 /**
  * \class DiffusionTensor3DInterpolateImageFunctionReimplementation
@@ -76,25 +66,9 @@ protected:
   DiffusionTensor3DInterpolateImageFunctionReimplementation();
   virtual void AllocateInterpolator() = 0;
 
-//  void SeparateImages() ;
-//  void AllocateImages() ;
-//  bool DivideRegion( int currentThread ) ;
-//  int RegionToDivide() ;
   typename InterpolateImageFunctionType::Pointer m_Interpol[6];
   ImagePointer m_ImageVec[6];
   int          m_NumberOfThreads;
-//  Semaphore::Pointer m_Threads ;
-//  int m_SplitAxis ;
-//  bool m_SeparationDone ;
-//  bool m_CannotSplit ;
-//  MutexLock::Pointer m_Lock ;
-//  MutexLock::Pointer m_LockNewThreadDetected ;
-//  std::vector< RegionType > m_ListRegions ;
-//  int m_NbThread ;
-//  MutexLock::Pointer m_CheckRegionsDone ;
-//  bool m_ExceptionThrown ;
-//  SizeType m_Size ;
-//  bool m_AllocateInterpolatorsDone ;
 };
 
 } // end namespace itk

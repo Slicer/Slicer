@@ -45,12 +45,12 @@ DiffusionTensor3DPPDAffineTransform<TData>
 
   if( this->m_LatestTime < Object::GetMTime() )
     {
-    this->m_Lock->Lock();
+    this->m_Lock.lock();
     if( this->m_LatestTime < Object::GetMTime() )
       {
       PreCompute();
       }
-    this->m_Lock->Unlock();
+    this->m_Lock.unlock();
     }
   EValuesType                       eigenValues;
   EVectorsType                      eigenVectors;
