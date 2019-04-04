@@ -338,7 +338,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
 
       viewNode = threeDView.mrmlViewNode()
       cameras = slicer.util.getNodes('vtkMRMLCameraNode*')
-      for cameraNode in list(cameras.values()):
+      for cameraNode in cameras.values():
         if cameraNode.GetActiveTag() == viewNode.GetID():
           break
       cameraNode.GetCamera().Azimuth(90)
@@ -423,7 +423,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       redController = redWidget.sliceController()
       viewNode = threeDView.mrmlViewNode()
       cameras = slicer.util.getNodes('vtkMRMLCameraNode*')
-      for cameraNode in list(cameras.values()):
+      for cameraNode in cameras.values():
         if cameraNode.GetActiveTag() == viewNode.GetID():
           break
 
@@ -449,7 +449,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       logic.takeScreenshot('Liver-ViewAdrenal','View Adrenal',-1)
 
       models = slicer.util.getNodes('vtkMRMLModelNode*')
-      for modelNode in list(models.values()):
+      for modelNode in models.values():
         modelNode.GetDisplayNode().SetVisibility(0)
 
       transparentNodes = ('MiddleHepaticVein_and_Branches','LiverSegment_IVb','LiverSegmentV',)
@@ -495,7 +495,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       redController = redWidget.sliceController()
       viewNode = threeDView.mrmlViewNode()
       cameras = slicer.util.getNodes('vtkMRMLCameraNode*')
-      for cameraNode in list(cameras.values()):
+      for cameraNode in cameras.values():
         if cameraNode.GetActiveTag() == viewNode.GetID():
           break
 

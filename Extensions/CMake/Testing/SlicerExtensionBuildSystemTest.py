@@ -726,7 +726,7 @@ include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScri
 
         self.assertEqual(sorted(query_data.keys()), sorted(expected_query_data.keys()))
 
-        for key, expected_value in list(expected_query_data.items()):
+        for key, expected_value in expected_query_data.items():
           current_value = query_data[key]
           if expected_value is None:
             # XXX For now only consider values that do not change with platform

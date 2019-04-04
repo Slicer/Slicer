@@ -531,7 +531,7 @@ class SampleDataLogic(object):
   def sourceForSampleName(self,sampleName):
     """For a given sample name this will search the available sources.
     Returns SampleDataSource instance."""
-    for category in list(slicer.modules.sampleDataSources.keys()):
+    for category in slicer.modules.sampleDataSources.keys():
       for source in slicer.modules.sampleDataSources[category]:
         if sampleName == source.sampleName:
           return source

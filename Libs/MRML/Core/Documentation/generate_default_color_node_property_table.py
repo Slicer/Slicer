@@ -47,7 +47,7 @@ titles = {'family': 'Family',
 max_row_widths = {column_name: len(column_title) for (column_name, column_title) in titles.items()}
 
 for row in table:
-    for column_name in list(max_row_widths.keys()):
+    for column_name in max_row_widths.keys():
         column_width = len(str(row[column_name]))
         if column_width > max_row_widths[column_name]:
             max_row_widths[column_name] = column_width

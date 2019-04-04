@@ -132,7 +132,7 @@ class LoadModulesDialog(object):
   def selectedModules(self):
     result = []
 
-    for item, module in list(self._moduleItems.items()):
+    for item, module in self._moduleItems.items():
       if item.checkState():
         result.append(module)
 

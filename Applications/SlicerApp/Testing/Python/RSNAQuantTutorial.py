@@ -239,7 +239,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
       yellowController = yellowWidget.sliceController()
       viewNode = threeDView.mrmlViewNode()
       cameras = slicer.util.getNodes('vtkMRMLCameraNode*')
-      for cameraNode in list(cameras.values()):
+      for cameraNode in cameras.values():
         if cameraNode.GetActiveTag() == viewNode.GetID():
           break
 
@@ -334,7 +334,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
       redController = redWidget.sliceController()
       viewNode = threeDView.mrmlViewNode()
       cameras = slicer.util.getNodes('vtkMRMLCameraNode*')
-      for cameraNode in list(cameras.values()):
+      for cameraNode in cameras.values():
         if cameraNode.GetActiveTag() == viewNode.GetID():
           break
 

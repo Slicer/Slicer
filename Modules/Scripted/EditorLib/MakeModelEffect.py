@@ -146,7 +146,7 @@ class MakeModelEffectOptions(Effect.EffectOptions):
       self.parameterNode.InvokePendingModifiedEvent()
 
   def getUniqueModelName(self, baseName):
-      names = list(slicer.util.getNodes().keys())
+      names = slicer.util.getNodes().keys()
       name = baseName
       index = 0
       while names.__contains__(name):

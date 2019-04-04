@@ -150,9 +150,9 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
             volumesByApproach[readerApproach] = volumeNode
 
             self.delayDisplay('Test quantity and unit')
-            if 'voxelValueQuantity' in list(dataset.keys()):
+            if 'voxelValueQuantity' in dataset.keys():
               self.assertEqual(volumeNode.GetVoxelValueQuantity().GetAsPrintableString(), dataset['voxelValueQuantity'])
-            if 'voxelValueUnits' in list(dataset.keys()):
+            if 'voxelValueUnits' in dataset.keys():
               self.assertEqual(volumeNode.GetVoxelValueUnits().GetAsPrintableString(), dataset['voxelValueUnits'])
 
 
@@ -175,7 +175,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
               print(('failed: %s', comparison))
               failedComparisons[firstApproach,secondApproach] = comparison
 
-        if len(list(failedComparisons.keys())) > 0:
+        if len(failedComparisons.keys()) > 0:
           raise Exception("Loaded volumes don't match: %s" % failedComparisons)
 
         self.delayDisplay('%s Test passed!' % dataset['name'])

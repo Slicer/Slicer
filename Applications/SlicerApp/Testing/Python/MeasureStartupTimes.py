@@ -142,7 +142,7 @@ def collect_startup_times_including_one_module(output_file, module_list, drop_ca
   modules = collect_modules(module_list)
   # Collect startup times disabling each module one by one
   moduleTimes = {}
-  for (idx, (moduleName, moduleType)) in enumerate(iter(modules.items()), start=1):
+  for (idx, (moduleName, moduleType)) in enumerate(modules.iteritems(), start=1):
     modules_minus_one = list(modules.keys())
     del modules_minus_one[modules_minus_one.index(moduleName)]
     print("[%d/%d] including %s" % (idx, len(modules), moduleName))
@@ -166,7 +166,7 @@ def collect_startup_times_excluding_one_module(output_file, module_list, drop_ca
   modules = collect_modules(module_list)
   # Collect startup times disabling each module one by one
   moduleTimes = {}
-  for (idx, (moduleName, moduleType)) in enumerate(iter(modules.items()), start=1):
+  for (idx, (moduleName, moduleType)) in enumerate(modules.iteritems(), start=1):
     #if moduleType == "CLI":
     #  print("=> Skipping CLI [%s]\n" % moduleName)
     #  continue

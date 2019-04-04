@@ -282,7 +282,7 @@ def loadSeriesWithVerification(seriesUIDs, selectedPlugins=None, loadedNodes=Non
   success = True
 
   # Verify loadables if baseline is given
-  if selectedPlugins is not None and len(list(selectedPlugins.keys())) > 0:
+  if selectedPlugins is not None and len(selectedPlugins.keys()) > 0:
     loadablesByPlugin = dicomWidget.detailsPopup.loadablesByPlugin
     actualSelectedPlugins = {}
     for plugin in loadablesByPlugin:
@@ -293,7 +293,7 @@ def loadSeriesWithVerification(seriesUIDs, selectedPlugins=None, loadedNodes=Non
             actualSelectedPlugins[plugin.loadType] = count+1
           else:
             actualSelectedPlugins[plugin.loadType] = 1
-    for pluginName in list(selectedPlugins.keys()):
+    for pluginName in selectedPlugins.keys():
       if pluginName not in actualSelectedPlugins:
         logging.error("Expected DICOM plugin '%s' was not selected" % (pluginName))
         success = False
@@ -305,7 +305,7 @@ def loadSeriesWithVerification(seriesUIDs, selectedPlugins=None, loadedNodes=Non
   # Count relevant node types in scene
   actualLoadedNodes = {}
   if loadedNodes is not None:
-    for nodeType in list(loadedNodes.keys()):
+    for nodeType in loadedNodes.keys():
       nodeCollection = slicer.mrmlScene.GetNodesByClass(nodeType)
       nodeCollection.UnRegister(None)
       actualLoadedNodes[nodeType] = nodeCollection.GetNumberOfItems()
@@ -314,7 +314,7 @@ def loadSeriesWithVerification(seriesUIDs, selectedPlugins=None, loadedNodes=Non
   dicomWidget.detailsPopup.loadCheckedLoadables()
 
   if loadedNodes is not None:
-    for nodeType in list(loadedNodes.keys()):
+    for nodeType in loadedNodes.keys():
       nodeCollection = slicer.mrmlScene.GetNodesByClass(nodeType)
       nodeCollection.UnRegister(None)
       numOfLoadedNodes = nodeCollection.GetNumberOfItems()-actualLoadedNodes[nodeType]

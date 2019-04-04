@@ -75,7 +75,7 @@ class RSNA2012ProstateDemoTest(ScriptedLoadableModuleTest):
     svns = slicer.util.getNodes('vtkMRMLSceneViewNode*')
 
     for reps in range(5):
-      for svname,svnode in list(svns.items()):
+      for svname,svnode in svns.items():
         self.delayDisplay('Restoring scene view %s ...' % svname )
         svnode.RestoreScene()
         self.delayDisplay('OK')
