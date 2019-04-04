@@ -447,7 +447,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
 #
 # PreviewPipeline
 #
-class PreviewPipeline:
+class PreviewPipeline(object):
   """ Visualization objects and pipeline for each slice view for threshold preview
   """
 

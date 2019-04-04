@@ -129,7 +129,7 @@ def loadSlicerRCFile():
 # Internal
 #
 
-class _Internal():
+class _Internal(object):
 
   def __init__( self ):
     import imp

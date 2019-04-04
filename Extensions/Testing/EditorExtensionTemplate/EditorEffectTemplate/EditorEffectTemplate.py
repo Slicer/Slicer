@@ -186,7 +186,7 @@ pet = EditorLib.EditorEffectTemplateTool(sw)
 # EditorEffectTemplate
 #
 
-class EditorEffectTemplate:
+class EditorEffectTemplate(object):
   """
   This class is the 'hook' for slicer to detect and recognize the extension
   as a loadable scripted module
@@ -225,7 +225,7 @@ class EditorEffectTemplate:
 # EditorEffectTemplateWidget
 #
 
-class EditorEffectTemplateWidget:
+class EditorEffectTemplateWidget(object):
   def __init__(self, parent = None):
     self.parent = parent
 

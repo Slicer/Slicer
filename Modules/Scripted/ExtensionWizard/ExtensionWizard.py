@@ -27,7 +27,7 @@ def _settingsList(settings, key):
 # ExtensionWizard
 #
 #=============================================================================
-class ExtensionWizard:
+class ExtensionWizard(object):
   #---------------------------------------------------------------------------
   def __init__(self, parent):
     parent.title = "Extension Wizard"
@@ -51,7 +51,7 @@ class ExtensionWizard:
 # ExtensionWizardWidget
 #
 #=============================================================================
-class ExtensionWizardWidget:
+class ExtensionWizardWidget(object):
   #---------------------------------------------------------------------------
   def __init__(self, parent = None):
     if not parent:

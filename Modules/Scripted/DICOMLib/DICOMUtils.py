@@ -224,7 +224,7 @@ def closeTemporaryDatabase(originalDatabaseDir, cleanup=True):
   return True
 
 #------------------------------------------------------------------------------
-class TemporaryDICOMDatabase:
+class TemporaryDICOMDatabase(object):
   """Context manager to conveniently use temporary DICOM databases
   """
   def __init__(self, directory=None):
@@ -355,7 +355,7 @@ def seriesUIDsForFiles(files):
   return seriesUIDs
 
 #------------------------------------------------------------------------------
-class LoadDICOMFilesToDatabase:
+class LoadDICOMFilesToDatabase(object):
   """Context manager to conveniently load DICOM files downloaded zipped from the internet
   """
   def __init__( self, url, archiveFilePath=None, dicomDataDir=None, \

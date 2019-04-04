@@ -5,7 +5,7 @@ import vtk, qt, ctk, slicer, logging
 # Abstract class of python scripted subject hierarchy plugins
 #
 
-class AbstractScriptedSubjectHierarchyPlugin():
+class AbstractScriptedSubjectHierarchyPlugin(object):
   """ Abstract scripted subject hierarchy plugin for python scripted plugins
 
       USAGE: Instantiate scripted subject hierarchy plugin adaptor class from

@@ -158,7 +158,7 @@ DICOM.setDatabasePrecacheTags = DICOMLib.setDatabasePrecacheTags
 # Class for avoiding python error that is caused by the method DICOM::setup
 # http://www.na-mic.org/Bug/view.php?id=3871
 #
-class DICOMFileWriter:
+class DICOMFileWriter(object):
   def __init__(self, parent):
     pass
 
@@ -166,7 +166,7 @@ class DICOMFileWriter:
 #
 # DICOM file dialog
 #
-class DICOMFileDialog:
+class DICOMFileDialog(object):
   """This specially named class is detected by the scripted loadable
   module and is the target for optional drag and drop operations.
   See: Base/QTGUI/qSlicerScriptedFileDialog.h
@@ -238,7 +238,7 @@ class DICOMFileDialog:
 # DICOM widget
 #
 
-class DICOMWidget:
+class DICOMWidget(object):
   """
   Slicer module that creates the Qt GUI for interacting with DICOM
   """

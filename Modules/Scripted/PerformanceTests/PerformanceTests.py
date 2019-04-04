@@ -313,7 +313,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
     self.memoryCallback()
 
 
-class sliceLogicTest:
+class sliceLogicTest(object):
   def __init__(self):
     self.step = 0
     self.sliceLogic = slicer.vtkMRMLSliceLayerLogic()

@@ -116,7 +116,7 @@ class SelfTestsWidget(ScriptedLoadableModuleWidget):
     slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
     return True
 
-class SelfTestsLogic:
+class SelfTestsLogic(object):
   """Logic to handle invoking the tests and reporting the results"""
 
   def __init__(self,selfTests):

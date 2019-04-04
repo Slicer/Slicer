@@ -186,7 +186,7 @@ pet = EditorLib.TemplateKeyEffectTool(sw)
 # TemplateKeyEffect
 #
 
-class TemplateKeyEffect:
+class TemplateKeyEffect(object):
   """
   This class is the 'hook' for slicer to detect and recognize the extension
   as a loadable scripted module
@@ -225,7 +225,7 @@ class TemplateKeyEffect:
 # TemplateKeyEffectWidget
 #
 
-class TemplateKeyEffectWidget:
+class TemplateKeyEffectWidget(object):
   def __init__(self, parent = None):
     self.parent = parent
 

@@ -917,7 +917,7 @@ class SegmentStatisticsSlicelet(Slicelet):
 # Class for avoiding python error that is caused by the method SegmentStatistics::setup
 # http://www.na-mic.org/Bug/view.php?id=3871
 #
-class SegmentStatisticsFileWriter:
+class SegmentStatisticsFileWriter(object):
   def __init__(self, parent):
     pass
 

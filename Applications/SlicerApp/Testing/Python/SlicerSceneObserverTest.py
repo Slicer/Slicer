@@ -3,7 +3,7 @@ import unittest
 import slicer
 import vtk
 
-class testClass():
+class testClass(object):
   """ Check that slicer exits correctly after adding an observer to the mrml scene
   """
   def callback(self, caller, event):

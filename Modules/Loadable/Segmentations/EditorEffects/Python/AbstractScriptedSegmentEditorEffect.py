@@ -5,7 +5,7 @@ import vtk, qt, ctk, slicer, logging
 # Abstract class of python scripted segment editor effects
 #
 
-class AbstractScriptedSegmentEditorEffect():
+class AbstractScriptedSegmentEditorEffect(object):
   """ Abstract scripted segment editor effects for effects implemented in python
 
       USAGE:

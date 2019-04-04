@@ -714,7 +714,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 # DICOMScalarVolumePlugin
 #
 
-class DICOMScalarVolumePlugin:
+class DICOMScalarVolumePlugin(object):
   """
   This class is the 'hook' for slicer to detect and recognize the plugin
   as a loadable scripted module

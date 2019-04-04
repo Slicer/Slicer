@@ -311,7 +311,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
       self.cameraNode.EndModify(wasModified)
       self.cameraNode.ResetClippingRange()
 
-class EndoscopyComputePath:
+class EndoscopyComputePath(object):
   """Compute path given a list of fiducials.
   A Hermite spline interpolation is used. See http://en.wikipedia.org/wiki/Cubic_Hermite_spline
 
@@ -450,7 +450,7 @@ class EndoscopyComputePath:
     return (t1, pguess, remainder)
 
 
-class EndoscopyPathModel:
+class EndoscopyPathModel(object):
   """Create a vtkPolyData for a polyline:
        - Add one point per path point.
        - Add a single polyline

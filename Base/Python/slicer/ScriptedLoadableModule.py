@@ -7,7 +7,7 @@ import importlib
 
 __all__ = ['ScriptedLoadableModule', 'ScriptedLoadableModuleWidget', 'ScriptedLoadableModuleLogic', 'ScriptedLoadableModuleTest']
 
-class ScriptedLoadableModule:
+class ScriptedLoadableModule(object):
   def __init__(self, parent):
     self.parent = parent
     self.moduleName = self.__class__.__name__
@@ -69,7 +69,7 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
     testCase.messageDelay = msec
     testCase.runTest(**kwargs)
 
-class ScriptedLoadableModuleWidget:
+class ScriptedLoadableModuleWidget(object):
   def __init__(self, parent = None):
     """If parent widget is not specified: a top-level widget is created automatically;
     the application has to delete this widget (by calling widget.parent.deleteLater() to avoid memory leaks.
@@ -213,7 +213,7 @@ class ScriptedLoadableModuleWidget:
     filePath = slicer.util.modulePath(self.moduleName)
     qt.QDesktopServices.openUrl(qt.QUrl("file:///"+filePath, qt.QUrl.TolerantMode))
 
-class ScriptedLoadableModuleLogic():
+class ScriptedLoadableModuleLogic(object):
   def __init__(self, parent = None):
     # Get module name by stripping 'Logic' from the class name
     self.moduleName = self.__class__.__name__
