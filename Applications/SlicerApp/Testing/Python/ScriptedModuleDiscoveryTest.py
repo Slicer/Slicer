@@ -9,7 +9,7 @@ assert not hasattr(__main__, 'ModuleC_WithoutWidget')
 assert not hasattr(__main__, 'ModuleD_WithFileDialog_WithoutWidget')
 assert not hasattr(__main__, 'ModuleE_WithFileWriter_WithoutWidget')
 
-from types import ClassType, ModuleType
+from types import ModuleType
 import slicer
 
 assert isinstance(slicer.modules, ModuleType)
@@ -42,14 +42,14 @@ assert isinstance(ModuleD_WithFileDialog_WithoutWidget, ModuleType)
 assert isinstance(ModuleE_WithFileWriter_WithoutWidget, ModuleType)
 
 # Check class type
-assert isinstance(ModuleA.ModuleA, ClassType)
-assert isinstance(ModuleB.ModuleB, ClassType)
-assert isinstance(ModuleC_WithoutWidget.ModuleC_WithoutWidget, ClassType)
-assert isinstance(ModuleD_WithFileDialog_WithoutWidget.ModuleD_WithFileDialog_WithoutWidget, ClassType)
-assert isinstance(ModuleE_WithFileWriter_WithoutWidget.ModuleE_WithFileWriter_WithoutWidget, ClassType)
+assert isinstance(ModuleA.ModuleA, type)
+assert isinstance(ModuleB.ModuleB, type)
+assert isinstance(ModuleC_WithoutWidget.ModuleC_WithoutWidget, type)
+assert isinstance(ModuleD_WithFileDialog_WithoutWidget.ModuleD_WithFileDialog_WithoutWidget, type)
+assert isinstance(ModuleE_WithFileWriter_WithoutWidget.ModuleE_WithFileWriter_WithoutWidget, type)
 
-assert isinstance(ModuleA.ModuleAWidget, ClassType)
-assert isinstance(ModuleB.ModuleBWidget, ClassType)
+assert isinstance(ModuleA.ModuleAWidget, type)
+assert isinstance(ModuleB.ModuleBWidget, type)
 assert not hasattr(ModuleC_WithoutWidget, 'ModuleC_WithoutWidgetWidget')
 assert not hasattr(ModuleC_WithoutWidget, 'ModuleD_WithFileDialog_WithoutWidget')
 assert not hasattr(ModuleC_WithoutWidget, 'ModuleE_WithFileWriter_WithoutWidget')
