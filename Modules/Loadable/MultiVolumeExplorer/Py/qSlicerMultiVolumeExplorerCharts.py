@@ -356,7 +356,7 @@ class MultiVolumeIntensityChartView(object):
         val = image.GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], c)
         if math.isnan(val):
           val = 0
-        chartTable.SetValue(c, 1, (val / self.baselineAverageSignal - 1) * 100.)
+        chartTable.SetValue(c, 1, int(val / self.baselineAverageSignal - 1) * 100.)
 
   def arePixelsWithinImageExtent(self, image, ijk):
     extent = image.GetExtent()
@@ -475,7 +475,7 @@ class LabeledImageChartView(object):
       if baseline != 0:
         for ic in range(nComponents):
           intensity = arr.GetComponent(ic, 1)
-          percentChange = (intensity / baseline - 1) * 100.
+          percentChange = int(intensity / baseline - 1) * 100.
           arr.SetComponent(ic, 1, percentChange)
 
   def createChartNodeAndInsertData(self):

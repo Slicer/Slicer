@@ -7,7 +7,7 @@ from qSlicerMultiVolumeExplorerModuleHelper import qSlicerMultiVolumeExplorerMod
 from qSlicerMultiVolumeExplorerCharts import LabeledImageChartView, MultiVolumeIntensityChartView
 
 
-class qSlicerMultiVolumeExplorerSimplifiedModuleWidget:
+class qSlicerMultiVolumeExplorerSimplifiedModuleWidget(object):
 
   def __init__(self, parent=None):
     logging.debug("qSlicerMultiVolumeExplorerSimplifiedModuleWidget:init() called")
@@ -195,7 +195,7 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget:
       # TODO: reset the label text
       return
 
-    if not self.sliceWidgetsPerStyle.has_key(observee):
+    if observee not in self.sliceWidgetsPerStyle:
       return
 
     interactor = observee.GetInteractor()
@@ -219,7 +219,7 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget:
     # get new slice nodes
     layoutManager = slicer.app.layoutManager()
     sliceNodeCount = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceNode')
-    for nodeIndex in xrange(sliceNodeCount):
+    for nodeIndex in range(sliceNodeCount):
       # find the widget for each node in scene
       sliceNode = slicer.mrmlScene.GetNthNodeByClass(nodeIndex, 'vtkMRMLSliceNode')
       sliceWidget = layoutManager.sliceWidget(sliceNode.GetLayoutName())

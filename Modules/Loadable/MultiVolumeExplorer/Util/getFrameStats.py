@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import helpers
 
 import argparse, sys, shutil, os, slicer
@@ -26,7 +28,7 @@ def main(argv):
     parser.add_argument("-f","--frame",dest="frame",default=0,type=int,required=False,help="Frame to extract statistics")
 
     args = parser.parse_args(argv)
-    print args.frame
+    print(args.frame)
 
     (_,mv) = slicer.util.loadVolume(args.multivolume,returnNode=True)
     (_,label) = slicer.util.loadLabelVolume(args.label,returnNode=True)
