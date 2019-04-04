@@ -115,7 +115,7 @@ class JRC2013VisWidget(ScriptedLoadableModuleWidget):
           dcmqrscpExePath = testPath
           break
       if not dcmqrscpExePath:
-        raise( UserWarning("Could not find dcmqrscp executable") )
+        raise UserWarning("Could not find dcmqrscp executable")
 
       args = (dcmqrscpExePath, '-c', configFilePath)
       print('Start DICOM peer')
@@ -205,7 +205,7 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
           dcmqrscpExePath = testPath
           break
       if not dcmqrscpExePath:
-        raise( UserWarning("Could not find dcmqrscp executable") )
+        raise UserWarning("Could not find dcmqrscp executable")
 
       args = (dcmqrscpExePath, '-c', configFilePath)
       popen = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=processCurrentPath)

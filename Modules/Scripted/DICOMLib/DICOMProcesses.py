@@ -42,7 +42,7 @@ class DICOMProcess(object):
         self.exeDir = testPath
         break
     if not self.exeDir:
-      raise( UserWarning("Could not find a valid path to DICOM helper applications") )
+      raise UserWarning("Could not find a valid path to DICOM helper applications")
 
     self.exeExtension = ""
     if os.name == 'nt':
@@ -111,7 +111,7 @@ class DICOMCommand(DICOMProcess):
       print('error is: %d' % self.process.error())
       print('standard out is: %s' % stdout)
       print('standard error is: %s' % stderr)
-      raise( UserWarning("Could not run %s with %s" % (self.executable, self.args)) )
+      raise UserWarning("Could not run %s with %s" % (self.executable, self.args))
     stdout = self.process.readAllStandardOutput()
     return stdout
 
@@ -239,7 +239,7 @@ class DICOMListener(DICOMStoreSCPProcess):
     settings = qt.QSettings()
     databaseDirectory = settings.value('DatabaseDirectory')
     if not databaseDirectory:
-      raise(UserWarning('Database directory not set: cannot start DICOMListener'))
+      raise UserWarning('Database directory not set: cannot start DICOMListener')
     if not os.path.exists(databaseDirectory):
       os.mkdir(databaseDirectory)
     incomingDir = databaseDirectory + "/incoming"
@@ -315,7 +315,7 @@ class DICOMSender(DICOMProcess):
       print('error code is: %d' % self.process.error())
       print('standard out is: %s' % stdout)
       print('standard error is: %s' % stderr)
-      raise( UserWarning("Could not send %s to %s:%s" % (file, self.address, self.port)) )
+      raise UserWarning("Could not send %s to %s:%s" % (file, self.address, self.port))
 
 
 class DICOMTestingQRServer(object):
