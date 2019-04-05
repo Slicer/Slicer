@@ -380,7 +380,8 @@ void qSlicerMouseModeToolBarPrivate::updateCursor()
         {
         if (action->data().toInt() == currentInteractionMode)
           {
-          q->changeCursorTo(this->cursorFromIcon(action->icon()));
+          QIcon icon = action->icon();
+          q->changeCursorTo(this->cursorFromIcon(icon));
           break;
           }
         }
@@ -418,7 +419,8 @@ void qSlicerMouseModeToolBarPrivate::updateCursor()
         }
       else
         {
-        q->changeCursorTo(this->cursorFromIcon(actions.at(i)->icon()));
+        QIcon icon = actions.at(i)->icon();
+        q->changeCursorTo(this->cursorFromIcon(icon));
         }
       break;
       }
