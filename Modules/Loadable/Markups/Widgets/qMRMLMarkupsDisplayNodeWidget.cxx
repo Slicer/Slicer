@@ -195,7 +195,7 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
   d->VisibilityCheckBox->setChecked(d->MarkupsDisplayNode ? d->MarkupsDisplayNode->GetVisibility() : false);
 
   // update the display properties from the markups display node
-  vtkSmartPointer<vtkMRMLMarkupsDisplayNode> markupsDisplayNode = d->MarkupsDisplayNode;
+  vtkSmartPointer<vtkMRMLMarkupsDisplayNode> markupsDisplayNode = d->MarkupsDisplayNode.GetPointer();
   if (!markupsDisplayNode)
     {
     // Create a temporary markups display node that we can retrieve defaults from.
