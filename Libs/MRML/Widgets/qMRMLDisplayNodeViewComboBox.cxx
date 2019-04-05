@@ -98,7 +98,20 @@ void qMRMLDisplayNodeViewComboBox
   this->qvtkReconnect(d->MRMLDisplayNode, displayNode, vtkCommand::ModifiedEvent,
                       this, SLOT(updateWidgetFromMRML()));
   d->MRMLDisplayNode = displayNode;
-  this->setMRMLScene(d->MRMLDisplayNode ? d->MRMLDisplayNode->GetScene() : nullptr);
+  if (d->MRMLDisplayNode)
+    {
+    // Only overwrite the scene if the node has a valid scene
+    // (otherwise scene may be swapped out to an invalid scene during scene close
+    // causing a crash if it happens during a scene model update).
+    if (d->MRMLDisplayNode->GetScene())
+      {
+      this->setMRMLScene(d->MRMLDisplayNode->GetScene());
+      }
+    }
+  else
+    {
+    this->setMRMLScene(nullptr);
+    }
   this->updateWidgetFromMRML();
 }
 

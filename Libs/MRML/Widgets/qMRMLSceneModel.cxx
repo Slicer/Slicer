@@ -766,12 +766,15 @@ void qMRMLSceneModel::updateScene()
 void qMRMLSceneModel::populateScene()
 {
   Q_D(qMRMLSceneModel);
-  Q_ASSERT(d->MRMLScene);
   // Add nodes
   int index = -1;
   vtkMRMLNode *node = nullptr;
   vtkCollectionSimpleIterator it;
   d->MisplacedNodes.clear();
+  if (!d->MRMLScene)
+    {
+    return;
+    }
   for (d->MRMLScene->GetNodes()->InitTraversal(it);
        (node = (vtkMRMLNode*)d->MRMLScene->GetNodes()->GetNextItemAsObject(it)) ;)
     {
