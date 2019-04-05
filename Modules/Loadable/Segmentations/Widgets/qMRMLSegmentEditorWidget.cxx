@@ -789,6 +789,9 @@ void qMRMLSegmentEditorWidgetPrivate::setEffectCursor(qSlicerSegmentEditorAbstra
     return;
     }
 
+  // We update the default cursor as well so that if the user hovers the mouse over
+  // a markup, the cursor shape is then restored to the effect cursor.
+
   foreach(QString sliceViewName, layoutManager->sliceViewNames())
     {
     qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);
@@ -799,10 +802,12 @@ void qMRMLSegmentEditorWidgetPrivate::setEffectCursor(qSlicerSegmentEditorAbstra
     if (effect && effect->showEffectCursorInSliceView())
       {
       sliceWidget->sliceView()->setViewCursor(effect->createCursor(sliceWidget));
+      sliceWidget->sliceView()->setDefaultViewCursor(effect->createCursor(sliceWidget));
       }
     else
       {
-      sliceWidget->sliceView()->unsetViewCursor();
+      sliceWidget->sliceView()->setViewCursor(QCursor());
+      sliceWidget->sliceView()->setDefaultViewCursor(QCursor());
       }
     }
   for (int threeDViewId = 0; threeDViewId < layoutManager->threeDViewCount(); ++threeDViewId)
@@ -815,10 +820,12 @@ void qMRMLSegmentEditorWidgetPrivate::setEffectCursor(qSlicerSegmentEditorAbstra
     if (effect && effect->showEffectCursorInThreeDView())
       {
       threeDWidget->threeDView()->setViewCursor(effect->createCursor(threeDWidget));
+      threeDWidget->threeDView()->setDefaultViewCursor(effect->createCursor(threeDWidget));
       }
     else
       {
-      threeDWidget->threeDView()->unsetViewCursor();
+      threeDWidget->threeDView()->setViewCursor(QCursor());
+      threeDWidget->threeDView()->setDefaultViewCursor(QCursor());
       }
     }
 }

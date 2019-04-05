@@ -82,6 +82,9 @@ public:
   /// Restore default cursor in the view area
   Q_INVOKABLE void unsetViewCursor();
 
+  /// Set default cursor in the view area
+  Q_INVOKABLE void setDefaultViewCursor(const QCursor &cursor);
+
 public slots:
 
   /// Set the MRML \a scene that should be listened for events
