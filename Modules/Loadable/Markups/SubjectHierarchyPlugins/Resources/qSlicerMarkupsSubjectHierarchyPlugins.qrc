@@ -1,5 +1,9 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
-    <file>Icons/Markup.png</file>
+    <file>Icons/MarkupsFiducial.png</file>
+    <file>Icons/MarkupsLine.png</file>
+    <file>Icons/MarkupsAngle.png</file>
+    <file>Icons/MarkupsOpenCurve.png</file>
+    <file>Icons/MarkupsClosedCurve.png</file>
   </qresource>
 </RCC>

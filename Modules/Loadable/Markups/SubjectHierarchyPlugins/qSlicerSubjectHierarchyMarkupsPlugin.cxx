@@ -67,8 +67,6 @@ public:
   qSlicerSubjectHierarchyMarkupsPluginPrivate(qSlicerSubjectHierarchyMarkupsPlugin& object);
   ~qSlicerSubjectHierarchyMarkupsPluginPrivate() override;
   void init();
-public:
-  QIcon MarkupIcon;
 };
 
 //-----------------------------------------------------------------------------
@@ -78,7 +76,6 @@ public:
 qSlicerSubjectHierarchyMarkupsPluginPrivate::qSlicerSubjectHierarchyMarkupsPluginPrivate(qSlicerSubjectHierarchyMarkupsPlugin& object)
 : q_ptr(&object)
 {
-  this->MarkupIcon = QIcon(":Icons/Markup.png");
 }
 
 //------------------------------------------------------------------------------
@@ -179,12 +176,42 @@ QIcon qSlicerSubjectHierarchyMarkupsPlugin::icon(vtkIdType itemID)
 
   Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
 
-  if (this->canOwnSubjectHierarchyItem(itemID))
+  if (!this->canOwnSubjectHierarchyItem(itemID))
     {
-    return d->MarkupIcon;
+    // Item unknown by plugin
+    return QIcon();
     }
-
-  // Item unknown by plugin
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    return QIcon();
+    }
+  vtkMRMLNode* node = shNode->GetItemDataNode(itemID);
+  if (!node)
+    {
+    return QIcon();
+    }
+  if (node->IsA("vtkMRMLMarkupsFiducialNode"))
+    {
+    return QIcon(":Icons/MarkupsFiducial.png");
+    }
+  else if (node->IsA("vtkMRMLMarkupsLineNode"))
+    {
+    return QIcon(":Icons/MarkupsLine.png");
+    }
+  else if (node->IsA("vtkMRMLMarkupsAngleNode"))
+    {
+    return QIcon(":Icons/MarkupsAngle.png");
+    }
+  else if (node->IsA("vtkMRMLMarkupsClosedCurveNode"))
+    {
+    // closed curve is a child class of curve node,
+    return QIcon(":Icons/MarkupsClosedCurve.png");
+    }
+  else if (node->IsA("vtkMRMLMarkupsCurveNode"))
+    {
+    return QIcon(":Icons/MarkupsOpenCurve.png");
+    }
   return QIcon();
 }
 
