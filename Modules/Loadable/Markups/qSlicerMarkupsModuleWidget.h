@@ -77,10 +77,7 @@ public:
 
   /// Add observations to the markups node, and remove them from other markups
   /// nodes (from all nodes if markupsNode is null)
-  void observeMarkupsNode(vtkMRMLNode *markupsNode);
-
-  /// Reset the GUI elements: clear out the table
-  void clearGUI();
+  void setMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode);
 
   /// Set up the logic default display settings from the application settings
   void updateLogicFromSettings();
@@ -121,16 +118,6 @@ public slots:
   /// them from hierarchies to Markups list nodes
   void convertAnnotationFiducialsToMarkups();
 
-  /// Display property slots
-  void onSelectedColorPickerButtonChanged(QColor qcolor);
-  void onUnselectedColorPickerButtonChanged(QColor qcolor);
-  void onGlyphTypeComboBoxChanged(QString value);
-  void onGlyphScaleSliderWidgetChanged(double value);
-  void onTextScaleSliderWidgetChanged(double value);
-  void onOpacitySliderWidgetChanged(double value);
-
-  void onMarkupScaleSliderWidgetValueChanged(double value);
-
   /// Display property button slots
   void onResetToDefaultDisplayPropertiesPushButtonClicked();
   void onSaveToDefaultDisplayPropertiesPushButtonClicked();
@@ -162,8 +149,6 @@ public slots:
 
   /// Toggle the markups node visibility flag
   void onListVisibileInvisiblePushButtonClicked();
-  /// Update the icon and tool tip on the list visibility button
-  void updateListVisibileInvisiblePushButton(int visibleFlag);
 
   /// Toggle the markups node locked flag
   void onListLockedUnlockedPushButtonClicked();

@@ -112,21 +112,13 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
 
   // test the default display node settings
   vtkSmartPointer<vtkMRMLMarkupsDisplayNode> displayNode = vtkSmartPointer<vtkMRMLMarkupsDisplayNode>::New();
-  TEST_SET_GET_INT_RANGE(logic1, DefaultMarkupsDisplayNodeGlyphType, displayNode->GetMinimumGlyphType(), displayNode->GetMaximumGlyphType());
-  TEST_SET_GET_DOUBLE_RANGE(logic1, DefaultMarkupsDisplayNodeGlyphScale, 0.0, 10.0);
-  TEST_SET_GET_DOUBLE_RANGE(logic1, DefaultMarkupsDisplayNodeTextScale, 0.0, 15.0);
-  TEST_SET_GET_DOUBLE_RANGE(logic1, DefaultMarkupsDisplayNodeOpacity, 0.0, 1.0);
-  TEST_SET_GET_VECTOR3_DOUBLE_RANGE(logic1, DefaultMarkupsDisplayNodeColor, 0.0, 1.0);
-  TEST_SET_GET_VECTOR3_DOUBLE_RANGE(logic1, DefaultMarkupsDisplayNodeSelectedColor, 0.0, 1.0);
-  TEST_SET_GET_BOOLEAN(logic1, DefaultMarkupsDisplayNodeSliceProjection);
-  TEST_SET_GET_VECTOR3_DOUBLE_RANGE(logic1, DefaultMarkupsDisplayNodeSliceProjectionColor, 0.0, 1.0);
-  TEST_SET_GET_DOUBLE(logic1, DefaultMarkupsDisplayNodeSliceProjectionOpacity, 0.0);
-  TEST_SET_GET_DOUBLE(logic1, DefaultMarkupsDisplayNodeSliceProjectionOpacity, 1.0);
+  vtkMRMLMarkupsDisplayNode* defaultDisplayNode = logic1->GetDefaultMarkupsDisplayNode();
+  CHECK_NOT_NULL(defaultDisplayNode);
 
   // make a test display node and reset it to defaults
-  int originalGlyphType = logic1->GetDefaultMarkupsDisplayNodeGlyphType();
-  double originalGlyphScale = logic1->GetDefaultMarkupsDisplayNodeGlyphScale();
-  double originalTextScale = logic1->GetDefaultMarkupsDisplayNodeTextScale();
+  int originalGlyphType = defaultDisplayNode->GetGlyphType();
+  double originalGlyphScale = defaultDisplayNode->GetGlyphScale();
+  double originalTextScale = defaultDisplayNode->GetTextScale();
   int glyphType = 3;
   displayNode->SetGlyphType(glyphType);
   double textScale = 3.33;
@@ -137,11 +129,11 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
   // reset the display node to defaults
   logic1->SetDisplayNodeToDefaults(displayNode);
   // check that the logic didn't change
-  CHECK_INT(logic1->GetDefaultMarkupsDisplayNodeGlyphType(), originalGlyphType);
+  CHECK_INT(defaultDisplayNode->GetGlyphType(), originalGlyphType);
   // check that the display node is changed
   CHECK_INT(displayNode->GetGlyphType(), originalGlyphType);
-  CHECK_INT(displayNode->GetGlyphScale(), originalGlyphScale);
-  CHECK_INT(displayNode->GetTextScale(), originalTextScale);
+  CHECK_DOUBLE(displayNode->GetGlyphScale(), originalGlyphScale);
+  CHECK_DOUBLE(displayNode->GetTextScale(), originalTextScale);
 
   // test without a selection node
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();

@@ -104,6 +104,8 @@ public:
 
   // Allows the widget to request interactive mode (faster updates)
   bool GetInteractive() override;
+  // Allows the widget to request a cursor shape
+  int GetMouseCursor() override;
 
   vtkMRMLMarkupsNode* GetMarkupsNode();
   vtkMRMLMarkupsDisplayNode* GetMarkupsDisplayNode();

@@ -92,21 +92,11 @@ public:
 vtkSlicerMarkupsLogic::vtkSlicerMarkupsLogic()
 {
   this->AutoCreateDisplayNodes = true;
-  this->DefaultMarkupsDisplayNode = vtkMRMLMarkupsDisplayNode::New();
-  // link an observation of the modified event on the display node to trigger
-  // a modified event on the logic so any settings panel can get updated
-  // first, create the callback
-  vtkNew<vtkSlicerMarkupsLogicCallback> myCallback;
-  myCallback->SetLogic(this);
-  this->DefaultMarkupsDisplayNode->AddObserver(vtkCommand::ModifiedEvent, myCallback.GetPointer());
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerMarkupsLogic::~vtkSlicerMarkupsLogic()
 {
-  this->DefaultMarkupsDisplayNode->RemoveObserver(vtkCommand::ModifiedEvent);
-  this->DefaultMarkupsDisplayNode->Delete();
-  this->DefaultMarkupsDisplayNode = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -808,164 +798,23 @@ void vtkSlicerMarkupsLogic::ToggleAllMarkupsSelected(vtkMRMLMarkupsNode *node)
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::SetDefaultMarkupsDisplayNodeGlyphType(int glyphType)
+void vtkSlicerMarkupsLogic::CopyBasicDisplayProperties(vtkMRMLMarkupsDisplayNode *sourceDisplayNode,
+  vtkMRMLMarkupsDisplayNode *targetDisplayNode)
 {
-  this->DefaultMarkupsDisplayNode->SetGlyphType(glyphType);
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::SetDefaultMarkupsDisplayNodeGlyphTypeFromString(const char *glyphType)
-{
-  if (glyphType == nullptr)
+  if (!sourceDisplayNode || !targetDisplayNode)
     {
-    vtkErrorMacro("SetDefaultMarkupsDisplayNodeGlyphTypeFromString: null glyph type string!");
+    vtkErrorMacro("vtkSlicerMarkupsLogic::CopyBasicDisplayProperties failed: invalid input nodes");
     return;
     }
-  this->DefaultMarkupsDisplayNode->SetGlyphTypeFromString(glyphType);
-}
-
-//---------------------------------------------------------------------------
-int vtkSlicerMarkupsLogic::GetDefaultMarkupsDisplayNodeGlyphType()
-{
-  return this->DefaultMarkupsDisplayNode->GetGlyphType();
-}
-
-//---------------------------------------------------------------------------
-std::string vtkSlicerMarkupsLogic::GetDefaultMarkupsDisplayNodeGlyphTypeAsString()
-{
-  std::string glyphString;
-  const char *glyphType = this->DefaultMarkupsDisplayNode->GetGlyphTypeAsString();
-  if (glyphType)
-    {
-    glyphString = std::string(glyphType);
-    }
-  return glyphString;
-}
-
-//---------------------------------------------------------------------------
-double vtkSlicerMarkupsLogic::GetDefaultMarkupsDisplayNodeGlyphScale()
-{
-  return this->DefaultMarkupsDisplayNode->GetGlyphScale();
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::SetDefaultMarkupsDisplayNodeGlyphScale(double scale)
-{
-  this->DefaultMarkupsDisplayNode->SetGlyphScale(scale);
-}
-
-//---------------------------------------------------------------------------
-double vtkSlicerMarkupsLogic::GetDefaultMarkupsDisplayNodeTextScale()
-{
-  return this->DefaultMarkupsDisplayNode->GetTextScale();
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::SetDefaultMarkupsDisplayNodeTextScale(double scale)
-{
-  this->DefaultMarkupsDisplayNode->SetTextScale(scale);
-}
-
-//---------------------------------------------------------------------------
-double vtkSlicerMarkupsLogic::GetDefaultMarkupsDisplayNodeOpacity()
-{
-  return this->DefaultMarkupsDisplayNode->GetOpacity();
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::SetDefaultMarkupsDisplayNodeOpacity(double opacity)
-{
-  this->DefaultMarkupsDisplayNode->SetOpacity(opacity);
-}
-
-//---------------------------------------------------------------------------
-double *vtkSlicerMarkupsLogic::GetDefaultMarkupsDisplayNodeColor()
-{
-  return this->DefaultMarkupsDisplayNode->GetColor();
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::SetDefaultMarkupsDisplayNodeColor(double *color)
-{
-  if (!color)
-    {
-    return;
-    }
-  this->DefaultMarkupsDisplayNode->SetColor(color);
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::SetDefaultMarkupsDisplayNodeColor(double r, double g, double b)
-{
-  this->DefaultMarkupsDisplayNode->SetColor(r,g,b);
-}
-
-//---------------------------------------------------------------------------
-double *vtkSlicerMarkupsLogic::GetDefaultMarkupsDisplayNodeSelectedColor()
-{
-  return this->DefaultMarkupsDisplayNode->GetSelectedColor();
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::SetDefaultMarkupsDisplayNodeSelectedColor(double *color)
-{
-  if (!color)
-    {
-    return;
-    }
-  this->DefaultMarkupsDisplayNode->SetSelectedColor(color);
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::SetDefaultMarkupsDisplayNodeSelectedColor(double r, double g, double b)
-{
-  this->DefaultMarkupsDisplayNode->SetSelectedColor(r,g,b);
-}
-
-//---------------------------------------------------------------------------
-bool vtkSlicerMarkupsLogic::GetDefaultMarkupsDisplayNodeSliceProjection()
-{
-  return this->DefaultMarkupsDisplayNode->GetSliceProjection();
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::SetDefaultMarkupsDisplayNodeSliceProjection(bool projection)
-{
-  this->DefaultMarkupsDisplayNode->SetSliceProjection(projection);
-}
-
-//---------------------------------------------------------------------------
-double *vtkSlicerMarkupsLogic::GetDefaultMarkupsDisplayNodeSliceProjectionColor()
-{
-  return this->DefaultMarkupsDisplayNode->GetSliceProjectionColor();
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::SetDefaultMarkupsDisplayNodeSliceProjectionColor(double *color)
-{
-  if (!color)
-    {
-    return;
-    }
-  this->DefaultMarkupsDisplayNode->SetSliceProjectionColor(color);
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::SetDefaultMarkupsDisplayNodeSliceProjectionColor(double r, double g, double b)
-{
-  this->DefaultMarkupsDisplayNode->SetSliceProjectionColor(r,g,b);
-}
-
-//---------------------------------------------------------------------------
-double vtkSlicerMarkupsLogic::GetDefaultMarkupsDisplayNodeSliceProjectionOpacity()
-{
-  return this->DefaultMarkupsDisplayNode->GetSliceProjectionOpacity();
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerMarkupsLogic::SetDefaultMarkupsDisplayNodeSliceProjectionOpacity(double opacity)
-{
-  this->DefaultMarkupsDisplayNode->SetSliceProjectionOpacity(opacity);
+  targetDisplayNode->SetSelectedColor(sourceDisplayNode->GetSelectedColor());
+  targetDisplayNode->SetColor(sourceDisplayNode->GetColor());
+  targetDisplayNode->SetOpacity(sourceDisplayNode->GetOpacity());
+  targetDisplayNode->SetGlyphType(sourceDisplayNode->GetGlyphType());
+  targetDisplayNode->SetGlyphScale(sourceDisplayNode->GetGlyphScale());
+  targetDisplayNode->SetTextScale(sourceDisplayNode->GetTextScale());
+  targetDisplayNode->SetSliceProjection(sourceDisplayNode->GetSliceProjection());
+  targetDisplayNode->SetSliceProjectionColor(sourceDisplayNode->GetSliceProjectionColor());
+  targetDisplayNode->SetSliceProjectionOpacity(sourceDisplayNode->GetSliceProjectionOpacity());
 }
 
 //---------------------------------------------------------------------------
@@ -975,16 +824,35 @@ void vtkSlicerMarkupsLogic::SetDisplayNodeToDefaults(vtkMRMLMarkupsDisplayNode *
     {
     return;
     }
+  if (!this->GetMRMLScene())
+    {
+    return;
+    }
+  vtkMRMLMarkupsDisplayNode* defaultNode = this->GetDefaultMarkupsDisplayNode();
+  if (!defaultNode)
+    {
+    return;
+    }
+  this->CopyBasicDisplayProperties(defaultNode, displayNode);
+}
 
-  displayNode->SetSelectedColor(this->GetDefaultMarkupsDisplayNodeSelectedColor());
-  displayNode->SetColor(this->GetDefaultMarkupsDisplayNodeColor());
-  displayNode->SetOpacity(this->GetDefaultMarkupsDisplayNodeOpacity());
-  displayNode->SetGlyphType(this->GetDefaultMarkupsDisplayNodeGlyphType());
-  displayNode->SetGlyphScale(this->GetDefaultMarkupsDisplayNodeGlyphScale());
-  displayNode->SetTextScale(this->GetDefaultMarkupsDisplayNodeTextScale());
-  displayNode->SetSliceProjection(this->GetDefaultMarkupsDisplayNodeSliceProjection());
-  displayNode->SetSliceProjectionColor(this->GetDefaultMarkupsDisplayNodeSliceProjectionColor());
-  displayNode->SetSliceProjectionOpacity(this->GetDefaultMarkupsDisplayNodeSliceProjectionOpacity());
+//---------------------------------------------------------------------------
+void vtkSlicerMarkupsLogic::SetDisplayDefaultsFromNode(vtkMRMLMarkupsDisplayNode *displayNode)
+{
+  if (!displayNode)
+    {
+    return;
+    }
+  if (!this->GetMRMLScene())
+    {
+    return;
+    }
+  vtkMRMLMarkupsDisplayNode* defaultNode = this->GetDefaultMarkupsDisplayNode();
+  if (!defaultNode)
+    {
+    return;
+    }
+  this->CopyBasicDisplayProperties(displayNode, defaultNode);
 }
 
 //---------------------------------------------------------------------------
@@ -1487,4 +1355,28 @@ int vtkSlicerMarkupsLogic::GetClosestControlPointIndexToPositionWorld(vtkMRMLMar
     }
   }
   return indexOfClosestMarkup;
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLMarkupsDisplayNode* vtkSlicerMarkupsLogic::GetDefaultMarkupsDisplayNode()
+{
+  if (!this->GetMRMLScene())
+    {
+    return nullptr;
+    }
+  vtkMRMLMarkupsDisplayNode* defaultNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(
+    this->GetMRMLScene()->GetDefaultNodeByClass("vtkMRMLMarkupsDisplayNode"));
+  if (defaultNode)
+    {
+    return defaultNode;
+    }
+  vtkSmartPointer<vtkMRMLMarkupsDisplayNode> newDefaultNode =
+    vtkSmartPointer<vtkMRMLMarkupsDisplayNode>::Take(vtkMRMLMarkupsDisplayNode::SafeDownCast(
+      this->GetMRMLScene()->CreateNodeByClass("vtkMRMLMarkupsDisplayNode")));
+  if (!newDefaultNode)
+    {
+    return nullptr;
+    }
+  this->GetMRMLScene()->AddDefaultNode(newDefaultNode);
+  return newDefaultNode;
 }

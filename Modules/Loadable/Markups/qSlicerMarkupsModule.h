@@ -24,6 +24,7 @@
 #include "qSlicerMarkupsModuleExport.h"
 
 class qSlicerMarkupsModulePrivate;
+class vtkMRMLMarkupsDisplayNode;
 
 /// \ingroup Slicer_QtModules_Markups
 class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsModule :
@@ -58,6 +59,11 @@ public:
 
   /// Specify editable node types
   QStringList associatedNodeTypes()const override;
+
+  void setMRMLScene(vtkMRMLScene* scene) override;
+
+  static void readDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDisplayNode* markupsDisplayNode);
+  static void writeDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDisplayNode* markupsDisplayNode);
 
 protected:
 

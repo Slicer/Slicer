@@ -116,43 +116,11 @@ public:
   void SetAllMarkupsSelected(vtkMRMLMarkupsNode *node, bool flag);
   void ToggleAllMarkupsSelected(vtkMRMLMarkupsNode *node);
 
-  /// set/get the default markups display node settings
-  int GetDefaultMarkupsDisplayNodeGlyphType();
-  void SetDefaultMarkupsDisplayNodeGlyphType(int glyphType);
-  void SetDefaultMarkupsDisplayNodeGlyphTypeFromString(const char *glyphType);
-  std::string GetDefaultMarkupsDisplayNodeGlyphTypeAsString();
-
-  double GetDefaultMarkupsDisplayNodeGlyphScale();
-  void SetDefaultMarkupsDisplayNodeGlyphScale(double scale);
-
-  double GetDefaultMarkupsDisplayNodeTextScale();
-  void SetDefaultMarkupsDisplayNodeTextScale(double scale);
-
-  double GetDefaultMarkupsDisplayNodeOpacity();
-  void SetDefaultMarkupsDisplayNodeOpacity(double opacity);
-
-  double *GetDefaultMarkupsDisplayNodeColor();
-  void SetDefaultMarkupsDisplayNodeColor(double *color);
-  void SetDefaultMarkupsDisplayNodeColor(double r, double g, double b);
-
-  double *GetDefaultMarkupsDisplayNodeSelectedColor();
-  void SetDefaultMarkupsDisplayNodeSelectedColor(double *color);
-  void SetDefaultMarkupsDisplayNodeSelectedColor(double r, double g, double b);
-
-  bool GetDefaultMarkupsDisplayNodeSliceProjection();
-  void SetDefaultMarkupsDisplayNodeSliceProjection(bool projection);
-  void DefaultMarkupsDisplayNodeSliceProjectionOn() { this->SetDefaultMarkupsDisplayNodeSliceProjection(true); };
-  void DefaultMarkupsDisplayNodeSliceProjectionOff() { this->SetDefaultMarkupsDisplayNodeSliceProjection(false); };
-
-  double *GetDefaultMarkupsDisplayNodeSliceProjectionColor();
-  void SetDefaultMarkupsDisplayNodeSliceProjectionColor(double *color);
-  void SetDefaultMarkupsDisplayNodeSliceProjectionColor(double r, double g, double b);
-
-  double GetDefaultMarkupsDisplayNodeSliceProjectionOpacity();
-  void SetDefaultMarkupsDisplayNodeSliceProjectionOpacity(double opacity);
-
   /// utility method to set up a display node from the defaults
   void SetDisplayNodeToDefaults(vtkMRMLMarkupsDisplayNode *displayNode);
+
+  /// utility method to set defaults from display node
+  void SetDisplayDefaultsFromNode(vtkMRMLMarkupsDisplayNode *displayNode);
 
   /// utility method to copy a control point from one list to another, adding it
   /// to the end of the new list
@@ -220,6 +188,12 @@ public:
   vtkGetMacro(AutoCreateDisplayNodes, bool);
   vtkBooleanMacro(AutoCreateDisplayNodes, bool);
 
+  vtkMRMLMarkupsDisplayNode* GetDefaultMarkupsDisplayNode();
+
+  /// Copies basic display properties between markups display nodes. This is used
+  /// for updating a display node to defaults.
+  void CopyBasicDisplayProperties(vtkMRMLMarkupsDisplayNode *sourceDisplayNode, vtkMRMLMarkupsDisplayNode *targetDisplayNode);
+
 protected:
   vtkSlicerMarkupsLogic();
   ~vtkSlicerMarkupsLogic() override;
@@ -238,10 +212,6 @@ private:
 
   vtkSlicerMarkupsLogic(const vtkSlicerMarkupsLogic&) = delete;
   void operator=(const vtkSlicerMarkupsLogic&) = delete;
-
-  /// keep a markups display node with default values that can be updated from
-  /// the application settings
-  vtkMRMLMarkupsDisplayNode *DefaultMarkupsDisplayNode;
 
   bool AutoCreateDisplayNodes;
 };

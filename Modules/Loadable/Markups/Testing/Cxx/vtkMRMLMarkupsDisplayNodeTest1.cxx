@@ -28,39 +28,8 @@ int vtkMRMLMarkupsDisplayNodeTest1(int , char * [] )
 
   TEST_SET_GET_INT_RANGE(node1, GlyphType, -1, 10);
 
-  // min glyph type
-  if (node1->GetMinimumGlyphType() != vtkMRMLMarkupsDisplayNode::GlyphMin)
-    {
-    std::cerr << "Error: GetMinimumGlyphType " << node1->GetMinimumGlyphType()
-              << " != vtkMRMLMarkupsDisplayNode::GlyphMin "
-              << vtkMRMLMarkupsDisplayNode::GlyphMin << std::endl;
-    return EXIT_FAILURE;
-    }
-  else
-    {
-    std::cout << "GlyphMin = " << node1->GetMinimumGlyphType()
-              << ", as string = "
-              << node1->GetGlyphTypeAsString(node1->GetMinimumGlyphType())
-              << std::endl;
-    }
-
-  // max glyph type
-  if (node1->GetMaximumGlyphType() != vtkMRMLMarkupsDisplayNode::GlyphMax)
-    {
-    std::cerr << "Error: GetMaximumGlyphType " << node1->GetMaximumGlyphType()
-              << " != vtkMRMLMarkupsDisplayNode::GlyphMax "
-              << vtkMRMLMarkupsDisplayNode::GlyphMax << std::endl;
-    return EXIT_FAILURE;
-    }
-  else
-    {
-    std::cout << "GlyphMax = " << node1->GetMaximumGlyphType()
-              << ", as string = "
-              << node1->GetGlyphTypeAsString(node1->GetMaximumGlyphType())
-              << std::endl;
-    }
-  for (int i = vtkMRMLMarkupsDisplayNode::GlyphMin;
-       i < vtkMRMLMarkupsDisplayNode::GlyphMax;
+  for (int i = vtkMRMLMarkupsDisplayNode::GetMinimumGlyphType();
+       i <= vtkMRMLMarkupsDisplayNode::GetMaximumGlyphType();
        i++)
     {
     node1->SetGlyphType(i);
@@ -72,10 +41,6 @@ int vtkMRMLMarkupsDisplayNodeTest1(int , char * [] )
 
   // print out the enums
   std::cout << "Enum GlyphShapes:" << std::endl;
-  std::cout << "    GlyphMin = " << vtkMRMLMarkupsDisplayNode::GlyphMin
-            << ", as string = "
-            << node1->GetGlyphTypeAsString(vtkMRMLMarkupsDisplayNode::GlyphMin)
-            << std::endl;
   std::cout << "    Vertex2D = " << vtkMRMLMarkupsDisplayNode::Vertex2D
             << ", as string = "
             << node1->GetGlyphTypeAsString(vtkMRMLMarkupsDisplayNode::Vertex2D)
@@ -132,10 +97,6 @@ int vtkMRMLMarkupsDisplayNodeTest1(int , char * [] )
             << ", as string = "
             << node1->GetGlyphTypeAsString(vtkMRMLMarkupsDisplayNode::Diamond3D)
             << std::endl;
-  std::cout << "    GlyphMax = " << vtkMRMLMarkupsDisplayNode::GlyphMax
-            << ", as string = "
-            << node1->GetGlyphTypeAsString(vtkMRMLMarkupsDisplayNode::GlyphMax)
-            << std::endl;
 
   // semantic assumptions
   if (node1->GetMinimumGlyphType() != vtkMRMLMarkupsDisplayNode::Vertex2D)
@@ -154,10 +115,10 @@ int vtkMRMLMarkupsDisplayNodeTest1(int , char * [] )
     return EXIT_FAILURE;
     }
 
-  if (node1->GetMaximumGlyphType() != vtkMRMLMarkupsDisplayNode::Sphere3D)
+  if (node1->GetMaximumGlyphType() != vtkMRMLMarkupsDisplayNode::Diamond3D)
     {
     std::cerr << "Error: maximum glyph type " << node1->GetMaximumGlyphType()
-              << " != Sphere3D: " << vtkMRMLMarkupsDisplayNode::Sphere3D
+              << " != Diamond3D: " << vtkMRMLMarkupsDisplayNode::Diamond3D
               << std::endl;
     return EXIT_FAILURE;
     }

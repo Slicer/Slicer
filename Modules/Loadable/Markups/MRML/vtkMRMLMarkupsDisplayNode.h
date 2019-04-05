@@ -117,8 +117,8 @@ public:
   /// Vertex2D is supposed to start at 1
   enum GlyphShapes
     {
-    GlyphMin = 1,
-    Vertex2D = GlyphMin,
+    GlyphTypeInvalid = 0,
+    Vertex2D,
     Dash2D,
     Cross2D,
     ThickCross2D,
@@ -132,11 +132,11 @@ public:
     StarBurst2D,
     Sphere3D,
     Diamond3D,
-    GlyphMax = Sphere3D,
+    GlyphType_Last // insert new types above this line
     };
   /// Return the min/max glyph types, for iterating over them in tcl
-  int GetMinimumGlyphType() { return vtkMRMLMarkupsDisplayNode::GlyphMin; };
-  int GetMaximumGlyphType() { return vtkMRMLMarkupsDisplayNode::GlyphMax; };
+  static int GetMinimumGlyphType() { return 1; };
+  static int GetMaximumGlyphType() { return vtkMRMLMarkupsDisplayNode::GlyphType_Last-1; };
 
   /// The glyph type used to display this fiducial
   void SetGlyphType(int type);
@@ -147,8 +147,10 @@ public:
 
   /// Return a string representing the glyph type, set it from a string
   const char* GetGlyphTypeAsString();
-  const char* GetGlyphTypeAsString(int g);
   void SetGlyphTypeFromString(const char *glyphString);
+
+  static const char* GetGlyphTypeAsString(int g);
+  static int GetGlyphTypeFromString(const char*);
 
   /// Get/Set for Symbol scale
   void SetGlyphScale(double scale);
@@ -240,7 +242,6 @@ protected:
   double TextScale;
   int GlyphType;
   double GlyphScale;
-  static const char* GlyphTypesNames[GlyphMax+2];
 
   bool SliceProjection;
   bool SliceProjectionUseFiducialColor;

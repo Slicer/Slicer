@@ -31,6 +31,7 @@
 // VTK includes
 #include "vtkCommand.h"
 #include "vtkPointPlacer.h"
+#include "vtkRenderWindow.h"
 #include "vtkTransform.h"
 
 //----------------------------------------------------------------------
@@ -1090,6 +1091,20 @@ bool vtkSlicerMarkupsWidget::GetInteractive()
       return true;
     default:
       return false;
+    }
+}
+
+//-------------------------------------------------------------------------
+int vtkSlicerMarkupsWidget::GetMouseCursor()
+{
+  if (this->WidgetState == WidgetStateIdle ||
+    this->WidgetState == WidgetStateDefine) // default cursor shape is the "place" cursor
+    {
+    return VTK_CURSOR_DEFAULT;
+    }
+  else
+    {
+    return VTK_CURSOR_HAND;
     }
 }
 

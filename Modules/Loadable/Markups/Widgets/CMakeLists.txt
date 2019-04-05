@@ -10,6 +10,8 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
+  qMRML${MODULE_NAME}DisplayNodeWidget.cxx
+  qMRML${MODULE_NAME}DisplayNodeWidget.h
   qMRML${MODULE_NAME}FiducialProjectionPropertyWidget.cxx
   qMRML${MODULE_NAME}FiducialProjectionPropertyWidget.h
   qSlicerMarkupsPlaceWidget.cxx
@@ -19,12 +21,14 @@ set(${KIT}_SRCS
   )
 
 set(${KIT}_MOC_SRCS
+  qMRML${MODULE_NAME}DisplayNodeWidget.h
   qMRML${MODULE_NAME}FiducialProjectionPropertyWidget.h
   qSlicerMarkupsPlaceWidget.h
   qSlicerSimpleMarkupsWidget.h
   )
 
 set(${KIT}_UI_SRCS
+  Resources/UI/qMRML${MODULE_NAME}DisplayNodeWidget.ui
   Resources/UI/qMRML${MODULE_NAME}FiducialProjectionPropertyWidget.ui
   Resources/UI/qSlicerMarkupsPlaceWidget.ui
   Resources/UI/qSlicerSimpleMarkupsWidget.ui

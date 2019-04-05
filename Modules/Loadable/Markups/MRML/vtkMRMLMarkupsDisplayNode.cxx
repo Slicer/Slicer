@@ -30,24 +30,6 @@
 // STL includes
 #include <sstream>
 
-const char *vtkMRMLMarkupsDisplayNode::GlyphTypesNames[GlyphMax+2] =
-{
-  "GlyphMin",
-  "Vertex2D",
-  "Dash2D",
-  "Cross2D",
-  "ThickCross2D",
-  "Triangle2D",
-  "Square2D",
-  "Circle2D",
-  "Diamond2D",
-  "Arrow2D",
-  "ThickArrow2D",
-  "HookedArrow2D",
-  "StarBurst2D",
-  "Sphere3D"
-};
-
 const char* vtkMRMLMarkupsDisplayNode::LineColorNodeReferenceRole = "lineColor";
 const char* vtkMRMLMarkupsDisplayNode::LineColorNodeReferenceMRMLAttributeName = "lineColorNodeRef";
 
@@ -236,36 +218,59 @@ void vtkMRMLMarkupsDisplayNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 const char* vtkMRMLMarkupsDisplayNode::GetGlyphTypeAsString()
 {
-  return this->GetGlyphTypeAsString(this->GlyphType);
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLMarkupsDisplayNode::GetGlyphTypeAsString(int glyphType)
-{
-  if (glyphType < GlyphMin || (glyphType > GlyphMax))
-    {
-    return "UNKNOWN";
-    }
-  return this->GlyphTypesNames[glyphType];
+  return vtkMRMLMarkupsDisplayNode::GetGlyphTypeAsString(this->GlyphType);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsDisplayNode::SetGlyphTypeFromString(const char *glyphString)
 {
-  if (!glyphString)
+  this->SetGlyphType(vtkMRMLMarkupsDisplayNode::GetGlyphTypeFromString(glyphString));
+}
+
+//-----------------------------------------------------------
+int vtkMRMLMarkupsDisplayNode::GetGlyphTypeFromString(const char* name)
+{
+  if (name == nullptr)
     {
-    vtkErrorMacro("SetGlyphTypeFromString: Null glyph type string!");
-    return;
+    // invalid name
+    return 0;
     }
-  for (int ID = GlyphMin; ID <= GlyphMax; ID++)
+  for (int ii = 0; ii < GlyphType_Last; ii++)
     {
-      if (!strcmp(glyphString,GlyphTypesNames[ID]))
+    if (strcmp(name, GetGlyphTypeAsString(ii)) == 0)
       {
-      this->SetGlyphType(ID);
-      return;
+      // found a matching name
+      return ii;
       }
     }
-  vtkErrorMacro("Invalid glyph type string: " << glyphString);
+  // unknown name
+  return GlyphTypeInvalid;
+}
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLMarkupsDisplayNode::GetGlyphTypeAsString(int id)
+{
+  switch (id)
+  {
+  case Vertex2D: return "Vertex2D";
+  case Dash2D: return "Dash2D";
+  case Cross2D: return "Cross2D";
+  case ThickCross2D: return "ThickCross2D";
+  case Triangle2D: return "Triangle2D";
+  case Square2D: return "Square2D";
+  case Circle2D: return "Circle2D";
+  case Diamond2D: return "Diamond2D";
+  case Arrow2D: return "Arrow2D";
+  case ThickArrow2D: return "ThickArrow2D";
+  case HookedArrow2D: return "HookedArrow2D";
+  case StarBurst2D: return "StarBurst2D";
+  case Sphere3D: return "Sphere3D";
+  case Diamond3D: return "Diamond3D";
+  case GlyphTypeInvalid:
+  default:
+    // invalid id
+    return "Invalid";
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -467,7 +472,7 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
     // Update existing control point
     markupsNode->SetNthControlPointPositionOrientationWorldFromArray(controlPointIndex,
       pointWorld, orientationMatrixWorld, associatedNodeID, positionStatus);
-  }
+    }
 
   if (activeComponentChanged)
     {
