@@ -40,6 +40,7 @@
 #include <vtkMRMLDisplayableManagerGroup.h>
 #include <vtkMRMLLightBoxRendererManagerProxy.h>
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
+#include <vtkMRMLScalarBarDisplayableManager.h>
 #include <vtkSliceViewInteractorStyle.h>
 
 // MRML includes
@@ -181,6 +182,7 @@ void qMRMLSliceViewPrivate::initDisplayableManagers()
   displayableManagers << "vtkMRMLCrosshairDisplayableManager";
   displayableManagers << "vtkMRMLOrientationMarkerDisplayableManager";
   displayableManagers << "vtkMRMLRulerDisplayableManager";
+  displayableManagers << "vtkMRMLScalarBarDisplayableManager";
   foreach(const QString& displayableManager, displayableManagers)
     {
     if (!factory->IsDisplayableManagerRegistered(displayableManager.toLatin1()))

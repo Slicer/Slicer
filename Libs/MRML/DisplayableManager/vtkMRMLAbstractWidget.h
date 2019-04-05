@@ -161,7 +161,7 @@ public:
   vtkMRMLInteractionNode* GetInteractionNode();
 
   // Allows the widget to request a cursor shape
-  virtual int GetCursor();
+  virtual int GetMouseCursor();
 
   // Allows the widget to request grabbing of all events (even when the mouse pointer moves out of view)
   virtual bool GetGrabFocus();

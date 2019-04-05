@@ -68,6 +68,14 @@ public:
     CompositeModifiedEvent = 18000
     };
 
+  enum
+    {
+    LayerNone = -1,
+    LayerBackground = 0,
+    LayerForeground = 1,
+    LayerLabel = 2
+    };
+
   /// Convenient methods allowing to initialize SliceLogic given \a newSliceNode
   /// \note This method should be used when the Logic is "shared" between two widgets
   void Initialize(vtkMRMLSliceNode* newSliceNode);

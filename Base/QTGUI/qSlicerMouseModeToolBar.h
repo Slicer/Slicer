@@ -53,9 +53,6 @@ public:
   qSlicerMouseModeToolBar(QWidget* parent = nullptr);
   ~qSlicerMouseModeToolBar() override;
 
-  /// For testing, return the active action text
-  QString activeActionText();
-
   QString defaultPlaceClassName()const;
   void setDefaultPlaceClassName(const QString& className);
 
@@ -85,6 +82,8 @@ public slots:
   /// Set interaction node used to update the toolbar.
   /// \sa interactionNode()
   void setInteractionNode(vtkMRMLInteractionNode* interactionNode);
+
+  void interactionModeActionTriggered(bool);
 
 protected:
   QScopedPointer<qSlicerMouseModeToolBarPrivate> d_ptr;

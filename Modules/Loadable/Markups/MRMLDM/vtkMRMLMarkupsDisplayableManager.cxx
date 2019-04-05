@@ -902,6 +902,16 @@ bool vtkMRMLMarkupsDisplayableManager::GetInteractive()
 }
 
 //---------------------------------------------------------------------------
+int vtkMRMLMarkupsDisplayableManager::GetMouseCursor()
+{
+  if (!this->LastActiveWidget)
+    {
+    return VTK_CURSOR_DEFAULT;
+    }
+  return this->LastActiveWidget->GetMouseCursor();
+}
+
+//---------------------------------------------------------------------------
 vtkSlicerMarkupsWidget * vtkMRMLMarkupsDisplayableManager::CreateWidget(vtkMRMLMarkupsDisplayNode* markupsDisplayNode)
 {
   vtkMRMLMarkupsNode* markupsNode = markupsDisplayNode->GetMarkupsNode();

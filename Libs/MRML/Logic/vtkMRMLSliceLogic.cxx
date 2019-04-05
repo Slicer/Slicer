@@ -1411,17 +1411,17 @@ vtkMRMLVolumeNode *vtkMRMLSliceLogic::GetLayerVolumeNode(int layer)
   char *id = nullptr;
   switch (layer)
     {
-    case 0:
+    case LayerBackground:
       {
       id = compositeNode->GetBackgroundVolumeID();
       break;
       }
-    case 1:
+    case LayerForeground:
       {
       id = compositeNode->GetForegroundVolumeID();
       break;
       }
-    case 2:
+    case LayerLabel:
       {
       id = compositeNode->GetLabelVolumeID();
       break;

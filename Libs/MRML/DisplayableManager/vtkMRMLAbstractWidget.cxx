@@ -271,7 +271,7 @@ void vtkMRMLAbstractWidget::Leave()
 }
 
 //-------------------------------------------------------------------------
-int vtkMRMLAbstractWidget::GetCursor()
+int vtkMRMLAbstractWidget::GetMouseCursor()
 {
   if (this->WidgetState == WidgetStateIdle)
     {

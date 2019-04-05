@@ -74,36 +74,41 @@ public:
 
   void init();
   void setMRMLScene(vtkMRMLScene* newScene);
-  void updateWidgetFromMRML();
-  /// given an place node class name, find the action associated with it and set it
-  /// checked, update the cursor, update the icon on the button
-  void updateWidgetToPlace(const char *placeNodeClassName);
+
+  /// update mouse cursor shape according to current interaction mode and selection
+  void updateCursor();
+
+  void updatePlaceWidgetMenuActionList();
+
+  QCursor cursorFromIcon(QIcon& icon);
 
 public slots:
 
   void onMRMLSceneStartBatchProcess();
   void onMRMLSceneEndBatchProcess();
-
-  void updateWidgetFromSelectionNode();
-  void updateWidgetFromInteractionNode();
+  void updateWidgetFromMRML();
 
   void onActivePlaceNodeClassNameChangedEvent();
   void onPlaceNodeClassNameListModifiedEvent();
-public:
 
+public:
   vtkSmartPointer<vtkMRMLScene>            MRMLScene;
   vtkSmartPointer<vtkMRMLApplicationLogic> MRMLAppLogic;
   vtkWeakPointer<vtkMRMLInteractionNode>   InteractionNode;
 
-  /// PlaceMode button and menu
-  QToolButton *CreateAndPlaceToolButton;
-  QMenu*        CreateAndPlaceMenu;
+  QAction* AdjustViewAction;
+  QAction* AdjustWindowLevelAction;
+  QAction* PlaceWidgetAction;
+  QMenu* PlaceWidgetMenu;
 
   /// Place Persistence
   QAction *PersistenceAction;
 
+  /// Group interaction modes together so that they're exclusive
+  QActionGroup* InteractionModesActionGroup;
+
   /// Group the place actions together so that they're exclusive
-  QActionGroup* ActionGroup;
+  QActionGroup* PlaceModesActionGroup;
 
   QString DefaultPlaceClassName;
 };

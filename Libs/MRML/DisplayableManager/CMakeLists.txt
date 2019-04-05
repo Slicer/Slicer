@@ -86,6 +86,7 @@ set(DisplayableManager_SRCS
   # DisplayableManager common between ThreeDView and SliceView
   vtkMRMLOrientationMarkerDisplayableManager.cxx
   vtkMRMLRulerDisplayableManager.cxx
+  vtkMRMLScalarBarDisplayableManager.cxx
   )
 
 set(KIT_SRCS
@@ -110,6 +111,8 @@ set(KIT_SRCS
   vtkMRMLAbstractWidgetRepresentation.cxx
   vtkSliceIntersectionWidget.cxx
   vtkSliceIntersectionRepresentation2D.cxx
+  vtkMRMLRubberBandWidgetRepresentation.cxx
+  vtkMRMLWindowLevelWidget.cxx
 
   # Proxy classes
   vtkMRMLLightBoxRendererManagerProxy.cxx

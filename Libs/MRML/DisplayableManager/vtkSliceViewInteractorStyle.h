@@ -25,6 +25,7 @@
 
 class vtkMRMLAbstractDisplayableManager;
 class vtkMRMLCrosshairDisplayableManager;
+class vtkMRMLScalarBarDisplayableManager;
 class vtkMRMLSegmentationDisplayNode;
 class vtkMRMLSliceLogic;
 class vtkMRMLDisplayableManagerGroup;
@@ -119,9 +120,13 @@ public:
 
   vtkMRMLCrosshairDisplayableManager* GetCrosshairDisplayableManager();
 
+  vtkMRMLScalarBarDisplayableManager* GetScalarBarDisplayableManager();
+
 protected:
   vtkSliceViewInteractorStyle();
   ~vtkSliceViewInteractorStyle() override;
+
+  void SetMouseCursor(int cursor);
 
   vtkMRMLSliceLogic *SliceLogic;
 

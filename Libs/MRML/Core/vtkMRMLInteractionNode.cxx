@@ -104,32 +104,18 @@ void vtkMRMLInteractionNode::SetLastInteractionMode ( int mode )
 //----------------------------------------------------------------------------
 void vtkMRMLInteractionNode::SetCurrentInteractionMode ( int mode )
 {
-  if ( this->CurrentInteractionMode == mode )
+  if (this->CurrentInteractionMode == mode)
     {
     return;
     }
-  switch (mode)
-    {
-    case vtkMRMLInteractionNode::Place:
-      this->CurrentInteractionMode = mode;
-      this->InvokeEvent(this->InteractionModeChangedEvent, nullptr);
-      break;
-    case vtkMRMLInteractionNode::ViewTransform:
-      this->CurrentInteractionMode = mode;
-      this->InvokeEvent(this->InteractionModeChangedEvent, nullptr);
-      break;
-    case vtkMRMLInteractionNode::Select:
-      this->CurrentInteractionMode = mode;
-      this->InvokeEvent(this->InteractionModeChangedEvent, nullptr);
-      break;
-//    case vtkMRMLInteractionNode::LassoRegion:
-//      this->CurrentInteractionMode = mode;
-//      this->InvokeEvent(this->InteractionModeChangedEvent, nullptr);
-//      break;
-    default:
-      break;
-    }
+  bool wasPlacing = (mode == vtkMRMLInteractionNode::Place);
+  this->CurrentInteractionMode = mode;
   this->Modified();
+  this->InvokeCustomModifiedEvent(vtkMRMLInteractionNode::InteractionModeChangedEvent);
+  if (wasPlacing)
+    {
+    this->InvokeCustomModifiedEvent(vtkMRMLInteractionNode::EndPlacementEvent);
+    }
 }
 
 //----------------------------------------------------------------------------

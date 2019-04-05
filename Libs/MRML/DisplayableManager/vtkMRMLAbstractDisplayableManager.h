@@ -109,6 +109,11 @@ public:
   /// Displayable manager can indicate that the window is in interactive mode (faster updates).
   virtual bool GetInteractive();
 
+  /// Displayable manager returns ID of the mouse cursor shape that should be displayed
+  virtual int GetMouseCursor();
+
+  void SetMouseCursor(int cursor);
+
 protected:
 
   vtkMRMLAbstractDisplayableManager();

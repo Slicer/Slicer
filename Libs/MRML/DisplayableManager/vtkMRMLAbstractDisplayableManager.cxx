@@ -1018,3 +1018,18 @@ bool vtkMRMLAbstractDisplayableManager::GetInteractive()
 {
   return false;
 }
+
+//---------------------------------------------------------------------------
+int vtkMRMLAbstractDisplayableManager::GetMouseCursor()
+{
+  return VTK_CURSOR_DEFAULT;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAbstractDisplayableManager::SetMouseCursor(int cursor)
+{
+  if (this->GetRenderer() && this->GetRenderer()->GetRenderWindow())
+  {
+    this->GetRenderer()->GetRenderWindow()->SetCurrentCursor(cursor);
+  }
+}

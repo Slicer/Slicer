@@ -65,6 +65,7 @@ public:
   void SetHasFocus(bool hasFocus) override;
   bool GetGrabFocus() override;
   bool GetInteractive() override;
+  int GetMouseCursor() override;
 
   // Updates markup point preview position.
   // Returns true if the event is processed.

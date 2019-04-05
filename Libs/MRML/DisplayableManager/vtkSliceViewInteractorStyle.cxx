@@ -22,6 +22,7 @@
 #include "vtkMRMLDisplayableManagerGroup.h"
 #include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLInteractionNode.h"
+#include "vtkMRMLScalarBarDisplayableManager.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSliceLayerLogic.h"
 #include "vtkMRMLSliceLogic.h"
@@ -286,6 +287,7 @@ bool vtkSliceViewInteractorStyle::ForwardInteractionEventToDisplayableManagers(u
 {
   if (!this->DisplayableManagers)
     {
+    //this->SetMouseCursor(VTK_CURSOR_DEFAULT);
     return false;
     }
   double canProcessEvent = false;
@@ -339,6 +341,8 @@ bool vtkSliceViewInteractorStyle::ForwardInteractionEventToDisplayableManagers(u
   if (!canProcessEvent)
     {
     // none of the displayable managers can process the event, just ignore it
+    //this->SetMouseCursor(VTK_CURSOR_DEFAULT);
+    this->DisplayableManagers->GetNthDisplayableManager(0)->SetMouseCursor(VTK_CURSOR_DEFAULT);
     return false;
     }
 
@@ -360,46 +364,80 @@ bool vtkSliceViewInteractorStyle::ForwardInteractionEventToDisplayableManagers(u
   // Process event with new displayable manager
   if (!this->FocusedDisplayableManager)
     {
+    if (oldFocusedDisplayableManager)
+      {
+      oldFocusedDisplayableManager->SetMouseCursor(VTK_CURSOR_DEFAULT);
+      }
     return false;
     }
 
-  return this->FocusedDisplayableManager->ProcessInteractionEvent(ed);
+  bool processed = this->FocusedDisplayableManager->ProcessInteractionEvent(ed);
+  int cursor = VTK_CURSOR_DEFAULT;
+  if (processed)
+    {
+    cursor = this->FocusedDisplayableManager->GetMouseCursor();
+    }
+  this->FocusedDisplayableManager->SetMouseCursor(cursor);
+  return processed;
 }
 
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::SetActionEnabled(int actionsMask, bool enable /*=true*/)
 {
+  this->EnableCursorUpdate = ((actionsMask & SetCursorPosition) != 0);
+
   vtkMRMLCrosshairDisplayableManager* crosshairDisplayableManager = this->GetCrosshairDisplayableManager();
-  if (!crosshairDisplayableManager)
+  if (crosshairDisplayableManager)
     {
-    vtkErrorMacro("vtkSliceViewInteractorStyle::SetActionEnabled failed: crosshair displayable manager not found");
-    return;
+    int actionsEnabled = crosshairDisplayableManager->GetActionsEnabled();
+    if (enable)
+      {
+      actionsEnabled |= actionsMask;
+      }
+    else
+      {
+      actionsEnabled  &= (~actionsMask);
+      }
+    crosshairDisplayableManager->SetActionsEnabled(actionsEnabled);
     }
 
-  int actionsEnabled = crosshairDisplayableManager->GetActionsEnabled();
-  if (enable)
+  vtkMRMLScalarBarDisplayableManager* scalarBarDisplayableManager = this->GetScalarBarDisplayableManager();
+  if (scalarBarDisplayableManager)
     {
-    actionsEnabled |= actionsMask;
+    scalarBarDisplayableManager->SetAdjustBackgroundWindowLevelEnabled((actionsMask & AdjustWindowLevelBackground) != 0);
+    scalarBarDisplayableManager->SetAdjustForegroundWindowLevelEnabled((actionsMask & AdjustWindowLevelForeground) != 0);
     }
-  else
-    {
-    actionsEnabled  &= (~actionsMask);
-    }
-  crosshairDisplayableManager->SetActionsEnabled(actionsEnabled);
-  this->EnableCursorUpdate = ((actionsEnabled & SetCursorPosition) != 0);
 }
 
 //----------------------------------------------------------------------------
 bool vtkSliceViewInteractorStyle::GetActionEnabled(int actionsMask)
 {
-  vtkMRMLCrosshairDisplayableManager* crosshairDisplayableManager = this->GetCrosshairDisplayableManager();
-  if (!crosshairDisplayableManager)
+  int actionsEnabled = 0;
+
+  if (this->EnableCursorUpdate)
     {
-    vtkErrorMacro("vtkSliceViewInteractorStyle::SetActionEnabled failed: crosshair displayable manager not found");
-    return false;
+    actionsEnabled |= SetCursorPosition;
     }
 
-  int actionsEnabled = crosshairDisplayableManager->GetActionsEnabled();
+  vtkMRMLCrosshairDisplayableManager* crosshairDisplayableManager = this->GetCrosshairDisplayableManager();
+  if (crosshairDisplayableManager)
+    {
+    actionsEnabled |= crosshairDisplayableManager->GetActionsEnabled();
+    }
+
+   vtkMRMLScalarBarDisplayableManager* scalarBarDisplayableManager = this->GetScalarBarDisplayableManager();
+  if (scalarBarDisplayableManager)
+    {
+    if (scalarBarDisplayableManager->GetAdjustBackgroundWindowLevelEnabled())
+      {
+      actionsEnabled |= AdjustWindowLevelBackground;
+      }
+    if (scalarBarDisplayableManager->GetAdjustForegroundWindowLevelEnabled())
+      {
+      actionsEnabled |= AdjustWindowLevelForeground;
+      }
+    }
+
   return (actionsEnabled & actionsMask) == actionsMask;
 }
 
@@ -417,4 +455,29 @@ vtkMRMLCrosshairDisplayableManager* vtkSliceViewInteractorStyle::GetCrosshairDis
       }
     }
   return nullptr;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLScalarBarDisplayableManager* vtkSliceViewInteractorStyle::GetScalarBarDisplayableManager()
+{
+  int numberOfDisplayableManagers = this->DisplayableManagers->GetDisplayableManagerCount();
+  for (int displayableManagerIndex = 0; displayableManagerIndex < numberOfDisplayableManagers; ++displayableManagerIndex)
+    {
+    vtkMRMLScalarBarDisplayableManager* displayableManager = vtkMRMLScalarBarDisplayableManager::SafeDownCast(
+      this->DisplayableManagers->GetNthDisplayableManager(displayableManagerIndex));
+    if (displayableManager)
+      {
+      return displayableManager;
+      }
+    }
+  return nullptr;
+}
+
+//----------------------------------------------------------------------------
+void vtkSliceViewInteractorStyle::SetMouseCursor(int cursor)
+{
+  if (this->GetCurrentRenderer() && this->GetCurrentRenderer()->GetRenderWindow())
+    {
+    this->GetCurrentRenderer()->GetRenderWindow()->SetCurrentCursor(cursor);
+    }
 }

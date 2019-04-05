@@ -47,11 +47,11 @@ public:
   /// bit field operations
   enum
     {
-      //SelectRegion,
-      //LassoRegion,
-      Place = 0x1,
-      ViewTransform = 0x2,
-      Select = 0x4,
+      Place = 1,
+      ViewTransform = 2,
+      Select = 4,
+      AdjustWindowLevel,
+      User = 1000
     };
 
   /// events

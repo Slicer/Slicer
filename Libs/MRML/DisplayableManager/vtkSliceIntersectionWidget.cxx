@@ -68,10 +68,6 @@ vtkSliceIntersectionWidget::vtkSliceIntersectionWidget()
   this->VolumeScalarRange[0] = 0;
   this->VolumeScalarRange[1] = 0;
 
-  this->LastVolumeWindowLevel[0] = 0;
-  this->LastVolumeWindowLevel[1] = 0;
-  this->WindowLevelAdjustedLayer = LayerBackground;
-
   this->LastForegroundOpacity = 0.;
   this->LastLabelOpacity = 0.;
   this->StartActionSegmentationDisplayNode = nullptr;
@@ -162,12 +158,6 @@ void vtkSliceIntersectionWidget::UpdateInteractionEventMapping()
     this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::MiddleButtonPressEvent, vtkEvent::NoModifier,
       WidgetStateTranslateSlice, WidgetEventTranslateSliceStart, WidgetEventTranslateSliceEnd);
     }
-
-  if (this->GetActionEnabled(ActionAdjustWindowLevelBackground) || this->GetActionEnabled(ActionAdjustWindowLevelForeground))
-  {
-    this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
-      WidgetStateAdjustWindowLevel, WidgetEventAdjustWindowLevelStart, WidgetEventAdjustWindowLevelEnd);
-  }
 }
 
 //----------------------------------------------------------------------
@@ -234,8 +224,7 @@ bool vtkSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteractionEv
     || this->WidgetState == WidgetStateRotate
     || this->WidgetState == WidgetStateBlend
     || this->WidgetState == WidgetStateTranslateSlice
-    || this->WidgetState == WidgetStateZoomSlice
-    || this->WidgetState == WidgetStateAdjustWindowLevel)
+    || this->WidgetState == WidgetStateZoomSlice)
     {
     distance2 = 0.0;
     return true;
@@ -305,13 +294,6 @@ bool vtkSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionEvent
     case WidgetEventZoomSliceEnd:
       processedEvent = this->ProcessEndMouseDrag(eventData);
       this->SliceLogic->EndSliceNodeInteraction();
-      break;
-    case WidgetEventAdjustWindowLevelStart:
-      this->SetWidgetState(WidgetStateAdjustWindowLevel);
-      processedEvent = this->ProcessAdjustWindowLevelStart(eventData);
-      break;
-    case WidgetEventAdjustWindowLevelEnd:
-      processedEvent = this->ProcessEndMouseDrag(eventData);
       break;
     case WidgetEventBlendStart:
       {
@@ -451,9 +433,6 @@ bool vtkSliceIntersectionWidget::ProcessMouseMove(vtkMRMLInteractionEventData* e
       break;
     case WidgetStateZoomSlice:
       this->ProcessZoomSlice(eventData);
-      break;
-    case WidgetStateAdjustWindowLevel:
-      this->ProcessAdjustWindowLevel(eventData);
       break;
     }
 
@@ -912,136 +891,6 @@ bool vtkSliceIntersectionWidget::ProcessZoomSlice(vtkMRMLInteractionEventData* e
     sliceNode->UpdateMatrices();
     }
   return true;
-}
-
-//----------------------------------------------------------------------------
-void vtkSliceIntersectionWidget::ProcessAdjustWindowLevel(vtkMRMLInteractionEventData* eventData)
-{
-  const int* eventPosition = eventData->GetDisplayPosition();
-
-  int deltaX = eventPosition[0] - this->PreviousEventPosition[0];
-  int deltaY = eventPosition[1] - this->PreviousEventPosition[1];
-
-  double rangeLow = this->VolumeScalarRange[0];
-  double rangeHigh = this->VolumeScalarRange[1];
-
-  int* windowSize = this->GetRenderer()->GetRenderWindow()->GetSize();
-  double windowMinSize = std::min(windowSize[0], windowSize[1]);
-
-  double gain = (rangeHigh - rangeLow) / windowMinSize;
-  double newWindow = this->LastVolumeWindowLevel[0] + (gain * deltaX);
-  if (newWindow < 0)
-    {
-    newWindow = 0;
-    }
-  double newLevel = this->LastVolumeWindowLevel[1] + (gain * deltaY);
-  if (newLevel < rangeLow - newWindow / 2)
-    {
-    newLevel = rangeLow - newWindow / 2;
-    }
-  if (newLevel > rangeHigh + newWindow / 2)
-    {
-    newLevel = rangeHigh + newWindow / 2;
-    }
-  if (this->WindowLevelAdjustedLayer == LayerBackground)
-    {
-    this->SliceLogic->SetBackgroundWindowLevel(newWindow, newLevel);
-    }
-  else
-    {
-    this->SliceLogic->SetForegroundWindowLevel(newWindow, newLevel);
-    }
-  this->LastVolumeWindowLevel[0] = newWindow;
-  this->LastVolumeWindowLevel[1] = newLevel;
-
-  this->PreviousEventPosition[0] = eventPosition[0];
-  this->PreviousEventPosition[1] = eventPosition[1];
-}
-
-//----------------------------------------------------------------------------
-bool vtkSliceIntersectionWidget::VolumeWindowLevelEditable(const char* volumeNodeID)
-{
-  if (!volumeNodeID)
-    {
-    return false;
-    }
-  vtkMRMLScene *scene = this->SliceLogic->GetMRMLScene();
-  if (!scene)
-    {
-    return false;
-    }
-  vtkMRMLVolumeNode* volumeNode =
-    vtkMRMLVolumeNode::SafeDownCast(scene->GetNodeByID(volumeNodeID));
-  if (volumeNode == nullptr)
-    {
-    return false;
-    }
-  vtkMRMLScalarVolumeDisplayNode* scalarVolumeDisplayNode =
-    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(volumeNode->GetDisplayNode());
-  if (!scalarVolumeDisplayNode)
-    {
-    return false;
-    }
-  return !scalarVolumeDisplayNode->GetWindowLevelLocked();
-}
-
-//----------------------------------------------------------------------------
-bool vtkSliceIntersectionWidget::ProcessAdjustWindowLevelStart(vtkMRMLInteractionEventData* eventData)
-{
-  vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
-  if (!sliceNode)
-    {
-    return false;
-    }
-  vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
-  if (!sliceCompositeNode)
-    {
-    return false;
-    }
-
-  bool foregroundEditable = this->VolumeWindowLevelEditable(sliceCompositeNode->GetForegroundVolumeID())
-    && this->GetActionEnabled(ActionAdjustWindowLevelForeground);
-  bool backgroundEditable = this->VolumeWindowLevelEditable(sliceCompositeNode->GetBackgroundVolumeID())
-    && this->GetActionEnabled(ActionAdjustWindowLevelBackground);
-
-  if (!foregroundEditable && !backgroundEditable)
-    {
-    // window/level editing is disabled on both volumes
-    return false;
-    }
-  // By default adjust background volume, if available
-  bool adjustForeground = !backgroundEditable;
-
-  // If both foreground and background volumes are visible then choose adjustment of
-  // foreground volume, if foreground volume is visible in current mouse position
-  if (foregroundEditable && backgroundEditable)
-    {
-    adjustForeground = (sliceCompositeNode->GetForegroundOpacity() > 0.0)
-      && this->IsEventInsideVolume(true, eventData)   // inside background (used as mask for displaying foreground)
-      && this->IsEventInsideVolume(false, eventData); // inside foreground
-    }
-
-  if (adjustForeground)
-    {
-    vtkMRMLNode* volumeNode = this->SliceLogic->GetMRMLScene()->GetNodeByID(sliceCompositeNode->GetForegroundVolumeID());
-    this->SliceLogic->GetMRMLScene()->SaveStateForUndo();
-    this->WindowLevelAdjustedLayer = LayerForeground;
-    this->SliceLogic->GetForegroundWindowLevelAndRange(
-      this->LastVolumeWindowLevel[0], this->LastVolumeWindowLevel[1],
-      this->VolumeScalarRange[0], this->VolumeScalarRange[1]);
-    }
-  else
-    {
-    vtkMRMLNode* volumeNode = this->SliceLogic->GetMRMLScene()->GetNodeByID(sliceCompositeNode->GetBackgroundVolumeID());
-    this->SliceLogic->GetMRMLScene()->SaveStateForUndo();
-    this->WindowLevelAdjustedLayer = LayerBackground;
-    this->SliceLogic->GetBackgroundWindowLevelAndRange(
-      this->LastVolumeWindowLevel[0], this->LastVolumeWindowLevel[1],
-      this->VolumeScalarRange[0], this->VolumeScalarRange[1]);
-    }
-  this->SetWidgetState(WidgetStateAdjustWindowLevel);
-
-  return this->ProcessStartMouseDrag(eventData);
 }
 
 //----------------------------------------------------------------------------

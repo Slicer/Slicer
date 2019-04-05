@@ -82,7 +82,6 @@ public:
     WidgetStateBlend,
     WidgetStateTranslateSlice,
     WidgetStateZoomSlice,
-    WidgetStateAdjustWindowLevel,
     };
 
   /// Widget events
@@ -108,8 +107,6 @@ public:
     WidgetEventTranslateSliceEnd,
     WidgetEventZoomSliceStart,
     WidgetEventZoomSliceEnd,
-    WidgetEventAdjustWindowLevelStart,
-    WidgetEventAdjustWindowLevelEnd,
     WidgetEventSetCrosshairPosition,
     };
 
@@ -121,8 +118,6 @@ public:
     ActionZoom = 2,
     ActionRotate = 4, /* not used */
     ActionBlend = 8, /* fg to bg, labelmap to bg */
-    ActionAdjustWindowLevelBackground = 16,
-    ActionAdjustWindowLevelForeground = 32,
     ActionBrowseSlice = 64,
     ActionShowSlice = 128,
     ActionAdjustLightbox = 256,
@@ -132,7 +127,6 @@ public:
     ActionTranslateSliceIntersection = 4096,
     ActionRotateSliceIntersection = 8192,
     ActionAll = ActionTranslate | ActionZoom | ActionRotate | ActionBlend
-    | ActionAdjustWindowLevelBackground | ActionAdjustWindowLevelForeground
     | ActionBrowseSlice | ActionShowSlice | ActionAdjustLightbox | ActionSelectVolume
     | ActionSetCursorPosition | ActionSetCrosshairPosition
     | ActionTranslateSliceIntersection | ActionRotateSliceIntersection
@@ -172,9 +166,6 @@ protected:
   // Move slice in-plane by click-and-drag
   bool ProcessTranslateSlice(vtkMRMLInteractionEventData* eventData);
 
-  bool ProcessAdjustWindowLevelStart(vtkMRMLInteractionEventData* eventData);
-  void ProcessAdjustWindowLevel(vtkMRMLInteractionEventData* eventData);
-
   bool ProcessZoomSlice(vtkMRMLInteractionEventData* eventData);
 
   /// Rotate the message by the specified amount. Used for touchpad events.
@@ -192,10 +183,6 @@ protected:
   /// Returns true if mouse is inside the selected layer volume.
   /// Use background flag to choose between foreground/background layer.
   bool IsEventInsideVolume(bool background, vtkMRMLInteractionEventData* eventData);
-
-  /// Returns true if the volume's window/level values are editable
-  /// on the GUI
-  bool VolumeWindowLevelEditable(const char* volumeNodeID);
 
   vtkMRMLSegmentationDisplayNode* GetVisibleSegmentationDisplayNode();
 
@@ -215,15 +202,12 @@ protected:
   double StartActionFOV[3];
   double VolumeScalarRange[2];
 
-  double LastVolumeWindowLevel[2];
-
   enum
   {
     LayerBackground,
     LayerForeground,
     LayerLabelmap
   };
-  int WindowLevelAdjustedLayer;
 
   // Blend
   double LastForegroundOpacity;

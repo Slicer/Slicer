@@ -144,7 +144,8 @@ int qMRMLSliceWidgetTest2(int argc, char * argv [] )
                   << "vtkMRMLModelSliceDisplayableManager"
                   << "vtkMRMLCrosshairDisplayableManager"
                   << "vtkMRMLOrientationMarkerDisplayableManager"
-                  << "vtkMRMLRulerDisplayableManager";
+                  << "vtkMRMLRulerDisplayableManager"
+                  << "vtkMRMLScalarBarDisplayableManager";
   qMRMLSliceView *sliceView = const_cast<qMRMLSliceView*>(sliceWidget.sliceView());
   vtkNew<vtkCollection> collection;
   sliceView->getDisplayableManagers(collection.GetPointer());
