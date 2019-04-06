@@ -21,14 +21,13 @@
 #define __vtkCurveGenerator_h
 
 // vtk includes
-#include <vtkSetGet.h>
 #include <vtkObject.h>
+#include <vtkParametricFunction.h>
+#include <vtkSetGet.h>
 #include <vtkSmartPointer.h>
 
-class vtkPoints;
 class vtkDoubleArray;
-class vtkParametricFunction;
-class vtkParametricSpline;
+class vtkPoints;
 class vtkSpline;
 
 // export
@@ -161,6 +160,10 @@ public:
   void SetOutputPoints(vtkPoints*);
 
   double GetOutputCurveLength();
+
+  /// The internal instance of the current parametric function
+  /// use of the curve for other computations.
+  vtkParametricFunction* GetParametricFunction() { return this->ParametricFunction.GetPointer(); };
 
   // logic
   void Update();
