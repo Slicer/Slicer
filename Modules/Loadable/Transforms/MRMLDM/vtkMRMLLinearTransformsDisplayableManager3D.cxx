@@ -517,8 +517,7 @@ void vtkMRMLLinearTransformsDisplayableManager3D::vtkInternal
 
   if (!transformNode->IsLinear())
     {
-    vtkWarningWithObjectMacro(transformNode,
-      "Cannot show interactive widget: Transform is not linear");
+    vtkDebugWithObjectMacro(transformNode, "Cannot show interactive widget: Transform is not linear");
     pipeline->Widget->SetEnabled(false);
     return;
     }
