@@ -133,6 +133,14 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// \sa RequestReadScene(), RequestWriteData(), RequestModified()
   vtkMTimeType RequestUpdateSubjectHierarchyLocation(const std::string &updatedNode, const std::string& siblingNode);
 
+  /// Request adding a node reference
+  /// The request will executed on the main thread.
+  /// Return the request UID (monotonically increasing) of the request or 0 if
+  /// the request failed to be registered. When the request is processed,
+  /// RequestProcessedEvent is invoked with the request UID as calldata.
+  /// \sa RequestReadScene(), RequestWriteData(), RequestModified()
+  vtkMTimeType RequestAddNodeReference(const std::string &referencingNode, const std::string& referencedNode, const std::string& role);
+
   /// Return the number of items that need to be read from the queue
   /// (this allows code that invokes command line modules to know when
   /// multiple items are being returned and have all been returned).

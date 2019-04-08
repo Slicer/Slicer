@@ -565,6 +565,37 @@ protected:
 };
 
 //----------------------------------------------------------------------------
+class ReadDataRequestAddNodeReference : public DataRequest
+{
+public:
+  ReadDataRequestAddNodeReference(const std::string& referencingNode,
+    const std::string& referencedNode, const std::string& role, int uid = 0)
+    : DataRequest(uid)
+  {
+    m_ReferencingNode = referencingNode;
+    m_ReferencedNode = referencedNode;
+    m_Role = role;
+  }
+
+  void Execute(vtkSlicerApplicationLogic* appLogic) override
+  {
+    vtkMRMLScene* scene = appLogic->GetMRMLScene();
+
+    vtkMRMLNode *referencingNode = scene->GetNodeByID(m_ReferencingNode);
+    vtkMRMLNode *referencedNode = scene->GetNodeByID(m_ReferencedNode);
+    if (referencingNode && referencedNode)
+      {
+      referencingNode->AddNodeReferenceID(m_Role.c_str(), m_ReferencedNode.c_str());
+      }
+  }
+
+protected:
+  std::string m_ReferencingNode;
+  std::string m_ReferencedNode;
+  std::string m_Role;
+};
+
+//----------------------------------------------------------------------------
 class WriteDataRequestFile: public DataRequest
 {
 public:

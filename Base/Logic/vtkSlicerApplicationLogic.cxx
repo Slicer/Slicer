@@ -538,6 +538,27 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestUpdateSubjectHierarchyLocation(co
 }
 
 //----------------------------------------------------------------------------
+vtkMTimeType vtkSlicerApplicationLogic::RequestAddNodeReference(const std::string &referencingNode, const std::string& referencedNode, const std::string& role)
+{
+  // only request to read a file if the ReadData queue is up
+  this->ReadDataQueueActiveLock.lock();
+  int active = this->ReadDataQueueActive;
+  this->ReadDataQueueActiveLock.unlock();
+  if (!active)
+    {
+    // could not request the record be added to the queue
+    return 0;
+    }
+
+  this->ReadDataQueueLock.lock();
+  this->RequestTimeStamp.Modified();
+  vtkMTimeType uid = this->RequestTimeStamp.GetMTime();
+  (*this->InternalReadDataQueue).push(new ReadDataRequestAddNodeReference(referencingNode, referencedNode, role, uid));
+  this->ReadDataQueueLock.unlock();
+  return uid;
+}
+
+//----------------------------------------------------------------------------
 vtkMTimeType vtkSlicerApplicationLogic::RequestWriteData(const char *refNode, const char *filename)
 {
   // only request to write a file if the WriteData queue is up

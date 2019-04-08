@@ -2446,12 +2446,12 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     }
 
 
-    // rewire the mrml scene as directed
+    // Rewire the MRML scene as directed
     //
-    // 1. if an output transform has a reference, then that reference is placed under the transform.
+    // 1. If an output transform has a reference, then that reference is placed under the transform.
     //        (subject, predicate, object) = (reference, setTransform, transform)
     //
-    // 2. if an output volume/model has a reference, then that output volume/model is placed in the
+    // 2. If an output volume/model has a reference, then that output volume/model is placed in the
     // same spot of the subject hierarchy as the reference.
     //        (subject, predicate, object) = (reference, setParent, volume/model)
     //
@@ -2460,6 +2460,9 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     // backwards), then a node reference is added from that node to the specified node with a given
     // role.
     //        (subject, predicate, object) = (node, addNodeReference, referencedNode)
+    //
+    // Warning: Never make any call that results in a Modified event. Instead, do a request
+    //          (see the solutions below)
     //
     for (pgit = pgbeginit; pgit != pgendit; ++pgit)
       {
@@ -2517,10 +2520,6 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
                     this->Internal->SetLastRequest(node0, requestUID);
                     }
                   }
-                else
-                  {
-                  // TODO: other reference types
-                  }
                 }
               else
                 {
@@ -2539,8 +2538,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         if (forwardReferences.size() > 0)
           {
           std::string referencingNodeID = (*pit).GetValue();
-          vtkMRMLNode *referencingNode = this->GetMRMLScene()->GetNodeByID(referencingNodeID.c_str());
-          if (referencingNode)
+          if (referencingNodeID.size() > 0)
             {
             std::map<std::string,std::vector<std::string> >::const_iterator frit;
             for (frit = forwardReferences.begin(); frit != forwardReferences.end(); ++frit)
@@ -2555,10 +2553,12 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
                   {
                   // get the id stored in the parameter referenced
                   std::string referencedNodeID = node0->GetModuleDescription().GetParameterValue(*frvit);
-                  vtkMRMLNode *referencedNode = this->GetMRMLScene()->GetNodeByID(referencedNodeID.c_str());
-                  if (referencedNode)
+                  if (referencedNodeID.size() > 0)
                     {
-                    referencingNode->AddNodeReferenceID(role.c_str(), referencedNodeID.c_str());
+                    // Place a request to add node reference
+                    vtkMTimeType requestUID = this->GetApplicationLogic()
+                      ->RequestAddNodeReference(referencingNodeID, referencedNodeID, role);
+                    this->Internal->SetLastRequest(node0, requestUID);
                     }
                   }
                 } // for frvit (referenced nodes)
