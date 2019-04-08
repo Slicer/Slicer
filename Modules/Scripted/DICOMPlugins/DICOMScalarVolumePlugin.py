@@ -220,20 +220,22 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     # remove any files from loadables that don't have pixel data (no point sending them to ITK for reading)
     # also remove DICOM SEG, since it is not handled by ITK readers
     newLoadables = []
-    segLoadables = []
     for loadable in loadables:
       newFiles = []
-      segLoadable = False
+      excludedLoadable = False
       for file in loadable.files:
         if slicer.dicomDatabase.fileValue(file,self.tags['pixelData'])!='':
           newFiles.append(file)
         if slicer.dicomDatabase.fileValue(file,self.tags['sopClassUID'])=='1.2.840.10008.5.1.4.1.1.66.4':
-          segLoadable = True
+          excludedLoadable = True
           logging.error('Please install Quantitative Reporting extension to enable loading of DICOM Segmentation objects')
-      if len(newFiles) > 0 and not segLoadable:
+        elif slicer.dicomDatabase.fileValue(file,self.tags['sopClassUID'])=='1.2.840.10008.5.1.4.1.1.481.3':
+          excludedLoadable = True
+          logging.error('Please install SlicerRT extension to enable loading of DICOM RT Structure Set objects')
+      if len(newFiles) > 0 and not excludedLoadable:
         loadable.files = newFiles
         newLoadables.append(loadable)
-      elif segLoadable:
+      elif excludedLoadable:
         continue
       else:
         # here all files in have no pixel data, so they might be
