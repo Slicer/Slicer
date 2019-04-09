@@ -15,7 +15,7 @@
 #include <vtkMRMLDisplayableManagerGroup.h>
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 #include <vtkMRMLViewDisplayableManager.h>
-#include <vtkThreeDViewInteractorStyle.h>
+#include <vtkMRMLThreeDViewInteractorStyle.h>
 
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
@@ -86,7 +86,7 @@ int vtkMRMLAnnotationTextDisplayableManagerTest1(int argc, char* argv[])
   rw->SetInteractor(ri);
 
   // Set Interactor Style
-  vtkThreeDViewInteractorStyle * iStyle = vtkThreeDViewInteractorStyle::New();
+  vtkMRMLThreeDViewInteractorStyle * iStyle = vtkMRMLThreeDViewInteractorStyle::New();
   ri->SetInteractorStyle(iStyle);
   iStyle->Delete();
 

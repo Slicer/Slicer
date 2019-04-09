@@ -22,7 +22,7 @@
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
 #include <vtkMRMLAnnotationFiducialDisplayableManager.h>
-#include <vtkThreeDViewInteractorStyle.h>
+#include <vtkMRMLThreeDViewInteractorStyle.h>
 
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
@@ -80,7 +80,7 @@ int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
   rw->SetInteractor(ri);
 
   // Set Interactor Style
-  vtkThreeDViewInteractorStyle * iStyle = vtkThreeDViewInteractorStyle::New();
+  vtkMRMLThreeDViewInteractorStyle * iStyle = vtkMRMLThreeDViewInteractorStyle::New();
   ri->SetInteractorStyle(iStyle);
   iStyle->Delete();
 
@@ -213,11 +213,11 @@ int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
   double d34 = sqrt(vtkMath::Distance2BetweenPoints(worldCoords3, worldCoords4));
   std::cout << "Distance between world coords 3 and 4: " << d34 << std::endl;
 
-  // Interactor style should be vtkThreeDViewInteractorStyle
+  // Interactor style should be vtkMRMLThreeDViewInteractorStyle
   vtkInteractorObserver * currentInteractoryStyle = ri->GetInteractorStyle();
-  if (!vtkThreeDViewInteractorStyle::SafeDownCast(currentInteractoryStyle))
+  if (!vtkMRMLThreeDViewInteractorStyle::SafeDownCast(currentInteractoryStyle))
     {
-    std::cerr << "Expected interactorStyle: vtkThreeDViewInteractorStyle" << std::endl;
+    std::cerr << "Expected interactorStyle: vtkMRMLThreeDViewInteractorStyle" << std::endl;
     std::cerr << "Current RenderWindowInteractor: "
       << (currentInteractoryStyle ? currentInteractoryStyle->GetClassName() : "Null") << std::endl;
     return EXIT_FAILURE;

@@ -19,9 +19,9 @@
 ==============================================================================*/
 
 // MRMLDisplayableManager includes
-#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
-#include <vtkThreeDViewInteractorStyle.h>
+#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
+#include <vtkMRMLThreeDViewInteractorStyle.h>
 
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
@@ -504,7 +504,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   rw->SetInteractor(ri.GetPointer());
 
   // Set Interactor Style
-  vtkNew<vtkThreeDViewInteractorStyle> iStyle;
+  vtkNew<vtkMRMLThreeDViewInteractorStyle> iStyle;
   ri->SetInteractorStyle(iStyle.GetPointer());
 
   // MRML scene
@@ -606,11 +606,11 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
-  // Interactor style should be vtkThreeDViewInteractorStyle
+  // Interactor style should be vtkMRMLThreeDViewInteractorStyle
   vtkInteractorObserver * currentInteractoryStyle = ri->GetInteractorStyle();
-  if (!vtkThreeDViewInteractorStyle::SafeDownCast(currentInteractoryStyle))
+  if (!vtkMRMLThreeDViewInteractorStyle::SafeDownCast(currentInteractoryStyle))
     {
-    std::cerr << "Expected interactorStyle: vtkThreeDViewInteractorStyle" << std::endl;
+    std::cerr << "Expected interactorStyle: vtkMRMLThreeDViewInteractorStyle" << std::endl;
     std::cerr << "Current RenderWindowInteractor: "
       << (currentInteractoryStyle ? currentInteractoryStyle->GetClassName() : "Null") << std::endl;
     return EXIT_FAILURE;

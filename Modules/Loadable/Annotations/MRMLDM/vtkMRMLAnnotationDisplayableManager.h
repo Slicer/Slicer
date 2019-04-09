@@ -100,6 +100,9 @@ public:
   /// \sa vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidgetAndNode()
   bool AddAnnotation(vtkMRMLAnnotationNode *node);
 
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &closestDistance2) override;
+  bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
+
 protected:
 
   vtkMRMLAnnotationDisplayableManager();

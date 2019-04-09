@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkSliceViewInteractorStyle.h,v $
+  Module:    $RCSfile: vtkMRMLSliceViewInteractorStyle.h,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -13,8 +13,8 @@
 
 =========================================================================*/
 
-#ifndef __vtkSliceViewInteractorStyle_h
-#define __vtkSliceViewInteractorStyle_h
+#ifndef __vtkMRMLSliceViewInteractorStyle_h
+#define __vtkMRMLSliceViewInteractorStyle_h
 
 // VTK includes
 #include "vtkInteractorStyleUser.h"
@@ -22,13 +22,14 @@
 
 // MRML includes
 #include "vtkMRMLDisplayableManagerExport.h"
+#include "vtkMRMLViewInteractorStyle.h"
 
 class vtkMRMLAbstractDisplayableManager;
 class vtkMRMLCrosshairDisplayableManager;
 class vtkMRMLScalarBarDisplayableManager;
 class vtkMRMLSegmentationDisplayNode;
 class vtkMRMLSliceLogic;
-class vtkMRMLDisplayableManagerGroup;
+class vtkTimerLog;
 
 /// \brief Provides customizable interaction routines.
 ///
@@ -39,12 +40,12 @@ class vtkMRMLDisplayableManagerGroup;
 /// * Do we need Rotate Mode?  Probably better to just rely on the reformat widget
 /// * Do we need to set the slice spacing on EnterEvent (I say no, nothing to do
 ///   with linked slices should go in here)
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkSliceViewInteractorStyle :
-  public vtkInteractorStyleUser
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceViewInteractorStyle :
+  public vtkMRMLViewInteractorStyle
 {
 public:
-  static vtkSliceViewInteractorStyle *New();
-  vtkTypeMacro(vtkSliceViewInteractorStyle,vtkInteractorStyleUser);
+  static vtkMRMLSliceViewInteractorStyle *New();
+  vtkTypeMacro(vtkMRMLSliceViewInteractorStyle,vtkInteractorStyleUser);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ///
@@ -53,31 +54,11 @@ public:
   /// they are passed to the vtkInteractorStyleUser, which conditionally
   /// passes them to observers if there are any.
   void OnMouseMove() override;
-  void OnEnter() override;
   void OnLeave() override;
-  void OnLeftButtonDown() override;
-  void OnLeftButtonUp() override;
-  void OnMiddleButtonDown() override;
-  void OnMiddleButtonUp() override;
-  void OnRightButtonDown() override;
-  void OnRightButtonUp() override;
-  void OnMouseWheelForward() override;
-  void OnMouseWheelBackward() override;
-
-  /// Keyboard functions
-  void OnChar() override;
-  void OnKeyPress() override;
-  void OnKeyRelease() override;
-
-  /// These are more esoteric events, but are useful in some cases.
-  void OnExpose() override;
-  void OnConfigure() override;
-
-  void SetDisplayableManagers(vtkMRMLDisplayableManagerGroup* displayableManagers);
 
   /// Give a chance to displayable managers to process the event.
   /// Return true if the event is processed.
-  bool ForwardInteractionEventToDisplayableManagers(unsigned long event);
+  bool DelegateInteractionEventToDisplayableManagers(unsigned long event);
 
   /// Internal state management for multi-event sequences (like click-drag-release)
 
@@ -123,23 +104,25 @@ public:
   vtkMRMLScalarBarDisplayableManager* GetScalarBarDisplayableManager();
 
 protected:
-  vtkSliceViewInteractorStyle();
-  ~vtkSliceViewInteractorStyle() override;
+  vtkMRMLSliceViewInteractorStyle();
+  ~vtkMRMLSliceViewInteractorStyle() override;
+
+  static void SliceViewProcessEvents(vtkObject* object, unsigned long event, void* clientdata, void* calldata);
 
   void SetMouseCursor(int cursor);
 
   vtkMRMLSliceLogic *SliceLogic;
 
-  bool MouseMovedSinceButtonDown;
+  //bool MouseMovedSinceButtonDown;
+
+  //vtkSmartPointer<vtkTimerLog> ClickTimer;
+  //int NumberOfClicks;
 
   bool EnableCursorUpdate;
 
-  vtkWeakPointer<vtkMRMLDisplayableManagerGroup> DisplayableManagers;
-  vtkMRMLAbstractDisplayableManager* FocusedDisplayableManager;
-
 private:
-  vtkSliceViewInteractorStyle(const vtkSliceViewInteractorStyle&) = delete;
-  void operator=(const vtkSliceViewInteractorStyle&) = delete;
+  vtkMRMLSliceViewInteractorStyle(const vtkMRMLSliceViewInteractorStyle&) = delete;
+  void operator=(const vtkMRMLSliceViewInteractorStyle&) = delete;
 };
 
 #endif

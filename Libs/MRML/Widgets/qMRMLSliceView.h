@@ -31,7 +31,7 @@ class qMRMLSliceViewPrivate;
 class vtkCollection;
 class vtkMRMLScene;
 class vtkMRMLSliceNode;
-class vtkSliceViewInteractorStyle;
+class vtkMRMLSliceViewInteractorStyle;
 
 /// \brief 2D view for slice nodes.
 /// For performance reasons, the view block refreshs when the scene is in
@@ -68,7 +68,7 @@ public:
   Q_INVOKABLE vtkMRMLSliceNode* mrmlSliceNode()const;
 
   /// Returns the interactor style of the view
-  Q_INVOKABLE vtkSliceViewInteractorStyle* sliceViewInteractorStyle()const;
+  Q_INVOKABLE vtkMRMLSliceViewInteractorStyle* sliceViewInteractorStyle()const;
 
   /// Convert device coordinates to XYZ coordinates. The x and y
   /// components of the return value are the positions within a

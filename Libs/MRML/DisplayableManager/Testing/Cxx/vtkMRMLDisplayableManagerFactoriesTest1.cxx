@@ -1,9 +1,9 @@
 
 // MRMLDisplayableManager includes
-#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
-#include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
-#include <vtkThreeDViewInteractorStyle.h>
+#include <vtkMRMLSliceViewDisplayableManagerFactory.h>
+#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
+#include <vtkMRMLThreeDViewInteractorStyle.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLTestThreeDViewDisplayableManager.h>
 #include <vtkMRMLTestSliceViewDisplayableManager.h>
@@ -100,7 +100,7 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
   rw->SetInteractor(ri.GetPointer());
 
   // Set Interactor Style
-  vtkNew<vtkThreeDViewInteractorStyle> iStyle;
+  vtkNew<vtkMRMLThreeDViewInteractorStyle> iStyle;
   ri->SetInteractorStyle(iStyle.GetPointer());
 
   // ThreeD - Instantiate displayable managers

@@ -201,6 +201,8 @@ protected:
 
   vtkSmartPointer<vtkMRMLAbstractWidgetRepresentation> WidgetRep;
 
+//  bool NeedToRender;
+
 private:
   vtkMRMLAbstractWidget(const vtkMRMLAbstractWidget&) = delete;
   void operator=(const vtkMRMLAbstractWidget&) = delete;

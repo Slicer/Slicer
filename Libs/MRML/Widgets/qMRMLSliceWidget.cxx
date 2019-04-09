@@ -28,7 +28,7 @@
 #include "qMRMLSliceWidget_p.h"
 
 // MRMLDisplayableManager includes
-#include <vtkSliceViewInteractorStyle.h>
+#include <vtkMRMLSliceViewInteractorStyle.h>
 
 // MRML includes
 #include <vtkMRMLSliceNode.h>

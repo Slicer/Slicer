@@ -28,6 +28,7 @@
 #include "vtkMRMLAbstractWidgetRepresentation.h"
 
 // VTK includes
+#include "vtkEvent.h"
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
 #include "vtkWidgetEventTranslator.h"
@@ -40,6 +41,8 @@ vtkMRMLAbstractWidget::vtkMRMLAbstractWidget()
 
   this->WidgetRep = nullptr;
   this->WidgetState = vtkMRMLAbstractWidget::WidgetStateIdle;
+
+//  this->NeedToRender = false;
 }
 
 //----------------------------------------------------------------------
@@ -312,6 +315,16 @@ bool vtkMRMLAbstractWidget::GetNeedToRender()
     return false;
     }
   return this->WidgetRep->GetNeedToRender();
+/*
+  if (this->NeedToRender)
+    {
+    return true;
+    }
+  if (this->WidgetRep && this->WidgetRep->GetNeedToRender())
+    {
+    return true;
+    }
+  return false;*/
 }
 
 //-------------------------------------------------------------------------
@@ -322,6 +335,13 @@ void vtkMRMLAbstractWidget::NeedToRenderOff()
     return;
     }
   this->WidgetRep->NeedToRenderOff();
+/*
+  this->NeedToRender = false;
+  if (this->WidgetRep)
+    {
+    this->WidgetRep->NeedToRenderOff();
+    }
+*/
 }
 
 //----------------------------------------------------------------------

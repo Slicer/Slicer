@@ -17,7 +17,7 @@
 #include <vtkAnnotationGlyphSource2D.h>
 
 // MRMLDisplayableManager includes
-#include <vtkSliceViewInteractorStyle.h>
+#include <vtkMRMLSliceViewInteractorStyle.h>
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>

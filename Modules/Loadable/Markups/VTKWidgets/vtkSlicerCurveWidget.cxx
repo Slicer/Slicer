@@ -17,13 +17,16 @@
 =========================================================================*/
 
 #include "vtkSlicerCurveWidget.h"
+
 #include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLMarkupsCurveNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkSlicerCurveRepresentation2D.h"
 #include "vtkSlicerCurveRepresentation3D.h"
+
 #include "vtkCommand.h"
+#include "vtkEvent.h"
 
 vtkStandardNewMacro(vtkSlicerCurveWidget);
 

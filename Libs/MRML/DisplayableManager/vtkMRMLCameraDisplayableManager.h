@@ -53,6 +53,9 @@ public:
     ActiveCameraChangedEvent   = 30000
   };
 
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &closestDistance2) override;
+  bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
+
 protected:
 
   vtkMRMLCameraDisplayableManager();

@@ -1,27 +1,26 @@
 // MRMLDisplayableManager includes
-#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
-#include <vtkMRMLDisplayableManagerGroup.h>
 #include <vtkMRMLAnnotationFiducialDisplayableManager.h>
 #include <vtkMRMLAnnotationRulerDisplayableManager.h>
 #include <vtkMRMLAnnotationBidimensionalDisplayableManager.h>
-
-#include <vtkThreeDViewInteractorStyle.h>
+#include <vtkMRMLDisplayableManagerGroup.h>
+#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
+#include <vtkMRMLThreeDViewInteractorStyle.h>
 
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
 
 // MRML includes
-#include <vtkMRMLViewNode.h>
 #include "vtkMRMLAnnotationFiducialNode.h"
 #include "vtkMRMLAnnotationRulerNode.h"
 #include "vtkMRMLAnnotationBidimensionalNode.h"
-
 #include "vtkMRMLScene.h"
+#include "vtkMRMLViewNode.h"
+
 // VTK includes
+#include <vtkCamera.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkCamera.h>
 
 // STD includes
 #include <sstream>
@@ -65,7 +64,7 @@ int vtkMRMLAnnotationNodesUndoTest1(int , char * [] )
   rw->SetInteractor(ri);
 
   // Set Interactor Style
-  vtkThreeDViewInteractorStyle * iStyle = vtkThreeDViewInteractorStyle::New();
+  vtkMRMLThreeDViewInteractorStyle * iStyle = vtkMRMLThreeDViewInteractorStyle::New();
   ri->SetInteractorStyle(iStyle);
   iStyle->Delete();
 

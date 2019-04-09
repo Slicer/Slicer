@@ -156,12 +156,15 @@ public:
   void SetGlyphScale(double scale);
   vtkGetMacro(GlyphScale,double);
 
-  /// An event that lets the markups logic know to reset this node to the
-  /// default values
   enum
     {
-    ResetToDefaultsEvent = 19001,
-    JumpToPointEvent, // request jump to a selected control point, request completed by markups logic
+    ResetToDefaultsEvent = 19001, //< reset this node to the default values, request completed by markups logic
+    JumpToPointEvent, /**< request jump to a selected control point, request completed by markups logic,
+                      event data is vtkMRMLInteractionEventData*/
+    MenuEvent, /**< display of context menu is requested (mapped to right-click by default),
+               event data is vtkMRMLInteractionEventData */
+    ActionEvent, /**< default action on the point is requested (mapped to double-click by default),
+                 event data is vtkMRMLInteractionEventData */
     };
 
   /// Set SliceProjection flag that controls if the projection of markups

@@ -37,7 +37,7 @@
 #include <vtkMRMLCrosshairDisplayableManager.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
-#include <vtkThreeDViewInteractorStyle.h>
+#include <vtkMRMLThreeDViewInteractorStyle.h>
 
 // MRML includes
 #include <vtkMRMLViewNode.h>
@@ -80,7 +80,7 @@ void qMRMLThreeDViewPrivate::init()
   Q_Q(qMRMLThreeDView);
   q->setRenderEnabled(this->MRMLScene != nullptr);
 
-  vtkNew<vtkThreeDViewInteractorStyle> interactorStyle;
+  vtkNew<vtkMRMLThreeDViewInteractorStyle> interactorStyle;
   q->interactor()->SetInteractorStyle(interactorStyle.GetPointer());
 
   // Set default background color
@@ -233,7 +233,7 @@ void ClickCallbackFunction (
   vtkRenderWindowInteractor *iren =
      static_cast<vtkRenderWindowInteractor*>(caller);
 
-  vtkThreeDViewInteractorStyle* style = vtkThreeDViewInteractorStyle::SafeDownCast
+  vtkMRMLThreeDViewInteractorStyle* style = vtkMRMLThreeDViewInteractorStyle::SafeDownCast
     (iren ? iren->GetInteractorStyle() : nullptr);
   if (!style)
     {
@@ -311,8 +311,8 @@ void qMRMLThreeDView::addDisplayableManager(const QString& displayableManagerNam
 //------------------------------------------------------------------------------
 void qMRMLThreeDView::rotateToViewAxis(unsigned int axisId)
 {
-  vtkThreeDViewInteractorStyle* style =
-    vtkThreeDViewInteractorStyle::SafeDownCast(this->interactorStyle());
+  vtkMRMLThreeDViewInteractorStyle* style =
+    vtkMRMLThreeDViewInteractorStyle::SafeDownCast(this->interactorStyle());
   if (!style)
     {
     qCritical() << "qMRMLThreeDView::rotateToViewAxis: no valid interactor style.";
@@ -380,8 +380,8 @@ void qMRMLThreeDView::rotateToViewAxis(const std::string& axisLabel)
 void qMRMLThreeDView
 ::resetCamera(bool resetRotation, bool resetTranslation, bool resetDistance)
 {
-  vtkThreeDViewInteractorStyle* style =
-    vtkThreeDViewInteractorStyle::SafeDownCast(this->interactorStyle());
+  vtkMRMLThreeDViewInteractorStyle* style =
+    vtkMRMLThreeDViewInteractorStyle::SafeDownCast(this->interactorStyle());
   if (!style)
     {
     qCritical() << "qMRMLThreeDView::resetCamera: no valid interactor style.";
@@ -553,7 +553,6 @@ void qMRMLThreeDView::unsetViewCursor()
 // --------------------------------------------------------------------------
 void qMRMLThreeDView::setDefaultViewCursor(const QCursor &cursor)
 {
-  this->setCursor(cursor);
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   if (this->VTKWidget() != nullptr)
     {

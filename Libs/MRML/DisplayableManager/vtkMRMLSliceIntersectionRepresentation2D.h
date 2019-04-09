@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    vtkSliceIntersectionRepresentation2D.h
+  Module:    vtkMRMLSliceIntersectionRepresentation2D.h
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -14,15 +14,15 @@
 =========================================================================*/
 
 /**
- * @class   vtkSliceIntersectionRepresentation2D
+ * @class   vtkMRMLSliceIntersectionRepresentation2D
  * @brief   represent intersections of other slice views in the current slice view
  *
  * @sa
  * vtkSliceIntersectionWidget vtkWidgetRepresentation vtkAbstractWidget
 */
 
-#ifndef vtkSliceIntersectionRepresentation2D_h
-#define vtkSliceIntersectionRepresentation2D_h
+#ifndef vtkMRMLSliceIntersectionRepresentation2D_h
+#define vtkMRMLSliceIntersectionRepresentation2D_h
 
 #include "vtkMRMLDisplayableManagerExport.h" // For export macro
 #include "vtkMRMLAbstractWidgetRepresentation.h"
@@ -48,19 +48,19 @@ class vtkActor2D;
 class SliceIntersectionDisplayPipeline;
 
 
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkSliceIntersectionRepresentation2D : public vtkMRMLAbstractWidgetRepresentation
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceIntersectionRepresentation2D : public vtkMRMLAbstractWidgetRepresentation
 {
 public:
   /**
    * Instantiate this class.
    */
-  static vtkSliceIntersectionRepresentation2D *New();
+  static vtkMRMLSliceIntersectionRepresentation2D *New();
 
   //@{
   /**
    * Standard methods for instances of this class.
    */
-  vtkTypeMacro(vtkSliceIntersectionRepresentation2D, vtkMRMLAbstractWidgetRepresentation);
+  vtkTypeMacro(vtkMRMLSliceIntersectionRepresentation2D, vtkMRMLAbstractWidgetRepresentation);
   void PrintSelf(ostream& os, vtkIndent indent) override;
   //@}
 
@@ -89,8 +89,8 @@ public:
   void TransformIntersectingSlices(vtkMatrix4x4* rotatedSliceToSliceTransformMatrix);
 
 protected:
-  vtkSliceIntersectionRepresentation2D();
-  ~vtkSliceIntersectionRepresentation2D() override;
+  vtkMRMLSliceIntersectionRepresentation2D();
+  ~vtkMRMLSliceIntersectionRepresentation2D() override;
 
   SliceIntersectionDisplayPipeline* GetDisplayPipelineFromSliceLogic(vtkMRMLSliceLogic* sliceLogic);
 
@@ -122,8 +122,8 @@ protected:
   vtkInternal * Internal;
 
 private:
-  vtkSliceIntersectionRepresentation2D(const vtkSliceIntersectionRepresentation2D&) = delete;
-  void operator=(const vtkSliceIntersectionRepresentation2D&) = delete;
+  vtkMRMLSliceIntersectionRepresentation2D(const vtkMRMLSliceIntersectionRepresentation2D&) = delete;
+  void operator=(const vtkMRMLSliceIntersectionRepresentation2D&) = delete;
 };
 
 #endif

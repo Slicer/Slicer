@@ -143,6 +143,8 @@ protected:
   // placing the widget.
   // Return true if the event is processed.
   virtual bool ProcessMouseMove(vtkMRMLInteractionEventData* eventData);
+  virtual bool ProcessWidgetMenu(vtkMRMLInteractionEventData* eventData);
+  virtual bool ProcessWidgetAction(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessControlPointSnapToSlice(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessControlPointDelete(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessControlPointInsert(vtkMRMLInteractionEventData* eventData);

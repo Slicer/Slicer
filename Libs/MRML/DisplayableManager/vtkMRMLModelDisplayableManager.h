@@ -182,7 +182,7 @@ protected:
 
   void RemoveMRMLObservers() override;
 
-  friend class vtkThreeDViewInteractorStyle; // Access to RequestRender();
+  friend class vtkMRMLThreeDViewInteractorStyle; // Access to RequestRender();
 
   void RemoveModelProps();
   void RemoveModelObservers(int clearCache);

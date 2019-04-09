@@ -41,7 +41,7 @@
 #include <vtkMRMLLightBoxRendererManagerProxy.h>
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 #include <vtkMRMLScalarBarDisplayableManager.h>
-#include <vtkSliceViewInteractorStyle.h>
+#include <vtkMRMLSliceViewInteractorStyle.h>
 
 // MRML includes
 #include <vtkMRMLSliceNode.h>
@@ -151,7 +151,7 @@ void qMRMLSliceViewPrivate::init()
 
   q->setRenderEnabled(this->MRMLScene != nullptr);
 
-  vtkNew<vtkSliceViewInteractorStyle> interactorStyle;
+  vtkNew<vtkMRMLSliceViewInteractorStyle> interactorStyle;
   q->interactor()->SetInteractorStyle(interactorStyle.GetPointer());
 
   this->LightBoxRendererManagerProxy->SetLightBoxRendererManager(
@@ -339,9 +339,9 @@ vtkMRMLSliceNode* qMRMLSliceView::mrmlSliceNode()const
 }
 
 //---------------------------------------------------------------------------
-vtkSliceViewInteractorStyle* qMRMLSliceView::sliceViewInteractorStyle()const
+vtkMRMLSliceViewInteractorStyle* qMRMLSliceView::sliceViewInteractorStyle()const
 {
-  return vtkSliceViewInteractorStyle::SafeDownCast(this->interactorStyle());
+  return vtkMRMLSliceViewInteractorStyle::SafeDownCast(this->interactorStyle());
 }
 
 // --------------------------------------------------------------------------
@@ -450,7 +450,6 @@ void qMRMLSliceView::unsetViewCursor()
 // --------------------------------------------------------------------------
 void qMRMLSliceView::setDefaultViewCursor(const QCursor &cursor)
 {
-  this->setCursor(cursor);
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   if (this->VTKWidget() != nullptr)
     {

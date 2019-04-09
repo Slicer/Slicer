@@ -29,9 +29,9 @@
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLLightBoxRendererManagerProxy.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLSliceIntersectionWidget.h>
 #include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLSliceNode.h>
-#include <vtkSliceIntersectionWidget.h>
 
 // VTK includes
 #include <vtkActor2D.h>
@@ -105,7 +105,7 @@ public:
   int CrosshairThickness;
   double CrosshairPosition[3];
 
-  vtkSmartPointer<vtkSliceIntersectionWidget> SliceIntersectionWidget;
+  vtkSmartPointer<vtkMRMLSliceIntersectionWidget> SliceIntersectionWidget;
 };
 
 
@@ -125,7 +125,7 @@ vtkMRMLCrosshairDisplayableManager::vtkInternal
   this->CrosshairPosition[0] = 0.0;
   this->CrosshairPosition[1] = 0.0;
   this->CrosshairPosition[2] = 0.0;
-  this->SliceIntersectionWidget = vtkSmartPointer<vtkSliceIntersectionWidget>::New();
+  this->SliceIntersectionWidget = vtkSmartPointer<vtkMRMLSliceIntersectionWidget>::New();
 }
 
 //---------------------------------------------------------------------------

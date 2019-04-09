@@ -19,22 +19,15 @@
 #define __vtkMRMLInteractionEventData_h
 
 // VTK includes
-#include "vtkCommand.h"
-#include "vtkEvent.h"
 #include "vtkEventData.h"
-#include "vtkInteractorStyleUser.h"
-#include "vtkMatrix4x4.h"
-#include "vtkRenderWindowInteractor.h"
-#include "vtkWeakPointer.h"
 
 // MRML includes
 #include "vtkMRMLDisplayableManagerExport.h"
 
-class vtkMRMLAbstractDisplayableManager;
-class vtkMRMLSegmentationDisplayNode;
-class vtkMRMLSliceLogic;
-class vtkMRMLDisplayableManagerGroup;
 class vtkMRMLAbstractViewNode;
+class vtkRenderWindowInteractor;
+class vtkRenderer;
+class vtkCellPicker;
 
 /// Class for storing all relevant details of mouse and keyboard events.
 /// It stores additional information that is expensive to compute (such as 3D position)
@@ -43,117 +36,69 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLInteractionEventData : public vt
 {
 public:
   vtkTypeMacro(vtkMRMLInteractionEventData, vtkEventData);
-  static vtkMRMLInteractionEventData *New()
-    {
-    vtkMRMLInteractionEventData *ret = new vtkMRMLInteractionEventData;
-    ret->InitializeObjectBase();
-    return ret;
-    };
+  static vtkMRMLInteractionEventData *New();
 
   /// Extends vtkCommand events
   enum MRMLInteractionEvents
     {
     LeftButtonClickEvent = vtkCommand::UserEvent + 300, // button press and release without moving mouse
     MiddleButtonClickEvent,
-    RightButtonClickEvent
+    RightButtonClickEvent,
     };
 
-  void SetType(unsigned long v) { this->Type = v; }
+  void SetType(unsigned long v);
 
-  void SetModifiers(int v) { this->Modifiers = v; }
-  int GetModifiers() { return this->Modifiers; }
+  void SetModifiers(int v);
+  int GetModifiers();
 
-  void GetWorldPosition(double v[3]) const
-    {
-    std::copy(this->WorldPosition, this->WorldPosition + 3, v);
-    }
-  const double *GetWorldPosition() const
-    {
-    return this->WorldPosition;
-    }
-  void SetWorldPosition(const double p[3])
-    {
-    this->WorldPosition[0] = p[0];
-    this->WorldPosition[1] = p[1];
-    this->WorldPosition[2] = p[2];
-    this->WorldPositionValid = true;
-    }
-  bool IsWorldPositionValid()
-    {
-    return this->WorldPositionValid;
-    }
-  void SetWorldPositionInvalid()
-    {
-    this->WorldPositionValid = false;
-    }
+  void GetWorldPosition(double v[3]) const;
+  const double *GetWorldPosition() const;
 
-  void GetDisplayPosition(int v[2]) const
-    {
-    std::copy(this->DisplayPosition, this->DisplayPosition + 2, v);
-    }
-  const int *GetDisplayPosition() const
-    {
-    return this->DisplayPosition;
-    }
-  void SetDisplayPosition(const int p[2])
-    {
-    this->DisplayPosition[0] = p[0];
-    this->DisplayPosition[1] = p[1];
-    this->DisplayPositionValid = true;
-    }
-  bool IsDisplayPositionValid()
-    {
-    return this->DisplayPositionValid;
-    }
-  void SetDisplayPositionValid()
-    {
-    this->DisplayPositionValid = false;
-    }
+  // It may be expensive to compute world position accurately (e.g., in a 3D view).
+  // If accurate parameter is set to false then it indicates
+  // that the position may be inaccurate.
+  void SetWorldPosition(const double p[3], bool accurate = true);
+  bool IsWorldPositionValid();
+  bool IsWorldPositionAccurate();
+  void SetWorldPositionInvalid();
 
-  void SetKeyCode(char v) { this->KeyCode = v; }
-  char GetKeyCode() { return this->KeyCode; }
-  void SetKeyRepeatCount(char v) { this->KeyRepeatCount = v; }
-  int GetKeyRepeatCount() { return this->KeyRepeatCount; }
-  void SetKeySym(const std::string &v) { this->KeySym = v; }
-  const std::string& GetKeySym() { return this->KeySym; }
+  bool ComputeAccurateWorldPosition(bool force = false);
 
-  void SetViewNode(vtkMRMLAbstractViewNode* viewNode) { this->ViewNode = viewNode; }
-  vtkMRMLAbstractViewNode* GetViewNode() { return this->ViewNode; }
+  void GetDisplayPosition(int v[2]) const;
+  const int *GetDisplayPosition() const;
+  void SetDisplayPosition(const int p[2]);
+  bool IsDisplayPositionValid();
+  void SetDisplayPositionValid();
 
-  void SetComponentType(int componentType) { this->ComponentType = componentType; }
-  int GetComponentType() { return this->ComponentType; }
+  void SetKeyCode(char v);
+  char GetKeyCode();
+  void SetKeyRepeatCount(char v);
+  int GetKeyRepeatCount();
+  void SetKeySym(const std::string &v);
+  const std::string& GetKeySym();
 
-  void SetComponentIndex(int componentIndex) { this->ComponentIndex = componentIndex; }
-  int GetComponentIndex() { return this->ComponentIndex; }
+  void SetViewNode(vtkMRMLAbstractViewNode* viewNode);
+  vtkMRMLAbstractViewNode* GetViewNode() const;
 
-  void SetRotation(double v) { this->Rotation = v; }
-  double GetRotation() { return this->Rotation; }
-  void SetLastRotation(double v) { this->LastRotation = v; }
-  double GetLastRotation() { return this->LastRotation; }
+  void SetComponentType(int componentType);
+  int GetComponentType() const;
+
+  void SetComponentIndex(int componentIndex);
+  int GetComponentIndex() const;
+
+  void SetRotation(double v);
+  double GetRotation() const;
+  void SetLastRotation(double v);
+  double GetLastRotation() const;
 
   /// Set Modifiers and Key... attributes from interactor
-  void SetAttributesFromInteractor(vtkRenderWindowInteractor* interactor)
-    {
-    this->Modifiers = 0;
-    if (interactor->GetShiftKey())
-      {
-      this->Modifiers |= vtkEvent::ShiftModifier;
-      }
-    if (interactor->GetControlKey())
-      {
-      this->Modifiers |= vtkEvent::ControlModifier;
-      }
-    if (interactor->GetAltKey())
-      {
-      this->Modifiers |= vtkEvent::AltModifier;
-      }
-    this->KeyCode = interactor->GetKeyCode();
-    this->KeySym = (interactor->GetKeySym() ? interactor->GetKeySym() : "");
-    this->KeyRepeatCount = interactor->GetRepeatCount();
+  void SetAttributesFromInteractor(vtkRenderWindowInteractor* interactor);
 
-    this->Rotation = interactor->GetRotation();
-    this->LastRotation = interactor->GetLastRotation();
-    }
+  vtkRenderer* GetRenderer() const;
+  void SetRenderer(vtkRenderer* ren);
+
+  void SetAccuratePicker(vtkCellPicker* picker);
+  vtkCellPicker* GetAccuratePicker() const;
 
 protected:
   int Modifiers;
@@ -161,7 +106,11 @@ protected:
   double WorldPosition[3];
   bool DisplayPositionValid;
   bool WorldPositionValid;
+  bool WorldPositionAccurate;
+  bool ComputeAccurateWorldPositionAttempted;
   vtkMRMLAbstractViewNode* ViewNode;
+  vtkRenderer* Renderer;
+  vtkCellPicker* AccuratePicker;
   int ComponentType;
   int ComponentIndex;
 
@@ -174,38 +123,9 @@ protected:
   double Rotation;
   double LastRotation;
 
-  bool Equivalent(const vtkEventData *e) const override
-    {
-    const vtkMRMLInteractionEventData *edd = static_cast<const vtkMRMLInteractionEventData *>(e);
-    if (this->Type != edd->Type)
-      {
-      return false;
-      }
-    if (edd->Modifiers >= 0 && (this->Modifiers != edd->Modifiers))
-      {
-      return false;
-      }
-    return true;
-    };
+  bool Equivalent(const vtkEventData *e) const override;
 
-  vtkMRMLInteractionEventData()
-    {
-    this->Type = 0;
-    this->Modifiers = 0;
-    this->DisplayPosition[0] = 0;
-    this->DisplayPosition[1] = 0;
-    this->WorldPosition[0] = 0.0;
-    this->WorldPosition[1] = 0.0;
-    this->WorldPosition[2] = 0.0;
-    this->DisplayPositionValid = false;
-    this->WorldPositionValid = false;
-    this->KeyRepeatCount = 0;
-    this->KeyCode = 0;
-    this->ViewNode = nullptr;
-    this->Rotation = 0.0;
-    this->LastRotation = 0.0;
-    }
-
+  vtkMRMLInteractionEventData();
   ~vtkMRMLInteractionEventData() override  = default;
 
 private:

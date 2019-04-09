@@ -46,6 +46,7 @@
 #include <vtkAbstractWidget.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCamera.h>
+#include <vtkEvent.h>
 #include <vtkGeneralTransform.h>
 #include <vtkMarkupsGlyphSource2D.h>
 #include <vtkMath.h>

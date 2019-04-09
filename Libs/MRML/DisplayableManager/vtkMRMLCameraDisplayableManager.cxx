@@ -21,10 +21,11 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLCameraDisplayableManager.h"
-#include "vtkThreeDViewInteractorStyle.h"
+#include "vtkMRMLThreeDViewInteractorStyle.h"
 
 // MRML includes
 #include <vtkEventBroker.h>
+#include <vtkMRMLCameraWidget.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
 
@@ -47,9 +48,11 @@ class vtkMRMLCameraDisplayableManager::vtkInternal
 {
 public:
   vtkInternal();
+  ~vtkInternal();
 
   vtkMRMLCameraNode* CameraNode;
   int UpdatingCameraNode;
+  vtkSmartPointer<vtkMRMLCameraWidget> CameraWidget;
 };
 
 //---------------------------------------------------------------------------
@@ -60,7 +63,14 @@ vtkMRMLCameraDisplayableManager::vtkInternal::vtkInternal()
 {
   this->CameraNode = nullptr;
   this->UpdatingCameraNode = 0;
+  this->CameraWidget = vtkSmartPointer<vtkMRMLCameraWidget>::New();
+}
 
+//---------------------------------------------------------------------------
+vtkMRMLCameraDisplayableManager::vtkInternal::~vtkInternal()
+{
+  this->CameraWidget->SetRenderer(nullptr);
+  this->CameraWidget->SetCameraNode(nullptr);
 }
 
 //---------------------------------------------------------------------------
@@ -236,25 +246,6 @@ void vtkMRMLCameraDisplayableManager::OnMRMLNodeModified(
   vtkMRMLNode* vtkNotUsed(node))
 #endif
 {
-  // ModifiedEvent is fired anytime vtkCamera is modified (when there is a
-  // pan, zoom, rotation...)
-  // The observation is setup here: vtkSetAndObserveMRMLNodeMacro(
-  // this->Internal->CameraNode, newCameraNode);
-  assert(vtkMRMLCameraNode::SafeDownCast(node));
-  vtkInteractorStyle* interactorStyle = vtkInteractorStyle::SafeDownCast(
-    this->GetInteractor()->GetInteractorStyle());
-  if (interactorStyle &&
-      interactorStyle->GetState() != VTKIS_NONE)
-    {
-    // The interactor style is in a "state" mode (rotate, dolly...), that
-    // means it is doing multiple actions on the camera at once (azimuth,
-    // elevation...). When the interactor style is done with updating the
-    // camera, it will call Render() on the interactor which will trigger a
-    // rendering. We don't need to do it here then, there is even a risk to
-    // trigger a rendering before the camera is done being updated (between
-    // azimuth and elevation for example).
-    return;
-    }
   this->RequestRender();
 }
 
@@ -300,6 +291,9 @@ void vtkMRMLCameraDisplayableManager::SetAndObserveCameraNode(vtkMRMLCameraNode 
     {
     viewNode->Modified(); // update vtkCamera from view node (perspective/parallel, etc)
     }
+
+  this->Internal->CameraWidget->SetRenderer(this->GetRenderer());
+  this->Internal->CameraWidget->SetCameraNode(this->Internal->CameraNode);
 };
 
 //---------------------------------------------------------------------------
@@ -543,17 +537,11 @@ void vtkMRMLCameraDisplayableManager::SetCameraToInteractor()
     return;
     }
   vtkInteractorObserver *iobs = this->GetInteractor()->GetInteractorStyle();
-  vtkThreeDViewInteractorStyle *istyle =
-    vtkThreeDViewInteractorStyle::SafeDownCast(iobs);
+  vtkMRMLThreeDViewInteractorStyle *istyle =
+    vtkMRMLThreeDViewInteractorStyle::SafeDownCast(iobs);
   if (istyle)
     {
     istyle->SetCameraNode(this->Internal->CameraNode);
-    //if (istyle->GetApplicationLogic() == 0 &&
-    //    this->GetApplicationLogic() != 0)
-    //  {
-    //  vtkDebugMacro("Updating interactor style's application logic, since it was 0");
-    //  istyle->SetApplicationLogic(this->GetApplicationLogic());
-    //  }
     }
 }
 
@@ -590,3 +578,24 @@ void vtkMRMLCameraDisplayableManager::SetCameraToInteractor()
 //
 //  broker->RemoveObservations(observations);
 //}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLCameraDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &closestDistance2)
+{
+  return this->Internal->CameraWidget->CanProcessInteractionEvent(eventData, closestDistance2);
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLCameraDisplayableManager::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
+{
+  return this->Internal->CameraWidget->ProcessInteractionEvent(eventData);
+  /*
+  bool processed = this->Internal->CameraWidget->ProcessInteractionEvent(eventData);
+  if (this->Internal->CameraWidget->GetNeedToRender())
+    {
+    this->Internal->CameraWidget->NeedToRenderOff();
+    this->RequestRender();
+    }
+  return processed;
+*/
+}

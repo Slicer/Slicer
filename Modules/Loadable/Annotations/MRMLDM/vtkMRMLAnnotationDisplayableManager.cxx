@@ -23,6 +23,7 @@
 
 // MRML includes
 #include <vtkMRMLApplicationLogic.h>
+#include <vtkMRMLInteractionEventData.h>
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
@@ -2172,5 +2173,38 @@ bool vtkMRMLAnnotationDisplayableManager::AddAnnotation(vtkMRMLAnnotationNode *a
   // tear down widget creation
   this->OnWidgetCreated(newWidget, annotationNode);
 
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLAnnotationDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &closestDistance2)
+{
+  if (this->GetDisableInteractorStyleEventsProcessing())
+    {
+    return false;
+    }
+  if (!this->IsCorrectDisplayableManager())
+    {
+    return false;
+    }
+  if (eventData->GetType() != vtkCommand::LeftButtonPressEvent
+    && eventData->GetType() != vtkCommand::LeftButtonReleaseEvent
+    && eventData->GetType() != vtkCommand::RightButtonPressEvent
+    && eventData->GetType() != vtkCommand::RightButtonReleaseEvent)
+    {
+    return false;
+    }
+  if (this->GetInteractionNode()->GetCurrentInteractionMode() != vtkMRMLInteractionNode::Place)
+    {
+    return false;
+    }
+  closestDistance2 = 0.0;
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLAnnotationDisplayableManager::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
+{
+  this->OnInteractorStyleEvent(eventData->GetType());
   return true;
 }

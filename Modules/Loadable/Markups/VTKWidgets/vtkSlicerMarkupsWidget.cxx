@@ -30,6 +30,7 @@
 
 // VTK includes
 #include "vtkCommand.h"
+#include "vtkEvent.h"
 #include "vtkPointPlacer.h"
 #include "vtkRenderWindow.h"
 #include "vtkTransform.h"
@@ -54,10 +55,13 @@ vtkSlicerMarkupsWidget::vtkSlicerMarkupsWidget()
   this->SetKeyboardEventTranslation(WidgetStateOnWidget, vtkEvent::ShiftModifier, 127, 1, "Delete", WidgetEventReset);
   this->SetKeyboardEventTranslation(WidgetStateOnWidget, vtkEvent::NoModifier, 127, 1, "Delete", WidgetEventControlPointDelete);
   this->SetKeyboardEventTranslation(WidgetStateOnWidget, vtkEvent::NoModifier, 8, 1, "BackSpace", WidgetEventControlPointDelete);
-  this->SetEventTranslation(WidgetStateOnWidget, vtkMRMLInteractionEventData::RightButtonClickEvent, vtkEvent::NoModifier, WidgetEventPick);
 
   this->SetEventTranslation(WidgetStateOnWidget, vtkMRMLInteractionEventData::LeftButtonClickEvent, vtkEvent::NoModifier, WidgetEventJumpCursor);
   this->SetEventTranslation(WidgetStateOnWidget, vtkCommand::LeftButtonDoubleClickEvent, vtkEvent::NoModifier, WidgetEventAction);
+
+  // Must process right button press if want to capture right button click event
+  this->SetEventTranslation(WidgetStateOnWidget, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetEventPick);
+  this->SetEventTranslation(WidgetStateOnWidget, vtkMRMLInteractionEventData::RightButtonClickEvent, vtkEvent::NoModifier, WidgetEventMenu);
 
   // Update active component
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
@@ -490,6 +494,60 @@ bool vtkSlicerMarkupsWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventD
   return true;
 }
 
+//-------------------------------------------------------------------------
+bool vtkSlicerMarkupsWidget::ProcessWidgetMenu(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
+{
+  if (this->WidgetState != WidgetStateOnWidget || !this->MousePressedSinceMarkupPlace)
+    {
+    return false;
+    }
+
+  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  vtkMRMLMarkupsDisplayNode* markupsDisplayNode = this->GetMarkupsDisplayNode();
+  if (!markupsNode || !markupsDisplayNode)
+    {
+    return false;
+    }
+  markupsNode->GetScene()->SaveStateForUndo();
+
+  vtkNew<vtkMRMLInteractionEventData> pickEventData;
+  pickEventData->SetType(vtkMRMLMarkupsDisplayNode::MenuEvent);
+  pickEventData->SetComponentType(markupsDisplayNode->GetActiveComponentType());
+  pickEventData->SetComponentIndex(markupsDisplayNode->GetActiveComponentIndex());
+  pickEventData->SetViewNode(this->WidgetRep->GetViewNode());
+  markupsDisplayNode->InvokeEvent(vtkMRMLMarkupsDisplayNode::MenuEvent, pickEventData);
+  return true;
+}
+
+//-------------------------------------------------------------------------
+bool vtkSlicerMarkupsWidget::ProcessWidgetAction(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
+{
+  if (this->WidgetState != WidgetStateOnWidget || !this->MousePressedSinceMarkupPlace)
+    {
+    return false;
+    }
+  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  vtkMRMLMarkupsDisplayNode* markupsDisplayNode = this->GetMarkupsDisplayNode();
+  if (!markupsNode || !markupsDisplayNode)
+    {
+    return false;
+    }
+  int controlPointIndex = markupsDisplayNode->GetActiveControlPoint();
+  if (controlPointIndex < 0 || controlPointIndex >= markupsNode->GetNumberOfControlPoints())
+    {
+    return false;
+    }
+  markupsNode->GetScene()->SaveStateForUndo();
+
+  vtkNew<vtkMRMLInteractionEventData> actionEventData;
+  actionEventData->SetType(vtkMRMLMarkupsDisplayNode::ActionEvent);
+  actionEventData->SetComponentType(vtkMRMLMarkupsDisplayNode::ComponentControlPoint);
+  actionEventData->SetComponentIndex(controlPointIndex);
+  actionEventData->SetViewNode(this->WidgetRep->GetViewNode());
+  markupsDisplayNode->InvokeEvent(vtkMRMLMarkupsDisplayNode::ActionEvent, actionEventData);
+  return true;
+}
+
 //-----------------------------------------------------------------------------
 bool vtkSlicerMarkupsWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
@@ -508,6 +566,12 @@ bool vtkSlicerMarkupsWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData
       break;
     case WidgetEventMouseMove:
       processedEvent = ProcessMouseMove(eventData);
+      break;
+    case WidgetEventMenu:
+      processedEvent = ProcessWidgetMenu(eventData);
+      break;
+    case WidgetEventAction:
+      processedEvent = ProcessWidgetAction(eventData);
       break;
     case WidgetEventControlPointSnapToSlice:
       processedEvent = ProcessControlPointSnapToSlice(eventData);
@@ -587,13 +651,11 @@ void vtkSlicerMarkupsWidget::StartWidgetInteraction(vtkMRMLInteractionEventData*
 
   markupsNode->GetScene()->SaveStateForUndo();
 
-  //this->GrabFocus(this->EventCallbackCommand);
-  //this->StartInteraction();
   double startEventPos[2]
-  {
+    {
     static_cast<double>(eventData->GetDisplayPosition()[0]),
     static_cast<double>(eventData->GetDisplayPosition()[1])
-  };
+    };
 
   // How far is this in pixels from the position of this widget?
   // Maintain this during interaction such as translating (don't
@@ -616,13 +678,19 @@ void vtkSlicerMarkupsWidget::StartWidgetInteraction(vtkMRMLInteractionEventData*
   // save also the cursor pos
   this->LastEventPosition[0] = startEventPos[0];
   this->LastEventPosition[1] = startEventPos[1];
+
+  markupsNode->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointStartInteractionEvent);
 }
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidget::EndWidgetInteraction()
 {
-  //this->ReleaseFocus();
-  //this->EndInteraction();
+  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  if (!markupsNode)
+    {
+    return;
+    }
+  markupsNode->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointEndInteractionEvent);
 }
 
 //----------------------------------------------------------------------

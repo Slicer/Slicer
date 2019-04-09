@@ -95,6 +95,8 @@ set(KIT_SRCS
   vtkMRMLDisplayableManagerGroup.cxx
   vtkMRMLDisplayableManagerFactory.cxx
 
+  vtkMRMLInteractionEventData.cxx
+
   # ThreeDView factory and DisplayableManager
   vtkMRMLAbstractThreeDViewDisplayableManager.cxx
   vtkMRMLThreeDViewDisplayableManagerFactory.cxx
@@ -103,14 +105,16 @@ set(KIT_SRCS
   vtkMRMLAbstractSliceViewDisplayableManager.cxx
   vtkMRMLSliceViewDisplayableManagerFactory.cxx
 
-  vtkSliceViewInteractorStyle.cxx
-  vtkThreeDViewInteractorStyle.cxx
+  vtkMRMLViewInteractorStyle.cxx
+  vtkMRMLSliceViewInteractorStyle.cxx
+  vtkMRMLThreeDViewInteractorStyle.cxx
 
   # Widgets
   vtkMRMLAbstractWidget.cxx
   vtkMRMLAbstractWidgetRepresentation.cxx
-  vtkSliceIntersectionWidget.cxx
-  vtkSliceIntersectionRepresentation2D.cxx
+  vtkMRMLCameraWidget.cxx
+  vtkMRMLSliceIntersectionWidget.cxx
+  vtkMRMLSliceIntersectionRepresentation2D.cxx
   vtkMRMLRubberBandWidgetRepresentation.cxx
   vtkMRMLWindowLevelWidget.cxx
 

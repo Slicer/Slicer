@@ -46,7 +46,6 @@
 #include <vtkProperty.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkThreeDViewInteractorStyle.h>
 #include <vtkTransform.h>
 
 // STD includes
@@ -241,6 +240,9 @@ NewImplicitPlaneWidget()
   vtkImplicitPlaneWidget2* planeWidget = vtkImplicitPlaneWidget2::New();
   planeWidget->SetInteractor(this->External->GetInteractor());
   planeWidget->SetRepresentation(rep.GetPointer());
+  // TODO: enabling picking might make behavior more predicatable
+  // when  multiple plane widgets are enabled
+  // planeWidget->SetPickingManaged(true);
   planeWidget->SetEnabled(0);
 
   // Link widget evenement to the WidgetsCallbackCommand

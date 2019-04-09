@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    vtkSliceIntersectionRepresentation2D.cxx
+  Module:    vtkMRMLSliceIntersectionRepresentation2D.cxx
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -12,7 +12,7 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-#include "vtkSliceIntersectionRepresentation2D.h"
+#include "vtkMRMLSliceIntersectionRepresentation2D.h"
 
 
 #include <deque>
@@ -56,8 +56,8 @@
 static const int CONTROL_MODIFIER = 1;
 static const int SHIFT_MODIFIER = 2;
 
-vtkStandardNewMacro(vtkSliceIntersectionRepresentation2D);
-vtkCxxSetObjectMacro(vtkSliceIntersectionRepresentation2D, MRMLApplicationLogic, vtkMRMLApplicationLogic);
+vtkStandardNewMacro(vtkMRMLSliceIntersectionRepresentation2D);
+vtkCxxSetObjectMacro(vtkMRMLSliceIntersectionRepresentation2D, MRMLApplicationLogic, vtkMRMLApplicationLogic);
 
 class SliceIntersectionDisplayPipeline
 {
@@ -167,15 +167,15 @@ public:
   vtkWeakPointer<vtkCallbackCommand> Callback;
 };
 
-class vtkSliceIntersectionRepresentation2D::vtkInternal
+class vtkMRMLSliceIntersectionRepresentation2D::vtkInternal
 {
 public:
-  vtkInternal(vtkSliceIntersectionRepresentation2D * external);
+  vtkInternal(vtkMRMLSliceIntersectionRepresentation2D * external);
   ~vtkInternal();
 
   static int IntersectWithFinitePlane(double n[3], double o[3], double pOrigin[3], double px[3], double py[3], double x0[3], double x1[3]);
 
-  vtkSliceIntersectionRepresentation2D* External;
+  vtkMRMLSliceIntersectionRepresentation2D* External;
 
   vtkSmartPointer<vtkMRMLSliceNode> SliceNode;
 
@@ -187,19 +187,19 @@ public:
 // vtkInternal methods
 
 //---------------------------------------------------------------------------
-vtkSliceIntersectionRepresentation2D::vtkInternal
-::vtkInternal(vtkSliceIntersectionRepresentation2D * external)
+vtkMRMLSliceIntersectionRepresentation2D::vtkInternal
+::vtkInternal(vtkMRMLSliceIntersectionRepresentation2D * external)
 {
   this->External = external;
 }
 
 //---------------------------------------------------------------------------
-vtkSliceIntersectionRepresentation2D::vtkInternal::~vtkInternal()
+vtkMRMLSliceIntersectionRepresentation2D::vtkInternal::~vtkInternal()
 = default;
 
 
 //---------------------------------------------------------------------------
-int vtkSliceIntersectionRepresentation2D::vtkInternal::IntersectWithFinitePlane(double n[3], double o[3],
+int vtkMRMLSliceIntersectionRepresentation2D::vtkInternal::IntersectWithFinitePlane(double n[3], double o[3],
   double pOrigin[3], double px[3], double py[3],
   double x0[3], double x1[3])
 {
@@ -270,13 +270,13 @@ int vtkSliceIntersectionRepresentation2D::vtkInternal::IntersectWithFinitePlane(
 }
 
 //----------------------------------------------------------------------
-vtkSliceIntersectionRepresentation2D::vtkSliceIntersectionRepresentation2D()
+vtkMRMLSliceIntersectionRepresentation2D::vtkMRMLSliceIntersectionRepresentation2D()
 {
   this->MRMLApplicationLogic = nullptr;
 
   this->Internal = new vtkInternal(this);
   this->Internal->SliceNodeModifiedCommand->SetClientData(this);
-  this->Internal->SliceNodeModifiedCommand->SetCallback(vtkSliceIntersectionRepresentation2D::SliceNodeModifiedCallback);
+  this->Internal->SliceNodeModifiedCommand->SetCallback(vtkMRMLSliceIntersectionRepresentation2D::SliceNodeModifiedCallback);
 
   this->SliceIntersectionPoint[0] = 0.0;
   this->SliceIntersectionPoint[1] = 0.0;
@@ -285,7 +285,7 @@ vtkSliceIntersectionRepresentation2D::vtkSliceIntersectionRepresentation2D()
 }
 
 //----------------------------------------------------------------------
-vtkSliceIntersectionRepresentation2D::~vtkSliceIntersectionRepresentation2D()
+vtkMRMLSliceIntersectionRepresentation2D::~vtkMRMLSliceIntersectionRepresentation2D()
 {
   this->SetSliceNode(nullptr);
   this->SetMRMLApplicationLogic(nullptr);
@@ -293,7 +293,7 @@ vtkSliceIntersectionRepresentation2D::~vtkSliceIntersectionRepresentation2D()
 }
 
 //----------------------------------------------------------------------
-void vtkSliceIntersectionRepresentation2D::GetActors2D(vtkPropCollection *pc)
+void vtkMRMLSliceIntersectionRepresentation2D::GetActors2D(vtkPropCollection *pc)
 {
   for (std::deque<SliceIntersectionDisplayPipeline*>::iterator sliceIntersectionIt = this->Internal->SliceIntersectionDisplayPipelines.begin();
     sliceIntersectionIt != this->Internal->SliceIntersectionDisplayPipelines.end(); ++sliceIntersectionIt)
@@ -303,7 +303,7 @@ void vtkSliceIntersectionRepresentation2D::GetActors2D(vtkPropCollection *pc)
 }
 
 //----------------------------------------------------------------------
-void vtkSliceIntersectionRepresentation2D::ReleaseGraphicsResources(vtkWindow *win)
+void vtkMRMLSliceIntersectionRepresentation2D::ReleaseGraphicsResources(vtkWindow *win)
 {
   for (std::deque<SliceIntersectionDisplayPipeline*>::iterator sliceIntersectionIt = this->Internal->SliceIntersectionDisplayPipelines.begin();
     sliceIntersectionIt != this->Internal->SliceIntersectionDisplayPipelines.end(); ++sliceIntersectionIt)
@@ -313,7 +313,7 @@ void vtkSliceIntersectionRepresentation2D::ReleaseGraphicsResources(vtkWindow *w
 }
 
 //----------------------------------------------------------------------
-int vtkSliceIntersectionRepresentation2D::RenderOverlay(vtkViewport *viewport)
+int vtkMRMLSliceIntersectionRepresentation2D::RenderOverlay(vtkViewport *viewport)
 {
   int count = 0;
 
@@ -327,7 +327,7 @@ int vtkSliceIntersectionRepresentation2D::RenderOverlay(vtkViewport *viewport)
 
 
 //----------------------------------------------------------------------
-void vtkSliceIntersectionRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLSliceIntersectionRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
 {
   //Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
   this->Superclass::PrintSelf(os, indent);
@@ -335,10 +335,10 @@ void vtkSliceIntersectionRepresentation2D::PrintSelf(ostream& os, vtkIndent inde
 
 
 //----------------------------------------------------------------------
-void vtkSliceIntersectionRepresentation2D::SliceNodeModifiedCallback(
+void vtkMRMLSliceIntersectionRepresentation2D::SliceNodeModifiedCallback(
   vtkObject* caller, unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
 {
-  vtkSliceIntersectionRepresentation2D* self = vtkSliceIntersectionRepresentation2D::SafeDownCast((vtkObject*)clientData);
+  vtkMRMLSliceIntersectionRepresentation2D* self = vtkMRMLSliceIntersectionRepresentation2D::SafeDownCast((vtkObject*)clientData);
 
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(caller);
   if (sliceNode)
@@ -356,7 +356,7 @@ void vtkSliceIntersectionRepresentation2D::SliceNodeModifiedCallback(
 }
 
 //----------------------------------------------------------------------
-void vtkSliceIntersectionRepresentation2D::SliceNodeModified(vtkMRMLSliceNode* sliceNode)
+void vtkMRMLSliceIntersectionRepresentation2D::SliceNodeModified(vtkMRMLSliceNode* sliceNode)
 {
   if (!sliceNode)
     {
@@ -374,7 +374,7 @@ void vtkSliceIntersectionRepresentation2D::SliceNodeModified(vtkMRMLSliceNode* s
 }
 
 //----------------------------------------------------------------------
-SliceIntersectionDisplayPipeline* vtkSliceIntersectionRepresentation2D::GetDisplayPipelineFromSliceLogic(vtkMRMLSliceLogic* sliceLogic)
+SliceIntersectionDisplayPipeline* vtkMRMLSliceIntersectionRepresentation2D::GetDisplayPipelineFromSliceLogic(vtkMRMLSliceLogic* sliceLogic)
 {
   for (std::deque<SliceIntersectionDisplayPipeline*>::iterator sliceIntersectionIt = this->Internal->SliceIntersectionDisplayPipelines.begin();
     sliceIntersectionIt != this->Internal->SliceIntersectionDisplayPipelines.end(); ++sliceIntersectionIt)
@@ -393,7 +393,7 @@ SliceIntersectionDisplayPipeline* vtkSliceIntersectionRepresentation2D::GetDispl
 }
 
 //----------------------------------------------------------------------
-void vtkSliceIntersectionRepresentation2D::UpdateSliceIntersectionDisplay(SliceIntersectionDisplayPipeline *pipeline)
+void vtkMRMLSliceIntersectionRepresentation2D::UpdateSliceIntersectionDisplay(SliceIntersectionDisplayPipeline *pipeline)
 {
   if (!pipeline || !this->Internal->SliceNode || pipeline->SliceLogic == nullptr)
     {
@@ -455,7 +455,7 @@ void vtkSliceIntersectionRepresentation2D::UpdateSliceIntersectionDisplay(SliceI
   double intersectionPoint1[4] = { 0.0, 0.0, 0.0, 1.0 };
   double intersectionPoint2[4] = { 0.0, 0.0, 0.0, 1.0 };
 
-  int intersectionFound = vtkSliceIntersectionRepresentation2D::vtkInternal::IntersectWithFinitePlane(slicePlaneNormal, slicePlaneOrigin,
+  int intersectionFound = vtkMRMLSliceIntersectionRepresentation2D::vtkInternal::IntersectWithFinitePlane(slicePlaneNormal, slicePlaneOrigin,
     intersectingPlaneOrigin, intersectingPlaneX, intersectingPlaneY,
     intersectionPoint1, intersectionPoint2);
   if (!intersectionFound)
@@ -471,7 +471,7 @@ void vtkSliceIntersectionRepresentation2D::UpdateSliceIntersectionDisplay(SliceI
 }
 
 //----------------------------------------------------------------------
-void vtkSliceIntersectionRepresentation2D::SetSliceNode(vtkMRMLSliceNode* sliceNode)
+void vtkMRMLSliceIntersectionRepresentation2D::SetSliceNode(vtkMRMLSliceNode* sliceNode)
 {
   if (sliceNode == this->Internal->SliceNode)
     {
@@ -491,13 +491,13 @@ void vtkSliceIntersectionRepresentation2D::SetSliceNode(vtkMRMLSliceNode* sliceN
 }
 
 //----------------------------------------------------------------------
-vtkMRMLSliceNode* vtkSliceIntersectionRepresentation2D::GetSliceNode()
+vtkMRMLSliceNode* vtkMRMLSliceIntersectionRepresentation2D::GetSliceNode()
 {
   return this->Internal->SliceNode;
 }
 
 //----------------------------------------------------------------------
-void vtkSliceIntersectionRepresentation2D::AddIntersectingSliceLogic(vtkMRMLSliceLogic* sliceLogic)
+void vtkMRMLSliceIntersectionRepresentation2D::AddIntersectingSliceLogic(vtkMRMLSliceLogic* sliceLogic)
 {
   if (!sliceLogic)
     {
@@ -522,7 +522,7 @@ void vtkSliceIntersectionRepresentation2D::AddIntersectingSliceLogic(vtkMRMLSlic
 }
 
 //----------------------------------------------------------------------
-void vtkSliceIntersectionRepresentation2D::RemoveIntersectingSliceNode(vtkMRMLSliceNode* sliceNode)
+void vtkMRMLSliceIntersectionRepresentation2D::RemoveIntersectingSliceNode(vtkMRMLSliceNode* sliceNode)
 {
   if (!sliceNode)
     {
@@ -547,7 +547,7 @@ void vtkSliceIntersectionRepresentation2D::RemoveIntersectingSliceNode(vtkMRMLSl
 }
 
 //----------------------------------------------------------------------
-void vtkSliceIntersectionRepresentation2D::UpdateIntersectingSliceNodes()
+void vtkMRMLSliceIntersectionRepresentation2D::UpdateIntersectingSliceNodes()
 {
   this->RemoveAllIntersectingSliceNodes();
   if (!this->GetSliceNode() || !this->MRMLApplicationLogic)
@@ -569,7 +569,7 @@ void vtkSliceIntersectionRepresentation2D::UpdateIntersectingSliceNodes()
 }
 
 //----------------------------------------------------------------------
-void vtkSliceIntersectionRepresentation2D::RemoveAllIntersectingSliceNodes()
+void vtkMRMLSliceIntersectionRepresentation2D::RemoveAllIntersectingSliceNodes()
 {
   for (std::deque<SliceIntersectionDisplayPipeline*>::iterator sliceIntersectionIt = this->Internal->SliceIntersectionDisplayPipelines.begin();
     sliceIntersectionIt != this->Internal->SliceIntersectionDisplayPipelines.end(); ++sliceIntersectionIt)
@@ -581,7 +581,7 @@ void vtkSliceIntersectionRepresentation2D::RemoveAllIntersectingSliceNodes()
 }
 
 //----------------------------------------------------------------------
-double* vtkSliceIntersectionRepresentation2D::GetSliceIntersectionPoint()
+double* vtkMRMLSliceIntersectionRepresentation2D::GetSliceIntersectionPoint()
 {
   size_t numberOfIntersections = this->Internal->SliceIntersectionDisplayPipelines.size();
   int numberOfFoundIntersectionPoints = 0;
@@ -639,7 +639,7 @@ double* vtkSliceIntersectionRepresentation2D::GetSliceIntersectionPoint()
 }
 
 //----------------------------------------------------------------------
-void vtkSliceIntersectionRepresentation2D::TransformIntersectingSlices(vtkMatrix4x4* rotatedSliceToSliceTransformMatrix)
+void vtkMRMLSliceIntersectionRepresentation2D::TransformIntersectingSlices(vtkMatrix4x4* rotatedSliceToSliceTransformMatrix)
   {
   std::deque<int> wasModified;
   for (std::deque<SliceIntersectionDisplayPipeline*>::iterator sliceIntersectionIt = this->Internal->SliceIntersectionDisplayPipelines.begin();

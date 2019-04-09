@@ -19,10 +19,10 @@
 ==============================================================================*/
 
 // MRMLDisplayableManager includes
-#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
-#include <vtkMRMLDisplayableManagerGroup.h>
-#include <vtkThreeDViewInteractorStyle.h>
 #include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
+#include <vtkMRMLDisplayableManagerGroup.h>
+#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
+#include <vtkMRMLThreeDViewInteractorStyle.h>
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -193,7 +193,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
   rw->SetInteractor(ri.GetPointer());
 
   // Set Interactor Style
-  vtkNew<vtkThreeDViewInteractorStyle> iStyle;
+  vtkNew<vtkMRMLThreeDViewInteractorStyle> iStyle;
   ri->SetInteractorStyle(iStyle.GetPointer());
 
   // MRML scene and ViewNode

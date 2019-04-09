@@ -20,7 +20,7 @@
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLDisplayableManagerGroup.h>
-#include <vtkThreeDViewInteractorStyle.h>
+#include <vtkMRMLThreeDViewInteractorStyle.h>
 
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
@@ -65,7 +65,7 @@ int vtkMRMLModelDisplayableManagerTest(int argc, char* argv[])
   renderWindow->SetInteractor(renderWindowInteractor.GetPointer());
 
   // Set Interactor Style
-  //vtkNew<vtkThreeDViewInteractorStyle> iStyle;
+  //vtkNew<vtkMRMLThreeDViewInteractorStyle> iStyle;
   //renderWindowInteractor->SetInteractorStyle(iStyle.GetPointer());
 
   // move back far enough to see the reformat widgets

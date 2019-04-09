@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    vtkSliceIntersectionWidget.h
+  Module:    vtkMRMLSliceIntersectionWidget.h
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -13,17 +13,17 @@
 
 =========================================================================*/
 /**
- * @class   vtkSliceIntersectionWidget
+ * @class   vtkMRMLSliceIntersectionWidget
  * @brief   Show slice intersection lines
  *
- * The vtkSliceIntersectionWidget allows moving slices by interacting with
- * displayed slice intersecrion lines.
+ * The vtkMRMLSliceIntersectionWidget allows moving slices by interacting with
+ * displayed slice intersection lines.
  *
  *
 */
 
-#ifndef vtkSliceIntersectionWidget_h
-#define vtkSliceIntersectionWidget_h
+#ifndef vtkMRMLSliceIntersectionWidget_h
+#define vtkMRMLSliceIntersectionWidget_h
 
 #include "vtkMRMLDisplayableManagerExport.h" // For export macro
 #include "vtkMRMLAbstractWidget.h"
@@ -40,19 +40,19 @@ class vtkMRMLApplicationLogic;
 class vtkMRMLSegmentationDisplayNode;
 
 
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkSliceIntersectionWidget : public vtkMRMLAbstractWidget
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceIntersectionWidget : public vtkMRMLAbstractWidget
 {
 public:
   /**
    * Instantiate this class.
    */
-  static vtkSliceIntersectionWidget *New();
+  static vtkMRMLSliceIntersectionWidget *New();
 
   //@{
   /**
    * Standard VTK class macros.
    */
-  vtkTypeMacro(vtkSliceIntersectionWidget, vtkMRMLAbstractWidget);
+  vtkTypeMacro(vtkMRMLSliceIntersectionWidget, vtkMRMLAbstractWidget);
   void PrintSelf(ostream& os, vtkIndent indent) override;
   //@}
 
@@ -150,8 +150,8 @@ public:
   void UpdateInteractionEventMapping();
 
 protected:
-  vtkSliceIntersectionWidget();
-  ~vtkSliceIntersectionWidget() override;
+  vtkMRMLSliceIntersectionWidget();
+  ~vtkMRMLSliceIntersectionWidget() override;
 
   bool ProcessStartMouseDrag(vtkMRMLInteractionEventData* eventData);
   bool ProcessMouseMove(vtkMRMLInteractionEventData* eventData);
@@ -238,8 +238,8 @@ protected:
   int ActionsEnabled;
 
 private:
-  vtkSliceIntersectionWidget(const vtkSliceIntersectionWidget&) = delete;
-  void operator=(const vtkSliceIntersectionWidget&) = delete;
+  vtkMRMLSliceIntersectionWidget(const vtkMRMLSliceIntersectionWidget&) = delete;
+  void operator=(const vtkMRMLSliceIntersectionWidget&) = delete;
 };
 
 #endif

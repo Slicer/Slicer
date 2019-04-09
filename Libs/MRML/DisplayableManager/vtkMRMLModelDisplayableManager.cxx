@@ -14,7 +14,7 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLModelDisplayableManager.h"
-#include "vtkThreeDViewInteractorStyle.h"
+#include "vtkMRMLThreeDViewInteractorStyle.h"
 #include "vtkMRMLApplicationLogic.h"
 
 // MRML/Slicer includes
@@ -388,16 +388,18 @@ void vtkMRMLModelDisplayableManager::PrintSelf ( ostream& os, vtkIndent indent )
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::AdditionalInitializeStep()
 {
+  /*
   vtkRenderWindowInteractor * interactor = this->GetInteractor();
   if (interactor)
     {
-    vtkThreeDViewInteractorStyle * interactorStyle =
-        vtkThreeDViewInteractorStyle::SafeDownCast(interactor->GetInteractorStyle());
+    vtkMRMLThreeDViewInteractorStyle * interactorStyle =
+        vtkMRMLThreeDViewInteractorStyle::SafeDownCast(interactor->GetInteractorStyle());
     if (interactorStyle)
       {
       interactorStyle->SetModelDisplayableManager(this);
       }
     }
+    */
 }
 
 //---------------------------------------------------------------------------

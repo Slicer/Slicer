@@ -22,8 +22,8 @@
 #include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
 
 // MRML includes
+#include "vtkMRMLThreeDViewInteractorStyle.h"
 #include <vtkMRMLViewNode.h>
-#include "vtkThreeDViewInteractorStyle.h"
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -72,7 +72,7 @@ vtkMRMLViewNode * vtkMRMLAbstractThreeDViewDisplayableManager::GetMRMLViewNode()
 //---------------------------------------------------------------------------
 void vtkMRMLAbstractThreeDViewDisplayableManager::PassThroughInteractorStyleEvent(int eventid)
 {
-  vtkThreeDViewInteractorStyle* interactorStyle = vtkThreeDViewInteractorStyle::SafeDownCast(
+  vtkMRMLThreeDViewInteractorStyle* interactorStyle = vtkMRMLThreeDViewInteractorStyle::SafeDownCast(
               this->GetInteractor()->GetInteractorStyle());
 
   if (interactorStyle)
