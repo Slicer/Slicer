@@ -215,7 +215,7 @@ bool vtkMRMLScalarBarDisplayableManager::CanProcessInteractionEvent(vtkMRMLInter
 bool vtkMRMLScalarBarDisplayableManager::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
   bool processed = this->Internal->WindowLevelWidget->ProcessInteractionEvent(eventData);
-  if (this->Internal->WindowLevelWidget->GetNeedToRender());
+  if (this->Internal->WindowLevelWidget->GetNeedToRender())
     {
     this->RequestRender();
     this->Internal->WindowLevelWidget->NeedToRenderOff();
