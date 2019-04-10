@@ -3655,7 +3655,7 @@ void vtkMRMLScene::SetMaximumNumberOfSavedUndoStates(int stackSize)
 void vtkMRMLScene::TrimUndoStack()
 {
   std::list<vtkSmartPointer<vtkCollection> > removedStacks;
-  while(this->UndoStack.size() > this->MaximumNumberOfSavedUndoStates)
+  while(static_cast<int>(this->UndoStack.size()) > this->MaximumNumberOfSavedUndoStates)
     {
     removedStacks.push_back(this->UndoStack.front());
     this->UndoStack.pop_front();

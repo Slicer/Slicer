@@ -891,7 +891,7 @@ public:
     {
     return new vtkRenderCallback;
     }
-  void Execute(vtkObject *caller, unsigned long, void*) override
+  void Execute(vtkObject *vtkNotUsed(caller), unsigned long vtkNotUsed(eventId), void* vtkNotUsed(callData)) override
     {
     this->RenderWindow->Render();
     }

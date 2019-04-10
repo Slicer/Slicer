@@ -375,7 +375,6 @@ void qSlicerMouseModeToolBarPrivate::updateCursor()
     else
       {
       // Find action corresponding to current interaction mode
-      QAction* currentAction = nullptr;
       foreach(QAction* action, this->InteractionModesActionGroup->actions())
         {
         if (action->data().toInt() == currentInteractionMode)

@@ -334,6 +334,7 @@ void qSlicerMarkupsSettingsPanel::updateMarkupsLogicDefaultUnselectedColor()
 
   // disable it for now; if we want a settings panel then use the same pattern that is used for default view options
   // d->MarkupsLogic->SetDefaultMarkupsDisplayNodeColor(color);
+  Q_UNUSED(color);
 }
 
 // --------------------------------------------------------------------------
@@ -359,6 +360,7 @@ void qSlicerMarkupsSettingsPanel::updateMarkupsLogicDefaultSelectedColor()
 
   // disable it for now; if we want a settings panel then use the same pattern that is used for default view options
   // d->MarkupsLogic->SetDefaultMarkupsDisplayNodeSelectedColor(color);
+  Q_UNUSED(color);
 }
 
 // --------------------------------------------------------------------------

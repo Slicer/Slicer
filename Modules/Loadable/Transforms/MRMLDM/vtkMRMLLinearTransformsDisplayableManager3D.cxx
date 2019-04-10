@@ -70,7 +70,7 @@ public:
   {
   }
 
-  virtual void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void *callData)
+  virtual void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void *vtkNotUsed(callData))
   {
     if ((event == vtkCommand::StartInteractionEvent) || (event == vtkCommand::EndInteractionEvent) || (event == vtkCommand::InteractionEvent))
       {

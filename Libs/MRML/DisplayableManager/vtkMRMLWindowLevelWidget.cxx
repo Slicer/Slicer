@@ -472,7 +472,7 @@ vtkMRMLVolumeNode* vtkMRMLWindowLevelWidget::GetVolumeNodeFromSliceLayer(int edi
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLWindowLevelWidget::ProcessResetWindowLevel(vtkMRMLInteractionEventData* eventData)
+bool vtkMRMLWindowLevelWidget::ProcessResetWindowLevel(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
 {
   vtkMRMLVolumeNode* volumeNode = this->GetVolumeNodeFromSliceLayer(this->WindowLevelAdjustedLayer);
   if (!volumeNode)
