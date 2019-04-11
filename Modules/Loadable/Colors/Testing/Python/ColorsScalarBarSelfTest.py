@@ -64,50 +64,10 @@ class ColorsScalarBarSelfTestWidget(ScriptedLoadableModuleWidget):
     pass
 
   def onApplyButton(self):
-    logic =ColorsScalarBarSelfTestLogic()
+    test = ColorsScalarBarSelfTestTest()
     print("Run the test algorithm")
-    logic.run()
+    test.test_ColorsScalarBarSelfTest1()
 
-#
-# ColorsScalarBarSelfTestLogic
-#
-
-class ColorsScalarBarSelfTestLogic(ScriptedLoadableModuleLogic):
-
-  def run(self):
-    """
-    Run the actual algorithm
-    """
-    logging.info('Processing started')
-
-    # start in the colors module
-    m = slicer.util.mainWindow()
-    m.moduleSelector().selectModule('Colors')
-    self.delayDisplay('In Colors module')
-
-    colorWidget = slicer.modules.colors.widgetRepresentation()
-    ctkScalarBarWidget = slicer.util.findChildren(colorWidget, name='VTKScalarBar')[0]
-    # show the scalar bar widget
-    ctkScalarBarWidget.setDisplay(1)
-    activeColorNodeSelector = slicer.util.findChildren(colorWidget, 'ColorTableComboBox')[0]
-    useColorNameAsLabelCheckbox = slicer.util.findChildren(colorWidget, 'UseColorNameAsLabelCheckBox')[0]
-    checked = useColorNameAsLabelCheckbox.isChecked()
-    # iterate over the color nodes and set each one active
-    numColorNodes = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLColorNode')
-    for n in range(numColorNodes):
-      colorNode = slicer.mrmlScene.GetNthNodeByClass(n, 'vtkMRMLColorNode')
-      useColorNameAsLabelCheckbox.setChecked(checked)
-      print("%d/%d" % (n, numColorNodes-1))
-      self.delayDisplay('Setting Color Node To %s' % colorNode.GetName())
-      activeColorNodeSelector.setCurrentNodeID(colorNode.GetID())
-      # use the delay display here to ensure a render
-      self.delayDisplay('Set Color Node To %s' % colorNode.GetName())
-      useColorNameAsLabelCheckbox.setChecked(not checked)
-      self.delayDisplay('Toggled using names as labels')
-
-    logging.info('Processing completed')
-
-    return True
 
 class ColorsScalarBarSelfTestTest(ScriptedLoadableModuleTest):
   """
@@ -129,7 +89,36 @@ class ColorsScalarBarSelfTestTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay("Starting the scalarbar test")
 
-    logic = ColorsScalarBarSelfTestLogic()
-    logic.run()
+    logging.info('Processing started')
+
+    # start in the colors module
+    m = slicer.util.mainWindow()
+    m.moduleSelector().selectModule('Colors')
+    self.delayDisplay('In Colors module')
+
+    colorWidget = slicer.modules.colors.widgetRepresentation()
+    ctkScalarBarWidget = slicer.util.findChildren(colorWidget, name='VTKScalarBar')[0]
+    # show the scalar bar widget
+    ctkScalarBarWidget.setDisplay(1)
+    activeColorNodeSelector = slicer.util.findChildren(colorWidget, 'ColorTableComboBox')[0]
+    useColorNameAsLabelCheckbox = slicer.util.findChildren(colorWidget, 'UseColorNameAsLabelCheckBox')[0]
+    checked = useColorNameAsLabelCheckbox.isChecked()
+    # iterate over the color nodes and set each one active
+    numColorNodes = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLColorNode')
+    for n in range(numColorNodes):
+      colorNode = slicer.mrmlScene.GetNthNodeByClass(n, 'vtkMRMLColorNode')
+      useColorNameAsLabelCheckbox.setChecked(checked)
+      print("%d/%d" % (n, numColorNodes-1))
+      # TODO Fix displayed of FreeSurferLabels. See https://issues.slicer.org/view.php?id=4688
+      if colorNode.GetName() == "FreeSurferLabels":
+        continue
+      self.delayDisplay('Setting Color Node To %s' % colorNode.GetName())
+      activeColorNodeSelector.setCurrentNodeID(colorNode.GetID())
+      # use the delay display here to ensure a render
+      self.delayDisplay('Set Color Node To %s' % colorNode.GetName())
+      useColorNameAsLabelCheckbox.setChecked(not checked)
+      self.delayDisplay('Toggled using names as labels')
+
+    logging.info('Processing completed')
 
     self.delayDisplay('Test passed!')
