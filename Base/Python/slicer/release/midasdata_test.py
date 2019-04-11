@@ -20,10 +20,10 @@ class TestVersioning(unittest.TestCase):
   @classmethod
   def setUpClass(self):
     """ setUpClass method """
-    self.url = raw_input("URL for Midas server: ")
-    self.cur_email = raw_input("Authentication email: ")
-    self.cur_apikey = raw_input("Authentication API key: ")
-    self.data_id = raw_input("Folder ID of empty folder: ")
+    self.url = input("URL for Midas server: ")
+    self.cur_email = input("Authentication email: ")
+    self.cur_apikey = input("Authentication API key: ")
+    self.data_id = input("Folder ID of empty folder: ")
     self.sourceVersion = "source"
     self.destVersion = "dest"
     self.ignore_modules = ""

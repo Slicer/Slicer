@@ -170,7 +170,7 @@ def inquire(msg, choices=_yesno):
 
   while True:
     try:
-      args = parser.parse_args(raw_input(msg))
+      args = parser.parse_args(input(msg))
       if args.choice in choices:
         return choices[args.choice]
 
