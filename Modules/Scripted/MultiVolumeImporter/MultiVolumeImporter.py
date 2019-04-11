@@ -342,7 +342,7 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
       spaceScaling *= 1000.
     if units & header.UnitsMicron:
       spaceScaling /= 1000.
-    spacing = map(lambda e: e * spaceScaling, spacing)
+    spacing = [e * spaceScaling for e in spacing]
 
     # create frame labels using the timing info from the file
     # but use the advanced info so user can specify offset and scale

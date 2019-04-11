@@ -1,3 +1,4 @@
+from __future__ import print_function
 import dicom, string, os, sys
 
 dirIn = sys.argv[1]
@@ -40,8 +41,8 @@ for f in files:
     tempPositions[tempPosition]=tempPositions[tempPosition]+1
   except:
     tempPositions[tempPosition]=1
-print 'Trigger times: ',trigTimes
-print 'Acquisition times: ',acqTimes
-print 'Conent times: ',contTimes
-print 'Series times: ',serTimes
-print 'Temporal positions: ', tempPositions
+print('Trigger times: ',trigTimes)
+print('Acquisition times: ',acqTimes)
+print('Conent times: ',contTimes)
+print('Series times: ',serTimes)
+print('Temporal positions: ', tempPositions)
