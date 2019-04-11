@@ -5,8 +5,7 @@ import ctk
 import qt
 import slicer
 from .EditOptions import HelpButton
-from . import Effect
-from . import IslandEffect
+from . import IslandEffectOptions, IslandEffectTool, IslandEffectLogic, IslandEffect
 
 __all__ = [
   'SaveIslandEffectOptions',
@@ -32,7 +31,7 @@ comment = """
 # SaveIslandEffectOptions - see Effect for superclasses
 #
 
-class SaveIslandEffectOptions(IslandEffect.IslandEffectOptions):
+class SaveIslandEffectOptions(IslandEffectOptions):
   """ SaveIslandEffect-specfic gui
   """
 
@@ -87,7 +86,7 @@ class SaveIslandEffectOptions(IslandEffect.IslandEffectOptions):
 # SaveIslandEffectTool
 #
 
-class SaveIslandEffectTool(IslandEffect.IslandEffectTool):
+class SaveIslandEffectTool(IslandEffectTool):
   """
   One instance of this will be created per-view when the effect
   is selected.  It is responsible for implementing feedback and
@@ -123,7 +122,7 @@ class SaveIslandEffectTool(IslandEffect.IslandEffectTool):
 # SaveIslandEffectLogic
 #
 
-class SaveIslandEffectLogic(IslandEffect.IslandEffectLogic):
+class SaveIslandEffectLogic(IslandEffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an SaveIslandEffectTool
@@ -161,7 +160,7 @@ class SaveIslandEffectLogic(IslandEffect.IslandEffectLogic):
 # The SaveIslandEffect class definition
 #
 
-class SaveIslandEffect(IslandEffect.IslandEffect):
+class SaveIslandEffect(IslandEffect):
   """Organizes the Options, Tool, and Logic classes into a single instance
   that can be managed by the EditBox
   """

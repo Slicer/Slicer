@@ -5,8 +5,7 @@ import ctk
 import qt
 import slicer
 from .EditOptions import HelpButton
-from . import Effect
-from . import MorphologyEffect
+from . import MorphologyEffectOptions, MorphologyEffectTool, MorphologyEffectLogic, MorphologyEffect
 
 __all__ = [
   'ErodeEffectOptions',
@@ -32,7 +31,7 @@ comment = """
 # ErodeEffectOptions - see Effect for superclasses
 #
 
-class ErodeEffectOptions(MorphologyEffect.MorphologyEffectOptions):
+class ErodeEffectOptions(MorphologyEffectOptions):
   """ ErodeEffect-specfic gui
   """
 
@@ -97,7 +96,7 @@ class ErodeEffectOptions(MorphologyEffect.MorphologyEffectOptions):
 # ErodeEffectTool
 #
 
-class ErodeEffectTool(MorphologyEffect.MorphologyEffectTool):
+class ErodeEffectTool(MorphologyEffectTool):
   """
   One instance of this will be created per-view when the effect
   is selected.  It is responsible for implementing feedback and
@@ -120,7 +119,7 @@ class ErodeEffectTool(MorphologyEffect.MorphologyEffectTool):
 # ErodeEffectLogic
 #
 
-class ErodeEffectLogic(MorphologyEffect.MorphologyEffectLogic):
+class ErodeEffectLogic(MorphologyEffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an ErodeEffectTool
@@ -166,7 +165,7 @@ class ErodeEffectLogic(MorphologyEffect.MorphologyEffectLogic):
 # The ErodeEffect class definition
 #
 
-class ErodeEffect(MorphologyEffect.MorphologyEffect):
+class ErodeEffect(MorphologyEffect):
   """Organizes the Options, Tool, and Logic classes into a single instance
   that can be managed by the EditBox
   """

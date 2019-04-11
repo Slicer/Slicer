@@ -6,8 +6,7 @@ import ctk
 import qt
 import slicer
 from .EditOptions import HelpButton
-from . import Effect
-from . import IslandEffect
+from . import IslandEffectOptions, IslandEffectTool, IslandEffectLogic, IslandEffect
 
 __all__ = [
   'RemoveIslandsEffectOptions',
@@ -34,7 +33,7 @@ comment = """
 # RemoveIslandsEffectOptions - see Effect for superclasses
 #
 
-class RemoveIslandsEffectOptions(IslandEffect.IslandEffectOptions):
+class RemoveIslandsEffectOptions(IslandEffectOptions):
   """ RemoveIslandsEffect-specfic gui
   """
 
@@ -103,7 +102,7 @@ class RemoveIslandsEffectOptions(IslandEffect.IslandEffectOptions):
 # RemoveIslandsEffectTool
 #
 
-class RemoveIslandsEffectTool(IslandEffect.IslandEffectTool):
+class RemoveIslandsEffectTool(IslandEffectTool):
   """
   One instance of this will be created per-view when the effect
   is selected.  It is responsible for implementing feedback and
@@ -129,7 +128,7 @@ class RemoveIslandsEffectTool(IslandEffect.IslandEffectTool):
 # RemoveIslandsEffectLogic
 #
 
-class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
+class RemoveIslandsEffectLogic(IslandEffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an RemoveIslandsEffectTool
@@ -380,7 +379,7 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
 # The RemoveIslandsEffect class definition
 #
 
-class RemoveIslandsEffect(IslandEffect.IslandEffect):
+class RemoveIslandsEffect(IslandEffect):
   """Organizes the Options, Tool, and Logic classes into a single instance
   that can be managed by the EditBox
   """

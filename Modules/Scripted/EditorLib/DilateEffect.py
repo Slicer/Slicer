@@ -5,8 +5,7 @@ import ctk
 import qt
 import slicer
 from .EditOptions import HelpButton
-from . import Effect
-from . import MorphologyEffect
+from . import MorphologyEffectOptions, MorphologyEffectTool, MorphologyEffectLogic, MorphologyEffect
 
 __all__ = [
   'DilateEffectOptions',
@@ -32,7 +31,7 @@ comment = """
 # DilateEffectOptions - see Effect for superclasses
 #
 
-class DilateEffectOptions(MorphologyEffect.MorphologyEffectOptions):
+class DilateEffectOptions(MorphologyEffectOptions):
   """ DilateEffect-specfic gui
   """
 
@@ -97,7 +96,7 @@ class DilateEffectOptions(MorphologyEffect.MorphologyEffectOptions):
 # DilateEffectTool
 #
 
-class DilateEffectTool(MorphologyEffect.MorphologyEffectTool):
+class DilateEffectTool(MorphologyEffectTool):
   """
   One instance of this will be created per-view when the effect
   is selected.  It is responsible for implementing feedback and
@@ -120,7 +119,7 @@ class DilateEffectTool(MorphologyEffect.MorphologyEffectTool):
 # DilateEffectLogic
 #
 
-class DilateEffectLogic(MorphologyEffect.MorphologyEffectLogic):
+class DilateEffectLogic(MorphologyEffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an DilateEffectTool
@@ -165,7 +164,7 @@ class DilateEffectLogic(MorphologyEffect.MorphologyEffectLogic):
 # The DilateEffect class definition
 #
 
-class DilateEffect(MorphologyEffect.MorphologyEffect):
+class DilateEffect(MorphologyEffect):
   """Organizes the Options, Tool, and Logic classes into a single instance
   that can be managed by the EditBox
   """

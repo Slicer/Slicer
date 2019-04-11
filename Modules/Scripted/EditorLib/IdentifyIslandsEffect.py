@@ -6,8 +6,7 @@ import ctk
 import qt
 import slicer
 from .EditOptions import HelpButton
-from . import Effect
-from . import IslandEffect
+from . import IslandEffectOptions, IslandEffectTool, IslandEffectLogic, IslandEffect
 
 __all__ = [
   'IdentifyIslandsEffectOptions',
@@ -34,7 +33,7 @@ comment = """
 # IdentifyIslandsEffectOptions - see Effect for superclasses
 #
 
-class IdentifyIslandsEffectOptions(IslandEffect.IslandEffectOptions):
+class IdentifyIslandsEffectOptions(IslandEffectOptions):
   """ IdentifyIslandsEffect-specfic gui
   """
 
@@ -94,7 +93,7 @@ class IdentifyIslandsEffectOptions(IslandEffect.IslandEffectOptions):
 # IdentifyIslandsEffectTool
 #
 
-class IdentifyIslandsEffectTool(IslandEffect.IslandEffectTool):
+class IdentifyIslandsEffectTool(IslandEffectTool):
   """
   One instance of this will be created per-view when the effect
   is selected.  It is responsible for implementing feedback and
@@ -120,7 +119,7 @@ class IdentifyIslandsEffectTool(IslandEffect.IslandEffectTool):
 # IdentifyIslandsEffectLogic
 #
 
-class IdentifyIslandsEffectLogic(IslandEffect.IslandEffectLogic):
+class IdentifyIslandsEffectLogic(IslandEffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an IdentifyIslandsEffectTool
@@ -180,7 +179,7 @@ class IdentifyIslandsEffectLogic(IslandEffect.IslandEffectLogic):
 # The IdentifyIslandsEffect class definition
 #
 
-class IdentifyIslandsEffect(IslandEffect.IslandEffect):
+class IdentifyIslandsEffect(IslandEffect):
   """Organizes the Options, Tool, and Logic classes into a single instance
   that can be managed by the EditBox
   """
