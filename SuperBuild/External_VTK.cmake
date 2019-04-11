@@ -196,7 +196,7 @@ endif()
   # pythonpath
     if(UNIX)
       set(${proj}_PYTHONPATH_LAUNCHER_BUILD
-        ${VTK_DIR}/${_library_output_subdir}/python2.7/site-packages
+        ${VTK_DIR}/${_library_output_subdir}/python3.6/site-packages
         )
     else()
       set(${proj}_PYTHONPATH_LAUNCHER_BUILD
@@ -218,7 +218,7 @@ endif()
     # in a standard location using CMake/SlicerBlockInstallExternalPythonModules.cmake
     if(UNIX)
       set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
-        <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_INSTALL_LIB_DIR}/python2.7/site-packages
+        <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_INSTALL_LIB_DIR}/python3.6/site-packages
         )
     else()
       set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
@@ -226,7 +226,7 @@ endif()
         # Adding the following line is needed only for (<VTK_MAJOR_VERSION>.<VTK_MINOR_VERSION> <= 8.1),
         # but since we only have Slicer_VTK_VERSION_MAJOR variable, following the update of VTK
         # version from 9.0 to 8.2, there is no way to discriminate between 8.1 and 8.2.
-        <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_INSTALL_LIB_DIR}/python2.7/site-packages
+        <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_INSTALL_LIB_DIR}/python3.6/site-packages
         )
     endif()
     mark_as_superbuild(

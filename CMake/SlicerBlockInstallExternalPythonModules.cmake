@@ -4,7 +4,7 @@ if(NOT APPLE)
 endif()
 
 # Install VTK python module
-set(VTK_PYTHON_MODULE "${VTK_DIR}/lib/python2.7/site-packages")
+set(VTK_PYTHON_MODULE "${VTK_DIR}/lib/python3.6/site-packages")
 set(_vtk_package "vtk")
 if(EXISTS ${VTK_PYTHON_MODULE}/vtkmodules)
   set(_vtk_package "vtkmodules") # Introduced in VTK9 kitware/vtk@2404228 on 2017.12.15
@@ -26,7 +26,7 @@ if(EXISTS ${VTK_PYTHON_MODULE}/vtk.py)
 endif()
 
 # Install external python runtime libraries that we don't link to (fixupbundle won't copy them)
-set(vtk_python_library_subdir "lib/python2.7/site-packages/${_vtk_package}")
+set(vtk_python_library_subdir "lib/python3.6/site-packages/${_vtk_package}")
 file(GLOB vtk_python_modules "${VTK_DIR}/${vtk_python_library_subdir}/*Python.so")
 install(FILES ${vtk_python_modules}
         DESTINATION ${Slicer_INSTALL_LIB_DIR}

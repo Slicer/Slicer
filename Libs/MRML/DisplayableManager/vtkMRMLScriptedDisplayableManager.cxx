@@ -331,7 +331,7 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& pytho
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(this));
 
   // Attempt to instantiate the associated python class
-  PyObject * self = PyInstance_New(classToInstantiate, arguments, nullptr);
+  PyObject * self = PyObject_CallObject(classToInstantiate, arguments);
   Py_DECREF(arguments);
   if (!self)
     {

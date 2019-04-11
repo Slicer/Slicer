@@ -38,7 +38,7 @@ except ImportError:
   available_kits = []
 
 import string, os, sys
-standalone_python = "python" in string.lower(os.path.split(sys.executable)[-1])
+standalone_python = "python" in str.lower(os.path.split(sys.executable)[-1])
 
 for kit in available_kits:
   # skip PythonQt kits if we are running in a regular python interpreter
@@ -50,10 +50,11 @@ for kit in available_kits:
   except ImportError as detail:
     print(detail)
 
+  del kit
+
 #-----------------------------------------------------------------------------
 # Cleanup: Removing things the user shouldn't have to see.
 
 del _createModule
 del available_kits
-del kit
 del standalone_python

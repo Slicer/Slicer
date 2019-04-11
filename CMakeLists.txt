@@ -807,7 +807,7 @@ if(Slicer_USE_PYTHONQT)
   endif()
   ctkMacroSetPaths("${PYTHON_LIBRARY_PATH}")
   execute_process(
-    COMMAND ${PYTHON_EXECUTABLE} -c "import sys; print sys.version[:3]"
+    COMMAND ${PYTHON_EXECUTABLE} -c "import sys; print(sys.version[:3])"
     OUTPUT_VARIABLE Slicer_PYTHON_VERSION_DOT
     OUTPUT_STRIP_TRAILING_WHITESPACE)
   string(REGEX REPLACE "[.]" "" Slicer_PYTHON_VERSION ${Slicer_PYTHON_VERSION_DOT})
