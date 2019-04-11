@@ -12,7 +12,7 @@ import base64
 import slicer
 
 qt_resource_handle = None
-qt_resource_data = base64.decodestring(\"\"\"
+qt_resource_data = base64.decodebytes(b\"\"\"
 """
 
 _footer = """
