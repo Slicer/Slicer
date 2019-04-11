@@ -1,17 +1,18 @@
-from AbstractScriptedSegmentEditorEffect import *
-from AbstractScriptedSegmentEditorLabelEffect import *
-from AbstractScriptedSegmentEditorAutoCompleteEffect import *
 
-from SegmentEditorDrawEffect import *
-from SegmentEditorFillBetweenSlicesEffect import *
-from SegmentEditorGrowFromSeedsEffect import *
-from SegmentEditorHollowEffect import *
-from SegmentEditorIslandsEffect import *
-from SegmentEditorLevelTracingEffect import *
-from SegmentEditorLogicalEffect import *
-from SegmentEditorMarginEffect import *
-from SegmentEditorSmoothingEffect import *
-from SegmentEditorThresholdEffect import *
+from .AbstractScriptedSegmentEditorEffect import *
+from .AbstractScriptedSegmentEditorLabelEffect import *
+from .AbstractScriptedSegmentEditorAutoCompleteEffect import *
+
+from .SegmentEditorDrawEffect import *
+from .SegmentEditorFillBetweenSlicesEffect import *
+from .SegmentEditorGrowFromSeedsEffect import *
+from .SegmentEditorHollowEffect import *
+from .SegmentEditorIslandsEffect import *
+from .SegmentEditorLevelTracingEffect import *
+from .SegmentEditorLogicalEffect import *
+from .SegmentEditorMarginEffect import *
+from .SegmentEditorSmoothingEffect import *
+from .SegmentEditorThresholdEffect import *
 
 from SegmentEditorEffects import *
 

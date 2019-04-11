@@ -1,1 +1,1 @@
-from tpycl import *
+from .tpycl import *

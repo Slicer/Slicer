@@ -1,6 +1,6 @@
 import os
 import vtk, qt, ctk, slicer, logging
-from AbstractScriptedSegmentEditorEffect import *
+from .AbstractScriptedSegmentEditorEffect import *
 
 __all__ = ['AbstractScriptedSegmentEditorLabelEffect']
 

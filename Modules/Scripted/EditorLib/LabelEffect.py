@@ -4,8 +4,8 @@ import vtk
 import qt
 import ctk
 import slicer
-from EditUtil import EditUtil
-import Effect
+from .EditUtil import EditUtil
+from . import Effect
 
 __all__ = [
   'LabelEffectOptions',

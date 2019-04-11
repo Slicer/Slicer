@@ -5,8 +5,8 @@ import slicer
 import teem
 import vtk
 
-from ColorBox import ColorBox
-from EditUtil import EditUtil
+from .ColorBox import ColorBox
+from .EditUtil import EditUtil
 
 #=============================================================================
 #

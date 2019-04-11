@@ -14,7 +14,7 @@ try:
 except ImportError:
   NUMPY_AVAILABLE = False
 
-import DataProbeUtil
+from . import DataProbeUtil
 
 class SliceAnnotations(VTKObservationMixin):
   """Implement the Qt window showing settings for Slice View Annotations

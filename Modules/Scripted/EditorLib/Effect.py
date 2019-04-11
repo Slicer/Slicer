@@ -3,8 +3,8 @@ import os
 import vtk
 import qt
 import slicer
-from EditOptions import EditOptions
-import EditUtil
+from .EditOptions import EditOptions
+from . import EditUtil
 from slicer.util import NodeModify
 
 __all__ = ['EffectOptions', 'EffectTool', 'EffectLogic', 'Effect']

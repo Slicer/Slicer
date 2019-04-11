@@ -1,7 +1,7 @@
 from __future__ import print_function
 import os
 import vtk, qt, ctk, slicer, logging
-from AbstractScriptedSegmentEditorEffect import *
+from .AbstractScriptedSegmentEditorEffect import *
 
 __all__ = ['AbstractScriptedSegmentEditorAutoCompleteEffect']
 

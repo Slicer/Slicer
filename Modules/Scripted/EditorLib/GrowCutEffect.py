@@ -4,8 +4,8 @@ import vtkITK
 import ctk
 import qt
 import slicer
-from EditOptions import HelpButton
-import Effect
+from .EditOptions import HelpButton
+from . import Effect
 import logging
 from functools import reduce
 

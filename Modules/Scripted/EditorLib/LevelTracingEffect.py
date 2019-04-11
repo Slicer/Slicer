@@ -4,8 +4,8 @@ import vtkITK
 import ctk
 import qt
 import slicer
-from EditOptions import HelpButton
-import LabelEffect
+from .EditOptions import HelpButton
+from . import LabelEffect
 
 __all__ = [
   'LevelTracingEffectOptions',

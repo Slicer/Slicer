@@ -1,2 +1,2 @@
-from SliceViewAnnotations import *
-from DataProbeUtil import *
+from .SliceViewAnnotations import *
+from .DataProbeUtil import *

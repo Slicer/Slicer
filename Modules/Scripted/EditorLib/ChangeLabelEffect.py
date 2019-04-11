@@ -3,9 +3,9 @@ import vtk
 import qt
 import ctk
 import slicer
-from EditOptions import HelpButton
-from EditUtil import EditUtil
-import Effect
+from .EditOptions import HelpButton
+from .EditUtil import EditUtil
+from . import Effect
 
 __all__ = [
   'ChangeLabelEffectOptions',
@@ -47,7 +47,7 @@ class ChangeLabelEffectOptions(Effect.EffectOptions):
   def create(self):
     super(ChangeLabelEffectOptions,self).create()
     self.logic.undoRedo = self.undoRedo
-    import EditColor
+    from . import EditColor
     self.inputColor = EditColor.EditColor(self.frame,'ChangeLabelEffect,inputColor')
     self.inputColor.label.setText("Input Color:")
     self.inputColor.colorSpin.setToolTip("Set the label value to replace.")

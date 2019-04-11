@@ -1,9 +1,9 @@
 from __future__ import print_function
 import os
 import vtk, qt, ctk, slicer
-from EditOptions import HelpButton
-from EditUtil import EditUtil
-import Effect
+from .EditOptions import HelpButton
+from .EditUtil import EditUtil
+from . import Effect
 
 __all__ = [
   'FastMarchingEffectOptions',

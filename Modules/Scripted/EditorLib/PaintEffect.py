@@ -4,9 +4,9 @@ import vtk
 import ctk
 import qt
 import slicer
-from EditOptions import HelpButton
-from EditUtil import EditUtil
-import LabelEffect
+from .EditOptions import HelpButton
+from .EditUtil import EditUtil
+from . import LabelEffect
 import numpy
 from math import sqrt
 from functools import reduce

@@ -4,9 +4,9 @@ import vtk
 import ctk
 import qt
 import slicer
-from EditOptions import HelpButton
-import Effect
-import MorphologyEffect
+from .EditOptions import HelpButton
+from . import Effect
+from . import MorphologyEffect
 
 __all__ = [
   'ErodeEffectOptions',

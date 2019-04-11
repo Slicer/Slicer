@@ -3,9 +3,9 @@ import vtk
 import qt
 import ctk
 import slicer
-from EditOptions import HelpButton
-from EditUtil import EditUtil
-import Effect
+from .EditOptions import HelpButton
+from .EditUtil import EditUtil
+from . import Effect
 
 __all__ = [
   'MakeModelEffectOptions',
