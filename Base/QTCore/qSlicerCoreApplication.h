@@ -451,7 +451,7 @@ public slots:
   /// setRenderPaused(false).
   /// Implemented in qSlicerApplication
   /// \sa qSlicerApplication::setRenderPaused()
-  virtual void setRenderPaused(bool pause) {};
+  virtual void setRenderPaused(bool pause) { Q_UNUSED(pause); };
   /// Equivalent to setRenderPaused(true)
   /// \sa setRenderPaused
   virtual void pauseRender() {};
