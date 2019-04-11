@@ -208,7 +208,7 @@ class CMakeScript(object):
   def __init__(self, content):
     """
     :param content: Textual content of a CMake script.
-    :type content: :class:`basestring`
+    :type content: :class:`str`
 
     :raises:
       :exc:`~exceptions.SyntaxError` or :exc:`~exceptions.EOFError` if a

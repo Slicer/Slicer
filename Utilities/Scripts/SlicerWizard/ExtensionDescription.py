@@ -32,11 +32,11 @@ class ExtensionDescription(object):
     :param filepath:
       Path to an existing ``.s4ext`` to read.
     :type filepath:
-      :class:`basestring` or ``None``.
+      :class:`str` or ``None``.
     :param sourcedir:
       Path to an extension source directory.
     :type sourcedir:
-      :class:`basestring` or ``None``.
+      :class:`str` or ``None``.
 
     :raises:
       * :exc:`~exceptions.KeyError` if the extension description is missing a
@@ -212,7 +212,7 @@ class ExtensionDescription(object):
     """Read extension description from directory.
 
     :param path: Directory containing extension description.
-    :type path: :class:`basestring`
+    :type path: :class:`str`
 
     :raises:
       :exc:`~exceptions.IOError` if ``path`` does not contain exactly one
@@ -291,7 +291,7 @@ class ExtensionDescription(object):
     """Write extension description to a file or stream.
 
     :param out: Stream or path to which to write the description.
-    :type out: :class:`~io.IOBase` or :class:`basestring`
+    :type out: :class:`~io.IOBase` or :class:`str`
 
     This writes the extension description to the specified file path or stream
     object. This is suitable for producing a ``.s4ext`` file from a description

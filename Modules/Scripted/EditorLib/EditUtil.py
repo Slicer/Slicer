@@ -175,9 +175,9 @@ class EditUtil(object):
   def setActiveVolumes(masterVolume, mergeVolume=None):
     """make the master node the active background, and the merge node the active label
     """
-    if isinstance(masterVolume, basestring):
+    if isinstance(masterVolume, str):
       masterVolume = slicer.mrmlScene.GetNodeByID(masterVolume)
-    if isinstance(mergeVolume, basestring):
+    if isinstance(mergeVolume, str):
       mergeVolume = slicer.mrmlScene.GetNodeByID(mergeVolume)
     selectionNode = slicer.app.applicationLogic().GetSelectionNode()
     selectionNode.SetActiveVolumeID(masterVolume.GetID())

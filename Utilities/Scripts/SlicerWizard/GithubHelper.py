@@ -117,11 +117,11 @@ def getRepo(session, name=None, url=None):
   :param name:
     Name of the repository to look up.
   :type name:
-    :class:`basestring` or ``None``
+    :class:`str` or ``None``
   :param url:
     Clone URL of the repository.
   :type url:
-    :class:`basestring` or ``None``
+    :class:`str` or ``None``
 
   :returns: Matching repository, or ``None`` if no such repository was found.
   :rtype: :class:`github:github.Repository.Repository` or ``None``.
@@ -248,7 +248,7 @@ def getPullRequest(upstream, ref, user=None, fork=None, target=None):
   :param ref:
     Branch name or git ref of the requested pull request.
   :type ref:
-    :class:`basestring`
+    :class:`str`
   :param fork:
     Downstream (fork) repository of the requested pull request.
   :type fork:
@@ -256,7 +256,7 @@ def getPullRequest(upstream, ref, user=None, fork=None, target=None):
   :param target:
     Branch name or git ref of the requested pull request target.
   :type target:
-    :class:`basestring` or ``None``
+    :class:`str` or ``None``
 
   :return:
     The specified pull request, or ``None`` if no such pull request exists.

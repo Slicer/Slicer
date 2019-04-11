@@ -17,7 +17,7 @@ def _settingsList(settings, key):
 
   value = settings.value(key)
 
-  if isinstance(value, basestring):
+  if isinstance(value, str):
     return [value]
 
   return [] if value is None else value

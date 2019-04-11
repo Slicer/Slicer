@@ -196,7 +196,7 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
     return self.inputSelector.currentNode()
 
   def setInputVolumeNode(self, node):
-    if isinstance(node, basestring):
+    if isinstance(node, str):
       node = getNode(node)
     self.inputSelector.setCurrentNode(node)
 
@@ -204,7 +204,7 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
     return self.outputSelector.currentNode()
 
   def setOutputVolumeNode(self, node):
-    if isinstance(node, basestring):
+    if isinstance(node, str):
       node = getNode(node)
     self.outputSelector.setCurrentNode(node)
 

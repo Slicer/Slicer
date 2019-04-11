@@ -242,7 +242,7 @@ def findChildren(widget=None, name="", text="", title="", className=""):
         # Objects may have text attributes with non-string value (for example,
         # QUndoStack objects have text attribute of 'builtin_qt_slot' type.
         # We only consider string type attributes.
-        if isinstance(attr_name, basestring):
+        if isinstance(attr_name, str):
           if fnmatch.fnmatchcase(attr_name, kwargs[attribute]):
             matched_filter_criteria = matched_filter_criteria + 1
     if matched_filter_criteria == len(expected_matches):
@@ -294,7 +294,7 @@ def startQtDesigner(args = None):
     executableFilePath += ".exe"
   cmdLineArguments = []
   if args is not None:
-    if isinstance(args, basestring):
+    if isinstance(args, str):
       cmdLineArguments.append(args)
     else:
       cmdLineArguments.extend(args)
@@ -553,7 +553,7 @@ def moduleSelector():
 
 def selectModule(module):
   moduleName = module
-  if not isinstance(module, basestring):
+  if not isinstance(module, str):
     moduleName = module.name
   selector = moduleSelector()
   if not selector:
@@ -584,7 +584,7 @@ def getModule(moduleName):
   return module
 
 def getModuleGui(module):
-  if isinstance(module, basestring):
+  if isinstance(module, str):
     module = getModule(module)
   widgetRepr = module.widgetRepresentation()
   if not widgetRepr:
@@ -593,7 +593,7 @@ def getModuleGui(module):
   return widgetRepr
 
 def getNewModuleGui(module):
-  if isinstance(module, basestring):
+  if isinstance(module, str):
     module = getModule(module)
   widgetRepr = module.createNewWidgetRepresentation()
   if not widgetRepr:
@@ -970,7 +970,7 @@ def updateTableFromArray(tableNode, narrays, columnNames=None):
   # Convert single string to a single-element string list
   if columnNames is None:
     columnNames = []
-  if isinstance(columnNames, basestring):
+  if isinstance(columnNames, str):
     columnNames = [columnNames]
   for columnIndex, ncolumn in enumerate(ncolumns):
     vcolumn = vtk.util.numpy_support.numpy_to_vtk(num_array=ncolumn.ravel(),deep=True,array_type=vtk.VTK_FLOAT)
@@ -1218,7 +1218,7 @@ def toBool(value):
   try:
     return bool(int(value))
   except (ValueError, TypeError):
-    return value.lower() in ['true'] if isinstance(value, basestring) else bool(value)
+    return value.lower() in ['true'] if isinstance(value, str) else bool(value)
 
 def settingsValue(key, default, converter=lambda v: v, settings=None):
   """Return settings value associated with key if it exists or the provided default otherwise.

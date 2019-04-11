@@ -119,13 +119,13 @@ class TemplateManager(object):
     """Copy (instantiate) a template.
 
     :param destination: Directory in which to create the template copy.
-    :type destination: :class:`basestring`
+    :type destination: :class:`str`
     :param category: Category of template to instantiate.
-    :type category: :class:`basestring`
+    :type category: :class:`str`
     :param kind: Name of template to instantiate.
-    :type kind: :class:`basestring`
+    :type kind: :class:`str`
     :param name: Name for the instantiated template.
-    :type name: :class:`basestring`
+    :type name: :class:`str`
     :param createInSubdirectory: If True then files are copied to ``destination/name/``, else ``destination/``.
     :type name: :class:`bool`
     :param requireEmptyDirectory: If True then files are only copied if the target directory is empty.
@@ -179,9 +179,9 @@ class TemplateManager(object):
     """Add templates for a particular category to the collection.
 
     :param category: Category of templates to add.
-    :type category: :class:`basestring`
+    :type category: :class:`str`
     :param path: Path to a directory containing templates.
-    :type path: :class:`basestring`
+    :type path: :class:`str`
 
     :raises:
       :exc:`~exceptions.KeyError` if ``category`` is not a known template
@@ -203,7 +203,7 @@ class TemplateManager(object):
     """Add a template path to the collection.
 
     :param basePath: Path to a directory containing categorized templates.
-    :type basePath: :class:`basestring`
+    :type basePath: :class:`str`
 
     This adds categorized templates to the collection. ``basePath`` should be
     a directory which contains one or more directories whose names match a
@@ -225,9 +225,9 @@ class TemplateManager(object):
     """Set template key for specified template.
 
     :param name: Name of template for which to set key.
-    :type name: :class:`basestring`
+    :type name: :class:`str`
     :param key: Key for specified template.
-    :type name: :class:`basestring`
+    :type name: :class:`str`
 
     This sets the template key for ``name`` to ``key``.
 
@@ -264,8 +264,8 @@ class TemplateManager(object):
       List of templates for the specified category, or a dictionary of such
       (keyed by category name) if ``category`` is ``None``.
     :rtype:
-      :class:`list` of :class:`basestring`, or :class:`dict` of
-      :class:`str` |rarr| (:class:`list` of :class:`basestring`).
+      :class:`list` of :class:`str`, or :class:`dict` of
+      :class:`str` |rarr| (:class:`list` of :class:`str`).
 
     :raises:
       :exc:`~exceptions.KeyError` if ``category`` is not ``None`` or a known
@@ -341,9 +341,9 @@ class TemplateManager(object):
     """Automatically add paths and keys from |CLI| arguments.
 
     :param args.templatePath: List of additional template paths.
-    :type args.templatePath: :class:`list` of :class:`basestring`
+    :type args.templatePath: :class:`list` of :class:`str`
     :param args.templateKey: List of user-specified template key mappings.
-    :type args.templateKey: :class:`list` of :class:`basestring`
+    :type args.templateKey: :class:`list` of :class:`str`
 
     This parses template-related command line arguments and updates the
     collection accordingly:

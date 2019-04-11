@@ -67,7 +67,7 @@ class Client(object):
     """Execute ``command`` and return line-split output.
 
     :param args: Subversion command to execute.
-    :type args: :class:`basestring`
+    :type args: :class:`str`
     :param args: Arguments to pass to ``command``.
     :type args: :class:`~collections.Sequence`
     :param kwargs: Named options to pass to ``command``.
@@ -109,7 +109,7 @@ class Client(object):
   def info(self, *args, **kwargs):
     """Return information about the specified item.
 
-    :type args: :class:`basestring`
+    :type args: :class:`str`
     :param args: Arguments to pass to ``svn info``.
     :type args: :class:`~collections.Sequence`
     :param kwargs: Named options to pass to ``svn info``.
@@ -180,7 +180,7 @@ class Repository(object):
   def __init__(self, path=os.getcwd()):
     """
     :param path: Location of the repository checkout.
-    :type path: :class:`basestring`
+    :type path: :class:`str`
 
     :raises:
       * :exc:`.CommandError` if the request to get the repository information

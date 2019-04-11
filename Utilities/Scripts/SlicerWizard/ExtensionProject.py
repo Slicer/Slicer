@@ -39,9 +39,9 @@ class ExtensionProject(object):
   def __init__(self, path, encoding=None):
     """
     :param path: Top level directory of the extension project.
-    :type path: :class:`basestring`
+    :type path: :class:`str`
     :param encoding: Encoding of extension CMakeLists.txt.
-    :type encoding: :class:`basestring` or ``None``
+    :type encoding: :class:`str` or ``None``
 
     If ``encoding`` is ``None``, the encoding will be guessed using
     :meth:`~SlicerWizard.Utilities.detectEncoding`.
@@ -141,7 +141,7 @@ class ExtensionProject(object):
   def project(self):
     """Name of extension project.
 
-    :type: :class:`basestring`
+    :type: :class:`str`
 
     :raises:
       :exc:`~exceptions.EOFError` if no ``project()`` command is present in the
@@ -190,7 +190,7 @@ class ExtensionProject(object):
     out, e.g. '``${outer_${inner_variable}_variable}``'.
 
     :param text: A text with zero or more variable references.
-    :type text: :class:`basestring`
+    :type text: :class:`str`
     """
 
     def _substitue(text):
@@ -227,7 +227,7 @@ class ExtensionProject(object):
     """Get value of CMake variable set in project.
 
     :param name: Name of the variable.
-    :type name: :class:`basestring`
+    :type name: :class:`str`
     :param default: Value to return if no such variable exists.
     :param substitute: If ``True``, expand variable references in value.
     :type substitute: :class:`bool`
@@ -284,9 +284,9 @@ class ExtensionProject(object):
     """Change value of CMake variable set in project.
 
     :param name: Name of the variable.
-    :type name: :class:`basestring`
+    :type name: :class:`str`
     :param value: Value to assign to the variable.
-    :type value: :class:`basestring`
+    :type value: :class:`str`
 
     :raises: :exc:`~exceptions.KeyError` if no such ``name`` is set.
 
@@ -321,7 +321,7 @@ class ExtensionProject(object):
     """Add a module to the build rules of the project.
 
     :param name: Name of the module to be added.
-    :type name: :class:`basestring`
+    :type name: :class:`str`
 
     :raises: :exc:`~exceptions.EOFError` if no insertion point can be found.
 
@@ -361,9 +361,9 @@ class ExtensionProject(object):
     """Save the project.
 
     :param destination: Location to which to write the build script.
-    :type destination: :class:`basestring` or ``None``
+    :type destination: :class:`str` or ``None``
     :param encoding: Encoding with which to write the build script.
-    :type destination: :class:`basestring` or ``None``
+    :type destination: :class:`str` or ``None``
 
     This saves the extension project CMake script to the specified file:
 
