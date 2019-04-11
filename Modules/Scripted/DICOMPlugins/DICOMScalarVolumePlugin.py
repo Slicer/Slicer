@@ -6,6 +6,7 @@ from DICOMLib import DICOMLoadable
 from DICOMLib import DICOMUtils
 from DICOMLib import DICOMExportScalarVolume
 import logging
+from functools import cmp_to_key
 
 #
 # This is the plugin to handle translation of scalar volumes
@@ -143,7 +144,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         self.cacheLoadables(files,loadablesForFiles)
 
     # sort the loadables by series number if possible
-    loadables.sort(lambda x,y: self.seriesSorter(x,y))
+    loadables.sort(key=cmp_to_key(lambda x,y: self.seriesSorter(x,y)))
 
     return loadables
 

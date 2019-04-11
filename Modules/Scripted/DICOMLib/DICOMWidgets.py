@@ -4,6 +4,8 @@ import qt
 import vtk
 import logging
 
+from functools import cmp_to_key
+
 from ctk import ctkDICOMObjectListWidget, ctkDICOMDatabase, ctkDICOMIndexer, ctkDICOMBrowser, ctkPopupWidget, ctkExpandButton
 import slicer
 from slicer.util import VTKObservationMixin
@@ -1297,7 +1299,8 @@ class DICOMRecentActivityWidget(qt.QWidget):
       self.insertDateTime = insertDateTime
       self.text = text
 
-  def compareSeriesTimes(self, a, b):
+  @staticmethod
+  def compareSeriesTimes(a, b):
     if a.elapsedSinceInsert > b.elapsedSinceInsert:
       return 1
     else:
@@ -1338,7 +1341,7 @@ class DICOMRecentActivityWidget(qt.QWidget):
             if timeNote:
               text = "%s: %s for %s" % (timeNote, seriesDescription, patientName)
               recentSeries.append(self.seriesWithTime(series, elapsed, seriesTime, text))
-    recentSeries.sort(self.compareSeriesTimes)
+    recentSeries.sort(key=cmp_to_key(self.compareSeriesTimes))
     return recentSeries
 
   def update(self):
