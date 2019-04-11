@@ -242,12 +242,6 @@ if(Slicer_USE_SimpleITK)
 endif()
 
 slicer_add_python_unittest(
-  SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/tests/test_saferef.py
-  SLICER_ARGS --no-main-window --disable-modules
-  TESTNAME_PREFIX nomainwindow_
-  )
-
-slicer_add_python_unittest(
   SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/tests/test_PythonManager.py
   SLICER_ARGS --no-main-window --disable-modules
   TESTNAME_PREFIX nomainwindow_

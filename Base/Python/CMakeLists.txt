@@ -8,7 +8,6 @@ set(Slicer_PYTHON_SCRIPTS
   slicer/util
   freesurfer
   mrml
-  saferef
   teem
   vtkAddon
   vtkITK
