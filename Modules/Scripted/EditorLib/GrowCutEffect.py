@@ -4,8 +4,10 @@ import vtkITK
 import ctk
 import qt
 import slicer
-from .EditOptions import HelpButton
-from . import Effect
+
+from . import EffectOptions, EffectTool, EffectLogic, Effect
+from . import HelpButton
+
 import logging
 from functools import reduce
 
@@ -34,7 +36,7 @@ comment = """
 # GrowCutEffectOptions - see Effect, EditOptions and Effect for superclasses
 #
 
-class GrowCutEffectOptions(Effect.EffectOptions):
+class GrowCutEffectOptions(EffectOptions):
   """ GrowCutEffect-specfic gui
   """
 
@@ -112,7 +114,7 @@ class GrowCutEffectOptions(Effect.EffectOptions):
 # GrowCutEffectTool
 #
 
-class GrowCutEffectTool(Effect.EffectTool):
+class GrowCutEffectTool(EffectTool):
   """
   One instance of this will be created per-view when the effect
   is selected.  It is responsible for implementing feedback and
@@ -132,7 +134,7 @@ class GrowCutEffectTool(Effect.EffectTool):
 # GrowCutEffectLogic
 #
 
-class GrowCutEffectLogic(Effect.EffectLogic):
+class GrowCutEffectLogic(EffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an GrowCutEffectTool
@@ -215,7 +217,7 @@ class GrowCutEffectLogic(Effect.EffectLogic):
 # The GrowCutEffect class definition
 #
 
-class GrowCutEffect(Effect.Effect):
+class GrowCutEffect(Effect):
   """Organizes the Options, Tool, and Logic classes into a single instance
   that can be managed by the EditBox
   """

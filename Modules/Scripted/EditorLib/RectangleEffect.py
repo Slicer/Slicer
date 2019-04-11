@@ -3,8 +3,8 @@ import vtk
 import ctk
 import qt
 import slicer
-from .EditOptions import HelpButton
-from . import LabelEffect
+from . import HelpButton
+from . import LabelEffectOptions, LabelEffectTool, LabelEffectLogic, LabelEffect
 
 __all__ = [
   'RectangleEffectOptions',
@@ -31,7 +31,7 @@ comment = """
 # RectangleEffectOptions - see LabelEffect, EditOptions and Effect for superclasses
 #
 
-class RectangleEffectOptions(LabelEffect.LabelEffectOptions):
+class RectangleEffectOptions(LabelEffectOptions):
   """ RectangleEffect-specfic gui
   """
 
@@ -81,7 +81,7 @@ class RectangleEffectOptions(LabelEffect.LabelEffectOptions):
 # RectangleEffectTool
 #
 
-class RectangleEffectTool(LabelEffect.LabelEffectTool):
+class RectangleEffectTool(LabelEffectTool):
   """
   One instance of this will be created per-view when the effect
   is selected.  It is responsible for implementing feedback and
@@ -202,7 +202,7 @@ class RectangleEffectTool(LabelEffect.LabelEffectTool):
 # RectangleEffectLogic
 #
 
-class RectangleEffectLogic(LabelEffect.LabelEffectLogic):
+class RectangleEffectLogic(LabelEffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an RectangleEffectTool
@@ -221,7 +221,7 @@ class RectangleEffectLogic(LabelEffect.LabelEffectLogic):
 # The RectangleEffect class definition
 #
 
-class RectangleEffect(LabelEffect.LabelEffect):
+class RectangleEffect(LabelEffect):
   """Organizes the Options, Tool, and Logic classes into a single instance
   that can be managed by the EditBox
   """

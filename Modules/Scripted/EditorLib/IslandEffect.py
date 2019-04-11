@@ -3,7 +3,7 @@ import vtk
 import qt
 import ctk
 import slicer
-from . import Effect
+from . import EffectOptions, EffectTool, EffectLogic, Effect
 
 __all__ = [
   'IslandEffectOptions',
@@ -31,7 +31,7 @@ comment = """
 # IslandEffectOptions - see EditOptions and Effect for superclasses
 #
 
-class IslandEffectOptions(Effect.EffectOptions):
+class IslandEffectOptions(EffectOptions):
   """ IslandEffect-specfic gui
   """
 
@@ -124,7 +124,7 @@ class IslandEffectOptions(Effect.EffectOptions):
 # IslandEffectTool
 #
 
-class IslandEffectTool(Effect.EffectTool):
+class IslandEffectTool(EffectTool):
   """
   One instance of this will be created per-view when the effect
   is selected.  It is responsible for implementing feedback and
@@ -145,7 +145,7 @@ class IslandEffectTool(Effect.EffectTool):
 # IslandEffectLogic
 #
 
-class IslandEffectLogic(Effect.EffectLogic):
+class IslandEffectLogic(EffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an IslandEffectTool
@@ -163,7 +163,7 @@ class IslandEffectLogic(Effect.EffectLogic):
 # The IslandEffect class definition
 #
 
-class IslandEffect(Effect.Effect):
+class IslandEffect(Effect):
   """Organizes the Options, Tool, and Logic classes into a single instance
   that can be managed by the EditBox
   """

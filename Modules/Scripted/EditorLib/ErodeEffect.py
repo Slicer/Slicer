@@ -4,7 +4,7 @@ import vtk
 import ctk
 import qt
 import slicer
-from .EditOptions import HelpButton
+from . import HelpButton
 from . import MorphologyEffectOptions, MorphologyEffectTool, MorphologyEffectLogic, MorphologyEffect
 
 __all__ = [

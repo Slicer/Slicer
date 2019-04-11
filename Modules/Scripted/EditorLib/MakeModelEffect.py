@@ -3,9 +3,9 @@ import vtk
 import qt
 import ctk
 import slicer
-from .EditOptions import HelpButton
-from .EditUtil import EditUtil
-from . import Effect
+from . import HelpButton
+from . import EditUtil
+from . import EffectOptions, EffectTool, EffectLogic, Effect
 
 __all__ = [
   'MakeModelEffectOptions',
@@ -32,7 +32,7 @@ comment = """
 # MakeModelEffectOptions - see EditOptions and Effect for superclasses
 #
 
-class MakeModelEffectOptions(Effect.EffectOptions):
+class MakeModelEffectOptions(EffectOptions):
   """ MakeModelEffect-specfic gui
   """
 
@@ -159,7 +159,7 @@ class MakeModelEffectOptions(Effect.EffectOptions):
 # MakeModelEffectTool
 #
 
-class MakeModelEffectTool(Effect.EffectTool):
+class MakeModelEffectTool(EffectTool):
   """
   One instance of this will be created per-view when the effect
   is selected.  It is responsible for implementing feedback and
@@ -179,7 +179,7 @@ class MakeModelEffectTool(Effect.EffectTool):
 # MakeModelEffectLogic
 #
 
-class MakeModelEffectLogic(Effect.EffectLogic):
+class MakeModelEffectLogic(EffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an MakeModelEffectTool
@@ -266,7 +266,7 @@ class MakeModelEffectLogic(Effect.EffectLogic):
 # The MakeModelEffect class definition
 #
 
-class MakeModelEffect(Effect.Effect):
+class MakeModelEffect(Effect):
   """Organizes the Options, Tool, and Logic classes into a single instance
   that can be managed by the EditBox
   """

@@ -3,7 +3,7 @@ import os
 import vtk
 import qt
 import slicer
-from .EditOptions import EditOptions
+from . import EditOptions
 from . import EditUtil
 from slicer.util import NodeModify
 
@@ -160,7 +160,7 @@ class EffectTool(object):
     self.interactor = self.sliceView.interactorStyle().GetInteractor()
     self.renderWindow = self.sliceWidget.sliceView().renderWindow()
     self.renderer = self.renderWindow.GetRenderers().GetItemAsObject(0)
-    self.editUtil = EditUtil.EditUtil()
+    self.editUtil = EditUtil()
 
     # optionally set by users of the class
     self.undoRedo = None
@@ -272,7 +272,7 @@ class EffectLogic(object):
 
   def __init__(self,sliceLogic):
     self.sliceLogic = sliceLogic
-    self.editUtil = EditUtil.EditUtil()
+    self.editUtil = EditUtil()
     # optionally set by users of the class
     self.undoRedo = None
     self.scope = 'All'

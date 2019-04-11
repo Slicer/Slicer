@@ -2,7 +2,11 @@ from __future__ import print_function
 import os
 import unittest
 import vtk, qt, ctk, slicer
+
 from slicer.ScriptedLoadableModule import *
+
+import EditorLib
+from EditorLib import EditUtil
 
 #
 # sceneImport2428
@@ -115,10 +119,8 @@ class sceneImport2428Test(ScriptedLoadableModuleTest):
     #
     # got to the editor and do some drawing
     #
-    import EditorLib
     self.delayDisplay("Setting up Editor and drawing")
-    editUtil = EditorLib.EditUtil.EditUtil()
-    parameterNode = editUtil.getParameterNode()
+    parameterNode = EditUtil.getParameterNode()
     lm = slicer.app.layoutManager()
     paintEffectOptions = EditorLib.PaintEffectOptions()
     paintEffectOptions.setMRMLDefaults()
@@ -133,7 +135,7 @@ class sceneImport2428Test(ScriptedLoadableModuleTest):
     paintTool = EditorLib.PaintEffectTool(sliceWidget)
     self.delayDisplay('Paint radius is %s, tool radius is %d' % (parameterNode.GetParameter('PaintEffect,radius'),paintTool.radius))
     for label in range(1,5):
-      editUtil.setLabel(label)
+      EditUtil.setLabel(label)
       pos = center - 2*step + (step * label)
       self.delayDisplay('Painting %d, at  (%d,%d)' % (label,pos,pos),200)
       paintTool.paintAddPoint(pos,pos)

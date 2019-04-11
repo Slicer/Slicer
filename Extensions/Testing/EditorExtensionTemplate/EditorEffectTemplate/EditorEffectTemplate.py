@@ -2,10 +2,10 @@ from __future__ import print_function
 import os
 import vtk, qt, ctk, slicer
 import EditorLib
-from EditorLib.EditOptions import HelpButton
-from EditorLib.EditOptions import EditOptions
+from EditorLib import HelpButton
+from EditorLib import EditOptions
 from EditorLib import EditUtil
-from EditorLib import LabelEffect
+from EditorLib import LabelEffectOptions, LabelEffectTool, LabelEffectLogic, LabelEffect
 
 #
 # The Editor Extension itself.
@@ -17,7 +17,7 @@ from EditorLib import LabelEffect
 # EditorEffectTemplateOptions - see LabelEffect, EditOptions and Effect for superclasses
 #
 
-class EditorEffectTemplateOptions(EditorLib.LabelEffectOptions):
+class EditorEffectTemplateOptions(LabelEffectOptions):
   """ EditorEffectTemplate-specfic gui
   """
 
@@ -56,7 +56,7 @@ class EditorEffectTemplateOptions(EditorLib.LabelEffectOptions):
   # in each leaf subclass so that "self" in the observer
   # is of the correct type
   def updateParameterNode(self, caller, event):
-    node = EditUtil.EditUtil().getParameterNode()
+    node = EditUtil.getParameterNode()
     if node != self.parameterNode:
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)

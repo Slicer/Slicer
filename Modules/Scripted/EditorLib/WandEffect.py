@@ -3,8 +3,8 @@ import vtk
 import ctk
 import qt
 import slicer
-from .EditOptions import HelpButton
-from . import LabelEffect
+from . import HelpButton
+from . import LabelEffectOptions, LabelEffectTool, LabelEffectLogic, LabelEffect
 
 __all__ = [
   'WandEffectOptions',
@@ -21,7 +21,7 @@ __all__ = [
 # WandEffectOptions - see LabelEffect, EditOptions and Effect for superclasses
 #
 
-class WandEffectOptions(LabelEffect.LabelEffectOptions):
+class WandEffectOptions(LabelEffectOptions):
   """ WandEffect-specfic gui
   """
 
@@ -177,7 +177,7 @@ class WandEffectOptions(LabelEffect.LabelEffectOptions):
 # WandEffectTool
 #
 
-class WandEffectTool(LabelEffect.LabelEffectTool):
+class WandEffectTool(LabelEffectTool):
   """
   One instance of this will be created per-view when the effect
   is selected.  It is responsible for implementing feedback and
@@ -217,7 +217,7 @@ class WandEffectTool(LabelEffect.LabelEffectTool):
 # WandEffectLogic
 #
 
-class WandEffectLogic(LabelEffect.LabelEffectLogic):
+class WandEffectLogic(LabelEffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an WandEffectTool
@@ -377,7 +377,7 @@ class WandEffectLogic(LabelEffect.LabelEffectLogic):
 # The WandEffect class definition
 #
 
-class WandEffect(LabelEffect.LabelEffect):
+class WandEffect(LabelEffect):
   """Organizes the Options, Tool, and Logic classes into a single instance
   that can be managed by the EditBox
   """

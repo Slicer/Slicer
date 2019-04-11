@@ -3,34 +3,35 @@ import os
 ICON_DIR = os.path.dirname(os.path.realpath(__file__)) + '/Resources/Icons/'
 del os
 
-from .ColorBox import *
-from .EditBox import *
-from .EditColor import *
-from .EditOptions import *
-from .HelperBox import *
-from .LabelEffect import LabelEffectOptions, LabelEffectTool, LabelEffectLogic
+from .ColorBox import ColorBox
+from .EditUtil import EditUtil, UndoRedo
+from .EditBox import EditBox
+from .EditColor import EditColor
+from .EditOptions import HelpButton, EditOptions
+from .HelperBox import HelperBox
 
 # Built-in effects
-from .PaintEffect import *
-from .DrawEffect import *
-from .ThresholdEffect import *
-from .RectangleEffect import *
-from .LevelTracingEffect import *
-from .MakeModelEffect import *
-from .MorphologyEffect import *
-from .ErodeEffect import *
-from .DilateEffect import *
-from .IslandEffect import *
-from .IdentifyIslandsEffect import *
-from .ChangeIslandEffect import *
-from .RemoveIslandsEffect import *
-from .SaveIslandEffect import *
-from .ChangeLabelEffect import *
-from .GrowCutEffect import *
-from .WatershedFromMarkerEffect import *
-from .FastMarchingEffect import *
-from .WandEffect import *
-
-# XXX Importing this module last will ensure effect
-#     calling "EditUtil.EditUtil()" will work.
-from . import EditUtil
+for effectName in [
+  'Effect',
+  'LabelEffect',
+  'PaintEffect',
+  'DrawEffect',
+  'ThresholdEffect',
+  'RectangleEffect',
+  'LevelTracingEffect',
+  'MakeModelEffect',
+  'MorphologyEffect',
+  'ErodeEffect',
+  'DilateEffect',
+  'IslandEffect',
+  'IdentifyIslandsEffect',
+  'ChangeIslandEffect',
+  'RemoveIslandsEffect',
+  'SaveIslandEffect',
+  'ChangeLabelEffect',
+  'GrowCutEffect',
+  'WatershedFromMarkerEffect',
+  'FastMarchingEffect',
+  'WandEffect'
+]:
+  exec("from .{0} import {0}Options, {0}Tool, {0}Logic, {0}".format(effectName))

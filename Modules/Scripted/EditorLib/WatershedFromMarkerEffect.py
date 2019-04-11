@@ -2,8 +2,8 @@ import os
 import vtk, qt, ctk, slicer
 from .EditOptions import HelpButton
 from .EditUtil import EditUtil
-from . import Effect
-from . import LabelEffect
+from . import EffectOptions, EffectTool, EffectLogic, Effect
+from . import LabelEffectOptions, LabelEffectTool, LabelEffectLogic, LabelEffect
 
 import math
 
@@ -25,7 +25,7 @@ __all__ = [
 # WatershedFromMarkerEffectOptions - see Effect for superclass
 #
 
-class WatershedFromMarkerEffectOptions(Effect.EffectOptions):
+class WatershedFromMarkerEffectOptions(EffectOptions):
   """ WatershedFromMarkerEffect-specfic gui
   """
 
@@ -181,7 +181,7 @@ The "Object Scale" parameter is use to adjust the smoothness of the output image
 # WatershedFromMarkerEffectTool
 #
 
-class WatershedFromMarkerEffectTool(LabelEffect.LabelEffectTool):
+class WatershedFromMarkerEffectTool(LabelEffectTool):
   """
   One instance of this will be created per-view when the effect
   is selected.  It is responsible for implementing feedback and
@@ -207,7 +207,7 @@ class WatershedFromMarkerEffectTool(LabelEffect.LabelEffectTool):
 # WatershedFromMarkerEffectLogic
 #
 
-class WatershedFromMarkerEffectLogic(LabelEffect.LabelEffectLogic):
+class WatershedFromMarkerEffectLogic(LabelEffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an WatershedFromMarkerEffectTool
@@ -270,7 +270,7 @@ class WatershedFromMarkerEffectLogic(LabelEffect.LabelEffectLogic):
 # The WatershedFromMarkerEffectExtension class definition
 #
 
-class WatershedFromMarkerEffectExtension(Effect.Effect):
+class WatershedFromMarkerEffectExtension(Effect):
   """Organizes the Options, Tool, and Logic classes into a single instance
   that can be managed by the EditBox
   """
@@ -297,7 +297,7 @@ pet = EditorLib.WatershedFromMarkerEffectTool(sw)
 # WatershedFromMarkerEffect
 #
 
-class WatershedFromMarkerEffect(Effect.Effect):
+class WatershedFromMarkerEffect(Effect):
   """Organizes the Options, Tool, and Logic classes into a single instance
   that can be managed by the EditBox
   """

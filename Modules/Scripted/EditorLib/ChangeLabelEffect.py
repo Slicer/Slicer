@@ -3,9 +3,10 @@ import vtk
 import qt
 import ctk
 import slicer
-from .EditOptions import HelpButton
-from .EditUtil import EditUtil
-from . import Effect
+from . import EditColor
+from . import EditUtil
+from . import HelpButton
+from . import EffectOptions, EffectTool, EffectLogic, Effect
 
 __all__ = [
   'ChangeLabelEffectOptions',
@@ -31,7 +32,7 @@ comment = """
 # ChangeLabelEffectOptions - see EditOptions and Effect for superclasses
 #
 
-class ChangeLabelEffectOptions(Effect.EffectOptions):
+class ChangeLabelEffectOptions(EffectOptions):
   """ ChangeLabelEffect-specfic gui
   """
 
@@ -47,12 +48,11 @@ class ChangeLabelEffectOptions(Effect.EffectOptions):
   def create(self):
     super(ChangeLabelEffectOptions,self).create()
     self.logic.undoRedo = self.undoRedo
-    from . import EditColor
-    self.inputColor = EditColor.EditColor(self.frame,'ChangeLabelEffect,inputColor')
+    self.inputColor = EditColor(self.frame,'ChangeLabelEffect,inputColor')
     self.inputColor.label.setText("Input Color:")
     self.inputColor.colorSpin.setToolTip("Set the label value to replace.")
 
-    self.outputColor = EditColor.EditColor(self.frame,'ChangeLabelEffect,outputColor')
+    self.outputColor = EditColor(self.frame,'ChangeLabelEffect,outputColor')
     self.outputColor.label.setText("Output Color:")
     self.outputColor.colorSpin.setToolTip("Set the new label value")
 
@@ -132,7 +132,7 @@ class ChangeLabelEffectOptions(Effect.EffectOptions):
 # ChangeLabelEffectTool
 #
 
-class ChangeLabelEffectTool(Effect.EffectTool):
+class ChangeLabelEffectTool(EffectTool):
   """
   One instance of this will be created per-view when the effect
   is selected.  It is responsible for implementing feedback and
@@ -152,7 +152,7 @@ class ChangeLabelEffectTool(Effect.EffectTool):
 # ChangeLabelEffectLogic
 #
 
-class ChangeLabelEffectLogic(Effect.EffectLogic):
+class ChangeLabelEffectLogic(EffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an ChangeLabelEffectTool
@@ -195,7 +195,7 @@ class ChangeLabelEffectLogic(Effect.EffectLogic):
 # The ChangeLabelEffect class definition
 #
 
-class ChangeLabelEffect(Effect.Effect):
+class ChangeLabelEffect(Effect):
   """Organizes the Options, Tool, and Logic classes into a single instance
   that can be managed by the EditBox
   """

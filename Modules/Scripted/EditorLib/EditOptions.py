@@ -4,7 +4,7 @@ import qt
 import ctk
 import vtk
 from slicer.util import getNodes
-from .EditUtil import EditUtil
+from . import EditUtil
 from slicer.util import VTKObservationMixin
 
 __all__ = ['HelpButton', 'EditOptions']

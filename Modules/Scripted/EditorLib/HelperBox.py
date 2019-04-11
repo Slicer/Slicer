@@ -3,7 +3,7 @@ import qt
 import ctk
 import vtk
 import slicer
-from .EditUtil import EditUtil
+from . import EditUtil
 from .LabelCreateDialog import LabelCreateDialog
 from .LabelStructureListWidget import LabelStructureListWidget
 from slicer.util import VTKObservationMixin

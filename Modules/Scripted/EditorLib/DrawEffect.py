@@ -3,8 +3,8 @@ import vtk
 import ctk
 import qt
 import slicer
-from .EditOptions import HelpButton
-from . import LabelEffect
+from . import HelpButton
+from . import LabelEffectOptions, LabelEffectTool, LabelEffectLogic, LabelEffect
 
 __all__ = [
   'DrawEffectOptions',
@@ -31,7 +31,7 @@ comment = """
 # DrawEffectOptions - see LabelEffect, EditOptions and Effect for superclasses
 #
 
-class DrawEffectOptions(LabelEffect.LabelEffectOptions):
+class DrawEffectOptions(LabelEffectOptions):
   """ DrawEffect-specfic gui
   """
 
@@ -93,7 +93,7 @@ class DrawEffectOptions(LabelEffect.LabelEffectOptions):
 # DrawEffectTool
 #
 
-class DrawEffectTool(LabelEffect.LabelEffectTool):
+class DrawEffectTool(LabelEffectTool):
   """
   One instance of this will be created per-view when the effect
   is selected.  It is responsible for implementing feedback and
@@ -317,7 +317,7 @@ class DrawEffectTool(LabelEffect.LabelEffectTool):
 # DrawEffectLogic
 #
 
-class DrawEffectLogic(LabelEffect.LabelEffectLogic):
+class DrawEffectLogic(LabelEffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an DrawEffectTool
@@ -336,7 +336,7 @@ class DrawEffectLogic(LabelEffect.LabelEffectLogic):
 # The DrawEffect class definition
 #
 
-class DrawEffect(LabelEffect.LabelEffect):
+class DrawEffect(LabelEffect):
   """Organizes the Options, Tool, and Logic classes into a single instance
   that can be managed by the EditBox
   """

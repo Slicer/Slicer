@@ -4,9 +4,9 @@ import vtk
 import ctk
 import qt
 import slicer
-from .EditOptions import HelpButton
-from .EditUtil import EditUtil
-from . import LabelEffect
+from . import HelpButton
+from . import EditUtil
+from . import LabelEffectOptions, LabelEffectTool, LabelEffectLogic, LabelEffect
 import numpy
 from math import sqrt
 from functools import reduce
@@ -36,7 +36,7 @@ comment = """
 # PaintEffectOptions - see LabelEffect, EditOptions and Effect for superclasses
 #
 
-class PaintEffectOptions(LabelEffect.LabelEffectOptions):
+class PaintEffectOptions(LabelEffectOptions):
   """ PaintEffect-specfic gui
   """
 
@@ -287,7 +287,7 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
 # PaintEffectTool
 #
 
-class PaintEffectTool(LabelEffect.LabelEffectTool):
+class PaintEffectTool(LabelEffectTool):
   """
   One instance of this will be created per-view when the effect
   is selected.  It is responsible for implementing feedback and
@@ -785,7 +785,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
 # PaintEffectLogic
 #
 
-class PaintEffectLogic(LabelEffect.LabelEffectLogic):
+class PaintEffectLogic(LabelEffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an PaintEffectTool
@@ -804,7 +804,7 @@ class PaintEffectLogic(LabelEffect.LabelEffectLogic):
 # The PaintEffect class definition
 #
 
-class PaintEffect(LabelEffect.LabelEffect):
+class PaintEffect(LabelEffect):
   """Organizes the Options, Tool, and Logic classes into a single instance
   that can be managed by the EditBox
   """

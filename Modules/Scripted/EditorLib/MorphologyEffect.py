@@ -3,7 +3,7 @@ import vtk
 import qt
 import ctk
 import slicer
-from . import Effect
+from . import EffectOptions, EffectTool, EffectLogic, Effect
 
 __all__ = [
   'MorphologyEffectOptions',
@@ -30,7 +30,7 @@ comment = """
 # MorphologyEffectOptions - see EditOptions and Effect for superclasses
 #
 
-class MorphologyEffectOptions(Effect.EffectOptions):
+class MorphologyEffectOptions(EffectOptions):
   """ MorphologyEffect-specfic gui
   """
 
@@ -127,7 +127,7 @@ class MorphologyEffectOptions(Effect.EffectOptions):
 # MorphologyEffectTool
 #
 
-class MorphologyEffectTool(Effect.EffectTool):
+class MorphologyEffectTool(EffectTool):
   """
   One instance of this will be created per-view when the effect
   is selected.  It is responsible for implementing feedback and
@@ -147,7 +147,7 @@ class MorphologyEffectTool(Effect.EffectTool):
 # MorphologyEffectLogic
 #
 
-class MorphologyEffectLogic(Effect.EffectLogic):
+class MorphologyEffectLogic(EffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an MorphologyEffectTool
@@ -165,7 +165,7 @@ class MorphologyEffectLogic(Effect.EffectLogic):
 # The MorphologyEffect class definition
 #
 
-class MorphologyEffect(Effect.Effect):
+class MorphologyEffect(Effect):
   """Organizes the Options, Tool, and Logic classes into a single instance
   that can be managed by the EditBox
   """

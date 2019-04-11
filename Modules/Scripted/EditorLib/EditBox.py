@@ -4,8 +4,8 @@ import slicer
 import vtk
 import qt
 import EditorLib
-from .EditUtil import EditUtil
-from .EditUtil import UndoRedo
+from . import EditUtil
+from . import UndoRedo
 from slicer.util import VTKObservationMixin
 
 #########################################################

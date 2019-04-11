@@ -5,7 +5,7 @@ import vtkITK
 import ctk
 import qt
 import slicer
-from .EditOptions import HelpButton
+from . import HelpButton
 from . import IslandEffectOptions, IslandEffectTool, IslandEffectLogic, IslandEffect
 
 __all__ = [
