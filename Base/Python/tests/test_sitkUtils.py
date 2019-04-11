@@ -45,7 +45,7 @@ class SitkUtilsTests(unittest.TestCase):
         for x in xrange(0,size[0],(int)(size[0]/10)):
             for y in xrange(0,size[1],(int)(size[1]/10)):
                 for z in xrange(0,size[2],(int)(size[2]/10)):
-                    sitkimage.SetPixel(x,y,z,0L)
+                    sitkimage.SetPixel(x,y,z,0)
 
         volumeNode1Modified = su.PushVolumeToSlicer(sitkimage, name="ImageChanged", className="vtkMRMLScalarVolumeNode")
         self.assertEqual(volumeNode1Modified.GetName(), "ImageChanged",
@@ -117,7 +117,7 @@ class SitkUtilsTests(unittest.TestCase):
         for x in xrange(0,size[0],(int)(size[0]/10)):
             for y in xrange(0,size[1],(int)(size[1]/10)):
                 for z in xrange(0,size[2],(int)(size[2]/10)):
-                    sitkimage.SetPixel(x,y,z,0L)
+                    sitkimage.SetPixel(x,y,z,0)
 
 
         su.PushToSlicer(sitkimage, 'ImageChanged', compositeView=0, overwrite=False)

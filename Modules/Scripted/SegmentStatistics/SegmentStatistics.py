@@ -562,7 +562,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
                       (segmentID, key) in statistics]
       if len(measurements)==0: # there were not measurements and therefore use the default "string" representation
         col = table.AddColumn()
-      elif type(measurements[0]) in [int, long]:
+      elif isinstance(measurements[0], int):
         col = table.AddColumn(vtk.vtkLongArray())
       elif isinstance(measurements[0], float):
         col = table.AddColumn(vtk.vtkDoubleArray())
