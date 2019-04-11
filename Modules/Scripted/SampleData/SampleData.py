@@ -728,8 +728,8 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     """Gets an ur from a local file path.
     Typically it prefixes the received path by file:// or file:///.
     """
-    import urlparse, urllib
-    return urlparse.urljoin('file:', urllib.pathname2url(path))
+    import urllib.parse, urllib
+    return urllib.parse.urljoin('file:', urllib.pathname2url(path))
 
   def test_downloadFromSource_downloadFiles(self):
     """Specifying URIs and fileNames without nodeNames is expected to download the files

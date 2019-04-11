@@ -10,7 +10,7 @@
 from __future__ import print_function
 import sys
 import os
-import Tkinter
+import tkinter
 import slicer
 import qt
 
@@ -25,7 +25,7 @@ class tpycl(object):
     except AttributeError:
       sys.argv = []
       sys.argv.append("")
-    self.tcl = Tkinter.Tcl()
+    self.tcl = tkinter.Tcl()
     self.tcl.createcommand("py_eval", self.py_eval)
     self.tcl.createcommand("py_package", self.py_package)
     self.tcl.createcommand("py_type", self.py_type)
@@ -175,7 +175,7 @@ class tpycl(object):
     self.dprint("callback command is <%s>" % cmd)
     try:
       result = self.tcl.eval(cmd)
-    except Tkinter.TclError as error:
+    except tkinter.TclError as error:
       print (error)
       errorInfo = self.tcl.eval("set ::errorInfo")
       print (errorInfo)
@@ -196,7 +196,7 @@ class tpycl(object):
       return()
     try:
       result = self.tcl.eval(cmd)
-    except Tkinter.TclError as error:
+    except tkinter.TclError as error:
       print (error)
       errorInfo = self.tcl.eval("set ::errorInfo")
       print (errorInfo)

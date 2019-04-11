@@ -7,7 +7,7 @@ import subprocess
 from github import Github
 from github.GithubObject import NotSet
 
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 __all__ = [
   'logIn',

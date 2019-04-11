@@ -12,10 +12,10 @@ import sys
 import textwrap
 import threading
 
-import BaseHTTPServer
-import SocketServer as socketserver
+import http.server
+import socketserver as socketserver
 
-from urlparse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs
 
 import SlicerExtensionBuildSystemTestConfig as config
 
@@ -61,7 +61,7 @@ def get_open_port():
   port = s.getsockname()[1]
   return port
 
-class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
+class Handler(http.server.BaseHTTPRequestHandler):
 
   def send_response_with_message(self,
       code=200, message="OK", response_type="text/html"):
