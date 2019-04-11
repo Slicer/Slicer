@@ -189,7 +189,9 @@ public:
 
   /// List of custom events fired by the class.
   enum Events{
-    RequestInvokeEvent = vtkCommand::UserEvent + 1
+    RequestInvokeEvent = vtkCommand::UserEvent + 1,
+    PauseRenderEvent = vtkCommand::UserEvent + 101,
+    ResumeRenderEvent
   };
   /// Structure passed as calldata pointer in the RequestEvent invoked event.
   struct InvokeRequest{
@@ -218,6 +220,20 @@ public:
   /// Saves the provided image as screenshot of the scene (same filepath as the scene URL but extension is .png instead of .mrml).
   /// Uses current scene's URL property, so the URL must be up-to-date when calling this method.
   void SaveSceneScreenshot(vtkImageData* screenshot);
+
+  /// Pauses rendering for all views in the current layout.
+  /// It should be used in situations where multiple nodes are modified, and it is undesirable to display an intermediate
+  /// state.
+  /// The caller is responsible for making sure that each PauseRender() is paired with
+  /// ResumeRender().
+  /// \sa vtkMRMLApplicationLogic::ResumeRender()
+  /// \sa qSlicerApplication::setRenderPaused()
+  virtual void PauseRender();
+
+  /// Resumes rendering for all views in the current layout.
+  /// \sa vtkMRMLApplicationLogic::PauseRender()
+  /// \sa qSlicerApplication::setRenderPaused()
+  virtual void ResumeRender();
 
 protected:
 

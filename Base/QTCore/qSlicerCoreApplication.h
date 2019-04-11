@@ -445,6 +445,20 @@ public slots:
 
   bool unregisterResource(int handle);
 
+  /// Calls setRenderPaused(pause) on the current layout manager.
+  /// Emits pauseRenderRequested() if pause is true and resumeRenderRequested() if pause is false.
+  /// The caller is responsible for making sure that each setRenderPaused(true) is paired with
+  /// setRenderPaused(false).
+  /// Implemented in qSlicerApplication
+  /// \sa qSlicerApplication::setRenderPaused()
+  virtual void setRenderPaused(bool pause) {};
+  /// Equivalent to setRenderPaused(true)
+  /// \sa setRenderPaused
+  virtual void pauseRender() {};
+  /// Equivalent to setRenderPaused(false)
+  /// \sa setRenderPaused
+  virtual void resumeRender() {};
+
 protected:
 
   /// Process command line arguments **before** the applicaton event loop is started.

@@ -1361,5 +1361,5 @@ void qMRMLLayoutManager::pauseRender()
 //------------------------------------------------------------------------------
 void qMRMLLayoutManager::resumeRender()
 {
-  this->setRenderPaused(true);
+  this->setRenderPaused(false);
 }

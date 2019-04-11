@@ -46,12 +46,14 @@
 #include <vtkMRMLSliceLayerLogic.h>
 
 // MRML includes
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLSegmentationNode.h>
 #include <vtkMRMLSegmentationDisplayNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceCompositeNode.h>
+#include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 
 // VTK includes
 #include <vtkNew.h>
@@ -1908,9 +1910,24 @@ void qMRMLSliceControllerWidget::setSliceOffsetValue(double offset)
     return;
     }
   //qDebug() << "qMRMLSliceControllerWidget::setSliceOffsetValue:" << offset;
+
+  // This prevents desynchronized update of displayable managers during user interaction
+  // (ie. slice intersection widget or segmentations lagging behind during slice translation)
+  vtkMRMLApplicationLogic* applicationLogic =
+    vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic();
+  if (applicationLogic)
+    {
+    applicationLogic->PauseRender();
+    }
+
   d->SliceLogic->StartSliceOffsetInteraction();
   d->SliceLogic->SetSliceOffset(offset);
   d->SliceLogic->EndSliceOffsetInteraction();
+
+  if (applicationLogic)
+    {
+    applicationLogic->ResumeRender();
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -1922,8 +1939,23 @@ void qMRMLSliceControllerWidget::trackSliceOffsetValue(double offset)
     return;
     }
   //qDebug() << "qMRMLSliceControllerWidget::trackSliceOffsetValue";
+
+  // This prevents desynchronized update of displayable managers during user interaction
+  // (ie. slice intersection widget or segmentations lagging behind during slice translation)
+    vtkMRMLApplicationLogic* applicationLogic =
+    vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic();
+  if (applicationLogic)
+    {
+    applicationLogic->PauseRender();
+    }
+
   d->SliceLogic->StartSliceOffsetInteraction();
   d->SliceLogic->SetSliceOffset(offset);
+
+  if (applicationLogic)
+    {
+    applicationLogic->ResumeRender();
+    }
 }
 
 // --------------------------------------------------------------------------

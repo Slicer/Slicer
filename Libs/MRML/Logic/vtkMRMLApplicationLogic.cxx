@@ -1244,3 +1244,19 @@ void vtkMRMLApplicationLogic::SaveSceneScreenshot(vtkImageData* screenshot)
   screenShotWriter->SetFileName(screenshotFilePath.c_str());
   screenShotWriter->Write();
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::PauseRender()
+{
+  // Observers in qSlicerCoreApplication listen for PauseRenderEvent and call pauseRender
+  // to temporarily stop rendering in all views in the current layout
+  this->InvokeEvent(PauseRenderEvent);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::ResumeRender()
+{
+  // Observers in qSlicerCoreApplication listen for ResumeRenderEvent and call resumeRender
+  // to resume rendering in all views in the current layout
+  this->InvokeEvent(ResumeRenderEvent);
+}

@@ -314,6 +314,10 @@ void qSlicerCoreApplicationPrivate::init()
               q, SLOT(onSlicerApplicationLogicRequest(vtkObject*,void*,ulong)));
   q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestWriteDataEvent,
               q, SLOT(onSlicerApplicationLogicRequest(vtkObject*,void*,ulong)));
+  q->qvtkConnect(this->AppLogic, vtkMRMLApplicationLogic::PauseRenderEvent,
+              q, SLOT(pauseRender()));
+  q->qvtkConnect(this->AppLogic, vtkMRMLApplicationLogic::ResumeRenderEvent,
+              q, SLOT(resumeRender()));
   q->qvtkConnect(this->AppLogic->GetUserInformation(), vtkCommand::ModifiedEvent,
     q, SLOT(onUserInformationModified()));
 

@@ -19,6 +19,7 @@
 
 // MRML includes
 #include "vtkMRMLAbstractSliceViewDisplayableManager.h"
+#include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLDisplayableManagerGroup.h"
 #include "vtkMRMLInteractionEventData.h"
 
@@ -303,6 +304,9 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventDataToDisplayableManage
     return false;
     }
 
+  // This prevents desynchronized update of displayable managers during user interaction
+  // (ie. slice intersection widget or segmentations lagging behind during slice translation)
+  this->FocusedDisplayableManager->GetMRMLApplicationLogic()->PauseRender();
   bool processed = this->FocusedDisplayableManager->ProcessInteractionEvent(eventData);
   int cursor = VTK_CURSOR_DEFAULT;
   if (processed)
@@ -310,6 +314,7 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventDataToDisplayableManage
     cursor = this->FocusedDisplayableManager->GetMouseCursor();
     }
   this->FocusedDisplayableManager->SetMouseCursor(cursor);
+  this->FocusedDisplayableManager->GetMRMLApplicationLogic()->ResumeRender();
   return processed;
 }
 

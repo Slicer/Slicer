@@ -176,15 +176,15 @@ public slots:
   /// The caller is responsible for making sure that each setRenderPaused(true) is paired with
   /// setRenderPaused(false).
   /// \sa qMRMLLayoutManager::setRenderPaused()
-  void setRenderPaused(bool pause);
+  void setRenderPaused(bool pause) override;
 
   /// Equivalent to setRenderPaused(true)
   /// \sa setRenderPaused
-  void pauseRender();
+  void pauseRender() override;
 
   /// Equivalent to setRenderPaused(false)
   /// \sa setRenderPaused
-  void resumeRender();
+  void resumeRender() override;
 
 signals:
 
