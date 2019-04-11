@@ -1294,8 +1294,8 @@ def downloadFile(url, targetFilePath):
   if not os.path.exists(targetFilePath) or os.stat(targetFilePath).st_size == 0:
     logging.info('Downloading from\n  %s\nas file\n  %s\nIt may take a few minutes...' % (url,targetFilePath))
     try:
-      import urllib
-      urllib.urlretrieve(url, targetFilePath)
+      import urllib.request, urllib.parse, urllib.error
+      urllib.request.urlretrieve(url, targetFilePath)
     except Exception as e:
       import traceback
       traceback.print_exc()

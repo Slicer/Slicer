@@ -645,12 +645,12 @@ class SampleDataLogic(object):
   def downloadFile(self, uri, destFolderPath, name):
     filePath = destFolderPath + '/' + name
     if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-      import urllib
+      import urllib.request, urllib.parse, urllib.error
       self.logMessage('<b>Requesting download</b> <i>%s</i> from %s...' % (name, uri))
       # add a progress bar
       self.downloadPercent = 0
       try:
-        urllib.urlretrieve(uri, filePath, self.reportHook)
+        urllib.request.urlretrieve(uri, filePath, self.reportHook)
         self.logMessage('<b>Download finished</b>')
       except IOError as e:
         self.logMessage('<b>\tDownload failed: %s</b>' % e, logging.ERROR)
@@ -728,8 +728,8 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     """Gets an ur from a local file path.
     Typically it prefixes the received path by file:// or file:///.
     """
-    import urllib.parse, urllib
-    return urllib.parse.urljoin('file:', urllib.pathname2url(path))
+    import urllib.parse, urllib.request, urllib.parse, urllib.error
+    return urllib.parse.urljoin('file:', urllib.request.pathname2url(path))
 
   def test_downloadFromSource_downloadFiles(self):
     """Specifying URIs and fileNames without nodeNames is expected to download the files

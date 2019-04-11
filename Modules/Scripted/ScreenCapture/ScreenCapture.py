@@ -770,9 +770,9 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       success = True
       try:
         logging.info('Requesting download ffmpeg from %s...' % url)
-        import urllib2
-        req = urllib2.Request(url, headers={ 'User-Agent': 'Mozilla/5.0' })
-        data = urllib2.urlopen(req).read()
+        import urllib.request, urllib.error, urllib.parse
+        req = urllib.request.Request(url, headers={ 'User-Agent': 'Mozilla/5.0' })
+        data = urllib.request.urlopen(req).read()
         with open(filePath, "wb") as f:
           f.write(data)
 
