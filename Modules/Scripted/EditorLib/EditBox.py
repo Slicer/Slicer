@@ -425,9 +425,9 @@ class EditBox(VTKObservationMixin):
       painter = qt.QPainter()
       cursorImage.fill(0)
       painter.begin(cursorImage)
-      point = qt.QPoint(center - (baseImage.width()/2), 0)
+      point = qt.QPoint(center - int(baseImage.width()/2), 0)
       painter.drawImage(point, baseImage)
-      point.setX(center - (effectImage.width()/2))
+      point.setX(center - int(effectImage.width()/2))
       point.setY(cursorImage.height() - effectImage.height())
       painter.drawImage(point, effectImage)
       painter.end()
@@ -448,7 +448,7 @@ class EditBox(VTKObservationMixin):
     cursorPosition = qt.QCursor().pos()
     w = self.mainFrame.width
     h = self.mainFrame.height
-    self.mainFrame.pos = qt.QPoint(cursorPosition.x() - w/2, cursorPosition.y() - h/2)
+    self.mainFrame.pos = qt.QPoint(cursorPosition.x() - int(w/2), cursorPosition.y() - int(h/2))
     self.mainFrame.show()
     self.mainFrame.raise_()
     Key_Space = 0x20 # not in PythonQt

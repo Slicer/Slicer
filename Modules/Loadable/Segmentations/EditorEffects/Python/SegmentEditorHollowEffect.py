@@ -154,7 +154,7 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
     kernelSizePixel = self.getKernelSizePixel()
     if shellMode == MEDIAL_SURFACE:
       # both erosion and dilation will be applied, so kernel size must be half on each side
-      kernelSizePixel = [kernelSizePixel[0]/2, kernelSizePixel[1]/2, kernelSizePixel[2]/2]
+      kernelSizePixel = [int(kernelSizePixel[0],2), int(kernelSizePixel[1],2), int(kernelSizePixel[2],2)]
 
     # We need to know exactly the value of the segment voxels, apply threshold to make force the selected label value
     labelValue = 1

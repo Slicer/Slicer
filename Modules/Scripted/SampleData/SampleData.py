@@ -231,7 +231,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
     iconPath = os.path.join(os.path.dirname(__file__).replace('\\','/'), 'Resources','Icons')
     desktop = qt.QDesktopWidget()
     mainScreenSize = desktop.availableGeometry(desktop.primaryScreen)
-    iconSize = qt.QSize(mainScreenSize.width()/15,mainScreenSize.height()/10)
+    iconSize = qt.QSize(int(mainScreenSize.width()/15),int(mainScreenSize.height()/10))
 
     categories = sorted(slicer.modules.sampleDataSources.keys())
     if self.logic.builtInCategoryName in categories:

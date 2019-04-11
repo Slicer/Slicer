@@ -714,10 +714,10 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
         if distanceSpannedBy100Slices==0:
             zVoxelSize_mm=1
         else:
-            zVoxelSize_mm = distanceSpannedBy100Slices/100
+            zVoxelSize_mm = int(distanceSpannedBy100Slices / 100)
         # --
         # Compute number of slices spanned by sphere
-        nNumSlicesInEachDirection=brushRadius / zVoxelSize_mm;
+        nNumSlicesInEachDirection=int(brushRadius / zVoxelSize_mm);
         nNumSlicesInEachDirection=nNumSlicesInEachDirection-1
         sliceOffsetArray=numpy.concatenate((-1*numpy.arange(1,nNumSlicesInEachDirection+1,),  numpy.arange(1,nNumSlicesInEachDirection+1)))
         for iSliceOffset in sliceOffsetArray:

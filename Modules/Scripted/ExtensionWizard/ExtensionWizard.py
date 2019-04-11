@@ -305,7 +305,7 @@ class ExtensionWizardWidget(object):
     self.extensionContentsView.setRootIndex(ri)
 
     w = self.extensionContentsView.width
-    self.extensionContentsView.setColumnWidth(0, (w * 4) / 9)
+    self.extensionContentsView.setColumnWidth(0, int((w * 4) / 9))
 
     # Prompt to load scripted modules from extension
     self.loadModules(path)

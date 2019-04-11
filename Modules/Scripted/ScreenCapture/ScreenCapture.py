@@ -480,12 +480,12 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
   def setVideoLength(self, lengthSec=None):
     wasBlocked = self.videoFrameRateSliderWidget.blockSignals(True)
-    self.videoFrameRateSliderWidget.value = self.numberOfStepsSliderWidget.value / self.videoLengthSliderWidget.value
+    self.videoFrameRateSliderWidget.value = int(self.numberOfStepsSliderWidget.value / self.videoLengthSliderWidget.value)
     self.videoFrameRateSliderWidget.blockSignals(wasBlocked)
 
   def setVideoFrameRate(self, frameRateFps):
     wasBlocked = self.videoFrameRateSliderWidget.blockSignals(True)
-    self.videoLengthSliderWidget.value = self.numberOfStepsSliderWidget.value / self.videoFrameRateSliderWidget.value
+    self.videoLengthSliderWidget.value = int(self.numberOfStepsSliderWidget.value / self.videoFrameRateSliderWidget.value)
     self.videoFrameRateSliderWidget.blockSignals(wasBlocked)
 
   def setNumberOfSteps(self, frameRateFps):
@@ -953,7 +953,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     sliceView = self.viewFromNode(sliceNode)
     compositeNode = sliceLogic.GetSliceCompositeNode()
-    offsetStepSize = (endSliceOffset-startSliceOffset)/(numberOfImages-1)
+    offsetStepSize = int((endSliceOffset-startSliceOffset)/(numberOfImages-1))
     for offsetIndex in range(numberOfImages):
       filename = filePathPattern % offsetIndex
       self.addLog("Write "+filename)
@@ -984,7 +984,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     originalForegroundOpacity = compositeNode.GetForegroundOpacity()
     startForegroundOpacity = 0.0
     endForegroundOpacity = 1.0
-    opacityStepSize = (endForegroundOpacity - startForegroundOpacity) / (numberOfImages - 1)
+    opacityStepSize = int((endForegroundOpacity - startForegroundOpacity) / (numberOfImages - 1))
     for offsetIndex in range(numberOfImages):
       filename = filePathPattern % offsetIndex
       self.addLog("Write "+filename)
@@ -1024,7 +1024,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       renderView.pitch()
 
     # Rotate step-by-step
-    rotationStepSize = (endRotation - startRotation) / (numberOfImages - 1)
+    rotationStepSize = int((endRotation - startRotation) / (numberOfImages - 1))
     renderView.setPitchRollYawIncrement(rotationStepSize)
     if rotationAxis == AXIS_YAW:
       renderView.yawDirection = renderView.YawLeft
@@ -1075,7 +1075,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     originalSelectedItemNumber = sequenceBrowserNode.GetSelectedItemNumber()
 
     renderView = self.viewFromNode(viewNode)
-    stepSize = (sequenceEndIndex - sequenceStartIndex) / (numberOfImages - 1)
+    stepSize = int((sequenceEndIndex - sequenceStartIndex) / (numberOfImages - 1))
     for offsetIndex in range(numberOfImages):
       sequenceBrowserNode.SetSelectedItemNumber(int(sequenceStartIndex+offsetIndex*stepSize))
       filename = filePathPattern % offsetIndex

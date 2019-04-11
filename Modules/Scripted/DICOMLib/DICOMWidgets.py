@@ -61,7 +61,7 @@ class SizePositionSettingsMixin(object):
     self.resize(self.settings.value("size",
                                     qt.QSize(int(parent.width*3/4), int(parent.height*3/4))))
     self.move(self.settings.value("pos",
-                                  qt.QPoint(screenPos.x() + (parent.width - self.width)/2, screenPos.y())))
+                                  qt.QPoint(int(screenPos.x() + (parent.width - self.width)/2), screenPos.y())))
     self.settings.endGroup()
 
     # If window position is no longer valid (for example because the window was
@@ -1443,8 +1443,8 @@ class DICOMSendDialog(qt.QDialog):
   def centerProgress(self):
     mainWindow = slicer.util.mainWindow()
     screenMainPos = mainWindow.pos
-    x = screenMainPos.x() + (mainWindow.width - self.progress.width)/2
-    y = screenMainPos.y() + (mainWindow.height - self.progress.height)/2
+    x = screenMainPos.x() + int((mainWindow.width - self.progress.width)/2)
+    y = screenMainPos.y() + int((mainWindow.height - self.progress.height)/2)
     self.progress.move(x,y)
 
 

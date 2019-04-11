@@ -204,7 +204,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
 
         thresh2 = vtk.vtkImageThreshold()
         thresh2.SetInputConnection(gaussianFilter.GetOutputPort())
-        thresh2.ThresholdByUpper(maxValue/2)
+        thresh2.ThresholdByUpper(int(maxValue / 2))
         thresh2.SetInValue(1)
         thresh2.SetOutValue(0)
         thresh2.SetOutputScalarType(selectedSegmentLabelmap.GetScalarType())

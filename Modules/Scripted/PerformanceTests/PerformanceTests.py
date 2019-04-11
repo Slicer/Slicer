@@ -78,7 +78,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
       slicer.app.processEvents()
       endTime = time.time()
       elapsedTime += (endTime - startTime)
-    fps = iters / elapsedTime
+    fps = int(iters / elapsedTime)
     result =  "fps = %g (%g ms per frame)" % (fps, 1000./fps)
     print (result)
     self.log.insertHtml('<i>%s</i>' % result)
@@ -149,7 +149,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
       endTime2 = time.time()
       delta = ((endTime1-startTime) + (endTime2 - endTime1)) / 2.
       elapsedTime += delta
-    fps = iters / elapsedTime
+    fps = int(iters / elapsedTime)
     result = "number of slice views = %d, fps = %g (%g ms per frame)" % (len(sliceViewNames), fps, 1000./fps)
     print (result)
     self.log.insertHtml('<i>%s</i>' % result)

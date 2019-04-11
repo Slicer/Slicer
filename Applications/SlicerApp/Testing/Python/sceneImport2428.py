@@ -127,8 +127,8 @@ class sceneImport2428Test(ScriptedLoadableModuleTest):
     self.delayDisplay('Paint radius is %s' % parameterNode.GetParameter('PaintEffect,radius'))
     sliceWidget = lm.sliceWidget('Red')
     size = min(sliceWidget.width,sliceWidget.height)
-    step = size / 12
-    center = size / 2
+    step = int(size / 12)
+    center = int(size / 2)
     parameterNode.SetParameter('PaintEffect,radius', '20')
     paintTool = EditorLib.PaintEffectTool(sliceWidget)
     self.delayDisplay('Paint radius is %s, tool radius is %d' % (parameterNode.GetParameter('PaintEffect,radius'),paintTool.radius))

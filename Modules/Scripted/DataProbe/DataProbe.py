@@ -99,7 +99,7 @@ class DataProbeInfoWidget(object):
     if not nameSize:
       nameSize = self.nameSize
     if len(name) > nameSize:
-      preSize = nameSize / 2
+      preSize = int(nameSize / 2)
       postSize = preSize - 3
       name = name[:preSize] + "..." + name[-postSize:]
     return name
@@ -359,8 +359,8 @@ class DataProbeInfoWidget(object):
         pen = qt.QPen()
         pen.setColor(crosshairColor)
         painter.setPen(pen)
-        painter.drawLine(0, imagePixmap.height()/2, imagePixmap.width(), imagePixmap.height()/2)
-        painter.drawLine(imagePixmap.width()/2,0, imagePixmap.width()/2, imagePixmap.height())
+        painter.drawLine(0, int(imagePixmap.height()/2), imagePixmap.width(), int(imagePixmap.height()/2))
+        painter.drawLine(int(imagePixmap.width()/2), 0, int(imagePixmap.width()/2), imagePixmap.height())
         painter.end()
         return imagePixmap
     return None
