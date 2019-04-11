@@ -4,6 +4,8 @@ import vtkITK
 import ctk
 import qt
 import slicer
+
+from . import EditUtil
 from . import HelpButton
 from . import IslandEffectOptions, IslandEffectTool, IslandEffectLogic, IslandEffect
 
@@ -66,7 +68,7 @@ class ChangeIslandEffectOptions(IslandEffectOptions):
   # in each leaf subclass so that "self" in the observer
   # is of the correct type
   def updateParameterNode(self, caller, event):
-    node = self.editUtil.getParameterNode()
+    node = EditUtil.getParameterNode()
     if node != self.parameterNode:
       if self.parameterNode:
         node.ChangeObserver(self.parameterNodeTag)
@@ -153,7 +155,7 @@ class ChangeIslandEffectLogic(IslandEffectLogic):
     connectivity.SetFunctionToChangeIsland()
     connectivity.SetInputData( self.getScopedLabelInput() )
     connectivity.SetOutput( self.getScopedLabelOutput() )
-    connectivity.SetOutputLabel( self.editUtil.getLabel() )
+    connectivity.SetOutputLabel( EditUtil.getLabel() )
     connectivity.SetSeed( ijk )
     # TODO: $this setProgressFilter $connectivity "Change Island"
     connectivity.Update()

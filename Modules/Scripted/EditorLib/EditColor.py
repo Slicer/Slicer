@@ -1,10 +1,11 @@
 import slicer
 import qt
 import vtk
-# from ctk import ctkCollapsibleButton
+
+from slicer.util import VTKObservationMixin
+
 from . import ColorBox
 from . import EditUtil
-from slicer.util import VTKObservationMixin
 
 __all__ = ['EditColor']
 

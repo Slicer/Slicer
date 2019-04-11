@@ -4,6 +4,8 @@ import vtkITK
 import ctk
 import qt
 import slicer
+
+from . import EditUtil
 from . import HelpButton
 from . import IslandEffectOptions, IslandEffectTool, IslandEffectLogic, IslandEffect
 
@@ -66,7 +68,7 @@ class SaveIslandEffectOptions(IslandEffectOptions):
   # in each leaf subclass so that "self" in the observer
   # is of the correct type
   def updateParameterNode(self, caller, event):
-    node = self.editUtil.getParameterNode()
+    node = EditUtil.getParameterNode()
     if node != self.parameterNode:
       if self.parameterNode:
         node.SaveObserver(self.parameterNodeTag)

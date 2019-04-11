@@ -4,6 +4,8 @@ import vtkITK
 import ctk
 import qt
 import slicer
+
+from . import EditUtil
 from . import HelpButton
 from . import LabelEffectOptions, LabelEffectTool, LabelEffectLogic, LabelEffect
 
@@ -61,7 +63,7 @@ class LevelTracingEffectOptions(LabelEffectOptions):
   # in each leaf subclass so that "self" in the observer
   # is of the correct type
   def updateParameterNode(self, caller, event):
-    node = self.editUtil.getParameterNode()
+    node = EditUtil.getParameterNode()
     if node != self.parameterNode:
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
@@ -162,7 +164,7 @@ class LevelTracingEffectTool(LabelEffectTool):
     """calculate the current level trace view if the
     mouse is inside the volume extent"""
     self.xyPoints.Reset()
-    backgroundImage = self.editUtil.getBackgroundImage()
+    backgroundImage = EditUtil.getBackgroundImage()
     ijk = self.logic.backgroundXYToIJK( xy )
     dimensions = backgroundImage.GetDimensions()
     for index in range(3):
@@ -170,7 +172,7 @@ class LevelTracingEffectTool(LabelEffectTool):
       # so only accept the point if it is inside the image and is at least one pixel away from the edge
       if ijk[index] < 1 or ijk[index] >= dimensions[index]-1:
         return
-    self.tracingFilter.SetInputData( self.editUtil.getBackgroundImage() )
+    self.tracingFilter.SetInputData( EditUtil.getBackgroundImage() )
     self.tracingFilter.SetSeed( ijk )
 
     # select the plane corresponding to current slice orientation

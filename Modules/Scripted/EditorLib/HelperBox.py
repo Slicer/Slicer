@@ -3,10 +3,12 @@ import qt
 import ctk
 import vtk
 import slicer
+
+from slicer.util import VTKObservationMixin
+
 from . import EditUtil
 from .LabelCreateDialog import LabelCreateDialog
 from .LabelStructureListWidget import LabelStructureListWidget
-from slicer.util import VTKObservationMixin
 
 __all__ = ['HelperBox']
 

@@ -5,6 +5,8 @@ import vtkITK
 import ctk
 import qt
 import slicer
+
+from . import EditUtil
 from . import HelpButton
 from . import IslandEffectOptions, IslandEffectTool, IslandEffectLogic, IslandEffect
 
@@ -82,7 +84,7 @@ class RemoveIslandsEffectOptions(IslandEffectOptions):
   # in each leaf subclass so that "self" in the observer
   # is of the correct type
   def updateParameterNode(self, caller, event):
-    node = self.editUtil.getParameterNode()
+    node = EditUtil.getParameterNode()
     if node != self.parameterNode:
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
@@ -165,11 +167,11 @@ class RemoveIslandsEffectLogic(IslandEffectLogic):
     # change the label values based on the parameter node
     #
     if not self.sliceLogic:
-      self.sliceLogic = self.editUtil.getSliceLogic()
-    parameterNode = self.editUtil.getParameterNode()
+      self.sliceLogic = EditUtil.getSliceLogic()
+    parameterNode = EditUtil.getParameterNode()
     minimumSize = int(parameterNode.GetParameter("IslandEffect,minimumSize"))
     fullyConnected = bool(parameterNode.GetParameter("IslandEffect,fullyConnected"))
-    label = self.editUtil.getLabel()
+    label = EditUtil.getLabel()
 
     # first, create an inverse binary version of the image
     # so that islands inside segemented object will be detected, along
@@ -247,14 +249,14 @@ class RemoveIslandsEffectLogic(IslandEffectLogic):
     a label map while preserving the original boundary in other places.
     """
     if not self.sliceLogic:
-      self.sliceLogic = self.editUtil.getSliceLogic()
-    parameterNode = self.editUtil.getParameterNode()
+      self.sliceLogic = EditUtil.getSliceLogic()
+    parameterNode = EditUtil.getParameterNode()
     self.minimumSize = int(parameterNode.GetParameter("IslandEffect,minimumSize"))
     self.fullyConnected = bool(parameterNode.GetParameter("IslandEffect,fullyConnected"))
 
     labelImage = vtk.vtkImageData()
     labelImage.DeepCopy( self.getScopedLabelInput() )
-    label = self.editUtil.getLabel()
+    label = EditUtil.getLabel()
 
     self.undoRedo.saveState()
 

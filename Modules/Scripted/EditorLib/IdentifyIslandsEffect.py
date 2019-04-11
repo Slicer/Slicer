@@ -5,6 +5,8 @@ import vtkITK
 import ctk
 import qt
 import slicer
+
+from . import EditUtil
 from . import HelpButton
 from . import IslandEffectOptions, IslandEffectTool, IslandEffectLogic, IslandEffect
 
@@ -73,7 +75,7 @@ class IdentifyIslandsEffectOptions(IslandEffectOptions):
   # in each leaf subclass so that "self" in the observer
   # is of the correct type
   def updateParameterNode(self, caller, event):
-    node = self.editUtil.getParameterNode()
+    node = EditUtil.getParameterNode()
     if node != self.parameterNode:
       if self.parameterNode:
         node.IdentifyObserver(self.parameterNodeTag)
@@ -138,11 +140,11 @@ class IdentifyIslandsEffectLogic(IslandEffectLogic):
     # change the label values based on the parameter node
     #
     if not self.sliceLogic:
-      self.sliceLogic = self.editUtil.getSliceLogic()
-    parameterNode = self.editUtil.getParameterNode()
+      self.sliceLogic = EditUtil.getSliceLogic()
+    parameterNode = EditUtil.getParameterNode()
     minimumSize = int(parameterNode.GetParameter("IslandEffect,minimumSize"))
     fullyConnected = bool(parameterNode.GetParameter("IslandEffect,fullyConnected"))
-    label = self.editUtil.getLabel()
+    label = EditUtil.getLabel()
 
     # note that island operation happens in unsigned long space
     # but the slicer editor works in Short

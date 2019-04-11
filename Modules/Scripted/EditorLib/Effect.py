@@ -3,9 +3,11 @@ import os
 import vtk
 import qt
 import slicer
+
+from slicer.util import NodeModify
+
 from . import EditOptions
 from . import EditUtil
-from slicer.util import NodeModify
 
 __all__ = ['EffectOptions', 'EffectTool', 'EffectLogic', 'Effect']
 
@@ -160,7 +162,7 @@ class EffectTool(object):
     self.interactor = self.sliceView.interactorStyle().GetInteractor()
     self.renderWindow = self.sliceWidget.sliceView().renderWindow()
     self.renderer = self.renderWindow.GetRenderers().GetItemAsObject(0)
-    self.editUtil = EditUtil()
+    self.editUtil = EditUtil()  # Kept for backward compatibility
 
     # optionally set by users of the class
     self.undoRedo = None
@@ -210,7 +212,7 @@ class EffectTool(object):
       if key.lower() == 'backslash':
         xy = self.interactor.GetEventPosition()
         if self.interactor.FindPokedRenderer(*xy):
-          self.editUtil.setLabel(self.logic.labelAtXY(xy))
+          EditUtil.setLabel(self.logic.labelAtXY(xy))
         else:
           print('not in viewport')
         self.abortEvent(event)
@@ -272,7 +274,7 @@ class EffectLogic(object):
 
   def __init__(self,sliceLogic):
     self.sliceLogic = sliceLogic
-    self.editUtil = EditUtil()
+    self.editUtil = EditUtil()  # Kept for backward compatibility
     # optionally set by users of the class
     self.undoRedo = None
     self.scope = 'All'
@@ -347,7 +349,7 @@ class EffectLogic(object):
     if volumeDisplayNode:
       colorNode = volumeDisplayNode.GetColorNode()
       lut = colorNode.GetLookupTable()
-      index = self.editUtil.getLabel()
+      index = EditUtil.getLabel()
       return(lut.GetTableValue(index))
     return (0,0,0,0)
 
@@ -411,7 +413,7 @@ class EffectLogic(object):
       self.scopedSlicePaint.Paint()
     else:
       print("Invalid scope option %s" % self.scope)
-    self.editUtil.markVolumeNodeAsModified(volumeNode)
+    EditUtil.markVolumeNodeAsModified(volumeNode)
 
   def getVisibleCorners(self,layerLogic,slicePaint=None):
     """return a nested list of ijk coordinates representing

@@ -3,6 +3,8 @@ import vtk
 import ctk
 import qt
 import slicer
+
+from . import EditUtil
 from . import HelpButton
 from . import LabelEffectOptions, LabelEffectTool, LabelEffectLogic, LabelEffect
 
@@ -107,7 +109,7 @@ class WandEffectOptions(LabelEffectOptions):
   # in each leaf subclass so that "self" in the observer
   # is of the correct type
   def updateParameterNode(self, caller, event):
-    node = self.editUtil.getParameterNode()
+    node = EditUtil.getParameterNode()
     if node != self.parameterNode:
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
@@ -237,7 +239,7 @@ class WandEffectLogic(LabelEffectLogic):
     #
     # get the parameters from MRML
     #
-    node = self.editUtil.getParameterNode()
+    node = EditUtil.getParameterNode()
     tolerance = float(node.GetParameter("WandEffect,tolerance"))
     maxPixels = float(node.GetParameter("WandEffect,maxPixels"))
     self.fillMode = node.GetParameter("WandEffect,fillMode")
@@ -311,7 +313,7 @@ class WandEffectLogic(LabelEffectLogic):
     #
     self.undoRedo.saveState()
     value = backgroundDrawArray[ijk]
-    label = self.editUtil.getLabel()
+    label = EditUtil.getLabel()
     if paintThreshold:
       lo = thresholdMin
       hi = thresholdMax
@@ -371,7 +373,7 @@ class WandEffectLogic(LabelEffectLogic):
           toVisit.append((location[0]    , location[1]    , location[2] + 1))
 
     # signal to slicer that the label needs to be updated
-    self.editUtil.markVolumeNodeAsModified(labelNode)
+    EditUtil.markVolumeNodeAsModified(labelNode)
 
 #
 # The WandEffect class definition

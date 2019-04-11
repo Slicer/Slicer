@@ -3,6 +3,8 @@ import vtk
 import ctk
 import qt
 import slicer
+
+from . import EditUtil
 from . import HelpButton
 from . import EffectOptions, EffectTool, EffectLogic, Effect
 
@@ -109,7 +111,7 @@ class ThresholdEffectOptions(EffectOptions):
   # in each leaf subclass so that "self" in the observer
   # is of the correct type
   def updateParameterNode(self, caller, event):
-    node = self.editUtil.getParameterNode()
+    node = EditUtil.getParameterNode()
     if node != self.parameterNode:
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
@@ -183,7 +185,7 @@ class ThresholdEffectOptions(EffectOptions):
     for tool in self.tools:
       tool.min = min
       tool.max = max
-      tool.preview(self.editUtil.getLabelColor()[:3] + (opacity,))
+      tool.preview(EditUtil.getLabelColor()[:3] + (opacity,))
     self.previewState += self.previewStep
     if self.previewState >= self.previewSteps:
       self.previewStep = -1
@@ -253,27 +255,27 @@ class ThresholdEffectTool(EffectTool):
 
   def apply(self):
 
-    if not self.editUtil.getBackgroundImage() or not self.editUtil.getLabelImage():
+    if not EditUtil.getBackgroundImage() or not EditUtil.getLabelImage():
       return
-    node = self.editUtil.getParameterNode()
+    node = EditUtil.getParameterNode()
 
     self.undoRedo.saveState()
 
     thresh = vtk.vtkImageThreshold()
-    thresh.SetInputData( self.editUtil.getBackgroundImage() )
+    thresh.SetInputData( EditUtil.getBackgroundImage() )
     thresh.ThresholdBetween(self.min, self.max)
-    thresh.SetInValue( self.editUtil.getLabel() )
+    thresh.SetInValue( EditUtil.getLabel() )
     thresh.SetOutValue( 0 )
-    thresh.SetOutputScalarType( self.editUtil.getLabelImage().GetScalarType() )
+    thresh.SetOutputScalarType( EditUtil.getLabelImage().GetScalarType() )
     # $this setProgressFilter $thresh "Threshold"
     thresh.Update()
 
-    self.editUtil.getLabelImage().DeepCopy( thresh.GetOutput() )
-    self.editUtil.markVolumeNodeAsModified(self.editUtil.getLabelVolume())
+    EditUtil.getLabelImage().DeepCopy( thresh.GetOutput() )
+    EditUtil.markVolumeNodeAsModified(EditUtil.getLabelVolume())
 
   def preview(self,color=None):
 
-    if not self.editUtil.getBackgroundImage() or not self.editUtil.getLabelImage():
+    if not EditUtil.getBackgroundImage() or not EditUtil.getLabelImage():
       return
 
     #

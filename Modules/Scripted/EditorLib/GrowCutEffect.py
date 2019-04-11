@@ -5,6 +5,7 @@ import ctk
 import qt
 import slicer
 
+from . import EditUtil
 from . import EffectOptions, EffectTool, EffectLogic, Effect
 from . import HelpButton
 
@@ -42,7 +43,7 @@ class GrowCutEffectOptions(EffectOptions):
 
   def __init__(self, parent=0):
     super(GrowCutEffectOptions,self).__init__(parent)
-    self.logic = GrowCutEffectLogic(self.editUtil.getSliceLogic())
+    self.logic = GrowCutEffectLogic(EditUtil.getSliceLogic())
 
   def __del__(self):
     super(GrowCutEffectOptions,self).__del__()
@@ -73,7 +74,7 @@ class GrowCutEffectOptions(EffectOptions):
   # in each leaf subclass so that "self" in the observer
   # is of the correct type
   def updateParameterNode(self, caller, event):
-    node = self.editUtil.getParameterNode()
+    node = EditUtil.getParameterNode()
     if node != self.parameterNode:
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)

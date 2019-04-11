@@ -4,6 +4,8 @@ import vtk
 import ctk
 import qt
 import slicer
+
+from . import EditUtil
 from . import HelpButton
 from . import MorphologyEffectOptions, MorphologyEffectTool, MorphologyEffectLogic, MorphologyEffect
 
@@ -60,7 +62,7 @@ class DilateEffectOptions(MorphologyEffectOptions):
     super(DilateEffectOptions,self).destroy()
 
   def onApply(self):
-    logic = DilateEffectLogic(self.editUtil.getSliceLogic())
+    logic = DilateEffectLogic(EditUtil.getSliceLogic())
     logic.undoRedo = self.undoRedo
     fill = int(self.parameterNode.GetParameter('MorphologyEffect,fill'))
     neighborMode = self.parameterNode.GetParameter('MorphologyEffect,neighborMode')
@@ -71,7 +73,7 @@ class DilateEffectOptions(MorphologyEffectOptions):
   # in each leaf subclass so that "self" in the observer
   # is of the correct type
   def updateParameterNode(self, caller, event):
-    node = self.editUtil.getParameterNode()
+    node = EditUtil.getParameterNode()
     if node != self.parameterNode:
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
@@ -140,7 +142,7 @@ class DilateEffectLogic(MorphologyEffectLogic):
     eroder.SetOutput( self.getScopedLabelOutput() )
 
     eroder.SetForeground( fill )
-    eroder.SetBackground( self.editUtil.getLabel() )
+    eroder.SetBackground( EditUtil.getLabel() )
 
     if neighborMode == '8':
       eroder.SetNeighborTo8()

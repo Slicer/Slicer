@@ -4,6 +4,8 @@ import vtk
 import ctk
 import qt
 import slicer
+
+from . import EditUtil
 from . import HelpButton
 from . import MorphologyEffectOptions, MorphologyEffectTool, MorphologyEffectLogic, MorphologyEffect
 
@@ -60,7 +62,7 @@ class ErodeEffectOptions(MorphologyEffectOptions):
     super(ErodeEffectOptions,self).destroy()
 
   def onApply(self):
-    logic = ErodeEffectLogic(self.editUtil.getSliceLogic())
+    logic = ErodeEffectLogic(EditUtil.getSliceLogic())
     logic.undoRedo = self.undoRedo
     fill = int(self.parameterNode.GetParameter('MorphologyEffect,fill'))
     neighborMode = self.parameterNode.GetParameter('MorphologyEffect,neighborMode')
@@ -71,7 +73,7 @@ class ErodeEffectOptions(MorphologyEffectOptions):
   # in each leaf subclass so that "self" in the observer
   # is of the correct type
   def updateParameterNode(self, caller, event):
-    node = self.editUtil.getParameterNode()
+    node = EditUtil.getParameterNode()
     if node != self.parameterNode:
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
@@ -139,7 +141,7 @@ class ErodeEffectLogic(MorphologyEffectLogic):
     eroder.SetInputData( self.getScopedLabelInput() )
     eroder.SetOutput( self.getScopedLabelOutput() )
 
-    eroder.SetForeground( self.editUtil.getLabel() )
+    eroder.SetForeground( EditUtil.getLabel() )
     eroder.SetBackground( fill )
 
     if neighborMode == '8':
