@@ -10,7 +10,7 @@ import numpy
 """
 To run as test from slicer python console, replace the following with your source tree path and paste:
 
-execfile('/Users/pieper/slicer4/latest/Slicer/Libs/vtkITK/Testing/vtkITKArchetypeDiffusionTensorReaderFile.py'); t = vtkITKReaderAgainstNRRDReader(); t.runTest()
+exec(open('/Users/pieper/slicer4/latest/Slicer/Libs/vtkITK/Testing/vtkITKArchetypeDiffusionTensorReaderFile.py').read()); t = vtkITKReaderAgainstNRRDReader(); t.runTest()
 
 note that from the 't' variable in the console you can access the readers and other instance variables for debugging.
 """

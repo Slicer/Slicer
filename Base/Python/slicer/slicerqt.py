@@ -113,7 +113,7 @@ def getSlicerRCFileName():
 #-----------------------------------------------------------------------------
 #
 # loadSlicerRCFile - Let's not add this function to 'slicer.util' so that
-# the global dictionary of the main context is passed to execfile().
+# the global dictionary of the main context is passed to exec().
 #
 
 def loadSlicerRCFile():
@@ -122,7 +122,7 @@ def loadSlicerRCFile():
   rcfile = getSlicerRCFileName()
   if os.path.isfile( rcfile ):
     print('Loading Slicer RC file [%s]' % ( rcfile ))
-    execfile( rcfile, globals() )
+    exec(open(rcfile).read(), globals())
 
 #-----------------------------------------------------------------------------
 #
