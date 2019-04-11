@@ -1019,14 +1019,14 @@ class VTKObservationMixin(object):
         return o
     return None
 
-def toVTKString(str):
+def toVTKString(text):
   """Convert unicode string into 8-bit encoded ascii string.
   Unicode characters without ascii equivalent will be stripped out.
   """
   vtkStr = ""
-  for c in str:
+  for c in text:
     try:
-      cc = c.encode("latin1", "ignore")
+      cc = c.encode("latin1", "ignore").decode()
     except (UnicodeDecodeError):
       cc = "?"
     vtkStr = vtkStr + cc
