@@ -33,8 +33,8 @@ value is the module name.
 # Load modules: Add VTK and PythonQt python module attributes into slicer namespace
 
 try:
-  from kits import available_kits
-except ImportError:
+  from .kits import available_kits
+except ImportError as detail:
   available_kits = []
 
 import string, os, sys
