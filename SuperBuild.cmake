@@ -197,7 +197,7 @@ mark_as_advanced(Slicer_BUILD_MULTIVOLUME_SUPPORT)
 
 Slicer_Remote_Add(MultiVolumeExplorer
   GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/fedorov/MultiVolumeExplorer.git
-  GIT_TAG 1618048725c37d1c36b1cdbd51c562f14479b1e9
+  GIT_TAG 299f2d982d0ffca166f8a39093e0782cd44c1778
   OPTION_NAME Slicer_BUILD_MultiVolumeExplorer
   OPTION_DEPENDS "Slicer_BUILD_QTLOADABLEMODULES;Slicer_BUILD_MULTIVOLUME_SUPPORT;Slicer_USE_PYTHONQT"
   LABELS REMOTE_MODULE
@@ -320,8 +320,8 @@ Slicer_Remote_Add(CompareVolumes
 list_conditional_append(Slicer_BUILD_CompareVolumes Slicer_REMOTE_DEPENDENCIES CompareVolumes)
 
 Slicer_Remote_Add(LandmarkRegistration
-  GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/pieper/LandmarkRegistration"
-  GIT_TAG 6569f69ecb5c6d766ca02845e02ab5962eaab971
+  GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/jcfr/LandmarkRegistration"
+  GIT_TAG 7fc2acc25daacf03895c063097e91289948fa013
   OPTION_NAME Slicer_BUILD_LandmarkRegistration
   OPTION_DEPENDS "Slicer_BUILD_CompareVolumes;Slicer_USE_PYTHONQT"
   LABELS REMOTE_MODULE
