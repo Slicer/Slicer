@@ -198,7 +198,7 @@ class CMakeScript(object):
   """
 
   _reWhitespace = re.compile(r"\s")
-  _reCommand = re.compile(r"([" + string.letters + r"]\w*)(\s*\()")
+  _reCommand = re.compile(r"([" + string.ascii_letters + r"]\w*)(\s*\()")
   _reComment = re.compile(r"#(\[=*\[)?")
   _reQuote = re.compile("\"")
   _reBracketQuote = re.compile(r"\[=*\[")
