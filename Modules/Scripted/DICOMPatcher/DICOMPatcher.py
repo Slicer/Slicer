@@ -452,7 +452,7 @@ class NormalizeFileNames(DICOMPatcherRule):
     return "{0}{1:03d}".format(prefix, numberOfFilesInFolder)
   def generateOutputFilePath(self, ds, filepath):
     folderName = ""
-    patientNameID = ds.PatientName+"*"+ds.PatientID
+    patientNameID = str(ds.PatientName)+"*"+ds.PatientID
     if patientNameID not in self.patientNameIDToFolderMap:
       self.patientNameIDToFolderMap[patientNameID] = self.getNextItemName("pa", folderName)
     folderName += self.patientNameIDToFolderMap[patientNameID]
