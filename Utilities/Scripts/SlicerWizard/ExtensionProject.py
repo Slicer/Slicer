@@ -200,7 +200,7 @@ class ExtensionProject(object):
 
       prefinedVariables = {}
       try:
-         prefinedVariables[u"PROJECT_NAME"] = self.project
+         prefinedVariables["PROJECT_NAME"] = self.project
       except EOFError:
         pass
 
@@ -401,4 +401,4 @@ class ExtensionProject(object):
     else:
       # Otherwise, write the file using full encoding conversion
       with open(destination, "w") as fp:
-        fp.write(unicode(self._scriptContents).encode(encoding))
+        fp.write(str(self._scriptContents).encode(encoding))

@@ -268,8 +268,8 @@ def buildProcessArgs(*args, **kwargs):
 
   .. code-block:: python
 
-    >>> buildProcessArgs('p1', u'p2', None, 12, a=5, b=True, long_name=u'hello')
-    ['-a', '5', '--long-name', u'hello', '-b', 'p1', u'p2', '12']
+    >>> buildProcessArgs('p1', 'p2', None, 12, a=5, b=True, long_name='hello')
+    ['-a', '5', '--long-name', 'hello', '-b', 'p1', 'p2', '12']
 
   Named arguments are converted to named options by adding ``'-'`` (if the name
   is one letter) or ``'--'`` (otherwise), and converting any underscores

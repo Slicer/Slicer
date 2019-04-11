@@ -56,15 +56,15 @@ class CreateComponentDialog(object):
   #---------------------------------------------------------------------------
   def accept(self):
     if not len(self.componentName):
-      slicer.util.errorDisplay(u"%s name may not be empty." % self._typetc,
-                               windowTitle=u"Cannot create %s" % self._typelc, parent=self.dialog)
+      slicer.util.errorDisplay("%s name may not be empty." % self._typetc,
+                               windowTitle="Cannot create %s" % self._typelc, parent=self.dialog)
       return
 
     if self.showDestination:
       dest = self.destination
       if not len(dest) or not os.path.exists(dest):
-        slicer.util.errorDisplay(u"Destination must be an existing directory.",
-                                 windowTitle=u"Cannot create %s" % self._typelc, parent=self.dialog)
+        slicer.util.errorDisplay("Destination must be an existing directory.",
+                                 windowTitle="Cannot create %s" % self._typelc, parent=self.dialog)
         return
 
     self.dialog.accept()

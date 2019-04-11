@@ -643,7 +643,7 @@ class DICOMPatcherTest(ScriptedLoadableModuleTest):
     file_meta.MediaStorageSOPClassUID = '1.2.840.10008.5.1.4.1.1.2'  # CT Image Storage
     file_meta.MediaStorageSOPInstanceUID = "1.2.3"  # !! Need valid UID here for real work
     file_meta.ImplementationClassUID = "1.2.3.4"  # !!! Need valid UIDs here
-    ds = dicom.dataset.FileDataset(testFileDICOMFilename, {}, file_meta=file_meta, preamble="\0" * 128)
+    ds = dicom.dataset.FileDataset(testFileDICOMFilename, {}, file_meta=file_meta, preamble=b"\0" * 128)
     ds.PatientName = "Test^Firstname"
     ds.PatientID = "123456"
     # Set the transfer syntax
@@ -665,10 +665,10 @@ class DICOMPatcherTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Verify generated files")
 
     expectedWalk = []
-    expectedWalk.append([[u'pa000'], [          ]])
-    expectedWalk.append([[u'st000'], [          ]])
-    expectedWalk.append([[u'se000'], [          ]])
-    expectedWalk.append([[        ], [u'000.dcm']])
+    expectedWalk.append([['pa000'], [         ]])
+    expectedWalk.append([['st000'], [         ]])
+    expectedWalk.append([['se000'], [         ]])
+    expectedWalk.append([[       ], ['000.dcm']])
     step = 0
     for root, subFolders, files in os.walk(outputTestDir):
       self.assertEqual(subFolders, expectedWalk[step][0])

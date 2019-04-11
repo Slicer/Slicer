@@ -206,7 +206,7 @@ class DICOMFileDialog(object):
     special characters in the name.
     """
     for directoryName in directoriesToAdd:
-      if isinstance(directoryName, unicode):
+      if isinstance(directoryName, str):
         try:
           directoryName.encode('ascii')
         except UnicodeEncodeError:
