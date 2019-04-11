@@ -122,7 +122,7 @@ class DataProbeInfoWidget(object):
     if not imageData:
       return "No Image"
     dims = imageData.GetDimensions()
-    for ele in xrange(3):
+    for ele in range(3):
       if ijk[ele] < 0 or ijk[ele] >= dims[ele]:
         return "Out of Frame"
     pixel = ""
@@ -167,7 +167,7 @@ class DataProbeInfoWidget(object):
     numberOfComponents = imageData.GetNumberOfScalarComponents()
     if numberOfComponents > 3:
       return "%d components" % numberOfComponents
-    for c in xrange(numberOfComponents):
+    for c in range(numberOfComponents):
       component = imageData.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
       if component.is_integer():
         component = int(component)
@@ -254,7 +254,7 @@ class DataProbeInfoWidget(object):
       sliceView = slicer.app.layoutManager().sliceWidget(sliceNode.GetLayoutName()).sliceView()
       sliceView.getDisplayableManagers(displayableManagerCollection)
     aggregatedDisplayableManagerInfo = ''
-    for index in xrange(displayableManagerCollection.GetNumberOfItems()):
+    for index in range(displayableManagerCollection.GetNumberOfItems()):
       displayableManager = displayableManagerCollection.GetItemAsObject(index)
       infoString = displayableManager.GetDataProbeInfoStringForPosition(xyz)
       if infoString != "":

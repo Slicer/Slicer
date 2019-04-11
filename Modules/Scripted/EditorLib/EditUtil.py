@@ -35,7 +35,7 @@ class EditUtil(object):
   def _findParameterNodeInScene():
     node = None
     size =  slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScriptedModuleNode")
-    for i in xrange(size):
+    for i in range(size):
       n  = slicer.mrmlScene.GetNthNodeByClass( i, "vtkMRMLScriptedModuleNode" )
       if n.GetModuleName() == "Editor" and n.GetSingletonTag() == "Editor":
         node = n
@@ -78,7 +78,7 @@ class EditUtil(object):
   def getCompositeNode(layoutName='Red'):
     """ use the Red slice composite node to define the active volumes """
     count = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceCompositeNode')
-    for n in xrange(count):
+    for n in range(count):
       compNode = slicer.mrmlScene.GetNthNodeByClass(n, 'vtkMRMLSliceCompositeNode')
       if compNode.GetLayoutName() == layoutName:
         return compNode
@@ -339,7 +339,7 @@ class EditUtil(object):
     hi = int(accum.GetMax()[0])
 
     thresholder = vtk.vtkImageThreshold()
-    for index in xrange(lo,hi+1):
+    for index in range(lo,hi+1):
       logging.info( "Splitting label %d..."%index )
       thresholder.SetInputConnection( mergeNode.GetImageDataConnection() )
       thresholder.SetInValue( index )

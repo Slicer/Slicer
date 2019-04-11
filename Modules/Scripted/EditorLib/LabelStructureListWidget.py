@@ -307,7 +307,7 @@ class LabelStructureListWidget(qt.QWidget):
 
     # check that structures are all the same size as the merge volume
     dims = merge.GetImageData().GetDimensions()
-    for row in xrange(rows):
+    for row in range(rows):
       structureName = self.structures.item(row,2).text()
       structureVolume = self.structureVolume( structureName )
       if not structureVolume:
@@ -321,7 +321,7 @@ class LabelStructureListWidget(qt.QWidget):
 
     # check that user really wants to merge
     rows = self.structures.rowCount()
-    for row in xrange(rows):
+    for row in range(rows):
       structureName = self.structures.item(row,2).text()
       structureVolume = self.structureVolume( structureName)
       if structureVolume.GetImageData().GetMTime() < merge.GetImageData().GetMTime():
@@ -338,7 +338,7 @@ class LabelStructureListWidget(qt.QWidget):
     #
     # iterate through structures merging into merge volume
     #
-    for row in xrange(rows):
+    for row in range(rows):
       structureName = self.structures.item(row,2).text()
       structureVolume = self.structureVolume( structureName )
 
@@ -355,7 +355,7 @@ class LabelStructureListWidget(qt.QWidget):
 
     # mark all volumes as modified so we will be able to tell if the
     # merged volume gets edited after these
-    for row in xrange(rows):
+    for row in range(rows):
       structureName = self.structures.item(row,2).text()
       structureVolume = self.structureVolume( structureName )
       structureVolume.GetImageData().Modified()
@@ -420,7 +420,7 @@ class LabelStructureListWidget(qt.QWidget):
     #
     numNodes = slicer.mrmlScene.GetNumberOfNodesByClass( "vtkMRMLModelHierarchyNode" )
     outHierarchy = None
-    for n in xrange(numNodes):
+    for n in range(numNodes):
       node = slicer.mrmlScene.GetNthNodeByClass( n, "vtkMRMLModelHierarchyNode" )
       if node.GetName() == "Editor Models":
         outHierarchy = node
@@ -429,7 +429,7 @@ class LabelStructureListWidget(qt.QWidget):
     if outHierarchy and self.replaceModels.checked and numNodes > 0:
       # user wants to delete any existing models, so take down hierarchy and
       # delete the model nodes
-      rr = range(numNodes)
+      rr = list(range(numNodes))
       rr.reverse()
       for n in rr:
         node = slicer.mrmlScene.GetNthNodeByClass( n, "vtkMRMLModelHierarchyNode" )
@@ -577,7 +577,7 @@ class LabelStructureListWidget(qt.QWidget):
 
     self.structureLabelNames = []
     rows = self.structures.rowCount()
-    for row in xrange(rows):
+    for row in range(rows):
       self.structureLabelNames.append(self.structures.item(row,2).text())
 
   #---------------------------------------------------------------------------

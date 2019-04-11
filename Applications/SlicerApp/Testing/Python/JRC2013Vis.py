@@ -317,7 +317,7 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
       redWidget.sliceController().setSliceVisible(True);
 
       self.delayDisplay('Scroll Slices')
-      for offset in xrange(-20,20,2):
+      for offset in range(-20,20,2):
         redController.setSliceOffsetValue(offset)
 
       self.delayDisplay('Skin Opacity')

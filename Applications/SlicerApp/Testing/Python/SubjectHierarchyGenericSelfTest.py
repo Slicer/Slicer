@@ -415,9 +415,9 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     sampleLabelmapNode.SetAndObserveImageData(imageData)
 
     extent = imageData.GetExtent()
-    for x in xrange(extent[0], extent[1]+1):
-      for y in xrange(extent[2], extent[3]+1):
-        for z in xrange(extent[4], extent[5]+1):
+    for x in range(extent[0], extent[1]+1):
+      for y in range(extent[2], extent[3]+1):
+        for z in range(extent[4], extent[5]+1):
           if (x >= (extent[1]/4) and x <= (extent[1]/4) * 3) and (y >= (extent[3]/4) and y <= (extent[3]/4) * 3) and (z >= (extent[5]/4) and z <= (extent[5]/4) * 3):
             imageData.SetScalarComponentFromDouble(x,y,z,0,label)
           else:

@@ -151,7 +151,7 @@ class ErodeEffectLogic(MorphologyEffectLogic):
       # bad neighbor mode - silently use default
       print('Bad neighborMode: %s' % neighborMode)
 
-    for i in xrange(iterations):
+    for i in range(iterations):
       # TODO: $this setProgressFilter eroder "Erode ($i)"
       print('updating')
       eroder.Update()

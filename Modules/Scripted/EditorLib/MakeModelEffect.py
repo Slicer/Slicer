@@ -236,7 +236,7 @@ class MakeModelEffectLogic(Effect.EffectLogic):
     #
     numNodes = slicer.mrmlScene.GetNumberOfNodesByClass( "vtkMRMLModelHierarchyNode" )
     outHierarchy = None
-    for n in xrange(numNodes):
+    for n in range(numNodes):
       node = slicer.mrmlScene.GetNthNodeByClass( n, "vtkMRMLModelHierarchyNode" )
       if node.GetName() == "Editor Models":
         outHierarchy = node

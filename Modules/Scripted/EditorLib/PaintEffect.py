@@ -606,7 +606,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     tr = [0,0,0]
     bl = [0,0,0]
     br = [0,0,0]
-    for i in xrange(3):
+    for i in range(3):
       tl[i] = int(round(tlIJK[i]))
       if tl[i] < 0:
         tl[i] = 0
@@ -632,7 +632,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     # to make sure at least one pixel is filled on each click
     maxRowDelta = 0
     maxColumnDelta = 0
-    for i in xrange(3):
+    for i in range(3):
       d = abs(tr[i] - tl[i])
       if d > maxColumnDelta:
         maxColumnDelta = d
@@ -741,7 +741,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
             trtemp = [0,0,0]
             bltemp = [0,0,0]
             brtemp = [0,0,0]
-            for i in xrange(3):
+            for i in range(3):
               tltemp[i] = int(round(tlIJKtemp[i]))
               if tltemp[i] < 0:
                 tltemp[i] = 0

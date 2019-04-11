@@ -359,7 +359,7 @@ def setSliceViewerLayers(background='keep-current', foreground='keep-current', l
     layoutManager = slicer.app.layoutManager()
     if layoutManager is not None:
       sliceLogics = layoutManager.mrmlSliceLogics()
-      for i in xrange(sliceLogics.GetNumberOfItems()):
+      for i in range(sliceLogics.GetNumberOfItems()):
         sliceLogic = sliceLogics.GetItemAsObject(i)
         if sliceLogic:
           sliceLogic.FitSliceToAll()
@@ -1274,7 +1274,7 @@ interactor.AddObserver(vtk.vtkCommand.LeftButtonPressEvent, onClick)
     interactor.SetEventPosition(end[0], end[1])
     interactor.MouseMoveEvent()
   else:
-    for step in xrange(steps):
+    for step in range(steps):
       frac = float(step)/(steps-1)
       x = int(start[0] + frac*(end[0]-start[0]))
       y = int(start[1] + frac*(end[1]-start[1]))

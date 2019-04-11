@@ -132,7 +132,7 @@ class sceneImport2428Test(ScriptedLoadableModuleTest):
     parameterNode.SetParameter('PaintEffect,radius', '20')
     paintTool = EditorLib.PaintEffectTool(sliceWidget)
     self.delayDisplay('Paint radius is %s, tool radius is %d' % (parameterNode.GetParameter('PaintEffect,radius'),paintTool.radius))
-    for label in xrange(1,5):
+    for label in range(1,5):
       editUtil.setLabel(label)
       pos = center - 2*step + (step * label)
       self.delayDisplay('Painting %d, at  (%d,%d)' % (label,pos,pos),200)
@@ -206,15 +206,15 @@ verifyModels()
     fileNamesInScene = []
     success = True
     numModels = slicer.mrmlScene.GetNumberOfNodesByClass( "vtkMRMLModelNode" )
-    for n in xrange(numModels):
+    for n in range(numModels):
       modelNode = slicer.mrmlScene.GetNthNodeByClass( n, "vtkMRMLModelNode" )
       polyDataInScene.append(modelNode.GetPolyData())
-      for dn in xrange(modelNode.GetNumberOfDisplayNodes()):
+      for dn in range(modelNode.GetNumberOfDisplayNodes()):
         displayNode = modelNode.GetNthDisplayNode(dn)
         if modelNode.GetPolyData() != displayNode.GetInputPolyData():
           self.delayDisplay("Model %d does not match its display node %d! (name: %s, ids: %s and %s)" % (n,dn,modelNode.GetName(), modelNode.GetID(),displayNode.GetID()))
           success = False
-      for sn in xrange(modelNode.GetNumberOfStorageNodes()):
+      for sn in range(modelNode.GetNumberOfStorageNodes()):
         storageNode = modelNode.GetNthStorageNode(sn)
         fileName = storageNode.GetFileName()
         fileNamesInScene.append(fileName)
@@ -226,7 +226,7 @@ verifyModels()
     #
     # now check that each model has a unique polydata
     #
-    for n in xrange(numModels):
+    for n in range(numModels):
       modelNode = slicer.mrmlScene.GetNthNodeByClass( n, "vtkMRMLModelNode" )
       if polyDataInScene.count(modelNode.GetPolyData()) > 1:
         self.delayDisplay("Polydata for Model is duplicated! (id: %s and %s)" % (n,modelNode.GetID()))

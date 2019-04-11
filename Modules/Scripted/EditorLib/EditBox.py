@@ -369,7 +369,7 @@ class EditBox(VTKObservationMixin):
       self.currentOption.updateGUI()
       layoutManager = slicer.app.layoutManager()
       sliceNodeCount = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceNode')
-      for nodeIndex in xrange(sliceNodeCount):
+      for nodeIndex in range(sliceNodeCount):
         # find the widget for each node in scene
         sliceNode = slicer.mrmlScene.GetNthNodeByClass(nodeIndex, 'vtkMRMLSliceNode')
         sliceWidget = layoutManager.sliceWidget(sliceNode.GetLayoutName())

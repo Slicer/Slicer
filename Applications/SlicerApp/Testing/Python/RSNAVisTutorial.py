@@ -365,14 +365,14 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       clip.SetGreenSliceClipState(2)
       logic.takeScreenshot('Head-SkullClipping','Turn on clipping for skull model',-1)
 
-      for offset in xrange(-20,20,2):
+      for offset in range(-20,20,2):
         greenController.setSliceOffsetValue(offset)
       logic.takeScreenshot('Head-ScrollCoronal','Scroll through coronal slices',-1)
 
       skull.GetDisplayNode().SetVisibility(0)
       logic.takeScreenshot('Head-HideSkull','Make the skull invisible',-1)
 
-      for offset in xrange(-40,-20,2):
+      for offset in range(-40,-20,2):
         greenController.setSliceOffsetValue(offset)
       logic.takeScreenshot('Head-ScrollCoronalWhiteMatter','Scroll through coronal slices to show white matter',-1)
 

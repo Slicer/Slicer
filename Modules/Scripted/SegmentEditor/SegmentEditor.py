@@ -95,7 +95,7 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   def getCompositeNode(self, layoutName):
     """ use the Red slice composite node to define the active volumes """
     count = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceCompositeNode')
-    for n in xrange(count):
+    for n in range(count):
       compNode = slicer.mrmlScene.GetNthNodeByClass(n, 'vtkMRMLSliceCompositeNode')
       if layoutName and compNode.GetLayoutName() != layoutName:
         continue

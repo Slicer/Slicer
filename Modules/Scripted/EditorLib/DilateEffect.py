@@ -151,7 +151,7 @@ class DilateEffectLogic(MorphologyEffectLogic):
       # bad neighbor mode - silently use default
       print('Bad neighborMode: %s' % neighborMode)
 
-    for i in xrange(iterations):
+    for i in range(iterations):
       # TODO: $this setProgressFilter eroder "Dilate ($i)"
       eroder.Update()
 

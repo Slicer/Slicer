@@ -154,7 +154,7 @@ class LevelTracingPipeline(object):
     ijk = self.effect.xyToIjk(xy, self.sliceWidget, masterImageData)
     dimensions = masterImageData.GetDimensions()
 
-    for index in xrange(3):
+    for index in range(3):
       # TracingFilter crashes if it receives a seed point at the edge of the image,
       # so only accept the point if it is inside the image and is at least one pixel away from the edge
       if ijk[index] < 1 or ijk[index] >= dimensions[index]-1:

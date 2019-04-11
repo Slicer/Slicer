@@ -597,7 +597,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         fileIndex = numberOfSteps
         for repeatIndex in range(numberOfRepeats):
           if forwardBackward:
-            for step in reversed(xrange(1, numberOfSteps-1)):
+            for step in reversed(range(1, numberOfSteps-1)):
               sourceFilename = filePathPattern % step
               destinationFilename = filePathPattern % fileIndex
               self.logic.addLog("Copy to "+destinationFilename)

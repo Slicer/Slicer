@@ -334,7 +334,7 @@ class ExtensionProject(object):
     indent = ""
     after = -1
 
-    for n in xrange(len(self._scriptContents.tokens)):
+    for n in range(len(self._scriptContents.tokens)):
       t = self._scriptContents.tokens[n]
 
       if isinstance(t, CMakeParser.Comment) and \

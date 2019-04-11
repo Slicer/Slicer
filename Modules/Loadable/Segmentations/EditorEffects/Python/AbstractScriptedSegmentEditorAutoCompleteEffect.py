@@ -289,7 +289,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     # Move segments from preview into current segmentation
     segmentIDs = vtk.vtkStringArray()
     previewNode.GetSegmentation().GetSegmentIDs(segmentIDs)
-    for index in xrange(segmentIDs.GetNumberOfValues()):
+    for index in range(segmentIDs.GetNumberOfValues()):
       segmentID = segmentIDs.GetValue(index)
       previewSegment = previewNode.GetSegmentation().GetSegment(segmentID)
       previewSegmentLabelmap = previewSegment.GetRepresentation(vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName())
@@ -445,7 +445,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     self.computePreviewLabelmap(mergedImage, outputLabelmap)
 
     # Write output segmentation results in segments
-    for index in xrange(self.selectedSegmentIds.GetNumberOfValues()):
+    for index in range(self.selectedSegmentIds.GetNumberOfValues()):
       segmentID = self.selectedSegmentIds.GetValue(index)
       segment = segmentationNode.GetSegmentation().GetSegment(segmentID)
       # Disable save with scene?

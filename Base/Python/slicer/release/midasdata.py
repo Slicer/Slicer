@@ -185,7 +185,7 @@ def versionDataModulesDirectory(sourceVersion, destVersion, token, communicator,
       if ignore_module_ind != -1:
         ignore_indices.append(ignore_module_ind)
 
-  for num_module in xrange(len(availableModulesFolders)):
+  for num_module in range(len(availableModulesFolders)):
     # Do not version if module is to be ignored
     if num_module in ignore_indices:
       continue
@@ -258,7 +258,7 @@ def printFolderStructure(folderID, token, communicator, depth = 0):
     token -- Authentication token.
     communicator -- Midas session communicator."""
   appFolder = communicator.folder_get(token, folderID)
-  for i in xrange(depth):
+  for i in range(depth):
     sys.stdout.write("'-")
   sys.stdout.write(appFolder["name"])
   sys.stdout.write(" ( folder_id: ")
@@ -274,7 +274,7 @@ def printFolderStructure(folderID, token, communicator, depth = 0):
   if len(childrenFolder["items"]) > 0:
     for item in childrenFolder["items"]:
       sys.stdout.write("\n")
-      for i in xrange(depth+1):
+      for i in range(depth+1):
         sys.stdout.write("'-")
       sys.stdout.write(item["name"])
       sys.stdout.write(" ( item_id: ")

@@ -63,7 +63,7 @@ def texturedPlane():
 
   toParent = vtk.vtkMatrix4x4()
   transformNode.GetMatrixTransformToParent(toParent)
-  for i in xrange(steps):
+  for i in range(steps):
     imageSource.SetInValue( 200*(i%2) )
 
     toParent.SetElement(0, 3, i)

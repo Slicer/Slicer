@@ -343,7 +343,7 @@ class EndoscopyComputePath(object):
       if self.n == 0:
         return
       self.p = numpy.zeros((self.n,3))
-      for i in xrange(self.n):
+      for i in range(self.n):
         f = collection.GetItemAsObject(i)
         coords = [0,0,0]
         f.GetFiducialCoordinates(coords)
@@ -357,7 +357,7 @@ class EndoscopyComputePath(object):
       # get fiducial positions
       # sets self.p
       self.p = numpy.zeros((n,3))
-      for i in xrange(n):
+      for i in range(n):
         coord = [0.0, 0.0, 0.0]
         self.fids.GetNthFiducialPosition(i, coord)
         self.p[i] = coord
@@ -370,7 +370,7 @@ class EndoscopyComputePath(object):
       # get control point data
       # sets self.p
       self.p = numpy.zeros((n,3))
-      for i in xrange(n):
+      for i in range(n):
         self.p[i] = self.fids.GetNthFiducialXYZ(i)
 
     # calculate the tangent vectors
@@ -380,10 +380,10 @@ class EndoscopyComputePath(object):
     # - sets self.m
     n = self.n
     fm = numpy.zeros((n,3))
-    for i in xrange(0,n-1):
+    for i in range(0,n-1):
       fm[i] = self.p[i+1] - self.p[i]
     self.m = numpy.zeros((n,3))
-    for i in xrange(1,n-1):
+    for i in range(1,n-1):
       self.m[i] = (fm[i-1] + fm[i]) / 2.
     self.m[0] = fm[0]
     self.m[n-1] = fm[n-2]

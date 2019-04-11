@@ -23,7 +23,7 @@ def newSphere(name=''):
 
 def sphereMovie(dir="."):
 
-  for i in xrange(20):
+  for i in range(20):
     newSphere()
     Slicer.TkCall( "update" )
     Slicer.TkCall( "SlicerSaveLargeImage %s/spheres-%d.png 3" % (dir, i) )

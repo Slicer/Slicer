@@ -236,7 +236,7 @@ class ScriptedLoadableModuleLogic(object):
     If no parameter nodes are available for this module then a new one is created.
     """
     numberOfScriptedModuleNodes =  slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScriptedModuleNode")
-    for nodeIndex in xrange(numberOfScriptedModuleNodes):
+    for nodeIndex in range(numberOfScriptedModuleNodes):
       parameterNode  = slicer.mrmlScene.GetNthNodeByClass( nodeIndex, "vtkMRMLScriptedModuleNode" )
       if parameterNode.GetAttribute("ModuleName") == self.moduleName:
         return parameterNode
@@ -252,7 +252,7 @@ class ScriptedLoadableModuleLogic(object):
     """
     foundParameterNodes = []
     numberOfScriptedModuleNodes =  slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScriptedModuleNode")
-    for nodeIndex in xrange(numberOfScriptedModuleNodes):
+    for nodeIndex in range(numberOfScriptedModuleNodes):
       parameterNode  = slicer.mrmlScene.GetNthNodeByClass( nodeIndex, "vtkMRMLScriptedModuleNode" )
       if parameterNode.GetAttribute("ModuleName") == self.moduleName:
         foundParameterNodes.append(parameterNode)

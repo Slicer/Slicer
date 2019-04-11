@@ -28,7 +28,7 @@ class DataProbeUtil(object):
   def _findParameterNodeInScene(self):
     node = None
     size =  slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScriptedModuleNode")
-    for i in xrange(size):
+    for i in range(size):
       n  = slicer.mrmlScene.GetNthNodeByClass( i, "vtkMRMLScriptedModuleNode" )
       if n.GetModuleName() == "DataProbe":
         node = n

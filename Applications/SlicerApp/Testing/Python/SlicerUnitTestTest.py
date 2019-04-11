@@ -5,13 +5,13 @@ class SlicerUnitTestTest(unittest.TestCase):
   """ See http://docs.python.org/library/unittest.html#basic-example
   """
   def setUp(self):
-    self.seq = range(10)
+    self.seq = list(range(10))
 
   def test_shuffle(self):
     # Make sure the shuffled sequence does not lose any elements
     random.shuffle(self.seq)
     self.seq.sort()
-    self.assertEqual(self.seq, range(10))
+    self.assertEqual(self.seq, list(range(10)))
 
     # Should raise an exception for an immutable sequence
     self.assertRaises(TypeError, random.shuffle, (1,2,3))

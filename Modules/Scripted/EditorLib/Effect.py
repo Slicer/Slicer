@@ -329,7 +329,7 @@ class EffectLogic(object):
     imageData = volumeNode.GetImageData()
     if not imageData: return 0
     dims = imageData.GetDimensions()
-    for ele in xrange(3):
+    for ele in range(3):
       if ijk[ele] < 0 or ijk[ele] >= dims[ele]: return 0
     return int(imageData.GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], 0))
 

@@ -1081,7 +1081,7 @@ class DICOMPluginSelector(qt.QWidget):
       size = settings.beginReadArray('DICOM/disabledPlugins')
       disabledPlugins = []
 
-      for i in xrange(size):
+      for i in range(size):
         settings.setArrayIndex(i)
         disabledPlugins.append(str(settings.allKeys()[0]))
       settings.endArray()
@@ -1123,7 +1123,7 @@ class DICOMLoadableTable(qt.QTableWidget):
     slicer.app.connect('aboutToQuit()', self.deleteLater)
 
   def getNumberOfCheckedItems(self):
-    return sum(1 for row in xrange(self.rowCount) if self.item(row, 0).checkState() == qt.Qt.Checked)
+    return sum(1 for row in range(self.rowCount) if self.item(row, 0).checkState() == qt.Qt.Checked)
 
   def configure(self):
     self.setColumnCount(3)
@@ -1174,8 +1174,8 @@ class DICOMLoadableTable(qt.QTableWidget):
     # For each plugin, keep only a single loadable selected for the same file set
     # to prevent loading same data multiple times.
     for plugin in loadablesByPlugin:
-      for thisLoadableId in xrange(len(loadablesByPlugin[plugin])):
-        for prevLoadableId in xrange(0, thisLoadableId):
+      for thisLoadableId in range(len(loadablesByPlugin[plugin])):
+        for prevLoadableId in range(0, thisLoadableId):
           thisLoadable = loadablesByPlugin[plugin][thisLoadableId]
           prevLoadable = loadablesByPlugin[plugin][prevLoadableId]
           # fileDifferences will contain all the files that only present in one or the other list (or tuple)
@@ -1195,12 +1195,12 @@ class DICOMLoadableTable(qt.QTableWidget):
     self.setVerticalHeaderLabels(row * [""])
 
   def uncheckAll(self):
-    for row in xrange(self.rowCount):
+    for row in range(self.rowCount):
       item = self.item(row, 0)
       item.setCheckState(False)
 
   def updateSelectedFromCheckstate(self):
-    for row in xrange(self.rowCount):
+    for row in range(self.rowCount):
       item = self.item(row, 0)
       self.loadables[row].selected = (item.checkState() != 0)
       # updating the names

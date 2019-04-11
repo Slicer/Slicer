@@ -243,7 +243,7 @@ def detectEncoding(data):
     return result["encoding"], result["confidence"]
 
   else:
-    chars = ''.join(map(chr, range(7,14) + range(32, 128)))
+    chars = ''.join(map(chr, list(range(7,14)) + list(range(32, 128))))
     if len(data.translate(None, chars)):
       return None, 0.0
 

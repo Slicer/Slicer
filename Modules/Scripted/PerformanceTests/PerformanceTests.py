@@ -72,7 +72,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
   def timeSteps(self, iters, f):
     import time
     elapsedTime = 0
-    for i in xrange(iters):
+    for i in range(iters):
       startTime = time.time()
       f()
       slicer.app.processEvents()
@@ -101,7 +101,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
     renderingTimesSec = np.zeros(numerOfSweeps*offsetSteps*2)
     sampleIndex = 0
     startOffset = sliceNode.GetSliceOffset()
-    for i in xrange(numerOfSweeps):
+    for i in range(numerOfSweeps):
       for offset in ([sliceOffset]*offsetSteps + [-sliceOffset]*offsetSteps):
         startTime = time.time()
         sliceNode.SetSliceOffset(sliceNode.GetSliceOffset()+offset)
@@ -139,7 +139,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
     elapsedTime = 0
     startPoint = (int(dims[0]*0.3), int(dims[1]*0.3))
     endPoint = (int(dims[0]*0.6), int(dims[1]*0.6))
-    for i in xrange(iters):
+    for i in range(iters):
       startTime = time.time()
       slicer.util.clickAndDrag(firstSliceWidget, button = None, modifiers = ['Shift'], start=startPoint, end=endPoint, steps=2)
       slicer.app.processEvents()

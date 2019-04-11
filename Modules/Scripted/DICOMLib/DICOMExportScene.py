@@ -112,7 +112,7 @@ class DICOMExportScene(object):
     lnodes = slicer.mrmlScene.GetNodesByClass("vtkMRMLLinearTransformNode")
     lnodes.UnRegister(slicer.mrmlScene)
     lnum = lnodes.GetNumberOfItems()
-    for itemNum in xrange(lnum):
+    for itemNum in range(lnum):
       print(itemNum)
       node = lnodes.GetItemAsObject(itemNum)
       snode = node.GetStorageNode()
