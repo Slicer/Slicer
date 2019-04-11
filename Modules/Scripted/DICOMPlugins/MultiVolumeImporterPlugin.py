@@ -258,8 +258,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
       ippPositionCnt = 0
       for ipp in subseriesLists.keys():
-        timesSorted = subseriesLists[ipp].keys()
-        timesSorted.sort()
+        timesSorted = sorted(subseriesLists[ipp].keys())
         timeCnt = 0
         for time in timesSorted:
           orderedFiles[timeCnt*nSlices+ippPositionCnt] = subseriesLists[ipp][time]
@@ -372,8 +371,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
       ippPositionCnt = 0
       for ipp in subseriesLists.keys():
-        timesSorted = subseriesLists[ipp].keys()
-        timesSorted.sort()
+        timesSorted = sorted(subseriesLists[ipp].keys())
         timeCnt = 0
         for time in timesSorted:
           orderedFiles[timeCnt*nSlices+ippPositionCnt] = subseriesLists[ipp][time]
@@ -834,9 +832,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         # not enough frames for this tag to be a multivolume
         continue
 
-      tagValues = tagValue2FileList.keys()
+      tagValues = sorted(tagValue2FileList.keys())
       # sort the frames
-      tagValues.sort()
       firstFrameSize = len(tagValue2FileList[tagValues[0]])
       frameInvalid = False
       for tagValue in tagValues:
