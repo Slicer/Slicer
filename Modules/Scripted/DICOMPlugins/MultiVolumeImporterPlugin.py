@@ -1,6 +1,5 @@
 from __future__ import print_function
 import os
-import string
 import re
 import vtk, qt, ctk, slicer
 import vtk.util.numpy_support
@@ -173,7 +172,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     for mvNode in mvNodes:
       tagName = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
       nFrames = mvNode.GetNumberOfFrames()
-      orderedFiles = string.split(mvNode.GetAttribute('MultiVolume.FrameFileList'),',')
+      orderedFiles = mvNode.GetAttribute('MultiVolume.FrameFileList').split(',')
 
       desc = slicer.dicomDatabase.fileValue(orderedFiles[0],self.tags['studyDescription']) # SeriesDescription
       num = slicer.dicomDatabase.fileValue(orderedFiles[0],self.tags['seriesNumber'])
@@ -496,7 +495,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       for mvNode in mvNodes:
         tagName = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
         nFrames = mvNode.GetNumberOfFrames()
-        orderedFiles = string.split(mvNode.GetAttribute('MultiVolume.FrameFileList'),',')
+        orderedFiles = mvNode.GetAttribute('MultiVolume.FrameFileList').split(',')
 
         if self.isFrameOriginConsistent(orderedFiles, mvNode) == False:
           continue
@@ -563,7 +562,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       return None
 
     nFrames = int(mvNode.GetAttribute('MultiVolume.NumberOfFrames'))
-    files = string.split(mvNode.GetAttribute('MultiVolume.FrameFileList'),',')
+    files = mvNode.GetAttribute('MultiVolume.FrameFileList').split(',')
     nFiles = len(files)
     filesPerFrame = int(nFiles/nFrames)
     frames = []
@@ -740,12 +739,12 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       return 0
 
     try:
-      hhmmss = string.split(tm,'.')[0]
+      hhmmss = tm.split('.')[0]
     except:
       hhmmss = tm
 
     try:
-      ssfrac = float('0.'+string.split(tm,'.')[1])
+      ssfrac = float('0.'+tm.split('.')[1])
     except:
       ssfrac = 0.
 
