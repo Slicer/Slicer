@@ -19,7 +19,7 @@ def haveGit():
   # If Python is not built with SSL support then do not even try to import
   # GithubHelper (it would throw missing attribute error for HTTPSConnection)
   import http.client
-  if hasattr(httplib, "HTTPSConnection"):
+  if hasattr(http.client, "HTTPSConnection"):
     # SSL is available
     try:
       import git
@@ -29,7 +29,7 @@ def haveGit():
     except ImportError:
       _haveGit = False
   else:
-    logging.debug("ExtensionWizard: git support is disabled because httplib.HTTPSConnection is not available")
+    logging.debug("ExtensionWizard: git support is disabled because http.client.HTTPSConnection is not available")
     _haveGit = False
 
   return _haveGit

@@ -86,7 +86,7 @@ class TemplateManager(object):
       contents = fp.read()
 
     # Replace template key with copy name
-    if isinstance(name, str):
+    if isinstance(name, bytes):
       # If replacement is just bytes, we can just do the replacement...
       contents = contents.replace(key, name)
       contents = contents.replace(key.upper(), name.upper())

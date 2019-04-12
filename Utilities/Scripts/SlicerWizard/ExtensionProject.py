@@ -81,7 +81,7 @@ class ExtensionProject(object):
   #---------------------------------------------------------------------------
   @staticmethod
   def _parse(cmakeFile, encoding=None):
-    with open(cmakeFile) as fp:
+    with open(cmakeFile, "rb") as fp:
       contents = fp.read()
 
       if encoding is None:
@@ -400,5 +400,5 @@ class ExtensionProject(object):
 
     else:
       # Otherwise, write the file using full encoding conversion
-      with open(destination, "w") as fp:
+      with open(destination, "wb") as fp:
         fp.write(str(self._scriptContents).encode(encoding))
