@@ -62,9 +62,9 @@ def run(executable, arguments=[], verbose=True, shell=False, drop_cache=False):
   stdout, stderr = p.communicate()
 
   if p.returncode != EXIT_SUCCESS:
-    print('STDERR: ' + stderr, file=sys.stderr)
+    print('STDERR: ' + stderr.decode(), file=sys.stderr)
 
-  return (p.returncode, stdout, stderr)
+  return (p.returncode, stdout.decode(), stderr.decode())
 
 def runSlicer(slicer_executable, arguments=[], verbose=True, **kwargs):
   """Run ``slicer_executable`` with provided ``arguments``.
