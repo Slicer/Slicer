@@ -311,12 +311,12 @@ if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
   add_test(
     NAME py_SlicerSslTest
     COMMAND ${Slicer_LAUNCHER_EXECUTABLE}
-    --ignore-slicerrc -c "import urllib2; urllib2.urlopen('https://www.eff.org/https-everywhere')"
+    --ignore-slicerrc -c "from urllib.request import urlopen; urlopen('https://www.eff.org/https-everywhere')"
     )
   add_test(
     NAME py_PythonSslTest
     COMMAND ${PYTHON_EXECUTABLE}
-    -c "import urllib2; urllib2.urlopen('https://www.eff.org/https-everywhere')"
+    -c "from urllib.request import urlopen; urlopen('https://www.eff.org/https-everywhere')"
     )
 endif()
 
