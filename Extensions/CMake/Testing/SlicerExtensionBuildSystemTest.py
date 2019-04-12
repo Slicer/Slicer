@@ -36,7 +36,7 @@ def get_cmakecache_values(file_path, variables):
         continue
       for variable in list(variables):
         if line.startswith(variable):
-          result[variable] = string.split(line, sep='=', maxsplit=1)[1]
+          result[variable] = str.split(line, sep='=', maxsplit=1)[1]
           variables.remove(variable)
           break
       if not len(variables):
@@ -70,10 +70,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
     self.send_header('Content-Length', str(len(message)))
     self.send_header('Connection', 'close')
     self.end_headers()
-    self.wfile.write(message)
+    self.wfile.write(message.encode())
 
   def do_GET(self):
-    if self.headers.getheader("Expect") == "100-continue":
+    if self.headers.get("Expect") == "100-continue":
       self.send_response(100)
       self.end_headers()
 
@@ -100,7 +100,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
   def do_PUT(self):
 
-    if self.headers.getheader("Expect") == "100-continue":
+    if self.headers.get("Expect") == "100-continue":
       self.send_response(100)
       self.end_headers()
 
@@ -318,7 +318,7 @@ class SlicerExtensionBuildSystemTest(unittest.TestCase):
         '--describe', extension_dir,
         ],
         cwd=config.CMAKE_CURRENT_BINARY_DIR,
-        )
+        ).decode()
       with open(extension_description_dir + '/TestExt%s.s4ext' % suffix, 'w') as description_file:
         description_file.write(description)
 
