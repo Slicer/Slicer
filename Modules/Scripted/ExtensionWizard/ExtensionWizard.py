@@ -411,7 +411,7 @@ class ExtensionWizardWidget(object):
       except:
         if not slicer.util.confirmRetryCloseDisplay("An error occurred while trying to create the module.",
                                                     parent=self.parent.window(),
-                                                    detailtedText=traceback.format_exc()):
+                                                    detailedText=traceback.format_exc()):
           return
 
         continue
