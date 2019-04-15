@@ -151,7 +151,7 @@ qSlicerCoreApplicationPrivate::~qSlicerCoreApplicationPrivate()
   // python references. (I.e calling Py_DECREF, ...)
   // - The PythonManager takes care of initializing and terminating the
   // python embedded interpreter
-  // => Di facto, it's important to make sure PythonManager is destructed
+  // => De facto, it's important to make sure PythonManager is destructed
   // after the ModuleManager.
   // To do so, the associated SharedPointer are cleared in the appropriate order
   this->ModuleManager->factoryManager()->unloadModules();
@@ -914,8 +914,13 @@ void qSlicerCoreApplication::handleCommandLineArguments()
           );
 
     // Clean memory
-    for(int i = 0; i < pythonArgc; ++i){ delete[] pythonArgv[i];}
+    for (int i = 0; i < pythonArgc; i++)
+      {
+      PyMem_RawFree(pythonArgv[i]);
+      }
     delete[] pythonArgv;
+    pythonArgv = nullptr;
+    pythonArgc = 0;
 
     // Attempt to load Slicer RC file only if 'display...AndExit' options are not True
     if (!(options->displayMessageAndExit() ||
