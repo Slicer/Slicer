@@ -658,7 +658,8 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentAdded(vtkObject* calle
 
   // Add the segment in subject hierarchy to allow individual handling (e.g. visibility)
   vtkIdType segmentShItemID = shNode->CreateHierarchyItem(
-    segmentationShItemID, segment->GetName(), vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName());
+    segmentationShItemID, (segment->GetName() ? segment->GetName() : ""),
+    vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName());
   shNode->SetItemAttribute(segmentShItemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName(), segmentId);
   // Set plugin for the new item (automatically selects the segment plugin based on confidence values)
   qSlicerSubjectHierarchyPluginHandler::instance()->findAndSetOwnerPluginForSubjectHierarchyItem(segmentShItemID);
@@ -792,9 +793,9 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentModified(vtkObject* ca
     }
 
   // Rename segment subject hierarchy item if segment name is different (i.e. has just been renamed)
-  if (shNode->GetItemName(segmentShItemID).compare(segment->GetName()))
+  if (shNode->GetItemName(segmentShItemID).compare(segment->GetName() ? segment->GetName() : ""))
     {
-    shNode->SetItemName(segmentShItemID, segment->GetName());
+    shNode->SetItemName(segmentShItemID, (segment->GetName() ? segment->GetName() : ""));
     }
 }
 
@@ -823,18 +824,22 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemModified(
     return;
     }
 
-  if (shNode->HasItemAttribute(itemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName()))
+  if (!shNode->HasItemAttribute(itemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName()))
     {
-    // If segment name is different than subject hierarchy item name then rename segment
-    vtkSegment* segment = vtkSlicerSegmentationsModuleLogic::GetSegmentForSegmentSubjectHierarchyItem(itemID, shNode->GetScene());
-    if (segment && segment->GetName())
-      {
-      if (strcmp(segment->GetName(), shNode->GetItemName(itemID).c_str()))
-        {
-        segment->SetName(shNode->GetItemName(itemID).c_str());
-        }
-      }
+    return;
     }
+  // If segment name is different than subject hierarchy item name then rename segment
+  vtkSegment* segment = vtkSlicerSegmentationsModuleLogic::GetSegmentForSegmentSubjectHierarchyItem(itemID, shNode->GetScene());
+  if (!segment)
+    {
+    return;
+    }
+  if (segment->GetName() && strcmp(segment->GetName(), shNode->GetItemName(itemID).c_str())==0)
+    {
+    // no change
+    return;
+    }
+  segment->SetName(shNode->GetItemName(itemID).c_str());
 }
 
 //---------------------------------------------------------------------------

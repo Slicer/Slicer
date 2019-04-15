@@ -657,7 +657,7 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
           }
         }
 
-      currentSegmentID = segmentation->GenerateUniqueSegmentID("SegmentAuto");
+      currentSegmentID = segmentation->GenerateUniqueSegmentID("Segment");
       vtkWarningMacro("Segment ID is missing for segment " << segmentIndex << " adding segment with ID: " << currentSegmentID);
       }
 
@@ -670,6 +670,7 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
     else
       {
       vtkWarningMacro("Segment name is missing for segment " << segmentIndex);
+      currentSegment->SetName(currentSegmentID.c_str());
       }
 
     // Color
