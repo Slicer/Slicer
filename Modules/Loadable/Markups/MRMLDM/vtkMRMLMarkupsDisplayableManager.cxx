@@ -357,7 +357,7 @@ void vtkMRMLMarkupsDisplayableManager::OnMRMLSceneEndImport()
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsDisplayableManager::UpdateFromMRMLScene()
 {
-  if (this->GetMRMLSliceNode())
+  if (this->GetMRMLDisplayableNode())
     {
     this->UpdateFromMRML();
     }
