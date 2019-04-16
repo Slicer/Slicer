@@ -33,7 +33,7 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "f9d43db4db1db29450dc455f2f9ef07c6fb78bff" # 5.0.rc01 (2019-01-30) + backports: DCMTK + ITKDeprecated
+    "e8acd1230a9313a39f3ed18374acc62a92463dfa" # 5.0.rc01 (2019-01-30) + backports: DCMTK + ITKDeprecated
     QUIET
     )
 
