@@ -402,7 +402,14 @@ bool qSlicerApplication::notify(QObject *receiver, QEvent *event)
     errorMessage += tr("The message detail is:\n\n");
     errorMessage += tr("Exception thrown in event: ") + exception.what();
     qCritical() << errorMessage;
-    QMessageBox::critical(this->mainWindow(),tr("Internal Error"), errorMessage);
+    if (this->commandOptions()->isTestingEnabled())
+      {
+      this->exit(EXIT_FAILURE);
+      }
+    else
+      {
+      QMessageBox::critical(this->mainWindow(),tr("Internal Error"), errorMessage);
+      }
     }
   return false;
 }
