@@ -155,6 +155,24 @@ int qSlicerApplicationHelper::postInitializeApplication(
     qDebug() << "Number of instantiated modules:"
              << moduleFactoryManager->instantiatedModuleNames().count();
     }
+
+  QStringList failedToBeInstantiatedModuleNames = QStringList::fromSet(
+        moduleFactoryManager->registeredModuleNames().toSet() - moduleFactoryManager->instantiatedModuleNames().toSet());
+  if (!failedToBeInstantiatedModuleNames.isEmpty())
+    {
+    qCritical() << "The following modules failed to be instantiated:";
+    foreach(const QString& moduleName, failedToBeInstantiatedModuleNames)
+      {
+      qCritical().noquote() << "  " << moduleName;
+      }
+    }
+
+  // Exit if testing module is enabled and not all modules are instantiated
+  if (!failedToBeInstantiatedModuleNames.isEmpty() && app.commandOptions()->isTestingEnabled())
+    {
+    return EXIT_FAILURE;
+    }
+
   // Create main window
   splashMessage(splashScreen, "Initializing user interface...");
   if (enableMainWindow)
@@ -212,5 +230,5 @@ int qSlicerApplicationHelper::postInitializeApplication(
   QTimer::singleShot(0, &app, SLOT(handleCommandLineArguments()));
 
   // qSlicerApplicationHelper::showMRMLEventLoggerWidget();
-  return 0;
+  return EXIT_SUCCESS;
 }
