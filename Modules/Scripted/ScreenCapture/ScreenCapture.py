@@ -163,7 +163,8 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
     # Number of steps value
     self.numberOfStepsSliderWidget = ctk.ctkSliderWidget()
-    self.numberOfStepsSliderWidget.singleStep = 10
+    self.numberOfStepsSliderWidget.singleStep = 1
+    self.numberOfStepsSliderWidget.pageStep = 10
     self.numberOfStepsSliderWidget.minimum = 1
     self.numberOfStepsSliderWidget.maximum = 600
     self.numberOfStepsSliderWidget.value = 31
@@ -480,12 +481,12 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
   def setVideoLength(self, lengthSec=None):
     wasBlocked = self.videoFrameRateSliderWidget.blockSignals(True)
-    self.videoFrameRateSliderWidget.value = int(self.numberOfStepsSliderWidget.value / self.videoLengthSliderWidget.value)
+    self.videoFrameRateSliderWidget.value = self.numberOfStepsSliderWidget.value / self.videoLengthSliderWidget.value
     self.videoFrameRateSliderWidget.blockSignals(wasBlocked)
 
   def setVideoFrameRate(self, frameRateFps):
     wasBlocked = self.videoFrameRateSliderWidget.blockSignals(True)
-    self.videoLengthSliderWidget.value = int(self.numberOfStepsSliderWidget.value / self.videoFrameRateSliderWidget.value)
+    self.videoLengthSliderWidget.value = self.numberOfStepsSliderWidget.value / self.videoFrameRateSliderWidget.value
     self.videoFrameRateSliderWidget.blockSignals(wasBlocked)
 
   def setNumberOfSteps(self, frameRateFps):
@@ -620,14 +621,14 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
             outputDir, imageFileNamePattern, self.videoFileNameWidget.text)
         except Exception as e:
           self.logic.deleteTemporaryFiles(outputDir, imageFileNamePattern, numberOfSteps)
-          raise ValueError(e)
+          raise
         self.logic.deleteTemporaryFiles(outputDir, imageFileNamePattern, numberOfSteps)
 
       self.addLog("Done.")
       self.createdOutputFile = os.path.join(outputDir, self.videoFileNameWidget.text) if videoOutputRequested else outputDir
       self.showCreatedOutputFileButton.enabled = True
     except Exception as e:
-      self.addLog("Error: {0}".format(e.message))
+      self.addLog("Error: {0}".format(str(e)))
       import traceback
       traceback.print_exc()
       self.showCreatedOutputFileButton.enabled = False
@@ -953,7 +954,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     sliceView = self.viewFromNode(sliceNode)
     compositeNode = sliceLogic.GetSliceCompositeNode()
-    offsetStepSize = int((endSliceOffset-startSliceOffset)/(numberOfImages-1))
+    offsetStepSize = (endSliceOffset-startSliceOffset)/(numberOfImages-1)
     for offsetIndex in range(numberOfImages):
       filename = filePathPattern % offsetIndex
       self.addLog("Write "+filename)
@@ -984,7 +985,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     originalForegroundOpacity = compositeNode.GetForegroundOpacity()
     startForegroundOpacity = 0.0
     endForegroundOpacity = 1.0
-    opacityStepSize = int((endForegroundOpacity - startForegroundOpacity) / (numberOfImages - 1))
+    opacityStepSize = (endForegroundOpacity - startForegroundOpacity) / (numberOfImages - 1)
     for offsetIndex in range(numberOfImages):
       filename = filePathPattern % offsetIndex
       self.addLog("Write "+filename)
@@ -1024,7 +1025,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       renderView.pitch()
 
     # Rotate step-by-step
-    rotationStepSize = int((endRotation - startRotation) / (numberOfImages - 1))
+    rotationStepSize = (endRotation - startRotation) / (numberOfImages - 1)
     renderView.setPitchRollYawIncrement(rotationStepSize)
     if rotationAxis == AXIS_YAW:
       renderView.yawDirection = renderView.YawLeft
@@ -1075,7 +1076,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     originalSelectedItemNumber = sequenceBrowserNode.GetSelectedItemNumber()
 
     renderView = self.viewFromNode(viewNode)
-    stepSize = int((sequenceEndIndex - sequenceStartIndex) / (numberOfImages - 1))
+    stepSize = (sequenceEndIndex - sequenceStartIndex) / (numberOfImages - 1)
     for offsetIndex in range(numberOfImages):
       sequenceBrowserNode.SetSelectedItemNumber(int(sequenceStartIndex+offsetIndex*stepSize))
       filename = filePathPattern % offsetIndex
@@ -1113,14 +1114,14 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     import subprocess
     p = subprocess.Popen(ffmpegParams, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=outputDir)
-    output = p.communicate()
+    stdout, stderr = p.communicate()
     if p.returncode != 0:
-      self.addLog("ffmpeg error output: " + output[1])
+      self.addLog("ffmpeg error output: " + stderr.decode())
       raise ValueError("ffmpeg returned with error")
     else:
       self.addLog("Video export succeeded to file: "+outputVideoFilePath)
-      logging.debug("ffmpeg standard output: " + output[0])
-      logging.debug("ffmpeg error output: " + output[1])
+      logging.debug("ffmpeg standard output: " + stdout.decode())
+      logging.debug("ffmpeg error output: " + stderr.decode())
 
   def deleteTemporaryFiles(self, outputDir, imageFileNamePattern, numberOfImages):
     """

@@ -154,7 +154,7 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
       self.logic.patchDicomDir(self.inputDirSelector.currentPath, self.outputDirSelector.currentPath)
 
     except Exception as e:
-      self.addLog("Unexpected error: {0}".format(e.message))
+      self.addLog("Unexpected error: {0}".format(str(e)))
       import traceback
       traceback.print_exc()
     slicer.app.restoreOverrideCursor();
@@ -165,7 +165,7 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
       self.statusLabel.plainText = ''
       self.logic.importDicomDir(self.outputDirSelector.currentPath)
     except Exception as e:
-      self.addLog("Unexpected error: {0}".format(e.message))
+      self.addLog("Unexpected error: {0}".format(str(e)))
       import traceback
       traceback.print_exc()
     slicer.app.restoreOverrideCursor();
