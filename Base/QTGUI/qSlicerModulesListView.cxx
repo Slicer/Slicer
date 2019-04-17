@@ -259,6 +259,8 @@ void qSlicerModulesListView::setFactoryManager(qSlicerAbstractModuleFactoryManag
   Q_D(qSlicerModulesListView);
   if (d->FactoryManager != nullptr)
     {
+    disconnect(d->FactoryManager, SIGNAL(modulesRegistered(QStringList)),
+               this, SLOT(updateModules(QStringList)));
     disconnect(d->FactoryManager, SIGNAL(moduleInstantiated(QString)),
                this, SLOT(updateModule(QString)));
     disconnect(d->FactoryManager, SIGNAL(modulesToIgnoreChanged(QStringList)),
@@ -272,6 +274,8 @@ void qSlicerModulesListView::setFactoryManager(qSlicerAbstractModuleFactoryManag
   d->FactoryManager = factoryManager;
   if (d->FactoryManager != nullptr)
     {
+    connect(d->FactoryManager, SIGNAL(modulesRegistered(QStringList)),
+            this, SLOT(updateModules(QStringList)));
     connect(d->FactoryManager, SIGNAL(moduleInstantiated(QString)),
             this, SLOT(updateModule(QString)));
     connect(d->FactoryManager, SIGNAL(modulesToIgnoreChanged(QStringList)),
