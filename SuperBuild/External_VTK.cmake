@@ -169,6 +169,18 @@ endif()
       ${${proj}_DEPENDENCIES}
     )
 
+  if(Slicer_USE_PYTHONQT AND NOT Slicer_USE_SYSTEM_python)
+    # Create the vtk-*.egg-info directory to prevent pip from re-installing
+    # vtk package as a wheel when listed as dependency in Slicer extension.
+    set(_vtk_egg_info_dir "${python_DIR}/${PYTHON_SITE_PACKAGES_SUBDIR}/vtk-8.2.0-py3.6.egg-info")
+    ExternalProject_Add_Step(${proj} create_egg_info
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${_vtk_egg_info_dir}
+      COMMAND ${CMAKE_COMMAND} -E touch ${_vtk_egg_info_dir}/PKG-INFO
+      COMMENT "Creating '${_vtk_egg_info_dir}' directory"
+      DEPENDEES build
+      )
+  endif()
+
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
   set(VTK_DIR ${EP_BINARY_DIR})
