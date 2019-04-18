@@ -27,7 +27,9 @@
 
 // Slicer includes
 #include "qSlicerApplication.h"
-#include "qSlicerPythonManager.h"
+#ifdef Slicer_USE_PYTHONQT
+# include "qSlicerPythonManager.h"
+#endif
 #include "qSlicerWebPythonProxy.h"
 
 // --------------------------------------------------------------------------
@@ -82,6 +84,8 @@ QString qSlicerWebPythonProxy::evalPython(const QString &python)
       }
     qDebug() << "Running " << python << " result is " << result;
     }
+#else
+  Q_UNUSED(python);
 #endif
   return result;
 }
