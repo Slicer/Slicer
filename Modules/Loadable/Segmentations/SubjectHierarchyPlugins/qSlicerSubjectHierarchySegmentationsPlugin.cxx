@@ -71,7 +71,6 @@ public:
   QAction* ConvertModelHierarchyToSegmentationAction;
   QAction* Toggle2DFillVisibilityAction;
   QAction* Toggle2DOutlineVisibilityAction;
-  QAction* Toggle3DVisibilityAction;
 
   bool SegmentSubjectHierarchyItemRemovalInProgress;
 };
@@ -90,7 +89,6 @@ qSlicerSubjectHierarchySegmentationsPluginPrivate::qSlicerSubjectHierarchySegmen
 , ConvertModelHierarchyToSegmentationAction(nullptr)
 , Toggle2DFillVisibilityAction(nullptr)
 , Toggle2DOutlineVisibilityAction(nullptr)
-, Toggle3DVisibilityAction(nullptr)
 , SegmentSubjectHierarchyItemRemovalInProgress(false)
 {
 }
@@ -124,11 +122,6 @@ void qSlicerSubjectHierarchySegmentationsPluginPrivate::init()
   QObject::connect(this->Toggle2DOutlineVisibilityAction, SIGNAL(toggled(bool)), q, SLOT(toggle2DOutlineVisibility(bool)));
   this->Toggle2DOutlineVisibilityAction->setCheckable(true);
   this->Toggle2DOutlineVisibilityAction->setChecked(false);
-
-  this->Toggle3DVisibilityAction = new QAction("Toggle 3D visibility",q);
-  QObject::connect(this->Toggle3DVisibilityAction, SIGNAL(toggled(bool)), q, SLOT(toggle3DVisibility(bool)));
-  this->Toggle3DVisibilityAction->setCheckable(true);
-  this->Toggle3DVisibilityAction->setChecked(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -554,7 +547,7 @@ QList<QAction*> qSlicerSubjectHierarchySegmentationsPlugin::visibilityContextMen
   Q_D(const qSlicerSubjectHierarchySegmentationsPlugin);
 
   QList<QAction*> actions;
-  actions << d->Toggle2DFillVisibilityAction << d->Toggle2DOutlineVisibilityAction << d->Toggle3DVisibilityAction;
+  actions << d->Toggle2DFillVisibilityAction << d->Toggle2DOutlineVisibilityAction;
   return actions;
 }
 
@@ -596,19 +589,14 @@ void qSlicerSubjectHierarchySegmentationsPlugin::showVisibilityContextMenuAction
       vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName() );
 
     d->Toggle2DFillVisibilityAction->blockSignals(true);
-    d->Toggle2DFillVisibilityAction->setChecked(containsBinaryLabelmap && displayNode->GetVisibility2DFill());
+    d->Toggle2DFillVisibilityAction->setChecked(displayNode->GetVisibility2DFill());
     d->Toggle2DFillVisibilityAction->blockSignals(false);
     d->Toggle2DFillVisibilityAction->setVisible(true);
 
     d->Toggle2DOutlineVisibilityAction->blockSignals(true);
-    d->Toggle2DOutlineVisibilityAction->setChecked(containsBinaryLabelmap && displayNode->GetVisibility2DOutline());
+    d->Toggle2DOutlineVisibilityAction->setChecked(displayNode->GetVisibility2DOutline());
     d->Toggle2DOutlineVisibilityAction->blockSignals(false);
     d->Toggle2DOutlineVisibilityAction->setVisible(true);
-
-    d->Toggle3DVisibilityAction->blockSignals(true);
-    d->Toggle3DVisibilityAction->setChecked(containsClosedSurface && displayNode->GetVisibility3D());
-    d->Toggle3DVisibilityAction->blockSignals(false);
-    d->Toggle3DVisibilityAction->setVisible(true);
     }
 }
 
@@ -1233,13 +1221,6 @@ void qSlicerSubjectHierarchySegmentationsPlugin::toggle2DFillVisibility(bool on)
     return;
     }
 
-  // Make sure binary labelmap representation exists
-  if (!segmentationNode->CreateBinaryLabelmapRepresentation())
-    {
-    qCritical() << Q_FUNC_INFO << ": Failed to create binary labelmap representation for segmentation node " << segmentationNode->GetName();
-    return;
-    }
-
   // Set 2D fill visibility
   displayNode->SetVisibility2DFill(on);
 }
@@ -1272,52 +1253,6 @@ void qSlicerSubjectHierarchySegmentationsPlugin::toggle2DOutlineVisibility(bool 
     return;
     }
 
-  // Make sure binary labelmap representation exists
-  if (!segmentationNode->CreateBinaryLabelmapRepresentation())
-    {
-    qCritical() << Q_FUNC_INFO << ": Failed to create binary labelmap representation for segmentation node " << segmentationNode->GetName();
-    return;
-    }
-
   // Set 2D outline visibility
   displayNode->SetVisibility2DOutline(on);
-}
-
-//---------------------------------------------------------------------------
-void qSlicerSubjectHierarchySegmentationsPlugin::toggle3DVisibility(bool on)
-{
-  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
-  if (!shNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return;
-    }
-  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid current item";
-    return;
-    }
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
-  if (!segmentationNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Failed to find segmentation node associated to subject hierarchy item " << currentItemID;
-    return;
-    }
-  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
-  if (!displayNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Failed to find display node for segmentation node " << segmentationNode->GetName();
-    return;
-    }
-
-  // Make sure closed surface representation exists
-  if (!segmentationNode->CreateClosedSurfaceRepresentation())
-    {
-    qCritical() << Q_FUNC_INFO << ": Failed to create closed surface representation for segmentation node " << segmentationNode->GetName();
-    return;
-    }
-
-  // Set 3D visibility
-  displayNode->SetVisibility3D(on);
 }

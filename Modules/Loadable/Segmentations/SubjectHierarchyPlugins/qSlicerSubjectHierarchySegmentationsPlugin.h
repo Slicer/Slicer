@@ -157,9 +157,6 @@ protected slots:
   /// Toggle 2D outline visibility for the current segmentation
   void toggle2DOutlineVisibility(bool);
 
-  /// Toggle 3D visibility for the current segmentation
-  void toggle3DVisibility(bool);
-
 protected:
   QScopedPointer<qSlicerSubjectHierarchySegmentationsPluginPrivate> d_ptr;
 
