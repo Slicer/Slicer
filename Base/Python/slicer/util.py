@@ -1053,16 +1053,6 @@ def tempDirectory(key='__SlicerTemp__',tempDir=None,includeDateTime=True):
   qt.QDir().mkpath(dirPath)
   return dirPath
 
-#
-# Misc. Utility methods
-#
-def unicodeify(s):
-  """
-  Avoid UnicodeEncodeErrors using the technique described here:
-  http://stackoverflow.com/questions/9942594/unicodeencodeerror-ascii-codec-cant-encode-character-u-xa0-in-position-20
-  """
-  return s.encode('utf-8')
-
 def delayDisplay(message,autoCloseMsec=1000):
   """Display an information message in a popup window for a short time.
   If autoCloseMsec<400, then only slicer.app.processEvents() is called.

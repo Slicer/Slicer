@@ -262,8 +262,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     """
     if not (hasattr(x,'name') and hasattr(y,'name')):
         return 0
-    xName = slicer.util.unicodeify(x.name)
-    yName = slicer.util.unicodeify(y.name)
+    xName = x.name
+    yName = y.name
     try:
       xNumber = int(xName[:xName.index(':')])
       yNumber = int(yName[:yName.index(':')])
