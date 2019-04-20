@@ -42,13 +42,13 @@ vtkMRMLNode::vtkMRMLNode()
   , Selectable(1)
   , Selected(0)
   , AddToScene(1)
+  , UndoEnabled(false)
   , SaveWithScene(true)
   , InMRMLCallbackFlag(0)
   , TempURLString(nullptr)
   , SingletonTag(nullptr)
   , DisableModifiedEvent(0)
   , ModifiedEventPending(0)
-  , UndoEnabled(false)
 {
   // Set up callbacks
   this->MRMLCallbackCommand = vtkCallbackCommand::New();
