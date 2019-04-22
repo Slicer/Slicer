@@ -126,6 +126,7 @@ endif()
 if(Slicer_USE_PYTHONQT)
   list(APPEND Slicer_DEPENDENCIES
     python-packaging # This package provides the "packaging.version.parse()" function
+    python-pip
     )
 endif()
 
@@ -134,7 +135,6 @@ if(Slicer_USE_PYTHONQT AND Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     python-chardet
     python-couchdb
     python-GitPython
-    python-pip
     python-six
     )
   if(Slicer_USE_PYTHONQT_WITH_OPENSSL OR Slicer_USE_SYSTEM_python)
