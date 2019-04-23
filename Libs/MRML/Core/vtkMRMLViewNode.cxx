@@ -51,7 +51,7 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->BackgroundColor2[0] = this->defaultBackgroundColor2()[0];
   this->BackgroundColor2[1] = this->defaultBackgroundColor2()[1];
   this->BackgroundColor2[2] = this->defaultBackgroundColor2()[2];
-  this->UseDepthPeeling = 0;
+  this->UseDepthPeeling = 1;
   this->FPSVisible = 0;
   this->OrientationMarkerEnabled = true;
   this->RulerEnabled = true;
