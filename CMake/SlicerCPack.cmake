@@ -36,9 +36,11 @@ if(NOT Slicer_USE_SYSTEM_QT)
     imageformats
     sqldrivers
     )
-    list(APPEND SlicerBlockInstallQtPlugins_subdirectories
-      designer:webengineview
-      )
+    if(Slicer_BUILD_WEBENGINE_SUPPORT)
+      list(APPEND SlicerBlockInstallQtPlugins_subdirectories
+        designer:webengineview
+        )
+    endif()
     if(APPLE)
       list(APPEND SlicerBlockInstallQtPlugins_subdirectories
         platforms:cocoa
