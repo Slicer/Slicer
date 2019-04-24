@@ -93,6 +93,13 @@ set(KIT_SRCS
   qSlicerViewersToolBar.cxx
   qSlicerViewersToolBar.h
   qSlicerViewersToolBar_p.h
+  qSlicerWebPythonProxy.cxx
+  qSlicerWebPythonProxy.h
+  qSlicerWebDownloadWidget.cxx
+  qSlicerWebDownloadWidget.h
+  qSlicerWebWidget.cxx
+  qSlicerWebWidget.h
+  qSlicerWebWidget_p.h
   qSlicerWidget.cxx
   qSlicerWidget.h
 
@@ -122,18 +129,6 @@ if(Slicer_BUILD_I18N_SUPPORT)
   list(APPEND KIT_SRCS
     qSlicerSettingsInternationalizationPanel.cxx
     qSlicerSettingsInternationalizationPanel.h
-    )
-endif()
-
-if(Slicer_BUILD_WEBENGINE_SUPPORT)
-  list(APPEND KIT_SRCS
-    qSlicerWebPythonProxy.cxx
-    qSlicerWebPythonProxy.h
-    qSlicerWebDownloadWidget.cxx
-    qSlicerWebDownloadWidget.h
-    qSlicerWebWidget.cxx
-    qSlicerWebWidget.h
-    qSlicerWebWidget_p.h
     )
 endif()
 
@@ -211,6 +206,10 @@ set(KIT_MOC_SRCS
   qSlicerStyle.h
   qSlicerViewersToolBar.h
   qSlicerViewersToolBar_p.h
+  qSlicerWebDownloadWidget.h
+  qSlicerWebPythonProxy.h
+  qSlicerWebWidget.h
+  qSlicerWebWidget_p.h
   qSlicerWidget.h
 
   qSlicerSingletonViewFactory.h
@@ -231,15 +230,6 @@ endif()
 if(Slicer_BUILD_I18N_SUPPORT)
   list(APPEND KIT_MOC_SRCS
     qSlicerSettingsInternationalizationPanel.h
-    )
-endif()
-
-if(Slicer_BUILD_WEBENGINE_SUPPORT)
-  list(APPEND KIT_MOC_SRCS
-    qSlicerWebDownloadWidget.h
-    qSlicerWebPythonProxy.h
-    qSlicerWebWidget.h
-    qSlicerWebWidget_p.h
     )
 endif()
 
