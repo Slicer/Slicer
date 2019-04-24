@@ -42,6 +42,7 @@ class SlicerApplicationLogHandler(logging.Handler):
         logging.ERROR : ctk.ctkErrorLogLevel.Error }
     self.origin = "Python"
     self.category = "Python"
+
   def emit(self, record):
     try:
       msg = self.format(record)
@@ -52,8 +53,19 @@ class SlicerApplicationLogHandler(logging.Handler):
       context.setFunction(record.funcName)
       context.setMessage(msg)
       threadId = "{0}({1})".format(record.threadName, record.thread)
-      slicer.app.errorLogModel().addEntry(qt.QDateTime.currentDateTime(), threadId,
-        self.pythonToCtkLevelConverter[record.levelno], self.origin, context, msg)
+      #
+      # Since message logged from ScriptedLoadableModuleWidget.cleanup() happen while
+      # the application is being destroyed, addEntry is not available at that time because
+      # the error log model instance has already been deleted.
+      #
+      # TODO Add ctkAbstractErrorLogModel to CTK/Core and manage reference to instantiated
+      #      log model in qSlicerCoreApplication.
+      #
+      if hasattr(slicer.app.errorLogModel(), 'addEntry'):
+        slicer.app.errorLogModel().addEntry(qt.QDateTime.currentDateTime(), threadId,
+          self.pythonToCtkLevelConverter[record.levelno], self.origin, context, msg)
+      else:
+        print(msg)
     except:
       self.handleError(record)
 
