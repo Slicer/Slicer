@@ -46,7 +46,6 @@ endif()
 # Configure headers
 # --------------------------------------------------------------------------
 set(MRML_WIDGETS_HAVE_QT5 1)
-    set(MRML_WIDGETS_HAVE_WEBKIT_SUPPORT 0)
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/qMRMLWidgetsConfigure.h.in
