@@ -124,9 +124,6 @@ public:
 
   QSettings* newSettings() override;
 
-  /// ErrorLogModel - It should exist only one instance of the ErrorLogModel
-  QSharedPointer<ctkErrorLogModel>            ErrorLogModel;
-
   QPointer<qSlicerLayoutManager> LayoutManager;
   ctkToolTipTrapper*      ToolTipTrapper;
   ctkSettingsDialog*      SettingsDialog;
@@ -412,13 +409,6 @@ bool qSlicerApplication::notify(QObject *receiver, QEvent *event)
       }
     }
   return false;
-}
-
-//-----------------------------------------------------------------------------
-ctkErrorLogModel* qSlicerApplication::errorLogModel()const
-{
-  Q_D(const qSlicerApplication);
-  return d->ErrorLogModel.data();
 }
 
 //-----------------------------------------------------------------------------
@@ -817,7 +807,7 @@ namespace
 struct qSlicerScopedTerminalOutputSettings
 {
   qSlicerScopedTerminalOutputSettings(
-      ctkErrorLogModel* errorLogModel,
+      ctkErrorLogAbstractModel* errorLogModel,
       const ctkErrorLogTerminalOutput::TerminalOutputs& terminalOutputs):
     ErrorLogModel(errorLogModel)
   {
@@ -828,7 +818,7 @@ struct qSlicerScopedTerminalOutputSettings
   {
     this->ErrorLogModel->setTerminalOutputs(this->Saved);
   }
-  ctkErrorLogModel* ErrorLogModel;
+  ctkErrorLogAbstractModel* ErrorLogModel;
   ctkErrorLogTerminalOutput::TerminalOutputs Saved;
 };
 

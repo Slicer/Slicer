@@ -38,6 +38,9 @@
 #include <QSettings>
 #include <QSharedPointer>
 
+// CTK includes
+#include <ctkErrorLogAbstractModel.h>
+
 // SlicerQt includes
 #include "qSlicerBaseQTCoreExport.h"
 #include "qSlicerCoreApplication.h"
@@ -150,6 +153,9 @@ public:
 
   /// CoreCommandOptions - It should exist only one instance of the CoreCommandOptions
   QSharedPointer<qSlicerCoreCommandOptions>   CoreCommandOptions;
+
+  /// ErrorLogModel - It should exist only one instance of the ErrorLogModel
+  QSharedPointer<ctkErrorLogAbstractModel> ErrorLogModel;
 
   /// ReturnCode flag
   int                                         ReturnCode;

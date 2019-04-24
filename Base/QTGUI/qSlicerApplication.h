@@ -77,9 +77,6 @@ public:
   ///
   bool notify(QObject * receiver, QEvent * event) override;
 
-  /// Get errorLogModel
-  Q_INVOKABLE ctkErrorLogModel* errorLogModel()const;
-
   /// Get commandOptions
   Q_INVOKABLE qSlicerCommandOptions* commandOptions()const;
 

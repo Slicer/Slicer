@@ -38,6 +38,7 @@
 #ifdef Slicer_BUILD_DICOM_SUPPORT
 class ctkDICOMDatabase;
 #endif
+class ctkErrorLogAbstractModel;
 class QSettings;
 class qSlicerCoreIOManager;
 class qSlicerCoreCommandOptions;
@@ -307,6 +308,9 @@ public:
   /// \note qSlicerCoreApplication takes ownership of the object
   void setExtensionsManagerModel(qSlicerExtensionsManagerModel* model);
 #endif
+
+  /// Get errorLogModel
+  Q_INVOKABLE ctkErrorLogAbstractModel* errorLogModel()const;
 
   /// Get the module manager
   Q_INVOKABLE qSlicerModuleManager* moduleManager()const;

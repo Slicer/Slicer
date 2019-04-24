@@ -1331,6 +1331,13 @@ qSlicerExtensionsManagerModel* qSlicerCoreApplication::extensionsManagerModel()c
 #endif
 
 //-----------------------------------------------------------------------------
+ctkErrorLogAbstractModel* qSlicerCoreApplication::errorLogModel()const
+{
+  Q_D(const qSlicerCoreApplication);
+  return d->ErrorLogModel.data();
+}
+
+//-----------------------------------------------------------------------------
 qSlicerModuleManager* qSlicerCoreApplication::moduleManager()const
 {
   Q_D(const qSlicerCoreApplication);
