@@ -228,7 +228,7 @@ public:
   /// Returns \a true if the module should be hidden to the user.
   /// By default, interactive modules are visible and non-interactive
   /// modules are hidden.
-  /// \sa hidden, widgetRepresentationAvailable
+  /// \sa hidden, isWidgetRepresentationCreationEnabled
   virtual bool isHidden()const;
 
   /// Return the contributors of the module
