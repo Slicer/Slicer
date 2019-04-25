@@ -1,6 +1,5 @@
 set(modules
   DataProbe
-  DMRIInstall
   Editor
   EditorLib
   LabelStatistics
@@ -15,6 +14,7 @@ set(modules
   )
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND modules
+    DMRIInstall
     ExtensionWizard
     )
 endif()
