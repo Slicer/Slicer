@@ -37,8 +37,6 @@ set(${KIT}_SRCS
   qMRMLDisplayNodeWidgetPlugin.h
   qMRMLEventBrokerWidgetPlugin.cxx
   qMRMLEventBrokerWidgetPlugin.h
-  qMRMLExpandingWebViewPlugin.cxx
-  qMRMLExpandingWebViewPlugin.h
   qMRMLLabelComboBoxPlugin.cxx
   qMRMLLabelComboBoxPlugin.h
   qMRMLLayoutWidgetPlugin.cxx
@@ -101,6 +99,13 @@ set(${KIT}_SRCS
   qMRMLWindowLevelWidgetPlugin.h
   )
 
+if(MRML_WIDGETS_HAVE_WEBGINE_SUPPORT)
+  list(APPEND ${KIT}_SRCS
+    qMRMLExpandingWebViewPlugin.cxx
+    qMRMLExpandingWebViewPlugin.h
+    )
+endif()
+
 # Headers that should run through moc
 set(${KIT}_MOC_SRCS
   qMRMLWidgetsPlugin.h
@@ -116,7 +121,6 @@ set(${KIT}_MOC_SRCS
   qMRMLDisplayNodeViewComboBoxPlugin.h
   qMRMLDisplayNodeWidgetPlugin.h
   qMRMLEventBrokerWidgetPlugin.h
-  qMRMLExpandingWebViewPlugin.h
   qMRMLLabelComboBoxPlugin.h
   qMRMLLayoutWidgetPlugin.h
   qMRMLLinearTransformSliderPlugin.h
@@ -148,6 +152,12 @@ set(${KIT}_MOC_SRCS
   qMRMLWidgetPlugin.h
   qMRMLWindowLevelWidgetPlugin.h
   )
+
+if(MRML_WIDGETS_HAVE_WEBGINE_SUPPORT)
+  list(APPEND ${KIT}_MOC_SRCS
+    qMRMLExpandingWebViewPlugin.h
+    )
+endif()
 
 set(${KIT}_TARGET_LIBRARIES
   qMRMLWidgets

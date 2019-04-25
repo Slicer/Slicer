@@ -43,7 +43,6 @@
        <item>
         <widget class="QStackedWidget" name="ManageExtensionsPager">
          <widget class="qSlicerExtensionsManageWidget" name="ExtensionsManageWidget"/>
-         <widget class="qSlicerExtensionsInstallWidget" name="ExtensionsManageBrowser"/>
         </widget>
        </item>
       </layout>
@@ -56,17 +55,10 @@
       <attribute name="title">
        <string>Install Extensions</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="InstallExtensionsTabLayout">
        <property name="margin">
         <number>0</number>
        </property>
-       <item>
-        <widget class="qSlicerExtensionsInstallWidget" name="ExtensionsInstallWidget" native="true">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="restoreExtensionsTab">
@@ -92,12 +84,6 @@
    <class>qSlicerExtensionsManageWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerExtensionsManageWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerExtensionsInstallWidget</class>
-   <extends>QWidget</extends>
-   <header>qSlicerExtensionsInstallWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

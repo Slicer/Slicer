@@ -46,6 +46,9 @@ endif()
 # Configure headers
 # --------------------------------------------------------------------------
 set(MRML_WIDGETS_HAVE_QT5 1)
+if(NOT DEFINED MRML_WIDGETS_HAVE_WEBGINE_SUPPORT)
+  set(MRML_WIDGETS_HAVE_WEBGINE_SUPPORT 1)
+endif()
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/qMRMLWidgetsConfigure.h.in
@@ -58,14 +61,6 @@ configure_file(
 set(MRMLWidgets_SRCS
   qMRMLCaptureToolBar.cxx
   qMRMLCaptureToolBar.h
-  qMRMLChartView.cxx
-  qMRMLChartView.h
-  qMRMLChartView_p.h
-  qMRMLChartViewControllerWidget.cxx
-  qMRMLChartViewControllerWidget.h
-  qMRMLChartViewControllerWidget_p.h
-  qMRMLChartWidget.cxx
-  qMRMLChartWidget.h
   qMRMLCheckableNodeComboBox.cxx
   qMRMLCheckableNodeComboBox.h
   qMRMLClipNodeWidget.cxx
@@ -226,23 +221,31 @@ set(MRMLWidgets_SRCS
   qMRMLVolumeThresholdWidget.h
   qMRMLVolumeWidget.cxx
   qMRMLVolumeWidget.h
-  qMRMLExpandingWebView.cxx
-  qMRMLExpandingWebView.h
-  qMRMLExpandingWebView_p.h
   qMRMLWidget.cxx
   qMRMLWidget.h
   qMRMLWindowLevelWidget.cxx
   qMRMLWindowLevelWidget.h
   )
 
+if(MRML_WIDGETS_HAVE_WEBGINE_SUPPORT)
+  list(APPEND MRMLWidgets_SRCS
+    qMRMLChartView.cxx
+    qMRMLChartView.h
+    qMRMLChartView_p.h
+    qMRMLChartViewControllerWidget.cxx
+    qMRMLChartViewControllerWidget.h
+    qMRMLChartViewControllerWidget_p.h
+    qMRMLChartWidget.cxx
+    qMRMLChartWidget.h
+    qMRMLExpandingWebView.cxx
+    qMRMLExpandingWebView.h
+    qMRMLExpandingWebView_p.h
+    )
+endif()
+
 # Headers that should run through moc
 set(MRMLWidgets_MOC_SRCS
   qMRMLCaptureToolBar.h
-  qMRMLChartView.h
-  qMRMLChartView_p.h
-  qMRMLChartViewControllerWidget.h
-  qMRMLChartViewControllerWidget_p.h
-  qMRMLChartWidget.h
   qMRMLCheckableNodeComboBox.h
   qMRMLClipNodeWidget.h
   qMRMLCollapsibleButton.h
@@ -328,15 +331,24 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLVolumeThresholdWidget.h
   qMRMLVolumeWidget.h
   qMRMLVolumeWidget_p.h
-  qMRMLExpandingWebView.h
-  qMRMLExpandingWebView_p.h
   qMRMLWidget.h
   qMRMLWindowLevelWidget.h
   )
 
+if(MRML_WIDGETS_HAVE_WEBGINE_SUPPORT)
+  list(APPEND MRMLWidgets_MOC_SRCS
+    qMRMLChartView.h
+    qMRMLChartView_p.h
+    qMRMLChartViewControllerWidget.h
+    qMRMLChartViewControllerWidget_p.h
+    qMRMLChartWidget.h
+    qMRMLExpandingWebView.h
+    qMRMLExpandingWebView_p.h
+    )
+endif()
+
 # UI files
 set(MRMLWidgets_UI_SRCS
-  Resources/UI/qMRMLChartViewControllerWidget.ui
   Resources/UI/qMRMLClipNodeWidget.ui
   Resources/UI/qMRMLColorPickerWidget.ui
   Resources/UI/qMRMLDisplayNodeWidget.ui
@@ -361,11 +373,22 @@ set(MRMLWidgets_UI_SRCS
   Resources/UI/qMRMLWindowLevelWidget.ui
   )
 
-configure_file(Resources/jqPlot.qrc.in ${qMRMLWidgets_BINARY_DIR}/Resources/jqPlot.qrc)
+if(MRML_WIDGETS_HAVE_WEBGINE_SUPPORT)
+  list(APPEND MRMLWidgets_UI_SRCS
+    Resources/UI/qMRMLChartViewControllerWidget.ui
+    )
+endif()
+
 set(MRMLWidgets_QRC_SRCS
   Resources/qMRMLWidgets.qrc
-  ${qMRMLWidgets_BINARY_DIR}/Resources/jqPlot.qrc
   )
+
+if(MRML_WIDGETS_HAVE_WEBGINE_SUPPORT)
+  configure_file(Resources/jqPlot.qrc.in ${qMRMLWidgets_BINARY_DIR}/Resources/jqPlot.qrc)
+  list(APPEND MRMLWidgets_QRC_SRCS
+    ${qMRMLWidgets_BINARY_DIR}/Resources/jqPlot.qrc
+    )
+endif()
 
 if(Slicer_USE_QtTesting)
   list(APPEND MRMLWidgets_SRCS

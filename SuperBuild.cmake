@@ -182,15 +182,17 @@ macro(list_conditional_append cond list)
   endif()
 endmacro()
 
-Slicer_Remote_Add(jqPlot
-  URL https://github.com/Slicer/SlicerBinaryDependencies/releases/download/jqplot/jquery.jqplot.1.0.4r1115.tar.gz
-  URL_MD5 5c5d73730145c3963f09e1d3ca355580
-  LICENSE_FILES "MIT-LICENSE.txt"
-  VERSION "1.0.4"
-  SOURCE_DIR_VAR jqPlot_DIR
-  LABELS FIND_PACKAGE
-  )
-list(APPEND Slicer_REMOTE_DEPENDENCIES jqPlot)
+if(Slicer_BUILD_WEBENGINE_SUPPORT)
+  Slicer_Remote_Add(jqPlot
+    URL https://github.com/Slicer/SlicerBinaryDependencies/releases/download/jqplot/jquery.jqplot.1.0.4r1115.tar.gz
+    URL_MD5 5c5d73730145c3963f09e1d3ca355580
+    LICENSE_FILES "MIT-LICENSE.txt"
+    VERSION "1.0.4"
+    SOURCE_DIR_VAR jqPlot_DIR
+    LABELS FIND_PACKAGE
+    )
+  list(APPEND Slicer_REMOTE_DEPENDENCIES jqPlot)
+endif()
 
 option(Slicer_BUILD_MULTIVOLUME_SUPPORT "Build MultiVolume support." ON)
 mark_as_advanced(Slicer_BUILD_MULTIVOLUME_SUPPORT)
@@ -306,6 +308,7 @@ Slicer_Remote_Add(DataStore
   GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/Slicer-DataStore"
   GIT_TAG 5fcf3b6457c378f5b2987d7d7430416001c364b8
   OPTION_NAME Slicer_BUILD_DataStore
+  OPTION_DEPENDS "Slicer_BUILD_WEBENGINE_SUPPORT"
   LABELS REMOTE_MODULE
   )
 list_conditional_append(Slicer_BUILD_DataStore Slicer_REMOTE_DEPENDENCIES DataStore)

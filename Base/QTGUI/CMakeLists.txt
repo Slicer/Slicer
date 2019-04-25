@@ -93,13 +93,6 @@ set(KIT_SRCS
   qSlicerViewersToolBar.cxx
   qSlicerViewersToolBar.h
   qSlicerViewersToolBar_p.h
-  qSlicerWebPythonProxy.cxx
-  qSlicerWebPythonProxy.h
-  qSlicerWebDownloadWidget.cxx
-  qSlicerWebDownloadWidget.h
-  qSlicerWebWidget.cxx
-  qSlicerWebWidget.h
-  qSlicerWebWidget_p.h
   qSlicerWidget.cxx
   qSlicerWidget.h
 
@@ -109,9 +102,6 @@ set(KIT_SRCS
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND KIT_SRCS
-    qSlicerExtensionsInstallWidget.cxx
-    qSlicerExtensionsInstallWidget.h
-    qSlicerExtensionsInstallWidget_p.h
     qSlicerExtensionsRestoreWidget.cxx
     qSlicerExtensionsRestoreWidget.h
     qSlicerExtensionsManageWidget.cxx
@@ -123,12 +113,31 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     qSlicerSettingsExtensionsPanel.cxx
     qSlicerSettingsExtensionsPanel.h
     )
+  if(Slicer_BUILD_WEBENGINE_SUPPORT)
+    list(APPEND KIT_SRCS
+      qSlicerExtensionsInstallWidget.cxx
+      qSlicerExtensionsInstallWidget.h
+      qSlicerExtensionsInstallWidget_p.h
+      )
+  endif()
 endif()
 
 if(Slicer_BUILD_I18N_SUPPORT)
   list(APPEND KIT_SRCS
     qSlicerSettingsInternationalizationPanel.cxx
     qSlicerSettingsInternationalizationPanel.h
+    )
+endif()
+
+if(Slicer_BUILD_WEBENGINE_SUPPORT)
+  list(APPEND KIT_SRCS
+    qSlicerWebPythonProxy.cxx
+    qSlicerWebPythonProxy.h
+    qSlicerWebDownloadWidget.cxx
+    qSlicerWebDownloadWidget.h
+    qSlicerWebWidget.cxx
+    qSlicerWebWidget.h
+    qSlicerWebWidget_p.h
     )
 endif()
 
@@ -206,10 +215,6 @@ set(KIT_MOC_SRCS
   qSlicerStyle.h
   qSlicerViewersToolBar.h
   qSlicerViewersToolBar_p.h
-  qSlicerWebDownloadWidget.h
-  qSlicerWebPythonProxy.h
-  qSlicerWebWidget.h
-  qSlicerWebWidget_p.h
   qSlicerWidget.h
 
   qSlicerSingletonViewFactory.h
@@ -217,19 +222,32 @@ set(KIT_MOC_SRCS
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND KIT_MOC_SRCS
-    qSlicerExtensionsInstallWidget.h
-    qSlicerExtensionsInstallWidget_p.h
     qSlicerExtensionsRestoreWidget.h
     qSlicerExtensionsManageWidget.h
     qSlicerExtensionsManagerDialog.h
     qSlicerExtensionsManagerWidget.h
     qSlicerSettingsExtensionsPanel.h
     )
+  if(Slicer_BUILD_WEBENGINE_SUPPORT)
+    list(APPEND KIT_MOC_SRCS
+      qSlicerExtensionsInstallWidget.h
+      qSlicerExtensionsInstallWidget_p.h
+      )
+  endif()
 endif()
 
 if(Slicer_BUILD_I18N_SUPPORT)
   list(APPEND KIT_MOC_SRCS
     qSlicerSettingsInternationalizationPanel.h
+    )
+endif()
+
+if(Slicer_BUILD_WEBENGINE_SUPPORT)
+  list(APPEND KIT_MOC_SRCS
+    qSlicerWebDownloadWidget.h
+    qSlicerWebPythonProxy.h
+    qSlicerWebWidget.h
+    qSlicerWebWidget_p.h
     )
 endif()
 

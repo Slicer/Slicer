@@ -121,6 +121,9 @@ void qSlicerApplicationHelper::preInitializeApplication(
   // Enable automatic scaling based on the pixel density of the monitor
   QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
+  // Enables resource sharing between the OpenGL contexts used by classes like QOpenGLWidget and QQuickWidget
+  QApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+
   // Allow a custom application name so that the settings
   // can be distinct for differently named applications
   QString applicationName("Slicer");

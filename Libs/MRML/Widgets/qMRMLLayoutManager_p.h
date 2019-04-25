@@ -41,6 +41,7 @@
 #include <ctkLayoutManager_p.h>
 
 // qMRML includes
+#include "qMRMLWidgetsConfigure.h" // For MRML_WIDGETS_HAVE_WEBGINE_SUPPORT
 #include "qMRMLLayoutManager.h"
 #include "qMRMLLayoutViewFactory.h"
 
@@ -177,6 +178,7 @@ protected:
 };
 
 //------------------------------------------------------------------------------
+#ifdef MRML_WIDGETS_HAVE_WEBGINE_SUPPORT
 class QMRML_WIDGETS_EXPORT qMRMLLayoutChartViewFactory
   : public qMRMLLayoutViewFactory
 {
@@ -194,6 +196,7 @@ protected:
   QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode) override;
   vtkMRMLColorLogic* ColorLogic;
 };
+#endif
 
 //------------------------------------------------------------------------------
 class QMRML_WIDGETS_EXPORT qMRMLLayoutTableViewFactory

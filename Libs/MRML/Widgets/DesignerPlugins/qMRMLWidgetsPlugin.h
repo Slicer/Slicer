@@ -21,7 +21,7 @@
 #ifndef __qMRMLWidgetsPlugin_h
 #define __qMRMLWidgetsPlugin_h
 
-#include "qMRMLWidgetsConfigure.h" // For MRML_WIDGETS_HAVE_QT5
+#include "qMRMLWidgetsConfigure.h" // For MRML_WIDGETS_HAVE_QT5, MRML_WIDGETS_HAVE_WEBGINE_SUPPORT
 
 // Qt includes
 #ifdef MRML_WIDGETS_HAVE_QT5
@@ -41,7 +41,9 @@
 #include "qMRMLDisplayNodeViewComboBoxPlugin.h"
 #include "qMRMLDisplayNodeWidgetPlugin.h"
 #include "qMRMLEventBrokerWidgetPlugin.h"
+#ifdef MRML_WIDGETS_HAVE_WEBGINE_SUPPORT
 #include "qMRMLExpandingWebViewPlugin.h"
+#endif
 #include "qMRMLLabelComboBoxPlugin.h"
 #include "qMRMLLayoutWidgetPlugin.h"
 #include "qMRMLLinearTransformSliderPlugin.h"
@@ -99,7 +101,9 @@ public:
             << new qMRMLDisplayNodeViewComboBoxPlugin
             << new qMRMLDisplayNodeWidgetPlugin
             << new qMRMLEventBrokerWidgetPlugin
+#ifdef MRML_WIDGETS_HAVE_WEBGINE_SUPPORT
             << new qMRMLExpandingWebViewPlugin
+#endif
             << new qMRMLLabelComboBoxPlugin
             << new qMRMLLayoutWidgetPlugin
             << new qMRMLLinearTransformSliderPlugin

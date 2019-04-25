@@ -211,6 +211,9 @@ mark_as_superbuild(Slicer_BUILD_DIFFUSION_SUPPORT)
 option(Slicer_BUILD_I18N_SUPPORT "Build Slicer with Internationalization support" OFF)
 mark_as_superbuild(Slicer_BUILD_I18N_SUPPORT)
 
+option(Slicer_BUILD_WEBENGINE_SUPPORT "Build Slicer with Qt WebEngine support" OFF)
+mark_as_superbuild(Slicer_BUILD_WEBENGINE_SUPPORT)
+
 option(Slicer_BUILD_QTLOADABLEMODULES "Build Slicer QT Loadable Modules" ON)
 mark_as_advanced(Slicer_BUILD_QTLOADABLEMODULES)
 mark_as_superbuild(Slicer_BUILD_QTLOADABLEMODULES)
@@ -552,11 +555,13 @@ endif()
     Svg Sql
     )
   find_package(Qt5 COMPONENTS Core QUIET)
+  if(Slicer_BUILD_WEBENGINE_SUPPORT)
     list(APPEND Slicer_REQUIRED_QT_MODULES
       WebEngine
       WebEngineWidgets
       WebChannel
       )
+  endif()
   if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     list(APPEND Slicer_REQUIRED_QT_MODULES Script)
   endif()

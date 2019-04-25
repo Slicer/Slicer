@@ -18,6 +18,8 @@
 
 ==============================================================================*/
 
+#include "vtkSlicerConfigure.h" // For Slicer_BUILD_WEBENGINE_SUPPORT
+
 // Qt includes
 #include <QFileDialog>
 #include <QMenu>
@@ -25,9 +27,11 @@
 #include <QTimerEvent>
 #include <QToolButton>
 #include <QUrlQuery>
+#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
 #include <QWebEngineHistory>
 #include <QWebEnginePage>
 #include <QWebEngineView>
+#endif
 
 // CTK includes
 #include <ctkSearchBox.h>
@@ -43,6 +47,7 @@
 namespace
 {
 
+#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
 QString jsQuote(QString text)
 {
   // NOTE: This assumes that 'text' does not contain '\r' or other control characters
@@ -50,6 +55,7 @@ QString jsQuote(QString text)
   text.replace(reSpecialCharacters, "\\\\1").replace("\n", "\\n");
   return QString("\'%1\'").arg(text);
 }
+#endif
 
 // --------------------------------------------------------------------------
 void invalidateSizeHint(QToolButton * button)
@@ -172,6 +178,11 @@ public:
   qSlicerExtensionsManagerWidgetPrivate(qSlicerExtensionsManagerWidget& object);
   void init();
 
+#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
+  qSlicerExtensionsInstallWidget* ExtensionsManageBrowser;
+  qSlicerExtensionsInstallWidget* ExtensionsInstallWidget
+#endif
+
   qSlicerExtensionsToolsWidget* toolsWidget;
   QString lastSearchText;
   int searchTimerId;
@@ -181,6 +192,10 @@ public:
 qSlicerExtensionsManagerWidgetPrivate::qSlicerExtensionsManagerWidgetPrivate(qSlicerExtensionsManagerWidget& object)
   :q_ptr(&object), searchTimerId(0)
 {
+#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
+  this->ExtensionsManageBrowser = nullptr;
+  this->ExtensionsInstallWidget = nullptr;
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -190,15 +205,29 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
 
   this->setupUi(q);
 
+#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
+  // Setup browser for "Install Extensions" tab
+  this->ExtensionsInstallWidget = new qSlicerExtensionsInstallWidget(installExtensionsTab);
+  this->ExtensionsInstallWidget->setObjectName("ExtensionsInstallWidget");
+  this->InstallExtensionsTabLayout->addWidget(this->ExtensionsInstallWidget);
+
+  // Setup browser for "Manage Extensions" tab
+  this->ExtensionsManageBrowser = new qSlicerExtensionsInstallWidget();
+  this->ExtensionsManageBrowser->setObjectName("ExtensionsManageBrowser");
+  this->ManageExtensionsPager->addWidget(this->ExtensionsManageBrowser);
   this->ExtensionsManageBrowser->setBrowsingEnabled(false);
   this->ExtensionsManageBrowser->webView()->load(QUrl("about:"));
+#endif
+
+  qSlicerExtensionsActionsWidget * actionsWidget = new qSlicerExtensionsActionsWidget;
 
   // Back and forward buttons
-  qSlicerExtensionsActionsWidget * actionsWidget = new qSlicerExtensionsActionsWidget;
+#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
   actionsWidget->ManageBackButton->setDefaultAction(this->ExtensionsManageBrowser->webView()->pageAction(QWebEnginePage::Back));
   actionsWidget->ManageForwardButton->setDefaultAction(this->ExtensionsManageBrowser->webView()->pageAction(QWebEnginePage::Forward));
   actionsWidget->InstallBackButton->setDefaultAction(this->ExtensionsInstallWidget->webView()->pageAction(QWebEnginePage::Back));
   actionsWidget->InstallForwardButton->setDefaultAction(this->ExtensionsInstallWidget->webView()->pageAction(QWebEnginePage::Forward));
+#endif
 
   this->tabWidget->setCornerWidget(actionsWidget, Qt::TopLeftCorner);
 
@@ -223,6 +252,7 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
   QObject::connect(this->ExtensionsManageWidget, SIGNAL(linkActivated(QUrl)),
                    q, SLOT(onManageLinkActivated(QUrl)));
 
+#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
   QObject::connect(this->ExtensionsManageBrowser->webView(),
                    SIGNAL(urlChanged(QUrl)),
                    q, SLOT(onManageUrlChanged(QUrl)));
@@ -234,6 +264,7 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
   QObject::connect(this->ExtensionsInstallWidget->webView(),
                    SIGNAL(urlChanged(QUrl)),
                    q, SLOT(onInstallUrlChanged(QUrl)));
+#endif
 
   QObject::connect(this->tabWidget, SIGNAL(currentChanged(int)),
                    q, SLOT(onCurrentTabChanged(int)));
@@ -289,8 +320,10 @@ void qSlicerExtensionsManagerWidget::setExtensionsManagerModel(qSlicerExtensions
   disconnect(this, SLOT(onModelUpdated()));
 
   d->ExtensionsManageWidget->setExtensionsManagerModel(model);
+#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
   d->ExtensionsManageBrowser->setExtensionsManagerModel(model);
   d->ExtensionsInstallWidget->setExtensionsManagerModel(model);
+#endif
   d->ExtensionsRestoreWidget->setExtensionsManagerModel(model);
 
   if (model)
@@ -309,7 +342,9 @@ void qSlicerExtensionsManagerWidget::setExtensionsManagerModel(qSlicerExtensions
 void qSlicerExtensionsManagerWidget::refreshInstallWidget()
 {
   Q_D(qSlicerExtensionsManagerWidget);
+#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
   d->ExtensionsInstallWidget->refresh();
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -348,21 +383,25 @@ void qSlicerExtensionsManagerWidget::onCurrentTabChanged(int index)
 {
   Q_D(qSlicerExtensionsManagerWidget);
   Q_UNUSED(index);
-
+#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
   QWebEngineHistory* history = d->ExtensionsManageBrowser->webView()->history();
   if (history->canGoBack())
     {
     history->goToItem(history->items().first());
     }
+#endif
 }
 
 // --------------------------------------------------------------------------
 void qSlicerExtensionsManagerWidget::onManageLinkActivated(const QUrl& link)
 {
   Q_D(qSlicerExtensionsManagerWidget);
-
+#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
   d->ManageExtensionsPager->setCurrentIndex(1);
   d->ExtensionsManageBrowser->webView()->load(link);
+#else
+  Q_UNUSED(link);
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -397,6 +436,7 @@ void qSlicerExtensionsManagerWidget::onInstallUrlChanged(const QUrl& newUrl)
 // --------------------------------------------------------------------------
 void qSlicerExtensionsManagerWidget::onSearchTextChanged(const QString& newText)
 {
+#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
   Q_D(qSlicerExtensionsManagerWidget);
   if (d->searchTimerId)
     {
@@ -407,11 +447,15 @@ void qSlicerExtensionsManagerWidget::onSearchTextChanged(const QString& newText)
     {
     d->searchTimerId = this->startTimer(500);
     }
+#else
+  Q_UNUSED(newText);
+#endif
 }
 
 // --------------------------------------------------------------------------
 void qSlicerExtensionsManagerWidget::timerEvent(QTimerEvent* e)
 {
+#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
   Q_D(qSlicerExtensionsManagerWidget);
   if (e->timerId() == d->searchTimerId)
     {
@@ -426,6 +470,7 @@ void qSlicerExtensionsManagerWidget::timerEvent(QTimerEvent* e)
     this->killTimer(d->searchTimerId);
     d->searchTimerId = 0;
     }
+#endif
   QObject::timerEvent(e);
 }
 

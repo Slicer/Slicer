@@ -110,10 +110,12 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
       )
 
     # Install webengine translations
-    set(translations_dir "${qt_root_dir}/translations/qtwebengine_locales")
-    install(DIRECTORY ${translations_dir}
-      DESTINATION ${Slicer_INSTALL_ROOT}/share/QtTranslations/ COMPONENT Runtime
-      )
+    if("Qt5::WebEngine" IN_LIST QT_LIBRARIES)
+      set(translations_dir "${qt_root_dir}/translations/qtwebengine_locales")
+      install(DIRECTORY ${translations_dir}
+        DESTINATION ${Slicer_INSTALL_ROOT}/share/QtTranslations/ COMPONENT Runtime
+        )
+    endif()
 
     # Configure and install qt.conf
     set(qt_conf_contents "[Paths]\nPrefix = ..\nPlugins = ${Slicer_INSTALL_QtPlugins_DIR}\nTranslations = share/QtTranslations")

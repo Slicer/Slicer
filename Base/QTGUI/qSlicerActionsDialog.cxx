@@ -18,10 +18,14 @@
 
 ==============================================================================*/
 
+#include "vtkSlicerConfigure.h" // For Slicer_BUILD_WEBENGINE_SUPPORT
+
 // Qt includes
 #include <QGridLayout>
 #include <QtGlobal>
+#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
 #include <QWebEngineView>
+#endif
 
 // SlicerQt includes
 #include "qSlicerActionsDialog.h"
@@ -40,7 +44,9 @@ public:
   qSlicerActionsDialogPrivate(qSlicerActionsDialog& object);
   void init();
 
+#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
   QWebEngineView* WebView;
+#endif
 
 };
 
@@ -56,6 +62,7 @@ void qSlicerActionsDialogPrivate::init()
   Q_Q(qSlicerActionsDialog);
 
   this->setupUi(q);
+#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
   this->WebView = new QWebEngineView();
   this->WebView->setObjectName("WebView");
   this->gridLayout->addWidget(this->WebView, 0, 0);
@@ -69,6 +76,9 @@ void qSlicerActionsDialogPrivate::init()
     QString("http://wiki.slicer.org/slicerWiki/index.php/Documentation/%1/").arg(wikiVersion);
   shortcutsUrl += "SlicerApplication/MouseandKeyboardShortcuts";
   this->WebView->setUrl( shortcutsUrl );
+#else
+  this->tabWidget->setTabEnabled(this->tabWidget->indexOf(this->WikiTab), false);
+#endif
 }
 
 //------------------------------------------------------------------------------
