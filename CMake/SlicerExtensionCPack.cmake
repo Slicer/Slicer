@@ -160,9 +160,20 @@ else()
   set(_is_superbuild_extension 0)
 endif()
 
+set(_has_cpack_cmake_install_projects 0)
 if(_is_superbuild_extension)
+  set(_has_cpack_cmake_install_projects 1)
   if("${CPACK_INSTALL_CMAKE_PROJECTS}" STREQUAL "")
     message(FATAL_ERROR "${EXTENSION_NAME}: Variable CPACK_INSTALL_CMAKE_PROJECTS is expected to be set.")
+  endif()
+else()
+  set(msg "Checking if CPACK_INSTALL_CMAKE_PROJECTS is defined")
+  message(STATUS "${msg}")
+  if(DEFINED CPACK_INSTALL_CMAKE_PROJECTS)
+    message(STATUS "${msg} - yes")
+    set(_has_cpack_cmake_install_projects 1)
+  else()
+    message(STATUS "${msg} - no")
   endif()
 endif()
 
@@ -212,7 +223,7 @@ if(APPLE)
   #------------------------------------------------------------------------------
   # Add install rule ensuring the "fix-up" script is executed at packaging time
   #------------------------------------------------------------------------------
-  if(NOT _is_superbuild_extension)
+  if(NOT _has_cpack_cmake_install_projects)
 
     message(STATUS "Extension fixup mode: adding <cpack_bundle_fixup_directory>")
     # HACK - For a given directory, "install(SCRIPT ...)" rule will be evaluated first,
