@@ -174,6 +174,12 @@ function(fixup_extension ext libs dirs)
   message(STATUS "  libs='${libs}'")
   message(STATUS "  dirs='${dirs}'")
 
+  set(extension_build_dir "@CMAKE_BINARY_DIR@")
+  set(_is_superbuild_extension @_is_superbuild_extension@)
+  if(_is_superbuild_extension)
+    get_filename_component(extension_build_dir ${extension_build_dir}/.. ABSOLUTE)
+  endif()
+
   #get_bundle_and_executable("${ext}" bundle executable valid)
   set(bundle "${ext}")
   message(STATUS "  bundle='${bundle}'")
@@ -211,9 +217,24 @@ function(fixup_extension ext libs dirs)
         message(STATUS "")
       endif()
 
-      string(FIND "${${key}_ITEM}" "@Slicer_SUPERBUILD_DIR@" pos)
       set(key_skip 0)
+
+      # Check if the item belong to an extension package itself built within a
+      # "Slicer" build tree. This may be done in custom application (e.g SlicerSALT)
+      # where bundling a specific extension (through -DSlicer_EXTENSION_SOURCE_DIRS=...)
+      # is not possible and instead the extension is packaged first and its content
+      # is then copied into the custom application package.
+      set(in_extension_build_dir_within_slicer_build_dir 0)
+      string(FIND "${extension_build_dir}" "@Slicer_SUPERBUILD_DIR@" pos)
       if(${pos} EQUAL 0)
+        string(FIND "${${key}_ITEM}" "${extension_build_dir}" pos)
+        if(${pos} EQUAL 0)
+          set(in_extension_build_dir_within_slicer_build_dir 1)
+        endif()
+      endif()
+
+      string(FIND "${${key}_ITEM}" "@Slicer_SUPERBUILD_DIR@" pos)
+      if(${pos} EQUAL 0 AND NOT in_extension_build_dir_within_slicer_build_dir)
         message(STATUS "${i}/${n}: skipping '${${key}_ITEM}'")
         set(key_skip 1)
       endif()
