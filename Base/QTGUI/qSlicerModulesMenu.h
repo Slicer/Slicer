@@ -65,7 +65,7 @@ public:
   ~qSlicerModulesMenu() override;
 
   ///
-  QAction* moduleAction(const QString& moduleName)const;
+  Q_INVOKABLE QAction* moduleAction(const QString& moduleName)const;
 
   /// Add a list of module available for selection
   inline void addModules(const QStringList& moduleNames);

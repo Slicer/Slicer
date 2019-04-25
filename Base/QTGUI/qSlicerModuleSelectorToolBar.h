@@ -54,7 +54,7 @@ public:
   ~qSlicerModuleSelectorToolBar() override;
 
   /// Returns a pointer to the modules menu used to populate the list of modules
-  qSlicerModulesMenu* modulesMenu()const;
+  Q_INVOKABLE qSlicerModulesMenu* modulesMenu()const;
 
   /// Returns the selected module name
   QString selectedModule() const;
