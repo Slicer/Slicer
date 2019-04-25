@@ -92,6 +92,21 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@fixup_path@/@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_THIRDPARTY_LIB_DIR@")
   endif()
 
+  set(extension_build_dir "@CMAKE_BINARY_DIR@")
+  set(_is_superbuild_extension @_is_superbuild_extension@)
+  if(_is_superbuild_extension)
+    get_filename_component(extension_build_dir ${extension_build_dir}/.. ABSOLUTE)
+  endif()
+
+  # Libraries that are not part of the Slicer build tree and not part of the extension
+  # build tree are considered as third-party libraries.
+  if(NOT item MATCHES "@Slicer_SUPERBUILD_DIR@"
+      AND NOT item MATCHES "${extension_build_dir}"
+      AND item MATCHES "\\.(so|dylib)$"
+      )
+    set(path "@fixup_path@/@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_THIRDPARTY_LIB_DIR@")
+  endif()
+
   math(EXPR lib_current $ENV{FIXUP_LIB_CURRENT}+1)
   set(ENV{FIXUP_LIB_CURRENT} ${lib_current})
   #gp_log_message("${lib_current}/$ENV{FIXUP_LIBS_COUNT} - fixing item ${item} with ${path}")
