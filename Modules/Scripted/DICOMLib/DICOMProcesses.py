@@ -1,5 +1,5 @@
 from __future__ import print_function
-import os, subprocess
+import os, subprocess, time
 import slicer
 import qt
 import ctk
@@ -185,13 +185,17 @@ class DICOMStoreSCPProcess(DICOMProcess):
         uniqueListener = self.notifyUserAboutRunningStoreSCP(pid)
     return uniqueListener
 
-  def killStoreSCPProcessesNT(self, uniqueListener):
+  def isStoreSCPProcessesRunningNT(self):
     cmd = 'WMIC PROCESS get Caption'
     process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     processList = []
     for line in process.stdout:
+      line = line.decode()
       processList.append(line.strip())
-    if any(self.STORESCP_PROCESS_FILE_NAME + self.exeExtension in process for process in processList):
+    return any(self.STORESCP_PROCESS_FILE_NAME + self.exeExtension in process for process in processList)
+
+  def killStoreSCPProcessesNT(self, uniqueListener):
+    if self.isStoreSCPProcessesRunningNT():
       uniqueListener = self.notifyUserAboutRunningStoreSCP()
     return uniqueListener
 
@@ -215,7 +219,15 @@ class DICOMStoreSCPProcess(DICOMProcess):
   def notifyUserAboutRunningStoreSCP(self, pid=None):
     if slicer.util.confirmYesNoDisplay('There are other DICOM listeners running.\n Do you want to end them?'):
       if os.name == 'nt':
-        os.popen('taskkill /f /im %s' % self.STORESCP_PROCESS_FILE_NAME + self.exeExtension)
+        # Killing processes can take a while, so we retry a couple of times until we confirm that there
+        # are no more listeners.
+        retryAttempts = 10
+        while retryAttempts:
+          os.popen('taskkill /f /im %s' % self.STORESCP_PROCESS_FILE_NAME + self.exeExtension)
+          if not self.isStoreSCPProcessesRunningNT():
+            break
+          retryAttempts -= 1
+          time.sleep(1)
       elif os.name == 'posix':
         import signal
         os.kill(pid, signal.SIGKILL)
