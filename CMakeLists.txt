@@ -378,7 +378,7 @@ endif()
 #-----------------------------------------------------------------------------
 configure_file(
   CMake/CTestCustom.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake
+  ${CMAKE_BINARY_DIR}/CTestCustom.cmake
   COPYONLY
   )
 
