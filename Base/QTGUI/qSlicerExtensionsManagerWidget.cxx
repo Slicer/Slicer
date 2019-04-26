@@ -39,6 +39,9 @@
 // QtGUI includes
 #include "qSlicerExtensionsManagerWidget.h"
 #include "qSlicerExtensionsManagerModel.h"
+#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
+#include "qSlicerExtensionsInstallWidget.h"
+#endif
 #include "ui_qSlicerExtensionsActionsWidget.h"
 #include "ui_qSlicerExtensionsManagerWidget.h"
 #include "ui_qSlicerExtensionsToolsWidget.h"
@@ -180,7 +183,7 @@ public:
 
 #ifdef Slicer_BUILD_WEBENGINE_SUPPORT
   qSlicerExtensionsInstallWidget* ExtensionsManageBrowser;
-  qSlicerExtensionsInstallWidget* ExtensionsInstallWidget
+  qSlicerExtensionsInstallWidget* ExtensionsInstallWidget;
 #endif
 
   qSlicerExtensionsToolsWidget* toolsWidget;
@@ -207,7 +210,7 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
 
 #ifdef Slicer_BUILD_WEBENGINE_SUPPORT
   // Setup browser for "Install Extensions" tab
-  this->ExtensionsInstallWidget = new qSlicerExtensionsInstallWidget(installExtensionsTab);
+  this->ExtensionsInstallWidget = new qSlicerExtensionsInstallWidget(this->InstallExtensionsTab);
   this->ExtensionsInstallWidget->setObjectName("ExtensionsInstallWidget");
   this->InstallExtensionsTabLayout->addWidget(this->ExtensionsInstallWidget);
 
