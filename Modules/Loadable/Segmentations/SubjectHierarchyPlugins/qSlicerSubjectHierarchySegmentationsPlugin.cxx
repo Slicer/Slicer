@@ -583,11 +583,6 @@ void qSlicerSubjectHierarchySegmentationsPlugin::showVisibilityContextMenuAction
       return;
       }
 
-    bool containsBinaryLabelmap = segmentationNode->GetSegmentation()->ContainsRepresentation(
-      vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName() );
-    bool containsClosedSurface = segmentationNode->GetSegmentation()->ContainsRepresentation(
-      vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName() );
-
     d->Toggle2DFillVisibilityAction->blockSignals(true);
     d->Toggle2DFillVisibilityAction->setChecked(displayNode->GetVisibility2DFill());
     d->Toggle2DFillVisibilityAction->blockSignals(false);
