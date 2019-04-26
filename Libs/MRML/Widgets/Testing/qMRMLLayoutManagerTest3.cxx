@@ -78,6 +78,9 @@ int qMRMLLayoutManagerTest3(int argc, char * argv[] )
   QSurfaceFormat::setDefaultFormat(format);
 #endif
 
+  // Enables resource sharing between the OpenGL contexts used by classes like QOpenGLWidget and QQuickWidget
+  QApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+
   QApplication app(argc, argv);
   QWidget w;
   w.show();
