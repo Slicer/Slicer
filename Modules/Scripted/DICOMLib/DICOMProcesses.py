@@ -179,6 +179,7 @@ class DICOMStoreSCPProcess(DICOMProcess):
     p = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
     out, err = p.communicate()
     for line in out.splitlines():
+      line = line.decode()
       if self.STORESCP_PROCESS_FILE_NAME in line:
         pid = int(line.split(None, 1)[0])
         uniqueListener = self.notifyUserAboutRunningStoreSCP(pid)
