@@ -306,7 +306,7 @@ QString qSlicerWebWidget::evalJS(const QString &js)
   // Connect to the "evalResult(QString,QString)" signal to get
   // results from the WebView.
   d->WebView->page()->runJavaScript(js, [this,js](const QVariant &v) {
-    qDebug() << js << " returns " << v.toString();
+//    qDebug() << js << " returns " << v.toString();
     emit evalResult(js, v.toString());
   });
   return QString();
