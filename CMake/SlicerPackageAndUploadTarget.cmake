@@ -99,6 +99,11 @@ if(NOT PACKAGEUPLOAD)
   include(SlicerMacroExtractRepositoryInfo)
   SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer SOURCE_DIR ${Slicer_SOURCE_DIR})
 
+  # Given a date formatted like "2019-01-15 22:08:54 -0500 (Tue, 15 Jan 2019)", only
+  # keep "2019-01-15 22:08:54".
+  string(REGEX REPLACE "^([0-9][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9] [0-9][0-9]\\:[0-9][0-9]\\:[0-9][0-9]).*"
+    "\\1" Slicer_WC_LAST_CHANGED_DATE "${Slicer_WC_LAST_CHANGED_DATE}")
+
   set(script_arg_list)
   foreach(varname
     ${script_vars}
@@ -114,11 +119,6 @@ if(NOT PACKAGEUPLOAD)
     set(script_arg_list "${script_arg_list}
 set(${varname} \"${${varname}}\")")
   endforeach()
-
-  # Given a date formatted like "2019-01-15 22:08:54 -0500 (Tue, 15 Jan 2019)", only
-  # keep "2019-01-15 22:08:54".
-  string(REGEX REPLACE "^([0-9][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9]).*"
-    "\\1" Slicer_WC_LAST_CHANGED_DATE "${Slicer_WC_LAST_CHANGED_DATE}")
 
   set(script_args_file ${CMAKE_CURRENT_BINARY_DIR}/midas_api_upload_package-command-args.cmake)
   file(WRITE ${script_args_file} ${script_arg_list})
