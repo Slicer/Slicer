@@ -165,9 +165,13 @@ endforeach()
 # of generated packages from its standard output and create a file PACKAGES.txt
 # containing the list of package paths.
 
-# The following variable can be used when testing this module. It avoids
-# to wait for a rebuild of the project.
+# Setting the environment variable SLICER_PACKAGE_UPLOAD_SKIP_PACKAGING_TARGET to
+# any non empty value can be used when testing this module. It avoids to wait for a rebuild
+# of the project.
 set(_build_target 1)
+if(NOT "$ENV{SLICER_PACKAGE_UPLOAD_SKIP_PACKAGING_TARGET}" STREQUAL "")
+  set(_build_target 0)
+endif()
 
 if(_build_target)
   execute_process(
