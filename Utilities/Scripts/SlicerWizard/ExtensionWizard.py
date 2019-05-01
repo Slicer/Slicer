@@ -22,6 +22,7 @@ def haveGit():
   if hasattr(http.client, "HTTPSConnection"):
     # SSL is available
     try:
+      global git, GithubHelper, NotSet
       import git
       from . import GithubHelper
       from .GithubHelper import NotSet

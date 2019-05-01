@@ -44,7 +44,7 @@ def _credentials(client, request, action="fill"):
   # Set up and execute 'git credential' process, passing stringized token to
   # the process's stdin
   p = client.credential(action, as_process=True, istream=subprocess.PIPE)
-  out, err = p.communicate(input=str(request))
+  out, err = p.communicate(input=str(request).encode("utf-8"))
 
   # Raise exception if process failed
   if p.returncode != 0:
@@ -52,7 +52,7 @@ def _credentials(client, request, action="fill"):
                               err.rstrip())
 
   # Return token parsed from the command's output
-  return _CredentialToken(out)
+  return _CredentialToken(out.decode())
 
 #-----------------------------------------------------------------------------
 def logIn(repo=None):
