@@ -59,6 +59,9 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
+
+  ExternalProject_GenerateProjectDescription_Step(${proj})
+
   set(${proj}_DIR ${EP_BINARY_DIR})
   set(${proj}_SOURCE_DIR ${EP_SOURCE_DIR})
   set(${proj}_INCLUDE_DIR ${${proj}_SOURCE_DIR}/include)

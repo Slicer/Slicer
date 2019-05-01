@@ -87,7 +87,7 @@ function(ExternalProject_GenerateProjectDescription_Step projectname)
   set(explicit_licenses 1)
 
   if(NOT _epgpd_LICENSE_FILES)
-    foreach(filename IN ITEMS LICENSE License LICENCE Licence NOTICE COPYRIGHT Copyright COPYING)
+    foreach(filename IN ITEMS LICENSE License license LICENCE Licence licence NOTICE COPYRIGHT Copyright copyright COPYING)
       foreach(ext IN ITEMS "" .md .rst .txt)
         list(APPEND _epgpd_LICENSE_FILES ${filename}${ext})
       endforeach()
