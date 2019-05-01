@@ -39,6 +39,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_GenerateProjectDescription_Step(${proj}
     VERSION ${_version}
+    LICENSE_FILES "COPYING.LESSER"
     )
 
   # See #3749 - Delete test files causing packaging to fail on windows
