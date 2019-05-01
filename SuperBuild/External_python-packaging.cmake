@@ -38,6 +38,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_GenerateProjectDescription_Step(${proj}
     VERSION ${_version}
+    LICENSE_FILES "LICENSE.BSD"
     )
 
 else()
