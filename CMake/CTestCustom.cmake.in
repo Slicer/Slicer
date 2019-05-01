@@ -172,8 +172,8 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "warning: the use of .tmpnam_r. is dangerous, better use .mkstemp."
 
   # Python - Windows
-  "(P|p)ython-2.7.13.(M|m)odules"
-  "(P|p)ython-2.7.13.PC"
+  "(P|p)ython-3.6.7.(M|m)odules"
+  "(P|p)ython-3.6.7.PC"
   "Include\\um\\winsock2.h.*warning C4005: 'INVALID_SOCKET': macro redefinition"
   # Python - Linux
   "Objects.unicodeobject.c.*warning:.*differ in signedness"
@@ -181,7 +181,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "Modules.expat.xmlparse.*warning.*discards qualifiers from pointer target type"
   "Objects.stringobject.c.*uninitialized"
   # Python - Mac
-  "ranlib: file:.*libpython2.7.a.*has no symbols"
+  "ranlib: file:.*libpython3.6.a.*has no symbols"
   "python.Modules._cursesmodule.c.*warning.*may be used uninitialized in this function"
   "python.Mac.Modules.(cf|Nav).*warning: (cast|unused)"
   "python.Modules._ctypes.*warning: function declaration isn't a prototype"
