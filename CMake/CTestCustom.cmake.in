@@ -227,6 +227,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "PythonQt.src.PythonQtSlot.cpp.*unused-value"
   "PythonQt.src.PythonQtSignalReceiver.cpp.*logical-op-parentheses"
   "PythonQt.PythonQtInstanceWrapper.h.*old-style-cast"
+  "[Pp]ython[Qq]t.generated_cpp"
   "pythonqt-build.generated_cpp"
 
   #Libarchive
