@@ -151,7 +151,7 @@ endforeach()
 if(NOT license_found AND EXISTS \${SOURCE_DIR}/setup.py)
   # Extract string of the form 'License [:: <text> [...]]:: <license_name>'
   set(license_name )
-  file(STRINGS \${SOURCE_DIR}/setup.py content REGEX \"Lic ense :: (.*)\" LIMIT_COUNT 1)
+  file(STRINGS \${SOURCE_DIR}/setup.py content REGEX \"License :: (.*)\" LIMIT_COUNT 1)
   if(content)
     string(STRIP \${content} content)
     # Extract <license_name>
