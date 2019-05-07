@@ -31,6 +31,7 @@
 #include "qSlicerAbstractModule.h"
 #include "qSlicerApplication.h"
 #include "qSlicerModuleManager.h"
+#include "ctkComboBox.h"
 #include "ctkMenuComboBox.h"
 
 // SlicerQt includes
@@ -197,6 +198,13 @@ qSlicerModulesMenu* qSlicerModuleSelectorToolBar::modulesMenu()const
 {
   Q_D(const qSlicerModuleSelectorToolBar);
   return d->ModulesMenu;
+}
+
+//---------------------------------------------------------------------------
+ctkMenuComboBox* qSlicerModuleSelectorToolBar::modulesMenuComboBox() const
+{
+  Q_D(const qSlicerModuleSelectorToolBar);
+  return d->ModulesComboBox;
 }
 
 //---------------------------------------------------------------------------
