@@ -268,6 +268,13 @@ bool qSlicerModulesMenuPrivate::removeTopLevelModuleAction(QAction* moduleAction
     return false;
     }
   menu->removeAction(moduleAction);
+  if (menu == q)
+    {
+    // If the action is removed from the top-level category, re-add the
+    // connection.
+    QObject::connect(moduleAction, SIGNAL(triggered(bool)),
+                     q, SLOT(onActionTriggered()));
+    }
   return true;
 }
 
