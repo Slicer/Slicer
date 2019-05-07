@@ -432,6 +432,20 @@ bool qSlicerModulesMenu::isAllModulesCategoryVisible()const
 }
 
 //---------------------------------------------------------------------------
+void qSlicerModulesMenu::setTopLevelCategoryOrder(const QStringList& categories)
+{
+  Q_D(qSlicerModulesMenu);
+  d->TopLevelCategoryOrder = categories;
+}
+
+//---------------------------------------------------------------------------
+QStringList qSlicerModulesMenu::topLevelCategoryOrder()const
+{
+  Q_D(const qSlicerModulesMenu);
+  return d->TopLevelCategoryOrder;
+}
+
+//---------------------------------------------------------------------------
 bool qSlicerModulesMenu::removeCategory(const QString& categoryName)
 {
   Q_D(qSlicerModulesMenu);

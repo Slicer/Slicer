@@ -58,6 +58,8 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulesMenu: public QMenu
   /// By default (isAllModulesCategoryVisible = true), setting this property controls
   /// the visibility of the "All Modules" category.
   Q_PROPERTY(bool allModulesCategoryVisible READ isAllModulesCategoryVisible WRITE setAllModulesCategoryVisible)
+
+  Q_PROPERTY(QStringList topLevelCategoryOrder READ topLevelCategoryOrder WRITE setTopLevelCategoryOrder)
 public:
   typedef QMenu Superclass;
 
@@ -91,6 +93,12 @@ public:
   /// in the module.
   void setShowHiddenModules(bool show);
   bool showHiddenModules()const;
+
+  void setAllModulesCategoryVisible(bool visible);
+  bool isAllModulesCategoryVisible()const;
+
+  void setTopLevelCategoryOrder(const QStringList& categories);
+  QStringList topLevelCategoryOrder()const;
 
   /// Remove a top-level category or sub-category. Return true if it was found and removed.
   ///
