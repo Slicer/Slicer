@@ -58,7 +58,7 @@ public:
 
   /// Give a chance to displayable managers to process the event.
   /// Return true if the event is processed.
-  bool DelegateInteractionEventToDisplayableManagers(unsigned long event);
+  bool DelegateInteractionEventToDisplayableManagers(unsigned long event) override;
 
   /// Internal state management for multi-event sequences (like click-drag-release)
 
