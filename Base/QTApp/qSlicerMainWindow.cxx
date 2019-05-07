@@ -1274,6 +1274,7 @@ void qSlicerMainWindow::setupMenuActions()
     app->revisionUserSettings()->value("Extensions/ManagerEnabled").toBool());
 #else
   d->ViewExtensionsManagerAction->setVisible(false);
+  d->WindowToolBarsMenu->removeAction(d->ViewExtensionsManagerAction);
 #endif
 
 #if defined Slicer_USE_QtTesting && defined Slicer_BUILD_CLI_SUPPORT
