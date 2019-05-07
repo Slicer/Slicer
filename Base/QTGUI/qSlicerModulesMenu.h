@@ -88,6 +88,15 @@ public:
   void setShowHiddenModules(bool show);
   bool showHiddenModules()const;
 
+  /// Remove a top-level category or sub-category. Return true if it was found and removed.
+  ///
+  /// Sub-category can be specified using a "dot" separator (i.e. "CategoryName.SubCategoryName")
+  ///
+  /// \note The special catergory "All Modules" can not be removed.
+  ///
+  /// \sa removeModule()
+  Q_INVOKABLE bool removeCategory(const QString& categoryName);
+
 public slots:
   /// Add a module by name into the menu.
   /// The category property of the module is used to assign a submenu to the
@@ -98,8 +107,13 @@ public slots:
   /// \sa qSlicerAbstractCoreModule::isHidden()
   void addModule(const QString& moduleName);
 
-  /// Remove the module from the list of available module
-  void removeModule(const QString& moduleName);
+  /// Remove the module from the list of available module.
+  ///
+  /// Return true if the module was found and removed.
+  ///
+  /// By default, the entry is also removed from the "All Modules" menu. Setting
+  /// \a removeFromAllModules to false allows to change this,
+  bool removeModule(const QString& moduleName, bool removeFromAllModules=true);
 
   /// Select a module by title. It looks for the module action and triggers it
   void setCurrentModuleByTitle(const QString& title);
@@ -120,7 +134,7 @@ protected:
   QScopedPointer<qSlicerModulesMenuPrivate> d_ptr;
 
   void addModule(qSlicerAbstractCoreModule*);
-  void removeModule(qSlicerAbstractCoreModule*);
+  bool removeModule(qSlicerAbstractCoreModule*, bool removeFromAllModules=true);
 
 private:
   Q_DECLARE_PRIVATE(qSlicerModulesMenu);
