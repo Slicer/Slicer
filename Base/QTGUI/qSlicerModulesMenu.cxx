@@ -57,6 +57,7 @@ public:
   QString               CurrentModule;
   bool                  DuplicateActions;
   bool                  ShowHiddenModules;
+  bool                  AllModulesCategoryVisible;
   QStringList           TopLevelCategoryOrder;
 };
 
@@ -69,6 +70,7 @@ qSlicerModulesMenuPrivate::qSlicerModulesMenuPrivate(qSlicerModulesMenu& object)
   this->NoModuleAction = nullptr;
   this->DuplicateActions = false;
   this->ShowHiddenModules = false;
+  this->AllModulesCategoryVisible = true;
   this->TopLevelCategoryOrder << "Wizards" << "Informatics" << "Registration"
     << "Segmentation" << "Quantification" << "Diffusion" << "IGT"
     << "Filtering" << "Surface Models" << "Converters" << "Endoscopy"
@@ -79,6 +81,8 @@ qSlicerModulesMenuPrivate::qSlicerModulesMenuPrivate(qSlicerModulesMenu& object)
 void qSlicerModulesMenuPrivate::init()
 {
   Q_Q(qSlicerModulesMenu);
+  this->AllModulesMenu = new QMenu(QObject::tr("All Modules"), q);
+
   this->addDefaultCategories();
 
   // Invisible action, don't add it anywhere.
@@ -91,8 +95,11 @@ void qSlicerModulesMenuPrivate::init()
 void qSlicerModulesMenuPrivate::addDefaultCategories()
 {
   Q_Q(qSlicerModulesMenu);
-  this->AllModulesMenu = q->addMenu(QObject::tr("All Modules"));
-  q->addSeparator();
+  if(this->AllModulesCategoryVisible)
+    {
+    q->addMenu(this->AllModulesMenu);
+    q->addSeparator();
+    }
   // between the 2 separators are the top level modules (with no category)
   q->addSeparator();
   // after the top level modules are the non-built-in categories (from
@@ -151,10 +158,13 @@ void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleActi
   QStringList orderedList;
   if (menu == q)
     {
-    // special ordering at the top level, the actions need to be added
-    // between the submenu AllModules and the other submenus
-    actions.removeFirst(); // remove AllModules
-    actions.removeFirst(); // remove first separator
+    if (this->AllModulesCategoryVisible)
+      {
+      // special ordering at the top level, the actions need to be added
+      // between the submenu AllModules and the other submenus
+      actions.removeFirst(); // remove AllModules
+      actions.removeFirst(); // remove first separator
+      }
     if (moduleAction->menu())
       {
       orderedList = this->TopLevelCategoryOrder;
@@ -390,6 +400,35 @@ bool qSlicerModulesMenu::showHiddenModules()const
 {
   Q_D(const qSlicerModulesMenu);
   return d->ShowHiddenModules;
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModulesMenu::setAllModulesCategoryVisible(bool visible)
+{
+  Q_D(qSlicerModulesMenu);
+  if (d->AllModulesCategoryVisible == visible)
+    {
+    return;
+    }
+  QList<QAction*> actions = this->actions();
+  if (!visible)
+    {
+    this->removeAction(actions.at(0)); // remove AllModules
+    this->removeAction(actions.at(1)); // remove first separator
+    }
+  else
+    {
+    QAction* separator = this->insertSeparator(actions.at(0));
+    this->insertMenu(separator, d->AllModulesMenu);
+    }
+  d->AllModulesCategoryVisible = visible;
+}
+
+//---------------------------------------------------------------------------
+bool qSlicerModulesMenu::isAllModulesCategoryVisible()const
+{
+  Q_D(const qSlicerModulesMenu);
+  return d->AllModulesCategoryVisible;
 }
 
 //---------------------------------------------------------------------------
