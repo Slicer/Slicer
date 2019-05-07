@@ -94,6 +94,9 @@ public:
   void setShowHiddenModules(bool show);
   bool showHiddenModules()const;
 
+  /// Return menu associated with the special "All Modules" category.
+  Q_INVOKABLE QMenu* allModulesCategory()const;
+
   void setAllModulesCategoryVisible(bool visible);
   bool isAllModulesCategoryVisible()const;
 

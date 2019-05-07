@@ -403,6 +403,13 @@ bool qSlicerModulesMenu::showHiddenModules()const
 }
 
 //---------------------------------------------------------------------------
+QMenu* qSlicerModulesMenu::allModulesCategory()const
+{
+  Q_D(const qSlicerModulesMenu);
+  return d->AllModulesMenu;
+}
+
+//---------------------------------------------------------------------------
 void qSlicerModulesMenu::setAllModulesCategoryVisible(bool visible)
 {
   Q_D(qSlicerModulesMenu);
