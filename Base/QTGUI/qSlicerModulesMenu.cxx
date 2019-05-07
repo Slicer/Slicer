@@ -530,7 +530,7 @@ qSlicerModuleManager* qSlicerModulesMenu::moduleManager()const
 QAction* qSlicerModulesMenu::moduleAction(const QString& moduleName)const
 {
   Q_D(const qSlicerModulesMenu);
-  return d->action(QVariant(moduleName), this);
+  return d->action(QVariant(moduleName), d->AllModulesMenu);
 }
 
 //---------------------------------------------------------------------------
