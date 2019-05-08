@@ -231,6 +231,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "pythonqt-build.generated_cpp"
   "QStyleOption.*V(2|3|4).*deprecated"
   "([0-9]+) warnings generated."
+  "(QNetworkProxyQuery|networkConfiguration|setNetworkConfiguration).*deprecated"
 
   #Libarchive
   "LibArchive.libArchive.*signed/unsigned mismatch"
