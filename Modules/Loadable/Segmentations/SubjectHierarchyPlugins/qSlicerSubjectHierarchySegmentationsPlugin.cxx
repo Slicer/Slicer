@@ -916,13 +916,23 @@ void qSlicerSubjectHierarchySegmentationsPlugin::exportToBinaryLabelmap()
     return;
     }
 
+  // Get exported (visible) segment IDs
+  std::vector<std::string> segmentIDs;
+  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
+  displayNode->GetVisibleSegmentIDs(segmentIDs);
+
   // Create new labelmap node
   vtkSmartPointer<vtkMRMLNode> newNode = vtkSmartPointer<vtkMRMLNode>::Take(
     segmentationNode->GetScene()->CreateNodeByClass("vtkMRMLLabelMapVolumeNode"));
   vtkMRMLLabelMapVolumeNode* newLabelmapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(
     segmentationNode->GetScene()->AddNode(newNode));
   newLabelmapNode->CreateDefaultDisplayNodes();
-  std::string exportedNodeName = std::string(segmentationNode->GetName()) + "-label";
+  std::string exportedNodeName = std::string(segmentationNode->GetName());
+  if (segmentIDs.size() == 1)
+    {
+    exportedNodeName += "-" + std::string(segmentationNode->GetSegmentation()->GetSegment(segmentIDs[0])->GetName());
+    }
+  exportedNodeName += "-label";
   exportedNodeName = segmentationNode->GetScene()->GetUniqueNameByString(exportedNodeName.c_str());
   newLabelmapNode->SetName(exportedNodeName.c_str());
 

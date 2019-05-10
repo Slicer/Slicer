@@ -745,6 +745,20 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
     return false;
     }
 
+  // Get IDs of segments to be exported
+  std::vector<std::string> segmentIDs;
+  if (d->ComboBox_ExportedSegments->currentIndex() == 0)
+    {
+    // All segments
+    currentSegmentationNode->GetSegmentation()->GetSegmentIDs(segmentIDs);
+    }
+  else
+    {
+    // Visible segments
+    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(currentSegmentationNode->GetDisplayNode());
+    displayNode->GetVisibleSegmentIDs(segmentIDs);
+    }
+
   // If existing node was not selected then create a new one that we will export into
   vtkMRMLNode* otherRepresentationNode = d->MRMLNodeComboBox_ImportExportNode->currentNode();
   if (!otherRepresentationNode)
@@ -758,7 +772,12 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
         currentSegmentationNode->GetScene()->AddNode(newNode));
       newLabelmapNode->CreateDefaultDisplayNodes();
       otherRepresentationNode = newLabelmapNode;
-      namePostfix = "-label";
+      // Add segment name if only one segment is exported
+      if (segmentIDs.size() == 1)
+        {
+        namePostfix += "-" + std::string(currentSegmentationNode->GetSegmentation()->GetSegment(segmentIDs[0])->GetName());
+        }
+      namePostfix += "-label";
       }
     else
       {
@@ -773,20 +792,6 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
     exportedNodeName = currentSegmentationNode->GetScene()->GetUniqueNameByString(exportedNodeName.c_str());
     otherRepresentationNode->SetName(exportedNodeName.c_str());
     d->MRMLNodeComboBox_ImportExportNode->setCurrentNode(otherRepresentationNode);
-    }
-
-  // Get IDs of segments to be exported
-  std::vector<std::string> segmentIDs;
-  if (d->ComboBox_ExportedSegments->currentIndex() == 0)
-    {
-    // All segments
-    currentSegmentationNode->GetSegmentation()->GetSegmentIDs(segmentIDs);
-    }
-  else
-    {
-    // Visible segments
-    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(currentSegmentationNode->GetDisplayNode());
-    displayNode->GetVisibleSegmentIDs(segmentIDs);
     }
 
   vtkMRMLLabelMapVolumeNode* labelmapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(otherRepresentationNode);
