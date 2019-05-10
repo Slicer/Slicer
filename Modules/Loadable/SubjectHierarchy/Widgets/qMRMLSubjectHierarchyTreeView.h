@@ -184,6 +184,9 @@ public slots:
   void setEditMenuActionVisible(bool visible);
   void setSelectRoleSubMenuVisible(bool visible);
 
+  /// Resets column sizes and size policies to default.
+  void resetColumnSizesToDefault();
+
 signals:
   void currentItemChanged(vtkIdType);
   void currentItemModified(vtkIdType);

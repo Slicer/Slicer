@@ -88,6 +88,7 @@ public:
   int VisibilityColumn;
   int ColorColumn;
   int TransformColumn;
+  int DescriptionColumn;
 
   QIcon VisibleIcon;
   QIcon HiddenIcon;

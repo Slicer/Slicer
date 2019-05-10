@@ -62,6 +62,7 @@ qMRMLSubjectHierarchyModelPrivate::qMRMLSubjectHierarchyModelPrivate(qMRMLSubjec
   , VisibilityColumn(-1)
   , ColorColumn(-1)
   , TransformColumn(-1)
+  , DescriptionColumn(-1)
   , SubjectHierarchyNode(nullptr)
   , MRMLScene(nullptr)
   , TerminologiesModuleLogic(nullptr)
@@ -107,15 +108,17 @@ void qMRMLSubjectHierarchyModelPrivate::init()
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)), q, SLOT(onItemChanged(QStandardItem*)));
 
   q->setNameColumn(0);
-  q->setVisibilityColumn(1);
-  q->setColorColumn(2);
-  q->setTransformColumn(3);
-  q->setIDColumn(4);
+  q->setDescriptionColumn(1);
+  q->setVisibilityColumn(2);
+  q->setColorColumn(3);
+  q->setTransformColumn(4);
+  q->setIDColumn(5);
 
   q->setHorizontalHeaderLabels(
-    QStringList() << "Node" << "" << "" << "" << "IDs" );
+    QStringList() << "Node" << "Description" << "" /*visibility*/ << "" /*color*/ << "" /*transform*/ << "IDs" );
 
   q->horizontalHeaderItem(q->nameColumn())->setToolTip(QObject::tr("Node name and type"));
+  q->horizontalHeaderItem(q->descriptionColumn())->setToolTip(QObject::tr("Node description"));
   q->horizontalHeaderItem(q->visibilityColumn())->setToolTip(QObject::tr("Show/hide branch or node"));
   q->horizontalHeaderItem(q->colorColumn())->setToolTip(QObject::tr("Node color"));
   q->horizontalHeaderItem(q->transformColumn())->setToolTip(QObject::tr("Applied transform"));
@@ -804,8 +807,8 @@ QFlags<Qt::ItemFlag> qMRMLSubjectHierarchyModel::subjectHierarchyItemFlags(vtkId
     return flags;
     }
 
-  // Name and transform columns are editable
-  if (column == this->nameColumn() || column == this->colorColumn() || column == this->transformColumn())
+  if (column == this->nameColumn() || column == this->colorColumn() || column == this->transformColumn()
+    || column == this->descriptionColumn())
     {
     flags |= Qt::ItemIsEditable;
     }
@@ -967,6 +970,15 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
     else
       {
       emit requestCollapseItem(shItemID);
+      }
+    }
+  // Description column
+  if (column == this->descriptionColumn())
+    {
+    vtkMRMLNode* dataNode = d->SubjectHierarchyNode->GetItemDataNode(shItemID);
+    if (dataNode)
+      {
+      item->setText(QString(dataNode->GetDescription()));
       }
     }
   // ID column
@@ -1162,6 +1174,17 @@ void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItemData(vtkIdTyp
     {
     // This call renames associated data node if any
     d->SubjectHierarchyNode->SetItemName(shItemID, item->text().toLatin1().constData());
+    }
+  // Description column
+  if (item->column() == this->descriptionColumn())
+    {
+    std::string newDescriptionStr = item->text().toLatin1().constData();
+    vtkMRMLNode* dataNode = vtkMRMLNode::SafeDownCast(d->SubjectHierarchyNode->GetItemDataNode(shItemID));
+    if (!dataNode)
+      {
+      return;
+      }
+    dataNode->SetDescription(newDescriptionStr.c_str());
     }
   // Visibility column
   if (item->column() == this->visibilityColumn() && !item->data(VisibilityRole).isNull())
@@ -1617,6 +1640,21 @@ void qMRMLSubjectHierarchyModel::setTransformColumn(int column)
 }
 
 //------------------------------------------------------------------------------
+int qMRMLSubjectHierarchyModel::descriptionColumn()const
+{
+  Q_D(const qMRMLSubjectHierarchyModel);
+  return d->DescriptionColumn;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModel::setDescriptionColumn(int column)
+{
+  Q_D(qMRMLSubjectHierarchyModel);
+  d->DescriptionColumn = column;
+  this->updateColumnCount();
+}
+
+//------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyModel::updateColumnCount()
 {
   Q_D(const qMRMLSubjectHierarchyModel);
@@ -1648,8 +1686,9 @@ void qMRMLSubjectHierarchyModel::updateColumnCount()
 int qMRMLSubjectHierarchyModel::maxColumnId()const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
-  int maxId = 0;
+  int maxId = -1;
   maxId = qMax(maxId, d->NameColumn);
+  maxId = qMax(maxId, d->DescriptionColumn);
   maxId = qMax(maxId, d->IDColumn);
   maxId = qMax(maxId, d->VisibilityColumn);
   maxId = qMax(maxId, d->ColorColumn);

@@ -169,12 +169,11 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
   this->SortFilterModel->setSourceModel(this->Model);
 
   // Set up headers
-  q->header()->setStretchLastSection(false);
-  q->header()->setSectionResizeMode(this->Model->nameColumn(), QHeaderView::Stretch);
-  q->header()->setSectionResizeMode(this->Model->visibilityColumn(), QHeaderView::ResizeToContents);
-  q->header()->setSectionResizeMode(this->Model->colorColumn(), QHeaderView::ResizeToContents);
-  q->header()->setSectionResizeMode(this->Model->transformColumn(), QHeaderView::ResizeToContents);
-  q->header()->setSectionResizeMode(this->Model->idColumn(), QHeaderView::ResizeToContents);
+  q->resetColumnSizesToDefault();
+  if (this->Model->descriptionColumn()>=0)
+    {
+    q->setColumnHidden(this->Model->descriptionColumn(), true);
+    }
 
   // Set generic MRML item delegate
   q->setItemDelegate(new qMRMLItemDelegate(q));
@@ -224,6 +223,43 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
 
   // Set up scene and node actions for the tree view
   this->setupActions();
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::resetColumnSizesToDefault()
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+
+  // Set up headers
+  this->header()->setStretchLastSection(false);
+  if (this->header()->count() <= 0)
+    {
+    return;
+    }
+  if (d->Model->nameColumn() >= 0)
+    {
+    this->header()->setSectionResizeMode(d->Model->nameColumn(), QHeaderView::Stretch);
+    }
+  if (d->Model->descriptionColumn() >= 0)
+    {
+    this->header()->setSectionResizeMode(d->Model->descriptionColumn(), QHeaderView::Interactive);
+    }
+  if (d->Model->visibilityColumn() >= 0)
+    {
+  this->header()->setSectionResizeMode(d->Model->visibilityColumn(), QHeaderView::ResizeToContents);
+    }
+  if (d->Model->colorColumn() >= 0)
+    {
+    this->header()->setSectionResizeMode(d->Model->colorColumn(), QHeaderView::ResizeToContents);
+    }
+  if (d->Model->transformColumn() >= 0)
+    {
+    this->header()->setSectionResizeMode(d->Model->transformColumn(), QHeaderView::ResizeToContents);
+    }
+  if (d->Model->idColumn() >= 0)
+    {
+    this->header()->setSectionResizeMode(d->Model->idColumn(), QHeaderView::ResizeToContents);
+    }
 }
 
 //------------------------------------------------------------------------------
