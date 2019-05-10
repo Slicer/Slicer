@@ -10,6 +10,7 @@ else()
   slicerInstallLibrary(FILE ${LibArchive_LIBRARY}
     DESTINATION ${Slicer_INSTALL_LIB_DIR}
     COMPONENT Runtime
+    STRIP
     )
 endif()
 

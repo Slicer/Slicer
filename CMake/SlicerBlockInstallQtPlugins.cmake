@@ -41,6 +41,11 @@ if(NOT "${QT_PLUGINS_DIR}" STREQUAL "")
         DESTINATION ${Slicer_INSTALL_QtPlugins_DIR}/${plugins_subdirectory}
         COMPONENT RuntimePlugins
         )
+      get_filename_component(qpi_libname ${qpi} NAME)
+      slicerStripInstalledLibrary(
+        FILES "${Slicer_INSTALL_QtPlugins_DIR}/${plugins_subdirectory}/${qpi_libname}"
+        COMPONENT Runtime
+        )
     endforeach()
 
   endforeach()

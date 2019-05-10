@@ -32,4 +32,10 @@ elseif(UNIX)
       ${TBB_LIB_DIR}/libtbbmalloc.so.2
       ${TBB_LIB_DIR}/libtbbmalloc_proxy.so.2
     DESTINATION ${TBB_INSTALL_LIB_DIR} COMPONENT Runtime)
+  slicerStripInstalledLibrary(
+    FILES
+      "${TBB_INSTALL_LIB_DIR}/libtbb.so.2"
+      "${TBB_INSTALL_LIB_DIR}/libtbbmalloc.so.2"
+      "${TBB_INSTALL_LIB_DIR}/libtbbmalloc_proxy.so.2"
+    COMPONENT Runtime)
 endif()

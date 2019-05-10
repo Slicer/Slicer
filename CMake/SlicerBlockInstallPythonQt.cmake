@@ -17,5 +17,8 @@ elseif(APPLE)
 elseif(UNIX)
   install(FILES ${PYTHONQT_INSTALL_DIR}/lib/libPythonQt.so
     DESTINATION ${PYTHONQT_INSTALL_LIB_DIR} COMPONENT Runtime)
+  slicerStripInstalledLibrary(
+    FILES "${PYTHONQT_INSTALL_LIB_DIR}/libPythonQt.so"
+    COMPONENT Runtime)
 endif()
 

@@ -14,5 +14,8 @@ elseif(APPLE)
 elseif(UNIX)
   install(FILES ${QtTesting_INSTALL_DIR}/lib/libQtTesting.so
     DESTINATION ${QtTesting_INSTALL_LIB_DIR} COMPONENT Runtime)
+  slicerStripInstalledLibrary(
+    FILES "${QtTesting_INSTALL_LIB_DIR}/libQtTesting.so"
+    COMPONENT Runtime)
 endif()
 

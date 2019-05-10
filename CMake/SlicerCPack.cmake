@@ -294,6 +294,12 @@ endmacro()
 # Common package properties
 # -------------------------------------------------------------------------
 set(CPACK_MONOLITHIC_INSTALL ON)
+if(UNIX AND NOT APPLE AND "${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+  # Reduce package size stripping symbols from the regular symbol table
+  # for ELF libraries and executables.
+  # See also use of slicerInstallLibrary() and slicerStripInstalledLibrary() functions
+  set(CPACK_STRIP_FILES 1)
+endif()
 
 set(${app_name}_CPACK_PACKAGE_NAME ${app_name})
 slicer_cpack_set("CPACK_PACKAGE_NAME")

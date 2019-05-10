@@ -11,5 +11,9 @@ foreach(dcmtk_Lib ${DCMTK_LIBRARIES})
     install(DIRECTORY ${DCMTK_DIR}/lib/
       DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Runtime
       FILES_MATCHING PATTERN lib${dcmtk_Lib}.so*)
+    slicerStripInstalledLibrary(
+      FILES "${Slicer_INSTALL_LIB_DIR}/lib${dcmtk_Lib}.so"
+      COMPONENT Runtime
+      )
   endif()
 endforeach()

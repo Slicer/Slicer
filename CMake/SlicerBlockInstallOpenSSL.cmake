@@ -17,6 +17,7 @@ foreach(library ${OPENSSL_LIBRARIES})
           FILE ${library}
           DESTINATION ${Slicer_INSTALL_LIB_DIR}
           COMPONENT Runtime
+          STRIP
           )
       endif()
     endif()

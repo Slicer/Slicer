@@ -45,6 +45,11 @@ To create a Slicer package including python libraries, you can *NOT* provide you
     REGEX "wsgiref*" EXCLUDE
     ${extra_exclude_pattern}
     )
+  slicerStripInstalledLibrary(
+    PATTERN "${Slicer_INSTALL_ROOT}lib/Python/${PYTHON_STDLIB_SUBDIR}/*.so"
+    COMPONENT Runtime
+    )
+
   # Install python library
   if(UNIX)
     if(NOT APPLE)
@@ -53,6 +58,16 @@ To create a Slicer package including python libraries, you can *NOT* provide you
         DESTINATION ${Slicer_INSTALL_ROOT}lib/Python/lib
         COMPONENT Runtime
         PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ)
+      # Explicitly call "slicerStripInstalledLibrary" because directly
+      # calling "slicerInstallLibrary" improperly gets the python library
+      # filename ("libpython3" instead of "libpython3.6m").
+      #
+      # This happens because "slicerInstallLibrary" internally uses
+      # "get_filename_component" with the NAME_WE option.
+      get_filename_component(libname ${PYTHON_LIBRARY} NAME)
+      slicerStripInstalledLibrary(
+        FILES "${Slicer_INSTALL_ROOT}lib/Python/lib/${libname}"
+        COMPONENT Runtime)
     endif()
   elseif(WIN32)
     get_filename_component(PYTHON_LIB_BASE ${PYTHON_LIBRARY} NAME_WE)

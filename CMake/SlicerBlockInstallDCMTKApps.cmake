@@ -12,6 +12,10 @@ foreach(dcmtk_App ${DCMTK_Apps})
     DESTINATION ${Slicer_INSTALL_BIN_DIR}
     COMPONENT Runtime
     )
+  slicerStripInstalledLibrary(
+    FILES "${Slicer_INSTALL_BIN_DIR}/${dcmtk_App}"
+    COMPONENT Runtime
+    )
   if(APPLE)
     # Fixes Slicer issue #3827
     set(dollar "$")

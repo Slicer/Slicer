@@ -43,12 +43,14 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
     # XcbQpa
     slicerInstallLibrary(FILE ${qt_root_dir}/lib/libQt5XcbQpa.so
       DESTINATION ${QT_INSTALL_LIB_DIR} COMPONENT Runtime
+      STRIP
       )
 
     # ICU libraries
     foreach(iculib IN ITEMS data i18n io le lx test tu uc)
       slicerInstallLibrary(FILE ${qt_root_dir}/lib/libicu${iculib}.so
         DESTINATION ${QT_INSTALL_LIB_DIR} COMPONENT Runtime
+        STRIP
         )
     endforeach()
 
@@ -68,6 +70,7 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
       # no corresponding CMake module.
       slicerInstallLibrary(FILE ${qt_root_dir}/lib/libQt5DesignerComponents.so
         DESTINATION ${QT_INSTALL_LIB_DIR} COMPONENT Runtime
+        STRIP
         )
     endif()
 
@@ -76,6 +79,9 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
       install(PROGRAMS ${qt_root_dir}/libexec/QtWebEngineProcess
         DESTINATION ${Slicer_INSTALL_ROOT}/libexec COMPONENT Runtime
         )
+      slicerStripInstalledLibrary(
+        FILES "${Slicer_INSTALL_ROOT}/libexec/QtWebEngineProcess"
+        COMPONENT Runtime)
       # XXX Workaround for QTBUG-66346 fixed in Qt >= 5.11 (See https://github.com/Slicer/Slicer/pull/944)
       set(qt_conf_contents "[Paths]\nPrefix = ..\nTranslations = share/QtTranslations")
       install(
@@ -100,6 +106,9 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
           DESTINATION ${QT_INSTALL_LIB_DIR} COMPONENT Runtime
           FILES_MATCHING PATTERN "${QT_LIB_NAME_tmp}*"
           PATTERN "${QT_LIB_NAME_tmp}*.debug" EXCLUDE)
+        slicerStripInstalledLibrary(
+          FILES "${QT_INSTALL_LIB_DIR}/${QT_LIB_NAME_tmp}"
+          COMPONENT Runtime)
       endif()
     endforeach()
 
@@ -168,4 +177,7 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
       DESTINATION ${Slicer_INSTALL_ROOT}/bin COMPONENT Runtime
       RENAME designer-real${CMAKE_EXECUTABLE_SUFFIX}
       )
+    slicerStripInstalledLibrary(
+      FILES "${Slicer_INSTALL_ROOT}/bin/designer-real"
+      COMPONENT Runtime)
   endif()
