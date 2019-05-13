@@ -47,6 +47,12 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
       )
   endif()
 
+  # Markups module needs vtkFrenetSerretFrame, which is available in
+  # SplineDrivenImageSlicer remote module.
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+    -DModule_SplineDrivenImageSlicer:BOOL=ON
+    )
+
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
     -DVTK_USE_GUISUPPORT:BOOL=ON
     -DVTK_USE_QVTK_QTOPENGL:BOOL=ON
