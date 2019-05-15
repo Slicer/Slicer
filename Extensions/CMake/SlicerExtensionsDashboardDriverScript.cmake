@@ -405,9 +405,9 @@ set(track ${CTEST_TRACK_PREFIX}${track}${CTEST_TRACK_SUFFIX})
 # Used in SlicerExtensionPackageAndUploadTarget CMake module
 set(ENV{CTEST_MODEL} ${model})
 
-# For more details, see http://www.kitware.com/blog/home/post/11
+# For more details, see https://cmake.org/cmake/help/latest/module/CTestUseLaunchers.html
 set(CTEST_USE_LAUNCHERS 1)
-if(NOT "${CTEST_CMAKE_GENERATOR}" MATCHES "Make")
+if(NOT "${CTEST_CMAKE_GENERATOR}" MATCHES "Make|Ninja")
   set(CTEST_USE_LAUNCHERS 0)
 endif()
 set(ENV{CTEST_USE_LAUNCHERS_DEFAULT} ${CTEST_USE_LAUNCHERS})
