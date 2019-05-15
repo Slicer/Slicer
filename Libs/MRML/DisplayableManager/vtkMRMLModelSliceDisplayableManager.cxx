@@ -262,6 +262,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     origin[i] = sliceMatrix->GetElement(i,3);
     }
 
+  vtkMath::Normalize(normal);
   plane->SetNormal(normal);
   plane->SetOrigin(origin);
 }

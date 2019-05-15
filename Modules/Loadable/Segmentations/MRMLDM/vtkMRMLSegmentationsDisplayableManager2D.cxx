@@ -421,6 +421,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::SetSlicePlaneFromMat
     origin[i] = sliceMatrix->GetElement(i,3);
     }
 
+  vtkMath::Normalize(normal);
   plane->SetNormal(normal);
   plane->SetOrigin(origin);
 }
