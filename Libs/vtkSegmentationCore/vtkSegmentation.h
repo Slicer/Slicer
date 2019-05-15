@@ -445,6 +445,7 @@ protected:
   /// alphabetical order)
   std::deque< std::string > SegmentIds;
 
+  friend class vtkMRMLSegmentationNode;
   friend class vtkSlicerSegmentationsModuleLogic;
   friend class qMRMLSegmentEditorWidgetPrivate;
 };
