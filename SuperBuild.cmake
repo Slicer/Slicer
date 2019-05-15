@@ -301,7 +301,7 @@ list_conditional_append(Slicer_BUILD_OtsuThresholdImageFilter Slicer_REMOTE_DEPE
 
 Slicer_Remote_Add(DataStore
   GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/Slicer-DataStore"
-  GIT_TAG "fb679171ca9722e8f716902a582e45495331f801"
+  GIT_TAG "e6278c07610d0a8719bfa65b24f2aa7c28332d68"
   OPTION_NAME Slicer_BUILD_DataStore
   LABELS REMOTE_MODULE
   )
