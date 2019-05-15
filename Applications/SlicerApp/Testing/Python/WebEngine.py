@@ -148,11 +148,9 @@ class WebEngineTest(ScriptedLoadableModuleTest):
 
     webWidget = slicer.qSlicerWebWidget()
     webWidget.size = qt.QSize(1024,512)
-    webView = webWidget.webView()
+    webWidget.webView().url = qt.QUrl("")
     webWidget.show()
     self.delayDisplay('Showing widget')
-
-
 
     webWidget.connect("evalResult(QString,QString)", self.onEvalResult)
 
@@ -183,55 +181,49 @@ class WebEngineTest(ScriptedLoadableModuleTest):
     if not self.gotCorrectResponse:
       raise AssertionError("Did not get back expected result!")
 
-
     #
-    # Note - calling slicerPython code from JavaScript code works when
-    # executed from the web page, but oddly not from within the
-    # context of a self test, so the following tests are disabled for now.
+    # Test python evaluation from javascript
     #
+    self.delayDisplay('Call a python method')
 
-    if False:
+    slicer.app.settings().setValue("WebEngine/AllowPythonExecution", ctk.ctkMessageBox.AcceptRole)
 
-        self.delayDisplay('Call a python method')
+    webWidget.evalJS(r"""
+        new QWebChannel(qt.webChannelTransport, channel => {
+            const slicerPython = channel.objects.slicerPython;
 
-        webWidget.evalJS("""
-            new QWebChannel(qt.webChannelTransport, channel => {
-                const slicerPython = channel.objects.slicerPython;
+            let pythonCode = "dialog = qt.QInputDialog(slicer.util.mainWindow())\n";
+            pythonCode += "dialog.setLabelText('hello')\n";
+            pythonCode += "dialog.open()\n";
+            pythonCode += "qt.QTimer.singleShot(1000, dialog.close)\n";
 
-                let pythonCode = "dialog = qt.QInputDialog(slicer.util.mainWindow())\n";
-                pythonCode += "dialog.setLabelText('hello')\n";
-                pythonCode += "dialog.open()\n";
-                pythonCode += "qt.QTimer.singleShot(1000, dialog.close)\n";
+            slicerPython.evalPython(pythonCode);
+        });
+    """)
 
-                slicerPython.evalPython(pythonCode);
-            });
-        """)
+    self.delayDisplay('Test access to python via js', msec=500)
 
+    if hasattr(slicer.modules, 'slicerPythonValueFromJS'):
+      del slicer.modules.slicerPythonValueFromJS
 
+    webWidget.evalJS("""
+        new QWebChannel(qt.webChannelTransport, channel => {
+            out = channel.objects.slicerPython.evalPython("slicer.modules.slicerPythonValueFromJS = 42");
+        });
+    """)
 
-        self.delayDisplay('Test access to python via js')
+    iteration = 0
+    while iteration < 3 and not hasattr(slicer.modules, 'slicerPythonValueFromJS'):
+      # Specify an explicit delay to ensure async execution by the
+      # webengine has completed.
+      self.delayDisplay('Waiting for python value from JS...', msec=500)
+      iteration += 1
 
-        if hasattr(slicer.modules, 'slicerPythonValueFromJS'):
-          del slicer.modules.slicerPythonValueFromJS
+    if iteration >= 3:
+      raise RuntimeError("Couldn't get python value back from JS")
 
-        webWidget.evalJS("""
-            new QWebChannel(qt.webChannelTransport, channel => {
-                channel.objects.slicerPython.evalPython("slicer.modules.slicerPythonValueFromJS = 42");
-            });
-        """)
+    self.delayDisplay('Value of %d received via javascipt' % slicer.modules.slicerPythonValueFromJS)
 
-        iteration = 0
-        while iteration < 5 and not hasattr(slicer.modules, 'slicerPythonValueFromJS'):
-          self.delayDisplay('Waiting for python value from JS...')
-          iteration += 1
-
-        if iteration >= 5:
-          raise RuntimeError("Couldn't get python value back from JS")
-
-        del slicer.modules.slicerPythonValueFromJS
-
-
-        self.delayDisplay('Value of %d receieved via javascipt' % slicerPythonValueFromJS)
-
+    del slicer.modules.slicerPythonValueFromJS
 
     self.delayDisplay('Test passed!')

@@ -41,8 +41,8 @@ public:
 public slots:
 
   /// Convenient function to execute python code from 
-  /// the the JavaScript (when an instance of this class
-  /// is registered with the WebChannel.
+  /// the JavaScript (when an instance of this class
+  /// is registered with the WebChannel).
   ///
   /// Internally Slicer's python manager is used to execute
   /// the passed code, and the resulting QVariant is returned
