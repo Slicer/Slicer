@@ -286,8 +286,18 @@ class SlicerExtensionBuildSystemTest(unittest.TestCase):
         # dependers of ExtensionsA can still configure/build/test without
         # any issues. See #4247
         module_dir = extension_dir + '/Mod%s' % suffix
-        with open(module_dir + '/Testing/Python/CMakeLists.txt', 'a') as content:
-          content.write("add_test(NAME FailingTest COMMAND invalid_test)")
+        module_cmakelists = module_dir + '/Testing/Python/CMakeLists.txt'
+        with open(module_cmakelists, 'a') as content:
+          content.write("add_test(NAME FailingTest COMMAND invalid_test)\n")
+
+        display_error_script = module_dir + '/Testing/Python/slicerDisplayErrors.cmake'
+        with open(display_error_script, 'w') as content:
+          content.write(textwrap.dedent("""
+          message("ERROR: In /path/to/Slicer/qSlicerCoreApplication.cxx, line 212
+          vtkObject (0x25f2b30): This is an an error message from VTK")
+          """))
+        with open(module_cmakelists, 'a') as content:
+          content.write("add_test(NAME TestDisplayingError COMMAND ${CMAKE_COMMAND} -P \"%s\")\n" % display_error_script)
 
       if suffix == 'B':
         project = ExtensionProject(extension_dir)
