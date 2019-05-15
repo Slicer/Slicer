@@ -118,9 +118,15 @@ signals:
   /// emited with result of evalJS
   void evalResult(QString js, QString result);
 
+  /// signal passed through from QWebEngineView
+  void loadStarted();
+  void loadProgress(int progress);
+  void loadFinished(bool ok);
+
 protected slots:
   virtual void initJavascript();
   virtual void onLoadStarted();
+  virtual void onLoadProgress(int progress);
   virtual void onLoadFinished(bool ok);
 #ifdef Slicer_HAVE_WEBKIT_SUPPORT
   virtual void onLinkClicked(const QUrl& url);
