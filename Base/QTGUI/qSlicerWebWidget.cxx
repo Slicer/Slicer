@@ -214,6 +214,29 @@ void qSlicerWebWidgetPrivate::onAppAboutToQuit()
 
 // --------------------------------------------------------------------------
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+void qSlicerWebWidgetPrivate::updateWebChannelScript(QByteArray& webChannelScript)
+{
+  webChannelScript.append(
+        "\n"
+        "new QWebChannel(qt.webChannelTransport, function(channel) {\n"
+        );
+  this->initializeWebChannelTransport(webChannelScript);
+  webChannelScript.append(
+        "});\n"
+        );
+}
+#endif
+
+// --------------------------------------------------------------------------
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+void qSlicerWebWidgetPrivate::initializeWebChannelTransport(QByteArray& webChannelScript)
+{
+  webChannelScript.append(" window.slicerPython = channel.objects.slicerPython;\n");
+}
+#endif
+
+// --------------------------------------------------------------------------
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
 void qSlicerWebWidgetPrivate::initializeWebEngineProfile(QWebEngineProfile* profile)
 {
   if (!profile)

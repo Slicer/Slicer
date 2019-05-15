@@ -152,15 +152,17 @@ class WebEngineTest(ScriptedLoadableModuleTest):
     webWidget.show()
     self.delayDisplay('Showing widget')
 
-    webWidget.connect("evalResult(QString,QString)", self.onEvalResult)
-
     webWidget.evalJS("""
         const paragraph = document.createElement('p');
         paragraph.innerText = 'Hello from Slicer!';
         document.body.appendChild(paragraph);
     """)
-
     self.delayDisplay('Slicer should be saying hello!')
+
+    #
+    # Test javascript evaluation + use of "evalResult()" signal
+    #
+    webWidget.connect("evalResult(QString,QString)", self.onEvalResult)
 
     self.delayDisplay('Slicer setting a javascript value')
 
@@ -189,16 +191,12 @@ class WebEngineTest(ScriptedLoadableModuleTest):
     slicer.app.settings().setValue("WebEngine/AllowPythonExecution", ctk.ctkMessageBox.AcceptRole)
 
     webWidget.evalJS(r"""
-        new QWebChannel(qt.webChannelTransport, channel => {
-            const slicerPython = channel.objects.slicerPython;
+        let pythonCode = "dialog = qt.QInputDialog(slicer.util.mainWindow())\n";
+        pythonCode += "dialog.setLabelText('hello')\n";
+        pythonCode += "dialog.open()\n";
+        pythonCode += "qt.QTimer.singleShot(1000, dialog.close)\n";
 
-            let pythonCode = "dialog = qt.QInputDialog(slicer.util.mainWindow())\n";
-            pythonCode += "dialog.setLabelText('hello')\n";
-            pythonCode += "dialog.open()\n";
-            pythonCode += "qt.QTimer.singleShot(1000, dialog.close)\n";
-
-            slicerPython.evalPython(pythonCode);
-        });
+        window.slicerPython.evalPython(pythonCode);
     """)
 
     self.delayDisplay('Test access to python via js', msec=500)
@@ -207,9 +205,7 @@ class WebEngineTest(ScriptedLoadableModuleTest):
       del slicer.modules.slicerPythonValueFromJS
 
     webWidget.evalJS("""
-        new QWebChannel(qt.webChannelTransport, channel => {
-            out = channel.objects.slicerPython.evalPython("slicer.modules.slicerPythonValueFromJS = 42");
-        });
+        window.slicerPython.evalPython("slicer.modules.slicerPythonValueFromJS = 42");
     """)
 
     iteration = 0

@@ -152,18 +152,16 @@ void qSlicerExtensionsInstallWidgetPrivate::setFailurePage(const QStringList& er
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidgetPrivate::updateWebChannelScript(QByteArray& webChannelScript)
+void qSlicerExtensionsInstallWidgetPrivate::initializeWebChannelTransport(QByteArray& webChannelScript)
 {
 #if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
   Q_UNUSED(webChannelScript);
 #else
+  this->Superclass::initializeWebChannelTransport(webChannelScript);
   webChannelScript.append(
-      "\n"
-      "new QWebChannel(qt.webChannelTransport, function(channel) {"
-      " window.extensions_manager_model = channel.objects.extensions_manager_model;"
+      " window.extensions_manager_model = channel.objects.extensions_manager_model;\n"
       // See ExtensionInstallWidgetWebChannelProxy
-      " window.extensions_install_widget = channel.objects.extensions_install_widget;"
-      "});"
+      " window.extensions_install_widget = channel.objects.extensions_install_widget;\n"
       );
 #endif
 }

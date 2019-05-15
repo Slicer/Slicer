@@ -66,8 +66,8 @@ public:
 
   void setFailurePage(const QStringList &errors);
 
-  virtual void updateWebChannelScript(QByteArray& webChannelScript);
   virtual void initializeWebChannel(QWebChannel* webChannel);
+  virtual void initializeWebChannelTransport(QByteArray& webChannelScript);
   void registerExtensionsManagerModel(qSlicerExtensionsManagerModel* oldModel, qSlicerExtensionsManagerModel* newModel);
 
   qSlicerExtensionsManagerModel * ExtensionsManagerModel;
