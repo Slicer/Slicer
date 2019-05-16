@@ -265,7 +265,10 @@ class ScriptedLoadableModuleLogic():
     This method can be overridden in derived classes to create a default parameter node with all
     parameter values set to their default.
     """
-    node = slicer.vtkMRMLScriptedModuleNode()
+    if slicer.mrmlScene is None:
+      return
+
+    node = slicer.mrmlScene.CreateNodeByClass("vtkMRMLScriptedModuleNode")
     if self.isSingletonParameterNode:
       node.SetSingletonTag( self.moduleName )
     # Add module name in an attribute to allow filtering in node selector widgets
