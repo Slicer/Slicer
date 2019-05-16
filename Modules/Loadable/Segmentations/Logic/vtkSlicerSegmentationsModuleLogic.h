@@ -362,6 +362,11 @@ protected:
   static bool ExportSegmentsClosedSurfaceRepresentationToObjFile(std::string destinationFolder,
     vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs, bool lps, double sizeScale);
 
+  /// Generate a safe file name from a given string.
+  /// The method is in this logic so that it does not cause confusion throughout Slicer
+  /// (there is an implementation already in qSlicerSaveDataDialogPrivate::nodeFileInfo and it would be good to keep a central one)
+  static std::string GetSafeFileName(std::string originalName);
+
 protected:
   vtkSlicerSegmentationsModuleLogic();
   virtual ~vtkSlicerSegmentationsModuleLogic();
