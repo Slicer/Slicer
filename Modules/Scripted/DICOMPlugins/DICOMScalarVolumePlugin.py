@@ -618,6 +618,11 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       columns, rows, slices = volumeNode.GetImageData().GetDimensions()
       corners = numpy.zeros(shape=[slices,2,2,3])
       uids = volumeNode.GetAttribute('DICOM.instanceUIDs').split()
+      if len(uids) != slices:
+        # There is no uid for each slice, so most likely all frames are in a single file
+        # or maybe there is a problem with the sequence
+        logging.warning("Cannot get DICOM slice positions for volume "+volumeNode.GetName())
+        return None
       for sliceIndex in range(slices):
         uid = uids[sliceIndex]
         # get slice geometry from instance
