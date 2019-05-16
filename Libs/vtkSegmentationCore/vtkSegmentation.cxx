@@ -75,6 +75,7 @@ vtkSegmentation::vtkSegmentation()
   this->MasterRepresentationCallbackCommand->SetCallback( vtkSegmentation::OnMasterRepresentationModified );
 
   this->MasterRepresentationModifiedEnabled = true;
+  this->SegmentModifiedEnabled = true;
 
   this->SegmentIdAutogeneratorIndex = 0;
 
@@ -265,6 +266,32 @@ bool vtkSegmentation::SetMasterRepresentationModifiedEnabled(bool enabled)
 }
 
 //---------------------------------------------------------------------------
+bool vtkSegmentation::SetSegmentModifiedEnabled(bool enabled)
+{
+  if (this->SegmentModifiedEnabled == enabled)
+    {
+    return this->SegmentModifiedEnabled;
+    }
+  // Add/remove observation of master representation in all segments
+  for (SegmentMap::iterator segmentIt = this->Segments.begin(); segmentIt != this->Segments.end(); ++segmentIt)
+    {
+    if (enabled)
+      {
+      if (!segmentIt->second->HasObserver(vtkCommand::ModifiedEvent, this->SegmentCallbackCommand))
+        {
+        segmentIt->second->AddObserver(vtkCommand::ModifiedEvent, this->SegmentCallbackCommand);
+        }
+      }
+    else
+      {
+      segmentIt->second->RemoveObservers(vtkCommand::ModifiedEvent, this->SegmentCallbackCommand);
+      }
+    }
+  this->SegmentModifiedEnabled = enabled;
+  return !enabled; // return old value
+}
+
+//---------------------------------------------------------------------------
 std::string vtkSegmentation::GenerateUniqueSegmentID(std::string id)
 {
   if (!id.empty() &&  this->Segments.find(id) == this->Segments.end())
@@ -312,7 +339,7 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
     }
 
   // Observe segment underlying data for changes
-  if (!segment->HasObserver(vtkCommand::ModifiedEvent, this->SegmentCallbackCommand))
+  if (this->SegmentModifiedEnabled && !segment->HasObserver(vtkCommand::ModifiedEvent, this->SegmentCallbackCommand))
     {
     segment->AddObserver(vtkCommand::ModifiedEvent, this->SegmentCallbackCommand);
     }
@@ -1031,6 +1058,11 @@ bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentati
     }
 
   // Perform conversion on all segments (no overwrites)
+  // Delay segment modified event invocation until all segments have the new representation.
+  std::deque< std::string > modifiedSegmentIds;
+
+  bool wasSegmentModifiedEnabled = this->SetSegmentModifiedEnabled(false);
+
   for (SegmentMap::iterator segmentIt = this->Segments.begin(); segmentIt != this->Segments.end(); ++segmentIt)
     {
     vtkDataObject* representationBefore = segmentIt->second->GetRepresentation(targetRepresentationName);
@@ -1044,9 +1076,23 @@ bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentati
       || (representationBefore != NULL && representationAfter != NULL && representationBefore->GetMTime() != representationAfter->GetMTime()) )
       {
       // representation has been modified
-      const char* segmentId = segmentIt->first.c_str();
-      this->InvokeEvent(vtkSegmentation::RepresentationModified, (void*)segmentId);
+      modifiedSegmentIds.push_back(segmentIt->first);
       }
+    }
+
+  this->SetSegmentModifiedEnabled(wasSegmentModifiedEnabled);
+
+  // All the updates are completed, now invoke modified events
+  for (std::deque< std::string >::iterator segmentIdIt = modifiedSegmentIds.begin();
+    segmentIdIt != modifiedSegmentIds.end(); ++segmentIdIt)
+    {
+    const char* segmentId = segmentIdIt->c_str();
+    vtkSegment* segment = GetSegment(segmentId);
+    if (segment)
+      {
+      segment->Modified();
+      }
+    this->InvokeEvent(vtkSegmentation::RepresentationModified, (void*)segmentId);
     }
 
   this->InvokeEvent(vtkSegmentation::ContainedRepresentationNamesModified);
@@ -1089,11 +1135,26 @@ bool vtkSegmentation::CreateRepresentation(vtkSegmentationConverter::ConversionP
 //---------------------------------------------------------------------------
 void vtkSegmentation::RemoveRepresentation(const std::string& representationName)
 {
+  // We temporarily disable modification of segments to avoid invoking events
+  // when segmentation is in an inconsistent state (when segments have different
+  // representations). We call Modified events after all the updates are completed.
+  std::deque< vtkSegment* > modifiedSegments;
+  bool wasSegmentModifiedEnabled = this->SetSegmentModifiedEnabled(false);
   for (SegmentMap::iterator segmentIt = this->Segments.begin(); segmentIt != this->Segments.end(); ++segmentIt)
     {
-    segmentIt->second->RemoveRepresentation(representationName);
+    if (segmentIt->second->RemoveRepresentation(representationName))
+      {
+      modifiedSegments.push_back(segmentIt->second);
+      }
     }
+  this->SetSegmentModifiedEnabled(wasSegmentModifiedEnabled);
 
+  // All the updates are completed, now invoke modified events
+  for (std::deque< vtkSegment* >::iterator segmentIt = modifiedSegments.begin(); segmentIt != modifiedSegments.end();
+    ++segmentIt)
+    {
+    (*segmentIt)->Modified();
+    }
   this->InvokeEvent(vtkSegmentation::ContainedRepresentationNamesModified);
 }
 
