@@ -1897,6 +1897,7 @@ void qMRMLSegmentEditorWidget::onSegmentationNodeChanged(vtkMRMLNode* node)
 
   this->setActiveEffect(NULL); // deactivate current effect when we switch to a different segmentation
   d->ParameterSetNode->SetAndObserveSegmentationNode(vtkMRMLSegmentationNode::SafeDownCast(node));
+  this->updateWidgetFromMRML();
 }
 
 //-----------------------------------------------------------------------------
