@@ -418,3 +418,15 @@ QList<double> qMRMLSliceView::convertXYZToRAS(const QList<double>& xyz)const
   ret << 0. << 0. << 0.;
   return ret;
 }
+
+// --------------------------------------------------------------------------
+void qMRMLSliceView::setViewCursor(const QCursor &cursor)
+{
+  this->setCursor(cursor);
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
+  if (this->VTKWidget() != NULL)
+    {
+    this->VTKWidget()->setQVTKCursor(cursor);
+    }
+#endif
+}

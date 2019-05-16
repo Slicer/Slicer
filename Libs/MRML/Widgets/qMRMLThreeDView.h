@@ -76,6 +76,9 @@ public:
                                bool resetTranslation = true,
                                bool resetDistance = true);
 
+  /// Set cursor in the view area
+  Q_INVOKABLE void setViewCursor(const QCursor &);
+
 public slots:
 
   /// Set the MRML \a scene that should be listened for events

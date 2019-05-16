@@ -87,6 +87,8 @@ public:
   /// in the LightBox pane.
   Q_INVOKABLE QList<double> convertXYZToRAS(const QList<double> &xyz)const;
 
+  /// Set cursor in the view area
+  Q_INVOKABLE void setViewCursor(const QCursor &);
 
 public slots:
 

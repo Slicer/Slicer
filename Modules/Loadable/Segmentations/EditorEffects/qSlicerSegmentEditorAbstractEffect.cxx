@@ -515,7 +515,16 @@ void qSlicerSegmentEditorAbstractEffect::cursorOff(qMRMLWidget* viewWidget)
   Q_D(qSlicerSegmentEditorAbstractEffect);
 
   d->SavedCursor = QCursor(viewWidget->cursor());
-  viewWidget->setCursor(QCursor(Qt::BlankCursor));
+  qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(viewWidget);
+  qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(viewWidget);
+  if (sliceWidget && sliceWidget->sliceView())
+    {
+    sliceWidget->sliceView()->setViewCursor(QCursor(Qt::BlankCursor));
+    }
+  else if (threeDWidget && threeDWidget->threeDView())
+    {
+    threeDWidget->threeDView()->setViewCursor(QCursor(Qt::BlankCursor));
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -523,7 +532,16 @@ void qSlicerSegmentEditorAbstractEffect::cursorOn(qMRMLWidget* viewWidget)
 {
   Q_D(qSlicerSegmentEditorAbstractEffect);
 
-  viewWidget->setCursor(d->SavedCursor);
+  qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(viewWidget);
+  qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(viewWidget);
+  if (sliceWidget && sliceWidget->sliceView())
+    {
+    sliceWidget->sliceView()->setViewCursor(d->SavedCursor);
+    }
+  else if (threeDWidget && threeDWidget->threeDView())
+    {
+    threeDWidget->threeDView()->setViewCursor(d->SavedCursor);
+    }
 }
 
 //-----------------------------------------------------------------------------
