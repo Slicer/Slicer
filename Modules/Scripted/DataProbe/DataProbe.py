@@ -250,7 +250,7 @@ class DataProbeInfoWidget(object):
     # collect information from displayable managers
     displayableManagerCollection = vtk.vtkCollection()
     if sliceNode:
-      sliceView = slicer.app.layoutManager().sliceWidget(sliceNode.GetLayoutName()).sliceView()
+      sliceView = slicer.app.layoutManager().sliceWidget(sliceNode.GetName()).sliceView()
       sliceView.getDisplayableManagers(displayableManagerCollection)
     aggregatedDisplayableManagerInfo = ''
     for index in xrange(displayableManagerCollection.GetNumberOfItems()):
