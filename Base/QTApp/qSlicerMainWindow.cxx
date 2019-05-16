@@ -111,6 +111,7 @@ qSlicerMainWindowPrivate::qSlicerMainWindowPrivate(qSlicerMainWindow& object)
   this->ModuleSelectorToolBar = 0;
   this->LayoutManager = 0;
   this->WindowInitialShowCompleted = false;
+  this->IsClosing = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -1099,6 +1100,16 @@ void qSlicerMainWindow::onFileRecentLoadedActionTriggered()
 void qSlicerMainWindow::closeEvent(QCloseEvent *event)
 {
   Q_D(qSlicerMainWindow);
+
+  // This is necessary because of a Qt bug on MacOS.
+  // (https://bugreports.qt.io/browse/QTBUG-43344).
+  // This flag prevents a second close event to be handled.
+  if (d->IsClosing)
+    {
+    return;
+    }
+  d->IsClosing = true;
+
   if (d->confirmCloseApplication())
     {
     // Exit current module to leave it a chance to change the UI (e.g. layout)
