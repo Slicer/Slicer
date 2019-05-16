@@ -516,6 +516,18 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 #endif
     pipeline->Cutter->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
 
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
+    // If there is no input or if the input has no points, the vtkTransformPolyDataFilter will display an error message
+    // on every update: "No input data".
+    // To prevent the error, if the input is empty then the actor should not be visible since there is nothing to display.
+    pipeline->GeometryFilter->Update();
+    if (!pipeline->GeometryFilter->GetOutput() || pipeline->GeometryFilter->GetOutput()->GetNumberOfPoints() < 1)
+      {
+      pipeline->Actor->SetVisibility(false);
+      return;
+      }
+#endif
+
     //  Set Poly Data Transform
     vtkNew<vtkMatrix4x4> rasToSliceXY;
     vtkMatrix4x4::Invert(this->SliceXYToRAS, rasToSliceXY.GetPointer());
