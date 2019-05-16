@@ -1066,6 +1066,12 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
     newColorTable->SetTypeToUser();
     newColorTable->NamesInitialisedOn();
     newColorTable->SetAttribute("Category", "Segmentations");
+    // Add an item to the color table, otherwise we get a warning
+    // when we set it in the display node.
+    newColorTable->SetNumberOfColors(1);
+    newColorTable->GetLookupTable()->SetRange(0, 0);
+    newColorTable->GetLookupTable()->SetNumberOfTableValues(1);
+    newColorTable->SetColor(0, "Background", 0.0, 0.0, 0.0, 0.0);
     labelmapNode->GetScene()->AddNode(newColorTable);
     labelmapNode->GetDisplayNode()->SetAndObserveColorNodeID(newColorTable->GetID());
     }
