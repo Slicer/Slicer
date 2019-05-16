@@ -535,3 +535,17 @@ void qMRMLThreeDView::setViewCursor(const QCursor &cursor)
     }
 #endif
 }
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDView::unsetViewCursor()
+{
+  this->unsetCursor();
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
+  if (this->VTKWidget() != NULL)
+    {
+    // TODO: it would be better to restore default cursor, but QVTKOpenGLNativeWidget
+    // API does not have an accessor method to the default cursor.
+    this->VTKWidget()->setQVTKCursor(QCursor(Qt::ArrowCursor));
+    }
+#endif
+}
