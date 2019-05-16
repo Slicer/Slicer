@@ -733,6 +733,7 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
       handleRep->VisibilityOff();
       handleRep->HandleVisibilityOff();
       handleRep->LabelVisibilityOff();
+      seedWidget->GetSeed(n)->EnabledOff();
       // If mouse pointer is over a markup when switching to a different slice,
       // its interaction state would stuck in vtkHandleRepresentation::NearSeed.
       handleRep->SetInteractionState(vtkHandleRepresentation::Outside);
