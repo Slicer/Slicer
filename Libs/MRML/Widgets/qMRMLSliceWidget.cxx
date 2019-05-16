@@ -80,12 +80,8 @@ void qMRMLSliceWidgetPrivate::init()
 // --------------------------------------------------------------------------
 void qMRMLSliceWidgetPrivate::setSliceViewSize(const QSize& size)
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-  const QSize scaledSize = size * this->SliceView->devicePixelRatio();
-  this->SliceController->setSliceViewSize(scaledSize);
-#else
-  this->SliceController->setSliceViewSize(size);
-#endif
+  QSizeF scaledSizeF = QSizeF(size) * this->SliceView->devicePixelRatioF();
+  this->SliceController->setSliceViewSize(scaledSizeF.toSize());
 }
 
 // --------------------------------------------------------------------------
