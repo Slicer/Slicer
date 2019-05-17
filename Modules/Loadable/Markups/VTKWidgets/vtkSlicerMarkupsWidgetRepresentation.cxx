@@ -28,6 +28,7 @@
 #include "vtkRenderer.h"
 #include "vtkSphereSource.h"
 #include "vtkStringArray.h"
+#include "vtkTextActor.h"
 #include "vtkTextProperty.h"
 
 vtkSlicerMarkupsWidgetRepresentation::ControlPointsPipeline::ControlPointsPipeline()
@@ -91,7 +92,6 @@ vtkSlicerMarkupsWidgetRepresentation::ControlPointsPipeline::ControlPointsPipeli
 
   this->GlyphSourceSphere = vtkSmartPointer<vtkSphereSource>::New();
   this->GlyphSourceSphere->SetRadius(0.5);
-
 };
 
 vtkSlicerMarkupsWidgetRepresentation::ControlPointsPipeline::~ControlPointsPipeline()
@@ -100,13 +100,15 @@ vtkSlicerMarkupsWidgetRepresentation::ControlPointsPipeline::~ControlPointsPipel
 //----------------------------------------------------------------------
 vtkSlicerMarkupsWidgetRepresentation::vtkSlicerMarkupsWidgetRepresentation()
 {
-  this->ViewScaleFactor = 1.0;
+  this->ViewScaleFactorMmPerPixel = 1.0;
+  this->ScreenSizePixel = 1000;
 
   this->ControlPointSize = 3.0;
-  this->Tolerance                = 2.0;
-  this->PixelTolerance           = 1;
   this->NeedToRender             = false;
   this->ClosedLoop               = 0;
+
+  this->TextActor = vtkSmartPointer<vtkTextActor>::New();
+  this->TextActor->SetInput("");
 
   this->PointPlacer = vtkSmartPointer<vtkFocalPlanePointPlacer>::New();
 
@@ -487,6 +489,8 @@ void vtkSlicerMarkupsWidgetRepresentation::UpdateFromMRML(
       }
     this->SetMarkupsNode(markupsNode);
     }
+
+  this->TextActor->SetVisibility(this->MarkupsDisplayNode->GetPropertiesLabelVisibility());
 
   this->NeedToRenderOn(); // TODO: to improve performance, call this only if it is actually needed
 }

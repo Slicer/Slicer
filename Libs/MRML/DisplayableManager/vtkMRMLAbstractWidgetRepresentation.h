@@ -112,7 +112,7 @@ public:
   /// Specify tolerance for performing pick operations of points
   /// (see ActivateNode).
   /// Tolerance is defined in terms of percentage of the handle size.
-  /// Default value is 0.5
+  /// Default value is 0.2
   vtkSetMacro(Tolerance, double);
   vtkGetMacro(Tolerance, double);
 
@@ -146,9 +146,6 @@ public:
   // using the renderer of this class.
   void GetRendererComputedDisplayPositionFromWorldPosition(const double worldPos[3], double displayPos[2]);
 
-  // Calculate view scale factor
-  void UpdateViewScaleFactor();
-
   void UpdateRelativeCoincidentTopologyOffsets(vtkMapper* mapper);
 
   // The renderer in which this widget is placed
@@ -160,11 +157,12 @@ public:
   double Tolerance;
   double PixelTolerance;
 
+  // Allows global rescaling of all widgets (to compensate for larger or smaller physical screen size)
+  double ScreenScaleFactor;
+
   vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;
 
   bool AlwaysOnTop;
-
-  double ViewScaleFactor;
 
   // Temporary variable to store GetBounds() result
   double Bounds[6];

@@ -57,7 +57,7 @@ public:
 
 public:
   vtkWeakPointer<vtkSlicerMarkupsLogic> MarkupsLogic;
-  vtkWeakPointer<vtkMRMLMarkupsFiducialNode> CurrentMarkupsNode;
+  vtkWeakPointer<vtkMRMLMarkupsNode> CurrentMarkupsNode;
   vtkWeakPointer<vtkMRMLSelectionNode> SelectionNode;
   vtkWeakPointer<vtkMRMLInteractionNode> InteractionNode;
   QMenu* PlaceMenu;
@@ -67,7 +67,7 @@ public:
   QColor DefaultNodeColor;
   bool DeleteMarkupsButtonVisible;
   bool DeleteAllMarkupsOptionVisible;
-  bool LastSignaledPlaceModeEnabled; // if placeModeEnabled changes compared to this value then a activeMarkupsFiducialPlaceModeChanged signal will be emitted
+  bool LastSignaledPlaceModeEnabled; // if placeModeEnabled changes compared to this value then a activeMarkupsPlaceModeChanged signal will be emitted
 
 };
 
@@ -177,6 +177,13 @@ vtkMRMLNode* qSlicerMarkupsPlaceWidget::currentNode() const
 vtkMRMLMarkupsFiducialNode* qSlicerMarkupsPlaceWidget::currentMarkupsFiducialNode() const
 {
   Q_D(const qSlicerMarkupsPlaceWidget);
+  return vtkMRMLMarkupsFiducialNode::SafeDownCast(d->CurrentMarkupsNode);
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLMarkupsNode* qSlicerMarkupsPlaceWidget::currentMarkupsNode() const
+{
+  Q_D(const qSlicerMarkupsPlaceWidget);
   return d->CurrentMarkupsNode;
 }
 
@@ -204,8 +211,7 @@ void qSlicerMarkupsPlaceWidget::setCurrentNode(vtkMRMLNode* currentNode)
 {
   Q_D(qSlicerMarkupsPlaceWidget);
 
-  vtkMRMLMarkupsFiducialNode* currentMarkupsNode = vtkMRMLMarkupsFiducialNode::SafeDownCast( currentNode );
-
+  vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(currentNode);
   if (currentMarkupsNode==d->CurrentMarkupsNode)
     {
     // not changed
@@ -223,7 +229,7 @@ void qSlicerMarkupsPlaceWidget::setCurrentNode(vtkMRMLNode* currentNode)
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsPlaceWidget::deleteLastPoint()
 {
-  vtkMRMLMarkupsFiducialNode* currentMarkupsNode = this->currentMarkupsFiducialNode();
+  vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
   if ( currentMarkupsNode == nullptr )
     {
     return;
@@ -244,7 +250,7 @@ void qSlicerMarkupsPlaceWidget::deleteLastMarkup()
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsPlaceWidget::deleteAllPoints()
 {
-  vtkMRMLMarkupsFiducialNode* currentMarkupsNode = this->currentMarkupsFiducialNode();
+  vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
   if ( currentMarkupsNode == nullptr )
     {
     return;
@@ -263,7 +269,7 @@ void qSlicerMarkupsPlaceWidget::deleteAllMarkups()
 bool qSlicerMarkupsPlaceWidget::currentNodeActive() const
 {
   Q_D(const qSlicerMarkupsPlaceWidget);
-  vtkMRMLMarkupsFiducialNode* currentMarkupsNode = this->currentMarkupsFiducialNode();
+  vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
   if (d->MarkupsLogic == nullptr || this->mrmlScene() == nullptr ||
       currentMarkupsNode == nullptr || d->InteractionNode == nullptr ||
       d->SelectionNode == nullptr)
@@ -272,8 +278,8 @@ bool qSlicerMarkupsPlaceWidget::currentNodeActive() const
     }
   bool currentNodeActive = (d->MarkupsLogic->GetActiveListID().compare( currentMarkupsNode->GetID() ) == 0);
   const char* activePlaceNodeClassName = d->SelectionNode->GetActivePlaceNodeClassName();
-  bool fiducialMode = activePlaceNodeClassName && std::string(activePlaceNodeClassName).compare("vtkMRMLMarkupsFiducialNode")==0;
-  return fiducialMode && currentNodeActive;
+  bool placeNodeClassNameMatches = activePlaceNodeClassName && std::string(activePlaceNodeClassName).compare(currentMarkupsNode->GetClassName())==0;
+  return placeNodeClassNameMatches && currentNodeActive;
 }
 
 //-----------------------------------------------------------------------------
@@ -293,7 +299,7 @@ void qSlicerMarkupsPlaceWidget::setCurrentNodeActive(bool active)
     {
     if (active)
       {
-      d->MarkupsLogic->SetActiveListID(this->currentMarkupsFiducialNode());
+      d->MarkupsLogic->SetActiveListID(this->currentMarkupsNode());
       }
     else
       {
@@ -311,15 +317,15 @@ bool qSlicerMarkupsPlaceWidget::placeModeEnabled() const
     {
     return false;
     }
-  if (d->SelectionNode == nullptr || d->InteractionNode == nullptr || this->mrmlScene() == nullptr )
+  vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
+  if (d->SelectionNode == nullptr || d->InteractionNode == nullptr || this->mrmlScene() == nullptr || currentMarkupsNode == nullptr)
     {
     return false;
     }
   bool placeMode = d->InteractionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place;
   const char* activePlaceNodeClassName = d->SelectionNode->GetActivePlaceNodeClassName();
-  bool fiducialMode = activePlaceNodeClassName && std::string(activePlaceNodeClassName).compare("vtkMRMLMarkupsFiducialNode")==0;
-
-  return placeMode && fiducialMode;
+  bool placeNodeClassNameMatches = activePlaceNodeClassName && std::string(activePlaceNodeClassName).compare(currentMarkupsNode->GetClassName()) == 0;
+  return placeMode && placeNodeClassNameMatches;
 }
 
 //-----------------------------------------------------------------------------
@@ -327,7 +333,7 @@ void qSlicerMarkupsPlaceWidget::setPlaceModeEnabled(bool placeEnable)
 {
   Q_D(qSlicerMarkupsPlaceWidget);
   if (d->MarkupsLogic == nullptr || this->mrmlScene() == nullptr ||
-      d->InteractionNode == nullptr || this->currentMarkupsFiducialNode() == nullptr)
+      d->InteractionNode == nullptr || this->currentMarkupsNode() == nullptr)
     {
     if (placeEnable)
       {
@@ -341,7 +347,7 @@ void qSlicerMarkupsPlaceWidget::setPlaceModeEnabled(bool placeEnable)
     // activate and set place mode
     if (!wasActive)
       {
-      d->MarkupsLogic->SetActiveListID(this->currentMarkupsFiducialNode());
+      d->MarkupsLogic->SetActiveListID(this->currentMarkupsNode());
       }
     if (d->PlaceMultipleMarkups == ForcePlaceSingleMarkup)
       {
@@ -389,7 +395,7 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
 {
   Q_D(qSlicerMarkupsPlaceWidget);
 
-  vtkMRMLMarkupsFiducialNode* currentMarkupsNode = currentMarkupsFiducialNode();
+  vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
   if (d->MarkupsLogic == nullptr || this->mrmlScene() == nullptr ||
       d->InteractionNode == nullptr || currentMarkupsNode == nullptr)
     {
@@ -403,6 +409,7 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
     if (d->LastSignaledPlaceModeEnabled)
       {
       emit activeMarkupsFiducialPlaceModeChanged(false);
+      emit activeMarkupsPlaceModeChanged(false);
       d->LastSignaledPlaceModeEnabled = false;
       }
     return;
@@ -464,6 +471,7 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
   if (d->LastSignaledPlaceModeEnabled != currentPlaceModeEnabled)
       {
       emit activeMarkupsFiducialPlaceModeChanged(currentPlaceModeEnabled);
+      emit activeMarkupsPlaceModeChanged(currentPlaceModeEnabled);
       d->LastSignaledPlaceModeEnabled = currentPlaceModeEnabled;
       }
 }
@@ -587,7 +595,7 @@ void qSlicerMarkupsPlaceWidget::setButtonsVisible(bool visible)
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsPlaceWidget::setNodeColor(QColor color)
 {
-  vtkMRMLMarkupsFiducialNode* currentMarkupsNode = currentMarkupsFiducialNode();
+  vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
   if ( currentMarkupsNode == nullptr )
     {
     return;
@@ -609,7 +617,7 @@ QColor qSlicerMarkupsPlaceWidget::nodeColor() const
 {
   Q_D(const qSlicerMarkupsPlaceWidget);
 
-  vtkMRMLMarkupsFiducialNode* currentMarkupsNode = currentMarkupsFiducialNode();
+  vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
   if ( currentMarkupsNode == nullptr )
     {
     return d->DefaultNodeColor;
@@ -647,7 +655,7 @@ QColor qSlicerMarkupsPlaceWidget::defaultNodeColor() const
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsPlaceWidget::onColorButtonChanged(QColor color)
 {
-  vtkMRMLMarkupsFiducialNode* currentMarkupsNode = currentMarkupsFiducialNode();
+  vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
   if ( currentMarkupsNode == nullptr && currentMarkupsNode->GetDisplayNode() == nullptr )
     {
     return;
@@ -660,7 +668,7 @@ void qSlicerMarkupsPlaceWidget::onColorButtonChanged(QColor color)
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsPlaceWidget::onVisibilityButtonClicked()
 {
-  vtkMRMLMarkupsFiducialNode* currentMarkupsNode = currentMarkupsFiducialNode();
+  vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
   if ( currentMarkupsNode == nullptr || currentMarkupsNode->GetDisplayNode() == nullptr )
     {
     return;
@@ -671,7 +679,7 @@ void qSlicerMarkupsPlaceWidget::onVisibilityButtonClicked()
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsPlaceWidget::onLockedButtonClicked()
 {
-  vtkMRMLMarkupsFiducialNode* currentMarkupsNode = currentMarkupsFiducialNode();
+  vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
   if ( currentMarkupsNode == nullptr )
     {
     return;

@@ -44,25 +44,29 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
   std::string formatTest = node1->ReplaceListNameInMarkupLabelFormat();
   CHECK_STD_STRING(formatTest, "testingname-%d");
 
-  node1->AddText("testing");
-  CHECK_INT(node1->GetNumberOfTexts(), 1);
-  CHECK_STD_STRING(node1->GetText(0), "testing");
+  vtkNew<vtkMRMLMeasurement> measurement1;
+  measurement1->SetName("Diameter");
+  measurement1->SetValue(15.0);
+  measurement1->SetUnits("mm2");
+  node1->AddMeasurement(measurement1);
+  CHECK_INT(node1->GetNumberOfMeasurements(), 1);
+  CHECK_STRING(node1->GetNthMeasurement(0)->GetName(), "Diameter");
 
-  node1->SetText(0, "New string");
-  CHECK_STD_STRING(node1->GetText(0), "New string");
+  node1->SetNthMeasurement(0, "Radius", 11.1, "cm");
+  CHECK_STRING(node1->GetNthMeasurement(0)->GetName(), "Radius");
 
-  node1->DeleteText(0);
-  CHECK_INT(node1->GetNumberOfTexts(), 0);
+  node1->RemoveNthMeasurement(0);
+  CHECK_INT(node1->GetNumberOfMeasurements(), 0);
 
-  node1->SetText(0, "string a");
-  node1->SetText(1, "string b");
-  node1->SetText(2, "string c");
-  CHECK_INT(node1->GetNumberOfTexts(), 3);
+  node1->SetNthMeasurement(0, "Cross-section area", 15.2, "mm2");
+  node1->SetNthMeasurement(1, "Volume", 1.3, "mm3");
+  node1->SetNthMeasurement(2, "Length", 25.4, "mm");
+  CHECK_INT(node1->GetNumberOfMeasurements(), 3);
 
-  node1->DeleteText(0);
-  CHECK_INT(node1->GetNumberOfTexts(), 2);
-  CHECK_STD_STRING(node1->GetText(0), "string b");
-  CHECK_STD_STRING(node1->GetText(1), "string c");
+  node1->RemoveNthMeasurement(0);
+  CHECK_INT(node1->GetNumberOfMeasurements(), 2);
+  CHECK_STRING(node1->GetNthMeasurement(0)->GetName(), "Volume");
+  CHECK_STRING(node1->GetNthMeasurement(1)->GetName(), "Length");
 
   //
   // test methods with no markups

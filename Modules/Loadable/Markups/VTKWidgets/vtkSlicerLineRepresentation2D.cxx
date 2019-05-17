@@ -98,7 +98,7 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned
 
   // Line display
 
-  this->TubeFilter->SetRadius(this->ViewScaleFactor * this->ControlPointSize * 0.125);
+  this->TubeFilter->SetRadius(this->ControlPointSize * 0.125);
 
   this->LineActor->SetVisibility(markupsNode->GetNumberOfControlPoints() == 2);
 

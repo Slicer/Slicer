@@ -66,6 +66,7 @@ protected:
   vtkMRMLMarkupsAngleNode(const vtkMRMLMarkupsAngleNode&);
   void operator=(const vtkMRMLMarkupsAngleNode&);
 
+  void UpdateMeasurements() override;
 };
 
 #endif

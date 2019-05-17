@@ -20,14 +20,18 @@
 
 // MRML includes
 #include "vtkMRMLDisplayableNode.h"
+#include "vtkCurveGenerator.h"
+#include "vtkMRMLMeasurement.h"
 
 // Markups includes
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 
 // VTK includes
-#include <vtkCurveGenerator.h>
+#include <vtkPointLocator.h>
 #include <vtkSmartPointer.h>
 #include <vtkVector.h>
+
+class vtkFrenetSerretFrame;
 
 /// \brief MRML node to represent an interactive widget.
 /// MarkupsNodes contains a list of points (ControlPoint).
@@ -66,6 +70,7 @@ class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsNode : public vtkMRML
   friend class vtkMRMLMarkupsFiducialStorageNode;
 
 public:
+
   struct ControlPoint
     {
     ControlPoint()
@@ -158,20 +163,27 @@ public:
   /// Create and observe default display node(s)
   void CreateDefaultDisplayNodes() override;
 
-  /// Access to a VTK string array, not currently used
-  int AddText(const char *newText);
-  void SetText(int id, const char *newText);
-  vtkStdString GetText(int id);
-  int DeleteText(int id);
-  int GetNumberOfTexts();
-  void RemoveAllTexts();
+  //@{
+  /**
+   * Get/set measurement data, such as length, angle, diameter, cross-section area.
+   */
+  int GetNumberOfMeasurements();
+  vtkMRMLMeasurement* GetNthMeasurement(int id);
+  void AddMeasurement(vtkMRMLMeasurement* measurement);
+  void SetNthMeasurement(int id, vtkMRMLMeasurement* measurement);
+  void SetNthMeasurement(int id, const std::string& name, double value, const std::string &units, const std::string description = "",
+    vtkCodedEntry* quantityCode = nullptr, vtkCodedEntry* derivationCode = nullptr,
+    vtkCodedEntry* unitsCode = nullptr, vtkCodedEntry* methodCode = nullptr);
+  void RemoveNthMeasurement(int id);
+  void RemoveAllMeasurements();
+  //@}
 
   /// Invoke events when control points change, passing the control point index if applicable.
   /// - LockModifiedEvent: markups node lock status is changed. Modified event is invoked, too.
   /// - LabelFormatModifiedEvent: markups node label format changed. Modified event is invoked, too.
   /// - PointAddedEvent: new control point(s) added. Modified event is NOT invoked.
   /// - PointRemovedEvent: control point(s) deleted. Modified event is NOT invoked.
-  /// - PointModifiedEvent: existing control point(s) modified. Modified event is NOT invoked.
+  /// - PointModifiedEvent: existing control point(s) modified, added, or removed. Modified event is NOT invoked.
   /// - PointStartInteractionEvent when starting interacting with a control point.
   /// - PointEndInteractionEvent when an interaction eith a control point process finishes.
   ///
@@ -501,6 +513,8 @@ public:
   static void ConvertOrientationMatrixToWXYZ(const double orientationMatrix[9], double orientationWXYZ[4]);
   static void ConvertOrientationWXYZToMatrix(double orientationWXYZ[4], double orientationMatrix[9]);
 
+  void GetControlPointLabels(vtkStringArray* labels);
+
   vtkPoints* GetCurvePointsWorld();
 
   vtkPolyData* GetCurveWorld();
@@ -519,6 +533,9 @@ public:
   void GetRASBounds(double bounds[6]) override;
   void GetBounds(double bounds[6]) override;
 
+  /// Get the index of the closest control point to the world coordinates
+  int GetClosestControlPointIndexToPositionWorld(double pos[3]);
+
 protected:
   vtkMRMLMarkupsNode();
   ~vtkMRMLMarkupsNode() override;
@@ -526,6 +543,21 @@ protected:
   void operator=(const vtkMRMLMarkupsNode&);
 
   vtkSmartPointer<vtkStringArray> TextList;
+
+  /// Set all control point positions from a point list.
+  /// The method is protected because the API may still change.
+  /// If points is nullptr then all control points are removed.
+  /// New control points are added if needed.
+  /// Existing control points are updated with the new positions.
+  /// Any extra existing control points are removed.
+  void SetControlPointPositionsWorld(vtkPoints* points);
+
+  /// Set label of closest control point.
+  /// If one control point is closest to multiple labels then all of them will be assigned to the same control point,
+  /// separated with the provided "separator" string.
+  /// Erase labels of all other control points.
+  /// The method is protected because the API may still change.
+  bool SetControlPointLabelsWorld(vtkStringArray* labels, vtkPoints* points, std::string separator = "");
 
   /// Utility function to be used internally for safe access to a control point's data.
   /// Return a pointer to the Nth control point stored in this node, nullptr if n is out of bounds
@@ -550,6 +582,8 @@ protected:
 
   void OnTransformNodeReferenceChanged(vtkMRMLTransformNode* transformNode) override;
 
+  virtual void UpdateMeasurements();
+
   // Used for limiting number of markups that may be placed.
   int MaximumNumberOfControlPoints;
   int RequiredNumberOfControlPoints;
@@ -562,6 +596,12 @@ protected:
   // Converts curve control points to curve points.
   vtkSmartPointer<vtkCurveGenerator> CurveGenerator;
 
+  // Computes tangent and smooth normal for each curve point.
+  // It provides a fully specified coordinate system at each point of the curve,
+  // which is useful for image reslicing or defining camera pose.
+  // Curve is defined in the world coordinate sytem.
+  vtkSmartPointer<vtkFrenetSerretFrame> CurveCoordinateSystemGeneratorWorld;
+
   // Stores control point positions in a polydata (in local coordinate system).
   // Line cells connect all points into a curve.
   vtkSmartPointer<vtkPolyData> CurveInputPoly;
@@ -572,6 +612,10 @@ protected:
 
   vtkSmartPointer<vtkTransformPolyDataFilter> CurvePolyToWorldTransformer;
   vtkSmartPointer<vtkGeneralTransform> CurvePolyToWorldTransform;
+
+  // Point locator that allows quick finding of interpolated point in the world
+  // coordinate system (in transformed CurvePoly).
+  vtkSmartPointer<vtkPointLocator> TransformedCurvePolyLocator;
 
   // Locks all the points and GUI
   int Locked;
@@ -587,6 +631,7 @@ protected:
   // It may be used as rotation center or as a handle to grab the widget by.
   vtkVector3d CenterPos;
 
+  std::vector< vtkSmartPointer<vtkMRMLMeasurement> > Measurements;
 };
 
 #endif

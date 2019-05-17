@@ -19,6 +19,7 @@
 // VTK includes
 #include "vtkActor2D.h"
 #include "vtkCellLocator.h"
+#include "vtkCleanPolyData.h"
 #include "vtkGlyph3D.h"
 #include "vtkPolyDataMapper.h"
 #include "vtkPointData.h"
@@ -78,7 +79,7 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
     {
     ControlPointsPipeline3D* controlPoints = this->GetControlPointsPipeline(controlPointType);
-    controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetTextVisibility());
+    controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility());
     controlPoints->Glypher->SetScaleFactor(this->ControlPointSize);
 
     this->UpdateRelativeCoincidentTopologyOffsets(controlPoints->Mapper);
@@ -253,7 +254,10 @@ void vtkSlicerCurveRepresentation3D::SetMarkupsNode(vtkMRMLMarkupsNode *markupsN
   {
     if (markupsNode)
       {
-      this->TubeFilter->SetInputConnection(markupsNode->GetCurveWorldConnection());
+      vtkNew<vtkCleanPolyData> cleaner;
+      cleaner->PointMergingOn();
+      cleaner->SetInputConnection(markupsNode->GetCurveWorldConnection());
+      this->TubeFilter->SetInputConnection(cleaner->GetOutputPort());
       }
     else
       {
@@ -290,7 +294,7 @@ void vtkSlicerCurveRepresentation3D::CanInteractWithCurve(
 
   if (dist2 < this->ControlPointSize * (1.0 + this->Tolerance))
     {
-    closestDistance2 = dist2 * this->ViewScaleFactor * this->ViewScaleFactor;
+    closestDistance2 = dist2 / this->ViewScaleFactorMmPerPixel / this->ViewScaleFactorMmPerPixel;
     foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentLine;
     componentIndex = this->MarkupsNode->GetControlPointIndexFromInterpolatedPointIndex(cellId);
     }

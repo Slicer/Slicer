@@ -31,6 +31,7 @@
 #include "vtkPolyDataMapper.h"
 #include "vtkProperty.h"
 #include "vtkRenderer.h"
+#include "vtkRenderWindow.h"
 #include "vtkSelectVisiblePoints.h"
 #include "vtkSlicerMarkupsWidgetRepresentation3D.h"
 #include "vtkSphereSource.h"
@@ -119,8 +120,9 @@ vtkSlicerMarkupsWidgetRepresentation3D::vtkSlicerMarkupsWidgetRepresentation3D()
   reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[Active])->Actor->PickableOff();
   reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[Active])->Actor->DragableOff();
 
+  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(Unselected)->TextProperty);
+
   this->ControlPointSize = 10; // will be set from the markup's GlyphScale
-  this->Tolerance = 5.0;
 
   this->AccuratePicker = vtkSmartPointer<vtkCellPicker>::New();
   this->AccuratePicker->SetTolerance(.005);
@@ -160,8 +162,6 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
     return;
     }
 
-  this->ControlPointSize = this->MarkupsDisplayNode->GetGlyphScale();
-
   int numPoints = markupsNode->GetNumberOfControlPoints();
 
   for (int i = 0; i<NumberOfControlPointTypes; i++)
@@ -196,7 +196,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
         startIndex = activeControlPointIndex;
         stopIndex = startIndex;
         controlPoints->Actor->VisibilityOn();
-        controlPoints->LabelsActor->SetVisibility(display->GetTextVisibility());
+        controlPoints->LabelsActor->SetVisibility(display->GetPointLabelsVisibility());
         }
       else
         {
@@ -207,7 +207,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
       }
     else
       {
-      controlPoints->LabelsActor->SetVisibility(display->GetTextVisibility());
+      controlPoints->LabelsActor->SetVisibility(display->GetPointLabelsVisibility());
       }
 
     for (int pointIndex = startIndex; pointIndex <= stopIndex; pointIndex++)
@@ -265,8 +265,6 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
 
   double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
 
-  double pixelTolerance2 = this->PixelTolerance * this->PixelTolerance;
-
   closestDistance2 = VTK_DOUBLE_MAX; // in display coordinate system
   foundComponentIndex = -1;
   if (markupsNode->GetNumberOfControlPoints() > 2 && this->ClosedLoop && markupsNode)
@@ -274,11 +272,13 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
     // Check if center is selected
     double centerPosWorld[3], centerPosDisplay[3];
     markupsNode->GetCenterPosition(centerPosWorld);
+    double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(centerPosWorld)
+      + this->ScreenSizePixel * this->ScreenScaleFactor * this->Tolerance / 100.0;
     this->Renderer->SetWorldPoint(centerPosWorld);
     this->Renderer->WorldToDisplay();
     this->Renderer->GetDisplayPoint(centerPosDisplay);
     double dist2 = vtkMath::Distance2BetweenPoints(centerPosDisplay, displayPosition3);
-    if (dist2 < pixelTolerance2)
+    if (dist2 < pixelTolerance * pixelTolerance)
       {
       closestDistance2 = dist2;
       foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentCenterPoint;
@@ -295,11 +295,13 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
       }
     double centerPosWorld[3], centerPosDisplay[3];
     markupsNode->GetNthControlPointPositionWorld(i, centerPosWorld);
+    double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(centerPosWorld)
+      + this->ScreenSizePixel * this->ScreenScaleFactor * this->Tolerance / 100.0;
     this->Renderer->SetWorldPoint(centerPosWorld);
     this->Renderer->WorldToDisplay();
     this->Renderer->GetDisplayPoint(centerPosDisplay);
     double dist2 = vtkMath::Distance2BetweenPoints(centerPosDisplay, displayPosition3);
-    if (dist2 < pixelTolerance2 && dist2 < closestDistance2)
+    if (dist2 < pixelTolerance * pixelTolerance && dist2 < closestDistance2)
       {
       closestDistance2 = dist2;
       foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentControlPoint;
@@ -362,14 +364,18 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithLine(
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
 {
-  // Update from slice node
-  if (!caller || caller == this->ViewNode.GetPointer())
+  this->UpdateViewScaleFactor();
+  if (this->MarkupsDisplayNode->GetUseGlyphScale())
     {
-    this->UpdateViewScaleFactor();
+    this->ControlPointSize = this->ScreenSizePixel * this->ScreenScaleFactor
+      * this->MarkupsDisplayNode->GetGlyphScale() / 100.0 * this->ViewScaleFactorMmPerPixel;
+    }
+  else
+    {
+    this->ControlPointSize = this->MarkupsDisplayNode->GetGlyphSize();
     }
 
-  this->ControlPointSize = this->MarkupsDisplayNode->GetGlyphScale();
-  this->PixelTolerance = this->ControlPointSize * (1.0 + this->Tolerance) * this->ViewScaleFactor;
+  this->UpdatePixelTolerance();
 
   Superclass::UpdateFromMRML(caller, event, callData);
 
@@ -476,12 +482,35 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOverlay(vtkViewport *viewport)
 int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
   vtkViewport *viewport)
 {
+
+  // Recompute glyph size if it is relative to the screen size
+  // (it gets smaller/larger as the camera is moved or zoomed)
+  bool updateControlPointSize = false;
+  if (this->MarkupsDisplayNode->GetUseGlyphScale())
+    {
+    double newControlPointSize = 1.0;
+    this->UpdateViewScaleFactor();
+    newControlPointSize = this->ScreenSizePixel * this->ScreenScaleFactor
+      * this->MarkupsDisplayNode->GetGlyphScale() / 100.0 * this->ViewScaleFactorMmPerPixel;
+    // Only update the size if there is noticeable difference to avoid slight flickering
+    // when the camera is moved
+    if (this->ControlPointSize > 0 && fabs(newControlPointSize - this->ControlPointSize) / this->ControlPointSize > 0.05)
+      {
+      this->ControlPointSize = newControlPointSize;
+      updateControlPointSize = true;
+      }
+    }
+
   int count=0;
   for (int i = 0; i < NumberOfControlPointTypes; i++)
     {
     ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
     if (controlPoints->Actor->GetVisibility())
       {
+      if (updateControlPointSize)
+        {
+        controlPoints->Glypher->SetScaleFactor(this->ControlPointSize);
+        }
       count += controlPoints->Actor->RenderOpaqueGeometry(viewport);
       }
     if (controlPoints->LabelsActor->GetVisibility())
@@ -641,4 +670,80 @@ bool vtkSlicerMarkupsWidgetRepresentation3D::AccuratePick(int x, int y, double p
       }
     }
   return true;
+}
+
+//----------------------------------------------------------------------
+double vtkSlicerMarkupsWidgetRepresentation3D::GetViewScaleFactorAtPosition(double positionWorld[3])
+{
+  double viewScaleFactorMmPerPixel = 1.0;
+  if (!this->Renderer || !this->Renderer->GetActiveCamera())
+    {
+    return viewScaleFactorMmPerPixel;
+    }
+
+  vtkCamera * cam = this->Renderer->GetActiveCamera();
+  if (cam->GetParallelProjection())
+    {
+    // Viewport: xmin, ymin, xmax, ymax; range: 0.0-1.0; origin is bottom left
+    // Determine the available renderer size in pixels
+    double minX = 0;
+    double minY = 0;
+    this->Renderer->NormalizedDisplayToDisplay(minX, minY);
+    double maxX = 1;
+    double maxY = 1;
+    this->Renderer->NormalizedDisplayToDisplay(maxX, maxY);
+    int rendererSizeInPixels[2] = { static_cast<int>(maxX - minX), static_cast<int>(maxY - minY) };
+    // Parallel scale: height of the viewport in world-coordinate distances.
+    // Larger numbers produce smaller images.
+    viewScaleFactorMmPerPixel = (cam->GetParallelScale() * 2.0) / double(rendererSizeInPixels[1]);
+    }
+  else
+    {
+    double cameraFP[4] = { positionWorld[0], positionWorld[1], positionWorld[2], 1.0 };
+
+    double cameraViewUp[3] = { 0 };
+    cam->GetViewUp(cameraViewUp);
+    vtkMath::Normalize(cameraViewUp);
+
+    // Get distance in pixels between two points at unit distance above and below the focal point
+    this->Renderer->SetWorldPoint(cameraFP[0] + cameraViewUp[0], cameraFP[1] + cameraViewUp[1], cameraFP[2] + cameraViewUp[2], cameraFP[3]);
+    this->Renderer->WorldToDisplay();
+    double topCenter[3] = { 0 };
+    this->Renderer->GetDisplayPoint(topCenter);
+    this->Renderer->SetWorldPoint(cameraFP[0] - cameraViewUp[0], cameraFP[1] - cameraViewUp[1], cameraFP[2] - cameraViewUp[2], cameraFP[3]);
+    this->Renderer->WorldToDisplay();
+    double bottomCenter[3] = { 0 };
+    this->Renderer->GetDisplayPoint(bottomCenter);
+    double distInPixels = sqrt(vtkMath::Distance2BetweenPoints(topCenter, bottomCenter));
+
+    // 2.0 = 2x length of viewUp vector in mm (because viewUp is unit vector)
+    viewScaleFactorMmPerPixel = 2.0 / distInPixels;
+    }
+  return viewScaleFactorMmPerPixel;
+}
+
+
+//----------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation3D::UpdateViewScaleFactor()
+{
+  this->ViewScaleFactorMmPerPixel = 1.0;
+  this->ScreenSizePixel = 1000.0;
+  if (!this->Renderer || !this->Renderer->GetActiveCamera())
+    {
+    return;
+    }
+
+  int* screenSize = this->Renderer->GetRenderWindow()->GetScreenSize();
+  this->ScreenSizePixel = sqrt(screenSize[0] * screenSize[0] + screenSize[1] * screenSize[1]);
+
+  double cameraFP[3] = { 0.0 };
+  this->Renderer->GetActiveCamera()->GetFocalPoint(cameraFP);
+  this->ViewScaleFactorMmPerPixel = this->GetViewScaleFactorAtPosition(cameraFP);
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation3D::UpdatePixelTolerance()
+{
+  this->PixelTolerance = this->ControlPointSize / 2.0 / this->ViewScaleFactorMmPerPixel
+    + this->ScreenSizePixel * this->ScreenScaleFactor * this->Tolerance / 100.0;
 }

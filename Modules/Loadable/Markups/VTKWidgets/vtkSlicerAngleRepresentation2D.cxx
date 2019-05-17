@@ -17,6 +17,7 @@
 =========================================================================*/
 
 // VTK includes
+#include "vtkActor2D.h"
 #include "vtkArcSource.h"
 #include "vtkCellLocator.h"
 #include "vtkDiscretizableColorTransferFunction.h"
@@ -95,11 +96,7 @@ vtkSlicerAngleRepresentation2D::vtkSlicerAngleRepresentation2D()
   this->ArcActor->SetMapper(this->ArcMapper);
   this->ArcActor->SetProperty(this->GetControlPointsPipeline(Unselected)->Property);
 
-  this->TextActor = vtkSmartPointer<vtkTextActor>::New();
-  this->TextActor->SetInput("0");
-  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(Unselected)->TextProperty);
-
-  this->LabelFormat = "%-#6.3g";
+  this->LabelFormat = "%s: %-#6.3g";
 }
 
 //----------------------------------------------------------------------
@@ -168,10 +165,6 @@ void vtkSlicerAngleRepresentation2D::BuildArc()
   this->Arc->SetCenter(c);
   this->Arc->Update();
 
-  char buf[80] = {0};
-  snprintf(buf, sizeof(buf)-1, this->LabelFormat.c_str(), vtkMath::DegreesFromRadians(angle));
-  this->TextActor->SetInput(buf);
-
   this->GetNthNodeDisplayPosition(0, p1);
   this->GetNthNodeDisplayPosition(1, c);
   this->GetNthNodeDisplayPosition(2, p2);
@@ -223,15 +216,11 @@ void vtkSlicerAngleRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
 
   // Update lines display properties
 
-  this->TextActor->SetVisibility(this->MarkupsDisplayNode->GetTextVisibility());
+  this->TubeFilter->SetRadius(this->ControlPointSize * 0.125);
+  this->ArcTubeFilter->SetRadius(this->ControlPointSize * 0.125);
 
-  this->TubeFilter->SetRadius(this->ViewScaleFactor * this->ControlPointSize * 0.125);
-  this->ArcTubeFilter->SetRadius(this->ViewScaleFactor * this->ControlPointSize * 0.125);
-
-  bool allNodeVisibile = this->GetAllControlPointsVisible();
   this->LineActor->SetVisibility(markupsNode->GetNumberOfControlPoints() >= 2);
   this->ArcActor->SetVisibility(markupsNode->GetNumberOfControlPoints() == 3);
-  this->TextActor->SetVisibility(allNodeVisibile && markupsNode->GetNumberOfControlPoints() == 3);
 
   int controlPointType = Unselected;
   if (this->MarkupsDisplayNode->GetActiveComponentType() == vtkMRMLMarkupsDisplayNode::ComponentLine)
@@ -289,7 +278,7 @@ void vtkSlicerAngleRepresentation2D::CanInteract(
 
   double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
 
-  this->PixelTolerance = this->ControlPointSize * (1.0 + this->Tolerance) * this->ViewScaleFactor;
+  this->UpdatePixelTolerance();
   double pixelTolerance2 = this->PixelTolerance * this->PixelTolerance;
 
   vtkIdType numberOfPoints = markupsNode->GetNumberOfControlPoints();
@@ -333,7 +322,6 @@ void vtkSlicerAngleRepresentation2D::GetActors(vtkPropCollection *pc)
 {
   this->LineActor->GetActors(pc);
   this->ArcActor->GetActors(pc);
-  this->TextActor->GetActors(pc);
   this->Superclass::GetActors(pc);
 }
 
@@ -343,7 +331,6 @@ void vtkSlicerAngleRepresentation2D::ReleaseGraphicsResources(
 {
   this->LineActor->ReleaseGraphicsResources(win);
   this->ArcActor->ReleaseGraphicsResources(win);
-  this->TextActor->ReleaseGraphicsResources(win);
   this->Superclass::ReleaseGraphicsResources(win);
 }
 
@@ -358,10 +345,6 @@ int vtkSlicerAngleRepresentation2D::RenderOverlay(vtkViewport *viewport)
   if (this->ArcActor->GetVisibility())
     {
     count +=  this->ArcActor->RenderOverlay(viewport);
-    }
-  if (this->TextActor->GetVisibility())
-    {
-    count +=  this->TextActor->RenderOverlay(viewport);
     }
   count += this->Superclass::RenderOverlay(viewport);
 
@@ -381,10 +364,6 @@ int vtkSlicerAngleRepresentation2D::RenderOpaqueGeometry(
     {
     count += this->ArcActor->RenderOpaqueGeometry(viewport);
     }
-  if (this->TextActor->GetVisibility())
-    {
-    count += this->TextActor->RenderOpaqueGeometry(viewport);
-    }
   count += this->Superclass::RenderOpaqueGeometry(viewport);
 
   return count;
@@ -403,10 +382,6 @@ int vtkSlicerAngleRepresentation2D::RenderTranslucentPolygonalGeometry(
     {
     count += this->ArcActor->RenderTranslucentPolygonalGeometry(viewport);
     }
-  if (this->TextActor->GetVisibility())
-    {
-    count += this->TextActor->RenderTranslucentPolygonalGeometry(viewport);
-    }
   count += this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
 
   return count;
@@ -424,10 +399,6 @@ vtkTypeBool vtkSlicerAngleRepresentation2D::HasTranslucentPolygonalGeometry()
     return true;
     }
   if (this->ArcActor->GetVisibility() && this->ArcActor->HasTranslucentPolygonalGeometry())
-    {
-    return true;
-    }
-  if (this->TextActor->GetVisibility() && this->TextActor->HasTranslucentPolygonalGeometry())
     {
     return true;
     }
@@ -462,15 +433,6 @@ void vtkSlicerAngleRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
   else
     {
     os << indent << "Arc Visibility: (none)\n";
-    }
-
-  if (this->TextActor)
-    {
-    os << indent << "Text Visibility: " << this->TextActor->GetVisibility() << "\n";
-    }
-  else
-    {
-    os << indent << "Text Visibility: (none)\n";
     }
 
   os << indent << "Label Format: ";

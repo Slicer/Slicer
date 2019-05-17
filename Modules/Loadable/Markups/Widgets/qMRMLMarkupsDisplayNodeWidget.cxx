@@ -73,7 +73,7 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   this->unselectedColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
 
   // set up the display properties
-  q->connect(this->VisibilityCheckBox, SIGNAL(toggled(bool)),
+  QObject::connect(this->VisibilityCheckBox, SIGNAL(toggled(bool)),
     q, SLOT(setVisibility(bool)));
   QObject::connect(this->selectedColorPickerButton, SIGNAL(colorChanged(QColor)),
     q, SLOT(onSelectedColorPickerButtonChanged(QColor)));
@@ -81,8 +81,14 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
     q, SLOT(onUnselectedColorPickerButtonChanged(QColor)));
   QObject::connect(this->glyphTypeComboBox, SIGNAL(currentIndexChanged(QString)),
     q, SLOT(onGlyphTypeComboBoxChanged(QString)));
+  QObject::connect(this->glyphSizeIsAbsoluteButton, SIGNAL(toggled(bool)),
+    q, SLOT(setGlyphSizeIsAbsolute(bool)));
   QObject::connect(this->glyphScaleSliderWidget, SIGNAL(valueChanged(double)),
     q, SLOT(onGlyphScaleSliderWidgetChanged(double)));
+  QObject::connect(this->glyphSizeSliderWidget, SIGNAL(valueChanged(double)),
+    q, SLOT(onGlyphSizeSliderWidgetChanged(double)));
+  QObject::connect(this->PointLabelsVisibilityCheckBox, SIGNAL(toggled(bool)),
+    q, SLOT(setPointLabelsVisibility(bool)));
   QObject::connect(this->textScaleSliderWidget, SIGNAL(valueChanged(double)),
     q, SLOT(onTextScaleSliderWidgetChanged(double)));
 
@@ -126,6 +132,9 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
     q->setEnabled(true);
     q->setMRMLMarkupsDisplayNode(this->MarkupsDisplayNode);
     }
+
+  this->glyphSizeSliderWidget->setVisible(this->glyphSizeIsAbsoluteButton->isChecked());
+  this->glyphScaleSliderWidget->setHidden(this->glyphSizeIsAbsoluteButton->isChecked());
 
   // Disable until a valid display node is set
   this->setEnabled(false);
@@ -218,6 +227,8 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
     d->glyphTypeComboBox->setCurrentIndex(glyphTypeIndex);
     }
 
+  d->glyphSizeIsAbsoluteButton->setChecked(d->MarkupsDisplayNode ? !d->MarkupsDisplayNode->GetUseGlyphScale() : false);
+
   // glyph scale
   double glyphScale = markupsDisplayNode->GetGlyphScale();
   // make sure that the slider can accommodate this scale
@@ -226,6 +237,17 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
     d->glyphScaleSliderWidget->setMaximum(glyphScale);
     }
   d->glyphScaleSliderWidget->setValue(glyphScale);
+
+  // glyph size
+  double glyphSize = markupsDisplayNode->GetGlyphSize();
+  // make sure that the slider can accommodate this scale
+  if (glyphSize > d->glyphSizeSliderWidget->maximum())
+    {
+    d->glyphSizeSliderWidget->setMaximum(glyphSize);
+    }
+  d->glyphSizeSliderWidget->setValue(glyphSize);
+
+  d->PointLabelsVisibilityCheckBox->setChecked(d->MarkupsDisplayNode ? d->MarkupsDisplayNode->GetPointLabelsVisibility() : false);
 
   // text scale
   double textScale = markupsDisplayNode->GetTextScale();
@@ -267,6 +289,42 @@ bool qMRMLMarkupsDisplayNodeWidget::visibility()const
 {
   Q_D(const qMRMLMarkupsDisplayNodeWidget);
   return d->VisibilityCheckBox->isChecked();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::setPointLabelsVisibility(bool visible)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode.GetPointer())
+    {
+    return;
+    }
+  d->MarkupsDisplayNode->SetPointLabelsVisibility(visible);
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLMarkupsDisplayNodeWidget::pointLabelsVisibility()const
+{
+  Q_D(const qMRMLMarkupsDisplayNodeWidget);
+  return d->PointLabelsVisibilityCheckBox->isChecked();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::setGlyphSizeIsAbsolute(bool absolute)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode.GetPointer())
+    {
+    return;
+    }
+  d->MarkupsDisplayNode->SetUseGlyphScale(!absolute);
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLMarkupsDisplayNodeWidget::glyphSizeIsAbsolute()const
+{
+  Q_D(const qMRMLMarkupsDisplayNodeWidget);
+  return d->glyphSizeIsAbsoluteButton->isChecked();
 }
 
 //-----------------------------------------------------------------------------
@@ -318,6 +376,17 @@ void qMRMLMarkupsDisplayNodeWidget::onGlyphScaleSliderWidgetChanged(double value
 }
 
 //-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::onGlyphSizeSliderWidgetChanged(double value)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+    {
+    return;
+    }
+  d->MarkupsDisplayNode->SetGlyphSize(value);
+}
+
+//-----------------------------------------------------------------------------
 void qMRMLMarkupsDisplayNodeWidget::onTextScaleSliderWidgetChanged(double value)
 {
   Q_D(qMRMLMarkupsDisplayNodeWidget);
@@ -351,5 +420,16 @@ void qMRMLMarkupsDisplayNodeWidget::setMaximumMarkupsScale(double maxScale)
   if (maxScale > d->textScaleSliderWidget->maximum())
     {
     d->textScaleSliderWidget->setMaximum(maxScale);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::setMaximumMarkupsSize(double maxSize)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+
+  if (maxSize > d->glyphSizeSliderWidget->maximum())
+    {
+    d->glyphSizeSliderWidget->setMaximum(maxSize);
     }
 }

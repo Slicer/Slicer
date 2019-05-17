@@ -9,6 +9,7 @@ set(${KIT}_INCLUDE_DIRECTORIES
 
 set(${KIT}_SRCS
   vtkMRML${MODULE_NAME}DisplayNode.cxx
+  vtkMRML${MODULE_NAME}FiducialDisplayNode.cxx
   vtkMRML${MODULE_NAME}FiducialNode.cxx
   vtkMRML${MODULE_NAME}LineNode.cxx
   vtkMRML${MODULE_NAME}AngleNode.cxx

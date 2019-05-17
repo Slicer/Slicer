@@ -105,6 +105,7 @@ set(MRMLCore_SRCS
   vtkEventBroker.cxx
   vtkImageBimodalAnalysis.cxx
   vtkDataFileFormatHelper.cxx
+  vtkMRMLMeasurement.cxx
   vtkMRMLLogic.cxx
   vtkMRMLAbstractLayoutNode.cxx
   vtkMRMLAbstractViewNode.cxx

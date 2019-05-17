@@ -36,7 +36,6 @@
 class vtkArcSource;
 class vtkDiscretizableColorTransferFunction;
 class vtkSampleImplicitFunctionFilter;
-class vtkTextActor;
 class vtkTubeFilter;
 
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerAngleRepresentation2D : public vtkSlicerMarkupsWidgetRepresentation2D
@@ -86,8 +85,6 @@ protected:
   vtkSmartPointer<vtkPolyDataMapper2D> ArcMapper;
   vtkSmartPointer<vtkActor2D> ArcActor;
   vtkSmartPointer<vtkDiscretizableColorTransferFunction> ColorMap;
-
-  vtkSmartPointer<vtkTextActor> TextActor;
 
   vtkSmartPointer<vtkTubeFilter> TubeFilter;
   vtkSmartPointer<vtkTubeFilter> ArcTubeFilter;

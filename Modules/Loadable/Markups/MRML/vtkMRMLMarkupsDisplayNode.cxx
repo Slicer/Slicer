@@ -64,7 +64,9 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   // markup display node settings
   this->TextScale = 3;
   this->GlyphType = vtkMRMLMarkupsDisplayNode::Sphere3D;
-  this->GlyphScale = 3;
+  this->GlyphScale = 1.0; // size as percent in screen size
+  this->GlyphSize = 5.0;  // size in world coordinate system (mm)
+  this->UseGlyphScale = true; // relative size by default
 
   // projection settings
   this->SliceProjection = false;
@@ -75,7 +77,8 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->SliceProjectionColor[2] = 1.0;
   this->SliceProjectionOpacity = 0.6;
 
-  this->TextVisibility = true;
+  this->PropertiesLabelVisibility = true;
+  this->PointLabelsVisibility = false;
 
   this->ActiveComponentType = ComponentNone;
   this->ActiveComponentIndex = -1;
@@ -104,19 +107,20 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  of << " textScale=\"" << this->TextScale << "\"";
-  of << " glyphScale=\"" << this->GlyphScale << "\"";
-  of << " glyphType=\"" << this->GlyphType << "\"";
-
-  of << " sliceProjection=\"" << this->SliceProjection << "\"";
-  of << " SliceProjectionUseFiducialColor=\"" << this->SliceProjectionUseFiducialColor << "\"";
-  of << " SliceProjectionOutlinedBehindSlicePlane=\"" << this->SliceProjectionOutlinedBehindSlicePlane << "\"";
-
-  of << " sliceProjectionColor=\"" << this->SliceProjectionColor[0] << " "
-     << this->SliceProjectionColor[1] << " "
-     << this->SliceProjectionColor[2] << "\"";
-
-  of << " sliceProjectionOpacity=\"" << this->SliceProjectionOpacity << "\"";
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLBooleanMacro(propertiesLabelVisibility, PropertiesLabelVisibility);
+  vtkMRMLWriteXMLBooleanMacro(pointLabelsVisibility, PointLabelsVisibility);
+  vtkMRMLWriteXMLFloatMacro(textScale, TextScale);
+  vtkMRMLWriteXMLFloatMacro(glyphScale, GlyphScale);
+  vtkMRMLWriteXMLFloatMacro(glyphSize, GlyphSize);
+  vtkMRMLWriteXMLBooleanMacro(useGlyphScale, UseGlyphScale);
+  vtkMRMLWriteXMLEnumMacro(glyphType, GlyphType);
+  vtkMRMLWriteXMLBooleanMacro(sliceProjection, SliceProjection);
+  vtkMRMLWriteXMLBooleanMacro(sliceProjectionUseFiducialColor, SliceProjectionUseFiducialColor);
+  vtkMRMLWriteXMLBooleanMacro(sliceProjectionOutlinedBehindSlicePlane, SliceProjectionOutlinedBehindSlicePlane);
+  vtkMRMLWriteXMLVectorMacro(sliceProjectionColor, SliceProjectionColor, double, 3);
+  vtkMRMLWriteXMLFloatMacro(sliceProjectionOpacity, SliceProjectionOpacity);
+  vtkMRMLWriteXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -126,66 +130,20 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
 
   Superclass::ReadXMLAttributes(atts);
 
-  const char* attName;
-  const char* attValue;
-  while (*atts != nullptr)
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-
-    if (!strcmp(attName, "textScale"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->TextScale;
-      }
-    else if (!strcmp(attName, "glyphType"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->GlyphType;
-      }
-    else if (!strcmp(attName, "glyphScale"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->GlyphScale;
-      }
-    else if (!strcmp(attName, "sliceProjection"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->SliceProjection;
-      }
-    else if (!strcmp(attName, "SliceProjectionUseFiducialColor"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->SliceProjectionUseFiducialColor;
-      }
-    else if (!strcmp(attName, "SliceProjectionOutlinedBehindSlicePlane"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->SliceProjectionOutlinedBehindSlicePlane;
-      }
-    else if (!strcmp(attName, "sliceProjectionColor") ||
-         !strcmp(attName, "projectedColor"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->SliceProjectionColor[0];
-      ss >> this->SliceProjectionColor[1];
-      ss >> this->SliceProjectionColor[2];
-      }
-    else if (!strcmp(attName, "sliceProjectionOpacity") ||
-         !strcmp(attName, "projectedOpacity"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->SliceProjectionOpacity;
-      }
-    }
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLBooleanMacro(propertiesLabelVisibility, PropertiesLabelVisibility);
+  vtkMRMLReadXMLBooleanMacro(pointLabelsVisibility, PointLabelsVisibility);
+  vtkMRMLReadXMLFloatMacro(textScale, TextScale);
+  vtkMRMLReadXMLFloatMacro(glyphScale, GlyphScale);
+  vtkMRMLReadXMLFloatMacro(glyphSize, GlyphSize);
+  vtkMRMLReadXMLBooleanMacro(useGlyphScale, UseGlyphScale);
+  vtkMRMLReadXMLEnumMacro(glyphType, GlyphType);
+  vtkMRMLReadXMLBooleanMacro(sliceProjection, SliceProjection);
+  vtkMRMLReadXMLBooleanMacro(sliceProjectionUseFiducialColor, SliceProjectionUseFiducialColor);
+  vtkMRMLReadXMLBooleanMacro(sliceProjectionOutlinedBehindSlicePlane, SliceProjectionOutlinedBehindSlicePlane);
+  vtkMRMLReadXMLVectorMacro(sliceProjectionColor, SliceProjectionColor, double, 3);
+  vtkMRMLReadXMLFloatMacro(sliceProjectionOpacity, SliceProjectionOpacity);
+  vtkMRMLReadXMLEndMacro();
 
   this->EndModify(disabledModify);
 }
@@ -202,14 +160,20 @@ void vtkMRMLMarkupsDisplayNode::Copy(vtkMRMLNode *anode)
 
   vtkMRMLMarkupsDisplayNode *node = vtkMRMLMarkupsDisplayNode::SafeDownCast(anode);
 
-  this->SetTextScale(node->GetTextScale());
-  this->SetGlyphType(node->GetGlyphType());
-  this->SetGlyphScale(node->GetGlyphScale());
-  this->SetSliceProjection(node->GetSliceProjection());
-  this->SetSliceProjectionUseFiducialColor(node->GetSliceProjectionUseFiducialColor());
-  this->SetSliceProjectionOutlinedBehindSlicePlane(node->GetSliceProjectionOutlinedBehindSlicePlane());
-  this->SetSliceProjectionColor(node->GetSliceProjectionColor());
-  this->SetSliceProjectionOpacity(node->GetSliceProjectionOpacity());
+  vtkMRMLCopyBeginMacro(anode);
+  vtkMRMLCopyBooleanMacro(PropertiesLabelVisibility);
+  vtkMRMLCopyBooleanMacro(PointLabelsVisibility);
+  vtkMRMLCopyFloatMacro(TextScale);
+  vtkMRMLCopyFloatMacro(GlyphScale);
+  vtkMRMLCopyFloatMacro(GlyphSize);
+  vtkMRMLCopyBooleanMacro(UseGlyphScale);
+  vtkMRMLCopyEnumMacro(GlyphType);
+  vtkMRMLCopyBooleanMacro(SliceProjection);
+  vtkMRMLCopyBooleanMacro(SliceProjectionUseFiducialColor);
+  vtkMRMLCopyBooleanMacro(SliceProjectionOutlinedBehindSlicePlane);
+  vtkMRMLCopyVectorMacro(SliceProjectionColor, double, 3);
+  vtkMRMLCopyFloatMacro(SliceProjectionOpacity);
+  vtkMRMLCopyEndMacro();
 
   this->EndModify(disabledModify);
 }
@@ -277,25 +241,22 @@ const char* vtkMRMLMarkupsDisplayNode::GetGlyphTypeAsString(int id)
 void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
-
-  os << indent << "Text scale: " << this->TextScale << "\n";
-  os << indent << "Glyph scale: (";
-  os << this->GlyphScale << ")\n";
-  os << indent << "Glyph type: ";
-  os << this->GetGlyphTypeAsString() << " (" << this->GlyphType << ")\n";
-  os << indent << "Slice projection: " << this->SliceProjection << "\n";
-  os << indent << "Slice projection use fiducial color: "
-    << this->SliceProjectionUseFiducialColor << "\n";
-  os << indent << "Slice projection outline behind plane: "
-    << this->SliceProjectionOutlinedBehindSlicePlane << "\n";
-  os << indent << "Slice projection Color: (";
-  os << this->SliceProjectionColor[0] << ","
-     << this->SliceProjectionColor[1] << ","
-     << this->SliceProjectionColor[2] << ")" << "\n";
-  os << indent << "Slice projection Opacity: " << this->SliceProjectionOpacity << "\n";
-
-  os << indent << "Active component type: " << this->ActiveComponentType << "\n";
-  os << indent << "Active component index: " << this->ActiveComponentIndex << "\n";
+  vtkMRMLPrintBeginMacro(os,indent);
+  vtkMRMLPrintBooleanMacro(PropertiesLabelVisibility);
+  vtkMRMLPrintBooleanMacro(PointLabelsVisibility);
+  vtkMRMLPrintFloatMacro(TextScale);
+  vtkMRMLPrintFloatMacro(GlyphScale);
+  vtkMRMLPrintFloatMacro(GlyphSize);
+  vtkMRMLPrintBooleanMacro(UseGlyphScale);
+  vtkMRMLPrintEnumMacro(GlyphType);
+  vtkMRMLPrintBooleanMacro(SliceProjection);
+  vtkMRMLPrintBooleanMacro(SliceProjectionUseFiducialColor);
+  vtkMRMLPrintBooleanMacro(SliceProjectionOutlinedBehindSlicePlane);
+  vtkMRMLPrintVectorMacro(SliceProjectionColor, double, 3);
+  vtkMRMLPrintFloatMacro(SliceProjectionOpacity);
+  vtkMRMLPrintFloatMacro(ActiveComponentType);
+  vtkMRMLPrintFloatMacro(ActiveComponentIndex);
+  vtkMRMLPrintEndMacro();
 }
 
 //---------------------------------------------------------------------------
@@ -324,31 +285,6 @@ int  vtkMRMLMarkupsDisplayNode::GlyphTypeIs3D(int glyphType)
     {
     return 0;
     }
-}
-
-//---------------------------------------------------------------------------
-void  vtkMRMLMarkupsDisplayNode::SetGlyphType(int type)
-{
-  if (this->GlyphType == type)
-    {
-    return;
-    }
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting GlyphType to " << type);
-  this->GlyphType = type;
-
-  this->Modified();
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayNode::SetGlyphScale(double scale)
-{
-  if (this->GlyphScale == scale)
-    {
-    return;
-    }
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting GlyphScale to " << scale);
-  this->GlyphScale = scale;
-  this->Modified();
 }
 
 //---------------------------------------------------------------------------

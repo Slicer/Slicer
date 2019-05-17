@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>258</width>
-    <height>259</height>
+    <width>348</width>
+    <height>278</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,6 +26,20 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="VisibilityLabel">
+     <property name="text">
+      <string>Visible:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QCheckBox" name="VisibilityCheckBox">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
    <item row="1" column="0">
     <widget class="QLabel" name="DisplayNodeViewLabel">
      <property name="text">
@@ -105,7 +119,7 @@
    <item row="9" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="glyphSizeIsAbsoluteButton">
        <property name="text">
         <string>absolute</string>
        </property>
@@ -122,18 +136,41 @@
        <property name="maximum">
         <double>20.000000000000000</double>
        </property>
+       <property name="suffix">
+        <string> %</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="qMRMLSliderWidget" name="glyphSizeSliderWidget">
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+       <property name="pageStep">
+        <double>1.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>5.000000000000000</double>
+       </property>
       </widget>
      </item>
     </layout>
    </item>
    <item row="10" column="0">
+    <widget class="QLabel" name="PointLabelsVisibilityLabel">
+     <property name="text">
+      <string>Point Labels:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0">
     <widget class="QLabel" name="textScaleLabel">
      <property name="text">
       <string>Text Size:</string>
      </property>
     </widget>
    </item>
-   <item row="10" column="1">
+   <item row="11" column="1">
     <widget class="ctkSliderWidget" name="textScaleSliderWidget">
      <property name="singleStep">
       <double>0.100000000000000</double>
@@ -146,7 +183,7 @@
      </property>
     </widget>
    </item>
-   <item row="11" column="0" colspan="2">
+   <item row="12" column="0" colspan="2">
     <widget class="ctkCollapsibleGroupBox" name="SliceDisplayCollapsibleGroupBox">
      <property name="title">
       <string>Advanced</string>
@@ -173,15 +210,8 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="VisibilityLabel">
-     <property name="text">
-      <string>Visible:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QCheckBox" name="VisibilityCheckBox">
+   <item row="10" column="1">
+    <widget class="QCheckBox" name="PointLabelsVisibilityCheckBox">
      <property name="text">
       <string/>
      </property>
@@ -207,6 +237,11 @@
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSliderWidget</class>
+   <extends>ctkSliderWidget</extends>
+   <header>qMRMLSliderWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLWidget</class>
@@ -238,5 +273,38 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>glyphSizeIsAbsoluteButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>glyphScaleSliderWidget</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>129</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>174</x>
+     <y>186</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>glyphSizeIsAbsoluteButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>glyphSizeSliderWidget</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>114</x>
+     <y>188</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>300</x>
+     <y>188</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

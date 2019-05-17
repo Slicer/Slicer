@@ -32,6 +32,7 @@
 #include <vtkBitArray.h>
 #include <vtkBoundingBox.h>
 #include <vtkCommand.h>
+#include <vtkFrenetSerretFrame.h>
 #include <vtkGeneralTransform.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
@@ -87,6 +88,13 @@ vtkMRMLMarkupsNode::vtkMRMLMarkupsNode()
   this->CurvePolyToWorldTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   this->CurvePolyToWorldTransformer->SetInputConnection(curvePointConnector->GetOutputPort());
   this->CurvePolyToWorldTransformer->SetTransform(this->CurvePolyToWorldTransform);
+
+  this->CurveCoordinateSystemGeneratorWorld = vtkSmartPointer<vtkFrenetSerretFrame>::New();
+  // Curve coordinate system is computed at the very end of the pipeline so that it is only computed
+  // if needed (it is not recomputed when a control point or the world transformation is modified).
+  this->CurveCoordinateSystemGeneratorWorld->SetInputConnection(this->CurvePolyToWorldTransformer->GetOutputPort());
+
+  this->TransformedCurvePolyLocator = vtkSmartPointer<vtkPointLocator>::New();
 }
 
 //----------------------------------------------------------------------------
@@ -118,7 +126,7 @@ void vtkMRMLMarkupsNode::ReadXMLAttributes(const char** atts)
   int disabledModify = this->StartModify();
 
   this->RemoveAllControlPoints();
-  this->RemoveAllTexts();
+  this->RemoveAllMeasurements();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -127,6 +135,7 @@ void vtkMRMLMarkupsNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLStdStringMacro(markupLabelFormat, MarkupLabelFormat);
   vtkMRMLReadXMLEndMacro();
 
+  /* TODO: read measurements
   const char* attName;
   const char* attValue;
   while (*atts != nullptr)
@@ -138,6 +147,7 @@ void vtkMRMLMarkupsNode::ReadXMLAttributes(const char** atts)
       this->AddText(attValue);
       }
     }
+  */
 
   this->EndModify(disabledModify);
 }
@@ -274,18 +284,20 @@ void vtkMRMLMarkupsNode::PrintSelf(ostream& os, vtkIndent indent)
     os << "\n";
     }
 
-  os << indent << "textList: ";
-  if  (!this->TextList || !this->GetNumberOfTexts())
+  os << indent << "Measurements: ";
+
+  if  (this->GetNumberOfMeasurements()>0)
     {
-    os << indent << "None"  << endl;
+    os << std::endl;
+    for (int measurementIndex = 0; measurementIndex < this->GetNumberOfMeasurements(); measurementIndex++)
+      {
+      vtkMRMLMeasurement* m = this->GetNthMeasurement(measurementIndex);
+      os << indent << m->GetName() << ": " << m->GetValueWithUnitsAsPrintableString() << std::endl;
+      }
     }
   else
     {
-    os << endl;
-    for (int i = 0 ; i < this->GetNumberOfTexts() ; i++)
-      {
-      os << indent << "  " << i <<": " <<  (TextList->GetValue(i) ? TextList->GetValue(i) : "(none)") << endl;
-      }
+    os << indent << "None" << std::endl;
     }
 
 }
@@ -314,107 +326,6 @@ void vtkMRMLMarkupsNode::RemoveAllControlPoints()
   this->CurvePoly->GetLines()->Squeeze();
 
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointRemovedEvent);
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLMarkupsNode::SetText(int id, const char *newText)
-{
-  if (id < 0)
-    {
-    vtkErrorMacro("SetText: Invalid ID");
-    return;
-    }
-  if (!this->TextList)
-    {
-    vtkErrorMacro("SetText: TextList is NULL");
-    return;
-    }
-
-  vtkStdString newString;
-  if (newText)
-    {
-    newString = vtkStdString(newText);
-    }
-
-  // check if the same as before
-  if (((this->TextList->GetNumberOfValues() == 0) && (newText == nullptr || newString == "")) ||
-      ((this->TextList->GetNumberOfValues() > id) &&
-       (this->TextList->GetValue(id) == newString)))
-    {
-    return;
-    }
-
-  this->TextList->InsertValue(id,newString);
-
-  // invoke a modified event
-  this->Modified();
-}
-
-//-------------------------------------------------------------------------
-int vtkMRMLMarkupsNode::AddText(const char *newText)
-{
-  if (!this->TextList)
-    {
-    vtkErrorMacro("Markups: For node " << this->GetName() << " text is not defined");
-    return -1 ;
-    }
-
-  int n = this->GetNumberOfTexts();
-  this->SetText(n,newText);
-
-  return n;
-}
-
-//-------------------------------------------------------------------------
-vtkStdString vtkMRMLMarkupsNode::GetText(int n)
-{
-  if ((this->GetNumberOfTexts() <= n) || n < 0)
-    {
-    return vtkStdString();
-    }
-
-  return this->TextList->GetValue(n);
-}
-
-//-------------------------------------------------------------------------
-int  vtkMRMLMarkupsNode::DeleteText(int id)
-{
-  if (!this->TextList)
-    {
-    return -1;
-    }
-
-  int n = this->GetNumberOfTexts();
-  if (id < 0 || id >= n)
-    {
-    return -1;
-    }
-
-  for (int i = id; i < n-1; i++)
-    {
-    this->TextList->SetValue(i, this->GetText(i+1));
-    }
-
-  this->TextList->Resize(n-1);
-
-  return 1;
-}
-
-
-//-------------------------------------------------------------------------
-int vtkMRMLMarkupsNode::GetNumberOfTexts()
-{
-  if (!this->TextList)
-    {
-    return -1;
-    }
-  return static_cast<int>(this->TextList->GetNumberOfValues());
-}
-
-//-------------------------------------------------------------------------
-void vtkMRMLMarkupsNode::RemoveAllTexts()
-{
-  this->TextList->Initialize();
 }
 
 //-------------------------------------------------------------------------
@@ -569,6 +480,7 @@ int vtkMRMLMarkupsNode::AddControlPoint(ControlPoint *controlPoint)
 
   int controlPointIndex = this->GetNumberOfControlPoints() - 1;
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointAddedEvent,  static_cast<void*>(&controlPointIndex));
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&controlPointIndex));
   return controlPointIndex;
 }
 
@@ -704,6 +616,7 @@ void vtkMRMLMarkupsNode::RemoveNthControlPoint(int pointIndex)
 
   this->UpdateCurvePolyFromControlPoints();
 
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&pointIndex));
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointRemovedEvent, static_cast<void*>(&pointIndex));
 }
 
@@ -770,7 +683,7 @@ void vtkMRMLMarkupsNode::UpdateCurvePolyFromCurveInputPoly()
   // Update lines: a single cell containing a line with point
   // indices: 0, 1, ..., last point (and an extra 0 if closed curve).
   vtkIdType numberOfPoints = this->CurvePoly->GetNumberOfPoints();
-  vtkCellArray* line = this->CurvePoly->GetLines();
+  vtkCellArray* lines = this->CurvePoly->GetLines();
   if (numberOfPoints > 1)
     {
     bool loop = (numberOfPoints > 2 && this->CurveClosed);
@@ -778,11 +691,12 @@ void vtkMRMLMarkupsNode::UpdateCurvePolyFromCurveInputPoly()
 
     // Only regenerate indices if necessary
     bool needToUpdateLines = true;
-    if (line->GetNumberOfCells() == 1)
+    if (lines->GetNumberOfCells() == 1)
       {
       vtkIdType currentNumberOfCellPoints = 0;
       vtkIdType* currentCellPoints = nullptr;
-      line->GetCell(0, currentNumberOfCellPoints, currentCellPoints);
+      lines->GetCell(0, currentNumberOfCellPoints, currentCellPoints);
+
       if (currentNumberOfCellPoints == numberOfCellPoints)
         {
         needToUpdateLines = false;
@@ -791,22 +705,22 @@ void vtkMRMLMarkupsNode::UpdateCurvePolyFromCurveInputPoly()
 
     if (needToUpdateLines)
       {
-      line->Reset();
-      line->InsertNextCell(numberOfCellPoints);
+      lines->Reset();
+      lines->InsertNextCell(numberOfCellPoints);
       for (int i = 0; i < numberOfPoints; i++)
         {
-        line->InsertCellPoint(i);
+        lines->InsertCellPoint(i);
         }
       if (loop)
         {
-        line->InsertCellPoint(0);
+        lines->InsertCellPoint(0);
         }
-      line->Modified();
+      lines->Modified();
       }
     }
   else
     {
-    line->Reset();
+    lines->Reset();
     }
 }
 
@@ -1656,6 +1570,7 @@ vtkPolyData* vtkMRMLMarkupsNode::GetCurveWorld()
     }
   this->CurvePolyToWorldTransformer->Update();
   vtkPolyData* curvePolyDataWorld = this->CurvePolyToWorldTransformer->GetOutput();
+  this->TransformedCurvePolyLocator->SetDataSet(curvePolyDataWorld);
   return curvePolyDataWorld;
 }
 
@@ -1790,4 +1705,215 @@ void vtkMRMLMarkupsNode::OnTransformNodeReferenceChanged(vtkMRMLTransformNode* t
 {
   vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), nullptr, this->CurvePolyToWorldTransform);
   Superclass::OnTransformNodeReferenceChanged(transformNode);
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLMarkupsNode::GetClosestControlPointIndexToPositionWorld(double pos[3])
+{
+  int numberOfControlPoints = this->GetNumberOfControlPoints();
+  if (numberOfControlPoints <= 0)
+    {
+    return -1;
+    }
+  if (numberOfControlPoints == 1)
+    {
+    // there is one control point, so the closest one is the only one
+    return 0;
+    }
+  vtkIdType indexOfClosestMarkup = -1;
+  double closestDistanceSquare = 0;
+  for (vtkIdType pointIndex = 0; pointIndex < numberOfControlPoints; pointIndex++)
+    {
+    double currentPos[4] = { 0.0, 0.0, 0.0, 1.0 };
+    this->GetNthControlPointPositionWorld(pointIndex, currentPos);
+    double distanceSquare = vtkMath::Distance2BetweenPoints(pos, currentPos);
+    if (distanceSquare < closestDistanceSquare || indexOfClosestMarkup < 0)
+      {
+      indexOfClosestMarkup = pointIndex;
+      closestDistanceSquare = distanceSquare;
+      }
+    }
+  return indexOfClosestMarkup;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::GetControlPointLabels(vtkStringArray* labels)
+{
+  if (!labels)
+    {
+    vtkErrorMacro("GetControlPointLabels failed: invalid labels");
+    return;
+    }
+  int numberOfControlPoints = this->GetNumberOfControlPoints();
+  labels->SetNumberOfValues(numberOfControlPoints);
+  for (vtkIdType pointIndex = 0; pointIndex < numberOfControlPoints; pointIndex++)
+    {
+    labels->SetValue(pointIndex, this->GetNthControlPointLabel(pointIndex));
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::SetControlPointPositionsWorld(vtkPoints* points)
+{
+  if (!points)
+    {
+    this->RemoveAllControlPoints();
+    return;
+    }
+  int wasModified = this->StartModify();
+  vtkIdType numberOfPoints = points->GetNumberOfPoints();
+  for (vtkIdType pointIndex = 0; pointIndex < numberOfPoints; pointIndex++)
+    {
+    double* posWorld = points->GetPoint(pointIndex);
+    if (pointIndex < this->GetNumberOfControlPoints())
+      {
+      // point already exists, just update it
+      this->SetNthControlPointPositionWorldFromArray(pointIndex, posWorld);
+      }
+    else
+      {
+      // need to add a new point
+      vtkMRMLMarkupsNode::AddControlPointWorld(vtkVector3d(posWorld));
+      }
+    }
+  while (this->GetNumberOfControlPoints() > numberOfPoints)
+    {
+    this->RemoveNthControlPoint(this->GetNumberOfControlPoints() - 1);
+    }
+  this->EndModify(wasModified);
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLMarkupsNode::SetControlPointLabelsWorld(vtkStringArray* labels, vtkPoints* points, std::string separator /*=""*/)
+{
+  if (!labels || !points || labels->GetNumberOfValues() != points->GetNumberOfPoints())
+    {
+    vtkErrorMacro("vtkMRMLMarkupsNode::SetControlPointLabelsWorld failed: invalid inputs");
+    return false;
+    }
+
+  int wasModified = this->StartModify();
+
+  // Erase all previous labels
+  int numberOfControlPoints = this->GetNumberOfControlPoints();
+  for (int n = 0; n < numberOfControlPoints; n++)
+    {
+    this->SetNthControlPointLabel(n, "");
+    }
+
+  // Set each label at the closest control point
+  vtkIdType numberOfLabels = labels->GetNumberOfValues();
+  for (vtkIdType labelIndex = 0; labelIndex < numberOfLabels; ++labelIndex)
+    {
+    int markupIndex = this->GetClosestControlPointIndexToPositionWorld(points->GetPoint(labelIndex));
+    if (markupIndex >= 0)
+      {
+      std::string oldLabel = this->GetNthControlPointLabel(markupIndex);
+      if (oldLabel.empty())
+        {
+        this->SetNthControlPointLabel(markupIndex, labels->GetValue(labelIndex));
+        }
+      else
+        {
+        this->SetNthControlPointLabel(markupIndex, oldLabel + separator + labels->GetValue(labelIndex));
+        }
+      }
+    }
+
+  this->EndModify(wasModified);
+  return true;
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLMarkupsNode::GetNumberOfMeasurements()
+{
+  return this->Measurements.size();
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLMeasurement* vtkMRMLMarkupsNode::GetNthMeasurement(int id)
+{
+  if (id < 0 || id >= this->Measurements.size())
+    {
+    return nullptr;
+    }
+  return this->Measurements[id];
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::SetNthMeasurement(int id, vtkMRMLMeasurement* measurement)
+{
+  if (id < 0 || id > this->Measurements.size())
+    {
+    vtkErrorMacro("vtkMRMLMarkupsNode::SetNthMeasurement failed: id out of range");
+    return;
+    }
+  if (id >= this->Measurements.size())
+    {
+    this->Measurements.push_back(measurement);
+    }
+  else
+    {
+    this->Measurements[id] = measurement;
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::AddMeasurement(vtkMRMLMeasurement* measurement)
+{
+  this->Measurements.push_back(measurement);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::SetNthMeasurement(int id,
+  const std::string& name, double value, const std::string &units, const std::string description/*=""*/,
+  vtkCodedEntry* quantityCode/*=nullptr*/, vtkCodedEntry* derivationCode/*=nullptr*/,
+  vtkCodedEntry* unitsCode/*=nullptr*/, vtkCodedEntry* methodCode/*=nullptr*/)
+{
+  if (id < 0 || id > this->Measurements.size())
+    {
+    vtkErrorMacro("vtkMRMLMarkupsNode::SetNthMeasurement failed: id out of range");
+    return;
+    }
+  vtkSmartPointer<vtkMRMLMeasurement> measurement;
+  if (id >= this->Measurements.size())
+    {
+    measurement = vtkSmartPointer<vtkMRMLMeasurement>::New();
+    this->Measurements.push_back(measurement);
+    }
+  else
+    {
+    measurement = this->Measurements[id];
+    }
+  measurement->SetName(name.c_str());
+  measurement->SetValue(value);
+  measurement->SetUnits(units.c_str());
+  measurement->SetDescription(description.c_str());
+  measurement->SetQuantityCode(quantityCode);
+  measurement->SetDerivationCode(derivationCode);
+  measurement->SetUnitsCode(unitsCode);
+  measurement->SetMethodCode(methodCode);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::RemoveNthMeasurement(int id)
+{
+  if (id < 0 || id >= this->Measurements.size())
+    {
+    vtkErrorMacro("vtkMRMLMarkupsNode::RemoveNthMeasurement failed: id out of range");
+    }
+  this->Measurements.erase(this->Measurements.begin() + id);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::RemoveAllMeasurements()
+{
+  this->Measurements.clear();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::UpdateMeasurements()
+{
+  // child classes override this funciton to compute measurements
+  this->RemoveAllMeasurements();
 }

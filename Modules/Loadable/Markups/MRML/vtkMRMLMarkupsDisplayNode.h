@@ -106,12 +106,24 @@ public:
   vtkGetMacro(TextScale,double);
   vtkSetMacro(TextScale,double);
 
-  /// Set the text visibility of the display node.
-  vtkSetMacro(TextVisibility, bool);
-  /// Get the text visibility of the display node.
-  vtkGetMacro(TextVisibility, bool);
-  /// Set the text visibility of the display node.
-  vtkBooleanMacro(TextVisibility, bool);
+  //@{
+  /**
+   * Control visibility of control point labels.
+   */
+  vtkSetMacro(PointLabelsVisibility, bool);
+  vtkGetMacro(PointLabelsVisibility, bool);
+  vtkBooleanMacro(PointLabelsVisibility, bool);
+  //@}
+
+  //@{
+  /**
+   * Control visibility of information box.
+   */
+  vtkSetMacro(PropertiesLabelVisibility, bool);
+  vtkGetMacro(PropertiesLabelVisibility, bool);
+  vtkBooleanMacro(PropertiesLabelVisibility, bool);
+  //@}
+
 
   /// Which kind of glyph should be used to display this markup?
   /// Vertex2D is supposed to start at 1
@@ -139,7 +151,7 @@ public:
   static int GetMaximumGlyphType() { return vtkMRMLMarkupsDisplayNode::GlyphType_Last-1; };
 
   /// The glyph type used to display this fiducial
-  void SetGlyphType(int type);
+  vtkSetMacro(GlyphType, int);
   vtkGetMacro(GlyphType, int);
   /// Returns 1 if the type is a 3d one, 0 else
   int GlyphTypeIs3D(int glyphType);
@@ -152,9 +164,25 @@ public:
   static const char* GetGlyphTypeAsString(int g);
   static int GetGlyphTypeFromString(const char*);
 
-  /// Get/Set for Symbol scale
-  void SetGlyphScale(double scale);
+  /// Get/Set markup point size relative to the window size.
+  /// This value is only used in slice views and only if SliceUseGlyphScale is set to true.
+  /// Diameter of the point is defined as "scale" percentage of diagonal size of the window.
+  vtkSetMacro(GlyphScale,double);
   vtkGetMacro(GlyphScale,double);
+
+  /// Get/Set absolute markup point size.
+  /// This value is used in 3D views. This value is used in slice views if SliceUseGlyphScale is set to false.
+  /// Diameter of the point is defined as "scale" percentage of diagonal size of the window.
+  vtkSetMacro(GlyphSize,double);
+  vtkGetMacro(GlyphSize,double);
+
+  /// This flag controls if GlyphScale relative or GlyphSize absolute size is used
+  /// to determine size of point glyphs.
+  /// On by default (GlyphScale is used for point sizing in 2D views).
+  /// \sa SetGlyphScale, SetGlyphSize
+  vtkSetMacro(UseGlyphScale, bool);
+  vtkGetMacro(UseGlyphScale, bool);
+  vtkBooleanMacro(UseGlyphScale, bool);
 
   enum
     {
@@ -241,10 +269,13 @@ protected:
   int ActiveComponentType;
   int ActiveComponentIndex;
 
-  bool TextVisibility;
+  bool PropertiesLabelVisibility;
+  bool PointLabelsVisibility;
   double TextScale;
   int GlyphType;
   double GlyphScale;
+  double GlyphSize;
+  bool UseGlyphScale;
 
   bool SliceProjection;
   bool SliceProjectionUseFiducialColor;

@@ -51,6 +51,7 @@ class vtkMarkupsGlyphSource2D;
 class vtkPointPlacer;
 class vtkPointSetToLabelHierarchy;
 class vtkSphereSource;
+class vtkTextActor;
 class vtkTextProperty;
 
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsWidgetRepresentation : public vtkMRMLAbstractWidgetRepresentation
@@ -122,6 +123,14 @@ protected:
     vtkSmartPointer<vtkTextProperty> TextProperty;
   };
 
+  // Calculate view size and scale factor
+  virtual void UpdateViewScaleFactor() = 0;
+
+  virtual void UpdatePixelTolerance() = 0;
+
+  double ViewScaleFactorMmPerPixel;
+  double ScreenSizePixel; // diagonal size of the screen
+
   double ControlPointSize;
 
   virtual void SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode);
@@ -130,6 +139,8 @@ protected:
   vtkWeakPointer<vtkMRMLMarkupsNode> MarkupsNode;
 
   vtkSmartPointer<vtkPointPlacer> PointPlacer;
+
+  vtkSmartPointer<vtkTextActor> TextActor;
 
   vtkTypeBool ClosedLoop;
 

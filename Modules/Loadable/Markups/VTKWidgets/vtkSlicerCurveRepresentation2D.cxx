@@ -18,6 +18,7 @@
 
 // VTK includes
 #include "vtkCellLocator.h"
+#include "vtkCleanPolyData.h"
 #include "vtkDiscretizableColorTransferFunction.h"
 #include "vtkLine.h"
 #include "vtkMath.h"
@@ -56,7 +57,11 @@ vtkSlicerCurveRepresentation2D::vtkSlicerCurveRepresentation2D()
   this->WorldToSliceTransformer->SetInputConnection(this->SliceDistance->GetOutputPort());
 
   this->TubeFilter = vtkSmartPointer<vtkTubeFilter>::New();
-  this->TubeFilter->SetInputConnection(this->WorldToSliceTransformer->GetOutputPort());
+
+  vtkNew<vtkCleanPolyData> cleaner;
+  cleaner->PointMergingOn();
+  cleaner->SetInputConnection(this->WorldToSliceTransformer->GetOutputPort());
+  this->TubeFilter->SetInputConnection(cleaner->GetOutputPort());
   this->TubeFilter->SetNumberOfSides(6);
   this->TubeFilter->SetRadius(1);
 
@@ -98,7 +103,7 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
 
   // Line display
 
-  this->TubeFilter->SetRadius(this->ViewScaleFactor * this->ControlPointSize * 0.125);
+  this->TubeFilter->SetRadius(this->ControlPointSize * 0.125);
 
   this->LineActor->SetVisibility(markupsNode->GetNumberOfControlPoints() >= 2);
 
@@ -317,7 +322,7 @@ void vtkSlicerCurveRepresentation2D::CanInteractWithCurve(
   //if (dist2 < this->ControlPointSize * (1.0 + this->Tolerance))
   if (dist2 < this->MarkupsDisplayNode->GetGlyphScale() * (1.0 + this->Tolerance))
     {
-    closestDistance2 = dist2 * this->ViewScaleFactor * this->ViewScaleFactor;
+    closestDistance2 = dist2 / this->ViewScaleFactorMmPerPixel / this->ViewScaleFactorMmPerPixel;
     foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentLine;
     componentIndex = markupsNode->GetControlPointIndexFromInterpolatedPointIndex(subId);
     }

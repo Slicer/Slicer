@@ -25,9 +25,11 @@
 //----------------------------------------------------------------------
 vtkMRMLAbstractWidgetRepresentation::vtkMRMLAbstractWidgetRepresentation()
 {
-  this->ViewScaleFactor = 1.0;
+  // Default glyph scale used to be 3.0 (in Slicer-4.10 and earlier).
+  // This display scale factor value produces similar appearance of markup points.
+  this->ScreenScaleFactor = 0.2;
 
-  this->Tolerance = 2.0;
+  this->Tolerance = 0.2;
   this->PixelTolerance = 1;
   this->NeedToRender = false;
 
@@ -37,56 +39,6 @@ vtkMRMLAbstractWidgetRepresentation::vtkMRMLAbstractWidgetRepresentation()
 //----------------------------------------------------------------------
 vtkMRMLAbstractWidgetRepresentation::~vtkMRMLAbstractWidgetRepresentation()
 = default;
-
-//----------------------------------------------------------------------
-void vtkMRMLAbstractWidgetRepresentation::UpdateViewScaleFactor()
-{
-  if (!this->Renderer || !this->Renderer->GetActiveCamera())
-    {
-    this->ViewScaleFactor = 1.0;
-    }
-
-  double p1[4], p2[4];
-  this->Renderer->GetActiveCamera()->GetFocalPoint(p1);
-  p1[3] = 1.0;
-  this->Renderer->SetWorldPoint(p1);
-  this->Renderer->WorldToView();
-  this->Renderer->GetViewPoint(p1);
-
-  double depth = p1[2];
-  double aspect[2];
-  this->Renderer->ComputeAspect();
-  this->Renderer->GetAspect(aspect);
-
-  p1[0] = -aspect[0];
-  p1[1] = -aspect[1];
-  this->Renderer->SetViewPoint(p1);
-  this->Renderer->ViewToWorld();
-  this->Renderer->GetWorldPoint(p1);
-
-  p2[0] = aspect[0];
-  p2[1] = aspect[1];
-  p2[2] = depth;
-  p2[3] = 1.0;
-  this->Renderer->SetViewPoint(p2);
-  this->Renderer->ViewToWorld();
-  this->Renderer->GetWorldPoint(p2);
-
-  double distance = sqrt(vtkMath::Distance2BetweenPoints(p1, p2));
-
-  int *size = this->Renderer->GetRenderWindow()->GetSize();
-  double viewport[4];
-  this->Renderer->GetViewport(viewport);
-
-  double x, y, distance2;
-
-  x = size[0] * (viewport[2] - viewport[0]);
-  y = size[1] * (viewport[3] - viewport[1]);
-
-  distance2 = sqrt(x * x + y * y);
-  this->ViewScaleFactor = distance2 / distance;
-}
-
 
 //----------------------------------------------------------------------
 void vtkMRMLAbstractWidgetRepresentation

@@ -35,7 +35,11 @@
 #include "vtkSlicerMarkupsModuleLogicExport.h"
 
 class vtkMRMLMarkupsNode;
+class vtkMRMLMarkupsClosedCurveNode;
 class vtkMRMLMarkupsDisplayNode;
+class vtkPlane;
+class vtkPoints;
+class vtkPolyData;
 
 /// \ingroup Slicer_QtModules_Markups
 class VTK_SLICER_MARKUPS_MODULE_LOGIC_EXPORT vtkSlicerMarkupsLogic :
@@ -181,9 +185,6 @@ public:
   /// in the scene
   void SetSliceIntersectionsVisibility(bool flag);
 
-  /// Get the index of teh closest control point to the world coordinates
-  int GetClosestControlPointIndexToPositionWorld(vtkMRMLMarkupsNode *markupsNode, double pos[3]);
-
   vtkSetMacro(AutoCreateDisplayNodes, bool);
   vtkGetMacro(AutoCreateDisplayNodes, bool);
   vtkBooleanMacro(AutoCreateDisplayNodes, bool);
@@ -193,6 +194,24 @@ public:
   /// Copies basic display properties between markups display nodes. This is used
   /// for updating a display node to defaults.
   void CopyBasicDisplayProperties(vtkMRMLMarkupsDisplayNode *sourceDisplayNode, vtkMRMLMarkupsDisplayNode *targetDisplayNode);
+
+  /// Measure surface area of the smooth surface that fits on the closed curve in world coordinate system.
+  /// \param curveNode points to fit the surface to
+  /// \param surface if not nullptr then the generated surface is saved into that
+  static double GetClosedCurveSurfaceArea(vtkMRMLMarkupsClosedCurveNode* curveNode, vtkPolyData* surface = nullptr);
+
+  /// Create a "soap bubble" surface that fits on the provided point list
+  /// \param curvePoints: points to fit the surface to
+  /// \param radiusScalingFactor size of the surface.Value of 1.0 (default) means the surface edge fits on the points.
+  /// Larger values increase the generated soap bubble outer radius, which may be useful to avoid coincident points
+  /// when using this surface for cutting another surface.
+  static bool CreateSoapBubblePolyDataFromCircumferencePoints(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor = 1.0);
+
+  /// Get best fit plane for a markup
+  static bool GetBestFitPlane(vtkMRMLMarkupsNode* curveNode, vtkPlane* plane);
+
+  /// Compute least squares best fit plane
+  static bool FitPlaneToPoints(vtkPoints* curvePoints, vtkPlane* plane);
 
 protected:
   vtkSlicerMarkupsLogic();

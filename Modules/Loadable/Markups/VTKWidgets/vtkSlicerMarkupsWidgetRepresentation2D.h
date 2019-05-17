@@ -87,10 +87,6 @@ public:
   void GetSliceToWorldCoordinates(const double[2], double[3]);
   void GetWorldToSliceCoordinates(const double worldPos[3], double slicePos[2]);
 
-  /// Set/Get the 2d scale factor to divide 3D scale by to show 2D elements appropriately (usually set to 300)
-  vtkSetMacro(ScaleFactor2D, double);
-  vtkGetMacro(ScaleFactor2D, double);
-
 protected:
   vtkSlicerMarkupsWidgetRepresentation2D();
   ~vtkSlicerMarkupsWidgetRepresentation2D() override;
@@ -99,6 +95,9 @@ protected:
   vtkMRMLSliceNode *GetSliceNode();
 
   void UpdatePlaneFromSliceNode();
+
+  void UpdateViewScaleFactor() override;
+  void UpdatePixelTolerance() override;
 
   bool GetAllControlPointsVisible() override;
 
@@ -144,9 +143,6 @@ protected:
 
   vtkSmartPointer<vtkTransform> WorldToSliceTransform;
   vtkSmartPointer<vtkPlane> SlicePlane;
-
-  /// Scale factor for 2d windows
-  double ScaleFactor2D;
 
   virtual void UpdateAllPointsAndLabelsFromMRML(double labelsOffset);
 

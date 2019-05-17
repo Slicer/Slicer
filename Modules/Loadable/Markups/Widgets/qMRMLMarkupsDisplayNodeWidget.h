@@ -55,6 +55,10 @@ public:
 
   bool visibility()const;
 
+  bool glyphSizeIsAbsolute()const;
+
+  bool pointLabelsVisibility()const;
+
 signals:
   ///
   /// Signal sent if the any property in the display node is changed
@@ -74,7 +78,12 @@ public slots:
 
   void setVisibility(bool);
 
+  void setGlyphSizeIsAbsolute(bool absolute);
+
+  void setPointLabelsVisibility(bool);
+
   void setMaximumMarkupsScale(double maxScale);
+  void setMaximumMarkupsSize(double maxScale);
 
 protected slots:
   void updateWidgetFromMRML();
@@ -84,6 +93,7 @@ protected slots:
   void onUnselectedColorPickerButtonChanged(QColor qcolor);
   void onGlyphTypeComboBoxChanged(QString value);
   void onGlyphScaleSliderWidgetChanged(double value);
+  void onGlyphSizeSliderWidgetChanged(double value);
   void onTextScaleSliderWidgetChanged(double value);
   void onOpacitySliderWidgetChanged(double value);
 

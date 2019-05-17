@@ -33,6 +33,7 @@
 #include "vtkPolyDataMapper2D.h"
 #include "vtkProperty2D.h"
 #include "vtkRenderer.h"
+#include "vtkRenderWindow.h"
 #include "vtkSlicerMarkupsWidgetRepresentation2D.h"
 #include "vtkSphereSource.h"
 #include "vtkStringArray.h"
@@ -109,15 +110,13 @@ vtkSlicerMarkupsWidgetRepresentation2D::vtkSlicerMarkupsWidgetRepresentation2D()
   this->ControlPoints[Active]->TextProperty->SetColor(0.4, 1.0, 0.); // bright green
   reinterpret_cast<ControlPointsPipeline2D*>(this->ControlPoints[Active])->Property->SetColor(0.4, 1.0, 0.);
 
+  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(Unselected)->TextProperty);
+
   this->PointsVisibilityOnSlice = vtkSmartPointer<vtkIntArray>::New();
   this->PointsVisibilityOnSlice->SetName("pointsVisibilityOnSlice");
   this->PointsVisibilityOnSlice->Allocate(100);
   this->PointsVisibilityOnSlice->SetNumberOfValues(1);
   this->PointsVisibilityOnSlice->SetValue(0,0);
-
-  // by default, multiply the display node scale by this when setting scale on elements in 2d windows
-  // 2d glyphs and text need to be scaled by 1/60 to show up properly in the 2d slice windows
-  this->ScaleFactor2D = 0.01667;
 
   this->SlicePlane = vtkSmartPointer<vtkPlane>::New();
   this->WorldToSliceTransform = vtkSmartPointer<vtkTransform>::New();
@@ -308,7 +307,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateAllPointsAndLabelsFromMRML(do
     if (controlPointType == Active)
       {
       controlPoints->Actor->VisibilityOn();
-      controlPoints->LabelsActor->VisibilityOn();
+      controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility());
       }
     }
 }
@@ -430,7 +429,14 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller,
       this->GetControlPointsPipeline(controlPointType)->Glypher->SetSourceConnection(glyphSource->GetOutputPort());
     }
 
-  this->ControlPointSize = this->MarkupsDisplayNode->GetGlyphScale() * this->ScaleFactor2D;
+  if (this->MarkupsDisplayNode->GetUseGlyphScale())
+    {
+    this->ControlPointSize = this->ScreenSizePixel * this->ScreenScaleFactor * this->MarkupsDisplayNode->GetGlyphScale() / 100.0;
+    }
+  else
+    {
+    this->ControlPointSize = this->MarkupsDisplayNode->GetGlyphSize() / this->ViewScaleFactorMmPerPixel;
+    }
 
   // Points widgets have only one Markup/Representation
   for (int PointIndex = 0; PointIndex < markupsNode->GetNumberOfControlPoints(); PointIndex++)
@@ -447,11 +453,11 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller,
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
     {
     ControlPointsPipeline2D* controlPoints = reinterpret_cast<ControlPointsPipeline2D*>(this->ControlPoints[controlPointType]);
-    controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetTextVisibility());
-    controlPoints->Glypher->SetScaleFactor(this->ViewScaleFactor * this->ControlPointSize);
+    controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility());
+    controlPoints->Glypher->SetScaleFactor(this->ControlPointSize);
     }
 
-  this->UpdateAllPointsAndLabelsFromMRML(this->ViewScaleFactor * this->ControlPointSize);
+  this->UpdateAllPointsAndLabelsFromMRML(this->ControlPointSize);
 
   this->VisibilityOn();
 }
@@ -472,7 +478,16 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteract(
 
   double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
 
-  this->PixelTolerance = this->ControlPointSize * (1.0 + this->Tolerance) * this->ViewScaleFactor;
+  if (this->MarkupsDisplayNode->GetUseGlyphScale())
+  {
+    this->ControlPointSize = this->ScreenSizePixel * this->MarkupsDisplayNode->GetGlyphScale() / 100.0 * this->ViewScaleFactorMmPerPixel;
+  }
+  else
+  {
+    this->ControlPointSize = this->MarkupsDisplayNode->GetGlyphSize();
+  }
+
+  this->UpdatePixelTolerance();
   double pixelTolerance2 = this->PixelTolerance * this->PixelTolerance;
 
   closestDistance2 = VTK_DOUBLE_MAX; // in display coordinate system
@@ -538,7 +553,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteractWithLine(
 
   double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
 
-  this->PixelTolerance = this->ControlPointSize * (1.0 + this->Tolerance) * this->ViewScaleFactor;
+  this->UpdatePixelTolerance();
   double pixelTolerance2 = this->PixelTolerance * this->PixelTolerance;
 
   vtkIdType numberOfPoints = markupsNode->GetNumberOfControlPoints();
@@ -586,6 +601,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::GetActors(vtkPropCollection *pc)
     controlPoints->Actor->GetActors(pc);
     controlPoints->LabelsActor->GetActors(pc);
     }
+  this->TextActor->GetActors(pc);
 }
 
 //----------------------------------------------------------------------
@@ -598,6 +614,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::ReleaseGraphicsResources(
     controlPoints->Actor->ReleaseGraphicsResources(win);
     controlPoints->LabelsActor->ReleaseGraphicsResources(win);
     }
+  this->TextActor->ReleaseGraphicsResources(win);
 }
 
 //----------------------------------------------------------------------
@@ -616,6 +633,10 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderOverlay(vtkViewport *viewport)
       count += controlPoints->LabelsActor->RenderOverlay(viewport);
       }
     }
+  if (this->TextActor->GetVisibility())
+    {
+    count += this->TextActor->RenderOverlay(viewport);
+}
   return count;
 }
 
@@ -624,6 +645,10 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderOpaqueGeometry(
   vtkViewport *viewport)
 {
   int count = 0;
+  if (this->TextActor->GetVisibility())
+    {
+    count += this->TextActor->RenderOpaqueGeometry(viewport);
+    }
   for (int i = 0; i < NumberOfControlPointTypes; i++)
     {
     ControlPointsPipeline2D* controlPoints = reinterpret_cast<ControlPointsPipeline2D*>(this->ControlPoints[i]);
@@ -644,6 +669,10 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderTranslucentPolygonalGeometry(
   vtkViewport *viewport)
 {
   int count = 0;
+  if (this->TextActor->GetVisibility())
+    {
+    count += this->TextActor->RenderTranslucentPolygonalGeometry(viewport);
+    }
   for (int i = 0; i < NumberOfControlPointTypes; i++)
     {
     ControlPointsPipeline2D* controlPoints = reinterpret_cast<ControlPointsPipeline2D*>(this->ControlPoints[i]);
@@ -663,6 +692,10 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderTranslucentPolygonalGeometry(
 vtkTypeBool vtkSlicerMarkupsWidgetRepresentation2D::HasTranslucentPolygonalGeometry()
 {
   if (this->Superclass::HasTranslucentPolygonalGeometry())
+    {
+    return true;
+    }
+  if (this->TextActor->GetVisibility() && this->TextActor->HasTranslucentPolygonalGeometry())
     {
     return true;
     }
@@ -686,6 +719,15 @@ void vtkSlicerMarkupsWidgetRepresentation2D::PrintSelf(ostream& os, vtkIndent in
 {
   //Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
   this->Superclass::PrintSelf(os, indent);
+
+  if (this->TextActor)
+    {
+    os << indent << "Text Visibility: " << this->TextActor->GetVisibility() << "\n";
+    }
+  else
+    {
+    os << indent << "Text Visibility: (none)\n";
+    }
 
   for (int i = 0; i < NumberOfControlPointTypes; i++)
     {
@@ -716,8 +758,6 @@ void vtkSlicerMarkupsWidgetRepresentation2D::PrintSelf(ostream& os, vtkIndent in
       os << indent << "Property: (none)\n";
       }
     }
-
-  os << indent << "ScaleFactor2D = " << this->ScaleFactor2D << std::endl;
 }
 
 //-----------------------------------------------------------------------------
@@ -1057,4 +1097,30 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdatePlaneFromSliceNode()
   this->SlicePlane->SetNormal(normal);
   this->SlicePlane->SetOrigin(origin);
   this->SlicePlane->Modified();
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation2D::UpdateViewScaleFactor()
+{
+  this->ViewScaleFactorMmPerPixel = 1.0;
+  this->ScreenSizePixel = 1000.0;
+  if (!this->Renderer || !this->Renderer->GetActiveCamera() || !this->GetSliceNode())
+    {
+    return;
+    }
+
+  int* screenSize = this->Renderer->GetRenderWindow()->GetScreenSize();
+  this->ScreenSizePixel = sqrt(screenSize[0] * screenSize[0] + screenSize[1] * screenSize[1]);
+
+  vtkMatrix4x4* xyToSlice = this->GetSliceNode()->GetXYToSlice();
+  this->ViewScaleFactorMmPerPixel = sqrt(xyToSlice->GetElement(0, 1) * xyToSlice->GetElement(0, 1)
+    + xyToSlice->GetElement(1, 1) * xyToSlice->GetElement(1, 1)
+    + xyToSlice->GetElement(2, 1) * xyToSlice->GetElement(2, 1));
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation2D::UpdatePixelTolerance()
+{
+  this->PixelTolerance = this->ControlPointSize / 2.0 / this->ViewScaleFactorMmPerPixel
+    + this->ScreenSizePixel * this->ScreenScaleFactor / 100.0 * this->Tolerance;
 }

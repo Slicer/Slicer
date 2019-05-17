@@ -123,6 +123,9 @@ public:
 
   void UpdateCurvePolyFromCurveInputPoly() override;
 
+  /// Create and observe default display node(s)
+  void CreateDefaultDisplayNodes() override;
+
 protected:
   vtkMRMLMarkupsFiducialNode();
   ~vtkMRMLMarkupsFiducialNode() override;

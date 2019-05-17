@@ -16,7 +16,7 @@
 ==============================================================================*/
 
 // MRML includes
-#include "vtkMRMLMarkupsDisplayNode.h"
+#include "vtkMRMLMarkupsFiducialDisplayNode.h"
 #include "vtkMRMLMarkupsFiducialNode.h"
 #include "vtkMRMLMarkupsFiducialStorageNode.h"
 #include "vtkMRMLScene.h"
@@ -208,4 +208,23 @@ void vtkMRMLMarkupsFiducialNode::GetNthFiducialWorldCoordinates(int n, double co
 void vtkMRMLMarkupsFiducialNode::UpdateCurvePolyFromCurveInputPoly()
 {
   // No need for curve generation for markup points
+}
+
+//-------------------------------------------------------------------------
+void vtkMRMLMarkupsFiducialNode::CreateDefaultDisplayNodes()
+{
+  if (this->GetDisplayNode() != nullptr &&
+    vtkMRMLMarkupsDisplayNode::SafeDownCast(this->GetDisplayNode()) != nullptr)
+    {
+    // display node already exists
+    return;
+    }
+  if (this->GetScene() == nullptr)
+    {
+    vtkErrorMacro("vtkMRMLMarkupsFiducialNode::CreateDefaultDisplayNodes failed: scene is invalid");
+    return;
+    }
+  vtkMRMLMarkupsFiducialDisplayNode* dispNode = vtkMRMLMarkupsFiducialDisplayNode::SafeDownCast(
+    this->GetScene()->AddNewNodeByClass("vtkMRMLMarkupsFiducialDisplayNode"));
+  this->SetAndObserveDisplayNodeID(dispNode->GetID());
 }

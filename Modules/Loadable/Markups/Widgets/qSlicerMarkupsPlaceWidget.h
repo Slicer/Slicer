@@ -34,6 +34,7 @@
 class qSlicerMarkupsPlaceWidgetPrivate;
 class vtkMRMLInteractionNode;
 class vtkMRMLMarkupsFiducialNode;
+class vtkMRMLMarkupsNode;
 
 /// \ingroup Slicer_QtModules_CreateModels
 class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT
@@ -50,7 +51,6 @@ qSlicerMarkupsPlaceWidget : public qSlicerWidget
   Q_PROPERTY(bool placeModeEnabled READ placeModeEnabled WRITE setPlaceModeEnabled)
   Q_PROPERTY(bool placeModePersistency READ placeModePersistency WRITE setPlaceModePersistency)
 
-
 public:
   typedef qSlicerWidget Superclass;
   qSlicerMarkupsPlaceWidget(QWidget *parent=nullptr);
@@ -58,7 +58,7 @@ public:
 
   enum PlaceMultipleMarkupsType
   {
-    ShowPlaceMultipleMarkupsOption, // show a menu on the place button to place multiple fiducials
+    ShowPlaceMultipleMarkupsOption, // show a menu on the place button to place multiple markup points
     HidePlaceMultipleMarkupsOption, // don't allow to change persistency of place mode, just use current
     ForcePlaceSingleMarkup, // always disable persistency when enabling place mode
     ForcePlaceMultipleMarkups // always enable persistency when enabling place mode
@@ -66,8 +66,8 @@ public:
 
   /// Get the currently selected markups node.
   Q_INVOKABLE vtkMRMLNode* currentNode() const;
-
   Q_INVOKABLE vtkMRMLMarkupsFiducialNode* currentMarkupsFiducialNode() const;
+  Q_INVOKABLE vtkMRMLMarkupsNode* currentMarkupsNode() const;
 
   /// Get interaction node.
   /// \sa setInteractionNode()
@@ -134,10 +134,10 @@ public slots:
   /// Set place mode to persistent (remains active until deactivated). Does not enable or disable placement mode.
   void setPlaceModePersistency(bool);
 
-  /// Delete a point from fiducial from the list.
+  /// Delete last placed markup point.
   void deleteLastPoint();
 
-  /// Delete all points from the current fiducial markups node.
+  /// Delete all points from the markups node.
   void deleteAllPoints();
 
   /// \deprecated Use deleteLastPoint instead.
@@ -165,6 +165,9 @@ signals:
   /// This signal is emitted when place mode for the active markup is changed to enabled or disabled.
   /// The argument \a enabled is true if the currently selected markups node is active and in place mode.
   /// The argument \a enabled is false if the currently selected markups node is not active or not in place mode.
+  void activeMarkupsPlaceModeChanged(bool enabled);
+
+  /// \deprecated Use activeMarkupsPlaceModeChanged instead.
   void activeMarkupsFiducialPlaceModeChanged(bool enabled);
 
 protected:

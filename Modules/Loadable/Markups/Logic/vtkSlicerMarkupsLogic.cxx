@@ -46,9 +46,19 @@
 #include "vtkMRMLSceneViewNode.h"
 
 // VTK includes
+#include <vtkDelaunay2D.h>
+#include <vtkDiskSource.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkPlane.h>
+#include <vtkPoints.h>
+#include <vtkPolyData.h>
+#include <vtkPolyDataNormals.h>
+#include <vtkMassProperties.h>
 #include <vtkStringArray.h>
+#include <vtkThinPlateSplineTransform.h>
+#include <vtkTransform.h>
+#include <vtkTransformPolyDataFilter.h>
 
 // STD includes
 #include <cassert>
@@ -1324,40 +1334,6 @@ void vtkSlicerMarkupsLogic::SetSliceIntersectionsVisibility(bool flag)
 }
 
 //---------------------------------------------------------------------------
-int vtkSlicerMarkupsLogic::GetClosestControlPointIndexToPositionWorld(vtkMRMLMarkupsNode *markupsNode, double pos[3])
-{
-  if (!markupsNode)
-    {
-    vtkGenericWarningMacro("GetClosestMarkupIndexToPositionWorld: invalid markups node");
-    return -1;
-    }
-  int numberOfControlPoints = markupsNode->GetNumberOfControlPoints();
-  if (numberOfControlPoints <= 0)
-    {
-    return -1;
-    }
-  if (numberOfControlPoints == 1)
-    {
-    // there is one control point, so the closest one is the only one
-    return 0;
-    }
-  int indexOfClosestMarkup = -1;
-  double closestDistanceSquare = 0;
-  for (int pointIndex = 0; pointIndex < numberOfControlPoints; pointIndex++)
-  {
-    double currentPos[4];
-    markupsNode->GetNthControlPointPositionWorld(pointIndex, currentPos);
-    double distanceSquare = vtkMath::Distance2BetweenPoints(pos, currentPos);
-    if (distanceSquare < closestDistanceSquare || indexOfClosestMarkup < 0)
-    {
-      indexOfClosestMarkup = pointIndex;
-      closestDistanceSquare = distanceSquare;
-    }
-  }
-  return indexOfClosestMarkup;
-}
-
-//---------------------------------------------------------------------------
 vtkMRMLMarkupsDisplayNode* vtkSlicerMarkupsLogic::GetDefaultMarkupsDisplayNode()
 {
   if (!this->GetMRMLScene())
@@ -1379,4 +1355,145 @@ vtkMRMLMarkupsDisplayNode* vtkSlicerMarkupsLogic::GetDefaultMarkupsDisplayNode()
     }
   this->GetMRMLScene()->AddDefaultNode(newDefaultNode);
   return newDefaultNode;
+}
+
+//---------------------------------------------------------------------------
+double vtkSlicerMarkupsLogic::GetClosedCurveSurfaceArea(vtkMRMLMarkupsClosedCurveNode* curveNode, vtkPolyData* inputSurface /*=nullptr*/)
+{
+  vtkSmartPointer<vtkPolyData> surface;
+  if (inputSurface)
+    {
+    inputSurface->Reset();
+    surface = inputSurface;
+    }
+  else
+    {
+    surface = vtkSmartPointer<vtkPolyData>::New();
+    }
+  vtkPoints* curvePointsWorld = curveNode->GetCurvePointsWorld();
+  if (curvePointsWorld == nullptr || curvePointsWorld->GetNumberOfPoints() == 0)
+    {
+    return 0.0;
+    }
+  if (!vtkSlicerMarkupsLogic::CreateSoapBubblePolyDataFromCircumferencePoints(curvePointsWorld, surface))
+    {
+    return 0.0;
+    }
+
+  vtkNew<vtkMassProperties> metrics;
+  metrics->SetInputData(surface);
+  double surfaceArea = metrics->GetSurfaceArea();
+
+  return surfaceArea;
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerMarkupsLogic::CreateSoapBubblePolyDataFromCircumferencePoints(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor/*=1.0*/)
+{
+  if (!curvePoints || !surface)
+    {
+    return false;
+    }
+
+  // Transform a unit disk to the curve circumference using thin-plate spline interpolation.
+  // It does not guarantee minimum area surface but at least it is a smooth surface that tightly
+  // fits at the provided contour at the boundary.
+  // A further refinement step could be added during that the surface points are adjusted so that
+  // the surface area is minimized.
+
+  // We have a landmark point at every 4.5 degrees (360/80) around the perimeter of the curve.
+  // This is accurate enough for reproducing even very complex curves and can be still computed
+  // quite quickly.
+  const vtkIdType numberOfLandmarkPoints = 80;
+  const vtkIdType numberOfCurvePoints = curvePoints->GetNumberOfPoints();
+
+  vtkNew<vtkPoints> sourceLandmarkPoints; // points on the unit disk
+  sourceLandmarkPoints->SetNumberOfPoints(numberOfLandmarkPoints); // points on the curve
+  vtkNew<vtkPoints> targetLandmarkPoints; // curve points
+  targetLandmarkPoints->SetNumberOfPoints(numberOfLandmarkPoints);
+  for (vtkIdType landmarkPointIndex = 0; landmarkPointIndex < numberOfLandmarkPoints; ++landmarkPointIndex)
+    {
+    double angle = double(landmarkPointIndex) / double(numberOfLandmarkPoints) * 2.0 * vtkMath::Pi();
+    vtkIdType curvePointIndex = vtkMath::Round(round(double(landmarkPointIndex) / double(numberOfLandmarkPoints) * numberOfCurvePoints));
+    sourceLandmarkPoints->SetPoint(landmarkPointIndex, cos(angle), sin(angle), 0);
+    targetLandmarkPoints->SetPoint(landmarkPointIndex, curvePoints->GetPoint(curvePointIndex));
+    }
+
+  vtkNew<vtkThinPlateSplineTransform> landmarkTransform;
+  landmarkTransform->SetSourceLandmarks(sourceLandmarkPoints);
+  landmarkTransform->SetTargetLandmarks(targetLandmarkPoints);
+
+  vtkNew<vtkDiskSource> unitDisk;
+  unitDisk->SetOuterRadius(radiusScalingFactor);
+  unitDisk->SetInnerRadius(0.0);
+  unitDisk->SetCircumferentialResolution(80);
+  unitDisk->SetRadialResolution(15);
+
+  vtkNew<vtkDelaunay2D> triangulator;
+  triangulator->SetTolerance(0.01); // get rid of the small triangles near the center of the unit disk
+  triangulator->SetInputConnection(unitDisk->GetOutputPort());
+
+  vtkNew<vtkTransformPolyDataFilter> polyTransformToCurve;
+  polyTransformToCurve->SetTransform(landmarkTransform);
+  polyTransformToCurve->SetInputConnection(triangulator->GetOutputPort());
+
+  vtkNew<vtkPolyDataNormals> polyDataNormals;
+  polyDataNormals->SetInputConnection(polyTransformToCurve->GetOutputPort());
+  // There are a few triangles in the triangulated unit disk with inconsistent
+  // orientation. Enabling consistency check fixes them.
+  polyDataNormals->ConsistencyOn();
+  polyDataNormals->Update();
+
+  surface->DeepCopy(polyDataNormals->GetOutput());
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerMarkupsLogic::GetBestFitPlane(vtkMRMLMarkupsNode* curveNode, vtkPlane* plane)
+{
+  if (!curveNode || !plane)
+    {
+    return false;
+    }
+  vtkPoints* curvePointsWorld = curveNode->GetCurvePointsWorld();
+  if (curvePointsWorld == nullptr || curvePointsWorld->GetNumberOfPoints() < 3)
+    {
+    // not enough points for computing a plane
+    return false;
+    }
+  return vtkSlicerMarkupsLogic::FitPlaneToPoints(curvePointsWorld, plane);
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerMarkupsLogic::FitPlaneToPoints(vtkPoints* curvePoints, vtkPlane* plane)
+{
+  if (!curvePoints || !plane)
+    {
+    return false;
+    }
+  vtkNew<vtkPolyData> pointSet;
+  pointSet->SetPoints(curvePoints);
+  vtkSmartPointer<vtkAbstractTransform> transform = vtkSmartPointer<vtkAbstractTransform>::Take(
+    vtkDelaunay2D::ComputeBestFittingPlane(pointSet));
+  vtkTransform* linearTransform = vtkTransform::SafeDownCast(transform->GetInverse());
+  if (!linearTransform)
+    {
+    return false;
+    }
+  vtkMatrix4x4* transformMatrix = linearTransform->GetMatrix();
+  double position[3] =
+    {
+    transformMatrix->GetElement(0, 3),
+    transformMatrix->GetElement(1, 3),
+    transformMatrix->GetElement(2, 3)
+    };
+  double normal[3] =
+    {
+    transformMatrix->GetElement(0, 2),
+    transformMatrix->GetElement(1, 2),
+    transformMatrix->GetElement(2, 2)
+    };
+  plane->SetOrigin(position);
+  plane->SetNormal(normal);
+  return true;
 }

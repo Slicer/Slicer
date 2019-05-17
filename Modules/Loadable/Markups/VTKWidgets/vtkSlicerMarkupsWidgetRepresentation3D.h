@@ -78,6 +78,12 @@ protected:
   vtkSlicerMarkupsWidgetRepresentation3D();
   ~vtkSlicerMarkupsWidgetRepresentation3D() override;
 
+  double GetViewScaleFactorAtPosition(double positionWorld[3]);
+
+  void UpdateViewScaleFactor() override;
+
+  void UpdatePixelTolerance() override;
+
   class ControlPointsPipeline3D : public ControlPointsPipeline
   {
   public:
