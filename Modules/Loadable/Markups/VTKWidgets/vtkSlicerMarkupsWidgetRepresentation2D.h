@@ -97,7 +97,11 @@ protected:
   void UpdatePlaneFromSliceNode();
 
   void UpdateViewScaleFactor() override;
-  void UpdatePixelTolerance() override;
+  void UpdateControlPointSize() override;
+
+  // Return squared distance of maximum distance for picking a control point,
+  // in pixels.
+  double GetMaximumControlPointPickingDistance2();
 
   bool GetAllControlPointsVisible() override;
 

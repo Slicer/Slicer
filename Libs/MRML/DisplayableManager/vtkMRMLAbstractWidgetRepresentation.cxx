@@ -29,8 +29,7 @@ vtkMRMLAbstractWidgetRepresentation::vtkMRMLAbstractWidgetRepresentation()
   // This display scale factor value produces similar appearance of markup points.
   this->ScreenScaleFactor = 0.2;
 
-  this->Tolerance = 0.2;
-  this->PixelTolerance = 1;
+  this->PickingTolerancePixel = 30;
   this->NeedToRender = false;
 
   this->AlwaysOnTop = false;
@@ -99,13 +98,9 @@ void vtkMRMLAbstractWidgetRepresentation::PrintSelf(ostream& os,
 {
   //Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
   this->Superclass::PrintSelf(os, indent);
-
-  os << indent << "Tolerance: " << this->Tolerance <<"\n";
-
-  os << indent << "Current Operation: ";
-
-  os << indent << "Always On Top: "
-     << (this->AlwaysOnTop ? "On\n" : "Off\n");
+  os << indent << "PickingTolerancePixel: " << this->PickingTolerancePixel <<"\n";
+  os << indent << "ScreenScaleFactor: " << this->ScreenScaleFactor << "\n";
+  os << indent << "Always On Top: " << (this->AlwaysOnTop ? "On\n" : "Off\n");
 }
 
 

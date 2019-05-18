@@ -292,7 +292,7 @@ void vtkSlicerCurveRepresentation3D::CanInteractWithCurve(
   double dist2 = VTK_DOUBLE_MAX;
   this->CurvePointLocator->FindClosestPoint(worldPosition, closestPointDisplay, cellId, subId, dist2);
 
-  if (dist2 < this->ControlPointSize * (1.0 + this->Tolerance))
+  if (dist2 < this->ControlPointSize + this->PickingTolerancePixel * this->ScreenScaleFactor * this->ViewScaleFactorMmPerPixel)
     {
     closestDistance2 = dist2 / this->ViewScaleFactorMmPerPixel / this->ViewScaleFactorMmPerPixel;
     foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentLine;

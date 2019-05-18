@@ -278,8 +278,7 @@ void vtkSlicerAngleRepresentation2D::CanInteract(
 
   double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
 
-  this->UpdatePixelTolerance();
-  double pixelTolerance2 = this->PixelTolerance * this->PixelTolerance;
+  double maxPickingDistanceFromControlPoint2 = this->GetMaximumControlPointPickingDistance2();
 
   vtkIdType numberOfPoints = markupsNode->GetNumberOfControlPoints();
 
@@ -308,7 +307,7 @@ void vtkSlicerAngleRepresentation2D::CanInteract(
 
     double relativePositionAlongLine = -1.0; // between 0.0-1.0 if between the endpoints of the line segment
     double distance2 = vtkLine::DistanceToLine(displayPosition3, pointDisplayPos1, pointDisplayPos2, relativePositionAlongLine);
-    if (distance2 < pixelTolerance2 && distance2 < closestDistance2 && relativePositionAlongLine >= 0 && relativePositionAlongLine <= 1)
+    if (distance2 < maxPickingDistanceFromControlPoint2 && distance2 < closestDistance2 && relativePositionAlongLine >= 0 && relativePositionAlongLine <= 1)
       {
       closestDistance2 = distance2;
       foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentLine;

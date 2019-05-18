@@ -109,12 +109,10 @@ public:
   */
   virtual void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr);
 
-  /// Specify tolerance for performing pick operations of points
-  /// (see ActivateNode).
-  /// Tolerance is defined in terms of percentage of the handle size.
-  /// Default value is 0.2
-  vtkSetMacro(Tolerance, double);
-  vtkGetMacro(Tolerance, double);
+  /// Specify tolerance for performing pick operations of points.
+  /// Defined in pixels. The specified value is scaled with ScreenScaleFactor.
+  vtkSetMacro(PickingTolerancePixel, double);
+  vtkGetMacro(PickingTolerancePixel, double);
 
   /// Controls whether the widget should always appear on top
   /// of other actors in the scene. (In effect, this will disable OpenGL
@@ -153,9 +151,7 @@ public:
 
   bool NeedToRender;
 
-  // Selection tolerance for the picking of points
-  double Tolerance;
-  double PixelTolerance;
+  double PickingTolerancePixel;
 
   // Allows global rescaling of all widgets (to compensate for larger or smaller physical screen size)
   double ScreenScaleFactor;

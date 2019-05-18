@@ -299,7 +299,7 @@ void vtkSlicerCurveRepresentation2D::SetMarkupsNode(vtkMRMLMarkupsNode *markupsN
 
 //----------------------------------------------------------------------
 void vtkSlicerCurveRepresentation2D::CanInteractWithCurve(
-  const int vtkNotUsed(displayPosition)[2], const double worldPosition[3],
+  const int displayPosition[2], const double worldPosition[3],
   int &foundComponentType, int &componentIndex, double &closestDistance2)
 {
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
@@ -313,16 +313,21 @@ void vtkSlicerCurveRepresentation2D::CanInteractWithCurve(
   this->SliceCurvePointLocator->SetDataSet(this->SliceDistance->GetOutput());
   this->SliceCurvePointLocator->Update();
 
-  double closestPointDisplay[3] = { 0.0 };
+  double closestPointWorld[3] = { 0.0 };
   vtkIdType cellId = -1;
   int subId = -1;
-  double dist2 = VTK_DOUBLE_MAX;
-  this->SliceCurvePointLocator->FindClosestPoint(worldPosition, closestPointDisplay, cellId, subId, dist2);
+  double dist2World = VTK_DOUBLE_MAX;
+  this->SliceCurvePointLocator->FindClosestPoint(worldPosition, closestPointWorld, cellId, subId, dist2World);
 
-  //if (dist2 < this->ControlPointSize * (1.0 + this->Tolerance))
-  if (dist2 < this->MarkupsDisplayNode->GetGlyphScale() * (1.0 + this->Tolerance))
+  double closestPointDisplay[3] = { 0.0 };
+  this->GetWorldToSliceCoordinates(closestPointWorld, closestPointDisplay);
+
+  double maxPickingDistanceFromControlPoint2 = this->GetMaximumControlPointPickingDistance2();
+  double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
+  double dist2 = vtkMath::Distance2BetweenPoints(displayPosition3, closestPointDisplay);
+  if (dist2 < maxPickingDistanceFromControlPoint2)
     {
-    closestDistance2 = dist2 / this->ViewScaleFactorMmPerPixel / this->ViewScaleFactorMmPerPixel;
+    closestDistance2 = dist2;
     foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentLine;
     componentIndex = markupsNode->GetControlPointIndexFromInterpolatedPointIndex(subId);
     }

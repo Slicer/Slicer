@@ -209,7 +209,7 @@ int vtkSlicerMarkupsWidgetRepresentation::FindClosestPointOnWidget(
   this->Renderer->DisplayToWorld();
   this->Renderer->GetWorldPoint(tmp2);
 
-  tmp1[0] = this->PixelTolerance;
+  tmp1[0] = this->PickingTolerancePixel * this->ScreenScaleFactor;
   this->Renderer->SetDisplayPoint(tmp1);
   this->Renderer->DisplayToWorld();
   this->Renderer->GetWorldPoint(tmp1);
@@ -375,15 +375,7 @@ void vtkSlicerMarkupsWidgetRepresentation::PrintSelf(ostream& os,
 {
   //Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
   this->Superclass::PrintSelf(os, indent);
-
-  os << indent << "Tolerance: " << this->Tolerance <<"\n";
-
-  os << indent << "Current Operation: ";
-
   os << indent << "Point Placer: " << this->PointPlacer << "\n";
-
-  os << indent << "Always On Top: "
-     << (this->AlwaysOnTop ? "On\n" : "Off\n");
 }
 
 //-----------------------------------------------------------------------------
@@ -606,4 +598,4 @@ double* vtkSlicerMarkupsWidgetRepresentation::GetWidgetColor(int controlPointTyp
 vtkPointPlacer* vtkSlicerMarkupsWidgetRepresentation::GetPointPlacer()
 {
   return this->PointPlacer;
-};
+}

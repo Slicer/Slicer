@@ -126,11 +126,15 @@ protected:
   // Calculate view size and scale factor
   virtual void UpdateViewScaleFactor() = 0;
 
-  virtual void UpdatePixelTolerance() = 0;
+  virtual void UpdateControlPointSize() = 0;
 
   double ViewScaleFactorMmPerPixel;
   double ScreenSizePixel; // diagonal size of the screen
 
+  // Control point size, specified in renderer world coordinate system.
+  // For slice views, renderer world coordinate system is the display coordinate system, so it is measured in pixels.
+  // For 3D views, renderer world coordinate system is the Slicer world coordinate system, so it is measured in the
+  // scene length unit (typically millimeters).
   double ControlPointSize;
 
   virtual void SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode);

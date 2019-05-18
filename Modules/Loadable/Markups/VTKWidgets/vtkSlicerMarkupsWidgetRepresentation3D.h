@@ -82,7 +82,7 @@ protected:
 
   void UpdateViewScaleFactor() override;
 
-  void UpdatePixelTolerance() override;
+  void UpdateControlPointSize() override;
 
   class ControlPointsPipeline3D : public ControlPointsPipeline
   {

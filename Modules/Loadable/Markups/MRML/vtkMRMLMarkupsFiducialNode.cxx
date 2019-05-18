@@ -226,5 +226,10 @@ void vtkMRMLMarkupsFiducialNode::CreateDefaultDisplayNodes()
     }
   vtkMRMLMarkupsFiducialDisplayNode* dispNode = vtkMRMLMarkupsFiducialDisplayNode::SafeDownCast(
     this->GetScene()->AddNewNodeByClass("vtkMRMLMarkupsFiducialDisplayNode"));
+  if (!dispNode)
+    {
+    vtkErrorMacro("vtkMRMLMarkupsFiducialNode::CreateDefaultDisplayNodes failed: unable to create vtkMRMLMarkupsFiducialDisplayNode")
+    return;
+    }
   this->SetAndObserveDisplayNodeID(dispNode->GetID());
 }

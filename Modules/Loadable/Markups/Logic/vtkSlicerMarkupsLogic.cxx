@@ -21,6 +21,7 @@
 // Markups MRML includes
 #include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
+#include "vtkMRMLMarkupsFiducialDisplayNode.h"
 #include "vtkMRMLMarkupsFiducialNode.h"
 #include "vtkMRMLMarkupsFiducialStorageNode.h"
 #include "vtkMRMLMarkupsLineNode.h"
@@ -223,6 +224,7 @@ void vtkSlicerMarkupsLogic::RegisterNodes()
 
   // Display nodes
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsDisplayNode>::New());
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsFiducialDisplayNode>::New());
 
   // Storage Nodes
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsStorageNode>::New());
@@ -437,8 +439,8 @@ std::string vtkSlicerMarkupsLogic::AddNewDisplayNodeForMarkupsNode(vtkMRMLNode *
     }
 
   // create the display node
-  vtkMRMLMarkupsDisplayNode *displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(
-    mrmlNode->GetScene()->AddNewNodeByClass("vtkMRMLMarkupsDisplayNode"));
+  displayableNode->CreateDefaultDisplayNodes();
+  vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(displayableNode->GetDisplayNode());
   if (!displayNode)
     {
     vtkErrorMacro("AddNewDisplayNodeForMarkupsNode: error creating new display node");
@@ -821,6 +823,8 @@ void vtkSlicerMarkupsLogic::CopyBasicDisplayProperties(vtkMRMLMarkupsDisplayNode
   targetDisplayNode->SetOpacity(sourceDisplayNode->GetOpacity());
   targetDisplayNode->SetGlyphType(sourceDisplayNode->GetGlyphType());
   targetDisplayNode->SetGlyphScale(sourceDisplayNode->GetGlyphScale());
+  targetDisplayNode->SetGlyphSize(sourceDisplayNode->GetGlyphSize());
+  targetDisplayNode->SetUseGlyphScale(sourceDisplayNode->GetUseGlyphScale());
   targetDisplayNode->SetTextScale(sourceDisplayNode->GetTextScale());
   targetDisplayNode->SetSliceProjection(sourceDisplayNode->GetSliceProjection());
   targetDisplayNode->SetSliceProjectionColor(sourceDisplayNode->GetSliceProjectionColor());

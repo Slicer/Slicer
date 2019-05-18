@@ -16,6 +16,12 @@
 
 =========================================================================*/
 
+// Uncomment when vtkSelectVisiblePoints::SetToleranceWorld() method becomes
+// available in Slicer's VTK. It will fix inaccurate markup point occlusion
+// (labels will be correctly hidden and occluded points will not be pickable).
+//
+// #define SELECT_VISIBLE_POINTS_WORLD_TOLERANCE_AVAILABLE
+
 // VTK includes
 #include "vtkCamera.h"
 #include "vtkCellPicker.h"
@@ -79,7 +85,9 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
 
   this->SelectVisiblePoints = vtkSmartPointer<vtkSelectVisiblePoints>::New();
   this->SelectVisiblePoints->SetInputData(this->LabelControlPointsPolyData);
-  //this->SelectVisiblePoints->SetInputData(this->ControlPointsPolyData);
+#ifdef SELECT_VISIBLE_POINTS_WORLD_TOLERANCE_AVAILABLE
+  this->SelectVisiblePoints->SetTolerance(0.0); // we will set tolerance in world coordinate system
+#endif
 
   this->PointSetToLabelHierarchyFilter->SetInputConnection(this->SelectVisiblePoints->GetOutputPort());
 
@@ -225,7 +233,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
       double pointNormalWorld[3] = { 0.0, 0.0, 1.0 };
       markupsNode->GetNthControlPointNormalWorld(pointIndex, pointNormalWorld);
 
-      controlPoints->ControlPoints->InsertNextPoint(worldPos);
+      vtkIdType pointIndexInPipeline = controlPoints->ControlPoints->InsertNextPoint(worldPos);
 
       /* No offset for 3D actors - we may revisit this in the future
       (we could also use text margins to add some space).
@@ -265,6 +273,12 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
 
   double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
 
+#ifdef SELECT_VISIBLE_POINTS_WORLD_TOLERANCE_AVAILABLE
+  // Get a pipeline (any of them would work)
+  vtkSelectVisiblePoints* visiblePoints = this->GetControlPointsPipeline(Active)->SelectVisiblePoints;
+  visiblePoints->Initialize(false);
+#endif
+
   closestDistance2 = VTK_DOUBLE_MAX; // in display coordinate system
   foundComponentIndex = -1;
   if (markupsNode->GetNumberOfControlPoints() > 2 && this->ClosedLoop && markupsNode)
@@ -273,7 +287,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
     double centerPosWorld[3], centerPosDisplay[3];
     markupsNode->GetCenterPosition(centerPosWorld);
     double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(centerPosWorld)
-      + this->ScreenSizePixel * this->ScreenScaleFactor * this->Tolerance / 100.0;
+      + this->PickingTolerancePixel * this->ScreenScaleFactor;
     this->Renderer->SetWorldPoint(centerPosWorld);
     this->Renderer->WorldToDisplay();
     this->Renderer->GetDisplayPoint(centerPosDisplay);
@@ -296,16 +310,22 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
     double centerPosWorld[3], centerPosDisplay[3];
     markupsNode->GetNthControlPointPositionWorld(i, centerPosWorld);
     double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(centerPosWorld)
-      + this->ScreenSizePixel * this->ScreenScaleFactor * this->Tolerance / 100.0;
+      + this->PickingTolerancePixel * this->ScreenScaleFactor;
     this->Renderer->SetWorldPoint(centerPosWorld);
     this->Renderer->WorldToDisplay();
     this->Renderer->GetDisplayPoint(centerPosDisplay);
     double dist2 = vtkMath::Distance2BetweenPoints(centerPosDisplay, displayPosition3);
     if (dist2 < pixelTolerance * pixelTolerance && dist2 < closestDistance2)
       {
-      closestDistance2 = dist2;
-      foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentControlPoint;
-      foundComponentIndex = i;
+#ifdef SELECT_VISIBLE_POINTS_WORLD_TOLERANCE_AVAILABLE
+      bool pointVisible = visiblePoints->IsPointOccluded(centerPosWorld, nullptr);
+      if (pointVisible)
+#endif
+        {
+        closestDistance2 = dist2;
+        foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentControlPoint;
+        foundComponentIndex = i;
+        }
       }
     }
 
@@ -365,17 +385,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithLine(
 void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
 {
   this->UpdateViewScaleFactor();
-  if (this->MarkupsDisplayNode->GetUseGlyphScale())
-    {
-    this->ControlPointSize = this->ScreenSizePixel * this->ScreenScaleFactor
-      * this->MarkupsDisplayNode->GetGlyphScale() / 100.0 * this->ViewScaleFactorMmPerPixel;
-    }
-  else
-    {
-    this->ControlPointSize = this->MarkupsDisplayNode->GetGlyphSize();
-    }
-
-  this->UpdatePixelTolerance();
+  this->UpdateControlPointSize();
 
   Superclass::UpdateFromMRML(caller, event, callData);
 
@@ -742,8 +752,22 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateViewScaleFactor()
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation3D::UpdatePixelTolerance()
+void vtkSlicerMarkupsWidgetRepresentation3D::UpdateControlPointSize()
 {
-  this->PixelTolerance = this->ControlPointSize / 2.0 / this->ViewScaleFactorMmPerPixel
-    + this->ScreenSizePixel * this->ScreenScaleFactor * this->Tolerance / 100.0;
+  if (this->MarkupsDisplayNode->GetUseGlyphScale())
+    {
+    this->ControlPointSize = this->ScreenSizePixel * this->ScreenScaleFactor
+      * this->MarkupsDisplayNode->GetGlyphScale() / 100.0 * this->ViewScaleFactorMmPerPixel;
+    }
+  else
+    {
+    this->ControlPointSize = this->MarkupsDisplayNode->GetGlyphSize();
+    }
+  for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
+    {
+    ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[controlPointType]);
+#ifdef SELECT_VISIBLE_POINTS_WORLD_TOLERANCE_AVAILABLE
+    controlPoints->SelectVisiblePoints->SetToleranceWorld(this->ControlPointSize*0.5);
+#endif
+    }
 }
