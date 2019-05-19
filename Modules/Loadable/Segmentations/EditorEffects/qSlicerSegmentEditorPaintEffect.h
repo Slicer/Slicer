@@ -33,10 +33,12 @@ class vtkPolyData;
 class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorPaintEffect :
   public qSlicerSegmentEditorAbstractLabelEffect
 {
-public:
   Q_OBJECT
 
 public:
+  Q_PROPERTY(double minimumPaintPointDistance READ minimumPaintPointDistance WRITE setMinimumPaintPointDistance)
+  Q_PROPERTY(bool delayedPaint READ delayedPaint WRITE setDelayedPaint)
+
   typedef qSlicerSegmentEditorAbstractLabelEffect Superclass;
   qSlicerSegmentEditorPaintEffect(QObject* parent = nullptr);
   ~qSlicerSegmentEditorPaintEffect() override;
@@ -75,12 +77,28 @@ public:
   /// Perform actions needed on reference geometry change
   void referenceGeometryChanged() override;
 
+  /// If a new point is added at less than this squared distance
+  /// (in display coordinate system) then the point is not added.
+  /// This is an experimental feature
+  /// that may help in limiting number of paint points to
+  /// improve performance.
+  double minimumPaintPointDistance();
+
+  /// If enabled then segmentation is only modified when the mouse button is released.
+  bool delayedPaint();
+
 public slots:
   /// Update user interface from parameter set node
   void updateGUIFromMRML() override;
 
   /// Update parameter set node from user interface
   void updateMRMLFromGUI() override;
+
+  /// \sa minimumPaintPointDistance
+  void setMinimumPaintPointDistance(double dist);
+
+  /// \sa delayedPaint
+  void setDelayedPaint(bool delayed);
 
 protected:
   /// Flag determining to always erase (not just when smudge from empty region)

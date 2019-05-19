@@ -231,6 +231,7 @@ qSlicerSegmentEditorPaintEffectPrivate::qSlicerSegmentEditorPaintEffectPrivate(q
   , ColorSmudgeCheckbox(nullptr)
   , EraseAllSegmentsCheckbox(nullptr)
   , BrushPixelModeCheckbox(nullptr)
+  , MinimumPaintPointDistance2(0.0)
 {
   this->PaintCoordinates_World = vtkSmartPointer<vtkPoints>::New();
   this->FeedbackPointsPolyData = vtkSmartPointer<vtkPolyData>::New();
@@ -266,6 +267,8 @@ qSlicerSegmentEditorPaintEffectPrivate::qSlicerSegmentEditorPaintEffectPrivate(q
 
   this->ActiveViewLastInteractionPosition[0] = 0;
   this->ActiveViewLastInteractionPosition[1] = 0;
+  this->ActiveViewLastPaintPosition[0] = 0;
+  this->ActiveViewLastPaintPosition[1] = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -1208,10 +1211,16 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
         }
       }
     d->paintAddPoint(viewWidget, brushPosition_World);
+    d->ActiveViewLastPaintPosition[0] = eventPosition[0];
+    d->ActiveViewLastPaintPosition[1] = eventPosition[1];
     abortEvent = true;
     }
   else if (eid == vtkCommand::LeftButtonReleaseEvent)
     {
+    if (d->IsPainting)
+      {
+      d->paintAddPoint(viewWidget, brushPosition_World);
+      }
     d->paintApply(viewWidget);
     d->IsPainting = false;
 
@@ -1227,7 +1236,20 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
     {
     if (d->IsPainting)
       {
-      d->paintAddPoint(viewWidget, brushPosition_World);
+      double distance2fromLastInteractionPosition = 0.0;
+      if (d->MinimumPaintPointDistance2 > 0.0)
+        {
+        distance2fromLastInteractionPosition =
+          (d->ActiveViewLastPaintPosition[0] - eventPosition[0])*(d->ActiveViewLastPaintPosition[0] - eventPosition[0])
+          + (d->ActiveViewLastPaintPosition[1] - eventPosition[1])*(d->ActiveViewLastPaintPosition[1] - eventPosition[1]);
+        }
+
+      if (distance2fromLastInteractionPosition >= d->MinimumPaintPointDistance2)
+        {
+        d->paintAddPoint(viewWidget, brushPosition_World);
+        d->ActiveViewLastPaintPosition[0] = eventPosition[0];
+        d->ActiveViewLastPaintPosition[1] = eventPosition[1];
+        }
       abortEvent = false;
       }
     }
@@ -1559,4 +1581,32 @@ void qSlicerSegmentEditorPaintEffect::referenceGeometryChanged()
   this->setCommonParameter("BrushAbsoluteDiameter", qMin(50.0 * minimumDiameter, 0.5 * maximumDiameter));
 
   this->updateGUIFromMRML();
+}
+
+//-----------------------------------------------------------------------------
+double qSlicerSegmentEditorPaintEffect::minimumPaintPointDistance()
+{
+  Q_D(qSlicerSegmentEditorPaintEffect);
+  return sqrt(d->MinimumPaintPointDistance2);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerSegmentEditorPaintEffect::delayedPaint()
+{
+  Q_D(qSlicerSegmentEditorPaintEffect);
+  return d->DelayedPaint;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorPaintEffect::setMinimumPaintPointDistance(double dist)
+{
+  Q_D(qSlicerSegmentEditorPaintEffect);
+  d->MinimumPaintPointDistance2 = dist * dist;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorPaintEffect::setDelayedPaint(bool delayed)
+{
+  Q_D(qSlicerSegmentEditorPaintEffect);
+  d->DelayedPaint = delayed;
 }

@@ -145,6 +145,11 @@ public:
   vtkSmartPointer<vtkPoints> PaintCoordinates_World;
   vtkSmartPointer<vtkPolyData> FeedbackPointsPolyData;
 
+  // If a new point is added at less than this squared distance
+  // then the point is not added. It can be used for limiting number of
+  // points to improve performance.
+  double MinimumPaintPointDistance2;
+
   QList<vtkActor2D*> FeedbackActors;
   QMap<qMRMLWidget*, BrushPipeline*> BrushPipelines;
   bool DelayedPaint;
@@ -153,6 +158,7 @@ public:
   // Observed view node
   qMRMLWidget* ActiveViewWidget;
   int ActiveViewLastInteractionPosition[2];
+  int ActiveViewLastPaintPosition[2];
 
   QFrame* BrushDiameterFrame;
   qMRMLSpinBox* BrushDiameterSpinBox;
