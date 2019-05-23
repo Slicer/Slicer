@@ -46,8 +46,8 @@ endif()
 # Configure headers
 # --------------------------------------------------------------------------
 set(MRML_WIDGETS_HAVE_QT5 1)
-if(NOT DEFINED MRML_WIDGETS_HAVE_WEBGINE_SUPPORT)
-  set(MRML_WIDGETS_HAVE_WEBGINE_SUPPORT 1)
+if(NOT DEFINED MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT)
+  set(MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT 1)
 endif()
 
 configure_file(
@@ -227,7 +227,7 @@ set(MRMLWidgets_SRCS
   qMRMLWindowLevelWidget.h
   )
 
-if(MRML_WIDGETS_HAVE_WEBGINE_SUPPORT)
+if(MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT)
   list(APPEND MRMLWidgets_SRCS
     qMRMLChartView.cxx
     qMRMLChartView.h
@@ -335,7 +335,7 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLWindowLevelWidget.h
   )
 
-if(MRML_WIDGETS_HAVE_WEBGINE_SUPPORT)
+if(MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT)
   list(APPEND MRMLWidgets_MOC_SRCS
     qMRMLChartView.h
     qMRMLChartView_p.h
@@ -373,7 +373,7 @@ set(MRMLWidgets_UI_SRCS
   Resources/UI/qMRMLWindowLevelWidget.ui
   )
 
-if(MRML_WIDGETS_HAVE_WEBGINE_SUPPORT)
+if(MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT)
   list(APPEND MRMLWidgets_UI_SRCS
     Resources/UI/qMRMLChartViewControllerWidget.ui
     )
@@ -383,7 +383,7 @@ set(MRMLWidgets_QRC_SRCS
   Resources/qMRMLWidgets.qrc
   )
 
-if(MRML_WIDGETS_HAVE_WEBGINE_SUPPORT)
+if(MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT)
   configure_file(Resources/jqPlot.qrc.in ${qMRMLWidgets_BINARY_DIR}/Resources/jqPlot.qrc)
   list(APPEND MRMLWidgets_QRC_SRCS
     ${qMRMLWidgets_BINARY_DIR}/Resources/jqPlot.qrc
@@ -414,8 +414,8 @@ if(Slicer_USE_QtTesting)
 endif()
 
   set(_moc_options OPTIONS -DMRML_WIDGETS_HAVE_QT5)
-  if(MRML_WIDGETS_HAVE_WEBGINE_SUPPORT)
-    list(APPEND _moc_options -DMRML_WIDGETS_HAVE_WEBGINE_SUPPORT)
+  if(MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT)
+    list(APPEND _moc_options -DMRML_WIDGETS_HAVE_WEBENGINE_SUPPORT)
   endif()
   QT5_WRAP_CPP(MRMLWidgets_MOC_CXX ${MRMLWidgets_MOC_SRCS} ${_moc_options})
   QT5_WRAP_UI(MRMLWidgets_UI_CXX ${MRMLWidgets_UI_SRCS})

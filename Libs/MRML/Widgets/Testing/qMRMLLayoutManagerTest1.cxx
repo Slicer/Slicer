@@ -27,8 +27,8 @@
 #include <QWidget>
 
 // Slicer includes
-#include <qMRMLWidgetsConfigure.h> // For MRML_WIDGETS_HAVE_WEBGINE_SUPPORT
-#ifdef MRML_WIDGETS_HAVE_WEBGINE_SUPPORT
+#include <qMRMLWidgetsConfigure.h> // For MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
+#ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
 #include "qMRMLChartWidget.h"
 #endif
 #include "qMRMLLayoutManager.h"
@@ -60,7 +60,7 @@ namespace
 //------------------------------------------------------------------------------
 bool testLayoutManagerViewWidgetForChart(int line, qMRMLLayoutManager* layoutManager, int viewId)
 {
-#ifdef MRML_WIDGETS_HAVE_WEBGINE_SUPPORT
+#ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
   qMRMLChartWidget* widget = layoutManager->chartWidget(viewId);
   vtkMRMLChartViewNode* node = widget ? widget->mrmlChartViewNode() : nullptr;
   if (!widget || !node)

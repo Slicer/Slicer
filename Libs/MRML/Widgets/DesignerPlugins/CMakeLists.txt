@@ -99,7 +99,7 @@ set(${KIT}_SRCS
   qMRMLWindowLevelWidgetPlugin.h
   )
 
-if(MRML_WIDGETS_HAVE_WEBGINE_SUPPORT)
+if(MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT)
   list(APPEND ${KIT}_SRCS
     qMRMLExpandingWebViewPlugin.cxx
     qMRMLExpandingWebViewPlugin.h
@@ -153,7 +153,7 @@ set(${KIT}_MOC_SRCS
   qMRMLWindowLevelWidgetPlugin.h
   )
 
-if(MRML_WIDGETS_HAVE_WEBGINE_SUPPORT)
+if(MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT)
   list(APPEND ${KIT}_MOC_SRCS
     qMRMLExpandingWebViewPlugin.h
     )

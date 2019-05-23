@@ -26,7 +26,7 @@
 #endif
 
 #cmakedefine MRML_WIDGETS_HAVE_QT5
-#cmakedefine MRML_WIDGETS_HAVE_WEBGINE_SUPPORT
+#cmakedefine MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
 
 #endif
 
