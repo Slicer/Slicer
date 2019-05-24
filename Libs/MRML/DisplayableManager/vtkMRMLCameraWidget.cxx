@@ -377,6 +377,22 @@ bool vtkMRMLCameraWidget::ProcessStartMouseDrag(vtkMRMLInteractionEventData* eve
 {
   this->SaveStateForUndo();
 
+  if (this->Renderer && this->Renderer->GetRenderWindow() && this->Renderer->GetRenderWindow()->GetInteractor())
+    {
+    vtkInteractorStyle* interactorStyle = vtkInteractorStyle::SafeDownCast(this->Renderer->GetRenderWindow()->GetInteractor()->GetInteractorStyle());
+    if (interactorStyle)
+      {
+      // Put the interactor to interactive mode (we always use VTKIS_ROTATE state as it does not matter how exactl we manipulate
+      // the camera). This changes the desired frame rate (so that for example volume rendering is performed at lower resolution)
+      // and also invokes StartInteractionState (and later EndInteractionState) events, which allow performing operations
+      // when interaction is completed.
+      if (interactorStyle->GetState() != VTKIS_ROTATE)
+        {
+        interactorStyle->StartState(VTKIS_ROTATE);
+        }
+      }
+    }
+
   const int* displayPos = eventData->GetDisplayPosition();
 
   this->StartEventPosition[0] = displayPos[0];
@@ -392,6 +408,18 @@ bool vtkMRMLCameraWidget::ProcessStartMouseDrag(vtkMRMLInteractionEventData* eve
 //-------------------------------------------------------------------------
 bool vtkMRMLCameraWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
 {
+  if (this->Renderer && this->Renderer->GetRenderWindow() && this->Renderer->GetRenderWindow()->GetInteractor())
+    {
+    vtkInteractorStyle* interactorStyle = vtkInteractorStyle::SafeDownCast(this->Renderer->GetRenderWindow()->GetInteractor()->GetInteractorStyle());
+    if (interactorStyle)
+      {
+      if (interactorStyle->GetState() != VTKIS_NONE)
+        {
+        interactorStyle->StopState();
+        }
+      }
+    }
+
   if (this->WidgetState == WidgetStateIdle)
     {
     return false;
