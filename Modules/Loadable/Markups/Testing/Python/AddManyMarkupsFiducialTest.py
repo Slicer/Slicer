@@ -114,11 +114,9 @@ class AddManyMarkupsFiducialTestLogic(ScriptedLoadableModuleLogic):
     timeToAddLastFid = 0
 
     testStartTime = time.clock()
-    displayNode = slicer.vtkMRMLMarkupsDisplayNode()
-    slicer.mrmlScene.AddNode(displayNode)
     fidNode = slicer.vtkMRMLMarkupsFiducialNode()
     slicer.mrmlScene.AddNode(fidNode)
-    fidNode.SetAndObserveDisplayNodeID(displayNode.GetID())
+    fidNode.CreateDefaultDisplayNodes()
 
     if usefewerModifyCalls == 1:
       print("Start modify")

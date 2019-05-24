@@ -16,12 +16,6 @@
 
 =========================================================================*/
 
-// Uncomment when vtkSelectVisiblePoints::SetToleranceWorld() method becomes
-// available in Slicer's VTK. It will fix inaccurate markup point occlusion
-// (labels will be correctly hidden and occluded points will not be pickable).
-//
-// #define SELECT_VISIBLE_POINTS_WORLD_TOLERANCE_AVAILABLE
-
 // VTK includes
 #include "vtkCamera.h"
 #include "vtkCellPicker.h"
@@ -85,9 +79,7 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
 
   this->SelectVisiblePoints = vtkSmartPointer<vtkSelectVisiblePoints>::New();
   this->SelectVisiblePoints->SetInputData(this->LabelControlPointsPolyData);
-#ifdef SELECT_VISIBLE_POINTS_WORLD_TOLERANCE_AVAILABLE
   this->SelectVisiblePoints->SetTolerance(0.0); // we will set tolerance in world coordinate system
-#endif
 
   this->PointSetToLabelHierarchyFilter->SetInputConnection(this->SelectVisiblePoints->GetOutputPort());
 
@@ -273,11 +265,9 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
 
   double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
 
-#ifdef SELECT_VISIBLE_POINTS_WORLD_TOLERANCE_AVAILABLE
   // Get a pipeline (any of them would work)
   vtkSelectVisiblePoints* visiblePoints = this->GetControlPointsPipeline(Active)->SelectVisiblePoints;
   visiblePoints->Initialize(false);
-#endif
 
   closestDistance2 = VTK_DOUBLE_MAX; // in display coordinate system
   foundComponentIndex = -1;
@@ -317,10 +307,8 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
     double dist2 = vtkMath::Distance2BetweenPoints(centerPosDisplay, displayPosition3);
     if (dist2 < pixelTolerance * pixelTolerance && dist2 < closestDistance2)
       {
-#ifdef SELECT_VISIBLE_POINTS_WORLD_TOLERANCE_AVAILABLE
       bool pointVisible = visiblePoints->IsPointOccluded(centerPosWorld, nullptr);
       if (pointVisible)
-#endif
         {
         closestDistance2 = dist2;
         foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentControlPoint;
@@ -520,6 +508,7 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
       if (updateControlPointSize)
         {
         controlPoints->Glypher->SetScaleFactor(this->ControlPointSize);
+        controlPoints->SelectVisiblePoints->SetToleranceWorld(this->ControlPointSize * 0.5);
         }
       count += controlPoints->Actor->RenderOpaqueGeometry(viewport);
       }
@@ -766,8 +755,6 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateControlPointSize()
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
     {
     ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[controlPointType]);
-#ifdef SELECT_VISIBLE_POINTS_WORLD_TOLERANCE_AVAILABLE
     controlPoints->SelectVisiblePoints->SetToleranceWorld(this->ControlPointSize*0.5);
-#endif
     }
 }
