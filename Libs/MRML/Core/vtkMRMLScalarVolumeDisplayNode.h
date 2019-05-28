@@ -20,9 +20,8 @@
 
 // VTK includes
 class vtkImageAlgorithm;
-class vtkImageAccumulate;
 class vtkImageAppendComponents;
-class vtkImageBimodalAnalysis;
+class vtkImageHistogramStatistics;
 class vtkImageCast;
 class vtkImageLogic;
 class vtkImageMapToColors;
@@ -242,8 +241,7 @@ protected:
 
   ///
   /// Used internally in CalculateScalarAutoLevels and CalculateStatisticsAutoLevels
-  vtkImageAccumulate *Accumulate;
-  vtkImageBimodalAnalysis *Bimodal;
+  vtkImageHistogramStatistics *HistogramStatistics;
   bool IsInCalculateAutoLevels;
 };
 

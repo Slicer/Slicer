@@ -23,12 +23,11 @@ Version:   $Revision: 1.2 $
 #include <vtkAlgorithmOutput.h>
 #include <vtkCallbackCommand.h>
 #include <vtkColorTransferFunction.h>
-#include <vtkImageAccumulate.h>
 #include <vtkImageAppendComponents.h>
-#include <vtkImageExtractComponents.h>
-#include <vtkImageBimodalAnalysis.h>
 #include <vtkImageCast.h>
 #include <vtkImageData.h>
+#include <vtkImageExtractComponents.h>
+#include <vtkImageHistogramStatistics.h>
 #include <vtkImageLogic.h>
 #include <vtkImageMapToWindowLevelColors.h>
 #include <vtkImageStencil.h>
@@ -105,8 +104,7 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
   this->AppendComponents->AddInputConnection(0, this->ExtractRGB->GetOutputPort() );
   this->AppendComponents->AddInputConnection(0, this->AlphaLogic->GetOutputPort() );
 
-  this->Bimodal = nullptr;
-  this->Accumulate = nullptr;
+  this->HistogramStatistics = nullptr;
   this->IsInCalculateAutoLevels = false;
 
   vtkEventBroker::GetInstance()->AddObservation(
@@ -127,15 +125,10 @@ vtkMRMLScalarVolumeDisplayNode::~vtkMRMLScalarVolumeDisplayNode()
   this->ExtractAlpha->Delete();
   this->MultiplyAlpha->Delete();
 
-  if (this->Bimodal)
+  if (this->HistogramStatistics)
     {
-    this->Bimodal->Delete();
-    this->Bimodal = nullptr;
-    }
-  if (this->Accumulate)
-    {
-    this->Accumulate->Delete();
-    this->Accumulate = nullptr;
+    this->HistogramStatistics->Delete();
+    this->HistogramStatistics = nullptr;
     }
 }
 
@@ -737,126 +730,44 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
     return;
     }
 
-  if (this->Bimodal == nullptr)
+  if (this->HistogramStatistics == nullptr)
     {
-    this->Bimodal = vtkImageBimodalAnalysis::New();
-    }
-  if (this->Accumulate == nullptr)
-    {
-    this->Accumulate = vtkImageAccumulate::New();
-    }
+    this->HistogramStatistics = vtkImageHistogramStatistics::New();
 
-  double window = 0.0;
-  double level = 0.0;
-  double lower = 0.0;
-  double upper = 0.0;
+    // Set automatic window/level to include the entire intensity range
+    // (except top/bottom 0.1%, to not let a very thin tail of the intensity
+    // distribution to decrease the image contrast too much).
+    // While in CT and sometimes in MRI, there may be a large empty area
+    // outside the reconstructed image, which could be suppressed
+    // by a larger lower percentile value, it would make the method
+    // too specific to particular imaging modalities and could lead to
+    // suboptimal results for other types of images.
+    // Therefore, we choose small, symmetric percentile values here
+    // and maybe add modality-specific methods later (e.g., for CT
+    // images we could set lower value to -1000HU).
+    this->HistogramStatistics->SetAutoRangePercentiles(0.1, 99.9);
 
-  int needAdHoc = 0;
-  int scalarType = imageDataScalar->GetScalarType();
-
-  if (imageDataScalar->GetNumberOfScalarComponents() >=3)
-    {
-    needAdHoc = 1;
-    }
-  else if (scalarType == VTK_INT ||
-           scalarType == VTK_SHORT ||
-           scalarType == VTK_CHAR ||
-           scalarType == VTK_SIGNED_CHAR ||
-           scalarType == VTK_UNSIGNED_CHAR ||
-           scalarType == VTK_UNSIGNED_SHORT ||
-           scalarType == VTK_UNSIGNED_INT)
-    {
-    // Data type is VTK_INT or similar, so calculate window/level
-    // check the scalar type, bimodal analysis only works on int
-
-    // Setup filter to work with signed 16-bit integer.
-    int extent[6] = {0, 65535, 0, 0, 0, 0};
-    this->Accumulate->SetComponentExtent(extent);
-    double origin[3] = {-32768, 0, 0};
-    this->Accumulate->SetComponentOrigin(origin);
-    this->Accumulate->SetInputData(imageDataScalar);
-    this->Bimodal->SetInputConnection(this->Accumulate->GetOutputPort());
-    this->Bimodal->Update();
-    // Workaround for image data where all accumulate samples fall
-    // within the same histogram bin
-    if ( this->Bimodal->GetWindow() == 0.0 &&
-         this->Bimodal->GetLevel() == 0.0 )
-      {
-      needAdHoc = 1;
-      }
-    else
-      {
-      window = this->Bimodal->GetWindow();
-      level = this->Bimodal->GetLevel();
-      lower = this->Bimodal->GetThreshold();
-      upper = this->Bimodal->GetMax();
-      }
-    }
-  else if (scalarType == VTK_FLOAT ||
-           scalarType == VTK_DOUBLE ||
-           scalarType == VTK_LONG ||
-           scalarType == VTK_UNSIGNED_LONG)
-    {
-    // If scalar range is expected to be less conventional, then scale the bins
-    // the image accumulate algorithm
-    double range[2];
-    this->GetDisplayScalarRange(range);
-    long minInt = trunc(range[0]) - 1;
-    long maxInt = trunc(range[1]) + 1;
-
-    this->Accumulate->SetInputData(imageDataScalar);
-    int extent[6] = {0, 999, 0, 0, 0, 0};
-    this->Accumulate->SetComponentExtent(extent);
-    double origin[3] = {static_cast<double>(minInt), 0.0, 0.0};
-    this->Accumulate->SetComponentOrigin(origin);
-    double spacing[3] = {(maxInt-minInt)/1000.0, 1.0, 1.0};
-    this->Accumulate->SetComponentSpacing(spacing);
-
-    this->Bimodal->SetInputConnection(this->Accumulate->GetOutputPort());
-    this->Bimodal->Update();
-
-    // The bimodal analysis assumes that the bin indices correspond directly to
-    // voxel intensity values, need to convert back to intensity space
-    window = this->Bimodal->GetWindow() * spacing[0];
-    level = minInt + (this->Bimodal->GetLevel() - minInt) * spacing[0];
-    lower = minInt + (this->Bimodal->GetThreshold() - minInt) * spacing[0];
-    upper = minInt + (this->Bimodal->GetMax() - minInt) * spacing[0];
-    }
-  else
-    {
-    // If unhandled type, estimate with ad hoc method
-    needAdHoc = 1;
-    }
-
-  if (needAdHoc)
-    {
-    vtkDebugMacro("CalculateScalarAutoLevels: image data scalar type is not integer,"
-                  " doing ad hoc calc of window/level.");
-    double range[2];
-    this->GetDisplayScalarRange(range);
-
-    double min = range[0];
-    double max = range[1];
-
-    window = max-min;
-    level = 0.5*(max+min);
-    lower = level;
-    upper = range[1];
+    // Percentiles are very low (0.1%), so there is no need for
+    // range expansion.
+    this->HistogramStatistics->SetAutoRangeExpansionFactors(0.0, 0.0);
     }
 
   this->IsInCalculateAutoLevels = true;
+  this->HistogramStatistics->SetInputData(imageDataScalar);
+  this->HistogramStatistics->Update();
+  double* intensityRange = this->HistogramStatistics->GetAutoRange();
+  vtkDebugMacro("CalculateScalarAutoLevels:"
+                << " lower: " << intensityRange[0] << " upper: " << intensityRange[1]);
+
   int disabledModify = this->StartModify();
   if (this->GetAutoWindowLevel())
     {
-    this->SetWindowLevel(window, level);
+    this->SetWindowLevelMinMax(intensityRange[0], intensityRange[1]);
     }
   if (this->GetAutoThreshold())
     {
-    this->SetThreshold(lower, upper);
+    this->SetThreshold(intensityRange[0], intensityRange[1]);
     }
-  vtkDebugMacro("CalculateScalarAutoLevels:"
-                << " window: " << window << " level: " << level
-                << " lower: " << lower << " upper: " << upper);
   this->EndModify(disabledModify);
   this->IsInCalculateAutoLevels = false;
 }

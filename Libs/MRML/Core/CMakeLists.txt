@@ -103,7 +103,6 @@ endif()
 set(MRMLCore_SRCS
   vtkCodedEntry.cxx
   vtkEventBroker.cxx
-  vtkImageBimodalAnalysis.cxx
   vtkDataFileFormatHelper.cxx
   vtkMRMLMeasurement.cxx
   vtkMRMLLogic.cxx
