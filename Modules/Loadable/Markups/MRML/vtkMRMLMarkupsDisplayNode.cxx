@@ -145,6 +145,32 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLFloatMacro(sliceProjectionOpacity, SliceProjectionOpacity);
   vtkMRMLReadXMLEndMacro();
 
+  // Fix up legacy markups fiducial nodes
+  const char* attName;
+  const char* attValue;
+  while (*atts != nullptr)
+    {
+    attName = *(atts++);
+    attValue = *(atts++);
+    // Glyph type used to be saved as an integer (not as a string enum as it is done now),
+    // therefore we can use it to detect legacy scenes.
+    if (!strcmp(attName, "glyphType"))
+      {
+      std::stringstream ss;
+      int val = 0;
+      ss << attValue;
+      ss >> val;
+      if (val > 0)
+        {
+        // Se glyph type from integer
+        this->SetGlyphType(val);
+        // Point label visibility attribute was not present in legacy scenes,
+        // therefore we need to set it here.
+        this->SetPointLabelsVisibility(true);
+        }
+      }
+    }
+
   this->EndModify(disabledModify);
 }
 
