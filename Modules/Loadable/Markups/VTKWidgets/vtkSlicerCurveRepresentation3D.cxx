@@ -272,13 +272,14 @@ void vtkSlicerCurveRepresentation3D::CanInteractWithCurve(
   const int vtkNotUsed(displayPosition)[2], const double worldPosition[3],
   int &foundComponentType, int &componentIndex, double &closestDistance2)
 {
-  if (!this->MarkupsNode)
+  if (!this->MarkupsNode || this->MarkupsNode->GetLocked()
+    || this->MarkupsNode->GetNumberOfControlPoints() < 2)
     {
     return;
     }
 
   vtkPolyData* curveWorld = this->MarkupsNode->GetCurveWorld();
-  if (!curveWorld)
+  if (!curveWorld || curveWorld->GetNumberOfCells()<1)
     {
     return;
     }
