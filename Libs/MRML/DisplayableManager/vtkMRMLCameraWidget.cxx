@@ -345,6 +345,16 @@ bool vtkMRMLCameraWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* e
       processedEvent = false;
     }
 
+  if (processedEvent)
+    {
+    // invoke interaction event for compatibility with pre-camera-widget
+    // behavior of vtk event processing.  This enables events to pass
+    // through the qMRMLThreeDView to the cameraNode
+    // for broadcast to other cameras
+    vtkRenderWindowInteractor* interactor = this->Renderer->GetRenderWindow()->GetInteractor();
+    interactor->InvokeEvent(vtkCommand::InteractionEvent);
+    }
+
   return processedEvent;
 }
 
