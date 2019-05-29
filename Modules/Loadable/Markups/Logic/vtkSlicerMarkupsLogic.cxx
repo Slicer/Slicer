@@ -454,16 +454,6 @@ std::string vtkSlicerMarkupsLogic::AddNewDisplayNodeForMarkupsNode(vtkMRMLNode *
   // get the node id to return
   id = std::string(displayNode->GetID());
 
-  // cast to markups node
-  vtkMRMLMarkupsNode *markupsNode = vtkMRMLMarkupsNode::SafeDownCast(mrmlNode);
-  if (markupsNode)
-    {
-    // observe the display node
-    markupsNode->DisableModifiedEventOn();
-    markupsNode->AddAndObserveDisplayNodeID(id.c_str());
-    markupsNode->DisableModifiedEventOff();
-    }
-
   return id;
 }
 
