@@ -30,6 +30,7 @@
 #include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLViewNode.h"
 
 vtkStandardNewMacro(vtkMRMLCameraWidget);
 
@@ -725,6 +726,15 @@ bool vtkMRMLCameraWidget::Dolly(double factor)
   if (camera->GetParallelProjection())
     {
     camera->SetParallelScale(camera->GetParallelScale() / factor);
+    if (this->GetCameraNode() && this->GetCameraNode()->GetScene())
+      {
+      vtkMRMLScene* scene = this->GetCameraNode()->GetScene();
+      vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(scene->GetNodeByID(this->GetCameraNode()->GetActiveTag()));
+      if (viewNode)
+        {
+        viewNode->SetFieldOfView(camera->GetParallelScale());
+        }
+      }
     }
   else
     {
