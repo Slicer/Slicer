@@ -110,9 +110,10 @@ public:
   virtual void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr);
 
   /// Specify tolerance for performing pick operations of points.
-  /// Defined in pixels. The specified value is scaled with ScreenScaleFactor.
-  vtkSetMacro(PickingTolerancePixel, double);
-  vtkGetMacro(PickingTolerancePixel, double);
+  /// For display renderers it is defined in pixels. The specified value is scaled with ScreenScaleFactor.
+  /// For VR renderer it is defined in millimeters. The specified value is scaled with WorldToPhysicalScale.
+  vtkSetMacro(PickingTolerance, double);
+  vtkGetMacro(PickingTolerance, double);
 
   /// Controls whether the widget should always appear on top
   /// of other actors in the scene. (In effect, this will disable OpenGL
@@ -140,27 +141,30 @@ public:
   /// additionalBounds is for convenience only, it allows defining additional bounds.
   void AddActorsBounds(vtkBoundingBox& bounds, const std::vector<vtkProp*> &actors, double* additionalBounds = nullptr);
 
-  // Given a world position and orientation, this computes the display position
-  // using the renderer of this class.
+  /// Given a world position and orientation, this computes the display position
+  /// using the renderer of this class.
   void GetRendererComputedDisplayPositionFromWorldPosition(const double worldPos[3], double displayPos[2]);
 
   void UpdateRelativeCoincidentTopologyOffsets(vtkMapper* mapper);
 
-  // The renderer in which this widget is placed
+  /// The renderer in which this widget is placed
   vtkWeakPointer<vtkRenderer> Renderer;
 
   bool NeedToRender;
 
-  double PickingTolerancePixel;
+  /// Tolerance for performing pick operations of points.
+  /// For display renderers it is defined in pixels. The specified value is scaled with ScreenScaleFactor.
+  /// For VR renderer it is defined in millimeters. The specified value is scaled with WorldToPhysicalScale.
+  double PickingTolerance;
 
-  // Allows global rescaling of all widgets (to compensate for larger or smaller physical screen size)
+  /// Allows global rescaling of all widgets (to compensate for larger or smaller physical screen size)
   double ScreenScaleFactor;
 
   vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;
 
   bool AlwaysOnTop;
 
-  // Temporary variable to store GetBounds() result
+  /// Temporary variable to store GetBounds() result
   double Bounds[6];
 
 private:

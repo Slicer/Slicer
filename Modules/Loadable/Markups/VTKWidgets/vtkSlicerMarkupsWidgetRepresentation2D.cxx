@@ -42,6 +42,9 @@
 #include "vtkTextProperty.h"
 #include "vtkTransform.h"
 
+// MRML includes
+#include "vtkMRMLInteractionEventData.h"
+
 vtkSlicerMarkupsWidgetRepresentation2D::ControlPointsPipeline2D::ControlPointsPipeline2D()
 {
   this->Glypher = vtkSmartPointer<vtkGlyph2D>::New();
@@ -452,7 +455,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller,
     }
 
   // put the labels near the boundary of the glyph, slightly away from it (by half picking tolarance)
-  double labelsOffset = this->ControlPointSize * 0.5 + this->PickingTolerancePixel * 0.5 * this->ScreenScaleFactor;
+  double labelsOffset = this->ControlPointSize * 0.5 + this->PickingTolerance * 0.5 * this->ScreenScaleFactor;
   this->UpdateAllPointsAndLabelsFromMRML(labelsOffset);
 
   this->VisibilityOn();
@@ -460,18 +463,19 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller,
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation2D::CanInteract(
-  const int displayPosition[2], const double vtkNotUsed(position)[3],
+  vtkMRMLInteractionEventData* interactionEventData,
   int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!sliceNode || !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
-    || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID()))
+    || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID()) || !interactionEventData)
     {
     return;
     }
 
+  const int* displayPosition = interactionEventData->GetDisplayPosition();
   double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
 
   this->UpdateControlPointSize();
@@ -526,18 +530,20 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteract(
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation2D::CanInteractWithLine(
-  const int displayPosition[2], const double vtkNotUsed(worldPosition)[3],
+  vtkMRMLInteractionEventData* interactionEventData,
   int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
 
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!sliceNode || !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1)
+  if ( !sliceNode || !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
+    || !interactionEventData )
     {
     return;
     }
 
+  const int* displayPosition = interactionEventData->GetDisplayPosition();
   double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
   double maxPickingDistanceFromControlPoint2 = this->GetMaximumControlPointPickingDistance2();
 
@@ -1122,6 +1128,6 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateControlPointSize()
 //----------------------------------------------------------------------
 double vtkSlicerMarkupsWidgetRepresentation2D::GetMaximumControlPointPickingDistance2()
 {
-  double maximumControlPointPickingDistance = this->ControlPointSize / 2.0 + this->PickingTolerancePixel * this->ScreenScaleFactor;
+  double maximumControlPointPickingDistance = this->ControlPointSize / 2.0 + this->PickingTolerance * this->ScreenScaleFactor;
   return maximumControlPointPickingDistance * maximumControlPointPickingDistance;
 }

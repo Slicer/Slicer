@@ -38,6 +38,8 @@ class vtkDiscretizableColorTransferFunction;
 class vtkSampleImplicitFunctionFilter;
 class vtkTubeFilter;
 
+class vtkMRMLInteractionEventData;
+
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerCurveRepresentation2D : public vtkSlicerMarkupsWidgetRepresentation2D
 {
 public:
@@ -52,7 +54,7 @@ public:
   /// are the methods that the widget and its representation use to
   /// communicate with each other.
   void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr) override;
-  void CanInteract(const int displayPosition[2], const double worldPosition[3],
+  void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
     int &foundComponentType, int &foundComponentIndex, double &closestDistance2) override;
 
   /// Methods to make this class behave as a vtkProp.
@@ -66,7 +68,7 @@ public:
   /// Return the bounds of the representation
   double *GetBounds() override;
 
-  void CanInteractWithCurve(const int displayPosition[2], const double worldPosition[3],
+  void CanInteractWithCurve(vtkMRMLInteractionEventData* interactionEventData,
     int &foundComponentType, int &componentIndex, double &closestDistance2);
 
 protected:

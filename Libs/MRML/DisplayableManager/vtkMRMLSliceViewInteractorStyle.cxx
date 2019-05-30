@@ -114,9 +114,9 @@ void vtkMRMLSliceViewInteractorStyle::OnLeave()
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(unsigned long event)
+bool vtkMRMLSliceViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(vtkEventData* inputEventData)
 {
-  if (!this->DisplayableManagers)
+  if (!this->DisplayableManagers || !inputEventData)
     {
     //this->SetMouseCursor(VTK_CURSOR_DEFAULT);
     return false;
@@ -138,7 +138,7 @@ bool vtkMRMLSliceViewInteractorStyle::DelegateInteractionEventToDisplayableManag
   xyToRasMatrix->MultiplyPoint(displayPosition, worldPosition);
 
   vtkNew<vtkMRMLInteractionEventData> ed;
-  ed->SetType(event);
+  ed->SetType(inputEventData->GetType());
   int displayPositionCorrected[2] = { displayPositionInt[0] - pokedRenderer->GetOrigin()[0], displayPositionInt[1] - pokedRenderer->GetOrigin()[1] };
   ed->SetDisplayPosition(displayPositionCorrected);
   ed->SetWorldPosition(worldPosition);

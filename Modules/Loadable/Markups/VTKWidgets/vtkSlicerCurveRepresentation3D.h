@@ -40,6 +40,8 @@ class vtkPolyDataMapper;
 class vtkPolyData;
 class vtkTubeFilter;
 
+class vtkMRMLInteractionEventData;
+
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerCurveRepresentation3D : public vtkSlicerMarkupsWidgetRepresentation3D
 {
 public:
@@ -66,10 +68,10 @@ public:
   /// Return the bounds of the representation
   double *GetBounds() override;
 
-  void CanInteract(const int displayPosition[2], const double worldPosition[3],
+  void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
     int &foundComponentType, int &foundComponentIndex, double &closestDistance2) override;
 
-  void CanInteractWithCurve(const int displayPosition[2], const double worldPosition[3],
+  void CanInteractWithCurve(vtkMRMLInteractionEventData* interactionEventData,
     int &foundComponentType, int &componentIndex, double &closestDistance2);
 
 protected:

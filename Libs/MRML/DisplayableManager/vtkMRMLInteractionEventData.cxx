@@ -46,6 +46,7 @@ vtkMRMLInteractionEventData::vtkMRMLInteractionEventData()
   this->ViewNode = nullptr;
   this->Rotation = 0.0;
   this->LastRotation = 0.0;
+  this->WorldToPhysicalScale = 1.0;
 }
 
 //---------------------------------------------------------------------------
@@ -72,18 +73,6 @@ void vtkMRMLInteractionEventData::SetModifiers(int v)
 int vtkMRMLInteractionEventData::GetModifiers()
 {
   return this->Modifiers;
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLInteractionEventData::GetWorldPosition(double v[3]) const
-{
-  std::copy(this->WorldPosition, this->WorldPosition + 3, v);
-}
-
-//---------------------------------------------------------------------------
-const double* vtkMRMLInteractionEventData::GetWorldPosition() const
-{
-  return this->WorldPosition;
 }
 
 //---------------------------------------------------------------------------
@@ -142,7 +131,7 @@ bool vtkMRMLInteractionEventData::IsDisplayPositionValid()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLInteractionEventData::SetDisplayPositionValid()
+void vtkMRMLInteractionEventData::SetDisplayPositionInvalid()
 {
   this->DisplayPositionValid = false;
 }
@@ -238,6 +227,18 @@ void vtkMRMLInteractionEventData::SetLastRotation(double v)
 double vtkMRMLInteractionEventData::GetLastRotation() const
 {
   return this->LastRotation;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLInteractionEventData::SetWorldToPhysicalScale(double v)
+{
+  this->WorldToPhysicalScale = v;
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLInteractionEventData::GetWorldToPhysicalScale() const
+{
+  return this->WorldToPhysicalScale;
 }
 
 //---------------------------------------------------------------------------

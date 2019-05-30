@@ -74,19 +74,19 @@ void vtkMRMLThreeDViewInteractorStyle::OnLeave()
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLThreeDViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(unsigned long event)
+bool vtkMRMLThreeDViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(vtkEventData* inputEventData)
 {
   // Get display and world position
   int* displayPositionInt = this->GetInteractor()->GetEventPosition();
   vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(displayPositionInt[0], displayPositionInt[1]);
-  if (!pokedRenderer)
+  if (!pokedRenderer || !inputEventData)
     {
     // can happen during application shutdown
     return false;
     }
 
   vtkNew<vtkMRMLInteractionEventData> ed;
-  ed->SetType(event);
+  ed->SetType(inputEventData->GetType());
   int displayPositionCorrected[2] = { displayPositionInt[0] - pokedRenderer->GetOrigin()[0], displayPositionInt[1] - pokedRenderer->GetOrigin()[1] };
   ed->SetDisplayPosition(displayPositionCorrected);
   double worldPosition[4] = { 0.0, 0.0, 0.0, 1.0 };

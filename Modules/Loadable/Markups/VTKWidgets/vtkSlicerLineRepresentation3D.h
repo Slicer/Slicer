@@ -38,6 +38,8 @@ class vtkPolyDataMapper;
 class vtkPolyData;
 class vtkTubeFilter;
 
+class vtkMRMLInteractionEventData;
+
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerLineRepresentation3D : public vtkSlicerMarkupsWidgetRepresentation3D
 {
 public:
@@ -53,7 +55,7 @@ public:
   /// communicate with each other.
   void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData=nullptr) override;
 
-  void CanInteract(const int displayPosition[2], const double worldPosition[3],
+  void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
     int &foundComponentType, int &foundComponentIndex, double &closestDistance2) override;
 
   /// Methods to make this class behave as a vtkProp.

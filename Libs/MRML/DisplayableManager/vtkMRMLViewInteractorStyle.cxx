@@ -197,6 +197,26 @@ void vtkMRMLViewInteractorStyle::OnMouseWheelBackward()
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLViewInteractorStyle::OnButton3D(vtkEventData* eventData)
+{
+  if (this->DelegateInteractionEventToDisplayableManagers(eventData))
+    {
+    return;
+    }
+  this->InvokeEvent(eventData->GetType(), eventData);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewInteractorStyle::OnMove3D(vtkEventData* eventData)
+{
+  if (this->DelegateInteractionEventToDisplayableManagers(eventData))
+    {
+    return;
+    }
+  this->InvokeEvent(eventData->GetType(), eventData);
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLViewInteractorStyle::OnExpose()
 {
   if (this->DelegateInteractionEventToDisplayableManagers(vtkCommand::ExposeEvent))
@@ -230,9 +250,31 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(u
 
   vtkNew<vtkMRMLInteractionEventData> ed;
   ed->SetType(event);
+
+  return this->DelegateInteractionEventToDisplayableManagers(ed);
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(vtkEventData* inputEventData)
+{
+  int* displayPositionInt = this->GetInteractor()->GetEventPosition();
+  vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(displayPositionInt[0], displayPositionInt[1]);
+
+  vtkNew<vtkMRMLInteractionEventData> ed;
+  ed->SetType(inputEventData ? inputEventData->GetType() : vtkCommand::NoEvent);
   int displayPositionCorrected[2] = { displayPositionInt[0] - pokedRenderer->GetOrigin()[0], displayPositionInt[1] - pokedRenderer->GetOrigin()[1] };
   ed->SetDisplayPosition(displayPositionCorrected);
   ed->SetAttributesFromInteractor(this->GetInteractor());
+  vtkEventDataDevice3D* inputEventDataDevice3D = inputEventData->GetAsEventDataDevice3D();
+  if (inputEventDataDevice3D)
+    {
+    ed->SetDevice(inputEventDataDevice3D->GetDevice());
+    ed->SetWorldPosition(inputEventDataDevice3D->GetWorldPosition());
+    ed->SetWorldOrientation(inputEventDataDevice3D->GetWorldOrientation());
+    ed->SetWorldDirection(inputEventDataDevice3D->GetWorldDirection());
+    ed->SetInput(inputEventDataDevice3D->GetInput());
+    ed->SetAction(inputEventDataDevice3D->GetAction());
+    }
 
   return this->DelegateInteractionEventDataToDisplayableManagers(ed);
 }
@@ -245,6 +287,12 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventDataToDisplayableManage
     //this->SetMouseCursor(VTK_CURSOR_DEFAULT);
     return false;
     }
+  if (eventData->GetType() == vtkCommand::Button3DEvent || eventData->GetType() == vtkCommand::Move3DEvent)
+    {
+    // Invalidate display position if 3D event
+    eventData->SetDisplayPositionInvalid();
+    }
+
   bool canProcessEvent = false;
   double closestDistance2 = VTK_DOUBLE_MAX;
   vtkMRMLAbstractDisplayableManager* closestDisplayableManager = nullptr;
@@ -350,8 +398,7 @@ void vtkMRMLViewInteractorStyle::CustomProcessEvents(vtkObject* object,
   // replace callback method calls. We make sure here that displayable managers
   // get the chance to process the events first (except when we are in an
   // interaction state - such as zooming, panning, etc).
-  if (self->State != VTKIS_NONE
-    || !self->DelegateInteractionEventToDisplayableManagers(event))
+  if (self->State != VTKIS_NONE || !self->DelegateInteractionEventToDisplayableManagers(event))
     {
     // Displayable managers did not processed it
     Superclass::ProcessEvents(object, event, clientdata, calldata);

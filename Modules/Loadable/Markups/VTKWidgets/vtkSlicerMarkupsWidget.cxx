@@ -67,6 +67,9 @@ vtkSlicerMarkupsWidget::vtkSlicerMarkupsWidget()
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
   this->SetEventTranslation(WidgetStateOnWidget, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
   this->SetEventTranslation(WidgetStateDefine, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
+  this->SetEventTranslation(WidgetStateIdle, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
+  this->SetEventTranslation(WidgetStateOnWidget, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
+  this->SetEventTranslation(WidgetStateDefine, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
 }
 
 //----------------------------------------------------------------------
@@ -165,12 +168,10 @@ bool vtkSlicerMarkupsWidget::ProcessMouseMove(vtkMRMLInteractionEventData* event
   else if (state == WidgetStateIdle || state == WidgetStateOnWidget)
     {
     // update state
-    const int* displayPosition = eventData->GetDisplayPosition();
-    const double* worldPosition = eventData->GetWorldPosition();
     int foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
     int foundComponentIndex = -1;
     double closestDistance2 = 0.0;
-    rep->CanInteract(displayPosition, worldPosition, foundComponentType, foundComponentIndex, closestDistance2);
+    rep->CanInteract(eventData, foundComponentType, foundComponentIndex, closestDistance2);
     if (foundComponentType == vtkMRMLMarkupsDisplayNode::ComponentNone)
       {
       this->SetWidgetState(WidgetStateIdle);
@@ -483,9 +484,10 @@ bool vtkSlicerMarkupsWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventD
 
   int foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   int foundComponentIndex = -1;
+  const int* displayPosition = (eventData->IsDisplayPositionValid() ? eventData->GetDisplayPosition() : nullptr);
+  const double* worldPosition = (eventData->IsWorldPositionValid() ? eventData->GetWorldPosition() : nullptr);
   double closestDistance2 = 0.0;
-  rep->CanInteract(eventData->GetDisplayPosition(), eventData->GetWorldPosition(),
-    foundComponentType, foundComponentIndex, closestDistance2);
+  rep->CanInteract(eventData, foundComponentType, foundComponentIndex, closestDistance2);
   if (foundComponentType == vtkMRMLMarkupsDisplayNode::ComponentNone)
     {
     return false;

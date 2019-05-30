@@ -190,6 +190,8 @@ vtkMRMLAbstractDisplayableManager::vtkInternal::vtkInternal(
   this->InteractorStyleObservableEvents.push_back(std::make_pair(vtkCommand::MouseWheelForwardEvent,0.0));
   this->InteractorStyleObservableEvents.push_back(std::make_pair(vtkCommand::EnterEvent,0.0));
   this->InteractorStyleObservableEvents.push_back(std::make_pair(vtkCommand::LeaveEvent,0.0));
+  this->InteractorStyleObservableEvents.push_back(std::make_pair(vtkCommand::Button3DEvent,0.0));
+  this->InteractorStyleObservableEvents.push_back(std::make_pair(vtkCommand::Move3DEvent,0.0));
 }
 
 //-----------------------------------------------------------------------------
@@ -318,7 +320,7 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::SetAndObserveInteractorStyl
   // Remove existing interactor style observer
   if (this->InteractorStyle)
     {
-    this->InteractorStyle->RemoveObserver(this->InteractorStyleCallBackCommand);
+
     this->InteractorStyle->UnRegister(this->External);
     }
 
@@ -326,12 +328,6 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::SetAndObserveInteractorStyl
   if (newInteractorStyle)
     {
     newInteractorStyle->Register(this->External);
-    for(size_t i=0; i < this->InteractorStyleObservableEvents.size(); ++i)
-      {
-      int eid = this->InteractorStyleObservableEvents[i].first;
-      float priority = this->InteractorStyleObservableEvents[i].second;
-      newInteractorStyle->AddObserver(eid, this->InteractorStyleCallBackCommand, priority);
-      }
     }
 
   this->InteractorStyle = newInteractorStyle;
@@ -380,17 +376,10 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::UpdateInteractorStyle(int e
     {
     int currentInteractionMode =
       this->MRMLInteractionNode->GetCurrentInteractionMode();
-    if ( currentInteractionMode & this->External->ActiveInteractionModes() )
-      {
-      this->SetAndObserveInteractor( this->Renderer->GetRenderWindow()->GetInteractor());
-      this->SetAndObserveInteractorStyle(
-          this->Renderer->GetRenderWindow()->GetInteractor()->GetInteractorStyle());
-      updateObserver = (this->InteractorStyle != nullptr);
-      }
-    else
-      {
-      this->SetAndObserveInteractorStyle(nullptr);
-      }
+    this->SetAndObserveInteractor( this->Renderer->GetRenderWindow()->GetInteractor());
+    this->SetAndObserveInteractorStyle(
+        this->Renderer->GetRenderWindow()->GetInteractor()->GetInteractorStyle());
+    updateObserver = (this->InteractorStyle != nullptr);
     }
 
   // Update observe if it applies

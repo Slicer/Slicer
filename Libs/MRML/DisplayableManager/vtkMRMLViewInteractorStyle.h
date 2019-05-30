@@ -19,7 +19,7 @@
 #define __vtkMRMLViewInteractorStyle_h
 
 // VTK includes
-#include "vtkInteractorStyleUser.h"
+#include "vtkInteractorStyle3D.h"
 #include "vtkSmartPointer.h"
 #include "vtkWeakPointer.h"
 
@@ -35,14 +35,14 @@ class vtkTimerLog;
 ///
 /// Events are converted to new-style VTK interaction events and
 /// forwarded to displayable managers for processing.
-/// Some additional high-level events (cush as click and double-click)
+/// Some additional high-level events (such as click and double-click)
 /// are generated here.
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLViewInteractorStyle :
-  public vtkInteractorStyleUser
+  public vtkInteractorStyle3D
 {
 public:
   static vtkMRMLViewInteractorStyle *New();
-  vtkTypeMacro(vtkMRMLViewInteractorStyle,vtkInteractorStyleUser);
+  vtkTypeMacro(vtkMRMLViewInteractorStyle,vtkInteractorStyle3D);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   void OnMouseMove() override;
@@ -62,6 +62,10 @@ public:
   void OnKeyPress() override;
   void OnKeyRelease() override;
 
+  /// 3D event bindings
+  void OnButton3D(vtkEventData* eventData) override;
+  void OnMove3D(vtkEventData* eventData) override;
+
   void OnExpose() override;
   void OnConfigure() override;
 
@@ -72,6 +76,12 @@ public:
   /// DelegateInteractionEventDataToDisplayableManagers.
   /// Return true if the event is processed.
   virtual bool DelegateInteractionEventToDisplayableManagers(unsigned long event);
+
+  /// Give a chance to displayable managers to process the event.
+  /// It just creates vtkMRMLInteractionEventData and calls
+  /// DelegateInteractionEventDataToDisplayableManagers.
+  /// Return true if the event is processed.
+  virtual bool DelegateInteractionEventToDisplayableManagers(vtkEventData* inputEventData);
 
   /// Give a chance to displayable managers to process the event.
   /// Return true if the event is processed.

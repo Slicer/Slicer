@@ -38,6 +38,8 @@ class vtkDiscretizableColorTransferFunction;
 class vtkSampleImplicitFunctionFilter;
 class vtkTubeFilter;
 
+class vtkMRMLInteractionEventData;
+
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerAngleRepresentation2D : public vtkSlicerMarkupsWidgetRepresentation2D
 {
 public:
@@ -64,7 +66,7 @@ public:
   /// Return the bounds of the representation
   double *GetBounds() override;
 
-  void CanInteract(const int displayPosition[2], const double worldPosition[3],
+  void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
     int &foundComponentType, int &foundComponentIndex, double &closestDistance2) override;
 
   bool GetTransformationReferencePoint(double referencePointWorld[3]) override;

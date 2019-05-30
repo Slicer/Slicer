@@ -31,6 +31,9 @@
 #include "vtkTextActor.h"
 #include "vtkTextProperty.h"
 
+// MRML includes
+#include "vtkMRMLInteractionEventData.h"
+
 vtkSlicerMarkupsWidgetRepresentation::ControlPointsPipeline::ControlPointsPipeline()
 {
   this->TextProperty = vtkSmartPointer<vtkTextProperty>::New();
@@ -209,7 +212,7 @@ int vtkSlicerMarkupsWidgetRepresentation::FindClosestPointOnWidget(
   this->Renderer->DisplayToWorld();
   this->Renderer->GetWorldPoint(tmp2);
 
-  tmp1[0] = this->PickingTolerancePixel * this->ScreenScaleFactor;
+  tmp1[0] = this->PickingTolerance * this->ScreenScaleFactor;
   this->Renderer->SetDisplayPoint(tmp1);
   this->Renderer->DisplayToWorld();
   this->Renderer->GetWorldPoint(tmp1);
@@ -380,7 +383,7 @@ void vtkSlicerMarkupsWidgetRepresentation::PrintSelf(ostream& os,
 
 //-----------------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation::CanInteract(
-  const int vtkNotUsed(displayPosition)[2], const double vtkNotUsed(position)[3],
+  vtkMRMLInteractionEventData* vtkNotUsed(interactionEventData),
   int &foundComponentType, int &vtkNotUsed(foundComponentIndex), double &vtkNotUsed(closestDistance2))
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;

@@ -17,7 +17,6 @@
 #define __vtkMRMLSliceViewInteractorStyle_h
 
 // VTK includes
-#include "vtkInteractorStyleUser.h"
 #include "vtkWeakPointer.h"
 
 // MRML includes
@@ -45,7 +44,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceViewInteractorStyle :
 {
 public:
   static vtkMRMLSliceViewInteractorStyle *New();
-  vtkTypeMacro(vtkMRMLSliceViewInteractorStyle,vtkInteractorStyleUser);
+  vtkTypeMacro(vtkMRMLSliceViewInteractorStyle,vtkMRMLViewInteractorStyle);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ///
@@ -58,7 +57,7 @@ public:
 
   /// Give a chance to displayable managers to process the event.
   /// Return true if the event is processed.
-  bool DelegateInteractionEventToDisplayableManagers(unsigned long event) override;
+  bool DelegateInteractionEventToDisplayableManagers(vtkEventData* inputEventData) override;
 
   /// Internal state management for multi-event sequences (like click-drag-release)
 

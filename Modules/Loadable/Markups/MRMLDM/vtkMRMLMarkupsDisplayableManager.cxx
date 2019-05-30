@@ -632,6 +632,7 @@ bool vtkMRMLMarkupsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInterac
   // New point can be placed anywhere
   int eventid = eventData->GetType();
   if ( (eventid == vtkCommand::MouseMoveEvent && eventData->GetModifiers() == vtkEvent::NoModifier)
+    || eventid == vtkCommand::Move3DEvent
     /*|| (eventid == vtkCommand::LeftButtonPressEvent && eventData->GetModifiers() == vtkEvent::NoModifier)
     || eventid == vtkCommand::LeftButtonReleaseEvent
     || eventid == vtkCommand::RightButtonReleaseEvent
@@ -694,7 +695,7 @@ bool vtkMRMLMarkupsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInterac
   bool canProcess = (this->FindClosestWidget(eventData, closestDistance2) != nullptr);
 
   if (!canProcess && this->LastActiveWidget != nullptr
-    && eventid == vtkCommand::MouseMoveEvent)
+    && (eventid == vtkCommand::MouseMoveEvent || eventid == vtkCommand::Move3DEvent) )
     {
     // mouse is moved away from the widget -> deactivate
     //closestDistance2 = 0.0;

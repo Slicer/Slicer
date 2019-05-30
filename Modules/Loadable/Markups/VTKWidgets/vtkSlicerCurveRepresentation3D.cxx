@@ -29,6 +29,7 @@
 #include "vtkTubeFilter.h"
 
 // MRML includes
+#include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 
 vtkStandardNewMacro(vtkSlicerCurveRepresentation3D);
@@ -213,22 +214,23 @@ double *vtkSlicerCurveRepresentation3D::GetBounds()
 
 //----------------------------------------------------------------------
 void vtkSlicerCurveRepresentation3D::CanInteract(
-  const int displayPosition[2], const double worldPosition[3],
+  vtkMRMLInteractionEventData* interactionEventData,
   int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1)
+  if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
+    || !interactionEventData )
     {
     return;
     }
-  Superclass::CanInteract(displayPosition, worldPosition, foundComponentType, foundComponentIndex, closestDistance2);
+  Superclass::CanInteract(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
   if (foundComponentType != vtkMRMLMarkupsDisplayNode::ComponentNone)
     {
     return;
     }
 
-  this->CanInteractWithCurve(displayPosition, worldPosition, foundComponentType, foundComponentIndex, closestDistance2);
+  this->CanInteractWithCurve(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
 }
 
 //-----------------------------------------------------------------------------
@@ -269,11 +271,12 @@ void vtkSlicerCurveRepresentation3D::SetMarkupsNode(vtkMRMLMarkupsNode *markupsN
 
 //----------------------------------------------------------------------
 void vtkSlicerCurveRepresentation3D::CanInteractWithCurve(
-  const int vtkNotUsed(displayPosition)[2], const double worldPosition[3],
+  vtkMRMLInteractionEventData* interactionEventData,
   int &foundComponentType, int &componentIndex, double &closestDistance2)
 {
   if (!this->MarkupsNode || this->MarkupsNode->GetLocked()
-    || this->MarkupsNode->GetNumberOfControlPoints() < 2)
+    || this->MarkupsNode->GetNumberOfControlPoints() < 2
+    || !interactionEventData)
     {
     return;
     }
@@ -291,9 +294,13 @@ void vtkSlicerCurveRepresentation3D::CanInteractWithCurve(
   vtkIdType cellId = -1;
   int subId = -1;
   double dist2 = VTK_DOUBLE_MAX;
-  this->CurvePointLocator->FindClosestPoint(worldPosition, closestPointDisplay, cellId, subId, dist2);
+  if (interactionEventData->IsWorldPositionValid())
+    {
+    const double* worldPosition = interactionEventData->GetWorldPosition();
+    this->CurvePointLocator->FindClosestPoint(worldPosition, closestPointDisplay, cellId, subId, dist2);
+    }
 
-  if (dist2 < this->ControlPointSize + this->PickingTolerancePixel * this->ScreenScaleFactor * this->ViewScaleFactorMmPerPixel)
+  if (dist2 < this->ControlPointSize + this->PickingTolerance * this->ScreenScaleFactor * this->ViewScaleFactorMmPerPixel)
     {
     closestDistance2 = dist2 / this->ViewScaleFactorMmPerPixel / this->ViewScaleFactorMmPerPixel;
     foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentLine;

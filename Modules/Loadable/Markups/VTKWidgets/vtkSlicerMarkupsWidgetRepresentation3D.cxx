@@ -39,6 +39,9 @@
 #include "vtkTextActor.h"
 #include "vtkTextProperty.h"
 
+// MRML includes
+#include "vtkMRMLInteractionEventData.h"
+
 vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPipeline3D()
 {
   this->Glypher = vtkSmartPointer<vtkGlyph3D>::New();
@@ -253,40 +256,69 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
-  const int displayPosition[2], const double vtkNotUsed(worldPosition)[3],
+  vtkMRMLInteractionEventData* interactionEventData,
   int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1)
+  if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
+    || !interactionEventData )
     {
     return;
     }
 
-  double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
+  double displayPosition3[3] = { 0.0, 0.0, 0.0 };
+  // Display position is valid in case of desktop interactions. Otherwise it is a 3D only context such as
+  // virtual reality, and then we expect a valid world position in tha absence of display position.
+  if (interactionEventData->IsDisplayPositionValid())
+    {
+    const int* displayPosition = interactionEventData->GetDisplayPosition();
+    displayPosition3[0] = static_cast<double>(displayPosition[0]);
+    displayPosition3[1] = static_cast<double>(displayPosition[1]);
+    }
+  else if (!interactionEventData->IsWorldPositionValid())
+    {
+    return;
+    }
 
   // Get a pipeline (any of them would work)
   vtkSelectVisiblePoints* visiblePoints = this->GetControlPointsPipeline(Active)->SelectVisiblePoints;
   visiblePoints->Initialize(false);
 
-  closestDistance2 = VTK_DOUBLE_MAX; // in display coordinate system
+  closestDistance2 = VTK_DOUBLE_MAX; // in display coordinate system (phyisical in case of virtual reality renderer)
   foundComponentIndex = -1;
   if (markupsNode->GetNumberOfControlPoints() > 2 && this->ClosedLoop && markupsNode)
     {
     // Check if center is selected
     double centerPosWorld[3], centerPosDisplay[3];
     markupsNode->GetCenterPosition(centerPosWorld);
-    double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(centerPosWorld)
-      + this->PickingTolerancePixel * this->ScreenScaleFactor;
     this->Renderer->SetWorldPoint(centerPosWorld);
-    this->Renderer->WorldToDisplay();
-    this->Renderer->GetDisplayPoint(centerPosDisplay);
-    double dist2 = vtkMath::Distance2BetweenPoints(centerPosDisplay, displayPosition3);
-    if (dist2 < pixelTolerance * pixelTolerance)
+    if (interactionEventData->IsDisplayPositionValid())
       {
-      closestDistance2 = dist2;
-      foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentCenterPoint;
-      foundComponentIndex = 0;
+      double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(centerPosWorld)
+        + this->PickingTolerance * this->ScreenScaleFactor;
+      this->Renderer->WorldToDisplay();
+      this->Renderer->GetDisplayPoint(centerPosDisplay);
+      double dist2 = vtkMath::Distance2BetweenPoints(centerPosDisplay, displayPosition3);
+      if (dist2 < pixelTolerance * pixelTolerance)
+        {
+        closestDistance2 = dist2;
+        foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentCenterPoint;
+        foundComponentIndex = 0;
+        }
+      }
+    else
+      {
+      const double* worldPosition = interactionEventData->GetWorldPosition();
+      double worldTolerance = this->ControlPointSize / 2.0 +
+        this->PickingTolerance / interactionEventData->GetWorldToPhysicalScale();
+      double dist2 = vtkMath::Distance2BetweenPoints(centerPosWorld, worldPosition);
+      if (dist2 < worldTolerance * worldTolerance)
+        {
+        closestDistance2 = dist2;
+        foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentCenterPoint;
+        foundComponentIndex = 0;
+        }
       }
     }
 
@@ -299,16 +331,29 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
       }
     double centerPosWorld[3], centerPosDisplay[3];
     markupsNode->GetNthControlPointPositionWorld(i, centerPosWorld);
-    double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(centerPosWorld)
-      + this->PickingTolerancePixel * this->ScreenScaleFactor;
     this->Renderer->SetWorldPoint(centerPosWorld);
-    this->Renderer->WorldToDisplay();
-    this->Renderer->GetDisplayPoint(centerPosDisplay);
-    double dist2 = vtkMath::Distance2BetweenPoints(centerPosDisplay, displayPosition3);
-    if (dist2 < pixelTolerance * pixelTolerance && dist2 < closestDistance2)
+    bool pointVisible = visiblePoints->IsPointOccluded(centerPosWorld, nullptr);
+    if (interactionEventData->IsDisplayPositionValid())
       {
-      bool pointVisible = visiblePoints->IsPointOccluded(centerPosWorld, nullptr);
-      if (pointVisible)
+      double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(centerPosWorld)
+        + this->PickingTolerance * this->ScreenScaleFactor;
+      this->Renderer->WorldToDisplay();
+      this->Renderer->GetDisplayPoint(centerPosDisplay);
+      double dist2 = vtkMath::Distance2BetweenPoints(centerPosDisplay, displayPosition3);
+      if (dist2 < pixelTolerance * pixelTolerance && dist2 < closestDistance2 && pointVisible)
+        {
+        closestDistance2 = dist2;
+        foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentControlPoint;
+        foundComponentIndex = i;
+        }
+      }
+    else
+      {
+      const double* worldPosition = interactionEventData->GetWorldPosition();
+      double worldTolerance = this->ControlPointSize / 2.0 +
+        this->PickingTolerance / interactionEventData->GetWorldToPhysicalScale();
+      double dist2 = vtkMath::Distance2BetweenPoints(centerPosWorld, worldPosition);
+      if (dist2 < worldTolerance * worldTolerance && dist2 < closestDistance2 && pointVisible)
         {
         closestDistance2 = dist2;
         foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentControlPoint;
@@ -336,12 +381,13 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithLine(
-  const int vtkNotUsed(displayPosition)[2], const double worldPosition[3],
+  vtkMRMLInteractionEventData* interactionEventData,
   int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1)
+  if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
+    || !interactionEventData || !interactionEventData->IsWorldPositionValid() )
     {
     return;
     }
@@ -359,6 +405,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithLine(
     markupsNode->GetNthControlPointPositionWorld(i + 1, pointWorldPos2);
 
     double relativePositionAlongLine = -1.0; // between 0.0-1.0 if between the endpoints of the line segment
+    const double* worldPosition = interactionEventData->GetWorldPosition();
     double distance2 = vtkLine::DistanceToLine(worldPosition, pointWorldPos1, pointWorldPos2, relativePositionAlongLine);
     if (distance2 < toleranceWorld && distance2 < closestDistance2 && relativePositionAlongLine >= 0 && relativePositionAlongLine <= 1)
       {

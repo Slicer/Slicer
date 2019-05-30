@@ -44,6 +44,8 @@ class vtkPlane;
 class vtkPolyDataMapper2D;
 class vtkProperty2D;
 
+class vtkMRMLInteractionEventData;
+
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsWidgetRepresentation2D : public vtkSlicerMarkupsWidgetRepresentation
 {
 public:
@@ -52,12 +54,12 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Position is displayed (slice) position
-  void CanInteract(const int displayPosition[2], const double worldPosition[3],
+  void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
     int &foundComponentType, int &foundComponentIndex, double &closestDistance2) override;
 
   /// Checks if interaction with straight line between visible points is possible.
   /// Can be used on the output of CanInteract, as if no better component is found then the input is returned.
-  void CanInteractWithLine(const int displayPosition[2], const double worldPosition[3],
+  void CanInteractWithLine(vtkMRMLInteractionEventData* interactionEventData,
     int &foundComponentType, int &foundComponentIndex, double &closestDistance2);
 
   /// Subclasses of vtkSlicerMarkupsWidgetRepresentation2D must implement these methods. These

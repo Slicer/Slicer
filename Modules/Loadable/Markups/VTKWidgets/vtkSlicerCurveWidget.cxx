@@ -75,8 +75,6 @@ bool vtkSlicerCurveWidget::ProcessControlPointInsert(vtkMRMLInteractionEventData
     return false;
     }
 
-  const int* displayPosition = eventData->GetDisplayPosition();
-  const double* worldPosition = eventData->GetWorldPosition();
   int foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   int foundComponentIndex = -1;
   double closestDistance2 = 0.0;
@@ -86,11 +84,11 @@ bool vtkSlicerCurveWidget::ProcessControlPointInsert(vtkMRMLInteractionEventData
   vtkSlicerCurveRepresentation3D* rep3d = vtkSlicerCurveRepresentation3D::SafeDownCast(this->WidgetRep);
   if (rep2d)
     {
-    rep2d->CanInteractWithCurve(displayPosition, worldPosition, foundComponentType, foundComponentIndex, closestDistance2);
+    rep2d->CanInteractWithCurve(eventData, foundComponentType, foundComponentIndex, closestDistance2);
     }
   else if (rep3d)
     {
-    rep3d->CanInteractWithCurve(displayPosition, worldPosition, foundComponentType, foundComponentIndex, closestDistance2);
+    rep3d->CanInteractWithCurve(eventData, foundComponentType, foundComponentIndex, closestDistance2);
     }
   else
     {

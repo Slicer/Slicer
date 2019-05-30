@@ -39,6 +39,7 @@
 #include "vtkTubeFilter.h"
 
 // MRML includes
+#include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLProceduralColorNode.h"
 
@@ -169,23 +170,24 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
 
 //----------------------------------------------------------------------
 void vtkSlicerCurveRepresentation2D::CanInteract(
-  const int displayPosition[2], const double worldPosition[3],
+  vtkMRMLInteractionEventData* interactionEventData,
   int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1)
+  if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
+    || !interactionEventData )
     {
     return;
     }
-  Superclass::CanInteract(displayPosition, worldPosition, foundComponentType, foundComponentIndex, closestDistance2);
+  Superclass::CanInteract(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
   if (foundComponentType != vtkMRMLMarkupsDisplayNode::ComponentNone)
     {
     // if mouse is near a control point then select that (ignore the line)
     return;
     }
 
-  this->CanInteractWithCurve(displayPosition, worldPosition, foundComponentType, foundComponentIndex, closestDistance2);
+  this->CanInteractWithCurve(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
 }
 
 //----------------------------------------------------------------------
@@ -299,12 +301,13 @@ void vtkSlicerCurveRepresentation2D::SetMarkupsNode(vtkMRMLMarkupsNode *markupsN
 
 //----------------------------------------------------------------------
 void vtkSlicerCurveRepresentation2D::CanInteractWithCurve(
-  const int displayPosition[2], const double worldPosition[3],
+  vtkMRMLInteractionEventData* interactionEventData,
   int &foundComponentType, int &componentIndex, double &closestDistance2)
 {
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!sliceNode || !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 2)
+  if ( !sliceNode || !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 2
+    || !interactionEventData )
     {
     return;
     }
@@ -317,12 +320,17 @@ void vtkSlicerCurveRepresentation2D::CanInteractWithCurve(
   vtkIdType cellId = -1;
   int subId = -1;
   double dist2World = VTK_DOUBLE_MAX;
-  this->SliceCurvePointLocator->FindClosestPoint(worldPosition, closestPointWorld, cellId, subId, dist2World);
+  if (interactionEventData->IsWorldPositionValid())
+    {
+    const double* worldPosition = interactionEventData->GetWorldPosition();
+    this->SliceCurvePointLocator->FindClosestPoint(worldPosition, closestPointWorld, cellId, subId, dist2World);
+    }
 
   double closestPointDisplay[3] = { 0.0 };
   this->GetWorldToSliceCoordinates(closestPointWorld, closestPointDisplay);
 
   double maxPickingDistanceFromControlPoint2 = this->GetMaximumControlPointPickingDistance2();
+  const int* displayPosition = interactionEventData->GetDisplayPosition();
   double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
   double dist2 = vtkMath::Distance2BetweenPoints(displayPosition3, closestPointDisplay);
   if (dist2 < maxPickingDistanceFromControlPoint2)

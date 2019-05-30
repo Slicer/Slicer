@@ -54,6 +54,8 @@ class vtkSphereSource;
 class vtkTextActor;
 class vtkTextProperty;
 
+class vtkMRMLInteractionEventData;
+
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsWidgetRepresentation : public vtkMRMLAbstractWidgetRepresentation
 {
 public:
@@ -88,7 +90,7 @@ public:
   /// Return found component type (as vtkMRMLMarkupsDisplayNode::ComponentType).
   /// closestDistance2 is the squared distance in display coordinates from the closest position where interaction is possible.
   /// componentIndex returns index of the found component (e.g., if control point is found then control point index is returned).
-  virtual void CanInteract(const int displayPosition[2], const double worldPosition[3],
+  virtual void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
     int &foundComponentType, int &foundComponentIndex, double &closestDistance2);
 
   virtual int FindClosestPointOnWidget(const int displayPos[2], double worldPos[3], int *idx);
