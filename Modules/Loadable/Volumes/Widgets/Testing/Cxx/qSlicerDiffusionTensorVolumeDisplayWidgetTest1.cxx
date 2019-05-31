@@ -35,22 +35,14 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
-#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
-#include <QSurfaceFormat>
-#include <QVTKOpenGLWidget.h>
-#endif
+#include "qMRMLWidget.h"
 
 //-----------------------------------------------------------------------------
 int qSlicerDiffusionTensorVolumeDisplayWidgetTest1( int argc, char * argv[] )
 {
-#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
-  // Set default surface format for QVTKOpenGLWidget
-  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
-  format.setSamples(0);
-  QSurfaceFormat::setDefaultFormat(format);
-#endif
-
+  qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
+  qMRMLWidget::postInitializeApplication();
 
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
   vtkSmartPointer<vtkMRMLDiffusionTensorVolumeDisplayNode> displayNode =

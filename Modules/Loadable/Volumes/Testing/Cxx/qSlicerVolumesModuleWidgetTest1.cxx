@@ -35,10 +35,7 @@
 
 // VTK includes
 #include <vtkNew.h>
-#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
-#include <QSurfaceFormat>
-#include <QVTKOpenGLWidget.h>
-#endif
+#include "qMRMLWidget.h"
 
 // ITK includes
 #include <itkConfigure.h>
@@ -49,14 +46,9 @@ int qSlicerVolumesModuleWidgetTest1( int argc, char * argv[] )
 {
   itk::itkFactoryRegistration();
 
-#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
-  // Set default surface format for QVTKOpenGLWidget
-  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
-  format.setSamples(0);
-  QSurfaceFormat::setDefaultFormat(format);
-#endif
-
-  qSlicerApplication app(argc, argv);
+  qMRMLWidget::preInitializeApplication();
+  QApplication app(argc, argv);
+  qMRMLWidget::postInitializeApplication();
 
   if (argc < 2)
     {

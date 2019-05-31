@@ -40,10 +40,7 @@
 // VTK includes
 #include <vtkCollection.h>
 #include <vtkNew.h>
-#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
-#include <QSurfaceFormat>
-#include <QVTKOpenGLWidget.h>
-#endif
+#include "qMRMLWidget.h"
 
 // Common test driver includes
 #include "qMRMLWidgetCxxTests.h"
@@ -71,17 +68,10 @@ bool checkNumberOfItems(int line, qMRMLLayoutManager* layoutManager, int expecte
 // --------------------------------------------------------------------------
 int qMRMLLayoutManagerTest3(int argc, char * argv[] )
 {
-#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
-  // Set default surface format for QVTKOpenGLWidget
-  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
-  format.setSamples(0);
-  QSurfaceFormat::setDefaultFormat(format);
-#endif
-
-  // Enables resource sharing between the OpenGL contexts used by classes like QOpenGLWidget and QQuickWidget
-  QApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
-
+  qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
+  qMRMLWidget::postInitializeApplication();
+
   QWidget w;
   w.show();
   qMRMLLayoutManager* layoutManager = new qMRMLLayoutManager(&w, &w);

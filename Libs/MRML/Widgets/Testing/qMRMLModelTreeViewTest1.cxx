@@ -33,23 +33,15 @@
 
 // VTK includes
 #include <vtkNew.h>
-#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
-#include <QSurfaceFormat>
-#include <QVTKOpenGLWidget.h>
-#endif
+#include "qMRMLWidget.h"
 
 // STD includes
 
 int qMRMLModelTreeViewTest1( int argc, char * argv [] )
 {
-#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
-  // Set default surface format for QVTKOpenGLWidget
-  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
-  format.setSamples(0);
-  QSurfaceFormat::setDefaultFormat(format);
-#endif
-
+  qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
+  qMRMLWidget::postInitializeApplication();
 
   vtkNew<vtkMRMLModelNode> modelNode;
   vtkNew<vtkMRMLModelDisplayNode> displayModelNode;

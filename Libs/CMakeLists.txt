@@ -64,6 +64,11 @@ set(MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
 # Name of the environment variable that contains the application home directory.
 set(MRML_APPLICATION_HOME_DIR_ENV "SLICER_HOME")
 
+# Name of the environment variable that contains the requested OpenGL profile.
+# Accepted values are "default" (same as not specifying a value) or
+# to force a specific profile: "no", "core", or  "compatibility".
+set(MRML_APPLICATION_OPENGL_PROFILE_ENV "SLICER_OPENGL_PROFILE")
+
 # Name of the subdirectory within the application directory where shared files are stored.
 set(MRML_APPLICATION_SHARE_SUBDIR ${Slicer_SHARE_DIR})
 

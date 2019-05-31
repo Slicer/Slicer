@@ -56,16 +56,13 @@
 
 // MRMLWidgets includes
 #include <qMRMLEventLoggerWidget.h>
+#include <qMRMLWidget.h>
 
 // ITK includes
 #include <itkFactoryRegistration.h>
 
 // VTK includes
 #include <vtksys/SystemTools.hxx>
-#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
-#include <QSurfaceFormat>
-#include <QVTKOpenGLWidget.h>
-#endif
 #include <vtkNew.h>
 
 // PythonQt includes
@@ -75,7 +72,7 @@
 #endif
 
 #ifdef _WIN32
-#include <Windows.h> //for SetProcessDPIAware
+#include <Windows.h> //for SHELLEXECUTEINFO
 #endif
 
 //----------------------------------------------------------------------------
@@ -92,37 +89,7 @@ void qSlicerApplicationHelper::preInitializeApplication(
     const char* argv0, ctkProxyStyle* style)
 {
   itk::itkFactoryRegistration();
-#ifdef Q_OS_MACX
-  if (QSysInfo::MacintoshVersion > QSysInfo::MV_10_8)
-    {
-    // Fix Mac OS X 10.9 (mavericks) font issue
-    // https://bugreports.qt-project.org/browse/QTBUG-32789
-    QFont::insertSubstitution(".Lucida Grande UI", "Lucida Grande");
-    }
-#endif
-
-#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
-  // Set default surface format for QVTKOpenGLWidget. Disable multisampling to
-  // support volume rendering and other VTK functionality that reads from the
-  // framebuffer; see https://gitlab.kitware.com/vtk/vtk/issues/17095.
-  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
-  format.setSamples(0);
-  QSurfaceFormat::setDefaultFormat(format);
-#endif
-
-#ifdef _WIN32
-  // Qt windows defaults to the PROCESS_PER_MONITOR_DPI_AWARE for DPI display
-  // on windows. Unfortunately, this doesn't work well on multi-screens setups.
-  // By calling SetProcessDPIAware(), we force the value to
-  // PROCESS_SYSTEM_DPI_AWARE instead which fixes those issues.
-  SetProcessDPIAware();
-#endif
-
-  // Enable automatic scaling based on the pixel density of the monitor
-  QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-
-  // Enables resource sharing between the OpenGL contexts used by classes like QOpenGLWidget and QQuickWidget
-  QApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+  qMRMLWidget::preInitializeApplication();
 
   // Allow a custom application name so that the settings
   // can be distinct for differently named applications
@@ -142,6 +109,8 @@ void qSlicerApplicationHelper::preInitializeApplication(
     {
     QApplication::setStyle(style);
     }
+
+  qMRMLWidget::postInitializeApplication();
 }
 
 //----------------------------------------------------------------------------

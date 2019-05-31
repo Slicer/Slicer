@@ -36,22 +36,14 @@
 #include "vtkMRMLScene.h"
 
 // VTK includes
-#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
-#include <QSurfaceFormat>
-#include <QVTKOpenGLWidget.h>
-#endif
+#include "qMRMLWidget.h"
 
 //-----------------------------------------------------------------------------
 int qSlicerVolumesIOOptionsWidgetTest1( int argc, char * argv[] )
 {
-#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
-  // Set default surface format for QVTKOpenGLWidget
-  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
-  format.setSamples(0);
-  QSurfaceFormat::setDefaultFormat(format);
-#endif
-
-  qSlicerApplication app(argc, argv);
+  qMRMLWidget::preInitializeApplication();
+  QApplication app(argc, argv);
+  qMRMLWidget::postInitializeApplication();
 
   // set up the color nodes for access from the widget
   vtkSlicerApplicationLogic* appLogic = qSlicerCoreApplication::application()->applicationLogic();

@@ -44,6 +44,13 @@ public:
   /// Return a pointer on the current MRML scene
   Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
 
+  /// Initialization that needs to be performed before creating the Qt application object.
+  /// Sets default application attributes related to hi-DPI, OpenGL surface format initialization, etc.
+  Q_INVOKABLE static void preInitializeApplication();
+
+  /// Initialization that needs to be performed after application object is created.
+  Q_INVOKABLE static void postInitializeApplication();
+
 public slots:
   /// Set the MRML \a scene associated with the widget
   virtual void setMRMLScene(vtkMRMLScene* newScene);

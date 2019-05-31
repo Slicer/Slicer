@@ -27,6 +27,7 @@
 
 // SlicerQt includes
 #include "qSlicerWidget.h"
+#include "qMRMLWidget.h"
 
 // Slicer includes
 #include <vtkMRMLSliceLogic.h>
@@ -48,7 +49,6 @@
 #include <vtkActor2D.h>
 #include <vtkVersion.h>
 #ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
-#include <QSurfaceFormat>
 #include <QVTKOpenGLWidget.h>
 #else
 #include <QVTKWidget.h>
@@ -151,17 +151,13 @@ int qSlicerWidgetTest2(int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
-  // Set default surface format for QVTKOpenGLWidget
-  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
-  format.setSamples(0);
-  QSurfaceFormat::setDefaultFormat(format);
-#endif
-
   //
   // Create a simple gui with a quit button and render window
   //
+  qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
+  qMRMLWidget::postInitializeApplication();
+
   QWidget parentWidget;
   parentWidget.setWindowTitle("qSlicerWidgetTest2");
   QVBoxLayout vbox;

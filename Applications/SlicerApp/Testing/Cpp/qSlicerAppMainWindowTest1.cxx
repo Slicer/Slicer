@@ -29,13 +29,7 @@
 # include <ctkPythonConsole.h>
 #endif
 
-// VTK includes
-#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
-#include <QSurfaceFormat>
-#include <QVTKOpenGLWidget.h>
-#endif
-
-// SlicerApp includes
+#include "qMRMLWidget.h"// SlicerApp includes
 #include "qSlicerApplication.h"
 #include "qSlicerAppMainWindow.h"
 #ifdef Slicer_USE_PYTHONQT
@@ -46,17 +40,9 @@
 
 int qSlicerAppMainWindowTest1(int argc, char * argv[] )
 {
-#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
-  // Set default surface format for QVTKOpenGLWidget
-  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
-  format.setSamples(0);
-  QSurfaceFormat::setDefaultFormat(format);
-#endif
-
-  // Enables resource sharing between the OpenGL contexts used by classes like QOpenGLWidget and QQuickWidget
-  QApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
-
-  qSlicerApplication app(argc, argv);
+  qMRMLWidget::preInitializeApplication();
+  QApplication app(argc, argv);
+  qMRMLWidget::postInitializeApplication();
 
   qSlicerAppMainWindow mainWindow;
   mainWindow.show();

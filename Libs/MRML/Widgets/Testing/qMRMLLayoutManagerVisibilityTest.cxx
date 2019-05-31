@@ -43,10 +43,7 @@
 
 // VTK includes
 #include <vtkNew.h>
-#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
-#include <QSurfaceFormat>
-#include <QVTKOpenGLWidget.h>
-#endif
+#include "qMRMLWidget.h"
 
 // --------------------------------------------------------------------------
 bool checkNodeVisibility(int line,
@@ -370,17 +367,9 @@ bool runTests(vtkMRMLScene* scene,
 // --------------------------------------------------------------------------
 int qMRMLLayoutManagerVisibilityTest(int argc, char * argv[] )
 {
-#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
-  // Set default surface format for QVTKOpenGLWidget
-  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
-  format.setSamples(0);
-  QSurfaceFormat::setDefaultFormat(format);
-#endif
-
-  // Enables resource sharing between the OpenGL contexts used by classes like QOpenGLWidget and QQuickWidget
-  QApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
-
+  qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
+  qMRMLWidget::postInitializeApplication();
 
   QWidget w;
   w.show();
