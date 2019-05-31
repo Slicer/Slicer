@@ -265,6 +265,7 @@ public slots:
 
   // Ruler
   void setRulerType(int type);
+  void setRulerColor(int color);
 
   // Lightbox
   void setLightbox(int rows, int columns);

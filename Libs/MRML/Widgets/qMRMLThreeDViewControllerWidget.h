@@ -129,6 +129,7 @@ public slots:
   void setOrientationMarkerType(int type);
   void setOrientationMarkerSize(int size);
   void setRulerType(int type);
+  void setRulerColor(int color);
 
 protected slots:
   void updateWidgetFromMRMLView();

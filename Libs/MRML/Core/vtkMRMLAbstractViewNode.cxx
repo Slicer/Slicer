@@ -47,6 +47,7 @@ vtkMRMLAbstractViewNode::vtkMRMLAbstractViewNode()
 , OrientationMarkerSize(OrientationMarkerSizeMedium)
 , RulerEnabled(false)
 , RulerType(RulerTypeNone)
+, RulerColor(RulerColorWhite)
 {
   this->BackgroundColor[0] = 0.0;
   this->BackgroundColor[1] = 0.0;
@@ -103,6 +104,7 @@ void vtkMRMLAbstractViewNode::WriteXML(ostream& of, int nIndent)
     {
     vtkMRMLWriteXMLEnumMacro(rulerType, RulerType);
     }
+  vtkMRMLWriteXMLEnumMacro(rulerColor, RulerColor);
   vtkMRMLWriteXMLEndMacro();
 
   of << " AxisLabels=\"";
@@ -148,6 +150,7 @@ void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLEnumMacro(orientationMarkerType, OrientationMarkerType);
   vtkMRMLReadXMLEnumMacro(orientationMarkerSize, OrientationMarkerSize);
   vtkMRMLReadXMLEnumMacro(rulerType, RulerType);
+  vtkMRMLReadXMLEnumMacro(rulerColor, RulerColor);
   vtkMRMLReadXMLEndMacro();
 
   const char* attName;
@@ -229,6 +232,7 @@ void vtkMRMLAbstractViewNode::Copy(vtkMRMLNode *anode)
     {
     vtkMRMLCopyEnumMacro(RulerType);
     }
+  vtkMRMLCopyEnumMacro(RulerColor);
   vtkMRMLCopyEndMacro();
 
   vtkMRMLAbstractViewNode *node = (vtkMRMLAbstractViewNode *) anode;
@@ -283,6 +287,7 @@ void vtkMRMLAbstractViewNode::PrintSelf(ostream& os, vtkIndent indent)
     {
     vtkMRMLPrintEnumMacro(RulerType);
     }
+  vtkMRMLPrintEnumMacro(RulerColor);
   vtkMRMLPrintEndMacro();
 
   os << indent << " AxisLabels: ";
@@ -441,13 +446,47 @@ const char* vtkMRMLAbstractViewNode::GetRulerTypeAsString(int id)
 int vtkMRMLAbstractViewNode::GetRulerTypeFromString(const char* name)
 {
   if (name == nullptr)
-  {
+    {
     // invalid name
     return -1;
-  }
+    }
   for (int i=0; i<RulerType_Last; i++)
     {
     if (strcmp(name, GetRulerTypeAsString(i))==0)
+      {
+      // found a matching name
+      return i;
+      }
+    }
+  // unknown name
+  return -1;
+}
+
+//-----------------------------------------------------------
+const char* vtkMRMLAbstractViewNode::GetRulerColorAsString(int id)
+{
+  switch (id)
+    {
+    case RulerColorWhite: return "white";
+    case RulerColorBlack: return "black";
+    case RulerColorYellow: return "yellow";
+    default:
+      // invalid id
+      return "";
+    }
+}
+
+//-----------------------------------------------------------
+int vtkMRMLAbstractViewNode::GetRulerColorFromString(const char* name)
+{
+  if (name == nullptr)
+    {
+    // invalid name
+    return -1;
+    }
+  for (int i=0; i<RulerColor_Last; i++)
+    {
+    if (strcmp(name, GetRulerColorAsString(i))==0)
       {
       // found a matching name
       return i;

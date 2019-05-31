@@ -567,6 +567,30 @@
     <string>Show thick ruler</string>
    </property>
   </action>
+  <action name="actionRulerColorWhite">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>White ruler</string>
+   </property>
+  </action>
+  <action name="actionRulerColorBlack">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Black ruler</string>
+   </property>
+  </action>
+  <action name="actionRulerColorYellow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Yellow ruler</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

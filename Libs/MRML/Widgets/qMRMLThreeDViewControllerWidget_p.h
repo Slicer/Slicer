@@ -79,6 +79,7 @@ public:
   ctkSignalMapper*                    OrientationMarkerTypesMapper;
   ctkSignalMapper*                    OrientationMarkerSizesMapper;
   ctkSignalMapper*                    RulerTypesMapper;
+  ctkSignalMapper*                    RulerColorMapper;
 
   QString                             ThreeDViewLabel;
   QToolButton*                        CenterToolButton;

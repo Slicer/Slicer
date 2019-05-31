@@ -238,13 +238,30 @@ public:
   static const char* GetRulerTypeAsString(int id);
   static int GetRulerTypeFromString(const char* name);
 
-  /// Enum to specify orientation marker types
+  /// Enum to specify ruler types
   enum RulerTypeType
   {
     RulerTypeNone=0,
     RulerTypeThin,
     RulerTypeThick,
     RulerType_Last // insert valid types above this line
+  };
+
+  /// Get/Set ruler color (e.g., white or black)
+  vtkSetMacro(RulerColor, int);
+  vtkGetMacro(RulerColor, int);
+
+  /// Convert between ruler color ID and name
+  static const char* GetRulerColorAsString(int id);
+  static int GetRulerColorFromString(const char* name);
+
+  /// Enum to specify ruler colors
+  enum RulerColorType
+  {
+    RulerColorWhite=0,
+    RulerColorBlack,
+    RulerColorYellow,
+    RulerColor_Last // insert valid types above this line
   };
 
   /// Get/Set labels of coordinate system axes.
@@ -307,6 +324,7 @@ protected:
   /// these parameters define how to display the ruler.
   bool RulerEnabled;
   int RulerType;
+  int RulerColor;
 
   ///
   /// Labels of coordinate system axes

@@ -275,6 +275,7 @@ public:
     OrientationMarkerTypeFlag,
     OrientationMarkerSizeFlag,
     RulerTypeFlag,
+    RulerColorFlag,
     UseDepthPeelingFlag,
     FPSVisibleFlag,
   };

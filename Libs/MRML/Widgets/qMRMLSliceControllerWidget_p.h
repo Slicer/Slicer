@@ -210,6 +210,7 @@ public:
   ctkSignalMapper*                    OrientationMarkerSizesMapper;
 
   ctkSignalMapper*                    RulerTypesMapper;
+  ctkSignalMapper*                    RulerColorMapper;
 };
 
 #endif

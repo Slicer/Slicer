@@ -199,11 +199,26 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   rulerTypesActions->addAction(this->actionRulerTypeThick);
   QObject::connect(this->RulerTypesMapper, SIGNAL(mapped(int)),q, SLOT(setRulerType(int)));
   QObject::connect(rulerTypesActions, SIGNAL(triggered(QAction*)),this->RulerTypesMapper, SLOT(map(QAction*)));
+  // Color
+  this->RulerColorMapper = new ctkSignalMapper(this->PopupWidget);
+  this->RulerColorMapper->setMapping(this->actionRulerColorWhite, vtkMRMLAbstractViewNode::RulerColorWhite);
+  this->RulerColorMapper->setMapping(this->actionRulerColorBlack, vtkMRMLAbstractViewNode::RulerColorBlack);
+  this->RulerColorMapper->setMapping(this->actionRulerColorYellow, vtkMRMLAbstractViewNode::RulerColorYellow);
+  QActionGroup* rulerColorActions = new QActionGroup(this->PopupWidget);
+  rulerColorActions->setExclusive(true);
+  rulerColorActions->addAction(this->actionRulerColorWhite);
+  rulerColorActions->addAction(this->actionRulerColorBlack);
+  rulerColorActions->addAction(this->actionRulerColorYellow);
+  QObject::connect(this->RulerColorMapper, SIGNAL(mapped(int)),q, SLOT(setRulerColor(int)));
+  QObject::connect(rulerColorActions, SIGNAL(triggered(QAction*)),this->RulerColorMapper, SLOT(map(QAction*)));
+
   // Menu
   QMenu* rulerMenu = new QMenu(tr("Ruler"), this->PopupWidget);
   rulerMenu->setObjectName("rulerMenu");
   this->RulerButton->setMenu(rulerMenu);
   rulerMenu->addActions(rulerTypesActions->actions());
+  rulerMenu->addSeparator();
+  rulerMenu->addActions(rulerColorActions->actions());
 
   // More controls
   QMenu* moreMenu = new QMenu("More", this->PopupWidget);
@@ -839,6 +854,20 @@ void qMRMLThreeDViewControllerWidget::setRulerType(int newRulerType)
     d->ViewNode->SetRenderMode(vtkMRMLViewNode::Orthographic);
     d->ViewLogic->EndViewNodeInteraction();
     }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidget::setRulerColor(int newRulerColor)
+{
+  Q_D(qMRMLThreeDViewControllerWidget);
+  if (!d->ViewNode)
+    {
+    return;
+    }
+
+  d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::RulerColorFlag);
+  d->ViewNode->SetRulerColor(newRulerColor);
+  d->ViewLogic->EndViewNodeInteraction();
 }
 
 //---------------------------------------------------------------------------
