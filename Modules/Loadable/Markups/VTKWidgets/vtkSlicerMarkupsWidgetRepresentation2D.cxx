@@ -417,11 +417,6 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller,
       glyphSource->SetGlyphType(this->MarkupsDisplayNode->GetGlyphType());
       }
 
-    if (this->MarkupsDisplayNode->GetSliceProjectionOutlinedBehindSlicePlane() && controlPointType >= Project)
-      {
-      glyphSource->SetNextGlyphType();
-      }
-
     if (this->MarkupsDisplayNode->GetSliceProjectionOutlinedBehindSlicePlane() && controlPointType == ProjectBack)
       {
       glyphSource->FilledOff();
