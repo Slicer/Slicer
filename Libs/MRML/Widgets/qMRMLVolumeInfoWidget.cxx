@@ -185,20 +185,19 @@ void qMRMLVolumeInfoWidget::setVolumeNode(vtkMRMLVolumeNode* volumeNode)
 void qMRMLVolumeInfoWidget::setDataTypeEditable(bool enable)
 {
   Q_D(qMRMLVolumeInfoWidget);
-  d->ScanOrderComboBox->setEnabled(enable);
-  d->NumberOfScalarsSpinBox->setEnabled(enable);
-  d->ScalarTypeComboBox->setEnabled(enable);
+  d->ScanOrderComboBox->setVisible(enable);
+  d->ScanOrderValueLabel->setVisible(!enable);
+  d->NumberOfScalarsSpinBox->setVisible(enable);
+  d->NumberOfScalarsValueLabel->setVisible(!enable);
+  d->ScalarTypeComboBox->setVisible(enable);
+  d->ScalarTypeValueLabel->setVisible(!enable);
 }
 
 //------------------------------------------------------------------------------
 bool qMRMLVolumeInfoWidget::isDataTypeEditable()const
 {
   Q_D(const qMRMLVolumeInfoWidget);
-  Q_ASSERT(d->ScanOrderComboBox->isEnabledTo(const_cast<qMRMLVolumeInfoWidget*>(this)) ==
-           d->NumberOfScalarsSpinBox->isEnabledTo(const_cast<qMRMLVolumeInfoWidget*>(this)));
-  Q_ASSERT(d->ScanOrderComboBox->isEnabledTo(const_cast<qMRMLVolumeInfoWidget*>(this)) ==
-           d->ScalarTypeComboBox->isEnabledTo(const_cast<qMRMLVolumeInfoWidget*>(this)));
-  return d->ScanOrderComboBox->isEnabledTo(const_cast<qMRMLVolumeInfoWidget*>(this));
+  return d->ScanOrderComboBox->isVisible();
 }
 
 //------------------------------------------------------------------------------
@@ -217,16 +216,16 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
     double origin[3] = {0.,0.,0.};
     d->ImageOriginWidget->setCoordinates(origin);
 
-    d->MinScalarDoubleSpinBox->setRange(0., 0.);
-    d->MaxScalarDoubleSpinBox->setRange(0., 0.);
-    d->MinScalarDoubleSpinBox->setValue(0.);
-    d->MaxScalarDoubleSpinBox->setValue(0.);
+    d->ScalarRangeValueLabel->setText("");
 
     d->ScanOrderComboBox->setCurrentIndex(-1);
+    d->ScanOrderValueLabel->setText("");
 
     d->NumberOfScalarsSpinBox->setValue(1);
+    d->NumberOfScalarsValueLabel->setText("");
 
     d->ScalarTypeComboBox->setCurrentIndex(-1);
+    d->ScalarTypeValueLabel->setText("");
 
     d->FileNameLineEdit->setText("");
 
@@ -269,30 +268,25 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
   d->VolumeNode->GetIJKToRASMatrix(mat.GetPointer());
   d->ScanOrderComboBox->setCurrentIndex(d->ScanOrderComboBox->findData(
     vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(mat.GetPointer())));
-
-  d->NumberOfScalarsSpinBox->setValue(
-    image ? image->GetNumberOfScalarComponents() : 0);
-
-  d->ScalarTypeComboBox->setCurrentIndex( d->ScalarTypeComboBox->findData(
-    image ? image->GetScalarType() : -1));
+  d->ScanOrderValueLabel->setText(d->ScanOrderComboBox->currentText());
 
   if (image)
     {
-    double typeRange[2];
-    vtkDataArray::GetDataTypeRange(image->GetScalarType(), typeRange);
-    d->MinScalarDoubleSpinBox->setRange(typeRange[0], typeRange[1]);
-    d->MaxScalarDoubleSpinBox->setRange(typeRange[0], typeRange[1]);
-
+    d->NumberOfScalarsSpinBox->setValue(image->GetNumberOfScalarComponents());
+    d->NumberOfScalarsValueLabel->setText(QString::number(image->GetNumberOfScalarComponents()));
+    d->ScalarTypeComboBox->setCurrentIndex(d->ScalarTypeComboBox->findData(image->GetScalarType()));
+    d->ScalarTypeValueLabel->setText(d->ScalarTypeComboBox->currentText());
     double* scalarRange = image->GetScalarRange();
-    d->MinScalarDoubleSpinBox->setValue(scalarRange[0]);
-    d->MaxScalarDoubleSpinBox->setValue(scalarRange[1]);
+    ;
+    d->ScalarRangeValueLabel->setText(QString("%1 to %2").arg(scalarRange[0]).arg(scalarRange[1]));
     }
   else
     {
-    d->MinScalarDoubleSpinBox->setRange(0., 0.);
-    d->MaxScalarDoubleSpinBox->setRange(0., 0.);
-    d->MinScalarDoubleSpinBox->setValue(0.);
-    d->MaxScalarDoubleSpinBox->setValue(0.);
+    d->NumberOfScalarsSpinBox->setValue(1);
+    d->NumberOfScalarsValueLabel->setText("");
+    d->ScalarTypeComboBox->setCurrentIndex(-1);
+    d->ScalarTypeValueLabel->setText("");
+    d->ScalarRangeValueLabel->setText("");
     }
 
   vtkMRMLStorageNode* storageNode = d->VolumeNode->GetStorageNode();

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>660</width>
-    <height>426</height>
+    <width>315</width>
+    <height>421</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,7 +20,16 @@
    <string>Volume Information</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item row="0" column="0">
@@ -31,24 +40,15 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="qMRMLCoordinatesWidget" name="ImageDimensionsWidget">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
+    <widget class="ctkCoordinatesWidget" name="ImageDimensionsWidget">
      <property name="decimals">
       <number>0</number>
      </property>
-     <property name="minimum">
-      <double>0.000000000000000</double>
+     <property name="decimalsOption">
+      <set>ctkDoubleSpinBox::FixedDecimals</set>
      </property>
-     <property name="maximum">
-      <double>1000000.000000000000000</double>
-     </property>
-     <property name="coordinates" stdset="0">
-      <string>1,1,1</string>
-     </property>
-     <property name="unitAwareProperties">
-      <set>qMRMLCoordinatesWidget::All</set>
+     <property name="readOnly">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -123,7 +123,7 @@
    <item row="3" column="1">
     <widget class="ctkMatrixWidget" name="IJKToRASDirectionMatrixWidget">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="columnCount">
       <number>3</number>
@@ -166,7 +166,18 @@
     </widget>
    </item>
    <item row="5" column="1">
-    <widget class="QComboBox" name="ScanOrderComboBox"/>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QLabel" name="ScanOrderValueLabel">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="ScanOrderComboBox"/>
+     </item>
+    </layout>
    </item>
    <item row="6" column="0">
     <widget class="QLabel" name="NumberOfScalarsLabel">
@@ -176,17 +187,28 @@
     </widget>
    </item>
    <item row="6" column="1">
-    <widget class="QSpinBox" name="NumberOfScalarsSpinBox">
-     <property name="minimum">
-      <number>1</number>
-     </property>
-     <property name="maximum">
-      <number>1000000000</number>
-     </property>
-     <property name="value">
-      <number>1</number>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="NumberOfScalarsValueLabel">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ctkDoubleSpinBox" name="NumberOfScalarsSpinBox">
+       <property name="decimals">
+        <number>0</number>
+       </property>
+       <property name="decimalsOption">
+        <set>ctkDoubleSpinBox::FixedDecimals</set>
+       </property>
+       <property name="value">
+        <double>1.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item row="7" column="0">
     <widget class="QLabel" name="ScalarTypeLabel">
@@ -196,7 +218,21 @@
     </widget>
    </item>
    <item row="7" column="1">
-    <widget class="QComboBox" name="ScalarTypeComboBox"/>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="ScalarTypeValueLabel">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="ScalarTypeComboBox"/>
+     </item>
+    </layout>
    </item>
    <item row="8" column="0">
     <widget class="QLabel" name="ScalarRangeLabel">
@@ -206,87 +242,34 @@
     </widget>
    </item>
    <item row="8" column="1">
-    <layout class="QHBoxLayout" name="ScalarRangeLayout">
-     <item>
-      <widget class="QLabel" name="MinScalarLabel">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Min:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="ctkDoubleSpinBox" name="MinScalarDoubleSpinBox">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-       <property name="decimals">
-        <number>0</number>
-       </property>
-       <property name="decimalsOption">
-        <set>ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue</set>
-       </property>
-       <property name="maximum">
-        <double>1000000000.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="MaxScalarLabel">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Max:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="ctkDoubleSpinBox" name="MaxScalarDoubleSpinBox">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-       <property name="decimals">
-        <number>0</number>
-       </property>
-       <property name="decimalsOption">
-        <set>ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue</set>
-       </property>
-       <property name="maximum">
-        <double>1000000000.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QLabel" name="ScalarRangeValueLabel">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
    </item>
    <item row="9" column="0">
+    <widget class="QLabel" name="VolumeTypeLabel">
+     <property name="text">
+      <string>Volume type:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1">
+    <widget class="QLabel" name="VolumeTagLabel">
+     <property name="text">
+      <string>VolumeTag</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0">
     <widget class="QLabel" name="FileNameLabel">
      <property name="text">
       <string>File Name:</string>
      </property>
     </widget>
    </item>
-   <item row="9" column="1">
+   <item row="10" column="1">
     <widget class="QLineEdit" name="FileNameLineEdit">
      <property name="readOnly">
       <bool>true</bool>
@@ -294,20 +277,13 @@
     </widget>
    </item>
    <item row="11" column="0">
-    <widget class="QLabel" name="VolumeTypeLabel">
-     <property name="text">
-      <string>Volume type:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="0">
     <widget class="QLabel" name="WindowLevelPresetsLabel">
      <property name="text">
       <string>Window/Level Presets:</string>
      </property>
     </widget>
    </item>
-   <item row="12" column="1">
+   <item row="11" column="1">
     <widget class="QListWidget" name="WindowLevelPresetsListWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -320,13 +296,6 @@
        <width>16777215</width>
        <height>80</height>
       </size>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="1">
-    <widget class="QLabel" name="VolumeTagLabel">
-     <property name="text">
-      <string>VolumeTag</string>
      </property>
     </widget>
    </item>
@@ -362,22 +331,6 @@
  </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>qMRMLVolumeInfoWidget</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>ImageDimensionsWidget</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>241</x>
-     <y>211</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>311</x>
-     <y>18</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>qMRMLVolumeInfoWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
