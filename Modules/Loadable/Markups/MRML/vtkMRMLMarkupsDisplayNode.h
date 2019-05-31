@@ -226,6 +226,12 @@ public:
   vtkSetClampMacro(SliceProjectionOpacity, double, 0.0, 1.0);
   vtkGetMacro(SliceProjectionOpacity, double);
 
+  /// Configures line thickness.
+  /// Thickness is specified relative to markup point size
+  /// (1.0 means line diameter is the same as diameter of point glyphs).
+  vtkGetMacro(LineThickness, double);
+  vtkSetMacro(LineThickness, double);
+
   /// Configures the line color fading appearance
   /// Default value = 1.0
   vtkGetMacro (LineColorFadingStart, double);
@@ -288,6 +294,7 @@ protected:
   static const char* LineColorNodeReferenceRole;
   static const char* LineColorNodeReferenceMRMLAttributeName;
 
+  double LineThickness;
   double LineColorFadingStart;
   double LineColorFadingEnd;
   double LineColorFadingSaturation;

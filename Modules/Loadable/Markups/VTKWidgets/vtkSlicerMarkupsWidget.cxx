@@ -40,6 +40,15 @@ vtkSlicerMarkupsWidget::vtkSlicerMarkupsWidget()
 {
   this->MousePressedSinceMarkupPlace = true;
 
+  this->LastEventPosition[0] = 0.0;
+  this->LastEventPosition[1] = 0.0;
+  this->StartEventOffsetPosition[0] = 0.0;
+  this->StartEventOffsetPosition[1] = 0.0;
+
+  // True if mouse button pressed since a point was placed.
+  // This is used to filter out "click" events that started before the point was placed.
+  bool MousePressedSinceMarkupPlace;
+
   this->PreviewPointIndex = -1;
 
   // Place
@@ -645,11 +654,6 @@ void vtkSlicerMarkupsWidget::StartWidgetInteraction(vtkMRMLInteractionEventData*
     {
     return;
     }
-  int activeControlPointIndex = markupsDisplayNode->GetActiveControlPoint();
-  if (activeControlPointIndex < 0 || activeControlPointIndex >= markupsNode->GetNumberOfControlPoints())
-    {
-    return;
-    }
 
   markupsNode->GetScene()->SaveStateForUndo();
 
@@ -659,29 +663,31 @@ void vtkSlicerMarkupsWidget::StartWidgetInteraction(vtkMRMLInteractionEventData*
     static_cast<double>(eventData->GetDisplayPosition()[1])
     };
 
-  // How far is this in pixels from the position of this widget?
-  // Maintain this during interaction such as translating (don't
-  // force center of widget to snap to mouse position)
-
-  // GetActiveNode position
-  double pos[2] = { 0.0 };
-  if (rep->GetNthNodeDisplayPosition(activeControlPointIndex, pos))
-    {
-    // save offset
-    this->StartEventOffsetPosition[0] = startEventPos[0] - pos[0];
-    this->StartEventOffsetPosition[1] = startEventPos[1] - pos[1];
-    }
-  else
-    {
-    this->StartEventOffsetPosition[0] = 0;
-    this->StartEventOffsetPosition[1] = 0;
-    }
-
-  // save also the cursor pos
+  // save the cursor position
   this->LastEventPosition[0] = startEventPos[0];
   this->LastEventPosition[1] = startEventPos[1];
 
-  markupsNode->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointStartInteractionEvent);
+  int activeControlPointIndex = markupsDisplayNode->GetActiveControlPoint();
+  if (activeControlPointIndex >= 0 || activeControlPointIndex < markupsNode->GetNumberOfControlPoints())
+    {
+    // How far is this in pixels from the position of this widget?
+    // Maintain this during interaction such as translating (don't
+    // force center of widget to snap to mouse position)
+    double pos[2] = { 0.0 };
+    if (rep->GetNthNodeDisplayPosition(activeControlPointIndex, pos))
+      {
+      // save offset
+      this->StartEventOffsetPosition[0] = startEventPos[0] - pos[0];
+      this->StartEventOffsetPosition[1] = startEventPos[1] - pos[1];
+      }
+    markupsNode->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointStartInteractionEvent);
+    }
+  else
+    {
+    // Picking line or something else - not handled in this base class
+    this->StartEventOffsetPosition[0] = 0;
+    this->StartEventOffsetPosition[1] = 0;
+    }
 }
 
 //----------------------------------------------------------------------

@@ -207,8 +207,8 @@ void vtkSlicerAngleRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   this->UpdateRelativeCoincidentTopologyOffsets(this->LineMapper);
   this->UpdateRelativeCoincidentTopologyOffsets(this->ArcMapper);
 
-  this->TubeFilter->SetRadius(this->ControlPointSize * 0.125);
-  this->ArcTubeFilter->SetRadius(this->ControlPointSize * 0.125);
+  this->TubeFilter->SetRadius(this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() * 0.5);
+  this->ArcTubeFilter->SetRadius(this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() * 0.5);
 
   bool lineVisibility = this->GetAllControlPointsVisible();
 
@@ -273,10 +273,12 @@ int vtkSlicerAngleRepresentation3D::RenderOpaqueGeometry(
   count = this->Superclass::RenderOpaqueGeometry(viewport);
   if (this->LineActor->GetVisibility())
     {
+    this->TubeFilter->SetRadius(this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() * 0.5);
     count += this->LineActor->RenderOpaqueGeometry(viewport);
     }
   if (this->ArcActor->GetVisibility())
     {
+    this->ArcTubeFilter->SetRadius(this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() * 0.5);
     count += this->ArcActor->RenderOpaqueGeometry(viewport);
     }
   if (this->TextActor->GetVisibility())

@@ -217,8 +217,8 @@ void vtkSlicerAngleRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
 
   // Update lines display properties
 
-  this->TubeFilter->SetRadius(this->ControlPointSize * 0.125);
-  this->ArcTubeFilter->SetRadius(this->ControlPointSize * 0.125);
+  this->TubeFilter->SetRadius(this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() * 0.5);
+  this->ArcTubeFilter->SetRadius(this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() * 0.5);
 
   this->LineActor->SetVisibility(markupsNode->GetNumberOfControlPoints() >= 2);
   this->ArcActor->SetVisibility(markupsNode->GetNumberOfControlPoints() == 3);

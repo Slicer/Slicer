@@ -83,6 +83,8 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->ActiveComponentType = ComponentNone;
   this->ActiveComponentIndex = -1;
 
+  this->LineThickness = 0.2;
+
   // Line color variables
   this->LineColorFadingStart = 1.;
   this->LineColorFadingEnd = 10.;
@@ -120,6 +122,11 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(sliceProjectionOutlinedBehindSlicePlane, SliceProjectionOutlinedBehindSlicePlane);
   vtkMRMLWriteXMLVectorMacro(sliceProjectionColor, SliceProjectionColor, double, 3);
   vtkMRMLWriteXMLFloatMacro(sliceProjectionOpacity, SliceProjectionOpacity);
+  vtkMRMLWriteXMLFloatMacro(lineThickness, LineThickness);
+  vtkMRMLWriteXMLFloatMacro(lineColorFadingStart, LineColorFadingStart);
+  vtkMRMLWriteXMLFloatMacro(lineColorFadingEnd, LineColorFadingEnd);
+  vtkMRMLWriteXMLFloatMacro(lineColorFadingSaturation, LineColorFadingSaturation);
+  vtkMRMLWriteXMLFloatMacro(lineColorFadingHueOffset, LineColorFadingHueOffset);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -143,6 +150,11 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(sliceProjectionOutlinedBehindSlicePlane, SliceProjectionOutlinedBehindSlicePlane);
   vtkMRMLReadXMLVectorMacro(sliceProjectionColor, SliceProjectionColor, double, 3);
   vtkMRMLReadXMLFloatMacro(sliceProjectionOpacity, SliceProjectionOpacity);
+  vtkMRMLReadXMLFloatMacro(lineThickness, LineThickness);
+  vtkMRMLReadXMLFloatMacro(lineColorFadingStart, LineColorFadingStart);
+  vtkMRMLReadXMLFloatMacro(lineColorFadingEnd, LineColorFadingEnd);
+  vtkMRMLReadXMLFloatMacro(lineColorFadingSaturation, LineColorFadingSaturation);
+  vtkMRMLReadXMLFloatMacro(lineColorFadingHueOffset, LineColorFadingHueOffset);
   vtkMRMLReadXMLEndMacro();
 
   // Fix up legacy markups fiducial nodes
@@ -199,6 +211,11 @@ void vtkMRMLMarkupsDisplayNode::Copy(vtkMRMLNode *anode)
   vtkMRMLCopyBooleanMacro(SliceProjectionOutlinedBehindSlicePlane);
   vtkMRMLCopyVectorMacro(SliceProjectionColor, double, 3);
   vtkMRMLCopyFloatMacro(SliceProjectionOpacity);
+  vtkMRMLCopyFloatMacro(LineThickness);
+  vtkMRMLCopyFloatMacro(LineColorFadingStart);
+  vtkMRMLCopyFloatMacro(LineColorFadingEnd);
+  vtkMRMLCopyFloatMacro(LineColorFadingSaturation);
+  vtkMRMLCopyFloatMacro(LineColorFadingHueOffset);
   vtkMRMLCopyEndMacro();
 
   this->EndModify(disabledModify);
@@ -282,6 +299,11 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintFloatMacro(SliceProjectionOpacity);
   vtkMRMLPrintFloatMacro(ActiveComponentType);
   vtkMRMLPrintFloatMacro(ActiveComponentIndex);
+  vtkMRMLPrintFloatMacro(LineThickness);
+  vtkMRMLPrintFloatMacro(LineColorFadingStart);
+  vtkMRMLPrintFloatMacro(LineColorFadingEnd);
+  vtkMRMLPrintFloatMacro(LineColorFadingSaturation);
+  vtkMRMLPrintFloatMacro(LineColorFadingHueOffset);
   vtkMRMLPrintEndMacro();
 }
 

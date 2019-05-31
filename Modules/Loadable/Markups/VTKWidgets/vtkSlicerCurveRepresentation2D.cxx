@@ -104,7 +104,7 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
 
   // Line display
 
-  this->TubeFilter->SetRadius(this->ControlPointSize * 0.125);
+  this->TubeFilter->SetRadius(this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() * 0.5);
 
   this->LineActor->SetVisibility(markupsNode->GetNumberOfControlPoints() >= 2);
 
@@ -307,7 +307,8 @@ void vtkSlicerCurveRepresentation2D::CanInteractWithCurve(
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if ( !sliceNode || !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 2
-    || !interactionEventData )
+    || !interactionEventData
+    || !this->MarkupsDisplayNode)
     {
     return;
     }
@@ -324,6 +325,12 @@ void vtkSlicerCurveRepresentation2D::CanInteractWithCurve(
     {
     const double* worldPosition = interactionEventData->GetWorldPosition();
     this->SliceCurvePointLocator->FindClosestPoint(worldPosition, closestPointWorld, cellId, subId, dist2World);
+    double lineVisibilityDistance = this->MarkupsDisplayNode->GetLineColorFadingEnd() * 1.2;
+    if (dist2World > lineVisibilityDistance * lineVisibilityDistance)
+      {
+      // line not visible at this distance
+      return;
+      }
     }
 
   double closestPointDisplay[3] = { 0.0 };
