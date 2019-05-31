@@ -24,6 +24,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QStringBuilder>
+#include <QTableWidgetItem>
 
 // C++ includes
 #include <cmath>
@@ -158,6 +159,18 @@ void qSlicerTransformsModuleWidget::setup()
 
   // Set a static min/max range to let users freely enter values
   d->MatrixWidget->setRange(-1e10, 1e10);
+
+  // Homogeneous transformation matrix is expected to have (0,0,0,1)
+  // in its last row, so do not allow users to edit the last row.
+  for (int col = 0; col < 4; col++)
+    {
+    QTableWidgetItem* item = d->MatrixWidget->widgetItem(3, col);
+    if (!item)
+      {
+      continue;
+      }
+    item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+    }
 
   d->RotationSliders->setSingleStep(0.1);
   d->RotationSliders->setDecimals(1);
@@ -436,6 +449,12 @@ void qSlicerTransformsModuleWidget::pasteTransform()
     qWarning() << "Cannot convert pasted string to matrix.";
     return;
     }
+  // Homogeneous transformation matrix is expected to have (0,0,0,1)
+  // in its last row.
+  tempMatrix->SetElement(3, 0, 0.0);
+  tempMatrix->SetElement(3, 1, 0.0);
+  tempMatrix->SetElement(3, 2, 0.0);
+  tempMatrix->SetElement(3, 3, 1.0);
   d->MRMLTransformNode->SetMatrixTransformToParent(tempMatrix.GetPointer());
 }
 
