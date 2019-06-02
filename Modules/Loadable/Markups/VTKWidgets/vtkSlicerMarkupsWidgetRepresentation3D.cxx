@@ -80,6 +80,13 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
 
   // Labels
 
+  this->ControlPointIndices = vtkSmartPointer<vtkIdTypeArray>::New();
+  this->ControlPointIndices->SetName("controlPointIndices");
+  this->ControlPointIndices->Allocate(100);
+  this->ControlPointIndices->SetNumberOfValues(1);
+  this->ControlPointIndices->SetValue(0, 0);
+  this->LabelControlPointsPolyData->GetPointData()->AddArray(this->ControlPointIndices);
+
   this->SelectVisiblePoints = vtkSmartPointer<vtkSelectVisiblePoints>::New();
   this->SelectVisiblePoints->SetInputData(this->LabelControlPointsPolyData);
   this->SelectVisiblePoints->SetTolerance(0.0); // we will set tolerance in world coordinate system
@@ -188,6 +195,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
 
     controlPoints->Labels->SetNumberOfValues(0);
     controlPoints->LabelsPriority->SetNumberOfValues(0);
+    controlPoints->ControlPointIndices->SetNumberOfValues(0);
 
     int startIndex = 0;
     int stopIndex = numPoints - 1;
@@ -241,6 +249,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
       controlPoints->LabelControlPointsPolyData->GetPointData()->GetNormals()->InsertNextTuple(pointNormalWorld);
       controlPoints->Labels->InsertNextValue(markupsNode->GetNthControlPointLabel(pointIndex));
       controlPoints->LabelsPriority->InsertNextValue(std::to_string(pointIndex));
+      controlPoints->ControlPointIndices->InsertNextValue(pointIndex);
       }
 
     controlPoints->ControlPoints->Modified();
@@ -281,10 +290,6 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
     return;
     }
 
-  // Get a pipeline (any of them would work)
-  vtkSelectVisiblePoints* visiblePoints = this->GetControlPointsPipeline(Active)->SelectVisiblePoints;
-  visiblePoints->Initialize(false);
-
   closestDistance2 = VTK_DOUBLE_MAX; // in display coordinate system (phyisical in case of virtual reality renderer)
   foundComponentIndex = -1;
   if (markupsNode->GetNumberOfControlPoints() > 2 && this->ClosedLoop && markupsNode)
@@ -292,13 +297,14 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
     // Check if center is selected
     double centerPosWorld[3], centerPosDisplay[3];
     markupsNode->GetCenterPosition(centerPosWorld);
-    this->Renderer->SetWorldPoint(centerPosWorld);
     if (interactionEventData->IsDisplayPositionValid())
       {
       double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(centerPosWorld)
         + this->PickingTolerance * this->ScreenScaleFactor;
+      this->Renderer->SetWorldPoint(centerPosWorld);
       this->Renderer->WorldToDisplay();
       this->Renderer->GetDisplayPoint(centerPosDisplay);
+      centerPosDisplay[2] = 0.0;
       double dist2 = vtkMath::Distance2BetweenPoints(centerPosDisplay, displayPosition3);
       if (dist2 < pixelTolerance * pixelTolerance)
         {
@@ -329,16 +335,50 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
       {
       continue;
       }
-    double centerPosWorld[3], centerPosDisplay[3];
+    double centerPosWorld[4] = { 0.0, 0.0, 0.0, 1.0 };
+    double centerPosDisplay[4] = { 0.0, 0.0, 0.0, 1.0 };
     markupsNode->GetNthControlPointPositionWorld(i, centerPosWorld);
     this->Renderer->SetWorldPoint(centerPosWorld);
-    bool pointVisible = visiblePoints->IsPointOccluded(centerPosWorld, nullptr);
+
+    // Check SelectVisiblePoints output to see if the point is occluded or not.
+    // SelectVisiblePoints is very sensitive to when it is executed (it has to check the z buffer after
+    // opaque geometry is rendered but 2D labels are not yet), therefore we do not
+    // update its output but just use the last output generated for the last rendering.
+    bool pointVisible = false;
+    for (int controlPointType = 0; controlPointType <= Active; ++controlPointType)
+      {
+      if (controlPointType == Unselected && markupsNode->GetNthControlPointSelected(i)
+        || controlPointType == Selected && !markupsNode->GetNthControlPointSelected(i))
+        {
+        continue;
+        }
+      ControlPointsPipeline3D* controlPoints = this->GetControlPointsPipeline(controlPointType);
+      vtkPolyData* visiblePointsPoly = controlPoints->SelectVisiblePoints->GetOutput();
+      if (!visiblePointsPoly || !visiblePointsPoly->GetPointData())
+        {
+        continue;
+        }
+      vtkIdTypeArray* visiblePointIndices = vtkIdTypeArray::SafeDownCast(visiblePointsPoly->GetPointData()->GetAbstractArray("controlPointIndices"));
+      if (!visiblePointIndices)
+        {
+        continue;
+        }
+      if (visiblePointIndices->LookupValue(i) >= 0)
+        {
+        // visible
+        pointVisible = true;
+        break;
+        }
+      }
+
     if (interactionEventData->IsDisplayPositionValid())
       {
       double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(centerPosWorld)
         + this->PickingTolerance * this->ScreenScaleFactor;
+      this->Renderer->SetWorldPoint(centerPosWorld);
       this->Renderer->WorldToDisplay();
       this->Renderer->GetDisplayPoint(centerPosDisplay);
+      centerPosDisplay[2] = 0.0;
       double dist2 = vtkMath::Distance2BetweenPoints(centerPosDisplay, displayPosition3);
       if (dist2 < pixelTolerance * pixelTolerance && dist2 < closestDistance2 && pointVisible)
         {
@@ -563,6 +603,11 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
       {
       count += controlPoints->LabelsActor->RenderOpaqueGeometry(viewport);
       }
+    else if (controlPoints->Actor->GetVisibility())
+      {
+      // if only control points are visible then just compute if control points are occluded
+      controlPoints->SelectVisiblePoints->Update();
+      }
     }
   return count;
 }
@@ -756,10 +801,12 @@ double vtkSlicerMarkupsWidgetRepresentation3D::GetViewScaleFactorAtPosition(doub
     this->Renderer->WorldToDisplay();
     double topCenter[3] = { 0 };
     this->Renderer->GetDisplayPoint(topCenter);
+    topCenter[2] = 0.0;
     this->Renderer->SetWorldPoint(cameraFP[0] - cameraViewUp[0], cameraFP[1] - cameraViewUp[1], cameraFP[2] - cameraViewUp[2], cameraFP[3]);
     this->Renderer->WorldToDisplay();
     double bottomCenter[3] = { 0 };
     this->Renderer->GetDisplayPoint(bottomCenter);
+    bottomCenter[2] = 0.0;
     double distInPixels = sqrt(vtkMath::Distance2BetweenPoints(topCenter, bottomCenter));
 
     // 2.0 = 2x length of viewUp vector in mm (because viewUp is unit vector)

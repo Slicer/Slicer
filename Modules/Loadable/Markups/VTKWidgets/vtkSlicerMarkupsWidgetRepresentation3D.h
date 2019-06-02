@@ -93,6 +93,7 @@ protected:
     ~ControlPointsPipeline3D() override;
 
     vtkSmartPointer<vtkSelectVisiblePoints> SelectVisiblePoints;
+    vtkSmartPointer<vtkIdTypeArray> ControlPointIndices;  // store original ID to determine which control point is actually visible
     vtkSmartPointer<vtkActor> Actor;
     vtkSmartPointer<vtkPolyDataMapper> Mapper;
     vtkSmartPointer<vtkGlyph3D> Glypher;
