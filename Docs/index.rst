@@ -38,6 +38,7 @@ Welcome to 3D Slicer's documentation!
 .. toctree::
    :hidden:
 
+   user_guide/module_dicompatcher
    user_guide/module_segmenteditor
 
 

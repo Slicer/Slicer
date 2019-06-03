@@ -158,7 +158,7 @@ Utilities
 
 - :doc:`module_BRAINSStripRotation`
 - :doc:`module_DataStore`
-- :doc:`module_DICOMPatcher`
+- :doc:`module_dicompatcher`
 - :doc:`module_ScreenCapture`
 - :doc:`module_EMSegmentTransformToNewFormat`
 - BRAINS:
