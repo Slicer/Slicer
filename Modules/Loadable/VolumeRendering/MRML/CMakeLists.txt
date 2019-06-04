@@ -4,7 +4,10 @@ set(KIT ${PROJECT_NAME})
 
 set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_MRML_EXPORT")
 
+find_package(JsonCpp REQUIRED)
+
 set(${KIT}_INCLUDE_DIRECTORIES
+  ${JsonCpp_INCLUDE_DIR}
   )
 
 set(${KIT}_SRCS
@@ -14,6 +17,10 @@ set(${KIT}_SRCS
   vtkMRMLGPURayCast${MODULE_NAME}DisplayNode.h
   vtkMRMLMulti${MODULE_NAME}DisplayNode.cxx
   vtkMRMLMulti${MODULE_NAME}DisplayNode.h
+  vtkMRMLShaderPropertyNode.cxx
+  vtkMRMLShaderPropertyNode.h
+  vtkMRMLShaderPropertyStorageNode.cxx
+  vtkMRMLShaderPropertyStorageNode.h
   vtkMRMLVolumePropertyNode.cxx
   vtkMRMLVolumePropertyNode.h
   vtkMRMLVolumePropertyStorageNode.cxx

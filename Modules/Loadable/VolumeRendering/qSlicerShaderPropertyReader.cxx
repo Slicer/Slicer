@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Julien Finet, Kitware Inc.
-  and was partially funded by NIH grant 3P41RR013218-12S1
+  This file was originally developed by Simon Drouin, Brigham and Women's
+  Hospital, Boston, MA.
 
 ==============================================================================*/
 
@@ -22,7 +22,7 @@
 #include <QFileInfo>
 
 // SlicerQt includes
-#include "qSlicerVolumeRenderingReader.h"
+#include "qSlicerShaderPropertyReader.h"
 
 // Logic includes
 #include "vtkSlicerVolumeRenderingLogic.h"
@@ -33,83 +33,88 @@
 // MRML includes
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLSelectionNode.h>
-#include "vtkMRMLVolumePropertyNode.h"
+#include "vtkMRMLShaderPropertyNode.h"
 
 // VTK includes
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerVolumeRenderingReaderPrivate
+class qSlicerShaderPropertyReaderPrivate
 {
   public:
   vtkSmartPointer<vtkSlicerVolumeRenderingLogic> VolumeRenderingLogic;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerVolumeRenderingReader::qSlicerVolumeRenderingReader(QObject* _parent)
+qSlicerShaderPropertyReader::qSlicerShaderPropertyReader(QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerVolumeRenderingReaderPrivate)
+  , d_ptr(new qSlicerShaderPropertyReaderPrivate)
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerVolumeRenderingReader::qSlicerVolumeRenderingReader(vtkSlicerVolumeRenderingLogic* logic, QObject* _parent)
+qSlicerShaderPropertyReader::qSlicerShaderPropertyReader(vtkSlicerVolumeRenderingLogic* logic, QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerVolumeRenderingReaderPrivate)
+  , d_ptr(new qSlicerShaderPropertyReaderPrivate)
 {
   this->setVolumeRenderingLogic(logic);
 }
 
 //-----------------------------------------------------------------------------
-qSlicerVolumeRenderingReader::~qSlicerVolumeRenderingReader()
+qSlicerShaderPropertyReader::~qSlicerShaderPropertyReader()
 = default;
 
 //-----------------------------------------------------------------------------
-void qSlicerVolumeRenderingReader::setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* logic)
+void qSlicerShaderPropertyReader::setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* logic)
 {
-  Q_D(qSlicerVolumeRenderingReader);
+  Q_D(qSlicerShaderPropertyReader);
   d->VolumeRenderingLogic = logic;
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerVolumeRenderingLogic* qSlicerVolumeRenderingReader::volumeRenderingLogic()const
+vtkSlicerVolumeRenderingLogic* qSlicerShaderPropertyReader::volumeRenderingLogic()const
 {
-  Q_D(const qSlicerVolumeRenderingReader);
+  Q_D(const qSlicerShaderPropertyReader);
   return d->VolumeRenderingLogic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerVolumeRenderingReader::description()const
+QString qSlicerShaderPropertyReader::description()const
 {
-  return "Transfer Function";
+  return "GPU Shader Property";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerVolumeRenderingReader::fileType()const
+qSlicerIO::IOFileType qSlicerShaderPropertyReader::fileType()const
 {
-  return QString("TransferFunctionFile");
+  return QString("ShaderPropertyFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerVolumeRenderingReader::extensions()const
+QStringList qSlicerShaderPropertyReader::extensions()const
 {
-  // pic files are bio-rad images (see itkBioRadImageIO)
   return QStringList()
-    << "Transfer Function (*.vp)";
+    << "Shader Property (*.sp)";
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerVolumeRenderingReader::load(const IOProperties& properties)
+bool qSlicerShaderPropertyReader::load(const IOProperties& properties)
 {
-  Q_D(qSlicerVolumeRenderingReader);
+  Q_D(qSlicerShaderPropertyReader);
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
+  // Name is ignored
+  //QString name = QFileInfo(fileName).baseName();
+  //if (properties.contains("name"))
+  //  {
+  //  name = properties["name"].toString();
+  //  }
   if (d->VolumeRenderingLogic.GetPointer() == nullptr)
     {
     return false;
     }
-  vtkMRMLVolumePropertyNode* node =
-    d->VolumeRenderingLogic->AddVolumePropertyFromFile(fileName.toLatin1());
+  vtkMRMLShaderPropertyNode* node =
+    d->VolumeRenderingLogic->AddShaderPropertyFromFile(fileName.toLatin1());
   QStringList loadedNodes;
   if (node)
     {

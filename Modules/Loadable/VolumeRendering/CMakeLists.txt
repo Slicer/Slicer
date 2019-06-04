@@ -35,6 +35,8 @@ set(MODULE_SRCS
   qSlicer${MODULE_NAME}Module.h
   qSlicer${MODULE_NAME}Reader.cxx
   qSlicer${MODULE_NAME}Reader.h
+  qSlicerShaderPropertyReader.cxx
+  qSlicerShaderPropertyReader.h
   qSlicer${MODULE_NAME}SettingsPanel.cxx
   qSlicer${MODULE_NAME}SettingsPanel.h
   )
@@ -42,6 +44,7 @@ set(MODULE_SRCS
 set(MODULE_MOC_SRCS
   qSlicer${MODULE_NAME}Module.h
   qSlicer${MODULE_NAME}Reader.h
+  qSlicerShaderPropertyReader.h
   qSlicer${MODULE_NAME}SettingsPanel.h
   )
 

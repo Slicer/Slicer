@@ -23,6 +23,7 @@
 class vtkMRMLAnnotationROINode;
 class vtkMRMLVolumeNode;
 class vtkMRMLVolumePropertyNode;
+class vtkMRMLShaderPropertyNode;
 class vtkMRMLViewNode;
 
 class vtkIntArray;
@@ -53,6 +54,11 @@ public:
   const char* GetVolumePropertyNodeID();
   void SetAndObserveVolumePropertyNodeID(const char *volumePropertyNodeID);
   vtkMRMLVolumePropertyNode* GetVolumePropertyNode();
+
+  const char* GetShaderPropertyNodeID();
+  void SetAndObserveShaderPropertyNodeID(const char *shaderPropertyNodeID);
+  vtkMRMLShaderPropertyNode* GetShaderPropertyNode();
+  vtkMRMLShaderPropertyNode* GetOrCreateShaderPropertyNode( vtkMRMLScene * mrmlScene );
 
   const char* GetROINodeID();
   void SetAndObserveROINodeID(const char *roiNodeID);
@@ -95,6 +101,8 @@ protected:
   static const char* VolumePropertyNodeReferenceMRMLAttributeName;
   static const char* ROINodeReferenceRole;
   static const char* ROINodeReferenceMRMLAttributeName;
+  static const char* ShaderPropertyNodeReferenceRole;
+  static const char* ShaderPropertyNodeReferenceMRMLAttributeName;
 
 protected:
   /// Flag indicating whether cropping is enabled

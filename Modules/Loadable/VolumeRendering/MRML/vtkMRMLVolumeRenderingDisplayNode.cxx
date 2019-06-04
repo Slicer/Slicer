@@ -19,6 +19,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumePropertyNode.h"
+#include "vtkMRMLShaderPropertyNode.h"
 #include "vtkMRMLVolumeRenderingDisplayNode.h"
 #include "vtkMRMLViewNode.h"
 
@@ -38,6 +39,8 @@ const char* vtkMRMLVolumeRenderingDisplayNode::VolumePropertyNodeReferenceRole =
 const char* vtkMRMLVolumeRenderingDisplayNode::VolumePropertyNodeReferenceMRMLAttributeName = "volumePropertyNodeID";
 const char* vtkMRMLVolumeRenderingDisplayNode::ROINodeReferenceRole = "roi";
 const char* vtkMRMLVolumeRenderingDisplayNode::ROINodeReferenceMRMLAttributeName = "ROINodeID";
+const char* vtkMRMLVolumeRenderingDisplayNode::ShaderPropertyNodeReferenceRole = "shaderProperty";
+const char* vtkMRMLVolumeRenderingDisplayNode::ShaderPropertyNodeReferenceMRMLAttributeName = "shaderPropertyNodeId";
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
@@ -61,6 +64,12 @@ vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
   this->AddNodeReferenceRole(ROINodeReferenceRole,
                              ROINodeReferenceMRMLAttributeName,
                              roiEvents.GetPointer());
+
+  vtkNew<vtkIntArray> shaderPropertyEvents;
+  shaderPropertyEvents->InsertNextValue(vtkCommand::ModifiedEvent);
+  this->AddNodeReferenceRole(ShaderPropertyNodeReferenceRole,
+                             ShaderPropertyNodeReferenceMRMLAttributeName,
+                             shaderPropertyEvents.GetPointer());
 
   this->CroppingEnabled = 0;//by default cropping is not enabled
 
@@ -183,6 +192,39 @@ vtkMRMLVolumePropertyNode* vtkMRMLVolumeRenderingDisplayNode::GetVolumePropertyN
 }
 
 //----------------------------------------------------------------------------
+const char* vtkMRMLVolumeRenderingDisplayNode::GetShaderPropertyNodeID()
+{
+    return this->GetNodeReferenceID(ShaderPropertyNodeReferenceRole);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayNode::SetAndObserveShaderPropertyNodeID(const char *shaderPropertyNodeID)
+{
+    this->SetAndObserveNodeReferenceID(ShaderPropertyNodeReferenceRole, shaderPropertyNodeID);
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLShaderPropertyNode* vtkMRMLVolumeRenderingDisplayNode::GetShaderPropertyNode()
+{
+    return vtkMRMLShaderPropertyNode::SafeDownCast(
+      this->GetNodeReference(ShaderPropertyNodeReferenceRole));
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLShaderPropertyNode* vtkMRMLVolumeRenderingDisplayNode::GetOrCreateShaderPropertyNode( vtkMRMLScene * mrmlScene )
+{
+  vtkMRMLShaderPropertyNode * sp = this->GetShaderPropertyNode();
+  if( sp == nullptr )
+    {
+    vtkNew<vtkMRMLShaderPropertyNode> shaderNode;
+    mrmlScene->AddNode(shaderNode);
+    this->SetAndObserveShaderPropertyNodeID(shaderNode->GetID());
+    sp = shaderNode.GetPointer();
+    }
+  return sp;
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayNode::SetAndObserveROINodeID(const char* roiNodeID)
 {
   this->SetAndObserveNodeReferenceID(ROINodeReferenceRole, roiNodeID);
@@ -260,6 +302,13 @@ void vtkMRMLVolumeRenderingDisplayNode::ProcessMRMLEvents(vtkObject *caller,
       event ==  vtkCommand::ModifiedEvent)
     {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
+    }
+  vtkMRMLShaderPropertyNode* shaderPropertyNode = this->GetShaderPropertyNode();
+  if (shaderPropertyNode != nullptr &&
+      shaderPropertyNode == vtkMRMLShaderPropertyNode::SafeDownCast(caller) &&
+      event ==  vtkCommand::ModifiedEvent)
+    {
+    this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
     }
   vtkMRMLAnnotationROINode* roiNode = this->GetROINode();
   if (roiNode != nullptr &&

@@ -32,6 +32,7 @@ class vtkMRMLViewNode;
 class vtkMRMLVolumeDisplayNode;
 class vtkMRMLVolumeNode;
 class vtkMRMLVolumePropertyNode;
+class vtkMRMLShaderPropertyNode;
 
 // VTK includes
 class vtkColorTransferFunction;
@@ -264,6 +265,10 @@ public:
   /// Load from file and add into the scene a transfer function.
   /// \sa vtkMRMLVolumePropertyStorageNode
   vtkMRMLVolumePropertyNode* AddVolumePropertyFromFile (const char* filename);
+
+  /// Load from file and add into the scene a shader property.
+  /// \sa vtkMRMLShaderPropertyStorageNode
+  vtkMRMLShaderPropertyNode* AddShaderPropertyFromFile (const char* filename);
 
   /// Return the scene containing the volume rendering presets.
   /// If there is no presets scene, a scene is created and presets are loaded

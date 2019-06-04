@@ -31,6 +31,7 @@
 #include "qSlicerVolumeRenderingModule.h"
 #include "qSlicerVolumeRenderingModuleWidget.h"
 #include "qSlicerVolumeRenderingReader.h"
+#include "qSlicerShaderPropertyReader.h"
 #include "qSlicerVolumeRenderingSettingsPanel.h"
 
 // SubjectHierarchy Plugins includes
@@ -144,10 +145,17 @@ void qSlicerVolumeRenderingModule::setup()
     qSlicerApplication::application()->settingsDialog()->addPanel("Volume rendering", panel);
     panel->setVolumeRenderingLogic(volumeRenderingLogic);
     }
+
+  // Register VolumeProperty reader/writer
   qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
   coreIOManager->registerIO(new qSlicerVolumeRenderingReader(volumeRenderingLogic, this));
   coreIOManager->registerIO(new qSlicerNodeWriter("Transfer Function", QString("TransferFunctionFile"),
     QStringList() << "vtkMRMLVolumePropertyNode", true, this));
+
+  // Register ShaderProperty reader/writer
+  coreIOManager->registerIO(new qSlicerShaderPropertyReader(volumeRenderingLogic,this));
+  coreIOManager->registerIO(new qSlicerNodeWriter("Shader Property", QString("ShaderPropertyFile"),
+    QStringList() << "vtkMRMLShaderPropertyNode", true, this ));
 
   // Register Subject Hierarchy core plugins
   vtkSlicerVolumeRenderingLogic* logic = vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
@@ -173,6 +181,7 @@ QStringList qSlicerVolumeRenderingModule::associatedNodeTypes() const
 {
   return QStringList()
     << "vtkMRMLVolumePropertyNode"
+    << "vtkMRMLShaderPropertyNode"
     << "vtkMRMLVolumeRenderingDisplayNode"
     << "vtkMRMLAnnotationROINode"; // volume rendering clipping box
 }

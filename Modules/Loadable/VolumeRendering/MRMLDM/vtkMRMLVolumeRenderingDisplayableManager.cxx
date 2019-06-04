@@ -34,6 +34,7 @@
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLVolumePropertyNode.h"
+#include "vtkMRMLShaderPropertyNode.h"
 #include "vtkEventBroker.h"
 
 // VTK includes
@@ -803,6 +804,10 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
   // Set volume property
   vtkVolumeProperty* volumeProperty = displayNode->GetVolumePropertyNode() ? displayNode->GetVolumePropertyNode()->GetVolumeProperty() : nullptr;
   pipeline->VolumeActor->SetProperty(volumeProperty);
+
+  // Set shader property
+  vtkShaderProperty* shaderProperty = displayNode->GetShaderPropertyNode() ? displayNode->GetShaderPropertyNode()->GetShaderProperty() : nullptr;
+  pipeline->VolumeActor->SetShaderProperty(shaderProperty);
 
   pipeline->VolumeActor->SetPickable(volumeNode->GetSelectable());
 

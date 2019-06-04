@@ -438,6 +438,10 @@ def loadLabelVolume(filename, properties={}, returnNode=False):
   properties['labelmap'] = True
   return loadNodeFromFile(filename, filetype, properties, returnNode)
 
+def loadShaderProperty(filename, returnNode=False):
+  filetype = 'ShaderPropertyFile'
+  return loadNodeFromFile(filename, filetype, {}, returnNode)
+
 def loadVolume(filename, properties={}, returnNode=False):
   """Properties:
   - name: this name will be used as node name for the loaded volume
@@ -495,6 +499,10 @@ def openAddMarkupsDialog():
 def openAddFiberBundleDialog():
   from slicer import app
   return app.coreIOManager().openAddFiberBundleDialog()
+
+def openAddShaderPropertyDialog():
+  from slicer import app, qSlicerFileDialog
+  return app.coreIOManager().openDialog('ShaderPropertyFile', qSlicerFileDialog.Read)
 
 def openSaveDataDialog():
   from slicer import app
