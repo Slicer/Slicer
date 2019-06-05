@@ -644,7 +644,8 @@ bool qMRMLSegmentEditorWidgetPrivate::updateAlignedMasterVolume()
   vtkMRMLSegmentationNode* segmentationNode = this->ParameterSetNode->GetSegmentationNode();
   vtkMRMLScalarVolumeNode* masterVolumeNode = this->ParameterSetNode->GetMasterVolumeNode();
   std::string referenceImageGeometry = this->referenceImageGeometry();
-  if (!segmentationNode || !masterVolumeNode || referenceImageGeometry.empty())
+  if (!segmentationNode || !masterVolumeNode || !masterVolumeNode->GetImageData()
+    || !masterVolumeNode->GetImageData()->GetPointData() || referenceImageGeometry.empty())
     {
     return false;
     }
@@ -1281,7 +1282,10 @@ void qMRMLSegmentEditorWidget::updateMaskingSection()
     {
     // threshold was uninitialized, set some default
     double range[2] = { 0.0 };
-    d->MasterVolumeNode->GetImageData()->GetScalarRange(range);
+    if (d->MasterVolumeNode && d->MasterVolumeNode->GetImageData() && d->MasterVolumeNode->GetImageData()->GetPointData())
+      {
+      d->MasterVolumeNode->GetImageData()->GetScalarRange(range);
+      }
     d->ParameterSetNode->SetMasterVolumeIntensityMaskRange(range[0] + 0.25*(range[1] - range[0]), range[0] + 0.75*(range[1] - range[0]));
     }
 
@@ -1512,7 +1516,8 @@ void qMRMLSegmentEditorWidget::onMasterVolumeImageDataModified()
   Q_D(qMRMLSegmentEditorWidget);
 
   // Update intensity range slider widget
-  if (d->MasterVolumeNode != nullptr && d->MasterVolumeNode->GetImageData() != nullptr)
+  if (d->MasterVolumeNode != nullptr && d->MasterVolumeNode->GetImageData() != nullptr
+    && d->MasterVolumeNode->GetImageData()->GetPointData() != nullptr)
     {
     double range[2] = { 0.0, 0.0 };
     d->MasterVolumeNode->GetImageData()->GetScalarRange(range);
