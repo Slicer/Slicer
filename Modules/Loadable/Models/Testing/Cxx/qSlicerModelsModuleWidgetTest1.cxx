@@ -46,7 +46,7 @@
 int qSlicerModelsModuleWidgetTest1( int argc, char * argv[] )
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  qSlicerApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
   if (argc < 2)

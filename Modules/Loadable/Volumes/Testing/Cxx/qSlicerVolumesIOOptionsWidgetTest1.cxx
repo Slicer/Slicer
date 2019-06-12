@@ -42,7 +42,7 @@
 int qSlicerVolumesIOOptionsWidgetTest1( int argc, char * argv[] )
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  qSlicerApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
   // set up the color nodes for access from the widget

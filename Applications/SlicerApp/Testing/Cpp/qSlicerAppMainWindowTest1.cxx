@@ -41,7 +41,7 @@
 int qSlicerAppMainWindowTest1(int argc, char * argv[] )
 {
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  qSlicerApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
   qSlicerAppMainWindow mainWindow;

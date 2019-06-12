@@ -47,7 +47,7 @@ int qSlicerVolumesModuleWidgetTest1( int argc, char * argv[] )
   itk::itkFactoryRegistration();
 
   qMRMLWidget::preInitializeApplication();
-  QApplication app(argc, argv);
+  qSlicerApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
   if (argc < 2)
