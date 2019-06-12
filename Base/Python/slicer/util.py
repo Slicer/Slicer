@@ -1606,3 +1606,93 @@ def plot(narray, xColumnIndex = -1, columnNames = None, title = None, show = Tru
     nodes['series'] = seriesNodes
 
   return chartNode
+
+def launchConsoleProcess(args, useStartupEnvironment=True):
+  """Launch a process. Hiding the console and captures the process output.
+  The console window is hidden when running on Windows.
+  :param args: executable name, followed by
+  :return: process object.
+
+  Example 1: simple plot
+
+  .. code-block:: python
+
+    # Get sample data
+    import numpy as np
+    import SampleData
+    volumeNode = SampleData.downloadSample("MRHead")
+  """
+  import subprocess
+  if useStartupEnvironment:
+    startupEnv = startupEnvironment()
+  else:
+    startupEnv = None
+  import os
+  if os.name == 'nt':
+    # Hide console window (only needed on Windows)
+    info = subprocess.STARTUPINFO()
+    info.dwFlags = 1
+    info.wShowWindow = 0
+    proc = subprocess.Popen(args, env=startupEnv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, startupinfo=info)
+  else:
+    proc = subprocess.Popen(args, env=startupEnv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+  return proc
+
+def logProcessOutput(proc):
+  """Continuously write process output to the application log and the Python console.
+  :param proc: process object.
+  """
+  from subprocess import Popen, PIPE, CalledProcessError
+  import logging
+  try:
+    from slicer import app
+    guiApp = app
+  except ImportError:
+    # Running from console
+    guiApp = None
+  for line in proc.stdout:
+    if guiApp:
+      logging.info(line.rstrip())
+      guiApp.processEvents()  # give a chance the application to refresh GUI
+    else:
+      print(line.rstrip())
+  proc.wait()
+  retcode=proc.returncode
+  if retcode != 0:
+    raise CalledProcessError(retcode, proc.args, output=proc.stdout, stderr=proc.stderr)
+
+def pip_install(req):
+  """Install python packages.
+  Currently, the method simply calls ``python -m pip install`` but in the future further checks, optimizations,
+  user confirmation may be implemented, therefore it is recommended over to use this method call instead of a plain
+  pip install.
+  :param req: requirement specifier, same format as used by pip (https://docs.python.org/3/installing/index.html)
+
+  Example: calling from Slicer GUI
+
+  .. code-block:: python
+
+    pip_install("tensorflow keras scikit-learn ipywidgets")
+
+  Example: calling from PythonSlicer console
+
+  .. code-block:: python
+
+    from slicer.util import pip_install
+    pip_install("tensorflow")
+
+  """
+  import os
+  import sys
+  try:
+    from slicer import app
+    pythonSlicerExecutablePath = app.slicerHome+"/bin/PythonSlicer"
+  except ImportError:
+    # Running from console
+    pythonSlicerExecutablePath = os.path.dirname(sys.executable)+"/PythonSlicer"
+  if os.name == 'nt':
+    pythonSlicerExecutablePath += ".exe"
+  command_line = [pythonSlicerExecutablePath, "-m", "pip", "install"]
+  command_line.extend(req.split(" "))
+  proc=launchConsoleProcess(command_line, useStartupEnvironment = False)
+  logProcessOutput(proc)
