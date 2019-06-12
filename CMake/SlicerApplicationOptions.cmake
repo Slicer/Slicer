@@ -114,3 +114,29 @@ if(NOT DEFINED ${Slicer_MAIN_PROJECT_APPLICATION_NAME}_SOURCE_DIR)
   set(${Slicer_MAIN_PROJECT_APPLICATION_NAME}_SOURCE_DIR ${CMAKE_SOURCE_DIR})
 endif()
 mark_as_superbuild(${Slicer_MAIN_PROJECT_APPLICATION_NAME}_SOURCE_DIR)
+
+#-----------------------------------------------------------------------------
+# Set default installation folder and admin account requirement for Windows
+#-----------------------------------------------------------------------------
+if(WIN32)
+
+  if(NOT DEFINED Slicer_CPACK_NSIS_INSTALL_ROOT)
+    # Set root install directory (displayed to end user at installer-run time)
+    # to C:\Users\<username>\AppData\Local by default to allow installation
+    # without having administrative privileges.
+    set(Slicer_CPACK_NSIS_INSTALL_ROOT "$LOCALAPPDATA\\\\${Slicer_ORGANIZATION_NAME}" CACHE STRING
+      "Default installation location. $LOCALAPPDATA, $APPDATA, $PROGRAMFILES, $PROGRAMFILES64 predefined values may be used as basis.")
+    mark_as_advanced(Slicer_CPACK_NSIS_INSTALL_ROOT)
+  endif()
+  mark_as_superbuild(Slicer_CPACK_NSIS_INSTALL_ROOT:STRING)
+  message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} install root [${Slicer_CPACK_NSIS_INSTALL_ROOT}]")
+
+  if(NOT DEFINED Slicer_CPACK_NSIS_INSTALL_REQUIRES_ADMIN_ACCOUNT)
+    set(Slicer_CPACK_NSIS_INSTALL_REQUIRES_ADMIN_ACCOUNT OFF CACHE BOOL
+      "Require administrator account to install the application. Must be enabled if Slicer_CPACK_NSIS_INSTALL_ROOT is only writable by administrators.")
+    mark_as_advanced(Slicer_CPACK_NSIS_INSTALL_REQUIRES_ADMIN_ACCOUNT)
+  endif()
+  mark_as_superbuild(Slicer_CPACK_NSIS_INSTALL_REQUIRES_ADMIN_ACCOUNT:BOOL)
+  message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} requires admin account [${Slicer_CPACK_NSIS_INSTALL_REQUIRES_ADMIN_ACCOUNT}]")
+
+endif()

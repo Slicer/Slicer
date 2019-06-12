@@ -350,16 +350,21 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
   set(Slicer_CPACK_NSIS_INSTALL_SUBDIRECTORY "")
   slicer_cpack_set("CPACK_NSIS_INSTALL_SUBDIRECTORY")
 
+  set(_nsis_install_root "${Slicer_CPACK_NSIS_INSTALL_ROOT}")
+
+  if (NOT Slicer_CPACK_NSIS_INSTALL_REQUIRES_ADMIN_ACCOUNT)
+    # Install as regular user (UAC dialog will not be shown).
+    SET(CPACK_NSIS_DEFINES ${CPACK_NSIS_DEFINES} "RequestExecutionLevel user")
+  endif()
+
   # Installers for 32- vs. 64-bit CMake:
-  #  - Root install directory (displayed to end user at installer-run time)
   #  - "NSIS package/display name" (text used in the installer GUI)
   #  - Registry key used to store info about the installation
+
   if(CMAKE_CL_64)
-    set(_nsis_install_root "$PROGRAMFILES64")
     slicer_verbose_set(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
     slicer_verbose_set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_INSTALL_DIRECTORY} (Win64)")
   else()
-    set(_nsis_install_root "$PROGRAMFILES")
     slicer_verbose_set(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} (Win32)")
     slicer_verbose_set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
   endif()
