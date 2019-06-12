@@ -175,7 +175,7 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
     # first, get the data - a zip file of dicom data
     #
     import SampleData
-    SampleData.downloadFromURL(
+    dicomFilesDirectory = SampleData.downloadFromURL(
       fileNames='Dcmtk-db.zip',
       uris='http://slicer.kitware.com/midas3/download?items=18822',
       checksums='SHA256:6bfb01cf5ffb8e3af9b1c0c9556f0c6b45f0ec40305a9539ed7a9f0dcfe378e3')[0]
