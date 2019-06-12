@@ -68,6 +68,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
 
     referenceData = [
       { "url": "http://slicer.kitware.com/midas3/download?items=292839",
+        "checksum": "SHA256:3450ef9372a3460a2f181c8d3bb35a74b4f0acb10c6e18cfcf7804e1d99bf843",
         "fileName": "Mouse-MR-example-where-GDCM_fails.zip",
         "name": "Mouse-MR-example-where-GDCM_fails",
         "seriesUID": "1.3.6.1.4.1.9590.100.1.2.366426457713813178933224342280246227461",
@@ -76,6 +77,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         "voxelValueUnits": "(1, UCUM, \"no units\")"
       },
       { "url": "http://slicer.kitware.com/midas3/download?items=294857",
+        "checksum": "SHA256:899f3f8617ca53bad7dca0b2908478319e708b48ff41dfa64b6bac1d76529928",
         "fileName": "deidentifiedMRHead-dcm-one-series.zip",
         "name": "deidentifiedMRHead-dcm-one-series",
         "seriesUID": "1.3.6.1.4.1.5962.99.1.3814087073.479799962.1489872804257.270.0",
@@ -103,7 +105,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
       try:
         import SampleData
         dicomFilesDirectory = SampleData.downloadFromURL(
-          fileNames=dataset['fileName'], uris=dataset['url'])[0]
+          fileNames=dataset['fileName'], uris=dataset['url'], checksums=dataset['checksum'])[0]
         self.delayDisplay('Finished with download')
 
         #
@@ -208,7 +210,8 @@ reloadScriptedModule('DICOMReaders'); import DICOMReaders; tester = DICOMReaders
     import SampleData
     dicomFilesDirectory = SampleData.downloadFromURL(
       fileNames='deidentifiedMRHead-dcm-one-series.zip',
-      uris='http://slicer.kitware.com/midas3/download?items=294857')[0]
+      uris='http://slicer.kitware.com/midas3/download?items=294857',
+      checksums='SHA256:899f3f8617ca53bad7dca0b2908478319e708b48ff41dfa64b6bac1d76529928')[0]
     self.delayDisplay('Finished with download\n')
 
     seriesUID = "1.3.6.1.4.1.5962.99.1.3814087073.479799962.1489872804257.270.0"

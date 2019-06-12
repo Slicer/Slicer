@@ -186,7 +186,8 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
     import SampleData
     dicomFilesDirectory = SampleData.downloadFromURL(
       fileNames='dataset1_Thorax_Abdomen.zip',
-      uris='http://slicer.kitware.com/midas3/download?items=124183')[0]
+      uris='http://slicer.kitware.com/midas3/download?items=124183',
+      checksums='SHA256:17a4199aad03a373dab27dc17e5bfcf84fc194d0a30975b4073e5b595d43a56a')[0]
 
     try:
       self.delayDisplay("Switching to temp database directory")
@@ -310,7 +311,8 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
     SampleData.downloadFromURL(
       fileNames='Head_Scene.mrb',
       loadFiles=True,
-      uris='http://slicer.kitware.com/midas3/download?items=124180')
+      uris='http://slicer.kitware.com/midas3/download?items=124180',
+      checksums='SHA256:6785e481925c912a5a3940e9c9b71935df93a78a871e10f66ab71f8478229e68')
 
     logic.takeScreenshot('Head-Downloaded','Finished with download and loading',-1)
 
@@ -410,7 +412,8 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
     SampleData.downloadFromURL(
       fileNames='LiverSegments_Scene.mrb',
       loadFiles=True,
-      uris='http://slicer.kitware.com/midas3/download?items=124181')
+      uris='http://slicer.kitware.com/midas3/download?items=124181',
+      checksums='SHA256:ff797140c13a5988a7b72920adf0d2dab390a9babeab9161d5c52613328249f7')
 
     logic.takeScreenshot('Liver-Loaded','Loaded Liver scene',-1)
 
@@ -483,7 +486,8 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
     SampleData.downloadFromURL(
       fileNames='LungSegments_Scene.mrb',
       loadFiles=True,
-      uris='http://slicer.kitware.com/midas3/download?items=124182')
+      uris='http://slicer.kitware.com/midas3/download?items=124182',
+      checksums='SHA256:89ffc6cabd76a17dfa6beb404a5901a4b4e4b4f2f4ee46c2d5f4d34459f554a1')
 
     logic.takeScreenshot('Lung-Loaded','Finished with download and loading',-1)
 

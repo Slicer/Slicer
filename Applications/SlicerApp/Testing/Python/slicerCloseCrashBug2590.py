@@ -91,7 +91,8 @@ class slicerCloseCrashBug2590Test(ScriptedLoadableModuleTest):
     import SampleData
     SampleData.downloadFromURL(
       fileNames='RSNA2011_ChangeTracker_data.zip',
-      uris='http://slicer.kitware.com/midas3/download?items=8986')
+      uris='http://slicer.kitware.com/midas3/download?items=8986',
+      checksums='SHA256:256bf00a83884fab173edc9f83c028f654bd5eb44aeed28d2203ec76fab941ce')
 
     try:
       mainWindow = slicer.util.mainWindow()

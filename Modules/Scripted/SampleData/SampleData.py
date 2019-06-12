@@ -3,6 +3,7 @@ import os
 import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
+from slicer.util import computeChecksum, extractAlgoAndDigest
 import logging
 import textwrap
 
@@ -10,13 +11,14 @@ import textwrap
 # SampleData methods
 #
 
-def downloadFromURL(uris=None, fileNames=None, nodeNames=None, loadFiles=None,
+def downloadFromURL(uris=None, fileNames=None, nodeNames=None, checksums=None, loadFiles=None,
   customDownloader=None, loadFileTypes=None, loadFileProperties={}):
   """Download and optionally load data into the application.
 
   :param uris: Download URL(s).
   :param fileNames: File name(s) that will be downloaded (and loaded).
   :param nodeNames: Node name(s) in the scene.
+  :param checksums: Checksum(s) formatted as ``<algo>:<digest>`` to verify the downloaded file(s). For example, ``SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93``.
   :param loadFiles: Boolean indicating if file(s) should be loaded. By default, the function decides.
   :param customDownloader: Custom function for downloading.
   :param loadFileTypes: file format name(s) ('VolumeFile' by default).
@@ -37,7 +39,7 @@ def downloadFromURL(uris=None, fileNames=None, nodeNames=None, loadFiles=None,
   be called for each.
   """
   return SampleDataLogic().downloadFromURL(
-    uris, fileNames, nodeNames, loadFiles, customDownloader, loadFileTypes, loadFileProperties)
+    uris, fileNames, nodeNames, checksums, loadFiles, customDownloader, loadFileTypes, loadFileProperties)
 
 
 def downloadSample(sampleName):
@@ -127,7 +129,8 @@ class SampleDataSource(object):
     loadedNode = SampleData.SampleDataLogic().downloadFromSource(dataSource)[0]
   """
 
-  def __init__(self, sampleName=None, sampleDescription=None, uris=None, fileNames=None, nodeNames=None, loadFiles=None,
+  def __init__(self, sampleName=None, sampleDescription=None, uris=None, fileNames=None, nodeNames=None,
+    checksums=None, loadFiles=None,
     customDownloader=None, thumbnailFileName=None,
     loadFileType=None, loadFileProperties={}):
     """
@@ -137,6 +140,7 @@ class SampleDataSource(object):
     :param uris: Download URL(s).
     :param fileNames: File name(s) that will be downloaded (and loaded).
     :param nodeNames: Node name(s) in the scene.
+    :param checksums: Checksum(s) formatted as ``<algo>:<digest>`` to verify the downloaded file(s). For example, ``SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93``.
     :param loadFiles: Boolean indicating if file(s) should be loaded.
     :param customDownloader: Custom function for downloading.
     :param loadFileType: file format name(s) ('VolumeFile' by default if node name is specified).
@@ -153,12 +157,15 @@ class SampleDataSource(object):
         nodeNames = [None] * len(uris)
       if loadFiles is None:
         loadFiles = [None] * len(uris)
+      if checksums is None:
+        checksums = [None] * len(uris)
     elif isinstance(uris, str):
       uris = [uris,]
       fileNames = [fileNames,]
       nodeNames = [nodeNames,]
       loadFiles = [loadFiles,]
       loadFileType = [loadFileType,]
+      checksums = [checksums,]
 
     updatedFileType = []
     for fileName, nodeName, fileType in zip(fileNames, nodeNames, loadFileType):
@@ -183,8 +190,18 @@ class SampleDataSource(object):
     self.thumbnailFileName = thumbnailFileName
     self.loadFileType = updatedFileType
     self.loadFileProperties = loadFileProperties
-    if not len(uris) == len(fileNames) == len(nodeNames) == len(loadFiles) == len(updatedFileType):
-      raise Exception("All fields of sample data source must have the same length")
+    self.checksums = checksums
+    if not len(uris) == len(fileNames) == len(nodeNames) == len(loadFiles) == len(updatedFileType) == len(checksums):
+      raise ValueError(
+        f"All fields of sample data source must have the same length\n"
+        f"  uris                 : {uris}\n"
+        f"  len(uris)            : {len(uris)}\n"
+        f"  len(fileNames)       : {len(fileNames)}\n"
+        f"  len(nodeNames)       : {len(nodeNames)}\n"
+        f"  len(loadFiles)       : {len(loadFiles)}\n"
+        f"  len(updatedFileType) : {len(updatedFileType)}\n"
+        f"  len(checksums)       : {len(checksums)}\n"
+        )
 
   def __str__(self):
     output = [
@@ -195,13 +212,14 @@ class SampleDataSource(object):
       "customDownloader  : %s" % self.customDownloader,
       ""
     ]
-    for fileName, uri, nodeName, loadFile, fileType in zip(self.fileNames, self.uris, self.nodeNames, self.loadFiles, self.loadFileType):
+    for fileName, uri, nodeName, loadFile, fileType, checksum in zip(self.fileNames, self.uris, self.nodeNames, self.loadFiles, self.loadFileType, self.checksums):
       output.extend([
-        "fileName    : %s" % fileName,
-        "uri         : %s" % uri,
-        "nodeName    : %s" % nodeName,
-        "loadFile    : %s" % loadFile,
-        "loadFileType: %s" % fileType,
+        " fileName    : %s" % fileName,
+        " uri         : %s" % uri,
+        " checksum    : %s" % checksum,
+        " nodeName    : %s" % nodeName,
+        " loadFile    : %s" % loadFile,
+        " loadFileType: %s" % fileType,
         ""
       ])
     return "\n".join(output)
@@ -327,13 +345,17 @@ class SampleDataLogic(object):
   SampleDataSource class.  These instances should be stored in a
   list that is assigned to a category following the model
   used in registerBuiltInSampleDataSources below.
+
+  Checksums are expected to be formatted as a string of the form
+  ``<algo>:<digest>``. For example, ``SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93``.
   """
 
   @staticmethod
   def registerCustomSampleDataSource(category='Custom',
     sampleName=None, uris=None, fileNames=None, nodeNames=None,
     customDownloader=None, thumbnailFileName=None,
-    loadFileType='VolumeFile', loadFiles=None, loadFileProperties={}):
+    loadFileType='VolumeFile', loadFiles=None, loadFileProperties={},
+    checksums=None):
     """Adds custom data sets to SampleData.
     :param category: Section title of data set in SampleData module GUI.
     :param sampleName: Displayed name of data set in SampleData module GUI.
@@ -345,6 +367,7 @@ class SampleDataLogic(object):
     :param loadFileType: file format name(s) ('VolumeFile' by default).
     :param loadFiles: Boolean indicating if file(s) should be loaded. By default, the function decides.
     :param loadFileProperties: custom properties passed to the IO plugin.
+    :param checksums: Checksum(s) formatted as ``<algo>:<digest>`` to verify the downloaded file(s). For example, ``SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93``.
     """
 
     try:
@@ -363,7 +386,8 @@ class SampleDataLogic(object):
       thumbnailFileName=thumbnailFileName,
       loadFileType=loadFileType,
       loadFiles=loadFiles,
-      loadFileProperties=loadFileProperties
+      loadFileProperties=loadFileProperties,
+      checksums=checksums,
       ))
 
   def __init__(self, logMessage=None):
@@ -377,35 +401,42 @@ class SampleDataLogic(object):
   def registerBuiltInSampleDataSources(self):
     """Fills in the pre-define sample data sources"""
     sourceArguments = (
-        ('MRHead', None, 'http://slicer.kitware.com/midas3/download/item/292308/MR-head.nrrd', 'MR-head.nrrd', 'MRHead'),
-        ('CTChest', None, 'http://slicer.kitware.com/midas3/download/item/292307/CT-chest.nrrd', 'CT-chest.nrrd', 'CTChest'),
-        ('CTACardio', None, 'http://slicer.kitware.com/midas3/download/item/292309/CTA-cardio.nrrd', 'CTA-cardio.nrrd', 'CTACardio'),
-        ('DTIBrain', None, 'http://slicer.kitware.com/midas3/download/item/292310/DTI-brain.nrrd', 'DTI-Brain.nrrd', 'DTIBrain'),
-        ('MRBrainTumor1', None, 'http://slicer.kitware.com/midas3/download/item/292312/RegLib_C01_1.nrrd', 'RegLib_C01_1.nrrd', 'MRBrainTumor1'),
-        ('MRBrainTumor2', None, 'http://slicer.kitware.com/midas3/download/item/292313/RegLib_C01_2.nrrd', 'RegLib_C01_2.nrrd', 'MRBrainTumor2'),
-        ('BaselineVolume', None, 'http://slicer.kitware.com/midas3/download/?items=2009,1', 'BaselineVolume.nrrd', 'BaselineVolume'),
+        ('MRHead', None, 'http://slicer.kitware.com/midas3/download/item/292308/MR-head.nrrd', 'MR-head.nrrd', 'MRHead', 'SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93'),
+        ('CTChest', None, 'http://slicer.kitware.com/midas3/download/item/292307/CT-chest.nrrd', 'CT-chest.nrrd', 'CTChest', 'SHA256:4507b664690840abb6cb9af2d919377ffc4ef75b167cb6fd0f747befdb12e38e'),
+        ('CTACardio', None, 'http://slicer.kitware.com/midas3/download/item/292309/CTA-cardio.nrrd', 'CTA-cardio.nrrd', 'CTACardio', 'SHA256:3b0d4eb1a7d8ebb0c5a89cc0504640f76a030b4e869e33ff34c564c3d3b88ad2'),
+        ('DTIBrain', None, 'http://slicer.kitware.com/midas3/download/item/292310/DTI-brain.nrrd', 'DTI-Brain.nrrd', 'DTIBrain', 'SHA256:5c78d00c86ae8d968caa7a49b870ef8e1c04525b1abc53845751d8bce1f0b91a'),
+        ('MRBrainTumor1', None, 'http://slicer.kitware.com/midas3/download/item/292312/RegLib_C01_1.nrrd', 'RegLib_C01_1.nrrd', 'MRBrainTumor1', 'SHA256:998cb522173839c78657f4bc0ea907cea09fd04e44601f17c82ea27927937b95'),
+        ('MRBrainTumor2', None, 'http://slicer.kitware.com/midas3/download/item/292313/RegLib_C01_2.nrrd', 'RegLib_C01_2.nrrd', 'MRBrainTumor2', 'SHA256:1a64f3f422eb3d1c9b093d1a18da354b13bcf307907c66317e2463ee530b7a97'),
+        ('BaselineVolume', None, 'http://slicer.kitware.com/midas3/download/?items=2009,1', 'BaselineVolume.nrrd', 'BaselineVolume', 'SHA256:dff28a7711d20b6e16d5416535f6010eb99fd0c8468aaa39be4e39da78e93ec2'),
         ('DTIVolume', None,
           ('http://slicer.kitware.com/midas3/download/?items=2011,1',
             'http://slicer.kitware.com/midas3/download/?items=2010,1', ),
-          ('DTIVolume.raw.gz', 'DTIVolume.nhdr'), (None, 'DTIVolume')),
+          ('DTIVolume.raw.gz', 'DTIVolume.nhdr'), (None, 'DTIVolume'),
+          ('SHA256:d785837276758ddd9d21d76a3694e7fd866505a05bc305793517774c117cb38d', 'SHA256:67564aa42c7e2eec5c3fd68afb5a910e9eab837b61da780933716a3b922e50fe')),
         ('DWIVolume', None,
           ('http://slicer.kitware.com/midas3/download/?items=2142,1', 'http://slicer.kitware.com/midas3/download/?items=2141,1'),
-          ('dwi.raw.gz', 'dwi.nhdr'), (None, 'dwi')),
-        ('CTAAbdomenPanoramix', 'CTA abdomen\n(Panoramix)', 'http://slicer.kitware.com/midas3/download/?items=9073,1', 'Panoramix-cropped.nrrd', 'Panoramix-cropped'),
+          ('dwi.raw.gz', 'dwi.nhdr'), (None, 'dwi'),
+          ('SHA256:cf03fd53583dc05120d3314d0a82bdf5946799b1f72f2a7f08963f3fd24ca692', 'SHA256:7666d83bc205382e418444ea60ab7df6dba6a0bd684933df8809da6b476b0fed')),
+        ('CTAAbdomenPanoramix', 'CTA abdomen\n(Panoramix)', 'http://slicer.kitware.com/midas3/download/?items=9073,1', 'Panoramix-cropped.nrrd', 'Panoramix-cropped', 'SHA256:146af87511520c500a3706b7b2bfb545f40d5d04dd180be3a7a2c6940e447433'),
         ('CBCTDentalSurgery', None,
           ('http://slicer.kitware.com/midas3/download/item/94510/Greyscale_presurg.gipl.gz',
             'http://slicer.kitware.com/midas3/download/item/94509/Greyscale_postsurg.gipl.gz',),
-          ('PreDentalSurgery.gipl.gz', 'PostDentalSurgery.gipl.gz'), ('PreDentalSurgery', 'PostDentalSurgery')),
+          ('PreDentalSurgery.gipl.gz', 'PostDentalSurgery.gipl.gz'), ('PreDentalSurgery', 'PostDentalSurgery'),
+          ('SHA256:7bfa16945629c319a439f414cfb7edddd2a97ba97753e12eede3b56a0eb09968', 'SHA256:4cdc3dc35519bb57daeef4e5df89c00849750e778809e94971d3876f95cc7bbd')),
         ('MRUSProstate', 'MR-US Prostate',
           ('http://slicer.kitware.com/midas3/download/item/142475/Case10-MR.nrrd',
             'http://slicer.kitware.com/midas3/download/item/142476/case10_US_resampled.nrrd',),
-          ('Case10-MR.nrrd', 'case10_US_resampled.nrrd'), ('MRProstate', 'USProstate')),
+          ('Case10-MR.nrrd', 'case10_US_resampled.nrrd'), ('MRProstate', 'USProstate'),
+          ('SHA256:4843cdc9ea5d7bcce61650d1492ce01035727c892019339dca726380496896aa', 'SHA256:34decf58b1e6794069acbe947b460252262fe95b6858c5e320aeab03bc82ebb2')),
         ('CTMRBrain', 'CT-MR Brain',
           ('http://slicer.kitware.com/midas3/download/item/284192/CTBrain.nrrd',
            'http://slicer.kitware.com/midas3/download/item/330508/MRBrainT1.nrrd',
            'http://slicer.kitware.com/midas3/download/item/330509/MRBrainT2.nrrd',),
           ('CT-brain.nrrd', 'MR-brain-T1.nrrd', 'MR-brain-T2.nrrd'),
-          ('CTBrain', 'MRBrainT1', 'MRBrainT2')),
+          ('CTBrain', 'MRBrainT1', 'MRBrainT2'),
+          ('SHA256:6a5b6caccb76576a863beb095e3bfb910c50ca78f4c9bf043aa42f976cfa53d1',
+           'SHA256:2da3f655ed20356ee8cdf32aa0f8f9420385de4b6e407d28e67f9974d7ce1593',
+           'SHA256:fa1fe5910a69182f2b03c0150d8151ac6c75df986449fb5a6c5ae67141e0f5e7')),
         )
 
     if self.builtInCategoryName not in slicer.modules.sampleDataSources:
@@ -423,10 +454,11 @@ class SampleDataLogic(object):
       fileNames=['TinyPatient_CT.nrrd', 'TinyPatient_Structures.seg.nrrd'],
       nodeNames=['TinyPatient_CT', 'TinyPatient_Segments'],
       thumbnailFileName=os.path.join(iconPath, 'TinyPatient.png'),
-      loadFileType=['VolumeFile', 'SegmentationFile']
+      loadFileType=['VolumeFile', 'SegmentationFile'],
+      checksums=['SHA256:c0743772587e2dd4c97d4e894f5486f7a9a202049c8575e032114c0a5c935c3b', 'SHA256:3243b62bde36b1db1cdbfe204785bd4bc1fbb772558d5f8cac964cda8385d470']
       )
 
-  def downloadFileIntoCache(self, uri, name):
+  def downloadFileIntoCache(self, uri, name, checksum=None):
     """Given a uri and and a filename, download the data into
     a file of the given name in the scene's cache"""
     destFolderPath = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()
@@ -438,14 +470,14 @@ class SampleDataLogic(object):
         self.logMessage('<b>Failed to create cache folder %s</b>' % destFolderPath, logging.ERROR)
       if not os.access(destFolderPath, os.W_OK):
         self.logMessage('<b>Cache folder %s is not writable</b>' % destFolderPath, logging.ERROR)
-    return self.downloadFile(uri, destFolderPath, name)
+    return self.downloadFile(uri, destFolderPath, name, checksum)
 
   def downloadSourceIntoCache(self, source):
     """Download all files for the given source and return a
     list of file paths for the results"""
     filePaths = []
-    for uri,fileName in zip(source.uris,source.fileNames):
-      filePaths.append(self.downloadFileIntoCache(uri, fileName))
+    for uri,fileName,checksum in zip(source.uris,source.fileNames,source.checksums):
+      filePaths.append(self.downloadFileIntoCache(uri, fileName, checksum))
     return filePaths
 
   def downloadFromSource(self,source,attemptCount=0):
@@ -467,10 +499,17 @@ class SampleDataLogic(object):
     nodes = []
     filePaths = []
 
-    for uri,fileName,nodeName,loadFile,loadFileType in zip(source.uris,source.fileNames,source.nodeNames,source.loadFiles,source.loadFileType):
+    for uri,fileName,nodeName,checksum,loadFile,loadFileType in zip(source.uris,source.fileNames,source.nodeNames,source.checksums,source.loadFiles,source.loadFileType):
 
-      current_source = SampleDataSource(uris=uri, fileNames=fileName, nodeNames=nodeName, loadFiles=loadFile, loadFileType=loadFileType, loadFileProperties=source.loadFileProperties)
-      filePath = self.downloadFileIntoCache(uri, fileName)
+      current_source = SampleDataSource(uris=uri, fileNames=fileName, nodeNames=nodeName, checksums=checksum, loadFiles=loadFile, loadFileType=loadFileType, loadFileProperties=source.loadFileProperties)
+      try:
+        filePath = self.downloadFileIntoCache(uri, fileName, checksum)
+      except ValueError:
+        if attemptCount < 5:
+          attemptCount += 1
+          self.logMessage('<b>Load failed! Trying to download again (%d of 5 attempts)...</b>' % (attemptCount), logging.ERROR)
+          filePath = self.downloadFileIntoCache(uri, fileName, checksum)
+
       filePaths.append(filePath)
 
       if loadFileType == 'ZipFile':
@@ -537,13 +576,14 @@ class SampleDataLogic(object):
           return source
     return None
 
-  def downloadFromURL(self, uris=None, fileNames=None, nodeNames=None, loadFiles=None,
+  def downloadFromURL(self, uris=None, fileNames=None, nodeNames=None, checksums=None, loadFiles=None,
     customDownloader=None, loadFileTypes=None, loadFileProperties={}):
     """Download and optionally load data into the application.
 
     :param uris: Download URL(s).
     :param fileNames: File name(s) that will be downloaded (and loaded).
     :param nodeNames: Node name(s) in the scene.
+    :param checksums: Checksum(s) formatted as ``<algo>:<digest>`` to verify the downloaded file(s). For example, ``SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93``.
     :param loadFiles: Boolean indicating if file(s) should be loaded. By default, the function decides.
     :param customDownloader: Custom function for downloading.
     :param loadFileTypes: file format name(s) ('VolumeFile' by default).
@@ -565,7 +605,7 @@ class SampleDataLogic(object):
     """
     return self.downloadFromSource(SampleDataSource(
       uris=uris, fileNames=fileNames, nodeNames=nodeNames, loadFiles=loadFiles,
-      loadFileType=loadFileTypes, loadFileProperties=loadFileProperties
+      loadFileType=loadFileTypes, loadFileProperties=loadFileProperties, checksums=checksums
     ))
 
   def downloadSample(self,sampleName):
@@ -642,11 +682,18 @@ class SampleDataLogic(object):
       self.logMessage('<i>Downloaded %s (%d%% of %s)...</i>' % (humanSizeSoFar, percent, humanSizeTotal))
       self.downloadPercent = percent
 
-  def downloadFile(self, uri, destFolderPath, name):
+  def downloadFile(self, uri, destFolderPath, name, checksum=None):
+    """
+    :param uri: Download URL.
+    :param destFolderPath: Folder to download the file into.
+    :param name: File name that will be downloaded.
+    :param checksum: Checksum formatted as ``<algo>:<digest>`` to verify the downloaded file. For example, ``SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93``.
+    """
     filePath = destFolderPath + '/' + name
+    (algo, digest) = extractAlgoAndDigest(checksum)
     if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
       import urllib.request, urllib.parse, urllib.error
-      self.logMessage('<b>Requesting download</b> <i>%s</i> from %s...' % (name, uri))
+      self.logMessage('<b>Requesting download</b> <i>%s</i> from %s ...' % (name, uri))
       # add a progress bar
       self.downloadPercent = 0
       try:
@@ -654,12 +701,31 @@ class SampleDataLogic(object):
         self.logMessage('<b>Download finished</b>')
       except IOError as e:
         self.logMessage('<b>\tDownload failed: %s</b>' % e, logging.ERROR)
+
+      if algo is not None:
+        self.logMessage('<b>Verifying checksum</b>')
+        current_digest = computeChecksum(algo, filePath)
+        if current_digest != digest:
+          self.logMessage('<b>Checksum verification failed. Computed checksum %s different from expected checksum %s</b>' % (current_digest, digest))
+          qt.QFile(filePath).remove()
+        else:
+          self.logMessage('<b>Checksum OK</b>')
     else:
-      self.logMessage('<b>File already exists in cache - reusing it.</b>')
+      if algo is not None:
+        self.logMessage('<b>Verifying checksum</b>')
+        current_digest = computeChecksum(algo, filePath)
+        if current_digest != digest:
+          self.logMessage('<b>File already exists in cache but checksum is different - re-downloading it.</b>')
+          qt.QFile(filePath).remove()
+          return self.downloadFile(uri, destFolderPath, name, checksum)
+        else:
+          self.logMessage('<b>File already exists and checksum is OK - reusing it.</b>')
+      else:
+        self.logMessage('<b>File already exists in cache - reusing it.</b>')
     return filePath
 
   def loadScene(self, uri,  fileProperties = {}):
-    self.logMessage('<b>Requesting load</b> %s...' % uri)
+    self.logMessage('<b>Requesting load</b> %s ...' % uri)
     fileProperties['fileName'] = uri
     success = slicer.app.coreIOManager().loadNodes('SceneFile', fileProperties)
     if not success:
@@ -669,7 +735,7 @@ class SampleDataLogic(object):
     return True
 
   def loadNode(self, uri, name, fileType = 'VolumeFile', fileProperties = {}):
-    self.logMessage('<b>Requesting load</b> <i>%s</i> from %s...' % (name, uri))
+    self.logMessage('<b>Requesting load</b> <i>%s</i> from %s ...' % (name, uri))
 
     fileProperties['fileName'] = uri
     fileProperties['name'] = name

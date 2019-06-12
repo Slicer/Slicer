@@ -124,7 +124,8 @@ class Slicer4MinuteTest(ScriptedLoadableModuleTest):
     SampleData.downloadFromURL(
       fileNames='slicer4minute.mrb',
       loadFiles=True,
-      uris='http://slicer.kitware.com/midas3/download?items=8466')
+      uris='http://slicer.kitware.com/midas3/download?items=8466',
+      checksums='SHA256:5a1c78c3347f77970b1a29e718bfa10e5376214692d55a7320af94b9d8d592b8')
     self.delayDisplay('Finished with download and loading')
 
     # Testing "Part 2" of Tutorial

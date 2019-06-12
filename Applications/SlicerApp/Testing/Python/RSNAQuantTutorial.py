@@ -220,7 +220,8 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
     import SampleData
     extractPath = SampleData.downloadFromURL(
       fileNames='dataset3_PETCT.zip',
-      uris='http://slicer.kitware.com/midas3/download?items=124185')[0]
+      uris='http://slicer.kitware.com/midas3/download?items=124185',
+      checksums='SHA256:11e81af3462076f4ca371b632e03ed435240042915c2daf07f80059b3f78f88d')[0]
 
     self.delayDisplay("Loading PET_CT_pre-treatment.mrb")
     preTreatmentPath = extractPath + '/PET_CT_pre-treatment.mrb'
@@ -323,7 +324,8 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
     SampleData.downloadFromURL(
       fileNames='ChangeTrackerScene.mrb',
       loadFiles=True,
-      uris='http://slicer.kitware.com/midas3/download?items=124184')
+      uris='http://slicer.kitware.com/midas3/download?items=124184',
+      checksums='SHA256:64734cbbf8ebafe4a52f551d1510a8f6f3d0625eb5b6c1e328be117c48e2c653')
     logic.takeScreenshot('ChangeTracker-Loaded','Finished with download and loading',-1)
 
     try:

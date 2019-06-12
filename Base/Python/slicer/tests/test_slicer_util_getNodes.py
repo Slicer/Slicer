@@ -3,7 +3,7 @@ import slicer
 import slicer.util
 import vtk
 
-class SlicerUtilTest(unittest.TestCase):
+class SlicerUtilGetNodeTest(unittest.TestCase):
 
     def setUp(self):
         slicer.mrmlScene.Clear(0)

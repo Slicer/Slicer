@@ -359,7 +359,7 @@ class LoadDICOMFilesToDatabase(object):
   """Context manager to conveniently load DICOM files downloaded zipped from the internet
   """
   def __init__( self, url, archiveFilePath=None, dicomDataDir=None, \
-                expectedNumberOfFiles=None, selectedPlugins=None, loadedNodes=None ):
+                expectedNumberOfFiles=None, selectedPlugins=None, loadedNodes=None, checksum=None):
     from time import gmtime, strftime
     if archiveFilePath is None:
       fileName = strftime("%Y%m%d_%H%M%S_", gmtime()) + 'LoadDICOMFilesToDatabase.zip'
@@ -369,6 +369,7 @@ class LoadDICOMFilesToDatabase(object):
       dicomDataDir = slicer.app.temporaryPath + '/' + directoryName
 
     self.url = url
+    self.checksum = checksum
     self.archiveFilePath = archiveFilePath
     self.dicomDataDir = dicomDataDir
     self.expectedNumberOfExtractedFiles = expectedNumberOfFiles
@@ -377,7 +378,8 @@ class LoadDICOMFilesToDatabase(object):
 
   def __enter__(self):
     if slicer.util.downloadAndExtractArchive( self.url, self.archiveFilePath, \
-                                              self.dicomDataDir, self.expectedNumberOfExtractedFiles):
+                                              self.dicomDataDir, self.expectedNumberOfExtractedFiles,
+                                              checksum=self.checksum):
       dicomFiles = slicer.util.getFilesInDirectory(self.dicomDataDir)
       if importDicom(self.dicomDataDir):
         seriesUIDs = seriesUIDsForFiles(dicomFiles)

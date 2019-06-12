@@ -97,7 +97,8 @@ class SlicerRestoreSceneViewCrashIssue3445Test(ScriptedLoadableModuleTest):
     filePath = SampleData.downloadFromURL(
       fileNames='BrainAtlas2012.mrb',
       loadFiles=True,
-      uris='http://slicer.kitware.com/midas3/download?items=10937')[0]
+      uris='http://slicer.kitware.com/midas3/download?items=10937',
+      checksums='SHA256:688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1')[0]
 
     self.delayDisplay('Finished with download')
 

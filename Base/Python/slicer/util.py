@@ -1283,13 +1283,21 @@ interactor.AddObserver(vtk.vtkCommand.LeftButtonPressEvent, onClick)
   interactor.SetShiftKey(0)
   interactor.SetControlKey(0)
 
-def downloadFile(url, targetFilePath):
+def downloadFile(url, targetFilePath, checksum=None, reDownloadIfChecksumInvalid=True):
   """ Download ``url`` to local storage as ``targetFilePath``
 
   Target file path needs to indicate the file name and extension as well
+
+  If specified, the ``checksum`` is used to verify that the downloaded file is the expected one.
+  It must be specified as ``<algo>:<digest>``. For example, ``SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93``.
   """
   import os
   import logging
+  try:
+    (algo, digest) = extractAlgoAndDigest(checksum)
+  except ValueError as excinfo:
+    logging.error('Failed to parse checksum: ' + excinfo.message)
+    return False
   if not os.path.exists(targetFilePath) or os.stat(targetFilePath).st_size == 0:
     logging.info('Downloading from\n  %s\nas file\n  %s\nIt may take a few minutes...' % (url,targetFilePath))
     try:
@@ -1300,8 +1308,33 @@ def downloadFile(url, targetFilePath):
       traceback.print_exc()
       logging.error('Failed to download file from ' + url)
       return False
+    if algo is not None:
+      logging.info('Verifying checksum\n  %s' % targetFilePath)
+      current_digest = computeChecksum(algo, targetFilePath)
+      if current_digest != digest:
+        logging.error('Downloaded file does not have expected checksum.'
+          '\n   current checksum: %s'
+          '\n  expected checksum: %s' % (current_digest, digest))
+        return False
+      else:
+        logging.info('Checksum OK')
   else:
-    logging.info('Requested file has been found: ' + targetFilePath)
+    if algo is not None:
+      current_digest = computeChecksum(algo, targetFilePath)
+      if current_digest != digest:
+        if reDownloadIfChecksumInvalid:
+          logging.info('Requested file has been found but its checksum is different: deleting and re-downloading')
+          os.remove(targetFilePath)
+          return downloadFile(url, targetFilePath, checksum, reDownloadIfChecksumInvalid=False)
+        else:
+          logging.error('Requested file has been found but its checksum is different:'
+            '\n   current checksum: %s'
+            '\n  expected checksum: %s' % (current_digest, digest))
+          return False
+      else:
+        logging.info('Requested file has been found and checksum is OK: ' + targetFilePath)
+    else:
+      logging.info('Requested file has been found: ' + targetFilePath)
   return True
 
 def extractArchive(archiveFilePath, outputDir, expectedNumberOfExtractedFiles=None):
@@ -1338,12 +1371,61 @@ def extractArchive(archiveFilePath, outputDir, expectedNumberOfExtractedFiles=No
   logging.info('Unzipping %s into %s successful' % (archiveFilePath, outputDir))
   return True
 
+def computeChecksum(algo, filePath):
+  """Compute digest of ``filePath`` using ``algo``.
+
+  Supported hashing algorithms are SHA256 and SHA512.
+
+  It internally reads the file by chunk of 8192 bytes.
+
+  Raises :class:`ValueError` if algo is unknown.
+  Raises :class:`IOError` if filePath does not exist.
+  """
+  import hashlib
+
+  if algo not in ['SHA256', 'SHA512']:
+    raise ValueError("unsupported hashing algorithm %s" % algo)
+
+  with open(filePath, 'rb') as content:
+    hash = hashlib.new(algo)
+    while True:
+        chunk = content.read(8192)
+        if not chunk:
+            break
+        hash.update(chunk)
+    return hash.hexdigest()
+
+def extractAlgoAndDigest(checksum):
+  """Given a checksum string formatted as ``<algo>:<digest>`` returns
+  the tuple ``(algo, digest)``.
+
+  ``<algo>`` is expected to be `SHA256` or `SHA512`.
+  ``<digest>`` is expected to be the full length hexdecimal digest.
+
+  Raises :class:`ValueError` if checksum is incorrectly formatted.
+  """
+  if checksum is None:
+    return None, None
+  if len(checksum.split(':')) != 2:
+    raise ValueError("invalid checksum '%s'. Expected format is '<algo>:<digest>'." % checksum)
+  (algo, digest) = checksum.split(':')
+  expected_algos = ['SHA256', 'SHA512']
+  if algo not in expected_algos:
+    raise ValueError("invalid algo '%s'. Algo must be one of %s" % (algo, ", ".join(expected_algos)))
+  expected_digest_length = {'SHA256': 64, 'SHA512': 128}
+  if len(digest) != expected_digest_length[algo]:
+    raise ValueError("invalid digest length %d. Expected digest length for %s is %d" % (len(digest), algo, expected_digest_length[algo]))
+  return algo, digest
+
 def downloadAndExtractArchive(url, archiveFilePath, outputDir, \
-                              expectedNumberOfExtractedFiles=None, numberOfTrials=3):
+                              expectedNumberOfExtractedFiles=None, numberOfTrials=3, checksum=None):
   """ Downloads an archive from ``url`` as ``archiveFilePath``, and extracts it to ``outputDir``.
 
   This combined function tests the success of the download by the extraction step,
   and re-downloads if extraction failed.
+
+  If specified, the ``checksum`` is used to verify that the downloaded file is the expected one.
+  It must be specified as ``<algo>:<digest>``. For example, ``SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93``.
   """
   import os
   import shutil
@@ -1359,7 +1441,7 @@ def downloadAndExtractArchive(url, archiveFilePath, outputDir, \
     os.mkdir(outputDir)
 
   while numberOfTrials:
-    if not downloadFile(url, archiveFilePath):
+    if not downloadFile(url, archiveFilePath, checksum):
       numberOfTrials -= 1
       _cleanup()
       continue

@@ -119,6 +119,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
     self.dicomDatabaseDir = subjectHierarchyGenericSelfTestDir + '/CtkDicomDatabase'
     self.dicomZipFileUrl = 'http://slicer.kitware.com/midas3/download/item/137843/TestDicomCT.zip'
+    self.dicomZipChecksum = 'SHA256:1aa0bb177bbf6471ca5f2192340a6cecdedb81b33506b03ff316c6b5f624e863'
     self.dicomZipFilePath = subjectHierarchyGenericSelfTestDir + '/TestDicomCT.zip'
     self.expectedNumOfFilesInDicomDataDir = 10
     self.tempDir = subjectHierarchyGenericSelfTestDir + '/Temp'
@@ -174,7 +175,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         with DICOMUtils.LoadDICOMFilesToDatabase( \
             self.dicomZipFileUrl, self.dicomZipFilePath, \
             self.dicomDataDir, self.expectedNumOfFilesInDicomDataDir, \
-            {}, loadedNodes) as success:
+            {}, loadedNodes, checksum=self.dicomZipChecksum) as success:
           self.assertTrue(success)
 
       self.assertEqual( len( slicer.util.getNodes('vtkMRMLSubjectHierarchyNode*') ), 1 )

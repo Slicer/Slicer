@@ -112,17 +112,12 @@ class ScenePerformanceWidget(ScriptedLoadableModuleWidget):
 #
 class ScenePerformanceLogic(ScriptedLoadableModuleLogic):
 
-  def downloadFile(self, downloadURL, downloadFileName):
-    downloads = (
-        (downloadURL, downloadFileName),
-        )
-
-    import urllib.request, urllib.parse, urllib.error
-    for url,name in downloads:
-      filePath = slicer.app.temporaryPath + '/' + name
-      if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-        urllib.request.urlretrieve(url, filePath)
-    return filePath
+  def downloadFile(self, downloadURL, downloadFileName, downloadFileChecksum=None):
+    import SampleData
+    return SampleData.downloadFromURL(
+      fileNames=downloadFileName,
+      uris=downloadURL,
+      checksums=downloadFileChecksum)[0]
 
   def startTiming(self):
     self.Timer = qt.QTime()
@@ -149,7 +144,7 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
   def testAll(self):
     self.setUp()
 
-    self.addURLData('http://slicer.kitware.com/midas3/download?items=10937', 'BrainAtlas2012.mrb')
+    self.addURLData('http://slicer.kitware.com/midas3/download?items=10937', 'BrainAtlas2012.mrb', 'SHA256:688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1')
     self.modifyNodeByID('vtkMRMLScalarVolumeNode1')
     self.modifyNodeByID('vtkMRMLScalarVolumeNode2')
     self.modifyNodeByID('vtkMRMLScalarVolumeNode3')
@@ -180,9 +175,9 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
     self.delayDisplay(message)
     return message
 
-  def addURLData(self, url, file):
+  def addURLData(self, url, file, checksum):
     logic = ScenePerformanceLogic()
-    file = logic.downloadFile(url, file)
+    file = logic.downloadFile(url, file, checksum)
     self.addData(file)
 
   def addData(self, file):
