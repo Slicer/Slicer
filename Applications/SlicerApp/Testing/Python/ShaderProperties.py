@@ -32,6 +32,20 @@ class ShaderPropertiesWidget(ScriptedLoadableModuleWidget):
 
     moduleName = 'ShaderProperties'
 
+    self.sphereTestButton = qt.QPushButton()
+    self.sphereTestButton.text = "Sphere test"
+    self.layout.addWidget(self.sphereTestButton)
+    self.sphereTestButton.connect("clicked()", lambda : ShaderPropertiesTest().testSphereCut())
+
+    self.wedgeTestButton = qt.QPushButton()
+    self.wedgeTestButton.text = "Wedge test"
+    self.layout.addWidget(self.wedgeTestButton)
+    self.wedgeTestButton.connect("clicked()", lambda : ShaderPropertiesTest().testWedgeCut())
+
+
+    # Add vertical spacer
+    self.layout.addStretch(1)
+
 
   def runTests(self):
     tester = ShaderPropertiesTest()
@@ -51,9 +65,117 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Setup complete")
 
   def runTest(self):
-    self.testAll()
+    self.testSphereCut()
+    self.testWedgeCut()
 
-  def testAll(self):
+  def testWedgeCut(self):
+
+    self.delayDisplay("Starting...")
+    self.setUp()
+
+    fileURL = 'http://slicer.kitware.com/midas3/download/item/426450/MRRobot-Shoulder-MR.nrrd'
+    filePath = os.path.join(slicer.util.tempDirectory(), 'MRRobot-Shoulder-MR.nrrd')
+    slicer.util.downloadFile(fileURL, filePath)
+    success, shoulder = slicer.util.loadVolume(filePath, returnNode=True)
+
+    self.delayDisplay("Shoulder downloaded...")
+
+    slicer.util.mainWindow().moduleSelector().selectModule('VolumeRendering')
+    volumeRenderingWidgetRep = slicer.modules.volumerendering.widgetRepresentation()
+    volumeRenderingWidgetRep.setMRMLVolumeNode(shoulder)
+
+    volumeRenderingNode = slicer.mrmlScene.GetFirstNodeByName('VolumeRendering')
+    volumeRenderingNode.SetVisibility(1)
+
+    self.delayDisplay('Volume rendering on')
+
+    methodComboBox = slicer.util.findChildren(name='RenderingMethodComboBox')[0]
+    methodComboBox.currentIndex = methodComboBox.findText('VTK GPU Ray Casting')
+
+    self.delayDisplay('GPU Ray Casting on')
+
+    endpoints = [ [-162.94, 2.32192, -30.1792], [-144.842, 96.867, -36.8726] ]
+    markupNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLMarkupsLineNode())
+    for endpoint in endpoints:
+        markupNode.AddControlPoint(vtk.vtkVector3d(endpoint))
+
+    self.delayDisplay('Line added')
+
+
+    #------------------------------------------------------
+    # Utility functions to get the position of the first
+    # fiducial point in the scene and the shader property
+    # node
+    #------------------------------------------------------
+    def GetLineEndpoints():
+        fn = slicer.util.getNode('vtkMRMLMarkupsLineNode1')
+        endpoints = []
+        for n in range(2):
+            endpoints.append([0,]*3)
+            fn.GetNthControlPointPosition(n,endpoints[n])
+        return endpoints
+
+    def GetShaderPropertyNode():
+        return slicer.util.getNode('vtkMRMLShaderPropertyNode1')
+
+    #------------------------------------------------------
+    # Get the shader property node which contains every custom
+    # shader modifications for every mapper associated with
+    # the first volume rendering display node
+    #------------------------------------------------------
+    displayNode = slicer.util.getNodesByClass('vtkMRMLGPURayCastVolumeRenderingDisplayNode')[0]
+    shaderPropNode = displayNode.GetOrCreateShaderPropertyNode(slicer.mrmlScene)
+    shaderProp = shaderPropNode.GetShaderProperty()
+
+    # turn off shading so carved region looks reasonable
+    volumePropertyNode = displayNode.GetVolumePropertyNode()
+    volumeProperty = volumePropertyNode.GetVolumeProperty()
+    volumeProperty.ShadeOff()
+
+    #------------------------------------------------------
+    # Declare and initialize custom uniform variables
+    # used in our shader replacement
+    #------------------------------------------------------
+    shaderUniforms = shaderPropNode.GetFragmentUniforms()
+    shaderUniforms.RemoveAllUniforms()
+    endpoints = GetLineEndpoints()
+    shaderUniforms.SetUniform3f("endpoint0",endpoints[0])
+    shaderUniforms.SetUniform3f("endpoint1",endpoints[1])
+    shaderUniforms.SetUniformf("coneCutoff",0.8)
+
+    #------------------------------------------------------
+    # Replace the cropping implementation part of the
+    # raycasting shader to skip everything in the sphere
+    # defined by endpoints and radius
+    #------------------------------------------------------
+    croppingImplShaderCode = """
+        vec4 texCoordRAS = in_volumeMatrix[0] * in_textureDatasetMatrix[0]  * vec4(g_dataPos, 1.);
+        vec3 samplePoint = texCoordRAS.xyz;
+        vec3 toSample = normalize(samplePoint - endpoint0);
+        vec3 toEnd = normalize(endpoint1 - endpoint0);
+        float onLine = dot(toEnd, toSample);
+        g_skip = (onLine > coneCutoff);
+    """
+    shaderProp.ClearAllFragmentShaderReplacements()
+    shaderProp.AddFragmentShaderReplacement("//VTK::Cropping::Impl", True, croppingImplShaderCode, False)
+
+    #------------------------------------------------------
+    # Add a callback when the fiducial moves to adjust
+    # the endpoints of the carving sphere accordingly
+    #------------------------------------------------------
+    def onControlPointMoved():
+        endpoints = GetLineEndpoints()
+        propNode = GetShaderPropertyNode()
+        propNode.GetFragmentUniforms().SetUniform3f("endpoint0",endpoints[0])
+        propNode.GetFragmentUniforms().SetUniform3f("endpoint1",endpoints[1])
+
+    fn = slicer.util.getNode('vtkMRMLMarkupsLineNode1')
+    fn.AddObserver(fn.PointModifiedEvent, lambda caller,event: onControlPointMoved())
+
+    self.delayDisplay("Should be a carved out shoulder now")
+
+
+  def testSphereCut(self):
 
     self.delayDisplay("Starting...")
     self.setUp()
@@ -105,6 +227,11 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
     displayNode = slicer.util.getNodesByClass('vtkMRMLGPURayCastVolumeRenderingDisplayNode')[0]
     shaderPropNode = displayNode.GetOrCreateShaderPropertyNode(slicer.mrmlScene)
     shaderProp = shaderPropNode.GetShaderProperty()
+
+    # turn off shading so carved region looks reasonable
+    volumePropertyNode = displayNode.GetVolumePropertyNode()
+    volumeProperty = volumePropertyNode.GetVolumeProperty()
+    volumeProperty.ShadeOff()
 
     #------------------------------------------------------
     # Declare and initialize custom uniform variables
