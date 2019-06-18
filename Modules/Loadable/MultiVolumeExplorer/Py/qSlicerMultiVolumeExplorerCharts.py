@@ -17,7 +17,7 @@ class MultiVolumeIntensityChartView(object):
     nFrames = volumeNode.GetNumberOfFrames()
     mvLabels = [0,]*nFrames
     if frameLabels:
-      mvLabels = string.split(frameLabels,',')
+      mvLabels = frameLabels.split(',')
       if len(mvLabels) == nFrames:
         for l in range(nFrames):
           mvLabels[l] = float(mvLabels[l])
