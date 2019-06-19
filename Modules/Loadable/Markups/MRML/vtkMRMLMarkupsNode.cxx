@@ -31,7 +31,7 @@
 #include <vtkAbstractTransform.h>
 #include <vtkBitArray.h>
 #include <vtkBoundingBox.h>
-#include <vtkCommand.h>
+#include <vtkCallbackCommand.h>
 #include <vtkFrenetSerretFrame.h>
 #include <vtkGeneralTransform.h>
 #include <vtkMatrix4x4.h>
@@ -79,6 +79,7 @@ vtkMRMLMarkupsNode::vtkMRMLMarkupsNode()
   this->CurveGenerator->SetOutputPoints(curvePoints);
   this->CurveGenerator->SetCurveTypeToLinearSpline();
   this->CurveGenerator->SetNumberOfPointsPerInterpolatingSegment(1);
+  this->CurveGenerator->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
 
   vtkNew<vtkTrivialProducer> curvePointConnector; // allows connecting a data object to pipeline input
   curvePointConnector->SetOutput(this->CurvePoly);
@@ -100,6 +101,7 @@ vtkMRMLMarkupsNode::vtkMRMLMarkupsNode()
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsNode::~vtkMRMLMarkupsNode()
 {
+  this->CurveGenerator->RemoveObserver(this->MRMLCallbackCommand);
   this->RemoveAllControlPoints();
 }
 
@@ -220,6 +222,12 @@ void vtkMRMLMarkupsNode::ProcessMRMLEvents(vtkObject *caller,
   if (caller != nullptr && event == vtkMRMLTransformableNode::TransformModifiedEvent)
     {
     vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), nullptr, this->CurvePolyToWorldTransform);
+    }
+  else if (caller == this->CurveGenerator.GetPointer())
+    {
+    this->UpdateCurvePolyFromCurveInputPoly();
+    int n = -1;
+    this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
     }
   Superclass::ProcessMRMLEvents(caller, event, callData);
 }

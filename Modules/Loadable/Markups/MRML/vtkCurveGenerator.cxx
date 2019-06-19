@@ -70,7 +70,7 @@ void vtkCurveGenerator::PrintSelf(std::ostream &os, vtkIndent indent)
   Superclass::PrintSelf(os, indent);
   os << indent << "InputPoints size: " << (this->InputPoints != nullptr ? this->InputPoints->GetNumberOfPoints() : 0) << std::endl;
   os << indent << "InputParameters size: " << (this->InputParameters != nullptr ? this->InputParameters->GetNumberOfTuples() : 0) << std::endl;
-  os << indent << "CurveType: " << this->GetCurveTypeAsString() << std::endl;
+  os << indent << "CurveType: " << this->GetCurveTypeAsString(this->CurveType) << std::endl;
   os << indent << "CurveIsLoop: " << this->CurveIsLoop << std::endl;
   os << indent << "KochanekBias: " << this->KochanekBias << std::endl;
   os << indent << "KochanekContinuity: " << this->KochanekContinuity << std::endl;
@@ -83,21 +83,21 @@ void vtkCurveGenerator::PrintSelf(std::ostream &os, vtkIndent indent)
 //------------------------------------------------------------------------------
 // ACCESSORS/MUTATORS
 //------------------------------------------------------------------------------
-std::string vtkCurveGenerator::GetCurveTypeAsString()
+const char* vtkCurveGenerator::GetCurveTypeAsString(int curveType)
 {
-  switch (this->CurveType)
+  switch (curveType)
     {
     case vtkCurveGenerator::CURVE_TYPE_LINEAR_SPLINE:
       {
-      return "linear_spline";
+      return "linear";
       }
     case vtkCurveGenerator::CURVE_TYPE_CARDINAL_SPLINE:
       {
-      return "cardinal_spline";
+      return "spline";
       }
     case vtkCurveGenerator::CURVE_TYPE_KOCHANEK_SPLINE:
       {
-      return "kochanek_spline";
+      return "kochanekSpline";
       }
     case vtkCurveGenerator::CURVE_TYPE_POLYNOMIAL:
       {
@@ -105,16 +105,37 @@ std::string vtkCurveGenerator::GetCurveTypeAsString()
       }
     default:
       {
-      vtkErrorMacro("Unknown curve type - cannot return as string.");
+      vtkGenericWarningMacro("Unknown curve type: " << curveType);
       return "";
       }
     }
 }
 
-//------------------------------------------------------------------------------
-std::string vtkCurveGenerator::GetPolynomialPointSortingMethodAsString()
+//-----------------------------------------------------------
+int vtkCurveGenerator::GetCurveTypeFromString(const char* name)
 {
-  switch (this->PolynomialPointSortingMethod)
+  if (name == nullptr)
+    {
+    // invalid name
+    return -1;
+    }
+  for (int i = 0; i < vtkCurveGenerator::CURVE_TYPE_LAST; i++)
+    {
+    if (strcmp(name, vtkCurveGenerator::GetCurveTypeAsString(i)) == 0)
+      {
+      // found a matching name
+      return i;
+      }
+    }
+  // name not found
+  vtkGenericWarningMacro("Unknown curve type: " << name);
+  return -1;
+}
+
+//------------------------------------------------------------------------------
+const char* vtkCurveGenerator::GetPolynomialPointSortingMethodAsString(int polynomialPointSortingMethod)
+{
+  switch (polynomialPointSortingMethod)
     {
     case vtkCurveGenerator::SORTING_METHOD_INDEX:
       {
@@ -122,41 +143,87 @@ std::string vtkCurveGenerator::GetPolynomialPointSortingMethodAsString()
       }
     case vtkCurveGenerator::SORTING_METHOD_MINIMUM_SPANNING_TREE_POSITION:
       {
-      return "minimum_spanning_tree_position";
+      return "minimumSpanningTreePosition";
       }
     default:
       {
-      vtkErrorMacro("Unknown sorting method - cannot return as string.");
+      vtkGenericWarningMacro("Unknown sorting method: " << polynomialPointSortingMethod);
       return "";
       }
     }
 }
 
-//------------------------------------------------------------------------------
-std::string vtkCurveGenerator::GetPolynomialFitMethodAsString()
+//-----------------------------------------------------------
+int vtkCurveGenerator::GetPolynomialPointSortingMethodFromString(const char* name)
 {
-  switch (this->PolynomialFitMethod)
+  if (name == nullptr)
+    {
+    // invalid name
+    vtkGenericWarningMacro("Invalid sorting method name");
+    return -1;
+    }
+  for (int i = 0; i < vtkCurveGenerator::SORTING_METHOD_LAST; i++)
+    {
+    if (strcmp(name, vtkCurveGenerator::GetPolynomialPointSortingMethodAsString(i)) == 0)
+      {
+      // found a matching name
+      return i;
+      }
+    }
+  // name not found
+  vtkGenericWarningMacro("Unknown sorting method name: " << name);
+  return -1;
+}
+
+
+//------------------------------------------------------------------------------
+const char* vtkCurveGenerator::GetPolynomialFitMethodAsString(int polynomialFitMethod)
+{
+  switch (polynomialFitMethod)
     {
     case vtkCurveGenerator::POLYNOMIAL_FIT_METHOD_GLOBAL_LEAST_SQUARES:
       {
-      return "global_least_squares";
+      return "globalLeastSquares";
       }
     case vtkCurveGenerator::POLYNOMIAL_FIT_METHOD_MOVING_LEAST_SQUARES:
       {
-      return "moving_least_squares";
+      return "movingLeastSquares";
       }
     default:
       {
-      vtkErrorMacro("Unknown fit method method - cannot return as string.");
+      vtkGenericWarningMacro("Unknown fit method method: " << polynomialFitMethod);
       return "";
       }
     }
 }
 
-//------------------------------------------------------------------------------
-std::string vtkCurveGenerator::GetPolynomialWeightFunctionAsString()
+//-----------------------------------------------------------
+int vtkCurveGenerator::GetPolynomialFitMethodFromString(const char* name)
 {
-  switch (this->PolynomialWeightFunction)
+  if (name == nullptr)
+    {
+    // invalid name
+    vtkGenericWarningMacro("Invalid polynomial fit method name");
+    return -1;
+    }
+  for (int i = 0; i < vtkCurveGenerator::POLYNOMIAL_FIT_METHOD_LAST; i++)
+    {
+    if (strcmp(name, vtkCurveGenerator::GetPolynomialFitMethodAsString(i)) == 0)
+      {
+      // found a matching name
+      return i;
+      }
+    }
+  // name not found
+  vtkGenericWarningMacro("Unknown polynomial fit method name: " << name);
+  return -1;
+}
+
+
+//------------------------------------------------------------------------------
+const char* vtkCurveGenerator::GetPolynomialWeightFunctionAsString(int polynomialWeightFunction)
+{
+  switch (polynomialWeightFunction)
     {
     case vtkCurveGenerator::POLYNOMIAL_WEIGHT_FUNCTION_RECTANGULAR:
       {
@@ -176,11 +243,34 @@ std::string vtkCurveGenerator::GetPolynomialWeightFunctionAsString()
       }
     default:
       {
-      vtkErrorMacro("Unknown weight function - cannot return as string.");
+      vtkGenericWarningMacro("Unknown weight function: " << polynomialWeightFunction);
       return "";
       }
     }
 }
+
+//-----------------------------------------------------------
+int vtkCurveGenerator::GetPolynomialWeightFunctionFromString(const char* name)
+{
+  if (name == nullptr)
+    {
+    // invalid name
+    vtkGenericWarningMacro("Invalid polynomial weight function name");
+    return -1;
+    }
+  for (int i = 0; i < vtkCurveGenerator::POLYNOMIAL_WEIGHT_FUNCTION_LAST; i++)
+    {
+    if (strcmp(name, vtkCurveGenerator::GetPolynomialWeightFunctionAsString(i)) == 0)
+      {
+      // found a matching name
+      return i;
+      }
+    }
+  // name not found
+  vtkGenericWarningMacro("Unknown polynomial weight function name: " << name);
+  return -1;
+}
+
 
 //------------------------------------------------------------------------------
 vtkPoints* vtkCurveGenerator::GetInputPoints()

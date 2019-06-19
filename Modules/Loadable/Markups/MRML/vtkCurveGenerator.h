@@ -59,7 +59,8 @@ public:
     };
   vtkGetMacro(CurveType, int);
   vtkSetMacro(CurveType, int);
-  std::string GetCurveTypeAsString();
+  static const char* GetCurveTypeAsString(int id);
+  static int GetCurveTypeFromString(const char* name);
   void SetCurveTypeToLinearSpline() { this->SetCurveType(CURVE_TYPE_LINEAR_SPLINE); }
   void SetCurveTypeToCardinalSpline() { this->SetCurveType(CURVE_TYPE_CARDINAL_SPLINE); }
   void SetCurveTypeToKochanekSpline() { this->SetCurveType(CURVE_TYPE_KOCHANEK_SPLINE); }
@@ -109,7 +110,8 @@ public:
   };
   vtkGetMacro(PolynomialPointSortingMethod, int);
   vtkSetMacro(PolynomialPointSortingMethod, int);
-  std::string GetPolynomialPointSortingMethodAsString();
+  static const char* GetPolynomialPointSortingMethodAsString(int id);
+  static int GetPolynomialPointSortingMethodFromString(const char* name);
   void SetPolynomialPointSortingMethodToIndex() { this->SetPolynomialPointSortingMethod(vtkCurveGenerator::SORTING_METHOD_INDEX); }
   void SetPolynomialPointSortingMethodToMinimumSpanningTreePosition() {
     this->SetPolynomialPointSortingMethod(vtkCurveGenerator::SORTING_METHOD_MINIMUM_SPANNING_TREE_POSITION);
@@ -125,7 +127,8 @@ public:
     };
   vtkGetMacro(PolynomialFitMethod, double);
   vtkSetMacro(PolynomialFitMethod, double);
-  std::string GetPolynomialFitMethodAsString();
+  static const char* GetPolynomialFitMethodAsString(int id);
+  static int GetPolynomialFitMethodFromString(const char* name);
   void SetPolynomialFitMethodToGlobalLeastSquares() { this->SetPolynomialFitMethod(vtkCurveGenerator::POLYNOMIAL_FIT_METHOD_GLOBAL_LEAST_SQUARES); }
   void SetPolynomialFitMethodToMovingLeastSquares() { this->SetPolynomialFitMethod(vtkCurveGenerator::POLYNOMIAL_FIT_METHOD_MOVING_LEAST_SQUARES); }
 
@@ -145,7 +148,8 @@ public:
     };
   vtkGetMacro(PolynomialWeightFunction, double);
   vtkSetMacro(PolynomialWeightFunction, double);
-  std::string GetPolynomialWeightFunctionAsString();
+  static const char* GetPolynomialWeightFunctionAsString(int id);
+  static int GetPolynomialWeightFunctionFromString(const char* name);
   void SetPolynomialWeightFunctionToRectangular() { this->SetPolynomialWeightFunction(vtkCurveGenerator::POLYNOMIAL_WEIGHT_FUNCTION_RECTANGULAR); }
   void SetPolynomialWeightFunctionToTriangular() { this->SetPolynomialWeightFunction(vtkCurveGenerator::POLYNOMIAL_WEIGHT_FUNCTION_TRIANGULAR); }
   void SetPolynomialWeightFunctionToCosine() { this->SetPolynomialWeightFunction(vtkCurveGenerator::POLYNOMIAL_WEIGHT_FUNCTION_COSINE); }

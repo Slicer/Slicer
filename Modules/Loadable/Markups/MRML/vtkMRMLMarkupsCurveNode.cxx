@@ -60,24 +60,51 @@ vtkMRMLMarkupsCurveNode::~vtkMRMLMarkupsCurveNode()
 void vtkMRMLMarkupsCurveNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of,nIndent);
+
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLEnumMacro(curveType, CurveType);
+  vtkMRMLWriteXMLIntMacro(numberOfPointsPerInterpolatingSegment, NumberOfPointsPerInterpolatingSegment);
+  vtkMRMLWriteXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::ReadXMLAttributes(const char** atts)
 {
-  Superclass::ReadXMLAttributes(atts);
+  int disabledModify = this->StartModify();
+  this->Superclass::ReadXMLAttributes(atts);
+
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLEnumMacro(curveType, CurveType);
+  vtkMRMLReadXMLIntMacro(numberOfPointsPerInterpolatingSegment, NumberOfPointsPerInterpolatingSegment);
+  vtkMRMLReadXMLEndMacro();
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
+
+  vtkMRMLCopyBeginMacro(anode);
+  vtkMRMLCopyEnumMacro(CurveType);
+  vtkMRMLCopyIntMacro(NumberOfPointsPerInterpolatingSegment);
+  vtkMRMLCopyEndMacro();
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
+
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintEnumMacro(CurveType);
+  vtkMRMLPrintIntMacro(NumberOfPointsPerInterpolatingSegment);
+  vtkMRMLPrintEndMacro();
 }
 
 //---------------------------------------------------------------------------
@@ -545,4 +572,64 @@ bool vtkMRMLMarkupsCurveNode::GetCurvePointToWorldTransformAtPointIndex(vtkIdTyp
     curvePointToWorld->SetElement(row, 3, position[row]);
     }
   return true;
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLMarkupsCurveNode::GetCurveType()
+{
+  return this->CurveGenerator->GetCurveType();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsCurveNode::SetCurveType(int type)
+{
+  this->CurveGenerator->SetCurveType(type);
+}
+
+//-----------------------------------------------------------
+const char* vtkMRMLMarkupsCurveNode::GetCurveTypeAsString(int id)
+{
+  return this->CurveGenerator->GetCurveTypeAsString(id);
+}
+
+//-----------------------------------------------------------
+int vtkMRMLMarkupsCurveNode::GetCurveTypeFromString(const char* name)
+{
+  return this->CurveGenerator->GetCurveTypeFromString(name);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsCurveNode::SetCurveTypeToLinear()
+{
+  this->CurveGenerator->SetCurveTypeToLinearSpline();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsCurveNode::SetCurveTypeToCardinalSpline()
+{
+  this->CurveGenerator->SetCurveTypeToCardinalSpline();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsCurveNode::SetCurveTypeToKochanekSpline()
+{
+  this->CurveGenerator->SetCurveTypeToKochanekSpline();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsCurveNode::SetCurveTypeToPolynomial()
+{
+  this->CurveGenerator->SetCurveTypeToPolynomial();
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLMarkupsCurveNode::GetNumberOfPointsPerInterpolatingSegment()
+{
+  return this->CurveGenerator->GetNumberOfPointsPerInterpolatingSegment();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsCurveNode::SetNumberOfPointsPerInterpolatingSegment(int pointsPerSegment)
+{
+  this->CurveGenerator->SetNumberOfPointsPerInterpolatingSegment(pointsPerSegment);
 }
