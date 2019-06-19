@@ -170,6 +170,13 @@ if(Slicer_USE_TBB)
   list(APPEND Slicer_DEPENDENCIES tbb)
 endif()
 
+include(SlicerCheckModuleEnabled)
+
+# JsonCpp is required to build VolumeRendering module
+slicer_is_loadable_builtin_module_enabled("VolumeRendering" _build_volume_rendering_module)
+if(_build_volume_rendering_module)
+  list(APPEND Slicer_DEPENDENCIES JsonCpp)
+endif()
 
 #------------------------------------------------------------------------------
 # Include remote modules
