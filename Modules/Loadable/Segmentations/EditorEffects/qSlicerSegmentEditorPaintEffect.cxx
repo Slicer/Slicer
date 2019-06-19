@@ -219,6 +219,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerSegmentEditorPaintEffectPrivate::qSlicerSegmentEditorPaintEffectPrivate(qSlicerSegmentEditorPaintEffect& object)
   : q_ptr(&object)
+  , MinimumPaintPointDistance2(0.0)
   , DelayedPaint(true)
   , IsPainting(false)
   , ActiveViewWidget(nullptr)
@@ -231,7 +232,6 @@ qSlicerSegmentEditorPaintEffectPrivate::qSlicerSegmentEditorPaintEffectPrivate(q
   , ColorSmudgeCheckbox(nullptr)
   , EraseAllSegmentsCheckbox(nullptr)
   , BrushPixelModeCheckbox(nullptr)
-  , MinimumPaintPointDistance2(0.0)
 {
   this->PaintCoordinates_World = vtkSmartPointer<vtkPoints>::New();
   this->FeedbackPointsPolyData = vtkSmartPointer<vtkPolyData>::New();
