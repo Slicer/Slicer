@@ -31,23 +31,11 @@ if(Slicer_BUILD_DICOM_SUPPORT)
     DICOMPatcher
     )
 endif()
+
+include(SlicerCheckModuleEnabled)
+
 foreach(module ${modules})
-  set(_build_module 1)
-  set(${module}_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${module})
-  # Is module expicitly disabled ?
-  if(Slicer_QTSCRIPTEDMODULES_DISABLED)
-    list(FIND Slicer_QTSCRIPTEDMODULES_DISABLED ${module} _module_disabled)
-    if(${_module_disabled} GREATER -1)
-      set(_build_module 0)
-    endif()
-  endif()
-  # Is module explicitly enabled ?
-  if(Slicer_QTSCRIPTEDMODULES_ENABLED)
-    list(FIND Slicer_QTSCRIPTEDMODULES_ENABLED ${module} _module_enabled)
-    if(NOT ${_module_enabled} GREATER -1)
-      set(_build_module 0)
-    endif()
-  endif()
+  slicer_is_scripted_builtin_module_enabled(${module} _build_module)
   if(_build_module)
     add_subdirectory(${module})
   endif()
