@@ -128,8 +128,12 @@ public:
   const char* GetCurveTypeAsString(int id);
   int GetCurveTypeFromString(const char* name);
 
+  //@{
+  /// Get/set how many curve points are inserted between control points.
+  /// Higher values are recommended if distance between control points is large.
   int GetNumberOfPointsPerInterpolatingSegment();
   void SetNumberOfPointsPerInterpolatingSegment(int pointsPerSegment);
+  //@}
 
 protected:
   vtkMRMLMarkupsCurveNode();
