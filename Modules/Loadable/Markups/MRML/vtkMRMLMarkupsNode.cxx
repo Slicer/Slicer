@@ -1835,13 +1835,13 @@ bool vtkMRMLMarkupsNode::SetControlPointLabelsWorld(vtkStringArray* labels, vtkP
 //---------------------------------------------------------------------------
 int vtkMRMLMarkupsNode::GetNumberOfMeasurements()
 {
-  return this->Measurements.size();
+  return static_cast<int>(this->Measurements.size());
 }
 
 //---------------------------------------------------------------------------
 vtkMRMLMeasurement* vtkMRMLMarkupsNode::GetNthMeasurement(int id)
 {
-  if (id < 0 || id >= this->Measurements.size())
+  if (id < 0 || id >= this->GetNumberOfMeasurements())
     {
     return nullptr;
     }
@@ -1851,12 +1851,12 @@ vtkMRMLMeasurement* vtkMRMLMarkupsNode::GetNthMeasurement(int id)
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::SetNthMeasurement(int id, vtkMRMLMeasurement* measurement)
 {
-  if (id < 0 || id > this->Measurements.size())
+  if (id < 0 || id > this->GetNumberOfMeasurements())
     {
     vtkErrorMacro("vtkMRMLMarkupsNode::SetNthMeasurement failed: id out of range");
     return;
     }
-  if (id >= this->Measurements.size())
+  if (id >= this->GetNumberOfMeasurements())
     {
     this->Measurements.push_back(measurement);
     }
@@ -1878,13 +1878,13 @@ void vtkMRMLMarkupsNode::SetNthMeasurement(int id,
   vtkCodedEntry* quantityCode/*=nullptr*/, vtkCodedEntry* derivationCode/*=nullptr*/,
   vtkCodedEntry* unitsCode/*=nullptr*/, vtkCodedEntry* methodCode/*=nullptr*/)
 {
-  if (id < 0 || id > this->Measurements.size())
+  if (id < 0 || id > this->GetNumberOfMeasurements())
     {
     vtkErrorMacro("vtkMRMLMarkupsNode::SetNthMeasurement failed: id out of range");
     return;
     }
   vtkSmartPointer<vtkMRMLMeasurement> measurement;
-  if (id >= this->Measurements.size())
+  if (id >= this->GetNumberOfMeasurements())
     {
     measurement = vtkSmartPointer<vtkMRMLMeasurement>::New();
     this->Measurements.push_back(measurement);
@@ -1906,7 +1906,7 @@ void vtkMRMLMarkupsNode::SetNthMeasurement(int id,
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::RemoveNthMeasurement(int id)
 {
-  if (id < 0 || id >= this->Measurements.size())
+  if (id < 0 || id >= this->GetNumberOfMeasurements())
     {
     vtkErrorMacro("vtkMRMLMarkupsNode::RemoveNthMeasurement failed: id out of range");
     }
