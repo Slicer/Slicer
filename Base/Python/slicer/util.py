@@ -616,6 +616,17 @@ def modulePath(moduleName):
 
 def reloadScriptedModule(moduleName):
   """Generic reload method for any scripted module.
+
+  The function performs the following:
+  * Ensure ``sys.path`` includes the module path and use ``imp.load_module``
+    to load the associated script.
+  * For the current module widget representation:
+    * Hide all children widgets
+    * Remove layout items
+    * Call ``cleanup()`` function
+  * Instantiate new widget representation
+  * Call ``setup()`` function
+  * Update ``slicer.modules.<moduleName>Widget`` attribute
   """
   import imp, sys, os
   import slicer
@@ -639,7 +650,7 @@ def reloadScriptedModule(moduleName):
     except AttributeError:
       pass
 
-  # remove spacer items
+  # remove layout items
   item = parent.layout().itemAt(0)
   while item:
     parent.layout().removeItem(item)
