@@ -347,8 +347,8 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
     bool pointVisible = false;
     for (int controlPointType = 0; controlPointType <= Active; ++controlPointType)
       {
-      if (controlPointType == Unselected && markupsNode->GetNthControlPointSelected(i)
-        || controlPointType == Selected && !markupsNode->GetNthControlPointSelected(i))
+      if ((controlPointType == Unselected && markupsNode->GetNthControlPointSelected(i))
+        || (controlPointType == Selected && !markupsNode->GetNthControlPointSelected(i)))
         {
         continue;
         }
