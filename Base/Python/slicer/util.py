@@ -622,7 +622,7 @@ def reloadScriptedModule(moduleName):
     to load the associated script.
   * For the current module widget representation:
     * Hide all children widgets
-    * Call ``cleanup()`` function
+    * Call ``cleanup()`` function and disconnect ``ScriptedLoadableModuleWidget_onModuleAboutToBeUnloaded``
     * Remove layout items
   * Instantiate new widget representation
   * Call ``setup()`` function
@@ -650,10 +650,15 @@ def reloadScriptedModule(moduleName):
     except AttributeError:
       pass
 
-  # call cleanup function for the existing widget
+  # if the module widget has been instantiated, call cleanup function and
+  # disconnect "_onModuleAboutToBeUnloaded" (this avoids double-cleanup on
+  # application exit)
   if hasattr(slicer.modules, widgetName):
-    w = getattr(slicer.modules, widgetName)
-    w.cleanup()
+    widget = getattr(slicer.modules, widgetName)
+    widget.cleanup()
+
+    if hasattr(widget, '_onModuleAboutToBeUnloaded'):
+      slicer.app.moduleManager().disconnect('moduleAboutToBeUnloaded(QString)', widget._onModuleAboutToBeUnloaded)
 
   # remove layout items
   item = parent.layout().itemAt(0)
