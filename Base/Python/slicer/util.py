@@ -622,8 +622,8 @@ def reloadScriptedModule(moduleName):
     to load the associated script.
   * For the current module widget representation:
     * Hide all children widgets
-    * Remove layout items
     * Call ``cleanup()`` function
+    * Remove layout items
   * Instantiate new widget representation
   * Call ``setup()`` function
   * Update ``slicer.modules.<moduleName>Widget`` attribute
@@ -650,16 +650,16 @@ def reloadScriptedModule(moduleName):
     except AttributeError:
       pass
 
+  # call cleanup function for the existing widget
+  if hasattr(slicer.modules, widgetName):
+    w = getattr(slicer.modules, widgetName)
+    w.cleanup()
+
   # remove layout items
   item = parent.layout().itemAt(0)
   while item:
     parent.layout().removeItem(item)
     item = parent.layout().itemAt(0)
-
-  # delete the old widget instance
-  if hasattr(slicer.modules, widgetName):
-    w = getattr(slicer.modules, widgetName)
-    w.cleanup()
 
   # create new widget inside existing parent
   widget = eval('reloaded_module.%s(parent)' % widgetName)
