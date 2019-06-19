@@ -49,5 +49,3 @@ foreach(module ${qtmodules})
     add_subdirectory(${module})
   endif()
 endforeach()
-
-# External modules have been moved to Modules/Remote/CMakeLists.txt
