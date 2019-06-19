@@ -143,7 +143,7 @@ std::string vtkMRMLMeasurement::GetAsString()
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMeasurement::SetFromString(const std::string& content)
+bool vtkMRMLMeasurement::SetFromString(const std::string& vtkNotUsed(content))
 {
   this->Initialize();
   bool success = true;
