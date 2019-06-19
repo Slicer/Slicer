@@ -62,6 +62,7 @@ public:
 
   /// Give a chance to displayable managers to process the event.
   /// Return true if the event is processed.
+  using vtkMRMLViewInteractorStyle::DelegateInteractionEventToDisplayableManagers;
   bool DelegateInteractionEventToDisplayableManagers(vtkEventData* inputEventData) override;
 
   ///
