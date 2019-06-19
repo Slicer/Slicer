@@ -374,8 +374,6 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::UpdateInteractorStyle(int e
   bool updateObserver = false;
   if (this->MRMLInteractionNode)
     {
-    int currentInteractionMode =
-      this->MRMLInteractionNode->GetCurrentInteractionMode();
     this->SetAndObserveInteractor( this->Renderer->GetRenderWindow()->GetInteractor());
     this->SetAndObserveInteractorStyle(
         this->Renderer->GetRenderWindow()->GetInteractor()->GetInteractorStyle());

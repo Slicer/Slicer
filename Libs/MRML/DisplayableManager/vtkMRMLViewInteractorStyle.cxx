@@ -245,9 +245,6 @@ void vtkMRMLViewInteractorStyle::SetDisplayableManagers(vtkMRMLDisplayableManage
 //----------------------------------------------------------------------------
 bool vtkMRMLViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(unsigned long event)
 {
-  int* displayPositionInt = this->GetInteractor()->GetEventPosition();
-  vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(displayPositionInt[0], displayPositionInt[1]);
-
   vtkNew<vtkMRMLInteractionEventData> ed;
   ed->SetType(event);
 
