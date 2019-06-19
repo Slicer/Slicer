@@ -333,6 +333,30 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
     logging.log(logLevel, message)
     slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
 
+  def isCategoryVisible(self, category):
+    """Check the visibility of a SampleData category given its name.
+
+    Returns False if the category is not visible or if it does not exist,
+    otherwise returns True.
+    """
+    if not self.isSampleDataSourceRegistered(category):
+      return False
+    return slicer.util.findChild(self.parent, '%sCollapsibleGroupBox' % category).isVisible()
+
+  def setCategoryVisible(self, category, visible):
+    """Update visibility of a SampleData category given its name.
+
+    The function is a no-op if the category does not exist.
+    """
+    if not self.isSampleDataSourceRegistered(category):
+      return
+    slicer.util.findChild(self.parent, '%sCollapsibleGroupBox' % category).setVisible(visible)
+
+  def isSampleDataSourceRegistered(self, category):
+    """Check if a SampleDataSource is registered given its category name.
+    """
+    return category in slicer.modules.sampleDataSources.keys()
+
 #
 # SampleData logic
 #
@@ -784,7 +808,9 @@ class SampleDataTest(ScriptedLoadableModuleTest):
       self.test_downloadFromSource_loadNode,
       self.test_downloadFromSource_loadNodeFromMultipleFiles,
       self.test_downloadFromSource_loadNodes,
-      self.test_downloadFromSource_loadNodesWithLoadFileFalse
+      self.test_downloadFromSource_loadNodesWithLoadFileFalse,
+      self.test_isSampleDataSourceRegistered,
+      self.test_categoryVisibility
     ]:
       self.setUp()
       test()
@@ -925,3 +951,16 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     self.assertEqual(len(nodes), 2)
     self.assertEqual(nodes[0], slicer.mrmlScene.GetFirstNodeByName("MRHead"))
     self.assertEqual(nodes[1], slicer.mrmlScene.GetFirstNodeByName("CTChest"))
+
+  def test_isSampleDataSourceRegistered(self):
+    widget = slicer.modules.SampleDataWidget
+    self.assertTrue(widget.isSampleDataSourceRegistered('BuiltIn'))
+    self.assertFalse(widget.isSampleDataSourceRegistered('Not_A_Registered_Category'))
+
+  def test_categoryVisibility(self):
+    slicer.util.selectModule("SampleData")
+    widget = slicer.modules.SampleDataWidget
+    widget.setCategoryVisible('BuiltIn', False)
+    self.assertFalse(widget.isCategoryVisible('BuiltIn'))
+    widget.setCategoryVisible('BuiltIn', True)
+    self.assertTrue(widget.isCategoryVisible('BuiltIn'))
