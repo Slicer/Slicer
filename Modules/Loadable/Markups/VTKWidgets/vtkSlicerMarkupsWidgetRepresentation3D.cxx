@@ -236,7 +236,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
       double pointNormalWorld[3] = { 0.0, 0.0, 1.0 };
       markupsNode->GetNthControlPointNormalWorld(pointIndex, pointNormalWorld);
 
-      vtkIdType pointIndexInPipeline = controlPoints->ControlPoints->InsertNextPoint(worldPos);
+      controlPoints->ControlPoints->InsertNextPoint(worldPos);
 
       /* No offset for 3D actors - we may revisit this in the future
       (we could also use text margins to add some space).

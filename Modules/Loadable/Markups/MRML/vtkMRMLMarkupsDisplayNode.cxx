@@ -196,8 +196,6 @@ void vtkMRMLMarkupsDisplayNode::Copy(vtkMRMLNode *anode)
 
   Superclass::Copy(anode);
 
-  vtkMRMLMarkupsDisplayNode *node = vtkMRMLMarkupsDisplayNode::SafeDownCast(anode);
-
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyBooleanMacro(PropertiesLabelVisibility);
   vtkMRMLCopyBooleanMacro(PointLabelsVisibility);

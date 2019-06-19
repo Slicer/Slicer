@@ -148,7 +148,6 @@ void vtkSlicerAngleRepresentation2D::BuildArc()
   double vector2[3] = { p2[0] - c[0], p2[1] - c[1], p2[2] - c[2] };
   double l1 = vtkMath::Normalize(vector1);
   double l2 = vtkMath::Normalize(vector2);
-  double angle = acos(vtkMath::Dot(vector1, vector2));
 
   // Place the label and place the arc
   double length = l1 < l2 ? l1 : l2;

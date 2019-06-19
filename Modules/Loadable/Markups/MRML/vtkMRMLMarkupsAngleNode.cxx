@@ -97,8 +97,8 @@ void vtkMRMLMarkupsAngleNode::UpdateMeasurements()
 
   double vector1[3] = { p1[0] - c[0], p1[1] - c[1], p1[2] - c[2] };
   double vector2[3] = { p2[0] - c[0], p2[1] - c[1], p2[2] - c[2] };
-  double l1 = vtkMath::Normalize(vector1);
-  double l2 = vtkMath::Normalize(vector2);
+  vtkMath::Normalize(vector1);
+  vtkMath::Normalize(vector2);
   double angle = vtkMath::DegreesFromRadians(acos(vtkMath::Dot(vector1, vector2)));
 
   this->SetNthMeasurement(0, "angle", angle, "deg");
