@@ -154,7 +154,6 @@ qSlicerCoreApplicationPrivate::~qSlicerCoreApplicationPrivate()
   // => De facto, it's important to make sure PythonManager is destructed
   // after the ModuleManager.
   // To do so, the associated SharedPointer are cleared in the appropriate order
-  this->ModuleManager->factoryManager()->unloadModules();
   this->ModuleManager.clear();
   this->CoreIOManager.clear();
 #ifdef Slicer_USE_PYTHONQT
@@ -405,6 +404,8 @@ void qSlicerCoreApplicationPrivate::init()
     // We load the language selected for the application
     qSlicerCoreApplication::loadLanguage();
     }
+
+  q->connect(q, SIGNAL(aboutToQuit()), q, SLOT(onAboutToQuit()));
 }
 
 //-----------------------------------------------------------------------------
@@ -766,6 +767,21 @@ int qSlicerCoreApplication::returnCode()const
 {
   Q_D(const qSlicerCoreApplication);
   return d->ReturnCode;
+}
+
+//-----------------------------------------------------------------------------
+int qSlicerCoreApplication::exec()
+{
+  int exit_code = QApplication::exec();
+  if (exit_code == qSlicerCoreApplication::ExitSuccess)
+    {
+    int return_code = qSlicerCoreApplication::application()->returnCode();
+    if (return_code != qSlicerCoreApplication::ExitNotRequested)
+      {
+      exit_code = return_code;
+      }
+    }
+  return exit_code;
 }
 
 //-----------------------------------------------------------------------------
@@ -1667,6 +1683,21 @@ void qSlicerCoreApplication::terminate(int returnCode)
   d->ReturnCode = returnCode;
   // Does nothing if the event loop is not running
   this->exit(returnCode);
+}
+
+//----------------------------------------------------------------------------
+void qSlicerCoreApplication::onAboutToQuit()
+{
+  Q_D(qSlicerCoreApplication);
+
+  d->ModuleManager->factoryManager()->unloadModules();
+
+#ifdef Slicer_USE_PYTHONQT
+  if (this->corePythonManager()->pythonErrorOccured())
+    {
+    d->ReturnCode = qSlicerCoreApplication::ExitFailure;
+    }
+#endif
 }
 
 //----------------------------------------------------------------------------

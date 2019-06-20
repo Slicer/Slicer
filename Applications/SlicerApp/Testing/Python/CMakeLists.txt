@@ -200,6 +200,16 @@ set_tests_properties(py_nomainwindow_${testname} PROPERTIES
 endif()
 
 #
+# Check that an exception raised during scripted module cleanup sets exit code
+#
+set(testname ScriptedModuleCleanupTest)
+add_test(
+  NAME py_${testname}
+  COMMAND ${PYTHON_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/${testname}.py ${Slicer_LAUNCHER_EXECUTABLE}
+  )
+
+#
 # Application tests
 #
 slicer_add_python_unittest(
