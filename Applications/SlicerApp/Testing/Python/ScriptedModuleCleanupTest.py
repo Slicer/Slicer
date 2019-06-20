@@ -18,6 +18,7 @@
 #  and was partially funded by NIH grant 1R01EB021391
 #
 
+import argparse
 import os
 import sys
 import tempfile
@@ -32,18 +33,16 @@ It uses an output file for communication because on Windows,
 standard output is not always enabled.
 
 Usage:
-    ScriptedModuleCleanupTest.py /path/to/Slicer
+    ScriptedModuleCleanupTest.py /path/to/Slicer [--with-testing]
 """
 
-if __name__ == "__main__":
 
-  if len(sys.argv) != 2:
-      print(os.path.basename(sys.argv[0]) +" /path/to/Slicer")
-      exit(EXIT_FAILURE)
-
-  debug = False # Set to True to:
-                #  * display the path of the expected test output file
-                #  * avoid deleting the created temporary directory
+def check_exit_code(slicer_executable, testing_enabled=True, debug=False):
+  """
+  If debug is set to True:
+    * display the path of the expected test output file
+    * avoid deleting the created temporary directory
+  """
 
   temporaryModuleDirPath = tempfile.mkdtemp().replace('\\','/')
   try:
@@ -53,10 +52,8 @@ if __name__ == "__main__":
     copyfile(currentDirPath+'/ScriptedModuleCleanupTestHelperModule.py',
       temporaryModuleDirPath+'/ModuleCleanup.py')
 
-    slicer_executable = os.path.expanduser(sys.argv[1])
-    slicer_arguments = [
+    common_arguments = [
       '--no-splash',
-      '--testing',
       '--disable-builtin-modules',
       '--additional-module-path', temporaryModuleDirPath,
       '--python-code', 'slicer.util.selectModule("ModuleCleanup")'
@@ -68,11 +65,31 @@ if __name__ == "__main__":
       print("SLICER_MODULE_CLEANUP_TEST_OUTPUT=%s" % test_output_file)
 
     # Test
-    (returnCode, stdout, stderr) = run(slicer_executable, slicer_arguments)
+    args = list(common_arguments)
+    if testing_enabled:
+      args.append('--testing')
+    else:
+      args.append('--exit-after-startup')
+    (returnCode, stdout, stderr) = run(slicer_executable, args)
+
     assert(os.path.isfile(test_output_file))
-    assert(returnCode == EXIT_FAILURE)
+
+    if testing_enabled:
+      assert(returnCode == EXIT_FAILURE)
+    else:
+      assert(returnCode == EXIT_SUCCESS)
 
   finally:
     if not debug:
       import shutil
       shutil.rmtree(temporaryModuleDirPath)
+
+if __name__ == "__main__":
+
+  parser = argparse.ArgumentParser()
+  parser.add_argument("/path/to/Slicer")
+  parser.add_argument('--with-testing', dest='testing_enabled', action='store_true')
+  args = parser.parse_args()
+
+  slicer_executable = os.path.expanduser(getattr(args, "/path/to/Slicer"))
+  check_exit_code(slicer_executable, testing_enabled=args.testing_enabled)

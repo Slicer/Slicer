@@ -202,11 +202,18 @@ endif()
 #
 # Check that an exception raised during scripted module cleanup sets exit code
 #
-set(testname ScriptedModuleCleanupTest)
+set(testname ScriptedModuleCleanupTest_with_testing)
 add_test(
   NAME py_${testname}
   COMMAND ${PYTHON_EXECUTABLE}
-    ${CMAKE_CURRENT_SOURCE_DIR}/${testname}.py ${Slicer_LAUNCHER_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/ScriptedModuleCleanupTest.py ${Slicer_LAUNCHER_EXECUTABLE} --with-testing
+  )
+
+set(testname ScriptedModuleCleanupTest_without_testing)
+add_test(
+  NAME py_${testname}
+  COMMAND ${PYTHON_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/ScriptedModuleCleanupTest.py ${Slicer_LAUNCHER_EXECUTABLE}
   )
 
 #

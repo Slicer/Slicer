@@ -193,10 +193,15 @@ public:
 
   /// Enters the main event loop and waits until exit(), quit() or terminate() is called.
   ///
-  /// \warning To ensure error occurring during the cleanup performed in onAboutToQuit()
-  /// are considered, it is important to start the event loop calling this function.
+  /// To ensure that python exceptions occurring during the module unloading performed
+  /// in onAboutToQuit() are considered, it is important to start the event loop directly
+  /// calling this function.
   ///
-  /// \sa QApplication::exec()
+  /// Note that the override of return code if an exception is raised during module
+  /// cleanup happens only if testing mode is enabled.
+  ///
+  /// \sa QApplication::exec(), returnCode()
+  /// \sa qSlicerCoreCommandOptions::isTestingEnabled()
   static int exec();
 
   /// Get MRML Scene

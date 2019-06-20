@@ -1693,7 +1693,8 @@ void qSlicerCoreApplication::onAboutToQuit()
   d->ModuleManager->factoryManager()->unloadModules();
 
 #ifdef Slicer_USE_PYTHONQT
-  if (this->corePythonManager()->pythonErrorOccured())
+  // Override return code only if testing mode is enabled
+  if (this->corePythonManager()->pythonErrorOccured() && this->coreCommandOptions()->isTestingEnabled())
     {
     d->ReturnCode = qSlicerCoreApplication::ExitFailure;
     }
