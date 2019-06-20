@@ -303,7 +303,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
           rowIndex += 1
           columnIndex = 0
         if source.customDownloader:
-          b.connect('clicked()', source.customDownloader)
+          b.connect('clicked()', lambda s=source: s.customDownloader(s))
         else:
           b.connect('clicked()', lambda s=source: self.logic.downloadFromSource(s))
 
@@ -412,6 +412,7 @@ class SampleDataLogic(object):
       loadFiles=loadFiles,
       loadFileProperties=loadFileProperties,
       checksums=checksums,
+      customDownloader=customDownloader,
       ))
 
   def __init__(self, logMessage=None):
@@ -421,6 +422,8 @@ class SampleDataLogic(object):
     self.developmentCategoryName = 'Development'
     self.registerBuiltInSampleDataSources()
     self.registerDevelopmentSampleDataSources()
+    if slicer.app.testingEnabled():
+      self.registerTestingDataSources()
 
   def registerBuiltInSampleDataSources(self):
     """Fills in the pre-define sample data sources"""
@@ -481,6 +484,10 @@ class SampleDataLogic(object):
       loadFileType=['VolumeFile', 'SegmentationFile'],
       checksums=['SHA256:c0743772587e2dd4c97d4e894f5486f7a9a202049c8575e032114c0a5c935c3b', 'SHA256:3243b62bde36b1db1cdbfe204785bd4bc1fbb772558d5f8cac964cda8385d470']
       )
+
+  def registerTestingDataSources(self):
+    """Register sample data sources used by SampleData self-test to test module functionalities."""
+    self.registerCustomSampleDataSource(**SampleDataTest.CustomDownloaderDataSource)
 
   def downloadFileIntoCache(self, uri, name, checksum=None):
     """Given a uri and and a filename, download the data into
@@ -794,8 +801,11 @@ class SampleDataTest(ScriptedLoadableModuleTest):
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
+  customDownloads = []
+
   def setUp(self):
     slicer.mrmlScene.Clear(0)
+    SampleDataTest.customDownloads = []
 
   def runTest(self):
     for test in [
@@ -810,7 +820,8 @@ class SampleDataTest(ScriptedLoadableModuleTest):
       self.test_downloadFromSource_loadNodes,
       self.test_downloadFromSource_loadNodesWithLoadFileFalse,
       self.test_isSampleDataSourceRegistered,
-      self.test_categoryVisibility
+      self.test_categoryVisibility,
+      self.test_customDownloader,
     ]:
       self.setUp()
       test()
@@ -964,3 +975,29 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     self.assertFalse(widget.isCategoryVisible('BuiltIn'))
     widget.setCategoryVisible('BuiltIn', True)
     self.assertTrue(widget.isCategoryVisible('BuiltIn'))
+
+  class CustomDownloader(object):
+    def __call__(self, source):
+      SampleDataTest.customDownloads.append(source)
+
+  CustomDownloaderDataSource = {
+    'category': "Testing",
+    'sampleName': 'customDownloader',
+    'uris': 'http://down.load/test',
+    'fileNames': 'cust.om',
+    'customDownloader': CustomDownloader()
+  }
+
+  def test_customDownloader(self):
+    if not slicer.app.testingEnabled():
+      return
+    slicer.util.selectModule("SampleData")
+    widget = slicer.modules.SampleDataWidget
+    button = slicer.util.findChild(widget.parent,'customDownloaderPushButton')
+
+    self.assertEqual(self.customDownloads, [])
+
+    button.click()
+
+    self.assertEqual(len(self.customDownloads), 1)
+    self.assertEqual(self.customDownloads[0].sampleName, 'customDownloader')
