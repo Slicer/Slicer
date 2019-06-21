@@ -248,30 +248,71 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
     if hasattr(self, "reloadCollapsibleButton"):
       self.reloadCollapsibleButton.collapsed = True
 
-    self.observerTags = []
     self.logic = SampleDataLogic(self.logMessage)
 
+    self.categoryLayout = qt.QVBoxLayout()
+    self.categoryLayout.setContentsMargins(0, 0, 0, 0)
+    self.layout.addLayout(self.categoryLayout)
+
+    SampleDataWidget.setCategoriesFromSampleDataSources(self.categoryLayout, slicer.modules.sampleDataSources, self.logic)
+    if self.developerMode is False:
+      self.setCategoryVisible(self.logic.developmentCategoryName, False)
+
+    self.log = qt.QTextEdit()
+    self.log.readOnly = True
+    self.layout.addWidget(self.log)
+    self.logMessage('<p>Status: <i>Idle</i>')
+
+    # Add spacer to layout
+    self.layout.addStretch(1)
+
+  def cleanup(self):
+    SampleDataWidget.setCategoriesFromSampleDataSources(self.categoryLayout, {}, self.logic)
+
+  @staticmethod
+  def removeCategories(categoryLayout):
+    """Remove all categories from the given category layout.
+    """
+    while categoryLayout.count() > 0:
+      frame = categoryLayout.itemAt(0).widget()
+      frame.visible = False
+      categoryLayout.removeWidget(frame)
+      frame.setParent(0)
+      del frame
+
+  @staticmethod
+  def setCategoriesFromSampleDataSources(categoryLayout, dataSources, logic):
+    """Update categoryLayout adding buttons for downloading dataSources.
+
+    Download buttons are organized in collapsible GroupBox with one GroupBox
+    per category.
+    """
     numberOfColumns = 3
     iconPath = os.path.join(os.path.dirname(__file__).replace('\\','/'), 'Resources','Icons')
     desktop = qt.QDesktopWidget()
     mainScreenSize = desktop.availableGeometry(desktop.primaryScreen)
     iconSize = qt.QSize(int(mainScreenSize.width()/15),int(mainScreenSize.height()/10))
 
-    categories = sorted(slicer.modules.sampleDataSources.keys())
-    if self.logic.builtInCategoryName in categories:
-      categories.remove(self.logic.builtInCategoryName)
-    categories.insert(0,self.logic.builtInCategoryName)
+    categories = sorted(dataSources.keys())
+
+    # Ensure "builtIn" catergory is always first
+    if logic.builtInCategoryName in categories:
+      categories.remove(logic.builtInCategoryName)
+      categories.insert(0, logic.builtInCategoryName)
+
+    # Clear category layout
+    SampleDataWidget.removeCategories(categoryLayout)
+
+    # Populate category layout
     for category in categories:
-      if category == self.logic.developmentCategoryName and self.developerMode is False:
-        continue
-      frame = ctk.ctkCollapsibleGroupBox(self.parent)
-      self.layout.addWidget(frame)
+      frame = ctk.ctkCollapsibleGroupBox(categoryLayout.parentWidget())
+      categoryLayout.addWidget(frame)
       frame.title = category
       frame.name = '%sCollapsibleGroupBox' % category
       layout = qt.QGridLayout(frame)
       columnIndex = 0
       rowIndex = 0
-      for source in slicer.modules.sampleDataSources[category]:
+      for source in dataSources[category]:
         name = source.sampleDescription
         if not name:
           name = source.nodeNames[0]
@@ -311,15 +352,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
         if source.customDownloader:
           b.connect('clicked()', lambda s=source: s.customDownloader(s))
         else:
-          b.connect('clicked()', lambda s=source: self.logic.downloadFromSource(s))
-
-    self.log = qt.QTextEdit()
-    self.log.readOnly = True
-    self.layout.addWidget(self.log)
-    self.logMessage('<p>Status: <i>Idle</i>')
-
-    # Add spacer to layout
-    self.layout.addStretch(1)
+          b.connect('clicked()', lambda s=source: logic.downloadFromSource(s))
 
   def logMessage(self, message, logLevel=logging.INFO):
     # Set text color based on log level
@@ -860,6 +893,8 @@ class SampleDataTest(ScriptedLoadableModuleTest):
       self.test_downloadFromSource_loadNodesWithLoadFileFalse,
       self.test_sampleDataSourcesByCategory,
       self.test_categoryVisibility,
+      self.test_setCategoriesFromSampleDataSources,
+      self.test_isSampleDataSourceRegistered,
       self.test_customDownloader,
     ]:
       self.setUp()
@@ -867,7 +902,7 @@ class SampleDataTest(ScriptedLoadableModuleTest):
 
   @staticmethod
   def path2uri(path):
-    """Gets an ur from a local file path.
+    """Gets a URI from a local file path.
     Typically it prefixes the received path by file:// or file:///.
     """
     import urllib.parse, urllib.request, urllib.parse, urllib.error
@@ -1014,6 +1049,17 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     self.assertFalse(widget.isCategoryVisible('BuiltIn'))
     widget.setCategoryVisible('BuiltIn', True)
     self.assertTrue(widget.isCategoryVisible('BuiltIn'))
+
+  def test_setCategoriesFromSampleDataSources(self):
+    slicer.util.selectModule("SampleData")
+    widget = slicer.modules.SampleDataWidget
+    self.assertGreater(widget.categoryLayout.count(), 0)
+
+    SampleDataWidget.removeCategories(widget.categoryLayout)
+    self.assertEqual(widget.categoryLayout.count(), 0)
+
+    SampleDataWidget.setCategoriesFromSampleDataSources(widget.categoryLayout, slicer.modules.sampleDataSources, widget.logic)
+    self.assertGreater(widget.categoryLayout.count(), 0)
 
   def test_isSampleDataSourceRegistered(self):
     if not slicer.app.testingEnabled():
