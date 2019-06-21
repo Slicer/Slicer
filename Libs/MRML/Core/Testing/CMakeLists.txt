@@ -89,6 +89,8 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLTableSQLiteStorageNodeTest.cxx
   vtkMRMLTableViewNodeTest1.cxx
   vtkMRMLTensorVolumeNodeTest1.cxx
+  vtkMRMLTextNodeTest1.cxx
+  vtkMRMLTextStorageNodeTest1.cxx
   vtkMRMLTransformableNodeReferenceSaveImportTest.cxx
   vtkMRMLTransformableNodeOnNodeReferenceAddTest.cxx
   vtkMRMLTransformDisplayNodeTest1.cxx
@@ -204,6 +206,8 @@ simple_test( vtkMRMLTableNodeTest1 )
 simple_test( vtkMRMLTableStorageNodeTest1 ${TEMP})
 simple_test( vtkMRMLTableViewNodeTest1 )
 simple_test( vtkMRMLTensorVolumeNodeTest1 )
+simple_test( vtkMRMLTextNodeTest1 )
+simple_test( vtkMRMLTextStorageNodeTest1 ${TEMP})
 simple_test( vtkMRMLTransformableNodeReferenceSaveImportTest )
 simple_test( vtkMRMLTransformableNodeOnNodeReferenceAddTest )
 simple_test( vtkMRMLTransformableNodeTest1 )

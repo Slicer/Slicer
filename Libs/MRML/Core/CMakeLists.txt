@@ -178,6 +178,8 @@ set(MRMLCore_SRCS
   vtkMRMLTableStorageNode.cxx
   vtkMRMLTableSQLiteStorageNode.cxx
   vtkMRMLTableViewNode.cxx
+  vtkMRMLTextNode.cxx
+  vtkMRMLTextStorageNode.cxx
   vtkMRMLTransformNode.cxx
   vtkMRMLTransformStorageNode.cxx
   vtkMRMLTransformDisplayNode.cxx

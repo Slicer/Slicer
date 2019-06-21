@@ -18,6 +18,7 @@ set(qtmodules
   Segmentations
   SlicerWelcome
   Tables
+  Texts
   Reformat
   ViewControllers
   Volumes

@@ -58,6 +58,8 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLTableNode.h"
 #include "vtkMRMLTableStorageNode.h"
 #include "vtkMRMLTableViewNode.h"
+#include "vtkMRMLTextNode.h"
+#include "vtkMRMLTextStorageNode.h"
 #include "vtkMRMLTransformDisplayNode.h"
 #include "vtkMRMLTransformStorageNode.h"
 #include "vtkMRMLVectorVolumeDisplayNode.h"
@@ -218,6 +220,8 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTableNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTableStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTableViewNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTextNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTextStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLPlotSeriesNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLPlotChartNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLPlotViewNode >::New() );
