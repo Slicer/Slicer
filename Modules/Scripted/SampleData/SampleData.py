@@ -132,7 +132,7 @@ class SampleDataSource(object):
   def __init__(self, sampleName=None, sampleDescription=None, uris=None, fileNames=None, nodeNames=None,
     checksums=None, loadFiles=None,
     customDownloader=None, thumbnailFileName=None,
-    loadFileType=None, loadFileProperties={}):
+    loadFileType=None, loadFileProperties=None):
     """
     :param sampleName: Name identifying the data set.
     :param sampleDescription: Displayed name of data set in SampleData module GUI. (default is ``sampleName``)
@@ -182,6 +182,9 @@ class SampleDataSource(object):
             fileType = "ZipFile"
       updatedFileType.append(fileType)
 
+    if loadFileProperties is None:
+      loadFileProperties = {}
+
     self.uris = uris
     self.fileNames = fileNames
     self.nodeNames = nodeNames
@@ -202,6 +205,9 @@ class SampleDataSource(object):
         f"  len(updatedFileType) : {len(updatedFileType)}\n"
         f"  len(checksums)       : {len(checksums)}\n"
         )
+
+  def __eq__(self, other):
+    return str(self) == str(other)
 
   def __str__(self):
     output = [
@@ -397,7 +403,7 @@ class SampleDataLogic(object):
     if category not in slicer.modules.sampleDataSources:
       slicer.modules.sampleDataSources[category] = []
 
-    slicer.modules.sampleDataSources[category].append(SampleDataSource(
+    dataSource = SampleDataSource(
       sampleName=sampleName,
       uris=uris,
       fileNames=fileNames,
@@ -408,7 +414,12 @@ class SampleDataLogic(object):
       loadFileProperties=loadFileProperties,
       checksums=checksums,
       customDownloader=customDownloader,
-      ))
+    )
+
+    if SampleDataLogic.isSampleDataSourceRegistered(category, dataSource):
+      return
+
+    slicer.modules.sampleDataSources[category].append(dataSource)
 
   @staticmethod
   def sampleDataSourcesByCategory(category=None):
@@ -425,6 +436,20 @@ class SampleDataLogic(object):
       return slicer.modules.sampleDataSources
     else:
       return slicer.modules.sampleDataSources.get(category, [])
+
+  @staticmethod
+  def isSampleDataSourceRegistered(category, sampleDataSource):
+    """Returns True if the sampleDataSource is registered with the category.
+    """
+    try:
+      slicer.modules.sampleDataSources
+    except AttributeError:
+      slicer.modules.sampleDataSources = {}
+
+    if not isinstance(sampleDataSource, SampleDataSource):
+      raise TypeError("unsupported sampleDataSource type '%s': '%s' is expected" % (type(sampleDataSource), str(SampleDataSource)))
+
+    return sampleDataSource in slicer.modules.sampleDataSources.get(category, [])
 
   def __init__(self, logMessage=None):
     if logMessage:
@@ -480,7 +505,10 @@ class SampleDataLogic(object):
     if self.builtInCategoryName not in slicer.modules.sampleDataSources:
       slicer.modules.sampleDataSources[self.builtInCategoryName] = []
     for sourceArgument in sourceArguments:
-      slicer.modules.sampleDataSources[self.builtInCategoryName].append(SampleDataSource(*sourceArgument))
+      dataSource = SampleDataSource(*sourceArgument)
+      if SampleDataLogic.isSampleDataSourceRegistered(self.builtInCategoryName, dataSource):
+        continue
+      slicer.modules.sampleDataSources[self.builtInCategoryName].append(dataSource)
 
   def registerDevelopmentSampleDataSources(self):
     """Fills in the sample data sources displayed only if developer mode is enabled."""
@@ -576,7 +604,7 @@ class SampleDataLogic(object):
         if not loadFile:
           nodes.append(filePath)
           continue
-        success = self.loadScene(filePath, source.loadFileProperties)
+        success = self.loadScene(filePath, source.loadFileProperties.copy())
         if not success and attemptCount < 5:
           file = qt.QFile(filePath)
           if not file.remove():
@@ -592,7 +620,7 @@ class SampleDataLogic(object):
         if loadFile == False:
           nodes.append(filePath)
           continue
-        loadedNode = self.loadNode(filePath, nodeName, loadFileType, source.loadFileProperties)
+        loadedNode = self.loadNode(filePath, nodeName, loadFileType, source.loadFileProperties.copy())
         if loadedNode is None and attemptCount < 5:
           file = qt.QFile(filePath)
           if not file.remove():
@@ -986,6 +1014,20 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     self.assertFalse(widget.isCategoryVisible('BuiltIn'))
     widget.setCategoryVisible('BuiltIn', True)
     self.assertTrue(widget.isCategoryVisible('BuiltIn'))
+
+  def test_isSampleDataSourceRegistered(self):
+    if not slicer.app.testingEnabled():
+      return
+    sourceArguments = {
+      'sampleName': 'isSampleDataSourceRegistered',
+      'uris': 'https://slicer.org',
+      'fileNames': 'volume.nrrd',
+      'loadFileType': 'VolumeFile',
+    }
+    self.assertFalse(SampleDataLogic.isSampleDataSourceRegistered("Testing", SampleDataSource(**sourceArguments)))
+    SampleDataLogic.registerCustomSampleDataSource(**sourceArguments, category="Testing")
+    self.assertTrue(SampleDataLogic.isSampleDataSourceRegistered("Testing", SampleDataSource(**sourceArguments)))
+    self.assertFalse(SampleDataLogic.isSampleDataSourceRegistered("Other", SampleDataSource(**sourceArguments)))
 
   class CustomDownloader(object):
     def __call__(self, source):
