@@ -339,7 +339,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
     Returns False if the category is not visible or if it does not exist,
     otherwise returns True.
     """
-    if not self.isSampleDataSourceRegistered(category):
+    if not SampleDataLogic.sampleDataSourcesByCategory(category):
       return False
     return slicer.util.findChild(self.parent, '%sCollapsibleGroupBox' % category).isVisible()
 
@@ -348,14 +348,9 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
 
     The function is a no-op if the category does not exist.
     """
-    if not self.isSampleDataSourceRegistered(category):
+    if not SampleDataLogic.sampleDataSourcesByCategory(category):
       return
     slicer.util.findChild(self.parent, '%sCollapsibleGroupBox' % category).setVisible(visible)
-
-  def isSampleDataSourceRegistered(self, category):
-    """Check if a SampleDataSource is registered given its category name.
-    """
-    return category in slicer.modules.sampleDataSources.keys()
 
 #
 # SampleData logic
@@ -414,6 +409,22 @@ class SampleDataLogic(object):
       checksums=checksums,
       customDownloader=customDownloader,
       ))
+
+  @staticmethod
+  def sampleDataSourcesByCategory(category=None):
+    """Return the registered SampleDataSources for with the given category.
+
+    If no category is specified, returns all registered SampleDataSources.
+    """
+    try:
+      slicer.modules.sampleDataSources
+    except AttributeError:
+      slicer.modules.sampleDataSources = {}
+
+    if category is None:
+      return slicer.modules.sampleDataSources
+    else:
+      return slicer.modules.sampleDataSources.get(category, [])
 
   def __init__(self, logMessage=None):
     if logMessage:
@@ -819,7 +830,7 @@ class SampleDataTest(ScriptedLoadableModuleTest):
       self.test_downloadFromSource_loadNodeFromMultipleFiles,
       self.test_downloadFromSource_loadNodes,
       self.test_downloadFromSource_loadNodesWithLoadFileFalse,
-      self.test_isSampleDataSourceRegistered,
+      self.test_sampleDataSourcesByCategory,
       self.test_categoryVisibility,
       self.test_customDownloader,
     ]:
@@ -963,10 +974,10 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     self.assertEqual(nodes[0], slicer.mrmlScene.GetFirstNodeByName("MRHead"))
     self.assertEqual(nodes[1], slicer.mrmlScene.GetFirstNodeByName("CTChest"))
 
-  def test_isSampleDataSourceRegistered(self):
-    widget = slicer.modules.SampleDataWidget
-    self.assertTrue(widget.isSampleDataSourceRegistered('BuiltIn'))
-    self.assertFalse(widget.isSampleDataSourceRegistered('Not_A_Registered_Category'))
+  def test_sampleDataSourcesByCategory(self):
+    self.assertTrue(len(SampleDataLogic.sampleDataSourcesByCategory()) > 0)
+    self.assertTrue(len(SampleDataLogic.sampleDataSourcesByCategory('BuiltIn')) > 0)
+    self.assertTrue(len(SampleDataLogic.sampleDataSourcesByCategory('Not_A_Registered_Category')) == 0)
 
   def test_categoryVisibility(self):
     slicer.util.selectModule("SampleData")
