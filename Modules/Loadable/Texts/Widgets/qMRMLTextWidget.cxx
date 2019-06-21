@@ -341,8 +341,6 @@ void qMRMLTextWidget::setAutoSave(bool autoSave)
 bool qMRMLTextWidget::wordWrap()
 {
   Q_D(qMRMLTextWidget);
-  QTextOption::WrapMode wordWrapMode = d->TextEdit->wordWrapMode();
-
   if (d->TextEdit->wordWrapMode() == QTextOption::NoWrap)
     {
     return false;
