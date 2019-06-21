@@ -66,13 +66,12 @@ class SegmentEditorScriptedSegmentEditorEffectModuleTemplateTest(ScriptedLoadabl
     ##################################
     self.delayDisplay("Load master volume")
 
-    import SampleData
     masterVolumeNode = SampleData.downloadSample('MRBrainTumor1')
 
     ##################################
     self.delayDisplay("Create segmentation containing a few spheres")
 
-    segmentationNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentationNode")
+    segmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode')
     segmentationNode.CreateDefaultDisplayNodes()
     segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(masterVolumeNode)
 

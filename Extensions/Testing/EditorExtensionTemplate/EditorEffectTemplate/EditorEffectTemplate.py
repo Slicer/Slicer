@@ -89,7 +89,7 @@ class EditorEffectTemplateOptions(LabelEffectOptions):
 # EditorEffectTemplateTool
 #
 
-class EditorEffectTemplateTool(LabelEffect.LabelEffectTool):
+class EditorEffectTemplateTool(LabelEffectTool):
   """
   One instance of this will be created per-view when the effect
   is selected.  It is responsible for implementing feedback and
@@ -137,7 +137,7 @@ class EditorEffectTemplateTool(LabelEffect.LabelEffectTool):
 # EditorEffectTemplateLogic
 #
 
-class EditorEffectTemplateLogic(LabelEffect.LabelEffectLogic):
+class EditorEffectTemplateLogic(LabelEffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an EditorEffectTemplateTool
@@ -159,7 +159,7 @@ class EditorEffectTemplateLogic(LabelEffect.LabelEffectLogic):
 # The EditorEffectTemplate class definition
 #
 
-class EditorEffectTemplateExtension(LabelEffect.LabelEffect):
+class EditorEffectTemplateExtension(LabelEffect):
   """Organizes the Options, Tool, and Logic classes into a single instance
   that can be managed by the EditBox
   """
