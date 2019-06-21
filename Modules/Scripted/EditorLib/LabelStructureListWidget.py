@@ -2,7 +2,7 @@ import logging
 import fnmatch
 import qt
 import slicer
-import teem
+import vtkTeem
 import vtk
 
 from . import ColorBox
@@ -333,7 +333,7 @@ class LabelStructureListWidget(qt.QWidget):
     # find the Image Label Combine
     # - call Enter to be sure GUI has been built
     #
-    combiner = teem.vtkImageLabelCombine()
+    combiner = vtkTeem.vtkImageLabelCombine()
 
     #
     # iterate through structures merging into merge volume

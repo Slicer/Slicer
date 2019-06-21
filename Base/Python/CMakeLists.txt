@@ -8,18 +8,18 @@ set(Slicer_PYTHON_SCRIPTS
   slicer/util
   freesurfer
   mrml
-  teem
   vtkAddon
   vtkITK
   vtkSegmentationCore
+  vtkTeem
   )
 
 set(Slicer_PYTHON_MODULES_CONFIG "
 # slicer libs
 'mrml',
-'teem',
 'vtkAddon',
 'vtkSegmentationCore',
+'vtkTeem'
 'qMRMLWidgetsPythonQt',
 # slicer base libs
 'logic',

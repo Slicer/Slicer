@@ -12,7 +12,7 @@ def tcl(cmd):
     import tpycl
     _tpycl = tpycl.tpycl()
 
-    packages = ['freesurfer', 'mrml', 'teem', 'vtk', 'vtkAddon', 'vtkITK', 'vtkSegmentationCore']
+    packages = ['freesurfer', 'mrml', 'vtk', 'vtkAddon', 'vtkITK', 'vtkSegmentationCore', 'vtkTeem']
     for p in packages:
       _tpycl.py_package(p)
 
