@@ -10,14 +10,20 @@
 #set_target_properties(${CLP}Test PROPERTIES FOLDER ${${CLP}_TARGETS_FOLDER})
 
 #set(testname ${CLP}Test)
-#add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
-#  --compare ${BASELINE}/${CLP}Test.nhdr
+#ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
+#  NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
+#  --compare DATA{${BASELINE}/${CLP}Test.nhdr,CurvatureAnisotropicDiffusionTest.raw.gz}
 #            ${TEMP}/${CLP}Test.nhdr
 #    ModuleEntryPoint
 #    --conductance 2
 #    --timeStep 0.0625
 #    --iterations 2
-#    ${TEST_DATA}/MRHeadResampled.nhdr
+#    DATA{${INPUT}/MRHeadResampled.nhdr,MRHeadResampled.raw.gz}
 #    ${TEMP}/${CLP}Test.nhdr
 #  )
 #set_property(TEST ${testname} PROPERTY LABELS ${CLP})
+
+#-----------------------------------------------------------------------------
+if(${SEM_DATA_MANAGEMENT_TARGET} STREQUAL ${CLP}Data)
+  ExternalData_add_target(${CLP}Data)
+endif()

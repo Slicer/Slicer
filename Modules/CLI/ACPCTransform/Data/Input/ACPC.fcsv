@@ -1,0 +1,18 @@
+# Fiducial List file /spl/tmp/dougt/realign_test/ACPC.fcsv
+# name = ACPC
+# numPoints = 2
+# symbolScale = 6
+# symbolType = 11
+# visibility = 1
+# textScale = 6
+# color = 0.4,1,1
+# selectedColor = 1,0.5,0.5
+# opacity = 1
+# ambient = 0
+# diffuse = 1
+# specular = 0
+# power = 1
+# locked = 0
+# columns = label,x,y,z,sel,vis
+ACPC0,0.5,-21.5,-9.5,1,1
+ACPC1,-2.5,4.5,-16.5,1,1

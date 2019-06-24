@@ -3,7 +3,12 @@
 set(BASELINE ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Baseline)
 set(INPUT ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Input)
 set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
+
 set(CLP ${MODULE_NAME})
+
+if(NOT DEFINED SEM_DATA_MANAGEMENT_TARGET)
+  set(SEM_DATA_MANAGEMENT_TARGET ${CLP}Data)
+endif()
 
 #-----------------------------------------------------------------------------
 add_executable(${CLP}Test ${CLP}Test.cxx)
@@ -12,15 +17,16 @@ set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 set_target_properties(${CLP}Test PROPERTIES FOLDER ${${CLP}_TARGETS_FOLDER})
 
 #-----------------------------------------------------------------------------
-set(OriginalImage ${INPUT}/dt-helix.nrrd)
+set(OriginalImage DATA{${INPUT}/dt-helix.nrrd})
 
 #-----------------------------------------------------------------------------
 set(TransformFile ${INPUT}/rotation.tfm )
 set(TransformedImage1 ${TEMP}/dt-helix-transformed1.nrrd )
 set(testname ${CLP}RotationNNTest)
-add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
+ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
+  NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   --compare
-    ${BASELINE}/dt-helix-ref-Rotated.nrrd
+    DATA{${BASELINE}/dt-helix-ref-Rotated.nrrd}
     ${TransformedImage1}
   --compareIntensityTolerance 0
   ModuleEntryPoint
@@ -37,9 +43,10 @@ set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 set(RotationAndAffineFile ${INPUT}/rotationAndAffine.tfm )
 set(TransformedImage2 ${TEMP}/dt-helix-transformed2.nrrd )
 set(testname ${CLP}2RigidTransformsLinearTest)
-add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
+ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
+  NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   --compare
-    ${BASELINE}/dt-helix-ref-RotationAndAffine.nrrd
+    DATA{${BASELINE}/dt-helix-ref-RotationAndAffine.nrrd}
     ${TransformedImage2}
   --compareIntensityTolerance 1e-10
   ModuleEntryPoint
@@ -58,9 +65,10 @@ set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 set(BSplineFile ${INPUT}/FastNonrigidBSplineregistrationTransform.tfm)
 set(TransformedImage3 ${TEMP}/dt-helix-transformed3.nrrd )
 set(testname ${CLP}BSplineWSInterpolationTest)
-add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
+ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
+  NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   --compare
-    ${BASELINE}/dt-helix-ref-BS.nrrd
+    DATA{${BASELINE}/dt-helix-ref-BS.nrrd}
     ${TransformedImage3}
   --compareIntensityTolerance 1e-10
   ModuleEntryPoint
@@ -77,9 +85,10 @@ set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 set(AffineFile ${INPUT}/affine.tfm)
 set(TransformedImage4 ${TEMP}/dt-helix-transformed4.nrrd )
 set(testname ${CLP}BSplineInterpolationTest)
-add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
+ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
+  NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   --compare
-    ${BASELINE}/dt-helix-ref-BSInterpolation.nrrd
+    DATA{${BASELINE}/dt-helix-ref-BSInterpolation.nrrd}
     ${TransformedImage4}
   --compareIntensityTolerance 1e-10
   ModuleEntryPoint
@@ -93,12 +102,13 @@ add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 #-----------------------------------------------------------------------------
-set(HFieldFile ${INPUT}/deformationField.nrrd)
+set(HFieldFile DATA{${INPUT}/deformationField.nrrd})
 set(TransformedImage5 ${TEMP}/dt-helix-transformed5.nrrd )
 set(testname ${CLP}HFieldTest)
-add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
+ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
+  NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   --compare
-    ${BASELINE}/dt-helix-ref-HField.nrrd
+    DATA{${BASELINE}/dt-helix-ref-HField.nrrd}
     ${TransformedImage5}
   --compareIntensityTolerance 0
   ModuleEntryPoint
@@ -121,7 +131,8 @@ file( COPY ${SourceScalarFile} DESTINATION ${TEMP})
 set( BinaryScalarFile ${TEMP}/Brain_slice.nrrd)
 set(testname itkTestMainExtendedScalarTest)
 set(TransformedImage7 ${TEMP}/dt-helix-transformed7.nrrd )
-add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
+ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
+  NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
  --compare
    ${BinaryScalarFile}
    ${BinaryScalarFile}
@@ -135,9 +146,10 @@ set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 #-----------------------------------------------------------------------------
 set(TransformedImage6 ${TEMP}/dt-helix-transformed6.nrrd )
 set(testname itkTestMainExtendedFailedTest)
-add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
+ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
+  NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   --compare
-    ${BASELINE}/dt-helix-ref-HField.nrrd
+    DATA{${BASELINE}/dt-helix-ref-HField.nrrd}
     ${TransformedImage6}
   --compareIntensityTolerance 0
   ModuleEntryPoint
@@ -147,3 +159,8 @@ add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 set_tests_properties( itkTestMainExtendedFailedTest PROPERTIES WILL_FAIL true)
+
+#-----------------------------------------------------------------------------
+if(${SEM_DATA_MANAGEMENT_TARGET} STREQUAL ${CLP}Data)
+  ExternalData_add_target(${CLP}Data)
+endif()

@@ -1,0 +1,34 @@
+<MRML  version="Slicer4" userTags="">
+ <ModelDisplay
+  id="vtkMRMLModelDisplayNode4"  name="ModelDisplay_3"  hideFromEditors="true"  selectable="true"  selected="false"  color="0 0 0"  selectedColor="1 0 0"  selectedAmbient="0.4"  ambient="0"  diffuse="1"  selectedSpecular="0.5"  specular="0"  power="1"  opacity="0"  visibility="true"  clipping="false"  sliceIntersectionVisibility="false"  backfaceCulling="true"  scalarVisibility="false"  vectorVisibility="false"  tensorVisibility="false"  interpolateTexture="false"  autoScalarRange="true"  scalarRange="0 100"  ></ModelDisplay>
+ <ModelHierarchy
+  id="vtkMRMLModelHierarchyNode1"  name="HelixHierarchy"  hideFromEditors="false"  selectable="true"  selected="false"  sortingValue="0"  allowMultipleChildren="true"  displayNodeID="vtkMRMLModelDisplayNode4"  expanded="true" ></ModelHierarchy>
+ <ModelDisplay
+  id="vtkMRMLModelDisplayNode5"  name="ModelDisplay_4"  hideFromEditors="true"  selectable="true"  selected="false"  color="0.501961 0.682353 0.501961"  selectedColor="1 0 0"  selectedAmbient="0.4"  ambient="0"  diffuse="1"  selectedSpecular="0.5"  specular="0"  power="1"  opacity="1"  visibility="true"  clipping="false"  sliceIntersectionVisibility="false"  backfaceCulling="true"  scalarVisibility="false"  vectorVisibility="false"  tensorVisibility="false"  interpolateTexture="false"  autoScalarRange="true"  scalarRange="0 100"  ></ModelDisplay>
+ <ModelHierarchy
+  id="vtkMRMLModelHierarchyNode2"  name="Helix Level 1"  hideFromEditors="false"  selectable="true"  selected="false"  parentNodeRef="vtkMRMLModelHierarchyNode1"  sortingValue="103"  allowMultipleChildren="true"  displayNodeID="vtkMRMLModelDisplayNode5"  expanded="true" ></ModelHierarchy>
+ <ModelDisplay
+  id="vtkMRMLModelDisplayNode6"  name="ModelDisplay_5"  hideFromEditors="true"  selectable="true"  selected="false"  color="0.501961 0.682353 0.501961"  selectedColor="1 0 0"  selectedAmbient="0.4"  ambient="0"  diffuse="1"  selectedSpecular="0.5"  specular="0"  power="1"  opacity="1"  visibility="true"  clipping="false"  sliceIntersectionVisibility="false"  backfaceCulling="true"  scalarVisibility="false"  vectorVisibility="false"  tensorVisibility="false"  interpolateTexture="false"  autoScalarRange="true"  scalarRange="0 100"  ></ModelDisplay>
+ <ModelHierarchy
+  id="vtkMRMLModelHierarchyNode3"  name="1"  hideFromEditors="true"  selectable="true"  selected="false"  parentNodeRef="vtkMRMLModelHierarchyNode2"  sortingValue="104"  allowMultipleChildren="true"  displayNodeID="vtkMRMLModelDisplayNode6"  expanded="true" ></ModelHierarchy>
+ <ModelDisplay
+  id="vtkMRMLModelDisplayNode7"  name="ModelDisplay_6"  hideFromEditors="true"  selectable="true"  selected="false"  color="0.945098 0.839216 0.568627"  selectedColor="1 0 0"  selectedAmbient="0.4"  ambient="0"  diffuse="1"  selectedSpecular="0.5"  specular="0"  power="1"  opacity="1"  visibility="true"  clipping="false"  sliceIntersectionVisibility="false"  backfaceCulling="true"  scalarVisibility="false"  vectorVisibility="false"  tensorVisibility="false"  interpolateTexture="false"  autoScalarRange="true"  scalarRange="0 100"  ></ModelDisplay>
+ <ModelHierarchy
+  id="vtkMRMLModelHierarchyNode4"  name="Helix Level 2"  hideFromEditors="false"  selectable="true"  selected="false"  parentNodeRef="vtkMRMLModelHierarchyNode2"  sortingValue="105"  allowMultipleChildren="true"  displayNodeID="vtkMRMLModelDisplayNode7"  expanded="true" ></ModelHierarchy>
+ <ModelDisplay
+  id="vtkMRMLModelDisplayNode8"  name="ModelDisplay_7"  hideFromEditors="true"  selectable="true"  selected="false"  color="0.945098 0.839216 0.568627"  selectedColor="1 0 0"  selectedAmbient="0.4"  ambient="0"  diffuse="1"  selectedSpecular="0.5"  specular="0"  power="1"  opacity="1"  visibility="true"  clipping="false"  sliceIntersectionVisibility="false"  backfaceCulling="true"  scalarVisibility="false"  vectorVisibility="false"  tensorVisibility="false"  interpolateTexture="false"  autoScalarRange="true"  scalarRange="0 100"  ></ModelDisplay>
+ <ModelHierarchy
+  id="vtkMRMLModelHierarchyNode5"  name="2"  hideFromEditors="true"  selectable="true"  selected="false"  parentNodeRef="vtkMRMLModelHierarchyNode4"  sortingValue="106"  allowMultipleChildren="true"  displayNodeID="vtkMRMLModelDisplayNode8"  expanded="true" ></ModelHierarchy>
+ <ModelDisplay
+  id="vtkMRMLModelDisplayNode9"  name="ModelDisplay_8"  hideFromEditors="true"  selectable="true"  selected="false"  color="0.694118 0.478431 0.396078"  selectedColor="1 0 0"  selectedAmbient="0.4"  ambient="0"  diffuse="1"  selectedSpecular="0.5"  specular="0"  power="1"  opacity="1"  visibility="true"  clipping="false"  sliceIntersectionVisibility="false"  backfaceCulling="true"  scalarVisibility="false"  vectorVisibility="false"  tensorVisibility="false"  interpolateTexture="false"  autoScalarRange="true"  scalarRange="0 100"  ></ModelDisplay>
+ <ModelHierarchy
+  id="vtkMRMLModelHierarchyNode6"  name="3"  hideFromEditors="true"  selectable="true"  selected="false"  parentNodeRef="vtkMRMLModelHierarchyNode4"  sortingValue="107"  allowMultipleChildren="true"  displayNodeID="vtkMRMLModelDisplayNode9"  expanded="true" ></ModelHierarchy>
+ <ModelDisplay
+  id="vtkMRMLModelDisplayNode10"  name="ModelDisplay_9"  hideFromEditors="true"  selectable="true"  selected="false"  color="0.435294 0.721569 0.823529"  selectedColor="1 0 0"  selectedAmbient="0.4"  ambient="0"  diffuse="1"  selectedSpecular="0.5"  specular="0"  power="1"  opacity="1"  visibility="true"  clipping="false"  sliceIntersectionVisibility="false"  backfaceCulling="true"  scalarVisibility="false"  vectorVisibility="false"  tensorVisibility="false"  interpolateTexture="false"  autoScalarRange="true"  scalarRange="0 100"  ></ModelDisplay>
+ <ModelHierarchy
+  id="vtkMRMLModelHierarchyNode7"  name="4"  hideFromEditors="true"  selectable="true"  selected="false"  parentNodeRef="vtkMRMLModelHierarchyNode2"  sortingValue="108"  allowMultipleChildren="true"  displayNodeID="vtkMRMLModelDisplayNode10"  expanded="true" ></ModelHierarchy>
+ <ModelDisplay
+  id="vtkMRMLModelDisplayNode11"  name="ModelDisplay_10"  hideFromEditors="true"  selectable="true"  selected="false"  color="0.847059 0.396078 0.309804"  selectedColor="1 0 0"  selectedAmbient="0.4"  ambient="0"  diffuse="1"  selectedSpecular="0.5"  specular="0"  power="1"  opacity="1"  visibility="true"  clipping="false"  sliceIntersectionVisibility="false"  backfaceCulling="true"  scalarVisibility="false"  vectorVisibility="false"  tensorVisibility="false"  interpolateTexture="false"  autoScalarRange="true"  scalarRange="0 100"  ></ModelDisplay>
+ <ModelHierarchy
+  id="vtkMRMLModelHierarchyNode8"  name="5"  hideFromEditors="true"  selectable="true"  selected="false"  parentNodeRef="vtkMRMLModelHierarchyNode2"  sortingValue="109"  allowMultipleChildren="true"  displayNodeID="vtkMRMLModelDisplayNode11"  expanded="true" ></ModelHierarchy>
+</MRML>

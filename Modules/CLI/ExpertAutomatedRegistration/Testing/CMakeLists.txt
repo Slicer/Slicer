@@ -2,7 +2,12 @@
 
 #-----------------------------------------------------------------------------
 set(INPUT ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Input)
+
 set(CLP ${MODULE_NAME})
+
+if(NOT DEFINED SEM_DATA_MANAGEMENT_TARGET)
+  set(SEM_DATA_MANAGEMENT_TARGET ${CLP}Data)
+endif()
 if(NOT DEFINED TEMP)
   set(TEMP ${PROJECT_BINARY_DIR}/Testing/Temporary)
 endif()
@@ -19,35 +24,45 @@ set_target_properties(Generate${CLP}TestData PROPERTIES FOLDER ${${CLP}_TARGETS_
 set(frequency 10)
 
 set(testname ${CLP}TestDataFixed)
-add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:Generate${CLP}TestData>
+ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
+  NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:Generate${CLP}TestData>
   ${frequency} ${TEMP}/${CLP}Fixed.mha
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 
 set(testname ${CLP}TestDataRigidArgs)
-add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:Generate${CLP}TestData>
+ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
+  NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:Generate${CLP}TestData>
   ${frequency} ${TEMP}/${CLP}RigidArgs.mha -p 2 4 6 -o 0.02 0.04 0.06
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 
 set(testname ${CLP}TestDataRigid)
-add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:Generate${CLP}TestData>
+ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
+  NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:Generate${CLP}TestData>
   ${frequency} ${TEMP}/${CLP}Rigid.mha -t ${INPUT}/RigidUNC24.tfm
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 
 set(testname ${CLP}TestDataAffine)
-add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:Generate${CLP}TestData>
+ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
+  NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:Generate${CLP}TestData>
   ${frequency} ${TEMP}/${CLP}Affine.mha -t ${INPUT}/AffineUNC24.tfm
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 
 set(testname ${CLP}TestDataBSpline)
-add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:Generate${CLP}TestData>
+ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
+  NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:Generate${CLP}TestData>
   ${frequency} ${TEMP}/${CLP}BSpline.mha -t ${INPUT}/BSplineUNC24.tfm
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
+
+#-----------------------------------------------------------------------------
+if(${SEM_DATA_MANAGEMENT_TARGET} STREQUAL ${CLP}Data)
+  ExternalData_add_target(${CLP}Data)
+endif()

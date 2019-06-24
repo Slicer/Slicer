@@ -1,7 +1,13 @@
 
 #-----------------------------------------------------------------------------
 set(BASELINE ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Baseline)
+set(INPUT ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Input)
+
 set(CLP ${MODULE_NAME})
+
+if(NOT DEFINED SEM_DATA_MANAGEMENT_TARGET)
+  set(SEM_DATA_MANAGEMENT_TARGET ${CLP}Data)
+endif()
 
 #-----------------------------------------------------------------------------
 add_executable(${CLP}Test ${CLP}Test.cxx)
@@ -11,33 +17,41 @@ set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 set_target_properties(${CLP}Test PROPERTIES FOLDER ${${CLP}_TARGETS_FOLDER})
 
 set(testname ${CLP}Test)
-add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
+ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
+  NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
-    ${MRML_TEST_DATA}/sphere.vtk
-    ${MRML_TEST_DATA}/cube.vtk
+    DATA{${INPUT}/sphere.vtk}
+    DATA{${INPUT}/cube.vtk}
     ${TEMP}/sphereCube.vtk
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}TestVtp)
-add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
+ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
+  NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
-    ${MRML_TEST_DATA}/sphere.vtp
-    ${MRML_TEST_DATA}/cube.vtp
+    DATA{${INPUT}/sphere.vtp}
+    DATA{${INPUT}/cube.vtp}
     ${TEMP}/sphereCube.vtp
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 # add a test that compares the outline to a baseline .vtp
 set(testname ${CLP}TestCompare)
-add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} ${CMAKE_COMMAND}
+ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
+  NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} ${CMAKE_COMMAND}
   -Dtest_cmd=$<TARGET_FILE:${CLP}Test>
   -Dtest_name=ModuleEntryPoint
-  -Dmodel1=${MRML_TEST_DATA}/sphere.vtp
-  -Dmodel2=${MRML_TEST_DATA}/cube.vtp
+  -Dmodel1=DATA{${INPUT}/sphere.vtp}
+  -Dmodel2=DATA{${INPUT}/cube.vtp}
   -Doutput_model=${TEMP}/sphereCube.vtp
-  -Doutput_baseline=${BASELINE}/sphereCube.vtp
+  -Doutput_baseline=DATA{${BASELINE}/sphereCube.vtp}
   -P ${CMAKE_CURRENT_SOURCE_DIR}/run_MergeModelsTest.cmake
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 set_property(TEST ${testname} PROPERTY DEPENDS ${CLP}TestVtp)
+
+#-----------------------------------------------------------------------------
+if(${SEM_DATA_MANAGEMENT_TARGET} STREQUAL ${CLP}Data)
+  ExternalData_add_target(${CLP}Data)
+endif()
