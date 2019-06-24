@@ -6,6 +6,10 @@ set(TEMP "${CMAKE_BINARY_DIR}/Testing/Temporary")
 
 set(CLP ${MODULE_NAME})
 
+if(NOT DEFINED SEM_DATA_MANAGEMENT_TARGET)
+  set(SEM_DATA_MANAGEMENT_TARGET ${CLP}Data)
+endif()
+
 #-----------------------------------------------------------------------------
 add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib ${SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES})
@@ -14,7 +18,7 @@ set_target_properties(${CLP}Test PROPERTIES FOLDER ${${CLP}_TARGETS_FOLDER})
 
 #-----------------------------------------------------------------------------
 set(testname ${CLP}Test)
-ExternalData_add_test(${CLP}Data NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
+ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET} NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   --compare DATA{${BASELINE}/${CLP}Test.nhdr,${CLP}Test.raw}
   ${TEMP}/${CLP}Test.nhdr
   ModuleEntryPoint
@@ -23,4 +27,6 @@ ExternalData_add_test(${CLP}Data NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} 
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 #-----------------------------------------------------------------------------
-ExternalData_add_target(${CLP}Data)
+if(${SEM_DATA_MANAGEMENT_TARGET} STREQUAL ${CLP}Data)
+  ExternalData_add_target(${CLP}Data)
+endif()
