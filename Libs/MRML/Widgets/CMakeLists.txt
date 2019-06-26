@@ -436,9 +436,7 @@ endif()
   # Translation
   # --------------------------------------------------------------------------
   if(Slicer_BUILD_I18N_SUPPORT)
-    set(TS_DIR
-      "${CMAKE_CURRENT_SOURCE_DIR}/Resources/Translations/"
-    )
+    set(TS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Resources/Translations")
     get_property(Slicer_LANGUAGES GLOBAL PROPERTY Slicer_LANGUAGES)
 
     include(SlicerMacroTranslation)
@@ -448,13 +446,7 @@ endif()
       TS_DIR ${TS_DIR}
       TS_BASEFILENAME ${PROJECT_NAME}
       TS_LANGUAGES ${Slicer_LANGUAGES}
-      QM_OUTPUT_DIR_VAR QM_OUTPUT_DIR
-      QM_OUTPUT_FILES_VAR QM_OUTPUT_FILES
       )
-
-    set_property(GLOBAL APPEND PROPERTY Slicer_QM_OUTPUT_DIRS ${QM_OUTPUT_DIR})
-  else()
-    set(QM_OUTPUT_FILES )
   endif()
 
 # --------------------------------------------------------------------------
@@ -468,7 +460,6 @@ add_library(${lib_name}
   ${MRMLWidgets_MOC_CXX}
   ${MRMLWidgets_UI_CXX}
   ${MRMLWidgets_QRC_CXX}
-  ${QM_OUTPUT_FILES}
   )
 
 set(MRMLWidgets_LIBRARIES

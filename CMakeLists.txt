@@ -435,8 +435,8 @@ include(SlicerFunctionAddPythonQtResources)
 #-----------------------------------------------------------------------------
 if(Slicer_BUILD_I18N_SUPPORT)
   set(Slicer_LANGUAGES
-  "es_Es"
-  "fr_FR"
+    "es_ES"
+    "fr_FR"
     )
   set_property(GLOBAL PROPERTY Slicer_LANGUAGES ${Slicer_LANGUAGES})
 endif()
@@ -1114,9 +1114,53 @@ endforeach()
 unset(Slicer_DIR)
 
 # --------------------------------------------------------------------------
-# Recover the QM output directories
+# Create targets CopySlicerPython{Resource, Script}Files, CompileSlicerPythonFiles
 # --------------------------------------------------------------------------
-get_property(Slicer_QM_OUTPUT_DIRS GLOBAL PROPERTY Slicer_QM_OUTPUT_DIRS)
+if(Slicer_USE_PYTHONQT)
+  slicerFunctionAddPythonQtResourcesTargets(SlicerPythonResources)
+  ctkFunctionAddCompilePythonScriptTargets(
+    ${CTK_COMPILE_PYTHON_SCRIPTS_GLOBAL_TARGET_NAME}
+    DEPENDS
+      SlicerPythonResources
+    )
+
+  SlicerFunctionAddPythonScriptTrFilesTargets(
+    ${CTK_COMPILE_PYTHON_SCRIPTS_GLOBAL_TARGET_NAME}
+    )
+
+  set(_python_dir ${Slicer_SUPERBUILD_DIR}/python-install)
+  if(NOT Slicer_USE_SYSTEM_python OR NOT EXISTS ${_python_dir})
+    # Custom target to ensure there are cached byte-code files for all the python
+    # standard library and site-packages modules.
+    #
+    # Considering (1) some of the tests purposefully include invalid code
+    # that would lead the compilation to fail and (2) test directories are
+    # explicitly excluded from packages in "CMake/SlicerBlockInstallPython.cmake",
+    # the corresponding files are excluded from the compilation passing the "-x"
+    # argument.
+    add_custom_command(
+      COMMAND ${PYTHON_EXECUTABLE} -m compileall -q -x "[\/\\\\]test[s]?[\/\\\\]" ${_python_dir}/${PYTHON_STDLIB_SUBDIR}
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/python_compile_stdlib_and_sitepackages_complete
+      COMMENT "Compiling python stdlib and site-packages modules: ${_python_dir}/${PYTHON_STDLIB_SUBDIR}"
+      VERBATIM
+      )
+    add_custom_target(CompileStdLibAndSitePackagesPythonFiles ALL
+      DEPENDS
+        ${CMAKE_CURRENT_BINARY_DIR}/python_compile_stdlib_and_sitepackages_complete
+      )
+  endif()
+endif()
+
+# --------------------------------------------------------------------------
+# Create target GenerateSlicerTranslationQMFiles (Slicer_QM_OUTPUT_DIRS is used in vtkSlicerConfigure.h)
+# --------------------------------------------------------------------------
+if(Slicer_BUILD_I18N_SUPPORT)
+  SlicerFunctionAddGenerateSlicerTranslationQMFilesTarget(
+    QM_OUTPUT_DIRS_VAR Slicer_QM_OUTPUT_DIRS
+    )
+else()
+  set(Slicer_QM_OUTPUT_DIRS)
+endif()
 
 # --------------------------------------------------------------------------
 # Configure and install headers
@@ -1215,44 +1259,6 @@ endif()
 # Create target to download data from the <Slicer_ExternalData_DATA_MANAGEMENT_TARGET> group.
 # This must come after all tests have been added that reference the group, so we put it last.
 ExternalData_Add_Target(${Slicer_ExternalData_DATA_MANAGEMENT_TARGET})
-
-#-----------------------------------------------------------------------------
-# Create targets CopySlicerPython{Resource, Script}Files, CompileSlicerPythonFiles
-if(Slicer_USE_PYTHONQT)
-
-  slicerFunctionAddPythonQtResourcesTargets(SlicerPythonResources)
-  ctkFunctionAddCompilePythonScriptTargets(
-    ${CTK_COMPILE_PYTHON_SCRIPTS_GLOBAL_TARGET_NAME}
-    DEPENDS
-      SlicerPythonResources
-    )
-
-  SlicerFunctionAddPythonScriptTrFilesTargets(
-    ${CTK_COMPILE_PYTHON_SCRIPTS_GLOBAL_TARGET_NAME}
-    )
-
-  set(_python_dir ${Slicer_SUPERBUILD_DIR}/python-install)
-  if(NOT Slicer_USE_SYSTEM_python OR NOT EXISTS ${_python_dir})
-    # Custom target to ensure there are cached byte-code files for all the python
-    # standard library and site-packages modules.
-    #
-    # Considering (1) some of the tests purposefully include invalid code
-    # that would lead the compilation to fail and (2) test directories are
-    # explicitly excluded from packages in "CMake/SlicerBlockInstallPython.cmake",
-    # the corresponding files are excluded from the compilation passing the "-x"
-    # argument.
-    add_custom_command(
-      COMMAND ${PYTHON_EXECUTABLE} -m compileall -q -x "[\/\\\\]test[s]?[\/\\\\]" ${_python_dir}/${PYTHON_STDLIB_SUBDIR}
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/python_compile_stdlib_and_sitepackages_complete
-      COMMENT "Compiling python stdlib and site-packages modules: ${_python_dir}/${PYTHON_STDLIB_SUBDIR}"
-      VERBATIM
-      )
-    add_custom_target(CompileStdLibAndSitePackagesPythonFiles ALL
-      DEPENDS
-        ${CMAKE_CURRENT_BINARY_DIR}/python_compile_stdlib_and_sitepackages_complete
-      )
-  endif()
-endif()
 
 #-----------------------------------------------------------------------------
 # The commands in this directory are intended to be executed as
