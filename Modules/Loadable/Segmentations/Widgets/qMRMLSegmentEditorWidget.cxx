@@ -379,21 +379,21 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   this->SpecifyGeometryButton->setMaximumHeight(this->MasterVolumeNodeComboBox->sizeHint().height());
   this->SpecifyGeometryButton->setMaximumWidth(this->MasterVolumeNodeComboBox->sizeHint().height());
 
-  this->MaskModeComboBox->addItem(QObject::tr("Everywhere"), vtkMRMLSegmentEditorNode::PaintAllowedEverywhere);
-  this->MaskModeComboBox->addItem(QObject::tr("Inside all segments"), vtkMRMLSegmentEditorNode::PaintAllowedInsideAllSegments);
-  this->MaskModeComboBox->addItem(QObject::tr("Inside all visible segments"), vtkMRMLSegmentEditorNode::PaintAllowedInsideVisibleSegments);
-  this->MaskModeComboBox->addItem(QObject::tr("Outside all segments"), vtkMRMLSegmentEditorNode::PaintAllowedOutsideAllSegments);
-  this->MaskModeComboBox->addItem(QObject::tr("Outside all visible segments"), vtkMRMLSegmentEditorNode::PaintAllowedOutsideVisibleSegments);
+  this->MaskModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Everywhere"), vtkMRMLSegmentEditorNode::PaintAllowedEverywhere);
+  this->MaskModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Inside all segments"), vtkMRMLSegmentEditorNode::PaintAllowedInsideAllSegments);
+  this->MaskModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Inside all visible segments"), vtkMRMLSegmentEditorNode::PaintAllowedInsideVisibleSegments);
+  this->MaskModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Outside all segments"), vtkMRMLSegmentEditorNode::PaintAllowedOutsideAllSegments);
+  this->MaskModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Outside all visible segments"), vtkMRMLSegmentEditorNode::PaintAllowedOutsideVisibleSegments);
   this->MaskModeComboBox->insertSeparator(this->MaskModeComboBox->count());
   this->MaskModeComboBoxFixedItemsCount = this->MaskModeComboBox->count();
 
-  this->OverwriteModeComboBox->addItem(QObject::tr("All segments"), vtkMRMLSegmentEditorNode::OverwriteAllSegments);
-  this->OverwriteModeComboBox->addItem(QObject::tr("Visible segments"), vtkMRMLSegmentEditorNode::OverwriteVisibleSegments);
-  this->OverwriteModeComboBox->addItem(QObject::tr("None"), vtkMRMLSegmentEditorNode::OverwriteNone);
+  this->OverwriteModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("All segments"), vtkMRMLSegmentEditorNode::OverwriteAllSegments);
+  this->OverwriteModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Visible segments"), vtkMRMLSegmentEditorNode::OverwriteVisibleSegments);
+  this->OverwriteModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("None"), vtkMRMLSegmentEditorNode::OverwriteNone);
 
   this->SwitchToSegmentationsButton->setIcon(q->style()->standardIcon(QStyle::SP_ArrowRight));
 
-  QMenu* segmentationsButtonMenu = new QMenu(q->tr("Segmentations"), this->SwitchToSegmentationsButton);
+  QMenu* segmentationsButtonMenu = new QMenu(qMRMLSegmentEditorWidget::tr("Segmentations"), this->SwitchToSegmentationsButton);
 
   QAction* importExportAction = new QAction("Import/export nodes...", segmentationsButtonMenu);
   segmentationsButtonMenu->addAction(importExportAction);
@@ -404,20 +404,20 @@ void qMRMLSegmentEditorWidgetPrivate::init()
 
   this->SwitchToSegmentationsButton->setMenu(segmentationsButtonMenu);
 
-  QMenu* show3DButtonMenu = new QMenu(q->tr("Show 3D"), this->Show3DButton);
+  QMenu* show3DButtonMenu = new QMenu(qMRMLSegmentEditorWidget::tr("Show 3D"), this->Show3DButton);
 
-  this->SurfaceSmoothingEnabledAction = new QAction(q->tr("Surface smoothing"), show3DButtonMenu);
-  this->SurfaceSmoothingEnabledAction->setToolTip(q->tr("Apply smoothing when converting binary lablemap to closed surface representation."));
+  this->SurfaceSmoothingEnabledAction = new QAction(qMRMLSegmentEditorWidget::tr("Surface smoothing"), show3DButtonMenu);
+  this->SurfaceSmoothingEnabledAction->setToolTip(qMRMLSegmentEditorWidget::tr("Apply smoothing when converting binary lablemap to closed surface representation."));
   this->SurfaceSmoothingEnabledAction->setCheckable(true);
   show3DButtonMenu->addAction(this->SurfaceSmoothingEnabledAction);
   QObject::connect(this->SurfaceSmoothingEnabledAction, SIGNAL(toggled(bool)), q, SLOT(onEnableSurfaceSmoothingToggled(bool)));
 
-  QMenu* surfaceSmoothingFactorMenu = new QMenu(q->tr("Smoothing factor"), show3DButtonMenu);
+  QMenu* surfaceSmoothingFactorMenu = new QMenu(qMRMLSegmentEditorWidget::tr("Smoothing factor"), show3DButtonMenu);
   surfaceSmoothingFactorMenu->setObjectName("slicerSpacingManualMode");
   surfaceSmoothingFactorMenu->setIcon(QIcon(":/Icon/SlicerManualSliceSpacing.png"));
 
   this->SurfaceSmoothingSlider = new ctkSliderWidget(surfaceSmoothingFactorMenu);
-  this->SurfaceSmoothingSlider->setToolTip(q->tr("Higher value means stronger smoothing during closed surface representation conversion."));
+  this->SurfaceSmoothingSlider->setToolTip(qMRMLSegmentEditorWidget::tr("Higher value means stronger smoothing during closed surface representation conversion."));
   this->SurfaceSmoothingSlider->setDecimals(2);
   this->SurfaceSmoothingSlider->setRange(0.0, 1.0);
   this->SurfaceSmoothingSlider->setSingleStep(0.1);

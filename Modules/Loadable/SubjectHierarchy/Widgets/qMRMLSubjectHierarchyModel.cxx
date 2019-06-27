@@ -117,12 +117,12 @@ void qMRMLSubjectHierarchyModelPrivate::init()
   q->setHorizontalHeaderLabels(
     QStringList() << "Node" << "Description" << "" /*visibility*/ << "" /*color*/ << "" /*transform*/ << "IDs" );
 
-  q->horizontalHeaderItem(q->nameColumn())->setToolTip(QObject::tr("Node name and type"));
-  q->horizontalHeaderItem(q->descriptionColumn())->setToolTip(QObject::tr("Node description"));
-  q->horizontalHeaderItem(q->visibilityColumn())->setToolTip(QObject::tr("Show/hide branch or node"));
-  q->horizontalHeaderItem(q->colorColumn())->setToolTip(QObject::tr("Node color"));
-  q->horizontalHeaderItem(q->transformColumn())->setToolTip(QObject::tr("Applied transform"));
-  q->horizontalHeaderItem(q->idColumn())->setToolTip(QObject::tr("Node ID"));
+  q->horizontalHeaderItem(q->nameColumn())->setToolTip(qMRMLSubjectHierarchyModel::tr("Node name and type"));
+  q->horizontalHeaderItem(q->descriptionColumn())->setToolTip(qMRMLSubjectHierarchyModel::tr("Node description"));
+  q->horizontalHeaderItem(q->visibilityColumn())->setToolTip(qMRMLSubjectHierarchyModel::tr("Show/hide branch or node"));
+  q->horizontalHeaderItem(q->colorColumn())->setToolTip(qMRMLSubjectHierarchyModel::tr("Node color"));
+  q->horizontalHeaderItem(q->transformColumn())->setToolTip(qMRMLSubjectHierarchyModel::tr("Applied transform"));
+  q->horizontalHeaderItem(q->idColumn())->setToolTip(qMRMLSubjectHierarchyModel::tr("Node ID"));
 
   q->horizontalHeaderItem(q->visibilityColumn())->setIcon(QIcon(":/Icons/Small/SlicerVisibleInvisible.png"));
   q->horizontalHeaderItem(q->colorColumn())->setIcon(QIcon(":/Icons/Colors.png"));

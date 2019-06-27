@@ -89,7 +89,7 @@ bool qSlicerCropVolumeModuleWidgetPrivate::checkInputs(bool& autoFixAvailable, Q
 
   if (this->ParametersNode == nullptr)
     {
-    message = QObject::tr("Select or create a new parameter node.");
+    message = qSlicerCropVolumeModuleWidget::tr("Select or create a new parameter node.");
     autoFixAvailable = true;
     if (autoFixProblems)
       {
@@ -100,7 +100,7 @@ bool qSlicerCropVolumeModuleWidgetPrivate::checkInputs(bool& autoFixAvailable, Q
 
   if (this->ParametersNode->GetInputVolumeNode() == nullptr)
     {
-    message = QObject::tr("Select an input volume.");
+    message = qSlicerCropVolumeModuleWidget::tr("Select an input volume.");
     return false;
     }
 
@@ -117,20 +117,20 @@ bool qSlicerCropVolumeModuleWidgetPrivate::checkInputs(bool& autoFixAvailable, Q
       && !this->ParametersNode->GetROINode()->GetParentTransformNode()->IsTransformToWorldLinear())
       {
       roiTransformValid = false;
-      problemsDescription << QObject::tr("Input ROI is under a non-linear tansform.");
+      problemsDescription << qSlicerCropVolumeModuleWidget::tr("Input ROI is under a non-linear tansform.");
       }
     }
   else
     {
     roiExists = false;
-    problemsDescription << QObject::tr("Select or create a new input ROI.");
+    problemsDescription << qSlicerCropVolumeModuleWidget::tr("Select or create a new input ROI.");
     }
   if (this->ParametersNode->GetOutputVolumeNode()
     && this->ParametersNode->GetOutputVolumeNode()->GetParentTransformNode()
     && !this->ParametersNode->GetOutputVolumeNode()->GetParentTransformNode()->IsTransformToWorldLinear())
     {
     outputVolumeTransformValid = false;
-    problemsDescription << QObject::tr("Output volume is under a non-linear tansform.");
+    problemsDescription << qSlicerCropVolumeModuleWidget::tr("Output volume is under a non-linear tansform.");
     }
 
   // Non-interpolated cropping problem
@@ -141,13 +141,13 @@ bool qSlicerCropVolumeModuleWidgetPrivate::checkInputs(bool& autoFixAvailable, Q
       && !this->ParametersNode->GetInputVolumeNode()->GetParentTransformNode()->IsTransformToWorldLinear())
       {
       inputVolumeTransformValid = false;
-      problemsDescription << QObject::tr("Interpolation is disabled and input volume is under a non-linear tansform");
+      problemsDescription << qSlicerCropVolumeModuleWidget::tr("Interpolation is disabled and input volume is under a non-linear tansform");
       }
     // Only report ROI errors, if ROI is valid (avoid overloading the user with too much info)
     if (roiExists && roiTransformValid && !vtkSlicerCropVolumeLogic::IsROIAlignedWithInputVolume(this->ParametersNode))
       {
       roiTransformValid = false;
-      problemsDescription += QObject::tr("Interpolation is disabled and input ROI is not aligned with input volume axes.");
+      problemsDescription += qSlicerCropVolumeModuleWidget::tr("Interpolation is disabled and input ROI is not aligned with input volume axes.");
       }
     }
 

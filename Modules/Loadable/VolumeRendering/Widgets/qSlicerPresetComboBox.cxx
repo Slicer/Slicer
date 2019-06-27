@@ -142,7 +142,7 @@ void qSlicerPresetComboBoxPrivate::init()
   q->setSelectNodeUponCreation(false);
   q->setAddEnabled(false);
   q->setRemoveEnabled(false);
-  q->setBaseName(q->tr("Preset"));
+  q->setBaseName(qSlicerPresetComboBox::tr("Preset"));
 
   q->setShowIcons(true);
 

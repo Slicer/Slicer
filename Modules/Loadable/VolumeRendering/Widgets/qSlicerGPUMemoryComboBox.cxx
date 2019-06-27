@@ -75,22 +75,22 @@ void qSlicerGPUMemoryComboBoxPrivate::init()
   q->setEditable(true);
   q->lineEdit()->setValidator( new QRegExpValidator(this->MemoryRegExp, q));
   q->addItem(DefaultText);
-  //q->addItem(q->tr("25 %")); //TODO: Uncomment when totalGPUMemoryInMB works
-  //q->addItem(q->tr("50 %"));
-  //q->addItem(q->tr("75 %"));
-  //q->addItem(q->tr("90 %"));
-  q->addItem(q->tr("128 MB"));
-  q->addItem(q->tr("256 MB"));
-  q->addItem(q->tr("512 MB"));
-  q->addItem(q->tr("1024 MB"));
-  q->addItem(q->tr("1.5 GB"));
-  q->addItem(q->tr("2 GB"));
-  q->addItem(q->tr("3 GB"));
-  q->addItem(q->tr("4 GB"));
-  q->addItem(q->tr("6 GB"));
-  q->addItem(q->tr("8 GB"));
-  q->addItem(q->tr("12 GB"));
-  q->addItem(q->tr("16 GB"));
+  //q->addItem(qSlicerGPUMemoryComboBox::tr("25 %")); //TODO: Uncomment when totalGPUMemoryInMB works
+  //q->addItem(qSlicerGPUMemoryComboBox::tr("50 %"));
+  //q->addItem(qSlicerGPUMemoryComboBox::tr("75 %"));
+  //q->addItem(qSlicerGPUMemoryComboBox::tr("90 %"));
+  q->addItem(qSlicerGPUMemoryComboBox::tr("128 MB"));
+  q->addItem(qSlicerGPUMemoryComboBox::tr("256 MB"));
+  q->addItem(qSlicerGPUMemoryComboBox::tr("512 MB"));
+  q->addItem(qSlicerGPUMemoryComboBox::tr("1024 MB"));
+  q->addItem(qSlicerGPUMemoryComboBox::tr("1.5 GB"));
+  q->addItem(qSlicerGPUMemoryComboBox::tr("2 GB"));
+  q->addItem(qSlicerGPUMemoryComboBox::tr("3 GB"));
+  q->addItem(qSlicerGPUMemoryComboBox::tr("4 GB"));
+  q->addItem(qSlicerGPUMemoryComboBox::tr("6 GB"));
+  q->addItem(qSlicerGPUMemoryComboBox::tr("8 GB"));
+  q->addItem(qSlicerGPUMemoryComboBox::tr("12 GB"));
+  q->addItem(qSlicerGPUMemoryComboBox::tr("16 GB"));
   q->insertSeparator(1);
 
   // Detect the amount of memory in the graphic card and set it as default
