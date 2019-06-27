@@ -278,7 +278,7 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
         extraItems.append(qMRMLNodeComboBox::tr("Create new ") + label);
         if (this->RenameEnabled)
           {
-          extraItems.append(qMRMLNodeComboBox::tr("Create new ") + label + " as...");
+          extraItems.append(qMRMLNodeComboBox::tr("Create new ") + label + qMRMLNodeComboBox::tr(" as..."));
           }
         }
       }

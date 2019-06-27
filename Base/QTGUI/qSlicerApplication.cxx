@@ -251,46 +251,46 @@ void qSlicerApplicationPrivate::init()
   this->SettingsDialog->setWindowFlags(this->SettingsDialog->windowFlags() | Qt::WindowMaximizeButtonHint);
 
   qSlicerSettingsGeneralPanel* generalPanel = new qSlicerSettingsGeneralPanel;
-  this->SettingsDialog->addPanel("General", generalPanel);
+  this->SettingsDialog->addPanel(qSlicerApplication::tr("General"), generalPanel);
 
   qSlicerSettingsModulesPanel * settingsModulesPanel = new qSlicerSettingsModulesPanel;
-  this->SettingsDialog->addPanel("Modules", settingsModulesPanel);
+  this->SettingsDialog->addPanel(qSlicerApplication::tr("Modules"), settingsModulesPanel);
 
   qSlicerSettingsStylesPanel* settingsStylesPanel =
     new qSlicerSettingsStylesPanel(generalPanel);
-  this->SettingsDialog->addPanel("Appearance", settingsStylesPanel);
+  this->SettingsDialog->addPanel(qSlicerApplication::tr("Appearance"), settingsStylesPanel);
 
   qSlicerSettingsViewsPanel* settingsViewsPanel =
     new qSlicerSettingsViewsPanel(generalPanel);
-  this->SettingsDialog->addPanel("Views", settingsViewsPanel);
+  this->SettingsDialog->addPanel(qSlicerApplication::tr("Views"), settingsViewsPanel);
 
   qSlicerSettingsUserInformationPanel* settingsUserPanel = new qSlicerSettingsUserInformationPanel;
   settingsUserPanel->setUserInformation(this->AppLogic->GetUserInformation());
-  this->SettingsDialog->addPanel("User", settingsUserPanel);
+  this->SettingsDialog->addPanel(qSlicerApplication::tr("User"), settingsUserPanel);
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   qSlicerSettingsExtensionsPanel * settingsExtensionsPanel = new qSlicerSettingsExtensionsPanel;
-  this->SettingsDialog->addPanel("Extensions", settingsExtensionsPanel);
+  this->SettingsDialog->addPanel(qSlicerApplication::tr("Extensions"), settingsExtensionsPanel);
 #endif
   qSlicerSettingsCachePanel* cachePanel = new qSlicerSettingsCachePanel;
   cachePanel->setCacheManager(this->MRMLScene->GetCacheManager());
-  this->SettingsDialog->addPanel("Cache", cachePanel);
+  this->SettingsDialog->addPanel(qSlicerApplication::tr("Cache"), cachePanel);
 
 #ifdef Slicer_BUILD_I18N_SUPPORT
   qSlicerSettingsInternationalizationPanel* qtInternationalizationPanel =
       new qSlicerSettingsInternationalizationPanel;
-  this->SettingsDialog->addPanel("Internationalization", qtInternationalizationPanel);
+  this->SettingsDialog->addPanel(qSlicerApplication::tr("Internationalization"), qtInternationalizationPanel);
 #endif
 
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
     {
-    q->settingsDialog()->addPanel("Python", new qSlicerSettingsPythonPanel);
+    q->settingsDialog()->addPanel(qSlicerApplication::tr("Python"), new qSlicerSettingsPythonPanel);
     }
 #endif
 
   qSlicerSettingsDeveloperPanel* developerPanel = new qSlicerSettingsDeveloperPanel;
-  this->SettingsDialog->addPanel("Developer", developerPanel);
+  this->SettingsDialog->addPanel(qSlicerApplication::tr("Developer"), developerPanel);
 
   QObject::connect(this->SettingsDialog, SIGNAL(restartRequested()),
                    q, SLOT(restart()));

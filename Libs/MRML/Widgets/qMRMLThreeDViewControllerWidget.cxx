@@ -129,7 +129,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   stereoTypesActions->addAction(this->actionSwitchToUserDefinedStereo_1);
   stereoTypesActions->addAction(this->actionSwitchToUserDefinedStereo_2);
   stereoTypesActions->addAction(this->actionSwitchToUserDefinedStereo_3);
-  QMenu* stereoTypesMenu = new QMenu("Stereo Modes", this->PopupWidget);
+  QMenu* stereoTypesMenu = new QMenu(qMRMLThreeDViewControllerWidget::tr("Stereo Modes"), this->PopupWidget);
   stereoTypesMenu->setObjectName("stereoTypesMenu");
   stereoTypesMenu->addActions(stereoTypesActions->actions());
   this->StereoButton->setMenu(stereoTypesMenu);
@@ -139,7 +139,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
                    this->StereoTypesMapper, SLOT(map(QAction*)));
   this->actionSwitchToQuadBufferStereo->setEnabled(false); // Disabled by default
 
-  QMenu* visibilityMenu = new QMenu("Visibility", this->PopupWidget);
+  QMenu* visibilityMenu = new QMenu(qMRMLThreeDViewControllerWidget::tr("Visibility"), this->PopupWidget);
   visibilityMenu->setObjectName("visibilityMenu");
   this->VisibilityButton->setMenu(visibilityMenu);
 
@@ -213,7 +213,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   QObject::connect(rulerColorActions, SIGNAL(triggered(QAction*)),this->RulerColorMapper, SLOT(map(QAction*)));
 
   // Menu
-  QMenu* rulerMenu = new QMenu(tr("Ruler"), this->PopupWidget);
+  QMenu* rulerMenu = new QMenu(qMRMLThreeDViewControllerWidget::tr("Ruler"), this->PopupWidget);
   rulerMenu->setObjectName("rulerMenu");
   this->RulerButton->setMenu(rulerMenu);
   rulerMenu->addActions(rulerTypesActions->actions());
@@ -221,7 +221,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   rulerMenu->addActions(rulerColorActions->actions());
 
   // More controls
-  QMenu* moreMenu = new QMenu("More", this->PopupWidget);
+  QMenu* moreMenu = new QMenu(qMRMLThreeDViewControllerWidget::tr("More"), this->PopupWidget);
   moreMenu->addAction(this->actionUseDepthPeeling);
   moreMenu->addAction(this->actionSetFPSVisible);
   this->MoreToolButton->setMenu(moreMenu);
