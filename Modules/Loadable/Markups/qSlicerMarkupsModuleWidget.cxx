@@ -164,7 +164,7 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // set up the list buttons
   // visibility
   // first add actions to the menu, then hook them up
-  visibilityMenu = new QMenu(q->tr("Visibility"), this->visibilityAllMarkupsInListMenuButton);
+  visibilityMenu = new QMenu(qSlicerMarkupsModuleWidget::tr("Visibility"), this->visibilityAllMarkupsInListMenuButton);
   // visibility on
   this->visibilityOnAllMarkupsInListAction =
     new QAction(QIcon(":/Icons/Small/SlicerVisible.png"), "Visibility On", visibilityMenu);
@@ -192,7 +192,7 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   // lock
   // first add actions to the menu, then hook them up
-  lockMenu = new QMenu(q->tr("Lock"), this->lockAllMarkupsInListMenuButton);
+  lockMenu = new QMenu(qSlicerMarkupsModuleWidget::tr("Lock"), this->lockAllMarkupsInListMenuButton);
   // lock
   this->lockAllMarkupsInListAction =
     new QAction(QIcon(":/Icons/Small/SlicerLock.png"), "Lock", lockMenu);
@@ -220,7 +220,7 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   // selected
   // first add actions to the menu, then hook them up
-  selectedMenu = new QMenu(q->tr("Selected"), this->selectedAllMarkupsInListMenuButton);
+  selectedMenu = new QMenu(qSlicerMarkupsModuleWidget::tr("Selected"), this->selectedAllMarkupsInListMenuButton);
   // selected on
   this->selectedOnAllMarkupsInListAction =
     new QAction(QIcon(":/Icons/MarkupsSelected.png"), "Selected On", selectedMenu);
@@ -261,31 +261,31 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
                    q, SLOT(onDeleteAllMarkupsInListPushButtonClicked()));
 
   this->cutAction = new QAction(q);
-  this->cutAction->setText(q->tr("Cut"));
+  this->cutAction->setText(qSlicerMarkupsModuleWidget::tr("Cut"));
   this->cutAction->setIcon(QIcon(":Icons/Medium/SlicerEditCut.png"));
   this->cutAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   this->cutAction->setShortcuts(QKeySequence::Cut);
-  this->cutAction->setToolTip(q->tr("Cut"));
+  this->cutAction->setToolTip(qSlicerMarkupsModuleWidget::tr("Cut"));
   q->addAction(this->cutAction);
   this->CutMarkupsToolButton->setDefaultAction(this->cutAction);
   QObject::connect(this->cutAction, SIGNAL(triggered()), q, SLOT(cutSelectedToClipboard()));
 
   this->copyAction = new QAction(q);
-  this->copyAction->setText(q->tr("Copy"));
+  this->copyAction->setText(qSlicerMarkupsModuleWidget::tr("Copy"));
   this->copyAction->setIcon(QIcon(":Icons/Medium/SlicerEditCopy.png"));
   this->copyAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   this->copyAction->setShortcuts(QKeySequence::Copy);
-  this->copyAction->setToolTip(q->tr("Copy"));
+  this->copyAction->setToolTip(qSlicerMarkupsModuleWidget::tr("Copy"));
   q->addAction(this->copyAction);
   this->CopyMarkupsToolButton->setDefaultAction(this->copyAction);
   QObject::connect(this->copyAction, SIGNAL(triggered()), q, SLOT(copySelectedToClipboard()));
 
   this->pasteAction = new QAction(q);
-  this->pasteAction->setText(q->tr("Paste"));
+  this->pasteAction->setText(qSlicerMarkupsModuleWidget::tr("Paste"));
   this->pasteAction->setIcon(QIcon(":Icons/Medium/SlicerEditPaste.png"));
   this->pasteAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   this->pasteAction->setShortcuts(QKeySequence::Paste);
-  this->pasteAction->setToolTip(q->tr("Paste"));
+  this->pasteAction->setToolTip(qSlicerMarkupsModuleWidget::tr("Paste"));
   q->addAction(this->pasteAction);
   this->PasteMarkupsToolButton->setDefaultAction(this->pasteAction);
   QObject::connect(this->pasteAction, SIGNAL(triggered()), q, SLOT(pasteSelectedFromClipboard()));

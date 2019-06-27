@@ -165,8 +165,8 @@ bool qSlicerWelcomeModuleWidgetPrivate::selectModule(const QString& moduleName)
   if(!module)
     {
     QMessageBox::warning(
-          q, q->tr("Raising %1 Module:").arg(moduleName),
-          q->tr("Unfortunately, this requested module is not available in this Slicer session."),
+          q, qSlicerWelcomeModuleWidget::tr("Raising %1 Module:").arg(moduleName),
+          qSlicerWelcomeModuleWidget::tr("Unfortunately, this requested module is not available in this Slicer session."),
           QMessageBox::Ok);
     return false;
     }

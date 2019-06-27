@@ -107,7 +107,7 @@ void qSlicerReformatModuleWidgetPrivate::setupReformatOptionsMenu()
   Q_Q(qSlicerReformatModuleWidget);
 
   QMenu* reformatMenu =
-    new QMenu(q->tr("Reformat"),this->ShowReformatWidgetToolButton);
+    new QMenu(qSlicerReformatModuleWidget::tr("Reformat"),this->ShowReformatWidgetToolButton);
 
   reformatMenu->addAction(this->actionLockNormalToCamera);
 
