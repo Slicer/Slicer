@@ -144,7 +144,7 @@ void qSlicerCLIProgressBarPrivate::init()
   this->StageProgressBar->setValue(0);
   this->GridLayout->addWidget(StageProgressBar, 4, 0, 1, 3);
 
-  this->NameLabel->setText(QObject::tr(""));
+  this->NameLabel->setText("");
   this->StatusLabelLabel->setText(QObject::tr("Status:"));
   this->StatusLabel->setText(QObject::tr("Idle"));
 
