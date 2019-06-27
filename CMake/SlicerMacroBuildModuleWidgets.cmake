@@ -79,12 +79,38 @@ macro(SlicerMacroBuildModuleWidgets)
     set(MODULEWIDGETS_NO_INSTALL_OPTION "NO_INSTALL")
   endif()
 
+  #-----------------------------------------------------------------------------
+  # Translation
+  #-----------------------------------------------------------------------------
+  if(Slicer_BUILD_I18N_SUPPORT)
+    set(TS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Resources/Translations/")
+    get_property(Slicer_LANGUAGES GLOBAL PROPERTY Slicer_LANGUAGES)
+
+    include(SlicerMacroTranslation)
+    SlicerMacroTranslation(
+      SRCS ${MODULEWIDGETS_SRCS}
+      UI_SRCS ${MODULEWIDGETS_UI_SRCS}
+      TS_DIR ${TS_DIR}
+      TS_BASEFILENAME ${MODULEWIDGETS_NAME}
+      TS_LANGUAGES ${Slicer_LANGUAGES}
+      QM_OUTPUT_DIR_VAR QM_OUTPUT_DIR
+      QM_OUTPUT_FILES_VAR QM_OUTPUT_FILES
+      )
+    set_property(GLOBAL APPEND PROPERTY Slicer_QM_OUTPUT_DIRS ${QM_OUTPUT_DIR})
+
+  else()
+    set(QM_OUTPUT_FILES )
+  endif()
+
+  # --------------------------------------------------------------------------
+  # Build library
+  # --------------------------------------------------------------------------
   SlicerMacroBuildModuleQtLibrary(
     NAME ${MODULEWIDGETS_NAME}
     EXPORT_DIRECTIVE ${MODULEWIDGETS_EXPORT_DIRECTIVE}
     FOLDER ${MODULEWIDGETS_FOLDER}
     INCLUDE_DIRECTORIES ${MODULEWIDGETS_INCLUDE_DIRECTORIES}
-    SRCS ${MODULEWIDGETS_SRCS}
+    SRCS ${MODULEWIDGETS_SRCS} ${QM_OUTPUT_FILES}
     MOC_SRCS ${MODULEWIDGETS_MOC_SRCS}
     UI_SRCS ${MODULEWIDGETS_UI_SRCS}
     TARGET_LIBRARIES ${MODULEWIDGETS_TARGET_LIBRARIES}
