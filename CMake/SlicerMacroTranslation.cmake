@@ -72,8 +72,7 @@ function(SlicerMacroTranslation)
     set(ts_file "${MY_TS_DIR}${MY_TS_BASEFILENAME}_${language}.ts")
 
     if(NOT Slicer_UPDATE_TRANSLATION AND NOT EXISTS ${ts_file})
-      message(WARNING "Translation file [${ts_file}] is missing: Consider setting the CMake option Slicer_UPDATE_TRANSLATION to ON")
-      return()
+      continue()
     endif()
 
     list(APPEND TS_FILES ${ts_file})

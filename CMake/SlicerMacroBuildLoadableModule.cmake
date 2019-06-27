@@ -170,29 +170,17 @@ macro(slicerMacroBuildLoadableModule)
     set(TS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Resources/Translations/")
     get_property(Slicer_LANGUAGES GLOBAL PROPERTY Slicer_LANGUAGES)
 
-    # Lookup loadable module translation files
-    set(_available_ts_languages "")
-    foreach(language ${Slicer_LANGUAGES})
-      set(_expected_ts_file "${TS_DIR}${LOADABLEMODULE_NAME}_${language}.ts")
-      if(EXISTS "${_expected_ts_file}")
-        list(APPEND _available_ts_languages ${language})
-      endif()
-    endforeach()
-
-    if(NOT _available_ts_languages STREQUAL "")
-      message(STATUS "  Available module translations: ${_available_ts_languages}")
-      include(SlicerMacroTranslation)
-      SlicerMacroTranslation(
-        SRCS ${LOADABLEMODULE_SRCS}
-        UI_SRCS ${LOADABLEMODULE_UI_SRCS}
-        TS_DIR ${TS_DIR}
-        TS_BASEFILENAME ${LOADABLEMODULE_NAME}
-        TS_LANGUAGES ${Slicer_LANGUAGES}
-        QM_OUTPUT_DIR_VAR QM_OUTPUT_DIR
-        QM_OUTPUT_FILES_VAR QM_OUTPUT_FILES
-        )
-      set_property(GLOBAL APPEND PROPERTY Slicer_QM_OUTPUT_DIRS ${QM_OUTPUT_DIR})
-    endif()
+    include(SlicerMacroTranslation)
+    SlicerMacroTranslation(
+      SRCS ${LOADABLEMODULE_SRCS}
+      UI_SRCS ${LOADABLEMODULE_UI_SRCS}
+      TS_DIR ${TS_DIR}
+      TS_BASEFILENAME ${LOADABLEMODULE_NAME}
+      TS_LANGUAGES ${Slicer_LANGUAGES}
+      QM_OUTPUT_DIR_VAR QM_OUTPUT_DIR
+      QM_OUTPUT_FILES_VAR QM_OUTPUT_FILES
+      )
+    set_property(GLOBAL APPEND PROPERTY Slicer_QM_OUTPUT_DIRS ${QM_OUTPUT_DIR})
 
   else()
     set(QM_OUTPUT_FILES )
