@@ -81,7 +81,7 @@ qSlicerModulesMenuPrivate::qSlicerModulesMenuPrivate(qSlicerModulesMenu& object)
 void qSlicerModulesMenuPrivate::init()
 {
   Q_Q(qSlicerModulesMenu);
-  this->AllModulesMenu = new QMenu(QObject::tr("All Modules"), q);
+  this->AllModulesMenu = new QMenu(qSlicerModulesMenu::tr("All Modules"), q);
 
   this->addDefaultCategories();
 

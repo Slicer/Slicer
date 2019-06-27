@@ -119,7 +119,7 @@ void qMRMLCaptureToolBarPrivate::init()
   QToolButton* sceneViewMenuButton = new QToolButton(q);
   sceneViewMenuButton->setText(qMRMLCaptureToolBar::tr("Restore view"));
   sceneViewMenuButton->setIcon(QIcon(":/Icons/ViewCameraSelect.png"));
-  sceneViewMenuButton->setToolTip(QObject::tr("Restore or delete saved scene views."));
+  sceneViewMenuButton->setToolTip(qMRMLCaptureToolBar::tr("Restore or delete saved scene views."));
   this->SceneViewMenu = new qMRMLSceneViewMenu(sceneViewMenuButton);
   sceneViewMenuButton->setMenu(this->SceneViewMenu);
   sceneViewMenuButton->setPopupMode(QToolButton::InstantPopup);
@@ -174,8 +174,8 @@ void qMRMLCaptureToolBarPrivate::createSceneView()
 
   // Ask user for a name
   bool ok = false;
-  QString sceneViewName = QInputDialog::getText(q, QObject::tr("SceneView Name"),
-                                                QObject::tr("SceneView Name:"), QLineEdit::Normal,
+  QString sceneViewName = QInputDialog::getText(q, qMRMLCaptureToolBar::tr("SceneView Name"),
+                                                qMRMLCaptureToolBar::tr("SceneView Name:"), QLineEdit::Normal,
                                                 "View", &ok);
   if (!ok || sceneViewName.isEmpty())
     {

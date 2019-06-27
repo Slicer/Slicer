@@ -70,9 +70,9 @@ void qSlicerMouseModeToolBarPrivate::init()
   this->AdjustViewAction = new QAction(this);
   this->AdjustViewAction->setObjectName("AdjustViewAction");
   this->AdjustViewAction->setData(vtkMRMLInteractionNode::ViewTransform);
-  this->AdjustViewAction->setToolTip(QObject::tr("Translate/rotate view, adjust displayed objects"));
+  this->AdjustViewAction->setToolTip(qSlicerMouseModeToolBar::tr("Translate/rotate view, adjust displayed objects"));
   this->AdjustViewAction->setIcon(QIcon(":/Icons/MouseViewTransformMode.png"));
-  this->AdjustViewAction->setText(QObject::tr("View"));
+  this->AdjustViewAction->setText(qSlicerMouseModeToolBar::tr("View"));
   this->AdjustViewAction->setCheckable(true);
 
   QObject::connect(this->AdjustViewAction, SIGNAL(toggled(bool)),
@@ -84,8 +84,8 @@ void qSlicerMouseModeToolBarPrivate::init()
 
   // persistence
   this->PersistenceAction = new QAction(q);
-  this->PersistenceAction->setText(QObject::tr("Persistent"));
-  this->PersistenceAction->setToolTip(QObject::tr("Switch between single place and persistent place modes."));
+  this->PersistenceAction->setText(qSlicerMouseModeToolBar::tr("Persistent"));
+  this->PersistenceAction->setToolTip(qSlicerMouseModeToolBar::tr("Switch between single place and persistent place modes."));
   this->PersistenceAction->setCheckable(true);
   this->PersistenceAction->setChecked(false);
   connect(this->PersistenceAction, SIGNAL(triggered(bool)),
@@ -96,7 +96,7 @@ void qSlicerMouseModeToolBarPrivate::init()
   // New actions should be added when interaction modes are registered with the scene.
 
   // popuplate the create and place menu, with persistence first
-  this->PlaceWidgetMenu = new QMenu(QObject::tr("Create and Place"), q);
+  this->PlaceWidgetMenu = new QMenu(qSlicerMouseModeToolBar::tr("Create and Place"), q);
   this->PlaceWidgetMenu->setObjectName("PlaceWidgetMenu");
   this->PlaceWidgetMenu->addAction(this->PersistenceAction);
   this->PlaceWidgetMenu->addSeparator();
@@ -106,8 +106,8 @@ void qSlicerMouseModeToolBarPrivate::init()
   this->PlaceWidgetAction = new QAction(this);
   this->PlaceWidgetAction->setObjectName("PlaceWidgetAction");
   this->PlaceWidgetAction->setData(vtkMRMLInteractionNode::Place);
-  this->PlaceWidgetAction->setToolTip(QObject::tr("Create and Place"));
-  this->PlaceWidgetAction->setText(QObject::tr("Place"));
+  this->PlaceWidgetAction->setToolTip(qSlicerMouseModeToolBar::tr("Create and Place"));
+  this->PlaceWidgetAction->setText(qSlicerMouseModeToolBar::tr("Place"));
   this->PlaceWidgetAction->setMenu(this->PlaceWidgetMenu);
   this->PlaceWidgetAction->setCheckable(true);
 
@@ -121,11 +121,11 @@ void qSlicerMouseModeToolBarPrivate::init()
   this->AdjustWindowLevelAction = new QAction(this);
   this->AdjustWindowLevelAction->setObjectName("AdjustWindowLevelAction");
   this->AdjustWindowLevelAction->setData(vtkMRMLInteractionNode::AdjustWindowLevel);
-  this->AdjustWindowLevelAction->setToolTip(QObject::tr(
+  this->AdjustWindowLevelAction->setToolTip(qSlicerMouseModeToolBar::tr(
     "Adjust window/level of volume by left-click-and-drag in slice views."
     " Hold down Control key for automatic window/level setting in a region."));
   this->AdjustWindowLevelAction->setIcon(QIcon(":/Icons/MouseWindowLevelMode.png"));
-  this->AdjustWindowLevelAction->setText(QObject::tr("Window/level"));
+  this->AdjustWindowLevelAction->setText(qSlicerMouseModeToolBar::tr("Window/level"));
   this->AdjustWindowLevelAction->setCheckable(true);
 
   QObject::connect(this->AdjustWindowLevelAction, SIGNAL(toggled(bool)),
@@ -249,11 +249,11 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
       this->PlaceWidgetAction->setIcon(action->icon());
       if (action->text().isEmpty())
         {
-        this->PlaceWidgetAction->setText(QObject::tr("Place"));
+        this->PlaceWidgetAction->setText(qSlicerMouseModeToolBar::tr("Place"));
         }
       else
         {
-        this->PlaceWidgetAction->setText(QObject::tr("Place %1").arg(action->text()));
+        this->PlaceWidgetAction->setText(qSlicerMouseModeToolBar::tr("Place %1").arg(action->text()));
         }
       break;
       }

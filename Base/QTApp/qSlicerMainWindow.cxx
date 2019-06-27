@@ -335,7 +335,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    this->ModuleSelectorToolBar, SLOT(selectModule(QString)));
 
   // Add menus for configuring compare view
-  QMenu *compareMenu = new QMenu(q->tr("Select number of viewers..."), mainWindow);
+  QMenu *compareMenu = new QMenu(qSlicerMainWindow::tr("Select number of viewers..."), mainWindow);
   compareMenu->setObjectName("CompareMenuView");
   compareMenu->addAction(this->ViewLayoutCompare_2_viewersAction);
   compareMenu->addAction(this->ViewLayoutCompare_3_viewersAction);
@@ -349,7 +349,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    q, SLOT(onLayoutCompareActionTriggered(QAction*)));
 
   // ... and for widescreen version of compare view as well
-  compareMenu = new QMenu(q->tr("Select number of viewers..."), mainWindow);
+  compareMenu = new QMenu(qSlicerMainWindow::tr("Select number of viewers..."), mainWindow);
   compareMenu->setObjectName("CompareMenuWideScreen");
   compareMenu->addAction(this->ViewLayoutCompareWidescreen_2_viewersAction);
   compareMenu->addAction(this->ViewLayoutCompareWidescreen_3_viewersAction);
@@ -363,7 +363,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    q, SLOT(onLayoutCompareWidescreenActionTriggered(QAction*)));
 
   // ... and for the grid version of the compare views
-  compareMenu = new QMenu(q->tr("Select number of viewers..."), mainWindow);
+  compareMenu = new QMenu(qSlicerMainWindow::tr("Select number of viewers..."), mainWindow);
   compareMenu->setObjectName("CompareMenuGrid");
   compareMenu->addAction(this->ViewLayoutCompareGrid_2x2_viewersAction);
   compareMenu->addAction(this->ViewLayoutCompareGrid_3x3_viewersAction);
@@ -389,7 +389,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   //----------------------------------------------------------------------------
   // Populate the View ToolBar with all the layouts of the layout manager
   QToolButton* layoutButton = new QToolButton(q);
-  layoutButton->setText(q->tr("Layout"));
+  layoutButton->setText(qSlicerMainWindow::tr("Layout"));
   layoutButton->setMenu(this->LayoutMenu);
   layoutButton->setPopupMode(QToolButton::InstantPopup);
 
@@ -478,7 +478,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
     {
     if (QSettings().value("Python/DockableWindow").toBool())
       {
-      this->PythonConsoleDockWidget = new QDockWidget(q->tr("Python Interactor"));
+      this->PythonConsoleDockWidget = new QDockWidget(qSlicerMainWindow::tr("Python Interactor"));
       this->PythonConsoleDockWidget->setObjectName("PythonConsoleDockWidget");
       this->PythonConsoleDockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
       this->PythonConsoleDockWidget->setWidget(q->pythonConsole());
@@ -641,22 +641,22 @@ bool qSlicerMainWindowPrivate::confirmCloseApplication()
   QString question;
   if (scene->GetStorableNodesModifiedSinceRead())
     {
-    question = q->tr("Some data have been modified. Do you want to save them before exit?");
+    question = qSlicerMainWindow::tr("Some data have been modified. Do you want to save them before exit?");
     }
   else if (scene->GetModifiedSinceRead())
     {
-    question = q->tr("The scene has been modified. Do you want to save it before exit?");
+    question = qSlicerMainWindow::tr("The scene has been modified. Do you want to save it before exit?");
     }
   bool close = false;
   if (!question.isEmpty())
     {
-    QMessageBox* messageBox = new QMessageBox(QMessageBox::Warning, q->tr("Save before exit?"), question, QMessageBox::NoButton);
+    QMessageBox* messageBox = new QMessageBox(QMessageBox::Warning, qSlicerMainWindow::tr("Save before exit?"), question, QMessageBox::NoButton);
     QAbstractButton* saveButton =
-       messageBox->addButton(q->tr("Save"), QMessageBox::ActionRole);
+       messageBox->addButton(qSlicerMainWindow::tr("Save"), QMessageBox::ActionRole);
     QAbstractButton* exitButton =
-       messageBox->addButton(q->tr("Exit (discard modifications)"), QMessageBox::ActionRole);
+       messageBox->addButton(qSlicerMainWindow::tr("Exit (discard modifications)"), QMessageBox::ActionRole);
     QAbstractButton* cancelButton =
-       messageBox->addButton(q->tr("Cancel exit"), QMessageBox::ActionRole);
+       messageBox->addButton(qSlicerMainWindow::tr("Cancel exit"), QMessageBox::ActionRole);
     Q_UNUSED(cancelButton);
     messageBox->exec();
     if (messageBox->clickedButton() == saveButton)
@@ -686,11 +686,11 @@ bool qSlicerMainWindowPrivate::confirmCloseScene()
   QString question;
   if (scene->GetStorableNodesModifiedSinceRead())
     {
-    question = q->tr("Some data have been modified. Do you want to save them before closing the scene?");
+    question = qSlicerMainWindow::tr("Some data have been modified. Do you want to save them before closing the scene?");
     }
   else if (scene->GetModifiedSinceRead())
     {
-    question = q->tr("The scene has been modified. Do you want to save it before closing the scene?");
+    question = qSlicerMainWindow::tr("The scene has been modified. Do you want to save it before closing the scene?");
     }
   else
     {
@@ -700,13 +700,13 @@ bool qSlicerMainWindowPrivate::confirmCloseScene()
 
   ctkMessageBox* confirmCloseMsgBox = new ctkMessageBox(q);
   confirmCloseMsgBox->setAttribute(Qt::WA_DeleteOnClose);
-  confirmCloseMsgBox->setWindowTitle(q->tr("Save before closing scene?"));
+  confirmCloseMsgBox->setWindowTitle(qSlicerMainWindow::tr("Save before closing scene?"));
   confirmCloseMsgBox->setText(question);
 
   // Use AcceptRole&RejectRole instead of Save&Discard because we would
   // like discard changes to be the default behavior.
-  confirmCloseMsgBox->addButton(q->tr("Close scene (discard modifications)"), QMessageBox::AcceptRole);
-  confirmCloseMsgBox->addButton(q->tr("Save scene"), QMessageBox::RejectRole);
+  confirmCloseMsgBox->addButton(qSlicerMainWindow::tr("Close scene (discard modifications)"), QMessageBox::AcceptRole);
+  confirmCloseMsgBox->addButton(qSlicerMainWindow::tr("Save scene"), QMessageBox::RejectRole);
   confirmCloseMsgBox->addButton(QMessageBox::Cancel);
 
   confirmCloseMsgBox->setDontShowAgainVisible(true);

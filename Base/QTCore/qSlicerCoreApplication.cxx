@@ -635,7 +635,7 @@ bool qSlicerCoreApplicationPrivate::createDirectory(const QString& path, const Q
     }
   if (!QDir::root().mkpath(path))
     {
-    qCritical() << QObject::tr("Failed to create %1 directory").arg(description) << path;
+    qCritical() << qSlicerCoreApplication::tr("Failed to create %1 directory").arg(description) << path;
     return false;
     }
   return true;

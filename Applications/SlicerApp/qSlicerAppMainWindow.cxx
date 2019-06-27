@@ -74,37 +74,37 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   //----------------------------------------------------------------------------
   QAction* helpKeyboardShortcutsAction = new QAction(mainWindow);
   helpKeyboardShortcutsAction->setObjectName("HelpKeyboardShortcutsAction");
-  helpKeyboardShortcutsAction->setText(mainWindow->tr("&Keyboard Shortcuts"));
-  helpKeyboardShortcutsAction->setToolTip(mainWindow->tr("Raise a window that lists commonly-used keyboard shortcuts."));
+  helpKeyboardShortcutsAction->setText(qSlicerAppMainWindow::tr("&Keyboard Shortcuts"));
+  helpKeyboardShortcutsAction->setToolTip(qSlicerAppMainWindow::tr("Raise a window that lists commonly-used keyboard shortcuts."));
 
   QAction* helpInterfaceDocumentationAction = new QAction(mainWindow);
   helpInterfaceDocumentationAction->setObjectName("HelpInterfaceDocumentationAction");
-  helpInterfaceDocumentationAction->setText(mainWindow->tr("Interface Documentation"));
-  helpInterfaceDocumentationAction->setShortcut(QKeySequence(mainWindow->tr("Ctrl+1", "Interface Documentation")));
+  helpInterfaceDocumentationAction->setText(qSlicerAppMainWindow::tr("Interface Documentation"));
+  helpInterfaceDocumentationAction->setShortcut(QKeySequence(qSlicerAppMainWindow::tr("Ctrl+1", "Interface Documentation")));
 
   QAction* helpBrowseTutorialsAction = new QAction(mainWindow);
   helpBrowseTutorialsAction->setObjectName("HelpBrowseTutorialsAction");
-  helpBrowseTutorialsAction->setText(mainWindow->tr("Browse tutorials"));
-  helpBrowseTutorialsAction->setToolTip(mainWindow->tr("Raise the training pages in your favorite web browser"));
+  helpBrowseTutorialsAction->setText(qSlicerAppMainWindow::tr("Browse tutorials"));
+  helpBrowseTutorialsAction->setToolTip(qSlicerAppMainWindow::tr("Raise the training pages in your favorite web browser"));
 
   QAction* helpSlicerPublicationsAction = new QAction(mainWindow);
   helpSlicerPublicationsAction->setObjectName("HelpSlicerPublicationsAction");
-  helpSlicerPublicationsAction->setText(mainWindow->tr("Slicer Publications"));
+  helpSlicerPublicationsAction->setText(qSlicerAppMainWindow::tr("Slicer Publications"));
 
   QAction* helpVisualBlogAction = new QAction(mainWindow);
   helpVisualBlogAction->setObjectName("HelpVisualBlogAction");
-  helpVisualBlogAction->setText(mainWindow->tr("Visual Blog"));
-  helpVisualBlogAction->setToolTip(mainWindow->tr("Open your favorite web browser to http://www.slicer.org/slicerWiki/index.php/Slicer3:VisualBlog where you can post screenshots of interesting ways you are using the Slicer3 software package in your research and share them with the Slicer community."));
+  helpVisualBlogAction->setText(qSlicerAppMainWindow::tr("Visual Blog"));
+  helpVisualBlogAction->setToolTip(qSlicerAppMainWindow::tr("Open your favorite web browser to http://www.slicer.org/slicerWiki/index.php/Slicer3:VisualBlog where you can post screenshots of interesting ways you are using the Slicer3 software package in your research and share them with the Slicer community."));
 
   QAction* helpReportBugOrFeatureRequestAction = new QAction(mainWindow);
   helpReportBugOrFeatureRequestAction->setObjectName("HelpReportBugOrFeatureRequestAction");
-  helpReportBugOrFeatureRequestAction->setText(mainWindow->tr("Report a bug"));
-  helpReportBugOrFeatureRequestAction->setToolTip(mainWindow->tr("Report error or request enhancement or new feature."));
+  helpReportBugOrFeatureRequestAction->setText(qSlicerAppMainWindow::tr("Report a bug"));
+  helpReportBugOrFeatureRequestAction->setToolTip(qSlicerAppMainWindow::tr("Report error or request enhancement or new feature."));
 
   QAction* helpAboutSlicerAppAction = new QAction(mainWindow);
   helpAboutSlicerAppAction->setObjectName("HelpAboutSlicerAppAction");
-  helpAboutSlicerAppAction->setText(mainWindow->tr("About 3D Slicer"));
-  helpAboutSlicerAppAction->setToolTip(mainWindow->tr("Provides a description of the Slicer effort and its support."));
+  helpAboutSlicerAppAction->setText(qSlicerAppMainWindow::tr("About 3D Slicer"));
+  helpAboutSlicerAppAction->setToolTip(qSlicerAppMainWindow::tr("Provides a description of the Slicer effort and its support."));
 
   //----------------------------------------------------------------------------
   // Calling "setupUi()" after adding the actions above allows the call

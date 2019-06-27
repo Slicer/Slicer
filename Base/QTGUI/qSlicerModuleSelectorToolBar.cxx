@@ -86,29 +86,29 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   QIcon historyIcon(":Icons/ModuleHistory.png");
 
   // Modules Label
-  q->addWidget(new QLabel(q->tr("Modules:"), q));
+  q->addWidget(new QLabel(qSlicerModuleSelectorToolBar::tr("Modules:"), q));
 
   // Modules comboBox
   this->ModulesComboBox = new ctkMenuComboBox(q);
-  this->ModulesComboBox->setToolTip(QObject::tr("Select a module from the module list"));
+  this->ModulesComboBox->setToolTip(qSlicerModuleSelectorToolBar::tr("Select a module from the module list"));
   this->ModulesComboBox->setMinimumContentsLength(20);
   q->addWidget(this->ModulesComboBox);
   QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
                    this->ModulesComboBox,SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
 
   // Modules menu
-  this->ModulesMenu = new qSlicerModulesMenu(QObject::tr("Modules"), this->ModulesComboBox);
+  this->ModulesMenu = new qSlicerModulesMenu(qSlicerModuleSelectorToolBar::tr("Modules"), this->ModulesComboBox);
   QObject::connect(this->ModulesMenu, SIGNAL(currentModuleChanged(QString)),
                    q, SLOT(onModuleSelected(QString)));
   this->ModulesComboBox->setMenu(this->ModulesMenu);
   this->ModulesComboBox->toolButtonInternal()->setShortcut(QKeySequence("Ctrl+F"));
 
   // History
-  this->HistoryMenu = new QMenu(QObject::tr("Modules history"), q);
+  this->HistoryMenu = new QMenu(qSlicerModuleSelectorToolBar::tr("Modules history"), q);
   this->HistoryButton = new QToolButton;
-  this->HistoryButton->setText(q->tr("History"));
+  this->HistoryButton->setText(qSlicerModuleSelectorToolBar::tr("History"));
   this->HistoryButton->setIcon(historyIcon);
-  this->HistoryButton->setToolTip(QObject::tr("Modules history"));
+  this->HistoryButton->setToolTip(qSlicerModuleSelectorToolBar::tr("Modules history"));
   this->HistoryButton->setMenu(this->HistoryMenu);
   this->HistoryButton->setPopupMode(QToolButton::InstantPopup);
   q->addWidget(this->HistoryButton);
@@ -116,11 +116,11 @@ void qSlicerModuleSelectorToolBarPrivate::init()
                    this->HistoryButton,SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
 
   // Previous button
-  this->PreviousHistoryMenu = new QMenu("Modules Previous History", q);
+  this->PreviousHistoryMenu = new QMenu(qSlicerModuleSelectorToolBar::tr("Modules Previous History"), q);
   this->PreviousButton = new QToolButton(q);
   this->PreviousButton->setIcon(previousIcon);
-  this->PreviousButton->setText(q->tr("Previous"));
-  this->PreviousButton->setToolTip(q->tr("Previous modules"));
+  this->PreviousButton->setText(qSlicerModuleSelectorToolBar::tr("Previous"));
+  this->PreviousButton->setToolTip(qSlicerModuleSelectorToolBar::tr("Previous modules"));
   this->PreviousButton->setMenu(this->PreviousHistoryMenu);
   // selectPreviousModule is called only if the toolbutton is clicked not if an
   // action in the history is triggered
@@ -133,11 +133,11 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   this->PreviousButton->setShortcut(QKeySequence(Qt::ControlModifier + Qt::Key_Left));
 
   // Next button
-  this->NextHistoryMenu = new QMenu("Modules Next History", q);
+  this->NextHistoryMenu = new QMenu(qSlicerModuleSelectorToolBar::tr("Modules Next History"), q);
   this->NextButton = new QToolButton(q);
   this->NextButton->setIcon(nextIcon);
-  this->NextButton->setText(q->tr("Next"));
-  this->NextButton->setToolTip(q->tr("Next modules"));
+  this->NextButton->setText(qSlicerModuleSelectorToolBar::tr("Next"));
+  this->NextButton->setToolTip(qSlicerModuleSelectorToolBar::tr("Next modules"));
   this->NextButton->setMenu(this->NextHistoryMenu);
   // selectNextModule is called only if the toolbutton is clicked not if an
   // action in the history is triggered

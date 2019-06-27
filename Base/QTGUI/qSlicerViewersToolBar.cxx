@@ -199,7 +199,7 @@ void qSlicerViewersToolBarPrivate::init()
                    this, SLOT(setSliceIntersectionVisible(bool)));
 
   // Menu
-  this->CrosshairMenu = new QMenu(QObject::tr("Crosshair"), q);
+  this->CrosshairMenu = new QMenu(tr("Crosshair"), q);
   this->CrosshairMenu->addActions(crosshairJumpSlicesActions->actions());
   this->CrosshairMenu->addSeparator();
   this->CrosshairMenu->addActions(crosshairActions->actions());
@@ -212,8 +212,8 @@ void qSlicerViewersToolBarPrivate::init()
   this->CrosshairToolButton = new QToolButton();
 //  this->CrosshairToolButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   this->CrosshairToolButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-  this->CrosshairToolButton->setToolTip(QObject::tr("Crosshair"));
-  this->CrosshairToolButton->setText(QObject::tr("Crosshair"));
+  this->CrosshairToolButton->setToolTip(tr("Crosshair"));
+  this->CrosshairToolButton->setText(tr("Crosshair"));
   this->CrosshairToolButton->setMenu(this->CrosshairMenu);
   this->CrosshairToolButton->setPopupMode(QToolButton::MenuButtonPopup);
 
@@ -221,9 +221,9 @@ void qSlicerViewersToolBarPrivate::init()
   this->CrosshairToggleAction = new QAction(q);
   this->CrosshairToggleAction->setIcon(QIcon(":/Icons/SlicesCrosshair.png"));
   this->CrosshairToggleAction->setCheckable(true);
-  this->CrosshairToggleAction->setToolTip(QObject::tr(
+  this->CrosshairToggleAction->setToolTip(tr(
     "Toggle crosshair visibility. Hold Shift key and move mouse in a view to set crosshair position."));
-  this->CrosshairToggleAction->setText(QObject::tr("Crosshair"));
+  this->CrosshairToggleAction->setText(tr("Crosshair"));
   this->CrosshairToolButton->setDefaultAction(this->CrosshairToggleAction);
   QObject::connect(this->CrosshairToggleAction, SIGNAL(toggled(bool)),
                    this, SLOT(setCrosshairEnabled(bool)));

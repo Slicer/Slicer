@@ -179,7 +179,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   QObject::connect(this->OrientationMarkerSizesMapper, SIGNAL(mapped(int)),q, SLOT(setOrientationMarkerSize(int)));
   QObject::connect(orientationMarkerSizesActions, SIGNAL(triggered(QAction*)),this->OrientationMarkerSizesMapper, SLOT(map(QAction*)));
   // Menu
-  QMenu* orientationMarkerMenu = new QMenu(tr("Orientation marker"), this->PopupWidget);
+  QMenu* orientationMarkerMenu = new QMenu(qMRMLThreeDViewControllerWidget::tr("Orientation marker"), this->PopupWidget);
   orientationMarkerMenu->setObjectName("orientationMarkerMenu");
   this->OrientationMarkerButton->setMenu(orientationMarkerMenu);
   orientationMarkerMenu->addActions(orientationMarkerTypesActions->actions());

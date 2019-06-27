@@ -197,27 +197,27 @@ void qSlicerExtensionsRestoreWidgetPrivate
   this->progressBar = new QProgressBar;
 
   this->selectAllAction = new QAction(q);
-  this->selectAllAction->setText(QObject::tr("Select All"));
+  this->selectAllAction->setText(qSlicerExtensionsRestoreWidget::tr("Select All"));
 
   this->selectAllButton = new QToolButton(q);
   this->selectAllButton->setDefaultAction(this->selectAllAction);
 
   this->deselectAllAction = new QAction(q);
-  this->deselectAllAction->setText(QObject::tr("Deselect All"));
+  this->deselectAllAction->setText(qSlicerExtensionsRestoreWidget::tr("Deselect All"));
 
   this->deselectAllButton = new QToolButton(q);
   this->deselectAllButton->setDefaultAction(this->deselectAllAction);
 
   this->installSelectedAction = new QAction(q);
-  this->installSelectedAction->setText(QObject::tr("&Install Selected..."));
+  this->installSelectedAction->setText(qSlicerExtensionsRestoreWidget::tr("&Install Selected..."));
 
   this->installSelectedButton = new QToolButton(q);
   this->installSelectedButton->setDefaultAction(this->installSelectedAction);
 
   this->extensionList->setAlternatingRowColors(true);
   this->extensionList->setItemDelegate(new qSlicerRestoreExtensionsItemDelegate(q));
-  this->checkOnStartup->setText(QObject::tr("Check previous extensions on startup"));
-  this->silentInstallOnStartup->setText(QObject::tr("Install previous extensions without request"));
+  this->checkOnStartup->setText(qSlicerExtensionsRestoreWidget::tr("Check previous extensions on startup"));
+  this->silentInstallOnStartup->setText(qSlicerExtensionsRestoreWidget::tr("Install previous extensions without request"));
 
   // See https://issues.slicer.org/view.php?id=4641
   this->checkOnStartup->setVisible(false);
@@ -289,7 +289,7 @@ void qSlicerExtensionsRestoreWidgetPrivate
         }
       else
         {
-        QString text = QObject::tr(
+        QString text = qSlicerExtensionsRestoreWidget::tr(
           "%1 compatible extension(s) from a previous Slicer installation found. Do you want to install? "
           "(For details see: Extension Manager > Restore Extensions)").arg(candidateIds.length());
 
@@ -335,22 +335,23 @@ void qSlicerExtensionsRestoreWidgetPrivate
 
     if (isInstalled)
       {
-      description = QObject::tr("currently installed");
+      description = qSlicerExtensionsRestoreWidget::tr("currently installed");
       }
     else if (isCompatible)
       {
       if (wasInstalledInLastRevision)
         {
-        description = QObject::tr("was used in previously installed Slicer version (%1)").arg(usedLastInRevision);
+        description = qSlicerExtensionsRestoreWidget::tr("was used in previously installed Slicer version (%1)").arg(usedLastInRevision);
         }
       else
         {
-        description = QObject::tr("was last used in Slicer version %1").arg(usedLastInRevision);
+        description = qSlicerExtensionsRestoreWidget::tr("was last used in Slicer version %1").arg(usedLastInRevision);
         }
       }
     else
       {
-      description = QObject::tr("not compatible with current Slicer version (was last used in Slicer version %1)").arg(usedLastInRevision);
+      description = qSlicerExtensionsRestoreWidget::tr(
+            "not compatible with current Slicer version (was last used in Slicer version %1)").arg(usedLastInRevision);
       }
 
     extensionItem->setData(qSlicerRestoreExtensions::IdRole, currentInfo.value("ExtensionId").toString());
@@ -421,7 +422,7 @@ void qSlicerExtensionsRestoreWidgetPrivate
       this->progressDialog->close();
       this->headlessMode = false;
       static_cast<qSlicerApplication*>qApp->confirmRestart(
-        QObject::tr("All extensions restored. Please restart Slicer."));
+            qSlicerExtensionsRestoreWidget::tr("All extensions restored. Please restart Slicer."));
       }
     else
       {
@@ -437,8 +438,7 @@ void qSlicerExtensionsRestoreWidgetPrivate
   if (this->headlessMode)
     {
     this->progressDialog->setValue(value);
-    this->progressDialog->setLabelText(
-      QObject::tr("Installing %1 (%2/%3)")
+    this->progressDialog->setLabelText(qSlicerExtensionsRestoreWidget::tr("Installing %1 (%2/%3)")
       .arg(extensionName)
       .arg(received)
       .arg(total));

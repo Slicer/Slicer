@@ -90,39 +90,39 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->addParameterGroups();
 
   // Setup AutoRun menu
-  QMenu* autoRunMenu = new QMenu(q->tr("AutoRun"), this->AutoRunPushButton);
+  QMenu* autoRunMenu = new QMenu(qSlicerCLIModuleWidget::tr("AutoRun"), this->AutoRunPushButton);
 
   this->AutoRunWhenParameterChanged =
-    new QAction(q->tr("AutoRun on changed parameter"), autoRunMenu);
+    new QAction(qSlicerCLIModuleWidget::tr("AutoRun on changed parameter"), autoRunMenu);
   this->AutoRunWhenParameterChanged->setToolTip(
-    q->tr("As long as the AutoRun button is down, the module "
+    qSlicerCLIModuleWidget::tr("As long as the AutoRun button is down, the module "
           "is run anytime a parameter value is changed."));
   this->AutoRunWhenParameterChanged->setCheckable(true);
   this->connect(this->AutoRunWhenParameterChanged, SIGNAL(toggled(bool)),
                 q, SLOT(setAutoRunWhenParameterChanged(bool)));
 
   this->AutoRunWhenInputModified =
-    new QAction(q->tr("AutoRun on modified input"), autoRunMenu);
+    new QAction(qSlicerCLIModuleWidget::tr("AutoRun on modified input"), autoRunMenu);
   this->AutoRunWhenInputModified->setToolTip(
-    q->tr("As long as the AutoRun button is down, the module is run anytime an "
+    qSlicerCLIModuleWidget::tr("As long as the AutoRun button is down, the module is run anytime an "
           "input node is modified."));
   this->AutoRunWhenInputModified->setCheckable(true);
   this->connect(this->AutoRunWhenInputModified, SIGNAL(toggled(bool)),
                 q, SLOT(setAutoRunWhenInputModified(bool)));
 
   this->AutoRunOnOtherInputEvents =
-    new QAction(q->tr("AutoRun on other input events"), autoRunMenu);
+    new QAction(qSlicerCLIModuleWidget::tr("AutoRun on other input events"), autoRunMenu);
   this->AutoRunOnOtherInputEvents->setToolTip(
-    q->tr("As long as the AutoRun button is down, the module is run anytime an "
+    qSlicerCLIModuleWidget::tr("As long as the AutoRun button is down, the module is run anytime an "
           "input node fires an event other than a modified event."));
   this->AutoRunOnOtherInputEvents->setCheckable(true);
   this->connect(this->AutoRunOnOtherInputEvents, SIGNAL(toggled(bool)),
                 q, SLOT(setAutoRunOnOtherInputEvents(bool)));
 
   this->AutoRunCancelsRunningProcess =
-    new QAction(q->tr("AutoRun cancels running process"),autoRunMenu);
+    new QAction(qSlicerCLIModuleWidget::tr("AutoRun cancels running process"),autoRunMenu);
   this->AutoRunCancelsRunningProcess->setToolTip(
-    q->tr("When checked, on apply, the module cancels/stops the existing "
+    qSlicerCLIModuleWidget::tr("When checked, on apply, the module cancels/stops the existing "
           "running instance if any, otherwise it waits the completion to start "
           "a new run."));
   this->AutoRunCancelsRunningProcess->setCheckable(true);

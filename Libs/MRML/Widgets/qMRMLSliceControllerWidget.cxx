@@ -400,7 +400,7 @@ void qMRMLSliceControllerWidgetPrivate::init()
 
   this->SliceOffsetSlider = new qMRMLSliderWidget(q);
   this->SliceOffsetSlider->setTracking(false);
-  this->SliceOffsetSlider->setToolTip(q->tr("Slice distance from RAS origin"));
+  this->SliceOffsetSlider->setToolTip(qMRMLSliceControllerWidget::tr("Slice distance from RAS origin"));
   this->SliceOffsetSlider->setQuantity("length");
   this->SliceOffsetSlider->setUnitAwareProperties(
     qMRMLSliderWidget::Suffix|qMRMLSliderWidget::Precision|qMRMLSliderWidget::Scaling);
