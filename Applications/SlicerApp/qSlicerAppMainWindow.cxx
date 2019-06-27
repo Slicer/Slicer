@@ -94,7 +94,7 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   QAction* helpVisualBlogAction = new QAction(mainWindow);
   helpVisualBlogAction->setObjectName("HelpVisualBlogAction");
   helpVisualBlogAction->setText(qSlicerAppMainWindow::tr("Visual Blog"));
-  helpVisualBlogAction->setToolTip(qSlicerAppMainWindow::tr("Open your favorite web browser to http://www.slicer.org/slicerWiki/index.php/Slicer3:VisualBlog where you can post screenshots of interesting ways you are using the Slicer3 software package in your research and share them with the Slicer community."));
+  helpVisualBlogAction->setToolTip(qSlicerAppMainWindow::tr("Open the Slicer Visual Blog using your favorite web browser where you can post screenshots of interesting ways you are using the Slicer software package in your research and share them with the Slicer community."));
 
   QAction* helpReportBugOrFeatureRequestAction = new QAction(mainWindow);
   helpReportBugOrFeatureRequestAction->setObjectName("HelpReportBugOrFeatureRequestAction");
