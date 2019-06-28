@@ -108,7 +108,6 @@ function(SlicerFunctionAddGenerateSlicerTranslationQMFilesTarget)
 
   # ---------------------------------------------------------------------------------
   set(qm_output_dirs)
-  set(rewritten_scripts_to_translate)
 
   # ---------------------------------------------------------------------------------
   # UPDATE or ADD translation
@@ -162,18 +161,12 @@ function(SlicerFunctionAddGenerateSlicerTranslationQMFilesTarget)
       QT5_ADD_TRANSLATION(QM_OUTPUT_FILES ${ts_files})
     endif()
 
-    list(APPEND rewritten_scripts_to_translate ${rewritten_scripts_to_translate_for_context})
     list(APPEND qm_output_dirs ${qm_output_dir})
   endforeach()
 
   # ---------------------------------------------------------------------------------
   # Targets
   # ---------------------------------------------------------------------------------
-  if(Slicer_USE_PYTHONQT)
-    add_custom_target(RewritePythonScriptsForTranslation DEPENDS
-      ${rewritten_scripts_to_translate}
-      )
-  endif()
 
   add_custom_target(GenerateSlicerTranslationQMFiles ALL DEPENDS
     ${QM_OUTPUT_FILES}
