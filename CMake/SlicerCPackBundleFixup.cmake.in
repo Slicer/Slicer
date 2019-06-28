@@ -197,7 +197,7 @@ function(fixup_bundle_with_plugins app)
   set(Slicer_USE_SimpleITK "@Slicer_USE_SimpleITK@")
   if(Slicer_USE_SimpleITK)
     list(APPEND candidates_pattern
-      "${app_dir}/Contents/lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR}/SimpleITK*/_SimpleITK.so"
+      "${app_dir}/Contents/lib/Python/${PYTHON_SITE_PACKAGES_SUBDIR}/SimpleITK*/_SimpleITK[^/]*\\.(so|dylib)"
       )
   endif()
 
