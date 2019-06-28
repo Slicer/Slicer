@@ -155,7 +155,7 @@ function(SlicerFunctionAddGenerateSlicerTranslationQMFilesTarget)
     set(untranslated_ts_file ${untranslated_ts_dir}/${ts_basefilename}_untranslated.ts)
     SLICER_CREATE_TRANSLATION_ONLY(
       ${srcs_to_translate} ${rewritten_scripts_to_translate_for_context} ${untranslated_ts_file}
-      OPTIONS -source-language en_US -no-ui-lines
+      OPTIONS -source-language en_US -no-ui-lines -locations none
       )
 
     set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${qm_output_dir})
@@ -164,7 +164,7 @@ function(SlicerFunctionAddGenerateSlicerTranslationQMFilesTarget)
       # generating the associated "*_<lang>.qm" files.
       QT5_CREATE_TRANSLATION(
         QM_OUTPUT_FILES ${srcs_to_translate} ${rewritten_scripts_to_translate_for_context} ${ts_files}
-        OPTIONS -source-language en_US -no-ui-lines
+        OPTIONS -source-language en_US -no-ui-lines -locations none
         )
     else()
       # Add custom command for generating the associated "*_<lang>.qm" files.
