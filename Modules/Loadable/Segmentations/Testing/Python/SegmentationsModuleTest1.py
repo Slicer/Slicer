@@ -82,10 +82,8 @@ class SegmentationsModuleTest1(unittest.TestCase):
   #------------------------------------------------------------------------------
   def TestSection_LoadInputData(self):
     # Load into Slicer
-    ctLoadSuccess = slicer.util.loadVolume(self.dataDir + '/TinyPatient_CT.nrrd')
-    self.assertTrue( ctLoadSuccess )
-    segLoadSuccess = slicer.util.loadNodeFromFile(self.dataDir + '/TinyPatient_Structures.seg.vtm', "SegmentationFile", {})
-    self.assertTrue( segLoadSuccess )
+    slicer.util.loadVolume(self.dataDir + '/TinyPatient_CT.nrrd')
+    slicer.util.loadNodeFromFile(self.dataDir + '/TinyPatient_Structures.seg.vtm', "SegmentationFile", {})
 
     # Change master representation to closed surface (so that conversion is possible when adding segment)
     self.inputSegmentationNode = slicer.util.getNode('vtkMRMLSegmentationNode1')

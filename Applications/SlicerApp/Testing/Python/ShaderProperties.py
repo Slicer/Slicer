@@ -76,7 +76,7 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
     fileURL = 'http://slicer.kitware.com/midas3/download/item/426450/MRRobot-Shoulder-MR.nrrd'
     filePath = os.path.join(slicer.util.tempDirectory(), 'MRRobot-Shoulder-MR.nrrd')
     slicer.util.downloadFile(fileURL, filePath)
-    success, shoulder = slicer.util.loadVolume(filePath, returnNode=True)
+    shoulder = slicer.util.loadVolume(filePath)
 
     self.delayDisplay("Shoulder downloaded...")
 

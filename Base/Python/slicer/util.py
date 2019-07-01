@@ -370,80 +370,197 @@ def setSliceViewerLayers(background='keep-current', foreground='keep-current', l
 #
 
 def loadNodeFromFile(filename, filetype, properties={}, returnNode=False):
+  """Load node into the scene from a file.
+  :param filename: full path of the file to load.
+  :param filetype: specifies the file type, which determines which IO class will load the file.
+  :param properties: map containing additional parameters for the loading.
+  :param returnNode: Deprecated. If set to true then the method returns status flag and node
+    instead of signalling error by throwing an exception.
+  :return: loaded node (if multiple nodes are loaded then a list of nodes).
+    If returnNode is True then a status flag and loaded node are returned.
+  """
   from slicer import app
   from vtk import vtkCollection
   properties['fileName'] = filename
 
+  loadedNodesCollection = vtkCollection()
+  success = app.coreIOManager().loadNodes(filetype, properties, loadedNodesCollection)
+  loadedNode = loadedNodesCollection.GetItemAsObject(0) if loadedNodesCollection.GetNumberOfItems() > 0 else None
+
+  # Deprecated way of returning status and node
   if returnNode:
-      loadedNodes = vtkCollection()
-      success = app.coreIOManager().loadNodes(filetype, properties, loadedNodes)
-      return success, loadedNodes.GetItemAsObject(0)
-  else:
-      success = app.coreIOManager().loadNodes(filetype, properties)
-      return success
+    import logging
+    logging.warning("loadNodeFromFile `returnNode` argument is deprecated. Loaded node is now returned directly if `returnNode` is not specified.")
+    return success, loadedNode
+
+  if not success:
+    errorMessage = "Failed to load node from file: " + str(filename)
+    raise RuntimeError(errorMessage)
+
+  return loadedNode
+
+def loadNodesFromFile(filename, filetype, properties={}, returnNode=False):
+  """Load nodes into the scene from a file. It differs from `loadNodeFromFile` in that
+  it returns loaded node(s) in an iterator.
+  :param filename: full path of the file to load.
+  :param filetype: specifies the file type, which determines which IO class will load the file.
+  :param properties: map containing additional parameters for the loading.
+  :return: loaded node(s) in an iterator object.
+  """
+  from slicer import app
+  from vtk import vtkCollection
+  properties['fileName'] = filename
+
+  loadedNodesCollection = vtkCollection()
+  success = app.coreIOManager().loadNodes(filetype, properties, loadedNodesCollection)
+  if not success:
+    errorMessage = "Failed to load nodes from file: " + str(filename)
+    raise RuntimeError(errorMessage)
+
+  return iter(loadedNodesCollection)
 
 def loadColorTable(filename, returnNode=False):
+  """Load node from file.
+  :param filename: full path of the file to load.
+  :param returnNode: Deprecated.
+  :return: loaded node (if multiple nodes are loaded then a list of nodes).
+    If returnNode is True then a status flag and loaded node are returned.
+  """
   filetype = 'ColorTableFile'
   return loadNodeFromFile(filename, filetype, {}, returnNode)
 
 def loadFiberBundle(filename, returnNode=False):
+  """Load node from file.
+  :param filename: full path of the file to load.
+  :param returnNode: Deprecated.
+  :return: loaded node (if multiple nodes are loaded then a list of nodes).
+    If returnNode is True then a status flag and loaded node are returned.
+  """
   filetype = 'FiberBundleFile'
   return loadNodeFromFile(filename, filetype, {}, returnNode)
 
 def loadFiducialList(filename, returnNode=False):
+  """Load node from file.
+  :param filename: full path of the file to load.
+  :param returnNode: Deprecated.
+  :return: loaded node (if multiple nodes are loaded then a list of nodes).
+    If returnNode is True then a status flag and loaded node are returned.
+  """
   filetype = 'FiducialListFile'
   return loadNodeFromFile(filename, filetype, {}, returnNode)
 
 def loadAnnotationFiducial(filename, returnNode=False):
+  """Load node from file.
+  :param filename: full path of the file to load.
+  :param returnNode: Deprecated.
+  :return: loaded node (if multiple nodes are loaded then a list of nodes).
+    If returnNode is True then a status flag and loaded node are returned.
+  """
   filetype = 'AnnotationFile'
   properties = {}
   properties['fiducial'] = 1
   return loadNodeFromFile(filename, filetype, properties, returnNode)
 
 def loadAnnotationRuler(filename, returnNode=False):
+  """Load node from file.
+  :param filename: full path of the file to load.
+  :param returnNode: Deprecated.
+  :return: loaded node (if multiple nodes are loaded then a list of nodes).
+    If returnNode is True then a status flag and loaded node are returned.
+  """
   filetype = 'AnnotationFile'
   properties = {}
   properties['ruler'] = 1
   return loadNodeFromFile(filename, filetype, properties, returnNode)
 
 def loadAnnotationROI(filename, returnNode=False):
+  """Load node from file.
+  :param filename: full path of the file to load.
+  :param returnNode: Deprecated.
+  :return: loaded node (if multiple nodes are loaded then a list of nodes).
+    If returnNode is True then a status flag and loaded node are returned.
+  """
   filetype = 'AnnotationFile'
   properties = {}
   properties['roi'] = 1
   return loadNodeFromFile(filename, filetype, properties, returnNode)
 
 def loadMarkupsFiducialList(filename, returnNode=False):
+  """Load node from file.
+  :param filename: full path of the file to load.
+  :param returnNode: Deprecated.
+  :return: loaded node (if multiple nodes are loaded then a list of nodes).
+    If returnNode is True then a status flag and loaded node are returned.
+  """
   filetype = 'MarkupsFiducials'
   properties = {}
   return loadNodeFromFile(filename, filetype, properties, returnNode)
 
 def loadModel(filename, returnNode=False):
+  """Load node from file.
+  :param filename: full path of the file to load.
+  :param returnNode: Deprecated.
+  :return: loaded node (if multiple nodes are loaded then a list of nodes).
+    If returnNode is True then a status flag and loaded node are returned.
+  """
   filetype = 'ModelFile'
   return loadNodeFromFile(filename, filetype, {}, returnNode)
 
 def loadScalarOverlay(filename, returnNode=False):
+  """Load node from file.
+  :param filename: full path of the file to load.
+  :param returnNode: Deprecated.
+  :return: loaded node (if multiple nodes are loaded then a list of nodes).
+    If returnNode is True then a status flag and loaded node are returned.
+  """
   filetype = 'ScalarOverlayFile'
   return loadNodeFromFile(filename, filetype, {}, returnNode)
 
 def loadSegmentation(filename, returnNode=False):
+  """Load node from file.
+  :param filename: full path of the file to load.
+  :param returnNode: Deprecated.
+  :return: loaded node (if multiple nodes are loaded then a list of nodes).
+    If returnNode is True then a status flag and loaded node are returned.
+  """
   filetype = 'SegmentationFile'
   return loadNodeFromFile(filename, filetype, {}, returnNode)
 
 def loadTransform(filename, returnNode=False):
+  """Load node from file.
+  :param filename: full path of the file to load.
+  :param returnNode: Deprecated.
+  :return: loaded node (if multiple nodes are loaded then a list of nodes).
+    If returnNode is True then a status flag and loaded node are returned.
+  """
   filetype = 'TransformFile'
   return loadNodeFromFile(filename, filetype, {}, returnNode)
 
 def loadLabelVolume(filename, properties={}, returnNode=False):
+  """Load node from file.
+  :param filename: full path of the file to load.
+  :param returnNode: Deprecated.
+  :return: loaded node (if multiple nodes are loaded then a list of nodes).
+    If returnNode is True then a status flag and loaded node are returned.
+  """
   filetype = 'VolumeFile'
   properties['labelmap'] = True
   return loadNodeFromFile(filename, filetype, properties, returnNode)
 
 def loadShaderProperty(filename, returnNode=False):
+  """Load node from file.
+  :param filename: full path of the file to load.
+  :param returnNode: Deprecated.
+  :return: loaded node (if multiple nodes are loaded then a list of nodes).
+    If returnNode is True then a status flag and loaded node are returned.
+  """
   filetype = 'ShaderPropertyFile'
   return loadNodeFromFile(filename, filetype, {}, returnNode)
 
 def loadVolume(filename, properties={}, returnNode=False):
-  """Properties:
+  """Load node from file.
+  :param filename: full path of the file to load.
+  :param properties:
   - name: this name will be used as node name for the loaded volume
   - labelmap: interpret volume as labelmap
   - singleFile: ignore all other files in the directory
@@ -452,11 +569,20 @@ def loadVolume(filename, properties={}, returnNode=False):
   - autoWindowLevel: compute window/level automatically
   - show: display volume in slice viewers after loading is completed
   - fileNames: list of filenames to load the volume from
+  :param returnNode: Deprecated.
+  :return: loaded node (if multiple nodes are loaded then a list of nodes).
+    If returnNode is True then a status flag and loaded node are returned.
   """
   filetype = 'VolumeFile'
   return loadNodeFromFile(filename, filetype, properties, returnNode)
 
 def loadScene(filename, properties={}):
+  """Load node from file.
+  :param filename: full path of the file to load.
+  :param returnNode: Deprecated.
+  :return: loaded node (if multiple nodes are loaded then a list of nodes).
+    If returnNode is True then a status flag and loaded node are returned.
+  """
   filetype = 'SceneFile'
   return loadNodeFromFile(filename, filetype, properties, returnNode=False)
 
