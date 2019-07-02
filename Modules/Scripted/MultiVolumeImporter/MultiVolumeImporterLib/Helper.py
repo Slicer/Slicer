@@ -4,10 +4,12 @@ from __main__ import vtk, slicer
 class Helper( object ):
 
   @staticmethod
-  def SetBgFgVolumes(bg, fg):
+  def SetBgFgVolumes(bgID, fgID):
     appLogic = slicer.app.applicationLogic()
     selectionNode = appLogic.GetSelectionNode()
-    selectionNode.SetReferenceActiveVolumeID(bg)
-    selectionNode.SetReferenceSecondaryVolumeID(fg)
+    if bgID is not None:
+      selectionNode.SetReferenceActiveVolumeID(bgID)
+    if fgID is not None:
+      selectionNode.SetReferenceSecondaryVolumeID(fgID)
     appLogic.PropagateVolumeSelection()
 
