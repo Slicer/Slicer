@@ -201,6 +201,12 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
       # VS2015
       set(OpenSSL_1.0.1h_1900_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1900-32.tar.gz)
       set(OpenSSL_1.0.1h_1900_MD5 e0e26ae6ac5693d266c804e738d7aa14)
+      # VS2017 (expected to be binary compatible with VS2015)
+      set(OpenSSL_1.0.1h_1916_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1900-32.tar.gz)
+      set(OpenSSL_1.0.1h_1916_MD5 e0e26ae6ac5693d266c804e738d7aa14)
+      # VS2019 (expected to be binary compatible with VS2015)
+      set(OpenSSL_1.0.1h_1921_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1900-32.tar.gz)
+      set(OpenSSL_1.0.1h_1921_MD5 e0e26ae6ac5693d266c804e738d7aa14)
 
       # OpenSSL 1.0.1l
       # VS2008
@@ -226,6 +232,12 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
       # VS2015
       set(OpenSSL_1.0.1h_1900_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1900-64.tar.gz)
       set(OpenSSL_1.0.1h_1900_MD5 f93d266def384926015550452573e824)
+      # VS2017
+      set(OpenSSL_1.0.1h_1916_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1900-64.tar.gz)
+      set(OpenSSL_1.0.1h_1916_MD5 f93d266def384926015550452573e824)
+      # VS2019
+      set(OpenSSL_1.0.1h_1921_URL https://github.com/Slicer/Slicer-OpenSSL/releases/download/1.0.1h/OpenSSL_1_0_1h-install-msvc1900-64.tar.gz)
+      set(OpenSSL_1.0.1h_1921_MD5 f93d266def384926015550452573e824)
 
       # OpenSSL 1.0.1l
       # VS2008
