@@ -142,7 +142,7 @@ if(WIN32)
     else()
       # We do not require administrative privileges, therefore we install to user folder
       # "C:\Users\<username>\AppData\Local".
-      set(_install_root_default "$LOCALAPPDATA\\\\${Slicer_ORGANIZATION_NAME}")
+      set(_install_root_default "$LOCALAPPDATA/${Slicer_ORGANIZATION_NAME}")
     endif()
 
     set(Slicer_CPACK_NSIS_INSTALL_ROOT ${_install_root_default} CACHE STRING

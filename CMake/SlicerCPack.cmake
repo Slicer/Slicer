@@ -370,8 +370,9 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
   endif()
 
   if(NOT CPACK_NSIS_INSTALL_SUBDIRECTORY STREQUAL "")
-    set(_nsis_install_root "${_nsis_install_root}\\\\${CPACK_NSIS_INSTALL_SUBDIRECTORY}")
+    set(_nsis_install_root "${_nsis_install_root}/${CPACK_NSIS_INSTALL_SUBDIRECTORY}")
   endif()
+  string(REPLACE "/" "\\\\" _nsis_install_root "${_nsis_install_root}")
   slicer_verbose_set(CPACK_NSIS_INSTALL_ROOT ${_nsis_install_root})
 
   # Slicer does *NOT* require setting the windows path
