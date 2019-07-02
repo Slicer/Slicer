@@ -333,14 +333,14 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
 
     # try to account for some of the unit options
     # (Note: no test data available but we hope these are right)
-    if units & header.UnitsMSec:
+    if units & header.UnitsMSec == header.UnitsMSec:
       timeSpacing /= 1000.
-    if units & header.UnitsUSec:
+    if units & header.UnitsUSec == header.UnitsUSec:
       timeSpacing /= 1000. / 1000.
     spaceScaling = 1.
-    if units & header.UnitsMeter:
+    if units & header.UnitsMeter == header.UnitsMeter:
       spaceScaling *= 1000.
-    if units & header.UnitsMicron:
+    if units & header.UnitsMicron == header.UnitsMicron:
       spaceScaling /= 1000.
     spacing = [e * spaceScaling for e in spacing]
 
