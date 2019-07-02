@@ -1824,16 +1824,27 @@ def pip_install(req):
     pip_install("tensorflow")
 
   """
-  import os
-  import sys
+
+  # Determine pythonSlicerExecutablePath
   try:
     from slicer import app
-    pythonSlicerExecutablePath = app.slicerHome+"/bin/PythonSlicer"
+    # If we get to this line then import from "app" is succeeded,
+    # which means that we run this function from Slicer Python interpreter.
+    # PythonSlicer is added to PATH environment variable in Slicer
+    # therefore shutil.which will be able to find it.
+    import shutil
+    import subprocess
+    pythonSlicerExecutablePath = shutil.which('PythonSlicer')
+    if not pythonSlicerExecutablePath:
+      raise RuntimeError("PythonSlicer executable not found")
   except ImportError:
     # Running from console
+    import os
+    import sys
     pythonSlicerExecutablePath = os.path.dirname(sys.executable)+"/PythonSlicer"
-  if os.name == 'nt':
-    pythonSlicerExecutablePath += ".exe"
+    if os.name == 'nt':
+      pythonSlicerExecutablePath += ".exe"
+
   command_line = [pythonSlicerExecutablePath, "-m", "pip", "install"]
   command_line.extend(req.split(" "))
   proc=launchConsoleProcess(command_line, useStartupEnvironment = False)
