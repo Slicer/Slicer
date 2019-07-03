@@ -676,11 +676,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       self.logCallback(text)
 
   def showViewControllers(self, show):
-    lm = slicer.app.layoutManager()
-    for viewIndex in range(lm.threeDViewCount):
-      lm.threeDWidget(viewIndex).threeDController().setVisible(show)
-    for sliceViewName in lm.sliceViewNames():
-      lm.sliceWidget(sliceViewName).sliceController().setVisible(show)
+    slicer.util.setViewControllersVisible(show)
 
   def getRandomFilePattern(self):
     import string

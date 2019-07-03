@@ -1849,3 +1849,74 @@ def pip_install(req):
   command_line.extend(req.split(" "))
   proc=launchConsoleProcess(command_line, useStartupEnvironment = False)
   logProcessOutput(proc)
+
+def setToolbarsVisible(visible, ignore=None):
+  """Show/hide all existing toolbars, except those listed in
+  ignore list.
+  """
+
+  for toolbar in mainWindow().findChildren('QToolBar'):
+    if ignore is not None and toolbar in ignore:
+      continue
+    toolbar.setVisible(visible)
+
+  # Prevent sequence browser toolbar showing up automatically
+  # when a sequence is loaded.
+  # (put in try block because Sequence Browser module is not always installed)
+  try:
+    import slicer
+    slicer.modules.sequencebrowser.autoShowToolBar = visible
+  except:
+    # Sequences module is not installed
+    pass
+
+def setMenuBarsVisible(visible, ignore=None):
+  """Show/hide all menu bars, except those listed in
+  ignore list."""
+  for menubar in mainWindow().findChildren('QMenuBar'):
+    if ignore is not None and menubar in ignore:
+      continue
+    menubar.setVisible(visible)
+
+def setPythonConsoleVisible(visible):
+  """Show/hide Python console."""
+  mainWindow().pythonConsole().parent().setVisible(visible)
+
+def setStatusBarVisible(visible):
+  """Show/hide status bar"""
+  mainWindow(verbose=False).statusBar().setVisible(visible)
+
+def setViewControllersVisible(visible):
+  """Show/hide view controller toolbar at the top of slice and 3D views"""
+  import slicer
+  lm = slicer.app.layoutManager()
+  for viewIndex in range(lm.threeDViewCount):
+    lm.threeDWidget(viewIndex).threeDController().setVisible(visible)
+  for sliceViewName in lm.sliceViewNames():
+    lm.sliceWidget(sliceViewName).sliceController().setVisible(visible)
+
+def setModulePanelTitleVisible(visible):
+  """Show/hide module panel title bar at the top of module panel.
+  If the title bar is not visible then it is not possible to drag and dock the
+  module panel to a different location."""
+  modulePanelDockWidget = mainWindow().findChildren('QDockWidget','PanelDockWidget')[0]
+  if visible:
+    modulePanelDockWidget.setTitleBarWidget(None)
+  else:
+    import qt
+    modulePanelDockWidget.setTitleBarWidget(qt.QWidget(modulePanelDockWidget))
+
+def setApplicationLogoVisible(visible):
+  """Show/hide application logo at the top of module panel."""
+  widget = findChild(mainWindow(), "LogoLabel")
+  widget.setVisible(visible)
+
+def setModuleHelpSectionVisible(visible):
+  """Show/hide Help section at the top of module panel."""
+  modulePanel = findChild(mainWindow(), "ModulePanel")
+  modulePanel.helpAndAcknowledgmentVisible=False
+
+def setDataProbeVisible(visible):
+  """Show/hide Data probe at the bottom of module panel."""
+  widget = findChild(mainWindow(), "DataProbeCollapsibleWidget")
+  widget.setVisible(visible)
