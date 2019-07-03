@@ -76,6 +76,7 @@ void qMRMLViewControllerBarPrivate::init()
   this->setParent(q);
 
   this->BarWidget = new QWidget(q);
+  this->BarWidget->setObjectName("BarWidget");
   this->BarWidget->setAutoFillBackground(true); // color the bar
 
   this->ControllerLayout = new QVBoxLayout(q);
@@ -98,6 +99,7 @@ void qMRMLViewControllerBarPrivate::init()
   this->setupPopupUi();
 
   this->PinButton = new QToolButton(q);
+  this->PinButton->setObjectName("PinButton");
   this->PinButton->setCheckable(true);
   this->PinButton->setAutoRaise(true);
   this->PinButton->setFixedSize(15, 15);
@@ -111,6 +113,7 @@ void qMRMLViewControllerBarPrivate::init()
   this->BarLayout->addWidget(this->PinButton);
 
   this->ViewLabel = new QLabel(q);
+  this->ViewLabel->setObjectName("ViewLabel");
   this->ViewLabel->setAlignment(Qt::AlignHCenter | Qt::AlignCenter);
   this->ViewLabel->setMinimumWidth(this->ViewLabel->fontMetrics().width("XX"));
   this->ViewLabel->setAutoFillBackground(true);
