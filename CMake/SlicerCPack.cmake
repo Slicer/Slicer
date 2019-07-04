@@ -33,6 +33,7 @@ endif()
 
 if(NOT Slicer_USE_SYSTEM_QT)
   set(SlicerBlockInstallQtPlugins_subdirectories
+    audio
     imageformats
     sqldrivers
     )
