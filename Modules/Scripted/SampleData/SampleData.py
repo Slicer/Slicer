@@ -679,6 +679,15 @@ class SampleDataLogic(object):
           return source
     return None
 
+  def categoryForSource(self, a_source):
+    """For a given SampleDataSource return the associated category name.
+    """
+    for category in slicer.modules.sampleDataSources.keys():
+      for source in slicer.modules.sampleDataSources[category]:
+        if a_source == source:
+          return category
+    return None
+
   def downloadFromURL(self, uris=None, fileNames=None, nodeNames=None, checksums=None, loadFiles=None,
     customDownloader=None, loadFileTypes=None, loadFileProperties={}):
     """Download and optionally load data into the application.
@@ -896,6 +905,7 @@ class SampleDataTest(ScriptedLoadableModuleTest):
       self.test_setCategoriesFromSampleDataSources,
       self.test_isSampleDataSourceRegistered,
       self.test_customDownloader,
+      self.test_categoryForSource,
     ]:
       self.setUp()
       test()
@@ -1100,3 +1110,8 @@ class SampleDataTest(ScriptedLoadableModuleTest):
 
     self.assertEqual(len(self.customDownloads), 1)
     self.assertEqual(self.customDownloads[0].sampleName, 'customDownloader')
+
+  def test_categoryForSource(self):
+    logic = SampleDataLogic()
+    source = slicer.modules.sampleDataSources[logic.builtInCategoryName][0]
+    self.assertEqual(logic.categoryForSource(source), logic.builtInCategoryName)
