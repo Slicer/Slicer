@@ -923,9 +923,13 @@ def array(pattern = "", index = 0):
     return arrayFromModelPoints(node)
   elif isinstance(node, slicer.vtkMRMLGridTransformNode):
     return arrayFromGridTransform(node)
+  elif isinstance(node, slicer.vtkMRMLMarkupsNode):
+    return arrayFromMarkupsControlPoints(node)
+  elif isinstance(node, slicer.vtkMRMLTransformNode):
+    return arrayFromTransformMatrix(node)
 
   # TODO: accessors for other node types: polydata (verts, polys...), colors
-  return None
+  raise RuntimeError("Cannot get node "+node.GetID()+" as array")
 
 def arrayFromVolume(volumeNode):
   """Return voxel array from volume node as numpy array.
@@ -1024,6 +1028,105 @@ def arrayFromGridTransform(gridTransformNode):
   narray = vtk.util.numpy_support.vtk_to_numpy(displacementGrid.GetPointData().GetScalars()).reshape(nshape)
   return narray
 
+def arrayFromVTKMatrix(vmatrix):
+  """Return vtkMatrix4x4 or vtkMatrix3x3 elements as numpy array.
+  The returned array is just a copy and so any modification in the array will not affect the input matrix.
+  To set VTK matrix from a numpy array, use :py:meth:`vtkMatrixFromArray` or
+  :py:meth:`updateVTKMatrixFromArray`.
+  """
+  from vtk import vtkMatrix4x4
+  from vtk import vtkMatrix3x3
+  import numpy as np
+  if isinstance(vmatrix, vtkMatrix4x4):
+    matrixSize = 4
+  elif isinstance(vmatrix, vtkMatrix3x3):
+    matrixSize = 3
+  else:
+    raise RuntimeError("Input must be vtk.vtkMatrix3x3 or vtk.vtkMatrix4x4")
+  narray = np.eye(matrixSize)
+  for r in range(matrixSize):
+    for c in range(matrixSize):
+      narray[r,c] = vmatrix.GetElement(r,c)
+  return narray
+
+def vtkMatrixFromArray(narray):
+  """Create VTK matrix from a 3x3 or 4x4 numpy array.
+  :param narray: input numpy array
+  The returned matrix is just a copy and so any modification in the array will not affect the output matrix.
+  To set numpy array from VTK matrix, use :py:meth:`arrayFromVTKMatrix`.
+  """
+  from vtk import vtkMatrix4x4
+  from vtk import vtkMatrix3x3
+  narrayshape = narray.shape
+  if narrayshape == (4,4):
+    vmatrix = vtkMatrix4x4()
+    updateVTKMatrixFromArray(vmatrix, narray)
+    return vmatrix
+  elif narrayshape == (3,3):
+    vmatrix = vtkMatrix3x3()
+    updateVTKMatrixFromArray(vmatrix, narray)
+    return vmatrix
+  else:
+    raise RuntimeError("Unsupported numpy array shape: "+str(narrayshape)+" expected (4,4)")
+
+def updateVTKMatrixFromArray(vmatrix, narray):
+  """Update VTK matrix values from a numpy array.
+  :param vmatrix: VTK matrix (vtkMatrix4x4 or vtkMatrix3x3) that will be update
+  :param narray: input numpy array
+  To set numpy array from VTK matrix, use :py:meth:`arrayFromVTKMatrix`.
+  """
+  from vtk import vtkMatrix4x4
+  from vtk import vtkMatrix3x3
+  if isinstance(vmatrix, vtkMatrix4x4):
+    for r in range(4):
+      for c in range(4):
+        vmatrix.SetElement(r,c, narray[r,c])
+  elif isinstance(vmatrix, vtkMatrix3x3):
+    for r in range(3):
+      for c in range(3):
+        vmatrix.SetElement(r,c, narray[r,c])
+  else:
+    raise RuntimeError("Input VTK matrix must be vtk.vtkMatrix3x3 or vtk.vtkMatrix4x4")
+
+def arrayFromTransformMatrix(transformNode, toWorld=False):
+  """Return 4x4 transformation matrix as numpy array.
+  :param toWorld: if set to True then the transform to world coordinate system is returned
+    (effect of parent transform to the node is applied), otherwise transform to parent transform is returned.
+  The returned array is just a copy and so any modification in the array will not affect the transform node.
+  To set transformation matrix from a numpy array, use :py:meth:`updateTransformMatrixFromArray`.
+  """
+  import numpy as np
+  from vtk import vtkMatrix4x4
+  vmatrix = vtkMatrix4x4()
+  if toWorld:
+    success = transformNode.GetMatrixTransformToWorld(vmatrix)
+  else:
+    success = transformNode.GetMatrixTransformToParent(vmatrix)
+  if not success:
+    raise RuntimeError("Failed to get transformation matrix from node "+transformNode.GetID())
+  return arrayFromVTKMatrix(vmatrix)
+
+def updateTransformMatrixFromArray(transformNode, narray, toWorld = False):
+  """Set transformation matrix from a numpy array of size 4x4 (toParent).
+  :param world: if set to True then the transform will be set so that transform
+    to world matrix will be equal to narray; otherwise transform to parent will be
+    set as narray.
+  """
+  import numpy as np
+  from vtk import vtkMatrix4x4
+  narrayshape = narray.shape
+  if narrayshape != (4,4):
+    raise RuntimeError("Unsupported numpy array shape: "+str(narrayshape)+" expected (4,4)")
+  if toWorld and transformNode.GetParentTransformNode():
+    # thisToParent = worldToParent * thisToWorld = inv(parentToWorld) * toWorld
+    narrayParentToWorld = arrayFromTransformMatrix(transformNode.GetParentTransformNode())
+    thisToParent = np.dot(np.linalg.inv(narrayParentToWorld), narray)
+    updateTransformMatrixFromArray(transformNode, thisToParent, toWorld = False)
+  else:
+    vmatrix = vtkMatrix4x4()
+    updateVTKMatrixFromArray(vmatrix, narray)
+    transformNode.SetMatrixTransformToParent(vmatrix)
+
 def arrayFromGridTransformModified(gridTransformNode):
   """Indicate that modification of a numpy array returned by :py:meth:`arrayFromModelPoints` has been completed."""
   transformGrid = gridTransformNode.GetTransformFromParent()
@@ -1047,6 +1150,54 @@ def arrayFromSegment(segmentationNode, segmentId):
   import vtk.util.numpy_support
   narray = vtk.util.numpy_support.vtk_to_numpy(vimage.GetPointData().GetScalars()).reshape(nshape)
   return narray
+
+def arrayFromMarkupsControlPoints(markupsNode, world = False):
+  """Return control point positions of a markups node as columns in a numpy array (of size 3xN).
+  :param world: if set to True then the control points coordinates are returned in world coordinate system
+    (effect of parent transform to the node is applied).
+  The returned array is just a copy and so any modification in the array will not affect the markup node.
+  To modify markup control points based on a numpy array, use :py:meth:`updateMarkupControlPointsFromArray`.
+  """
+  numberOfControlPoints = markupsNode.GetNumberOfControlPoints()
+  import numpy as np
+  narray = np.zeros([3,numberOfControlPoints])
+  for controlPointIndex in range(numberOfControlPoints):
+    if world:
+      markupsNode.GetNthControlPointPositionWorld(controlPointIndex, narray[:,controlPointIndex])
+    else:
+      markupsNode.GetNthControlPointPosition(controlPointIndex, narray[:,controlPointIndex])
+  return narray
+
+def updateMarkupControlPointsFromArray(markupsNode, narray, world = False):
+  """Sets control point positions in a markups node from a numpy array of size 3xN.
+  :param world: if set to True then the control points coordinates are expected in world coordinate system.
+  All previous content of the node is deleted.
+  """
+  narrayshape = narray.shape
+  if narrayshape == (0,):
+    markupsNode.RemoveAllControlPoints()
+    return
+  if len(narrayshape) != 2 or narrayshape[0] != 3:
+    raise RuntimeError("Unsupported numpy array shape: "+str(narrayshape)+" expected (3,N)")
+  numberOfControlPoints = narrayshape[1]
+  oldNumberOfControlPoints = markupsNode.GetNumberOfControlPoints()
+  # Update existing control points
+  for controlPointIndex in range(min(numberOfControlPoints, oldNumberOfControlPoints)):
+    if world:
+      markupsNode.SetNthControlPointPositionWorldFromArray(controlPointIndex, narray[:,controlPointIndex])
+    else:
+      markupsNode.SetNthControlPointPositionFromArray(controlPointIndex, narray[:,controlPointIndex])
+  if numberOfControlPoints >= oldNumberOfControlPoints:
+    # Add new points to the markup node
+    for controlPointIndex in range(oldNumberOfControlPoints, numberOfControlPoints):
+      if world:
+        markupsNode.AddControlPointWorld(vtk.vtkVector3d(narray[:,controlPointIndex]))
+      else:
+        markupsNode.AddControlPoint(vtk.vtkVector3d(narray[:,controlPointIndex]))
+  else:
+    # Remove extra point from the markup node
+    for controlPointIndex in range(oldNumberOfControlPoints, numberOfControlPoints, -1):
+      markupsNode.RemoveNthControlPoint(controlPointIndex-1)
 
 def updateVolumeFromArray(volumeNode, narray):
   """Sets voxels of a volume node from a numpy array.
