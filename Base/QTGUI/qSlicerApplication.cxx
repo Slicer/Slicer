@@ -851,6 +851,7 @@ void qSlicerApplication::logApplicationInformation() const
       << "Qt configuration "
       << "Developer mode enabled "
       << "Prefer executable CLI "
+      << "Application path "
       << "Additional module paths ";
 
   int titleWidth = 0;
@@ -1018,6 +1019,10 @@ void qSlicerApplication::logApplicationInformation() const
       additionalModulePaths << extensionOrModulePath;
       }
     }
+
+  qDebug("%s: %s",
+    qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
+    qPrintable(this->applicationDirPath()));
 
   qDebug("%s: %s",
          qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
