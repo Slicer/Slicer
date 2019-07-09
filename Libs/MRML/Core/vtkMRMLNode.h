@@ -552,11 +552,14 @@ public:
     this->EndModify(oldMode);
     }
 
-  /// \brief Only the scene can set itself to the node.
+  /// Get the scene this node has been added to.
+  virtual vtkMRMLScene* GetScene();
+
+  /// \brief This method is for internal use only.
+  /// Use AddNode method of vtkMRMLScene to add a node to the scene.
   ///
   /// Internally calls SetSceneReferences()
   /// \sa SetSceneReferences()
-  virtual vtkMRMLScene* GetScene();
   virtual void SetScene(vtkMRMLScene* scene);
 
   /// \brief Update the references of the node to the scene.
