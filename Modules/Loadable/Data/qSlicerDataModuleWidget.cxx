@@ -60,6 +60,7 @@ protected:
   qSlicerDataModuleWidget* const q_ptr;
 public:
   qSlicerDataModuleWidgetPrivate(qSlicerDataModuleWidget& object);
+  ~qSlicerDataModuleWidgetPrivate();
   vtkSlicerDataModuleLogic* logic() const;
 public:
   QAction* HardenTransformAction;
@@ -67,6 +68,9 @@ public:
 
   /// Callback object to get notified about item modified events
   vtkSmartPointer<vtkCallbackCommand> CallBack;
+
+  /// Observer tag for subject hierarchy observation
+  unsigned long SubjectHierarchyObservationTag;
 };
 
 //-----------------------------------------------------------------------------
@@ -77,10 +81,21 @@ qSlicerDataModuleWidgetPrivate::qSlicerDataModuleWidgetPrivate(qSlicerDataModule
   : q_ptr(&object)
   , HardenTransformAction(nullptr)
   , ContextMenusHintShown(0)
+  , SubjectHierarchyObservationTag(0)
 {
   this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
   this->CallBack->SetClientData(q_ptr);
   this->CallBack->SetCallback(qSlicerDataModuleWidget::onSubjectHierarchyItemEvent);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerDataModuleWidgetPrivate::~qSlicerDataModuleWidgetPrivate()
+{
+  vtkMRMLSubjectHierarchyNode* shNode = this->SubjectHierarchyTreeView->subjectHierarchyNode();
+  if (shNode)
+    {
+    shNode->RemoveObserver(this->SubjectHierarchyObservationTag);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -441,7 +456,7 @@ void qSlicerDataModuleWidget::setInfoLabelFromSubjectHierarchyItem(vtkIdType ite
     // Connect node for updating info label
     if (!shNode->HasObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent, d->CallBack))
       {
-      shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent, d->CallBack, -10.0);
+      d->SubjectHierarchyObservationTag = shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent, d->CallBack, -10.0);
       }
     }
   else
