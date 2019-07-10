@@ -318,8 +318,9 @@ public:
   vtkIdType GetItemAncestorAtLevel(vtkIdType itemID, std::string level);
 
   /// Determine if any of the children of this item is transformed (has a parent transform applied), except for an optionally given node
-  /// \param exceptionNode The function still returns true if the only applied transform found is this specified node
-  bool IsAnyNodeInBranchTransformed(vtkIdType itemID, vtkMRMLTransformNode* exceptionNode=nullptr);
+  /// \param includeParentItem Determine whether the given item (the parent of the branch) should be included in the search. True by default
+  /// \param exceptionNode The function returns false if the only applied transform found is this specified node.
+  bool IsAnyNodeInBranchTransformed(vtkIdType itemID, bool includeParentItem=true, vtkMRMLTransformNode* exceptionNode=nullptr);
 
   /// Deserialize a UID list string (stored in the UID map) into a vector of UID strings
   static void DeserializeUIDList(std::string uidListString, std::vector<std::string>& deserializedUIDList);

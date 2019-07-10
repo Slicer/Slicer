@@ -2827,7 +2827,8 @@ vtkIdType vtkMRMLSubjectHierarchyNode::GetItemAncestorAtLevel(vtkIdType itemID, 
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLSubjectHierarchyNode::IsAnyNodeInBranchTransformed(vtkIdType itemID, vtkMRMLTransformNode* exceptionNode/*=nullptr*/)
+bool vtkMRMLSubjectHierarchyNode::IsAnyNodeInBranchTransformed(
+  vtkIdType itemID, bool includeParentItem/*=true*/, vtkMRMLTransformNode* exceptionNode/*=nullptr*/)
 {
   // Check transformable node from the item itself if any
   vtkSubjectHierarchyItem* item = this->Internal->SceneItem->FindChildByID(itemID);
@@ -2836,11 +2837,13 @@ bool vtkMRMLSubjectHierarchyNode::IsAnyNodeInBranchTransformed(vtkIdType itemID,
     vtkErrorMacro("IsAnyNodeInBranchTransformed: Failed to find non-scene subject hierarchy item by ID " << itemID);
     return false;
     }
+  vtkMRMLTransformableNode* parentTransformableNode = nullptr;
   if (item->DataNode)
     {
-    vtkMRMLTransformableNode* transformableDataNode = vtkMRMLTransformableNode::SafeDownCast(item->DataNode);
-    if ( transformableDataNode && transformableDataNode->GetParentTransformNode()
-      && transformableDataNode->GetParentTransformNode() != exceptionNode)
+    parentTransformableNode = vtkMRMLTransformableNode::SafeDownCast(item->DataNode);
+    if ( parentTransformableNode && parentTransformableNode->GetParentTransformNode()
+      && parentTransformableNode->GetParentTransformNode() != exceptionNode
+      && includeParentItem )
       {
       return true;
       }
@@ -2858,6 +2861,10 @@ bool vtkMRMLSubjectHierarchyNode::IsAnyNodeInBranchTransformed(vtkIdType itemID,
     vtkMRMLTransformNode* parentTransformNode = nullptr;
     if (transformableNode && (parentTransformNode = transformableNode->GetParentTransformNode()))
       {
+      if (!includeParentItem && transformableNode == parentTransformableNode)
+        {
+        continue;
+        }
       if (parentTransformNode != exceptionNode)
         {
         return true;

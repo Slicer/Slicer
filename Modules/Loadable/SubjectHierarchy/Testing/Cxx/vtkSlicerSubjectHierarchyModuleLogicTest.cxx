@@ -795,7 +795,7 @@ namespace
       std::cerr << "Wrong inquiry about transformed items in study2" << std::endl;
       return false;
       }
-    if (shNode->IsAnyNodeInBranchTransformed(study2ShItemID, transformNode1.GetPointer()))
+    if (shNode->IsAnyNodeInBranchTransformed(study2ShItemID, true, transformNode1.GetPointer()))
       {
       std::cerr << "Wrong inquiry about transformed items in study2 with exception transform set" << std::endl;
       return false;

@@ -1249,7 +1249,7 @@ void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItemData(vtkIdTyp
 
     // Ask the user if any child node in the branch is transformed with a transform different from the chosen one
     bool hardenExistingTransforms = true;
-    if (d->SubjectHierarchyNode->IsAnyNodeInBranchTransformed(shItemID))
+    if (d->SubjectHierarchyNode->IsAnyNodeInBranchTransformed(shItemID, false))
       {
       QMessageBox::StandardButton answer =
         QMessageBox::question(nullptr, tr("Some nodes in the branch are already transformed"),
@@ -1263,7 +1263,6 @@ void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItemData(vtkIdTyp
         }
       else if (answer == QMessageBox::Cancel)
         {
-        //qDebug() << Q_FUNC_INFO << ": Transform branch cancelled";
         return;
         }
       }
