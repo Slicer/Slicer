@@ -804,6 +804,12 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
   // Set volume property
   vtkVolumeProperty* volumeProperty = displayNode->GetVolumePropertyNode() ? displayNode->GetVolumePropertyNode()->GetVolumeProperty() : nullptr;
   pipeline->VolumeActor->SetProperty(volumeProperty);
+  // vtkMultiVolume's GetProperty returns the volume property from the first volume actor, and that is used when assembling the
+  // shader, so need to set the volume property to the the first volume actor (in this case dummy actor, see above TODO)
+  if (this->MultiVolumeActor && this->MultiVolumeActor->GetVolume(0))
+    {
+    this->MultiVolumeActor->GetVolume(0)->SetProperty(volumeProperty);
+    }
 
   // Set shader property
   vtkShaderProperty* shaderProperty = displayNode->GetShaderPropertyNode() ? displayNode->GetShaderPropertyNode()->GetShaderProperty() : nullptr;
