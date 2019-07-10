@@ -1354,16 +1354,16 @@ def tempDirectory(key='__SlicerTemp__',tempDir=None,includeDateTime=True):
   qt.QDir().mkpath(dirPath)
   return dirPath
 
-def delayDisplay(message,autoCloseMsec=1000):
+def delayDisplay(message, autoCloseMsec=1000):
   """Display an information message in a popup window for a short time.
-  If autoCloseMsec<400, then only slicer.app.processEvents() is called.
-  If autoCloseMsec>=400 then the window is closed after waiting for autoCloseMsec milliseconds
-  If autoCloseMsec=0 then the window is not closed until the user clicks on it.
+  If autoCloseMsec < 0 then the window is not closed until the user clicks on it
+  If 0 <= autoCloseMsec < 400 then only slicer.app.processEvents() is called.
+  If autoCloseMsec >= 400 then the window is closed after waiting for autoCloseMsec milliseconds
   """
   import qt, slicer
   import logging
   logging.info(message)
-  if autoCloseMsec < 400:
+  if 0 <= autoCloseMsec < 400:
     slicer.app.processEvents()
     return
   messagePopup = qt.QDialog()
@@ -1371,7 +1371,7 @@ def delayDisplay(message,autoCloseMsec=1000):
   messagePopup.setLayout(layout)
   label = qt.QLabel(message,messagePopup)
   layout.addWidget(label)
-  if autoCloseMsec>0:
+  if autoCloseMsec >= 0:
     qt.QTimer.singleShot(autoCloseMsec, messagePopup.close)
   else:
     okButton = qt.QPushButton("OK")
