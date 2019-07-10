@@ -261,7 +261,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
     self.log = qt.QTextEdit()
     self.log.readOnly = True
     self.layout.addWidget(self.log)
-    self.logMessage('<p>Status: <i>Idle</i>')
+    self.logMessage('<p>Status: <i>Idle</i></p>')
 
     # Add spacer to layout
     self.layout.addStretch(1)
