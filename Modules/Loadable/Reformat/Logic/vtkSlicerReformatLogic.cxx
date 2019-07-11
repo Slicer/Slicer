@@ -184,12 +184,11 @@ void vtkSlicerReformatLogic::GetVolumeBounds(vtkMRMLSliceNode* node,
 
   if (!node->GetScene())
     {
-    vtkWarningMacro("vtkSlicerReformatLogic::GetVolumeBounds: slice node must be associated with a scene");
+    vtkWarningWithObjectMacro(node, "vtkSlicerReformatLogic::GetVolumeBounds: slice node must be associated with a scene");
     return;
     }
 
   vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(volumeNodeID));
-
   if (volumeNode)
     {
     double dimensions[3], center[3];

@@ -57,7 +57,7 @@ public:
   void SetSliceNormal(vtkMRMLSliceNode* node, double normal[3]);
 
   /// Compute and return the volume bounding box
-  void GetVolumeBounds(vtkMRMLSliceNode* node, double bounds[6]);
+  static void GetVolumeBounds(vtkMRMLSliceNode* node, double bounds[6]);
 
   /// Compute the center from a bounds
   static void GetCenterFromBounds(double bounds[6], double center[3]);
