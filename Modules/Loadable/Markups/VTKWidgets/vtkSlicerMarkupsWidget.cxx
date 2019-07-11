@@ -45,10 +45,6 @@ vtkSlicerMarkupsWidget::vtkSlicerMarkupsWidget()
   this->StartEventOffsetPosition[0] = 0.0;
   this->StartEventOffsetPosition[1] = 0.0;
 
-  // True if mouse button pressed since a point was placed.
-  // This is used to filter out "click" events that started before the point was placed.
-  bool MousePressedSinceMarkupPlace;
-
   this->PreviewPointIndex = -1;
 
   // Place
@@ -520,8 +516,6 @@ bool vtkSlicerMarkupsWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventD
 
   int foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   int foundComponentIndex = -1;
-  const int* displayPosition = (eventData->IsDisplayPositionValid() ? eventData->GetDisplayPosition() : nullptr);
-  const double* worldPosition = (eventData->IsWorldPositionValid() ? eventData->GetWorldPosition() : nullptr);
   double closestDistance2 = 0.0;
   rep->CanInteract(eventData, foundComponentType, foundComponentIndex, closestDistance2);
   if (foundComponentType == vtkMRMLMarkupsDisplayNode::ComponentNone)
