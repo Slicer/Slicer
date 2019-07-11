@@ -189,7 +189,15 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateAllPointsAndLabelsFromMRML(do
     {
     return;
     }
-  int activeControlPointIndex = this->MarkupsDisplayNode->GetActiveControlPoint();
+
+  // Use first active control point for jumping //TODO: Have an 'even more active' point concept
+  std::vector<int> activeControlPointIndices;
+  this->MarkupsDisplayNode->GetActiveControlPoints(activeControlPointIndices);
+  int activeControlPointIndex = -1;
+  if (!activeControlPointIndices.empty())
+    {
+    activeControlPointIndex = activeControlPointIndices[0];
+    }
 
   int numPoints = markupsNode->GetNumberOfControlPoints();
 

@@ -47,6 +47,7 @@ vtkMRMLInteractionEventData::vtkMRMLInteractionEventData()
   this->Rotation = 0.0;
   this->LastRotation = 0.0;
   this->WorldToPhysicalScale = 1.0;
+  this->InteractionContextName = "";
 }
 
 //---------------------------------------------------------------------------
@@ -287,6 +288,18 @@ vtkCellPicker* vtkMRMLInteractionEventData::GetAccuratePicker() const
 void vtkMRMLInteractionEventData::SetAccuratePicker(vtkCellPicker* picker)
 {
   this->AccuratePicker = picker;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLInteractionEventData::SetInteractionContextName(const std::string& contextName)
+{
+  this->InteractionContextName = contextName;
+}
+
+//---------------------------------------------------------------------------
+const std::string& vtkMRMLInteractionEventData::GetInteractionContextName()
+{
+  return this->InteractionContextName;
 }
 
 //---------------------------------------------------------------------------

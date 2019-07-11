@@ -275,7 +275,7 @@ void vtkMRMLMarkupsDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newSce
 
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsDisplayableManager
-::ProcessMRMLNodesEvents(vtkObject *caller,unsigned long event,void *callData)
+::ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData)
 {
   vtkMRMLMarkupsNode * markupsNode = vtkMRMLMarkupsNode::SafeDownCast(caller);
   vtkMRMLInteractionNode * interactionNode = vtkMRMLInteractionNode::SafeDownCast(caller);
@@ -323,7 +323,8 @@ void vtkMRMLMarkupsDisplayableManager
           {
           continue;
           }
-        widget->Leave();
+        vtkMRMLInteractionEventData* eventData = reinterpret_cast<vtkMRMLInteractionEventData*>(callData);
+        widget->Leave(eventData);
         }
       }
     }
@@ -682,8 +683,7 @@ bool vtkMRMLMarkupsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInterac
 
   if (eventid == vtkCommand::LeaveEvent && this->LastActiveWidget != nullptr)
     {
-    if (this->LastActiveWidget->GetMarkupsDisplayNode()
-      && this->LastActiveWidget->GetMarkupsDisplayNode()->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentNone)
+    if (this->LastActiveWidget->GetMarkupsDisplayNode() && this->LastActiveWidget->GetMarkupsDisplayNode()->HasActiveComponent())
       {
       // this widget has active component, therefore leave event is relevant
       closestDistance2 = 0.0;
@@ -697,11 +697,15 @@ bool vtkMRMLMarkupsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInterac
   if (!canProcess && this->LastActiveWidget != nullptr
     && (eventid == vtkCommand::MouseMoveEvent || eventid == vtkCommand::Move3DEvent) )
     {
-    // mouse is moved away from the widget -> deactivate
-    //closestDistance2 = 0.0;
-    //return this->LastActiveWidget;
-    this->LastActiveWidget->Leave();
-    this->LastActiveWidget = nullptr;
+    // interaction context (e.g. mouse) is moved away from the widget -> deactivate if it's the same context that activated it
+    std::vector<std::string> contextsWithActiveComponents =
+      this->LastActiveWidget->GetMarkupsDisplayNode()->GetActiveComponentInteractionContexts();
+    if (std::find(contextsWithActiveComponents.begin(), contextsWithActiveComponents.end(), eventData->GetInteractionContextName())
+        != contextsWithActiveComponents.end() )
+      {
+      this->LastActiveWidget->Leave(eventData);
+      this->LastActiveWidget = nullptr;
+      }
     }
 
   return canProcess;
@@ -720,7 +724,7 @@ bool vtkMRMLMarkupsDisplayableManager::ProcessInteractionEvent(vtkMRMLInteractio
     {
     if (this->LastActiveWidget != nullptr)
       {
-      this->LastActiveWidget->Leave();
+      this->LastActiveWidget->Leave(eventData);
       this->LastActiveWidget = nullptr;
       }
     }
@@ -744,7 +748,7 @@ bool vtkMRMLMarkupsDisplayableManager::ProcessInteractionEvent(vtkMRMLInteractio
   // Deactivate previous widget
   if (this->LastActiveWidget != nullptr && this->LastActiveWidget != activeWidget)
     {
-    this->LastActiveWidget->Leave();
+    this->LastActiveWidget->Leave(eventData);
     }
   this->LastActiveWidget = activeWidget;
   if (!activeWidget)
@@ -752,7 +756,7 @@ bool vtkMRMLMarkupsDisplayableManager::ProcessInteractionEvent(vtkMRMLInteractio
     // deactivate widget if we move far from it
     if (eventid == vtkCommand::MouseMoveEvent && this->LastActiveWidget != nullptr)
       {
-      this->LastActiveWidget->Leave();
+      this->LastActiveWidget->Leave(eventData);
       this->LastActiveWidget = nullptr;
       }
     return false;
@@ -886,7 +890,7 @@ void vtkMRMLMarkupsDisplayableManager::SetHasFocus(bool hasFocus)
 {
   if (!hasFocus && this->LastActiveWidget!=nullptr)
     {
-    this->LastActiveWidget->Leave();
+    this->LastActiveWidget->Leave(nullptr);
     this->LastActiveWidget = nullptr;
     }
 }

@@ -199,7 +199,7 @@ bool vtkMRMLScalarBarDisplayableManager::CanProcessInteractionEvent(vtkMRMLInter
   int eventid = eventData->GetType();
   if (eventid == vtkCommand::LeaveEvent)
     {
-    this->Internal->WindowLevelWidget->Leave();
+    this->Internal->WindowLevelWidget->Leave(eventData);
     }
 
   // Find/create active widget

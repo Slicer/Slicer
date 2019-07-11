@@ -75,7 +75,7 @@ public:
   bool IsPointPreviewed();
 
   /// Add/update a point preview to the current active Markup at the specified position.
-  void UpdatePreviewPoint(const int displayPos[2], const double worldPos[3], const char* associatedNodeID, int positionStatus);
+  void UpdatePreviewPoint(vtkMRMLInteractionEventData* eventData, const char* associatedNodeID, int positionStatus);
 
   /// Remove the point preview to the current active Markup.
   /// Returns true is preview point existed and now it is removed.
@@ -86,7 +86,7 @@ public:
   // Returns true if the event is processed.
   bool PlacePoint(vtkMRMLInteractionEventData* eventData);
 
-  /// Add a point to the current active Markup at input World coordiantes.
+  /// Add a point to the current active Markup at input World coordinates.
   virtual int AddPointFromWorldCoordinate(const double worldCoordinates[3]);
 
   /// Given a specific X, Y pixel location, add a new node
@@ -100,7 +100,7 @@ public:
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
 
   /// Called when the the widget loses the focus.
-  void Leave() override;
+  void Leave(vtkMRMLInteractionEventData* eventData) override;
 
   // Allows the widget to request interactive mode (faster updates)
   bool GetInteractive() override;

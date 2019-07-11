@@ -16,6 +16,7 @@
 ==============================================================================*/
 
 // MRML includes
+#include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include <vtkMRMLProceduralColorNode.h>
 
@@ -80,8 +81,8 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->PropertiesLabelVisibility = true;
   this->PointLabelsVisibility = false;
 
-  this->ActiveComponentType = ComponentNone;
-  this->ActiveComponentIndex = -1;
+  // Set active component defaults for mouse (identified by empty string)
+  this->ActiveComponents[""] = ComponentInfo();
 
   this->LineThickness = 0.2;
 
@@ -295,8 +296,14 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBooleanMacro(SliceProjectionOutlinedBehindSlicePlane);
   vtkMRMLPrintVectorMacro(SliceProjectionColor, double, 3);
   vtkMRMLPrintFloatMacro(SliceProjectionOpacity);
-  vtkMRMLPrintFloatMacro(ActiveComponentType);
-  vtkMRMLPrintFloatMacro(ActiveComponentIndex);
+  {
+  os << indent << "ActiveComponents:   ";
+  for (std::map<std::string, ComponentInfo>::iterator it = this->ActiveComponents.begin(); it != this->ActiveComponents.end(); ++it)
+    {
+    os << it->first << ": " << it->second.Type << ", " << it->second.Index;
+    }
+  os << "\n";
+  }
   vtkMRMLPrintFloatMacro(LineThickness);
   vtkMRMLPrintFloatMacro(LineColorFadingStart);
   vtkMRMLPrintFloatMacro(LineColorFadingEnd);
@@ -364,17 +371,69 @@ const char *vtkMRMLMarkupsDisplayNode::GetLineColorNodeReferenceMRMLAttributeNam
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayNode::SetActiveComponent(int componentType, int componentIndex)
+int vtkMRMLMarkupsDisplayNode::GetActiveComponentType(std::string context/*=""*/)
 {
-  if (this->ActiveComponentIndex == componentIndex
-    && this->ActiveComponentType == componentType)
+  if (this->ActiveComponents.find(context) == this->ActiveComponents.end())
+    {
+    vtkErrorMacro("GetActiveComponentType: No interaction context with identifier '" << context << "' was found");
+    return ComponentNone;
+    }
+
+  return this->ActiveComponents[context].Type;
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLMarkupsDisplayNode::GetActiveComponentIndex(std::string context/*=""*/)
+{
+  if (this->ActiveComponents.find(context) == this->ActiveComponents.end())
+    {
+    vtkErrorMacro("GetActiveComponentIndex: No interaction context with identifier '" << context << "' was found");
+    return -1;
+    }
+
+  return this->ActiveComponents[context].Index;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsDisplayNode::SetActiveComponent(int componentType, int componentIndex, std::string context/*=""*/)
+{
+  if ( this->ActiveComponents.find(context) != this->ActiveComponents.end()
+    && this->ActiveComponents[context].Type == componentType
+    && this->ActiveComponents[context].Index == componentIndex )
     {
     // no change
     return;
     }
-  this->ActiveComponentIndex = componentIndex;
-  this->ActiveComponentType = componentType;
+  this->ActiveComponents[context].Index = componentIndex;
+  this->ActiveComponents[context].Type = componentType;
   this->Modified();
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLMarkupsDisplayNode::HasActiveComponent()
+{
+  for (std::map<std::string, ComponentInfo>::iterator it = this->ActiveComponents.begin(); it != this->ActiveComponents.end(); ++it)
+    {
+    if (it->second.Type != ComponentNone)
+      {
+      return true;
+      }
+    }
+  return false;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> vtkMRMLMarkupsDisplayNode::GetActiveComponentInteractionContexts()
+{
+  std::vector<std::string> interactionContextVector;
+  for (std::map<std::string, ComponentInfo>::iterator it = this->ActiveComponents.begin(); it != this->ActiveComponents.end(); ++it)
+    {
+    if (it->second.Type != ComponentNone)
+      {
+      interactionContextVector.push_back(it->first);
+      }
+    }
+  return interactionContextVector;
 }
 
 //---------------------------------------------------------------------------
@@ -385,12 +444,12 @@ void vtkMRMLMarkupsDisplayNode::SetActiveControlPoint(int controlPointIndex)
 
 //---------------------------------------------------------------------------
 int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
-  int controlPointIndex, double pointWorld[3],
+  int controlPointIndex, vtkMRMLInteractionEventData* eventData,
   double orientationMatrixWorld[9], const char* viewNodeID,
   const char* associatedNodeID, int positionStatus)
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!markupsNode)
+  if (!markupsNode || !eventData)
     {
     return -1;
     }
@@ -398,21 +457,22 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
   bool addNewControlPoint = false;
   if (controlPointIndex < 0 || controlPointIndex >= markupsNode->GetNumberOfControlPoints())
     {
-    // Determine new control point index. Now we assuem that new point is added to the end,
+    // Determine new control point index. Now we assume that new point is added to the end,
     // but in the future we may place existing points.
     controlPointIndex = markupsNode->GetNumberOfControlPoints();
     addNewControlPoint = true;
     }
 
-  // Update active component but not yet fire modified event
-  // because the control point is not created/updated yet
-  // in the markups node.
+  // Update active component but not yet fire modified event because the control
+  // point is not created/updated yet in the markups node.
+  //TODO: Allow other interaction contexts to place markups
   bool activeComponentChanged = false;
-  if (this->ActiveComponentIndex != controlPointIndex
-    || this->ActiveComponentType != ComponentControlPoint)
+  std::string interactionContext = eventData->GetInteractionContextName();
+  if ( this->ActiveComponents[interactionContext].Index != controlPointIndex
+    || this->ActiveComponents[interactionContext].Type != ComponentControlPoint )
     {
-    this->ActiveComponentType = ComponentControlPoint;
-    this->ActiveComponentIndex = controlPointIndex;
+    this->ActiveComponents[interactionContext].Type = ComponentControlPoint;
+    this->ActiveComponents[interactionContext].Index = controlPointIndex;
     activeComponentChanged = true;
     }
 
@@ -433,6 +493,9 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
     markupsNode->SetAttribute("Markups.MovingMarkupIndex", "");
     }
   markupsNode->SetDisableModifiedEvent(wasDisabled);
+
+  double pointWorld[3] = { 0.0 };
+  eventData->GetWorldPosition(pointWorld);
 
   if (addNewControlPoint)
     {
@@ -466,11 +529,25 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
 
 
 //---------------------------------------------------------------------------
-int vtkMRMLMarkupsDisplayNode::GetActiveControlPoint()
+void vtkMRMLMarkupsDisplayNode::GetActiveControlPoints(std::vector<int>& controlPointIndices)
 {
-  if (this->ActiveComponentType == ComponentControlPoint)
+  controlPointIndices.clear();
+  for (std::map<std::string, ComponentInfo>::iterator it = this->ActiveComponents.begin(); it != this->ActiveComponents.end(); ++it)
     {
-    return this->ActiveComponentIndex;
+    if (it->second.Type == ComponentControlPoint)
+      {
+      controlPointIndices.push_back(it->second.Index);
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLMarkupsDisplayNode::GetActiveControlPointForContext(std::string context)
+{
+  if ( this->ActiveComponents.find(context) != this->ActiveComponents.end()
+    && this->ActiveComponents[context].Type == ComponentControlPoint )
+    {
+    return this->ActiveComponents[context].Index;
     }
   else
     {

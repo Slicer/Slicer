@@ -73,7 +73,7 @@ public:
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
 
   /// Called when the the widget loses the focus.
-  void Leave() override;
+  void Leave(vtkMRMLInteractionEventData* eventData) override;
 
   /// Widget states
   enum

@@ -101,7 +101,7 @@ public:
   /// Get position of a curve point along the curve relative to the specified start point index.
   /// \param startCurvePointId index of the curve point to start the distance measurement from
   /// \param distanceFromStartPoint distance from the start point
-  /// \return founod point index, -1 in case of an error
+  /// \return found point index, -1 in case of an error
   vtkIdType GetCurvePointIndexAlongCurveWorld(vtkIdType startCurvePointId, double distanceFromStartPoint);
 
   /// Get direction vector at specified curve point index, in World coordinate system.

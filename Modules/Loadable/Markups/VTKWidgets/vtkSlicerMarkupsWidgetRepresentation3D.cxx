@@ -161,8 +161,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateNthPointAndLabelFromMRML(int 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
 {
-  vtkMRMLMarkupsDisplayNode* display = this->MarkupsDisplayNode;
-  if (!display)
+  if (!this->MarkupsDisplayNode)
     {
     return;
     }
@@ -181,7 +180,8 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
     controlPoints->Glypher->SetScaleFactor(this->ControlPointSize);
     }
 
-  int activeControlPointIndex = this->MarkupsDisplayNode->GetActiveControlPoint();
+  std::vector<int> activeControlPointIndices;
+  this->MarkupsDisplayNode->GetActiveControlPoints(activeControlPointIndices);
 
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
     {
@@ -197,36 +197,32 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
     controlPoints->LabelsPriority->SetNumberOfValues(0);
     controlPoints->ControlPointIndices->SetNumberOfValues(0);
 
-    int startIndex = 0;
-    int stopIndex = numPoints - 1;
-    if (controlPointType == Active)
+    for (int pointIndex = 0; pointIndex < numPoints; ++pointIndex)
       {
-      if (activeControlPointIndex >= 0 && activeControlPointIndex < numPoints &&
-        markupsNode->GetNthControlPointVisibility(activeControlPointIndex))
+      bool isPointActive = std::find(activeControlPointIndices.begin(), activeControlPointIndices.end(), pointIndex) != activeControlPointIndices.end();
+      if (controlPointType == Active)
         {
-        startIndex = activeControlPointIndex;
-        stopIndex = startIndex;
-        controlPoints->Actor->VisibilityOn();
-        controlPoints->LabelsActor->SetVisibility(display->GetPointLabelsVisibility());
+        if (isPointActive && markupsNode->GetNthControlPointVisibility(pointIndex))
+          {
+          controlPoints->Actor->VisibilityOn();
+          controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility());
+          }
+        else
+          {
+          controlPoints->Actor->VisibilityOff();
+          controlPoints->LabelsActor->VisibilityOff();
+          continue;
+          }
         }
       else
         {
-        controlPoints->Actor->VisibilityOff();
-        controlPoints->LabelsActor->VisibilityOff();
-        continue;
+        controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility());
         }
-      }
-    else
-      {
-      controlPoints->LabelsActor->SetVisibility(display->GetPointLabelsVisibility());
-      }
 
-    for (int pointIndex = startIndex; pointIndex <= stopIndex; pointIndex++)
-      {
-
-      if (controlPointType != Active
-        && (!markupsNode->GetNthControlPointVisibility(pointIndex) || pointIndex == activeControlPointIndex ||
-        ((controlPointType == Selected) != (markupsNode->GetNthControlPointSelected(pointIndex) != 0))))
+      if ( controlPointType != Active
+        && ( !markupsNode->GetNthControlPointVisibility(pointIndex)
+          || isPointActive
+          || ((controlPointType == Selected) != (markupsNode->GetNthControlPointSelected(pointIndex) != 0)) ) )
         {
         continue;
         }

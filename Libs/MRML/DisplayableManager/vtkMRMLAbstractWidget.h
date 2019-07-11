@@ -153,7 +153,7 @@ public:
   virtual unsigned long TranslateInteractionEventToWidgetEvent(vtkMRMLInteractionEventData* eventData);
 
   /// Called when the the widget loses the focus.
-  virtual void Leave();
+  virtual void Leave(vtkMRMLInteractionEventData* eventData);
 
   void SetRenderer(vtkRenderer* renderer);
   vtkGetMacro(Renderer, vtkRenderer*);

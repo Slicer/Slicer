@@ -186,14 +186,14 @@ bool vtkMRMLWindowLevelWidget::ProcessInteractionEvent(vtkMRMLInteractionEventDa
 }
 
 //-------------------------------------------------------------------------
-void vtkMRMLWindowLevelWidget::Leave()
+void vtkMRMLWindowLevelWidget::Leave(vtkMRMLInteractionEventData* eventData)
 {
   this->SetWidgetState(WidgetStateIdle);
   if (this->WidgetRep)
     {
     this->WidgetRep->SetVisibility(false);
     }
-  this->Superclass::Leave();
+  this->Superclass::Leave(eventData);
 }
 
 //-------------------------------------------------------------------------

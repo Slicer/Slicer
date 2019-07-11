@@ -176,7 +176,7 @@ protected:
 
   double* GetWidgetColor(int controlPointType);
 
-  ControlPointsPipeline* ControlPoints[5]; // Unselected, Selected, Active, Project, ProjectBehind
+  ControlPointsPipeline* ControlPoints[NumberOfControlPointTypes]; // Unselected, Selected, Active, Project, ProjectBehind
 
 private:
   vtkSlicerMarkupsWidgetRepresentation(const vtkSlicerMarkupsWidgetRepresentation&) = delete;

@@ -398,9 +398,9 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
 }
 
 //-------------------------------------------------------------------------
-void vtkMRMLSliceIntersectionWidget::Leave()
+void vtkMRMLSliceIntersectionWidget::Leave(vtkMRMLInteractionEventData* eventData)
 {
-  this->Superclass::Leave();
+  this->Superclass::Leave(eventData);
 }
 
 //-------------------------------------------------------------------------

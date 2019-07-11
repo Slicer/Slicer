@@ -102,6 +102,9 @@ public:
   void SetAccuratePicker(vtkCellPicker* picker);
   vtkCellPicker* GetAccuratePicker() const;
 
+  void SetInteractionContextName(const std::string& v);
+  const std::string& GetInteractionContextName();
+
 protected:
   int Modifiers;
   int DisplayPosition[2];
@@ -131,6 +134,9 @@ protected:
   /// For VR events
   /// World to physical scale: Value greater than 1 means that objects appear larger in VR than their real world size.
   double WorldToPhysicalScale;
+
+  /// Name of interaction context. In case of the mouse, it is empty string
+  std::string InteractionContextName;
 
   bool Equivalent(const vtkEventData *e) const override;
 
