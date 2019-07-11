@@ -1,7 +1,8 @@
 import os
 import unittest
-from __main__ import vtk, qt, ctk, slicer
+import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
+import logging
 import time
 
 #
@@ -10,6 +11,7 @@ import time
 
 class UtilTest(ScriptedLoadableModule):
   def __init__(self, parent):
+    ScriptedLoadableModule.__init__(self, parent)
     parent.title = "UtilTest" # TODO make this more human readable by adding spaces
     parent.categories = ["Testing.TestCases"]
     parent.dependencies = []
@@ -18,20 +20,6 @@ class UtilTest(ScriptedLoadableModule):
     This is a self test that tests the methods of slicer.util
     """
     parent.acknowledgementText = """""" # replace with organization, grant and thanks.
-    self.parent = parent
-
-    # Add this test to the SelfTest module's list for discovery when the module
-    # is created.  Since this module may be discovered before SelfTests itself,
-    # create the list if it doesn't already exist.
-    try:
-      slicer.selfTests
-    except AttributeError:
-      slicer.selfTests = {}
-    slicer.selfTests['UtilTest'] = self.runTest
-
-  def runTest(self):
-    tester = UtilTestTest()
-    tester.runTest()
 
 #
 # UtilTestWidget
@@ -82,6 +70,9 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     self.test_updateVolumeFromArray()
     self.test_updateTableFromArray()
     self.test_arrayFromModelPoints()
+    self.test_arrayFromVTKMatrix()
+    self.test_arrayFromTransformMatrix()
+    self.test_arrayFromMarkupsControlPoints()
     self.test_array()
 
   def test_setSliceViewerLayers(self):
@@ -286,6 +277,162 @@ class UtilTestTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay('Testing slicer.util.test_arrayFromModelPoints passed')
 
+  def test_arrayFromVTKMatrix(self):
+    # Test arrayFromVTKMatrix,  vtkMatrixFromArray, and updateVTKMatrixFromArray
+    import numpy as np
+
+    self.delayDisplay('Test arrayFromVTKMatrix, vtkMatrixFromArray, and updateVTKMatrixFromArray')
+
+    # Test 4x4 matrix
+    a = np.array([[1.5,0.5,0,4],[0,2.0,0,11],[0,0,2.5,6],[0,0,0,1]])
+    vmatrix = slicer.util.vtkMatrixFromArray(a)
+    self.assertTrue(isinstance(vmatrix,vtk.vtkMatrix4x4))
+    self.assertEqual(vmatrix.GetElement(0,1), 0.5)
+    self.assertEqual(vmatrix.GetElement(1,3), 11)
+
+    narray = slicer.util.arrayFromVTKMatrix(vmatrix)
+    np.testing.assert_array_equal(a, narray)
+
+    vmatrixExisting = vtk.vtkMatrix4x4()
+    slicer.util.updateVTKMatrixFromArray(vmatrixExisting, a)
+    narray = slicer.util.arrayFromVTKMatrix(vmatrixExisting)
+    np.testing.assert_array_equal(a, narray)
+
+    # Test 3x3 matrix
+    a = np.array([[1.5,0,0],[0,2.0,0],[0,1.2,2.5]])
+    vmatrix = slicer.util.vtkMatrixFromArray(a)
+    self.assertTrue(isinstance(vmatrix,vtk.vtkMatrix3x3))
+    self.assertEqual(vmatrix.GetElement(0,0), 1.5)
+    self.assertEqual(vmatrix.GetElement(2,1), 1.2)
+
+    narray = slicer.util.arrayFromVTKMatrix(vmatrix)
+    np.testing.assert_array_equal(a, narray)
+
+    vmatrixExisting = vtk.vtkMatrix3x3()
+    slicer.util.updateVTKMatrixFromArray(vmatrixExisting, a)
+    narray = slicer.util.arrayFromVTKMatrix(vmatrixExisting)
+    np.testing.assert_array_equal(a, narray)
+
+    # Test invalid matrix size
+    caughtException = False
+    try:
+      vmatrix = slicer.util.vtkMatrixFromArray(np.zeros([3,4]))
+    except RuntimeError:
+      caughtException = True
+    self.assertTrue(caughtException)
+
+  def test_arrayFromTransformMatrix(self):
+    # Test arrayFromTransformMatrix and updateTransformMatrixFromArray
+    import numpy as np
+
+    self.delayDisplay('Test arrayFromTransformMatrix')
+
+    transformNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLTransformNode')
+    transformMatrix = vtk.vtkMatrix4x4()
+    transformMatrix.SetElement(0,0, 5.0)
+    transformMatrix.SetElement(0,1, 3.0)
+    transformMatrix.SetElement(1,1, 2.3)
+    transformMatrix.SetElement(2,2, 1.3)
+    transformMatrix.SetElement(0,3, 11.0)
+    transformMatrix.SetElement(1,3, 22.0)
+    transformMatrix.SetElement(2,3, 44.0)
+    transformNode.SetMatrixTransformToParent(transformMatrix)
+
+    narray = slicer.util.arrayFromTransformMatrix(transformNode)
+    self.assertEqual(narray.shape, (4, 4))
+    self.assertEqual(narray[0,0], 5.0)
+    self.assertEqual(narray[0,1], 3.0)
+    self.assertEqual(narray[0,3], 11.0)
+    self.assertEqual(narray[2,3], 44.0)
+
+    self.delayDisplay('Test arrayFromTransformMatrix with toWorld=True')
+
+    parentTransformNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLTransformNode')
+    parentTransformMatrix = vtk.vtkMatrix4x4()
+    parentTransformMatrix.SetElement(1,1, 0.3)
+    parentTransformMatrix.SetElement(0,3, 30.0)
+    parentTransformMatrix.SetElement(1,3, 20.0)
+    parentTransformMatrix.SetElement(2,3, 10.0)
+    parentTransformNode.SetMatrixTransformToParent(parentTransformMatrix)
+    narrayParent = slicer.util.arrayFromTransformMatrix(parentTransformNode)
+
+    transformNode.SetAndObserveTransformNodeID(parentTransformNode.GetID())
+
+    narrayToWorld = slicer.util.arrayFromTransformMatrix(transformNode, toWorld=True)
+    narrayToWorldExpected = np.dot(narrayParent, narray)
+    np.testing.assert_array_equal(narrayToWorld, narrayToWorldExpected)
+
+    self.delayDisplay('Test updateTransformMatrixFromArray')
+    narrayUpdated = np.array([[1.5,0.5,0,4],[0,2.0,0,11],[0,0,2.5,6],[0,0,0,1]])
+    slicer.util.updateTransformMatrixFromArray(transformNode, narrayUpdated)
+    transformMatrixUpdated = vtk.vtkMatrix4x4()
+    transformNode.GetMatrixTransformToParent(transformMatrixUpdated)
+    for r in range(4):
+      for c in range(4):
+        self.assertEqual(narrayUpdated[r,c], transformMatrixUpdated.GetElement(r,c))
+
+    self.delayDisplay('Test updateTransformMatrixFromArray with toWorld=True')
+    narrayUpdated = np.array([[2.5,1.5,0,2],[0,2.0,0,15],[0,1,3.5,6],[0,0,0,1]])
+    slicer.util.updateTransformMatrixFromArray(transformNode, narrayUpdated, toWorld=True)
+    transformMatrixUpdated = vtk.vtkMatrix4x4()
+    transformNode.GetMatrixTransformToWorld(transformMatrixUpdated)
+    for r in range(4):
+      for c in range(4):
+        self.assertEqual(narrayUpdated[r,c], transformMatrixUpdated.GetElement(r,c))
+
+  def test_arrayFromMarkupsControlPoints(self):
+    # Test if retrieving markups control coordinates as a numpy array works
+    import numpy as np
+
+    self.delayDisplay('Test arrayFromMarkupsControlPoints')
+
+    markupsNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsFiducialNode')
+    markupsNode.AddControlPoint(vtk.vtkVector3d(10,20,30))
+    markupsNode.AddControlPoint(vtk.vtkVector3d(21,21,31))
+    markupsNode.AddControlPoint(vtk.vtkVector3d(32,33,44))
+    markupsNode.AddControlPoint(vtk.vtkVector3d(45,45,55))
+    markupsNode.AddControlPoint(vtk.vtkVector3d(51,41,59))
+
+    translation = [10.0, 30.0, 20.0]
+    transformNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLTransformNode')
+    transformMatrix = vtk.vtkMatrix4x4()
+    transformMatrix.SetElement(0,3, translation[0])
+    transformMatrix.SetElement(1,3, translation[1])
+    transformMatrix.SetElement(2,3, translation[2])
+    transformNode.SetMatrixTransformToParent(transformMatrix)
+    markupsNode.SetAndObserveTransformNodeID(transformNode.GetID())
+
+    narray = slicer.util.arrayFromMarkupsControlPoints(markupsNode)
+    self.assertEqual(narray.shape, (5, 3))
+    self.assertEqual(narray[0,0], 10)
+    self.assertEqual(narray[1,2], 31)
+    self.assertEqual(narray[4,2], 59)
+
+    self.delayDisplay('Test arrayFromMarkupsControlPoints with world=True')
+
+    narray = slicer.util.arrayFromMarkupsControlPoints(markupsNode, world=True)
+    self.assertEqual(narray.shape, (5, 3))
+    self.assertEqual(narray[0,0], 10+translation[0])
+    self.assertEqual(narray[1,2], 31+translation[2])
+    self.assertEqual(narray[4,2], 59+translation[2])
+
+    self.delayDisplay('Test updateMarkupControlPointsFromArray')
+
+    narray = np.array([[2,3,4],[6,7,8]])
+    slicer.util.updateMarkupControlPointsFromArray(markupsNode, narray)
+    self.assertEqual(markupsNode.GetNumberOfControlPoints(), 2)
+    position = [0]*3
+    markupsNode.GetNthControlPointPosition(1,position)
+    np.testing.assert_array_equal(position,narray[1,:])
+
+    self.delayDisplay('Test updateMarkupControlPointsFromArray with world=True')
+
+    narray = np.array([[2,3,4],[6,7,8]])
+    slicer.util.updateMarkupControlPointsFromArray(markupsNode, narray, world=True)
+    self.assertEqual(markupsNode.GetNumberOfControlPoints(), 2)
+    markupsNode.GetNthControlPointPositionWorld(1,position)
+    np.testing.assert_array_equal(position,narray[1,:])
+
   def test_array(self):
     # Test if convenience function of getting numpy array from various nodes works
 
@@ -298,10 +445,10 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     voxelValueNumpy = narray[voxelPos[2], voxelPos[1], voxelPos[0]]
     self.assertEqual(voxelValueVtk, voxelValueNumpy)
 
-    self.delayDisplay('Test array with tensor image')
-    tensorVolumeNode = SampleData.downloadSample('DTIBrain')
-    narray = slicer.util.array(tensorVolumeNode.GetName())
-    self.assertEqual(narray.shape, (85, 144, 144, 3, 3))
+    # self.delayDisplay('Test array with tensor image')
+    # tensorVolumeNode = SampleData.downloadSample('DTIBrain')
+    # narray = slicer.util.array(tensorVolumeNode.GetName())
+    # self.assertEqual(narray.shape, (85, 144, 144, 3, 3))
 
     self.delayDisplay('Test array with model points')
     sphere = vtk.vtkSphereSource()
@@ -309,5 +456,26 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     modelNode.SetPolyDataConnection(sphere.GetOutputPort())
     narray = slicer.util.array(modelNode.GetName())
     self.assertEqual(narray.shape, (50, 3))
+
+    self.delayDisplay('Test array with markups fiducials')
+    markupsNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsFiducialNode')
+    markupsNode.AddControlPoint(vtk.vtkVector3d(10,20,30))
+    markupsNode.AddControlPoint(vtk.vtkVector3d(21,21,31))
+    markupsNode.AddControlPoint(vtk.vtkVector3d(32,33,44))
+    markupsNode.AddControlPoint(vtk.vtkVector3d(45,45,55))
+    markupsNode.AddControlPoint(vtk.vtkVector3d(51,41,59))
+    narray = slicer.util.array(markupsNode.GetName())
+    self.assertEqual(narray.shape, (5, 3))
+
+    self.delayDisplay('Test array with transforms')
+    transformNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLTransformNode')
+    transformMatrix = vtk.vtkMatrix4x4()
+    transformMatrix.SetElement(0,0, 2.0)
+    transformMatrix.SetElement(0,3, 11.0)
+    transformMatrix.SetElement(1,3, 22.0)
+    transformMatrix.SetElement(2,3, 44.0)
+    transformNode.SetMatrixTransformToParent(transformMatrix)
+    narray = slicer.util.array(transformNode.GetName())
+    self.assertEqual(narray.shape, (4, 4))
 
     self.delayDisplay('Testing slicer.util.test_array passed')

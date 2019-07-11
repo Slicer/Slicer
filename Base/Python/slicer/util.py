@@ -1152,7 +1152,7 @@ def arrayFromSegment(segmentationNode, segmentId):
   return narray
 
 def arrayFromMarkupsControlPoints(markupsNode, world = False):
-  """Return control point positions of a markups node as columns in a numpy array (of size 3xN).
+  """Return control point positions of a markups node as rows in a numpy array (of size Nx3).
   :param world: if set to True then the control points coordinates are returned in world coordinate system
     (effect of parent transform to the node is applied).
   The returned array is just a copy and so any modification in the array will not affect the markup node.
@@ -1160,16 +1160,16 @@ def arrayFromMarkupsControlPoints(markupsNode, world = False):
   """
   numberOfControlPoints = markupsNode.GetNumberOfControlPoints()
   import numpy as np
-  narray = np.zeros([3,numberOfControlPoints])
+  narray = np.zeros([numberOfControlPoints, 3])
   for controlPointIndex in range(numberOfControlPoints):
     if world:
-      markupsNode.GetNthControlPointPositionWorld(controlPointIndex, narray[:,controlPointIndex])
+      markupsNode.GetNthControlPointPositionWorld(controlPointIndex, narray[controlPointIndex,:])
     else:
-      markupsNode.GetNthControlPointPosition(controlPointIndex, narray[:,controlPointIndex])
+      markupsNode.GetNthControlPointPosition(controlPointIndex, narray[controlPointIndex,:])
   return narray
 
 def updateMarkupControlPointsFromArray(markupsNode, narray, world = False):
-  """Sets control point positions in a markups node from a numpy array of size 3xN.
+  """Sets control point positions in a markups node from a numpy array of size Nx3.
   :param world: if set to True then the control points coordinates are expected in world coordinate system.
   All previous content of the node is deleted.
   """
@@ -1177,23 +1177,23 @@ def updateMarkupControlPointsFromArray(markupsNode, narray, world = False):
   if narrayshape == (0,):
     markupsNode.RemoveAllControlPoints()
     return
-  if len(narrayshape) != 2 or narrayshape[0] != 3:
-    raise RuntimeError("Unsupported numpy array shape: "+str(narrayshape)+" expected (3,N)")
-  numberOfControlPoints = narrayshape[1]
+  if len(narrayshape) != 2 or narrayshape[1] != 3:
+    raise RuntimeError("Unsupported numpy array shape: "+str(narrayshape)+" expected (N,3)")
+  numberOfControlPoints = narrayshape[0]
   oldNumberOfControlPoints = markupsNode.GetNumberOfControlPoints()
   # Update existing control points
   for controlPointIndex in range(min(numberOfControlPoints, oldNumberOfControlPoints)):
     if world:
-      markupsNode.SetNthControlPointPositionWorldFromArray(controlPointIndex, narray[:,controlPointIndex])
+      markupsNode.SetNthControlPointPositionWorldFromArray(controlPointIndex, narray[controlPointIndex,:])
     else:
-      markupsNode.SetNthControlPointPositionFromArray(controlPointIndex, narray[:,controlPointIndex])
+      markupsNode.SetNthControlPointPositionFromArray(controlPointIndex, narray[controlPointIndex,:])
   if numberOfControlPoints >= oldNumberOfControlPoints:
     # Add new points to the markup node
     for controlPointIndex in range(oldNumberOfControlPoints, numberOfControlPoints):
       if world:
-        markupsNode.AddControlPointWorld(vtk.vtkVector3d(narray[:,controlPointIndex]))
+        markupsNode.AddControlPointWorld(vtk.vtkVector3d(narray[controlPointIndex,:]))
       else:
-        markupsNode.AddControlPoint(vtk.vtkVector3d(narray[:,controlPointIndex]))
+        markupsNode.AddControlPoint(vtk.vtkVector3d(narray[controlPointIndex,:]))
   else:
     # Remove extra point from the markup node
     for controlPointIndex in range(oldNumberOfControlPoints, numberOfControlPoints, -1):
