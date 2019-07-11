@@ -219,7 +219,7 @@ void qSlicerReformatModuleWidgetPrivate::updateOriginCoordinates()
 
   // Update volumes extremums
   double volumeBounds[6] = {0, 0, 0, 0, 0, 0};
-  reformatLogic->GetVolumeBounds(this->MRMLSliceNode, volumeBounds);
+  vtkSlicerReformatLogic::GetVolumeBounds(this->MRMLSliceNode, volumeBounds);
 
   /// TODO: set min/max per element
   double minimum = qMin(volumeBounds[0], qMin(volumeBounds[2], volumeBounds[4]));
@@ -535,7 +535,7 @@ void qSlicerReformatModuleWidget::setWorldPosition(double* worldCoordinates)
     }
 
   // Insert the widget translation
-  reformatLogic->SetSliceOrigin(d->MRMLSliceNode, worldCoordinates);
+  vtkSlicerReformatLogic::SetSliceOrigin(d->MRMLSliceNode, worldCoordinates);
 }
 
 //------------------------------------------------------------------------------
@@ -634,7 +634,7 @@ void qSlicerReformatModuleWidget::setSliceNormal(double* sliceNormal)
   vtkMath::Normalize(normalizedSliceNormal);
 
   // Insert the widget rotation
-  reformatLogic->SetSliceNormal(d->MRMLSliceNode, normalizedSliceNormal);
+  vtkSlicerReformatLogic::SetSliceNormal(d->MRMLSliceNode, normalizedSliceNormal);
 }
 
 //------------------------------------------------------------------------------
@@ -724,11 +724,11 @@ void qSlicerReformatModuleWidget::centerSliceNode()
 
   // Retrieve the center given the volume bounds
   double bounds[6], center[3];
-  reformatLogic->GetVolumeBounds(d->MRMLSliceNode, bounds);
+  vtkSlicerReformatLogic::GetVolumeBounds(d->MRMLSliceNode, bounds);
   vtkSlicerReformatLogic::GetCenterFromBounds(bounds, center);
 
   // Apply the center
-  reformatLogic->SetSliceOrigin(d->MRMLSliceNode, center);
+  vtkSlicerReformatLogic::SetSliceOrigin(d->MRMLSliceNode, center);
 }
 
 //-----------------------------------------------------------

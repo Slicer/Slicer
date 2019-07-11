@@ -43,18 +43,18 @@ class VTK_SLICER_REFORMAT_MODULE_LOGIC_EXPORT
 vtkSlicerReformatLogic : public vtkSlicerModuleLogic
 {
 public:
-
   static vtkSlicerReformatLogic *New();
+  typedef vtkSlicerReformatLogic Self;
   vtkTypeMacro(vtkSlicerReformatLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Set the world coordinate origin position
-  void SetSliceOrigin(vtkMRMLSliceNode* node, double x, double y, double z);
-  void SetSliceOrigin(vtkMRMLSliceNode* node, double position[3]);
+  static void SetSliceOrigin(vtkMRMLSliceNode* node, double x, double y, double z);
+  static void SetSliceOrigin(vtkMRMLSliceNode* node, double position[3]);
 
   /// Set the normal to the plane of the slice node.
-  void SetSliceNormal(vtkMRMLSliceNode* node, double x, double y, double z);
-  void SetSliceNormal(vtkMRMLSliceNode* node, double normal[3]);
+  static void SetSliceNormal(vtkMRMLSliceNode* node, double x, double y, double z);
+  static void SetSliceNormal(vtkMRMLSliceNode* node, double normal[3]);
 
   /// Compute and return the volume bounding box
   static void GetVolumeBounds(vtkMRMLSliceNode* node, double bounds[6]);

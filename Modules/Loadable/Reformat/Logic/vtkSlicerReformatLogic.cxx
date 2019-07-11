@@ -67,7 +67,7 @@ SetSliceOrigin(vtkMRMLSliceNode* node, double x, double y, double z)
 
   // Clamp the position given the volume
   double bounds[6];
-  this->GetVolumeBounds(node, bounds);
+  Self::GetVolumeBounds(node, bounds);
 
   x = std::max(bounds[0], std::min(x, bounds[1]));
   y = std::max(bounds[2], std::min(y, bounds[3]));
@@ -88,7 +88,7 @@ SetSliceOrigin(vtkMRMLSliceNode* node, double position[3])
   double y = position[1];
   double z = position[2];
 
-  this->SetSliceOrigin(node, x, y, z);
+  Self::SetSliceOrigin(node, x, y, z);
 }
 
 //------------------------------------------------------------------------------
@@ -153,7 +153,7 @@ SetSliceNormal(vtkMRMLSliceNode* node, double normal[3])
   double y = normal[1];
   double z = normal[2];
 
-  this->SetSliceNormal(node, x, y, z);
+  Self::SetSliceNormal(node, x, y, z);
 }
 
 //------------------------------------------------------------------------------
