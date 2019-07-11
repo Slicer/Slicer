@@ -132,6 +132,7 @@ function(get_extension_keys ext_dir libs dirs keys_var)
     # But do fixups on all executables in the bundle:
     #
     get_bundle_all_executables("${bundle}" exes)
+    message(STATUS "  exes='${exes}'")
 
     # For each extra lib, accumulate a key as well and then also accumulate
     # any of its prerequisites. (Extra libs are typically dynamically loaded
