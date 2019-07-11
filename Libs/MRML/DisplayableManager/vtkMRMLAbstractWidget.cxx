@@ -268,7 +268,7 @@ bool vtkMRMLAbstractWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData*
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLAbstractWidget::Leave(vtkMRMLInteractionEventData* eventData)
+void vtkMRMLAbstractWidget::Leave(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
 {
   this->SetWidgetState(WidgetStateIdle);
 }

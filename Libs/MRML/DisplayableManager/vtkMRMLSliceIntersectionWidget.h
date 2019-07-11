@@ -82,12 +82,17 @@ public:
     WidgetStateBlend,
     WidgetStateTranslateSlice,
     WidgetStateZoomSlice,
+    WidgetStateTouchGesture,
     };
 
   /// Widget events
   enum
     {
-    WidgetEventTouchpadRotateSliceIntersection = WidgetEventUser,
+    WidgetEventTouchGestureStart = WidgetEventUser,
+    WidgetEventTouchGestureEnd,
+    WidgetEventTouchRotateSliceIntersection,
+    WidgetEventTouchZoomSlice,
+    WidgetEventTouchTranslateSlice,
     WidgetEventBlendStart,
     WidgetEventBlendEnd,
     WidgetEventToggleLabelOpacity,
@@ -168,6 +173,12 @@ protected:
 
   bool ProcessZoomSlice(vtkMRMLInteractionEventData* eventData);
 
+  bool ProcessTouchGestureStart(vtkMRMLInteractionEventData* eventData);
+  bool ProcessTouchGestureEnd(vtkMRMLInteractionEventData* eventData);
+  bool ProcessTouchRotate(vtkMRMLInteractionEventData* eventData);
+  bool ProcessTouchZoom(vtkMRMLInteractionEventData* eventData);
+  bool ProcessTouchTranslate(vtkMRMLInteractionEventData* eventData);
+
   /// Rotate the message by the specified amount. Used for touchpad events.
   bool Rotate(double sliceRotationAngleRad);
 
@@ -236,6 +247,16 @@ protected:
   bool ModifierKeyPressedSinceLastMouseButtonRelease;
 
   int ActionsEnabled;
+
+  double TouchRotationThreshold;
+  double TouchTranslationThreshold;
+  double TouchZoomThreshold;
+  double TotalTouchRotation;
+  bool TouchRotateEnabled;
+  double TotalTouchTranslation;
+  bool TouchTranslationEnabled;
+  double TotalTouchZoom;
+  bool TouchZoomEnabled;
 
 private:
   vtkMRMLSliceIntersectionWidget(const vtkMRMLSliceIntersectionWidget&) = delete;

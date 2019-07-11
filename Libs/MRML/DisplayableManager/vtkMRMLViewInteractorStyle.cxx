@@ -237,6 +237,56 @@ void vtkMRMLViewInteractorStyle::OnConfigure()
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLViewInteractorStyle::OnPinch()
+{
+  if (this->DelegateInteractionEventToDisplayableManagers(vtkCommand::PinchEvent))
+    {
+    return;
+    }
+  this->Superclass::OnPinch();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewInteractorStyle::OnRotate()
+{
+  if (this->DelegateInteractionEventToDisplayableManagers(vtkCommand::RotateEvent))
+    {
+    return;
+    }
+  this->Superclass::OnRotate();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewInteractorStyle::OnPan()
+{
+  if (this->DelegateInteractionEventToDisplayableManagers(vtkCommand::PanEvent))
+    {
+    return;
+    }
+  this->Superclass::OnPan();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewInteractorStyle::OnTap()
+{
+  if (this->DelegateInteractionEventToDisplayableManagers(vtkCommand::TapEvent))
+    {
+    return;
+    }
+  this->Superclass::OnTap();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewInteractorStyle::OnLongTap()
+{
+  if (this->DelegateInteractionEventToDisplayableManagers(vtkCommand::LongTapEvent))
+    {
+    return;
+    }
+  this->Superclass::OnLongTap();
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLViewInteractorStyle::SetDisplayableManagers(vtkMRMLDisplayableManagerGroup* displayableManagerGroup)
 {
   this->DisplayableManagers = displayableManagerGroup;
@@ -430,5 +480,11 @@ void vtkMRMLViewInteractorStyle::SetInteractor(vtkRenderWindowInteractor *intera
     this->Interactor->AddObserver(vtkCommand::LeftButtonDoubleClickEvent, this->EventCallbackCommand, this->Priority);
     this->Interactor->AddObserver(vtkCommand::MiddleButtonDoubleClickEvent, this->EventCallbackCommand, this->Priority);
     this->Interactor->AddObserver(vtkCommand::RightButtonDoubleClickEvent, this->EventCallbackCommand, this->Priority);
+    this->Interactor->AddObserver(vtkCommand::StartPinchEvent, this->EventCallbackCommand, this->Priority);
+    this->Interactor->AddObserver(vtkCommand::EndPinchEvent, this->EventCallbackCommand, this->Priority);
+    this->Interactor->AddObserver(vtkCommand::StartRotateEvent, this->EventCallbackCommand, this->Priority);
+    this->Interactor->AddObserver(vtkCommand::EndRotateEvent, this->EventCallbackCommand, this->Priority);
+    this->Interactor->AddObserver(vtkCommand::StartPanEvent, this->EventCallbackCommand, this->Priority);
+    this->Interactor->AddObserver(vtkCommand::EndPanEvent, this->EventCallbackCommand, this->Priority);
     }
 }

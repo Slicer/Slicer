@@ -57,6 +57,13 @@ public:
   void OnMouseWheelForward() override;
   void OnMouseWheelBackward() override;
 
+  // Touch gesture interaction events
+  void OnPinch() override;
+  void OnRotate() override;
+  void OnPan() override;
+  void OnTap() override;
+  void OnLongTap() override;
+
   /// Keyboard functions
   void OnChar() override;
   void OnKeyPress() override;

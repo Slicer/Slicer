@@ -21,9 +21,11 @@
 #include "vtkCamera.h"
 #include "vtkEvent.h"
 #include "vtkInteractorStyle.h"
+#include "vtkPlane.h"
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
+#include "vtkTransform.h"
 
 /// MRML includes
 #include "vtkMRMLCrosshairDisplayableManager.h"
@@ -50,56 +52,56 @@ vtkMRMLCameraWidget::vtkMRMLCameraWidget()
 
   // Rotate camera to anatomic directions
 
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "KP_1", WidgetCameraRotateToAnterior);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "End", WidgetCameraRotateToAnterior);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "KP_1", WidgetCameraRotateToPosterior);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "End", WidgetCameraRotateToPosterior);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "KP_1", WidgetEventCameraRotateToAnterior);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "End", WidgetEventCameraRotateToAnterior);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "KP_1", WidgetEventCameraRotateToPosterior);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "End", WidgetEventCameraRotateToPosterior);
 
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "KP_3", WidgetCameraRotateToLeft);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Next", WidgetCameraRotateToLeft); //= PageDown
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "KP_3", WidgetCameraRotateToRight);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "Next", WidgetCameraRotateToRight);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "KP_3", WidgetEventCameraRotateToLeft);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Next", WidgetEventCameraRotateToLeft); //= PageDown
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "KP_3", WidgetEventCameraRotateToRight);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "Next", WidgetEventCameraRotateToRight);
 
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "KP_7", WidgetCameraRotateToSuperior);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Home", WidgetCameraRotateToSuperior);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "KP_7", WidgetCameraRotateToInferior);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "Home", WidgetCameraRotateToInferior);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "KP_7", WidgetEventCameraRotateToSuperior);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Home", WidgetEventCameraRotateToSuperior);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "KP_7", WidgetEventCameraRotateToInferior);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "Home", WidgetEventCameraRotateToInferior);
 
   // Rotate camera by small increments
 
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "KP_2", WidgetCameraRotateCwX);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Down", WidgetCameraRotateCwX);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "KP_8", WidgetCameraRotateCcwX);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Up", WidgetCameraRotateCcwX);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "KP_4", WidgetCameraRotateCwZ);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Left", WidgetCameraRotateCwZ);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "KP_6", WidgetCameraRotateCcwZ);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Right", WidgetCameraRotateCcwZ);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "KP_2", WidgetEventCameraRotateCwX);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Down", WidgetEventCameraRotateCwX);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "KP_8", WidgetEventCameraRotateCcwX);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Up", WidgetEventCameraRotateCcwX);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "KP_4", WidgetEventCameraRotateCwZ);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Left", WidgetEventCameraRotateCwZ);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "KP_6", WidgetEventCameraRotateCcwZ);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Right", WidgetEventCameraRotateCcwZ);
 
   // Translate camera by small increments
 
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "KP_2", WidgetCameraTranslateBackwardY);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "Down", WidgetCameraTranslateBackwardY);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "KP_8", WidgetCameraTranslateForwardY);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "Up", WidgetCameraTranslateForwardY);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "KP_4", WidgetCameraTranslateBackwardX);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "Left", WidgetCameraTranslateBackwardX);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "KP_6", WidgetCameraTranslateForwardX);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "Right", WidgetCameraTranslateForwardX);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "KP_2", WidgetEventCameraTranslateBackwardY);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "Down", WidgetEventCameraTranslateBackwardY);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "KP_8", WidgetEventCameraTranslateForwardY);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "Up", WidgetEventCameraTranslateForwardY);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "KP_4", WidgetEventCameraTranslateBackwardX);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "Left", WidgetEventCameraTranslateBackwardX);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "KP_6", WidgetEventCameraTranslateForwardX);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "Right", WidgetEventCameraTranslateForwardX);
 
   // Camera zoom
 
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "plus", WidgetCameraZoomIn);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "minus", WidgetCameraZoomOut);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "plus", WidgetEventCameraZoomIn);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "minus", WidgetEventCameraZoomOut);
 
   // Reset camera
 
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "KP_0", WidgetCameraReset);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Insert", WidgetCameraReset);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "KP_5", WidgetCameraResetRotation);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Clear", WidgetCameraResetRotation);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "KP_5", WidgetCameraResetTranslation);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "Clear", WidgetCameraResetTranslation);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "KP_0", WidgetEventCameraReset);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Insert", WidgetEventCameraReset);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "KP_5", WidgetEventCameraResetRotation);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "Clear", WidgetEventCameraResetRotation);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "KP_5", WidgetEventCameraResetTranslation);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::ShiftModifier, 0, 0, "Clear", WidgetEventCameraResetTranslation);
 
   // Rotate
   this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
@@ -110,18 +112,30 @@ vtkMRMLCameraWidget::vtkMRMLCameraWidget()
     WidgetStateTranslate, WidgetEventTranslateStart, WidgetEventTranslateEnd);
   this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::MiddleButtonPressEvent, vtkEvent::NoModifier,
     WidgetStateTranslate, WidgetEventTranslateStart, WidgetEventTranslateEnd);
+  // Touch translate
+  this->SetEventTranslation(WidgetStateIdle, vtkCommand::StartPanEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureStart);
+  this->SetEventTranslation(WidgetStateTouchGesture, vtkCommand::PanEvent, vtkEvent::AnyModifier, WidgetEventTouchPanTranslate);
+  this->SetEventTranslation(WidgetStateTouchGesture, vtkCommand::EndPanEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureEnd);
 
   // Dolly
   this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::ShiftModifier + vtkEvent::ControlModifier,
     WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
   this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier,
     WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
-  this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseWheelForwardEvent, vtkEvent::NoModifier, WidgetCameraWheelZoomIn);
-  this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseWheelBackwardEvent, vtkEvent::NoModifier, WidgetCameraWheelZoomOut);
+  this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseWheelForwardEvent, vtkEvent::NoModifier, WidgetEventCameraWheelZoomIn);
+  this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseWheelBackwardEvent, vtkEvent::NoModifier, WidgetEventCameraWheelZoomOut);
+  // Touch zoom
+  this->SetEventTranslation(WidgetStateIdle, vtkCommand::StartPinchEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureStart);
+  this->SetEventTranslation(WidgetStateTouchGesture, vtkCommand::PinchEvent, vtkEvent::AnyModifier, WidgetEventTouchPinchZoom);
+  this->SetEventTranslation(WidgetStateTouchGesture, vtkCommand::EndPinchEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureEnd);
 
   // Spin
   this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::ControlModifier,
     WidgetStateSpin, WidgetEventSpinStart, WidgetEventSpinEnd);
+  // Touch rotate
+  this->SetEventTranslation(WidgetStateIdle, vtkCommand::StartRotateEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureStart);
+  this->SetEventTranslation(WidgetStateTouchGesture, vtkCommand::RotateEvent, vtkEvent::AnyModifier, WidgetEventTouchSpinCamera);
+  this->SetEventTranslation(WidgetStateTouchGesture, vtkCommand::EndRotateEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureEnd);
 
   // Set cursor position
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseMoveEvent, vtkEvent::ShiftModifier, WidgetEventSetCrosshairPosition);
@@ -190,123 +204,123 @@ bool vtkMRMLCameraWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* e
   if (!this->CameraNode)
     {
     return false;
-   }
+    }
   unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
 
   bool processedEvent = true;
 
   switch (widgetEvent)
     {
-    case WidgetCameraRotateToAnterior:
+    case WidgetEventCameraRotateToAnterior:
       this->SaveStateForUndo();
       this->CameraNode->RotateTo(vtkMRMLCameraNode::Anterior);
       break;
-    case WidgetCameraRotateToPosterior:
+    case WidgetEventCameraRotateToPosterior:
       this->SaveStateForUndo();
       this->CameraNode->RotateTo(vtkMRMLCameraNode::Posterior);
       break;
-    case WidgetCameraRotateToRight:
+    case WidgetEventCameraRotateToRight:
       this->SaveStateForUndo();
       this->CameraNode->RotateTo(vtkMRMLCameraNode::Right);
       break;
-    case WidgetCameraRotateToLeft:
+    case WidgetEventCameraRotateToLeft:
       this->SaveStateForUndo();
       this->CameraNode->RotateTo(vtkMRMLCameraNode::Left);
       break;
-    case WidgetCameraRotateToSuperior:
+    case WidgetEventCameraRotateToSuperior:
       this->SaveStateForUndo();
       this->CameraNode->RotateTo(vtkMRMLCameraNode::Superior);
       break;
-    case WidgetCameraRotateToInferior:
+    case WidgetEventCameraRotateToInferior:
       this->SaveStateForUndo();
       this->CameraNode->RotateTo(vtkMRMLCameraNode::Inferior);
       break;
 
-    case WidgetCameraTranslateBackwardX:
+    case WidgetEventCameraTranslateBackwardX:
       this->SaveStateForUndo();
       this->CameraNode->TranslateAlong(vtkMRMLCameraNode::X, true); // screen X is towards left
       break;
-    case WidgetCameraTranslateForwardX:
+    case WidgetEventCameraTranslateForwardX:
       this->SaveStateForUndo();
       this->CameraNode->TranslateAlong(vtkMRMLCameraNode::X, false); // screen X is towards left
       break;
-    case WidgetCameraTranslateBackwardY:
+    case WidgetEventCameraTranslateBackwardY:
       this->SaveStateForUndo();
       this->CameraNode->TranslateAlong(vtkMRMLCameraNode::Y, false);
       break;
-    case WidgetCameraTranslateForwardY:
+    case WidgetEventCameraTranslateForwardY:
       this->SaveStateForUndo();
       this->CameraNode->TranslateAlong(vtkMRMLCameraNode::Y, true);
       break;
-    case WidgetCameraTranslateBackwardZ:
+    case WidgetEventCameraTranslateBackwardZ:
       this->SaveStateForUndo();
       this->CameraNode->TranslateAlong(vtkMRMLCameraNode::Z, false);
       break;
-    case WidgetCameraTranslateForwardZ:
+    case WidgetEventCameraTranslateForwardZ:
       this->SaveStateForUndo();
       this->CameraNode->TranslateAlong(vtkMRMLCameraNode::Z, true);
       break;
 
-    case WidgetCameraRotateCcwX:
+    case WidgetEventCameraRotateCcwX:
       this->SaveStateForUndo();
       this->CameraNode->RotateAround(vtkMRMLCameraNode::R, false);
       break;
-    case WidgetCameraRotateCwX:
+    case WidgetEventCameraRotateCwX:
       this->SaveStateForUndo();
       this->CameraNode->RotateAround(vtkMRMLCameraNode::R, true);
       break;
-    case WidgetCameraRotateCcwY:
+    case WidgetEventCameraRotateCcwY:
       this->SaveStateForUndo();
       this->CameraNode->RotateAround(vtkMRMLCameraNode::A, false);
       break;
-    case WidgetCameraRotateCwY:
+    case WidgetEventCameraRotateCwY:
       this->SaveStateForUndo();
       this->CameraNode->RotateAround(vtkMRMLCameraNode::A, true);
       break;
-    case WidgetCameraRotateCcwZ:
+    case WidgetEventCameraRotateCcwZ:
       this->SaveStateForUndo();
       this->CameraNode->RotateAround(vtkMRMLCameraNode::S, false);
       break;
-    case WidgetCameraRotateCwZ:
+    case WidgetEventCameraRotateCwZ:
       this->SaveStateForUndo();
       this->CameraNode->RotateAround(vtkMRMLCameraNode::S, true);
       break;
 
-    case WidgetCameraReset:
+    case WidgetEventCameraReset:
       this->SaveStateForUndo();
       this->CameraNode->Reset(true, true, true, this->Renderer);
       break;
-    case WidgetCameraResetRotation:
+    case WidgetEventCameraResetRotation:
       this->SaveStateForUndo();
       this->CameraNode->Reset(true, false, false, this->Renderer);
       break;
-    case WidgetCameraResetTranslation:
+    case WidgetEventCameraResetTranslation:
       this->SaveStateForUndo();
       this->CameraNode->Reset(false, true, false, this->Renderer);
       break;
 
-    case WidgetCameraZoomIn:
+    case WidgetEventCameraZoomIn:
       this->SaveStateForUndo();
       this->Dolly(1.2);
       break;
-    case WidgetCameraZoomOut:
+    case WidgetEventCameraZoomOut:
       this->SaveStateForUndo();
       this->Dolly(0.8);
       break;
 
-    case WidgetCameraWheelZoomIn:
+    case WidgetEventCameraWheelZoomIn:
       this->SaveStateForUndo();
       // Slicer; invert direction to match right button drag
       this->Dolly(pow((double)1.1, -0.2 * this->MotionFactor * this->MouseWheelMotionFactor));
       break;
-    case WidgetCameraWheelZoomOut:
+    case WidgetEventCameraWheelZoomOut:
       this->SaveStateForUndo();
       // Slicer; invert direction to match right button drag
       this->Dolly(pow((double)1.1, 0.2 * this->MotionFactor * this->MouseWheelMotionFactor));
       break;
 
     case WidgetEventMouseMove:
-    // click-and-dragging the mouse cursor
+      // click-and-dragging the mouse cursor
       processedEvent = this->ProcessMouseMove(eventData);
       break;
 
@@ -337,6 +351,21 @@ bool vtkMRMLCameraWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* e
       break;
     case WidgetEventSpinEnd:
       processedEvent = this->ProcessEndMouseDrag(eventData);
+      break;
+    case WidgetEventTouchGestureStart:
+      this->ProcessTouchGestureStart(eventData);
+      break;
+    case WidgetEventTouchGestureEnd:
+      this->ProcessTouchGestureEnd(eventData);
+      break;
+    case WidgetEventTouchSpinCamera:
+      this->ProcessTouchCameraSpin(eventData);
+      break;
+    case WidgetEventTouchPinchZoom:
+      this->ProcessTouchCameraZoom(eventData);
+      break;
+    case WidgetEventTouchPanTranslate:
+      this->ProcessTouchCameraTranslate(eventData);
       break;
 
     case WidgetEventSetCrosshairPosition:
@@ -379,7 +408,7 @@ bool vtkMRMLCameraWidget::ProcessMouseMove(vtkMRMLInteractionEventData* eventDat
     default:
       // not processed
       return false;
-  }
+    }
   return true;
 }
 
@@ -704,6 +733,150 @@ bool vtkMRMLCameraWidget::ProcessScale(vtkMRMLInteractionEventData* eventData)
 
   this->PreviousEventPosition[0] = eventPosition[0];
   this->PreviousEventPosition[1] = eventPosition[1];
+  return true;
+}
+
+//-------------------------------------------------------------------------
+bool vtkMRMLCameraWidget::ProcessTouchGestureStart(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
+{
+  this->SetWidgetState(WidgetStateTouchGesture);
+  return true;
+}
+
+//-------------------------------------------------------------------------
+bool vtkMRMLCameraWidget::ProcessTouchGestureEnd(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
+{
+  this->SetWidgetState(WidgetStateIdle);
+  return true;
+}
+
+//-------------------------------------------------------------------------
+bool vtkMRMLCameraWidget::ProcessTouchCameraSpin(vtkMRMLInteractionEventData* eventData)
+{
+  vtkCamera* camera = this->GetCamera();
+  if (!camera)
+    {
+    return false;
+    }
+
+  bool wasCameraNodeModified = this->CameraModifyStart();
+
+  int pinchPostionDisplay[2] = { 0,0 };
+  eventData->GetDisplayPosition(pinchPostionDisplay);
+
+  double oldWorldPosition[4] = { 0,0,0,0 };
+  vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer, pinchPostionDisplay[0], pinchPostionDisplay[1], 0, oldWorldPosition);
+
+  camera->Roll(eventData->GetRotation() - eventData->GetLastRotation());
+  camera->OrthogonalizeViewUp();
+
+  double newWorldPosition[4] = { 0,0,0,0 };
+  vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer, pinchPostionDisplay[0], pinchPostionDisplay[1], 0, newWorldPosition);
+
+  vtkNew<vtkPlane> plane;
+  plane->SetOrigin(camera->GetFocalPoint());
+  plane->SetNormal(camera->GetViewPlaneNormal());
+  plane->ProjectPoint(newWorldPosition, newWorldPosition);
+  plane->ProjectPoint(oldWorldPosition, oldWorldPosition);
+
+  double deltaWorld[3] = { 0,0,0 };
+  vtkMath::Subtract(oldWorldPosition, newWorldPosition, deltaWorld);
+
+  vtkNew<vtkTransform> deltaWorldTransform;
+  deltaWorldTransform->Identity();
+  deltaWorldTransform->Translate(deltaWorld);
+  camera->ApplyTransform(deltaWorldTransform);
+
+  this->CameraModifyEnd(wasCameraNodeModified, false, true);
+  return true;
+}
+
+//-------------------------------------------------------------------------
+bool vtkMRMLCameraWidget::ProcessTouchCameraZoom(vtkMRMLInteractionEventData* eventData)
+{
+  vtkCamera* camera = this->GetCamera();
+  if (!camera)
+    {
+    return false;
+    }
+  if (!eventData)
+    {
+    return false;
+    }
+
+  bool wasCameraNodeModified = this->CameraModifyStart();
+
+  int pinchPostionDisplay[3] = { 0,0,0 };
+  eventData->GetDisplayPosition(pinchPostionDisplay);
+
+  // Remember the position of the center of the pinch in world coordinates
+  // This position should stay in the same location on the screen after the dolly has been performed
+  double oldWorldPosition[4] = { 0,0,0,0 };
+  vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer, pinchPostionDisplay[0], pinchPostionDisplay[1], pinchPostionDisplay[2], oldWorldPosition);
+
+  // Perform the zoom
+  this->Dolly(eventData->GetScale() / eventData->GetLastScale());
+
+  // New position at the center of the pinch gesture
+  double newWorldPosition[4] = { 0,0,0,0 };
+  vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer, pinchPostionDisplay[0], pinchPostionDisplay[1], pinchPostionDisplay[2], newWorldPosition);
+
+  vtkNew<vtkPlane> plane;
+  plane->SetOrigin(camera->GetFocalPoint());
+  plane->SetNormal(camera->GetViewPlaneNormal());
+  plane->ProjectPoint(newWorldPosition, newWorldPosition);
+  plane->ProjectPoint(oldWorldPosition, oldWorldPosition);
+
+  // Determine how far the pinch center has been shifted from it's original location
+  double deltaWorld[3] = { 0,0,0 };
+  vtkMath::Subtract(oldWorldPosition, newWorldPosition, deltaWorld);
+
+  // Translate the camera to compensate for the shift of the pinch center
+  vtkNew<vtkTransform> deltaWorldTransform;
+  deltaWorldTransform->Identity();
+  deltaWorldTransform->Translate(deltaWorld);
+  camera->ApplyTransform(deltaWorldTransform);
+
+  this->CameraModifyEnd(wasCameraNodeModified, false, true);
+  return true;
+}
+
+//-------------------------------------------------------------------------
+bool vtkMRMLCameraWidget::ProcessTouchCameraTranslate(vtkMRMLInteractionEventData* eventData)
+{
+  vtkCamera* camera = this->GetCamera();
+  if (!this->Renderer || !eventData || !camera)
+    {
+    return false;
+    }
+
+  const double* translation = eventData->GetTranslation();
+  double deltaView[3] = {-translation[0], -translation[1], 0.0};
+
+  double worldFocus[4];
+  camera->GetFocalPoint(worldFocus);
+  double viewFocus[4];
+  vtkInteractorObserver::ComputeWorldToDisplay(this->Renderer,
+                                               worldFocus[0],
+                                               worldFocus[1],
+                                               worldFocus[2],
+                                               viewFocus);
+
+  double newWorldFocus[4];
+  vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer,
+                                               viewFocus[0] + deltaView[0],
+                                               viewFocus[1] + deltaView[1],
+                                               viewFocus[2] + deltaView[2],
+                                               newWorldFocus);
+
+  double deltaWorld[4];
+  vtkMath::Subtract(newWorldFocus, worldFocus, deltaWorld);
+
+  vtkNew<vtkTransform> deltaWorldTransform;
+  deltaWorldTransform->Identity();
+  deltaWorldTransform->Translate(deltaWorld);
+  camera->ApplyTransform(deltaWorldTransform);
+
   return true;
 }
 

@@ -89,7 +89,14 @@ public:
   double GetRotation() const;
   void SetLastRotation(double v);
   double GetLastRotation() const;
-
+  void SetScale(double scale);
+  double GetScale() const;
+  void SetLastScale(double scale);
+  double GetLastScale() const;
+  void SetTranslation(const double translation[2]);
+  const double *GetTranslation() const;
+  void SetLastTranslation(const double translation[2]);
+  const double* GetLastTranslation() const;
   void SetWorldToPhysicalScale(double v);
   double GetWorldToPhysicalScale() const;
 
@@ -125,10 +132,15 @@ protected:
   std::string KeySym;
   //@}
 
+  // Gesture events
   //@{
   /// MacOSX touchpad events
   double Rotation;
   double LastRotation;
+  double Scale;
+  double LastScale;
+  double Translation[2];
+  double LastTranslation[2];
   //@}
 
   /// For VR events

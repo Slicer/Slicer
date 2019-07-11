@@ -264,6 +264,10 @@ void vtkMRMLInteractionEventData::SetAttributesFromInteractor(vtkRenderWindowInt
 
   this->Rotation = interactor->GetRotation();
   this->LastRotation = interactor->GetLastRotation();
+  this->Scale = interactor->GetScale();
+  this->LastScale = interactor->GetLastScale();
+  this->SetTranslation(interactor->GetTranslation());
+  this->SetLastTranslation(interactor->GetLastTranslation());
 }
 
 //---------------------------------------------------------------------------
@@ -363,3 +367,53 @@ bool vtkMRMLInteractionEventData::Equivalent(const vtkEventData *e) const
     }
   return true;
 };
+
+//---------------------------------------------------------------------------
+void vtkMRMLInteractionEventData::SetScale(double scale)
+{
+  this->Scale = scale;
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLInteractionEventData::GetScale() const
+{
+  return this->Scale;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLInteractionEventData::SetLastScale(double lastScale)
+{
+  this->LastScale = lastScale;
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLInteractionEventData::GetLastScale() const
+{
+  return this->LastScale;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLInteractionEventData::SetTranslation(const double translation[2])
+{
+  this->Translation[0] = translation[0];
+  this->Translation[1] = translation[1];
+}
+
+//---------------------------------------------------------------------------
+const double* vtkMRMLInteractionEventData::GetTranslation() const
+{
+  return this->Translation;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLInteractionEventData::SetLastTranslation(const double lastTranslation[2])
+{
+  this->LastTranslation[0] = lastTranslation[0];
+  this->LastTranslation[1] = lastTranslation[1];
+}
+
+//---------------------------------------------------------------------------
+const double* vtkMRMLInteractionEventData::GetLastTranslation() const
+{
+  return this->LastTranslation;
+}
