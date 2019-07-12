@@ -542,7 +542,7 @@ void vtkMRMLMarkupsDisplayNode::GetActiveControlPoints(std::vector<int>& control
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLMarkupsDisplayNode::GetActiveControlPointForContext(std::string context)
+int vtkMRMLMarkupsDisplayNode::GetActiveControlPoint(std::string context)
 {
   if ( this->ActiveComponents.find(context) != this->ActiveComponents.end()
     && this->ActiveComponents[context].Type == ComponentControlPoint )

@@ -75,7 +75,10 @@ public:
 
   /// Active component (that the mouse or other interaction context is hovered over).
   /// This property is computed on-the-fly and saved to file.
-  /// \param context Name of the interaction context. By default it is empty string, meaning mouse
+  /// \param context Name of the interaction context. By default it is empty string, meaning mouse.
+  ///   Additional devices, such as virtual reality controllers can specify additional context names.
+  ///   This mechanism allows interacting with multiple markups at the same time (user can grab
+  ///   different markup points with each controller at the same time).
   int GetActiveComponentType(std::string context="");
   enum ComponentType
     {
@@ -127,7 +130,7 @@ public:
   /// Returns index of active control point for interaction context if active component type is
   /// ComponentControlPoint, -1 otherwise.
   /// \param context Name of the interaction context. By default it is empty string, meaning mouse
-  int GetActiveControlPointForContext(std::string context="");
+  int GetActiveControlPoint(std::string context="");
 
   /// Set the text scale of the associated text.
   vtkGetMacro(TextScale,double);
