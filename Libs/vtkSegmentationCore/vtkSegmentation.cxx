@@ -151,7 +151,7 @@ void vtkSegmentation::DeepCopy(vtkSegmentation* aSegmentation)
     {
     vtkSmartPointer<vtkSegment> segment = vtkSmartPointer<vtkSegment>::New();
     segment->DeepCopy(aSegmentation->Segments[*segmentIdIt]);
-    this->AddSegment(segment);
+    this->AddSegment(segment, *segmentIdIt);
     }
 }
 
