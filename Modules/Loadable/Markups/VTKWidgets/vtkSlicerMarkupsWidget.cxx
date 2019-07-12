@@ -720,6 +720,15 @@ void vtkSlicerMarkupsWidget::StartWidgetInteraction(vtkMRMLInteractionEventData*
       this->StartEventOffsetPosition[0] = startEventPos[0] - pos[0];
       this->StartEventOffsetPosition[1] = startEventPos[1] - pos[1];
       }
+    // AddControlPoint will fire modified events anyway, so we temporarily disable events
+    // to add a new point with a minimum number of events.
+    bool wasDisabled = markupsNode->GetDisableModifiedEvent();
+    markupsNode->DisableModifiedEventOn();
+    markupsNode->SetAttribute("Markups.MovingInSliceView", rep->GetViewNode() ? rep->GetViewNode()->GetID() : "");
+    std::ostringstream controlPointIndexStr;
+    controlPointIndexStr << activeControlPointIndex;
+    markupsNode->SetAttribute("Markups.MovingMarkupIndex", controlPointIndexStr.str().c_str());
+    markupsNode->SetDisableModifiedEvent(wasDisabled);
     markupsNode->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointStartInteractionEvent);
     }
   else
@@ -739,6 +748,13 @@ void vtkSlicerMarkupsWidget::EndWidgetInteraction()
     return;
     }
   markupsNode->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointEndInteractionEvent);
+  // AddControlPoint will fire modified events anyway, so we temporarily disable events
+  // to add a new point with a minimum number of events.
+  bool wasDisabled = markupsNode->GetDisableModifiedEvent();
+  markupsNode->DisableModifiedEventOn();
+  markupsNode->SetAttribute("Markups.MovingInSliceView", "");
+  markupsNode->SetAttribute("Markups.MovingMarkupIndex", "");
+  markupsNode->SetDisableModifiedEvent(wasDisabled);
 }
 
 //----------------------------------------------------------------------

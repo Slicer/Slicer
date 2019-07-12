@@ -486,7 +486,7 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
     std::ostringstream controlPointIndexStr;
     controlPointIndexStr << controlPointIndex;
     markupsNode->SetAttribute("Markups.MovingMarkupIndex", controlPointIndexStr.str().c_str());
-  }
+    }
   else
     {
     markupsNode->SetAttribute("Markups.MovingInSliceView", "");
