@@ -185,6 +185,11 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
 
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
     {
+    if (controlPointType == Project || controlPointType == ProjectBack)
+      {
+      // no projection display in 3D
+      continue;
+      }
     ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[controlPointType]);
 
     controlPoints->ControlPoints->SetNumberOfPoints(0);
@@ -197,34 +202,20 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
     controlPoints->LabelsPriority->SetNumberOfValues(0);
     controlPoints->ControlPointIndices->SetNumberOfValues(0);
 
+    controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility());
+
     for (int pointIndex = 0; pointIndex < numPoints; ++pointIndex)
       {
-      bool isPointActive = std::find(activeControlPointIndices.begin(), activeControlPointIndices.end(), pointIndex) != activeControlPointIndices.end();
-      if (controlPointType == Active)
-        {
-        if (isPointActive && markupsNode->GetNthControlPointVisibility(pointIndex))
-          {
-          controlPoints->Actor->VisibilityOn();
-          controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility());
-          }
-        else
-          {
-          controlPoints->Actor->VisibilityOff();
-          controlPoints->LabelsActor->VisibilityOff();
-          continue;
-          }
-        }
-      else
-        {
-        controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility());
-        }
-
-      if ( controlPointType != Active
-        && ( !markupsNode->GetNthControlPointVisibility(pointIndex)
-          || isPointActive
-          || ((controlPointType == Selected) != (markupsNode->GetNthControlPointSelected(pointIndex) != 0)) ) )
+      if (!markupsNode->GetNthControlPointVisibility(pointIndex))
         {
         continue;
+        }
+      bool isPointActive = std::find(activeControlPointIndices.begin(), activeControlPointIndices.end(), pointIndex) != activeControlPointIndices.end();
+      switch (controlPointType)
+        {
+        case Active: if (!isPointActive) continue; break;
+        case Unselected: if (isPointActive || markupsNode->GetNthControlPointSelected(pointIndex)) continue; break;
+        case Selected: if (isPointActive || !markupsNode->GetNthControlPointSelected(pointIndex)) continue; break;
         }
 
       double worldPos[3] = { 0.0, 0.0, 0.0 };
