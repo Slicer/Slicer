@@ -196,16 +196,32 @@ public:
   void CopyBasicDisplayProperties(vtkMRMLMarkupsDisplayNode *sourceDisplayNode, vtkMRMLMarkupsDisplayNode *targetDisplayNode);
 
   /// Measure surface area of the smooth surface that fits on the closed curve in world coordinate system.
+  /// If projectWarp option is enabled then FitSurfaceProjectWarp method is used
+  /// otherwise FitSurfaceDiskWarp is used. FitSurfaceProjectWarp produces accurate results
+  /// for all quasi-planar curves (while FitSurfaceDiskWarp may significantly overestimate surface area for
+  /// planar convex curves). FitSurfaceDiskWarp is kept for compatison only and may be removed in the future.
   /// \param curveNode points to fit the surface to
   /// \param surface if not nullptr then the generated surface is saved into that
-  static double GetClosedCurveSurfaceArea(vtkMRMLMarkupsClosedCurveNode* curveNode, vtkPolyData* surface = nullptr);
+  static double GetClosedCurveSurfaceArea(vtkMRMLMarkupsClosedCurveNode* curveNode, vtkPolyData* surface = nullptr, bool projectWarp = true);
 
-  /// Create a "soap bubble" surface that fits on the provided point list
+  /// Create a "soap bubble" surface that fits on the provided point list.
+  /// First the contour points projected to best fit plane, triangulated in 2D, and warped to the non-planar shape.
+  /// Convex surfaces are triangulated correctly. If the contour is self-intersecting after projected to best fit plane
+  /// then the surface will be invalid.
+  /// \param curvePoints: points to fit the surface to
+  /// \param radiusScalingFactor size of the surface. Value of 1.0 (default) means the surface edge fits on the points.
+  /// Larger values increase the generated soap bubble outer radius, which may be useful to avoid coincident points
+  /// when using this surface for cutting another surface.
+  static bool FitSurfaceProjectWarp(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor = 1.0);
+
+  /// Create a "soap bubble" surface that fits on the provided point list.
+  /// A triangulated disk is warped so that its boundary matches the provided curve points using thin-plate spline transform.
+  /// The generated surface may go beyond the boundary of the input points if the boundary is highly concave or curved.
   /// \param curvePoints: points to fit the surface to
   /// \param radiusScalingFactor size of the surface.Value of 1.0 (default) means the surface edge fits on the points.
   /// Larger values increase the generated soap bubble outer radius, which may be useful to avoid coincident points
   /// when using this surface for cutting another surface.
-  static bool CreateSoapBubblePolyDataFromCircumferencePoints(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor = 1.0);
+  static bool FitSurfaceDiskWarp(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor = 1.0);
 
   /// Get best fit plane for a markup
   static bool GetBestFitPlane(vtkMRMLMarkupsNode* curveNode, vtkPlane* plane);

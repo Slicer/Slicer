@@ -47,8 +47,13 @@
 #include "vtkMRMLSceneViewNode.h"
 
 // VTK includes
+//#include <vtkAdaptiveSubdivisionFilter.h>
+#include <vtkCleanPolyData.h>
 #include <vtkDelaunay2D.h>
 #include <vtkDiskSource.h>
+//#include <vtkLinearSubdivisionFilter.h>
+//#include <vtkButterflySubdivisionFilter.h>
+//#include <vtkLoopSubdivisionFilter.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPlane.h>
@@ -56,10 +61,12 @@
 #include <vtkPolyData.h>
 #include <vtkPolyDataNormals.h>
 #include <vtkMassProperties.h>
+//#include <vtkSmoothPolyDataFilter.h>
 #include <vtkStringArray.h>
 #include <vtkThinPlateSplineTransform.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
+//#include <vtkTriangleFilter.h>
 
 // STD includes
 #include <cassert>
@@ -1352,7 +1359,8 @@ vtkMRMLMarkupsDisplayNode* vtkSlicerMarkupsLogic::GetDefaultMarkupsDisplayNode()
 }
 
 //---------------------------------------------------------------------------
-double vtkSlicerMarkupsLogic::GetClosedCurveSurfaceArea(vtkMRMLMarkupsClosedCurveNode* curveNode, vtkPolyData* inputSurface /*=nullptr*/)
+double vtkSlicerMarkupsLogic::GetClosedCurveSurfaceArea(vtkMRMLMarkupsClosedCurveNode* curveNode,
+  vtkPolyData* inputSurface /*=nullptr*/, bool projectWarp /*=true*/)
 {
   vtkSmartPointer<vtkPolyData> surface;
   if (inputSurface)
@@ -1369,7 +1377,16 @@ double vtkSlicerMarkupsLogic::GetClosedCurveSurfaceArea(vtkMRMLMarkupsClosedCurv
     {
     return 0.0;
     }
-  if (!vtkSlicerMarkupsLogic::CreateSoapBubblePolyDataFromCircumferencePoints(curvePointsWorld, surface))
+  bool success = false;
+  if (projectWarp)
+    {
+    success = vtkSlicerMarkupsLogic::FitSurfaceProjectWarp(curvePointsWorld, surface);
+    }
+  else
+    {
+    success = vtkSlicerMarkupsLogic::FitSurfaceDiskWarp(curvePointsWorld, surface);
+    }
+  if (!success)
     {
     return 0.0;
     }
@@ -1382,7 +1399,117 @@ double vtkSlicerMarkupsLogic::GetClosedCurveSurfaceArea(vtkMRMLMarkupsClosedCurv
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerMarkupsLogic::CreateSoapBubblePolyDataFromCircumferencePoints(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor/*=1.0*/)
+bool vtkSlicerMarkupsLogic::FitSurfaceProjectWarp(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor/*=1.0*/)
+{
+  if (!curvePoints || !surface)
+    {
+    vtkGenericWarningMacro("FitSurfaceProjectWarp failed: invalid curvePoints or surface");
+    return false;
+    }
+
+  vtkIdType numberOfCurvePoints = curvePoints->GetNumberOfPoints();
+  if (numberOfCurvePoints < 3)
+    {
+    // less than 3 points means that the surface is empty
+    surface->Initialize();
+    return true;
+    }
+
+  // Create a polydata containing a single polygon of the curve points
+  vtkNew<vtkPolyData> inputSurface;
+  inputSurface->SetPoints(curvePoints);
+  vtkNew<vtkCellArray> polys;
+  polys->InsertNextCell(numberOfCurvePoints);
+  for (int i = 0; i < numberOfCurvePoints; i++)
+    {
+    polys->InsertCellPoint(i);
+    }
+  polys->Modified();
+  inputSurface->SetPolys(polys);
+
+  // Remove duplicate points (it would confuse the triangulator)
+  vtkNew<vtkCleanPolyData> cleaner;
+  cleaner->SetInputData(inputSurface);
+  cleaner->Update();
+  inputSurface->DeepCopy(cleaner->GetOutput());
+  vtkNew<vtkPoints> cleanedCurvePoints;
+  cleanedCurvePoints->DeepCopy(inputSurface->GetPoints());
+  numberOfCurvePoints = cleanedCurvePoints->GetNumberOfPoints();
+
+  // The triangulator requires all points to be on the XY plane
+  vtkSmartPointer<vtkAbstractTransform> transform = vtkSmartPointer<vtkAbstractTransform>::Take(
+    vtkDelaunay2D::ComputeBestFittingPlane(inputSurface));
+  vtkTransform* linearTransform = vtkTransform::SafeDownCast(transform);
+  if (!linearTransform)
+    {
+    vtkGenericWarningMacro("FitSurfaceProjectWarp failed: error computing best fitting plane");
+    return false;
+    }
+  vtkNew<vtkTransform> transformToPlane;
+  vtkNew<vtkPoints> pointsOnPlane;
+  transform->TransformPoints(cleanedCurvePoints, pointsOnPlane);
+  inputSurface->SetPoints(pointsOnPlane);
+  for (vtkIdType i = 0; i < numberOfCurvePoints; i++)
+    {
+    double* pt = pointsOnPlane->GetPoint(i);
+    pointsOnPlane->SetPoint(i, pt[0], pt[1], 0.0);
+    }
+
+  // Add random points to improve triangulation quality.
+  // We already have many points on the boundary but no points inside the polygon.
+  // If we passed these points to the triangulator then opposite points on the curve
+  // would be connected by triangles, so we would end up with many very skinny triangles,
+  // and not smooth surface after warping.
+  // By adding random points, the triangulator can create evenly sized triangles.
+  vtkIdType numberOfExtraPoints = numberOfCurvePoints * 5; // add 10x more mesh points than contour points
+  double bounds[6] = { 0.0 };
+  pointsOnPlane->GetBounds(bounds);
+  for (vtkIdType i = 0; i < numberOfExtraPoints; i++)
+    {
+    pointsOnPlane->InsertNextPoint(vtkMath::Random(bounds[0], bounds[1]), vtkMath::Random(bounds[2], bounds[3]), 0.0);
+    }
+
+  vtkNew<vtkDelaunay2D> triangulator;
+  triangulator->SetInputData(inputSurface);
+  triangulator->SetSourceData(inputSurface);
+  triangulator->Update();
+  // TODO: return with failure if a warning is logged (it may happen when the flattened curve is self-intersecting)
+  vtkPolyData* triangulatedSurface = triangulator->GetOutput();
+  vtkPoints* triangulatedSurfacePoints = triangulatedSurface->GetPoints();
+
+  vtkNew<vtkPoints> sourceLandmarkPoints; // points on the triangulated surface
+  vtkNew<vtkPoints> targetLandmarkPoints; // points on the curve
+  // Use only the transformed curve points (first numberOfCurvePoints points)
+  int step = 3; // use only every 3rd boundary point for simpler and faster warping
+  vtkIdType numberOfRegistrationLandmarkPoints = numberOfCurvePoints / step;
+  sourceLandmarkPoints->SetNumberOfPoints(numberOfRegistrationLandmarkPoints);
+  targetLandmarkPoints->SetNumberOfPoints(numberOfRegistrationLandmarkPoints);
+  for (vtkIdType landmarkPointIndex = 0; landmarkPointIndex < numberOfRegistrationLandmarkPoints; landmarkPointIndex++)
+    {
+    sourceLandmarkPoints->SetPoint(landmarkPointIndex, triangulatedSurfacePoints->GetPoint(landmarkPointIndex*step));
+    targetLandmarkPoints->SetPoint(landmarkPointIndex, cleanedCurvePoints->GetPoint(landmarkPointIndex*step));
+    }
+
+  vtkNew<vtkThinPlateSplineTransform> landmarkTransform;
+  landmarkTransform->SetBasisToR();
+  landmarkTransform->SetSourceLandmarks(sourceLandmarkPoints);
+  landmarkTransform->SetTargetLandmarks(targetLandmarkPoints);
+
+  vtkNew<vtkTransformPolyDataFilter> polyTransformToCurve;
+  polyTransformToCurve->SetTransform(landmarkTransform);
+  polyTransformToCurve->SetInputData(triangulatedSurface);
+
+  vtkNew<vtkPolyDataNormals> polyDataNormals;
+  polyDataNormals->SetInputConnection(polyTransformToCurve->GetOutputPort());
+  polyDataNormals->SplittingOff();
+  polyDataNormals->Update();
+
+  surface->DeepCopy(polyDataNormals->GetOutput());
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerMarkupsLogic::FitSurfaceDiskWarp(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor/*=1.0*/)
 {
   if (!curvePoints || !surface)
     {
@@ -1414,6 +1541,7 @@ bool vtkSlicerMarkupsLogic::CreateSoapBubblePolyDataFromCircumferencePoints(vtkP
     }
 
   vtkNew<vtkThinPlateSplineTransform> landmarkTransform;
+  landmarkTransform->SetBasisToR();
   landmarkTransform->SetSourceLandmarks(sourceLandmarkPoints);
   landmarkTransform->SetTargetLandmarks(targetLandmarkPoints);
 
