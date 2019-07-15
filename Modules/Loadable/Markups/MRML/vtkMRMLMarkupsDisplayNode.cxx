@@ -82,7 +82,7 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->PointLabelsVisibility = false;
 
   // Set active component defaults for mouse (identified by empty string)
-  this->ActiveComponents[""] = ComponentInfo();
+  this->ActiveComponents[GetDefaultContextName()] = ComponentInfo();
 
   this->LineThickness = 0.2;
 
@@ -371,7 +371,7 @@ const char *vtkMRMLMarkupsDisplayNode::GetLineColorNodeReferenceMRMLAttributeNam
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLMarkupsDisplayNode::GetActiveComponentType(std::string context/*=""*/)
+int vtkMRMLMarkupsDisplayNode::GetActiveComponentType(std::string context/*=GetDefaultContextName()*/)
 {
   if (this->ActiveComponents.find(context) == this->ActiveComponents.end())
     {
@@ -383,7 +383,7 @@ int vtkMRMLMarkupsDisplayNode::GetActiveComponentType(std::string context/*=""*/
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLMarkupsDisplayNode::GetActiveComponentIndex(std::string context/*=""*/)
+int vtkMRMLMarkupsDisplayNode::GetActiveComponentIndex(std::string context/*=GetDefaultContextName()*/)
 {
   if (this->ActiveComponents.find(context) == this->ActiveComponents.end())
     {
@@ -395,7 +395,7 @@ int vtkMRMLMarkupsDisplayNode::GetActiveComponentIndex(std::string context/*=""*
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayNode::SetActiveComponent(int componentType, int componentIndex, std::string context/*=""*/)
+void vtkMRMLMarkupsDisplayNode::SetActiveComponent(int componentType, int componentIndex, std::string context/*=GetDefaultContextName()*/)
 {
   if ( this->ActiveComponents.find(context) != this->ActiveComponents.end()
     && this->ActiveComponents[context].Type == componentType
