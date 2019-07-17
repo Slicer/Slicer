@@ -847,7 +847,8 @@ void qSlicerMarkupsModuleWidget::updateRow(int m)
     {
     markupsNode = vtkMRMLMarkupsNode::SafeDownCast(mrmlNode);
     }
-  if (!markupsNode)
+  if (!markupsNode
+    || m >= markupsNode->GetNumberOfControlPoints()) // markup point is already deleted (possible after batch update)
     {
     //qDebug() << QString("update Row: unable to get markups node with id ") + activeMarkupsNodeID;
     return;

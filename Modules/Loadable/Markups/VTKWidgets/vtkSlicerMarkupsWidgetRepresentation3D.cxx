@@ -172,25 +172,22 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
     }
 
   int numPoints = markupsNode->GetNumberOfControlPoints();
-
-  for (int i = 0; i<NumberOfControlPointTypes; i++)
-    {
-    ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
-    this->UpdateRelativeCoincidentTopologyOffsets(controlPoints->Mapper);
-    controlPoints->Glypher->SetScaleFactor(this->ControlPointSize);
-    }
-
   std::vector<int> activeControlPointIndices;
   this->MarkupsDisplayNode->GetActiveControlPoints(activeControlPointIndices);
-
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
     {
+    ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[controlPointType]);
+
     if (controlPointType == Project || controlPointType == ProjectBack)
       {
       // no projection display in 3D
+      controlPoints->Actor->SetVisibility(false);
+      controlPoints->LabelsActor->SetVisibility(false);
       continue;
       }
-    ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[controlPointType]);
+
+    this->UpdateRelativeCoincidentTopologyOffsets(controlPoints->Mapper);
+    controlPoints->Glypher->SetScaleFactor(this->ControlPointSize);
 
     controlPoints->ControlPoints->SetNumberOfPoints(0);
     controlPoints->ControlPointsPolyData->GetPointData()->GetNormals()->SetNumberOfTuples(0);
@@ -201,8 +198,6 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
     controlPoints->Labels->SetNumberOfValues(0);
     controlPoints->LabelsPriority->SetNumberOfValues(0);
     controlPoints->ControlPointIndices->SetNumberOfValues(0);
-
-    controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility());
 
     for (int pointIndex = 0; pointIndex < numPoints; ++pointIndex)
       {
@@ -239,13 +234,24 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
       controlPoints->ControlPointIndices->InsertNextValue(pointIndex);
       }
 
-    controlPoints->ControlPoints->Modified();
-    controlPoints->ControlPointsPolyData->GetPointData()->GetNormals()->Modified();
-    controlPoints->ControlPointsPolyData->Modified();
+    if (controlPoints->ControlPointIndices->GetNumberOfValues() > 0)
+      {
+      controlPoints->ControlPoints->Modified();
+      controlPoints->ControlPointsPolyData->GetPointData()->GetNormals()->Modified();
+      controlPoints->ControlPointsPolyData->Modified();
 
-    controlPoints->LabelControlPoints->Modified();
-    controlPoints->LabelControlPointsPolyData->GetPointData()->GetNormals()->Modified();
-    controlPoints->LabelControlPointsPolyData->Modified();
+      controlPoints->LabelControlPoints->Modified();
+      controlPoints->LabelControlPointsPolyData->GetPointData()->GetNormals()->Modified();
+      controlPoints->LabelControlPointsPolyData->Modified();
+
+      controlPoints->Actor->SetVisibility(true);
+      controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility());
+      }
+    else
+      {
+      controlPoints->Actor->SetVisibility(false);
+      controlPoints->LabelsActor->SetVisibility(false);
+      }
     }
 }
 
