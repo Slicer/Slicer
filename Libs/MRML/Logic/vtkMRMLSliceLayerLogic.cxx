@@ -500,8 +500,8 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
 
   if (this->SliceNode)
     {
-    vtkMatrix4x4::Multiply4x4(this->SliceNode->GetXYToRAS(), xyToIJK.GetPointer(), xyToIJK.GetPointer());
     this->SliceNode->GetDimensions(dimensions);
+    vtkMatrix4x4::Multiply4x4(this->SliceNode->GetXYToRAS(), xyToIJK.GetPointer(), xyToIJK.GetPointer());
 
     vtkMatrix4x4::Multiply4x4(this->SliceNode->GetUVWToRAS(), uvwToIJK.GetPointer(), uvwToIJK.GetPointer());
     this->SliceNode->GetUVWDimensions(dimensionsUVW);

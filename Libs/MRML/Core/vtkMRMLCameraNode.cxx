@@ -627,6 +627,9 @@ void vtkMRMLCameraNode::TranslateAlong(ScreenAxis screenAxis, bool positive)
   this->SetFocalPoint(focalPoint[0] + offset[X],
                       focalPoint[1] + offset[Y],
                       focalPoint[2] + offset[Z]);
+
+  this->ResetClippingRange();
+
   this->EndModify(wasModifying);
 }
 

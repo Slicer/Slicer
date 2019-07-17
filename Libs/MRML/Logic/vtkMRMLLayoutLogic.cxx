@@ -1720,6 +1720,7 @@ void vtkMRMLLayoutLogic::ApplyProperty(const ViewProperty& property, vtkMRMLNode
       vtkWarningMacro("Invalid orientation property.");
       return;
       }
+    sliceNode->SetDefaultOrientation(value.c_str());
     sliceNode->SetOrientation(value.c_str());
     }
   // ViewGroup

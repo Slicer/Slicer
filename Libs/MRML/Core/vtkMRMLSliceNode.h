@@ -139,6 +139,10 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   bool SetOrientationToSagittal();
   bool SetOrientationToCoronal();
 
+  /// Set slice orientation to that is defined in DefaultOrientation.
+  /// Returns true on success.
+  bool SetOrientationToDefault();
+
   /// \brief Get orientation.
   ///
   /// It returns a string with a description of the slice orientation
@@ -161,6 +165,13 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   /// \sa AddSliceOrientationPreset(const std::string& name, vtkMatrix4x4* sliceToRAS)
   /// \sa UpdateMatrices()
   bool SetOrientation(const char* orientation);
+
+  /// \brief Set default orientation preset name.
+  ///
+  /// If slice view orientation is reset is requested then
+  /// orientation is set to this preset.
+  vtkSetStringMacro(DefaultOrientation);
+  vtkGetStringMacro(DefaultOrientation);
 
   /// \brief Get orientation.
   ///
@@ -214,6 +225,10 @@ public:
   ///
   /// \sa AddSliceOrientationPreset(const std::string& name, vtkMatrix4x4* sliceToRAS)
   bool HasSliceOrientationPreset(const std::string& name);
+
+  /// Returns the name of "Reformat" orientation, which means that it is none of the
+  /// known orientations.
+  static const char* GetReformatOrientationName() { return "Reformat"; }
 
   /// \brief Initialize \a orientationMatrix as an `Axial` orientation matrix.
   static void InitializeAxialMatrix(vtkMatrix3x3* orientationMatrix);
@@ -442,6 +457,7 @@ public:
   ///    XYZOriginFlag - broadcast the XYZOrigin to all linked viewers
   ///    LabelOutlineFlag - broadcast outlining the labelmaps
   ///    SliceVisibleFlag = broadcast display of slice in 3D
+  ///    ResetOrientationFlag = broadcast a reset to default orientation to all linked viewers
   enum InteractionFlagType
   {
     None = 0,
@@ -453,8 +469,8 @@ public:
     XYZOriginFlag = 32,
     LabelOutlineFlag = 64,
     SliceVisibleFlag = 128,
-    SliceSpacingFlag = 256
-    // Next one needs to be 512
+    SliceSpacingFlag = 256,
+    ResetOrientationFlag = 512,
   };
 
   /// Get/Set a flag indicating what parameters are being manipulated
@@ -534,7 +550,9 @@ protected:
   // Hold the string returned by GetOrientationString
   std::string OrientationString;
 
-  char *OrientationReference;
+  char* DefaultOrientation;
+
+  char* OrientationReference;
 
   int LayoutGridRows;
   int LayoutGridColumns;

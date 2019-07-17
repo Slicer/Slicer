@@ -51,6 +51,7 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->JumpMode = OffsetJumpSlice;
 
   this->OrientationReference = nullptr;
+  this->DefaultOrientation = nullptr;
 
   // calculated by UpdateMatrices()
   this->XYToSlice = vtkSmartPointer<vtkMatrix4x4>::New();
@@ -115,7 +116,7 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->LayoutColor[1] = vtkMRMLAbstractViewNode::GetGrayColor()[1];
   this->LayoutColor[2] = vtkMRMLAbstractViewNode::GetGrayColor()[2];
 
-  this->SetOrientationReference("Reformat");
+  this->SetOrientationReference(vtkMRMLSliceNode::GetReformatOrientationName());
   this->SetLayoutLabel("");
 
   this->OrientationMarkerEnabled = true;
@@ -125,10 +126,8 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
 //----------------------------------------------------------------------------
 vtkMRMLSliceNode::~vtkMRMLSliceNode()
 {
-  if ( this->OrientationReference )
-    {
-    delete [] this->OrientationReference;
-    }
+  this->SetOrientationReference(nullptr);
+  this->SetDefaultOrientation(nullptr);
 }
 
 //-----------------------------------------------------------
@@ -388,7 +387,7 @@ std::string vtkMRMLSliceNode::GetOrientation(vtkMatrix4x4 *sliceToRAS)
     {
     return orientation;
     }
-  return "Reformat";
+  return vtkMRMLSliceNode::GetReformatOrientationName();
 }
 
 //----------------------------------------------------------------------------
@@ -422,7 +421,7 @@ int vtkMRMLSliceNode::GetNumberOfSliceOrientationPresets() const
 //----------------------------------------------------------------------------
 bool vtkMRMLSliceNode::AddSliceOrientationPreset(const std::string &name, vtkMatrix3x3 *orientationMatrix)
 {
-  if (name == "Reformat")
+  if (name == vtkMRMLSliceNode::GetReformatOrientationName())
     {
     vtkWarningMacro("AddSliceOrientationPreset: Reformat refer to any arbitrary orientation. "
                     "Therefore, it can not be used a preset name.");
@@ -463,7 +462,8 @@ bool vtkMRMLSliceNode::RemoveSliceOrientationPreset(const std::string &name)
 //----------------------------------------------------------------------------
 bool vtkMRMLSliceNode::RenameSliceOrientationPreset(const std::string &name, const std::string &updatedName)
 {
-  if (name == "Reformat" || updatedName == "Reformat")
+  if (name == vtkMRMLSliceNode::GetReformatOrientationName()
+    || updatedName == vtkMRMLSliceNode::GetReformatOrientationName())
     {
     vtkErrorMacro("RenameSliceOrientationPreset: 'Reformat' refers to any "
                   "arbitrary orientation. It can NOT be used as a preset name.");
@@ -497,7 +497,7 @@ bool vtkMRMLSliceNode::RenameSliceOrientationPreset(const std::string &name, con
 //----------------------------------------------------------------------------
 bool vtkMRMLSliceNode::HasSliceOrientationPreset(const std::string &name)
 {
-  if (name == "Reformat")
+  if (name == vtkMRMLSliceNode::GetReformatOrientationName())
     {
     vtkWarningMacro("HasSliceOrientationPreset: 'Reformat' refers to any "
                     "arbitrary orientation. It can NOT be used as a preset name.");
@@ -889,6 +889,7 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
     }
 
   of << " orientation=\"" << this->GetOrientation() << "\"";
+  of << " defaultOrientation=\"" << (this->GetDefaultOrientation() ? this->GetDefaultOrientation() : "") << "\"";
   if (this->OrientationReference)
     {
     of << " orientationReference=\"" << this->OrientationReference << "\"";
@@ -1104,10 +1105,14 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp(attName, "orientation"))
       {
-      if (strcmp( attValue, "Reformat" ))
+      if (strcmp( attValue, vtkMRMLSliceNode::GetReformatOrientationName()))
         {
         this->SetOrientation( attValue );
         }
+      }
+    else if (!strcmp(attName, "defaultOrientation"))
+      {
+      this->SetDefaultOrientation( attValue );
       }
     else if (!strcmp(attName, "orientationReference"))
       {
@@ -1291,10 +1296,11 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
     }
 
   std::string orientation = node->GetOrientation();
-  if (orientation != "Reformat")
+  if (orientation != vtkMRMLSliceNode::GetReformatOrientationName())
     {
     this->SetOrientation(orientation.c_str());
     }
+  this->SetDefaultOrientation(node->GetDefaultOrientation());
   this->SetOrientationReference(node->GetOrientationReference());
 
   this->JumpMode = node->JumpMode;
@@ -1337,13 +1343,18 @@ void vtkMRMLSliceNode::Reset(vtkMRMLNode* defaultNode)
   // preserved automatically.
   // This require a custom behavior implemented here.
   std::string orientation = this->GetOrientation();
+  std::string defaultOrientation = (this->GetDefaultOrientation() ? this->GetDefaultOrientation() : "");
   double layoutColor[3] = {0.0, 0.0, 0.0};
   this->GetLayoutColor(layoutColor);
   this->Superclass::Reset(defaultNode);
   int wasModified = this->StartModify();
-  if (orientation != "Reformat")
+  if (orientation != vtkMRMLSliceNode::GetReformatOrientationName())
     {
     this->SetOrientation(orientation.c_str());
+    }
+  if (!defaultOrientation.empty())
+    {
+    this->SetDefaultOrientation(defaultOrientation.c_str());
     }
   this->SetLayoutColor(layoutColor);
   this->EndModify(wasModified);
@@ -1445,6 +1456,8 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << "ThreeDViewIDs[" << i << "]: " <<
       this->ThreeDViewIDs[i] << "\n";
     }
+
+  os << indent << "DefaultOrientation: " << (this->GetDefaultOrientation() ? this->GetDefaultOrientation() : "") << "\n";
 }
 
 //----------------------------------------------------------------------------
@@ -2243,4 +2256,16 @@ void vtkMRMLSliceNode::RotateToAxes(vtkMatrix4x4 *referenceToRAS, int sliceNorma
   vtkAddonMathUtilities::SetOrientationMatrixColumn(this->SliceToRAS, 2, sliceZAxisDirection);
 
   this->UpdateMatrices();
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceNode::SetOrientationToDefault()
+{
+  if (!this->GetDefaultOrientation()
+    || strlen(this->GetDefaultOrientation()) == 0
+    || !strcmp(this->GetDefaultOrientation(), vtkMRMLSliceNode::GetReformatOrientationName()) )
+    {
+    return false;
+    }
+  return this->SetOrientation(this->GetDefaultOrientation());
 }

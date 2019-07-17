@@ -451,6 +451,15 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
           }
         }
 
+      // Resetting the orientations to default does not require the
+      // orientations to match
+      if ((sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
+          & vtkMRMLSliceNode::ResetOrientationFlag)
+          && this->GetMRMLApplicationLogic()->GetSliceLogics())
+        {
+        sNode->SetOrientationToDefault();
+        }
+
       // Broadcasting the rotation from a ReformatWidget
       if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
         & vtkMRMLSliceNode::MultiplanarReformatFlag)

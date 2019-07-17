@@ -373,30 +373,7 @@ void vtkMRMLSliceLogic::UpdateSliceNodeFromLayout()
     {
     return;
     }
-
-  if (this->SliceNode->GetNumberOfSliceOrientationPresets() < 3)
-    {
-    vtkErrorMacro("UpdateSliceNodeFromLayout: " << this->GetName() <<
-                  " could not set its slice node orientation. At least 3"
-                  " orientation preset names are required.")
-    return;
-    }
-
-  vtkNew<vtkStringArray> namedOrientations;
-  this->SliceNode->GetSliceOrientationPresetNames(namedOrientations.GetPointer());
-
-  if ( !strcmp( this->GetName(), "Red" ) )
-    {
-    this->SliceNode->SetOrientation(namedOrientations->GetValue(0));
-    }
-  if ( !strcmp( this->GetName(), "Yellow" ) )
-    {
-    this->SliceNode->SetOrientation(namedOrientations->GetValue(1));
-    }
-  if ( !strcmp( this->GetName(), "Green" ) )
-    {
-    this->SliceNode->SetOrientation(namedOrientations->GetValue(2));
-    }
+  this->SliceNode->SetOrientationToDefault();
 }
 
 //----------------------------------------------------------------------------
