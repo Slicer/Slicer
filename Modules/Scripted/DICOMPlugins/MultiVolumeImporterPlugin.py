@@ -53,6 +53,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     # Philips DWI
     self.multiVolumeTags['Philips.B-value'] = "2001,1003"
     self.multiVolumeTags['Standard.B-value'] = "0018,9087"
+    # GE Revolution CT Kinematics protocol
+    self.multiVolumeTags['DeltaStartTime'] = "0043,101e"
 
     for tagName,tagVal in self.multiVolumeTags.items():
       self.tags[tagName] = tagVal
@@ -72,6 +74,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTagsUnits['Standard.B-value'] = "sec/mm2"
     self.multiVolumeTagsUnits['CardiacCycle'] = "%"
     self.multiVolumeTagsUnits['NominalPercentageOfCardiacPhase'] = "%"
+    self.multiVolumeTagsUnits['DeltaStartTime'] = "sec"
     self.epsilon = epsilon
 
   @staticmethod
