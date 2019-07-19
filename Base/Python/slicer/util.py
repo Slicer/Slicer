@@ -1239,6 +1239,27 @@ def updateVolumeFromArray(volumeNode, narray):
   volumeNode.Modified()
   volumeNode.InvokeEvent(slicer.vtkMRMLVolumeNode.ImageDataModifiedEvent, volumeNode)
 
+def arrayFromTableColumn(tableNode, columnName):
+  """Return values of a table node's column as numpy array.
+  Values can be modified by modifying the numpy array.
+  After all modifications has been completed, call :py:meth:`arrayFromTableColumnModified`.
+
+  .. warning:: Important: memory area of the returned array is managed by VTK,
+    therefore values in the array may be changed, but the array must not be reallocated.
+    See :py:meth:`arrayFromVolume` for details.
+  """
+  import vtk.util.numpy_support
+  columnData = tableNode.GetTable().GetColumnByName(columnName)
+  narray = vtk.util.numpy_support.vtk_to_numpy(columnData)
+  return narray
+
+def arrayFromTableColumnModified(tableNode, columnName):
+  """Indicate that modification of a numpy array returned by :py:meth:`arrayFromModelPoints` has been completed."""
+  import vtk.util.numpy_support
+  columnData = tableNode.GetTable().GetColumnByName(columnName)
+  columnData.Modified()
+  tableNode.GetTable().Modified()
+
 def updateTableFromArray(tableNode, narrays, columnNames=None):
   """Sets values in a table node from a numpy array.
   columnNames may contain a string or list of strings that will be used as column name(s).
