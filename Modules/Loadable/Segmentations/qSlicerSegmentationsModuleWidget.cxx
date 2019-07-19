@@ -472,7 +472,7 @@ void qSlicerSegmentationsModuleWidget::onEditSelectedSegment()
     return;
     }
   // Get segmentation selector combobox and set segmentation
-  qMRMLNodeComboBox* nodeSelector = moduleWidget->findChild<qMRMLNodeComboBox*>("MRMLNodeComboBox_Segmentation");
+  qMRMLNodeComboBox* nodeSelector = moduleWidget->findChild<qMRMLNodeComboBox*>("SegmentationNodeComboBox");
   if (!nodeSelector)
     {
     qCritical() << Q_FUNC_INFO << ": MRMLNodeComboBox_Segmentation is not found in Segment Editor module";
