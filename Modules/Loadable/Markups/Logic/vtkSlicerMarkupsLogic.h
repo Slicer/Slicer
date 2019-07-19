@@ -223,6 +223,9 @@ public:
   /// when using this surface for cutting another surface.
   static bool FitSurfaceDiskWarp(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor = 1.0);
 
+  /// Return tru if the polygon points are oriented clockwise.
+  static bool IsPolygonClockwise(vtkPoints* points);
+
   /// Get best fit plane for a markup
   static bool GetBestFitPlane(vtkMRMLMarkupsNode* curveNode, vtkPlane* plane);
 

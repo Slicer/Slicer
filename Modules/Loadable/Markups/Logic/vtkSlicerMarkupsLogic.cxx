@@ -1455,6 +1455,21 @@ bool vtkSlicerMarkupsLogic::FitSurfaceProjectWarp(vtkPoints* curvePoints, vtkPol
     pointsOnPlane->SetPoint(i, pt[0], pt[1], 0.0);
     }
 
+  // Ensure points are in counter-clockwise direction
+  // (that indicates to Delaunay2D that it is a polygon to be
+  // filled in and not a hole).
+  if (vtkSlicerMarkupsLogic::IsPolygonClockwise(pointsOnPlane))
+    {
+    vtkNew<vtkCellArray> reversePolys;
+    reversePolys->InsertNextCell(numberOfCurvePoints);
+    for (int i = numberOfCurvePoints - 1; i >= 0 ; i--)
+      {
+      reversePolys->InsertCellPoint(i);
+      }
+    reversePolys->Modified();
+    inputSurface->SetPolys(reversePolys);
+    }
+
   // Add random points to improve triangulation quality.
   // We already have many points on the boundary but no points inside the polygon.
   // If we passed these points to the triangulator then opposite points on the curve
@@ -1507,6 +1522,45 @@ bool vtkSlicerMarkupsLogic::FitSurfaceProjectWarp(vtkPoints* curvePoints, vtkPol
   surface->DeepCopy(polyDataNormals->GetOutput());
   return true;
 }
+
+//---------------------------------------------------------------------------
+bool vtkSlicerMarkupsLogic::IsPolygonClockwise(vtkPoints* points)
+{
+  vtkIdType numberOfPoints = points->GetNumberOfPoints();
+  if (!points || numberOfPoints < 3)
+    {
+    return false;
+    }
+
+  // Find the bottom-left point (it is on the convex hull) of the polygon,
+  // and check sign of cross-product of the edges before and after that point.
+  // (https://en.wikipedia.org/wiki/Curve_orientation#Orientation_of_a_simple_polygon)
+
+  double* point0 = points->GetPoint(0);
+  double minX = point0[0];
+  double minY = point0[1];
+  vtkIdType cornerPointIndex = 0;
+  for (vtkIdType i = 1; i < numberOfPoints; i++)
+    {
+    double* p = points->GetPoint(i);
+    if ((p[1] < minY) || ((p[1] == minY) && (p[0] < minX)))
+      {
+      cornerPointIndex = i;
+      minX = p[0];
+      minY = p[1];
+      }
+    }
+
+  double p1[3];
+  double p2[3];
+  double p3[3];
+  points->GetPoint((cornerPointIndex - 1) % numberOfPoints, p1);
+  points->GetPoint(cornerPointIndex, p2);
+  points->GetPoint((cornerPointIndex + 1) % numberOfPoints, p3);
+  double det = p2[0] * p3[1] - p2[1] * p3[0] - p1[0] * p3[1] + p1[0] * p2[1] + p1[1] * p3[0] - p1[1] * p2[0];
+  return (det < 0);
+}
+
 
 //---------------------------------------------------------------------------
 bool vtkSlicerMarkupsLogic::FitSurfaceDiskWarp(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor/*=1.0*/)
