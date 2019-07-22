@@ -2374,3 +2374,36 @@ std::string vtkSlicerSegmentationsModuleLogic::GetSafeFileName(std::string origi
 
   return safeName;
 }
+
+// -----------------------------------------------------------------------------
+std::string vtkSlicerSegmentationsModuleLogic::GetStatusTagName()
+{
+  return "Segmentation.Status";
+}
+
+//------------------------------------------------------------------------------
+int vtkSlicerSegmentationsModuleLogic::GetSegmentStatus(vtkSegment* segment)
+{
+  if (!segment)
+    {
+    vtkErrorWithObjectMacro(nullptr, "Invalid segment");
+    return -1;
+    }
+  std::string value;
+  if (!segment->GetTag(vtkSlicerSegmentationsModuleLogic::GetStatusTagName(), value))
+    {
+    return NotStarted;
+    }
+  return vtkVariant(value).ToInt();
+}
+
+//------------------------------------------------------------------------------
+void vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(vtkSegment* segment, int status)
+{
+  if (!segment)
+    {
+    vtkErrorWithObjectMacro(nullptr, "Invalid segment");
+    return;
+    }
+  segment->SetTag(vtkSlicerSegmentationsModuleLogic::GetStatusTagName(), status);
+}

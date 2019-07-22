@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>315</width>
+    <width>204</width>
     <height>74</height>
    </rect>
   </property>
@@ -26,7 +26,16 @@
    <string>qMRMLSegmentsTableView</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item row="0" column="0">
@@ -54,8 +63,11 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QTableWidget" name="SegmentsTable">
+   <item row="3" column="0">
+    <widget class="QTableView" name="SegmentsTable">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="sizePolicy">
       <sizepolicy hsizetype="Ignored" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
@@ -77,7 +89,10 @@
      <property name="alternatingRowColors">
       <bool>true</bool>
      </property>
-     <property name="columnCount">
+     <property name="sortingEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="columnCount" stdset="0">
       <number>6</number>
      </property>
      <attribute name="horizontalHeaderDefaultSectionSize">
@@ -89,58 +104,108 @@
      <attribute name="verticalHeaderVisible">
       <bool>false</bool>
      </attribute>
-     <column>
-      <property name="text">
-       <string/>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QWidget" name="FilterBar" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="leftMargin">
+       <number>0</number>
       </property>
-      <property name="toolTip">
-       <string>Segment visibility in 3D (click on header to change all)</string>
+      <property name="topMargin">
+       <number>0</number>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string/>
+      <property name="rightMargin">
+       <number>0</number>
       </property>
-      <property name="toolTip">
-       <string>Segment fill visibility in 2D (click on header to change all)</string>
+      <property name="bottomMargin">
+       <number>0</number>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="toolTip">
-       <string>Segment outline visibility in 2D (click on header to change all)</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Color</string>
-      </property>
-      <property name="toolTip">
-       <string>Segment color</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Opacity</string>
-      </property>
-      <property name="toolTip">
-       <string>Segment opacity (all views)</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Name</string>
-      </property>
-      <property name="toolTip">
-       <string>Segment name</string>
-      </property>
-     </column>
+      <item>
+       <widget class="QLabel" name="FilterLabel">
+        <property name="text">
+         <string>Filter:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="FilterLineEdit"/>
+      </item>
+      <item>
+       <widget class="QToolButton" name="ShowNotStartedButton">
+        <property name="toolTip">
+         <string>Show/Hide not started segments</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../qSlicerSegmentationsModuleWidgets.qrc">
+          <normaloff>:/Icons/Dot.png</normaloff>:/Icons/Dot.png</iconset>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="ShowInProgressButton">
+        <property name="toolTip">
+         <string>Show/Hide in progress segments</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../qSlicerSegmentationsModuleWidgets.qrc">
+          <normaloff>:/Icons/Edit.png</normaloff>:/Icons/Edit.png</iconset>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="ShowCompletedButton">
+        <property name="toolTip">
+         <string>Show/Hide completed segments</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../qSlicerSegmentationsModuleWidgets.qrc">
+          <normaloff>:/Icons/Present.png</normaloff>:/Icons/Present.png</iconset>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="ShowFlaggedButton">
+        <property name="toolTip">
+         <string>Show/Hide flagged segments</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../qSlicerSegmentationsModuleWidgets.qrc">
+          <normaloff>:/Icons/Flag.png</normaloff>:/Icons/Flag.png</iconset>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../qSlicerSegmentationsModuleWidgets.qrc"/>
+ </resources>
  <connections/>
 </ui>

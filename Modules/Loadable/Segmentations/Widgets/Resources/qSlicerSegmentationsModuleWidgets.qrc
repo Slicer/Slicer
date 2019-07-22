@@ -2,6 +2,8 @@
   <qresource>
     <file>Icons/Add.png</file>
     <file>Icons/Edit.png</file>
+    <file>Icons/Dot.png</file>
+    <file>Icons/Flag.png</file>
     <file>Icons/Help.png</file>
     <file>Icons/Master.png</file>
     <file>Icons/MakeModel.png</file>

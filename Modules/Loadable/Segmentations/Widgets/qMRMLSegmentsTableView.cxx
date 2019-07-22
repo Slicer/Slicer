@@ -21,22 +21,20 @@
 ==============================================================================*/
 
 // Segmentations includes
+#include "qMRMLSegmentsModel.h"
 #include "qMRMLSegmentsTableView.h"
+#include "qMRMLSortFilterSegmentsProxyModel.h"
 #include "ui_qMRMLSegmentsTableView.h"
-
-#include "qMRMLDoubleSpinBoxDelegate.h"
-
 #include "vtkMRMLSegmentationNode.h"
 #include "vtkMRMLSegmentationDisplayNode.h"
 #include "vtkSegmentation.h"
 #include "vtkSegment.h"
 
+// Segmentations logic includes
+#include "vtkSlicerSegmentationsModuleLogic.h"
+
 // Terminologies includes
 #include "qSlicerTerminologyItemDelegate.h"
-#include "vtkSlicerTerminologiesModuleLogic.h"
-#include "vtkSlicerTerminologyEntry.h"
-#include "vtkSlicerTerminologyCategory.h"
-#include "vtkSlicerTerminologyType.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -64,6 +62,8 @@
 #include <QToolButton>
 #include <QContextMenuEvent>
 #include <QMenu>
+#include <QModelIndex>
+#include <QMessageBox>
 
 #define ID_PROPERTY "ID"
 #define VISIBILITY_PROPERTY "Visible"
@@ -82,15 +82,6 @@ public:
   /// Sets table message and takes care of the visibility of the label
   void setMessage(const QString& message);
 
-  /// Return the column index for a given string, -1 if not a valid header
-  int columnIndex(QString label);
-
-  /// Find name item of row corresponding to a segment ID
-  QTableWidgetItem* findItemBySegmentID(QString segmentID);
-
-  /// Get string to pass terminology information via table widget item
-  QString getTerminologyUserDataForSegment(vtkSegment* segment);
-
 public:
   /// Segmentation MRML node containing shown segments
   vtkWeakPointer<vtkMRMLSegmentationNode> SegmentationNode;
@@ -107,8 +98,10 @@ public:
   /// IsUpdatingWidgetFromMRML to true when an update is already in progress.
   bool IsUpdatingWidgetFromMRML;
 
+  qMRMLSegmentsModel* Model;
+  qMRMLSortFilterSegmentsProxyModel* SortFilterModel;
+
 private:
-  QStringList ColumnLabels;
   QStringList HiddenSegmentIDs;
 };
 
@@ -118,6 +111,7 @@ qMRMLSegmentsTableViewPrivate::qMRMLSegmentsTableViewPrivate(qMRMLSegmentsTableV
   , SegmentationNode(nullptr)
   , AdvancedSegmentVisibility(false)
   , IsUpdatingWidgetFromMRML(false)
+  , Model(nullptr)
 {
 }
 
@@ -125,24 +119,23 @@ qMRMLSegmentsTableViewPrivate::qMRMLSegmentsTableViewPrivate(qMRMLSegmentsTableV
 void qMRMLSegmentsTableViewPrivate::init()
 {
   Q_Q(qMRMLSegmentsTableView);
+
   this->setupUi(q);
+
+  this->Model = new qMRMLSegmentsModel(this->SegmentsTable);
+  this->SortFilterModel = new qMRMLSortFilterSegmentsProxyModel(this->SegmentsTable);
+  this->SortFilterModel->setSourceModel(this->Model);
+  this->SegmentsTable->setModel(this->SortFilterModel);
 
   this->VisibleIcon = QIcon(":/Icons/Small/SlicerVisible.png");
   this->InvisibleIcon = QIcon(":/Icons/Small/SlicerInvisible.png");
 
   this->setMessage(QString());
 
-  // Set table header properties
-  this->ColumnLabels << "Visible" << "Color" << "Opacity" << "Name";
-  this->SegmentsTable->setHorizontalHeaderLabels(
-    QStringList() << "" << "Color" << "Opacity" << "Name" );
-  this->SegmentsTable->setColumnCount(this->ColumnLabels.size());
-
-  this->SegmentsTable->horizontalHeaderItem(
-    this->columnIndex("Visible"))->setIcon(QIcon(":/Icons/Small/SlicerVisibleInvisible.png") );
-
   this->SegmentsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-  this->SegmentsTable->horizontalHeader()->setStretchLastSection(1);
+  this->SegmentsTable->horizontalHeader()->setSectionResizeMode(this->Model->nameColumn(), QHeaderView::Stretch);
+  this->SegmentsTable->horizontalHeader()->setStretchLastSection(0);
+  this->SegmentsTable->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
   // Select rows
   this->SegmentsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -151,31 +144,55 @@ void qMRMLSegmentsTableViewPrivate::init()
   q->setReadOnly(false);
 
   // Make connections
-  QObject::connect(this->SegmentsTable, SIGNAL(itemChanged(QTableWidgetItem*)),
-                   q, SLOT(onSegmentTableItemChanged(QTableWidgetItem*)));
-  QObject::connect(this->SegmentsTable->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-                   q, SLOT(onSegmentSelectionChanged(QItemSelection,QItemSelection)));
+  QObject::connect(this->SegmentsTable->selectionModel(), &QItemSelectionModel::selectionChanged, q, &qMRMLSegmentsTableView::onSegmentSelectionChanged);
+  QObject::connect(this->Model, &qMRMLSegmentsModel::segmentAboutToBeModified, q, &qMRMLSegmentsTableView::segmentAboutToBeModified);
+  QObject::connect(this->SegmentsTable, &QTableView::clicked, q, &qMRMLSegmentsTableView::onSegmentsTableClicked);
+  QObject::connect(this->FilterLineEdit, &QLineEdit::textChanged, this->SortFilterModel, &qMRMLSortFilterSegmentsProxyModel::setTextFilter);
+  QObject::connect(this->ShowNotStartedButton, &QToolButton::toggled, this->SortFilterModel, &qMRMLSortFilterSegmentsProxyModel::setShowNotStarted);
+  QObject::connect(this->ShowInProgressButton, &QToolButton::toggled, this->SortFilterModel, &qMRMLSortFilterSegmentsProxyModel::setShowInProgress);
+  QObject::connect(this->ShowCompletedButton, &QToolButton::toggled, this->SortFilterModel, &qMRMLSortFilterSegmentsProxyModel::setShowCompleted);
+  QObject::connect(this->ShowFlaggedButton, &QToolButton::toggled, this->SortFilterModel, &qMRMLSortFilterSegmentsProxyModel::setShowFlagged);
 
   // Set item delegate to handle color and opacity changes
   qMRMLItemDelegate* itemDelegate = new qMRMLItemDelegate(this->SegmentsTable);
-  //this->SegmentsTable->setItemDelegateForColumn(this->columnIndex("Color"), itemDelegate);
-  this->SegmentsTable->setItemDelegateForColumn(this->columnIndex("Color"), new qSlicerTerminologyItemDelegate(this->SegmentsTable));
-  this->SegmentsTable->setItemDelegateForColumn(this->columnIndex("Opacity"), itemDelegate);
-  //this->SegmentsTable->setItemDelegateForColumn(this->columnIndex("Opacity"), new qMRMLDoubleSpinBoxDelegate(this->SegmentsTable));
-
+  this->SegmentsTable->setItemDelegateForColumn(this->Model->colorColumn(), new qSlicerTerminologyItemDelegate(this->SegmentsTable));
+  this->SegmentsTable->setItemDelegateForColumn(this->Model->opacityColumn(), itemDelegate);
   this->SegmentsTable->installEventFilter(q);
-
 }
 
 //-----------------------------------------------------------------------------
-int qMRMLSegmentsTableViewPrivate::columnIndex(QString label)
+void qMRMLSegmentsTableView::onSegmentsTableClicked(const QModelIndex& modelIndex)
 {
-  if (!this->ColumnLabels.contains(label))
+  Q_D(qMRMLSegmentsTableView);
+  QString segmentId = d->SortFilterModel->segmentIDFromIndex(modelIndex);
+  QStandardItem* item = d->Model->itemFromSegmentID(segmentId);
+  if (!d->SegmentationNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid column label!";
-    return -1;
+    return;
     }
-  return this->ColumnLabels.indexOf(label);
+
+  Qt::ItemFlags flags = item->flags();
+  if (!flags.testFlag(Qt::ItemIsSelectable))
+    {
+    return;
+    }
+
+  vtkSegment* segment = d->SegmentationNode->GetSegmentation()->GetSegment(segmentId.toStdString());
+  if (modelIndex.column() == d->Model->visibilityColumn())
+    {
+    // Set all visibility types to segment referenced by button toggled
+    int visible = !item->data(qMRMLSegmentsModel::VisibilityRole).toInt();
+    this->setSegmentVisibility(segmentId, visible, -1, -1, -1);
+    }
+  else if (modelIndex.column() == d->Model->statusColumn())
+    {
+    int status = vtkSlicerSegmentationsModuleLogic::GetSegmentStatus(segment) + 1;
+    if (status >= vtkSlicerSegmentationsModuleLogic::LastStatus)
+      {
+      status = vtkSlicerSegmentationsModuleLogic::InProgress;
+      }
+    vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(segment, status);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -184,42 +201,6 @@ void qMRMLSegmentsTableViewPrivate::setMessage(const QString& message)
   this->SegmentsTableMessageLabel->setVisible(!message.isEmpty());
   this->SegmentsTableMessageLabel->setText(message);
 }
-
-//-----------------------------------------------------------------------------
-QTableWidgetItem* qMRMLSegmentsTableViewPrivate::findItemBySegmentID(QString segmentID)
-{
-  Q_Q(qMRMLSegmentsTableView);
-  for (int row=0; row<this->SegmentsTable->rowCount(); ++row)
-    {
-    QTableWidgetItem* item = this->SegmentsTable->item(row, this->columnIndex("Name"));
-    if (!item)
-      {
-      continue;
-      }
-    if (!item->data(q->IDRole).toString().compare(segmentID))
-      {
-      return item;
-      }
-    }
-
-  return nullptr;
-}
-
-//------------------------------------------------------------------------------
-QString qMRMLSegmentsTableViewPrivate::getTerminologyUserDataForSegment(vtkSegment* segment)
-{
-  if (!segment)
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid segment given";
-    return QString();
-    }
-
-  std::string tagValue;
-  return ( segment->GetTag(vtkSegment::GetTerminologyEntryTagName(), tagValue) ? QString(tagValue.c_str()) : QString() );
-}
-
-//-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 // qMRMLSegmentsTableView methods
@@ -231,7 +212,6 @@ qMRMLSegmentsTableView::qMRMLSegmentsTableView(QWidget* _parent)
 {
   Q_D(qMRMLSegmentsTableView);
   d->init();
-  this->populateSegmentTable();
 }
 
 //-----------------------------------------------------------------------------
@@ -244,24 +224,35 @@ void qMRMLSegmentsTableView::setSegmentationNode(vtkMRMLNode* node)
   Q_D(qMRMLSegmentsTableView);
 
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(node);
-
-  // Connect display modified event to population of the table
-  qvtkReconnect( d->SegmentationNode, segmentationNode, vtkMRMLDisplayableNode::DisplayModifiedEvent,
-                 this, SLOT( updateWidgetFromMRML() ) );
+  d->SegmentationNode = segmentationNode;
+  d->Model->setSegmentationNode(d->SegmentationNode);
 
   // Connect segment added/removed and display modified events to population of the table
-  qvtkReconnect( d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentAdded,
-                 this, SLOT( populateSegmentTable() ) );
-  qvtkReconnect( d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentRemoved,
-                 this, SLOT( populateSegmentTable() ) );
-  qvtkReconnect( d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentModified,
-                 this, SLOT( updateWidgetFromMRML() ) );
-  qvtkReconnect( d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentsOrderModified,
-                 this, SLOT( populateSegmentTable() ) );
-
-  d->SegmentationNode = segmentationNode;
-  this->populateSegmentTable();
+  qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentAdded,
+    this, SLOT(onSegmentAddedOrRemoved()));
+  qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentRemoved,
+    this, SLOT(onSegmentAddedOrRemoved()));
+  this->onSegmentAddedOrRemoved();
 }
+
+//---------------------------------------------------------------------------
+void qMRMLSegmentsTableView::onSegmentAddedOrRemoved()
+{
+  Q_D(qMRMLSegmentsTableView);
+
+  if (!d->SegmentationNode)
+    {
+    d->setMessage(tr("No node is selected"));
+    return;
+    }
+  else if (d->SegmentationNode->GetSegmentation()->GetNumberOfSegments() == 0)
+    {
+    d->setMessage(tr("Empty segmentation"));
+    return;
+    }
+  d->setMessage(QString());
+}
+
 
 //---------------------------------------------------------------------------
 void qMRMLSegmentsTableView::setMRMLScene(vtkMRMLScene* newScene)
@@ -271,8 +262,6 @@ void qMRMLSegmentsTableView::setMRMLScene(vtkMRMLScene* newScene)
     {
     return;
     }
-
-  this->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::EndBatchProcessEvent, this, SLOT(endProcessing()));
 
   if (d->SegmentationNode && newScene != d->SegmentationNode->GetScene())
     {
@@ -290,271 +279,33 @@ vtkMRMLNode* qMRMLSegmentsTableView::segmentationNode()
   return d->SegmentationNode;
 }
 
+//--------------------------------------------------------------------------
+qMRMLSortFilterSegmentsProxyModel* qMRMLSegmentsTableView::sortFilterProxyModel()const
+{
+  Q_D(const qMRMLSegmentsTableView);
+  if (!d->SortFilterModel)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid sort filter proxy model";
+    }
+  return d->SortFilterModel;
+}
+
+//--------------------------------------------------------------------------
+qMRMLSegmentsModel* qMRMLSegmentsTableView::model()const
+{
+  Q_D(const qMRMLSegmentsTableView);
+  if (!d->Model)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid data model";
+    }
+  return d->Model;
+}
+
 //-----------------------------------------------------------------------------
-QTableWidget* qMRMLSegmentsTableView::tableWidget()
+QTableView* qMRMLSegmentsTableView::tableWidget()
 {
   Q_D(qMRMLSegmentsTableView);
   return d->SegmentsTable;
-}
-
-//-----------------------------------------------------------------------------
-void qMRMLSegmentsTableView::populateSegmentTable()
-{
-  Q_D(qMRMLSegmentsTableView);
-
-  if (d->IsUpdatingWidgetFromMRML)
-    {
-    return;
-    }
-  d->IsUpdatingWidgetFromMRML = true;
-
-  d->setMessage(QString());
-
-  QStringList selectedSegmentIDs = this->selectedSegmentIDs();
-
-  // Block signals so that onSegmentTableItemChanged function is not called when populating
-  bool wasBlocked = d->SegmentsTable->blockSignals(true);
-
-  // Clear table so that it can be populated
-  d->SegmentsTable->clearContents();
-
-  if (!d->SegmentationNode)
-    {
-    d->setMessage(tr("No node is selected"));
-    d->SegmentsTable->setRowCount(0);
-    d->SegmentsTable->blockSignals(wasBlocked);
-    d->IsUpdatingWidgetFromMRML = false;
-    emit selectionChanged(QItemSelection(), QItemSelection());
-    return;
-    }
-  else if (d->SegmentationNode->GetSegmentation()->GetNumberOfSegments() == 0)
-    {
-    d->setMessage(tr("Empty segmentation"));
-    d->SegmentsTable->setRowCount(0);
-    d->SegmentsTable->blockSignals(wasBlocked);
-    d->IsUpdatingWidgetFromMRML = false;
-    emit selectionChanged(QItemSelection(), QItemSelection());
-    return;
-    }
-
-  // Get segmentation display node
-  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode());
-
-  vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
-  QStringList displayedSegmentIDs = this->displayedSegmentIDs();
-  d->SegmentsTable->setRowCount(displayedSegmentIDs.size());
-  int row = 0;
-  foreach (QString segmentId, displayedSegmentIDs)
-  {
-    vtkSegment* segment = segmentation->GetSegment(segmentId.toLatin1().constData());
-
-    // Row height is smaller than default (which is 30)
-    d->SegmentsTable->setRowHeight(row, 20);
-
-    // Segment name
-    QString name(segment->GetName());
-    QTableWidgetItem* nameItem = new QTableWidgetItem(name);
-    nameItem->setData(IDRole, segmentId);
-    d->SegmentsTable->setItem(row, d->columnIndex("Name"), nameItem);
-
-    // Get segment display properties
-    vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
-    if (displayNode)
-      {
-      displayNode->GetSegmentDisplayProperties(segmentId.toLatin1().constData(), properties);
-      }
-
-    // Visibility (show only 3D visibility; if the user changes it then it applies to all types of visibility)
-    QToolButton* visibilityButton = new QToolButton();
-    visibilityButton->setEnabled(displayNode != nullptr);
-    visibilityButton->setAutoRaise(true);
-    visibilityButton->setProperty(ID_PROPERTY, segmentId);
-    if (displayNode != nullptr && properties.Visible && (properties.Visible3D || properties.Visible2DFill || properties.Visible2DOutline))
-      {
-      visibilityButton->setProperty(VISIBILITY_PROPERTY, true);
-      visibilityButton->setIcon(d->VisibleIcon);
-      }
-    else
-      {
-      visibilityButton->setProperty(VISIBILITY_PROPERTY, false);
-      visibilityButton->setIcon(d->InvisibleIcon);
-      }
-    d->SegmentsTable->setCellWidget(row, d->columnIndex("Visible"), visibilityButton);
-    connect(visibilityButton, SIGNAL(clicked()), this, SLOT(onVisibilityButtonClicked()));
-
-    // Set up actions for the visibility button if required
-    if (d->AdvancedSegmentVisibility)
-      {
-      visibilityButton->setToolTip("Set visibility for segment. Keep the button pressed for the advanced visibility options to show");
-
-      QAction* visibility3DAction = new QAction("Show in 3D", visibilityButton);
-      visibility3DAction->setCheckable(true);
-      visibility3DAction->setChecked(properties.Visible3D);
-      visibility3DAction->setProperty(ID_PROPERTY, segmentId);
-      connect(visibility3DAction, SIGNAL(triggered(bool)), this, SLOT(onVisibility3DActionToggled(bool)));
-      visibilityButton->addAction(visibility3DAction);
-
-      QAction* visibility2DFillAction = new QAction("Show in 2D as fill", visibilityButton);
-      visibility2DFillAction->setCheckable(true);
-      visibility2DFillAction->setChecked(properties.Visible2DFill);
-      visibility2DFillAction->setProperty(ID_PROPERTY, segmentId);
-      connect(visibility2DFillAction, SIGNAL(triggered(bool)), this, SLOT(onVisibility2DFillActionToggled(bool)));
-      visibilityButton->addAction(visibility2DFillAction);
-
-      QAction* visibility2DOutlineAction = new QAction("Show in 2D as outline", visibilityButton);
-      visibility2DOutlineAction->setCheckable(true);
-      visibility2DOutlineAction->setChecked(properties.Visible2DOutline);
-      visibility2DOutlineAction->setProperty(ID_PROPERTY, segmentId);
-      connect(visibility2DOutlineAction, SIGNAL(triggered(bool)), this, SLOT(onVisibility2DOutlineActionToggled(bool)));
-      visibilityButton->addAction(visibility2DOutlineAction);
-      }
-
-    // Terminology / color
-    QTableWidgetItem* colorItem = new QTableWidgetItem();
-    // Get segment color
-    double* colorArray = segment->GetColor();
-    QColor color = QColor::fromRgbF(colorArray[0], colorArray[1], colorArray[2]);
-    // Get generated color from slicer generic anatomy color table that is used if there is no recommended color
-    // in the selected terminology entry. This color is the same as the one generated for the empty segment
-    double generatedColorArray[3] = {0.5,0.5,0.5};
-    if (displayNode)
-      {
-      displayNode->GenerateSegmentColor(generatedColorArray, segmentation->GetSegmentIndex(segmentId.toLatin1().constData()) + 1);
-      }
-    QColor generatedColor = QColor::fromRgbF(generatedColorArray[0], generatedColorArray[1], generatedColorArray[2]);
-    // Set item data
-    colorItem->setData(Qt::DecorationRole, color);
-    colorItem->setData(IDRole, segmentId);
-    colorItem->setData(qSlicerTerminologyItemDelegate::TerminologyRole, d->getTerminologyUserDataForSegment(segment));
-    colorItem->setData(qSlicerTerminologyItemDelegate::NameRole, segment->GetName());
-    colorItem->setData(qSlicerTerminologyItemDelegate::NameAutoGeneratedRole, segment->GetNameAutoGenerated());
-    colorItem->setData(qSlicerTerminologyItemDelegate::ColorAutoGeneratedRole, segment->GetColorAutoGenerated());
-    colorItem->setData(qSlicerTerminologyItemDelegate::GeneratedColorRole, generatedColor);
-    colorItem->setToolTip(qMRMLSegmentsTableView::terminologyTooltipForSegment(segment));
-    d->SegmentsTable->setItem(row, d->columnIndex("Color"), colorItem);
-
-    // Opacity (only 3D opacity - 2D outline and fill can be set in the display widget)
-    QTableWidgetItem* opacityItem = new QTableWidgetItem();
-    QString displayedOpacity = QString::number(properties.Opacity3D, 'f', 2);
-    opacityItem->setData(Qt::EditRole, displayedOpacity); // for qMRMLItemDelegate
-    //opacityItem->setData(Qt::EditRole, properties.Opacity3D); // for qMRMLDoubleSpinBoxDelegate
-    opacityItem->setData(IDRole, segmentId);
-    opacityItem->setToolTip("Opacity");
-    d->SegmentsTable->setItem(row, d->columnIndex("Opacity"), opacityItem);
-    row++;
-    }
-
-  // Unblock signals
-  this->setSelectedSegmentIDs(selectedSegmentIDs);
-  d->SegmentsTable->blockSignals(wasBlocked);
-  d->IsUpdatingWidgetFromMRML = false;
-  emit selectionChanged(QItemSelection(), QItemSelection());
-}
-
-//-----------------------------------------------------------------------------
-void qMRMLSegmentsTableView::updateWidgetFromMRML()
-{
-  Q_D(qMRMLSegmentsTableView);
-
-  if (d->IsUpdatingWidgetFromMRML)
-    {
-    return;
-    }
-  d->IsUpdatingWidgetFromMRML = true;
-
-  if ( !d->SegmentationNode
-    || d->SegmentsTable->rowCount() != d->SegmentationNode->GetSegmentation()->GetNumberOfSegments() )
-    {
-    this->populateSegmentTable();
-    d->IsUpdatingWidgetFromMRML = false;
-    return;
-    }
-  // Get segmentation display node
-  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
-    d->SegmentationNode->GetDisplayNode() );
-
-  // Find items for each segment and update each field
-  vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
-  QStringList displayedSegmentIDs = this->displayedSegmentIDs();
-  foreach (QString segmentId, displayedSegmentIDs)
-    {
-    QTableWidgetItem* nameItem = d->findItemBySegmentID(segmentId);
-    if (!nameItem)
-      {
-      qCritical() << Q_FUNC_INFO << ": Cannot find table item corresponding to segment ID '"
-        << segmentId << "' in segmentation node " << d->SegmentationNode->GetName();
-      continue;
-      }
-    int row = nameItem->row();
-
-    // Name
-    vtkSegment* segment = segmentation->GetSegment(segmentId.toLatin1().constData());
-    nameItem->setText(segment->GetName());
-
-    // Get segment display properties
-    vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
-    if (displayNode)
-      {
-      displayNode->GetSegmentDisplayProperties(segmentId.toLatin1().constData(), properties);
-      }
-
-    // Visibility
-    QToolButton* visibilityButton = qobject_cast<QToolButton*>(
-      d->SegmentsTable->cellWidget(row, d->columnIndex("Visible")) );
-    if (visibilityButton)
-      {
-      visibilityButton->setEnabled(displayNode != nullptr);
-      if (displayNode != nullptr && properties.Visible && (properties.Visible3D || properties.Visible2DFill || properties.Visible2DOutline))
-        {
-        visibilityButton->setProperty(VISIBILITY_PROPERTY, true);
-        visibilityButton->setIcon(d->VisibleIcon);
-        }
-      else
-        {
-        visibilityButton->setProperty(VISIBILITY_PROPERTY, false);
-        visibilityButton->setIcon(d->InvisibleIcon);
-        }
-
-      // Update actions if enabled
-      if (d->AdvancedSegmentVisibility)
-        {
-        QList<QAction*> visibilityActions = visibilityButton->actions();
-        visibilityActions[0]->setChecked(properties.Visible3D);
-        visibilityActions[1]->setChecked(properties.Visible2DFill);
-        visibilityActions[2]->setChecked(properties.Visible2DOutline);
-        }
-      }
-
-    // Terminology / color
-    QTableWidgetItem* colorItem = d->SegmentsTable->item(row, d->columnIndex("Color"));
-    if (colorItem)
-      {
-      // Set terminology information from segment to item
-      colorItem->setData(qSlicerTerminologyItemDelegate::NameRole, segment->GetName());
-      colorItem->setData(qSlicerTerminologyItemDelegate::NameAutoGeneratedRole, segment->GetNameAutoGenerated());
-      colorItem->setData(qSlicerTerminologyItemDelegate::ColorAutoGeneratedRole, segment->GetColorAutoGenerated());
-      QString segmentTerminologyTagValue(d->getTerminologyUserDataForSegment(segment));
-      if (segmentTerminologyTagValue != colorItem->data(qSlicerTerminologyItemDelegate::TerminologyRole).toString())
-        {
-        colorItem->setData(qSlicerTerminologyItemDelegate::TerminologyRole, segmentTerminologyTagValue);
-        colorItem->setToolTip(qMRMLSegmentsTableView::terminologyTooltipForSegment(segment));
-        }
-      // Set color
-      double* colorArray = segment->GetColor();
-      QColor color = QColor::fromRgbF(colorArray[0], colorArray[1], colorArray[2]);
-      colorItem->setData(Qt::DecorationRole, color);
-      }
-
-    // Opacity (show only 3D opacity; if the user changes it then it applies to all types of opacity)
-    QTableWidgetItem* opacityItem =  d->SegmentsTable->item(row, d->columnIndex("Opacity"));
-    if (opacityItem)
-      {
-      QString displayedOpacityStr = QString::number(properties.Opacity3D, 'f', 2);
-      opacityItem->setData(Qt::EditRole, displayedOpacityStr); // for qMRMLItemDelegate
-      //opacityItem->setData(Qt::EditRole, properties.Opacity3D); // for qMRMLDoubleSpinBoxDelegate
-      }
-    }
-  d->IsUpdatingWidgetFromMRML = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -566,153 +317,6 @@ void qMRMLSegmentsTableView::onSegmentSelectionChanged(const QItemSelection &sel
     return;
     }
   emit selectionChanged(selected, deselected);
-}
-
-//-----------------------------------------------------------------------------
-void qMRMLSegmentsTableView::onSegmentTableItemChanged(QTableWidgetItem* changedItem)
-{
-  Q_D(qMRMLSegmentsTableView);
-
-  d->setMessage(QString());
-
-  if (d->IsUpdatingWidgetFromMRML)
-    {
-    return;
-    }
-  if (!changedItem || !d->SegmentationNode)
-    {
-    return;
-    }
-
-  // All items contain the segment ID, get that
-  QString segmentId = changedItem->data(IDRole).toString();
-
-  // If segment name has been changed
-  if (changedItem->column() == d->columnIndex("Name"))
-    {
-    QString nameText(changedItem->text());
-    vtkSegment* segment = d->SegmentationNode->GetSegmentation()->GetSegment(segmentId.toLatin1().constData());
-    if (!segment)
-      {
-      qCritical() << Q_FUNC_INFO << ": Segment with ID '" << segmentId << "' not found in segmentation node " << d->SegmentationNode->GetName();
-      return;
-      }
-    emit segmentAboutToBeModified(segmentId);
-    segment->SetName(nameText.toLatin1().constData());
-
-    // Turn off auto-generated flag for segment because it was manually entered
-    segment->SetNameAutoGenerated(false);
-
-    // Set name as item data for color item so that it can be propagated to terminology selector
-    QTableWidgetItem* colorItem = changedItem->tableWidget()->item(changedItem->row(), d->columnIndex("Color"));
-    d->IsUpdatingWidgetFromMRML = true;
-    colorItem->setData(qSlicerTerminologyItemDelegate::NameRole, nameText);
-    colorItem->setData(qSlicerTerminologyItemDelegate::NameAutoGeneratedRole, false);
-    d->IsUpdatingWidgetFromMRML = false;
-    }
-  // If visualization has been changed
-  else
-    {
-    // For all other columns we need the display node
-    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
-      d->SegmentationNode->GetDisplayNode() );
-    if (!displayNode)
-      {
-      qCritical() << Q_FUNC_INFO << ": No display node for segmentation!";
-      return;
-      }
-    // Get display properties
-    vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
-    displayNode->GetSegmentDisplayProperties(segmentId.toLatin1().constData(), properties);
-
-    bool displayPropertyChanged = false;
-
-    // Terminology / color changed
-    if (changedItem->column() == d->columnIndex("Color"))
-      {
-      vtkSegment* segment = d->SegmentationNode->GetSegmentation()->GetSegment(segmentId.toLatin1().constData());
-      if (!segment)
-        {
-        qCritical() << Q_FUNC_INFO << ": Segment with ID '" << segmentId << "' not found in segmentation node " << d->SegmentationNode->GetName();
-        return;
-        }
-
-      // Set terminology information to segment as tag
-      QString terminologyString = changedItem->data(qSlicerTerminologyItemDelegate::TerminologyRole).toString();
-      segment->SetTag(vtkSegment::GetTerminologyEntryTagName(), terminologyString.toLatin1().constData());
-
-      // Set color to segment if it changed
-      QColor color = changedItem->data(Qt::DecorationRole).value<QColor>();
-      double* oldColorArray = segment->GetColor();
-      QColor oldColor = QColor::fromRgbF(oldColorArray[0], oldColorArray[1], oldColorArray[2]);
-      if (oldColor != color)
-        {
-        segment->SetColor(color.redF(), color.greenF(), color.blueF());
-        }
-      // Set color auto-generated flag
-      segment->SetColorAutoGenerated(
-        changedItem->data(qSlicerTerminologyItemDelegate::ColorAutoGeneratedRole).toBool() );
-
-      // Set name if it changed
-      QString nameFromColorItem = changedItem->data(qSlicerTerminologyItemDelegate::NameRole).toString();
-      if (nameFromColorItem.compare(segment->GetName()))
-        {
-        emit segmentAboutToBeModified(segmentId);
-        segment->SetName(nameFromColorItem.toLatin1().constData());
-        }
-      // Set name auto-generated flag
-      segment->SetNameAutoGenerated(
-        changedItem->data(qSlicerTerminologyItemDelegate::NameAutoGeneratedRole).toBool() );
-
-      // Update tooltip
-      changedItem->setToolTip(qMRMLSegmentsTableView::terminologyTooltipForSegment(segment));
-      }
-    // Opacity changed
-    else if (changedItem->column() == d->columnIndex("Opacity"))
-      {
-      QString opacity = changedItem->data(Qt::EditRole).toString();
-      QString currentOpacity = QString::number( properties.Opacity3D, 'f', 2);
-      if (opacity != currentOpacity)
-        {
-        // Set to all kinds of opacities as they are combined on the UI
-        properties.Opacity3D = opacity.toDouble();
-        displayPropertyChanged = true;
-        }
-      }
-    // Set changed properties to segmentation display node if a value has actually changed
-    if (displayPropertyChanged)
-      {
-      displayNode->SetSegmentDisplayProperties(segmentId.toLatin1().constData(), properties);
-      }
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qMRMLSegmentsTableView::onVisibilityButtonClicked()
-{
-  Q_D(qMRMLSegmentsTableView);
-
-  QToolButton* senderButton = qobject_cast<QToolButton*>(sender());
-  if (!senderButton)
-    {
-    return;
-    }
-
-  bool visible = !senderButton->property(VISIBILITY_PROPERTY).toBool();
-
-  // Set all visibility types to segment referenced by button toggled
-  this->setSegmentVisibility(senderButton, visible, -1, -1, -1);
-
-  // Change button icon
-  senderButton->setProperty(VISIBILITY_PROPERTY, visible);
-  if (visible)
-    {
-    senderButton->setIcon(d->VisibleIcon);
-    }
-  else
-    {
-    senderButton->setIcon(d->InvisibleIcon);
-    }
 }
 
 //-----------------------------------------------------------------------------
@@ -760,12 +364,25 @@ void qMRMLSegmentsTableView::setSegmentVisibility(QObject* senderObject, int vis
   Q_D(qMRMLSegmentsTableView);
 
   if (!d->SegmentationNode)
-  {
+    {
     qCritical() << Q_FUNC_INFO << " failed: segmentation node is not set";
     return;
-  }
+    }
 
   QString segmentId = senderObject->property(ID_PROPERTY).toString();
+  this->setSegmentVisibility(segmentId, visible, visible3D, visible2DFill, visible2DOutline);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentsTableView::setSegmentVisibility(QString segmentId, int visible, int visible3D, int visible2DFill, int visible2DOutline)
+{
+  Q_D(qMRMLSegmentsTableView);
+
+  if (!d->SegmentationNode)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: segmentation node is not set";
+    return;
+    }
 
   vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
     d->SegmentationNode->GetDisplayNode() );
@@ -775,7 +392,7 @@ void qMRMLSegmentsTableView::setSegmentVisibility(QObject* senderObject, int vis
     return;
     }
   vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
-  displayNode->GetSegmentDisplayProperties(segmentId.toLatin1().constData(), properties);
+  displayNode->GetSegmentDisplayProperties(segmentId.toStdString(), properties);
 
   // Change visibility to all modes
   bool valueChanged = false;
@@ -813,7 +430,7 @@ void qMRMLSegmentsTableView::setSegmentVisibility(QObject* senderObject, int vis
   // Set visibility to display node
   if (valueChanged)
     {
-    displayNode->SetSegmentDisplayProperties(segmentId.toLatin1().constData(), properties);
+    displayNode->SetSegmentDisplayProperties(segmentId.toStdString(), properties);
     }
 }
 
@@ -822,25 +439,23 @@ int qMRMLSegmentsTableView::segmentCount() const
 {
   Q_D(const qMRMLSegmentsTableView);
 
-  return d->SegmentsTable->rowCount();
+  return d->Model->rowCount();
 }
 
 //-----------------------------------------------------------------------------
 QStringList qMRMLSegmentsTableView::selectedSegmentIDs()
 {
   Q_D(qMRMLSegmentsTableView);
-
-  QList<QTableWidgetItem*> selectedItems = d->SegmentsTable->selectedItems();
-  QStringList selectedSegmentIds;
-  QSet<int> rows;
-  foreach (QTableWidgetItem* item, selectedItems)
+  if (!d->SegmentsTable->selectionModel()->hasSelection())
     {
-    int row = item->row();
-    if (!rows.contains(row))
-      {
-      rows.insert(row);
-      selectedSegmentIds << item->data(IDRole).toString();
-      }
+    return QStringList();
+    }
+
+  QModelIndexList selectedModelIndices = d->SegmentsTable->selectionModel()->selectedRows();
+  QStringList selectedSegmentIds;
+  foreach (QModelIndex selectedModelIndex, selectedModelIndices)
+    {
+    selectedSegmentIds << d->SortFilterModel->segmentIDFromIndex(selectedModelIndex);
     }
 
   return selectedSegmentIds;
@@ -857,50 +472,34 @@ void qMRMLSegmentsTableView::setSelectedSegmentIDs(QStringList segmentIDs)
     return;
     }
 
-  // Select items that have to be selected
-  // (need to select first to avoid a transient state when nothing is selected)
-  int columnCount = d->SegmentsTable->columnCount();
-  for (int row = 0; row<d->SegmentsTable->rowCount(); ++row)
+  for (QString segmentID : segmentIDs)
     {
-    QTableWidgetItem* nameItem = d->SegmentsTable->item(row, d->columnIndex("Name"));
-    if (!nameItem)
-      {
-      // invalid item, canot determine selection state
-      continue;
-      }
-    if (!segmentIDs.contains(nameItem->data(IDRole).toString()))
-      {
-      // not selected
-      continue;
-      }
-    // select all items in this row
-    for (int column = 0; column < columnCount; column++)
-      {
-      QModelIndex index = d->SegmentsTable->model()->index(row, column);
-      d->SegmentsTable->selectionModel()->select(index, QItemSelectionModel::Select);
-      }
+    QModelIndex index = d->SortFilterModel->indexFromSegmentID(segmentID);
+    QFlags<QItemSelectionModel::SelectionFlag> flags = QFlags<QItemSelectionModel::SelectionFlag>();
+    flags << QItemSelectionModel::SelectionFlag::Select << QItemSelectionModel::Rows;
+    d->SegmentsTable->selectionModel()->select(index, flags);
     }
 
   // Deselect items that don't have to be selected anymore
-  for (int row = 0; row<d->SegmentsTable->rowCount(); ++row)
+  for (int row = 0; row < d->SortFilterModel->rowCount(); ++row)
     {
-    QTableWidgetItem* nameItem = d->SegmentsTable->item(row, d->columnIndex("Name"));
-    if (!nameItem)
+    QModelIndex index = d->SortFilterModel->index(row, d->Model->nameColumn());
+    QString segmentID = d->SortFilterModel->segmentIDFromIndex(index);
+    if (segmentID.isEmpty())
       {
       // invalid item, canot determine selection state
       continue;
       }
-    if (segmentIDs.contains(nameItem->data(IDRole).toString()))
+
+    if (segmentIDs.contains(segmentID))
       {
       // selected
       continue;
       }
-    // unselect all items in this row
-    for (int column = 0; column < columnCount; column++)
-      {
-      QModelIndex index = d->SegmentsTable->model()->index(row, column);
-      d->SegmentsTable->selectionModel()->select(index, QItemSelectionModel::Deselect);
-      }
+
+    QFlags<QItemSelectionModel::SelectionFlag> flags = QFlags<QItemSelectionModel::SelectionFlag>();
+    flags << QItemSelectionModel::SelectionFlag::Deselect << QItemSelectionModel::Rows;
+    d->SegmentsTable->selectionModel()->select(index, flags);
     }
 }
 
@@ -908,13 +507,7 @@ void qMRMLSegmentsTableView::setSelectedSegmentIDs(QStringList segmentIDs)
 void qMRMLSegmentsTableView::clearSelection()
 {
   Q_D(qMRMLSegmentsTableView);
-
-  // Deselect selected items first
-  QList<QTableWidgetItem*> selectedItems = d->SegmentsTable->selectedItems();
-  foreach (QTableWidgetItem* item, selectedItems)
-    {
-    d->SegmentsTable->setItemSelected(item, false);
-    }
+  d->SegmentsTable->clearSelection();
 }
 
 //------------------------------------------------------------------------------
@@ -949,7 +542,6 @@ bool qMRMLSegmentsTableView::eventFilter(QObject* target, QEvent* event)
 //------------------------------------------------------------------------------
 void qMRMLSegmentsTableView::endProcessing()
 {
-  this->populateSegmentTable();
 }
 
 //------------------------------------------------------------------------------
@@ -970,21 +562,28 @@ void qMRMLSegmentsTableView::setHeaderVisible(bool visible)
 void qMRMLSegmentsTableView::setVisibilityColumnVisible(bool visible)
 {
   Q_D(qMRMLSegmentsTableView);
-  d->SegmentsTable->setColumnHidden(d->columnIndex("Visible"), !visible);
+  d->SegmentsTable->setColumnHidden(d->Model->visibilityColumn(), !visible);
 }
 
 //------------------------------------------------------------------------------
 void qMRMLSegmentsTableView::setColorColumnVisible(bool visible)
 {
   Q_D(qMRMLSegmentsTableView);
-  d->SegmentsTable->setColumnHidden(d->columnIndex("Color"), !visible);
+  d->SegmentsTable->setColumnHidden(d->Model->colorColumn(), !visible);
 }
 
 //------------------------------------------------------------------------------
 void qMRMLSegmentsTableView::setOpacityColumnVisible(bool visible)
 {
   Q_D(qMRMLSegmentsTableView);
-  d->SegmentsTable->setColumnHidden(d->columnIndex("Opacity"), !visible);
+  d->SegmentsTable->setColumnHidden(d->Model->opacityColumn(), !visible);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSegmentsTableView::setStatusColumnVisible(bool visible)
+{
+  Q_D(qMRMLSegmentsTableView);
+  d->SegmentsTable->setColumnHidden(d->Model->statusColumn(), !visible);
 }
 
 //------------------------------------------------------------------------------
@@ -999,6 +598,13 @@ void qMRMLSegmentsTableView::setReadOnly(bool aReadOnly)
     {
     d->SegmentsTable->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
     }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSegmentsTableView::setFilterBarVisible(bool visible)
+{
+  Q_D(qMRMLSegmentsTableView);
+  d->FilterBar->setVisible(visible);
 }
 
 //------------------------------------------------------------------------------
@@ -1019,21 +625,28 @@ bool qMRMLSegmentsTableView::headerVisible()
 bool qMRMLSegmentsTableView::visibilityColumnVisible()
 {
   Q_D(qMRMLSegmentsTableView);
-  return !d->SegmentsTable->isColumnHidden(d->columnIndex("Visible"));
+  return !d->SegmentsTable->isColumnHidden(d->Model->visibilityColumn());
 }
 
 //------------------------------------------------------------------------------
 bool qMRMLSegmentsTableView::colorColumnVisible()
 {
   Q_D(qMRMLSegmentsTableView);
-  return !d->SegmentsTable->isColumnHidden(d->columnIndex("Color"));
+  return !d->SegmentsTable->isColumnHidden(d->Model->colorColumn());
 }
 
 //------------------------------------------------------------------------------
 bool qMRMLSegmentsTableView::opacityColumnVisible()
 {
   Q_D(qMRMLSegmentsTableView);
-  return !d->SegmentsTable->isColumnHidden(d->columnIndex("Opacity"));
+  return !d->SegmentsTable->isColumnHidden(d->Model->opacityColumn());
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLSegmentsTableView::statusColumnVisible()
+{
+  Q_D(qMRMLSegmentsTableView);
+  return !d->SegmentsTable->isColumnHidden(d->Model->statusColumn());
 }
 
 //------------------------------------------------------------------------------
@@ -1044,8 +657,17 @@ bool qMRMLSegmentsTableView::readOnly()
 }
 
 //------------------------------------------------------------------------------
+bool qMRMLSegmentsTableView::filterBarVisible()
+{
+  Q_D(qMRMLSegmentsTableView);
+  return d->FilterBar->isVisible();
+}
+
+//------------------------------------------------------------------------------
 void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
 {
+  Q_D(qMRMLSegmentsTableView);
+
   QMenu* contextMenu = new QMenu(this);
 
   QAction* showOnlySelectedAction = new QAction("Show only selected segments", this);
@@ -1060,15 +682,101 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
 
   contextMenu->addSeparator();
 
-  QAction* moveUpAction = new QAction("Move segment up", this);
+  QAction* moveUpAction = new QAction("Move selected segments up", this);
   QObject::connect(moveUpAction, SIGNAL(triggered()), this, SLOT(moveSelectedSegmentsUp()));
   contextMenu->addAction(moveUpAction);
 
-  QAction* moveDownAction = new QAction("Move segment down", this);
+  QAction* moveDownAction = new QAction("Move selected segments down", this);
   QObject::connect(moveDownAction, SIGNAL(triggered()), this, SLOT(moveSelectedSegmentsDown()));
   contextMenu->addAction(moveDownAction);
 
-  contextMenu->popup(event->globalPos());
+  QModelIndex index = d->SegmentsTable->indexAt(d->SegmentsTable->viewport()->mapFromGlobal(event->globalPos()));
+  if (d->AdvancedSegmentVisibility && index.isValid())
+    {
+    QString segmentID = d->SortFilterModel->segmentIDFromIndex(index);
+
+    // Get segment display properties
+    vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
+    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode());
+    if (displayNode)
+      {
+      displayNode->GetSegmentDisplayProperties(segmentID.toLatin1().constData(), properties);
+      }
+
+    contextMenu->addSeparator();
+
+    QAction* visibility3DAction = new QAction("Show in 3D", this);
+    visibility3DAction->setCheckable(true);
+    visibility3DAction->setChecked(properties.Visible3D);
+    visibility3DAction->setProperty(ID_PROPERTY, segmentID);
+    QObject::connect(visibility3DAction, SIGNAL(triggered(bool)), this, SLOT(onVisibility3DActionToggled(bool)));
+    contextMenu->addAction(visibility3DAction);
+
+    QAction* visibility2DFillAction = new QAction("Show in 2D as fill", this);
+    visibility2DFillAction->setCheckable(true);
+    visibility2DFillAction->setChecked(properties.Visible2DFill);
+    visibility2DFillAction->setProperty(ID_PROPERTY, segmentID);
+    connect(visibility2DFillAction, SIGNAL(triggered(bool)), this, SLOT(onVisibility2DFillActionToggled(bool)));
+    contextMenu->addAction(visibility2DFillAction);
+
+    QAction* visibility2DOutlineAction = new QAction("Show in 2D as outline", this);
+    visibility2DOutlineAction->setCheckable(true);
+    visibility2DOutlineAction->setChecked(properties.Visible2DOutline);
+    visibility2DOutlineAction->setProperty(ID_PROPERTY, segmentID);
+    connect(visibility2DOutlineAction, SIGNAL(triggered(bool)), this, SLOT(onVisibility2DOutlineActionToggled(bool)));
+    contextMenu->addAction(visibility2DOutlineAction);
+    }
+
+  contextMenu->addSeparator();
+  QAction* clearSelectedSegmentAction = new QAction("Clear selected segments", this);
+  QObject::connect(clearSelectedSegmentAction, SIGNAL(triggered()), this, SLOT(clearSelectedSegments()));
+  contextMenu->addAction(clearSelectedSegmentAction);
+
+
+contextMenu->popup(event->globalPos());
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSegmentsTableView::clearSelectedSegments()
+{
+  Q_D(qMRMLSegmentsTableView);
+
+  QAction* clearSegmentAction = qobject_cast<QAction*>(sender());
+  Q_ASSERT(clearSegmentAction);
+
+  if (!d->SegmentationNode)
+    {
+    qCritical() << Q_FUNC_INFO << "Invalid segmentation node";
+    }
+  vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
+  if (!segmentation)
+    {
+    qCritical() << Q_FUNC_INFO << "Invalid segmentation";
+    }
+
+  QMessageBox messageBox;
+  messageBox.setStandardButtons(QMessageBox::StandardButton::Discard | QMessageBox::StandardButton::Cancel);
+  messageBox.setDefaultButton(QMessageBox::Cancel);
+  messageBox.setText("Are you sure you want to discard the contents of the selected segments?");
+  if (messageBox.exec() == QMessageBox::Cancel)
+    {
+    return;
+    }
+
+  QStringList selectedSegmentIDs = this->selectedSegmentIDs();
+  for (QString segmentID : selectedSegmentIDs)
+  {
+    vtkSegment* segment = segmentation->GetSegment(segmentID.toStdString());
+    if (!segment)
+      {
+      continue;
+      }
+    vtkDataObject* dataObject = segment->GetRepresentation(segmentation->GetMasterRepresentationName());
+    dataObject->Initialize();
+    dataObject->Modified();
+    vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(segment, vtkSlicerSegmentationsModuleLogic::NotStarted);
+    segment->Modified();
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1241,72 +949,32 @@ void qMRMLSegmentsTableView::moveSelectedSegmentsDown()
 // --------------------------------------------------------------------------
 QString qMRMLSegmentsTableView::terminologyTooltipForSegment(vtkSegment* segment)
 {
-  if (!segment)
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid segment given";
-    return QString();
-    }
-
-  // Get terminologies module logic
-  vtkSlicerTerminologiesModuleLogic* terminologiesLogic = nullptr;
-  qSlicerAbstractCoreModule* terminologiesModule = qSlicerCoreApplication::application()->moduleManager()->module("Terminologies");
-  if (terminologiesModule)
-    {
-    terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(terminologiesModule->logic());
-    }
-  else
-    {
-    qCritical() << Q_FUNC_INFO << ": Terminologies module is not found";
-    return QString();
-    }
-
-  std::string serializedTerminology("");
-  if (!segment->GetTag(vtkSegment::GetTerminologyEntryTagName(), serializedTerminology))
-    {
-    return QString("No terminology information");
-    }
-  vtkSmartPointer<vtkSlicerTerminologyEntry> terminologyEntry = vtkSmartPointer<vtkSlicerTerminologyEntry>::New();
-  if (!terminologiesLogic->DeserializeTerminologyEntry(serializedTerminology, terminologyEntry))
-    {
-    return QString("Invalid terminology information");
-    }
-
-  return QString(terminologiesLogic->GetInfoStringFromTerminologyEntry(terminologyEntry).c_str());
+  return qMRMLSegmentsModel::terminologyTooltipForSegment(segment);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSegmentsTableView::setHideSegments(const QStringList& segmentIDs)
 {
   Q_D(qMRMLSegmentsTableView);
-  d->HiddenSegmentIDs = segmentIDs;
-  this->populateSegmentTable();
+  d->SortFilterModel->setHideSegments(segmentIDs);
 }
 
 // --------------------------------------------------------------------------
 QStringList qMRMLSegmentsTableView::hideSegments()const
 {
   Q_D(const qMRMLSegmentsTableView);
-  return d->HiddenSegmentIDs;
+  return d->SortFilterModel->hideSegments();
 }
 
 // --------------------------------------------------------------------------
 QStringList qMRMLSegmentsTableView::displayedSegmentIDs()const
 {
   Q_D(const qMRMLSegmentsTableView);
+
   QStringList displayedSegmentIDs;
-  std::vector< std::string > segmentIDs;
-  vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
-  if (segmentation)
-  {
-    segmentation->GetSegmentIDs(segmentIDs);
-  }
-  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
-  {
-    if (d->HiddenSegmentIDs.contains(segmentIdIt->c_str()))
+  for (int row = 0; row < d->SortFilterModel->rowCount(); ++row)
     {
-      continue;
+    displayedSegmentIDs << d->SortFilterModel->segmentIDFromIndex(d->SortFilterModel->index(row, 0));
     }
-    displayedSegmentIDs.append(segmentIdIt->c_str());
-  }
   return displayedSegmentIDs;
 }

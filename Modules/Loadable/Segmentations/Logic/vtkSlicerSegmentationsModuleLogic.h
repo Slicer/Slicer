@@ -337,6 +337,22 @@ public:
   bool GetDefaultSurfaceSmoothingEnabled();
   void SetDefaultSurfaceSmoothingEnabled(bool enabled);
 
+  enum SegmentStatus
+  {
+    NotStarted,
+    InProgress,
+    Completed,
+    Flagged,
+    LastStatus
+  };
+
+  /// Returns the name of the status tag
+  static std::string GetStatusTagName();
+  /// Returns the value of the status tag for the given segment
+  static int GetSegmentStatus(vtkSegment* segment);
+  /// Returns the value of the status tag for the given segment
+  static void SetSegmentStatus(vtkSegment* segment, int status);
+
 public:
   /// Set Terminologies module logic
   void SetTerminologiesLogic(vtkSlicerTerminologiesModuleLogic* terminologiesLogic);

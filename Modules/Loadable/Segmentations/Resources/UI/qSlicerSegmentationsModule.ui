@@ -868,5 +868,21 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>qSlicerSegmentationsModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>SegmentsTableView</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>415</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>178</x>
+     <y>177</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>
