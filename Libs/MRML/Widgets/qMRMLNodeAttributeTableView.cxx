@@ -53,9 +53,6 @@ public:
 public:
   /// MRML node to inspect
   vtkMRMLNode* InspectedNode;
-
-  /// Text of the attribute table item that is being edited
-  QString SelectedAttributeTableItemText;
 };
 
 // --------------------------------------------------------------------------
@@ -73,8 +70,6 @@ void qMRMLNodeAttributeTableViewPrivate::init()
 
   QObject::connect(this->NodeAttributesTable, SIGNAL(itemChanged(QTableWidgetItem*)),
           q, SLOT(onAttributeChanged(QTableWidgetItem*)));
-  QObject::connect(this->NodeAttributesTable, SIGNAL(currentItemChanged(QTableWidgetItem*,QTableWidgetItem*)),
-          q, SLOT(storeSelectedAttributeTableItem(QTableWidgetItem*,QTableWidgetItem*)));
 
   this->setMessage(QString());
 }
@@ -124,7 +119,7 @@ void qMRMLNodeAttributeTableView::populateAttributeTable()
   d->setMessage(QString());
 
   // Block signals so that onAttributeChanged function is not called when populating
-  d->NodeAttributesTable->blockSignals(true);
+  bool wasBlocked = d->NodeAttributesTable->blockSignals(true);
 
   d->NodeAttributesTable->clearContents();
 
@@ -138,7 +133,7 @@ void qMRMLNodeAttributeTableView::populateAttributeTable()
     {
     d->setMessage(tr("No node is selected"));
     d->NodeAttributesTable->setRowCount(0);
-    d->NodeAttributesTable->blockSignals(false);
+    d->NodeAttributesTable->blockSignals(wasBlocked);
     return;
     }
 
@@ -156,16 +151,22 @@ void qMRMLNodeAttributeTableView::populateAttributeTable()
     for (std::vector< std::string >::iterator iter = attributeNames.begin();
         iter != attributeNames.end(); ++iter, ++row)
       {
-      d->NodeAttributesTable->setItem( row, 0, new QTableWidgetItem(
-        QString(iter->c_str())) );
+      // attribute name
+      QString attributeName = QString(iter->c_str());
+      QTableWidgetItem* attributeNameItem = new QTableWidgetItem(attributeName);
+      // save the attribute name as user data so that if the item is renamed
+      // we know which attribute name to change
+      attributeNameItem->setData(Qt::UserRole, attributeName);
+      d->NodeAttributesTable->setItem( row, 0, attributeNameItem);
 
+      // attribute value
       d->NodeAttributesTable->setItem( row, 1, new QTableWidgetItem(
         QString(d->InspectedNode->GetAttribute(iter->c_str())) ) );
       }
     }
 
   // Unblock signals
-  d->NodeAttributesTable->blockSignals(false);
+  d->NodeAttributesTable->blockSignals(wasBlocked);
 }
 
 //-----------------------------------------------------------------------------
@@ -179,9 +180,10 @@ void qMRMLNodeAttributeTableView::onAttributeChanged(QTableWidgetItem* changedIt
     {
     return;
     }
-  // If attribute name has been changed
-  else if (changedItem->column() == 0)
+
+  if (changedItem->column() == 0)
     {
+    // Attribute name has been changed
     QTableWidgetItem* valueItem = d->NodeAttributesTable->item( changedItem->row(), 1 );
     QString valueText;
     if (valueItem)
@@ -189,29 +191,35 @@ void qMRMLNodeAttributeTableView::onAttributeChanged(QTableWidgetItem* changedIt
       valueText = valueItem->text();
       }
 
-    // Don't set if there is another attribute with the same name (would overwrite it)
+    QString attributeNameBeforeEditing = changedItem->data(Qt::UserRole).toString();
     if (d->InspectedNode->GetAttribute(changedItem->text().toLatin1().constData()))
       {
+      // Don't set if there is another attribute with the same name (would overwrite it),
+      // revert to the original value.
       d->setMessage(tr("There is already an attribute with the same name"));
-      d->NodeAttributesTable->blockSignals(true);
-      changedItem->setText( d->SelectedAttributeTableItemText );
-      d->NodeAttributesTable->blockSignals(false);
+      bool wasBlocked = d->NodeAttributesTable->blockSignals(true);
+      changedItem->setText(attributeNameBeforeEditing);
+      d->NodeAttributesTable->blockSignals(wasBlocked);
       }
     else
       {
       int wasModifying = d->InspectedNode->StartModify();
 
-      d->InspectedNode->SetAttribute(
-        d->SelectedAttributeTableItemText.toLatin1().constData(), nullptr);
+      d->InspectedNode->RemoveAttribute(attributeNameBeforeEditing.toLatin1().constData());
       d->InspectedNode->SetAttribute(
         changedItem->text().toLatin1().constData(), valueText.toLatin1().constData());
+
+      // Save the new attribute name
+      bool wasBlocked = d->NodeAttributesTable->blockSignals(true);
+      changedItem->setData(Qt::UserRole, changedItem->text());
+      d->NodeAttributesTable->blockSignals(wasBlocked);
 
       d->InspectedNode->EndModify(wasModifying);
       }
     }
-  // If attribute value has been changed
   else if (changedItem->column() == 1)
     {
+    // Attribute value has been changed
     QTableWidgetItem* nameItem = d->NodeAttributesTable->item( changedItem->row(), 0 );
     QString nameText;
     if (nameItem)
@@ -220,15 +228,6 @@ void qMRMLNodeAttributeTableView::onAttributeChanged(QTableWidgetItem* changedIt
       }
     d->InspectedNode->SetAttribute( nameText.toLatin1().constData(), changedItem->text().toLatin1().constData() );
     }
-}
-
-//-----------------------------------------------------------------------------
-void qMRMLNodeAttributeTableView::storeSelectedAttributeTableItem(QTableWidgetItem* selectedItem, QTableWidgetItem* previousItem)
-{
-  Q_UNUSED(previousItem);
-  Q_D(qMRMLNodeAttributeTableView);
-
-  d->SelectedAttributeTableItemText = selectedItem ? selectedItem->text() : QString();
 }
 
 //-----------------------------------------------------------------------------
@@ -259,16 +258,20 @@ void qMRMLNodeAttributeTableView::addAttribute()
 
   d->setMessage(QString());
 
+  bool wasBlocked = d->NodeAttributesTable->blockSignals(true);
   int rowCountBefore = d->NodeAttributesTable->rowCount();
-
-  // Reset selected attribute text so that the added
-  // item is renamed even if one is already selected
-  d->SelectedAttributeTableItemText = QString();
-
   d->NodeAttributesTable->insertRow( rowCountBefore );
-  d->NodeAttributesTable->setItem( rowCountBefore, 0,
-    new QTableWidgetItem(this->generateNewAttributeName()) );
-  d->NodeAttributesTable->setItem( rowCountBefore, 1, new QTableWidgetItem(QString()) );
+  QString newAttributeName = this->generateNewAttributeName();
+  QString newAttributeValue;
+  QTableWidgetItem* attributeNameItem = new QTableWidgetItem(newAttributeName);
+  // save the attribute name as user data so that if the item is renamed
+  // we know which attribute name to change
+  attributeNameItem->setData(Qt::UserRole, newAttributeName);
+  d->NodeAttributesTable->setItem( rowCountBefore, 0, attributeNameItem);
+  d->NodeAttributesTable->setItem( rowCountBefore, 1, new QTableWidgetItem(newAttributeValue) );
+  d->NodeAttributesTable->blockSignals(wasBlocked);
+
+  d->InspectedNode->SetAttribute(newAttributeName.toLatin1().constData(), newAttributeValue.toLatin1().constData());
 }
 
 //-----------------------------------------------------------------------------
