@@ -67,7 +67,7 @@ public:
 
   // Insert a segment into the specified row
   // If no row is specified, then the index is retreived from the segmentation
-  QStandardItem* qMRMLSegmentsModelPrivate::insertSegment(QString segmentID, int row=-1);
+  QStandardItem* insertSegment(QString segmentID, int row=-1);
 
   /// Get string to pass terminology information via table widget item
   QString getTerminologyUserDataForSegment(vtkSegment* segment);

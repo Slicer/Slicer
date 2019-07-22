@@ -382,6 +382,7 @@ void qMRMLSegmentsModel::updateFromSegments()
 Qt::ItemFlags qMRMLSegmentsModel::segmentFlags(QString segmentID, int column)const
 {
   Q_D(const qMRMLSegmentsModel);
+  Q_UNUSED(segmentID);
 
   Qt::ItemFlags flags;
   flags.setFlag(Qt::ItemIsEnabled);

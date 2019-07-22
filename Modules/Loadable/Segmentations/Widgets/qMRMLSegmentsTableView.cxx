@@ -253,7 +253,6 @@ void qMRMLSegmentsTableView::onSegmentAddedOrRemoved()
   d->setMessage(QString());
 }
 
-
 //---------------------------------------------------------------------------
 void qMRMLSegmentsTableView::setMRMLScene(vtkMRMLScene* newScene)
 {
@@ -475,8 +474,10 @@ void qMRMLSegmentsTableView::setSelectedSegmentIDs(QStringList segmentIDs)
   for (QString segmentID : segmentIDs)
     {
     QModelIndex index = d->SortFilterModel->indexFromSegmentID(segmentID);
-    QFlags<QItemSelectionModel::SelectionFlag> flags = QFlags<QItemSelectionModel::SelectionFlag>();
-    flags << QItemSelectionModel::SelectionFlag::Select << QItemSelectionModel::Rows;
+
+    QItemSelectionModel::QItemSelectionModel::SelectionFlags flags = QFlags<QItemSelectionModel::SelectionFlag>();
+    flags.setFlag(QItemSelectionModel::Select);
+    flags.setFlag(QItemSelectionModel::Rows);
     d->SegmentsTable->selectionModel()->select(index, flags);
     }
 
@@ -497,8 +498,9 @@ void qMRMLSegmentsTableView::setSelectedSegmentIDs(QStringList segmentIDs)
       continue;
       }
 
-    QFlags<QItemSelectionModel::SelectionFlag> flags = QFlags<QItemSelectionModel::SelectionFlag>();
-    flags << QItemSelectionModel::SelectionFlag::Deselect << QItemSelectionModel::Rows;
+    QItemSelectionModel::QItemSelectionModel::SelectionFlags flags = QFlags<QItemSelectionModel::SelectionFlag>();
+    flags.setFlag(QItemSelectionModel::Deselect);
+    flags.setFlag(QItemSelectionModel::Rows);
     d->SegmentsTable->selectionModel()->select(index, flags);
     }
 }
