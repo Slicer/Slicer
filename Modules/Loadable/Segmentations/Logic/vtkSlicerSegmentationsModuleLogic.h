@@ -346,8 +346,11 @@ public:
     LastStatus
   };
 
+  /// Get the human readable segment status from the SegmentStatus enum value
+  static const char* GetSegmentStatusEnumAsString(int val);
+
   /// Returns the name of the status tag
-  static std::string GetStatusTagName();
+  static const char* GetStatusTagName();
   /// Returns the value of the status tag for the given segment
   static int GetSegmentStatus(vtkSegment* segment);
   /// Returns the value of the status tag for the given segment

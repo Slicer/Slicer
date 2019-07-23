@@ -131,6 +131,9 @@ public slots:
   /// Segment's center is determined as the center of bounding box.
   void jumpSlices();
 
+  /// Set the status of the selected segments
+  void setSelectedSegmentsStatus(int status=-1);
+
   /// Erase the contents of the selected segments and set the status to "Not started"
   void clearSelectedSegments();
 

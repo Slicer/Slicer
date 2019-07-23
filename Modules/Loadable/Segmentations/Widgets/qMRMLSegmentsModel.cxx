@@ -71,10 +71,10 @@ qMRMLSegmentsModelPrivate::qMRMLSegmentsModelPrivate(qMRMLSegmentsModel& object)
   this->HiddenIcon = QIcon(":Icons/VisibleOff.png");
   this->VisibleIcon = QIcon(":Icons/VisibleOn.png");
 
-  this->NotStartedIcon = QIcon(":Icons/Dot.png");
-  this->InProgressIcon = QIcon(":Icons/Edit.png");
-  this->FlaggedIcon = QIcon(":Icons/Flag.png");
-  this->CompletedIcon = QIcon(":Icons/Present.png");
+  this->NotStartedIcon = QIcon(":Icons/NotStarted.png");
+  this->InProgressIcon = QIcon(":Icons/InProgress.png");
+  this->FlaggedIcon = QIcon(":Icons/Flagged.png");
+  this->CompletedIcon = QIcon(":Icons/Completed.png");
 
   qRegisterMetaType<QStandardItem*>("QStandardItem*");
 }
@@ -137,7 +137,7 @@ void qMRMLSegmentsModelPrivate::init()
 
   q->horizontalHeaderItem(q->visibilityColumn())->setIcon(QIcon(":/Icons/Small/SlicerVisibleInvisible.png"));
   q->horizontalHeaderItem(q->colorColumn())->setIcon(QIcon(":/Icons/Colors.png"));
-  q->horizontalHeaderItem(q->statusColumn())->setIcon(QIcon(":/Icons/Flag.png"));
+  q->horizontalHeaderItem(q->statusColumn())->setIcon(QIcon(":/Icons/Flagged.png"));
 }
 
 //------------------------------------------------------------------------------
@@ -150,7 +150,6 @@ QStandardItem* qMRMLSegmentsModelPrivate::insertSegment(QString segmentID, int r
     // It is possible that the item has been already added if it is the parent of a child item already inserted
     return item;
     }
-
 
   QList<QStandardItem*> items;
   for (int col = 0; col < q->columnCount(); ++col)
@@ -235,11 +234,11 @@ void qMRMLSegmentsModel::setSegmentationNode(vtkMRMLSegmentationNode* segmentati
 
   if (d->SegmentationNode)
     {
-    d->SegmentationNode->AddObserver(vtkSegmentation::SegmentAdded, d->CallBack);
-    d->SegmentationNode->AddObserver(vtkSegmentation::SegmentRemoved, d->CallBack);
-    d->SegmentationNode->AddObserver(vtkSegmentation::SegmentModified, d->CallBack);
-    d->SegmentationNode->AddObserver(vtkSegmentation::SegmentsOrderModified, d->CallBack);
-    d->SegmentationNode->AddObserver(vtkMRMLDisplayableNode::DisplayModifiedEvent, d->CallBack);
+    d->SegmentationNode->AddObserver(vtkSegmentation::SegmentAdded, d->CallBack, 10.0);
+    d->SegmentationNode->AddObserver(vtkSegmentation::SegmentRemoved, d->CallBack, 10.0);
+    d->SegmentationNode->AddObserver(vtkSegmentation::SegmentModified, d->CallBack, -10.0);
+    d->SegmentationNode->AddObserver(vtkSegmentation::SegmentsOrderModified, d->CallBack, -15.0);
+    d->SegmentationNode->AddObserver(vtkMRMLDisplayableNode::DisplayModifiedEvent, d->CallBack, -15.0);
     }
 }
 
@@ -406,6 +405,11 @@ Qt::ItemFlags qMRMLSegmentsModel::segmentFlags(QString segmentID, int column)con
 void qMRMLSegmentsModel::updateItemFromSegment(QStandardItem* item, QString segmentID, int column)
 {
   Q_D(qMRMLSegmentsModel);
+  if (!item)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid item";
+    return;
+    }
 
   bool wasUpdating = d->UpdatingItemFromSegment;
   d->UpdatingItemFromSegment = true;
@@ -451,7 +455,8 @@ void qMRMLSegmentsModel::updateItemDataFromSegment(QStandardItem* item, QString 
   vtkSegment* segment = segmentation->GetSegment(segmentID.toStdString());
   if (!segment)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid segment";
+    qCritical() << Q_FUNC_INFO << ": Invalid segment " << segmentID;
+    return;
     }
 
   if (column == this->nameColumn())
@@ -494,6 +499,7 @@ void qMRMLSegmentsModel::updateItemDataFromSegment(QStandardItem* item, QString 
     if (!displayNode)
       {
       qCritical() << Q_FUNC_INFO << ": Invalid segmentation display node";
+      return;
       }
 
     vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
@@ -529,7 +535,7 @@ void qMRMLSegmentsModel::updateItemDataFromSegment(QStandardItem* item, QString 
       // to a bug in Qt (http://bugreports.qt.nokia.com/browse/QTBUG-20248),
       // it would fire a superfluous itemChanged() signal.
       if (item->data(VisibilityRole).isNull()
-        || item->data(VisibilityRole).toInt() != visible)
+        || item->data(VisibilityRole).toBool() != visible)
         {
 
         if (item->data(VisibilityRole).isNull() ||
@@ -565,6 +571,12 @@ void qMRMLSegmentsModel::updateSegmentFromItemData(QString segmentID, QStandardI
   if (!d->SegmentationNode)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid segmentation node";
+    return;
+    }
+
+  if (!item)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid item";
     return;
     }
 
@@ -732,13 +744,35 @@ void qMRMLSegmentsModel::onEvent(
   switch (event)
     {
     case vtkSegmentation::SegmentAdded:
-      model->onSegmentAdded(segmentID);
+      if (!segmentID.isEmpty())
+        {
+        model->onSegmentAdded(segmentID);
+        break;
+        }
+      else
+        {
+        model->rebuildFromSegments();
+        }
       break;
     case vtkSegmentation::SegmentRemoved:
-      model->onSegmentRemoved(segmentID);
+      if (!segmentID.isEmpty())
+        {
+        model->onSegmentRemoved(segmentID);
+        }
+        else
+        {
+        model->rebuildFromSegments();
+        }
       break;
     case vtkSegmentation::SegmentModified:
-      model->onSegmentModified(segmentID);
+      if (!segmentID.isEmpty())
+        {
+        model->onSegmentModified(segmentID);
+        }
+      else
+        {
+        model->updateFromSegments();
+        }
       break;
     case vtkSegmentation::SegmentsOrderModified:
       model->onSegmentOrderModified();
@@ -794,6 +828,11 @@ void qMRMLSegmentsModel::reorderItems()
     }
 
   vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
+  if (segmentation)
+    {
+    return;
+    }
+
   for (int i = 0; i < segmentation->GetNumberOfSegments(); ++i)
     {
     std::string segmentID = segmentation->GetNthSegmentID(i);
@@ -932,7 +971,7 @@ QString qMRMLSegmentsModel::terminologyTooltipForSegment(vtkSegment* segment)
 {
   if (!segment)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid segment given";
+    qCritical() << Q_FUNC_INFO << ": Invalid segment";
     return QString();
     }
 

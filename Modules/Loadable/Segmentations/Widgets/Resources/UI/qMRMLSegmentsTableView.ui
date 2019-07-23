@@ -89,6 +89,12 @@
      <property name="alternatingRowColors">
       <bool>true</bool>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
+     </property>
      <property name="sortingEnabled">
       <bool>false</bool>
      </property>
@@ -153,7 +159,7 @@
         </property>
         <property name="icon">
          <iconset resource="../qSlicerSegmentationsModuleWidgets.qrc">
-          <normaloff>:/Icons/Dot.png</normaloff>:/Icons/Dot.png</iconset>
+          <normaloff>:/Icons/NotStarted.png</normaloff>:/Icons/NotStarted.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -176,7 +182,7 @@
         </property>
         <property name="icon">
          <iconset resource="../qSlicerSegmentationsModuleWidgets.qrc">
-          <normaloff>:/Icons/Edit.png</normaloff>:/Icons/Edit.png</iconset>
+          <normaloff>:/Icons/InProgress.png</normaloff>:/Icons/InProgress.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -199,7 +205,7 @@
         </property>
         <property name="icon">
          <iconset resource="../qSlicerSegmentationsModuleWidgets.qrc">
-          <normaloff>:/Icons/Present.png</normaloff>:/Icons/Present.png</iconset>
+          <normaloff>:/Icons/Completed.png</normaloff>:/Icons/Completed.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -222,7 +228,7 @@
         </property>
         <property name="icon">
          <iconset resource="../qSlicerSegmentationsModuleWidgets.qrc">
-          <normaloff>:/Icons/Flag.png</normaloff>:/Icons/Flag.png</iconset>
+          <normaloff>:/Icons/Flagged.png</normaloff>:/Icons/Flagged.png</iconset>
         </property>
         <property name="iconSize">
          <size>

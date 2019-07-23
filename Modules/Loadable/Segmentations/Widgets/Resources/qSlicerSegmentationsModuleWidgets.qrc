@@ -2,11 +2,13 @@
   <qresource>
     <file>Icons/Add.png</file>
     <file>Icons/Edit.png</file>
-    <file>Icons/Dot.png</file>
-    <file>Icons/Flag.png</file>
+    <file>Icons/Completed.png</file>
+    <file>Icons/Flagged.png</file>
     <file>Icons/Help.png</file>
+    <file>Icons/InProgress.png</file>
     <file>Icons/Master.png</file>
     <file>Icons/MakeModel.png</file>
+    <file>Icons/NotStarted.png</file>
     <file>Icons/Present.png</file>
     <file>Icons/Remove.png</file>
     <file>Icons/SlicerRotateWarning.png</file>

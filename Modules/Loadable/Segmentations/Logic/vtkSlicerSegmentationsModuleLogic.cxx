@@ -2375,8 +2375,25 @@ std::string vtkSlicerSegmentationsModuleLogic::GetSafeFileName(std::string origi
   return safeName;
 }
 
-// -----------------------------------------------------------------------------
-std::string vtkSlicerSegmentationsModuleLogic::GetStatusTagName()
+//------------------------------------------------------------------------------
+const char* vtkSlicerSegmentationsModuleLogic::GetSegmentStatusEnumAsString(int val)
+{
+  switch (val)
+    {
+    case NotStarted:
+      return "Not started";
+    case InProgress:
+      return "In progress";
+    case Completed:
+      return "Completed";
+    case Flagged:
+      return "Flagged";
+    }
+  return "(unknown)";
+};
+
+//------------------------------------------------------------------------------
+const char* vtkSlicerSegmentationsModuleLogic::GetStatusTagName()
 {
   return "Segmentation.Status";
 }

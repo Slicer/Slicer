@@ -67,6 +67,7 @@
 
 #define ID_PROPERTY "ID"
 #define VISIBILITY_PROPERTY "Visible"
+#define STATUS_PROPERTY "Status"
 
 //-----------------------------------------------------------------------------
 class qMRMLSegmentsTableViewPrivate: public Ui_qMRMLSegmentsTableView
@@ -91,6 +92,11 @@ public:
 
   QIcon VisibleIcon;
   QIcon InvisibleIcon;
+
+  QIcon NotStartedIcon;
+  QIcon InProgressIcon;
+  QIcon FlaggedIcon;
+  QIcon CompletedIcon;
 
   /// Currently, if we are requesting segment display information from the
   /// segmentation display node,  the display node may emit modification events.
@@ -129,6 +135,11 @@ void qMRMLSegmentsTableViewPrivate::init()
 
   this->VisibleIcon = QIcon(":/Icons/Small/SlicerVisible.png");
   this->InvisibleIcon = QIcon(":/Icons/Small/SlicerInvisible.png");
+
+  this->NotStartedIcon = QIcon(":Icons/NotStarted.png");
+  this->InProgressIcon = QIcon(":Icons/InProgress.png");
+  this->FlaggedIcon = QIcon(":Icons/Flagged.png");
+  this->CompletedIcon = QIcon(":Icons/Completed.png");
 
   this->setMessage(QString());
 
@@ -186,10 +197,19 @@ void qMRMLSegmentsTableView::onSegmentsTableClicked(const QModelIndex& modelInde
     }
   else if (modelIndex.column() == d->Model->statusColumn())
     {
-    int status = vtkSlicerSegmentationsModuleLogic::GetSegmentStatus(segment) + 1;
-    if (status >= vtkSlicerSegmentationsModuleLogic::LastStatus)
+    int status = vtkSlicerSegmentationsModuleLogic::GetSegmentStatus(segment);
+    switch (status)
       {
-      status = vtkSlicerSegmentationsModuleLogic::InProgress;
+       case vtkSlicerSegmentationsModuleLogic::SegmentStatus::Flagged:
+         status = vtkSlicerSegmentationsModuleLogic::SegmentStatus::Completed;
+         break;
+       default:
+         ++status;
+         if (status >= vtkSlicerSegmentationsModuleLogic::SegmentStatus::LastStatus)
+           {
+           status = 0;
+           }
+         break;
       }
     vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(segment, status);
     }
@@ -285,6 +305,7 @@ qMRMLSortFilterSegmentsProxyModel* qMRMLSegmentsTableView::sortFilterProxyModel(
   if (!d->SortFilterModel)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid sort filter proxy model";
+    return nullptr;
     }
   return d->SortFilterModel;
 }
@@ -296,6 +317,7 @@ qMRMLSegmentsModel* qMRMLSegmentsTableView::model()const
   if (!d->Model)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid data model";
+    return nullptr;
     }
   return d->Model;
 }
@@ -672,30 +694,44 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
 
   QMenu* contextMenu = new QMenu(this);
 
-  QAction* showOnlySelectedAction = new QAction("Show only selected segments", this);
-  QObject::connect(showOnlySelectedAction, SIGNAL(triggered()), this, SLOT(showOnlySelectedSegments()));
-  contextMenu->addAction(showOnlySelectedAction);
+  QStringList selectedSegmentIDs = this->selectedSegmentIDs();
+
+  if (selectedSegmentIDs.size() > 0)
+    {
+    QAction* showOnlySelectedAction = new QAction("Show only selected segments", this);
+    QObject::connect(showOnlySelectedAction, SIGNAL(triggered()), this, SLOT(showOnlySelectedSegments()));
+    contextMenu->addAction(showOnlySelectedAction);
+
+    contextMenu->addSeparator();
+
+    QAction* jumpSlicesAction = new QAction("Jump slices", this);
+    QObject::connect(jumpSlicesAction, SIGNAL(triggered()), this, SLOT(jumpSlices()));
+    contextMenu->addAction(jumpSlicesAction);
+
+    contextMenu->addSeparator();
+
+    QAction* moveUpAction = new QAction("Move selected segments up", this);
+    QObject::connect(moveUpAction, SIGNAL(triggered()), this, SLOT(moveSelectedSegmentsUp()));
+    contextMenu->addAction(moveUpAction);
+
+    QAction* moveDownAction = new QAction("Move selected segments down", this);
+    QObject::connect(moveDownAction, SIGNAL(triggered()), this, SLOT(moveSelectedSegmentsDown()));
+    contextMenu->addAction(moveDownAction);
+    }
 
   contextMenu->addSeparator();
 
-  QAction* jumpSlicesAction = new QAction("Jump slices", this);
-  QObject::connect(jumpSlicesAction, SIGNAL(triggered()), this, SLOT(jumpSlices()));
-  contextMenu->addAction(jumpSlicesAction);
-
-  contextMenu->addSeparator();
-
-  QAction* moveUpAction = new QAction("Move selected segments up", this);
-  QObject::connect(moveUpAction, SIGNAL(triggered()), this, SLOT(moveSelectedSegmentsUp()));
-  contextMenu->addAction(moveUpAction);
-
-  QAction* moveDownAction = new QAction("Move selected segments down", this);
-  QObject::connect(moveDownAction, SIGNAL(triggered()), this, SLOT(moveSelectedSegmentsDown()));
-  contextMenu->addAction(moveDownAction);
+  QAction* showFilterAction = new QAction("Show filter bar", this);
+  showFilterAction->setCheckable(true);
+  showFilterAction->setChecked(d->FilterBar->isVisible());
+  QObject::connect(showFilterAction, SIGNAL(triggered(bool)), this, SLOT(setFilterBarVisible(bool)));
+  contextMenu->addAction(showFilterAction);
 
   QModelIndex index = d->SegmentsTable->indexAt(d->SegmentsTable->viewport()->mapFromGlobal(event->globalPos()));
   if (d->AdvancedSegmentVisibility && index.isValid())
     {
     QString segmentID = d->SortFilterModel->segmentIDFromIndex(index);
+    vtkSegment* segment = d->SegmentationNode->GetSegmentation()->GetSegment(segmentID.toStdString());
 
     // Get segment display properties
     vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
@@ -729,13 +765,83 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
     contextMenu->addAction(visibility2DOutlineAction);
     }
 
-  contextMenu->addSeparator();
-  QAction* clearSelectedSegmentAction = new QAction("Clear selected segments", this);
-  QObject::connect(clearSelectedSegmentAction, SIGNAL(triggered()), this, SLOT(clearSelectedSegments()));
-  contextMenu->addAction(clearSelectedSegmentAction);
+  if (selectedSegmentIDs.size() > 0)
+    {
+    contextMenu->addSeparator();
+    for (int i = 0; i < vtkSlicerSegmentationsModuleLogic::LastStatus; ++i)
+      {
+      QString name = vtkSlicerSegmentationsModuleLogic::GetSegmentStatusEnumAsString(i);
+      QIcon icon;
+      switch (i)
+        {
+        case vtkSlicerSegmentationsModuleLogic::NotStarted:
+          icon = d->NotStartedIcon;
+          break;
+        case vtkSlicerSegmentationsModuleLogic::InProgress:
+          icon = d->InProgressIcon;
+          break;
+        case vtkSlicerSegmentationsModuleLogic::Completed:
+          icon = d->CompletedIcon;
+          break;
+        case vtkSlicerSegmentationsModuleLogic::Flagged:
+          icon = d->FlaggedIcon;
+          break;
+        }
 
+      QAction* setStatusAction = new QAction(name);
+      setStatusAction->setIcon(icon);
+      setStatusAction->setProperty(STATUS_PROPERTY, i);
+      QObject::connect(setStatusAction, SIGNAL(triggered()), this, SLOT(setSelectedSegmentsStatus()));
+      contextMenu->addAction(setStatusAction);
+      }
 
-contextMenu->popup(event->globalPos());
+    contextMenu->addSeparator();
+    QAction* clearSelectedSegmentAction = new QAction("Clear selected segments", this);
+    QObject::connect(clearSelectedSegmentAction, SIGNAL(triggered()), this, SLOT(clearSelectedSegments()));
+    contextMenu->addAction(clearSelectedSegmentAction);
+    }
+
+  contextMenu->popup(event->globalPos());
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSegmentsTableView::setSelectedSegmentsStatus(int aStatus)
+{
+  Q_D(qMRMLSegmentsTableView);
+
+  int status = aStatus;
+  if (status == -1)
+    {
+    QAction* setStatusAction = qobject_cast<QAction*>(sender());
+    Q_ASSERT(setStatusAction);
+    if (!setStatusAction)
+      {
+      return;
+      }
+    status = setStatusAction->property(STATUS_PROPERTY).toInt();
+    }
+
+  if (!d->SegmentationNode)
+    {
+    qCritical() << Q_FUNC_INFO << "Invalid segmentation node";
+    return;
+    }
+  vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
+  if (!segmentation)
+    {
+    qCritical() << Q_FUNC_INFO << "Invalid segmentation";
+    return;
+    }
+
+  QStringList selectedSegmentIDs = this->selectedSegmentIDs();
+  for (QString segmentID : selectedSegmentIDs)
+    {
+    vtkSegment* segment = segmentation->GetSegment(segmentID.toStdString());
+    if (segment)
+      {
+      vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(segment, status);
+      }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -749,11 +855,13 @@ void qMRMLSegmentsTableView::clearSelectedSegments()
   if (!d->SegmentationNode)
     {
     qCritical() << Q_FUNC_INFO << "Invalid segmentation node";
+    return;
     }
   vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
   if (!segmentation)
     {
     qCritical() << Q_FUNC_INFO << "Invalid segmentation";
+    return;
     }
 
   QMessageBox messageBox;
@@ -767,7 +875,7 @@ void qMRMLSegmentsTableView::clearSelectedSegments()
 
   QStringList selectedSegmentIDs = this->selectedSegmentIDs();
   for (QString segmentID : selectedSegmentIDs)
-  {
+    {
     vtkSegment* segment = segmentation->GetSegment(segmentID.toStdString());
     if (!segment)
       {
@@ -778,7 +886,7 @@ void qMRMLSegmentsTableView::clearSelectedSegments()
     dataObject->Modified();
     vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(segment, vtkSlicerSegmentationsModuleLogic::NotStarted);
     segment->Modified();
-  }
+    }
 }
 
 //------------------------------------------------------------------------------
