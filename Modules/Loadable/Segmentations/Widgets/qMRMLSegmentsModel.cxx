@@ -558,10 +558,9 @@ void qMRMLSegmentsModel::updateItemDataFromSegment(QStandardItem* item, QString 
 void qMRMLSegmentsModel::updateSegmentFromItem(QString segmentID, QStandardItem* item)
 {
   Q_D(qMRMLSegmentsModel);
-  //int wasModifying = d->SegmentationNode->StartModify(); //TODO: Add feature to item if there are performance issues
-  // Can't call StartModfiy/EndModify currently, since SegmentID will be lost (likely because the calldata is a std::string::c_str).
+  //MRMLNodeModify segmentationNodeModify(d->SegmentationNode);//TODO: Add feature to item if there are performance issues
+  // Calling StartModfiy/EndModify will cause the calldata to be erased, cauding the whole table to be updated
   this->updateSegmentFromItemData(segmentID, item);
-  //d->SegmentationNode->EndModify(wasModifying);
 }
 
 //------------------------------------------------------------------------------

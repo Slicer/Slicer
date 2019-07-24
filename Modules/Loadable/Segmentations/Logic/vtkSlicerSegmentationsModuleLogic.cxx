@@ -1282,7 +1282,7 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkMRML
   //   run the thresholding in single threaded mode to avoid data corruption observed on mac release builds
   //threshold->SetNumberOfThreads(1);
 
-  int segmentationNodeWasModified = segmentationNode->StartModify();
+  MRMLNodeModifyBlocker blocker(segmentationNode);
   for (int labelIndex = 0; labelIndex < labelValues->GetNumberOfValues(); ++labelIndex)
     {
     int label = labelValues->GetValue(labelIndex);
@@ -1352,8 +1352,6 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkMRML
       }
     } // for each label
 
-  segmentationNode->EndModify(segmentationNodeWasModified);
-
   return true;
 }
 
@@ -1384,7 +1382,7 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrie
   vtkNew<vtkIntArray> labelValues;
   vtkSlicerSegmentationsModuleLogic::GetAllLabelValues(labelValues.GetPointer(), labelmapImage);
 
-  int segmentationNodeWasModified = segmentationNode->StartModify();
+  MRMLNodeModifyBlocker blocker(segmentationNode);
 
   vtkSmartPointer<vtkImageThreshold> threshold = vtkSmartPointer<vtkImageThreshold>::New();
   threshold->SetInputData(labelmapImage);
@@ -1436,8 +1434,6 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrie
       return false;
       }
     } // for each label
-
-  segmentationNode->EndModify(segmentationNodeWasModified);
 
   return true;
 }
@@ -1526,7 +1522,7 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
   threshold->ReplaceOutOn();
   threshold->SetOutputScalarType(labelmapImage->GetScalarType());
 
-  int segmentationNodeWasModified = segmentationNode->StartModify();
+  MRMLNodeModifyBlocker blocker(segmentationNode);
   for (int segmentIndex = 0; segmentIndex < updatedSegmentIDs->GetNumberOfValues(); ++segmentIndex)
   {
     std::string segmentId = updatedSegmentIDs->GetValue(segmentIndex);
@@ -1560,8 +1556,6 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
 
   } // for each label
 
-  segmentationNode->EndModify(segmentationNodeWasModified);
-
   return true;
 }
 
@@ -1569,6 +1563,8 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
 bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNodeWithTerminology(vtkMRMLLabelMapVolumeNode* labelmapNode,
   vtkMRMLSegmentationNode* segmentationNode, std::string terminologyContextName, std::string insertBeforeSegmentId/*=""*/)
 {
+  MRMLNodeModifyBlocker blocker(segmentationNode);
+
   // Import labelmap to segmentation
   if (! vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
         labelmapNode, segmentationNode, insertBeforeSegmentId ) )
@@ -2007,6 +2003,8 @@ bool vtkSlicerSegmentationsModuleLogic::SetTerminologyToSegmentationFromLabelmap
     terminologyContextName, categories[firstNonEmptyCategoryIndex], typesInFirstCategory[0], firstType );
   firstTerminologyEntry->GetTypeObject()->Copy(firstType);
   std::string firstTerminologyString = this->TerminologiesLogic->SerializeTerminologyEntry(firstTerminologyEntry);
+
+  MRMLNodeModifyBlocker blocker(segmentationNode);
 
   // Assign terminology entry to each segment in the segmentation
   std::vector<std::string> segmentIDs;

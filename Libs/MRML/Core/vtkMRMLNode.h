@@ -953,4 +953,34 @@ private:
   std::map<int, int> CustomModifiedEventPending; // event id, pending value (number of events grouped together)
 };
 
+/// \brief Safe replacement of MRML node start/end modify.
+///
+/// MRMLNodeModifyBlocker can be used wherever you would otherwise use
+/// a pair of calls to node->StartModify() and node->EndModify().
+/// It temporarily blocks invoke of node modify and custom modify events
+/// in its constructor and in the destructor it resets the state to what
+/// it was before the constructor ran.
+///
+class VTK_MRML_EXPORT MRMLNodeModifyBlocker
+{
+public:
+  vtkWeakPointer<vtkMRMLNode> Node;
+  int WasModifying;
+  MRMLNodeModifyBlocker(vtkMRMLNode* node)
+  {
+    this->Node = node;
+    if (this->Node)
+      {
+      this->WasModifying = this->Node->StartModify();
+      }
+  };
+  ~MRMLNodeModifyBlocker()
+  {
+    if (this->Node)
+      {
+      this->Node->EndModify(this->WasModifying);
+      }
+  }
+};
+
 #endif

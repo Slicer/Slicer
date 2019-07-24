@@ -914,7 +914,7 @@ void qMRMLSegmentsTableView::showOnlySelectedSegments()
     }
 
   // Hide all segments except the selected ones
-  int disabledModify = displayNode->StartModify();
+  MRMLNodeModifyBlocker displayNodeModify(displayNode);
   QStringList displayedSegmentIDs = this->displayedSegmentIDs();
   foreach (QString segmentId, displayedSegmentIDs)
     {
@@ -926,7 +926,6 @@ void qMRMLSegmentsTableView::showOnlySelectedSegments()
 
     displayNode->SetSegmentVisibility(segmentId.toLatin1().constData(), visible);
     }
-  displayNode->EndModify(disabledModify);
 }
 
 //------------------------------------------------------------------------------
