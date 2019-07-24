@@ -46,6 +46,10 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
     pluginHandlerSingleton.registerPlugin(slicer.qSlicerSubjectHierarchyDICOMPlugin())
 
+    self.viewFactory = slicer.qSlicerSingletonViewFactory()
+    self.viewFactory.setTagName("dicombrowser")
+    slicer.app.layoutManager().registerViewFactory(self.viewFactory)
+
   def performPostModuleDiscoveryTasks(self):
     """Since dicom plugins are discovered while the application
     is initialized, they may be found after the DICOM module
@@ -82,6 +86,28 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
       self.settingsPanel = DICOMSettingsPanel()
       slicer.app.settingsDialog().addPanel("DICOM", self.settingsPanel)
 
+    dataProbe = slicer.util.mainWindow().findChild("QWidget", "DataProbeCollapsibleWidget")
+    self.wasDataProbeVisible = dataProbe.isVisible()
+
+    layoutNode = slicer.app.layoutManager().layoutLogic().GetLayoutNode()
+    self.currentViewArrangement = layoutNode.GetViewArrangement()
+    self.previousViewArrangement = layoutNode.GetViewArrangement()
+
+    self.detailsPopup = None
+    self.setDetailsPopup(DICOMWidget.getSavedDICOMDetailsWidgetType()())
+
+    layoutManager = slicer.app.layoutManager()
+    layoutManager.connect('layoutChanged(int)', self.onLayoutChanged)
+    layout = (
+      "<layout type=\"horizontal\">"
+      " <item>"
+      "  <dicombrowser></dicombrowser>"
+      " </item>"
+      "</layout>"
+    )
+    layoutManager.layoutLogic().GetLayoutNode().AddLayoutDescription(
+      slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView, layout)
+
   def startListener(self):
     # the dicom listener is also global, but only started on app start if
     # the user so chooses
@@ -107,6 +133,37 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
       for action in fileMenu.actions():
         if action.text == 'Save':
           fileMenu.insertAction(action,a)
+
+  def setDetailsPopup(self, detailsPopup):
+    if self.detailsPopup == detailsPopup:
+      return
+
+    if self.detailsPopup is not None:
+      self.detailsPopup.closed.disconnect(self.onDetailsPopupClosed)
+
+    self.detailsPopup = detailsPopup
+    self.detailsPopup.setAutoFillBackground(True)
+    self.viewFactory.setWidget(self.detailsPopup)
+    self.detailsPopup.closed.connect(self.onDetailsPopupClosed)
+
+  def onLayoutChanged(self, viewArrangement):
+    self.previousViewArrangement = self.currentViewArrangement
+    self.currentViewArrangement = viewArrangement
+    dataProbe = slicer.util.mainWindow().findChild("QWidget", "DataProbeCollapsibleWidget")
+    if self.currentViewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView:
+      # View has been changed to the DICOM browser view
+      self.wasDataProbeVisible = dataProbe.isVisible()
+      dataProbe.setVisible(False)
+      self.detailsPopup.closeButton.setVisible(True)
+    elif self.previousViewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView:
+      # View has been changed from the DICOM browser view
+      dataProbe.setVisible(self.wasDataProbeVisible)
+      self.detailsPopup.closeButton.setVisible(False)
+
+  def onDetailsPopupClosed(self):
+    if (self.currentViewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView and
+        self.previousViewArrangement != slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView):
+      slicer.app.layoutManager().setLayout(self.previousViewArrangement)
 
   def __del__(self):
     if hasattr(slicer, 'dicomListener'):
@@ -371,7 +428,8 @@ class DICOMWidget(object):
     self.dicomFrame.setText("DICOM Database and Networking")
     self.layout.addWidget(self.dicomFrame)
 
-    self.detailsPopup = self.getSavedDICOMDetailsWidgetType()()
+    self.detailsPopup = None
+    self.setDetailsPopup(self.getSavedDICOMDetailsWidgetType()())
 
     # XXX Slicer 4.5 - Remove these. Here only for backward compatibility.
     self.dicomBrowser = self.detailsPopup.dicomBrowser
@@ -407,14 +465,18 @@ class DICOMWidget(object):
     self.activityFrame.layout().addWidget(self.recentActivity)
     self.requestUpdateRecentActivity()
 
-
     # Add spacer to layout
     self.layout.addStretch(1)
 
+  def setDetailsPopup(self, detailsPopup):
+    self.detailsPopup = detailsPopup
+    slicer.modules.DICOMInstance.setDetailsPopup(detailsPopup)
+
   def onOpenDetailsPopup(self):
     if not isinstance(self.detailsPopup, self.getSavedDICOMDetailsWidgetType()):
-      self.detailsPopup = self.getSavedDICOMDetailsWidgetType()()
-    self.detailsPopup.open()
+      self.setDetailsPopup(self.getSavedDICOMDetailsWidgetType()())
+
+    slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView)
 
   def onDatabaseChanged(self):
     """Use this because to update the view in response to things
