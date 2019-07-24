@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>224</width>
-    <height>107</height>
+    <width>241</width>
+    <height>74</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -134,20 +134,14 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="FilterLabel">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+       <widget class="ctkSearchBox" name="FilterLineEdit">
+        <property name="placeholderText">
+         <string>Filter</string>
         </property>
-        <property name="text">
-         <string>Filter:</string>
+        <property name="showSearchIcon">
+         <bool>true</bool>
         </property>
        </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="FilterLineEdit"/>
       </item>
       <item>
        <widget class="QPushButton" name="ShowNotStartedButton">
@@ -246,6 +240,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkSearchBox</class>
+   <extends>QLineEdit</extends>
+   <header>ctkSearchBox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../qSlicerSegmentationsModuleWidgets.qrc"/>
  </resources>
