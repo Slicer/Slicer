@@ -1189,11 +1189,12 @@ def updateMarkupControlPointsFromArray(markupsNode, narray, world = False):
       markupsNode.SetNthControlPointPositionFromArray(controlPointIndex, narray[controlPointIndex,:])
   if numberOfControlPoints >= oldNumberOfControlPoints:
     # Add new points to the markup node
+    from vtk import vtkVector3d
     for controlPointIndex in range(oldNumberOfControlPoints, numberOfControlPoints):
       if world:
-        markupsNode.AddControlPointWorld(vtk.vtkVector3d(narray[controlPointIndex,:]))
+        markupsNode.AddControlPointWorld(vtkVector3d(narray[controlPointIndex,:]))
       else:
-        markupsNode.AddControlPoint(vtk.vtkVector3d(narray[controlPointIndex,:]))
+        markupsNode.AddControlPoint(vtkVector3d(narray[controlPointIndex,:]))
   else:
     # Remove extra point from the markup node
     for controlPointIndex in range(oldNumberOfControlPoints, numberOfControlPoints, -1):
