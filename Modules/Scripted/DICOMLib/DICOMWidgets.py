@@ -81,8 +81,6 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
   """
 
   widgetType = None
-  loadingFinished = qt.Signal()
-  closed = qt.Signal()
 
   def __init__(self, dicomBrowser=None):
     VTKObservationMixin.__init__(self)
@@ -275,12 +273,6 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
     self.actionButtonLayout.addWidget(self.viewMetadataButton)
     self.viewMetadataButton.connect('clicked()', self.onViewHeaderButton)
     self.viewMetadataButton.connect('clicked()', self.headerPopup.show)
-
-    self.closeButton = qt.QPushButton('Close')
-    self.closeButton.toolTip = 'Close the DICOM browser'
-    self.actionButtonLayout.addWidget(self.closeButton)
-    self.closeButton.connect('clicked()', self.close)
-
     self.actionButtonLayout.addStretch(1)
 
     self.examineButton = qt.QPushButton('Examine')
@@ -613,7 +605,6 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
 
   def close(self):
     self.hide()
-    self.closed.emit()
 
   def organizeLoadables(self):
     """Review the selected state and confidence of the loadables
@@ -925,7 +916,6 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
   def onLoadingFinished(self):
     if not self.browserPersistent:
       self.close()
-    self.loadingFinished.emit()
 
 
 class DICOMReferencesDialog(qt.QMessageBox):
@@ -986,8 +976,6 @@ class DICOMReferencesDialog(qt.QMessageBox):
 class DICOMDetailsDialog(DICOMDetailsBase, qt.QDialog):
 
   widgetType = "dialog"
-  loadingFinished = qt.Signal()
-  closed = qt.Signal()
 
   def __init__(self, dicomBrowser=None, parent="mainWindow"):
     DICOMDetailsBase.__init__(self, dicomBrowser)
@@ -1034,8 +1022,6 @@ class DICOMDetailsWindow(DICOMDetailsDialog):
 class DICOMDetailsDock(DICOMDetailsBase, qt.QFrame):
 
   widgetType = "dock"
-  loadingFinished = qt.Signal()
-  closed = qt.Signal()
 
   def __init__(self, dicomBrowser=None):
     DICOMDetailsBase.__init__(self, dicomBrowser)
@@ -1058,7 +1044,6 @@ class DICOMDetailsDock(DICOMDetailsBase, qt.QFrame):
 
   def close(self):
     self.dock.hide()
-    self.closed.emit()
 
   def onVisibilityChanged(self, visible):
     if not visible:
@@ -1068,8 +1053,6 @@ class DICOMDetailsDock(DICOMDetailsBase, qt.QFrame):
 class DICOMDetailsWidget(DICOMDetailsBase, qt.QWidget):
 
   widgetType = "widget"
-  loadingFinished = qt.Signal()
-  closed = qt.Signal()
 
   def __init__(self, dicomBrowser=None, parent=None):
     DICOMDetailsBase.__init__(self, dicomBrowser)
