@@ -141,6 +141,9 @@ void qMRMLSegmentsTableViewPrivate::init()
   this->FlaggedIcon = QIcon(":Icons/Flagged.png");
   this->CompletedIcon = QIcon(":Icons/Completed.png");
 
+  // Hide filter bar to simplify default GUI. User can enable to handle many segments
+  q->setFilterBarVisible(false);
+
   this->setMessage(QString());
 
   this->SegmentsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
