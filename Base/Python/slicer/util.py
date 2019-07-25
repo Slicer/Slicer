@@ -1044,9 +1044,7 @@ def arrayFromVTKMatrix(vmatrix):
   else:
     raise RuntimeError("Input must be vtk.vtkMatrix3x3 or vtk.vtkMatrix4x4")
   narray = np.eye(matrixSize)
-  for r in range(matrixSize):
-    for c in range(matrixSize):
-      narray[r,c] = vmatrix.GetElement(r,c)
+  vmatrix.DeepCopy(narray.ravel(), vmatrix)
   return narray
 
 def vtkMatrixFromArray(narray):
@@ -1078,15 +1076,14 @@ def updateVTKMatrixFromArray(vmatrix, narray):
   from vtk import vtkMatrix4x4
   from vtk import vtkMatrix3x3
   if isinstance(vmatrix, vtkMatrix4x4):
-    for r in range(4):
-      for c in range(4):
-        vmatrix.SetElement(r,c, narray[r,c])
+    matrixSize = 4
   elif isinstance(vmatrix, vtkMatrix3x3):
-    for r in range(3):
-      for c in range(3):
-        vmatrix.SetElement(r,c, narray[r,c])
+    matrixSize = 3
   else:
-    raise RuntimeError("Input VTK matrix must be vtk.vtkMatrix3x3 or vtk.vtkMatrix4x4")
+    raise RuntimeError("Output vmatrix must be vtk.vtkMatrix3x3 or vtk.vtkMatrix4x4")
+  if narray.shape != (matrixSize, matrixSize):
+    raise RuntimeError("Input narray size must match output vmatrix size ({0}x{0})".format(matrixSize))
+  vmatrix.DeepCopy(narray.ravel())
 
 def arrayFromTransformMatrix(transformNode, toWorld=False):
   """Return 4x4 transformation matrix as numpy array.
