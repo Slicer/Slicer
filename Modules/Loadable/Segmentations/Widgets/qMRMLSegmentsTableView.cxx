@@ -970,7 +970,6 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
   if (d->AdvancedSegmentVisibility && index.isValid())
     {
     QString segmentID = d->SortFilterModel->segmentIDFromIndex(index);
-    vtkSegment* segment = d->SegmentationNode->GetSegmentation()->GetSegment(segmentID.toStdString());
 
     // Get segment display properties
     vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;

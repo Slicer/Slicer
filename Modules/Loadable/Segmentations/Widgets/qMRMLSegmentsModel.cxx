@@ -330,7 +330,6 @@ QModelIndexList qMRMLSegmentsModel::indexes(QString segmentID) const
     }
   // Add the QModelIndexes from the other columns
   const int row = itemIndexes[0].row();
-  QModelIndex itemParentIndex = itemIndexes[0].parent();
   for (int col = 1; col < this->columnCount(); ++col)
     {
     itemIndexes << this->index(row, col);

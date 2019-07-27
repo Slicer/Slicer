@@ -59,8 +59,8 @@ void vtkMRMLGPURayCastVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
   int wasModifying = this->StartModify();
   this->Superclass::Copy(anode);
 
-  vtkMRMLCopyBeginMacro(anode);
-  vtkMRMLCopyEndMacro();
+//  vtkMRMLCopyBeginMacro(anode);
+//  vtkMRMLCopyEndMacro();
 
   this->EndModify(wasModifying);
 }

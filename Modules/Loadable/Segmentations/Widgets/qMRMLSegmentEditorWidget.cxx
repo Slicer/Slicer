@@ -3125,7 +3125,7 @@ void qMRMLSegmentEditorWidget::onSelectSegmentShortcut()
     }
   QSet<QString> displayedSegmentIDsSet = d->SegmentsTableView->displayedSegmentIDs().toSet();
   QStringList iterableSegmentIds = visibleSegmentIDsSet.intersect(displayedSegmentIDsSet).toList();
-  for (unsigned int segmentIndex = 0; segmentIndex < iterableSegmentIds.size(); segmentIndex++)
+  for (int segmentIndex = 0; segmentIndex < iterableSegmentIds.size(); segmentIndex++)
     {
     QString segmentID = iterableSegmentIds[segmentIndex];
     if (currentSegmentID == segmentID)
