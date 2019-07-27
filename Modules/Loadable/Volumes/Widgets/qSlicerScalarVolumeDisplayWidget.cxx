@@ -202,8 +202,8 @@ void qSlicerScalarVolumeDisplayWidget::updateWidgetFromMRML()
     {
     d->ColorTableComboBox->setCurrentNode(displayNode->GetColorNode());
     d->InterpolateCheckbox->setChecked(displayNode->GetInterpolate());
-    d->LockWindowLevelButton->setChecked(displayNode->GetInterpolate());
     bool lockedWindowLevel = displayNode->GetWindowLevelLocked();
+    d->LockWindowLevelButton->setChecked(lockedWindowLevel);
     if (lockedWindowLevel)
       {
       d->LockWindowLevelButton->setIcon(QIcon(":Icons/Medium/SlicerLock.png"));
