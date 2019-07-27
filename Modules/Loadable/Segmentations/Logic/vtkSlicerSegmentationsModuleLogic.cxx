@@ -2374,9 +2374,9 @@ std::string vtkSlicerSegmentationsModuleLogic::GetSafeFileName(std::string origi
 }
 
 //------------------------------------------------------------------------------
-const char* vtkSlicerSegmentationsModuleLogic::GetSegmentStatusEnumAsString(int val)
+const char* vtkSlicerSegmentationsModuleLogic::GetSegmentStatusAsHumanReadableString(int segmentStatus)
 {
-  switch (val)
+  switch (segmentStatus)
     {
     case NotStarted:
       return "Not started";
@@ -2387,8 +2387,39 @@ const char* vtkSlicerSegmentationsModuleLogic::GetSegmentStatusEnumAsString(int 
     case Flagged:
       return "Flagged";
     }
-  return "(unknown)";
+  return "Unknown";
 };
+
+//------------------------------------------------------------------------------
+const char* vtkSlicerSegmentationsModuleLogic::GetSegmentStatusAsMachineReadableString(int segmentStatus)
+{
+  switch (segmentStatus)
+  {
+  case NotStarted:
+    return "notstarted";
+  case InProgress:
+    return "inprogress";
+  case Completed:
+    return "completed";
+  case Flagged:
+    return "flagged";
+  }
+  return "unknown";
+};
+
+//------------------------------------------------------------------------------
+int vtkSlicerSegmentationsModuleLogic::GetSegmentStatusFromMachineReadableString(std::string statusString)
+{
+  for (int i = 0; i < LastStatus; ++i)
+    {
+    std::string currentStatusString = vtkSlicerSegmentationsModuleLogic::GetSegmentStatusAsMachineReadableString(i);
+    if (currentStatusString == statusString)
+      {
+      return i;
+      }
+    }
+  return -1;
+}
 
 //------------------------------------------------------------------------------
 const char* vtkSlicerSegmentationsModuleLogic::GetStatusTagName()
@@ -2409,7 +2440,7 @@ int vtkSlicerSegmentationsModuleLogic::GetSegmentStatus(vtkSegment* segment)
     {
     return NotStarted;
     }
-  return vtkVariant(value).ToInt();
+  return vtkSlicerSegmentationsModuleLogic::GetSegmentStatusFromMachineReadableString(value);
 }
 
 //------------------------------------------------------------------------------
@@ -2420,5 +2451,44 @@ void vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(vtkSegment* segment, in
     vtkErrorWithObjectMacro(nullptr, "Invalid segment");
     return;
     }
-  segment->SetTag(vtkSlicerSegmentationsModuleLogic::GetStatusTagName(), status);
+  segment->SetTag(vtkSlicerSegmentationsModuleLogic::GetStatusTagName(), vtkSlicerSegmentationsModuleLogic::GetSegmentStatusAsMachineReadableString(status));
+}
+
+//------------------------------------------------------------------------------
+bool vtkSlicerSegmentationsModuleLogic::ClearSegment(vtkMRMLSegmentationNode* segmentationNode, std::string segmentID)
+{
+  if (!segmentationNode)
+    {
+    vtkErrorWithObjectMacro(nullptr, "Invalid segmentation node");
+    return false;
+    }
+  return vtkSlicerSegmentationsModuleLogic::ClearSegment(segmentationNode->GetSegmentation(), segmentID);
+}
+
+//------------------------------------------------------------------------------
+bool vtkSlicerSegmentationsModuleLogic::ClearSegment(vtkSegmentation* segmentation, std::string segmentID)
+{
+  if (!segmentation)
+    {
+    vtkErrorWithObjectMacro(nullptr, "Invalid segmentation");
+    return false;
+    }
+
+  vtkSegment* segment = segmentation->GetSegment(segmentID);
+  if (!segment)
+    {
+    vtkErrorWithObjectMacro(nullptr, "Invalid segment");
+    return false;
+    }
+
+  vtkDataObject* dataObject = segment->GetRepresentation(segmentation->GetMasterRepresentationName());
+  if (dataObject)
+    {
+    dataObject->Initialize();
+    dataObject->Modified();
+    }
+
+  vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(segment, vtkSlicerSegmentationsModuleLogic::NotStarted);
+  segment->Modified();
+  return true;
 }

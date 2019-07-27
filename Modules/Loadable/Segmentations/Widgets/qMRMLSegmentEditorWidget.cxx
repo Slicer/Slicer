@@ -22,7 +22,7 @@
 
 // Segmentations includes
 #include "qMRMLSegmentEditorWidget.h"
-
+#include "qMRMLSortFilterSegmentsProxyModel.h"
 #include "ui_qMRMLSegmentEditorWidget.h"
 
 #include "vtkMRMLSegmentationNode.h"
@@ -2030,7 +2030,17 @@ void qMRMLSegmentEditorWidget::onAddSegment()
   d->SegmentationHistory->SaveState();
 
   // Create empty segment in current segmentation
-  std::string addedSegmentID = segmentationNode->GetSegmentation()->AddEmptySegment();
+  std::string addedSegmentID = segmentationNode->GetSegmentation()->AddEmptySegment(d->SegmentsTableView->textFilter().toStdString());
+  int status = 0;
+  for (int i = 0; i < vtkSlicerSegmentationsModuleLogic::LastStatus; ++i)
+    {
+    if (d->SegmentsTableView->sortFilterProxyModel()->showStatus(i))
+      {
+      status = i;
+      break;
+      }
+    }
+  vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(segmentationNode->GetSegmentation()->GetSegment(addedSegmentID), status);
 
   // Select the new segment
   if (!addedSegmentID.empty())
@@ -3087,6 +3097,7 @@ void qMRMLSegmentEditorWidget::onSelectEffectShortcut()
 //-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::onSelectSegmentShortcut()
 {
+  Q_D(qMRMLSegmentEditorWidget);
   QShortcut* shortcut = qobject_cast<QShortcut*>(sender());
   if (shortcut == nullptr)
     {
@@ -3104,17 +3115,24 @@ void qMRMLSegmentEditorWidget::onSelectSegmentShortcut()
     {
     return;
     }
-  std::vector<std::string> segmentIDs;
-  displayNode->GetVisibleSegmentIDs(segmentIDs);
+  std::vector<std::string> visibleSegmentIDs;
+  displayNode->GetVisibleSegmentIDs(visibleSegmentIDs);
   QString currentSegmentID = this->currentSegmentID();
-  for (unsigned int segmentIndex = 0; segmentIndex < segmentIDs.size(); segmentIndex++)
+  QSet<QString> visibleSegmentIDsSet;
+  for (std::string visibleSegmentID : visibleSegmentIDs)
     {
-    std::string segmentID = segmentIDs[segmentIndex];
-    if (currentSegmentID == segmentID.c_str())
+    visibleSegmentIDsSet << QString::fromStdString(visibleSegmentID);
+    }
+  QSet<QString> displayedSegmentIDsSet = d->SegmentsTableView->displayedSegmentIDs().toSet();
+  QStringList iterableSegmentIds = visibleSegmentIDsSet.intersect(displayedSegmentIDsSet).toList();
+  for (unsigned int segmentIndex = 0; segmentIndex < iterableSegmentIds.size(); segmentIndex++)
+    {
+    QString segmentID = iterableSegmentIds[segmentIndex];
+    if (currentSegmentID == segmentID)
       {
       // this is the current segment, determine which one is the previous/next and select that
-      int newSegmentIndex = (segmentIndex + segmentIndexOffset) % segmentIDs.size(); // wrap around
-      this->setCurrentSegmentID(segmentIDs[newSegmentIndex].c_str());
+      int newSegmentIndex = (segmentIndex + segmentIndexOffset) % iterableSegmentIds.size(); // wrap around
+      this->setCurrentSegmentID(iterableSegmentIds[newSegmentIndex].toStdString().c_str());
       return;
       }
     }

@@ -345,9 +345,12 @@ public:
     Flagged,
     LastStatus
   };
-
   /// Get the human readable segment status from the SegmentStatus enum value
-  static const char* GetSegmentStatusEnumAsString(int val);
+  static const char* GetSegmentStatusAsHumanReadableString(int segmentStatus);
+  /// Get the machine readable segment status from the SegmentStatus enum value
+  static const char* GetSegmentStatusAsMachineReadableString(int segmentStatus);
+  /// Get the enum segment status from a machine string
+  static int GetSegmentStatusFromMachineReadableString(std::string statusString);
 
   /// Returns the name of the status tag
   static const char* GetStatusTagName();
@@ -355,6 +358,9 @@ public:
   static int GetSegmentStatus(vtkSegment* segment);
   /// Returns the value of the status tag for the given segment
   static void SetSegmentStatus(vtkSegment* segment, int status);
+
+  static bool ClearSegment(vtkMRMLSegmentationNode* segmentationNode, std::string segmentID);
+  static bool ClearSegment(vtkSegmentation* segmentation, std::string segmentID);
 
 public:
   /// Set Terminologies module logic

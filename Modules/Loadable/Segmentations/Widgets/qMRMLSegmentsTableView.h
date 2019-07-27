@@ -59,6 +59,7 @@ public:
   Q_PROPERTY(bool opacityColumnVisible READ opacityColumnVisible WRITE setOpacityColumnVisible)
   Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly)
   Q_PROPERTY(bool filterBarVisible READ filterBarVisible WRITE setFilterBarVisible)
+  Q_PROPERTY(QString textFilter READ textFilter WRITE setTextFilter)
 
   typedef qMRMLWidget Superclass;
   /// Constructor
@@ -105,6 +106,13 @@ public:
   Q_INVOKABLE qMRMLSortFilterSegmentsProxyModel* sortFilterProxyModel()const;
   Q_INVOKABLE qMRMLSegmentsModel* model()const;
 
+  /// The text used to filter the segments in the table
+  /// \sa setTextFilter
+  QString textFilter();
+  // If the specified status should be shown in the table
+  /// \sa setStatusShown
+  Q_INVOKABLE bool statusShown(int status);
+
 public slots:
   /// Set segmentation MRML node
   void setSegmentationNode(vtkMRMLNode* node);
@@ -142,6 +150,13 @@ public slots:
   /// Move selected segments down in the list
   void moveSelectedSegmentsDown();
 
+  /// Set the text used to filter the segments in the table
+  /// \sa textFilter
+  void setTextFilter(QString);
+  /// Set if the specified status should be shown in the table
+  /// \sa statusShown
+  void setStatusShown(int status, bool shown);
+
 signals:
   /// Emitted if selection changes
   void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
@@ -159,6 +174,11 @@ protected slots:
   void onVisibility2DFillActionToggled(bool visible);
   void onVisibility2DOutlineActionToggled(bool visible);
 
+  /// Handles when the filters on underlying sort model are modified
+  void onSegmentsFilterModified();
+  /// Handles clicks on the show status buttons
+  void onShowStatusButtonClicked();
+
   /// Handles clicks on a table cell (visibility + state)
   void onSegmentsTableClicked(const QModelIndex& modelIndex);
 
@@ -166,6 +186,10 @@ protected slots:
   void endProcessing();
 
   void onSegmentAddedOrRemoved();
+
+  /// Update the widget form the MRML node
+  /// Called when the segmentation node is modified
+  void updateWidgetFromMRML();
 
 protected:
   /// Convenience function to set segment visibility options from event handlers

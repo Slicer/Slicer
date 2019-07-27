@@ -42,26 +42,12 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSortFilterSegmentsProxyM
   Q_OBJECT
   QVTK_OBJECT
 
+  /// Whether the filter should be applied
+  Q_PROPERTY(bool filterEnabled READ filterEnabled WRITE setFilterEnabled)
   /// Filter to show only items that contain the string in their names. Empty by default
   Q_PROPERTY(QString nameFilter READ nameFilter WRITE setNameFilter)
   /// Filter to show only items that contain the string in their names or within tag values. Empty by default
   Q_PROPERTY(QString textFilter READ textFilter WRITE setTextFilter)
-  /// Filter to show segments with the state NotStarted
-  /// If all four boolean flags are false, than no filtering is performed
-  /// \sa showInProgress showCompleted showFlagged
-  Q_PROPERTY(bool showNotStarted READ showNotStarted WRITE setShowNotStarted)
-  /// Filter to show segments with the state InProgress
-  /// If all four boolean flags are false, than no filtering is performed
-  /// \sa showNotStarted showCompleted showFlagged
-  Q_PROPERTY(bool showInProgress READ showInProgress WRITE setShowInProgress)
-  ///Filter to show segments with the state Completed
-  /// If all four boolean flags are false, than no filtering is performed
-  /// \sa showNotStarted showInProgress showFlagged
-  Q_PROPERTY(bool showCompleted READ showCompleted WRITE setShowCompleted)
-  /// Filter to show segments with the state Flagged
-  /// If all four boolean flags are false, than no filtering is performed
-  /// \sa showNotStarted showInProgress showCompleted
-  Q_PROPERTY(bool showFlagged READ showFlagged WRITE setShowFlagged)
 
 public:
   typedef QSortFilterProxyModel Superclass;
@@ -76,18 +62,21 @@ public:
   Q_INVOKABLE void setHideSegments(const QStringList& segmentIDs);
   Q_INVOKABLE QStringList hideSegments()const;
 
+  bool filterEnabled()const;
   QString nameFilter()const;
   QString textFilter()const;
-  bool showNotStarted()const;
-  bool showInProgress()const;
-  bool showCompleted()const;
-  bool showFlagged()const;
+
+  /// Filter to show segments with the specified state
+  /// If the flags for all states are false, than no filtering is performed
+  /// The list of availiable status is in vtkSlicerSegmentationsModuleLogic::SegmentStatus
+  /// \sa setShowStatus
+  Q_INVOKABLE bool showStatus(int status) const;
 
   /// Retrieve the associated segment ID from a model index
   Q_INVOKABLE QString segmentIDFromIndex(const QModelIndex& index)const;
 
   /// Retrieve an index for a given a segment ID
-  Q_INVOKABLE QModelIndex indexFromSegmentID(QString itemID, int column=0)const;
+  Q_INVOKABLE QModelIndex indexFromSegmentID(QString segmentID, int column=0)const;
 
   /// Returns true if the item in the row indicated by the given sourceRow and
   /// sourceParent should be included in the model; otherwise returns false.
@@ -100,13 +89,21 @@ public:
   /// Returns the flags for the current index
   Qt::ItemFlags flags(const QModelIndex & index)const override;
 
+  /// Set filter to show segments with the specified state
+  /// If the flags for all states are false, than no filtering is performed
+  /// The list of availiable status is in vtkSlicerSegmentationsModuleLogic::SegmentStatus
+  /// \sa showStatus
+  void setShowStatus(int status, bool shown);
+
 public slots:
+  void setFilterEnabled(bool filterEnabled);
   void setNameFilter(QString filter);
   void setTextFilter(QString filter);
-  void setShowNotStarted(bool show);
-  void setShowInProgress(bool show);
-  void setShowCompleted(bool show);
-  void setShowFlagged(bool show);
+
+signals:
+  /// Emitted when one of the filter parameters are modified
+  /// \sa setShowStatus setTextFilter setNameFilter
+  void filterModified();
 
 protected:
   QStandardItem* sourceItem(const QModelIndex& index)const;

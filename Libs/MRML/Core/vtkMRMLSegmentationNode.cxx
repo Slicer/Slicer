@@ -71,6 +71,8 @@ vtkMRMLSegmentationNode::vtkMRMLSegmentationNode()
   this->SegmentCenterTmp[2] = 0.0;
   this->SegmentCenterTmp[3] = 1.0;
 
+  this->SegmentListFilterEnabled = false;
+
   // Create empty segmentations object
   this->Segmentation = nullptr;
   vtkSmartPointer<vtkSegmentation> segmentation = vtkSmartPointer<vtkSegmentation>::New();
@@ -94,6 +96,10 @@ void vtkMRMLSegmentationNode::WriteXML(ostream& of, int nIndent)
     {
     this->Segmentation->WriteXML(of, nIndent);
     }
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLBooleanMacro(segmentListFilterEnabled, SegmentListFilterEnabled);
+  vtkMRMLWriteXMLStdStringMacro(segmentListFilterOptions, SegmentListFilterOptions);
+  vtkMRMLWriteXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -110,6 +116,10 @@ void vtkMRMLSegmentationNode::ReadXMLAttributes(const char** atts)
     this->SetAndObserveSegmentation(segmentation);
     }
   this->Segmentation->ReadXMLAttributes(atts);
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLBooleanMacro(segmentListFilterEnabled, SegmentListFilterEnabled);
+  vtkMRMLReadXMLStdStringMacro(segmentListFilterOptions, SegmentListFilterOptions);
+  vtkMRMLReadXMLEndMacro();
 
   this->EndModify(disabledModify);
 }
@@ -143,6 +153,11 @@ void vtkMRMLSegmentationNode::Copy(vtkMRMLNode *anode)
     this->SetAndObserveSegmentation(nullptr);
     }
 
+  vtkMRMLCopyBeginMacro(anode);
+  vtkMRMLCopyBooleanMacro(SegmentListFilterEnabled);
+  vtkMRMLCopyStdStringMacro(SegmentListFilterOptions);
+  vtkMRMLCopyEndMacro();
+
   this->EndModify(wasModified);
 }
 
@@ -166,6 +181,10 @@ void vtkMRMLSegmentationNode::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << " (invalid)\n";
     }
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintBooleanMacro(SegmentListFilterEnabled);
+  vtkMRMLPrintStdStringMacro(SegmentListFilterOptions);
+  vtkMRMLPrintEndMacro();
 }
 
 //----------------------------------------------------------------------------

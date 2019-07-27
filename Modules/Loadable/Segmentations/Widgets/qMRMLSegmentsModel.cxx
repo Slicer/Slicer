@@ -827,7 +827,7 @@ void qMRMLSegmentsModel::reorderItems()
     }
 
   vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
-  if (segmentation)
+  if (!segmentation)
     {
     return;
     }

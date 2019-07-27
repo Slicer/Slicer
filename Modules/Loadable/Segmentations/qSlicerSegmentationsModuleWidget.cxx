@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Segmentations includes
+#include "qMRMLSortFilterSegmentsProxyModel.h"
 #include "qSlicerSegmentationsModuleWidget.h"
 #include "ui_qSlicerSegmentationsModule.h"
 
@@ -428,7 +429,17 @@ void qSlicerSegmentationsModuleWidget::onAddSegment()
     }
 
   // Create empty segment in current segmentation
-  std::string addedSegmentID = currentSegmentationNode->GetSegmentation()->AddEmptySegment();
+  std::string addedSegmentID = currentSegmentationNode->GetSegmentation()->AddEmptySegment(d->SegmentsTableView->textFilter().toStdString());
+  int status = 0;
+  for (int i = 0; i < vtkSlicerSegmentationsModuleLogic::LastStatus; ++i)
+    {
+    if (d->SegmentsTableView->sortFilterProxyModel()->showStatus(i))
+      {
+      status = i;
+      break;
+      }
+    }
+  vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(currentSegmentationNode->GetSegmentation()->GetSegment(addedSegmentID), status);
 
   // Select the new segment
   if (!addedSegmentID.empty())

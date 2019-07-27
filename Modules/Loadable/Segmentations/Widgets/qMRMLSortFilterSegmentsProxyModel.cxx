@@ -42,36 +42,32 @@ class qMRMLSortFilterSegmentsProxyModelPrivate
 public:
   qMRMLSortFilterSegmentsProxyModelPrivate();
 
+  bool FilterEnabled;
   QString NameFilter;
   QString TextFilter;
-  bool ShowNotStarted;
-  bool ShowInProgress;
-  bool ShowCompleted;
-  bool ShowFlagged;
+  bool ShowStatus[vtkSlicerSegmentationsModuleLogic::LastStatus];
   QStringList HideSegments;
 };
 
 // -----------------------------------------------------------------------------
 qMRMLSortFilterSegmentsProxyModelPrivate::qMRMLSortFilterSegmentsProxyModelPrivate()
-  : NameFilter(QString())
+  : FilterEnabled(false)
+  , NameFilter(QString())
   , TextFilter(QString())
-  , ShowNotStarted(false)
-  , ShowInProgress(false)
-  , ShowCompleted(false)
-  , ShowFlagged(false)
 {
+  for (int i = 0; i < vtkSlicerSegmentationsModuleLogic::LastStatus; ++i)
+    {
+    this->ShowStatus[i] = false;
+    }
 }
 
 // -----------------------------------------------------------------------------
 // qMRMLSortFilterSegmentsProxyModel
 
 // -----------------------------------------------------------------------------
+CTK_GET_CPP(qMRMLSortFilterSegmentsProxyModel, bool, filterEnabled, FilterEnabled);
 CTK_GET_CPP(qMRMLSortFilterSegmentsProxyModel, QString, nameFilter, NameFilter);
 CTK_GET_CPP(qMRMLSortFilterSegmentsProxyModel, QString, textFilter, TextFilter);
-CTK_GET_CPP(qMRMLSortFilterSegmentsProxyModel, bool, showNotStarted, ShowNotStarted);
-CTK_GET_CPP(qMRMLSortFilterSegmentsProxyModel, bool, showInProgress, ShowInProgress);
-CTK_GET_CPP(qMRMLSortFilterSegmentsProxyModel, bool, showCompleted, ShowCompleted);
-CTK_GET_CPP(qMRMLSortFilterSegmentsProxyModel, bool, showFlagged, ShowFlagged);
 
 //------------------------------------------------------------------------------
 qMRMLSortFilterSegmentsProxyModel::qMRMLSortFilterSegmentsProxyModel(QObject *vparent)
@@ -103,6 +99,19 @@ vtkMRMLSegmentationNode* qMRMLSortFilterSegmentsProxyModel::segmentationNode()co
 }
 
 //-----------------------------------------------------------------------------
+void qMRMLSortFilterSegmentsProxyModel::setFilterEnabled(bool filterEnabled)
+{
+  Q_D(qMRMLSortFilterSegmentsProxyModel);
+  if (d->FilterEnabled == filterEnabled)
+  {
+    return;
+  }
+  d->FilterEnabled = filterEnabled;
+  this->invalidateFilter();
+  emit filterModified();
+}
+
+//-----------------------------------------------------------------------------
 void qMRMLSortFilterSegmentsProxyModel::setNameFilter(QString filter)
 {
   Q_D(qMRMLSortFilterSegmentsProxyModel);
@@ -112,6 +121,7 @@ void qMRMLSortFilterSegmentsProxyModel::setNameFilter(QString filter)
     }
   d->NameFilter = filter;
   this->invalidateFilter();
+  emit filterModified();
 }
 
 //-----------------------------------------------------------------------------
@@ -119,73 +129,55 @@ void qMRMLSortFilterSegmentsProxyModel::setTextFilter(QString filter)
 {
   Q_D(qMRMLSortFilterSegmentsProxyModel);
   if (d->TextFilter == filter)
-  {
+    {
     return;
-  }
+    }
   d->TextFilter = filter;
   this->invalidateFilter();
+  emit filterModified();
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSortFilterSegmentsProxyModel::setShowNotStarted(bool show)
+bool qMRMLSortFilterSegmentsProxyModel::showStatus(int status) const
 {
-  Q_D(qMRMLSortFilterSegmentsProxyModel);
-  if (d->ShowNotStarted == show)
-  {
-    return;
-  }
-  d->ShowNotStarted = show;
-  this->invalidateFilter();
+  Q_D(const qMRMLSortFilterSegmentsProxyModel);
+  if (status < 0 || status >= vtkSlicerSegmentationsModuleLogic::LastStatus)
+    {
+    return false;
+    }
+  return d->ShowStatus[status];
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSortFilterSegmentsProxyModel::setShowInProgress(bool show)
+void qMRMLSortFilterSegmentsProxyModel::setShowStatus(int status, bool shown)
 {
   Q_D(qMRMLSortFilterSegmentsProxyModel);
-  if (d->ShowInProgress == show)
-  {
+  if (status < 0 || status >= vtkSlicerSegmentationsModuleLogic::LastStatus)
+    {
     return;
-  }
-  d->ShowInProgress = show;
-  this->invalidateFilter();
-}
+    }
+  if (d->ShowStatus[status] == shown)
+    {
+    return;
+    }
 
-//-----------------------------------------------------------------------------
-void qMRMLSortFilterSegmentsProxyModel::setShowCompleted(bool show)
-{
-  Q_D(qMRMLSortFilterSegmentsProxyModel);
-  if (d->ShowCompleted == show)
-  {
-    return;
-  }
-  d->ShowCompleted = show;
+  d->ShowStatus[status] = shown;
   this->invalidateFilter();
-}
-
-//-----------------------------------------------------------------------------
-void qMRMLSortFilterSegmentsProxyModel::setShowFlagged(bool show)
-{
-  Q_D(qMRMLSortFilterSegmentsProxyModel);
-  if (d->ShowFlagged == show)
-  {
-    return;
-  }
-  d->ShowFlagged = show;
-  this->invalidateFilter();
+  emit filterModified();
 }
 
 //-----------------------------------------------------------------------------
 QString qMRMLSortFilterSegmentsProxyModel::segmentIDFromIndex(const QModelIndex& index)const
 {
-  qMRMLSegmentsModel* sceneModel = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
-  return sceneModel->segmentIDFromIndex( this->mapToSource(index) );
+  qMRMLSegmentsModel* segmentsModel = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
+  return segmentsModel->segmentIDFromIndex( this->mapToSource(index) );
 }
 
 //-----------------------------------------------------------------------------
-QModelIndex qMRMLSortFilterSegmentsProxyModel::indexFromSegmentID(QString itemID, int column)const
+QModelIndex qMRMLSortFilterSegmentsProxyModel::indexFromSegmentID(QString segmentID, int column)const
 {
-  qMRMLSegmentsModel* sceneModel = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
-  return this->mapFromSource(sceneModel->indexFromSegmentID(itemID, column));
+  qMRMLSegmentsModel* segmentsModel = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
+  return this->mapFromSource(segmentsModel->indexFromSegmentID(segmentID, column));
 }
 
 //-----------------------------------------------------------------------------
@@ -237,6 +229,11 @@ bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsItem(QString segmentID)cons
   if (d->HideSegments.contains(segmentID))
     {
     return false;
+    }
+
+  if (!d->FilterEnabled)
+    {
+    return true;
     }
 
   qMRMLSegmentsModel* model = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
@@ -300,35 +297,22 @@ bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsItem(QString segmentID)cons
     }
 
   // Filter if segment state does not match one of the shown states
-  if (d->ShowNotStarted || d->ShowInProgress || d->ShowCompleted || d->ShowFlagged)
+  bool statusFilterEnabled = false;
+  for (int i = 0; i < vtkSlicerSegmentationsModuleLogic::LastStatus; ++i)
+    {
+    statusFilterEnabled = d->ShowStatus[i];
+    if (statusFilterEnabled)
+      {
+      break;
+      }
+    }
+
+  if (statusFilterEnabled)
     {
     int status = vtkSlicerSegmentationsModuleLogic::GetSegmentStatus(segment);
-    switch (status)
+    if (status >= 0 && status < vtkSlicerSegmentationsModuleLogic::LastStatus && !d->ShowStatus[status])
       {
-      case vtkSlicerSegmentationsModuleLogic::NotStarted:
-        if (!d->ShowNotStarted)
-          {
-          return false;
-          }
-        break;
-      case vtkSlicerSegmentationsModuleLogic::InProgress:
-        if (!d->ShowInProgress)
-          {
-          return false;
-          }
-        break;
-      case vtkSlicerSegmentationsModuleLogic::Completed:
-        if (!d->ShowCompleted)
-          {
-          return false;
-          }
-        break;
-      case vtkSlicerSegmentationsModuleLogic::Flagged:
-        if (!d->ShowFlagged)
-          {
-          return false;
-          }
-        break;
+      return false;
       }
     }
 
@@ -341,8 +325,8 @@ Qt::ItemFlags qMRMLSortFilterSegmentsProxyModel::flags(const QModelIndex & index
 {
   QString segmentID = this->segmentIDFromIndex(index);
   bool isSelectable = this->filterAcceptsItem(segmentID);
-  qMRMLSegmentsModel* sceneModel = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
-  QStandardItem* item = sceneModel->itemFromSegmentID(segmentID, index.column());
+  qMRMLSegmentsModel* segmentsModel = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
+  QStandardItem* item = segmentsModel->itemFromSegmentID(segmentID, index.column());
   if (!item)
     {
     return Qt::ItemFlags();

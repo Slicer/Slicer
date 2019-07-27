@@ -249,6 +249,15 @@ public:
   /// Get position of the segment's center in world coordinate system.
   void GetSegmentCenterRAS(const std::string& segmentID, double centerRAS[3]);
 
+  /// Indicates whether or not the segment filter is visible in the segments view
+  vtkSetMacro(SegmentListFilterEnabled, bool);
+  vtkGetMacro(SegmentListFilterEnabled, bool);
+  vtkBooleanMacro(SegmentListFilterEnabled, bool);
+
+  /// Contains a serialized representation of the filtering options used by the segments view
+  vtkSetMacro(SegmentListFilterOptions, std::string);
+  vtkGetMacro(SegmentListFilterOptions, std::string);
+
 protected:
   /// Set segmentation object
   vtkSetObjectMacro(Segmentation, vtkSegmentation);
@@ -287,6 +296,9 @@ protected:
   /// Temporary buffer that holds value returned by GetSegmentCenter(...) and GetSegmentCenterRAS(...)
   /// Has 4 components to allow usage in homogeneous transformations
   double SegmentCenterTmp[4];
+
+  bool SegmentListFilterEnabled;
+  std::string SegmentListFilterOptions;
 };
 
 #endif // __vtkMRMLSegmentationNode_h
