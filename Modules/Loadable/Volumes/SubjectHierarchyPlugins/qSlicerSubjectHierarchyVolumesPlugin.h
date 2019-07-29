@@ -96,12 +96,13 @@ public:
   /// \return Display visibility (0: hidden, 1: shown, 2: partially shown)
   int getDisplayVisibility(vtkIdType itemID)const override;
 
-  /// Get item context menu item actions to add to tree view
-  QList<QAction*> itemContextMenuActions()const override;
+  /// Get visibility context menu item actions to add to tree view.
+  /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
+  virtual QList<QAction*> visibilityContextMenuActions()const;
 
-  /// Show context menu actions valid for a given subject hierarchy item.
-  /// \param itemID Subject Hierarchy item to show the context menu items for
-  void showContextMenuActionsForItem(vtkIdType itemID) override;
+  /// Show visibility context menu actions valid for a given subject hierarchy item.
+  /// \param itemID Subject Hierarchy item to show the visibility context menu items for
+  virtual void showVisibilityContextMenuActionsForItem(vtkIdType itemID);
 
 public:
   /// Show volume in all slice views. The argument node replaces any volume shown on the specified layer
@@ -122,6 +123,9 @@ protected slots:
   /// Show volumes in study. The first two scalar volumes are shown if there are more.
   /// Hides other volumes if there are less in the current study.
   void showVolumesInBranch();
+
+  /// Show volume in the slice views as foreground
+  void showVolumeInForeground();
 
   /// Re-connect slice composite node events so that visibility icons are updated when volumes
   /// are shown/hidden from outside subject hierarchy

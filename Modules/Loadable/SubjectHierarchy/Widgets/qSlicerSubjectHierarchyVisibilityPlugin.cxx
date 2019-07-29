@@ -34,6 +34,7 @@
 // MRML includes
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLDisplayNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -138,15 +139,20 @@ void qSlicerSubjectHierarchyVisibilityPlugin::showVisibilityContextMenuActionsFo
 
   // Determine 2D and 3D visibility of branch. Visible only if visibility is on for all items in branch
   bool visible2D = true;
+  bool visible2DVisible = false;
   bool visible3D = true;
+  bool visible3DVisible = false;
   vtkSmartPointer<vtkCollection> childDisplayableNodes = vtkSmartPointer<vtkCollection>::New();
   shNode->GetDataNodesInBranch(itemID, childDisplayableNodes, "vtkMRMLDisplayableNode");
   childDisplayableNodes->InitTraversal();
   for (int i=0; i<childDisplayableNodes->GetNumberOfItems(); ++i)
     {
     vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(childDisplayableNodes->GetItemAsObject(i));
-    if (!displayableNode)
+    vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(childDisplayableNodes->GetItemAsObject(i));
+    if (!displayableNode || volumeNode)
       {
+      // Disable it for volume nodes
+      // (instead, it has a different visibility icon and a show in foreground action in the Volumes plugin)
       continue;
       }
     vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(displayableNode->GetDisplayNode());
@@ -156,18 +162,20 @@ void qSlicerSubjectHierarchyVisibilityPlugin::showVisibilityContextMenuActionsFo
       continue;
       }
     visible2D = visible2D && (displayNode->GetVisibility2D() > 0);
+    visible2DVisible = true;
     visible3D = visible3D && (displayNode->GetVisibility3D() > 0);
+    visible3DVisible = true;
     }
 
   d->ToggleVisibility2DAction->blockSignals(true);
   d->ToggleVisibility2DAction->setChecked(visible2D);
   d->ToggleVisibility2DAction->blockSignals(false);
-  d->ToggleVisibility2DAction->setVisible(childDisplayableNodes->GetNumberOfItems() > 0);
+  d->ToggleVisibility2DAction->setVisible(visible2DVisible);
 
   d->ToggleVisibility3DAction->blockSignals(true);
   d->ToggleVisibility3DAction->setChecked(visible3D);
   d->ToggleVisibility3DAction->blockSignals(false);
-  d->ToggleVisibility3DAction->setVisible(childDisplayableNodes->GetNumberOfItems() > 0);
+  d->ToggleVisibility3DAction->setVisible(visible3DVisible);
 }
 
 //---------------------------------------------------------------------------
@@ -183,7 +191,7 @@ void qSlicerSubjectHierarchyVisibilityPlugin::toggleCurrentItemVisibility2D(bool
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (!currentItemID)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid current subject hierarchy item!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current subject hierarchy item";
     return;
     }
 
@@ -214,7 +222,7 @@ void qSlicerSubjectHierarchyVisibilityPlugin::toggleCurrentItemVisibility3D(bool
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (!currentItemID)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid current subject hierarchy item!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current subject hierarchy item";
     return;
     }
 

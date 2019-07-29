@@ -34,6 +34,7 @@
 // MRML includes
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
+#include "vtkMRMLScalarVolumeNode.h"
 
 // CTK includes
 #include "ctkDoubleSlider.h"
@@ -145,6 +146,7 @@ void qSlicerSubjectHierarchyOpacityPlugin::showVisibilityContextMenuActionsForIt
 
   // Show opacity for every non-scene items with display node
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(displayableNode);
   if (!displayableNode)
     {
     qCritical() << Q_FUNC_INFO << ": Unable to find node for subject hierarchy item " << shNode->GetItemName(itemID).c_str();
@@ -156,7 +158,8 @@ void qSlicerSubjectHierarchyOpacityPlugin::showVisibilityContextMenuActionsForIt
     d->OpacitySlider->setValue(displayNode->GetOpacity());
     }
 
-  d->OpacityAction->setVisible(displayNode != nullptr);
+  // Show opacity action if there is a valid display node and if the node is not a volume
+  d->OpacityAction->setVisible(displayNode && !volumeNode);
 }
 
 //---------------------------------------------------------------------------
