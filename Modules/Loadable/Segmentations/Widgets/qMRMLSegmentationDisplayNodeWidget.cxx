@@ -75,6 +75,8 @@ void qMRMLSegmentationDisplayNodeWidgetPrivate::init()
   // Make connections
   QObject::connect(this->checkBox_Visible, SIGNAL(stateChanged(int)),
     q, SLOT(onVisibilityChanged(int)) );
+  QObject::connect(this->SliderWidget_Opacity, SIGNAL(valueChanged(double)),
+    q, SLOT(onOpacityChanged(double)));
 
   // Segmentation visibility and opacity settings
   QObject::connect(this->checkBox_VisibilitySliceFill, SIGNAL(stateChanged(int)),
@@ -426,6 +428,19 @@ void qMRMLSegmentationDisplayNodeWidget::onVisibilityChanged(int visible)
     }
 
   d->SegmentationDisplayNode->SetVisibility(visible > 0 ? 1 : 0);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentationDisplayNodeWidget::onOpacityChanged(double opacity)
+{
+  Q_D(qMRMLSegmentationDisplayNodeWidget);
+
+  if (!d->SegmentationDisplayNode.GetPointer())
+    {
+    return;
+    }
+
+  d->SegmentationDisplayNode->SetOpacity(opacity);
 }
 
 //-----------------------------------------------------------------------------

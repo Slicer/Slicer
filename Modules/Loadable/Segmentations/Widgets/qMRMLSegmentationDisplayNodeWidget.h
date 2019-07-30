@@ -78,6 +78,7 @@ public slots:
   void populate2DRepresentationsCombobox();
 
   void onVisibilityChanged(int);
+  void onOpacityChanged(double);
   void onVisibilitySliceFillChanged(int);
   void onVisibilitySliceOutlineChanged(int);
   void onVisibility3DChanged(int);
