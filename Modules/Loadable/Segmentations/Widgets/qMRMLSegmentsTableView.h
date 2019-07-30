@@ -113,6 +113,11 @@ public:
   /// \sa setStatusShown
   Q_INVOKABLE bool statusShown(int status);
 
+  /// Get the row for the specified segment ID
+  int rowForSegmentID(QString segmentID);
+  /// Get the segment ID for the specified row
+  QString segmentIDForRow(int row);
+
 public slots:
   /// Set segmentation MRML node
   void setSegmentationNode(vtkMRMLNode* node);
@@ -152,7 +157,7 @@ public slots:
 
   /// Set the text used to filter the segments in the table
   /// \sa textFilter
-  void setTextFilter(QString);
+  void setTextFilter(QString textFilter);
   /// Set if the specified status should be shown in the table
   /// \sa statusShown
   void setStatusShown(int status, bool shown);

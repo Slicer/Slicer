@@ -27,18 +27,20 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
 
     self.TestSection_00_SetupPathsAndNames()
     self.TestSection_01_GenerateInputData()
-    self.TestSection_1_qMRMLSegmentsTableView()
-    self.TestSection_2_qMRMLSegmentationGeometryWidget()
+    self.TestSection_02_qMRMLSegmentsTableView()
+    self.TestSection_03_qMRMLSegmentationGeometryWidget()
+    self.TestSection_04_qMRMLSegmentatEditorWidget()
 
     logging.info('Test finished')
 
   #------------------------------------------------------------------------------
   def TestSection_00_SetupPathsAndNames(self):
+    logging.info('Test section 0: SetupPathsAndNames')
     self.inputSegmentationNode = None
 
   #------------------------------------------------------------------------------
   def TestSection_01_GenerateInputData(self):
-
+    logging.info('Test section 1: GenerateInputData')
     self.inputSegmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode')
 
     # Create new segments
@@ -62,8 +64,12 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     self.assertEqual(self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 3)
 
   #------------------------------------------------------------------------------
-  def TestSection_1_qMRMLSegmentsTableView(self):
-    logging.info('Test section 1: qMRMLSegmentsTableView')
+  def TestSection_02_qMRMLSegmentsTableView(self):
+    logging.info('Test section 2: qMRMLSegmentsTableView')
+
+    self.inputSegmentationNode.CreateDefaultDisplayNodes()
+    displayNode = self.inputSegmentationNode.GetDisplayNode()
+    self.assertIsNotNone(displayNode)
 
     segmentsTableView = slicer.qMRMLSegmentsTableView()
     segmentsTableView.setMRMLScene(slicer.mrmlScene)
@@ -78,6 +84,27 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     self.assertEqual(len(segmentsTableView.displayedSegmentIDs()), 2)
     slicer.app.processEvents()
     slicer.util.delayDisplay("Hidden 'second'")
+
+    segmentsTableView.setHideSegments([])
+
+    sortFilterProxyModel = segmentsTableView.sortFilterProxyModel()
+    sortFilterProxyModel.filterEnabled = True
+    sortFilterProxyModel.textFilter = "third"
+    slicer.app.processEvents()
+    slicer.util.delayDisplay("All but 'third' filtered")
+    self.assertEqual(len(segmentsTableView.displayedSegmentIDs()), 1)
+
+    sortFilterProxyModel.textFilter = ""
+
+    firstSegment = self.inputSegmentationNode.GetSegmentation().GetSegment("first")
+
+    logic = slicer.modules.segmentations.logic()
+    logic.SetSegmentStatus(firstSegment, logic.InProgress)
+    sortFilterProxyModel.setShowStatus(logic.NotStarted, True)
+
+    slicer.app.processEvents()
+    slicer.util.delayDisplay("'NotStarted' shown")
+    self.assertEqual(len(segmentsTableView.displayedSegmentIDs()), 2)
 
   #------------------------------------------------------------------------------
   def compareOutputGeometry(self, orientedImageData, spacing, origin, directions):
@@ -124,7 +151,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     return imageAccumulate.GetVoxelCount()
 
   #------------------------------------------------------------------------------
-  def TestSection_2_qMRMLSegmentationGeometryWidget(self):
+  def TestSection_03_qMRMLSegmentationGeometryWidget(self):
     logging.info('Test section 2: qMRMLSegmentationGeometryWidget')
 
     import vtkSegmentationCore
@@ -307,3 +334,52 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     slicer.util.delayDisplay('Model and ROI source cases - OK')
 
     slicer.util.delayDisplay('Segmentation geometry widget test passed')
+
+  #------------------------------------------------------------------------------
+  def TestSection_04_qMRMLSegmentatEditorWidget(self):
+    logging.info('Test section 4: qMRMLSegmentatEditorWidget')
+
+    self.segmentEditorNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentEditorNode')
+    self.assertIsNotNone(self.segmentEditorNode)
+
+    displayNode = self.inputSegmentationNode.GetDisplayNode()
+    self.assertIsNotNone(displayNode)
+
+    segmentEditorWidget = slicer.qMRMLSegmentEditorWidget()
+    segmentEditorWidget.setMRMLSegmentEditorNode(self.segmentEditorNode)
+    segmentEditorWidget.setMRMLScene(slicer.mrmlScene)
+    segmentEditorWidget.setSegmentationNode(self.inputSegmentationNode)
+    segmentEditorWidget.installKeyboardShortcuts(segmentEditorWidget)
+    segmentEditorWidget.setFocus(qt.Qt.OtherFocusReason)
+    segmentEditorWidget.show()
+
+    self.segmentEditorNode.SetSelectedSegmentID('first')
+
+    segmentEditorWidget.selectNextSegment()
+    selectedSegmentID = self.segmentEditorNode.GetSelectedSegmentID()
+    self.assertEqual(selectedSegmentID, 'second')
+
+    segmentEditorWidget.selectPreviousSegment()
+    selectedSegmentID = self.segmentEditorNode.GetSelectedSegmentID()
+    self.assertEqual(selectedSegmentID, 'first')
+
+    displayNode.SetSegmentVisibility('second', False)
+    segmentEditorWidget.selectNextSegment()
+    selectedSegmentID = self.segmentEditorNode.GetSelectedSegmentID()
+    self.assertEqual(selectedSegmentID, 'third')
+
+    # Trying to go out of bounds past first segment
+    segmentEditorWidget.selectPreviousSegment() #First
+    selectedSegmentID = self.segmentEditorNode.GetSelectedSegmentID()
+    self.assertEqual(selectedSegmentID, 'first')
+    segmentEditorWidget.selectPreviousSegment() #First
+    selectedSegmentID = self.segmentEditorNode.GetSelectedSegmentID()
+    self.assertEqual(selectedSegmentID, 'first')
+    segmentEditorWidget.selectPreviousSegment() #First
+    selectedSegmentID = self.segmentEditorNode.GetSelectedSegmentID()
+    self.assertEqual(selectedSegmentID, 'first')
+
+    # Wrap around
+    self.segmentEditorNode.SetSelectedSegmentID('third')
+    segmentEditorWidget.selectNextSegment()
+    self.assertEqual(selectedSegmentID, 'first')

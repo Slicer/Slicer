@@ -103,6 +103,7 @@
 #include <QPointer>
 #include <QScrollArea>
 #include <QShortcut>
+#include <QTableView>
 #include <QToolButton>
 #include <QVBoxLayout>
 #include <QWidgetAction>
@@ -3103,39 +3104,10 @@ void qMRMLSegmentEditorWidget::onSelectSegmentShortcut()
     {
     return;
     }
-  int segmentIndexOffset = shortcut->property("segmentIndexOffset").toInt();
 
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->segmentationNode());
-  if (segmentationNode == nullptr || segmentationNode->GetDisplayNode() == nullptr)
-    {
-    return;
-    }
-  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
-  if (displayNode == nullptr)
-    {
-    return;
-    }
-  std::vector<std::string> visibleSegmentIDs;
-  displayNode->GetVisibleSegmentIDs(visibleSegmentIDs);
-  QString currentSegmentID = this->currentSegmentID();
-  QSet<QString> visibleSegmentIDsSet;
-  for (std::string visibleSegmentID : visibleSegmentIDs)
-    {
-    visibleSegmentIDsSet << QString::fromStdString(visibleSegmentID);
-    }
-  QSet<QString> displayedSegmentIDsSet = d->SegmentsTableView->displayedSegmentIDs().toSet();
-  QStringList iterableSegmentIds = visibleSegmentIDsSet.intersect(displayedSegmentIDsSet).toList();
-  for (int segmentIndex = 0; segmentIndex < iterableSegmentIds.size(); segmentIndex++)
-    {
-    QString segmentID = iterableSegmentIds[segmentIndex];
-    if (currentSegmentID == segmentID)
-      {
-      // this is the current segment, determine which one is the previous/next and select that
-      int newSegmentIndex = (segmentIndex + segmentIndexOffset) % iterableSegmentIds.size(); // wrap around
-      this->setCurrentSegmentID(iterableSegmentIds[newSegmentIndex].toStdString().c_str());
-      return;
-      }
-    }
+  // Direction that the segment selection should be moved (-1/+1 is previous/next)
+  int segmentIndexOffset = shortcut->property("segmentIndexOffset").toInt();
+  this->selectSegmentAtOffset (segmentIndexOffset);
 }
 
 //---------------------------------------------------------------------------
@@ -3681,4 +3653,58 @@ void qMRMLSegmentEditorWidget::showSegmentationGeometryDialog()
       this->setMasterVolumeNode(masterVolumeNode);
       }
     }
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::selectPreviousSegment()
+{
+  this->selectSegmentAtOffset (-1);
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::selectNextSegment()
+{
+  this->selectSegmentAtOffset (1);
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::selectSegmentAtOffset (int offset)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->segmentationNode());
+  if (segmentationNode == nullptr || segmentationNode->GetDisplayNode() == nullptr)
+    {
+    return;
+    }
+  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
+  if (displayNode == nullptr)
+    {
+    return;
+    }
+  std::vector<std::string> visibleSegmentIDs;
+  displayNode->GetVisibleSegmentIDs(visibleSegmentIDs);
+  QString currentSegmentID = this->currentSegmentID();
+
+  QModelIndexList selectedRows = d->SegmentsTableView->tableWidget()->selectionModel()->selectedRows();
+  if (selectedRows.empty())
+    {
+    return;
+    }
+
+  int selectedRow = selectedRows[0].row();
+  int rowCount = d->SegmentsTableView->tableWidget()->model()->rowCount();
+  QString selectedSegmentID = currentSegmentID;
+  for (int i = 0; i < rowCount; ++i)
+    {
+    // 'offset' represents the direction that the segment selection should be moved (-1/+1 is previous/next)
+    selectedRow = std::max(0, (selectedRow + offset) % rowCount);
+    std::string segmentID = d->SegmentsTableView->segmentIDForRow(selectedRow).toStdString();
+    if (std::find(visibleSegmentIDs.begin(), visibleSegmentIDs.end(), segmentID) != visibleSegmentIDs.end())
+      {
+      selectedSegmentID = QString::fromStdString(segmentID);
+      break;
+      }
+    }
+  this->setCurrentSegmentID(selectedSegmentID.toStdString().c_str());
 }

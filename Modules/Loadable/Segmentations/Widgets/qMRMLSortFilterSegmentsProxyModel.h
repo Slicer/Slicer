@@ -93,7 +93,7 @@ public:
   /// If the flags for all states are false, than no filtering is performed
   /// The list of availiable status is in vtkSlicerSegmentationsModuleLogic::SegmentStatus
   /// \sa showStatus
-  void setShowStatus(int status, bool shown);
+  Q_INVOKABLE void setShowStatus(int status, bool shown);
 
 public slots:
   void setFilterEnabled(bool filterEnabled);

@@ -275,7 +275,7 @@ void qMRMLSegmentsTableViewPrivate::init()
   QObject::connect(this->SegmentsTable->selectionModel(), &QItemSelectionModel::selectionChanged, q, &qMRMLSegmentsTableView::onSegmentSelectionChanged);
   QObject::connect(this->Model, &qMRMLSegmentsModel::segmentAboutToBeModified, q, &qMRMLSegmentsTableView::segmentAboutToBeModified);
   QObject::connect(this->SegmentsTable, &QTableView::clicked, q, &qMRMLSegmentsTableView::onSegmentsTableClicked);
-  QObject::connect(this->FilterLineEdit, &QLineEdit::textChanged, this->SortFilterModel, &qMRMLSortFilterSegmentsProxyModel::setTextFilter);
+  QObject::connect(this->FilterLineEdit, &ctkSearchBox::textEdited, this->SortFilterModel, &qMRMLSortFilterSegmentsProxyModel::setTextFilter);
   for (QPushButton* button : this->ShowStatusButtons)
     {
     if (!button)
@@ -284,8 +284,7 @@ void qMRMLSegmentsTableViewPrivate::init()
       }
     QObject::connect(button, &QToolButton::clicked, q, &qMRMLSegmentsTableView::onShowStatusButtonClicked);
     }
-
-  QObject::connect(this->FilterLineEdit, &QLineEdit::textEdited, this->SortFilterModel, &qMRMLSortFilterSegmentsProxyModel::setTextFilter);
+  QObject::connect(this->SortFilterModel, &qMRMLSortFilterSegmentsProxyModel::filterModified, q, &qMRMLSegmentsTableView::onSegmentsFilterModified);
 
   // Set item delegate to handle color and opacity changes
   qMRMLItemDelegate* itemDelegate = new qMRMLItemDelegate(this->SegmentsTable);
@@ -927,6 +926,19 @@ void qMRMLSegmentsTableView::setStatusShown(int status, bool shown)
 }
 
 //------------------------------------------------------------------------------
+int qMRMLSegmentsTableView::rowForSegmentID(QString segmentID)
+{
+  return this->sortFilterProxyModel()->indexFromSegmentID(segmentID).row();
+}
+
+//------------------------------------------------------------------------------
+QString qMRMLSegmentsTableView::segmentIDForRow(int row)
+{
+  QModelIndex index = this->sortFilterProxyModel()->index(row, 0);
+  return this->sortFilterProxyModel()->segmentIDFromIndex(index);
+}
+
+//------------------------------------------------------------------------------
 void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
 {
   Q_D(qMRMLSegmentsTableView);
@@ -1056,6 +1068,7 @@ void qMRMLSegmentsTableView::setSelectedSegmentsStatus(int aStatus)
     return;
     }
 
+  MRMLNodeModifyBlocker blocker(d->SegmentationNode);
   QStringList selectedSegmentIDs = this->selectedSegmentIDs();
   for (QString segmentID : selectedSegmentIDs)
     {

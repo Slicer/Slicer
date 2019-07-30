@@ -295,6 +295,17 @@ public slots:
   /// \sa interactionNode()
   void setInteractionNode(vtkMRMLInteractionNode* interactionNode);
 
+  /// Select the segment above the currently selected one in the table (skipping segments that are not visible)
+  void selectPreviousSegment();
+
+  /// Select the segment below the currently selected one in the table (skipping segments that are not visible)
+  void selectNextSegment();
+
+  /// Select the segment offset from the currently selected one in the table (skipping segments that are not visible)
+  /// Positive offset will move down the table
+  /// Negative offset will move up the table
+  void selectSegmentAtOffset (int offset);
+
 signals:
   /// Emitted if different segment is selected in the segment list.
   void currentSegmentIDChanged(const QString&);

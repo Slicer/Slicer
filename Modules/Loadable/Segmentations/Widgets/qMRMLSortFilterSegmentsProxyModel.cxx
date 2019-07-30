@@ -348,6 +348,8 @@ void qMRMLSortFilterSegmentsProxyModel::setHideSegments(const QStringList& segme
 {
   Q_D(qMRMLSortFilterSegmentsProxyModel);
   d->HideSegments = segmentIDs;
+  this->invalidateFilter();
+  emit filterModified();
 }
 
 // --------------------------------------------------------------------------
