@@ -138,6 +138,10 @@ protected slots:
   ///       to know after a Modified event if a volume was hidden in the process
   void onSliceCompositeNodeModified();
 
+  /// Toggle flag determining whether field of view in slice views is reset when showing a volume
+  /// in subject hierarchy. By default it is off. State is stored in the application settings.
+  void toggleResetFieldOfViewOnShowAction(bool);
+
 protected:
   QScopedPointer<qSlicerSubjectHierarchyVolumesPluginPrivate> d_ptr;
 

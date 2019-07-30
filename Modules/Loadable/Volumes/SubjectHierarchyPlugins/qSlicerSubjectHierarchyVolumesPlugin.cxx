@@ -26,6 +26,7 @@
 #include "qSlicerSubjectHierarchyDefaultPlugin.h"
 
 // Slicer includes
+#include "qMRMLSliceWidget.h"
 #include "qSlicerApplication.h"
 #include "qSlicerLayoutManager.h" 
 #include "vtkSlicerApplicationLogic.h"
@@ -44,9 +45,10 @@
 #include <vtkImageData.h>
 
 // Qt includes
-#include <QDebug>
-#include <QStandardItem>
 #include <QAction>
+#include <QDebug>
+#include <QSettings>
+#include <QStandardItem>
 #include <QTimer>
 
 //-----------------------------------------------------------------------------
@@ -61,6 +63,10 @@ public:
   ~qSlicerSubjectHierarchyVolumesPluginPrivate() override;
   void init();
 
+  bool resetFieldOfViewOnShow();
+
+  qMRMLSliceWidget* sliceWidgetForSliceCompositeNode(vtkMRMLSliceCompositeNode* compositeNode);
+
 public:
   QIcon VolumeIcon;
   QIcon VolumeVisibilityOffIcon;
@@ -68,6 +74,7 @@ public:
 
   QAction* ShowVolumesInBranchAction;
   QAction* ShowVolumeInForegroundAction;
+  QAction* ResetFieldOfViewOnShowAction;
 };
 
 //-----------------------------------------------------------------------------
@@ -83,6 +90,7 @@ qSlicerSubjectHierarchyVolumesPluginPrivate::qSlicerSubjectHierarchyVolumesPlugi
 
   this->ShowVolumesInBranchAction = nullptr;
   this->ShowVolumeInForegroundAction = nullptr;
+  this->ResetFieldOfViewOnShowAction = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -103,11 +111,45 @@ void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
 
   this->ShowVolumeInForegroundAction = new QAction("Show in slice views as foreground", q);
   QObject::connect(this->ShowVolumeInForegroundAction, SIGNAL(triggered()), q, SLOT(showVolumeInForeground()));
+
+  this->ResetFieldOfViewOnShowAction = new QAction("Reset field of view on show",q);
+  QObject::connect(this->ResetFieldOfViewOnShowAction, SIGNAL(toggled(bool)), q, SLOT(toggleResetFieldOfViewOnShowAction(bool)));
+  this->ResetFieldOfViewOnShowAction->setCheckable(true);
+  this->ResetFieldOfViewOnShowAction->setChecked(false);
 }
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyVolumesPluginPrivate::~qSlicerSubjectHierarchyVolumesPluginPrivate()
 = default;
+
+//-----------------------------------------------------------------------------
+bool qSlicerSubjectHierarchyVolumesPluginPrivate::resetFieldOfViewOnShow()
+{
+  QSettings settings;
+  return settings.value("SubjectHierarchy/ResetFieldOfViewOnShowVolume", false).toBool();
+}
+
+//------------------------------------------------------------------------------
+qMRMLSliceWidget* qSlicerSubjectHierarchyVolumesPluginPrivate::sliceWidgetForSliceCompositeNode(vtkMRMLSliceCompositeNode* compositeNode)
+{
+  qMRMLLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  if (!layoutManager)
+    {
+    return nullptr;
+    }
+
+  QStringList sliceViewNames = layoutManager->sliceViewNames();
+  foreach (QString sliceName, sliceViewNames)
+    {
+    qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceName);
+    if (sliceWidget->mrmlSliceCompositeNode() == compositeNode)
+      {
+      return sliceWidget;
+      }
+    }
+
+  return nullptr;
+}
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyVolumesPlugin methods
@@ -327,6 +369,8 @@ int qSlicerSubjectHierarchyVolumesPlugin::getDisplayVisibility(vtkIdType itemID)
 void qSlicerSubjectHierarchyVolumesPlugin::showVolumeInAllViews(
   vtkMRMLScalarVolumeNode* node, int layer/*=vtkMRMLApplicationLogic::BackgroundLayer*/ )
 {
+  Q_D(qSlicerSubjectHierarchyVolumesPlugin);
+
   if (!node)
     {
     qCritical() << Q_FUNC_INFO << ": nullptr node";
@@ -367,6 +411,15 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumeInAllViews(
     else if (layer & vtkMRMLApplicationLogic::LabelLayer)
       {
       compositeNode->SetLabelVolumeID(node->GetID());
+      }
+
+    if (d->resetFieldOfViewOnShow())
+      {
+      qMRMLSliceWidget* sliceWidget = d->sliceWidgetForSliceCompositeNode(compositeNode);
+      if (sliceWidget)
+        {
+        sliceWidget->fitSliceToBackground();
+        }
       }
     }
 
@@ -482,7 +535,7 @@ QList<QAction*> qSlicerSubjectHierarchyVolumesPlugin::visibilityContextMenuActio
   Q_D(const qSlicerSubjectHierarchyVolumesPlugin);
 
   QList<QAction*> actions;
-  actions << d->ShowVolumesInBranchAction << d->ShowVolumeInForegroundAction;
+  actions << d->ShowVolumesInBranchAction << d->ShowVolumeInForegroundAction << d->ResetFieldOfViewOnShowAction;
   return actions;
 }
 
@@ -507,6 +560,9 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVisibilityContextMenuActionsForIt
   if (this->canOwnSubjectHierarchyItem(itemID))
     {
     d->ShowVolumeInForegroundAction->setVisible(true);
+
+    d->ResetFieldOfViewOnShowAction->setChecked(d->resetFieldOfViewOnShow());
+    d->ResetFieldOfViewOnShowAction->setVisible(true);
     }
 
   // Folders (Patient, Study, Folder)
@@ -706,4 +762,11 @@ void qSlicerSubjectHierarchyVolumesPlugin::onSliceCompositeNodeModified()
       shNode->ItemModified(volumeItemID);
       }
     }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyVolumesPlugin::toggleResetFieldOfViewOnShowAction(bool on)
+{
+  QSettings settings;
+  settings.setValue("SubjectHierarchy/ResetFieldOfViewOnShowVolume", on);
 }
