@@ -66,6 +66,7 @@ public:
   enum SegmentTableItemDataRole
   {
     SegmentIDRole = Qt::UserRole + 1,
+    IndexRole,
     VisibilityRole,
     StatusRole,
   };

@@ -226,9 +226,6 @@ void qMRMLSegmentsModel::setSegmentationNode(vtkMRMLSegmentationNode* segmentati
     }
   d->SegmentationNode = segmentationNode;
 
-  // Remove all items
-  this->removeRows(0, this->rowCount());
-
   // Update all segments
   this->rebuildFromSegments();
 
@@ -424,13 +421,6 @@ void qMRMLSegmentsModel::updateItemFromSegment(QStandardItem* item, QString segm
   //// Update item data for the current column
   this->updateItemDataFromSegment(item, segmentID, column);
 
-  int index = d->SegmentationNode->GetSegmentation()->GetSegmentIndex(segmentID.toStdString());
-  if (item->row() != index)
-    {
-    QList<QStandardItem*> items = this->takeRow(item->row());
-    this->insertRow(index);
-    }
-
   d->UpdatingItemFromSegment = wasUpdating;
 }
 
@@ -457,6 +447,9 @@ void qMRMLSegmentsModel::updateItemDataFromSegment(QStandardItem* item, QString 
     qCritical() << Q_FUNC_INFO << ": Invalid segment " << segmentID;
     return;
     }
+
+  int index = segmentation->GetSegmentIndex(segmentID.toStdString());
+  item->setData(index, IndexRole);
 
   if (column == this->nameColumn())
     {
@@ -831,13 +824,21 @@ void qMRMLSegmentsModel::reorderItems()
     return;
     }
 
+  this->layoutAboutToBeChanged();
+  bool wasBlocking = this->blockSignals(true);
   for (int i = 0; i < segmentation->GetNumberOfSegments(); ++i)
     {
     std::string segmentID = segmentation->GetNthSegmentID(i);
     QModelIndex index = this->indexFromSegmentID(segmentID.c_str());
+    if (index.row() == i)
+      {
+      continue;
+      }
     QList<QStandardItem*> items = this->takeRow(index.row());
     this->insertRow(i, items);
     }
+  this->blockSignals(wasBlocking);
+  this->layoutChanged();
 }
 
 //------------------------------------------------------------------------------

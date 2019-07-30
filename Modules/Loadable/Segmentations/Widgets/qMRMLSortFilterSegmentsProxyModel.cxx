@@ -74,12 +74,6 @@ qMRMLSortFilterSegmentsProxyModel::qMRMLSortFilterSegmentsProxyModel(QObject *vp
  : QSortFilterProxyModel(vparent)
  , d_ptr(new qMRMLSortFilterSegmentsProxyModelPrivate)
 {
-  // For speed issue, we might want to disable the dynamic sorting however
-  // when having source models using QStandardItemModel, drag&drop is handled
-  // in 2 steps, first a new row is created (which automatically calls
-  // filterAcceptsRow() that returns false) and then set the row with the
-  // correct values (which doesn't call filterAcceptsRow() on the up to date
-  // value unless DynamicSortFilter is true).
   this->setDynamicSortFilter(true);
 }
 
