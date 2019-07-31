@@ -13,65 +13,20 @@
   <property name="windowTitle">
    <string>Model Display Node</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+  <layout class="QGridLayout" name="gridLayout_2">
+   <property name="leftMargin">
     <number>0</number>
    </property>
-   <item>
-    <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox">
-     <property name="title">
-      <string>Visibility</string>
-     </property>
-     <layout class="QFormLayout" name="formLayout_2">
-      <property name="fieldGrowthPolicy">
-       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-      </property>
-      <item row="0" column="0">
-       <widget class="QLabel" name="VisibilityLabel">
-        <property name="text">
-         <string>Visible:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QCheckBox" name="VisibilityCheckBox">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="DisplayNodeViewLabel">
-        <property name="text">
-         <string>View:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="qMRMLDisplayNodeViewComboBox" name="DisplayNodeViewComboBox">
-        <property name="toolTip">
-         <string>Select views in which to show this node. All unchecked shows in all 3D and 2D views.</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="ColorLabel">
-        <property name="text">
-         <string>Color:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="ctkColorPickerButton" name="ColorPickerButton">
-        <property name="displayColorName">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item row="1" column="0">
     <widget class="ctkCollapsibleGroupBox" name="RepresentationCollapsibleGroupBox">
      <property name="title">
       <string>3D Display</string>
@@ -83,26 +38,6 @@
       <property name="fieldGrowthPolicy">
        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
       </property>
-      <item row="0" column="0">
-       <widget class="QLabel" name="OpacityLabel">
-        <property name="text">
-         <string>Opacity:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="ctkSliderWidget" name="OpacitySliderWidget">
-        <property name="singleStep">
-         <double>0.100000000000000</double>
-        </property>
-        <property name="pageStep">
-         <double>0.250000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>1.000000000000000</double>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <widget class="QLabel" name="RepresentationLabel">
         <property name="text">
@@ -133,6 +68,85 @@
          </property>
         </item>
        </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="CullingLabel">
+        <property name="text">
+         <string>Visible Sides:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="ShowFacesComboBox">
+        <property name="toolTip">
+         <string>All: recommended for open surface. Front: recommended for faster rendering of closed opaque surfaces. Back: Useful for rendering backface of open surfaces with different color.</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Front-facing</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Back-facing</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="ClippingLabel">
+        <property name="text">
+         <string>Clipping:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QCheckBox" name="ClippingCheckBox">
+          <property name="toolTip">
+           <string>Hide part of the model according to Clipping Planes settings.</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="ConfigureClippingPushButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Configure clipping planes</string>
+          </property>
+          <property name="text">
+           <string>Configure...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </item>
       <item row="4" column="0" colspan="2">
        <widget class="ctkCollapsibleGroupBox" name="Advanced3dCollapsibleGroupBox">
@@ -252,89 +266,10 @@
         </layout>
        </widget>
       </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="ClippingLabel">
-        <property name="text">
-         <string>Clipping:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QComboBox" name="ShowFacesComboBox">
-        <property name="toolTip">
-         <string>All: recommended for open surface. Front: recommended for faster rendering of closed opaque surfaces. Back: Useful for rendering backface of open surfaces with different color.</string>
-        </property>
-        <item>
-         <property name="text">
-          <string>All</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Front-facing</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Back-facing</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="CullingLabel">
-        <property name="text">
-         <string>Visible Sides:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QCheckBox" name="ClippingCheckBox">
-          <property name="toolTip">
-           <string>Hide part of the model according to Clipping Planes settings.</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="ConfigureClippingPushButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>Configure clipping planes</string>
-          </property>
-          <property name="text">
-           <string>Configure...</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="2" column="0">
     <widget class="ctkCollapsibleGroupBox" name="SliceDisplayCollapsibleGroupBox">
      <property name="title">
       <string>Slice Display</string>
@@ -353,7 +288,7 @@
       <item row="0" column="1">
        <widget class="QCheckBox" name="SliceIntersectionVisibilityCheckBox">
         <property name="text">
-         <string> </string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -458,7 +393,7 @@
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="3" column="0">
     <widget class="ctkCollapsibleGroupBox" name="ScalarsGroupBox">
      <property name="title">
       <string>Scalars</string>
@@ -536,7 +471,7 @@
       <item row="0" column="1">
        <widget class="QCheckBox" name="ScalarsVisibilityCheckBox">
         <property name="text">
-         <string> </string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -588,6 +523,81 @@ should set &quot;backface&quot; and &quot;frontface&quot; to OFF in the Represen
      </layout>
     </widget>
    </item>
+   <item row="0" column="0">
+    <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox">
+     <property name="title">
+      <string>Visibility</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="1" column="1">
+       <widget class="qMRMLDisplayNodeViewComboBox" name="DisplayNodeViewComboBox">
+        <property name="toolTip">
+         <string>Select views in which to show this node. All unchecked shows in all 3D and 2D views.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="DisplayNodeViewLabel">
+        <property name="text">
+         <string>View:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="ctkColorPickerButton" name="ColorPickerButton">
+        <property name="displayColorName">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="ColorLabel">
+        <property name="text">
+         <string>Color:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QCheckBox" name="VisibilityCheckBox">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="OpacityLabel">
+          <property name="text">
+           <string>Opacity:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="ctkSliderWidget" name="OpacitySliderWidget">
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="pageStep">
+           <double>0.250000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>1.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="VisibilityLabel">
+        <property name="text">
+         <string>Visibility:</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -595,6 +605,7 @@ should set &quot;backface&quot; and &quot;frontface&quot; to OFF in the Represen
    <class>qMRMLCheckableNodeComboBox</class>
    <extends>qMRMLNodeComboBox</extends>
    <header>qMRMLCheckableNodeComboBox.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qMRMLColorTableComboBox</class>
@@ -605,11 +616,13 @@ should set &quot;backface&quot; and &quot;frontface&quot; to OFF in the Represen
    <class>qMRMLDisplayNodeViewComboBox</class>
    <extends>qMRMLCheckableNodeComboBox</extends>
    <header>qMRMLDisplayNodeViewComboBox.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qMRMLRangeWidget</class>
