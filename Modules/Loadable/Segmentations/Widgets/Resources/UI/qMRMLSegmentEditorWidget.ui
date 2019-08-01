@@ -454,7 +454,7 @@
          <string/>
         </property>
         <property name="text">
-         <string>Overwrite other segments:</string>
+         <string>Modify other segments:</string>
         </property>
        </widget>
       </item>

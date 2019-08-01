@@ -388,9 +388,9 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   this->MaskModeComboBox->insertSeparator(this->MaskModeComboBox->count());
   this->MaskModeComboBoxFixedItemsCount = this->MaskModeComboBox->count();
 
-  this->OverwriteModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("All segments"), vtkMRMLSegmentEditorNode::OverwriteAllSegments);
-  this->OverwriteModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Visible segments"), vtkMRMLSegmentEditorNode::OverwriteVisibleSegments);
-  this->OverwriteModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("None"), vtkMRMLSegmentEditorNode::OverwriteNone);
+  this->OverwriteModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Overwrite all"), vtkMRMLSegmentEditorNode::OverwriteAllSegments);
+  this->OverwriteModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Overwrite visible"), vtkMRMLSegmentEditorNode::OverwriteVisibleSegments);
+  this->OverwriteModeComboBox->addItem(qMRMLSegmentEditorWidget::tr("Allow overlap"), vtkMRMLSegmentEditorNode::OverwriteNone);
 
   this->SwitchToSegmentationsButton->setIcon(q->style()->standardIcon(QStyle::SP_ArrowRight));
 
