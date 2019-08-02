@@ -912,8 +912,7 @@ void vtkMRMLMarkupsNode::SetCenterPositionFromArray(const double pos[3])
 void vtkMRMLMarkupsNode::SetCenterPosition(const double x, const double y, const double z)
 {
   this->CenterPos.Set(x,y,z);
-  int n = -1;
-  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::CenterPointModifiedEvent);
 }
 
 //-----------------------------------------------------------

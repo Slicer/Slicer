@@ -186,10 +186,10 @@ public:
   /// - PointModifiedEvent: existing control point(s) modified, added, or removed. Modified event is NOT invoked.
   /// - PointStartInteractionEvent when starting interacting with a control point.
   /// - PointEndInteractionEvent when an interaction eith a control point process finishes.
+  /// - CenterPointModifiedEvent when position of the centerpoint is changed (displayed for example for closed curves)
   ///
   /// Event data for Point* events: Event callData is control point index address (int*). If the pointer is nullptr
-  /// then one or more points are added/removed/modified. If the value is -1 then it is not a control point
-  /// but the center point.
+  /// then one or more points are added/removed/modified.
   ///
   /// Note: the current active node (control point or line) information are stored in the display node.
   ///
@@ -202,6 +202,7 @@ public:
     PointModifiedEvent,
     PointStartInteractionEvent,
     PointEndInteractionEvent,
+    CenterPointModifiedEvent,
   };
 
   /// Placement status of a control point.
