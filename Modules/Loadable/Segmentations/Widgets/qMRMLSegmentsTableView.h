@@ -196,6 +196,9 @@ protected slots:
   /// Called when the segmentation node is modified
   void updateWidgetFromMRML();
 
+  /// Update the filter parameters in the vtkMRMLSegmentationNode
+  void updateMRMLFromFilterParameters();
+
 protected:
   /// Convenience function to set segment visibility options from event handlers
   /// \sa onVisibilityButtonToggled \sa onVisibility3DActionToggled \sa onVisibility2DFillActionToggled \sa onVisibility2DOutlineActionToggled
