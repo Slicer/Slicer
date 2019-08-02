@@ -195,9 +195,6 @@ public:
 
   QIcon StatusIcons[vtkSlicerSegmentationsModuleLogic::LastStatus];
   QPushButton* ShowStatusButtons[vtkSlicerSegmentationsModuleLogic::LastStatus];
-
-private:
-  QStringList HiddenSegmentIDs;
 };
 
 //-----------------------------------------------------------------------------
@@ -881,14 +878,14 @@ bool qMRMLSegmentsTableView::filterBarVisible()
 QString qMRMLSegmentsTableView::textFilter()
 {
   Q_D(qMRMLSegmentsTableView);
-  return d->FilterLineEdit->text();
+  return d->SortFilterModel->textFilter();
 }
 
 //------------------------------------------------------------------------------
 void qMRMLSegmentsTableView::setTextFilter(QString filter)
 {
   Q_D(qMRMLSegmentsTableView);
-  d->FilterLineEdit->setText(filter);
+  d->SortFilterModel->setTextFilter(filter);
 }
 
 //------------------------------------------------------------------------------
@@ -1140,18 +1137,35 @@ void qMRMLSegmentsTableView::showOnlySelectedSegments()
     return;
     }
 
+  vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
+  if (!segmentation)
+    {
+    qCritical() << Q_FUNC_INFO << ": No segmentation";
+    return;
+    }
+
+  std::vector<std::string> displayedSegmentIDs;
+  segmentation->GetSegmentIDs(displayedSegmentIDs);
+
+  QStringList hiddenSegmentIDs = d->SortFilterModel->hideSegments();
+
   // Hide all segments except the selected ones
   MRMLNodeModifyBlocker blocker(displayNode);
-  QStringList displayedSegmentIDs = this->displayedSegmentIDs();
-  foreach (QString segmentId, displayedSegmentIDs)
+  for (std::string displayedID : displayedSegmentIDs)
     {
+    QString segmentID = QString::fromStdString(displayedID);
+    if (hiddenSegmentIDs.contains(segmentID))
+      {
+      continue;
+      }
+
     bool visible = false;
-    if (selectedSegmentIDs.contains(segmentId))
+    if (selectedSegmentIDs.contains(segmentID))
       {
       visible = true;
       }
 
-    displayNode->SetSegmentVisibility(segmentId.toLatin1().constData(), visible);
+    displayNode->SetSegmentVisibility(displayedID, visible);
     }
 }
 

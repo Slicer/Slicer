@@ -3658,13 +3658,13 @@ void qMRMLSegmentEditorWidget::showSegmentationGeometryDialog()
 //---------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::selectPreviousSegment()
 {
-  this->selectSegmentAtOffset (-1);
+  this->selectSegmentAtOffset(-1);
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::selectNextSegment()
 {
-  this->selectSegmentAtOffset (1);
+  this->selectSegmentAtOffset(1);
 }
 
 //---------------------------------------------------------------------------
