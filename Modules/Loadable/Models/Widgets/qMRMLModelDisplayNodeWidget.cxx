@@ -64,6 +64,9 @@ public:
   vtkSmartPointer<vtkMRMLModelDisplayNode> MRMLModelDisplayNode;
   vtkSmartPointer<vtkProperty> Property;
   vtkSmartPointer<vtkMRMLNode>  ModelOrHierarchyNode;
+  // Store what data range was used to automatically slider range of display range,
+  // to prevent resetting slider range when user moves the slider.
+  double DataRangeUsedForAutoDisplayRange[2];
 };
 
 //------------------------------------------------------------------------------
@@ -71,6 +74,8 @@ qMRMLModelDisplayNodeWidgetPrivate::qMRMLModelDisplayNodeWidgetPrivate(qMRMLMode
   : q_ptr(&object)
 {
   this->Property = vtkSmartPointer<vtkProperty>::New();
+  this->DataRangeUsedForAutoDisplayRange[0] = 0.0;
+  this->DataRangeUsedForAutoDisplayRange[1] = 0.0;
 }
 
 //------------------------------------------------------------------------------
@@ -626,8 +631,16 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   double dataMin = 0.0;
   double dataMax = 0.0;
   int decimals = 0;
+  bool resetSliderRange = false;
   if (dataRange[0] < dataRange[1])
     {
+    if (d->DataRangeUsedForAutoDisplayRange[0] != dataRange[0]
+      || d->DataRangeUsedForAutoDisplayRange[1] != dataRange[1])
+      {
+      d->DataRangeUsedForAutoDisplayRange[0] = dataRange[0];
+      d->DataRangeUsedForAutoDisplayRange[1] = dataRange[1];
+      resetSliderRange = true;
+      }
     // Begin with a precision of 1% of the range
     precision = dataRange[1]/100.0 - dataRange[0]/100.0;
     // Extend min/max by 20% to give some room to work with
@@ -645,8 +658,18 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   double *displayRange = d->MRMLModelDisplayNode->GetScalarRange();
 
   wasBlocking = d->DisplayedScalarRangeWidget->blockSignals(true);
-  d->DisplayedScalarRangeWidget->setRange(std::min(dataMin, displayRange[0]),
-    std::max(dataMax, displayRange[1]));
+  if (resetSliderRange)
+    {
+    d->DisplayedScalarRangeWidget->setRange(std::min(dataMin, displayRange[0]),
+      std::max(dataMax, displayRange[1]));
+    }
+  else
+    {
+    double currentRange[2] = { 0.0 };
+    d->DisplayedScalarRangeWidget->range(currentRange);
+    d->DisplayedScalarRangeWidget->setRange(std::min(currentRange[0], displayRange[0]),
+      std::max(currentRange[1], displayRange[1]));
+    }
   d->DisplayedScalarRangeWidget->setValues(displayRange[0], displayRange[1]);
   d->DisplayedScalarRangeWidget->setDecimals(decimals);
   d->DisplayedScalarRangeWidget->setSingleStep(precision);
