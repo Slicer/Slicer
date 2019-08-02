@@ -305,6 +305,6 @@ void vtkSlicerCurveRepresentation3D::CanInteractWithCurve(
     {
     closestDistance2 = dist2 / this->ViewScaleFactorMmPerPixel / this->ViewScaleFactorMmPerPixel;
     foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentLine;
-    componentIndex = this->MarkupsNode->GetControlPointIndexFromInterpolatedPointIndex(cellId);
+    componentIndex = this->MarkupsNode->GetControlPointIndexFromInterpolatedPointIndex(subId);
     }
 }

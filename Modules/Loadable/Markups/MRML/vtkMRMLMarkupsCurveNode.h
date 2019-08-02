@@ -88,13 +88,20 @@ public:
     double samplingDistance, vtkIdType startCurvePointIndex, vtkIdType endCurvePointIndex);
 
   /// Get the index of the closest curve point to the world coordinates
-  vtkIdType GetClosestCurvePointIndexToPositionWorld(double posWorld[3]);
+  vtkIdType GetClosestCurvePointIndexToPositionWorld(const double posWorld[3]);
+
+  /// Get position of the closest point along the curve in world coordinates.
+  /// The found position may be between two curve points.
+  /// Returns index of the found line segment. -1 if failed.
+  /// \param posWorld: input position
+  /// \param closestPosWorld: output found closest position
+  vtkIdType GetClosestPointPositionAlongCurveWorld(const double posWorld[3], double closestPosWorld[3]);
 
   /// Get index of the farthest curve point from the specified reference point.
   /// Distance is Euclidean distance, not distance along the curve.
   /// \param posWorld Reference point position in world coordinate system
   /// \return index of the farthest curve point from refPoint, -1 in case of error
-  vtkIdType GetFarthestCurvePointIndexToPositionWorld(double posWorld[3]);
+  vtkIdType GetFarthestCurvePointIndexToPositionWorld(const double posWorld[3]);
 
   vtkIdType GetCurvePointIndexFromControlPointIndex(int controlPointIndex);
 

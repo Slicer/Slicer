@@ -104,7 +104,12 @@ bool vtkSlicerCurveWidget::ProcessControlPointInsert(vtkMRMLInteractionEventData
   const int* displayPos = eventData->GetDisplayPosition();
   if (rep3d)
     {
-    if (!rep3d->AccuratePick(displayPos[0], displayPos[1], worldPos))
+    if (!eventData->IsWorldPositionValid())
+      {
+      return false;
+      }
+    vtkIdType lineIndex = markupsNode->GetClosestPointPositionAlongCurveWorld(eventData->GetWorldPosition(), worldPos);
+    if (lineIndex < 0)
       {
       return false;
       }

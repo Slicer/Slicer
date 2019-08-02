@@ -1005,7 +1005,7 @@ void vtkSlicerMarkupsWidget::RotateWidget(double eventPos[2])
     slicePos[0] = this->LastEventPosition[0];
     slicePos[1] = this->LastEventPosition[1];
 
-    rep3d->GetTransformationReferencePoint(center);
+    rep2d->GetTransformationReferencePoint(center);
 
     rep2d->GetSliceToWorldCoordinates(slicePos, lastWorldPos);
 
