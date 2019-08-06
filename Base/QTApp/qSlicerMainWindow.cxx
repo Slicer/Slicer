@@ -1454,6 +1454,11 @@ void qSlicerMainWindow::onModuleAboutToBeUnloaded(const QString& moduleName)
 {
   Q_D(qSlicerMainWindow);
 
+  if (d->ModuleSelectorToolBar->selectedModule() == moduleName)
+    {
+    d->ModuleSelectorToolBar->selectModule("");
+    }
+
   foreach(QAction* action, d->ModuleToolBar->actions())
     {
     if (action->data().toString() == moduleName)
