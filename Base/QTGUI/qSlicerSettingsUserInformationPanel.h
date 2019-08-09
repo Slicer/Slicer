@@ -38,7 +38,7 @@ public:
   /// Destructor
   ~qSlicerSettingsUserInformationPanel() override;
 
-  virtual void setUserInformation(vtkPersonInformation* userInfo);
+  Q_INVOKABLE virtual void setUserInformation(vtkPersonInformation* userInfo);
 
 public Q_SLOTS:
   void resetSettings() override;
