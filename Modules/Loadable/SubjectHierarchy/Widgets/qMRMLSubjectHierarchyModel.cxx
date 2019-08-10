@@ -1248,7 +1248,7 @@ void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItemData(vtkIdTyp
       }
 
     // Ask the user if any child node in the branch is transformed with a transform different from the chosen one
-    bool hardenExistingTransforms = true;
+    bool hardenExistingTransforms = false;
     if (d->SubjectHierarchyNode->IsAnyNodeInBranchTransformed(shItemID, false))
       {
       QMessageBox::StandardButton answer =
@@ -1257,9 +1257,9 @@ void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItemData(vtkIdTyp
         "  Note: If you choose no, then the applied transform will simply be replaced."),
         QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
         QMessageBox::Yes);
-      if (answer == QMessageBox::No)
+      if (answer == QMessageBox::Yes)
         {
-        hardenExistingTransforms = false;
+        hardenExistingTransforms = true;
         }
       else if (answer == QMessageBox::Cancel)
         {
