@@ -806,10 +806,17 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
   pipeline->VolumeActor->SetProperty(volumeProperty);
   // vtkMultiVolume's GetProperty returns the volume property from the first volume actor, and that is used when assembling the
   // shader, so need to set the volume property to the the first volume actor (in this case dummy actor, see above TODO)
+  /*
+   * This call causes VTK to trigger an error message if the MultiVolumeActor has not yet
+   * been initialized (see line line 76 in vtkMultiVolume::GetVolume)
+   * and I don't see any behavior difference with this commented out.
+   * Probably it can be added back when the rest of the multivolume
+   * issues have been resolved.
   if (this->MultiVolumeActor && this->MultiVolumeActor->GetVolume(0))
     {
     this->MultiVolumeActor->GetVolume(0)->SetProperty(volumeProperty);
     }
+  */
 
   // Set shader property
   vtkShaderProperty* shaderProperty = displayNode->GetShaderPropertyNode() ? displayNode->GetShaderPropertyNode()->GetShaderProperty() : nullptr;
