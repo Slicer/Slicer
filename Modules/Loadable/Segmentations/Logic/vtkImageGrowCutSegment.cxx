@@ -498,13 +498,13 @@ template <class SourceVolType>
 bool vtkImageGrowCutSegment::vtkInternal::ExecuteGrowCut(vtkImageData *intensityVolume, vtkImageData *seedLabelVolume,
   vtkImageData *maskLabelVolume, vtkImageData *resultLabelVolume)
 {
-  const double compareTolerance = 1e-6;
   int* extent = intensityVolume->GetExtent();
   double* spacing = intensityVolume->GetSpacing();
   double* origin = intensityVolume->GetOrigin();
   int* seedExtent = seedLabelVolume->GetExtent();
   double* seedSpacing = seedLabelVolume->GetSpacing();
   double* seedOrigin = seedLabelVolume->GetOrigin();
+  const double compareTolerance = (spacing[0]+spacing[1]+spacing[2])/3.0 * 0.01;
 
   // Return with error if intensity volume geometry differs from seed label volume geometry
   if (seedExtent[0] != extent[0] || seedExtent[1] != extent[1]
