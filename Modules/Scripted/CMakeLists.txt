@@ -9,7 +9,6 @@ set(modules
   SegmentEditor
   SegmentStatistics
   SelfTests
-  SurfaceToolbox
   VectorToScalarVolume
   )
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
