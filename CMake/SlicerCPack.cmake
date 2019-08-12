@@ -76,6 +76,9 @@ if(Slicer_BUILD_QT_DESIGNER_PLUGINS)
     set(installed_designer_executable "Designer")
     set(installed_designer_subdir "Designer.app/Contents/MacOS")
   endif()
+  # Ensure directory exists at configuration time
+  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/${Slicer_BIN_DIR})
+  # Configure designer launcher
   find_package(CTKAppLauncher REQUIRED)
   ctkAppLauncherConfigureForExecutable(
     APPLICATION_NAME ${executablename}
