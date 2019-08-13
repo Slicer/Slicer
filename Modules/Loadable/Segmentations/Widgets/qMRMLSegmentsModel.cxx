@@ -721,9 +721,9 @@ void qMRMLSegmentsModel::onEvent(
 
   // Get segment ID for segmentation node events
   QString segmentID;
-  if (callData && (vtkSegmentation::SegmentAdded
-                || vtkSegmentation::SegmentRemoved
-                || vtkSegmentation::SegmentModified))
+  if (callData && (event == vtkSegmentation::SegmentAdded
+                || event == vtkSegmentation::SegmentRemoved
+                || event == vtkSegmentation::SegmentModified))
     {
     const char* segmentIDPtr = reinterpret_cast<const char*>(callData);
     if (segmentIDPtr)
