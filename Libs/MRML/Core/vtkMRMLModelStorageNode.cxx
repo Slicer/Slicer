@@ -238,10 +238,10 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         {
         readerSH->SetFileName(fullName.c_str());
         readerSH->Update();
-        MeshReaderType::SceneType::Pointer scene = readerSH->GetScene();
-        MeshReaderType::SceneType::ObjectListType * objList =  scene->GetObjects(1,nullptr);
+        MeshReaderType::GroupType::Pointer group = readerSH->GetGroup();
+        MeshReaderType::GroupType::ObjectListType * objList =  group->GetChildren(1,nullptr);
 
-        MeshReaderType::SceneType::ObjectListType::iterator it = objList->begin();
+        MeshReaderType::GroupType::ObjectListType::iterator it = objList->begin();
         itk::SpatialObject<3> * curObj = *it;
         MeshSpatialObjectType::Pointer  SOMesh = dynamic_cast<MeshSpatialObjectType*> (curObj);
         surfaceMesh = SOMesh->GetMesh();
