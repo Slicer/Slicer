@@ -102,12 +102,23 @@ public:
   /// \param itemID Subject Hierarchy item to show the context menu items for
   void showContextMenuActionsForItem(vtkIdType itemID) override;
 
+  /// Get visibility context menu item actions to add to tree view.
+  /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
+  QList<QAction*> visibilityContextMenuActions()const override;
+
+  /// Show visibility context menu actions valid for a given subject hierarchy item.
+  /// \param itemID Subject Hierarchy item to show the visibility context menu items for
+  void showVisibilityContextMenuActionsForItem(vtkIdType itemID) override;
+
 protected slots:
   /// Invert selected transform
   void invert();
 
   /// Set transform to identity (only available for linear transforms)
   void identity();
+
+  /// Toggle interaction box
+  void toggleInteractionBox(bool);
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyTransformsPluginPrivate> d_ptr;

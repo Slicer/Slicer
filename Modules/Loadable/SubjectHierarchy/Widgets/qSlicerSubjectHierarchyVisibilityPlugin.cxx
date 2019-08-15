@@ -158,6 +158,11 @@ void qSlicerSubjectHierarchyVisibilityPlugin::showVisibilityContextMenuActionsFo
     vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(displayableNode->GetDisplayNode());
     if (!displayNode)
       {
+      displayableNode->CreateDefaultDisplayNodes();
+      displayNode = displayableNode->GetDisplayNode();
+      }
+    if (!displayNode)
+      {
       qCritical() << Q_FUNC_INFO << ": Failed to find display node for displayable node " << displayableNode->GetName();
       continue;
       }
@@ -167,14 +172,14 @@ void qSlicerSubjectHierarchyVisibilityPlugin::showVisibilityContextMenuActionsFo
     visible3DVisible = true;
     }
 
-  d->ToggleVisibility2DAction->blockSignals(true);
+  bool wasBlocked = d->ToggleVisibility2DAction->blockSignals(true);
   d->ToggleVisibility2DAction->setChecked(visible2D);
-  d->ToggleVisibility2DAction->blockSignals(false);
+  d->ToggleVisibility2DAction->blockSignals(wasBlocked);
   d->ToggleVisibility2DAction->setVisible(visible2DVisible);
 
-  d->ToggleVisibility3DAction->blockSignals(true);
+  wasBlocked = d->ToggleVisibility3DAction->blockSignals(true);
   d->ToggleVisibility3DAction->setChecked(visible3D);
-  d->ToggleVisibility3DAction->blockSignals(false);
+  d->ToggleVisibility3DAction->blockSignals(wasBlocked);
   d->ToggleVisibility3DAction->setVisible(visible3DVisible);
 }
 

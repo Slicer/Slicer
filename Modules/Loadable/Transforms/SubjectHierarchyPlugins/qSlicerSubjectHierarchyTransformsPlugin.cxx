@@ -32,6 +32,7 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLTransformableNode.h>
+#include <vtkMRMLTransformDisplayNode.h>
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -67,6 +68,8 @@ public:
 
   QAction* InvertAction;
   QAction* IdentityAction;
+
+  QAction* ToggleInteractionBoxAction;
 };
 
 //-----------------------------------------------------------------------------
@@ -92,6 +95,11 @@ void qSlicerSubjectHierarchyTransformsPluginPrivate::init()
 
   this->IdentityAction = new QAction("Reset transform to identity",q);
   QObject::connect(this->IdentityAction, SIGNAL(triggered()), q, SLOT(identity()));
+
+  this->ToggleInteractionBoxAction = new QAction("Toggle interaction box",q);
+  QObject::connect(this->ToggleInteractionBoxAction, SIGNAL(toggled(bool)), q, SLOT(toggleInteractionBox(bool)));
+  this->ToggleInteractionBoxAction->setCheckable(true);
+  this->ToggleInteractionBoxAction->setChecked(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -197,7 +205,7 @@ double qSlicerSubjectHierarchyTransformsPlugin::canAddNodeToSubjectHierarchy(
   Q_UNUSED(parentItemID);
   if (!node)
     {
-    qCritical() << Q_FUNC_INFO << ": Input node is nullptr!";
+    qCritical() << Q_FUNC_INFO << ": Input node is nullptr";
     return 0.0;
     }
   else if (node->IsA("vtkMRMLTransformNode"))
@@ -245,13 +253,13 @@ QString qSlicerSubjectHierarchyTransformsPlugin::tooltip(vtkIdType itemID)const
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
-    return QString("Invalid!");
+    return QString("Invalid");
     }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return QString("Error!");
+    return QString("Error");
     }
 
   // Get basic tooltip from abstract plugin
@@ -335,6 +343,54 @@ void qSlicerSubjectHierarchyTransformsPlugin::showContextMenuActionsForItem(vtkI
 }
 
 //---------------------------------------------------------------------------
+QList<QAction*> qSlicerSubjectHierarchyTransformsPlugin::visibilityContextMenuActions()const
+{
+  Q_D(const qSlicerSubjectHierarchyTransformsPlugin);
+
+  QList<QAction*> actions;
+  actions << d->ToggleInteractionBoxAction;
+  return actions;
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyTransformsPlugin::showVisibilityContextMenuActionsForItem(vtkIdType itemID)
+{
+  Q_D(qSlicerSubjectHierarchyTransformsPlugin);
+
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+
+  if (this->canOwnSubjectHierarchyItem(itemID))
+    {
+    vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+    if (transformNode)
+      {
+      vtkMRMLTransformDisplayNode* displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetDisplayNode());
+      if (!displayNode)
+        {
+        transformNode->CreateDefaultDisplayNodes();
+        displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetDisplayNode());
+        }
+      if (displayNode)
+        {
+        d->ToggleInteractionBoxAction->setVisible(true);
+        bool wasBlocked = d->ToggleInteractionBoxAction->blockSignals(true);
+        d->ToggleInteractionBoxAction->setChecked(displayNode->GetEditorVisibility());
+        d->ToggleInteractionBoxAction->blockSignals(wasBlocked);
+        }
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyTransformsPlugin::invert()
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
@@ -346,7 +402,7 @@ void qSlicerSubjectHierarchyTransformsPlugin::invert()
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid current item!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current item";
     return;
     }
 
@@ -370,7 +426,7 @@ void qSlicerSubjectHierarchyTransformsPlugin::identity()
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid current item!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current item";
     return;
     }
 
@@ -381,4 +437,38 @@ void qSlicerSubjectHierarchyTransformsPlugin::identity()
     vtkNew<vtkMatrix4x4> matrix; // initialized to identity by default
     transformNode->SetMatrixTransformToParent(matrix.GetPointer());
     }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyTransformsPlugin::toggleInteractionBox(bool visible)
+{
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current item";
+    return;
+    }
+
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(
+    shNode->GetItemDataNode(currentItemID) );
+  if (!transformNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to get transform node";
+    return;
+    }
+  vtkMRMLTransformDisplayNode* displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(
+    transformNode->GetDisplayNode() );
+  if (!displayNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to get transform display node";
+    return;
+    }
+
+  displayNode->SetEditorVisibility(visible);
 }
