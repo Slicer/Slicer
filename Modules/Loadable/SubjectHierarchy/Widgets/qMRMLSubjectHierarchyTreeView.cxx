@@ -1419,6 +1419,10 @@ void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForItems(QList<vtkIdT
     qCritical() << Q_FUNC_INFO << ": Invalid MRML scene";
     return;
     }
+  if (scene->IsImporting())
+    {
+    return;
+    }
 
   // Get scene model and column to highlight
   qMRMLSubjectHierarchyModel* sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->model());
