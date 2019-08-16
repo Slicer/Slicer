@@ -206,8 +206,12 @@ macro(slicerMacroBuildLoadableModule)
   set_target_properties(${lib_name} PROPERTIES LABELS ${lib_name})
 
   target_link_libraries(${lib_name}
-    ${Slicer_GUI_LIBRARY}
-    ${LOADABLEMODULE_TARGET_LIBRARIES}
+    # The two PUBLIC keywords are not a duplication, they allow developers to 
+    # include PRIVATE/INTERFACE keywords in their library list
+    PUBLIC
+      ${LOADABLEMODULE_TARGET_LIBRARIES}
+    PUBLIC
+      ${Slicer_GUI_LIBRARY}
     )
 
   # Apply user-defined properties to the library target.
