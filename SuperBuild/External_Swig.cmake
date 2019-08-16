@@ -103,4 +103,9 @@ ExternalProject_Execute(${proj} \"configure\" sh ${EP_SOURCE_DIR}/configure
   ExternalProject_GenerateProjectDescription_Step(${proj}
     VERSION ${SWIG_TARGET_VERSION}
     )
+
+  mark_as_superbuild(
+    VARS SWIG_EXECUTABLE:FILEPATH
+    LABELS "FIND_PACKAGE"
+    )
 endif()

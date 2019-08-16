@@ -165,6 +165,10 @@ if(Slicer_USE_PYTHONQT)
   list(APPEND Slicer_EXTERNAL_PROJECTS_CONFIG PythonLibs PythonInterp)
   list(APPEND Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG PythonLibs PythonInterp)
 endif()
+if(Slicer_USE_SimpleITK)
+  list(APPEND Slicer_EXTERNAL_PROJECTS_CONFIG SWIG)
+  list(APPEND Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG SWIG)
+endif()
 
 # Configure Slicer_USE_SYSTEM_* variables
 set(Slicer_EP_USE_SYSTEM_VARS_CONFIG "")
