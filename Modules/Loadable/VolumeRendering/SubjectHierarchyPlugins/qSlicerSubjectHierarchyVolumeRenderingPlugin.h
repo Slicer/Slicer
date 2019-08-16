@@ -31,12 +31,6 @@
 class qSlicerSubjectHierarchyVolumeRenderingPluginPrivate;
 class vtkSlicerVolumeRenderingLogic;
 
-// Due to some reason the Python wrapping of this class fails, therefore
-// put everything between BTX/ETX to exclude from wrapping.
-// TODO investigate why the wrapping fails:
-//   https://www.assembla.com/spaces/slicerrt/tickets/210-python-wrapping-error-when-starting-up-slicer-with-slicerrt
-//BTX
-
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 class Q_SLICER_VOLUMERENDERING_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyVolumeRenderingPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
@@ -73,7 +67,5 @@ private:
   Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyVolumeRenderingPlugin);
   Q_DISABLE_COPY(qSlicerSubjectHierarchyVolumeRenderingPlugin);
 };
-
-//ETX
 
 #endif

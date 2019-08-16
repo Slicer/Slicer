@@ -33,12 +33,6 @@ class vtkMRMLNode;
 class vtkMRMLSubjectHierarchyNode;
 class vtkMRMLTableViewNode;
 
-// Due to some reason the Python wrapping of this class fails, therefore
-// put everything between BTX/ETX to exclude from wrapping.
-// TODO investigate why the wrapping fails:
-//   https://www.assembla.com/spaces/slicerrt/tickets/210-python-wrapping-error-when-starting-up-slicer-with-slicerrt
-//BTX
-
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
 class Q_SLICER_TABLES_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyTablesPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
@@ -99,7 +93,5 @@ private:
   Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyTablesPlugin);
   Q_DISABLE_COPY(qSlicerSubjectHierarchyTablesPlugin);
 };
-
-//ETX
 
 #endif
