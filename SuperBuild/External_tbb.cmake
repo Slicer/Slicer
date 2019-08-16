@@ -50,10 +50,10 @@ if (WIN32)
     set(tbb_vsdir vc12)
   elseif (NOT MSVC_VERSION VERSION_GREATER 1900)
     set(tbb_vsdir vc14)
-  elseif (NOT MSVC_VERSION VERSION_GREATER 1916)
+  elseif (NOT MSVC_VERSION VERSION_GREATER 1919)
     # VS2017 is expected to be binary compatible with VS2015
     set(tbb_vsdir vc14)
-  elseif (NOT MSVC_VERSION VERSION_GREATER 1921)
+  elseif (NOT MSVC_VERSION VERSION_GREATER 1929)
     # VS2019 is expected to be binary compatible with VS2015
     set(tbb_vsdir vc14)
   elseif (tbb_enabled)
