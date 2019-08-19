@@ -57,6 +57,9 @@ public:
   /// Get the XML tag that identifies the view where the widget should be placed
   Q_INVOKABLE QString tagName();
 
+public slots:
+  virtual void onWidgetDestroyed();
+
 protected:
   QScopedPointer<qSlicerSingletonViewFactoryPrivate> d_ptr;
 

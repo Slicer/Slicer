@@ -118,6 +118,7 @@ public:
     SlicerLayoutFourUpPlotTableView = 38,
     SlicerLayoutOneUpPlotView = 39,
     SlicerLayoutThreeOverThreePlotView = 40,
+    SlicerLayoutDicomBrowserView = 41,
     SlicerLayoutFinalView, // special value, must be placed after the last standard view (used for iterating through all the views)
 
     SlicerLayoutMaximizedView = 98,
