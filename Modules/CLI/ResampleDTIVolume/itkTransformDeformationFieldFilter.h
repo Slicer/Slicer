@@ -55,7 +55,7 @@ public:
   itkSetObjectMacro( Transform, TransformType );
 
 // /Get the time of the last modification of the object
-  unsigned long GetMTime() const override;
+  ModifiedTimeType GetMTime() const override;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */

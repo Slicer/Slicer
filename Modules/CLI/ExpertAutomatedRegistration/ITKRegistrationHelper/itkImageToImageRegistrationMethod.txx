@@ -169,7 +169,7 @@ ImageToImageRegistrationMethod<TImage>
 }
 
 template <class TImage>
-unsigned long
+ModifiedTimeType
 ImageToImageRegistrationMethod<TImage>
 ::GetMTime( void ) const
 {

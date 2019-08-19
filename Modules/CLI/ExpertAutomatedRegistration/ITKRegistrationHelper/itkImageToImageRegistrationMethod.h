@@ -144,7 +144,7 @@ protected:
   using Superclass::MakeOutput;
   DataObjectPointer   MakeOutput( DataObjectPointerArraySizeType idx ) override;
 
-  unsigned long               GetMTime( void ) const override;
+  ModifiedTimeType GetMTime( void ) const override;
 
 protected:
 

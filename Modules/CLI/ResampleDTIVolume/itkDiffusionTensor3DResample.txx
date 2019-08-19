@@ -32,7 +32,7 @@ DiffusionTensor3DResample<TInput, TOutput>
 }
 
 template <class TInput, class TOutput>
-unsigned long
+ModifiedTimeType
 DiffusionTensor3DResample<TInput, TOutput>
 ::GetMTime() const
 {

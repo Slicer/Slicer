@@ -14,7 +14,7 @@ TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
 }
 
 template <class TInput, class TOutput, int NDimensions>
-unsigned long
+ModifiedTimeType
 TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
 ::GetMTime() const
 {

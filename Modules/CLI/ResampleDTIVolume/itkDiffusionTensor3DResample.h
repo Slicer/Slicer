@@ -75,7 +75,7 @@ public:
   void SetOutputParametersFromImage( InputImagePointerType Image );
 
 // /Get the time of the last modification of the object
-  unsigned long GetMTime() const override;
+  ModifiedTimeType GetMTime() const override;
 
   itkSetMacro( DefaultPixelValue, OutputDataType );
   itkGetMacro( DefaultPixelValue, OutputDataType );
