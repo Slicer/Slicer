@@ -176,6 +176,9 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
 
 
   def onLayoutChanged(self, viewArrangement):
+    if viewArrangement == self.currentViewArrangement:
+      return
+
     self.previousViewArrangement = self.currentViewArrangement
     self.currentViewArrangement = viewArrangement
 
@@ -431,7 +434,8 @@ class DICOMWidget(object):
     self.tables = self.detailsPopup.tables
 
     layoutManager = slicer.app.layoutManager()
-    layoutManager.layoutChanged.connect(self.onLayoutChanged)
+    if layoutManager is not None:
+      layoutManager.layoutChanged.connect(self.onLayoutChanged)
 
     # connect to the 'Show DICOM Browser' button
     self.showBrowserButton = qt.QPushButton('Show DICOM database browser')
@@ -457,7 +461,6 @@ class DICOMWidget(object):
     self.subjectHierarchyTree.currentItemModified.connect(self.onCurrentItemModified)
     self.subjectHierarchyCurrentVisibility = False
     self.subjectHierarchyTree.setColumnHidden(self.subjectHierarchyTree.model().idColumn, True)
-
 
     self.browserSettingsWidget = ctk.ctkCollapsibleGroupBox()
     self.browserSettingsWidget.title = "Browser settings"
@@ -553,9 +556,6 @@ class DICOMWidget(object):
     self.recentActivity = DICOMLib.DICOMRecentActivityWidget(self.activityFrame,detailsPopup=self.detailsPopup)
     self.activityFrame.layout().addWidget(self.recentActivity)
     self.requestUpdateRecentActivity()
-
-    # Add spacer to layout
-    self.layout.addStretch(1)
 
   def onLayoutChanged(self, viewArrangement):
     if viewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView:
