@@ -798,6 +798,8 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
       (self.referencedLoadables, loadEnabled) = self.getLoadablesFromFileLists(referencedFileLists)
 
     automaticallyLoadReferences = int(slicer.util.settingsValue('DICOM/automaticallyLoadReferences', qt.QMessageBox.InvalidRole))
+    if slicer.app.commandOptions().testingEnabled:
+      automaticallyLoadReferences = qt.QMessageBox.No
     if loadEnabled and automaticallyLoadReferences == qt.QMessageBox.InvalidRole:
       self.showReferenceDialogAndProceed()
     elif loadEnabled and automaticallyLoadReferences == qt.QMessageBox.Yes:

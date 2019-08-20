@@ -232,6 +232,8 @@ class _ui_DICOMSettingsPanel(object):
     schemaUpdateComboBox.addItem("Never update", "NeverUpdate")
     schemaUpdateComboBox.addItem("Ask user", "AskUser")
     schemaUpdateComboBox.currentIndex = 2 # Make 'AskUser' the default as opposed to the CTK default 'AlwaysUpdate'
+    if slicer.app.commandOptions().testingEnabled:
+      schemaUpdateComboBox.currentIndex = 0 # Update database for automatic tests
     genericGroupBoxFormLayout.addRow("Schema update behavior:", schemaUpdateComboBox)
     parent.registerProperty(
       "DICOM/SchemaUpdateOption", schemaUpdateComboBox,
