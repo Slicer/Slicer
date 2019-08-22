@@ -52,6 +52,8 @@ set(vtkAddon_SRCS
   vtkAddonTestingUtilities.cxx
   vtkAddonTestingUtilities.h
   vtkAddonTestingUtilities.txx
+  vtkErrorSink.cxx
+  vtkErrorSink.h
   vtkLoggingMacros.h
   vtkTestingOutputWindow.cxx
   vtkTestingOutputWindow.h

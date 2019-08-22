@@ -29,6 +29,7 @@
 #include <vtkObjectFactory.h>
 #include <vtkDelimitedTextReader.h>
 #include <vtkDelimitedTextWriter.h>
+#include <vtkErrorSink.h>
 #include <vtkTable.h>
 #include <vtkStringArray.h>
 #include <vtkBitArray.h>
@@ -448,11 +449,19 @@ bool vtkMRMLTableStorageNode::WriteTable(std::string filename, vtkMRMLTableNode*
   // string values quite often.
   writer->SetUseStringDelimiter(delimiter==",");
 
+  vtkNew<vtkErrorSink> errorWarningObserver;
+  errorWarningObserver->SetObservedObject(writer);
   try
     {
     writer->Write();
     }
   catch (...)
+    {
+    vtkErrorMacro("vtkMRMLTableStorageNode::WriteTable: failed to write file: " << filename);
+    return false;
+    }
+  errorWarningObserver->DisplayMessages();
+  if (errorWarningObserver->HasErrors())
     {
     vtkErrorMacro("vtkMRMLTableStorageNode::WriteTable: failed to write file: " << filename);
     return false;
@@ -522,6 +531,9 @@ bool vtkMRMLTableStorageNode::WriteSchema(std::string filename, vtkMRMLTableNode
     }
 
   vtkNew<vtkDelimitedTextWriter> writer;
+  vtkNew<vtkErrorSink> errorWarningObserver;
+  errorWarningObserver->SetObservedObject(writer);
+
   writer->SetFileName(filename.c_str());
   writer->SetInputData(schemaTable.GetPointer());
 
@@ -540,6 +552,13 @@ bool vtkMRMLTableStorageNode::WriteSchema(std::string filename, vtkMRMLTableNode
   catch (...)
     {
     vtkErrorMacro("vtkMRMLTableStorageNode::WriteSchema: failed to write file: " << filename);
+    return false;
+    }
+
+  errorWarningObserver->DisplayMessages();
+  if (errorWarningObserver->HasErrors())
+    {
+    vtkErrorMacro("vtkMRMLTableStorageNode::WriteTable: failed to write file: " << filename);
     return false;
     }
 

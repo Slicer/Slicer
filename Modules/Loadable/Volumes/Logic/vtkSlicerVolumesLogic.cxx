@@ -42,6 +42,7 @@
 
 // VTK includes
 #include <vtkCallbackCommand.h>
+#include <vtkErrorSink.h>
 #include <vtkGeneralTransform.h>
 #include <vtkImageData.h>
 #include <vtkImageThreshold.h>
@@ -180,80 +181,6 @@ int orderOfMagnitude(double value)
   // we went 1 order too far, so decrement it
   return magnitudeOrder - magnitudeStep;
 };
-
-//----------------------------------------------------------------------------
-class vtkSlicerErrorSink : public vtkCallbackCommand
-{
-public:
-
-  vtkTypeMacro(vtkSlicerErrorSink,vtkCallbackCommand);
-  static vtkSlicerErrorSink *New() {return new vtkSlicerErrorSink; }
-  typedef vtkSlicerErrorSink Self;
-
-  void PrintSelf(ostream& os, vtkIndent indent) override;
-
-  /// Display errors using vtkOutputWindowDisplayErrorText
-  /// \sa vtkOutputWindowDisplayErrorText
-  void DisplayErrors();
-
-protected:
-  vtkSlicerErrorSink();
-  ~vtkSlicerErrorSink() override = default;
-
-private:
-  static void CallbackFunction(vtkObject*, long unsigned int,
-                               void* clientData, void* callData);
-
-  std::vector<std::string> ErrorList;
-
-private:
-  vtkSlicerErrorSink(const vtkSlicerErrorSink&) = delete;
-  void operator=(const vtkSlicerErrorSink&) = delete;
-};
-
-//----------------------------------------------------------------------------
-// vtkSlicerErrorSink methods
-
-//----------------------------------------------------------------------------
-vtkSlicerErrorSink::vtkSlicerErrorSink()
-{
-  this->SetCallback(Self::CallbackFunction);
-  this->SetClientData(this);
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerErrorSink::PrintSelf(ostream& os, vtkIndent indent)
-{
-  this->Superclass::PrintSelf(os, indent);
-  std::vector<std::string>::iterator it = this->ErrorList.begin();
-  os << indent << "ErrorList = \n";
-  while(it != this->ErrorList.end())
-    {
-    os << indent.GetNextIndent() << *it << "\n";
-    ++it;
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerErrorSink::DisplayErrors()
-{
-  std::vector<std::string>::iterator it = this->ErrorList.begin();
-  while(it != this->ErrorList.end())
-    {
-    vtkOutputWindowDisplayErrorText((*it).c_str());
-    ++it;
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerErrorSink::CallbackFunction(vtkObject* vtkNotUsed(caller),
-                                          long unsigned int vtkNotUsed(eventId),
-                                          void* clientData, void* callData)
-{
-  vtkSlicerErrorSink * self = reinterpret_cast<vtkSlicerErrorSink*>(clientData);
-  char * message = reinterpret_cast<char*>(callData);
-  self->ErrorList.push_back(message);
-}
 
 } // end of anonymous namespace
 
@@ -655,7 +582,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
   std::string volumeName = volname != nullptr ? volname : vtksys::SystemTools::GetFilenameName(filename);
   volumeName = this->GetMRMLScene()->GetUniqueNameByString(volumeName.c_str());
 
-  vtkNew<vtkSlicerErrorSink> errorSink;
+  vtkNew<vtkErrorSink> errorSink;
 
   // set up a mini scene to avoid adding and removing nodes from the main scene
   vtkNew<vtkMRMLScene> testScene;
@@ -692,7 +619,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
       {
 
       // connect the observers
-      nodeSet.StorageNode->AddObserver(vtkCommand::ErrorEvent, errorSink.GetPointer());
+      errorSink->SetObservedObject(nodeSet.StorageNode);
       nodeSet.StorageNode->AddObserver(vtkCommand::ProgressEvent,  this->GetMRMLNodesCallbackCommand());
 
       this->InitializeStorageNode(nodeSet.StorageNode, filename, fileList, testScene.GetPointer());
@@ -703,7 +630,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
       bool success = nodeSet.StorageNode->ReadData(nodeSet.Node);
 
       // disconnect the observers
-      nodeSet.StorageNode->RemoveObservers(vtkCommand::ErrorEvent, errorSink.GetPointer());
+      errorSink->SetObservedObject(nullptr);
       nodeSet.StorageNode->RemoveObservers(vtkCommand::ProgressEvent,  this->GetMRMLNodesCallbackCommand());
 
       if (success)
@@ -732,7 +659,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
   // display any errors
   if (volumeNode == nullptr)
     {
-    errorSink->DisplayErrors();
+    errorSink->DisplayMessages();
     }
 
 
