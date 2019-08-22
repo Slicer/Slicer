@@ -68,6 +68,9 @@
 #include <vtkTransformPolyDataFilter.h>
 //#include <vtkTriangleFilter.h>
 
+#include "vtk_eigen.h"
+#include VTK_EIGEN(Dense)
+
 // STD includes
 #include <cassert>
 
@@ -1437,17 +1440,16 @@ bool vtkSlicerMarkupsLogic::FitSurfaceProjectWarp(vtkPoints* curvePoints, vtkPol
   numberOfCurvePoints = cleanedCurvePoints->GetNumberOfPoints();
 
   // The triangulator requires all points to be on the XY plane
-  vtkSmartPointer<vtkAbstractTransform> transform = vtkSmartPointer<vtkAbstractTransform>::Take(
-    vtkDelaunay2D::ComputeBestFittingPlane(inputSurface));
-  vtkTransform* linearTransform = vtkTransform::SafeDownCast(transform);
-  if (!linearTransform)
+  vtkNew<vtkMatrix4x4> transformToBestFitPlaneMatrix;
+  if (!vtkSlicerMarkupsLogic::FitPlaneToPoints(inputSurface->GetPoints(), transformToBestFitPlaneMatrix))
     {
-    vtkGenericWarningMacro("FitSurfaceProjectWarp failed: error computing best fitting plane");
     return false;
     }
-  vtkNew<vtkTransform> transformToPlane;
+  vtkNew<vtkTransform> transformToXYPlane;
+  transformToXYPlane->SetMatrix(transformToBestFitPlaneMatrix); // set XY plane -> best-fit plane
+  transformToXYPlane->Inverse(); // // change the transform to: set best-fit plane -> XY plane
   vtkNew<vtkPoints> pointsOnPlane;
-  transform->TransformPoints(cleanedCurvePoints, pointsOnPlane);
+  transformToXYPlane->TransformPoints(cleanedCurvePoints, pointsOnPlane);
   inputSurface->SetPoints(pointsOnPlane);
   for (vtkIdType i = 0; i < numberOfCurvePoints; i++)
     {
@@ -1643,33 +1645,56 @@ bool vtkSlicerMarkupsLogic::GetBestFitPlane(vtkMRMLMarkupsNode* curveNode, vtkPl
 //---------------------------------------------------------------------------
 bool vtkSlicerMarkupsLogic::FitPlaneToPoints(vtkPoints* curvePoints, vtkPlane* plane)
 {
-  if (!curvePoints || !plane)
+  if (!curvePoints || !plane || curvePoints->GetNumberOfPoints() < 3)
     {
     return false;
     }
-  vtkNew<vtkPolyData> pointSet;
-  pointSet->SetPoints(curvePoints);
-  vtkSmartPointer<vtkAbstractTransform> transform = vtkSmartPointer<vtkAbstractTransform>::Take(
-    vtkDelaunay2D::ComputeBestFittingPlane(pointSet));
-  vtkTransform* linearTransform = vtkTransform::SafeDownCast(transform->GetInverse());
-  if (!linearTransform)
+
+  vtkNew<vtkMatrix4x4> transformToBestFitPlane;
+  if (!vtkSlicerMarkupsLogic::FitPlaneToPoints(curvePoints, transformToBestFitPlane))
     {
     return false;
     }
-  vtkMatrix4x4* transformMatrix = linearTransform->GetMatrix();
-  double position[3] =
+  plane->SetOrigin(transformToBestFitPlane->GetElement(0, 3), transformToBestFitPlane->GetElement(1, 3), transformToBestFitPlane->GetElement(2, 3));
+  plane->SetNormal(transformToBestFitPlane->GetElement(0, 2), transformToBestFitPlane->GetElement(1, 2), transformToBestFitPlane->GetElement(2, 2));
+  return true;
+}
+
+
+//---------------------------------------------------------------------------
+bool vtkSlicerMarkupsLogic::FitPlaneToPoints(vtkPoints* curvePoints, vtkMatrix4x4* transformToBestFitPlane)
+{
+  if (!curvePoints || !transformToBestFitPlane || curvePoints->GetNumberOfPoints() < 3)
     {
-    transformMatrix->GetElement(0, 3),
-    transformMatrix->GetElement(1, 3),
-    transformMatrix->GetElement(2, 3)
-    };
-  double normal[3] =
+    return false;
+    }
+
+  vtkIdType numberOfPoints = curvePoints->GetNumberOfPoints();
+  Eigen::MatrixXd pointCoords(3, numberOfPoints);
+  double point[3] = { 0.0 };
+  for (vtkIdType pointIndex = 0; pointIndex < numberOfPoints; ++pointIndex)
     {
-    transformMatrix->GetElement(0, 2),
-    transformMatrix->GetElement(1, 2),
-    transformMatrix->GetElement(2, 2)
-    };
-  plane->SetOrigin(position);
-  plane->SetNormal(normal);
+    curvePoints->GetPoint(pointIndex, point);
+    pointCoords(0, pointIndex) = point[0];
+    pointCoords(1, pointIndex) = point[1];
+    pointCoords(2, pointIndex) = point[2];
+    }
+  // Subtract centroid
+  Eigen::Vector3d centroid(pointCoords.row(0).mean(), pointCoords.row(1).mean(), pointCoords.row(2).mean());
+  pointCoords.row(0).array() -= centroid(0);
+  pointCoords.row(1).array() -= centroid(1);
+  pointCoords.row(2).array() -= centroid(2);
+  Eigen::BDCSVD<Eigen::MatrixXd> svd(pointCoords, Eigen::ComputeFullU);
+  const Eigen::MatrixXd& u = svd.matrixU();
+
+  transformToBestFitPlane->Identity();
+  for (int row = 0; row < 3; row++)
+    {
+    transformToBestFitPlane->SetElement(row, 0, svd.matrixU()(row,0));
+    transformToBestFitPlane->SetElement(row, 1, svd.matrixU()(row, 1));
+    transformToBestFitPlane->SetElement(row, 2, svd.matrixU()(row, 2));
+    transformToBestFitPlane->SetElement(row, 3, centroid(row));
+    }
+
   return true;
 }

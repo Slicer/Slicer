@@ -34,6 +34,7 @@
 
 #include "vtkSlicerMarkupsModuleLogicExport.h"
 
+class vtkMatrix4x4;
 class vtkMRMLMarkupsNode;
 class vtkMRMLMarkupsClosedCurveNode;
 class vtkMRMLMarkupsDisplayNode;
@@ -231,6 +232,9 @@ public:
 
   /// Compute least squares best fit plane
   static bool FitPlaneToPoints(vtkPoints* curvePoints, vtkPlane* plane);
+
+  /// Compute transform that best transforms the XY plane to the best fit plane
+  static bool FitPlaneToPoints(vtkPoints* curvePoints, vtkMatrix4x4* transformToBestFitPlane);
 
 protected:
   vtkSlicerMarkupsLogic();
