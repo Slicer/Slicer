@@ -9,6 +9,7 @@ class SegmentEditorEffect(AbstractScriptedSegmentEditorEffect):
   def __init__(self, scriptedEffect):
     scriptedEffect.name = 'TemplateKey'
     scriptedEffect.perSegment = False # this effect operates on all segments at once (not on a single selected segment)
+    scriptedEffect.requireSegments = True # this effect requires segment(s) existing in the segmentation
     AbstractScriptedSegmentEditorEffect.__init__(self, scriptedEffect)
 
   def clone(self):

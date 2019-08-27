@@ -1593,7 +1593,7 @@ void qMRMLSegmentEditorWidget::updateEffectsSectionFromMRML()
         // nullptr effect
         continue;
         }
-      effectButton->setEnabled(segmentAvailable && (segmentSelected || !effect->perSegment()));
+      effectButton->setEnabled(!effect->requireSegments() || (segmentAvailable && (segmentSelected || !effect->perSegment())));
       }
     }
 

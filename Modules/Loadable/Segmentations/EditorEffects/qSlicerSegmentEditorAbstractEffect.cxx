@@ -112,6 +112,7 @@ qSlicerSegmentEditorAbstractEffect::qSlicerSegmentEditorAbstractEffect(QObject* 
  , m_Name(QString())
  , m_Active(false)
  , m_PerSegment(true)
+ , m_RequireSegments(true)
  , m_ShowEffectCursorInSliceView(true)
  , m_ShowEffectCursorInThreeDView(false)
  , m_FillValue(1.0)
@@ -152,6 +153,18 @@ void qSlicerSegmentEditorAbstractEffect::setPerSegment(bool perSegment)
 {
   Q_UNUSED(perSegment);
   qCritical() << Q_FUNC_INFO << ": Cannot set per-segment flag by method, only in constructor!";
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerSegmentEditorAbstractEffect::requireSegments()const
+{
+  return this->m_RequireSegments;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorAbstractEffect::setRequireSegments(bool requireSegments)
+{
+  this->m_RequireSegments = requireSegments;
 }
 
 //-----------------------------------------------------------------------------

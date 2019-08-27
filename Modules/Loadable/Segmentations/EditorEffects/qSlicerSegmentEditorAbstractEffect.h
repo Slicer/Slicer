@@ -71,6 +71,12 @@ public:
   /// \sa perSegment(), \sa setPerSegment
   Q_PROPERTY(bool perSegment READ perSegment WRITE setPerSegment)
 
+  /// If this property is set to true then this effect is enabled only when the segmentation has segment(s) in it.
+  /// It can be set to false in effects which create new segments.
+  /// True by default.
+  /// \sa requireSegments(), \sa setRequireSegments
+  Q_PROPERTY(bool requireSegments READ requireSegments WRITE setRequireSegments)
+
   /// Show effect cursor in slice view. If false then default arrow cursor will be shown.
   /// True by default.
   Q_PROPERTY(bool showEffectCursorInSliceView READ showEffectCursorInSliceView WRITE setShowEffectCursorInSliceView)
@@ -221,6 +227,12 @@ public:
   /// Set flag indicating whether effect operates on segments (true) or the whole segmentation (false).
   /// NOTE: name must be defined in constructor in C++ effects, this can only be used in python scripted ones
   virtual void setPerSegment(bool perSegment);
+
+  /// If this property is set to true then this effect is enabled only when the segmentation has segment(s) in it.
+  virtual bool requireSegments()const;
+  /// If this property is set to true then this effect is enabled only when the segmentation has segment(s) in it.
+  virtual void setRequireSegments(bool requireSegments);
+
 
   /// Turn off cursor and save cursor to restore later
   Q_INVOKABLE void cursorOff(qMRMLWidget* viewWidget);
@@ -382,6 +394,8 @@ protected:
   /// of modifier labelmap, but it is set to empty in the parameter set node.
   /// True by default.
   bool m_PerSegment;
+
+  bool m_RequireSegments;
 
   bool m_ShowEffectCursorInSliceView;
   bool m_ShowEffectCursorInThreeDView;

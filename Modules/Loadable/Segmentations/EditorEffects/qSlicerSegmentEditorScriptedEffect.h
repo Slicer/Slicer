@@ -69,6 +69,9 @@ public:
   /// Set flag indicating whether effect operates on segments (true) or the whole segmentation (false).
   void setPerSegment(bool perSegment) override;
 
+  /// If this property is set to true then this effect is enabled only when the segmentation has segment(s) in it.
+  void setRequireSegments(bool requireSegments) override;
+
 // API: Methods that are to be reimplemented in the effect subclasses
 public:
   /// Get icon for effect to be displayed in segment editor

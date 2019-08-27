@@ -229,6 +229,12 @@ void qSlicerSegmentEditorScriptedEffect::setPerSegment(bool perSegment)
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerSegmentEditorScriptedEffect::setRequireSegments(bool requireSegments)
+{
+  this->m_RequireSegments = requireSegments;
+}
+
+//-----------------------------------------------------------------------------
 QIcon qSlicerSegmentEditorScriptedEffect::icon()
 {
   Q_D(const qSlicerSegmentEditorScriptedEffect);
