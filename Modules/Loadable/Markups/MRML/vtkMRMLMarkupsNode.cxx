@@ -319,8 +319,13 @@ void vtkMRMLMarkupsNode::RemoveAllControlPoints()
     return;
     }
 
+  bool definedPointsExisted = false;
   for(unsigned int i = 0; i < this->ControlPoints.size(); i++)
     {
+    if (this->ControlPoints[i]->PositionStatus == vtkMRMLMarkupsNode::PositionDefined)
+      {
+      definedPointsExisted = true;
+      }
     delete this->ControlPoints[i];
     }
 
@@ -334,6 +339,10 @@ void vtkMRMLMarkupsNode::RemoveAllControlPoints()
   this->CurvePoly->GetLines()->Squeeze();
 
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointRemovedEvent);
+  if (definedPointsExisted)
+    {
+    this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionUndefinedEvent);
+    }
 }
 
 //-------------------------------------------------------------------------
@@ -489,6 +498,10 @@ int vtkMRMLMarkupsNode::AddControlPoint(ControlPoint *controlPoint)
   int controlPointIndex = this->GetNumberOfControlPoints() - 1;
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointAddedEvent,  static_cast<void*>(&controlPointIndex));
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&controlPointIndex));
+  if (controlPoint->PositionStatus == vtkMRMLMarkupsNode::PositionDefined)
+    {
+    this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionDefinedEvent, static_cast<void*>(&controlPointIndex));
+    }
   return controlPointIndex;
 }
 
@@ -619,11 +632,17 @@ void vtkMRMLMarkupsNode::RemoveNthControlPoint(int pointIndex)
     this->LastUsedControlPointNumber--;
     }
 
+  bool positionWasDefined = (this->ControlPoints[static_cast<unsigned int>(pointIndex)]->PositionStatus == vtkMRMLMarkupsNode::PositionDefined);
+
   delete this->ControlPoints[static_cast<unsigned int> (pointIndex)];
   this->ControlPoints.erase(this->ControlPoints.begin() + pointIndex);
 
   this->UpdateCurvePolyFromControlPoints();
 
+  if (positionWasDefined)
+    {
+    this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionUndefinedEvent, static_cast<void*>(&pointIndex));
+    }
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&pointIndex));
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointRemovedEvent, static_cast<void*>(&pointIndex));
 }
@@ -662,7 +681,10 @@ bool vtkMRMLMarkupsNode::InsertControlPoint(ControlPoint *controlPoint, int targ
 
   // let observers know that a markup was added
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointAddedEvent, static_cast<void*>(&targetIndex));
-
+  if (controlPoint->PositionStatus == vtkMRMLMarkupsNode::PositionDefined)
+    {
+    this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionUndefinedEvent, static_cast<void*>(&targetIndex));
+    }
   return true;
 }
 
@@ -791,6 +813,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointPosition(const int pointIndex,
   controlPointPosition[0] = x;
   controlPointPosition[1] = y;
   controlPointPosition[2] = z;
+  int oldPositionStatus = controlPoint->PositionStatus;
   controlPoint->PositionStatus = positionStatus;
 
   vtkPoints* points = this->CurveInputPoly->GetPoints();
@@ -801,6 +824,14 @@ void vtkMRMLMarkupsNode::SetNthControlPointPosition(const int pointIndex,
   // throw an event to let listeners know the position has changed
   int n = pointIndex;
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
+  if (oldPositionStatus != PositionDefined && positionStatus == PositionDefined)
+    {
+    this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionDefinedEvent, static_cast<void*>(&n));
+    }
+  else if (oldPositionStatus == PositionDefined && positionStatus != PositionDefined)
+    {
+    this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionUndefinedEvent, static_cast<void*>(&n));
+    }
 }
 
 //-----------------------------------------------------------
@@ -843,6 +874,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointPositionOrientationWorldFromArray(
     }
   // TODO: return if no modification
   this->TransformPointFromWorld(pos, controlPoint->Position);
+  int oldPositionStatus = controlPoint->PositionStatus;
   controlPoint->PositionStatus = positionStatus;
   // TODO: transform orientation matrix to world
   std::copy_n(orientationMatrix, 9, controlPoint->OrientationMatrix);
@@ -863,6 +895,14 @@ void vtkMRMLMarkupsNode::SetNthControlPointPositionOrientationWorldFromArray(
   // throw an event to let listeners know the position has changed
   int n = pointIndex;
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
+  if (oldPositionStatus != PositionDefined && positionStatus == PositionDefined)
+  {
+    this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionDefinedEvent, static_cast<void*>(&n));
+  }
+  else if (oldPositionStatus == PositionDefined && positionStatus != PositionDefined)
+  {
+    this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionUndefinedEvent, static_cast<void*>(&n));
+  }
 }
 
 //-----------------------------------------------------------
