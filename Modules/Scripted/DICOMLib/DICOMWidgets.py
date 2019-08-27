@@ -523,6 +523,7 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
         But, if the application is in testing mode, just pick a temp directory.
     """
     if slicer.app.commandOptions().testingEnabled:
+      self.dicomBrowser.schemaUpdateAutoCreateDirectory = True
       databaseDirectory = os.path.join(slicer.app.temporaryPath, 'tempDICOMDatabase')
     else:
       databaseDirectory = self.settings.value('DatabaseDirectory')
