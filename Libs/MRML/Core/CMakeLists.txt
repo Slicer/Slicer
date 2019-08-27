@@ -43,6 +43,7 @@ set(${PROJECT_NAME}_ITK_COMPONENTS
   ITKIOImageBase
   ITKIOSpatialObjects
   ITKIOTransformBase
+  ITKMesh
   ITKTransform
   )
 find_package(ITK 4.6 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
