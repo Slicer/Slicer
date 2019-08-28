@@ -804,7 +804,7 @@ vtkSlicerVolumesLogic::CreateAndAddLabelVolume(vtkMRMLScene *scene,
 
   // Create a volume node as copy of source volume
   vtkNew<vtkMRMLLabelMapVolumeNode> labelNode;
-  std::string uname = this->GetMRMLScene()->GetUniqueNameByString(name);
+  std::string uname = scene->GetUniqueNameByString(name);
   labelNode->SetName(uname.c_str());
   scene->AddNode(labelNode.GetPointer());
 
