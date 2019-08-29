@@ -1304,8 +1304,8 @@ void qSlicerTerminologyNavigatorWidget::setCurrentTerminology(QString terminolog
     d->SearchBox_Category->setEnabled(true);
     }
   
-  // Selection is invalid until category then type is selected
-  emit selectionValidityChanged(false);
+  // Selection is valid if there is a valid type object
+  emit selectionValidityChanged(d->CurrentTypeObject && d->CurrentTypeObject->GetCodeValue());
 }
 
 //-----------------------------------------------------------------------------
