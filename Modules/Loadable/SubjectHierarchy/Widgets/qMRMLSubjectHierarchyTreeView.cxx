@@ -1641,11 +1641,17 @@ void qMRMLSubjectHierarchyTreeView::onSubjectHierarchyItemModified(vtkObject *ca
 //-----------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::onMRMLSceneCloseEnded(vtkObject* sceneObject)
 {
+  Q_D(qMRMLSubjectHierarchyTreeView);
+
   vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
   if (!scene)
     {
     return;
     }
+
+  // Clear selection model
+  this->clearSelection();
+  d->SelectedItems.clear();
 
   // Get new subject hierarchy node (or if not created yet then trigger creating it, because
   // scene close removed the pseudo-singleton subject hierarchy node), and set it to the tree view
