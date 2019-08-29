@@ -549,6 +549,7 @@ void vtkMRMLSelectionNode::RemovePlaceNodeClassNameFromList(const char *classNam
   // erase the className and resource
   this->PlaceNodeClassNameList.erase(this->PlaceNodeClassNameList.begin()+index);
   this->PlaceNodeResourceList.erase(this->PlaceNodeResourceList.begin()+index);
+  this->PlaceNodeIconNameList.erase(this->PlaceNodeIconNameList.begin()+index);
 
   // was it the active one?
   if (this->GetActivePlaceNodeClassName() &&
