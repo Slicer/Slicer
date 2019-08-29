@@ -160,6 +160,8 @@ void qSlicerMouseModeToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
     this->MRMLAppLogic->GetSelectionNode() : nullptr;
   this->qvtkReconnect(selectionNode, vtkMRMLSelectionNode::ActivePlaceNodeClassNameChangedEvent,
                       this, SLOT(updateWidgetFromMRML()));
+  this->qvtkReconnect(selectionNode, vtkMRMLSelectionNode::PlaceNodeClassNameListModifiedEvent,
+                      this, SLOT(updateWidgetFromMRML()));
 
   // Update UI
   q->setEnabled(this->MRMLScene != nullptr);
@@ -320,28 +322,28 @@ void qSlicerMouseModeToolBarPrivate::updatePlaceWidgetMenuActionList()
     if (!action)
       {
       // add it
-      QAction * newAction = new QAction(this->PlaceWidgetMenu);
-      newAction->setObjectName(placeNodeClassName);
-      newAction->setIcon(QIcon(placeNodeResource));
-      if (newAction->icon().isNull())
-        {
-        qCritical() << "qSlicerMouseModeToolBarPrivate::updateWidgetFromSelectionNode - "
-                    << "New action icon for class name " << placeNodeClassName << "is null. "
-                    << "Resource:" << placeNodeResource;
-        }
-      newAction->setText(placeNodeIconName);
-      newAction->setIconText(placeNodeIconName);
-      QString tooltip = QString("Use mouse to Create-and-Place ") + placeNodeIconName;
-      newAction->setToolTip(tooltip);
-      // save the class name as data on the action
-      newAction->setData(placeNodeClassName);
-      newAction->setCheckable(true);
-      connect(newAction, SIGNAL(triggered()),
-              q, SLOT(switchPlaceMode()));
-      this->PlaceWidgetAction->menu()->addAction(newAction);
-      this->PlaceModesActionGroup->addAction(newAction);
-      action = newAction;
+      action = new QAction(this->PlaceWidgetMenu);
+      connect(action, SIGNAL(triggered()),
+        q, SLOT(switchPlaceMode()));
+      this->PlaceWidgetAction->menu()->addAction(action);
+      this->PlaceModesActionGroup->addAction(action);
       }
+    // update it
+    action->setObjectName(placeNodeClassName);
+    action->setIcon(QIcon(placeNodeResource));
+    if (action->icon().isNull())
+      {
+      qCritical() << "qSlicerMouseModeToolBarPrivate::updateWidgetFromSelectionNode - "
+                  << "New action icon for class name " << placeNodeClassName << "is null. "
+                  << "Resource:" << placeNodeResource;
+      }
+    action->setText(placeNodeIconName);
+    action->setIconText(placeNodeIconName);
+    QString tooltip = QString("Use mouse to Create-and-Place ") + placeNodeIconName;
+    action->setToolTip(tooltip);
+    // save the class name as data on the action
+    action->setData(placeNodeClassName);
+    action->setCheckable(true);
     }
 }
 
