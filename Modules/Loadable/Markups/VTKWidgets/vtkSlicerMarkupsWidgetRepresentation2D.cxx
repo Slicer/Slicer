@@ -286,7 +286,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateAllPointsAndLabelsFromMRML(do
         }
 
       double slicePos[3] = { 0.0 };
-      this->GetNthNodeDisplayPosition(pointIndex, slicePos);
+      this->GetNthControlPointDisplayPosition(pointIndex, slicePos);
 
       controlPoints->ControlPoints->InsertNextPoint(slicePos);
       slicePos[0] += labelsOffset / sqrt(2.0);
@@ -351,7 +351,7 @@ vtkMRMLSliceNode *vtkSlicerMarkupsWidgetRepresentation2D::GetSliceNode()
 }
 
 //----------------------------------------------------------------------
-int vtkSlicerMarkupsWidgetRepresentation2D::GetNthNodeDisplayPosition(int n, double slicePos[2])
+int vtkSlicerMarkupsWidgetRepresentation2D::GetNthControlPointDisplayPosition(int n, double slicePos[2])
 {
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
@@ -366,10 +366,25 @@ int vtkSlicerMarkupsWidgetRepresentation2D::GetNthNodeDisplayPosition(int n, dou
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation2D::SetNthPointSliceVisibility(int n, bool visibility)
+void vtkSlicerMarkupsWidgetRepresentation2D::SetNthControlPointSliceVisibility(int n, bool visibility)
 {
   this->PointsVisibilityOnSlice->InsertValue(n, visibility);
   this->Modified();
+}
+
+//----------------------------------------------------------------------
+bool vtkSlicerMarkupsWidgetRepresentation2D::GetNthControlPointViewVisibility(int n)
+{
+  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  if (!markupsNode || !this->GetVisibility())
+    {
+    return false;
+    }
+  if (!markupsNode->GetNthControlPointVisibility(n))
+    {
+    return false;
+    }
+  return (this->PointsVisibilityOnSlice->GetValue(n) != 0 || this->MarkupsDisplayNode->GetSliceProjection());
 }
 
 //----------------------------------------------------------------------
@@ -439,10 +454,10 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller,
   UpdateControlPointSize();
 
   // Points widgets have only one Markup/Representation
-  for (int PointIndex = 0; PointIndex < markupsNode->GetNumberOfControlPoints(); PointIndex++)
+  for (int pointIndex = 0; pointIndex < markupsNode->GetNumberOfControlPoints(); pointIndex++)
     {
-    bool visibility = this->IsPointDisplayableOnSlice(markupsNode, PointIndex);
-    this->SetNthPointSliceVisibility(PointIndex, visibility);
+    bool visibility =  this->IsControlPointDisplayableOnSlice(markupsNode, pointIndex);
+    this->SetNthControlPointSliceVisibility(pointIndex, visibility);
     }
   if (markupsNode->GetCurveClosed())
     {
@@ -511,6 +526,10 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteract(
   sliceNode->GetXYToRAS()->Invert(sliceNode->GetXYToRAS(), rasToxyMatrix.GetPointer());
   for (int i = 0; i < numberOfPoints; i++)
     {
+    if (!markupsNode->GetNthControlPointVisibility(i))
+      {
+      continue;
+      }
     if (!this->PointsVisibilityOnSlice->GetValue(i) && !this->MarkupsDisplayNode->GetSliceProjection())
       {
       continue;
@@ -761,7 +780,7 @@ vtkSlicerMarkupsWidgetRepresentation2D::ControlPointsPipeline2D* vtkSlicerMarkup
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerMarkupsWidgetRepresentation2D::IsPointDisplayableOnSlice(vtkMRMLMarkupsNode *markupsNode, int pointIndex)
+bool vtkSlicerMarkupsWidgetRepresentation2D::IsControlPointDisplayableOnSlice(vtkMRMLMarkupsNode *markupsNode, int pointIndex)
 {
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
   if (!sliceNode)

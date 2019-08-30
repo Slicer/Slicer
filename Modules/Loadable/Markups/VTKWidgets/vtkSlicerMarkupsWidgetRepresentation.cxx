@@ -140,7 +140,7 @@ vtkSlicerMarkupsWidgetRepresentation::~vtkSlicerMarkupsWidgetRepresentation()
 // The display position for a given world position must be re-computed
 // from the world positions... It should not be queried from the renderer
 // whose camera position may have changed
-int vtkSlicerMarkupsWidgetRepresentation::GetNthNodeDisplayPosition(int n, double displayPos[2])
+int vtkSlicerMarkupsWidgetRepresentation::GetNthControlPointDisplayPosition(int n, double displayPos[2])
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || n < 0 || n >= markupsNode->GetNumberOfControlPoints())
@@ -149,7 +149,7 @@ int vtkSlicerMarkupsWidgetRepresentation::GetNthNodeDisplayPosition(int n, doubl
     }
 
   double pos[4] = { 0.0, 0.0, 0.0, 1.0 };
-  markupsNode->TransformPointToWorld(this->GetNthNode(n)->Position, pos);
+  markupsNode->TransformPointToWorld(this->GetNthControlPoint(n)->Position, pos);
 
   this->Renderer->SetWorldPoint(pos);
   this->Renderer->WorldToDisplay();
@@ -161,7 +161,7 @@ int vtkSlicerMarkupsWidgetRepresentation::GetNthNodeDisplayPosition(int n, doubl
 }
 
 //----------------------------------------------------------------------
-vtkMRMLMarkupsNode::ControlPoint* vtkSlicerMarkupsWidgetRepresentation::GetNthNode(int n)
+vtkMRMLMarkupsNode::ControlPoint* vtkSlicerMarkupsWidgetRepresentation::GetNthControlPoint(int n)
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || n < 0 || n >= markupsNode->GetNumberOfControlPoints())
@@ -436,7 +436,7 @@ void vtkSlicerMarkupsWidgetRepresentation::BuildLine(vtkPolyData* linePolyData, 
     // Add the node
     if (displayPosition)
       {
-      this->GetNthNodeDisplayPosition(i, pos);
+      this->GetNthControlPointDisplayPosition(i, pos);
       }
     else
       {
@@ -451,7 +451,7 @@ void vtkSlicerMarkupsWidgetRepresentation::BuildLine(vtkPolyData* linePolyData, 
     {
     if (displayPosition)
       {
-      this->GetNthNodeDisplayPosition(0, pos);
+      this->GetNthControlPointDisplayPosition(0, pos);
       }
     else
       {

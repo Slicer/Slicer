@@ -567,12 +567,17 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
   if (this->MarkupsDisplayNode->GetUseGlyphScale())
     {
     double newControlPointSize = 1.0;
+    double oldScreenSizePixel = this->ScreenSizePixel;
     this->UpdateViewScaleFactor();
+    if (this->ScreenSizePixel != oldScreenSizePixel)
+      {
+      updateControlPointSize = true;
+      }
     newControlPointSize = this->ScreenSizePixel * this->ScreenScaleFactor
       * this->MarkupsDisplayNode->GetGlyphScale() / 100.0 * this->ViewScaleFactorMmPerPixel;
     // Only update the size if there is noticeable difference to avoid slight flickering
     // when the camera is moved
-    if (this->ControlPointSize > 0 && fabs(newControlPointSize - this->ControlPointSize) / this->ControlPointSize > 0.05)
+    if (this->ControlPointSize <= 0.0 || fabs(newControlPointSize - this->ControlPointSize) / this->ControlPointSize > 0.05)
       {
       this->ControlPointSize = newControlPointSize;
       updateControlPointSize = true;
@@ -802,8 +807,13 @@ double vtkSlicerMarkupsWidgetRepresentation3D::GetViewScaleFactorAtPosition(doub
     bottomCenter[2] = 0.0;
     double distInPixels = sqrt(vtkMath::Distance2BetweenPoints(topCenter, bottomCenter));
 
-    // 2.0 = 2x length of viewUp vector in mm (because viewUp is unit vector)
-    viewScaleFactorMmPerPixel = 2.0 / distInPixels;
+    // if render window is not initialized yet then distInPixels == 0.0,
+    // in that case just leave the default viewScaleFactorMmPerPixel
+    if (distInPixels > 1e-3)
+      {
+      // 2.0 = 2x length of viewUp vector in mm (because viewUp is unit vector)
+      viewScaleFactorMmPerPixel = 2.0 / distInPixels;
+      }
     }
   return viewScaleFactorMmPerPixel;
 }
@@ -820,7 +830,13 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateViewScaleFactor()
     }
 
   int* screenSize = this->Renderer->GetRenderWindow()->GetScreenSize();
-  this->ScreenSizePixel = sqrt(screenSize[0] * screenSize[0] + screenSize[1] * screenSize[1]);
+  double screenSizePixel = sqrt(screenSize[0] * screenSize[0] + screenSize[1] * screenSize[1]);
+  if (screenSizePixel < 1.0)
+    {
+    // render window is not fully initialized yet
+    return;
+    }
+  this->ScreenSizePixel = screenSizePixel;
 
   double cameraFP[3] = { 0.0 };
   this->Renderer->GetActiveCamera()->GetFocalPoint(cameraFP);
@@ -844,4 +860,45 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateControlPointSize()
     ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[controlPointType]);
     controlPoints->SelectVisiblePoints->SetToleranceWorld(this->ControlPointSize*0.5);
     }
+}
+
+//----------------------------------------------------------------------
+bool vtkSlicerMarkupsWidgetRepresentation3D::GetNthControlPointViewVisibility(int n)
+{
+  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  if (!markupsNode || !this->GetVisibility())
+    {
+    return false;
+    }
+
+  // Check SelectVisiblePoints output to see if the point is occluded or not.
+  // SelectVisiblePoints is very sensitive to when it is executed (it has to check the z buffer after
+  // opaque geometry is rendered but 2D labels are not yet), therefore we do not
+  // update its output but just use the last output generated for the last rendering.
+  bool pointVisible = false;
+  for (int controlPointType = 0; controlPointType <= Active; ++controlPointType)
+    {
+    if ((controlPointType == Unselected && markupsNode->GetNthControlPointSelected(n))
+      || (controlPointType == Selected && !markupsNode->GetNthControlPointSelected(n)))
+      {
+      continue;
+      }
+    ControlPointsPipeline3D* controlPoints = this->GetControlPointsPipeline(controlPointType);
+    vtkPolyData* visiblePointsPoly = controlPoints->SelectVisiblePoints->GetOutput();
+    if (!visiblePointsPoly || !visiblePointsPoly->GetPointData())
+      {
+      continue;
+      }
+    vtkIdTypeArray* visiblePointIndices = vtkIdTypeArray::SafeDownCast(visiblePointsPoly->GetPointData()->GetAbstractArray("controlPointIndices"));
+    if (!visiblePointIndices)
+      {
+      continue;
+      }
+    if (visiblePointIndices->LookupValue(n) >= 0)
+      {
+      // visible
+      return true;
+      }
+    }
+  return false;
 }

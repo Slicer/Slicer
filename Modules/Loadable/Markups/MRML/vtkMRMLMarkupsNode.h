@@ -199,7 +199,6 @@ public:
     LabelFormatModifiedEvent,
     PointAddedEvent,
     PointRemovedEvent,
-    PointPlacedEvent,
     PointPositionDefinedEvent, // point was not defined (undefined, preview position status, or non-existent point) before but now it is defined
     PointPositionUndefinedEvent, // point position was defined and now it is not defined anymore (point deleted or position is not defined)
     PointModifiedEvent,

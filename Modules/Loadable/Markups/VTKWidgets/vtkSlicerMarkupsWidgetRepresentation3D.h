@@ -76,6 +76,11 @@ public:
 
   bool AccuratePick(int x, int y, double pickPoint[3]);
 
+  /// Return true if the control point is actually visible
+  /// (displayed and not occluded by other objects in the view).
+  /// Useful for non-regression tests that need to inspect internal state of the widget.
+  bool GetNthControlPointViewVisibility(int n);
+
 protected:
   vtkSlicerMarkupsWidgetRepresentation3D();
   ~vtkSlicerMarkupsWidgetRepresentation3D() override;

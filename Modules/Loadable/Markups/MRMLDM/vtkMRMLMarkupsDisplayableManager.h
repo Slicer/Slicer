@@ -82,6 +82,9 @@ public:
   /// \sa ConvertDeviceToXYZ(vtkRenderWindowInteractor *, vtkMRMLSliceNode *, double x, double y, double xyz[3])
   void ConvertDeviceToXYZ(double x, double y, double xyz[3]);
 
+  /// Get the widget of a node.
+  vtkSlicerMarkupsWidget* GetWidget(vtkMRMLMarkupsDisplayNode * node);
+
 protected:
 
   vtkMRMLMarkupsDisplayableManager();
@@ -120,9 +123,6 @@ protected:
   /// Observe the interaction node.
   void AddObserversToInteractionNode();
   void RemoveObserversFromInteractionNode();
-
-  /// Get the widget of a node.
-  vtkSlicerMarkupsWidget* GetWidget(vtkMRMLMarkupsDisplayNode * node);
 
   /// Check if it is the right displayManager
   virtual bool IsCorrectDisplayableManager();

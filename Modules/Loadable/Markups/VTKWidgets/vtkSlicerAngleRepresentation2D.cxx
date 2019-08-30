@@ -165,9 +165,9 @@ void vtkSlicerAngleRepresentation2D::BuildArc()
   this->Arc->SetCenter(c);
   this->Arc->Update();
 
-  this->GetNthNodeDisplayPosition(0, p1);
-  this->GetNthNodeDisplayPosition(1, c);
-  this->GetNthNodeDisplayPosition(2, p2);
+  this->GetNthControlPointDisplayPosition(0, p1);
+  this->GetNthControlPointDisplayPosition(1, c);
+  this->GetNthControlPointDisplayPosition(2, p2);
 
   for (int i = 0; i < 3; ++i)
     {

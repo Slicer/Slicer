@@ -69,10 +69,10 @@ public:
   /// Get the nth node's display position. Will return
   /// 1 on success, or 0 if there are not at least
   /// (n+1) nodes (0 based counting).
-  virtual int GetNthNodeDisplayPosition(int n, double pos[2]);
+  virtual int GetNthControlPointDisplayPosition(int n, double pos[2]);
 
   /// Get the nth node.
-  virtual vtkMRMLMarkupsNode::ControlPoint *GetNthNode(int n);
+  virtual vtkMRMLMarkupsNode::ControlPoint *GetNthControlPoint(int n);
 
   /// Set/Get the vtkMRMLMarkipsNode connected with this representation
   virtual void SetMarkupsDisplayNode(vtkMRMLMarkupsDisplayNode *markupsDisplayNode);

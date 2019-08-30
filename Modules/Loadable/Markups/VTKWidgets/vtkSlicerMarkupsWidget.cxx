@@ -716,7 +716,7 @@ void vtkSlicerMarkupsWidget::StartWidgetInteraction(vtkMRMLInteractionEventData*
     // Maintain this during interaction such as translating (don't
     // force center of widget to snap to mouse position)
     double pos[2] = { 0.0 };
-    if (rep->GetNthNodeDisplayPosition(activeControlPointIndex, pos))
+    if (rep->GetNthControlPointDisplayPosition(activeControlPointIndex, pos))
       {
       // save offset
       this->StartEventOffsetPosition[0] = startEventPos[0] - pos[0];

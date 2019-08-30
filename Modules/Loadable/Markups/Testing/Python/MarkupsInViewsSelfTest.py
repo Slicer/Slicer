@@ -73,35 +73,44 @@ class MarkupsInViewsSelfTestWidget(ScriptedLoadableModuleWidget):
 
 class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
 
-  def widgetVisible(self, fidNode, viewNodeID):
+  def controlPointVisible3D(self, fidNode, viewNodeID, controlPointIndex):
+    import vtkSlicerMarkupsModuleVTKWidgetsPython
     lm = slicer.app.layoutManager()
     for v in range(lm.threeDViewCount):
      td = lm.threeDWidget(v)
+     if td.viewLogic().GetViewNode().GetID() != viewNodeID:
+       continue
+     td.threeDView().forceRender()
+     slicer.app.processEvents()
      ms = vtk.vtkCollection()
      td.getDisplayableManagers(ms)
      for i in range(ms.GetNumberOfItems()):
       m = ms.GetItemAsObject(i)
-      if m.GetClassName() == "vtkMRMLMarkupsFiducialDisplayableManager3D" and m.GetMRMLViewNode().GetID() == viewNodeID:
-        h = m.GetHelper()
-        seedWidget = h.GetWidget(fidNode)
-        return seedWidget.GetEnabled()
-    return 0
+      if m.GetClassName() == "vtkMRMLMarkupsDisplayableManager":
+        markupsWidget = m.GetWidget(fidNode.GetDisplayNode())
+        return markupsWidget.GetMarkupsRepresentation().GetNthControlPointViewVisibility(controlPointIndex)
+    return False
 
-  def widgetVisibleOnSlice(self, fidNode, sliceNodeID):
+  def controlPointVisibleSlice(self, fidNode, sliceNodeID, controlPointIndex):
+    import vtkSlicerMarkupsModuleVTKWidgetsPython
     lm = slicer.app.layoutManager()
     sliceNames = lm.sliceViewNames()
     for sliceName in sliceNames:
       sliceWidget = lm.sliceWidget(sliceName)
       sliceView = sliceWidget.sliceView()
+      sliceNode = sliceView.mrmlSliceNode()
+      if sliceNode.GetID() != sliceNodeID:
+        continue
+      sliceView.forceRender()
+      slicer.app.processEvents()
       ms = vtk.vtkCollection()
       sliceView.getDisplayableManagers(ms)
       for i in range(ms.GetNumberOfItems()):
         m = ms.GetItemAsObject(i)
-        if m.GetClassName() == 'vtkMRMLMarkupsFiducialDisplayableManager2D' and m.GetMRMLSliceNode().GetID() == sliceNodeID:
-          h = m.GetHelper()
-          seedWidget = h.GetWidget(fidNode)
-          return seedWidget.GetEnabled()
-    return 0
+        if m.GetClassName() == 'vtkMRMLMarkupsDisplayableManager':
+          markupsWidget = m.GetWidget(fidNode.GetDisplayNode())
+          return markupsWidget.GetMarkupsRepresentation().GetNthControlPointViewVisibility(controlPointIndex)
+    return False
 
   def printViewNodeIDs(self, displayNode):
     numIDs = displayNode.GetNumberOfViewNodeIDs()
@@ -125,6 +134,9 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     for sn in range(numSliceNodes):
       sliceNode = slicer.mrmlScene.GetNthNodeByClass(sn, 'vtkMRMLSliceNode')
       print('\t',sliceNode.GetName(),"id =",sliceNode.GetID())
+
+  def onRecordNodeEvent(self, caller, event, eventId):
+    self.nodeEvents.append(eventId)
 
   def run(self):
     """
@@ -160,35 +172,48 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     lm.setLayout(2)
 
     # create a fiducial list
-    displayNode = slicer.vtkMRMLMarkupsDisplayNode()
-    slicer.mrmlScene.AddNode(displayNode)
     fidNode = slicer.vtkMRMLMarkupsFiducialNode()
     slicer.mrmlScene.AddNode(fidNode)
-    fidNode.SetAndObserveDisplayNodeID(displayNode.GetID())
+    fidNode.CreateDefaultDisplayNodes()
+    displayNode = fidNode.GetDisplayNode()
 
     # make it active
     selectionNode = slicer.mrmlScene.GetNodeByID("vtkMRMLSelectionNodeSingleton")
     if (selectionNode is not None):
       selectionNode.SetReferenceActivePlaceNodeID(fidNode.GetID())
 
+    fidNodeObserverTags = []
+    self.nodeEvents = []
+    observedEvents = [
+      slicer.vtkMRMLMarkupsNode.PointPositionDefinedEvent,
+      slicer.vtkMRMLMarkupsNode.PointPositionUndefinedEvent ]
+    for eventId in observedEvents:
+      fidNodeObserverTags.append(fidNode.AddObserver(eventId, lambda caller, event, eventId=eventId: self.onRecordNodeEvent(caller, event, eventId)))
+
     # add some known points to it
     eye1 = [33.4975, 79.4042, -10.2143]
     eye2 = [-31.283, 80.9652, -16.2143]
     nose = [4.61944, 114.526, -33.2143]
-    index = fidNode.AddFiducialFromArray(eye1)
-    fidNode.SetNthFiducialLabel(index, "eye-1")
-    index = fidNode.AddFiducialFromArray(eye2)
-    fidNode.SetNthFiducialLabel(index, "eye-2")
+    controlPointIndex = fidNode.AddFiducialFromArray(eye1)
+    slicer.nodeEvents = self.nodeEvents
+    assert(len(self.nodeEvents) == 1)
+    assert(self.nodeEvents[0] == slicer.vtkMRMLMarkupsNode.PointPositionDefinedEvent)
+    fidNode.SetNthFiducialLabel(controlPointIndex, "eye-1")
+    controlPointIndex = fidNode.AddFiducialFromArray(eye2)
+    fidNode.SetNthFiducialLabel(controlPointIndex, "eye-2")
     # hide the second eye as a test of visibility flags
-    fidNode.SetNthFiducialVisibility(index, 0)
-    index = fidNode.AddFiducialFromArray(nose)
-    fidNode.SetNthFiducialLabel(index, "nose")
+    fidNode.SetNthFiducialVisibility(controlPointIndex, controlPointIndex)
+    controlPointIndex = fidNode.AddFiducialFromArray(nose)
+    fidNode.SetNthFiducialLabel(controlPointIndex, "nose")
+
+    for tag in fidNodeObserverTags:
+      fidNode.RemoveObserver(tag)
 
     self.delayDisplay("Placed 3 fiducials")
 
     # self.printViewAndSliceNodes()
 
-    if self.widgetVisible(fidNode, 'vtkMRMLViewNode1') == 0:
+    if not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode1', controlPointIndex):
       self.delayDisplay("Test failed: widget is not visible in view 1")
       # self.printViewNodeIDs(displayNode)
       return False
@@ -200,7 +225,12 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     self.delayDisplay("Switched to 2 3D views")
     # self.printViewAndSliceNodes()
 
-    if self.widgetVisible(fidNode, 'vtkMRMLViewNode1') == 0 or self.widgetVisible(fidNode, 'vtkMRMLViewNode2') == 0:
+    controlPointIndex = 0
+
+    slicer.modules.markups.logic().FocusCamerasOnNthPointInMarkup(fidNode.GetID(), controlPointIndex)
+
+    if (not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode1', controlPointIndex)
+        or not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode2', controlPointIndex)):
       self.delayDisplay("Test failed: widget is not visible in view 1 and 2")
       # self.printViewNodeIDs(displayNode)
       return False
@@ -210,11 +240,11 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     #
     displayNode.AddViewNodeID("vtkMRMLViewNode2")
     self.delayDisplay("Showing only in view 2")
-    if self.widgetVisible(fidNode, 'vtkMRMLViewNode1') == 1:
+    if self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode1', controlPointIndex):
       self.delayDisplay("Test failed: widget is not supposed to be visible in view 1")
       # self.printViewNodeIDs(displayNode)
       return False
-    if self.widgetVisible(fidNode, 'vtkMRMLViewNode2') == 0:
+    if not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode2', controlPointIndex):
       self.delayDisplay("Test failed: widget is not visible in view 2")
       # self.printViewNodeIDs(displayNode)
       return False
@@ -224,7 +254,8 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     #
     displayNode.RemoveAllViewNodeIDs()
     self.delayDisplay("Showing in both views")
-    if self.widgetVisible(fidNode, 'vtkMRMLViewNode1') == 0 or self.widgetVisible(fidNode, 'vtkMRMLViewNode2') == 0:
+    if (not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode1', controlPointIndex)
+        or not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode2', controlPointIndex)):
       self.delayDisplay("Test failed: widget is not visible in view 1 and 2")
       self.printViewNodeIDs(displayNode)
       return False
@@ -234,11 +265,11 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     #
     displayNode.AddViewNodeID("vtkMRMLViewNode1")
     self.delayDisplay("Showing only in view 1")
-    if self.widgetVisible(fidNode, 'vtkMRMLViewNode2') == 1:
+    if self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode2', controlPointIndex):
       self.delayDisplay("Test failed: widget is not supposed to be visible in view 2")
       # self.printViewNodeIDs(displayNode)
       return False
-    if self.widgetVisible(fidNode, 'vtkMRMLViewNode1') == 0:
+    if not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode1', controlPointIndex):
       self.delayDisplay("Test failed: widget is not visible in view 1")
       # self.printViewNodeIDs(displayNode)
       return False
@@ -252,14 +283,14 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     displayNode.RemoveAllViewNodeIDs()
 
     # jump to the last fiducial
-    slicer.modules.markups.logic().JumpSlicesToNthPointInMarkup(fidNode.GetID(), index, 1)
+    slicer.modules.markups.logic().JumpSlicesToNthPointInMarkup(fidNode.GetID(), controlPointIndex, True)
     # refocus the 3D cameras as well
-    slicer.modules.markups.logic().FocusCamerasOnNthPointInMarkup(fidNode.GetID(), index)
+    slicer.modules.markups.logic().FocusCamerasOnNthPointInMarkup(fidNode.GetID(), controlPointIndex)
 
     # show only in red
     displayNode.AddViewNodeID('vtkMRMLSliceNodeRed')
     self.delayDisplay("Show only in red slice")
-    if self.widgetVisibleOnSlice(fidNode,'vtkMRMLSliceNodeRed') != 1:
+    if not self.controlPointVisibleSlice(fidNode,'vtkMRMLSliceNodeRed', controlPointIndex):
       self.delayDisplay("Test failed: widget not displayed on red slice")
       # self.printViewNodeIDs(displayNode)
       return False
@@ -272,10 +303,11 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     # self.printViewNodeIDs(displayNode)
     displayNode.AddViewNodeID('vtkMRMLSliceNodeGreen')
     self.delayDisplay('Show only in green slice')
-    if self.widgetVisibleOnSlice(fidNode,'vtkMRMLSliceNodeRed') != 0 or self.widgetVisibleOnSlice(fidNode,'vtkMRMLSliceNodeGreen') != 1:
+    if (self.controlPointVisibleSlice(fidNode,'vtkMRMLSliceNodeRed', controlPointIndex)
+        or not self.controlPointVisibleSlice(fidNode,'vtkMRMLSliceNodeGreen', controlPointIndex)):
       self.delayDisplay("Test failed: widget not displayed only on green slice")
-      print('\tred = ',self.widgetVisibleOnSlice(fidNode,'vtkMRMLSliceNodeRed'))
-      print('\tgreen =',self.widgetVisibleOnSlice(fidNode,'vtkMRMLSliceNodeGreen'))
+      print('\tred = ',self.controlPointVisibleSlice(fidNode,'vtkMRMLSliceNodeRed', controlPointIndex))
+      print('\tgreen =',self.controlPointVisibleSlice(fidNode,'vtkMRMLSliceNodeGreen', controlPointIndex))
       self.printViewNodeIDs(displayNode)
       return False
 
