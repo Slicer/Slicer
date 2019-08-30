@@ -47,13 +47,9 @@
 #include "vtkMRMLSceneViewNode.h"
 
 // VTK includes
-//#include <vtkAdaptiveSubdivisionFilter.h>
 #include <vtkCleanPolyData.h>
 #include <vtkDelaunay2D.h>
 #include <vtkDiskSource.h>
-//#include <vtkLinearSubdivisionFilter.h>
-//#include <vtkButterflySubdivisionFilter.h>
-//#include <vtkLoopSubdivisionFilter.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPlane.h>
@@ -61,12 +57,10 @@
 #include <vtkPolyData.h>
 #include <vtkPolyDataNormals.h>
 #include <vtkMassProperties.h>
-//#include <vtkSmoothPolyDataFilter.h>
 #include <vtkStringArray.h>
 #include <vtkThinPlateSplineTransform.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
-//#include <vtkTriangleFilter.h>
 
 #include "vtk_eigen.h"
 #include VTK_EIGEN(Dense)
@@ -1508,6 +1502,8 @@ bool vtkSlicerMarkupsLogic::FitSurfaceProjectWarp(vtkPoints* curvePoints, vtkPol
     }
 
   vtkNew<vtkThinPlateSplineTransform> landmarkTransform;
+  // Disable regularization to make sure transformation is correct even if source or target points are coplanar
+  landmarkTransform->SetRegularizeBulkTransform(false);
   landmarkTransform->SetBasisToR();
   landmarkTransform->SetSourceLandmarks(sourceLandmarkPoints);
   landmarkTransform->SetTargetLandmarks(targetLandmarkPoints);
@@ -1597,6 +1593,8 @@ bool vtkSlicerMarkupsLogic::FitSurfaceDiskWarp(vtkPoints* curvePoints, vtkPolyDa
     }
 
   vtkNew<vtkThinPlateSplineTransform> landmarkTransform;
+  // Disable regularization to make sure transformation is correct even if source or target points are coplanar
+  landmarkTransform->SetRegularizeBulkTransform(false);
   landmarkTransform->SetBasisToR();
   landmarkTransform->SetSourceLandmarks(sourceLandmarkPoints);
   landmarkTransform->SetTargetLandmarks(targetLandmarkPoints);
