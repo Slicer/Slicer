@@ -568,7 +568,7 @@ class SampleDataLogic(object):
 
     if not os.access(destFolderPath, os.W_OK):
       try:
-        os.mkdir(destFolderPath)
+        os.makedirs(destFolderPath, exist_ok=True)
       except:
         self.logMessage('<b>Failed to create cache folder %s</b>' % destFolderPath, logging.ERROR)
       if not os.access(destFolderPath, os.W_OK):
@@ -813,6 +813,7 @@ class SampleDataLogic(object):
         self.logMessage('<b>Download finished</b>')
       except IOError as e:
         self.logMessage('<b>\tDownload failed: %s</b>' % e, logging.ERROR)
+        raise ValueError(f"Failed to download {uri} to {filePath}")
 
       if algo is not None:
         self.logMessage('<b>Verifying checksum</b>')
