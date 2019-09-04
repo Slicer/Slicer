@@ -67,6 +67,7 @@ void ITKComputeThresholdFromVTKImage(vtkITKImageThresholdCalculator *self, vtkIm
   vtkExporter->SetInputData ( inputImage );
 
   ConnectPipelines(vtkExporter.GetPointer(), itkImporter);
+  itkImporter->UpdateLargestPossibleRegion();
 
   typename HistogramGeneratorType::Pointer histGenerator = HistogramGeneratorType::New();
   histGenerator->SetInput(itkImporter->GetOutput());
