@@ -97,6 +97,9 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
     # is specified in the settings, therefore promptForDatabaseDirectory must be called before this.
     self.dicomBrowser = dicomBrowser if dicomBrowser is not None else ctkDICOMBrowser()
 
+    if slicer.app.commandOptions().testingEnabled:
+      self.dicomBrowser.schemaUpdateAutoCreateDirectory = True
+
     self.browserPersistent = settingsValue('DICOM/BrowserPersistent', False, converter=toBool)
     self.tableDensity = settingsValue('DICOM/tableDensity', 'Compact')
     self.advancedView = settingsValue('DICOM/advancedView', 0, converter=int)
@@ -523,7 +526,6 @@ class DICOMDetailsBase(VTKObservationMixin, SizePositionSettingsMixin):
         But, if the application is in testing mode, just pick a temp directory.
     """
     if slicer.app.commandOptions().testingEnabled:
-      self.dicomBrowser.schemaUpdateAutoCreateDirectory = True
       databaseDirectory = os.path.join(slicer.app.temporaryPath, 'tempDICOMDatabase')
     else:
       databaseDirectory = self.settings.value('DatabaseDirectory')
