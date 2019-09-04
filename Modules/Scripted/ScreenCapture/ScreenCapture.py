@@ -185,6 +185,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
     # Output directory selector
     self.outputDirSelector = ctk.ctkPathLineEdit()
+    self.outputDirSelector.sizeAdjustPolicy = ctk.ctkPathLineEdit.AdjustToMinimumContentsLength
     self.outputDirSelector.filters = ctk.ctkPathLineEdit.Dirs
     self.outputDirSelector.settingKey = 'ScreenCaptureOutputDir'
     outputFormLayout.addRow("Output directory:", self.outputDirSelector)
@@ -267,6 +268,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
     ffmpegPath = self.logic.getFfmpegPath()
     self.ffmpegPathSelector = ctk.ctkPathLineEdit()
+    self.ffmpegPathSelector.sizeAdjustPolicy = ctk.ctkPathLineEdit.AdjustToMinimumContentsLength
     self.ffmpegPathSelector.setCurrentPath(ffmpegPath)
     self.ffmpegPathSelector.nameFilters = [self.logic.getFfmpegExecutableFilename()]
     self.ffmpegPathSelector.setSizePolicy(qt.QSizePolicy.MinimumExpanding, qt.QSizePolicy.Preferred)
@@ -302,6 +304,72 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.transparentBackgroundCheckBox.checked = False
     self.transparentBackgroundCheckBox.setToolTip("If checked, images will be captured with transparent background.")
     advancedFormLayout.addRow("Transparent background:", self.transparentBackgroundCheckBox)
+
+    watermarkEnabled = slicer.util.settingsValue('ScreenCapture/WatermarkEnabled', False, converter=slicer.util.toBool)
+
+    self.watermarkEnabledCheckBox = qt.QCheckBox(" ")
+    self.watermarkEnabledCheckBox.checked = watermarkEnabled
+    self.watermarkEnabledCheckBox.setToolTip("If checked, selected watermark image will be added to all exported images.")
+
+    self.watermarkPositionWidget = qt.QComboBox()
+    self.watermarkPositionWidget.enabled = watermarkEnabled
+    self.watermarkPositionWidget.setSizePolicy(qt.QSizePolicy.MinimumExpanding, qt.QSizePolicy.Preferred)
+    self.watermarkPositionWidget.setToolTip("Add a watermark image to all exported images.")
+    for watermarkPositionPreset in self.logic.watermarkPositionPresets:
+      self.watermarkPositionWidget.addItem(watermarkPositionPreset["name"])
+    self.watermarkPositionWidget.setCurrentText(
+      slicer.util.settingsValue('ScreenCapture/WatermarkPosition', self.logic.watermarkPositionPresets[0]["name"]))
+
+    self.watermarkSizeSliderWidget = qt.QSpinBox()
+    self.watermarkSizeSliderWidget.enabled = watermarkEnabled
+    self.watermarkSizeSliderWidget.setSizePolicy(qt.QSizePolicy.MinimumExpanding, qt.QSizePolicy.Preferred)
+    self.watermarkSizeSliderWidget.singleStep = 10
+    self.watermarkSizeSliderWidget.minimum = 10
+    self.watermarkSizeSliderWidget.maximum = 1000
+    self.watermarkSizeSliderWidget.value = 100
+    self.watermarkSizeSliderWidget.suffix = "%"
+    self.watermarkSizeSliderWidget.setToolTip("Size scaling applied to the watermark image. 100% is original size")
+    try:
+      self.watermarkSizeSliderWidget.value = int(slicer.util.settingsValue('ScreenCapture/WatermarkSize', 100))
+    except:
+      pass
+
+    self.watermarkOpacitySliderWidget = qt.QSpinBox()
+    self.watermarkOpacitySliderWidget.enabled = watermarkEnabled
+    self.watermarkOpacitySliderWidget.setSizePolicy(qt.QSizePolicy.MinimumExpanding, qt.QSizePolicy.Preferred)
+    self.watermarkOpacitySliderWidget.singleStep = 10
+    self.watermarkOpacitySliderWidget.minimum = 0
+    self.watermarkOpacitySliderWidget.maximum = 100
+    self.watermarkOpacitySliderWidget.value = 30
+    self.watermarkOpacitySliderWidget.suffix = "%"
+    self.watermarkOpacitySliderWidget.setToolTip("Opacity of the watermark image. 100% is fully opaque.")
+    try:
+      self.watermarkOpacitySliderWidget.value = int(slicer.util.settingsValue('ScreenCapture/WatermarkOpacity', 30))
+    except:
+      pass
+
+    self.watermarkPathSelector = ctk.ctkPathLineEdit()
+    self.watermarkPathSelector.enabled = watermarkEnabled
+    self.watermarkPathSelector.settingKey = 'ScreenCaptureWatermarkImagePath'
+    self.watermarkPathSelector.nameFilters = ["*.png"]
+    self.watermarkPathSelector.sizeAdjustPolicy = ctk.ctkPathLineEdit.AdjustToMinimumContentsLength
+    self.watermarkPathSelector.setSizePolicy(qt.QSizePolicy.MinimumExpanding, qt.QSizePolicy.Preferred)
+    self.watermarkPathSelector.setToolTip("Watermark image file in png format")
+
+    hbox = qt.QHBoxLayout()
+    hbox.addWidget(self.watermarkEnabledCheckBox)
+    hbox.addWidget(qt.QLabel("Position:"))
+    hbox.addWidget(self.watermarkPositionWidget)
+    hbox.addWidget(qt.QLabel("Size:"))
+    hbox.addWidget(self.watermarkSizeSliderWidget)
+    hbox.addWidget(qt.QLabel("Opacity:"))
+    hbox.addWidget(self.watermarkOpacitySliderWidget)
+    #hbox.addStretch()
+    advancedFormLayout.addRow("Watermark image:", hbox)
+
+    hbox = qt.QHBoxLayout()
+    hbox.addWidget(self.watermarkPathSelector)
+    advancedFormLayout.addRow("", hbox)
 
     # Capture button
     self.captureButtonLabelCapture = "Capture"
@@ -348,6 +416,9 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.videoLengthSliderWidget.connect('valueChanged(double)', self.setVideoLength)
     self.videoFrameRateSliderWidget.connect('valueChanged(double)', self.setVideoFrameRate)
     self.numberOfStepsSliderWidget.connect('valueChanged(double)', self.setNumberOfSteps)
+    self.watermarkEnabledCheckBox.connect('toggled(bool)', self.watermarkPositionWidget, 'setEnabled(bool)')
+    self.watermarkEnabledCheckBox.connect('toggled(bool)', self.watermarkSizeSliderWidget, 'setEnabled(bool)')
+    self.watermarkEnabledCheckBox.connect('toggled(bool)', self.watermarkPathSelector, 'setEnabled(bool)')
 
     self.setVideoLength() # update frame rate based on video length
     self.updateVideoFormat(0)
@@ -513,6 +584,23 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
     self.logic.setFfmpegPath(self.ffmpegPathSelector.currentPath)
 
+    qt.QSettings().setValue('ScreenCapture/WatermarkEnabled', bool(self.watermarkEnabledCheckBox.checked))
+    qt.QSettings().setValue('ScreenCapture/WatermarkPosition', self.watermarkPositionWidget.currentText)
+    qt.QSettings().setValue('ScreenCapture/WatermarkOpacity', self.watermarkOpacitySliderWidget.value)
+    qt.QSettings().setValue('ScreenCapture/WatermarkSize', self.watermarkSizeSliderWidget.value)
+
+    if self.watermarkEnabledCheckBox.checked:
+      if self.watermarkPathSelector.currentPath:
+        self.logic.setWatermarkImagePath(self.watermarkPathSelector.currentPath)
+        self.watermarkPathSelector.addCurrentPathToHistory()
+      else:
+        self.logic.setWatermarkImagePath(self.resourcePath('SlicerWatermark.png'))
+      self.logic.setWatermarkPosition(self.watermarkPositionWidget.currentIndex)
+      self.logic.setWatermarkSizePercent(self.watermarkSizeSliderWidget.value)
+      self.logic.setWatermarkOpacityPercent(self.watermarkOpacitySliderWidget.value)
+    else:
+      self.logic.setWatermarkPosition(-1)
+
     self.statusLabel.plainText = ''
 
     videoOutputRequested = self.videoExportCheckBox.checked
@@ -524,6 +612,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
       # If a single image is selected
       videoOutputRequested = False
     outputDir = self.outputDirSelector.currentPath
+    self.outputDirSelector.addCurrentPathToHistory()
 
     self.videoExportFfmpegWarning.setVisible(False)
     if videoOutputRequested:
@@ -666,6 +755,20 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       {"name": "Animated GIF",             "fileExtension": "gif", "extraVideoOptions": "-filter_complex palettegen,[v]paletteuse"},
       {"name": "Animated GIF (grayscale)", "fileExtension": "gif", "extraVideoOptions": "-vf format=gray"} ]
 
+    self.watermarkPositionPresets = [
+      {"name": "bottom-left", "position": lambda capturedImageSize, watermarkSize, spacing: [-2, -2]},
+      {"name": "bottom-right", "position": lambda capturedImageSize, watermarkSize, spacing: [
+        -capturedImageSize[0]*spacing+watermarkSize[0]+2, -2]},
+      {"name": "top-left", "position": lambda capturedImageSize, watermarkSize, spacing: [
+        -2, -capturedImageSize[1]*spacing+watermarkSize[1]+2]},
+      {"name": "top-right", "position": lambda capturedImageSize, watermarkSize, spacing: [
+        -capturedImageSize[0]*spacing+watermarkSize[0]+2, -capturedImageSize[1]*spacing+watermarkSize[1]+2]} ]
+
+    self.watermarkPosition = -1
+    self.watermarkSizePercent = 100
+    self.watermarkOpacityPercent = 100
+    self.watermarkImagePath = None
+
   def requestCancel(self):
     logging.info("User requested cancelling of capture")
     self.cancelRequested = True
@@ -797,6 +900,18 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         return
     settings.setValue('General/ffmpegPath',ffmpegPath)
 
+  def setWatermarkPosition(self, watermarkPosition):
+    self.watermarkPosition = watermarkPosition
+
+  def setWatermarkSizePercent(self, watermarkSizePercent):
+    self.watermarkSizePercent = watermarkSizePercent
+
+  def setWatermarkOpacityPercent(self, watermarkOpacityPercent):
+    self.watermarkOpacityPercent = watermarkOpacityPercent
+
+  def setWatermarkImagePath(self, watermarkImagePath):
+    self.watermarkImagePath = watermarkImagePath
+
   def getSliceLogicFromSliceNode(self, sliceNode):
     lm = slicer.app.layoutManager()
     sliceLogic = lm.sliceWidget(sliceNode.GetLayoutName()).sliceLogic()
@@ -860,39 +975,36 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         # image is too small, most likely it is invalid
         raise ValueError('Capture image from view failed')
 
-      # Make sure image witdth and height is even, otherwise encoding may fail
-      if (imageSize.x() & 1 == 1):
-        imageSize.setX(imageSize.x()-1)
-      if (imageSize.y() & 1 == 1):
-        imageSize.setY(imageSize.y()-1)
-
       img = ctk.ctkWidgetsUtils.grabWidget(slicer.util.mainWindow(), qt.QRect(topLeft.x(), topLeft.y(), imageSize.x(), imageSize.y()))
-      img.save(filename)
-      return
 
-    rw = view.renderWindow()
-    wti = vtk.vtkWindowToImageFilter()
+      capturedImage = vtk.vtkImageData()
+      ctk.ctkVTKWidgetsUtils.qImageToVTKImageData(img, capturedImage)
 
-    if transparentBackground:
-      originalAlphaBitPlanes = rw.GetAlphaBitPlanes()
-      rw.SetAlphaBitPlanes(1)
-      ren=rw.GetRenderers().GetFirstRenderer()
-      originalGradientBackground = ren.GetGradientBackground()
-      ren.SetGradientBackground(False)
-      wti.SetInputBufferTypeToRGBA()
-      rw.Render() # need to render after changing bit planes
+    else:
+      # Capture single view
 
-    wti.SetInput(rw)
-    wti.Update()
+      rw = view.renderWindow()
+      wti = vtk.vtkWindowToImageFilter()
 
-    if transparentBackground:
-      rw.SetAlphaBitPlanes(originalAlphaBitPlanes)
-      ren.SetGradientBackground(originalGradientBackground)
+      if transparentBackground:
+        originalAlphaBitPlanes = rw.GetAlphaBitPlanes()
+        rw.SetAlphaBitPlanes(1)
+        ren=rw.GetRenderers().GetFirstRenderer()
+        originalGradientBackground = ren.GetGradientBackground()
+        ren.SetGradientBackground(False)
+        wti.SetInputBufferTypeToRGBA()
+        rw.Render() # need to render after changing bit planes
 
-    writer = vtk.vtkPNGWriter()
-    writer.SetFileName(filename)
-    outputImage = wti.GetOutput()
-    imageSize = outputImage.GetDimensions()
+      wti.SetInput(rw)
+      wti.Update()
+
+      if transparentBackground:
+        rw.SetAlphaBitPlanes(originalAlphaBitPlanes)
+        ren.SetGradientBackground(originalGradientBackground)
+
+      capturedImage = wti.GetOutput()
+
+    imageSize = capturedImage.GetDimensions()
 
     if imageSize[0]<2 or imageSize[1]<2:
       # image is too small, most likely it is invalid
@@ -904,15 +1016,64 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     if imageWidthOdd or imageHeightOdd:
       imageClipper = vtk.vtkImageClip()
       imageClipper.SetInputConnection(wti.GetOutputPort())
-      extent = outputImage.GetExtent()
+      extent = capturedImage.GetExtent()
       imageClipper.SetOutputWholeExtent(extent[0], extent[1]-1 if imageWidthOdd else extent[1],
                                         extent[2], extent[3]-1 if imageHeightOdd else extent[3],
                                         extent[4], extent[5])
-      writer.SetInputConnection(imageClipper.GetOutputPort())
-    else:
-      writer.SetInputConnection(wti.GetOutputPort())
+      imageClipper.Update()
+      capturedImage = imageClipper.GetOutput()
 
+    writer = vtk.vtkPNGWriter()
+    writer.SetInputData(self.addWatermark(capturedImage))
+    writer.SetFileName(filename)
     writer.Write()
+
+  def addWatermark(self, capturedImage):
+
+    if self.watermarkPosition < 0:
+      # no watermark
+      return capturedImage
+
+    watermarkReader = vtk.vtkPNGReader()
+    watermarkReader.SetFileName(self.watermarkImagePath)
+    watermarkReader.Update()
+    watermarkImage = watermarkReader.GetOutput()
+
+    # Add alpha channel, if image is only RGB and not RGBA
+    if watermarkImage.GetNumberOfScalarComponents() == 3:
+      alphaImage = vtk.vtkImageData()
+      alphaImage.SetDimensions(watermarkImage.GetDimensions())
+      alphaImage.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)
+      alphaImage.GetPointData().GetScalars().Fill(255)
+      appendRGBA = vtk.vtkImageAppendComponents()
+      appendRGBA.AddInputData(watermarkImage)
+      appendRGBA.AddInputData(alphaImage)
+      appendRGBA.Update()
+      watermarkImage = appendRGBA.GetOutput()
+
+    watermarkSize = [0] * 3
+    watermarkImage.GetDimensions(watermarkSize)
+    capturedImageSize = [0] * 3
+    capturedImage.GetDimensions(capturedImageSize)
+    spacing = 100.0 / self.watermarkSizePercent
+    watermarkResize = vtk.vtkImageReslice()
+    watermarkResize.SetInterpolationModeToCubic()
+    watermarkResize.SetInputData(watermarkImage)
+    watermarkResize.SetOutputExtent(capturedImage.GetExtent())
+    watermarkResize.SetOutputSpacing(spacing, spacing, 1)
+    position = self.watermarkPositionPresets[self.watermarkPosition]["position"](capturedImageSize, watermarkSize, spacing)
+    watermarkResize.SetOutputOrigin(position[0], position[1], 0.0)
+    watermarkResize.Update()
+
+    blend = vtk.vtkImageBlend()
+    blend.SetOpacity(0, 1.0-self.watermarkOpacityPercent*0.01)
+    blend.SetOpacity(1, self.watermarkOpacityPercent*0.01)
+    blend.AddInputData(capturedImage)
+    blend.AddInputData(watermarkResize.GetOutput())
+    blend.Update()
+
+    return blend.GetOutput()
+
 
   def viewFromNode(self, viewNode):
     if not viewNode:
