@@ -22,6 +22,9 @@
 #include <QStyle>
 #include <QPainter>
 
+// CTK includes
+#include "ctkVTKWidgetsUtils.h"
+
 // qMRML includes
 #include "qMRMLUtils.h"
 
@@ -151,57 +154,14 @@ QPixmap qMRMLUtils::createColorPixmap(QStyle * style, const QColor &color)
 //---------------------------------------------------------------------------
 bool qMRMLUtils::qImageToVtkImageData(const QImage& qImage, vtkImageData* vtkimage)
 {
-  if (vtkimage == nullptr)
-    {
-    return false;
-    }
-
-  QImage img = qImage;
-  vtkNew<vtkQImageToImageSource> converter;
-  converter->SetQImage(&img);
-  converter->Update();
-  vtkimage->DeepCopy(converter->GetOutput());
-  return true;
+  return ctk::qImageToVTKImageData(qImage, vtkimage);
 }
 
 //---------------------------------------------------------------------------
 bool qMRMLUtils::vtkImageDataToQImage(vtkImageData* vtkimage, QImage& img)
 {
-  if (!vtkimage ||
-      vtkimage->GetScalarType() != VTK_UNSIGNED_CHAR)
-    {
-    return false;
-    }
-
-  int extent[6];
-  vtkimage->GetExtent(extent);
-  int width = extent[1]-extent[0]+1;
-  int height = extent[3]-extent[2]+1;
-  int numcomponents = vtkimage->GetNumberOfScalarComponents();
-  if(!(numcomponents == 3 || numcomponents == 4))
-    {
-    return false;
-    }
-
-  QImage newimg(width, height, QImage::Format_ARGB32);
-
-  for(int i=0; i<height; i++)
-    {
-    QRgb* bits = reinterpret_cast<QRgb*>(newimg.scanLine(i));
-    unsigned char* row;
-    row = static_cast<unsigned char*>(
-      vtkimage->GetScalarPointer(extent[0], extent[2] + height-i-1, extent[4]));
-    for(int j=0; j<width; j++)
-      {
-      unsigned char* data = &row[j*numcomponents];
-      bits[j] = numcomponents == 4 ?
-        qRgba(data[0], data[1], data[2], data[3]) :
-        qRgb(data[0], data[1], data[2]);
-      }
-    }
-
-  img = newimg;
-  return true;
+  img = ctk::vtkImageDataToQImage(vtkimage);
+  return !img.isNull();
 }
 
 //-----------------------------------------------------------------------------
