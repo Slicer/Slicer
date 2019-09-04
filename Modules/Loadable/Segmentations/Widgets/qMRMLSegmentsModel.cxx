@@ -735,25 +735,10 @@ void qMRMLSegmentsModel::onEvent(
   switch (event)
     {
     case vtkSegmentation::SegmentAdded:
-      if (!segmentID.isEmpty())
-        {
         model->onSegmentAdded(segmentID);
-        break;
-        }
-      else
-        {
-        model->rebuildFromSegments();
-        }
       break;
     case vtkSegmentation::SegmentRemoved:
-      if (!segmentID.isEmpty())
-        {
         model->onSegmentRemoved(segmentID);
-        }
-        else
-        {
-        model->rebuildFromSegments();
-        }
       break;
     case vtkSegmentation::SegmentModified:
       if (!segmentID.isEmpty())
@@ -778,7 +763,23 @@ void qMRMLSegmentsModel::onEvent(
 void qMRMLSegmentsModel::onSegmentAdded(QString segmentID)
 {
   Q_D(qMRMLSegmentsModel);
-  d->insertSegment(segmentID);
+  if (!segmentID.isEmpty())
+    {
+    d->insertSegment(segmentID);
+    return;
+    }
+
+  std::vector<std::string> segmentIDs;
+  d->SegmentationNode->GetSegmentation()->GetSegmentIDs(segmentIDs);
+  for (std::string currentSegmentID : segmentIDs)
+    {
+    QModelIndex index = this->indexFromSegmentID(currentSegmentID.c_str());
+    if (index.isValid())
+      {
+      continue;
+      }
+    d->insertSegment(currentSegmentID.c_str());
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -786,7 +787,24 @@ void qMRMLSegmentsModel::onSegmentRemoved(QString removedSegmentID)
 {
   Q_D(qMRMLSegmentsModel);
   QModelIndex index = this->indexFromSegmentID(removedSegmentID);
-  this->removeRow(index.row());
+  if (!removedSegmentID.isEmpty())
+    {
+    this->removeRow(index.row());
+    return;
+    }
+
+  std::vector<std::string> segmentIDs;
+  d->SegmentationNode->GetSegmentation()->GetSegmentIDs(segmentIDs);
+  for (int i = 0; i < this->rowCount(); ++i)
+    {
+    QModelIndex index = this->index(i, 0);
+    std::string currentSegmentID = this->segmentIDFromIndex(index).toStdString();
+    std::vector<std::string>::iterator currentSegmentIt = std::find(segmentIDs.begin(), segmentIDs.end(), currentSegmentID);
+    if (currentSegmentIt == segmentIDs.end())
+      {
+      this->removeRow(index.row());
+      }
+    }
 }
 
 //------------------------------------------------------------------------------
