@@ -202,8 +202,6 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
       selectedSegmentName = segmentationNode.GetSegmentation().GetSegment(selectedSegmentID).GetName()
       slicer.vtkSlicerSegmentationsModuleLogic.ImportLabelmapToSegmentationNode(
         multiLabelImage, segmentationNode, selectedSegmentName+" -", insertBeforeSegmentID)
-      # ImportLabelmapToSegmentationNode resets current segment selection. Restore it now.
-      self.scriptedEffect.parameterSetNode().SetSelectedSegmentID(selectedSegmentID)
 
     self.scriptedEffect.modifySelectedSegmentByLabelmap(largestIslandImage, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
 
