@@ -229,7 +229,7 @@ def findChildren(widget=None, name="", text="", title="", className=""):
     p = parents.pop()
     # sometimes, p is null, f.e. when using --python-script or --python-code
     if not p:
-      break
+      continue
     if not hasattr(p,'children'):
       continue
     parents += p.children()
