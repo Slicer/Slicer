@@ -57,6 +57,7 @@ public:
   Q_PROPERTY(bool visibilityColumnVisible READ visibilityColumnVisible WRITE setVisibilityColumnVisible)
   Q_PROPERTY(bool colorColumnVisible READ colorColumnVisible WRITE setColorColumnVisible)
   Q_PROPERTY(bool opacityColumnVisible READ opacityColumnVisible WRITE setOpacityColumnVisible)
+  Q_PROPERTY(bool statusColumnVisible READ statusColumnVisible WRITE setStatusColumnVisible)
   Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly)
   Q_PROPERTY(bool filterBarVisible READ filterBarVisible WRITE setFilterBarVisible)
   Q_PROPERTY(QString textFilter READ textFilter WRITE setTextFilter)
