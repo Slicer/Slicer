@@ -43,10 +43,10 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     self.browserSettingsWidget = None
     self.currentViewArrangement = 0
 
+  def setup(self):
     # Tasks to execute after the application has started up
     slicer.app.connect("startupCompleted()", self.performPostModuleDiscoveryTasks)
 
-  def setup(self):
     pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
     pluginHandlerSingleton.registerPlugin(slicer.qSlicerSubjectHierarchyDICOMPlugin())
 
