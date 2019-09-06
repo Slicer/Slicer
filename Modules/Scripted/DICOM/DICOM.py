@@ -419,8 +419,7 @@ class DICOMWidget(object):
     self.onOpenDetailsPopup()
 
   def exit(self):
-    if not self.detailsPopup.browserPersistent:
-      self.detailsPopup.close()
+    self.detailsPopup.close()
 
   def updateGUIFromMRML(self, caller, event):
     pass
