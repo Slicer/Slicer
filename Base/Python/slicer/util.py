@@ -2064,6 +2064,23 @@ def setViewControllersVisible(visible):
     lm.threeDWidget(viewIndex).threeDController().setVisible(visible)
   for sliceViewName in lm.sliceViewNames():
     lm.sliceWidget(sliceViewName).sliceController().setVisible(visible)
+  for viewIndex in range(lm.tableViewCount):
+    lm.tableWidget(viewIndex).tableController().setVisible(visible)
+  for viewIndex in range(lm.plotViewCount):
+    lm.plotWidget(viewIndex).plotController().setVisible(visible)
+
+def forceRenderAllViews():
+  """Force rendering of all views"""
+  import slicer
+  lm = slicer.app.layoutManager()
+  for viewIndex in range(lm.threeDViewCount):
+    lm.threeDWidget(viewIndex).threeDView().forceRender()
+  for sliceViewName in lm.sliceViewNames():
+    lm.sliceWidget(sliceViewName).sliceView().forceRender()
+  for viewIndex in range(lm.tableViewCount):
+    lm.tableWidget(viewIndex).tableView().repaint()
+  for viewIndex in range(lm.plotViewCount):
+    lm.plotWidget(viewIndex).plotView().repaint()
 
 def setModulePanelTitleVisible(visible):
   """Show/hide module panel title bar at the top of module panel.

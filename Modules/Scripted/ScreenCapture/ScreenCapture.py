@@ -949,12 +949,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     if view:
       view.forceRender()
     else:
-      # force rendering of all views
-      lm = slicer.app.layoutManager()
-      for viewIndex in range(lm.threeDViewCount):
-        lm.threeDWidget(viewIndex).threeDView().forceRender()
-      for sliceViewName in lm.sliceViewNames():
-        lm.sliceWidget(sliceViewName).sliceView().forceRender()
+      slicer.util.forceRenderAllViews()
 
     if view is None:
       if transparentBackground:
@@ -1015,7 +1010,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     imageHeightOdd = (imageSize[1] & 1 == 1)
     if imageWidthOdd or imageHeightOdd:
       imageClipper = vtk.vtkImageClip()
-      imageClipper.SetInputConnection(wti.GetOutputPort())
+      imageClipper.SetInputData(capturedImage)
       extent = capturedImage.GetExtent()
       imageClipper.SetOutputWholeExtent(extent[0], extent[1]-1 if imageWidthOdd else extent[1],
                                         extent[2], extent[3]-1 if imageHeightOdd else extent[3],
