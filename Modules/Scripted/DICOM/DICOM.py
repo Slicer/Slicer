@@ -112,7 +112,6 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     self.detailsPopup = None
     self.viewWidget = None
     self.browserSettingsWidget = None
-    self.setDetailsPopup(DICOMWidget.getSavedDICOMDetailsWidgetType()())
 
   def startListener(self):
     # the dicom listener is also global, but only started on app start if
