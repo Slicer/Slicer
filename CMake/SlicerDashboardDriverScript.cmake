@@ -227,7 +227,7 @@ endmacro()
 #-----------------------------------------------------------------------------
 # Set default values
 #-----------------------------------------------------------------------------
-setIfNotDefined(CTEST_TEST_TIMEOUT 900) # 15mins
+setIfNotDefined(CTEST_TEST_TIMEOUT 120) # 15mins
 setIfNotDefined(CTEST_PARALLEL_LEVEL 8)
 setIfNotDefined(CTEST_CONTINUOUS_DURATION 46800) # Lasts 13 hours (Assuming it starts at 9am, it will end around 10pm)
 setIfNotDefined(MIDAS_PACKAGE_URL "http://slicer.kitware.com/midas3")
