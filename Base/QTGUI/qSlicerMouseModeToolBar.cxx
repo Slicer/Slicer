@@ -541,7 +541,7 @@ void qSlicerMouseModeToolBar::changeCursorTo(QCursor cursor)
     qMRMLThreeDView* threeDView = layoutManager->threeDWidget(i)->threeDView();
     if (!threeDView->mrmlViewNode()->IsMappedInLayout())
       {
-      return;
+      continue;
       }
     // Update cursor only if view interaction node corresponds to the one associated with the mouse toolbar
     if (threeDView->mrmlViewNode()->GetInteractionNode() != this->interactionNode())
@@ -558,7 +558,7 @@ void qSlicerMouseModeToolBar::changeCursorTo(QCursor cursor)
     qMRMLSliceView* sliceView = layoutManager->sliceWidget(viewerName)->sliceView();
     if (!sliceView->mrmlSliceNode()->IsMappedInLayout())
       {
-      return;
+      continue;
       }
     // Update cursor only if view interaction node corresponds to the one associated with the mouse toolbar
     if (sliceView->mrmlSliceNode()->GetInteractionNode() != this->interactionNode())
