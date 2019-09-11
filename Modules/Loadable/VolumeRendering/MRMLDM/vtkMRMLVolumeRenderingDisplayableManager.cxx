@@ -137,7 +137,7 @@ public:
   void RemoveVolumeNode(vtkMRMLVolumeNode* displayableNode);
 
   // Transforms
-  void UpdatePipelineTransforms(vtkMRMLVolumeNode *node);
+  bool UpdatePipelineTransforms(vtkMRMLVolumeNode *node); // return with true if pipelines may have changed
   bool GetVolumeTransformToWorld(vtkMRMLVolumeNode* node, vtkMatrix4x4* ijkToWorldMatrix);
 
   // ROIs
@@ -533,12 +533,13 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::RemoveDisplayNode(vt
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineTransforms(vtkMRMLVolumeNode* volumeNode)
+bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineTransforms(vtkMRMLVolumeNode* volumeNode)
 {
   // Update the pipeline for all tracked DisplayableNode
   PipelinesCacheType::iterator pipelineIt;
   std::set< vtkMRMLVolumeRenderingDisplayNode* > displayNodes = this->VolumeToDisplayNodes[volumeNode];
   std::set< vtkMRMLVolumeRenderingDisplayNode* >::iterator displayNodeIt;
+  bool pipelineModified = false;
   for (displayNodeIt = displayNodes.begin(); displayNodeIt != displayNodes.end(); displayNodeIt++)
     {
     if (((pipelineIt = this->DisplayPipelines.find(*displayNodeIt)) != this->DisplayPipelines.end()))
@@ -550,8 +551,10 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineTransf
       // Calculate and apply transform matrix
       this->GetVolumeTransformToWorld(volumeNode, currentPipeline->IJKToWorldMatrix);
       currentPipeline->VolumeActor->SetUserMatrix(currentPipeline->IJKToWorldMatrix.GetPointer());
+      pipelineModified = false;
       }
     }
+  return pipelineModified;
 }
 
 //---------------------------------------------------------------------------
@@ -1271,11 +1274,15 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLNodesEvents(vtkObject*
         }
       }
     else if ( (event == vtkMRMLDisplayableNode::TransformModifiedEvent)
-           || (event == vtkMRMLTransformableNode::TransformModifiedEvent) )
+           || (event == vtkMRMLTransformableNode::TransformModifiedEvent)
+           || (event == vtkCommand::ModifiedEvent))
       {
-      this->Internal->UpdatePipelineTransforms(volumeNode);
-      // ROI must not be reset, as it would make it impossible to replay clipped volume sequences
-      this->RequestRender();
+      // Parent transforms, volume origin, etc. changed, so we need to recompute transforms
+      if (this->Internal->UpdatePipelineTransforms(volumeNode))
+        {
+        // ROI must not be reset here, as it would make it impossible to replay clipped volume sequences
+        this->RequestRender();
+        }
       }
     else if (event == vtkMRMLScalarVolumeNode::ImageDataModifiedEvent)
       {
