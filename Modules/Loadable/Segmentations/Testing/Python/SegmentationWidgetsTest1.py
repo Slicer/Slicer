@@ -119,6 +119,11 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     displayNode.SetSegmentVisibility("third", True)
     segmentsTableView.filterBarVisible = False
 
+    # Reset the filtering parameters in the segmentation node to avoid interference with other tests that
+    # use this segmentation node
+    self.inputSegmentationNode.SetSegmentListFilterEnabled(False)
+    self.inputSegmentationNode.SetSegmentListFilterOptions("")
+
   #------------------------------------------------------------------------------
   def compareOutputGeometry(self, orientedImageData, spacing, origin, directions):
     if orientedImageData is None:
@@ -354,6 +359,9 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
 
     self.segmentEditorNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentEditorNode')
     self.assertIsNotNone(self.segmentEditorNode)
+
+    self.inputSegmentationNode.SetSegmentListFilterEnabled(False)
+    self.inputSegmentationNode.SetSegmentListFilterOptions("")
 
     displayNode = self.inputSegmentationNode.GetDisplayNode()
     self.assertIsNotNone(displayNode)
