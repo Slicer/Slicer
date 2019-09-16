@@ -329,15 +329,12 @@ void qSlicerSubjectHierarchyPluginLogic::onSceneCloseEnded(vtkObject* sceneObjec
 
   // Trigger creating new subject hierarchy node
   // (scene close removed the pseudo-singleton subject hierarchy node)
-  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
+  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(scene);
   if (!shNode)
     {
     qCritical() << Q_FUNC_INFO << ": There must be a subject hierarchy node in the scene";
     return;
     }
-
-  // Set subject hierarchy node to plugin handler
-  qSlicerSubjectHierarchyPluginHandler::instance()->setSubjectHierarchyNode(shNode);
 }
 
 //-----------------------------------------------------------------------------

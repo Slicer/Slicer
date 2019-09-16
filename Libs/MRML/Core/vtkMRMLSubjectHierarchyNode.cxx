@@ -1800,6 +1800,138 @@ void vtkMRMLSubjectHierarchyNode::PrintItem(vtkIdType itemID, ostream& os, vtkIn
 }
 
 //----------------------------------------------------------------------------
+vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(vtkMRMLScene* scene)
+{
+  std::vector<vtkMRMLNode*> shNodesInScene;
+  scene->GetNodesByClass("vtkMRMLSubjectHierarchyNode", shNodesInScene);
+
+  if (shNodesInScene.size() == 0)
+    {
+    vtkSmartPointer<vtkMRMLSubjectHierarchyNode> newShNode = vtkSmartPointer<vtkMRMLSubjectHierarchyNode>::New();
+    newShNode->SetName("SubjectHierarchy");
+    scene->AddNode(newShNode);
+
+    vtkDebugWithObjectMacro(newShNode.GetPointer(), "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: "
+      "New subject hierarchy node created as none was found in the scene");
+    return newShNode;
+    }
+
+  // Return subject hierarchy node if there is only one
+  vtkMRMLSubjectHierarchyNode* firstShNode = nullptr;
+  firstShNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(shNodesInScene[0]);
+  if (!firstShNode)
+    {
+    vtkErrorWithObjectMacro( scene,
+      "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Invalid first subject hierarchy node" );
+    return firstShNode;
+    }
+  if (shNodesInScene.size() == 1)
+    {
+    // Resolve unresolved items. There are unresolved items after importing or restoring a scene
+    // (do not perform this consolidation operation while the scene is processing)
+    if ( ! ( scene->IsBatchProcessing() || scene->IsImporting() || scene->IsRestoring() || scene->IsClosing()
+          || firstShNode == nullptr || firstShNode->Internal->IsResolving )
+      && !firstShNode->Internal->ResolveUnresolvedItems() )
+      {
+      // Remove invalid subject hierarchy node so that it can be rebuilt from scratch
+      scene->RemoveNode(firstShNode);
+      vtkErrorWithObjectMacro( scene,
+        "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Failed to resolve unresolved subject "
+        "hierarchy items, re-building subject hierarchy from scratch" );
+      return nullptr;
+      }
+
+    return firstShNode;
+    }
+
+  // Do not perform merge operations while the scene is processing, simply return the first node
+  if ( scene->IsBatchProcessing() || scene->IsImporting() || scene->IsClosing()
+    || firstShNode->Internal->IsResolving )
+    {
+    return firstShNode;
+    }
+
+  // Enter resolving state for merging
+  bool wasResolving = firstShNode->Internal->IsResolving;
+  firstShNode->Internal->IsResolving = true;
+  // Invoke event marking the end of the resolving operation
+  firstShNode->InvokeCustomModifiedEvent(SubjectHierarchyStartResolveEvent);
+
+  // Merge subject hierarchy nodes into the first one found
+  std::vector<vtkMRMLSubjectHierarchyNode*> mergedShNodes;
+  for (std::vector<vtkMRMLNode*>::iterator shNodeIt=shNodesInScene.begin()+1; shNodeIt!=shNodesInScene.end(); ++shNodeIt)
+    {
+    vtkMRMLSubjectHierarchyNode* currentShNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(*shNodeIt);
+    if (currentShNode == nullptr)
+      {
+      continue;
+      }
+    // Prevent events from being invoked from both subject hierarchy nodes
+    bool wereEventsDisabled = firstShNode->Internal->EventsDisabled;
+    firstShNode->Internal->EventsDisabled = true;
+
+    // Copy all unresolved items from the merged subject hierarchy node into first node
+    firstShNode->Internal->UnresolvedItems->DeepCopy(currentShNode->Internal->UnresolvedItems);
+
+    // Mark node as merged so that it is removed later
+    mergedShNodes.push_back(currentShNode);
+
+    // Re-enable events
+    firstShNode->Internal->EventsDisabled = wereEventsDisabled;
+
+    // Resolve all unresolved items (only SubjectHierarchyItemAddedEvent is invoked from the node in the process)
+    if (!firstShNode->Internal->ResolveUnresolvedItems())
+      {
+      // Remove all subject hierarchy nodes including the invalid one so that it can be rebuilt from scratch
+
+      // When a node is deleted, other nodes may be deleted as a side effect, therefore we retrieve all the node IDs
+      // and look up each node by ID when deleting. This way we can detect if a node has been already deleted
+      // and do not attempt to delete it again.
+
+      // Retrieve node IDs
+      std::vector<std::string> allShNodeIDs;
+      std::vector<vtkMRMLNode*> allShNodes;
+      scene->GetNodesByClass("vtkMRMLSubjectHierarchyNode", allShNodes);
+      for (std::vector<vtkMRMLNode*>::iterator allShNodeIt=allShNodes.begin(); allShNodeIt!=allShNodes.end(); ++allShNodeIt)
+        {
+        const char* nodeID = (*allShNodeIt)->GetID();
+        if (nodeID)
+          {
+          allShNodeIDs.push_back(nodeID);
+          }
+        }
+
+      // Delete nodes by node IDs:
+      for (std::vector<std::string>::iterator allShNodeIDIt = allShNodeIDs.begin(); allShNodeIDIt != allShNodeIDs.end(); ++allShNodeIDIt)
+        {
+        vtkMRMLNode* node = scene->GetNodeByID(*allShNodeIDIt);
+        if (node)
+          {
+          scene->RemoveNode(node);
+          }
+        }
+
+      vtkErrorWithObjectMacro( scene,
+        "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Failed to merge subject hierarchy nodes, re-building subject hierarchy from scratch" );
+      return vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
+      }
+    }
+  // Remove merged subject hierarchy nodes from the scene
+  for (std::vector<vtkMRMLSubjectHierarchyNode*>::iterator mergedShIt=mergedShNodes.begin(); mergedShIt!=mergedShNodes.end(); ++mergedShIt)
+    {
+    scene->RemoveNode(*mergedShIt);
+    }
+
+  // Indicate that resolving unresolved items is underway
+  firstShNode->Internal->IsResolving = wasResolving;
+  // Invoke event marking the end of the resolving operation
+  firstShNode->InvokeCustomModifiedEvent(SubjectHierarchyEndResolveEvent);
+
+  // Return the first (and now only) subject hierarchy node into which the others were merged
+  return firstShNode;
+}
+
+//----------------------------------------------------------------------------
 const char* vtkMRMLSubjectHierarchyNode::GetNodeTagName()
 {
   return "SubjectHierarchy";
@@ -3206,136 +3338,11 @@ void vtkMRMLSubjectHierarchyNode::ItemEventCallback(vtkObject* caller, unsigned 
 //---------------------------------------------------------------------------
 vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(vtkMRMLScene* scene)
 {
-  if (!scene)
+  if (scene == nullptr)
     {
     vtkGenericWarningMacro("vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Invalid scene given");
     return nullptr;
     }
-  std::vector<vtkMRMLNode*> shNodesInScene;
-  scene->GetNodesByClass("vtkMRMLSubjectHierarchyNode", shNodesInScene);
+  return scene->GetSubjectHierarchyNode();
 
-  if (shNodesInScene.size() == 0)
-    {
-    vtkSmartPointer<vtkMRMLSubjectHierarchyNode> newShNode = vtkSmartPointer<vtkMRMLSubjectHierarchyNode>::New();
-    newShNode->SetName("SubjectHierarchy");
-    scene->AddNode(newShNode);
-
-    vtkDebugWithObjectMacro(newShNode.GetPointer(), "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: "
-      "New subject hierarchy node created as none was found in the scene");
-    return newShNode;
-    }
-
-  // Return subject hierarchy node if there is only one
-
-  vtkMRMLSubjectHierarchyNode* firstShNode = nullptr;
-  firstShNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(shNodesInScene[0]);
-  if (!firstShNode)
-    {
-    vtkErrorWithObjectMacro( scene,
-      "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Invalid first subject hierarchy node" );
-    return firstShNode;
-    }
-  if (shNodesInScene.size() == 1)
-    {
-    // Resolve unresolved items. There are unresolved items after importing or restoring a scene
-    // (do not perform this consolidation operation while the scene is processing)
-    if ( ! ( scene->IsBatchProcessing() || scene->IsImporting() || scene->IsRestoring() || scene->IsClosing()
-          || firstShNode == nullptr || firstShNode->Internal->IsResolving )
-      && !firstShNode->Internal->ResolveUnresolvedItems() )
-      {
-      // Remove invalid subject hierarchy node so that it can be rebuilt from scratch
-      scene->RemoveNode(firstShNode);
-      vtkErrorWithObjectMacro( scene,
-        "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Failed to resolve unresolved subject hierarchy items, re-building subject hierarchy from scratch" );
-      return nullptr;
-      }
-
-    return firstShNode;
-    }
-
-  // Do not perform merge operations while the scene is processing, simply return the first node
-  if ( scene->IsBatchProcessing() || scene->IsImporting() || scene->IsClosing()
-    || firstShNode->Internal->IsResolving )
-    {
-    return firstShNode;
-    }
-
-  // Enter resolving state for merging
-  bool wasResolving = firstShNode->Internal->IsResolving;
-  firstShNode->Internal->IsResolving = true;
-  // Invoke event marking the end of the resolving operation
-  firstShNode->InvokeCustomModifiedEvent(SubjectHierarchyStartResolveEvent);
-
-  // Merge subject hierarchy nodes into the first one found
-  std::vector<vtkMRMLSubjectHierarchyNode*> mergedShNodes;
-  for (std::vector<vtkMRMLNode*>::iterator shNodeIt=shNodesInScene.begin()+1; shNodeIt!=shNodesInScene.end(); ++shNodeIt)
-    {
-    vtkMRMLSubjectHierarchyNode* currentShNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(*shNodeIt);
-    if (currentShNode == nullptr)
-      {
-      continue;
-      }
-    // Prevent events from being invoked from both subject hierarchy nodes
-    bool wereEventsDisabled = firstShNode->Internal->EventsDisabled;
-    firstShNode->Internal->EventsDisabled = true;
-
-    // Copy all unresolved items from the merged subject hierarchy node into first node
-    firstShNode->Internal->UnresolvedItems->DeepCopy(currentShNode->Internal->UnresolvedItems);
-
-    // Mark node as merged so that it is removed later
-    mergedShNodes.push_back(currentShNode);
-
-    // Re-enable events
-    firstShNode->Internal->EventsDisabled = wereEventsDisabled;
-
-    // Resolve all unresolved items (only SubjectHierarchyItemAddedEvent is invoked from the node in the process)
-    if (!firstShNode->Internal->ResolveUnresolvedItems())
-      {
-      // Remove all subject hierarchy nodes including the invalid one so that it can be rebuilt from scratch
-
-      // When a node is deleted, other nodes may be deleted as a side effect, therefore we retrieve all the node IDs
-      // and look up each node by ID when deleting. This way we can detect if a node has been already deleted
-      // and do not attempt to delete it again.
-
-      // Retrieve node IDs
-      std::vector<std::string> allShNodeIDs;
-      std::vector<vtkMRMLNode*> allShNodes;
-      scene->GetNodesByClass("vtkMRMLSubjectHierarchyNode", allShNodes);
-      for (std::vector<vtkMRMLNode*>::iterator allShNodeIt=allShNodes.begin(); allShNodeIt!=allShNodes.end(); ++allShNodeIt)
-        {
-        const char* nodeID = (*allShNodeIt)->GetID();
-        if (nodeID)
-          {
-          allShNodeIDs.push_back(nodeID);
-          }
-        }
-
-      // Delete nodes by node IDs:
-      for (std::vector<std::string>::iterator allShNodeIDIt = allShNodeIDs.begin(); allShNodeIDIt != allShNodeIDs.end(); ++allShNodeIDIt)
-        {
-        vtkMRMLNode* node = scene->GetNodeByID(*allShNodeIDIt);
-        if (node)
-          {
-          scene->RemoveNode(node);
-          }
-        }
-
-      vtkErrorWithObjectMacro( scene,
-        "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Failed to merge subject hierarchy nodes, re-building subject hierarchy from scratch" );
-      return vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
-      }
-    }
-  // Remove merged subject hierarchy nodes from the scene
-  for (std::vector<vtkMRMLSubjectHierarchyNode*>::iterator mergedShIt=mergedShNodes.begin(); mergedShIt!=mergedShNodes.end(); ++mergedShIt)
-    {
-    scene->RemoveNode(*mergedShIt);
-    }
-
-  // Indicate that resolving unresolved items is underway
-  firstShNode->Internal->IsResolving = wasResolving;
-  // Invoke event marking the end of the resolving operation
-  firstShNode->InvokeCustomModifiedEvent(SubjectHierarchyEndResolveEvent);
-
-  // Return the first (and now only) subject hierarchy node into which the others were merged
-  return firstShNode;
 }

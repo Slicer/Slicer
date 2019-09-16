@@ -103,6 +103,7 @@ Version:   $Revision: 1.18 $
 # include <vtkTimerLog.h>
 #endif
 
+vtkCxxSetObjectMacro(vtkMRMLScene, SubjectHierarchyNode, vtkMRMLSubjectHierarchyNode);
 vtkCxxSetObjectMacro(vtkMRMLScene, CacheManager, vtkCacheManager)
 vtkCxxSetObjectMacro(vtkMRMLScene, DataIOManager, vtkDataIOManager)
 vtkCxxSetObjectMacro(vtkMRMLScene, UserTagTable, vtkTagTable)
@@ -123,6 +124,8 @@ vtkMRMLScene::vtkMRMLScene()
 
   this->NodeReferences.clear();
   this->ReferencedIDChanges.clear();
+
+  this->SubjectHierarchyNode = nullptr;
 
   this->CacheManager = nullptr;
   this->DataIOManager = nullptr;
@@ -247,6 +250,11 @@ vtkMRMLScene::~vtkMRMLScene()
   for (unsigned int n=0; n<this->RegisteredNodeClasses.size(); n++)
     {
     this->RegisteredNodeClasses[n]->Delete();
+    }
+
+  if ( this->SubjectHierarchyNode != nullptr )
+    {
+    this->SubjectHierarchyNode = nullptr;
     }
 
   if ( this->CacheManager != nullptr )
@@ -867,6 +875,10 @@ int vtkMRMLScene::Import()
   timer->Delete();
 #endif
   this->StoredTime.Modified();
+
+  // Once the import is finished, give the SH a chance to ensure consistency
+  this->SetSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(this));
+
   return returnCode;
 }
 
@@ -1188,10 +1200,16 @@ vtkMRMLNode* vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
   n->SetScene( this );
   this->Nodes->vtkCollection::AddItem((vtkObject *)n);
 
-  // cache the node so the whole scene cache stays up-todate
+  // cache the node so the whole scene cache stays up-to date
   this->AddNodeID(n);
 
-  //n->OnNodeAddedToScene();
+  // Keep the SH up-to-date
+  if (vtkMRMLSubjectHierarchyNode::SafeDownCast(n) != nullptr &&
+    !(this->IsImporting() || this->IsRestoring()) )
+  {
+    // This should rarely ever be called, but just in case someone added a SH node manually, let's make sure it works
+    this->SetSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(this));
+  }
 
   n->EndModify(wasModifying);
   return n;
@@ -3500,6 +3518,20 @@ const char * vtkMRMLScene::GetErrorMessagePointer()
   {
   return (this->GetErrorMessage().c_str());
   }
+
+//----------------------------------------------------------------------------
+vtkMRMLSubjectHierarchyNode* vtkMRMLScene::GetSubjectHierarchyNode()
+{
+  if (this->SubjectHierarchyNode == nullptr)
+  {
+    this->SetSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(this));
+    if (this->SubjectHierarchyNode == nullptr)
+    {
+      vtkErrorMacro("Unable to resolve subject hierarchy. No node available.");
+    }
+  }
+  return this->SubjectHierarchyNode;
+}
 
 //-----------------------------------------------------------------------------
 bool vtkMRMLScene::GetModifiedSinceRead()

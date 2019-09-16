@@ -99,7 +99,6 @@ void qSlicerSubjectHierarchyPluginHandler::setInstance(qSlicerSubjectHierarchyPl
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyPluginHandler::qSlicerSubjectHierarchyPluginHandler(QObject* parent)
   : QObject(parent)
-  , m_SubjectHierarchyNode(nullptr)
   , m_MRMLScene(nullptr)
   , m_PluginLogic(nullptr)
 {
@@ -116,11 +115,6 @@ qSlicerSubjectHierarchyPluginHandler::qSlicerSubjectHierarchyPluginHandler(QObje
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyPluginHandler::~qSlicerSubjectHierarchyPluginHandler()
 {
-  if (m_SubjectHierarchyNode)
-    {
-    m_SubjectHierarchyNode->RemoveObserver(m_CallBack);
-    }
-
   QList<qSlicerSubjectHierarchyAbstractPlugin*>::iterator pluginIt;
   for (pluginIt = this->m_RegisteredPlugins.begin(); pluginIt != this->m_RegisteredPlugins.end(); ++pluginIt)
     {
@@ -263,7 +257,7 @@ qSlicerSubjectHierarchyPluginHandler::pluginsForReparentingItemInSubjectHierarch
 qSlicerSubjectHierarchyAbstractPlugin*
 qSlicerSubjectHierarchyPluginHandler::findOwnerPluginForSubjectHierarchyItem(vtkIdType itemID)
 {
-  if (!this->m_SubjectHierarchyNode.GetPointer())
+  if (this->m_MRMLScene != nullptr && this->m_MRMLScene->GetSubjectHierarchyNode() == nullptr)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy node";
     return nullptr;
@@ -295,7 +289,7 @@ qSlicerSubjectHierarchyPluginHandler::findOwnerPluginForSubjectHierarchyItem(vtk
   if (mostSuitablePlugins.size() > 1)
     {
     // Let the user choose a plugin if more than one returned the same non-zero confidence value
-    vtkMRMLNode* dataNode = this->m_SubjectHierarchyNode->GetItemDataNode(itemID);
+    vtkMRMLNode* dataNode = this->m_MRMLScene->GetSubjectHierarchyNode()->GetItemDataNode(itemID);
     QString textToDisplay = QString("Equal confidence number found for more than one subject hierarchy plugin.\n\n"
                                     "Select plugin to own node named\n'%1'\n(type %2):").arg(
                                     dataNode?dataNode->GetName():"NULL").arg(dataNode?dataNode->GetNodeTagName():"None");
@@ -318,30 +312,30 @@ qSlicerSubjectHierarchyPluginHandler::findOwnerPluginForSubjectHierarchyItem(vtk
 //---------------------------------------------------------------------------
 qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::findAndSetOwnerPluginForSubjectHierarchyItem(vtkIdType itemID)
 {
-  if (!this->m_SubjectHierarchyNode.GetPointer())
+  if (this->m_MRMLScene != nullptr && this->m_MRMLScene->GetSubjectHierarchyNode() == nullptr)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy node";
     return nullptr;
     }
 
   qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin = this->findOwnerPluginForSubjectHierarchyItem(itemID);
-  this->m_SubjectHierarchyNode->SetItemOwnerPluginName(itemID, ownerPlugin->name().toLatin1().constData());
+  this->m_MRMLScene->GetSubjectHierarchyNode()->SetItemOwnerPluginName(itemID, ownerPlugin->name().toLatin1().constData());
   return ownerPlugin;
 }
 
 //---------------------------------------------------------------------------
 qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::getOwnerPluginForSubjectHierarchyItem(vtkIdType itemID)
 {
-  if (!this->m_SubjectHierarchyNode.GetPointer())
+  if (this->m_MRMLScene != nullptr && this->m_MRMLScene->GetSubjectHierarchyNode() == nullptr)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy node";
     return nullptr;
     }
 
-  std::string ownerPluginName = this->m_SubjectHierarchyNode->GetItemOwnerPluginName(itemID);
+  std::string ownerPluginName = this->m_MRMLScene->GetSubjectHierarchyNode()->GetItemOwnerPluginName(itemID);
   if (ownerPluginName.empty())
     {
-    qCritical() << Q_FUNC_INFO << ": Item '" << this->m_SubjectHierarchyNode->GetItemName(itemID).c_str() << "' is not owned by any plugin!";
+    qCritical() << Q_FUNC_INFO << ": Item '" << this->m_MRMLScene->GetSubjectHierarchyNode()->GetItemName(itemID).c_str() << "' is not owned by any plugin!";
     return nullptr;
     }
 
@@ -386,33 +380,9 @@ qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::sel
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyPluginHandler::setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode)
-{
-  if (shNode == m_SubjectHierarchyNode)
-    {
-    return;
-    }
-
-  if (m_SubjectHierarchyNode)
-    {
-    m_SubjectHierarchyNode->RemoveObserver(m_CallBack);
-    }
-
-  m_SubjectHierarchyNode = shNode;
-
-  if (shNode)
-    {
-    this->setMRMLScene(shNode->GetScene());
-    
-    shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent, m_CallBack);
-    shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested, m_CallBack);
-    }
-}
-
-//-----------------------------------------------------------------------------
 vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyPluginHandler::subjectHierarchyNode()const
 {
-  return m_SubjectHierarchyNode;
+  return m_MRMLScene == nullptr ? nullptr : m_MRMLScene->GetSubjectHierarchyNode();
 }
 
 //-----------------------------------------------------------------------------
@@ -424,20 +394,6 @@ void qSlicerSubjectHierarchyPluginHandler::setMRMLScene(vtkMRMLScene* scene)
     }
 
   m_MRMLScene = scene;
-
-  if (scene)
-    {
-    scene->AddObserver(vtkMRMLScene::NodeRemovedEvent, m_CallBack);
-    }
-
-  // Use subject hierarchy node from the new scene
-  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
-  if (!shNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": There must be a subject hierarchy node in the scene";
-    return;
-    }
-  this->setSubjectHierarchyNode(shNode);
 }
 
 //-----------------------------------------------------------------------------
@@ -629,14 +585,11 @@ void qSlicerSubjectHierarchyPluginHandler::onSubjectHierarchyNodeEvent(
     if (!scene->IsClosing() && node->IsA("vtkMRMLSubjectHierarchyNode"))
       {
       // Make sure there is one subject hierarchy node in the scene
-      vtkMRMLSubjectHierarchyNode* newSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
+      vtkMRMLSubjectHierarchyNode* newSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(scene);
       if (!newSubjectHierarchyNode)
         {
         qCritical() << Q_FUNC_INFO << ": No subject hierarchy node could be retrieved from the scene";
         }
-
-      // Set the quasi-singleton subject hierarchy node to the plugin handler
-      pluginHandler->setSubjectHierarchyNode(newSubjectHierarchyNode);
       }
     }
 }

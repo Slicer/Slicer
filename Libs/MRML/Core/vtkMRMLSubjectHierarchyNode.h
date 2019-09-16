@@ -356,6 +356,9 @@ public:
   /// Print subject hierarchy item info on stream
   void PrintItem(vtkIdType itemID, ostream& os, vtkIndent indent);
 
+  /// Ensure the consistency and validity of the SH node in the scene
+  static vtkMRMLSubjectHierarchyNode* ResolveSubjectHierarchy(vtkMRMLScene* scene);
+
 protected:
   /// Callback function for all events from the subject hierarchy items
   static void ItemEventCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData);

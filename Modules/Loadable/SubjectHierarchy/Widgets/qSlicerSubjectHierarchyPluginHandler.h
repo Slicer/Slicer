@@ -85,8 +85,6 @@ public:
   /// Allows cleanup of the singleton at application exit
   static void setInstance(qSlicerSubjectHierarchyPluginHandler* instance);
 
-  /// Set subject hierarchy node
-  void setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode);
   /// Get subject hierarchy node
   Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
   /// Set MRML scene
@@ -208,8 +206,6 @@ protected:
   /// (selected items in the tree view e.g. for context menu request)
   QList<vtkIdType> m_CurrentItems;
 
-  /// Subject hierarchy node
-  vtkWeakPointer<vtkMRMLSubjectHierarchyNode> m_SubjectHierarchyNode;
   /// MRML scene (to get new subject hierarchy node if the stored one is deleted)
   vtkWeakPointer<vtkMRMLScene> m_MRMLScene;
 
