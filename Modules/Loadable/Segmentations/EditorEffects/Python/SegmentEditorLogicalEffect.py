@@ -201,6 +201,26 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
       modifierSegment = segmentation.GetSegment(modifierSegmentID)
       modifierSegmentLabelmap = modifierSegment.GetRepresentation(vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName())
 
+      # Get common geometry
+      commonGeometryString = segmentationNode.GetSegmentation().DetermineCommonLabelmapGeometry(
+        vtkSegmentationCore.vtkSegmentation.EXTENT_UNION_OF_SEGMENTS, None)
+      if not commonGeometryString:
+        logging.info("Logical operation skipped: all segments are empty")
+        return
+      commonGeometryImage = vtkSegmentationCore.vtkOrientedImageData()
+      vtkSegmentationCore.vtkSegmentationConverter.DeserializeImageGeometry(commonGeometryString, commonGeometryImage, False)
+
+      # Make sure modifier segment has correct geometry
+      # (if modifier segment has been just copied over from another segment then its geometry may be different)
+      if not vtkSegmentationCore.vtkOrientedImageDataResample.DoGeometriesMatch(commonGeometryImage, modifierSegmentLabelmap):
+        modifierSegmentLabelmap_CommonGeometry = vtkSegmentationCore.vtkOrientedImageData()
+        vtkSegmentationCore.vtkOrientedImageDataResample.ResampleOrientedImageToReferenceOrientedImage(
+          modifierSegmentLabelmap, commonGeometryImage, modifierSegmentLabelmap_CommonGeometry,
+          False, # nearest neighbor interpolation,
+          True # make sure resampled modifier segment is not cropped
+          )
+        modifierSegmentLabelmap = modifierSegmentLabelmap_CommonGeometry
+
       if operation == LOGICAL_COPY:
         if bypassMasking:
           slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(modifierSegmentLabelmap,
@@ -223,7 +243,9 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
       elif operation == LOGICAL_INTERSECT:
         selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()
         intersectionLabelmap = vtkSegmentationCore.vtkOrientedImageData()
-        vtkSegmentationCore.vtkOrientedImageDataResample.MergeImage(selectedSegmentLabelmap, modifierSegmentLabelmap, intersectionLabelmap, vtkSegmentationCore.vtkOrientedImageDataResample.OPERATION_MINIMUM, selectedSegmentLabelmap.GetExtent())
+        vtkSegmentationCore.vtkOrientedImageDataResample.MergeImage(
+          selectedSegmentLabelmap, modifierSegmentLabelmap, intersectionLabelmap,
+          vtkSegmentationCore.vtkOrientedImageDataResample.OPERATION_MINIMUM, selectedSegmentLabelmap.GetExtent())
         selectedSegmentLabelmapExtent = selectedSegmentLabelmap.GetExtent()
         modifierSegmentLabelmapExtent = modifierSegmentLabelmap.GetExtent()
         commonExtent = [max(selectedSegmentLabelmapExtent[0], modifierSegmentLabelmapExtent[0]),
