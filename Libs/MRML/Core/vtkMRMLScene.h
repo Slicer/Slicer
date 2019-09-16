@@ -29,9 +29,9 @@ Version:   $Revision: 1.18 $
 // STD includes
 #include <list>
 #include <map>
-#include <vector>
-#include <string>
 #include <set>
+#include <string>
+#include <vector>
 
 class vtkCacheManager;
 class vtkDataIOManager;
@@ -215,7 +215,7 @@ public:
   ///
   /// This function is used after adding a bunch of nodes with AddNodeNoNotify()
   void NodeAdded(vtkMRMLNode *n);
-  void NodeAdded() {this->NodeAdded(nullptr);};
+  void NodeAdded() {this->NodeAdded(nullptr);}
 
   /// Remove a path from the list.
   void RemoveNode(vtkMRMLNode *n);
@@ -339,15 +339,15 @@ public:
   const char* GetUniqueNameByString(const char* baseName);
 
   /// insert a node in the scene after a specified node
-  vtkMRMLNode* InsertAfterNode( vtkMRMLNode *item, vtkMRMLNode *newItem);
+  vtkMRMLNode* InsertAfterNode(vtkMRMLNode *item, vtkMRMLNode *newItem);
   /// insert a node in the scene before a specified node
-  vtkMRMLNode* InsertBeforeNode( vtkMRMLNode *item, vtkMRMLNode *newItem);
+  vtkMRMLNode* InsertBeforeNode(vtkMRMLNode *item, vtkMRMLNode *newItem);
 
   /// Set undo on/off
-  void SetUndoOn() {UndoFlag=true;};
-  void SetUndoOff() {UndoFlag=false;};
-  bool GetUndoFlag() {return UndoFlag;};
-  void SetUndoFlag(bool flag) {UndoFlag = flag;};
+  void SetUndoOn() {UndoFlag=true;}
+  void SetUndoOff() {UndoFlag=false;}
+  bool GetUndoFlag() {return UndoFlag;}
+  void SetUndoFlag(bool flag) {UndoFlag = flag;}
 
   /// undo, set the scene to previous state
   void Undo();
@@ -362,10 +362,10 @@ public:
   void ClearRedoStack();
 
   /// returns number of undo steps in the history buffer
-  int GetNumberOfUndoLevels() { return (int)this->UndoStack.size();};
+  int GetNumberOfUndoLevels() {return static_cast<int>(this->UndoStack.size());}
 
   /// returns number of redo steps in the history buffer
-  int GetNumberOfRedoLevels() { return (int)this->RedoStack.size();};
+  int GetNumberOfRedoLevels() {return static_cast<int>(this->RedoStack.size());}
 
   /// Save current state in the undo buffer
   void SaveStateForUndo();
@@ -510,14 +510,14 @@ public:
   void SetErrorMessage(const char * message);
   const char *GetErrorMessagePointer();
 
-  vtkGetObjectMacro ( CacheManager, vtkCacheManager );
-  virtual void SetCacheManager(vtkCacheManager* );
-  vtkGetObjectMacro ( DataIOManager, vtkDataIOManager );
-  virtual void SetDataIOManager(vtkDataIOManager* );
-  vtkGetObjectMacro ( URIHandlerCollection, vtkCollection );
-  virtual void SetURIHandlerCollection(vtkCollection* );
-  vtkGetObjectMacro ( UserTagTable, vtkTagTable);
-  virtual void SetUserTagTable(vtkTagTable* );
+  vtkGetObjectMacro(CacheManager, vtkCacheManager);
+  virtual void SetCacheManager(vtkCacheManager*);
+  vtkGetObjectMacro(DataIOManager, vtkDataIOManager);
+  virtual void SetDataIOManager(vtkDataIOManager*);
+  vtkGetObjectMacro(URIHandlerCollection, vtkCollection);
+  virtual void SetURIHandlerCollection(vtkCollection*);
+  vtkGetObjectMacro(UserTagTable, vtkTagTable);
+  virtual void SetUserTagTable(vtkTagTable*);
 
   /// \brief Find a URI handler in the collection that can work on the
   /// passed URI.
@@ -525,7 +525,7 @@ public:
   /// Returns nullptr on failure
   vtkURIHandler *FindURIHandler(const char *URI);
   /// Returns a URIhandler of a specific type if its name is known.
-  vtkURIHandler *FindURIHandlerByName ( const char *name );
+  vtkURIHandler *FindURIHandlerByName (const char *name);
   /// Add a uri handler to the collection.
   void AddURIHandler(vtkURIHandler *handler);
 
@@ -765,8 +765,7 @@ protected:
   void AddReferencedNodes(vtkMRMLNode *node, vtkCollection *refNodes, bool recursive=true);
 
   /// Handle vtkMRMLScene::DeleteEvent: clear the scene.
-  static void SceneCallback( vtkObject *caller, unsigned long eid,
-                             void *clientData, void *callData );
+  static void SceneCallback(vtkObject *caller, unsigned long eid, void *clientData, void *callData);
 
   std::string GenerateUniqueID(vtkMRMLNode* node);
   std::string GenerateUniqueID(const std::string& baseID);
