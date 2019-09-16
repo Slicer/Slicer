@@ -103,7 +103,6 @@ Version:   $Revision: 1.18 $
 # include <vtkTimerLog.h>
 #endif
 
-vtkCxxSetObjectMacro(vtkMRMLScene, SubjectHierarchyNode, vtkMRMLSubjectHierarchyNode);
 vtkCxxSetObjectMacro(vtkMRMLScene, CacheManager, vtkCacheManager)
 vtkCxxSetObjectMacro(vtkMRMLScene, DataIOManager, vtkDataIOManager)
 vtkCxxSetObjectMacro(vtkMRMLScene, UserTagTable, vtkTagTable)
@@ -124,8 +123,6 @@ vtkMRMLScene::vtkMRMLScene()
 
   this->NodeReferences.clear();
   this->ReferencedIDChanges.clear();
-
-  this->SubjectHierarchyNode = nullptr;
 
   this->CacheManager = nullptr;
   this->DataIOManager = nullptr;
@@ -250,11 +247,6 @@ vtkMRMLScene::~vtkMRMLScene()
   for (unsigned int n=0; n<this->RegisteredNodeClasses.size(); n++)
     {
     this->RegisteredNodeClasses[n]->Delete();
-    }
-
-  if ( this->SubjectHierarchyNode != nullptr )
-    {
-    this->SubjectHierarchyNode = nullptr;
     }
 
   if ( this->CacheManager != nullptr )
@@ -3531,6 +3523,12 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLScene::GetSubjectHierarchyNode()
     }
   }
   return this->SubjectHierarchyNode;
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLScene::SetSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* node)
+{
+  this->SubjectHierarchyNode = node;
 }
 
 //-----------------------------------------------------------------------------
