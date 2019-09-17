@@ -1686,7 +1686,7 @@ def extractArchive(archiveFilePath, outputDir, expectedNumberOfExtractedFiles=No
 def computeChecksum(algo, filePath):
   """Compute digest of ``filePath`` using ``algo``.
 
-  Supported hashing algorithms are SHA256 and SHA512.
+  Supported hashing algorithms are SHA256, SHA512, and MD5.
 
   It internally reads the file by chunk of 8192 bytes.
 
@@ -1695,7 +1695,7 @@ def computeChecksum(algo, filePath):
   """
   import hashlib
 
-  if algo not in ['SHA256', 'SHA512']:
+  if algo not in ['SHA256', 'SHA512', 'MD5']:
     raise ValueError("unsupported hashing algorithm %s" % algo)
 
   with open(filePath, 'rb') as content:
@@ -1711,7 +1711,7 @@ def extractAlgoAndDigest(checksum):
   """Given a checksum string formatted as ``<algo>:<digest>`` returns
   the tuple ``(algo, digest)``.
 
-  ``<algo>`` is expected to be `SHA256` or `SHA512`.
+  ``<algo>`` is expected to be `SHA256`, `SHA512`, or `MD5`.
   ``<digest>`` is expected to be the full length hexdecimal digest.
 
   Raises :class:`ValueError` if checksum is incorrectly formatted.
@@ -1721,10 +1721,10 @@ def extractAlgoAndDigest(checksum):
   if len(checksum.split(':')) != 2:
     raise ValueError("invalid checksum '%s'. Expected format is '<algo>:<digest>'." % checksum)
   (algo, digest) = checksum.split(':')
-  expected_algos = ['SHA256', 'SHA512']
+  expected_algos = ['SHA256', 'SHA512', 'MD5']
   if algo not in expected_algos:
     raise ValueError("invalid algo '%s'. Algo must be one of %s" % (algo, ", ".join(expected_algos)))
-  expected_digest_length = {'SHA256': 64, 'SHA512': 128}
+  expected_digest_length = {'SHA256': 64, 'SHA512': 128, 'MD5': 32}
   if len(digest) != expected_digest_length[algo]:
     raise ValueError("invalid digest length %d. Expected digest length for %s is %d" % (len(digest), algo, expected_digest_length[algo]))
   return algo, digest
