@@ -466,13 +466,15 @@ void vtkSlicerVolumesLogic
       {
       displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID());
       }
-    else
+    else if (displayNode->GetColorNodeID() == nullptr)
       {
+      // only set default color node ID if it was not set already (by default volume node stored in the scene)
       displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
       }
     }
-  else
+  else if (displayNode->GetColorNodeID() == nullptr)
     {
+    // only set default color node ID if it was not set already (by default volume node stored in the scene)
     displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
     }
 }
