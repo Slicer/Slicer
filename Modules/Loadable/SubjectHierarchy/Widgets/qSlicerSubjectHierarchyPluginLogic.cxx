@@ -335,6 +335,9 @@ void qSlicerSubjectHierarchyPluginLogic::onSceneCloseEnded(vtkObject* sceneObjec
     qCritical() << Q_FUNC_INFO << ": There must be a subject hierarchy node in the scene";
     return;
     }
+
+  // Set subject hierarchy node to plugin handler
+  qSlicerSubjectHierarchyPluginHandler::instance()->observeSubjectHierarchyNode(shNode);
 }
 
 //-----------------------------------------------------------------------------

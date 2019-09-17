@@ -190,6 +190,11 @@ public:
   /// \return Plugin chosen by the user
   qSlicerSubjectHierarchyAbstractPlugin* selectPluginFromDialog(QString textToDisplay, QList<qSlicerSubjectHierarchyAbstractPlugin*> candidatePlugins);
 
+  /// Add an observer on the given SH node to watch for changes and react
+  /// as needed
+  /// \param shNode the subject hierarchy node to observe
+  void observeSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode);
+
 protected:
   /// Handle subject hierarchy node events
   static void onSubjectHierarchyNodeEvent(vtkObject* caller, unsigned long event, void* clientData, void* callData);

@@ -115,6 +115,11 @@ qSlicerSubjectHierarchyPluginHandler::qSlicerSubjectHierarchyPluginHandler(QObje
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyPluginHandler::~qSlicerSubjectHierarchyPluginHandler()
 {
+  if (m_MRMLScene != nullptr)
+    {
+    m_MRMLScene->RemoveObserver(m_CallBack);
+    }
+
   QList<qSlicerSubjectHierarchyAbstractPlugin*>::iterator pluginIt;
   for (pluginIt = this->m_RegisteredPlugins.begin(); pluginIt != this->m_RegisteredPlugins.end(); ++pluginIt)
     {
@@ -379,6 +384,23 @@ qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::sel
   return candidatePlugins[0];
 }
 
+//----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyPluginHandler::observeSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode)
+{
+  if (m_MRMLScene != nullptr)
+  {
+    m_MRMLScene->GetSubjectHierarchyNode()->RemoveObserver(m_CallBack);
+  }
+
+  if (shNode != nullptr)
+  {
+    this->setMRMLScene(shNode->GetScene());
+
+    shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent, m_CallBack);
+    shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested, m_CallBack);
+  }
+}
+
 //-----------------------------------------------------------------------------
 vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyPluginHandler::subjectHierarchyNode()const
 {
@@ -393,7 +415,18 @@ void qSlicerSubjectHierarchyPluginHandler::setMRMLScene(vtkMRMLScene* scene)
     return;
     }
 
+  if (m_MRMLScene != nullptr)
+    {
+    m_MRMLScene->RemoveObserver(m_CallBack);
+    }
+
   m_MRMLScene = scene;
+
+  if (m_MRMLScene != nullptr)
+    {
+    scene->AddObserver(vtkMRMLScene::NodeRemovedEvent, m_CallBack);
+    this->observeSubjectHierarchyNode(m_MRMLScene->GetSubjectHierarchyNode());
+    }
 }
 
 //-----------------------------------------------------------------------------
