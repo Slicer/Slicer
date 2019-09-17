@@ -63,6 +63,12 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
   Q_PROPERTY(bool selectRoleSubMenuVisible READ selectRoleSubMenuVisible WRITE setSelectRoleSubMenuVisible)
   /// Flag determining whether multiple items can be selected
   Q_PROPERTY(bool multiSelection READ multiSelection WRITE setMultiSelection)
+  Q_PROPERTY(QString attributeNameFilter READ attributeNameFilter WRITE setAttributeNameFilter)
+  Q_PROPERTY(QString attributeValueFilter READ attributeValueFilter WRITE setAttributeValueFilter)
+  Q_PROPERTY(QString levelFilter READ levelFilter WRITE setLevelFilter)
+  Q_PROPERTY(QString nameFilter READ nameFilter WRITE setNameFilter)
+  Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
+  Q_PROPERTY(QStringList hideChildNodeTypes READ hideChildNodeTypes WRITE setHideChildNodeTypes)
 
 public:
   typedef QTreeView Superclass;
@@ -81,6 +87,9 @@ public:
   /// \param vtkIdList for python compatibility
   Q_INVOKABLE void currentItems(vtkIdList* selectedItems);
 
+  /// Convenience method to set current item by associated data node.
+  virtual vtkMRMLNode* currentNode()const;
+
   /// Get root item of the tree
   Q_INVOKABLE vtkIdType rootItem()const;
   /// Get root item visibility
@@ -96,16 +105,27 @@ public:
   Q_INVOKABLE void setAttributeFilter(const QString& attributeName, const QVariant& attributeValue=QVariant());
   /// Remove item attribute filtering \sa setAttribute
   Q_INVOKABLE void removeAttributeFilter();
+  void setAttributeNameFilter(const QString& attributeName);
+  void setAttributeValueFilter(const QString& attributeValue);
+  QString attributeNameFilter()const;
+  QString attributeValueFilter()const;
 
   /// Set level filter that allows showing only items at a specified level and their parents. Show all items if empty
-  Q_INVOKABLE void setLevelFilter(QString &levelFilter);
+  void setLevelFilter(QString &levelFilter);
+  QString levelFilter()const;
+
   /// Set name filter that allows showing only items containing a specified string (case-insensitive). Show all items if empty
-  Q_INVOKABLE void setNameFilter(QString &nameFilter);
+  void setNameFilter(QString &nameFilter);
+  QString nameFilter()const;
+
   /// Set node type filter that allows showing only data nodes of a certain type. Show all data nodes if empty
-  Q_INVOKABLE void setNodeTypes(const QStringList& types);
+  void setNodeTypes(const QStringList& types);
+  QStringList nodeTypes()const;
+
   /// Set child node types filter that allows hiding certain data node subclasses that would otherwise be
   /// accepted by the data node type filter. Show all data nodes if empty
-  Q_INVOKABLE void setHideChildNodeTypes(const QStringList& types);
+  void setHideChildNodeTypes(const QStringList& types);
+  QStringList hideChildNodeTypes()const;
 
   Q_INVOKABLE qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel()const;
   Q_INVOKABLE qMRMLSubjectHierarchyModel* model()const;

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>423</width>
-    <height>490</height>
+    <width>440</width>
+    <height>787</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,114 +21,132 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <layout class="QGridLayout" name="gridLayout_2">
-     <item row="0" column="2">
-      <widget class="QPushButton" name="listVisibileInvisiblePushButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="createLabel">
+       <property name="text">
+        <string>Create:</string>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>30</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>32</width>
-         <height>32</height>
-        </size>
-       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="createFiducialPushButton">
        <property name="toolTip">
-        <string>Toggle the list visibility, which will over ride the visibility of markups in the list.</string>
+        <string>Create fiducial markup</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="icon">
-        <iconset>
-         <normaloff>:Icons/Medium/SlicerVisible.png</normaloff>:Icons/Medium/SlicerVisible.png</iconset>
+        <iconset resource="../qSlicerMarkupsModule.qrc">
+         <normaloff>:/Icons/MarkupsMouseModePlace.png</normaloff>:/Icons/MarkupsMouseModePlace.png</iconset>
        </property>
       </widget>
      </item>
-     <item row="0" column="3">
-      <widget class="QPushButton" name="listLockedUnlockedPushButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>30</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>32</width>
-         <height>32</height>
-        </size>
-       </property>
+     <item>
+      <widget class="QPushButton" name="createLinePushButton">
        <property name="toolTip">
-        <string>Toggle the list lock state which will over ride the lock state of markups in the list.</string>
+        <string>Create line markup</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="icon">
-        <iconset>
-         <normaloff>:Icons/Medium/SlicerUnlock.png</normaloff>:Icons/Medium/SlicerUnlock.png</iconset>
+        <iconset resource="../qSlicerMarkupsModule.qrc">
+         <normaloff>:/Icons/MarkupsLineMouseModePlace.png</normaloff>:/Icons/MarkupsLineMouseModePlace.png</iconset>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <widget class="qMRMLNodeComboBox" name="activeMarkupMRMLNodeComboBox">
+     <item>
+      <widget class="QPushButton" name="createAnglePushButton">
        <property name="toolTip">
-        <string>Select or create a markups list</string>
+        <string>Create angle markup</string>
        </property>
-       <property name="nodeTypes">
-        <stringlist>
-         <string>vtkMRMLMarkupsFiducialNode</string>
-         <string>vtkMRMLMarkupsLineNode</string>
-         <string>vtkMRMLMarkupsAngleNode</string>
-         <string>vtkMRMLMarkupsCurveNode</string>
-         <string>vtkMRMLMarkupsClosedCurveNode</string>
-        </stringlist>
+       <property name="text">
+        <string/>
        </property>
-       <property name="baseName">
-        <string>M</string>
-       </property>
-       <property name="addEnabled">
-        <bool>true</bool>
-       </property>
-       <property name="renameEnabled">
-        <bool>true</bool>
+       <property name="icon">
+        <iconset resource="../qSlicerMarkupsModule.qrc">
+         <normaloff>:/Icons/MarkupsAngleMouseModePlace.png</normaloff>:/Icons/MarkupsAngleMouseModePlace.png</iconset>
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="activeMarkupMRMLNodeLabel">
+     <item>
+      <widget class="QPushButton" name="createOpenCurvePushButton">
+       <property name="toolTip">
+        <string>Create open curve markup</string>
+       </property>
        <property name="text">
-        <string>List</string>
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../qSlicerMarkupsModule.qrc">
+         <normaloff>:/Icons/MarkupsCurveMouseModePlace.png</normaloff>:/Icons/MarkupsCurveMouseModePlace.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="createClosedCurvePushButton">
+       <property name="toolTip">
+        <string>Create closed curve markup</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../qSlicerMarkupsModule.qrc">
+         <normaloff>:/Icons/MarkupsClosedCurveMouseModePlace.png</normaloff>:/Icons/MarkupsClosedCurveMouseModePlace.png</iconset>
        </property>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox">
-     <property name="title">
-      <string>Display</string>
+    <widget class="ctkExpandableWidget" name="ResizableFrame">
+     <property name="orientations">
+      <set>Qt::Vertical</set>
      </property>
-     <property name="collapsed">
+     <property name="sizeGripInside">
       <bool>false</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="qMRMLSubjectHierarchyTreeView" name="activeMarkupTreeView">
+        <property name="dragDropMode">
+         <enum>QAbstractItemView::InternalMove</enum>
+        </property>
+        <property name="selectionMode">
+         <enum>QAbstractItemView::ExtendedSelection</enum>
+        </property>
+        <property name="editMenuActionVisible">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="qMRMLCollapsibleButton" name="CollapsibleGroupBox">
+     <property name="text">
+      <string>Display</string>
+     </property>
+     <property name="collapsed">
+      <bool>true</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
        <widget class="qMRMLMarkupsDisplayNodeWidget" name="markupsDisplayWidget"/>
       </item>
@@ -160,331 +178,170 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="jumpSlicesGroupBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+    <widget class="ctkCollapsibleButton" name="CollapsibleButton">
+     <property name="text">
+      <string>Control Points</string>
      </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>If checked, click on table rows to jump slices to that point. Arrow keys also work to highlight rows for jumping slices.</string>
-     </property>
-     <property name="title">
-      <string>Click to Jump Slices</string>
-     </property>
-     <property name="checkable">
+     <property name="collapsed">
       <bool>true</bool>
      </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QRadioButton" name="jumpOffsetRadioButton">
-        <property name="toolTip">
-         <string>Jumps slices with offset</string>
-        </property>
+     <layout class="QFormLayout" name="formLayout">
+      <item row="1" column="0">
+       <widget class="QLabel" name="label">
         <property name="text">
-         <string>Offset</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
+         <string>Click to Jump Slices:</string>
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="QRadioButton" name="jumpCenteredRadioButton">
-        <property name="toolTip">
-         <string>Jumps slices centered around the highlighted point</string>
-        </property>
+      <item row="1" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QCheckBox" name="jumpSlicesCheckBox">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>10</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QComboBox" name="jumpModeComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Offset: set slice plane position. Centered: set slice plane position and center the slice view on the control point.</string>
+          </property>
+          <item>
+           <property name="text">
+            <string>offset</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>centered</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>Centered</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
+         <string>Show Slice Intersections:</string>
         </property>
        </widget>
       </item>
-      <item>
+      <item row="2" column="1">
        <widget class="ctkCheckBox" name="sliceIntersectionsVisibilityCheckBox">
         <property name="toolTip">
          <string>Show how the other slice planes intersect each slice plane.</string>
         </property>
         <property name="text">
-         <string>Show Slice Intersections</string>
+         <string/>
         </property>
        </widget>
       </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_6">
-     <item>
-      <widget class="ctkMenuButton" name="visibilityAllMarkupsInListMenuButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>64</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>32</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Toggle visibility flag on all markups in list, use drop down menu to set all to visible or invisible.</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="ctkMenuButton" name="selectedAllMarkupsInListMenuButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>64</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>32</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Toggle selected flag on all markups in list, use drop down menu to set all to selected or deselected.</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="ctkMenuButton" name="lockAllMarkupsInListMenuButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>64</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>32</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Toggle lock flag on all markups in list, use drop down menu to set all to locked or unlocked.</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="deleteMarkupPushButton">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>30</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>32</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Delete the highlighted markup(s) from the active list</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../qSlicerMarkupsModule.qrc">
-         <normaloff>:/Icons/MarkupsDeleteSelectedRows.png</normaloff>:/Icons/MarkupsDeleteSelectedRows.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="deleteAllMarkupsInListPushButton">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>30</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>32</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Remove all markups from the active list</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../qSlicerMarkupsModule.qrc">
-         <normaloff>:/Icons/MarkupsDeleteAllRows.png</normaloff>:/Icons/MarkupsDeleteAllRows.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="CutMarkupsToolButton">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="text">
-        <string>Cut</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="CopyMarkupsToolButton">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="text">
-        <string>Copy</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="PasteMarkupsToolButton">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="text">
-        <string>Paste</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="checkBoxesHorizontalLayout">
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="transformedCoordinatesCheckBox">
-       <property name="toolTip">
-        <string>Check to show the transformed coordinates in the table.</string>
-       </property>
-       <property name="text">
-        <string>Transformed</string>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="hideCoordinateColumnsCheckBox">
-       <property name="toolTip">
-        <string>Check to hide the coordinate columns in the table, uncheck to show them. Right click in rows to see coordinates.</string>
-       </property>
-       <property name="text">
-        <string>Hide RAS</string>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QTableWidget" name="activeMarkupTableWidget">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>250</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>The markups in the currently active markups node. Right click in a row for delete, jump, copy, move.</string>
-     </property>
-     <property name="accessibleName">
-      <string>active markup table</string>
-     </property>
-     <property name="alternatingRowColors">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="ctkCollapsibleGroupBox" name="advancedCollapsibleButton">
-     <property name="toolTip">
-      <string>Display, naming, volume interactions, moving up/down, adding, Annotations import</string>
-     </property>
-     <property name="title">
-      <string>Advanced</string>
-     </property>
-     <property name="collapsed">
-      <bool>true</bool>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_7">
+      <item row="3" column="0" colspan="2">
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
         <item>
-         <widget class="QPushButton" name="moveMarkupUpPushButton">
+         <widget class="ctkMenuButton" name="visibilityAllMarkupsInListMenuButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>64</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Toggle visibility flag on all markups in list, use drop down menu to set all to visible or invisible.</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="ctkMenuButton" name="selectedAllMarkupsInListMenuButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>64</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Toggle selected flag on all markups in list, use drop down menu to set all to selected or deselected.</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="ctkMenuButton" name="lockAllMarkupsInListMenuButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>64</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Toggle lock flag on all markups in list, use drop down menu to set all to locked or unlocked.</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="deleteMarkupPushButton">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -504,19 +361,22 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Move a highlighted markup up one spot in the list</string>
+           <string>Delete the highlighted markup(s) from the active list</string>
           </property>
           <property name="text">
            <string/>
           </property>
           <property name="icon">
            <iconset resource="../qSlicerMarkupsModule.qrc">
-            <normaloff>:/Icons/MarkupsMoveUp.png</normaloff>:/Icons/MarkupsMoveUp.png</iconset>
+            <normaloff>:/Icons/MarkupsDeleteSelectedRows.png</normaloff>:/Icons/MarkupsDeleteSelectedRows.png</iconset>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="moveMarkupDownPushButton">
+         <widget class="QPushButton" name="deleteAllMarkupsInListPushButton">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -536,102 +396,319 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Move a highlighted markup down one spot in the list</string>
+           <string>Remove all markups from the active list</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../qSlicerMarkupsModule.qrc">
+            <normaloff>:/Icons/MarkupsDeleteAllRows.png</normaloff>:/Icons/MarkupsDeleteAllRows.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="CutMarkupsToolButton">
+          <property name="enabled">
+           <bool>true</bool>
           </property>
           <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../qSlicerMarkupsModule.qrc">
-            <normaloff>:/Icons/MarkupsMoveDown.png</normaloff>:/Icons/MarkupsMoveDown.png</iconset>
+           <string>Cut</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="addMarkupPushButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+         <widget class="QToolButton" name="CopyMarkupsToolButton">
+          <property name="enabled">
+           <bool>true</bool>
           </property>
-          <property name="minimumSize">
-           <size>
-            <width>30</width>
-            <height>0</height>
-           </size>
+          <property name="text">
+           <string>Copy</string>
           </property>
-          <property name="maximumSize">
-           <size>
-            <width>32</width>
-            <height>32</height>
-           </size>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="PasteMarkupsToolButton">
+          <property name="enabled">
+           <bool>true</bool>
           </property>
-          <property name="toolTip">
-           <string>Add a new markup to the active list, at origin</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../qSlicerMarkupsModule.qrc">
-            <normaloff>:/Icons/MarkupsAddFiducial.png</normaloff>:/Icons/MarkupsAddFiducial.png</iconset>
+          <property name="text">
+           <string>Paste</string>
           </property>
          </widget>
         </item>
        </layout>
       </item>
-      <item>
-       <widget class="ctkCollapsibleGroupBox" name="namingCollapsibleGroupBox">
-        <property name="title">
-         <string>Naming</string>
+      <item row="4" column="0" colspan="2">
+       <layout class="QHBoxLayout" name="checkBoxesHorizontalLayout">
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="transformedCoordinatesCheckBox">
+          <property name="toolTip">
+           <string>Check to show the transformed coordinates in the table.</string>
+          </property>
+          <property name="text">
+           <string>Transformed</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="hideCoordinateColumnsCheckBox">
+          <property name="toolTip">
+           <string>Check to hide the coordinate columns in the table, uncheck to show them. Right click in rows to see coordinates.</string>
+          </property>
+          <property name="text">
+           <string>Hide RAS</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="5" column="0" colspan="2">
+       <widget class="QTableWidget" name="activeMarkupTableWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <layout class="QGridLayout" name="gridLayout">
-         <item row="2" column="0">
-          <widget class="QLabel" name="nameFormatLabel">
-           <property name="toolTip">
-            <string>Include %N for list name, %d for number.</string>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>250</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>The markups in the currently active markups node. Right click in a row for delete, jump, copy, move.</string>
+        </property>
+        <property name="accessibleName">
+         <string>active markup table</string>
+        </property>
+        <property name="alternatingRowColors">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="listLockedUnlockedPushButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Enable/disable all interactions in slice and 3D views.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>:Icons/Medium/SlicerUnlock.png</normaloff>:Icons/Medium/SlicerUnlock.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Interaction in Views:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0" colspan="2">
+       <widget class="ctkCollapsibleGroupBox" name="advancedCollapsibleButton">
+        <property name="toolTip">
+         <string>Display, naming, volume interactions, moving up/down, adding, Annotations import</string>
+        </property>
+        <property name="title">
+         <string>Advanced</string>
+        </property>
+        <property name="collapsed">
+         <bool>true</bool>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_7">
+           <item>
+            <widget class="QPushButton" name="moveMarkupUpPushButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Move a highlighted markup up one spot in the list</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerMarkupsModule.qrc">
+               <normaloff>:/Icons/MarkupsMoveUp.png</normaloff>:/Icons/MarkupsMoveUp.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="moveMarkupDownPushButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Move a highlighted markup down one spot in the list</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerMarkupsModule.qrc">
+               <normaloff>:/Icons/MarkupsMoveDown.png</normaloff>:/Icons/MarkupsMoveDown.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="addMarkupPushButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Add a new markup to the active list, at origin</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerMarkupsModule.qrc">
+               <normaloff>:/Icons/MarkupsAddFiducial.png</normaloff>:/Icons/MarkupsAddFiducial.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="ctkCollapsibleGroupBox" name="namingCollapsibleGroupBox">
+           <property name="title">
+            <string>Naming</string>
            </property>
-           <property name="text">
-            <string>Name Format</string>
-           </property>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="2" column="0">
+             <widget class="QLabel" name="nameFormatLabel">
+              <property name="toolTip">
+               <string>Include %N for list name, %d for number.</string>
+              </property>
+              <property name="text">
+               <string>Name Format</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="nameFormatLineEdit">
+              <property name="toolTip">
+               <string>Format for creating names of new markups, using sprintf format style. %N is replaced by the list name, %d by an integer.</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="3">
+             <widget class="QPushButton" name="resetNameFormatToDefaultPushButton">
+              <property name="toolTip">
+               <string>Reset the name format field to the default value.</string>
+              </property>
+              <property name="text">
+               <string>Reset</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="QPushButton" name="renameAllWithCurrentNameFormatPushButton">
+              <property name="toolTip">
+               <string>Rename all markups in this list according to the current name format, trying to preserve numbers.</string>
+              </property>
+              <property name="text">
+               <string>Apply</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </item>
-         <item row="2" column="1">
-          <widget class="QLineEdit" name="nameFormatLineEdit">
+         <item>
+          <widget class="QPushButton" name="convertAnnotationFiducialsPushButton">
            <property name="toolTip">
-            <string>Format for creating names of new markups, using sprintf format style. %N is replaced by the list name, %d by an integer.</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="3">
-          <widget class="QPushButton" name="resetNameFormatToDefaultPushButton">
-           <property name="toolTip">
-            <string>Reset the name format field to the default value.</string>
+            <string>Uses annotation fiducial hierarchies to make markup lists. Removes the annotations once they've been moved.</string>
            </property>
            <property name="text">
-            <string>Reset</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="2">
-          <widget class="QPushButton" name="renameAllWithCurrentNameFormatPushButton">
-           <property name="toolTip">
-            <string>Rename all markups in this list according to the current name format, trying to preserve numbers.</string>
-           </property>
-           <property name="text">
-            <string>Apply</string>
+            <string>Convert Annotation Fiducials</string>
            </property>
           </widget>
          </item>
         </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="convertAnnotationFiducialsPushButton">
-        <property name="toolTip">
-         <string>Uses annotation fiducial hierarchies to make markup lists. Removes the annotations once they've been moved.</string>
-        </property>
-        <property name="text">
-         <string>Convert Annotation Fiducials</string>
-        </property>
        </widget>
       </item>
      </layout>
@@ -641,9 +718,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qMRMLNodeComboBox</class>
-   <extends>QWidget</extends>
-   <header>qMRMLNodeComboBox.h</header>
+   <class>qMRMLCollapsibleButton</class>
+   <extends>ctkCollapsibleButton</extends>
+   <header>qMRMLCollapsibleButton.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -658,14 +735,31 @@
    <header>qMRMLMarkupsDisplayNodeWidget.h</header>
   </customwidget>
   <customwidget>
+   <class>qMRMLSubjectHierarchyTreeView</class>
+   <extends>QTreeView</extends>
+   <header>qMRMLSubjectHierarchyTreeView.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkCheckBox</class>
    <extends>QCheckBox</extends>
    <header>ctkCheckBox.h</header>
   </customwidget>
   <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ctkCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
    <header>ctkCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkExpandableWidget</class>
+   <extends>QFrame</extends>
+   <header>ctkExpandableWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -681,7 +775,7 @@
   <connection>
    <sender>qSlicerMarkupsModule</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>activeMarkupMRMLNodeComboBox</receiver>
+   <receiver>activeMarkupTreeView</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -689,8 +783,8 @@
      <y>20</y>
     </hint>
     <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
+     <x>219</x>
+     <y>91</y>
     </hint>
    </hints>
   </connection>

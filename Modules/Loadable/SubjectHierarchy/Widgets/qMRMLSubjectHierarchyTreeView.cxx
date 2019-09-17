@@ -246,7 +246,7 @@ void qMRMLSubjectHierarchyTreeView::resetColumnSizesToDefault()
     }
   if (d->Model->visibilityColumn() >= 0)
     {
-  this->header()->setSectionResizeMode(d->Model->visibilityColumn(), QHeaderView::ResizeToContents);
+    this->header()->setSectionResizeMode(d->Model->visibilityColumn(), QHeaderView::ResizeToContents);
     }
   if (d->Model->colorColumn() >= 0)
     {
@@ -433,6 +433,18 @@ vtkIdType qMRMLSubjectHierarchyTreeView::currentItem()const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
   return d->SelectedItems.count() ? d->SelectedItems[0] : vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLNode* qMRMLSubjectHierarchyTreeView::currentNode()const
+{
+  Q_D(const qMRMLSubjectHierarchyTreeView);
+  vtkIdType itemID = currentItem();
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID || !d->SubjectHierarchyNode)
+    {
+    return nullptr;
+    }
+ return d->SubjectHierarchyNode->GetItemDataNode(itemID);
 }
 
 //------------------------------------------------------------------------------
@@ -756,6 +768,36 @@ void qMRMLSubjectHierarchyTreeView::setAttributeFilter(const QString& attributeN
 }
 
 //--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setAttributeNameFilter(const QString& attributeName)
+{
+  this->sortFilterProxyModel()->setAttributeNameFilter(attributeName);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  this->setRootItem(this->rootItem());
+}
+
+//--------------------------------------------------------------------------
+QString qMRMLSubjectHierarchyTreeView::attributeNameFilter()const
+{
+  return this->sortFilterProxyModel()->attributeNameFilter();
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setAttributeValueFilter(const QString& attributeValue)
+{
+  this->sortFilterProxyModel()->setAttributeValueFilter(attributeValue);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  this->setRootItem(this->rootItem());
+}
+
+//--------------------------------------------------------------------------
+QString qMRMLSubjectHierarchyTreeView::attributeValueFilter()const
+{
+  return this->sortFilterProxyModel()->attributeValueFilter();
+}
+
+//--------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::removeAttributeFilter()
 {
   this->sortFilterProxyModel()->setAttributeNameFilter(QString());
@@ -775,12 +817,24 @@ void qMRMLSubjectHierarchyTreeView::setLevelFilter(QString &levelFilter)
 }
 
 //--------------------------------------------------------------------------
+QString qMRMLSubjectHierarchyTreeView::levelFilter()const
+{
+  return this->sortFilterProxyModel()->levelFilter();
+}
+
+//--------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::setNameFilter(QString &nameFilter)
 {
   this->sortFilterProxyModel()->setNameFilter(nameFilter);
 
   // Reset root item, as it may have been corrupted, when tree became empty due to the filter
   this->setRootItem(this->rootItem());
+}
+
+//--------------------------------------------------------------------------
+QString qMRMLSubjectHierarchyTreeView::nameFilter()const
+{
+  return this->sortFilterProxyModel()->nameFilter();
 }
 
 //--------------------------------------------------------------------------
@@ -793,12 +847,24 @@ void qMRMLSubjectHierarchyTreeView::setNodeTypes(const QStringList& types)
 }
 
 //--------------------------------------------------------------------------
+QStringList qMRMLSubjectHierarchyTreeView::nodeTypes()const
+{
+  return this->sortFilterProxyModel()->nodeTypes();
+}
+
+//--------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::setHideChildNodeTypes(const QStringList& types)
 {
   this->sortFilterProxyModel()->setHideChildNodeTypes(types);
 
   // Reset root item, as it may have been corrupted, when tree became empty due to the filter
   this->setRootItem(this->rootItem());
+}
+
+//--------------------------------------------------------------------------
+QStringList qMRMLSubjectHierarchyTreeView::hideChildNodeTypes()const
+{
+  return this->sortFilterProxyModel()->hideChildNodeTypes();
 }
 
 //------------------------------------------------------------------------------
@@ -1641,17 +1707,11 @@ void qMRMLSubjectHierarchyTreeView::onSubjectHierarchyItemModified(vtkObject *ca
 //-----------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::onMRMLSceneCloseEnded(vtkObject* sceneObject)
 {
-  Q_D(qMRMLSubjectHierarchyTreeView);
-
   vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
   if (!scene)
     {
     return;
     }
-
-  // Clear selection model
-  this->clearSelection();
-  d->SelectedItems.clear();
 
   // Get new subject hierarchy node (or if not created yet then trigger creating it, because
   // scene close removed the pseudo-singleton subject hierarchy node), and set it to the tree view

@@ -35,14 +35,18 @@
 
 // SlicerQt includes
 #include "qMRMLSceneModel.h"
+#include "qMRMLSortFilterSubjectHierarchyProxyModel.h"
+#include "qMRMLSubjectHierarchyModel.h"
 #include "qMRMLUtils.h"
 #include "qSlicerApplication.h"
 
 // MRML includes
+#include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceNode.h"
+#include "vtkMRMLSubjectHierarchyNode.h"
 
 // MRMLDM includes
 #include "vtkMRMLMarkupsDisplayableManager.h"
@@ -66,6 +70,8 @@
 
 #include <math.h>
 
+static const int JUMP_MODE_COMBOBOX_INDEX_OFFSET = 0;
+static const int JUMP_MODE_COMBOBOX_INDEX_CENTERED = 1;
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Markups
@@ -91,6 +97,8 @@ public:
   vtkMRMLNode* selectionNodeActivePlaceNode();
   void setSelectionNodeActivePlaceNode(vtkMRMLNode* activePlaceNode);
   void setMRMLMarkupsNodeFromSelectionNode();
+
+  void setPlaceModeEnabled(bool placeEnable);
 
   vtkMRMLMarkupsDisplayNode* markupsDisplayNode();
 
@@ -160,6 +168,11 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 {
   Q_Q(qSlicerMarkupsModuleWidget);
   this->Ui_qSlicerMarkupsModule::setupUi(widget);
+
+  this->activeMarkupTreeView->setNodeTypes(QStringList(QString("vtkMRMLMarkupsNode")));
+  this->activeMarkupTreeView->setColumnHidden(this->activeMarkupTreeView->model()->idColumn(), true);
+  this->activeMarkupTreeView->setColumnHidden(this->activeMarkupTreeView->model()->transformColumn(), true);
+  this->activeMarkupTreeView->setColumnHidden(this->activeMarkupTreeView->model()->descriptionColumn(), false);
 
   // set up the list buttons
   // visibility
@@ -291,27 +304,29 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   QObject::connect(this->pasteAction, SIGNAL(triggered()), q, SLOT(pasteSelectedFromClipboard()));
 
   // set up the active markups node selector
-  QObject::connect(this->activeMarkupMRMLNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                   q, SLOT(onActiveMarkupMRMLNodeChanged(vtkMRMLNode*)));
-  QObject::connect(this->activeMarkupMRMLNodeComboBox, SIGNAL(nodeAddedByUser(vtkMRMLNode*)),
-                   q, SLOT(onActiveMarkupMRMLNodeAdded(vtkMRMLNode*)));
+  QObject::connect(this->activeMarkupTreeView, SIGNAL(currentItemChanged(vtkIdType)),
+    q, SLOT(onActiveMarkupItemChanged(vtkIdType)));
+  QObject::connect(this->createFiducialPushButton, SIGNAL(clicked()),
+    q, SLOT(onCreateMarkupsFiducial()));
+  QObject::connect(this->createLinePushButton, SIGNAL(clicked()),
+    q, SLOT(onCreateMarkupsLine()));
+  QObject::connect(this->createAnglePushButton, SIGNAL(clicked()),
+    q, SLOT(onCreateMarkupsAngle()));
+  QObject::connect(this->createOpenCurvePushButton, SIGNAL(clicked()),
+    q, SLOT(onCreateMarkupsOpenCurve()));
+  QObject::connect(this->createClosedCurvePushButton, SIGNAL(clicked()),
+    q, SLOT(onCreateMarkupsClosedCurve()));
 
   // Make sure that the Jump to Slices radio buttons match the default of the
   // MRML slice node
   vtkNew<vtkMRMLSliceNode> sliceNode;
   if (sliceNode->GetJumpMode() == vtkMRMLSliceNode::OffsetJumpSlice)
     {
-    if (this->jumpOffsetRadioButton->isChecked() != true)
-      {
-      this->jumpOffsetRadioButton->setChecked(true);
-      }
+    this->jumpModeComboBox->setCurrentIndex(JUMP_MODE_COMBOBOX_INDEX_OFFSET);
     }
   else if (sliceNode->GetJumpMode() == vtkMRMLSliceNode::CenteredJumpSlice)
     {
-    if (this->jumpCenteredRadioButton->isChecked() != true)
-      {
-      this->jumpCenteredRadioButton->setChecked(true);
-      }
+    this->jumpModeComboBox->setCurrentIndex(JUMP_MODE_COMBOBOX_INDEX_CENTERED);
     }
   // update the checked state of showing the slice intersections
   // vtkSlicerMarkupsLogic::GetSliceIntersectionsVisibility() cannot be called, as the scene
@@ -322,24 +337,8 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
                    q, SLOT(onSliceIntersectionsVisibilityToggled(bool)));
 
   //
-  // add an action to create a new markups list using the display node
-  // settings from the currently active list
-  //
-
-  this->newMarkupWithCurrentDisplayPropertiesAction =
-    new QAction("New markups with current display properties",
-                this->activeMarkupMRMLNodeComboBox);
-  this->activeMarkupMRMLNodeComboBox->addMenuAction(this->newMarkupWithCurrentDisplayPropertiesAction);
-  this->activeMarkupMRMLNodeComboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-
-  QObject::connect(this->newMarkupWithCurrentDisplayPropertiesAction, SIGNAL(triggered()),
-                    q, SLOT(onNewMarkupWithCurrentDisplayPropertiesTriggered()));
-
-  //
   // set up the list visibility/locked buttons
   //
-  QObject::connect(this->listVisibileInvisiblePushButton, SIGNAL(clicked()),
-                   q, SLOT(onListVisibileInvisiblePushButtonClicked()));
   QObject::connect(this->listLockedUnlockedPushButton, SIGNAL(clicked()),
                    q, SLOT(onListLockedUnlockedPushButtonClicked()));
   //
@@ -502,13 +501,30 @@ void qSlicerMarkupsModuleWidgetPrivate::setMRMLMarkupsNodeFromSelectionNode()
 
   // Select current markups node
   vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->selectionNodeActivePlaceNode());
-  if (!currentMarkupsNode)
+  if (!currentMarkupsNode && q->mrmlScene() && this->activeMarkupTreeView->subjectHierarchyNode())
     {
     // Active place node is not a markups node then switch to the last markups node.
-    QList<vtkMRMLNode*> nodes = this->activeMarkupMRMLNodeComboBox->nodes();
-    if (!nodes.isEmpty())
-      {
-      currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(nodes.last());
+    vtkCollection* nodes = q->mrmlScene()->GetNodes();
+    vtkMRMLSubjectHierarchyNode* shNode = this->activeMarkupTreeView->subjectHierarchyNode();
+    for (int nodeIndex = nodes->GetNumberOfItems() - 1; nodeIndex >= 0; nodeIndex--)
+    {
+      vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(nodes->GetItemAsObject(nodeIndex));
+      if (!markupsNode)
+        {
+        continue;
+        }
+      vtkIdType itemID = shNode->GetItemByDataNode(markupsNode);
+      if (!itemID)
+        {
+        continue;
+        }
+      QModelIndex itemIndex = this->activeMarkupTreeView->sortFilterProxyModel()->indexFromSubjectHierarchyItem(itemID);
+      if (!itemIndex.isValid())
+        {
+        // not visible in current view
+        continue;
+        }
+      currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(markupsNode);
       }
     if (currentMarkupsNode)
       {
@@ -516,6 +532,37 @@ void qSlicerMarkupsModuleWidgetPrivate::setMRMLMarkupsNodeFromSelectionNode()
       }
     }
   q->setMRMLMarkupsNode(currentMarkupsNode);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidgetPrivate::setPlaceModeEnabled(bool placeEnable)
+{
+  Q_Q(qSlicerMarkupsModuleWidget);
+  vtkMRMLInteractionNode* interactionNode = nullptr;
+  if (q->mrmlScene())
+    {
+    interactionNode = vtkMRMLInteractionNode::SafeDownCast(q->mrmlScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
+    }
+  if (interactionNode == nullptr)
+    {
+    if (placeEnable)
+      {
+      qCritical() << Q_FUNC_INFO << " setPlaceModeEnabled failed: invalid interaction node";
+      }
+    return;
+    }
+
+  if (placeEnable)
+    {
+    interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
+    }
+  else
+    {
+    if (interactionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
+      {
+      interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -697,9 +744,9 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
 {
   Q_D(qSlicerMarkupsModuleWidget);
 
-  bool wasBlocked = d->activeMarkupMRMLNodeComboBox->blockSignals(true);
-  d->activeMarkupMRMLNodeComboBox->setCurrentNode(d->MarkupsNode);
-  d->activeMarkupMRMLNodeComboBox->blockSignals(wasBlocked);
+  bool wasBlocked = d->activeMarkupTreeView->blockSignals(true);
+  d->activeMarkupTreeView->setCurrentNode(d->MarkupsNode);
+  d->activeMarkupTreeView->blockSignals(wasBlocked);
 
   d->markupsDisplayWidget->setMRMLMarkupsNode(d->MarkupsNode);
 
@@ -709,18 +756,6 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
     d->activeMarkupTableWidget->setRowCount(0);
 
     return;
-    }
-
-  // update the list visibility button icon and tool tip
-  if (d->MarkupsNode->GetDisplayVisibility())
-    {
-    d->listVisibileInvisiblePushButton->setIcon(QIcon(":Icons/Medium/SlicerVisible.png"));
-    d->listVisibileInvisiblePushButton->setToolTip(QString("Click to hide this markup list"));
-    }
-  else
-    {
-    d->listVisibileInvisiblePushButton->setIcon(QIcon(":Icons/Medium/SlicerInvisible.png"));
-    d->listVisibileInvisiblePushButton->setToolTip(QString("Click to show this markup list"));
     }
 
   if (d->MarkupsNode->GetLocked())
@@ -840,13 +875,13 @@ void qSlicerMarkupsModuleWidget::updateRow(int m)
 
   // qDebug() << QString("updateRow: row = ") + QString::number(m) + QString(", number of rows = ") + QString::number(d->activeMarkupTableWidget->rowCount());
   // get active markups node
-  QString activeMarkupsNodeID = d->activeMarkupMRMLNodeComboBox->currentNodeID();
-  vtkMRMLNode *mrmlNode = this->mrmlScene()->GetNodeByID(activeMarkupsNodeID.toLatin1());
-  vtkMRMLMarkupsNode *markupsNode = nullptr;
-  if (mrmlNode)
-    {
-    markupsNode = vtkMRMLMarkupsNode::SafeDownCast(mrmlNode);
-    }
+  vtkMRMLMarkupsNode* markupsNode = nullptr;
+   vtkMRMLNode* node = d->activeMarkupTreeView->currentNode();
+   if (node)
+     {
+     // make sure the node is still in the scene and convert to markups
+     markupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->mrmlScene()->GetNodeByID(node->GetID()));
+     }
   if (!markupsNode
     || m >= markupsNode->GetNumberOfControlPoints()) // markup point is already deleted (possible after batch update)
     {
@@ -983,7 +1018,7 @@ void qSlicerMarkupsModuleWidget::onNodeAddedEvent(vtkObject*, vtkObject* node)
   if (markupsNode)
     {
     // make it active
-    d->activeMarkupMRMLNodeComboBox->setCurrentNodeID(markupsNode->GetID());
+    d->activeMarkupTreeView->setCurrentNode(markupsNode);
     }
 }
 
@@ -1325,6 +1360,18 @@ void qSlicerMarkupsModuleWidget::onDeleteAllMarkupsInListPushButtonClicked()
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onActiveMarkupItemChanged(vtkIdType)
+{
+  Q_D(qSlicerMarkupsModuleWidget);
+  if (!this->isEntered())
+    {
+    // ignore any changes if the GUI is not shown
+    return;
+    }
+  this->onActiveMarkupMRMLNodeChanged(d->activeMarkupTreeView->currentNode());
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::onActiveMarkupMRMLNodeChanged(vtkMRMLNode *node)
 {
   Q_D(qSlicerMarkupsModuleWidget);
@@ -1347,6 +1394,51 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupMRMLNodeChanged(vtkMRMLNode *node
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onCreateMarkupsFiducial()
+{
+  if (this->mrmlScene())
+    {
+    this->onActiveMarkupMRMLNodeAdded(this->mrmlScene()->AddNewNodeByClass("vtkMRMLMarkupsFiducialNode"));
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onCreateMarkupsLine()
+{
+  if (this->mrmlScene())
+    {
+    this->onActiveMarkupMRMLNodeAdded(this->mrmlScene()->AddNewNodeByClass("vtkMRMLMarkupsLineNode"));
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onCreateMarkupsAngle()
+{
+  if (this->mrmlScene())
+    {
+    this->onActiveMarkupMRMLNodeAdded(this->mrmlScene()->AddNewNodeByClass("vtkMRMLMarkupsAngleNode"));
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onCreateMarkupsOpenCurve()
+{
+  if (this->mrmlScene())
+    {
+    this->onActiveMarkupMRMLNodeAdded(this->mrmlScene()->AddNewNodeByClass("vtkMRMLMarkupsCurveNode"));
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onCreateMarkupsClosedCurve()
+{
+  if (this->mrmlScene())
+    {
+    this->onActiveMarkupMRMLNodeAdded(this->mrmlScene()->AddNewNodeByClass("vtkMRMLMarkupsClosedCurveNode"));
+    }
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::onActiveMarkupMRMLNodeAdded(vtkMRMLNode *markupsNode)
 {
   Q_D(qSlicerMarkupsModuleWidget);
@@ -1357,6 +1449,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupMRMLNodeAdded(vtkMRMLNode *markup
   // make sure it's set up for the mouse mode tool bar to easily add points to
   // it by making it active in the selection node
   d->setSelectionNodeActivePlaceNode(markupsNode);
+  d->setPlaceModeEnabled(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -1598,7 +1691,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCurrentCellChanged(
     }
 
   // is jumping disabled?
-  if (!d->jumpSlicesGroupBox->isChecked())
+  if (!d->jumpSlicesCheckBox->isChecked())
     {
     return;
     }
@@ -1606,7 +1699,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCurrentCellChanged(
 
   // offset or center?
   bool jumpCentered = false;
-  if (d->jumpCenteredRadioButton->isChecked())
+  if (d->jumpModeComboBox->currentIndex() == JUMP_MODE_COMBOBOX_INDEX_CENTERED)
     {
     jumpCentered = true;
     }
@@ -1792,7 +1885,7 @@ void qSlicerMarkupsModuleWidget::onJumpSlicesActionTriggered()
 
   // offset or center?
   bool jumpCentered = false;
-  if (d->jumpCenteredRadioButton->isChecked())
+  if (d->jumpModeComboBox->currentIndex() == JUMP_MODE_COMBOBOX_INDEX_CENTERED)
     {
     jumpCentered = true;
     }
@@ -1934,7 +2027,7 @@ void qSlicerMarkupsModuleWidget::pasteSelectedFromClipboard()
     {
     // No fiducial list is selected - create a new one
     // Assume a fiducial markups
-    d->activeMarkupMRMLNodeComboBox->addNode("vtkMRMLMarkupsFiducialNode");
+    this->onCreateMarkupsFiducial();
     if (!d->MarkupsNode)
       {
       return;
@@ -2021,7 +2114,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodeLockModifiedEvent()
   Q_D(qSlicerMarkupsModuleWidget);
 
   // get the active list
-  vtkMRMLNode *mrmlNode = d->activeMarkupMRMLNodeComboBox->currentNode();
+  vtkMRMLNode *mrmlNode = d->activeMarkupTreeView->currentNode();
   if (!mrmlNode)
     {
     return;
@@ -2030,16 +2123,6 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodeLockModifiedEvent()
   if (!markupsNode)
     {
     return;
-    }
-  if (markupsNode->GetLocked())
-    {
-    // disable the table
-    d->activeMarkupTableWidget->setEnabled(false);
-    }
-  else
-    {
-    // enable it
-    d->activeMarkupTableWidget->setEnabled(true);
     }
 }
 
@@ -2088,7 +2171,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointAddedEvent()
   // (if jump slices on click in table is selected, selecting the new
   // row before the point coordinates are updated will cause the slices
   // to jump to 0,0,0)
-  if (!d->jumpSlicesGroupBox->isChecked())
+  if (!d->jumpSlicesCheckBox->isChecked())
     {
     d->activeMarkupTableWidget->setCurrentCell(newRow, 0);
     }
@@ -2156,7 +2239,7 @@ void qSlicerMarkupsModuleWidget::onNewMarkupWithCurrentDisplayPropertiesTriggere
     {
     // if there's no currently active markups list, trigger the default add
     // node
-    d->activeMarkupMRMLNodeComboBox->addNode();
+    this->onCreateMarkupsFiducial();
     return;
     }
 
@@ -2199,7 +2282,7 @@ void qSlicerMarkupsModuleWidget::onNewMarkupWithCurrentDisplayPropertiesTriggere
   d->setSelectionNodeActivePlaceNode(newMRMLNode);
   this->setMRMLMarkupsNode(newMRMLNode);
   // let the user rename it
-  d->activeMarkupMRMLNodeComboBox->renameCurrentNode();
+  d->activeMarkupTreeView->renameCurrentItem();
 }
 
 //-----------------------------------------------------------------------------

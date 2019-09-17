@@ -23,6 +23,7 @@
 
 #include "qSlicerMarkupsModuleExport.h"
 
+class QItemSelection;
 class QMenu;
 class QModelIndex;
 class QTableWidgetItem;
@@ -138,7 +139,8 @@ public slots:
   void onDeleteMarkupPushButtonClicked(bool confirm=true);
   void onDeleteAllMarkupsInListPushButtonClicked();
 
-  /// Update the selection node from the combo box
+  /// Update the selection node from the tree view
+  void onActiveMarkupItemChanged(vtkIdType);
   void onActiveMarkupMRMLNodeChanged(vtkMRMLNode *markupsNode);
   /// Update the combo box from the selection node
   void onSelectionNodeActivePlaceNodeIDChanged();
@@ -146,6 +148,12 @@ public slots:
   /// When the user clicks in the comob box to create a new markups node,
   /// make sure that a display node is added
   void onActiveMarkupMRMLNodeAdded(vtkMRMLNode *markupsNode);
+
+  void onCreateMarkupsFiducial();
+  void onCreateMarkupsLine();
+  void onCreateMarkupsAngle();
+  void onCreateMarkupsOpenCurve();
+  void onCreateMarkupsClosedCurve();
 
   /// Toggle the markups node visibility flag
   void onListVisibileInvisiblePushButtonClicked();
