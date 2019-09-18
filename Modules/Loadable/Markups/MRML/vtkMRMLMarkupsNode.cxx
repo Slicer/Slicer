@@ -1831,6 +1831,23 @@ void vtkMRMLMarkupsNode::SetControlPointPositionsWorld(vtkPoints* points)
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::GetControlPointPositionsWorld(vtkPoints* points)
+{
+  if (!points)
+    {
+    return;
+    }
+  int numberOfControlPoints = this->GetNumberOfControlPoints();
+  points->SetNumberOfPoints(numberOfControlPoints);
+  double posWorld[3] = { 0.0 };
+  for (int controlPointIndex = 0; controlPointIndex < numberOfControlPoints; controlPointIndex++)
+    {
+    this->GetNthControlPointPositionWorld(controlPointIndex, posWorld);
+    points->SetPoint(controlPointIndex, posWorld);
+    }
+}
+
+//---------------------------------------------------------------------------
 bool vtkMRMLMarkupsNode::SetControlPointLabelsWorld(vtkStringArray* labels, vtkPoints* points, std::string separator /*=""*/)
 {
   if (!labels || !points || labels->GetNumberOfValues() != points->GetNumberOfPoints())

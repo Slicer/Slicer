@@ -539,6 +539,16 @@ public:
   /// Get the index of the closest control point to the world coordinates
   int GetClosestControlPointIndexToPositionWorld(double pos[3]);
 
+  /// Set all control point positions from a point list.
+  /// If points is nullptr then all control points are removed.
+  /// New control points are added if needed.
+  /// Existing control points are updated with the new positions.
+  /// Any extra existing control points are removed.
+  void SetControlPointPositionsWorld(vtkPoints* points);
+
+  /// Get a copy of all control point positions in world coordinate system
+  void GetControlPointPositionsWorld(vtkPoints* points);
+
 protected:
   vtkMRMLMarkupsNode();
   ~vtkMRMLMarkupsNode() override;
@@ -546,14 +556,6 @@ protected:
   void operator=(const vtkMRMLMarkupsNode&);
 
   vtkSmartPointer<vtkStringArray> TextList;
-
-  /// Set all control point positions from a point list.
-  /// The method is protected because the API may still change.
-  /// If points is nullptr then all control points are removed.
-  /// New control points are added if needed.
-  /// Existing control points are updated with the new positions.
-  /// Any extra existing control points are removed.
-  void SetControlPointPositionsWorld(vtkPoints* points);
 
   /// Set label of closest control point.
   /// If one control point is closest to multiple labels then all of them will be assigned to the same control point,

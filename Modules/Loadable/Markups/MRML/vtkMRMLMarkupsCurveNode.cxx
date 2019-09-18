@@ -121,19 +121,19 @@ vtkPoints* vtkMRMLMarkupsCurveNode::GetCurvePointsWorld()
 }
 
 //---------------------------------------------------------------------------
-double vtkMRMLMarkupsCurveNode::GetCurveLengthWorld(vtkIdType startCurvePointIndex /*=0*/, vtkIdType numberOfCurvePoints /*=-1*/)
+double vtkMRMLMarkupsCurveNode::GetCurveLength(vtkPoints* curvePoints, bool closedCurve,
+  vtkIdType startCurvePointIndex /*=0*/, vtkIdType numberOfCurvePoints /*=-1*/)
 {
-  vtkPoints* points = this->GetCurvePointsWorld();
-  if (!points || points->GetNumberOfPoints() < 2)
+  if (!curvePoints || curvePoints->GetNumberOfPoints() < 2)
     {
     return 0.0;
     }
   if (startCurvePointIndex < 0)
     {
-    vtkWarningMacro("Invalid startCurvePointIndex=" << startCurvePointIndex << ", using 0 instead");
+    vtkGenericWarningMacro("Invalid startCurvePointIndex=" << startCurvePointIndex << ", using 0 instead");
     startCurvePointIndex = 0;
     }
-  vtkIdType lastCurvePointIndex = points->GetNumberOfPoints()-1;
+  vtkIdType lastCurvePointIndex = curvePoints->GetNumberOfPoints()-1;
   if (numberOfCurvePoints >= 0 && startCurvePointIndex + numberOfCurvePoints - 1 < lastCurvePointIndex)
     {
     lastCurvePointIndex = startCurvePointIndex + numberOfCurvePoints - 1;
@@ -141,17 +141,32 @@ double vtkMRMLMarkupsCurveNode::GetCurveLengthWorld(vtkIdType startCurvePointInd
 
   double length = 0.0;
   double previousPoint[3] = { 0.0 };
-  points->GetPoint(startCurvePointIndex, previousPoint);
+  double nextPoint[3] = { 0.0 };
+  curvePoints->GetPoint(startCurvePointIndex, previousPoint);
   for (vtkIdType curvePointIndex = startCurvePointIndex + 1; curvePointIndex <= lastCurvePointIndex; curvePointIndex++)
     {
-    double nextPoint[3];
-    points->GetPoint(curvePointIndex, nextPoint);
+    curvePoints->GetPoint(curvePointIndex, nextPoint);
     length += sqrt(vtkMath::Distance2BetweenPoints(previousPoint, nextPoint));
     previousPoint[0] = nextPoint[0];
     previousPoint[1] = nextPoint[1];
     previousPoint[2] = nextPoint[2];
     }
+  // Add length of closing segment
+  if (closedCurve && (numberOfCurvePoints < 0 || numberOfCurvePoints >= curvePoints->GetNumberOfPoints()))
+    {
+    curvePoints->GetPoint(0, nextPoint);
+    length += sqrt(vtkMath::Distance2BetweenPoints(previousPoint, nextPoint));
+    }
   return length;
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLMarkupsCurveNode::GetCurveLengthWorld(
+  vtkIdType startCurvePointIndex /*=0*/, vtkIdType numberOfCurvePoints /*=-1*/)
+{
+  vtkPoints* points = this->GetCurvePointsWorld();
+  return vtkMRMLMarkupsCurveNode::GetCurveLength(points, this->CurveClosed,
+    startCurvePointIndex, numberOfCurvePoints);
 }
 
 //---------------------------------------------------------------------------
@@ -181,7 +196,7 @@ void vtkMRMLMarkupsCurveNode::ResampleCurveWorld(double controlPointDistance)
   vtkMRMLMarkupsCurveNode::ResamplePoints(points, interpolatedPoints, controlPointDistance, this->CurveClosed);
 
   vtkNew<vtkPoints> originalPoints;
-  originalPoints->DeepCopy(points);
+  this->GetControlPointPositionsWorld(originalPoints);
   vtkNew<vtkStringArray> originalLabels;
   this->GetControlPointLabels(originalLabels);
 
@@ -206,20 +221,33 @@ bool vtkMRMLMarkupsCurveNode::ResamplePoints(vtkPoints* originalPoints, vtkPoint
     }
 
   double distanceFromLastSampledPoint = 0;
+  double remainingSegmentLength = 0;
   double previousCurvePoint[3] = { 0.0 };
   originalPoints->GetPoint(0, previousCurvePoint);
   sampledPoints->Reset();
   sampledPoints->InsertNextPoint(previousCurvePoint);
   vtkIdType numberOfOriginalPoints = originalPoints->GetNumberOfPoints();
-  for (vtkIdType originalPointIndex = 0; originalPointIndex < numberOfOriginalPoints; originalPointIndex++)
+  bool addClosingSegment = closedCurve; // for closed curves, add a closing segment that connects last and first points
+  double* currentCurvePoint = nullptr;
+  for (vtkIdType originalPointIndex = 0; originalPointIndex < numberOfOriginalPoints || addClosingSegment; originalPointIndex++)
     {
-    double* currentCurvePoint = originalPoints->GetPoint(originalPointIndex);
+    if (originalPointIndex >= numberOfOriginalPoints)
+      {
+      // this is the closing segment
+      addClosingSegment = false;
+      currentCurvePoint = originalPoints->GetPoint(0);
+      }
+    else
+      {
+      currentCurvePoint = originalPoints->GetPoint(originalPointIndex);
+      }
+
     double segmentLength = sqrt(vtkMath::Distance2BetweenPoints(currentCurvePoint, previousCurvePoint));
     if (segmentLength <= 0.0)
       {
       continue;
       }
-    double remainingSegmentLength = distanceFromLastSampledPoint + segmentLength;
+    remainingSegmentLength = distanceFromLastSampledPoint + segmentLength;
     if (remainingSegmentLength >= samplingDistance)
       {
       double segmentDirectionVector[3] =
@@ -254,28 +282,174 @@ bool vtkMRMLMarkupsCurveNode::ResamplePoints(vtkPoints* originalPoints, vtkPoint
     previousCurvePoint[2] = currentCurvePoint[2];
     }
 
-  // The last segment may be much shorter than all the others, which may introduce artifact in spline fitting.
-  // To fix that, move the last point to have two equal segments at the end.
-  if (closedCurve && sampledPoints->GetNumberOfPoints() > 3)
-    {
-    double firstPoint[3] = { 0.0 };
-    double secondLastPoint[3] = { 0.0 };
-    double lastPoint[3] = { 0.0 };
-    sampledPoints->GetPoint(0, firstPoint);
-    sampledPoints->GetPoint(sampledPoints->GetNumberOfPoints()-2, secondLastPoint);
-    sampledPoints->GetPoint(sampledPoints->GetNumberOfPoints() - 1, lastPoint);
-    double lastSegmentLength = sqrt(vtkMath::Distance2BetweenPoints(secondLastPoint, lastPoint));
-    double lastTwoSegmentLengthAverage = (lastSegmentLength + sqrt(vtkMath::Distance2BetweenPoints(lastPoint, firstPoint)))/2.0;
-    double lastTwoSegmentRatio = lastTwoSegmentLengthAverage / lastSegmentLength;
-    double adjustedLastPoint[3] =
+  // Make sure the resampled curve has the same size as the original
+  // but avoid having very long or very short line segments at the end.
+  if (closedCurve)
+  {
+    // Closed curve
+    // Ideally, remainingSegmentLength would be equal to samplingDistance.
+    if (remainingSegmentLength < samplingDistance * 0.5)
       {
-      secondLastPoint[0] + (lastPoint[0] - secondLastPoint[0]) * lastTwoSegmentRatio,
-      secondLastPoint[1] + (lastPoint[1] - secondLastPoint[1]) * lastTwoSegmentRatio,
-      secondLastPoint[2] + (lastPoint[2] - secondLastPoint[2]) * lastTwoSegmentRatio
-      };
-    sampledPoints->SetPoint(sampledPoints->GetNumberOfPoints() - 1, adjustedLastPoint);
+      // last segment would be too short, so remove the last point and adjust position of second last point
+      double lastPointPosition[3] = { 0.0 };
+      vtkIdType foundClosestPointIndex = -1; // not used
+      if (vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(lastPointPosition, foundClosestPointIndex,
+        0, -(2.0*samplingDistance+remainingSegmentLength)/2.0, originalPoints, closedCurve))
+        {
+        sampledPoints->SetNumberOfPoints(sampledPoints->GetNumberOfPoints() - 1);
+        sampledPoints->SetPoint(sampledPoints->GetNumberOfPoints() - 1, lastPointPosition);
+        }
+      else
+        {
+        // something went wrong, we could not add a point, therefore just remove the last point
+        sampledPoints->SetNumberOfPoints(sampledPoints->GetNumberOfPoints() - 1);
+        }
+      }
+    else
+      {
+      // last segment is only slightly shorter than the sampling distance
+      // so just adjust the position of the last point
+      double lastPointPosition[3] = { 0.0 };
+      vtkIdType foundClosestPointIndex = -1; // not used
+      if (vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(lastPointPosition, foundClosestPointIndex,
+        0, -(samplingDistance+remainingSegmentLength)/2.0, originalPoints, closedCurve))
+        {
+        sampledPoints->SetPoint(sampledPoints->GetNumberOfPoints() - 1, lastPointPosition);
+        }
+      }
+  }
+  else
+    {
+    // Open curve
+    // Ideally, remainingSegmentLength would be equal to 0.
+    if (remainingSegmentLength > samplingDistance * 0.5)
+      {
+      // last segment would be much longer than the sampling distance, so add an extra point
+      double secondLastPointPosition[3] = { 0.0 };
+      vtkIdType foundClosestPointIndex = -1; // not used
+      if (vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(secondLastPointPosition, foundClosestPointIndex,
+        originalPoints->GetNumberOfPoints() - 1, -(samplingDistance+remainingSegmentLength) / 2.0, originalPoints, closedCurve))
+        {
+        sampledPoints->SetPoint(sampledPoints->GetNumberOfPoints() - 1, secondLastPointPosition);
+        sampledPoints->InsertNextPoint(originalPoints->GetPoint(originalPoints->GetNumberOfPoints() - 1));
+        }
+      else
+        {
+        // something went wrong, we could not add a point, therefore just adjust the last point position
+        sampledPoints->SetPoint(sampledPoints->GetNumberOfPoints() - 1,
+          originalPoints->GetPoint(originalPoints->GetNumberOfPoints() - 1));
+        }
+      }
+    else
+      {
+      // last segment is only slightly longer than the sampling distance
+      // so we just adjust the position of last point
+      sampledPoints->SetPoint(sampledPoints->GetNumberOfPoints() - 1,
+        originalPoints->GetPoint(originalPoints->GetNumberOfPoints() - 1));
+      }
     }
 
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(double foundCurvePosition[3], vtkIdType foundClosestPointIndex,
+  vtkIdType startCurvePointId, double distanceFromStartPoint, vtkPoints* curvePoints, bool closedCurve)
+{
+  vtkIdType numberOfCurvePoints = (curvePoints != nullptr ? curvePoints->GetNumberOfPoints() : 0);
+  if (numberOfCurvePoints == 0)
+    {
+    vtkGenericWarningMacro("vtkMRMLMarkupsCurveNode::GetPositionAlongCurve failed: invalid input points");
+    foundClosestPointIndex = -1;
+    return false;
+    }
+  if (startCurvePointId < 0 || startCurvePointId >= numberOfCurvePoints)
+    {
+    vtkGenericWarningMacro("vtkMRMLMarkupsCurveNode::GetPositionAlongCurve failed: startCurvePointId is out of range");
+    foundClosestPointIndex = -1;
+    return false;
+    }
+  if (numberOfCurvePoints == 1 || distanceFromStartPoint == 0)
+    {
+    curvePoints->GetPoint(startCurvePointId, foundCurvePosition);
+    foundClosestPointIndex = startCurvePointId;
+    if (distanceFromStartPoint > 0.0)
+      {
+      vtkGenericWarningMacro("vtkMRMLMarkupsCurveNode::GetPositionAlongCurve failed: non-zero distance"
+        " is requested but only 1 point is available");
+      return false;
+      }
+    else
+      {
+      return true;
+      }
+    }
+  vtkIdType idIncrement = (distanceFromStartPoint > 0 ? 1 : -1);
+  double remainingDistanceFromStartPoint = abs(distanceFromStartPoint);
+  double previousPoint[3] = { 0.0 };
+  curvePoints->GetPoint(startCurvePointId, previousPoint);
+  vtkIdType pointId = startCurvePointId;
+  bool curveConfirmedToBeNonZeroLength = false;
+  double lastSegmentLength = 0;
+  while (true)
+    {
+    pointId += idIncrement;
+
+    // if reach the end then wrap around for closed curve, terminate search for open curve
+    if (pointId < 0 || pointId >= numberOfCurvePoints)
+      {
+      if (closedCurve)
+        {
+        if (!curveConfirmedToBeNonZeroLength)
+          {
+          if (vtkMRMLMarkupsCurveNode::GetCurveLength(curvePoints, closedCurve) == 0.0)
+            {
+            foundClosestPointIndex = -1;
+            return false;
+            }
+          curveConfirmedToBeNonZeroLength = true;
+          }
+        pointId = (pointId < 0 ? numberOfCurvePoints : -1);
+        continue;
+        }
+      else
+        {
+        // reached end of curve before getting at the requested distance
+        // return closest
+        foundClosestPointIndex = (pointId < 0 ? 0 : numberOfCurvePoints - 1);
+        curvePoints->GetPoint(startCurvePointId, foundCurvePosition);
+        return false;
+        }
+      }
+
+    // determine how much closer we are now
+    double* nextPoint = curvePoints->GetPoint(pointId);
+    lastSegmentLength = sqrt(vtkMath::Distance2BetweenPoints(nextPoint, previousPoint));
+    remainingDistanceFromStartPoint -= lastSegmentLength;
+
+    if (remainingDistanceFromStartPoint <= 0)
+      {
+      // reached the requested distance (and probably a bit more)
+      for (int i=0; i<3; i++)
+        {
+        foundCurvePosition[i] = nextPoint[i] +
+          remainingDistanceFromStartPoint * (nextPoint[i] - previousPoint[i]) / lastSegmentLength;
+        }
+      if (fabs(remainingDistanceFromStartPoint) <= fabs(remainingDistanceFromStartPoint + lastSegmentLength))
+        {
+        foundClosestPointIndex = pointId;
+        }
+      else
+        {
+        foundClosestPointIndex = pointId-1;
+        }
+      break;
+      }
+
+    previousPoint[0] = nextPoint[0];
+    previousPoint[1] = nextPoint[1];
+    previousPoint[2] = nextPoint[2];
+    }
   return true;
 }
 
@@ -425,68 +599,11 @@ vtkIdType vtkMRMLMarkupsCurveNode::GetFarthestCurvePointIndexToPositionWorld(con
 vtkIdType vtkMRMLMarkupsCurveNode::GetCurvePointIndexAlongCurveWorld(vtkIdType startCurvePointId, double distanceFromStartPoint)
 {
   vtkPoints* points = this->GetCurvePointsWorld();
-  if (!points)
-    {
-    return -1;
-    }
-  vtkIdType n = points->GetNumberOfPoints();
-  if (startCurvePointId < 0 || startCurvePointId >= n)
-    {
-    return -1;
-    }
-
-  vtkIdType idIncrement = (distanceFromStartPoint >= 0 ? 1 : -1);
-  double remainingDistanceFromStartPoint = abs(distanceFromStartPoint);
-  double previousPoint[3] = { 0.0 };
-  points->GetPoint(startCurvePointId, previousPoint);
-  vtkIdType pointId = startCurvePointId;
-  bool curveConfirmedToBeNonZeroLength = false;
-  double lastSegmentLength = 0;
-  while (remainingDistanceFromStartPoint>0)
-    {
-    pointId += idIncrement;
-
-    // if reach the end then wrap around for closed curve, terminate search for open curve
-    if (pointId < 0 || pointId >= n)
-      {
-      if (this->CurveClosed)
-        {
-        if (!curveConfirmedToBeNonZeroLength)
-          {
-          if (this->GetCurveLengthWorld() == 0.0)
-            {
-            return -1;
-            }
-          curveConfirmedToBeNonZeroLength = true;
-          }
-        pointId = (pointId < 0 ? n : -1);
-        continue;
-        }
-      else
-        {
-        // reached end of curve before getting at the requested distance
-        // return closest
-        return (pointId < 0 ? 0 : n - 1);
-        }
-      }
-
-    // determine how much closer we are now
-    double* nextPoint = points->GetPoint(pointId);
-    lastSegmentLength = sqrt(vtkMath::Distance2BetweenPoints(nextPoint, previousPoint));
-    remainingDistanceFromStartPoint -= lastSegmentLength;
-    previousPoint[0] = nextPoint[0];
-    previousPoint[1] = nextPoint[1];
-    previousPoint[2] = nextPoint[2];
-    }
-
-  if (fabs(remainingDistanceFromStartPoint) <= fabs(remainingDistanceFromStartPoint + lastSegmentLength))
-    {
-    return pointId;
-    }
-  else
-    {
-    return pointId-1;
-    }
+  double foundCurvePosition[3] = { 0.0 };
+  vtkIdType foundClosestPointIndex = -1;
+  vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(foundCurvePosition, foundClosestPointIndex,
+    startCurvePointId, distanceFromStartPoint, points, this->CurveClosed);
+  return foundClosestPointIndex;
 }
 
 //---------------------------------------------------------------------------

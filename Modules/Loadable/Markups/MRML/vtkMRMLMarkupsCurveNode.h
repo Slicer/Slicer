@@ -67,9 +67,14 @@ public:
 
   /// Get length of the curve or a section of the curve.
   /// \param startCurvePointIndex length computation starts from this curve point index
-  /// \param numberOfCurvePoints if specified then distances up to the first n points are computed
+  /// \param numberOfCurvePoints if specified then distances up to the first n points are computed.
+  ///   If <0 then all the points are used.
   /// \return sum of distances between the curve points, returns 0 in case of an error
   double GetCurveLengthWorld(vtkIdType startCurvePointIndex=0, vtkIdType numberOfCurvePoints=-1);
+
+  /// Utility function to get curve length from a point list.
+  /// \sa GetCurveLengthWorld
+  static double GetCurveLength(vtkPoints* curvePoints, bool closedCurve, vtkIdType startCurvePointIndex=0, vtkIdType numberOfCurvePoints=-1);
 
   /// Get length of a section of the curve between startPointIndex and endPointIndex.
   /// If endPointIndex < startPointIndex then length outside of the section is computed.
@@ -103,7 +108,13 @@ public:
   /// \return index of the farthest curve point from refPoint, -1 in case of error
   vtkIdType GetFarthestCurvePointIndexToPositionWorld(const double posWorld[3]);
 
+  /// Get curve point index corresponding to a control point.
+  /// It is useful for calling methods that require curve point index as input.
   vtkIdType GetCurvePointIndexFromControlPointIndex(int controlPointIndex);
+
+  /// Get point position along curve. Position is found along the curve and not snapped to closest curve point.
+  static bool GetPositionAndClosestPointIndexAlongCurve(double foundCurvePosition[3], vtkIdType foundClosestPointIndex,
+    vtkIdType startCurvePointId, double distanceFromStartPoint, vtkPoints* curvePoints, bool closedCurve);
 
   /// Get position of a curve point along the curve relative to the specified start point index.
   /// \param startCurvePointId index of the curve point to start the distance measurement from
