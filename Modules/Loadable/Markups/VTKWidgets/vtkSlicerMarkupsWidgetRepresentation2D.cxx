@@ -43,7 +43,8 @@
 #include "vtkTransform.h"
 
 // MRML includes
-#include "vtkMRMLInteractionEventData.h"
+#include <vtkMRMLFolderDisplayNode.h>
+#include <vtkMRMLInteractionEventData.h>
 
 vtkSlicerMarkupsWidgetRepresentation2D::ControlPointsPipeline2D::ControlPointsPipeline2D()
 {
@@ -332,13 +333,21 @@ double vtkSlicerMarkupsWidgetRepresentation2D::GetWidgetOpacity(int controlPoint
     return 1.0;
     }
 
+  // Use hierarchy information if any, and if overriding is allowed for the current display node
+  double hierarchyOpacity = 1.0;
+  if (this->MarkupsDisplayNode->GetFolderDisplayOverrideAllowed())
+    {
+    vtkMRMLDisplayableNode* displayableNode = this->MarkupsDisplayNode->GetDisplayableNode();
+    hierarchyOpacity = vtkMRMLFolderDisplayNode::GetHierarchyOpacity(displayableNode);
+    }
+
   switch (controlPointType)
     {
-    case Unselected: return this->MarkupsDisplayNode->GetOpacity();
-    case Selected: return this->MarkupsDisplayNode->GetOpacity();
-    case Active: return this->MarkupsDisplayNode->GetOpacity();
-    case Project: return this->MarkupsDisplayNode->GetSliceProjectionOpacity();
-    case ProjectBack: return this->MarkupsDisplayNode->GetSliceProjectionOpacity();
+    case Unselected: return this->MarkupsDisplayNode->GetOpacity() * hierarchyOpacity;
+    case Selected: return this->MarkupsDisplayNode->GetOpacity() * hierarchyOpacity;
+    case Active: return this->MarkupsDisplayNode->GetOpacity() * hierarchyOpacity;
+    case Project: return this->MarkupsDisplayNode->GetSliceProjectionOpacity() * hierarchyOpacity;
+    case ProjectBack: return this->MarkupsDisplayNode->GetSliceProjectionOpacity() * hierarchyOpacity;
     default:
       return 1.0;
     }
@@ -406,11 +415,19 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller,
     this->UpdatePlaneFromSliceNode();
     }
 
+  // Use hierarchy information if any, and if overriding is allowed for the current display node
+  bool hierarchyVisibility = true;
+  if (this->MarkupsDisplayNode->GetFolderDisplayOverrideAllowed())
+    {
+    vtkMRMLDisplayableNode* displayableNode = this->MarkupsDisplayNode->GetDisplayableNode();
+    hierarchyVisibility = vtkMRMLFolderDisplayNode::GetHierarchyVisibility(displayableNode);
+    }
+
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!this->ViewNode || !markupsNode || !this->MarkupsDisplayNode
+  if ( !this->ViewNode || !markupsNode || !this->MarkupsDisplayNode
     || !this->MarkupsDisplayNode->GetVisibility()
     || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID())
-    )
+    || !hierarchyVisibility )
     {
     this->VisibilityOff();
     return;
@@ -451,7 +468,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller,
       this->GetControlPointsPipeline(controlPointType)->Glypher->SetSourceConnection(glyphSource->GetOutputPort());
     }
 
-  UpdateControlPointSize();
+  this->UpdateControlPointSize();
 
   // Points widgets have only one Markup/Representation
   for (int pointIndex = 0; pointIndex < markupsNode->GetNumberOfControlPoints(); pointIndex++)

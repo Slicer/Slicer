@@ -32,7 +32,8 @@
 #include "vtkTextProperty.h"
 
 // MRML includes
-#include "vtkMRMLInteractionEventData.h"
+#include <vtkMRMLFolderDisplayNode.h>
+#include <vtkMRMLInteractionEventData.h>
 
 vtkSlicerMarkupsWidgetRepresentation::ControlPointsPipeline::ControlPointsPipeline()
 {
@@ -538,6 +539,19 @@ double* vtkSlicerMarkupsWidgetRepresentation::GetWidgetColor(int controlPointTyp
   if (!this->MarkupsDisplayNode)
     {
     return invalidColor;
+    }
+
+  // If a folder is overriding display properties then return the color defined by the folder
+  if (this->MarkupsDisplayNode->GetFolderDisplayOverrideAllowed())
+    {
+    vtkMRMLDisplayableNode* displayableNode = this->MarkupsDisplayNode->GetDisplayableNode();
+    vtkMRMLDisplayNode* overrideHierarchyDisplayNode =
+      vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(displayableNode);
+    if (overrideHierarchyDisplayNode)
+      {
+      overrideHierarchyDisplayNode->GetColor(color);
+      return color;
+      }
     }
 
   switch (controlPointType)

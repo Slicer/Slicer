@@ -40,7 +40,8 @@
 #include "vtkTextProperty.h"
 
 // MRML includes
-#include "vtkMRMLInteractionEventData.h"
+#include <vtkMRMLFolderDisplayNode.h>
+#include <vtkMRMLInteractionEventData.h>
 
 vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPipeline3D()
 {
@@ -457,10 +458,21 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller,
 
   Superclass::UpdateFromMRML(caller, event, callData);
 
+  // Use hierarchy information if any, and if overriding is allowed for the current display node
+  bool hierarchyVisibility = true;
+  double hierarchyOpacity = 1.0;
+  if (this->MarkupsDisplayNode->GetFolderDisplayOverrideAllowed())
+    {
+    vtkMRMLDisplayableNode* displayableNode = this->MarkupsDisplayNode->GetDisplayableNode();
+    hierarchyVisibility = vtkMRMLFolderDisplayNode::GetHierarchyVisibility(displayableNode);
+    hierarchyOpacity = vtkMRMLFolderDisplayNode::GetHierarchyOpacity(displayableNode);
+    }
+
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!this->ViewNode || !markupsNode || !this->MarkupsDisplayNode
+  if ( !this->ViewNode || !markupsNode || !this->MarkupsDisplayNode
     || !this->MarkupsDisplayNode->GetVisibility()
-    || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID()))
+    || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID())
+    || !hierarchyVisibility )
     {
     this->VisibilityOff();
     return;
@@ -474,10 +486,10 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller,
 
     ControlPointsPipeline3D* controlPoints = this->GetControlPointsPipeline(controlPointType);
     controlPoints->Property->SetColor(color);
-    controlPoints->Property->SetOpacity(this->MarkupsDisplayNode->GetOpacity());
+    controlPoints->Property->SetOpacity(this->MarkupsDisplayNode->GetOpacity() * hierarchyOpacity);
 
     controlPoints->TextProperty->SetColor(color);
-    controlPoints->TextProperty->SetOpacity(this->MarkupsDisplayNode->GetOpacity());
+    controlPoints->TextProperty->SetOpacity(this->MarkupsDisplayNode->GetOpacity() * hierarchyOpacity);
     controlPoints->TextProperty->SetFontSize(static_cast<int>(5. * this->MarkupsDisplayNode->GetTextScale()));
 
     if (this->MarkupsDisplayNode->GlyphTypeIs3D())
