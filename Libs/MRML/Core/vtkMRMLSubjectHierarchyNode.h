@@ -269,11 +269,25 @@ public:
   /// \return The first subject hierarchy item ID to which the given node is associated to.
   vtkIdType GetItemByDataNode(vtkMRMLNode* dataNode);
 
-  /// Get direct child subject hierarchy item with specific name (not recursive)
+  /// Get item in whole subject hierarchy by a given name
+  /// \param name Name to find
+  /// \return Item ID of the first item found by name using exact match. Warning is logged if more than one found
+  vtkIdType GetItemByName(std::string name);
+
+  /// Get items in whole subject hierarchy by a given name
+  /// \param name Name to find
+  /// \param foundItemIds List of found items
+  /// \param contains Flag whether string containment is enough to determine match. True means a substring is searched
+  ///   (case insensitive), false means that the name needs to match exactly (case sensitive). False by default.
+  /// \return Item ID of the first item found by name using exact match. Warning is logged if more than one found
+  void GetItemsByName(std::string name, vtkIdList* foundItemIds, bool contains=false);
+
+  /// Get child subject hierarchy item with specific name
   /// \param parent Parent subject hierarchy item to start from
   /// \param name Name to find
-  /// \return Child node whose name without postfix is the same as the given attribute
-  vtkIdType GetItemChildWithName(vtkIdType parentItemID, std::string name);
+  /// \param recursive Flag determining whether search is recursive or not. False by default
+  /// \return Child item ID whose name is the same as the given string
+  vtkIdType GetItemChildWithName(vtkIdType parentItemID, std::string name, bool recursive=false);
 
   /// Find all associated data nodes of a specified class in a branch of the hierarchy.
   /// \param itemID Parent item of the branch

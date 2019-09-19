@@ -36,7 +36,6 @@
 #include <vtkMRMLSubjectHierarchyNode.h>
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
-#include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLLinearTransformNode.h"
@@ -173,7 +172,7 @@ namespace
     vtkIdType volume2SeriesItemID = shNode->CreateItem(study2ItemID, volume2Node.GetPointer());
     shNode->SetItemUID(volume2SeriesItemID, UID_NAME, VOLUME2_UID_VALUE);
 
-    // Create model21 series in study 2 with nested association
+    // Create model21 series in study 2
     vtkNew<vtkMRMLModelNode> model21Node;
     model21Node->SetName("Model21");
     scene->AddNode(model21Node.GetPointer());
@@ -182,15 +181,10 @@ namespace
     scene->AddNode(model21DisplayNode.GetPointer());
     model21Node->SetAndObserveDisplayNodeID(model21DisplayNode->GetID());
 
-    vtkNew<vtkMRMLModelHierarchyNode> model21ModelHierarchyNode;
-    model21ModelHierarchyNode->SetName("Model21_Hierarchy");
-    model21ModelHierarchyNode->SetDisplayableNodeID(model21Node->GetID());
-    scene->AddNode(model21ModelHierarchyNode.GetPointer());
-
     vtkIdType model21SeriesItemID = shNode->CreateItem(study2ItemID, model21Node.GetPointer());
     shNode->SetItemUID(model21SeriesItemID, UID_NAME, MODEL21_UID_VALUE);
 
-    // Create model22 series in study 2 with nested association
+    // Create model22 series in study 2
     vtkNew<vtkMRMLModelNode> model22Node;
     model22Node->SetName("Model22");
     scene->AddNode(model22Node.GetPointer());
@@ -199,16 +193,11 @@ namespace
     scene->AddNode(model22DisplayNode.GetPointer());
     model22Node->SetAndObserveDisplayNodeID(model22DisplayNode->GetID());
 
-    vtkNew<vtkMRMLModelHierarchyNode> model22ModelHierarchyNode;
-    model22ModelHierarchyNode->SetName("Model22_Hierarchy");
-    model22ModelHierarchyNode->SetDisplayableNodeID(model22Node->GetID());
-    scene->AddNode(model22ModelHierarchyNode.GetPointer());
-
     vtkIdType model22SeriesItemID = shNode->CreateItem(study2ItemID, model22Node.GetPointer());
     shNode->SetItemUID(model22SeriesItemID, UID_NAME, MODEL22_UID_VALUE);
 
     int currentNodeCount = scene->GetNumberOfNodes();
-    int expectedNodeCount = 13;
+    int expectedNodeCount = 11;
     if (expectedNodeCount != currentNodeCount)
       {
       std::cerr << "Line " << __LINE__ << " - Problem with PopulateScene\n"
@@ -660,49 +649,9 @@ namespace
       return false;
       }
 
-    if (shNode->GetDisplayVisibilityForBranch(patientShItemID) != 1)
+    if (shNode->GetItemDisplayVisibility(patientShItemID) != 1)
       {
       std::cerr << "Wrong display visibility value for patient" << std::endl;
-      return false;
-      }
-
-    // Check display visibility value propagation down a branch
-    shNode->SetDisplayVisibilityForBranch(study2ShItemID, 0);
-    if ( model21DisplayNode->GetVisibility() != 0
-      || model22DisplayNode->GetVisibility() != 0 )
-      {
-      std::cerr << "Failed to set display visibility on study" << std::endl;
-      return false;
-      }
-
-    // Check partial visibility
-    if (shNode->GetDisplayVisibilityForBranch(patientShItemID) != 2)
-      {
-      std::cerr << "Wrong partial display visibility value for patient" << std::endl;
-      return false;
-      }
-
-    shNode->SetDisplayVisibilityForBranch(model22ShItemID, 1);
-    if (shNode->GetDisplayVisibilityForBranch(study2ShItemID) != 2)
-      {
-      std::cerr << "Wrong partial display visibility value for study" << std::endl;
-      return false;
-      }
-    if (shNode->GetDisplayVisibilityForBranch(patientShItemID) != 2)
-      {
-      std::cerr << "Wrong partial display visibility value for patient" << std::endl;
-      return false;
-      }
-
-    // Show everything again
-    shNode->SetDisplayVisibilityForBranch(patientShItemID, 1);
-    if ( shNode->GetDisplayVisibilityForBranch(study1ShItemID) != 1
-      || shNode->GetDisplayVisibilityForBranch(study2ShItemID) != 1
-      || model1DisplayNode->GetVisibility() != 1
-      || model21DisplayNode->GetVisibility() != 1
-      || model22DisplayNode->GetVisibility() != 1 )
-      {
-      std::cerr << "Wrong display visibility values after showing everything again" << std::endl;
       return false;
       }
 

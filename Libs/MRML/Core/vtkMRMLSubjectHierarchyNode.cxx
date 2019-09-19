@@ -2751,7 +2751,55 @@ vtkIdType vtkMRMLSubjectHierarchyNode::GetItemByDataNode(vtkMRMLNode* dataNode)
 }
 
 //---------------------------------------------------------------------------
-vtkIdType vtkMRMLSubjectHierarchyNode::GetItemChildWithName(vtkIdType parentItemID, std::string name)
+vtkIdType vtkMRMLSubjectHierarchyNode::GetItemByName(std::string name)
+{
+  if (name.empty())
+    {
+    vtkErrorMacro("GetItemByName: Empty string given");
+    return INVALID_ITEM_ID;
+    }
+
+  std::vector<vtkIdType> foundItemIDs;
+  this->Internal->SceneItem->FindChildrenByName(name, foundItemIDs);
+  if (foundItemIDs.size() == 0)
+    {
+    vtkDebugMacro("GetItemByName: Failed to find subject hierarchy item with name '" << name);
+    return INVALID_ITEM_ID;
+    }
+  else if (foundItemIDs.size() > 1)
+    {
+    vtkWarningMacro("GetItemByName: Multiple subject hierarchy item found with name '" << name << ". Returning first");
+    }
+  return foundItemIDs[0];
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSubjectHierarchyNode::GetItemsByName(std::string name, vtkIdList* foundItemIds, bool contains/*=false*/)
+{
+  if (!foundItemIds)
+    {
+    vtkErrorMacro("GetItemsByName: Invalid output ID list");
+    return;
+    }
+  foundItemIds->Reset();
+  if (name.empty())
+    {
+    vtkErrorMacro("GetItemsByName: Empty string given, returning empty list");
+    return;
+    }
+
+  std::vector<vtkIdType> foundItemsVector;
+  this->Internal->SceneItem->FindChildrenByName(name, foundItemsVector, contains);
+
+  std::vector<vtkIdType>::iterator itemIt;
+  for (itemIt=foundItemsVector.begin(); itemIt!=foundItemsVector.end(); ++itemIt)
+    {
+    foundItemIds->InsertNextId(*itemIt);
+    }
+}
+
+//---------------------------------------------------------------------------
+vtkIdType vtkMRMLSubjectHierarchyNode::GetItemChildWithName(vtkIdType parentItemID, std::string name, bool recursive/*=false*/)
 {
   vtkSubjectHierarchyItem* parentItem = this->Internal->FindItemByID(parentItemID);
   if (!parentItem)
@@ -2760,9 +2808,8 @@ vtkIdType vtkMRMLSubjectHierarchyNode::GetItemChildWithName(vtkIdType parentItem
     return INVALID_ITEM_ID;
     }
 
-  // Search only one level (not recursive)
   std::vector<vtkIdType> foundItemIDs;
-  parentItem->FindChildrenByName(name, foundItemIDs, false, false);
+  parentItem->FindChildrenByName(name, foundItemIDs, false, recursive);
   if (foundItemIDs.size() == 0)
     {
     vtkDebugMacro("GetItemChildWithName: Failed to find subject hierarchy item with name '" << name
