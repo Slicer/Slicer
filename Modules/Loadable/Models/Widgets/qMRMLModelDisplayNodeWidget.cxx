@@ -232,10 +232,15 @@ QList<vtkMRMLDisplayNode*> qMRMLModelDisplayNodeWidgetPrivate::displayNodesFromS
     {
     // Can be set from model or folder
     vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(itemID));
-    if (displayableNode)
+    vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+    if (displayNode)
+      {
+      displayNodes << displayNode;
+      }
+    else if (displayableNode)
       {
       // Note: Formerly the last display node was chosen that was model display node type (or the proper fiber type)
-      vtkMRMLDisplayNode* displayNode = displayableNode->GetDisplayNode();
+      displayNode = displayableNode->GetDisplayNode();
       if (displayNode)
         {
         displayNodes << displayNode;
