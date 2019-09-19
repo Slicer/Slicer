@@ -2877,9 +2877,8 @@ int vtkMRMLSubjectHierarchyNode::GetItemDisplayVisibility(vtkIdType itemID)
     return displayNode->GetVisibility();
     }
 
-  // If there is no displayable or display node associated (should not happen),
-  // then keep its branch visible.
-  vtkWarningMacro("GetDisplayVisibilityForBranch: Item " << itemID << " has no displayable nor display node");
+  // If there is no displayable or display node associated (can happen before
+  // a folder type item receives its display node), then keep its branch visible.
   return 1;
 }
 

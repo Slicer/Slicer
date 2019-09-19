@@ -16,8 +16,6 @@
 
 // VTK includes
 #include <vtkCollection.h>
-#include <vtkMRMLModelDisplayNode.h>
-#include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLModelStorageNode.h>
 #include <vtkNew.h>

@@ -29,7 +29,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     self.TestSection_01_GenerateInputData()
     self.TestSection_02_qMRMLSegmentsTableView()
     self.TestSection_03_qMRMLSegmentationGeometryWidget()
-    self.TestSection_04_qMRMLSegmentatEditorWidget()
+    self.TestSection_04_qMRMLSegmentEditorWidget()
 
     logging.info('Test finished')
 
@@ -295,10 +295,10 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     slicer.util.delayDisplay('Segmentation source cases - OK')
 
     # Model source with no transform
-    outputModelHierarchy = slicer.vtkMRMLModelHierarchyNode()
-    slicer.mrmlScene.AddNode(outputModelHierarchy)
-    success = vtkSlicerSegmentationsModuleLogic.vtkSlicerSegmentationsModuleLogic.ExportVisibleSegmentsToModelHierarchy(
-      tinySegmentationNode, outputModelHierarchy )
+    shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    outputFolderId = shNode.CreateFolderItem(shNode.GetSceneItemID(), 'ModelsFolder')
+    success = vtkSlicerSegmentationsModuleLogic.vtkSlicerSegmentationsModuleLogic.ExportVisibleSegmentsToModels(
+      tinySegmentationNode, outputFolderId )
     self.assertTrue(success)
     modelNode = slicer.util.getNode('Body_Contour')
     geometryWidget.setSourceNode(modelNode)
@@ -354,8 +354,8 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     slicer.util.delayDisplay('Segmentation geometry widget test passed')
 
   #------------------------------------------------------------------------------
-  def TestSection_04_qMRMLSegmentatEditorWidget(self):
-    logging.info('Test section 4: qMRMLSegmentatEditorWidget')
+  def TestSection_04_qMRMLSegmentEditorWidget(self):
+    logging.info('Test section 4: qMRMLSegmentEditorWidget')
 
     self.segmentEditorNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentEditorNode')
     self.assertIsNotNone(self.segmentEditorNode)

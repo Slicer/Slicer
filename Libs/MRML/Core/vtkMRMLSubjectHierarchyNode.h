@@ -276,7 +276,6 @@ public:
   vtkIdType GetItemChildWithName(vtkIdType parentItemID, std::string name);
 
   /// Find all associated data nodes of a specified class in a branch of the hierarchy.
-  /// Re-implemented to handle nested associations \sa GetAssociatedNode
   /// \param itemID Parent item of the branch
   /// \param dataNodeCollection Collection updated with the list of data nodes
   /// \param childClass Name of the class we are looking for. nullptr returns associated data nodes of any kind
