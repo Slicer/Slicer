@@ -73,7 +73,6 @@ set(MRMLLogic_SRCS
   vtkMRMLDisplayableHierarchyLogic.cxx
   vtkMRMLRemoteIOLogic.cxx
   vtkMRMLLayoutLogic.cxx
-  vtkMRMLModelHierarchyLogic.cxx
   vtkMRMLSliceLayerLogic.cxx
   vtkMRMLSliceLogic.cxx
   vtkMRMLSliceLinkLogic.cxx

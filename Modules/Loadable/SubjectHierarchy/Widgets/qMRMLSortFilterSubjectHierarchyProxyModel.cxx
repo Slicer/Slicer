@@ -46,7 +46,7 @@ public:
   QString NameFilter;
   QString AttributeNameFilter;
   QString AttributeValueFilter;
-  QString LevelFilter;
+  QStringList LevelFilter;
   QStringList NodeTypes;
   QStringList HideChildNodeTypes;
   vtkIdType HideItemsUnaffiliatedWithItemID;
@@ -57,7 +57,7 @@ qMRMLSortFilterSubjectHierarchyProxyModelPrivate::qMRMLSortFilterSubjectHierarch
   : NameFilter(QString())
   , AttributeNameFilter(QString())
   , AttributeValueFilter(QString())
-  , LevelFilter(QString())
+  , LevelFilter(QStringList())
   , NodeTypes(QStringList())
   , HideChildNodeTypes(QStringList())
   , HideItemsUnaffiliatedWithItemID(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
@@ -71,7 +71,7 @@ qMRMLSortFilterSubjectHierarchyProxyModelPrivate::qMRMLSortFilterSubjectHierarch
 CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QString, nameFilter, NameFilter);
 CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QString, attributeNameFilter, AttributeNameFilter);
 CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QString, attributeValueFilter, AttributeValueFilter);
-CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QString, levelFilter, LevelFilter);
+CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QStringList, levelFilter, LevelFilter);
 CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QStringList, nodeTypes, NodeTypes);
 CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QStringList, hideChildNodeTypes, HideChildNodeTypes);
 
@@ -152,7 +152,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setAttributeValueFilter(QString 
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSortFilterSubjectHierarchyProxyModel::setLevelFilter(QString filter)
+void qMRMLSortFilterSubjectHierarchyProxyModel::setLevelFilter(QStringList filter)
 {
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
   if (d->LevelFilter == filter)
@@ -385,20 +385,33 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
     } // If data node
 
   // Filter by level
+  bool itemLevelAccepted = false;
   if (!d->LevelFilter.isEmpty())
     {
-    std::string levelFilterStr(d->LevelFilter.toLatin1().constData());
-    if (!shNode->IsItemLevel(itemID, levelFilterStr))
+    QString itemLevel(shNode->GetItemLevel(itemID).c_str());
+    foreach (const QString& levelFilter, d->LevelFilter)
       {
-      if (canAcceptIfAnyChildIsAccepted)
+      if (itemLevel == levelFilter)
         {
-        // If level was requested but is different, then only show if any of its children are shown
-        onlyAcceptIfAnyChildIsAccepted = true;
+        itemLevelAccepted = true;
+        break;
         }
-      else
-        {
-        return false;
-        }
+      }
+    }
+  else
+    {
+    itemLevelAccepted = true;
+    }
+  if (!itemLevelAccepted)
+    {
+    if (canAcceptIfAnyChildIsAccepted)
+      {
+      // If level was requested but is different, then only show if any of its children are shown
+      onlyAcceptIfAnyChildIsAccepted = true;
+      }
+    else
+      {
+      return false;
       }
     }
 

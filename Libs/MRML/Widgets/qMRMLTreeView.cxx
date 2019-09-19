@@ -33,7 +33,6 @@
 // qMRML includes
 #include "qMRMLItemDelegate.h"
 #include "qMRMLSceneDisplayableModel.h"
-#include "qMRMLSceneModelHierarchyModel.h"
 #include "qMRMLSceneTransformModel.h"
 #include "qMRMLSortFilterHierarchyProxyModel.h"
 #include "qMRMLTreeView_p.h"
@@ -42,8 +41,6 @@
 #include <vtkMRMLDisplayableHierarchyNode.h>
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
-#include <vtkMRMLModelHierarchyLogic.h>
-#include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLScene.h>
@@ -353,11 +350,6 @@ void qMRMLTreeView::setSceneModelType(const QString& modelName)
     {
     newModel = new qMRMLSceneDisplayableModel(this);
     }
-  else if (modelName == QString("ModelHierarchy"))
-    {
-    newModel = new qMRMLSceneModelHierarchyModel(this);
-    newFilterModel = new qMRMLSortFilterHierarchyProxyModel(this);
-    }
   else if (modelName == QString(""))
     {
     newModel = new qMRMLSceneModel(this);
@@ -373,7 +365,6 @@ void qMRMLTreeView::setSceneModelType(const QString& modelName)
     newFilterModel->setShowHidden(this->showHidden());
     }
   d->setSceneModel(newModel);
-  // typically a no op except for ModelHierarchy
   d->setSortFilterProxyModel(newFilterModel);
 }
 
@@ -870,36 +861,10 @@ void qMRMLTreeView::toggleVisibility(const QModelIndex& index)
       {
       visibility = (hierDisplayNode->GetVisibility() ? 0 : 1);
       }
-    std::map<std::string, std::string> nodeTypes =  selectionNode->GetModelHierarchyDisplayNodeClassNames();
-    if (nodeTypes.empty())
-      {
-      vtkMRMLModelHierarchyLogic::SetChildrenVisibility(displayableHierarchyNode,
-                                                        nullptr, nullptr, visibility);
-      }
-    for (std::map<std::string, std::string>::iterator it = nodeTypes.begin();
-         it != nodeTypes.end(); it++)
-      {
-      std::string displayableType = it->first;
-      std::string displayType = it->second;
-      vtkMRMLModelHierarchyLogic::SetChildrenVisibility(displayableHierarchyNode,
-                                              displayableType.c_str(), displayType.c_str(), visibility);
-      }
     }
   else if (selectionNode && displayNode)
     {
     displayNode->SetVisibility(displayNode->GetVisibility() ? 0 : 1);
-    }
-  else if (selectionNode && displayableNode)
-    {
-    char *displayableType = (char *)node->GetClassName();
-    char *displayType = nullptr;
-    std::string ds = selectionNode->GetModelHierarchyDisplayNodeClassName(displayableType);
-    if (!ds.empty())
-      {
-      displayType = (char *)ds.c_str();
-      }
-    displayableNode->SetDisplayClassVisibility(displayType,
-            displayableNode->GetDisplayClassVisibility(displayType) ? 0 : 1);
     }
 }
 

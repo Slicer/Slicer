@@ -808,7 +808,7 @@ void qMRMLSubjectHierarchyTreeView::removeAttributeFilter()
 }
 
 //--------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::setLevelFilter(QString &levelFilter)
+void qMRMLSubjectHierarchyTreeView::setLevelFilter(QStringList &levelFilter)
 {
   this->sortFilterProxyModel()->setLevelFilter(levelFilter);
 
@@ -817,7 +817,7 @@ void qMRMLSubjectHierarchyTreeView::setLevelFilter(QString &levelFilter)
 }
 
 //--------------------------------------------------------------------------
-QString qMRMLSubjectHierarchyTreeView::levelFilter()const
+QStringList qMRMLSubjectHierarchyTreeView::levelFilter()const
 {
   return this->sortFilterProxyModel()->levelFilter();
 }

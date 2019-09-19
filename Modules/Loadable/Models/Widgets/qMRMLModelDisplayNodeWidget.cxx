@@ -28,13 +28,16 @@
 #include "qMRMLModelDisplayNodeWidget.h"
 #include "ui_qMRMLModelDisplayNodeWidget.h"
 
+// Subject hierarchy includes
+#include <qSlicerSubjectHierarchyFolderPlugin.h>
+#include <qSlicerSubjectHierarchyPluginHandler.h>
+
 // MRML includes
 #include <vtkMRMLScene.h>
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelNode.h>
-#include <vtkMRMLModelHierarchyNode.h>
-#include <vtkMRMLSelectionNode.h>
+#include <vtkMRMLSubjectHierarchyNode.h>
 
 // VTK includes
 #include <vtkDataArray.h>
@@ -61,9 +64,10 @@ public:
   qMRMLModelDisplayNodeWidgetPrivate(qMRMLModelDisplayNodeWidget& object);
   void init();
 
-  vtkSmartPointer<vtkMRMLModelDisplayNode> MRMLModelDisplayNode;
+  vtkWeakPointer<vtkMRMLModelDisplayNode> ModelDisplayNode;
+  vtkWeakPointer<vtkMRMLDisplayNode> DisplayNode;
   vtkSmartPointer<vtkProperty> Property;
-  vtkSmartPointer<vtkMRMLNode>  ModelOrHierarchyNode;
+  vtkIdType CurrentSubjectHierarchyItemID;
   // Store what data range was used to automatically slider range of display range,
   // to prevent resetting slider range when user moves the slider.
   double DataRangeUsedForAutoDisplayRange[2];
@@ -74,6 +78,7 @@ qMRMLModelDisplayNodeWidgetPrivate::qMRMLModelDisplayNodeWidgetPrivate(qMRMLMode
   : q_ptr(&object)
 {
   this->Property = vtkSmartPointer<vtkProperty>::New();
+  this->CurrentSubjectHierarchyItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
   this->DataRangeUsedForAutoDisplayRange[0] = 0.0;
   this->DataRangeUsedForAutoDisplayRange[1] = 0.0;
 }
@@ -137,17 +142,16 @@ void qMRMLModelDisplayNodeWidgetPrivate::init()
 
   // Scalar
   QObject::connect(this->ScalarsVisibilityCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(setScalarsVisibility(bool)));
+    q, SLOT(setScalarsVisibility(bool)));
   QObject::connect(this->ActiveScalarComboBox, SIGNAL(currentArrayChanged(QString)),
-                   q, SLOT(setActiveScalarName(QString)));
+    q, SLOT(setActiveScalarName(QString)));
   QObject::connect(this->ScalarsColorNodeComboBox,
-                   SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                   q, SLOT(setScalarsColorNode(vtkMRMLNode*)));
+    SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(setScalarsColorNode(vtkMRMLNode*)));
   // scalar range
   QObject::connect(this->DisplayedScalarRangeModeComboBox, SIGNAL(currentIndexChanged(int)),
-                   q, SLOT(setScalarRangeMode(int)));
+    q, SLOT(setScalarRangeMode(int)));
   QObject::connect(this->DisplayedScalarRangeWidget, SIGNAL(valuesChanged(double,double)),
-                   q, SLOT(setScalarsDisplayRange(double,double)));
+    q, SLOT(setScalarsDisplayRange(double,double)));
 
   // Thresholding
   this->ThresholdCheckBox->setChecked(false);
@@ -160,16 +164,16 @@ void qMRMLModelDisplayNodeWidgetPrivate::init()
   // update range mode
   q->setScalarRangeMode(qMRMLModelDisplayNodeWidget::Data); // former auto
 
-  if (this->MRMLModelDisplayNode.GetPointer())
+  if (this->ModelDisplayNode.GetPointer())
   {
     q->setEnabled(true);
-    q->setMRMLModelDisplayNode(this->MRMLModelDisplayNode);
+    q->setMRMLModelDisplayNode(this->ModelDisplayNode);
   }
 }
 
 //------------------------------------------------------------------------------
-qMRMLModelDisplayNodeWidget::qMRMLModelDisplayNodeWidget(QWidget *_parent)
-  : QWidget(_parent)
+qMRMLModelDisplayNodeWidget::qMRMLModelDisplayNodeWidget(QWidget* _parent)
+  : qMRMLWidget(_parent)
   , d_ptr(new qMRMLModelDisplayNodeWidgetPrivate(*this))
 {
   Q_D(qMRMLModelDisplayNodeWidget);
@@ -184,54 +188,58 @@ qMRMLModelDisplayNodeWidget::~qMRMLModelDisplayNodeWidget()
 vtkMRMLModelDisplayNode* qMRMLModelDisplayNodeWidget::mrmlModelDisplayNode()const
 {
   Q_D(const qMRMLModelDisplayNodeWidget);
-  return d->MRMLModelDisplayNode;
+  return d->ModelDisplayNode;
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLNode* qMRMLModelDisplayNodeWidget::mrmlDisplayableNode()const
+vtkMRMLDisplayNode* qMRMLModelDisplayNodeWidget::mrmlDisplayNode()const
 {
   Q_D(const qMRMLModelDisplayNodeWidget);
-  return d->ModelOrHierarchyNode;
+  return d->DisplayNode;
 }
 
 //------------------------------------------------------------------------------
-void qMRMLModelDisplayNodeWidget::setMRMLModelOrHierarchyNode(vtkMRMLNode* node)
+vtkIdType qMRMLModelDisplayNodeWidget::currentSubjectHierarchyItemID()const
+{
+  Q_D(const qMRMLModelDisplayNodeWidget);
+  return d->CurrentSubjectHierarchyItemID;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLModelDisplayNodeWidget::setCurrentSubjectHierarchyItemID(vtkIdType currentItemID)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
+  if (d->CurrentSubjectHierarchyItemID == currentItemID)
+    {
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(this->mrmlScene());
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
 
-  d->ModelOrHierarchyNode = node;
+  d->CurrentSubjectHierarchyItemID = currentItemID;
 
-  // can be set from a model node or a model hierarchy node
-  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(node);
-  vtkMRMLModelHierarchyNode *hierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(node);
-  vtkMRMLModelDisplayNode *modelDisplayNode = nullptr;
+  vtkMRMLDisplayNode* displayNode = nullptr;
+
+  // Can be set from model or folder
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
   if (modelNode)
     {
-    vtkMRMLSelectionNode* selectionNode = this->getSelectionNode(modelNode->GetScene());
-    std::string displayNodeName;
-    if (selectionNode)
-      {
-      displayNodeName = selectionNode->GetModelHierarchyDisplayNodeClassName(
-                        modelNode->GetClassName());
-      }
+    // Note: Formerly the last display node was chosen that was model display node typem (or the proper fiber type)
+    displayNode = modelNode->GetDisplayNode();
+    }
 
-    int nDisplayNodes = modelNode->GetNumberOfDisplayNodes();
-    for (int i=0; i<nDisplayNodes; i++)
-      {
-        modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetNthDisplayNode(i));
-        //qvtkReconnect(modelDisplayNode, modelDisplayNode, vtkCommand::ModifiedEvent,
-        //        this, SLOT(updateWidgetFromMRML()));
-        if (displayNodeName.empty() || modelDisplayNode->IsA(displayNodeName.c_str()))
-          {
-          break;
-          }
-      }
-    }
-  else if (hierarchyNode)
+  qSlicerSubjectHierarchyFolderPlugin* folderPlugin = qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(
+    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder") );
+  if (folderPlugin->canOwnSubjectHierarchyItem(currentItemID) > 0.0)
     {
-    modelDisplayNode = hierarchyNode->GetModelDisplayNode();
+    displayNode = folderPlugin->createDisplayNodeForItem(currentItemID);
     }
-  this->setMRMLModelDisplayNode(modelDisplayNode);
+
+  this->setMRMLDisplayNode(displayNode);
 }
 
 //------------------------------------------------------------------------------
@@ -241,16 +249,24 @@ void qMRMLModelDisplayNodeWidget::setMRMLModelDisplayNode(vtkMRMLNode* node)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLModelDisplayNodeWidget::setMRMLModelDisplayNode(vtkMRMLModelDisplayNode* ModelDisplayNode)
+void qMRMLModelDisplayNodeWidget::setMRMLModelDisplayNode(vtkMRMLModelDisplayNode* modelDisplayNode)
+{
+  this->setMRMLDisplayNode(modelDisplayNode);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLModelDisplayNodeWidget::setMRMLDisplayNode(vtkMRMLDisplayNode* displayNode)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (d->MRMLModelDisplayNode == ModelDisplayNode)
+  if (d->DisplayNode == displayNode)
     {
     return;
     }
-  qvtkReconnect(d->MRMLModelDisplayNode, ModelDisplayNode, vtkCommand::ModifiedEvent,
-                this, SLOT(updateWidgetFromMRML()));
-  d->MRMLModelDisplayNode = ModelDisplayNode;
+
+  qvtkReconnect(d->DisplayNode, displayNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
+  d->DisplayNode = displayNode;
+  d->ModelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
+
   this->updateWidgetFromMRML();
 }
 
@@ -258,12 +274,12 @@ void qMRMLModelDisplayNodeWidget::setMRMLModelDisplayNode(vtkMRMLModelDisplayNod
 void qMRMLModelDisplayNodeWidget::setScalarsVisibility(bool visible)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->DisplayNode.GetPointer())
     {
     return;
     }
 
-  d->MRMLModelDisplayNode->SetScalarVisibility(visible);
+  d->DisplayNode->SetScalarVisibility(visible);
 }
 
 //------------------------------------------------------------------------------
@@ -277,22 +293,20 @@ bool qMRMLModelDisplayNodeWidget::scalarsVisibility()const
 void qMRMLModelDisplayNodeWidget::setActiveScalarName(const QString& arrayName)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->ModelDisplayNode.GetPointer())
     {
     return;
     }
-  int wasModified = d->MRMLModelDisplayNode->StartModify();
-  d->MRMLModelDisplayNode->SetActiveScalar(arrayName.toLatin1(), d->ActiveScalarComboBox->currentArrayLocation());
+  int wasModified = d->DisplayNode->StartModify();
+  d->ModelDisplayNode->SetActiveScalar(arrayName.toLatin1(), d->ActiveScalarComboBox->currentArrayLocation());
 
   // if there's no color node set for a non empty array name, use a default
-  if (!arrayName.isEmpty() &&
-      d->MRMLModelDisplayNode->GetColorNodeID() == nullptr)
+  if (!arrayName.isEmpty() && d->ModelDisplayNode->GetColorNodeID() == nullptr)
     {
-    const char *colorNodeID = "vtkMRMLColorTableNodeFileViridis.txt";
-
-    d->MRMLModelDisplayNode->SetAndObserveColorNodeID(colorNodeID);
+    const char* colorNodeID = "vtkMRMLColorTableNodeFileViridis.txt";
+    d->ModelDisplayNode->SetAndObserveColorNodeID(colorNodeID);
     }
-  d->MRMLModelDisplayNode->EndModify(wasModified);
+  d->ModelDisplayNode->EndModify(wasModified);
 }
 
 //------------------------------------------------------------------------------
@@ -314,20 +328,19 @@ void qMRMLModelDisplayNodeWidget::setScalarsColorNode(vtkMRMLNode* colorNode)
 void qMRMLModelDisplayNodeWidget::setScalarsColorNode(vtkMRMLColorNode* colorNode)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->DisplayNode.GetPointer())
     {
     return;
     }
 
-  d->MRMLModelDisplayNode->SetAndObserveColorNodeID(colorNode ? colorNode->GetID() : nullptr);
+  d->DisplayNode->SetAndObserveColorNodeID(colorNode ? colorNode->GetID() : nullptr);
 }
 
 //------------------------------------------------------------------------------
 vtkMRMLColorNode* qMRMLModelDisplayNodeWidget::scalarsColorNode()const
 {
   Q_D(const qMRMLModelDisplayNodeWidget);
-  return vtkMRMLColorNode::SafeDownCast(
-    d->ScalarsColorNodeComboBox->currentNode());
+  return vtkMRMLColorNode::SafeDownCast(d->ScalarsColorNodeComboBox->currentNode());
 }
 
 // --------------------------------------------------------------------------
@@ -335,7 +348,7 @@ void qMRMLModelDisplayNodeWidget::setScalarRangeMode(ControlMode controlMode)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
 
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->ModelDisplayNode.GetPointer())
     {
     return;
     }
@@ -350,14 +363,14 @@ void qMRMLModelDisplayNodeWidget::setScalarRangeMode(ControlMode controlMode)
     case DirectMapping: newScalarRangeMode = vtkMRMLDisplayNode::UseDirectMapping; break;
     }
 
-  int currentScalarRangeMode = d->MRMLModelDisplayNode->GetScalarRangeFlag();
+  int currentScalarRangeMode = d->ModelDisplayNode->GetScalarRangeFlag();
   if (currentScalarRangeMode == newScalarRangeMode)
     {
     // no change
     return;
     }
 
-  d->MRMLModelDisplayNode->SetScalarRangeFlag(newScalarRangeMode);
+  d->ModelDisplayNode->SetScalarRangeFlag(newScalarRangeMode);
   emit this->scalarRangeModeValueChanged(controlMode);
 }
 
@@ -417,44 +430,44 @@ qMRMLModelDisplayNodeWidget::ControlMode qMRMLModelDisplayNodeWidget::scalarRang
 void qMRMLModelDisplayNodeWidget::setScalarsDisplayRange(double min, double max)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->DisplayNode.GetPointer())
     {
     return;
     }
-  double *range = d->MRMLModelDisplayNode->GetScalarRange();
+  double *range = d->DisplayNode->GetScalarRange();
   if (range[0] == min && range[1] == max)
     {
     return;
     }
-  d->MRMLModelDisplayNode->SetScalarRange(min, max);
+  d->DisplayNode->SetScalarRange(min, max);
 }
 
 //------------------------------------------------------------------------------
 void qMRMLModelDisplayNodeWidget::setTresholdEnabled(bool b)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->ModelDisplayNode.GetPointer())
     {
     return;
     }
-  d->MRMLModelDisplayNode->SetThresholdEnabled(b);
+  d->ModelDisplayNode->SetThresholdEnabled(b);
 }
 
 //------------------------------------------------------------------------------
 void qMRMLModelDisplayNodeWidget::setThresholdRange(double min, double max)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->ModelDisplayNode.GetPointer())
     {
     return;
     }
-  double oldMin = d->MRMLModelDisplayNode->GetThresholdMin();
-  double oldMax = d->MRMLModelDisplayNode->GetThresholdMax();
+  double oldMin = d->ModelDisplayNode->GetThresholdMin();
+  double oldMax = d->ModelDisplayNode->GetThresholdMax();
   if (oldMin == min && oldMax == max)
     {
     return;
     }
-  d->MRMLModelDisplayNode->SetThresholdRange(min, max);
+  d->ModelDisplayNode->SetThresholdRange(min, max);
 }
 
 // --------------------------------------------------------------------------
@@ -495,49 +508,45 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   bool wasBlocking;
 
   Q_D(qMRMLModelDisplayNodeWidget);
-  this->setEnabled(d->MRMLModelDisplayNode.GetPointer() != nullptr);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  this->setEnabled(d->DisplayNode.GetPointer() != nullptr);
+  if (!d->DisplayNode.GetPointer())
     {
     emit displayNodeChanged();
     return;
     }
 
-  d->VisibilityCheckBox->setChecked(d->MRMLModelDisplayNode->GetVisibility());
-  d->DisplayNodeViewComboBox->setMRMLDisplayNode(d->MRMLModelDisplayNode);
-  d->ClippingCheckBox->setChecked(d->MRMLModelDisplayNode->GetClipping());
-  d->SliceIntersectionVisibilityCheckBox->setChecked(
-    d->MRMLModelDisplayNode->GetVisibility2D());
-  d->SliceIntersectionThicknessSpinBox->setValue(
-    d->MRMLModelDisplayNode->GetSliceIntersectionThickness());
+  d->VisibilityCheckBox->setChecked(d->DisplayNode->GetVisibility());
+  d->DisplayNodeViewComboBox->setMRMLDisplayNode(d->DisplayNode);
+  d->ClippingCheckBox->setChecked(d->DisplayNode->GetClipping());
+  d->SliceIntersectionVisibilityCheckBox->setChecked(d->DisplayNode->GetVisibility2D());
+  d->SliceIntersectionThicknessSpinBox->setValue(d->DisplayNode->GetSliceIntersectionThickness());
   bool showSliceIntersectionThickness =
-    (d->MRMLModelDisplayNode->GetSliceDisplayMode() == vtkMRMLModelDisplayNode::SliceDisplayIntersection);
-  //d->SliceIntersectionThicknessLabel->setVisible(showSliceIntersectionThickness);
-  //d->SliceIntersectionThicknessSpinBox->setVisible(showSliceIntersectionThickness);
+    (d->ModelDisplayNode && d->ModelDisplayNode->GetSliceDisplayMode() == vtkMRMLModelDisplayNode::SliceDisplayIntersection);
   d->SliceIntersectionThicknessSpinBox->setEnabled(showSliceIntersectionThickness);
-  d->SliceIntersectionOpacitySlider->setValue(
-    d->MRMLModelDisplayNode->GetSliceIntersectionOpacity());
+  d->SliceIntersectionOpacitySlider->setValue(d->DisplayNode->GetSliceIntersectionOpacity());
 
-  d->SliceDisplayModeComboBox->setCurrentIndex(d->MRMLModelDisplayNode->GetSliceDisplayMode());
+  d->SliceDisplayModeComboBox->setEnabled(d->ModelDisplayNode);
+  if (d->ModelDisplayNode)
+    {
+    d->SliceDisplayModeComboBox->setCurrentIndex(d->ModelDisplayNode->GetSliceDisplayMode());
+    }
 
   wasBlocking = d->DistanceToColorNodeComboBox->blockSignals(true);
-  if (d->DistanceToColorNodeComboBox->mrmlScene() !=
-    d->MRMLModelDisplayNode->GetScene())
+  if (d->DistanceToColorNodeComboBox->mrmlScene() != this->mrmlScene())
     {
-    d->DistanceToColorNodeComboBox->setMRMLScene(
-      d->MRMLModelDisplayNode->GetScene());
+    d->DistanceToColorNodeComboBox->setMRMLScene(this->mrmlScene());
     }
-  if (d->DistanceToColorNodeComboBox->currentNodeID() !=
-    d->MRMLModelDisplayNode->GetDistanceEncodedProjectionColorNodeID())
+  if ( d->ModelDisplayNode
+    && d->DistanceToColorNodeComboBox->currentNodeID() != d->ModelDisplayNode->GetDistanceEncodedProjectionColorNodeID() )
     {
-    d->DistanceToColorNodeComboBox->setCurrentNodeID(
-      d->MRMLModelDisplayNode->GetDistanceEncodedProjectionColorNodeID());
+    d->DistanceToColorNodeComboBox->setCurrentNodeID(d->ModelDisplayNode->GetDistanceEncodedProjectionColorNodeID());
     }
-  d->DistanceToColorNodeComboBox->setEnabled(d->MRMLModelDisplayNode->GetSliceDisplayMode()
-    == vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection);
+  d->DistanceToColorNodeComboBox->setEnabled( d->ModelDisplayNode &&
+    d->ModelDisplayNode->GetSliceDisplayMode() == vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection );
   d->DistanceToColorNodeComboBox->blockSignals(wasBlocking);
 
   // Representation
-  switch (d->MRMLModelDisplayNode->GetRepresentation())
+  switch (d->DisplayNode->GetRepresentation())
     {
     case REPRESENTATION_POINTS:
       d->RepresentationComboBox->setCurrentIndex(0);
@@ -546,7 +555,7 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
       d->RepresentationComboBox->setCurrentIndex(1);
       break;
     case REPRESENTATION_SURFACE:
-      if (d->MRMLModelDisplayNode->GetEdgeVisibility())
+      if (d->DisplayNode->GetEdgeVisibility())
         {
         d->RepresentationComboBox->setCurrentIndex(3);
         }
@@ -557,25 +566,21 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
       break;
     }
 
-  d->PointSizeSliderWidget->setValue(d->MRMLModelDisplayNode->GetPointSize());
-  bool showPointSize = d->MRMLModelDisplayNode->GetRepresentation() == REPRESENTATION_POINTS;
-  //d->PointSizeLabel->setVisible(showPointSize);
-  //d->PointSizeSliderWidget->setVisible(showPointSize);
+  d->PointSizeSliderWidget->setValue(d->DisplayNode->GetPointSize());
+  bool showPointSize = d->DisplayNode->GetRepresentation() == REPRESENTATION_POINTS;
   d->PointSizeSliderWidget->setEnabled(showPointSize);
 
-  d->LineWidthSliderWidget->setValue(d->MRMLModelDisplayNode->GetLineWidth());
-  bool showLineWidth = (d->MRMLModelDisplayNode->GetRepresentation() == REPRESENTATION_WIREFRAME)
-    || (d->MRMLModelDisplayNode->GetRepresentation() == REPRESENTATION_SURFACE && d->MRMLModelDisplayNode->GetEdgeVisibility());
-  //d->LineWidthLabel->setVisible(showLineWidth);
-  //d->LineWidthSliderWidget->setVisible(showLineWidth);
+  d->LineWidthSliderWidget->setValue(d->DisplayNode->GetLineWidth());
+  bool showLineWidth = (d->DisplayNode->GetRepresentation() == REPRESENTATION_WIREFRAME)
+    || (d->DisplayNode->GetRepresentation() == REPRESENTATION_SURFACE && d->DisplayNode->GetEdgeVisibility());
   d->LineWidthSliderWidget->setEnabled(showLineWidth);
 
-  if (!d->MRMLModelDisplayNode->GetFrontfaceCulling() && d->MRMLModelDisplayNode->GetBackfaceCulling())
+  if (!d->DisplayNode->GetFrontfaceCulling() && d->DisplayNode->GetBackfaceCulling())
     {
     // show only front faces
     d->ShowFacesComboBox->setCurrentIndex(1);
     }
-  else if (d->MRMLModelDisplayNode->GetFrontfaceCulling() && !d->MRMLModelDisplayNode->GetBackfaceCulling())
+  else if (d->DisplayNode->GetFrontfaceCulling() && !d->DisplayNode->GetBackfaceCulling())
     {
     // show only back faces
     d->ShowFacesComboBox->setCurrentIndex(2);
@@ -586,44 +591,42 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
     d->ShowFacesComboBox->setCurrentIndex(0);
     }
 
-  double* c = d->MRMLModelDisplayNode->GetColor();
-  d->ColorPickerButton->setColor(
-    QColor::fromRgbF(qMin(c[0], 1.), qMin(c[1], 1.), qMin(c[2], 1.)));
-  d->OpacitySliderWidget->setValue(d->MRMLModelDisplayNode->GetOpacity());
-  double* ec = d->MRMLModelDisplayNode->GetEdgeColor();
+  double* c = d->DisplayNode->GetColor();
+  d->ColorPickerButton->setColor(QColor::fromRgbF(qMin(c[0], 1.), qMin(c[1], 1.), qMin(c[2], 1.)));
+  d->OpacitySliderWidget->setValue(d->DisplayNode->GetOpacity());
+  double* ec = d->DisplayNode->GetEdgeColor();
   d->EdgeColorPickerButton->setColor(
     QColor::fromRgbF(qMin(ec[0], 1.), qMin(ec[1], 1.), qMin(ec[2], 1.)));
-  bool showEdgeColor = (d->MRMLModelDisplayNode->GetRepresentation() == REPRESENTATION_SURFACE
-    && d->MRMLModelDisplayNode->GetEdgeVisibility());
-  //d->EdgeColorLabel->setVisible(showEdgeColor);
-  //d->EdgeColorPickerButton->setVisible(showEdgeColor);
+  bool showEdgeColor =
+    (d->DisplayNode->GetRepresentation() == REPRESENTATION_SURFACE && d->DisplayNode->GetEdgeVisibility());
   d->EdgeColorPickerButton->setEnabled(showEdgeColor);
 
-  d->LightingCheckBox->setChecked(d->MRMLModelDisplayNode->GetLighting());
-  d->InterpolationComboBox->setCurrentIndex(d->MRMLModelDisplayNode->GetInterpolation());
+  d->LightingCheckBox->setChecked(d->DisplayNode->GetLighting());
+  d->InterpolationComboBox->setCurrentIndex(d->DisplayNode->GetInterpolation());
 
   // Material
-  d->Property->SetAmbient(d->MRMLModelDisplayNode->GetAmbient());
-  d->Property->SetDiffuse(d->MRMLModelDisplayNode->GetDiffuse());
-  d->Property->SetSpecular(d->MRMLModelDisplayNode->GetSpecular());
-  d->Property->SetSpecularPower(d->MRMLModelDisplayNode->GetPower());
+  d->Property->SetAmbient(d->DisplayNode->GetAmbient());
+  d->Property->SetDiffuse(d->DisplayNode->GetDiffuse());
+  d->Property->SetSpecular(d->DisplayNode->GetSpecular());
+  d->Property->SetSpecularPower(d->DisplayNode->GetPower());
 
   // Scalars
 
-  if (d->ScalarsVisibilityCheckBox->isChecked() !=
-      (bool)d->MRMLModelDisplayNode->GetScalarVisibility())
+  if (d->ScalarsVisibilityCheckBox->isChecked() != (bool)d->DisplayNode->GetScalarVisibility())
     {
     wasBlocking = d->ScalarsVisibilityCheckBox->blockSignals(true);
-    d->ScalarsVisibilityCheckBox->setChecked(
-      d->MRMLModelDisplayNode->GetScalarVisibility());
+    d->ScalarsVisibilityCheckBox->setChecked(d->DisplayNode->GetScalarVisibility());
     d->ScalarsVisibilityCheckBox->blockSignals(wasBlocking);
     }
 
   double dataRange[2] = { 0.0, 0.0 };
-  vtkDataArray *dataArray = d->MRMLModelDisplayNode->GetActiveScalarArray();
-  if (dataArray)
+  if (d->ModelDisplayNode)
     {
-    dataArray->GetRange(dataRange);
+    vtkDataArray* dataArray = d->ModelDisplayNode->GetActiveScalarArray();
+    if (dataArray)
+      {
+      dataArray->GetRange(dataRange);
+      }
     }
 
   // Update scalar values, range, decimals and single step
@@ -655,13 +658,12 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
     decimals = std::max(stepDecimals, std::max(minDecimals, maxDecimals));
     }
 
-  double *displayRange = d->MRMLModelDisplayNode->GetScalarRange();
+  double* displayRange = d->DisplayNode->GetScalarRange();
 
   wasBlocking = d->DisplayedScalarRangeWidget->blockSignals(true);
   if (resetSliderRange)
     {
-    d->DisplayedScalarRangeWidget->setRange(std::min(dataMin, displayRange[0]),
-      std::max(dataMax, displayRange[1]));
+    d->DisplayedScalarRangeWidget->setRange(std::min(dataMin, displayRange[0]), std::max(dataMax, displayRange[1]));
     }
   else
     {
@@ -673,13 +675,17 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   d->DisplayedScalarRangeWidget->setValues(displayRange[0], displayRange[1]);
   d->DisplayedScalarRangeWidget->setDecimals(decimals);
   d->DisplayedScalarRangeWidget->setSingleStep(precision);
-  d->DisplayedScalarRangeWidget->setEnabled(d->MRMLModelDisplayNode->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseManualScalarRange);
+  d->DisplayedScalarRangeWidget->setEnabled(d->DisplayNode->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseManualScalarRange);
   d->DisplayedScalarRangeWidget->blockSignals(wasBlocking);
 
   double thresholdRange[2] = { 0.0, 0.0 };
-  d->MRMLModelDisplayNode->GetThresholdRange(thresholdRange);
+  if (d->ModelDisplayNode)
+    {
+    d->ModelDisplayNode->GetThresholdRange(thresholdRange);
+    }
 
   wasBlocking = d->ThresholdRangeWidget->blockSignals(true);
+  d->ThresholdRangeWidget->setEnabled(d->ModelDisplayNode && d->ModelDisplayNode->GetThresholdEnabled());
   d->ThresholdRangeWidget->setRange(dataRange[0] - precision, dataRange[1] + precision);
   if (thresholdRange[0] <= thresholdRange[1])
     {
@@ -697,15 +703,15 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
     }
   d->ThresholdRangeWidget->setDecimals(decimals);
   d->ThresholdRangeWidget->setSingleStep(precision);
-  d->ThresholdRangeWidget->setEnabled(d->MRMLModelDisplayNode->GetThresholdEnabled());
   d->ThresholdRangeWidget->blockSignals(wasBlocking);
 
   wasBlocking = d->ThresholdCheckBox->blockSignals(true);
-  d->ThresholdCheckBox->setChecked(d->MRMLModelDisplayNode->GetThresholdEnabled());
+  d->ThresholdCheckBox->setEnabled(d->ModelDisplayNode);
+  d->ThresholdCheckBox->setChecked(d->ModelDisplayNode && d->ModelDisplayNode->GetThresholdEnabled());
   d->ThresholdCheckBox->blockSignals(wasBlocking);
 
   ControlMode controlMode = qMRMLModelDisplayNodeWidget::Manual;
-  switch (d->MRMLModelDisplayNode->GetScalarRangeFlag())
+  switch (d->DisplayNode->GetScalarRangeFlag())
     {
     case vtkMRMLDisplayNode::UseDataScalarRange: controlMode = qMRMLModelDisplayNodeWidget::Data; break;
     case vtkMRMLDisplayNode::UseColorNodeScalarRange: controlMode = qMRMLModelDisplayNodeWidget::LUT; break;
@@ -719,58 +725,44 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   d->DisplayedScalarRangeModeComboBox->blockSignals(wasBlocking);
 
   wasBlocking = d->ActiveScalarComboBox->blockSignals(true);
-  d->ActiveScalarComboBox->setDataSet(d->MRMLModelDisplayNode->GetInputMesh());
-  d->ActiveScalarComboBox->blockSignals(wasBlocking);
-
-  if (d->ActiveScalarComboBox->currentArrayName() !=
-      d->MRMLModelDisplayNode->GetActiveScalarName())
+  d->ActiveScalarComboBox->setEnabled(d->ModelDisplayNode);
+  if (d->ModelDisplayNode)
     {
-    d->ActiveScalarComboBox->setCurrentArray(
-      d->MRMLModelDisplayNode->GetActiveScalarName());
-    // Array location would need to be set in d->ActiveScalarComboBox if
-    // same scalar name is used in multiple locations.
+    d->ActiveScalarComboBox->setDataSet(d->ModelDisplayNode->GetInputMesh());
+    if (d->ActiveScalarComboBox->currentArrayName() != d->ModelDisplayNode->GetActiveScalarName())
+      {
+      d->ActiveScalarComboBox->setCurrentArray(d->ModelDisplayNode->GetActiveScalarName());
+      // Array location would need to be set in d->ActiveScalarComboBox if
+      // same scalar name is used in multiple locations.
+      }
     }
   d->ActiveScalarComboBox->blockSignals(wasBlocking);
 
   wasBlocking = d->ScalarsColorNodeComboBox->blockSignals(true);
-  if (d->ScalarsColorNodeComboBox->mrmlScene() !=
-      d->MRMLModelDisplayNode->GetScene())
+  if (d->ScalarsColorNodeComboBox->mrmlScene() != this->mrmlScene())
     {
-    d->ScalarsColorNodeComboBox->setMRMLScene(
-      d->MRMLModelDisplayNode->GetScene());
+    d->ScalarsColorNodeComboBox->setMRMLScene(this->mrmlScene());
     }
-  if (d->ScalarsColorNodeComboBox->currentNodeID() !=
-      d->MRMLModelDisplayNode->GetColorNodeID())
+  if ( d->ModelDisplayNode
+    && d->ScalarsColorNodeComboBox->currentNodeID() != d->ModelDisplayNode->GetColorNodeID() )
     {
-    d->ScalarsColorNodeComboBox->setCurrentNodeID(
-      d->MRMLModelDisplayNode->GetColorNodeID());
+    d->ScalarsColorNodeComboBox->setCurrentNodeID(d->ModelDisplayNode->GetColorNodeID());
     }
-  d->ScalarsColorNodeComboBox->setEnabled(d->MRMLModelDisplayNode->GetScalarRangeFlag() != vtkMRMLDisplayNode::UseDirectMapping);
+  d->ScalarsColorNodeComboBox->setEnabled( d->ModelDisplayNode &&
+    d->ModelDisplayNode->GetScalarRangeFlag() != vtkMRMLDisplayNode::UseDirectMapping );
   d->ScalarsColorNodeComboBox->blockSignals(wasBlocking);
   emit displayNodeChanged();
-}
-
-//------------------------------------------------------------------------------
-vtkMRMLSelectionNode* qMRMLModelDisplayNodeWidget::getSelectionNode(vtkMRMLScene *mrmlScene)
-{
-  vtkMRMLSelectionNode* selectionNode = nullptr;
-  if (mrmlScene)
-    {
-    selectionNode =
-      vtkMRMLSelectionNode::SafeDownCast(mrmlScene->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
-    }
-  return selectionNode;
 }
 
 //------------------------------------------------------------------------------
 void qMRMLModelDisplayNodeWidget::setVisibility(bool visible)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->DisplayNode.GetPointer())
     {
     return;
     }
-  d->MRMLModelDisplayNode->SetVisibility(visible);
+  d->DisplayNode->SetVisibility(visible);
 }
 
 //------------------------------------------------------------------------------
@@ -784,11 +776,11 @@ bool qMRMLModelDisplayNodeWidget::visibility()const
 void qMRMLModelDisplayNodeWidget::setClipping(bool clip)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->DisplayNode.GetPointer())
     {
     return;
     }
-  d->MRMLModelDisplayNode->SetClipping(clip);
+  d->DisplayNode->SetClipping(clip);
   emit clippingToggled(clip);
 }
 
@@ -803,11 +795,11 @@ bool qMRMLModelDisplayNodeWidget::clipping()const
 void qMRMLModelDisplayNodeWidget::setSliceIntersectionVisible(bool visible)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->DisplayNode.GetPointer())
     {
     return;
     }
-  d->MRMLModelDisplayNode->SetVisibility2D(visible);
+  d->DisplayNode->SetVisibility2D(visible);
 }
 
 //------------------------------------------------------------------------------
@@ -821,11 +813,11 @@ bool qMRMLModelDisplayNodeWidget::sliceIntersectionVisible()const
 void qMRMLModelDisplayNodeWidget::setSliceIntersectionThickness(int thickness)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->DisplayNode.GetPointer())
     {
     return;
     }
-  d->MRMLModelDisplayNode->SetSliceIntersectionThickness(thickness);
+  d->DisplayNode->SetSliceIntersectionThickness(thickness);
 }
 
 //------------------------------------------------------------------------------
@@ -839,11 +831,11 @@ int qMRMLModelDisplayNodeWidget::sliceIntersectionThickness()const
 void qMRMLModelDisplayNodeWidget::setSliceIntersectionOpacity(double opacity)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->DisplayNode.GetPointer())
     {
     return;
     }
-  d->MRMLModelDisplayNode->SetSliceIntersectionOpacity(opacity);
+  d->DisplayNode->SetSliceIntersectionOpacity(opacity);
 }
 
 //------------------------------------------------------------------------------
@@ -857,46 +849,46 @@ double qMRMLModelDisplayNodeWidget::sliceIntersectionOpacity()const
 void qMRMLModelDisplayNodeWidget::updateNodeFromProperty()
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->DisplayNode.GetPointer())
     {
     return;
     }
-  int wasModifying = d->MRMLModelDisplayNode->StartModify();
+  int wasModifying = d->DisplayNode->StartModify();
   // Lighting
-  d->MRMLModelDisplayNode->SetLighting(d->Property->GetLighting());
-  d->MRMLModelDisplayNode->SetInterpolation(d->Property->GetInterpolation());
-  d->MRMLModelDisplayNode->SetShading(d->Property->GetShading());
+  d->DisplayNode->SetLighting(d->Property->GetLighting());
+  d->DisplayNode->SetInterpolation(d->Property->GetInterpolation());
+  d->DisplayNode->SetShading(d->Property->GetShading());
   // Material
-  d->MRMLModelDisplayNode->SetAmbient(d->Property->GetAmbient());
-  d->MRMLModelDisplayNode->SetDiffuse(d->Property->GetDiffuse());
-  d->MRMLModelDisplayNode->SetSpecular(d->Property->GetSpecular());
-  d->MRMLModelDisplayNode->SetPower(d->Property->GetSpecularPower());
-  d->MRMLModelDisplayNode->EndModify(wasModifying);
+  d->DisplayNode->SetAmbient(d->Property->GetAmbient());
+  d->DisplayNode->SetDiffuse(d->Property->GetDiffuse());
+  d->DisplayNode->SetSpecular(d->Property->GetSpecular());
+  d->DisplayNode->SetPower(d->Property->GetSpecularPower());
+  d->DisplayNode->EndModify(wasModifying);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLModelDisplayNodeWidget::setRepresentation(int newRepresentation)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->DisplayNode.GetPointer())
     {
     return;
     }
   switch (newRepresentation)
     {
     case 0: // points
-      d->MRMLModelDisplayNode->SetRepresentation(REPRESENTATION_POINTS);
+      d->DisplayNode->SetRepresentation(REPRESENTATION_POINTS);
       break;
     case 1: // wireframe
-      d->MRMLModelDisplayNode->SetRepresentation(REPRESENTATION_WIREFRAME);
+      d->DisplayNode->SetRepresentation(REPRESENTATION_WIREFRAME);
       break;
     case 2: // surface
     case 3: // surface with edges
       {
-      int wasModified = d->MRMLModelDisplayNode->StartModify();
-      d->MRMLModelDisplayNode->SetRepresentation(REPRESENTATION_SURFACE);
-      d->MRMLModelDisplayNode->SetEdgeVisibility(newRepresentation == 3);
-      d->MRMLModelDisplayNode->EndModify(wasModified);
+      int wasModified = d->DisplayNode->StartModify();
+      d->DisplayNode->SetRepresentation(REPRESENTATION_SURFACE);
+      d->DisplayNode->SetEdgeVisibility(newRepresentation == 3);
+      d->DisplayNode->EndModify(wasModified);
       break;
       }
     }
@@ -906,70 +898,70 @@ void qMRMLModelDisplayNodeWidget::setRepresentation(int newRepresentation)
 void qMRMLModelDisplayNodeWidget::setSliceDisplayMode(int newMode)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->ModelDisplayNode.GetPointer())
   {
     return;
   }
-  int wasModified = d->MRMLModelDisplayNode->StartModify();
+  int wasModified = d->ModelDisplayNode->StartModify();
   // Select a color node if none is selected yet
-  if (d->MRMLModelDisplayNode->GetSliceDisplayMode()
+  if (d->ModelDisplayNode->GetSliceDisplayMode()
     != vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection
     && newMode == vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection
-    && d->MRMLModelDisplayNode->GetDistanceEncodedProjectionColorNodeID() == nullptr)
+    && d->ModelDisplayNode->GetDistanceEncodedProjectionColorNodeID() == nullptr)
     {
-    d->MRMLModelDisplayNode->SetAndObserveDistanceEncodedProjectionColorNodeID("vtkMRMLFreeSurferProceduralColorNodeRedGreen");
+    d->ModelDisplayNode->SetAndObserveDistanceEncodedProjectionColorNodeID("vtkMRMLFreeSurferProceduralColorNodeRedGreen");
     }
-  d->MRMLModelDisplayNode->SetSliceDisplayMode(newMode);
-  d->MRMLModelDisplayNode->EndModify(wasModified);
+  d->ModelDisplayNode->SetSliceDisplayMode(newMode);
+  d->ModelDisplayNode->EndModify(wasModified);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLModelDisplayNodeWidget::setPointSize(double newPointSize)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->DisplayNode.GetPointer())
     {
     return;
     }
-  d->MRMLModelDisplayNode->SetPointSize(newPointSize);
+  d->DisplayNode->SetPointSize(newPointSize);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLModelDisplayNodeWidget::setLineWidth(double newLineWidth)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->DisplayNode.GetPointer())
   {
     return;
   }
-  d->MRMLModelDisplayNode->SetLineWidth(newLineWidth);
+  d->DisplayNode->SetLineWidth(newLineWidth);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLModelDisplayNodeWidget::setShowFaces(int newShowFaces)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->DisplayNode.GetPointer())
   {
     return;
   }
-  int wasModified = d->MRMLModelDisplayNode->StartModify();
+  int wasModified = d->DisplayNode->StartModify();
   switch (newShowFaces)
     {
     case 0: // show all
-      d->MRMLModelDisplayNode->SetFrontfaceCulling(false);
-      d->MRMLModelDisplayNode->SetBackfaceCulling(false);
+      d->DisplayNode->SetFrontfaceCulling(false);
+      d->DisplayNode->SetBackfaceCulling(false);
       break;
     case 1: // show front only
-      d->MRMLModelDisplayNode->SetFrontfaceCulling(false);
-      d->MRMLModelDisplayNode->SetBackfaceCulling(true);
+      d->DisplayNode->SetFrontfaceCulling(false);
+      d->DisplayNode->SetBackfaceCulling(true);
       break;
     case 2: // show back only
-      d->MRMLModelDisplayNode->SetFrontfaceCulling(true);
-      d->MRMLModelDisplayNode->SetBackfaceCulling(false);
+      d->DisplayNode->SetFrontfaceCulling(true);
+      d->DisplayNode->SetBackfaceCulling(false);
       break;
     }
-  d->MRMLModelDisplayNode->EndModify(wasModified);
+  d->DisplayNode->EndModify(wasModified);
 
 }
 
@@ -977,29 +969,29 @@ void qMRMLModelDisplayNodeWidget::setShowFaces(int newShowFaces)
 void qMRMLModelDisplayNodeWidget::setColor(const QColor& newColor)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->DisplayNode.GetPointer())
   {
     return;
   }
-  d->MRMLModelDisplayNode->SetColor(newColor.redF(), newColor.greenF(), newColor.blueF());
+  d->DisplayNode->SetColor(newColor.redF(), newColor.greenF(), newColor.blueF());
 }
 
 // --------------------------------------------------------------------------
 void qMRMLModelDisplayNodeWidget::setOpacity(double newOpacity)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->DisplayNode.GetPointer())
   {
     return;
   }
-  d->MRMLModelDisplayNode->SetOpacity(newOpacity);
+  d->DisplayNode->SetOpacity(newOpacity);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLModelDisplayNodeWidget::setEdgeVisibility(bool newEdgeVisibility)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->DisplayNode.GetPointer())
   {
     return;
   }
@@ -1010,19 +1002,18 @@ void qMRMLModelDisplayNodeWidget::setEdgeVisibility(bool newEdgeVisibility)
 void qMRMLModelDisplayNodeWidget::setEdgeColor(const QColor& newColor)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->DisplayNode.GetPointer())
   {
     return;
   }
-  d->MRMLModelDisplayNode->SetEdgeColor(
-      newColor.redF(), newColor.greenF(), newColor.blueF());
+  d->DisplayNode->SetEdgeColor(newColor.redF(), newColor.greenF(), newColor.blueF());
 }
 
 // --------------------------------------------------------------------------
 void qMRMLModelDisplayNodeWidget::setLighting(bool newLighting)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->DisplayNode.GetPointer())
   {
     return;
   }
@@ -1033,7 +1024,7 @@ void qMRMLModelDisplayNodeWidget::setLighting(bool newLighting)
 void qMRMLModelDisplayNodeWidget::setInterpolation(int newInterpolation)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->DisplayNode.GetPointer())
   {
     return;
   }
@@ -1044,11 +1035,11 @@ void qMRMLModelDisplayNodeWidget::setInterpolation(int newInterpolation)
 void qMRMLModelDisplayNodeWidget::setDistanceToColorNode(vtkMRMLNode* colorNode)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-  if (!d->MRMLModelDisplayNode.GetPointer())
+  if (!d->ModelDisplayNode.GetPointer())
     {
     return;
     }
-  d->MRMLModelDisplayNode->SetAndObserveDistanceEncodedProjectionColorNodeID(
+  d->ModelDisplayNode->SetAndObserveDistanceEncodedProjectionColorNodeID(
     colorNode ? colorNode->GetID() : nullptr);
 }
 

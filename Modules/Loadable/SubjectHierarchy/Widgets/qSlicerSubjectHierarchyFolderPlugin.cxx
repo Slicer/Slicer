@@ -63,6 +63,8 @@ public:
   QAction* CreateFolderUnderSceneAction;
   QAction* CreateFolderUnderNodeAction;
   QAction* ApplyColorToBranchAction;
+
+  QString AddedByFolderPluginAttributeName;
 };
 
 //-----------------------------------------------------------------------------
@@ -77,6 +79,11 @@ qSlicerSubjectHierarchyFolderPluginPrivate::qSlicerSubjectHierarchyFolderPluginP
   this->CreateFolderUnderSceneAction = nullptr;
   this->CreateFolderUnderNodeAction = nullptr;
   this->ApplyColorToBranchAction = nullptr;
+
+  std::string addedByFolderPluginAttributeNameStr =
+      vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyAttributePrefix()
+    + std::string(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder());
+  this->AddedByFolderPluginAttributeName = QString(addedByFolderPluginAttributeNameStr.c_str());
 }
 
 //------------------------------------------------------------------------------
@@ -118,6 +125,37 @@ qSlicerSubjectHierarchyFolderPlugin::qSlicerSubjectHierarchyFolderPlugin(QObject
 qSlicerSubjectHierarchyFolderPlugin::~qSlicerSubjectHierarchyFolderPlugin()
 = default;
 
+//----------------------------------------------------------------------------
+double qSlicerSubjectHierarchyFolderPlugin::canAddNodeToSubjectHierarchy(
+  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+{
+  Q_UNUSED(parentItemID);
+  if (!node)
+    {
+    qCritical() << Q_FUNC_INFO << ": Input node is NULL";
+    return 0.0;
+    }
+  else if (node->IsA("vtkMRMLFolderDisplayNode"))
+    {
+    // Node is a folder display node (handle cases when the display node is added instead of an item created)
+    return 1.0;
+    }
+  return 0.0;
+}
+
+//----------------------------------------------------------------------------
+bool qSlicerSubjectHierarchyFolderPlugin::addNodeToSubjectHierarchy(vtkMRMLNode* nodeToAdd, vtkIdType parentItemID)
+{
+  Q_D(qSlicerSubjectHierarchyFolderPlugin);
+  if (nodeToAdd->GetAttribute(d->AddedByFolderPluginAttributeName.toLatin1().constData()))
+    {
+    // Prevent creation of new folder item if the folder display node was not added by the folder plugin
+    return true;
+    }
+
+  return qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(nodeToAdd, parentItemID);
+}
+
 //---------------------------------------------------------------------------
 double qSlicerSubjectHierarchyFolderPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
 {
@@ -137,6 +175,11 @@ double qSlicerSubjectHierarchyFolderPlugin::canOwnSubjectHierarchyItem(vtkIdType
     {
     // Folder with no hierarchy node
     return 1.0;
+    }
+  else if (!shNode->GetItemLevel(itemID).empty())
+    {
+    // There is any level information (for example for DICOM levels which are also folders)
+    return 0.5;
     }
 
   return 0.0;
@@ -515,6 +558,7 @@ vtkMRMLDisplayNode* qSlicerSubjectHierarchyFolderPlugin::displayNodeForItem(vtkI
 //-----------------------------------------------------------------------------
 vtkMRMLDisplayNode* qSlicerSubjectHierarchyFolderPlugin::createDisplayNodeForItem(vtkIdType itemID)
 {
+  Q_D(qSlicerSubjectHierarchyFolderPlugin);
   if (!itemID)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
@@ -542,6 +586,7 @@ vtkMRMLDisplayNode* qSlicerSubjectHierarchyFolderPlugin::createDisplayNodeForIte
   vtkNew<vtkMRMLFolderDisplayNode> displayNode;
   displayNode->SetName(shNode->GetItemName(itemID).c_str());
   displayNode->SetHideFromEditors(0); // Need to set this so that the folder shows up in SH
+  displayNode->SetAttribute(d->AddedByFolderPluginAttributeName.toLatin1().constData(), "1");
   shNode->GetScene()->AddNode(displayNode);
 
   shNode->SetItemDataNode(itemID, displayNode);

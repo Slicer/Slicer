@@ -180,6 +180,5 @@ QStringList qSlicerModelsModule::associatedNodeTypes() const
 {
   return QStringList()
     << "vtkMRMLModelNode"
-    << "vtkMRMLModelDisplayNode"
-    << "vtkMRMLModelHierarchyNode";
+    << "vtkMRMLModelDisplayNode";
 }

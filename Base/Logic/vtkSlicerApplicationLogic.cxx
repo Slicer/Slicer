@@ -18,16 +18,9 @@
 #ifdef Slicer_BUILD_CLI_SUPPORT
 # include <vtkMRMLCommandLineModuleNode.h>
 #endif
-#include <vtkMRMLDisplayNode.h>
-#include <vtkMRMLFreeSurferModelOverlayStorageNode.h>
-#include <vtkMRMLFreeSurferModelStorageNode.h>
-#include <vtkMRMLLabelMapVolumeNode.h>
-#include <vtkMRMLModelNode.h>
-#include <vtkMRMLModelHierarchyNode.h>
+#include <vtkMRMLRemoteIOLogic.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
-#include <vtkMRMLTableNode.h>
-#include <vtkMRMLRemoteIOLogic.h>
 
 // VTKAddon includes
 #include <vtkPersonInformation.h>
@@ -35,8 +28,6 @@
 // VTK includes
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
-#include <vtkPointData.h>
-#include <vtkPolyData.h>
 
 // ITKSYS includes
 #include <itksys/SystemTools.hxx>
@@ -579,7 +570,6 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestWriteData(const char *refNode, co
   this->WriteDataQueueLock.unlock();
   return uid;
 }
-
 
 //----------------------------------------------------------------------------
 vtkMTimeType vtkSlicerApplicationLogic::RequestReadScene(

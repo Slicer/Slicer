@@ -989,23 +989,7 @@ void qMRMLSceneModel::updateItemDataFromNode(
       }
     else if (displayableNode)
       {
-      std::string displayType;
-
-      vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-        this->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
-      if (selectionNode)
-        {
-        char *displayableType = (char *)node->GetClassName();
-        displayType = selectionNode->GetModelHierarchyDisplayNodeClassName(displayableType);
-        }
-      if (!displayType.empty())
-        {
-        visible = displayableNode->GetDisplayClassVisibility(displayType.c_str());
-        }
-      else
-        {
-        visible = displayableNode->GetDisplayVisibility();
-        }
+      visible = displayableNode->GetDisplayVisibility();
       }
     // It should be fine to set the icon even if it is the same, but due
     // to a bug in Qt (http://bugreports.qt.nokia.com/browse/QTBUG-20248),
@@ -1129,22 +1113,7 @@ void qMRMLSceneModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* i
       }
     else if (displayableNode)
       {
-      std::string displayType;
-      vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-            this->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
-      if (selectionNode)
-        {
-        char *displayableType = (char *)node->GetClassName();
-        displayType = selectionNode->GetModelHierarchyDisplayNodeClassName(displayableType);
-        }
-      if (!displayType.empty())
-        {
-        displayableNode->SetDisplayClassVisibility(displayType.c_str(), visible);
-        }
-      else
-        {
-        displayableNode->SetDisplayVisibility(visible);
-        }
+      displayableNode->SetDisplayVisibility(visible);
       }
     }
 }

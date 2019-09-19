@@ -291,6 +291,12 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>qMRMLWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>qMRMLClipNodeWidget</class>
    <extends>QWidget</extends>
    <header>qMRMLClipNodeWidget.h</header>
@@ -313,7 +319,7 @@
   </customwidget>
   <customwidget>
    <class>qMRMLModelDisplayNodeWidget</class>
-   <extends>QWidget</extends>
+   <extends>qMRMLWidget</extends>
    <header>qMRMLModelDisplayNodeWidget.h</header>
   </customwidget>
   <customwidget>
@@ -356,6 +362,12 @@
      <y>740</y>
     </hint>
    </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerModelsModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ModelDisplayWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
   </connection>
   <connection>
    <sender>ClipModelsNodeComboBox</sender>

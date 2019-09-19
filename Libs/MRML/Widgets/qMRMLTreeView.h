@@ -53,7 +53,6 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
   /// - "" -> qMRMLSceneModel
   /// - "Transform" -> qMRMLSceneTransformModel
   /// - "Displayable" -> qMRMLSceneDisplayableModel
-  /// - "ModelHierarchy" -> qMRMLSceneModelHierarchyModel
   /// Transform by default
   /// \sa setSceneModel()
   Q_PROPERTY(QString sceneModelType READ sceneModelType WRITE setSceneModelType)
@@ -66,7 +65,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
   /// This property controls which node types are visible in the view.
   /// This behaves as a filter, the nodes that have a type not included in the
   /// list will be hidden.
-  /// For example, a value of "vtkMRMLModelHierarchyNode", "vtkMRMLModelNode"
+  /// For example, a value of "qMRMLSceneDisplayableModel", "vtkMRMLModelNode"
   /// will show the model nodes. When dealing with hierarchies, please note
   /// that the node type of the parents should not be filtered out (should
   /// be included in nodeTypes) to ensure the children are visible.
@@ -129,7 +128,7 @@ public:
   /// \sa QItemSelectionModel::currentIndex(), QItemSelectionModel::selectedIndexes()
   vtkMRMLNode* currentNode()const;
 
-  /// Could be "", "Transform", "Displayable", "ModelHierarchy" or the type
+  /// Could be "", "Transform", "Displayable" or the type
   /// associated with the scene model added with qMRMLTreeView::setSceneModel()
   /// \sa setSceneModel()
   QString sceneModelType()const;

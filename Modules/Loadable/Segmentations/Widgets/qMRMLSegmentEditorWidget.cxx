@@ -84,7 +84,6 @@
 #include <qSlicerAbstractModule.h>
 #include <qSlicerAbstractModuleWidget.h>
 #include <qMRMLSegmentationFileExportWidget.h>
-#include <qSlicerSubjectHierarchyAbstractPlugin.h>
 #include <qMRMLSliceWidget.h>
 #include <qMRMLSliceView.h>
 #include <qMRMLThreeDWidget.h>
@@ -1592,7 +1591,7 @@ void qMRMLSegmentEditorWidget::updateEffectsSectionFromMRML()
         // nullptr effect
         continue;
         }
-      effectButton->setEnabled(segmentAvailable && (segmentSelected || !effect->perSegment()));
+      effectButton->setEnabled(!effect->requireSegments() || (segmentAvailable && (segmentSelected || !effect->perSegment())));
       }
     }
 

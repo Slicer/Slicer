@@ -59,36 +59,8 @@ vtkMRMLDisplayNode* qMRMLSceneDisplayableModelPrivate
     return vtkMRMLDisplayNode::SafeDownCast(node);
     }
 
-  vtkMRMLSelectionNode* selectionNode = nullptr;
-  if (this->MRMLScene)
-    {
-    selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-      this->MRMLScene->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
-    }
-
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
-  if (selectionNode && displayableNode)
-    {
-    char *displayableType = (char *)displayableNode->GetClassName();
-    std::string displayType =
-        selectionNode->GetModelHierarchyDisplayNodeClassName(displayableType);
-    if (!displayType.empty())
-      {
-      for (int  i=0; i<displayableNode->GetNumberOfDisplayNodes(); i++)
-        {
-        vtkMRMLDisplayNode *displayNode = displayableNode->GetNthDisplayNode(i);
-        if (displayNode && displayNode->IsA(displayType.c_str()))
-          {
-            return displayNode;
-          }
-        }
-      }
-    else
-      {
-      return displayableNode->GetDisplayNode();
-      }
-    }
-  else if (displayableNode)
+  if (displayableNode)
     {
     return displayableNode->GetDisplayNode();
     }

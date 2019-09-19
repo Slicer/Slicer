@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>qMRMLModelDisplayNodeWidget</class>
- <widget class="QWidget" name="qMRMLModelDisplayNodeWidget">
+ <widget class="qMRMLWidget" name="qMRMLModelDisplayNodeWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -601,6 +601,12 @@ should set &quot;backface&quot; and &quot;frontface&quot; to OFF in the Represen
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>qMRMLWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLWidget.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>qMRMLCheckableNodeComboBox</class>
    <extends>qMRMLNodeComboBox</extends>

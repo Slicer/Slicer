@@ -23,29 +23,24 @@
 #include <QDir>
 
 /// SlicerQt includes
-//#include "qSlicerAbstractModule.h"
 #include "qSlicerCoreApplication.h"
-//#include "qSlicerModuleManager.h"
 #include "qSlicerCoreIOManager.h"
 #include "qSlicerSlicer2SceneReader.h"
 #include "vtkSlicerApplicationLogic.h"
 
-/// Logic includes
-//#include "vtkSlicerVolumesLogic.h"
-//#include "vtkSlicerModelsLogic.h"
-
 /// MRML includes
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLFiducialListNode.h>
+#include <vtkMRMLFolderDisplayNode.h>
 #include <vtkMRMLLabelMapVolumeDisplayNode.h>
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLModelDisplayNode.h>
-#include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLSelectionNode.h>
+#include <vtkMRMLSubjectHierarchyNode.h>
 
 /// VTK includes
 #include <vtkImageReader.h>
@@ -126,24 +121,7 @@ int dataType(QString type)
 }
 
 }
-//-----------------------------------------------------------------------------
-/*
-vtkSlicerVolumesLogic* volumesLogic()
-{
-  return vtkSlicerVolumesLogic::SafeDownCast(
-    qSlicerCoreApplication::application()->moduleManager()
-    ->module("Volumes")->logic());
-}
 
-//-----------------------------------------------------------------------------
-vtkSlicerModelsLogic* modelsLogic()
-{
-  Q_ASSERT(qSlicerCoreApplication::application()->moduleManager()->module("Models"));
-  return vtkSlicerModelsLogic::SafeDownCast(
-    qSlicerCoreApplication::application()->moduleManager()
-    ->module("Models")->logic());
-}
-*/
 //-----------------------------------------------------------------------------
 class qSlicerSlicer2SceneReaderPrivate
 {
@@ -971,12 +949,11 @@ void qSlicerSlicer2SceneReaderPrivate::importModelGroupNode(NodeType& node)
   //set dnode [vtkMRMLModelDisplayNode New]
   //$hnode SetScene $::slicer3::MRMLScene
   //$dnode SetScene $::slicer3::MRMLScene
-  vtkSmartPointer<vtkMRMLModelHierarchyNode> hnode =
-    vtkSmartPointer<vtkMRMLModelHierarchyNode>::New();
-  vtkSmartPointer<vtkMRMLModelDisplayNode> dnode =
-    vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
-  hnode->SetScene(q->mrmlScene());
+  // Folder display node belongs to the folder item, which replaced the model hierarchy
+  vtkSmartPointer<vtkMRMLFolderDisplayNode> dnode =
+    vtkSmartPointer<vtkMRMLFolderDisplayNode>::New();
   dnode->SetScene(q->mrmlScene());
+  dnode->SetHideFromEditors(0); // Need to set this so that the folder shows up in SH as folder
 
   // if { [info exists n(visibility)] } {
   //   if {$n(visibility) == "false"} {
@@ -996,7 +973,7 @@ void qSlicerSlicer2SceneReaderPrivate::importModelGroupNode(NodeType& node)
   //}
   if (node.contains("name"))
     {
-    hnode->SetName(node["name"].toLatin1());
+    dnode->SetName(node["name"].toLatin1());
     }
 
   // if { [info exists n(color)] } {
@@ -1023,31 +1000,37 @@ void qSlicerSlicer2SceneReaderPrivate::importModelGroupNode(NodeType& node)
     }
   //set dnode [$::slicer3::MRMLScene AddNode $dnode]
   //set hnode [$::slicer3::MRMLScene AddNode $hnode]
-  dnode = vtkMRMLModelDisplayNode::SafeDownCast(
+  dnode = vtkMRMLFolderDisplayNode::SafeDownCast(
     q->mrmlScene()->AddNode(dnode));
   Q_ASSERT(dnode);
-  hnode = vtkMRMLModelHierarchyNode::SafeDownCast(
-    q->mrmlScene()->AddNode(hnode));
-  Q_ASSERT(hnode);
-  this->LoadedNodes << dnode->GetID() << hnode->GetID();
+  this->LoadedNodes << dnode->GetID();
 
   //if {$::S2_HParent_ID != ""} {
   //  $hnode SetParentNodeIDReference $::S2_HParent_ID
   //}
   if (!this->ParentID.isEmpty())
     {
-    hnode->SetParentNodeID(this->ParentID.toLatin1());
+    vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(q->mrmlScene());
+    if (!shNode)
+      {
+      qCritical() << Q_FUNC_INFO << "Unable to access subject hierarchy node";
+      return;
+      }
+
+    vtkMRMLNode* parentNode = q->mrmlScene()->GetNodeByID(this->ParentID.toLatin1());
+    if (parentNode)
+      {
+      vtkIdType parentItemId = shNode->GetItemByDataNode(parentNode);
+      vtkIdType folderItemId = shNode->GetItemByDataNode(dnode);
+      if (parentItemId && folderItemId)
+        {
+        shNode->SetItemParent(folderItemId, parentItemId);
+        }
+      }
     }
 
-  //$hnode SetAndObserveDisplayNodeID [$dnode GetID]
-  //$hnode SetHideFromEditors 0
-  //$hnode SetSelectable 1
-  hnode->SetAndObserveDisplayNodeID(dnode->GetID());
-  hnode->SetHideFromEditors(0);
-  hnode->SetSelectable(1);
-
   //set ::S2_HParent_ID [$hnode GetID]
-  this->ParentID = hnode->GetID();
+  this->ParentID = dnode->GetID();
 }
 
 //-----------------------------------------------------------------------------
@@ -1058,12 +1041,9 @@ void qSlicerSlicer2SceneReaderPrivate::importModelRefNode(NodeType& node)
   //upvar $node n
   //set hnode [vtkMRMLModelHierarchyNode New]
   //$hnode SetScene $::slicer3::MRMLScene
-  vtkSmartPointer<vtkMRMLModelHierarchyNode> hnode =
-    vtkSmartPointer<vtkMRMLModelHierarchyNode>::New();
-  hnode->SetScene(q->mrmlScene());
 
-  //$hnode SetExpanded 1
-  hnode->SetExpanded(1);
+  // Important! Leaf hierarchy nodes are not needed any more.
+  //   Simply set parent folder to the model node in subject hierarchy
 
   //set id2 $n(ModelRefID)
   //set id3 $::S2_Model_ID($id2)
@@ -1071,28 +1051,36 @@ void qSlicerSlicer2SceneReaderPrivate::importModelRefNode(NodeType& node)
   QString id3 = this->ModelIDs[id2];
 
   //$hnode SetName [[$::slicer3::MRMLScene GetNodeByID $id3] GetName]
-  Q_ASSERT(q->mrmlScene()->GetNodeByID(id3.toLatin1()));
-  hnode->SetName(q->mrmlScene()->GetNodeByID(id3.toLatin1())->GetName());
-
-  //set hnode [$::slicer3::MRMLScene AddNode $hnode]
-  hnode = vtkMRMLModelHierarchyNode::SafeDownCast(
-    q->mrmlScene()->AddNode(hnode));
-  this->LoadedNodes << hnode->GetID();
+  vtkMRMLNode* modelNode = q->mrmlScene()->GetNodeByID(id3.toLatin1());
+  if (!modelNode)
+    {
+    qCritical() << Q_FUNC_INFO << "Unable to access referenced model node";
+    return;
+    }
 
   //if {$::S2_HParent_ID != ""} {
   //  $hnode SetParentNodeIDReference $::S2_HParent_ID
   //}
   if (!this->ParentID.isEmpty())
     {
-    hnode->SetParentNodeID(this->ParentID.toLatin1());
-    }
-  //$hnode SetModelNodeIDReference $id3
-  hnode->SetModelNodeIDReference(id3.toLatin1());
+    vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(q->mrmlScene());
+    if (!shNode)
+      {
+      qCritical() << Q_FUNC_INFO << "Unable to access subject hierarchy node";
+      return;
+      }
 
-  //$hnode SetHideFromEditors 1
-  //$hnode SetSelectable 0
-  hnode->SetHideFromEditors(1);
-  hnode->SetSelectable(0);
+    vtkMRMLNode* parentNode = q->mrmlScene()->GetNodeByID(this->ParentID.toLatin1());
+    if (parentNode)
+      {
+      vtkIdType parentItemId = shNode->GetItemByDataNode(parentNode);
+      vtkIdType modelItemId = shNode->GetItemByDataNode(modelNode);
+      if (parentItemId && modelItemId)
+        {
+        shNode->SetItemParent(modelItemId, parentItemId);
+        }
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------

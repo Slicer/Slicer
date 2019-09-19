@@ -149,7 +149,7 @@ protected slots:
   void convertModelToSegmentation();
 
   /// Convert model hierarchy to segmentation node
-  void convertModelHierarchyToSegmentation();
+  void convertModelsToSegmentation();
 
   /// Toggle 2D fill visibility for the current segmentation
   void toggle2DFillVisibility(bool);

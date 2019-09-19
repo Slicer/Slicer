@@ -56,8 +56,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSortFilterSubjectHier
   /// All the nodes are visible (invalid item ID - vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) by default
   Q_PROPERTY(vtkIdType hideItemsUnaffiliatedWithItemID READ hideItemsUnaffiliatedWithItemID WRITE setHideItemsUnaffiliatedWithItemID)
   /// Filter to show only items of a certain level (and their parents). If empty, then show all
-  /// Exact match is required. Empty by default
-  Q_PROPERTY(QString levelFilter READ levelFilter WRITE setLevelFilter)
+  Q_PROPERTY(QStringList levelFilter READ levelFilter WRITE setLevelFilter)
   /// This property controls which items are visible. The MRML node class name must be provided.
   /// An empty list means all the nodes are visible (default).
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
@@ -82,7 +81,7 @@ public:
   QString nameFilter()const;
   QString attributeNameFilter()const;
   QString attributeValueFilter()const;
-  QString levelFilter()const;
+  QStringList levelFilter()const;
   QStringList nodeTypes()const;
   QStringList hideChildNodeTypes()const;
 
@@ -116,7 +115,7 @@ public slots:
   void setNameFilter(QString filter);
   void setAttributeNameFilter(QString filter);
   void setAttributeValueFilter(QString filter);
-  void setLevelFilter(QString filter);
+  void setLevelFilter(QStringList filter);
   void setNodeTypes(const QStringList& types);
   void setHideChildNodeTypes(const QStringList& types);
 

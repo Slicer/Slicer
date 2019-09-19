@@ -103,10 +103,7 @@ vtkMRMLDisplayNode* vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(
   vtkIdType nodeShId = shNode->GetItemByDataNode(node);
   if (!nodeShId)
     {
-    if (!node->GetHideFromEditors())
-      {
-      vtkErrorWithObjectMacro(node, "GetOverridingHierarchyDisplayNode: Failed to get subject hierarchy item for node " << node->GetName());
-      }
+    // May happen if an AddNode event is caught before SH had the chance to add the item
     return nullptr;
     }
 

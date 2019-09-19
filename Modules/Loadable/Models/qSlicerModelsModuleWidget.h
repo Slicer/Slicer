@@ -54,7 +54,7 @@ public slots:
   void setMRMLScene(vtkMRMLScene* scene) override;
 
   /// Set current node associated to the selected subject hierarchy item to the widgets
-  void setCurrentNodeFromSubjectHierarchyItem(vtkIdType itemID);
+  void setDisplaySelectionFromSubjectHierarchyItem(vtkIdType itemID);
 
   void includeFiberBundles(bool include);
   void onDisplayClassChanged(int index);

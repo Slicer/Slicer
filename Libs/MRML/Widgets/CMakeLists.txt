@@ -149,8 +149,6 @@ set(MRMLWidgets_SRCS
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.cxx
   qMRMLSceneModel.h
-  qMRMLSceneModelHierarchyModel.cxx
-  qMRMLSceneModelHierarchyModel.h
   qMRMLSceneViewMenu.cxx
   qMRMLSceneViewMenu.h
   qMRMLSceneViewMenu_p.h
@@ -290,7 +288,6 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLSceneColorTableModel.h
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.h
-  qMRMLSceneModelHierarchyModel.h
   qMRMLSceneViewMenu.h
   qMRMLSceneViewMenu_p.h
   qMRMLSceneTransformModel.h

@@ -44,7 +44,6 @@ class vtkMRMLScalarVolumeNode;
 class vtkMRMLLabelMapVolumeNode;
 class vtkMRMLVolumeNode;
 class vtkMRMLModelNode;
-class vtkMRMLModelHierarchyNode;
 class vtkSlicerTerminologiesModuleLogic;
 
 /// \ingroup Slicer_QtModules_Segmentations
@@ -142,29 +141,29 @@ public:
   /// Otherwise return with failure.
   static bool ExportSegmentToRepresentationNode(vtkSegment* segment, vtkMRMLNode* representationNode);
 
-  /// Export multiple segments into a model hierarchy, a model node from each segment
+  /// Export multiple segments into a folder, a model node from each segment
   /// \param segmentationNode Segmentation node from which the the segments are exported
   /// \param segmentIds List of segment IDs to export
-  /// \param modelHierarchyNode Model hierarchy to export the segments to
-  static bool ExportSegmentsToModelHierarchy(vtkMRMLSegmentationNode* segmentationNode,
-    std::vector<std::string>& segmentIDs, vtkMRMLModelHierarchyNode* modelHierarchyNode);
+  /// \param folderItemId Subject hierarchy folder item ID to export the segments to
+  static bool ExportSegmentsToModels(vtkMRMLSegmentationNode* segmentationNode,
+    std::vector<std::string>& segmentIDs, vtkIdType folderItemId);
 
-  /// Export multiple segments into a model hierarchy, a model node from each segment
+  /// Export multiple segments into a folder, a model node from each segment
   /// \param segmentationNode Segmentation node from which the the segments are exported
   /// \param segmentIds List of segment IDs to export
-  /// \param modelHierarchyNode Model hierarchy to export the segments to
-  static bool ExportSegmentsToModelHierarchy(vtkMRMLSegmentationNode* segmentationNode,
-    vtkStringArray* segmentIds, vtkMRMLModelHierarchyNode* modelHierarchyNode);
+  /// \param folderItemId Subject hierarchy folder item ID to export the segments to
+  static bool ExportSegmentsToModels(vtkMRMLSegmentationNode* segmentationNode,
+    vtkStringArray* segmentIds, vtkIdType folderItemId);
 
-  /// Export visible segments into a model hierarchy, a model node from each segment
+  /// Export visible segments into a folder, a model node from each segment
   /// \param segmentationNode Segmentation node from which the the segments are exported
-  /// \param modelHierarchyNode Model hierarchy to export the visible segments to
-  static bool ExportVisibleSegmentsToModelHierarchy(vtkMRMLSegmentationNode* segmentationNode, vtkMRMLModelHierarchyNode* modelHierarchyNode);
+  /// \param folderItemId Subject hierarchy folder item ID to export the segments to
+  static bool ExportVisibleSegmentsToModels(vtkMRMLSegmentationNode* segmentationNode, vtkIdType folderItemId);
 
-  /// Export all segments into a model hierarchy, a model node from each segment
+  /// Export all segments into a folder, a model node from each segment
   /// \param segmentationNode Segmentation node from which the the segments are exported
-  /// \param modelHierarchyNode Model hierarchy to export the segments to
-  static bool ExportAllSegmentsToModelHierarchy(vtkMRMLSegmentationNode* segmentationNode, vtkMRMLModelHierarchyNode* modelHierarchyNode);
+  /// \param folderItemId Subject hierarchy folder item ID to export the segments to
+  static bool ExportAllSegmentsToModels(vtkMRMLSegmentationNode* segmentationNode, vtkIdType folderItemId);
 
   /// Export multiple segments into a multi-label labelmap volume node
   /// \param segmentationNode Segmentation node from which the the segments are exported
@@ -230,9 +229,9 @@ public:
   /// Import model into the segmentation as a segment.
   static bool ImportModelToSegmentationNode(vtkMRMLModelNode* modelNode, vtkMRMLSegmentationNode* segmentationNode, std::string insertBeforeSegmentId = "");
 
-  /// Import model hierarchy into the segmentation as segments.
-  static bool ImportModelHierarchyToSegmentationNode(
-    vtkMRMLModelHierarchyNode* modelHierarchyNode, vtkMRMLSegmentationNode* segmentationNode, std::string insertBeforeSegmentId = "" );
+  /// Import models in a folder into the segmentation as segments.
+  static bool ImportModelsToSegmentationNode(
+    vtkIdType folderItemId, vtkMRMLSegmentationNode* segmentationNode, std::string insertBeforeSegmentId = "" );
 
   /// Export closed surface representation of multiple segments to files. Typically used for writing 3D printable model files.
   /// \param segmentationNode Segmentation node from which the the segments are exported

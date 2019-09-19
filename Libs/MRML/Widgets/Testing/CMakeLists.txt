@@ -72,9 +72,6 @@ set(TEST_SOURCES
   qMRMLSceneHierarchyModelTest1.cxx
   qMRMLSceneModelTest.cxx
   qMRMLSceneModelTest1.cxx
-  qMRMLSceneModelHierarchyModelTest1.cxx
-  qMRMLSceneModelHierarchyModelTest2.cxx
-  #qMRMLTransformProxyModelTest1.cxx
   qMRMLSceneTransformModelTest1.cxx
   qMRMLSceneTransformModelTest2.cxx
   qMRMLSceneDisplayableModelTest1.cxx
@@ -215,8 +212,6 @@ simple_test( qMRMLSceneColorTableModelTest1 )
 simple_test( qMRMLSceneFactoryWidgetTest1 )
 simple_test( qMRMLSceneModelTest )
 simple_test( qMRMLSceneModelTest1 )
-simple_test( qMRMLSceneModelHierarchyModelTest1 )
-SCENE_TEST( qMRMLSceneModelHierarchyModelTest2 vol_and_cube.mrml)
 simple_test( qMRMLSceneTransformModelTest1 )
 SCENE_TEST(  qMRMLSceneTransformModelTest2 vol_and_cube.mrml )
 simple_test( qMRMLSceneDisplayableModelTest1 )

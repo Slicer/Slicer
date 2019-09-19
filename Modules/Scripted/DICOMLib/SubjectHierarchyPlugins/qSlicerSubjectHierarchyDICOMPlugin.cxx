@@ -130,6 +130,17 @@ qSlicerSubjectHierarchyDICOMPlugin::qSlicerSubjectHierarchyDICOMPlugin(QObject* 
 qSlicerSubjectHierarchyDICOMPlugin::~qSlicerSubjectHierarchyDICOMPlugin()
 = default;
 
+//----------------------------------------------------------------------------
+double qSlicerSubjectHierarchyDICOMPlugin::canAddNodeToSubjectHierarchy(
+  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+{
+  Q_UNUSED(node);
+  Q_UNUSED(parentItemID);
+
+  // The DICOM plugin is a subclass of the Folder plugin, but cannot add any node to subject hierarchy
+  return 0.0;
+}
+
 //---------------------------------------------------------------------------
 double qSlicerSubjectHierarchyDICOMPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
 {
@@ -148,12 +159,12 @@ double qSlicerSubjectHierarchyDICOMPlugin::canOwnSubjectHierarchyItem(vtkIdType 
   // Patient level
   if (shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()))
     {
-    return 0.7;
+    return 0.9;
     }
   // Study level
   if (shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()))
     {
-    return 0.3;
+    return 0.9;
     }
 
   return 0.0;

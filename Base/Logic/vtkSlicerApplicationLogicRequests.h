@@ -11,7 +11,13 @@
 #ifndef __vtkSlicerApplicationLogicRequests_h
 #define __vtkSlicerApplicationLogicRequests_h
 
+#include <vtkMRMLDisplayNode.h>
+#include <vtkMRMLLabelMapVolumeNode.h>
+#include <vtkMRMLModelHierarchyNode.h>
+#include <vtkMRMLModelNode.h>
+#include <vtkMRMLStorageNode.h>
 #include <vtkMRMLSubjectHierarchyNode.h>
+#include <vtkMRMLTableNode.h>
 
 //----------------------------------------------------------------------------
 class DataRequest

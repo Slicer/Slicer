@@ -2043,6 +2043,9 @@ void vtkMRMLSubjectHierarchyNode::SetItemDataNode(vtkIdType itemID, vtkMRMLNode*
     }
 
   item->DataNode = dataNode;
+
+  // Add observers for data node
+  this->Internal->AddItemObservers(item);
 }
 
 //----------------------------------------------------------------------------

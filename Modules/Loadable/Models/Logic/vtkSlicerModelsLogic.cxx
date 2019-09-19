@@ -552,10 +552,6 @@ void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
       this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
     }
 
-  std::map<std::string, std::string> displayNodeClasses =
-    selectionNode->GetModelHierarchyDisplayNodeClassNames();
-  std::map<std::string, std::string>::iterator it;
-
   int numModels = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLModelNode");
 
   // go into batch processing mode
@@ -590,13 +586,7 @@ void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
         vtkMRMLDisplayNode *displayNode = modelNode->GetNthDisplayNode(i);
         if (displayNode)
           {
-          for (it = displayNodeClasses.begin(); it != displayNodeClasses.end(); it++)
-            {
-            if (!strcmp(displayNode->GetClassName(), it->second.c_str()))
-              {
-              displayNode->SetVisibility(flag);
-              }
-            }
+          displayNode->SetVisibility(flag);
           }
         }
       }

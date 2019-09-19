@@ -23,7 +23,6 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLLayoutLogicCompareTest.cxx
   vtkMRMLLayoutLogicTest1.cxx
   vtkMRMLLayoutLogicTest2.cxx
-  vtkMRMLModelHierarchyLogicTest1.cxx
   vtkMRMLSliceLayerLogicTest.cxx
   vtkMRMLSliceLogicTest1.cxx
   vtkMRMLSliceLogicTest2.cxx
@@ -49,7 +48,6 @@ endmacro()
 simple_test( vtkMRMLAbstractLogicSceneEventsTest )
 simple_test( vtkMRMLColorLogicTest1 )
 simple_test( vtkMRMLDisplayableHierarchyLogicTest1 )
-simple_test( vtkMRMLModelHierarchyLogicTest1 )
 simple_test( vtkMRMLLayoutLogicCompareTest )
 simple_test( vtkMRMLLayoutLogicTest1 )
 simple_test( vtkMRMLLayoutLogicTest2 )

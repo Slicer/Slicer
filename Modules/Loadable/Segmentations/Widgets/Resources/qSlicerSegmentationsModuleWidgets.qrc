@@ -2,6 +2,7 @@
   <qresource>
     <file>Icons/Add.png</file>
     <file>Icons/Edit.png</file>
+    <file>Icons/ClearSelection.png</file>
     <file>Icons/Completed.png</file>
     <file>Icons/Flagged.png</file>
     <file>Icons/Help.png</file>

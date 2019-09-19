@@ -279,7 +279,7 @@ void qMRMLSubjectHierarchyComboBox::removeAttributeFilter()
 }
 
 //--------------------------------------------------------------------------
-void qMRMLSubjectHierarchyComboBox::setLevelFilter(QString &levelFilter)
+void qMRMLSubjectHierarchyComboBox::setLevelFilter(QStringList &levelFilter)
 {
   Q_D(qMRMLSubjectHierarchyComboBox);
   d->TreeView->setLevelFilter(levelFilter);

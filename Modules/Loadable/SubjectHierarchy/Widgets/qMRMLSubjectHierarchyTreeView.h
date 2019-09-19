@@ -65,7 +65,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
   Q_PROPERTY(bool multiSelection READ multiSelection WRITE setMultiSelection)
   Q_PROPERTY(QString attributeNameFilter READ attributeNameFilter WRITE setAttributeNameFilter)
   Q_PROPERTY(QString attributeValueFilter READ attributeValueFilter WRITE setAttributeValueFilter)
-  Q_PROPERTY(QString levelFilter READ levelFilter WRITE setLevelFilter)
+  Q_PROPERTY(QStringList levelFilter READ levelFilter WRITE setLevelFilter)
   Q_PROPERTY(QString nameFilter READ nameFilter WRITE setNameFilter)
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
   Q_PROPERTY(QStringList hideChildNodeTypes READ hideChildNodeTypes WRITE setHideChildNodeTypes)
@@ -111,8 +111,8 @@ public:
   QString attributeValueFilter()const;
 
   /// Set level filter that allows showing only items at a specified level and their parents. Show all items if empty
-  void setLevelFilter(QString &levelFilter);
-  QString levelFilter()const;
+  void setLevelFilter(QStringList &levelFilter);
+  QStringList levelFilter()const;
 
   /// Set name filter that allows showing only items containing a specified string (case-insensitive). Show all items if empty
   void setNameFilter(QString &nameFilter);

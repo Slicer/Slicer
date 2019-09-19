@@ -76,7 +76,6 @@
 #include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLLabelMapVolumeDisplayNode.h>
 #include <vtkMRMLModelDisplayNode.h>
-#include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkEventBroker.h>
 
@@ -812,17 +811,19 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentToRepresentationNode(vtkSeg
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModelHierarchy(vtkMRMLSegmentationNode* segmentationNode,
-  std::vector<std::string>& segmentIDs, vtkMRMLModelHierarchyNode* modelHierarchyNode)
+bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModels(vtkMRMLSegmentationNode* segmentationNode,
+  std::vector<std::string>& segmentIDs, vtkIdType folderItemId)
 {
   if (!segmentationNode || !segmentationNode->GetScene())
     {
-    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModelHierarchy: Invalid segmentation node");
+    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModels: Invalid segmentation node");
     return false;
     }
-  if (!modelHierarchyNode || !modelHierarchyNode->GetScene() || modelHierarchyNode->GetScene() != segmentationNode->GetScene())
+  vtkMRMLScene* scene = segmentationNode->GetScene();
+  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
+  if (!shNode)
     {
-    vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsToModelHierarchy: Invalid model hierarchy node");
+    vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModels: Failed to access subject hierarchy");
     return false;
     }
 
@@ -831,19 +832,18 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModelHierarchy(vtkMRMLSe
     vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName() );
   if (!closedSurfacePresent)
     {
-    vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsToModelHierarchy: Unable to convert segment to closed surface representation");
+    vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsToModels: Unable to convert segment to closed surface representation");
     return false;
     }
 
-  // Create a map that can be used for quickly looking up existing models in a hierarchy
-  vtkNew<vtkCollection> existingModels;
-  modelHierarchyNode->GetChildrenModelNodes(existingModels.GetPointer());
+  // Create a map that can be used for quickly looking up existing models in the hierarchy
   std::map< std::string, vtkMRMLModelNode* > existingModelNamesToModels;
-  vtkObject* object = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (existingModels->InitTraversal(it); (object = existingModels->GetNextItemAsObject(it));)
+  std::vector<vtkIdType> childItemIDs;
+  shNode->GetItemChildren(folderItemId, childItemIDs);
+  for (std::vector<vtkIdType>::iterator itemIt=childItemIDs.begin(); itemIt!=childItemIDs.end(); ++itemIt)
     {
-    vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(object);
+    vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(
+      shNode->GetItemDataNode(*itemIt) );
     if (!modelNode)
       {
       continue;
@@ -876,63 +876,51 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModelHierarchy(vtkMRMLSe
       {
       // Create new model node
       vtkNew<vtkMRMLModelNode> newModelNode;
-      modelHierarchyNode->GetScene()->AddNode(newModelNode.GetPointer());
+      scene->AddNode(newModelNode.GetPointer());
       newModelNode->CreateDefaultDisplayNodes();
       modelNode = newModelNode.GetPointer();
-      // Add to model hierarchy
-      vtkNew<vtkMRMLModelHierarchyNode> newModelHierarchyNode;
-      newModelHierarchyNode->SetHideFromEditors(true);
-      modelHierarchyNode->GetScene()->AddNode(newModelHierarchyNode.GetPointer());
-      newModelHierarchyNode->SetAssociatedNodeID(modelNode->GetID());
-      newModelHierarchyNode->SetParentNodeID(modelHierarchyNode->GetID());
+      // Add to folder
+      shNode->SetItemParent( shNode->GetItemByDataNode(newModelNode), folderItemId );
       }
 
     // Export segment into model node
     if (!vtkSlicerSegmentationsModuleLogic::ExportSegmentToRepresentationNode(segment, modelNode))
       {
-      vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsToModelHierarchy: Failed to export segmentation into model hierarchy");
+      vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsToModels: Failed to export segmentation into model hierarchy");
       return false;
       }
     }
 
   // Move exported representation under same parent as segmentation
-  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(segmentationNode->GetScene());
-  if (shNode)
-    {
-    shNode->SetItemParent(shNode->GetItemByDataNode(modelHierarchyNode),
-      shNode->GetItemParent(shNode->GetItemByDataNode(segmentationNode)) );
-    }
-  else
-    {
-    vtkWarningWithObjectMacro(segmentationNode, "ExportSegmentsToModelHierarchy: Failed to access subject hierarchy node");
-    }
+  shNode->SetItemParent( folderItemId,
+    shNode->GetItemParent(shNode->GetItemByDataNode(segmentationNode)) );
 
   return true;
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModelHierarchy(vtkMRMLSegmentationNode* segmentationNode,
-  vtkStringArray* segmentIds, vtkMRMLModelHierarchyNode* modelHierarchyNode)
+bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModels(
+  vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* segmentIds, vtkIdType folderItemId)
 {
   std::vector<std::string> segmentIdsVector;
   if (segmentIds == nullptr)
     {
-    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModelHierarchy failed: invalid segmentIDs");
+    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModels failed: invalid segmentIDs");
     return false;
     }
   for (int segmentIndex = 0; segmentIndex < segmentIds->GetNumberOfValues(); ++segmentIndex)
     {
     segmentIdsVector.push_back(segmentIds->GetValue(segmentIndex));
     }
-  return vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModelHierarchy(segmentationNode, segmentIdsVector, modelHierarchyNode);
+  return vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModels(segmentationNode, segmentIdsVector, folderItemId);
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSlicerSegmentationsModuleLogic::ExportVisibleSegmentsToModelHierarchy(vtkMRMLSegmentationNode* segmentationNode, vtkMRMLModelHierarchyNode* modelHierarchyNode)
+bool vtkSlicerSegmentationsModuleLogic::ExportVisibleSegmentsToModels(vtkMRMLSegmentationNode* segmentationNode, vtkIdType folderItemId)
 {
   if (!segmentationNode)
     {
-    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ExportVisibleSegmentsToModelHierarchy: Invalid segmentation node");
+    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ExportVisibleSegmentsToModels: Invalid segmentation node");
     return false;
     }
 
@@ -940,14 +928,14 @@ bool vtkSlicerSegmentationsModuleLogic::ExportVisibleSegmentsToModelHierarchy(vt
   vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
   displayNode->GetVisibleSegmentIDs(visibleSegmentIDs);
 
-  return vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModelHierarchy(segmentationNode, visibleSegmentIDs, modelHierarchyNode);
+  return vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModels(segmentationNode, visibleSegmentIDs, folderItemId);
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSlicerSegmentationsModuleLogic::ExportAllSegmentsToModelHierarchy(vtkMRMLSegmentationNode* segmentationNode, vtkMRMLModelHierarchyNode* modelHierarchyNode)
+bool vtkSlicerSegmentationsModuleLogic::ExportAllSegmentsToModels(vtkMRMLSegmentationNode* segmentationNode, vtkIdType folderItemId)
 {
   std::vector<std::string> segmentIDs;
-  return vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModelHierarchy(segmentationNode, segmentIDs, modelHierarchyNode);
+  return vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModels(segmentationNode, segmentIDs, folderItemId);
 }
 
 //-----------------------------------------------------------------------------
@@ -1193,30 +1181,29 @@ bool vtkSlicerSegmentationsModuleLogic::ImportModelToSegmentationNode(vtkMRMLMod
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSlicerSegmentationsModuleLogic::ImportModelHierarchyToSegmentationNode(vtkMRMLModelHierarchyNode* modelHierarchyNode,
+bool vtkSlicerSegmentationsModuleLogic::ImportModelsToSegmentationNode(vtkIdType folderItemId,
   vtkMRMLSegmentationNode* segmentationNode, std::string vtkNotUsed(insertBeforeSegmentId)/*=""*/)
 {
-  if (!segmentationNode)
+  if (!segmentationNode || !segmentationNode->GetScene())
     {
-    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ImportModelHierarchyToSegmentationNode: Invalid segmentation node");
+    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ImportModelsToSegmentationNode: Invalid segmentation node");
     return false;
     }
-  if (!modelHierarchyNode)
+  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(segmentationNode->GetScene());
+  if (!shNode)
     {
-    vtkErrorWithObjectMacro(segmentationNode, "ImportModelHierarchyToSegmentationNode: Invalid model hierarchy node");
-    return false;
-    }
+      vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic::ImportModelsToSegmentationNode: Failed to access subject hierarchy");
+      return false;
+      }
 
   // Get model nodes
   bool returnValue = true;
-  vtkMRMLModelNode* modelNode = nullptr;
-  vtkNew<vtkCollection> modelNodes;
-  modelHierarchyNode->GetChildrenModelNodes(modelNodes.GetPointer());
-  vtkObject* object = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (modelNodes->InitTraversal(it); (object = modelNodes->GetNextItemAsObject(it));)
+  std::vector<vtkIdType> childItemIDs;
+  shNode->GetItemChildren(folderItemId, childItemIDs);
+  for (std::vector<vtkIdType>::iterator itemIt=childItemIDs.begin(); itemIt!=childItemIDs.end(); ++itemIt)
     {
-    modelNode = vtkMRMLModelNode::SafeDownCast(object);
+    vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(
+      shNode->GetItemDataNode(*itemIt) );
     if (!modelNode)
       {
       continue;
@@ -1224,7 +1211,7 @@ bool vtkSlicerSegmentationsModuleLogic::ImportModelHierarchyToSegmentationNode(v
     // TODO: look up segment with matching name and overwrite that
     if (!vtkSlicerSegmentationsModuleLogic::ImportModelToSegmentationNode(modelNode, segmentationNode))
       {
-      vtkErrorWithObjectMacro(segmentationNode, "ImportModelHierarchyToSegmentationNode: Failed to import model node "
+      vtkErrorWithObjectMacro(segmentationNode, "ImportModelsToSegmentationNode: Failed to import model node "
         << modelNode->GetName() << " to segmentation " << segmentationNode->GetName());
       returnValue = false;
       }

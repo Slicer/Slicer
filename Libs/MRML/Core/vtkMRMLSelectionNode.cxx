@@ -157,27 +157,6 @@ void vtkMRMLSelectionNode::WriteXML(ostream& of, int nIndent)
   of << " activeViewID=\"" << (this->ActiveViewID ? this->ActiveViewID : "NULL") << "\"";
   of << " activeLayoutID=\"" << (this->ActiveLayoutID ? this->ActiveLayoutID : "NULL") << "\"";
   of << " activePlotChartID=\"" << (this->ActivePlotChartID ? this->ActivePlotChartID : "NULL") << "\"";
-
-  if (this->ModelHierarchyDisplayNodeClassName.size() > 0)
-    {
-    of << " modelHierarchyDisplayableNodeClassName=\"";
-
-    for (std::map<std::string, std::string>::const_iterator it = this->ModelHierarchyDisplayNodeClassName.begin();
-         it != this->ModelHierarchyDisplayNodeClassName.end(); it++)
-      {
-      of << " " << it->first;
-      }
-    of << "\"";
-
-    of << " modelHierarchyDisplayNodeClassName=\"";
-
-    for (std::map<std::string, std::string>::const_iterator it = this->ModelHierarchyDisplayNodeClassName.begin();
-         it != this->ModelHierarchyDisplayNodeClassName.end(); it++)
-      {
-      of << " " << it->second;
-      }
-    of << "\"";
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -294,9 +273,6 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
 
   this->Superclass::ReadXMLAttributes(atts);
 
-  std::vector<std::string> modelHierarchyDisplayableNodeClassName;
-  std::vector<std::string> modelHierarchyDisplayNodeClassName;
-
   const char* attName;
   const char* attValue;
   while (*atts != nullptr)
@@ -357,47 +333,6 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
       this->SetActivePlotChartID (attValue);
       //this->Scene->AddReferencedNodeID ( this->ActivePlotChartID, this);
       }
-    if (!strcmp (attName, "modelHierarchyDisplayableNodeClassName"))
-      {
-      std::stringstream ss(attValue);
-      while (!ss.eof())
-        {
-        std::string name;
-        ss >> name;
-        if (!name.empty())
-          {
-          modelHierarchyDisplayableNodeClassName.push_back(name);
-          }
-        }
-      }
-    if (!strcmp (attName, "modelHierarchyDisplayNodeClassName"))
-      {
-      std::stringstream ss(attValue);
-      while (!ss.eof())
-        {
-        std::string name;
-        ss >> name;
-        if (!name.empty())
-          {
-          modelHierarchyDisplayNodeClassName.push_back(name);
-          }
-        }
-      }
-    }
-
-  if (modelHierarchyDisplayableNodeClassName.size() != modelHierarchyDisplayNodeClassName.size() )
-    {
-    vtkErrorMacro(<< "ReadXMLAttributes: Number of modelHierarchyDisplayableNodeClassName is not equal to modelHierarchyDisplayNodeClassName.");
-    }
-  else
-    {
-    std::vector<std::string>::const_iterator it1 = modelHierarchyDisplayableNodeClassName.begin();
-    for (std::vector<std::string>::const_iterator it = modelHierarchyDisplayNodeClassName.begin();
-        it != modelHierarchyDisplayNodeClassName.end(); it++)
-      {
-      this->AddModelHierarchyDisplayNodeClassName(*it1, *it);
-      it1++;
-      }
     }
 
   this->EndModify(disabledModify);
@@ -424,7 +359,6 @@ void vtkMRMLSelectionNode::Copy(vtkMRMLNode *anode)
   this->SetActiveViewID (node->GetActiveViewID() );
   this->SetActiveLayoutID (node->GetActiveLayoutID() );
   this->SetActivePlotChartID (node->GetActivePlotChartID());
-  this->ModelHierarchyDisplayNodeClassName = node->ModelHierarchyDisplayNodeClassName;
   this->EndModify(disabledModify);
 }
 
@@ -468,16 +402,6 @@ void vtkMRMLSelectionNode::PrintSelf(ostream& os, vtkIndent indent)
   os << "ActiveViewID: " << ( (this->ActiveViewID) ? this->ActiveViewID : "None" ) << "\n";
   os << "ActiveLayoutID: " << ( (this->ActiveLayoutID) ? this->ActiveLayoutID : "None" ) << "\n";
   os << "ActivePlotChartID: " << ( (this->ActivePlotChartID) ? this->ActivePlotChartID : "None" ) << "\n";
-
-  if (this->ModelHierarchyDisplayNodeClassName.size() > 0)
-    {
-    os << "Mode lHierarchy Display Node Class Name: \n";
-    for (std::map<std::string, std::string>::const_iterator it = this->ModelHierarchyDisplayNodeClassName.begin();
-         it != this->ModelHierarchyDisplayNodeClassName.end(); it++)
-      {
-      os << indent.GetNextIndent() << it->first << " " << it->second << "\n";
-      }
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -731,32 +655,4 @@ void vtkMRMLSelectionNode::SetReferenceActivePlaceNodeClassName (const char *cla
 {
   this->SetActivePlaceNodeClassName(className);
   this->InvokeEvent(vtkMRMLSelectionNode::ActivePlaceNodeClassNameChangedEvent);
-}
-
-//----------------------------------------------------------------------------
-std::string
-vtkMRMLSelectionNode::GetModelHierarchyDisplayNodeClassName(const std::string& dispayableNodeClass)const
-{
-  std::map<std::string, std::string>::const_iterator it = this->ModelHierarchyDisplayNodeClassName.find(dispayableNodeClass);
-  return (it == this->ModelHierarchyDisplayNodeClassName.end() ? std::string() : it->second);
-}
-
-//----------------------------------------------------------------------------
-std::map<std::string, std::string>
-vtkMRMLSelectionNode::GetModelHierarchyDisplayNodeClassNames()const
-{
-  return this->ModelHierarchyDisplayNodeClassName;
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLSelectionNode::AddModelHierarchyDisplayNodeClassName(const std::string& dispayableNodeClass,
-                                                                 const std::string& displayNodeClass)
-{
-  this->ModelHierarchyDisplayNodeClassName[dispayableNodeClass] = displayNodeClass;
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLSelectionNode::ClearModelHierarchyDisplayNodeClassNames()
-{
-  this->ModelHierarchyDisplayNodeClassName.clear();
 }

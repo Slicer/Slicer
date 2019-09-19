@@ -30,7 +30,6 @@ class vtkMRMLColorLogic;
 class vtkMRMLModelDisplayNode;
 class vtkMRMLSliceNode;
 class vtkMRMLSliceLogic;
-class vtkMRMLModelHierarchyLogic;
 class vtkMRMLSelectionNode;
 class vtkMRMLStorableNode;
 class vtkMRMLStorageNode;
@@ -73,9 +72,6 @@ public:
   vtkCollection* GetViewLogics()const;
   vtkMRMLViewLogic* GetViewLogic(vtkMRMLViewNode* viewNode) const;
   vtkMRMLViewLogic* GetViewLogicByLayoutName(const char* layoutName) const;
-
-  /// Get ModelHierarchyLogic
-  vtkMRMLModelHierarchyLogic* GetModelHierarchyLogic() const;
 
   /// Set/Get color logic.
   /// The application typically sets a custom color logic (i.e.

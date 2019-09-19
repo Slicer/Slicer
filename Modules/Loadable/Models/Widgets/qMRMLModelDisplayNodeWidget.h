@@ -21,8 +21,8 @@
 #ifndef __qMRMLModelDisplayNodeWidget_h
 #define __qMRMLModelDisplayNodeWidget_h
 
-// Qt includes
-#include <QWidget>
+// MRMLWidgets includes
+#include "qMRMLWidget.h"
 
 // CTK includes
 #include <ctkVTKObject.h>
@@ -31,13 +31,12 @@
 #include "qSlicerModelsModuleWidgetsExport.h"
 
 class qMRMLModelDisplayNodeWidgetPrivate;
-class vtkMRMLScene;
-class vtkMRMLNode;
-class vtkMRMLModelDisplayNode;
 class vtkMRMLColorNode;
-class vtkMRMLSelectionNode;
+class vtkMRMLDisplayNode;
+class vtkMRMLModelDisplayNode;
+class vtkMRMLNode;
 
-class Q_SLICER_QTMODULES_MODELS_WIDGETS_EXPORT qMRMLModelDisplayNodeWidget : public QWidget
+class Q_SLICER_QTMODULES_MODELS_WIDGETS_EXPORT qMRMLModelDisplayNodeWidget : public qMRMLWidget
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -49,12 +48,16 @@ class Q_SLICER_QTMODULES_MODELS_WIDGETS_EXPORT qMRMLModelDisplayNodeWidget : pub
   Q_ENUMS(ControlMode)
 
 public:
-
-  qMRMLModelDisplayNodeWidget(QWidget *parent=nullptr);
+  typedef qMRMLWidget Superclass;
+  qMRMLModelDisplayNodeWidget(QWidget* parent = nullptr);
   ~qMRMLModelDisplayNodeWidget() override;
 
+  /// Get model display node (if model was selected not folder)
   vtkMRMLModelDisplayNode* mrmlModelDisplayNode()const;
-  vtkMRMLNode* mrmlDisplayableNode()const;
+  /// Get current display node (may be model or folder display node)
+  vtkMRMLDisplayNode* mrmlDisplayNode()const;
+  /// Get current item
+  vtkIdType currentSubjectHierarchyItemID()const;
 
   bool visibility()const;
   bool clipping()const;
@@ -87,31 +90,28 @@ public:
   double maximumValue()const;
 
 signals:
-  ///
   /// Signal sent if the min/max value is updated
   void minMaxValuesChanged(double min, double max);
-  ///
   /// Signal sent if the auto/manual value is updated
   void scalarRangeModeValueChanged(ControlMode value);
-  ///
   /// Signal sent if the any property in the display node is changed
   void displayNodeChanged();
-  ///
   /// Signal sent if user toggles clipping checkbox on the GUI
   void clippingToggled(bool);
-  ///
   /// Signal sent if clipping configuration button is clicked
   void clippingConfigurationButtonClicked();
 
 public slots:
-  /// Set the volume node to display
-  void setMRMLModelDisplayNode(vtkMRMLModelDisplayNode *node);
+  /// Set the model display node
+  void setMRMLModelDisplayNode(vtkMRMLModelDisplayNode* node);
   /// Utility function to be connected with generic signals
-  void setMRMLModelDisplayNode(vtkMRMLNode *node);
+  void setMRMLModelDisplayNode(vtkMRMLNode* node);
+  /// Set display node (may be model or folder display node)
+  void setMRMLDisplayNode(vtkMRMLDisplayNode* displayNode);
   /// Utility function to be connected with generic signals,
   /// it internally shows the 1st display node.
-  /// can be set from a model node or a model hierarchy node
-  void setMRMLModelOrHierarchyNode(vtkMRMLNode* modelNode);
+  /// can be set from the item of a model node or a folder
+  void setCurrentSubjectHierarchyItemID(vtkIdType currentItemID);
 
   void setVisibility(bool);
   void setClipping(bool);
@@ -154,7 +154,6 @@ public slots:
 protected slots:
   void updateWidgetFromMRML();
   void updateNodeFromProperty();
-  vtkMRMLSelectionNode* getSelectionNode(vtkMRMLScene *mrmlScene);
 
 protected:
   QScopedPointer<qMRMLModelDisplayNodeWidgetPrivate> d_ptr;

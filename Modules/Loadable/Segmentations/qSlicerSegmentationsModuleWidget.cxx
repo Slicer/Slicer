@@ -37,12 +37,13 @@
 #include <qSlicerApplication.h>
 #include <qSlicerAbstractModuleWidget.h>
 #include <qSlicerSubjectHierarchyAbstractPlugin.h>
+#include <qSlicerSubjectHierarchyFolderPlugin.h>
+#include <qSlicerSubjectHierarchyPluginHandler.h>
 
 // MRML includes
 #include "vtkMRMLScene.h"
 #include "vtkMRMLLabelMapVolumeNode.h"
 #include "vtkMRMLModelNode.h"
-#include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLSubjectHierarchyNode.h"
 
 // VTK includes
@@ -320,16 +321,16 @@ void qSlicerSegmentationsModuleWidget::init()
   connect(d->MRMLNodeComboBox_OtherSegmentationOrRepresentationNode, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
     this, SLOT(setOtherSegmentationOrRepresentationNode(vtkMRMLNode*)) );
 
-  this->connect(d->ImportExportOperationButtonGroup,
-    SIGNAL(buttonClicked(QAbstractButton*)),
-    SLOT(onImportExportOptionsButtonClicked()));
+  connect(d->ImportExportOperationButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)),
+    this, SLOT(updateImportExportWidgets()));
 
-  this->connect(d->ImportExportTypeButtonGroup,
-    SIGNAL(buttonClicked(QAbstractButton*)),
-    SLOT(onImportExportOptionsButtonClicked()));
+  connect(d->ImportExportTypeButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)),
+    this, SLOT(updateImportExportWidgets()));
 
   connect(d->PushButton_ImportExport, SIGNAL(clicked()),
     this, SLOT(onImportExportApply()));
+  connect(d->pushButton_ClearSelection, SIGNAL(clicked()),
+    this, SLOT(onImportExportClearSelection()));
 
   d->ExportToFilesWidget->setSettingsKey("ExportSegmentsToFiles");
   connect(d->MRMLNodeComboBox_Segmentation, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
@@ -350,16 +351,18 @@ void qSlicerSegmentationsModuleWidget::init()
   d->SegmentsTableView_Current->setVisibilityColumnVisible(false);
   d->SegmentsTableView_Current->setColorColumnVisible(false);
   d->SegmentsTableView_Current->setOpacityColumnVisible(false);
+  d->SegmentsTableView_Current->setStatusColumnVisible(false);
 
   d->SegmentsTableView_Other->setSelectionMode(QAbstractItemView::ExtendedSelection);
   d->SegmentsTableView_Other->setHeaderVisible(false);
   d->SegmentsTableView_Other->setVisibilityColumnVisible(false);
   d->SegmentsTableView_Other->setColorColumnVisible(false);
   d->SegmentsTableView_Other->setOpacityColumnVisible(false);
+  d->SegmentsTableView_Other->setStatusColumnVisible(false);
 
   d->radioButton_Export->setChecked(true);
   d->radioButton_Labelmap->setChecked(true);
-  this->onImportExportOptionsButtonClicked();
+  this->updateImportExportWidgets();
 }
 
 //-----------------------------------------------------------------------------
@@ -545,7 +548,7 @@ void qSlicerSegmentationsModuleWidget::setOtherSegmentationOrRepresentationNode(
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentationsModuleWidget::onImportExportOptionsButtonClicked()
+void qSlicerSegmentationsModuleWidget::updateImportExportWidgets()
 {
   Q_D(qSlicerSegmentationsModuleWidget);
 
@@ -558,7 +561,7 @@ void qSlicerSegmentationsModuleWidget::onImportExportOptionsButtonClicked()
     d->label_TerminologyContext->setVisible(false);
     d->ComboBox_TerminologyContext->setVisible(false);
     }
-  else
+  else // Import
     {
     d->label_ImportExportType->setText("Input type:");
     d->label_ImportExportNode->setText("Input node:");
@@ -566,35 +569,41 @@ void qSlicerSegmentationsModuleWidget::onImportExportOptionsButtonClicked()
     d->label_TerminologyContext->setVisible(d->radioButton_Labelmap->isChecked());
     d->ComboBox_TerminologyContext->setVisible(d->radioButton_Labelmap->isChecked());
     }
-  d->MRMLNodeComboBox_ImportExportNode->setNoneEnabled(d->radioButton_Export->isChecked());
   d->ComboBox_ExportedSegments->setEnabled(d->radioButton_Export->isChecked());
   d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->setEnabled(
     d->radioButton_Labelmap->isChecked() && d->radioButton_Export->isChecked());
+  d->pushButton_ClearSelection->setVisible(d->radioButton_Export->isChecked());
 
   // Type: labelmap/model
   QStringList nodeTypes;
+  QStringList levelFilter;
   if (d->radioButton_Labelmap->isChecked())
     {
     nodeTypes << "vtkMRMLLabelMapVolumeNode";
     if (d->radioButton_Export->isChecked())
       {
-      d->MRMLNodeComboBox_ImportExportNode->setNoneDisplay("Export to new labelmap");
+      d->SubjectHierarchyComboBox_ImportExport->setDefaultText("Export to new labelmap");
       }
     }
-  else
+  else // Model
     {
-    nodeTypes << "vtkMRMLModelHierarchyNode";
     if (d->radioButton_Export->isChecked())
       {
-      d->MRMLNodeComboBox_ImportExportNode->setNoneDisplay("Export to new model hierarchy");
+      nodeTypes << "vtkMRMLFolderDisplayNode"; // Do not show any data nodes (folder display node belongs to folders)
+      d->SubjectHierarchyComboBox_ImportExport->setDefaultText("Export models to new folder");
+      // Show only hierarchy items (folder, study, patient)
+      levelFilter << vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()
+        << vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy().c_str()
+        << vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient().c_str();
       }
-    else
+    else // Import
       {
-      // Import is supported from an individual model node as well
       nodeTypes << "vtkMRMLModelNode";
       }
     }
-  d->MRMLNodeComboBox_ImportExportNode->setNodeTypes(nodeTypes);
+  d->SubjectHierarchyComboBox_ImportExport->setNodeTypes(nodeTypes);
+  d->SubjectHierarchyComboBox_ImportExport->setLevelFilter(levelFilter);
+
   d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->setEnabled(
     d->radioButton_Labelmap->isChecked() && d->radioButton_Export->isChecked() );
 }
@@ -611,6 +620,14 @@ void qSlicerSegmentationsModuleWidget::onImportExportApply()
     {
     this->importToCurrentSegmentation();
     }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentationsModuleWidget::onImportExportClearSelection()
+{
+  Q_D(qSlicerSegmentationsModuleWidget);
+  d->SubjectHierarchyComboBox_ImportExport->clearSelection();
+  this->updateImportExportWidgets();
 }
 
 //-----------------------------------------------------------------------------
@@ -748,6 +765,13 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
 {
   Q_D(qSlicerSegmentationsModuleWidget);
 
+  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(this->mrmlScene());
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return false;
+    }
+
   vtkMRMLSegmentationNode* currentSegmentationNode =  vtkMRMLSegmentationNode::SafeDownCast(
     d->MRMLNodeComboBox_Segmentation->currentNode() );
   if (!currentSegmentationNode || !currentSegmentationNode->GetSegmentation())
@@ -770,43 +794,58 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
     displayNode->GetVisibleSegmentIDs(segmentIDs);
     }
 
-  // If existing node was not selected then create a new one that we will export into
-  vtkMRMLNode* otherRepresentationNode = d->MRMLNodeComboBox_ImportExportNode->currentNode();
-  if (!otherRepresentationNode)
+  // Get selected item
+  vtkIdType selectedItem = d->SubjectHierarchyComboBox_ImportExport->currentItem();
+  vtkIdType folderItem = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID; // Often exporting into a folder
+
+  // Determine if selected item is a folder
+  qSlicerSubjectHierarchyFolderPlugin* folderPlugin = qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(
+    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder") );
+  if (folderPlugin->canOwnSubjectHierarchyItem(selectedItem) > 0.0)
     {
-    std::string namePostfix;
-    if (d->radioButton_Labelmap->isChecked())
-      {
-      vtkSmartPointer<vtkMRMLNode> newNode = vtkSmartPointer<vtkMRMLNode>::Take(
-        currentSegmentationNode->GetScene()->CreateNodeByClass("vtkMRMLLabelMapVolumeNode"));
-      vtkMRMLLabelMapVolumeNode* newLabelmapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(
-        currentSegmentationNode->GetScene()->AddNode(newNode));
-      newLabelmapNode->CreateDefaultDisplayNodes();
-      otherRepresentationNode = newLabelmapNode;
-      // Add segment name if only one segment is exported
-      if (segmentIDs.size() == 1)
-        {
-        namePostfix += "-" + std::string(currentSegmentationNode->GetSegmentation()->GetSegment(segmentIDs[0])->GetName());
-        }
-      namePostfix += "-label";
-      }
-    else
-      {
-      vtkSmartPointer<vtkMRMLNode> newNode = vtkSmartPointer<vtkMRMLNode>::Take(
-        currentSegmentationNode->GetScene()->CreateNodeByClass("vtkMRMLModelHierarchyNode"));
-      vtkMRMLModelHierarchyNode* newModelHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(
-        currentSegmentationNode->GetScene()->AddNode(newNode));
-      otherRepresentationNode = newModelHierarchyNode;
-      namePostfix = "-models";
-      }
-    std::string exportedNodeName = std::string(currentSegmentationNode->GetName() ? currentSegmentationNode->GetName() : "Unknown") + namePostfix;
-    exportedNodeName = currentSegmentationNode->GetScene()->GetUniqueNameByString(exportedNodeName.c_str());
-    otherRepresentationNode->SetName(exportedNodeName.c_str());
-    d->MRMLNodeComboBox_ImportExportNode->setCurrentNode(otherRepresentationNode);
+    folderItem = selectedItem;
     }
 
-  vtkMRMLLabelMapVolumeNode* labelmapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(otherRepresentationNode);
-  vtkMRMLModelHierarchyNode* modelHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(otherRepresentationNode);
+  // Create new labelmap if exporting to labelmap and selection was not an existing labelmap
+  vtkMRMLLabelMapVolumeNode* labelmapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(
+    shNode->GetItemDataNode(selectedItem) );
+  if (d->radioButton_Labelmap->isChecked() && !labelmapNode)
+    {
+    // Add segment name to node name if only one segment is exported
+    std::string exportedNodeName(currentSegmentationNode->GetName());
+    if (segmentIDs.size() == 1)
+      {
+      exportedNodeName += "-" + std::string(currentSegmentationNode->GetSegmentation()->GetSegment(segmentIDs[0])->GetName());
+      }
+    exportedNodeName += "-label";
+
+    vtkSmartPointer<vtkMRMLNode> newNode = vtkSmartPointer<vtkMRMLNode>::Take(
+      currentSegmentationNode->GetScene()->CreateNodeByClass("vtkMRMLLabelMapVolumeNode"));
+    vtkMRMLLabelMapVolumeNode* newLabelmapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(
+      currentSegmentationNode->GetScene()->AddNode(newNode));
+    newLabelmapNode->SetName(this->mrmlScene()->GetUniqueNameByString(exportedNodeName.c_str()));
+    newLabelmapNode->CreateDefaultDisplayNodes();
+
+    // Move new labelmap under folder if selected
+    if (folderItem)
+      {
+      vtkIdType newLabelmapItem = shNode->GetItemByDataNode(newLabelmapNode);
+      shNode->SetItemParent(newLabelmapItem, folderItem);
+      }
+
+    labelmapNode = newLabelmapNode;
+    }
+
+  // Create folder if exporting to model and there was no folder selection
+  if (d->radioButton_Model->isChecked() && !folderItem)
+    {
+    std::string exportedItemName(currentSegmentationNode->GetName());
+    exportedItemName += "-models";
+
+    folderItem = shNode->CreateFolderItem(shNode->GetSceneItemID(), shNode->GenerateUniqueItemName(exportedItemName));
+    }
+
+  // Do the export
   if (labelmapNode)
     {
     // Export selected segments into a multi-label labelmap volume
@@ -824,17 +863,17 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
       return false;
       }
     }
-  else if (modelHierarchyNode)
+  else if (folderItem)
     {
-    // Export selected segments into a model hierarchy, a model node from each segment
+    // Export selected segments into a models, a model node from each segment
     QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-    bool success = vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModelHierarchy(currentSegmentationNode, segmentIDs, modelHierarchyNode);
+    bool success = vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModels(currentSegmentationNode, segmentIDs, folderItem);
     QApplication::restoreOverrideCursor();
     if (!success)
       {
-      QString message = QString("Failed to export segments from segmentation %1 to model hierarchy %2!\n\n"
+      QString message = QString("Failed to export segments from segmentation %1 to models in folder %2!\n\n"
         "Most probably the segment cannot be converted into closed surface representation.").
-        arg(currentSegmentationNode->GetName()).arg(modelHierarchyNode->GetName());
+        arg(currentSegmentationNode->GetName()).arg(shNode->GetItemName(folderItem).c_str());
       qCritical() << Q_FUNC_INFO << ": " << message;
       QMessageBox::warning(nullptr, tr("Failed to export segments to models"), message);
       return false;
@@ -856,21 +895,35 @@ bool qSlicerSegmentationsModuleWidget::importToCurrentSegmentation()
     qWarning() << Q_FUNC_INFO << ": No segmentation selected";
     return false;
     }
-  currentSegmentationNode->CreateDefaultDisplayNodes();
 
-  vtkMRMLNode* otherRepresentationNode = d->MRMLNodeComboBox_ImportExportNode->currentNode();
-  if (!otherRepresentationNode)
+  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(this->mrmlScene());
+  if (!shNode)
     {
-    qWarning() << Q_FUNC_INFO << ": No other node is selected";
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return false;
     }
-  vtkMRMLLabelMapVolumeNode* labelmapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(otherRepresentationNode);
-  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(otherRepresentationNode);
-  vtkMRMLModelHierarchyNode* modelHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(otherRepresentationNode);
 
+  currentSegmentationNode->CreateDefaultDisplayNodes();
+
+  // Get selected item
+  vtkIdType selectedItem = d->SubjectHierarchyComboBox_ImportExport->currentItem();
+
+  // Determine if selected item is a folder, labelmap, or model
+  vtkIdType folderItem = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+  qSlicerSubjectHierarchyFolderPlugin* folderPlugin = qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(
+  qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder") );
+  if (folderPlugin->canOwnSubjectHierarchyItem(selectedItem) > 0.0)
+    {
+    folderItem = selectedItem;
+    }
+  vtkMRMLLabelMapVolumeNode* labelmapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(
+    shNode->GetItemDataNode(selectedItem) );
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(
+    shNode->GetItemDataNode(selectedItem) );
+
+  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
   if (labelmapNode)
     {
-    QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
     std::string currentTerminologyContextName(
       d->ComboBox_TerminologyContext->currentText() == d->ComboBox_TerminologyContext->defaultText() ? "" : d->ComboBox_TerminologyContext->currentText().toLatin1().constData());
     bool success = d->logic()->ImportLabelmapToSegmentationNodeWithTerminology(
@@ -880,56 +933,35 @@ bool qSlicerSegmentationsModuleWidget::importToCurrentSegmentation()
       {
       QString message = QString("Failed to copy labels from labelmap volume node %1!").arg(labelmapNode->GetName());
       qCritical() << Q_FUNC_INFO << ": " << message;
-      QMessageBox::warning(nullptr, tr("Failed to import from labelmap volume"), message);
+      QMessageBox::warning(nullptr, tr("Failed to import labelmap volume"), message);
+      QApplication::restoreOverrideCursor();
       return false;
       }
     }
-  else if (modelNode || modelHierarchyNode)
+  else if (modelNode)
     {
-    QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-    vtkNew<vtkCollection> modelNodes;
-    if (modelNode)
+    if (!vtkSlicerSegmentationsModuleLogic::ImportModelToSegmentationNode(modelNode, currentSegmentationNode))
       {
-      modelNodes->AddItem(modelNode);
+      QString message = QString("Failed to copy polydata from model node %1!").arg(modelNode->GetName());
+      qCritical() << Q_FUNC_INFO << ": " << message;
+      QMessageBox::warning(nullptr, tr("Failed to import model node"), message);
+      QApplication::restoreOverrideCursor();
+      return false;
       }
-    else if (modelHierarchyNode)
-      {
-      modelHierarchyNode->GetChildrenModelNodes(modelNodes.GetPointer());
-      }
-    QString errorMessage;
-    vtkObject* object = nullptr;
-    vtkCollectionSimpleIterator it;
-    for (modelNodes->InitTraversal(it); (object = modelNodes->GetNextItemAsObject(it));)
-      {
-      modelNode = vtkMRMLModelNode::SafeDownCast(object);
-      if (!modelNode)
-        {
-        continue;
-        }
-      // TODO: look up segment with matching name and overwrite that
-      if (!vtkSlicerSegmentationsModuleLogic::ImportModelToSegmentationNode(modelNode, currentSegmentationNode))
-        {
-        if (errorMessage.isEmpty())
-          {
-          errorMessage = tr("Failed to copy polydata from model node:");
-          }
-        errorMessage.append(" ");
-        errorMessage.append(QString(modelNode->GetName() ? modelNode->GetName() : "(unknown)"));
-        }
-      }
-    if (!errorMessage.isEmpty())
-      {
-      qCritical() << Q_FUNC_INFO << ": " << errorMessage;
-      QMessageBox::warning(nullptr, tr("Failed to import model node"), errorMessage);
-      }
-    QApplication::restoreOverrideCursor();
     }
-  else
+  else if (folderItem)
     {
-    qCritical() << Q_FUNC_INFO << ": Representation node needs to be either model, model hierarchy, or labelmap, but "
-      << otherRepresentationNode->GetName() << " is " << otherRepresentationNode->GetNodeTagName();
-    return false;
+    if (!vtkSlicerSegmentationsModuleLogic::ImportModelsToSegmentationNode(folderItem, currentSegmentationNode))
+      {
+      QString message = QString("Failed to copy polydata from models under folder %1!").arg(shNode->GetItemName(folderItem).c_str());
+      qCritical() << Q_FUNC_INFO << ": " << message;
+      QMessageBox::warning(nullptr, tr("Failed to import models"), message);
+      QApplication::restoreOverrideCursor();
+      return false;
+      }
     }
+  QApplication::restoreOverrideCursor();
+
   return true;
 }
 

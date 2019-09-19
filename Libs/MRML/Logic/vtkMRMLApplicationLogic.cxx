@@ -24,7 +24,6 @@
 // MRMLLogic includes
 #include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLColorLogic.h"
-#include "vtkMRMLModelHierarchyLogic.h"
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceLinkLogic.h"
 #include "vtkMRMLViewLogic.h"
@@ -85,7 +84,6 @@ public:
   vtkSmartPointer<vtkCollection> ViewLogics;
   vtkSmartPointer<vtkMRMLSliceLinkLogic> SliceLinkLogic;
   vtkSmartPointer<vtkMRMLViewLinkLogic> ViewLinkLogic;
-  vtkSmartPointer<vtkMRMLModelHierarchyLogic> ModelHierarchyLogic;
   vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
   std::string TemporaryPath;
 
@@ -100,7 +98,6 @@ vtkMRMLApplicationLogic::vtkInternal::vtkInternal(vtkMRMLApplicationLogic* exter
   this->External = external;
   this->SliceLinkLogic = vtkSmartPointer<vtkMRMLSliceLinkLogic>::New();
   this->ViewLinkLogic = vtkSmartPointer<vtkMRMLViewLinkLogic>::New();
-  this->ModelHierarchyLogic = vtkSmartPointer<vtkMRMLModelHierarchyLogic>::New();
   this->ColorLogic = vtkSmartPointer<vtkMRMLColorLogic>::New();
 }
 
@@ -158,7 +155,6 @@ vtkMRMLApplicationLogic::vtkMRMLApplicationLogic()
   this->Internal = new vtkInternal(this);
   this->Internal->SliceLinkLogic->SetMRMLApplicationLogic(this);
   this->Internal->ViewLinkLogic->SetMRMLApplicationLogic(this);
-  this->Internal->ModelHierarchyLogic->SetMRMLApplicationLogic(this);
   this->Internal->ColorLogic->SetMRMLApplicationLogic(this);
 }
 
@@ -184,12 +180,6 @@ vtkMRMLSelectionNode* vtkMRMLApplicationLogic::GetSelectionNode()const
 vtkMRMLInteractionNode* vtkMRMLApplicationLogic::GetInteractionNode()const
 {
   return this->Internal->InteractionNode;
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLModelHierarchyLogic* vtkMRMLApplicationLogic::GetModelHierarchyLogic()const
-{
-  return this->Internal->ModelHierarchyLogic;
 }
 
 //----------------------------------------------------------------------------
@@ -410,7 +400,6 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 
   this->Internal->SliceLinkLogic->SetMRMLScene(newScene);
   this->Internal->ViewLinkLogic->SetMRMLScene(newScene);
-  this->Internal->ModelHierarchyLogic->SetMRMLScene(newScene);
 }
 
 //----------------------------------------------------------------------------
