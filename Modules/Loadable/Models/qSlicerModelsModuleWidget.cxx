@@ -105,8 +105,6 @@ void qSlicerModelsModuleWidget::setup()
 
   d->ClipModelsNodeComboBox->setVisible(false);
 
-  d->DisplayClassTabWidget->setVisible(false);
-
   // Set up tree view
   qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel = d->SubjectHierarchyTreeView->sortFilterProxyModel();
   sortFilterProxyModel->setNodeTypes(QStringList() << "vtkMRMLModelNode" << "vtkMRMLFolderDisplayNode");
@@ -122,12 +120,6 @@ void qSlicerModelsModuleWidget::setup()
 
   connect( d->FilterModelSearchBox, SIGNAL(textChanged(QString)),
     sortFilterProxyModel, SLOT(setNameFilter(QString)) );
-
-  connect(d->IncludeFiberBundleCheckBox, SIGNAL(toggled(bool)),
-    this, SLOT(includeFiberBundles(bool)));
-
-  connect(d->DisplayClassTabWidget, SIGNAL(currentChanged(int)),
-    this, SLOT(onDisplayClassChanged(int)));
 
   connect(d->ModelDisplayWidget, SIGNAL(clippingToggled(bool)),
     this, SLOT(onClipSelectedModelToggled(bool)));
@@ -237,7 +229,7 @@ void qSlicerModelsModuleWidget::onMRMLSceneEvent(vtkObject* vtk_obj, unsigned lo
   Q_ASSERT(widget);
   if (event == vtkMRMLScene::EndImportEvent)
     {
-    widget->updateWidgetFromSelectionNode();
+    //widget->updateWidgetFromSelectionNode();
     }
 }
 
@@ -267,133 +259,6 @@ void qSlicerModelsModuleWidget::hideAllModels()
     {
     modelsLogic->SetAllModelsVisibility(0);
     }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerModelsModuleWidget::includeFiberBundles(bool include)
-{
-  Q_D(qSlicerModelsModuleWidget);
-
-  // update selection node
-  //TODO: Use SH
-  // vtkMRMLSelectionNode* selectionNode = this->getSelectionNode();
-  // if (selectionNode)
-  //   {
-  //   selectionNode->ClearModelHierarchyDisplayNodeClassNames();
-  //   if (include)
-  //     {
-  //     selectionNode->AddModelHierarchyDisplayNodeClassName("vtkMRMLFiberBundleNode",
-  //                                                         d->FiberDisplayClass.toStdString());
-  //     }
-  //   }
-
-  this->updateWidgetFromSelectionNode();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerModelsModuleWidget::onDisplayClassChanged(int index)
-{
-  Q_D(qSlicerModelsModuleWidget);
-
-  std::string name;
-  if (index == 0)
-    {
-    name = std::string("vtkMRMLFiberBundleLineDisplayNode");
-    }
-  else if (index == 1)
-    {
-    name = std::string("vtkMRMLFiberBundleTubeDisplayNode");
-    }
-  else if (index == 2)
-    {
-    name = std::string("vtkMRMLFiberBundleGlyphDisplayNode");
-    }
-
-  //TODO: Use SH
-
-  // d->FiberDisplayClass.fromStdString(name);
-
-  // vtkMRMLSelectionNode* selectionNode = this->getSelectionNode();
-  // if (selectionNode)
-  //   {
-  //   selectionNode->ClearModelHierarchyDisplayNodeClassNames();
-  //   selectionNode->AddModelHierarchyDisplayNodeClassName("vtkMRMLFiberBundleNode",
-  //                                                        name);
-  //   }
-  this->updateWidgetFromSelectionNode();
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLSelectionNode* qSlicerModelsModuleWidget::getSelectionNode()
-{
-  vtkMRMLSelectionNode* selectionNode = nullptr;
-  if (this->mrmlScene())
-    {
-    selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-      this->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
-    }
-  return selectionNode;
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerModelsModuleWidget::updateWidgetFromSelectionNode()
-{
-  Q_D(qSlicerModelsModuleWidget);
-
-  //TODO: Use SH
-
-  // vtkMRMLSelectionNode* selectionNode = this->getSelectionNode();
-
-  // bool include = false;
-  // std::string displayNodeClass("");
-  // if (selectionNode)
-  //   {
-  //   displayNodeClass = selectionNode->GetModelHierarchyDisplayNodeClassName("vtkMRMLFiberBundleNode");
-  //   include = !displayNodeClass.empty();
-  //   }
-
-  // if (include)
-  //   {
-  //   d->HideChildNodeTypes = (QStringList() << "vtkMRMLAnnotationNode");
-  //   d->DisplayClassTabWidget->setVisible(true);
-  //   }
-  // else
-  //   {
-  //   d->HideChildNodeTypes = (QStringList() << "vtkMRMLFiberBundleNode" << "vtkMRMLAnnotationNode");
-  //   d->DisplayClassTabWidget->setVisible(false);
-  //   }
-
-  // if (include)
-  //   {
-  //   d->FiberDisplayClass.fromStdString(displayNodeClass);
-  //   int index = 0;
-  //   if (displayNodeClass == std::string("vtkMRMLFiberBundleTubeDisplayNode"))
-  //     {
-  //     index = 1;
-  //     }
-  //   else if (displayNodeClass == std::string("vtkMRMLFiberBundleGlyphDisplayNode"))
-  //     {
-  //     index = 2;
-  //     }
-  //     d->DisplayClassTabWidget->setCurrentIndex(index);
-  //   }
-
-  // qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel = d->SubjectHierarchyTreeView->sortFilterProxyModel();
-  // sortFilterProxyModel->setHideChildNodeTypes(d->HideChildNodeTypes);
-
-  // if (include)
-  //   {
-  //   // force update mrml widgets
-  //   std::vector<vtkMRMLNode *> nodes;
-  //   vtkMRMLScene *scene = this->mrmlScene();
-  //   scene->GetNodesByClass(displayNodeClass.c_str(), nodes);
-  //   for (unsigned int i = 0; i < nodes.size(); i++)
-  //     {
-  //     nodes[i]->InvokeEvent(vtkCommand::ModifiedEvent);
-  //     }
-  //   }
-
-  //d->ModelDisplayWidget->setMRMLModelOrHierarchyNode(d->ModelDisplayWidget->mrmlDisplayableNode()); //No-op, remove
 }
 
 //-----------------------------------------------------------

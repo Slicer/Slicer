@@ -56,67 +56,6 @@
       <item>
        <layout class="QHBoxLayout" name="allModelsHorizontalLayout">
         <item>
-         <widget class="QLabel" name="IncludeFiberBundlesLabel">
-          <property name="text">
-           <string>Include Fibers</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="IncludeFiberBundleCheckBox">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QTabWidget" name="DisplayClassTabWidget">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="currentIndex">
-           <number>0</number>
-          </property>
-          <widget class="QWidget" name="LineTab">
-           <attribute name="title">
-            <string>Line</string>
-           </attribute>
-          </widget>
-          <widget class="QWidget" name="TubeTab">
-           <attribute name="title">
-            <string>Tube</string>
-           </attribute>
-          </widget>
-          <widget class="QWidget" name="GlyphTab">
-           <attribute name="title">
-            <string>Glyph</string>
-           </attribute>
-          </widget>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>5</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
          <widget class="ctkSearchBox" name="FilterModelSearchBox">
           <property name="placeholderText">
            <string>Filter by name...</string>
@@ -368,6 +307,16 @@
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>ModelDisplayWidget</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
   </connection>
   <connection>
    <sender>ClipModelsNodeComboBox</sender>
@@ -386,18 +335,18 @@
    </hints>
   </connection>
   <connection>
-   <sender>hideAllModelsButton</sender>
-   <signal>clicked()</signal>
-   <receiver>qSlicerModelsModuleWidget</receiver>
-   <slot>hideAllModels()</slot>
+   <sender>qSlicerModelsModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>SubjectHierarchyTreeView</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>579</x>
-     <y>11</y>
+     <x>267</x>
+     <y>157</y>
     </hint>
     <hint type="destinationlabel">
-     <x>207</x>
-     <y>-9</y>
+     <x>288</x>
+     <y>56</y>
     </hint>
    </hints>
   </connection>
@@ -418,18 +367,18 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerModelsModuleWidget</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>SubjectHierarchyTreeView</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <sender>hideAllModelsButton</sender>
+   <signal>clicked()</signal>
+   <receiver>qSlicerModelsModuleWidget</receiver>
+   <slot>hideAllModels()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>267</x>
-     <y>157</y>
+     <x>579</x>
+     <y>11</y>
     </hint>
     <hint type="destinationlabel">
-     <x>288</x>
-     <y>56</y>
+     <x>207</x>
+     <y>-9</y>
     </hint>
    </hints>
   </connection>

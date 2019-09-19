@@ -48,16 +48,12 @@ public:
   void exit() override;
   bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
 
-  vtkMRMLSelectionNode* getSelectionNode();
-
 public slots:
   void setMRMLScene(vtkMRMLScene* scene) override;
 
   /// Set current node associated to the selected subject hierarchy item to the widgets
   void setDisplaySelectionFromSubjectHierarchyItem(vtkIdType itemID);
 
-  void includeFiberBundles(bool include);
-  void onDisplayClassChanged(int index);
   void onClippingConfigurationButtonClicked();
   void onDisplayNodeChanged();
   void onClipSelectedModelToggled(bool);
@@ -76,8 +72,6 @@ protected slots:
 
 protected:
   void setup() override;
-
-  void updateWidgetFromSelectionNode();
 
 protected:
   QScopedPointer<qSlicerModelsModuleWidgetPrivate> d_ptr;
