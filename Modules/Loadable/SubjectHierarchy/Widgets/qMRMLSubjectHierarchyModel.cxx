@@ -897,6 +897,10 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
     return;
     }
+  if (shItemID == d->SubjectHierarchyNode->GetSceneItemID())
+    {
+    return;
+    }
 
   qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin = nullptr;
   if (!d->SubjectHierarchyNode->GetItemOwnerPluginName(shItemID).empty())

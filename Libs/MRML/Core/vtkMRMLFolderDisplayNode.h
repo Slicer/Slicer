@@ -58,13 +58,25 @@ public:
   /// Copy the node's attributes to this object
   void Copy(vtkMRMLNode *node) override;
 
+  /// Make sure display node and transform node are present and valid
+  virtual void SetScene(vtkMRMLScene* scene) override;
+
+  /// Process events from the MRML scene
+  void ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData) override;
+
+  /// Overridden to be able to call modified on branch if necessary
+  void Modified() override;
+
   ///@{
   /// Set/Get whether to apply display properties on the whole branch
   /// \sa ApplyDisplayPropertiesOnBranch
-  vtkSetMacro(ApplyDisplayPropertiesOnBranch, bool);
+  void SetApplyDisplayPropertiesOnBranch(bool on);
   vtkGetMacro(ApplyDisplayPropertiesOnBranch, bool);
-  vtkBooleanMacro(ApplyDisplayPropertiesOnBranch, bool);
   ///@}
+
+  /// Call modified event on display nodes in branch that allow overriding
+  /// \sa FolderDisplayOverrideAllowed
+  void ChildDisplayNodesModified();
 
   /// Get display node from hierarchy that overrides the display properties of a given
   /// displayable node.

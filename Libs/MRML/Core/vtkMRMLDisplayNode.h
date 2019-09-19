@@ -81,7 +81,6 @@ public:
   /// Convert between scalar range flag type id and string
   /// \sa ScalarRangeFlag
   static const char* GetScalarRangeFlagTypeAsString(int flag);
-
   /// Gets scalar range flag type from string
   static int GetScalarRangeFlagTypeFromString(const char* name);
 
@@ -418,11 +417,27 @@ public:
   vtkGetVector2Macro(ScalarRange, double);
 
   /// Set the scalar range to use with color mapping
-  /// \sa ScalarRangeFlag, GetScalarRangeFlag()
+  /// \sa ScalarRangeFlag, GetScalarRangeFlag(), SetScalarRangeFlagFromString()
   vtkSetMacro(ScalarRangeFlag, int);
   /// Get the interpolation of the surface.
-  /// \sa ScalarRangeFlag, SetScalarRangeFlag()
+  /// \sa ScalarRangeFlag, SetScalarRangeFlag(), GetScalarRangeFlagAsString()
   vtkGetMacro(ScalarRangeFlag, int);
+  /// Get scalar range flag as string
+  /// \sa ScalarRangeFlag, GetScalarRangeFlag()
+  const char* GetScalarRangeFlagAsString();
+  /// Set scalar range flag from string
+  /// \sa ScalarRangeFlag, SetScalarRangeFlag()
+  void SetScalarRangeFlagFromString(const char* str);
+
+  /// Set flag determining whether folders are allowed to override display properties.
+  /// \sa FolderDisplayOverrideAllowed, GetFolderDisplayOverrideAllowed()
+  vtkSetMacro(FolderDisplayOverrideAllowed, bool);
+  /// Get flag determining whether folders are allowed to override display properties.
+  /// \sa FolderDisplayOverrideAllowed, SetFolderDisplayOverrideAllowed()
+  vtkGetMacro(FolderDisplayOverrideAllowed, bool);
+  /// Set flag determining whether folders are allowed to override display properties.
+  /// \sa FolderDisplayOverrideAllowed, SetFolderDisplayOverrideAllowed(), GetFolderDisplayOverrideAllowed()
+  vtkBooleanMacro(FolderDisplayOverrideAllowed, bool);
 
   /// Set and observe the texture image data port.
   /// \sa TextureImageDataConnection, GetTextureImageDataConnection()
@@ -468,11 +483,17 @@ public:
 
   /// Set the active attribute location of the display node.
   /// vtkAssignAttribute::POINT_DATA by default.
-  /// \sa ActiveAttributeLocation, GetActiveAttributeLocation()
+  /// \sa ActiveAttributeLocation, GetActiveAttributeLocation(), SetActiveAttributeLocationFromString()
   vtkSetMacro(ActiveAttributeLocation, int);
   /// Get the active attribute location of the display node.
-  /// \sa ActiveAttributeLocation, SetActiveAttributeLocation()
+  /// \sa ActiveAttributeLocation, SetActiveAttributeLocation(), GetActiveAttributeLocationAsString()
   vtkGetMacro(ActiveAttributeLocation, int);
+  /// Get the active attribute location of the display node as string
+  /// \sa ActiveAttributeLocation, GetActiveAttributeLocation()
+  const char* GetActiveAttributeLocationAsString();
+  /// Set the active attribute location of the display node from string
+  /// \sa ActiveAttributeLocation, SetActiveAttributeLocation()
+  void SetActiveAttributeLocationFromString(const char* str);
 
   /// Add View Node ID for the view to display this node in.
   /// \sa ViewNodeIDs, RemoveViewNodeID(), RemoveAllViewNodeIDs()
@@ -516,7 +537,6 @@ public:
 
   /// Converts attribute location (point or cell data) to string
   static const char* GetAttributeLocationAsString(int id);
-
   /// Gets attribute location (point or cell data) from string
   static int GetAttributeLocationFromString(const char* name);
 
@@ -758,6 +778,11 @@ protected:
   /// \sa ScalarRangeFlagType,GetScalarRangeFlag(), SetScalarRangeFlag(),
   /// ScalarRange, SetScalarRange(), GetScalarRange()
   int ScalarRangeFlag;
+
+  /// Flag to determine whether folders are allowed to override display properties.
+  /// On by default.
+  /// \sa GetFolderDisplayOverrideAllowed(), SetFolderDisplayOverrideAllowed()
+  bool FolderDisplayOverrideAllowed;
 
   /// Cached value of last found displayable node (it is expensive to determine it)
   vtkWeakPointer<vtkMRMLDisplayableNode> LastFoundDisplayableNode;

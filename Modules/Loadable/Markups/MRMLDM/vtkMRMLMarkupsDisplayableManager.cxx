@@ -34,6 +34,7 @@
 // MRML includes
 #include <vtkEventBroker.h>
 #include <vtkMRMLApplicationLogic.h>
+#include <vtkMRMLFolderDisplayNode.h>
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>

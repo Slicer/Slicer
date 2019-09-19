@@ -27,6 +27,7 @@
 
 // MRML includes
 #include <vtkEventBroker.h>
+#include <vtkMRMLFolderDisplayNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
 #include <vtkMRMLTransformNode.h>
@@ -446,6 +447,33 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
     {
     return;
     }
+
+  // Get display node from hierarchy that applies display properties on branch
+  vtkMRMLDisplayableNode* displayableNode = displayNode->GetDisplayableNode();
+  vtkMRMLDisplayNode* overrideHierarchyDisplayNode =
+    vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(displayableNode);
+  vtkMRMLDisplayNode* genericDisplayNode = displayNode;
+
+  // Use hierarchy display node if any, and if overriding is allowed for the current display node.
+  // If override is explicitly disabled, then do not apply hierarchy visibility or opacity either.
+  bool hierarchyVisibility = true;
+  double hierarchyOpacity = 1.0;
+  if (displayNode->GetFolderDisplayOverrideAllowed())
+    {
+    if (overrideHierarchyDisplayNode)
+      {
+      genericDisplayNode = overrideHierarchyDisplayNode;
+      }
+
+    // Get visibility and opacity defined by the hierarchy.
+    // These two properties are influenced by the hierarchy regardless the fact whether there is override
+    // or not. Visibility of items defined by hierarchy is off if any of the ancestors is explicitly hidden,
+    // and the opacity is the product of the ancestors' opacities.
+    // However, this does not apply on display nodes that do not allow overrides (FolderDisplayOverrideAllowed)
+    hierarchyVisibility = vtkMRMLFolderDisplayNode::GetHierarchyVisibility(displayableNode);
+    hierarchyOpacity = vtkMRMLFolderDisplayNode::GetHierarchyOpacity(displayableNode);
+    }
+
   bool displayNodeVisible = this->IsVisible(displayNode);
 
   // Determine which representation to show
@@ -461,8 +489,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
     }
 
   // Get segmentation
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
-    displayNode->GetDisplayableNode() );
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(displayableNode);
   if (!segmentationNode)
     {
     return;
@@ -486,7 +513,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
     // Update visibility
     vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
     displayNode->GetSegmentDisplayProperties(pipelineIt->first, properties);
-    bool segmentVisible = displayNodeVisible && properties.Visible && properties.Visible3D;
+    bool segmentVisible = hierarchyVisibility && displayNodeVisible && properties.Visible && properties.Visible3D;
     pipeline->Actor->SetVisibility(segmentVisible);
     if (!segmentVisible)
       {
@@ -511,36 +538,44 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
 
     // Get displayed color (if no override is defined then use the color from the segment)
     double color[3] = {vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2]};
-    displayNode->GetSegmentColor(pipelineIt->first, color);
-
-    // Update pipeline actor
-    pipeline->Actor->GetProperty()->SetRepresentation(displayNode->GetRepresentation());
-    pipeline->Actor->GetProperty()->SetPointSize(displayNode->GetPointSize());
-    pipeline->Actor->GetProperty()->SetLineWidth(displayNode->GetLineWidth());
-    pipeline->Actor->GetProperty()->SetLighting(displayNode->GetLighting());
-    pipeline->Actor->GetProperty()->SetInterpolation(displayNode->GetInterpolation());
-    pipeline->Actor->GetProperty()->SetShading(displayNode->GetShading());
-    pipeline->Actor->GetProperty()->SetFrontfaceCulling(displayNode->GetFrontfaceCulling());
-    pipeline->Actor->GetProperty()->SetBackfaceCulling(displayNode->GetBackfaceCulling());
-
-    pipeline->Actor->GetProperty()->SetColor(color[0], color[1], color[2]);
-    pipeline->Actor->GetProperty()->SetOpacity(properties.Opacity3D * displayNode->GetOpacity3D() * displayNode->GetOpacity());
-
-    pipeline->Actor->SetPickable(segmentationNode->GetSelectable());
-    if (displayNode->GetSelected())
+    if (overrideHierarchyDisplayNode)
       {
-      pipeline->Actor->GetProperty()->SetAmbient(displayNode->GetSelectedAmbient());
-      pipeline->Actor->GetProperty()->SetSpecular(displayNode->GetSelectedSpecular());
+      overrideHierarchyDisplayNode->GetColor(color);
       }
     else
       {
-      pipeline->Actor->GetProperty()->SetAmbient(displayNode->GetAmbient());
-      pipeline->Actor->GetProperty()->SetSpecular(displayNode->GetSpecular());
+      displayNode->GetSegmentColor(pipelineIt->first, color);
       }
-    pipeline->Actor->GetProperty()->SetDiffuse(displayNode->GetDiffuse());
-    pipeline->Actor->GetProperty()->SetSpecularPower(displayNode->GetPower());
-    pipeline->Actor->GetProperty()->SetEdgeVisibility(displayNode->GetEdgeVisibility());
-    pipeline->Actor->GetProperty()->SetEdgeColor(displayNode->GetEdgeColor());
+
+    // Update pipeline actor
+    pipeline->Actor->GetProperty()->SetRepresentation(genericDisplayNode->GetRepresentation());
+    pipeline->Actor->GetProperty()->SetPointSize(genericDisplayNode->GetPointSize());
+    pipeline->Actor->GetProperty()->SetLineWidth(genericDisplayNode->GetLineWidth());
+    pipeline->Actor->GetProperty()->SetLighting(genericDisplayNode->GetLighting());
+    pipeline->Actor->GetProperty()->SetInterpolation(genericDisplayNode->GetInterpolation());
+    pipeline->Actor->GetProperty()->SetShading(genericDisplayNode->GetShading());
+    pipeline->Actor->GetProperty()->SetFrontfaceCulling(genericDisplayNode->GetFrontfaceCulling());
+    pipeline->Actor->GetProperty()->SetBackfaceCulling(genericDisplayNode->GetBackfaceCulling());
+
+    pipeline->Actor->GetProperty()->SetColor(color[0], color[1], color[2]);
+    pipeline->Actor->GetProperty()->SetOpacity(
+      hierarchyOpacity * properties.Opacity3D * displayNode->GetOpacity3D() * genericDisplayNode->GetOpacity());
+
+    pipeline->Actor->SetPickable(segmentationNode->GetSelectable());
+    if (genericDisplayNode->GetSelected())
+      {
+      pipeline->Actor->GetProperty()->SetAmbient(genericDisplayNode->GetSelectedAmbient());
+      pipeline->Actor->GetProperty()->SetSpecular(genericDisplayNode->GetSelectedSpecular());
+      }
+    else
+      {
+      pipeline->Actor->GetProperty()->SetAmbient(genericDisplayNode->GetAmbient());
+      pipeline->Actor->GetProperty()->SetSpecular(genericDisplayNode->GetSpecular());
+      }
+    pipeline->Actor->GetProperty()->SetDiffuse(genericDisplayNode->GetDiffuse());
+    pipeline->Actor->GetProperty()->SetSpecularPower(genericDisplayNode->GetPower());
+    pipeline->Actor->GetProperty()->SetEdgeVisibility(genericDisplayNode->GetEdgeVisibility());
+    pipeline->Actor->GetProperty()->SetEdgeColor(genericDisplayNode->GetEdgeColor());
 
     pipeline->Actor->SetTexture(nullptr);
   }

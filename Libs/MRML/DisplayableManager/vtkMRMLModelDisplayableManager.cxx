@@ -663,44 +663,6 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
       this->RequestRender();
       }
     }
-  else if (vtkMRMLFolderDisplayNode::SafeDownCast(caller))
-    {
-    if (event == vtkCommand::ModifiedEvent)
-      {
-      vtkMRMLDisplayNode* folderDisplayNode = vtkMRMLDisplayNode::SafeDownCast(caller);
-      this->SetModelDisplayPropertyOnBranch(folderDisplayNode);
-      }
-
-    if (!isUpdating)
-      {
-      this->RequestRender();
-      }
-    }
-  else if ( vtkMRMLSubjectHierarchyNode::SafeDownCast(caller)
-         && event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent )
-    {
-    // Get item ID for subject hierarchy node events
-    vtkIdType itemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
-    if (callData)
-      {
-      vtkIdType* itemIdPtr = reinterpret_cast<vtkIdType*>(callData);
-      if (itemIdPtr)
-        {
-        itemID = *itemIdPtr;
-        }
-      }
-    vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(caller);
-    vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(shNode->GetItemDataNode(itemID));
-    if (modelNode)
-      {
-      this->SetModelDisplayProperty(modelNode);
-      }
-
-    if (!isUpdating)
-      {
-      this->RequestRender();
-      }
-    }
   else
     {
     this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
@@ -734,18 +696,6 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneEndClose()
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::UpdateFromMRMLScene()
 {
-  // Observe subject hierarchy events
-  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(this->GetMRMLScene());
-  if (!shNode)
-    {
-    vtkErrorMacro("UpdateFromMRMLScene: Failed to get subject hierarchy node from current scene");
-    return;
-    }
-  if (!shNode->HasObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent, this->GetMRMLNodesCallbackCommand()))
-    {
-    shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent, this->GetMRMLNodesCallbackCommand());
-    }
-
   // UpdateFromMRML will be executed only if there has been some actions
   // during the import that requested it (don't call
   // SetUpdateFromMRMLRequested(1) here, it should be done somewhere else
@@ -757,10 +707,9 @@ void vtkMRMLModelDisplayableManager::UpdateFromMRMLScene()
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
-  if ( (!node->IsA("vtkMRMLDisplayableNode") &&
-        !node->IsA("vtkMRMLDisplayNode") &&
-        !node->IsA("vtkMRMLFolderDisplayNode"))
-      || node->IsA("vtkMRMLClipModelsNode") )
+  if ( !node->IsA("vtkMRMLDisplayableNode") &&
+       !node->IsA("vtkMRMLDisplayNode") &&
+       !node->IsA("vtkMRMLClipModelsNode") )
     {
     return;
     }
@@ -774,12 +723,7 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
     }
 
   // Node specific processing
-  if (node->IsA("vtkMRMLFolderDisplayNode"))
-    {
-    vtkEventBroker *broker = vtkEventBroker::GetInstance();
-    broker->AddObservation(node, vtkCommand::ModifiedEvent, this, this->GetMRMLNodesCallbackCommand());
-    }
-  else if (node->IsA("vtkMRMLClipModelsNode"))
+  if (node->IsA("vtkMRMLClipModelsNode"))
     {
     vtkSetAndObserveMRMLNodeMacro(this->Internal->ClipModelsNode, node);
     }
@@ -792,7 +736,6 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
   if (!node->IsA("vtkMRMLDisplayableNode") &&
       !node->IsA("vtkMRMLDisplayNode") &&
-      !node->IsA("vtkMRMLFolderDisplayNode") &&
       !node->IsA("vtkMRMLClipModelsNode"))
     {
     return;
@@ -810,13 +753,6 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
   if (node->IsA("vtkMRMLDisplayableNode"))
     {
     this->RemoveDisplayable(vtkMRMLDisplayableNode::SafeDownCast(node));
-    }
-  else if (node->IsA("vtkMRMLFolderDisplayNode"))
-    {
-    vtkEventBroker *broker = vtkEventBroker::GetInstance();
-    vtkEventBroker::ObservationVector observations =
-      broker->GetObservations(node, vtkCommand::ModifiedEvent, this, this->GetMRMLNodesCallbackCommand());
-    broker->RemoveObservations(observations);
     }
   else if (node->IsA("vtkMRMLClipModelsNode"))
     {
@@ -1316,38 +1252,6 @@ void vtkMRMLModelDisplayableManager::UpdateModel(vtkMRMLDisplayableNode *model)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::SetModelDisplayPropertyOnBranch(vtkMRMLDisplayNode* displayNode)
-{
-  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(this->GetMRMLScene());
-  if (!shNode)
-    {
-    vtkErrorMacro("SetModelDisplayPropertyOnBranch: Failed to get subject hierarchy node from current scene");
-    return;
-    }
-  vtkIdType folderShId = shNode->GetItemByDataNode(displayNode);
-  if (!folderShId)
-    {
-    vtkErrorMacro("SetModelDisplayPropertyOnBranch: Failed to get subject hierarchy item for node "
-      << (displayNode ? displayNode->GetName() : "nullptr") );
-    return;
-    }
-
-  // Get items in branch
-  std::vector<vtkIdType> childItemIDs;
-  shNode->GetItemChildren(folderShId, childItemIDs, true);
-  std::vector<vtkIdType>::iterator childIt;
-  for (childIt=childItemIDs.begin(); childIt!=childItemIDs.end(); ++childIt)
-    {
-    vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(
-      shNode->GetItemDataNode(*childIt) );
-    if (modelNode)
-      {
-      this->SetModelDisplayProperty(modelNode);
-      }
-    }
-}
-
-//---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::RemoveModelProps()
 {
   std::map<std::string, vtkProp3D *>::iterator iter;
@@ -1514,13 +1418,6 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
   vtkMRMLDisplayNode* overrideHierarchyDisplayNode =
     vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(model);
 
-  // Get visibility and opacity defined by the hierarchy.
-  // These two properties are influenced by the hierarchy regardless the fact whether there is override
-  // or not. Visibility defined by hierarchy is off if any of the ancestors is explicitly hidden, and
-  // the opacity is the product of the ancestors' opacities.
-  bool hierarchyVisibility = vtkMRMLFolderDisplayNode::GetHierarchyVisibility(model);
-  double hierarchyOpacity = vtkMRMLFolderDisplayNode::GetHierarchyOpacity(model);
-
   // Set display properties to props for all display nodes
   int numberOfDisplayNodes = model->GetNumberOfDisplayNodes();
   for (int i=0; i<numberOfDisplayNodes; i++)
@@ -1537,10 +1434,24 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
       continue;
       }
 
-    // Use hierarchy display node if any
-    if (overrideHierarchyDisplayNode)
+    // Use hierarchy display node if any, and if overriding is allowed for the current display node.
+    // If override is explicitly disabled, then do not apply hierarchy visibility or opacity either.
+    bool hierarchyVisibility = true;
+    double hierarchyOpacity = 1.0;
+    if (displayNode->GetFolderDisplayOverrideAllowed())
       {
-      displayNode = overrideHierarchyDisplayNode;
+      if (overrideHierarchyDisplayNode)
+        {
+        displayNode = overrideHierarchyDisplayNode;
+        }
+
+      // Get visibility and opacity defined by the hierarchy.
+      // These two properties are influenced by the hierarchy regardless the fact whether there is override
+      // or not. Visibility of items defined by hierarchy is off if any of the ancestors is explicitly hidden,
+      // and the opacity is the product of the ancestors' opacities.
+      // However, this does not apply on display nodes that do not allow overrides (FolderDisplayOverrideAllowed)
+      hierarchyVisibility = vtkMRMLFolderDisplayNode::GetHierarchyVisibility(model);
+      hierarchyOpacity = vtkMRMLFolderDisplayNode::GetHierarchyOpacity(model);
       }
 
     vtkActor *actor = vtkActor::SafeDownCast(prop);

@@ -222,13 +222,18 @@ void qMRMLModelDisplayNodeWidget::setCurrentSubjectHierarchyItemID(vtkIdType cur
 
   d->CurrentSubjectHierarchyItemID = currentItemID;
 
+  if (!currentItemID)
+    {
+    return;
+    }
+
   vtkMRMLDisplayNode* displayNode = nullptr;
 
   // Can be set from model or folder
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
   if (modelNode)
     {
-    // Note: Formerly the last display node was chosen that was model display node typem (or the proper fiber type)
+    // Note: Formerly the last display node was chosen that was model display node type (or the proper fiber type)
     displayNode = modelNode->GetDisplayNode();
     }
 
@@ -521,7 +526,7 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   d->SliceIntersectionVisibilityCheckBox->setChecked(d->DisplayNode->GetVisibility2D());
   d->SliceIntersectionThicknessSpinBox->setValue(d->DisplayNode->GetSliceIntersectionThickness());
   bool showSliceIntersectionThickness =
-    (d->ModelDisplayNode && d->ModelDisplayNode->GetSliceDisplayMode() == vtkMRMLModelDisplayNode::SliceDisplayIntersection);
+    (d->ModelDisplayNode ? d->ModelDisplayNode->GetSliceDisplayMode() == vtkMRMLModelDisplayNode::SliceDisplayIntersection : true);
   d->SliceIntersectionThicknessSpinBox->setEnabled(showSliceIntersectionThickness);
   d->SliceIntersectionOpacitySlider->setValue(d->DisplayNode->GetSliceIntersectionOpacity());
 

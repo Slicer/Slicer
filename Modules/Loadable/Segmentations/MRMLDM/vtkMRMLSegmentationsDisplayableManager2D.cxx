@@ -22,6 +22,7 @@
 #include "vtkMRMLSegmentationsDisplayableManager2D.h"
 
 // MRML includes
+#include <vtkMRMLFolderDisplayNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLSegmentationDisplayNode.h>
@@ -699,11 +700,34 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
     }
   bool displayNodeVisible = this->IsVisible(displayNode);
 
-  // Get segmentation display node
-  vtkMRMLSegmentationDisplayNode* segmentationDisplayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(displayNode);
+  // Get display node from hierarchy that applies display properties on branch
+  vtkMRMLDisplayableNode* displayableNode = displayNode->GetDisplayableNode();
+  vtkMRMLDisplayNode* overrideHierarchyDisplayNode =
+    vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(displayableNode);
+  vtkMRMLDisplayNode* genericDisplayNode = displayNode;
+
+  // Use hierarchy display node if any, and if overriding is allowed for the current display node.
+  // If override is explicitly disabled, then do not apply hierarchy visibility or opacity either.
+  bool hierarchyVisibility = true;
+  double hierarchyOpacity = 1.0;
+  if (displayNode->GetFolderDisplayOverrideAllowed())
+    {
+    if (overrideHierarchyDisplayNode)
+      {
+      genericDisplayNode = overrideHierarchyDisplayNode;
+      }
+
+    // Get visibility and opacity defined by the hierarchy.
+    // These two properties are influenced by the hierarchy regardless the fact whether there is override
+    // or not. Visibility of items defined by hierarchy is off if any of the ancestors is explicitly hidden,
+    // and the opacity is the product of the ancestors' opacities.
+    // However, this does not apply on display nodes that do not allow overrides (FolderDisplayOverrideAllowed)
+    hierarchyVisibility = vtkMRMLFolderDisplayNode::GetHierarchyVisibility(displayableNode);
+    hierarchyOpacity = vtkMRMLFolderDisplayNode::GetHierarchyOpacity(displayableNode);
+    }
 
   // Determine which representation to show
-  std::string shownRepresenatationName = segmentationDisplayNode->GetDisplayRepresentationName2D();
+  std::string shownRepresenatationName = displayNode->GetDisplayRepresentationName2D();
   if (shownRepresenatationName.empty())
     {
     // Hide segmentation if there is no 2D representation to show
@@ -718,8 +742,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
     }
 
   // Get segmentation
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
-    segmentationDisplayNode->GetDisplayableNode() );
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(displayableNode);
   if (!segmentationNode)
     {
     return;
@@ -744,12 +767,16 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
     vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
     displayNode->GetSegmentDisplayProperties(pipelineIt->first, properties);
 
-    double outlineOpacity = properties.Opacity2DOutline * displayNode->GetOpacity2DOutline() * displayNode->GetOpacity();
-    bool segmentOutlineVisible = displayNodeVisible && properties.Visible
+    double outlineOpacity =
+      hierarchyOpacity * properties.Opacity2DOutline * displayNode->GetOpacity2DOutline() * genericDisplayNode->GetOpacity();
+    bool segmentOutlineVisible =
+      hierarchyVisibility && displayNodeVisible && properties.Visible
       && properties.Visible2DOutline && displayNode->GetVisibility2DOutline() && (outlineOpacity > 0.0);
-    double fillOpacity = properties.Opacity2DFill * displayNode->GetOpacity2DFill() * displayNode->GetOpacity();
-    bool segmentFillVisible = displayNodeVisible && properties.Visible
-      && properties.Visible2DFill && displayNode->GetVisibility2DFill() && (fillOpacity > 0.0);
+    double fillOpacity =
+      hierarchyOpacity * properties.Opacity2DFill * displayNode->GetOpacity2DFill() * genericDisplayNode->GetOpacity();
+    bool segmentFillVisible =
+      hierarchyVisibility && displayNodeVisible && properties.Visible
+        && properties.Visible2DFill && displayNode->GetVisibility2DFill() && (fillOpacity > 0.0);
 
     // Get representation to display
     vtkPolyData* polyData = vtkPolyData::SafeDownCast(
@@ -788,7 +815,14 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
 
     // Get displayed color (if no override is defined then use the color from the segment)
     double color[3] = {vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2]};
-    displayNode->GetSegmentColor(pipelineIt->first, color);
+    if (overrideHierarchyDisplayNode)
+      {
+      overrideHierarchyDisplayNode->GetColor(color);
+      }
+    else
+      {
+      displayNode->GetSegmentColor(pipelineIt->first, color);
+      }
 
     // If shown representation is poly data
     if (polyData)
@@ -855,7 +889,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       pipeline->PolyDataOutlineActor->SetVisibility(segmentOutlineVisible);
       pipeline->PolyDataOutlineActor->GetProperty()->SetColor(color);
       pipeline->PolyDataOutlineActor->GetProperty()->SetOpacity(outlineOpacity);
-      pipeline->PolyDataOutlineActor->GetProperty()->SetLineWidth(displayNode->GetSliceIntersectionThickness());
+      pipeline->PolyDataOutlineActor->GetProperty()->SetLineWidth(genericDisplayNode->GetSliceIntersectionThickness());
       pipeline->PolyDataOutlineActor->SetPosition(0,0);
       pipeline->PolyDataFillActor->SetVisibility(segmentFillVisible);
       pipeline->PolyDataFillActor->GetProperty()->SetColor(color[0], color[1], color[2]);
@@ -882,8 +916,9 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
         }
 
       // Set segment color
-      pipeline->LookupTableOutline->SetTableValue(1,
-        color[0], color[1], color[2], properties.Opacity2DOutline * displayNode->GetOpacity2DOutline() * displayNode->GetOpacity());
+      pipeline->LookupTableOutline->SetTableValue( 1,
+        color[0], color[1], color[2],
+        hierarchyOpacity * properties.Opacity2DOutline * displayNode->GetOpacity2DOutline() * genericDisplayNode->GetOpacity());
       pipeline->LookupTableFill->SetNumberOfTableValues(2);
       pipeline->LookupTableFill->SetRampToLinear();
       pipeline->LookupTableFill->SetTableRange(0, 1);
@@ -900,7 +935,8 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       pipeline->LookupTableFill->SetHueRange(hsv[0], hsv[0]);
       pipeline->LookupTableFill->SetSaturationRange(hsv[1], hsv[1]);
       pipeline->LookupTableFill->SetValueRange(hsv[2], hsv[2]);
-      pipeline->LookupTableFill->SetAlphaRange(0.0, properties.Opacity2DFill * displayNode->GetOpacity2DFill() * displayNode->GetOpacity());
+      pipeline->LookupTableFill->SetAlphaRange( 0.0,
+        hierarchyOpacity * properties.Opacity2DFill * displayNode->GetOpacity2DFill() * genericDisplayNode->GetOpacity());
       pipeline->LookupTableFill->ForceBuild();
       pipeline->Reslice->SetBackgroundLevel(minimumValue);
 
@@ -980,7 +1016,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
           pipeline->LabelOutline->SetInputConnection(pipeline->ImageThreshold->GetOutputPort());
           }
 
-        pipeline->LabelOutline->SetOutline(displayNode->GetSliceIntersectionThickness());
+        pipeline->LabelOutline->SetOutline(genericDisplayNode->GetSliceIntersectionThickness());
         }
       else
         {

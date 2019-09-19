@@ -172,11 +172,6 @@ protected:
   vtkAlgorithm *CreateTransformedClipper(vtkMRMLTransformNode *tnode,
                                          vtkMRMLModelNode::MeshTypeHint type);
 
-  /// Set display properties to model nodes in a branch defined by a display node
-  /// Note: Subject hierarchy folders have display nodes associated to be able to
-  ///   override display properties of a branch on the request of the user
-  void SetModelDisplayPropertyOnBranch(vtkMRMLDisplayNode* displayNode);
-
   void RemoveDispalyedID(std::string &id);
 
 protected:

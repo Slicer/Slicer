@@ -25,6 +25,7 @@ Version:   $Revision: 1.3 $
 #include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
 #include <vtkImageData.h>
+#include <vtksys/SystemTools.hxx>
 
 // STD includes
 #include <algorithm>
@@ -67,6 +68,7 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
   this->TensorVisibility = 0;
   this->InterpolateTexture = 0;
   this->ScalarRangeFlag = vtkMRMLDisplayNode::UseDataScalarRange;
+  this->FolderDisplayOverrideAllowed = true;
 
   // Arrays
   this->ScalarRange[0] = 0;
@@ -111,131 +113,44 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
 
   Superclass::WriteXML(of, nIndent);
 
-  of << " color=\"" << this->Color[0] << " "
-    << this->Color[1] << " "
-    << this->Color[2] << "\"";
-
-  of << " edgeColor=\"" << this->EdgeColor[0] << " "
-    << this->EdgeColor[1] << " " << this->EdgeColor[2] << "\"";
-  of << " selectedColor=\"" << this->SelectedColor[0] << " "
-    << this->SelectedColor[1] << " "
-    << this->SelectedColor[2] << "\"";
-
-  of << " selectedAmbient=\"" << this->SelectedAmbient << "\"";
-
-  of << " ambient=\"" << this->Ambient << "\"";
-
-  of << " diffuse=\"" << this->Diffuse << "\"";
-
-  of << " selectedSpecular=\"" << this->SelectedSpecular << "\"";
-
-  of << " specular=\"" << this->Specular << "\"";
-
-  of << " power=\"" << this->Power << "\"";
-
-  of << " opacity=\"" << this->Opacity << "\"";
-  of << " sliceIntersectionOpacity=\"" << this->SliceIntersectionOpacity << "\"";
-
-  of << " pointSize=\"" << this->PointSize << "\"";
-  of << " lineWidth=\"" << this->LineWidth << "\"";
-  of << " representation=\"" << this->Representation << "\"";
-  of << " lighting=\"" << (this->Lighting? "true" : "false") << "\"";
-  of << " interpolation=\"" << this->Interpolation << "\"";
-  of << " shading=\"" << (this->Shading? "true" : "false") << "\"";
-
-  of << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
-  of << " visibility2D=\"" << (this->Visibility2D ? "true" : "false") << "\"";
-  of << " visibility3D=\"" << (this->Visibility3D ? "true" : "false") << "\"";
-  of << " edgeVisibility=\"" << (this->EdgeVisibility? "true" : "false") << "\"";
-  of << " clipping=\"" << (this->Clipping ? "true" : "false") << "\"";
-
-  of << " sliceIntersectionThickness=\"" << this->SliceIntersectionThickness << "\"";
-
-  of << " frontfaceCulling=\"" << (this->FrontfaceCulling ? "true" : "false") << "\"";
-  of << " backfaceCulling=\"" << (this->BackfaceCulling ? "true" : "false") << "\"";
-
-  of << " scalarVisibility=\"" << (this->ScalarVisibility ? "true" : "false") << "\"";
-
-  of << " vectorVisibility=\"" << (this->VectorVisibility ? "true" : "false") << "\"";
-
-  of << " tensorVisibility=\"" << (this->TensorVisibility ? "true" : "false") << "\"";
-
-  of << " interpolateTexture=\"" << (this->InterpolateTexture ? "true" : "false") << "\"";
-
-  of << " scalarRangeFlag=\"" << this->GetScalarRangeFlagTypeAsString(this->ScalarRangeFlag) << "\"";
-
-  of << " scalarRange=\"" << this->ScalarRange[0] << " "
-     << this->ScalarRange[1] << "\"";
-
-  if (this->ColorNodeID != nullptr)
-    {
-    of << " colorNodeID=\"" << this->ColorNodeID << "\"";
-    }
-
-  if (this->ActiveScalarName != nullptr)
-    {
-    of << " activeScalarName=\"" << this->ActiveScalarName << "\"";
-    of << " activeAttributeLocation=\"" << vtkMRMLDisplayNode::GetAttributeLocationAsString(
-        this->GetActiveAttributeLocation()) << "\"";
-    }
-
-  std::stringstream ss;
-  unsigned int n;
-  for (n=0; n < this->ViewNodeIDs.size(); n++)
-    {
-    ss << this->ViewNodeIDs[n];
-    if (n < ViewNodeIDs.size()-1)
-      {
-      ss << " ";
-      }
-    }
-  if (this->ViewNodeIDs.size() > 0)
-    {
-    of << " viewNodeRef=\"" << ss.str().c_str() << "\"";
-    }
-
-  of << " ";
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLDisplayNode::SetSceneReferences()
-{
-  this->Superclass::SetSceneReferences();
-  if (this->Scene == nullptr)
-    {
-    return;
-    }
-  this->Scene->AddReferencedNodeID(this->ColorNodeID, this);
-  for (unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
-    {
-    this->Scene->AddReferencedNodeID(this->ViewNodeIDs[i].c_str(), this);
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
-{
-  this->Superclass::UpdateReferenceID(oldID, newID);
-  if (this->ColorNodeID && !strcmp(oldID, this->ColorNodeID))
-    {
-    this->SetAndObserveColorNodeID(newID);
-    }
-  else
-    {
-    bool modified = false;
-    for (unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
-      {
-      if ( std::string(oldID) == this->ViewNodeIDs[i])
-        {
-        this->ViewNodeIDs[i] =  std::string(newID);
-        modified = true;
-        }
-      }
-    if (modified)
-      {
-      this->Modified();
-      }
-    }
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLVectorMacro(color, Color, double, 3);
+  vtkMRMLWriteXMLVectorMacro(edgeColor, EdgeColor, double, 3);
+  vtkMRMLWriteXMLVectorMacro(selectedColor, SelectedColor, double, 3);
+  vtkMRMLWriteXMLFloatMacro(selectedAmbient, SelectedAmbient);
+  vtkMRMLWriteXMLFloatMacro(ambient, Ambient);
+  vtkMRMLWriteXMLFloatMacro(diffuse, Diffuse);
+  vtkMRMLWriteXMLFloatMacro(selectedSpecular, SelectedSpecular);
+  vtkMRMLWriteXMLFloatMacro(specular, Specular);
+  vtkMRMLWriteXMLFloatMacro(power, Power);
+  vtkMRMLWriteXMLFloatMacro(opacity, Opacity);
+  vtkMRMLWriteXMLFloatMacro(sliceIntersectionOpacity, SliceIntersectionOpacity);
+  vtkMRMLWriteXMLFloatMacro(pointSize, PointSize);
+  vtkMRMLWriteXMLFloatMacro(lineWidth, LineWidth);
+  vtkMRMLWriteXMLIntMacro(representation, Representation);
+  vtkMRMLWriteXMLBooleanMacro(lighting, Lighting);
+  vtkMRMLWriteXMLIntMacro(interpolation, Interpolation);
+  vtkMRMLWriteXMLBooleanMacro(shading, Shading);
+  vtkMRMLWriteXMLBooleanMacro(visibility, Visibility);
+  vtkMRMLWriteXMLBooleanMacro(visibility2D, Visibility2D);
+  vtkMRMLWriteXMLBooleanMacro(visibility3D, Visibility3D);
+  vtkMRMLWriteXMLBooleanMacro(edgeVisibility, EdgeVisibility);
+  vtkMRMLWriteXMLBooleanMacro(clipping, Clipping);
+  vtkMRMLWriteXMLIntMacro(sliceIntersectionThickness, SliceIntersectionThickness);
+  vtkMRMLWriteXMLBooleanMacro(frontfaceCulling, FrontfaceCulling);
+  vtkMRMLWriteXMLBooleanMacro(backfaceCulling, BackfaceCulling);
+  vtkMRMLWriteXMLBooleanMacro(scalarVisibility, ScalarVisibility);
+  vtkMRMLWriteXMLBooleanMacro(vectorVisibility, VectorVisibility);
+  vtkMRMLWriteXMLBooleanMacro(tensorVisibility, TensorVisibility);
+  vtkMRMLWriteXMLBooleanMacro(interpolateTexture, InterpolateTexture);
+  vtkMRMLWriteXMLStringMacro(scalarRangeFlag, ScalarRangeFlagAsString);
+  vtkMRMLWriteXMLVectorMacro(scalarRange, ScalarRange, double, 2);
+  vtkMRMLWriteXMLStringMacro(colorNodeID, ColorNodeID);
+  vtkMRMLWriteXMLStringMacro(activeScalarName, ActiveScalarName);
+  vtkMRMLWriteXMLStringMacro(activeAttributeLocation, ActiveAttributeLocationAsString);
+  vtkMRMLWriteXMLStdStringVectorMacro(viewNodeRef, ViewNodeIDs, std::vector);
+  vtkMRMLWriteXMLBooleanMacro(folderDisplayOverrideAllowed, FolderDisplayOverrideAllowed);
+  vtkMRMLWriteXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -245,331 +160,66 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
 
   Superclass::ReadXMLAttributes(atts);
 
-  const char* attName;
-  const char* attValue;
-  while (*atts != nullptr)
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLVectorMacro(color, Color, double, 3);
+  vtkMRMLReadXMLVectorMacro(edgeColor, EdgeColor, double, 3);
+  vtkMRMLReadXMLVectorMacro(selectedColor, SelectedColor, double, 3);
+  vtkMRMLReadXMLFloatMacro(selectedAmbient, SelectedAmbient);
+  vtkMRMLReadXMLFloatMacro(ambient, Ambient);
+  vtkMRMLReadXMLFloatMacro(diffuse, Diffuse);
+  vtkMRMLReadXMLFloatMacro(selectedSpecular, SelectedSpecular);
+  vtkMRMLReadXMLFloatMacro(specular, Specular);
+  vtkMRMLReadXMLFloatMacro(power, Power);
+  vtkMRMLReadXMLFloatMacro(opacity, Opacity);
+  vtkMRMLReadXMLFloatMacro(sliceIntersectionOpacity, SliceIntersectionOpacity);
+  vtkMRMLReadXMLFloatMacro(pointSize, PointSize);
+  vtkMRMLReadXMLFloatMacro(lineWidth, LineWidth);
+  vtkMRMLReadXMLIntMacro(representation, Representation);
+  vtkMRMLReadXMLBooleanMacro(lighting, Lighting);
+  vtkMRMLReadXMLIntMacro(interpolation, Interpolation);
+  vtkMRMLReadXMLBooleanMacro(shading, Shading);
+  vtkMRMLReadXMLBooleanMacro(visibility, Visibility);
+  vtkMRMLReadXMLBooleanMacro(visibility2D, Visibility2D);
+  vtkMRMLReadXMLBooleanMacro(sliceIntersectionVisibility, Visibility2D); // For backwards compatibility
+  vtkMRMLReadXMLBooleanMacro(visibility3D, Visibility3D);
+  vtkMRMLReadXMLBooleanMacro(edgeVisibility, EdgeVisibility);
+  vtkMRMLReadXMLBooleanMacro(clipping, Clipping);
+  vtkMRMLReadXMLIntMacro(sliceIntersectionThickness, SliceIntersectionThickness);
+  vtkMRMLReadXMLBooleanMacro(frontfaceCulling, FrontfaceCulling);
+  vtkMRMLReadXMLBooleanMacro(backfaceCulling, BackfaceCulling);
+  vtkMRMLReadXMLBooleanMacro(scalarVisibility, ScalarVisibility);
+  vtkMRMLReadXMLBooleanMacro(vectorVisibility, VectorVisibility);
+  vtkMRMLReadXMLBooleanMacro(tensorVisibility, TensorVisibility);
+  vtkMRMLReadXMLBooleanMacro(interpolateTexture, InterpolateTexture);
+  vtkMRMLReadXMLStringMacro(scalarRangeFlag, ScalarRangeFlagFromString);
+  vtkMRMLReadXMLVectorMacro(scalarRange, ScalarRange, double, 2);
+  vtkMRMLReadXMLStringMacro(colorNodeID, ColorNodeID);
+  vtkMRMLReadXMLStringMacro(colorNodeRef, ColorNodeID);
+  vtkMRMLReadXMLStringMacro(activeScalarName, ActiveScalarName);
+  vtkMRMLReadXMLStringMacro(activeAttributeLocation, ActiveAttributeLocationFromString);
+  vtkMRMLReadXMLBooleanMacro(folderDisplayOverrideAllowed, FolderDisplayOverrideAllowed);
+  if (!strcmp(xmlReadAttName, "autoScalarRange"))
     {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName, "color"))
+    if (!strcmp(xmlReadAttName,"true"))
       {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> Color[0];
-      ss >> Color[1];
-      ss >> Color[2];
+      this->SetScalarRangeFlag(vtkMRMLDisplayNode::UseDataScalarRange);
       }
-    else if (!strcmp(attName, "edgeColor"))
+    else
       {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->EdgeColor[0];
-      ss >> this->EdgeColor[1];
-      ss >> this->EdgeColor[2];
-      }
-    else if (!strcmp(attName, "selectedColor"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> SelectedColor[0];
-      ss >> SelectedColor[1];
-      ss >> SelectedColor[2];
-      }
-    else if (!strcmp(attName, "selectedAmbient"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> SelectedAmbient;
-      }
-    else if (!strcmp(attName, "selectedSpecular"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> SelectedSpecular;
-      }
-    else if (!strcmp(attName, "scalarRange"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> ScalarRange[0];
-      ss >> ScalarRange[1];
-      }
-    else if (!strcmp(attName, "ambient"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> Ambient;
-      }
-    else if (!strcmp(attName, "diffuse"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> Diffuse;
-      }
-    else if (!strcmp(attName, "specular"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> Specular;
-      }
-    else if (!strcmp(attName, "power"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> Power;
-      }
-    else if (!strcmp(attName, "opacity"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> Opacity;
-      }
-    else if (!strcmp(attName, "sliceIntersectionOpacity"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> SliceIntersectionOpacity;
-      }
-    else if (!strcmp(attName, "pointSize"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->PointSize;
-      }
-    else if (!strcmp(attName, "lineWidth"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->LineWidth;
-      }
-    else if (!strcmp(attName, "representation"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->Representation;
-      }
-    else if (!strcmp(attName, "lighting"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->Lighting = 1;
-        }
-      else
-        {
-        this->Lighting = 0;
-        }
-      }
-    else if (!strcmp(attName, "interpolation"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->Interpolation;
-      }
-    else if (!strcmp(attName, "shading"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->Shading = 1;
-        }
-      else
-        {
-        this->Shading = 0;
-        }
-      }
-    else if (!strcmp(attName, "visibility"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->Visibility = 1;
-        }
-      else
-        {
-        this->Visibility = 0;
-        }
-      }
-    else if (!strcmp(attName, "visibility2D"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->Visibility2D = 1;
-        }
-      else
-        {
-        this->Visibility2D = 0;
-        }
-      }
-    else if (!strcmp(attName, "visibility3D"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->Visibility3D = 1;
-        }
-      else
-        {
-        this->Visibility3D = 0;
-        }
-      }
-    else if (!strcmp(attName, "edgeVisibility"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->EdgeVisibility = 1;
-        }
-      else
-        {
-        this->EdgeVisibility = 0;
-        }
-      }
-    else if (!strcmp(attName, "clipping"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->Clipping = 1;
-        }
-      else
-        {
-        this->Clipping = 0;
-        }
-     }
-    else if (!strcmp(attName, "sliceIntersectionVisibility"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->Visibility2D = 1;
-        }
-      else
-        {
-        this->Visibility2D = 0;
-        }
-      }
-    else if (!strcmp(attName, "sliceIntersectionThickness"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->SliceIntersectionThickness;
-      }
-    else if (!strcmp(attName, "frontfaceCulling"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->FrontfaceCulling = 1;
-        }
-      else
-        {
-        this->FrontfaceCulling = 0;
-        }
-      }
-    else if (!strcmp(attName, "backfaceCulling"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->BackfaceCulling = 1;
-        }
-      else
-        {
-        this->BackfaceCulling = 0;
-        }
-      }
-    else if (!strcmp(attName, "scalarVisibility"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->ScalarVisibility = 1;
-        }
-      else
-        {
-        this->ScalarVisibility = 0;
-        }
-      }
-    else if (!strcmp(attName, "vectorVisibility"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->VectorVisibility = 1;
-        }
-      else
-        {
-        this->VectorVisibility = 0;
-        }
-      }
-    else if (!strcmp(attName, "tensorVisibility"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->TensorVisibility = 1;
-        }
-      else
-        {
-        this->TensorVisibility = 0;
-        }
-      }
-    else if (!strcmp(attName, "interpolateTexture"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->InterpolateTexture = 1;
-        }
-      else
-        {
-        this->InterpolateTexture = 0;
-        }
-      }
-    else if (!strcmp(attName, "scalarRangeFlag"))
-      {
-      int scalarRangeFlag = this->GetScalarRangeFlagTypeFromString(attValue);
-      if (scalarRangeFlag < 0)
-        {
-        // invalid value, maybe legacy scene
-        scalarRangeFlag = atoi(attValue);
-        }
-      this->SetScalarRangeFlag(scalarRangeFlag);
-      }
-    else if (!strcmp(attName, "autoScalarRange"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->SetScalarRangeFlag(vtkMRMLDisplayNode::UseDataScalarRange);
-        }
-      else
-        {
-        this->SetScalarRangeFlag(vtkMRMLDisplayNode::UseManualScalarRange);
-        }
-      }
-    else if (!strcmp(attName, "colorNodeID") ||
-             !strcmp(attName, "colorNodeRef"))
-      {
-      this->SetAndObserveColorNodeID(attValue);
-      }
-    else if (!strcmp(attName, "activeScalarName"))
-      {
-      this->SetActiveScalarName(attValue);
-      }
-    else if (!strcmp(attName, "activeAttributeLocation"))
-      {
-      int id = this->GetAttributeLocationFromString(attValue);
-      if (id<0)
-        {
-        vtkWarningMacro("Invalid activeAttributeLocation: " << (attValue ? attValue : "(none)"));
-        }
-      else
-        {
-        this->SetActiveAttributeLocation(id);
-        }
-      }
-    else if (!strcmp(attName, "viewNodeRef"))
-      {
-      std::stringstream ss(attValue);
-      while (!ss.eof())
-        {
-        std::string id;
-        ss >> id;
-        this->AddViewNodeID(id.c_str());
-        }
-
-      //this->Scene->AddReferencedNodeID(this->DisplayNodeID, this);
+      this->SetScalarRangeFlag(vtkMRMLDisplayNode::UseManualScalarRange);
       }
     }
-    this->EndModify(disabledModify);
+  if (!strcmp(xmlReadAttValue, "viewNodeRef"))
+    {
+    std::stringstream ss(xmlReadAttValue);
+    while (!ss.eof())
+      {
+      std::string id;
+      ss >> id;
+      this->AddViewNodeID(id.c_str());
+      }
+    }
+  vtkMRMLReadXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -613,6 +263,7 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetTextureImageDataConnection(node->TextureImageDataConnection);
   this->SetAndObserveColorNodeID(node->ColorNodeID);
   this->SetActiveScalarName(node->ActiveScalarName);
+  this->SetFolderDisplayOverrideAllowed(node->FolderDisplayOverrideAllowed);
 
   const int ndnodes = node->GetNumberOfViewNodeIDs();
   for (int i=0; i<ndnodes; i++)
@@ -630,56 +281,84 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 
   Superclass::PrintSelf(os,indent);
 
-  os << indent << "Color:             ";
-  for (idx = 0; idx < 3; ++idx)
-    {
-    os << this->Color[idx] << ((idx == 2) ? "\n" : ", ");
-    }
-  os << indent << "SelectedColor:     ";
-  for (idx = 0; idx < 3; ++idx)
-    {
-    os << this->SelectedColor[idx] << ((idx == 2) ? "\n" : ", ");
-    }
-  os << indent << "EdgeColor:         ";
-  for (idx = 0; idx < 3; ++idx)
-    {
-    os << this->EdgeColor[idx] << ((idx == 2) ? "\n" : ", ");
-    }
-  os << indent << "SelectedAmbient:   " << this->SelectedAmbient << "\n";
-  os << indent << "SelectedSpecular:  " << this->SelectedSpecular << "\n";
-  os << indent << "Opacity:           " << this->Opacity << "\n";
-  os << indent << "SliceIntersectionOpacity:           " << this->SliceIntersectionOpacity << "\n";
-  os << indent << "Ambient:           " << this->Ambient << "\n";
-  os << indent << "Diffuse:           " << this->Diffuse << "\n";
-  os << indent << "Specular:          " << this->Specular << "\n";
-  os << indent << "Power:             " << this->Power << "\n";
-  os << indent << "Visibility:        " << this->Visibility << "\n";
-  os << indent << "Visibility2D:      " << this->Visibility2D << "\n";
-  os << indent << "Visibility3D:      " << this->Visibility3D << "\n";
-  os << indent << "ScalarVisibility:  " << this->ScalarVisibility << "\n";
-  os << indent << "VectorVisibility:  " << this->VectorVisibility << "\n";
-  os << indent << "TensorVisibility:  " << this->TensorVisibility << "\n";
-  os << indent << "InterpolateTexture:" << this->InterpolateTexture << "\n";
-  os << indent << "ScalarRangeFlag:   " << this->GetScalarRangeFlagTypeAsString(this->ScalarRangeFlag) << "\n";
-  os << indent << "BackfaceCulling:   " << this->BackfaceCulling << "\n";
-  os << indent << "Clipping:          " << this->Clipping << "\n";
-  os << indent << "SliceIntersectionThickness: " << this->SliceIntersectionThickness << "\n";
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintVectorMacro(Color, double, 3);
+  vtkMRMLPrintVectorMacro(EdgeColor, double, 3);
+  vtkMRMLPrintVectorMacro(SelectedColor, double, 3);
+  vtkMRMLPrintFloatMacro(SelectedAmbient);
+  vtkMRMLPrintFloatMacro(Ambient);
+  vtkMRMLPrintFloatMacro(Diffuse);
+  vtkMRMLPrintFloatMacro(SelectedSpecular);
+  vtkMRMLPrintFloatMacro(Specular);
+  vtkMRMLPrintFloatMacro(Power);
+  vtkMRMLPrintFloatMacro(Opacity);
+  vtkMRMLPrintFloatMacro(SliceIntersectionOpacity);
+  vtkMRMLPrintFloatMacro(PointSize);
+  vtkMRMLPrintFloatMacro(LineWidth);
+  vtkMRMLPrintIntMacro(Representation);
+  vtkMRMLPrintBooleanMacro(Lighting);
+  vtkMRMLPrintIntMacro(Interpolation);
+  vtkMRMLPrintBooleanMacro(Shading);
+  vtkMRMLPrintBooleanMacro(Visibility);
+  vtkMRMLPrintBooleanMacro(Visibility2D);
+  vtkMRMLPrintBooleanMacro(Visibility3D);
+  vtkMRMLPrintBooleanMacro(EdgeVisibility);
+  vtkMRMLPrintBooleanMacro(Clipping);
+  vtkMRMLPrintIntMacro(SliceIntersectionThickness);
+  vtkMRMLPrintBooleanMacro(FrontfaceCulling);
+  vtkMRMLPrintBooleanMacro(BackfaceCulling);
+  vtkMRMLPrintBooleanMacro(ScalarVisibility);
+  vtkMRMLPrintBooleanMacro(VectorVisibility);
+  vtkMRMLPrintBooleanMacro(TensorVisibility);
+  vtkMRMLPrintBooleanMacro(InterpolateTexture);
+  vtkMRMLPrintStringMacro(ScalarRangeFlagAsString);
+  vtkMRMLPrintVectorMacro(ScalarRange, double, 2);
+  vtkMRMLPrintStringMacro(ColorNodeID);
+  vtkMRMLPrintStringMacro(ActiveScalarName);
+  vtkMRMLPrintStringMacro(ActiveAttributeLocationAsString);
+  vtkMRMLPrintStdStringVectorMacro(ViewNodeIDs, std::vector);
+  vtkMRMLPrintBooleanMacro(FolderDisplayOverrideAllowed);
+  vtkMRMLPrintEndMacro();
+}
 
-  os << indent << "ScalarRange:       ";
-  for (idx = 0; idx < 2; ++idx)
+//----------------------------------------------------------------------------
+void vtkMRMLDisplayNode::SetSceneReferences()
+{
+  this->Superclass::SetSceneReferences();
+  if (this->Scene == nullptr)
     {
-    os << this->ScalarRange[idx] << ((idx == 0) ? ", " : "\n");
+    return;
     }
-  os << indent << "ColorNodeID: " <<
-    (this->ColorNodeID ? this->ColorNodeID : "(none)") << "\n";
-
-  os << indent<< "ActiveScalarName: " <<
-    (this->ActiveScalarName ? this->ActiveScalarName : "(none)") << "\n";
-
+  this->Scene->AddReferencedNodeID(this->ColorNodeID, this);
   for (unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
     {
-    os << indent << "ViewNodeIDs[" << i << "]: " <<
-      this->ViewNodeIDs[i] << "\n";
+    this->Scene->AddReferencedNodeID(this->ViewNodeIDs[i].c_str(), this);
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
+{
+  this->Superclass::UpdateReferenceID(oldID, newID);
+  if (this->ColorNodeID && !strcmp(oldID, this->ColorNodeID))
+    {
+    this->SetAndObserveColorNodeID(newID);
+    }
+  else
+    {
+    bool modified = false;
+    for (unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
+      {
+      if ( std::string(oldID) == this->ViewNodeIDs[i])
+        {
+        this->ViewNodeIDs[i] =  std::string(newID);
+        modified = true;
+        }
+      }
+    if (modified)
+      {
+      this->Modified();
+      }
     }
 }
 
@@ -845,9 +524,7 @@ void vtkMRMLDisplayNode::SetColorNodeInternal(vtkMRMLColorNode* vtkNotUsed(newCo
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event,
-                                           void *callData )
+void vtkMRMLDisplayNode::ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData)
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 
@@ -954,8 +631,7 @@ bool vtkMRMLDisplayNode::IsViewNodeIDPresent(const char* viewNodeID)const
 //-------------------------------------------------------
 bool vtkMRMLDisplayNode::IsDisplayableInView(const char* viewNodeID)const
 {
-  return this->GetNumberOfViewNodeIDs() == 0
-    || this->IsViewNodeIDPresent(viewNodeID);
+  return this->GetNumberOfViewNodeIDs() == 0 || this->IsViewNodeIDPresent(viewNodeID);
 }
 
 //-------------------------------------------------------
@@ -1019,7 +695,7 @@ bool vtkMRMLDisplayNode::GetVisibility(const char* viewNodeID)
 //-------------------------------------------------------
 void vtkMRMLDisplayNode::SetAutoScalarRange(int b)
 {
-  if(b)
+  if (b)
     {
     this->AutoScalarRangeOn();
     }
@@ -1048,8 +724,7 @@ void vtkMRMLDisplayNode::AutoScalarRangeOff()
 }
 
 //-------------------------------------------------------
-const char* vtkMRMLDisplayNode
-::GetScalarRangeFlagTypeAsString(int flag)
+const char* vtkMRMLDisplayNode::GetScalarRangeFlagTypeAsString(int flag)
 {
   switch (flag)
     {
@@ -1084,6 +759,22 @@ int vtkMRMLDisplayNode::GetScalarRangeFlagTypeFromString(const char* name)
   return -1;
 }
 
+//-----------------------------------------------------------
+const char* vtkMRMLDisplayNode::GetScalarRangeFlagAsString()
+{
+  return this->GetScalarRangeFlagTypeAsString(this->ScalarRangeFlag);
+}
+
+//-----------------------------------------------------------
+void vtkMRMLDisplayNode::SetScalarRangeFlagFromString(const char* str)
+{
+  int scalarRangeFlag = this->GetScalarRangeFlagTypeFromString(str);
+  if (scalarRangeFlag < 0)
+    {
+    // invalid value, maybe legacy scene
+    scalarRangeFlag = atoi(str);
+    }
+}
 
 //-----------------------------------------------------------
 const char* vtkMRMLDisplayNode::GetAttributeLocationAsString(int id)
@@ -1118,6 +809,26 @@ int vtkMRMLDisplayNode::GetAttributeLocationFromString(const char* name)
     }
   // name not found
   return -1;
+}
+
+//-----------------------------------------------------------
+const char* vtkMRMLDisplayNode::GetActiveAttributeLocationAsString()
+{
+  return vtkMRMLDisplayNode::GetAttributeLocationAsString(this->GetActiveAttributeLocation());
+}
+
+//-----------------------------------------------------------
+void vtkMRMLDisplayNode::SetActiveAttributeLocationFromString(const char* str)
+{
+  int id = this->GetAttributeLocationFromString(str);
+  if (id<0)
+    {
+    vtkWarningMacro("Invalid activeAttributeLocation: " << (str ? str : "(none)"));
+    }
+  else
+    {
+    this->SetActiveAttributeLocation(id);
+    }
 }
 
 //-----------------------------------------------------------

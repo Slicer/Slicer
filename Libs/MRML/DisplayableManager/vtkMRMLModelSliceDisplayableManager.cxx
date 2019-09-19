@@ -24,6 +24,7 @@
 #include <vtkMRMLColorNode.h>
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLDisplayableNode.h>
+#include <vtkMRMLFolderDisplayNode.h>
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLProceduralColorNode.h>
@@ -41,21 +42,21 @@
 #include <vtkColorTransferFunction.h>
 #include <vtkDataSetSurfaceFilter.h>
 #include <vtkEventBroker.h>
+#include <vtkGeneralTransform.h>
 #include <vtkLookupTable.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPlane.h>
+#include <vtkPointLocator.h>
 #include <vtkPolyDataMapper2D.h>
 #include <vtkProperty2D.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
-#include <vtkGeneralTransform.h>
 #include <vtkTransformFilter.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkWeakPointer.h>
-#include <vtkPointLocator.h>
 
 // VTK includes: customization
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
@@ -178,7 +179,7 @@ bool vtkMRMLModelSliceDisplayableManager::vtkInternal::IsVisible(vtkMRMLDisplayN
     return 0;
     }
   bool visibleOnNode = true;
-  vtkMRMLSliceNode *sliceNode = this->SliceNode;
+  vtkMRMLSliceNode* sliceNode = this->SliceNode;
   if (sliceNode)
     {
     visibleOnNode = displayNode->GetVisibility(sliceNode->GetID());
@@ -408,7 +409,32 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     return;
     }
 
-  if (!this->IsVisible(displayNode))
+  // Get display node from hierarchy that applies display properties on branch
+  vtkMRMLDisplayableNode* displayableNode = displayNode->GetDisplayableNode();
+  vtkMRMLDisplayNode* overrideHierarchyDisplayNode =
+    vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(displayableNode);
+
+  // Use hierarchy display node if any, and if overriding is allowed for the current display node.
+  // If override is explicitly disabled, then do not apply hierarchy visibility or opacity either.
+  bool hierarchyVisibility = true;
+  double hierarchyOpacity = 1.0;
+  if (displayNode->GetFolderDisplayOverrideAllowed())
+    {
+    if (overrideHierarchyDisplayNode)
+      {
+      displayNode = overrideHierarchyDisplayNode;
+      }
+
+    // Get visibility and opacity defined by the hierarchy.
+    // These two properties are influenced by the hierarchy regardless the fact whether there is override
+    // or not. Visibility of items defined by hierarchy is off if any of the ancestors is explicitly hidden,
+    // and the opacity is the product of the ancestors' opacities.
+    // However, this does not apply on display nodes that do not allow overrides (FolderDisplayOverrideAllowed)
+    hierarchyVisibility = vtkMRMLFolderDisplayNode::GetHierarchyVisibility(displayableNode);
+    hierarchyOpacity = vtkMRMLFolderDisplayNode::GetHierarchyOpacity(displayableNode);
+    }
+
+  if (!hierarchyVisibility || !this->IsVisible(displayNode))
     {
     pipeline->Actor->SetVisibility(false);
     return;
@@ -434,7 +460,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
   pipeline->ModelWarper->SetInputData(pointSet); //why here? +connection?
   pipeline->ModelWarper->SetTransform(pipeline->NodeToWorld);
 
-  //  Set Plane Transform
+  // Set Plane Transform
   this->SetSlicePlaneFromMatrix(this->SliceXYToRAS, pipeline->Plane);
   pipeline->Plane->Modified();
 
@@ -526,10 +552,10 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
         vtkLookupTable* dNodeLUT = (colorNode ? colorNode->GetLookupTable() : nullptr);
         if (dNodeLUT)
           {
-          mapper->SetScalarRange(modelDisplayNode->GetScalarRange());
+          mapper->SetScalarRange(displayNode->GetScalarRange());
           lut = vtkSmartPointer<vtkLookupTable>::Take(
             vtkMRMLModelDisplayableManager::CreateLookupTableCopy(dNodeLUT));
-          lut->SetAlpha(displayNode->GetSliceIntersectionOpacity());
+          lut->SetAlpha(hierarchyOpacity * displayNode->GetSliceIntersectionOpacity());
           }
         }
 
@@ -544,11 +570,11 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
         mapper->SetScalarVisibility(false);
         }
       }
-    else if (modelDisplayNode->GetScalarVisibility())
+    else if (displayNode->GetScalarVisibility())
       {
       // Check if using point data or cell data
-      vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(modelDisplayNode->GetDisplayableNode());
-      if (vtkMRMLModelDisplayableManager::IsCellScalarsActive(modelDisplayNode, modelNode))
+      vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(displayableNode);
+      if (vtkMRMLModelDisplayableManager::IsCellScalarsActive(displayNode, modelNode))
         {
         mapper->SetScalarModeToUseCellData();
         }
@@ -557,7 +583,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
         mapper->SetScalarModeToUsePointData();
         }
 
-      if (modelDisplayNode->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseDirectMapping)
+      if (displayNode->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseDirectMapping)
         {
         mapper->SetColorModeToDirectScalars();
         mapper->SetLookupTable(nullptr);
@@ -579,16 +605,16 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
         // values range. It is therefore necessary to make a copy
         // of the colorNode vtkLookupTable in order not to impact
         // that lookup table original range.
-        vtkLookupTable* dNodeLUT = modelDisplayNode->GetColorNode() ?
-          modelDisplayNode->GetColorNode()->GetLookupTable() : nullptr;
+        vtkLookupTable* dNodeLUT = displayNode->GetColorNode() ?
+          displayNode->GetColorNode()->GetLookupTable() : nullptr;
         vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::Take(
           vtkMRMLModelDisplayableManager::CreateLookupTableCopy(dNodeLUT));
-        lut->SetAlpha(displayNode->GetSliceIntersectionOpacity());
+        lut->SetAlpha(hierarchyOpacity * displayNode->GetSliceIntersectionOpacity());
         mapper->SetLookupTable(lut.GetPointer());
         }
 
       // Set scalar range
-      mapper->SetScalarRange(modelDisplayNode->GetScalarRange());
+      mapper->SetScalarRange(displayNode->GetScalarRange());
 
       mapper->SetScalarVisibility(true);
       }
@@ -601,7 +627,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
   vtkProperty2D* actorProperties = actor->GetProperty();
   actorProperties->SetColor(displayNode->GetColor());
   actorProperties->SetLineWidth(displayNode->GetSliceIntersectionThickness());
-  actorProperties->SetOpacity(displayNode->GetSliceIntersectionOpacity());
+  actorProperties->SetOpacity(hierarchyOpacity * displayNode->GetSliceIntersectionOpacity());
 
   // Opacity of the slice intersection is intentionally not set by
   // actorProperties->SetOpacity(displayNode->GetOpacity()),
