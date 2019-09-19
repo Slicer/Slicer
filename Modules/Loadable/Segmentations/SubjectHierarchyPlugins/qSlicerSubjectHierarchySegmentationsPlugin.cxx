@@ -1109,6 +1109,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::convertModelsToSegmentation()
     shNode->GetScene()->AddNode(newNode));
   std::string newSegmentationNodeName = shNode->GetItemName(currentItemID) + "-segmentation";
   newSegmentationNode->SetName(newSegmentationNodeName.c_str());
+  newSegmentationNode->SetMasterRepresentationToClosedSurface();
 
   if (!vtkSlicerSegmentationsModuleLogic::ImportModelsToSegmentationNode(currentItemID, newSegmentationNode))
     {

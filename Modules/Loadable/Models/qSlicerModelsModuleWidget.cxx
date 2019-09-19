@@ -115,8 +115,8 @@ void qSlicerModelsModuleWidget::setup()
   d->SubjectHierarchyTreeView->expandToDepth(4);
   d->SubjectHierarchyTreeView->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
 
-  connect( d->SubjectHierarchyTreeView, SIGNAL(currentItemChanged(vtkIdType)),
-    this, SLOT(setDisplaySelectionFromSubjectHierarchyItem(vtkIdType)) );
+  connect( d->SubjectHierarchyTreeView, SIGNAL(currentItemsChanged(QList<vtkIdType>)),
+    this, SLOT(setDisplaySelectionFromSubjectHierarchyItems(QList<vtkIdType>)) );
 
   connect( d->FilterModelSearchBox, SIGNAL(textChanged(QString)),
     sortFilterProxyModel, SLOT(setNameFilter(QString)) );
@@ -348,7 +348,7 @@ void qSlicerModelsModuleWidget::onClipSelectedModelToggled(bool toggled)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerModelsModuleWidget::setDisplaySelectionFromSubjectHierarchyItem(vtkIdType itemID)
+void qSlicerModelsModuleWidget::setDisplaySelectionFromSubjectHierarchyItems(QList<vtkIdType> itemIDs)
 {
   Q_D(qSlicerModelsModuleWidget);
 
@@ -359,15 +359,17 @@ void qSlicerModelsModuleWidget::setDisplaySelectionFromSubjectHierarchyItem(vtkI
     return;
     }
 
-  vtkMRMLNode* dataNode = nullptr;
-  if (itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  vtkMRMLNode* firstDataNode = nullptr;
+  if ( itemIDs.size() > 0
+    // In case of empty selection the only item in the list is the scene
+    && !(itemIDs.size() == 1 && itemIDs[0] == shNode->GetSceneItemID()) )
     {
-    dataNode = shNode->GetItemDataNode(itemID);
+    firstDataNode = shNode->GetItemDataNode(itemIDs[0]);
     }
   // Only set model node to info widget if it's visible
-  d->MRMLModelInfoWidget->setMRMLModelNode(d->InformationButton->collapsed() ? nullptr : dataNode);
+  d->MRMLModelInfoWidget->setMRMLModelNode(d->InformationButton->collapsed() ? nullptr : firstDataNode);
 
-  d->ModelDisplayWidget->setCurrentSubjectHierarchyItemID(itemID);
+  d->ModelDisplayWidget->setCurrentSubjectHierarchyItemIDs(itemIDs);
 }
 
 //---------------------------------------------------------------------------
@@ -375,6 +377,6 @@ void qSlicerModelsModuleWidget::onSubjectHierarchyItemModified(vtkObject* vtkNot
 {
   Q_D(qSlicerModelsModuleWidget);
 
-  vtkIdType currentItemID = d->SubjectHierarchyTreeView->currentItem();
-  this->setDisplaySelectionFromSubjectHierarchyItem(currentItemID);
+  QList<vtkIdType> currentItemIDs = d->SubjectHierarchyTreeView->currentItems();
+  this->setDisplaySelectionFromSubjectHierarchyItems(currentItemIDs);
 }

@@ -56,8 +56,10 @@ public:
   vtkMRMLModelDisplayNode* mrmlModelDisplayNode()const;
   /// Get current display node (may be model or folder display node)
   vtkMRMLDisplayNode* mrmlDisplayNode()const;
-  /// Get current item
+  /// Get current item (if single selection)
   vtkIdType currentSubjectHierarchyItemID()const;
+  /// Get current items (if multi selection)
+  QList<vtkIdType> currentSubjectHierarchyItemIDs()const;
 
   bool visibility()const;
   bool clipping()const;
@@ -110,8 +112,14 @@ public slots:
   void setMRMLDisplayNode(vtkMRMLDisplayNode* displayNode);
   /// Utility function to be connected with generic signals,
   /// it internally shows the 1st display node.
-  /// can be set from the item of a model node or a folder
+  /// can be set from the item of a model node or a folder.
   void setCurrentSubjectHierarchyItemID(vtkIdType currentItemID);
+  /// Set the current subject hierarchy items.
+  /// Both model and folder items are supported. In case of multi
+  /// selection, the first item's display properties are displayed
+  /// in the widget, but the changed settings are applied on all
+  /// selected items if applicable.
+  void setCurrentSubjectHierarchyItemIDs(QList<vtkIdType> currentItemIDs);
 
   void setVisibility(bool);
   void setClipping(bool);
@@ -153,7 +161,7 @@ public slots:
 
 protected slots:
   void updateWidgetFromMRML();
-  void updateNodeFromProperty();
+  void updateDisplayNodesFromProperty();
 
 protected:
   QScopedPointer<qMRMLModelDisplayNodeWidgetPrivate> d_ptr;

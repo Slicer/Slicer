@@ -1079,6 +1079,7 @@ void qMRMLSubjectHierarchyTreeView::onSelectionChanged(const QItemSelection& sel
     newCurrentItemID = d->SortFilterModel->subjectHierarchyItemFromIndex(selectedIndices[0]);
     }
   emit currentItemChanged(newCurrentItemID);
+  emit currentItemsChanged(selectedShItems);
 }
 
 //------------------------------------------------------------------------------

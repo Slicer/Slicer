@@ -209,6 +209,7 @@ public slots:
 
 signals:
   void currentItemChanged(vtkIdType);
+  void currentItemsChanged(QList<vtkIdType>);
   void currentItemModified(vtkIdType);
 
 protected slots:

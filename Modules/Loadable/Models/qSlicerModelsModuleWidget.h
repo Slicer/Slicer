@@ -51,8 +51,11 @@ public:
 public slots:
   void setMRMLScene(vtkMRMLScene* scene) override;
 
-  /// Set current node associated to the selected subject hierarchy item to the widgets
-  void setDisplaySelectionFromSubjectHierarchyItem(vtkIdType itemID);
+  /// Set current subject hierarchy item IDs.
+  /// The current node (the properties of which the widget displays) will be the one associated
+  /// to the first selected subject hierarchy item.
+  /// When a property changes, then it is applied to all the models in the selection
+  void setDisplaySelectionFromSubjectHierarchyItems(QList<vtkIdType> itemIDs);
 
   void onClippingConfigurationButtonClicked();
   void onDisplayNodeChanged();
