@@ -33,6 +33,7 @@
 #include <vtkMRMLSubjectHierarchyConstants.h>
 
 class vtkCallbackCommand;
+class vtkMRMLDisplayNode;
 class vtkMRMLTransformNode;
 
 /// \ingroup Slicer_MRML_Core
@@ -67,6 +68,7 @@ public:
     SubjectHierarchyItemAboutToBeRemovedEvent,
     SubjectHierarchyItemRemovedEvent,
     SubjectHierarchyItemModifiedEvent,
+    SubjectHierarchyItemReparentedEvent,
     /// Event invoked when UID is added to subject hierarchy item. Useful when using UIDs
     /// to find related nodes, and the nodes are loaded sequentially in unspecified order.
     SubjectHierarchyItemUIDAddedEvent,
@@ -289,11 +291,23 @@ public:
 // Utility functions
 public:
   /// Set subject hierarchy branch visibility
+  /// \deprecated Kept only for backward compatibility. \sa SetItemDisplayVisibility
   void SetDisplayVisibilityForBranch(vtkIdType itemID, int visible);
-
   /// Get subject hierarchy branch visibility
+  /// \deprecated Kept only for backward compatibility. \sa GetItemDisplayVisibility
   /// \return Visibility value (0:Hidden, 1:Visible, 2:PartiallyVisible, -1:NotDisplayable)
   int GetDisplayVisibilityForBranch(vtkIdType itemID);
+
+  /// Set subject hierarchy item visibility.
+  /// If the item is a hierarchy item (folder, study, etc.), then it will apply to the whole branch,
+  /// as the displayable managers consider hierarchy visibility information.
+  void SetItemDisplayVisibility(vtkIdType itemID, int visible);
+  /// Get subject hierarchy item visibility
+  int GetItemDisplayVisibility(vtkIdType itemID);
+
+  /// Get display node associated to a given item, either directly (folder, study, etc.)
+  /// or indirectly (displayable nodes with an associated display node)
+  vtkMRMLDisplayNode* GetDisplayNodeForItem(vtkIdType itemID);
 
   /// Determine if an item is of a certain level
   /// \param level Level to check

@@ -148,11 +148,8 @@ void qSlicerSubjectHierarchyPluginLogic::setMRMLScene(vtkMRMLScene* scene)
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginLogic::observeNode(vtkMRMLNode* node)
 {
-  qSlicerSubjectHierarchyFolderPlugin* folderPlugin = qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(
-    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder") );
-
-  // Observe HierarchyModifiedEvent so that we can update subject hierarchy based on the other type of hierarchy the node is in
-  qvtkConnect( node, vtkMRMLNode::HierarchyModifiedEvent, folderPlugin, SLOT( onDataNodeAssociatedToHierarchyNode(vtkObject*) ) );
+  // Make observations between the added node and certain plugins
+  // For future reference, this was used to connect hierarchy modified events with the Folder plugin
 }
 
 //-----------------------------------------------------------------------------
@@ -394,14 +391,5 @@ void qSlicerSubjectHierarchyPluginLogic::addSupportedDataNodesToSubjectHierarchy
         this->observeNode(node);
         }
       }
-    }
-
-  // Resolve hierarchies for data nodes that have been added to the subject hierarchy by their
-  // most confident owner plugin, but are associated to hierarchy nodes in the scene
-  qSlicerSubjectHierarchyFolderPlugin* folderPlugin = qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(
-    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder") );
-  if (!folderPlugin->resolveHierarchies())
-    {
-    qCritical() << Q_FUNC_INFO << ": Failed to resolve hierarchies";
     }
 }

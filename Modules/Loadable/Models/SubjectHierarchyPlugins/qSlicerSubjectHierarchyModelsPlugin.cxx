@@ -21,9 +21,10 @@
 ==============================================================================*/
 
 // SubjectHierarchy Plugins includes
-#include "qSlicerSubjectHierarchyPluginHandler.h"
-#include "qSlicerSubjectHierarchyModelsPlugin.h"
 #include "qSlicerSubjectHierarchyDefaultPlugin.h"
+#include "qSlicerSubjectHierarchyFolderPlugin.h"
+#include "qSlicerSubjectHierarchyModelsPlugin.h"
+#include "qSlicerSubjectHierarchyPluginHandler.h"
 
 // Terminologies includes
 #include "qSlicerTerminologyItemDelegate.h"

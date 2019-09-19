@@ -74,7 +74,6 @@
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLViewNode.h>
-#include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
 
@@ -1593,7 +1592,7 @@ void qMRMLSegmentEditorWidget::updateEffectsSectionFromMRML()
         // nullptr effect
         continue;
         }
-      effectButton->setEnabled(!effect->requireSegments() || (segmentAvailable && (segmentSelected || !effect->perSegment())));
+      effectButton->setEnabled(segmentAvailable && (segmentSelected || !effect->perSegment()));
       }
     }
 

@@ -1757,7 +1757,7 @@ bool qMRMLSubjectHierarchyTreeView::showContextMenuHint(bool visibility/*=false*
 
   // Get current item
   vtkIdType itemID = this->currentItem();
-  if (!itemID || d->SubjectHierarchyNode->GetDisplayVisibilityForBranch(itemID) == -1)
+  if (!itemID || !d->SubjectHierarchyNode->GetDisplayNodeForItem(itemID))
     {
     // If current item is not displayable, then find first displayable leaf item
     itemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
@@ -1768,7 +1768,7 @@ bool qMRMLSubjectHierarchyTreeView::showContextMenuHint(bool visibility/*=false*
       std::vector<vtkIdType> currentChildItems;
       d->SubjectHierarchyNode->GetItemChildren(*childIt, currentChildItems);
       if ( (currentChildItems.empty() || d->SubjectHierarchyNode->IsItemVirtualBranchParent(*childIt)) // Leaf
-        && ( d->SubjectHierarchyNode->GetDisplayVisibilityForBranch(*childIt) != -1 // Displayable
+        && ( d->SubjectHierarchyNode->GetDisplayNodeForItem(*childIt) // Displayable
           || vtkMRMLScalarVolumeNode::SafeDownCast(d->SubjectHierarchyNode->GetItemDataNode(*childIt)) ) ) // Volume
         {
         itemID = (*childIt);

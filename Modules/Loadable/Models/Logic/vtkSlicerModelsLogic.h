@@ -38,45 +38,33 @@ class VTK_SLICER_MODELS_MODULE_LOGIC_EXPORT vtkSlicerModelsLogic
   vtkTypeMacro(vtkSlicerModelsLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  ///
   /// The color logic is used to retrieve the default color node ID for
   /// model nodes.
   virtual void SetColorLogic(vtkMRMLColorLogic* colorLogic);
   vtkGetObjectMacro(ColorLogic, vtkMRMLColorLogic);
 
-  ///
-  /// The currently active mrml volume node
-  vtkGetObjectMacro (ActiveModelNode, vtkMRMLModelNode);
-  void SetActiveModelNode (vtkMRMLModelNode *ActiveModelNode);
-
-  ///
   /// Add into the scene a new mrml model node with an existing polydata
   /// A display node is also added into the scene.
   /// \todo Should the function AddModel also add a storage node ?
   vtkMRMLModelNode* AddModel(vtkPolyData* polyData = nullptr);
 
-  ///
   /// Add into the scene a new mrml model node with an existing polydata
   /// A display node is also added into the scene.
   /// \todo Should the function AddModel also add a storage node ?
   vtkMRMLModelNode* AddModel(vtkAlgorithmOutput* polyData = nullptr);
 
-  ///
   /// Add into the scene a new mrml model node and
   /// read it's polydata from a specified file
   /// A display node and a storage node are also added into the scene
-  vtkMRMLModelNode* AddModel (const char* filename);
+  vtkMRMLModelNode* AddModel(const char* filename);
 
-  ///
   /// Create model nodes and
   /// read their polydata from a specified directory
-  int AddModels (const char* dirname, const char* suffix );
+  int AddModels(const char* dirname, const char* suffix);
 
-  ///
   /// Write model's polydata  to a specified file
-  int SaveModel (const char* filename, vtkMRMLModelNode *modelNode);
+  int SaveModel(const char* filename, vtkMRMLModelNode *modelNode);
 
-  ///
   /// Read in a scalar overlay and add it to the model node
   /// \return True on success
   bool AddScalar(const char* filename, vtkMRMLModelNode *modelNode);
@@ -105,12 +93,11 @@ protected:
   /// instantiated.
   void ObserveMRMLScene() override;
 
-  //
-  vtkMRMLModelNode *ActiveModelNode;
+  void OnMRMLSceneEndImport() override;
 
+private:
   /// Color logic
   vtkMRMLColorLogic* ColorLogic;
-
 };
 
 #endif

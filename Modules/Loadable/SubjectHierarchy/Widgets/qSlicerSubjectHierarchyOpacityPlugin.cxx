@@ -145,14 +145,19 @@ void qSlicerSubjectHierarchyOpacityPlugin::showVisibilityContextMenuActionsForIt
     }
 
   // Show opacity for every non-scene items with display node
+  vtkMRMLDisplayNode* displayNode = nullptr;
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(displayableNode);
-  if (!displayableNode)
+  if (displayableNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Unable to find node for subject hierarchy item " << shNode->GetItemName(itemID).c_str();
-    return;
+    displayNode = displayableNode->GetDisplayNode();
     }
-  vtkMRMLDisplayNode* displayNode = displayableNode->GetDisplayNode();
+  else
+    {
+    // Folder nodes may have display nodes directly associated
+    displayNode = vtkMRMLDisplayNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+    }
+
   if (displayNode)
     {
     d->OpacitySlider->setValue(displayNode->GetOpacity());
@@ -180,16 +185,20 @@ void qSlicerSubjectHierarchyOpacityPlugin::setOpacityForCurrentItem(double opaci
     }
 
   // Get display node
+  vtkMRMLDisplayNode* displayNode = nullptr;
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
-  if (!displayableNode)
+  if (displayableNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Unable to find node for subject hierarchy item " << shNode->GetItemName(currentItemID).c_str();
-    return;
+    displayNode = displayableNode->GetDisplayNode();
     }
-  vtkMRMLDisplayNode* displayNode = displayableNode->GetDisplayNode();
+  else
+    {
+    // Folder nodes may have display nodes directly associated
+    displayNode = vtkMRMLDisplayNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
+    }
   if (!displayNode)
     {
-    qCritical() << Q_FUNC_INFO << ": No display node";
+    qCritical() << Q_FUNC_INFO << ": Unable to find display node for subject hierarchy item " << shNode->GetItemName(currentItemID).c_str();
     return;
     }
 

@@ -24,20 +24,26 @@
 #define __qSlicerSubjectHierarchyDICOMPlugin_h
 
 // SubjectHierarchy Plugins includes
-#include "qSlicerSubjectHierarchyAbstractPlugin.h"
+#include "qSlicerSubjectHierarchyFolderPlugin.h"
 
 #include "qSlicerDICOMLibSubjectHierarchyPluginsExport.h"
 
 class qSlicerSubjectHierarchyDICOMPluginPrivate;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
-class Q_SLICER_DICOMLIB_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyDICOMPlugin : public qSlicerSubjectHierarchyAbstractPlugin
+/// \ingroup Slicer_QtModules_DICOMLob_SubjectHierarchyPlugins
+///
+/// The DICOM subject hierarchy plugin provides subject hierarchy items for
+/// Subject and Study, in addition to functions to convert folders to these
+/// types. It also supplies the context menu for DICOM export.
+/// This plugin is a subclass of the Folder plugin, in order to be able to
+/// override display properties of their branches.
+class Q_SLICER_DICOMLIB_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyDICOMPlugin : public qSlicerSubjectHierarchyFolderPlugin
 {
 public:
   Q_OBJECT
 
 public:
-  typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
+  typedef qSlicerSubjectHierarchyFolderPlugin Superclass;
   qSlicerSubjectHierarchyDICOMPlugin(QObject* parent = nullptr);
   ~qSlicerSubjectHierarchyDICOMPlugin() override;
 

@@ -19,37 +19,22 @@
 #include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
 #include "vtkMRMLDisplayableManagerExport.h"
 
-// MRMLLogic includes
-#include "vtkMRMLModelHierarchyLogic.h"
-
 // MRML includes
 #include <vtkMRMLModelNode.h>
 class vtkMRMLClipModelsNode;
 class vtkMRMLDisplayNode;
 class vtkMRMLDisplayableNode;
-class vtkMRMLModelHierarchyLogic;
-class vtkMRMLModelHierarchyNode;
-class vtkMRMLSelectionNode;
 class vtkMRMLTransformNode;
 
 // VTK includes
 #include "vtkRenderWindow.h"
 class vtkActor;
-class vtkActorText;
 class vtkAlgorithm;
-class vtkBoundingBox;
-class vtkCellArray;
 class vtkCellPicker;
-class vtkClipPolyData;
-class vtkFollower;
-class vtkImplicitBoolean;
 class vtkLookupTable;
 class vtkMatrix4x4;
-class vtkPMatrix4x4;
-class vtkPlane;
 class vtkPlane;
 class vtkPointPicker;
-class vtkPolyData;
 class vtkProp3D;
 class vtkPropPicker;
 class vtkWorldPointPicker;
@@ -70,32 +55,25 @@ public:
   vtkTypeMacro(vtkMRMLModelDisplayableManager,vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  ///
   /// Get/Set the ClipModels Node
   vtkMRMLClipModelsNode* GetClipModelsNode();
   void SetClipModelsNode(vtkMRMLClipModelsNode *snode);
 
-  ///
   /// Return the current model actor corresponding to a give MRML ID
   vtkProp3D *GetActorByID(const char *id);
 
-  ///
   /// Return the current node ID corresponding to a given vtkProp3D
   const char *GetIDByActor(vtkProp3D *actor);
 
-  ///
   /// Get world point picker
   vtkWorldPointPicker* GetWorldPointPicker();
 
-  ///
   /// Get property picker
   vtkPropPicker* GetPropPicker();
 
-  ///
   /// Get cell picker
   vtkCellPicker* GetCellPicker();
 
-  ///
   /// Get point picker
   vtkPointPicker* GetPointPicker();
 
@@ -107,32 +85,28 @@ public:
   /// as appropriate depending what's found under the position.
   int Pick3D(double ras[3]) override;
 
-  /// Get/Set tolerance for Pick() method.
-  /// it will call vtkCellPicker.Get/SetTolerance()
+  /// Get tolerance for Pick() method. It will call vtkCellPicker.GetTolerance()
   double GetPickTolerance();
+  /// Set tolerance for Pick() method. It will call vtkCellPicker.SetTolerance()
   void SetPickTolerance(double tolerance);
 
-  ///
   /// Get the MRML ID of the picked node, returns empty string if no pick
   const char* GetPickedNodeID() override;
 
-  ///
-  /// Get/Set the picked RAS point, returns 0,0,0 if no pick
+  /// Get the picked RAS point, returns 0,0,0 if no pick
   double* GetPickedRAS();
+  /// Set the picked RAS point, returns 0,0,0 if no pick
   void SetPickedRAS(double* newPickedRAS);
 
-  /// Get/Set the picked cell id, returns -1 if no pick
+  /// Get the picked cell id, returns -1 if no pick
   vtkIdType GetPickedCellID();
+  /// Set the picked cell id, returns -1 if no pick
   void SetPickedCellID(vtkIdType newCellID);
 
-  ///
-  /// Get/Set the picked point id, returns -1 if no pick
+  /// Get the picked point id, returns -1 if no pick
   vtkIdType GetPickedPointID();
+  /// Set the picked point id, returns -1 if no pick
   void SetPickedPointID(vtkIdType newPointID);
-
-  ///
-  /// Get/Set vtkMRMLModelHierarchyLogic
-  vtkMRMLModelHierarchyLogic* GetModelHierarchyLogic();
 
   void SetClipPlaneFromMatrix(vtkMatrix4x4 *sliceMatrix,
                              int planeDirection,
@@ -155,11 +129,6 @@ public:
   static bool IsCellScalarsActive(vtkMRMLDisplayNode* displayNode, vtkMRMLModelNode* model = nullptr);
 
 protected:
-
-  vtkMRMLModelDisplayableManager();
-  ~vtkMRMLModelDisplayableManager() override;
-
-  void AdditionalInitializeStep() override;
   int ActiveInteractionModes() override;
 
   void UnobserveMRMLScene() override;
@@ -175,27 +144,25 @@ protected:
 
   /// Returns true if something visible in modelNode has changed and would
   /// require a refresh.
-  bool OnMRMLDisplayableModelNodeModifiedEvent(vtkMRMLDisplayableNode * modelNode);
+  bool OnMRMLDisplayableModelNodeModifiedEvent(vtkMRMLDisplayableNode* modelNode);
 
   /// Updates Actors based on models in the scene
   void UpdateFromMRML() override;
 
   void RemoveMRMLObservers() override;
 
-  friend class vtkMRMLThreeDViewInteractorStyle; // Access to RequestRender();
-
   void RemoveModelProps();
   void RemoveModelObservers(int clearCache);
   void RemoveDisplayable(vtkMRMLDisplayableNode* model);
-  void RemoveDisplayableNodeObservers(vtkMRMLDisplayableNode *model);
+  void RemoveDisplayableNodeObservers(vtkMRMLDisplayableNode* model);
 
   void UpdateModelsFromMRML();
-  void UpdateModel(vtkMRMLDisplayableNode *model);
-  void UpdateModelMesh(vtkMRMLDisplayableNode *model);
-  void UpdateModifiedModel(vtkMRMLDisplayableNode *model);
+  void UpdateModel(vtkMRMLDisplayableNode* model);
+  void UpdateModelMesh(vtkMRMLDisplayableNode* model);
+  void UpdateModifiedModel(vtkMRMLDisplayableNode* model);
 
-  void SetModelDisplayProperty(vtkMRMLDisplayableNode *model);
-  int GetDisplayedModelsVisibility(vtkMRMLDisplayNode *model);
+  void SetModelDisplayProperty(vtkMRMLDisplayableNode* model);
+  int GetDisplayedModelsVisibility(vtkMRMLDisplayNode* displayNode);
 
   const char* GetActiveScalarName(vtkMRMLDisplayNode* displayNode,
                                   vtkMRMLModelNode* model = nullptr);
@@ -205,20 +172,20 @@ protected:
   vtkAlgorithm *CreateTransformedClipper(vtkMRMLTransformNode *tnode,
                                          vtkMRMLModelNode::MeshTypeHint type);
 
-  void AddHierarchyObservers();
-  void RemoveHierarchyObservers(int clearCache);
-
-  void CheckModelHierarchies();
-  void UpdateModelHierarchies();
-  void UpdateModelHierarchyVisibility(vtkMRMLModelHierarchyNode* mhnode, int visibility );
-  void UpdateModelHierarchyDisplay(vtkMRMLDisplayableNode *model);
-
-  vtkMRMLDisplayNode*  GetHierarchyDisplayNode(vtkMRMLDisplayableNode *model);
+  /// Set display properties to model nodes in a branch defined by a display node
+  /// Note: Subject hierarchy folders have display nodes associated to be able to
+  ///   override display properties of a branch on the request of the user
+  void SetModelDisplayPropertyOnBranch(vtkMRMLDisplayNode* displayNode);
 
   void RemoveDispalyedID(std::string &id);
 
-private:
+protected:
+  vtkMRMLModelDisplayableManager();
+  ~vtkMRMLModelDisplayableManager() override;
 
+  friend class vtkMRMLThreeDViewInteractorStyle; // Access to RequestRender();
+
+private:
   vtkMRMLModelDisplayableManager(const vtkMRMLModelDisplayableManager&) = delete;
   void operator=(const vtkMRMLModelDisplayableManager&) = delete;
 

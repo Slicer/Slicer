@@ -29,7 +29,6 @@
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLStorageNode.h>
-#include <vtkMRMLHierarchyNode.h>
 #include <vtkMRMLSubjectHierarchyNode.h>
 
 // VTK includes
@@ -71,7 +70,7 @@ void vtkSlicerSubjectHierarchyModuleLogic::UpdateFromMRMLScene()
 {
   if (!this->GetMRMLScene())
     {
-    vtkErrorMacro("UpdateFromMRMLScene: Invalid MRML scene!");
+    vtkErrorMacro("UpdateFromMRMLScene: Invalid MRML scene");
     return;
     }
 
@@ -84,7 +83,7 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
 {
   if ( !shNode || !patientId || !studyInstanceUID || !seriesInstanceUID )
     {
-    vtkGenericWarningMacro("vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy: Invalid input arguments!");
+    vtkGenericWarningMacro("vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy: Invalid input arguments");
     return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
     }
 
@@ -123,7 +122,7 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
     {
     vtkErrorWithObjectMacro(shNode,
       "vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy: Subject hierarchy item with DICOM UID '"
-      << seriesInstanceUID << "' cannot be found!");
+      << seriesInstanceUID << "' cannot be found");
     return 0;
     }
 
@@ -245,7 +244,7 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::AreNodesInSameBranch(vtkMRMLNode
 {
   if (!node1 || !node2 || !node1->GetScene() || node1->GetScene() != node2->GetScene())
     {
-    vtkGenericWarningMacro("vtkSlicerSubjectHierarchyModuleLogic::AreNodesInSameBranch: Invalid input nodes or they are not in the same scene!");
+    vtkGenericWarningMacro("vtkSlicerSubjectHierarchyModuleLogic::AreNodesInSameBranch: Invalid input nodes or they are not in the same scene");
     return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
     }
 
@@ -294,7 +293,7 @@ void vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(
 {
   if (!shNode)
     {
-    vtkGenericWarningMacro("vtkSlicerSubjectHierarchyModuleLogic::TransformBranch: Invalid subject hierarchy node!");
+    vtkGenericWarningMacro("vtkSlicerSubjectHierarchyModuleLogic::TransformBranch: Invalid subject hierarchy node");
     return;
     }
 
@@ -347,7 +346,7 @@ void vtkSlicerSubjectHierarchyModuleLogic::HardenTransformOnBranch(vtkMRMLSubjec
 {
   if (!shNode)
     {
-    vtkGenericWarningMacro("vtkSlicerSubjectHierarchyModuleLogic::HardenTransformOnBranch: Invalid subject hierarchy node!");
+    vtkGenericWarningMacro("vtkSlicerSubjectHierarchyModuleLogic::HardenTransformOnBranch: Invalid subject hierarchy node");
     return;
     }
 
@@ -377,7 +376,7 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::CloneSubjectHierarchyItem(
 {
   if (!shNode)
     {
-    vtkGenericWarningMacro("vtkSlicerSubjectHierarchyModuleLogic::CloneSubjectHierarchyItem: Invalid subject hierarchy node!");
+    vtkGenericWarningMacro("vtkSlicerSubjectHierarchyModuleLogic::CloneSubjectHierarchyItem: Invalid subject hierarchy node");
     return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
     }
   vtkMRMLScene* scene = shNode->GetScene();
@@ -466,21 +465,6 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::CloneSubjectHierarchyItem(
     {
       transformableClonedNode->GetParentTransformNode()->Modified();
     }
-
-    // Put data node in the same non-subject hierarchy if any
-    vtkMRMLHierarchyNode* genericHierarchyNode =
-      vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(scene, associatedDataNode->GetID());
-    if (genericHierarchyNode)
-      {
-      vtkSmartPointer<vtkMRMLHierarchyNode> clonedHierarchyNode;
-      clonedHierarchyNode.TakeReference( vtkMRMLHierarchyNode::SafeDownCast(
-        scene->CreateNodeByClass(genericHierarchyNode->GetClassName()) ) );
-      clonedHierarchyNode->Copy(genericHierarchyNode);
-      std::string clonedHierarchyNodeName = std::string(genericHierarchyNode->GetName()) + std::string(CLONED_NODE_NAME_POSTFIX);
-      clonedHierarchyNode->SetName(clonedHierarchyNodeName.c_str());
-      scene->AddNode(clonedHierarchyNode);
-      clonedHierarchyNode->SetAssociatedNodeID(clonedDataNode->GetID());
-      }
 
     // Put data node in the same subject hierarchy branch as current node
     clonedShItemID = shNode->GetItemByDataNode(clonedDataNode);

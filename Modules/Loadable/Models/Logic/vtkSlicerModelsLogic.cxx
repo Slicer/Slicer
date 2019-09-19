@@ -18,9 +18,11 @@
 #include <vtkMRMLFreeSurferModelOverlayStorageNode.h>
 #include <vtkMRMLFreeSurferModelStorageNode.h>
 #include <vtkMRMLModelDisplayNode.h>
+#include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLSubjectHierarchyNode.h>
 #include <vtkMRMLTransformNode.h>
 
 /// VTK includes
@@ -45,18 +47,12 @@ vtkCxxSetObjectMacro(vtkSlicerModelsLogic, ColorLogic, vtkMRMLColorLogic);
 //----------------------------------------------------------------------------
 vtkSlicerModelsLogic::vtkSlicerModelsLogic()
 {
-  this->ActiveModelNode = nullptr;
   this->ColorLogic = nullptr;
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerModelsLogic::~vtkSlicerModelsLogic()
 {
-  if (this->ActiveModelNode != nullptr)
-    {
-    this->ActiveModelNode->Delete();
-    this->ActiveModelNode = nullptr;
-    }
   if (this->ColorLogic != nullptr)
     {
     this->ColorLogic->Delete();
@@ -69,6 +65,7 @@ void vtkSlicerModelsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   vtkNew<vtkIntArray> sceneEvents;
   sceneEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::EndImportEvent);
   this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents.GetPointer());
 }
 
@@ -84,11 +81,105 @@ void vtkSlicerModelsLogic::ObserveMRMLScene()
   this->Superclass::ObserveMRMLScene();
 }
 
-//----------------------------------------------------------------------------
-void vtkSlicerModelsLogic::SetActiveModelNode(vtkMRMLModelNode *activeNode)
+//-----------------------------------------------------------------------------
+void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
 {
-  vtkSetMRMLNodeMacro(this->ActiveModelNode, activeNode );
-  this->Modified();
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (!scene)
+    {
+    vtkErrorMacro("OnMRMLSceneEndImport: Unable to access MRML scene");
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
+  if (!shNode)
+    {
+    vtkErrorMacro("OnMRMLSceneEndImport: Unable to access subject hierarchy node");
+    return;
+    }
+
+  // Convert model hierarchy nodes into subject hierarchy folders
+  vtkMRMLNode* node = nullptr;
+  vtkCollectionSimpleIterator mhIt;
+  vtkCollection* mhNodes = scene->GetNodesByClass("vtkMRMLModelHierarchyNode");
+  std::string newFolderName = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewItemNamePrefix()
+    + vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder();
+  std::map<std::string, vtkIdType> mhNodeIdToShItemIdMap;
+  std::map<std::string, std::string> mhNodeIdToParentNodeIdMap;
+  for (mhNodes->InitTraversal(mhIt); (node = (vtkMRMLNode*)mhNodes->GetNextItemAsObject(mhIt)) ;)
+    {
+    // Get direct child hierarchy nodes
+    vtkMRMLModelHierarchyNode* mhNode = vtkMRMLModelHierarchyNode::SafeDownCast(node);
+    std::vector<vtkMRMLHierarchyNode*> childHierarchyNodes = mhNode->GetChildrenNodes();
+
+    vtkIdType folderItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+    if (childHierarchyNodes.size() > 0)
+      {
+      // Create new folder for the model hierarchy if there are children
+      // (otherwise it's a leaf node with an associated model).
+      // Have it directly under the scene for now. Rebuild hierarchy later
+      // when we have all the items created.
+      folderItemID = shNode->CreateFolderItem(shNode->GetSceneItemID(),
+        (mhNode->GetName() ? mhNode->GetName() : shNode->GenerateUniqueItemName(newFolderName)) );
+      }
+    else if (!mhNode->GetAssociatedNodeID())
+      {
+      // If there are no children but there is no associated node, then something is wrong
+      vtkWarningMacro("OnMRMLSceneEndImport: Invalid model hierarchy node found with neither "
+        << "children nor associated node: " << mhNode->GetID());
+      continue;
+      }
+
+    // Remember subject hierarchy item for current model hierarchy node
+    // (even if has no actual folder, as this map will be used to remove the hierarchy nodes)
+    mhNodeIdToShItemIdMap[mhNode->GetID()] = folderItemID;
+
+    // Remember parent for current model hierarchy node if not leaf
+    // (i.e. has a corresponding folder item and so need to be reparented in subject hierarchy)
+    if (mhNode->GetParentNodeID() && !mhNode->GetAssociatedNodeID())
+      {
+      mhNodeIdToParentNodeIdMap[mhNode->GetID()] = mhNode->GetParentNodeID();
+      }
+
+    // Move all the direct children of the model hierarchy node under the folder if one was created
+    if (folderItemID)
+      {
+      for (std::vector<vtkMRMLHierarchyNode*>::iterator it = childHierarchyNodes.begin();
+        it != childHierarchyNodes.end(); ++it)
+        {
+        vtkMRMLNode* associatedNode = (*it)->GetAssociatedNode();
+        if (associatedNode)
+          {
+          vtkIdType associatedItemID = shNode->GetItemByDataNode(associatedNode);
+          if (associatedItemID)
+            {
+            shNode->SetItemParent(associatedItemID, folderItemID);
+            }
+          }
+        }
+      // Request plugin search for the folder that triggers creation of a model display node
+      shNode->RequestOwnerPluginSearch(folderItemID);
+      }
+    } // for all model hierarchy nodes
+  mhNodes->Delete();
+
+  // Set up hierarchy between the created folder items
+  for (std::map<std::string, std::string>::iterator it = mhNodeIdToParentNodeIdMap.begin();
+    it != mhNodeIdToParentNodeIdMap.end(); ++it)
+    {
+    // Get SH item IDs for the nodes
+    vtkIdType currentItemID = mhNodeIdToShItemIdMap[it->first];
+    vtkIdType parentItemID = mhNodeIdToShItemIdMap[it->second];
+
+    // Set parent in subject hierarchy
+    shNode->SetItemParent(currentItemID, parentItemID);
+    }
+
+  // Remove model hierarchy nodes from the scene
+  for (std::map<std::string, vtkIdType>::iterator it = mhNodeIdToShItemIdMap.begin();
+    it != mhNodeIdToShItemIdMap.end(); ++it)
+    {
+    scene->RemoveNode(scene->GetNodeByID(it->first));
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -305,8 +396,6 @@ void vtkSlicerModelsLogic::PrintSelf(ostream& os, vtkIndent indent)
   this->vtkObject::PrintSelf(os, indent);
 
   os << indent << "vtkSlicerModelsLogic:             " << this->GetClassName() << "\n";
-  os << indent << "ActiveModelNode: " <<
-    (this->ActiveModelNode ? this->ActiveModelNode->GetName() : "(none)") << "\n";
   if (this->ColorLogic)
     {
     os << indent << "ColorLogic: ";

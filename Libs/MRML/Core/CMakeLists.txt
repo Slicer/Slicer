@@ -127,6 +127,7 @@ set(MRMLCore_SRCS
   vtkMRMLFiducial.cxx
   vtkMRMLFiducialListNode.cxx
   vtkMRMLFiducialListStorageNode.cxx
+  vtkMRMLFolderDisplayNode.cxx
   vtkMRMLFreeSurferModelOverlayStorageNode.cxx
   vtkMRMLFreeSurferModelStorageNode.cxx
   vtkMRMLFreeSurferProceduralColorNode.cxx

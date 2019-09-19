@@ -49,8 +49,6 @@ public:
     { return "VirtualBranch"; };
   static const std::string GetSubjectHierarchyLevelAttributeName()
     { return "Level"; };
-  static const std::string GetSubjectHierarchyApplyColorToBranchAttributeName()
-    { return "ApplyColorToBranch"; };
   static const std::string GetSubjectHierarchyNewItemNamePrefix()
     { return "New"; };
 

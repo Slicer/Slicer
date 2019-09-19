@@ -259,8 +259,7 @@ void qSlicerSubjectHierarchyAbstractPlugin::setDisplayVisibility(vtkIdType itemI
     return;
     }
 
-  // Default behavior is to call SetDisplayVisibility on all displayable associated data nodes in the whole branch
-  shNode->SetDisplayVisibilityForBranch(itemID, visible);
+  shNode->SetItemDisplayVisibility(itemID, visible);
 }
 
 //-----------------------------------------------------------------------------
@@ -273,7 +272,7 @@ int qSlicerSubjectHierarchyAbstractPlugin::getDisplayVisibility(vtkIdType itemID
     return 0;
     }
 
-  return shNode->GetDisplayVisibilityForBranch(itemID);
+  return shNode->GetItemDisplayVisibility(itemID);
 }
 
 //-----------------------------------------------------------------------------

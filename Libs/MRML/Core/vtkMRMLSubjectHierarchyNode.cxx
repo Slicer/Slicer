@@ -967,7 +967,7 @@ bool vtkSubjectHierarchyItem::Reparent(vtkSubjectHierarchyItem* newParentItem)
   // Invoke modified events on all affected items
   formerParentItem->Modified();
   newParentItem->Modified();
-  this->Modified();
+  this->InvokeEvent(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent, this);
 
   return true;
 }
@@ -1197,7 +1197,7 @@ void vtkSubjectHierarchyItem::ReparentChildrenToParent()
         // Add child item to this item's parent
         childItem->Parent = this->Parent;
         this->Parent->Children.push_back(childSmartPointer);
-        childItem->Modified();
+        childItem->InvokeEvent(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent, childItem);
         break;
         }
       }
@@ -1685,6 +1685,10 @@ void vtkMRMLSubjectHierarchyNode::vtkInternal::AddItemObservers(vtkSubjectHierar
   if (!item->HasObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested, this->External->ItemEventCallbackCommand))
     {
     item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested, this->External->ItemEventCallbackCommand);
+    }
+  if (!item->HasObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent, this->External->ItemEventCallbackCommand))
+    {
+    item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent, this->External->ItemEventCallbackCommand);
     }
   if (!item->HasObserver(vtkCommand::ModifiedEvent, this->External->ItemEventCallbackCommand))
     {
@@ -2807,10 +2811,18 @@ vtkMRMLNode* vtkMRMLSubjectHierarchyNode::GetParentDataNode(vtkMRMLNode* dataNod
 //---------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyNode::SetDisplayVisibilityForBranch(vtkIdType itemID, int visible)
 {
+  vtkWarningMacro("SetDisplayVisibilityForBranch: Deprecated function. Please use SetItemDisplayVisibility instead");
+
+  this->SetItemDisplayVisibility(itemID, visible);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSubjectHierarchyNode::SetItemDisplayVisibility(vtkIdType itemID, int visible)
+{
   if (visible != 0 && visible != 1)
     {
-    vtkErrorMacro( "SetDisplayVisibilityForBranch: Invalid visibility value to set: " << visible
-      << ". Needs to be one of the following: 0:Hidden, 1:Visible, 2:PartiallyVisible" );
+    vtkErrorMacro("SetItemDisplayVisibility: Invalid visibility value to set: " << visible
+      << ". Needs to be one of the following: 0:Hidden, 1:Visible" );
     return;
     }
   if (this->Scene->IsBatchProcessing())
@@ -2818,87 +2830,71 @@ void vtkMRMLSubjectHierarchyNode::SetDisplayVisibilityForBranch(vtkIdType itemID
     return;
     }
 
-  // Get all child displayable nodes for branch
-  vtkNew<vtkCollection> childDisplayableNodes;
-  this->GetDataNodesInBranch(itemID, childDisplayableNodes.GetPointer(), "vtkMRMLDisplayableNode");
-
-  childDisplayableNodes->InitTraversal();
-  std::set<vtkIdType> parentItems;
-  for (int childNodeIndex = 0; childNodeIndex < childDisplayableNodes->GetNumberOfItems(); ++childNodeIndex)
+  vtkMRMLNode* dataNode = this->GetItemDataNode(itemID);
+  vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(dataNode);
+  vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(dataNode);
+  if (displayableNode)
     {
-    vtkMRMLDisplayableNode* displayableNode =
-      vtkMRMLDisplayableNode::SafeDownCast(childDisplayableNodes->GetItemAsObject(childNodeIndex));
-    if (displayableNode)
+    // Create default display node is there is no display node associated
+    vtkMRMLDisplayNode* displayNode = displayableNode->GetDisplayNode();
+    if (!displayNode)
       {
-      // Create default display node is there is no display node associated
-      vtkMRMLDisplayNode* displayNode = displayableNode->GetDisplayNode();
-      if (!displayNode)
-        {
-        displayableNode->CreateDefaultDisplayNodes();
-        }
-
-      // Set display visibility
-      bool wereEventsDisabled = this->Internal->EventsDisabled;
-      this->Internal->EventsDisabled = true; // Prevent the views from updating before all the display nodes are modified
-      displayableNode->SetDisplayVisibility(visible);
-      this->Internal->EventsDisabled = wereEventsDisabled;
-
-      // Collect all parents
-      vtkIdType itemForDisplayableNode = this->GetItemByDataNode(displayableNode);
-      if (itemForDisplayableNode == INVALID_ITEM_ID)
-        {
-        vtkErrorMacro("SetDisplayVisibilityForBranch: Failed to find subject hierarchy item for node " << displayableNode->GetName())
-        continue;
-        }
-      this->ItemModified(itemID);
-      vtkIdType parentItemID = itemID;
-      while ( (parentItemID = this->GetItemParent(parentItemID)) != this->Internal->SceneItemID ) // The double parentheses avoids a Linux build warning
-        {
-        parentItems.insert(parentItemID);
-        }
+      displayableNode->CreateDefaultDisplayNodes();
       }
-    }
 
-  // Invoke modified event for all parent items so that their icons are refreshed in the view
-  for (std::set<vtkIdType>::iterator parentIt = parentItems.begin(); parentIt != parentItems.end(); ++ parentIt)
+    // Set display visibility
+    displayableNode->SetDisplayVisibility(visible);
+    }
+  else if (displayNode)
     {
-    this->ItemModified((*parentIt));
+    displayNode->SetVisibility(visible);
     }
 }
 
 //---------------------------------------------------------------------------
 int vtkMRMLSubjectHierarchyNode::GetDisplayVisibilityForBranch(vtkIdType itemID)
 {
-  int visible = -1;
+  vtkWarningMacro("GetDisplayVisibilityForBranch: Deprecated function. Please use GetItemDisplayVisibility instead");
 
-  // Get all child displayable nodes for branch
-  vtkNew<vtkCollection> childDisplayableNodes;
-  this->GetDataNodesInBranch(itemID, childDisplayableNodes.GetPointer(), "vtkMRMLDisplayableNode");
+  return this->GetItemDisplayVisibility(itemID);
+}
 
-  // Determine visibility state based on all displayable nodes involved
-  childDisplayableNodes->InitTraversal();
-  for (int childNodeIndex=0; childNodeIndex<childDisplayableNodes->GetNumberOfItems(); ++childNodeIndex)
+//---------------------------------------------------------------------------
+int vtkMRMLSubjectHierarchyNode::GetItemDisplayVisibility(vtkIdType itemID)
+{
+  vtkMRMLNode* dataNode = this->GetItemDataNode(itemID);
+  vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(dataNode);
+  vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(dataNode);
+  if (displayableNode)
     {
-    vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(
-      childDisplayableNodes->GetItemAsObject(childNodeIndex) );
-    // Omit volume nodes from the process (they are displayed differently than every other type)
-    // TODO: This is not very elegant or safe, it would be better to distinguish between visibility modes, or overhaul the visibility features completely
-    if (displayableNode && !displayableNode->IsA("vtkMRMLVolumeNode"))
-      {
-      // If we set visibility
-      if (visible == -1)
-        {
-        visible = displayableNode->GetDisplayVisibility();
-        }
-      // If the current node visibility does not match the found visibility, then set partial visibility
-      else if (displayableNode->GetDisplayVisibility() != visible)
-        {
-        return 2;
-        }
-      }
+    return displayableNode->GetDisplayVisibility();
+    }
+  else if (displayNode)
+    {
+    return displayNode->GetVisibility();
     }
 
-  return visible;
+  // If there is no displayable or display node associated (should not happen),
+  // then keep its branch visible.
+  vtkWarningMacro("GetDisplayVisibilityForBranch: Item " << itemID << " has no displayable nor display node");
+  return 1;
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLDisplayNode* vtkMRMLSubjectHierarchyNode::GetDisplayNodeForItem(vtkIdType itemID)
+{
+  vtkMRMLNode* dataNode = this->GetItemDataNode(itemID);
+  vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(dataNode);
+  vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(dataNode);
+  if (displayableNode)
+    {
+    return displayableNode->GetDisplayNode();
+    }
+  else if (displayNode)
+    {
+    return displayNode;
+    }
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -3281,6 +3277,7 @@ void vtkMRMLSubjectHierarchyNode::ItemEventCallback(vtkObject* caller, unsigned 
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent:
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemUIDAddedEvent:
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested:
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent:
       {
       // Get item from call data
       vtkSubjectHierarchyItem* item = reinterpret_cast<vtkSubjectHierarchyItem*>(callData);
