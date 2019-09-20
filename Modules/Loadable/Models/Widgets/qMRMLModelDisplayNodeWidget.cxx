@@ -723,7 +723,10 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
     }
 
   double* c = d->CurrentDisplayNode->GetColor();
+  bool wasBlocked = d->ColorPickerButton->blockSignals(true);
   d->ColorPickerButton->setColor(QColor::fromRgbF(qMin(c[0], 1.), qMin(c[1], 1.), qMin(c[2], 1.)));
+  d->ColorPickerButton->blockSignals(wasBlocked);
+
   d->OpacitySliderWidget->setValue(d->CurrentDisplayNode->GetOpacity());
   double* ec = d->CurrentDisplayNode->GetEdgeColor();
   d->EdgeColorPickerButton->setColor(

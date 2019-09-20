@@ -1188,7 +1188,10 @@ void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItemData(vtkIdTyp
       {
       return;
       }
-    dataNode->SetDescription(newDescriptionStr.c_str());
+    if (dataNode->GetDescription() && newDescriptionStr.compare(dataNode->GetDescription()))
+      {
+      dataNode->SetDescription(newDescriptionStr.c_str());
+      }
     }
   // Visibility column
   if (item->column() == this->visibilityColumn() && !item->data(VisibilityRole).isNull())
