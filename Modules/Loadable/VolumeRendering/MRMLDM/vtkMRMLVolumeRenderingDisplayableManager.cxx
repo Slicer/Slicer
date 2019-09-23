@@ -450,7 +450,8 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::AddDisplayNode(vtkMR
     // Create a dummy volume for port zero if this is the first volume. Necessary because the first transform is ignored,
     // see https://gitlab.kitware.com/vtk/vtk/issues/17325
     //TODO: Remove this workaround when the issue is fixed in VTK
-    if (this->MultiVolumeActor->GetVolume(0) == nullptr)
+    double* multiVolumeBounds = this->MultiVolumeActor->GetBounds();
+    if (multiVolumeBounds[0] > multiVolumeBounds[1]) // Prevent error that GetVolume throws if volume is null (TODO: need GetNumberOfVolumes)
       {
       vtkNew<vtkImageData> dummyImage;
       dummyImage->SetExtent(0,1,0,1,0,1);
@@ -809,17 +810,14 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
   pipeline->VolumeActor->SetProperty(volumeProperty);
   // vtkMultiVolume's GetProperty returns the volume property from the first volume actor, and that is used when assembling the
   // shader, so need to set the volume property to the the first volume actor (in this case dummy actor, see above TODO)
-  /*
-   * This call causes VTK to trigger an error message if the MultiVolumeActor has not yet
-   * been initialized (see line line 76 in vtkMultiVolume::GetVolume)
-   * and I don't see any behavior difference with this commented out.
-   * Probably it can be added back when the rest of the multivolume
-   * issues have been resolved.
-  if (this->MultiVolumeActor && this->MultiVolumeActor->GetVolume(0))
+  if (this->MultiVolumeActor)
     {
-    this->MultiVolumeActor->GetVolume(0)->SetProperty(volumeProperty);
+    double* multiVolumeBounds = this->MultiVolumeActor->GetBounds();
+    if (multiVolumeBounds[0] < multiVolumeBounds[1]) // Prevent error that GetVolume throws if volume is null (TODO: need GetNumberOfVolumes)
+      {
+      this->MultiVolumeActor->GetVolume(0)->SetProperty(volumeProperty);
+      }
     }
-  */
 
   // Set shader property
   vtkShaderProperty* shaderProperty = displayNode->GetShaderPropertyNode() ? displayNode->GetShaderPropertyNode()->GetShaderProperty() : nullptr;
