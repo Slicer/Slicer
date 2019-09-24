@@ -15,7 +15,6 @@
 
 ==============================================================================*/
 
-#include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsFiducialStorageNode.h"
 #include "vtkMRMLMarkupsNode.h"
 
@@ -466,31 +465,10 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     }
 
   // cast the input node
-  vtkMRMLMarkupsNode *markupsNode =
-    vtkMRMLMarkupsNode::SafeDownCast(refNode);
+  vtkMRMLMarkupsNode *markupsNode = vtkMRMLMarkupsNode::SafeDownCast(refNode);
   if (!markupsNode)
     {
     return 0;
-    }
-
-  // get the display node
-  vtkMRMLMarkupsDisplayNode *displayNode = nullptr;
-  vtkMRMLDisplayNode * mrmlNode = markupsNode->GetDisplayNode();
-  if (mrmlNode)
-    {
-    displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(mrmlNode);
-    }
-  if (!displayNode)
-    {
-    vtkWarningMacro("ReadDataInternal: no display node!");
-    if (this->GetScene())
-      {
-      vtkWarningMacro("ReadDataInternal: adding a new display node.");
-      displayNode = vtkMRMLMarkupsDisplayNode::New();
-      this->GetScene()->AddNode(displayNode);
-      markupsNode->SetAndObserveDisplayNodeID(displayNode->GetID());
-      displayNode->Delete();
-      }
     }
 
   // check if it's an annotation csv file

@@ -686,9 +686,6 @@ char * vtkSlicerMarkupsLogic::LoadMarkupsFiducials(const char *fileName, const c
 
   vtkDebugMacro("LoadMarkupsFiducials, file name = " << fileName << ", fidsName = " << (fidsName ? fidsName : "null"));
 
-  // turn on batch processing
-  this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
-
   // make a storage node and fiducial node and set the file name
   vtkNew<vtkMRMLMarkupsFiducialStorageNode> storageNode;
   storageNode->SetFileName(fileName);
@@ -706,8 +703,7 @@ char * vtkSlicerMarkupsLogic::LoadMarkupsFiducials(const char *fileName, const c
     nodeID = fidNode->GetID();
     }
 
-  // turn off batch processing
-  this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
+  fidNode->CreateDefaultDisplayNodes();
 
   return nodeID;
 
