@@ -552,7 +552,7 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineTransf
       // Calculate and apply transform matrix
       this->GetVolumeTransformToWorld(volumeNode, currentPipeline->IJKToWorldMatrix);
       currentPipeline->VolumeActor->SetUserMatrix(currentPipeline->IJKToWorldMatrix.GetPointer());
-      pipelineModified = false;
+      pipelineModified = true;
       }
     }
   return pipelineModified;
