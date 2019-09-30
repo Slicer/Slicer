@@ -1815,7 +1815,7 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarch
     newShNode->SetName("SubjectHierarchy");
     scene->AddNode(newShNode);
 
-    vtkDebugWithObjectMacro(newShNode.GetPointer(), "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: "
+    vtkDebugWithObjectMacro(newShNode.GetPointer(), "vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy: "
       "New subject hierarchy node created as none was found in the scene");
     return newShNode;
     }
@@ -1826,7 +1826,7 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarch
   if (!firstShNode)
     {
     vtkErrorWithObjectMacro( scene,
-      "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Invalid first subject hierarchy node" );
+      "vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy: Invalid first subject hierarchy node" );
     return firstShNode;
     }
   if (shNodesInScene.size() == 1)
@@ -1840,7 +1840,7 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarch
       // Remove invalid subject hierarchy node so that it can be rebuilt from scratch
       scene->RemoveNode(firstShNode);
       vtkErrorWithObjectMacro( scene,
-        "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Failed to resolve unresolved subject "
+        "vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy: Failed to resolve unresolved subject "
         "hierarchy items, re-building subject hierarchy from scratch" );
       return nullptr;
       }
@@ -1916,8 +1916,8 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarch
         }
 
       vtkErrorWithObjectMacro( scene,
-        "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Failed to merge subject hierarchy nodes, re-building subject hierarchy from scratch" );
-      return vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
+        "vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy: Failed to merge subject hierarchy nodes, re-building subject hierarchy from scratch" );
+      return vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(scene);
       }
     }
   // Remove merged subject hierarchy nodes from the scene

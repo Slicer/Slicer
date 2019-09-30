@@ -44,7 +44,8 @@ class vtkMRMLTransformNode;
 ///   It is not singleton in either the common or the MRML sense, instead, the subject hierarchy logic
 ///   makes sure that any added subject hierarchy nodes are merged in the first one, and if the last one
 ///   is removed, a new one is created. The used subject hierarchy node can be accessed using the static
-///   function \sa GetSubjectHierarchyNode().
+///   function \sa GetSubjectHierarchyNode(). Resolution of multiple SH nodes or stale nodes can be
+///   performed via \sa ResolveSubjectHierarchy()
 ///
 ///   The node entries are encapsulated in SubjectHierarchyItem classes, which contain the hierarchy
 ///   information for the contained nodes, and represent the non-leaf nodes of the tree. Accessor functions

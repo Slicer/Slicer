@@ -1473,7 +1473,7 @@ void qMRMLSubjectHierarchyModel::onMRMLSceneImported(vtkMRMLScene* scene)
 void qMRMLSubjectHierarchyModel::onMRMLSceneClosed(vtkMRMLScene* scene)
 {
   // Make sure there is one subject hierarchy node in the scene, and it is used by the model
-  vtkMRMLSubjectHierarchyNode* newSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
+  vtkMRMLSubjectHierarchyNode* newSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(scene);
   if (!newSubjectHierarchyNode)
     {
     qCritical() << Q_FUNC_INFO << ": No subject hierarchy node could be retrieved from the scene";
@@ -1508,7 +1508,7 @@ void qMRMLSubjectHierarchyModel::onMRMLNodeRemoved(vtkMRMLNode* node)
   if (node->IsA("vtkMRMLSubjectHierarchyNode"))
     {
     // Make sure there is one subject hierarchy node in the scene, and it is used by the model
-    vtkMRMLSubjectHierarchyNode* newSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(d->MRMLScene);
+    vtkMRMLSubjectHierarchyNode* newSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(d->MRMLScene);
     if (!newSubjectHierarchyNode)
       {
       qCritical() << Q_FUNC_INFO << ": No subject hierarchy node could be retrieved from the scene";

@@ -90,7 +90,7 @@ void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
     vtkErrorMacro("OnMRMLSceneEndImport: Unable to access MRML scene");
     return;
     }
-  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
+  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(scene);
   if (!shNode)
     {
     vtkErrorMacro("OnMRMLSceneEndImport: Unable to access subject hierarchy node");

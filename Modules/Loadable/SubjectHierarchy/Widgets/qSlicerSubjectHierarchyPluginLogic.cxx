@@ -166,7 +166,7 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAdded(vtkObject* sceneObject, vtk
   if (subjectHierarchyNode)
     {
     // Calling this function makes sure that there is exactly one subject hierarchy node in the scene (performs the merge if more found)
-    vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
+    vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(scene);
     }
   // If data node, then add it to subject hierarchy
   else
@@ -272,7 +272,7 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeRemoved(vtkObject* sceneObject, v
   if (shNode)
     {
     // Make sure a new quasi-singleton subject hierarchy node is created
-    vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
+    vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(scene);
 
     // Add data nodes that are supported (i.e. there is a plugin that can claim it) and were not
     // in the imported subject hierarchy node to subject hierarchy
@@ -294,7 +294,7 @@ void qSlicerSubjectHierarchyPluginLogic::onSceneImportEnded(vtkObject* sceneObje
   // be done when first accessing the subject hierarchy node, but it needs to be done so that
   // the addSupportedDataNodesToSubjectHierarchy call below only adds the nodes that were not
   // in the hierarchy stored by the imported scene
-  vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
+  vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(scene);
 
   // Add data nodes that are supported (i.e. there is a plugin that can claim it) and were not
   // in the imported subject hierarchy node to subject hierarchy
@@ -312,7 +312,7 @@ void qSlicerSubjectHierarchyPluginLogic::onSceneRestoreEnded(vtkObject* sceneObj
 
   // This call is needed to resolve unresolved items that were copied into the hierarchy
   // when restoring the scene view
-  vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
+  vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(scene);
 }
 
 //-----------------------------------------------------------------------------
