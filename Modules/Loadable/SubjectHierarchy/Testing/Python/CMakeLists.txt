@@ -6,6 +6,20 @@ set(EXTENSION_TEST_PYTHON_SCRIPTS
 set(EXTENSION_TEST_PYTHON_RESOURCES
   )
 
+if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
+  slicerMacroBuildScriptedModule(
+    NAME SubjectHierarchyCorePluginsSelfTest
+    SCRIPTS SubjectHierarchyCorePluginsSelfTest.py
+    )
+  slicer_add_python_unittest(SCRIPT SubjectHierarchyCorePluginsSelfTest.py)
+
+  slicerMacroBuildScriptedModule(
+    NAME SubjectHierarchyGenericSelfTest
+    SCRIPTS SubjectHierarchyGenericSelfTest.py
+    )
+  slicer_add_python_unittest(SCRIPT SubjectHierarchyGenericSelfTest.py)
+endif()
+
 #-----------------------------------------------------------------------------
 if(CMAKE_CONFIGURATION_TYPES)
   set(MODULE_BUILD_DIR "")

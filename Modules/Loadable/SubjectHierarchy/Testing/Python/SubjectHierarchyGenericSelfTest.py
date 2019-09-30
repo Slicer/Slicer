@@ -20,7 +20,9 @@ class SubjectHierarchyGenericSelfTest(ScriptedLoadableModule):
     parent.helpText = """
     This is a self test for the Subject hierarchy module generic features.
     """
-    parent.acknowledgementText = """This file was originally developed by Csaba Pinter, PerkLab, Queen's University and was supported through the Applied Cancer Research Unit program of Cancer Care Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care""" # replace with organization, grant and thanks.
+    parent.acknowledgementText = """
+This file was originally developed by Csaba Pinter, PerkLab, Queen's University and was supported through the Applied Cancer
+ Research Unit program of Cancer Care Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care"""
     self.parent = parent
 
     # Add this test to the SelfTest module's list for discovery when the module
@@ -32,7 +34,7 @@ class SubjectHierarchyGenericSelfTest(ScriptedLoadableModule):
       slicer.selfTests = {}
     slicer.selfTests['SubjectHierarchyGenericSelfTest'] = self.runTest
 
-  def runTest(self):
+  def runTest(self, msec=100, **kwargs):
     tester = SubjectHierarchyGenericSelfTestTest()
     tester.runTest()
 
@@ -419,7 +421,9 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     for x in range(extent[0], extent[1]+1):
       for y in range(extent[2], extent[3]+1):
         for z in range(extent[4], extent[5]+1):
-          if (x >= (extent[1]/4) and x <= (extent[1]/4) * 3) and (y >= (extent[3]/4) and y <= (extent[3]/4) * 3) and (z >= (extent[5]/4) and z <= (extent[5]/4) * 3):
+          if ( (x >= (extent[1]/4) and x <= (extent[1]/4) * 3) and
+               (y >= (extent[3]/4) and y <= (extent[3]/4) * 3) and
+               (z >= (extent[5]/4) and z <= (extent[5]/4) * 3) ):
             imageData.SetScalarComponentFromDouble(x,y,z,0,label)
           else:
             imageData.SetScalarComponentFromDouble(x,y,z,0,0)

@@ -409,8 +409,6 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   slicer_add_python_unittest(SCRIPT RSNA2012ProstateDemo.py)
   slicer_add_python_unittest(SCRIPT JRC2013Vis.py)
   slicer_add_python_unittest(SCRIPT FiducialLayoutSwitchBug1914.py)
-  slicer_add_python_unittest(SCRIPT SubjectHierarchyGenericSelfTest.py)
-  slicer_add_python_unittest(SCRIPT SubjectHierarchyCorePluginsSelfTest.py)
   slicer_add_python_unittest(SCRIPT ShaderProperties.py)
 
   # add as hidden module for use at run time
@@ -435,8 +433,6 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     RSNA2012ProstateDemo.py
     JRC2013Vis.py
     FiducialLayoutSwitchBug1914.py
-    SubjectHierarchyGenericSelfTest.py
-    SubjectHierarchyCorePluginsSelfTest.py
     ShaderProperties.py
     UtilTest.py
     )

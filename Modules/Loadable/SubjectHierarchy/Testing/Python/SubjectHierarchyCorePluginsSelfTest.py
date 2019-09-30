@@ -17,7 +17,9 @@ class SubjectHierarchyCorePluginsSelfTest(ScriptedLoadableModule):
     parent.helpText = """
     This is a self test for the Subject hierarchy core plugins.
     """
-    parent.acknowledgementText = """This file was originally developed by Csaba Pinter, PerkLab, Queen's University and was supported through the Applied Cancer Research Unit program of Cancer Care Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care""" # replace with organization, grant and thanks.
+    parent.acknowledgementText = """
+This file was originally developed by Csaba Pinter, PerkLab, Queen's University and was supported through the Applied Cancer
+ Research Unit program of Cancer Care Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care"""
     self.parent = parent
 
     # Add this test to the SelfTest module's list for discovery when the module
@@ -29,7 +31,7 @@ class SubjectHierarchyCorePluginsSelfTest(ScriptedLoadableModule):
       slicer.selfTests = {}
     slicer.selfTests['SubjectHierarchyCorePluginsSelfTest'] = self.runTest
 
-  def runTest(self):
+  def runTest(self, msec=100, **kwargs):
     tester = SubjectHierarchyCorePluginsSelfTestTest()
     tester.runTest()
 
