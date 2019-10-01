@@ -786,11 +786,12 @@ def reloadScriptedModule(moduleName):
     if hasattr(widget, '_onModuleAboutToBeUnloaded'):
       slicer.app.moduleManager().disconnect('moduleAboutToBeUnloaded(QString)', widget._onModuleAboutToBeUnloaded)
 
-  # remove layout items
-  item = parent.layout().itemAt(0)
-  while item:
+  # remove layout items (remaining spacer items would add space above the widget)
+  items = []
+  for itemIndex in range(parent.layout().count()):
+    items.append(parent.layout().itemAt(itemIndex))
+  for item in items:
     parent.layout().removeItem(item)
-    item = parent.layout().itemAt(0)
 
   # create new widget inside existing parent
   widget = eval('reloaded_module.%s(parent)' % widgetName)
