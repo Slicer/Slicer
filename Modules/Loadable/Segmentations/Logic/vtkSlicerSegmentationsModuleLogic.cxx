@@ -791,6 +791,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentToRepresentationNode(vtkSeg
     if (segmentationDisplayNode && modelDisplayNode)
       {
       modelDisplayNode->SetColor(segment->GetColor());
+      modelDisplayNode->SetOpacity(segmentationDisplayNode->GetSegmentOpacity3D(segmentId));
       }
 
     // Set segmentation's parent transform to exported node

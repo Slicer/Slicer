@@ -325,7 +325,6 @@ QColor qSlicerSubjectHierarchyModelsPlugin::getDisplayColor(vtkIdType itemID, QM
   vtkMRMLModelDisplayNode* displayNode = vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode());
   if (!displayNode)
     {
-    qDebug() << Q_FUNC_INFO << ": No display node for model";
     return QColor(0,0,0,0);
     }
 
