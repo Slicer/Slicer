@@ -73,6 +73,9 @@ protected slots:
   /// Updates current item selection to reflect changes in item (such as display node creation)
   void onSubjectHierarchyItemModified(vtkObject* caller, void* callData);
 
+  /// Called when the information collapsible button collapsed state is changed.
+  void onInformationSectionCollapsed(bool);
+
 protected:
   void setup() override;
 

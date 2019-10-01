@@ -121,18 +121,21 @@ void qSlicerModelsModuleWidget::setup()
   connect( d->FilterModelSearchBox, SIGNAL(textChanged(QString)),
     sortFilterProxyModel, SLOT(setNameFilter(QString)) );
 
+  connect( d->InformationButton, SIGNAL(contentsCollapsed(bool)),
+    this, SLOT(onInformationSectionCollapsed(bool)) );
+
   connect(d->ModelDisplayWidget, SIGNAL(clippingToggled(bool)),
-    this, SLOT(onClipSelectedModelToggled(bool)));
+    this, SLOT(onClipSelectedModelToggled(bool)) );
 
   connect(d->ModelDisplayWidget, SIGNAL(clippingConfigurationButtonClicked()),
-    this, SLOT(onClippingConfigurationButtonClicked()));
+    this, SLOT(onClippingConfigurationButtonClicked()) );
 
   // add an add hierarchy right click action on the scene and hierarchy nodes
   connect(d->ModelDisplayWidget, SIGNAL(displayNodeChanged()),
-    this, SLOT(onDisplayNodeChanged()));
+    this, SLOT(onDisplayNodeChanged()) );
 
   connect(d->ClipSelectedModelCheckBox, SIGNAL(toggled(bool)),
-    this, SLOT(onClipSelectedModelToggled(bool)));
+    this, SLOT(onClipSelectedModelToggled(bool)) );
 
   this->Superclass::setup();
 }
@@ -379,4 +382,16 @@ void qSlicerModelsModuleWidget::onSubjectHierarchyItemModified(vtkObject* vtkNot
 
   QList<vtkIdType> currentItemIDs = d->SubjectHierarchyTreeView->currentItems();
   this->setDisplaySelectionFromSubjectHierarchyItems(currentItemIDs);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModelsModuleWidget::onInformationSectionCollapsed(bool collapsed)
+{
+  Q_D(qSlicerModelsModuleWidget);
+
+  if (!collapsed)
+    {
+    QList<vtkIdType> currentItemIDs = d->SubjectHierarchyTreeView->currentItems();
+    this->setDisplaySelectionFromSubjectHierarchyItems(currentItemIDs);
+    }
 }
