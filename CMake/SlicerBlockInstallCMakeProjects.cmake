@@ -1,3 +1,4 @@
+include(${Slicer_CMAKE_DIR}/SlicerCheckModuleEnabled.cmake)  # For slicer_is_loadable_builtin_module_enabled
 
 # -------------------------------------------------------------------------
 # Install VTK
