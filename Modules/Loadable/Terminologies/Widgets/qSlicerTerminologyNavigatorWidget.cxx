@@ -865,14 +865,15 @@ QString qSlicerTerminologyNavigatorWidget::nameFromTerminology(vtkSlicerTerminol
 {
   QString name;
   if ( !entry->GetTypeObject() || !entry->GetTypeObject()->GetCodeValue() ||
-       (entry->GetTypeObject()->GetHasModifiers() && (!entry->GetTypeModifierObject() || !entry->GetTypeModifierObject()->GetCodeValue())) )
+       (entry->GetTypeObject()->GetHasModifiers() && !entry->GetTypeModifierObject()) )
     {
     // Incomplete terminology selection, name is empty
     return name;
     }
 
   // Try to set name based on '3dSlicerLabel' field in terminology entry
-  if (!entry->GetTypeObject()->GetHasModifiers() && entry->GetTypeObject()->GetSlicerLabel())
+  if ( entry->GetTypeObject()->GetSlicerLabel()
+    && (!entry->GetTypeObject()->GetHasModifiers() || entry->GetTypeModifierObject()->GetCodeValue() == nullptr) )
     {
     name = entry->GetTypeObject()->GetSlicerLabel();
     }
@@ -885,7 +886,7 @@ QString qSlicerTerminologyNavigatorWidget::nameFromTerminology(vtkSlicerTerminol
     {
     name = entry->GetTypeObject()->GetCodeMeaning();
 
-    if (entry->GetTypeObject()->GetHasModifiers() && entry->GetTypeModifierObject())
+    if (entry->GetTypeObject()->GetHasModifiers() && entry->GetTypeModifierObject() && entry->GetTypeModifierObject()->GetCodeValue())
       {
       name += QString(", %1").arg(entry->GetTypeModifierObject()->GetCodeMeaning());
       }
@@ -1228,6 +1229,15 @@ void qSlicerTerminologyNavigatorWidget::populateTypeModifierComboBox()
     return;
     }
 
+  int selectedIndex = -1;
+
+  // Add none item so that no modifier can be selected even if there are options
+  d->ComboBox_TypeModifier->addItem(tr("No type modifier"));
+  if (d->CurrentTypeModifierObject->GetCodeValue() == nullptr)
+    {
+    selectedIndex = 0;
+    }
+
   // Get type modifier names
   std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier> typeModifiers;
   logic->GetTypeModifiersInTerminologyType(
@@ -1236,8 +1246,7 @@ void qSlicerTerminologyNavigatorWidget::populateTypeModifierComboBox()
     vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType(d->CurrentTypeObject),
     typeModifiers );
 
-  int selectedIndex = -1;
-  int index = 0;
+  int index = 1; // None modifier has index 0
   std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier>::iterator idIt;
   for (idIt=typeModifiers.begin(); idIt!=typeModifiers.end(); ++idIt, ++index)
     {
@@ -1249,7 +1258,7 @@ void qSlicerTerminologyNavigatorWidget::populateTypeModifierComboBox()
     userData[QString::number(CodeValueRole)] = QString(addedTypeModifierId.CodeValue.c_str());
     d->ComboBox_TypeModifier->addItem(addedTypeModifierName, QVariant(userData));
     
-    if (!addedTypeModifierName.compare(d->CurrentTypeModifierObject->GetCodeMeaning()))
+    if (selectedIndex == -1 && !addedTypeModifierName.compare(d->CurrentTypeModifierObject->GetCodeMeaning()))
       {
       selectedIndex = index;
       }
@@ -1670,29 +1679,33 @@ void qSlicerTerminologyNavigatorWidget::onTypeModifierSelectionChanged(int index
     return;
     }
 
-  // Get current modifier object
   vtkSlicerTerminologiesModuleLogic* logic = d->terminologyLogic();
   if (!logic)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to access terminology logic";
     return;
     }
-  QMap<QString, QVariant> userData = d->ComboBox_TypeModifier->itemData(index).toMap();
-  vtkSlicerTerminologiesModuleLogic::CodeIdentifier modifierId(
-    userData[QString::number(CodingSchemeDesignatorRole)].toString().toLatin1().constData(),
-    userData[QString::number(CodeValueRole)].toString().toLatin1().constData(),
-    d->ComboBox_TypeModifier->itemText(index).toLatin1().constData() );
-  if (!logic->GetTypeModifierInTerminologyType(
-    d->CurrentTerminologyName.toLatin1().constData(),
-    vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(d->CurrentCategoryObject),
-    vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType(d->CurrentTypeObject),
-    modifierId, modifier) )
+
+  // Get current modifier object is not None modifier is selected
+  if (index != 0 || !d->ComboBox_TypeModifier->itemData(index).isNull())
     {
-    qCritical() << Q_FUNC_INFO << ": Failed to find modifier '" << d->ComboBox_TypeModifier->itemText(index);
-    return;
+    QMap<QString, QVariant> userData = d->ComboBox_TypeModifier->itemData(index).toMap();
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifier modifierId(
+      userData[QString::number(CodingSchemeDesignatorRole)].toString().toLatin1().constData(),
+      userData[QString::number(CodeValueRole)].toString().toLatin1().constData(),
+      d->ComboBox_TypeModifier->itemText(index).toLatin1().constData() );
+    if (!logic->GetTypeModifierInTerminologyType(
+      d->CurrentTerminologyName.toLatin1().constData(),
+      vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(d->CurrentCategoryObject),
+      vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType(d->CurrentTypeObject),
+      modifierId, modifier) )
+      {
+      qCritical() << Q_FUNC_INFO << ": Failed to find modifier '" << d->ComboBox_TypeModifier->itemText(index);
+      return;
+      }
     }
 
-  // Set current region modifier
+  // Set current type modifier
   this->setCurrentTypeModifier(modifier);
 
   // Generate name based on selection if not custom
