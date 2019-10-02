@@ -265,7 +265,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
       // Leaf node (file name) and not top-level
       else if (parentItemID)
         {
-        shNode->SetItemParent(vtkIdTypes[nodeIndex], parentItemID);
+        shNode->SetItemParent(vtkIdTypes[nodeIndex], parentItemID, true);
         }
       }
     shNode->ItemModified(parentItemID); // Update subject hierarchy items in the tree

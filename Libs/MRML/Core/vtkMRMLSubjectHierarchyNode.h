@@ -223,7 +223,8 @@ public:
   void RemoveAllItems(bool removeDataNode=false);
 
   /// Set the parent of a subject hierarchy item
-  void SetItemParent(vtkIdType itemID, vtkIdType parentItemID);
+  /// \param enableCircularCheck Option to do a safety check for circular parenthood in performance-critical cases. On by default.
+  void SetItemParent(vtkIdType itemID, vtkIdType parentItemID, bool enableCircularCheck=true);
   /// Get ID of the parent of a subject hierarchy item
   /// \return Parent item ID, INVALID_ITEM_ID if there is no parent
   vtkIdType GetItemParent(vtkIdType itemID);

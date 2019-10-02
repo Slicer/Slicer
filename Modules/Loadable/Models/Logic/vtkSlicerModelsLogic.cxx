@@ -152,7 +152,7 @@ void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
           vtkIdType associatedItemID = shNode->GetItemByDataNode(associatedNode);
           if (associatedItemID)
             {
-            shNode->SetItemParent(associatedItemID, folderItemID);
+            shNode->SetItemParent(associatedItemID, folderItemID, true);
             }
           }
         }
@@ -171,7 +171,7 @@ void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
     vtkIdType parentItemID = mhNodeIdToShItemIdMap[it->second];
 
     // Set parent in subject hierarchy
-    shNode->SetItemParent(currentItemID, parentItemID);
+    shNode->SetItemParent(currentItemID, parentItemID, true);
     }
 
   // Remove model hierarchy nodes from the scene

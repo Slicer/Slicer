@@ -2584,8 +2584,13 @@ void vtkMRMLSubjectHierarchyNode::RemoveAllItems(bool removeDataNode/*=false*/)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSubjectHierarchyNode::SetItemParent(vtkIdType itemID, vtkIdType parentItemID)
+void vtkMRMLSubjectHierarchyNode::SetItemParent(vtkIdType itemID, vtkIdType parentItemID, bool enableCircularCheck/*=true*/)
 {
+  if (itemID == parentItemID)
+    {
+    vtkErrorMacro("SetItemParent: Cannot set an item as its own parent: " << itemID);
+    return;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->SceneItem->FindChildByID(itemID);
   if (!item)
     {
@@ -2597,6 +2602,27 @@ void vtkMRMLSubjectHierarchyNode::SetItemParent(vtkIdType itemID, vtkIdType pare
     {
     vtkErrorMacro("SetItemParent: Failed to find subject hierarchy item by ID " << parentItemID);
     return;
+    }
+
+  // Check if the new parent is not a child of the item
+  if (enableCircularCheck)
+    {
+    vtkSubjectHierarchyItem* currentParentItem = parentItem;
+    while ( (currentParentItem = currentParentItem->Parent) != nullptr )
+      {
+      if (currentParentItem == item)
+        {
+        vtkErrorMacro("SetItemParent: Circular parenthood detected, parenting aborted: given parent item "
+          << parentItemID << " is a child of the reparented item " << itemID);
+        return;
+        }
+      if (currentParentItem == parentItem)
+        {
+        vtkErrorMacro("SetItemParent: Circular parenthood detected, parenting aborted: given parent item "
+          << parentItemID << " is a child of itself");
+        return;
+        }
+      }
     }
 
   // Perform reparenting

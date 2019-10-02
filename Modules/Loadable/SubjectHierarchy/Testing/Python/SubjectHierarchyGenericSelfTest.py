@@ -103,6 +103,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.section_AttributeFilter()
     self.section_ReparentNodeInSubjectHierarchy()
     self.section_LoadScene()
+    self.section_TestCircularParenthood()
 
     logging.info('Test finished')
 
@@ -398,6 +399,20 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
     # Print subject hierarchy after the test
     logging.info(shNode)
+
+  # ------------------------------------------------------------------------------
+  def section_TestCircularParenthood(self):
+    # Test case for https://issues.slicer.org/view.php?id=4713
+    self.delayDisplay("Test circular parenthood",self.delayMs)
+
+    shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    self.assertIsNotNone( shNode )
+
+    sceneItemID = shNode.GetSceneItemID()
+    mainfolder_ID = shNode.CreateFolderItem(sceneItemID, "Main Folder")
+    subfolder_ID = shNode.CreateFolderItem(sceneItemID, "Sub Folder")
+    shNode.SetItemParent(subfolder_ID, mainfolder_ID) # Regular hiearchy setting
+    shNode.SetItemParent(mainfolder_ID, subfolder_ID) # Makes slicer crash instead of returning an error
 
   # ------------------------------------------------------------------------------
   # Utility functions
