@@ -780,7 +780,7 @@ bool qSlicerTerminologyNavigatorWidget::setTerminologyEntry(vtkSlicerTerminology
 
   // Select type modifier
   vtkSlicerTerminologyType* typeModifierObject = entry->GetTypeModifierObject();
-  if (typeObject && typeObject->GetHasModifiers() && typeModifierObject)
+  if (typeObject && typeObject->GetHasModifiers() && typeModifierObject && typeModifierObject->GetCodeValue())
     {
     if (!this->setCurrentTypeModifier(typeModifierObject))
       {
