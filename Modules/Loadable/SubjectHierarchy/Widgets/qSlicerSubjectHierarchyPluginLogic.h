@@ -102,6 +102,9 @@ protected slots:
   /// Called when scene restore is finished. As the restored node contains only unresolved
   /// items, they need to be resolved when restoring ended
   void onSceneRestoreEnded(vtkObject* sceneObject);
+  /// Called when batch processing is ended. Subject hierarchy is updated after batch processing,
+  /// when nodes may be added/removed without individual events
+  void onSceneBatchProcessEnded(vtkObject* sceneObject);
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyPluginLogicPrivate> d_ptr; 

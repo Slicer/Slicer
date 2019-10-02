@@ -202,7 +202,13 @@ protected:
   /// Set the subject hierarchy node found in the given scene. Called only internally.
   virtual void setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode);
 
+  /// Rebuild model from scratch.
+  /// This is a hard-update that is uses more resources. Use sparingly.
+  virtual void rebuildFromSubjectHierarchy();
+  /// Updates properties in the model based on subject hierarchy.
+  /// This is a soft update that is quick. Calls \sa rebuildFromSubjectHierarchy if necessary.
   virtual void updateFromSubjectHierarchy();
+
   virtual QStandardItem* insertSubjectHierarchyItem(vtkIdType itemID);
   virtual QStandardItem* insertSubjectHierarchyItem(vtkIdType itemID, QStandardItem* parent, int row=-1);
 

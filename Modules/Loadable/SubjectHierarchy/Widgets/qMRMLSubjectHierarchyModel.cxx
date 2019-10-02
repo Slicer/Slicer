@@ -278,7 +278,7 @@ void qMRMLSubjectHierarchyModel::setSubjectHierarchyNode(vtkMRMLSubjectHierarchy
   this->setColumnCount(oldColumnCount);
 
   // Update whole subject hierarchy
-  this->updateFromSubjectHierarchy();
+  this->rebuildFromSubjectHierarchy();
 
   if (shNode)
     {
@@ -677,7 +677,7 @@ bool qMRMLSubjectHierarchyModel::dropMimeData( const QMimeData *data, Qt::DropAc
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSubjectHierarchyModel::updateFromSubjectHierarchy()
+void qMRMLSubjectHierarchyModel::rebuildFromSubjectHierarchy()
 {
   Q_D(qMRMLSubjectHierarchyModel);
 
@@ -743,6 +743,50 @@ void qMRMLSubjectHierarchyModel::updateFromSubjectHierarchy()
     int index = d->SubjectHierarchyNode->GetItemPositionUnderParent(itemID);
     d->insertSubjectHierarchyItem(itemID, index);
     }
+
+  // Update expanded states (during inserting the update calls did not find valid indices, so
+  // expand and collapse statuses were not set in the tree view)
+  for (std::vector<vtkIdType>::iterator itemIt=allItemIDs.begin(); itemIt!=allItemIDs.end(); ++itemIt)
+    {
+    vtkIdType itemID = (*itemIt);
+    // Expanded states are handled with the name column
+    QStandardItem* item = this->itemFromSubjectHierarchyItem(itemID, this->nameColumn());
+    this->updateItemDataFromSubjectHierarchyItem(item, itemID, this->nameColumn());
+    }
+
+  emit subjectHierarchyUpdated();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModel::updateFromSubjectHierarchy()
+{
+  Q_D(qMRMLSubjectHierarchyModel);
+
+  if (!d->SubjectHierarchyNode)
+    {
+    // Remove all items
+    const int oldColumnCount = this->columnCount();
+    this->removeRows(0, this->rowCount());
+    this->setColumnCount(oldColumnCount);
+    return;
+    }
+  else if (!this->subjectHierarchySceneItem())
+    {
+    this->rebuildFromSubjectHierarchy();
+    return;
+    }
+  else
+    {
+    // Update the scene item index in case subject hierarchy node has changed
+    this->subjectHierarchySceneItem()->setData(
+      QVariant::fromValue(d->SubjectHierarchyNode->GetSceneItemID()), qMRMLSubjectHierarchyModel::SubjectHierarchyItemIDRole );
+    d->RowCache[d->SubjectHierarchyNode->GetSceneItemID()] = this->subjectHierarchySceneItem()->index();
+    }
+
+
+  // Get all subject hierarchy items
+  std::vector<vtkIdType> allItemIDs;
+  d->SubjectHierarchyNode->GetItemChildren(d->SubjectHierarchyNode->GetSceneItemID(), allItemIDs, true);
 
   // Update expanded states (during inserting the update calls did not find valid indices, so
   // expand and collapse statuses were not set in the tree view)
@@ -895,6 +939,11 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
   if (!d->SubjectHierarchyNode)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
+    return;
+    }
+  if (!item)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid item";
     return;
     }
   if (shItemID == d->SubjectHierarchyNode->GetSceneItemID())
@@ -1432,7 +1481,7 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemRemoved(vtkIdType removed
     {
     return;
     }
-  // The removed item may had children, if they haven't been updated, they are likely to be lost
+  // The removed item may have had children, if they haven't been updated, they are likely to be lost
   // (not reachable when browsing the model), we need to reparent them.
   foreach(QList<QStandardItem*> orphans, d->Orphans)
     {
@@ -1466,7 +1515,7 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemModified(vtkIdType itemID
 void qMRMLSubjectHierarchyModel::onMRMLSceneImported(vtkMRMLScene* scene)
 {
   Q_UNUSED(scene);
-  this->updateFromSubjectHierarchy();
+  this->rebuildFromSubjectHierarchy();
 }
 
 //------------------------------------------------------------------------------
@@ -1670,7 +1719,7 @@ void qMRMLSubjectHierarchyModel::updateColumnCount()
   this->setColumnCount(max + 1);
   if (oldColumnCount == 0)
     {
-    this->updateFromSubjectHierarchy();
+    this->rebuildFromSubjectHierarchy();
     }
   else
     {

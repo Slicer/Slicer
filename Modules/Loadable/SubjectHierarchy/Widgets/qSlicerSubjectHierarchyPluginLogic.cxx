@@ -138,11 +138,16 @@ void qSlicerSubjectHierarchyPluginLogic::setMRMLScene(vtkMRMLScene* scene)
   // Connect scene node removed event so if the subject hierarchy node is removed, it is re-created and the hierarchy rebuilt
   qvtkReconnect( scene, vtkMRMLScene::NodeRemovedEvent, this, SLOT( onNodeRemoved(vtkObject*,vtkObject*) ) );
   // Connect scene import ended event so that subject hierarchy items can be created for supported data nodes if missing (backwards compatibility)
-  qvtkReconnect( scene, vtkMRMLScene::EndImportEvent, this, SLOT( onSceneImportEnded(vtkObject*) ) );
+  // Called with high priority so that it is processed here before the model is updated
+  qvtkReconnect( scene, vtkMRMLScene::EndImportEvent, this, SLOT( onSceneImportEnded(vtkObject*) ), 10.0 );
   // Connect scene close ended event so that subject hierarchy can be cleared
   qvtkReconnect( scene, vtkMRMLScene::EndCloseEvent, this, SLOT( onSceneCloseEnded(vtkObject*) ) );
   // Connect scene restore ended event so that restored subject hierarchy node containing only unresolved items can be resolved
   qvtkReconnect( scene, vtkMRMLScene::EndRestoreEvent, this, SLOT( onSceneRestoreEnded(vtkObject*) ) );
+  // Connect scene batch process ended event so that subject hierarchy is updated after batch processing, when nodes
+  // may be added/removed without individual events.
+  // Called with high priority so that it is processed here before the model is updated
+  qvtkReconnect( scene, vtkMRMLScene::EndBatchProcessEvent, this, SLOT( onSceneBatchProcessEnded(vtkObject*) ), 10.0 );
 }
 
 //-----------------------------------------------------------------------------
@@ -302,20 +307,6 @@ void qSlicerSubjectHierarchyPluginLogic::onSceneImportEnded(vtkObject* sceneObje
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyPluginLogic::onSceneRestoreEnded(vtkObject* sceneObject)
-{
-  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
-  if (!scene)
-    {
-    return;
-    }
-
-  // This call is needed to resolve unresolved items that were copied into the hierarchy
-  // when restoring the scene view
-  vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(scene);
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginLogic::onSceneCloseEnded(vtkObject* sceneObject)
 {
   vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
@@ -335,6 +326,61 @@ void qSlicerSubjectHierarchyPluginLogic::onSceneCloseEnded(vtkObject* sceneObjec
 
   // Set subject hierarchy node to plugin handler
   qSlicerSubjectHierarchyPluginHandler::instance()->observeSubjectHierarchyNode(shNode);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyPluginLogic::onSceneRestoreEnded(vtkObject* sceneObject)
+{
+  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
+  if (!scene)
+    {
+    return;
+    }
+
+  // This call is needed to resolve unresolved items that were copied into the hierarchy
+  // when restoring the scene view
+  vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(scene);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyPluginLogic::onSceneBatchProcessEnded(vtkObject* sceneObject)
+{
+  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
+  if (!scene)
+    {
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = scene->GetSubjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": There must be a subject hierarchy node in the scene";
+    return;
+    }
+
+  // Go through items, delete the ones that are not folders or virtual items and don't have data nodes
+  std::vector<vtkIdType> allItemIDs;
+  shNode->GetItemChildren(shNode->GetSceneItemID(), allItemIDs, true);
+  for (std::vector<vtkIdType>::iterator itemIt=allItemIDs.begin(); itemIt!=allItemIDs.end(); ++itemIt)
+    {
+    vtkIdType itemID = (*itemIt);
+    if (!shNode->GetItemLevel(itemID).empty())
+      {
+      continue; // Folder type item
+      }
+    if ( shNode->HasItemAttribute( itemID,
+      vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName()) )
+      {
+      continue; // In virtual branch
+      }
+    if (shNode->GetItemDataNode(itemID) == nullptr)
+      {
+      shNode->RemoveItem(itemID, false, false);
+      }
+    }
+
+  // Add data nodes that are supported (i.e. there is a plugin that can claim it) and were not
+  // in the imported subject hierarchy node to subject hierarchy
+  this->addSupportedDataNodesToSubjectHierarchy();
 }
 
 //-----------------------------------------------------------------------------

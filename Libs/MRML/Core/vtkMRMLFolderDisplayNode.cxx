@@ -23,6 +23,7 @@
 
 // MRML includes
 #include "vtkMRMLDisplayableNode.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLSubjectHierarchyNode.h"
 
 // VTK includes
@@ -198,6 +199,13 @@ void vtkMRMLFolderDisplayNode::ChildDisplayNodesModified()
   // Get items in branch
   std::vector<vtkIdType> childItemIDs;
   shNode->GetItemChildren(folderItemId, childItemIDs, true);
+
+  bool batchProcessing = (childItemIDs.size() > 10);
+  if (batchProcessing)
+    {
+    this->GetScene()->StartState(vtkMRMLScene::BatchProcessState);
+    }
+
   std::vector<vtkIdType>::iterator childIt;
   for (childIt=childItemIDs.begin(); childIt!=childItemIDs.end(); ++childIt)
     {
@@ -217,12 +225,17 @@ void vtkMRMLFolderDisplayNode::ChildDisplayNodesModified()
         }
       } // For all display nodes
     }
+
+  if (batchProcessing)
+    {
+    this->GetScene()->EndState(vtkMRMLScene::BatchProcessState);
+    }
 }
 
 //---------------------------------------------------------------------------
 vtkMRMLDisplayNode* vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(vtkMRMLDisplayableNode* node)
 {
-  if (!node)
+  if (!node || !node->GetScene() || node->GetScene()->IsImporting())
     {
     return nullptr;
     }

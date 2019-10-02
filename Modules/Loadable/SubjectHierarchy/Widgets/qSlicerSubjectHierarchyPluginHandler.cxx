@@ -340,7 +340,10 @@ qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::get
   std::string ownerPluginName = this->m_MRMLScene->GetSubjectHierarchyNode()->GetItemOwnerPluginName(itemID);
   if (ownerPluginName.empty())
     {
-    qCritical() << Q_FUNC_INFO << ": Item '" << this->m_MRMLScene->GetSubjectHierarchyNode()->GetItemName(itemID).c_str() << "' is not owned by any plugin!";
+    if (itemID != this->m_MRMLScene->GetSubjectHierarchyNode()->GetSceneItemID())
+      {
+      qCritical() << Q_FUNC_INFO << ": Item '" << this->m_MRMLScene->GetSubjectHierarchyNode()->GetItemName(itemID).c_str() << "' is not owned by any plugin!";
+      }
     return nullptr;
     }
 

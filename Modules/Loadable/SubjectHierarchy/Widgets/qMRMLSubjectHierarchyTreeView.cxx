@@ -880,6 +880,15 @@ void qMRMLSubjectHierarchyTreeView::toggleSubjectHierarchyItemVisibility(vtkIdTy
     return;
     }
 
+  // If more than 10 item visibilities are changed, then enter in batch processing state
+  vtkNew<vtkIdList> childItemsList;
+  d->SubjectHierarchyNode->GetItemChildren(itemID, childItemsList, true);
+  bool batchProcessing = (childItemsList->GetNumberOfIds() > 10);
+  if (batchProcessing)
+    {
+    d->SubjectHierarchyNode->GetScene()->StartState(vtkMRMLScene::BatchProcessState);
+    }
+
   qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin =
     qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(itemID);
   if (!ownerPlugin)
@@ -891,6 +900,14 @@ void qMRMLSubjectHierarchyTreeView::toggleSubjectHierarchyItemVisibility(vtkIdTy
 
   int visible = (ownerPlugin->getDisplayVisibility(itemID) > 0 ? 0 : 1);
   ownerPlugin->setDisplayVisibility(itemID, visible);
+
+  if (batchProcessing)
+    {
+    d->SubjectHierarchyNode->GetScene()->EndState(vtkMRMLScene::BatchProcessState);
+    }
+
+  // Trigger view update for the modified item
+  d->SubjectHierarchyNode->ItemModified(itemID);
 }
 
 //------------------------------------------------------------------------------
@@ -1713,6 +1730,15 @@ void qMRMLSubjectHierarchyTreeView::onMRMLSceneCloseEnded(vtkObject* sceneObject
     {
     return;
     }
+
+  Q_D(qMRMLSubjectHierarchyTreeView);
+
+  // Remove selection
+  QList<vtkIdType> emptySelection;
+  this->setCurrentItems(emptySelection);
+  d->SelectedItems.clear();
+  d->HighlightedItems.clear();
+
 
   // Get new subject hierarchy node (or if not created yet then trigger creating it, because
   // scene close removed the pseudo-singleton subject hierarchy node), and set it to the tree view
