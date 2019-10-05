@@ -304,6 +304,11 @@ void qMRMLScreenShotDialog::grabScreenShot(int screenshotWindow)
   Q_D(qMRMLScreenShotDialog);
   QWidget* widget = nullptr;
   vtkRenderWindow* renderWindow = nullptr;
+  if (d->LayoutManager.isNull())
+    {
+    // layout manager not set, can't grab image
+    return;
+    }
   switch (screenshotWindow)
     {
     case qMRMLScreenShotDialog::ThreeD:
