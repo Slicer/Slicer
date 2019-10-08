@@ -390,21 +390,6 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
           sNode->SetXYZOrigin( xyzOrigin[0], xyzOrigin[1], xyzOrigin[2] );
           }
 
-        // Copy the field of view information. Use the new
-        // prescribed x fov, aspect corrected y fov, and keep z fov
-        // constant
-        if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
-          & vtkMRMLSliceNode::FieldOfViewFlag)
-          {
-          sNode->SetFieldOfView( sliceNode->GetFieldOfView()[0],
-                                  sliceNode->GetFieldOfView()[0]
-                                  * sNode->GetFieldOfView()[1]
-                                  / sNode->GetFieldOfView()[0],
-                                  sNode->GetFieldOfView()[2] );
-          }
-
-        // need to manage prescribed spacing here as well?
-
         // Forces the internal matrices to be updated which results
         // in this being modified so a Render can occur
         sNode->UpdateMatrices();
@@ -414,6 +399,23 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
       // Some parameters and commands do not require the
       // orientations to match. These are handled here.
       //
+
+      // Keeping zoom factor the same among all views (regardless of orientation)
+      // is useful for reviewing a volume in multiple views.
+      // Copy the field of view information. Use the new
+      // prescribed x fov, aspect corrected y fov, and keep z fov
+      // constant
+      if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
+        & vtkMRMLSliceNode::FieldOfViewFlag)
+      {
+        sNode->SetFieldOfView(sliceNode->GetFieldOfView()[0],
+          sliceNode->GetFieldOfView()[0]
+          * sNode->GetFieldOfView()[1]
+          / sNode->GetFieldOfView()[0],
+          sNode->GetFieldOfView()[2]);
+      }
+
+      // need to manage prescribed spacing here as well?
 
       // Setting the orientation of the slice plane does not
       // require that the orientations initially match.
