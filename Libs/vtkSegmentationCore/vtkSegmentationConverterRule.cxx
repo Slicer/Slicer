@@ -23,10 +23,16 @@
 
 // VTK includes
 #include <vtkObjectFactory.h>
+#include <vtkSmartPointer.h>
+
+// SegmentationCore includes
+#include <vtkSegment.h>
 
 //----------------------------------------------------------------------------
 vtkSegmentationConverterRule::vtkSegmentationConverterRule()
-= default;
+  : ReplaceTargetRepresentation(false)
+{
+}
 
 //----------------------------------------------------------------------------
 vtkSegmentationConverterRule::~vtkSegmentationConverterRule()
@@ -40,6 +46,23 @@ vtkSegmentationConverterRule* vtkSegmentationConverterRule::Clone()
   vtkSegmentationConverterRule* clone = this->CreateRuleInstance();
   clone->ConversionParameters = this->ConversionParameters;
   return clone;
+}
+
+//----------------------------------------------------------------------------
+bool vtkSegmentationConverterRule::CreateTargetRepresentation(vtkSegment* segment)
+{
+  // Get target representation
+  vtkSmartPointer<vtkDataObject> targetRepresentation = segment->GetRepresentation(
+    this->GetTargetRepresentationName());
+
+  // Create an empty target representation if it does not exist, or if we want to replace the target
+  if (!targetRepresentation.GetPointer() || this->ReplaceTargetRepresentation)
+    {
+    targetRepresentation = vtkSmartPointer<vtkDataObject>::Take(
+      this->ConstructRepresentationObjectByRepresentation(this->GetTargetRepresentationName()));
+    segment->AddRepresentation(this->GetTargetRepresentationName(), targetRepresentation);
+    }
+  return true;
 }
 
 //----------------------------------------------------------------------------

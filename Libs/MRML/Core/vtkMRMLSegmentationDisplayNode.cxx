@@ -761,7 +761,8 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentDisplayPropertiesToDefault(const 
     return;
     }
 
-  int wasModifyingDisplayNode = this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
+  MRMLNodeModifyBlocker blocker2(segmentationNode);
 
   // Set segment color to a default if invalid (empty)
   double color[3] = { 0.0, 0.0, 0.0 };
@@ -791,8 +792,6 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentDisplayPropertiesToDefault(const 
   properties.Opacity2DFill = 1.0;
   properties.Opacity2DOutline = 1.0;
   this->SetSegmentDisplayProperties(segmentId, properties);
-
-  this->EndModify(wasModifyingDisplayNode);
 }
 
 //---------------------------------------------------------------------------

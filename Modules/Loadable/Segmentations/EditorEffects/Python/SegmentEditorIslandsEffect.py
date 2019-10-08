@@ -162,7 +162,7 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
     thresh.Update()
     # Create oriented image data from output
     import vtkSegmentationCorePython as vtkSegmentationCore
-    largestIslandImage = vtkSegmentationCore.vtkOrientedImageData()
+    largestIslandImage = slicer.vtkOrientedImageData()
     largestIslandImage.ShallowCopy(thresh.GetOutput())
     selectedSegmentLabelmapImageToWorldMatrix = vtk.vtkMatrix4x4()
     selectedSegmentLabelmap.GetImageToWorldMatrix(selectedSegmentLabelmapImageToWorldMatrix)
@@ -188,7 +188,7 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
 
       # Create oriented image data from output
       import vtkSegmentationCorePython as vtkSegmentationCore
-      multiLabelImage = vtkSegmentationCore.vtkOrientedImageData()
+      multiLabelImage = slicer.vtkOrientedImageData()
       multiLabelImage.DeepCopy(thresh2.GetOutput())
       selectedSegmentLabelmapImageToWorldMatrix = vtk.vtkMatrix4x4()
       selectedSegmentLabelmap.GetImageToWorldMatrix(selectedSegmentLabelmapImageToWorldMatrix)
@@ -241,7 +241,7 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
     operationName = self.scriptedEffect.parameter("Operation")
 
     if operationName == ADD_SELECTED_ISLAND:
-      inputLabelImage = vtkSegmentationCore.vtkOrientedImageData()
+      inputLabelImage = slicer.vtkOrientedImageData()
       if not segmentationNode.GenerateMergedLabelmapForAllSegments(inputLabelImage,
                                                                    vtkSegmentationCore.vtkSegmentation.EXTENT_UNION_OF_SEGMENTS_PADDED,
                                                                    None, visibleSegmentIds):
@@ -262,7 +262,7 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
       thresh.Update()
       # Create oriented image data from output
       import vtkSegmentationCorePython as vtkSegmentationCore
-      inputLabelImage = vtkSegmentationCore.vtkOrientedImageData()
+      inputLabelImage = slicer.vtkOrientedImageData()
       inputLabelImage.ShallowCopy(thresh.GetOutput())
       selectedSegmentLabelmapImageToWorldMatrix = vtk.vtkMatrix4x4()
       selectedSegmentLabelmap.GetImageToWorldMatrix(selectedSegmentLabelmapImageToWorldMatrix)

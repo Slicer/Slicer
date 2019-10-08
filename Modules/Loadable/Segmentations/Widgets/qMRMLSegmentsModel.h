@@ -58,8 +58,10 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentsModel : public Q
   Q_PROPERTY(int colorColumn READ colorColumn WRITE setColorColumn)
   /// Control in which column the segment opacity is displayed (Qt::EditRole).
   Q_PROPERTY (int opacityColumn READ opacityColumn WRITE setOpacityColumn)
-  /// Control in which column the segment opacity is displayed (qMRMLSegmentsModel::StatusRole).
+  /// Control in which column the segment status is displayed (qMRMLSegmentsModel::StatusRole).
   Q_PROPERTY(int statusColumn READ statusColumn WRITE setStatusColumn)
+  /// Control in which column the segment layer is displayed (qMRMLSegmentsModel::LayerRole).
+  Q_PROPERTY(int layerColumn READ layerColumn WRITE setLayerColumn)
 
 public:
 
@@ -85,6 +87,8 @@ public:
   void setOpacityColumn(int column);
   int statusColumn()const;
   void setStatusColumn(int column);
+  int layerColumn()const;
+  void setLayerColumn(int layer);
 
   /// Returns the segment ID for the given index
   QString segmentIDFromIndex(const QModelIndex &index)const;

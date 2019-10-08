@@ -293,7 +293,8 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
       segmentID = segmentIDs.GetValue(index)
       previewSegment = previewNode.GetSegmentation().GetSegment(segmentID)
       previewSegmentLabelmap = previewSegment.GetRepresentation(vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName())
-      slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(previewSegmentLabelmap, segmentationNode, segmentID)
+      self.scriptedEffect.modifySegmentByLabelmap(segmentationNode, segmentID,previewSegmentLabelmap,
+        slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
       if segmentationDisplayNode is not None and self.isBackgroundLabelmap(previewSegmentLabelmap):
         # Automatically hide result segments that are background (all eight corners are non-zero)
         segmentationDisplayNode.SetSegmentVisibility(segmentID, False)
@@ -362,7 +363,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         logging.error("Auto-complete operation skipped: at least {0} visible segments are required".format(self.minimumNumberOfSegments))
         return
       if not self.mergedLabelmapGeometryImage:
-        self.mergedLabelmapGeometryImage = vtkSegmentationCore.vtkOrientedImageData()
+        self.mergedLabelmapGeometryImage = slicer.vtkOrientedImageData()
       commonGeometryString = segmentationNode.GetSegmentation().DetermineCommonLabelmapGeometry(
         vtkSegmentationCore.vtkSegmentation.EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, self.selectedSegmentIds)
       if not commonGeometryString:
@@ -411,7 +412,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
       self.setPreviewShow3D(inputContainsClosedSurfaceRepresentation)
 
       if self.clippedMasterImageDataRequired:
-        self.clippedMasterImageData = vtkSegmentationCore.vtkOrientedImageData()
+        self.clippedMasterImageData = slicer.vtkOrientedImageData()
         masterImageClipper = vtk.vtkImageConstantPad()
         masterImageClipper.SetInputData(masterImageData)
         masterImageClipper.SetOutputWholeExtent(self.mergedLabelmapGeometryImage.GetExtent())
@@ -421,7 +422,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
 
       self.clippedMaskImageData = None
       if self.clippedMaskImageDataRequired:
-        self.clippedMaskImageData = vtkSegmentationCore.vtkOrientedImageData()
+        self.clippedMaskImageData = slicer.vtkOrientedImageData()
         intensityBasedMasking = self.scriptedEffect.parameterSetNode().GetMasterVolumeIntensityMask()
         success = segmentationNode.GenerateEditMask(self.clippedMaskImageData,
           self.scriptedEffect.parameterSetNode().GetMaskMode(),
@@ -436,11 +437,11 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
 
     previewNode.SetName(segmentationNode.GetName()+" preview")
 
-    mergedImage = vtkSegmentationCore.vtkOrientedImageData()
+    mergedImage = slicer.vtkOrientedImageData()
     segmentationNode.GenerateMergedLabelmapForAllSegments(mergedImage,
       vtkSegmentationCore.vtkSegmentation.EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, self.mergedLabelmapGeometryImage, self.selectedSegmentIds)
 
-    outputLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+    outputLabelmap = slicer.vtkOrientedImageData()
 
     self.computePreviewLabelmap(mergedImage, outputLabelmap)
 
@@ -463,7 +464,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
       thresh.Update()
 
       # Write label to segment
-      newSegmentLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+      newSegmentLabelmap = slicer.vtkOrientedImageData()
       newSegmentLabelmap.ShallowCopy(thresh.GetOutput())
       newSegmentLabelmap.CopyDirections(mergedImage)
       newSegment = previewNode.GetSegmentation().GetSegment(segmentID)
@@ -473,7 +474,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         color = segmentationNode.GetSegmentation().GetSegment(segmentID).GetColor()
         newSegment.SetColor(color)
         previewNode.GetSegmentation().AddSegment(newSegment, segmentID)
-      slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(newSegmentLabelmap, previewNode, segmentID)
+      self.scriptedEffect.modifySegmentByLabelmap(previewNode, segmentID, newSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
 
       # Automatically hide result segments that are background (all eight corners are non-zero)
       previewNode.GetDisplayNode().SetSegmentVisibility3D(segmentID, not self.isBackgroundLabelmap(newSegmentLabelmap))

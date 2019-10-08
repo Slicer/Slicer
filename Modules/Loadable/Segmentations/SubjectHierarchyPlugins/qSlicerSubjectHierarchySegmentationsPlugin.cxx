@@ -861,6 +861,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemAboutToBe
       return;
       }
     vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(shNode->GetItemDataNode(parentItemID));
+    MRMLNodeModifyBlocker blocker(segmentationNode);
     if (segmentationNode && segmentationNode->GetSegmentation()->GetSegment(segmentId))
       {
       d->SegmentSubjectHierarchyItemRemovalInProgress = true;

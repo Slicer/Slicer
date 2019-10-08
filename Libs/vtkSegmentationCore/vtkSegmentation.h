@@ -28,6 +28,7 @@
 // STD includes
 #include <map>
 #include <deque>
+#include <vector>
 
 // SegmentationCore includes
 #include "vtkSegment.h"
@@ -38,6 +39,7 @@
 
 class vtkAbstractTransform;
 class vtkCallbackCommand;
+class vtkCollection;
 class vtkStringArray;
 
 /// \ingroup SegmentationCore
@@ -105,7 +107,7 @@ public:
     /// Invoked if a representation is created or removed in the segments (e.g., created by conversion from master).
     ContainedRepresentationNamesModified,
     /// Invoked if segment IDs order is changed. Not called when a segment is added or removed.
-    SegmentsOrderModified
+    SegmentsOrderModified,
     };
 
   enum
@@ -154,7 +156,6 @@ public:
   virtual void ApplyNonLinearTransform(vtkAbstractTransform* transform);
 
 #ifndef __VTK_WRAP__
-//BTX
   /// Determine common labelmap geometry for whole segmentation.
   /// If the segmentation has reference image geometry conversion parameter, then oversample it to
   /// be at least as fine resolution as the highest resolution labelmap contained, otherwise just use
@@ -172,7 +173,6 @@ public:
   /// \param computeEffectiveExtent Specifies if the extent of a segment is the whole extent or the effective extent (where voxel values >0 found)
   void DetermineCommonLabelmapExtent(int commonGeometryExtent[6], vtkOrientedImageData* commonGeometryImage,
     const std::vector<std::string>& segmentIDs = std::vector<std::string>(), bool computeEffectiveExtent=false, bool addPadding=false);
-//ETX
 #endif // __VTK_WRAP__
 
   /// Determine common labelmap geometry for whole segmentation, for python compatibility.
@@ -304,7 +304,90 @@ public:
   /// Invalidate (remove) non-master representations in all the segments if this segmentation node
   void InvalidateNonMasterRepresentations();
 
-// Conversion related methods
+  /// Merged labelmap functions
+
+#ifndef __VTK_WRAP__
+  /// Create a merged labelmap from the segment IDs
+  /// If no segment IDs are specified, then all segments will be merged
+  bool GenerateMergedLabelmap(vtkOrientedImageData* mergedImageData, int extentComputationMode, vtkOrientedImageData* mergedLabelmapGeometry = nullptr,
+    const std::vector<std::string>& segmentIDs = std::vector<std::string>());
+#endif // __VTK_WRAP__
+
+ /// Shared labelmap utility functions
+
+  /// Returns true if the binary labelmap representation is shared
+  bool IsSharedBinaryLabelmap(std::string segmentID);
+
+  /// Gets the segment IDs that are shared with the specified segment
+  /// \param originalSegmentId ID of the specified segment
+  /// \param representationName Representation to check for shared segment IDs
+  /// \param sharedSegmentIds Output segment IDs
+  /// \param includeOriginalSegmentId If true, the original segment ID is included in the output
+  void GetSegmentIDsSharingRepresentation(std::string originalSegmentId, std::string representationName,
+    std::vector<std::string>& sharedSegmentIds, bool includeOriginalSegmentId=true);
+
+  /// Gets the segment IDs that are shared with the specified segment binary labelmap
+  /// \param originalSegmentId ID of the specified segment
+  /// \param sharedSegmentIds Output segment IDs
+  /// \param includeOriginalSegmentId If true, the original segment ID is included in the output
+  void GetSegmentIDsSharingBinaryLabelmapRepresentation(std::string originalSegmentId, std::vector<std::string> &sharedSegmentIds,
+    bool includeOriginalSegmentId=true);
+
+  /// Gets a unique shared labelmap value for the specified segment
+  /// Compares all of the other segments that are shared with the specified segmentId to determine the a unique
+  /// labelmap value
+  int GetUniqueLabelValueForSharedLabelmap(std::string segmentId);
+
+  /// Gets a unique shared labelmap value for the specified labelmap
+  /// Returns labelmap->GetScalarRange()[1] + 1
+  int GetUniqueLabelValueForSharedLabelmap(vtkOrientedImageData* labelmap);
+
+  /// Merges the specified segments into the same shared labelmap
+  /// This method can cause segments to overwrite each other during during merge.
+  /// Segments with a higher index will overwrite segments with a lower index.
+  /// If no segment IDs are specified, then all segments will be shared
+  void MergeSegmentLabelmaps(std::vector<std::string> mergeSegmentIds);
+
+  /// Moves an existing segment from a shared labelmap into a separate labelmap containing only the specified segment
+  void SeparateSegmentLabelmap(std::string segmentId);
+
+  /// Clears the segment representation.
+  /// If the segment is in a shared labelmap, it will be erased from the labelmap.
+  /// Otherwise, the vtkDataObject will be initialized.
+  void ClearSegment(std::string segmentId);
+
+  /// Shared representation layer functions
+
+  /// Get the number of unique vtkDataObject that are used for a particular representation type
+  /// If representationName is not specified, it will be set to the master representation name
+  int GetNumberOfLayers(std::string representationName="");
+
+  /// Get the layer index for a particular segment
+  /// If representationName is not specified, it will be set to the master representation name
+  int GetLayerIndex(std::string segmentId, std::string representationName="");
+
+  /// Get the data object for a particular layer index
+  /// If representationName is not specified, it will be set to the master representation name
+  vtkDataObject* GetLayerDataObject(int layer, std::string representationName="");
+
+  /// Get a collection of all of the data objects in the segmentation
+  /// If representationName is not specified, it will be set to the master representation name
+  void GetLayerObjects(vtkCollection* layerObjects, std::string representationName = "");
+
+  /// Get the segmentIDs contained in the specified layer
+  /// If representationName is not specified, it will be set to the master representation name
+  std::vector<std::string> GetSegmentIDsForLayer(int layer, std::string representationName = "");
+
+  /// Get the segmentIDs that use a specific data object
+  /// If representationName is not specified, it will be set to the master representation name
+  std::vector<std::string> GetSegmentIDsForDataObject(vtkDataObject* dataObject, std::string representationName = "");
+
+  /// Reduce the binary labelmap representation to as few layers as possible.
+  /// \param forceToSingleLayer If false, then the layers will not be overwritten by each other, if true then the layers can
+  ///   overwrite each other, but the result is guaranteed to have one layer
+  void CollapseBinaryLabelmaps(bool forceToSingleLayer=false);
+
+  // Conversion related methods
 
   /// Create a representation in all segments, using the conversion path with the
   /// lowest cost. The stored conversion parameters are used (which are the defaults if not changed by the user).
@@ -379,13 +462,16 @@ public:
   virtual void SetMasterRepresentationName(const std::string& representationName);
 
 protected:
+  bool ConvertSegmentsUsingPath(std::vector<std::string> segmentIDs, vtkSegmentationConverter::ConversionPathType path, bool overwriteExisting = false);
+  bool ConvertSegments(std::vector<std::string> segmentIDs, bool overwriteExisting = false);
+
   /// Convert given segment along a specified path
   /// \param segment Segment to convert
   /// \param path Path to do the conversion along
   /// \param overwriteExisting If true then do each conversion step regardless the target representation
   ///   exists. If false then skip those conversion steps that would overwrite existing representation
   /// \return Success flag
-  bool ConvertSegmentUsingPath(vtkSegment* segment, vtkSegmentationConverter::ConversionPathType path, bool overwriteExisting=false);
+  bool ConvertSegmentUsingPath(vtkSegment* segment, vtkSegmentationConverter::ConversionPathType path, bool overwriteExisting = false);
 
   /// Converts a single segment to a representation.
   bool ConvertSingleSegment(std::string segmentId, std::string targetRepresentationName);

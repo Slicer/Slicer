@@ -205,9 +205,16 @@ public:
 
   /// Get a segment as binary labelmap.
   /// If representation does not exist yet then call CreateBinaryLabelmapRepresentation() before.
-  /// If binary labelmap is the master representation then the returned object can be modified, and
-  /// all other representations will be automatically updated.
-  virtual vtkOrientedImageData* GetBinaryLabelmapRepresentation(const std::string segmentId);
+  /// This function returns a copy of the segment binary labelmap.
+  virtual void GetBinaryLabelmapRepresentation(const std::string segmentId, vtkOrientedImageData* outputBinaryLabelmap);
+
+  /// Get a segment as binary labelmap.
+  /// If representation does not exist yet then call CreateBinaryLabelmapRepresentation() before.
+  /// This function returns a pointer to the original labelmap representation in the segment.
+  /// The binary labelmap can be a shared labelmap containing multiple segments.
+  /// To get a list of all segments in a shared labelmap, call vtkSegmentation::GetSegmentIDsSharingRepresentation()
+  /// The label value used for each segment can be retreived using vtkSegment::GetLabelValue().
+  virtual vtkOrientedImageData* GetBinaryLabelmapInternalRepresentation(const std::string segmentId);
 
   /// Generate closed surface representation for all segments.
   /// Useful for 3D visualization.
@@ -218,9 +225,13 @@ public:
 
   /// Get a segment as binary labelmap.
   /// If representation does not exist yet then call CreateClosedSurfaceRepresentation() before.
-  /// If closed surface is the master representation then the returned object can be modified, and
-  /// all other representations will be automatically updated.
-  virtual vtkPolyData* GetClosedSurfaceRepresentation(const std::string segmentId);
+  /// This function returns a copy of the segment closed surface.
+  virtual void GetClosedSurfaceRepresentation(const std::string segmentId, vtkPolyData* outputClosedSurface);
+
+  /// Get a segment as binary labelmap.
+  /// If representation does not exist yet then call CreateClosedSurfaceRepresentation() before.
+  /// This function returns a copy of the segment closed surface.
+  virtual vtkPolyData* GetClosedSurfaceInternalRepresentation(const std::string segmentId);
 
   /// Add new segment from a closed surface.
   /// \return Segment ID of the new segment. Empty string if an error occurred.

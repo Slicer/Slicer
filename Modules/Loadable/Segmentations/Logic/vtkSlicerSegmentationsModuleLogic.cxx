@@ -473,7 +473,6 @@ void vtkSlicerSegmentationsModuleLogic::GetAllLabelValues(vtkIntArray* labels, v
     }
 }
 
-
 //-----------------------------------------------------------------------------
 vtkSegment* vtkSlicerSegmentationsModuleLogic::CreateSegmentFromLabelmapVolumeNode(vtkMRMLLabelMapVolumeNode* labelmapVolumeNode, vtkMRMLSegmentationNode* segmentationNode/*=nullptr*/)
 {
@@ -742,8 +741,8 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentToRepresentationNode(vtkSeg
       }
 
     // Export binary labelmap representation into labelmap volume node
-    vtkOrientedImageData* orientedImageData = vtkOrientedImageData::SafeDownCast(
-      segment->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()) );
+    vtkNew<vtkOrientedImageData> orientedImageData;
+    segmentationNode->GetBinaryLabelmapRepresentation(segmentId, orientedImageData);
     bool success = vtkSlicerSegmentationsModuleLogic::CreateLabelmapVolumeFromOrientedImageData(orientedImageData, labelmapNode);
     if (!success)
       {
@@ -769,7 +768,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentToRepresentationNode(vtkSeg
       return false;
       }
 
-    // Export binary labelmap representation into labelmap volume node
+    // Export closed surface representation into model node
     vtkPolyData* polyData = vtkPolyData::SafeDownCast(
       segment->GetRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName()) );
     vtkSmartPointer<vtkPolyData> polyDataCopy = vtkSmartPointer<vtkPolyData>::New();
@@ -1001,35 +1000,35 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
       }
     }
 
-  // Generate merged labelmap for the exported segments
-  vtkSmartPointer<vtkOrientedImageData> mergedImage_Segmentation = vtkSmartPointer<vtkOrientedImageData>::New();
-  if (!segmentationNode->GenerateMergedLabelmap(mergedImage_Segmentation, vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS,
+  // Generate shared labelmap for the exported segments
+  vtkSmartPointer<vtkOrientedImageData> sharedImage_Segmentation = vtkSmartPointer<vtkOrientedImageData>::New();
+  if (!segmentationNode->GenerateMergedLabelmap(sharedImage_Segmentation, vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS,
     referenceGeometry_Segmentation, segmentIDs))
     {
-    vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsToLabelmapNode: Failed to generate merged labelmap");
+    vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsToLabelmapNode: Failed to generate shared labelmap");
     return false;
     }
 
-  // Transform merged labelmap to reference geometry coordinate system
-  vtkSmartPointer<vtkOrientedImageData> mergedImage_Reference;
+  // Transform shared labelmap to reference geometry coordinate system
+  vtkSmartPointer<vtkOrientedImageData> sharedImage_Reference;
   if (referenceGeometryToSegmentationTransform)
     {
-    mergedImage_Reference = vtkSmartPointer<vtkOrientedImageData>::New();
+    sharedImage_Reference = vtkSmartPointer<vtkOrientedImageData>::New();
     vtkAbstractTransform* segmentationToReferenceGeometryTransform = referenceGeometryToSegmentationTransform->GetInverse();
     segmentationToReferenceGeometryTransform->Update();
-    vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(mergedImage_Segmentation, referenceGeometry_Reference, mergedImage_Reference,
+    vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(sharedImage_Segmentation, referenceGeometry_Reference, sharedImage_Reference,
       false /* nearest neighbor interpolation*/, false /* no padding */, segmentationToReferenceGeometryTransform);
     }
   else
     {
-    mergedImage_Reference = mergedImage_Segmentation;
+    sharedImage_Reference = sharedImage_Segmentation;
     }
-  mergedImage_Segmentation = nullptr; // free up memory
+  sharedImage_Segmentation = nullptr; // free up memory
 
-  // Export merged labelmap to the output node
-  if (!vtkSlicerSegmentationsModuleLogic::CreateLabelmapVolumeFromOrientedImageData(mergedImage_Reference, labelmapNode))
+  // Export shared labelmap to the output node
+  if (!vtkSlicerSegmentationsModuleLogic::CreateLabelmapVolumeFromOrientedImageData(sharedImage_Reference, labelmapNode))
     {
-    vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsToLabelmapNode: Failed to create labelmap from merged segments image");
+    vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsToLabelmapNode: Failed to create labelmap from shared segments image");
     return false;
     }
 
@@ -1259,30 +1258,24 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkMRML
   vtkNew<vtkIntArray> labelValues;
   vtkSlicerSegmentationsModuleLogic::GetAllLabelValues(labelValues.GetPointer(), labelmapNode->GetImageData());
 
-  vtkSmartPointer<vtkImageThreshold> threshold = vtkSmartPointer<vtkImageThreshold>::New();
-  threshold->SetInputConnection(labelmapNode->GetImageDataConnection());
-  threshold->SetInValue(1);
-  threshold->SetOutValue(0);
-  threshold->ReplaceInOn();
-  threshold->ReplaceOutOn();
-  threshold->SetOutputScalarType(labelmapNode->GetImageData()->GetScalarType());
-  //TODO: pending resolution of bug http://www.na-mic.org/Bug/view.php?id=1822,
-  //   run the thresholding in single threaded mode to avoid data corruption observed on mac release builds
-  //threshold->SetNumberOfThreads(1);
+  vtkSmartPointer<vtkOrientedImageData> labelOrientedImageData = vtkSmartPointer<vtkOrientedImageData>::New();
+  labelOrientedImageData->vtkImageData::DeepCopy(labelmapNode->GetImageData());
+  labelOrientedImageData->SetGeometryFromImageToWorldMatrix(labelmapIjkToRasMatrix);
+
+  // Apply parent transforms if any
+  if (labelmapNode->GetParentTransformNode() || segmentationNode->GetParentTransformNode())
+    {
+    vtkSmartPointer<vtkGeneralTransform> labelmapToSegmentationTransform = vtkSmartPointer<vtkGeneralTransform>::New();
+    vtkSlicerSegmentationsModuleLogic::GetTransformBetweenRepresentationAndSegmentation(labelmapNode, segmentationNode, labelmapToSegmentationTransform);
+    vtkOrientedImageDataResample::TransformOrientedImage(labelOrientedImageData, labelmapToSegmentationTransform);
+    }
 
   MRMLNodeModifyBlocker blocker(segmentationNode);
   for (int labelIndex = 0; labelIndex < labelValues->GetNumberOfValues(); ++labelIndex)
     {
     int label = labelValues->GetValue(labelIndex);
-    threshold->ThresholdBetween(label, label);
-    threshold->Update();
-
-    // Create oriented image data for label
-    vtkSmartPointer<vtkOrientedImageData> labelOrientedImageData = vtkSmartPointer<vtkOrientedImageData>::New();
-    labelOrientedImageData->vtkImageData::DeepCopy(threshold->GetOutput());
-    labelOrientedImageData->SetGeometryFromImageToWorldMatrix(labelmapIjkToRasMatrix);
-
     vtkSmartPointer<vtkSegment> segment = vtkSmartPointer<vtkSegment>::New();
+    segment->SetLabelValue(label);
 
     // Set segment color
     double color[4] = { vtkSegment::SEGMENT_COLOR_INVALID[0],
@@ -1310,14 +1303,6 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkMRML
       labelName = ss.str().c_str();
       }
     segment->SetName(labelName);
-
-    // Apply parent transforms if any
-    if (labelmapNode->GetParentTransformNode() || segmentationNode->GetParentTransformNode())
-      {
-      vtkSmartPointer<vtkGeneralTransform> labelmapToSegmentationTransform = vtkSmartPointer<vtkGeneralTransform>::New();
-      vtkSlicerSegmentationsModuleLogic::GetTransformBetweenRepresentationAndSegmentation(labelmapNode, segmentationNode, labelmapToSegmentationTransform);
-      vtkOrientedImageDataResample::TransformOrientedImage(labelOrientedImageData, labelmapToSegmentationTransform);
-      }
 
     // Clip to effective extent
     int labelOrientedImageDataEffectiveExtent[6] = { 0, -1, 0, -1, 0, -1 };
@@ -1785,7 +1770,8 @@ bool vtkSlicerSegmentationsModuleLogic::GetSegmentClosedSurfaceRepresentation(vt
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
-  vtkOrientedImageData* labelmap, vtkMRMLSegmentationNode* segmentationNode, std::string segmentID, int mergeMode/*=MODE_REPLACE*/, const int extent[6]/*=0*/ )
+  vtkOrientedImageData* labelmap, vtkMRMLSegmentationNode* segmentationNode, std::string segmentID, int mergeMode/*=MODE_REPLACE*/, const int extent[6]/*=0*/,
+    bool minimumOfAllSegments/*=false*/)
 {
   if (!segmentationNode || segmentID.empty() || !labelmap)
     {
@@ -1797,6 +1783,8 @@ bool vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
     vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment: Invalid input labelmap");
     return false;
     }
+
+  std::vector<std::string> modifiedSegments;
 
   // Get binary labelmap representation of selected segment
   vtkSegment* selectedSegment = segmentationNode->GetSegmentation()->GetSegment(segmentID);
@@ -1834,9 +1822,29 @@ bool vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
     mergeMode = MODE_REPLACE;
     }
 
+  int labelValue = selectedSegment->GetLabelValue();
+  // Ensure that the value for the segment can be contained in the labelmap.
+  vtkOrientedImageDataResample::CastImageForValue(segmentLabelmap, labelValue);
+
   if (mergeMode == MODE_REPLACE)
     {
-    if (!vtkOrientedImageDataResample::CopyImage(labelmap, newSegmentLabelmap, extent))
+    vtkSmartPointer<vtkOrientedImageData> modifierLabelmap = labelmap;
+    if (segmentationNode->GetSegmentation()->GetMasterRepresentationName() == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName() &&
+      labelValue != 1)
+      {
+      vtkNew<vtkImageThreshold> threshold;
+      threshold->SetInputData(labelmap);
+      threshold->ThresholdByLower(0);
+      threshold->SetInValue(0);
+      threshold->SetOutValue(labelValue);
+      threshold->Update();
+      modifierLabelmap = vtkSmartPointer<vtkOrientedImageData>::New();
+      modifierLabelmap->ShallowCopy(threshold->GetOutput());
+      modifierLabelmap->CopyDirections(labelmap);
+      }
+    modifiedSegments.push_back(segmentID);
+
+    if (!vtkOrientedImageDataResample::CopyImage(modifierLabelmap, newSegmentLabelmap, extent))
       {
       vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment: Failed to copy labelmap");
       return false;
@@ -1844,27 +1852,75 @@ bool vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
     }
   else
     {
-    int operation = (mergeMode==MODE_MERGE_MAX ? vtkOrientedImageDataResample::OPERATION_MAXIMUM : vtkOrientedImageDataResample::OPERATION_MINIMUM);
-
-    if (!vtkOrientedImageDataResample::DoGeometriesMatch(segmentLabelmap, labelmap))
+    int operation = vtkOrientedImageDataResample::OPERATION_MINIMUM;
+    switch (mergeMode)
       {
-      // Make sure appended image has the same lattice as the input image
-      vtkSmartPointer<vtkOrientedImageData> resampledSegmentLabelmap = vtkSmartPointer<vtkOrientedImageData>::New();
-      vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(
-        segmentLabelmap, labelmap, resampledSegmentLabelmap, false /*interpolate*/, true /*pad*/);
-      if (!vtkOrientedImageDataResample::MergeImage(resampledSegmentLabelmap, labelmap, newSegmentLabelmap, operation, extent, 0, 1, &segmentLabelmapModified))
-        {
-        vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment: Failed to merge labelmap (max)");
-        return false;
-        }
+      case MODE_MERGE_MAX:
+        operation = vtkOrientedImageDataResample::OPERATION_MAXIMUM;
+        break;
+      case MODE_MERGE_MASK:
+        operation = vtkOrientedImageDataResample::OPERATION_MASKING;
+        break;
+      default:
+        operation = vtkOrientedImageDataResample::OPERATION_MINIMUM;
+      }
+
+    vtkNew<vtkImageThreshold> threshold;
+    threshold->SetInputData(labelmap);
+    threshold->ThresholdByLower(0);
+    threshold->SetInValue(0);
+
+    if (operation == vtkOrientedImageDataResample::OPERATION_MINIMUM)
+      {
+      threshold->SetOutValue(segmentLabelmap->GetScalarTypeMax());
       }
     else
       {
-        if (!vtkOrientedImageDataResample::MergeImage(segmentLabelmap, labelmap, newSegmentLabelmap, operation, extent, 0, 1, &segmentLabelmapModified))
-        {
-        vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment: Failed to merge labelmap (max)");
-        return false;
-        }
+      threshold->SetOutValue(1);
+      vtkSlicerSegmentationsModuleLogic::GetSharedSegmentIDsInMask(segmentationNode, segmentID, labelmap, modifiedSegments);
+      }
+    modifiedSegments.push_back(segmentID);
+
+    threshold->SetOutputScalarType(segmentLabelmap->GetScalarType());
+    threshold->Update();
+
+    vtkNew<vtkOrientedImageData> thresholdedLabelmap;
+    thresholdedLabelmap->ShallowCopy(threshold->GetOutput());
+    thresholdedLabelmap->CopyDirections(labelmap);
+
+    vtkSmartPointer<vtkOrientedImageData> resampledSegmentLabelmap;
+    if (!vtkOrientedImageDataResample::DoGeometriesMatch(segmentLabelmap, thresholdedLabelmap))
+      {
+      // Make sure appended image has the same lattice as the input image
+      resampledSegmentLabelmap = vtkSmartPointer<vtkOrientedImageData>::New();
+      vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(
+        segmentLabelmap, thresholdedLabelmap, resampledSegmentLabelmap, false /*interpolate*/, true /*pad*/);
+      }
+    else
+      {
+      resampledSegmentLabelmap = segmentLabelmap;
+      }
+
+    if (operation == vtkOrientedImageDataResample::OPERATION_MINIMUM && !minimumOfAllSegments)
+      {
+      vtkNew<vtkOrientedImageData> segmentMask;
+      vtkNew<vtkImageThreshold> thresholdSegment;
+      thresholdSegment->SetInputData(resampledSegmentLabelmap);
+      thresholdSegment->ThresholdBetween(labelValue, labelValue);
+      thresholdSegment->SetInValue(1);
+      thresholdSegment->SetOutValue(0);
+      thresholdSegment->SetOutputScalarTypeToUnsignedChar();
+      thresholdSegment->Update();
+      segmentMask->ShallowCopy(thresholdSegment->GetOutput());
+      segmentMask->CopyDirections(resampledSegmentLabelmap);
+      vtkOrientedImageDataResample::ApplyImageMask(thresholdedLabelmap, segmentMask, thresholdedLabelmap->GetScalarTypeMax());
+      }
+
+    if (!vtkOrientedImageDataResample::MergeImage(
+      resampledSegmentLabelmap, thresholdedLabelmap, newSegmentLabelmap, operation, extent, 0, labelValue, &segmentLabelmapModified))
+      {
+      vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment: Failed to merge labelmap (max)");
+      return false;
       }
     }
 
@@ -1907,8 +1963,17 @@ bool vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
     std::string targetRepresentationName = (*reprIt);
     if (targetRepresentationName.compare(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()))
       {
-      conversionHappened |= segmentationNode->GetSegmentation()->ConvertSingleSegment(
-        segmentID, targetRepresentationName );
+      vtkSegmentationConverter::ConversionPathAndCostListType pathCosts;
+      segmentationNode->GetSegmentation()->GetPossibleConversions(targetRepresentationName, pathCosts);
+
+      // Get cheapest path from found conversion paths
+      vtkSegmentationConverter::ConversionPathType cheapestPath = vtkSegmentationConverter::GetCheapestPath(pathCosts);
+      if (cheapestPath.empty())
+        {
+        return false;
+        }
+
+      conversionHappened |= segmentationNode->GetSegmentation()->ConvertSegmentsUsingPath(modifiedSegments, cheapestPath, true);
       }
     }
 
@@ -2443,14 +2508,14 @@ void vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(vtkSegment* segment, in
 }
 
 //------------------------------------------------------------------------------
-bool vtkSlicerSegmentationsModuleLogic::ClearSegment(vtkMRMLSegmentationNode* segmentationNode, std::string segmentID)
+bool vtkSlicerSegmentationsModuleLogic::ClearSegment(vtkMRMLSegmentationNode* segmentationNode, std::string segmentId)
 {
   if (!segmentationNode)
     {
     vtkErrorWithObjectMacro(nullptr, "Invalid segmentation node");
     return false;
     }
-  return vtkSlicerSegmentationsModuleLogic::ClearSegment(segmentationNode->GetSegmentation(), segmentID);
+  return vtkSlicerSegmentationsModuleLogic::ClearSegment(segmentationNode->GetSegmentation(), segmentId);
 }
 
 //------------------------------------------------------------------------------
@@ -2469,14 +2534,86 @@ bool vtkSlicerSegmentationsModuleLogic::ClearSegment(vtkSegmentation* segmentati
     return false;
     }
 
-  vtkDataObject* dataObject = segment->GetRepresentation(segmentation->GetMasterRepresentationName());
-  if (dataObject)
+  std::vector<std::string> representationNames;
+  segmentation->GetContainedRepresentationNames(representationNames);
+
+  segmentation->ClearSegment(segmentID);
+
+  std::vector<std::string> sharedSegmentIDs;
+  segmentation->GetSegmentIDsSharingBinaryLabelmapRepresentation(segmentID, sharedSegmentIDs, true);
+
+  // Re-convert all other representations
+  for (std::vector<std::string>::iterator reprIt = representationNames.begin();
+    reprIt != representationNames.end(); ++reprIt)
     {
-    dataObject->Initialize();
-    dataObject->Modified();
+    std::string targetRepresentationName = (*reprIt);
+    if (targetRepresentationName.compare(segmentation->MasterRepresentationName))
+    {
+      vtkSegmentationConverter::ConversionPathAndCostListType pathCosts;
+      segmentation->GetPossibleConversions(targetRepresentationName, pathCosts);
+
+      // Get cheapest path from found conversion paths
+      vtkSegmentationConverter::ConversionPathType cheapestPath = vtkSegmentationConverter::GetCheapestPath(pathCosts);
+      if (!cheapestPath.empty())
+        {
+        segmentation->ConvertSegmentsUsingPath(sharedSegmentIDs, cheapestPath, true);
+        }
+      }
     }
 
   vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(segment, vtkSlicerSegmentationsModuleLogic::NotStarted);
   segment->Modified();
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerSegmentationsModuleLogic::GetSharedSegmentIDsInMask(
+  vtkMRMLSegmentationNode* segmentationNode, std::string sharedSegmentID, vtkOrientedImageData* maskLabelmap, std::vector<std::string>& segmentIDs,
+  int maskThreshold/*=0*/, bool includeInputSegmentID/*=false*/)
+{
+  segmentIDs.clear();
+
+  if (!segmentationNode)
+    {
+    vtkErrorWithObjectMacro(nullptr, "Invalid segmentation node!");
+    return false;
+    }
+
+  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+  if (!segmentation)
+    {
+    vtkErrorWithObjectMacro(nullptr, "Invalid segmentation!");
+    return false;
+    }
+
+  std::vector<std::string> sharedSegmentIDs;
+  segmentation->GetSegmentIDsSharingBinaryLabelmapRepresentation(sharedSegmentID, sharedSegmentIDs, includeInputSegmentID);
+  if (sharedSegmentIDs.empty())
+    {
+    // No shared segments to compare against, so there are no relevant IDs in the mask
+    return true;
+    }
+
+  std::map<int, std::string> segmentValues;
+  for (std::string currentSegmentID : sharedSegmentIDs)
+    {
+    vtkSegment* segment = segmentation->GetSegment(currentSegmentID);
+    segmentValues[segment->GetLabelValue()] = currentSegmentID;
+    }
+
+  vtkOrientedImageData* binaryLabelmap = vtkOrientedImageData::SafeDownCast(
+    segmentation->GetSegment(sharedSegmentID)->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()));
+
+  std::vector<int> labelValuesInMask;
+  vtkOrientedImageDataResample::GetLabelValuesInMask(binaryLabelmap, maskLabelmap, maskThreshold, labelValuesInMask);
+
+  for (int labelValue : labelValuesInMask)
+    {
+    if (labelValue == 0 || segmentValues.find(labelValue) == segmentValues.end())
+      {
+      continue;
+      }
+    segmentIDs.push_back(segmentValues[labelValue]);
+    }
   return true;
 }

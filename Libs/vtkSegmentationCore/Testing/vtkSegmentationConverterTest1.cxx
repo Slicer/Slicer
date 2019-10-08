@@ -58,8 +58,7 @@ public: \
   virtual vtkDataObject* ConstructRepresentationObjectByClass( \
     std::string vtkNotUsed(className)) override { return nullptr; }; \
   virtual bool Convert( \
-    vtkDataObject* vtkNotUsed(sourceRepresentation),\
-    vtkDataObject* vtkNotUsed(targetRepresentation)) override { return true; } \
+    vtkSegment* vtkNotUsed(segment)) override { return true; } \
   virtual unsigned int GetConversionCost( \
     vtkDataObject* sourceRepresentation=nullptr, \
     vtkDataObject* targetRepresentation=nullptr)  override \

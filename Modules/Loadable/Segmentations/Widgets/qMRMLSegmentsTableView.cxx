@@ -257,6 +257,9 @@ void qMRMLSegmentsTableViewPrivate::init()
   // Hide filter bar to simplify default GUI. User can enable to handle many segments
   q->setFilterBarVisible(false);
 
+  // Hide layer column
+  q->setLayerColumnVisible(false);
+
   this->setMessage(QString());
 
   this->SegmentsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
@@ -291,9 +294,8 @@ void qMRMLSegmentsTableViewPrivate::init()
   QObject::connect(this->SortFilterModel, &qMRMLSortFilterSegmentsProxyModel::filterModified, q, &qMRMLSegmentsTableView::onSegmentsFilterModified);
 
   // Set item delegate to handle color and opacity changes
-  qMRMLItemDelegate* itemDelegate = new qMRMLItemDelegate(this->SegmentsTable);
   this->SegmentsTable->setItemDelegateForColumn(this->Model->colorColumn(), new qSlicerTerminologyItemDelegate(this->SegmentsTable));
-  this->SegmentsTable->setItemDelegateForColumn(this->Model->opacityColumn(), itemDelegate);
+  this->SegmentsTable->setItemDelegateForColumn(this->Model->opacityColumn(), new qMRMLItemDelegate(this->SegmentsTable));
   this->SegmentsTable->installEventFilter(q);
 }
 
@@ -411,39 +413,39 @@ void qMRMLSegmentsTableView::onSegmentsTableClicked(const QModelIndex& modelInde
   QString segmentId = d->SortFilterModel->segmentIDFromIndex(modelIndex);
   QStandardItem* item = d->Model->itemFromSegmentID(segmentId);
   if (!d->SegmentationNode)
-  {
+    {
     return;
-  }
+    }
 
   Qt::ItemFlags flags = item->flags();
   if (!flags.testFlag(Qt::ItemIsSelectable))
-  {
+    {
     return;
-  }
+    }
 
   vtkSegment* segment = d->SegmentationNode->GetSegmentation()->GetSegment(segmentId.toStdString());
   if (modelIndex.column() == d->Model->visibilityColumn())
-  {
+    {
     // Set all visibility types to segment referenced by button toggled
     int visible = !item->data(qMRMLSegmentsModel::VisibilityRole).toInt();
     this->setSegmentVisibility(segmentId, visible, -1, -1, -1);
-  }
+    }
   else if (modelIndex.column() == d->Model->statusColumn())
-  {
+    {
     int status = vtkSlicerSegmentationsModuleLogic::GetSegmentStatus(segment);
     switch (status)
-    {
-    case vtkSlicerSegmentationsModuleLogic::SegmentStatus::Flagged:
-      status = vtkSlicerSegmentationsModuleLogic::SegmentStatus::Completed;
-      break;
-    default:
-      ++status;
-      if (status >= vtkSlicerSegmentationsModuleLogic::SegmentStatus::LastStatus)
       {
-        status = 0;
+      case vtkSlicerSegmentationsModuleLogic::SegmentStatus::Flagged:
+        status = vtkSlicerSegmentationsModuleLogic::SegmentStatus::Completed;
+        break;
+      default:
+        ++status;
+        if (status >= vtkSlicerSegmentationsModuleLogic::SegmentStatus::LastStatus)
+          {
+          status = 0;
+          }
+        break;
       }
-      break;
-    }
     vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(segment, status);
   }
 }
@@ -824,6 +826,13 @@ void qMRMLSegmentsTableView::setStatusColumnVisible(bool visible)
 }
 
 //------------------------------------------------------------------------------
+void qMRMLSegmentsTableView::setLayerColumnVisible(bool visible)
+{
+  Q_D(qMRMLSegmentsTableView);
+  d->SegmentsTable->setColumnHidden(d->Model->layerColumn(), !visible);
+}
+
+//------------------------------------------------------------------------------
 void qMRMLSegmentsTableView::setReadOnly(bool aReadOnly)
 {
   Q_D(qMRMLSegmentsTableView);
@@ -886,6 +895,13 @@ bool qMRMLSegmentsTableView::statusColumnVisible()
 {
   Q_D(qMRMLSegmentsTableView);
   return !d->SegmentsTable->isColumnHidden(d->Model->statusColumn());
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLSegmentsTableView::layerColumnVisible()
+{
+  Q_D(qMRMLSegmentsTableView);
+  return !d->SegmentsTable->isColumnHidden(d->Model->layerColumn());
 }
 
 //------------------------------------------------------------------------------
@@ -1002,6 +1018,12 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
   showFilterAction->setChecked(d->FilterBar->isVisible());
   QObject::connect(showFilterAction, SIGNAL(triggered(bool)), this, SLOT(setFilterBarVisible(bool)));
   contextMenu->addAction(showFilterAction);
+
+  QAction* showLayerColumnAction = new QAction("Show layer column", this);
+  showLayerColumnAction->setCheckable(true);
+  showLayerColumnAction->setChecked(this->layerColumnVisible());
+  QObject::connect(showLayerColumnAction, SIGNAL(triggered(bool)), this, SLOT(setLayerColumnVisible(bool)));
+  contextMenu->addAction(showLayerColumnAction);
 
   QModelIndex index = d->SegmentsTable->indexAt(d->SegmentsTable->viewport()->mapFromGlobal(event->globalPos()));
   if (d->AdvancedSegmentVisibility && index.isValid())

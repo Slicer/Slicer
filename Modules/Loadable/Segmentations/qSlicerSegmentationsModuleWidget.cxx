@@ -243,6 +243,9 @@ void qSlicerSegmentationsModuleWidget::updateWidgetFromMRML()
   // Update copy/move/import/export buttons from selection
   this->updateCopyMoveButtonStates();
 
+  // Update layer info widgets
+  this->updateLayerWidgets();
+
   // Update segment handler button states based on segment selection
   this->onSegmentSelectionChanged(QItemSelection(),QItemSelection());
 
@@ -321,6 +324,9 @@ void qSlicerSegmentationsModuleWidget::init()
   connect(d->MRMLNodeComboBox_OtherSegmentationOrRepresentationNode, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
     this, SLOT(setOtherSegmentationOrRepresentationNode(vtkMRMLNode*)) );
 
+  connect(d->pushButton_CollapseLayers, SIGNAL(clicked()),
+    this, SLOT(collapseLabelmapLayers()));
+
   connect(d->ImportExportOperationButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)),
     this, SLOT(updateImportExportWidgets()));
 
@@ -390,6 +396,7 @@ void qSlicerSegmentationsModuleWidget::onSegmentationNodeChanged(vtkMRMLNode* no
   qvtkReconnect( d->SegmentationNode, segmentationNode, vtkSegmentation::MasterRepresentationModified, this, SLOT(updateWidgetFromMRML()) );
   qvtkReconnect( d->SegmentationNode, segmentationNode, vtkMRMLNode::ReferenceAddedEvent, this, SLOT(onSegmentationNodeReferenceChanged()) );
   qvtkReconnect( d->SegmentationNode, segmentationNode, vtkMRMLNode::ReferenceModifiedEvent, this, SLOT(onSegmentationNodeReferenceChanged()) );
+  qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentModified, this, SLOT(updateLayerWidgets()) );
 
   d->SegmentationNode = segmentationNode;
   d->SegmentationDisplayNodeWidget->setSegmentationNode(segmentationNode);
@@ -545,6 +552,37 @@ void qSlicerSegmentationsModuleWidget::setOtherSegmentationOrRepresentationNode(
 
   // Update widgets based on selection
   this->updateCopyMoveButtonStates();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentationsModuleWidget::collapseLabelmapLayers()
+{
+  Q_D(qSlicerSegmentationsModuleWidget);
+  if (!d->SegmentationNode)
+    {
+    return;
+    }
+
+  MRMLNodeModifyBlocker blocker(d->SegmentationNode);
+  bool forceToSingleLayer = d->checkBox_OverwriteSegments->isChecked();
+  d->SegmentationNode->GetSegmentation()->CollapseBinaryLabelmaps(forceToSingleLayer);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentationsModuleWidget::updateLayerWidgets()
+{
+  Q_D(qSlicerSegmentationsModuleWidget);
+
+  std::stringstream ss;
+  if (!d->SegmentationNode)
+    {
+    ss << "0";
+    }
+  else
+    {
+    ss << d->SegmentationNode->GetSegmentation()->GetNumberOfLayers(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
+    }
+  d->label_LayerCountValue->setText(QString::fromStdString(ss.str()));
 }
 
 //-----------------------------------------------------------------------------

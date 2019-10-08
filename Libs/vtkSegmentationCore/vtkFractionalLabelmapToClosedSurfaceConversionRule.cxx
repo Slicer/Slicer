@@ -18,9 +18,6 @@
 
 ==============================================================================*/
 
-// SegmentationCore includes
-#include <vtkOrientedImageData.h>
-
 // VTK includes
 #include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
 #include <vtkObjectFactory.h>
@@ -31,7 +28,7 @@
   #include <vtkMarchingCubes.h>
 #endif
 #include <vtkDecimatePro.h>
-#include <vtkSmoothPolyDataFilter.h>
+#include <vtkWindowedSincPolyDataFilter.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkImageConstantPad.h>
@@ -40,9 +37,12 @@
 #include <vtkImageResize.h>
 #include <vtkFieldData.h>
 #include <vtkDoubleArray.h>
+#include <vtkPolyDataNormals.h>
 
-
+// SegmentationCore includes
 #include "vtkFractionalLabelmapToClosedSurfaceConversionRule.h"
+#include <vtkOrientedImageData.h>
+#include <vtkSegment.h>
 
 //----------------------------------------------------------------------------
 vtkSegmentationConverterRuleNewMacro(vtkFractionalLabelmapToClosedSurfaceConversionRule);
@@ -103,8 +103,13 @@ vtkDataObject* vtkFractionalLabelmapToClosedSurfaceConversionRule::ConstructRepr
 }
 
 //----------------------------------------------------------------------------
-bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sourceRepresentation, vtkDataObject* targetRepresentation)
+bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* segment)
 {
+  this->CreateTargetRepresentation(segment);
+
+  vtkDataObject* sourceRepresentation = segment->GetRepresentation(this->GetSourceRepresentationName());
+  vtkDataObject* targetRepresentation = segment->GetRepresentation(this->GetTargetRepresentationName());
+
   // Check validity of source and target representation objects
   vtkOrientedImageData* fractionalLabelMap = vtkOrientedImageData::SafeDownCast(sourceRepresentation);
   if (!fractionalLabelMap)
@@ -146,6 +151,7 @@ bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* 
   // Get conversion parameters
   double decimationFactor = vtkVariant(this->ConversionParameters[this->GetDecimationFactorParameterName()].first).ToDouble();
   double smoothingFactor = vtkVariant(this->ConversionParameters[this->GetSmoothingFactorParameterName()].first).ToDouble();
+  int computeSurfaceNormals = vtkVariant(this->ConversionParameters[GetComputeSurfaceNormalsParameterName()].first).ToInt();
   double fractionalOversamplingFactor = vtkVariant(this->ConversionParameters[this->GetFractionalLabelMapOversamplingFactorParameterName()].first).ToDouble();
   double fractionalThreshold = vtkVariant(this->ConversionParameters[this->GetThresholdFractionParameterName()].first).ToDouble();
 
@@ -196,57 +202,85 @@ bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* 
     vtkErrorMacro("Convert: Error while running marching cubes!");
     return false;
     }
-  if (marchingCubes->GetOutput()->GetNumberOfPolys() == 0)
+
+    vtkSmartPointer<vtkPolyData> convertedSegment = vtkSmartPointer<vtkPolyData>::New();
+
+  // Run marching cubes
+  vtkSmartPointer<vtkPolyData> processingResult = marchingCubes->GetOutput();
+  if (processingResult->GetNumberOfPolys() == 0)
     {
-    vtkErrorMacro("Convert: No polygons can be created!");
-    return false;
+    vtkDebugMacro("Convert: No polygons can be created, probably all voxels are empty");
+    convertedSegment = nullptr;
+    closedSurfacePolyData->Reset();
     }
 
-  // Decimate if necessary
-  vtkSmartPointer<vtkDecimatePro> decimator = vtkSmartPointer<vtkDecimatePro>::New();
-  decimator->SetInputConnection(marchingCubes->GetOutputPort());
+  if (!convertedSegment)
+    {
+    return true;
+    }
+
+  // Decimate
   if (decimationFactor > 0.0)
     {
+    vtkSmartPointer<vtkDecimatePro> decimator = vtkSmartPointer<vtkDecimatePro>::New();
+    decimator->SetInputData(processingResult);
     decimator->SetFeatureAngle(60);
     decimator->SplittingOff();
     decimator->PreserveTopologyOn();
     decimator->SetMaximumError(1);
     decimator->SetTargetReduction(decimationFactor);
-    try
-      {
-      decimator->Update();
-      }
-    catch(...)
-      {
-      vtkErrorMacro("Error decimating model");
-      return false;
-      }
+    decimator->Update();
+    processingResult = decimator->GetOutput();
     }
 
-  // Perform smoothing using specified factor
-  vtkSmartPointer<vtkSmoothPolyDataFilter> smoothFilter = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
-  if (decimationFactor > 0.0)
+  if (smoothingFactor > 0)
     {
-    smoothFilter->SetInputConnection(decimator->GetOutputPort());
+    vtkSmartPointer<vtkWindowedSincPolyDataFilter> smoother = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
+    smoother->SetInputData(processingResult);
+    smoother->SetNumberOfIterations(20); // based on VTK documentation ("Ten or twenty iterations is all the is usually necessary")
+    // This formula maps:
+    // 0.0  -> 1.0   (almost no smoothing)
+    // 0.25 -> 0.1   (average smoothing)
+    // 0.5  -> 0.01  (more smoothing)
+    // 1.0  -> 0.001 (very strong smoothing)
+    double passBand = pow(10.0, -4.0 * smoothingFactor);
+    smoother->SetPassBand(passBand);
+    smoother->BoundarySmoothingOff();
+    smoother->FeatureEdgeSmoothingOff();
+    smoother->NonManifoldSmoothingOn();
+    smoother->NormalizeCoordinatesOn();
+    smoother->Update();
+    processingResult = smoother->GetOutput();
     }
-  else
-    {
-    smoothFilter->SetInputConnection(marchingCubes->GetOutputPort());
-    }
-  smoothFilter->SetRelaxationFactor(smoothingFactor);
-  smoothFilter->Update();
 
   // Transform the result surface from labelmap IJK to world coordinate system
   vtkSmartPointer<vtkTransform> labelmapGeometryTransform = vtkSmartPointer<vtkTransform>::New();
   labelmapGeometryTransform->SetMatrix(labelmapImageToWorldMatrix);
 
   vtkSmartPointer<vtkTransformPolyDataFilter> transformPolyDataFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  transformPolyDataFilter->SetInputConnection(smoothFilter->GetOutputPort());
+  transformPolyDataFilter->SetInputData(processingResult);
   transformPolyDataFilter->SetTransform(labelmapGeometryTransform);
   transformPolyDataFilter->Update();
 
+  if (computeSurfaceNormals > 0)
+    {
+    vtkSmartPointer<vtkPolyDataNormals> polyDataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
+    polyDataNormals->SetInputConnection(transformPolyDataFilter->GetOutputPort());
+    polyDataNormals->ConsistencyOn(); // discrete marching cubes may generate inconsistent surface
+    // We almost always perform smoothing, so splitting would not be able to preserve any sharp features
+    // (and sharp edges would look like artifacts in the smooth surface).
+    polyDataNormals->SplittingOff();
+    polyDataNormals->Update();
+    convertedSegment->ShallowCopy(polyDataNormals->GetOutput());
+    }
+  else
+    {
+    transformPolyDataFilter->Update();
+    convertedSegment->ShallowCopy(transformPolyDataFilter->GetOutput());
+    }
+
   // Set output
-  closedSurfacePolyData->ShallowCopy(transformPolyDataFilter->GetOutput());
+  closedSurfacePolyData->ShallowCopy(convertedSegment);
 
   // Delete temporary padded labelmap if it was created
   if (paddingNecessary)

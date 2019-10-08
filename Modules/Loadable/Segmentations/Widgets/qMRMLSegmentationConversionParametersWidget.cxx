@@ -389,6 +389,8 @@ void qMRMLSegmentationConversionParametersWidget::applyConversion()
     return;
     }
 
+  MRMLNodeModifyBlocker blocker(d->SegmentationNode);
+
   // Perform conversion using selected path and chosen conversion parameters
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
   if (!d->SegmentationNode->GetSegmentation()->CreateRepresentation(

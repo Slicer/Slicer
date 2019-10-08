@@ -261,7 +261,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
       logging.info("Smoothing operation skipped: there are no visible segments")
       return
 
-    mergedImage = vtkSegmentationCore.vtkOrientedImageData()
+    mergedImage = slicer.vtkOrientedImageData()
     if not segmentationNode.GenerateMergedLabelmapForAllSegments(mergedImage,
                                                                  vtkSegmentationCore.vtkSegmentation.EXTENT_UNION_OF_SEGMENTS_PADDED,
                                                                  None, visibleSegmentIds):
@@ -338,7 +338,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
     for segmentId, labelValue in segmentLabelValues:
       threshold.ThresholdBetween(labelValue, labelValue)
       stencil.Update()
-      smoothedBinaryLabelMap = vtkSegmentationCore.vtkOrientedImageData()
+      smoothedBinaryLabelMap = slicer.vtkOrientedImageData()
       smoothedBinaryLabelMap.ShallowCopy(stencil.GetOutput())
       smoothedBinaryLabelMap.SetImageToWorldMatrix(imageToWorldMatrix)
       # Write results to segments directly, bypassing masking

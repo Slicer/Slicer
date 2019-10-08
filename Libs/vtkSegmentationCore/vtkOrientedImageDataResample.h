@@ -24,7 +24,11 @@
 // Segmentation includes
 #include "vtkSegmentationCoreConfigure.h"
 
+// VTK includes
 #include "vtkObject.h"
+
+// std includes
+#include <vector>
 
 class vtkImageData;
 class vtkMatrix4x4;
@@ -159,6 +163,23 @@ public:
   ///   The effect is to pass the input pixels where the mask is zero, and replace the pixels where the
   ///   mask is non zero
   static bool ApplyImageMask(vtkOrientedImageData* input, vtkOrientedImageData* mask, double fillValue, bool notMask = false);
+
+  /// Get the values contained in the labelmap under the mask
+  /// \param binaryLabelmap Input image to get values from
+  /// \param maskLabelmap Mask image to get values under
+  /// \param Threshold value for the mask. Values above this threshold are considered to be under the mask
+  /// \param values The values found in the binary labelmap underneath the mask
+  static void GetLabelValuesInMask(vtkOrientedImageData* binaryLabelmap, vtkOrientedImageData* mask, int maskThreshold, std::vector<int> &labelValues);
+
+  /// Determine if there is a non-zero value in the labelmap under the mask
+  /// \param binaryLabelmap Input image to get values from
+  /// \param maskLabelmap Mask image to get values under
+  static bool IsLabelInMask(vtkOrientedImageData* binaryLabelmap, vtkOrientedImageData* mask, int maskThreshold);
+
+  /// Cast the data type of the image to be able to contain the specified value
+  /// \param image Image to convert
+  /// \param value Value that should be representable by the image data type
+  static void CastImageForValue(vtkOrientedImageData* image, double value);
 
 protected:
   vtkOrientedImageDataResample();

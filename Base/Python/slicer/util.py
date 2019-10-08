@@ -1133,8 +1133,24 @@ def arrayFromGridTransformModified(gridTransformNode):
   displacementGrid.Modified()
 
 def arrayFromSegment(segmentationNode, segmentId):
+  """
+  """
+  import logging
+  logging.warning("arrayFromSegment is deprecated! Binary labelmap representation may be shared between multiple segments!"
+                  " Use arrayFromSegmentBinaryLabelmap to access a copy of the binary labelmap that will not modify the original labelmap."
+                  " Use arrayFromSegmentInternalBinaryLabelmap to access a modifiable internal lablemap representation that may be shared"
+                  " between multiple segments.")
+  return arrayFromSegmentBinaryLabelmap(segmentationNode, segmentId)
+
+def arrayFromSegmentInternalBinaryLabelmap(segmentationNode, segmentId):
   """Return voxel array of a segment's binary labelmap representation as numpy array.
   Voxels values are not copied.
+
+  The labelmap containing the specified segment may be a shared labelmap containing multiple segments.
+  To get and modify the array for a single segment, calling:
+  segmentationNode->GetSegmentation()->SeparateSegment(segmentId) will transfer the segment from a shared labelmap into a new layer.
+  Layers can be merged by calling segmentationNode->GetSegmentation()->CollapseBinaryLabelmaps()
+
   If binary labelmap is the master representation then voxel values in the volume node can be modified
   by changing values in the numpy array. After all modifications has been completed, call:
   segmentationNode.GetSegmentation().GetSegment(segmentID).Modified()
@@ -1143,7 +1159,26 @@ def arrayFromSegment(segmentationNode, segmentId):
     therefore values in the array may be changed, but the array must not be reallocated.
     See :py:meth:`arrayFromVolume` for details.
   """
-  vimage = segmentationNode.GetBinaryLabelmapRepresentation(segmentId)
+  vimage = segmentationNode.GetBinaryLabelmapInternalRepresentation(segmentId)
+  nshape = tuple(reversed(vimage.GetDimensions()))
+  import vtk.util.numpy_support
+  narray = vtk.util.numpy_support.vtk_to_numpy(vimage.GetPointData().GetScalars()).reshape(nshape)
+  return narray
+
+def arrayFromSegmentBinaryLabelmap(segmentationNode, segmentId):
+  """Return voxel array of a segment's binary labelmap representation as numpy array.
+  Voxels values are copied.
+  If binary labelmap is the master representation then voxel values in the volume node can be modified
+  by changing values in the numpy array. After all modifications has been completed, call:
+  segmentationNode.GetSegmentation().GetSegment(segmentID).Modified()
+
+  .. warning:: Important: memory area of the returned array is managed by VTK,
+    therefore values in the array may be changed, but the array must not be reallocated.
+    See :py:meth:`arrayFromVolume` for details.
+  """
+  import slicer
+  vimage = slicer.vtkOrientedImageData()
+  segmentationNode.GetBinaryLabelmapRepresentation(segmentId, vimage)
   nshape = tuple(reversed(vimage.GetDimensions()))
   import vtk.util.numpy_support
   narray = vtk.util.numpy_support.vtk_to_numpy(vimage.GetPointData().GetScalars()).reshape(nshape)

@@ -623,9 +623,22 @@ bool qMRMLSegmentEditorWidgetPrivate::updateSelectedSegmentLabelmap()
     this->SelectedSegmentLabelmap->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
     return true;
     }
+
+  vtkNew<vtkImageThreshold> threshold;
+  threshold->SetInputData(segmentLabelmap);
+  threshold->ThresholdBetween(selectedSegment->GetLabelValue(), selectedSegment->GetLabelValue());
+  threshold->SetInValue(1);
+  threshold->SetOutValue(0);
+  threshold->Update();
+
+  vtkSmartPointer<vtkOrientedImageData> thresholdedSegmentLabelmap = vtkSmartPointer<vtkOrientedImageData>::New();
+  thresholdedSegmentLabelmap->ShallowCopy(threshold->GetOutput());
+  thresholdedSegmentLabelmap->CopyDirections(segmentLabelmap);
+
   vtkNew<vtkOrientedImageData> referenceImage;
   vtkSegmentationConverter::DeserializeImageGeometry(referenceImageGeometry, referenceImage.GetPointer(), false);
-  vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(segmentLabelmap, referenceImage.GetPointer(), this->SelectedSegmentLabelmap, /*linearInterpolation=*/false);
+  vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(
+    thresholdedSegmentLabelmap, referenceImage.GetPointer(), this->SelectedSegmentLabelmap, /*linearInterpolation=*/false);
 
   return true;
 }
@@ -991,6 +1004,8 @@ bool qMRMLSegmentEditorWidgetPrivate::setSurfaceSmoothingFactor(double smoothing
     return false;
     }
 
+  MRMLNodeModifyBlocker blocker(segmentationNode);
+
   segmentationNode->GetSegmentation()->SetConversionParameter(
     vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSmoothingFactorParameterName(),
     QVariant(smoothingFactor).toString().toLatin1().constData());
@@ -1324,6 +1339,8 @@ bool qMRMLSegmentEditorWidget::setMasterRepresentationToBinaryLabelmap()
     // Current master representation is already binary labelmap
     return true;
     }
+
+  MRMLNodeModifyBlocker blocker(d->SegmentationNode);
 
   // Editing is only possible if binary labelmap is the master representation
   // If master is not binary labelmap, then ask the user if they wants to make it master
@@ -2203,6 +2220,9 @@ void qMRMLSegmentEditorWidget::onCreateSurfaceToggled(bool on)
     return;
     }
 
+  MRMLNodeModifyBlocker segmentationNodeBlocker(segmentationNode);
+  MRMLNodeModifyBlocker displayNodeBlocker(displayNode);
+
   // If just have been checked, then create closed surface representation and show it
   if (on)
     {
@@ -2936,10 +2956,10 @@ void qMRMLSegmentEditorWidget::toggleMasterVolumeIntensityMaskEnabled()
 {
   Q_D(qMRMLSegmentEditorWidget);
   if (!d->ParameterSetNode)
-  {
+    {
     qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node";
     return;
-  }
+    }
   d->ParameterSetNode->SetMasterVolumeIntensityMask(
     !d->ParameterSetNode->GetMasterVolumeIntensityMask());
 }
@@ -2948,18 +2968,18 @@ void qMRMLSegmentEditorWidget::toggleMasterVolumeIntensityMaskEnabled()
 void qMRMLSegmentEditorWidget::undo()
 {
   Q_D(qMRMLSegmentEditorWidget);
-  if (d->SegmentationNode == nullptr)
-    {
-    return;
-    }
+  MRMLNodeModifyBlocker blocker(d->SegmentationNode);
   d->SegmentationHistory->RestorePreviousState();
+  d->SegmentationNode->InvokeCustomModifiedEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, d->SegmentationNode->GetDisplayNode());
 }
 
 //-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::redo()
 {
   Q_D(qMRMLSegmentEditorWidget);
+  MRMLNodeModifyBlocker blocker(d->SegmentationNode);
   d->SegmentationHistory->RestoreNextState();
+  d->SegmentationNode->InvokeCustomModifiedEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, d->SegmentationNode->GetDisplayNode());
 }
 
 //-----------------------------------------------------------------------------

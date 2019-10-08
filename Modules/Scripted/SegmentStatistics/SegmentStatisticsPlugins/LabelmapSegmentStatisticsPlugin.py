@@ -27,10 +27,8 @@ class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
     if not containsLabelmapRepresentation:
       return {}
 
-    segment = segmentationNode.GetSegmentation().GetSegment(segmentID)
-    segBinaryLabelName = vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName()
-    segmentLabelmap = segment.GetRepresentation(segBinaryLabelName)
-
+    segmentLabelmap = slicer.vtkOrientedImageData()
+    segmentationNode.GetBinaryLabelmapRepresentation(segmentID, segmentLabelmap)
     if (not segmentLabelmap
       or not segmentLabelmap.GetPointData()
       or not segmentLabelmap.GetPointData().GetScalars()):

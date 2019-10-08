@@ -121,9 +121,16 @@ public:
   /// Returns true if the effect is currently active (activated and has not deactivated since then)
   Q_INVOKABLE virtual bool active();
 
-  Q_INVOKABLE virtual void modifySelectedSegmentByLabelmap(vtkOrientedImageData* modifierLabelmap, ModificationMode modificationMode, const int modificationExtent[6]);
-  Q_INVOKABLE virtual void modifySelectedSegmentByLabelmap(vtkOrientedImageData* modifierLabelmap, ModificationMode modificationMode);
-  Q_INVOKABLE virtual void modifySelectedSegmentByLabelmap(vtkOrientedImageData* modifierLabelmap, ModificationMode modificationMode, QList<int> extent);
+  Q_INVOKABLE virtual void modifySelectedSegmentByLabelmap(vtkOrientedImageData* modifierLabelmap,
+    ModificationMode modificationMode, const int modificationExtent[6],bool bypassMasking = false);
+  Q_INVOKABLE virtual void modifySelectedSegmentByLabelmap(vtkOrientedImageData* modifierLabelmap,
+    ModificationMode modificationMode, bool bypassMasking = false);
+  Q_INVOKABLE virtual void modifySelectedSegmentByLabelmap(vtkOrientedImageData* modifierLabelmap,
+    ModificationMode modificationMode, QList<int> extent, bool bypassMasking = false);
+  Q_INVOKABLE virtual void modifySegmentByLabelmap(vtkMRMLSegmentationNode* segmentationNode, const char* segmentID,
+    vtkOrientedImageData* modifierLabelmap, ModificationMode modificationMode, bool bypassMasking = false);
+  Q_INVOKABLE virtual void modifySegmentByLabelmap(vtkMRMLSegmentationNode* segmentationNode, const char* segmentID,
+    vtkOrientedImageData* modifierLabelmap, ModificationMode modificationMode, const int modificationExtent[6], bool bypassMasking = false);
 
   /// Apply mask image on an input image.
   /// This method is kept here for backward compatibility only and will be removed in the future.

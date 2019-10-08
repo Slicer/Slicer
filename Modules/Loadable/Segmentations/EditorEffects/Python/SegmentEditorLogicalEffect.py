@@ -168,7 +168,7 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     inverter.SetOutputScalarType(vtk.VTK_UNSIGNED_CHAR)
     inverter.Update()
 
-    invertedModifierLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+    invertedModifierLabelmap = slicer.vtkOrientedImageData()
     invertedModifierLabelmap.ShallowCopy(inverter.GetOutput())
     imageToWorldMatrix = vtk.vtkMatrix4x4()
     modifierLabelmap.GetImageToWorldMatrix(imageToWorldMatrix)
@@ -176,6 +176,7 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     return invertedModifierLabelmap
 
   def onApply(self):
+    import vtkSegmentationCorePython as vtkSegmentationCore
 
     self.scriptedEffect.saveStateForUndo()
 
@@ -199,7 +200,8 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
         logging.error("Operation {0} requires a selected modifier segment".format(operation))
         return
       modifierSegment = segmentation.GetSegment(modifierSegmentID)
-      modifierSegmentLabelmap = modifierSegment.GetRepresentation(vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName())
+      modifierSegmentLabelmap = slicer.vtkOrientedImageData()
+      segmentationNode.GetBinaryLabelmapRepresentation(modifierSegmentID, modifierSegmentLabelmap)
 
       # Get common geometry
       commonGeometryString = segmentationNode.GetSegmentation().DetermineCommonLabelmapGeometry(
@@ -207,13 +209,13 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
       if not commonGeometryString:
         logging.info("Logical operation skipped: all segments are empty")
         return
-      commonGeometryImage = vtkSegmentationCore.vtkOrientedImageData()
+      commonGeometryImage = slicer.vtkOrientedImageData()
       vtkSegmentationCore.vtkSegmentationConverter.DeserializeImageGeometry(commonGeometryString, commonGeometryImage, False)
 
       # Make sure modifier segment has correct geometry
       # (if modifier segment has been just copied over from another segment then its geometry may be different)
       if not vtkSegmentationCore.vtkOrientedImageDataResample.DoGeometriesMatch(commonGeometryImage, modifierSegmentLabelmap):
-        modifierSegmentLabelmap_CommonGeometry = vtkSegmentationCore.vtkOrientedImageData()
+        modifierSegmentLabelmap_CommonGeometry = slicer.vtkOrientedImageData()
         vtkSegmentationCore.vtkOrientedImageDataResample.ResampleOrientedImageToReferenceOrientedImage(
           modifierSegmentLabelmap, commonGeometryImage, modifierSegmentLabelmap_CommonGeometry,
           False, # nearest neighbor interpolation,
@@ -222,27 +224,17 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
         modifierSegmentLabelmap = modifierSegmentLabelmap_CommonGeometry
 
       if operation == LOGICAL_COPY:
-        if bypassMasking:
-          slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(modifierSegmentLabelmap,
-            segmentationNode, selectedSegmentID, slicer.vtkSlicerSegmentationsModuleLogic.MODE_REPLACE, modifierSegmentLabelmap.GetExtent())
-        else:
-          self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
+          self.scriptedEffect.modifySelectedSegmentByLabelmap(
+            modifierSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet, bypassMasking)
       elif operation == LOGICAL_UNION:
-        if bypassMasking:
-          slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(modifierSegmentLabelmap,
-            segmentationNode, selectedSegmentID, slicer.vtkSlicerSegmentationsModuleLogic.MODE_MERGE_MAX, modifierSegmentLabelmap.GetExtent())
-        else:
-          self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeAdd)
+          self.scriptedEffect.modifySelectedSegmentByLabelmap(
+            modifierSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeAdd, bypassMasking)
       elif operation == LOGICAL_SUBTRACT:
-        if bypassMasking:
-          invertedModifierSegmentLabelmap = self.getInvertedBinaryLabelmap(modifierSegmentLabelmap)
-          slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(invertedModifierSegmentLabelmap, segmentationNode, selectedSegmentID,
-            slicer.vtkSlicerSegmentationsModuleLogic.MODE_MERGE_MIN, modifierSegmentLabelmap.GetExtent())
-        else:
-          self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeRemove)
+          self.scriptedEffect.modifySelectedSegmentByLabelmap(
+            modifierSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeRemove, bypassMasking)
       elif operation == LOGICAL_INTERSECT:
         selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()
-        intersectionLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+        intersectionLabelmap = slicer.vtkOrientedImageData()
         vtkSegmentationCore.vtkOrientedImageDataResample.MergeImage(
           selectedSegmentLabelmap, modifierSegmentLabelmap, intersectionLabelmap,
           vtkSegmentationCore.vtkOrientedImageDataResample.OPERATION_MINIMUM, selectedSegmentLabelmap.GetExtent())
@@ -254,29 +246,20 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
           min(selectedSegmentLabelmapExtent[3], modifierSegmentLabelmapExtent[3]),
           max(selectedSegmentLabelmapExtent[4], modifierSegmentLabelmapExtent[4]),
           min(selectedSegmentLabelmapExtent[5], modifierSegmentLabelmapExtent[5])]
-        if bypassMasking:
-          slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(intersectionLabelmap, segmentationNode, selectedSegmentID,
-            slicer.vtkSlicerSegmentationsModuleLogic.MODE_REPLACE, commonExtent)
-        else:
-          self.scriptedEffect.modifySelectedSegmentByLabelmap(intersectionLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet, commonExtent)
+        self.scriptedEffect.modifySelectedSegmentByLabelmap(
+          intersectionLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet, commonExtent)
 
     elif operation == LOGICAL_INVERT:
       selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()
       invertedSelectedSegmentLabelmap = self.getInvertedBinaryLabelmap(selectedSegmentLabelmap)
-      if bypassMasking:
-        slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(
-          invertedSelectedSegmentLabelmap, segmentationNode, selectedSegmentID, slicer.vtkSlicerSegmentationsModuleLogic.MODE_REPLACE)
-      else:
-        self.scriptedEffect.modifySelectedSegmentByLabelmap(invertedSelectedSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
+      self.scriptedEffect.modifySelectedSegmentByLabelmap(
+        invertedSelectedSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet, bypassMasking)
 
     elif operation == LOGICAL_CLEAR or operation == LOGICAL_FILL:
       selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()
       vtkSegmentationCore.vtkOrientedImageDataResample.FillImage(selectedSegmentLabelmap, 1 if operation == LOGICAL_FILL else 0, selectedSegmentLabelmap.GetExtent())
-      if bypassMasking:
-        slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(
-          selectedSegmentLabelmap, segmentationNode, selectedSegmentID, slicer.vtkSlicerSegmentationsModuleLogic.MODE_REPLACE)
-      else:
-        self.scriptedEffect.modifySelectedSegmentByLabelmap(selectedSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
+      self.scriptedEffect.modifySelectedSegmentByLabelmap(
+        selectedSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet, bypassMasking)
 
     else:
       logging.error("Unknown operation: {0}".format(operation))

@@ -58,6 +58,7 @@ public:
   Q_PROPERTY(bool colorColumnVisible READ colorColumnVisible WRITE setColorColumnVisible)
   Q_PROPERTY(bool opacityColumnVisible READ opacityColumnVisible WRITE setOpacityColumnVisible)
   Q_PROPERTY(bool statusColumnVisible READ statusColumnVisible WRITE setStatusColumnVisible)
+  Q_PROPERTY(bool layerColumnVisible READ layerColumnVisible WRITE setLayerColumnVisible)
   Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly)
   Q_PROPERTY(bool filterBarVisible READ filterBarVisible WRITE setFilterBarVisible)
   Q_PROPERTY(QString textFilter READ textFilter WRITE setTextFilter)
@@ -93,6 +94,7 @@ public:
   bool colorColumnVisible();
   bool opacityColumnVisible();
   bool statusColumnVisible();
+  bool layerColumnVisible();
   bool readOnly();
   bool filterBarVisible();
 
@@ -135,6 +137,7 @@ public slots:
   void setColorColumnVisible(bool visible);
   void setOpacityColumnVisible(bool visible);
   void setStatusColumnVisible(bool visible);
+  void setLayerColumnVisible(bool visible);
   void setReadOnly(bool aReadOnly);
   void setFilterBarVisible(bool visible);
 

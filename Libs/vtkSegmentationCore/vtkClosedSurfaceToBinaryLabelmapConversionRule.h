@@ -43,6 +43,9 @@ public:
   /// then automatic oversampling is calculated.
   static const std::string GetOversamplingFactorParameterName() { return "Oversampling factor"; };
   static const std::string GetCropToReferenceImageGeometryParameterName() { return "Crop to reference image geometry"; };
+  /// Determines if the output binary labelmaps should be reduced to as few shared labelmaps as possible after conversion.
+  /// A value of 1 means that the labelmaps will be collapsed, while a value of 0 means that they will not be collapsed.
+  static const std::string GetCollapseLabelmapsParameterName() { return "Collapse labelmaps"; };
 
 public:
   static vtkClosedSurfaceToBinaryLabelmapConversionRule* New();
@@ -60,7 +63,11 @@ public:
   vtkDataObject* ConstructRepresentationObjectByClass(std::string className) override;
 
   /// Update the target representation based on the source representation
-  bool Convert(vtkDataObject* sourceRepresentation, vtkDataObject* targetRepresentation) override;
+  bool Convert(vtkSegment* segment) override;
+
+  /// Perform postprocesing steps on the output
+  /// Collapses the segments to as few labelmaps as is possible
+  bool PostConvert(vtkSegmentation* segmentation) override;
 
   /// Get the cost of the conversion.
   unsigned int GetConversionCost(vtkDataObject* sourceRepresentation=nullptr, vtkDataObject* targetRepresentation=nullptr) override;

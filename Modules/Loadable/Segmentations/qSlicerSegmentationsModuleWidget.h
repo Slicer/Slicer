@@ -119,6 +119,9 @@ protected slots:
   void onEditSelectedSegment();
   void onRemoveSelectedSegments();
 
+  void updateLayerWidgets();
+  void collapseLabelmapLayers();
+
   void updateImportExportWidgets();
   void onImportExportApply();
   void onImportExportClearSelection();

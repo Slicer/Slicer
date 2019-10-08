@@ -30,6 +30,9 @@
 #include <vtkIntArray.h>
 #include <vtkFieldData.h>
 
+// SegmentationCore includes
+#include "vtkSegment.h"
+
 //----------------------------------------------------------------------------
 vtkSegmentationConverterRuleNewMacro(vtkClosedSurfaceToFractionalLabelmapConversionRule);
 
@@ -88,8 +91,12 @@ vtkDataObject* vtkClosedSurfaceToFractionalLabelmapConversionRule::ConstructRepr
 }
 
 //----------------------------------------------------------------------------
-bool vtkClosedSurfaceToFractionalLabelmapConversionRule::Convert(vtkDataObject* sourceRepresentation, vtkDataObject* targetRepresentation)
+bool vtkClosedSurfaceToFractionalLabelmapConversionRule::Convert(vtkSegment* segment)
 {
+  this->CreateTargetRepresentation(segment);
+
+  vtkDataObject* sourceRepresentation = segment->GetRepresentation(this->GetSourceRepresentationName());
+  vtkDataObject* targetRepresentation = segment->GetRepresentation(this->GetTargetRepresentationName());
 
   // Check validity of source and target representation objects
   vtkPolyData* closedSurfacePolyData = vtkPolyData::SafeDownCast(sourceRepresentation);

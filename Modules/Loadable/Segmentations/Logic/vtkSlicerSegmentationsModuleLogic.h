@@ -313,15 +313,17 @@ public:
   /// Master representation must be binary labelmap! Master representation changed event is disabled to prevent deletion of all
   /// other representation in all segments. The other representations in the given segment are re-converted. The extent of the
   /// segment binary labelmap is shrunk to the effective extent. Display update is triggered.
-  /// \param mergeMode Determines if the labelmap should replace the segment, or combined with a maximum or minimum operation.
+  /// \param mergeMode Determines if the labelmap should replace the segment, combined with a maximum or minimum operation, or set under the mask.
   /// \param extent If extent is specified then only that extent of the labelmap is used.
   enum
     {
     MODE_REPLACE = 0,
     MODE_MERGE_MAX,
-    MODE_MERGE_MIN
+    MODE_MERGE_MIN,
+    MODE_MERGE_MASK
     };
-  static bool SetBinaryLabelmapToSegment(vtkOrientedImageData* labelmap, vtkMRMLSegmentationNode* segmentationNode, std::string segmentID, int mergeMode=MODE_REPLACE, const int extent[6]=nullptr);
+  static bool SetBinaryLabelmapToSegment(vtkOrientedImageData* labelmap, vtkMRMLSegmentationNode* segmentationNode, std::string segmentID,
+    int mergeMode=MODE_REPLACE, const int extent[6]=nullptr, bool minimumOfAllSegments=false);
 
   /// Assign terminology to segments in a segmentation node based on the labels of a labelmap node. Match is made based on the
   /// 3dSlicerLabel terminology type attribute. If the terminology context does not contain that attribute, match cannot be made.
@@ -360,6 +362,15 @@ public:
 
   static bool ClearSegment(vtkMRMLSegmentationNode* segmentationNode, std::string segmentID);
   static bool ClearSegment(vtkSegmentation* segmentation, std::string segmentID);
+
+  /// Get the list of segment IDs in the same shared labelmap that are contained within the mask
+  /// \param segmentationNode Node containing the segmentation
+  /// \param sharedSegmentID Segment ID of the segment that contains the shared labelmap to be checked
+  /// \param mask Mask labelmap
+  /// \param segmentIDs Output list of segment IDs under the mask
+  /// \param includeInputSharedSegmentID If false, sharedSegmentID will not be added to the list of output segment IDs even if it is within the mask
+  static bool GetSharedSegmentIDsInMask(vtkMRMLSegmentationNode* segmentationNode, std::string sharedSegmentID, vtkOrientedImageData* mask,
+    std::vector<std::string>& segmentIDs, int maskThreshold = 0.0, bool includeInputSharedSegmentID = false);
 
 public:
   /// Set Terminologies module logic

@@ -51,10 +51,8 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
     cubicMMPerVoxel = reduce(lambda x,y: x*y, referenceGeometry_Reference.GetSpacing())
     ccPerCubicMM = 0.001
 
-    segment = segmentationNode.GetSegmentation().GetSegment(segmentID)
-    segBinaryLabelName = vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName()
-    segmentLabelmap = segment.GetRepresentation(segBinaryLabelName)
-
+    segmentLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+    segmentationNode.GetBinaryLabelmapRepresentation(segmentID, segmentLabelmap)
     if (not segmentLabelmap
       or not segmentLabelmap.GetPointData()
       or not segmentLabelmap.GetPointData().GetScalars()):

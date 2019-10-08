@@ -2,6 +2,7 @@ set(KIT vtkSegmentationCore)
 
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkSegmentationTest1.cxx
+  vtkSegmentationTest2.cxx
   vtkSegmentationConverterTest1.cxx
   vtkClosedSurfaceToFractionalLabelMapConversionTest1.cxx
   )
@@ -19,5 +20,6 @@ macro(TEST_FILE TEST_NAME FILENAME)
 endmacro()
 
 simple_test( vtkSegmentationTest1 )
+simple_test( vtkSegmentationTest2 )
 simple_test( vtkSegmentationConverterTest1 )
 simple_test( vtkClosedSurfaceToFractionalLabelMapConversionTest1 )

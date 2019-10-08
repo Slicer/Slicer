@@ -64,6 +64,7 @@ qMRMLSegmentsModelPrivate::qMRMLSegmentsModelPrivate(qMRMLSegmentsModel& object)
   , ColorColumn(-1)
   , OpacityColumn(-1)
   , StatusColumn(-1)
+  , LayerColumn(-1)
   , SegmentationNode(nullptr)
 {
   this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
@@ -101,7 +102,8 @@ void qMRMLSegmentsModelPrivate::init()
   q->setColorColumn(1);
   q->setOpacityColumn(2);
   q->setNameColumn(3);
-  q->setStatusColumn(4);
+  q->setLayerColumn(4);
+  q->setStatusColumn(5);
 
   QStringList columnLabels;
   for (int i = 0; i < q->columnCount(); ++i)
@@ -121,6 +123,10 @@ void qMRMLSegmentsModelPrivate::init()
     else if (i == q->nameColumn())
       {
       columnLabels << "Name";
+      }
+    else if (i == q->layerColumn())
+      {
+      columnLabels << "Layer";
       }
     else if (i == q->statusColumn())
       {
@@ -389,7 +395,7 @@ Qt::ItemFlags qMRMLSegmentsModel::segmentFlags(QString segmentID, int column)con
     return flags;
     }
 
-  if (column != this->visibilityColumn() && column != this->statusColumn())
+  if (column != this->visibilityColumn() && column != this->statusColumn() && column != this->layerColumn())
     {
     flags.setFlag(Qt::ItemIsEditable);
     }
@@ -416,10 +422,11 @@ void qMRMLSegmentsModel::updateItemFromSegment(QStandardItem* item, QString segm
   //// Set ID
   bool blocked = this->blockSignals(true);
   item->setData(segmentID, qMRMLSegmentsModel::SegmentIDRole);
-  this->blockSignals(blocked);
 
   //// Update item data for the current column
   this->updateItemDataFromSegment(item, segmentID, column);
+
+  this->blockSignals(blocked);
 
   d->UpdatingItemFromSegment = wasUpdating;
 }
@@ -483,6 +490,14 @@ void qMRMLSegmentsModel::updateItemDataFromSegment(QStandardItem* item, QString 
       item->setToolTip(statusTooltip);
       item->setIcon(statusIcon);
       }
+    }
+  else if (column == this->layerColumn())
+    {
+    int layer = segmentation->GetLayerIndex(segmentID.toStdString(), vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
+    std::stringstream ss;
+    ss << layer;
+    item->setText(QString::fromStdString(ss.str()));
+    item->setTextAlignment(Qt::AlignCenter);
     }
   else
     {
@@ -551,7 +566,7 @@ void qMRMLSegmentsModel::updateSegmentFromItem(QString segmentID, QStandardItem*
 {
   Q_D(qMRMLSegmentsModel);
   //MRMLNodeModify segmentationNodeModify(d->SegmentationNode);//TODO: Add feature to item if there are performance issues
-  // Calling StartModfiy/EndModify will cause the calldata to be erased, cauding the whole table to be updated
+  // Calling StartModfiy/EndModify will cause the calldata to be erased, causing the whole table to be updated
   this->updateSegmentFromItemData(segmentID, item);
 }
 
@@ -685,12 +700,20 @@ void qMRMLSegmentsModel::updateSegmentFromItemData(QString segmentID, QStandardI
 void qMRMLSegmentsModel::updateItemsFromColumnIndex(int column)
 {
   Q_D(qMRMLSegmentsModel);
+  if (column < 0)
+    {
+    return;
+    }
+
   std::vector<std::string> segmentIDs;
   d->SegmentationNode->GetSegmentation()->GetSegmentIDs(segmentIDs);
   for (std::string segmentID : segmentIDs)
     {
     QStandardItem* item = this->itemFromSegmentID(segmentID.c_str(), column);
-    this->updateItemFromSegment(item, segmentID.c_str(), column);
+    if (item)
+      {
+      this->updateItemFromSegment(item, segmentID.c_str(), column);
+      }
     }
 }
 
@@ -780,6 +803,7 @@ void qMRMLSegmentsModel::onSegmentAdded(QString segmentID)
       }
     d->insertSegment(currentSegmentID.c_str());
     }
+  this->updateItemsFromColumnIndex(this->layerColumn());
 }
 
 //------------------------------------------------------------------------------
@@ -805,18 +829,21 @@ void qMRMLSegmentsModel::onSegmentRemoved(QString removedSegmentID)
       this->removeRow(index.row());
       }
     }
+  this->updateItemsFromColumnIndex(this->layerColumn());
 }
 
 //------------------------------------------------------------------------------
 void qMRMLSegmentsModel::onSegmentModified(QString segmentID)
 {
   this->updateItemsFromSegmentID(segmentID);
+  this->updateItemsFromColumnIndex(this->layerColumn());
 }
 
 //------------------------------------------------------------------------------
 void qMRMLSegmentsModel::onSegmentOrderModified()
 {
   this->reorderItems();
+  this->updateItemsFromColumnIndex(this->layerColumn());
 }
 
 //------------------------------------------------------------------------------
@@ -926,7 +953,6 @@ void qMRMLSegmentsModel::setOpacityColumn(int column)
   this->updateColumnCount();
 }
 
-
 //------------------------------------------------------------------------------
 int qMRMLSegmentsModel::statusColumn()const
 {
@@ -939,6 +965,21 @@ void qMRMLSegmentsModel::setStatusColumn(int column)
 {
   Q_D(qMRMLSegmentsModel);
   d->StatusColumn = column;
+  this->updateColumnCount();
+}
+
+//------------------------------------------------------------------------------
+int qMRMLSegmentsModel::layerColumn()const
+{
+  Q_D(const qMRMLSegmentsModel);
+  return d->LayerColumn;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSegmentsModel::setLayerColumn(int column)
+{
+  Q_D(qMRMLSegmentsModel);
+  d->LayerColumn = column;
   this->updateColumnCount();
 }
 
