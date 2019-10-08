@@ -347,16 +347,28 @@ bool vtkSlicerSegmentationGeometryLogic::IsSourceSegmentationWithBinaryLabelmapM
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationGeometryLogic::InputSegmentationCanBeResampled()
 {
-  if ( this->InputSegmentationNode != nullptr
-    &&  this->InputSegmentationNode->GetSegmentation()->GetNumberOfSegments() > 0
-    && this->InputSegmentationNode->GetSegmentation()->ContainsRepresentation(
-        vtkSegmentationConverter::GetBinaryLabelmapRepresentationName())
-    && this->InputSegmentationNode->GetSegmentation()->GetMasterRepresentationName()
-        == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName() )
+  if (!this->InputSegmentationNode || !this->InputSegmentationNode->GetSegmentation())
     {
-    return true;
+    return false;
     }
-  return false;
+  if (this->InputSegmentationNode->GetSegmentation()->GetNumberOfSegments() == 0)
+    {
+    return false;
+    }
+  if (!this->InputSegmentationNode->GetSegmentation()->ContainsRepresentation(
+      vtkSegmentationConverter::GetBinaryLabelmapRepresentationName())
+    || this->InputSegmentationNode->GetSegmentation()->GetMasterRepresentationName()
+      != vtkSegmentationConverter::GetBinaryLabelmapRepresentationName())
+    {
+    return false;
+    }
+  std::string geometryString = this->InputSegmentationNode->GetSegmentation()->DetermineCommonLabelmapGeometry();
+  if (geometryString.empty())
+    {
+    // all segments are empty
+    return false;
+    }
+  return true;
 }
 
 //-----------------------------------------------------------------------------

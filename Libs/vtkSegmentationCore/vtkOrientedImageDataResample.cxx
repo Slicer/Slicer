@@ -271,6 +271,36 @@ bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage
   vtkNew<vtkMatrix4x4> referenceImageToWorldMatrix;
   referenceImage->GetImageToWorldMatrix(referenceImageToWorldMatrix.GetPointer());
 
+  int* inputExtent = inputImage->GetExtent();
+  if (inputExtent[0] > inputExtent[1] || inputExtent[2] > inputExtent[3] || inputExtent[4] > inputExtent[5])
+    {
+    // empty input image, fill with background value
+    outputImage->SetExtent(referenceImage->GetExtent());
+
+    // if data is not allocated then GetScalarType() would always return VTK_DOUBLE,
+    // which is not a good default image type
+    if (backgroundValue >= 0 && backgroundValue <= 255)
+      {
+      outputImage->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
+      }
+    else if (backgroundValue >= -32768 && backgroundValue <= 32767)
+      {
+      outputImage->AllocateScalars(VTK_SHORT, 1);
+      }
+    else if (backgroundValue >= 0 && backgroundValue <= 65535)
+      {
+      outputImage->AllocateScalars(VTK_UNSIGNED_SHORT, 1);
+      }
+    else
+      {
+      outputImage->AllocateScalars(VTK_DOUBLE, 1);
+      }
+
+    outputImage->GetPointData()->GetScalars()->Fill(backgroundValue);
+    outputImage->SetImageToWorldMatrix(referenceImageToWorldMatrix.GetPointer());
+    return true;
+    }
+
   // Simply copy input into output if the reference has the same geometry as the input, so no resampling is necessary
   bool isInputImageTransformIdentity = false;
   if (inputImageTransform == nullptr)
@@ -300,7 +330,6 @@ bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage
     else
       {
       // Only extent is different
-      int* inputExtent = inputImage->GetExtent();
       int* referenceExtent = referenceImage->GetExtent();
       int unionExtent[6] = { 0, -1, 0, -1, 0, -1 };
       if (padImage)
@@ -379,12 +408,12 @@ bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage
   referenceImageToInputImageTransform->Update();
 
   // Create clone for input image that has an identity geometry
-  //TODO: Creating a new vtkOrientedImageReslice class would be a better solution on the long run
+  // TODO: it would be better to use direction matrix that is now available in vtkImageData in latest VTK
   vtkSmartPointer<vtkMatrix4x4> identityMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   identityMatrix->Identity();
   vtkSmartPointer<vtkOrientedImageData> identityInputImage = vtkSmartPointer<vtkOrientedImageData>::New();
   identityInputImage->ShallowCopy(inputImage);
-  identityInputImage->SetGeometryFromImageToWorldMatrix(identityMatrix);
+  identityInputImage->SetImageToWorldMatrix(identityMatrix);
 
   // Perform resampling
   vtkSmartPointer<vtkImageReslice> resliceFilter = vtkSmartPointer<vtkImageReslice>::New();
@@ -409,7 +438,7 @@ bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage
 
   // Set output
   outputImage->ShallowCopy(resliceFilter->GetOutput());
-  outputImage->SetGeometryFromImageToWorldMatrix(referenceImageToWorldMatrix.GetPointer());
+  outputImage->SetImageToWorldMatrix(referenceImageToWorldMatrix.GetPointer());
 
   return true;
 }
@@ -689,8 +718,15 @@ bool vtkOrientedImageDataResample::DoGeometriesMatchIgnoreOrigin(vtkOrientedImag
 //----------------------------------------------------------------------------
 void vtkOrientedImageDataResample::TransformExtent(const int inputExtent[6], vtkAbstractTransform* inputToOutputTransform, int outputExtent[6])
 {
-  if (!inputToOutputTransform)
+  if (!inputToOutputTransform
+    || inputExtent[0] > inputExtent[1] || inputExtent[2] > inputExtent[3] || inputExtent[4] > inputExtent[5])
     {
+    outputExtent[0] = 0;
+    outputExtent[1] = -1;
+    outputExtent[2] = 0;
+    outputExtent[3] = -1;
+    outputExtent[4] = 0;
+    outputExtent[5] = -1;
     return;
     }
 
