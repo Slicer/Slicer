@@ -1567,10 +1567,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
         // elements in the texture cause the actor to be treated as
         // translucent, i.e. rendered without writing to the depth buffer.
         // See http://www.na-mic.org/Bug/view.php?id=4253.
-        if (actorProperties->GetOpacity() == 1.0)
-          {
-          actor->ForceOpaqueOn();
-          }
+        actor->SetForceOpaque(actorProperties->GetOpacity() >= 1.0);
         }
       else
         {
