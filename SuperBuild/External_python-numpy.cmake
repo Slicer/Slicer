@@ -6,7 +6,9 @@ set(${proj}_DEPENDENCIES python python-setuptools python-pip)
 set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
 file(WRITE ${requirements_file} [===[
 nose==1.3.7 --hash=sha256:9ff7c6cc443f8c51994b34a667bbcf45afd6d945be7477b52e97516fd17c53ac  # needed for NumPy unit tests
-numpy==1.16.2 --hash=sha256:23cc40313036cffd5d1873ef3ce2e949bdee0646c5d6f375bf7ee4f368db2511 # auto pick platform
+numpy==1.16.2 --hash=sha256:d20c0360940f30003a23c0adae2fe50a0a04f3e48dc05c298493b51fd6280197 # numpy-1.16.2-cp36-cp36m-win_amd64.whl \
+              --hash=sha256:bd2834d496ba9b1bdda3a6cf3de4dc0d4a0e7be306335940402ec95132ad063d # numpy-1.16.2-cp36-cp36m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl \
+              --hash=sha256:23cc40313036cffd5d1873ef3ce2e949bdee0646c5d6f375bf7ee4f368db2511 # numpy-1.16.2-cp36-cp36m-manylinux1_x86_64.whl
 ]===])
 
 if(NOT DEFINED Slicer_USE_SYSTEM_${proj})
