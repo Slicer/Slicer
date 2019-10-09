@@ -118,28 +118,25 @@ if(Slicer_BUILD_DICOM_SUPPORT)
 endif()
 
 if(Slicer_BUILD_DICOM_SUPPORT AND Slicer_USE_PYTHONQT_WITH_OPENSSL)
-  list(APPEND Slicer_DEPENDENCIES python-pydicom1)
-  list(APPEND Slicer_DEPENDENCIES python-pydicom)
-  list(APPEND Slicer_DEPENDENCIES python-dicomweb-client)
+  list(APPEND Slicer_DEPENDENCIES python-dicom-requirements)
 endif()
 
 if(Slicer_USE_PYTHONQT)
   list(APPEND Slicer_DEPENDENCIES
-    python-packaging # This package provides the "packaging.version.parse()" function
+    python-pythonqt-requirements  # This provides the "packaging.version.parse()" function
     python-pip
     )
 endif()
 
 if(Slicer_USE_PYTHONQT AND Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND Slicer_DEPENDENCIES
-    python-chardet
-    python-couchdb
-    python-GitPython
-    python-six
+    python-extension-manager-requirements
     )
   if(Slicer_USE_PYTHONQT_WITH_OPENSSL OR Slicer_USE_SYSTEM_python)
     # python-PyGithub requires SSL support in Python
-    list(APPEND Slicer_DEPENDENCIES python-PyGithub)
+    list(APPEND Slicer_DEPENDENCIES
+      python-extension-manager-ssl-requirements
+      )
   else()
     message(STATUS "--------------------------------------------------")
     message(STATUS "Python was built without SSL support; "
@@ -159,7 +156,7 @@ if(Slicer_USE_PYTHONQT)
 endif()
 
 if(Slicer_USE_NUMPY)
-  list(APPEND Slicer_DEPENDENCIES NUMPY)
+  list(APPEND Slicer_DEPENDENCIES python-numpy)
 endif()
 
 if(Slicer_USE_PYTHONQT_WITH_TCL AND UNIX)
