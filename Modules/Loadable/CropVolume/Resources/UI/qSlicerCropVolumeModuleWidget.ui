@@ -14,7 +14,16 @@
    <string>Crop Volume</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -38,7 +47,16 @@
       <property name="verticalSpacing">
        <number>6</number>
       </property>
-      <property name="margin">
+      <property name="leftMargin">
+       <number>4</number>
+      </property>
+      <property name="topMargin">
+       <number>4</number>
+      </property>
+      <property name="rightMargin">
+       <number>4</number>
+      </property>
+      <property name="bottomMargin">
        <number>4</number>
       </property>
       <item row="0" column="0">
@@ -99,7 +117,16 @@
       <property name="verticalSpacing">
        <number>6</number>
       </property>
-      <property name="margin">
+      <property name="leftMargin">
+       <number>4</number>
+      </property>
+      <property name="topMargin">
+       <number>4</number>
+      </property>
+      <property name="rightMargin">
+       <number>4</number>
+      </property>
+      <property name="bottomMargin">
        <number>4</number>
       </property>
       <item row="0" column="0">
@@ -264,7 +291,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Interpolation</string>
+      <string>Advanced</string>
      </property>
      <property name="collapsed">
       <bool>false</bool>
@@ -279,17 +306,26 @@
       <property name="verticalSpacing">
        <number>6</number>
       </property>
-      <property name="margin">
+      <property name="leftMargin">
        <number>4</number>
       </property>
-      <item row="0" column="0">
+      <property name="topMargin">
+       <number>4</number>
+      </property>
+      <property name="rightMargin">
+       <number>4</number>
+      </property>
+      <property name="bottomMargin">
+       <number>4</number>
+      </property>
+      <item row="1" column="0">
        <widget class="QLabel" name="IsotropicOutputVoxelLabel_2">
         <property name="text">
          <string>Interpolated cropping:</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="1" column="1">
        <widget class="QCheckBox" name="InterpolationEnabledCheckBox">
         <property name="toolTip">
          <string>Interpolate and pad the input volume to make the output image exactly the size of the ROI, with the requested spacing.</string>
@@ -305,7 +341,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="0">
        <widget class="QLabel" name="InputSpacingScalingConstantLabel">
         <property name="toolTip">
          <string>The voxel spacing in the output volume will be scaled by this value. Values larger than 1.0 will make the cropped volume lower resolution than the input volume. Values smaller than 1.0 will make the cropped volume higher resolution than the input volume.</string>
@@ -315,7 +351,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="2" column="1">
        <widget class="ctkDoubleSpinBox" name="SpacingScalingSpinBox">
         <property name="toolTip">
          <string>The voxel spacing in the output volume will be scaled by this value. Values larger than 1.0 will make the cropped volume lower resolution than the input volume. Values smaller than 1.0 will make the cropped volume higher resolution than the input volume.</string>
@@ -331,14 +367,14 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="3" column="0">
        <widget class="QLabel" name="IsotropicOutputVoxelLabel">
         <property name="text">
          <string>Isotropic spacing:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="3" column="1">
        <widget class="QCheckBox" name="IsotropicCheckbox">
         <property name="text">
          <string/>
@@ -351,14 +387,14 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
+      <item row="4" column="0">
        <widget class="QLabel" name="InterpolatorLabel">
         <property name="text">
          <string>Interpolator:</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item row="4" column="1">
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="1" column="1">
          <widget class="QRadioButton" name="BSRadioButton">
@@ -402,14 +438,14 @@
         </item>
        </layout>
       </item>
-      <item row="4" column="0">
+      <item row="0" column="0">
        <widget class="QLabel" name="FillValueLabel">
         <property name="text">
          <string>Fill value:</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
+      <item row="0" column="1">
        <widget class="ctkDoubleSpinBox" name="FillValueSpinBox">
         <property name="toolTip">
          <string>Voxel values outside the input volume will be filled with this value</string>
@@ -452,7 +488,16 @@
       <number>6</number>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>4</number>
+      </property>
+      <property name="topMargin">
+       <number>4</number>
+      </property>
+      <property name="rightMargin">
+       <number>4</number>
+      </property>
+      <property name="bottomMargin">
        <number>4</number>
       </property>
       <item>
@@ -1012,22 +1057,6 @@
     <hint type="destinationlabel">
      <x>173</x>
      <y>531</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>InterpolationEnabledCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>FillValueSpinBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>405</x>
-     <y>392</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>405</x>
-     <y>577</y>
     </hint>
    </hints>
   </connection>

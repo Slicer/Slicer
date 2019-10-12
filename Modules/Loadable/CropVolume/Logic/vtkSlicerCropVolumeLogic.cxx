@@ -41,8 +41,8 @@
 // VTK includes
 #include <vtkBoundingBox.h>
 #include <vtkGeneralTransform.h>
+#include <vtkImageConstantPad.h>
 #include <vtkImageData.h>
-#include <vtkImageClip.h>
 #include <vtkNew.h>
 #include <vtkMatrix4x4.h>
 #include <vtkMatrix3x3.h>
@@ -201,7 +201,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   int errorCode = 0;
   if (pnode->GetVoxelBased()) // voxel based cropping selected
     {
-    errorCode = this->CropVoxelBased(inputROI, inputVolume, outputVolume);
+    errorCode = this->CropVoxelBased(inputROI, inputVolume, outputVolume, false, pnode->GetFillValue());
     }
   else  // interpolated cropping selected
     {
@@ -213,7 +213,8 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
 }
 
 //----------------------------------------------------------------------------
-bool vtkSlicerCropVolumeLogic::GetVoxelBasedCropOutputExtent(vtkMRMLAnnotationROINode* roi, vtkMRMLVolumeNode* inputVolume, int outputExtent[6])
+bool vtkSlicerCropVolumeLogic::GetVoxelBasedCropOutputExtent(vtkMRMLAnnotationROINode* roi, vtkMRMLVolumeNode* inputVolume,
+  int outputExtent[6], bool limitToInputExtent/*=true*/)
 {
   outputExtent[0] = outputExtent[2] = outputExtent[4] = 0;
   outputExtent[1] = outputExtent[3] = outputExtent[5] = -1;
@@ -286,20 +287,28 @@ bool vtkSlicerCropVolumeLogic::GetVoxelBasedCropOutputExtent(vtkMRMLAnnotationRO
       }
     }
 
-  // Limit output extent to input extent
-  int* inputExtent = inputVolume->GetImageData()->GetExtent();
   double tolerance = 0.001;
   for (int axisIndex = 0; axisIndex < 3; ++axisIndex)
     {
-    outputExtent[axisIndex * 2] = std::max(inputExtent[axisIndex * 2], int(ceil(outputExtentDouble[axisIndex * 2]+0.5-tolerance)));
-    outputExtent[axisIndex * 2 + 1] = std::min(inputExtent[axisIndex * 2 + 1], int(floor(outputExtentDouble[axisIndex * 2 + 1]-0.5+tolerance)));
+    outputExtent[axisIndex * 2] = int(ceil(outputExtentDouble[axisIndex * 2] + 0.5 - tolerance));
+    outputExtent[axisIndex * 2 + 1] = int(floor(outputExtentDouble[axisIndex * 2 + 1] - 0.5 + tolerance));
+    }
+  if (limitToInputExtent)
+    {
+    int* inputExtent = inputVolume->GetImageData()->GetExtent();
+    for (int axisIndex = 0; axisIndex < 3; ++axisIndex)
+      {
+      outputExtent[axisIndex * 2] = std::max(inputExtent[axisIndex * 2], outputExtent[axisIndex * 2]);
+      outputExtent[axisIndex * 2 + 1] = std::min(inputExtent[axisIndex * 2 + 1], outputExtent[axisIndex * 2 + 1]);
+      }
     }
 
   return true;
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerCropVolumeLogic::CropVoxelBased(vtkMRMLAnnotationROINode* roi, vtkMRMLVolumeNode* inputVolume, vtkMRMLVolumeNode* outputVolume)
+int vtkSlicerCropVolumeLogic::CropVoxelBased(vtkMRMLAnnotationROINode* roi,
+  vtkMRMLVolumeNode* inputVolume, vtkMRMLVolumeNode* outputVolume, bool limitToInputExtent/*=true*/, double fillValue/*=0.0*/)
 {
   if(!roi || !inputVolume || !outputVolume)
     {
@@ -313,7 +322,7 @@ int vtkSlicerCropVolumeLogic::CropVoxelBased(vtkMRMLAnnotationROINode* roi, vtkM
     }
 
   int outputExtent[6] = { 0, -1, 0, -1, 0, -1 };
-  if (!vtkSlicerCropVolumeLogic::GetVoxelBasedCropOutputExtent(roi, inputVolume, outputExtent))
+  if (!vtkSlicerCropVolumeLogic::GetVoxelBasedCropOutputExtent(roi, inputVolume, outputExtent, limitToInputExtent))
     {
     vtkGenericWarningMacro("vtkSlicerCropVolumeLogic::CropVoxelBased: failed to get output geometry")
     return -1;
@@ -322,19 +331,18 @@ int vtkSlicerCropVolumeLogic::CropVoxelBased(vtkMRMLAnnotationROINode* roi, vtkM
   vtkNew<vtkMatrix4x4> inputIJKToRAS;
   inputVolume->GetIJKToRASMatrix(inputIJKToRAS.GetPointer());
 
-  vtkNew<vtkImageClip> imageClip;
+  vtkNew<vtkImageConstantPad> imageClip;
   imageClip->SetInputData(inputVolume->GetImageData());
   imageClip->SetOutputWholeExtent(outputExtent);
-  imageClip->SetClipData(true);
+  imageClip->SetConstant(fillValue);
   imageClip->Update();
 
-  //int wasModified = outputVolume->StartModify();
+  int wasModified = outputVolume->StartModify();
   outputVolume->SetAndObserveImageData(imageClip->GetOutput());
   outputVolume->SetIJKToRASMatrix(inputIJKToRAS.GetPointer());
   outputVolume->ShiftImageDataExtentToZeroStart();
-  //outputVolume->EndModify(wasModified);
-
   outputVolume->SetAndObserveTransformNodeID(inputVolume->GetTransformNodeID());
+  outputVolume->EndModify(wasModified);
 
   return 0;
 }

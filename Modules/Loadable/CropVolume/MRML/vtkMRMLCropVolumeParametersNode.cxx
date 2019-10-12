@@ -71,67 +71,33 @@ vtkMRMLCropVolumeParametersNode::~vtkMRMLCropVolumeParametersNode()
 //----------------------------------------------------------------------------
 void vtkMRMLCropVolumeParametersNode::ReadXMLAttributes(const char** atts)
 {
+  // Read all MRML node attributes from two arrays of names and values
+  int disabledModify = this->StartModify();
+
   Superclass::ReadXMLAttributes(atts);
 
-  const char* attName;
-  const char* attValue;
-  while (*atts != nullptr)
-  {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName,"VoxelBased"))
-      {
-      if (!strcmp(attValue, "true"))
-        {
-        this->VoxelBased = true;
-        }
-      else
-        {
-        this->VoxelBased = false;
-        }
-      }
-    else if (!strcmp(attName,"interpolationMode"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->InterpolationMode;
-      }
-    else if (!strcmp(attName, "isotropicResampling"))
-      {
-      if (!strcmp(attValue, "true"))
-        {
-        this->IsotropicResampling = true;
-        }
-      else
-        {
-        this->IsotropicResampling = false;
-        }
-      }
-    else if (!strcmp(attName, "spaceScalingConst"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->SpacingScalingConst;
-      }
-    else if (!strcmp(attName, "fillValue"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->FillValue;
-      }
-  }
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLBooleanMacro(voxelBased, VoxelBased);
+  vtkMRMLReadXMLIntMacro(interpolationMode, InterpolationMode);
+  vtkMRMLReadXMLBooleanMacro(isotropicResampling, IsotropicResampling);
+  vtkMRMLReadXMLFloatMacro(spaceScalingConst, SpacingScalingConst);
+  vtkMRMLReadXMLFloatMacro(fillValue, FillValue);
+  vtkMRMLReadXMLEndMacro();
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLCropVolumeParametersNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-
-  of << " voxelBased=\"" << (this->VoxelBased ? "true" : "false") << "\"";
-  of << " interpolationMode=\"" << this->InterpolationMode << "\"";
-  of << " isotropicResampling=\"" << (this->IsotropicResampling ? "true" : "false") << "\"";
-  of << " spaceScalingConst=\"" << this->SpacingScalingConst << "\"";
-  of << " fillValue=\"" << this->FillValue << "\"";
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLBooleanMacro(voxelBased, VoxelBased);
+  vtkMRMLWriteXMLIntMacro(interpolationMode, InterpolationMode);
+  vtkMRMLWriteXMLBooleanMacro(isotropicResampling, IsotropicResampling);
+  vtkMRMLWriteXMLFloatMacro(spaceScalingConst, SpacingScalingConst);
+  vtkMRMLWriteXMLFloatMacro(fillValue, FillValue);
+  vtkMRMLWriteXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -139,30 +105,29 @@ void vtkMRMLCropVolumeParametersNode::WriteXML(ostream& of, int nIndent)
 // Does NOT copy: ID, FilePrefix, Name, SliceID
 void vtkMRMLCropVolumeParametersNode::Copy(vtkMRMLNode *anode)
 {
-  int disabledModify = this->StartModify();
-  
+  int wasModified = this->StartModify();
   Superclass::Copy(anode);
-  vtkMRMLCropVolumeParametersNode *node = vtkMRMLCropVolumeParametersNode::SafeDownCast(anode);
-
-  this->SetVoxelBased(node->GetVoxelBased());
-  this->SetInterpolationMode(node->GetInterpolationMode());
-  this->SetIsotropicResampling(node->GetIsotropicResampling());
-  this->SetSpacingScalingConst(node->GetSpacingScalingConst());
-  this->SetFillValue(node->GetFillValue());
-
-  this->EndModify(disabledModify);
+  vtkMRMLCopyBeginMacro(anode);
+  vtkMRMLCopyBooleanMacro(VoxelBased);
+  vtkMRMLCopyIntMacro(InterpolationMode);
+  vtkMRMLCopyBooleanMacro(IsotropicResampling);
+  vtkMRMLCopyFloatMacro(SpacingScalingConst);
+  vtkMRMLCopyFloatMacro(FillValue);
+  vtkMRMLCopyEndMacro();
+  this->EndModify(wasModified);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLCropVolumeParametersNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
-
-  os << "VoxelBased: " << (this->VoxelBased ? "true" : "false") << "\n";
-  os << "InterpolationMode: " << this->InterpolationMode << "\n";
-  os << "IsotropicResampling: " << (this->IsotropicResampling ? "true" : "false") << "\n";
-  os << "SpacingScalingConst: " << this->SpacingScalingConst << "\n";
-  os << "FillValue: " << this->FillValue << "\n";
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintBooleanMacro(VoxelBased);
+  vtkMRMLPrintIntMacro(InterpolationMode);
+  vtkMRMLPrintBooleanMacro(IsotropicResampling);
+  vtkMRMLPrintFloatMacro(SpacingScalingConst);
+  vtkMRMLPrintFloatMacro(FillValue);
+  vtkMRMLPrintEndMacro();
 }
 
 //----------------------------------------------------------------------------
