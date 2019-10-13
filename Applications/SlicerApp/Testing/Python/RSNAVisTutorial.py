@@ -193,23 +193,18 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       self.delayDisplay("Switching to temp database directory")
       originalDatabaseDirectory = DICOMUtils.openTemporaryDatabase('tempDICOMDatabase')
 
-      self.delayDisplay('Importing DICOM')
-      mainWindow = slicer.util.mainWindow()
-      mainWindow.moduleSelector().selectModule('DICOM')
-
-      indexer = ctk.ctkDICOMIndexer()
-      indexer.addDirectory(slicer.dicomDatabase, dicomFilesDirectory, None)
-      indexer.waitForImportFinished()
-
-      dicomWidget = slicer.modules.DICOMWidget
-      dicomWidget.detailsPopup.open()
+      slicer.util.selectModule('DICOM')
+      browserWidget = slicer.modules.DICOMWidget.browserWidget
+      dicomBrowser = browserWidget.dicomBrowser
+      dicomBrowser.importDirectory(dicomFilesDirectory, dicomBrowser.ImportDirectoryAddLink)
+      dicomBrowser.waitForImportFinished()
 
       # load the data by series UID
-      dicomWidget.detailsPopup.offerLoadables('1.3.12.2.1107.5.1.4.50025.30000005060811542834300000776','Series')
-      dicomWidget.detailsPopup.examineForLoading()
+      dicomBrowser.dicomTableManager().patientsTable().selectFirst()
+      browserWidget.examineForLoading()
 
       self.delayDisplay('Loading Selection')
-      dicomWidget.detailsPopup.loadCheckedLoadables()
+      browserWidget.loadCheckedLoadables()
 
       logic.takeScreenshot('LoadingADICOMVolume-Loaded','Loaded DICOM Volume',-1)
 
@@ -221,7 +216,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       logic.takeScreenshot('LoadingADICOMVolume-WL','Changed level and window',-1)
 
       redWidget.sliceController().setSliceLink(True)
-      redWidget.sliceController().setSliceVisible(True);
+      redWidget.sliceController().setSliceVisible(True)
       logic.takeScreenshot('LoadingADICOMVolume-LinkView','Linked and visible',-1)
 
       slicer.util.clickAndDrag(redWidget,button='Right',start=(10,10),end=(10,40))
@@ -247,7 +242,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
 
       presetsScene = slicer.modules.volumerendering.logic().GetPresetsScene()
       ctCardiac3 = presetsScene.GetFirstNodeByName('CT-Cardiac3')
-      volumeRenderingWidgetRep.applyPreset(ctCardiac3)
+      volumeRenderingWidgetRep.mrmlVolumePropertyNode().Copy(ctCardiac3)
       logic.takeScreenshot('VolumeRendering-SelectPreset','Select the Preset CT-Cardiac-3')
 
       self.delayDisplay('Skipping: Select VTK CPU Ray Casting')

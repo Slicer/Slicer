@@ -563,21 +563,15 @@ void qSlicerDICOMExportDialog::exportSeries()
   // Import exported files to DICOM database if requested
   if (d->ImportExportedDatasetCheckBox->isChecked())
     {
-    ctkDICOMIndexer* indexer = new ctkDICOMIndexer();
     ctkDICOMDatabase* dicomDatabase = qSlicerApplication::application()->dicomDatabase();
     if (!dicomDatabase)
       {
       d->ErrorLabel->setText("No DICOM database is set, so the data (that was successfully exported) cannot be imported back");
       return;
       }
-    QString destinationFolderPath("");
-    if (isDicomDatabaseFolder)
-      {
-      // If we export to the DICOM database folder, then we need a non-empty destination path
-      destinationFolderPath = dicomDatabase->databaseDirectory();
-      }
-    indexer->addDirectory(*dicomDatabase, outputFolder.absolutePath(), destinationFolderPath);
-    delete indexer;
+    ctkDICOMIndexer indexer;
+    indexer.setDatabase(dicomDatabase);
+    indexer.addDirectory(outputFolder.absolutePath(), false);
     }
 
   // Remove temporary DICOM folder if exported to the DICOM database folder

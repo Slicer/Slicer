@@ -659,7 +659,7 @@ class SliceAnnotations(VTKObservationMixin):
 
   def makeDicomAnnotation(self,bgUid,fgUid,sliceViewName):
     # Do not attempt to retrieve dicom values if no local database exists
-    if not slicer.dicomDatabase:
+    if not slicer.dicomDatabase.isOpen:
       return
     viewHeight = self.sliceViews[sliceViewName].height
     if fgUid is not None and bgUid is not None:

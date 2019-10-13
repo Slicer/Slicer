@@ -174,7 +174,7 @@ public:
 
 #ifdef Slicer_BUILD_DICOM_SUPPORT
   /// Application-wide database instance
-  ctkDICOMDatabase*                           DICOMDatabase;
+  QSharedPointer<ctkDICOMDatabase>            DICOMDatabase;
 #endif
 
   QHash<int, QByteArray>                      LoadedResources;

@@ -85,6 +85,8 @@
         <file alias="SlicerAddFiducialList.png">Icons/Medium/SlicerAddFiducialList.png</file>
         <file alias="SlicerDataBundle.png">Icons/Medium/SlicerDataBundle.png</file>
         <file alias="SlicerInteractivePlotting.png">Icons/Medium/SlicerInteractivePlotting.png</file>
+        <file alias="SlicerDatabase.png">Icons/Medium/SlicerDatabase.png</file>
+        <file alias="SlicerImportDICOM.png">Icons/Medium/SlicerImportDICOM.png</file>
     </qresource>
     <qresource prefix="/Icons/Scalable">
         <file alias="SlicerConfigure.svg">Icons/Scalable/SlicerConfigure.svg</file>

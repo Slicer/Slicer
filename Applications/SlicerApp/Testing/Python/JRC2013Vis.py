@@ -104,6 +104,10 @@ class JRC2013VisWidget(ScriptedLoadableModuleWidget):
         '/../CTK-build/CMakeExternals/Install/bin',
         '/../DCMTK-install/bin',
         '/../DCMTK-build/bin',
+        '/../DCMTK-build/bin/Release'
+        '/../DCMTK-build/bin/Debug'
+        '/../DCMTK-build/bin/RelWithDebInfo'
+        '/../DCMTK-build/bin/MinSizeRel'
         )
 
       dcmqrscpExePath = None
@@ -168,7 +172,6 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
   def test_Part1DICOM(self):
     """ Test the DICOM part of the test using the head atlas
     """
-
     import os
     self.delayDisplay("Starting the DICOM test")
     #
@@ -177,8 +180,8 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
     import SampleData
     dicomFilesDirectory = SampleData.downloadFromURL(
       fileNames='Dcmtk-db.zip',
-      uris='http://slicer.kitware.com/midas3/download?items=18822',
-      checksums='SHA256:6bfb01cf5ffb8e3af9b1c0c9556f0c6b45f0ec40305a9539ed7a9f0dcfe378e3')[0]
+      uris='https://github.com/Slicer/SlicerTestingData/releases/download/MD5/7a43d121a51a631ab0df02071e5ba6ed',
+      checksums='MD5:7a43d121a51a631ab0df02071e5ba6ed')[0]
 
     try:
       self.delayDisplay("Switching to temp database directory")
@@ -189,12 +192,18 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
       import os
       configFilePath = dicomFilesDirectory + '/Dcmtk-db/dcmqrscp.cfg'
       processCurrentPath = dicomFilesDirectory + '/Dcmtk-db/'
+      print("configFilePath: "+os.path.abspath(configFilePath))
+      print("processCurrentPath: "+os.path.abspath(processCurrentPath))
 
       dcmqrscpExeOptions = (
         '/bin',
         '/../CTK-build/CMakeExternals/Install/bin',
         '/../DCMTK-install/bin',
         '/../DCMTK-build/bin',
+        '/../DCMTK-build/bin/Release',
+        '/../DCMTK-build/bin/Debug',
+        '/../DCMTK-build/bin/RelWithDebInfo'
+        '/../DCMTK-build/bin/MinSizeRel'
         )
 
       dcmqrscpExePath = None
@@ -213,8 +222,7 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
       popen = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=processCurrentPath)
 
       self.delayDisplay('Retrieve DICOM')
-      mainWindow = slicer.util.mainWindow()
-      mainWindow.moduleSelector().selectModule('DICOM')
+      slicer.util.selectModule('DICOM')
       dicomRetrieve = ctk.ctkDICOMRetrieve()
       dicomRetrieve.setKeepAssociationOpen(True)
       dicomRetrieve.setDatabase(slicer.dicomDatabase)
@@ -224,13 +232,14 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
       dicomRetrieve.setHost('localhost')
       dicomRetrieve.getStudy('1.2.124.113932.1.170.223.162.178.20050502.160340.12640015');
       popen.kill()
-      dicomWidget.detailsPopup.open()
-      # click on the first row of the tree
-      index = dicomWidget.tree.indexAt(qt.QPoint(0,0))
-      dicomWidget.onTreeClicked(index)
+
+      # Select first patient
+      browserWidget = slicer.modules.DICOMWidget.browserWidget
+      browserWidget.dicomBrowser.dicomTableManager().patientsTable().selectFirst()
+      browserWidget.examineForLoading()
 
       self.delayDisplay('Loading Selection')
-      dicomWidget.detailsPopup.loadCheckedLoadables()
+      browserWidget.loadCheckedLoadables()
 
       self.delayDisplay('Change Level')
       layoutManager = slicer.app.layoutManager()
@@ -296,6 +305,9 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Starting the test")
     #
     # first, get some data
+    # TODO: This is a very old scene with missing scene view screenshots
+    #   that is why error is reported while attempting to load it.
+    #   It would be better to replace with a new scene.
     #
     import SampleData
     SampleData.downloadFromURL(
@@ -310,9 +322,9 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
       mainWindow = slicer.util.mainWindow()
       layoutManager = slicer.app.layoutManager()
       threeDView = layoutManager.threeDWidget(0).threeDView()
-      redWidget = layoutManager.sliceWidget('Red')
+      redWidget = layoutManager.sliceWidget('vtkMRMLSliceNode1') # it would be 'Red' in a recent scene
       redController = redWidget.sliceController()
-      greenWidget = layoutManager.sliceWidget('Green')
+      greenWidget = layoutManager.sliceWidget('vtkMRMLSliceNode2') # it would be 'Green' in a recent scene
       greenController = greenWidget.sliceController()
 
       self.delayDisplay('Models and Slice Model')
@@ -337,7 +349,7 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
       greenWidget.sliceController().setSliceVisible(True);
       hemispheric_white_matter = slicer.util.getNode(pattern='hemispheric_white_matter.vtk')
       hemispheric_white_matter.GetDisplayNode().SetClipping(1)
-      clip = slicer.util.getNode(pattern='vtkMRMLClipModelsNode1')
+      clip = slicer.mrmlScene.GetFirstNodeByClass('vtkMRMLClipModelsNode')
       clip.SetRedSliceClipState(0)
       clip.SetYellowSliceClipState(0)
       clip.SetGreenSliceClipState(2)

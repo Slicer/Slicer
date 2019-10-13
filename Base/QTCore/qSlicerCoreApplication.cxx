@@ -139,7 +139,7 @@ qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate(
   this->CoreCommandOptions = QSharedPointer<qSlicerCoreCommandOptions>(coreCommandOptions);
   this->CoreIOManager = QSharedPointer<qSlicerCoreIOManager>(coreIOManager);
 #ifdef Slicer_BUILD_DICOM_SUPPORT
-  this->DICOMDatabase = nullptr;
+  this->DICOMDatabase = QSharedPointer<ctkDICOMDatabase>(new ctkDICOMDatabase);
 #endif
   this->NextResourceHandle = 0;
 }
@@ -1522,14 +1522,14 @@ QString qSlicerCoreApplication::os()const
 
 #ifdef Slicer_BUILD_DICOM_SUPPORT
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplication::setDICOMDatabase(ctkDICOMDatabase* dicomDatabase)
+ctkDICOMDatabase* qSlicerCoreApplication::dicomDatabase()const
 {
-  Q_D(qSlicerCoreApplication);
-  d->DICOMDatabase = dicomDatabase;
+  Q_D(const qSlicerCoreApplication);
+  return d->DICOMDatabase.data();
 }
 
 //-----------------------------------------------------------------------------
-ctkDICOMDatabase* qSlicerCoreApplication::dicomDatabase()const
+QSharedPointer<ctkDICOMDatabase> qSlicerCoreApplication::dicomDatabaseShared()const
 {
   Q_D(const qSlicerCoreApplication);
   return d->DICOMDatabase;

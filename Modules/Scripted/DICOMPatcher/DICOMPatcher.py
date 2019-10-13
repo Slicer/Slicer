@@ -98,21 +98,13 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
     #
     # Import Button
     #
-    self.importButton = qt.QPushButton("Import")
-    self.importButton.toolTip = "Import DICOM files in output directory into Slicer DICOM database"
+    self.importButton = qt.QPushButton("Import to DICOM database")
+    self.importButton.toolTip = "Import DICOM files in output directory into the application's DICOM database"
     parametersFormLayout.addRow(self.importButton)
-
-    #
-    # Switch to DICOM module Button
-    #
-    self.switchToDICOMModuleButton = qt.QPushButton("Go to DICOM module")
-    self.switchToDICOMModuleButton.toolTip = "Open DICOM module where imported data can be loaded into the scene"
-    parametersFormLayout.addRow(self.switchToDICOMModuleButton)
 
     # connections
     self.patchButton.connect('clicked(bool)', self.onPatchButton)
     self.importButton.connect('clicked(bool)', self.onImportButton)
-    self.switchToDICOMModuleButton.connect('clicked(bool)', self.onSwitchToDICOMModuleButton)
 
     self.statusLabel = qt.QPlainTextEdit()
     self.statusLabel.setTextInteractionFlags(qt.Qt.TextSelectableByMouse)
@@ -157,22 +149,10 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
       self.addLog("Unexpected error: {0}".format(str(e)))
       import traceback
       traceback.print_exc()
-    slicer.app.restoreOverrideCursor();
+    slicer.app.restoreOverrideCursor()
 
   def onImportButton(self):
-    slicer.app.setOverrideCursor(qt.Qt.WaitCursor)
-    try:
-      self.statusLabel.plainText = ''
-      self.logic.importDicomDir(self.outputDirSelector.currentPath)
-    except Exception as e:
-      self.addLog("Unexpected error: {0}".format(str(e)))
-      import traceback
-      traceback.print_exc()
-    slicer.app.restoreOverrideCursor();
-
-  def onSwitchToDICOMModuleButton(self):
-    mainWindow = slicer.util.mainWindow()
-    mainWindow.moduleSelector().selectModule('DICOM')
+    self.logic.importDicomDir(self.outputDirSelector.currentPath)
 
   def addLog(self, text):
     """Append text to log window
@@ -580,12 +560,10 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
     """
     Utility function to import DICOM files from a directory
     """
-    self.addLog('Directory: '+outputDirPath)
-    self.addLog('DICOM importing started...')
-    dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
-    indexer = ctk.ctkDICOMIndexer()
-    indexer.addDirectory( slicer.dicomDatabase, outputDirPath )
-    self.addLog('DICOM importing completed.')
+    self.addLog('Initiate DICOM importing from folder '+outputDirPath)
+    slicer.util.selectModule('DICOM')
+    dicomBrowser = slicer.modules.dicom.widgetRepresentation().self().browserWidget.dicomBrowser
+    dicomBrowser.importDirectory(outputDirPath)
 
 #
 # Test

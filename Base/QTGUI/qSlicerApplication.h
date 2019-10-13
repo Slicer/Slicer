@@ -49,6 +49,10 @@ class ctkErrorLogModel;
 class ctkQtTestingUtility;
 #endif
 
+#ifdef Slicer_BUILD_DICOM_SUPPORT
+class ctkDICOMBrowser;
+#endif
+
 // MRML includes
 class vtkMRMLNode;
 
@@ -132,6 +136,12 @@ public:
   ///
   /// \sa qSlicerCoreCommandOptions::displayApplicationInformation()
   Q_INVOKABLE virtual void logApplicationInformation() const;
+
+#ifdef Slicer_BUILD_DICOM_SUPPORT
+  /// Create a DICOM browser that uses the application's main DICOM database.
+  /// This method is added because PythonQt does not allow wrapping of QSharedPointer.
+  Q_INVOKABLE ctkDICOMBrowser* createDICOMBrowserForMainDatabase();
+#endif
 
 public slots:
 

@@ -714,7 +714,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         else:
           logging.warning(warningText + "  Regularization transform is not added, as the option is disabled.")
       elif maxError > 0 and maxError > self.zeroEpsilon:
-        logging.warning("Irregular volume geometry detected, but maximum error non-zero but is within tolerance"+
+        logging.debug("Irregular volume geometry detected, but maximum error is within tolerance"+
           " (maximum error of %g mm, tolerance threshold is %g mm)." % (maxError, self.cornerEpsilon))
 
 

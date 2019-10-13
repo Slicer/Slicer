@@ -439,12 +439,12 @@ public:
   QString os()const;
 
 #ifdef Slicer_BUILD_DICOM_SUPPORT
-  /// Return the active slicer dicom database (will be nullptr until set by dicom
-  /// management code).
+  /// Return the application's main DICOM database.
   Q_INVOKABLE ctkDICOMDatabase* dicomDatabase() const;
 
-  /// Set the current application dicomDatabase.
-  Q_INVOKABLE void setDICOMDatabase(ctkDICOMDatabase* dicomDatabase);
+  /// Return the application's main DICOM database as a shared pointer
+  /// (not Python-wrappable).
+  QSharedPointer<ctkDICOMDatabase> dicomDatabaseShared() const;
 #endif
 
   static void loadTranslations(const QString& dir);

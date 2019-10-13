@@ -3,6 +3,7 @@ import os, subprocess, time
 import slicer
 import qt
 import ctk
+import logging
 
 #########################################################
 #
@@ -30,6 +31,8 @@ class DICOMProcess(object):
     pathOptions = (
         '/../DCMTK-build/bin/Debug',
         '/../DCMTK-build/bin/Release',
+        '/../DCMTK-build/bin/RelWithDebInfo',
+        '/../DCMTK-build/bin/MinSizeRel',
         '/../DCMTK-build/bin',
         '/../CTK-build/CMakeExternals/Install/bin',
         '/bin'
@@ -62,25 +65,27 @@ class DICOMProcess(object):
     # start the server!
     self.process = qt.QProcess()
     self.process.connect('stateChanged(QProcess::ProcessState)', self.onStateChanged)
-    print(("Starting %s with " % cmd, args))
+    logging.debug(("Starting %s with " % cmd, args))
     self.process.start(cmd, args)
 
   def onStateChanged(self, newState):
-    print("process %s now in state %s" % (self.cmd, self.QProcessState[newState]))
+    logging.debug("Process %s now in state %s" % (self.cmd, self.QProcessState[newState]))
     if newState == 0 and self.process:
       stdout = self.process.readAllStandardOutput()
       stderr = self.process.readAllStandardError()
-      print('error code is: %d' % self.process.error())
-      print('standard out is: %s' % stdout)
-      print('standard error is: %s' % stderr)
+      logging.debug('DICOM process error code is: %d' % self.process.error())
+      logging.debug('DICOM process standard out is: %s' % stdout)
+      logging.debug('DICOM process standard error is: %s' % stderr)
       return stdout, stderr
     return None, None
 
   def stop(self):
     if hasattr(self,'process'):
       if self.process:
-        print("stopping DICOM process")
+        logging.debug("stopping DICOM process")
         self.process.kill()
+        # Wait up to 3 seconds for the process to stop
+        self.process.waitForFinished(3000)
         self.process = None
 
 
@@ -100,17 +105,17 @@ class DICOMCommand(DICOMProcess):
   def start(self):
     # run the process!
     self.process = qt.QProcess()
-    print(( 'running: ', self.executable, self.args))
+    logging.debug(('DICOM process running: ', self.executable, self.args))
     self.process.start(self.executable, self.args)
     self.process.waitForFinished()
     if self.process.exitStatus() == qt.QProcess.CrashExit or self.process.exitCode() != 0:
       stdout = self.process.readAllStandardOutput()
       stderr = self.process.readAllStandardError()
-      print('exit status is: %d' % self.process.exitStatus())
-      print('exit code is: %d' % self.process.exitCode())
-      print('error is: %d' % self.process.error())
-      print('standard out is: %s' % stdout)
-      print('standard error is: %s' % stderr)
+      logging.debug('DICOM process exit status is: %d' % self.process.exitStatus())
+      logging.debug('DICOM process exit code is: %d' % self.process.exitCode())
+      logging.debug('DICOM process error is: %d' % self.process.error())
+      logging.debug('DICOM process standard out is: %s' % stdout)
+      logging.debug('DICOM process standard error is: %s' % stderr)
       raise UserWarning("Could not run %s with %s" % (self.executable, self.args))
     stdout = self.process.readAllStandardOutput()
     return stdout
@@ -156,16 +161,16 @@ class DICOMStoreSCPProcess(DICOMProcess):
     return stdout, stderr
 
   def start(self, cmd=None, args=None):
-    if self.killStoreSCPProcesses():
-      onReceptionCallback = '%s --load-short --print-short --print-filename --search PatientName "%s/#f"' \
-                            % (self.dcmdumpExecutable, self.incomingDataDir)
-      args = [str(self.port), '--accept-all', '--output-directory' , self.incomingDataDir, '--exec-sync',
-              '--exec-on-reception', onReceptionCallback]
-      print("starting storescp process")
-      super(DICOMStoreSCPProcess,self).start(self.storescpExecutable, args)
-      self.process.connect('readyReadStandardOutput()', self.readFromStandardOutput)
-    else:
-      slicer.util.warningDisplay("Storescp process could not be started", windowTitle=self.__class__.__name__)
+    # Offer to terminate runnning SCP processes.
+    # They may be started by other applications, listening on other ports, so we try to start ours anyway.
+    self.killStoreSCPProcesses()
+    onReceptionCallback = '%s --load-short --print-short --print-filename --search PatientName "%s/#f"' \
+                          % (self.dcmdumpExecutable, self.incomingDataDir)
+    args = [str(self.port), '--accept-all', '--output-directory' , self.incomingDataDir, '--exec-sync',
+            '--exec-on-reception', onReceptionCallback]
+    logging.debug("Starting storescp process")
+    super(DICOMStoreSCPProcess,self).start(self.storescpExecutable, args)
+    self.process.connect('readyReadStandardOutput()', self.readFromStandardOutput)
 
   def killStoreSCPProcesses(self):
     uniqueListener = True
@@ -185,14 +190,69 @@ class DICOMStoreSCPProcess(DICOMProcess):
         uniqueListener = self.notifyUserAboutRunningStoreSCP(pid)
     return uniqueListener
 
+  def findAndKillProcessNT(self, processName, killProcess):
+    """Find (and optionally terminate) processes by the specified name.
+    Returns true if process by that name exists (after attempting to
+    terminate the process).
+    """
+    import sys, os.path, ctypes, ctypes.wintypes
+
+    psapi = ctypes.WinDLL('Psapi.dll')
+    enum_processes = psapi.EnumProcesses
+    enum_processes.restype = ctypes.wintypes.BOOL
+    get_process_image_file_name = psapi.GetProcessImageFileNameA
+    get_process_image_file_name.restype = ctypes.wintypes.DWORD
+
+    kernel32 = ctypes.WinDLL('kernel32.dll')
+    open_process = kernel32.OpenProcess
+    open_process.restype = ctypes.wintypes.HANDLE
+    terminate_process = kernel32.TerminateProcess
+    terminate_process.restype = ctypes.wintypes.BOOL
+    close_handle = kernel32.CloseHandle
+
+    MAX_PATH = 260
+    PROCESS_TERMINATE = 0x0001
+    PROCESS_QUERY_INFORMATION = 0x0400
+
+    count = 512
+    while True:
+      process_ids = (ctypes.wintypes.DWORD * count)()
+      cb = ctypes.sizeof(process_ids)
+      bytes_returned = ctypes.wintypes.DWORD()
+      if enum_processes(ctypes.byref(process_ids), cb, ctypes.byref(bytes_returned)):
+        if bytes_returned.value < cb:
+          break
+        else:
+          count *= 2
+      else:
+        logging.error("Call to EnumProcesses failed")
+        return False
+
+    processMayBeStillRunning = False
+
+    for index in range(int(bytes_returned.value / ctypes.sizeof(ctypes.wintypes.DWORD))):
+      process_id = process_ids[index]
+      h_process = open_process(PROCESS_TERMINATE | PROCESS_QUERY_INFORMATION, False, process_id)
+      if h_process:
+        image_file_name = (ctypes.c_char * MAX_PATH)()
+        if get_process_image_file_name(h_process, image_file_name, MAX_PATH) > 0:
+          filename = os.path.basename(image_file_name.value)
+          if filename.decode() == processName:
+            # Found the process we are looking for
+            if not killProcess:
+              # we don't need to kill the process, just indicate that there is a process to kill
+              res = close_handle(h_process)
+              return True
+            if not terminate_process(h_process, 1):
+              # failed to terminate process, it may be still running
+              processMayBeStillRunning = True
+
+        res = close_handle(h_process)
+
+    return processMayBeStillRunning
+
   def isStoreSCPProcessesRunningNT(self):
-    cmd = 'WMIC PROCESS get Caption'
-    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-    processList = []
-    for line in process.stdout:
-      line = line.decode()
-      processList.append(line.strip())
-    return any(self.STORESCP_PROCESS_FILE_NAME + self.exeExtension in process for process in processList)
+    return self.findAndKillProcessNT(self.STORESCP_PROCESS_FILE_NAME + self.exeExtension, False)
 
   def killStoreSCPProcessesNT(self, uniqueListener):
     if self.isStoreSCPProcessesRunningNT():
@@ -200,31 +260,32 @@ class DICOMStoreSCPProcess(DICOMProcess):
     return uniqueListener
 
   def readFromStandardOutput(self, readLineCallback=None):
-    print('================ready to read stdout from %s===================' % self.__class__.__name__)
+    lines = []
     while self.process.canReadLine():
       line = str(self.process.readLine())
-      print("From %s: %s" % (self.__class__.__name__, line))
-      if readLineCallback:
-        readLineCallback(line)
-    print('================end reading stdout from %s===================' % self.__class__.__name__)
+      lines.append(line)
+    logging.debug("Output from %s: %s" % (self.__class__.__name__, "\n".join(lines)))
+    if readLineCallback:
+      for line in lines:
+        # Remove stray newline and single-quote characters
+        clearLine = line.replace('\\r', '').replace('\\n', '').replace('\'', '').strip()
+        readLineCallback(clearLine)
     self.readFromStandardError()
 
   def readFromStandardError(self):
     stdErr = str(self.process.readAllStandardError())
     if stdErr:
-      print('================ready to read stderr from %s===================' % self.__class__.__name__)
-      print ("processed stderr: %s" %stdErr)
-      print('================end reading stderr from %s===================' % self.__class__.__name__)
+      logging.debug("Error output from %s: %s" % (self.__class__.__name__, stdErr))
 
   def notifyUserAboutRunningStoreSCP(self, pid=None):
     if slicer.util.confirmYesNoDisplay('There are other DICOM listeners running.\n Do you want to end them?'):
       if os.name == 'nt':
+        self.findAndKillProcessNT(self.STORESCP_PROCESS_FILE_NAME + self.exeExtension, True)
         # Killing processes can take a while, so we retry a couple of times until we confirm that there
         # are no more listeners.
-        retryAttempts = 10
+        retryAttempts = 5
         while retryAttempts:
-          os.popen('taskkill /f /im %s' % self.STORESCP_PROCESS_FILE_NAME + self.exeExtension)
-          if not self.isStoreSCPProcessesRunningNT():
+          if not self.findAndKillProcessNT(self.STORESCP_PROCESS_FILE_NAME + self.exeExtension, False):
             break
           retryAttempts -= 1
           time.sleep(1)
@@ -249,8 +310,7 @@ class DICOMListener(DICOMStoreSCPProcess):
     self.fileAddedCallback = fileAddedCallback
     self.lastFileAdded = None
 
-    settings = qt.QSettings()
-    databaseDirectory = settings.value('DatabaseDirectory')
+    databaseDirectory = self.dicomDatabase.databaseDirectory
     if not databaseDirectory:
       raise UserWarning('Database directory not set: cannot start DICOMListener')
     if not os.path.exists(databaseDirectory):
@@ -269,22 +329,19 @@ class DICOMListener(DICOMStoreSCPProcess):
     tagStart = line.find(searchTag)
     if tagStart != -1:
       dicomFilePath = line[tagStart + len(searchTag):].strip()
-      destinationDir = os.path.dirname(self.dicomDatabase.databaseFilename)
-      print()
-      print()
-      print()
-      print ("indexing: %s into %s " % (dicomFilePath, destinationDir) )
+      slicer.dicomFilePath = dicomFilePath
+      logging.debug("indexing: %s " % dicomFilePath)
       if self.fileToBeAddedCallback:
         self.fileToBeAddedCallback()
-      self.indexer.addFile( self.dicomDatabase, dicomFilePath, destinationDir )
-      print ("done indexing")
+      self.indexer.addFile(self.dicomDatabase, dicomFilePath, True)
+      logging.debug("done indexing")
       self.lastFileAdded = dicomFilePath
       if self.fileAddedCallback:
-        print ("calling callback...")
+        logging.debug("calling callback...")
         self.fileAddedCallback()
-        print ("callback done")
+        logging.debug("callback done")
       else:
-        print ("no callback")
+        logging.debug("no callback")
 
 
 class DICOMSender(DICOMProcess):
@@ -306,7 +363,7 @@ class DICOMSender(DICOMProcess):
     super(DICOMSender,self).__del__()
 
   def defaultProgressCallback(self,s):
-    print(s)
+    logging.debug(s)
 
   def send(self):
     self.progressCallback("Starting send to %s:%s" % (self.address, self.port))
@@ -325,9 +382,9 @@ class DICOMSender(DICOMProcess):
     if self.process.ExitStatus() == qt.QProcess.CrashExit or self.process.exitCode() != 0:
       stdout = self.process.readAllStandardOutput()
       stderr = self.process.readAllStandardError()
-      print('error code is: %d' % self.process.error())
-      print('standard out is: %s' % stdout)
-      print('standard error is: %s' % stderr)
+      logging.debug('DICOM process error code is: %d' % self.process.error())
+      logging.debug('DICOM process standard out is: %s' % stdout)
+      logging.debug('DICOM process standard error is: %s' % stderr)
       raise UserWarning("Could not send %s to %s:%s" % (file, self.address, self.port))
 
 

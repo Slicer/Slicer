@@ -19,7 +19,7 @@ comment = """
 def loadPatientByUID(patientUID):
   """ Load patient by patient UID from DICOM database
   """
-  if not hasattr(slicer, 'dicomDatabase') or not hasattr(slicer.modules, 'dicom'):
+  if not slicer.dicomDatabase.isOpen:
     logging.error('DICOM module or database cannot be accessed')
     return False
 
@@ -46,7 +46,10 @@ def loadPatientByUID(patientUID):
 def getDatabasePatientUIDByPatientName(name):
   """ Get patient UID by patient name for easy loading of a patient
   """
-  if not hasattr(slicer, 'dicomDatabase'):
+  if not slicer.dicomDatabase.isOpen:
+    logging.error('DICOM module or database cannot be accessed')
+    return False
+
     logging.error('DICOM database cannot be accessed')
     return None
   patients = slicer.dicomDatabase.patients()
@@ -70,7 +73,7 @@ def loadPatientByName(patientName):
 def getDatabasePatientUIDByPatientID(patientID):
   """ Get database patient UID by DICOM patient ID for easy loading of a patient
   """
-  if not hasattr(slicer, 'dicomDatabase'):
+  if not slicer.dicomDatabase.isOpen:
     logging.error('DICOM database cannot be accessed')
     return None
   patients = slicer.dicomDatabase.patients()
@@ -120,48 +123,64 @@ def loadSeriesByUID(seriesUIDs):
   if not isinstance(seriesUIDs, list):
     logging.error('SeriesUIDs must contain a list')
     return False
-  if not hasattr(slicer, 'dicomDatabase') or not hasattr(slicer.modules, 'dicom'):
+  if seriesUIDs is None or len(seriesUIDs) == 0:
+    logging.error('No series UIDs given')
+    return False
+  if not slicer.dicomDatabase.isOpen:
     logging.error('DICOM module or database cannot be accessed')
     return False
-  dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
 
-  dicomWidget.detailsPopup.offerLoadables(seriesUIDs, 'SeriesUIDList')
-  if len(dicomWidget.detailsPopup.fileLists)==0 or \
-      not isinstance(dicomWidget.detailsPopup.fileLists[0], tuple):
-    logging.error('Failed to offer loadables for DICOM series list')
+  fileLists = []
+  for seriesUID in seriesUIDs:
+    fileLists.append(slicer.dicomDatabase.filesForSeries(seriesUID))
+  if len(fileLists) == 0:
+    logging.error('No files found for DICOM series list')
     return False
 
-  # Examine file lists for loadables
-  dicomWidget.detailsPopup.examineForLoading()
+  loadablesByPlugin, loadEnabled = getLoadablesFromFileLists(fileLists)
+  loadedNodeIDs = loadLoadables(loadablesByPlugin)
 
-  # Load selected data
-  dicomWidget.detailsPopup.loadCheckedLoadables()
   return True
 
 #------------------------------------------------------------------------------
-# Open specified DICOM database
 def openDatabase(databaseDir):
-  if not hasattr(slicer, 'dicomDatabase') or not hasattr(slicer.modules, 'dicom'):
-    logging.error('DICOM module or database cannot be accessed')
-    return False
+  """Open DICOM database in the specified folder"""
   if not os.access(databaseDir, os.F_OK):
     logging.error('Specified database directory ' + repr(databaseDir) + ' cannot be found')
     return False
-  dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
-  dicomWidget.onDatabaseDirectoryChanged(databaseDir)
+  databaseFileName = databaseDir + "/ctkDICOM.sql"
+  slicer.dicomDatabase.openDatabase(databaseFileName)
   if not slicer.dicomDatabase.isOpen:
     logging.error('Unable to open DICOM database ' + databaseDir)
     return False
   return True
 
 #------------------------------------------------------------------------------
-def openTemporaryDatabase(directory=None):
-  """ Open temporary DICOM database, return current database directory
-  """
-  if not hasattr(slicer,'dicomDatabase') or not hasattr(slicer.modules,'dicom'):
-    logging.error('DICOM module or database cannot be accessed')
-    return None
+def clearDatabase(dicomDatabase=None):
+  """Delete entire content (index and copied files) of the DICOM database"""
+  # Remove files from index and copied files from disk
+  if dicomDatabase is None:
+    dicomDatabase = slicer.dicomDatabase
+  patientIds = dicomDatabase.patients()
+  for patientId in patientIds:
+    dicomDatabase.removePatient(patientId)
+  # Delete empty folders remaining after removing copied files
+  removeEmptyDirs(dicomDatabase.databaseDirectory+'/dicom')
+  dicomDatabase.databaseChanged()
 
+def removeEmptyDirs(path):
+  for root, dirnames, filenames in os.walk(path, topdown=False):
+    for dirname in dirnames:
+      print(dirname)
+      removeEmptyDirs(os.path.realpath(os.path.join(root, dirname)))
+      os.rmdir(os.path.realpath(os.path.join(root, dirname)))
+
+#------------------------------------------------------------------------------
+def openTemporaryDatabase(directory=None):
+  """ Temporarily change the main DICOM database folder location,
+  return current database directory. Useful for tests and demos.
+  Call closeTemporaryDatabase to restore the original database folder.
+  """
   # Specify temporary directory
   if not directory or directory == '':
     from time import gmtime, strftime
@@ -175,16 +194,13 @@ def openTemporaryDatabase(directory=None):
     qt.QDir().mkpath(tempDatabaseDir)
 
   # Get original database directory to be able to restore it later
-  originalDatabaseDir = None
-  if slicer.dicomDatabase:
-    originalDatabaseDir = os.path.split(slicer.dicomDatabase.databaseFilename)[0]
-    logging.info('Original DICOM database: ' + originalDatabaseDir)
-  else:
-    settings = qt.QSettings()
-    settings.setValue('DatabaseDirectory', tempDatabaseDir)
+  settings = qt.QSettings()
+  originalDatabaseDir = settings.value(slicer.dicomDatabaseDirectorySettingsKey)
+  settings.setValue(slicer.dicomDatabaseDirectorySettingsKey, tempDatabaseDir)
 
-  # Open temporary database
   openDatabase(tempDatabaseDir)
+
+  # Clear the entire database
   slicer.dicomDatabase.initializeDatabase()
 
   return originalDatabaseDir
@@ -193,14 +209,69 @@ def openTemporaryDatabase(directory=None):
 def closeTemporaryDatabase(originalDatabaseDir, cleanup=True):
   """ Close temporary DICOM database and remove its directory if requested
   """
-  if not hasattr(slicer, 'dicomDatabase') or not hasattr(slicer.modules, 'dicom'):
-    logging.error('DICOM module or database cannot be accessed')
-    return False
-
-  slicer.dicomDatabase.closeDatabase()
   if slicer.dicomDatabase.isOpen:
+    if cleanup:
+      slicer.dicomDatabase.initializeDatabase()
+      # TODO: The database files cannot be deleted even if the database is closed.
+      #       Not critical, as it will be empty, so will not take measurable disk space.
+      # import shutil
+      # databaseDir = os.path.split(slicer.dicomDatabase.databaseFilename)[0]
+      # shutil.rmtree(databaseDir)
+      # if os.access(databaseDir, os.F_OK):
+        # logging.error('Failed to delete DICOM database ' + databaseDir)
+    slicer.dicomDatabase.closeDatabase()
+  else:
     logging.error('Unable to close DICOM database ' + slicer.dicomDatabase.databaseFilename)
+
+
+  if originalDatabaseDir is None:
+    # Only log debug if there was no original database, as it is a valid use case,
+    # see openTemporaryDatabase
+    logging.debug('No original database directory was specified')
+    return True
+
+  settings = qt.QSettings()
+  settings.setValue(slicer.dicomDatabaseDirectorySettingsKey, originalDatabaseDir)
+
+  success = openDatabase(originalDatabaseDir)
+  if not success:
+    logging.error('Unable to open DICOM database ' + originalDatabaseDir)
     return False
+  return True
+
+#------------------------------------------------------------------------------
+def createTemporaryDatabase(directory=None):
+  """ Open temporary DICOM database, return new database object
+  """
+  # Specify temporary directory
+  if not directory or directory == '':
+    from time import gmtime, strftime
+    directory = strftime("%Y%m%d_%H%M%S_", gmtime()) + 'TempDICOMDatabase'
+  if os.path.isabs(directory):
+    tempDatabaseDir = directory
+  else:
+    tempDatabaseDir = slicer.app.temporaryPath + '/' + directory
+  logging.info('Switching to temporary DICOM database: ' + tempDatabaseDir)
+  if not os.access(tempDatabaseDir, os.F_OK):
+    qt.QDir().mkpath(tempDatabaseDir)
+
+  databaseFileName = tempDatabaseDir + "/ctkDICOM.sql"
+  dicomDatabase = ctk.ctkDICOMDatabase()
+  dicomDatabase.openDatabase(databaseFileName)
+  if dicomDatabase.isOpen:
+    if slicer.dicomDatabase.schemaVersionLoaded() != slicer.dicomDatabase.schemaVersion():
+      slicer.dicomDatabase.closeDatabase()
+
+  if dicomDatabase.isOpen:
+    return dicomDatabase
+  else:
+    return None
+
+#------------------------------------------------------------------------------
+def deleteTemporaryDatabase(dicomDatabase, cleanup=True):
+  """ Close temporary DICOM database and remove its directory if requested
+  """
+  slicer.dicomDatabase.closeDatabase()
 
   if cleanup:
     slicer.dicomDatabase.initializeDatabase()
@@ -212,15 +283,6 @@ def closeTemporaryDatabase(originalDatabaseDir, cleanup=True):
     # if os.access(databaseDir, os.F_OK):
       # logging.error('Failed to delete DICOM database ' + databaseDir)
 
-  if originalDatabaseDir is None:
-    # Only log debug if there was no original database, as it is a valid use case,
-    # see openTemporaryDatabase
-    logging.debug('No original database directofy was specified')
-    return True
-  success = openDatabase(originalDatabaseDir)
-  if not success:
-    logging.error('Unable to open DICOM database ' + originalDatabaseDir)
-    return False
   return True
 
 #------------------------------------------------------------------------------
@@ -241,12 +303,8 @@ def importDicom(dicomDataDir, dicomDatabase=None):
   """ Import DICOM files from folder into Slicer database
   """
   try:
-    slicer.util.selectModule('DICOM')
-
-    dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
     indexer = ctk.ctkDICOMIndexer()
     assert indexer is not None
-
     if dicomDatabase is None:
       dicomDatabase = slicer.dicomDatabase
     indexer.addDirectory( dicomDatabase, dicomDataDir )
@@ -259,31 +317,32 @@ def importDicom(dicomDataDir, dicomDatabase=None):
   return True
 
 #------------------------------------------------------------------------------
-def loadSeriesWithVerification(seriesUIDs, selectedPlugins=None, loadedNodes=None):
+def loadSeriesWithVerification(seriesUIDs, expectedSelectedPlugins=None, expectedLoadedNodes=None):
   """ Load series by UID, and verify loadable selection and loaded nodes.
 
   ``selectedPlugins`` example: { 'Scalar Volume':1, 'RT':2 }
-  ``loadedNodes`` example: { 'vtkMRMLScalarVolumeNode':2, 'vtkMRMLSegmentationNode':1 }
+  ``expectedLoadedNodes`` example: { 'vtkMRMLScalarVolumeNode':2, 'vtkMRMLSegmentationNode':1 }
   """
-  if not hasattr(slicer, 'dicomDatabase') or not hasattr(slicer.modules, 'dicom'):
+  if not slicer.dicomDatabase.isOpen:
     logging.error('DICOM module or database cannot be accessed')
     return False
   if seriesUIDs is None or len(seriesUIDs) == 0:
     logging.error('No series UIDs given')
     return False
 
-  dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
-  dicomWidget.detailsPopup.offerLoadables(seriesUIDs, 'SeriesUIDList')
-  if len(dicomWidget.detailsPopup.fileLists) == 0:
-    logging.error('Failed to offer loadables for DICOM series list')
+  fileLists = []
+  for seriesUID in seriesUIDs:
+    fileLists.append(slicer.dicomDatabase.filesForSeries(seriesUID))
+
+  if len(fileLists) == 0:
+    logging.error('No files found for DICOM series list')
     return False
 
-  dicomWidget.detailsPopup.examineForLoading()
+  loadablesByPlugin, loadEnabled = getLoadablesFromFileLists(fileLists)
   success = True
 
   # Verify loadables if baseline is given
-  if selectedPlugins is not None and len(selectedPlugins.keys()) > 0:
-    loadablesByPlugin = dicomWidget.detailsPopup.loadablesByPlugin
+  if expectedSelectedPlugins is not None and len(expectedSelectedPlugins.keys()) > 0:
     actualSelectedPlugins = {}
     for plugin in loadablesByPlugin:
       for loadable in loadablesByPlugin[plugin]:
@@ -293,34 +352,34 @@ def loadSeriesWithVerification(seriesUIDs, selectedPlugins=None, loadedNodes=Non
             actualSelectedPlugins[plugin.loadType] = count+1
           else:
             actualSelectedPlugins[plugin.loadType] = 1
-    for pluginName in selectedPlugins.keys():
+    for pluginName in expectedSelectedPlugins.keys():
       if pluginName not in actualSelectedPlugins:
         logging.error("Expected DICOM plugin '%s' was not selected" % (pluginName))
         success = False
-      elif actualSelectedPlugins[pluginName] != selectedPlugins[pluginName]:
+      elif actualSelectedPlugins[pluginName] != expectedSelectedPlugins[pluginName]:
         logging.error("DICOM plugin '%s' was expected to be selected in %d loadables, but was selected in %d" % \
-          (pluginName, selectedPlugins[pluginName], actualSelectedPlugins[pluginName]))
+          (pluginName, expectedSelectedPlugins[pluginName], actualSelectedPlugins[pluginName]))
         success = False
 
   # Count relevant node types in scene
   actualLoadedNodes = {}
-  if loadedNodes is not None:
-    for nodeType in loadedNodes.keys():
+  if expectedLoadedNodes is not None:
+    for nodeType in expectedLoadedNodes.keys():
       nodeCollection = slicer.mrmlScene.GetNodesByClass(nodeType)
       nodeCollection.UnRegister(None)
       actualLoadedNodes[nodeType] = nodeCollection.GetNumberOfItems()
 
   # Load selected data
-  dicomWidget.detailsPopup.loadCheckedLoadables()
+  loadedNodeIDs = loadLoadables(loadablesByPlugin)
 
-  if loadedNodes is not None:
-    for nodeType in loadedNodes.keys():
+  if expectedLoadedNodes is not None:
+    for nodeType in expectedLoadedNodes.keys():
       nodeCollection = slicer.mrmlScene.GetNodesByClass(nodeType)
       nodeCollection.UnRegister(None)
       numOfLoadedNodes = nodeCollection.GetNumberOfItems()-actualLoadedNodes[nodeType]
-      if numOfLoadedNodes != loadedNodes[nodeType]:
+      if numOfLoadedNodes != expectedLoadedNodes[nodeType]:
         logging.error("Number of loaded %s nodes was %d, but %d was expected" % \
-          (nodeType, numOfLoadedNodes, loadedNodes[nodeType]) )
+          (nodeType, numOfLoadedNodes, expectedLoadedNodes[nodeType]) )
         success = False
 
   return success
@@ -504,9 +563,108 @@ def refreshDICOMWidget():
   different from the one stored in the DICOM browser. There may be multiple
   database connection (through different database objects) in the same process.
   """
-  if not hasattr(slicer, 'dicomDatabase') or not hasattr(slicer.modules, 'dicom'):
-    logging.error('DICOM module or database cannot be accessed')
+  try:
+    slicer.modules.DICOMInstance.browserWidget.dicomBrowser.dicomTableManager().updateTableViews()
+  except AttributeError:
+    logging.error('DICOM module or browser cannot be accessed')
     return False
-  dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
-  dicomWidget.detailsPopup.dicomBrowser.dicomTableManager().updateTableViews()
   return True
+
+def getLoadablesFromFileLists(fileLists, pluginClassNames=None, messages=None, progressCallback=None, pluginInstances=None):
+  """Take list of file lists, return loadables by plugin dictionary
+  """
+  loadablesByPlugin = {}
+  loadEnabled = False
+  if not isinstance(fileLists, list) or len(fileLists) == 0 or not type(fileLists[0]) in [tuple, list]:
+    logging.error('File lists must contain a non-empty list of tuples/lists')
+    return loadablesByPlugin, loadEnabled
+
+  if pluginClassNames is None:
+    pluginClassNames = list(slicer.modules.dicomPlugins.keys())
+
+  if pluginInstances is None:
+    pluginInstances = {}
+
+  for step, pluginClassName in enumerate(pluginClassNames):
+    if pluginClassName not in pluginInstances:
+      pluginInstances[pluginClassName] = slicer.modules.dicomPlugins[pluginClassName]()
+    plugin = pluginInstances[pluginClassName]
+    if progressCallback:
+      cancelled = progressCallback(pluginClassName, step*100/len(pluginClassNames))
+      if cancelled:
+        break
+    try:
+      loadablesByPlugin[plugin] = plugin.examineForImport(fileLists)
+      # If regular method is not overridden (so returns empty list), try old function
+      # Ensuring backwards compatibility: examineForImport used to be called examine
+      if not loadablesByPlugin[plugin]:
+        loadablesByPlugin[plugin] = plugin.examine(fileLists)
+      loadEnabled = loadEnabled or loadablesByPlugin[plugin] != []
+    except Exception as e:
+      import traceback
+      traceback.print_exc()
+      logging.error("DICOM Plugin failed: %s" % str(e))
+      if messages:
+        messages.append("Plugin failed: %s." % pluginClass)
+
+  return loadablesByPlugin, loadEnabled
+
+def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
+  """Load each DICOM loadable item.
+  Returns loaded node IDs.
+  """
+
+  # Find a plugin for each loadable that will load it
+  # (the last plugin that has that loadable selected wins)
+  selectedLoadables = {}
+  for plugin in loadablesByPlugin:
+    for loadable in loadablesByPlugin[plugin]:
+      if loadable.selected:
+        selectedLoadables[loadable] = plugin
+
+  loadedNodeIDs = []
+
+  @vtk.calldata_type(vtk.VTK_OBJECT)
+  def onNodeAdded(caller, event, calldata):
+    node = calldata
+    if isinstance(node, slicer.vtkMRMLVolumeNode):
+      loadedNodeIDs.append(node.GetID())
+
+  sceneObserverTag = slicer.mrmlScene.AddObserver(slicer.vtkMRMLScene.NodeAddedEvent, onNodeAdded)
+
+  for step, (loadable, plugin) in enumerate(selectedLoadables.items(), start=1):
+    if progressCallback:
+      cancelled = progressCallback(loadable.name, step*100/len(selectedLoadables))
+      if cancelled:
+        break
+
+    try:
+      loadSuccess = plugin.load(loadable)
+    except:
+      loadSuccess = False
+      import traceback
+      logging.error("DICOM plugin failed to load '"
+        + loadable.name + "' as a '" + plugin.loadType + "'.\n"
+        + traceback.format_exc())
+    if (not loadSuccess) and (messages is not None):
+      messages.append('Could not load: %s as a %s' % (loadable.name, plugin.loadType))
+
+    cancelled = False
+    try:
+      # DICOM reader plugins (for example, in PETDICOM extension) may generate additional DICOM files
+      # during loading. These must be added to the database.
+      for derivedItem in loadable.derivedItems:
+        indexer = ctk.ctkDICOMIndexer()
+        cancelled = progressCallback("{0} ({1})".format(loadable.name, derivedItem), step*100/len(selectedLoadables))
+        if cancelled:
+          break
+        indexer.addFile(slicer.dicomDatabase, derivedItem)
+    except AttributeError:
+      # no derived items or some other attribute error
+      pass
+    if cancelled:
+      break
+
+  slicer.mrmlScene.RemoveObserver(sceneObserverTag)
+
+  return loadedNodeIDs

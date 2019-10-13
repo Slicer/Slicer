@@ -27,9 +27,9 @@ class DICOM(ScriptedLoadableModule):
     import string
     self.parent.title = "DICOM"
     self.parent.categories = ["", "Informatics"] # top level module
-    self.parent.contributors = ["Steve Pieper (Isomics)"]
+    self.parent.contributors = ["Steve Pieper (Isomics)", "Andras Lasso (PerkLab)"]
     self.parent.helpText = """
-The DICOM module integrates DICOM classes from CTK (based on DCMTK).
+This module allows importing, loading, and exporting DICOM files, and sending receiving data using DICOM networking.
 """
     self.parent.helpText += self.getDefaultModuleDocumentationLink()
     self.parent.acknowledgementText = """
@@ -38,8 +38,8 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     self.parent.icon = qt.QIcon(':Icons/Medium/SlicerLoadDICOM.png')
     self.parent.dependencies = ["SubjectHierarchy"]
 
-    self.detailsPopup = None
-    self.viewWidget = None
+    self.viewWidget = None  # Widget used in the layout manager (contains just label and browser widget)
+    self.browserWidget = None  # SlicerDICOMBrowser instance (ctkDICOMBrowser with additional section for loading the selected items)
     self.browserSettingsWidget = None
     self.currentViewArrangement = 0
 
@@ -55,6 +55,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     if slicer.app.layoutManager() is not None:
       slicer.app.layoutManager().registerViewFactory(self.viewFactory)
 
+
   def performPostModuleDiscoveryTasks(self):
     """Since dicom plugins are discovered while the application
     is initialized, they may be found after the DICOM module
@@ -65,24 +66,12 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     if slicer.mrmlScene.GetTagByClassName( "vtkMRMLScriptedModuleNode" ) != 'ScriptedModule':
       slicer.mrmlScene.RegisterNodeClass(vtkMRMLScriptedModuleNode())
 
-    # initialize the dicom infrastructure
-    slicer.dicomDatabase = None
+    self.initializeDICOMDatabase()
+
     settings = qt.QSettings()
-    # the dicom database is a global object for slicer
-    if settings.contains('DatabaseDirectory'):
-      databaseDirectory = settings.value('DatabaseDirectory')
-      if databaseDirectory:
-        slicer.dicomDatabase = ctk.ctkDICOMDatabase()
-        slicer.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
-        if not slicer.dicomDatabase.isOpen:
-          # can't open the database, so prompt the user later if they enter module
-          slicer.dicomDatabase = None
-        else:
-          self.startListener()
-        if slicer.dicomDatabase:
-          slicer.app.setDICOMDatabase(slicer.dicomDatabase)
-    # set the dicom pre-cache tags once all plugin classes have been initialized
-    DICOMLib.setDatabasePrecacheTags()
+    if settings.contains('DICOM/RunListenerAtStart') and not slicer.app.commandOptions().testingEnabled:
+      if settings.value('DICOM/RunListenerAtStart') == 'true':
+        self.startListener()
 
     if not slicer.app.commandOptions().noMainWindow:
       # add to the main app file menu
@@ -109,22 +98,76 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
       self.currentViewArrangement = layoutNode.GetViewArrangement()
       self.previousViewArrangement = layoutNode.GetViewArrangement()
 
-    self.detailsPopup = None
-    self.viewWidget = None
-    self.browserSettingsWidget = None
+      slicer.app.moduleManager().connect(
+        'moduleAboutToBeUnloaded(QString)', self._onModuleAboutToBeUnloaded)
+
+
+  def initializeDICOMDatabase(self):
+    #  Create alias for convenience
+    slicer.dicomDatabase = slicer.app.dicomDatabase()
+
+    # Set the dicom pre-cache tags once all plugin classes have been initialized.
+    # Pre-caching tags is very important for fast DICOM loading because tags that are
+    # not pre-cached during DICOM import in bulk, will be cached during Examine step one-by-one
+    # (which takes magnitudes more time).
+    tagsToPrecache = list(slicer.dicomDatabase.tagsToPrecache)
+    for pluginClass in slicer.modules.dicomPlugins:
+      plugin = slicer.modules.dicomPlugins[pluginClass]()
+      tagsToPrecache += list(plugin.tags.values())
+    tagsToPrecache = sorted(set(tagsToPrecache))  # remove duplicates
+    slicer.dicomDatabase.tagsToPrecache = tagsToPrecache
+
+    # Try to initialize the database using the location stored in settings
+    if slicer.app.commandOptions().testingEnabled:
+      # For automatic tests (use a separate DICOM database for testing)
+      slicer.dicomDatabaseDirectorySettingsKey = 'DatabaseDirectoryTest_'+ctk.ctkDICOMDatabase().schemaVersion()
+      databaseDirectory = os.path.join(slicer.app.temporaryPath,
+        'temp'+slicer.app.applicationName+'DICOMDatabase_'+ctk.ctkDICOMDatabase().schemaVersion())
+    else:
+      # For production
+      slicer.dicomDatabaseDirectorySettingsKey = 'DatabaseDirectory_'+ctk.ctkDICOMDatabase().schemaVersion()
+      settings = qt.QSettings()
+      databaseDirectory = settings.value(slicer.dicomDatabaseDirectorySettingsKey)
+      if not databaseDirectory:
+        documentsLocation = qt.QStandardPaths.DocumentsLocation
+        documents = qt.QStandardPaths.writableLocation(documentsLocation)
+        databaseDirectory = os.path.join(documents, slicer.app.applicationName+"DICOMDatabase")
+        settings.setValue(slicer.dicomDatabaseDirectorySettingsKey, databaseDirectory)
+
+    # Attempt to open the database. If it fails then user will have to configure it using DICOM module.
+    databaseFileName = databaseDirectory + "/ctkDICOM.sql"
+    slicer.dicomDatabase.openDatabase(databaseFileName)
+    if slicer.dicomDatabase.isOpen:
+      # There is an existing database at the current location
+      if slicer.dicomDatabase.schemaVersionLoaded() != slicer.dicomDatabase.schemaVersion():
+        # Schema does not match, do not use it
+        slicer.dicomDatabase.closeDatabase()
+
+
 
   def startListener(self):
-    # the dicom listener is also global, but only started on app start if
-    # the user so chooses
-    settings = qt.QSettings()
-    if settings.contains('DICOM/RunListenerAtStart'):
-      if settings.value('DICOM/RunListenerAtStart') == 'true':
-        if not hasattr(slicer, 'dicomListener'):
-          try:
-            slicer.dicomListener = DICOMLib.DICOMListener(slicer.dicomDatabase)
-            slicer.dicomListener.start()
-          except (UserWarning,OSError) as message:
-            logging.error('Problem trying to start DICOMListener:\n %s' % message)
+
+    if not slicer.dicomDatabase.isOpen:
+      logging.error("Failed to start DICOM listener. DICOM database is not open.")
+      return False
+
+    if not hasattr(slicer, 'dicomListener'):
+      try:
+        dicomListener = DICOMLib.DICOMListener(slicer.dicomDatabase)
+        dicomListener.start()
+      except (UserWarning, OSError) as message:
+        logging.error('Problem trying to start DICOM listener:\n %s' % message)
+        return False
+      if not dicomListener.process:
+        logging.error("Failed to start DICOM listener. Process start failed.")
+        return False
+      slicer.dicomListener = dicomListener
+      logging.info("DICOM C-Store SCP service started at port "+str(slicer.dicomListener.port))
+
+  def stopListener(self):
+    if hasattr(slicer, 'dicomListener'):
+      slicer.dicomListener.stop()
+      del slicer.dicomListener
 
   def addMenu(self):
     """Add an action to the File menu that will go into
@@ -139,22 +182,23 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
         if action.text == 'Save':
           fileMenu.insertAction(action,a)
 
-  def setDetailsPopup(self, detailsPopup):
-    if self.detailsPopup == detailsPopup:
+
+  def setBrowserWidgetInDICOMLayout(self, browserWidget):
+    """Set DICOM browser widget in the custom view layout"""
+    if self.browserWidget == browserWidget:
       return
 
-    if self.detailsPopup is not None:
-      self.detailsPopup.closed.disconnect(self.onDetailsPopupClosed)
+    if self.browserWidget is not None:
+      self.browserWidget.closed.disconnect(self.onBrowserWidgetClosed)
 
-    oldDetailsPopup = self.detailsPopup
-    self.detailsPopup = detailsPopup
-    self.detailsPopup.setAutoFillBackground(True)
-    self.detailsPopup.closed.connect(self.onDetailsPopupClosed)
-    self.detailsPopup.browserPersistentButton.hide()
-    self.detailsPopup.horizontalViewCheckBox.hide()
-    expandButton = self.detailsPopup.findChild("ctkExpandButton", "")
-    if expandButton is not None:
-      expandButton.hide()
+    oldBrowserWidget = self.browserWidget
+    self.browserWidget = browserWidget
+    self.browserWidget.setAutoFillBackground(True)
+    if slicer.util.mainWindow():
+      # For some reason, we cannot disconnect this event connection if
+      # main window, and not disconnecting would cause crash on application shutdown,
+      # so we only connect when main window is present.
+      self.browserWidget.closed.connect(self.onBrowserWidgetClosed)
 
     if self.viewWidget is None:
       self.viewWidget = qt.QWidget()
@@ -162,6 +206,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
       self.viewFactory.setWidget(self.viewWidget)
       layout = qt.QVBoxLayout()
       self.viewWidget.setLayout(layout)
+
       label = qt.QLabel("DICOM database")
       label.setSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Fixed)
       layout.addWidget(label)
@@ -169,9 +214,12 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
       font.setBold(True)
       font.setPointSize(12)
       label.setFont(font)
-    elif not oldDetailsPopup is None:
-      self.viewWidget.layout().removeWidget(oldDetailsPopup)
-    self.viewWidget.layout().addWidget(self.detailsPopup)
+
+    if oldBrowserWidget is not None:
+      self.viewWidget.layout().removeWidget(oldBrowserWidget)
+
+    if self.browserWidget:
+      self.viewWidget.layout().addWidget(self.browserWidget)
 
 
   def onLayoutChanged(self, viewArrangement):
@@ -181,27 +229,32 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     self.previousViewArrangement = self.currentViewArrangement
     self.currentViewArrangement = viewArrangement
 
-    if self.detailsPopup is None:
+    if self.browserWidget is None:
       return
     dataProbe = slicer.util.mainWindow().findChild("QWidget", "DataProbeCollapsibleWidget")
     if self.currentViewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView:
       # View has been changed to the DICOM browser view
       self.wasDataProbeVisible = dataProbe.isVisible()
-      self.detailsPopup.show()
+      self.browserWidget.show()
       dataProbe.setVisible(False)
     elif self.previousViewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView:
       # View has been changed from the DICOM browser view
       dataProbe.setVisible(self.wasDataProbeVisible)
 
-  def onDetailsPopupClosed(self):
+
+  def onBrowserWidgetClosed(self):
     if (self.currentViewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView and
         self.previousViewArrangement != slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView):
       slicer.app.layoutManager().setLayout(self.previousViewArrangement)
 
-  def __del__(self):
-    if hasattr(slicer, 'dicomListener'):
-      logging.debug('trying to stop listener')
-      slicer.dicomListener.stop()
+
+  def _onModuleAboutToBeUnloaded(self, moduleName):
+    # Application is shutting down. Stop the listener.
+    if moduleName == "DICOM":
+      self.stopListener()
+      slicer.app.moduleManager().disconnect(
+        'moduleAboutToBeUnloaded(QString)', self._onModuleAboutToBeUnloaded)
+
 
 class _ui_DICOMSettingsPanel(object):
   def __init__(self, parent):
@@ -224,20 +277,6 @@ class _ui_DICOMSettingsPanel(object):
       "DICOM/automaticallyLoadReferences", loadReferencesComboBox,
       "currentUserDataAsString", str(qt.SIGNAL("currentIndexChanged(int)")))
 
-    schemaUpdateComboBox = ctk.ctkComboBox()
-    schemaUpdateComboBox.toolTip = "What do do when the supported schema version is " \
-      "different from that of the loaded database"
-    schemaUpdateComboBox.addItem("Always update", "AlwaysUpdate")
-    schemaUpdateComboBox.addItem("Never update", "NeverUpdate")
-    schemaUpdateComboBox.addItem("Ask user", "AskUser")
-    schemaUpdateComboBox.currentIndex = 2 # Make 'AskUser' the default as opposed to the CTK default 'AlwaysUpdate'
-    if slicer.app.commandOptions().testingEnabled:
-      schemaUpdateComboBox.currentIndex = 0 # Update database for automatic tests
-    genericGroupBoxFormLayout.addRow("Schema update behavior:", schemaUpdateComboBox)
-    parent.registerProperty(
-      "DICOM/SchemaUpdateOption", schemaUpdateComboBox,
-      "currentUserDataAsString", str(qt.SIGNAL("currentIndexChanged(int)")))
-
     vBoxLayout.addWidget(genericGroupBox)
 
     # Add settings panel for the plugins
@@ -257,8 +296,6 @@ class DICOMSettingsPanel(ctk.ctkSettingsPanel):
     self.ui = _ui_DICOMSettingsPanel(self)
 
 
-# XXX Slicer 4.5 - Remove this. Here only for backward compatibility.
-DICOM.setDatabasePrecacheTags = DICOMLib.setDatabasePrecacheTags
 
 #
 # Class for avoiding python error that is caused by the method DICOM::setup
@@ -267,6 +304,7 @@ DICOM.setDatabasePrecacheTags = DICOMLib.setDatabasePrecacheTags
 class DICOMFileWriter(object):
   def __init__(self, parent):
     pass
+
 
 
 #
@@ -286,9 +324,11 @@ class DICOMFileDialog(object):
     qSlicerFileDialog.action = slicer.qSlicerFileDialog.Read
     self.directoriesToAdd = []
 
+
   def execDialog(self):
     """Not used"""
     logging.debug('execDialog called on %s' % self)
+
 
   def isMimeDataAccepted(self):
     """Checks the dropped data and returns true if it is one or
@@ -304,6 +344,7 @@ class DICOMFileDialog(object):
         if pathInfo.isDir(): # if it is a directory we add the files to the dialog
           self.directoriesToAdd.append(localPath)
     self.qSlicerFileDialog.acceptMimeData(len(self.directoriesToAdd) != 0)
+
 
   def validDirectories(self, directoriesToAdd):
     """Return True if the directory names are acceptable for input.
@@ -326,6 +367,7 @@ class DICOMFileDialog(object):
           return False
     return True
 
+
   def dropEvent(self):
     if not self.validDirectories(self.directoriesToAdd):
       if not slicer.util.confirmYesNoDisplay("Import from folders with special (non-ASCII) characters in the name is not supported."
@@ -333,235 +375,157 @@ class DICOMFileDialog(object):
         self.directoriesToAdd = []
         return
 
-    mainWindow = slicer.util.mainWindow()
-    mainWindow.moduleSelector().selectModule('DICOM')
-    dicomWidget = slicer.modules.DICOMWidget
-
-    dicomWidget.detailsPopup.dicomBrowser.importDirectories(self.directoriesToAdd)
+    slicer.util.selectModule('DICOM')
+    slicer.modules.DICOMInstance.browserWidget.dicomBrowser.importDirectories(self.directoriesToAdd)
     self.directoriesToAdd = []
+
+
 
 #
 # DICOM widget
 #
 
-class EscapeKeyFilter(qt.QObject):
-  def eventFilter(self, obj, event):
-    if event.type() == qt.QEvent.KeyPress:
-      if event.key() ==  qt.Qt.Key_Escape:
-        return True
-    return False
-
-class DICOMWidget(object):
+class DICOMWidget(ScriptedLoadableModuleWidget):
   """
   Slicer module that creates the Qt GUI for interacting with DICOM
   """
 
-  detailWidgetClasses = [DICOMLib.DICOMDetailsWindow, DICOMLib.DICOMDetailsDialog, DICOMLib.DICOMDetailsDock]
+  # sets up the widget
+  def setup(self):
+    ScriptedLoadableModuleWidget.setup(self)
 
-  @staticmethod
-  def getSavedDICOMDetailsWidgetType(default="window"):
-    widgetType = settingsValue('DICOM/BrowserWidgetType', default)
-    widgetClass = DICOMWidget.getDetailsWidgetClassForType(widgetType)
-    if not widgetClass:
-      qt.QSettings().setValue('DICOM/BrowserWidgetType', widgetType)
-      widgetClass = DICOMWidget.getDetailsWidgetClassForType(default)
-    return widgetClass
-
-  @staticmethod
-  def setDICOMDetailsWidgetType(widgetType):
-    if not widgetType in DICOMWidget.getAvailableWidgetTypes():
-      raise ValueError("Widget type '%s' for DICOMDetails does not exist" % widgetType)
-    else:
-      qt.QSettings().setValue('DICOM/BrowserWidgetType', widgetType)
-
-  @staticmethod
-  def getAvailableWidgetTypes():
-    return [c.widgetType for c in DICOMWidget.detailWidgetClasses]
-
-  @staticmethod
-  def getDetailsWidgetClassForType(widgetType):
-    try:
-      return DICOMWidget.detailWidgetClasses[DICOMWidget.getAvailableWidgetTypes().index(widgetType)]
-    except (KeyError, ValueError):
-      return None
-
-  def __init__(self, parent=None):
-    self.testingServer = None
-
-    # state management for compressing events
-    # - each time an update is requested, start the singleShot timer
-    # - if the update is requested before the timeout, the call to timer.start() resets it
-    # - the actual update only happens when the the full time elapses since the last request
-    self.updateRecentActivityTimer = qt.QTimer()
-    self.updateRecentActivityTimer.setSingleShot(True)
-    self.updateRecentActivityTimer.interval = 500
-    self.updateRecentActivityTimer.connect('timeout()', self.onUpateRecentActivityRequestTimeout)
-
-    if not parent:
-      self.parent = slicer.qMRMLWidget()
-      self.parent.setLayout(qt.QVBoxLayout())
-      self.parent.setMRMLScene(slicer.mrmlScene)
-      self.layout = self.parent.layout()
-      self.setup()
-      self.parent.show()
-    else:
-      self.parent = parent
-      self.layout = parent.layout()
-
-    self.detailsPopup = None
-    self.directoryButton = None
-    self.tableDensityComboBox = None
+    # This module is often used in developer mode, therefore
+    # collapse reload & test section by default.
+    if hasattr(self, "reloadCollapsibleButton"):
+      self.reloadCollapsibleButton.collapsed = True
 
     globals()['d'] = self
 
-  def enter(self):
-    self.onOpenDetailsPopup()
+    self.testingServer = None
+    self.browserWidget = None
+    self.directoryButton = None
 
-  def exit(self):
-    self.detailsPopup.close()
+    # Load widget from .ui file (created by Qt Designer)
+    uiWidget = slicer.util.loadUI(self.resourcePath('UI/DICOM.ui'))
+    self.layout.addWidget(uiWidget)
+    self.ui = slicer.util.childWidgetVariables(uiWidget)
 
-  def updateGUIFromMRML(self, caller, event):
-    pass
+    self.browserWidget = DICOMLib.SlicerDICOMBrowser()
+    self.browserWidget.objectName = 'SlicerDICOMBrowser'
 
-  # sets up the widget
-  def setup(self):
-
-    self.detailsPopup = None
-    self.setDetailsPopup(self.getSavedDICOMDetailsWidgetType()())
-
-    # XXX Slicer 4.5 - Remove these. Here only for backward compatibility.
-    self.dicomBrowser = self.detailsPopup.dicomBrowser
-    self.tables = self.detailsPopup.tables
+    slicer.modules.DICOMInstance.setBrowserWidgetInDICOMLayout(self.browserWidget)
 
     layoutManager = slicer.app.layoutManager()
     if layoutManager is not None:
       layoutManager.layoutChanged.connect(self.onLayoutChanged)
+      viewArrangement = slicer.app.layoutManager().layoutLogic().GetLayoutNode().GetViewArrangement()
+      self.ui.showBrowserButton.checked = (viewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView)
 
     # connect to the 'Show DICOM Browser' button
-    self.showBrowserButton = qt.QPushButton('Show DICOM database browser')
-    self.showBrowserButton.setCheckable(True)
-    self.layout.addWidget(self.showBrowserButton)
-    self.showBrowserButton.setStyleSheet("font:Bold;"
-                                         "font-size:12px")
-    self.showBrowserButton.connect('clicked()', self.toggleDetailsPopup)
+    self.ui.showBrowserButton.connect('clicked()', self.toggleBrowserWidget)
 
-    self.loadedDataLabel = qt.QLabel("Loaded data")
-    self.loadedDataLabel.setSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Fixed)
-    self.layout.addWidget(self.loadedDataLabel)
-    font = qt.QFont()
-    font.setBold(True)
-    font.setPointSize(12)
-    self.loadedDataLabel.setFont(font)
-    self.layout.addWidget(self.loadedDataLabel)
+    self.ui.importButton.connect('clicked()', self.browserWidget.dicomBrowser, 'openImportDialog()')
 
-    self.subjectHierarchyTree = slicer.qMRMLSubjectHierarchyTreeView()
-    self.layout.addWidget(self.subjectHierarchyTree)
-    self.subjectHierarchyTree.setMRMLScene(slicer.mrmlScene)
-    self.subjectHierarchyTree.currentItemChanged.connect(self.onCurrentItemChanged)
-    self.subjectHierarchyTree.currentItemModified.connect(self.onCurrentItemModified)
+    self.ui.subjectHierarchyTree.setMRMLScene(slicer.mrmlScene)
+    self.ui.subjectHierarchyTree.currentItemChanged.connect(self.onCurrentItemChanged)
+    self.ui.subjectHierarchyTree.currentItemModified.connect(self.onCurrentItemModified)
     self.subjectHierarchyCurrentVisibility = False
-    self.subjectHierarchyTree.setColumnHidden(self.subjectHierarchyTree.model().idColumn, True)
-
-    self.browserSettingsWidget = ctk.ctkCollapsibleGroupBox()
-    self.browserSettingsWidget.title = "Browser settings"
-    self.layout.addWidget(self.browserSettingsWidget)
-    self.browserSettingsWidget.collapsed = True
-    self.browserSettingsWidget.setLayout(qt.QFormLayout())
-
-    self.directoryButton = ctk.ctkDirectoryButton()
-    self.browserSettingsWidget.layout().addRow("Local database:", self.directoryButton)
-    self.directoryButton.directoryChanged.connect(self.onDatabaseDirectoryButtonChanged)
-    self.onDatabaseDirectoryDetailsPopupChanged(self.detailsPopup.dicomBrowser.databaseDirectory)
-
-    self.tableDensityComboBox = qt.QComboBox()
-    self.browserSettingsWidget.layout().addRow("Table density:", self.tableDensityComboBox)
-    self.tableDensityComboBox.currentIndexChanged.connect(self.onTableDensityChanged)
-    self.updateTableDensityComboBox()
-
-    self.horizontalCheckBox = qt.QCheckBox()
-    self.horizontalCheckBox.checked = settingsValue('DICOM/horizontalTables', 0, converter=int)
-    self.horizontalCheckBox.stateChanged.connect(self.onHorizontalStateChanged)
-    self.browserSettingsWidget.layout().addRow("Horizontal:", self.horizontalCheckBox)
-
-    self.browserPersistentCheckBox = qt.QCheckBox()
-    self.browserPersistentCheckBox.checked =settingsValue('DICOM/BrowserPersistent', False, converter=toBool)
-    self.browserPersistentCheckBox.stateChanged.connect(self.onBrowserPersistentStateChanged)
-    self.browserSettingsWidget.layout().addRow("Browser persistent:", self.browserPersistentCheckBox)
-
-    self.additionalSettingsLayout = qt.QHBoxLayout()
+    self.ui.subjectHierarchyTree.setColumnHidden(self.ui.subjectHierarchyTree.model().idColumn, True)
 
     #
-    # servers
+    # DICOM networking
     #
 
-    # testing server - not exposed (used for development)
-    self.localFrame = ctk.ctkCollapsibleButton(self.parent)
-    self.localFrame.setLayout(qt.QVBoxLayout())
-    self.localFrame.setText("Servers")
-    self.layout.addWidget(self.localFrame)
-    self.localFrame.collapsed = True
+    self.ui.networkingFrame.collapsed = True
+    self.ui.queryServerButton.connect('clicked()', self.browserWidget.dicomBrowser, "openQueryDialog()")
+
+    self.ui.toggleListener.connect('toggled(bool)', self.onToggleListener)
+
+    settings = qt.QSettings()
+    self.ui.runListenerAtStart.checked = settingsValue('DICOM/RunListenerAtStart', False, converter=toBool)
+    self.ui.runListenerAtStart.connect('toggled(bool)', self.onRunListenerAtStart)
+
+    # Testing server - not exposed (used for development)
 
     self.toggleServer = qt.QPushButton("Start Testing Server")
-    self.localFrame.layout().addWidget(self.toggleServer)
+    self.ui.networkingFrame.layout().addWidget(self.toggleServer)
     self.toggleServer.connect('clicked()', self.onToggleServer)
 
     self.verboseServer = qt.QCheckBox("Verbose")
-    self.localFrame.layout().addWidget(self.verboseServer)
+    self.ui.networkingFrame.layout().addWidget(self.verboseServer)
 
     # advanced options - not exposed to end users
     # developers can uncomment these lines to access testing server
     self.toggleServer.hide()
     self.verboseServer.hide()
 
-    # Listener
+    #
+    # Browser settings
+    #
 
-    settings = qt.QSettings()
-    self.toggleListener = qt.QPushButton()
-    self.toggleListener.checkable = True
-    if hasattr(slicer, 'dicomListener'):
-      self.toggleListener.text = "Stop Listener"
-      slicer.dicomListener.process.connect('stateChanged(QProcess::ProcessState)',self.onListenerStateChanged)
-    else:
-      self.toggleListener.text = "Start Listener"
-    self.localFrame.layout().addWidget(self.toggleListener)
-    self.toggleListener.connect('clicked()', self.onToggleListener)
+    self.ui.browserSettingsFrame.collapsed = True
 
-    self.runListenerAtStart = qt.QCheckBox("Start Listener when Slicer Starts")
-    self.localFrame.layout().addWidget(self.runListenerAtStart)
-    self.runListenerAtStart.checked = settingsValue('DICOM/RunListenerAtStart', False, converter=toBool)
-    self.runListenerAtStart.connect('clicked()', self.onRunListenerAtStart)
+    self.updateDatabaseDirectoryFromBrowser(self.browserWidget.dicomBrowser.databaseDirectory)
+    # Synchronize database selection between browser and this widget
+    self.ui.directoryButton.directoryChanged.connect(self.updateDatabaseDirectoryFromWidget)
+    self.browserWidget.dicomBrowser.databaseDirectoryChanged.connect(self.updateDatabaseDirectoryFromBrowser)
+
+    self.ui.browserAutoHideCheckBox.checked = not settingsValue('DICOM/BrowserPersistent', False, converter=toBool)
+    self.ui.browserAutoHideCheckBox.stateChanged.connect(self.onBrowserAutoHideStateChanged)
+
+    self.ui.repairDatabaseButton.connect('clicked()', self.browserWidget.dicomBrowser, "onRepairAction()")
+    self.ui.clearDatabaseButton.connect('clicked()', self.onClearDatabase)
 
     # connect to the main window's dicom button
     mw = slicer.util.mainWindow()
     if mw:
       try:
         action = slicer.util.findChildren(mw,name='LoadDICOMAction')[0]
-        action.connect('triggered()',self.onOpenDetailsPopup)
+        action.connect('triggered()',self.onOpenBrowserWidget)
       except IndexError:
         logging.error('Could not connect to the main window DICOM button')
 
-    if hasattr(slicer, 'dicomListener'):
-      slicer.dicomListener.fileToBeAddedCallback = self.onListenerToAddFile
-      slicer.dicomListener.fileAddedCallback = self.onListenerAddedFile
+    self.databaseRefreshRequestTimer = qt.QTimer()
+    self.databaseRefreshRequestTimer.setSingleShot(True)
+    # If not receiving new file for 2 seconds then a database update is triggered.
+    self.databaseRefreshRequestTimer.setInterval(2000)
+    self.databaseRefreshRequestTimer.connect('timeout()', self.requestDatabaseRefresh)
 
-    slicer.dicomDatabase.connect('databaseChanged()', self.onDatabaseChanged)
 
-    # the recent activity frame
-    self.activityFrame = ctk.ctkCollapsibleButton(self.parent)
-    self.activityFrame.collapsed = True
-    self.activityFrame.setLayout(qt.QVBoxLayout())
-    self.activityFrame.setText("Recent DICOM Activity")
-    self.layout.addWidget(self.activityFrame)
+  def enter(self):
+    self.onOpenBrowserWidget()
+    self.addListenerObservers()
 
-    self.recentActivity = DICOMLib.DICOMRecentActivityWidget(self.activityFrame,detailsPopup=self.detailsPopup)
-    self.activityFrame.layout().addWidget(self.recentActivity)
-    self.requestUpdateRecentActivity()
+
+  def exit(self):
+    self.removeListenerObservers()
+    self.browserWidget.close()
+
+
+  def addListenerObservers(self):
+    if not hasattr(slicer, 'dicomListener'):
+      return
+    slicer.dicomListener.process.connect('stateChanged(QProcess::ProcessState)', self.onListenerStateChanged)
+    slicer.dicomListener.fileToBeAddedCallback = self.onListenerToAddFile
+    slicer.dicomListener.fileAddedCallback = self.onListenerAddedFile
+    self.onListenerStateChanged(slicer.dicomListener.process.state())
+
+
+  def removeListenerObservers(self):
+    if not hasattr(slicer, 'dicomListener'):
+      return
+    slicer.dicomListener.process.disconnect('stateChanged(QProcess::ProcessState)', self.onListenerStateChanged)
+    slicer.dicomListener.fileToBeAddedCallback = None
+    slicer.dicomListener.fileAddedCallback = None
+
+
+  def updateGUIFromMRML(self, caller, event):
+    pass
+
 
   def onLayoutChanged(self, viewArrangement):
-    if viewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView:
-      self.showBrowserButton.checked = True
-    else:
-      slicer.modules.DICOMWidget.showBrowserButton.checked = False
+    self.ui.showBrowserButton.checked = (viewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView)
+
 
   def onCurrentItemChanged(self, id):
     plugin = slicer.qSlicerSubjectHierarchyPluginHandler.instance().getOwnerPluginForSubjectHierarchyItem(id)
@@ -569,6 +533,7 @@ class DICOMWidget(object):
       self.subjectHierarchyCurrentVisibility = False
       return
     self.subjectHierarchyCurrentVisibility = plugin.getDisplayVisibility(id)
+
 
   def onCurrentItemModified(self, id):
     oldSubjectHierarchyCurrentVisibility = self.subjectHierarchyCurrentVisibility
@@ -579,98 +544,51 @@ class DICOMWidget(object):
     else:
       self.subjectHierarchyCurrentVisibility = plugin.getDisplayVisibility(id)
 
-    if self.detailsPopup is None:
+    if self.browserWidget is None:
       return
 
     if (oldSubjectHierarchyCurrentVisibility != self.subjectHierarchyCurrentVisibility and
         self.subjectHierarchyCurrentVisibility):
-      self.detailsPopup.close()
+      self.browserWidget.close()
 
-  def setDetailsPopup(self, detailsPopup):
-    if self.detailsPopup:
-      self.detailsPopup.dicomBrowser.databaseDirectoryChanged.disconnect(self.onDatabaseDirectoryDetailsPopupChanged)
 
-    self.detailsPopup = detailsPopup
-    slicer.modules.DICOMInstance.setDetailsPopup(detailsPopup)
-
-    if self.detailsPopup:
-      self.onDatabaseDirectoryDetailsPopupChanged(self.detailsPopup.dicomBrowser.databaseDirectory)
-      self.detailsPopup.dicomBrowser.databaseDirectoryChanged.connect(self.onDatabaseDirectoryDetailsPopupChanged)
-
-      self.eventFilter = EscapeKeyFilter()
-      self.detailsPopup.installEventFilter(self.eventFilter)
-
-      if self.tableDensityComboBox:
-        detailsPopupTableDensityComboBox = self.detailsPopup.findChild("QWidget", "tableDensityComboBox")
-        if detailsPopupTableDensityComboBox:
-          for i in range(detailsPopupTableDensityComboBox.count):
-            self.tableDensityComboBox.addItem(detailsPopupTableDensityComboBox.itemText(i))
-
-  def toggleDetailsPopup(self):
-    if self.showBrowserButton.checked:
-      self.onOpenDetailsPopup()
+  def toggleBrowserWidget(self):
+    if self.ui.showBrowserButton.checked:
+      self.onOpenBrowserWidget()
     else:
-      if self.detailsPopup:
-        self.detailsPopup.close()
+      if self.browserWidget:
+        self.browserWidget.close()
 
-  def onOpenDetailsPopup(self):
-    if not isinstance(self.detailsPopup, self.getSavedDICOMDetailsWidgetType()):
-      self.setDetailsPopup(self.getSavedDICOMDetailsWidgetType()())
 
+  def onOpenBrowserWidget(self):
     slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView)
 
-  def onDatabaseChanged(self):
-    """Use this because to update the view in response to things
-    like database inserts.  Ideally the model would do this
-    directly based on signals from the SQLite database, but
-    that is not currently available.
-    https://bugreports.qt-project.org/browse/QTBUG-10775
-    """
-    self.requestUpdateRecentActivity()
 
-  def requestUpdateRecentActivity(self):
-    """This method serves to compress the requests for updating
-    the recent activity widget since it is time consuming and there can be
-    many of them coming in a rapid sequence when the
-    database is active"""
-    self.updateRecentActivityTimer.start()
-
-  def onUpateRecentActivityRequestTimeout(self):
-    self.recentActivity.update()
-
-  def onToggleListener(self):
-    self.toggleListener.checked = False
+  def onToggleListener(self, toggled):
     if hasattr(slicer, 'dicomListener'):
-      slicer.dicomListener.stop()
-      del slicer.dicomListener
-    else:
-      try:
-        dicomListener = DICOMLib.DICOMListener(database=slicer.dicomDatabase)
-        dicomListener.start()
-        if dicomListener.process:
-          self.onListenerStateChanged(dicomListener.process.state())
-          dicomListener.process.connect('stateChanged(QProcess::ProcessState)',self.onListenerStateChanged)
-          dicomListener.fileToBeAddedCallback = self.onListenerToAddFile
-          dicomListener.fileAddedCallback = self.onListenerAddedFile
-          slicer.dicomListener = dicomListener
-      except UserWarning as message:
-        slicer.util.warningDisplay("Could not start listener:\n %s" % message, windowTitle="DICOM")
+      self.removeListenerObservers()
+      slicer.modules.DICOMInstance.stopListener()
+    if toggled:
+      slicer.modules.DICOMInstance.startListener()
+      self.addListenerObservers()
 
-  def onListenerStateChanged(self,newState):
+  def onListenerStateChanged(self, newState):
     """ Called when the indexer process state changes
     so we can provide feedback to the user
     """
     if newState == 0:
-      slicer.util.showStatusMessage("DICOM Listener not running")
-      self.toggleListener.text = "Start Listener"
-      self.toggleListener.checked = False
-      del slicer.dicomListener
+      self.ui.listenerStateLabel.text = "not started"
+      wasBlocked = self.ui.toggleListener.blockSignals(True)
+      self.ui.toggleListener.checked = False
+      self.ui.toggleListener.blockSignals(wasBlocked)
+      slicer.modules.DICOMInstance.stopListener()
     if newState == 1:
-      slicer.util.showStatusMessage("DICOM Listener starting")
+      self.ui.listenerStateLabel.text = "starting"
     if newState == 2:
-      slicer.util.showStatusMessage("DICOM Listener running")
-      self.toggleListener.text = "Stop Listener"
-      self.toggleListener.checked = True
+      port = str(slicer.dicomListener.port) if hasattr(slicer, 'dicomListener') else "unknown"
+      self.ui.listenerStateLabel.text = "running at port "+port
+      self.ui.toggleListener.checked = True
+
 
   def onListenerToAddFile(self):
     """ Called when the indexer is about to add a file to the database.
@@ -678,13 +596,20 @@ class DICOMWidget(object):
     database locked.
     """
 
+
   def onListenerAddedFile(self):
     """Called after the listener has added a file.
     Restore and refresh the app model
     """
     newFile = slicer.dicomListener.lastFileAdded
     if newFile:
-      slicer.util.showStatusMessage("Loaded: %s" % newFile, 1000)
+      slicer.util.showStatusMessage("Received DICOM file: %s" % newFile, 1000)
+    self.databaseRefreshRequestTimer.start()
+
+  def requestDatabaseRefresh(self):
+    logging.debug("Database refresh is requested")
+    if slicer.dicomDatabase.isOpen:
+      slicer.dicomDatabase.databaseChanged()
 
   def onToggleServer(self):
     if self.testingServer and self.testingServer.qrRunning():
@@ -722,55 +647,32 @@ class DICOMWidget(object):
       self.testingServer.start(verbose=self.verboseServer.checked,initialFiles=files)
       #self.toggleServer.text = "Stop Testing Server"
 
-  def onRunListenerAtStart(self):
+
+  def onRunListenerAtStart(self, toggled):
     settings = qt.QSettings()
-    settings.setValue('DICOM/RunListenerAtStart', self.runListenerAtStart.checked)
+    settings.setValue('DICOM/RunListenerAtStart', toggled)
 
-  def onDatabaseDirectoryChanged(self,databaseDirectory):
-    # XXX Slicer 4.5 - Remove this function. Was here only for backward compatibility.
-    self.detailsPopup.onDatabaseDirectoryChanged(databaseDirectory)
 
-  def onDatabaseDirectoryButtonChanged(self, databaseDirectory):
-    if not self.detailsPopup:
-      return
-    if not self.directoryButton:
-      return
-    if self.detailsPopup.dicomBrowser.databaseDirectory == databaseDirectory:
-      return
-    self.detailsPopup.dicomBrowser.databaseDirectory = databaseDirectory
+  def updateDatabaseDirectoryFromWidget(self, databaseDirectory):
+    self.browserWidget.dicomBrowser.databaseDirectory = databaseDirectory
 
-  def onDatabaseDirectoryDetailsPopupChanged(self,databaseDirectory):
-    if not self.detailsPopup:
-      return
-    if not self.directoryButton:
-      return
-    if self.directoryButton.directory == databaseDirectory:
-      return
-    self.directoryButton.directory = databaseDirectory
 
-  def updateTableDensityComboBox(self):
-    if self.detailsPopup:
-      detailsPopupTableDensityComboBox = self.detailsPopup.findChild("QWidget", "tableDensityComboBox")
-      if detailsPopupTableDensityComboBox:
-        self.tableDensityComboBox.clear()
-        for i in range(detailsPopupTableDensityComboBox.count):
-          self.tableDensityComboBox.addItem(detailsPopupTableDensityComboBox.itemText(i))
-        self.tableDensityComboBox.setCurrentIndex(detailsPopupTableDensityComboBox.currentIndex)
+  def updateDatabaseDirectoryFromBrowser(self,databaseDirectory):
+    wasBlocked = self.ui.directoryButton.blockSignals(True)
+    self.ui.directoryButton.directory = databaseDirectory
+    self.ui.directoryButton.blockSignals(wasBlocked)
 
-  def onTableDensityChanged(self, index):
-    self.detailsPopup.dicomBrowser.onTablesDensityComboBox(self.tableDensityComboBox.itemText(index))
 
-  def onHorizontalStateChanged(self):
-    if self.detailsPopup:
-      self.detailsPopup.tableSplitter.setOrientation(self.horizontalCheckBox.checked)
-    settings = qt.QSettings()
-    settings.setValue('DICOM/horizontalTables', int(self.horizontalCheckBox.checked))
+  def onBrowserAutoHideStateChanged(self, autoHideState):
+    if self.browserWidget:
+      self.browserWidget.setBrowserPersistence(autoHideState != qt.Qt.Checked)
 
-  def onBrowserPersistentStateChanged(self, state):
-    if self.detailsPopup:
-      self.detailsPopup.setBrowserPersistence(state)
-
-  def messageBox(self,text,title='DICOM'):
-    # XXX Slicer 4.5 - Remove this function. Was here only for backward compatibility.
-    #                  Instead, slicer.util.warningDisplay() should be used.
-    slicer.util.warningDisplay(text, windowTitle=title)
+  def onClearDatabase(self):
+    patientIds = slicer.dicomDatabase.patients()
+    if len(patientIds) == 0:
+      slicer.util.infoDisplay("DICOM database is already empty.")
+    elif not slicer.util.confirmYesNoDisplay(
+      'Are you sure you want to delete all data and files copied into the database (%d patients)?' % len(patientIds),
+      windowTitle='Clear entire DICOM database'):
+        return
+    DICOMLib.clearDatabase(slicer.dicomDatabase)

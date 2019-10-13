@@ -72,7 +72,9 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         "fileName": "Mouse-MR-example-where-GDCM_fails.zip",
         "name": "Mouse-MR-example-where-GDCM_fails",
         "seriesUID": "1.3.6.1.4.1.9590.100.1.2.366426457713813178933224342280246227461",
-        "expectedFailures": ["GDCM", "Archetype"],
+        # GDCM rejects loading. 
+        # DCMTK reads it but then ITK rejects loading the image with 0 spacing.
+        "expectedFailures": ["GDCM", "Archetype", "DCMTK", "GDCM with DCMTK fallback"],
         "voxelValueQuantity": "(110852, DCM, \"MR signal intensity\")",
         "voxelValueUnits": "(1, UCUM, \"no units\")"
       },
@@ -109,28 +111,26 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         self.delayDisplay('Finished with download')
 
         #
-        # insert the data into th database
+        # insert the data into the database
         #
         self.delayDisplay("Switching to temp database directory")
         originalDatabaseDirectory = DICOMUtils.openTemporaryDatabase('tempDICOMDatabase')
 
         self.delayDisplay('Importing DICOM')
-        mainWindow = slicer.util.mainWindow()
-        mainWindow.moduleSelector().selectModule('DICOM')
+        slicer.util.selectModule("DICOM")
 
-        indexer = ctk.ctkDICOMIndexer()
-        indexer.addDirectory(slicer.dicomDatabase, dicomFilesDirectory, None)
-        indexer.waitForImportFinished()
+        browserWidget = slicer.modules.DICOMWidget.browserWidget
+        dicomBrowser = browserWidget.dicomBrowser
+        dicomBrowser.importDirectory(dicomFilesDirectory, dicomBrowser.ImportDirectoryAddLink)
+        dicomBrowser.waitForImportFinished()
 
         #
         # select the series
         #
-        detailsPopup = slicer.modules.DICOMWidget.detailsPopup
-        detailsPopup.open()
+        browserWidget.onSeriesSelected([dataset['seriesUID']])
         # load the data by series UID
-        detailsPopup.offerLoadables(dataset['seriesUID'],'Series')
-        detailsPopup.examineForLoading()
-        loadable = list(detailsPopup.getAllSelectedLoadables().keys())[0]
+        browserWidget.examineForLoading()
+        loadable = list(browserWidget.getAllSelectedLoadables().keys())[0]
 
         #
         # try loading using each of the selected readers, fail
@@ -189,7 +189,8 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         testPass = False
 
     self.delayDisplay("Restoring original database directory")
-    mainWindow.moduleSelector().selectModule('DICOMReaders')
+    DICOMUtils.closeTemporaryDatabase(originalDatabaseDirectory)
+    slicer.util.selectModule('DICOMReaders')
 
     logging.info(loadingResult)
 
@@ -206,6 +207,9 @@ reloadScriptedModule('DICOMReaders'); import DICOMReaders; tester = DICOMReaders
     testPass = True
     import os, json
     self.delayDisplay("Starting the DICOM test")
+
+    settings = qt.QSettings()
+    settings.setValue("DICOM/ScalarVolume/AcquisitionGeometryRegularization", "transform")
 
     import SampleData
     dicomFilesDirectory = SampleData.downloadFromURL(
@@ -254,22 +258,20 @@ reloadScriptedModule('DICOMReaders'); import DICOMReaders; tester = DICOMReaders
       originalDatabaseDirectory = DICOMUtils.openTemporaryDatabase('tempDICOMDatabase')
 
       self.delayDisplay('Importing DICOM')
-      mainWindow = slicer.util.mainWindow()
-      mainWindow.moduleSelector().selectModule('DICOM')
+      slicer.util.selectModule("DICOM")
 
-      indexer = ctk.ctkDICOMIndexer()
-      indexer.addDirectory(slicer.dicomDatabase, dicomFilesDirectory, None)
-      indexer.waitForImportFinished()
+      browserWidget = slicer.modules.DICOMWidget.browserWidget
+      dicomBrowser = browserWidget.dicomBrowser
+      dicomBrowser.importDirectory(dicomFilesDirectory, dicomBrowser.ImportDirectoryAddLink)
+      dicomBrowser.waitForImportFinished()
 
       #
       # select the series
       #
-      detailsPopup = slicer.modules.DICOMWidget.detailsPopup
-      detailsPopup.open()
+      browserWidget.onSeriesSelected([seriesUID])
       # load the data by series UID
-      detailsPopup.offerLoadables(seriesUID,'Series')
-      detailsPopup.examineForLoading()
-      loadable = list(detailsPopup.getAllSelectedLoadables().keys())[0]
+      browserWidget.examineForLoading()
+      loadable = list(browserWidget.getAllSelectedLoadables().keys())[0]
 
       if len(loadable.warning) == 0:
         raise Exception("Expected warning about geometry issues due to missing slices!")
@@ -292,6 +294,7 @@ reloadScriptedModule('DICOMReaders'); import DICOMReaders; tester = DICOMReaders
       testPass = False
 
     self.delayDisplay("Restoring original database directory")
-    mainWindow.moduleSelector().selectModule('DICOMReaders')
+    DICOMUtils.closeTemporaryDatabase(originalDatabaseDirectory)
+    slicer.util.selectModule('DICOMReaders')
 
     return testPass

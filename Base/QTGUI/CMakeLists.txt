@@ -315,6 +315,13 @@ if(Slicer_USE_PYTHONQT)
     )
 endif()
 
+# DICOM
+if(Slicer_BUILD_DICOM_SUPPORT)
+  list(APPEND KIT_target_libraries
+    CTKDICOMWidgets
+    )
+endif()
+
 # Resources
 set(KIT_resources
   Resources/qSlicerBaseQTGUI.qrc

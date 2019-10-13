@@ -49,6 +49,9 @@
 #include <ctkXMLEventObserver.h>
 #include <ctkXMLEventSource.h>
 #endif
+#ifdef Slicer_BUILD_DICOM_SUPPORT
+#include <ctkDICOMBrowser.h>
+#endif
 #include <ctkToolTipTrapper.h>
 #include <ctkVTKErrorLogMessageHandler.h>
 
@@ -1054,3 +1057,11 @@ void qSlicerApplication::resumeRender()
 {
   this->setRenderPaused(false);
 }
+
+#ifdef Slicer_BUILD_DICOM_SUPPORT
+//-----------------------------------------------------------------------------
+ctkDICOMBrowser* qSlicerApplication::createDICOMBrowserForMainDatabase()
+{
+  return new ctkDICOMBrowser(this->dicomDatabaseShared());
+}
+#endif

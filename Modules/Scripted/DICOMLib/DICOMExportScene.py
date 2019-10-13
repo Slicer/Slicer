@@ -53,8 +53,8 @@ class DICOMExportScene(object):
     return success
 
   def getFirstFileInDatabase(self):
-    if not slicer.dicomDatabase:
-      logging.error('No DICOM database is set')
+    if not slicer.dicomDatabase.isOpen:
+      logging.error('DICOM database is not open')
       return
     for patient in slicer.dicomDatabase.patients():
       studies = slicer.dicomDatabase.studiesForPatient(patient)
@@ -189,8 +189,8 @@ class DICOMExportScene(object):
     return True
 
   def addFilesToDatabase(self):
-    if not slicer.dicomDatabase:
-      slicer.util.warningDisplay("No DICOM database is set, so the (otherwise successfully) exported dataset cannot be imported back")
+    if not slicer.dicomDatabase.isOpen:
+      slicer.util.warningDisplay("DICOM database is not open, so the (otherwise successfully) exported dataset cannot be imported back")
       return
     self.progress('Adding to DICOM Database...')
     indexer = ctk.ctkDICOMIndexer()
@@ -199,5 +199,4 @@ class DICOMExportScene(object):
       files = [self.sdbFile]
     else:
       files = glob.glob('%s/*' % self.dicomDirectory)
-    for file in files:
-      indexer.addFile( slicer.dicomDatabase, file, destinationDir )
+    indexer.addListOfFiles( slicer.dicomDatabase, files, True)
