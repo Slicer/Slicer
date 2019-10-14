@@ -88,7 +88,7 @@ public:
   /// Compute non-interpolated (voxel-based) cropping output volume geometry (without actually cropping the image).
   /// If limitToInputExtent is set to true (default) then the extent can only be smaller than the input volume.
   static bool GetVoxelBasedCropOutputExtent(vtkMRMLAnnotationROINode* roi, vtkMRMLVolumeNode* inputVolume,
-    int outputExtent[6], bool limitToInputExtent=true);
+    int outputExtent[6], bool limitToInputExtent=false);
 
   /// Perform interpolated cropping.
   int CropInterpolated(vtkMRMLAnnotationROINode* roi, vtkMRMLVolumeNode* inputVolume, vtkMRMLVolumeNode* outputNode,
