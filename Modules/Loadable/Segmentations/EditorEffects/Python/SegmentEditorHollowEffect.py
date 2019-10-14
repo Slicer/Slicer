@@ -48,7 +48,7 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
     self.shellThicknessMmSpinBox.singleStep = 1.0
 
     self.kernelSizePixel = qt.QLabel()
-    self.kernelSizePixel.setToolTip("Thickness in pixels. Computed from the segment's spacing and the specified margin size.")
+    self.kernelSizePixel.setToolTip("Closest achievable thickness. Constrained by the segmentation's binary labelmap representation spacing.")
 
     shellThicknessFrame = qt.QHBoxLayout()
     shellThicknessFrame.addWidget(self.shellThicknessMmSpinBox)
@@ -80,14 +80,9 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
     if selectedSegmentLabelmap:
       selectedSegmentLabelmapSpacing = selectedSegmentLabelmap.GetSpacing()
 
-    if self.scriptedEffect.parameter("ShellMode") == MEDIAL_SURFACE:
-      # Size rounded to nearest 2x of odd number, as kernel will be applied on both sides and kernel size must be odd number.
-      shellThicknessMm = abs(self.scriptedEffect.doubleParameter("ShellThicknessMm"))
-      kernelSizePixel = [int(round((shellThicknessMm / selectedSegmentLabelmapSpacing[componentIndex]+2)/4)*4) for componentIndex in range(3)]
-    else:
-      # Size rounded to nearest odd number. If kernel size is even then image gets shifted.
-      shellThicknessMm = abs(self.scriptedEffect.doubleParameter("ShellThicknessMm"))
-      kernelSizePixel = [int(round((shellThicknessMm / selectedSegmentLabelmapSpacing[componentIndex]+1)/2)*2-1) for componentIndex in range(3)]
+    # Size rounded to nearest odd number. If kernel size is even then image gets shifted.
+    shellThicknessMm = abs(self.scriptedEffect.doubleParameter("ShellThicknessMm"))
+    kernelSizePixel = [int(round(shellThicknessMm / selectedSegmentLabelmapSpacing[componentIndex])*2.0+1.0) for componentIndex in range(3)]
     return kernelSizePixel
 
   def updateGUIFromMRML(self):
@@ -109,18 +104,20 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
     self.outsideSurfaceOptionRadioButton.setChecked(self.scriptedEffect.parameter("ShellMode") == OUTSIDE_SURFACE)
     self.outsideSurfaceOptionRadioButton.blockSignals(wasBlocked)
 
-    kernelSizePixel = self.getKernelSizePixel()
-
-    if self.scriptedEffect.parameter("ShellMode") == MEDIAL_SURFACE:
-      minimumKernelSize = 2
+    selectedSegmentLabelmapSpacing = [1.0, 1.0, 1.0]
+    selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()
+    if selectedSegmentLabelmap:
+      selectedSegmentLabelmapSpacing = selectedSegmentLabelmap.GetSpacing()
+      kernelSizePixel = self.getKernelSizePixel()
+      if kernelSizePixel[0]<=1 and kernelSizePixel[1]<=1 and kernelSizePixel[2]<=1:
+        self.kernelSizePixel.text = "requested. Not feasible at current resolution."
+        self.applyButton.setEnabled(False)
+      else:
+        thicknessMm = [abs((kernelSizePixel[i]-1.0)/2.0*selectedSegmentLabelmapSpacing[i]) for i in range(3)]
+        self.kernelSizePixel.text = "requested. Actual: {0} x {1} x {2} mm.".format(*thicknessMm)
+        self.applyButton.setEnabled(True)
     else:
-      minimumKernelSize = 1
-    if kernelSizePixel[0]<=1 and kernelSizePixel[1]<=1 and kernelSizePixel[2]<=1:
-      self.kernelSizePixel.text = "too thin"
-      self.applyButton.setEnabled(False)
-    else:
-      self.kernelSizePixel.text = "{0}x{1}x{2} pixels".format(abs(kernelSizePixel[0]), abs(kernelSizePixel[1]), abs(kernelSizePixel[2]))
-      self.applyButton.setEnabled(True)
+      self.kernelSizePixel.text = "empty segment"
 
     self.setWidgetMinMaxStepFromImageSpacing(self.shellThicknessMmSpinBox, self.scriptedEffect.selectedSegmentLabelmap())
 
@@ -148,14 +145,6 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
     modifierLabelmap = self.scriptedEffect.defaultModifierLabelmap()
     selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()
 
-    shellMode = self.scriptedEffect.parameter("ShellMode")
-
-    marginSizeMm = self.scriptedEffect.doubleParameter("MarginSizeMm")
-    kernelSizePixel = self.getKernelSizePixel()
-    if shellMode == MEDIAL_SURFACE:
-      # both erosion and dilation will be applied, so kernel size must be half on each side
-      kernelSizePixel = [int(kernelSizePixel[0]/2), int(kernelSizePixel[1]/2), int(kernelSizePixel[2]/2)]
-
     # We need to know exactly the value of the segment voxels, apply threshold to make force the selected label value
     labelValue = 1
     backgroundValue = 0
@@ -169,24 +158,35 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
 
     subtract = vtk.vtkImageMathematics()
     subtract.SetOperationToSubtract()
+    kernelSizePixel = self.getKernelSizePixel()
+    shellMode = self.scriptedEffect.parameter("ShellMode")
+    if shellMode == MEDIAL_SURFACE:
+      dilateKernelSizePixel = [int((kernelSizePixel[i]+1.0)/4.0)*2+1 for i in range(3)]
+      erodeKernelSizePixel = [int((kernelSizePixel[i]-1.0)/4.0)*2+1 for i in range(3)]
+    elif shellMode == INSIDE_SURFACE:
+      dilateKernelSizePixel = kernelSizePixel
+      erodeKernelSizePixel = [1, 1, 1]
+    elif shellMode == OUTSIDE_SURFACE:
+      dilateKernelSizePixel = [1, 1, 1]
+      erodeKernelSizePixel = kernelSizePixel
 
-    if shellMode == INSIDE_SURFACE or shellMode == MEDIAL_SURFACE:
+    if dilateKernelSizePixel[0]>1 or dilateKernelSizePixel[1]>1 or dilateKernelSizePixel[2]>1:
       dilate = vtk.vtkImageDilateErode3D()
       dilate.SetInputConnection(thresh.GetOutputPort())
       dilate.SetDilateValue(labelValue)
       dilate.SetErodeValue(backgroundValue)
-      dilate.SetKernelSize(kernelSizePixel[0],kernelSizePixel[1],kernelSizePixel[2])
+      dilate.SetKernelSize(*dilateKernelSizePixel)
       dilate.Update()
       subtract.SetInput1Data(dilate.GetOutput())
     else:
       subtract.SetInput1Data(thresh.GetOutput())
 
-    if shellMode == OUTSIDE_SURFACE or shellMode == MEDIAL_SURFACE:
+    if erodeKernelSizePixel[0]>1 or erodeKernelSizePixel[1]>1 or erodeKernelSizePixel[2]>1:
       erode = vtk.vtkImageDilateErode3D()
       erode.SetInputConnection(thresh.GetOutputPort())
       erode.SetDilateValue(backgroundValue)
       erode.SetErodeValue(labelValue)
-      erode.SetKernelSize(kernelSizePixel[0],kernelSizePixel[1],kernelSizePixel[2])
+      erode.SetKernelSize(*erodeKernelSizePixel)
       erode.Update()
       subtract.SetInput2Data(erode.GetOutput())
     else:
