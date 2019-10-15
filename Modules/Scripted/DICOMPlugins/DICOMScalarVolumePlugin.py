@@ -225,7 +225,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       newFiles = []
       excludedLoadable = False
       for file in loadable.files:
-        if slicer.dicomDatabase.fileValue(file,self.tags['pixelData'])!='':
+        if slicer.dicomDatabase.fileValueExists(file,self.tags['pixelData']):
           newFiles.append(file)
         if slicer.dicomDatabase.fileValue(file,self.tags['sopClassUID'])=='1.2.840.10008.5.1.4.1.1.66.4':
           excludedLoadable = True
