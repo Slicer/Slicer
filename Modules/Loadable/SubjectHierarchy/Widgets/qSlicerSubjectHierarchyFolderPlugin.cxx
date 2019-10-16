@@ -255,6 +255,12 @@ void qSlicerSubjectHierarchyFolderPlugin::setDisplayVisibility(vtkIdType itemID,
     {
     displayNode = this->createDisplayNodeForItem(itemID);
     }
+  if (!displayNode)
+    {
+    // No display node can be associated with this item
+    // (for exmple, it is a scripted module node)
+    return;
+    }
   displayNode->SetVisibility(visible);
 }
 
