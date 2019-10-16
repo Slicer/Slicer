@@ -686,4 +686,6 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
       'Are you sure you want to delete all data and files copied into the database (%d patients)?' % len(patientIds),
       windowTitle='Clear entire DICOM database'):
         return
+    slicer.app.setOverrideCursor(qt.Qt.WaitCursor)
     DICOMLib.clearDatabase(slicer.dicomDatabase)
+    slicer.app.restoreOverrideCursor()
