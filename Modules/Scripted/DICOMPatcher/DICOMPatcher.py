@@ -196,14 +196,18 @@ class ForceSamePatientNameIdInEachDirectory(DICOMPatcherRule):
     self.firstFileInDirectory = True
     self.patientIndex += 1
   def processDataSet(self, ds):
-    import dicom
+    import pydicom as dicom
     if self.firstFileInDirectory:
       # Get patient name and ID for this folder and save it
       self.firstFileInDirectory = False
-      if ds.PatientName == '':
+      if ds.PatientName:
+        self.patientName = ds.PatientName
+      else:
         self.patientName = "Unspecified Patient " + str(self.patientIndex)
-      if ds.PatientID == '':
-        self.patientID = dicom.UID.generate_uid(None)
+      if ds.PatientID:
+        self.patientID = ds.PatientID
+      else:
+        self.patientID = dicom.uid.generate_uid(None)
     # Set the same patient name and ID as the first file in the directory
     ds.PatientName = self.patientName
     ds.PatientID = self.patientID
@@ -213,28 +217,28 @@ class GenerateMissingIDs(DICOMPatcherRule):
     self.requiredTags = ['PatientName', 'PatientID', 'StudyInstanceUID', 'SeriesInstanceUID', 'SeriesNumber']
     self.eachFileIsSeparateSeries = False
   def processStart(self, inputRootDir, outputRootDir):
-    import dicom
+    import pydicom as dicom
     self.patientIDToRandomIDMap = {}
     self.studyUIDToRandomUIDMap = {}
     self.seriesUIDToRandomUIDMap = {}
     self.numberOfSeriesInStudyMap = {}
     # All files without a patient ID will be assigned to the same patient
-    self.randomPatientID = dicom.UID.generate_uid(None)
+    self.randomPatientID = dicom.uid.generate_uid(None)
   def processDirectory(self, currentSubDir):
-    import dicom
+    import pydicom as dicom
     # Assume that all files in a directory belongs to the same study
-    self.randomStudyUID = dicom.UID.generate_uid(None)
+    self.randomStudyUID = dicom.uid.generate_uid(None)
     # Assume that all files in a directory belongs to the same series
-    self.randomSeriesInstanceUID = dicom.UID.generate_uid(None)
+    self.randomSeriesInstanceUID = dicom.uid.generate_uid(None)
   def processDataSet(self, ds):
-    import dicom
+    import pydicom as dicom
 
     for tag in self.requiredTags:
       if not hasattr(ds,tag):
         setattr(ds,tag,'')
 
     # Generate a new SOPInstanceUID to avoid different files having the same SOPInstanceUID
-    ds.SOPInstanceUID = dicom.UID.generate_uid(None)
+    ds.SOPInstanceUID = dicom.uid.generate_uid(None)
 
     if ds.PatientName == '':
       ds.PatientName = "Unspecified Patient"
@@ -244,7 +248,7 @@ class GenerateMissingIDs(DICOMPatcherRule):
       ds.StudyInstanceUID = self.randomStudyUID
     if ds.SeriesInstanceUID == '':
       if self.eachFileIsSeparateSeries:
-        ds.SeriesInstanceUID = dicom.UID.generate_uid(None)
+        ds.SeriesInstanceUID = dicom.uid.generate_uid(None)
       else:
         ds.SeriesInstanceUID = self.randomSeriesInstanceUID
 
@@ -276,7 +280,6 @@ class FixPrivateMediaStorageSOPClassUID(DICOMPatcherRule):
     # GDCM refuses to load images with a private SOP class UID, so we change it to CT storage
     # (as that is the most commonly used imaging modality).
     # We could make things nicer by allowing the user to specify a modality.
-    import dicom
     DCMTKPrivateMediaStorageSOPClassUID = "1.2.276.0.7230010.3.1.0.1"
     CTImageStorageSOPClassUID = "1.2.840.10008.5.1.4.1.1.2"
     if not hasattr(ds.file_meta, 'MediaStorageSOPClassUID') or ds.file_meta.MediaStorageSOPClassUID == DCMTKPrivateMediaStorageSOPClassUID:
@@ -292,7 +295,7 @@ class FixPrivateMediaStorageSOPClassUID(DICOMPatcherRule):
 class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
   """Add missing slice spacing info to multiframe files"""
   def processDataSet(self, ds):
-    import dicom
+    import pydicom as dicom
 
     if not hasattr(ds,'NumberOfFrames'):
       return
@@ -375,21 +378,21 @@ class Anonymize(DICOMPatcherRule):
   def __init__(self):
     self.requiredTags = ['PatientName', 'PatientID', 'StudyInstanceUID', 'SeriesInstanceUID', 'SeriesNumber']
   def processStart(self, inputRootDir, outputRootDir):
-    import dicom
+    import pydicom as dicom
     self.patientIDToRandomIDMap = {}
     self.studyUIDToRandomUIDMap = {}
     self.seriesUIDToRandomUIDMap = {}
     self.numberOfSeriesInStudyMap = {}
     # All files without a patient ID will be assigned to the same patient
-    self.randomPatientID = dicom.UID.generate_uid(None)
+    self.randomPatientID = dicom.uid.generate_uid(None)
   def processDirectory(self, currentSubDir):
-    import dicom
+    import pydicom as dicom
     # Assume that all files in a directory belongs to the same study
-    self.randomStudyUID = dicom.UID.generate_uid(None)
+    self.randomStudyUID = dicom.uid.generate_uid(None)
     # Assume that all files in a directory belongs to the same series
-    self.randomSeriesInstanceUID = dicom.UID.generate_uid(None)
+    self.randomSeriesInstanceUID = dicom.uid.generate_uid(None)
   def processDataSet(self, ds):
-    import dicom
+    import pydicom as dicom
 
     ds.StudyDate = ''
     ds.StudyTime = ''
@@ -404,13 +407,13 @@ class Anonymize(DICOMPatcherRule):
 
     # replace ids with random values - re-use if we have seen them before
     if ds.PatientID not in self.patientIDToRandomIDMap:
-      self.patientIDToRandomIDMap[ds.PatientID] = dicom.UID.generate_uid(None)
+      self.patientIDToRandomIDMap[ds.PatientID] = dicom.uid.generate_uid(None)
     ds.PatientID = self.patientIDToRandomIDMap[ds.PatientID]
     if ds.StudyInstanceUID not in self.studyUIDToRandomUIDMap:
-      self.studyUIDToRandomUIDMap[ds.StudyInstanceUID] = dicom.UID.generate_uid(None)
+      self.studyUIDToRandomUIDMap[ds.StudyInstanceUID] = dicom.uid.generate_uid(None)
     ds.StudyInstanceUID = self.studyUIDToRandomUIDMap[ds.StudyInstanceUID]
     if ds.SeriesInstanceUID not in self.seriesUIDToRandomUIDMap:
-      self.seriesUIDToRandomUIDMap[ds.SeriesInstanceUID] = dicom.UID.generate_uid(None)
+      self.seriesUIDToRandomUIDMap[ds.SeriesInstanceUID] = dicom.uid.generate_uid(None)
     ds.SeriesInstanceUID = self.seriesUIDToRandomUIDMap[ds.SeriesInstanceUID]
 
 #
@@ -496,7 +499,7 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
     [1] https://github.com/commontk/CTK/blob/16aa09540dcb59c6eafde4d9a88dfee1f0948edc/Libs/DICOM/Core/ctkDICOMDatabase.cpp#L1283-L1287
     """
 
-    import dicom
+    import pydicom as dicom
 
     self.addLog('DICOM patching started...')
     logging.debug('DICOM patch input directory: '+inputDirPath)
@@ -616,7 +619,7 @@ class DICOMPatcherTest(ScriptedLoadableModuleTest):
 
     testFileDICOMFilename = inputTestDir+"/DICOMFile.dcm"
     self.delayDisplay('Writing test file: '+testFileDICOMFilename)
-    import dicom
+    import pydicom as dicom
     file_meta = dicom.dataset.Dataset()
     file_meta.MediaStorageSOPClassUID = '1.2.840.10008.5.1.4.1.1.2'  # CT Image Storage
     file_meta.MediaStorageSOPInstanceUID = "1.2.3"  # !! Need valid UID here for real work
