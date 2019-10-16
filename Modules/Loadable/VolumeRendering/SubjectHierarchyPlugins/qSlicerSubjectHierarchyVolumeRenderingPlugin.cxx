@@ -82,7 +82,7 @@ void qSlicerSubjectHierarchyVolumeRenderingPluginPrivate::init()
 {
   Q_Q(qSlicerSubjectHierarchyVolumeRenderingPlugin);
 
-  this->ToggleVolumeRenderingAction = new QAction("Toggle volume rendering",q);
+  this->ToggleVolumeRenderingAction = new QAction("Show in 3D views as volume rendering",q);
   QObject::connect(this->ToggleVolumeRenderingAction, SIGNAL(toggled(bool)), q, SLOT(toggleVolumeRenderingForCurrentItem(bool)));
   this->ToggleVolumeRenderingAction->setCheckable(true);
   this->ToggleVolumeRenderingAction->setChecked(false);
