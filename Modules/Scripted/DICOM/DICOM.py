@@ -152,20 +152,22 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
       return False
 
     if not hasattr(slicer, 'dicomListener'):
-      try:
-        dicomListener = DICOMLib.DICOMListener(slicer.dicomDatabase)
-        dicomListener.start()
-      except (UserWarning, OSError) as message:
-        logging.error('Problem trying to start DICOM listener:\n %s' % message)
-        return False
-      if not dicomListener.process:
-        logging.error("Failed to start DICOM listener. Process start failed.")
-        return False
-      slicer.dicomListener = dicomListener
-      logging.info("DICOM C-Store SCP service started at port "+str(slicer.dicomListener.port))
+      dicomListener = DICOMLib.DICOMListener(slicer.dicomDatabase)
+
+    try:
+      dicomListener.start()
+    except (UserWarning, OSError) as message:
+      logging.error('Problem trying to start DICOM listener:\n %s' % message)
+      return False
+    if not dicomListener.process:
+      logging.error("Failed to start DICOM listener. Process start failed.")
+      return False
+    slicer.dicomListener = dicomListener
+    logging.info("DICOM C-Store SCP service started at port "+str(slicer.dicomListener.port))
 
   def stopListener(self):
     if hasattr(slicer, 'dicomListener'):
+      logging.info("DICOM C-Store SCP service stopping")
       slicer.dicomListener.stop()
       del slicer.dicomListener
 
@@ -495,6 +497,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
   def enter(self):
     self.onOpenBrowserWidget()
     self.addListenerObservers()
+    self.onListenerStateChanged()
 
 
   def exit(self):
@@ -505,16 +508,17 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
   def addListenerObservers(self):
     if not hasattr(slicer, 'dicomListener'):
       return
-    slicer.dicomListener.process.connect('stateChanged(QProcess::ProcessState)', self.onListenerStateChanged)
+    if slicer.dicomListener.process is not None:
+      slicer.dicomListener.process.connect('stateChanged(QProcess::ProcessState)', self.onListenerStateChanged)
     slicer.dicomListener.fileToBeAddedCallback = self.onListenerToAddFile
     slicer.dicomListener.fileAddedCallback = self.onListenerAddedFile
-    self.onListenerStateChanged(slicer.dicomListener.process.state())
 
 
   def removeListenerObservers(self):
     if not hasattr(slicer, 'dicomListener'):
       return
-    slicer.dicomListener.process.disconnect('stateChanged(QProcess::ProcessState)', self.onListenerStateChanged)
+    if slicer.dicomListener.process is not None:
+      slicer.dicomListener.process.disconnect('stateChanged(QProcess::ProcessState)', self.onListenerStateChanged)
     slicer.dicomListener.fileToBeAddedCallback = None
     slicer.dicomListener.fileAddedCallback = None
 
@@ -571,11 +575,18 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
     if toggled:
       slicer.modules.DICOMInstance.startListener()
       self.addListenerObservers()
+    self.onListenerStateChanged()
 
-  def onListenerStateChanged(self, newState):
+
+  def onListenerStateChanged(self, newState=None):
     """ Called when the indexer process state changes
     so we can provide feedback to the user
     """
+    if hasattr(slicer, 'dicomListener') and slicer.dicomListener.process is not None:
+      newState = slicer.dicomListener.process.state()
+    else:
+      newState = 0
+
     if newState == 0:
       self.ui.listenerStateLabel.text = "not started"
       wasBlocked = self.ui.toggleListener.blockSignals(True)
@@ -595,7 +606,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
     Works around issue where ctkDICOMModel has open queries that keep the
     database locked.
     """
-
+    pass
 
   def onListenerAddedFile(self):
     """Called after the listener has added a file.
