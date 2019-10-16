@@ -85,6 +85,20 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     -DModule_ITKDeprecated:BOOL=ON #<-- Needed for ITKv5 now. (itkMultiThreader.h and MutexLock backwards compatibility.)
     )
 
+
+  #Add additional user specified modules from this variable
+  #Slicer_ITK_ADDITIONAL_MOUDLES
+  #Add -DModule_${module} for each listed module
+  #Names in list must match the expected module names in the ITK build system
+  if(DEFINED Slicer_ITK_ADDITIONAL_MODULES)
+    foreach(module ${Slicer_ITK_ADDITIONAL_MODULES})
+      list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+          -DModule_${module}:BOOL=ON
+        )
+    endforeach()
+  endif()
+
+
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${Slicer_${proj}_GIT_REPOSITORY}"
