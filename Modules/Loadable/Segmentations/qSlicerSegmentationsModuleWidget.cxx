@@ -324,9 +324,6 @@ void qSlicerSegmentationsModuleWidget::init()
   connect(d->MRMLNodeComboBox_OtherSegmentationOrRepresentationNode, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
     this, SLOT(setOtherSegmentationOrRepresentationNode(vtkMRMLNode*)) );
 
-  connect(d->pushButton_CollapseLayers, SIGNAL(clicked()),
-    this, SLOT(collapseLabelmapLayers()));
-
   connect(d->ImportExportOperationButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)),
     this, SLOT(updateImportExportWidgets()));
 
@@ -350,6 +347,11 @@ void qSlicerSegmentationsModuleWidget::init()
     this, SLOT(onCopyToCurrentSegmentation()) );
   connect(d->toolButton_MoveToCurrentSegmentation, SIGNAL(clicked()),
     this, SLOT(onMoveToCurrentSegmentation()) );
+
+  connect(d->CollapsibleButton_BinaryLabelmapLayers, SIGNAL(contentsCollapsed(bool)),
+    this, SLOT(updateLayerWidgets()));
+  connect(d->pushButton_CollapseLayers, SIGNAL(clicked()),
+    this, SLOT(collapseLabelmapLayers()));
 
   // Show only segment names in copy/view segment list and make it non-editable
   d->SegmentsTableView_Current->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -573,16 +575,32 @@ void qSlicerSegmentationsModuleWidget::updateLayerWidgets()
 {
   Q_D(qSlicerSegmentationsModuleWidget);
 
-  std::stringstream ss;
+  if (d->CollapsibleButton_BinaryLabelmapLayers->collapsed())
+    {
+    return;
+    }
+
+  std::stringstream segmentCountSS;
   if (!d->SegmentationNode)
     {
-    ss << "0";
+    segmentCountSS << "0";
     }
   else
     {
-    ss << d->SegmentationNode->GetSegmentation()->GetNumberOfLayers(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
+    segmentCountSS << d->SegmentationNode->GetSegmentation()->GetNumberOfSegments();
     }
-  d->label_LayerCountValue->setText(QString::fromStdString(ss.str()));
+  d->label_SegmentCountValue->setText(QString::fromStdString(segmentCountSS.str()));
+
+  std::stringstream layerCountSS;
+  if (!d->SegmentationNode)
+    {
+    layerCountSS << "0";
+    }
+  else
+    {
+    layerCountSS << d->SegmentationNode->GetSegmentation()->GetNumberOfLayers(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
+    }
+  d->label_LayerCountValue->setText(QString::fromStdString(layerCountSS.str()));
 }
 
 //-----------------------------------------------------------------------------
@@ -650,6 +668,7 @@ void qSlicerSegmentationsModuleWidget::updateImportExportWidgets()
 void qSlicerSegmentationsModuleWidget::onImportExportApply()
 {
   Q_D(qSlicerSegmentationsModuleWidget);
+  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
   if (d->radioButton_Export->isChecked())
     {
     this->exportFromCurrentSegmentation();
@@ -658,6 +677,7 @@ void qSlicerSegmentationsModuleWidget::onImportExportApply()
     {
     this->importToCurrentSegmentation();
     }
+  QApplication::restoreOverrideCursor();
 }
 
 //-----------------------------------------------------------------------------

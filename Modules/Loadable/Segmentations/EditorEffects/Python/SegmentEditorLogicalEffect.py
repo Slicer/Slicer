@@ -247,7 +247,7 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
           max(selectedSegmentLabelmapExtent[4], modifierSegmentLabelmapExtent[4]),
           min(selectedSegmentLabelmapExtent[5], modifierSegmentLabelmapExtent[5])]
         self.scriptedEffect.modifySelectedSegmentByLabelmap(
-          intersectionLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet, commonExtent)
+          intersectionLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet, commonExtent, bypassMasking)
 
     elif operation == LOGICAL_INVERT:
       selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()

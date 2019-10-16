@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>348</width>
-    <height>719</height>
+    <width>340</width>
+    <height>756</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -446,58 +446,6 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="CollapsibleButton_BinaryLabelmapLayers">
-     <property name="text">
-      <string>Binary labelmap layers</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_5">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_LayerCount">
-        <property name="text">
-         <string>Layer count:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QPushButton" name="pushButton_CollapseLayers">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Collapse labelmap layers</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QCheckBox" name="checkBox_OverwriteSegments">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Overwrite segments</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="label_LayerCountValue">
-        <property name="text">
-         <string>0</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
     <widget class="ctkCollapsibleButton" name="CollapsibleButton_ImportExportSegment">
      <property name="text">
       <string>Export/import models and labelmaps</string>
@@ -524,12 +472,26 @@
       <property name="spacing">
        <number>4</number>
       </property>
-      <item row="0" column="1">
-       <widget class="QRadioButton" name="radioButton_Export">
-        <property name="text">
-         <string>Export</string>
-        </property>
-       </widget>
+      <item row="3" column="1" colspan="2">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="qMRMLSubjectHierarchyComboBox" name="SubjectHierarchyComboBox_ImportExport"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_ClearSelection">
+          <property name="toolTip">
+           <string>Clear selection indicating that a new node should be created</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../Widgets/Resources/qSlicerSegmentationsModuleWidgets.qrc">
+            <normaloff>:/Icons/ClearSelection.png</normaloff>:/Icons/ClearSelection.png</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label">
@@ -555,13 +517,6 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="0" colspan="3">
-       <widget class="ctkPushButton" name="PushButton_ImportExport">
-        <property name="text">
-         <string>Apply</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_ImportExportType">
         <property name="text">
@@ -573,6 +528,20 @@
        <widget class="QLabel" name="label_ImportExportNode">
         <property name="text">
          <string>Output:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="3">
+       <widget class="ctkPushButton" name="PushButton_ImportExport">
+        <property name="text">
+         <string>Apply</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QRadioButton" name="radioButton_Export">
+        <property name="text">
+         <string>Export</string>
         </property>
        </widget>
       </item>
@@ -688,27 +657,6 @@
         </layout>
        </widget>
       </item>
-      <item row="3" column="1" colspan="2">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="qMRMLSubjectHierarchyComboBox" name="SubjectHierarchyComboBox_ImportExport"/>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton_ClearSelection">
-          <property name="toolTip">
-           <string>Clear selection indicating that a new node should be created</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../../Widgets/Resources/qSlicerSegmentationsModuleWidgets.qrc">
-            <normaloff>:/Icons/ClearSelection.png</normaloff>:/Icons/ClearSelection.png</iconset>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
      </layout>
     </widget>
    </item>
@@ -754,6 +702,94 @@
       </size>
      </property>
     </spacer>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleButton" name="CollapsibleButton_BinaryLabelmapLayers">
+     <property name="text">
+      <string>Binary labelmap layers</string>
+     </property>
+     <property name="collapsed">
+      <bool>true</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_5">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_LayerCountText">
+        <property name="text">
+         <string>Number of layers:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_LayerCountValue">
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_OverwriteSegmentsText">
+        <property name="text">
+         <string>Force collapse to single layer:</string>
+        </property>
+        <property name="toolTip">
+         <string>Forcing all segments to a single layer will modify overlapping segments. Regions where multiple segments overlap will be assigned to the segment closest to the end of the segment list.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_SegmentCountText">
+        <property name="text">
+         <string>Number of segments:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="3">
+       <widget class="QPushButton" name="pushButton_CollapseLayers">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Collapse labelmap layers</string>
+        </property>
+        <property name="toolTip">
+         <string>Minimize the number of layers by moving segments to shared layers to minimize memory usage. Contents of segments are not modified unless there are overlapping segments and collapsing to a single layer is forced.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="label_SegmentCountValue">
+        <property name="text">
+         <string>0</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QCheckBox" name="checkBox_OverwriteSegments">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>

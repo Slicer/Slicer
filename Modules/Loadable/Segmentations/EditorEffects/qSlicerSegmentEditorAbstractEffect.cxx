@@ -404,21 +404,40 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
   std::vector<std::string> sharedSegmentIDs;
   segmentationNode->GetSegmentation()->GetSegmentIDsSharingBinaryLabelmapRepresentation(segmentID, sharedSegmentIDs, false);
 
-  std::vector<std::string> sharedSegmentsUnderModifier;
-  vtkSlicerSegmentationsModuleLogic::GetSharedSegmentIDsInMask(segmentationNode, segmentID, modifierLabelmapInput, sharedSegmentsUnderModifier, 0.0, false);
-  std::vector<std::string> sharedSegmentIDToSeparate;
-  for (std::string sharedSegmentID : sharedSegmentsUnderModifier)
+  // Determine if there are any segments on the same layer that we should not overwrite
+  bool segmentsOnLayerShouldOverlap = false;
+  for (std::string sharedID : sharedSegmentIDs)
     {
-    std::vector<std::string>::iterator foundOverwriteIDIt = std::find(segmentIDsToOverwrite.begin(), segmentIDsToOverwrite.end(), sharedSegmentID);
-    if (foundOverwriteIDIt == segmentIDsToOverwrite.end())
+    if (std::find(segmentIDsToOverwrite.begin(), segmentIDsToOverwrite.end(), sharedID) == segmentIDsToOverwrite.end())
       {
-      sharedSegmentIDToSeparate.push_back(sharedSegmentID);
+      segmentsOnLayerShouldOverlap = true;
+      break;
       }
     }
 
-  if (!sharedSegmentIDToSeparate.empty())
+  // If there are segments on the same layer that we should not overwrite, determine if there are any under the modifier labelmap
+  if (segmentsOnLayerShouldOverlap)
     {
-    segmentationNode->GetSegmentation()->SeparateSegmentLabelmap(segmentationNode->GetSegmentation()->GetSegmentIdBySegment(segment));
+    std::vector<std::string> sharedSegmentsUnderModifier;
+    vtkSlicerSegmentationsModuleLogic::GetSharedSegmentIDsInMask(segmentationNode, segmentID, modifierLabelmap,
+      extent, sharedSegmentsUnderModifier, 0.0, false);
+
+    bool separateSegmentID = false;
+    for (std::string sharedSegmentID : sharedSegmentsUnderModifier)
+      {
+      std::vector<std::string>::iterator foundOverwriteIDIt = std::find(segmentIDsToOverwrite.begin(), segmentIDsToOverwrite.end(), sharedSegmentID);
+      if (foundOverwriteIDIt == segmentIDsToOverwrite.end())
+        {
+        separateSegmentID = true;
+        break;
+        }
+      }
+
+    // We would overwrite a segment that should not be. Separate the segment to a separate layer
+    if (separateSegmentID)
+      {
+      segmentationNode->GetSegmentation()->SeparateSegmentLabelmap(segmentationNode->GetSegmentation()->GetSegmentIdBySegment(segment));
+      }
     }
 
   for (std::string sharedSegmentID : sharedSegmentIDs)
@@ -454,7 +473,7 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
     modifierLabelmap->GetImageToWorldMatrix(imageToWorldMatrix.GetPointer());
     invertedModifierLabelmap->SetGeometryFromImageToWorldMatrix(imageToWorldMatrix.GetPointer());
     if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
-      invertedModifierLabelmap.GetPointer(), segmentationNode, segmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MIN, extent))
+      invertedModifierLabelmap.GetPointer(), segmentationNode, segmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MIN))
       {
       qCritical() << Q_FUNC_INFO << ": Failed to remove modifier labelmap from selected segment";
       }

@@ -335,15 +335,20 @@ If segments overlap, segment higher in the segments table will have priority. <b
     imageToWorldMatrix = vtk.vtkMatrix4x4()
     mergedImage.GetImageToWorldMatrix(imageToWorldMatrix)
 
+    # TODO: Temporarily setting the overwite mode to OverwriteVisibleSegments is an approach that should be change once additional
+    # layer control options have been implemented. Users may wish to keep segments on separate layers, and not allow them to be separated/merged automatically.
+    # This effect could leverage those options once they have been implemented.
+    oldOverwriteMode = self.scriptedEffect.parameterSetNode().GetOverwriteMode()
+    self.scriptedEffect.parameterSetNode().SetOverwriteMode(slicer.vtkMRMLSegmentEditorNode.OverwriteVisibleSegments)
     for segmentId, labelValue in segmentLabelValues:
       threshold.ThresholdBetween(labelValue, labelValue)
       stencil.Update()
       smoothedBinaryLabelMap = slicer.vtkOrientedImageData()
       smoothedBinaryLabelMap.ShallowCopy(stencil.GetOutput())
       smoothedBinaryLabelMap.SetImageToWorldMatrix(imageToWorldMatrix)
-      # Write results to segments directly, bypassing masking
-      slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(smoothedBinaryLabelMap,
-        segmentationNode, segmentId, slicer.vtkSlicerSegmentationsModuleLogic.MODE_REPLACE, smoothedBinaryLabelMap.GetExtent())
+      self.scriptedEffect.modifySegmentByLabelmap(segmentationNode, segmentId, smoothedBinaryLabelMap,
+        slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet, False)
+    self.scriptedEffect.parameterSetNode().SetOverwriteMode(oldOverwriteMode)
 
 MEDIAN = 'MEDIAN'
 GAUSSIAN = 'GAUSSIAN'

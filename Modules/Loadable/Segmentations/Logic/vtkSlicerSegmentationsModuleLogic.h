@@ -369,7 +369,7 @@ public:
   /// \param mask Mask labelmap
   /// \param segmentIDs Output list of segment IDs under the mask
   /// \param includeInputSharedSegmentID If false, sharedSegmentID will not be added to the list of output segment IDs even if it is within the mask
-  static bool GetSharedSegmentIDsInMask(vtkMRMLSegmentationNode* segmentationNode, std::string sharedSegmentID, vtkOrientedImageData* mask,
+  static bool GetSharedSegmentIDsInMask(vtkMRMLSegmentationNode* segmentationNode, std::string sharedSegmentID, vtkOrientedImageData* mask, const int extent[6],
     std::vector<std::string>& segmentIDs, int maskThreshold = 0.0, bool includeInputSharedSegmentID = false);
 
 public:

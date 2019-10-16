@@ -169,12 +169,14 @@ public:
   /// \param maskLabelmap Mask image to get values under
   /// \param Threshold value for the mask. Values above this threshold are considered to be under the mask
   /// \param values The values found in the binary labelmap underneath the mask
-  static void GetLabelValuesInMask(vtkOrientedImageData* binaryLabelmap, vtkOrientedImageData* mask, int maskThreshold, std::vector<int> &labelValues);
+  static void GetLabelValuesInMask(vtkOrientedImageData* binaryLabelmap, vtkOrientedImageData* mask,
+    const int extent[6], std::vector<int> &labelValues, int maskThreshold=0);
 
   /// Determine if there is a non-zero value in the labelmap under the mask
   /// \param binaryLabelmap Input image to get values from
   /// \param maskLabelmap Mask image to get values under
-  static bool IsLabelInMask(vtkOrientedImageData* binaryLabelmap, vtkOrientedImageData* mask, int maskThreshold);
+  static bool IsLabelInMask(vtkOrientedImageData* binaryLabelmap, vtkOrientedImageData* mask,
+    int extent[6], int maskThreshold=0);
 
   /// Cast the data type of the image to be able to contain the specified value
   /// \param image Image to convert

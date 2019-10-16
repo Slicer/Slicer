@@ -70,14 +70,15 @@ public:
       mapper->SetScalarVisibility(false); // ignore any scalars that an input mesh may contain
       this->Actor->SetMapper(mapper.GetPointer());
       this->Actor->SetVisibility(false);
-      this->InputPolyData = vtkSmartPointer<vtkPolyData>::New();
+
+      this->NodeToWorldTransform = vtkSmartPointer<vtkGeneralTransform>::New();
       this->ModelWarper = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-      this->ModelWarper->SetInputData(this->InputPolyData);
+      this->ModelWarper->SetTransform(this->NodeToWorldTransform);
       mapper->SetInputConnection(this->ModelWarper->GetOutputPort());
       }
 
     vtkSmartPointer<vtkActor> Actor;
-    vtkSmartPointer<vtkPolyData> InputPolyData;
+    vtkSmartPointer<vtkGeneralTransform> NodeToWorldTransform;
     vtkSmartPointer<vtkTransformPolyDataFilter> ModelWarper;
     };
 
@@ -270,9 +271,9 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayableTra
         this->GetNodeTransformToWorld(mNode, nodeToWorld.GetPointer());
         // It is important to only update the transform if the transform chain is actually changed,
         // because recomputing a non-linear transformation on a complex model may be very time-consuming.
-        if (!vtkMRMLTransformNode::AreTransformsEqual(nodeToWorld.GetPointer(), currentPipeline->ModelWarper->GetTransform()))
+        if (!vtkMRMLTransformNode::AreTransformsEqual(nodeToWorld.GetPointer(), currentPipeline->NodeToWorldTransform))
           {
-          currentPipeline->ModelWarper->SetTransform(nodeToWorld.GetPointer());
+          currentPipeline->NodeToWorldTransform->DeepCopy(nodeToWorld);
           }
         }
       }
@@ -410,9 +411,9 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateSegmentPipelin
       this->GetNodeTransformToWorld(segmentationNode, nodeToWorld.GetPointer());
       // It is important to only update the transform if the transform chain is actually changed,
       // because recomputing a non-linear transformation on a complex model may be very time-consuming.
-      if (!vtkMRMLTransformNode::AreTransformsEqual(nodeToWorld.GetPointer(), segmentPipelines[*segmentIdIt]->ModelWarper->GetTransform()))
+      if (!vtkMRMLTransformNode::AreTransformsEqual(nodeToWorld.GetPointer(), segmentPipelines[*segmentIdIt]->NodeToWorldTransform))
         {
-        segmentPipelines[*segmentIdIt]->ModelWarper->SetTransform(nodeToWorld.GetPointer());
+        segmentPipelines[*segmentIdIt]->NodeToWorldTransform->DeepCopy(nodeToWorld);
         }
       }
     }
@@ -533,8 +534,14 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
     // For all pipelines (pipeline per segment)
     vtkNew<vtkGeneralTransform> nodeToWorld;
     this->GetNodeTransformToWorld(segmentationNode, nodeToWorld.GetPointer());
-    pipeline->ModelWarper->SetTransform(nodeToWorld.GetPointer());
-    pipeline->InputPolyData->ShallowCopy(polyData);
+    if (!vtkMRMLTransformNode::AreTransformsEqual(nodeToWorld.GetPointer(), pipeline->NodeToWorldTransform))
+      {
+      pipeline->NodeToWorldTransform->DeepCopy(nodeToWorld);
+      }
+    if (pipeline->ModelWarper->GetInputDataObject(0, 0) != polyData)
+      {
+      pipeline->ModelWarper->SetInputData(polyData);
+      }
 
     // Get displayed color (if no override is defined then use the color from the segment)
     double color[3] = {vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2]};

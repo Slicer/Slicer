@@ -291,9 +291,9 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     previewNode.GetSegmentation().GetSegmentIDs(segmentIDs)
     for index in range(segmentIDs.GetNumberOfValues()):
       segmentID = segmentIDs.GetValue(index)
-      previewSegment = previewNode.GetSegmentation().GetSegment(segmentID)
-      previewSegmentLabelmap = previewSegment.GetRepresentation(vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName())
-      self.scriptedEffect.modifySegmentByLabelmap(segmentationNode, segmentID,previewSegmentLabelmap,
+      previewSegmentLabelmap = slicer.vtkOrientedImageData()
+      previewNode.GetBinaryLabelmapRepresentation(segmentID, previewSegmentLabelmap)
+      self.scriptedEffect.modifySegmentByLabelmap(segmentationNode, segmentID, previewSegmentLabelmap,
         slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
       if segmentationDisplayNode is not None and self.isBackgroundLabelmap(previewSegmentLabelmap):
         # Automatically hide result segments that are background (all eight corners are non-zero)

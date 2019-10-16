@@ -634,13 +634,31 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentAdded(vtkObject* calle
     return;
     }
 
-  // Add the segment in subject hierarchy to allow individual handling (e.g. visibility)
-  vtkIdType segmentShItemID = shNode->CreateHierarchyItem(
-    segmentationShItemID, (segment->GetName() ? segment->GetName() : ""),
-    vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName());
-  shNode->SetItemAttribute(segmentShItemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName(), segmentId);
-  // Set plugin for the new item (automatically selects the segment plugin based on confidence values)
-  qSlicerSubjectHierarchyPluginHandler::instance()->findAndSetOwnerPluginForSubjectHierarchyItem(segmentShItemID);
+  // Find the current SegmentID if it already exists
+  vtkIdType segmentShItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+  std::vector<vtkIdType> segmentShItemIDs;
+  shNode->GetItemChildren(segmentationShItemID, segmentShItemIDs);
+  std::vector<vtkIdType>::iterator segmentIt;
+  for (segmentIt = segmentShItemIDs.begin(); segmentIt != segmentShItemIDs.end(); ++segmentIt)
+    {
+    std::string currentSegmentId = shNode->GetItemAttribute(*segmentIt, vtkMRMLSegmentationNode::GetSegmentIDAttributeName());
+    if (!currentSegmentId.compare(segmentId))
+      {
+      segmentShItemID = (*segmentIt);
+      break;
+      }
+    }
+
+  if (segmentShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    // Add the segment in subject hierarchy to allow individual handling (e.g. visibility)
+    vtkIdType segmentShItemID = shNode->CreateHierarchyItem(
+      segmentationShItemID, (segment->GetName() ? segment->GetName() : ""),
+      vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName());
+    shNode->SetItemAttribute(segmentShItemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName(), segmentId);
+    // Set plugin for the new item (automatically selects the segment plugin based on confidence values)
+    qSlicerSubjectHierarchyPluginHandler::instance()->findAndSetOwnerPluginForSubjectHierarchyItem(segmentShItemID);
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -861,7 +879,6 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemAboutToBe
       return;
       }
     vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(shNode->GetItemDataNode(parentItemID));
-    MRMLNodeModifyBlocker blocker(segmentationNode);
     if (segmentationNode && segmentationNode->GetSegmentation()->GetSegment(segmentId))
       {
       d->SegmentSubjectHierarchyItemRemovalInProgress = true;
