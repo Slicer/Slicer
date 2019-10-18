@@ -172,6 +172,16 @@ set(BUILD_SHARED_LIBS ON)
 mark_as_superbuild(BUILD_SHARED_LIBS:BOOL)
 
 #-----------------------------------------------------------------------------
+# Slicer application options
+#-----------------------------------------------------------------------------
+include(SlicerApplicationOptions)
+
+#-----------------------------------------------------------------------------
+# Slicer version number
+#-----------------------------------------------------------------------------
+include(SlicerVersion)
+
+#-----------------------------------------------------------------------------
 # Append the library version information to the library target properties.
 #------------------------------------------------------------------------------
 option(Slicer_WITH_LIBRARY_VERSION "Build with library version information" OFF)
@@ -418,11 +428,6 @@ endif()
 include(SlicerBlockCXXRequiredFlags)
 
 #-----------------------------------------------------------------------------
-# Slicer application options
-#-----------------------------------------------------------------------------
-include(SlicerApplicationOptions)
-
-#-----------------------------------------------------------------------------
 # Slicer directories
 #-----------------------------------------------------------------------------
 include(SlicerDirectories)
@@ -443,10 +448,6 @@ if(NOT DEFINED SlicerExecutionModel_DEFAULT_CLI_ARCHIVE_OUTPUT_DIRECTORY)
   set(SlicerExecutionModel_DEFAULT_CLI_ARCHIVE_OUTPUT_DIRECTORY ${_sem_output_dir}/${Slicer_CLIMODULES_LIB_DIR})
 endif()
 
-#-----------------------------------------------------------------------------
-# Slicer version number
-#-----------------------------------------------------------------------------
-include(SlicerVersion)
 
 #-----------------------------------------------------------------------------
 # Extension directories
