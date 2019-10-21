@@ -645,6 +645,18 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
     return;
     }
 
+  vtkImageData *imageData = this->VolumeNode->GetImageData();
+  if (imageData != nullptr &&
+      (imageData->GetScalarType() == VTK_LONG ||
+       imageData->GetScalarType() == VTK_UNSIGNED_LONG ||
+       imageData->GetScalarType() == VTK_LONG_LONG ||
+       imageData->GetScalarType() == VTK_UNSIGNED_LONG_LONG))
+    {
+    vtkErrorMacro("Reslicing can only be done on types representable as double.  Node " <<
+      this->VolumeNode->GetName() << " has image data of type " << imageData->GetScalarTypeAsString());
+    return;
+    }
+
   vtkMTimeType oldReSliceMTime = this->Reslice->GetMTime();
   vtkMTimeType oldReSliceUVWMTime = this->ResliceUVW->GetMTime();
   vtkMTimeType oldAssign = this->AssignAttributeTensorsToScalars->GetMTime();
