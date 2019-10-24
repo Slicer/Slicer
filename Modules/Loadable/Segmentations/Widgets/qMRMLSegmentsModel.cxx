@@ -810,16 +810,18 @@ void qMRMLSegmentsModel::onSegmentAdded(QString segmentID)
 void qMRMLSegmentsModel::onSegmentRemoved(QString removedSegmentID)
 {
   Q_D(qMRMLSegmentsModel);
-  QModelIndex index = this->indexFromSegmentID(removedSegmentID);
   if (!removedSegmentID.isEmpty())
     {
+    QModelIndex index = this->indexFromSegmentID(removedSegmentID);
     this->removeRow(index.row());
     return;
     }
 
   std::vector<std::string> segmentIDs;
   d->SegmentationNode->GetSegmentation()->GetSegmentIDs(segmentIDs);
-  for (int i = 0; i < this->rowCount(); ++i)
+
+  // Iterate in reverse so the index remains valid
+  for (int i = this->rowCount()-1; i >= 0; --i)
     {
     QModelIndex index = this->index(i, 0);
     std::string currentSegmentID = this->segmentIDFromIndex(index).toStdString();
