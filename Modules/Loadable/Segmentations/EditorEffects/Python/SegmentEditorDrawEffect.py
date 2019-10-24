@@ -158,19 +158,8 @@ class DrawPipeline(object):
     # Make an empty single-polyline polydata
     polyData = vtk.vtkPolyData()
     polyData.SetPoints(self.xyPoints)
-
     lines = vtk.vtkCellArray()
     polyData.SetLines(lines)
-    idArray = lines.GetData()
-    idArray.Reset()
-    idArray.InsertNextTuple1(0)
-
-    polygons = vtk.vtkCellArray()
-    polyData.SetPolys(polygons)
-    idArray = polygons.GetData()
-    idArray.Reset()
-    idArray.InsertNextTuple1(0)
-
     return polyData
 
   def addPoint(self,ras):
@@ -192,11 +181,11 @@ class DrawPipeline(object):
     self.lastInsertSliceNodeMTime = sliceNode.GetMTime()
 
     p = self.rasPoints.InsertNextPoint(ras)
-    lines = self.polyData.GetLines()
-    idArray = lines.GetData()
-    idArray.InsertNextTuple1(p)
-    idArray.SetTuple1(0, idArray.GetNumberOfTuples()-1)
-    lines.SetNumberOfCells(1)
+    if p > 0:
+      idList = vtk.vtkIdList()
+      idList.InsertNextId(p-1)
+      idList.InsertNextId(p)
+      self.polyData.InsertNextCell(vtk.VTK_LINE, idList)
 
   def setLineMode(self,mode="solid"):
     actorProperty = self.actor.GetProperty()
@@ -222,10 +211,10 @@ class DrawPipeline(object):
     if lines.GetNumberOfCells() == 0: return
 
     # Close the polyline back to the first point
-    idArray = lines.GetData()
-    p = idArray.GetTuple1(1)
-    idArray.InsertNextTuple1(p)
-    idArray.SetTuple1(0, idArray.GetNumberOfTuples() - 1)
+    idList = vtk.vtkIdList()
+    idList.InsertNextId(self.polyData.GetNumberOfPoints()-1)
+    idList.InsertNextId(0)
+    self.polyData.InsertNextCell(vtk.VTK_LINE, idList)
 
     self.scriptedEffect.saveStateForUndo()
 
@@ -241,25 +230,23 @@ class DrawPipeline(object):
   def resetPolyData(self):
     # Return the polyline to initial state with no points
     lines = self.polyData.GetLines()
-    idArray = lines.GetData()
-    idArray.Reset()
-    idArray.InsertNextTuple1(0)
+    lines.Initialize()
     self.xyPoints.Reset()
     self.rasPoints.Reset()
-    lines.SetNumberOfCells(0)
     self.activeSlice = None
 
   def deleteLastPoint(self):
     # Unwind through addPoint list back to empty polydata
     pcount = self.rasPoints.GetNumberOfPoints()
-    if pcount <= 0: return
+    if pcount <= 0:
+      return
 
     pcount = pcount - 1
     self.rasPoints.SetNumberOfPoints(pcount)
 
-    lines = self.polyData.GetLines()
-    idArray = lines.GetData()
-    idArray.SetTuple1(0, pcount)
-    idArray.SetNumberOfTuples(pcount+1)
+    cellCount = self.polyData.GetNumberOfCells()
+    if cellCount > 0:
+      self.polyData.DeleteCell(cellCount - 1)
+      self.polyData.RemoveDeletedCells()
 
     self.positionActors()

@@ -31,7 +31,27 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     self.timer.connect('timeout()', self.preview)
 
     self.previewPipelines = {}
+    self.histogramPipeline = None
     self.setupPreviewDisplay()
+
+    # Histogram stencil setup
+    self.stencil = vtk.vtkPolyDataToImageStencil()
+
+    # Histogram reslice setup
+    self.reslice = vtk.vtkImageReslice()
+    self.reslice.AutoCropOutputOff()
+    self.reslice.SetOptimization(1)
+    self.reslice.SetOutputOrigin(0, 0, 0)
+    self.reslice.SetOutputSpacing(1, 1, 1)
+    self.reslice.SetOutputDimensionality(3)
+    self.reslice.GenerateStencilOutputOn()
+
+    self.imageAccumulate = vtk.vtkImageAccumulate()
+    self.imageAccumulate.SetInputConnection(0, self.reslice.GetOutputPort())
+    self.imageAccumulate.SetInputConnection(1, self.stencil.GetOutputPort())
+
+    self.selectionStartPosition = None
+    self.selectionEndPosition = None
 
   def clone(self):
     import qSlicerSegmentationsEditorEffectsPythonQt as effects
@@ -67,6 +87,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
 
     # Clear preview pipeline and stop timer
     self.clearPreviewDisplay()
+    self.clearHistogramDisplay()
     self.timer.stop()
 
   def setCurrentSegmentTransparent(self):
@@ -178,7 +199,165 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     autoThresholdFrame.addWidget(self.selectPreviousAutoThresholdButton)
     autoThresholdFrame.addWidget(self.selectNextAutoThresholdButton)
     autoThresholdFrame.addWidget(self.setAutoThresholdButton)
-    self.scriptedEffect.addLabeledOptionsWidget("Automatic threshold:", autoThresholdFrame)
+
+    autoThresholdGroupBox = ctk.ctkCollapsibleGroupBox()
+    autoThresholdGroupBox.setTitle("Automatic threshold")
+    autoThresholdGroupBox.setLayout(autoThresholdFrame)
+    autoThresholdGroupBox.collapsed = True
+    self.scriptedEffect.addOptionsWidget(autoThresholdGroupBox)
+
+    histogramFrame = qt.QVBoxLayout()
+
+    histogramBrushFrame = qt.QHBoxLayout()
+    histogramFrame.addLayout(histogramBrushFrame)
+
+    self.histogramBrushButtonGroup = qt.QButtonGroup()
+    self.histogramBrushButtonGroup.setExclusive(True)
+
+    self.boxROIButton = qt.QPushButton()
+    self.boxROIButton.setText("Box")
+    self.boxROIButton.setCheckable(True)
+    self.boxROIButton.clicked.connect(self.updateMRMLFromGUI)
+    histogramBrushFrame.addWidget(self.boxROIButton)
+    self.histogramBrushButtonGroup.addButton(self.boxROIButton)
+
+    self.circleROIButton = qt.QPushButton()
+    self.circleROIButton.setText("Circle")
+    self.circleROIButton.setCheckable(True)
+    self.circleROIButton.clicked.connect(self.updateMRMLFromGUI)
+    histogramBrushFrame.addWidget(self.circleROIButton)
+    self.histogramBrushButtonGroup.addButton(self.circleROIButton)
+
+    self.drawROIButton = qt.QPushButton()
+    self.drawROIButton.setText("Draw")
+    self.drawROIButton.setCheckable(True)
+    self.drawROIButton.clicked.connect(self.updateMRMLFromGUI)
+    histogramBrushFrame.addWidget(self.drawROIButton)
+    self.histogramBrushButtonGroup.addButton(self.drawROIButton)
+
+    self.lineROIButton = qt.QPushButton()
+    self.lineROIButton.setText("Line")
+    self.lineROIButton.setCheckable(True)
+    self.lineROIButton.clicked.connect(self.updateMRMLFromGUI)
+    histogramBrushFrame.addWidget(self.lineROIButton)
+    self.histogramBrushButtonGroup.addButton(self.lineROIButton)
+
+    self.histogramView = ctk.ctkTransferFunctionView()
+    histogramFrame.addWidget(self.histogramView)
+    scene = self.histogramView.scene()
+
+    self.histogramFunction = vtk.vtkPiecewiseFunction()
+    self.histogramFunctionContainer = ctk.ctkVTKPiecewiseFunction(self.scriptedEffect)
+    self.histogramFunctionContainer.setPiecewiseFunction(self.histogramFunction)
+    self.histogramFunctionItem = ctk.ctkTransferFunctionBarsItem(self.histogramFunctionContainer)
+    self.histogramFunctionItem.barWidth = 1.0
+    self.histogramFunctionItem.logMode = ctk.ctkTransferFunctionBarsItem.NoLog
+    self.histogramFunctionItem.setZValue(1)
+    scene.addItem(self.histogramFunctionItem)
+
+    self.histogramEventFilter = HistogramEventFilter()
+    self.histogramEventFilter.setThresholdEffect(self)
+    self.histogramFunctionItem.installEventFilter(self.histogramEventFilter)
+
+    self.minMaxFunction = vtk.vtkPiecewiseFunction()
+    self.minMaxFunctionContainer = ctk.ctkVTKPiecewiseFunction(self.scriptedEffect)
+    self.minMaxFunctionContainer.setPiecewiseFunction(self.minMaxFunction)
+    self.minMaxFunctionItem = ctk.ctkTransferFunctionBarsItem(self.minMaxFunctionContainer)
+    self.minMaxFunctionItem.barWidth = 0.03
+    self.minMaxFunctionItem.logMode = ctk.ctkTransferFunctionBarsItem.NoLog
+    self.minMaxFunctionItem.barColor = qt.QColor(200, 0, 0)
+    self.minMaxFunctionItem.setZValue(0)
+    scene.addItem(self.minMaxFunctionItem)
+
+    self.averageFunction = vtk.vtkPiecewiseFunction()
+    self.averageFunctionContainer = ctk.ctkVTKPiecewiseFunction(self.scriptedEffect)
+    self.averageFunctionContainer.setPiecewiseFunction(self.averageFunction)
+    self.averageFunctionItem = ctk.ctkTransferFunctionBarsItem(self.averageFunctionContainer)
+    self.averageFunctionItem.barWidth = 0.03
+    self.averageFunctionItem.logMode = ctk.ctkTransferFunctionBarsItem.NoLog
+    self.averageFunctionItem.barColor = qt.QColor(225, 150, 0)
+    self.averageFunctionItem.setZValue(-1)
+    scene.addItem(self.averageFunctionItem)
+
+    # Window level gradient
+    self.backgroundColor = [1.0, 1.0, 0.7]
+    self.backgroundFunction = vtk.vtkColorTransferFunction()
+    self.backgroundFunctionContainer = ctk.ctkVTKColorTransferFunction(self.scriptedEffect)
+    self.backgroundFunctionContainer.setColorTransferFunction(self.backgroundFunction)
+    self.backgroundFunctionItem = ctk.ctkTransferFunctionGradientItem(self.backgroundFunctionContainer)
+    self.backgroundFunctionItem.setZValue(-2)
+    scene.addItem(self.backgroundFunctionItem)
+
+    histogramItemFrame = qt.QHBoxLayout()
+    histogramFrame.addLayout(histogramItemFrame)
+
+    ###
+    # Lower histogram threshold buttons
+
+    lowerGroupBox = qt.QGroupBox("Lower")
+    lowerHistogramLayout = qt.QHBoxLayout()
+    lowerGroupBox.setLayout(lowerHistogramLayout)
+    histogramItemFrame.addWidget(lowerGroupBox)
+    self.histogramLowerMethodButtonGroup = qt.QButtonGroup()
+    self.histogramLowerMethodButtonGroup.setExclusive(True)
+
+    self.histogramLowerThresholdMinimumButton = qt.QPushButton()
+    self.histogramLowerThresholdMinimumButton.setText("Minimum")
+    self.histogramLowerThresholdMinimumButton.setCheckable(True)
+    self.histogramLowerThresholdMinimumButton.clicked.connect(self.updateMRMLFromGUI)
+    lowerHistogramLayout.addWidget(self.histogramLowerThresholdMinimumButton)
+    self.histogramLowerMethodButtonGroup.addButton(self.histogramLowerThresholdMinimumButton)
+
+    self.histogramLowerThresholdLowerButton = qt.QPushButton()
+    self.histogramLowerThresholdLowerButton.setText("Lower")
+    self.histogramLowerThresholdLowerButton.setCheckable(True)
+    self.histogramLowerThresholdLowerButton.clicked.connect(self.updateMRMLFromGUI)
+    lowerHistogramLayout.addWidget(self.histogramLowerThresholdLowerButton)
+    self.histogramLowerMethodButtonGroup.addButton(self.histogramLowerThresholdLowerButton)
+
+    self.histogramLowerThresholdAverageButton = qt.QPushButton()
+    self.histogramLowerThresholdAverageButton.setText("Average")
+    self.histogramLowerThresholdAverageButton.setCheckable(True)
+    self.histogramLowerThresholdAverageButton.clicked.connect(self.updateMRMLFromGUI)
+    lowerHistogramLayout.addWidget(self.histogramLowerThresholdAverageButton)
+    self.histogramLowerMethodButtonGroup.addButton(self.histogramLowerThresholdAverageButton)
+
+    ###
+    # Upper histogram threshold buttons
+
+    upperGroupBox = qt.QGroupBox("Upper")
+    upperHistogramLayout = qt.QHBoxLayout()
+    upperGroupBox.setLayout(upperHistogramLayout)
+    histogramItemFrame.addWidget(upperGroupBox)
+    self.histogramUpperMethodButtonGroup = qt.QButtonGroup()
+    self.histogramUpperMethodButtonGroup.setExclusive(True)
+
+    self.histogramUpperThresholdAverageButton = qt.QPushButton()
+    self.histogramUpperThresholdAverageButton.setText("Average")
+    self.histogramUpperThresholdAverageButton.setCheckable(True)
+    self.histogramUpperThresholdAverageButton.clicked.connect(self.updateMRMLFromGUI)
+    upperHistogramLayout.addWidget(self.histogramUpperThresholdAverageButton)
+    self.histogramUpperMethodButtonGroup.addButton(self.histogramUpperThresholdAverageButton)
+
+    self.histogramUpperThresholdUpperButton = qt.QPushButton()
+    self.histogramUpperThresholdUpperButton.setText("Upper")
+    self.histogramUpperThresholdUpperButton.setCheckable(True)
+    self.histogramUpperThresholdUpperButton.clicked.connect(self.updateMRMLFromGUI)
+    upperHistogramLayout.addWidget(self.histogramUpperThresholdUpperButton)
+    self.histogramUpperMethodButtonGroup.addButton(self.histogramUpperThresholdUpperButton)
+
+    self.histogramUpperThresholdMaximumButton = qt.QPushButton()
+    self.histogramUpperThresholdMaximumButton.setText("Maximum")
+    self.histogramUpperThresholdMaximumButton.setCheckable(True)
+    self.histogramUpperThresholdMaximumButton.clicked.connect(self.updateMRMLFromGUI)
+    upperHistogramLayout.addWidget(self.histogramUpperThresholdMaximumButton)
+    self.histogramUpperMethodButtonGroup.addButton(self.histogramUpperThresholdMaximumButton)
+
+    histogramGroupBox = ctk.ctkCollapsibleGroupBox()
+    histogramGroupBox.setTitle("Local histogram")
+    histogramGroupBox.setLayout(histogramFrame)
+    histogramGroupBox.collapsed = True
+    self.scriptedEffect.addOptionsWidget(histogramGroupBox)
 
     self.useForPaintButton = qt.QPushButton("Use for masking")
     self.useForPaintButton.setToolTip("Use specified intensity range for masking and switch to Paint effect.")
@@ -218,17 +397,14 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
   def layoutChanged(self):
     self.setupPreviewDisplay()
 
-  def processInteractionEvents(self, callerInteractor, eventId, viewWidget):
-    return False # For the sake of example
-
-  def processViewNodeEvents(self, callerViewNode, eventId, viewWidget):
-    pass # For the sake of example
-
   def setMRMLDefaults(self):
     self.scriptedEffect.setParameterDefault("MinimumThreshold", 0.)
     self.scriptedEffect.setParameterDefault("MaximumThreshold", 0)
     self.scriptedEffect.setParameterDefault("AutoThresholdMethod", METHOD_OTSU)
     self.scriptedEffect.setParameterDefault("AutoThresholdMode", MODE_SET_LOWER_MAX)
+    self.scriptedEffect.setParameterDefault(HISTOGRAM_BRUSH_TYPE_PARAMETER_NAME, HISTOGRAM_BRUSH_TYPE_CIRCLE)
+    self.scriptedEffect.setParameterDefault(HISTOGRAM_SET_LOWER_PARAMETER_NAME, HISTOGRAM_SET_LOWER)
+    self.scriptedEffect.setParameterDefault(HISTOGRAM_SET_UPPER_PARAMETER_NAME, HISTOGRAM_SET_UPPER)
 
   def updateGUIFromMRML(self):
     self.thresholdSlider.blockSignals(True)
@@ -246,17 +422,77 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     self.autoThresholdModeSelectorComboBox.setCurrentIndex(autoThresholdMode)
     self.autoThresholdModeSelectorComboBox.blockSignals(wasBlocked)
 
+    histogramBrushType = self.scriptedEffect.parameter(HISTOGRAM_BRUSH_TYPE_PARAMETER_NAME)
+    self.boxROIButton.checked = (histogramBrushType == HISTOGRAM_BRUSH_TYPE_BOX)
+    self.circleROIButton.checked = (histogramBrushType == HISTOGRAM_BRUSH_TYPE_CIRCLE)
+    self.drawROIButton.checked = (histogramBrushType == HISTOGRAM_BRUSH_TYPE_DRAW)
+    self.lineROIButton.checked = (histogramBrushType == HISTOGRAM_BRUSH_TYPE_LINE)
+
+    histogramSetModeLower = self.scriptedEffect.parameter(HISTOGRAM_SET_LOWER_PARAMETER_NAME)
+    self.histogramLowerThresholdMinimumButton.checked = (histogramSetModeLower == HISTOGRAM_SET_MINIMUM)
+    self.histogramLowerThresholdLowerButton.checked = (histogramSetModeLower == HISTOGRAM_SET_LOWER)
+    self.histogramLowerThresholdAverageButton.checked = (histogramSetModeLower == HISTOGRAM_SET_AVERAGE)
+
+    histogramSetModeUpper = self.scriptedEffect.parameter(HISTOGRAM_SET_UPPER_PARAMETER_NAME)
+    self.histogramUpperThresholdAverageButton.checked = (histogramSetModeUpper == HISTOGRAM_SET_AVERAGE)
+    self.histogramUpperThresholdUpperButton.checked = (histogramSetModeUpper == HISTOGRAM_SET_UPPER)
+    self.histogramUpperThresholdMaximumButton.checked = (histogramSetModeUpper == HISTOGRAM_SET_MAXIMUM)
+
+    self.updateHistogramBackground()
+
   def updateMRMLFromGUI(self):
-    self.scriptedEffect.setParameter("MinimumThreshold", self.thresholdSlider.minimumValue)
-    self.scriptedEffect.setParameter("MaximumThreshold", self.thresholdSlider.maximumValue)
+    with slicer.util.NodeModify(self.scriptedEffect.parameterSetNode()):
+      self.scriptedEffect.setParameter("MinimumThreshold", self.thresholdSlider.minimumValue)
+      self.scriptedEffect.setParameter("MaximumThreshold", self.thresholdSlider.maximumValue)
 
-    methodIndex = self.autoThresholdMethodSelectorComboBox.currentIndex
-    autoThresholdMethod = self.autoThresholdMethodSelectorComboBox.itemData(methodIndex)
-    self.scriptedEffect.setParameter("AutoThresholdMethod", autoThresholdMethod)
+      methodIndex = self.autoThresholdMethodSelectorComboBox.currentIndex
+      autoThresholdMethod = self.autoThresholdMethodSelectorComboBox.itemData(methodIndex)
+      self.scriptedEffect.setParameter("AutoThresholdMethod", autoThresholdMethod)
 
-    modeIndex = self.autoThresholdModeSelectorComboBox.currentIndex
-    autoThresholdMode = self.autoThresholdModeSelectorComboBox.itemData(modeIndex)
-    self.scriptedEffect.setParameter("AutoThresholdMode", autoThresholdMode)
+      modeIndex = self.autoThresholdModeSelectorComboBox.currentIndex
+      autoThresholdMode = self.autoThresholdModeSelectorComboBox.itemData(modeIndex)
+      self.scriptedEffect.setParameter("AutoThresholdMode", autoThresholdMode)
+
+      histogramParameterChanged = False
+
+      histogramBrushType = HISTOGRAM_BRUSH_TYPE_CIRCLE
+      if self.boxROIButton.checked:
+        histogramBrushType = HISTOGRAM_BRUSH_TYPE_BOX
+      elif self.circleROIButton.checked:
+        histogramBrushType = HISTOGRAM_BRUSH_TYPE_CIRCLE
+      elif self.drawROIButton.checked:
+        histogramBrushType = HISTOGRAM_BRUSH_TYPE_DRAW
+      elif self.lineROIButton.checked:
+        histogramBrushType = HISTOGRAM_BRUSH_TYPE_LINE
+
+      if histogramBrushType != self.scriptedEffect.parameter(HISTOGRAM_BRUSH_TYPE_PARAMETER_NAME):
+        self.scriptedEffect.setParameter(HISTOGRAM_BRUSH_TYPE_PARAMETER_NAME, histogramBrushType)
+        histogramParameterChanged = True
+
+      histogramSetModeLower = HISTOGRAM_SET_LOWER
+      if self.histogramLowerThresholdMinimumButton.checked:
+        histogramSetModeLower = HISTOGRAM_SET_MINIMUM
+      elif self.histogramLowerThresholdLowerButton.checked:
+        histogramSetModeLower = HISTOGRAM_SET_LOWER
+      elif self.histogramLowerThresholdAverageButton.checked:
+        histogramSetModeLower = HISTOGRAM_SET_AVERAGE
+      if histogramSetModeLower != self.scriptedEffect.parameter(HISTOGRAM_SET_LOWER_PARAMETER_NAME):
+        self.scriptedEffect.setParameter(HISTOGRAM_SET_LOWER_PARAMETER_NAME, histogramSetModeLower)
+        histogramParameterChanged = True
+
+      histogramSetModeUpper = HISTOGRAM_SET_UPPER
+      if self.histogramUpperThresholdAverageButton.checked:
+        histogramSetModeUpper = HISTOGRAM_SET_AVERAGE
+      elif self.histogramUpperThresholdUpperButton.checked:
+        histogramSetModeUpper = HISTOGRAM_SET_UPPER
+      elif self.histogramUpperThresholdMaximumButton.checked:
+        histogramSetModeUpper = HISTOGRAM_SET_MAXIMUM
+      if histogramSetModeUpper != self.scriptedEffect.parameter(HISTOGRAM_SET_UPPER_PARAMETER_NAME):
+        self.scriptedEffect.setParameter(HISTOGRAM_SET_UPPER_PARAMETER_NAME, histogramSetModeUpper)
+        histogramParameterChanged = True
+
+      if histogramParameterChanged:
+        self.updateHistogram()
 
   #
   # Effect specific methods (the above ones are the API methods to override)
@@ -379,6 +615,12 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
       self.scriptedEffect.removeActor2D(sliceWidget, pipeline.actor)
     self.previewPipelines = {}
 
+  def clearHistogramDisplay(self):
+    if self.histogramPipeline is None:
+      return
+    self.histogramPipeline.removeActors()
+    self.histogramPipeline = None
+
   def setupPreviewDisplay(self):
     # Clear previous pipelines before setting up the new ones
     self.clearPreviewDisplay()
@@ -431,9 +673,8 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     for sliceWidget in self.previewPipelines:
       pipeline = self.previewPipelines[sliceWidget]
       pipeline.lookupTable.SetTableValue(1,  r, g, b,  opacity)
-      sliceLogic = sliceWidget.sliceLogic()
-      backgroundLogic = sliceLogic.GetBackgroundLayer()
-      pipeline.thresholdFilter.SetInputConnection(backgroundLogic.GetReslice().GetOutputPort())
+      layerLogic = self.getMasterVolumeLayerLogic(sliceWidget)
+      pipeline.thresholdFilter.SetInputConnection(layerLogic.GetReslice().GetOutputPort())
       pipeline.thresholdFilter.ThresholdBetween(min, max)
       pipeline.actor.VisibilityOn()
       sliceWidget.sliceView().scheduleRender()
@@ -443,6 +684,231 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
       self.previewStep = -1
     if self.previewState <= 0:
       self.previewStep = 1
+
+  def processInteractionEvents(self, callerInteractor, eventId, viewWidget):
+    abortEvent = False
+
+    masterImageData = self.scriptedEffect.masterVolumeImageData()
+    if masterImageData is None:
+      return abortEvent
+
+    # Only allow for slice views
+    if viewWidget.className() != "qMRMLSliceWidget":
+      return abortEvent
+
+    # Clicking in a view should remove all previous pipelines
+    if eventId == vtk.vtkCommand.LeftButtonPressEvent:
+      self.clearHistogramDisplay()
+
+    if self.histogramPipeline is None:
+      self.createHistogramPipeline(viewWidget)
+
+    xy = callerInteractor.GetEventPosition()
+    ras = self.xyToRas(xy, viewWidget)
+
+    if eventId == vtk.vtkCommand.LeftButtonPressEvent:
+      self.histogramPipeline.state = HISTOGRAM_STATE_MOVING
+      self.histogramPipeline.addPoint(ras)
+      self.updateHistogram()
+      abortEvent = True
+    elif eventId == vtk.vtkCommand.LeftButtonReleaseEvent:
+      self.histogramPipeline.state = HISTOGRAM_STATE_PLACED
+      abortEvent = True
+    elif eventId == vtk.vtkCommand.MouseMoveEvent:
+      if self.histogramPipeline.state == HISTOGRAM_STATE_MOVING:
+        self.histogramPipeline.addPoint(ras)
+        self.updateHistogram()
+        abortEvent = True
+    return abortEvent
+
+  def createHistogramPipeline(self, sliceWidget):
+    brushType = HISTOGRAM_BRUSH_TYPE_CIRCLE
+    if self.boxROIButton.checked:
+      brushType = HISTOGRAM_BRUSH_TYPE_BOX
+    elif self.drawROIButton.checked:
+      brushType = HISTOGRAM_BRUSH_TYPE_DRAW
+    elif self.lineROIButton.checked:
+      brushType = HISTOGRAM_BRUSH_TYPE_LINE
+    pipeline = HistogramPipeline(self, self.scriptedEffect, sliceWidget, brushType)
+    self.histogramPipeline = pipeline
+
+  def processViewNodeEvents(self, callerViewNode, eventId, viewWidget):
+    if self.histogramPipeline is not None:
+      self.histogramPipeline.updateBrushModel()
+
+  def onHistogramMouseClick(self, pos, button):
+    self.selectionStartPosition = pos
+    self.selectionEndPosition = pos
+    if (button == qt.Qt.RightButton):
+      self.selectionStartPosition = None
+      self.selectionEndPosition = None
+      self.minMaxFunction.RemoveAllPoints()
+      self.averageFunction.RemoveAllPoints()
+    self.updateHistogram()
+
+  def onHistogramMouseMove(self, pos, button):
+    self.selectionEndPosition = pos
+    if (button == qt.Qt.RightButton):
+      return
+    self.updateHistogram()
+
+  def onHistogramMouseRelease(self, pos, button):
+    self.selectionEndPosition = pos
+    if (button == qt.Qt.RightButton):
+      return
+    self.updateHistogram()
+
+  def getMasterVolumeLayerLogic(self, sliceWidget):
+    masterVolumeNode = self.scriptedEffect.parameterSetNode().GetMasterVolumeNode()
+    sliceLogic = sliceWidget.sliceLogic()
+
+    backgroundLogic = sliceLogic.GetBackgroundLayer()
+    backgroundVolumeNode = backgroundLogic.GetVolumeNode()
+    if masterVolumeNode == backgroundVolumeNode:
+      return backgroundLogic
+
+    foregroundLogic = sliceLogic.GetForegroundLayer()
+    foregroundVolumeNode = foregroundLogic.GetVolumeNode()
+    if masterVolumeNode == foregroundVolumeNode:
+      return foregroundLogic
+
+    logging.warning("Master volume is not set as either the foreground or background")
+
+    foregroundOpacity = 0.0
+    if foregroundVolumeNode:
+      compositeNode = sliceLogic.GetSliceCompositeNode()
+      foregroundOpacity = compositeNode.GetForegroundOpacity()
+
+    if foregroundOpacity > 0.5:
+        return foregroundLogic
+
+    return backgroundLogic
+
+  def updateHistogram(self):
+    masterImageData = self.scriptedEffect.masterVolumeImageData()
+    if masterImageData is None or self.histogramPipeline is None:
+      self.histogramFunction.RemoveAllPoints()
+      return
+
+    # Ensure that the brush is in the correct location
+    self.histogramPipeline.updateBrushModel()
+
+    self.stencil.SetInputConnection(self.histogramPipeline.worldToSliceTransformer.GetOutputPort())
+
+    self.histogramPipeline.worldToSliceTransformer.Update()
+    brushPolydata = self.histogramPipeline.worldToSliceTransformer.GetOutput()
+    brushBounds = brushPolydata.GetBounds()
+    brushExtent = [0, -1, 0, -1, 0, -1]
+    for i in range(3):
+      brushExtent[2*i] = vtk.vtkMath.Floor(brushBounds[2*i])
+      brushExtent[2*i+1] = vtk.vtkMath.Ceil(brushBounds[2*i+1])
+    if brushExtent[0] > brushExtent[1] or brushExtent[2] > brushExtent[3] or brushExtent[4] > brushExtent[5]:
+      self.histogramFunction.RemoveAllPoints()
+      return
+
+    layerLogic = self.getMasterVolumeLayerLogic(self.histogramPipeline.sliceWidget)
+    self.reslice.SetInputConnection(layerLogic.GetReslice().GetInputConnection(0, 0))
+    self.reslice.SetResliceTransform(layerLogic.GetReslice().GetResliceTransform())
+    self.reslice.SetInterpolationMode(layerLogic.GetReslice().GetInterpolationMode())
+    self.reslice.SetOutputExtent(brushExtent)
+
+    maxNumberOfBins = 1000
+    masterImageData = self.scriptedEffect.masterVolumeImageData()
+    scalarRange = masterImageData.GetScalarRange()
+    numberOfBins = int(scalarRange[1] - scalarRange[0]) + 1
+    if numberOfBins > maxNumberOfBins:
+      numberOfBins = maxNumberOfBins
+    binSpacing = (scalarRange[1] - scalarRange[0] + 1) / numberOfBins
+
+    self.imageAccumulate.SetComponentExtent(0, numberOfBins - 1, 0, 0, 0, 0)
+    self.imageAccumulate.SetComponentSpacing(binSpacing, binSpacing, binSpacing)
+    self.imageAccumulate.SetComponentOrigin(scalarRange[0], scalarRange[0], scalarRange[0])
+
+    self.imageAccumulate.Update()
+
+    self.histogramFunction.RemoveAllPoints()
+    tableSize = self.imageAccumulate.GetOutput().GetPointData().GetScalars().GetNumberOfTuples()
+    for i in range(tableSize):
+      value = self.imageAccumulate.GetOutput().GetPointData().GetScalars().GetTuple1(i)
+      self.histogramFunction.AddPoint(binSpacing * i + scalarRange[0], value)
+    self.histogramFunction.AdjustRange(scalarRange)
+
+    lower  = self.imageAccumulate.GetMin()[0]
+    average = self.imageAccumulate.GetMean()[0]
+    upper = self.imageAccumulate.GetMax()[0]
+
+    # If there is a selection, then set the threshold based on that
+    if self.selectionStartPosition is not None and self.selectionEndPosition is not None:
+
+      # Clamp selection based on scalar range
+      startX = min(scalarRange[1], max(scalarRange[0], self.selectionStartPosition[0]))
+      endX = min(scalarRange[1], max(scalarRange[0], self.selectionEndPosition[0]))
+
+      lower = min(startX, endX)
+      average = (startX + endX) / 2.0
+      upper = max(startX, endX)
+
+    epsilon = 0.00001
+    self.minMaxFunction.RemoveAllPoints()
+    self.minMaxFunction.AddPoint(lower - epsilon, 0.0)
+    self.minMaxFunction.AddPoint(lower, 1.0)
+    self.minMaxFunction.AddPoint(lower + epsilon, 0.0)
+    self.minMaxFunction.AddPoint(upper - epsilon, 0.0)
+    self.minMaxFunction.AddPoint(upper, 1.0)
+    self.minMaxFunction.AddPoint(upper + epsilon, 0.0)
+    self.minMaxFunction.AdjustRange(scalarRange)
+
+    self.averageFunction.RemoveAllPoints()
+    self.averageFunction.AddPoint(average - epsilon, 0.0)
+    self.averageFunction.AddPoint(average, 1.0)
+    self.averageFunction.AddPoint(average + epsilon, 0.0)
+    self.averageFunction.AdjustRange(scalarRange)
+
+    minimumThreshold = lower
+    maximumThreshold = upper
+
+    histogramSetModeLower = self.scriptedEffect.parameter(HISTOGRAM_SET_LOWER_PARAMETER_NAME)
+    if histogramSetModeLower == HISTOGRAM_SET_MINIMUM:
+      minimumThreshold = scalarRange[0]
+    elif histogramSetModeLower == HISTOGRAM_SET_LOWER:
+      minimumThreshold = lower
+    elif histogramSetModeLower == HISTOGRAM_SET_AVERAGE:
+      minimumThreshold = average
+
+    histogramSetModeUpper = self.scriptedEffect.parameter(HISTOGRAM_SET_UPPER_PARAMETER_NAME)
+    if histogramSetModeUpper == HISTOGRAM_SET_AVERAGE:
+      maximumThreshold = average
+    elif histogramSetModeUpper == HISTOGRAM_SET_UPPER:
+      maximumThreshold = upper
+    elif histogramSetModeUpper == HISTOGRAM_SET_MAXIMUM:
+      maximumThreshold = scalarRange[1]
+
+    self.scriptedEffect.setParameter("MinimumThreshold", minimumThreshold)
+    self.scriptedEffect.setParameter("MaximumThreshold", maximumThreshold)
+
+  def updateHistogramBackground(self):
+    self.backgroundFunction.RemoveAllPoints()
+
+    masterImageData = self.scriptedEffect.masterVolumeImageData()
+    if masterImageData is None:
+      return
+
+    scalarRange = masterImageData.GetScalarRange()
+
+    epsilon = 0.00001
+    low   = self.scriptedEffect.doubleParameter("MinimumThreshold")
+    upper = self.scriptedEffect.doubleParameter("MaximumThreshold")
+    low =   max(scalarRange[0] + epsilon, low)
+    upper = min(scalarRange[1] - epsilon, upper)
+
+    self.backgroundFunction.AddRGBPoint(scalarRange[0], 1, 1, 1)
+    self.backgroundFunction.AddRGBPoint(low - epsilon, 1, 1, 1)
+    self.backgroundFunction.AddRGBPoint(low, self.backgroundColor[0], self.backgroundColor[1], self.backgroundColor[2])
+    self.backgroundFunction.AddRGBPoint(upper, self.backgroundColor[0], self.backgroundColor[1], self.backgroundColor[2])
+    self.backgroundFunction.AddRGBPoint(upper + epsilon, 1, 1, 1)
+    self.backgroundFunction.AddRGBPoint(scalarRange[1], 1, 1, 1)
+    self.backgroundFunction.SetAlpha(1.0)
+    self.backgroundFunction.Build()
 
 #
 # PreviewPipeline
@@ -479,6 +945,263 @@ class PreviewPipeline(object):
     # Setup pipeline
     self.colorMapper.SetInputConnection(self.thresholdFilter.GetOutputPort())
     self.mapper.SetInputConnection(self.colorMapper.GetOutputPort())
+
+###
+#
+# Histogram threshold
+#
+class HistogramEventFilter(qt.QObject):
+  thresholdEffect = None
+  def setThresholdEffect(self, thresholdEffect):
+    self.thresholdEffect = thresholdEffect
+
+  def eventFilter(self, object, event):
+    if self.thresholdEffect is None:
+      return
+
+    if (event.type() == qt.QEvent.GraphicsSceneMousePress or
+        event.type() == qt.QEvent.GraphicsSceneMouseMove or
+        event.type() == qt.QEvent.GraphicsSceneMouseRelease):
+      transferFunction = object.transferFunction()
+      if transferFunction is None:
+        return
+
+      representation = transferFunction.representation()
+      x = representation.mapXFromScene(event.pos().x())
+      y = representation.mapYFromScene(event.pos().y())
+      position = (x, y)
+
+      if event.type() == qt.QEvent.GraphicsSceneMousePress:
+        self.thresholdEffect.onHistogramMouseClick(position, event.button())
+      elif event.type() == qt.QEvent.GraphicsSceneMouseMove:
+        self.thresholdEffect.onHistogramMouseMove(position, event.button())
+      elif event.type() == qt.QEvent.GraphicsSceneMouseRelease:
+        self.thresholdEffect.onHistogramMouseRelease(position, event.button())
+      return True
+    return False
+
+
+class HistogramPipeline(object):
+
+  def __init__(self, thresholdEffect, scriptedEffect, sliceWidget, brushMode):
+    self.thresholdEffect = thresholdEffect
+    self.scriptedEffect = scriptedEffect
+    self.sliceWidget = sliceWidget
+    self.brushMode = brushMode
+    self.state = HISTOGRAM_STATE_OFF
+
+    self.point1 = None
+    self.point2 = None
+
+    # Actor setup
+    self.brushCylinderSource = vtk.vtkCylinderSource()
+    self.brushCylinderSource.SetResolution(32)
+
+    self.brushCubeSource = vtk.vtkCubeSource()
+
+    self.brushLineSource = vtk.vtkLineSource()
+    self.brushTubeSource = vtk.vtkTubeFilter()
+    self.brushTubeSource.SetInputConnection(self.brushLineSource.GetOutputPort())
+    self.brushTubeSource.SetNumberOfSides(50)
+    self.brushTubeSource.SetCapping(True)
+
+    self.brushToWorldOriginTransform = vtk.vtkTransform()
+    self.brushToWorldOriginTransformer = vtk.vtkTransformPolyDataFilter()
+    self.brushToWorldOriginTransformer.SetTransform(self.brushToWorldOriginTransform)
+    self.brushToWorldOriginTransformer.SetInputConnection(self.brushCylinderSource.GetOutputPort())
+
+    self.normalFilter = vtk.vtkPolyDataNormals()
+    self.normalFilter.AutoOrientNormalsOn()
+    self.normalFilter.SetInputConnection(self.brushToWorldOriginTransformer.GetOutputPort())
+
+    # Brush to RAS transform
+    self.worldOriginToWorldTransform = vtk.vtkTransform()
+    self.worldOriginToWorldTransformer = vtk.vtkTransformPolyDataFilter()
+    self.worldOriginToWorldTransformer.SetTransform(self.worldOriginToWorldTransform)
+    self.worldOriginToWorldTransformer.SetInputConnection(self.normalFilter.GetOutputPort())
+
+    # RAS to XY transform
+    self.worldToSliceTransform = vtk.vtkTransform()
+    self.worldToSliceTransformer = vtk.vtkTransformPolyDataFilter()
+    self.worldToSliceTransformer.SetTransform(self.worldToSliceTransform)
+    self.worldToSliceTransformer.SetInputConnection(self.worldOriginToWorldTransformer.GetOutputPort())
+
+    # Cutting takes place in XY coordinates
+    self.slicePlane = vtk.vtkPlane()
+    self.slicePlane.SetNormal(0, 0, 1)
+    self.slicePlane.SetOrigin(0, 0, 0)
+    self.cutter = vtk.vtkCutter()
+    self.cutter.SetCutFunction(self.slicePlane)
+    self.cutter.SetInputConnection(self.worldToSliceTransformer.GetOutputPort())
+
+    self.rasPoints = vtk.vtkPoints()
+    lines = vtk.vtkCellArray()
+    self.polyData = vtk.vtkPolyData()
+    self.polyData.SetPoints(self.rasPoints)
+    self.polyData.SetLines(lines)
+
+    # Thin line
+    self.thinRASPoints = vtk.vtkPoints()
+    thinLines = vtk.vtkCellArray()
+    self.thinPolyData = vtk.vtkPolyData()
+    self.thinPolyData.SetPoints(self.rasPoints)
+    self.thinPolyData.SetLines(thinLines)
+
+    self.mapper = vtk.vtkPolyDataMapper2D()
+    self.mapper.SetInputConnection(self.cutter.GetOutputPort())
+
+    # Add actor
+    self.actor = vtk.vtkActor2D()
+    self.actor.SetMapper(self.mapper)
+    actorProperty = self.actor.GetProperty()
+    actorProperty.SetColor(1,1,0)
+    actorProperty.SetLineWidth(2)
+    renderer = self.scriptedEffect.renderer(sliceWidget)
+    if renderer is None:
+      logging.error("pipelineForWidget: Failed to get renderer!")
+      return None
+    self.scriptedEffect.addActor2D(sliceWidget, self.actor)
+
+    self.thinActor = None
+    if self.brushMode == HISTOGRAM_BRUSH_TYPE_DRAW:
+      self.worldToSliceTransformer.SetInputData(self.polyData)
+      self.mapper.SetInputConnection(self.worldToSliceTransformer.GetOutputPort())
+
+      self.thinWorldToSliceTransformer = vtk.vtkTransformPolyDataFilter()
+      self.thinWorldToSliceTransformer.SetInputData(self.thinPolyData)
+      self.thinWorldToSliceTransformer.SetTransform(self.worldToSliceTransform)
+
+      self.thinMapper = vtk.vtkPolyDataMapper2D()
+      self.thinMapper.SetInputConnection(self.thinWorldToSliceTransformer.GetOutputPort())
+
+      self.thinActor = vtk.vtkActor2D()
+      self.thinActor.SetMapper(self.thinMapper)
+      thinActorProperty = self.thinActor.GetProperty()
+      thinActorProperty.SetColor(1,1,0)
+      thinActorProperty.SetLineWidth(1)
+      self.scriptedEffect.addActor2D(sliceWidget, self.thinActor)
+    elif self.brushMode == HISTOGRAM_BRUSH_TYPE_LINE:
+      self.worldToSliceTransformer.SetInputConnection(self.brushTubeSource.GetOutputPort())
+
+  def removeActors(self):
+    if self.actor is not None:
+      self.scriptedEffect.removeActor2D(self.sliceWidget, self.actor)
+    if self.thinActor is not None:
+      self.scriptedEffect.removeActor2D(self.sliceWidget, self.thinActor)
+
+  def setPoint1(self, ras):
+    self.point1 = ras
+    self.updateBrushModel()
+
+  def setPoint2(self, ras):
+    self.point2 = ras
+    self.updateBrushModel()
+
+  def addPoint(self, ras):
+    if self.brushMode == HISTOGRAM_BRUSH_TYPE_DRAW:
+      newPointIndex = self.rasPoints.InsertNextPoint(ras)
+      previousPointIndex = newPointIndex - 1
+      if (previousPointIndex >= 0):
+        idList = vtk.vtkIdList()
+        idList.InsertNextId(previousPointIndex)
+        idList.InsertNextId(newPointIndex)
+        self.polyData.InsertNextCell(vtk.VTK_LINE, idList)
+
+        thinLines = self.thinPolyData.GetLines()
+        thinLines.Initialize()
+        idList = vtk.vtkIdList()
+        idList.InsertNextId(newPointIndex)
+        idList.InsertNextId(0)
+        self.thinPolyData.InsertNextCell(vtk.VTK_LINE, idList)
+
+    else:
+      if self.point1 is None:
+        self.setPoint1(ras)
+      self.setPoint2(ras)
+
+  def updateBrushModel(self):
+    if self.brushMode != HISTOGRAM_BRUSH_TYPE_DRAW and (self.point1 is None or self.point2 is None):
+      return
+
+    # Update slice cutting plane position and orientation
+    sliceXyToRas = self.sliceWidget.sliceLogic().GetSliceNode().GetXYToRAS()
+    rasToSliceXy = vtk.vtkMatrix4x4()
+    vtk.vtkMatrix4x4.Invert(sliceXyToRas, rasToSliceXy)
+    self.worldToSliceTransform.SetMatrix(rasToSliceXy)
+
+    # brush is rotated to the slice widget plane
+    brushToWorldOriginTransformMatrix = vtk.vtkMatrix4x4()
+    brushToWorldOriginTransformMatrix.DeepCopy(self.sliceWidget.sliceLogic().GetSliceNode().GetSliceToRAS())
+    brushToWorldOriginTransformMatrix.SetElement(0,3, 0)
+    brushToWorldOriginTransformMatrix.SetElement(1,3, 0)
+    brushToWorldOriginTransformMatrix.SetElement(2,3, 0)
+
+    self.brushToWorldOriginTransform.Identity()
+    self.brushToWorldOriginTransform.Concatenate(brushToWorldOriginTransformMatrix)
+    self.brushToWorldOriginTransform.RotateX(90) # cylinder's long axis is the Y axis, we need to rotate it to Z axis
+
+    sliceSpacingMm = self.scriptedEffect.sliceSpacing(self.sliceWidget)
+
+    center = [0,0,0]
+    if self.brushMode == HISTOGRAM_BRUSH_TYPE_CIRCLE:
+      center = self.point1
+
+      point1ToPoint2 = [0,0,0]
+      vtk.vtkMath.Subtract(self.point1, self.point2, point1ToPoint2)
+      radius = vtk.vtkMath.Normalize(point1ToPoint2)
+
+      self.brushToWorldOriginTransformer.SetInputConnection(self.brushCylinderSource.GetOutputPort())
+      self.brushCylinderSource.SetRadius(radius)
+      self.brushCylinderSource.SetHeight(sliceSpacingMm)
+
+    elif self.brushMode == HISTOGRAM_BRUSH_TYPE_BOX:
+      self.brushToWorldOriginTransformer.SetInputConnection(self.brushCubeSource.GetOutputPort())
+
+      length = [0,0,0]
+      for i in range(3):
+        center[i] = (self.point1[i] + self.point2[i]) / 2.0
+        length[i] = abs(self.point1[i] - self.point2[i])
+
+      xVector = [1,0,0,0]
+      self.brushToWorldOriginTransform.MultiplyPoint(xVector, xVector)
+      xLength = abs(vtk.vtkMath.Dot(xVector[:3], length))
+      self.brushCubeSource.SetXLength(xLength)
+
+      zVector = [0,0,1,0]
+      self.brushToWorldOriginTransform.MultiplyPoint(zVector, zVector)
+      zLength = abs(vtk.vtkMath.Dot(zVector[:3], length))
+      self.brushCubeSource.SetZLength(zLength)
+      self.brushCubeSource.SetYLength(sliceSpacingMm)
+
+    elif self.brushMode == HISTOGRAM_BRUSH_TYPE_LINE:
+      self.brushLineSource.SetPoint1(self.point1)
+      self.brushLineSource.SetPoint2(self.point2)
+      self.brushTubeSource.SetRadius(sliceSpacingMm)
+
+    self.worldOriginToWorldTransform.Identity()
+    self.worldOriginToWorldTransform.Translate(center)
+
+    self.sliceWidget.sliceView().scheduleRender()
+
+HISTOGRAM_BRUSH_TYPE_PARAMETER_NAME = "BrushType"
+
+HISTOGRAM_BRUSH_TYPE_BOX = 'BOX'
+HISTOGRAM_BRUSH_TYPE_CIRCLE = 'CIRCLE'
+HISTOGRAM_BRUSH_TYPE_DRAW = 'DRAW'
+HISTOGRAM_BRUSH_TYPE_LINE = 'LINE'
+
+HISTOGRAM_STATE_OFF = 'OFF'
+HISTOGRAM_STATE_MOVING = 'MOVING'
+HISTOGRAM_STATE_PLACED = 'PLACED'
+
+HISTOGRAM_SET_LOWER_PARAMETER_NAME = 'HistogramSetLower'
+HISTOGRAM_SET_UPPER_PARAMETER_NAME = 'HistogramSetUpper'
+
+HISTOGRAM_SET_MINIMUM = 'MINIMUM'
+HISTOGRAM_SET_LOWER = 'LOWER'
+HISTOGRAM_SET_AVERAGE = 'AVERAGE'
+HISTOGRAM_SET_UPPER = 'UPPER'
+HISTOGRAM_SET_MAXIMUM = 'MAXIMUM'
 
 ###
 
