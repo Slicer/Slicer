@@ -19,6 +19,7 @@
 ==============================================================================*/
 // QT includes
 #include <QButtonGroup>
+#include <QFileDialog>
 #include <QMetaProperty>
 #include <QPointer>
 
@@ -405,6 +406,30 @@ void qMRMLScreenShotDialog::grabScreenShot(int screenshotWindow)
     }
   // save the screen shot image to this class
   this->setImageData(newImageData.GetPointer());
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLScreenShotDialog::saveAs()
+{
+  if (this->data().isValid())
+    {
+    // If a data is set, we are in "review" mode, no screenshot can be taken
+    return;
+    }
+  QString name = nameEdit();
+  if (name == "")
+    {
+    name = "Slicer Screen Capture";
+    }
+  QString savePath = QFileDialog::getSaveFileName(this, tr("Save File"),
+                           name, tr("Images (*.png *.jpg)"));
+
+  if (savePath != "")
+    {
+    QImage qimage;
+    qMRMLUtils::vtkImageDataToQImage(this->imageData(),qimage);
+    qimage.save(savePath);
+    }
 }
 
 //-----------------------------------------------------------------------------

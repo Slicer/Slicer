@@ -95,6 +95,10 @@ protected slots:
   /// Reset the dialog
   void resetDialog();
 
+  /// Present save as dialog to directly save image
+  void saveAs();
+
+
 private:
   QString enumToString(int type);
 
