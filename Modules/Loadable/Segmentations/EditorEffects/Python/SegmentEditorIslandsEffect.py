@@ -143,67 +143,63 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
     islandMath.SetMinimumSize(minimumSize)
     islandMath.Update()
 
-    # Create a separate image for the first (largest) island
-    labelValue = 1
-    backgroundValue = 0
-    thresh = vtk.vtkImageThreshold()
-    if split:
-      thresh.ThresholdBetween(1, 1)
-    else:
-      if maxNumberOfSegments != 0:
-        thresh.ThresholdBetween(1, maxNumberOfSegments)
-      else:
-        thresh.ThresholdByUpper(1)
-
-    thresh.SetInputData(islandMath.GetOutput())
-    thresh.SetOutValue(backgroundValue)
-    thresh.SetInValue(labelValue)
-    thresh.SetOutputScalarType(selectedSegmentLabelmap.GetScalarType())
-    thresh.Update()
-    # Create oriented image data from output
-    import vtkSegmentationCorePython as vtkSegmentationCore
-    largestIslandImage = slicer.vtkOrientedImageData()
-    largestIslandImage.ShallowCopy(thresh.GetOutput())
+    islandImage = slicer.vtkOrientedImageData()
+    islandImage.ShallowCopy(islandMath.GetOutput())
     selectedSegmentLabelmapImageToWorldMatrix = vtk.vtkMatrix4x4()
     selectedSegmentLabelmap.GetImageToWorldMatrix(selectedSegmentLabelmapImageToWorldMatrix)
-    largestIslandImage.SetImageToWorldMatrix(selectedSegmentLabelmapImageToWorldMatrix)
+    islandImage.SetImageToWorldMatrix(selectedSegmentLabelmapImageToWorldMatrix)
 
     if split and (maxNumberOfSegments != 1):
-
-      thresh2 = vtk.vtkImageThreshold()
-      # 0 is background, 1 is largest island; we need label 2 and higher
-      if maxNumberOfSegments != 0:
-        thresh2.ThresholdBetween(2, maxNumberOfSegments)
-      else:
-        thresh2.ThresholdByUpper(2)
-      thresh2.SetInputData(islandMath.GetOutput())
-      thresh2.SetOutValue(backgroundValue)
-      thresh2.ReplaceInOff()
-      thresh2.Update()
 
       islandCount = islandMath.GetNumberOfIslands()
       islandOrigCount = islandMath.GetOriginalNumberOfIslands()
       ignoredIslands = islandOrigCount - islandCount
       logging.info( "%d islands created (%d ignored)" % (islandCount, ignoredIslands) )
 
-      # Create oriented image data from output
-      import vtkSegmentationCorePython as vtkSegmentationCore
-      multiLabelImage = slicer.vtkOrientedImageData()
-      multiLabelImage.DeepCopy(thresh2.GetOutput())
-      selectedSegmentLabelmapImageToWorldMatrix = vtk.vtkMatrix4x4()
-      selectedSegmentLabelmap.GetImageToWorldMatrix(selectedSegmentLabelmapImageToWorldMatrix)
-      multiLabelImage.SetGeometryFromImageToWorldMatrix(selectedSegmentLabelmapImageToWorldMatrix)
-
-      # Import multi-label labelmap to segmentation
-      segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
+      baseSegmentName = "Label"
       selectedSegmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
-      selectedSegmentIndex = segmentationNode.GetSegmentation().GetSegmentIndex(selectedSegmentID)
-      insertBeforeSegmentID = segmentationNode.GetSegmentation().GetNthSegmentID(selectedSegmentIndex + 1)
-      selectedSegmentName = segmentationNode.GetSegmentation().GetSegment(selectedSegmentID).GetName()
-      slicer.vtkSlicerSegmentationsModuleLogic.ImportLabelmapToSegmentationNode(
-        multiLabelImage, segmentationNode, selectedSegmentName+" -", insertBeforeSegmentID)
+      segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
+      segmentation = segmentationNode.GetSegmentation()
+      selectedSegment = segmentation.GetSegment(selectedSegmentID)
+      selectedSegmentName = selectedSegment.GetName()
+      if selectedSegmentName is not None and selectedSegmentName != "":
+        baseSegmentName = selectedSegmentName
 
-    self.scriptedEffect.modifySelectedSegmentByLabelmap(largestIslandImage, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
+      labelValues = vtk.vtkIntArray();
+      slicer.vtkSlicerSegmentationsModuleLogic.GetAllLabelValues(labelValues, islandImage);
+
+      for i in range(labelValues.GetNumberOfTuples()):
+        labelValue = int(labelValues.GetTuple1(i))
+        if i == 0:
+          segment = selectedSegment
+          segmentID = selectedSegmentID
+        else:
+          segment = slicer.vtkSegment()
+          name = baseSegmentName + "_" + str(i+1)
+          segment.SetName(name)
+          segment.AddRepresentation(slicer.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName(),
+            selectedSegment.GetRepresentation(slicer.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName()));
+          segmentation.AddSegment(segment)
+          segmentID = segmentation.GetSegmentIdBySegment(segment)
+          segment.SetLabelValue(segmentation.GetUniqueLabelValueForSharedLabelmap(selectedSegmentID))
+
+        threshold = vtk.vtkImageThreshold()
+        threshold.SetInputData(islandMath.GetOutput())
+        threshold.ThresholdBetween(labelValue, labelValue)
+        threshold.SetInValue(1)
+        threshold.SetOutValue(0)
+        threshold.Update()
+
+        # Create oriented image data from output
+        modifierImage = slicer.vtkOrientedImageData()
+        modifierImage.DeepCopy(threshold.GetOutput())
+        selectedSegmentLabelmapImageToWorldMatrix = vtk.vtkMatrix4x4()
+        selectedSegmentLabelmap.GetImageToWorldMatrix(selectedSegmentLabelmapImageToWorldMatrix)
+        modifierImage.SetGeometryFromImageToWorldMatrix(selectedSegmentLabelmapImageToWorldMatrix)
+        # We could use a single slicer.vtkSlicerSegmentationsModuleLogic.ImportLabelmapToSegmentationNode
+        # method call to import all the resulting segments at once but that would put all the imported segments
+        # in a new layer. By using modifySegmentByLabelmap, the number of layers will not increase.
+        self.scriptedEffect.modifySegmentByLabelmap(segmentationNode, segmentID, modifierImage, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
 
     qt.QApplication.restoreOverrideCursor()
 
