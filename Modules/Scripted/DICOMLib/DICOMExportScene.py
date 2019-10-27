@@ -163,7 +163,7 @@ class DICOMExportScene(object):
 
     dump = str(dump) + candygram
 
-    logging.debug('dumping to: %s/dump.dcm' % self.dicomDirectory, 'w')
+    logging.debug('dumping to: %s/dump.dcm' % self.dicomDirectory)
     fp = open('%s/dump.dcm' % self.dicomDirectory, 'w')
     fp.write(dump)
     fp.close()
