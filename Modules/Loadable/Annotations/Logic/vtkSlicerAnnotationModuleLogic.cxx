@@ -3285,7 +3285,7 @@ void vtkSlicerAnnotationModuleLogic::SetHierarchyAnnotationsVisibleFlag(vtkMRMLA
     vtkErrorMacro("SetHierarchyAnnotationsVisibleFlag: no hierarchy node");
     return;
     }
-  vtkCollection* children = vtkCollection::New();
+  vtkNew<vtkCollection> children;
   hierarchyNode->GetChildrenDisplayableNodes(children);
 
   children->InitTraversal();
@@ -3295,10 +3295,9 @@ void vtkSlicerAnnotationModuleLogic::SetHierarchyAnnotationsVisibleFlag(vtkMRMLA
     if (childNode)
       {
       // this is a valid annotation child node
-      //
       childNode->SetDisplayVisibility((flag ? 1 : 0));
       }
-    } // for loop
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -3314,7 +3313,7 @@ void vtkSlicerAnnotationModuleLogic::SetHierarchyAnnotationsLockFlag(vtkMRMLAnno
     vtkErrorMacro("SetHierarchyAnnotationsLockFlag: no hierarchy node");
     return;
     }
-  vtkCollection* children = vtkCollection::New();
+  vtkNew<vtkCollection> children;
   hierarchyNode->GetChildrenDisplayableNodes(children);
 
   children->InitTraversal();
@@ -3324,10 +3323,9 @@ void vtkSlicerAnnotationModuleLogic::SetHierarchyAnnotationsLockFlag(vtkMRMLAnno
     if (childNode)
       {
       // this is a valid annotation child node
-      //
       childNode->SetLocked((flag ? 1 : 0));
       }
-    } // for loop
+    }
 }
 
 //---------------------------------------------------------------------------
