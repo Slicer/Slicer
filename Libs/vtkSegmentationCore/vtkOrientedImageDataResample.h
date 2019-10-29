@@ -85,7 +85,7 @@ public:
   /// Extent can be specified to restrict imageToAppend's extent to a smaller region.
   /// inputImage and imageToAppend must have the same geometry, but they may have different extents.
   static bool MergeImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* imageToAppend, vtkOrientedImageData* outputImage, int operation,
-    const int extent[6] = nullptr, double maskThreshold = 0, double fillValue = 1, bool *outputModified=nullptr);
+    const int extent[6]=nullptr, double maskThreshold = 0, double fillValue = 1, bool *outputModified=nullptr);
 
   /// Modifies inputImage in-place by combining with modifierImage using max/min operation.
   /// The extent will remain unchanged.
@@ -166,17 +166,22 @@ public:
 
   /// Get the values contained in the labelmap under the mask
   /// \param binaryLabelmap Input image to get values from
-  /// \param maskLabelmap Mask image to get values under
-  /// \param Threshold value for the mask. Values above this threshold are considered to be under the mask
-  /// \param values The values found in the binary labelmap underneath the mask
-  static void GetLabelValuesInMask(vtkOrientedImageData* binaryLabelmap, vtkOrientedImageData* mask,
-    const int extent[6], std::vector<int> &labelValues, int maskThreshold=0);
+  /// \param mask Mask image to get values under
+  /// \param extent Can be set to restrict the examined extent to a smaller region.
+  ///  If nullptr, the extent will be the overlapping extent between the label and mask.
+  /// \param labelValues The values found in the binary labelmap underneath the mask
+  /// \param maskThreshold Threshold value for the mask. Values above this threshold are considered to be under the mask
+  static void GetLabelValuesInMask(std::vector<int>& labelValues, vtkOrientedImageData* binaryLabelmap, vtkOrientedImageData* mask,
+    const int extent[6]=nullptr, int maskThreshold = 0);
 
   /// Determine if there is a non-zero value in the labelmap under the mask
   /// \param binaryLabelmap Input image to get values from
-  /// \param maskLabelmap Mask image to get values under
+  /// \param mask Mask image to get values under
+  /// \param extent Can be set to restrict the examined extent to a smaller region.
+  ///  If nullptr, the extent will be the overlapping extent between the label and mask.
+  /// \param maskThreshold Threshold value for the mask. Values above this threshold are considered to be under the mask
   static bool IsLabelInMask(vtkOrientedImageData* binaryLabelmap, vtkOrientedImageData* mask,
-    int extent[6], int maskThreshold=0);
+    int extent[6]=nullptr, int maskThreshold=0);
 
   /// Cast the data type of the image to be able to contain the specified value
   /// \param image Image to convert

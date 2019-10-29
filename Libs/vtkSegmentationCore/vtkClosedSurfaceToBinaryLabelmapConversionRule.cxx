@@ -46,6 +46,8 @@
 // STD includes
 #include <sstream>
 
+int DEFAULT_LABEL_VALUE = 1;
+
 //----------------------------------------------------------------------------
 vtkSegmentationConverterRuleNewMacro(vtkClosedSurfaceToBinaryLabelmapConversionRule);
 
@@ -224,7 +226,9 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment
   stencil->SetInputData(binaryLabelmap);
   stencil->SetStencilConnection(polyDataToImageStencil->GetOutputPort());
   stencil->ReverseStencilOn();
-  stencil->SetBackgroundValue(segment->GetLabelValue()); // General foreground value is 1 (background value because of reverse stencil)
+  // If the output labelmap was to required to be unsigned char, we could use the segment label value.
+  // To ensure that the label value is < 255, we set it to 1. Collapsing the labelmaps during post-conversion may assign new a value regardless.
+  stencil->SetBackgroundValue(DEFAULT_LABEL_VALUE); // General foreground value is 1 (background value because of reverse stencil)
 
   // Save result to output
   vtkNew<vtkImageCast> imageCast;
@@ -236,6 +240,9 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment
   // Restore geometry of the labelmap that we set to identity before conversion
   // (so that we can perform the stencil operations in IJK space)
   binaryLabelmap->SetGeometryFromImageToWorldMatrix(outputLabelmapImageToWorldMatrix);
+
+  // Set segment value to 1
+  segment->SetLabelValue(DEFAULT_LABEL_VALUE);
 
   return true;
 }

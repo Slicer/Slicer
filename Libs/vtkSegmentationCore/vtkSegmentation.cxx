@@ -2292,7 +2292,7 @@ void vtkSegmentation::CollapseBinaryLabelmaps(bool forceToSingleLayer/*=false*/)
 
   if (forceToSingleLayer)
     {
-    // If the merge is unsafe, segments can be overwritten.
+    // If the merge is forced to a single layer, segments can be overwritten.
     std::vector<std::string> segmentIds;
     this->GetSegmentIDs(segmentIds);
     this->MergeSegmentLabelmaps(segmentIds);
@@ -2357,7 +2357,7 @@ void vtkSegmentation::CollapseBinaryLabelmaps(bool forceToSingleLayer/*=false*/)
         bool safeToMerge = true;
         if (currentLabelmap)
           {
-          safeToMerge = !vtkOrientedImageDataResample::IsLabelInMask(newLayerLabelmap, thresholdedLabelmap, 0);
+          safeToMerge = !vtkOrientedImageDataResample::IsLabelInMask(newLayerLabelmap, thresholdedLabelmap);
           }
 
         if (safeToMerge)
@@ -2368,7 +2368,7 @@ void vtkSegmentation::CollapseBinaryLabelmaps(bool forceToSingleLayer/*=false*/)
             {
             // GetUniqueLabelValueForSharedLabelmap(vtkOrientedImageData) only checks the existing scalars in the labelmap.
             // If there are shared labelmaps in the new layer that do not have filled voxels in the labelmap, then the result of
-            // GetUniqueLabelValueForSharedLabelmap may not be unique. Compare the label value of all of the segments in the
+            // GetUniqueLabelValueForSharedLabelmap may not be unique. Instead, we compare the label value of all of the segments in the
             // new layer to make sure the value is unique.
             int existingValue = newLabelmapValues[layerSegmentID];
             labelValue = std::max(labelValue, existingValue + 1);
