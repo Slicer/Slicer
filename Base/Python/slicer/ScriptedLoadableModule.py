@@ -152,7 +152,6 @@ class ScriptedLoadableModuleWidget(object):
 
     self.editModuleUiButton = None
     moduleUiFileName = self.resourcePath('UI/%s.ui' % self.moduleName)
-    print(moduleUiFileName)
     import os.path
     if os.path.isfile(moduleUiFileName):
       # Module UI file exists
