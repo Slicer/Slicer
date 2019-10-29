@@ -92,6 +92,7 @@ QStringList qSlicerSegmentationsReader::extensions()const
 {
   return QStringList() << "Segmentation (*.seg.nrrd)" << "Segmentation (*.seg.vtm)"
     << "Segmentation (*.nrrd)" << "Segmentation (*.vtm)"
+    << "Segmentation (*.nii.gz)" << "Segmentation (*.nii)" << "Segmentation (*.hdr)"
     << "Segmentation (*.stl)" << "Segmentation (*.obj)";
 }
 

@@ -205,6 +205,12 @@ protected:
   /// Create representations based on serialized representation names string
   void CreateRepresentationsBySerializedNames(vtkSegmentation* segmentation, std::string representationNames);
 
+  /// Get the metadata string for the segment and key from the dictionary
+  static bool GetSegmentMetaDataFromDicitionary(std::string& headerValue, itk::MetaDataDictionary dictionary, int segmentIndex, std::string keyName);
+
+  /// Get the metadata string for the segmentation key from the dictionary
+  static bool GetSegmentationMetaDataFromDicitionary(std::string& headerValue, itk::MetaDataDictionary dictionary, std::string keyName);
+
   static std::string GetSegmentMetaDataKey(int segmentIndex, const std::string& keyName);
 
   static std::string GetSegmentationMetaDataKey(const std::string& keyName);
