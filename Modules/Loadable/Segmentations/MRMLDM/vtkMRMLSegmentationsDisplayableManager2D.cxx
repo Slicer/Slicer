@@ -835,16 +835,6 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       pipeline->ImageOutlineActor->SetVisibility(false);
       pipeline->ImageFillActor->SetVisibility(false);
 
-      // Set outline properties and turn it off if not shown
-      if (segmentOutlineVisible)
-        {
-        pipeline->LabelOutline->SetOutline(genericDisplayNode->GetSliceIntersectionThickness());
-        }
-      else
-        {
-        pipeline->LabelOutline->SetInputConnection(nullptr);
-        }
-
       if ((!segmentOutlineVisible && !segmentFillVisible) || (!polyData || polyData->GetNumberOfPoints() == 0))
         {
         pipeline->PolyDataOutlineActor->SetVisibility(false);
@@ -967,6 +957,16 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       if (!outlineVisible && !fillVisible)
         {
         continue;
+        }
+
+      // Set outline properties and turn it off if not shown
+      if (outlineVisible)
+        {
+        pipeline->LabelOutline->SetOutline(genericDisplayNode->GetSliceIntersectionThickness());
+        }
+      else
+        {
+        pipeline->LabelOutline->SetInputConnection(nullptr);
         }
 
       // Set the range of the scalars in the image data from the ScalarRange field if it exists
