@@ -37,6 +37,20 @@ class vtkMRMLDisplayableNode;
 /// The class has no additional features compared to its base class, but
 /// since the base display node class is abstract, we need one that we can
 /// instantiate.
+///
+/// Displayable managers must take into account parent folder display nodes as follows:
+///
+/// If the \sa ApplyDisplayPropertiesOnBranch flag is off, then the displayable node's own
+/// Visibility and Opacity properties must be combined with the corresponding values stored
+/// in the folder displayable (opacity = folderOpacity * ownOpacity;
+/// visibility = folderVisibility && ownVisibility).
+///
+/// If the \sa ApplyDisplayPropertiesOnBranch flag is on, then displayable node's own display node
+/// properties must be combined or replaced by the folder display nodes properties.
+/// Properties to combine: Visibility, Visibility3D, Visibility2D, Opacity.
+/// Properties to replace: all other properties stored in folder display node
+/// (Color, EdgeColor, SelectedColor, Ambient, Specular, etc.).
+///
 class VTK_MRML_EXPORT vtkMRMLFolderDisplayNode : public vtkMRMLDisplayNode
 {
 public:
