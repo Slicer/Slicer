@@ -426,6 +426,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller,
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if ( !this->ViewNode || !markupsNode || !this->MarkupsDisplayNode
     || !this->MarkupsDisplayNode->GetVisibility()
+    || !this->MarkupsDisplayNode->GetVisibility2D()
     || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID())
     || !hierarchyVisibility )
     {
@@ -505,7 +506,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteract(
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!sliceNode || !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
-    || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID()) || !interactionEventData)
+    || !this->GetVisibility() || !interactionEventData)
     {
     return;
     }
@@ -543,11 +544,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteract(
   sliceNode->GetXYToRAS()->Invert(sliceNode->GetXYToRAS(), rasToxyMatrix.GetPointer());
   for (int i = 0; i < numberOfPoints; i++)
     {
-    if (!markupsNode->GetNthControlPointVisibility(i))
-      {
-      continue;
-      }
-    if (!this->PointsVisibilityOnSlice->GetValue(i) && !this->MarkupsDisplayNode->GetSliceProjection())
+    if (!this->GetNthControlPointViewVisibility(i))
       {
       continue;
       }
@@ -577,7 +574,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteractWithLine(
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if ( !sliceNode || !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
-    || !interactionEventData )
+    || !this->GetVisibility() || !interactionEventData )
     {
     return;
     }
