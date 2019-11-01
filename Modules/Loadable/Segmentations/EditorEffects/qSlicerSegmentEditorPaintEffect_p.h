@@ -106,9 +106,17 @@ protected:
   /// Paint labelmap
   void paintApply(qMRMLWidget* viewWidget);
 
-  /// Paint one pixel to coordinate
-  void paintPixel(qMRMLWidget* viewWidget, double brushPosition_World[3]);
-  void paintPixels(qMRMLWidget* viewWidget, vtkPoints* pixelPositions);
+  /// Paint brushes to the modifier labelmap
+  void paintBrushes(vtkOrientedImageData* modifierLabelmap, qMRMLWidget* viewWidget, vtkPoints* pixelPositions_World, int extent[6]=nullptr);
+
+  /// Paint one pixel at coordinate
+  void paintPixel(vtkOrientedImageData* modifierLabelmap, qMRMLWidget* viewWidget, double pixelPosition_World[3]);
+
+  /// Paint pixels at the coordinates
+  void paintPixels(vtkOrientedImageData* modifierLabelmap, vtkPoints* pixelPositions_World, int extent[6]=nullptr);
+
+  /// Transform points from World to IJK
+  void transformPointsFromWorldToIJK(vtkOrientedImageData* image, vtkMRMLSegmentationNode* segmentationNode, vtkPoints* inputPoints, vtkPoints* outputPoints);
 
   /// Scale brush diameter and save it in parameter node
   void scaleDiameter(double scaleFactor);

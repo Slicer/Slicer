@@ -361,84 +361,29 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintApply(qMRMLWidget* viewWidget)
   q->saveStateForUndo();
 
   QList<int> updateExtentList;
+  int updateExtent[6] = { 0, -1, 0, -1, 0, -1 };
 
   if (q->integerParameter("BrushPixelMode"))
     {
-    this->paintPixels(viewWidget, this->PaintCoordinates_World);
+    this->paintPixels(modifierLabelmap, this->PaintCoordinates_World, updateExtent);
     }
   else
     {
-    this->updateBrushStencil(viewWidget);
-
-    this->BrushPolyDataToStencil->Update();
-    vtkImageStencilData* stencilData = this->BrushPolyDataToStencil->GetOutput();
-    int stencilExtent[6]={0,-1,0,-1,0,-1};
-    stencilData->GetExtent(stencilExtent);
-
-    vtkNew<vtkTransform> worldToModifierLabelmapIjkTransform;
-
-    vtkNew<vtkMatrix4x4> segmentationToSegmentationIjkTransformMatrix;
-    modifierLabelmap->GetWorldToImageMatrix(segmentationToSegmentationIjkTransformMatrix.GetPointer());
-    worldToModifierLabelmapIjkTransform->Concatenate(segmentationToSegmentationIjkTransformMatrix.GetPointer());
-
-    vtkNew<vtkMatrix4x4> worldToSegmentationTransformMatrix;
-    // We don't support painting in non-linearly transformed node (it could be implemented, but would probably slow down things too much)
-    // TODO: show a meaningful error message to the user if attempted
-    vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(nullptr, segmentationNode->GetParentTransformNode(), worldToSegmentationTransformMatrix.GetPointer());
-    worldToModifierLabelmapIjkTransform->Concatenate(worldToSegmentationTransformMatrix.GetPointer());
-
-    vtkNew<vtkPoints> paintCoordinates_Ijk;
-    worldToModifierLabelmapIjkTransform->TransformPoints(this->PaintCoordinates_World, paintCoordinates_Ijk.GetPointer());
-
-    vtkNew<vtkImageStencilToImage> stencilToImage;
-    stencilToImage->SetInputConnection(this->BrushPolyDataToStencil->GetOutputPort());
-    stencilToImage->SetInsideValue(q->m_FillValue);
-    stencilToImage->SetOutsideValue(q->m_EraseValue);
-    stencilToImage->SetOutputScalarType(modifierLabelmap->GetScalarType());
-
-    vtkNew<vtkImageChangeInformation> brushPositioner;
-    brushPositioner->SetInputConnection(stencilToImage->GetOutputPort());
-    brushPositioner->SetOutputSpacing(modifierLabelmap->GetSpacing());
-    brushPositioner->SetOutputOrigin(modifierLabelmap->GetOrigin());
-
-    vtkIdType numberOfPoints = this->PaintCoordinates_World->GetNumberOfPoints();
-    int updateExtent[6] = { 0, -1, 0, -1, 0, -1 };
-    for (int pointIndex = 0; pointIndex < numberOfPoints; pointIndex++)
-      {
-      double* shiftDouble = paintCoordinates_Ijk->GetPoint(pointIndex);
-      int shift[3] = {int(shiftDouble[0]+0.5), int(shiftDouble[1]+0.5), int(shiftDouble[2]+0.5)};
-      brushPositioner->SetExtentTranslation(shift);
-      brushPositioner->Update();
-      vtkNew<vtkOrientedImageData> orientedBrushPositionerOutput;
-      orientedBrushPositionerOutput->ShallowCopy(brushPositioner->GetOutput());
-      orientedBrushPositionerOutput->CopyDirections(modifierLabelmap);
-      if (pointIndex == 0)
-        {
-        orientedBrushPositionerOutput->GetExtent(updateExtent);
-        }
-      else
-        {
-        int* brushExtent = orientedBrushPositionerOutput->GetExtent();
-        for (int i = 0; i < 3; i++)
-          {
-          if (brushExtent[i * 2] < updateExtent[i * 2])
-            {
-            updateExtent[i * 2] = brushExtent[i * 2];
-            }
-          if (brushExtent[i * 2 + 1] > updateExtent[i * 2 + 1])
-            {
-            updateExtent[i * 2 + 1] = brushExtent[i * 2 + 1];
-            }
-          }
-        }
-      vtkOrientedImageDataResample::ModifyImage(modifierLabelmap, orientedBrushPositionerOutput.GetPointer(), vtkOrientedImageDataResample::OPERATION_MAXIMUM);
-      }
-    modifierLabelmap->Modified();
-    for (int i = 0; i < 6; i++)
-      {
-      updateExtentList << updateExtent[i];
-      }
+    this->paintBrushes(modifierLabelmap, viewWidget, this->PaintCoordinates_World, updateExtent);
     }
+
+  int modifierExtent[6] = { 0,-1,0,-1,0,-1 };
+  modifierLabelmap->GetExtent(modifierExtent);
+  for (int i = 0; i < 3; i++)
+    {
+    updateExtent[2 * i] = std::min(updateExtent[2 * i], modifierExtent[2 * i]);
+    updateExtent[2 * i + 1] = std::max(updateExtent[2 * i + 1], modifierExtent[2 * i + 1]);
+    }
+  for (int i = 0; i < 6; i++)
+    {
+    updateExtentList << updateExtent[i];
+    }
+
 
   // Rendering the feedback actor with no points will result in an error message that will clutter the log.
   // "No input data"
@@ -514,28 +459,45 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateBrushStencil(qMRMLWidget* vie
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorPaintEffectPrivate::paintPixel(qMRMLWidget* viewWidget, double pixelPosition_World[3])
+void qSlicerSegmentEditorPaintEffectPrivate::transformPointsFromWorldToIJK(vtkOrientedImageData* image,
+  vtkMRMLSegmentationNode* segmentationNode, vtkPoints* rasPoints, vtkPoints* ijkPoints)
+{
+  vtkNew<vtkTransform> worldToModifierLabelmapIjkTransform;
+
+  vtkNew<vtkMatrix4x4> segmentationToSegmentationIjkTransformMatrix;
+  image->GetWorldToImageMatrix(segmentationToSegmentationIjkTransformMatrix.GetPointer());
+  worldToModifierLabelmapIjkTransform->Concatenate(segmentationToSegmentationIjkTransformMatrix.GetPointer());
+
+  vtkNew<vtkMatrix4x4> worldToSegmentationTransformMatrix;
+  // We don't support painting in non-linearly transformed node (it could be implemented, but would probably slow down things too much)
+  // TODO: show a meaningful error message to the user if attempted
+  vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(nullptr, segmentationNode->GetParentTransformNode(), worldToSegmentationTransformMatrix.GetPointer());
+  worldToModifierLabelmapIjkTransform->Concatenate(worldToSegmentationTransformMatrix.GetPointer());
+  worldToModifierLabelmapIjkTransform->TransformPoints(rasPoints, ijkPoints);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorPaintEffectPrivate::paintPixel(vtkOrientedImageData* modifierLabelmap, qMRMLWidget* viewWidget, double pixelPosition_World[3])
 {
   vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
   points->InsertNextPoint(pixelPosition_World);
-  this->paintPixels(viewWidget, points);
+  this->paintPixels(modifierLabelmap, points);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorPaintEffectPrivate::paintPixels(
-    qMRMLWidget* viewWidget,
-    vtkPoints* pixelPositions)
+  vtkOrientedImageData* modifierLabelmap,
+    vtkPoints* pixelPositions_World,
+    int updateExtent[6])
 {
-  Q_UNUSED(viewWidget);
+  Q_Q(qSlicerSegmentEditorPaintEffect);
 
-  if (!pixelPositions)
+  if (!pixelPositions_World)
     {
     qCritical() << Q_FUNC_INFO << ": Invalid pixelPositions";
     return;
     }
-  /*
-  TODO: implement
-  vtkOrientedImageData* modifierLabelmap = q->modifierLabelmap();
+
   if (!modifierLabelmap)
     {
     return;
@@ -546,20 +508,125 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintPixels(
 
   double valueToSet = (q->m_Erase ? q->m_EraseValue : q->m_FillValue);
 
-  vtkIdType numberOfPoints = pixelPositions->GetNumberOfPoints();
+  vtkMRMLSegmentationNode* segmentationNode = q->parameterSetNode()->GetSegmentationNode();
+  if (!segmentationNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid segmentationNode";
+    return;
+    }
+
+  vtkIdType numberOfPoints = pixelPositions_World->GetNumberOfPoints();
+
+  int modifierExtent[6] = { 0, -1, 0, -1, 0, -1 };
+  modifierLabelmap->GetExtent(modifierExtent);
+
+  vtkNew<vtkPoints> paintCoordinates_Ijk;
+  this->transformPointsFromWorldToIJK(modifierLabelmap, segmentationNode, this->PaintCoordinates_World, paintCoordinates_Ijk);
+
   for (int pointIndex = 0; pointIndex < numberOfPoints; pointIndex++)
     {
-    int ijk[3] = { 0, 0, 0 };
-    q->xyzToIjk(pixelPositions->GetPoint(pointIndex), ijk, sliceWidget, modifierLabelmap);
+    double ijkCoordinates[3] = { 0 };
+
+    paintCoordinates_Ijk->GetPoint(pointIndex, ijkCoordinates);
+
+    int ijk[3] = {
+      static_cast<int>(std::round(ijkCoordinates[0])),
+      static_cast<int>(std::round(ijkCoordinates[1])),
+      static_cast<int>(std::round(ijkCoordinates[2]))
+    };
 
     // Clamp to image extent
-    if (ijk[0] < 0 || ijk[0] >= dims[0]) { continue; }
-    if (ijk[1] < 0 || ijk[1] >= dims[1]) { continue; }
-    if (ijk[2] < 0 || ijk[2] >= dims[2]) { continue; }
+    if (ijk[0] < modifierExtent[0] || ijk[0] > modifierExtent[1] ||
+        ijk[1] < modifierExtent[2] || ijk[1] > modifierExtent[3] ||
+        ijk[2] < modifierExtent[4] || ijk[2] > modifierExtent[5])
+      {
+      continue;
+      }
 
+    for (int i = 0; i < 3; ++i)
+      {
+      updateExtent[2 * i] = std::min(updateExtent[2 * i], ijk[i]);
+      updateExtent[2 * i + 1] = std::max(updateExtent[2 * i + 1], ijk[i]);
+      }
     modifierLabelmap->SetScalarComponentFromDouble(ijk[0], ijk[1], ijk[2], 0, valueToSet);
     }
-  */
+  modifierLabelmap->Modified();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorPaintEffectPrivate::paintBrushes(
+  vtkOrientedImageData* modifierLabelmap,
+  qMRMLWidget* viewWidget,
+  vtkPoints* pixelPositions_World,
+  int updateExtent[6])
+{
+  Q_Q(qSlicerSegmentEditorPaintEffect);
+
+  this->updateBrushStencil(viewWidget);
+
+  if (!modifierLabelmap)
+    {
+    return;
+    }
+
+  vtkMRMLSegmentationNode* segmentationNode = q->parameterSetNode()->GetSegmentationNode();
+  if (!segmentationNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid segmentationNode";
+    return;
+    }
+
+  this->BrushPolyDataToStencil->Update();
+  vtkImageStencilData* stencilData = this->BrushPolyDataToStencil->GetOutput();
+  int stencilExtent[6]={0,-1,0,-1,0,-1};
+  stencilData->GetExtent(stencilExtent);
+
+  vtkNew<vtkPoints> paintCoordinates_Ijk;
+  this->transformPointsFromWorldToIJK(modifierLabelmap, segmentationNode, this->PaintCoordinates_World, paintCoordinates_Ijk);
+
+  vtkNew<vtkImageStencilToImage> stencilToImage;
+  stencilToImage->SetInputConnection(this->BrushPolyDataToStencil->GetOutputPort());
+  stencilToImage->SetInsideValue(q->m_FillValue);
+  stencilToImage->SetOutsideValue(q->m_EraseValue);
+  stencilToImage->SetOutputScalarType(modifierLabelmap->GetScalarType());
+
+  vtkNew<vtkImageChangeInformation> brushPositioner;
+  brushPositioner->SetInputConnection(stencilToImage->GetOutputPort());
+  brushPositioner->SetOutputSpacing(modifierLabelmap->GetSpacing());
+  brushPositioner->SetOutputOrigin(modifierLabelmap->GetOrigin());
+
+  vtkIdType numberOfPoints = this->PaintCoordinates_World->GetNumberOfPoints();
+  for (int pointIndex = 0; pointIndex < numberOfPoints; pointIndex++)
+    {
+    double* shiftDouble = paintCoordinates_Ijk->GetPoint(pointIndex);
+    int shift[3] = {int(shiftDouble[0]+0.5), int(shiftDouble[1]+0.5), int(shiftDouble[2]+0.5)};
+    brushPositioner->SetExtentTranslation(shift);
+    brushPositioner->Update();
+    vtkNew<vtkOrientedImageData> orientedBrushPositionerOutput;
+    orientedBrushPositionerOutput->ShallowCopy(brushPositioner->GetOutput());
+    orientedBrushPositionerOutput->CopyDirections(modifierLabelmap);
+    if (pointIndex == 0)
+      {
+      orientedBrushPositionerOutput->GetExtent(updateExtent);
+      }
+    else
+      {
+      int* brushExtent = orientedBrushPositionerOutput->GetExtent();
+      for (int i = 0; i < 3; i++)
+        {
+        if (brushExtent[i * 2] < updateExtent[i * 2])
+          {
+          updateExtent[i * 2] = brushExtent[i * 2];
+          }
+        if (brushExtent[i * 2 + 1] > updateExtent[i * 2 + 1])
+          {
+          updateExtent[i * 2 + 1] = brushExtent[i * 2 + 1];
+          }
+        }
+      }
+    vtkOrientedImageDataResample::ModifyImage(modifierLabelmap, orientedBrushPositionerOutput.GetPointer(), vtkOrientedImageDataResample::OPERATION_MAXIMUM);
+    }
+  modifierLabelmap->Modified();
 }
 
 //-----------------------------------------------------------------------------
@@ -724,7 +791,6 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateBrushModel(qMRMLWidget* viewW
     this->BrushCylinderSource->SetResolution(32);
     double sliceSpacingMm = qSlicerSegmentEditorAbstractEffect::sliceSpacing(sliceWidget);
     this->BrushCylinderSource->SetHeight(sliceSpacingMm);
-    this->BrushCylinderSource->SetCenter(0, 0, sliceSpacingMm/2.0);
     this->BrushToWorldOriginTransformer->SetInputConnection(this->BrushCylinderSource->GetOutputPort());
     }
 
