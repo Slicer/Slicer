@@ -266,6 +266,15 @@ class _ui_DICOMSettingsPanel(object):
     genericGroupBox.title = "Generic DICOM settings"
     genericGroupBoxFormLayout = qt.QFormLayout(genericGroupBox)
 
+    directoryButton = ctk.ctkDirectoryButton()
+    genericGroupBoxFormLayout.addRow("Database location:", directoryButton)
+    parent.registerProperty(slicer.dicomDatabaseDirectorySettingsKey, directoryButton,
+                      "directory", str(qt.SIGNAL("directoryChanged(QString)")),
+                      "DICOM general settings", ctk.ctkSettingsPanel.OptionRequireRestart)
+    # Restart is forced because no mechanism is implemented that would reopen the DICOM database after
+    # folder location is changed. It is easier to restart the application than implementing an update
+    # mechanism.
+
     loadReferencesComboBox = ctk.ctkComboBox()
     loadReferencesComboBox.toolTip = "Determines whether referenced DICOM series are " \
       "offered when loading DICOM, or the automatic behavior if interaction is disabled. " \
