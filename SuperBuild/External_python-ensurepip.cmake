@@ -1,14 +1,7 @@
-set(proj python-pythonqt-requirements)
+set(proj python-ensurepip)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES python python-ensurepip python-pip python-setuptools python-wheel)
-
-set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
-file(WRITE ${requirements_file} [===[
-packaging==19.0 --hash=sha256:9e1cbf8c12b1f1ce0bb5344b8d7ecf66a6f8a6e91bcb0c84593ed6d3ab5c4ab3
-pyparsing==2.3.1 --hash=sha256:f6c5ef0d7480ad048c054c37632c67fca55299990fff127850181659eea33fc3
-six==1.12.0 --hash=sha256:3350809f0555b11f552448330d0b52d5f24c91a322ea4a15ef22629740f3761c
-]===])
+set(${proj}_DEPENDENCIES python)
 
 if(NOT DEFINED Slicer_USE_SYSTEM_${proj})
   set(Slicer_USE_SYSTEM_${proj} ${Slicer_USE_SYSTEM_python})
@@ -18,7 +11,7 @@ endif()
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(Slicer_USE_SYSTEM_${proj})
-  foreach(module_name IN ITEMS pyparsing packaging)
+  foreach(module_name IN ITEMS ensurepip pip setuptools)
     ExternalProject_FindPythonPackage(
       MODULE_NAME "${module_name}"
       REQUIRED
@@ -35,7 +28,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
-    INSTALL_COMMAND ${PYTHON_EXECUTABLE} -m pip install --require-hashes -r ${requirements_file}
+    INSTALL_COMMAND ${PYTHON_EXECUTABLE} -m ensurepip --default-pip
     LOG_INSTALL 1
     DEPENDS
       ${${proj}_DEPENDENCIES}
