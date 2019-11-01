@@ -481,11 +481,10 @@ void qSlicerDICOMExportDialog::showUpdatedDICOMBrowser()
   // (no direct function for it, so re-set the folder)
   PythonQt::init();
   PythonQtObjectPtr openBrowserContext = PythonQt::self()->getMainModule();
-  openBrowserContext.evalScript( QString(
-    "dicomWidget = slicer.modules.dicom.widgetRepresentation().self()\n"
-    "dicomWidget.dicomBrowser.databaseDirectory = '%1'\n"
-    "dicomWidget.detailsPopup.open()\n" )
-    .arg(qSlicerApplication::application()->dicomDatabase()->databaseDirectory()) );
+  openBrowserContext.evalScript(QString(
+    "slicer.util.selectModule('DICOM')\n"
+    "slicer.modules.DICOMInstance.browserWidget.dicomBrowser.dicomTableManager().updateTableViews()\n"
+    ));
 }
 
 //-----------------------------------------------------------------------------
