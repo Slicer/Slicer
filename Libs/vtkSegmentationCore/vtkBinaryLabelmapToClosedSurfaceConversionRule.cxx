@@ -414,19 +414,21 @@ void IsLabelmapPaddingNecessaryGeneric(vtkImageData* binaryLabelmap, bool &paddi
 
   ImageScalarType* imagePtr = (ImageScalarType*)binaryLabelmap->GetScalarPointerForExtent(extent);
 
-  for (int i=0; i<dimensions[0]; ++i)
+  for (long k = 0; k < dimensions[2]; ++k)
     {
-    for (int j=0; j<dimensions[1]; ++j)
+    long offset2 = k * dimensions[0] * dimensions[1];
+    for (long j = 0; j < dimensions[1]; ++j)
       {
-      for (int k=0; k<dimensions[2]; ++k)
-        {
+      long offset1 = j * dimensions[0] + offset2;
+      for (long i=0; i<dimensions[0]; ++i)
+      {
         if (i!=0 && i!=dimensions[0]-1 && j!=0 && j!=dimensions[1]-1 && k!=0 && k!=dimensions[2]-1)
           {
           // Skip non-border voxels
           continue;
           }
         int voxelValue = 0;
-        voxelValue = (*(imagePtr + i + j*dimensions[0] + k*dimensions[0]*dimensions[1]));
+        voxelValue = (*(imagePtr + i + offset1));
 
         if (voxelValue != 0)
           {
