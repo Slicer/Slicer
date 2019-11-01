@@ -290,6 +290,7 @@ void qMRMLSubjectHierarchyModel::setSubjectHierarchyNode(vtkMRMLSubjectHierarchy
     shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent, d->CallBack, +10.0);
     shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent, d->CallBack, -10.0);
     shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent, d->CallBack, -10.0);
+    shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent, d->CallBack, -10.0);
     }
 }
 
@@ -1414,6 +1415,7 @@ void qMRMLSubjectHierarchyModel::onEvent(
       sceneModel->onSubjectHierarchyItemRemoved(itemID);
       break;
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent:
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent:
       sceneModel->onSubjectHierarchyItemModified(itemID);
       break;
     case vtkMRMLScene::EndImportEvent:
