@@ -1782,7 +1782,6 @@ bool vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
   bool wasMasterRepresentationModifiedEnabled = segmentationNode->GetSegmentation()->SetMasterRepresentationModifiedEnabled(false);
 
   // 1. Append input labelmap to the segment labelmap if requested
-  vtkSmartPointer<vtkOrientedImageData> newSegmentLabelmap = vtkSmartPointer<vtkOrientedImageData>::New();
   bool segmentLabelmapModified = true;
 
   int* segmentLabelmapExtent = segmentLabelmap->GetExtent();
@@ -1824,7 +1823,7 @@ bool vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
       }
     modifiedSegments.push_back(segmentID);
 
-    if (!vtkOrientedImageDataResample::CopyImage(modifierLabelmap, newSegmentLabelmap, extent))
+    if (!vtkOrientedImageDataResample::CopyImage(modifierLabelmap, segmentLabelmap, extent))
       {
       vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment: Failed to copy labelmap");
       segmentationNode->GetSegmentation()->SetMasterRepresentationModifiedEnabled(wasMasterRepresentationModifiedEnabled);
@@ -1878,7 +1877,6 @@ bool vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
       {
       resampledSegmentLabelmap = segmentLabelmap;
       }
-    newSegmentLabelmap = segmentLabelmap;
 
     if (operation == vtkOrientedImageDataResample::OPERATION_MINIMUM && !minimumOfAllSegments)
       {
@@ -1896,7 +1894,7 @@ bool vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
       }
 
     if (!vtkOrientedImageDataResample::MergeImage(
-      resampledSegmentLabelmap, modifierLabelmap, newSegmentLabelmap, operation, extent, 0, labelValue, &segmentLabelmapModified))
+      resampledSegmentLabelmap, modifierLabelmap, segmentLabelmap, operation, extent, 0, labelValue, &segmentLabelmapModified))
       {
       vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment: Failed to merge labelmap (max)");
       segmentationNode->GetSegmentation()->SetMasterRepresentationModifiedEnabled(wasMasterRepresentationModifiedEnabled);
@@ -1904,23 +1902,7 @@ bool vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
       }
     }
 
-  if (!segmentLabelmapModified)
-    {
-    // segment labelmap not modified, there is no need to update representations
-    segmentationNode->GetSegmentation()->SetMasterRepresentationModifiedEnabled(wasMasterRepresentationModifiedEnabled);
-    return true;
-    }
-
-  // 2. Copy the temporary padded modifier labelmap to the segment.
-  //    Disable modified event so that the consequently emitted MasterRepresentationModified event that causes
-  //    removal of all other representations in all segments does not get activated. Instead, explicitly create
-  //    representations for the edited segment that the other segments have.
-  if (segmentLabelmap != newSegmentLabelmap)
-    {
-    segmentLabelmap->ShallowCopy(newSegmentLabelmap);
-    }
-
-  // 3. Shrink the image data extent to only contain the effective data (extent of non-zero voxels)
+  // 2. Shrink the image data extent to only contain the effective data (extent of non-zero voxels)
   int effectiveExtent[6] = {0,-1,0,-1,0,-1};
   vtkOrientedImageDataResample::CalculateEffectiveExtent(segmentLabelmap, effectiveExtent); // TODO: use the update extent? maybe crop when changing segment?
   if (effectiveExtent[0] > effectiveExtent[1] || effectiveExtent[2] > effectiveExtent[3] || effectiveExtent[4] > effectiveExtent[5])
@@ -1950,7 +1932,15 @@ bool vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
       segmentLabelmap->ShallowCopy(padder->GetOutput());
       }
     }
-  // 4. Re-convert all other representations
+
+  if (!segmentLabelmapModified)
+    {
+    // segment labelmap not modified, there is no need to update representations
+    segmentationNode->GetSegmentation()->SetMasterRepresentationModifiedEnabled(wasMasterRepresentationModifiedEnabled);
+    return true;
+    }
+
+  // 3. Re-convert all other representations
   std::vector<std::string> representationNames;
   selectedSegment->GetContainedRepresentationNames(representationNames);
   bool conversionHappened = false;

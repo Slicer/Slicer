@@ -439,6 +439,10 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintApply(qMRMLWidget* viewWidget)
       updateExtentList << updateExtent[i];
       }
     }
+
+  // Rendering the feedback actor with no points will result in an error message that will clutter the log.
+  // "No input data"
+  this->clearBrushPipelines();
   this->PaintCoordinates_World->Reset();
 
   // Notify editor about changes
