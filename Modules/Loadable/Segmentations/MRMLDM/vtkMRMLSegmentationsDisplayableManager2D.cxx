@@ -39,42 +39,41 @@
 
 // VTK includes
 #include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
+#include <vtkActor2D.h>
+#include <vtkCallbackCommand.h>
+#include <vtkCellArray.h>
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
 #include <vtkCompositeDataGeometryFilter.h>
-  #include <vtkPlaneCutter.h>
+#include <vtkPlaneCutter.h>
 #else
-  #include <vtkCutter.h>
+#include <vtkCutter.h>
 #endif
+#include <vtkCleanPolyData.h>
+#include <vtkDataSetAttributes.h>
+#include <vtkDoubleArray.h>
+#include <vtkEventBroker.h>
+#include <vtkGeneralTransform.h>
+#include <vtkImageMapper.h>
+#include <vtkImageMapToRGBA.h>
+#include <vtkImageThreshold.h>
+#include <vtkImageReslice.h>
+#include <vtkIntArray.h>
+#include <vtkLookupTable.h>
+#include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
-#include <vtkStringArray.h>
-#include <vtkCallbackCommand.h>
-#include <vtkEventBroker.h>
-#include <vtkActor2D.h>
-#include <vtkMatrix4x4.h>
 #include <vtkPlane.h>
+#include <vtkPointData.h>
+#include <vtkPointLocator.h>
 #include <vtkPolyDataMapper2D.h>
 #include <vtkProperty2D.h>
 #include <vtkRenderer.h>
+#include <vtkSmartPointer.h>
+#include <vtkStringArray.h>
+#include <vtkStripper.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
-#include <vtkPointLocator.h>
-#include <vtkGeneralTransform.h>
-#include <vtkPointData.h>
-#include <vtkDataSetAttributes.h>
-#include <vtkImageReslice.h>
-#include <vtkImageMapper.h>
-#include <vtkImageMapToRGBA.h>
-#include <vtkStripper.h>
 #include <vtkTriangleFilter.h>
-#include <vtkCleanPolyData.h>
-#include <vtkCellArray.h>
-#include <vtkDoubleArray.h>
-#include <vtkIntArray.h>
-#include <vtkImageThreshold.h>
-#include <vtkDiscretizableColorTransferFunction.h>
-#include <vtkPiecewiseFunction.h>
 
 // STD includes
 #include <algorithm>
@@ -207,8 +206,8 @@ public:
       this->Reslice = vtkSmartPointer<vtkImageReslice>::New();
       this->SliceToImageTransform = vtkSmartPointer<vtkGeneralTransform>::New();
       this->LabelOutline = vtkSmartPointer<vtkImageLabelOutline>::New();
-      this->LookupTableOutline = vtkSmartPointer<vtkDiscretizableColorTransferFunction>::New();
-      this->LookupTableFill = vtkSmartPointer<vtkDiscretizableColorTransferFunction>::New();
+      this->LookupTableOutline = vtkSmartPointer<vtkLookupTable>::New();
+      this->LookupTableFill = vtkSmartPointer<vtkLookupTable>::New();
       this->ImageThreshold = vtkSmartPointer<vtkImageThreshold>::New();
 
       // Set up image pipeline
@@ -221,9 +220,6 @@ public:
       this->Reslice->GenerateStencilOutputOn();
 
       this->SliceToImageTransform->PostMultiply();
-
-      this->LookupTableOutline->EnableOpacityMappingOn();
-      this->LookupTableFill->EnableOpacityMappingOn();
 
       this->ImageThreshold->SetInputConnection(this->Reslice->GetOutputPort());
       this->ImageThreshold->SetOutValue(1);
@@ -277,8 +273,8 @@ public:
     vtkSmartPointer<vtkImageReslice> Reslice;
     vtkSmartPointer<vtkGeneralTransform> SliceToImageTransform;
     vtkSmartPointer<vtkImageLabelOutline> LabelOutline;
-    vtkSmartPointer<vtkDiscretizableColorTransferFunction> LookupTableOutline;
-    vtkSmartPointer<vtkDiscretizableColorTransferFunction> LookupTableFill;
+    vtkSmartPointer<vtkLookupTable> LookupTableOutline;
+    vtkSmartPointer<vtkLookupTable> LookupTableFill;
     vtkSmartPointer<vtkImageThreshold> ImageThreshold;
 
     vtkMTimeType SliceIntersectionUpdatedTime;
@@ -982,8 +978,8 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
         }
 
       // Set segment color
-      int minLabelmapValue = VTK_INT_MAX;
-      int maxLabelmapValue = VTK_INT_MIN;
+      int minLabelmapValue = 0;
+      int maxLabelmapValue = 0;
 
       for (std::string segmentId : sharedSegmentIds)
         {
@@ -993,20 +989,28 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
         maxLabelmapValue = std::max(maxLabelmapValue, labelmapValue);
         }
 
-      vtkSmartPointer<vtkPiecewiseFunction> outlineOpacityFunction = vtkSmartPointer<vtkPiecewiseFunction>::New();
-      vtkSmartPointer<vtkPiecewiseFunction> fillOpacityFunction = vtkSmartPointer<vtkPiecewiseFunction>::New();
-
       if (displayNode->GetDisplayRepresentationName2D() == vtkSegmentationConverter::GetFractionalLabelmapRepresentationName())
         {
-        outlineOpacityFunction->AddPoint(0.0, 0);
-        fillOpacityFunction->AddPoint(minimumValue - 1, 0);
+        pipeline->LookupTableFill->SetNumberOfTableValues(maximumValue - minimumValue + 1);
+        pipeline->LookupTableFill->SetTableRange(minimumValue, maximumValue);
         }
       else
         {
-        pipeline->LookupTableOutline->AddRGBPoint(0, 0, 0, 0);
-        pipeline->LookupTableFill->AddRGBPoint(0, 0, 0, 0);
-        outlineOpacityFunction->AddPoint(0, 0);
-        fillOpacityFunction->AddPoint(0, 0);
+        int numberOfValues = maxLabelmapValue - minLabelmapValue + 1;
+        pipeline->LookupTableOutline->SetNumberOfTableValues(numberOfValues);
+        pipeline->LookupTableOutline->SetRange(minLabelmapValue, maxLabelmapValue);
+        pipeline->LookupTableOutline->IndexedLookupOff();
+        pipeline->LookupTableOutline->Build();
+
+        pipeline->LookupTableFill->SetNumberOfTableValues(numberOfValues);
+        pipeline->LookupTableFill->SetRange(minLabelmapValue, maxLabelmapValue);
+        pipeline->LookupTableFill->IndexedLookupOff();
+        pipeline->LookupTableFill->Build();
+
+        int index = pipeline->LookupTableOutline->GetIndex(0.0);
+        pipeline->LookupTableOutline->SetTableValue(index, 0, 0, 0, 0);
+        index = pipeline->LookupTableFill->GetIndex(0.0);
+        pipeline->LookupTableFill->SetTableValue(index, 0, 0, 0, 0);
         }
 
       for (std::string segmentId : sharedSegmentIds)
@@ -1047,37 +1051,40 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
 
         if (displayNode->GetDisplayRepresentationName2D() == vtkSegmentationConverter::GetFractionalLabelmapRepresentationName())
           {
-          pipeline->LookupTableOutline->AddRGBPoint(0.0, color[0], color[1], color[2]);
-          outlineOpacityFunction->AddPoint(0.0, 0.0);
-          pipeline->LookupTableOutline->AddRGBPoint(1.0, color[0], color[1], color[2]);
-          outlineOpacityFunction->AddPoint(1.0, outlineOpacity);
-
-          if (this->SmoothFractionalLabelMapBorder)
+          pipeline->LookupTableFill->SetRampToLinear();
+          if (!this->SmoothFractionalLabelMapBorder)
             {
-            pipeline->LookupTableFill->AddRGBPoint(minimumValue, color[0], color[1], color[2]);
-            fillOpacityFunction->AddPoint(minimumValue, 0.0);
-            pipeline->LookupTableFill->AddRGBPoint(maximumValue, color[0], color[1], color[2]);
-            fillOpacityFunction->AddPoint(maximumValue, fillOpacity);
+            pipeline->LookupTableFill->SetNumberOfTableValues(2);
             }
           else
             {
-            pipeline->LookupTableFill->AddRGBPoint(0.0, color[0], color[1], color[2]);
-            fillOpacityFunction->AddPoint(0.0, 0.0);
-            pipeline->LookupTableFill->AddRGBPoint(1.0, color[0], color[1], color[2]);
-            fillOpacityFunction->AddPoint(1.0, fillOpacity);
+            pipeline->LookupTableFill->SetNumberOfTableValues(maximumValue - minimumValue + 1);
             }
+          double hsv[3] = { 0,0,0 };
+          vtkMath::RGBToHSV(color, hsv);
+          pipeline->LookupTableFill->SetHueRange(hsv[0], hsv[0]);
+          pipeline->LookupTableFill->SetSaturationRange(hsv[1], hsv[1]);
+          pipeline->LookupTableFill->SetValueRange(hsv[2], hsv[2]);
+          pipeline->LookupTableFill->SetAlphaRange(0.0,
+            hierarchyOpacity* properties.Opacity2DFill* displayNode->GetOpacity2DFill()* genericDisplayNode->GetOpacity());
+          pipeline->LookupTableFill->SetTableRange(minimumValue, maximumValue);
+          pipeline->LookupTableFill->ForceBuild();
+
+          pipeline->LookupTableOutline->SetTableValue(0,color[0], color[1], color[2], 0.0);
+          pipeline->LookupTableOutline->SetTableValue(1,
+            color[0], color[1], color[2],
+            hierarchyOpacity* properties.Opacity2DOutline* displayNode->GetOpacity2DOutline()* genericDisplayNode->GetOpacity());
+          pipeline->LookupTableOutline->SetNumberOfTableValues(2);
+          pipeline->LookupTableOutline->SetTableRange(0, 1);
           }
         else
           {
-          pipeline->LookupTableOutline->AddRGBPoint(labelmapValue, color[0], color[1], color[2]);
-          outlineOpacityFunction->AddPoint(labelmapValue, outlineOpacity);
-          pipeline->LookupTableFill->AddRGBPoint(labelmapValue, color[0], color[1], color[2]);
-          fillOpacityFunction->AddPoint(labelmapValue, fillOpacity);
+          int index = pipeline->LookupTableFill->GetIndex(labelmapValue);
+          pipeline->LookupTableOutline->SetTableValue(index, color[0], color[1], color[2], outlineOpacity);
+          index = pipeline->LookupTableFill->GetIndex(labelmapValue);
+          pipeline->LookupTableFill->SetTableValue(index, color[0], color[1], color[2], fillOpacity);
           }
         }
-      pipeline->LookupTableFill->SetScalarOpacityFunction(fillOpacityFunction);
-      pipeline->LookupTableOutline->SetScalarOpacityFunction(outlineOpacityFunction);
-
       pipeline->Reslice->SetBackgroundLevel(minimumValue);
 
       // Calculate image IJK to world RAS transform
