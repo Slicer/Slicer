@@ -197,7 +197,9 @@ void vtkSlicerAngleRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
     {
     ControlPointsPipeline3D* controlPoints = this->GetControlPointsPipeline(controlPointType);
-    controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility());
+    // For backward compatibility, we hide labels if text scale is set to 0.
+    controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility()
+      && this->MarkupsDisplayNode->GetTextScale() > 0.0);
     controlPoints->Glypher->SetScaleFactor(this->ControlPointSize);
     this->UpdateRelativeCoincidentTopologyOffsets(controlPoints->Mapper);
     }

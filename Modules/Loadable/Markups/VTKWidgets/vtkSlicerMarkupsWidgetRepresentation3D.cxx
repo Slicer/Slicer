@@ -246,7 +246,9 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
       controlPoints->LabelControlPointsPolyData->Modified();
 
       controlPoints->Actor->SetVisibility(true);
-      controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility());
+      // For backward compatibility, we hide labels if text scale is set to 0.
+      controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility()
+        && this->MarkupsDisplayNode->GetTextScale() > 0.0);
       }
     else
       {

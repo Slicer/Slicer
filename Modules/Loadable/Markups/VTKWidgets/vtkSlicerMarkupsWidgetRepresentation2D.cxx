@@ -320,7 +320,9 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateAllPointsAndLabelsFromMRML(do
     if (controlPointType == Active)
       {
       controlPoints->Actor->VisibilityOn();
-      controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility());
+      // For backward compatibility, we hide labels if text scale is set to 0.
+      controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility()
+        && this->MarkupsDisplayNode->GetTextScale() > 0.0);
       }
     }
 }
@@ -486,7 +488,9 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller,
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
     {
     ControlPointsPipeline2D* controlPoints = reinterpret_cast<ControlPointsPipeline2D*>(this->ControlPoints[controlPointType]);
-    controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility());
+    // For backward compatibility, we hide labels if text scale is set to 0.
+    controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility()
+      && this->MarkupsDisplayNode->GetTextScale() > 0.0);
     controlPoints->Glypher->SetScaleFactor(this->ControlPointSize);
     }
 
