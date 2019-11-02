@@ -123,6 +123,9 @@ public slots:
   void onResetToDefaultDisplayPropertiesPushButtonClicked();
   void onSaveToDefaultDisplayPropertiesPushButtonClicked();
 
+  //Resample Curve button slot
+  void onApplyCurveResamplingPushButtonClicked();
+
   /// List button slots
   void onVisibilityOnAllMarkupsInListPushButtonClicked();
   void onVisibilityOffAllMarkupsInListPushButtonClicked();
