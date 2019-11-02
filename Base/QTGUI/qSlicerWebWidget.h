@@ -89,6 +89,9 @@ public:
   /// Convenience for setting the internal webView QUrl from a QString
   Q_INVOKABLE QString url();
 
+  /// Convenience for setting the internal webView html from a QString
+  Q_INVOKABLE void setHtml(const QString &html, const QUrl &baseUrl = QUrl());
+
 public slots:
 
   /// Convenience for setting the internal webView QUrl from a QString

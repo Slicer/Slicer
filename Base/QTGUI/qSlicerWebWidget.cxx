@@ -314,6 +314,14 @@ QString qSlicerWebWidget::evalJS(const QString &js)
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerWebWidget::setHtml(const QString &html, const QUrl &baseUrl)
+{
+  Q_D(qSlicerWebWidget);
+
+  d->WebView->setHtml(html, baseUrl);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerWebWidget::setUrl(const QString &url)
 {
   Q_D(qSlicerWebWidget);
