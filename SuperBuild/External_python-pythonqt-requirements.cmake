@@ -1,7 +1,7 @@
 set(proj python-pythonqt-requirements)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES python python-ensurepip python-pip python-setuptools python-wheel)
+set(${proj}_DEPENDENCIES python python-setuptools python-wheel python-pip)
 
 set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
 file(WRITE ${requirements_file} [===[

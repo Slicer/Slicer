@@ -124,6 +124,7 @@ endif()
 if(Slicer_USE_PYTHONQT)
   list(APPEND Slicer_DEPENDENCIES
     python-pythonqt-requirements  # This provides the "packaging.version.parse()" function
+    python-pip
     )
 endif()
 
