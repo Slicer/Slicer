@@ -20,6 +20,8 @@
 #include "vtkMRMLMarkupsLineNode.h"
 #include "vtkMRMLMarkupsFiducialStorageNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLSelectionNode.h"
+#include "vtkMRMLUnitNode.h"
 
 // VTK includes
 #include <vtkNew.h>
@@ -65,4 +67,39 @@ void vtkMRMLMarkupsLineNode::Copy(vtkMRMLNode *anode)
 void vtkMRMLMarkupsLineNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsLineNode::UpdateMeasurements()
+{
+  this->RemoveAllMeasurements();
+  if (this->GetNumberOfDefinedControlPoints() == 2)
+    {
+    double p1[3] = { 0.0 };
+    double p2[3] = { 0.0 };
+    this->GetNthControlPointPositionWorld(0, p1);
+    this->GetNthControlPointPositionWorld(1, p2);
+    double length = sqrt(vtkMath::Distance2BetweenPoints(p1, p2));
+
+    std::string printFormat;
+    std::string unit = "mm";
+    vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+      this->GetScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+    if (selectionNode)
+      {
+      vtkMRMLUnitNode* unitNode = vtkMRMLUnitNode::SafeDownCast(this->GetScene()->GetNodeByID(
+          selectionNode->GetUnitNodeID("length")));
+      if (unitNode)
+        {
+        if (unitNode->GetSuffix())
+          {
+          unit = unitNode->GetSuffix();
+          }
+        length = unitNode->GetDisplayValueFromValue(length);
+        printFormat = unitNode->GetDisplayStringFormat();
+        }
+      }
+    this->SetNthMeasurement(0, "length", length, unit, printFormat);
+    }
+  this->WriteMeasurementsToDescription();
 }

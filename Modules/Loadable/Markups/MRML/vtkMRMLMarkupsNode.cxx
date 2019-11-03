@@ -222,6 +222,7 @@ void vtkMRMLMarkupsNode::ProcessMRMLEvents(vtkObject *caller,
   if (caller != nullptr && event == vtkMRMLTransformableNode::TransformModifiedEvent)
     {
     vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), nullptr, this->CurvePolyToWorldTransform);
+    this->UpdateMeasurements();
     }
   else if (caller == this->CurveGenerator.GetPointer())
     {
@@ -343,6 +344,7 @@ void vtkMRMLMarkupsNode::RemoveAllControlPoints()
     {
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionUndefinedEvent);
     }
+  this->UpdateMeasurements();
 }
 
 //-------------------------------------------------------------------------
@@ -502,6 +504,7 @@ int vtkMRMLMarkupsNode::AddControlPoint(ControlPoint *controlPoint)
     {
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionDefinedEvent, static_cast<void*>(&controlPointIndex));
     }
+  this->UpdateMeasurements();
   return controlPointIndex;
 }
 
@@ -645,6 +648,7 @@ void vtkMRMLMarkupsNode::RemoveNthControlPoint(int pointIndex)
     }
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&pointIndex));
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointRemovedEvent, static_cast<void*>(&pointIndex));
+  this->UpdateMeasurements();
 }
 
 //-----------------------------------------------------------
@@ -685,6 +689,7 @@ bool vtkMRMLMarkupsNode::InsertControlPoint(ControlPoint *controlPoint, int targ
     {
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionUndefinedEvent, static_cast<void*>(&targetIndex));
     }
+  this->UpdateMeasurements();
   return true;
 }
 
@@ -776,6 +781,7 @@ void vtkMRMLMarkupsNode::SwapControlPoints(int m1, int m2)
   // and let listeners know that two control points have changed
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&m1));
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&m2));
+  this->UpdateMeasurements();
 }
 
 //-----------------------------------------------------------
@@ -832,6 +838,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointPosition(const int pointIndex,
     {
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionUndefinedEvent, static_cast<void*>(&n));
     }
+  this->UpdateMeasurements();
 }
 
 //-----------------------------------------------------------
@@ -903,6 +910,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointPositionOrientationWorldFromArray(
   {
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionUndefinedEvent, static_cast<void*>(&n));
   }
+  this->UpdateMeasurements();
 }
 
 //-----------------------------------------------------------
@@ -994,6 +1002,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointOrientation(int n, double w, double x
   vtkMRMLMarkupsNode::ConvertOrientationWXYZToMatrix(wxyz, controlPoint->OrientationMatrix);
 
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
+  this->UpdateMeasurements();
 }
 
 //-----------------------------------------------------------
@@ -1115,6 +1124,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointAssociatedNodeID(int n, std::string i
     }
   controlPoint->AssociatedNodeID = std::string(id.c_str());
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
+  this->UpdateMeasurements();
 }
 
 //-----------------------------------------------------------
@@ -1204,6 +1214,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointSelected(int n, bool flag)
     }
   controlPoint->Selected = flag;
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
+  this->UpdateMeasurements();
 }
 
 //---------------------------------------------------------------------------
@@ -1730,6 +1741,7 @@ void vtkMRMLMarkupsNode::UnsetNthControlPointPosition(int n)
     }
   controlPoint->PositionStatus = PositionUndefined;
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
+  this->UpdateMeasurements();
 }
 
 //---------------------------------------------------------------------------
@@ -1930,7 +1942,8 @@ void vtkMRMLMarkupsNode::AddMeasurement(vtkMRMLMeasurement* measurement)
 
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::SetNthMeasurement(int id,
-  const std::string& name, double value, const std::string &units, const std::string description/*=""*/,
+  const std::string& name, double value, const std::string &units,
+  std::string printFormat/*=""*/, std::string description/*=""*/,
   vtkCodedEntry* quantityCode/*=nullptr*/, vtkCodedEntry* derivationCode/*=nullptr*/,
   vtkCodedEntry* unitsCode/*=nullptr*/, vtkCodedEntry* methodCode/*=nullptr*/)
 {
@@ -1952,6 +1965,10 @@ void vtkMRMLMarkupsNode::SetNthMeasurement(int id,
   measurement->SetName(name.c_str());
   measurement->SetValue(value);
   measurement->SetUnits(units.c_str());
+  if (!printFormat.empty())
+    {
+    measurement->SetPrintFormat(printFormat.c_str());
+    }
   measurement->SetDescription(description.c_str());
   measurement->SetQuantityCode(quantityCode);
   measurement->SetDerivationCode(derivationCode);
@@ -1978,6 +1995,24 @@ void vtkMRMLMarkupsNode::RemoveAllMeasurements()
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::UpdateMeasurements()
 {
-  // child classes override this funciton to compute measurements
+  // child classes override this function to compute measurements
   this->RemoveAllMeasurements();
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::WriteMeasurementsToDescription()
+{
+  std::string description;
+  for (std::vector< vtkSmartPointer<vtkMRMLMeasurement> >::iterator measurementIt = this->Measurements.begin();
+    measurementIt != this->Measurements.end(); ++measurementIt)
+  {
+    if (!description.empty())
+      {
+      description += "; ";
+      }
+    description += (*measurementIt)->GetName() + std::string(": ") + (*measurementIt)->GetValueWithUnitsAsPrintableString();
+  }
+  this->SetDescription(description.c_str());
 }

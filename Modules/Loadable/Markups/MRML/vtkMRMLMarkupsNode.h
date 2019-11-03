@@ -171,7 +171,8 @@ public:
   vtkMRMLMeasurement* GetNthMeasurement(int id);
   void AddMeasurement(vtkMRMLMeasurement* measurement);
   void SetNthMeasurement(int id, vtkMRMLMeasurement* measurement);
-  void SetNthMeasurement(int id, const std::string& name, double value, const std::string &units, const std::string description = "",
+  void SetNthMeasurement(int id, const std::string& name, double value, const std::string &units,
+    std::string printFormat = "", const std::string description = "",
     vtkCodedEntry* quantityCode = nullptr, vtkCodedEntry* derivationCode = nullptr,
     vtkCodedEntry* unitsCode = nullptr, vtkCodedEntry* methodCode = nullptr);
   void RemoveNthMeasurement(int id);
@@ -588,6 +589,10 @@ protected:
   void OnTransformNodeReferenceChanged(vtkMRMLTransformNode* transformNode) override;
 
   virtual void UpdateMeasurements();
+
+  /// Helper function to write measurements to node Description property.
+  /// This is a short-term solution until measurements display is properly implemented.
+  virtual void WriteMeasurementsToDescription();
 
   // Used for limiting number of markups that may be placed.
   int MaximumNumberOfControlPoints;

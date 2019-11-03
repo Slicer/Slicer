@@ -66,6 +66,7 @@ protected:
   vtkMRMLMarkupsLineNode(const vtkMRMLMarkupsLineNode&);
   void operator=(const vtkMRMLMarkupsLineNode&);
 
+  void UpdateMeasurements() override;
 };
 
 #endif
