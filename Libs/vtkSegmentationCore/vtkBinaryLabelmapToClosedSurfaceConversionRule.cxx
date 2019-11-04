@@ -316,7 +316,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
     {
     vtkDebugMacro("Convert: No polygons can be created, probably all voxels are empty");
     convertedSegment = nullptr;
-    closedSurfacePolyData->Reset();
+    closedSurfacePolyData->Initialize();
     }
 
   if (!convertedSegment)

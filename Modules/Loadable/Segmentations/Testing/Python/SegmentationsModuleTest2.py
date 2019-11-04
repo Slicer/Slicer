@@ -15,17 +15,20 @@ Shared segment modification behavior is controlled through qSlicerSegmentEditorA
 
 class SegmentationsModuleTest2(unittest.TestCase):
 
+  #------------------------------------------------------------------------------
   def setUp(self):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
     """
     slicer.mrmlScene.Clear(0)
 
+  #------------------------------------------------------------------------------
   def runTest(self):
     """Run as few or as many tests as needed here.
     """
     self.setUp()
     self.test_SegmentationsModuleTest2()
 
+  #------------------------------------------------------------------------------
   def test_SegmentationsModuleTest2(self):
     # Check for modules
     self.assertIsNotNone( slicer.modules.segmentations )
@@ -35,7 +38,8 @@ class SegmentationsModuleTest2(unittest.TestCase):
     self.TestSection_SetupPathsAndNames()
     self.TestSection_RetrieveInputData()
     self.TestSection_SetupScene()
-    self.TestSection_TestSharedLabelmapMultipleLayerEditing()
+    self.TestSection_SharedLabelmapMultipleLayerEditing()
+    self.TestSection_IslandEffects()
     logging.info('Test finished')
 
   #------------------------------------------------------------------------------
@@ -55,12 +59,6 @@ class SegmentationsModuleTest2(unittest.TestCase):
     # Define variables
     self.expectedNumOfFilesInDataDir = 4
     self.expectedNumOfFilesInDataSegDir = 2
-    self.inputSegmentationNode = None
-    self.bodySegmentName = 'Body_Contour'
-    self.tumorSegmentName = 'Tumor_Contour'
-    self.secondSegmentationNode = None
-    self.sphereSegment = None
-    self.sphereSegmentName = 'Sphere'
     self.closedSurfaceReprName = vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationClosedSurfaceRepresentationName()
     self.binaryLabelmapReprName = vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName()
 
@@ -86,6 +84,7 @@ class SegmentationsModuleTest2(unittest.TestCase):
   def TestSection_SetupScene(self):
 
     self.paintEffect = slicer.modules.segmenteditor.widgetRepresentation().self().editor.effectByName("Paint")
+    self.islandEffect = slicer.modules.segmenteditor.widgetRepresentation().self().editor.effectByName("Islands")
 
     self.segmentEditorNode = slicer.util.getNode("SegmentEditor")
     self.assertIsNotNone(self.segmentEditorNode)
@@ -103,7 +102,7 @@ class SegmentationsModuleTest2(unittest.TestCase):
     self.assertIsNotNone(self.segmentation)
 
   #------------------------------------------------------------------------------
-  def TestSection_TestSharedLabelmapMultipleLayerEditing(self):
+  def TestSection_SharedLabelmapMultipleLayerEditing(self):
 
     self.segmentation.RemoveAllSegments()
     self.segmentation.AddEmptySegment("Segment_1")
@@ -115,12 +114,15 @@ class SegmentationsModuleTest2(unittest.TestCase):
 
     threshold = vtk.vtkImageThreshold()
     threshold.SetInputData(mergedLabelmap)
-    threshold.ThresholdBetween(vtk.VTK_UNSIGNED_CHAR_MIN, vtk.VTK_UNSIGNED_CHAR_MAX)
+    threshold.ThresholdBetween(0,0)
     threshold.SetInValue(1)
-    threshold.SetOutValue(0)
+    threshold.SetOutValue(1)
     threshold.Update()
     mergedLabelmap.ShallowCopy(threshold.GetOutput())
 
+    oldOverwriteMode = self.segmentEditorNode.GetOverwriteMode()
+
+    self.segmentEditorNode.SetOverwriteMode(self.segmentEditorNode.OverwriteAllSegments)
     self.segmentEditorNode.SetSelectedSegmentID("Segment_1")
     self.paintEffect.modifySelectedSegmentByLabelmap(mergedLabelmap, self.paintEffect.ModificationModeAdd)
     self.segmentEditorNode.SetSelectedSegmentID("Segment_2")
@@ -135,4 +137,119 @@ class SegmentationsModuleTest2(unittest.TestCase):
     layerCount = self.segmentation.GetNumberOfLayers()
     self.assertEqual(layerCount, 2)
 
+    self.segmentEditorNode.SetOverwriteMode(oldOverwriteMode)
     logging.info('Multiple layer editing successful')
+
+  #------------------------------------------------------------------------------
+  def TestSection_IslandEffects(self):
+
+    islandSizes = [1, 26, 11, 6, 8, 6, 2]
+    islandSizes.sort(reverse=True)
+
+    minimumSize = 3
+    self.resetIslandSegments(islandSizes)
+    self.islandEffect.setParameter('MinimumSize', minimumSize)
+    self.islandEffect.setParameter('Operation','KEEP_LARGEST_ISLAND')
+    self.islandEffect.self().onApply()
+    layerCount = self.segmentation.GetNumberOfLayers()
+    self.assertEqual(layerCount, 1)
+
+    voxelCount = 0
+    for size in islandSizes:
+      if size < minimumSize:
+          continue
+      voxelCount = max(voxelCount, size)
+    self.checkSegmentVoxelCount(0, voxelCount)
+
+    minimumSize = 7
+    self.resetIslandSegments(islandSizes)
+    self.islandEffect.setParameter('MinimumSize', minimumSize)
+    self.islandEffect.setParameter('Operation','REMOVE_SMALL_ISLANDS')
+    self.islandEffect.self().onApply()
+    layerCount = self.segmentation.GetNumberOfLayers()
+    self.assertEqual(layerCount, 1)
+
+    voxelCount = 0
+    for size in islandSizes:
+      if size < minimumSize:
+        continue
+      voxelCount += size
+    self.checkSegmentVoxelCount(0, voxelCount)
+
+    self.resetIslandSegments(islandSizes)
+    minimumSize = 3
+    self.islandEffect.setParameter('MinimumSize', minimumSize)
+    self.islandEffect.setParameter('Operation','SPLIT_ISLANDS_TO_SEGMENTS')
+    self.islandEffect.self().onApply()
+    layerCount = self.segmentation.GetNumberOfLayers()
+    self.assertEqual(layerCount, 1)
+
+    for i in range(len(islandSizes)):
+      size = islandSizes[i]
+      if size < minimumSize:
+        continue
+      self.checkSegmentVoxelCount(i, size)
+
+  #------------------------------------------------------------------------------
+  def resetIslandSegments(self, islandSizes):
+    self.segmentation.RemoveAllSegments()
+
+    totalSize = 0
+    voxelSizeSum = 0
+    for size in islandSizes:
+      totalSize += size + 1
+      voxelSizeSum += size
+
+    mergedLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+    mergedLabelmapExtent = [0, totalSize-1, 0, 0, 0, 0]
+    self.setupIslandLabelmap(mergedLabelmap, mergedLabelmapExtent, 0)
+
+    emptySegment = slicer.vtkSegment()
+    emptySegment.SetName("Segment_1")
+    emptySegment.AddRepresentation(self.binaryLabelmapReprName, mergedLabelmap)
+    self.segmentation.AddSegment(emptySegment)
+    self.segmentEditorNode.SetSelectedSegmentID("Segment_1")
+
+    startExtent = 0
+    for size in islandSizes:
+      islandLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+      islandExtent = [startExtent, startExtent+size-1, 0, 0, 0, 0]
+      self.setupIslandLabelmap(islandLabelmap, islandExtent)
+      self.paintEffect.modifySelectedSegmentByLabelmap(islandLabelmap, self.paintEffect.ModificationModeAdd)
+      startExtent += size + 1
+    self.checkSegmentVoxelCount(0, voxelSizeSum)
+
+
+    layerCount = self.segmentation.GetNumberOfLayers()
+    self.assertEqual(layerCount, 1)
+
+  #------------------------------------------------------------------------------
+  def checkSegmentVoxelCount(self, segmentIndex, expectedVoxelCount):
+    segment = self.segmentation.GetNthSegment(segmentIndex)
+    self.assertIsNotNone(segment)
+
+    labelmap = slicer.vtkOrientedImageData()
+    segmentID = self.segmentation.GetNthSegmentID(segmentIndex)
+    self.segmentationNode.GetBinaryLabelmapRepresentation(segmentID, labelmap)
+
+    imageStat = vtk.vtkImageAccumulate()
+    imageStat.SetInputData(labelmap)
+    imageStat.SetComponentExtent(0,4,0,0,0,0)
+    imageStat.SetComponentOrigin(0,0,0)
+    imageStat.SetComponentSpacing(1,1,1)
+    imageStat.IgnoreZeroOn()
+    imageStat.Update()
+
+    self.assertEqual(imageStat.GetVoxelCount(), expectedVoxelCount)
+
+  #------------------------------------------------------------------------------
+  def setupIslandLabelmap(self, labelmap, extent, value=1):
+    labelmap.SetExtent(extent)
+    labelmap.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)
+    threshold = vtk.vtkImageThreshold()
+    threshold.SetInputData(labelmap)
+    threshold.ThresholdBetween(0,0)
+    threshold.SetInValue(value)
+    threshold.SetOutValue(value)
+    threshold.Update()
+    labelmap.ShallowCopy(threshold.GetOutput())
