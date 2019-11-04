@@ -307,7 +307,7 @@ void vtkSlicerCurveRepresentation2D::CanInteractWithCurve(
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if ( !sliceNode || !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 2
-    || !interactionEventData
+    || !this->GetVisibility() || !interactionEventData
     || !this->MarkupsDisplayNode)
     {
     return;

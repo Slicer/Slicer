@@ -266,7 +266,7 @@ void vtkSlicerAngleRepresentation2D::CanInteract(
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
-    || !interactionEventData )
+    || !this->GetVisibility() || !interactionEventData )
     {
     return;
     }

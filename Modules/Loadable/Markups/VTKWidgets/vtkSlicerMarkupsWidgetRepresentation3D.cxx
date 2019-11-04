@@ -267,7 +267,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
-    || !interactionEventData )
+    || !this->GetVisibility() || !interactionEventData )
     {
     return;
     }
@@ -423,7 +423,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithLine(
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
-    || !interactionEventData || !interactionEventData->IsWorldPositionValid() )
+    || !this->GetVisibility() || !interactionEventData || !interactionEventData->IsWorldPositionValid() )
     {
     return;
     }

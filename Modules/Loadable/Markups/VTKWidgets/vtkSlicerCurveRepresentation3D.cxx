@@ -279,7 +279,7 @@ void vtkSlicerCurveRepresentation3D::CanInteractWithCurve(
 {
   if (!this->MarkupsNode || this->MarkupsNode->GetLocked()
     || this->MarkupsNode->GetNumberOfControlPoints() < 2
-    || !interactionEventData)
+    || !this->GetVisibility() || !interactionEventData)
     {
     return;
     }
