@@ -1,7 +1,12 @@
 set(proj python-wheel)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES python python-setuptools)
+set(${proj}_DEPENDENCIES python python-setuptools python-pip)
+
+set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
+file(WRITE ${requirements_file} [===[
+wheel==0.33.1 --hash=sha256:8eb4a788b3aec8abf5ff68d4165441bc57420c9f64ca5f471f58c3969fe08668
+]===])
 
 if(NOT DEFINED Slicer_USE_SYSTEM_${proj})
   set(Slicer_USE_SYSTEM_${proj} ${Slicer_USE_SYSTEM_python})
@@ -11,26 +16,24 @@ endif()
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(Slicer_USE_SYSTEM_${proj})
-  ExternalProject_FindPythonPackage(
-    MODULE_NAME "wheel"
-    REQUIRED
-    )
+  foreach(module_name IN ITEMS wheel)
+    ExternalProject_FindPythonPackage(
+      MODULE_NAME "${module_name}"
+      REQUIRED
+      )
+  endforeach()
 endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})
 
-  set(_version "0.33.1")
-
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://files.pythonhosted.org/packages/b7/cf/1ea0f5b3ce55cacde1e84cdde6cee1ebaff51bd9a3e6c7ba4082199af6f6/wheel-${_version}.tar.gz"
-    URL_HASH "SHA256=66a8fd76f28977bb664b098372daef2b27f60dc4d1688cfab7b37a09448f0e9d"
-    DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
+    DOWNLOAD_COMMAND ""
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
-    INSTALL_COMMAND ${PYTHON_EXECUTABLE} setup.py install
+    INSTALL_COMMAND ${PYTHON_EXECUTABLE} -m pip install --require-hashes -r ${requirements_file}
     LOG_INSTALL 1
     DEPENDS
       ${${proj}_DEPENDENCIES}

@@ -117,35 +117,6 @@ if(Slicer_BUILD_DICOM_SUPPORT)
   list(APPEND Slicer_DEPENDENCIES DCMTK)
 endif()
 
-if(Slicer_BUILD_DICOM_SUPPORT AND Slicer_USE_PYTHONQT_WITH_OPENSSL)
-  list(APPEND Slicer_DEPENDENCIES python-dicom-requirements)
-endif()
-
-if(Slicer_USE_PYTHONQT)
-  list(APPEND Slicer_DEPENDENCIES
-    python-pythonqt-requirements  # This provides the "packaging.version.parse()" function
-    python-pip
-    )
-endif()
-
-if(Slicer_USE_PYTHONQT AND Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-  list(APPEND Slicer_DEPENDENCIES
-    python-extension-manager-requirements
-    )
-  if(Slicer_USE_PYTHONQT_WITH_OPENSSL OR Slicer_USE_SYSTEM_python)
-    # python-PyGithub requires SSL support in Python
-    list(APPEND Slicer_DEPENDENCIES
-      python-extension-manager-ssl-requirements
-      )
-  else()
-    message(STATUS "--------------------------------------------------")
-    message(STATUS "Python was built without SSL support; "
-                   "github integration will not be available. "
-                   "Set Slicer_USE_PYTHONQT_WITH_OPENSSL=ON to enable this feature.")
-    message(STATUS "--------------------------------------------------")
-  endif()
-endif()
-
 if(Slicer_USE_CTKAPPLAUNCHER)
   list(APPEND Slicer_DEPENDENCIES CTKAPPLAUNCHER)
 endif()
@@ -153,14 +124,35 @@ endif()
 if(Slicer_USE_PYTHONQT)
   set(PYTHON_ENABLE_SSL ${Slicer_USE_PYTHONQT_WITH_OPENSSL})
   list(APPEND Slicer_DEPENDENCIES python)
-endif()
-
-if(Slicer_USE_NUMPY)
-  list(APPEND Slicer_DEPENDENCIES python-numpy)
-endif()
-
-if(Slicer_USE_PYTHONQT_WITH_TCL AND UNIX)
-  list(APPEND Slicer_DEPENDENCIES incrTcl)
+  list(APPEND Slicer_DEPENDENCIES
+    python-pythonqt-requirements  # This provides the "packaging.version.parse()" function
+    )
+  if(Slicer_USE_NUMPY)
+    list(APPEND Slicer_DEPENDENCIES python-numpy)
+  endif()
+  if(Slicer_BUILD_DICOM_SUPPORT AND Slicer_USE_PYTHONQT_WITH_OPENSSL)
+    list(APPEND Slicer_DEPENDENCIES python-dicom-requirements)
+  endif()
+  if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+    list(APPEND Slicer_DEPENDENCIES
+      python-extension-manager-requirements
+      )
+    if(Slicer_USE_PYTHONQT_WITH_OPENSSL OR Slicer_USE_SYSTEM_python)
+      # python-PyGithub requires SSL support in Python
+      list(APPEND Slicer_DEPENDENCIES
+        python-extension-manager-ssl-requirements
+        )
+    else()
+      message(STATUS "--------------------------------------------------")
+      message(STATUS "Python was built without SSL support; "
+                    "github integration will not be available. "
+                    "Set Slicer_USE_PYTHONQT_WITH_OPENSSL=ON to enable this feature.")
+      message(STATUS "--------------------------------------------------")
+    endif()
+  endif()
+  if(Slicer_USE_PYTHONQT_WITH_TCL AND UNIX)
+    list(APPEND Slicer_DEPENDENCIES incrTcl)
+  endif()
 endif()
 
 if(Slicer_USE_TBB)
