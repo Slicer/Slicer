@@ -1065,3 +1065,13 @@ ctkDICOMBrowser* qSlicerApplication::createDICOMBrowserForMainDatabase()
   return new ctkDICOMBrowser(this->dicomDatabaseShared());
 }
 #endif
+
+//------------------------------------------------------------------------------
+bool qSlicerApplication::launchDesigner(const QStringList& args/*=QStringList()*/)
+{
+  QString designerExecutable = this->slicerHome() + "/bin/SlicerDesigner";
+#ifdef Q_OS_WIN32
+  designerExecutable += ".exe";
+#endif
+  return QProcess::startDetached(designerExecutable, args);
+}

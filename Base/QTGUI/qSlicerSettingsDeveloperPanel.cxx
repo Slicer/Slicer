@@ -85,6 +85,9 @@ void qSlicerSettingsDeveloperPanelPrivate::init()
                    q, SLOT(enableDeveloperMode(bool)));
   QObject::connect(this->QtTestingEnabledCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(enableQtTesting(bool)));
+
+  QObject::connect(this->QtDesignerButton, SIGNAL(clicked()),
+    qSlicerApplication::application(), SLOT(launchDesigner()));
 }
 
 // --------------------------------------------------------------------------

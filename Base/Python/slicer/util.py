@@ -287,19 +287,14 @@ def loadUI(path):
 def startQtDesigner(args = None):
   """ Start Qt Designer application to allow editing UI files.
   """
-  import os
   import slicer
-  import subprocess
-  executableFilePath = os.path.join(slicer.app.slicerHome, "bin", "SlicerDesigner")
-  if slicer.app.os == 'win':
-    executableFilePath += ".exe"
   cmdLineArguments = []
   if args is not None:
     if isinstance(args, str):
       cmdLineArguments.append(args)
     else:
       cmdLineArguments.extend(args)
-  return subprocess.Popen([executableFilePath] + cmdLineArguments, env=startupEnvironment())
+  return slicer.app.launchDesigner(cmdLineArguments)
 
 def childWidgetVariables(widget):
   """ Get child widgets as attributes of an object.

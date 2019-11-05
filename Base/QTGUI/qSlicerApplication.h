@@ -156,6 +156,10 @@ public slots:
   /// If no \a reason is given, the text will default to ""Are you sure you want to restart?"
   void confirmRestart(QString reason = QString());
 
+  /// Launch Qt Designer application (bundled with the application).
+  /// If uiFile argument is specified then designer loads that UI file on startup.
+  bool launchDesigner(const QStringList& args = QStringList());
+
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   void openExtensionsManagerDialog();
 #endif
