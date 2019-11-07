@@ -33,6 +33,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     self.tags['orientation'] = "0020,0037"
     self.tags['pixelData'] = "7fe0,0010"
     self.tags['seriesInstanceUID'] = "0020,000E"
+    self.tags['imageType'] = "0008,0008"
     self.tags['contentTime'] = "0008,0033"
     self.tags['triggerTime'] = "0018,1060"
     self.tags['diffusionGradientOrientation'] = "0018,9089"
@@ -168,6 +169,9 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     # make subseries volumes based on tag differences
     subseriesTags = [
         "seriesInstanceUID",
+        # GE volume viewer puts an overview slice and reconstructed slices in one series, using two different image types.
+        # Splitting based on image type allows loading of these volumes.
+        "imageType",
         "imageOrientationPatient",
         "diffusionGradientOrientation",
     ]
