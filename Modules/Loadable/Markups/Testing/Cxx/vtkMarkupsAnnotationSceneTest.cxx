@@ -16,7 +16,7 @@
 ==============================================================================*/
 
 // Markups includes
-#include "vtkMRMLMarkupsDisplayNode.h"
+#include "vtkMRMLMarkupsFiducialDisplayNode.h"
 #include "vtkMRMLMarkupsFiducialStorageNode.h"
 #include "vtkMRMLMarkupsFiducialNode.h"
 #include "vtkSlicerMarkupsLogic.h"
@@ -190,30 +190,30 @@ int vtkMarkupsAnnotationSceneTest(int argc, char * argv[] )
   // check display nodes
   //
   int numAnnotationPointDisplayNodes = scene->GetNumberOfNodesByClass("vtkMRMLAnnotationPointDisplayNode");
-  int numMarkupsDisplayNodes = scene->GetNumberOfNodesByClass("vtkMRMLMarkupsDisplayNode");
+  int numMarkupsFiducialDisplayNodes = scene->GetNumberOfNodesByClass("vtkMRMLMarkupsFiducialDisplayNode");
   if (numAnnotationPointDisplayNodes != 0 ||
-      numMarkupsDisplayNodes != 1)
+      numMarkupsFiducialDisplayNodes != 1)
     {
     std::cerr << "Failed to translate annotation point display nodes into markup display nodes, have "
               << numAnnotationPointDisplayNodes << " annotation point display nodes and "
-              << numMarkupsDisplayNodes << " mark up display nodes"
+              << numMarkupsFiducialDisplayNodes << " markup fiducial display nodes"
               << std::endl;
     return EXIT_FAILURE;
     }
 
-  vtkMRMLNode *mrmlNode1 = scene->GetNodeByID("vtkMRMLMarkupsDisplayNode1");
+  vtkMRMLNode *mrmlNode1 = scene->GetNodeByID("vtkMRMLMarkupsFiducialDisplayNode1");
   if (!mrmlNode1)
     {
-    std::cerr << "Failed to get node vtkMRMLMarkupsDisplayNode1" << std::endl;
+    std::cerr << "Failed to get node vtkMRMLMarkupsFiducialDisplayNode1" << std::endl;
     return EXIT_FAILURE;
     }
-  vtkMRMLMarkupsDisplayNode *markupsDisplayNode1 = vtkMRMLMarkupsDisplayNode::SafeDownCast(mrmlNode1);
-  if (!markupsDisplayNode1)
+  vtkMRMLMarkupsFiducialDisplayNode *markupsFiducialDisplayNode1 = vtkMRMLMarkupsFiducialDisplayNode::SafeDownCast(mrmlNode1);
+  if (!markupsFiducialDisplayNode1)
     {
-    std::cerr << "Failed to cast node with id vtkMRMLMarkupsDisplayNode1 to the expected markups display node" << std::endl;
+    std::cerr << "Failed to cast node with id vtkMRMLMarkupsFiducialDisplayNode1 to the expected markups fiducial display node" << std::endl;
     return EXIT_FAILURE;
     }
-  double *outputColor1 = markupsDisplayNode1->GetColor();
+  double *outputColor1 = markupsFiducialDisplayNode1->GetColor();
   diff = vtkMath::Distance2BetweenPoints(inputColor1, outputColor1);
   if (diff > 0.01)
     {
@@ -227,7 +227,7 @@ int vtkMarkupsAnnotationSceneTest(int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  double outputGlyphScale1 = markupsDisplayNode1->GetGlyphScale();
+  double outputGlyphScale1 = markupsFiducialDisplayNode1->GetGlyphScale();
   if (inputGlyphScale1 != outputGlyphScale1)
     {
     std::cerr << "Failed to read in expected glyph scale of "
