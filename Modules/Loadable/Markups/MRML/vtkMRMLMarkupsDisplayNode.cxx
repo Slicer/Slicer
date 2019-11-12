@@ -806,10 +806,17 @@ void vtkMRMLMarkupsDisplayNode::UpdateTextPropertyFromString(std::string inputSt
     return ;
     }
 
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  std::vector<std::string> textProperties = vtksys::SystemTools::SplitString(inputString, ';');
+  for (std::string textPropertyString : textProperties)
+    {
+    std::vector<std::string> keyValue = vtksys::SystemTools::SplitString(textPropertyString, ':');
+#else
   std::vector<vtksys::String> textProperties = vtksys::SystemTools::SplitString(inputString, ';');
   for (vtksys::String textPropertyString : textProperties)
     {
     std::vector<vtksys::String> keyValue = vtksys::SystemTools::SplitString(textPropertyString, ':');
+#endif
     if (keyValue.empty())
       {
       continue;
@@ -875,10 +882,18 @@ void vtkMRMLMarkupsDisplayNode::UpdateTextPropertyFromString(std::string inputSt
       }
     else if (key == "text-shadow")
       {
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+      std::vector<std::string> shadowProperties = vtksys::SystemTools::SplitString(textPropertyString, ' ');
+#else
       std::vector<vtksys::String> shadowProperties = vtksys::SystemTools::SplitString(textPropertyString, ' ');
+#endif
       int shadowOffset[2] = { 0,0 };
       int shadowPropertyIndex = 0;
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+      for (std::string shadowProperty : shadowProperties)
+#else
       for (vtksys::String shadowProperty : shadowProperties)
+#endif
         {
         if (shadowPropertyIndex == SHADOW_H_OFFSET_INDEX || shadowPropertyIndex == SHADOW_V_OFFSET_INDEX)
           {
@@ -928,7 +943,11 @@ void vtkMRMLMarkupsDisplayNode::GetColorFromString(const std::string& inputStrin
     colorString = colorString.substr(0, pos);
     }
 
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  std::vector<std::string> componentStrings = vtksys::SystemTools::SplitString(colorString, ',');
+#else
   std::vector<vtksys::String> componentStrings = vtksys::SystemTools::SplitString(colorString, ',');
+#endif
   for (int i = 0; i < 4 && i <static_cast<int>(componentStrings.size()); ++i)
     {
     double componentF = vtkVariant(componentStrings[i]).ToDouble();

@@ -1246,7 +1246,7 @@ void vtkPVScalarBarActor::BuildScalarBarTexture()
   colorMapImage->SetExtent(0, COLOR_TEXTURE_MAP_SIZE-1, 0, 0, 0, 0);
   colorMapImage->AllocateScalars(VTK_UNSIGNED_CHAR, 4);
   vtkDataArray* colors
-    = this->LookupTable->MapScalars(tmp.GetPointer(), VTK_COLOR_MODE_MAP_SCALARS, 0);
+    = vtkDataArray::SafeDownCast(this->LookupTable->MapScalars(tmp.GetPointer(), VTK_COLOR_MODE_MAP_SCALARS, 0));
   colorMapImage->GetPointData()->SetScalars(colors);
   colors->Delete();
 
