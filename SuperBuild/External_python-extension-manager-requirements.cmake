@@ -7,9 +7,9 @@ set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
 file(WRITE ${requirements_file} [===[
 chardet==3.0.4 --hash=sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691
 couchdb==1.2 --hash=sha256:13a28a1159c49f8346732e8724b9a4d65cba54bec017c4a7eeb1499fe88151d1
-gitdb2==2.0.5 --hash=sha256:e3a0141c5f2a3f635c7209d56c496ebe1ad35da82fe4d3ec4aaa36278d70648a
+gitdb2==2.0.6 --hash=sha256:96bbb507d765a7f51eb802554a9cfe194a174582f772e0d89f4e87288c288b7b
 smmap2==2.0.5 --hash=sha256:0555a7bf4df71d1ef4218e4807bbf9b201f910174e6e08af2e138d4e517b4dde
-GitPython==2.1.11 --hash=sha256:563221e5a44369c6b79172f455584c9ebbb122a13368cc82cb4b5addff788f82
+GitPython==3.0.4 --hash=sha256:a7d6bef0775f66ba47f25911d285bcd692ce9053837ff48a120c2b8cf3a71389
 six==1.12.0 --hash=sha256:3350809f0555b11f552448330d0b52d5f24c91a322ea4a15ef22629740f3761c
 ]===])
 

@@ -5,8 +5,8 @@ set(${proj}_DEPENDENCIES python python-ensurepip python-pip python-setuptools py
 
 set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
 file(WRITE ${requirements_file} [===[
-packaging==19.0 --hash=sha256:9e1cbf8c12b1f1ce0bb5344b8d7ecf66a6f8a6e91bcb0c84593ed6d3ab5c4ab3
-pyparsing==2.3.1 --hash=sha256:f6c5ef0d7480ad048c054c37632c67fca55299990fff127850181659eea33fc3
+packaging==19.2 --hash=sha256:d9551545c6d761f3def1677baf08ab2a3ca17c56879e70fecba2fc4dde4ed108
+pyparsing==2.4.2 --hash=sha256:d9338df12903bbf5d65a0e4e87c2161968b10d2e489652bb47001d82a9b028b4
 six==1.12.0 --hash=sha256:3350809f0555b11f552448330d0b52d5f24c91a322ea4a15ef22629740f3761c
 ]===])
 

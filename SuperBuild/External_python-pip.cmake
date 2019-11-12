@@ -5,7 +5,7 @@ set(${proj}_DEPENDENCIES python python-ensurepip python-setuptools)
 
 set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
 file(WRITE ${requirements_file} [===[
-pip==19.0.3 --hash=sha256:bd812612bbd8ba84159d9ddc0266b7fbce712fc9bc98c82dee5750546ec8ec64
+pip==19.3.1 --hash=sha256:6917c65fc3769ecdc61405d3dfd97afdedd75808d200b2838d7d961cebc0c2c7
 ]===])
 
 if(NOT DEFINED Slicer_USE_SYSTEM_${proj})

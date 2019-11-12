@@ -7,12 +7,12 @@ set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
 file(WRITE ${requirements_file} [===[
 nose==1.3.7 --hash=sha256:9ff7c6cc443f8c51994b34a667bbcf45afd6d945be7477b52e97516fd17c53ac  # needed for NumPy unit tests
 # Hashes correspond to the following packages:
-# - numpy-1.16.2-cp36-cp36m-win_amd64.whl
-# - numpy-1.16.2-cp36-cp36m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl
-# - numpy-1.16.2-cp36-cp36m-manylinux1_x86_64.whl
-numpy==1.16.2 --hash=sha256:d20c0360940f30003a23c0adae2fe50a0a04f3e48dc05c298493b51fd6280197 \
-              --hash=sha256:bd2834d496ba9b1bdda3a6cf3de4dc0d4a0e7be306335940402ec95132ad063d \
-              --hash=sha256:23cc40313036cffd5d1873ef3ce2e949bdee0646c5d6f375bf7ee4f368db2511
+# - numpy-1.17.3-cp36-cp36m-win_amd64.whl
+# - numpy-1.17.3-cp36-cp36m-macosx_10_9_x86_64.whl
+# - numpy-1.17.3-cp36-cp36m-manylinux1_x86_64.whl
+numpy==1.17.3 --hash=sha256:2e418f0a59473dac424f888dd57e85f77502a593b207809211c76e5396ae4f5c \
+              --hash=sha256:669795516d62f38845c7033679c648903200980d68935baaa17ac5c7ae03ae0c \
+              --hash=sha256:4f2a2b279efde194877aff1f76cf61c68e840db242a5c7169f1ff0fd59a2b1e2
 ]===])
 
 if(NOT DEFINED Slicer_USE_SYSTEM_${proj})
