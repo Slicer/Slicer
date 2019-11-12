@@ -5,7 +5,6 @@ set(${proj}_DEPENDENCIES python python-setuptools python-pip)
 
 set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
 file(WRITE ${requirements_file} [===[
-dicom==0.9.9.post1 --hash=sha256:9caac735341cfb7ef4c718186ab4339088b083cf12ae8847464a924ec5c6a185
 pydicom==1.2.2 --hash=sha256:44a11323e9ee5c189da20958c28ca426656778ee7c7942a2126bf0a9f6aa4e95
 # NOTE: The requirements specified below are needed for dicomweb_client to install correctly and not in a project dependency
 # Hashes correspond to the following packages:
@@ -39,7 +38,7 @@ endif()
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(Slicer_USE_SYSTEM_${proj})
-  foreach(module_name IN ITEMS dicom pydicom numpy pillow six certifi idna chardet urllib3 requests dicomweb_client)
+  foreach(module_name IN ITEMS pydicom numpy pillow six certifi idna chardet urllib3 requests dicomweb_client)
     ExternalProject_FindPythonPackage(
       MODULE_NAME "${module_name}"
       REQUIRED
