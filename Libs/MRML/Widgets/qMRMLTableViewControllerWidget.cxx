@@ -162,7 +162,7 @@ void qMRMLTableViewControllerWidgetPrivate::onTableNodeSelected(vtkMRMLNode * no
 
   this->qvtkReconnect(this->TableNode, node, vtkCommand::ModifiedEvent,
                       q, SLOT(updateWidgetFromMRML()));
-  this->TableNode = node;
+  this->TableNode = vtkMRMLTableNode::SafeDownCast(node);
 
   this->TableViewNode->SetTableNodeID(this->TableNode ? this->TableNode->GetID() : nullptr);
 

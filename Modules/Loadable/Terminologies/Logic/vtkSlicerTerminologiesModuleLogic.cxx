@@ -2048,7 +2048,11 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
   entry->SetTerminologyContextName(terminologyName.empty()?nullptr:terminologyName.c_str());
 
   // Category
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  std::vector<std::string> categoryIds = vtksys::SystemTools::SplitString(entryComponents[1], '^');
+#else
   std::vector<vtksys::String> categoryIds = vtksys::SystemTools::SplitString(entryComponents[1], '^');
+#endif
   if (categoryIds.size() != 3)
     {
     vtkErrorWithObjectMacro(entry, "DeserializeTerminologyEntry: Invalid category component");
@@ -2064,7 +2068,12 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
   entry->GetCategoryObject()->Copy(categoryObject);
 
   // Type
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  std::vector<std::string> typeIds = vtksys::SystemTools::SplitString(entryComponents[2], '^');
+#else
   std::vector<vtksys::String> typeIds = vtksys::SystemTools::SplitString(entryComponents[2], '^');
+#endif
+
   if (typeIds.size() != 3)
     {
     vtkErrorWithObjectMacro(entry, "DeserializeTerminologyEntry: Invalid type component");
@@ -2080,7 +2089,11 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
   entry->GetTypeObject()->Copy(typeObject);
 
   // Type modifier (optional)
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  std::vector<std::string> typeModifierIds = vtksys::SystemTools::SplitString(entryComponents[3], '^');
+#else
   std::vector<vtksys::String> typeModifierIds = vtksys::SystemTools::SplitString(entryComponents[3], '^');
+#endif
   if (typeModifierIds.size() == 3)
     {
     vtkSlicerTerminologiesModuleLogic::CodeIdentifier typeModifierId(typeModifierIds[0], typeModifierIds[1], typeModifierIds[2]);
@@ -2100,7 +2113,12 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
   entry->SetAnatomicContextName(anatomicContextName.empty()?nullptr:anatomicContextName.c_str());
 
   // Anatomic region (optional)
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  std::vector<std::string> regionIds = vtksys::SystemTools::SplitString(entryComponents[5], '^');
+#else
   std::vector<vtksys::String> regionIds = vtksys::SystemTools::SplitString(entryComponents[5], '^');
+#endif
+
   if (regionIds.size() == 3)
     {
     vtkSlicerTerminologiesModuleLogic::CodeIdentifier regionId(regionIds[0], regionIds[1], regionIds[2]);
@@ -2115,7 +2133,11 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
       }
 
     // Anatomic region modifier (optional)
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+    std::vector<std::string> regionModifierIds = vtksys::SystemTools::SplitString(entryComponents[6], '^');
+#else
     std::vector<vtksys::String> regionModifierIds = vtksys::SystemTools::SplitString(entryComponents[6], '^');
+#endif
     if (regionModifierIds.size() == 3)
       {
       vtkSlicerTerminologiesModuleLogic::CodeIdentifier regionModifierId(regionModifierIds[0], regionModifierIds[1], regionModifierIds[2]);

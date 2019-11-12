@@ -79,7 +79,7 @@ protected:
     // there is a unique slice widget per node
     Q_ASSERT(!this->viewWidget(viewNode));
 
-    this->LastNode = viewNode;
+    this->LastNode = vtkMRMLSliceNode::SafeDownCast(viewNode);
 
     qMRMLSliceWidget * sliceWidget = new qMRMLSliceWidget(this->layoutManager()->viewport());
     sliceWidget->sliceController()->setControllerButtonGroup(this->SliceControllerButtonGroup);
@@ -177,7 +177,7 @@ protected:
     // There must be a unique Custom widget per node
     Q_ASSERT(!this->viewWidget(viewNode));
 
-    this->LastNode = viewNode;
+    this->LastNode = vtkMRMLSliceNode::SafeDownCast(viewNode);
 
     QLabel* label = new QLabel();
     label->setText("This is a custom view");

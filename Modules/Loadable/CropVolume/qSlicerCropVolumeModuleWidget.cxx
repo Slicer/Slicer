@@ -419,7 +419,7 @@ void qSlicerCropVolumeModuleWidget::setInputVolume(vtkMRMLNode* volumeNode)
     }
 
   qvtkReconnect(d->InputVolumeNode, volumeNode, vtkCommand::ModifiedEvent, this, SLOT(updateVolumeInfo()));
-  d->InputVolumeNode = volumeNode;
+  d->InputVolumeNode = vtkMRMLVolumeNode::SafeDownCast(volumeNode);
   d->ParametersNode->SetInputVolumeNodeID(volumeNode ? volumeNode->GetID() : nullptr);
 }
 
