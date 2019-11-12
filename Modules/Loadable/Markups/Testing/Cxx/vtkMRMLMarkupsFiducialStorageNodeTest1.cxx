@@ -17,7 +17,7 @@
 
 // MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
-#include "vtkMRMLMarkupsDisplayNode.h"
+#include "vtkMRMLMarkupsFiducialDisplayNode.h"
 #include "vtkMRMLMarkupsFiducialStorageNode.h"
 #include "vtkMRMLMarkupsFiducialNode.h"
 #include "vtkURIHandler.h"
@@ -37,7 +37,7 @@ int vtkMRMLMarkupsFiducialStorageNodeTest1(int argc, char * argv[] )
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   vtkNew<vtkMRMLMarkupsFiducialNode> markupsNode;
-  vtkNew<vtkMRMLMarkupsDisplayNode> displayNode;
+  vtkNew<vtkMRMLMarkupsFiducialDisplayNode> displayNode;
 
   // get the file name
   std::string fileName = std::string("testMarkupsStorageNode.fcsv");
@@ -115,10 +115,7 @@ int vtkMRMLMarkupsFiducialStorageNodeTest1(int argc, char * argv[] )
 
   std::cout << "Reading from " << snode2->GetFileName() << std::endl;
 
-  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   retval = snode2->ReadData(markupsNode2.GetPointer());
-  TESTING_OUTPUT_ASSERT_WARNINGS(2); // 2 warnings are logged: display node is not available, display node is added
-  TESTING_OUTPUT_ASSERT_WARNINGS_END();
   CHECK_BOOL(retval, true);
 
   std::cout << "\nMarkup read from file = " << std::endl;
@@ -151,7 +148,7 @@ int vtkMRMLMarkupsFiducialStorageNodeTest1(int argc, char * argv[] )
   CHECK_STD_STRING(markupsNode2->GetNthControlPointLabel(index), "");
 
   // now read it again with a display node defined
-  vtkNew<vtkMRMLMarkupsDisplayNode> displayNode2;
+  vtkNew<vtkMRMLMarkupsFiducialDisplayNode> displayNode2;
   scene2->AddNode(displayNode2.GetPointer());
   markupsNode2->SetAndObserveDisplayNodeID(displayNode2->GetID());
   std::cout << "Added display node, re-reading from "
