@@ -1,12 +1,4 @@
 08fd0e76845ea9a1a1c9ab6d7d96daf6dbb2840d5f2649a127a6f279e7c04c0a  Base/Logic/Testing/vol.zip
-01fd0b39e96da9e85b841273173001958a5feb219875deee0719a74e36b02652  Base/QTCore/Testing/Data/Input/19354-linux-amd64-CLIExtensionTemplate-svn19354-2012-02-23.tar.gz
-87105840a5b6a5efee1e682df07957d880e23e131791c3b53746e0a4e6c2dfc8  Base/QTCore/Testing/Data/Input/19354-linux-amd64-LoadableExtensionTemplate-svn19354-2012-02-23.tar.gz
-dd619c9bbd8f058f85c124d775fe5fec1883f05ce4c1025c0f245db1ec088b51  Base/QTCore/Testing/Data/Input/19354-linux-amd64-ScriptedLoadableExtensionTemplate-svn19354-2012-02-23.tar.gz
-8e047014e0d5addf1c8c5d92c20069e2c6d5c9893a670c4731b4c4e45cac7b21  Base/QTCore/Testing/Data/Input/19354-linux-amd64-SuperBuildLoadableExtensionTemplate-svn19354-2012-02-23.tar.gz
-57d76d876cb96bde01d30a16d42316941209c8b6c22ad311d623d918597141c0  Base/QTCore/Testing/Data/Input/19615-macosx-amd64-CLIExtensionTemplate-svn19615-2012-03-18.tar.gz
-3ce4a2f0485c9f5db56fb48727421fbe9ccef213c345175e8defb573ce2113da  Base/QTCore/Testing/Data/Input/19615-macosx-amd64-LoadableExtensionTemplate-svn19615-2012-03-18.tar.gz
-d0d9ee8477a9e29c7b2823c2b7ece97183209e14375aa44ae4cc1f2f3a18b8c1  Base/QTCore/Testing/Data/Input/19615-macosx-amd64-ScriptedLoadableExtensionTemplate-svn19615-2012-03-18.tar.gz
-15b83e8e00f530f2fea3ed436587ad248b5b008ca04d0af13ef595e5574ac36f  Base/QTCore/Testing/Data/Input/19615-macosx-amd64-SuperBuildLoadableExtensionTemplate-svn19615-2012-03-18.tar.gz
 379467dc52a7c42dfb0ff219c46d8491ddd67c7c476636d2a1ec1293985c22ef  Libs/MRML/Core/Testing/TestData/ITKSnapSegmentation.nii.gz
 9eb3389094d16af1e3410c140817d756a2b9badce56252e4d04479e2d4c11e91  Libs/MRML/Core/Testing/TestData/OldSlicerSegmentation.seg.nrrd
 09fd607b87b1371d1d3b53f3b9ab9505c19408cb39a4699243820ac398bd6e5e  Libs/MRML/Core/Testing/TestData/SlicerSegmentation.seg.nrrd
