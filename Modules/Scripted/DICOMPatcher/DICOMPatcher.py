@@ -196,7 +196,7 @@ class ForceSamePatientNameIdInEachDirectory(DICOMPatcherRule):
     self.firstFileInDirectory = True
     self.patientIndex += 1
   def processDataSet(self, ds):
-    import pydicom as dicom
+    import pydicom
     if self.firstFileInDirectory:
       # Get patient name and ID for this folder and save it
       self.firstFileInDirectory = False
@@ -207,7 +207,7 @@ class ForceSamePatientNameIdInEachDirectory(DICOMPatcherRule):
       if ds.PatientID:
         self.patientID = ds.PatientID
       else:
-        self.patientID = dicom.uid.generate_uid(None)
+        self.patientID = pydicom.uid.generate_uid(None)
     # Set the same patient name and ID as the first file in the directory
     ds.PatientName = self.patientName
     ds.PatientID = self.patientID
@@ -217,28 +217,28 @@ class GenerateMissingIDs(DICOMPatcherRule):
     self.requiredTags = ['PatientName', 'PatientID', 'StudyInstanceUID', 'SeriesInstanceUID', 'SeriesNumber']
     self.eachFileIsSeparateSeries = False
   def processStart(self, inputRootDir, outputRootDir):
-    import pydicom as dicom
+    import pydicom
     self.patientIDToRandomIDMap = {}
     self.studyUIDToRandomUIDMap = {}
     self.seriesUIDToRandomUIDMap = {}
     self.numberOfSeriesInStudyMap = {}
     # All files without a patient ID will be assigned to the same patient
-    self.randomPatientID = dicom.uid.generate_uid(None)
+    self.randomPatientID = pydicom.uid.generate_uid(None)
   def processDirectory(self, currentSubDir):
-    import pydicom as dicom
+    import pydicom
     # Assume that all files in a directory belongs to the same study
-    self.randomStudyUID = dicom.uid.generate_uid(None)
+    self.randomStudyUID = pydicom.uid.generate_uid(None)
     # Assume that all files in a directory belongs to the same series
-    self.randomSeriesInstanceUID = dicom.uid.generate_uid(None)
+    self.randomSeriesInstanceUID = pydicom.uid.generate_uid(None)
   def processDataSet(self, ds):
-    import pydicom as dicom
+    import pydicom
 
     for tag in self.requiredTags:
       if not hasattr(ds,tag):
         setattr(ds,tag,'')
 
     # Generate a new SOPInstanceUID to avoid different files having the same SOPInstanceUID
-    ds.SOPInstanceUID = dicom.uid.generate_uid(None)
+    ds.SOPInstanceUID = pydicom.uid.generate_uid(None)
 
     if ds.PatientName == '':
       ds.PatientName = "Unspecified Patient"
@@ -248,7 +248,7 @@ class GenerateMissingIDs(DICOMPatcherRule):
       ds.StudyInstanceUID = self.randomStudyUID
     if ds.SeriesInstanceUID == '':
       if self.eachFileIsSeparateSeries:
-        ds.SeriesInstanceUID = dicom.uid.generate_uid(None)
+        ds.SeriesInstanceUID = pydicom.uid.generate_uid(None)
       else:
         ds.SeriesInstanceUID = self.randomSeriesInstanceUID
 
@@ -295,7 +295,7 @@ class FixPrivateMediaStorageSOPClassUID(DICOMPatcherRule):
 class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
   """Add missing slice spacing info to multiframe files"""
   def processDataSet(self, ds):
-    import pydicom as dicom
+    import pydicom
 
     if not hasattr(ds,'NumberOfFrames'):
       return
@@ -317,7 +317,7 @@ class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
     sliceSpacing = ds.SliceThickness if hasattr(ds,'SliceThickness') else 1.0
     pixelSpacing = ds.PixelSpacing if hasattr(ds,'PixelSpacing') else [1.0, 1.0]
 
-    if not (dicom.tag.Tag(0x5200,0x9229) in ds):
+    if not (pydicom.tag.Tag(0x5200,0x9229) in ds):
 
       # (5200,9229) SQ (Sequence with undefined length #=1)     # u/l, 1 SharedFunctionalGroupsSequence
       #   (0020,9116) SQ (Sequence with undefined length #=1)     # u/l, 1 PlaneOrientationSequence
@@ -326,25 +326,25 @@ class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
       #       (0018,0050) DS [3.00000]                                #   8, 1 SliceThickness
       #       (0028,0030) DS [0.597656\0.597656]                      #  18, 2 PixelSpacing
 
-      planeOrientationDataSet = dicom.dataset.Dataset()
+      planeOrientationDataSet = pydicom.dataset.Dataset()
       planeOrientationDataSet.ImageOrientationPatient = sliceAxes
-      planeOrientationSequence = dicom.sequence.Sequence()
-      planeOrientationSequence.insert(dicom.tag.Tag(0x0020,0x9116),planeOrientationDataSet)
+      planeOrientationSequence = pydicom.sequence.Sequence()
+      planeOrientationSequence.insert(pydicom.tag.Tag(0x0020,0x9116),planeOrientationDataSet)
 
-      pixelMeasuresDataSet = dicom.dataset.Dataset()
+      pixelMeasuresDataSet = pydicom.dataset.Dataset()
       pixelMeasuresDataSet.SliceThickness = sliceSpacing
       pixelMeasuresDataSet.PixelSpacing = pixelSpacing
-      pixelMeasuresSequence = dicom.sequence.Sequence()
-      pixelMeasuresSequence.insert(dicom.tag.Tag(0x0028,0x9110),pixelMeasuresDataSet)
+      pixelMeasuresSequence = pydicom.sequence.Sequence()
+      pixelMeasuresSequence.insert(pydicom.tag.Tag(0x0028,0x9110),pixelMeasuresDataSet)
 
-      sharedFunctionalGroupsDataSet = dicom.dataset.Dataset()
+      sharedFunctionalGroupsDataSet = pydicom.dataset.Dataset()
       sharedFunctionalGroupsDataSet.PlaneOrientationSequence = planeOrientationSequence
       sharedFunctionalGroupsDataSet.PixelMeasuresSequence = pixelMeasuresSequence
-      sharedFunctionalGroupsSequence = dicom.sequence.Sequence()
-      sharedFunctionalGroupsSequence.insert(dicom.tag.Tag(0x5200,0x9229),sharedFunctionalGroupsDataSet)
+      sharedFunctionalGroupsSequence = pydicom.sequence.Sequence()
+      sharedFunctionalGroupsSequence.insert(pydicom.tag.Tag(0x5200,0x9229),sharedFunctionalGroupsDataSet)
       ds.SharedFunctionalGroupsSequence = sharedFunctionalGroupsSequence
 
-    if not (dicom.tag.Tag(0x5200,0x9230) in ds):
+    if not (pydicom.tag.Tag(0x5200,0x9230) in ds):
 
       #(5200,9230) SQ (Sequence with undefined length #=54)    # u/l, 1 PerFrameFunctionalGroupsSequence
       #  (0020,9113) SQ (Sequence with undefined length #=1)     # u/l, 1 PlanePositionSequence
@@ -353,20 +353,20 @@ class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
       #    (0020,0032) DS [-94.7012\-312.701\-809.500]             #  26, 3 ImagePositionPatient
       #  ...
 
-      perFrameFunctionalGroupsSequence = dicom.sequence.Sequence()
+      perFrameFunctionalGroupsSequence = pydicom.sequence.Sequence()
 
       for frameIndex in range(numberOfFrames):
-        planePositionDataSet = dicom.dataset.Dataset()
+        planePositionDataSet = pydicom.dataset.Dataset()
         slicePosition = [
           sliceStartPosition[0]+frameIndex*z[0]*sliceSpacing,
           sliceStartPosition[1]+frameIndex*z[1]*sliceSpacing,
           sliceStartPosition[2]+frameIndex*z[2]*sliceSpacing]
         planePositionDataSet.ImagePositionPatient = slicePosition
-        planePositionSequence = dicom.sequence.Sequence()
-        planePositionSequence.insert(dicom.tag.Tag(0x0020,0x9113),planePositionDataSet)
-        perFrameFunctionalGroupsDataSet = dicom.dataset.Dataset()
+        planePositionSequence = pydicom.sequence.Sequence()
+        planePositionSequence.insert(pydicom.tag.Tag(0x0020,0x9113),planePositionDataSet)
+        perFrameFunctionalGroupsDataSet = pydicom.dataset.Dataset()
         perFrameFunctionalGroupsDataSet.PlanePositionSequence = planePositionSequence
-        perFrameFunctionalGroupsSequence.insert(dicom.tag.Tag(0x5200,0x9230),perFrameFunctionalGroupsDataSet)
+        perFrameFunctionalGroupsSequence.insert(pydicom.tag.Tag(0x5200,0x9230),perFrameFunctionalGroupsDataSet)
 
       ds.PerFrameFunctionalGroupsSequence = perFrameFunctionalGroupsSequence
 
@@ -378,21 +378,21 @@ class Anonymize(DICOMPatcherRule):
   def __init__(self):
     self.requiredTags = ['PatientName', 'PatientID', 'StudyInstanceUID', 'SeriesInstanceUID', 'SeriesNumber']
   def processStart(self, inputRootDir, outputRootDir):
-    import pydicom as dicom
+    import pydicom
     self.patientIDToRandomIDMap = {}
     self.studyUIDToRandomUIDMap = {}
     self.seriesUIDToRandomUIDMap = {}
     self.numberOfSeriesInStudyMap = {}
     # All files without a patient ID will be assigned to the same patient
-    self.randomPatientID = dicom.uid.generate_uid(None)
+    self.randomPatientID = pydicom.uid.generate_uid(None)
   def processDirectory(self, currentSubDir):
-    import pydicom as dicom
+    import pydicom
     # Assume that all files in a directory belongs to the same study
-    self.randomStudyUID = dicom.uid.generate_uid(None)
+    self.randomStudyUID = pydicom.uid.generate_uid(None)
     # Assume that all files in a directory belongs to the same series
-    self.randomSeriesInstanceUID = dicom.uid.generate_uid(None)
+    self.randomSeriesInstanceUID = pydicom.uid.generate_uid(None)
   def processDataSet(self, ds):
-    import pydicom as dicom
+    import pydicom
 
     ds.StudyDate = ''
     ds.StudyTime = ''
@@ -407,13 +407,13 @@ class Anonymize(DICOMPatcherRule):
 
     # replace ids with random values - re-use if we have seen them before
     if ds.PatientID not in self.patientIDToRandomIDMap:
-      self.patientIDToRandomIDMap[ds.PatientID] = dicom.uid.generate_uid(None)
+      self.patientIDToRandomIDMap[ds.PatientID] = pydicom.uid.generate_uid(None)
     ds.PatientID = self.patientIDToRandomIDMap[ds.PatientID]
     if ds.StudyInstanceUID not in self.studyUIDToRandomUIDMap:
-      self.studyUIDToRandomUIDMap[ds.StudyInstanceUID] = dicom.uid.generate_uid(None)
+      self.studyUIDToRandomUIDMap[ds.StudyInstanceUID] = pydicom.uid.generate_uid(None)
     ds.StudyInstanceUID = self.studyUIDToRandomUIDMap[ds.StudyInstanceUID]
     if ds.SeriesInstanceUID not in self.seriesUIDToRandomUIDMap:
-      self.seriesUIDToRandomUIDMap[ds.SeriesInstanceUID] = dicom.uid.generate_uid(None)
+      self.seriesUIDToRandomUIDMap[ds.SeriesInstanceUID] = pydicom.uid.generate_uid(None)
     ds.SeriesInstanceUID = self.seriesUIDToRandomUIDMap[ds.SeriesInstanceUID]
 
 #
@@ -499,7 +499,7 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
     [1] https://github.com/commontk/CTK/blob/16aa09540dcb59c6eafde4d9a88dfee1f0948edc/Libs/DICOM/Core/ctkDICOMDatabase.cpp#L1283-L1287
     """
 
-    import pydicom as dicom
+    import pydicom
 
     self.addLog('DICOM patching started...')
     logging.debug('DICOM patch input directory: '+inputDirPath)
@@ -532,8 +532,8 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
           continue
 
         try:
-          ds = dicom.read_file(filePath)
-        except (IOError, dicom.filereader.InvalidDicomError):
+          ds = pydicom.read_file(filePath)
+        except (IOError, pydicom.filereader.InvalidDicomError):
           self.addLog('  Not DICOM file. Skipped.')
           continue
 
@@ -554,7 +554,7 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
           os.makedirs(dirName)
 
         self.addLog('  Writing DICOM...')
-        dicom.write_file(patchedFilePath, ds)
+        pydicom.write_file(patchedFilePath, ds)
         self.addLog('  Created DICOM file: %s' % patchedFilePath)
 
     self.addLog('DICOM patching completed. Patched files are written to:\n{0}'.format(outputDirPath))
@@ -619,12 +619,12 @@ class DICOMPatcherTest(ScriptedLoadableModuleTest):
 
     testFileDICOMFilename = inputTestDir+"/DICOMFile.dcm"
     self.delayDisplay('Writing test file: '+testFileDICOMFilename)
-    import pydicom as dicom
-    file_meta = dicom.dataset.Dataset()
+    import pydicom
+    file_meta = pydicom.dataset.Dataset()
     file_meta.MediaStorageSOPClassUID = '1.2.840.10008.5.1.4.1.1.2'  # CT Image Storage
     file_meta.MediaStorageSOPInstanceUID = "1.2.3"  # !! Need valid UID here for real work
     file_meta.ImplementationClassUID = "1.2.3.4"  # !!! Need valid UIDs here
-    ds = dicom.dataset.FileDataset(testFileDICOMFilename, {}, file_meta=file_meta, preamble=b"\0" * 128)
+    ds = pydicom.dataset.FileDataset(testFileDICOMFilename, {}, file_meta=file_meta, preamble=b"\0" * 128)
     ds.PatientName = "Test^Firstname"
     ds.PatientID = "123456"
     # Set the transfer syntax
