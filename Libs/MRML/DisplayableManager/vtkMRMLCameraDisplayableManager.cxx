@@ -599,3 +599,9 @@ bool vtkMRMLCameraDisplayableManager::ProcessInteractionEvent(vtkMRMLInteraction
   return processed;
 */
 }
+
+//---------------------------------------------------------------------------
+vtkMRMLCameraWidget* vtkMRMLCameraDisplayableManager::GetCameraWidget()
+{
+  return this->Internal->CameraWidget;
+}

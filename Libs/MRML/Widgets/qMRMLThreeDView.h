@@ -28,6 +28,7 @@
 #include "qMRMLWidgetsExport.h"
 
 class qMRMLThreeDViewPrivate;
+class vtkMRMLAbstractDisplayableManager;
 class vtkMRMLScene;
 class vtkMRMLViewNode;
 class vtkCollection;
@@ -58,6 +59,9 @@ public:
   /// already registered.
   void addDisplayableManager(const QString& displayableManager);
   Q_INVOKABLE void getDisplayableManagers(vtkCollection* displayableManagers);
+
+  /// Return a DisplayableManager given its class name
+  Q_INVOKABLE  vtkMRMLAbstractDisplayableManager* displayableManagerByClassName(const char* className);
 
   /// Get the 3D View node observed by view.
   Q_INVOKABLE vtkMRMLViewNode* mrmlViewNode()const;

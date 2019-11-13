@@ -524,6 +524,13 @@ void qMRMLThreeDView::getDisplayableManagers(vtkCollection *displayableManagers)
     }
 }
 
+//------------------------------------------------------------------------------
+vtkMRMLAbstractDisplayableManager* qMRMLThreeDView::displayableManagerByClassName(const char* className)
+{
+  Q_D(qMRMLThreeDView);
+  return d->DisplayableManagerGroup->GetDisplayableManagerByClassName(className);
+}
+
 // --------------------------------------------------------------------------
 void qMRMLThreeDView::setViewCursor(const QCursor &cursor)
 {

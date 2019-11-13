@@ -27,6 +27,7 @@
 
 class vtkMRMLCrosshairNode;
 class vtkMRMLScene;
+class vtkMRMLSliceIntersectionWidget;
 
 /// \brief Displayable manager for the crosshair on slice (2D) views
 ///
@@ -48,6 +49,8 @@ public:
 
   void SetActionsEnabled(int actions);
   int GetActionsEnabled();
+
+  vtkMRMLSliceIntersectionWidget* GetSliceIntersectionWidget();
 
 protected:
   vtkMRMLCrosshairDisplayableManager();

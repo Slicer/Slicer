@@ -68,9 +68,13 @@
 #include <vtkSlicerApplicationLogic.h>
 
 // MRML includes
+#include <vtkMRMLCameraDisplayableManager.h>
+#include <vtkMRMLCameraWidget.h>
+#include <vtkMRMLCrosshairDisplayableManager.h>
 #include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLSliceIntersectionWidget.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLViewNode.h>
@@ -2757,6 +2761,38 @@ void qMRMLSegmentEditorWidget::processEvents(vtkObject* caller,
   vtkMRMLAbstractViewNode* callerViewNode = vtkMRMLAbstractViewNode::SafeDownCast(caller);
   if (callerInteractor)
     {
+
+    // Do not process events while a touch gesture is in progress (e.g., do not paint in the view
+    // while doing multi-touch pinch/rotate).
+    qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(viewWidget);
+    if (sliceWidget)
+      {
+      vtkMRMLCrosshairDisplayableManager* crosshairDisplayableManager = vtkMRMLCrosshairDisplayableManager::SafeDownCast(
+        sliceWidget->sliceView()->displayableManagerByClassName("vtkMRMLCrosshairDisplayableManager"));
+      if (crosshairDisplayableManager)
+        {
+        int widgetState = crosshairDisplayableManager->GetSliceIntersectionWidget()->GetWidgetState();
+        if (widgetState == vtkMRMLSliceIntersectionWidget::WidgetStateTouchGesture)
+          {
+          return;
+          }
+        }
+      }
+    qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(viewWidget);
+    if (threeDWidget)
+      {
+      vtkMRMLCameraDisplayableManager* cameraDisplayableManager = vtkMRMLCameraDisplayableManager::SafeDownCast(
+        threeDWidget->threeDView()->displayableManagerByClassName("vtkMRMLCameraDisplayableManager"));
+      if (cameraDisplayableManager)
+        {
+        int widgetState = cameraDisplayableManager->GetCameraWidget()->GetWidgetState();
+        if (widgetState == vtkMRMLCameraWidget::WidgetStateTouchGesture)
+          {
+          return;
+          }
+        }
+      }
+
     bool abortEvent = activeEffect->processInteractionEvents(callerInteractor, eid, viewWidget);
     if (abortEvent)
       {

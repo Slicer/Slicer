@@ -29,6 +29,7 @@
 
 class qMRMLSliceViewPrivate;
 class vtkCollection;
+class vtkMRMLAbstractDisplayableManager;
 class vtkMRMLScene;
 class vtkMRMLSliceNode;
 class vtkMRMLSliceViewInteractorStyle;
@@ -63,6 +64,9 @@ public:
   /// Get the displayable managers registered in this view
   /// \sa addDisplayableManager
   Q_INVOKABLE void getDisplayableManagers(vtkCollection *displayableManagers);
+
+  /// Return a DisplayableManager given its class name
+  Q_INVOKABLE  vtkMRMLAbstractDisplayableManager* displayableManagerByClassName(const char* className);
 
   /// Get the 3D View node observed by view.
   Q_INVOKABLE vtkMRMLSliceNode* mrmlSliceNode()const;

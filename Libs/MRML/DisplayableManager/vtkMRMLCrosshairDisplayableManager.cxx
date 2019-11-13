@@ -588,3 +588,9 @@ int vtkMRMLCrosshairDisplayableManager::GetActionsEnabled()
 {
   return this->Internal->SliceIntersectionWidget->GetActionsEnabled();
 }
+
+//---------------------------------------------------------------------------
+vtkMRMLSliceIntersectionWidget* vtkMRMLCrosshairDisplayableManager::GetSliceIntersectionWidget()
+{
+  return this->Internal->SliceIntersectionWidget;
+}

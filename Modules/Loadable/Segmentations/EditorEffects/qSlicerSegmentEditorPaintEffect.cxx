@@ -959,21 +959,8 @@ std::string qSlicerSegmentEditorPaintEffectPrivate::segmentAtPosition(qMRMLWidge
     }
 
   // Get slice displayable manager
-  vtkNew<vtkCollection> displayableManagerCollection;
-  sliceWidget->sliceView()->getDisplayableManagers(displayableManagerCollection.GetPointer());
-  vtkCollectionSimpleIterator it;
-  vtkObject* displayableManager = nullptr;
-  vtkMRMLSegmentationsDisplayableManager2D* segmentationDisplayableManager2D = nullptr;
-  for (displayableManagerCollection->InitTraversal(it);
-       (displayableManager = displayableManagerCollection->GetNextItemAsObject(it));)
-    {
-    segmentationDisplayableManager2D = vtkMRMLSegmentationsDisplayableManager2D::SafeDownCast(displayableManager);
-    if (segmentationDisplayableManager2D)
-      {
-      // found the segmentation displayable manager
-      break;
-      }
-    }
+  vtkMRMLSegmentationsDisplayableManager2D* segmentationDisplayableManager2D = vtkMRMLSegmentationsDisplayableManager2D::SafeDownCast(
+    sliceWidget->sliceView()->displayableManagerByClassName("vtkMRMLSegmentationsDisplayableManager2D"));
   if (!segmentationDisplayableManager2D)
     {
     return selectedSegmentID;

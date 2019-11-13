@@ -28,6 +28,7 @@
 #include "vtkMRMLDisplayableManagerExport.h"
 
 class vtkMRMLCameraNode;
+class vtkMRMLCameraWidget;
 
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLCameraDisplayableManager :
   public vtkMRMLAbstractThreeDViewDisplayableManager
@@ -55,6 +56,8 @@ public:
 
   bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &closestDistance2) override;
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
+
+  vtkMRMLCameraWidget* GetCameraWidget();
 
 protected:
 

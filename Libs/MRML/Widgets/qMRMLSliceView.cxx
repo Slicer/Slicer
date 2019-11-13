@@ -299,6 +299,14 @@ void qMRMLSliceView::getDisplayableManagers(vtkCollection *displayableManagers)
 }
 
 //------------------------------------------------------------------------------
+vtkMRMLAbstractDisplayableManager* qMRMLSliceView::displayableManagerByClassName(const char* className)
+{
+  Q_D(qMRMLSliceView);
+  return d->DisplayableManagerGroup->GetDisplayableManagerByClassName(className);
+}
+
+
+//------------------------------------------------------------------------------
 void qMRMLSliceView::setMRMLScene(vtkMRMLScene* newScene)
 {
   Q_D(qMRMLSliceView);
