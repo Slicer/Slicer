@@ -260,26 +260,10 @@ bool vtkSegmentation::SetMasterRepresentationModifiedEnabled(bool enabled)
     {
     return this->MasterRepresentationModifiedEnabled;
     }
-  // Add/remove observation of master representation in all segments
-  for (SegmentMap::iterator segmentIt = this->Segments.begin(); segmentIt != this->Segments.end(); ++segmentIt)
-    {
-    vtkDataObject* masterRepresentation = segmentIt->second->GetRepresentation(this->MasterRepresentationName);
-    if (masterRepresentation)
-      {
-      if (enabled)
-        {
-        if (!masterRepresentation->HasObserver(vtkCommand::ModifiedEvent, this->MasterRepresentationCallbackCommand))
-          {
-          masterRepresentation->AddObserver(vtkCommand::ModifiedEvent, this->MasterRepresentationCallbackCommand);
-          }
-        }
-      else
-        {
-        masterRepresentation->RemoveObservers(vtkCommand::ModifiedEvent, this->MasterRepresentationCallbackCommand);
-        }
-      }
-    }
   this->MasterRepresentationModifiedEnabled = enabled;
+
+  // Add/remove observation of master representation in all segments
+  this->UpdateMasterRepresentationObservers();
   return !enabled; // return old value
 }
 
@@ -509,15 +493,7 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
     }
 
   // Add observation of master representation in new segment
-  vtkDataObject* masterRepresentation = segment->GetRepresentation(this->MasterRepresentationName);
-  if (masterRepresentation && this->MasterRepresentationModifiedEnabled)
-    {
-    // Observe segment's master representation
-    if (!masterRepresentation->HasObserver(vtkCommand::ModifiedEvent, this->MasterRepresentationCallbackCommand))
-      {
-      masterRepresentation->AddObserver(vtkCommand::ModifiedEvent, this->MasterRepresentationCallbackCommand);
-      }
-    }
+  this->UpdateMasterRepresentationObservers();
 
   // Add to list. If segmentId is empty, then segment name becomes the ID
   std::string key = segmentId;
@@ -599,13 +575,6 @@ void vtkSegmentation::RemoveSegment(SegmentMap::iterator segmentIt)
   // Remove observation of segment modified event
   segmentIt->second.GetPointer()->RemoveObservers(vtkCommand::ModifiedEvent, this->SegmentCallbackCommand);
 
-  // Remove observation of master representation of removed segment
-  vtkDataObject* masterRepresentation = segmentIt->second->GetRepresentation(this->MasterRepresentationName);
-  if (masterRepresentation)
-    {
-    masterRepresentation->RemoveObservers(vtkCommand::ModifiedEvent, this->MasterRepresentationCallbackCommand);
-    }
-
   this->SeparateSegmentLabelmap(segmentId);
 
   // Remove segment
@@ -615,6 +584,8 @@ void vtkSegmentation::RemoveSegment(SegmentMap::iterator segmentIt)
     {
     this->SegmentIdAutogeneratorIndex = 0;
     }
+
+  this->UpdateMasterRepresentationObservers();
 
   this->Modified();
 
@@ -658,12 +629,14 @@ void vtkSegmentation::OnSegmentModified(vtkObject* caller,
     // Segment is modified before actually having been added to the segmentation (within AddSegment)
     return;
     }
-  const char* segmentIdChars = segmentId.c_str();
 
+  const char* segmentIdChars = segmentId.c_str();
   if (eid == vtkCommand::ModifiedEvent)
     {
     self->InvokeEvent(vtkSegmentation::SegmentModified, (void*)(segmentIdChars));
     }
+
+  self->UpdateMasterRepresentationObservers();
 }
 
 //---------------------------------------------------------------------------
@@ -683,6 +656,47 @@ void vtkSegmentation::OnMasterRepresentationModified(vtkObject* vtkNotUsed(calle
   self->InvalidateNonMasterRepresentations();
 
   self->InvokeEvent(vtkSegmentation::MasterRepresentationModified, callData);
+}
+
+//---------------------------------------------------------------------------
+void vtkSegmentation::UpdateMasterRepresentationObservers()
+{
+  std::set<vtkSmartPointer<vtkDataObject> > newMasterRepresentations;
+  // Add/remove observation of master representation in all segments
+  for (SegmentMap::iterator segmentIt = this->Segments.begin(); segmentIt != this->Segments.end(); ++segmentIt)
+    {
+    vtkDataObject* masterRepresentation = segmentIt->second->GetRepresentation(this->MasterRepresentationName);
+    if (masterRepresentation)
+      {
+      newMasterRepresentations.insert(masterRepresentation);
+      }
+    }
+
+  // Remove observers from master representations that are no longer in any segments
+  for (vtkSmartPointer<vtkDataObject> masterRepresentation : this->MasterRepresentationCache)
+    {
+    if (std::find(newMasterRepresentations.begin(), newMasterRepresentations.end(), masterRepresentation) == newMasterRepresentations.end())
+      {
+      masterRepresentation->RemoveObservers(vtkCommand::ModifiedEvent, this->MasterRepresentationCallbackCommand);
+      }
+    }
+
+  // Add/remove observation of master representation in all segments
+  for (vtkSmartPointer<vtkDataObject> masterRepresentation : newMasterRepresentations)
+    {
+    if (this->MasterRepresentationModifiedEnabled)
+      {
+      if (!masterRepresentation->HasObserver(vtkCommand::ModifiedEvent, this->MasterRepresentationCallbackCommand))
+        {
+        masterRepresentation->AddObserver(vtkCommand::ModifiedEvent, this->MasterRepresentationCallbackCommand);
+        }
+      }
+    else
+      {
+      masterRepresentation->RemoveObservers(vtkCommand::ModifiedEvent, this->MasterRepresentationCallbackCommand);
+      }
+    }
+  this->MasterRepresentationCache = newMasterRepresentations;
 }
 
 //---------------------------------------------------------------------------
@@ -1365,6 +1379,7 @@ void vtkSegmentation::MergeSegmentLabelmaps(std::vector<std::string> mergeSegmen
     segment->SetLabelValue(value);
     segment->AddRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName(), sharedLabelmapRepresentation);
     }
+  sharedLabelmapRepresentation->Modified();
 }
 
 //---------------------------------------------------------------------------

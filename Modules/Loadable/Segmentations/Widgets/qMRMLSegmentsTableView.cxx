@@ -1159,7 +1159,7 @@ void qMRMLSegmentsTableView::clearSelectedSegments()
   QStringList selectedSegmentIDs = this->selectedSegmentIDs();
   for (QString segmentID : selectedSegmentIDs)
     {
-    vtkSlicerSegmentationsModuleLogic::ClearSegment(segmentation, segmentID.toStdString());
+    vtkSlicerSegmentationsModuleLogic::ClearSegment(d->SegmentationNode, segmentID.toStdString());
     }
 }
 

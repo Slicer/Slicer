@@ -2503,19 +2503,15 @@ bool vtkSlicerSegmentationsModuleLogic::ClearSegment(vtkMRMLSegmentationNode* se
     vtkErrorWithObjectMacro(nullptr, "Invalid segmentation node");
     return false;
     }
-  return vtkSlicerSegmentationsModuleLogic::ClearSegment(segmentationNode->GetSegmentation(), segmentId);
-}
 
-//------------------------------------------------------------------------------
-bool vtkSlicerSegmentationsModuleLogic::ClearSegment(vtkSegmentation* segmentation, std::string segmentID)
-{
+  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
   if (!segmentation)
     {
     vtkErrorWithObjectMacro(nullptr, "Invalid segmentation");
     return false;
     }
 
-  vtkSegment* segment = segmentation->GetSegment(segmentID);
+  vtkSegment* segment = segmentation->GetSegment(segmentId);
   if (!segment)
     {
     vtkErrorWithObjectMacro(nullptr, "Invalid segment");
@@ -2525,29 +2521,13 @@ bool vtkSlicerSegmentationsModuleLogic::ClearSegment(vtkSegmentation* segmentati
   std::vector<std::string> representationNames;
   segmentation->GetContainedRepresentationNames(representationNames);
 
-  segmentation->ClearSegment(segmentID);
+  bool wasMasterRepresentationModifiedEnabled = segmentationNode->GetSegmentation()->SetMasterRepresentationModifiedEnabled(false);
+  segmentation->ClearSegment(segmentId);
+  segmentationNode->GetSegmentation()->SetMasterRepresentationModifiedEnabled(wasMasterRepresentationModifiedEnabled);
 
-  std::vector<std::string> sharedSegmentIDs;
-  segmentation->GetSegmentIDsSharingBinaryLabelmapRepresentation(segmentID, sharedSegmentIDs, true);
-
-  // Re-convert all other representations
-  for (std::vector<std::string>::iterator reprIt = representationNames.begin();
-    reprIt != representationNames.end(); ++reprIt)
-    {
-    std::string targetRepresentationName = (*reprIt);
-    if (targetRepresentationName.compare(segmentation->MasterRepresentationName))
-    {
-      vtkSegmentationConverter::ConversionPathAndCostListType pathCosts;
-      segmentation->GetPossibleConversions(targetRepresentationName, pathCosts);
-
-      // Get cheapest path from found conversion paths
-      vtkSegmentationConverter::ConversionPathType cheapestPath = vtkSegmentationConverter::GetCheapestPath(pathCosts);
-      if (!cheapestPath.empty())
-        {
-        segmentation->ConvertSegmentsUsingPath(sharedSegmentIDs, cheapestPath, true);
-        }
-      }
-    }
+  std::vector<std::string> segmentIDVector;
+  segmentIDVector.push_back(segmentId);
+  vtkSlicerSegmentationsModuleLogic::ReconvertAllRepresentations(segmentationNode, segmentIDVector);
 
   vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(segment, vtkSlicerSegmentationsModuleLogic::NotStarted);
   segment->Modified();
@@ -2604,4 +2584,68 @@ bool vtkSlicerSegmentationsModuleLogic::GetSharedSegmentIDsInMask(
     segmentIDs.push_back(segmentValues[labelValue]);
     }
   return true;
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerSegmentationsModuleLogic::ReconvertAllRepresentations(vtkMRMLSegmentationNode* segmentationNode, const
+  std::vector<std::string>& segmentIDs/*={}*/)
+{
+  if (!segmentationNode)
+    {
+    vtkErrorWithObjectMacro(nullptr, "Invalid segmentation node!");
+    return false;
+    }
+
+  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+  if (!segmentation)
+    {
+    vtkErrorWithObjectMacro(nullptr, "Invalid segmentation!");
+    return false;
+    }
+
+  std::vector<std::string> segmentIDsToConvert = segmentIDs;
+  if (segmentIDsToConvert.empty())
+    {
+    segmentation->GetSegmentIDs(segmentIDsToConvert);
+    }
+
+  bool conversionHappened = false;
+   std::vector<std::string> representationNames;
+  segmentation->GetContainedRepresentationNames(representationNames);
+
+  // Re-convert all other representations
+  for (std::vector<std::string>::iterator reprIt = representationNames.begin();
+    reprIt != representationNames.end(); ++reprIt)
+    {
+    std::string targetRepresentationName = (*reprIt);
+    if (targetRepresentationName.compare(segmentation->MasterRepresentationName))
+    {
+      vtkSegmentationConverter::ConversionPathAndCostListType pathCosts;
+      segmentation->GetPossibleConversions(targetRepresentationName, pathCosts);
+
+      // Get cheapest path from found conversion paths
+      vtkSegmentationConverter::ConversionPathType cheapestPath = vtkSegmentationConverter::GetCheapestPath(pathCosts);
+      if (!cheapestPath.empty())
+        {
+        conversionHappened |= segmentationNode->GetSegmentation()->ConvertSegmentsUsingPath(segmentIDsToConvert, cheapestPath, true);
+        }
+      }
+    }
+  return conversionHappened;
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerSegmentationsModuleLogic::CollapseBinaryLabelmaps(vtkMRMLSegmentationNode* segmentationNode, bool forceToSingleLayer)
+{
+  if (!segmentationNode)
+    {
+    vtkErrorWithObjectMacro(nullptr, "Invalid segmentation node!");
+    return;
+    }
+
+  MRMLNodeModifyBlocker blocker(segmentationNode);
+  bool wasMasterRepresentationModifiedEnabled = segmentationNode->GetSegmentation()->SetMasterRepresentationModifiedEnabled(false);
+  segmentationNode->GetSegmentation()->CollapseBinaryLabelmaps(forceToSingleLayer);
+  segmentationNode->GetSegmentation()->SetMasterRepresentationModifiedEnabled(wasMasterRepresentationModifiedEnabled);
+  vtkSlicerSegmentationsModuleLogic::ReconvertAllRepresentations(segmentationNode);
 }

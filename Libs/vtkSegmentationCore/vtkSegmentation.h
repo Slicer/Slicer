@@ -501,6 +501,10 @@ protected:
   /// It fires a \sa MasterRepresentationModifiedEvent if master representation is changed in ANY segment
   static void OnMasterRepresentationModified(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
 
+  /// Check to ensure that all master representations are being observed, and observers on master representations that
+  /// are no longer in the segmentation are removed
+  void UpdateMasterRepresentationObservers();
+
 protected:
   vtkSegmentation();
   ~vtkSegmentation() override;
@@ -539,6 +543,8 @@ protected:
   /// (we could retrieve segment IDs from SegmentMap too, but that always contains segments in
   /// alphabetical order)
   std::deque< std::string > SegmentIds;
+
+  std::set<vtkSmartPointer<vtkDataObject> > MasterRepresentationCache;
 
   friend class vtkMRMLSegmentationNode;
   friend class vtkSlicerSegmentationsModuleLogic;

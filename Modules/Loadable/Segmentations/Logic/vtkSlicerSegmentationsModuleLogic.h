@@ -74,7 +74,7 @@ public:
   /// \param filename Path and name of file containing segmentation (nrrd, vtm, etc.)
   /// \param autoOpacities Optional flag determining whether segment opacities are calculated automatically based on containment. True by default
   /// \return Loaded segmentation node
-  vtkMRMLSegmentationNode* LoadSegmentationFromFile(const char* filename, bool autoOpacities=true);
+  vtkMRMLSegmentationNode* LoadSegmentationFromFile(const char* filename, bool autoOpacities = true);
 
   /// Create labelmap volume MRML node from oriented image data.
   /// Creates a display node if a display node does not exist. Shifts image extent to start from zero.
@@ -359,9 +359,8 @@ public:
   static int GetSegmentStatus(vtkSegment* segment);
   /// Returns the value of the status tag for the given segment
   static void SetSegmentStatus(vtkSegment* segment, int status);
-
+  /// Clear the contents of a single segment
   static bool ClearSegment(vtkMRMLSegmentationNode* segmentationNode, std::string segmentID);
-  static bool ClearSegment(vtkSegmentation* segmentation, std::string segmentID);
 
   /// Get the list of segment IDs in the same shared labelmap that are contained within the mask
   /// \param segmentationNode Node containing the segmentation
@@ -371,6 +370,20 @@ public:
   /// \param includeInputSharedSegmentID If false, sharedSegmentID will not be added to the list of output segment IDs even if it is within the mask
   static bool GetSharedSegmentIDsInMask(vtkMRMLSegmentationNode* segmentationNode, std::string sharedSegmentID, vtkOrientedImageData* mask, const int extent[6],
     std::vector<std::string>& segmentIDs, int maskThreshold = 0.0, bool includeInputSharedSegmentID = false);
+
+  /// Reconvert all representations in the segmentation from the master representation
+  /// \param segmentationNode Node containing the segmentation
+  /// \param sharedSegmentID Segment IDs to be converted. If empty, all segments will be converted.
+  /// \return True if the representation was created, False otherwise
+  static bool ReconvertAllRepresentations(vtkMRMLSegmentationNode* segmentationNode,
+    const std::vector<std::string>& segmentIDs={});
+
+  /// Collapse all segments into fewer shared labelmap layers
+  /// \param segmentationNode Node containing the segmentation
+  /// \param forceToSingleLayer If false, then the layers will not be overwritten by each other, if true then the layers can
+  ///   overwrite each other, but the result is guaranteed to have one layer
+  /// \return True if the representation was created, False otherwise
+  static void CollapseBinaryLabelmaps(vtkMRMLSegmentationNode* segmentationNode, bool forceToSingleLayer);
 
 public:
   /// Set Terminologies module logic

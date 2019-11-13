@@ -565,9 +565,8 @@ void qSlicerSegmentationsModuleWidget::collapseLabelmapLayers()
     return;
     }
 
-  MRMLNodeModifyBlocker blocker(d->SegmentationNode);
   bool forceToSingleLayer = d->checkBox_OverwriteSegments->isChecked();
-  d->SegmentationNode->GetSegmentation()->CollapseBinaryLabelmaps(forceToSingleLayer);
+  vtkSlicerSegmentationsModuleLogic::CollapseBinaryLabelmaps(d->SegmentationNode, forceToSingleLayer);
 }
 
 //-----------------------------------------------------------------------------
