@@ -39,11 +39,11 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char * argv[] )
   scene->AddNode(node1.GetPointer());
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
-  if (argc != 3)
+  if (argc != 4)
     {
     std::cerr << "Line " << __LINE__
               << " - Missing parameters !\n"
-              << "Usage: " << argv[0] << " /path/to/temp /path/to/testdata"
+              << "Usage: " << argv[0] << " /path/to/ITKSnapSegmentation.nii.gz /path/to/OldSlicerSegmentation.seg.nrrd /path/to/SlicerSegmentation.seg.nrrd"
               << std::endl;
     return EXIT_FAILURE;
     }
@@ -54,13 +54,9 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char * argv[] )
   converterFactory->RegisterConverterRule(vtkSmartPointer<vtkFractionalLabelmapToClosedSurfaceConversionRule>::New());
   converterFactory->RegisterConverterRule(vtkSmartPointer<vtkClosedSurfaceToFractionalLabelmapConversionRule>::New());
 
-  const char* tempDirArg = argv[1];
-  const char* dataDirArg = argv[2];
-
-  std::string dataDir = std::string(dataDirArg);
-  std::string itkSnapSegmentationFilename = dataDir + "/ITKSnapSegmentation.nii.gz";
-  std::string oldSlicerSegmentationFilename = dataDir + "/OldSlicerSegmentation.seg.nrrd"; // Segmentation before shared labelmaps implemented.
-  std::string slicerSegmentationFilename = dataDir + "/SlicerSegmentation.seg.nrrd"; // Segmentation with shared labelmaps.
+  const char* itkSnapSegmentationFilename = argv[1]; // ITKSnapSegmentation.nii.gz
+  const char* oldSlicerSegmentationFilename = argv[2]; // OldSlicerSegmentation.seg.nrrd: Segmentation before shared labelmaps implemented.
+  const char* slicerSegmentationFilename = argv[3]; // SlicerSegmentation.seg.nrrd: Segmentation with shared labelmaps.
 
   // Test segmentation exported from ITK-SNAP
   std::cout << "Testing ITK-SNAP segmentation" << std::endl;
@@ -69,7 +65,7 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char * argv[] )
     scene->AddNode(segmentationNode);
     vtkNew<vtkMRMLSegmentationStorageNode> segmentationStorageNode;
     scene->AddNode(segmentationStorageNode);
-    segmentationStorageNode->SetFileName(itkSnapSegmentationFilename.c_str());
+    segmentationStorageNode->SetFileName(itkSnapSegmentationFilename);
     segmentationStorageNode->ReadData(segmentationNode);
     vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
     CHECK_NOT_NULL(segmentation);
@@ -88,7 +84,7 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char * argv[] )
     scene->AddNode(segmentationNode);
     vtkNew<vtkMRMLSegmentationStorageNode> segmentationStorageNode;
     scene->AddNode(segmentationStorageNode);
-    segmentationStorageNode->SetFileName(oldSlicerSegmentationFilename.c_str());
+    segmentationStorageNode->SetFileName(oldSlicerSegmentationFilename);
     segmentationStorageNode->ReadData(segmentationNode);
     vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
     CHECK_NOT_NULL(segmentation);
@@ -106,7 +102,7 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char * argv[] )
     scene->AddNode(segmentationNode);
     vtkNew<vtkMRMLSegmentationStorageNode> segmentationStorageNode;
     scene->AddNode(segmentationStorageNode);
-    segmentationStorageNode->SetFileName(slicerSegmentationFilename.c_str());
+    segmentationStorageNode->SetFileName(slicerSegmentationFilename);
     segmentationStorageNode->ReadData(segmentationNode);
     vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
     CHECK_NOT_NULL(segmentation);

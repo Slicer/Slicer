@@ -122,8 +122,9 @@ target_link_libraries(${KIT}CxxTests ${KIT})
 set_target_properties(${KIT}CxxTests PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
 
 #-----------------------------------------------------------------------------
-set(TEMP "${CMAKE_BINARY_DIR}/Testing/Temporary")
 set(DATAPATH "${CMAKE_CURRENT_SOURCE_DIR}/TestData")
+set(INPUT ${CMAKE_CURRENT_SOURCE_DIR}/TestData)
+set(TEMP "${CMAKE_BINARY_DIR}/Testing/Temporary")
 
 #-----------------------------------------------------------------------------
 simple_test( vtkMRMLBSplineTransformNodeTest1 )
@@ -196,7 +197,11 @@ simple_test( vtkMRMLSceneViewNodeRestoreSceneTest )
 simple_test( vtkMRMLSceneViewNodeStoreSceneTest )
 simple_test( vtkMRMLSceneViewNodeTest1 )
 simple_test( vtkMRMLSceneViewStorageNodeTest1 )
-simple_test( vtkMRMLSegmentationStorageNodeTest1 ${TEMP} ${DATAPATH})
+simple_test( vtkMRMLSegmentationStorageNodeTest1
+  DATA{${INPUT}/ITKSnapSegmentation.nii.gz}
+  DATA{${INPUT}/OldSlicerSegmentation.seg.nrrd}
+  DATA{${INPUT}/SlicerSegmentation.seg.nrrd}
+  )
 simple_test( vtkMRMLSelectionNodeTest1 )
 simple_test( vtkMRMLSliceCompositeNodeTest1 )
 simple_test( vtkMRMLSliceNodeTest1 )
