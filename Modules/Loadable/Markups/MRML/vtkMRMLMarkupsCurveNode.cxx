@@ -251,7 +251,7 @@ bool vtkMRMLMarkupsCurveNode::ResampleCurveSurface(double controlPointDistance, 
   pointLocator->SetDataSet(surfacePolydata);
   pointLocator->BuildLocator();
 
-  vtkDataArray* normalVectorArray = vtkArrayDownCast<vtkDataArray>(surfacePolydata->GetPointData()->GetArray("Normals"));
+  vtkSmartPointer<vtkDataArray> normalVectorArray = vtkArrayDownCast<vtkDataArray>(surfacePolydata->GetPointData()->GetArray("Normals"));
   if(!normalVectorArray)
     {
     vtkNew<vtkPolyDataNormals> normalFilter;
@@ -259,7 +259,7 @@ bool vtkMRMLMarkupsCurveNode::ResampleCurveSurface(double controlPointDistance, 
     normalFilter->ComputePointNormalsOn();
     normalFilter->Update();
     vtkPolyData* normalPolydata = normalFilter->GetOutput();
-    vtkDataArray* normalVectorArray = vtkArrayDownCast<vtkDataArray>(normalPolydata->GetPointData()->GetNormals());
+    normalVectorArray = vtkArrayDownCast<vtkDataArray>(normalPolydata->GetPointData()->GetNormals());
     if (!normalVectorArray)
       {
       vtkErrorMacro("vtkMRMLMarkupsCurveNode::ResamplePoints failed: Unable to find or calculate normals");
