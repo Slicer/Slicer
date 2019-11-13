@@ -92,7 +92,7 @@ int vtkMRMLSceneImportIDConflictTest(int vtkNotUsed(argc), char * vtkNotUsed(arg
 
   scene->SetSceneXMLString(scene1XML);
   scene->SetLoadFromXMLString(1);
-  scene->Import();
+  scene->Import();  // adds Subject Hierarchy Node
 
   // When importing the scene, there is conflict between the existing nodes
   // and added nodes. New IDs are set by Import to the added nodes.
@@ -100,6 +100,7 @@ int vtkMRMLSceneImportIDConflictTest(int vtkNotUsed(argc), char * vtkNotUsed(arg
   // At this point the scene should be:
   //
   //  Scene
+  //    |---- vtkMRMLSubjectHierarchyNode1
   //    |---- vtkMRMLModelNode1  (valid polydata)
   //    |          |-- ref [displayNodeRef] to vtkMRMLModelDisplayNode1
   //    |
@@ -119,7 +120,7 @@ int vtkMRMLSceneImportIDConflictTest(int vtkNotUsed(argc), char * vtkNotUsed(arg
   // Check scene contains original nodes
   //
 
-  CHECK_INT(scene->GetNumberOfNodes(), 6);
+  CHECK_INT(scene->GetNumberOfNodes(), 7);
   CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLModelNode1", modelNode.GetPointer());
   CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLModelDisplayNode1", modelDisplayNode.GetPointer());
   CHECK_POINTER(modelNode->GetDisplayNode(), modelDisplayNode.GetPointer());

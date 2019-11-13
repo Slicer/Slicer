@@ -2531,11 +2531,11 @@ bool TestNodeReferenceSerialization()
   scene2->RegisterNodeClass(vtkSmartPointer<vtkMRMLNodeTestHelper1>::New());
   scene2->SetLoadFromXMLString(1);
   scene2->SetSceneXMLString(sceneXMLString);
-  scene2->Import();
+  scene2->Import();  // adds Subject Hierarchy Node
 
   if (!CheckInt(__LINE__,
                 "Scene2-GetNumberOfNodes",
-                scene2->GetNumberOfNodes(), 4))
+                scene2->GetNumberOfNodes(), 5))
     {
     return false;
     }

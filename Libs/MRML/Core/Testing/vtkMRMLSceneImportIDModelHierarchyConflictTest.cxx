@@ -139,11 +139,12 @@ int ImportIDModelHierarchyConflictTest()
   // and added nodes. New IDs are set by Import to the added nodes.
   // The node ids in the scene after a proper import should be
 
-  scene->Import();
+  scene->Import();  // adds Subject Hierarchy Node
 
   // At this point the scene should be:
   //
   //  Scene
+  //    |---- vtkMRMLSubjectHierarchyNode1
   //    |---- vtkMRMLModelNode1  (valid polydata)
   //    |          |-- ref [displayNodeRef] to vtkMRMLModelDisplayNode1
   //    |
@@ -166,7 +167,7 @@ int ImportIDModelHierarchyConflictTest()
   //               |-- ref [displayNodeID] to vtkMRMLModelDisplayNode4
   //               |-- ref [associatedNodeRef] to vtkMRMLModelNode2
 
-  CHECK_INT(scene->GetNumberOfNodes(), 8);
+  CHECK_INT(scene->GetNumberOfNodes(), 9);
   CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLModelNode1", modelNode.GetPointer());
   CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLModelDisplayNode1", modelDisplayNode.GetPointer());
   CHECK_POINTER(modelNode->GetDisplayNode(), modelDisplayNode.GetPointer());
@@ -254,11 +255,12 @@ int ImportModelHierarchyTwiceTest()
   // Load same scene into scene
   scene->SetSceneXMLString(xmlScene);
   scene->SetLoadFromXMLString(1);
-  scene->Import();
+  scene->Import();  // adds Subject Hierarchy Node
 
   // At this point the scene should be:
   //
   //  Scene
+  //    |---- vtkMRMLSubjectHierarchyNode1
   //    |---- vtkMRMLModelNode1
   //    |
   //    |---- vtkMRMLModelDisplayNode1
@@ -281,7 +283,7 @@ int ImportModelHierarchyTwiceTest()
   //    |
   //    |---- vtkMRMLHierarchyNode2                                     [was vtkMRMLHierarchyNode1]
 
-  CHECK_INT(scene->GetNumberOfNodes(), 8);
+  CHECK_INT(scene->GetNumberOfNodes(), 9);
   CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLModelNode1", modelNode.GetPointer());
   CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLModelDisplayNode1", hierachyDisplayNode.GetPointer());
   CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLModelHierarchyNode1", modelHierarchyNode.GetPointer());

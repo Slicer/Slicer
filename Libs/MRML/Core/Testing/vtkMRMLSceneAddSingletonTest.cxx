@@ -159,9 +159,9 @@ int vtkMRMLSceneAddSingletonTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [
 
   scene->SetLoadFromXMLString(1);
   scene->SetSceneXMLString(scene1XML);
-  scene->Import();
+  scene->Import();  // adds Subject Hierarchy Node
 
-  CHECK_INT(scene->GetNumberOfNodes(), 4);
+  CHECK_INT(scene->GetNumberOfNodes(), 5);
 
   vtkMRMLNode* scene1SingletonA = scene->GetNodeByID("vtkMRMLScriptedModuleNodeSingletonA");
   vtkMRMLNode* scene1SingletonB = scene->GetNodeByID("vtkMRMLScriptedModuleNodeSingletonB");
@@ -201,9 +201,9 @@ int vtkMRMLSceneAddSingletonTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [
 
   scene->SetLoadFromXMLString(1);
   scene->SetSceneXMLString(scene2XML);
-  scene->Import();
+  scene->Import();  // adds Subject Hierarchy Node
 
-  CHECK_INT(scene->GetNumberOfNodes(), 6);
+  CHECK_INT(scene->GetNumberOfNodes(), 7);
 
   vtkMRMLNode* scene2SingletonA = scene->GetNodeByID("vtkMRMLScriptedModuleNodeSingletonA");
   vtkMRMLNode* scene2SingletonB = scene->GetNodeByID("vtkMRMLScriptedModuleNodeSingletonB"); // ID changed (singleton is matched based on singleton tag)
