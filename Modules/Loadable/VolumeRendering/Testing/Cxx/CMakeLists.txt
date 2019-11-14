@@ -55,7 +55,7 @@ slicerMacroConfigureModuleCxxTestDriver(
 simple_test(qMRMLVolumePropertyNodeWidgetTest1)
 simple_test(qSlicerPresetComboBoxTest)
 simple_test(qSlicer${MODULE_NAME}ModuleWidgetTest1)
-simple_test(qSlicer${MODULE_NAME}ModuleWidgetTest2 ${MRML_CORE_INPUT}/fixed.nrrd)
+simple_test(qSlicer${MODULE_NAME}ModuleWidgetTest2 DATA{${MRML_CORE_INPUT}/fixed.nrrd})
 simple_test(vtkMRMLShaderPropertyStorageNodeTest1 ${TEMP})
 simple_test(vtkMRMLVolumePropertyNodeTest1 ${INPUT}/volRender.mrml)
 simple_test(vtkMRMLVolumePropertyStorageNodeTest1)

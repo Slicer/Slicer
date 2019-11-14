@@ -96,7 +96,7 @@ if(BUILD_TESTING)
   simple_test( qSlicerMouseModeToolBarTest1 )
   simple_test( qSlicerSaveDataDialogCustomFileWriterTest )
   simple_test( qSlicerWidgetTest1 )
-  simple_test( qSlicerWidgetTest2 ${CMAKE_SOURCE_DIR}/Libs/MRML/Core/Testing/TestData/fixed.nrrd )
+  simple_test( qSlicerWidgetTest2 DATA{${CMAKE_SOURCE_DIR}/Libs/MRML/Core/Testing/TestData/fixed.nrrd} )
 
   if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   endif()

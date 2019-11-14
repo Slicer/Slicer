@@ -18,8 +18,8 @@ include(${ITK_USE_FILE})
 
 #-----------------------------------------------------------------------------
 set(TEMP ${Slicer_BINARY_DIR}/Testing/Temporary)
-set(INPUT ${MRMLCore_SOURCE_DIR}/Testing/TestData/)
-set(INPUT_TESTDATA ${Slicer_SOURCE_DIR}/Applications/SlicerApp/Data/Input/)
+set(MRML_CORE_INPUT ${MRMLCore_SOURCE_DIR}/Testing/TestData/)
+set(SLICERAPP_INPUT ${Slicer_SOURCE_DIR}/Applications/SlicerApp/Data/Input/)
 
 #-----------------------------------------------------------------------------
 set(KIT_TEST_SRCS
@@ -39,14 +39,14 @@ slicerMacroConfigureModuleCxxTestDriver(
 
 #-----------------------------------------------------------------------------
 simple_test(qSlicerVolumesIOOptionsWidgetTest1)
-simple_test(qSlicerVolumesModuleWidgetTest1 ${INPUT}/fixed.nrrd)
-simple_test(vtkSlicerVolumesLogicTest1 ${INPUT}/fixed.nrrd)
+simple_test(qSlicerVolumesModuleWidgetTest1 DATA{${MRML_CORE_INPUT}/fixed.nrrd})
+simple_test(vtkSlicerVolumesLogicTest1 DATA{${MRML_CORE_INPUT}/fixed.nrrd})
 
 ExternalData_add_test(${Slicer_ExternalData_DATA_MANAGEMENT_TARGET}
   NAME vtkSlicerVolumesLogicTest1_TestNAN
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests>
     vtkSlicer${MODULE_NAME}LogicTest1
-    DATA{${INPUT_TESTDATA}/testNANInVolume.nrrd}
+    DATA{${SLICERAPP_INPUT}/testNANInVolume.nrrd}
   )
 set_property(TEST vtkSlicerVolumesLogicTest1_TestNAN PROPERTY LABELS ${KIT})
 
