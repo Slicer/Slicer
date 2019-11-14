@@ -173,12 +173,14 @@ if(UNIX)
 endif()
 
 if(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
-  add_test(
+  ExternalData_add_test(${Slicer_ExternalData_DATA_MANAGEMENT_TARGET}
     NAME py_nomainwindow_CLISerializationTest
     COMMAND ${PYTHON_EXECUTABLE}
       ${CMAKE_CURRENT_SOURCE_DIR}/CLISerializationTest.py
       ${Slicer_LAUNCHER_EXECUTABLE}
       ${Slicer_SOURCE_DIR}/Testing/Data/Input
+      DATA{${INPUT}/MRHeadResampled.nhdr,MRHeadResampled.raw.gz}
+      DATA{${INPUT}/CTHeadAxial.nhdr,CTHeadAxial.raw.gz}
       ${Slicer_BINARY_DIR}/Testing/Temporary
     )
 endif()

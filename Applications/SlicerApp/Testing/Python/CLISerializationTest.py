@@ -56,12 +56,16 @@ if __name__ == '__main__':
   # Common options
   parser.add_argument("/path/to/Slicer")
   parser.add_argument("/path/to/data_dir")
+  parser.add_argument("/path/to/MRHeadResampled.nhdr")
+  parser.add_argument("/path/to/CTHeadAxial.nhdr")
   parser.add_argument("/path/to/temp_dir")
   args = parser.parse_args()
 
   # Get testing parameters
   slicer_executable = os.path.expanduser(getattr(args, "/path/to/Slicer"))
   data_dir = os.path.expanduser(getattr(args, "/path/to/data_dir"))
+  mrHeadResampled = os.path.expanduser(getattr(args, "/path/to/MRHeadResampled.nhdr"))
+  ctHeadAxial = os.path.expanduser(getattr(args, "/path/to/CTHeadAxial.nhdr"))
   temp_dir = os.path.expanduser(getattr(args, "/path/to/temp_dir"))
 
   # Create input/output
@@ -76,8 +80,8 @@ if __name__ == '__main__':
   required_inputs = [
     '--transform1', '%s/ExecutionModelTourTest.mrml#vtkMRMLLinearTransformNode1'%(data_dir),
     '--transform2', '%s/ExecutionModelTourTest.mrml#vtkMRMLLinearTransformNode2'%(data_dir),
-    '%s/MRHeadResampled.nhdr'%(data_dir),
-    '%s/CTHeadAxial.nhdr'%(data_dir),
+    mrHeadResampled,
+    ctHeadAxial,
     ]
   serialize_options = [
     '--integer', '30',
@@ -135,8 +139,8 @@ if __name__ == '__main__':
         },
         "Index Parameters" :
         {
-          "arg0" : "%s/MRHeadResampled.nhdr"%(data_dir),
-          "arg1" : "%s/CTHeadAxial.nhdr"%(data_dir)
+          "arg0" : mrHeadResampled,
+          "arg1" : ctHeadAxial
         },
         "Measurements" :
         {
