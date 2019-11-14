@@ -17,12 +17,5 @@ add_executable(${KIT}CxxTests ${Tests} )
 target_link_libraries(${KIT}CxxTests ${KIT} )
 set_target_properties(${KIT}CxxTests PROPERTIES FOLDER "Module-${MODULE_NAME}")
 
-macro(SCENE_TEST TESTNAME SCENEFILENAME)
-  add_test(
-    NAME ${TESTNAME}_${SCENEFILENAME}
-    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${MRMLCore_SOURCE_DIR}/Testing/${SCENEFILENAME}
-    )
-endmacro()
-
 simple_test( qMRMLTransformInfoWidgetTest1 )
 simple_test( qMRMLTransformDisplayNodeWidgetTest1 )
