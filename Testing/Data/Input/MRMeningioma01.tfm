@@ -1,5 +1,0 @@
-#Insight Transform File V1.0
-# Transform 0
-Transform: QuaternionRigidTransform_double_3_3
-Parameters: 0.00993255 0.00724952 0.00477429 0.999913 7.40702 4.83973 -0.0941685
-FixedParameters: 0.00025 0.00025 -1.42109e-14
