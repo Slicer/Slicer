@@ -158,13 +158,37 @@ target_link_libraries(${KIT}CxxTests ${KIT})
 
 set_target_properties(${KIT}CxxTests PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
 
-macro(SCENE_TEST TESTNAME SCENEFILENAME)
-  add_test(
-    NAME ${TESTNAME}_${SCENEFILENAME}
-    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${MRMLCore_SOURCE_DIR}/Testing/${SCENEFILENAME}
-    )
-endmacro()
+#-----------------------------------------------------------------------------
+set(INPUT ${MRMLCore_SOURCE_DIR}/Testing/TestData)
 
+#-----------------------------------------------------------------------------
+function(SCENE_TEST TESTNAME SCENEFILENAME)
+  # Extract list of external files to download. Note that the ${_externalfiles} variable
+  # is only specified to trigger download of data files used in the scene, the arguments
+  # are NOT explcitly used in ${KIT}CxxTests test executable.
+  string(REPLACE "|" ";" scenefilename_and_externalfiles ${SCENEFILENAME})
+  list(GET scenefilename_and_externalfiles 0 SCENEFILENAME)
+  list(LENGTH scenefilename_and_externalfiles _length)
+  if(_length EQUAL 2)
+    configure_file(
+      ${MRMLCore_SOURCE_DIR}/Testing/${SCENEFILENAME}
+      ${MRMLCore_BINARY_DIR}/Testing/${SCENEFILENAME}
+      COPYONLY
+      )
+    set(_scenefile ${MRMLCore_BINARY_DIR}/Testing/${SCENEFILENAME})
+    list(GET scenefilename_and_externalfiles 1 _externalfiles)
+  else()
+    set(_scenefile ${MRMLCore_SOURCE_DIR}/Testing/${SCENEFILENAME})
+    set(_externalfiles "")
+  endif()
+  ExternalData_add_test(${Slicer_ExternalData_DATA_MANAGEMENT_TARGET}
+    NAME ${TESTNAME}_${SCENEFILENAME}
+    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME}
+      ${_scenefile} ${_externalfiles}
+    )
+endfunction()
+
+#-----------------------------------------------------------------------------
 simple_test( qMRMLCheckableNodeComboBoxTest )
 simple_test( qMRMLCheckableNodeComboBoxTest1 )
 simple_test( qMRMLClipNodeWidgetTest1 )
@@ -196,7 +220,7 @@ simple_test( qMRMLNodeAttributeTableViewTest )
 simple_test( qMRMLNodeAttributeTableWidgetTest )
 simple_test( qMRMLNodeComboBoxTest1 )
 simple_test( qMRMLNodeComboBoxTest2 )
-SCENE_TEST(  qMRMLNodeComboBoxTest3 diffusionEditor.mrml )
+SCENE_TEST(  qMRMLNodeComboBoxTest3 diffusionEditor.mrml|DATA{${INPUT}/helix-DTI.nhdr,helix-DTI.raw.gz,helix-DWI.nhdr,helix-DWI.raw.gz} )
 simple_test( qMRMLNodeComboBoxTest4 )
 simple_test( qMRMLNodeComboBoxTest5 )
 simple_test( qMRMLNodeComboBoxTest6 )
