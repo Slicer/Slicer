@@ -21,7 +21,4 @@ slicerMacroConfigureModuleCxxTestDriver(
 set(TEMP "${CMAKE_BINARY_DIR}/Testing/Temporary")
 
 #-----------------------------------------------------------------------------
-add_test(
-    NAME vtkSlicerSubjectHierarchyModuleLogicTest
-    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> vtkSlicerSubjectHierarchyModuleLogicTest
-  )
+simple_test(vtkSlicerSubjectHierarchyModuleLogicTest)

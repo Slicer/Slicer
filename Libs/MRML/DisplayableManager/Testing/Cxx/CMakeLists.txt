@@ -47,13 +47,12 @@ set_target_properties(${KIT}CxxTests PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER}
 set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 foreach(test ${TestsToRun})
   get_filename_component(TESTNAME ${test} NAME_WE)
-  add_test(
-      NAME ${TESTNAME}
-      COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME}
+  simple_test(
+    ${TESTNAME}
       -D ${CMAKE_CURRENT_SOURCE_DIR}/../
       -T ${TEMP}
       -V Baseline/${TESTNAME}.png
-      )
+    )
 endforeach()
 
 set_tests_properties(vtkMRMLCameraDisplayableManagerTest1 PROPERTIES RUN_SERIAL TRUE)

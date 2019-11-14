@@ -253,10 +253,7 @@ function(SIMPLE_TEST_WITH_SCENE TESTNAME SCENEFILENAME)
     set(_scenefile ${CMAKE_CURRENT_SOURCE_DIR}/${SCENEFILENAME})
     set(_externalfiles "")
   endif()
-  ExternalData_add_test(${Slicer_ExternalData_DATA_MANAGEMENT_TARGET}
-    NAME ${TESTNAME}_${SCENEFILENAME}
-    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${_scenefile} ${_externalfiles}
-    )
+  simple_test(${TESTNAME}_${SCENEFILENAME} DRIVER_TESTNAME ${TESTNAME} ${_scenefile} ${_externalfiles})
 endfunction()
 
 set( ScenesToTest

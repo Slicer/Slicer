@@ -60,13 +60,10 @@ slicerMacroConfigureModuleCxxTestDriver(
 # Add all the tests
 foreach(test ${KIT_TESTS_TO_RUN})
   get_filename_component(testname ${test} NAME_WE)
-  add_test(
-    NAME ${testname}
-    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${testname}
+  simple_test(${testname}
       -D ${INPUT}
       -T ${TEMP}
       #-V Baseline/${testname}.png
     )
-  set_property(TEST ${testname} PROPERTY LABELS ${KIT})
 endforeach()
 

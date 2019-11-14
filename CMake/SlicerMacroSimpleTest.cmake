@@ -3,12 +3,15 @@
 
 #! Usage:
 #! \code
-#! simple_test(<testname> [argument1 ...])
+#! simple_test(<testname> [DRIVER_TESTNAME <testname> ] [argument1 ...])
 #! \endcode
 #!
 #! This macro add a test using the complete add_test signature specifying target using
-#! $<TARGET_FILE:...> generator expression. Optional test argument(s) can be passed
+#! $<TARGET_FILE:${KIT}CxxTests> generator expression. Optional test argument(s) can be passed
 #! after specifying the <testname>.
+#!
+#! By default <testname> associated with ${KIT}CxxTests executable is run. Specifying DRIVER_TESTNAME argument
+#! allows to change this.
 #!
 #! Variable named KIT (or CLP or EXTENSION_NAME) is expected to be defined in the current scope.
 #! KIT (or CLP or EXTENSION_NAME) variable usually matches the value of PROJECT_NAME.
@@ -20,6 +23,23 @@
 #!
 #! \ingroup CMakeUtilities
 macro(simple_test testname)
+  set(options
+    )
+  set(oneValueArgs
+    DRIVER_TESTNAME
+    )
+  set(multiValueArgs
+    )
+  cmake_parse_arguments(MY
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
+    ${ARGN}
+    )
+
+  if("${MY_DRIVER_TESTNAME}" STREQUAL "")
+    set(MY_DRIVER_TESTNAME ${testname})
+  endif()
 
   if("${KIT}" STREQUAL "")
     set(KIT ${CLP})
@@ -42,7 +62,6 @@ macro(simple_test testname)
   endif()
 
   ExternalData_add_test(${Slicer_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${testname}
-           COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${testname} ${ARGN})
+           COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${MY_DRIVER_TESTNAME} ${MY_UNPARSED_ARGUMENTS})
   set_property(TEST ${testname} PROPERTY LABELS ${KIT})
 endmacro()
-

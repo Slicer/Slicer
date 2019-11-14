@@ -41,14 +41,9 @@ slicerMacroConfigureModuleCxxTestDriver(
 simple_test(qSlicerVolumesIOOptionsWidgetTest1)
 simple_test(qSlicerVolumesModuleWidgetTest1 DATA{${MRML_CORE_INPUT}/fixed.nrrd})
 simple_test(vtkSlicerVolumesLogicTest1 DATA{${MRML_CORE_INPUT}/fixed.nrrd})
-
-ExternalData_add_test(${Slicer_ExternalData_DATA_MANAGEMENT_TARGET}
-  NAME vtkSlicerVolumesLogicTest1_TestNAN
-  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests>
-    vtkSlicer${MODULE_NAME}LogicTest1
-    DATA{${SLICERAPP_INPUT}/testNANInVolume.nrrd}
+simple_test(vtkSlicerVolumesLogicTest1_TestNAN
+  DRIVER_TESTNAME vtkSlicer${MODULE_NAME}LogicTest1 DATA{${SLICERAPP_INPUT}/testNANInVolume.nrrd}
   )
-set_property(TEST vtkSlicerVolumesLogicTest1_TestNAN PROPERTY LABELS ${KIT})
 
 #-----------------------------------------------------------------------------
 add_executable(vtkSlicer${MODULE_NAME}LogicTest2 vtkSlicer${MODULE_NAME}LogicTest2.cxx)
