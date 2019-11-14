@@ -39,6 +39,7 @@
 // MRML includes
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
+#include <vtkMRMLMarkupsFiducialNode.h>
 #include <vtkMRMLScene.h>
 
 // vtkSegmentationCore includes
@@ -50,6 +51,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QInputDialog>
 #include <QStandardItem>
 #include <QAction>
 
@@ -67,6 +69,11 @@ public:
   qSlicerSubjectHierarchyMarkupsPluginPrivate(qSlicerSubjectHierarchyMarkupsPlugin& object);
   ~qSlicerSubjectHierarchyMarkupsPluginPrivate() override;
   void init();
+
+public:
+  QAction* RenameFiducialAction;
+
+  QVariantMap ViewMenuEventData;
 };
 
 //-----------------------------------------------------------------------------
@@ -76,11 +83,16 @@ public:
 qSlicerSubjectHierarchyMarkupsPluginPrivate::qSlicerSubjectHierarchyMarkupsPluginPrivate(qSlicerSubjectHierarchyMarkupsPlugin& object)
 : q_ptr(&object)
 {
+  this->RenameFiducialAction = nullptr;
 }
 
 //------------------------------------------------------------------------------
 void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
 {
+  Q_Q(qSlicerSubjectHierarchyMarkupsPlugin);
+
+  this->RenameFiducialAction = new QAction("Rename fiducial...", q);
+  QObject::connect(this->RenameFiducialAction, SIGNAL(triggered()), q, SLOT(renameFiducial()));
 }
 
 //-----------------------------------------------------------------------------
@@ -350,4 +362,85 @@ QColor qSlicerSubjectHierarchyMarkupsPlugin::getDisplayColor(vtkIdType itemID, Q
   // Get and return color
   double* colorArray = displayNode->GetSelectedColor();
   return QColor::fromRgbF(colorArray[0], colorArray[1], colorArray[2]);
+}
+
+//-----------------------------------------------------------------------------
+QList<QAction*> qSlicerSubjectHierarchyMarkupsPlugin::viewContextMenuActions()const
+{
+  Q_D(const qSlicerSubjectHierarchyMarkupsPlugin);
+
+  QList<QAction*> actions;
+  actions << d->RenameFiducialAction;
+  return actions;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtkIdType itemID, QVariantMap eventData)
+{
+  Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
+
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+
+  // Markup
+  vtkMRMLNode* associatedNode = shNode->GetItemDataNode(itemID);
+  if (associatedNode && associatedNode->IsA("vtkMRMLMarkupsFiducialNode"))
+    {
+    d->ViewMenuEventData = eventData;
+    d->ViewMenuEventData["NodeID"] = QVariant(associatedNode->GetID());
+
+    d->RenameFiducialAction->setVisible(true);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyMarkupsPlugin::renameFiducial()
+{
+  Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
+
+  if (d->ViewMenuEventData.find("NodeID") == d->ViewMenuEventData.end())
+    {
+    qCritical() << Q_FUNC_INFO << ": No node ID found in the view menu event data";
+    return;
+    }
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access MRML scene";
+    return;
+    }
+
+  // Get fiducial markups node
+  QString nodeID = d->ViewMenuEventData["NodeID"].toString();
+  vtkMRMLNode* node = scene->GetNodeByID(nodeID.toLatin1().constData());
+  vtkMRMLMarkupsFiducialNode* fiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast(node);
+  if (!fiducialNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to get fiducial markups node by ID " << nodeID;
+    return;
+    }
+
+  // Get fiducial index
+  int componentIndex = d->ViewMenuEventData["ComponentIndex"].toInt();
+
+  // Pop up an entry box for the new name, with the old name as default
+  QString oldName(fiducialNode->GetNthFiducialLabel(componentIndex).c_str());
+
+  bool ok = false;
+  QString newName = QInputDialog::getText(nullptr, QString("Rename ") + oldName, "New name:", QLineEdit::Normal, oldName, &ok);
+  if (!ok)
+    {
+    return;
+    }
+
+  fiducialNode->SetNthFiducialLabel(componentIndex, newName.toLatin1().constData());
 }

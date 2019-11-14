@@ -37,9 +37,17 @@
 #include "qSlicerSubjectHierarchyOpacityPlugin.h"
 #include "qSlicerSubjectHierarchyVisibilityPlugin.h"
 
+// MRML includes
+#include "vtkMRMLDisplayableNode.h"
+#include "vtkMRMLDisplayNode.h"
+#include "vtkMRMLInteractionEventData.h"
+
 // Qt includes
+#include <QAction>
 #include <QDebug>
+#include <QMenu>
 #include <QString>
+#include <QVariantMap>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SubjectHierarchy
@@ -52,6 +60,9 @@ public:
   qSlicerSubjectHierarchyPluginLogicPrivate(qSlicerSubjectHierarchyPluginLogic& object);
   ~qSlicerSubjectHierarchyPluginLogicPrivate();
   void loadApplicationSettings();
+
+  /// Menu shown when right-clicking a supported object in the views
+  QMenu* ViewMenu;
 };
 
 //-----------------------------------------------------------------------------
@@ -64,11 +75,16 @@ qSlicerSubjectHierarchyPluginLogicPrivate::qSlicerSubjectHierarchyPluginLogicPri
   // Register vtkIdType for use in python for subject hierarchy item IDs
   qRegisterMetaType<vtkIdType>("vtkIdType");
   //qRegisterMetaType<QList<vtkIdType> >("QList<vtkIdType>"); //TODO: Allows returning it but cannot be used (e.g. pluginHandler->currentItems())
+
+  this->ViewMenu = new QMenu();
 }
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyPluginLogicPrivate::~qSlicerSubjectHierarchyPluginLogicPrivate()
-= default;
+{
+  this->ViewMenu->deleteLater();
+  this->ViewMenu = nullptr;
+}
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyPluginLogic methods
@@ -154,7 +170,13 @@ void qSlicerSubjectHierarchyPluginLogic::setMRMLScene(vtkMRMLScene* scene)
 void qSlicerSubjectHierarchyPluginLogic::observeNode(vtkMRMLNode* node)
 {
   // Make observations between the added node and certain plugins
-  // For future reference, this was used to connect hierarchy modified events with the Folder plugin
+
+  // Observe display modified event so that display node menu events can be managed by subject hierarchy
+  vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
+  if (displayableNode)
+    {
+    qvtkReconnect( displayableNode, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT( onDisplayNodeModified(vtkObject*, vtkObject*) ) );
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -384,6 +406,80 @@ void qSlicerSubjectHierarchyPluginLogic::onSceneBatchProcessEnded(vtkObject* sce
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyPluginLogic::onDisplayNodeModified(vtkObject* displayableNodeObject, vtkObject* displayNodeObject)
+{
+  Q_UNUSED(displayableNodeObject);
+
+  vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(displayNodeObject);
+  if (!displayNode)
+    {
+    qCritical() << Q_FUNC_INFO<< ": Invalid object type calling display node modified event";
+    return;
+    }
+
+  if (!qvtkIsConnected(displayNode, vtkMRMLDisplayNode::MenuEvent, this, SLOT(onDisplayMenuEvent(vtkObject*, vtkObject*))))
+    {
+    qvtkConnect( displayNode, vtkMRMLDisplayNode::MenuEvent, this, SLOT( onDisplayMenuEvent(vtkObject*, vtkObject*) ) );
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyPluginLogic::onDisplayMenuEvent(vtkObject* displayNodeObject, vtkObject* eventDataObject)
+{
+  vtkMRMLInteractionEventData* eventData = vtkMRMLInteractionEventData::SafeDownCast(eventDataObject);
+  if (!eventData)
+    {
+    qCritical() << Q_FUNC_INFO<< ": Menu event called with invalid event data";
+    return;
+    }
+  vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(displayNodeObject);
+  if (!displayNode || !displayNode->GetScene())
+    {
+    qCritical() << Q_FUNC_INFO<< ": Invalid object type calling display menu event";
+    return;
+    }
+  vtkMRMLDisplayableNode* displayableNode = displayNode->GetDisplayableNode();
+  if (!displayableNode)
+    {
+    qCritical() << Q_FUNC_INFO<< ": Unable to get displayable node from display node " << displayNode->GetID();
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = displayNode->GetScene()->GetSubjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+
+  Q_D(qSlicerSubjectHierarchyPluginLogic);
+
+  // Package event data
+  QVariantMap eventDataMap;
+  eventDataMap["ComponentType"] = QVariant(eventData->GetComponentType());
+  eventDataMap["ComponentIndex"] = QVariant(eventData->GetComponentIndex());
+
+  // Get subject hierarchy item ID
+  vtkIdType itemID = shNode->GetItemByDataNode(displayableNode);
+  if (!itemID)
+    {
+    qCritical() << Q_FUNC_INFO<< ": Failed to find displayable node " << (displayableNode->GetName() ? displayableNode->GetName() : "Unnamed")
+      << " in subject hierarchy";
+    return;
+    }
+
+  // Have all plugins show context view menu actions for current item
+  foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
+    {
+    plugin->hideAllContextMenuActions();
+    plugin->showViewContextMenuActionsForItem(itemID, eventDataMap);
+    }
+
+  // Show menu
+  d->ViewMenu->move(QCursor::pos());
+  d->ViewMenu->exec();
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginLogic::addSupportedDataNodesToSubjectHierarchy()
 {
   // Get subject hierarchy node
@@ -437,5 +533,16 @@ void qSlicerSubjectHierarchyPluginLogic::addSupportedDataNodesToSubjectHierarchy
         this->observeNode(node);
         }
       }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyPluginLogic::addViewMenuAction(QAction* action)
+{
+  Q_D(qSlicerSubjectHierarchyPluginLogic);
+
+  if (action)
+    {
+    d->ViewMenu->addAction(action);
     }
 }

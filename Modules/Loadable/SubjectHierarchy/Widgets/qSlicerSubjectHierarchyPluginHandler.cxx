@@ -155,6 +155,12 @@ bool qSlicerSubjectHierarchyPluginHandler::registerPlugin(qSlicerSubjectHierarch
       }
     }
 
+  // Add view menu actions from plugin to plugin logic
+  foreach (QAction* action, pluginToRegister->viewContextMenuActions())
+    {
+    this->m_PluginLogic->addViewMenuAction(action);
+    }
+
   // Add the plugin to the list
   this->m_RegisteredPlugins << pluginToRegister;
 

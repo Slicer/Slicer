@@ -529,7 +529,7 @@ bool vtkSlicerMarkupsWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventD
 }
 
 //-------------------------------------------------------------------------
-bool vtkSlicerMarkupsWidget::ProcessWidgetMenu(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
+bool vtkSlicerMarkupsWidget::ProcessWidgetMenu(vtkMRMLInteractionEventData* eventData)
 {
   if (this->WidgetState != WidgetStateOnWidget || !this->MousePressedSinceMarkupPlace)
     {
@@ -545,11 +545,15 @@ bool vtkSlicerMarkupsWidget::ProcessWidgetMenu(vtkMRMLInteractionEventData* vtkN
   markupsNode->GetScene()->SaveStateForUndo();
 
   vtkNew<vtkMRMLInteractionEventData> pickEventData;
-  pickEventData->SetType(vtkMRMLMarkupsDisplayNode::MenuEvent);
+  pickEventData->SetType(vtkMRMLDisplayNode::MenuEvent);
   pickEventData->SetComponentType(markupsDisplayNode->GetActiveComponentType()); //TODO: This will always pass the active component for the mouse
   pickEventData->SetComponentIndex(markupsDisplayNode->GetActiveComponentIndex());
   pickEventData->SetViewNode(this->WidgetRep->GetViewNode());
-  markupsDisplayNode->InvokeEvent(vtkMRMLMarkupsDisplayNode::MenuEvent, pickEventData);
+  if (eventData->IsDisplayPositionValid())
+    {
+    pickEventData->SetDisplayPosition(eventData->GetDisplayPosition());
+    }
+  markupsDisplayNode->InvokeEvent(vtkMRMLDisplayNode::MenuEvent, pickEventData);
   return true;
 }
 

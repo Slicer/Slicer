@@ -78,6 +78,12 @@ public:
     NUM_SCALAR_RANGE_FLAGS
   } ScalarRangeFlagType;
 
+  enum
+    {
+    MenuEvent = 16100, /**< display of context menu is requested (mapped to right-click by default),
+                       event data is vtkMRMLInteractionEventData */
+    };
+
   /// Convert between scalar range flag type id and string
   /// \sa ScalarRangeFlag
   static const char* GetScalarRangeFlagTypeAsString(int flag);

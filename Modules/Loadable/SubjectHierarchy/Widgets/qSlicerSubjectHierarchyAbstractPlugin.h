@@ -158,6 +158,15 @@ public:
   /// \param itemID Subject Hierarchy item to show the visibility context menu items for
   Q_INVOKABLE virtual void showVisibilityContextMenuActionsForItem(vtkIdType itemID) { Q_UNUSED(itemID); };
 
+  /// Get view context menu item actions that are available when right-clicking an object in the views.
+  /// These item context menu actions can be shown in the implementations of \sa showViewContextMenuActionsForItem
+  Q_INVOKABLE virtual QList<QAction*> viewContextMenuActions()const;
+
+  /// Show context menu actions valid for a given subject hierarchy item to be shown in the view.
+  /// \param itemID Subject Hierarchy item to show the context menu items for
+  /// \param eventData Supplementary data for the item that may be considered for the menu (sub-item ID, attribute, etc.)
+  Q_INVOKABLE virtual void showViewContextMenuActionsForItem(vtkIdType itemID, QVariantMap eventData) { Q_UNUSED(itemID); Q_UNUSED(eventData); };
+
 // Parenting related virtual methods with default implementation
 public:
   /// Determines if a data node can be placed in the hierarchy using the actual plugin,
@@ -233,6 +242,7 @@ private:
   qSlicerSubjectHierarchyAbstractPlugin(const qSlicerSubjectHierarchyAbstractPlugin&); // Not implemented
   void operator=(const qSlicerSubjectHierarchyAbstractPlugin&); // Not implemented
   friend class qMRMLSubjectHierarchyTreeView;
+  friend class qSlicerSubjectHierarchyPluginLogic;
 };
 
 #endif

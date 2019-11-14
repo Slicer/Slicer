@@ -5,6 +5,7 @@ set(KIT ${PROJECT_NAME})
 set(${KIT}_EXPORT_DIRECTIVE "Q_SLICER_${MODULE_NAME_UPPER}_SUBJECT_HIERARCHY_PLUGINS_EXPORT")
 
 set(${KIT}_INCLUDE_DIRECTORIES
+  ${vtkSlicerMarkupsModuleMRML_INCLUDE_DIRS}
   ${qSlicerSubjectHierarchyModuleWidgets_INCLUDE_DIRS}
   ${vtkSlicerSubjectHierarchyModuleLogic_INCLUDE_DIRS}
   ${qSlicerTerminologiesModuleWidgets_INCLUDE_DIRS}
@@ -33,6 +34,7 @@ set(${KIT}_RESOURCES
 
 #-----------------------------------------------------------------------------
 set(${KIT}_TARGET_LIBRARIES
+  vtkSlicer${MODULE_NAME}ModuleMRML
   qSlicerSubjectHierarchyModuleWidgets
   vtkSlicerSubjectHierarchyModuleLogic
   qSlicerTerminologiesModuleWidgets

@@ -84,6 +84,9 @@ protected:
   /// hierarchy module if supported nodes are found that are not in the hierarchy.
   void addSupportedDataNodesToSubjectHierarchy();
 
+  /// Add view menu action. Called by plugin handler when registering a plugin
+  void addViewMenuAction(QAction* action);
+
 protected slots:
   /// Called when a node is added to the scene so that a plugin can create an item for it
   void onNodeAdded(vtkObject* scene, vtkObject* nodeObject);
@@ -106,12 +109,18 @@ protected slots:
   /// when nodes may be added/removed without individual events
   void onSceneBatchProcessEnded(vtkObject* sceneObject);
 
+  /// Called when display node modified event is invoked on an owned displayable node
+  void onDisplayNodeModified(vtkObject*, vtkObject*);
+  /// Called when menu event is invoked on a display node of an owned displayable node
+  void onDisplayMenuEvent(vtkObject*, vtkObject*);
+
 protected:
   QScopedPointer<qSlicerSubjectHierarchyPluginLogicPrivate> d_ptr; 
   
 private:
   Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyPluginLogic);
   Q_DISABLE_COPY(qSlicerSubjectHierarchyPluginLogic);
+  friend class qSlicerSubjectHierarchyPluginHandler;
 };
 
 #endif
