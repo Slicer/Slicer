@@ -38,13 +38,12 @@ target_link_libraries(${KIT}CxxTests ${KIT} ${ITK_LIBRARIES})
 
 set_target_properties(${KIT}CxxTests PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
 
-macro(SIMPLE_FILE_TEST TESTNAME FILE)
-  add_test(
-    NAME ${TESTNAME}_${FILE}
-    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${MRMLCore_SOURCE_DIR}/Testing/TestData/${FILE}
-    )
+#-----------------------------------------------------------------------------
+macro(simple_file_test TESTNAME FILE)
+  simple_test(${TESTNAME}_${FILE} DRIVER_TESTNAME ${TESTNAME} DATA{${MRMLCore_SOURCE_DIR}/Testing/TestData/${FILE}})
 endmacro()
 
+#-----------------------------------------------------------------------------
 simple_test( vtkMRMLAbstractLogicSceneEventsTest )
 simple_test( vtkMRMLColorLogicTest1 )
 simple_test( vtkMRMLDisplayableHierarchyLogicTest1 )
@@ -53,8 +52,8 @@ simple_test( vtkMRMLLayoutLogicTest1 )
 simple_test( vtkMRMLLayoutLogicTest2 )
 simple_test( vtkMRMLSliceLayerLogicTest )
 simple_test( vtkMRMLSliceLogicTest1 )
-SIMPLE_FILE_TEST( vtkMRMLSliceLogicTest2 fixed.nrrd)
-SIMPLE_FILE_TEST( vtkMRMLSliceLogicTest3 fixed.nrrd)
-SIMPLE_FILE_TEST( vtkMRMLSliceLogicTest4 fixed.nrrd)
-SIMPLE_FILE_TEST( vtkMRMLSliceLogicTest5 fixed.nrrd)
+simple_file_test( vtkMRMLSliceLogicTest2 fixed.nrrd)
+simple_file_test( vtkMRMLSliceLogicTest3 fixed.nrrd)
+simple_file_test( vtkMRMLSliceLogicTest4 fixed.nrrd)
+simple_file_test( vtkMRMLSliceLogicTest5 fixed.nrrd)
 simple_test( vtkMRMLApplicationLogicTest1 "${CMAKE_BINARY_DIR}/Testing/Temporary" )
