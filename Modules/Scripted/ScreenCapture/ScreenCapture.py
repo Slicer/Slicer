@@ -947,7 +947,10 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     slicer.app.processEvents()
     if view:
-      view.forceRender()
+      if type(view)==slicer.qMRMLSliceView or type(view)==slicer.qMRMLThreeDView:
+        view.forceRender()
+      else:
+        view.repaint()
     else:
       slicer.util.forceRenderAllViews()
 
@@ -1082,6 +1085,16 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         view = lm.threeDWidget(widgetIndex).threeDView()
         if viewNode == view.mrmlViewNode():
           renderView = view
+          break
+      if not renderView:
+        raise ValueError('Selected 3D view is not visible in the current layout.')
+      return renderView
+    elif viewNode.IsA("vtkMRMLPlotViewNode"):
+      renderView = None
+      lm = slicer.app.layoutManager()
+      for viewIndex in range(lm.plotViewCount):
+        if viewNode == lm.plotWidget(viewIndex).mrmlPlotViewNode():
+          renderView = lm.plotWidget(viewIndex).plotView()
           break
       if not renderView:
         raise ValueError('Selected 3D view is not visible in the current layout.')
