@@ -32,6 +32,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLDoubleArrayStorageNode.h"
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLFiducialListStorageNode.h"
+#include "vtkMRMLFolderDisplayNode.h"
 #include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
 #include "vtkMRMLFreeSurferModelStorageNode.h"
 #include "vtkMRMLGridTransformNode.h"
@@ -167,6 +168,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLClipModelsNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLFiducialListNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLFiducialListStorageNode >::New() );
+  this->RegisterNodeClass(vtkSmartPointer< vtkMRMLFolderDisplayNode >::New());
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLROINode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLROIListNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSliceCompositeNode >::New() );
