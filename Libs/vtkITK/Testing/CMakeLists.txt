@@ -11,10 +11,10 @@ target_link_libraries(VTKITKVectorReader
 
 set_target_properties(VTKITKVectorReader PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
 
-add_test(
+ExternalData_add_test(${Slicer_ExternalData_DATA_MANAGEMENT_TARGET}
   NAME VTKITKVectorReader
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:VTKITKVectorReader>
-    ${MRML_TEST_DATA_DIR}/fixed.nrrd
+    DATA{${MRML_TEST_DATA_DIR}/fixed.nrrd}
   )
 
 slicer_add_python_unittest(SCRIPT vtkITKArchetypeDiffusionTensorReaderFile.py)
