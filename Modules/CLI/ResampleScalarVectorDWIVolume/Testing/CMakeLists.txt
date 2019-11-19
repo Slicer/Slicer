@@ -104,7 +104,6 @@ ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
-set(HFieldFile ${Slicer_SOURCE_DIR}/Testing/Data/Input/MRHeadResampledHField.nrrd)
 set(testname ${CLP}HFieldTest)
 ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
   NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
@@ -112,7 +111,7 @@ ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
     DATA{${INPUT}/MRHeadResampledHFieldTest.nrrd}
     ${TEMP}/${testname}.nrrd
   ModuleEntryPoint
-    -H ${HFieldFile}
+    -H DATA{${INPUT}/MRHeadResampledHField.nrrd}
     DATA{${INPUT}/MRHeadResampled.nhdr,MRHeadResampled.raw.gz}
     ${TEMP}/${testname}.nrrd
   )
