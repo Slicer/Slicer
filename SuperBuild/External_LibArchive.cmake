@@ -42,13 +42,11 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
     QUIET
     )
 
-  # master (v3.3.3) with patches:
+  # master (v3.4.0) with patches:
   # - disabling LHA (See #4407)
-  # - fixing GCC7 build errors
-  # - fix CMP0074 warning
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "0737ce70653716995508f4613338410b2eb7f6ec" # slicer-v3.3.3-2018-06-10-d7dea508
+    "92ad4c79e46805ce2dfbc46746e10d204108655e" # slicer-v3.4.0-2019-06-11-614110e7
     QUIET
     )
 
