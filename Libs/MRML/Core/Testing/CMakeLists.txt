@@ -262,14 +262,14 @@ set( ScenesToTest
   diffusionEditor.mrml|DATA{${INPUT}/helix-DTI.nhdr,helix-DTI.raw.gz,helix-DWI.nhdr,helix-DWI.raw.gz}
   helixGlyphs.mrml|DATA{${INPUT}/helix-DTI.nhdr,helix-DTI.raw.gz}
   hier_test.mrml
-  multi_display.mrml
-  name.mrml
-  SlicePipeline.mrml
+  multi_display.mrml|DATA{${INPUT}/cube.vtk}
+  name.mrml|DATA{${INPUT}/cube.vtk,fixed.nrrd,moving.nrrd}
+  SlicePipeline.mrml|DATA{${INPUT}/fixed.nrrd}
   volumetric_mesh.mrml
-  vol_and_cube_camera.mrml
-  vol_and_cube.mrml
-  vol.mrml
-  volScene.mrml
+  vol_and_cube_camera.mrml|DATA{${INPUT}/fixed.nrrd,cube.vtk}
+  vol_and_cube.mrml|DATA{${INPUT}/fixed.nrrd,cube.vtk}
+  vol.mrml|DATA{${INPUT}/fixed.nrrd}
+  volScene.mrml|DATA{${INPUT}/fixed.nrrd,moving.nrrd}
   )
 
 foreach(SceneToTest ${ScenesToTest})
