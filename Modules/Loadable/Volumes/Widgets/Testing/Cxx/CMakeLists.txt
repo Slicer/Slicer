@@ -25,4 +25,4 @@ slicerMacroConfigureModuleCxxTestDriver(
 #-----------------------------------------------------------------------------
 simple_test(qSlicerDiffusionTensorVolumeDisplayWidgetTest1)
 simple_test(qSlicerDTISliceDisplayWidgetTest1)
-simple_test(qSlicerDTISliceDisplayWidgetTest2 ${INPUT}/helix-DTI.nhdr)
+simple_test(qSlicerDTISliceDisplayWidgetTest2 DATA{${INPUT}/helix-DTI.nhdr})
