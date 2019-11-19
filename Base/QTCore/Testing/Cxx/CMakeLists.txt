@@ -124,7 +124,7 @@ if(BUILD_TESTING)
 
   simple_test( qSlicerCoreApplicationTest1)
   set_property(TEST qSlicerCoreApplicationTest1 PROPERTY LABELS ${LIBRARY_NAME})
-  simple_test( qSlicerCoreIOManagerTest1 ${CMAKE_SOURCE_DIR}/Libs/MRML/Core/Testing/name.mrml)
+  simple_test( qSlicerCoreIOManagerTest1 )
   set_property(TEST qSlicerCoreIOManagerTest1 PROPERTY LABELS ${LIBRARY_NAME})
   simple_test( qSlicerAbstractCoreModuleTest1 )
   simple_test( qSlicerLoadableModuleFactoryTest1 )
