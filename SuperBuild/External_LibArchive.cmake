@@ -89,7 +89,7 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
     )
   if(APPLE)
     ExternalProject_Add_Step(${proj} fix_rpath
-      COMMAND install_name_tool -id ${EP_INSTALL_DIR}/lib/libarchive.16.dylib ${EP_INSTALL_DIR}/lib/libarchive.16.dylib
+      COMMAND install_name_tool -id ${EP_INSTALL_DIR}/lib/libarchive.17.dylib ${EP_INSTALL_DIR}/lib/libarchive.17.dylib
       DEPENDEES install
       )
   endif()
