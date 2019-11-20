@@ -208,24 +208,25 @@ class DrawPipeline(object):
 
   def apply(self):
     lines = self.polyData.GetLines()
-    if lines.GetNumberOfCells() == 0: return
+    lineExists = lines.GetNumberOfCells() > 0
+    if lineExists:
+      # Close the polyline back to the first point
+      idList = vtk.vtkIdList()
+      idList.InsertNextId(self.polyData.GetNumberOfPoints()-1)
+      idList.InsertNextId(0)
+      self.polyData.InsertNextCell(vtk.VTK_LINE, idList)
 
-    # Close the polyline back to the first point
-    idList = vtk.vtkIdList()
-    idList.InsertNextId(self.polyData.GetNumberOfPoints()-1)
-    idList.InsertNextId(0)
-    self.polyData.InsertNextCell(vtk.VTK_LINE, idList)
+      # Get modifier labelmap
+      import vtkSegmentationCorePython as vtkSegmentationCore
+      modifierLabelmap = self.scriptedEffect.defaultModifierLabelmap()
 
-    self.scriptedEffect.saveStateForUndo()
+      # Apply poly data on modifier labelmap
+      self.scriptedEffect.appendPolyMask(modifierLabelmap, self.polyData, self.sliceWidget)
 
-    # Get modifier labelmap
-    import vtkSegmentationCorePython as vtkSegmentationCore
-    modifierLabelmap = self.scriptedEffect.defaultModifierLabelmap()
-
-    # Apply poly data on modifier labelmap
-    self.scriptedEffect.appendPolyMask(modifierLabelmap, self.polyData, self.sliceWidget)
     self.resetPolyData()
-    self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeAdd)
+    if lineExists:
+      self.scriptedEffect.saveStateForUndo()
+      self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeAdd)
 
   def resetPolyData(self):
     # Return the polyline to initial state with no points
