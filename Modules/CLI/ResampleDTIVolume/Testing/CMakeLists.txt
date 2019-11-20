@@ -126,16 +126,13 @@ set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 #We run ResampleDTIVolume and do not care about the result. What interests us in that test is to make sure that by extending
 #itkTestMainExtended.h to work with DTI, we did not break it and that it still works with scalar images too.
 #Therefore, we compare a scalar image with itself and verify that the test passes successfully.
-set(SourceScalarFile ${BASELINE}/Brain_slice.nrrd )
-file( COPY ${SourceScalarFile} DESTINATION ${TEMP})
-set( BinaryScalarFile ${TEMP}/Brain_slice.nrrd)
 set(testname itkTestMainExtendedScalarTest)
 set(TransformedImage7 ${TEMP}/dt-helix-transformed7.nrrd )
 ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
   NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
  --compare
-   ${BinaryScalarFile}
-   ${BinaryScalarFile}
+   DATA{${BASELINE}/Brain_slice.nrrd}
+   DATA{${BASELINE}/Brain_slice.nrrd}
   ModuleEntryPoint
     --interpolation nn
     ${OriginalImage}
