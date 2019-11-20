@@ -2417,6 +2417,9 @@ void vtkSegmentation::CollapseBinaryLabelmaps(bool forceToSingleLayer/*=false*/)
       }
     }
 
+  // Although the labelmaps have been collapsed, the individual segment contents should not have been modified.
+  // Don't invoke a MasterRepresentation modified event, since that would invalidate the derived representations.
+  bool wasMasterRepresentationModifiedEnabled = this->SetMasterRepresentationModifiedEnabled(false);
   for (LayerType newLayer : newLayers)
     {
     for (std::string segmentId : newLayer.second)
@@ -2427,4 +2430,5 @@ void vtkSegmentation::CollapseBinaryLabelmaps(bool forceToSingleLayer/*=false*/)
       }
     newLayer.first->Modified();
     }
+  this->SetMasterRepresentationModifiedEnabled(wasMasterRepresentationModifiedEnabled);
 }

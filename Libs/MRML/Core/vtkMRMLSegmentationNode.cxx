@@ -896,6 +896,11 @@ void vtkMRMLSegmentationNode::GetBinaryLabelmapRepresentation(const std::string 
 
   vtkOrientedImageData* binaryLabelmap = vtkOrientedImageData::SafeDownCast(
     segment->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()));
+  if (!binaryLabelmap)
+    {
+    vtkErrorMacro("GetBinaryLabelmapRepresentation: No binary labelmap representation in segment");
+    return;
+    }
 
   vtkNew<vtkImageThreshold> threshold;
   threshold->SetInputData(binaryLabelmap);
@@ -961,7 +966,13 @@ void vtkMRMLSegmentationNode::GetClosedSurfaceRepresentation(const std::string s
     vtkErrorMacro("GetClosedSurfaceRepresentation: Invalid segment");
     return;
     }
-  outputClosedSurface->DeepCopy(segment->GetRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName()));
+  vtkDataObject* closedSurface = segment->GetRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
+  if (!closedSurface)
+    {
+    vtkErrorMacro("GetClosedSurfaceRepresentation: No closed surface representation in segment")
+    return;
+    }
+  outputClosedSurface->DeepCopy(closedSurface);
 }
 
 //---------------------------------------------------------------------------
