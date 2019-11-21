@@ -128,6 +128,9 @@ public:
   /// Get item context menu item actions to add to tree view
   QList<QAction*> itemContextMenuActions()const override;
 
+  /// Get view item context menu item actions to add to views
+  QList<QAction*> viewContextMenuActions()const override;
+
   /// Get scene context menu item actions to add to tree view
   /// Separate method is needed for the scene, as its actions are set to the
   /// tree by a different method \sa itemContextMenuActions
@@ -137,7 +140,12 @@ public:
   /// \param itemID Subject Hierarchy item to show the context menu items for
   void showContextMenuActionsForItem(vtkIdType itemID) override;
 
-// Parenting related virtual methods with default implementation
+  /// Show view context menu actions valid for a given subject hierarchy item.
+  /// \param itemID Subject Hierarchy item to show the context menu items for
+  /// \param eventData Supplementary data for the item that may be considered for the menu (sub-item ID, attribute, etc.)
+  void showViewContextMenuActionsForItem(vtkIdType itemID, QVariantMap eventData) override;
+
+  // Parenting related virtual methods with default implementation
 public:
   /// Determines if a data node can be placed in the hierarchy using the actual plugin,
   /// and gets a confidence value for a certain MRML node (usually the type and possibly attributes are checked).

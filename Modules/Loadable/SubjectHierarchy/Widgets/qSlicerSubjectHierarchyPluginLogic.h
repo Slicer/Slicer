@@ -71,8 +71,16 @@ public:
 
   /// Register subject hierarchy core plugins
   /// Note: Registering plugins provided by other modules is the responsibility
-  ///   of the module!
+  ///       of the module!
   void registerCorePlugins();
+
+  /// Get all view menu actions available
+  /// \return List of object names of all registered view menu actions
+  Q_INVOKABLE QStringList availableViewMenuActionNames();
+  /// Set desired set of view menu actions
+  /// \param actionObjectNames List of view menu actions to consider. Only actions included here by object name
+  ///        are shown in the menu if they are accepted by the owner plugin. The order set here is used.
+  Q_INVOKABLE void setDisplayedViewMenuActionNames(QStringList actionObjectNames);
 
 protected:
   /// Add observations for node that was added to subject hierarchy
@@ -85,7 +93,7 @@ protected:
   void addSupportedDataNodesToSubjectHierarchy();
 
   /// Add view menu action. Called by plugin handler when registering a plugin
-  void addViewMenuAction(QAction* action);
+  void registerViewMenuAction(QAction* action);
 
 protected slots:
   /// Called when a node is added to the scene so that a plugin can create an item for it
@@ -113,6 +121,8 @@ protected slots:
   void onDisplayNodeModified(vtkObject*, vtkObject*);
   /// Called when menu event is invoked on a display node of an owned displayable node
   void onDisplayMenuEvent(vtkObject*, vtkObject*);
+  /// Called when the user clicks the Edit properties View menu action
+  void editProperties();
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyPluginLogicPrivate> d_ptr; 

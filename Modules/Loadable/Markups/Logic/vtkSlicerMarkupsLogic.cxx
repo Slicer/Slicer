@@ -392,7 +392,7 @@ void vtkSlicerMarkupsLogic::SetActiveListID(vtkMRMLMarkupsNode *markupsNode)
     const char *activePlaceNodeClassName = selectionNode->GetActivePlaceNodeClassName();
     if (activePlaceNodeClassName && strcmp(activePlaceNodeClassName, "vtkMRMLMarkupsFiducialNode") == 0)
       {
-      selectionNode->SetActivePlaceNodeID(nullptr);
+      selectionNode->SetReferenceActivePlaceNodeID(nullptr);
       vtkSmartPointer<vtkCollection> interactionNodes = vtkSmartPointer<vtkCollection>::Take
             (this->GetMRMLScene()->GetNodesByClass("vtkMRMLInteractionNode"));
       for(int interactionNodeIndex = 0; interactionNodeIndex < interactionNodes->GetNumberOfItems(); ++interactionNodeIndex)
@@ -421,7 +421,7 @@ void vtkSlicerMarkupsLogic::SetActiveListID(vtkMRMLMarkupsNode *markupsNode)
   if (!activePlaceNodeID ||
       (activePlaceNodeID && strcmp(activePlaceNodeID, markupsNode->GetID()) != 0))
     {
-    selectionNode->SetActivePlaceNodeID(markupsNode->GetID());
+    selectionNode->SetReferenceActivePlaceNodeID(markupsNode->GetID());
     }
 }
 

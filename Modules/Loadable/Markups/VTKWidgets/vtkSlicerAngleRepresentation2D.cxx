@@ -227,7 +227,7 @@ void vtkSlicerAngleRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
     {
     controlPointType = Active;
     }
-  else if (!markupsNode->GetNthControlPointSelected(0) ||
+  else if ((markupsNode->GetNumberOfControlPoints() > 0 && !markupsNode->GetNthControlPointSelected(0)) ||
            (markupsNode->GetNumberOfControlPoints() > 1 && !markupsNode->GetNthControlPointSelected(1)) ||
            (markupsNode->GetNumberOfControlPoints() > 2 && !markupsNode->GetNthControlPointSelected(2)))
     {

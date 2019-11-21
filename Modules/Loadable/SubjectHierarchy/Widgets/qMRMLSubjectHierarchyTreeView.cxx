@@ -1260,7 +1260,7 @@ void qMRMLSubjectHierarchyTreeView::selectPluginForCurrentItem()
   vtkIdType currentItemID = this->currentItem();
   if (!currentItemID)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid current item for manually selecting role!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current item for manually selecting role";
     return;
     }
   QString selectedPluginName = d->SelectPluginActionGroup->checkedAction()->data().toString();
@@ -1291,7 +1291,7 @@ void qMRMLSubjectHierarchyTreeView::updateSelectPluginActions()
   vtkIdType currentItemID = this->currentItem();
   if (!currentItemID)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid current item!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current item";
     return;
     }
   QString ownerPluginName = QString(d->SubjectHierarchyNode->GetItemOwnerPluginName(currentItemID).c_str());
@@ -1342,7 +1342,7 @@ void qMRMLSubjectHierarchyTreeView::renameCurrentItem()
   vtkIdType currentItemID = this->currentItem();
   if (!currentItemID)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid current item!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current item";
     return;
     }
 
@@ -1371,7 +1371,7 @@ void qMRMLSubjectHierarchyTreeView::editCurrentItem()
   vtkIdType currentItemID = this->currentItem();
   if (!currentItemID)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid current item!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current item";
     return;
     }
 
@@ -1480,7 +1480,7 @@ void qMRMLSubjectHierarchyTreeView::expandToDepthFromContextMenu()
   QAction* senderAction = qobject_cast<QAction*>(this->sender());
   if (!senderAction)
     {
-    qCritical() << Q_FUNC_INFO << ": Unable to get sender action!";
+    qCritical() << Q_FUNC_INFO << ": Unable to get sender action";
     return;
     }
 

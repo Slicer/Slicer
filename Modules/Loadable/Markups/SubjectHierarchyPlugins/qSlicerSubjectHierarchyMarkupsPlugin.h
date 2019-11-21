@@ -99,8 +99,12 @@ public:
   void showViewContextMenuActionsForItem(vtkIdType itemID, QVariantMap eventData) override;
 
 protected slots:
-  /// Called when clicking on rename fiducial function
-  void renameFiducial();
+  /// Called when clicking on rename point action
+  void renamePoint();
+  /// Called when clicking on delete point action
+  void deletePoint();
+  /// Called when clicking on toggle select point action
+  void toggleSelectPoint();
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyMarkupsPluginPrivate> d_ptr;

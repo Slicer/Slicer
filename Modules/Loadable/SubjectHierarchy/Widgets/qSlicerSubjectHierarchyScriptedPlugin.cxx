@@ -60,8 +60,10 @@ public:
     SetDisplayVisibilityMethod,
     GetDisplayVisibilityMethod,
     ItemContextMenuActionsMethod,
+    ViewContextMenuActionsMethod,
     SceneContextMenuActionsMethod,
     ShowContextMenuActionsForItemMethod,
+    ShowViewContextMenuActionsForItemMethod,
     CanAddNodeToSubjectHierarchyMethod,
     CanReparentItemInsideSubjectHierarchyMethod,
     ReparentItemInsideSubjectHierarchyMethod
@@ -91,8 +93,10 @@ qSlicerSubjectHierarchyScriptedPluginPrivate::qSlicerSubjectHierarchyScriptedPlu
   this->PythonCppAPI.declareMethod(Self::GetDisplayVisibilityMethod, "getDisplayVisibility");
   // Function related methods
   this->PythonCppAPI.declareMethod(Self::ItemContextMenuActionsMethod, "itemContextMenuActions");
+  this->PythonCppAPI.declareMethod(Self::ViewContextMenuActionsMethod, "viewContextMenuActions");
   this->PythonCppAPI.declareMethod(Self::SceneContextMenuActionsMethod, "sceneContextMenuActions");
   this->PythonCppAPI.declareMethod(Self::ShowContextMenuActionsForItemMethod, "showContextMenuActionsForItem");
+  this->PythonCppAPI.declareMethod(Self::ShowViewContextMenuActionsForItemMethod, "showViewContextMenuActionsForItem");
   // Parenting related methods (with default implementation)
   this->PythonCppAPI.declareMethod(Self::CanAddNodeToSubjectHierarchyMethod, "canAddNodeToSubjectHierarchy");
   this->PythonCppAPI.declareMethod(Self::CanReparentItemInsideSubjectHierarchyMethod, "canReparentItemInsideSubjectHierarchy");
@@ -377,6 +381,33 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::itemContextMenuActions()c
 }
 
 //-----------------------------------------------------------------------------
+QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::viewContextMenuActions()const
+{
+  Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
+  PyObject* result = d->PythonCppAPI.callMethod(d->ViewContextMenuActionsMethod);
+  if (!result)
+    {
+    // Method call failed (probably an omitted function), call default implementation
+    return this->Superclass::viewContextMenuActions();
+    }
+
+  // Parse result
+  QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::List);
+  if (resultVariant.isNull())
+    {
+    return this->Superclass::viewContextMenuActions();
+    }
+  QList<QVariant> resultVariantList = resultVariant.toList();
+  QList<QAction*> actionList;
+  foreach(QVariant actionVariant, resultVariantList)
+    {
+    QAction* action = qobject_cast<QAction*>( actionVariant.value<QObject*>() );
+    actionList << action;
+    }
+  return actionList;
+}
+
+//-----------------------------------------------------------------------------
 QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::sceneContextMenuActions()const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
@@ -407,10 +438,25 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::sceneContextMenuActions()
 void qSlicerSubjectHierarchyScriptedPlugin::showContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyScriptedPlugin);
-
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyObject* result = d->PythonCppAPI.callMethod(d->ShowContextMenuActionsForItemMethod, arguments);
+  Py_DECREF(arguments);
+  if (!result)
+    {
+    // Method call failed (probably an omitted function), call default implementation
+    this->Superclass::showContextMenuActionsForItem(itemID);
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyScriptedPlugin::showViewContextMenuActionsForItem(vtkIdType itemID, QVariantMap eventData)
+{
+  Q_D(qSlicerSubjectHierarchyScriptedPlugin);
+  PyObject* arguments = PyTuple_New(2);
+  PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
+  PyTuple_SET_ITEM(arguments, 1, PythonQtConv::QVariantMapToPyObject(eventData));
+  PyObject* result = d->PythonCppAPI.callMethod(d->ShowViewContextMenuActionsForItemMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
     {

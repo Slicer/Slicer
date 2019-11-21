@@ -160,6 +160,7 @@ public:
 
   /// Get view context menu item actions that are available when right-clicking an object in the views.
   /// These item context menu actions can be shown in the implementations of \sa showViewContextMenuActionsForItem
+  /// Note: The actions need object names set so that they can be included in the white list
   Q_INVOKABLE virtual QList<QAction*> viewContextMenuActions()const;
 
   /// Show context menu actions valid for a given subject hierarchy item to be shown in the view.

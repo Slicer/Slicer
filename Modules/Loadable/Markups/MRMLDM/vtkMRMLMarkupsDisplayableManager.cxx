@@ -875,7 +875,7 @@ vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManager::GetWidgetForPlacement(
   if (!activeMarkupsNode)
     {
     activeMarkupsNode = this->CreateNewMarkupsNode(placeNodeClassName);
-    selectionNode->SetActivePlaceNodeID(activeMarkupsNode->GetID());
+    selectionNode->SetReferenceActivePlaceNodeID(activeMarkupsNode->GetID());
     }
 
   if (!activeMarkupsNode)

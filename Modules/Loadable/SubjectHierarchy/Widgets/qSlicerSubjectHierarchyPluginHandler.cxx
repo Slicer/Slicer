@@ -135,12 +135,12 @@ bool qSlicerSubjectHierarchyPluginHandler::registerPlugin(qSlicerSubjectHierarch
 {
   if (pluginToRegister == nullptr)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid plugin to register!";
+    qCritical() << Q_FUNC_INFO << ": Invalid plugin to register";
     return false;
     }
   if (pluginToRegister->name().isEmpty())
     {
-    qCritical() << Q_FUNC_INFO << ": SubjectHierarchy plugin cannot be registered with empty name!";
+    qCritical() << Q_FUNC_INFO << ": SubjectHierarchy plugin cannot be registered with empty name";
     return false;
     }
 
@@ -158,7 +158,7 @@ bool qSlicerSubjectHierarchyPluginHandler::registerPlugin(qSlicerSubjectHierarch
   // Add view menu actions from plugin to plugin logic
   foreach (QAction* action, pluginToRegister->viewContextMenuActions())
     {
-    this->m_PluginLogic->addViewMenuAction(action);
+    this->m_PluginLogic->registerViewMenuAction(action);
     }
 
   // Add the plugin to the list
@@ -204,7 +204,7 @@ qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::plu
       }
     }
 
-  qWarning() << Q_FUNC_INFO << ": Plugin named '" << name << "' cannot be found!";
+  qWarning() << Q_FUNC_INFO << ": Plugin named '" << name << "' cannot be found";
   return nullptr;
 }
 
@@ -348,7 +348,7 @@ qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::get
     {
     if (itemID != this->m_MRMLScene->GetSubjectHierarchyNode()->GetSceneItemID())
       {
-      qCritical() << Q_FUNC_INFO << ": Item '" << this->m_MRMLScene->GetSubjectHierarchyNode()->GetItemName(itemID).c_str() << "' is not owned by any plugin!";
+      qCritical() << Q_FUNC_INFO << ": Item '" << this->m_MRMLScene->GetSubjectHierarchyNode()->GetItemName(itemID).c_str() << "' is not owned by any plugin";
       }
     return nullptr;
     }

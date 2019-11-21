@@ -39,7 +39,7 @@
 // MRML includes
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
-#include <vtkMRMLMarkupsFiducialNode.h>
+#include <vtkMRMLMarkupsNode.h>
 #include <vtkMRMLScene.h>
 
 // vtkSegmentationCore includes
@@ -71,7 +71,9 @@ public:
   void init();
 
 public:
-  QAction* RenameFiducialAction;
+  QAction* RenamePointAction;
+  QAction* DeletePointAction;
+  QAction* ToggleSelectPointAction;
 
   QVariantMap ViewMenuEventData;
 };
@@ -82,8 +84,10 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyMarkupsPluginPrivate::qSlicerSubjectHierarchyMarkupsPluginPrivate(qSlicerSubjectHierarchyMarkupsPlugin& object)
 : q_ptr(&object)
+, RenamePointAction(nullptr)
+, DeletePointAction(nullptr)
+, ToggleSelectPointAction(nullptr)
 {
-  this->RenameFiducialAction = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -91,8 +95,17 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
 {
   Q_Q(qSlicerSubjectHierarchyMarkupsPlugin);
 
-  this->RenameFiducialAction = new QAction("Rename fiducial...", q);
-  QObject::connect(this->RenameFiducialAction, SIGNAL(triggered()), q, SLOT(renameFiducial()));
+  this->RenamePointAction = new QAction("Rename point...", q);
+  this->RenamePointAction->setObjectName("RenamePointAction");
+  QObject::connect(this->RenamePointAction, SIGNAL(triggered()), q, SLOT(renamePoint()));
+
+  this->DeletePointAction = new QAction("Delete point", q);
+  this->DeletePointAction->setObjectName("DeletePointAction");
+  QObject::connect(this->DeletePointAction, SIGNAL(triggered()), q, SLOT(deletePoint()));
+
+  this->ToggleSelectPointAction = new QAction("Toggle select point", q);
+  this->ToggleSelectPointAction->setObjectName("ToggleSelectPointAction");
+  QObject::connect(this->ToggleSelectPointAction, SIGNAL(triggered()), q, SLOT(toggleSelectPoint()));
 }
 
 //-----------------------------------------------------------------------------
@@ -370,7 +383,7 @@ QList<QAction*> qSlicerSubjectHierarchyMarkupsPlugin::viewContextMenuActions()co
   Q_D(const qSlicerSubjectHierarchyMarkupsPlugin);
 
   QList<QAction*> actions;
-  actions << d->RenameFiducialAction;
+  actions << d->RenamePointAction << d->DeletePointAction << d->ToggleSelectPointAction;
   return actions;
 }
 
@@ -393,17 +406,19 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
 
   // Markup
   vtkMRMLNode* associatedNode = shNode->GetItemDataNode(itemID);
-  if (associatedNode && associatedNode->IsA("vtkMRMLMarkupsFiducialNode"))
+  if (associatedNode && associatedNode->IsA("vtkMRMLMarkupsNode"))
     {
     d->ViewMenuEventData = eventData;
     d->ViewMenuEventData["NodeID"] = QVariant(associatedNode->GetID());
 
-    d->RenameFiducialAction->setVisible(true);
+    d->RenamePointAction->setVisible(true);
+    d->DeletePointAction->setVisible(true);
+    d->ToggleSelectPointAction->setVisible(true);
     }
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyMarkupsPlugin::renameFiducial()
+void qSlicerSubjectHierarchyMarkupsPlugin::renamePoint()
 {
   Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
 
@@ -419,21 +434,21 @@ void qSlicerSubjectHierarchyMarkupsPlugin::renameFiducial()
     return;
     }
 
-  // Get fiducial markups node
+  // Get markups node
   QString nodeID = d->ViewMenuEventData["NodeID"].toString();
   vtkMRMLNode* node = scene->GetNodeByID(nodeID.toLatin1().constData());
-  vtkMRMLMarkupsFiducialNode* fiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast(node);
-  if (!fiducialNode)
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(node);
+  if (!markupsNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Failed to get fiducial markups node by ID " << nodeID;
+    qCritical() << Q_FUNC_INFO << ": Failed to get markups node by ID " << nodeID;
     return;
     }
 
-  // Get fiducial index
+  // Get point index
   int componentIndex = d->ViewMenuEventData["ComponentIndex"].toInt();
 
   // Pop up an entry box for the new name, with the old name as default
-  QString oldName(fiducialNode->GetNthFiducialLabel(componentIndex).c_str());
+  QString oldName(markupsNode->GetNthControlPointLabel(componentIndex).c_str());
 
   bool ok = false;
   QString newName = QInputDialog::getText(nullptr, QString("Rename ") + oldName, "New name:", QLineEdit::Normal, oldName, &ok);
@@ -442,5 +457,71 @@ void qSlicerSubjectHierarchyMarkupsPlugin::renameFiducial()
     return;
     }
 
-  fiducialNode->SetNthFiducialLabel(componentIndex, newName.toLatin1().constData());
+  markupsNode->SetNthControlPointLabel(componentIndex, newName.toLatin1().constData());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyMarkupsPlugin::deletePoint()
+{
+  Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
+
+  if (d->ViewMenuEventData.find("NodeID") == d->ViewMenuEventData.end())
+    {
+    qCritical() << Q_FUNC_INFO << ": No node ID found in the view menu event data";
+    return;
+    }
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access MRML scene";
+    return;
+    }
+
+  // Get markups node
+  QString nodeID = d->ViewMenuEventData["NodeID"].toString();
+  vtkMRMLNode* node = scene->GetNodeByID(nodeID.toLatin1().constData());
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(node);
+  if (!markupsNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to get markups node by ID " << nodeID;
+    return;
+    }
+
+  // Get point index
+  int componentIndex = d->ViewMenuEventData["ComponentIndex"].toInt();
+
+  markupsNode->RemoveNthControlPoint(componentIndex);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyMarkupsPlugin::toggleSelectPoint()
+{
+  Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
+
+  if (d->ViewMenuEventData.find("NodeID") == d->ViewMenuEventData.end())
+    {
+    qCritical() << Q_FUNC_INFO << ": No node ID found in the view menu event data";
+    return;
+    }
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access MRML scene";
+    return;
+    }
+
+  // Get markups node
+  QString nodeID = d->ViewMenuEventData["NodeID"].toString();
+  vtkMRMLNode* node = scene->GetNodeByID(nodeID.toLatin1().constData());
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(node);
+  if (!markupsNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to get markups node by ID " << nodeID;
+    return;
+    }
+
+  // Get point index
+  int componentIndex = d->ViewMenuEventData["ComponentIndex"].toInt();
+
+  markupsNode->SetNthControlPointSelected(componentIndex, !markupsNode->GetNthControlPointSelected(componentIndex));
 }
