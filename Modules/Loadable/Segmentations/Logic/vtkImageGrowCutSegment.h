@@ -13,21 +13,27 @@ public:
   vtkTypeMacro(vtkImageGrowCutSegment, vtkImageAlgorithm);
   void PrintSelf(ostream &os, vtkIndent indent) override;
 
-  // Set input grayscale volume (input 0)
+  /// Set input grayscale volume (input 0)
   void SetIntensityVolume(vtkImageData* grayscaleImage) { this->SetInputData(0, grayscaleImage); }
 
-  // Set input seed label volume (input 1)
+  /// Set input seed label volume (input 1)
   void SetSeedLabelVolume(vtkImageData* labelImage) { this->SetInputData(1, labelImage); }
 
-  // Set mask volume (input 2). Optional.
-  // If this volume is specified then only those regions outside the mask (where mask has zero value)
-  // will be included in the segmentation result. Regions outside the mask will not be used
-  // for region growing either (growing will not start from or cross through masked region).
+  /// Set mask volume (input 2). Optional.
+  /// If this volume is specified then only those regions outside the mask (where mask has zero value)
+  /// will be included in the segmentation result. Regions outside the mask will not be used
+  /// for region growing either (growing will not start from or cross through masked region).
   void SetMaskVolume(vtkImageData* labelImage) { this->SetInputData(2, labelImage); }
 
-  // Reset to initial state. This forces full recomputation of the result label volume.
-  // This method has to be called if intensity volume changes or if seeds are deleted after initial computation.
+  /// Reset to initial state. This forces full recomputation of the result label volume.
+  /// This method has to be called if intensity volume changes or if seeds are deleted after initial computation.
   void Reset();
+
+  /// Spatial regularization factor, which can force growing in nearby regions.
+  /// For each physical unit distance, this much intensity level difference is simulated.
+  /// By default = 0, which means spatial distance does not play a role in the region growing, only intensity value similarity.
+  vtkGetMacro(DistancePenalty, double);
+  vtkSetMacro(DistancePenalty, double);
 
 protected:
   vtkImageGrowCutSegment();
@@ -39,6 +45,7 @@ protected:
 private:
   class vtkInternal;
   vtkInternal * Internal;
+  double DistancePenalty;
 };
 
 #endif

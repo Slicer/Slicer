@@ -52,6 +52,49 @@ The effect uses <a href="https://www.spl.harvard.edu/publications/item/view/2761
     AbstractScriptedSegmentEditorAutoCompleteEffect.reset(self)
     self.updateGUIFromMRML()
 
+  def setupOptionsFrame(self):
+    AbstractScriptedSegmentEditorAutoCompleteEffect.setupOptionsFrame(self)
+
+     # Object scale slider
+    self.seedLocalityFactorSlider = slicer.qMRMLSliderWidget()
+    self.seedLocalityFactorSlider.setMRMLScene(slicer.mrmlScene)
+    self.seedLocalityFactorSlider.minimum = 0
+    self.seedLocalityFactorSlider.maximum = 10
+    self.seedLocalityFactorSlider.value = 0.0
+    self.seedLocalityFactorSlider.decimals = 1
+    self.seedLocalityFactorSlider.singleStep = 0.1
+    self.seedLocalityFactorSlider.pageStep = 1.0
+    self.seedLocalityFactorSlider.setToolTip('Increasing this value makes the effect of seeds more localized,'
+      ' thereby reducing leaks, but requires seed regions to be more evenly distributed in the image.'
+      ' The value is specified as an additional "intensity level difference" per "unit distance."')
+    self.scriptedEffect.addLabeledOptionsWidget("Seed locality:", self.seedLocalityFactorSlider)
+    self.seedLocalityFactorSlider.connect('valueChanged(double)', self.updateAlgorithmParameterFromGUI)
+
+  def setMRMLDefaults(self):
+    AbstractScriptedSegmentEditorAutoCompleteEffect.setMRMLDefaults(self)
+    self.scriptedEffect.setParameterDefault("SeedLocalityFactor", 0.0)
+
+  def updateGUIFromMRML(self):
+    AbstractScriptedSegmentEditorAutoCompleteEffect.updateGUIFromMRML(self)
+    if self.scriptedEffect.parameterDefined("SeedLocalityFactor"):
+      seedLocalityFactor = self.scriptedEffect.doubleParameter("SeedLocalityFactor")
+    else:
+      seedLocalityFactor = 0.0
+    wasBlocked = self.seedLocalityFactorSlider.blockSignals(True)
+    self.seedLocalityFactorSlider.value = abs(seedLocalityFactor)
+    self.seedLocalityFactorSlider.blockSignals(wasBlocked)
+
+  def updateMRMLFromGUI(self):
+    AbstractScriptedSegmentEditorAutoCompleteEffect.updateMRMLFromGUI(self)
+    self.scriptedEffect.setParameter("SeedLocalityFactor", self.seedLocalityFactorSlider.value)
+
+  def updateAlgorithmParameterFromGUI(self):
+    self.updateMRMLFromGUI()
+
+    # Trigger preview update
+    if self.getPreviewNode():
+      self.delayedAutoUpdateTimer.start()
+
   def computePreviewLabelmap(self, mergedImage, outputLabelmap):
     import vtkSlicerSegmentationsModuleLogicPython as vtkSlicerSegmentationsModuleLogic
 
@@ -71,6 +114,11 @@ The effect uses <a href="https://www.spl.harvard.edu/publications/item/view/2761
 
       self.extentGrowthRatio
 
+    if self.scriptedEffect.parameterDefined("SeedLocalityFactor"):
+      seedLocalityFactor = self.scriptedEffect.doubleParameter("SeedLocalityFactor")
+    else:
+      seedLocalityFactor = 0.0
+    self.growCutFilter.SetDistancePenalty(seedLocalityFactor)
     self.growCutFilter.SetSeedLabelVolume(mergedImage)
     self.growCutFilter.Update()
 
