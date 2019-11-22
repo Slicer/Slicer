@@ -774,6 +774,7 @@ void vtkMRMLDisplayNode::SetScalarRangeFlagFromString(const char* str)
     // invalid value, maybe legacy scene
     scalarRangeFlag = atoi(str);
     }
+  this->SetScalarRangeFlag(scalarRangeFlag);
 }
 
 //-----------------------------------------------------------
