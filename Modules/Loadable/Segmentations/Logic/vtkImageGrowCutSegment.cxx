@@ -317,27 +317,58 @@ bool vtkImageGrowCutSegment::vtkInternal::InitializationAHP(
     LabelPixelType* resultLabelVolumePtr = static_cast<LabelPixelType*>(m_ResultLabelVolume->GetScalarPointer());
     DistancePixelType* distanceVolumePtr = static_cast<DistancePixelType*>(m_DistanceVolume->GetScalarPointer());
 
-    for (long index = 0; index < dimXYZ; index++)
+    if (this->m_DistancePenalty <= 0.0)
       {
-      if (seedLabelVolumePtr[index] != 0)
+      // There is no distance penalty
+      for (long index = 0; index < dimXYZ; index++)
         {
-        // Only grow from new/changed seeds
-        if (resultLabelVolumePtr[index] != seedLabelVolumePtr[index])
+        if (seedLabelVolumePtr[index] != 0)
           {
-          m_HeapNodes[index] = DIST_EPSILON;
-          distanceVolumePtr[index] = DIST_EPSILON;
-          resultLabelVolumePtr[index] = seedLabelVolumePtr[index];
+          // Only grow from new/changed seeds
+          if (resultLabelVolumePtr[index] != seedLabelVolumePtr[index])
+            {
+            m_HeapNodes[index] = DIST_EPSILON;
+            distanceVolumePtr[index] = DIST_EPSILON;
+            resultLabelVolumePtr[index] = seedLabelVolumePtr[index];
+            m_Heap->Insert(&m_HeapNodes[index]);
+            m_HeapNodes[index].SetIndexValue(index);
+            }
+          }
+        else
+          {
+          m_HeapNodes[index] = DIST_INF;
+          distanceVolumePtr[index] = DIST_INF;
+          resultLabelVolumePtr[index] = 0;
           m_Heap->Insert(&m_HeapNodes[index]);
           m_HeapNodes[index].SetIndexValue(index);
           }
         }
-      else
+      }
+    else
+      {
+      // There is distance penalty
+      for (long index = 0; index < dimXYZ; index++)
         {
-        m_HeapNodes[index] = DIST_INF;
-        distanceVolumePtr[index] = DIST_INF;
-        resultLabelVolumePtr[index] = 0;
-        m_Heap->Insert(&m_HeapNodes[index]);
-        m_HeapNodes[index].SetIndexValue(index);
+        if (seedLabelVolumePtr[index] != 0)
+          {
+          // Only grow from new/changed seeds
+          if (resultLabelVolumePtr[index] != seedLabelVolumePtr[index] || distanceVolumePtr[index] > DIST_EPSILON)
+            {
+            m_HeapNodes[index] = DIST_EPSILON;
+            distanceVolumePtr[index] = DIST_EPSILON;
+            resultLabelVolumePtr[index] = seedLabelVolumePtr[index];
+            m_Heap->Insert(&m_HeapNodes[index]);
+            m_HeapNodes[index].SetIndexValue(index);
+            }
+          }
+        else
+          {
+          m_HeapNodes[index] = DIST_INF;
+          distanceVolumePtr[index] = DIST_INF;
+          resultLabelVolumePtr[index] = 0;
+          m_Heap->Insert(&m_HeapNodes[index]);
+          m_HeapNodes[index].SetIndexValue(index);
+          }
         }
       }
     }
