@@ -788,6 +788,11 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
           else
             {
             // empty segment
+            for (int i = 0; i < 3; ++i)
+              {
+              currentSegmentExtent[2 * i] = 0;
+              currentSegmentExtent[2 * i + 1] = -1;
+              }
             currentBinaryLabelmap->SetExtent(currentSegmentExtent);
             currentBinaryLabelmap->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
             }
