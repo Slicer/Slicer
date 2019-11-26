@@ -1,6 +1,7 @@
 import os
 import vtk, qt, ctk, slicer
 import logging
+import time
 from SegmentEditorEffects import *
 
 class SegmentEditorGrowFromSeedsEffect(AbstractScriptedSegmentEditorAutoCompleteEffect):
@@ -112,14 +113,18 @@ The effect uses <a href="https://www.spl.harvard.edu/publications/item/view/2761
         # Background segment is expected to surround region of interest, so narrower margin is enough.
         self.extentGrowthRatio = 0.20
 
-      self.extentGrowthRatio
-
     if self.scriptedEffect.parameterDefined("SeedLocalityFactor"):
       seedLocalityFactor = self.scriptedEffect.doubleParameter("SeedLocalityFactor")
     else:
       seedLocalityFactor = 0.0
     self.growCutFilter.SetDistancePenalty(seedLocalityFactor)
     self.growCutFilter.SetSeedLabelVolume(mergedImage)
+    startTime = time.time()
     self.growCutFilter.Update()
+    logging.info('Grow-cut operation on volume of {0}x{1}x{2} voxels was completed in {3:3.1f} seconds.'.format(
+      self.clippedMasterImageData.GetDimensions()[0],
+      self.clippedMasterImageData.GetDimensions()[1],
+      self.clippedMasterImageData.GetDimensions()[2],
+      time.time() - startTime))
 
     outputLabelmap.DeepCopy( self.growCutFilter.GetOutput() )
