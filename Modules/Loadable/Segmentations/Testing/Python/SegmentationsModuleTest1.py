@@ -31,6 +31,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.TestSection_AddRemoveSegment()
     self.TestSection_MergeLabelmapWithDifferentGeometries()
     self.TestSection_ImportExportSegment()
+    self.TestSection_ImportExportSegment2()
     self.TestSection_SubjectHierarchy()
 
     logging.info('Test finished')
@@ -381,6 +382,83 @@ class SegmentationsModuleTest1(unittest.TestCase):
     slicer.mrmlScene.RemoveNode(bodyModelNodeTransformed)
     slicer.mrmlScene.RemoveNode(bodyLabelmapNodeTransformed)
     slicer.mrmlScene.RemoveNode(modelTransformedImportSegmentationNode)
+
+  def TestSection_ImportExportSegment2(self):
+    # Testing sequential add of individual segments to a segmentation through ImportLabelmapToSegmentationNode
+    logging.info('Test section: Import/export segment 2')
+
+    # Export body segment to volume node
+    bodySegment = self.inputSegmentationNode.GetSegmentation().GetSegment(self.bodySegmentName)
+    bodyLabelmapNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLLabelMapVolumeNode', 'BodyLabelmap')
+    result = slicer.vtkSlicerSegmentationsModuleLogic.ExportSegmentToRepresentationNode(bodySegment, bodyLabelmapNode)
+    self.assertTrue(result)
+    bodyImageData = bodyLabelmapNode.GetImageData()
+    self.assertIsNotNone(bodyImageData)
+    imageStat = vtk.vtkImageAccumulate()
+    imageStat.SetInputData(bodyImageData)
+    imageStat.Update()
+    self.assertEqual(imageStat.GetVoxelCount(), 792)
+    self.assertEqual(imageStat.GetMin()[0], 0)
+    self.assertEqual(imageStat.GetMax()[0], 1)
+
+    # Export tumor segment to volume node
+    tumorSegment = self.inputSegmentationNode.GetSegmentation().GetSegment(self.tumorSegmentName)
+    tumorLabelmapNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLLabelMapVolumeNode', 'TumorLabelmap')
+    result = slicer.vtkSlicerSegmentationsModuleLogic.ExportSegmentToRepresentationNode(tumorSegment, tumorLabelmapNode)
+    self.assertTrue(result)
+    tumorImageData = tumorLabelmapNode.GetImageData()
+    self.assertIsNotNone(tumorImageData)
+    imageStat = vtk.vtkImageAccumulate()
+    imageStat.SetInputData(tumorImageData)
+    imageStat.Update()
+    self.assertEqual(imageStat.GetVoxelCount(), 12)
+    self.assertEqual(imageStat.GetMin()[0], 0)
+    self.assertEqual(imageStat.GetMax()[0], 1)
+
+    # Import single-label labelmap to segmentation
+    singleLabelImportSegmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode', 'SingleLabelImport')
+    singleLabelImportSegmentationNode.GetSegmentation().SetMasterRepresentationName(self.binaryLabelmapReprName)
+
+    bodySegmentID = singleLabelImportSegmentationNode.GetSegmentation().AddEmptySegment('BodyLabelmap')
+    bodySegmentIDArray = vtk.vtkStringArray()
+    bodySegmentIDArray.SetNumberOfValues(1)
+    bodySegmentIDArray.SetValue(0, bodySegmentID)
+    result = slicer.vtkSlicerSegmentationsModuleLogic.ImportLabelmapToSegmentationNode(bodyLabelmapNode, singleLabelImportSegmentationNode, bodySegmentIDArray)
+
+    self.assertTrue(result)
+    self.assertEqual(singleLabelImportSegmentationNode.GetSegmentation().GetNumberOfSegments(), 1)
+
+    tumorSegmentID = singleLabelImportSegmentationNode.GetSegmentation().AddEmptySegment('TumorLabelmap')
+    tumorSegmentIDArray = vtk.vtkStringArray()
+    tumorSegmentIDArray.SetNumberOfValues(1)
+    tumorSegmentIDArray.SetValue(0, tumorSegmentID)
+    result = slicer.vtkSlicerSegmentationsModuleLogic.ImportLabelmapToSegmentationNode(tumorLabelmapNode, singleLabelImportSegmentationNode, tumorSegmentIDArray)
+    self.assertTrue(result)
+    self.assertEqual(singleLabelImportSegmentationNode.GetSegmentation().GetNumberOfSegments(), 2)
+
+    bodyLabelmap = slicer.vtkOrientedImageData()
+    singleLabelImportSegmentationNode.GetBinaryLabelmapRepresentation(bodySegmentID, bodyLabelmap)
+    imageStat = vtk.vtkImageAccumulate()
+    imageStat.SetInputData(bodyLabelmap)
+    imageStat.Update()
+    self.assertEqual(imageStat.GetVoxelCount(), 792)
+    self.assertEqual(imageStat.GetMin()[0], 0)
+    self.assertEqual(imageStat.GetMax()[0], 1)
+
+    tumorLabelmap = slicer.vtkOrientedImageData()
+    singleLabelImportSegmentationNode.GetBinaryLabelmapRepresentation(tumorSegmentID, tumorLabelmap)
+    self.assertIsNotNone(tumorLabelmap)
+    imageStat = vtk.vtkImageAccumulate()
+    imageStat.SetInputData(tumorLabelmap)
+    imageStat.Update()
+    self.assertEqual(imageStat.GetVoxelCount(), 12)
+    self.assertEqual(imageStat.GetMin()[0], 0)
+    self.assertEqual(imageStat.GetMax()[0], 1)
+
+    # Clean up temporary nodes
+    slicer.mrmlScene.RemoveNode(bodyLabelmapNode)
+    slicer.mrmlScene.RemoveNode(tumorLabelmapNode)
+    slicer.mrmlScene.RemoveNode(singleLabelImportSegmentationNode)
 
   #------------------------------------------------------------------------------
   def TestSection_SubjectHierarchy(self):
