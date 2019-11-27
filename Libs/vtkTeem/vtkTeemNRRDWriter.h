@@ -82,6 +82,19 @@ public:
   /// from the number of components and scalar type.
   void SetVectorAxisKind(int kind);
 
+  /// Method to set the coordinate system written to the NRRD file.
+  /// Currently the only valid coordinate systems are: RAS, RAST, LPS, and LPST.
+  vtkSetMacro(Space, int);
+  vtkGetMacro(Space, int);
+
+  /// Set coordinate system to RAS
+  void vtkSetSpaceToRAS()  { this->SetSpace(nrrdSpaceRightAnteriorSuperior);  };
+  void vtkSetSpaceToRAST() { this->SetSpace(nrrdSpaceRightAnteriorSuperiorTime);  };
+
+  /// Set coordinate system to LPS
+  void vtkSetSpaceToLPS()  { this->SetSpace(nrrdSpaceLeftPosteriorSuperior); };
+  void vtkSetSpaceToLPST() { this->SetSpace(nrrdSpaceLeftPosteriorSuperiorTime); };
+
   /// Utility function to return image as a Nrrd*
   void* MakeNRRD();
 
@@ -115,6 +128,7 @@ protected:
   AxisInfoMapType *AxisLabels;
   AxisInfoMapType *AxisUnits;
   int VectorAxisKind;
+  int Space;
 
 private:
   vtkTeemNRRDWriter(const vtkTeemNRRDWriter&) = delete;

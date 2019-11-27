@@ -38,6 +38,7 @@ vtkTeemNRRDWriter::vtkTeemNRRDWriter()
   this->AxisLabels = new AxisInfoMapType;
   this->AxisUnits = new AxisInfoMapType;
   this->VectorAxisKind = nrrdKindUnknown;
+  this->Space = nrrdSpaceRightAnteriorSuperior;
 }
 
 //----------------------------------------------------------------------------
@@ -197,9 +198,23 @@ void* vtkTeemNRRDWriter::MakeNRRD()
   void *buffer;
   int vtkType;
 
-    // Fill in image information.
+  // Fill in image information.
 
   //vtkImageData *input = this->GetInput();
+
+  if (this->Space != nrrdSpaceRightAnteriorSuperior || this->Space != nrrdSpaceRightAnteriorSuperiorTime)
+    {
+    if (this->GetInput()->GetPointData()->GetTensors())
+      {
+      vtkErrorMacro("Write: Can only NRRD with tensors in RAS space");
+      return nullptr;
+      }
+    if (this->MeasurementFrameMatrix)
+      {
+      vtkErrorMacro("Write: Can only NRRD with a measurement frame in RAS space");
+      return nullptr;
+      }
+    }
 
   // Find Pixel type from data and select a buffer.
   this->vtkImageDataInfoToNrrdInfo(this->GetInput(),kind[0],size[0],vtkType, &buffer);
@@ -220,16 +235,35 @@ void* vtkTeemNRRDWriter::MakeNRRD()
     }
   nrrdDim = baseDim + spaceDim;
 
+  vtkNew<vtkMatrix4x4> rasToSpaceMatrix;
+  switch (this->Space)
+    {
+    case nrrdSpaceRightAnteriorSuperior:
+    case nrrdSpaceRightAnteriorSuperiorTime:
+      break;
+    case nrrdSpaceLeftPosteriorSuperior:
+    case nrrdSpaceLeftPosteriorSuperiorTime:
+      rasToSpaceMatrix->SetElement(0, 0, -1);
+      rasToSpaceMatrix->SetElement(1, 1, -1);
+      break;
+    default:
+      vtkErrorMacro("Write: Unsupported space " << this->Space << " for " << this->GetFileName());
+      return nullptr;
+    }
+  vtkNew<vtkMatrix4x4> ijkToSpaceMatrix;
+  vtkMatrix4x4::Multiply4x4(rasToSpaceMatrix, this->IJKToRASMatrix, ijkToSpaceMatrix);
+
   unsigned int axi;
   for (axi=0; axi < spaceDim; axi++)
     {
     size[axi+baseDim] = this->GetInput()->GetDimensions()[axi];
     kind[axi+baseDim] = nrrdKindDomain;
-    origin[axi] = this->IJKToRASMatrix->GetElement((int) axi,3);
+    origin[axi] = ijkToSpaceMatrix->GetElement((int) axi,3);
+
     //double spacing = this->GetInput()->GetSpacing()[axi];
     for (unsigned int saxi=0; saxi < spaceDim; saxi++)
       {
-      spaceDir[axi+baseDim][saxi] = this->IJKToRASMatrix->GetElement(saxi,axi);
+      spaceDir[axi+baseDim][saxi] = ijkToSpaceMatrix->GetElement(saxi,axi);
       }
     }
 
@@ -249,7 +283,7 @@ void* vtkTeemNRRDWriter::MakeNRRD()
     }
   nrrdAxisInfoSet_nva(nrrd, nrrdAxisInfoKind, kind);
   nrrdAxisInfoSet_nva(nrrd, nrrdAxisInfoSpaceDirection, spaceDir);
-  nrrd->space = nrrdSpaceRightAnteriorSuperior;
+  nrrd->space = this->Space;
 
   if (!this->AxisLabels->empty())
     {
