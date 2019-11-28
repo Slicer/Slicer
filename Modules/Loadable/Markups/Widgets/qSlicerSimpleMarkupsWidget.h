@@ -73,7 +73,7 @@ public:
   /// Accessors to control place mode behavior
   bool enterPlaceModeOnNodeChange() const;
 
-  /// If enabled then the fiducial will be shown in all slice views when a fiducial is selected
+  /// If enabled then the control point will be shown in all slice views when a caontrol point is selected
   /// /sa setViewGroup
   bool jumpToSliceEnabled() const;
 
@@ -113,7 +113,7 @@ public slots:
   /// Accessors to control place mode behavior
   void setEnterPlaceModeOnNodeChange(bool);
 
-  /// If enabled then the fiducial will be shown in all slice views when a fiducial is selected
+  /// If enabled then the control point will be shown in all slice views when a control point is selected
   void setJumpToSliceEnabled(bool);
 
   /// Show/hide the markup node selector widget.
@@ -128,7 +128,10 @@ public slots:
   /// Set the default color that is assigned to newly created markups nodes in the combo box.
   void setDefaultNodeColor(QColor color);
 
-  /// Scrolls to and selects the Nth fiducial in the table of fiducials.
+  /// Scrolls to and selects the Nth control point in the table of control points.
+  void highlightNthControlPoint(int n);
+
+  /// \deprecated Use highlightNthControlPoint instead
   void highlightNthFiducial(int n);
 
   /// Set the currently selected markups node to be the active markups node in the Slicer scene.
@@ -140,17 +143,17 @@ public slots:
 protected slots:
 
   /// Update the widget when a different markups node is selected by the combo box.
-  void onMarkupsFiducialNodeChanged();
+  void onMarkupsNodeChanged();
   /// Setup a newly created markups node - add display node, set color.
-  void onMarkupsFiducialNodeAdded(vtkMRMLNode*);
+  void onMarkupsNodeAdded(vtkMRMLNode*);
   /// Create context menu for the table displaying the currently selected markups node.
-  void onMarkupsFiducialTableContextMenu(const QPoint& position);
+  void onMarkupsControlPointsTableContextMenu(const QPoint& position);
 
   /// Edit the name or position of the currently selected markups node.
-  void onMarkupsFiducialEdited(int row, int column);
+  void onMarkupsControlPointEdited(int row, int column);
 
-  /// Clicked on a fiducial or used keyboard to move between fiducials in the table.
-  void onMarkupsFiducialSelected(int row, int column);
+  /// Clicked on a control point or used keyboard to move between control points in the table.
+  void onMarkupsControlPointSelected(int row, int column);
 
   /// Update the GUI to reflect the currently selected markups node.
   void updateWidget();
@@ -161,19 +164,28 @@ protected slots:
 signals:
 
   /// The signal is emitted when a different markup node is selected.
+  void markupsNodeChanged();
+
+  /// \deprecated Use markupsNodeChanged instead.
   void markupsFiducialNodeChanged();
 
   /// This signal is emitted when a different markup point is selected in the table.
   /// The argument \a markupIndex is the index of the selected markup.
+  void currentMarkupsControlPointSelectionChanged(int markupIndex);
+
+  /// \deprecated Use currentMarkupsControlPointSelectionChanged instead
   void currentMarkupsFiducialSelectionChanged(int markupIndex);
 
   /// This signal is emitted when place mode for the active markup is changed to enabled or disabled.
   /// The argument \a enabled is true if the currently selected markups node is active and in place mode.
   /// The argument \a enabled is false if the currently selected markups node is not active or not in place mode.
+  void activeMarkupsPlaceModeChanged(bool enabled);
+
+  /// \deprecated Use activeMarkupsPlaceModeChanged instead
   void activeMarkupsFiducialPlaceModeChanged(bool enabled);
 
   /// This signal is emitted if updates to the widget have finished.
-  /// It is called after fiducials are changed (added, position modified, etc).
+  /// It is called after control points are changed (added, position modified, etc).
   void updateFinished();
 
 protected:

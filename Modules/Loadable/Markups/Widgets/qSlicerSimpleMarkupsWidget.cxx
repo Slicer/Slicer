@@ -33,18 +33,18 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLInteractionNode.h>
-#include <vtkMRMLMarkupsFiducialNode.h>
+#include <vtkMRMLMarkupsNode.h>
 
 // Qt includes
 #include <QAction>
 #include <QMenu>
 #include <QTableWidgetItem>
 
-int FIDUCIAL_LABEL_COLUMN = 0;
-int FIDUCIAL_X_COLUMN = 1;
-int FIDUCIAL_Y_COLUMN = 2;
-int FIDUCIAL_Z_COLUMN = 3;
-int FIDUCIAL_COLUMNS = 4;
+int CONTROL_POINT_LABEL_COLUMN = 0;
+int CONTROL_POINT_X_COLUMN = 1;
+int CONTROL_POINT_Y_COLUMN = 2;
+int CONTROL_POINT_Z_COLUMN = 3;
+int CONTROL_POINT_COLUMNS = 4;
 
 
 //-----------------------------------------------------------------------------
@@ -126,29 +126,30 @@ void qSlicerSimpleMarkupsWidget::setup()
     }
   d->setupUi(this);
 
-  connect( d->MarkupsFiducialNodeComboBox, SIGNAL( currentNodeChanged( vtkMRMLNode* ) ), this, SLOT( onMarkupsFiducialNodeChanged() ) );
-  connect( d->MarkupsFiducialNodeComboBox, SIGNAL( nodeAddedByUser( vtkMRMLNode* ) ), this, SLOT( onMarkupsFiducialNodeAdded( vtkMRMLNode* ) ) );
-  connect( d->MarkupsPlaceWidget, SIGNAL( activeMarkupsFiducialPlaceModeChanged(bool) ), this, SIGNAL( activeMarkupsFiducialPlaceModeChanged(bool) ) );
+  connect( d->MarkupsNodeComboBox, SIGNAL( currentNodeChanged( vtkMRMLNode* ) ), this, SLOT( onMarkupsNodeChanged() ) );
+  connect( d->MarkupsNodeComboBox, SIGNAL( nodeAddedByUser( vtkMRMLNode* ) ), this, SLOT( onMarkupsNodeAdded( vtkMRMLNode* ) ) );
+  connect( d->MarkupsPlaceWidget, SIGNAL( activeMarkupsPlaceModeChanged(bool) ), this, SIGNAL( activeMarkupsPlaceModeChanged(bool) ) );
 
-  d->MarkupsFiducialTableWidget->setColumnCount( FIDUCIAL_COLUMNS );
-  d->MarkupsFiducialTableWidget->setHorizontalHeaderLabels( QStringList() << "Label" << "X" << "Y" << "Z" );
-  d->MarkupsFiducialTableWidget->horizontalHeader()->setSectionResizeMode( QHeaderView::Stretch );
-  d->MarkupsFiducialTableWidget->setContextMenuPolicy( Qt::CustomContextMenu );
-  d->MarkupsFiducialTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows); // only select rows rather than cells
+  d->MarkupsControlPointsTableWidget->setColumnCount( CONTROL_POINT_COLUMNS );
+  d->MarkupsControlPointsTableWidget->setHorizontalHeaderLabels( QStringList() << "Label" << "X" << "Y" << "Z" );
+  d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode( QHeaderView::Stretch );
+  d->MarkupsControlPointsTableWidget->setContextMenuPolicy( Qt::CustomContextMenu );
+  d->MarkupsControlPointsTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows); // only select rows rather than cells
 
-  connect(d->MarkupsFiducialTableWidget, SIGNAL( customContextMenuRequested(const QPoint&) ), this, SLOT( onMarkupsFiducialTableContextMenu(const QPoint&) ) );
-  connect(d->MarkupsFiducialTableWidget, SIGNAL( cellChanged( int, int ) ), this, SLOT( onMarkupsFiducialEdited( int, int ) ) );
+  connect(d->MarkupsControlPointsTableWidget, SIGNAL( customContextMenuRequested(const QPoint&) ),
+    this, SLOT( onMarkupsControlPointsTableContextMenu(const QPoint&) ) );
+  connect(d->MarkupsControlPointsTableWidget, SIGNAL( cellChanged( int, int ) ), this, SLOT( onMarkupsControlPointEdited( int, int ) ) );
   // listen for click on a markup
-  connect(d->MarkupsFiducialTableWidget, SIGNAL(cellClicked(int,int)), this, SLOT(onMarkupsFiducialSelected(int,int)));
+  connect(d->MarkupsControlPointsTableWidget, SIGNAL(cellClicked(int,int)), this, SLOT(onMarkupsControlPointSelected(int,int)));
   // listen for the current cell selection change (happens when arrows are used to navigate)
-  connect(d->MarkupsFiducialTableWidget, SIGNAL(currentCellChanged(int, int, int, int)), this, SLOT(onMarkupsFiducialSelected(int, int)));
+  connect(d->MarkupsControlPointsTableWidget, SIGNAL(currentCellChanged(int, int, int, int)), this, SLOT(onMarkupsControlPointSelected(int, int)));
 }
 
 //-----------------------------------------------------------------------------
 vtkMRMLNode* qSlicerSimpleMarkupsWidget::currentNode() const
 {
   Q_D(const qSlicerSimpleMarkupsWidget);
-  return d->MarkupsFiducialNodeComboBox->currentNode();
+  return d->MarkupsNodeComboBox->currentNode();
 }
 
 //-----------------------------------------------------------------------------
@@ -170,10 +171,10 @@ void qSlicerSimpleMarkupsWidget::setCurrentNode(vtkMRMLNode* currentNode)
     return;
     }
 
-  // Don't change the active fiducial list if the current node is changed programmatically
-  bool wasBlocked = d->MarkupsFiducialNodeComboBox->blockSignals(true);
-  d->MarkupsFiducialNodeComboBox->setCurrentNode( currentMarkupsNode );
-  d->MarkupsFiducialNodeComboBox->blockSignals(wasBlocked);
+  // Don't change the active markups if the current node is changed programmatically
+  bool wasBlocked = d->MarkupsNodeComboBox->blockSignals(true);
+  d->MarkupsNodeComboBox->setCurrentNode( currentMarkupsNode );
+  d->MarkupsNodeComboBox->blockSignals(wasBlocked);
 
   d->MarkupsPlaceWidget->setCurrentNode( currentMarkupsNode );
 
@@ -185,6 +186,7 @@ void qSlicerSimpleMarkupsWidget::setCurrentNode(vtkMRMLNode* currentNode)
 
   this->updateWidget();
 
+  emit markupsNodeChanged();
   emit markupsFiducialNodeChanged();
 }
 
@@ -206,7 +208,7 @@ void qSlicerSimpleMarkupsWidget::setInteractionNode(vtkMRMLInteractionNode* inte
 void qSlicerSimpleMarkupsWidget::setNodeBaseName(QString newNodeBaseName)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
-  d->MarkupsFiducialNodeComboBox->setBaseName(newNodeBaseName);
+  d->MarkupsNodeComboBox->setBaseName(newNodeBaseName);
 }
 
 //-----------------------------------------------------------------------------
@@ -255,14 +257,14 @@ void qSlicerSimpleMarkupsWidget::setJumpToSliceEnabled(bool enable)
 bool qSlicerSimpleMarkupsWidget::nodeSelectorVisible() const
 {
   Q_D(const qSlicerSimpleMarkupsWidget);
-  return d->MarkupsFiducialNodeComboBox->isVisible();
+  return d->MarkupsNodeComboBox->isVisible();
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSimpleMarkupsWidget::setNodeSelectorVisible(bool visible)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
-  d->MarkupsFiducialNodeComboBox->setVisible(visible);
+  d->MarkupsNodeComboBox->setVisible(visible);
 }
 
 //-----------------------------------------------------------------------------
@@ -283,7 +285,7 @@ void qSlicerSimpleMarkupsWidget::setOptionsVisible(bool visible)
 QTableWidget* qSlicerSimpleMarkupsWidget::tableWidget() const
 {
   Q_D(const qSlicerSimpleMarkupsWidget);
-  return d->MarkupsFiducialTableWidget;
+  return d->MarkupsControlPointsTableWidget;
 }
 
 //-----------------------------------------------------------------------------
@@ -315,19 +317,25 @@ int qSlicerSimpleMarkupsWidget::viewGroup() const
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSimpleMarkupsWidget::highlightNthFiducial(int n)
+void qSlicerSimpleMarkupsWidget::highlightNthControlPoint(int n)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
-  if ( n >= 0 && n < d->MarkupsFiducialTableWidget->rowCount() )
+  if ( n >= 0 && n < d->MarkupsControlPointsTableWidget->rowCount() )
     {
-    d->MarkupsFiducialTableWidget->selectRow(n);
-    d->MarkupsFiducialTableWidget->setCurrentCell(n,0);
-    d->MarkupsFiducialTableWidget->scrollTo(d->MarkupsFiducialTableWidget->currentIndex());
+    d->MarkupsControlPointsTableWidget->selectRow(n);
+    d->MarkupsControlPointsTableWidget->setCurrentCell(n,0);
+    d->MarkupsControlPointsTableWidget->scrollTo(d->MarkupsControlPointsTableWidget->currentIndex());
     }
   else
     {
-    d->MarkupsFiducialTableWidget->clearSelection();
+    d->MarkupsControlPointsTableWidget->clearSelection();
     }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSimpleMarkupsWidget::highlightNthFiducial(int n)
+{
+  this->highlightNthControlPoint(n);
 }
 
 //-----------------------------------------------------------------------------
@@ -345,10 +353,10 @@ void qSlicerSimpleMarkupsWidget::placeActive(bool place)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSimpleMarkupsWidget::onMarkupsFiducialNodeChanged()
+void qSlicerSimpleMarkupsWidget::onMarkupsNodeChanged()
 {
   Q_D(qSlicerSimpleMarkupsWidget);
-  vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( d->MarkupsFiducialNodeComboBox->currentNode() );
+  vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( d->MarkupsNodeComboBox->currentNode() );
   this->setCurrentNode(currentMarkupsNode);
 
   if (d->EnterPlaceModeOnNodeChange)
@@ -358,55 +366,55 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialNodeChanged()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSimpleMarkupsWidget::onMarkupsFiducialNodeAdded( vtkMRMLNode* newNode )
+void qSlicerSimpleMarkupsWidget::onMarkupsNodeAdded( vtkMRMLNode* newNode )
 {
   Q_D(qSlicerSimpleMarkupsWidget);
 
   if (d->MarkupsLogic == nullptr)
     {
-    qCritical("qSlicerSimpleMarkupsWidget::onMarkupsFiducialNodeAdded failed: Markups module logic is invalid");
+    qCritical("qSlicerSimpleMarkupsWidget::onMarkupsNodeAdded failed: Markups module logic is invalid");
     return;
     }
 
-  vtkMRMLMarkupsFiducialNode* newMarkupsFiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast( newNode );
-  if (newMarkupsFiducialNode->GetDisplayNode()==nullptr)
+  vtkMRMLMarkupsNode* newMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( newNode );
+  if (newMarkupsNode->GetDisplayNode()==nullptr)
     {
     // Make sure there is an associated display node
-    d->MarkupsLogic->AddNewDisplayNodeForMarkupsNode( newMarkupsFiducialNode );
+    d->MarkupsLogic->AddNewDisplayNodeForMarkupsNode( newMarkupsNode );
     }
-  d->MarkupsFiducialNodeComboBox->setCurrentNode( newMarkupsFiducialNode );
+  d->MarkupsNodeComboBox->setCurrentNode( newMarkupsNode );
   this->setNodeColor( defaultNodeColor() );
-  this->onMarkupsFiducialNodeChanged();
+  this->onMarkupsNodeChanged();
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSimpleMarkupsWidget::onMarkupsFiducialTableContextMenu(const QPoint& position)
+void qSlicerSimpleMarkupsWidget::onMarkupsControlPointsTableContextMenu(const QPoint& position)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
 
   if (d->MarkupsLogic == nullptr)
     {
-    qCritical("qSlicerSimpleMarkupsWidget::onMarkupsFiducialTableContextMenu failed: Markups module logic is invalid");
+    qCritical("qSlicerSimpleMarkupsWidget::onMarkupsControlPointsTableContextMenu failed: Markups module logic is invalid");
     return;
     }
 
-  QPoint globalPosition = d->MarkupsFiducialTableWidget->viewport()->mapToGlobal( position );
+  QPoint globalPosition = d->MarkupsControlPointsTableWidget->viewport()->mapToGlobal( position );
 
-  QMenu* fiducialsMenu = new QMenu( d->MarkupsFiducialTableWidget );
-  QAction* deleteAction = new QAction( "Delete highlighted fiducials", fiducialsMenu );
-  QAction* upAction = new QAction( "Move current fiducial up", fiducialsMenu );
-  QAction* downAction = new QAction( "Move current fiducial down", fiducialsMenu );
-  QAction* jumpAction = new QAction( "Jump slices to fiducial", fiducialsMenu );
+  QMenu* controlPointsMenu = new QMenu( d->MarkupsControlPointsTableWidget );
+  QAction* deleteAction = new QAction( "Delete highlighted control points", controlPointsMenu );
+  QAction* upAction = new QAction( "Move current control point up", controlPointsMenu );
+  QAction* downAction = new QAction( "Move current control point down", controlPointsMenu );
+  QAction* jumpAction = new QAction( "Jump slices to control point", controlPointsMenu );
 
-  fiducialsMenu->addAction( deleteAction );
-  fiducialsMenu->addAction( upAction );
-  fiducialsMenu->addAction( downAction );
-  fiducialsMenu->addAction( jumpAction );
+  controlPointsMenu->addAction( deleteAction );
+  controlPointsMenu->addAction( upAction );
+  controlPointsMenu->addAction( downAction );
+  controlPointsMenu->addAction( jumpAction );
 
-  QAction* selectedAction = fiducialsMenu->exec( globalPosition );
+  QAction* selectedAction = controlPointsMenu->exec( globalPosition );
 
-  int currentFiducial = d->MarkupsFiducialTableWidget->currentRow();
-  vtkMRMLMarkupsFiducialNode* currentNode = vtkMRMLMarkupsFiducialNode::SafeDownCast( d->MarkupsFiducialNodeComboBox->currentNode() );
+  int currentControlPoint = d->MarkupsControlPointsTableWidget->currentRow();
+  vtkMRMLMarkupsNode* currentNode = vtkMRMLMarkupsNode::SafeDownCast( d->MarkupsNodeComboBox->currentNode() );
 
   if ( currentNode == nullptr )
     {
@@ -416,23 +424,23 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialTableContextMenu(const QPoint&
   // Only do this for non-null node
   if ( selectedAction == deleteAction )
     {
-    QItemSelectionModel* selectionModel = d->MarkupsFiducialTableWidget->selectionModel();
-    std::vector< int > deleteFiducials;
+    QItemSelectionModel* selectionModel = d->MarkupsControlPointsTableWidget->selectionModel();
+    std::vector< int > deleteControlPoints;
     // Need to find selected before removing because removing automatically refreshes the table
-    for ( int i = 0; i < d->MarkupsFiducialTableWidget->rowCount(); i++ )
+    for ( int i = 0; i < d->MarkupsControlPointsTableWidget->rowCount(); i++ )
       {
-      if ( selectionModel->rowIntersectsSelection( i, d->MarkupsFiducialTableWidget->rootIndex() ) )
+      if ( selectionModel->rowIntersectsSelection( i, d->MarkupsControlPointsTableWidget->rootIndex() ) )
         {
-        deleteFiducials.push_back( i );
+        deleteControlPoints.push_back( i );
         }
       }
     // Do this in batch mode
     int wasModifying = currentNode->StartModify();
     //Traversing this way should be more efficient and correct
-    for ( int i = static_cast<int>(deleteFiducials.size()) - 1; i >= 0; i-- )
+    for ( int i = static_cast<int>(deleteControlPoints.size()) - 1; i >= 0; i-- )
       {
       // remove the point at that row
-      currentNode->RemoveNthControlPoint(deleteFiducials.at( static_cast<size_t>(i) ));
+      currentNode->RemoveNthControlPoint(deleteControlPoints.at( static_cast<size_t>(i) ));
       }
     currentNode->EndModify(wasModifying);
     }
@@ -440,98 +448,99 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialTableContextMenu(const QPoint&
 
   if ( selectedAction == upAction )
     {
-    if ( currentFiducial > 0 )
+    if ( currentControlPoint > 0 )
       {
-      currentNode->SwapControlPoints(currentFiducial, currentFiducial - 1 );
+      currentNode->SwapControlPoints(currentControlPoint, currentControlPoint - 1 );
       }
     }
 
   if ( selectedAction == downAction )
     {
-    if ( currentFiducial < currentNode->GetNumberOfFiducials() - 1 )
+    if ( currentControlPoint < currentNode->GetNumberOfControlPoints() - 1 )
       {
-      currentNode->SwapControlPoints( currentFiducial, currentFiducial + 1 );
+      currentNode->SwapControlPoints( currentControlPoint, currentControlPoint + 1 );
       }
     }
 
   if ( selectedAction == jumpAction )
     {
-    d->MarkupsLogic->JumpSlicesToNthPointInMarkup(this->currentNode()->GetID(), currentFiducial, true /* centered */, d->ViewGroup);
+    d->MarkupsLogic->JumpSlicesToNthPointInMarkup(this->currentNode()->GetID(), currentControlPoint, true /* centered */, d->ViewGroup);
     }
 
   this->updateWidget();
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSimpleMarkupsWidget::onMarkupsFiducialSelected(int row, int column)
+void qSlicerSimpleMarkupsWidget::onMarkupsControlPointSelected(int row, int column)
 {
   Q_UNUSED(column)
   Q_D(qSlicerSimpleMarkupsWidget);
 
   if (d->JumpToSliceEnabled)
     {
-    vtkMRMLMarkupsFiducialNode* currentMarkupsFiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast( this->currentNode() );
-    if ( currentMarkupsFiducialNode == nullptr )
+    vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( this->currentNode() );
+    if ( currentMarkupsNode == nullptr )
       {
       return;
       }
     if (d->MarkupsLogic == nullptr)
       {
-      qCritical("qSlicerSimpleMarkupsWidget::onMarkupsFiducialSelected failed: Cannot jump, markups module logic is invalid");
+      qCritical("qSlicerSimpleMarkupsWidget::onMarkupsControlPointSelected failed: Cannot jump, markups module logic is invalid");
       return;
       }
-    d->MarkupsLogic->JumpSlicesToNthPointInMarkup(currentMarkupsFiducialNode->GetID(), row, true /* centered */, d->ViewGroup);
+    d->MarkupsLogic->JumpSlicesToNthPointInMarkup(currentMarkupsNode->GetID(), row, true /* centered */, d->ViewGroup);
     }
 
+  emit currentMarkupsControlPointSelectionChanged(row);
   emit currentMarkupsFiducialSelectionChanged(row);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSimpleMarkupsWidget::onMarkupsFiducialEdited(int row, int column)
+void qSlicerSimpleMarkupsWidget::onMarkupsControlPointEdited(int row, int column)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
 
-  vtkMRMLMarkupsFiducialNode* currentMarkupsFiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast( this->currentNode() );
+  vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( this->currentNode() );
 
-  if ( currentMarkupsFiducialNode == nullptr )
+  if ( currentMarkupsNode == nullptr )
     {
     return;
     }
 
-  // Find the fiducial's current properties
-  double currentFiducialPosition[3] = { 0, 0, 0 };
-  currentMarkupsFiducialNode->GetNthFiducialPosition( row, currentFiducialPosition );
-  std::string currentFiducialLabel = currentMarkupsFiducialNode->GetNthFiducialLabel( row );
+  // Find the control point's current properties
+  double currentControlPointPosition[3] = { 0, 0, 0 };
+  currentMarkupsNode->GetNthControlPointPosition( row, currentControlPointPosition );
+  std::string currentControlPointLabel = currentMarkupsNode->GetNthControlPointLabel( row );
 
   // Find the entry that we changed
-  QTableWidgetItem* qItem = d->MarkupsFiducialTableWidget->item( row, column );
+  QTableWidgetItem* qItem = d->MarkupsControlPointsTableWidget->item( row, column );
   QString qText = qItem->text();
 
-  if ( column == FIDUCIAL_LABEL_COLUMN )
+  if ( column == CONTROL_POINT_LABEL_COLUMN )
     {
-    currentMarkupsFiducialNode->SetNthFiducialLabel( row, qText.toStdString() );
+    currentMarkupsNode->SetNthControlPointLabel( row, qText.toStdString() );
     }
 
   // Check if the value can be converted to double is already performed implicitly
-  double newFiducialPosition = qText.toDouble();
+  double newControlPointPosition = qText.toDouble();
 
   // Change the position values
-  if ( column == FIDUCIAL_X_COLUMN )
+  if ( column == CONTROL_POINT_X_COLUMN )
     {
-    currentFiducialPosition[ 0 ] = newFiducialPosition;
+    currentControlPointPosition[ 0 ] = newControlPointPosition;
     }
-  if ( column == FIDUCIAL_Y_COLUMN )
+  if ( column == CONTROL_POINT_Y_COLUMN )
     {
-    currentFiducialPosition[ 1 ] = newFiducialPosition;
+    currentControlPointPosition[ 1 ] = newControlPointPosition;
     }
-  if ( column == FIDUCIAL_Z_COLUMN )
+  if ( column == CONTROL_POINT_Z_COLUMN )
     {
-    currentFiducialPosition[ 2 ] = newFiducialPosition;
+    currentControlPointPosition[ 2 ] = newControlPointPosition;
     }
 
-  currentMarkupsFiducialNode->SetNthFiducialPositionFromArray( row, currentFiducialPosition );
+  currentMarkupsNode->SetNthControlPointPositionFromArray( row, currentControlPointPosition );
 
-  this->updateWidget(); // This may not be necessary the widget is updated whenever a fiducial is changed
+  this->updateWidget(); // This may not be necessary the widget is updated whenever a control point is changed
 }
 
 //-----------------------------------------------------------------------------
@@ -544,12 +553,12 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
     qCritical("qSlicerSimpleMarkupsWidget::updateWidget failed: Markups module logic or scene is invalid");
     }
 
-  vtkMRMLMarkupsFiducialNode* currentMarkupsFiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast( d->MarkupsFiducialNodeComboBox->currentNode() );
-  if ( currentMarkupsFiducialNode == nullptr || d->MarkupsLogic == nullptr)
+  vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( d->MarkupsNodeComboBox->currentNode() );
+  if ( currentMarkupsNode == nullptr || d->MarkupsLogic == nullptr)
     {
-    d->MarkupsFiducialTableWidget->clear();
-    d->MarkupsFiducialTableWidget->setRowCount( 0 );
-    d->MarkupsFiducialTableWidget->setColumnCount( 0 );
+    d->MarkupsControlPointsTableWidget->clear();
+    d->MarkupsControlPointsTableWidget->setRowCount( 0 );
+    d->MarkupsControlPointsTableWidget->setColumnCount( 0 );
     d->MarkupsPlaceWidget->setEnabled(false);
     emit updateFinished();
     return;
@@ -557,51 +566,51 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
 
   d->MarkupsPlaceWidget->setEnabled(true);
 
-  // Update the fiducials table
-  bool wasBlockedTableWidget = d->MarkupsFiducialTableWidget->blockSignals( true );
+  // Update the control points table
+  bool wasBlockedTableWidget = d->MarkupsControlPointsTableWidget->blockSignals( true );
 
-  if (d->MarkupsFiducialTableWidget->rowCount()==currentMarkupsFiducialNode->GetNumberOfFiducials())
+  if (d->MarkupsControlPointsTableWidget->rowCount()==currentMarkupsNode->GetNumberOfControlPoints())
     {
     // don't recreate the table if the number of items is not changed to preserve selection state
-    double fiducialPosition[ 3 ] = { 0, 0, 0 };
-    std::string fiducialLabel;
-    for ( int i = 0; i < currentMarkupsFiducialNode->GetNumberOfFiducials(); i++ )
+    double controlPointPosition[ 3 ] = { 0, 0, 0 };
+    std::string controlPointLabel;
+    for ( int i = 0; i < currentMarkupsNode->GetNumberOfControlPoints(); i++ )
       {
-      fiducialLabel = currentMarkupsFiducialNode->GetNthFiducialLabel( i );
-      currentMarkupsFiducialNode->GetNthFiducialPosition( i, fiducialPosition );
-      d->MarkupsFiducialTableWidget->item(i, FIDUCIAL_LABEL_COLUMN)->setText(QString::fromStdString( fiducialLabel ));
-      d->MarkupsFiducialTableWidget->item(i, FIDUCIAL_X_COLUMN)->setText(QString::number( fiducialPosition[0], 'f', 3 ));
-      d->MarkupsFiducialTableWidget->item(i, FIDUCIAL_Y_COLUMN)->setText(QString::number( fiducialPosition[1], 'f', 3 ));
-      d->MarkupsFiducialTableWidget->item(i, FIDUCIAL_Z_COLUMN)->setText(QString::number( fiducialPosition[2], 'f', 3 ));
+      controlPointLabel = currentMarkupsNode->GetNthControlPointLabel(i);
+      currentMarkupsNode->GetNthControlPointPosition(i, controlPointPosition);
+      d->MarkupsControlPointsTableWidget->item(i, CONTROL_POINT_LABEL_COLUMN)->setText(QString::fromStdString(controlPointLabel));
+      d->MarkupsControlPointsTableWidget->item(i, CONTROL_POINT_X_COLUMN)->setText(QString::number( controlPointPosition[0], 'f', 3 ));
+      d->MarkupsControlPointsTableWidget->item(i, CONTROL_POINT_Y_COLUMN)->setText(QString::number( controlPointPosition[1], 'f', 3 ));
+      d->MarkupsControlPointsTableWidget->item(i, CONTROL_POINT_Z_COLUMN)->setText(QString::number( controlPointPosition[2], 'f', 3 ));
       }
     }
   else
     {
-    d->MarkupsFiducialTableWidget->clear();
-    d->MarkupsFiducialTableWidget->setRowCount( currentMarkupsFiducialNode->GetNumberOfFiducials() );
-    d->MarkupsFiducialTableWidget->setColumnCount( FIDUCIAL_COLUMNS );
-    d->MarkupsFiducialTableWidget->setHorizontalHeaderLabels( QStringList() << "Label" << "X" << "Y" << "Z" );
+    d->MarkupsControlPointsTableWidget->clear();
+    d->MarkupsControlPointsTableWidget->setRowCount( currentMarkupsNode->GetNumberOfControlPoints() );
+    d->MarkupsControlPointsTableWidget->setColumnCount( CONTROL_POINT_COLUMNS );
+    d->MarkupsControlPointsTableWidget->setHorizontalHeaderLabels( QStringList() << "Label" << "X" << "Y" << "Z" );
 
-    double fiducialPosition[ 3 ] = { 0, 0, 0 };
-    std::string fiducialLabel;
-    for ( int i = 0; i < currentMarkupsFiducialNode->GetNumberOfFiducials(); i++ )
+    double controlPointPosition[ 3 ] = { 0, 0, 0 };
+    std::string controlPointLabel;
+    for ( int i = 0; i < currentMarkupsNode->GetNumberOfControlPoints(); i++ )
       {
-      fiducialLabel = currentMarkupsFiducialNode->GetNthFiducialLabel( i );
-      currentMarkupsFiducialNode->GetNthFiducialPosition( i, fiducialPosition );
+      controlPointLabel = currentMarkupsNode->GetNthControlPointLabel( i );
+      currentMarkupsNode->GetNthControlPointPosition( i, controlPointPosition );
 
-      QTableWidgetItem* labelItem = new QTableWidgetItem( QString::fromStdString( fiducialLabel ) );
-      QTableWidgetItem* xItem = new QTableWidgetItem( QString::number( fiducialPosition[0], 'f', 3 ) );
-      QTableWidgetItem* yItem = new QTableWidgetItem( QString::number( fiducialPosition[1], 'f', 3 ) );
-      QTableWidgetItem* zItem = new QTableWidgetItem( QString::number( fiducialPosition[2], 'f', 3 ) );
+      QTableWidgetItem* labelItem = new QTableWidgetItem( QString::fromStdString(controlPointLabel) );
+      QTableWidgetItem* xItem = new QTableWidgetItem( QString::number( controlPointPosition[0], 'f', 3 ) );
+      QTableWidgetItem* yItem = new QTableWidgetItem( QString::number( controlPointPosition[1], 'f', 3 ) );
+      QTableWidgetItem* zItem = new QTableWidgetItem( QString::number( controlPointPosition[2], 'f', 3 ) );
 
-      d->MarkupsFiducialTableWidget->setItem( i, FIDUCIAL_LABEL_COLUMN, labelItem );
-      d->MarkupsFiducialTableWidget->setItem( i, FIDUCIAL_X_COLUMN, xItem );
-      d->MarkupsFiducialTableWidget->setItem( i, FIDUCIAL_Y_COLUMN, yItem );
-      d->MarkupsFiducialTableWidget->setItem( i, FIDUCIAL_Z_COLUMN, zItem );
+      d->MarkupsControlPointsTableWidget->setItem( i, CONTROL_POINT_LABEL_COLUMN, labelItem );
+      d->MarkupsControlPointsTableWidget->setItem( i, CONTROL_POINT_X_COLUMN, xItem );
+      d->MarkupsControlPointsTableWidget->setItem( i, CONTROL_POINT_Y_COLUMN, yItem );
+      d->MarkupsControlPointsTableWidget->setItem( i, CONTROL_POINT_Z_COLUMN, zItem );
       }
     }
 
-  d->MarkupsFiducialTableWidget->blockSignals( wasBlockedTableWidget );
+  d->MarkupsControlPointsTableWidget->blockSignals( wasBlockedTableWidget );
 
   emit updateFinished();
 }
@@ -611,7 +620,7 @@ void qSlicerSimpleMarkupsWidget::onPointAdded()
 {
   Q_D(qSlicerSimpleMarkupsWidget);
   this->updateWidget();
-  d->MarkupsFiducialTableWidget->scrollToBottom();
+  d->MarkupsControlPointsTableWidget->scrollToBottom();
 }
 
 
@@ -633,5 +642,5 @@ qSlicerMarkupsPlaceWidget* qSlicerSimpleMarkupsWidget::markupsPlaceWidget() cons
 qMRMLNodeComboBox* qSlicerSimpleMarkupsWidget::markupsSelectorComboBox() const
 {
   Q_D(const qSlicerSimpleMarkupsWidget);
-  return d->MarkupsFiducialNodeComboBox;
+  return d->MarkupsNodeComboBox;
 }
