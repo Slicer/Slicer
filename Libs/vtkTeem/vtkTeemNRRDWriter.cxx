@@ -202,7 +202,7 @@ void* vtkTeemNRRDWriter::MakeNRRD()
 
   //vtkImageData *input = this->GetInput();
 
-  if (this->Space != nrrdSpaceRightAnteriorSuperior || this->Space != nrrdSpaceRightAnteriorSuperiorTime)
+  if (this->Space != nrrdSpaceRightAnteriorSuperior && this->Space != nrrdSpaceRightAnteriorSuperiorTime)
     {
     if (this->GetInput()->GetPointData()->GetTensors())
       {
