@@ -697,7 +697,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
       return abortEvent
 
     # Clicking in a view should remove all previous pipelines
-    if eventId == vtk.vtkCommand.LeftButtonPressEvent:
+    if eventId == vtk.vtkCommand.LeftButtonPressEvent and not callerInteractor.GetShiftKey():
       self.clearHistogramDisplay()
 
     if self.histogramPipeline is None:
@@ -706,19 +706,17 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     xy = callerInteractor.GetEventPosition()
     ras = self.xyToRas(xy, viewWidget)
 
-    if eventId == vtk.vtkCommand.LeftButtonPressEvent:
+    if eventId == vtk.vtkCommand.LeftButtonPressEvent and not callerInteractor.GetShiftKey():
       self.histogramPipeline.state = HISTOGRAM_STATE_MOVING
       self.histogramPipeline.addPoint(ras)
       self.updateHistogram()
       abortEvent = True
     elif eventId == vtk.vtkCommand.LeftButtonReleaseEvent:
       self.histogramPipeline.state = HISTOGRAM_STATE_PLACED
-      abortEvent = True
     elif eventId == vtk.vtkCommand.MouseMoveEvent:
       if self.histogramPipeline.state == HISTOGRAM_STATE_MOVING:
         self.histogramPipeline.addPoint(ras)
         self.updateHistogram()
-        abortEvent = True
     return abortEvent
 
   def createHistogramPipeline(self, sliceWidget):
