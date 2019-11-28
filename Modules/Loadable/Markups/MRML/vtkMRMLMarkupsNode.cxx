@@ -1609,6 +1609,16 @@ void vtkMRMLMarkupsNode::ConvertOrientationWXYZToMatrix(double orientationWXYZ[4
 }
 
 //----------------------------------------------------------------------
+vtkPoints* vtkMRMLMarkupsNode::GetCurvePoints()
+{
+  if (!this->CurvePoly)
+    {
+    return nullptr;
+    }
+  return this->CurvePoly->GetPoints();
+}
+
+//----------------------------------------------------------------------
 vtkPoints* vtkMRMLMarkupsNode::GetCurvePointsWorld()
 {
   vtkPolyData* curvePolyDataWorld = this->GetCurveWorld();
@@ -1617,6 +1627,12 @@ vtkPoints* vtkMRMLMarkupsNode::GetCurvePointsWorld()
     return nullptr;
     }
   return curvePolyDataWorld->GetPoints();
+}
+
+//----------------------------------------------------------------------
+vtkPolyData* vtkMRMLMarkupsNode::GetCurve()
+{
+  return this->CurvePoly;
 }
 
 //----------------------------------------------------------------------

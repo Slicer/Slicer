@@ -519,8 +519,10 @@ public:
 
   void GetControlPointLabels(vtkStringArray* labels);
 
+  vtkPoints* GetCurvePoints();
   vtkPoints* GetCurvePointsWorld();
 
+  vtkPolyData* GetCurve();
   vtkPolyData* GetCurveWorld();
 
   vtkAlgorithmOutput* GetCurveWorldConnection();

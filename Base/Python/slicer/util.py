@@ -1184,7 +1184,7 @@ def arrayFromMarkupsControlPoints(markupsNode, world = False):
   :param world: if set to True then the control points coordinates are returned in world coordinate system
     (effect of parent transform to the node is applied).
   The returned array is just a copy and so any modification in the array will not affect the markup node.
-  To modify markup control points based on a numpy array, use :py:meth:`updateMarkupControlPointsFromArray`.
+  To modify markup control points based on a numpy array, use :py:meth:`updateMarkupsControlPointsFromArray`.
   """
   numberOfControlPoints = markupsNode.GetNumberOfControlPoints()
   import numpy as np
@@ -1196,9 +1196,9 @@ def arrayFromMarkupsControlPoints(markupsNode, world = False):
       markupsNode.GetNthControlPointPosition(controlPointIndex, narray[controlPointIndex,:])
   return narray
 
-def updateMarkupControlPointsFromArray(markupsNode, narray, world = False):
+def updateMarkupsControlPointsFromArray(markupsNode, narray, world = False):
   """Sets control point positions in a markups node from a numpy array of size Nx3.
-  :param world: if set to True then the control points coordinates are expected in world coordinate system.
+  :param world: if set to True then the control point coordinates are expected in world coordinate system.
   All previous content of the node is deleted.
   """
   narrayshape = narray.shape
@@ -1227,6 +1227,21 @@ def updateMarkupControlPointsFromArray(markupsNode, narray, world = False):
     # Remove extra point from the markup node
     for controlPointIndex in range(oldNumberOfControlPoints, numberOfControlPoints, -1):
       markupsNode.RemoveNthControlPoint(controlPointIndex-1)
+
+def arrayFromMarkupsCurvePoints(markupsNode, world = False):
+  """Return interpolated curve point positions of a markups node as rows in a numpy array (of size Nx3).
+  :param world: if set to True then the point coordinates are returned in world coordinate system
+    (effect of parent transform to the node is applied).
+  The returned array is just a copy and so any modification in the array will not affect the markup node.
+  """
+  import numpy as np
+  import vtk.util.numpy_support
+  if world:
+    pointData = markupsNode.GetCurvePointsWorld().GetData()
+  else:
+    pointData = markupsNode.GetCurvePoints().GetData()
+  narray = vtk.util.numpy_support.vtk_to_numpy(pointData)
+  return narray
 
 def updateVolumeFromArray(volumeNode, narray):
   """Sets voxels of a volume node from a numpy array.
