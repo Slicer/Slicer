@@ -1289,6 +1289,49 @@ def updateVolumeFromArray(volumeNode, narray):
   volumeNode.Modified()
   volumeNode.InvokeEvent(slicer.vtkMRMLVolumeNode.ImageDataModifiedEvent, volumeNode)
 
+def addVolumeFromArray(narray, ijkToRAS=None, name=None, nodeClassName=None):
+  """Create a new volume node from content of a numpy array and add it to the scene.
+  Voxels values are deep-copied, therefore if the numpy array
+  is modified after calling this method, voxel values in the volume node will not change.
+  :param narray: numpy array containing volume voxels.
+  :param ijkToRAS: 4x4 numpy array or vtk.vtkMatrix4x4 that defines mapping from IJK to RAS coordinate system (specifying origin, spacing, directions)
+  :param name: volume node name
+  :param nodeClassName: type of created volume, default: ``vtkMRMLScalarVolumeNode``.
+    Use ``vtkMRMLLabelMapVolumeNode`` for labelmap volume, ``vtkMRMLVectorVolumeNode`` for vector volume.
+  :return: created new volume node
+
+  Example: create zero-filled volume
+
+    import numpy as np
+    volumeNode = slicer.util.addVolumeFromArray(np.zeros((30, 40, 50)))
+
+  Example: create labelmap volume filled with voxel value of 120
+
+    import numpy as np
+    volumeNode = slicer.util.addVolumeFromArray(np.ones((30, 40, 50),'int8') * 120,
+      np.diag([0.2, 0.2, 0.5, 1.0]), nodeClassName="vtkMRMLLabelMapVolumeNode")
+
+  """
+
+  import slicer
+  from vtk import vtkMatrix4x4
+  import numpy as np
+
+  if name is None:
+    name = ""
+  if nodeClassName is None:
+    nodeClassName = "vtkMRMLScalarVolumeNode"
+
+  volumeNode = slicer.mrmlScene.AddNewNodeByClass(nodeClassName, name)
+  if ijkToRAS is not None:
+    if not isinstance(ijkToRAS, vtkMatrix4x4):
+      ijkToRAS = vtkMatrixFromArray(ijkToRAS)
+    volumeNode.SetIJKToRASMatrix(ijkToRAS)
+  updateVolumeFromArray(volumeNode, narray)
+  volumeNode.CreateDefaultDisplayNodes()
+
+  return volumeNode
+
 def arrayFromTableColumn(tableNode, columnName):
   """Return values of a table node's column as numpy array.
   Values can be modified by modifying the numpy array.
