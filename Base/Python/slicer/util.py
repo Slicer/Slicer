@@ -501,7 +501,7 @@ def loadModel(filename, returnNode=False):
   filetype = 'ModelFile'
   return loadNodeFromFile(filename, filetype, {}, returnNode)
 
-def loadScalarOverlay(filename, returnNode=False):
+def loadScalarOverlay(filename, modelNodeID, returnNode=False):
   """Load node from file.
   :param filename: full path of the file to load.
   :param returnNode: Deprecated.
@@ -509,7 +509,7 @@ def loadScalarOverlay(filename, returnNode=False):
     If returnNode is True then a status flag and loaded node are returned.
   """
   filetype = 'ScalarOverlayFile'
-  return loadNodeFromFile(filename, filetype, {}, returnNode)
+  return loadNodeFromFile(filename, filetype, {'modelNodeId': modelNodeID }, returnNode)
 
 def loadSegmentation(filename, returnNode=False):
   """Load node from file.
