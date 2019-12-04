@@ -39,6 +39,7 @@
 
 // CTK includes
 #include <ctkPimpl.h>
+#include <ctkSignalMapper.h>
 #include <ctkVTKObject.h>
 #include "qSlicerBaseQTGUIExport.h"
 
@@ -100,6 +101,13 @@ public:
   QAction* AdjustWindowLevelAction;
   QAction* PlaceWidgetAction;
   QMenu* PlaceWidgetMenu;
+
+  QAction* AdjustWindowLevelAdjustModeAction;
+  QAction* AdjustWindowLevelRegionModeAction;
+  QAction* AdjustWindowLevelCenteredRegionModeAction;
+  QMenu* AdjustWindowLevelMenu;
+
+  ctkSignalMapper* AdjustWindowLevelModeMapper;
 
   /// Place Persistence
   QAction *PersistenceAction;

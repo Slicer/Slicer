@@ -51,6 +51,14 @@ public:
    */
   static vtkMRMLWindowLevelWidget *New();
 
+  enum
+  {
+    ModeAdjust,
+    ModeRectangle,
+    ModeRectangleCentered,
+    Mode_Last
+  };
+
   //@{
   /**
    * Standard VTK class macros.
@@ -92,7 +100,9 @@ public:
   enum
     {
     WidgetStateAdjustWindowLevel = WidgetStateUser,
-    WidgetStateSetWindowLevelFromRegion,
+    /// alternative state: if current mode is region-based then in alternative state
+    /// the mode is adjustment; if current mode is adjustment then alternative state is region-based
+    WidgetStateAdjustWindowLevelAlternative,
     };
 
   /// Widget events
@@ -102,17 +112,17 @@ public:
     WidgetEventAdjustWindowLevelStart,
     WidgetEventAdjustWindowLevelEnd,
     WidgetEventAdjustWindowLevelCancel,
-    WidgetEventSetWindowLevelFromRegionStart,
-    WidgetEventSetWindowLevelFromRegionEnd,
-    WidgetEventSetWindowLevelFromRegionCancel,
+    WidgetEventAdjustWindowLevelAlternativeStart,
+    WidgetEventAdjustWindowLevelAlternativeEnd,
+    WidgetEventAdjustWindowLevelAlternativeCancel,
     };
 
   bool UpdateWindowLevelFromRectangle(int layer, int cornerPoint1[2], int cornerPoint2[2]);
 
-  /// Rubberband is centered around the click position
-  vtkGetMacro(CenteredRubberBand, bool);
-  vtkSetMacro(CenteredRubberBand, bool);
-  vtkBooleanMacro(CenteredRubberBand, bool);
+  static const char* GetInteractionNodeAdjustWindowLevelModeAttributeName() { return "AdjustWindowLevelMode"; };
+
+  static const char* GetAdjustWindowLevelModeAsString(int id);
+  static int GetAdjustWindowLevelModeFromString(const char* name);
 
 protected:
   vtkMRMLWindowLevelWidget();
@@ -146,6 +156,11 @@ protected:
 
   bool SetVolumeWindowLevel(double window, double level, bool isAutoWindowLevel);
 
+  /// Rubberband is centered around the click position
+  vtkGetMacro(CenteredRubberBand, bool);
+  vtkSetMacro(CenteredRubberBand, bool);
+  vtkBooleanMacro(CenteredRubberBand, bool);
+
   vtkWeakPointer<vtkMRMLSliceNode> SliceNode;
   vtkWeakPointer<vtkMRMLSliceLogic> SliceLogic;
 
@@ -164,6 +179,8 @@ protected:
 
   bool BackgroundVolumeEditable;
   bool ForegroundVolumeEditable;
+
+  int AdjustMode;
 
 private:
   vtkMRMLWindowLevelWidget(const vtkMRMLWindowLevelWidget&) = delete;

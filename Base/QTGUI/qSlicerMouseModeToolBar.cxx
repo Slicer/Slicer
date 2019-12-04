@@ -28,6 +28,7 @@
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLViewNode.h>
+#include <vtkMRMLWindowLevelWidget.h>
 
 // SlicerQt includes
 #include "qSlicerApplication.h"
@@ -48,6 +49,12 @@
 qSlicerMouseModeToolBarPrivate::qSlicerMouseModeToolBarPrivate(qSlicerMouseModeToolBar& object)
   : q_ptr(&object)
 {
+  this->AdjustWindowLevelAdjustModeAction = nullptr;
+  this->AdjustWindowLevelRegionModeAction = nullptr;
+  this->AdjustWindowLevelCenteredRegionModeAction = nullptr;
+  this->AdjustWindowLevelModeMapper = nullptr;
+  this->AdjustWindowLevelMenu = nullptr;
+
   this->PlaceWidgetAction = nullptr;
   this->PlaceWidgetMenu = nullptr;
 
@@ -79,6 +86,62 @@ void qSlicerMouseModeToolBarPrivate::init()
     q, SLOT(interactionModeActionTriggered(bool)));
   q->addAction(this->AdjustViewAction);
   this->InteractionModesActionGroup->addAction(this->AdjustViewAction);
+
+  // Window/level mode
+
+  QActionGroup* windowLevelModeActions = new QActionGroup(q);
+  windowLevelModeActions->setExclusive(true);
+
+  this->AdjustWindowLevelAdjustModeAction = new QAction(q);
+  this->AdjustWindowLevelAdjustModeAction->setText(tr("Adjust"));
+  this->AdjustWindowLevelAdjustModeAction->setToolTip(tr("Adjust window/level by click-and-drag in a slice viewer."));
+  this->AdjustWindowLevelAdjustModeAction->setCheckable(true);
+
+  this->AdjustWindowLevelRegionModeAction = new QAction(q);
+  this->AdjustWindowLevelRegionModeAction->setText(tr("Select region"));
+  this->AdjustWindowLevelRegionModeAction->setToolTip(
+    tr("Set window level based on a rectangular region, specified by click-and-drag in a slice viewer. Click position is used as region corner."));
+  this->AdjustWindowLevelRegionModeAction->setCheckable(true);
+
+  this->AdjustWindowLevelCenteredRegionModeAction = new QAction(q);
+  this->AdjustWindowLevelCenteredRegionModeAction->setText(tr("Select region - centered"));
+  this->AdjustWindowLevelCenteredRegionModeAction->setToolTip(
+    tr("Set window level based on a rectangular region, specified by click-and-drag in a slice viewer. Click position is used as region center."));
+  this->AdjustWindowLevelCenteredRegionModeAction->setCheckable(true);
+
+  windowLevelModeActions->addAction(this->AdjustWindowLevelAdjustModeAction);
+  windowLevelModeActions->addAction(this->AdjustWindowLevelRegionModeAction);
+  windowLevelModeActions->addAction(this->AdjustWindowLevelCenteredRegionModeAction);
+
+  this->AdjustWindowLevelModeMapper = new ctkSignalMapper(q);
+  this->AdjustWindowLevelModeMapper->setMapping(this->AdjustWindowLevelAdjustModeAction, vtkMRMLWindowLevelWidget::ModeAdjust);
+  this->AdjustWindowLevelModeMapper->setMapping(this->AdjustWindowLevelRegionModeAction, vtkMRMLWindowLevelWidget::ModeRectangle);
+  this->AdjustWindowLevelModeMapper->setMapping(this->AdjustWindowLevelCenteredRegionModeAction, vtkMRMLWindowLevelWidget::ModeRectangleCentered);
+  QObject::connect(windowLevelModeActions, SIGNAL(triggered(QAction*)), this->AdjustWindowLevelModeMapper, SLOT(map(QAction*)));
+  QObject::connect(this->AdjustWindowLevelModeMapper, SIGNAL(mapped(int)), q, SLOT(setAdjustWindowLevelMode(int)));
+
+  // Menu
+  this->AdjustWindowLevelMenu = new QMenu(tr("Adjust window/level"), q);
+  this->AdjustWindowLevelMenu->addActions(windowLevelModeActions->actions());
+
+  this->AdjustWindowLevelAction = new QAction(this);
+  this->AdjustWindowLevelAction->setObjectName("AdjustWindowLevelAction");
+  this->AdjustWindowLevelAction->setData(vtkMRMLInteractionNode::AdjustWindowLevel);
+  this->AdjustWindowLevelAction->setToolTip(qSlicerMouseModeToolBar::tr(
+    "Adjust window/level of volume by left-click-and-drag in slice views."
+    " Hold down Ctrl/Cmd key for temporarily switch between adjustment and region-based setting."));
+  this->AdjustWindowLevelAction->setIcon(QIcon(":/Icons/MouseWindowLevelMode.png"));
+  this->AdjustWindowLevelAction->setText(qSlicerMouseModeToolBar::tr("Window/level"));
+  this->AdjustWindowLevelAction->setCheckable(true);
+  this->AdjustWindowLevelAction->setMenu(this->AdjustWindowLevelMenu);
+  //this->AdjustWindowLevelAction->setPopupMode(QToolButton::MenuButtonPopup);
+
+  QObject::connect(this->AdjustWindowLevelAction, SIGNAL(toggled(bool)),
+    q, SLOT(interactionModeActionTriggered(bool)));
+  q->addAction(this->AdjustWindowLevelAction);
+  this->InteractionModesActionGroup->addAction(this->AdjustWindowLevelAction);
+
+
 
   // Place mode
 
@@ -115,23 +178,6 @@ void qSlicerMouseModeToolBarPrivate::init()
     q, SLOT(interactionModeActionTriggered(bool)));
   q->addAction(this->PlaceWidgetAction);
   this->InteractionModesActionGroup->addAction(this->PlaceWidgetAction);
-
-  // Window/level mode
-
-  this->AdjustWindowLevelAction = new QAction(this);
-  this->AdjustWindowLevelAction->setObjectName("AdjustWindowLevelAction");
-  this->AdjustWindowLevelAction->setData(vtkMRMLInteractionNode::AdjustWindowLevel);
-  this->AdjustWindowLevelAction->setToolTip(qSlicerMouseModeToolBar::tr(
-    "Adjust window/level of volume by left-click-and-drag in slice views."
-    " Hold down Control key for automatic window/level setting in a region."));
-  this->AdjustWindowLevelAction->setIcon(QIcon(":/Icons/MouseWindowLevelMode.png"));
-  this->AdjustWindowLevelAction->setText(qSlicerMouseModeToolBar::tr("Window/level"));
-  this->AdjustWindowLevelAction->setCheckable(true);
-
-  QObject::connect(this->AdjustWindowLevelAction, SIGNAL(toggled(bool)),
-    q, SLOT(interactionModeActionTriggered(bool)));
-  q->addAction(this->AdjustWindowLevelAction);
-  this->InteractionModesActionGroup->addAction(this->AdjustWindowLevelAction);
 }
 
 //---------------------------------------------------------------------------
@@ -259,6 +305,22 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
         }
       break;
       }
+    }
+
+  int adjustWindowLevelMode = vtkMRMLWindowLevelWidget::GetAdjustWindowLevelModeFromString(
+    interactionNode->GetAttribute(vtkMRMLWindowLevelWidget::GetInteractionNodeAdjustWindowLevelModeAttributeName()));
+  switch (adjustWindowLevelMode)
+    {
+    case vtkMRMLWindowLevelWidget::ModeRectangle:
+      this->AdjustWindowLevelRegionModeAction->setChecked(true);
+      break;
+    case vtkMRMLWindowLevelWidget::ModeRectangleCentered:
+      this->AdjustWindowLevelCenteredRegionModeAction->setChecked(true);
+      break;
+    case vtkMRMLWindowLevelWidget::ModeAdjust:
+    default:
+      this->AdjustWindowLevelAdjustModeAction->setChecked(true);
+      break;
     }
 
   this->updateCursor();
@@ -696,7 +758,6 @@ void qSlicerMouseModeToolBar::setInteractionNode(vtkMRMLInteractionNode* interac
   d->updateWidgetFromMRML();
 }
 
-
 //-----------------------------------------------------------------------------
 void qSlicerMouseModeToolBar::interactionModeActionTriggered(bool toggled)
 {
@@ -731,4 +792,18 @@ void qSlicerMouseModeToolBar::interactionModeActionTriggered(bool toggled)
         }
       }
     }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMouseModeToolBar::setAdjustWindowLevelMode(int adjustWindowLevelMode)
+{
+  Q_D(qSlicerMouseModeToolBar);
+  vtkMRMLInteractionNode* interactionNode = this->interactionNode();
+  if (!interactionNode)
+    {
+    qDebug() << "setAdjustWindowLevelMode: no interaction node";
+    return;
+    }
+  interactionNode->SetAttribute(vtkMRMLWindowLevelWidget::GetInteractionNodeAdjustWindowLevelModeAttributeName(),
+    vtkMRMLWindowLevelWidget::GetAdjustWindowLevelModeAsString(adjustWindowLevelMode));
 }

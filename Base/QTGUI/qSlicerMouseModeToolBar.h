@@ -85,6 +85,8 @@ public slots:
 
   void interactionModeActionTriggered(bool);
 
+  void setAdjustWindowLevelMode(int);
+
 protected:
   QScopedPointer<qSlicerMouseModeToolBarPrivate> d_ptr;
 

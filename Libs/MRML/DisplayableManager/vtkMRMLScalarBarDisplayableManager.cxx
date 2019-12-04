@@ -133,12 +133,8 @@ void vtkMRMLScalarBarDisplayableManager::vtkInternal::UpdateSliceNode()
     this->WindowLevelWidget->SetMRMLApplicationLogic(mrmlAppLogic);
     this->WindowLevelWidget->CreateDefaultRepresentation();
     this->WindowLevelWidget->SetRenderer(this->External->GetRenderer());
-    this->WindowLevelWidget->SetSliceNode(this->GetSliceNode());
     }
-  else
-    {
-    this->WindowLevelWidget->SetSliceNode(this->GetSliceNode());
-    }
+  this->WindowLevelWidget->SetSliceNode(this->GetSliceNode());
 }
 
 //---------------------------------------------------------------------------

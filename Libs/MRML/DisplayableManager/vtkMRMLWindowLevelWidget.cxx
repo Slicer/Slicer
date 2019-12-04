@@ -22,6 +22,7 @@
 #include "vtkMRMLCrosshairDisplayableManager.h"
 #include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLInteractionEventData.h"
+#include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSegmentationDisplayNode.h"
@@ -72,16 +73,19 @@ vtkMRMLWindowLevelWidget::vtkMRMLWindowLevelWidget()
 
   this->CenteredRubberBand = true;
 
+  this->AdjustMode = ModeAdjust;
+
   this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
     WidgetStateAdjustWindowLevel, WidgetEventAdjustWindowLevelStart, WidgetEventAdjustWindowLevelEnd);
   this->SetKeyboardEventTranslation(WidgetStateAdjustWindowLevel, vtkEvent::NoModifier, 0, 0, "Escape", WidgetEventAdjustWindowLevelCancel);
   this->SetEventTranslation(WidgetStateAdjustWindowLevel, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetEventAdjustWindowLevelCancel);
 
   this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::ControlModifier,
-    WidgetStateSetWindowLevelFromRegion, WidgetEventSetWindowLevelFromRegionStart, WidgetEventSetWindowLevelFromRegionEnd);
-  this->SetKeyboardEventTranslation(WidgetStateSetWindowLevelFromRegion, vtkEvent::AnyModifier, 0, 0, "Escape", WidgetEventSetWindowLevelFromRegionCancel);
-  this->SetEventTranslation(WidgetStateSetWindowLevelFromRegion, vtkCommand::RightButtonPressEvent, vtkEvent::AnyModifier,
-    WidgetEventSetWindowLevelFromRegionCancel);
+    WidgetStateAdjustWindowLevelAlternative, WidgetEventAdjustWindowLevelAlternativeStart, WidgetEventAdjustWindowLevelAlternativeEnd);
+  this->SetKeyboardEventTranslation(WidgetStateAdjustWindowLevelAlternative,
+    vtkEvent::AnyModifier, 0, 0, "Escape", WidgetEventAdjustWindowLevelAlternativeCancel);
+  this->SetEventTranslation(WidgetStateAdjustWindowLevelAlternative, vtkCommand::RightButtonPressEvent, vtkEvent::AnyModifier,
+    WidgetEventAdjustWindowLevelAlternativeCancel);
 
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::LeftButtonDoubleClickEvent, vtkEvent::NoModifier, WidgetEventResetWindowLevel);
 }
@@ -102,6 +106,7 @@ void vtkMRMLWindowLevelWidget::CreateDefaultRepresentation()
     }
   vtkNew<vtkMRMLRubberBandWidgetRepresentation> newRep;
   this->WidgetRep = newRep;
+  this->WidgetRep->SetViewNode(this->GetSliceNode());
 }
 
 //-----------------------------------------------------------------------------
@@ -124,8 +129,8 @@ bool vtkMRMLWindowLevelWidget::CanProcessInteractionEvent(vtkMRMLInteractionEven
     }
 
   // If we are currently dragging a point then we interact everywhere
-  if (this->WidgetState == WidgetStateSetWindowLevelFromRegion
-    || this->WidgetState == WidgetStateAdjustWindowLevel)
+  if (this->WidgetState == WidgetStateAdjustWindowLevel
+    || this->WidgetState == WidgetStateAdjustWindowLevelAlternative)
     {
     distance2 = 0.0;
     return true;
@@ -157,10 +162,53 @@ bool vtkMRMLWindowLevelWidget::ProcessInteractionEvent(vtkMRMLInteractionEventDa
       processedEvent = this->ProcessMouseMove(eventData);
       break;
     case WidgetEventAdjustWindowLevelStart:
-      processedEvent = this->ProcessAdjustWindowLevelStart(eventData);
+    case WidgetEventAdjustWindowLevelAlternativeStart:
+      {
+      vtkMRMLInteractionNode * interactionNode = this->GetInteractionNode();
+      this->AdjustMode = -1;
+      if (interactionNode)
+        {
+        this->AdjustMode = GetAdjustWindowLevelModeFromString(
+          interactionNode->GetAttribute(GetInteractionNodeAdjustWindowLevelModeAttributeName()));
+        }
+      if (this->AdjustMode < 0)
+        {
+        // no valid mode is defined, use default
+        this->AdjustMode = ModeAdjust;
+        }
+      // Control modifier indicates to use the alternative adjustment mode
+      if (widgetEvent == WidgetEventAdjustWindowLevelAlternativeStart)
+        {
+        if (this->AdjustMode == ModeAdjust)
+          {
+          this->AdjustMode = ModeRectangleCentered;
+          }
+        else
+          {
+          this->AdjustMode = ModeAdjust;
+          }
+        }
+      if (this->AdjustMode == ModeAdjust)
+        {
+        processedEvent = this->ProcessAdjustWindowLevelStart(eventData);
+        }
+      else
+        {
+        this->SetCenteredRubberBand(this->AdjustMode == ModeRectangleCentered);
+        processedEvent = this->ProcessSetWindowLevelFromRegionStart(eventData);
+        }
+      }
       break;
     case WidgetEventAdjustWindowLevelEnd:
-      processedEvent = this->ProcessEndMouseDrag(eventData);
+    case WidgetEventAdjustWindowLevelAlternativeEnd:
+      if (this->AdjustMode == ModeAdjust)
+        {
+        processedEvent = this->ProcessEndMouseDrag(eventData);
+        }
+      else
+        {
+        processedEvent = this->ProcessSetWindowLevelFromRegionEnd(eventData);
+        }
       break;
     case WidgetEventAdjustWindowLevelCancel:
       processedEvent = this->ProcessEndMouseDrag(eventData);
@@ -169,13 +217,7 @@ bool vtkMRMLWindowLevelWidget::ProcessInteractionEvent(vtkMRMLInteractionEventDa
     case WidgetEventResetWindowLevel:
       processedEvent = this->ProcessResetWindowLevel(eventData);
       break;
-    case WidgetEventSetWindowLevelFromRegionStart:
-      processedEvent = this->ProcessSetWindowLevelFromRegionStart(eventData);
-      break;
-    case WidgetEventSetWindowLevelFromRegionEnd:
-      processedEvent = this->ProcessSetWindowLevelFromRegionEnd(eventData);
-      break;
-    case WidgetEventSetWindowLevelFromRegionCancel:
+    case WidgetEventAdjustWindowLevelAlternativeCancel:
       processedEvent = this->ProcessSetWindowLevelFromRegionEnd(eventData, false);
       break;
     default:
@@ -209,7 +251,7 @@ bool vtkMRMLWindowLevelWidget::ProcessMouseMove(vtkMRMLInteractionEventData* eve
     case WidgetStateAdjustWindowLevel:
       this->ProcessAdjustWindowLevel(eventData);
       break;
-    case WidgetStateSetWindowLevelFromRegion:
+    case WidgetStateAdjustWindowLevelAlternative:
       this->ProcessSetWindowLevelFromRegion(eventData);
       break;
     }
@@ -281,7 +323,10 @@ void vtkMRMLWindowLevelWidget::SetSliceNode(vtkMRMLSliceNode* sliceNode)
     return;
     }
   this->SliceNode = sliceNode;
-
+  if (this->WidgetRep)
+    {
+    this->WidgetRep->SetViewNode(sliceNode);
+    }
   // Force update of slice logic
   this->SliceLogic = nullptr;
 }
@@ -515,7 +560,7 @@ bool vtkMRMLWindowLevelWidget::ProcessSetWindowLevelFromRegionStart(vtkMRMLInter
     rubberBand->SetVisibility(true);
     rubberBand->NeedToRenderOn();
     }
-  this->SetWidgetState(WidgetStateSetWindowLevelFromRegion);
+  this->SetWidgetState(WidgetStateAdjustWindowLevelAlternative);
   return this->ProcessStartMouseDrag(eventData);
 }
 
@@ -727,4 +772,38 @@ bool vtkMRMLWindowLevelWidget::SetVolumeWindowLevel(double window, double level,
     volumeDisplayNode->EndModify(disabledModify);
     }
   return true;
+}
+
+//-----------------------------------------------------------
+const char* vtkMRMLWindowLevelWidget::GetAdjustWindowLevelModeAsString(int id)
+{
+  switch (id)
+    {
+    case ModeAdjust: return "Adjust";
+    case ModeRectangle: return "Rectangle";
+    case ModeRectangleCentered: return "RectangleCentered";
+    default:
+      // invalid id
+      return "";
+    }
+}
+
+//-----------------------------------------------------------
+int vtkMRMLWindowLevelWidget::GetAdjustWindowLevelModeFromString(const char* name)
+{
+  if (name == nullptr)
+    {
+    // invalid name
+    return -1;
+    }
+  for (int ii = 0; ii < Mode_Last; ii++)
+    {
+    if (strcmp(name, GetAdjustWindowLevelModeAsString(ii)) == 0)
+      {
+      // found a matching name
+      return ii;
+      }
+    }
+  // unknown name
+  return -1;
 }
