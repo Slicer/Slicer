@@ -310,7 +310,7 @@ class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
       ds.SOPClassUID = '1.2.840.10008.5.1.4.1.1.2.1' # Enhanced CT Image IOD
 
     sliceStartPosition = ds.ImagePositionPatient if hasattr(ds,'ImagePositionPatient') else [0,0,0]
-    sliceAxes = ds.ImageOrientationPatient if hasattr(ds,'ImagePositionPatient') else [1,0,0,0,1,0]
+    sliceAxes = ds.ImageOrientationPatient if hasattr(ds,'ImageOrientationPatient') else [1,0,0,0,1,0]
     x = sliceAxes[:3]
     y = sliceAxes[3:]
     z = [x[1] * y[2] - x[2] * y[1], x[2] * y[0] - x[0] * y[2], x[0] * y[1] - x[1] * y[0]] # cross(x,y)
