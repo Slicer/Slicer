@@ -28,6 +28,7 @@
 #include "vtkSlicerSegmentationsModuleLogic.h"
 #include "vtkMRMLSegmentationsDisplayableManager3D.h"
 #include "vtkMRMLSegmentationsDisplayableManager2D.h"
+#include "qSlicerSegmentationsNodeWriter.h"
 
 // Segment editor effects includes
 #include "qSlicerSegmentEditorEffectFactory.h"
@@ -167,7 +168,7 @@ void qSlicerSegmentationsModule::setup()
 
   // Register IOs
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
-  ioManager->registerIO(new qSlicerNodeWriter("Segmentation", QString("SegmentationFile"), QStringList() << "vtkMRMLSegmentationNode", true, this));
+  ioManager->registerIO(new qSlicerSegmentationsNodeWriter(this));
   ioManager->registerIO(new qSlicerSegmentationsReader(segmentationsLogic, this));
 
   // Register settings panel

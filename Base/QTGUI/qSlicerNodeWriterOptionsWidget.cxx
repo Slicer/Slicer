@@ -18,26 +18,13 @@
 
 ==============================================================================*/
 
-// Qt includes
-
 // qSlicer includes
-#include "qSlicerIOOptions_p.h"
 #include "qSlicerNodeWriterOptionsWidget.h"
-#include "ui_qSlicerNodeWriterOptionsWidget.h"
+#include "qSlicerNodeWriterOptionsWidget_p.h"
 
 // MRML includes
 #include <vtkMRMLStorableNode.h>
 #include <vtkMRMLStorageNode.h>
-
-//------------------------------------------------------------------------------
-class qSlicerNodeWriterOptionsWidgetPrivate
-  : public qSlicerIOOptionsPrivate
-  , public Ui_qSlicerNodeWriterOptionsWidget
-{
-public:
-  ~qSlicerNodeWriterOptionsWidgetPrivate() override;
-  virtual void setupUi(QWidget* widget);
-};
 
 //------------------------------------------------------------------------------
 qSlicerNodeWriterOptionsWidgetPrivate::~qSlicerNodeWriterOptionsWidgetPrivate()
@@ -51,6 +38,14 @@ void qSlicerNodeWriterOptionsWidgetPrivate::setupUi(QWidget* widget)
                    widget, SLOT(setUseCompression(bool)));
   QObject::connect(this->CompressionParameterSelector, SIGNAL(currentIndexChanged(int)),
                    widget, SLOT(setCompressionParameter(int)));
+}
+
+//------------------------------------------------------------------------------
+qSlicerNodeWriterOptionsWidget
+::qSlicerNodeWriterOptionsWidget(qSlicerNodeWriterOptionsWidgetPrivate* pimpl,
+                                   QWidget* parentWidget)
+  : Superclass(pimpl, parentWidget)
+{
 }
 
 //------------------------------------------------------------------------------

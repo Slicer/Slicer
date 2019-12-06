@@ -26,6 +26,7 @@
 #include "vtkOrientedImageDataResample.h"
 
 // MRML includes
+#include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLScene.h>
 #include "vtkMRMLSegmentationNode.h"
 #include "vtkMRMLSegmentationDisplayNode.h"
@@ -93,7 +94,9 @@ vtkMRMLNodeNewMacro(vtkMRMLSegmentationStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLSegmentationStorageNode::vtkMRMLSegmentationStorageNode()
-= default;
+  : CropToMinimumExtent(false)
+{
+}
 
 //----------------------------------------------------------------------------
 vtkMRMLSegmentationStorageNode::~vtkMRMLSegmentationStorageNode()
@@ -102,23 +105,29 @@ vtkMRMLSegmentationStorageNode::~vtkMRMLSegmentationStorageNode()
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLStorageNode::PrintSelf(os,indent);
+  Superclass::PrintSelf(os,indent);
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintBooleanMacro(CropToMinimumExtent);
+  vtkMRMLPrintEndMacro();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationStorageNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
-
+  MRMLNodeModifyBlocker blocker(this);
   Superclass::ReadXMLAttributes(atts);
-
-  this->EndModify(disabledModify);
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLBooleanMacro(CropToMinimumExtent, CropToMinimumExtent);
+  vtkMRMLReadXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationStorageNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLBooleanMacro(CropToMinimumExtent, CropToMinimumExtent);
+  vtkMRMLWriteXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -126,11 +135,11 @@ void vtkMRMLSegmentationStorageNode::WriteXML(ostream& of, int nIndent)
 // Does NOT copy: ID, FilePrefix, Name, StorageID
 void vtkMRMLSegmentationStorageNode::Copy(vtkMRMLNode *anode)
 {
-  int disabledModify = this->StartModify();
-
+  MRMLNodeModifyBlocker blocker(anode);
   Superclass::Copy(anode);
-
-  this->EndModify(disabledModify);
+  vtkMRMLCopyBeginMacro(anode);
+  vtkMRMLCopyBooleanMacro(CropToMinimumExtent);
+  vtkMRMLCopyEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -631,7 +640,7 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
   // Read succeeded, set master representation
   segmentation->SetMasterRepresentationName(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
 
-  int segmentationNodeWasModified = segmentationNode->StartModify();
+  MRMLNodeModifyBlocker blocker(segmentationNode);
 
   // Compensate for the extent shift in the image origin.
   // We change the origin so that if a reader ignores private fields, such as
@@ -863,8 +872,6 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
     segmentation->AddSegment(currentSegment, currentSegmentID);
     }
 
-  segmentationNode->EndModify(segmentationNodeWasModified);
-
   // Create contained representations now that all the data is loaded
   this->CreateRepresentationsBySerializedNames(segmentation, containedRepresentationNames);
 
@@ -902,7 +909,7 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
     return 0;
     }
 
-  int segmentationNodeWasModified = segmentationNode->StartModify();
+  MRMLNodeModifyBlocker blocker(segmentationNode);
 
   // Read segment poly datas
   std::string masterRepresentationName;
@@ -922,7 +929,6 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
       if (!masterRepresentationArray)
         {
         vtkErrorMacro("ReadPolyDataRepresentation: Unable to find master representation for segmentation in file " << path);
-        segmentationNode->EndModify(segmentationNodeWasModified);
         return 0;
         }
       masterRepresentationName = masterRepresentationArray->GetValue(0);
@@ -1043,8 +1049,6 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
   // Create contained representations now that all the data is loaded
   this->CreateRepresentationsBySerializedNames(segmentation, containedRepresentationNames);
 
-  segmentationNode->EndModify(segmentationNodeWasModified);
-
   return 1;
 }
 
@@ -1126,7 +1130,8 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
   int commonGeometryExtent[6] = { 0, -1, 0, -1, 0, -1 };
   if (segmentation->GetNumberOfSegments() > 0)
     {
-    std::string commonGeometryString = segmentation->DetermineCommonLabelmapGeometry(vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS);
+    std::string commonGeometryString = segmentation->DetermineCommonLabelmapGeometry(
+      this->CropToMinimumExtent ? vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS : vtkSegmentation::EXTENT_REFERENCE_GEOMETRY);
     vtkSegmentationConverter::DeserializeImageGeometry(commonGeometryString, commonGeometryImage, true, scalarType, 1);
     commonGeometryImage->GetExtent(commonGeometryExtent);
     }

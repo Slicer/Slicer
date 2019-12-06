@@ -37,7 +37,7 @@ public:
   explicit qSlicerNodeWriterOptionsWidget(QWidget* parent = nullptr);
   ~qSlicerNodeWriterOptionsWidget() override;
 
-  bool showUseCompression()const;
+  bool showUseCompression() const;
   void setShowUseCompression(bool show);
 
   bool isValid()const override;
@@ -49,6 +49,10 @@ protected slots:
   virtual void setUseCompression(bool use);
   virtual void setCompressionParameter(int index);
   virtual void setCompressionParameter(QString parameter);
+
+protected:
+  qSlicerNodeWriterOptionsWidget(qSlicerNodeWriterOptionsWidgetPrivate* pimpl,
+    QWidget* parent);
 
 private:
   Q_DECLARE_PRIVATE_D(qGetPtrHelper(qSlicerIOOptions::d_ptr), qSlicerNodeWriterOptionsWidget);

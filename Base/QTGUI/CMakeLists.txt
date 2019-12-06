@@ -71,6 +71,7 @@ set(KIT_SRCS
   qSlicerNodeWriter.h
   qSlicerNodeWriterOptionsWidget.cxx
   qSlicerNodeWriterOptionsWidget.h
+  qSlicerNodeWriterOptionsWidget_p.h
   qSlicerQListQVariantMapMetaType.h
   qSlicerSaveDataDialog.cxx
   qSlicerSaveDataDialog.h
@@ -203,6 +204,7 @@ set(KIT_MOC_SRCS
   qSlicerMouseModeToolBar_p.h
   qSlicerNodeWriter.h
   qSlicerNodeWriterOptionsWidget.h
+  qSlicerNodeWriterOptionsWidget_p.h
   qSlicerSaveDataDialog.h
   qSlicerSaveDataDialog_p.h
   qSlicerSettingsCachePanel.h

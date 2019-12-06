@@ -162,6 +162,17 @@ public:
   /// Reset supported write file types. Called when master representation is changed
   void ResetSupportedWriteFileTypes();
 
+  /// Controls if segmentation labelmap representation is written using minimum necessary extent
+  /// or the extent of reference image.
+  /// If false (default): the segmentation will be saved using the same extent as the reference image.
+  /// If true: the segmentation will be saved using the effective extent. This saves space (especially when
+  /// saving the segmentation uncompressed), but makes voxel coordinates of the segmentation different from
+  /// voxel coordinates of the reference image, which may cause problems in software that assume voxel coordinate system
+  /// of the reference image is the same as the segmentation's.
+  vtkSetMacro(CropToMinimumExtent, bool);
+  vtkGetMacro(CropToMinimumExtent, bool);
+  vtkBooleanMacro(CropToMinimumExtent, bool);
+
 protected:
   /// Initialize all the supported read file types
   void InitializeSupportedReadFileTypes() override;
@@ -224,6 +235,9 @@ protected:
 
   static std::string GetSegmentColorAsString(vtkMRMLSegmentationNode* segmentationNode, const std::string& segmentId);
   static void GetSegmentColorFromString(double color[3], std::string colorString);
+
+protected:
+  bool CropToMinimumExtent;
 
 protected:
   vtkMRMLSegmentationStorageNode();
