@@ -21,7 +21,7 @@ endif()
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(Slicer_USE_SYSTEM_${proj})
-  foreach(module_name IN ITEMS chardet couchdb gitdb2 smmap2 GitPython six)
+  foreach(module_name IN ITEMS chardet couchdb gitdb smmap git six)
     ExternalProject_FindPythonPackage(
       MODULE_NAME "${module_name}"
       REQUIRED

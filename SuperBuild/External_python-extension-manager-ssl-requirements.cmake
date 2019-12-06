@@ -25,12 +25,17 @@ endif()
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(Slicer_USE_SYSTEM_${proj})
-  foreach(module_name IN ITEMS PyJWT PyGithub)
+  foreach(module_name IN ITEMS jwt)
     ExternalProject_FindPythonPackage(
       MODULE_NAME "${module_name}"
       REQUIRED
       )
   endforeach()
+  ExternalProject_FindPythonPackage(
+    MODULE_NAME github
+    NO_VERSION_PROPERTY
+    REQUIRED
+    )
 endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})

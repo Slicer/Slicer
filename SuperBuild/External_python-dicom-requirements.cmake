@@ -38,12 +38,21 @@ endif()
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(Slicer_USE_SYSTEM_${proj})
-  foreach(module_name IN ITEMS pydicom numpy pillow six certifi idna chardet urllib3 requests dicomweb_client)
+  foreach(module_name IN ITEMS pydicom numpy six certifi idna chardet urllib3 requests)
     ExternalProject_FindPythonPackage(
       MODULE_NAME "${module_name}"
       REQUIRED
       )
   endforeach()
+  ExternalProject_FindPythonPackage(
+    MODULE_NAME PIL #pillow
+    REQUIRED
+    )
+  ExternalProject_FindPythonPackage(
+    MODULE_NAME dicomweb_client
+    NO_VERSION_PROPERTY
+    REQUIRED
+    )
 endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})

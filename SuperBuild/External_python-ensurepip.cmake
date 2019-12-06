@@ -11,12 +11,17 @@ endif()
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(Slicer_USE_SYSTEM_${proj})
-  foreach(module_name IN ITEMS ensurepip pip setuptools)
+  foreach(module_name IN ITEMS pip setuptools)
     ExternalProject_FindPythonPackage(
       MODULE_NAME "${module_name}"
       REQUIRED
       )
   endforeach()
+  ExternalProject_FindPythonPackage(
+    MODULE_NAME ensurepip
+    VERSION_PROPERTY "version()"
+    REQUIRED
+    )
 endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})
