@@ -1156,6 +1156,15 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
           }
         }
       }
+    else
+      {
+      // Display representation object is not available.
+      pipeline->PolyDataOutlineActor->SetVisibility(false);
+      pipeline->PolyDataFillActor->SetVisibility(false);
+      pipeline->ImageOutlineActor->SetVisibility(false);
+      pipeline->ImageFillActor->SetVisibility(false);
+      continue;
+      }
     }
 }
 
@@ -1272,6 +1281,12 @@ bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::IsSegmentVisibleInCu
     {
     vtkPolyData* polyData = vtkPolyData::SafeDownCast(segment->GetRepresentation(displayNode->GetDisplayRepresentationName2D()));
     polyData->GetBounds(segmentBounds_Segment);
+    }
+  else if (displayNode->GetDisplayRepresentationName2D() == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName() ||
+    displayNode->GetDisplayRepresentationName2D() == vtkSegmentationConverter::GetFractionalLabelmapRepresentationName())
+    {
+    vtkOrientedImageData* imageData = vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(displayNode->GetDisplayRepresentationName2D()));
+    imageData->GetBounds(segmentBounds_Segment);
     }
   else
     {

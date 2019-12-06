@@ -2532,7 +2532,7 @@ bool vtkSlicerSegmentationsModuleLogic::ClearSegment(vtkMRMLSegmentationNode* se
   vtkSlicerSegmentationsModuleLogic::ReconvertAllRepresentations(segmentationNode, segmentIDVector);
 
   vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(segment, vtkSlicerSegmentationsModuleLogic::NotStarted);
-  segment->Modified();
+  segmentation->InvokeEvent(vtkSegmentation::RepresentationModified, (void*)segmentId.c_str());
   return true;
 }
 

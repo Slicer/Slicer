@@ -258,7 +258,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
     {
     // empty labelmap
     vtkDebugMacro("Convert: No polygons can be created, input image extent is empty");
-    closedSurfacePolyData->Reset();
+    closedSurfacePolyData->Initialize();
     return true;
     }
 
