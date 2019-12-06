@@ -39,7 +39,7 @@
        </property>
        <property name="icon">
         <iconset resource="../qSlicerMarkupsModule.qrc">
-         <normaloff>:/Icons/MarkupsMouseModePlace.png</normaloff>:/Icons/MarkupsMouseModePlace.png</iconset>
+         <normaloff>:/Icons/MarkupsMouseModePlaceAdd.png</normaloff>:/Icons/MarkupsMouseModePlaceAdd.png</iconset>
        </property>
       </widget>
      </item>
@@ -53,7 +53,7 @@
        </property>
        <property name="icon">
         <iconset resource="../qSlicerMarkupsModule.qrc">
-         <normaloff>:/Icons/MarkupsLineMouseModePlace.png</normaloff>:/Icons/MarkupsLineMouseModePlace.png</iconset>
+         <normaloff>:/Icons/MarkupsLineMouseModePlaceAdd.png</normaloff>:/Icons/MarkupsLineMouseModePlaceAdd.png</iconset>
        </property>
       </widget>
      </item>
@@ -67,7 +67,7 @@
        </property>
        <property name="icon">
         <iconset resource="../qSlicerMarkupsModule.qrc">
-         <normaloff>:/Icons/MarkupsAngleMouseModePlace.png</normaloff>:/Icons/MarkupsAngleMouseModePlace.png</iconset>
+         <normaloff>:/Icons/MarkupsAngleMouseModePlaceAdd.png</normaloff>:/Icons/MarkupsAngleMouseModePlaceAdd.png</iconset>
        </property>
       </widget>
      </item>
@@ -81,7 +81,7 @@
        </property>
        <property name="icon">
         <iconset resource="../qSlicerMarkupsModule.qrc">
-         <normaloff>:/Icons/MarkupsCurveMouseModePlace.png</normaloff>:/Icons/MarkupsCurveMouseModePlace.png</iconset>
+         <normaloff>:/Icons/MarkupsCurveMouseModePlaceAdd.png</normaloff>:/Icons/MarkupsCurveMouseModePlaceAdd.png</iconset>
        </property>
       </widget>
      </item>
@@ -95,7 +95,7 @@
        </property>
        <property name="icon">
         <iconset resource="../qSlicerMarkupsModule.qrc">
-         <normaloff>:/Icons/MarkupsClosedCurveMouseModePlace.png</normaloff>:/Icons/MarkupsClosedCurveMouseModePlace.png</iconset>
+         <normaloff>:/Icons/MarkupsClosedCurveMouseModePlaceAdd.png</normaloff>:/Icons/MarkupsClosedCurveMouseModePlaceAdd.png</iconset>
        </property>
       </widget>
      </item>

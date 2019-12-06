@@ -10,14 +10,19 @@
         <file>Icons/MarkupsListLock.png</file>
         <file>Icons/MarkupsListUnlock.png</file>
         <file>Icons/MarkupsMouseModePlace.png</file>
+        <file>Icons/MarkupsMouseModePlaceAdd.png</file>
         <file>Icons/MarkupsMoveDown.png</file>
         <file>Icons/MarkupsMoveUp.png</file>
         <file>Icons/MarkupsSelected.png</file>
         <file>Icons/MarkupsSelectedOrUnselected.png</file>
         <file>Icons/MarkupsUnselected.png</file>
         <file>Icons/MarkupsLineMouseModePlace.png</file>
+        <file>Icons/MarkupsLineMouseModePlaceAdd.png</file>
         <file>Icons/MarkupsAngleMouseModePlace.png</file>
+        <file>Icons/MarkupsAngleMouseModePlaceAdd.png</file>
         <file>Icons/MarkupsCurveMouseModePlace.png</file>
+        <file>Icons/MarkupsCurveMouseModePlaceAdd.png</file>
         <file>Icons/MarkupsClosedCurveMouseModePlace.png</file>
+        <file>Icons/MarkupsClosedCurveMouseModePlaceAdd.png</file>
     </qresource>
 </RCC>
