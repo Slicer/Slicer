@@ -444,7 +444,15 @@ int vtkMRMLTransformStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     vtkErrorMacro("ReadData: File name not specified");
     return 0;
     }
-  // check that the file exists
+
+  // Skip reading if write state indicates that no file has been saved due to empty dataset
+  if (this->GetWriteState() == SkippedNoData)
+    {
+    vtkDebugMacro("ReadDataInternal: empty transform file was not saved, ignore loading");
+    return 1;
+    }
+
+  // Check that the file exists
   if (vtksys::SystemTools::FileExists(fullName.c_str()) == false)
     {
     vtkErrorMacro("ReadDataInternal: transform file '" << fullName.c_str() << "' not found.");
@@ -481,8 +489,8 @@ int vtkMRMLTransformStorageNode::WriteToTransformFile(vtkMRMLNode *refNode)
   vtkAbstractTransform* transformVtk = transformNode->GetTransformFromParent();
   if (transformVtk==nullptr)
     {
-    vtkErrorMacro("WriteTransform failed: cannot get VTK transform");
-    return 0;
+    this->SetWriteStateSkippedNoData();
+    return 1;
     }
 
   // Convert VTK transform to ITK transform

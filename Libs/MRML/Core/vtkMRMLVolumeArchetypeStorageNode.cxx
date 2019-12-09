@@ -258,6 +258,13 @@ void ApplyImageSeriesReaderWorkaround(vtkMRMLVolumeArchetypeStorageNode * storag
 //----------------------------------------------------------------------------
 int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
+  // Skip file loading for empty volume, for which no file was saved
+  if (this->GetWriteState() == SkippedNoData)
+    {
+    vtkDebugMacro("ReadDataInternal: Empty volume file was not saved, ignore loading");
+    return 1;
+    }
+
   std::string fullName = this->GetFullNameFromFileName();
   vtkDebugMacro("ReadData: got full archetype name " << fullName);
 
@@ -284,9 +291,9 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   //
 
   vtkMRMLScalarVolumeNode * volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
-  if(volNode == nullptr)
+  if (volNode == nullptr)
     {
-    vtkErrorMacro("ReadData: Reference node is expected to be a vtkMRMLScalarVolumeNode");
+    vtkErrorMacro("ReadDataInternal: Reference node is expected to be a vtkMRMLScalarVolumeNode");
     return 0;
     }
 
@@ -311,7 +318,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
   if (reader.GetPointer() == nullptr)
     {
-    vtkErrorMacro("ReadData: Failed to instantiate a file reader");
+    vtkErrorMacro("ReadDataInternal: Failed to instantiate a file reader");
     return 0;
     }
 
@@ -345,7 +352,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   std::string errorMessage = "";
   try
     {
-    vtkDebugMacro("ReadData: right before reader update, reader num files = " << reader->GetNumberOfFileNames());
+    vtkDebugMacro("ReadDataInternal: right before reader update, reader num files = " << reader->GetNumberOfFileNames());
     reader->Update();
     if (reader->GetErrorCode() != vtkErrorCode::NoError)
       {
@@ -366,7 +373,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       {
       reader0thFileName = std::string("reader 0th file name = ") + std::string(reader->GetFileName(0));
       }
-    vtkErrorMacro(<< "ReadData: Cannot read file as a volume of type "
+    vtkErrorMacro(<< "ReadDataInternal: Cannot read file as a volume of type "
                   << (refNode ? refNode->GetNodeTagName() : "null")
                   << "[" << "fullName = " << fullName << "]\n"
                   << "\tNumber of files listed in the node = "
@@ -381,16 +388,16 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
   if (reader->GetOutput() == nullptr || reader->GetOutput()->GetPointData() == nullptr)
     {
-    vtkErrorMacro("ReadData: Unable to read data from file: " << fullName);
+    vtkErrorMacro("ReadDataInternal: Unable to read data from file: " << fullName);
     return 0;
     }
 
-  vtkPointData * pointData = reader->GetOutput()->GetPointData();
+  vtkPointData* pointData = reader->GetOutput()->GetPointData();
   if (volNode->IsA("vtkMRMLDiffusionTensorVolumeNode"))
     {
     if (pointData->GetTensors() == nullptr || pointData->GetTensors()->GetNumberOfTuples() == 0)
       {
-      vtkErrorMacro("ReadData: Unable to read DiffusionTensorVolume data from file: " << fullName );
+      vtkErrorMacro("ReadDataInternal: Unable to read DiffusionTensorVolume data from file: " << fullName );
       return 0;
       }
     }
@@ -398,7 +405,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     {
     if (pointData->GetScalars() == nullptr || pointData->GetScalars()->GetNumberOfTuples() == 0)
       {
-      vtkErrorMacro("ReadData: Unable to read ScalarVolume data from file: " << fullName );
+      vtkErrorMacro("ReadDataInternal: Unable to read ScalarVolume data from file: " << fullName );
       return 0;
       }
     }
@@ -407,7 +414,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       && !volNode->IsA("vtkMRMLDiffusionTensorVolumeNode")
       && reader->GetNumberOfComponents() != 1)
     {
-    vtkErrorMacro("ReadData: Not a scalar volume file: " << fullName );
+    vtkErrorMacro("ReadDataInternal: Not a scalar volume file: " << fullName );
     return 0;
     }
 
@@ -417,7 +424,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   // Get all the file names from the reader
   if (reader->GetNumberOfFileNames() > 1)
     {
-    vtkDebugMacro("Number of file names = " << reader->GetNumberOfFileNames()
+    vtkDebugMacro("ReadDataInternal: Number of file names = " << reader->GetNumberOfFileNames()
                   << ", number of slice location = " << reader->GetNumberOfSliceLocation());
     if (this->FileNameList.size() == 0)
       {
@@ -435,7 +442,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         int currentSize =
 #endif
           this->AddFileName(thisFileName);
-        vtkDebugMacro("After adding file " << n << ", filename = " << thisFileName
+        vtkDebugMacro("ReadDataInternal: After adding file " << n << ", filename = " << thisFileName
                       << " to this storage node's list, current size of the list = " << currentSize);
         }
       }
@@ -449,7 +456,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
   if (ici->GetOutput() == nullptr)
     {
-    vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file: " << fullName);
+    vtkErrorMacro("ReadDataInternal: Cannot read file: " << fullName);
     return 0;
     }
 
@@ -466,7 +473,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   vtkMatrix4x4* mat = reader->GetRasToIjkMatrix();
   if ( mat == nullptr )
     {
-    vtkErrorMacro ("Reader returned nullptr RasToIjkMatrix");
+    vtkErrorMacro("ReadDataInternal: Reader returned nullptr RasToIjkMatrix");
     }
   volNode->SetRASToIJKMatrix(mat);
 
@@ -488,8 +495,8 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 
   if (volNode->GetImageData() == nullptr)
     {
-    vtkErrorMacro("cannot write ImageData, it's NULL");
-    return 0;
+    this->SetWriteStateSkippedNoData();
+    return 1;
     }
 
   // update the file list

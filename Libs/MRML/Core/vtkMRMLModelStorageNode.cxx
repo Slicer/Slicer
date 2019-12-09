@@ -122,7 +122,11 @@ bool vtkMRMLModelStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
-  vtkMRMLModelNode *modelNode = dynamic_cast <vtkMRMLModelNode *> (refNode);
+  if (this->GetWriteState() == SkippedNoData)
+    {
+    vtkDebugMacro("ReadDataInternal: empty model file was not saved, ignore loading");
+    return 1;
+    }
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
@@ -147,6 +151,8 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     }
 
   vtkDebugMacro("ReadDataInternal: extension = " << extension.c_str());
+
+  vtkMRMLModelNode* modelNode = dynamic_cast<vtkMRMLModelNode*>(refNode);
 
   int result = 1;
   try
@@ -327,10 +333,16 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
-  {
+    {
     vtkErrorMacro("vtkMRMLModelNode: File name not specified");
     return 0;
-  }
+    }
+
+  if (modelNode->GetMeshConnection() == nullptr || modelNode->GetMesh()->GetNumberOfPoints() == 0)
+    {
+    this->SetWriteStateSkippedNoData();
+    return 1;
+    }
 
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
 
