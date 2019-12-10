@@ -29,6 +29,7 @@
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkMatrix4x4.h>
+#include <vtkNumberToString.h>
 #include <vtkImageData.h>
 #include <vtkTransform.h>
 #include <vtkVariant.h>
@@ -130,12 +131,13 @@ std::string vtkSegmentationConverter::SerializeImageGeometry(vtkMatrix4x4* geome
     return "";
     }
 
+  vtkNumberToString numberToString;
   std::stringstream geometryStream;
   for (int i=0; i<4; i++)
     {
     for (int j=0; j<4; j++)
       {
-      geometryStream << std::setprecision(15) << geometryMatrix->GetElement(i,j) << SERIALIZED_GEOMETRY_SEPARATOR;
+      geometryStream << numberToString(geometryMatrix->GetElement(i, j)) << SERIALIZED_GEOMETRY_SEPARATOR;
       }
     }
 
