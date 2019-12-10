@@ -674,36 +674,48 @@ void vtkSlicerMarkupsLogic::FocusCameraOnNthPointInMarkup(
 }
 
 //---------------------------------------------------------------------------
-char * vtkSlicerMarkupsLogic::LoadMarkupsFiducials(const char *fileName, const char *fidsName)
+char* vtkSlicerMarkupsLogic::LoadMarkupsFiducials(const char* fileName, const char* fidsName/*=nullptr*/)
 {
-  char *nodeID = nullptr;
-  std::string idList;
-  if (!fileName)
+  return this->LoadMarkups(fileName, "vtkMRMLMarkupsFiducialNode", fidsName);
+}
+
+//---------------------------------------------------------------------------
+char * vtkSlicerMarkupsLogic::LoadMarkups(const char* fileName, const char* markupsNodeClassName, const char* nodeName/*=nullptr*/)
+{
+  if (!fileName || !markupsNodeClassName)
     {
-    vtkErrorMacro("LoadMarkupsFiducials: null file name, cannot load");
-    return nodeID;
+    vtkErrorMacro("LoadMarkups: null file or markups class name, cannot load");
+    return nullptr;
     }
 
-  vtkDebugMacro("LoadMarkupsFiducials, file name = " << fileName << ", fidsName = " << (fidsName ? fidsName : "null"));
+  vtkDebugMacro("LoadMarkups, file name = " << fileName << ", class name = " << markupsNodeClassName
+    << ", nodeName = " << (nodeName ? nodeName : "null"));
+
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass(markupsNodeClassName, nodeName));
+  if (!markupsNode)
+    {
+    vtkErrorMacro("LoadMarkups: failed to instantiate markups node by class " << markupsNodeClassName);
+    return nullptr;
+    }
 
   // make a storage node and fiducial node and set the file name
-  vtkNew<vtkMRMLMarkupsFiducialStorageNode> storageNode;
+  vtkSmartPointer<vtkMRMLStorageNode> storageNode = vtkSmartPointer<vtkMRMLStorageNode>::Take(markupsNode->CreateDefaultStorageNode());
   storageNode->SetFileName(fileName);
-  vtkNew<vtkMRMLMarkupsFiducialNode> fidNode;
-  fidNode->SetName(fidsName);
-
   // add the nodes to the scene and set up the observation on the storage node
   this->GetMRMLScene()->AddNode(storageNode.GetPointer());
-  this->GetMRMLScene()->AddNode(fidNode.GetPointer());
-  fidNode->SetAndObserveStorageNodeID(storageNode->GetID());
+  markupsNode->SetAndObserveStorageNodeID(storageNode->GetID());
 
   // read the file
-  if (storageNode->ReadData(fidNode.GetPointer()))
+  char* nodeID = nullptr;
+  if (storageNode->ReadData(markupsNode))
     {
-    nodeID = fidNode->GetID();
+    nodeID = markupsNode->GetID();
     }
-
-  fidNode->CreateDefaultDisplayNodes();
+  else
+    {
+    this->GetMRMLScene()->RemoveNode(storageNode);
+    this->GetMRMLScene()->RemoveNode(markupsNode);
+    }
 
   return nodeID;
 

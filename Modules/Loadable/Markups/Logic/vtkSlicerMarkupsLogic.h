@@ -111,7 +111,13 @@ public:
   /// Load a markups fiducial list from fileName, return nullptr on error, node ID string
   /// otherwise. Adds the appropriate storage and display nodes to the scene
   /// as well.
-  char *LoadMarkupsFiducials(const char *fileName, const char *fidsName);
+  char* LoadMarkupsFiducials(const char *fileName, const char *fidsName=nullptr);
+
+  /// Load a markups fiducial list from fileName, return nullptr on error, node ID string
+  /// otherwise. Adds the appropriate storage and display nodes to the scene
+  /// as well.
+  //. \param markupsNodeClassName class name of the MRML node to be loaded (e.g., vtkMRMLMarkupsCurveNode)
+  char* LoadMarkups(const char* fileName, const char* markupsNodeClassName, const char* fidsName=nullptr);
 
   /// Utility methods to operate on all markups in a markups node
   void SetAllMarkupsVisibility(vtkMRMLMarkupsNode *node, bool flag);

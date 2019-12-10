@@ -107,14 +107,19 @@ bool qSlicerMarkupsReader::load(const IOProperties& properties)
     name = properties["name"].toString();
     }
 
+  QString markupsClassName = "vtkMRMLMarkupsFiducialNode";
+  if (properties.contains("className"))
+    {
+    markupsClassName = properties["className"].toString();
+    }
+
   if (d->MarkupsLogic.GetPointer() == nullptr)
     {
     return false;
     }
 
   // pass to logic to do the loading
-  char * nodeIDs = d->MarkupsLogic->LoadMarkupsFiducials(fileName.toLatin1(), name.toLatin1());
-
+  char * nodeIDs = d->MarkupsLogic->LoadMarkups(fileName.toLatin1(), markupsClassName.toLatin1(), name.toLatin1());
   if (nodeIDs)
     {
     // returned a comma separated list of ids of the nodes that were loaded

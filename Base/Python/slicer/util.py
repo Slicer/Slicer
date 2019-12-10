@@ -488,8 +488,26 @@ def loadMarkupsFiducialList(filename, returnNode=False):
     If returnNode is True then a status flag and loaded node are returned.
   """
   filetype = 'MarkupsFiducials'
-  properties = {}
+  properties = {'className': 'vtkMRMLMarkupsFiducialNode'}
   return loadNodeFromFile(filename, filetype, properties, returnNode)
+
+def loadMarkupsCurve(filename):
+  """Load node from file.
+  :param filename: full path of the file to load.
+  :return: loaded node (if multiple nodes are loaded then a list of nodes).
+  """
+  filetype = 'MarkupsFiducials'
+  properties = {'className': 'vtkMRMLMarkupsCurveNode'}
+  return loadNodeFromFile(filename, filetype, properties)
+
+def loadMarkupsClosedCurve(filename):
+  """Load node from file.
+  :param filename: full path of the file to load.
+  :return: loaded node (if multiple nodes are loaded then a list of nodes).
+  """
+  filetype = 'MarkupsFiducials'
+  properties = {'className': 'vtkMRMLMarkupsClosedCurveNode'}
+  return loadNodeFromFile(filename, filetype, properties)
 
 def loadModel(filename, returnNode=False):
   """Load node from file.
