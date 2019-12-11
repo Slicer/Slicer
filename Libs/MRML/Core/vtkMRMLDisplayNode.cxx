@@ -156,7 +156,7 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
 
   Superclass::ReadXMLAttributes(atts);
 
