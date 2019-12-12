@@ -135,7 +135,7 @@ public:
   vtkIdType GetCurvePointIndexFromControlPointIndex(int controlPointIndex);
 
   /// Get point position along curve. Position is found along the curve and not snapped to closest curve point.
-  static bool GetPositionAndClosestPointIndexAlongCurve(double foundCurvePosition[3], vtkIdType foundClosestPointIndex,
+  static bool GetPositionAndClosestPointIndexAlongCurve(double foundCurvePosition[3], vtkIdType& foundClosestPointIndex,
     vtkIdType startCurvePointId, double distanceFromStartPoint, vtkPoints* curvePoints, bool closedCurve);
 
   /// Get position of a curve point along the curve relative to the specified start point index.
