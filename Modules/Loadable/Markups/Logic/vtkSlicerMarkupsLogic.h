@@ -219,6 +219,7 @@ public:
   /// \param radiusScalingFactor size of the surface. Value of 1.0 (default) means the surface edge fits on the points.
   /// Larger values increase the generated soap bubble outer radius, which may be useful to avoid coincident points
   /// when using this surface for cutting another surface.
+  /// \warning Specifying radiusScalingFactor has no effect. Associated feature is not yet implemented.
   static bool FitSurfaceProjectWarp(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor = 1.0);
 
   /// Create a "soap bubble" surface that fits on the provided point list.
