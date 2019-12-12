@@ -393,7 +393,6 @@ bool vtkMRMLMarkupsCurveNode::ConstrainPointsToSurface(vtkPoints* originalPoints
     rayEndPoint[2] = originalPoint[2] + rayDirection[2] * rayLength;
 
     double t = 0.0;
-    double firstIntersectionPoint[3] = { 0.0 };
     double pcoords[3] = { 0.0 };
     int subId = 0;
     vtkIdType cellId = 0;
@@ -596,19 +595,16 @@ bool vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(double f
   if (numberOfCurvePoints == 0)
     {
     vtkGenericWarningMacro("vtkMRMLMarkupsCurveNode::GetPositionAlongCurve failed: invalid input points");
-    foundClosestPointIndex = -1;
     return false;
     }
   if (startCurvePointId < 0 || startCurvePointId >= numberOfCurvePoints)
     {
     vtkGenericWarningMacro("vtkMRMLMarkupsCurveNode::GetPositionAlongCurve failed: startCurvePointId is out of range");
-    foundClosestPointIndex = -1;
     return false;
     }
   if (numberOfCurvePoints == 1 || distanceFromStartPoint == 0)
     {
     curvePoints->GetPoint(startCurvePointId, foundCurvePosition);
-    foundClosestPointIndex = startCurvePointId;
     if (distanceFromStartPoint > 0.0)
       {
       vtkGenericWarningMacro("vtkMRMLMarkupsCurveNode::GetPositionAlongCurve failed: non-zero distance"
@@ -640,7 +636,6 @@ bool vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(double f
           {
           if (vtkMRMLMarkupsCurveNode::GetCurveLength(curvePoints, closedCurve) == 0.0)
             {
-            foundClosestPointIndex = -1;
             return false;
             }
           curveConfirmedToBeNonZeroLength = true;
@@ -652,7 +647,6 @@ bool vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(double f
         {
         // reached end of curve before getting at the requested distance
         // return closest
-        foundClosestPointIndex = (pointId < 0 ? 0 : numberOfCurvePoints - 1);
         curvePoints->GetPoint(startCurvePointId, foundCurvePosition);
         return false;
         }
@@ -670,14 +664,6 @@ bool vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(double f
         {
         foundCurvePosition[i] = nextPoint[i] +
           remainingDistanceFromStartPoint * (nextPoint[i] - previousPoint[i]) / lastSegmentLength;
-        }
-      if (fabs(remainingDistanceFromStartPoint) <= fabs(remainingDistanceFromStartPoint + lastSegmentLength))
-        {
-        foundClosestPointIndex = pointId;
-        }
-      else
-        {
-        foundClosestPointIndex = pointId-1;
         }
       break;
       }
@@ -1014,7 +1000,6 @@ vtkIdType vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurveWorld(const 
   closestPosWorld[0] = closestCurvePoint[0];
   closestPosWorld[1] = closestCurvePoint[1];
   closestPosWorld[2] = closestCurvePoint[2];
-  vtkIdType lineIndex = closestCurvePointIndex;
 
   // See if we can find any points closer along the curve
   double relativePositionAlongLine = -1.0; // between 0.0-1.0 if between the endpoints of the line segment
@@ -1030,7 +1015,6 @@ vtkIdType vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurveWorld(const 
       closestPosWorld[0] = closestPointOnLine[0];
       closestPosWorld[1] = closestPointOnLine[1];
       closestPosWorld[2] = closestPointOnLine[2];
-      lineIndex = closestCurvePointIndex - 1;
       }
     }
   if (closestCurvePointIndex + 1 < points->GetNumberOfPoints())
@@ -1043,7 +1027,6 @@ vtkIdType vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurveWorld(const 
       closestPosWorld[0] = closestPointOnLine[0];
       closestPosWorld[1] = closestPointOnLine[1];
       closestPosWorld[2] = closestPointOnLine[2];
-      lineIndex = closestCurvePointIndex;
       }
     }
   return true;

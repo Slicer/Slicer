@@ -1404,7 +1404,7 @@ double vtkSlicerMarkupsLogic::GetClosedCurveSurfaceArea(vtkMRMLMarkupsClosedCurv
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerMarkupsLogic::FitSurfaceProjectWarp(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor/*=1.0*/)
+bool vtkSlicerMarkupsLogic::FitSurfaceProjectWarp(vtkPoints* curvePoints, vtkPolyData* surface, double vtkNotUsed(radiusScalingFactor)/*=1.0*/)
 {
   if (!curvePoints || !surface)
     {
@@ -1691,7 +1691,6 @@ bool vtkSlicerMarkupsLogic::FitPlaneToPoints(vtkPoints* curvePoints, vtkMatrix4x
   pointCoords.row(1).array() -= centroid(1);
   pointCoords.row(2).array() -= centroid(2);
   Eigen::BDCSVD<Eigen::MatrixXd> svd(pointCoords, Eigen::ComputeFullU);
-  const Eigen::MatrixXd& u = svd.matrixU();
 
   transformToBestFitPlane->Identity();
   for (int row = 0; row < 3; row++)

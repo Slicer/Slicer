@@ -545,13 +545,6 @@ void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
     return;
     }
 
-  vtkMRMLSelectionNode *selectionNode = nullptr;
-  if (this->GetMRMLScene())
-    {
-    selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-      this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
-    }
-
   int numModels = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLModelNode");
 
   // go into batch processing mode

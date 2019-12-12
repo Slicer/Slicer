@@ -220,6 +220,8 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
       }
     }
   vtkMRMLReadXMLEndMacro();
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -277,8 +279,6 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  int idx;
-
   Superclass::PrintSelf(os,indent);
 
   vtkMRMLPrintBeginMacro(os, indent);

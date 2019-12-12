@@ -1049,7 +1049,6 @@ void vtkMRMLModelDisplayableManager::UpdateModelMesh(vtkMRMLDisplayableNode *dis
     vtkProp3D* prop = nullptr;
 
     int clipping = displayNode->GetClipping();
-    int visibility = (displayNode->GetVisibility() == 1 && displayNode->GetVisibility3D() == 1 ? 1 : 0);
     vtkAlgorithmOutput *meshConnection = nullptr;
     if (this->IsModelDisplayable(modelDisplayNode))
       {

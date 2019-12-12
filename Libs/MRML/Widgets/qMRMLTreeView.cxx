@@ -845,24 +845,11 @@ void qMRMLTreeView::toggleVisibility(const QModelIndex& index)
   vtkMRMLNode* node = this->sortFilterProxyModel()->mrmlNodeFromIndex(index);
   vtkMRMLDisplayNode* displayNode =
     vtkMRMLDisplayNode::SafeDownCast(node);
-  vtkMRMLDisplayableNode* displayableNode =
-    vtkMRMLDisplayableNode::SafeDownCast(node);
-  vtkMRMLDisplayableHierarchyNode* displayableHierarchyNode =
-      vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
 
   vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
     this->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
 
-  if (selectionNode && displayableHierarchyNode)
-    {
-    vtkMRMLDisplayNode *hierDisplayNode = displayableHierarchyNode->GetDisplayNode();
-    int visibility = 1;
-    if (hierDisplayNode)
-      {
-      visibility = (hierDisplayNode->GetVisibility() ? 0 : 1);
-      }
-    }
-  else if (selectionNode && displayNode)
+  if (selectionNode && displayNode)
     {
     displayNode->SetVisibility(displayNode->GetVisibility() ? 0 : 1);
     }
