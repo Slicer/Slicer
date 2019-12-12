@@ -88,11 +88,11 @@ int vtkSegmentationTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
     }
   std::string defaultGeometryString = vtkSegmentationConverter::SerializeImageGeometry(defaultImageData);
   std::string expectedDefaultGeometryString =
-    "0.235971522108411;0;0;20.7521629333496;"
-    "0;0.235971522108411;0;20.7521629333496;"
-    "0;0;0.235971522108411;20;"
+    "0.23597152210841135;0;0;20.75216293334961;"
+    "0;0.23597152210841135;0;20.75216293334961;"
+    "0;0;0.23597152210841135;20;"
     "0;0;0;1;"
-    "0;248;0;248;0;255;";
+    "0;248;0;248;-1;255;";
   if (defaultGeometryString != expectedDefaultGeometryString)
     {
     std::cerr << __LINE__ << ": Default reference geometry mismatch. Expected: "
@@ -107,7 +107,7 @@ int vtkSegmentationTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
     std::cerr << __LINE__ << ": Binary labelmap converted without reference geometry has no foreground voxels!" << std::endl;
     return EXIT_FAILURE;
     }
-  int expectedVoxelCount = 15872256;
+  int expectedVoxelCount = 15934257;
   if (imageAccumulate->GetVoxelCount() != expectedVoxelCount)
     {
     std::cerr << __LINE__ << ": Binary labelmap voxel count mismatch after converting without reference geometry."
