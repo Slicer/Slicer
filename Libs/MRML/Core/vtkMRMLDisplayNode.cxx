@@ -220,8 +220,6 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
       }
     }
   vtkMRMLReadXMLEndMacro();
-
-  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
