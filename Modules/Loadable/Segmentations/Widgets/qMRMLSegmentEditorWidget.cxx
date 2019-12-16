@@ -955,7 +955,7 @@ bool qMRMLSegmentEditorWidgetPrivate::segmentationDisplayableInView(vtkMRMLAbstr
   for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
     {
     vtkMRMLDisplayNode* segmentationDisplayNode = segmentationNode->GetNthDisplayNode(displayNodeIndex);
-    if (segmentationDisplayNode->IsDisplayableInView(viewNodeID))
+    if (segmentationDisplayNode && segmentationDisplayNode->IsDisplayableInView(viewNodeID))
       {
       return true;
       }
