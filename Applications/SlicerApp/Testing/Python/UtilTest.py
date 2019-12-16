@@ -416,19 +416,19 @@ class UtilTestTest(ScriptedLoadableModuleTest):
     self.assertEqual(narray[1,2], 31+translation[2])
     self.assertEqual(narray[4,2], 59+translation[2])
 
-    self.delayDisplay('Test updateMarkupControlPointsFromArray')
+    self.delayDisplay('Test updateMarkupsControlPointsFromArray')
 
     narray = np.array([[2,3,4],[6,7,8]])
-    slicer.util.updateMarkupControlPointsFromArray(markupsNode, narray)
+    slicer.util.updateMarkupsControlPointsFromArray(markupsNode, narray)
     self.assertEqual(markupsNode.GetNumberOfControlPoints(), 2)
     position = [0]*3
     markupsNode.GetNthControlPointPosition(1,position)
     np.testing.assert_array_equal(position,narray[1,:])
 
-    self.delayDisplay('Test updateMarkupControlPointsFromArray with world=True')
+    self.delayDisplay('Test updateMarkupsControlPointsFromArray with world=True')
 
     narray = np.array([[2,3,4],[6,7,8]])
-    slicer.util.updateMarkupControlPointsFromArray(markupsNode, narray, world=True)
+    slicer.util.updateMarkupsControlPointsFromArray(markupsNode, narray, world=True)
     self.assertEqual(markupsNode.GetNumberOfControlPoints(), 2)
     markupsNode.GetNthControlPointPositionWorld(1,position)
     np.testing.assert_array_equal(position,narray[1,:])
