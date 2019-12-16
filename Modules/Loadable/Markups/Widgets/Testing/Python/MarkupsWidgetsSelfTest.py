@@ -93,7 +93,7 @@ class MarkupsWidgetsSelfTestTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Test SimpleMarkupsWidget",self.delayMs)
 
     simpleMarkupsWidget = slicer.qSlicerSimpleMarkupsWidget()
-    nodeSelector = slicer.util.findChildren(simpleMarkupsWidget,"MarkupsFiducialNodeComboBox")[0]
+    nodeSelector = slicer.util.findChildren(simpleMarkupsWidget,"MarkupsNodeComboBox")[0]
     self.assertIsNone(simpleMarkupsWidget.interactionNode())
     simpleMarkupsWidget.setMRMLScene(slicer.mrmlScene)
     simpleMarkupsWidget.show()
