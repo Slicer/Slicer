@@ -694,6 +694,27 @@ bool vtkMRMLMarkupsNode::InsertControlPoint(ControlPoint *controlPoint, int targ
 }
 
 //-----------------------------------------------------------
+bool vtkMRMLMarkupsNode::InsertControlPointWorld(int n, vtkVector3d pointWorld, std::string label)
+{
+  vtkVector3d point;
+  this->TransformPointFromWorld(pointWorld, point);
+  return this->InsertControlPoint(n, point, label);
+}
+
+
+//-----------------------------------------------------------
+bool vtkMRMLMarkupsNode::InsertControlPoint(int n, vtkVector3d point, std::string label)
+{
+  ControlPoint *controlPoint = new ControlPoint;
+  controlPoint->Label = label;
+  controlPoint->Position[0] = point.GetX();
+  controlPoint->Position[1] = point.GetY();
+  controlPoint->Position[2] = point.GetZ();
+  controlPoint->PositionStatus = PositionDefined;
+  return this->InsertControlPoint(controlPoint, n);
+}
+
+//-----------------------------------------------------------
 void vtkMRMLMarkupsNode::UpdateCurvePolyFromControlPoints()
 {
   // Add points

@@ -312,6 +312,14 @@ public:
   /// Returns true on success, false on failure.
   bool InsertControlPoint(ControlPoint* controlPoint, int targetIndex);
 
+  //Add and insert control point at index, defined in the world coordinate system.
+  //\sa InsertControlPoint
+  bool InsertControlPointWorld(int n, vtkVector3d pointWorld, std::string label = std::string());
+
+  //Add and insert control point at index
+  //\sa InsertControlPoint
+  bool InsertControlPoint(int n, vtkVector3d point, std::string label = std::string());
+
   /// Swap the position of two control points
   void SwapControlPoints(int m1, int m2);
 
