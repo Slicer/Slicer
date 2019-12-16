@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>UtilTest</class>
- <widget class="QWidget" name="UtilTest">
+ <widget class="QWidget" name="TemplateKey">
   <property name="geometry">
    <rect>
     <x>0</x>
