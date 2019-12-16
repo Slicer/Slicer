@@ -21,7 +21,6 @@
 // SegmentationCore includes
 #include "vtkSegment.h"
 
-#include "vtkSegmentationConverter.h"
 #include "vtkSegmentationConverterFactory.h"
 #include "vtkOrientedImageData.h"
 #include "vtkOrientedImageDataResample.h"
@@ -29,7 +28,6 @@
 // VTK includes
 #include <vtkBoundingBox.h>
 #include <vtkImageData.h>
-#include <vtkImageThreshold.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
@@ -174,7 +172,6 @@ void vtkSegment::DeepCopy(vtkSegment* source)
     }
 
   this->DeepCopyMetadata(source);
-  this->SetLabelValue(source->GetLabelValue());
 
   // Deep copy representations
   std::set<std::string> representationNamesToKeep;
@@ -188,20 +185,7 @@ void vtkSegment::DeepCopy(vtkSegment* source)
       vtkErrorMacro("DeepCopy: Unable to construct representation type class '" << reprIt->second->GetClassName() << "'");
       continue;
       }
-
     representationCopy->DeepCopy(reprIt->second);
-    // Binary labelmap is a special case, as it may contain multiple segment representations
-    if (reprIt->first == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName())
-      {
-      vtkNew<vtkImageThreshold> threshold;
-      threshold->SetInputData(representationCopy);
-      threshold->ThresholdBetween(source->LabelValue, source->LabelValue);
-      threshold->SetInValue(source->LabelValue);
-      threshold->SetOutValue(0);
-      threshold->Update();
-      representationCopy->DeepCopy(threshold->GetOutput());
-      }
-
     this->AddRepresentation(reprIt->first, representationCopy);
     representationCopy->Delete(); // this representation is now owned by the segment
     representationNamesToKeep.insert(reprIt->first);
