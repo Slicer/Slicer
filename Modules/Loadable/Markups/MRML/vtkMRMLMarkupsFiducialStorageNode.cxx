@@ -402,7 +402,7 @@ std::string vtkMRMLMarkupsFiducialStorageNode::GetPointAsString(vtkMRMLMarkupsNo
     separator = this->FieldDelimiterCharacters[0];
     }
 
-  std::string id = markupsNode->GetNthControlPointID(0);
+  std::string id = markupsNode->GetNthControlPointID(pointIndex);
   vtkDebugMacro("WriteDataInternal: wrote id " << id.c_str());
 
   double xyz[3] = { 0.0, 0.0, 0.0 };

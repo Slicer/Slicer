@@ -483,7 +483,6 @@ int vtkMRMLMarkupsNode::AddControlPoint(ControlPoint *controlPoint)
     {
     controlPoint->ID = this->GenerateUniqueControlPointID();
     }
-  this->LastUsedControlPointNumber++;
   if (controlPoint->Label.empty())
     {
     controlPoint->Label = this->GenerateControlPointLabel(this->LastUsedControlPointNumber);
@@ -1448,19 +1447,14 @@ bool vtkMRMLMarkupsNode::ResetNthControlPointID(int n)
     }
 
   this->SetNthControlPointID(n, this->GenerateUniqueControlPointID());
-  this->LastUsedControlPointNumber++;
   return true;
 }
 
 //---------------------------------------------------------------------------
 std::string vtkMRMLMarkupsNode::GenerateUniqueControlPointID()
 {
-  std::string id;
-  int controlPointNumber = this->LastUsedControlPointNumber;
-  // increment by one so as not to start with 0
-  controlPointNumber++;
-  // put the number in a string
-  return std::to_string(controlPointNumber);
+  this->LastUsedControlPointNumber++;
+  return std::to_string(this->LastUsedControlPointNumber);
 }
 
 //---------------------------------------------------------------------------
