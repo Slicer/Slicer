@@ -1446,7 +1446,9 @@ bool vtkMRMLMarkupsNode::ResetNthControlPointID(int n)
     {
     return false;
     }
+
   this->SetNthControlPointID(n, this->GenerateUniqueControlPointID());
+  this->LastUsedControlPointNumber++;
   return true;
 }
 
