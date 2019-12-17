@@ -33,6 +33,7 @@
 #include "vtkSegmentationCoreConfigure.h"
 
 class vtkCallbackCommand;
+class vtkDataObject;
 class vtkSegment;
 class vtkSegmentation;
 
@@ -103,7 +104,8 @@ protected:
 
   /// Deep copies source segment to destination segment. If the same representation is found in baseline
   /// with up-to-date timestamp then the representation is reused from baseline.
-  void CopySegment(vtkSegment* destination, vtkSegment* source, vtkSegment* baseline, std::vector<std::string> representationsToIgnore);
+  void CopySegment(vtkSegment* destination, vtkSegment* source, vtkSegment* baseline,
+    std::map<vtkDataObject*, vtkDataObject*>& cachedRepresentations=std::map<vtkDataObject*, vtkDataObject*>());
 
 protected:  /// Container type for segments. Maps segment IDs to segment objects
   typedef std::map<std::string, vtkSmartPointer<vtkSegment> > SegmentsMap;
