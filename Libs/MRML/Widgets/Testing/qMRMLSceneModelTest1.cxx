@@ -30,6 +30,9 @@
 #include "qMRMLSceneModel.h"
 #include "qMRMLSceneFactoryWidget.h"
 
+// CTK includes
+#include <ctkCoreTestingMacros.h>
+
 // MRML includes
 //
 // VTK includes
@@ -44,27 +47,20 @@ int qMRMLSceneModelTest1( int argc, char * argv [] )
   qMRMLWidget::postInitializeApplication();
 
   qMRMLSceneModel   sceneModel;
-
-  if (sceneModel.rowCount() != 0)
-    {
-    std::cerr << "qMRMLSceneModel: wrong row count" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_INT(sceneModel.rowCount(), 0);
 
   qMRMLSceneFactoryWidget sceneFactory;
   sceneFactory.generateScene();
   sceneModel.setMRMLScene(sceneFactory.mrmlScene());
-  if (sceneModel.rowCount() != 1)
-    {
-    std::cerr << "qMRMLSceneModel:setScene() failed" << std::endl;
-    return EXIT_FAILURE;
-    }
 
-  //sceneFactory.deleteScene();
-  //sceneFactory.generateScene();
-  //sceneModel.setMRMLScene(sceneFactory.mrmlScene());
+  // Check if root item is shown
+  CHECK_INT(sceneModel.rowCount(), 1);
 
-  sceneFactory.generateNode();
+  sceneFactory.deleteScene();
+  sceneFactory.generateScene();
+
+  sceneModel.setMRMLScene(sceneFactory.mrmlScene());
+
   sceneFactory.generateNode();
   sceneFactory.generateNode();
   sceneFactory.generateNode();
@@ -76,22 +72,13 @@ int qMRMLSceneModelTest1( int argc, char * argv [] )
   sceneFactory.generateNode();
   sceneFactory.generateNode();
 
-  if (sceneModel.rowCount(sceneModel.mrmlSceneIndex()) != 11)
-    {
-    std::cerr << "qMRMLSceneModel wrong number of children: "
-              << sceneModel.rowCount(sceneModel.mrmlSceneIndex()) << std::endl;
-    return EXIT_FAILURE;
-    }
+  // Check if root item + 10 nodes are shown
+  CHECK_INT(sceneModel.rowCount(sceneModel.mrmlSceneIndex()), 11);
 
   QStringList postNodes;
   postNodes << QString("temporary item");
   sceneModel.setPostItems(postNodes, sceneModel.mrmlSceneItem());
-  if (sceneModel.rowCount(sceneModel.mrmlSceneIndex()) != 12)
-    {
-    std::cerr << "qMRMLSceneModel wrong number of children after post: "
-              << sceneModel.rowCount(sceneModel.mrmlSceneIndex()) << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_INT(sceneModel.rowCount(sceneModel.mrmlSceneIndex()), 12);
 
   // test if it can be replaced
   postNodes.clear();
@@ -106,31 +93,16 @@ int qMRMLSceneModelTest1( int argc, char * argv [] )
   postScene << "post scene item";
   sceneModel.setPostItems(postScene, nullptr);
 
-  if (sceneModel.rowCount(sceneModel.mrmlSceneIndex()) != 18)
-    {
-    std::cerr << "qMRMLSceneModel wrong number of children after pre/post: "
-              << sceneModel.rowCount(sceneModel.mrmlSceneIndex()) << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_INT(sceneModel.rowCount(sceneModel.mrmlSceneIndex()), 18);
 
   sceneFactory.generateNode();
   sceneFactory.generateNode();
   sceneFactory.generateNode();
 
-  if (sceneModel.rowCount(sceneModel.mrmlSceneIndex()) != 21)
-    {
-    std::cerr << "qMRMLSceneModel wrong number of children after adding nodes: "
-              << sceneModel.rowCount(sceneModel.mrmlSceneIndex()) << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_INT(sceneModel.rowCount(sceneModel.mrmlSceneIndex()), 21);
 
-  if (sceneModel.columnCount() != 1 ||
-      sceneModel.columnCount(sceneModel.mrmlSceneIndex()) != 1)
-    {
-    std::cerr << "Wrong number of columns" << sceneModel.columnCount()
-              << " " << sceneModel.columnCount(sceneModel.mrmlSceneIndex()) << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_INT(sceneModel.columnCount(), 1);
+  CHECK_INT(sceneModel.columnCount(sceneModel.mrmlSceneIndex()), 1);
 
   QTreeView* view = new QTreeView(nullptr);
   view->setSelectionMode(QAbstractItemView::SingleSelection);
