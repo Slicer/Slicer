@@ -108,9 +108,8 @@ protected:
   /// Deep copies source segment to destination segment. If the same representation is found in baseline
   /// with up-to-date timestamp then the representation is reused from baseline.
   void CopySegment(vtkSegment* destination, vtkSegment* source, vtkSegment* baseline,
-    std::map<vtkDataObject*, vtkDataObject*>& cachedRepresentations=std::map<vtkDataObject*, vtkDataObject*>());
+    std::map<vtkDataObject*, vtkDataObject*> &cachedRepresentations);
 
-protected:  /// Container type for segments. Maps segment IDs to segment objects
   typedef std::map<std::string, vtkSmartPointer<vtkSegment> > SegmentsMap;
 
   struct SegmentationState

@@ -159,7 +159,7 @@ bool vtkSegmentationHistory::SaveState()
 
 //---------------------------------------------------------------------------
 void vtkSegmentationHistory::CopySegment(vtkSegment* destination, vtkSegment* source, vtkSegment* baseline,
-  std::map<vtkDataObject*, vtkDataObject*>& cachedRepresentations/*=std::map<vtkDataObject*, vtkDataObject*>()*/)
+  std::map<vtkDataObject*, vtkDataObject*>& cachedRepresentations)
 {
   destination->RemoveAllRepresentations();
   destination->DeepCopyMetadata(source);
