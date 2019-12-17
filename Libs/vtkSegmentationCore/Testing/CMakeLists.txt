@@ -3,6 +3,7 @@ set(KIT vtkSegmentationCore)
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkSegmentationTest1.cxx
   vtkSegmentationTest2.cxx
+  vtkSegmentationHistoryTest1.cxx
   vtkSegmentationConverterTest1.cxx
   vtkClosedSurfaceToFractionalLabelMapConversionTest1.cxx
   )
@@ -13,5 +14,6 @@ set_target_properties(${KIT}CxxTests PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER}
 
 simple_test( vtkSegmentationTest1 )
 simple_test( vtkSegmentationTest2 )
+simple_test( vtkSegmentationHistoryTest1 )
 simple_test( vtkSegmentationConverterTest1 )
 simple_test( vtkClosedSurfaceToFractionalLabelMapConversionTest1 )

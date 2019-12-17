@@ -83,6 +83,9 @@ public:
   /// Get the limit of how many states may be stored.
   vtkGetMacro(MaximumNumberOfStates, unsigned int);
 
+  /// Get the current number of states.
+  int GetNumberOfStates();
+
 protected:
   /// Callback function called when the segmentation has been modified.
   /// It clears all states that are more recent than the last restored state.

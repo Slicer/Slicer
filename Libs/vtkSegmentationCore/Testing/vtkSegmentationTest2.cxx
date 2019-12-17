@@ -342,6 +342,7 @@ int vtkSegmentationTest2(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   return EXIT_SUCCESS;
 }
 
+//----------------------------------------------------------------------------
 void SetReferenceGeometry(vtkSegmentation* segmentation)
 {
   //// Create non-default reference geometry for conversion
