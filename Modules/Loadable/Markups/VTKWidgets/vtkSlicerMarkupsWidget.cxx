@@ -542,7 +542,6 @@ bool vtkSlicerMarkupsWidget::ProcessWidgetMenu(vtkMRMLInteractionEventData* even
     {
     return false;
     }
-  markupsNode->GetScene()->SaveStateForUndo();
 
   vtkNew<vtkMRMLInteractionEventData> pickEventData;
   pickEventData->SetType(vtkMRMLDisplayNode::MenuEvent);
