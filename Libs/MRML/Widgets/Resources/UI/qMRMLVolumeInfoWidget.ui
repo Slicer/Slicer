@@ -196,15 +196,12 @@
       </widget>
      </item>
      <item>
-      <widget class="ctkDoubleSpinBox" name="NumberOfScalarsSpinBox">
-       <property name="decimals">
-        <number>0</number>
-       </property>
-       <property name="decimalsOption">
-        <set>ctkDoubleSpinBox::FixedDecimals</set>
+      <widget class="QSpinBox" name="NumberOfScalarsSpinBox">
+       <property name="maximum">
+        <number>9999</number>
        </property>
        <property name="value">
-        <double>1.000000000000000</double>
+        <number>1</number>
        </property>
       </widget>
      </item>
@@ -317,11 +314,6 @@
    <class>ctkCoordinatesWidget</class>
    <extends>QWidget</extends>
    <header>ctkCoordinatesWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkDoubleSpinBox</class>
-   <extends>QWidget</extends>
-   <header>ctkDoubleSpinBox.h</header>
   </customwidget>
   <customwidget>
    <class>ctkMatrixWidget</class>

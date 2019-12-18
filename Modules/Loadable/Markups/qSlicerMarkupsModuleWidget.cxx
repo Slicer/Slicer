@@ -2105,18 +2105,14 @@ void qSlicerMarkupsModuleWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsN
 
   qvtkReconnect(d->MarkupsNode, markupsNode, vtkCommand::ModifiedEvent,
     this, SLOT(onActiveMarkupsNodeModifiedEvent()));
-  qvtkReconnect(d->MarkupsNode, markupsNode, vtkMRMLMarkupsNode::LockModifiedEvent,
-    this, SLOT(onActiveMarkupsNodeLockModifiedEvent()));
-  qvtkReconnect(d->MarkupsNode, markupsNode, vtkMRMLMarkupsNode::LabelFormatModifiedEvent,
-    this, SLOT(onActiveMarkupsNodeLabelFormatModifiedEvent()));
 
   // points
   qvtkReconnect(d->MarkupsNode, markupsNode, vtkMRMLMarkupsNode::PointModifiedEvent,
-    this, SLOT(onActiveMarkupsNodePointModifiedEvent(vtkObject*, vtkObject*)));
+    this, SLOT(onActiveMarkupsNodePointModifiedEvent(vtkObject*, void*)));
   qvtkReconnect(d->MarkupsNode, markupsNode, vtkMRMLMarkupsNode::PointAddedEvent,
     this, SLOT(onActiveMarkupsNodePointAddedEvent()));
   qvtkReconnect(d->MarkupsNode, markupsNode, vtkMRMLMarkupsNode::PointRemovedEvent,
-    this, SLOT(onActiveMarkupsNodePointRemovedEvent(vtkObject*, vtkObject*)));
+    this, SLOT(onActiveMarkupsNodePointRemovedEvent(vtkObject*, void*)));
 
   // display
   qvtkReconnect(d->MarkupsNode, markupsNode, vtkMRMLDisplayableNode::DisplayModifiedEvent,
@@ -2132,7 +2128,7 @@ void qSlicerMarkupsModuleWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsN
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointModifiedEvent(vtkObject *caller, vtkObject *callData)
+void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointModifiedEvent(vtkObject *caller, void *callData)
 {
   // the call data should be the index n
   if (caller == nullptr)
@@ -2176,7 +2172,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointAddedEvent()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointRemovedEvent(vtkObject *caller, vtkObject *callData)
+void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointRemovedEvent(vtkObject *caller, void *callData)
 {
   Q_D(qSlicerMarkupsModuleWidget);
 

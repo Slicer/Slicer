@@ -203,11 +203,11 @@ public slots:
   /// Update table when markups node is modified
   void onActiveMarkupsNodeModifiedEvent();
   /// Update the table with the modified point information if the node is active
-  void onActiveMarkupsNodePointModifiedEvent(vtkObject *caller, vtkObject *callData);
+  void onActiveMarkupsNodePointModifiedEvent(vtkObject *caller, void *callData);
   /// Update the table with the new point information if the node is active
   void onActiveMarkupsNodePointAddedEvent();
   /// Update the table for the removed point if the node is active
-  void onActiveMarkupsNodePointRemovedEvent(vtkObject *caller, vtkObject *callData);
+  void onActiveMarkupsNodePointRemovedEvent(vtkObject *caller, void *callData);
   /// Update the display properties widgets when the display node is modified
   void onActiveMarkupsNodeDisplayModifiedEvent();
   /// Update the transform related elements of the gui when the transform node is modified
