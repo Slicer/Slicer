@@ -156,9 +156,12 @@ bool qSlicerSubjectHierarchyPluginHandler::registerPlugin(qSlicerSubjectHierarch
     }
 
   // Add view menu actions from plugin to plugin logic
-  foreach (QAction* action, pluginToRegister->viewContextMenuActions())
+  if (this->m_PluginLogic)
     {
-    this->m_PluginLogic->registerViewMenuAction(action);
+    foreach(QAction* action, pluginToRegister->viewContextMenuActions())
+      {
+      this->m_PluginLogic->registerViewMenuAction(action);
+      }
     }
 
   // Add the plugin to the list
@@ -460,6 +463,18 @@ void qSlicerSubjectHierarchyPluginHandler::setPluginLogic(qSlicerSubjectHierarch
     }
 
   m_PluginLogic = pluginLogic;
+
+  // Register view menu actions of those plugins that were registered before the PluginLogic was set.
+  if (this->m_PluginLogic)
+    {
+    foreach(qSlicerSubjectHierarchyAbstractPlugin * pluginToRegister, this->m_RegisteredPlugins)
+      {
+      foreach(QAction * action, pluginToRegister->viewContextMenuActions())
+        {
+        this->m_PluginLogic->registerViewMenuAction(action);
+        }
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------
