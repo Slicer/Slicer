@@ -202,10 +202,6 @@ public slots:
 
   /// Update table when markups node is modified
   void onActiveMarkupsNodeModifiedEvent();
-  /// Enable/disable editing the table if the markups node is un/locked
-  void onActiveMarkupsNodeLockModifiedEvent();
-  /// Update the format text entry from the node
-  void onActiveMarkupsNodeLabelFormatModifiedEvent();
   /// Update the table with the modified point information if the node is active
   void onActiveMarkupsNodePointModifiedEvent(vtkObject *caller, vtkObject *callData);
   /// Update the table with the new point information if the node is active

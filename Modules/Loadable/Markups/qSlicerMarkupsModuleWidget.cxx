@@ -2132,52 +2132,25 @@ void qSlicerMarkupsModuleWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsN
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onActiveMarkupsNodeLockModifiedEvent()
-{
-  Q_D(qSlicerMarkupsModuleWidget);
-
-  // get the active list
-  vtkMRMLNode *mrmlNode = d->activeMarkupTreeView->currentNode();
-  if (!mrmlNode)
-    {
-    return;
-    }
-  vtkMRMLMarkupsNode *markupsNode = vtkMRMLMarkupsNode::SafeDownCast(mrmlNode);
-  if (!markupsNode)
-    {
-    return;
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onActiveMarkupsNodeLabelFormatModifiedEvent()
-{
-  Q_D(qSlicerMarkupsModuleWidget);
-  if (!d->MarkupsNode)
-    {
-    return;
-    }
-  d->nameFormatLineEdit->setText(d->MarkupsNode->GetMarkupLabelFormat().c_str());
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointModifiedEvent(vtkObject *caller, vtkObject *callData)
 {
   // the call data should be the index n
-  if (caller == nullptr || callData == nullptr)
+  if (caller == nullptr)
     {
     return;
     }
 
-  int *nPtr = nullptr;
-  int n = -1;
-  nPtr = reinterpret_cast<int *>(callData);
-  if (nPtr)
+  int* nPtr = reinterpret_cast<int*>(callData);
+  int n = (nPtr ? *nPtr : -1);
+  if (n>=0)
     {
-    n = *nPtr;
+    this->updateRow(n);
     }
-
-  this->updateRow(n);
+  else
+    {
+    // batch update finished
+    this->updateWidgetFromMRML();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -2207,21 +2180,23 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointRemovedEvent(vtkObject 
 {
   Q_D(qSlicerMarkupsModuleWidget);
 
-  // the call data should be the index n
-  if (caller == nullptr || callData == nullptr)
+  if (caller == nullptr)
     {
     return;
     }
 
-  int *nPtr = nullptr;
-  int n = -1;
-  nPtr = reinterpret_cast<int *>(callData);
-  if (nPtr)
+  // the call data should be the index n
+  int *nPtr = reinterpret_cast<int*>(callData);
+  int n = (nPtr ? *nPtr : -1);
+  if (n >= 0)
     {
-    n = *nPtr;
+    d->activeMarkupTableWidget->removeRow(n);
     }
-
-  d->activeMarkupTableWidget->removeRow(n);
+  else
+    {
+    // batch update finished
+    this->updateWidgetFromMRML();
+    }
 }
 
 //-----------------------------------------------------------------------------
