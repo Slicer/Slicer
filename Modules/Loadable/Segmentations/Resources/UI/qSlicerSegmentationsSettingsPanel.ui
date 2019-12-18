@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>318</width>
+    <width>246</width>
     <height>98</height>
    </rect>
   </property>
@@ -37,7 +37,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item row="3" column="0" colspan="2">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -73,9 +73,31 @@
      </property>
     </widget>
    </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Default terminology entry:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="ctkPushButton" name="EditDefaultTerminologyEntryPushButton">
+     <property name="toolTip">
+      <string>This terminology will be used by default for new segments in an empty segmentation.</string>
+     </property>
+     <property name="text">
+      <string>(set)</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>ctkPushButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkPushButton.h</header>
+  </customwidget>
   <customwidget>
    <class>ctkSettingsPanel</class>
    <extends>QWidget</extends>

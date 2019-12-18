@@ -983,6 +983,20 @@ void qSlicerTerminologyNavigatorWidget::setAnatomicRegionSectionVisible(bool vis
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerTerminologyNavigatorWidget::overrideSectionVisible() const
+{
+  Q_D(const qSlicerTerminologyNavigatorWidget);
+  return d->frame_TerminologyOverride->isVisible();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTerminologyNavigatorWidget::setOverrideSectionVisible(bool visible)
+{
+  Q_D(qSlicerTerminologyNavigatorWidget);
+  d->frame_TerminologyOverride->setVisible(visible);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerTerminologyNavigatorWidget::populateTerminologyComboBox()
 {
   Q_D(qSlicerTerminologyNavigatorWidget);

@@ -39,26 +39,31 @@ class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsSettingsPanel
   : public ctkSettingsPanel
 {
   Q_OBJECT
+
+  Q_PROPERTY(QString defaultTerminologyEntry READ defaultTerminologyEntry WRITE setDefaultTerminologyEntry)
 public:
-  /// Superclass typedef
   typedef ctkSettingsPanel Superclass;
 
-  /// Constructor
   explicit qSlicerSegmentationsSettingsPanel(QWidget* parent = nullptr);
+  ~qSlicerSegmentationsSettingsPanel() override;
 
   /// Segmentations logic is used for configuring default settings
   void setSegmentationsLogic(vtkSlicerSegmentationsModuleLogic* logic);
   vtkSlicerSegmentationsModuleLogic* segmentationsLogic()const;
 
-  /// Destructor
-  ~qSlicerSegmentationsSettingsPanel() override;
+  QString defaultTerminologyEntry();
 
 public slots:
 
 protected slots:
   void setAutoOpacities(bool on);
   void setDefaultSurfaceSmoothing(bool on);
+  void onEditDefaultTerminologyEntry();
+  void setDefaultTerminologyEntry(QString);
   void updateDefaultSegmentationNodeFromWidget();
+
+signals:
+  void defaultTerminologyEntryChanged(QString terminologyStr);
 
 protected:
   QScopedPointer<qSlicerSegmentationsSettingsPanelPrivate> d_ptr;

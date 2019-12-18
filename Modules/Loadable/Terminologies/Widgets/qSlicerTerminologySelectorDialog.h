@@ -40,14 +40,19 @@ class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologySelectorDia
 {
 public:
   Q_OBJECT
+  Q_PROPERTY(bool overrideSectionVisible READ overrideSectionVisible WRITE setOverrideSectionVisible)
 
 public:
   typedef QObject Superclass;
+  qSlicerTerminologySelectorDialog(QObject* parent = nullptr);
+#ifndef __VTK_WRAP__
   qSlicerTerminologySelectorDialog(
     qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &initialTerminologyInfo, QObject* parent = nullptr );
+#endif
   ~qSlicerTerminologySelectorDialog() override;
 
 public:
+#ifndef __VTK_WRAP__
   /// Convenience function to start dialog, initialized with a terminology entry
   /// \param terminology Initial terminology shown by the dialog. The selected terminology is set to this as well.
   /// \param name Initial name shown by the dialog. Selected name (only if custom) is set to this as well after closing
@@ -58,6 +63,16 @@ public:
 
   /// Get selected terminology and other metadata (name, color, auto-generated flags) into given info bundle object
   void terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo);
+#endif
+
+  /// Convenience function to start dialog, initialized with a terminology entry.
+  /// Does not show name and color overrides.
+  /// \param terminology Initial terminology shown by the dialog. The selected terminology is set to this as well.
+  /// \return Success flag
+  static bool getTerminology(vtkSlicerTerminologyEntry* terminologyEntry, QObject* parent);
+
+  /// Get whether name and color override section is visible
+  bool overrideSectionVisible() const;
 
   /// Show dialog
   /// \param nodeToSelect Node is selected in the tree if given
@@ -69,6 +84,9 @@ public:
 
 protected slots:
   void setSelectButtonEnabled(bool);
+
+  /// Show/hide name and color override section
+  void setOverrideSectionVisible(bool);
 
 protected:
   QScopedPointer<qSlicerTerminologySelectorDialogPrivate> d_ptr;

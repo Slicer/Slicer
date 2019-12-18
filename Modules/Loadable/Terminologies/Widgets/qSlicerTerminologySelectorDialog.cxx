@@ -100,6 +100,15 @@ void qSlicerTerminologySelectorDialogPrivate::init()
 // qSlicerTerminologySelectorDialog methods
 
 //-----------------------------------------------------------------------------
+qSlicerTerminologySelectorDialog::qSlicerTerminologySelectorDialog(QObject* parent)
+  : QObject(parent)
+  , d_ptr(new qSlicerTerminologySelectorDialogPrivate(*this))
+{
+  Q_D(qSlicerTerminologySelectorDialog);
+  d->init();
+}
+
+//-----------------------------------------------------------------------------
 qSlicerTerminologySelectorDialog::qSlicerTerminologySelectorDialog(
   qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &initialTerminologyInfo, QObject* parent)
   : QObject(parent)
@@ -147,6 +156,23 @@ bool qSlicerTerminologySelectorDialog::getTerminology(
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerTerminologySelectorDialog::getTerminology(vtkSlicerTerminologyEntry* terminologyEntry, QObject* parent)
+{
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle terminologyInfo;
+  terminologyInfo.GetTerminologyEntry()->Copy(terminologyEntry);
+  // Open terminology dialog and store result
+  qSlicerTerminologySelectorDialog dialog(terminologyInfo, parent);
+  dialog.setOverrideSectionVisible(false);
+  if (!dialog.exec())
+    {
+    return false;
+    }
+  dialog.terminologyInfo(terminologyInfo);
+  terminologyEntry->Copy(terminologyInfo.GetTerminologyEntry());
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerTerminologySelectorDialog::terminologyInfo(
   qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo )
 {
@@ -159,4 +185,18 @@ void qSlicerTerminologySelectorDialog::setSelectButtonEnabled(bool enabled)
 {
   Q_D(qSlicerTerminologySelectorDialog);
   d->SelectButton->setEnabled(enabled);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerTerminologySelectorDialog::overrideSectionVisible() const
+{
+  Q_D(const qSlicerTerminologySelectorDialog);
+  return d->NavigatorWidget->overrideSectionVisible();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTerminologySelectorDialog::setOverrideSectionVisible(bool visible)
+{
+  Q_D(qSlicerTerminologySelectorDialog);
+  d->NavigatorWidget->setOverrideSectionVisible(visible);
 }

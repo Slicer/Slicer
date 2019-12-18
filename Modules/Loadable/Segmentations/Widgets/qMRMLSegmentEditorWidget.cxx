@@ -104,6 +104,7 @@
 #include <QMessageBox>
 #include <QPointer>
 #include <QScrollArea>
+#include <QSettings>
 #include <QShortcut>
 #include <QTableView>
 #include <QToolButton>
@@ -2051,6 +2052,20 @@ void qMRMLSegmentEditorWidget::onAddSegment()
 
   // Create empty segment in current segmentation
   std::string addedSegmentID = segmentationNode->GetSegmentation()->AddEmptySegment(d->SegmentsTableView->textFilter().toStdString());
+
+  // Set default terminology entry from application settings
+  vtkSegment* addedSegment = segmentationNode->GetSegmentation()->GetSegment(addedSegmentID);
+  if (addedSegment)
+    {
+    QSettings settings;
+    QString defaultTerminologyEntryStr = settings.value("Segmentations/DefaultTerminologyEntry").toString();
+    if (!defaultTerminologyEntryStr.isEmpty())
+      {
+      addedSegment->SetTag(vtkSegment::GetTerminologyEntryTagName(), defaultTerminologyEntryStr.toLatin1().constData());
+      }
+    }
+
+  // Set segment status to one that is visible by current filtering criteria
   int status = 0;
   for (int i = 0; i < vtkSlicerSegmentationsModuleLogic::LastStatus; ++i)
     {
@@ -2060,7 +2075,7 @@ void qMRMLSegmentEditorWidget::onAddSegment()
       break;
       }
     }
-  vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(segmentationNode->GetSegmentation()->GetSegment(addedSegmentID), status);
+  vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(addedSegment, status);
 
   // Select the new segment
   if (!addedSegmentID.empty())

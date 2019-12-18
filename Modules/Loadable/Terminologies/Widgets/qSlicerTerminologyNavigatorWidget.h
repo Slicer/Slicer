@@ -52,6 +52,7 @@ class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologyNavigatorWi
   QVTK_OBJECT
 
   Q_PROPERTY(bool anatomicRegionSectionVisible READ anatomicRegionSectionVisible WRITE setAnatomicRegionSectionVisible)
+  Q_PROPERTY(bool overrideSectionVisible READ overrideSectionVisible WRITE setOverrideSectionVisible)
 
   /// Roles set to the items in the terminology tables uniquely identifying the entries
   enum TerminologyItemDataRole
@@ -72,7 +73,8 @@ public:
   /// Destructor
   ~qSlicerTerminologyNavigatorWidget() override;
 
-  class TerminologyInfoBundle
+#ifndef __VTK_WRAP__
+  class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT TerminologyInfoBundle
   {
   public:
     TerminologyInfoBundle();
@@ -95,6 +97,7 @@ public:
   void terminologyInfo(TerminologyInfoBundle &terminologyInfo);
   /// Set selection to widget: terminology and meta-data (name, color, auto-generated flags)
   void setTerminologyInfo(TerminologyInfoBundle &terminologyInfo);
+#endif // __VTK_WRAP__
 
   /// Populate terminology entry from terminology and anatomy selection
   /// \return Success flag (e.g. fail if no type is selected)
@@ -105,6 +108,9 @@ public:
 
   /// Get whether anatomic region section are visible
   bool anatomicRegionSectionVisible() const;
+
+  /// Get whether name and color override section is visible
+  bool overrideSectionVisible() const;
 
   /// Generate name for given terminology
   Q_INVOKABLE static QString nameFromTerminology(vtkSlicerTerminologyEntry* entry);
@@ -118,6 +124,9 @@ public:
 public slots:
   /// Show/hide anatomic region section section
   void setAnatomicRegionSectionVisible(bool);
+
+  /// Show/hide name and color override section
+  void setOverrideSectionVisible(bool);
 
 protected:
   /// Set current terminology to widget
