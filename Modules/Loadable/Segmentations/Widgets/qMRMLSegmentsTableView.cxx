@@ -180,9 +180,6 @@ public:
   /// Flag determining whether the long-press per-view segment visibility options are available
   bool AdvancedSegmentVisibility;
 
-  QIcon VisibleIcon;
-  QIcon InvisibleIcon;
-
   /// Currently, if we are requesting segment display information from the
   /// segmentation display node,  the display node may emit modification events.
   /// We make sure these events do not interrupt the update process by setting
@@ -220,9 +217,6 @@ void qMRMLSegmentsTableViewPrivate::init()
   this->SortFilterModel = new qMRMLSortFilterSegmentsProxyModel(this->SegmentsTable);
   this->SortFilterModel->setSourceModel(this->Model);
   this->SegmentsTable->setModel(this->SortFilterModel);
-
-  this->VisibleIcon = QIcon(":/Icons/Small/SlicerVisible.png");
-  this->InvisibleIcon = QIcon(":/Icons/Small/SlicerInvisible.png");
 
   for (int status = 0; status < vtkSlicerSegmentationsModuleLogic::LastStatus; ++status)
     {
@@ -412,7 +406,7 @@ void qMRMLSegmentsTableView::onSegmentsTableClicked(const QModelIndex& modelInde
   Q_D(qMRMLSegmentsTableView);
   QString segmentId = d->SortFilterModel->segmentIDFromIndex(modelIndex);
   QStandardItem* item = d->Model->itemFromSegmentID(segmentId);
-  if (!d->SegmentationNode)
+  if (!d->SegmentationNode || !item)
     {
     return;
     }

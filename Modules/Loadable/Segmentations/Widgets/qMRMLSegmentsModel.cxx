@@ -420,13 +420,10 @@ void qMRMLSegmentsModel::updateItemFromSegment(QStandardItem* item, QString segm
   item->setFlags(flags);
 
   //// Set ID
-  bool blocked = this->blockSignals(true);
   item->setData(segmentID, qMRMLSegmentsModel::SegmentIDRole);
 
   //// Update item data for the current column
   this->updateItemDataFromSegment(item, segmentID, column);
-
-  this->blockSignals(blocked);
 
   d->UpdatingItemFromSegment = wasUpdating;
 }
