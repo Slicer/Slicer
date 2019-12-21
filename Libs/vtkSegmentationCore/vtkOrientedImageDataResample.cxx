@@ -334,11 +334,29 @@ bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage
       int unionExtent[6] = { 0, -1, 0, -1, 0, -1 };
       if (padImage)
         {
+        bool referenceExtentValid = true;
+        for (int i = 0; i < 3; ++i)
+          {
+          if (referenceExtent[i * 2 + 1] < referenceExtent[i * 2])
+            {
+            referenceExtentValid = false;
+            }
+          }
+
         // Make sure input image data fits into the extent.
         for (int i = 0; i < 3; i++)
           {
-          unionExtent[i * 2] = std::min(inputExtent[i * 2], referenceExtent[i * 2]);
-          unionExtent[i * 2 + 1] = std::max(inputExtent[i * 2 + 1], referenceExtent[i * 2 + 1]);
+          if (referenceExtentValid)
+            {
+            unionExtent[i * 2] = std::min(inputExtent[i * 2], referenceExtent[i * 2]);
+            unionExtent[i * 2 + 1] = std::max(inputExtent[i * 2 + 1], referenceExtent[i * 2 + 1]);
+            }
+          else
+            {
+            // Output extent is empty
+            unionExtent[i * 2] = inputExtent[i * 2];
+            unionExtent[i * 2 + 1] = inputExtent[i * 2 + 1];
+            }
           }
         }
       else
@@ -385,11 +403,29 @@ bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage
   int unionExtent[6] = { 0, -1, 0, -1, 0, -1 };
   if (padImage)
     {
+    bool referenceExtentValid = true;
+    for (int i = 0; i < 3; ++i)
+      {
+      if (referenceExtent[i * 2 + 1] < referenceExtent[i * 2])
+        {
+        referenceExtentValid = false;
+        }
+      }
+
     // Make sure input image data fits into the extent.
     for (int i = 0; i < 3; i++)
       {
-      unionExtent[i * 2] = std::min(inputExtentInReferenceFrame[i * 2], referenceExtent[i * 2]);
-      unionExtent[i * 2 + 1] = std::max(inputExtentInReferenceFrame[i * 2 + 1], referenceExtent[i * 2 + 1]);
+      if (referenceExtentValid)
+        {
+        unionExtent[i * 2] = std::min(inputExtentInReferenceFrame[i * 2], referenceExtent[i * 2]);
+        unionExtent[i * 2 + 1] = std::max(inputExtentInReferenceFrame[i * 2 + 1], referenceExtent[i * 2 + 1]);
+        }
+      else
+        {
+        // Output extent is empty
+        unionExtent[i * 2] = inputExtentInReferenceFrame[i * 2];
+        unionExtent[i * 2 + 1] = inputExtentInReferenceFrame[i * 2 + 1];
+        }
       }
     }
   else

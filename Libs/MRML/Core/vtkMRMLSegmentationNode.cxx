@@ -53,6 +53,9 @@
 #include <vtkMatrix4x4.h>
 #include <vtkTransform.h>
 
+// vtkITK includes
+#include <vtkITKIslandMath.h>
+
 // STD includes
 #include <algorithm>
 
@@ -1041,18 +1044,74 @@ double* vtkMRMLSegmentationNode::GetSegmentCenter(const std::string& segmentID)
       vtkWarningMacro("GetSegmentCenter: segment " << segmentID << " is empty");
       return nullptr;
       }
+
+    // Labelmap image to world
+    vtkNew<vtkMatrix4x4> imageToWorldMatrix;
+    labelmap->GetImageToWorldMatrix(imageToWorldMatrix.GetPointer());
+
+    vtkNew<vtkOrientedImageData> effectiveExtentLabelmap;
+    effectiveExtentLabelmap->SetImageToWorldMatrix(imageToWorldMatrix);
+    effectiveExtentLabelmap->SetExtent(labelOrientedImageDataEffectiveExtent);
+    vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(labelmap, effectiveExtentLabelmap, effectiveExtentLabelmap);
+
+    double resampledSpacing[3] = { 0 };
+    effectiveExtentLabelmap->GetSpacing(resampledSpacing);
+
+    double bounds[6] = { 0.0, -1.0, 0.0, -1.0, 0.0, -1.0 };
+    effectiveExtentLabelmap->GetBounds(bounds);
+    double volumeSizeInMm3 = (bounds[1] - bounds[0]) * (bounds[3] - bounds[2]) * (bounds[5] - bounds[4]);
+
+    // set spacing to have an approxmately 64^3 volume
+    const double preferredVolumeSizeInVoxels = 64 * 64 * 64;
+
+    double spacing = std::pow(volumeSizeInMm3 / preferredVolumeSizeInVoxels, 1 / 3.);
+    for (int i = 0; i < 3; ++i)
+      {
+      double axisBoundsSize = bounds[2 * i + 1] - bounds[2 * i];
+      int dimension = std::ceil(axisBoundsSize / spacing);
+      resampledSpacing[i] = std::max(axisBoundsSize / dimension, resampledSpacing[i]);
+      }
+
+    vtkNew<vtkOrientedImageData> resampledLabelmap;
+    resampledLabelmap->SetImageToWorldMatrix(imageToWorldMatrix);
+    resampledLabelmap->SetSpacing(resampledSpacing);
+    vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(effectiveExtentLabelmap, resampledLabelmap, resampledLabelmap, false, true);
+
+    vtkNew<vtkITKIslandMath> islandMath;
+    islandMath->SetInputData(resampledLabelmap);
+
+    vtkNew<vtkImageThreshold> largestIslandFilter;
+    largestIslandFilter->SetInputConnection(islandMath->GetOutputPort());
+    largestIslandFilter->ThresholdBetween(1.0, 1.0);
+    largestIslandFilter->SetInValue(1.0);
+    largestIslandFilter->SetOutValue(0.0);
+    largestIslandFilter->Update();
+
+    vtkNew<vtkOrientedImageData> largestResampledIsland;
+    largestResampledIsland->ShallowCopy(largestIslandFilter->GetOutput());
+    largestResampledIsland->CopyDirections(resampledLabelmap);
+
+    int resampledLabelEffectiveExtent[6] = { 0, -1, 0, -1, 0, -1 };
+    if (!vtkOrientedImageDataResample::CalculateEffectiveExtent(largestResampledIsland, resampledLabelEffectiveExtent))
+      {
+      vtkWarningMacro("GetSegmentCenter: segment " << segmentID << " is empty");
+      return nullptr;
+      }
+
     // segmentCenter_Image is floored to put the center exactly in the center of a voxel
     // (otherwise center position would be set at the boundary between two voxels when extent size is an even number)
     double segmentCenter_Image[4] =
       {
-      floor((labelOrientedImageDataEffectiveExtent[0] + labelOrientedImageDataEffectiveExtent[1]) / 2.0),
-      floor((labelOrientedImageDataEffectiveExtent[2] + labelOrientedImageDataEffectiveExtent[3]) / 2.0),
-      floor((labelOrientedImageDataEffectiveExtent[4] + labelOrientedImageDataEffectiveExtent[5]) / 2.0),
+      floor((resampledLabelEffectiveExtent[0] + resampledLabelEffectiveExtent[1]) / 2.0),
+      floor((resampledLabelEffectiveExtent[2] + resampledLabelEffectiveExtent[3]) / 2.0),
+      floor((resampledLabelEffectiveExtent[4] + resampledLabelEffectiveExtent[5]) / 2.0),
       1.0
       };
-    vtkNew<vtkMatrix4x4> imageToWorld;
-    labelmap->GetImageToWorldMatrix(imageToWorld.GetPointer());
-    imageToWorld->MultiplyPoint(segmentCenter_Image, this->SegmentCenterTmp);
+
+    // Resampled image to world
+    vtkNew<vtkMatrix4x4> resampledImageToWorldMatrix;
+    resampledLabelmap->GetImageToWorldMatrix(resampledImageToWorldMatrix.GetPointer());
+    resampledImageToWorldMatrix->MultiplyPoint(segmentCenter_Image, this->SegmentCenterTmp);
     }
   else
     {
