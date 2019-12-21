@@ -20,9 +20,9 @@
 
 // SegmentationCore includes
 #include "vtkSegmentation.h"
-
 #include "vtkSegmentationConverterRule.h"
 #include "vtkSegmentationConverterFactory.h"
+#include "vtkSegmentationHistory.h"
 
 #include "vtkOrientedImageData.h"
 #include "vtkOrientedImageDataResample.h"
@@ -156,19 +156,7 @@ void vtkSegmentation::DeepCopy(vtkSegmentation* aSegmentation)
   for (std::deque< std::string >::iterator segmentIdIt = aSegmentation->SegmentIds.begin(); segmentIdIt != aSegmentation->SegmentIds.end(); ++segmentIdIt)
     {
     vtkSmartPointer<vtkSegment> segment = vtkSmartPointer<vtkSegment>::New();
-    segment->DeepCopy(aSegmentation->Segments[*segmentIdIt]);
-
-    // Check to see if we have already added a segment that used the same vtkDataObject (i.e. shared)
-    vtkDataObject* originalRepresentation = aSegmentation->Segments[*segmentIdIt]->GetRepresentation(this->GetMasterRepresentationName());
-    if (copiedDataObjects.find(originalRepresentation) == copiedDataObjects.end())
-      {
-      copiedDataObjects[originalRepresentation] = segment->GetRepresentation(this->MasterRepresentationName);
-      }
-    else
-      {
-      segment->AddRepresentation(this->MasterRepresentationName, copiedDataObjects[originalRepresentation]);
-      }
-
+    vtkSegmentation::CopySegment(segment, aSegmentation->Segments[*segmentIdIt], nullptr, copiedDataObjects);
     this->AddSegment(segment, *segmentIdIt);
     }
 }
@@ -902,7 +890,6 @@ std::vector<vtkSegment*> vtkSegmentation::GetSegmentsByTag(std::string tag, std:
 
   return foundSegments;
 }
-
 
 //---------------------------------------------------------------------------
 void vtkSegmentation::GetSegmentIDs(std::vector<std::string> &segmentIds)
@@ -2431,4 +2418,56 @@ void vtkSegmentation::CollapseBinaryLabelmaps(bool forceToSingleLayer/*=false*/)
     newLayer.first->Modified();
     }
   this->SetMasterRepresentationModifiedEnabled(wasMasterRepresentationModifiedEnabled);
+}
+
+//---------------------------------------------------------------------------
+void vtkSegmentation::CopySegment(vtkSegment* destination, vtkSegment* source, vtkSegment* baseline,
+  std::map<vtkDataObject*, vtkDataObject*>& cachedRepresentations)
+{
+  destination->RemoveAllRepresentations();
+  destination->DeepCopyMetadata(source);
+
+  // Copy representations
+  std::vector<std::string> representationNames;
+  source->GetContainedRepresentationNames(representationNames);
+  for (std::vector<std::string>::iterator representationNameIt = representationNames.begin();
+    representationNameIt != representationNames.end(); ++representationNameIt)
+    {
+    vtkDataObject* sourceRepresentation = source->GetRepresentation(*representationNameIt);
+    if (cachedRepresentations.find(sourceRepresentation) != cachedRepresentations.end())
+      {
+      // If the same object (i.e. shared labelmap) has already been cached from a previous segment, then point to that
+      // object instead. No need to perform copy.
+      destination->AddRepresentation(*representationNameIt, cachedRepresentations[sourceRepresentation]);
+      continue;
+      }
+
+    vtkDataObject* baselineRepresentation = nullptr;
+    if (baseline)
+      {
+      baselineRepresentation = baseline->GetRepresentation(*representationNameIt);
+      }
+    // Shallow-copy from baseline if it's up-to-date, otherwise deep-copy from source
+    if (baselineRepresentation != nullptr
+      && baselineRepresentation->GetMTime() > sourceRepresentation->GetMTime())
+      {
+      // we already have an up-to-date copy in the baseline, so reuse that
+      destination->AddRepresentation(*representationNameIt, baselineRepresentation);
+      cachedRepresentations[sourceRepresentation] = baselineRepresentation;
+      }
+    else
+      {
+      vtkDataObject* representationCopy =
+        vtkSegmentationConverterFactory::GetInstance()->ConstructRepresentationObjectByClass(sourceRepresentation->GetClassName());
+      if (!representationCopy)
+        {
+        vtkErrorWithObjectMacro(nullptr, "DeepCopy: Unable to construct representation type class '" << sourceRepresentation->GetClassName() << "'");
+        continue;
+        }
+      representationCopy->DeepCopy(sourceRepresentation);
+      destination->AddRepresentation(*representationNameIt, representationCopy);
+      cachedRepresentations[sourceRepresentation] = representationCopy;
+      representationCopy->Delete(); // this representation is now owned by the segment
+      }
+    }
 }

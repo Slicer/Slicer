@@ -144,7 +144,7 @@ bool vtkSegmentationHistory::SaveState()
       }
 
     vtkSmartPointer<vtkSegment> segmentClone = vtkSmartPointer<vtkSegment>::New();
-    this->CopySegment(segmentClone, segment, baselineSegment, savedObjects);
+    vtkSegmentation::CopySegment(segmentClone, segment, baselineSegment, savedObjects);
     newSegmentationState.Segments[*segmentIDIt] = segmentClone;
     }
   this->SegmentationStates.push_back(newSegmentationState);
@@ -155,58 +155,6 @@ bool vtkSegmentationHistory::SaveState()
 
   this->Modified();
   return true;
-}
-
-//---------------------------------------------------------------------------
-void vtkSegmentationHistory::CopySegment(vtkSegment* destination, vtkSegment* source, vtkSegment* baseline,
-  std::map<vtkDataObject*, vtkDataObject*>& cachedRepresentations)
-{
-  destination->RemoveAllRepresentations();
-  destination->DeepCopyMetadata(source);
-
-  // Copy representations
-  std::vector<std::string> representationNames;
-  source->GetContainedRepresentationNames(representationNames);
-  for (std::vector<std::string>::iterator representationNameIt = representationNames.begin();
-    representationNameIt != representationNames.end(); ++representationNameIt)
-    {
-    vtkDataObject* sourceRepresentation = source->GetRepresentation(*representationNameIt);
-    if (cachedRepresentations.find(sourceRepresentation) != cachedRepresentations.end())
-      {
-      // If the same object (i.e. shared labelmap) has already been cached from a previous segment, then point to that
-      // object instead. No need to perform copy.
-      destination->AddRepresentation(*representationNameIt, cachedRepresentations[sourceRepresentation]);
-      continue;
-      }
-
-    vtkDataObject* baselineRepresentation = nullptr;
-    if (baseline)
-      {
-      baselineRepresentation = baseline->GetRepresentation(*representationNameIt);
-      }
-    // Shallow-copy from baseline if it's up-to-date, otherwise deep-copy from source
-    if (baselineRepresentation != nullptr
-      && baselineRepresentation->GetMTime() > sourceRepresentation->GetMTime())
-      {
-      // we already have an up-to-date copy in the baseline, so reuse that
-      destination->AddRepresentation(*representationNameIt, baselineRepresentation);
-      cachedRepresentations[sourceRepresentation] = baselineRepresentation;
-      }
-    else
-      {
-      vtkDataObject* representationCopy =
-        vtkSegmentationConverterFactory::GetInstance()->ConstructRepresentationObjectByClass(sourceRepresentation->GetClassName());
-      if (!representationCopy)
-        {
-        vtkErrorMacro("DeepCopy: Unable to construct representation type class '" << sourceRepresentation->GetClassName() << "'");
-        continue;
-        }
-      representationCopy->DeepCopy(sourceRepresentation);
-      destination->AddRepresentation(*representationNameIt, representationCopy);
-      cachedRepresentations[sourceRepresentation] = representationCopy;
-      representationCopy->Delete(); // this representation is now owned by the segment
-      }
-    }
 }
 
 //---------------------------------------------------------------------------
@@ -277,7 +225,7 @@ bool vtkSegmentationHistory::RestoreState(unsigned int stateIndex)
       this->Segmentation->AddSegment(segment, restoredSegmentsIt->first);
       }
 
-    this->CopySegment(segment, segmentToRestore, nullptr, restoredRepresentations);
+    vtkSegmentation::CopySegment(segment, segmentToRestore, nullptr, restoredRepresentations);
 
     std::vector<std::string> restoredRepresentationNames;
     segmentToRestore->GetContainedRepresentationNames(restoredRepresentationNames);

@@ -461,6 +461,11 @@ public:
   /// the segmentation! Use \sa CreateRepresentation for that.
   virtual void SetMasterRepresentationName(const std::string& representationName);
 
+  /// Deep copies source segment to destination segment. If the same representation is found in baseline
+  /// with up-to-date timestamp then the representation is reused from baseline.
+  static void CopySegment(vtkSegment* destination, vtkSegment* source, vtkSegment* baseline,
+    std::map<vtkDataObject*, vtkDataObject*>& cachedRepresentations);
+
 protected:
   bool ConvertSegmentsUsingPath(std::vector<std::string> segmentIDs, vtkSegmentationConverter::ConversionPathType path, bool overwriteExisting = false);
   bool ConvertSegments(std::vector<std::string> segmentIDs, bool overwriteExisting = false);
