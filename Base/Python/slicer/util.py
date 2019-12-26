@@ -1478,9 +1478,10 @@ def tempDirectory(key='__SlicerTemp__',tempDir=None,includeDateTime=True):
   import qt, slicer
   if not tempDir:
     tempDir = qt.QDir(slicer.app.temporaryPath)
-  tempDirName = key
   if includeDateTime:
-    key += qt.QDateTime().currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz")
+    tempDirName = key + qt.QDateTime().currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz")
+  else:
+    tempDirName = key
   fileInfo = qt.QFileInfo(qt.QDir(tempDir), tempDirName)
   dirPath = fileInfo.absoluteFilePath()
   qt.QDir().mkpath(dirPath)
