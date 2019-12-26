@@ -101,10 +101,10 @@ public:
 
   /// Populate terminology entry from terminology and anatomy selection
   /// \return Success flag (e.g. fail if no type is selected)
-  bool terminologyEntry(vtkSlicerTerminologyEntry* entry);
+  Q_INVOKABLE bool terminologyEntry(vtkSlicerTerminologyEntry* entry);
   /// Update terminology and anatomy widgets and selections from terminology entry
   /// \return Success flag (e.g. fail if no type is specified in entry)
-  bool setTerminologyEntry(vtkSlicerTerminologyEntry* entry);
+  Q_INVOKABLE bool setTerminologyEntry(vtkSlicerTerminologyEntry* entry);
 
   /// Get whether anatomic region section are visible
   bool anatomicRegionSectionVisible() const;
