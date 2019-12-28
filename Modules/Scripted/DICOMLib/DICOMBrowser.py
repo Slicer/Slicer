@@ -401,7 +401,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
     """For selected plugins, give user the option
     of what to load"""
 
-    self.loadablesByPlugin = self.getLoadablesFromFileLists(self.fileLists)
+    (self.loadablesByPlugin, loadEnabled) = self.getLoadablesFromFileLists(self.fileLists)
     self.organizeLoadables()
     self.loadableTable.setLoadables(self.loadablesByPlugin)
     self.updateButtonStates()
@@ -449,7 +449,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
       slicer.util.warningDisplay("Warning: %s\n\nSee python console for error message." % ' '.join(messages),
                                    windowTitle="DICOM", parent=self)
 
-    return loadablesByPlugin
+    return loadablesByPlugin, loadEnabled
 
   def isFileListInCheckedLoadables(self, fileList):
     for plugin in self.loadablesByPlugin:
@@ -633,8 +633,8 @@ class DICOMReferencesDialog(qt.QMessageBox):
   def _setBasicProperties(self):
     self.layout().setSpacing(9)
     self.setWindowTitle(self.WINDOW_TITLE)
-    self.fontMetrics = qt.QFontMetrics(qt.QApplication.font(self))
-    self.setMinimumWidth(self.fontMetrics.width(self.WINDOW_TITLE))
+    fontMetrics = qt.QFontMetrics(qt.QApplication.font(self))
+    self.setMinimumWidth(fontMetrics.width(self.WINDOW_TITLE))
 
   def _addTextLabel(self):
     label = qt.QLabel(self.WINDOW_TEXT)
