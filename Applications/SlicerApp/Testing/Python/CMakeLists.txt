@@ -303,6 +303,12 @@ slicer_add_python_unittest(
   )
 
 slicer_add_python_unittest(
+  SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/slicer/tests/test_slicer_python_sqlite3.py
+  SLICER_ARGS --no-main-window  --disable-modules
+  TESTNAME_PREFIX nomainwindow_
+  )
+
+slicer_add_python_unittest(
   SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/slicer/tests/test_slicer_util_VTKObservationMixin.py
   SLICER_ARGS --no-main-window --disable-modules
   TESTNAME_PREFIX nomainwindow_

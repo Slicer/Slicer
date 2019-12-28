@@ -67,7 +67,7 @@ if(APPLE)
   set(required_deployment_target "10.11")
 
   if(CMAKE_OSX_DEPLOYMENT_TARGET VERSION_LESS ${required_deployment_target})
-    message(FATAL_ERROR "CMAKE_OSX_DEPLOYMENT_TARGET must be ${required_deployment_target} or greater.")
+    message(FATAL_ERROR "CMAKE_OSX_DEPLOYMENT_TARGET ${CMAKE_OSX_DEPLOYMENT_TARGET} must be ${required_deployment_target} or greater.")
   endif()
 
   if(NOT "${CMAKE_OSX_SYSROOT}" STREQUAL "")
