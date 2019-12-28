@@ -2215,7 +2215,7 @@ def setApplicationLogoVisible(visible):
 def setModuleHelpSectionVisible(visible):
   """Show/hide Help section at the top of module panel."""
   modulePanel = findChild(mainWindow(), "ModulePanel")
-  modulePanel.helpAndAcknowledgmentVisible=False
+  modulePanel.helpAndAcknowledgmentVisible = visible
 
 def setDataProbeVisible(visible):
   """Show/hide Data probe at the bottom of module panel."""
