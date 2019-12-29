@@ -1423,32 +1423,32 @@ class VTKObservationMixin(object):
     self.Observations = []
 
   def removeObservers(self, method=None):
-    for o, e, m, g, t in list(self.Observations):
+    for o, e, m, g, t, p in list(self.Observations):
       if method == m or method is None:
         o.RemoveObserver(t)
-        self.Observations.remove([o, e, m, g, t])
+        self.Observations.remove([o, e, m, g, t, p])
 
-  def addObserver(self, object, event, method, group = 'none'):
+  def addObserver(self, object, event, method, group = 'none', priority = 0.0):
     if self.hasObserver(object, event, method):
       print('already has observer')
       return
-    tag = object.AddObserver(event, method)
-    self.Observations.append([object, event, method, group, tag])
+    tag = object.AddObserver(event, method, priority)
+    self.Observations.append([object, event, method, group, tag, priority])
 
   def removeObserver(self, object, event, method):
-    for o, e, m, g, t in self.Observations:
+    for o, e, m, g, t, p in self.Observations:
       if o == object and e == event and m == method:
         o.RemoveObserver(t)
-        self.Observations.remove([o, e, m, g, t])
+        self.Observations.remove([o, e, m, g, t, p])
 
   def hasObserver(self, object, event, method):
-    for o, e, m, g, t in self.Observations:
+    for o, e, m, g, t, p in self.Observations:
       if o == object and e == event and m == method:
         return True
     return False
 
   def observer(self, event, method):
-    for o, e, m, g, t in self.Observations:
+    for o, e, m, g, t, p in self.Observations:
       if e == event and m == method:
         return o
     return None
