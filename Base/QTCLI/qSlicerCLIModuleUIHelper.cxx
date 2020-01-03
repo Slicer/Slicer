@@ -214,6 +214,7 @@ public:
   ///  parameter type -> MRML node type
   static bool MapInitialized;
   static QHash<QString, QString> ImageTypeAttributeToNodeType;
+  static QHash<QString, QString> PointTypeAttributeToNodeType;
   static QHash<QString, QString> GeometryTypeAttributeToNodeType;
   static QHash<QString, QString> TableTypeAttributeToNodeType;
   static QHash<QString, QString> TransformTypeAttributeToNodeType;
@@ -231,6 +232,7 @@ public:
 //-----------------------------------------------------------------------------
 bool qSlicerCLIModuleUIHelperPrivate::MapInitialized = false;
 QHash<QString, QString> qSlicerCLIModuleUIHelperPrivate::ImageTypeAttributeToNodeType;
+QHash<QString, QString> qSlicerCLIModuleUIHelperPrivate::PointTypeAttributeToNodeType;
 QHash<QString, QString> qSlicerCLIModuleUIHelperPrivate::GeometryTypeAttributeToNodeType;
 QHash<QString, QString> qSlicerCLIModuleUIHelperPrivate::TableTypeAttributeToNodeType;
 QHash<QString, QString> qSlicerCLIModuleUIHelperPrivate::TransformTypeAttributeToNodeType;
@@ -274,6 +276,13 @@ void qSlicerCLIModuleUIHelperPrivate::initializeMaps()
   Self::ImageTypeAttributeToNodeType["signal"] = "vtkMRMLMultiVolumeNode";
   Self::ImageTypeAttributeToNodeType["multichannel"] = "vtkMRMLMultiVolumeNode";
   Self::ImageTypeAttributeToNodeType["dynamic-contrast-enhanced"] = "vtkMRMLMultiVolumeNode";
+
+  // Markups type attribute mapping
+  Self::PointTypeAttributeToNodeType["point"] = "vtkMRMLMarkupsFiducialNode";
+  Self::PointTypeAttributeToNodeType["line"] = "vtkMRMLMarkupsLineNode";
+  Self::PointTypeAttributeToNodeType["angle"] = "vtkMRMLMarkupsAngleNode";
+  Self::PointTypeAttributeToNodeType["curve"] = "vtkMRMLMarkupsCurveNode";
+  Self::PointTypeAttributeToNodeType["closedcurve"] = "vtkMRMLMarkupsClosedCurveNode";
 
   // Geometry type attribute mapping
   Self::GeometryTypeAttributeToNodeType["fiberbundle"] = "vtkMRMLFiberBundleNode";
@@ -571,10 +580,35 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createPointFileTagWidget(const ModuleP
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
   qMRMLNodeComboBox* widget = new qMRMLNodeComboBox;
-  QStringList nodeTypes;
-  nodeTypes += "vtkMRMLMarkupsFiducialNode";
 
-  widget->setNodeTypes(nodeTypes);
+  QString type = QString::fromStdString(moduleParameter.GetType());
+  if (type == "any")
+    {
+    // Add all of the other concrete volume node types
+    // TODO: it would be nicer to iterate through all the registered node classes in the scene
+    // and add all nodes that are derived from vtkMRMLVolumeNode.
+    widget->setNodeTypes(QStringList()
+      << "vtkMRMLMarkupsFiducialNode"
+      << "vtkMRMLMarkupsLineNode"
+      << "vtkMRMLMarkupsCurveNode"
+      << "vtkMRMLMarkupsClosedCurveNode"
+      << "vtkMRMLMarkupsAngleNode"
+      );
+    }
+  else
+    {
+    QString nodeType = Self::nodeTypeFromMap(Self::PointTypeAttributeToNodeType, type, "vtkMRMLMarkupsFiducialNode");
+    widget->setNodeTypes(QStringList(nodeType));
+    }
+
+  // If "type" is specified, only display nodes of type nodeType
+  // and don't display subclasses
+  if (!type.isEmpty() &&
+      type != "any")
+    {
+    widget->setShowChildNodeTypes(false);
+    }
+
   //TODO - title + " FiducialList"
   widget->setNoneEnabled(this->isNoneEnabled(moduleParameter));
   widget->setBaseName(_label);

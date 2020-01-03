@@ -1540,7 +1540,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           vtkMRMLNode *node
             = this->GetMRMLScene()->GetNodeByID((*pit).GetValue().c_str());
           vtkMRMLDisplayableNode *markups = vtkMRMLDisplayableNode::SafeDownCast(node);
-          if (markups && markups->IsA("vtkMRMLMarkupsFiducialNode"))
+          if (markups && markups->IsA("vtkMRMLMarkupsNode"))
             {
             vtkMRMLStorageNode *mrmlStorageNode = markups->GetStorageNode();
             if (mrmlStorageNode)
