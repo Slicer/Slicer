@@ -1,6 +1,6 @@
 {
   "SegmentationCategoryTypeContextName": "Segmentation category and type - 3D Slicer General Anatomy list",
-  "@schema": "https://raw.githubusercontent.com/qiicr/dcmqi/master/doc/schemas/segment-context-schema.json#",
+  "@schema": "https://raw.githubusercontent.com/qiicr/dcmqi/master/doc/segment-context-schema.json#",
   "SegmentationCodes": {
     "Category": [
       {
@@ -25,7 +25,8 @@
             "UMLSConceptUID": "C0040300",
             "CodeValue": "T-D0050",
             "contextGroupName": "Abstract Segmentation Types",
-            "SNOMEDCTConceptID": "85756007"
+            "SNOMEDCTConceptID": "85756007",
+            "3dSlicerIntegerLabel": 1
           },
           {
             "recommendedDisplayRGBValue": [
@@ -40,7 +41,8 @@
             "UMLSConceptUID": "C0555806",
             "CodeValue": "T-41066",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "275989006"
+            "SNOMEDCTConceptID": "275989006",
+            "3dSlicerIntegerLabel": 17
           },
           {
             "recommendedDisplayRGBValue": [
@@ -55,7 +57,8 @@
             "UMLSConceptUID": "C0344335",
             "CodeValue": "F-03D38",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "248300009"
+            "SNOMEDCTConceptID": "248300009",
+            "3dSlicerIntegerLabel": 12
           },
           {
             "recommendedDisplayRGBValue": [
@@ -70,7 +73,8 @@
             "UMLSConceptUID": "C0262950",
             "CodeValue": "T-D016E",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "272673000"
+            "SNOMEDCTConceptID": "272673000",
+            "3dSlicerIntegerLabel": 2
           },
           {
             "recommendedDisplayRGBValue": [
@@ -85,7 +89,8 @@
             "UMLSConceptUID": "C0006901",
             "CodeValue": "T-40050",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "20982000"
+            "SNOMEDCTConceptID": "20982000",
+            "3dSlicerIntegerLabel": 18
           },
           {
             "recommendedDisplayRGBValue": [
@@ -100,7 +105,8 @@
             "UMLSConceptUID": "C0007301",
             "CodeValue": "T-D021B",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "309312004"
+            "SNOMEDCTConceptID": "309312004",
+            "3dSlicerIntegerLabel": 21
           },
           {
             "recommendedDisplayRGBValue": [
@@ -115,7 +121,8 @@
             "UMLSConceptUID": "C0009780",
             "CodeValue": "T-1A200",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "21793004"
+            "SNOMEDCTConceptID": "21793004",
+            "3dSlicerIntegerLabel": 4
           },
           {
             "recommendedDisplayRGBValue": [
@@ -130,7 +137,8 @@
             "UMLSConceptUID": "C0023685",
             "CodeValue": "T-18010",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "52082005"
+            "SNOMEDCTConceptID": "52082005",
+            "3dSlicerIntegerLabel": 19
           },
           {
             "recommendedDisplayRGBValue": [
@@ -145,7 +153,8 @@
             "UMLSConceptUID": "C0024204",
             "CodeValue": "T-C4000",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "59441001"
+            "SNOMEDCTConceptID": "59441001",
+            "3dSlicerIntegerLabel": 23
           },
           {
             "recommendedDisplayRGBValue": [
@@ -160,7 +169,8 @@
             "UMLSConceptUID": "C0229889",
             "CodeValue": "T-C6010",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "83555006"
+            "SNOMEDCTConceptID": "83555006",
+            "3dSlicerIntegerLabel": 24
           },
           {
             "recommendedDisplayRGBValue": [
@@ -175,7 +185,8 @@
             "UMLSConceptUID": "C0224498",
             "CodeValue": "T-15009",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "74135004"
+            "SNOMEDCTConceptID": "74135004",
+            "3dSlicerIntegerLabel": 22
           },
           {
             "recommendedDisplayRGBValue": [
@@ -190,7 +201,8 @@
             "UMLSConceptUID": "C0026845",
             "CodeValue": "T-13001",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "71616004"
+            "SNOMEDCTConceptID": "71616004",
+            "3dSlicerIntegerLabel": 8
           },
           {
             "recommendedDisplayRGBValue": [
@@ -205,7 +217,8 @@
             "UMLSConceptUID": "C1268169",
             "CodeValue": "T-D0598",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "119410002"
+            "SNOMEDCTConceptID": "119410002",
+            "3dSlicerIntegerLabel": 15
           },
           {
             "recommendedDisplayRGBValue": [
@@ -220,7 +233,8 @@
             "UMLSConceptUID": "C1285092",
             "CodeValue": "T-1A310",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "2861001"
+            "SNOMEDCTConceptID": "2861001",
+            "3dSlicerIntegerLabel": 6
           },
           {
             "recommendedDisplayRGBValue": [
@@ -235,7 +249,8 @@
             "UMLSConceptUID": "C1123023",
             "CodeValue": "T-01000",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "39937001"
+            "SNOMEDCTConceptID": "39937001",
+            "3dSlicerIntegerLabel": 3
           },
           {
             "recommendedDisplayRGBValue": [
@@ -250,7 +265,8 @@
             "UMLSConceptUID": "C0039508",
             "CodeValue": "T-17010",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "13024002"
+            "SNOMEDCTConceptID": "13024002",
+            "3dSlicerIntegerLabel": 20
           },
           {
             "recommendedDisplayRGBValue": [
@@ -265,7 +281,8 @@
             "UMLSConceptUID": "C0040300",
             "CodeValue": "T-D0050",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "85756007"
+            "SNOMEDCTConceptID": "85756007",
+            "3dSlicerIntegerLabel": 1
           },
           {
             "recommendedDisplayRGBValue": [
@@ -280,7 +297,8 @@
             "UMLSConceptUID": "C0447146",
             "CodeValue": "T-4806E",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "181378009"
+            "SNOMEDCTConceptID": "181378009",
+            "3dSlicerIntegerLabel": 16
           }
         ],
         "showAnatomy": true
@@ -307,7 +325,8 @@
             "UMLSConceptUID": "C0000726",
             "CodeMeaning": "Abdomen",
             "contextGroupName": "Abdominal Organ Segmentation Types",
-            "SNOMEDCTConceptID": "113345001"
+            "SNOMEDCTConceptID": "113345001",
+            "3dSlicerIntegerLabel": 206
           },
           {
             "recommendedDisplayRGBValue": [
@@ -322,7 +341,8 @@
             "UMLSConceptUID": "C0230168",
             "CodeMeaning": "Abdominal cavity",
             "contextGroupName": "Abdominal Organ Segmentation Types",
-            "SNOMEDCTConceptID": "52731004"
+            "SNOMEDCTConceptID": "52731004",
+            "3dSlicerIntegerLabel": 205
           },
           {
             "recommendedDisplayRGBValue": [
@@ -337,7 +357,8 @@
             "UMLSConceptUID": "C1279385",
             "CodeMeaning": "Abdominal wall muscle",
             "contextGroupName": "Abdominal Organ Segmentation Types",
-            "SNOMEDCTConceptID": "195879000"
+            "SNOMEDCTConceptID": "195879000",
+            "3dSlicerIntegerLabel": 244
           },
           {
             "recommendedDisplayRGBValue": [
@@ -352,7 +373,8 @@
             "UMLSConceptUID": "C0032008",
             "CodeMeaning": "Adenohypophysis",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "62818001"
+            "SNOMEDCTConceptID": "62818001",
+            "3dSlicerIntegerLabel": 120
           },
           {
             "contextGroupName": "Abdominal Organ Segmentation Types",
@@ -375,7 +397,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 228
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -390,10 +413,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 229
               }
             ],
-            "SNOMEDCTConceptID": "23451007"
+            "SNOMEDCTConceptID": "23451007",
+            "3dSlicerIntegerLabel": 120
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -416,7 +441,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 62
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -431,10 +457,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 63
               }
             ],
-            "SNOMEDCTConceptID": "4958002"
+            "SNOMEDCTConceptID": "4958002",
+            "3dSlicerIntegerLabel": 229
           },
           {
             "recommendedDisplayRGBValue": [
@@ -449,7 +477,8 @@
             "UMLSConceptUID": "C0003461",
             "CodeMeaning": "Anus",
             "contextGroupName": "Common Anatomic Regions",
-            "SNOMEDCTConceptID": "53505006"
+            "SNOMEDCTConceptID": "53505006",
+            "3dSlicerIntegerLabel": 215
           },
           {
             "recommendedDisplayRGBValue": [
@@ -464,7 +493,8 @@
             "UMLSConceptUID": "C0003483",
             "CodeMeaning": "Aorta",
             "contextGroupName": "Cardiac Structure Segmentation Types",
-            "SNOMEDCTConceptID": "15825003"
+            "SNOMEDCTConceptID": "15825003",
+            "3dSlicerIntegerLabel": 191
           },
           {
             "recommendedDisplayRGBValue": [
@@ -479,7 +509,8 @@
             "UMLSConceptUID": "C0003501",
             "CodeMeaning": "Aortic Valve",
             "contextGroupName": "Mediastinum Anatomy Finding or Feature",
-            "SNOMEDCTConceptID": "34202007"
+            "SNOMEDCTConceptID": "34202007",
+            "3dSlicerIntegerLabel": 189
           },
           {
             "recommendedDisplayRGBValue": [
@@ -494,7 +525,8 @@
             "UMLSConceptUID": "C0003707",
             "CodeMeaning": "Arachnoid",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "75042008"
+            "SNOMEDCTConceptID": "75042008",
+            "3dSlicerIntegerLabel": 124
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -517,7 +549,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 78
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -532,10 +565,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 79
               }
             ],
-            "SNOMEDCTConceptID": ""
+            "SNOMEDCTConceptID": "",
+            "3dSlicerIntegerLabel": 124
           },
           {
             "recommendedDisplayRGBValue": [
@@ -550,7 +585,8 @@
             "UMLSConceptUID": "C0206250",
             "CodeMeaning": "Autonomic nerve",
             "contextGroupName": "Peripheral Nervous System Segmentation Types",
-            "SNOMEDCTConceptID": "53520000"
+            "SNOMEDCTConceptID": "53520000",
+            "3dSlicerIntegerLabel": 280
           },
           {
             "recommendedDisplayRGBValue": [
@@ -565,7 +601,8 @@
             "UMLSConceptUID": "C0005400",
             "CodeMeaning": "Bile Duct",
             "contextGroupName": "Abdominal Organ Segmentation Types",
-            "SNOMEDCTConceptID": "28273000"
+            "SNOMEDCTConceptID": "28273000",
+            "3dSlicerIntegerLabel": 217
           },
           {
             "recommendedDisplayRGBValue": [
@@ -580,7 +617,8 @@
             "UMLSConceptUID": "C0005682",
             "CodeMeaning": "Bladder",
             "contextGroupName": "Pelvic Organ Segmentation Types",
-            "SNOMEDCTConceptID": "89837001"
+            "SNOMEDCTConceptID": "89837001",
+            "3dSlicerIntegerLabel": 226
           },
           {
             "recommendedDisplayRGBValue": [
@@ -595,7 +633,8 @@
             "UMLSConceptUID": "C0448157",
             "CodeMeaning": "Bone of thorax",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "272710004"
+            "SNOMEDCTConceptID": "272710004",
+            "3dSlicerIntegerLabel": 199
           },
           {
             "recommendedDisplayRGBValue": [
@@ -610,7 +649,8 @@
             "UMLSConceptUID": "C0730130",
             "CodeMeaning": "Bone structure of head and/or neck",
             "contextGroupName": "Craniofacial Anatomic Regions",
-            "SNOMEDCTConceptID": "312779009"
+            "SNOMEDCTConceptID": "312779009",
+            "3dSlicerIntegerLabel": 166
           },
           {
             "recommendedDisplayRGBValue": [
@@ -625,7 +665,8 @@
             "UMLSConceptUID": "C0006104",
             "CodeMeaning": "Brain",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "12738006"
+            "SNOMEDCTConceptID": "12738006",
+            "3dSlicerIntegerLabel": 38
           },
           {
             "recommendedDisplayRGBValue": [
@@ -640,7 +681,8 @@
             "UMLSConceptUID": "C0459387",
             "CodeMeaning": "Brain cerebrospinal fluid pathway",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "280371009"
+            "SNOMEDCTConceptID": "280371009",
+            "3dSlicerIntegerLabel": 106
           },
           {
             "recommendedDisplayRGBValue": [
@@ -655,7 +697,8 @@
             "UMLSConceptUID": "C0007799",
             "CodeMeaning": "Brain ventricle",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "35764002"
+            "SNOMEDCTConceptID": "35764002",
+            "3dSlicerIntegerLabel": 107
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -678,7 +721,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 56
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -693,10 +737,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 57
               }
             ],
-            "SNOMEDCTConceptID": "11000004"
+            "SNOMEDCTConceptID": "11000004",
+            "3dSlicerIntegerLabel": 107
           },
           {
             "recommendedDisplayRGBValue": [
@@ -711,7 +757,8 @@
             "UMLSConceptUID": "C0927232",
             "CodeMeaning": "Central nervous system",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "21483005"
+            "SNOMEDCTConceptID": "21483005",
+            "3dSlicerIntegerLabel": 37
           },
           {
             "recommendedDisplayRGBValue": [
@@ -726,7 +773,8 @@
             "UMLSConceptUID": "C0152381",
             "CodeMeaning": "Cerebellar white matter",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "33060004"
+            "SNOMEDCTConceptID": "33060004",
+            "3dSlicerIntegerLabel": 105
           },
           {
             "recommendedDisplayRGBValue": [
@@ -741,7 +789,8 @@
             "UMLSConceptUID": "C0007769",
             "CodeMeaning": "Cerebral aqueduct",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "80447000"
+            "SNOMEDCTConceptID": "80447000",
+            "3dSlicerIntegerLabel": 112
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -764,7 +813,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 100
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -779,10 +829,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 101
               }
             ],
-            "SNOMEDCTConceptID": "87463005"
+            "SNOMEDCTConceptID": "87463005",
+            "3dSlicerIntegerLabel": 112
           },
           {
             "recommendedDisplayRGBValue": [
@@ -797,7 +849,8 @@
             "UMLSConceptUID": "C0007776",
             "CodeMeaning": "Cerebral Grey Matter",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "40146001"
+            "SNOMEDCTConceptID": "40146001",
+            "3dSlicerIntegerLabel": 41
           },
           {
             "recommendedDisplayRGBValue": [
@@ -812,7 +865,168 @@
             "UMLSConceptUID": "C0152295",
             "CodeMeaning": "Cerebral White Matter",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "68523003"
+            "SNOMEDCTConceptID": "68523003",
+            "3dSlicerIntegerLabel": 73
+          },
+          {
+            "recommendedDisplayRGBValue": [
+              200,
+              200,
+              235
+            ],
+            "CodeMeaning": "Gray Matter",
+            "CodingSchemeDesignator": "SRT",
+            "3dSlicerLabel": "gray matter",
+            "3dSlicerIntegerLabel": 13,
+            "cid": "7153",
+            "UMLSConceptUID": "C1300312",
+            "CodeValue": "T-A0096",
+            "contextGroupName": "CNSSegmentationTypes",
+            "SNOMEDCTConceptID": "389081007"
+          },
+          {
+            "recommendedDisplayRGBValue": [
+              250,
+              250,
+              210
+            ],
+            "CodeMeaning": "White Matter",
+            "CodingSchemeDesignator": "SRT",
+            "3dSlicerLabel": "white matter",
+            "3dSlicerIntegerLabel": 14,
+            "cid": "7153",
+            "UMLSConceptUID": "C1300311",
+            "CodeValue": "T-A0095",
+            "contextGroupName": "CNSSegmentationTypes",
+            "SNOMEDCTConceptID": "389080008"
+          },
+          {
+            "recommendedDisplayRGBValue": [
+              221,
+              130,
+              101
+            ],
+            "CodeMeaning": "Liver",
+            "CodingSchemeDesignator": "SRT",
+            "3dSlicerLabel": "liver",
+            "3dSlicerIntegerLabel": 216,
+            "cid": "4030,7154",
+            "UMLSConceptUID": "C0023884",
+            "CodeValue": "T-62000",
+            "contextGroupName": "CT,MRandPETAnatomyImaged,AbdominalSegmentationTypes",
+            "SNOMEDCTConceptID": "10200004"
+          },
+          {
+            "recommendedDisplayRGBValue": [
+              196,
+              172,
+              68
+            ],
+            "CodeMeaning": "Maxilla",
+            "CodingSchemeDesignator": "SRT",
+            "3dSlicerLabel": "maxilla",
+            "3dSlicerIntegerLabel": 152,
+            "cid": "4028,4031",
+            "UMLSConceptUID": "C0024947",
+            "CodeValue": "T-11170",
+            "contextGroupName": "CraniofacialAnatomicRegions,CommonAnatomicRegions",
+            "SNOMEDCTConceptID": "70925003"
+          },
+          {
+            "recommendedDisplayRGBValue": [
+              145,
+              92,
+              109
+            ],
+            "CodeMeaning": "Midbrain",
+            "CodingSchemeDesignator": "SRT",
+            "3dSlicerLabel": "midbrain",
+            "3dSlicerIntegerLabel": 69,
+            "cid": "7153",
+            "UMLSConceptUID": "C0025462",
+            "CodeValue": "T-A5100",
+            "contextGroupName": "CNSSegmentationTypes",
+            "SNOMEDCTConceptID": "61962009"
+          },
+          {
+            "recommendedDisplayRGBValue": [
+              255,
+              245,
+              217
+            ],
+            "CodeMeaning": "Pleura",
+            "CodingSchemeDesignator": "SRT",
+            "3dSlicerLabel": "pleura",
+            "3dSlicerIntegerLabel": 179,
+            "cid": "7155",
+            "UMLSConceptUID": "C0032225",
+            "CodeValue": "T-29000",
+            "contextGroupName": "ThoracicSegmentationTypes",
+            "SNOMEDCTConceptID": "3120008"
+          },
+          {
+            "recommendedDisplayRGBValue": [
+              253,
+              232,
+              158
+            ],
+            "CodeMeaning": "Rib",
+            "CodingSchemeDesignator": "SRT",
+            "3dSlicerLabel": "ribs",
+            "3dSlicerIntegerLabel": 201,
+            "cid": "4031,6114,7155",
+            "UMLSConceptUID": "C0035561",
+            "CodeValue": "T-11300",
+            "contextGroupName": "CommonAnatomicRegions,OsseousAnatomyFindingorFeature,ThoracicSegmentationTypes",
+            "SNOMEDCTConceptID": "113197003"
+          },
+          {
+            "recommendedDisplayRGBValue": [
+              157,
+              108,
+              162
+            ],
+            "CodeMeaning": "Spleen",
+            "CodingSchemeDesignator": "SRT",
+            "3dSlicerLabel": "spleen",
+            "3dSlicerIntegerLabel": 220,
+            "cid": "4030,7154",
+            "UMLSConceptUID": "C0037993",
+            "CodeValue": "T-C3000",
+            "contextGroupName": "CT,MRandPETAnatomyImaged,AbdominalSegmentationTypes",
+            "SNOMEDCTConceptID": "78961009"
+          },
+          {
+            "recommendedDisplayRGBValue": [
+              68,
+              131,
+              98
+            ],
+            "CodeMeaning": "Telencephalon",
+            "CodingSchemeDesignator": "SRT",
+            "3dSlicerLabel": "telencephalon",
+            "3dSlicerIntegerLabel": 40,
+            "cid": "7153",
+            "UMLSConceptUID": "C0039452",
+            "CodeValue": "T-A0103",
+            "contextGroupName": "CNSSegmentationTypes",
+            "SNOMEDCTConceptID": "11628009"
+          },
+          {
+            "recommendedDisplayRGBValue": [
+              240,
+              210,
+              35
+            ],
+            "CodeMeaning": "Vagus nerve",
+            "CodingSchemeDesignator": "SRT",
+            "3dSlicerLabel": "vagus nerve",
+            "3dSlicerIntegerLabel": 283,
+            "cid": "7167",
+            "UMLSConceptUID": "C0042276",
+            "CodeValue": "T-A8640",
+            "contextGroupName": "PeripheralNervousSystemSegmentationTypes",
+            "SNOMEDCTConceptID": "88882009"
           },
           {
             "recommendedDisplayRGBValue": [
@@ -827,7 +1041,8 @@
             "UMLSConceptUID": "C0728985",
             "CodeMeaning": "Cervical spine",
             "contextGroupName": "Common Anatomic Regions",
-            "SNOMEDCTConceptID": "122494005"
+            "SNOMEDCTConceptID": "122494005",
+            "3dSlicerIntegerLabel": 168
           },
           {
             "recommendedDisplayRGBValue": [
@@ -842,7 +1057,8 @@
             "UMLSConceptUID": "C0817096",
             "CodeMeaning": "Chest",
             "contextGroupName": "Endoscopy Anatomic Regions",
-            "SNOMEDCTConceptID": "51185008"
+            "SNOMEDCTConceptID": "51185008",
+            "3dSlicerIntegerLabel": 169
           },
           {
             "recommendedDisplayRGBValue": [
@@ -857,7 +1073,8 @@
             "UMLSConceptUID": "C1269825",
             "CodeMeaning": "Chest wall muscle",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "372074006"
+            "SNOMEDCTConceptID": "372074006",
+            "3dSlicerIntegerLabel": 198
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -880,7 +1097,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 82
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -895,10 +1113,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 83
               }
             ],
-            "SNOMEDCTConceptID": "37035000"
+            "SNOMEDCTConceptID": "37035000",
+            "3dSlicerIntegerLabel": 198
           },
           {
             "contextGroupName": "Thoracic Tissue Segmentation Types",
@@ -921,7 +1141,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 203
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -936,10 +1157,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 204
               }
             ],
-            "SNOMEDCTConceptID": "51299004"
+            "SNOMEDCTConceptID": "51299004",
+            "3dSlicerIntegerLabel": 83
           },
           {
             "recommendedDisplayRGBValue": [
@@ -954,7 +1177,8 @@
             "UMLSConceptUID": "C0009368",
             "CodeMeaning": "Colon",
             "contextGroupName": "Common Anatomic Regions",
-            "SNOMEDCTConceptID": "71854001"
+            "SNOMEDCTConceptID": "71854001",
+            "3dSlicerIntegerLabel": 214
           },
           {
             "recommendedDisplayRGBValue": [
@@ -969,7 +1193,8 @@
             "UMLSConceptUID": "C0010090",
             "CodeMeaning": "Corpus callosum",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "88442005"
+            "SNOMEDCTConceptID": "88442005",
+            "3dSlicerIntegerLabel": 103
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -992,7 +1217,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 54
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -1007,10 +1233,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 55
               }
             ],
-            "SNOMEDCTConceptID": "31428008"
+            "SNOMEDCTConceptID": "31428008",
+            "3dSlicerIntegerLabel": 103
           },
           {
             "recommendedDisplayRGBValue": [
@@ -1025,33 +1253,24 @@
             "UMLSConceptUID": "C0010268",
             "CodeMeaning": "Cranial nerve",
             "contextGroupName": "Peripheral Nervous System Segmentation Types",
-            "SNOMEDCTConceptID": "25238003"
+            "SNOMEDCTConceptID": "25238003",
+            "3dSlicerIntegerLabel": 282
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Diencephalon",
+            "3dSlicerLabel": "diencephalon",
             "CodingSchemeDesignator": "SRT",
             "UMLSConceptUID": "C0012144",
             "CodeValue": "T-A0102",
-            "Modifier": [
-              {
-                "recommendedDisplayRGBValue": [
-                  69,
-                  110,
-                  53
-                ],
-                "cid": "244",
-                "CodingSchemeDesignator": "SRT",
-                "3dSlicerLabel": "diencephalon",
-                "CodeValue": "G-A100",
-                "UMLSConceptUID": "C0205090",
-                "CodeMeaning": "Right",
-                "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
-              }
+            "recommendedDisplayRGBValue": [
+              69,
+              110,
+              53
             ],
-            "SNOMEDCTConceptID": "87563008"
+            "SNOMEDCTConceptID": "87563008",
+            "3dSlicerIntegerLabel": 64
           },
           {
             "recommendedDisplayRGBValue": [
@@ -1066,7 +1285,8 @@
             "UMLSConceptUID": "C0013303",
             "CodeMeaning": "Duodenum",
             "contextGroupName": "Common Anatomic Regions",
-            "SNOMEDCTConceptID": "38848004"
+            "SNOMEDCTConceptID": "38848004",
+            "3dSlicerIntegerLabel": 212
           },
           {
             "recommendedDisplayRGBValue": [
@@ -1081,7 +1301,8 @@
             "UMLSConceptUID": "C0013313",
             "CodeMeaning": "Dura mater",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "18545000"
+            "SNOMEDCTConceptID": "18545000",
+            "3dSlicerIntegerLabel": 123
           },
           {
             "recommendedDisplayRGBValue": [
@@ -1096,7 +1317,8 @@
             "UMLSConceptUID": "C0014876",
             "CodeMeaning": "Esophagus",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "32849002"
+            "SNOMEDCTConceptID": "32849002",
+            "3dSlicerIntegerLabel": 194
           },
           {
             "contextGroupName": "Craniofacial Anatomic Regions",
@@ -1119,7 +1341,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 134
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -1134,10 +1357,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 135
               }
             ],
-            "SNOMEDCTConceptID": "28347008"
+            "SNOMEDCTConceptID": "28347008",
+            "3dSlicerIntegerLabel": 194
           },
           {
             "contextGroupName": "Craniofacial Anatomic Regions",
@@ -1160,7 +1385,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 138
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -1175,10 +1401,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 139
               }
             ],
-            "SNOMEDCTConceptID": "79652003"
+            "SNOMEDCTConceptID": "79652003",
+            "3dSlicerIntegerLabel": 135
           },
           {
             "recommendedDisplayRGBValue": [
@@ -1193,7 +1421,8 @@
             "UMLSConceptUID": "C0227747",
             "CodeMeaning": "Female external genitalia",
             "contextGroupName": "Pelvic Organ Segmentation Types",
-            "SNOMEDCTConceptID": "86969008"
+            "SNOMEDCTConceptID": "86969008",
+            "3dSlicerIntegerLabel": 247
           },
           {
             "recommendedDisplayRGBValue": [
@@ -1208,7 +1437,8 @@
             "UMLSConceptUID": "C0227748",
             "CodeMeaning": "Female internal genitalia",
             "contextGroupName": "Pelvic Organ Segmentation Types",
-            "SNOMEDCTConceptID": "87759004"
+            "SNOMEDCTConceptID": "87759004",
+            "3dSlicerIntegerLabel": 230
           },
           {
             "contextGroupName": "Common Anatomic Regions",
@@ -1231,7 +1461,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 277
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -1246,10 +1477,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 278
               }
             ],
-            "SNOMEDCTConceptID": "56459004"
+            "SNOMEDCTConceptID": "56459004",
+            "3dSlicerIntegerLabel": 230
           },
           {
             "contextGroupName": "Common Anatomic Regions",
@@ -1272,7 +1505,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 259
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -1287,10 +1521,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 260
               }
             ],
-            "SNOMEDCTConceptID": "14975008"
+            "SNOMEDCTConceptID": "14975008",
+            "3dSlicerIntegerLabel": 278
           },
           {
             "recommendedDisplayRGBValue": [
@@ -1305,7 +1541,8 @@
             "UMLSConceptUID": "C0149556",
             "CodeMeaning": "Fourth ventricle",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "35918002"
+            "SNOMEDCTConceptID": "35918002",
+            "3dSlicerIntegerLabel": 113
           },
           {
             "contextGroupName": "Craniofacial Anatomic Regions",
@@ -1328,7 +1565,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 141
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -1343,10 +1581,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 142
               }
             ],
-            "SNOMEDCTConceptID": "74872008"
+            "SNOMEDCTConceptID": "74872008",
+            "3dSlicerIntegerLabel": 113
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -1369,7 +1609,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 42
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -1384,10 +1625,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 43
               }
             ],
-            "SNOMEDCTConceptID": "83251001"
+            "SNOMEDCTConceptID": "83251001",
+            "3dSlicerIntegerLabel": 142
           },
           {
             "recommendedDisplayRGBValue": [
@@ -1402,7 +1645,8 @@
             "UMLSConceptUID": "C0016976",
             "CodeMeaning": "Gallbladder",
             "contextGroupName": "Endoscopy Anatomic Regions",
-            "SNOMEDCTConceptID": "28231008"
+            "SNOMEDCTConceptID": "28231008",
+            "3dSlicerIntegerLabel": 218
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -1425,7 +1669,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 60
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -1440,10 +1685,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 61
               }
             ],
-            "SNOMEDCTConceptID": "14738005"
+            "SNOMEDCTConceptID": "14738005",
+            "3dSlicerIntegerLabel": 218
           },
           {
             "contextGroupName": "Common Anatomic Regions",
@@ -1466,7 +1713,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 263
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -1481,10 +1729,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 264
               }
             ],
-            "SNOMEDCTConceptID": "85562004"
+            "SNOMEDCTConceptID": "85562004",
+            "3dSlicerIntegerLabel": 61
           },
           {
             "recommendedDisplayRGBValue": [
@@ -1499,7 +1749,8 @@
             "UMLSConceptUID": "C0018670",
             "CodeMeaning": "Head",
             "contextGroupName": "Common Anatomic Regions",
-            "SNOMEDCTConceptID": "69536005"
+            "SNOMEDCTConceptID": "69536005",
+            "3dSlicerIntegerLabel": 36
           },
           {
             "recommendedDisplayRGBValue": [
@@ -1514,7 +1765,8 @@
             "UMLSConceptUID": "C0018787",
             "CodeMeaning": "Heart",
             "contextGroupName": "Cardiac Structure Segmentation Types",
-            "SNOMEDCTConceptID": "80891009"
+            "SNOMEDCTConceptID": "80891009",
+            "3dSlicerIntegerLabel": 180
           },
           {
             "recommendedDisplayRGBValue": [
@@ -1529,7 +1781,8 @@
             "UMLSConceptUID": "C0020417",
             "CodeMeaning": "Hyoid bone",
             "contextGroupName": "Craniofacial Anatomic Regions",
-            "SNOMEDCTConceptID": "21387005"
+            "SNOMEDCTConceptID": "21387005",
+            "3dSlicerIntegerLabel": 167
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -1552,7 +1805,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 95
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -1567,10 +1821,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 96
               }
             ],
-            "SNOMEDCTConceptID": "67701001"
+            "SNOMEDCTConceptID": "67701001",
+            "3dSlicerIntegerLabel": 167
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -1593,7 +1849,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 76
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -1608,10 +1865,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 77
               }
             ],
-            "SNOMEDCTConceptID": "55233005"
+            "SNOMEDCTConceptID": "55233005",
+            "3dSlicerIntegerLabel": 96
           },
           {
             "contextGroupName": "Craniofacial Anatomic Regions",
@@ -1634,7 +1893,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 132
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -1649,10 +1909,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 133
               }
             ],
-            "SNOMEDCTConceptID": "22945000"
+            "SNOMEDCTConceptID": "22945000",
+            "3dSlicerIntegerLabel": 77
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -1675,7 +1937,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 50
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -1690,10 +1953,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 51
               }
             ],
-            "SNOMEDCTConceptID": "36169008"
+            "SNOMEDCTConceptID": "36169008",
+            "3dSlicerIntegerLabel": 133
           },
           {
             "recommendedDisplayRGBValue": [
@@ -1708,7 +1973,8 @@
             "UMLSConceptUID": "C0225836",
             "CodeMeaning": "Interatrial septum",
             "contextGroupName": "Muscular Anatomy",
-            "SNOMEDCTConceptID": "58095006"
+            "SNOMEDCTConceptID": "58095006",
+            "3dSlicerIntegerLabel": 183
           },
           {
             "recommendedDisplayRGBValue": [
@@ -1723,7 +1989,8 @@
             "UMLSConceptUID": "C0225870",
             "CodeMeaning": "Interventricular septum",
             "contextGroupName": "Muscular Anatomy",
-            "SNOMEDCTConceptID": "589001"
+            "SNOMEDCTConceptID": "589001",
+            "3dSlicerIntegerLabel": 184
           },
           {
             "contextGroupName": "Abdominal Organ Segmentation Types",
@@ -1746,7 +2013,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 222
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -1761,10 +2029,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 223
               }
             ],
-            "SNOMEDCTConceptID": "64033007"
+            "SNOMEDCTConceptID": "64033007",
+            "3dSlicerIntegerLabel": 184
           },
           {
             "contextGroupName": "Endoscopy Anatomic Regions",
@@ -1787,7 +2057,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 273
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -1802,10 +2073,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 274
               }
             ],
-            "SNOMEDCTConceptID": "72696002"
+            "SNOMEDCTConceptID": "72696002",
+            "3dSlicerIntegerLabel": 223
           },
           {
             "contextGroupName": "Craniofacial Anatomic Regions",
@@ -1828,10 +2101,12 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 154
               }
             ],
-            "SNOMEDCTConceptID": "6229007"
+            "SNOMEDCTConceptID": "6229007",
+            "3dSlicerIntegerLabel": 274
           },
           {
             "recommendedDisplayRGBValue": [
@@ -1846,7 +2121,8 @@
             "UMLSConceptUID": "C0023078",
             "CodeMeaning": "Larynx",
             "contextGroupName": "Endoscopy Anatomic Regions",
-            "SNOMEDCTConceptID": "4596009"
+            "SNOMEDCTConceptID": "4596009",
+            "3dSlicerIntegerLabel": 162
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -1869,7 +2145,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 85
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -1884,10 +2161,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 86
               }
             ],
-            "SNOMEDCTConceptID": "461002"
+            "SNOMEDCTConceptID": "461002",
+            "3dSlicerIntegerLabel": 162
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -1910,7 +2189,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 108
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -1925,10 +2205,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 109
               }
             ],
-            "SNOMEDCTConceptID": "66720007"
+            "SNOMEDCTConceptID": "66720007",
+            "3dSlicerIntegerLabel": 86
           },
           {
             "recommendedDisplayRGBValue": [
@@ -1943,7 +2225,8 @@
             "UMLSConceptUID": "C0225897",
             "CodeMeaning": "Left Ventricle",
             "contextGroupName": "Cardiac Structure Segmentation Types",
-            "SNOMEDCTConceptID": "87878005"
+            "SNOMEDCTConceptID": "87878005",
+            "3dSlicerIntegerLabel": 186
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -1966,7 +2249,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 52
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -1981,10 +2265,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 53
               }
             ],
-            "SNOMEDCTConceptID": "279215006"
+            "SNOMEDCTConceptID": "279215006",
+            "3dSlicerIntegerLabel": 186
           },
           {
             "recommendedDisplayRGBValue": [
@@ -1999,7 +2285,8 @@
             "UMLSConceptUID": "C0023759",
             "CodeMeaning": "Lip",
             "contextGroupName": "Craniofacial Anatomic Regions",
-            "SNOMEDCTConceptID": "48477009"
+            "SNOMEDCTConceptID": "48477009",
+            "3dSlicerIntegerLabel": 128
           },
           {
             "contextGroupName": "Common Anatomic Regions",
@@ -2022,7 +2309,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 275
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -2037,10 +2325,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 276
               }
             ],
-            "SNOMEDCTConceptID": "30021000"
+            "SNOMEDCTConceptID": "30021000",
+            "3dSlicerIntegerLabel": 128
           },
           {
             "contextGroupName": "Common Anatomic Regions",
@@ -2063,7 +2353,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 267
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -2078,10 +2369,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 268
               }
             ],
-            "SNOMEDCTConceptID": "61685007"
+            "SNOMEDCTConceptID": "61685007",
+            "3dSlicerIntegerLabel": 276
           },
           {
             "contextGroupName": "Thoracic Tissue Segmentation Types",
@@ -2104,7 +2397,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 177
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -2119,10 +2413,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 178
               }
             ],
-            "SNOMEDCTConceptID": "90572001"
+            "SNOMEDCTConceptID": "90572001",
+            "3dSlicerIntegerLabel": 268
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2137,7 +2433,8 @@
             "UMLSConceptUID": "C0024091",
             "CodeMeaning": "Lumbar spine",
             "contextGroupName": "Common Anatomic Regions",
-            "SNOMEDCTConceptID": "122496007"
+            "SNOMEDCTConceptID": "122496007",
+            "3dSlicerIntegerLabel": 246
           },
           {
             "contextGroupName": "Thoracic Tissue Segmentation Types",
@@ -2160,7 +2457,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 172
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -2175,10 +2473,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 173
               }
             ],
-            "SNOMEDCTConceptID": "39607008"
+            "SNOMEDCTConceptID": "39607008",
+            "3dSlicerIntegerLabel": 246
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2193,7 +2493,8 @@
             "UMLSConceptUID": "C0227922",
             "CodeMeaning": "Male external genitalia",
             "contextGroupName": "Pelvic Organ Segmentation Types",
-            "SNOMEDCTConceptID": "90418005"
+            "SNOMEDCTConceptID": "90418005",
+            "3dSlicerIntegerLabel": 248
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2208,7 +2509,8 @@
             "UMLSConceptUID": "C0227923",
             "CodeMeaning": "Male internal genitalia",
             "contextGroupName": "Pelvic Organ Segmentation Types",
-            "SNOMEDCTConceptID": "38242008"
+            "SNOMEDCTConceptID": "38242008",
+            "3dSlicerIntegerLabel": 237
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2223,7 +2525,8 @@
             "UMLSConceptUID": "C0024687",
             "CodeMeaning": "Mandible",
             "contextGroupName": "Common Anatomic Regions",
-            "SNOMEDCTConceptID": "91609006"
+            "SNOMEDCTConceptID": "91609006",
+            "3dSlicerIntegerLabel": 158
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -2246,7 +2549,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 89
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -2261,10 +2565,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 90
               }
             ],
-            "SNOMEDCTConceptID": "30114003"
+            "SNOMEDCTConceptID": "30114003",
+            "3dSlicerIntegerLabel": 158
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2279,7 +2585,8 @@
             "UMLSConceptUID": "C0025066",
             "CodeMeaning": "Mediastinum",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "72410000"
+            "SNOMEDCTConceptID": "72410000",
+            "3dSlicerIntegerLabel": 196
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2294,7 +2601,8 @@
             "UMLSConceptUID": "C0025285",
             "CodeMeaning": "Meninges",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "1231004"
+            "SNOMEDCTConceptID": "1231004",
+            "3dSlicerIntegerLabel": 122
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -2317,7 +2625,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 93
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -2332,10 +2641,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 94
               }
             ],
-            "SNOMEDCTConceptID": "33723005"
+            "SNOMEDCTConceptID": "33723005",
+            "3dSlicerIntegerLabel": 122
           },
           {
             "contextGroupName": "Craniofacial Anatomic Regions",
@@ -2358,7 +2669,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 136
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -2373,10 +2685,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 137
               }
             ],
-            "SNOMEDCTConceptID": "25342003"
+            "SNOMEDCTConceptID": "25342003",
+            "3dSlicerIntegerLabel": 94
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2391,7 +2705,8 @@
             "UMLSConceptUID": "C0225757",
             "CodeMeaning": "Middle lobe of right lung",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "72481006"
+            "SNOMEDCTConceptID": "72481006",
+            "3dSlicerIntegerLabel": 176
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2406,7 +2721,8 @@
             "UMLSConceptUID": "C0026264",
             "CodeMeaning": "Mitral Valve",
             "contextGroupName": "Mediastinum Anatomy Finding or Feature",
-            "SNOMEDCTConceptID": "91134007"
+            "SNOMEDCTConceptID": "91134007",
+            "3dSlicerIntegerLabel": 187
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2421,7 +2737,8 @@
             "UMLSConceptUID": "C0224097",
             "CodeMeaning": "Muscle of head",
             "contextGroupName": "Craniofacial Anatomic Regions",
-            "SNOMEDCTConceptID": "22688005"
+            "SNOMEDCTConceptID": "22688005",
+            "3dSlicerIntegerLabel": 126
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2436,7 +2753,8 @@
             "UMLSConceptUID": "C0027532",
             "CodeMeaning": "Muscle of neck",
             "contextGroupName": "Craniofacial Anatomic Regions",
-            "SNOMEDCTConceptID": "81727001"
+            "SNOMEDCTConceptID": "81727001",
+            "3dSlicerIntegerLabel": 160
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2451,7 +2769,8 @@
             "UMLSConceptUID": "C0027530",
             "CodeMeaning": "Neck",
             "contextGroupName": "Common Anatomic Regions",
-            "SNOMEDCTConceptID": "45048000"
+            "SNOMEDCTConceptID": "45048000",
+            "3dSlicerIntegerLabel": 159
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2466,7 +2785,8 @@
             "UMLSConceptUID": "C0032009",
             "CodeMeaning": "Neurohypophysis",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "37512009"
+            "SNOMEDCTConceptID": "37512009",
+            "3dSlicerIntegerLabel": 121
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -2489,7 +2809,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 48
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -2504,10 +2825,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 49
               }
             ],
-            "SNOMEDCTConceptID": "31065004"
+            "SNOMEDCTConceptID": "31065004",
+            "3dSlicerIntegerLabel": 121
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2522,7 +2845,8 @@
             "UMLSConceptUID": "C0028977",
             "CodeMeaning": "Omentum",
             "contextGroupName": "Abdominal Organ Segmentation Types",
-            "SNOMEDCTConceptID": "27398004"
+            "SNOMEDCTConceptID": "27398004",
+            "3dSlicerIntegerLabel": 208
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2537,7 +2861,8 @@
             "UMLSConceptUID": "C0029126",
             "CodeMeaning": "Optic chiasm",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "244453006"
+            "SNOMEDCTConceptID": "244453006",
+            "3dSlicerIntegerLabel": 97
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -2560,7 +2885,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 87
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -2575,10 +2901,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 88
               }
             ],
-            "SNOMEDCTConceptID": "70105001"
+            "SNOMEDCTConceptID": "70105001",
+            "3dSlicerIntegerLabel": 97
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -2601,7 +2929,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 98
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -2616,10 +2945,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 99
               }
             ],
-            "SNOMEDCTConceptID": "53238003"
+            "SNOMEDCTConceptID": "53238003",
+            "3dSlicerIntegerLabel": 88
           },
           {
             "contextGroupName": "Pelvic Organ Segmentation Types",
@@ -2642,7 +2973,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 234
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -2657,10 +2989,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 235
               }
             ],
-            "SNOMEDCTConceptID": "15497006"
+            "SNOMEDCTConceptID": "15497006",
+            "3dSlicerIntegerLabel": 99
           },
           {
             "contextGroupName": "Craniofacial Anatomic Regions",
@@ -2683,7 +3017,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 156
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -2698,10 +3033,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 157
               }
             ],
-            "SNOMEDCTConceptID": "51283005"
+            "SNOMEDCTConceptID": "51283005",
+            "3dSlicerIntegerLabel": 235
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2716,7 +3053,8 @@
             "UMLSConceptUID": "C0030274",
             "CodeMeaning": "Pancreas",
             "contextGroupName": "CT, MR and PET Anatomy Imaged",
-            "SNOMEDCTConceptID": "15776009"
+            "SNOMEDCTConceptID": "15776009",
+            "3dSlicerIntegerLabel": 219
           },
           {
             "contextGroupName": "Craniofacial Anatomic Regions",
@@ -2739,7 +3077,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 143
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -2754,10 +3093,42 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 144
               }
             ],
-            "SNOMEDCTConceptID": "24924006"
+            "SNOMEDCTConceptID": "24924006",
+            "3dSlicerIntegerLabel": 219
+          },
+          {
+            "contextGroupName": "Craniofacial Anatomic Regions",
+            "cid": "4028",
+            "CodeMeaning": "Occipital bone",
+            "CodingSchemeDesignator": "SRT",
+            "UMLSConceptUID": "C0028784",
+            "CodeValue": "T-11140",
+            "3dSlicerLabel": "occipital bone",
+            "recommendedDisplayRGBValue": [
+              255,
+              230,
+              138
+            ],
+            "3dSlicerIntegerLabel": 151
+          },
+          {
+            "recommendedDisplayRGBValue": [
+              255,
+              237,
+              145
+            ],
+            "cid": "4028",
+            "CodingSchemeDesignator": "SRT",
+            "3dSlicerLabel": "vomer bone",
+            "CodeValue": "T-21342",
+            "UMLSConceptUID": "C0242403",
+            "CodeMeaning": "Vomer bone",
+            "contextGroupName": "Craniofacial Anatomic Regions",
+            "3dSlicerIntegerLabel": 155
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -2780,7 +3151,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 46
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -2795,10 +3167,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 47
               }
             ],
-            "SNOMEDCTConceptID": "16630005"
+            "SNOMEDCTConceptID": "16630005",
+            "3dSlicerIntegerLabel": 155
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2813,7 +3187,8 @@
             "UMLSConceptUID": "C0225972",
             "CodeMeaning": "Pericardial cavity",
             "contextGroupName": "Cardiac Structure Segmentation Types",
-            "SNOMEDCTConceptID": "25489000"
+            "SNOMEDCTConceptID": "25489000",
+            "3dSlicerIntegerLabel": 193
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2828,7 +3203,8 @@
             "UMLSConceptUID": "C0031050",
             "CodeMeaning": "Pericardium",
             "contextGroupName": "Cardiac Structure Segmentation Types",
-            "SNOMEDCTConceptID": "76848001"
+            "SNOMEDCTConceptID": "76848001",
+            "3dSlicerIntegerLabel": 192
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2843,7 +3219,8 @@
             "UMLSConceptUID": "C0031119",
             "CodeMeaning": "Peripheral nerve",
             "contextGroupName": "Peripheral Nervous System Segmentation Types",
-            "SNOMEDCTConceptID": "84782009"
+            "SNOMEDCTConceptID": "84782009",
+            "3dSlicerIntegerLabel": 284
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2858,7 +3235,8 @@
             "UMLSConceptUID": "C0206417",
             "CodeMeaning": "Peripheral nervous system",
             "contextGroupName": "Peripheral Nervous System Segmentation Types",
-            "SNOMEDCTConceptID": "3058005"
+            "SNOMEDCTConceptID": "3058005",
+            "3dSlicerIntegerLabel": 279
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2873,7 +3251,8 @@
             "UMLSConceptUID": "C0031153",
             "CodeMeaning": "Peritioneum",
             "contextGroupName": "Abdominal Organ Segmentation Types",
-            "SNOMEDCTConceptID": "15425007"
+            "SNOMEDCTConceptID": "15425007",
+            "3dSlicerIntegerLabel": 207
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2888,7 +3267,8 @@
             "UMLSConceptUID": "C1704247",
             "CodeMeaning": "Peritoneal cavity",
             "contextGroupName": "Abdominal Organ Segmentation Types",
-            "SNOMEDCTConceptID": "83670000"
+            "SNOMEDCTConceptID": "83670000",
+            "3dSlicerIntegerLabel": 209
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2903,7 +3283,8 @@
             "UMLSConceptUID": "C0031354",
             "CodeMeaning": "Pharynx",
             "contextGroupName": "Endoscopy Anatomic Regions",
-            "SNOMEDCTConceptID": "54066008"
+            "SNOMEDCTConceptID": "54066008",
+            "3dSlicerIntegerLabel": 161
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2918,7 +3299,8 @@
             "UMLSConceptUID": "C0031869",
             "CodeMeaning": "Pia mater",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "23180006"
+            "SNOMEDCTConceptID": "23180006",
+            "3dSlicerIntegerLabel": 125
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2933,7 +3315,8 @@
             "UMLSConceptUID": "C0031939",
             "CodeMeaning": "Pineal Gland",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "45793000"
+            "SNOMEDCTConceptID": "45793000",
+            "3dSlicerIntegerLabel": 68
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2948,7 +3331,8 @@
             "UMLSConceptUID": "C0032005",
             "CodeMeaning": "Pituitary",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "56329008"
+            "SNOMEDCTConceptID": "56329008",
+            "3dSlicerIntegerLabel": 119
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2963,7 +3347,8 @@
             "UMLSConceptUID": "C0152327",
             "CodeMeaning": "Posterior cerebral commissure",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "279336005"
+            "SNOMEDCTConceptID": "279336005",
+            "3dSlicerIntegerLabel": 104
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2978,7 +3363,8 @@
             "UMLSConceptUID": "C0033572",
             "CodeMeaning": "Prostate",
             "contextGroupName": "Pelvic Organ Segmentation Types",
-            "SNOMEDCTConceptID": "41216001"
+            "SNOMEDCTConceptID": "41216001",
+            "3dSlicerIntegerLabel": 238
           },
           {
             "recommendedDisplayRGBValue": [
@@ -2993,7 +3379,8 @@
             "UMLSConceptUID": "C0034086",
             "CodeMeaning": "Pulmonary valve",
             "contextGroupName": "Mediastinum Anatomy Finding or Feature",
-            "SNOMEDCTConceptID": "39057004"
+            "SNOMEDCTConceptID": "39057004",
+            "3dSlicerIntegerLabel": 190
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -3016,7 +3403,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 58
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -3031,10 +3419,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 59
               }
             ],
-            "SNOMEDCTConceptID": "89278009"
+            "SNOMEDCTConceptID": "89278009",
+            "3dSlicerIntegerLabel": 190
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3049,7 +3439,8 @@
             "UMLSConceptUID": "C0035359",
             "CodeMeaning": "Retroperitoneal space",
             "contextGroupName": "Abdominal Organ Segmentation Types",
-            "SNOMEDCTConceptID": "82849001"
+            "SNOMEDCTConceptID": "82849001",
+            "3dSlicerIntegerLabel": 210
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3064,7 +3455,8 @@
             "UMLSConceptUID": "C0225883",
             "CodeMeaning": "Right Ventricle",
             "contextGroupName": "Cardiac Structure Segmentation Types",
-            "SNOMEDCTConceptID": "53085002"
+            "SNOMEDCTConceptID": "53085002",
+            "3dSlicerIntegerLabel": 185
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3079,7 +3471,8 @@
             "UMLSConceptUID": "C0036098",
             "CodeMeaning": "Salivary gland",
             "contextGroupName": "Craniofacial Anatomic Regions",
-            "SNOMEDCTConceptID": "385294005"
+            "SNOMEDCTConceptID": "385294005",
+            "3dSlicerIntegerLabel": 127
           },
           {
             "contextGroupName": "Pelvic Organ Segmentation Types",
@@ -3102,7 +3495,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 239
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -3117,10 +3511,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 240
               }
             ],
-            "SNOMEDCTConceptID": "64739004"
+            "SNOMEDCTConceptID": "64739004",
+            "3dSlicerIntegerLabel": 127
           },
           {
             "contextGroupName": "Endoscopy Anatomic Regions",
@@ -3143,7 +3539,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 253
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -3158,10 +3555,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 254
               }
             ],
-            "SNOMEDCTConceptID": "16982005"
+            "SNOMEDCTConceptID": "16982005",
+            "3dSlicerIntegerLabel": 240
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3176,7 +3575,8 @@
             "UMLSConceptUID": "C0222166",
             "CodeMeaning": "Skin of abdomen",
             "contextGroupName": "Abdominal Organ Segmentation Types",
-            "SNOMEDCTConceptID": "75093004"
+            "SNOMEDCTConceptID": "75093004",
+            "3dSlicerIntegerLabel": 243
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3191,7 +3591,8 @@
             "UMLSConceptUID": "C0222149",
             "CodeMeaning": "Skin of chest",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "74160004"
+            "SNOMEDCTConceptID": "74160004",
+            "3dSlicerIntegerLabel": 197
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3206,7 +3607,8 @@
             "UMLSConceptUID": "C0037303",
             "CodeMeaning": "Skull",
             "contextGroupName": "Common Anatomic Regions",
-            "SNOMEDCTConceptID": "89546000"
+            "SNOMEDCTConceptID": "89546000",
+            "3dSlicerIntegerLabel": 140
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3221,7 +3623,8 @@
             "UMLSConceptUID": "C0021852",
             "CodeMeaning": "Small Intestine",
             "contextGroupName": "Abdominal Organ Segmentation Types",
-            "SNOMEDCTConceptID": "30315005"
+            "SNOMEDCTConceptID": "30315005",
+            "3dSlicerIntegerLabel": 213
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3236,7 +3639,8 @@
             "UMLSConceptUID": "C0030219",
             "CodeMeaning": "Soft palate",
             "contextGroupName": "Craniofacial Anatomic Regions",
-            "SNOMEDCTConceptID": "49460000"
+            "SNOMEDCTConceptID": "49460000",
+            "3dSlicerIntegerLabel": 131
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3251,7 +3655,8 @@
             "UMLSConceptUID": "C0037925",
             "CodeMeaning": "Spinal cord",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "2748008"
+            "SNOMEDCTConceptID": "2748008",
+            "3dSlicerIntegerLabel": 115
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3266,7 +3671,8 @@
             "UMLSConceptUID": "C0475853",
             "CodeMeaning": "Spinal cord gray matter",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "12958003"
+            "SNOMEDCTConceptID": "12958003",
+            "3dSlicerIntegerLabel": 116
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3281,7 +3687,8 @@
             "UMLSConceptUID": "C0458457",
             "CodeMeaning": "Spinal cord white matter",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "27088001"
+            "SNOMEDCTConceptID": "27088001",
+            "3dSlicerIntegerLabel": 117
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3296,7 +3703,8 @@
             "UMLSConceptUID": "C0038293",
             "CodeMeaning": "Sternum",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "56873002"
+            "SNOMEDCTConceptID": "56873002",
+            "3dSlicerIntegerLabel": 202
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3311,7 +3719,8 @@
             "UMLSConceptUID": "C0038351",
             "CodeMeaning": "Stomach",
             "contextGroupName": "Common Anatomic Regions",
-            "SNOMEDCTConceptID": "69695003"
+            "SNOMEDCTConceptID": "69695003",
+            "3dSlicerIntegerLabel": 211
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3326,7 +3735,8 @@
             "UMLSConceptUID": "C0038527",
             "CodeMeaning": "Subarachnoid space",
             "contextGroupName": "CNS Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "35951006"
+            "SNOMEDCTConceptID": "35951006",
+            "3dSlicerIntegerLabel": 114
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -3349,7 +3759,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 71
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -3364,10 +3775,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 72
               }
             ],
-            "SNOMEDCTConceptID": "70007007"
+            "SNOMEDCTConceptID": "70007007",
+            "3dSlicerIntegerLabel": 114
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -3390,7 +3803,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 74
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -3405,10 +3819,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 75
               }
             ],
-            "SNOMEDCTConceptID": "89202009"
+            "SNOMEDCTConceptID": "89202009",
+            "3dSlicerIntegerLabel": 72
           },
           {
             "contextGroupName": "Craniofacial Anatomic Regions",
@@ -3431,7 +3847,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 145
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -3446,10 +3863,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 146
               }
             ],
-            "SNOMEDCTConceptID": "60911003"
+            "SNOMEDCTConceptID": "60911003",
+            "3dSlicerIntegerLabel": 75
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -3472,7 +3891,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 44
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -3487,10 +3907,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 45
               }
             ],
-            "SNOMEDCTConceptID": "78277001"
+            "SNOMEDCTConceptID": "78277001",
+            "3dSlicerIntegerLabel": 146
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -3513,7 +3935,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 66
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -3528,10 +3951,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 67
               }
             ],
-            "SNOMEDCTConceptID": "119406000"
+            "SNOMEDCTConceptID": "119406000",
+            "3dSlicerIntegerLabel": 45
           },
           {
             "contextGroupName": "Common Anatomic Regions",
@@ -3554,7 +3979,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 271
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -3569,10 +3995,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 272
               }
             ],
-            "SNOMEDCTConceptID": "68367000"
+            "SNOMEDCTConceptID": "68367000",
+            "3dSlicerIntegerLabel": 67
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3587,7 +4015,8 @@
             "UMLSConceptUID": "C0581269",
             "CodeMeaning": "Thoracic spine",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "122495006"
+            "SNOMEDCTConceptID": "122495006",
+            "3dSlicerIntegerLabel": 200
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3602,7 +4031,8 @@
             "UMLSConceptUID": "C0817096",
             "CodeMeaning": "Thorax",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "51185008"
+            "SNOMEDCTConceptID": "51185008",
+            "3dSlicerIntegerLabel": 169
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3617,7 +4047,8 @@
             "UMLSConceptUID": "C0040113",
             "CodeMeaning": "Thymus",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "9875009"
+            "SNOMEDCTConceptID": "9875009",
+            "3dSlicerIntegerLabel": 195
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3632,7 +4063,8 @@
             "UMLSConceptUID": "C0040113",
             "CodeMeaning": "Thymus Gland",
             "contextGroupName": "Mediastinum Anatomy Finding or Feature",
-            "SNOMEDCTConceptID": "9875009"
+            "SNOMEDCTConceptID": "9875009",
+            "3dSlicerIntegerLabel": 195
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3647,7 +4079,8 @@
             "UMLSConceptUID": "C0040132",
             "CodeMeaning": "Thyroid",
             "contextGroupName": "Mediastinum Anatomy Finding or Feature",
-            "SNOMEDCTConceptID": "69748006"
+            "SNOMEDCTConceptID": "69748006",
+            "3dSlicerIntegerLabel": 163
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3662,7 +4095,8 @@
             "UMLSConceptUID": "C0040408",
             "CodeMeaning": "Tongue",
             "contextGroupName": "Craniofacial Anatomic Regions",
-            "SNOMEDCTConceptID": "21974007"
+            "SNOMEDCTConceptID": "21974007",
+            "3dSlicerIntegerLabel": 130
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3677,7 +4111,8 @@
             "UMLSConceptUID": "C0040426",
             "CodeMeaning": "Tooth",
             "contextGroupName": "Craniofacial Anatomic Regions",
-            "SNOMEDCTConceptID": "38199008"
+            "SNOMEDCTConceptID": "38199008",
+            "3dSlicerIntegerLabel": 11
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3692,7 +4127,8 @@
             "UMLSConceptUID": "C0040578",
             "CodeMeaning": "Trachea",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "44567001"
+            "SNOMEDCTConceptID": "44567001",
+            "3dSlicerIntegerLabel": 170
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3707,7 +4143,8 @@
             "UMLSConceptUID": "C0040960",
             "CodeMeaning": "Tricuspid Valve",
             "contextGroupName": "Mediastinum Anatomy Finding or Feature",
-            "SNOMEDCTConceptID": "46030003"
+            "SNOMEDCTConceptID": "46030003",
+            "3dSlicerIntegerLabel": 188
           },
           {
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -3730,7 +4167,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 80
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -3745,10 +4183,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 81
               }
             ],
-            "SNOMEDCTConceptID": "26230003"
+            "SNOMEDCTConceptID": "26230003",
+            "3dSlicerIntegerLabel": 188
           },
           {
             "contextGroupName": "Common Anatomic Regions",
@@ -3771,7 +4211,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 255
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -3786,10 +4227,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 256
               }
             ],
-            "SNOMEDCTConceptID": "40983000"
+            "SNOMEDCTConceptID": "40983000",
+            "3dSlicerIntegerLabel": 81
           },
           {
             "contextGroupName": "Common Anatomic Regions",
@@ -3812,7 +4255,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 251
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -3827,10 +4271,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 252
               }
             ],
-            "SNOMEDCTConceptID": "53120007"
+            "SNOMEDCTConceptID": "53120007",
+            "3dSlicerIntegerLabel": 256
           },
           {
             "contextGroupName": "Thoracic Tissue Segmentation Types",
@@ -3853,7 +4299,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 174
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -3868,10 +4315,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 175
               }
             ],
-            "SNOMEDCTConceptID": "45653009"
+            "SNOMEDCTConceptID": "45653009",
+            "3dSlicerIntegerLabel": 252
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3886,7 +4335,8 @@
             "UMLSConceptUID": "C0041967",
             "CodeMeaning": "Urethra",
             "contextGroupName": "Common Anatomic Regions",
-            "SNOMEDCTConceptID": "13648007"
+            "SNOMEDCTConceptID": "13648007",
+            "3dSlicerIntegerLabel": 227
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3901,7 +4351,8 @@
             "UMLSConceptUID": "C1508753",
             "CodeMeaning": "Urinary system",
             "contextGroupName": "Abdominal Organ Segmentation Types",
-            "SNOMEDCTConceptID": "122489005"
+            "SNOMEDCTConceptID": "122489005",
+            "3dSlicerIntegerLabel": 221
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3916,7 +4367,8 @@
             "UMLSConceptUID": "C0042149",
             "CodeMeaning": "Uterus",
             "contextGroupName": "Pelvic Organ Segmentation Types",
-            "SNOMEDCTConceptID": "35039007"
+            "SNOMEDCTConceptID": "35039007",
+            "3dSlicerIntegerLabel": 231
           },
           {
             "recommendedDisplayRGBValue": [
@@ -3931,7 +4383,8 @@
             "UMLSConceptUID": "C0042232",
             "CodeMeaning": "Vagina",
             "contextGroupName": "Pelvic Organ Segmentation Types",
-            "SNOMEDCTConceptID": "76784001"
+            "SNOMEDCTConceptID": "76784001",
+            "3dSlicerIntegerLabel": 236
           },
           {
             "contextGroupName": "Pelvic Organ Segmentation Types",
@@ -3954,7 +4407,8 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 241
               },
               {
                 "recommendedDisplayRGBValue": [
@@ -3969,10 +4423,12 @@
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "7771000"
+                "SNOMEDCTConceptID": "7771000",
+                "3dSlicerIntegerLabel": 242
               }
             ],
-            "SNOMEDCTConceptID": "57671007"
+            "SNOMEDCTConceptID": "57671007",
+            "3dSlicerIntegerLabel": 236
           },
           {
             "contextGroupName": "Common Anatomic Regions",
@@ -3995,10 +4451,12 @@
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
-                "SNOMEDCTConceptID": "24028007"
+                "SNOMEDCTConceptID": "24028007",
+                "3dSlicerIntegerLabel": 153
               }
             ],
-            "SNOMEDCTConceptID": "13881006"
+            "SNOMEDCTConceptID": "13881006",
+            "3dSlicerIntegerLabel": 242
           }
         ],
         "showAnatomy": false
@@ -4025,7 +4483,8 @@
             "UMLSConceptUID": "C0027551",
             "CodeValue": "A-30360",
             "contextGroupName": "Chest Non-Lesion Object Type",
-            "SNOMEDCTConceptID": "79068005"
+            "SNOMEDCTConceptID": "79068005",
+            "3dSlicerIntegerLabel": 291
           },
           {
             "recommendedDisplayRGBValue": [
@@ -4040,7 +4499,8 @@
             "UMLSConceptUID": "C0027551",
             "CodeValue": "A-30360",
             "contextGroupName": "Device Segmentation Types",
-            "SNOMEDCTConceptID": "79068005"
+            "SNOMEDCTConceptID": "79068005",
+            "3dSlicerIntegerLabel": 291
           },
           {
             "recommendedDisplayRGBValue": [
@@ -4055,7 +4515,8 @@
             "UMLSConceptUID": "C0016542",
             "CodeValue": "M-30400",
             "contextGroupName": "Artifact Segmentation Types",
-            "SNOMEDCTConceptID": "19227008"
+            "SNOMEDCTConceptID": "19227008",
+            "3dSlicerIntegerLabel": 9
           },
           {
             "recommendedDisplayRGBValue": [
@@ -4070,7 +4531,8 @@
             "UMLSConceptUID": "C0043045",
             "CodeValue": "F-61779",
             "contextGroupName": "Abstract Segmentation Types",
-            "SNOMEDCTConceptID": "289925000"
+            "SNOMEDCTConceptID": "289925000",
+            "3dSlicerIntegerLabel": 10
           }
         ],
         "showAnatomy": true
@@ -4097,7 +4559,8 @@
             "UMLSConceptUID": "C0302148",
             "CodeValue": "M-35000",
             "contextGroupName": "Lesion Segmentation Types",
-            "SNOMEDCTConceptID": "75753009"
+            "SNOMEDCTConceptID": "75753009",
+            "3dSlicerIntegerLabel": 34
           },
           {
             "recommendedDisplayRGBValue": [
@@ -4112,7 +4575,8 @@
             "UMLSConceptUID": "C0010709",
             "CodeValue": "M-3340A",
             "contextGroupName": "Lesion Segmentation Types",
-            "SNOMEDCTConceptID": "367643001"
+            "SNOMEDCTConceptID": "367643001",
+            "3dSlicerIntegerLabel": 309
           },
           {
             "recommendedDisplayRGBValue": [
@@ -4127,7 +4591,8 @@
             "UMLSConceptUID": "C0013604",
             "CodeValue": "M-36300",
             "contextGroupName": "Lesion Segmentation Types",
-            "SNOMEDCTConceptID": "79654002"
+            "SNOMEDCTConceptID": "79654002",
+            "3dSlicerIntegerLabel": 31
           },
           {
             "recommendedDisplayRGBValue": [
@@ -4142,7 +4607,8 @@
             "UMLSConceptUID": "C1704212",
             "CodeValue": "M-35300",
             "contextGroupName": "Lesion Segmentation Types",
-            "SNOMEDCTConceptID": "55584005"
+            "SNOMEDCTConceptID": "55584005",
+            "3dSlicerIntegerLabel": 35
           },
           {
             "recommendedDisplayRGBValue": [
@@ -4157,7 +4623,8 @@
             "UMLSConceptUID": "C0019080",
             "CodeValue": "M-37000",
             "contextGroupName": "Lesion Segmentation Types",
-            "SNOMEDCTConceptID": "50960005"
+            "SNOMEDCTConceptID": "50960005",
+            "3dSlicerIntegerLabel": 32
           },
           {
             "recommendedDisplayRGBValue": [
@@ -4172,7 +4639,8 @@
             "UMLSConceptUID": "C0577559",
             "CodeValue": "M-03000",
             "contextGroupName": "Lesion Segmentation Types",
-            "SNOMEDCTConceptID": "4147007"
+            "SNOMEDCTConceptID": "4147007",
+            "3dSlicerIntegerLabel": 7
           },
           {
             "recommendedDisplayRGBValue": [
@@ -4187,7 +4655,8 @@
             "UMLSConceptUID": "C0027540",
             "CodeValue": "M-54000",
             "contextGroupName": "Lesion Segmentation Types",
-            "SNOMEDCTConceptID": "6574001"
+            "SNOMEDCTConceptID": "6574001",
+            "3dSlicerIntegerLabel": 33
           }
         ],
         "showAnatomy": true
@@ -4214,7 +4683,8 @@
             "UMLSConceptUID": "C0005388",
             "CodeValue": "T-60650",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "70150004"
+            "SNOMEDCTConceptID": "70150004",
+            "3dSlicerIntegerLabel": 26
           },
           {
             "recommendedDisplayRGBValue": [
@@ -4229,7 +4699,8 @@
             "UMLSConceptUID": "C0005889",
             "CodeValue": "T-D0070",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "32457005"
+            "SNOMEDCTConceptID": "32457005",
+            "3dSlicerIntegerLabel": 30
           },
           {
             "recommendedDisplayRGBValue": [
@@ -4244,7 +4715,8 @@
             "UMLSConceptUID": "C0015733",
             "CodeValue": "T-59666",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "39477002"
+            "SNOMEDCTConceptID": "39477002",
+            "3dSlicerIntegerLabel": 28
           },
           {
             "recommendedDisplayRGBValue": [
@@ -4259,7 +4731,8 @@
             "UMLSConceptUID": "C0017110",
             "CodeValue": "C-10080",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "74947009"
+            "SNOMEDCTConceptID": "74947009",
+            "3dSlicerIntegerLabel": 29
           },
           {
             "recommendedDisplayRGBValue": [
@@ -4274,7 +4747,8 @@
             "UMLSConceptUID": "C0042036",
             "CodeValue": "T-70060",
             "contextGroupName": "Common Tissue Segmentation Types",
-            "SNOMEDCTConceptID": "78014005"
+            "SNOMEDCTConceptID": "78014005",
+            "3dSlicerIntegerLabel": 27
           }
         ],
         "showAnatomy": false
