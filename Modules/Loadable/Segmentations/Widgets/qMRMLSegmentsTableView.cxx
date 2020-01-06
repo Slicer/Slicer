@@ -202,8 +202,14 @@ qMRMLSegmentsTableViewPrivate::qMRMLSegmentsTableViewPrivate(qMRMLSegmentsTableV
   , SegmentationNode(nullptr)
   , AdvancedSegmentVisibility(false)
   , IsUpdatingWidgetFromMRML(false)
+  , IsFilterBarVisible(false)
   , Model(nullptr)
+  , SortFilterModel(nullptr)
 {
+  for (int status = 0; status < vtkSlicerSegmentationsModuleLogic::LastStatus; ++status)
+    {
+    this->ShowStatusButtons[status] = nullptr;
+    }
 }
 
 //-----------------------------------------------------------------------------

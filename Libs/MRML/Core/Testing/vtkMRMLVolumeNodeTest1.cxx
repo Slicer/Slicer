@@ -106,7 +106,7 @@ int vtkMRMLVolumeNodeTest1(int , char * [])
       dirs[i][j] = 0.0;
   dirs[0][0] = 1;
   dirs[1][1] = 1;
-  dirs[1][1] = 1;
+  dirs[2][2] = 1;
   node1->SetIJKToRASDirections(dirs);
   double getDirs[3][3];
   node1->GetIJKToRASDirections(getDirs);

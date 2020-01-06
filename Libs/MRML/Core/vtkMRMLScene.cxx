@@ -2492,7 +2492,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkMRMLNode *node)
     return;
     }
 
-  if (!node->GetUndoEnabled())
+  if (node && !node->GetUndoEnabled())
     {
     return;
     }
@@ -2908,15 +2908,14 @@ void vtkMRMLScene::Redo()
   for(iter=undoMap.begin(); iter != undoMap.end(); iter++)
     {
     curIter = currentMap.find(iter->first);
-    if (!curIter->second || !iter->second)
-      {
-      continue;
-      }
-
     if ( curIter == currentMap.end() )
       {
       // the node was deleted, add Node back to the current scene
       addNodes.push_back(iter->second);
+      }
+    else if (!curIter->second || !iter->second)
+      {
+      continue;
       }
     else if (iter->second != curIter->second)
       {

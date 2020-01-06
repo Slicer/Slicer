@@ -249,7 +249,8 @@ public:
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsManagerModelPrivate::qSlicerExtensionsManagerModelPrivate(qSlicerExtensionsManagerModel& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
+  , NewExtensionEnabledByDefault(true)
 {
 }
 
@@ -261,8 +262,6 @@ void qSlicerExtensionsManagerModelPrivate::init()
   this->SlicerVersion = Slicer_VERSION;
 
   qRegisterMetaType<ExtensionMetadataType>("ExtensionMetadataType");
-
-  this->NewExtensionEnabledByDefault = true;
 
   this->initializeColumnIdToNameMap(Self::IdColumn, "extension_id");
   this->initializeColumnIdToNameMap(Self::NameColumn, "extensionname");

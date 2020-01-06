@@ -505,7 +505,7 @@ void vtkMRMLHierarchyNode::RemoveHierarchyChildrenNodes()
     {
     vtkMRMLHierarchyNode *child = children[i];
     std::vector< vtkMRMLHierarchyNode *> childChildren = child->GetChildrenNodes();
-    for (unsigned int j=0; i<childChildren.size(); j++)
+    for (unsigned int j=0; j<childChildren.size(); j++)
       {
       childChildren[j]->SetParentNodeID(parentID);
       }
@@ -530,7 +530,7 @@ void vtkMRMLHierarchyNode::RemoveAllHierarchyChildrenNodes()
     {
     vtkMRMLHierarchyNode *child = children[i];
     std::vector< vtkMRMLHierarchyNode *> childChildren = child->GetChildrenNodes();
-    for (unsigned int j=0; i<childChildren.size(); j++)
+    for (unsigned int j=0; j<childChildren.size(); j++)
       {
       childChildren[j]->RemoveAllHierarchyChildrenNodes();
       }

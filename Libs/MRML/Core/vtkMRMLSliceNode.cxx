@@ -1014,15 +1014,6 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
 
       this->SliceResolutionMode = val;
       }
-    else if (!strcmp(attName, "sliceResolutionMode"))
-      {
-      std::stringstream ss;
-      int val;
-      ss << attValue;
-      ss >> val;
-
-      this->SliceResolutionMode = val;
-      }
     else if (!strcmp(attName, "activeSlice"))
       {
       std::stringstream ss;

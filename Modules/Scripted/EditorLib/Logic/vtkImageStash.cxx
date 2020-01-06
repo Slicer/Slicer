@@ -36,7 +36,7 @@ vtkImageStash::vtkImageStash()
 vtkImageStash::~vtkImageStash()
 {
 
-  if (this->Stashing)
+  if (this->Stashing && this->MultiThreader)
     {
     this->MultiThreader->TerminateThread(this->StashingThreadID);
     }

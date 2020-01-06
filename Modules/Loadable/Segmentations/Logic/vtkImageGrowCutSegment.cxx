@@ -115,7 +115,18 @@ bool vtkImageGrowCutSegment::vtkInternal::InitializationAHP(
     vtkImageData *maskLabelVolume,
     double distancePenalty)
 {
-  m_Heap = new FibHeap;
+  // Release memory before reallocating
+  if (m_Heap != nullptr)
+    {
+    delete m_Heap;
+    m_Heap = nullptr;
+    }
+  if (m_HeapNodes != nullptr)
+    {
+    delete[] m_HeapNodes;
+    m_HeapNodes = nullptr;
+    }
+
   NodeIndexType dimXYZ = m_DimX * m_DimY * m_DimZ;
   if ((m_HeapNodes = new FibHeapNode[dimXYZ+1]) == nullptr)  // size is +1 for storing the zeroValueElement
     {
@@ -123,8 +134,13 @@ bool vtkImageGrowCutSegment::vtkInternal::InitializationAHP(
     return false;
     }
 
+  m_Heap = new FibHeap;
   m_Heap->SetHeapNodes(m_HeapNodes);
-  LabelPixelType* seedLabelVolumePtr = static_cast<LabelPixelType*>(seedLabelVolume->GetScalarPointer());
+  LabelPixelType* seedLabelVolumePtr = nullptr;
+  if (seedLabelVolume)
+    {
+    seedLabelVolumePtr = static_cast<LabelPixelType*>(seedLabelVolume->GetScalarPointer());
+    }
   MaskPixelType* maskLabelVolumePtr = nullptr;
   if (seedLabelVolume != nullptr)
     {
@@ -300,6 +316,11 @@ void vtkImageGrowCutSegment::vtkInternal::DijkstraBasedClassificationAHP(
     vtkImageData *vtkNotUsed(seedLabelVolume),
     vtkImageData *vtkNotUsed(maskLabelVolume))
 {
+  if (m_Heap == nullptr || m_HeapNodes == nullptr)
+    {
+    return;
+    }
+
   LabelPixelType* resultLabelVolumePtr = static_cast<LabelPixelType*>(m_ResultLabelVolume->GetScalarPointer());
   IntensityPixelType* imSrc = static_cast<IntensityPixelType*>(intensityVolume->GetScalarPointer());
 
@@ -376,17 +397,10 @@ void vtkImageGrowCutSegment::vtkInternal::DijkstraBasedClassificationAHP(
   m_bSegInitialized = true;
 
   // Release memory
-  if (m_Heap != nullptr)
-    {
-    delete m_Heap;
-    m_Heap = nullptr;
-    }
-  //m_HeapNodes.clear();
-  if (m_HeapNodes != nullptr)
-    {
-    delete[] m_HeapNodes;
-    m_HeapNodes = nullptr;
-    }
+  delete m_Heap;
+  m_Heap = nullptr;
+  delete[] m_HeapNodes;
+  m_HeapNodes = nullptr;
 }
 
 //-----------------------------------------------------------------------------

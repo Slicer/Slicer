@@ -523,7 +523,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteract(
 
   closestDistance2 = VTK_DOUBLE_MAX; // in display coordinate system
   foundComponentIndex = -1;
-  if (markupsNode->GetNumberOfControlPoints() > 2 && this->ClosedLoop && markupsNode && this->CenterVisibilityOnSlice)
+  if (markupsNode->GetNumberOfControlPoints() > 2 && this->ClosedLoop && this->CenterVisibilityOnSlice)
     {
     // Check if center is selected
     double centerPosWorld[3], centerPosDisplay[3];

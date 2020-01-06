@@ -1532,8 +1532,8 @@ bool vtkSlicerMarkupsLogic::FitSurfaceProjectWarp(vtkPoints* curvePoints, vtkPol
 //---------------------------------------------------------------------------
 bool vtkSlicerMarkupsLogic::IsPolygonClockwise(vtkPoints* points)
 {
-  vtkIdType numberOfPoints = points->GetNumberOfPoints();
-  if (!points || numberOfPoints < 3)
+  vtkIdType numberOfPoints = (points == nullptr ? 0 : points->GetNumberOfPoints());
+  if (numberOfPoints < 3)
     {
     return false;
     }

@@ -203,7 +203,6 @@ public:
   /// Initialize the module, an appLogic must be given to
   /// initialize the module
   void initialize(vtkSlicerApplicationLogic* appLogic);
-  inline bool initialized() { return this->Initialized; }
 
   /// Set/Get the name of the module. The name is used to uniquely describe
   /// a module: name must be unique.
@@ -323,8 +322,6 @@ private:
   /// Internal method called by the destructor of qSlicerAbstractModuleRepresentation
   /// to remove the representation from the list.
   void representationDeleted(qSlicerAbstractModuleRepresentation *representation);
-  /// Indicate if the module has already been initialized
-  bool Initialized;
 };
 
 #endif

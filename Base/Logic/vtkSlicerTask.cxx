@@ -11,6 +11,7 @@ vtkSlicerTask::vtkSlicerTask()
 {
   this->TaskObject = nullptr;
   this->TaskFunction = nullptr;
+  this->TaskClientData = nullptr;
   this->Type = vtkSlicerTask::Undefined;
 }
 //----------------------------------------------------------------------------

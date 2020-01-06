@@ -1033,7 +1033,7 @@ void vtkSlicerMarkupsWidget::RotateWidget(double eventPos[2])
       {
       for (int i = 0; i < 3; i++)
         {
-        ref[i] = worldPos[i];
+        ref[i] = lastWorldPos[i];
         }
       }
     else

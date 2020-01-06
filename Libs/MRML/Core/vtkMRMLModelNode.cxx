@@ -542,7 +542,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
       vtkErrorMacro("CompositeScalars: unable to find the named scalar arrays " << backgroundName << " and/or " << overlayName);
       return 0;
       }
-    if (scalars1->GetNumberOfTuples() != scalars1->GetNumberOfTuples())
+    if (scalars1->GetNumberOfTuples() != scalars2->GetNumberOfTuples())
       {
       vtkErrorMacro("CompositeScalars: sizes of scalar arrays don't match");
       return 0;

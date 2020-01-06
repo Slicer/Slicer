@@ -99,7 +99,7 @@ void qSlicerModulesListViewPrivate::updateItem(QStandardItem* item)
   QString moduleName = item->data(Qt::UserRole).toString();
   item->setCheckable(true);
   // The module is ignored, therefore it hasn't been loaded
-  if (this->FactoryManager->ignoredModuleNames().contains(moduleName))
+  if (this->FactoryManager != nullptr && this->FactoryManager->ignoredModuleNames().contains(moduleName))
     {
     item->setForeground(q->palette().color(QPalette::Disabled, QPalette::Text));
     }

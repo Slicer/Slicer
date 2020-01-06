@@ -135,7 +135,7 @@ public:
       }
     else
       {
-      std::remove(this->ThreadIDs.begin(), this->ThreadIDs.end(), id);
+      this->ThreadIDs.erase(std::remove(this->ThreadIDs.begin(), this->ThreadIDs.end(), id), this->ThreadIDs.end());
       }
   }
 protected:
@@ -859,7 +859,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
   std::string target
     = node0->GetModuleDescription().GetTarget();
   std::string::size_type pos = target.find("slicer:");
-  if (pos != std::string::npos && pos == 0)
+  if (pos == 0)
     {
     sscanf(target.c_str(), "slicer:%p", &entryPoint);
     }
@@ -2880,105 +2880,93 @@ void vtkSlicerCLIModuleLogic
 void vtkSlicerCLIModuleLogic::AddCompleteModelHierarchyToMiniScene(vtkMRMLScene *miniscene, vtkMRMLModelHierarchyNode *mhnd,
                                                                    MRMLIDMap *sceneToMiniSceneMap, std::set<std::string> &filesToDelete)
 {
-    if (mhnd)
+  if (!mhnd)
+    {
+    return;
+    }
+
+  // construct a list that includes this node and all its children
+  std::vector<vtkMRMLHierarchyNode*> hnodes;
+  mhnd->GetAllChildrenNodes(hnodes);
+  hnodes.insert(hnodes.begin(), mhnd);  // add the current node to the front of the vector
+
+  // copy the entire hierarchy into the miniscene, we assume the nodes are ordered such that parents appear before children
+  for (std::vector<vtkMRMLHierarchyNode*>::iterator it = hnodes.begin(); it != hnodes.end(); ++it)
+    {
+    vtkMRMLNode *tnd = *it;
+    vtkMRMLModelHierarchyNode *tmhnd = vtkMRMLModelHierarchyNode::SafeDownCast(tnd);
+
+    if (!tmhnd)
       {
-      // construct a list that includes this node and all its children
-      std::vector<vtkMRMLHierarchyNode*> hnodes;
-      mhnd->GetAllChildrenNodes(hnodes);
-      hnodes.insert(hnodes.begin(), mhnd);  // add the current node to the front of the vector
+      std::cerr << "Child is not a model hierarchy node." << std::endl;
+      continue;
+      }
 
-      // copy the entire hierarchy into the miniscene, we assume the nodes are ordered such that parents appear before children
-      for (std::vector<vtkMRMLHierarchyNode*>::iterator it = hnodes.begin(); it != hnodes.end(); ++it)
+    // model hierarchy nodes need to get put in a scene
+    vtkMRMLNode *cp = miniscene->CopyNode(tnd);
+    vtkMRMLModelHierarchyNode *mhcp  = vtkMRMLModelHierarchyNode::SafeDownCast(cp);
+
+    // wire the parent relationship (again, we assume the parents appeared in the list before the children)
+    vtkMRMLNode *p = tmhnd->GetParentNode();
+    if (p)
+      {
+      // find parent in the sceneToMiniSceneMap
+      MRMLIDMap::iterator mit = sceneToMiniSceneMap->find(p->GetID());
+      if (mit != sceneToMiniSceneMap->end())
         {
-        vtkMRMLNode *tnd = *it;
-        vtkMRMLModelHierarchyNode *tmhnd = vtkMRMLModelHierarchyNode::SafeDownCast(tnd);
+        mhcp->SetParentNodeID((*mit).second.c_str());
+        }
+      }
 
-        if (!tmhnd)
+    // keep track of what scene node corresponds to what miniscene node
+    (*sceneToMiniSceneMap)[tnd->GetID()] = cp->GetID();
+
+    // also add any display node
+    vtkMRMLDisplayNode *dnd = tmhnd->GetDisplayNode();
+    if (dnd)
+      {
+      vtkMRMLNode *dcp = miniscene->CopyNode(dnd);
+      vtkMRMLDisplayNode *d = vtkMRMLDisplayNode::SafeDownCast(dcp);
+      mhcp->SetAndObserveDisplayNodeID( d->GetID() );
+      }
+
+      // add the actual model node
+    vtkMRMLModelNode* mnd = vtkMRMLModelNode::SafeDownCast(tmhnd->GetDisplayableNode());
+    if (mnd)
+      {
+      vtkMRMLNode *mcp = miniscene->CopyNode(mnd);
+
+      vtkMRMLModelNode *tmcp = vtkMRMLModelNode::SafeDownCast(mcp);
+      if (tmcp)
+        {
+        mhcp->SetAssociatedNodeID(tmcp->GetID());
+
+        // add the display nodes for the model to the miniscene
+        int ndn = mnd->GetNumberOfDisplayNodes();
+        for (int i=0; i<ndn; i++)
           {
-          std::cerr << "Child is not a model hierarchy node." << std::endl;
-          continue;
+          vtkMRMLDisplayNode *mdnd = mnd->GetNthDisplayNode(i);
+          if (mdnd)
+            {
+            vtkMRMLDisplayNode *d = vtkMRMLDisplayNode::SafeDownCast(miniscene->CopyNode(mdnd));
+            tmcp->AddAndObserveDisplayNodeID(d->GetID());
+            }
           }
 
-        // model hierarchy nodes need to get put in a scene
-        vtkMRMLNode *cp = miniscene->CopyNode(tnd);
-        vtkMRMLModelHierarchyNode *mhcp  = vtkMRMLModelHierarchyNode::SafeDownCast(cp);
-
-        // wire the parent relationship (again, we assume the parents appeared in the list before the children)
-        vtkMRMLNode *p = tmhnd->GetParentNode();
-        if (p)
-        {
-          // find parent in the sceneToMiniSceneMap
-          MRMLIDMap::iterator mit = sceneToMiniSceneMap->find(p->GetID());
-          if (mit != sceneToMiniSceneMap->end())
+        // add the storage node for the model to the miniscene
+        vtkMRMLStorageNode *msnd = mnd->GetStorageNode();
+        if (msnd)
           {
-            mhcp->SetParentNodeID((*mit).second.c_str());
+          vtkMRMLModelStorageNode *s = vtkMRMLModelStorageNode::SafeDownCast(miniscene->CopyNode(msnd));
+          std::string fname = this->ConstructTemporaryFileName("geometry", "", tmcp->GetID(), std::vector<std::string>(), CommandLineModule);
+          s->SetFileName(fname.c_str());
+          filesToDelete.insert(fname);
+          tmcp->SetAndObserveStorageNodeID( s->GetID());
           }
         }
 
-        // keep track of what scene node corresponds to what miniscene node
-        (*sceneToMiniSceneMap)[tnd->GetID()] = cp->GetID();
-
-        // also add any display node
-        vtkMRMLDisplayNode *dnd = tmhnd->GetDisplayNode();
-        if (dnd)
-          {
-          vtkMRMLNode *dcp = miniscene->CopyNode(dnd);
-
-          vtkMRMLDisplayNode *d = vtkMRMLDisplayNode::SafeDownCast(dcp);
-
-          mhcp->SetAndObserveDisplayNodeID( d->GetID() );
-          }
-
-          // add the actual model node
-          vtkMRMLDisplayableNode* tmnd = tmhnd->GetDisplayableNode();
-          if (tmnd)
-          {
-            vtkMRMLModelNode *mnd = vtkMRMLModelNode::SafeDownCast(tmnd);
-            if (mnd)
-              {
-              vtkMRMLNode *mcp = miniscene->CopyNode(mnd);
-              vtkMRMLModelNode *tmcp = vtkMRMLModelNode::SafeDownCast(mcp);
-
-              mhcp->SetAssociatedNodeID(tmcp->GetID());
-
-              // add the display nodes for the model to the miniscene
-              int ndn = mnd->GetNumberOfDisplayNodes();
-              for (int i=0; i<ndn; i++)
-                {
-                vtkMRMLDisplayNode *mdnd = mnd->GetNthDisplayNode(i);
-                if (mdnd && tmcp)
-                  {
-                  vtkMRMLNode *mdcp = miniscene->CopyNode(mdnd);
-
-                  vtkMRMLDisplayNode *d = vtkMRMLDisplayNode::SafeDownCast(mdcp);
-
-                  tmcp->AddAndObserveDisplayNodeID( d->GetID());
-                  }
-                }
-
-              // add the storage node for the model to the miniscene
-              vtkMRMLStorageNode *msnd = mnd->GetStorageNode();
-              if (msnd)
-                {
-                vtkMRMLNode *mscp = miniscene->CopyNode(msnd);
-
-                vtkMRMLModelStorageNode *s = vtkMRMLModelStorageNode::SafeDownCast(mscp);
-                std::string fname
-                    = this->ConstructTemporaryFileName("geometry", "", tmcp->GetID(), std::vector<std::string>(),
-                                                                                  CommandLineModule);
-
-                s->SetFileName(fname.c_str());
-                filesToDelete.insert(fname);
-                if (tmcp)
-                  {
-                  tmcp->SetAndObserveStorageNodeID( s->GetID());
-                  }
-                }
-
-              // keep track of the what scene node corresponds to what miniscene node
-              (*sceneToMiniSceneMap)[mnd->GetID()] = mcp->GetID();
-              }
-            }
-          }
+      // keep track of the what scene node corresponds to what miniscene node
+      (*sceneToMiniSceneMap)[mnd->GetID()] = mcp->GetID();
       }
+    }
 }

@@ -1030,8 +1030,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         {
         //--- I think these are piled together. MBq ml... search for all.
         std::string units = tag.c_str();
-        if ( ( units.find ("BQML") != std::string::npos) ||
-             ( units.find ("BQML") != std::string::npos) )
+        if (units.find ("BQML") != std::string::npos)
           {
           list.radioactivityUnits= "Bq";
           list.tissueRadioactivityUnits = "Bq";

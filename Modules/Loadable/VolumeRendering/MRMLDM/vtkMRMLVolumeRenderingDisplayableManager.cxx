@@ -440,13 +440,13 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::AddDisplayNode(vtkMR
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   else if (displayNode->IsA("vtkMRMLMultiVolumeRenderingDisplayNode"))
     {
-    PipelineMultiVolume* pipelineMulti = new PipelineMultiVolume(this->NextMultiVolumeActorPortIndex++);
-    if (pipelineMulti->ActorPortIndex >= 10)
+    if (this->NextMultiVolumeActorPortIndex >= 10)
       {
       vtkErrorWithObjectMacro(this->External, "AddDisplayNode: Multi-volume only supports 10 volumes in the pipeline. Cannot add volume "
         << volumeNode->GetName());
       return;
       }
+    PipelineMultiVolume* pipelineMulti = new PipelineMultiVolume(this->NextMultiVolumeActorPortIndex++);
     // Create a dummy volume for port zero if this is the first volume. Necessary because the first transform is ignored,
     // see https://gitlab.kitware.com/vtk/vtk/issues/17325
     //TODO: Remove this workaround when the issue is fixed in VTK
@@ -1079,6 +1079,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::FindPickedDisplayNod
 
 //---------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayableManager::vtkMRMLVolumeRenderingDisplayableManager()
+: VolumeRenderingLogic(nullptr)
 {
   this->Internal = new vtkInternal(this);
 

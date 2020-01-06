@@ -52,7 +52,8 @@ public:
 
 // --------------------------------------------------------------------------
 qSlicerActionsDialogPrivate::qSlicerActionsDialogPrivate(qSlicerActionsDialog& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
+  , WebView(nullptr)
 {
 }
 

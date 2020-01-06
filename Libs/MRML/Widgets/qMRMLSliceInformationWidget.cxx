@@ -35,6 +35,7 @@
 //---------------------------------------------------------------------------
 qMRMLSliceInformationWidgetPrivate::qMRMLSliceInformationWidgetPrivate(qMRMLSliceInformationWidget& object)
   : q_ptr(&object)
+  , SliceSpacingModeGroup(nullptr)
 {
 }
 

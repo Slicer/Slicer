@@ -733,9 +733,15 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateFileNode(const char* fileName)
 
   ctnode->GetStorageNode()->SetFileName(fileName);
   std::string basename = vtksys::SystemTools::GetFilenameWithoutExtension(fileName);
-  std::string uname( this->GetMRMLScene()->GetUniqueNameByString(basename.c_str()));
-  ctnode->SetName(uname.c_str());
-
+  if (this->GetMRMLScene())
+    {
+    std::string uname(this->GetMRMLScene()->GetUniqueNameByString(basename.c_str()));
+    ctnode->SetName(uname.c_str());
+    }
+  else
+    {
+    ctnode->SetName(basename.c_str());
+    }
   vtkDebugMacro("CreateFileNode: About to read user file " << fileName);
 
   if (ctnode->GetStorageNode()->ReadData(ctnode) == 0)
@@ -780,8 +786,15 @@ vtkMRMLProceduralColorNode* vtkMRMLColorLogic::CreateProceduralFileNode(const ch
 
   cpnode->GetStorageNode()->SetFileName(fileName);
   std::string basename = vtksys::SystemTools::GetFilenameWithoutExtension(fileName);
-  std::string uname( this->GetMRMLScene()->GetUniqueNameByString(basename.c_str()));
-  cpnode->SetName(uname.c_str());
+  if (this->GetMRMLScene())
+    {
+    std::string uname(this->GetMRMLScene()->GetUniqueNameByString(basename.c_str()));
+    cpnode->SetName(uname.c_str());
+    }
+  else
+    {
+    cpnode->SetName(basename.c_str());
+    }
 
   vtkDebugMacro("CreateProceduralFileNode: About to read user file " << fileName);
 

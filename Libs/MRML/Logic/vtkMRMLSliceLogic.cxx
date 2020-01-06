@@ -839,7 +839,7 @@ void vtkMRMLSliceLogic
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic
 ::GetBackgroundWindowLevelAndRange(double& window, double& level,
-                                         double& rangeLow, double& rangeHigh)
+                                         double& rangeLow, double& rangeHigh, bool& autoWindowLevel)
 {
   vtkMRMLScalarVolumeNode* volumeNode =
     vtkMRMLScalarVolumeNode::SafeDownCast( this->GetLayerVolumeNode (0) );
@@ -859,13 +859,14 @@ void vtkMRMLSliceLogic
     imageData->GetScalarRange(range);
     rangeLow = range[0];
     rangeHigh = range[1];
+    autoWindowLevel = (volumeDisplayNode->GetAutoScalarRange() != 0);
     }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic
 ::GetForegroundWindowLevelAndRange(double& window, double& level,
-                                         double& rangeLow, double& rangeHigh)
+                                         double& rangeLow, double& rangeHigh, bool& autoWindowLevel)
 {
   vtkMRMLScalarVolumeNode* volumeNode =
     vtkMRMLScalarVolumeNode::SafeDownCast( this->GetLayerVolumeNode (1) );
@@ -885,6 +886,7 @@ void vtkMRMLSliceLogic
     imageData->GetScalarRange(range);
     rangeLow = range[0];
     rangeHigh = range[1];
+    autoWindowLevel = (volumeDisplayNode->GetAutoScalarRange() != 0);
     }
 }
 
@@ -1929,19 +1931,19 @@ void vtkMRMLSliceLogic::SetSliceOffset(double offset)
 void vtkMRMLSliceLogic::StartSliceCompositeNodeInteraction(unsigned int parameters)
 {
   vtkMRMLSliceCompositeNode *compositeNode = this->GetSliceCompositeNode();
+  if (!compositeNode)
+    {
+    return;
+    }
 
   // Cache the flags on what parameters are going to be modified. Need
   // to this this outside the conditional on HotLinkedControl and LinkedControl
   compositeNode->SetInteractionFlags(parameters);
 
   // If we have hot linked controls, then we want to broadcast changes
-  if (compositeNode &&
-      compositeNode->GetHotLinkedControl() && compositeNode->GetLinkedControl())
+  if (compositeNode->GetHotLinkedControl() && compositeNode->GetLinkedControl())
     {
-    if (compositeNode)
-      {
-      compositeNode->InteractingOn();
-      }
+    compositeNode->InteractingOn();
     }
 }
 

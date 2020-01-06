@@ -254,10 +254,6 @@ protected:
   int LinkedControl;
   int HotLinkedControl;
 
-  int ForegroundGrid;
-  int BackgroundGrid;
-  int LabelGrid;
-
   int FiducialVisibility;
   int FiducialLabelVisibility;
 

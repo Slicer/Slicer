@@ -193,7 +193,9 @@ public:
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsManagerWidgetPrivate::qSlicerExtensionsManagerWidgetPrivate(qSlicerExtensionsManagerWidget& object)
-  :q_ptr(&object), searchTimerId(0)
+  : q_ptr(&object)
+  , searchTimerId(0)
+  , toolsWidget(nullptr)
 {
 #ifdef Slicer_BUILD_WEBENGINE_SUPPORT
   this->ExtensionsManageBrowser = nullptr;

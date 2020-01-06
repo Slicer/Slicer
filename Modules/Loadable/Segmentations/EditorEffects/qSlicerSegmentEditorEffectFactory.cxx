@@ -52,12 +52,8 @@ qSlicerSegmentEditorEffectFactory* qSlicerSegmentEditorEffectFactory::instance()
 {
   if(!qSlicerSegmentEditorEffectFactory::m_Instance)
     {
-    if(!qSlicerSegmentEditorEffectFactory::m_Instance)
-      {
-      qSlicerSegmentEditorEffectFactoryCleanupGlobal.use();
-
-      qSlicerSegmentEditorEffectFactory::m_Instance = new qSlicerSegmentEditorEffectFactory();
-      }
+    qSlicerSegmentEditorEffectFactoryCleanupGlobal.use();
+    qSlicerSegmentEditorEffectFactory::m_Instance = new qSlicerSegmentEditorEffectFactory();
     }
   // Return the instance
   return qSlicerSegmentEditorEffectFactory::m_Instance;

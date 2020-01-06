@@ -104,14 +104,12 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
   hoodMax2 = 0;
 
   // in and out should be marching through corresponding pixels.
-  inPtr = (T *)(inData->GetScalarPointer(outMin0, outMin1, outMin2));
-
   target = (unsigned long)((outMax2-outMin2+1)*(outMax1-outMin1+1)/50.0);
   target++;
 
   // loop through pixels of output
   outPtr2 = outPtr;
-  inPtr2 = inPtr;
+  inPtr2 = (T*)(inData->GetScalarPointer(outMin0, outMin1, outMin2));
   for (outIdx2 = outMin2; outIdx2 <= outMax2; outIdx2++)
     {
     outPtr1 = outPtr2;

@@ -189,7 +189,7 @@ void vtkSlicerVolumeRenderingLogic::RemoveVolumeRenderingDisplayNode(vtkMRMLVolu
 //----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::RemoveAllVolumeRenderingDisplayNodes()
 {
-  for (; this->DisplayNodes.size();)
+  while (!this->DisplayNodes.empty())
     {
     this->RemoveVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(this->DisplayNodes[0]));
     }

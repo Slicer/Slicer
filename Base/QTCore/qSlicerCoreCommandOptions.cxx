@@ -50,6 +50,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerCoreCommandOptionsPrivate::qSlicerCoreCommandOptionsPrivate(qSlicerCoreCommandOptions& object)
   : q_ptr(&object)
+  , RunPythonAndExit(false)
 {
 }
 
@@ -57,7 +58,6 @@ qSlicerCoreCommandOptionsPrivate::qSlicerCoreCommandOptionsPrivate(qSlicerCoreCo
 void qSlicerCoreCommandOptionsPrivate::init()
 {
   Q_Q(qSlicerCoreCommandOptions);
-  this->RunPythonAndExit = false;
   q->setArgumentPrefix("--", "-"); // Use Unix-style argument names
   q->enableSettings("disable-settings"); // Enable QSettings support
 }

@@ -80,7 +80,7 @@ qSlicerSubjectHierarchyTransformsPluginPrivate::qSlicerSubjectHierarchyTransform
 : q_ptr(&object)
 {
   this->TransformIcon = QIcon(":Icons/Transform.png");
-
+  this->ToggleInteractionBoxAction = nullptr;
   this->InvertAction = nullptr;
   this->IdentityAction = nullptr;
 }

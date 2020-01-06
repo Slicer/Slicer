@@ -66,12 +66,8 @@ qSlicerSubjectHierarchyPluginHandler* qSlicerSubjectHierarchyPluginHandler::inst
 {
   if(!qSlicerSubjectHierarchyPluginHandler::m_Instance)
     {
-    if(!qSlicerSubjectHierarchyPluginHandler::m_Instance)
-      {
-      qSlicerSubjectHierarchyPluginHandlerCleanupGlobal.use();
-
-      qSlicerSubjectHierarchyPluginHandler::m_Instance = new qSlicerSubjectHierarchyPluginHandler();
-      }
+    qSlicerSubjectHierarchyPluginHandlerCleanupGlobal.use();
+    qSlicerSubjectHierarchyPluginHandler::m_Instance = new qSlicerSubjectHierarchyPluginHandler();
     }
   // Return the instance
   return qSlicerSubjectHierarchyPluginHandler::m_Instance;

@@ -79,6 +79,8 @@ qMRMLTableViewPrivate::qMRMLTableViewPrivate(qMRMLTableView& object)
   : q_ptr(&object)
   , MRMLScene(nullptr)
   , MRMLTableViewNode(nullptr)
+  , PinButton(nullptr)
+  , PopupWidget(nullptr)
 {
 }
 

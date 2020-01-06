@@ -141,11 +141,13 @@ qMRMLSubjectHierarchyTreeViewPrivate::qMRMLSubjectHierarchyTreeViewPrivate(qMRML
   , SelectPluginSubMenu(nullptr)
   , SelectPluginActionGroup(nullptr)
   , ExpandToDepthAction(nullptr)
+  , NodeMenu(nullptr)
   , SceneMenu(nullptr)
   , VisibilityMenu(nullptr)
   , TransformItemDelegate(nullptr)
   , SubjectHierarchyNode(nullptr)
   , HighlightReferencedItems(true)
+  , SelectRoleSubMenuVisible(false)
 {
 }
 
@@ -1698,10 +1700,7 @@ void qMRMLSubjectHierarchyTreeView::onSubjectHierarchyItemModified(vtkObject *ca
   if (callData)
     {
     vtkIdType* itemIdPtr = reinterpret_cast<vtkIdType*>(callData);
-    if (itemIdPtr)
-      {
-      itemID = *itemIdPtr;
-      }
+    itemID = *itemIdPtr;
     }
 
   // Highlight items referenced by DICOM in case of single-selection

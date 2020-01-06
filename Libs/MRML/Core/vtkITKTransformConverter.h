@@ -1417,12 +1417,12 @@ itk::Object::Pointer vtkITKTransformConverter::CreateITKTransformFromVTK(vtkObje
     for (int transformIndex = transformList->GetNumberOfItems()-1; transformIndex>=0; --transformIndex)
       {
       vtkAbstractTransform* singleTransformVtk = vtkAbstractTransform::SafeDownCast(transformList->GetItemAsObject(transformIndex));
-      itk::Object::Pointer secondaryTransformItk;
+      itk::Object::Pointer secondaryTransformItkTmp;
       // We use ITKv4 format (PreferITKv3Transform format is set to false), because
       // legacy ITKv3 code does not know how to interpret composite transforms,
       // and also ITKv3 bspline transform with bulk component cannot be saved in a composite transform
-      itk::Object::Pointer singleTransformItk = CreateITKTransformFromVTK(loggerObject, singleTransformVtk, secondaryTransformItk, false );
-      if (secondaryTransformItk.IsNotNull())
+      itk::Object::Pointer singleTransformItk = CreateITKTransformFromVTK(loggerObject, singleTransformVtk, secondaryTransformItkTmp, false );
+      if (secondaryTransformItkTmp.IsNotNull())
         {
         vtkErrorWithObjectMacro(loggerObject, "vtkITKTransformConverter::CreateITKTransformFromVTK failed: composite transforms cannot contain legacy transforms (that contains secondary transforms). Do not harden transforms on legacy ITK transforms to avoid this error.");
         return nullptr;

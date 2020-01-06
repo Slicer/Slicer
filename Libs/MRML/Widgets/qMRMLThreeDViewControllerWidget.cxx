@@ -55,13 +55,19 @@
 qMRMLThreeDViewControllerWidgetPrivate::qMRMLThreeDViewControllerWidgetPrivate(
   qMRMLThreeDViewControllerWidget& object)
   : Superclass(object)
+  , StereoTypesMapper(nullptr)
+  , AnimateViewButtonGroup(nullptr)
+  , OrientationMarkerTypesMapper(nullptr)
+  , OrientationMarkerSizesMapper(nullptr)
+  , RulerTypesMapper(nullptr)
+  , RulerColorMapper(nullptr)
+  , ViewLogic(nullptr)
+  , ViewLogics(nullptr)
+  , ViewNode(nullptr)
+  , CameraNode(nullptr)
+  , ThreeDView(nullptr)
+  , CenterToolButton(nullptr)
 {
-  this->ViewLogic = nullptr;
-  this->ViewLogics = nullptr;
-  this->ViewNode = nullptr;
-  this->CameraNode = nullptr;
-  this->ThreeDView = nullptr;
-  this->CenterToolButton = nullptr;
 }
 
 //---------------------------------------------------------------------------

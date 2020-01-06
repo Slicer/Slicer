@@ -61,7 +61,8 @@ public:
 
 // --------------------------------------------------------------------------
 qSlicerDirectoryListViewPrivate::qSlicerDirectoryListViewPrivate(qSlicerDirectoryListView& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
+  , ListView(nullptr)
 {
 }
 

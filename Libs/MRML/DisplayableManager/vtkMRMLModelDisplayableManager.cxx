@@ -245,8 +245,12 @@ void vtkMRMLModelDisplayableManager::vtkInternal::FindDisplayNodeFromImageData(v
     if (displayNode)
       {
       vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast(displayNode->GetDisplayableNode());
-      vtkImageData *volumeImageData = vtkImageData::SafeDownCast(volumeNode->GetImageData());
-      if (volumeNode && volumeImageData && volumeImageData == imageData)
+      vtkImageData *volumeImageData = nullptr;
+      if (volumeNode)
+        {
+        volumeImageData = vtkImageData::SafeDownCast(volumeNode->GetImageData());
+        }
+      if (volumeImageData && volumeImageData == imageData)
         {
         this->PickedDisplayNodeID = displayNode->GetID();
         return; // Display node found
@@ -1112,8 +1116,12 @@ void vtkMRMLModelDisplayableManager::UpdateModelMesh(vtkMRMLDisplayableNode *dis
     else
       {
       prop = (*ait).second;
-      std::map<std::string, int>::iterator cit = this->Internal->DisplayedClipState.find(modelDisplayNode->GetID());
-      if (modelDisplayNode && cit != this->Internal->DisplayedClipState.end() && cit->second == clipping )
+      std::map<std::string, int>::iterator cit = this->Internal->DisplayedClipState.end();
+      if (modelDisplayNode)
+        {
+        cit = this->Internal->DisplayedClipState.find(modelDisplayNode->GetID());
+        }
+      if (cit != this->Internal->DisplayedClipState.end() && cit->second == clipping )
         {
         // make sure that we are looking at the current mesh (most of the code in here
         // assumes a display node will never change what mesh it wants to view and hence

@@ -1038,6 +1038,7 @@ bool vtkSlicerTerminologiesModuleLogic::LoadContextFromFile(std::string filePath
   if (!fp)
     {
     vtkErrorMacro("LoadContextFromFile: Failed to load context from file '" << filePath);
+    delete jsonRoot;
     return false;
     }
   char buffer[4096];
@@ -1046,6 +1047,7 @@ bool vtkSlicerTerminologiesModuleLogic::LoadContextFromFile(std::string filePath
     {
     vtkErrorMacro("LoadContextFromFile: Failed to load context from file '" << filePath);
     fclose(fp);
+    delete jsonRoot;
     return false;
     }
 
@@ -1055,6 +1057,7 @@ bool vtkSlicerTerminologiesModuleLogic::LoadContextFromFile(std::string filePath
     {
     vtkErrorMacro("LoadContextFromFile: File " << filePath << " does not contain schema information");
     fclose(fp);
+    delete jsonRoot;
     return false;
     }
   std::string schema = (*jsonRoot)["@schema"].GetString();
@@ -1078,6 +1081,7 @@ bool vtkSlicerTerminologiesModuleLogic::LoadContextFromFile(std::string filePath
     {
     vtkErrorMacro("LoadContextFromFile: File " << filePath << " is neither a terminology nor anatomic context file according to its schema");
     fclose(fp);
+    delete jsonRoot;
     return false;
     }
 
@@ -1095,6 +1099,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromFile(std::stri
   if (!fp)
     {
     vtkErrorMacro("LoadTerminologyFromFile: Failed to load terminology from file '" << filePath << "'");
+    delete terminologyRoot;
     return "";
     }
   char buffer[4096];
@@ -1103,6 +1108,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromFile(std::stri
     {
     vtkErrorMacro("LoadTerminologyFromFile: Failed to load terminology from file '" << filePath << "'");
     fclose(fp);
+    delete terminologyRoot;
     return "";
     }
 
@@ -1112,6 +1118,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromFile(std::stri
     {
     vtkErrorMacro("LoadTerminologyFromFile: File " << filePath << " does not contain schema information");
     fclose(fp);
+    delete terminologyRoot;
     return "";
     }
   std::string schema = (*terminologyRoot)["@schema"].GetString();
@@ -1119,6 +1126,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromFile(std::stri
     {
     vtkErrorMacro("LoadTerminologyFromFile: File " << filePath << " is not a terminology context file according to its schema");
     fclose(fp);
+    delete terminologyRoot;
     return "";
     }
 
@@ -1208,6 +1216,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromFile(std::
   if (!fp)
     {
     vtkErrorMacro("LoadAnatomicContextFromFile: Failed to load anatomic context from file " << filePath);
+    delete anatomicContextRoot;
     return "";
     }
 
@@ -1217,6 +1226,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromFile(std::
     {
     vtkErrorMacro("LoadAnatomicContextFromFile: Failed to load anatomic context from file " << filePath);
     fclose(fp);
+    delete anatomicContextRoot;
     return "";
     }
 
@@ -1226,6 +1236,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromFile(std::
     {
     vtkErrorMacro("LoadAnatomicContextFromFile: File " << filePath << " does not contain schema information");
     fclose(fp);
+    delete anatomicContextRoot;
     return "";
     }
   std::string schema = (*anatomicContextRoot)["@schema"].GetString();
@@ -1233,6 +1244,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromFile(std::
     {
     vtkErrorMacro("LoadAnatomicContextFromFile: File " << filePath << " is not an anatomic context file according to its schema");
     fclose(fp);
+    delete anatomicContextRoot;
     return "";
     }
 

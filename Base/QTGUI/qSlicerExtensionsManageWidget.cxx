@@ -867,8 +867,8 @@ void qSlicerExtensionsManageWidget::onModelExtensionEnabledChanged(const QString
 {
   Q_D(qSlicerExtensionsManageWidget);
   QListWidgetItem * item = d->extensionItem(extensionName);
-  item->setData(qSlicerExtensionsManageWidgetPrivate::EnabledRole, enabled);
   Q_ASSERT(item);
+  item->setData(qSlicerExtensionsManageWidgetPrivate::EnabledRole, enabled);
   qSlicerExtensionsItemWidget * widget =
       dynamic_cast<qSlicerExtensionsItemWidget*>(this->itemWidget(item));
   Q_ASSERT(widget);

@@ -49,7 +49,9 @@ QString findPython()
 
 //-----------------------------------------------------------------------------
 qSlicerCLIExecutableModuleFactoryItem::qSlicerCLIExecutableModuleFactoryItem(
-  const QString& newTempDirectory) : TempDirectory(newTempDirectory)
+  const QString& newTempDirectory)
+  : TempDirectory(newTempDirectory)
+  , CLIModule(nullptr)
 {
 }
 

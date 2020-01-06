@@ -40,6 +40,7 @@ vtkOpenGLTextureImage::vtkOpenGLTextureImage()
   this->TextureName = 0;
   this->Interpolate = 1;
   this->TextureMTime = 0;
+  this->TextureWrap = vtkOpenGLTextureImage::ClampToEdge;
 }
 
 //----------------------------------------------------------------------------
@@ -93,6 +94,11 @@ bool vtkOpenGLTextureImage::UpdateTexture()
     }
   this->ShaderComputation->MakeCurrent();
 
+  if (this->ImageData == nullptr)
+    {
+    return false;
+    }
+
   if (this->ImageData->GetMTime() > this->TextureMTime)
     {
     if (this->TextureName != 0)
@@ -106,10 +112,6 @@ bool vtkOpenGLTextureImage::UpdateTexture()
     return true;
     }
 
-  if ( this->ImageData == nullptr )
-    {
-    return false;
-    }
   int componentCount = this->ImageData->GetNumberOfScalarComponents();
   GLenum format;
   GLenum internalFormat;

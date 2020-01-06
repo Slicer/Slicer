@@ -65,6 +65,7 @@ qSlicerDICOMExportablePrivate::qSlicerDICOMExportablePrivate()
   this->Name = QString("Unknown exporter");
   this->Tooltip = QString("Creates a DICOM file from the selected data");
   this->Confidence = 0.0;
+  this->SubjectHierarchyItemID = 0;
 }
 
 //-----------------------------------------------------------------------------

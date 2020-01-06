@@ -78,6 +78,9 @@ qSlicerMarkupsPlaceWidgetPrivate::qSlicerMarkupsPlaceWidgetPrivate( qSlicerMarku
   this->DeleteMarkupsButtonVisible = true;
   this->DeleteAllMarkupsOptionVisible = true;
   this->PlaceMultipleMarkups = qSlicerMarkupsPlaceWidget::ShowPlaceMultipleMarkupsOption;
+  this->PlaceMenu = nullptr;
+  this->DeleteMenu = nullptr;
+  this->LastSignaledPlaceModeEnabled = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -142,7 +145,6 @@ void qSlicerMarkupsPlaceWidget::setup()
     d->PlaceButton->setMenu(d->PlaceMenu);
     }
   connect( d->PlaceButton, SIGNAL(toggled(bool)), this, SLOT(setPlaceModeEnabled(bool)) );
-  d->LastSignaledPlaceModeEnabled = false;
 
   d->DeleteMenu = new QMenu(tr("Delete options"), d->DeleteButton);
   d->DeleteMenu->setObjectName("DeleteMenu");
@@ -658,7 +660,7 @@ QColor qSlicerMarkupsPlaceWidget::defaultNodeColor() const
 void qSlicerMarkupsPlaceWidget::onColorButtonChanged(QColor color)
 {
   vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
-  if ( currentMarkupsNode == nullptr && currentMarkupsNode->GetDisplayNode() == nullptr )
+  if (currentMarkupsNode == nullptr || currentMarkupsNode->GetDisplayNode() == nullptr)
     {
     return;
     }

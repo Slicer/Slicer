@@ -49,6 +49,8 @@
 qSlicerMouseModeToolBarPrivate::qSlicerMouseModeToolBarPrivate(qSlicerMouseModeToolBar& object)
   : q_ptr(&object)
 {
+  this->AdjustViewAction = nullptr;
+  this->AdjustWindowLevelAction = nullptr;
   this->AdjustWindowLevelAdjustModeAction = nullptr;
   this->AdjustWindowLevelRegionModeAction = nullptr;
   this->AdjustWindowLevelCenteredRegionModeAction = nullptr;
@@ -61,6 +63,7 @@ qSlicerMouseModeToolBarPrivate::qSlicerMouseModeToolBarPrivate(qSlicerMouseModeT
   this->PersistenceAction = nullptr;
 
   this->PlaceModesActionGroup = nullptr;
+  this->InteractionModesActionGroup = nullptr;
   this->DefaultPlaceClassName = "vtkMRMLMarkupsFiducialNode";
 }
 

@@ -372,7 +372,7 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
     while (retval < 0 )
       {
       //--- keep prompting until user provides all information, or user cancels.
-      handler->GetPermissionPrompter()->Prompt(nullptr);
+      retval = handler->GetPermissionPrompter()->Prompt(nullptr);
       }
     }
   if ( retval == 0)

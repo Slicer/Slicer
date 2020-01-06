@@ -1596,7 +1596,7 @@ void vtkMRMLNode::InvalidateNodeReferences()
 {
   // Remove the referenced node pointers, but keep the IDs and events
   NodeReferencesType::iterator it;
-  for (it = this->NodeReferences.begin(); it != NodeReferences.end(); it++)
+  for (it = this->NodeReferences.begin(); it != this->NodeReferences.end(); it++)
     {
     NodeReferenceListType::iterator it1;
     for (it1 = it->second.begin(); it1 != it->second.end(); it1++)

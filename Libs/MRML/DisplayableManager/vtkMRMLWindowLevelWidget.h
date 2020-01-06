@@ -171,6 +171,7 @@ protected:
 
   double VolumeScalarRange[2];
 
+  // Auto window/level was active before starting to adjust it
   bool IsStartVolumeAutoWindowLevel;
   double StartVolumeWindowLevel[2];
   double LastVolumeWindowLevel[2];

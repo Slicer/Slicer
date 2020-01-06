@@ -136,10 +136,12 @@ void vtkITKImageThresholdCalculator::PrintSelf(ostream& os, vtkIndent indent)
 void vtkITKImageThresholdCalculator::Update()
 {
   vtkImageData *inputImage = this->GetImageDataInput(0);
-  vtkPointData* pointData = inputImage->GetPointData();
-
-  if ( inputImage == nullptr ||
-       pointData == nullptr )
+  vtkPointData* pointData = nullptr;
+  if (inputImage)
+    {
+    pointData = inputImage->GetPointData();
+    }
+  if (pointData == nullptr)
     {
     vtkErrorMacro(<<"vtkITKImageThresholdCalculator: No input image");
     return;

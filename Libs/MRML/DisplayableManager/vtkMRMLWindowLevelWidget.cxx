@@ -62,6 +62,7 @@ vtkMRMLWindowLevelWidget::vtkMRMLWindowLevelWidget()
   this->VolumeScalarRange[0] = 0;
   this->VolumeScalarRange[1] = 0;
 
+  this->IsStartVolumeAutoWindowLevel = false;
   this->StartVolumeWindowLevel[0] = 0;
   this->StartVolumeWindowLevel[1] = 0;
   this->LastVolumeWindowLevel[0] = 0;
@@ -477,13 +478,15 @@ bool vtkMRMLWindowLevelWidget::ProcessAdjustWindowLevelStart(vtkMRMLInteractionE
     {
     sliceLogic->GetForegroundWindowLevelAndRange(
       this->LastVolumeWindowLevel[0], this->LastVolumeWindowLevel[1],
-      this->VolumeScalarRange[0], this->VolumeScalarRange[1]);
+      this->VolumeScalarRange[0], this->VolumeScalarRange[1],
+      this->IsStartVolumeAutoWindowLevel);
     }
   else if (editedLayer == vtkMRMLSliceLogic::LayerBackground)
     {
     sliceLogic->GetBackgroundWindowLevelAndRange(
       this->LastVolumeWindowLevel[0], this->LastVolumeWindowLevel[1],
-      this->VolumeScalarRange[0], this->VolumeScalarRange[1]);
+      this->VolumeScalarRange[0], this->VolumeScalarRange[1],
+      this->IsStartVolumeAutoWindowLevel);
     }
   this->StartVolumeWindowLevel[0] = this->LastVolumeWindowLevel[0];
   this->StartVolumeWindowLevel[1] = this->LastVolumeWindowLevel[1];

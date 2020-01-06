@@ -120,7 +120,7 @@ public:
   ///
   /// Helper to aget the background layer Window/Level
   void GetBackgroundWindowLevelAndRange(double& window, double& level,
-                                      double& rangeLow, double& rangeHigh);
+                                      double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
 
   ///
   /// Helper to set the foreground layer Window/Level
@@ -129,7 +129,7 @@ public:
   ///
   /// Helper to aget the foreground layer Window/Level
   void GetForegroundWindowLevelAndRange(double& window, double& level,
-                                      double& rangeLow, double& rangeHigh);
+                                      double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
   ///
   /// Model slice plane
   vtkGetObjectMacro(SliceModelNode, vtkMRMLModelNode);

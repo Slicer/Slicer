@@ -46,8 +46,14 @@ vtkMRMLInteractionEventData::vtkMRMLInteractionEventData()
   this->ViewNode = nullptr;
   this->Rotation = 0.0;
   this->LastRotation = 0.0;
+  this->Scale = 1.0;
+  this->LastScale = 1.0;
+  this->Translation[0] = this->Translation[1] = 0.0;
+  this->LastTranslation[0] = this->LastTranslation[1] = 0.0;
   this->WorldToPhysicalScale = 1.0;
   this->InteractionContextName = "";
+  this->ComponentType = -1;
+  this->ComponentIndex = -1;
 }
 
 //---------------------------------------------------------------------------

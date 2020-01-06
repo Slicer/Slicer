@@ -48,7 +48,8 @@ public:
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsManagerDialogPrivate::qSlicerExtensionsManagerDialogPrivate(qSlicerExtensionsManagerDialog& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
+  , RestartRequested(false)
 {
 }
 

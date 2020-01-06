@@ -82,7 +82,7 @@ MRMLIDImageIO
 
   // check that the filename starts with the slicer3 scheme
   loc = fname.find("slicer:");
-  if (loc != std::string::npos && (loc == 0))
+  if (loc == 0)
     {
     this->m_Scheme = std::string(fname.begin(),
                                fname.begin() + std::string("slicer").size());

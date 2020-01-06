@@ -21,6 +21,7 @@ const NodeKeyValueType FibHeapNode::NegativeInfinity = -std::numeric_limits<Node
 //-----------------------------------------------------------------------------
 FibHeap::FibHeap()
 {
+  m_HeapNodes = nullptr;
   m_MinRoot = nullptr;
   m_NumNodes = m_NumTrees = m_NumMarkedNodes = 0;
 }

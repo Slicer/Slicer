@@ -288,7 +288,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
 
   closestDistance2 = VTK_DOUBLE_MAX; // in display coordinate system (phyisical in case of virtual reality renderer)
   foundComponentIndex = -1;
-  if (markupsNode->GetNumberOfControlPoints() > 2 && this->ClosedLoop && markupsNode)
+  if (markupsNode->GetNumberOfControlPoints() > 2 && this->ClosedLoop)
     {
     // Check if center is selected
     double centerPosWorld[3], centerPosDisplay[3];

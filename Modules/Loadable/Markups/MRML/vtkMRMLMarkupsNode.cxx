@@ -911,7 +911,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointPositionOrientationWorldFromArray(
     }
   else
     {
-    controlPoint->AssociatedNodeID.empty();
+    controlPoint->AssociatedNodeID.clear();
     }
 
   vtkPoints* points = this->CurveInputPoly->GetPoints();

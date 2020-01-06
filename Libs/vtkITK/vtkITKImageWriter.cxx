@@ -305,11 +305,13 @@ void vtkITKImageWriter::SetFileName(const char *name)
 // Writes all the data from the input.
 void vtkITKImageWriter::Write()
 {
-  vtkImageData *inputImage = this->GetImageDataInput(0);
-  vtkPointData* pointData = inputImage->GetPointData();
-
-  if ( inputImage == nullptr ||
-       pointData == nullptr )
+  vtkImageData* inputImage = this->GetImageDataInput(0);
+  vtkPointData* pointData = nullptr;
+  if (inputImage)
+    {
+    pointData = inputImage->GetPointData();
+    }
+  if (pointData == nullptr)
     {
     vtkErrorMacro(<<"vtkITKImageWriter: No image to write");
     return;

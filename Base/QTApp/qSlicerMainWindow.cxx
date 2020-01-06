@@ -1031,14 +1031,11 @@ void qSlicerMainWindow::onPythonConsoleToggled(bool toggled)
     // Dockable Python console
     if (toggled)
       {
-      if (d->PythonConsoleDockWidget)
+      d->PythonConsoleDockWidget->activateWindow();
+      QTextEdit* textEditWidget = pythonConsole->findChild<QTextEdit*>();
+      if (textEditWidget)
         {
-        d->PythonConsoleDockWidget->activateWindow();
-        QTextEdit* textEditWidget = pythonConsole->findChild<QTextEdit*>();
-        if (textEditWidget)
-          {
-          textEditWidget->setFocus();
-          }
+        textEditWidget->setFocus();
         }
       }
     }

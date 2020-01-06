@@ -2241,7 +2241,8 @@ void qSlicerMarkupsModuleWidget::onNewMarkupWithCurrentDisplayPropertiesTriggere
   vtkMRMLDisplayNode *displayNode = d->MarkupsNode->GetDisplayNode();
   if (!displayNode)
     {
-    qDebug() << "Unable to get the display node on the markups node";
+    qWarning() << Q_FUNC_INFO << " failed: Unable to get the display node on the markups node";
+    return;
     }
 
   // create a new one
