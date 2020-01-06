@@ -59,19 +59,32 @@ class vtkMRMLInteractionEventData;
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsWidgetRepresentation : public vtkMRMLAbstractWidgetRepresentation
 {
 public:
+  enum
+  {
+    Unselected,
+    Selected,
+    Active,
+    Project,
+    ProjectBack,
+    NumberOfControlPointTypes
+  };
+
   /// Standard methods for instances of this class.
   vtkTypeMacro(vtkSlicerMarkupsWidgetRepresentation, vtkMRMLAbstractWidgetRepresentation);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  // Update the representation from markups node
+  /// Update the representation from markups node
   void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr) override;
+
+  /// Get number of control points.
+  virtual int GetNumberOfControlPoints();
 
   /// Get the nth node's display position. Will return
   /// 1 on success, or 0 if there are not at least
   /// (n+1) nodes (0 based counting).
   virtual int GetNthControlPointDisplayPosition(int n, double pos[2]);
 
-  /// Get the nth node.
+  /// Get the nth control point.
   virtual vtkMRMLMarkupsNode::ControlPoint *GetNthControlPoint(int n);
 
   /// Set/Get the vtkMRMLMarkipsNode connected with this representation
@@ -95,7 +108,17 @@ public:
 
   virtual int FindClosestPointOnWidget(const int displayPos[2], double worldPos[3], int *idx);
 
-  vtkPointPlacer* GetPointPlacer();
+  virtual vtkPointPlacer* GetPointPlacer();
+
+  /// Get internal control points polydata - for testing purposes.
+  /// controlPointType can be Unselected, Selected, Active, Project, ProjectBack.
+  virtual vtkPolyData* GetControlPointsPolyData(int controlPointType);
+  /// Get internal label control points polydata - for testing purposes.
+  /// controlPointType can be Unselected, Selected, Active, Project, ProjectBack.
+  virtual vtkPolyData* GetLabelControlPointsPolyData(int pipeline);
+  /// Get internal labels list - for testing purposes.
+  /// controlPointType can be Unselected, Selected, Active, Project, ProjectBack.
+  virtual vtkStringArray* GetLabels(int pipeline);
 
 protected:
   vtkSlicerMarkupsWidgetRepresentation();
@@ -163,16 +186,6 @@ protected:
   void BuildLine(vtkPolyData* linePolyData, bool displayPosition);
 
   vtkTimeStamp MarkupsTransformModifiedTime;
-
-  enum
-  {
-    Unselected,
-    Selected,
-    Active,
-    Project,
-    ProjectBack,
-    NumberOfControlPointTypes
-  };
 
   double* GetWidgetColor(int controlPointType);
 
