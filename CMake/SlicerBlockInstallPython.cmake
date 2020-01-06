@@ -25,7 +25,7 @@ To create a Slicer package including python libraries, you can *NOT* provide you
   endif()
 
   # Install libraries
-  
+
   set(extra_exclude_pattern)
   if(UNIX)
     list(APPEND extra_exclude_pattern
@@ -108,10 +108,9 @@ To create a Slicer package including python libraries, you can *NOT* provide you
       COMPONENT Runtime
       )
     # Install Slicer python launcher
+    # Regardless of how the main application is built (GUI or console application - as specified by Slicer_BUILD_WIN32_CONSOLE),
+    # the Python console is always use the console launcher (CTKAppLauncher) and not the GUI launcher (CTKAppLauncherW).
     set(_launcher CTKAppLauncher)
-    if(Slicer_BUILD_WIN32_CONSOLE)
-      set(_launcher CTKAppLauncherW)
-    endif()
     install(
       PROGRAMS ${CTKAppLauncher_DIR}/bin/${_launcher}${CMAKE_EXECUTABLE_SUFFIX}
       DESTINATION ${Slicer_INSTALL_BIN_DIR}
@@ -137,4 +136,3 @@ To create a Slicer package including python libraries, you can *NOT* provide you
     )
 
 endif()
-
