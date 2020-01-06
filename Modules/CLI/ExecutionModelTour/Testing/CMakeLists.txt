@@ -15,6 +15,10 @@ target_link_libraries(${CLP}Test ${CLP}Lib ${SlicerExecutionModel_EXTRA_EXECUTAB
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 set_target_properties(${CLP}Test PROPERTIES FOLDER ${${CLP}_TARGETS_FOLDER})
 
+configure_file(${INPUT}/ExecutionModelTourTest.mrml
+      ${TEMP}/ExecutionModelTourTest.mrml
+      COPYONLY)
+
 set(testname ${CLP}Test)
 ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
   NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
@@ -25,8 +29,8 @@ ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
     --string_vector foo,bar,foobar
     --enumeration Bill
     --boolean1
-    --transform1 ${INPUT}/ExecutionModelTourTest.mrml\#vtkMRMLLinearTransformNode1
-    --transform2 ${INPUT}/ExecutionModelTourTest.mrml\#vtkMRMLLinearTransformNode2
+    --transform1 ${TEMP}/ExecutionModelTourTest.mrml\#vtkMRMLLinearTransformNode1
+    --transform2 ${TEMP}/ExecutionModelTourTest.mrml\#vtkMRMLLinearTransformNode2
     DATA{${INPUT}/MRHeadResampled.nhdr,MRHeadResampled.raw.gz}
     DATA{${INPUT}/CTHeadAxial.nhdr,CTHeadAxial.raw.gz}
   )
