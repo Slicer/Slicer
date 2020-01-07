@@ -32,6 +32,7 @@
 #include <vtkVector.h>
 
 class vtkFrenetSerretFrame;
+class vtkMRMLUnitNode;
 
 /// \brief MRML node to represent an interactive widget.
 /// MarkupsNodes contains a list of points (ControlPoint).
@@ -567,6 +568,9 @@ protected:
   void operator=(const vtkMRMLMarkupsNode&);
 
   vtkSmartPointer<vtkStringArray> TextList;
+
+  /// Utility function to get unit node from scene
+  vtkMRMLUnitNode* GetUnitNode(const char* quantity);
 
   /// Set label of closest control point.
   /// If one control point is closest to multiple labels then all of them will be assigned to the same control point,

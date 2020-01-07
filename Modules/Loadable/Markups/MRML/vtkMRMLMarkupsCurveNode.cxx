@@ -23,6 +23,7 @@
 #include "vtkMRMLMarkupsFiducialStorageNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTransformNode.h"
+#include "vtkMRMLUnitNode.h"
 
 // VTK includes
 #include <vtkBoundingBox.h>
@@ -1046,4 +1047,28 @@ vtkIdType vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurveWorld(const 
       }
     }
   return lineIndex;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsCurveNode::UpdateMeasurements()
+{
+  this->RemoveAllMeasurements();
+  if (this->GetNumberOfDefinedControlPoints() > 1)
+    {
+    double length = this->GetCurveLengthWorld();
+    std::string printFormat;
+    std::string unit = "mm";
+    vtkMRMLUnitNode* unitNode = GetUnitNode("length");
+    if (unitNode)
+      {
+      if (unitNode->GetSuffix())
+        {
+        unit = unitNode->GetSuffix();
+        }
+      length = unitNode->GetDisplayValueFromValue(length);
+      printFormat = unitNode->GetDisplayStringFormat();
+      }
+    this->SetNthMeasurement(0, "length", length, unit, printFormat);
+    }
+  this->WriteMeasurementsToDescription();
 }

@@ -180,6 +180,8 @@ protected:
   ~vtkMRMLMarkupsCurveNode() override;
   vtkMRMLMarkupsCurveNode(const vtkMRMLMarkupsCurveNode&);
   void operator=(const vtkMRMLMarkupsCurveNode&);
+
+  void UpdateMeasurements() override;
 };
 
 #endif
