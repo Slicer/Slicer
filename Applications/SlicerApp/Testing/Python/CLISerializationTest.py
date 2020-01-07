@@ -22,6 +22,7 @@ import argparse
 import csv
 import json
 import os
+import shutil
 import tempfile
 import sys
 
@@ -73,13 +74,18 @@ if __name__ == '__main__':
   deserializeSeedsOutFile = '%s/%s.acsv' %(temp_dir, 'SeedsDeSerialized')
   json_file = '%s/%s.json' %(temp_dir, 'ExecutionModelTourSerialized')
 
+  #Copy .mrml file to prevent modification of source tree
+  mrml_source_path = os.path.join(data_dir, 'ExecutionModelTourTest.mrml')
+  mrml_dest_path = os.path.join(temp_dir, 'ExecutionModelTourTestPython.mrml')
+  shutil.copyfile(mrml_source_path, mrml_dest_path)
+
   # -- Test ExecutionModelTour --
   EMTSerializer = CLISerializationTest()
   EMTSerializer.SlicerExecutable = slicer_executable
   CLIName = 'ExecutionModelTour'
   required_inputs = [
-    '--transform1', '%s/ExecutionModelTourTest.mrml#vtkMRMLLinearTransformNode1'%(data_dir),
-    '--transform2', '%s/ExecutionModelTourTest.mrml#vtkMRMLLinearTransformNode2'%(data_dir),
+    '--transform1', '%s/ExecutionModelTourTestPython.mrml#vtkMRMLLinearTransformNode1'%(temp_dir),
+    '--transform2', '%s/ExecutionModelTourTestPython.mrml#vtkMRMLLinearTransformNode2'%(temp_dir),
     mrHeadResampled,
     ctHeadAxial,
     ]
@@ -174,8 +180,8 @@ if __name__ == '__main__':
         },
         "Transform Parameters" :
         {
-          "transform1" : "%s/ExecutionModelTourTest.mrml#vtkMRMLLinearTransformNode1"%(data_dir),
-          "transform2" : "%s/ExecutionModelTourTest.mrml#vtkMRMLLinearTransformNode2"%(data_dir),
+          "transform1" : "%s/ExecutionModelTourTestPython.mrml#vtkMRMLLinearTransformNode1"%(temp_dir),
+          "transform2" : "%s/ExecutionModelTourTestPython.mrml#vtkMRMLLinearTransformNode2"%(temp_dir),
           "transformInput" : "",
           "transformInputBspline" : "",
           "transformInputNonlinear" : "",
