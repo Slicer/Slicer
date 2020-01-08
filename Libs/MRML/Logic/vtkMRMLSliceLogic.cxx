@@ -839,6 +839,15 @@ void vtkMRMLSliceLogic
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic
 ::GetBackgroundWindowLevelAndRange(double& window, double& level,
+                                         double& rangeLow, double& rangeHigh)
+{
+  bool autoWindowLevel; // unused, just a placeholder to allow calling the method
+  this->GetBackgroundWindowLevelAndRange(window, level, rangeLow, rangeHigh, autoWindowLevel);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic
+::GetBackgroundWindowLevelAndRange(double& window, double& level,
                                          double& rangeLow, double& rangeHigh, bool& autoWindowLevel)
 {
   vtkMRMLScalarVolumeNode* volumeNode =
@@ -861,6 +870,15 @@ void vtkMRMLSliceLogic
     rangeHigh = range[1];
     autoWindowLevel = (volumeDisplayNode->GetAutoScalarRange() != 0);
     }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic
+::GetForegroundWindowLevelAndRange(double& window, double& level,
+                                         double& rangeLow, double& rangeHigh)
+{
+  bool autoWindowLevel; // unused, just a placeholder to allow calling the method
+  this->GetForegroundWindowLevelAndRange(window, level, rangeLow, rangeHigh, autoWindowLevel);
 }
 
 //----------------------------------------------------------------------------

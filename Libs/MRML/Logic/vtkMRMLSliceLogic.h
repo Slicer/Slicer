@@ -118,18 +118,30 @@ public:
   void SetBackgroundWindowLevel(double window, double level);
 
   ///
-  /// Helper to aget the background layer Window/Level
+  /// Helper to get the background layer Window/Level, intensity range and
+  /// status of automatic Window/Level setting
   void GetBackgroundWindowLevelAndRange(double& window, double& level,
                                       double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
+
+  ///
+  /// Helper to get the background layer Window/Level and intensity range
+  void GetBackgroundWindowLevelAndRange(double& window, double& level,
+                                      double& rangeLow, double& rangeHigh);
 
   ///
   /// Helper to set the foreground layer Window/Level
   void SetForegroundWindowLevel(double window, double level);
 
   ///
-  /// Helper to aget the foreground layer Window/Level
+  /// Helper to get the foreground layer Window/Level, intensity range and
+  /// status of automatic Window/Level setting
   void GetForegroundWindowLevelAndRange(double& window, double& level,
                                       double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
+
+  ///
+  /// Helper to get the foreground layer Window/Level and intensity range
+  void GetForegroundWindowLevelAndRange(double& window, double& level,
+                                      double& rangeLow, double& rangeHigh);
   ///
   /// Model slice plane
   vtkGetObjectMacro(SliceModelNode, vtkMRMLModelNode);
