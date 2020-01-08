@@ -479,6 +479,7 @@ void qSlicerSegmentEditorPaintEffectPrivate::transformPointsFromWorldToIJK(vtkOr
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorPaintEffectPrivate::paintPixel(vtkOrientedImageData* modifierLabelmap, qMRMLWidget* viewWidget, double pixelPosition_World[3])
 {
+  Q_UNUSED(viewWidget);
   vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
   points->InsertNextPoint(pixelPosition_World);
   this->paintPixels(modifierLabelmap, points);
@@ -560,6 +561,7 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintBrushes(
   vtkPoints* pixelPositions_World,
   int updateExtent[6])
 {
+  Q_UNUSED(pixelPositions_World);
   Q_Q(qSlicerSegmentEditorPaintEffect);
 
   this->updateBrushStencil(viewWidget);
