@@ -8,7 +8,7 @@ import slicer
 #
 comment = """
 
-DICOMExportScene provides the feature of exporting a slicer
+DICOMExportScalarVolume provides the feature of exporting a slicer
 scalar volume as a DICOM series into local folder.
 
 This code is slicer-specific and relies on the slicer python module
