@@ -26,7 +26,8 @@ set(pycli_files
   )
 
 add_custom_target(InstallPyCLITest4 ALL
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different ${pycli_files} ${pycli_build_dir}
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${pycli_build_dir}
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${pycli_files} ${pycli_build_dir}
   )
 
 if(NOT WIN32)
