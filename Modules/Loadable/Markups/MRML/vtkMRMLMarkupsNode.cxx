@@ -2042,6 +2042,10 @@ vtkMRMLUnitNode* vtkMRMLMarkupsNode::GetUnitNode(const char* quantity)
     vtkWarningMacro("vtkMRMLMarkupsNode::GetUnitNode failed: invalid quantity");
     return nullptr;
     }
+  if (!this->GetScene())
+    {
+    return nullptr;
+    }
   vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
     this->GetScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   if (!selectionNode)
