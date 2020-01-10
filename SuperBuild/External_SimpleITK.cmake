@@ -35,13 +35,13 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" Packaging/s
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/Slicer/SimpleITK.git"
+    "${EP_GIT_PROTOCOL}://github.com/SimpleITK/SimpleITK.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "3ad12467ba44d2f831305ef645ae181a381e60ab" # slicer-v1.2.0-2019-08-16-3ad12467
+    "16a62269c25fef83b739f8ae8640cf796a6f44f1"  # pre-v2.0 (ITK 5 as default)
     QUIET
     )
 
