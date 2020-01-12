@@ -82,7 +82,7 @@ void vtkITKExecuteDataFromFileVector(
       self->GetDesiredCoordinateOrientation());
     filter = orient2;
     }
-   filter->UpdateLargestPossibleRegion();
+  filter->UpdateLargestPossibleRegion();
   typename itk::ImportImageContainer<itk::SizeValueType, T>::Pointer PixelContainer2;
   PixelContainer2 = filter->GetOutput()->GetPixelContainer();
   void *ptr = static_cast<void *> (PixelContainer2->GetBufferPointer());

@@ -806,6 +806,9 @@ protected:
   /// Get MetaData from dictionary, removing all whitespaces from the string.
   static std::string GetMetaDataWithoutSpaces(const itk::MetaDataDictionary &dict, const std::string& tag);
 
+  /// Get the image IO for the specified filename
+  itk::ImageIOBase::Pointer GetImageIO(const char* filename);
+
   char *Archetype;
   int SingleFile;
   int UseOrientationFromFile;

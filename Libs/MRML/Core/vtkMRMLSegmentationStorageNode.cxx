@@ -341,6 +341,7 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation4DSpatial(vt
 
   // Get metadata dictionary from image
   itk::MetaDataDictionary metadata = allSegmentLabelmapsImage->GetMetaDataDictionary();
+
   // Read common geometry extent
   std::string commonExtent;
   itk::ExposeMetaData<std::string>(metadata, GetSegmentationMetaDataKey(KEY_SEGMENTATION_EXTENT).c_str(), commonExtent);
@@ -556,6 +557,13 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
     // Get metadata dictionary from image
     itk::MetaDataDictionary dictionary = archetypeImageReader->GetMetaDataDictionary();
 
+    std::string segmentationExtentString;
+    if (this->GetSegmentationMetaDataFromDicitionary(segmentationExtentString, dictionary, KEY_SEGMENTATION_EXTENT))
+      {
+      // Legacy format. Return and read using ReadBinaryLabelmapRepresentation4DSpatial if availiable.
+      return 0;
+      }
+
     // Read common geometry
     std::string referenceImageExtentOffsetStr;
     if (this->GetSegmentationMetaDataFromDicitionary(referenceImageExtentOffsetStr, dictionary, KEY_SEGMENTATION_REFERENCE_IMAGE_EXTENT_OFFSET))
@@ -574,28 +582,11 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
       }
     else
       {
-      // For backward compatibility only
-      std::string segmentationExtentString;
-      if (this->GetSegmentationMetaDataFromDicitionary(segmentationExtentString, dictionary, KEY_SEGMENTATION_EXTENT))
-        {
-        GetImageExtentFromString(commonGeometryExtent, segmentationExtentString);
-        if (imageExtentInFile[1] - imageExtentInFile[0] != commonGeometryExtent[1] - commonGeometryExtent[0]
-          || imageExtentInFile[3] - imageExtentInFile[2] != commonGeometryExtent[3] - commonGeometryExtent[2]
-          || imageExtentInFile[5] - imageExtentInFile[4] != commonGeometryExtent[5] - commonGeometryExtent[4])
-          {
-          vtkErrorMacro("vtkMRMLVolumeSequenceStorageNode::ReadDataInternal: "
-            << GetSegmentationMetaDataKey(KEY_SEGMENTATION_EXTENT) << " is inconsistent with the image size");
-          return 0;
-          }
-        }
-      else
-        {
-        // Neither KEY_SEGMENTATION_REFERENCE_IMAGE_EXTENT_OFFSET nor KEY_SEGMENTATION_EXTENT is specified,
-        // which means that this is probably a regular NRRD file that should be imported as a segmentation.
-        // Use the image extent as common geometry extent.
-        vtkInfoMacro(<< KEY_SEGMENTATION_REFERENCE_IMAGE_EXTENT_OFFSET << " attribute was not found in NRRD segmentation file. Assume no offset.");
-        imageData->GetExtent(commonGeometryExtent);
-        }
+      // KEY_SEGMENTATION_REFERENCE_IMAGE_EXTENT_OFFSET is not specified,
+      // which means that this is probably a regular NRRD file that should be imported as a segmentation.
+      // Use the image extent as common geometry extent.
+      vtkInfoMacro(<< KEY_SEGMENTATION_REFERENCE_IMAGE_EXTENT_OFFSET << " attribute was not found in NRRD segmentation file. Assume no offset.");
+      imageData->GetExtent(commonGeometryExtent);
       }
 
     // Read conversion parameters
