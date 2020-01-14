@@ -22,7 +22,7 @@ ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
             ${TEMP}/${CLP}TestOutput.mha
   --compareNumberOfPixelsTolerance 20
   ModuleEntryPoint
-    DATA{${INPUT}/OAS10001.hdr,OAS10001.img}
+    DATA{${INPUT}/OAS10001.nii.gz}
     DATA{${INPUT}/OAS10001-Transformed.vtp}
     ${TEMP}/${CLP}TestOutput.mha
   )
@@ -37,7 +37,7 @@ ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
   --compareNumberOfPixelsTolerance 20
   ModuleEntryPoint
     --labelValue 128
-    DATA{${INPUT}/OAS10001.hdr,OAS10001.img}
+    DATA{${INPUT}/OAS10001.nii.gz}
     DATA{${INPUT}/OAS10001-Transformed.vtp}
     ${TEMP}/${CLP}TestLabelValueOutput.mha
   )
