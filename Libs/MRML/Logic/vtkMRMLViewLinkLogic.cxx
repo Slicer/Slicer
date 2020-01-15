@@ -363,6 +363,10 @@ void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode* cameraNod
           sCamera->SetFocalPoint(camera->GetFocalPoint());
           sCamera->SetViewUp(camera->GetViewUp());
           }
+        if (camera->GetParallelProjection())
+          {
+          sCamera->SetParallelScale(camera->GetParallelScale());
+          }
 
         sNode->EndModify(wasModifying);
         sNode->InvokeCustomModifiedEvent(vtkMRMLCameraNode::ResetCameraClippingEvent);
