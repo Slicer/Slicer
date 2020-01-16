@@ -40,8 +40,9 @@
 #include <vtksys/SystemTools.hxx>
 
 // STD includes
-#include <sstream>
 #include <deque>
+#include <sstream>
+#include <string>
 
 // Reserved property names
 static const char SCHEMA_COLUMN_NAME[] = "columnName";

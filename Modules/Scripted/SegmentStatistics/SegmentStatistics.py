@@ -531,6 +531,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
           if len(units)>0 and units[0]=='[' and units[-1]==']': units = units[1:-1]
           if len(units)>0: name += ' ['+units+']'
         elif 'units' in info and info['units'] and len(info['units'])>0:
+          units = info['units']
           name += ' ['+units+']'
       headerNames.append(name)
     uniqueHeaderNames = list(headerNames)
@@ -566,6 +567,22 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
         col = table.AddColumn(vtk.vtkLongArray())
       elif isinstance(measurements[0], float):
         col = table.AddColumn(vtk.vtkDoubleArray())
+      elif isinstance(measurements[0], list):
+        length = len(measurements[0])
+        if length == 0:
+          col = table.AddColumn()
+        else:
+          value = measurements[0][0]
+          if isinstance(value, int):
+            array = vtk.vtkLongArray()
+            array.SetNumberOfComponents(length)
+            col = table.AddColumn(array)
+          elif isinstance(value, float):
+            array = vtk.vtkDoubleArray()
+            array.SetNumberOfComponents(length)
+            col = table.AddColumn(array)
+          else:
+            col = table.AddColumn()
       else: # default
         col = table.AddColumn()
       plugin = self.getPluginByKey(key)
@@ -583,6 +600,13 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
             table.SetColumnDescription(columnName, str(miv))
           elif mik=='units':
             table.SetColumnUnitLabel(columnName, str(miv))
+          elif mik == 'componentNames':
+            componentNames = miv
+            array = table.GetTable().GetColumnByName(columnName)
+            componentIndex = 0
+            for componentName in miv:
+              array.SetComponentName(componentIndex, componentName)
+              componentIndex += 1
           else:
             table.SetColumnProperty(columnName, str(mik), str(miv))
 
@@ -594,7 +618,11 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
         value = statistics[segmentID, key] if (segmentID, key) in statistics else None
         if value is None and key!='Segment':
           value = float('nan')
-        table.GetTable().GetColumn(columnIndex).SetValue(rowIndex, value)
+        if isinstance(value, list):
+          for i in range(len(value)):
+            table.GetTable().GetColumn(columnIndex).SetComponent(rowIndex, i, value[i])
+        else:
+          table.GetTable().GetColumn(columnIndex).SetValue(rowIndex, value)
         columnIndex += 1
 
     table.Modified()

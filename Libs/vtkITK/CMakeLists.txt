@@ -105,6 +105,7 @@ set(vtkITK_SRCS
   vtkITKImageToImageFilterSS.h
   vtkITKGradientAnisotropicDiffusionImageFilter.cxx
   vtkITKDistanceTransform.cxx
+  vtkITKLabelShapeStatistics.cxx
   vtkITKLevelTracingImageFilter.cxx
   vtkITKLevelTracing3DImageFilter.cxx
   vtkITKWandImageFilter.cxx

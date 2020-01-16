@@ -39,6 +39,8 @@
 //------------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLTableStorageNode);
 
+const char* COMPONENT_SEPERATOR = "_";
+
 //----------------------------------------------------------------------------
 vtkMRMLTableStorageNode::vtkMRMLTableStorageNode()
 {
@@ -267,6 +269,251 @@ std::string vtkMRMLTableStorageNode::GetFieldDelimiterCharacters(std::string fil
 }
 
 //----------------------------------------------------------------------------
+std::vector<vtkMRMLTableStorageNode::ColumnInfo> vtkMRMLTableStorageNode::GetColumnInfo(vtkMRMLTableNode* tableNode, vtkTable* rawTable)
+{
+  vtkTable* schema = tableNode->GetSchema();
+  std::vector<vtkMRMLTableStorageNode::ColumnInfo> columnDetails;
+
+  vtkStringArray* schemaColumnNameArray = nullptr;
+  vtkStringArray* schemaComponentNamesArray = nullptr;
+  if (schema != nullptr)
+    {
+    schemaColumnNameArray = vtkStringArray::SafeDownCast(schema->GetColumnByName("columnName"));
+    schemaComponentNamesArray = vtkStringArray::SafeDownCast(schema->GetColumnByName("componentNames"));
+    }
+
+  // Populate the output table column details.
+  // If the schema exists, read the contents and determine column data type/component names/component arrays
+  if (schema != nullptr &&
+      schemaColumnNameArray != nullptr &&
+      schemaComponentNamesArray != nullptr)
+    {
+    for (int schemaRowIndex = 0; schemaRowIndex < schema->GetNumberOfRows(); ++schemaRowIndex)
+      {
+      vtkMRMLTableStorageNode::ColumnInfo columnInfo;
+      columnInfo.ColumnName = schemaColumnNameArray->GetValue(schemaRowIndex);
+      columnInfo.ScalarType = tableNode->GetColumnValueTypeFromSchema(columnInfo.ColumnName);
+      columnInfo.NullValueString = tableNode->GetColumnProperty(columnInfo.ColumnName, "nullValue");
+
+      std::vector<vtkAbstractArray*> componentArrays;
+      std::string componentNamesStr = schemaComponentNamesArray->GetValue(schemaRowIndex);
+      if (componentNamesStr.empty())
+        {
+        vtkAbstractArray* rawColumn = rawTable->GetColumnByName(columnInfo.ColumnName.c_str());
+        if (rawColumn == nullptr)
+          {
+          /// We still add the invalid column to the info so that it can be replace with default values later
+          vtkWarningMacro("vtkMRMLTableStorageNode::GetColumnInfo: invalid column " << columnInfo.ColumnName);
+          }
+        componentArrays.push_back(rawColumn);
+        }
+      else
+        {
+        std::stringstream ss(componentNamesStr);
+        std::string componentName;
+        while (std::getline(ss, componentName, '|'))
+          {
+          std::string componentColumnName = columnInfo.ColumnName + COMPONENT_SEPERATOR + componentName;
+          vtkAbstractArray* rawColumn = rawTable->GetColumnByName(componentColumnName.c_str());
+          if (rawColumn == nullptr)
+            {
+            /// We still add the invalid column to the info so that it can be replace with default values later
+            vtkWarningMacro("vtkMRMLTableStorageNode::GetColumnInfo: invalid column - " << columnInfo.ColumnName
+              << " component - " << componentName);
+            }
+          componentArrays.push_back(rawColumn);
+          columnInfo.ComponentNames.push_back(componentName);
+          }
+        }
+      columnInfo.RawComponentArrays = componentArrays;
+      columnDetails.push_back(columnInfo);
+      }
+    }
+  else
+    {
+    for (int col = 0; col < rawTable->GetNumberOfColumns(); ++col)
+      {
+      vtkMRMLTableStorageNode::ColumnInfo columnInfo;
+      vtkStringArray* column = vtkStringArray::SafeDownCast(rawTable->GetColumn(col));
+      if (column == nullptr)
+        {
+        vtkWarningMacro("vtkMRMLTableStorageNode::GetColumnInfo: invalid column - " << col);
+        continue;
+        }
+      if (!column->GetName())
+        {
+        vtkWarningMacro("vtkMRMLTableStorageNode::GetColumnDetails: empty column name, skipping column");
+        continue;
+        }
+      columnInfo.ColumnName = column->GetName();
+      columnInfo.ScalarType = tableNode->GetColumnValueTypeFromSchema(columnInfo.ColumnName);
+      columnInfo.RawComponentArrays.push_back(column);
+      columnInfo.NullValueString = tableNode->GetColumnProperty(columnInfo.ColumnName, "nullValue");
+      columnDetails.push_back(columnInfo);
+      }
+    }
+  return columnDetails;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTableStorageNode::FillDataFromStringArray(vtkStringArray* stringComponentArray, vtkDataArray* typedComponentArray, std::string nullValueString)
+{
+  if (!stringComponentArray || !typedComponentArray)
+    {
+    vtkErrorMacro("vtkMRMLTableStorageNode::FillTypedComponentArray: Invalid input");
+    return;
+    }
+
+  if (stringComponentArray->GetNumberOfValues() != typedComponentArray->GetNumberOfValues())
+    {
+    vtkErrorMacro("vtkMRMLTableStorageNode::FillTypedComponentArray: Number of tuples between string ("
+      << stringComponentArray->GetNumberOfValues() << ") and typed (" << stringComponentArray->GetNumberOfValues() << ") arrays");
+    return;
+    }
+
+  int numberOfTuples = stringComponentArray->GetNumberOfTuples();
+
+  // Initialize with null value
+  if (typedComponentArray->IsNumeric())
+    {
+    // numeric arrays can be initialized in one batch
+    double nullValue = 0.0;
+    if (!nullValueString.empty())
+      {
+      nullValue = vtkVariant(nullValueString).ToDouble();
+      }
+    typedComponentArray->FillComponent(0, nullValue);
+    }
+  else
+    {
+    vtkVariant nullValue(nullValueString);
+    for (vtkIdType row = 0; row < numberOfTuples; ++row)
+      {
+      typedComponentArray->SetVariantValue(row, nullValue);
+      }
+    }
+
+  // Set values
+  vtkIdType scalarTypeId = typedComponentArray->GetDataType();
+  if (scalarTypeId == VTK_CHAR || scalarTypeId == VTK_SIGNED_CHAR || scalarTypeId == VTK_UNSIGNED_CHAR)
+    {
+    bool valid = false;
+    for (vtkIdType row = 0; row < numberOfTuples; ++row)
+      {
+      if (stringComponentArray->GetValue(row).empty())
+        {
+        // empty cell, leave the null value
+        continue;
+        }
+      int value = stringComponentArray->GetVariantValue(row).ToInt(&valid);
+      if (!valid)
+        {
+        continue;
+        }
+      typedComponentArray->SetVariantValue(row, vtkVariant(value));
+      }
+    }
+  else
+    {
+    for (vtkIdType row = 0; row < numberOfTuples; ++row)
+      {
+      if (stringComponentArray->GetValue(row).empty())
+        {
+        // empty cell, leave the null value
+        continue;
+        }
+      typedComponentArray->SetVariantValue(row, stringComponentArray->GetVariantValue(row));
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTableStorageNode::AddColumnToTable(vtkTable* table, vtkMRMLTableStorageNode::ColumnInfo columnInfo)
+{
+  std::string columnName = columnInfo.ColumnName;
+  int valueTypeId = columnInfo.ScalarType;
+  std::vector<vtkAbstractArray*> rawComponentArrays = columnInfo.RawComponentArrays;
+  std::string nullValueString = columnInfo.NullValueString;
+
+  if (valueTypeId == VTK_VOID)
+    {
+    // schema is not defined or no valid column type is defined for column
+    valueTypeId = VTK_STRING;
+    }
+  if (valueTypeId == VTK_STRING)
+    {
+    if (rawComponentArrays.size() > 0)
+      {
+      vtkAbstractArray* columnArray = rawComponentArrays[0];
+      if (columnArray)
+        {
+        columnArray->SetName(columnName.c_str());
+        table->AddColumn(columnArray);
+        }
+      }
+    }
+  else
+    {
+    // Output column. Can be multi-component
+    vtkSmartPointer<vtkDataArray> typedColumn = vtkSmartPointer<vtkDataArray>::Take(vtkDataArray::CreateDataArray(valueTypeId));
+    typedColumn->SetName(columnName.c_str());
+    typedColumn->SetNumberOfComponents(rawComponentArrays.size());
+    vtkIdType numberOfTuples = 0;
+    for (vtkAbstractArray* rawComponentArray : rawComponentArrays)
+      {
+      if (rawComponentArray == nullptr)
+        {
+        continue;
+        }
+      numberOfTuples = std::max(numberOfTuples, rawComponentArray->GetNumberOfTuples());
+      }
+    typedColumn->SetNumberOfTuples(numberOfTuples);
+
+    int componentIndex = 0;
+    for (vtkAbstractArray* componentArray : rawComponentArrays)
+      {
+      vtkSmartPointer<vtkStringArray> rawComponentArray = vtkStringArray::SafeDownCast(componentArray);
+      if (rawComponentArray == nullptr)
+        {
+        vtkWarningMacro("vtkMRMLTableStorageNode::ReadTable: Failed to read component for column " << columnName);
+        // Add an empty default array for components that are not found
+        rawComponentArray = vtkSmartPointer<vtkStringArray>::New();
+        rawComponentArray->SetNumberOfComponents(1);
+        rawComponentArray->SetNumberOfTuples(numberOfTuples);
+        }
+
+      // Single-component array for a potentially multi-component column
+      vtkSmartPointer<vtkDataArray> typedComponentArray = vtkSmartPointer<vtkDataArray>::Take(vtkDataArray::CreateDataArray(valueTypeId));
+      typedComponentArray->SetName(rawComponentArray->GetName());
+      typedComponentArray->SetNumberOfComponents(1);
+      typedComponentArray->SetNumberOfTuples(numberOfTuples);
+
+      /// Fill the component array with the correct values of the correct type
+      this->FillDataFromStringArray(rawComponentArray, typedComponentArray, nullValueString);
+
+      if (rawComponentArrays.size() > 1)
+        {
+        // Multi-component column. Copy the contents of the single component column into the output.
+        typedColumn->CopyComponent(componentIndex, typedComponentArray, 0);
+        }
+      else
+        {
+        // Single-component column. Add the column directly to the output.
+        typedColumn = typedComponentArray;
+        }
+
+      if (componentIndex < columnInfo.ComponentNames.size())
+        {
+        std::string componentName = columnInfo.ComponentNames[componentIndex];
+        typedColumn->SetComponentName(componentIndex, componentName.c_str());
+        }
+      ++componentIndex;
+      }
+    table->AddColumn(typedColumn);
+  }
+}
+
+//----------------------------------------------------------------------------
 bool vtkMRMLTableStorageNode::ReadSchema(std::string filename, vtkMRMLTableNode* tableNode)
 {
   if (filename.empty())
@@ -340,96 +587,16 @@ bool vtkMRMLTableStorageNode::ReadTable(std::string filename, vtkMRMLTableNode* 
     return 0;
     }
 
+  /// Get the info for the columns defined in the schema (Column name, component arrays, component names, scalar type)
+  /// If the schema does not exist, then the raw table is used to generate the table info.
+  std::vector<vtkMRMLTableStorageNode::ColumnInfo> columnDetails = this->GetColumnInfo(tableNode, rawTable);
+
   vtkSmartPointer<vtkTable> table = vtkSmartPointer<vtkTable>::New();
-  for (int col = 0; col < rawTable->GetNumberOfColumns(); ++col)
+  for (vtkMRMLTableStorageNode::ColumnInfo columnInfo : columnDetails)
     {
-    vtkStringArray* column = vtkStringArray::SafeDownCast(rawTable->GetColumn(col));
-    if (column == nullptr)
-      {
-      // invalid column
-      continue;
-      }
-    if (!column->GetName())
-      {
-      vtkWarningMacro("vtkMRMLTableStorageNode::ReadTable: empty column name in file: " << filename << ", skipping column");
-      continue;
-      }
-
-    std::string columnName = column->GetName();
-    int valueTypeId = tableNode->GetColumnValueTypeFromSchema(columnName);
-    if (valueTypeId == VTK_VOID)
-      {
-      // schema is not defined or no valid column type is defined for column
-      valueTypeId = VTK_STRING;
-      }
-    if (valueTypeId == VTK_STRING)
-      {
-      column->SetName(columnName.c_str());
-      table->AddColumn(column);
-      }
-    else
-      {
-      vtkSmartPointer<vtkDataArray> typedColumn = vtkSmartPointer<vtkDataArray>::Take(vtkDataArray::CreateDataArray(valueTypeId));
-      typedColumn->SetName(columnName.c_str());
-      vtkIdType numberOfTuples = column->GetNumberOfTuples();
-      typedColumn->SetNumberOfTuples(numberOfTuples);
-
-      // Initialize with null value
-      std::string nullValueStr = tableNode->GetColumnProperty(columnName, "nullValue");
-      if (typedColumn->IsNumeric())
-        {
-        // numeric arrays can be initialized in one batch
-        double nullValue = 0.0;
-        if (!nullValueStr.empty())
-          {
-          nullValue = vtkVariant(nullValueStr).ToDouble();
-          }
-        typedColumn->FillComponent(0, nullValue);
-        }
-      else
-        {
-        vtkVariant nullValue(nullValueStr);
-        for (vtkIdType row = 0; row < numberOfTuples; ++row)
-          {
-          typedColumn->SetVariantValue(row, nullValue);
-          }
-        }
-
-      // Set values
-      if (valueTypeId == VTK_CHAR || valueTypeId == VTK_SIGNED_CHAR || valueTypeId == VTK_UNSIGNED_CHAR)
-        {
-        bool valid = false;
-        for (vtkIdType row = 0; row < numberOfTuples; ++row)
-          {
-          if (column->GetValue(row).empty())
-            {
-            // empty cell, leave the null value
-            continue;
-            }
-          int value = column->GetVariantValue(row).ToInt(&valid);
-          if (!valid)
-            {
-            continue;
-            }
-          typedColumn->SetVariantValue(row, vtkVariant(value));
-          }
-        }
-      else
-        {
-        for (vtkIdType row = 0; row < numberOfTuples; ++row)
-          {
-          if (column->GetValue(row).empty())
-            {
-            // empty cell, leave the null value
-            continue;
-            }
-          typedColumn->SetVariantValue(row, column->GetVariantValue(row));
-          }
-        }
-
-      table->AddColumn(typedColumn);
-      }
+    this->AddColumnToTable(table, columnInfo);
     }
+
   tableNode->SetAndObserveTable(table);
   return true;
 }
@@ -437,9 +604,51 @@ bool vtkMRMLTableStorageNode::ReadTable(std::string filename, vtkMRMLTableNode* 
 //----------------------------------------------------------------------------
 bool vtkMRMLTableStorageNode::WriteTable(std::string filename, vtkMRMLTableNode* tableNode)
 {
+  vtkTable* originalTable = tableNode->GetTable();
+
+  vtkNew<vtkTable> newTable;
+  for (int i = 0; i < originalTable->GetNumberOfColumns(); ++i)
+    {
+    vtkAbstractArray* oldColumn = originalTable->GetColumn(i);
+    vtkDataArray* oldDataArray = vtkDataArray::SafeDownCast(oldColumn);
+    int numberOfComponents = oldColumn->GetNumberOfComponents();
+    if (oldDataArray && numberOfComponents > 1)
+      {
+      std::string columnName;
+      if (oldColumn->GetName())
+        {
+        columnName = oldColumn->GetName();
+        }
+      for (int componentIndex = 0; componentIndex < numberOfComponents; ++componentIndex)
+        {
+        std::stringstream newColumnNameSS;
+        newColumnNameSS << columnName << COMPONENT_SEPERATOR;
+        if (oldColumn->GetComponentName(componentIndex))
+          {
+          newColumnNameSS << oldColumn->GetComponentName(componentIndex);
+          }
+        else
+          {
+          newColumnNameSS << componentIndex;
+          }
+        std::string newColumnName = newColumnNameSS.str();
+        vtkSmartPointer<vtkDataArray> newColumn = vtkSmartPointer<vtkDataArray>::Take(oldDataArray->NewInstance());
+        newColumn->SetNumberOfComponents(1);
+        newColumn->SetNumberOfTuples(oldColumn->GetNumberOfTuples());
+        newColumn->SetName(newColumnName.c_str());
+        newColumn->CopyComponent(0, oldDataArray, componentIndex);
+        newTable->AddColumn(newColumn);
+        }
+      }
+    else
+      {
+      newTable->AddColumn(oldColumn);
+      }
+    }
+
   vtkNew<vtkDelimitedTextWriter> writer;
   writer->SetFileName(filename.c_str());
-  writer->SetInputData(tableNode->GetTable());
+  writer->SetInputData(newTable);
 
   std::string delimiter = this->GetFieldDelimiterCharacters(filename);
   writer->SetFieldDelimiter(delimiter.c_str());
@@ -475,7 +684,7 @@ bool vtkMRMLTableStorageNode::WriteSchema(std::string filename, vtkMRMLTableNode
 {
   vtkNew<vtkTable> schemaTable;
 
-  // Create a copy, as it is nice if writing to file has a side effect of modifying some
+  // Create a copy, as it is not nice if writing to file has a side effect of modifying some
   // data in the node
   if (tableNode->GetSchema())
     {
@@ -488,8 +697,8 @@ bool vtkMRMLTableStorageNode::WriteSchema(std::string filename, vtkMRMLTableNode
     vtkNew<vtkStringArray> newArray;
     newArray->SetName("columnName");
     newArray->SetNumberOfValues(schemaTable->GetNumberOfRows());
-    schemaTable->AddColumn(newArray.GetPointer());
-    columnNameArray = newArray.GetPointer();
+    schemaTable->AddColumn(newArray);
+    columnNameArray = newArray;
     }
 
   vtkStringArray* columnTypeArray = vtkStringArray::SafeDownCast(schemaTable->GetColumnByName("type"));
@@ -498,8 +707,8 @@ bool vtkMRMLTableStorageNode::WriteSchema(std::string filename, vtkMRMLTableNode
     vtkNew<vtkStringArray> newArray;
     newArray->SetName("type");
     newArray->SetNumberOfValues(schemaTable->GetNumberOfRows());
-    schemaTable->AddColumn(newArray.GetPointer());
-    columnTypeArray = newArray.GetPointer();
+    schemaTable->AddColumn(newArray);
+    columnTypeArray = newArray;
     }
 
   // Add column type to schema
@@ -530,12 +739,69 @@ bool vtkMRMLTableStorageNode::WriteSchema(std::string filename, vtkMRMLTableNode
       }
     }
 
+  vtkStringArray* componentNamesArray = vtkStringArray::SafeDownCast(schemaTable->GetColumnByName("componentNames"));
+  if (componentNamesArray == nullptr)
+    {
+    vtkNew<vtkStringArray> newArray;
+    newArray->SetName("componentNames");
+    newArray->SetNumberOfValues(schemaTable->GetNumberOfRows());
+    schemaTable->AddColumn(newArray);
+    componentNamesArray = newArray;
+    }
+
+  if (componentNamesArray != nullptr)
+    {
+    for (int col = 0; col < table->GetNumberOfColumns(); ++col)
+      {
+      vtkAbstractArray* column = table->GetColumn(col);
+      if (column == nullptr)
+        {
+        // invalid column
+        continue;
+        }
+      if (!column->GetName())
+        {
+        vtkWarningMacro("vtkMRMLTableStorageNode::WriteSchema: empty column name in file: " << filename << ", skipping column");
+        continue;
+        }
+      vtkIdType schemaRowIndex = columnNameArray->LookupValue(column->GetName());
+      if (schemaRowIndex < 0)
+        {
+        schemaRowIndex = schemaTable->InsertNextBlankRow();
+        columnNameArray->SetValue(schemaRowIndex, column->GetName());
+        }
+
+      std::stringstream componentNamesSS;
+      if (column->GetNumberOfComponents() > 1)
+        {
+        for (int componentIndex = 0; componentIndex < column->GetNumberOfComponents(); ++componentIndex)
+          {
+          if (componentIndex != 0)
+            {
+            componentNamesSS << "|";
+            }
+
+          if (column->GetComponentName(componentIndex))
+            {
+            componentNamesSS << column->GetComponentName(componentIndex);
+            }
+          else
+            {
+            componentNamesSS << componentIndex;
+            }
+          }
+        }
+      std::string componentNames = componentNamesSS.str();
+      componentNamesArray->SetValue(schemaRowIndex, componentNames.c_str());
+      }
+    }
+
   vtkNew<vtkDelimitedTextWriter> writer;
   vtkNew<vtkErrorSink> errorWarningObserver;
   errorWarningObserver->SetObservedObject(writer);
 
   writer->SetFileName(filename.c_str());
-  writer->SetInputData(schemaTable.GetPointer());
+  writer->SetInputData(schemaTable);
 
   std::string delimiter = this->GetFieldDelimiterCharacters(filename);
   writer->SetFieldDelimiter(delimiter.c_str());

@@ -17,13 +17,15 @@ class SegmentStatisticsPluginBase(object):
 
   @staticmethod
   def createMeasurementInfo(name, description, units, quantityDicomCode=None, unitsDicomCode=None,
-                            measurementMethodDicomCode=None, derivationDicomCode=None):
+                            measurementMethodDicomCode=None, derivationDicomCode=None, componentNames=None):
     """Utility method to create measurement information"""
     info = {
       "name": name,
       "description": description,
       "units": units
       }
+    if componentNames:
+      info["componentNames"] = componentNames
     if quantityDicomCode:
       info["DICOM.QuantityCode"] = quantityDicomCode
     if unitsDicomCode:
@@ -50,7 +52,7 @@ class SegmentStatisticsPluginBase(object):
       self.parameterNode.RemoveObserver(self.parameterNodeObserver)
 
   def computeStatistics(self, segmentID):
-    """Compute measurements for requested keys on the given segment and return 
+    """Compute measurements for requested keys on the given segment and return
     as dictionary mapping key's to measurement results
     """
     pass
@@ -82,12 +84,12 @@ class SegmentStatisticsPluginBase(object):
       return ()
     requestedKeys = [key for key in self.keys if self.parameterNode.GetParameter(self.toLongKey(key)+'.enabled')=='True']
     return requestedKeys
-  
+
   def toLongKey(self, key):
     # add name of plugin as a prefix for use outside of plugin
     pluginName = self.__class__.__name__
     return pluginName+'.'+key
-  
+
   def toShortKey(self, key):
     # remove prefix used outside of plugin
     pluginName = self.__class__.__name__

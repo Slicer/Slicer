@@ -26,6 +26,7 @@
 #include "vtkMRMLStorageNode.h"
 
 class vtkMRMLTableNode;
+class vtkTable;
 
 /// \brief MRML node for handling Table node storage
 ///
@@ -89,6 +90,28 @@ protected:
   std::string GenerateSchemaFileName(const char* fileName);
 
   virtual std::string GetFieldDelimiterCharacters(std::string filename);
+
+  // Struct for managing column information
+  typedef struct
+  {
+    std::string ColumnName;
+    std::vector<vtkAbstractArray*> RawComponentArrays;
+    int ScalarType = VTK_STRING;
+    std::vector<std::string> ComponentNames;
+    std::string NullValueString;
+  } ColumnInfo;
+
+  /// Determines information about the columns in the table, including column name,
+  /// The raw components that should be includeded in the table, the scalar type,
+  /// and the names of the components.
+  std::vector<ColumnInfo> GetColumnInfo(vtkMRMLTableNode* tableNode, vtkTable* rawTable);
+
+  /// Casts the data in the string array to the correct type and stores it in the data array
+  void FillDataFromStringArray(vtkStringArray* stringComponentArray, vtkDataArray* dataArray, std::string nullValueString="");
+
+  /// Adds the column specified by the given columnInfo to the table.
+  /// Handles both single and multi-component columns
+  void AddColumnToTable(vtkTable* table, ColumnInfo columnInfo);
 
   bool ReadSchema(std::string filename, vtkMRMLTableNode* tableNode);
   bool ReadTable(std::string filename, vtkMRMLTableNode* tableNode);
