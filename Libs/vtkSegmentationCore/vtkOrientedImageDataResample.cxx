@@ -487,16 +487,6 @@ bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceGeometry(vtkO
     return false;
     }
 
-  // Only support the following scalar types
-  int inputImageScalarType = inputImage->GetScalarType();
-  if ( inputImageScalarType != VTK_UNSIGNED_CHAR
-    && inputImageScalarType != VTK_UNSIGNED_SHORT
-    && inputImageScalarType != VTK_SHORT )
-    {
-    vtkErrorWithObjectMacro(inputImage, "ResampleOrientedImageToReferenceGeometry: Input image scalar type must be unsigned char, unsighed short, or short!");
-    return false;
-    }
-
   // Determine IJK extent of contained data (non-zero voxels) in the input image
   int inputExtent[6] = {0,-1,0,-1,0,-1};
   inputImage->GetExtent(inputExtent);
