@@ -47,7 +47,7 @@ qMRMLRangeWidget::qMRMLRangeWidget(QWidget* parentWidget)
 
   this->MinSpinBox = new qMRMLSpinBox(rangeWidget);
   this->MinSpinBox->setPrefix("Min: ");
-  this->MinSpinBox->setRange(-1000000., 1000000.);
+  this->MinSpinBox->setRange(-std::numeric_limits<double>::max(), std::numeric_limits<double>::max());
   this->MinSpinBox->setValue(this->minimum());
   connect(this->MinSpinBox, SIGNAL(valueChanged(double)),
           this, SLOT(updateRange()));
@@ -55,7 +55,7 @@ qMRMLRangeWidget::qMRMLRangeWidget(QWidget* parentWidget)
 
   this->MaxSpinBox = new qMRMLSpinBox(rangeWidget);
   this->MaxSpinBox->setPrefix("Max: ");
-  this->MaxSpinBox->setRange(-1000000., 1000000.);
+  this->MaxSpinBox->setRange(-std::numeric_limits<double>::max(), std::numeric_limits<double>::max());
   this->MaxSpinBox->setValue(this->maximum());
   connect(this->MaxSpinBox, SIGNAL(valueChanged(double)),
           this, SLOT(updateRange()));
