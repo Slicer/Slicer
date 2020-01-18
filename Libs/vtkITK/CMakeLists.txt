@@ -63,6 +63,7 @@ include(${ITK_USE_FILE})
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${vtkAddon_INCLUDE_DIRS}
   )
 include_directories(${include_dirs})
 

@@ -19,6 +19,9 @@
 #include <vtkTableAlgorithm.h>
 #include <vtkVector.h>
 
+// vtkAddon includes
+#include <vtkAddonSetGet.h>
+
 // std includes
 #include <vector>
 
@@ -53,8 +56,8 @@ public:
   static ShapeStatistic GetShapeStatisticFromString(std::string statisticName);
 
   vtkSetObjectMacro(Directions, vtkMatrix4x4);
-  vtkSetMacro(ComputedStatistics, std::vector<std::string>);
-  vtkGetMacro(ComputedStatistics, std::vector<std::string>);
+  vtkSetStdVectorMacro(ComputedStatistics, std::vector<std::string>);
+  vtkGetStdVectorMacro(ComputedStatistics, std::vector<std::string>);
 
   /// Set/Get if the the specified statistic should be computed.
   /// Label centroid and flatness are computed by default.
