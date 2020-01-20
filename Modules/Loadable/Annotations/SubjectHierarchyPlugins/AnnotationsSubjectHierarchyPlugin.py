@@ -9,6 +9,12 @@ class AnnotationsSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin):
       The methods that are not needed (i.e. the default implementation in
       qSlicerSubjectHierarchyAbstractPlugin is satisfactory) can simply be
       omitted in plugins created based on this one.
+
+      The plugin registers itself on creation, but needs to be initialized from the
+      module or application as follows:
+        from SubjectHierarchyPlugins import AnnotationsSubjectHierarchyPlugin
+        scriptedPlugin = slicer.qSlicerSubjectHierarchyScriptedPlugin(None)
+        scriptedPlugin.setPythonSource(AnnotationsSubjectHierarchyPlugin.filePath)
   """
 
   # Necessary static member to be able to set python source to scripted subject hierarchy plugin
@@ -84,6 +90,24 @@ class AnnotationsSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin):
     return []
 
   def showContextMenuActionsForItem(self, itemID):
+    pass
+
+  def viewContextMenuActions(self):
+    """ Important note:
+        In order to use view menus in scripted plugins, it needs to be registered differently,
+        so that the Python API can be fully built by the time this function is called.
+
+        The following changes are necessary:
+        1. Remove or comment out the following line from constructor
+             AbstractScriptedSubjectHierarchyPlugin.__init__(self, scriptedPlugin)
+        2. In addition to the initialization where the scripted plugin is instantialized and
+           the source set, the plugin also needs to be registered manually:
+             pluginHandler = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
+             pluginHandler.registerPlugin(scriptedPlugin)
+    """
+    return []
+
+  def showViewContextMenuActionsForItem(self, itemID, eventData):
     pass
 
   def tooltip(self, itemID):
