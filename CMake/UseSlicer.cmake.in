@@ -272,11 +272,13 @@ if(NOT Slicer_DONT_USE_EXTENSION)
   #-----------------------------------------------------------------------------
   # Configure additional launcher settings
   #-----------------------------------------------------------------------------
-  if(NOT DEFINED Slicer_SKIP_SlicerBlockAdditionalLauncherSettings)
-    set(Slicer_SKIP_SlicerBlockAdditionalLauncherSettings FALSE)
-  endif()
-  if(NOT ${Slicer_SKIP_SlicerBlockAdditionalLauncherSettings})
-    include(SlicerBlockAdditionalLauncherSettings)
+  if(${Slicer_BUILD_CTKAPPLAUNCHER})
+    if(NOT DEFINED Slicer_SKIP_SlicerBlockAdditionalLauncherSettings)
+      set(Slicer_SKIP_SlicerBlockAdditionalLauncherSettings FALSE)
+    endif()
+    if(NOT ${Slicer_SKIP_SlicerBlockAdditionalLauncherSettings})
+      include(SlicerBlockAdditionalLauncherSettings)
+    endif()
   endif()
 
   #-----------------------------------------------------------------------------
