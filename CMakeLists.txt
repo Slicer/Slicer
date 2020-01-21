@@ -350,9 +350,9 @@ mark_as_superbuild(Slicer_USE_SimpleITK_SHARED)
 # Install no development files by default, but allow the user to get
 # them installed by setting Slicer_INSTALL_DEVELOPMENT to true.
 #-----------------------------------------------------------------------------
-#option(Slicer_INSTALL_DEVELOPMENT "Install Slicer extension development files." OFF)
-#mark_as_advanced(Slicer_INSTALL_DEVELOPMENT)
-set(Slicer_INSTALL_DEVELOPMENT OFF)
+option(Slicer_INSTALL_DEVELOPMENT "Install Slicer extension development files." OFF)
+mark_as_advanced(Slicer_INSTALL_DEVELOPMENT)
+
 if(NOT Slicer_INSTALL_DEVELOPMENT)
   set(Slicer_INSTALL_NO_DEVELOPMENT 1)
 else()
