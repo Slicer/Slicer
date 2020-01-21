@@ -1063,13 +1063,15 @@ include(SlicerConfigureVersionHeaderTarget)
 add_dependencies(SlicerBaseLogic SlicerConfigureVersionHeader)
 add_dependencies(MRMLCore SlicerConfigureVersionHeader)
 
-list(APPEND files ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerVersionConfigure.h)
+list(APPEND files vtkSlicerVersionConfigure.h)
 
 if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
+foreach(f ${files})
   install(
-    FILES ${files}
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/${f}
     DESTINATION ${Slicer_INSTALL_INCLUDE_DIR} COMPONENT Development
     )
+endforeach()
 endif()
 
 #-----------------------------------------------------------------------------
