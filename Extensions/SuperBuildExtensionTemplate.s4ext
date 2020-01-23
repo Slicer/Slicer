@@ -18,7 +18,7 @@ depends NA
 build_subdirectory inner-build
 
 # homepage
-homepage http://slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/SuperBuildExtensionTemplate
+homepage https://www.slicer.org/wiki/Documentation/Nightly/Extensions/SuperBuildExtensionTemplate
 
 # Firstname1 Lastname1 ([SubOrg1, ]Org1), Firstname2 Lastname2 ([SubOrg2, ]Org2)
 # For example: Jane Roe (Superware), John Doe (Lab1, Nowhere), Joe Bloggs (Noware)
