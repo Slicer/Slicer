@@ -41,21 +41,21 @@ class VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML_EXPORT vtkMRMLMultiVolumeNode :
 
   static vtkMRMLMultiVolumeNode *New();
   vtkTypeMacro(vtkMRMLMultiVolumeNode,vtkMRMLScalarVolumeNode);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
 
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
+  virtual void ReadXMLAttributes( const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+  virtual void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  virtual void Copy(vtkMRMLNode *node) override;
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "MRMLMultiVolume";};
+  virtual const char* GetNodeTagName() override {return "MRMLMultiVolume";};
 
   /// Update the stored reference to another node in the scene
   //virtual void UpdateReferenceID(const char *oldID, const char *newID);
@@ -75,8 +75,8 @@ class VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML_EXPORT vtkMRMLMultiVolumeNode :
   std::string GetLabelName();
   void SetLabelName(const std::string& n);
 
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() VTK_OVERRIDE;
-  virtual void CreateDefaultDisplayNodes() VTK_OVERRIDE;
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
+  virtual void CreateDefaultDisplayNodes() override;
   
   vtkMRMLMultiVolumeDisplayNode* GetMultiVolumeDisplayNode();
 

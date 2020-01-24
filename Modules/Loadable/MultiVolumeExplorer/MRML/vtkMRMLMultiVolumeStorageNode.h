@@ -31,14 +31,14 @@ class VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML_EXPORT vtkMRMLMultiVolumeStorag
   static vtkMRMLMultiVolumeStorageNode *New();
   vtkTypeMacro(vtkMRMLMultiVolumeStorageNode,vtkMRMLNRRDStorageNode);
 
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  virtual vtkMRMLNode* CreateNodeInstance() override;
 
   /// 
   /// Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE  {return "MultiVolumeStorage";};
+  virtual const char* GetNodeTagName() override  {return "MultiVolumeStorage";};
 
   /// Return true if the node can be read in.
-  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) VTK_OVERRIDE;
+  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
 
 protected:
   vtkMRMLMultiVolumeStorageNode();
@@ -51,7 +51,7 @@ protected:
   /// This implementation delegates most everything to the superclass
   /// but it has an early exit if the file to be read is not a
   /// MultiVolume, e.g. the file is a NRRD but not a MultiVolume NRRD.
-  virtual int ReadDataInternal(vtkMRMLNode* refNode) VTK_OVERRIDE;
+  virtual int ReadDataInternal(vtkMRMLNode* refNode) override;
 };
 
 #endif
