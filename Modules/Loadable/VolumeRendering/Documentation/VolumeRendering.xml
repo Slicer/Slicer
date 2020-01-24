@@ -48,7 +48,7 @@
     </parameter>
     <parameter>
       <label>Rendering</label>
-      <description><![CDATA[Select a volume rendering method. A default method can be set in the application settings Volume Rendering panel.<br  /><UL><b>VTK CPU Ray Casting:</b> Available on all platforms, the volume rendering is entirely realized on the CPU (default)<br  /><b>VTK GPU Ray Casting</b>: Available on all platforms except on Mac with an NVidia graphic card, fastest method to volume render<br  /><b>VTK OpenGL 3D Texture Mapping:</b> Available on all platforms, use the GPU but it is not ray casting<br  /><b>NCI GPU Ray Casting</b>: Available on all platforms, ray caster on the GPU, doesn't support compositing.]]></description>
+      <description><![CDATA[Select a volume rendering method. A default method can be set in the application settings Volume Rendering panel.<br  /><UL><b>VTK CPU Ray Casting:</b> Available on all platforms, the volume rendering is entirely realized on the CPU (default)<br  /><b>VTK GPU Ray Casting</b>: Available on all platforms, fastest method to volume render<br  /><b>VTK Multi-Volume (experimental):</b> GPU ray-casting enabling real multi-volume rendering. Some features are not yet available, such as shading or cropping. Available on all platforms.]]></description>
     </parameter>
   </parameters>
   <parameters>
