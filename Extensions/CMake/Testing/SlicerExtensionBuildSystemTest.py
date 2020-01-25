@@ -701,7 +701,7 @@ include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScri
             'contributors': ['John Doe (AnyWare Corp.)'],
             'description': ['This is an example of a simple extension'],
             'enabled': ['1'],
-            'homepage': ['http://slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/%s' % extensionName],
+            'homepage': ['https://www.slicer.org/wiki/Documentation/Nightly/Extensions/%s' % extensionName],
             'icon_url': ['http://www.example.com/Slicer/Extensions/%s.png' % extensionName],
             'screenshots': ['http://www.example.com/Slicer/Extensions/%s/Screenshots/1.png' % extensionName],
           })

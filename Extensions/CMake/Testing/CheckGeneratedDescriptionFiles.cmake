@@ -37,7 +37,7 @@ endfunction()
 
 check_extension_metadata(
   "HOMEPAGE"
-  "http://slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/TestExtC"
+  "https://www.slicer.org/wiki/Documentation/Nightly/Extensions/TestExtC"
   )
 check_extension_metadata(
   "CATEGORY"
