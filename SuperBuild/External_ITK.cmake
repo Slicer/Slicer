@@ -9,6 +9,9 @@ endif()
 if(Slicer_BUILD_ITKPython)
   list(APPEND ${proj}_DEPENDENCIES Swig python)
 endif()
+if(Slicer_USE_TBB)
+  list(APPEND ${proj}_DEPENDENCIES tbb)
+endif()
 
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
@@ -38,6 +41,13 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     )
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
+
+  if(Slicer_USE_TBB)
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+      -DModule_ITKTBB:BOOL=ON
+      -DTBB_DIR:PATH=${TBB_INSTALL_DIR}/cmake
+      )
+  endif()
 
   if(Slicer_USE_PYTHONQT OR Slicer_BUILD_ITKPython)
     # XXX Ensure python executable used for ITKModuleHeaderTest
@@ -87,7 +97,7 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
 
   #Add additional user specified modules from this variable
-  #Slicer_ITK_ADDITIONAL_MOUDLES
+  #Slicer_ITK_ADDITIONAL_MODULES
   #Add -DModule_${module} for each listed module
   #Names in list must match the expected module names in the ITK build system
   if(DEFINED Slicer_ITK_ADDITIONAL_MODULES)
