@@ -38,6 +38,7 @@ class vtkCallbackCommand;
 
 // STD includes
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -896,7 +897,7 @@ protected:
 
   /// Parse references in the form "role1:id1 id2;role2:id3;"
   /// map contains existing role-id pairs, so we don't repeat them
-  void ParseReferencesAttribute(const char *attValue, std::map<std::string, std::string> &references);
+  void ParseReferencesAttribute(const char *attValue, std::set<std::string> &references);
 
   /// Holders for MRML callbacks
   vtkCallbackCommand *MRMLCallbackCommand;

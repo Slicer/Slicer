@@ -367,53 +367,63 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(undoEnabled, UndoEnabled)
   vtkMRMLReadXMLEndMacro();
 
-  std::map<std::string, std::string> references;
-
+  std::set<std::string> references;
+  const char** xmlReadAtts = atts;
   const char* attName;
   const char* attValue;
-  while (*atts != nullptr)
+  while (*xmlReadAtts != nullptr)
     {
-    attName = *(atts++);
-    attValue = *(atts++);
+    attName = *(xmlReadAtts++);
+    attValue = *(xmlReadAtts++);
+    if (!strcmp(attName, "attributes"))
+      {
+      std::stringstream attributes(attValue);
+      std::string attribute;
+      while (std::getline(attributes, attribute, ';'))
+        {
+        int colonIndex = attribute.find(':');
+        std::string name = attribute.substr(0, colonIndex);
+        std::string value = attribute.substr(colonIndex + 1);
+        // decode percent sign and semicolon (semicolon is a special character because it separates attributes)
+        vtksys::SystemTools::ReplaceString(value, "%3B", ";");
+        vtksys::SystemTools::ReplaceString(value, "%25", "%");
+        this->SetAttribute(name.c_str(), value.c_str());
+        }
+      }
+    else if (!strcmp(attName, "references"))
+      {
+      this->ParseReferencesAttribute(attValue, references);
+      }
+    }
 
-     if (!strcmp(attName, "attributes"))
-       {
-       std::stringstream attributes(attValue);
-       std::string attribute;
-       while (std::getline(attributes, attribute, ';'))
-         {
-         int colonIndex = attribute.find(':');
-         std::string name = attribute.substr(0, colonIndex);
-         std::string value = attribute.substr(colonIndex + 1);
-         // decode percent sign and semicolon (semicolon is a special character because it separates attributes)
-         vtksys::SystemTools::ReplaceString(value, "%3B", ";");
-         vtksys::SystemTools::ReplaceString(value, "%25", "%");
-         this->SetAttribute(name.c_str(), value.c_str());
-         }
-       }
-     else if (!strcmp(attName, "references"))
-       {
-       this->ParseReferencesAttribute(attValue, references);
-       }
-     else if ( const char* referenceRole =
-                 this->GetReferenceRoleFromMRMLAttributeName(attName) )
-       {
-       std::stringstream ss(attValue);
-       while (!ss.eof())
-         {
-         std::string id;
-         ss >> id;
-         if (!id.empty())
-           {
-           if (references.find(id) == references.end() ||
-             references.find(id)->second != referenceRole)
-             {
-             this->AddNodeReferenceID(referenceRole, id.c_str());
-             references[id] = std::string(referenceRole);
-             }
-           }
-         }
-       }
+  // It is important that we look for legacy node references after the "reference" attribute.
+  // If the reference has already been read from the "references" attribute, then we skip it here.
+  xmlReadAtts = atts;
+  while (*xmlReadAtts != nullptr)
+    {
+    attName = *(xmlReadAtts++);
+    attValue = *(xmlReadAtts++);
+    if ( const char* referenceRole =
+                this->GetReferenceRoleFromMRMLAttributeName(attName) )
+      {
+      // Reference role has already been read
+      if (references.find(referenceRole) != references.end())
+        {
+        continue;
+        }
+
+      std::stringstream ss(attValue);
+      while (!ss.eof())
+        {
+        std::string id;
+        ss >> id;
+        if (!id.empty())
+          {
+          this->AddNodeReferenceID(referenceRole, id.c_str());
+          references.insert(std::string(referenceRole));
+          }
+        }
+      }
     }
   this->EndModify(disabledModify);
 
@@ -422,8 +432,7 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
 
 
 //----------------------------------------------------------------------------
-void vtkMRMLNode::ParseReferencesAttribute(const char *attValue,
-                                           std::map<std::string, std::string> &references)
+void vtkMRMLNode::ParseReferencesAttribute(const char *attValue, std::set<std::string> &references)
 {
   /// parse references in the form "role1:id1 id2;role2:id3;"
   std::string attribute(attValue);
@@ -433,21 +442,20 @@ void vtkMRMLNode::ParseReferencesAttribute(const char *attValue,
   std::size_t sep = attribute.find_first_of(':', start);
   while (start != std::string::npos && sep != std::string::npos && start != end && start != sep)
     {
-    std::string ref = attribute.substr(start, end-start);
     std::string role = attribute.substr(start, sep-start);
-    std::string ids = attribute.substr(sep+1, end-sep-1);
-    std::stringstream ss(ids);
-    while (!ss.eof())
+    // Only process this role if it has not been encountered already
+    if (references.find(role) == references.end())
       {
-      std::string id;
-      ss >> id;
-      if (!id.empty())
+      std::string ids = attribute.substr(sep + 1, end - sep - 1);
+      std::stringstream ss(ids);
+      while (!ss.eof())
         {
-        if (references.find(id) == references.end() ||
-          references.find(id)->second != role )
+        std::string id;
+        ss >> id;
+        if (!id.empty())
           {
           this->AddNodeReferenceID(role.c_str(), id.c_str());
-          references[id] = role;
+          references.insert(role);
           }
         }
       }
@@ -506,15 +514,7 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
   std::map< std::string, std::string>::iterator itName;
   for (it = this->NodeReferences.begin(); it != this->NodeReferences.end(); it++)
     {
-    std::string referenceMRMLAttributeName;
     const std::string& referenceRole = it->first;
-    const char *attName = this->GetMRMLAttributeNameFromReferenceRole(referenceRole.c_str());
-    if (attName != nullptr)
-      {
-      referenceMRMLAttributeName = std::string(attName);
-      }
-    std::stringstream ss;
-
     int numReferencedNodes = this->GetNumberOfNodeReferences(referenceRole.c_str());
 
     if (numReferencedNodes > 0)
@@ -525,21 +525,14 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
     for (int n=0; n < numReferencedNodes; n++)
       {
       const char * id = this->GetNthNodeReferenceID(referenceRole.c_str(), n);
-
-      ss << id;
       ssRef << id;
       if (n < numReferencedNodes-1)
         {
-        ss << " ";
         ssRef << " ";
         }
       }
     if (numReferencedNodes > 0)
       {
-      if (referenceMRMLAttributeName.length() > 0)
-        {
-        of << " " << referenceMRMLAttributeName << "=\"" << ss.str().c_str() << "\"";
-        }
       ssRef << ";";
       }
     }
