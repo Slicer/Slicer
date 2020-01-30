@@ -17,28 +17,38 @@ comment = """
 
 #------------------------------------------------------------------------------
 def loadPatientByUID(patientUID):
-  """ Load patient by patient UID from DICOM database
+  """ Load patient by patient UID from DICOM database.
+  Returns list of loaded node ids.
+
+  Example: load all data from a DICOM folder (using a temporary DICOM database)
+
+    dicomDataDir = "c:/my/folder/with/dicom-files"  # input folder with DICOM files
+    loadedNodeIDs = []  # this list will contain the list of all loaded node IDs
+
+    from DICOMLib import DICOMUtils
+    with DICOMUtils.TemporaryDICOMDatabase() as db:
+      DICOMUtils.importDicom(dicomDataDir, db)
+      patientUIDs = db.patients()
+      for patientUID in patientUIDs:
+        loadedNodeIDs.extend(DICOMUtils.loadPatientByUID(patientUID))
+
   """
   if not slicer.dicomDatabase.isOpen:
-    logging.error('DICOM module or database cannot be accessed')
-    return False
+    raise IOError('DICOM module or database cannot be accessed')
 
   patientUIDstr = str(patientUID)
   if not patientUIDstr in slicer.dicomDatabase.patients():
-    logging.error('No patient found with DICOM database UID %s' % patientUIDstr)
-    return False
+    raise IOError('No patient found with DICOM database UID %s' % patientUIDstr)
 
   # Select all series in selected patient
   studies = slicer.dicomDatabase.studiesForPatient(patientUIDstr)
   if len(studies) == 0:
-    logging.warning('No studies found in patient with DICOM database UID ' + patientUIDstr)
-    return False
+    raise IOError('No studies found in patient with DICOM database UID ' + patientUIDstr)
 
   series = [slicer.dicomDatabase.seriesForStudy(study) for study in studies]
   seriesUIDs = [uid for uidList in series for uid in uidList]
   if len(seriesUIDs) == 0:
-    logging.warning('No series found in patient with DICOM database UID ' + patientUIDstr)
-    return False
+    raise IOError('No series found in patient with DICOM database UID ' + patientUIDstr)
 
   return loadSeriesByUID(seriesUIDs)
 
@@ -47,11 +57,8 @@ def getDatabasePatientUIDByPatientName(name):
   """ Get patient UID by patient name for easy loading of a patient
   """
   if not slicer.dicomDatabase.isOpen:
-    logging.error('DICOM module or database cannot be accessed')
-    return False
+    raise IOError('DICOM module or database cannot be accessed')
 
-    logging.error('DICOM database cannot be accessed')
-    return None
   patients = slicer.dicomDatabase.patients()
   for patientUID in patients:
     currentName = slicer.dicomDatabase.nameForPatient(patientUID)
@@ -61,12 +68,12 @@ def getDatabasePatientUIDByPatientName(name):
 
 #------------------------------------------------------------------------------
 def loadPatientByName(patientName):
-  """ Load patient by patient name from DICOM database
+  """ Load patient by patient name from DICOM database.
+  Returns list of loaded node ids.
   """
   patientUID = getDatabasePatientUIDByPatientName(patientName)
   if patientUID is None:
-    logging.error('Patient not found by name %s' % patientName)
-    return False
+    raise IOError('Patient not found by name %s' % patientName)
   return loadPatientByUID(patientUID)
 
 #------------------------------------------------------------------------------
@@ -74,8 +81,8 @@ def getDatabasePatientUIDByPatientID(patientID):
   """ Get database patient UID by DICOM patient ID for easy loading of a patient
   """
   if not slicer.dicomDatabase.isOpen:
-    logging.error('DICOM database cannot be accessed')
-    return None
+    raise IOError('DICOM module or database cannot be accessed')
+
   patients = slicer.dicomDatabase.patients()
   for patientUID in patients:
     # Get first file of first series
@@ -96,16 +103,19 @@ def getDatabasePatientUIDByPatientID(patientID):
 
 #------------------------------------------------------------------------------
 def loadPatientByPatientID(patientID):
-  """ Load patient from DICOM database by DICOM PatientID
+  """ Load patient from DICOM database by DICOM PatientID.
+  Returns list of loaded node ids.
   """
   patientUID = getDatabasePatientUIDByPatientID(patientID)
   if patientUID is None:
-    logging.error('Patient not found by PatientID %s' % patientID)
-    return False
+    raise IOError('Patient not found by PatientID %s' % patientID)
   return loadPatientByUID(patientUID)
 
 #------------------------------------------------------------------------------
 def loadPatient(uid=None, name=None, patientID=None):
+  """ Load patient from DICOM database fr uid, name, or patient ID.
+  Returns list of loaded node ids.
+  """
   if uid is not None:
     return loadPatientByUID(uid)
   elif name is not None:
@@ -113,34 +123,30 @@ def loadPatient(uid=None, name=None, patientID=None):
   elif patientID is not None:
     return loadPatientByPatientID(patientID)
 
-  logging.error('One of the following arguments needs to be specified: uid, name, patientID')
-  return False
+  raise ValueError('One of the following arguments needs to be specified: uid, name, patientID')
 
 #------------------------------------------------------------------------------
 def loadSeriesByUID(seriesUIDs):
-  """ Load multiple series by UID from DICOM database
+  """ Load multiple series by UID from DICOM database.
+  Returns list of loaded node ids.
   """
   if not isinstance(seriesUIDs, list):
-    logging.error('SeriesUIDs must contain a list')
-    return False
+    raise ValueError('SeriesUIDs must contain a list')
   if seriesUIDs is None or len(seriesUIDs) == 0:
-    logging.error('No series UIDs given')
-    return False
+    raise ValueError('No series UIDs given')
+
   if not slicer.dicomDatabase.isOpen:
-    logging.error('DICOM module or database cannot be accessed')
-    return False
+    raise IOError('DICOM module or database cannot be accessed')
 
   fileLists = []
   for seriesUID in seriesUIDs:
     fileLists.append(slicer.dicomDatabase.filesForSeries(seriesUID))
   if len(fileLists) == 0:
-    logging.error('No files found for DICOM series list')
-    return False
+    # No files found for DICOM series list
+    return []
 
   loadablesByPlugin, loadEnabled = getLoadablesFromFileLists(fileLists)
-  loadedNodeIDs = loadLoadables(loadablesByPlugin)
-
-  return True
+  return loadLoadables(loadablesByPlugin)
 
 #------------------------------------------------------------------------------
 def openDatabase(databaseDir):
@@ -259,8 +265,8 @@ def createTemporaryDatabase(directory=None):
   dicomDatabase = ctk.ctkDICOMDatabase()
   dicomDatabase.openDatabase(databaseFileName)
   if dicomDatabase.isOpen:
-    if slicer.dicomDatabase.schemaVersionLoaded() != slicer.dicomDatabase.schemaVersion():
-      slicer.dicomDatabase.closeDatabase()
+    if dicomDatabase.schemaVersionLoaded() != dicomDatabase.schemaVersion():
+      dicomDatabase.closeDatabase()
 
   if dicomDatabase.isOpen:
     return dicomDatabase
@@ -271,14 +277,14 @@ def createTemporaryDatabase(directory=None):
 def deleteTemporaryDatabase(dicomDatabase, cleanup=True):
   """ Close temporary DICOM database and remove its directory if requested
   """
-  slicer.dicomDatabase.closeDatabase()
+  dicomDatabase.closeDatabase()
 
   if cleanup:
-    slicer.dicomDatabase.initializeDatabase()
+    dicomDatabase.initializeDatabase()
     # TODO: The database files cannot be deleted even if the database is closed.
     #       Not critical, as it will be empty, so will not take measurable disk space.
     # import shutil
-    # databaseDir = os.path.split(slicer.dicomDatabase.databaseFilename)[0]
+    # databaseDir = os.path.split(dicomDatabase.databaseFilename)[0]
     # shutil.rmtree(databaseDir)
     # if os.access(databaseDir, os.F_OK):
       # logging.error('Failed to delete DICOM database ' + databaseDir)
@@ -287,7 +293,9 @@ def deleteTemporaryDatabase(dicomDatabase, cleanup=True):
 
 #------------------------------------------------------------------------------
 class TemporaryDICOMDatabase(object):
-  """Context manager to conveniently use temporary DICOM databases
+  """Context manager to conveniently use temporary DICOM database.
+     It creates a new DICOM database and temporarily sets it as the main
+     DICOM database in the application (slicer.dicomDatabase).
   """
   def __init__(self, directory=None):
     self.temporaryDatabaseDir = directory
