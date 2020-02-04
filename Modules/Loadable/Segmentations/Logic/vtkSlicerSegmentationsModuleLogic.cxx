@@ -1810,30 +1810,44 @@ bool vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
 
   if (mergeMode == MODE_REPLACE)
     {
-    vtkSmartPointer<vtkOrientedImageData> modifierLabelmap = labelmap;
-    if (segmentationNode->GetSegmentation()->GetMasterRepresentationName() == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName() &&
-      labelValue != 1)
+    std::vector<std::string> sharedSegmentIDs;
+    segmentationNode->GetSegmentation()->GetSegmentIDsSharingBinaryLabelmapRepresentation(segmentID, sharedSegmentIDs, false);
+    if (sharedSegmentIDs.size() != 0)
       {
-      vtkNew<vtkImageThreshold> threshold;
-      threshold->SetInputData(labelmap);
-      threshold->ThresholdByLower(0);
-      threshold->SetInValue(0);
-      threshold->SetOutValue(labelValue);
-      threshold->Update();
-      modifierLabelmap = vtkSmartPointer<vtkOrientedImageData>::New();
-      modifierLabelmap->ShallowCopy(threshold->GetOutput());
-      modifierLabelmap->CopyDirections(labelmap);
+      // There are other labelmaps that share the same representation.
+      // Clear the representation and use mask mode.
+      mergeMode = MODE_MERGE_MASK;
+      vtkSlicerSegmentationsModuleLogic::ClearSegment(segmentationNode, segmentID);
       }
-    modifiedSegments.push_back(segmentID);
-
-    if (!vtkOrientedImageDataResample::CopyImage(modifierLabelmap, segmentLabelmap, extent))
+    else
       {
-      vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment: Failed to copy labelmap");
-      segmentationNode->GetSegmentation()->SetMasterRepresentationModifiedEnabled(wasMasterRepresentationModifiedEnabled);
-      return false;
+      vtkSmartPointer<vtkOrientedImageData> modifierLabelmap = labelmap;
+      if (labelValue != 1)
+        {
+        // If the label value is not the same as the modifier (which should be 1), change the label value of the modifier labelmap to be
+        // the same as the segment label value.
+        vtkNew<vtkImageThreshold> threshold;
+        threshold->SetInputData(labelmap);
+        threshold->ThresholdByLower(0);
+        threshold->SetInValue(0);
+        threshold->SetOutValue(labelValue);
+        threshold->Update();
+        modifierLabelmap = vtkSmartPointer<vtkOrientedImageData>::New();
+        modifierLabelmap->ShallowCopy(threshold->GetOutput());
+        modifierLabelmap->CopyDirections(labelmap);
+        }
+      modifiedSegments.push_back(segmentID);
+
+      if (!vtkOrientedImageDataResample::CopyImage(modifierLabelmap, segmentLabelmap, extent))
+        {
+        vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment: Failed to copy labelmap");
+        segmentationNode->GetSegmentation()->SetMasterRepresentationModifiedEnabled(wasMasterRepresentationModifiedEnabled);
+        return false;
+        }
       }
     }
-  else
+
+  if (mergeMode != MODE_REPLACE)
     {
     int operation = vtkOrientedImageDataResample::OPERATION_MINIMUM;
     switch (mergeMode)
