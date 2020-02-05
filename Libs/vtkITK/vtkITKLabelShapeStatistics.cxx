@@ -1,16 +1,22 @@
-/*=========================================================================
+/*==============================================================================
 
-  Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
+  Queen's University, Kingston, ON, Canada. All Rights Reserved.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   vtkITK
-  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Libs/vtkITK/vtkITKLabelShapeStatistics.cxx $
-  Date:      $Date: 2006-12-21 07:21:52 -0500 (Thu, 21 Dec 2006) $
-  Version:   $Revision: 1900 $
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
 
-==========================================================================*/
+  This file was originally developed by Kyle Sunderland, PerkLab, Queen's University
+  and was supported through CANARIE's Research Software Program, Cancer
+  Care Ontario, OpenAnatomy, and Brigham and Women’s Hospital through NIH grant R01MH112748.
+
+==============================================================================*/
 
 #include "vtkITKLabelShapeStatistics.h"
 
@@ -78,6 +84,12 @@ std::string vtkITKLabelShapeStatistics::GetShapeStatisticAsString(ShapeStatistic
       return "Roundness";
     case Flatness:
       return "Flatness";
+    case Elongation:
+      return "Elongation";
+    case PrincipalMoments:
+      return "PrincipalMoments";
+    case PrincipalAxes:
+      return "PrincipalAxes";
     default:
       vtkErrorWithObjectMacro(nullptr, "GetShapeStatisticFromString: Cannot determine string for statistic: " << statistic);
       return "";
@@ -171,9 +183,9 @@ T* GetArray(vtkTable* table, std::string name, int numberOfComponents, std::vect
     int componentIndex = 0;
     if (componentNames)
       {
-      if (numberOfComponents != componentNames->size())
+      if (numberOfComponents != static_cast<int>(componentNames->size()))
         {
-        vtkErrorWithObjectMacro(nullptr, "vtkITKLAbelSHapeStatistics: GetArray - Number of components and component names do not match!");
+        vtkErrorWithObjectMacro(nullptr, "vtkITKLabelShapeStatistics: GetArray - Number of components and component names do not match!");
         }
       else
         {
@@ -286,6 +298,12 @@ void vtkITKLabelShapeStatisticsExecute(vtkITKLabelShapeStatistics* self, vtkImag
         vtkDoubleArray* array = GetArray<vtkDoubleArray>(output, statisticName, 1);
         array->InsertTuple1(rowIndex, flatness);
         }
+      else if (statisticName == self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::Elongation))
+        {
+        double elongation = shapeObject->GetElongation();
+        vtkDoubleArray* array = GetArray<vtkDoubleArray>(output, statisticName, 1);
+        array->InsertTuple1(rowIndex, elongation);
+        }
       else if (statisticName == self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::FeretDiameter))
         {
         double feretDiameter = shapeObject->GetFeretDiameter();
@@ -316,6 +334,22 @@ void vtkITKLabelShapeStatisticsExecute(vtkITKLabelShapeStatistics* self, vtkImag
         obbDirectionYArray->InsertTuple3(rowIndex, boundingBoxDirections(1, 0), boundingBoxDirections(1, 1), boundingBoxDirections(1, 2));
         vtkDoubleArray* obbDirectionZArray = GetArray<vtkDoubleArray>(output, "OrientedBoundingBoxDirectionZ", 3);
         obbDirectionZArray->InsertTuple3(rowIndex, boundingBoxDirections(2, 0), boundingBoxDirections(2, 1), boundingBoxDirections(2, 2));
+        }
+      else if (statisticName == self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::PrincipalMoments))
+        {
+        typename ShapeLabelObjectType::VectorType principalMoments = shapeObject->GetPrincipalMoments();
+        vtkDoubleArray* principalMomentsArray = GetArray<vtkDoubleArray>(output, statisticName, 3);
+        principalMomentsArray->InsertTuple3(rowIndex, principalMoments[0], principalMoments[1], principalMoments[2]);
+        }
+      else if (statisticName == self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::PrincipalAxes))
+        {
+        typename ShapeLabelObjectType::MatrixType principalAxes = shapeObject->GetPrincipalAxes();
+        vtkDoubleArray* principalAxisXArray = GetArray<vtkDoubleArray>(output, "PrincipalAxisX", 3);
+        principalAxisXArray->InsertTuple3(rowIndex, principalAxes(0, 0), principalAxes(0, 1), principalAxes(0, 2));
+        vtkDoubleArray* principalAxisYArray = GetArray<vtkDoubleArray>(output, "PrincipalAxisY", 3);
+        principalAxisYArray->InsertTuple3(rowIndex, principalAxes(1, 0), principalAxes(1, 1), principalAxes(1, 2));
+        vtkDoubleArray* principalAxisZArray = GetArray<vtkDoubleArray>(output, "PrincipalAxisZ", 3);
+        principalAxisZArray->InsertTuple3(rowIndex, principalAxes(2, 0), principalAxes(2, 1), principalAxes(2, 2));
         }
       }
     }

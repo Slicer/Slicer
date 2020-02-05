@@ -93,9 +93,18 @@ int TestReadWriteWithSchema(vtkMRMLScene* scene)
   col2->SetName("col2");
   col2->InsertNextValue(123);
   col2->InsertNextValue(456.7);
+  vtkNew<vtkIntArray> col3;
+  col3->SetName("col3");
+  col3->SetNumberOfComponents(3);
+  col3->SetComponentName(0, "A");
+  col3->SetComponentName(1, "B");
+  col3->SetComponentName(2, "C");
+  col3->InsertNextTuple3(1, 2, 3);
+  col3->InsertNextTuple3(9, 8, 7);
   vtkNew<vtkTable> table;
   table->AddColumn(col1.GetPointer());
   table->AddColumn(col2.GetPointer());
+  table->AddColumn(col3.GetPointer());
 
   CHECK_EXIT_SUCCESS(TestReadWriteData(scene, ".csv", table.GetPointer(), true));
   CHECK_EXIT_SUCCESS(TestReadWriteData(scene, ".tsv", table.GetPointer(), true));
@@ -121,7 +130,7 @@ int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkTable* tabl
   int numberOfColumns = table->GetNumberOfColumns();
   CHECK_BOOL(numberOfColumns > 0, true);
 
-  // Add model node
+  // Add table node
   vtkNew<vtkMRMLTableNode> tableNode;
   tableNode->SetAndObserveTable(table);
   CHECK_NOT_NULL(tableNode->GetTable());
@@ -149,5 +158,26 @@ int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkTable* tabl
   CHECK_NOT_NULL(table2);
   CHECK_INT(table2->GetNumberOfColumns(), numberOfColumns);
 
+  // Compare contents
+  for (vtkIdType columnId = 0; columnId < numberOfColumns; ++columnId)
+    {
+    vtkAbstractArray* column = table->GetColumn(columnId);
+    CHECK_NOT_NULL(column);
+
+    vtkAbstractArray* column2 = table2->GetColumn(columnId);
+    CHECK_NOT_NULL(column2);
+
+    CHECK_INT(column->GetNumberOfTuples(), column2->GetNumberOfTuples());
+    CHECK_INT(column->GetNumberOfComponents(), column2->GetNumberOfComponents());
+    for (vtkIdType valueId = 0; valueId < column->GetNumberOfValues(); ++valueId)
+      {
+      CHECK_BOOL(column->GetVariantValue(valueId) == column2->GetVariantValue(valueId), true);
+      }
+
+    for (vtkIdType componentId = 0; componentId < column->GetNumberOfComponents(); ++componentId)
+      {
+      CHECK_STRING(column->GetComponentName(componentId), column2->GetComponentName(componentId));
+      }
+    }
   return EXIT_SUCCESS;
 }

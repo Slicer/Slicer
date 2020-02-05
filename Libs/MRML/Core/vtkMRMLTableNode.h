@@ -147,7 +147,7 @@ public:
   /// Remove all columns from the table (including associated properties).
   /// Returns with true on success.
   bool RemoveAllColumns();
-  
+
   ///
   /// Add an empty row at the end of the table
   /// Returns the index of the inserted row or -1 on failure.
@@ -290,6 +290,25 @@ public:
 
   /// Get value type id from string (uses vtkImageScalarTypeNameMacro)
   static std::string GetValueTypeAsString(int valueType);
+
+  /// Set the component names for the specified column
+  bool SetComponentNames(const std::string& columnName, const std::vector<std::string>& componentNames);
+
+  /// Get the vector of component names from the
+  std::vector<std::string> GetComponentNames(const std::string& columnName);
+
+  /// Get component names stored in the schema. It should only be used during reading/writing of the node,
+  /// because once the table column is created, the actual column names are stored in the data array.
+  std::vector<std::string> GetComponentNamesFromSchema(const std::string& columnName);
+
+  /// Get component names from a vtkAbstractArray as a vector of string
+  static std::vector<std::string> GetComponentNamesFromArray(vtkAbstractArray* array);
+
+  /// Convert the vector of component names from a string of component names separated with the '|' character
+  static const std::vector<std::string> GetComponentNamesFromString(const std::string& componentNameString);
+
+  /// Convert the component names as a string of component names separated with the '|' character
+  static std::string GetComponentNamesAsString(const std::vector<std::string>& componentNames);
 
   //----------------------------------------------------------------
   /// Constructor and destructor

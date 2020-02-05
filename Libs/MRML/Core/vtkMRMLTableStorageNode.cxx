@@ -469,7 +469,7 @@ void vtkMRMLTableStorageNode::AddColumnToTable(vtkTable* table, vtkMRMLTableStor
       }
     typedColumn->SetNumberOfTuples(numberOfTuples);
 
-    int componentIndex = 0;
+    vtkIdType componentIndex = 0;
     for (vtkAbstractArray* componentArray : rawComponentArrays)
       {
       vtkSmartPointer<vtkStringArray> rawComponentArray = vtkStringArray::SafeDownCast(componentArray);
@@ -502,7 +502,7 @@ void vtkMRMLTableStorageNode::AddColumnToTable(vtkTable* table, vtkMRMLTableStor
         typedColumn = typedComponentArray;
         }
 
-      if (componentIndex < columnInfo.ComponentNames.size())
+      if (componentIndex < static_cast<vtkIdType>(columnInfo.ComponentNames.size()))
         {
         std::string componentName = columnInfo.ComponentNames[componentIndex];
         typedColumn->SetComponentName(componentIndex, componentName.c_str());
@@ -771,28 +771,9 @@ bool vtkMRMLTableStorageNode::WriteSchema(std::string filename, vtkMRMLTableNode
         columnNameArray->SetValue(schemaRowIndex, column->GetName());
         }
 
-      std::stringstream componentNamesSS;
-      if (column->GetNumberOfComponents() > 1)
-        {
-        for (int componentIndex = 0; componentIndex < column->GetNumberOfComponents(); ++componentIndex)
-          {
-          if (componentIndex != 0)
-            {
-            componentNamesSS << "|";
-            }
-
-          if (column->GetComponentName(componentIndex))
-            {
-            componentNamesSS << column->GetComponentName(componentIndex);
-            }
-          else
-            {
-            componentNamesSS << componentIndex;
-            }
-          }
-        }
-      std::string componentNames = componentNamesSS.str();
-      componentNamesArray->SetValue(schemaRowIndex, componentNames.c_str());
+      std::vector<std::string> componentNames = vtkMRMLTableNode::GetComponentNamesFromArray(column);
+      std::string componentNamesStr = vtkMRMLTableNode::GetComponentNamesAsString(componentNames);
+      componentNamesArray->SetValue(schemaRowIndex, componentNamesStr.c_str());
       }
     }
 

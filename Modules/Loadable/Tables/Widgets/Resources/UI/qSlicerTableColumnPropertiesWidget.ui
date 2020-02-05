@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>768</width>
+    <width>384</width>
     <height>285</height>
    </rect>
   </property>
@@ -23,7 +23,16 @@
    <property name="fieldGrowthPolicy">
     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
    </property>
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item row="1" column="0">
@@ -96,6 +105,11 @@
        </item>
        <item>
         <property name="text">
+         <string>long</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>long long</string>
         </property>
        </item>
@@ -157,45 +171,73 @@
      </item>
     </layout>
    </item>
-   <item row="3" column="0">
+   <item row="5" column="0">
     <widget class="QLabel" name="NullValueLabel">
      <property name="text">
       <string>Null value:</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
+   <item row="5" column="1">
     <widget class="QLineEdit" name="NullValueLineEdit"/>
    </item>
-   <item row="4" column="0">
+   <item row="6" column="0">
     <widget class="QLabel" name="LongNameLabel">
      <property name="text">
       <string>Long name:</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="6" column="1">
     <widget class="QLineEdit" name="LongNameLineEdit"/>
    </item>
-   <item row="5" column="0">
+   <item row="7" column="0">
     <widget class="QLabel" name="DescriptionLabel">
      <property name="text">
       <string>Description:</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="7" column="1">
     <widget class="QLineEdit" name="DescriptionLineEdit"/>
    </item>
-   <item row="6" column="0">
+   <item row="8" column="0">
     <widget class="QLabel" name="UnitLabelLabel">
      <property name="text">
       <string>Unit label:</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="1">
+   <item row="8" column="1">
     <widget class="QLineEdit" name="UnitLabelLineEdit"/>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="ComponentCountLabel">
+     <property name="text">
+      <string>Component count:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLineEdit" name="ComponentCountLineEdit">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QLineEdit" name="ComponentNamesLineEdit">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="ComponentNamesLabel">
+     <property name="text">
+      <string>Component names:</string>
+     </property>
+    </widget>
    </item>
   </layout>
   <action name="ActionPersistent">

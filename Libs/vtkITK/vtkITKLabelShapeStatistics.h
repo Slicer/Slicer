@@ -1,11 +1,22 @@
-/*=========================================================================
+/*==============================================================================
 
-  Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
+  Queen's University, Kingston, ON, Canada. All Rights Reserved.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-==========================================================================*/
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Kyle Sunderland, PerkLab, Queen's University
+  and was supported through CANARIE's Research Software Program, Cancer
+  Care Ontario, OpenAnatomy, and Brigham and Women’s Hospital through NIH grant R01MH112748.
+
+==============================================================================*/
 
 #ifndef __vtkITKLabelShapeStatistics_h
 #define __vtkITKLabelShapeStatistics_h
@@ -31,7 +42,7 @@ class vtkPoints;
 /// Utilizes itk::LabelImageToShapeLabelMapFilter to calcualte label shape statistics
 /// (https://itk.org/Doxygen/html/classitk_1_1LabelImageToShapeLabelMapFilter.html)
 /// Label centroid and flatness are the only statistics calculated by default.
-/// Other availiable statistics are: Oriented bounding box (origin, size, direction), feret diameter, perimeter, roundness.
+/// For a list of availiable parameters, see: vtkITKLabelShapeStatistics::ShapeStatistic
 /// Calculated statistics can be changed using the SetComputeShapeStatistic/ComputeShapeStatisticOn/ComputeShapeStatisticOff methods.
 /// Output statistics are represented in a vtkTable where each column represents a statistic and each row is a different label value.
 class VTK_ITK_EXPORT vtkITKLabelShapeStatistics : public vtkTableAlgorithm
@@ -41,14 +52,28 @@ public:
   vtkTypeMacro(vtkITKLabelShapeStatistics, vtkTableAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
+  /// Shape statistic parameters
+  /// See parameter definitions and formulas here: http://hdl.handle.net/1926/584
   enum ShapeStatistic
   {
+    /// Location of the center of mass of the label
     Centroid,
+    /// Oriented bounding box of the label
     OrientedBoundingBox,
+    /// Diameter of the sphere that contains the label
     FeretDiameter,
+    /// Surface area of the label
     Perimeter,
+    /// Ratio of the area of the hypersphere by the actual area. A value of 1 represents a spherical structure
     Roundness,
+    /// Square root of the ratio of the second smallest principal moment by the smallest. A value of 0 represents a flat structure
     Flatness,
+    /// Square root of the ratio of the second largest principal moment by the second smallest
+    Elongation,
+    /// Principal moments of inertia for the principal axes
+    PrincipalMoments,
+    // Principal axes of rotation
+    PrincipalAxes,
     ShapeStatistic_Last,
   };
 
