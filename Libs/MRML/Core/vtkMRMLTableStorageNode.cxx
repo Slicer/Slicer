@@ -612,26 +612,32 @@ bool vtkMRMLTableStorageNode::WriteTable(std::string filename, vtkMRMLTableNode*
     vtkAbstractArray* oldColumn = originalTable->GetColumn(i);
     vtkDataArray* oldDataArray = vtkDataArray::SafeDownCast(oldColumn);
     int numberOfComponents = oldColumn->GetNumberOfComponents();
-    if (oldDataArray && numberOfComponents > 1)
+
+    // Component names are only valid for vtkDataArray
+    // If we cannot cast to a vtkDataArray, then add to table as is.
+    // Otherwise, separate to individual components
+    if (!oldDataArray)
+      {
+      newTable->AddColumn(oldColumn);
+      }
+    else
       {
       std::string columnName;
       if (oldColumn->GetName())
         {
         columnName = oldColumn->GetName();
         }
+
+      std::vector<std::string> componentNames = tableNode->GetComponentNames(columnName);
       for (int componentIndex = 0; componentIndex < numberOfComponents; ++componentIndex)
         {
-        std::stringstream newColumnNameSS;
-        newColumnNameSS << columnName << COMPONENT_SEPERATOR;
-        if (oldColumn->GetComponentName(componentIndex))
+        std::string newColumnName = columnName;
+        if (componentNames.size() > componentIndex)
           {
-          newColumnNameSS << oldColumn->GetComponentName(componentIndex);
+          std::stringstream newColumnNameSS;
+          newColumnNameSS << columnName << COMPONENT_SEPERATOR << componentNames[componentIndex];
+          newColumnName = newColumnNameSS.str();
           }
-        else
-          {
-          newColumnNameSS << componentIndex;
-          }
-        std::string newColumnName = newColumnNameSS.str();
         vtkSmartPointer<vtkDataArray> newColumn = vtkSmartPointer<vtkDataArray>::Take(oldDataArray->NewInstance());
         newColumn->SetNumberOfComponents(1);
         newColumn->SetNumberOfTuples(oldColumn->GetNumberOfTuples());
@@ -639,10 +645,6 @@ bool vtkMRMLTableStorageNode::WriteTable(std::string filename, vtkMRMLTableNode*
         newColumn->CopyComponent(0, oldDataArray, componentIndex);
         newTable->AddColumn(newColumn);
         }
-      }
-    else
-      {
-      newTable->AddColumn(oldColumn);
       }
     }
 

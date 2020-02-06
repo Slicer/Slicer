@@ -98,7 +98,7 @@ int TestReadWriteWithSchema(vtkMRMLScene* scene)
   col3->SetNumberOfComponents(3);
   col3->SetComponentName(0, "A");
   col3->SetComponentName(1, "B");
-  col3->SetComponentName(2, "C");
+  col3->SetComponentName(2, "A");
   col3->InsertNextTuple3(1, 2, 3);
   col3->InsertNextTuple3(9, 8, 7);
   vtkNew<vtkTable> table;
@@ -174,9 +174,14 @@ int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkTable* tabl
       CHECK_BOOL(column->GetVariantValue(valueId) == column2->GetVariantValue(valueId), true);
       }
 
-    for (vtkIdType componentId = 0; componentId < column->GetNumberOfComponents(); ++componentId)
+    std::vector<std::string> componentNames = vtkMRMLTableNode::GetComponentNamesFromArray(column);
+    std::vector<std::string> componentNames2 = vtkMRMLTableNode::GetComponentNamesFromArray(column2);
+    CHECK_BOOL(componentNames.size() == componentNames2.size(), true);
+    for (int i = 0; i < componentNames.size(); ++i)
       {
-      CHECK_STRING(column->GetComponentName(componentId), column2->GetComponentName(componentId));
+      std::string componentName = componentNames[i];
+      std::string componentName2 = componentNames2[i];
+      CHECK_STD_STRING(componentName, componentName2);
       }
     }
   return EXIT_SUCCESS;

@@ -1297,20 +1297,46 @@ std::vector<std::string> vtkMRMLTableNode::GetComponentNamesFromArray(vtkAbstrac
     return componentNames;
     }
 
+  if (!vtkDataArray::SafeDownCast(array))
+    {
+    // We don't handle component names for non vtkDataArray types
+    return componentNames;
+    }
+
+  if (array->GetNumberOfComponents() <= 1 && !array->HasAComponentName())
+    {
+    // For single-component array we don't create default component names
+    return componentNames;
+    }
+
+  // Get component names (and generate missing names automatically)
   for (int componentIndex = 0; componentIndex < array->GetNumberOfComponents(); ++componentIndex)
     {
-    const char* componentName = array->GetComponentName(componentIndex);
-    if (componentName != nullptr)
+    std::string componentName;
+    if (array->GetComponentName(componentIndex))
       {
-      componentNames.push_back(componentName);
+      componentName = array->GetComponentName(componentIndex);
       }
     else
       {
       // Default to colum integer name 0, 1, 2, etc.
       std::stringstream ss;
       ss << componentIndex;
-      componentNames.push_back(ss.str());
+      componentName = ss.str();
       }
+
+    // Generate a unique component name
+    int i=0;
+    std::string tempComponentName = componentName;
+    while (std::find(componentNames.begin(), componentNames.end(), componentName) != componentNames.end())
+      {
+      std::stringstream ss;
+      ss << tempComponentName << "_" << i;
+      componentName = ss.str();
+      i++;
+      }
+
+    componentNames.push_back(componentName);
     }
   return componentNames;
 }
