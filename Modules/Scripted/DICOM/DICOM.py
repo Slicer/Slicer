@@ -335,17 +335,19 @@ class DICOMFileDialog(object):
     qSlicerFileDialog.action = slicer.qSlicerFileDialog.Read
     self.directoriesToAdd = []
 
-
   def execDialog(self):
     """Not used"""
     logging.debug('execDialog called on %s' % self)
 
-
   def isMimeDataAccepted(self):
     """Checks the dropped data and returns true if it is one or
     more directories"""
-    self.directoriesToAdd = []
-    mimeData = self.qSlicerFileDialog.mimeData()
+    self.directoriesToAdd = DICOMFileDialog.foldersFromMimeData(self.qSlicerFileDialog.mimeData())
+    self.qSlicerFileDialog.acceptMimeData(len(self.directoriesToAdd) != 0)
+
+  @staticmethod
+  def foldersFromMimeData(mimeData, acceptFiles=False):
+    directoriesToAdd = []
     if mimeData.hasFormat('text/uri-list'):
       urls = mimeData.urls()
       for url in urls:
@@ -353,11 +355,13 @@ class DICOMFileDialog(object):
         pathInfo = qt.QFileInfo()
         pathInfo.setFile(localPath) # information about the path
         if pathInfo.isDir(): # if it is a directory we add the files to the dialog
-          self.directoriesToAdd.append(localPath)
-    self.qSlicerFileDialog.acceptMimeData(len(self.directoriesToAdd) != 0)
+          directoriesToAdd.append(localPath)
+        elif acceptFiles:
+          directoriesToAdd.append(pathInfo.absolutePath())
+    return directoriesToAdd
 
-
-  def validDirectories(self, directoriesToAdd):
+  @staticmethod
+  def validDirectories(directoriesToAdd):
     """Return True if the directory names are acceptable for input.
     If path contains non-ASCII characters then they are rejected because
     DICOM module cannot reliable read files form folders that contain
@@ -378,9 +382,8 @@ class DICOMFileDialog(object):
           return False
     return True
 
-
   def dropEvent(self):
-    if not self.validDirectories(self.directoriesToAdd):
+    if not DICOMFileDialog.validDirectories(self.directoriesToAdd):
       if not slicer.util.confirmYesNoDisplay("Import from folders with special (non-ASCII) characters in the name is not supported."
           " It is recommended to move files into a different folder and retry. Try to import from current location anyway?"):
         self.directoriesToAdd = []
@@ -390,6 +393,50 @@ class DICOMFileDialog(object):
     slicer.modules.DICOMInstance.browserWidget.dicomBrowser.importDirectories(self.directoriesToAdd)
     self.directoriesToAdd = []
 
+
+class DICOMLoadingByDragAndDropEventFilter(qt.QWidget):
+  """This event filter is used for overriding drag-and-drop behavior while
+  the DICOM module is active. To simplify DICOM import, while DICOM module is active
+  then files or folders that are drag-and-dropped to the application window
+  are always interpreted as DICOM data.
+  """
+
+  def eventFilter(self, object, event):
+    """
+    Custom event filter for Slicer Main Window.
+
+    Inputs: Object (QObject), Event (QEvent)
+    """
+    if event.type() == qt.QEvent.DragEnter:
+      self.dragEnterEvent(event)
+      return True
+    if event.type() == qt.QEvent.Drop:
+      self.dropEvent(event)
+      return True
+    return False
+
+  def dragEnterEvent(self, event):
+    """
+    Actions to do when a drag enter event occurs in the Main Window.
+
+    Read up on https://doc.qt.io/qt-5.12/dnd.html#dropping
+    Input: Event (QEvent)
+    """
+    self.directoriesToAdd = DICOMFileDialog.foldersFromMimeData(event.mimeData(), acceptFiles=True)
+    if self.directoriesToAdd:
+      event.acceptProposedAction()  # allows drop event to proceed
+    else:
+      event.ignore()
+
+  def dropEvent(self, event):
+    if not DICOMFileDialog.validDirectories(self.directoriesToAdd):
+      if not slicer.util.confirmYesNoDisplay("Import from folders with special (non-ASCII) characters in the name is not supported."
+          " It is recommended to move files into a different folder and retry. Try to import from current location anyway?"):
+        self.directoriesToAdd = []
+        return
+
+    slicer.modules.DICOMInstance.browserWidget.dicomBrowser.importDirectories(self.directoriesToAdd)
+    self.directoriesToAdd = []
 
 
 #
@@ -409,6 +456,8 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
     # collapse reload & test section by default.
     if hasattr(self, "reloadCollapsibleButton"):
       self.reloadCollapsibleButton.collapsed = True
+
+    self.dragAndDropEventFilter = DICOMLoadingByDragAndDropEventFilter()
 
     globals()['d'] = self
 
@@ -503,13 +552,18 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
     self.databaseRefreshRequestTimer.connect('timeout()', self.requestDatabaseRefresh)
 
 
+
+
   def enter(self):
     self.onOpenBrowserWidget()
     self.addListenerObservers()
     self.onListenerStateChanged()
+    # While DICOM module is active, drag-and-drop always performs DICOM import
+    slicer.util.mainWindow().installEventFilter(self.dragAndDropEventFilter)
 
 
   def exit(self):
+    slicer.util.mainWindow().removeEventFilter(self.dragAndDropEventFilter)
     self.removeListenerObservers()
     self.browserWidget.close()
 
