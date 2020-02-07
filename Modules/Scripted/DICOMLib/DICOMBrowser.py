@@ -420,30 +420,26 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         if not os.path.exists(filePath):
           missingFileCount += 1
 
-    if missingFileCount > 0:
-      messages.appendslicer.util.warningDisplay("Warning: %d of %d selected files listed in the database cannot be found on disk."
-                                 % (missingFileCount, allFileCount), windowTitle="DICOM")
-
-    if missingFileCount == allFileCount:
-      # Nothing to load
-      return loadablesByPlugin, loadEnabled
-
-    progressDialog = slicer.util.createProgressDialog(parent=self, value=0, maximum=100)
-
-    def progressCallback(progressDialog, progressLabel, progressValue):
-      progressDialog.labelText = '\nChecking %s' % progressLabel
-      slicer.app.processEvents()
-      progressDialog.setValue(progressValue)
-      slicer.app.processEvents()
-      cancelled = progressDialog.wasCanceled
-      return cancelled
-
     messages = []
-    loadablesByPlugin, loadEnabled = DICOMLib.getLoadablesFromFileLists(fileLists, self.pluginSelector.selectedPlugins(), messages,
-      lambda progressLabel, progressValue, progressDialog=progressDialog: progressCallback(progressDialog, progressLabel, progressValue),
-      self.pluginInstances)
+    if missingFileCount > 0:
+      messages.append("Warning: %d of %d selected files listed in the database cannot be found on disk." % (missingFileCount, allFileCount))
 
-    progressDialog.close()
+    if missingFileCount < allFileCount:
+      progressDialog = slicer.util.createProgressDialog(parent=self, value=0, maximum=100)
+
+      def progressCallback(progressDialog, progressLabel, progressValue):
+        progressDialog.labelText = '\nChecking %s' % progressLabel
+        slicer.app.processEvents()
+        progressDialog.setValue(progressValue)
+        slicer.app.processEvents()
+        cancelled = progressDialog.wasCanceled
+        return cancelled
+
+      loadablesByPlugin, loadEnabled = DICOMLib.getLoadablesFromFileLists(fileLists, self.pluginSelector.selectedPlugins(), messages,
+        lambda progressLabel, progressValue, progressDialog=progressDialog: progressCallback(progressDialog, progressLabel, progressValue),
+        self.pluginInstances)
+
+      progressDialog.close()
 
     if messages:
       slicer.util.warningDisplay("Warning: %s\n\nSee python console for error message." % ' '.join(messages),
