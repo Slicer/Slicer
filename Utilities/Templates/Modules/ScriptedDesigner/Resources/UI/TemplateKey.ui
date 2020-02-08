@@ -127,6 +127,9 @@
    </item>
    <item row="0" column="1">
     <widget class="qMRMLNodeComboBox" name="parameterNodeSelector">
+     <property name="toolTip">
+      <string>Pick node to store parameter set</string>
+     </property>
      <property name="nodeTypes">
       <stringlist>
        <string>vtkMRMLScriptedModuleNode</string>
@@ -134,6 +137,9 @@
      </property>
      <property name="showHidden">
       <bool>true</bool>
+     </property>
+     <property name="baseName">
+      <string>TemplateKey</string>
      </property>
      <property name="renameEnabled">
       <bool>true</bool>
