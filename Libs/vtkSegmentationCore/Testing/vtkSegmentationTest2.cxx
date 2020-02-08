@@ -199,7 +199,7 @@ bool TestSharedLabelmapCollapse()
     imageCount3,
     imageCount4,
     };
-  for (int i = 0; i < segments.size(); ++i)
+  for (size_t i = 0; i < segments.size(); ++i)
     {
     vtkSegment* segment = segments[i];
     int expectedFrequency = expectedResults[i];
@@ -235,7 +235,7 @@ bool TestSharedLabelmapCollapse()
     imageCount3,
     imageCount4,
     };
-  for (int i = 0; i < segments.size(); ++i)
+  for (size_t i = 0; i < segments.size(); ++i)
     {
     vtkSegment* segment = segments[i];
     int expectedFrequency = expectedResults[i];

@@ -47,6 +47,8 @@ set(vtkSegmentationCore_SRCS
   vtkSegmentationConverterRule.h
   vtkSegmentationHistory.cxx
   vtkSegmentationHistory.h
+  vtkSegmentationModifier.cxx
+  vtkSegmentationModifier.h
   vtkTopologicalHierarchy.cxx
   vtkTopologicalHierarchy.h
   vtkBinaryLabelmapToClosedSurfaceConversionRule.cxx

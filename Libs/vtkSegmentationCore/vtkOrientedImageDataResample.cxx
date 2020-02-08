@@ -1740,7 +1740,7 @@ void IsLabelInMaskGeneric2(vtkOrientedImageData* binaryLabelmap, vtkOrientedImag
       {
       for (vtkIdType idxX = 0; idxX <= maxX; idxX++)
         {
-        if (static_cast<MaskScalarType>(*maskPointer) > maskThreshold && *binaryLabelmapPointer != (ImageScalarType)0)
+        if (*maskPointer > static_cast<MaskScalarType>(maskThreshold) && *binaryLabelmapPointer != (ImageScalarType)0)
           {
           inMask = true;
           return;

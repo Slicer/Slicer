@@ -468,7 +468,6 @@ public:
 
 protected:
   bool ConvertSegmentsUsingPath(std::vector<std::string> segmentIDs, vtkSegmentationConverter::ConversionPathType path, bool overwriteExisting = false);
-  bool ConvertSegments(std::vector<std::string> segmentIDs, bool overwriteExisting = false);
 
   /// Convert given segment along a specified path
   /// \param segment Segment to convert
@@ -553,6 +552,7 @@ protected:
 
   friend class vtkMRMLSegmentationNode;
   friend class vtkSlicerSegmentationsModuleLogic;
+  friend class vtkSegmentationModifier;
   friend class qMRMLSegmentEditorWidgetPrivate;
 };
 

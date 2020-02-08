@@ -807,7 +807,7 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
     }
 
   // Add the created segments to the segmentation
-  for (int segmentIndex = 0; segmentIndex < segments.size(); ++segmentIndex)
+  for (int segmentIndex = 0; segmentIndex < static_cast<int>(segments.size()); ++segmentIndex)
     {
     vtkSegment* currentSegment = segments[segmentIndex];
     if (!currentSegment)

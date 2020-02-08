@@ -405,48 +405,13 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
   std::vector<std::string> sharedSegmentIDs;
   segmentationNode->GetSegmentation()->GetSegmentIDsSharingBinaryLabelmapRepresentation(segmentID, sharedSegmentIDs, false);
 
-  // Determine if there are any segments on the same layer that we should not overwrite
-  bool segmentsOnLayerShouldOverlap = false;
-  for (std::string sharedID : sharedSegmentIDs)
+  std::vector<std::string> segmentsToErase;
+  for (std::string segmentIDToOverwrite : segmentIDsToOverwrite)
     {
-    if (std::find(segmentIDsToOverwrite.begin(), segmentIDsToOverwrite.end(), sharedID) == segmentIDsToOverwrite.end())
+    std::vector<std::string>::iterator foundSegmentIDIt = std::find(sharedSegmentIDs.begin(), sharedSegmentIDs.end(), segmentIDToOverwrite);
+    if (foundSegmentIDIt == sharedSegmentIDs.end())
       {
-      segmentsOnLayerShouldOverlap = true;
-      break;
-      }
-    }
-
-  // If there are segments on the same layer that we should not overwrite, determine if there are any under the modifier labelmap
-  if (segmentsOnLayerShouldOverlap)
-    {
-    std::vector<std::string> sharedSegmentsUnderModifier;
-    vtkSlicerSegmentationsModuleLogic::GetSharedSegmentIDsInMask(segmentationNode, segmentID, modifierLabelmap,
-      extent, sharedSegmentsUnderModifier, 0.0, false);
-
-    bool separateSegmentID = false;
-    for (std::string sharedSegmentID : sharedSegmentsUnderModifier)
-      {
-      std::vector<std::string>::iterator foundOverwriteIDIt = std::find(segmentIDsToOverwrite.begin(), segmentIDsToOverwrite.end(), sharedSegmentID);
-      if (foundOverwriteIDIt == segmentIDsToOverwrite.end())
-        {
-        separateSegmentID = true;
-        break;
-        }
-      }
-
-    // We would overwrite a segment that should not be. Separate the segment to a separate layer
-    if (separateSegmentID)
-      {
-      segmentationNode->GetSegmentation()->SeparateSegmentLabelmap(segmentationNode->GetSegmentation()->GetSegmentIdBySegment(segment));
-      }
-    }
-
-  for (std::string sharedSegmentID : sharedSegmentIDs)
-    {
-    std::vector<std::string>::iterator foundOverwriteIDIt = std::find(segmentIDsToOverwrite.begin(), segmentIDsToOverwrite.end(), sharedSegmentID);
-    if (foundOverwriteIDIt != segmentIDsToOverwrite.end())
-      {
-      segmentIDsToOverwrite.erase(foundOverwriteIDIt);
+      segmentsToErase.push_back(segmentIDToOverwrite);
       }
     }
 
@@ -474,12 +439,13 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
     modifierLabelmap->GetImageToWorldMatrix(imageToWorldMatrix.GetPointer());
     invertedModifierLabelmap->SetGeometryFromImageToWorldMatrix(imageToWorldMatrix.GetPointer());
     if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
-      invertedModifierLabelmap.GetPointer(), segmentationNode, segmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MIN))
+      invertedModifierLabelmap.GetPointer(), segmentationNode, segmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MIN,
+      nullptr, false, segmentIDsToOverwrite))
       {
       qCritical() << Q_FUNC_INFO << ": Failed to remove modifier labelmap from selected segment";
       }
     if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
-      modifierLabelmap, segmentationNode, segmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MASK, extent))
+      modifierLabelmap, segmentationNode, segmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MASK, extent, false, segmentIDsToOverwrite))
       {
       qCritical() << Q_FUNC_INFO << ": Failed to add modifier labelmap to selected segment";
       }
@@ -487,7 +453,7 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
   else if (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeAdd)
     {
     if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
-      modifierLabelmap, segmentationNode, segmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MASK, extent))
+      modifierLabelmap, segmentationNode, segmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MASK, extent, false, segmentIDsToOverwrite))
       {
       qCritical() << Q_FUNC_INFO << ": Failed to add modifier labelmap to selected segment";
       }
@@ -502,7 +468,8 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
     modifierLabelmap->GetImageToWorldMatrix(imageToWorldMatrix.GetPointer());
     invertedModifierLabelmap->SetGeometryFromImageToWorldMatrix(imageToWorldMatrix.GetPointer());
     if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
-      invertedModifierLabelmap.GetPointer(), segmentationNode, segmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MIN, extent))
+      invertedModifierLabelmap.GetPointer(), segmentationNode, segmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MIN,
+      extent, false, segmentIDsToOverwrite))
       {
       qCritical() << Q_FUNC_INFO << ": Failed to remove modifier labelmap from selected segment";
       }
@@ -516,7 +483,7 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
       }
     }
 
-  if (!segmentIDsToOverwrite.empty() &&
+  if (!segmentsToErase.empty() &&
      ( modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeSet
     || modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeAdd
     || modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemoveAll))
@@ -529,9 +496,9 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
     invertedModifierLabelmap->SetGeometryFromImageToWorldMatrix(imageToWorldMatrix.GetPointer());
 
     std::map<vtkDataObject*, bool> erased;
-    for (std::string currentSegmentID : segmentIDsToOverwrite)
+    for (std::string eraseSegmentID : segmentsToErase)
       {
-      vtkSegment* currentSegment = segmentationNode->GetSegmentation()->GetSegment(currentSegmentID);
+      vtkSegment* currentSegment = segmentationNode->GetSegmentation()->GetSegment(eraseSegmentID);
       vtkDataObject* dataObject = currentSegment->GetRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
       if (erased[dataObject])
         {
@@ -543,10 +510,10 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
 
       std::vector<std::string> dontOverwriteIDs;
       std::vector<std::string> currentSharedIDs;
-      segmentationNode->GetSegmentation()->GetSegmentIDsSharingBinaryLabelmapRepresentation(currentSegmentID, currentSharedIDs, true);
+      segmentationNode->GetSegmentation()->GetSegmentIDsSharingBinaryLabelmapRepresentation(eraseSegmentID, currentSharedIDs, true);
       for (std::string sharedSegmentID : currentSharedIDs)
         {
-        if (std::find(segmentIDsToOverwrite.begin(), segmentIDsToOverwrite.end(), sharedSegmentID) == segmentIDsToOverwrite.end())
+        if (std::find(segmentsToErase.begin(), segmentsToErase.end(), sharedSegmentID) == segmentsToErase.end())
           {
           dontOverwriteIDs.push_back(sharedSegmentID);
           }
@@ -576,9 +543,9 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
         }
 
       if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
-        invertedModifierLabelmap2, segmentationNode, currentSegmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MIN, extent, true))
+        invertedModifierLabelmap2, segmentationNode, eraseSegmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MIN, extent, true, segmentIDsToOverwrite))
         {
-        qCritical() << Q_FUNC_INFO << ": Failed to set modifier labelmap to segment " << (currentSegmentID.c_str());
+        qCritical() << Q_FUNC_INFO << ": Failed to set modifier labelmap to segment " << (eraseSegmentID.c_str());
         }
       }
     }
@@ -591,7 +558,8 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
       && this->parameterSetNode()->GetMaskSegmentID())
       {
       if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
-        modifierLabelmap, segmentationNode, this->parameterSetNode()->GetMaskSegmentID(), vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MASK, extent))
+        modifierLabelmap, segmentationNode, this->parameterSetNode()->GetMaskSegmentID(), vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MASK,
+        extent, false, segmentIDsToOverwrite))
         {
         qCritical() << Q_FUNC_INFO << ": Failed to remove modifier labelmap from segment " << this->parameterSetNode()->GetMaskSegmentID();
         }

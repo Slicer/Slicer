@@ -174,8 +174,6 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* segment
       imageAccumulate->SetComponentSpacing(1, 1, 1);
       imageAccumulate->SetComponentExtent(lowLabel, highLabel, 0, 0, 0, 0);
       imageAccumulate->Update();
-      int minimum = (int)imageAccumulate->GetMin()[0];
-      int maximum = (int)imageAccumulate->GetMax()[0];
 
       std::vector<int> labelValues;
       for (int labelValue = lowLabel; labelValue <= highLabel; ++labelValue)
@@ -288,7 +286,6 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
   double decimationFactor = vtkVariant(this->ConversionParameters[GetDecimationFactorParameterName()].first).ToDouble();
   double smoothingFactor = vtkVariant(this->ConversionParameters[GetSmoothingFactorParameterName()].first).ToDouble();
   int computeSurfaceNormals = vtkVariant(this->ConversionParameters[GetComputeSurfaceNormalsParameterName()].first).ToInt();
-  int jointSmoothing = vtkVariant(this->ConversionParameters[GetJointSmoothingParameterName()].first).ToInt();
 
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   vtkNew<vtkDiscreteFlyingEdges3D> marchingCubes;

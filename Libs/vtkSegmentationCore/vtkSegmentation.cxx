@@ -361,8 +361,6 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
       reprIt != requiredRepresentationNames.end(); ++reprIt)
       {
       vtkSmartPointer<vtkDataObject> emptyRepresentation;
-      bool isSharedLabelmap = false;
-      int sharedLabelmapValue = -1;
       if (this->GetMasterRepresentationName() == vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName())
         {
         for (std::deque<std::string>::iterator segmentIDIt = this->SegmentIds.begin(); segmentIDIt != this->SegmentIds.end(); ++segmentIDIt)
@@ -370,8 +368,6 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
           emptyRepresentation = segment->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
           if (emptyRepresentation)
             {
-            isSharedLabelmap = true;
-            sharedLabelmapValue = 1;
             break;
             }
           }
@@ -1063,12 +1059,6 @@ bool vtkSegmentation::ConvertSegmentsUsingPath(std::vector<std::string> segmentI
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSegmentation::ConvertSegments(std::vector<std::string> segmentIDs, bool overwriteExisting)
-{
-  return true;
-}
-
-//-----------------------------------------------------------------------------
 bool vtkSegmentation::ConvertSegmentUsingPath(vtkSegment* segment, vtkSegmentationConverter::ConversionPathType path, bool overwriteExisting/*=false*/)
 {
   // Execute each conversion step in the selected path
@@ -1179,7 +1169,6 @@ bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentati
   std::map<std::string, vtkDataObject*> representationsBefore;
   for (SegmentMap::iterator segmentIt = this->Segments.begin(); segmentIt != this->Segments.end(); ++segmentIt)
     {
-    vtkSegment* segment = segmentIt->second;
     representationsBefore[segmentIt->first] = segmentIt->second->GetRepresentation(targetRepresentationName);
     }
 
@@ -1193,7 +1182,6 @@ bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentati
 
   for (SegmentMap::iterator segmentIt = this->Segments.begin(); segmentIt != this->Segments.end(); ++segmentIt)
     {
-    vtkSegment* segment = segmentIt->second;
     vtkDataObject* representationBefore = representationsBefore[segmentIt->first];
     vtkDataObject* representationAfter = segmentIt->second->GetRepresentation(targetRepresentationName);
     if (representationBefore != representationAfter
@@ -1797,7 +1785,6 @@ std::string vtkSegmentation::AddEmptySegment(std::string segmentId/*=""*/, std::
   if (this->MasterRepresentationName == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName())
     {
     std::string sharedSegmentId;
-    int numberOfSharedSegments = 0;
     if (this->SegmentIds.size() > 0)
       {
       // Add the empty segment to the first shared labelmap.
