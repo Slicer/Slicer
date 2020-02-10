@@ -1024,6 +1024,29 @@ def arrayFromModelPointData(modelNode, arrayName):
   narray = vtk.util.numpy_support.vtk_to_numpy(arrayVtk)
   return narray
 
+def arrayFromModelPolyIds(modelNode):
+  """Return poly id array of a model node as numpy array.
+
+  These ids are the following format:
+  [ n(0), i(0,0), i(0,1), ... i(0,n(00),..., n(j), i(j,0), ... i(j,n(j))...]
+  where n(j) is the number of vertices in polygon j
+  and i(j,k) is the index into the vertex array for vertex k of poly j.
+
+  As described here:
+  https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf
+
+  Typically in Slicer n(j) will always be 3 because a model node's
+  polygons will be triangles.
+
+  .. warning:: Important: memory area of the returned array is managed by VTK,
+    therefore values in the array may be changed, but the array must not be reallocated.
+    See :py:meth:`arrayFromVolume` for details.
+  """
+  import vtk.util.numpy_support
+  arrayVtk = modelNode.GetPolyData().GetPolys().GetData()
+  narray = vtk.util.numpy_support.vtk_to_numpy(arrayVtk)
+  return narray
+
 def arrayFromGridTransform(gridTransformNode):
   """Return voxel array from transform node as numpy array.
   Vector values are not copied. Values in the transform node can be modified
