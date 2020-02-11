@@ -50,18 +50,15 @@ if(NOT DEFINED DCMTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/commontk/dcmtk"
+    "${EP_GIT_PROTOCOL}://git.dcmtk.org/dcmtk"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    # Official DCMTK master as of 20180621
-    # http://git.dcmtk.org/?p=dcmtk.git;a=commit;h=29f9de10c2e8576147f16475b156bba98d14ba7d
-    # plus the following patch:
-    # * Set CMP0067 to ensure try_compile work as expected
-    # * Backport fix for DICOM TR support for along-track measurements
-    "22f253424f70d6c6d8ea91a11fcc07231e6ac2bf" # v3.6.3_20180621
+    # Official DCMTK release DCMTK-3.6.5
+    # http://git.dcmtk.org/?p=dcmtk.git;a=commit;h=0f2de2313a00f9360bdf33399a2f37ee5e65c429
+    "DCMTK-3.6.5"
     QUIET
     )
 
