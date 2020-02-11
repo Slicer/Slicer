@@ -324,10 +324,10 @@ class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
                                                                              "Sum of segmented voxel volumes", True))
 
     info["centroid_ras"] = \
-      self.createMeasurementInfo(name="Centroid (RAS)", description="Location of the centroid in RAS", units="", componentNames=["r", "a", "s"])
+      self.createMeasurementInfo(name="Centroid", description="Location of the centroid in RAS", units="", componentNames=["r", "a", "s"])
 
     info["feret_diameter_mm"] = \
-      self.createMeasurementInfo(name="Feret Diameter mm", description="Feret diameter in mm", units="mm")
+      self.createMeasurementInfo(name="Feret diameter mm", description="Feret diameter in mm", units="mm")
 
     info["surface_area_mm2"] = \
       self.createMeasurementInfo(name="Surface mm2", description="Surface area in mm2", units="mm2",
@@ -353,31 +353,31 @@ class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
       self.createMeasurementInfo(name="Oriented bounding box", description="Oriented bounding box", units="")
 
     info["obb_origin_ras"] = \
-      self.createMeasurementInfo(name="OBB origin (RAS)", description="Oriented bounding box origin", units="", componentNames=["r", "a", "s"])
+      self.createMeasurementInfo(name="OBB origin", description="Oriented bounding box origin in RAS coordinates", units="", componentNames=["r", "a", "s"])
 
     info["obb_diameter_mm"] = \
-      self.createMeasurementInfo(name="OBB diameter", description="Oriented bounding box diameter", units="mm", componentNames=["x", "y", "z"])
+      self.createMeasurementInfo(name="OBB diameter", description="Oriented bounding box diameter in mm", units="mm", componentNames=["x", "y", "z"])
 
     info["obb_direction_ras_x"] = \
-      self.createMeasurementInfo(name="OBB X direction (RAS)", description="Oriented bounding box X direction", units="", componentNames=["r", "a", "s"])
+      self.createMeasurementInfo(name="OBB X direction", description="Oriented bounding box X direction in RAS coordinates", units="", componentNames=["r", "a", "s"])
 
     info["obb_direction_ras_y"] = \
-      self.createMeasurementInfo(name="OBB Y direction (RAS)", description="Oriented bounding box Y direction", units="", componentNames=["r", "a", "s"])
+      self.createMeasurementInfo(name="OBB Y direction", description="Oriented bounding box Y direction in RAS coordinates", units="", componentNames=["r", "a", "s"])
 
     info["obb_direction_ras_z"] = \
-      self.createMeasurementInfo(name="OBB Z direction (RAS)", description="Oriented bounding box Z direction", units="", componentNames=["r", "a", "s"])
+      self.createMeasurementInfo(name="OBB Z direction", description="Oriented bounding box Z direction in RAS coordinates", units="", componentNames=["r", "a", "s"])
 
     info["principal_moments"] = \
       self.createMeasurementInfo(name="Principal moments", description="Principal moments of inertia for x, y and z axes",
       units="", componentNames=["x", "y", "z"])
 
     info["principal_axis_x"] = \
-      self.createMeasurementInfo(name="Principal X axis", description="Principal X axis of rotation", units="", componentNames=["r", "a", "s"])
+      self.createMeasurementInfo(name="Principal X axis", description="Principal X axis of rotation in RAS coordinates", units="", componentNames=["r", "a", "s"])
 
     info["principal_axis_y"] = \
-      self.createMeasurementInfo(name="Principal Y axis", description="Principal Y axis of rotation", units="", componentNames=["r", "a", "s"])
+      self.createMeasurementInfo(name="Principal Y axis", description="Principal Y axis of rotation in RAS coordinates", units="", componentNames=["r", "a", "s"])
 
     info["principal_axis_z"] = \
-      self.createMeasurementInfo(name="Principal Z axis", description="Principal Z axis of rotation", units="", componentNames=["r", "a", "s"])
+      self.createMeasurementInfo(name="Principal Z axis", description="Principal Z axis of rotation in RAS coordinates", units="", componentNames=["r", "a", "s"])
 
     return info[key] if key in info else None

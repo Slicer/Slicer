@@ -147,7 +147,7 @@ class SegmentStatisticsPluginBase(object):
       tooltip = "key: "+key
       info = self.getMeasurementInfo(key)
       if info and ("name" in info or "description" in info):
-        label = info["description"] if "description" in info else info["name"]
+        label = info["name"] if "name" in info else info["description"]
         if "name" in info: tooltip += "\nname: " + str(info["name"])
         if "description" in info: tooltip += "\ndescription: " + str(info["description"])
         if "units" in info: tooltip += "\nunits: " + (str(info["units"]) if info["units"] else "n/a")
