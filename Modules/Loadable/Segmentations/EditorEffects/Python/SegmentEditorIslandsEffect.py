@@ -157,69 +157,70 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
     baseSegmentName = "Label"
     selectedSegmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
-    segmentation = segmentationNode.GetSegmentation()
-    selectedSegment = segmentation.GetSegment(selectedSegmentID)
-    selectedSegmentName = selectedSegment.GetName()
-    if selectedSegmentName is not None and selectedSegmentName != "":
-      baseSegmentName = selectedSegmentName
+    with slicer.util.NodeModify(segmentationNode):
+      segmentation = segmentationNode.GetSegmentation()
+      selectedSegment = segmentation.GetSegment(selectedSegmentID)
+      selectedSegmentName = selectedSegment.GetName()
+      if selectedSegmentName is not None and selectedSegmentName != "":
+        baseSegmentName = selectedSegmentName
 
-    labelValues = vtk.vtkIntArray();
-    slicer.vtkSlicerSegmentationsModuleLogic.GetAllLabelValues(labelValues, islandImage);
+      labelValues = vtk.vtkIntArray();
+      slicer.vtkSlicerSegmentationsModuleLogic.GetAllLabelValues(labelValues, islandImage);
 
-    # Erase segment from in original labelmap.
-    # Individuall islands will be added back later.
-    threshold = vtk.vtkImageThreshold()
-    threshold.SetInputData(selectedSegmentLabelmap)
-    threshold.ThresholdBetween(0, 0)
-    threshold.SetInValue(0)
-    threshold.SetOutValue(0)
-    threshold.Update()
-    emptyLabelmap = slicer.vtkOrientedImageData()
-    emptyLabelmap.ShallowCopy(threshold.GetOutput())
-    emptyLabelmap.CopyDirections(selectedSegmentLabelmap)
-    self.scriptedEffect.modifySegmentByLabelmap(segmentationNode, selectedSegmentID, emptyLabelmap,
-      slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
-
-    for i in range(labelValues.GetNumberOfTuples()):
-      if (maxNumberOfSegments > 0 and i >= maxNumberOfSegments):
-        # We only care about the segments up to maxNumberOfSegments.
-        # If we do not want to split segments, we only care about the first.
-        break
-
-      labelValue = int(labelValues.GetTuple1(i))
-      segment = selectedSegment
-      segmentID = selectedSegmentID
-      if i != 0 and split:
-        segment = slicer.vtkSegment()
-        name = baseSegmentName + "_" + str(i+1)
-        segment.SetName(name)
-        segment.AddRepresentation(slicer.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName(),
-          selectedSegment.GetRepresentation(slicer.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName()));
-        segmentation.AddSegment(segment)
-        segmentID = segmentation.GetSegmentIdBySegment(segment)
-        segment.SetLabelValue(segmentation.GetUniqueLabelValueForSharedLabelmap(selectedSegmentID))
-
+      # Erase segment from in original labelmap.
+      # Individuall islands will be added back later.
       threshold = vtk.vtkImageThreshold()
-      threshold.SetInputData(islandMath.GetOutput())
-      threshold.ThresholdBetween(labelValue, labelValue)
-      threshold.SetInValue(1)
+      threshold.SetInputData(selectedSegmentLabelmap)
+      threshold.ThresholdBetween(0, 0)
+      threshold.SetInValue(0)
       threshold.SetOutValue(0)
       threshold.Update()
+      emptyLabelmap = slicer.vtkOrientedImageData()
+      emptyLabelmap.ShallowCopy(threshold.GetOutput())
+      emptyLabelmap.CopyDirections(selectedSegmentLabelmap)
+      self.scriptedEffect.modifySegmentByLabelmap(segmentationNode, selectedSegmentID, emptyLabelmap,
+        slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
 
-      modificationMode = slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeAdd
-      if i == 0:
-        modificationMode = slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet
+      for i in range(labelValues.GetNumberOfTuples()):
+        if (maxNumberOfSegments > 0 and i >= maxNumberOfSegments):
+          # We only care about the segments up to maxNumberOfSegments.
+          # If we do not want to split segments, we only care about the first.
+          break
 
-      # Create oriented image data from output
-      modifierImage = slicer.vtkOrientedImageData()
-      modifierImage.DeepCopy(threshold.GetOutput())
-      selectedSegmentLabelmapImageToWorldMatrix = vtk.vtkMatrix4x4()
-      selectedSegmentLabelmap.GetImageToWorldMatrix(selectedSegmentLabelmapImageToWorldMatrix)
-      modifierImage.SetGeometryFromImageToWorldMatrix(selectedSegmentLabelmapImageToWorldMatrix)
-      # We could use a single slicer.vtkSlicerSegmentationsModuleLogic.ImportLabelmapToSegmentationNode
-      # method call to import all the resulting segments at once but that would put all the imported segments
-      # in a new layer. By using modifySegmentByLabelmap, the number of layers will not increase.
-      self.scriptedEffect.modifySegmentByLabelmap(segmentationNode, segmentID, modifierImage, modificationMode)
+        labelValue = int(labelValues.GetTuple1(i))
+        segment = selectedSegment
+        segmentID = selectedSegmentID
+        if i != 0 and split:
+          segment = slicer.vtkSegment()
+          name = baseSegmentName + "_" + str(i+1)
+          segment.SetName(name)
+          segment.AddRepresentation(slicer.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName(),
+            selectedSegment.GetRepresentation(slicer.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName()));
+          segmentation.AddSegment(segment)
+          segmentID = segmentation.GetSegmentIdBySegment(segment)
+          segment.SetLabelValue(segmentation.GetUniqueLabelValueForSharedLabelmap(selectedSegmentID))
+
+        threshold = vtk.vtkImageThreshold()
+        threshold.SetInputData(islandMath.GetOutput())
+        threshold.ThresholdBetween(labelValue, labelValue)
+        threshold.SetInValue(1)
+        threshold.SetOutValue(0)
+        threshold.Update()
+
+        modificationMode = slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeAdd
+        if i == 0:
+          modificationMode = slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet
+
+        # Create oriented image data from output
+        modifierImage = slicer.vtkOrientedImageData()
+        modifierImage.DeepCopy(threshold.GetOutput())
+        selectedSegmentLabelmapImageToWorldMatrix = vtk.vtkMatrix4x4()
+        selectedSegmentLabelmap.GetImageToWorldMatrix(selectedSegmentLabelmapImageToWorldMatrix)
+        modifierImage.SetGeometryFromImageToWorldMatrix(selectedSegmentLabelmapImageToWorldMatrix)
+        # We could use a single slicer.vtkSlicerSegmentationsModuleLogic.ImportLabelmapToSegmentationNode
+        # method call to import all the resulting segments at once but that would put all the imported segments
+        # in a new layer. By using modifySegmentByLabelmap, the number of layers will not increase.
+        self.scriptedEffect.modifySegmentByLabelmap(segmentationNode, segmentID, modifierImage, modificationMode)
 
     qt.QApplication.restoreOverrideCursor()
 

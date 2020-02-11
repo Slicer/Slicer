@@ -928,6 +928,8 @@ void vtkMRMLSegmentationDisplayNode::GenerateSegmentColor(double color[3], int c
     {
     colorNumber = this->NumberOfGeneratedColors;
     }
+  // Contain the color index to the valid range of colors
+  colorNumber = colorNumber % genericAnatomyColorNode->GetNumberOfColors();
 
   // Get color corresponding to the number of added segments (which is incremented in
   // vtkMRMLSegmentationNode::AddSegmentDisplayProperties every time a new segment display
