@@ -113,6 +113,7 @@ set(vtkITK_SRCS
   vtkITKNewOtsuThresholdImageFilter.cxx
   vtkITKTimeSeriesDatabase.cxx
   vtkITKIslandMath.cxx
+  vtkITKImageMargin.cxx
   vtkITKGrowCutSegmentationImageFilter.cxx
   vtkITKMorphologicalContourInterpolator.cxx
   )
