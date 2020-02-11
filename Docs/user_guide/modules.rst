@@ -62,6 +62,7 @@ Segmentation
 - :doc:`module_emsegment`
 - :doc:`module_emsegmentquick`
 - :doc:`module_segmenteditor`
+- :doc:`module_segmentstatistics`
 - :doc:`module_simpleregiongrowingsegmentation`
 - Specialized:
 
