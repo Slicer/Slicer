@@ -40,6 +40,7 @@ Welcome to 3D Slicer's documentation!
 
    user_guide/module_dicompatcher
    user_guide/module_segmenteditor
+   user_guide/module_segmentstatistics
 
 
 Indices and tables
