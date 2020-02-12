@@ -709,6 +709,11 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentRemoved(vtkObject* cal
   for (segmentIt = segmentShItemIDs.begin(); segmentIt != segmentShItemIDs.end(); ++segmentIt)
     {
     std::string currentSegmentId = shNode->GetItemAttribute(*segmentIt, vtkMRMLSegmentationNode::GetSegmentIDAttributeName());
+    if (currentSegmentId.empty())
+      {
+      // this child item is not a segment - ignore it
+      continue;
+      }
     if (!currentSegmentId.compare(segmentId))
       {
       shNode->RemoveItem(*segmentIt);

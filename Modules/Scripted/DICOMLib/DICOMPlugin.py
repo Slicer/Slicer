@@ -227,7 +227,7 @@ class DICOMPlugin(object):
       instanceUIDs += uid + " "
     instanceUIDs = instanceUIDs[:-1]  # strip last space
     shn.SetItemUID(seriesItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMInstanceUIDName(), instanceUIDs)
-    
+
     # Set referenced instance UIDs from loadable to series
     referencedInstanceUIDs = ""
     if hasattr(loadable,'referencedInstanceUIDs'):
@@ -238,9 +238,15 @@ class DICOMPlugin(object):
                           referencedInstanceUIDs )
 
     # Add series item to hierarchy under the right study and patient items. If they are present then used, if not, then created
-    patientId = slicer.dicomDatabase.fileValue(firstFile, tags['patientID'])
-    patientItemID = shn.GetItemByUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), patientId)
     studyInstanceUid = slicer.dicomDatabase.fileValue(firstFile, tags['studyInstanceUID'])
+    patientId = slicer.dicomDatabase.fileValue(firstFile, tags['patientID'])
+    if not patientId:
+      # Patient ID tag is required DICOM tag and it cannot be empty. Unfortunately, we may get DICOM files that do not follow
+      # the standard (e.g., incorrectly anonymized) and have empty patient tag. We generate a unique ID from the study instance UID.
+      # The DICOM browser uses the study instance UID as patient ID directly, but this would not work in the subject hierarchy, because
+      # then the DICOM UID of the patient and study tag would be the same, so we add a prefix ("Patient-").
+      patientId = "Patient-"+studyInstanceUid
+    patientItemID = shn.GetItemByUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), patientId)
     studyId = slicer.dicomDatabase.fileValue(firstFile, tags['studyID'])
     studyItemID = shn.GetItemByUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), studyInstanceUid)
     slicer.vtkSlicerSubjectHierarchyModuleLogic.InsertDicomSeriesInHierarchy(shn, patientId, studyInstanceUid, seriesInstanceUid)
