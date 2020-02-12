@@ -24,6 +24,16 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   set(_env_script ${CMAKE_BINARY_DIR}/${proj}_Env.cmake)
   ExternalProject_Write_SetPythonSetupEnv_Commands(${_env_script})
 
+  set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
+
+  set(SimpleITK_ADDITONAL_CMAKE_CACHE_ARGS)
+  if(APPLE)
+    # To ensure dynamic_cast for ITK symbols works across libraries,
+    # and with the Slicer runtime, make all implicit symbols visible
+    # on OSX.
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS  "-DCMAKE_CXX_VISIBILITY_PRESET:BOOL=default")
+  endif()
+
   # install step - the working path must be set to the location of the SimpleITK.py
   # file so that it will be picked up by distuils setup, and installed
   set(_install_script ${CMAKE_BINARY_DIR}/${proj}_install_step.cmake)
@@ -35,13 +45,13 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" Packaging/s
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/SimpleITK/SimpleITK.git"
+    "${EP_GIT_PROTOCOL}://github.com/Slicer/SimpleITK.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "16a62269c25fef83b739f8ae8640cf796a6f44f1"  # pre-v2.0 (ITK 5 as default)
+    "slicer-v1.2.4-2020-02-07-777520bd"  # pre-v2.0 (ITK 5 as default), with patch "Propagate CMake visibility variables in external projects"
     QUIET
     )
 
@@ -82,13 +92,14 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" Packaging/s
       -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}
       -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=${CMAKE_CXX_STANDARD_REQUIRED}
       -DCMAKE_CXX_EXTENSIONS:BOOL=${CMAKE_CXX_EXTENSIONS}
+      -DCMAKE_CXX_VISIBILITY_PRESET:BOOL=default
       -DBUILD_SHARED_LIBS:BOOL=${Slicer_USE_SimpleITK_SHARED}
       -DBUILD_EXAMPLES:BOOL=OFF
+      -DSimpleITK_BUILD_STRIP:BOOL=1
       -DSimpleITK_PYTHON_THREADS:BOOL=ON
       -DSimpleITK_INSTALL_ARCHIVE_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
       -DSimpleITK_INSTALL_LIBRARY_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
       -DSimpleITK_INT64_PIXELIDS:BOOL=OFF
-      -DSimpleITK_EXPLICIT_INSTATIATION_DEFAULT:BOOL=ON
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
       -DSimpleITK_USE_SYSTEM_ITK:BOOL=ON
       -DITK_DIR:PATH=${ITK_DIR}
@@ -103,6 +114,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" Packaging/s
       -DWRAP_PYTHON:BOOL=ON
       -DSimpleITK_BUILD_DISTRIBUTE:BOOL=ON # Shorten version and install path removing -g{GIT-HASH} suffix.
       -DExternalData_OBJECT_STORES:PATH=${ExternalData_OBJECT_STORES}
+      ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS}
     #
     INSTALL_COMMAND ${CMAKE_COMMAND} -P ${_install_script}
     #
