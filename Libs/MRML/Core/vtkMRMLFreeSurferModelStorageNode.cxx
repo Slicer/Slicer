@@ -120,6 +120,13 @@ int vtkMRMLFreeSurferModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
   vtkDebugMacro("ReadDataInternal: extension = " << extension.c_str());
 
+  // Node was saved with vtk extension.
+  // Should be handled by vtkMRMLModelStorageNode.
+  if (extension == ".vtk")
+    {
+    return Superclass::ReadDataInternal(refNode);
+    }
+
   int result = 1;
   try
     {
