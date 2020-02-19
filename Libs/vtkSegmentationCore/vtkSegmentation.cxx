@@ -1935,7 +1935,7 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
       }
     vtkOrientedImageData* currentBinaryLabelmap = vtkOrientedImageData::SafeDownCast(
       currentSegment->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()) );
-    if (currentBinaryLabelmap->IsEmpty())
+    if (!currentBinaryLabelmap || currentBinaryLabelmap->IsEmpty())
       {
       continue;
       }
