@@ -88,7 +88,8 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
     inputFiducialsNodeSelector = slicer.qMRMLNodeComboBox()
     inputFiducialsNodeSelector.objectName = 'inputFiducialsNodeSelector'
     inputFiducialsNodeSelector.toolTip = "Select a fiducial list to define control points for the path."
-    inputFiducialsNodeSelector.nodeTypes = ['vtkMRMLMarkupsFiducialNode', 'vtkMRMLAnnotationHierarchyNode', 'vtkMRMLFiducialListNode']
+    inputFiducialsNodeSelector.nodeTypes = ['vtkMRMLMarkupsFiducialNode', 'vtkMRMLMarkupsCurveNode',
+      'vtkMRMLAnnotationHierarchyNode', 'vtkMRMLFiducialListNode']
     inputFiducialsNodeSelector.noneEnabled = False
     inputFiducialsNodeSelector.addEnabled = False
     inputFiducialsNodeSelector.removeEnabled = False
@@ -348,9 +349,10 @@ class EndoscopyComputePath(object):
         coords = [0,0,0]
         f.GetFiducialCoordinates(coords)
         self.p[i] = coords
-    elif self.fids.GetClassName() == "vtkMRMLMarkupsFiducialNode":
+    elif (self.fids.GetClassName() == "vtkMRMLMarkupsFiducialNode"
+      or self.fids.GetClassName() == "vtkMRMLMarkupsCurveNode"):
       # slicer4 Markups node
-      self.n = self.fids.GetNumberOfFiducials()
+      self.n = self.fids.GetNumberOfControlPoints()
       n = self.n
       if n == 0:
         return
@@ -359,7 +361,7 @@ class EndoscopyComputePath(object):
       self.p = numpy.zeros((n,3))
       for i in range(n):
         coord = [0.0, 0.0, 0.0]
-        self.fids.GetNthFiducialPosition(i, coord)
+        self.fids.GetNthControlPointPositionWorld(i, coord)
         self.p[i] = coord
     else:
       # slicer3 style fiducial lists
