@@ -445,6 +445,16 @@ void vtkSlicerSegmentationsModuleLogic::GetAllLabelValues(vtkIntArray* labels, v
     vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::GetAllLabelValues: Invalid labelmap");
     return;
    }
+
+  int dimensions[3] = { 0 };
+  labelmap->GetDimensions(dimensions);
+  if (dimensions[0] <= 0 || dimensions[1] <= 0 || dimensions[2] <= 0)
+    {
+    // Labelmap is empty, there are no label values.
+    // Running vtkImageAccumulate would cause a crash.
+    return;
+    }
+
   double* scalarRange = labelmap->GetScalarRange();
   int lowLabel = (int)(floor(scalarRange[0]));
   int highLabel = (int)(ceil(scalarRange[1]));
