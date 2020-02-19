@@ -385,7 +385,6 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::CalculateOutputGeometry(vtk
     // Set effective extent to be just large enough to contain the full surface
     geometryImageData->SetExtent(surfaceExtent);
     }
-  geometryImageData->AllocateScalars(geometryImageData->GetScalarType(), geometryImageData->GetNumberOfScalarComponents());
 
   return true;
 }

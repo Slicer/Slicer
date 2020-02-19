@@ -87,7 +87,7 @@ protected:
   /// Calculate actual geometry of the output labelmap volume by verifying that the reference image geometry
   /// encompasses the input surface model, and extending it to the proper directions if necessary.
   /// \param closedSurfacePolyData Input closed surface poly data to convert
-  /// \param geometryImageData Output dummy image data containing output labelmap geometry
+  /// \param geometryImageData Output image data containing output labelmap geometry. Memory is not allocated for voxel data.
   /// \return Success flag indicating sane calculated extents
   bool CalculateOutputGeometry(vtkPolyData* closedSurfacePolyData, vtkOrientedImageData* geometryImageData);
 
