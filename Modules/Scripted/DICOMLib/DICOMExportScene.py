@@ -89,7 +89,8 @@ class DICOMExportScene(object):
     os.mkdir(self.sceneDirectory) # known to be unique
     self.imageFile = os.path.join(self.dicomDirectory, "scene.jpg")
     self.zipFile = os.path.join(self.dicomDirectory, "scene.zip")
-    self.dumpFile = os.path.join(self.dicomDirectory, "dicom.dump")
+    self.dumpFile = os.path.join(self.dicomDirectory, "dump.dcm")
+    self.templateFile = os.path.join(self.dicomDirectory, "template.dcm")
     self.sdbFile = os.path.join(self.dicomDirectory, "SlicerDataBundle.dcm")
     # Clean up paths on Windows (some commands and operations are not performed properly with mixed slash and backslash)
     self.dicomDirectory = self.dicomDirectory.replace('\\','/')
@@ -97,6 +98,7 @@ class DICOMExportScene(object):
     self.imageFile = self.imageFile.replace('\\','/')
     self.zipFile = self.zipFile.replace('\\','/')
     self.dumpFile = self.dumpFile.replace('\\','/')
+    self.templateFile = self.templateFile.replace('\\','/')
     self.sdbFile = self.sdbFile.replace('\\','/')
 
     # get the screen image
@@ -125,7 +127,7 @@ class DICOMExportScene(object):
         snode.SetFileName(node.GetID()+".h5")
 
     # save the scene to the temp dir
-    self.progress('Saving Scene...')
+    self.progress('Saving scene...')
     appLogic = slicer.app.applicationLogic()
     appLogic.SaveSceneToSlicerDataBundleDirectory(self.sceneDirectory, imageReader.GetOutput())
 
@@ -145,8 +147,10 @@ class DICOMExportScene(object):
       if not self.referenceFile:
         logging.error('No reference file! DICOM database is empty')
         return False
+    logging.info('Using reference file ' + str(self.referenceFile))
     args = ['--print-all', '--write-pixel', self.dicomDirectory, self.referenceFile]
-    dump = DICOMLib.DICOMCommand('dcmdump', args).start()
+    dumpByteArray = DICOMLib.DICOMCommand('dcmdump', args).start()
+    dump = str(dumpByteArray.data(), encoding='utf-8')
 
     # append this to the dumped output and save the result as self.dicomDirectory/dcm.dump
     # with %s as self.zipFile and %d being its size in bytes
@@ -161,18 +165,15 @@ class DICOMExportScene(object):
 (cadb,1010) OB =%s                                      #  %d, 1 Unknown Tag & Data
 """ % (creatorString, len(creatorString), zipSizeString, self.zipFile, zipSize)
 
-    dump = str(dump) + candygram
+    dump = dump + candygram
 
-    logging.debug('dumping to: %s/dump.dcm' % self.dicomDirectory)
-    fp = open('%s/dump.dcm' % self.dicomDirectory, 'w')
+    logging.debug('dumping to: %s' % self.dumpFile)
+    fp = open(self.dumpFile, 'w')
     fp.write(dump)
     fp.close()
 
-    self.progress('Encapsulating Scene in DICOM Dump...')
-    args = [
-        '%s/dump.dcm' % self.dicomDirectory,
-        '%s/template.dcm' % self.dicomDirectory,
-        '--generate-new-uids', '--overwrite-uids', '--ignore-errors']
+    self.progress('Encapsulating scene in DICOM dump...')
+    args = [ self.dumpFile, self.templateFile, '--generate-new-uids', '--overwrite-uids', '--ignore-errors' ]
     DICOMLib.DICOMCommand('dump2dcm', args).start()
 
     # now create the Secondary Capture data set
@@ -181,10 +182,16 @@ class DICOMExportScene(object):
         '-k', 'InstanceNumber=1',
         '-k', 'StudyDescription=Slicer Scene Export',
         '-k', 'SeriesDescription=Slicer Data Bundle',
-        '--dataset-from', '%s/template.dcm' % self.dicomDirectory,
+        '--dataset-from', self.templateFile,
         self.imageFile, self.sdbFile]
-    self.progress('Creating DICOM Binary File...')
+    self.progress('Creating DICOM binary file...')
     DICOMLib.DICOMCommand('img2dcm', args).start()
+
+    self.progress('Deleting temporary files...')
+    os.remove(self.zipFile)
+    os.remove(self.dumpFile)
+    os.remove(self.templateFile)
+
     self.progress('Done')
     return True
 

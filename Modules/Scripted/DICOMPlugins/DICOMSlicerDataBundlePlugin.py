@@ -64,7 +64,8 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
         loadable.files = [f]
         loadable.name = name + ' - as Slicer Scene'
         loadable.selected = True
-        loadable.tooltip = 'Appears to contain a slicer scene'
+        loadable.tooltip = 'Contains a Slicer scene'
+        loadable.confidence = 0.9
         loadables.append(loadable)
     return loadables
 
