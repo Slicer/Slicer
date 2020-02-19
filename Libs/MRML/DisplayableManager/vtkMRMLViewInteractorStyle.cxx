@@ -120,11 +120,11 @@ void vtkMRMLViewInteractorStyle::OnRightButtonUp()
 void vtkMRMLViewInteractorStyle::OnMiddleButtonDown()
 {
   this->MouseMovedSinceButtonDown = false;
-  if (!this->DelegateInteractionEventToDisplayableManagers(vtkCommand::MiddleButtonPressEvent))
+  if (this->DelegateInteractionEventToDisplayableManagers(vtkCommand::MiddleButtonPressEvent))
     {
     return;
     }
-  this->InvokeEvent(vtkCommand::MiddleButtonReleaseEvent, nullptr);
+  this->InvokeEvent(vtkCommand::MiddleButtonPressEvent, nullptr);
 }
 
 //----------------------------------------------------------------------------
