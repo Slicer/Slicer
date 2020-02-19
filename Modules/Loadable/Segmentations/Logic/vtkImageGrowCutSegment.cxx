@@ -5,7 +5,6 @@
 
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
-#include <vtkLoggingMacros.h>
 #include <vtkMath.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
