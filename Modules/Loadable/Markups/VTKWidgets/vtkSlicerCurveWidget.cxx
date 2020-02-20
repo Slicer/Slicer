@@ -124,7 +124,15 @@ bool vtkSlicerCurveWidget::ProcessControlPointInsert(vtkMRMLInteractionEventData
 
   // Create new control point and insert
   vtkMRMLMarkupsNode::ControlPoint* controlPoint = new vtkMRMLMarkupsNode::ControlPoint;
-  (*controlPoint) = (*markupsNode->GetNthControlPoint(foundComponentIndex));
+  vtkMRMLMarkupsNode::ControlPoint* foundControlPoint = markupsNode->GetNthControlPoint(foundComponentIndex);
+  if (foundControlPoint)
+    {
+    (*controlPoint) = (*foundControlPoint);
+    }
+  else
+    {
+    vtkWarningMacro("ProcessControlPointInsert: Found control point is out of bounds");
+    }
   markupsNode->TransformPointFromWorld(worldPos, controlPoint->Position);
   if (!markupsNode->InsertControlPoint(controlPoint, foundComponentIndex + 1))
     {

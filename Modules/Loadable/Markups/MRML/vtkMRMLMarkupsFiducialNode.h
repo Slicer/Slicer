@@ -121,8 +121,6 @@ public:
   /// Get world coordinates on nth fiducial
   void GetNthFiducialWorldCoordinates(int n, double coords[4]);
 
-  void UpdateCurvePolyFromCurveInputPoly() override;
-
   /// Create and observe default display node(s)
   void CreateDefaultDisplayNodes() override;
 

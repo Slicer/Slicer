@@ -29,6 +29,7 @@
 #include <QSignalMapper>
 #include <QStringList>
 #include <QTableWidgetItem>
+#include <QTimer>
 
 // CTK includes
 #include "ctkMessageBox.h"
@@ -124,6 +125,8 @@ private:
   QAction*    cutAction;
   QAction*    copyAction;
   QAction*    pasteAction;
+
+  QTimer*     editScalarFunctionDelay;
 };
 
 //-----------------------------------------------------------------------------
@@ -151,6 +154,8 @@ qSlicerMarkupsModuleWidgetPrivate::qSlicerMarkupsModuleWidgetPrivate(qSlicerMark
   this->cutAction = nullptr;
   this->copyAction = nullptr;
   this->pasteAction = nullptr;
+
+  this->editScalarFunctionDelay = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -436,6 +441,27 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->resampleCurveCollapsibleButton->setVisible(false);
   QObject::connect(this->resampleCurveButton, SIGNAL(clicked()),
     q, SLOT(onApplyCurveResamplingPushButtonClicked()));
+
+
+  this->curveTypeComboBox->clear();
+  for (int curveType = 0; curveType < vtkCurveGenerator::CURVE_TYPE_LAST; ++curveType)
+    {
+    this->curveTypeComboBox->addItem(vtkCurveGenerator::GetCurveTypeAsString(curveType), curveType);
+    }
+
+  this->editScalarFunctionDelay = new QTimer(q);
+  this->editScalarFunctionDelay->setInterval(500);
+  this->editScalarFunctionDelay->setSingleShot(true);
+  QObject::connect(this->editScalarFunctionDelay, SIGNAL(timeout()),
+    q, SLOT(onCurveTypeParameterChanged()));
+  QObject::connect(this->curveTypeComboBox, SIGNAL(currentIndexChanged(int)),
+    q, SLOT(onCurveTypeParameterChanged()));
+  QObject::connect(this->modelNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+    q, SLOT(onCurveTypeParameterChanged()));
+  QObject::connect(this->useScalarsCheckBox, SIGNAL(stateChanged(int)),
+    q, SLOT(onCurveTypeParameterChanged()));
+  QObject::connect(this->scalarFunctionLineEdit, SIGNAL(textChanged(QString)),
+    this->editScalarFunctionDelay, SLOT(start()));
 }
 
 //-----------------------------------------------------------------------------
@@ -837,6 +863,34 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
       {
       d->resampleCurveOutputNodeSelector->setCurrentNode(nullptr);
       }
+
+    wasBlocked = d->curveTypeComboBox->blockSignals(true);
+    d->curveTypeComboBox->setCurrentIndex(d->curveTypeComboBox->findData(markupsCurveNode->GetCurveType()));
+    d->curveTypeComboBox->blockSignals(wasBlocked);
+
+    vtkMRMLModelNode* modelNode = markupsCurveNode->GetModelNode();
+    wasBlocked = d->modelNodeSelector->blockSignals(true);
+    d->modelNodeSelector->setCurrentNode(modelNode);
+    d->modelNodeSelector->blockSignals(wasBlocked);
+
+    wasBlocked = d->useScalarsCheckBox->blockSignals(true);
+    d->useScalarsCheckBox->setChecked(markupsCurveNode->GetUseSurfaceScalarWeights());
+    d->useScalarsCheckBox->blockSignals(wasBlocked);
+
+    wasBlocked = d->scalarFunctionLineEdit->blockSignals(true);
+    int currentCursorPosition = d->scalarFunctionLineEdit->cursorPosition();
+    d->scalarFunctionLineEdit->setText(markupsCurveNode->GetSurfaceScalarWeightFunction());
+    d->scalarFunctionLineEdit->setCursorPosition(currentCursorPosition);
+    d->scalarFunctionLineEdit->blockSignals(wasBlocked);
+    }
+
+  if (markupsCurveNode && markupsCurveNode->GetCurveType() == vtkCurveGenerator::CURVE_TYPE_SHORTEST_SURFACE_DISTANCE)
+    {
+    d->surfaceCurveCollapsibleButton->setVisible(true);
+    }
+  else
+    {
+    d->surfaceCurveCollapsibleButton->setVisible(false);
     }
 }
 
@@ -2463,4 +2517,22 @@ void qSlicerMarkupsModuleWidget::onSaveToDefaultDisplayPropertiesPushButtonClick
 
   // also save the settings permanently
   qSlicerMarkupsModule::writeDefaultMarkupsDisplaySettings(this->markupsLogic()->GetDefaultMarkupsDisplayNode());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onCurveTypeParameterChanged()
+{
+  Q_D(qSlicerMarkupsModuleWidget);
+  vtkMRMLMarkupsCurveNode* curveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(d->MarkupsNode);
+  if (!curveNode)
+    {
+    return;
+    }
+
+  MRMLNodeModifyBlocker blocker(curveNode);
+  curveNode->SetCurveType(d->curveTypeComboBox->currentData().toInt());
+  curveNode->SetAndObserveModelNode(vtkMRMLModelNode::SafeDownCast(d->modelNodeSelector->currentNode()));
+  curveNode->SetUseSurfaceScalarWeights(d->useScalarsCheckBox->isChecked());
+  std::string functionString = d->scalarFunctionLineEdit->text().toStdString();
+  curveNode->SetSurfaceScalarWeightFunction(functionString.c_str());
 }

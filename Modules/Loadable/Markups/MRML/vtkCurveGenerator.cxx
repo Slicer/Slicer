@@ -17,17 +17,28 @@
 
 ==============================================================================*/
 
+// Markups MRML includes
 #include "vtkCurveGenerator.h"
 #include "vtkLinearSpline.h"
 
+// VTK includes
 #include <vtkCardinalSpline.h>
+#include <vtkDijkstraGraphGeodesicPath.h>
 #include <vtkDoubleArray.h>
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
 #include <vtkKochanekSpline.h>
 #include <vtkParametricSpline.h>
 #include <vtkParametricFunction.h>
 #include "vtkParametricPolynomialApproximation.h"
 #include <vtkPoints.h>
+#include <vtkPointData.h>
+#include <vtkPointLocator.h>
+#include <vtkPolyData.h>
 
+#include <vtkLine.h>
+
+// std includes
 #include <list>
 
 //------------------------------------------------------------------------------
@@ -36,8 +47,8 @@ vtkStandardNewMacro(vtkCurveGenerator);
 //------------------------------------------------------------------------------
 vtkCurveGenerator::vtkCurveGenerator()
 {
-  this->InputPoints = nullptr;
-  this->InputParameters = nullptr;
+  this->SetNumberOfInputPorts(2);
+
   this->SetCurveTypeToLinearSpline();
   this->CurveIsLoop = false;
   this->NumberOfPointsPerInterpolatingSegment = 5;
@@ -50,13 +61,17 @@ vtkCurveGenerator::vtkCurveGenerator()
   this->PolynomialFitMethod = vtkCurveGenerator::POLYNOMIAL_FIT_METHOD_GLOBAL_LEAST_SQUARES;
   this->PolynomialWeightFunction = vtkCurveGenerator::POLYNOMIAL_WEIGHT_FUNCTION_GAUSSIAN;
   this->PolynomialSampleWidth = 0.5;
-  this->OutputPoints = nullptr;
+  this->UseSurfaceScalarWeights = true;
   this->OutputCurveLength = 0.0;
 
   // timestamps for input and output are the same, initially
   this->Modified();
 
   // local storage variables
+  this->PointLocator = vtkSmartPointer<vtkPointLocator>::New();
+  this->PathFilter = vtkSmartPointer<vtkDijkstraGraphGeodesicPath>::New();
+  this->PathFilter->StopWhenEndReachedOn();
+  this->InputParameters = nullptr;
   this->ParametricFunction = nullptr;
 }
 
@@ -68,7 +83,6 @@ vtkCurveGenerator::~vtkCurveGenerator()
 void vtkCurveGenerator::PrintSelf(std::ostream &os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
-  os << indent << "InputPoints size: " << (this->InputPoints != nullptr ? this->InputPoints->GetNumberOfPoints() : 0) << std::endl;
   os << indent << "InputParameters size: " << (this->InputParameters != nullptr ? this->InputParameters->GetNumberOfTuples() : 0) << std::endl;
   os << indent << "CurveType: " << this->GetCurveTypeAsString(this->CurveType) << std::endl;
   os << indent << "CurveIsLoop: " << this->CurveIsLoop << std::endl;
@@ -77,7 +91,29 @@ void vtkCurveGenerator::PrintSelf(std::ostream &os, vtkIndent indent)
   os << indent << "KochanekTension: " << this->KochanekTension << std::endl;
   os << indent << "KochanekEndsCopyNearestDerivatives: " << this->KochanekEndsCopyNearestDerivatives << std::endl;
   os << indent << "PolynomialOrder: " << this->PolynomialOrder << std::endl;
-  os << indent << "OutputPoints size: " << (this->OutputPoints != nullptr ? this->OutputPoints->GetNumberOfPoints() : 0) << std::endl;
+  os << indent << "UseSurfaceScalarWeights: " << this->UseSurfaceScalarWeights << std::endl;
+}
+
+//----------------------------------------------------------------------------
+int vtkCurveGenerator::FillInputPortInformation(
+  int port, vtkInformation* info)
+{
+  if (port == 0)
+    {
+    info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkPolyData");
+    }
+  else if (port == 1)
+    {
+    info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkPolyData");
+    info->Set(vtkAlgorithm::INPUT_IS_OPTIONAL(), 1);
+    }
+  else
+    {
+    vtkErrorMacro("Cannot set input info for port " << port);
+    return 0;
+    }
+
+  return 1;
 }
 
 //------------------------------------------------------------------------------
@@ -102,6 +138,10 @@ const char* vtkCurveGenerator::GetCurveTypeAsString(int curveType)
     case vtkCurveGenerator::CURVE_TYPE_POLYNOMIAL:
       {
       return "polynomial";
+      }
+    case vtkCurveGenerator::CURVE_TYPE_SHORTEST_SURFACE_DISTANCE:
+      {
+      return "shortestSurfaceDistance";
       }
     default:
       {
@@ -271,156 +311,92 @@ int vtkCurveGenerator::GetPolynomialWeightFunctionFromString(const char* name)
   return -1;
 }
 
-
-//------------------------------------------------------------------------------
-vtkPoints* vtkCurveGenerator::GetInputPoints()
-{
-  return this->InputPoints;
-}
-
-//------------------------------------------------------------------------------
-void vtkCurveGenerator::SetInputPoints(vtkPoints* points)
-{
-  this->InputPoints = points;
-  this->Modified();
-}
-
-//------------------------------------------------------------------------------
-vtkPoints* vtkCurveGenerator::GetOutputPoints()
-{
-  if (this->UpdateNeeded())
-    {
-    this->Update();
-    }
-  return this->OutputPoints;
-}
-
 //------------------------------------------------------------------------------
 double vtkCurveGenerator::GetOutputCurveLength()
 {
-  if (this->UpdateNeeded())
-    {
-    this->Update();
-    }
   return this->OutputCurveLength;
 }
 
 //------------------------------------------------------------------------------
-void vtkCurveGenerator::SetOutputPoints(vtkPoints* points)
+int vtkCurveGenerator::RequestData(
+  vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** inputVector,
+  vtkInformationVector* outputVector)
 {
-  this->OutputPoints = points;
-  this->Modified();
+  vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
+  vtkPolyData* inputPolyData = vtkPolyData::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+
+  if (!inputPolyData)
+    {
+    return 1;
+    }
+
+  vtkPoints* inputPoints = inputPolyData->GetPoints();
+  if (!inputPoints)
+    {
+    return 1;
+    }
+
+  vtkPolyData* inputSurfaceMesh = nullptr;
+  vtkInformation* inInfo2 = inputVector[1]->GetInformationObject(0);
+  if (inInfo2)
+    {
+    inputSurfaceMesh = vtkPolyData::SafeDownCast(
+      inInfo2->Get(vtkDataObject::DATA_OBJECT()));
+    }
+
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+  vtkPolyData* outputPolyData = vtkPolyData::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
+  if (!this->GeneratePoints(inputPoints, inputSurfaceMesh, outputPolyData))
+    {
+    return 0;
+    }
+
+  if (!this->GenerateLines(outputPolyData))
+    {
+    return 0;
+    }
+
+  outputPolyData->Squeeze();
+  return 1;
 }
 
 //------------------------------------------------------------------------------
-// LOGIC
-//------------------------------------------------------------------------------
-void vtkCurveGenerator::Update()
-{
-  if (this->InputPoints == nullptr)
-    {
-    vtkWarningMacro("No input points. No curve generation possible.");
-    return;
-    }
-
-  if (!this->UpdateNeeded())
-    {
-    return;
-    }
-
-  switch (this->CurveType)
-    {
-    case vtkCurveGenerator::CURVE_TYPE_LINEAR_SPLINE:
-      {
-      this->SetParametricFunctionToLinearSpline();
-      break;
-      }
-    case vtkCurveGenerator::CURVE_TYPE_CARDINAL_SPLINE:
-      {
-      this->SetParametricFunctionToCardinalSpline();
-      break;
-      }
-    case vtkCurveGenerator::CURVE_TYPE_KOCHANEK_SPLINE:
-      {
-      this->SetParametricFunctionToKochanekSpline();
-      break;
-      }
-    case vtkCurveGenerator::CURVE_TYPE_POLYNOMIAL:
-      {
-      this->SetParametricFunctionToPolynomial();
-      break;
-      }
-    default:
-      {
-      vtkErrorMacro("Error: Unrecognized curve type: " << this->CurveType << ".");
-      break;
-      }
-    }
-  this->GeneratePoints();
-}
-
-//------------------------------------------------------------------------------
-bool vtkCurveGenerator::UpdateNeeded()
-{
-  // assume that if any of these is null, then the user intends for everything to be computed
-  // in normal use, none of these should be null
-  if (this->OutputPoints == nullptr || this->InputPoints == nullptr)
-    {
-    return true;
-    }
-
-  // If this->InputParameters ever become modifiable by the user,
-  // then that modified time will need to be checked here too.
-
-  vtkMTimeType outputModifiedTime = this->OutputPoints->GetMTime();
-  vtkMTimeType curveGeneratorModifiedTime = this->GetMTime();
-  if (curveGeneratorModifiedTime > outputModifiedTime)
-    {
-    return true;
-    }
-
-  vtkMTimeType inputPointsModifiedTime = this->InputPoints->GetMTime();
-  if (inputPointsModifiedTime > outputModifiedTime)
-    {
-    return true;
-    }
-
-  return false;
-}
-
-//------------------------------------------------------------------------------
-void vtkCurveGenerator::SetParametricFunctionToSpline(vtkSpline* xSpline, vtkSpline* ySpline, vtkSpline* zSpline)
+void vtkCurveGenerator::SetParametricFunctionToSpline(vtkPoints* inputPoints, vtkSpline* xSpline, vtkSpline* ySpline, vtkSpline* zSpline)
 {
   vtkSmartPointer<vtkParametricSpline> parametricSpline = vtkSmartPointer<vtkParametricSpline>::New();
   parametricSpline->SetXSpline(xSpline);
   parametricSpline->SetYSpline(ySpline);
   parametricSpline->SetZSpline(zSpline);
-  parametricSpline->SetPoints(this->InputPoints);
+  parametricSpline->SetPoints(inputPoints);
   parametricSpline->SetClosed(this->CurveIsLoop);
   parametricSpline->SetParameterizeByLength(false);
   this->ParametricFunction = parametricSpline;
 }
 
 //------------------------------------------------------------------------------
-void vtkCurveGenerator::SetParametricFunctionToLinearSpline()
+void vtkCurveGenerator::SetParametricFunctionToLinearSpline(vtkPoints* inputPoints)
 {
   vtkSmartPointer<vtkLinearSpline> xSpline = vtkSmartPointer<vtkLinearSpline>::New();
   vtkSmartPointer<vtkLinearSpline> ySpline = vtkSmartPointer<vtkLinearSpline>::New();
   vtkSmartPointer<vtkLinearSpline> zSpline = vtkSmartPointer<vtkLinearSpline>::New();
-  this->SetParametricFunctionToSpline(xSpline, ySpline, zSpline);
+  this->SetParametricFunctionToSpline(inputPoints, xSpline, ySpline, zSpline);
 }
 
 //------------------------------------------------------------------------------
-void vtkCurveGenerator::SetParametricFunctionToCardinalSpline()
+void vtkCurveGenerator::SetParametricFunctionToCardinalSpline(vtkPoints* inputPoints)
 {
   vtkSmartPointer<vtkCardinalSpline> xSpline = vtkSmartPointer<vtkCardinalSpline>::New();
   vtkSmartPointer<vtkCardinalSpline> ySpline = vtkSmartPointer<vtkCardinalSpline>::New();
   vtkSmartPointer<vtkCardinalSpline> zSpline = vtkSmartPointer<vtkCardinalSpline>::New();
-  this->SetParametricFunctionToSpline(xSpline, ySpline, zSpline);
+  this->SetParametricFunctionToSpline(inputPoints, xSpline, ySpline, zSpline);
 }
 
 //------------------------------------------------------------------------------
-void vtkCurveGenerator::SetParametricFunctionToKochanekSpline()
+void vtkCurveGenerator::SetParametricFunctionToKochanekSpline(vtkPoints* inputPoints)
 {
   vtkSmartPointer<vtkKochanekSpline> xSpline = vtkSmartPointer<vtkKochanekSpline>::New();
   xSpline->SetDefaultBias(this->KochanekBias);
@@ -449,9 +425,9 @@ void vtkCurveGenerator::SetParametricFunctionToKochanekSpline()
     zSpline->SetLeftConstraint(1);
     // we assume there are at least 2 points, this is already checked in the Update() functions
     double point0[3];
-    this->InputPoints->GetPoint(0, point0);
+    inputPoints->GetPoint(0, point0);
     double point1[3];
-    this->InputPoints->GetPoint(1, point1);
+    inputPoints->GetPoint(1, point1);
     xSpline->SetLeftValue(point1[0] - point0[0]);
     ySpline->SetLeftValue(point1[1] - point0[1]);
     zSpline->SetLeftValue(point1[2] - point0[2]);
@@ -459,11 +435,11 @@ void vtkCurveGenerator::SetParametricFunctionToKochanekSpline()
     xSpline->SetRightConstraint(1);
     ySpline->SetRightConstraint(1);
     zSpline->SetRightConstraint(1);
-    int numberOfInputPoints = this->InputPoints->GetNumberOfPoints();
+    int numberOfInputPoints = inputPoints->GetNumberOfPoints();
     double pointNMinus2[3];
-    this->InputPoints->GetPoint(numberOfInputPoints - 2, pointNMinus2);
+    inputPoints->GetPoint(numberOfInputPoints - 2, pointNMinus2);
     double pointNMinus1[3];
-    this->InputPoints->GetPoint(numberOfInputPoints - 1, pointNMinus1);
+    inputPoints->GetPoint(numberOfInputPoints - 1, pointNMinus1);
     xSpline->SetRightValue(pointNMinus1[0] - pointNMinus2[0]);
     ySpline->SetRightValue(pointNMinus1[1] - pointNMinus2[1]);
     zSpline->SetRightValue(pointNMinus1[2] - pointNMinus2[2]);
@@ -482,14 +458,14 @@ void vtkCurveGenerator::SetParametricFunctionToKochanekSpline()
     zSpline->SetRightConstraint(0);
     }
 
-  this->SetParametricFunctionToSpline(xSpline, ySpline, zSpline);
+  this->SetParametricFunctionToSpline(inputPoints, xSpline, ySpline, zSpline);
 }
 
 //------------------------------------------------------------------------------
-void vtkCurveGenerator::SetParametricFunctionToPolynomial()
+void vtkCurveGenerator::SetParametricFunctionToPolynomial(vtkPoints* inputPoints)
 {
   vtkSmartPointer< vtkParametricPolynomialApproximation > polynomial = vtkSmartPointer< vtkParametricPolynomialApproximation >::New();
-  polynomial->SetPoints(this->InputPoints);
+  polynomial->SetPoints(inputPoints);
   polynomial->SetPolynomialOrder(this->PolynomialOrder);
 
   if (this->InputParameters == nullptr)
@@ -499,11 +475,11 @@ void vtkCurveGenerator::SetParametricFunctionToPolynomial()
 
   if (this->PolynomialPointSortingMethod == vtkCurveGenerator::SORTING_METHOD_INDEX)
     {
-    vtkCurveGenerator::SortByIndex(this->InputPoints, this->InputParameters);
+    vtkCurveGenerator::SortByIndex(inputPoints, this->InputParameters);
     }
   else if (this->PolynomialPointSortingMethod == vtkCurveGenerator::SORTING_METHOD_MINIMUM_SPANNING_TREE_POSITION)
     {
-    vtkCurveGenerator::SortByMinimumSpanningTreePosition(this->InputPoints, this->InputParameters);
+    vtkCurveGenerator::SortByMinimumSpanningTreePosition(inputPoints, this->InputParameters);
     }
   else
     {
@@ -553,33 +529,78 @@ void vtkCurveGenerator::SetParametricFunctionToPolynomial()
 }
 
 //------------------------------------------------------------------------------
-void vtkCurveGenerator::GeneratePoints()
+int vtkCurveGenerator::GeneratePoints(vtkPoints* inputPoints, vtkPolyData* inputSurface, vtkPolyData* outputPolyData)
 {
-  if (this->InputPoints == nullptr)
-    {
-    vtkErrorMacro("Input points are null, so curve points cannot be generated.");
-    return;
-    }
-  if (this->ParametricFunction == nullptr)
-    {
-    vtkErrorMacro("Parametric function is null, so curve points cannot be generated.");
-    return;
-    }
-
-  if (this->OutputPoints == nullptr)
-    {
-    this->OutputPoints = vtkSmartPointer< vtkPoints >::New();
-    }
-  else
-    {
-    this->OutputPoints->Reset();
-    }
+  vtkNew<vtkPoints> outputPoints;
   this->OutputCurveLength = 0.0;
+  this->CorrespondingControlPointIds.clear();
 
-  int numberOfInputPoints = this->InputPoints->GetNumberOfPoints();
+  switch (this->CurveType)
+  {
+  case vtkCurveGenerator::CURVE_TYPE_LINEAR_SPLINE:
+  case vtkCurveGenerator::CURVE_TYPE_CARDINAL_SPLINE:
+  case vtkCurveGenerator::CURVE_TYPE_KOCHANEK_SPLINE:
+  case vtkCurveGenerator::CURVE_TYPE_POLYNOMIAL:
+    {
+    if (!this->GeneratePointsFromFunction(inputPoints, outputPoints))
+      {
+      return 0;
+      }
+    break;
+    }
+  case vtkCurveGenerator::CURVE_TYPE_SHORTEST_SURFACE_DISTANCE:
+    if (!this->GeneratePointsFromSurface(inputPoints, inputSurface, outputPoints))
+      {
+      return 0;
+      }
+    break;
+  default:
+    {
+    vtkErrorMacro("Error: Unrecognized curve type: " << this->CurveType << ".");
+    return 0;
+    }
+  }
+
+  outputPolyData->SetPoints(outputPoints);
+  return 1;
+}
+
+//------------------------------------------------------------------------------
+int vtkCurveGenerator::GeneratePointsFromFunction(vtkPoints* inputPoints, vtkPoints* outputPoints)
+{
+  int numberOfInputPoints = inputPoints->GetNumberOfPoints();
   if (numberOfInputPoints <= 1)
     {
-    return;
+    return 0;
+    }
+
+  switch (this->CurveType)
+    {
+    case vtkCurveGenerator::CURVE_TYPE_LINEAR_SPLINE:
+      {
+      this->SetParametricFunctionToLinearSpline(inputPoints);
+      break;
+      }
+    case vtkCurveGenerator::CURVE_TYPE_CARDINAL_SPLINE:
+      {
+      this->SetParametricFunctionToCardinalSpline(inputPoints);
+      break;
+      }
+    case vtkCurveGenerator::CURVE_TYPE_KOCHANEK_SPLINE:
+      {
+      this->SetParametricFunctionToKochanekSpline(inputPoints);
+      break;
+      }
+    case vtkCurveGenerator::CURVE_TYPE_POLYNOMIAL:
+      {
+      this->SetParametricFunctionToPolynomial(inputPoints);
+      break;
+      }
+    default:
+      {
+      vtkErrorMacro("Error: Unrecognized curve type: " << this->CurveType << ".");
+      break;
+      }
     }
 
   int numberOfSegments = 0; // temporary value
@@ -599,7 +620,7 @@ void vtkCurveGenerator::GeneratePoints()
     double sampleParameter = pointIndex / (double)(totalNumberOfPoints - 1);
     double curvePoint[3];
     this->ParametricFunction->Evaluate(&sampleParameter, curvePoint, nullptr);
-    this->OutputPoints->InsertNextPoint(curvePoint);
+    outputPoints->InsertNextPoint(curvePoint);
     if (pointIndex > 0)
       {
       double segmentLength = sqrt(vtkMath::Distance2BetweenPoints(previousPoint, curvePoint));
@@ -608,7 +629,143 @@ void vtkCurveGenerator::GeneratePoints()
     previousPoint[0] = curvePoint[0];
     previousPoint[1] = curvePoint[1];
     previousPoint[2] = curvePoint[2];
+  }
+  return 1;
+}
+
+//------------------------------------------------------------------------------
+int vtkCurveGenerator::GeneratePointsFromSurface(vtkPoints* inputPoints, vtkPolyData* inputSurface, vtkPoints* outputPoints)
+{
+  // If there is no surface, there are no points. Don't report as an error.
+  if (!inputSurface)
+    {
+    return 1;
     }
+
+  // If there are no input points, there are output points. Don't report as an error.
+  vtkIdType numberOfInputPoints = inputPoints->GetNumberOfPoints();
+  if (numberOfInputPoints <= 1)
+    {
+    return 1;
+    }
+
+  vtkIdType numberOfSegments = 0;
+  if (this->CurveIsLoop)
+    {
+    numberOfSegments = numberOfInputPoints;
+    }
+  else
+    {
+    numberOfSegments = (numberOfInputPoints - 1);
+    }
+
+  this->PathFilter->SetInputData(inputSurface);
+  this->PointLocator->SetDataSet(inputSurface);
+  this->PointLocator->BuildLocator();
+
+  for (vtkIdType controlPointIndex = 0; controlPointIndex < numberOfSegments; ++controlPointIndex)
+    {
+    double controlPoint1[3] = { 0 };
+    inputPoints->GetPoint(controlPointIndex, controlPoint1);
+    vtkIdType id1 = this->PointLocator->FindClosestPoint(controlPoint1);
+
+    double controlPoint2[3] = { 0 };
+    inputPoints->GetPoint((controlPointIndex + 1) % numberOfInputPoints, controlPoint2);
+    vtkIdType id2 = this->PointLocator->FindClosestPoint(controlPoint2);
+
+    // If no scalar array is active on the points, and UseScalarWeights is enabled, the dijkstra filter will crash.
+    // To avoid this, UseScalarWeights is temporarily disabled.
+    bool useSurfaceScalarWeightsTemp = this->UseSurfaceScalarWeights;
+    if (!inputSurface->GetPointData() || !inputSurface->GetPointData()->GetScalars())
+      {
+      this->UseSurfaceScalarWeights = false;
+      }
+
+    // Path is traced backward, so start vertex should be point2, and end should be point1.
+    this->PathFilter->SetStartVertex(id2);
+    this->PathFilter->SetEndVertex(id1);
+    if (static_cast<bool>(this->PathFilter->GetUseScalarWeights()) != this->UseSurfaceScalarWeights)
+      {
+      this->PathFilter->SetUseScalarWeights(this->UseSurfaceScalarWeights);
+      // Edge weights are not recalculated unless the input surface is modified.
+      inputSurface->Modified();
+      }
+
+    this->PathFilter->Update();
+    this->UseSurfaceScalarWeights = useSurfaceScalarWeightsTemp;
+
+    vtkPolyData* outputPath = this->PathFilter->GetOutput();
+    double previousPoint[3];
+    for (vtkIdType pointIndex = 0; pointIndex < outputPath->GetNumberOfPoints(); ++pointIndex)
+      {
+      double curvePoint[3] = { 0 };
+      outputPath->GetPoint(pointIndex, curvePoint);
+
+      if (controlPointIndex == 0 || pointIndex > 0)
+        {
+        vtkIdType outputPointId = outputPoints->InsertNextPoint(curvePoint);
+        if (this->CorrespondingControlPointIds.size() <= controlPointIndex)
+          {
+          this->CorrespondingControlPointIds.push_back(outputPointId);
+          }
+
+        if (pointIndex > 0)
+          {
+          double segmentLength = sqrt(vtkMath::Distance2BetweenPoints(previousPoint, curvePoint));
+          this->OutputCurveLength += segmentLength;
+          }
+        }
+      previousPoint[0] = curvePoint[0];
+      previousPoint[1] = curvePoint[1];
+      previousPoint[2] = curvePoint[2];
+      }
+    }
+  return 1;
+}
+
+//------------------------------------------------------------------------------
+int vtkCurveGenerator::GenerateLines(vtkPolyData* polyData)
+{
+  // Update lines: a single cell containing a line with point
+  // indices: 0, 1, ..., last point (and an extra 0 if closed curve).
+  vtkIdType numberOfPoints = polyData->GetNumberOfPoints();
+  vtkNew<vtkCellArray> lines;
+  if (numberOfPoints > 1)
+    {
+    bool loop = (numberOfPoints > 2 && this->CurveIsLoop);
+    vtkIdType numberOfCellPoints = (loop ? numberOfPoints + 1 : numberOfPoints);
+
+    // Only regenerate indices if necessary
+    bool needToUpdateLines = true;
+    if (lines->GetNumberOfCells() == 1)
+      {
+      vtkIdType currentNumberOfCellPoints = 0;
+      vtkIdType* currentCellPoints = nullptr;
+      lines->GetCell(0, currentNumberOfCellPoints, currentCellPoints);
+
+      if (currentNumberOfCellPoints == numberOfCellPoints)
+        {
+        needToUpdateLines = false;
+        }
+      }
+
+    if (needToUpdateLines)
+      {
+      lines->Reset();
+      lines->InsertNextCell(numberOfCellPoints);
+      for (int i = 0; i < numberOfPoints; i++)
+        {
+        lines->InsertCellPoint(i);
+        }
+      if (loop)
+        {
+        lines->InsertCellPoint(0);
+        }
+      lines->Modified();
+      }
+    }
+  polyData->SetLines(lines);
+  return 1;
 }
 
 //------------------------------------------------------------------------------
@@ -838,4 +995,25 @@ bool vtkCurveGenerator::IsInterpolatingCurve()
   return (this->CurveType == CURVE_TYPE_LINEAR_SPLINE
     || this->CurveType == CURVE_TYPE_CARDINAL_SPLINE
     || this->CurveType == CURVE_TYPE_KOCHANEK_SPLINE);
+}
+
+//------------------------------------------------------------------------------
+vtkIdList* vtkCurveGenerator::GetSurfacePointIds()
+{
+  return this->PathFilter->GetIdList();
+}
+
+//------------------------------------------------------------------------------
+vtkIdType vtkCurveGenerator::GetControlPointIdFromInterpolatedPointId(vtkIdType outputPointId)
+{
+  int controlId = -1;
+  for (vtkIdType id : this->CorrespondingControlPointIds)
+    {
+    if (outputPointId < id)
+      {
+      return controlId;
+      }
+    ++controlId;
+    }
+  return controlId;
 }

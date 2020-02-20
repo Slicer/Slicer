@@ -313,6 +313,13 @@ void vtkSlicerCurveRepresentation2D::CanInteractWithCurve(
     return;
     }
 
+  // No curve points to find. Trying to run the locator would result in a crash.
+  vtkPoints* curvePoints = this->MarkupsNode->GetCurvePoints();
+  if (!curvePoints || curvePoints->GetNumberOfPoints() == 0)
+    {
+    return;
+    }
+
   this->SliceDistance->Update();
   this->SliceCurvePointLocator->SetDataSet(this->SliceDistance->GetOutput());
   this->SliceCurvePointLocator->Update();

@@ -21,11 +21,13 @@
 #define __vtkCurveGenerator_h
 
 // vtk includes
-#include <vtkObject.h>
 #include <vtkParametricFunction.h>
+#include <vtkPolyData.h>
+#include <vtkPolyDataAlgorithm.h>
 #include <vtkSetGet.h>
 #include <vtkSmartPointer.h>
 
+class vtkDijkstraGraphGeodesicPath;
 class vtkDoubleArray;
 class vtkPoints;
 class vtkSpline;
@@ -33,28 +35,29 @@ class vtkSpline;
 // export
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 
-// A class to generate curves from input polydata
-class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkCurveGenerator : public vtkObject
+/// Filter that generates curves between points of an input polydata
+class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkCurveGenerator : public vtkPolyDataAlgorithm
 {
 public:
-  vtkTypeMacro(vtkCurveGenerator, vtkObject);
+  vtkTypeMacro(vtkCurveGenerator, vtkPolyDataAlgorithm);
   static vtkCurveGenerator* New();
 
-  void PrintSelf(ostream &os, vtkIndent indent) override;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  // This indicates whether the curve should loop back in on itself,
-  // connecting the last point back to the first point (disabled by default).
+  /// This indicates whether the curve should loop back in on itself,
+  /// connecting the last point back to the first point (disabled by default).
   vtkSetMacro(CurveIsLoop, bool);
   vtkGetMacro(CurveIsLoop, bool);
   vtkBooleanMacro(CurveIsLoop, bool);
 
-  // type of curve to generate
+  /// Type of curve to generate
   enum
     {
     CURVE_TYPE_LINEAR_SPLINE = 0, // Curve interpolates between input points with straight lines
     CURVE_TYPE_CARDINAL_SPLINE, // Curve interpolates between input points smoothly
     CURVE_TYPE_KOCHANEK_SPLINE, // Curve interpolates between input points smoothly, generalized
     CURVE_TYPE_POLYNOMIAL, // Curve approximates the input points with a polynomial fit
+    CURVE_TYPE_SHORTEST_SURFACE_DISTANCE, // Curve finds the closest path along a the edges of a surface mesh
     CURVE_TYPE_LAST // Valid types go above this line
     };
   vtkGetMacro(CurveType, int);
@@ -65,30 +68,31 @@ public:
   void SetCurveTypeToCardinalSpline() { this->SetCurveType(CURVE_TYPE_CARDINAL_SPLINE); }
   void SetCurveTypeToKochanekSpline() { this->SetCurveType(CURVE_TYPE_KOCHANEK_SPLINE); }
   void SetCurveTypeToPolynomial() { this->SetCurveType(CURVE_TYPE_POLYNOMIAL); }
+  void SetCurveTypeToShortestSurfaceDistance() { this->SetCurveType(CURVE_TYPE_SHORTEST_SURFACE_DISTANCE); }
 
   virtual bool IsInterpolatingCurve();
 
-  // Sample an *interpolating* curve this many times per segment (pair of points in sequence). Range 1 and up. Default 5.
+  /// Sample an *interpolating* curve this many times per segment (pair of points in sequence). Range 1 and up. Default 5.
   vtkSetMacro(NumberOfPointsPerInterpolatingSegment, int);
   vtkGetMacro(NumberOfPointsPerInterpolatingSegment, int);
 
-  // Bias of derivative toward previous point (negative value) or next point. Range -1 to 1. Default 0.
+  /// Bias of derivative toward previous point (negative value) or next point. Range -1 to 1. Default 0.
   vtkGetMacro(KochanekBias, double);
   vtkSetMacro(KochanekBias, double);
 
-  // Make the curve sharper( negative value) or smoother (positive value). Range -1 to 1. Default 0.
+  /// Make the curve sharper( negative value) or smoother (positive value). Range -1 to 1. Default 0.
   vtkGetMacro(KochanekContinuity, double);
   vtkSetMacro(KochanekContinuity, double);
 
-  // How quickly the curve turns, higher values like tightening an elastic. Range -1 to 1. Default 0.
+  /// How quickly the curve turns, higher values like tightening an elastic. Range -1 to 1. Default 0.
   vtkGetMacro(KochanekTension, double);
   vtkSetMacro(KochanekTension, double);
 
-  // Make the ends of the curve 'straighter' by copying derivative of the nearest point. Default false.
+  /// Make the ends of the curve 'straighter' by copying derivative of the nearest point. Default false.
   vtkGetMacro(KochanekEndsCopyNearestDerivatives, bool);
   vtkSetMacro(KochanekEndsCopyNearestDerivatives, bool);
 
-  // Set the order of the polynomials for fitting. Range 1 to 9 (equation becomes unstable from 9 upward). Default 1.
+  /// Set the order of the polynomials for fitting. Range 1 to 9 (equation becomes unstable from 9 upward). Default 1.
   vtkGetMacro(PolynomialOrder, int);
   vtkSetMacro(PolynomialOrder, int);
 
@@ -102,23 +106,25 @@ public:
   //virtual void SetInputParameters( vtkDoubleArray* );
   //virtual vtkDoubleArray* GetInputParameters();
 
-  // Set the sorting method for points in a polynomial.
-  enum {
+  /// Set the sorting method for points in a polynomial.
+  enum
+    {
     SORTING_METHOD_INDEX = 0,
     SORTING_METHOD_MINIMUM_SPANNING_TREE_POSITION,
     SORTING_METHOD_LAST // valid types should be written above this line
-  };
+    };
   vtkGetMacro(PolynomialPointSortingMethod, int);
   vtkSetMacro(PolynomialPointSortingMethod, int);
   static const char* GetPolynomialPointSortingMethodAsString(int id);
   static int GetPolynomialPointSortingMethodFromString(const char* name);
   void SetPolynomialPointSortingMethodToIndex() { this->SetPolynomialPointSortingMethod(vtkCurveGenerator::SORTING_METHOD_INDEX); }
-  void SetPolynomialPointSortingMethodToMinimumSpanningTreePosition() {
+  void SetPolynomialPointSortingMethodToMinimumSpanningTreePosition()
+    {
     this->SetPolynomialPointSortingMethod(vtkCurveGenerator::SORTING_METHOD_MINIMUM_SPANNING_TREE_POSITION);
-  }
+    }
 
-  // Set the type of fit for polynomials
-  // see corresponding entries in vtkParametricPolynomialApproximation.h for more information
+  /// Set the type of fit for polynomials
+  /// see corresponding entries in vtkParametricPolynomialApproximation.h for more information
   enum
     {
     POLYNOMIAL_FIT_METHOD_GLOBAL_LEAST_SQUARES = 0,
@@ -132,12 +138,12 @@ public:
   void SetPolynomialFitMethodToGlobalLeastSquares() { this->SetPolynomialFitMethod(vtkCurveGenerator::POLYNOMIAL_FIT_METHOD_GLOBAL_LEAST_SQUARES); }
   void SetPolynomialFitMethodToMovingLeastSquares() { this->SetPolynomialFitMethod(vtkCurveGenerator::POLYNOMIAL_FIT_METHOD_MOVING_LEAST_SQUARES); }
 
-  // Set the sampling distance (in parameter space) for moving least squares sampling
+  /// Set the sampling distance (in parameter space) for moving least squares sampling
   vtkGetMacro(PolynomialSampleWidth, double);
   vtkSetMacro(PolynomialSampleWidth, double);
 
-  // Set the weight function for moving least squares polynomial fits
-  // see corresponding entries in vtkParametricPolynomialApproximation.h for more information
+  /// Set the weight function for moving least squares polynomial fits
+  /// see corresponding entries in vtkParametricPolynomialApproximation.h for more information
   enum
     {
     POLYNOMIAL_WEIGHT_FUNCTION_RECTANGULAR = 0,
@@ -155,31 +161,25 @@ public:
   void SetPolynomialWeightFunctionToCosine() { this->SetPolynomialWeightFunction(vtkCurveGenerator::POLYNOMIAL_WEIGHT_FUNCTION_COSINE); }
   void SetPolynomialWeightFunctionToGaussian() { this->SetPolynomialWeightFunction(vtkCurveGenerator::POLYNOMIAL_WEIGHT_FUNCTION_GAUSSIAN); }
 
-  // Set the points that the curve should be based on
-  vtkPoints* GetInputPoints();
-  void SetInputPoints(vtkPoints*);
+  /// If the surface scalars should be used to weight the distances in the pathfinding algorithm
+  vtkGetMacro(UseSurfaceScalarWeights, bool);
+  vtkSetMacro(UseSurfaceScalarWeights, bool);
+  vtkBooleanMacro(UseSurfaceScalarWeights, bool);
 
-  // output sampled points
-  vtkPoints* GetOutputPoints();
-  void SetOutputPoints(vtkPoints*);
+  /// Get the control point id from the interpolated point id
+  /// Currently only works for shortest surface distance
+  vtkIdType GetControlPointIdFromInterpolatedPointId(vtkIdType interpolatedPointId);
 
+  /// Get the list of curve point ids on the surface mesh
+  vtkIdList* GetSurfacePointIds();
+
+  /// Get the length of the curve
   double GetOutputCurveLength();
 
-  /// The internal instance of the current parametric function
-  /// use of the curve for other computations.
+  /// The internal instance of the current parametric function use of the curve for other computations.
   vtkParametricFunction* GetParametricFunction() { return this->ParametricFunction.GetPointer(); };
 
-  // logic
-  void Update();
-
 protected:
-  vtkCurveGenerator();
-  ~vtkCurveGenerator() override;
-
-private:
-  // inputs
-  vtkSmartPointer< vtkPoints > InputPoints;
-
   // input parameters
   int NumberOfPointsPerInterpolatingSegment;
   int CurveType;
@@ -193,27 +193,38 @@ private:
   int PolynomialFitMethod;
   double PolynomialSampleWidth;
   int PolynomialWeightFunction;
+  bool UseSurfaceScalarWeights;
+  std::vector<vtkIdType> CorrespondingControlPointIds;
 
   // internal storage
-  vtkSmartPointer< vtkDoubleArray > InputParameters;
-  vtkSmartPointer< vtkParametricFunction > ParametricFunction;
+  vtkSmartPointer<vtkPointLocator> PointLocator;
+  vtkSmartPointer<vtkDijkstraGraphGeodesicPath> PathFilter;
+  vtkSmartPointer<vtkDoubleArray> InputParameters;
+  vtkSmartPointer<vtkParametricFunction> ParametricFunction;
 
   // output
-  vtkSmartPointer< vtkPoints > OutputPoints;
   double OutputCurveLength;
 
   // logic
-  void SetParametricFunctionToSpline(vtkSpline* xSpline, vtkSpline* ySpline, vtkSpline* zSpline);
-  void SetParametricFunctionToLinearSpline();
-  void SetParametricFunctionToCardinalSpline();
-  void SetParametricFunctionToKochanekSpline();
-  void SetParametricFunctionToPolynomial();
-  bool UpdateNeeded();
-  void GeneratePoints();
+  void SetParametricFunctionToSpline(vtkPoints* inputPoints, vtkSpline* xSpline, vtkSpline* ySpline, vtkSpline* zSpline);
+  void SetParametricFunctionToLinearSpline(vtkPoints* inputPoints);
+  void SetParametricFunctionToCardinalSpline(vtkPoints* inputPoints);
+  void SetParametricFunctionToKochanekSpline(vtkPoints* inputPoints);
+  void SetParametricFunctionToPolynomial(vtkPoints* inputPoints);
+  int GeneratePoints(vtkPoints* inputPoints, vtkPolyData* inputSurface, vtkPolyData* outputPolyData);
+  int GeneratePointsFromFunction(vtkPoints* inputPoints, vtkPoints* outputPoints);
+  int GeneratePointsFromSurface(vtkPoints* inputPoints, vtkPolyData* inputSurface, vtkPoints* outputPoints);
+  int GenerateLines(vtkPolyData* polyData);
 
   static void SortByIndex(vtkPoints*, vtkDoubleArray*);
   static void SortByMinimumSpanningTreePosition(vtkPoints*, vtkDoubleArray*);
 
+  int FillInputPortInformation(int port, vtkInformation* info) override;
+  int RequestData(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector) override;
+
+protected:
+  vtkCurveGenerator();
+  ~vtkCurveGenerator() override;
   vtkCurveGenerator(const vtkCurveGenerator&) = delete;
   void operator=(const vtkCurveGenerator&) = delete;
 };

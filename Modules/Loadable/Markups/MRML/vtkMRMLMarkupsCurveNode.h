@@ -30,7 +30,13 @@
 // VTK includes
 #include <vtkStringArray.h>
 
+// std includes
+#include <vector>
+
+class vtkArrayCalculator;
+class vtkPassArrays;
 class vtkPlane;
+class vtkTransformPolyDataFilter;
 
 /// \brief MRML node to represent a curve markup
 /// Curve Markups nodes contain N control points.
@@ -159,14 +165,34 @@ public:
 
   bool GetPointsOnPlaneWorld(vtkPlane* plane, vtkPoints* intersectionPoints);
 
+  /// Type of curve to generate
   int GetCurveType();
   void SetCurveType(int type);
+  const char* GetCurveTypeAsString(int id);
+  int GetCurveTypeFromString(const char* name);
   void SetCurveTypeToLinear();
   void SetCurveTypeToCardinalSpline();
   void SetCurveTypeToKochanekSpline();
   void SetCurveTypeToPolynomial();
-  const char* GetCurveTypeAsString(int id);
-  int GetCurveTypeFromString(const char* name);
+  void SetCurveTypeToShortestSurfaceDistance(vtkMRMLModelNode* modelNode=nullptr);
+
+  /// Node reference role for the surface that is used in the shortest surface distance curve type
+  const char* GetSurfaceMeshNodeReferenceRole() { return "surfaceMesh"; };
+  const char* GetSurfaceMeshNodeReferenceMRMLAttributeName() { return "surfaceMeshRef"; };
+
+  /// The model node that is used for calculating the shortest surface distance curve type
+  void SetAndObserveModelNode(vtkMRMLModelNode* modelNode);
+  vtkMRMLModelNode* GetModelNode();
+
+  /// Whether to scale the distance of the points by some scalar weight value.
+  /// Only applies to shortest surface distance curve type.
+  bool GetUseSurfaceScalarWeights();
+  void SetUseSurfaceScalarWeights(bool useSurfaceScalarWeights);
+
+  /// The scalar weight function that is used for modifying the weight on each vertex.
+  /// The the currently active point scalar array is availiable as the "activeScalar" variable.
+  const char* GetSurfaceScalarWeightFunction();
+  void SetSurfaceScalarWeightFunction(const char* function);
 
   //@{
   /// Get/set how many curve points are inserted between control points.
@@ -176,6 +202,20 @@ public:
   //@}
 
 protected:
+  vtkSmartPointer<vtkTransformPolyDataFilter> PolyDataToWorldTransformer;
+  vtkSmartPointer<vtkArrayCalculator> ScalarCalculator;
+  vtkSmartPointer<vtkPassArrays> PassArray;
+  const char* ActiveScalar;
+
+protected:
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
+  virtual void OnNodeReferenceAdded(vtkMRMLNodeReference* reference) override;
+  virtual void OnNodeReferenceModified(vtkMRMLNodeReference* reference) override;
+  virtual void OnNodeReferenceRemoved(vtkMRMLNodeReference* reference) override;
+
+  virtual void UpdateScalarVariables();
+  virtual void UpdateModelNode();
+
   vtkMRMLMarkupsCurveNode();
   ~vtkMRMLMarkupsCurveNode() override;
   vtkMRMLMarkupsCurveNode(const vtkMRMLMarkupsCurveNode&);

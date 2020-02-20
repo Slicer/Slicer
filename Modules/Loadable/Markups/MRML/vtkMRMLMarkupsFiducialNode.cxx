@@ -205,12 +205,6 @@ void vtkMRMLMarkupsFiducialNode::GetNthFiducialWorldCoordinates(int n, double co
 }
 
 //-------------------------------------------------------------------------
-void vtkMRMLMarkupsFiducialNode::UpdateCurvePolyFromCurveInputPoly()
-{
-  // No need for curve generation for markup points
-}
-
-//-------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialNode::CreateDefaultDisplayNodes()
 {
   if (this->GetDisplayNode() != nullptr &&

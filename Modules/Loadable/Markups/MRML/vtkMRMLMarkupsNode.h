@@ -598,8 +598,6 @@ protected:
 
   virtual void UpdateCurvePolyFromControlPoints();
 
-  virtual void UpdateCurvePolyFromCurveInputPoly();
-
   void OnTransformNodeReferenceChanged(vtkMRMLTransformNode* transformNode) override;
 
   virtual void UpdateMeasurements();
@@ -630,9 +628,8 @@ protected:
   // Line cells connect all points into a curve.
   vtkSmartPointer<vtkPolyData> CurveInputPoly;
 
-  // Points store interpolated/approximated point positions (in local coordinate system).
-  // Line cells connect all points into a curve.
-  vtkSmartPointer<vtkPolyData> CurvePoly;
+  vtkSmartPointer<vtkTransformPolyDataFilter> CurveInputPolyToWorldTransformer;
+  vtkSmartPointer<vtkGeneralTransform> CurveInputPolyToWorldTransform;
 
   vtkSmartPointer<vtkTransformPolyDataFilter> CurvePolyToWorldTransformer;
   vtkSmartPointer<vtkGeneralTransform> CurvePolyToWorldTransform;

@@ -228,6 +228,9 @@ public slots:
   /// update the coordinates shown in the table to be either the transformed coordiantes (checked) or the untransformed coordiantes (unchecked)
   void onTransformedCoordinatesToggled(bool checked);
 
+  /// Change in a widget related to a surface curve type parameter
+  void onCurveTypeParameterChanged();
+
 protected:
   QScopedPointer<qSlicerMarkupsModuleWidgetPrivate> d_ptr;
 
