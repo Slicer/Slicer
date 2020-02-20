@@ -347,7 +347,7 @@ class EditBox(VTKObservationMixin):
       self.currentOption.__del__()
       self.currentOption = None
       for tool in self.currentTools:
-        tool.sliceWidget.unsetCursor()
+        tool.sliceWidget.sliceView().unsetViewCursor()
         tool.cleanup()
       self.currentTools = []
 
@@ -406,7 +406,7 @@ class EditBox(VTKObservationMixin):
       # make an appropriate cursor for the tool
       cursor = self.cursorForEffect(effectName)
       for tool in self.currentTools:
-        tool.sliceWidget.setCursor(cursor)
+        tool.sliceWidget.sliceView().setViewCursor(cursor)
 
   def cursorForEffect(self,effectName):
     """Return an instance of QCursor customized for the given effectName.
