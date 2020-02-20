@@ -160,7 +160,6 @@ class MultiVolumeIntensityChartView(object):
     self.__chart.LegendVisibilityOff()
     self.__chart.SetAxisTitleFontSize(15)
     self.__chartViewNode.SetPlotChartNodeID(self.__chart.GetID())
-    self.__chartView.show()
 
     self.__bgxArray = vtk.vtkFloatArray()
     self.__bgyArray = vtk.vtkFloatArray()
