@@ -1151,17 +1151,17 @@ void qSlicerCLIModuleUIHelper
   QVariant::Type type = value.type();
   if (type == QVariant::Bool)
     {
-    commandLineModuleNode->SetParameterAsBool(name.toLatin1(),
+    commandLineModuleNode->SetParameterAsBool(name.toUtf8(),
                                               value.toBool());
     }
   else if (type == QVariant::Int)
     {
-    commandLineModuleNode->SetParameterAsInt(name.toLatin1(),
+    commandLineModuleNode->SetParameterAsInt(name.toUtf8(),
                                              value.toInt());
     }
   else if (type == QVariant::Double)
     {
-    commandLineModuleNode->SetParameterAsDouble(name.toLatin1(),
+    commandLineModuleNode->SetParameterAsDouble(name.toUtf8(),
                                                 value.toDouble());
     }
   else if (type == QVariant::String)
@@ -1172,7 +1172,7 @@ void qSlicerCLIModuleUIHelper
       {
       if (d->CLIModuleWidget->mrmlScene())
         {
-        node =  d->CLIModuleWidget->mrmlScene()->GetNodeByID(valueAsString.toLatin1());
+        node =  d->CLIModuleWidget->mrmlScene()->GetNodeByID(valueAsString.toUtf8());
         }
       else
         {
@@ -1181,11 +1181,11 @@ void qSlicerCLIModuleUIHelper
       }
     if (node)
       {
-      commandLineModuleNode->SetParameterAsNode(name.toLatin1(),node);
+      commandLineModuleNode->SetParameterAsNode(name.toUtf8(),node);
       }
     else
       {
-      commandLineModuleNode->SetParameterAsString(name.toLatin1(),
+      commandLineModuleNode->SetParameterAsString(name.toUtf8(),
                                                   value.toString().toStdString());
       }
     }
@@ -1219,7 +1219,7 @@ void qSlicerCLIModuleUIHelper::updateUi(vtkMRMLCommandLineModuleNode* commandLin
   foreach(qSlicerWidgetValueWrapper* valueWrapper, d->WidgetValueWrappers)
     {
     QString value = QString::fromStdString(
-      commandLineModuleNode->GetParameterAsString(valueWrapper->name().toLatin1()));
+      commandLineModuleNode->GetParameterAsString(valueWrapper->name().toUtf8()));
     valueWrapper->setValue(value);
     }
 }

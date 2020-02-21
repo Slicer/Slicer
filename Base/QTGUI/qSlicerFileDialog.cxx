@@ -246,7 +246,7 @@ qSlicerIOOptions* qSlicerStandardFileDialog
     vtkMRMLNode* nodeToSave = nullptr;
     if (!ioProperties["nodeID"].toString().isEmpty())
       {
-      nodeToSave = scene->GetNodeByID(ioProperties["nodeID"].toString().toLatin1());
+      nodeToSave = scene->GetNodeByID(ioProperties["nodeID"].toString().toUtf8());
       }
     QStringList fileDescriptions =
       ioManager->fileWriterDescriptions(this->fileType());

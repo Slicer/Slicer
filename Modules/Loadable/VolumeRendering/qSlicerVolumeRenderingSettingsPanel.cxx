@@ -311,7 +311,7 @@ void qSlicerVolumeRenderingSettingsPanel::updateVolumeRenderingLogicDefaultRende
     {
     return;
     }
-  d->VolumeRenderingLogic->SetDefaultRenderingMethod(this->defaultRenderingMethod().toLatin1());
+  d->VolumeRenderingLogic->SetDefaultRenderingMethod(this->defaultRenderingMethod().toUtf8());
 }
 
 // --------------------------------------------------------------------------

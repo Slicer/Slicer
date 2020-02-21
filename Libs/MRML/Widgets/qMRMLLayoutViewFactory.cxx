@@ -219,7 +219,7 @@ bool qMRMLLayoutViewFactory::isElementSupported(QDomElement layoutElement)const
 // --------------------------------------------------------------------------
 bool qMRMLLayoutViewFactory::isViewNodeSupported(vtkMRMLAbstractViewNode* viewNode)const
 {
-  return viewNode && viewNode->IsA(this->viewClassName().toLatin1());
+  return viewNode && viewNode->IsA(this->viewClassName().toUtf8());
 }
 
 // --------------------------------------------------------------------------

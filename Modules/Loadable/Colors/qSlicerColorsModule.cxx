@@ -108,7 +108,7 @@ void qSlicerColorsModule::setup()
   // Warning: If the logic has already created the color nodes (AddDefaultColorNodes),
   // setting the user color file paths doesn't trigger any action to add new nodes.
   // It's something that must be fixed into the logic, not here
-  colorLogic->SetUserColorFilePaths(joinedPaths.toLatin1());
+  colorLogic->SetUserColorFilePaths(joinedPaths.toUtf8());
 
   // Color picker
   d->ColorDialogPickerWidget->setMRMLColorLogic(colorLogic);

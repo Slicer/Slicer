@@ -96,13 +96,13 @@ void qSlicerLayoutManager::setScriptedDisplayableManagerDirectory(
   //sliceFactory->RegisterDisplayableManager(
   //  QFileInfo(QDir(scriptedDisplayableManagerDirectory),
   //            "vtkScriptedExampleDisplayableManager.py")
-  //    .absoluteFilePath().toLatin1());
+  //    .absoluteFilePath().toUtf8());
   //vtkMRMLThreeDViewDisplayableManagerFactory* threeDFactory
   //  = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
   //threeDFactory->RegisterDisplayableManager(
   //  QFileInfo(QDir(scriptedDisplayableManagerDirectory),
   //            "vtkScriptedExampleDisplayableManager.py")
-  //    .absoluteFilePath().toLatin1());
+  //    .absoluteFilePath().toUtf8());
 #else
   Q_UNUSED(scriptedDisplayableManagerDirectory);
 #endif

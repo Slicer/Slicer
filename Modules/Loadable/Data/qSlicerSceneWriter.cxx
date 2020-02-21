@@ -113,7 +113,7 @@ bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
   Q_ASSERT(!properties["fileName"].toString().isEmpty());
   QString fileName = properties["fileName"].toString();
 
-  this->mrmlScene()->SetURL(fileName.toLatin1());
+  this->mrmlScene()->SetURL(fileName.toUtf8());
   std::string parentDir = vtksys::SystemTools::GetParentDirectory(this->mrmlScene()->GetURL());
   this->mrmlScene()->SetRootDirectory(parentDir.c_str());
 
@@ -198,7 +198,7 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
     qSlicerCoreApplication::application()->applicationLogic();
   Q_ASSERT(this->mrmlScene() == applicationLogic->GetMRMLScene());
   bool retval =
-    applicationLogic->SaveSceneToSlicerDataBundleDirectory(bundlePath.toLatin1(),
+    applicationLogic->SaveSceneToSlicerDataBundleDirectory(bundlePath.toUtf8(),
                                                            imageData);
   if (!retval)
     {
@@ -207,8 +207,8 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
     }
 
   qDebug() << "zipping to " << fileInfo.absoluteFilePath();
-  if ( !applicationLogic->Zip(fileInfo.absoluteFilePath().toLatin1(),
-                              bundlePath.toLatin1()) )
+  if ( !applicationLogic->Zip(fileInfo.absoluteFilePath().toUtf8(),
+                              bundlePath.toUtf8()) )
     {
     QMessageBox::critical(nullptr, tr("Save scene as MRB"), tr("Could not compress bundle"));
     return false;
@@ -288,7 +288,7 @@ bool qSlicerSceneWriter::writeToDirectory(const qSlicerIO::IOProperties& propert
     qSlicerCoreApplication::application()->applicationLogic();
   Q_ASSERT(this->mrmlScene() == applicationLogic->GetMRMLScene());
   bool retval = applicationLogic->SaveSceneToSlicerDataBundleDirectory(
-    saveDirName.toLatin1(), imageData);
+    saveDirName.toUtf8(), imageData);
   if (retval)
     {
     qDebug() << "Saved scene to dir" << saveDirName;

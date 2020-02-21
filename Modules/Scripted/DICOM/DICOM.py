@@ -361,30 +361,49 @@ class DICOMFileDialog(object):
     return directoriesToAdd
 
   @staticmethod
+  def isAscii(s):
+    """Return True if string only contains ASCII characters.
+    """
+    if isinstance(s, str):
+      try:
+        s.encode('ascii')
+      except UnicodeEncodeError:
+        # encoding as ascii failed, therefore it was not an ascii string
+        return False
+    else:
+      try:
+        s.decode('ascii')
+      except UnicodeDecodeError:
+        # decoding to ascii failed, therefore it was not an ascii string
+        return False
+    return True
+
+  @staticmethod
   def validDirectories(directoriesToAdd):
     """Return True if the directory names are acceptable for input.
     If path contains non-ASCII characters then they are rejected because
     DICOM module cannot reliable read files form folders that contain
     special characters in the name.
     """
+    if slicer.app.isCodePageUtf8():
+      return True
+
     for directoryName in directoriesToAdd:
-      if isinstance(directoryName, str):
-        try:
-          directoryName.encode('ascii')
-        except UnicodeEncodeError:
-          # encoding as ascii failed, therefore it was not an ascii string
+      for root, dirs, files in os.walk(directoryName):
+        if not DICOMFileDialog.isAscii(root):
           return False
-      else:
-        try:
-          directoryName.decode('ascii')
-        except UnicodeDecodeError:
-          # decoding to ascii failed, therefore it was not an ascii string
-          return False
+        for name in files:
+          if not DICOMFileDialog.isAscii(name):
+            return False
+        for name in dirs:
+          if not DICOMFileDialog.isAscii(name):
+            return False
+
     return True
 
   def dropEvent(self):
     if not DICOMFileDialog.validDirectories(self.directoriesToAdd):
-      if not slicer.util.confirmYesNoDisplay("Import from folders with special (non-ASCII) characters in the name is not supported."
+      if not slicer.util.confirmYesNoDisplay("Import of files that have special (non-ASCII) characters in their names is not supported."
           " It is recommended to move files into a different folder and retry. Try to import from current location anyway?"):
         self.directoriesToAdd = []
         return

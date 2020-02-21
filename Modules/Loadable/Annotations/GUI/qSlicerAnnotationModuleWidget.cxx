@@ -266,7 +266,7 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked(QString mrmlId)
 {
   Q_D(qSlicerAnnotationModuleWidget);
 
-  QByteArray mrmlIdArray = mrmlId.toLatin1();
+  QByteArray mrmlIdArray = mrmlId.toUtf8();
 
   // special case for snapshots
   if (d->logic()->IsSnapshotNode(mrmlIdArray.data()))

@@ -10,7 +10,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
-add_executable(SFLSRobustStat3DTestConsole SFLSRobustStat3DTestConsole.cxx)
+ctk_add_executable_utf8(SFLSRobustStat3DTestConsole SFLSRobustStat3DTestConsole.cxx)
 target_link_libraries(SFLSRobustStat3DTestConsole ${CLP}Lib ${SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES})
 set_target_properties(SFLSRobustStat3DTestConsole PROPERTIES LABELS ${CLP})
 set_target_properties(SFLSRobustStat3DTestConsole PROPERTIES FOLDER ${${CLP}_TARGETS_FOLDER})

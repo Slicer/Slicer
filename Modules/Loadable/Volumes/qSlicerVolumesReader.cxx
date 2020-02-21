@@ -163,13 +163,13 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
     fileList = vtkSmartPointer<vtkStringArray>::New();
     foreach(QString file, properties["fileNames"].toStringList())
       {
-      fileList->InsertNextValue(file.toLatin1());
+      fileList->InsertNextValue(file.toUtf8());
       }
     }
   Q_ASSERT(d->Logic);
   vtkMRMLVolumeNode* node = d->Logic->AddArchetypeVolume(
-    fileName.toLatin1(),
-    name.toLatin1(),
+    fileName.toUtf8(),
+    name.toUtf8(),
     options,
     fileList.GetPointer());
   if (node)
@@ -179,7 +179,7 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
       QString colorNodeID = properties["colorNodeID"].toString();
       if (node->GetDisplayNode())
         {
-        node->GetDisplayNode()->SetAndObserveColorNodeID(colorNodeID.toLatin1());
+        node->GetDisplayNode()->SetAndObserveColorNodeID(colorNodeID.toUtf8());
         }
       }
     if (propagateVolumeSelection)

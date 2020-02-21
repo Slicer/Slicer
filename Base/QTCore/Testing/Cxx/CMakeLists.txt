@@ -111,7 +111,7 @@ if(BUILD_TESTING)
     )
   endif()
 
-  add_executable(${KIT}CxxTests ${Tests})
+  ctk_add_executable_utf8(${KIT}CxxTests ${Tests})
   target_link_libraries(${KIT}CxxTests ${KIT_TEST_TARGET_LIBRARIES})
   set_target_properties(${KIT}CxxTests PROPERTIES LABELS ${KIT})
   set_target_properties(${KIT}CxxTests PROPERTIES FOLDER "Core-Base")

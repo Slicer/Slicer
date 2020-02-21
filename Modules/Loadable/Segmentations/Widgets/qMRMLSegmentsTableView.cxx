@@ -1035,7 +1035,7 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
     vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode());
     if (displayNode)
       {
-      displayNode->GetSegmentDisplayProperties(segmentID.toLatin1().constData(), properties);
+      displayNode->GetSegmentDisplayProperties(segmentID.toUtf8().constData(), properties);
       }
 
     contextMenu->addSeparator();
@@ -1237,7 +1237,7 @@ void qMRMLSegmentsTableView::jumpSlices()
     return;
     }
 
-  double* segmentCenterPosition = d->SegmentationNode->GetSegmentCenterRAS(selectedSegmentIDs[0].toLatin1().constData());
+  double* segmentCenterPosition = d->SegmentationNode->GetSegmentCenterRAS(selectedSegmentIDs[0].toUtf8().constData());
   if (!segmentCenterPosition)
     {
     return;
@@ -1316,7 +1316,7 @@ void qMRMLSegmentsTableView::moveSelectedSegmentsUp()
     QModelIndex previousModelIndex = d->SortFilterModel->index(selectedModelIndex.row() - 1, 0);
     QString previousSegmentID = d->SortFilterModel->segmentIDFromIndex(previousModelIndex);
     int previousSegmentIndex = segmentation->GetSegmentIndex(previousSegmentID.toStdString());
-    segmentation->SetSegmentIndex(selectedSegmentIDs[i].toLatin1().constData(), previousSegmentIndex);
+    segmentation->SetSegmentIndex(selectedSegmentIDs[i].toUtf8().constData(), previousSegmentIndex);
     }
   this->setSelectedSegmentIDs(selectedSegmentIDs);
 }
@@ -1360,7 +1360,7 @@ void qMRMLSegmentsTableView::moveSelectedSegmentsDown()
     QModelIndex nextModelIndex = d->SortFilterModel->index(selectedModelIndex.row() + 1, 0);
     QString nextSegmentID = d->SortFilterModel->segmentIDFromIndex(nextModelIndex);
     int nextSegmentIndex = segmentation->GetSegmentIndex(nextSegmentID.toStdString());
-    segmentation->SetSegmentIndex(selectedSegmentIDs[i].toLatin1().constData(), nextSegmentIndex);
+    segmentation->SetSegmentIndex(selectedSegmentIDs[i].toUtf8().constData(), nextSegmentIndex);
     }
   this->setSelectedSegmentIDs(selectedSegmentIDs);
 }

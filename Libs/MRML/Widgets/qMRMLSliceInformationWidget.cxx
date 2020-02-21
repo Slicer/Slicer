@@ -103,7 +103,7 @@ void qMRMLSliceInformationWidgetPrivate::updateWidgetFromMRMLSliceNode()
   //qDebug() << "qMRMLSliceInformationWidgetPrivate::updateWidgetFromMRMLSliceNode";
 
   // Update layout name
-  this->LayoutNameLineEdit->setText(QLatin1String(this->MRMLSliceNode->GetLayoutName()));
+  this->LayoutNameLineEdit->setText(QString::fromUtf8(this->MRMLSliceNode->GetLayoutName()));
 
   qMRMLSliceControllerWidgetPrivate::updateSliceOrientationSelector(
         this->MRMLSliceNode, this->SliceOrientationSelector);
@@ -215,7 +215,7 @@ void qMRMLSliceInformationWidget::setSliceOrientation(const QString& orientation
     return;
     }
 
-  d->MRMLSliceNode->SetOrientation(orientation.toLatin1());
+  d->MRMLSliceNode->SetOrientation(orientation.toUtf8());
 }
 
 //---------------------------------------------------------------------------

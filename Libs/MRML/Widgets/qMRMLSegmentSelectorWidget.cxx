@@ -382,7 +382,7 @@ void qMRMLSegmentSelectorWidget::setSelectedSegmentIDs(QStringList segmentIDList
   QStringList invalidSegmentIDs;
   foreach (QString segmentID, segmentIDList)
     {
-    if (!d->SegmentationNode->GetSegmentation()->GetSegment(segmentID.toLatin1().constData()))
+    if (!d->SegmentationNode->GetSegmentation()->GetSegment(segmentID.toUtf8().constData()))
       {
       // If no segment present with the current ID, then mark it for removal
       invalidSegmentIDs << segmentID;

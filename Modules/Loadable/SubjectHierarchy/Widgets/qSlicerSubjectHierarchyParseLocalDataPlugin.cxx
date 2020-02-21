@@ -246,7 +246,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
     for (int componentIndex=0; componentIndex<loadedFilePaths[nodeIndex].count(); ++componentIndex)
       {
       QString currentComponent = loadedFilePaths[nodeIndex][componentIndex];
-      vtkIdType itemID = shNode->GetItemChildWithName(parentItemID, currentComponent.toLatin1().constData());
+      vtkIdType itemID = shNode->GetItemChildWithName(parentItemID, currentComponent.toUtf8().constData());
       // If hierarchy node already created
       if (itemID)
         {
@@ -259,7 +259,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
         qSlicerSubjectHierarchyFolderPlugin* folderPlugin = qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(
           qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder") );
         parentItemID = folderPlugin->createFolderUnderItem(parentItemID);
-        shNode->SetItemName(parentItemID, currentComponent.toLatin1().constData());
+        shNode->SetItemName(parentItemID, currentComponent.toUtf8().constData());
         createdItemIDs << parentItemID;
         }
       // Leaf node (file name) and not top-level

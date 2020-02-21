@@ -131,22 +131,22 @@ void qMRMLSceneAnnotationModel::updateNodeFromItemData(vtkMRMLNode* node, QStand
     if (annotationNode)
       {
       // if we have an annotation node, the text can be changed by editing the textcolumn
-      annotationNode->SetText(0,item->text().toLatin1(),0,1);
+      annotationNode->SetText(0,item->text().toUtf8(),0,1);
       if (annotationNode->IsA("vtkMRMLAnnotationFiducialNode"))
         {
         // also set the name
-        //annotationNode->SetName(item->text().toLatin1());
+        //annotationNode->SetName(item->text().toUtf8());
         }
       }
     else if (hierarchyNode)
       {
       // if we have a hierarchy node, the description can be changed by editing the textcolumn
-      hierarchyNode->SetDescription(item->text().toLatin1());
+      hierarchyNode->SetDescription(item->text().toUtf8());
       }
     else if (snapshotNode)
       {
       // if we have a snapshot node, the name can be changed by editing the textcolumn
-      snapshotNode->SetName(item->text().toLatin1());
+      snapshotNode->SetName(item->text().toUtf8());
       }
     }
 }

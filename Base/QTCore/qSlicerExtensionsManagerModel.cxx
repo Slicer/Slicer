@@ -289,7 +289,7 @@ void qSlicerExtensionsManagerModelPrivate::init()
   int columnIdx = 0;
   foreach(const QString& columnName, this->columnNames())
     {
-    roleNames[Qt::UserRole + 1 + columnIdx] = columnName.toLatin1();
+    roleNames[Qt::UserRole + 1 + columnIdx] = columnName.toUtf8();
     ++columnIdx;
     }
 
@@ -392,7 +392,7 @@ void qSlicerExtensionsManagerModelPrivate::addExtensionModelRow(const ExtensionM
     QString value = metadata.value(key).toString();
     QStandardItem * item = new QStandardItem(value);
     item->setEditable(false);
-    item->setData(value, this->role(key.toLatin1()));
+    item->setData(value, this->role(key.toUtf8()));
     itemList << item;
     }
 

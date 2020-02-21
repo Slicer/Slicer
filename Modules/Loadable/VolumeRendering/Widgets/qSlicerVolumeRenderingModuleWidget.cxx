@@ -591,7 +591,7 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentRenderingMethodChanged(int ind
 
   // Replace display nodes with new display nodes of the type corresponding to the requested method
   vtkSlicerVolumeRenderingLogic* volumeRenderingLogic = vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
-  volumeRenderingLogic->ChangeVolumeRenderingMethod(renderingClassName.toLatin1());
+  volumeRenderingLogic->ChangeVolumeRenderingMethod(renderingClassName.toUtf8());
 
   // Perform necessary setup steps for the new display node for the current volume
   this->onCurrentMRMLVolumeNodeChanged(d->VolumeNodeComboBox->currentNode());

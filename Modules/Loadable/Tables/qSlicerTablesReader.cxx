@@ -121,7 +121,7 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
     {
     name = properties["name"].toString();
     }
-  std::string uname = this->mrmlScene()->GetUniqueNameByString(name.toLatin1());
+  std::string uname = this->mrmlScene()->GetUniqueNameByString(name.toUtf8());
   std::string password;
 
   // Check if the file is sqlite
@@ -156,7 +156,7 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
   vtkMRMLTableNode* node = nullptr;
   if (d->Logic!=nullptr)
     {
-    node = d->Logic->AddTable(fileName.toLatin1(),uname.c_str(), true, password.c_str());
+    node = d->Logic->AddTable(fileName.toUtf8(),uname.c_str(), true, password.c_str());
     }
   if (node)
     {

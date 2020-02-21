@@ -96,7 +96,7 @@ bool qSlicerColorsReader::load(const IOProperties& properties)
     return false;
     }
 
-  vtkMRMLColorNode* node = d->ColorLogic->LoadColorFile(fileName.toLatin1());
+  vtkMRMLColorNode* node = d->ColorLogic->LoadColorFile(fileName.toUtf8());
   QStringList loadedNodes;
   if (node)
     {

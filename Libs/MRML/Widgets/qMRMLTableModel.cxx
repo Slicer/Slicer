@@ -499,7 +499,7 @@ void qMRMLTableModel::updateMRMLFromModel(QStandardItem* item)
       else
         {
         vtkVariant valueInTableBefore = table->GetValue(tableRow, tableCol); // restore this value if new value is invalid
-        vtkVariant itemText(item->text().toLatin1().constData()); // the vtkVariant constructor makes a copy of the input buffer, so using constData is safe
+        vtkVariant itemText(item->text().toUtf8().constData()); // the vtkVariant constructor makes a copy of the input buffer, so using constData is safe
         table->SetValue(tableRow, tableCol, itemText);
         vtkVariant valueInTableAfter = table->GetValue(tableRow, tableCol);
         if (valueInTableBefore == valueInTableAfter)
@@ -526,7 +526,7 @@ void qMRMLTableModel::updateMRMLFromModel(QStandardItem* item)
       QString valueBefore = QString::fromStdString(column->GetName()?column->GetName():"");
       if (valueBefore!=item->text())
         {
-        tableNode->RenameColumn(tableCol, item->text().toLatin1().constData());
+        tableNode->RenameColumn(tableCol, item->text().toUtf8().constData());
         }
       }
     }

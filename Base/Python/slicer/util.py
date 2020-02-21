@@ -1477,8 +1477,17 @@ class VTKObservationMixin(object):
     return None
 
 def toVTKString(text):
-  """Convert unicode string into 8-bit encoded ascii string.
-  Unicode characters without ascii equivalent will be stripped out.
+  """This method is deprecated. It converted unicode string into VTK string, but
+  since now VTK assumes that all strings are in UTF-8 and all strings in Slicer are UTF-8, too,
+  conversion is no longer necessary.
+  The method is only kept for backward compatibility and will be removed in the future.
+  """
+  import logging
+  logging.warning("toVTKString is deprecated! Conversion is no longer necessary.")
+  return text
+
+def toLatin1String(text):
+  """Convert string to latin1 encoding.
   """
   vtkStr = ""
   for c in text:

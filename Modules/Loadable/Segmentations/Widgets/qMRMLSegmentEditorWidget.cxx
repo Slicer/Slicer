@@ -1013,7 +1013,7 @@ bool qMRMLSegmentEditorWidgetPrivate::setSurfaceSmoothingFactor(double smoothing
 
   segmentationNode->GetSegmentation()->SetConversionParameter(
     vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSmoothingFactorParameterName(),
-    QVariant(smoothingFactor).toString().toLatin1().constData());
+    QVariant(smoothingFactor).toString().toUtf8().constData());
 
   bool closedSurfacePresent = segmentationNode->GetSegmentation()->ContainsRepresentation(
     vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
@@ -1573,7 +1573,7 @@ void qMRMLSegmentEditorWidget::setActiveEffect(qSlicerSegmentEditorAbstractEffec
     return;
     }
 
-  d->ParameterSetNode->SetActiveEffectName(effect ? effect->name().toLatin1() : "");
+  d->ParameterSetNode->SetActiveEffectName(effect ? effect->name().toUtf8() : "");
 }
 
 //-----------------------------------------------------------------------------
@@ -1962,7 +1962,7 @@ void qMRMLSegmentEditorWidget::onSegmentSelectionChanged(const QItemSelection &s
     }
   else
     {
-    d->ParameterSetNode->SetSelectedSegmentID(selectedSegmentID.toLatin1().constData());
+    d->ParameterSetNode->SetSelectedSegmentID(selectedSegmentID.toUtf8().constData());
     }
 
   // Disable editing if no segment is selected
@@ -1977,7 +1977,7 @@ void qMRMLSegmentEditorWidget::setCurrentSegmentID(const QString segmentID)
   Q_D(qMRMLSegmentEditorWidget);
   if (d->ParameterSetNode)
     {
-    d->ParameterSetNode->SetSelectedSegmentID(segmentID.toLatin1().constData());
+    d->ParameterSetNode->SetSelectedSegmentID(segmentID.toUtf8().constData());
     }
 }
 
@@ -2061,7 +2061,7 @@ void qMRMLSegmentEditorWidget::onAddSegment()
     QString defaultTerminologyEntryStr = settings.value("Segmentations/DefaultTerminologyEntry").toString();
     if (!defaultTerminologyEntryStr.isEmpty())
       {
-      addedSegment->SetTag(vtkSegment::GetTerminologyEntryTagName(), defaultTerminologyEntryStr.toLatin1().constData());
+      addedSegment->SetTag(vtkSegment::GetTerminologyEntryTagName(), defaultTerminologyEntryStr.toUtf8().constData());
       }
     }
 
@@ -2869,7 +2869,7 @@ void qMRMLSegmentEditorWidget::onMaskModeChanged(int index)
   if (index >= d->MaskModeComboBoxFixedItemsCount)
     {
     // specific index is selected
-    d->ParameterSetNode->SetMaskSegmentID(d->MaskModeComboBox->itemData(index).toString().toLatin1());
+    d->ParameterSetNode->SetMaskSegmentID(d->MaskModeComboBox->itemData(index).toString().toUtf8());
     d->ParameterSetNode->SetMaskMode(vtkMRMLSegmentEditorNode::PaintAllowedInsideSingleSegment);
     }
   else

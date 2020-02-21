@@ -670,7 +670,7 @@ void qSlicerMouseModeToolBar::switchPlaceMode()
   if ( selectionNode )
     {
     QString previousPlaceNodeClassName = QString(selectionNode->GetActivePlaceNodeClassName());
-    selectionNode->SetReferenceActivePlaceNodeClassName(placeNodeClassName.toLatin1());
+    selectionNode->SetReferenceActivePlaceNodeClassName(placeNodeClassName.toUtf8());
     // update the interaction mode, which will trigger an update of the cursor
     vtkMRMLInteractionNode * interactionNode = this->interactionNode();
     if (interactionNode)
@@ -791,7 +791,7 @@ void qSlicerMouseModeToolBar::interactionModeActionTriggered(bool toggled)
       const char* currentPlaceNodeClassName = selectionNode->GetActivePlaceNodeClassName();
       if (!currentPlaceNodeClassName || strlen(currentPlaceNodeClassName) == 0)
         {
-        selectionNode->SetReferenceActivePlaceNodeClassName(d->DefaultPlaceClassName.toLatin1());
+        selectionNode->SetReferenceActivePlaceNodeClassName(d->DefaultPlaceClassName.toUtf8());
         }
       }
     }

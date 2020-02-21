@@ -1006,10 +1006,8 @@ int vtkMRMLScene::Commit(const char* url)
   //file << "<?xml version=\"1.0\" standalone='no'?>\n";
   //file << "<!DOCTYPE MRML SYSTEM \"mrml20.dtd\">\n";
 
-  // Add XML encoding specification. Since Slicer uses the Latin1 (ISO-8859-1) character set,
-  // but the MRML file did not specify it, the extra characters made XML loading fail with
-  // characters in the file that are valid for Slicer.
-  *os << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";
+  // Add XML encoding specification. Slicer uses the UTF-8 character set.
+  *os << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
   //--- BEGIN test of user tags
   //file << "<MRML>\n";

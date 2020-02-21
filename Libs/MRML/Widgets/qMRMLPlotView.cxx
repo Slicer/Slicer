@@ -201,7 +201,7 @@ vtkMRMLPlotSeriesNode* qMRMLPlotViewPrivate::plotSeriesNodeFromPlot(vtkPlot* plo
     {
     return nullptr;
     }
-  vtkMRMLPlotSeriesNode* plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(this->mrmlScene()->GetNodeByID(plotSeriesNodeID.toLatin1().constData()));
+  vtkMRMLPlotSeriesNode* plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(this->mrmlScene()->GetNodeByID(plotSeriesNodeID.toUtf8().constData()));
   if (plotSeriesNode == nullptr)
     {
     // node is not in the scene anymore

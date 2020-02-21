@@ -1278,7 +1278,7 @@ void qMRMLSubjectHierarchyTreeView::selectPluginForCurrentItem()
     }
 
   // Set new owner plugin
-  d->SubjectHierarchyNode->SetItemOwnerPluginName(currentItemID, selectedPluginName.toLatin1().constData());
+  d->SubjectHierarchyNode->SetItemOwnerPluginName(currentItemID, selectedPluginName.toUtf8().constData());
 }
 
 //--------------------------------------------------------------------------
@@ -1357,7 +1357,7 @@ void qMRMLSubjectHierarchyTreeView::renameCurrentItem()
     {
     return;
     }
-  d->SubjectHierarchyNode->SetItemName(currentItemID, newName.toLatin1().constData());
+  d->SubjectHierarchyNode->SetItemName(currentItemID, newName.toUtf8().constData());
 }
 
 //--------------------------------------------------------------------------

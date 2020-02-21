@@ -598,7 +598,7 @@ QString qSlicerApplication::nodeModule(vtkMRMLNode* node)const
   QStringList classNames = this->allModuleAssociatedNodeTypes();
   foreach(const QString& className, classNames)
     {
-    if (node->IsA(className.toLatin1()))
+    if (node->IsA(className.toUtf8()))
       {
       moduleNames << this->modulesAssociatedWithNodeType(className);
       }
@@ -900,12 +900,22 @@ void qSlicerApplication::logApplicationInformation() const
   systemInfo->RunOSCheck();
   systemInfo->RunMemoryCheck();
 
+#ifdef Q_OS_WIN32
+  qDebug() << qPrintable(QString("%0: %1 / %2 / (Build %3, Code Page %4) - %5")
+    .arg(titles.at(titleIndex++).leftJustified(titleWidth, '.'))
+    .arg(systemInfo->GetOSName() ? systemInfo->GetOSName() : "unknown")
+    .arg(systemInfo->GetOSRelease() ? systemInfo->GetOSRelease() : "unknown")
+    .arg(qSlicerApplication::windowsOSBuildNumber())
+    .arg(qSlicerApplication::windowsActiveCodePage())
+    .arg(systemInfo->Is64Bits() ? "64-bit" : "32-bit"));
+#else
   qDebug("%s: %s / %s / %s - %s",
-         qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
-         systemInfo->GetOSName() ? systemInfo->GetOSName() : "unknown",
-         systemInfo->GetOSRelease() ? systemInfo->GetOSRelease() : "unknown",
-         systemInfo->GetOSVersion() ? systemInfo->GetOSVersion() : "unknown" ,
-         systemInfo->Is64Bits() ? "64-bit" : "32-bit");
+    qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
+    systemInfo->GetOSName() ? systemInfo->GetOSName() : "unknown",
+    systemInfo->GetOSRelease() ? systemInfo->GetOSRelease() : "unknown",
+    systemInfo->GetOSVersion() ? systemInfo->GetOSVersion() : "unknown",
+    systemInfo->Is64Bits() ? "64-bit" : "32-bit");
+#endif
 
   // Memory
   size_t totalPhysicalMemoryMb = systemInfo->GetTotalPhysicalMemory();
@@ -1074,4 +1084,50 @@ bool qSlicerApplication::launchDesigner(const QStringList& args/*=QStringList()*
   designerExecutable += ".exe";
 #endif
   return QProcess::startDetached(designerExecutable, args);
+}
+
+
+#ifdef Q_OS_WIN32
+
+typedef LONG NTSTATUS, * PNTSTATUS;
+typedef NTSTATUS(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
+
+//------------------------------------------------------------------------------
+unsigned long int qSlicerApplication::windowsOSBuildNumber()
+{
+  HMODULE hMod = ::GetModuleHandleW(L"ntdll.dll");
+  if (!hMod)
+    {
+    return 0;
+    }
+  RtlGetVersionPtr fxPtr = (RtlGetVersionPtr)::GetProcAddress(hMod, "RtlGetVersion");
+  if (!fxPtr)
+    {
+    return 0;
+    }
+  RTL_OSVERSIONINFOW rovi = { 0 };
+  rovi.dwOSVersionInfoSize = sizeof(rovi);
+  if (fxPtr(&rovi) != (0x00000000))
+    {
+    return 0;
+    }
+  return rovi.dwBuildNumber;
+}
+
+//------------------------------------------------------------------------------
+unsigned int qSlicerApplication::windowsActiveCodePage()
+{
+  UINT activeCodePage = GetACP();
+  return activeCodePage;
+}
+#endif
+
+//------------------------------------------------------------------------------
+bool qSlicerApplication::isCodePageUtf8()
+{
+#ifdef Q_OS_WIN32
+  return (qSlicerApplication::windowsActiveCodePage() == CP_UTF8);
+#else
+  return true;
+#endif
 }

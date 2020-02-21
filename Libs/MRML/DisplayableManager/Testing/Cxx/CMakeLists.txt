@@ -33,7 +33,7 @@ SlicerConfigureDisplayableManagerObjectFactory(
   OUTPUT_SRCS_VAR DisplayableManagerInstantiatorTest_SRCS
   )
 
-add_executable(${KIT}CxxTests
+ctk_add_executable_utf8(${KIT}CxxTests
   ${Tests}
   ${DisplayableManagerTest_SRCS}
   ${DisplayableManagerInstantiatorTest_SRCS})

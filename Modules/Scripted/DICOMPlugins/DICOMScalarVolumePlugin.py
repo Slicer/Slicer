@@ -291,10 +291,9 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     using the volume logic helper class
     and the vtkITK archetype helper code
     """
-    name = slicer.util.toVTKString(name)
     fileList = vtk.vtkStringArray()
     for f in files:
-      fileList.InsertNextValue(slicer.util.toVTKString(f))
+      fileList.InsertNextValue(f)
     volumesLogic = slicer.modules.volumes.logic()
     return(volumesLogic.AddArchetypeScalarVolume(files[0],name,0,fileList))
 
@@ -305,7 +304,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     reader = vtkITK.vtkITKArchetypeImageSeriesScalarReader()
     reader.SetArchetype(files[0]);
     for f in files:
-      reader.AddFileName(slicer.util.toVTKString(f))
+      reader.AddFileName(f)
     reader.SetSingleFile(0);
     reader.SetOutputScalarTypeToNative()
     reader.SetDesiredCoordinateOrientationToNative()
@@ -332,7 +331,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     imageChangeInformation.SetOutputOrigin( 0, 0, 0 )
     imageChangeInformation.Update()
 
-    name = slicer.mrmlScene.GenerateUniqueName(slicer.util.toVTKString(name))
+    name = slicer.mrmlScene.GenerateUniqueName(name)
     volumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode", name)
     volumeNode.SetAndObserveImageData(imageChangeInformation.GetOutputDataObject(0))
     slicer.vtkMRMLVolumeArchetypeStorageNode.SetMetaDataDictionaryFromReader(volumeNode, reader)

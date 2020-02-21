@@ -529,7 +529,7 @@ void qSlicerSegmentationsModuleWidget::onRemoveSelectedSegments()
   QStringList selectedSegmentIds = d->SegmentsTableView->selectedSegmentIDs();
   foreach (QString segmentId, selectedSegmentIds)
     {
-    currentSegmentationNode->GetSegmentation()->RemoveSegment(segmentId.toLatin1().constData());
+    currentSegmentationNode->GetSegmentation()->RemoveSegment(segmentId.toUtf8().constData());
     }
 }
 
@@ -697,7 +697,7 @@ bool qSlicerSegmentationsModuleWidget::copySegmentBetweenSegmentations(
     return false;
     }
 
-  std::string segmentIdStd(segmentId.toLatin1().constData());
+  std::string segmentIdStd(segmentId.toUtf8().constData());
 
   // Get segment
   vtkSegment* segment = fromSegmentation->GetSegment(segmentIdStd);
@@ -982,7 +982,8 @@ bool qSlicerSegmentationsModuleWidget::importToCurrentSegmentation()
   if (labelmapNode)
     {
     std::string currentTerminologyContextName(
-      d->ComboBox_TerminologyContext->currentText() == d->ComboBox_TerminologyContext->defaultText() ? "" : d->ComboBox_TerminologyContext->currentText().toLatin1().constData());
+      d->ComboBox_TerminologyContext->currentText() == d->ComboBox_TerminologyContext->defaultText()
+        ? "" : d->ComboBox_TerminologyContext->currentText().toUtf8().constData());
     bool success = d->logic()->ImportLabelmapToSegmentationNodeWithTerminology(
       labelmapNode, currentSegmentationNode, currentTerminologyContextName);
     QApplication::restoreOverrideCursor();

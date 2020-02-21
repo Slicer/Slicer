@@ -30,7 +30,7 @@ bool setModuleAttribute(int line,
     return true;
     }
 
-  PyObject* module = PyImport_AddModule(moduleName.isEmpty() ? "__main__" : moduleName.toLatin1());
+  PyObject* module = PyImport_AddModule(moduleName.isEmpty() ? "__main__" : moduleName.toUtf8());
   if (!module)
     {
     PythonQt::self()->handleError();
@@ -39,7 +39,7 @@ bool setModuleAttribute(int line,
 
   PythonQtObjectPtr currentAttributeValue;
   currentAttributeValue.setNewRef(
-        PyObject_GetAttrString(module, attributeName.toLatin1()));
+        PyObject_GetAttrString(module, attributeName.toUtf8()));
   if (currentAttributeValue != expectedAttributeValue)
     {
     std::cerr << "Line " << line << " - Problem with setModuleAttribute()\n"

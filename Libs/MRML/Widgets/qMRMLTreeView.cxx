@@ -660,7 +660,7 @@ vtkMRMLNode* qMRMLTreeView::rootNode()const
         .isEmpty())
     {
     return this->mrmlScene()->GetNodeByID(
-      this->sortFilterProxyModel()->hideNodesUnaffiliatedWithNodeID().toLatin1());
+      this->sortFilterProxyModel()->hideNodesUnaffiliatedWithNodeID().toUtf8());
     }
   return treeRootNode;
 }
@@ -931,7 +931,7 @@ void qMRMLTreeView::renameCurrentNode()
     {
     return;
     }
-  this->currentNode()->SetName(newName.toLatin1());
+  this->currentNode()->SetName(newName.toUtf8());
   emit currentNodeRenamed(newName);
 }
 

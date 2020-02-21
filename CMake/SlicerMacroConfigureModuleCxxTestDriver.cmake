@@ -98,7 +98,7 @@ macro(SlicerMacroConfigureModuleCxxTestDriver)
       set(${SLICER_TEST_DRIVER_TESTS_TO_RUN_VAR} ${TestsToRun})
     endif()
 
-    add_executable(${SLICER_TEST_DRIVER_NAME}CxxTests ${Tests})
+    ctk_add_executable_utf8(${SLICER_TEST_DRIVER_NAME}CxxTests ${Tests})
     set_target_properties(${SLICER_TEST_DRIVER_NAME}CxxTests
       PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${Slicer_BIN_DIR}

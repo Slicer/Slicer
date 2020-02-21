@@ -159,7 +159,7 @@ vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNode(int row)const
     return 0;
     }
   vtkMRMLScene* scene = q->mrmlScene();
-  return scene ? scene->GetNodeByID(nodeId.toLatin1()) : 0;
+  return scene ? scene->GetNodeByID(nodeId.toUtf8()) : 0;
   */
   return this->mrmlNodeFromIndex(modelIndex);
 }
@@ -176,7 +176,7 @@ vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNodeFromIndex(const QModelIndex& inde
     return nullptr;
     }
   vtkMRMLScene* scene = q->mrmlScene();
-  return scene ? scene->GetNodeByID(nodeId.toLatin1()) : nullptr;
+  return scene ? scene->GetNodeByID(nodeId.toUtf8()) : nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -560,7 +560,7 @@ QString qMRMLNodeComboBox::nodeTypeLabel(const QString& nodeType)const
   // Otherwise use the node tag
   if (this->mrmlScene())
     {
-    QString label = this->mrmlScene()->GetTagByClassName(nodeType.toLatin1());
+    QString label = this->mrmlScene()->GetTagByClassName(nodeType.toUtf8());
     if (!label.isEmpty())
       {
       return label;
@@ -655,7 +655,7 @@ void qMRMLNodeComboBox::renameCurrentNode()
     {
     return;
     }
-  node->SetName(newName.toLatin1());
+  node->SetName(newName.toUtf8());
   emit currentNodeRenamed(newName);
 }
 

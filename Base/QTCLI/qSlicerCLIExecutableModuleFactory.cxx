@@ -123,7 +123,7 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
     return nullptr;
     }
 
-  module->setXmlModuleDescription(xmlDescription.toLatin1());
+  module->setXmlModuleDescription(xmlDescription.toUtf8());
   module->setTempDirectory(this->TempDirectory);
   module->setPath(this->path());
   module->setInstalled(qSlicerCLIModuleFactoryHelper::isInstalled(this->path()));

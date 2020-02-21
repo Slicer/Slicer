@@ -63,7 +63,7 @@ void qMRMLThreeDViewInformationWidgetPrivate::updateWidgetFromMRMLViewNode()
     return;
     }
 
-  this->LayoutNameLineEdit->setText(QLatin1String(this->MRMLViewNode->GetLayoutName()));
+  this->LayoutNameLineEdit->setText(this->MRMLViewNode->GetLayoutName());
   this->ViewGroupSpinBox->setValue(this->MRMLViewNode->GetViewGroup());
 }
 

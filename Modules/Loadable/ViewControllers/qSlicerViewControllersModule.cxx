@@ -122,15 +122,18 @@ void qSlicerViewControllersModule::readCommonViewSettings(vtkMRMLAbstractViewNod
 {
   if (settings.contains("OrientationMarkerType"))
     {
-    defaultViewNode->SetOrientationMarkerType(vtkMRMLAbstractViewNode::GetOrientationMarkerTypeFromString(settings.value("OrientationMarkerType").toString().toLatin1()));
+    defaultViewNode->SetOrientationMarkerType(vtkMRMLAbstractViewNode::GetOrientationMarkerTypeFromString(
+      settings.value("OrientationMarkerType").toString().toUtf8()));
     }
   if (settings.contains("OrientationMarkerSize"))
     {
-    defaultViewNode->SetOrientationMarkerSize(vtkMRMLAbstractViewNode::GetOrientationMarkerSizeFromString(settings.value("OrientationMarkerSize").toString().toLatin1()));
+    defaultViewNode->SetOrientationMarkerSize(vtkMRMLAbstractViewNode::GetOrientationMarkerSizeFromString(
+      settings.value("OrientationMarkerSize").toString().toUtf8()));
     }
   if (settings.contains("RulerType"))
     {
-    defaultViewNode->SetRulerType(vtkMRMLAbstractViewNode::GetRulerTypeFromString(settings.value("RulerType").toString().toLatin1()));
+    defaultViewNode->SetRulerType(vtkMRMLAbstractViewNode::GetRulerTypeFromString(
+      settings.value("RulerType").toString().toUtf8()));
     }
 }
 

@@ -109,7 +109,7 @@ bool qSlicerVolumeRenderingReader::load(const IOProperties& properties)
     return false;
     }
   vtkMRMLVolumePropertyNode* node =
-    d->VolumeRenderingLogic->AddVolumePropertyFromFile(fileName.toLatin1());
+    d->VolumeRenderingLogic->AddVolumePropertyFromFile(fileName.toUtf8());
   QStringList loadedNodes;
   if (node)
     {

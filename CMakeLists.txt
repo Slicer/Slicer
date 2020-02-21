@@ -802,6 +802,11 @@ set(CMAKE_MODULE_PATH
   ${CTK_CMAKE_UTILITIES_DIR})
 
 #-----------------------------------------------------------------------------
+# CMake Function(s) and Macro(s) from CTK
+#-----------------------------------------------------------------------------
+include(ctkFunctionAddExecutableUtf8)
+
+#-----------------------------------------------------------------------------
 # Set Slicer_PYTHON_VERSION and Slicer_PYTHON_VERSION_DOT
 #-----------------------------------------------------------------------------
 if(Slicer_USE_PYTHONQT)

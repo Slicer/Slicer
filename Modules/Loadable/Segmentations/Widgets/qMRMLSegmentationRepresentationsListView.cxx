@@ -323,7 +323,7 @@ void qMRMLSegmentationRepresentationsListView::createRepresentationDefault()
 
   // Perform conversion using cheapest path and default conversion parameters
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-  if (!d->SegmentationNode->GetSegmentation()->CreateRepresentation(representationName.toLatin1().constData()))
+  if (!d->SegmentationNode->GetSegmentation()->CreateRepresentation(representationName.toUtf8().constData()))
     {
     QString message = QString("Failed to convert %1 to %2!\n\nProbably there is no valid conversion path between the master representation and %2").arg(d->SegmentationNode->GetName()).arg(representationName);
     QMessageBox::warning(nullptr, tr("Conversion failed"), message);
@@ -397,7 +397,7 @@ void qMRMLSegmentationRepresentationsListView::removeRepresentation()
   QString representationName = this->sender()->property(REPRESENTATION_NAME_PROPERTY).toString();
 
   // Remove representation from segmentation
-  d->SegmentationNode->GetSegmentation()->RemoveRepresentation(representationName.toLatin1().constData());
+  d->SegmentationNode->GetSegmentation()->RemoveRepresentation(representationName.toUtf8().constData());
 
   this->populateRepresentationsList();
 }
@@ -434,6 +434,6 @@ void qMRMLSegmentationRepresentationsListView::makeMaster()
       }
     }
 
-  d->SegmentationNode->GetSegmentation()->SetMasterRepresentationName(representationName.toLatin1().constData());
+  d->SegmentationNode->GetSegmentation()->SetMasterRepresentationName(representationName.toUtf8().constData());
   this->populateRepresentationsList();
 }

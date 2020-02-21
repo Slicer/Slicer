@@ -101,11 +101,11 @@ void qSlicerAnnotationModuleSnapShotDialog::reset()
   // dialog causes it to reset and calling GetUniqueNameByString increments
   // the number each time).
   vtkCollection *col =
-    this->m_Logic->GetMRMLScene()->GetNodesByName(name.toLatin1());
+    this->m_Logic->GetMRMLScene()->GetNodesByName(name.toUtf8());
   if (col->GetNumberOfItems() > 0)
     {
     // get a new unique name
-    name = this->m_Logic->GetMRMLScene()->GetUniqueNameByString(name.toLatin1());
+    name = this->m_Logic->GetMRMLScene()->GetUniqueNameByString(name.toUtf8());
     }
 
   this->resetDialog();
@@ -119,11 +119,11 @@ void qSlicerAnnotationModuleSnapShotDialog::accept()
 {
   // name
   QString name = this->nameEdit();
-  QByteArray nameBytes = name.toLatin1();
+  QByteArray nameBytes = name.toUtf8();
 
   // description
   QString description = this->description();
-  QByteArray descriptionBytes = description.toLatin1();
+  QByteArray descriptionBytes = description.toUtf8();
 
   // we need to know of which type the screenshot is
   int screenshotType = static_cast<int>(this->widgetType());
@@ -140,7 +140,7 @@ void qSlicerAnnotationModuleSnapShotDialog::accept()
   else
     {
     // this snapshot already exists
-    this->m_Logic->ModifySnapShot(vtkStdString(this->data().toString().toLatin1()),
+    this->m_Logic->ModifySnapShot(vtkStdString(this->data().toString().toUtf8()),
                                   nameBytes.data(),
                                   descriptionBytes.data(),
                                   screenshotType,

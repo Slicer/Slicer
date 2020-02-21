@@ -10,7 +10,7 @@ if(NOT DEFINED SEM_DATA_MANAGEMENT_TARGET)
 endif()
 
 #-----------------------------------------------------------------------------
-add_executable(${CLP}Test ${CLP}Test.cxx)
+ctk_add_executable_utf8(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib ${SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES})
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 set_target_properties(${CLP}Test PROPERTIES FOLDER ${${CLP}_TARGETS_FOLDER})

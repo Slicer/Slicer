@@ -123,7 +123,7 @@ QList<qSlicerFileWriter*> qSlicerCoreIOManagerPrivate::writers(
   QString fileName = parameters.value("fileName").toString();
   QString nodeID = parameters.value("nodeID").toString();
 
-  vtkObject * object = this->currentScene()->GetNodeByID(nodeID.toLatin1());
+  vtkObject * object = this->currentScene()->GetNodeByID(nodeID.toUtf8());
   QFileInfo file(fileName);
 
   QList<qSlicerFileWriter*> matchingWriters;
@@ -508,7 +508,7 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
     foreach(const QString& node, nodes)
       {
       loadedNodes->AddItem(
-        d->currentScene()->GetNodeByID(node.toLatin1()));
+        d->currentScene()->GetNodeByID(node.toUtf8()));
       }
     }
 

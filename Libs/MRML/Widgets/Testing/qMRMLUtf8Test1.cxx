@@ -33,8 +33,12 @@
 
 // MRML includes
 #include "vtkMRMLCameraNode.h"
+#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLNode.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLStorageNode.h"
 
 // VTK includes
 #include "vtkNew.h"
@@ -75,7 +79,43 @@ int qMRMLUtf8Test1(int argc, char * argv [] )
   myScene->SetURL(argv[1]);
   myScene->Connect();
 
-  myNode = scene->GetNthNode(0);
+  // Check that active code page is UTF-8 on Windows
+#ifdef _WIN32
+  UINT activeCodePage = GetACP();
+  std::cout << "Active code page: " << activeCodePage << std::endl;
+  if (activeCodePage != CP_UTF8)
+    {
+    std::cout << "Active code page is not 65001 (UTF-8)."
+      << " This is expected on Windows 10 versions before 1903 (May 2019 Update)."
+      << " Further tests are skipped." << std::endl;
+    return 0;
+    }
+#endif
+
+  // Check if node name that contains special characters is loaded correctly
+  vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(scene->GetNodeByID("vtkMRMLScalarVolumeDisplayNode1"));
+  CHECK_NOT_NULL(volumeDisplayNode);
+  QString actualDisplayNodeName = QString::fromUtf8(volumeDisplayNode->GetName());
+  // expectedDisplayNodeName contains a number of unicode characters that are not found in Latin1 character set
+  // (the word is "a'rvi'ztu"ro" tu:ko:rfu'ro'ge'p" - https://en.wikipedia.org/wiki/Mojibake#Examples)
+  QString expectedDisplayNodeName = QString::fromUtf8(
+    u8"\u00e1\u0072\u0076\u00ed\u007a\u0074\u0171\u0072\u0151\u0020\u0074\u00fc\u006b\u00f6\u0072\u0066\u00fa\u0072\u00f3\u0067\u00e9\u0070");
+  CHECK_BOOL(actualDisplayNodeName == expectedDisplayNodeName, true);
+
+  // Check that volume can be saved into filename with special character and that file can be loaded
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(scene->GetNodeByID("vtkMRMLScalarVolumeNode1"));
+  CHECK_NOT_NULL(volumeNode);
+  vtkMRMLStorageNode* storageNode = vtkMRMLStorageNode::SafeDownCast(volumeNode->GetStorageNode());
+  QString filenameWithSpecialChars = expectedDisplayNodeName + ".nrrd";
+  storageNode->SetFileName(filenameWithSpecialChars.toUtf8().constData());
+  CHECK_INT(storageNode->WriteData(volumeNode), 1);
+  CHECK_INT(storageNode->ReadData(volumeNode), 1);
+
+  // Check that unicode string can be get/set as node name and saved into file
+  // (when the application exits, the string that is typed in the editbox is saved in the scene as camera node name)
+
+  myNode = scene->GetNodeByID("vtkMRMLCameraNode1");
+  CHECK_NOT_NULL(myNode);
 
   std::string cameraName = myNode->GetName();
   if (cameraName.find("camera") == std::string::npos)
@@ -86,9 +126,10 @@ int qMRMLUtf8Test1(int argc, char * argv [] )
 
   std::string newName = cameraName.erase(0, std::strlen("camera"));
   myNode->SetName(newName.c_str());
+  QString name = QString::fromUtf8(myNode->GetName());
 
   myLineEdit = new QLineEdit(nullptr);
-  myLineEdit->setText(QString::fromUtf8(myNode->GetName()));
+  myLineEdit->setText(name);
   myLineEdit->show();
 
   ctkCallback callback;
@@ -105,4 +146,3 @@ int qMRMLUtf8Test1(int argc, char * argv [] )
 
   return app.exec();
 }
-

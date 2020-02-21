@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <executable>
   <category>Core</category>
   <title>Volume Rendering</title>
@@ -78,13 +78,13 @@
   </parameters>
   <parameters>
     <label>Volume Properties</label>
-    <description><![CDATA[Advanced views of the transfer functions.]]></description> 
+    <description><![CDATA[Advanced views of the transfer functions.]]></description>
     <parameter>
       <label>Left button click</label>label>
       <description><![CDATA[Set current point or create a new point if no point is under the mouse.]]></description>
-    </parameter> 
+    </parameter>
     <parameter>
-      <label>Left button move</label> 
+      <label>Left button move</label>
       <description><![CDATA[Move the current or selected points if any.]]></description>
     </parameter>
     <parameter>
@@ -93,18 +93,18 @@
     </parameter>
     <parameter>
       <label>Right button move</label>
-      <description><![CDATA[Define an area to select points:]]></description>  
+      <description><![CDATA[Define an area to select points:]]></description>
     </parameter>
     <parameter>
       <label>Middle button click </label>
       <description><![CDATA[Delete point under the mouse cursor.]]></description>
     </parameter>
     <parameter>
-      <label>Right/Left arrow keys</label> 
+      <label>Right/Left arrow keys</label>
       <description><![CDATA[Change of current point]]></description>
     </parameter>
     <parameter>
-      <label>Delete key</label> 
+      <label>Delete key</label>
       <description><![CDATA[Delete the current point and set the next point as current]]></description>
     </parameter>
     <parameter>
@@ -116,7 +116,7 @@
       <description><![CDATA[Unselect all points.]]></description>
     </parameter>
     <parameter>
-      <label>Unsupported </label> 
+      <label>Unsupported </label>
       <description><![CDATA["ALT to move selected points", "CTRL-A to select all points"]]></description>
     </parameter>
     <parameter>

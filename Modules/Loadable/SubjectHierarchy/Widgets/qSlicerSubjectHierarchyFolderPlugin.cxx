@@ -147,7 +147,7 @@ double qSlicerSubjectHierarchyFolderPlugin::canAddNodeToSubjectHierarchy(
 bool qSlicerSubjectHierarchyFolderPlugin::addNodeToSubjectHierarchy(vtkMRMLNode* nodeToAdd, vtkIdType parentItemID)
 {
   Q_D(qSlicerSubjectHierarchyFolderPlugin);
-  if (nodeToAdd->GetAttribute(d->AddedByFolderPluginAttributeName.toLatin1().constData()))
+  if (nodeToAdd->GetAttribute(d->AddedByFolderPluginAttributeName.toUtf8().constData()))
     {
     // Prevent creation of new folder item if the folder display node was not added by the folder plugin
     return true;
@@ -592,7 +592,7 @@ vtkMRMLDisplayNode* qSlicerSubjectHierarchyFolderPlugin::createDisplayNodeForIte
   vtkNew<vtkMRMLFolderDisplayNode> displayNode;
   displayNode->SetName(shNode->GetItemName(itemID).c_str());
   displayNode->SetHideFromEditors(0); // Need to set this so that the folder shows up in SH
-  displayNode->SetAttribute(d->AddedByFolderPluginAttributeName.toLatin1().constData(), "1");
+  displayNode->SetAttribute(d->AddedByFolderPluginAttributeName.toUtf8().constData(), "1");
   shNode->GetScene()->AddNode(displayNode);
 
   shNode->SetItemDataNode(itemID, displayNode);

@@ -153,13 +153,13 @@ bool qSlicerSegmentEditorScriptedLabelEffect::setPythonSource(const QString newP
   PyObject * global_dict = PyModule_GetDict(main_module);
 
   // Get a reference (or create if needed) the <moduleName> python module
-  PyObject * module = PyImport_AddModule(moduleName.toLatin1());
+  PyObject * module = PyImport_AddModule(moduleName.toUtf8());
 
   // Get a reference to the python module class to instantiate
   PythonQtObjectPtr classToInstantiate;
-  if (PyObject_HasAttrString(module, className.toLatin1()))
+  if (PyObject_HasAttrString(module, className.toUtf8()))
     {
-    classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toLatin1()));
+    classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toUtf8()));
     }
   if (!classToInstantiate)
     {
@@ -169,9 +169,9 @@ bool qSlicerSegmentEditorScriptedLabelEffect::setPythonSource(const QString newP
       {
       return false;
       }
-    if (PyObject_HasAttrString(module, className.toLatin1()))
+    if (PyObject_HasAttrString(module, className.toUtf8()))
       {
-      classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toLatin1()));
+      classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toUtf8()));
       }
     }
 
@@ -181,7 +181,7 @@ bool qSlicerSegmentEditorScriptedLabelEffect::setPythonSource(const QString newP
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerSegmentEditorScriptedLabelEffect::setPythonSource - "
                             "Failed to load segment editor scripted effect: "
-                            "class %1 was not found in %2").arg(className).arg(newPythonSource).toLatin1());
+                            "class %1 was not found in %2").arg(className).arg(newPythonSource).toUtf8());
     PythonQt::self()->handleError();
     return false;
     }

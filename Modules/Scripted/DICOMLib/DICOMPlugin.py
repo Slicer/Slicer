@@ -255,7 +255,7 @@ class DICOMPlugin(object):
       patientItemID = shn.GetItemByUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), patientId)
       if patientItemID:
         # Add attributes for DICOM tags
-        patientName = slicer.util.toVTKString(slicer.dicomDatabase.fileValue(firstFile,tags['patientName']))
+        patientName = slicer.dicomDatabase.fileValue(firstFile,tags['patientName'])
         if patientName == '':
           patientName = 'No name'
 
@@ -282,13 +282,13 @@ class DICOMPlugin(object):
       studyItemID = shn.GetItemByUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), studyInstanceUid)
       if studyItemID:
         # Add attributes for DICOM tags
-        studyDescription = slicer.util.toVTKString(slicer.dicomDatabase.fileValue(firstFile,tags['studyDescription']))
+        studyDescription = slicer.dicomDatabase.fileValue(firstFile,tags['studyDescription'])
         if studyDescription == '':
           studyDescription = 'No study description'
 
         shn.SetItemAttribute( studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDescriptionAttributeName(),
                               studyDescription )
-        studyDate = slicer.util.toVTKString(slicer.dicomDatabase.fileValue(firstFile,tags['studyDate']))
+        studyDate = slicer.dicomDatabase.fileValue(firstFile,tags['studyDate'])
         shn.SetItemAttribute( studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyInstanceUIDTagName(),
                               studyInstanceUid )
         shn.SetItemAttribute( studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyIDTagName(),

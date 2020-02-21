@@ -256,7 +256,7 @@ void qMRMLChartViewControllerWidgetPrivate::onChartTypeSelected(const QString& t
     return;
     }
 
-  this->chartNode()->SetProperty("default", "type", type.toLatin1());
+  this->chartNode()->SetProperty("default", "type", type.toUtf8());
 }
 
 // --------------------------------------------------------------------------
@@ -629,7 +629,7 @@ void qMRMLChartViewControllerWidget::setTitle(const QString &str)
     }
 
   // Set the parameter
-  chartNode->SetProperty("default", "title", str.toLatin1());
+  chartNode->SetProperty("default", "title", str.toUtf8());
 
   //qDebug() << "Regetting property: " << chartNode->GetProperty("default", "title");
 }
@@ -647,7 +647,7 @@ void qMRMLChartViewControllerWidget::setXAxisLabel(const QString &str)
     }
 
   // Set the parameter
-  chartNode->SetProperty("default", "xAxisLabel", str.toLatin1());
+  chartNode->SetProperty("default", "xAxisLabel", str.toUtf8());
 
   //qDebug() << "Regetting property: " << chartNode->GetProperty("default", "xAxisLabel");
 }
@@ -666,7 +666,7 @@ void qMRMLChartViewControllerWidget::setYAxisLabel(const QString &str)
     }
 
   // Set the parameter
-  chartNode->SetProperty("default", "yAxisLabel", str.toLatin1());
+  chartNode->SetProperty("default", "yAxisLabel", str.toUtf8());
 
   //qDebug() << "Regetting property: " << chartNode->GetProperty("default", "yAxisLabel");
 }

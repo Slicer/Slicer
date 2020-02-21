@@ -185,7 +185,7 @@ void qSlicerSettingsCachePanel::updateFromCacheManager()
 void qSlicerSettingsCachePanel::setCachePath(const QString& path)
 {
   Q_D(qSlicerSettingsCachePanel);
-  d->CacheManager->SetRemoteCacheDirectory(path.toLatin1());
+  d->CacheManager->SetRemoteCacheDirectory(path.toUtf8());
 }
 
 // --------------------------------------------------------------------------

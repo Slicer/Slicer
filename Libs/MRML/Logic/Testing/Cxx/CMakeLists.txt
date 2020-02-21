@@ -33,7 +33,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   EXTRA_INCLUDE ${EXTRA_INCLUDE}
   )
 
-add_executable(${KIT}CxxTests ${Tests})
+ctk_add_executable_utf8(${KIT}CxxTests ${Tests})
 target_link_libraries(${KIT}CxxTests ${KIT} ${ITK_LIBRARIES})
 
 set_target_properties(${KIT}CxxTests PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})

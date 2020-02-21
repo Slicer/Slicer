@@ -46,7 +46,7 @@ simple_test(vtkSlicerVolumesLogicTest1_TestNAN
   )
 
 #-----------------------------------------------------------------------------
-add_executable(vtkSlicer${MODULE_NAME}LogicTest2 vtkSlicer${MODULE_NAME}LogicTest2.cxx)
+ctk_add_executable_utf8(vtkSlicer${MODULE_NAME}LogicTest2 vtkSlicer${MODULE_NAME}LogicTest2.cxx)
 target_link_libraries(vtkSlicer${MODULE_NAME}LogicTest2 ${KIT})
 set_target_properties(vtkSlicer${MODULE_NAME}LogicTest2 PROPERTIES FOLDER "Module-${MODULE_NAME}")
 

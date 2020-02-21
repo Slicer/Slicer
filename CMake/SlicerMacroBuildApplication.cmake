@@ -417,7 +417,7 @@ macro(slicerMacroBuildApplication)
   endif()
   message(STATUS "Setting ${SLICERAPP_APPLICATION_NAME} executable name to '${executable_name}${CMAKE_EXECUTABLE_SUFFIX}'")
 
-  add_executable(${slicerapp_target}
+  ctk_add_executable_utf8(${slicerapp_target}
     ${SLICERAPP_EXE_OPTIONS}
     Main.cxx
     ${apple_bundle_sources}

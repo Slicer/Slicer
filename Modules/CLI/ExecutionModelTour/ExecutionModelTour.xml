@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <executable>
   <category>Developer Tools</category>
   <title>Execution Model Tour</title>
@@ -9,7 +9,7 @@
   <contributor>Daniel Blezek (GE), Bill Lorensen (GE)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
-    <label>Scalar Parameters</label>
+    <label>Scalar Parameters (árvíztűrő tükörfúrógép)</label>
     <description><![CDATA[Variations on scalar parameters]]></description>
     <integer>
       <name>integerVariable</name>
@@ -67,6 +67,7 @@
       <element>Ross</element>
       <element>Steve</element>
       <element>Will</element>
+      <element>árvíztűrő tükörfúrógép</element>
     </string-enumeration>
   </parameters>
   <parameters>
@@ -353,6 +354,7 @@
       <element>Ross</element>
       <element>Steve</element>
       <element>Will</element>
+      <element>árvíztűrő tükörfúrógép</element>
     </string-enumeration>
   </parameters>
 </executable>

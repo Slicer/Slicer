@@ -67,24 +67,24 @@ void qSlicerSceneViewsModuleDialog::loadNode(const QString& nodeId)
   this->setData(QVariant(nodeId));
 
   // get the name..
-  vtkStdString name = this->m_Logic->GetSceneViewName(nodeId.toLatin1());
+  vtkStdString name = this->m_Logic->GetSceneViewName(nodeId.toUtf8());
 
   // ..and set it in the GUI
   this->setNameEdit(QString::fromStdString(name));
 
   // get the description..
-  vtkStdString description = this->m_Logic->GetSceneViewDescription(nodeId.toLatin1());
+  vtkStdString description = this->m_Logic->GetSceneViewDescription(nodeId.toUtf8());
 
   // ..and set it in the GUI
   this->setDescription(QString::fromStdString(description));
 
   // get the screenshot type..
-  int screenshotType = this->m_Logic->GetSceneViewScreenshotType(nodeId.toLatin1());
+  int screenshotType = this->m_Logic->GetSceneViewScreenshotType(nodeId.toUtf8());
 
   // ..and set it in the GUI
   this->setWidgetType((qMRMLScreenShotDialog::WidgetType)screenshotType);
 
-  vtkImageData* imageData = this->m_Logic->GetSceneViewScreenshot(nodeId.toLatin1());
+  vtkImageData* imageData = this->m_Logic->GetSceneViewScreenshot(nodeId.toUtf8());
   this->setImageData(imageData);
 }
 
@@ -99,12 +99,12 @@ void qSlicerSceneViewsModuleDialog::reset()
   // check to see if it's an already used name for a node (redrawing the
   // dialog causes it to reset and calling GetUniqueNameByString increments
   // the number each time).
-  QByteArray nameBytes = name.toLatin1();
+  QByteArray nameBytes = name.toUtf8();
   vtkCollection* col = this->m_Logic->GetMRMLScene()->GetNodesByName(nameBytes.data());
   if (col->GetNumberOfItems() > 0)
     {
     // get a new unique name
-    name = this->m_Logic->GetMRMLScene()->GetUniqueNameByString(name.toLatin1());
+    name = this->m_Logic->GetMRMLScene()->GetUniqueNameByString(name.toUtf8());
     }
   col->Delete();
   this->resetDialog();
@@ -116,11 +116,11 @@ void qSlicerSceneViewsModuleDialog::accept()
 {
   // name
   QString name = this->nameEdit();
-  QByteArray nameBytes = name.toLatin1();
+  QByteArray nameBytes = name.toUtf8();
 
   // description
   QString description = this->description();
-  QByteArray descriptionBytes = description.toLatin1();
+  QByteArray descriptionBytes = description.toUtf8();
 
   // we need to know of which type the screenshot is
   int screenshotType = static_cast<int>(this->widgetType());
@@ -136,7 +136,7 @@ void qSlicerSceneViewsModuleDialog::accept()
   else
     {
     // this SceneView already exists
-    this->m_Logic->ModifySceneView(vtkStdString(this->data().toString().toLatin1()),nameBytes.data(),descriptionBytes.data()
+    this->m_Logic->ModifySceneView(vtkStdString(this->data().toString().toUtf8()),nameBytes.data(),descriptionBytes.data()
                                    ,screenshotType,this->imageData());
     //QMessageBox::information(this, "3D Slicer SceneView updated",
     //             The SceneView was updated without changing the attached scene.");

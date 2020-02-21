@@ -138,7 +138,7 @@ bool qSlicerAnnotationsReader::load(const IOProperties& properties)
     }
 
   char * nodeID = d->AnnotationLogic->LoadAnnotation(
-    fileName.toLatin1(), name.toLatin1(), fileType);
+    fileName.toUtf8(), name.toUtf8(), fileType);
   if (!nodeID)
     {
     this->setLoadedNodes(QStringList());
@@ -148,7 +148,7 @@ bool qSlicerAnnotationsReader::load(const IOProperties& properties)
   if (properties.contains("name"))
     {
     std::string uname = this->mrmlScene()->GetUniqueNameByString(
-      properties["name"].toString().toLatin1());
+      properties["name"].toString().toUtf8());
     this->mrmlScene()->GetNodeByID(nodeID)->SetName(uname.c_str());
     }
   return true;

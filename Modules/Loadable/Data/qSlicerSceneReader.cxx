@@ -84,7 +84,7 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
   Q_D(qSlicerSceneReader);
   Q_ASSERT(properties.contains("fileName"));
   QString file = properties["fileName"].toString();
-  this->mrmlScene()->SetURL(file.toLatin1());
+  this->mrmlScene()->SetURL(file.toUtf8());
   bool clear = properties.value("clear", false).toBool();
   int res = 0;
   if (clear)

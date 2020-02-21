@@ -114,7 +114,7 @@ bool qSlicerShaderPropertyReader::load(const IOProperties& properties)
     return false;
     }
   vtkMRMLShaderPropertyNode* node =
-    d->VolumeRenderingLogic->AddShaderPropertyFromFile(fileName.toLatin1());
+    d->VolumeRenderingLogic->AddShaderPropertyFromFile(fileName.toUtf8());
   QStringList loadedNodes;
   if (node)
     {

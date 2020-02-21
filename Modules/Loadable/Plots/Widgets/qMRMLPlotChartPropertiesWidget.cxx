@@ -430,7 +430,7 @@ void qMRMLPlotChartPropertiesWidget::setTitle(const QString &str)
   {
     return;
   }
-  d->PlotChartNode->SetTitle(str.toLatin1().constData());
+  d->PlotChartNode->SetTitle(str.toUtf8().constData());
 }
 
 //---------------------------------------------------------------------------
@@ -441,7 +441,7 @@ void qMRMLPlotChartPropertiesWidget::setXAxisLabel(const QString &str)
   {
     return;
   }
-  d->PlotChartNode->SetXAxisTitle(str.toLatin1().constData());
+  d->PlotChartNode->SetXAxisTitle(str.toUtf8().constData());
 }
 
 //---------------------------------------------------------------------------
@@ -452,7 +452,7 @@ void qMRMLPlotChartPropertiesWidget::setYAxisLabel(const QString &str)
   {
     return;
   }
-  d->PlotChartNode->SetYAxisTitle(str.toLatin1().constData());
+  d->PlotChartNode->SetYAxisTitle(str.toUtf8().constData());
 }
 
 //---------------------------------------------------------------------------

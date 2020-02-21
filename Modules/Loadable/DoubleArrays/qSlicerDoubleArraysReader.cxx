@@ -108,8 +108,8 @@ bool qSlicerDoubleArraysReader::load(const IOProperties& properties)
     }
   Q_ASSERT(d->Logic);
   vtkMRMLDoubleArrayNode* node = d->Logic->AddDoubleArray(
-    fileName.toLatin1(),
-    name.toLatin1());
+    fileName.toUtf8(),
+    name.toUtf8());
   if (node)
     {
     this->setLoadedNodes(QStringList(QString(node->GetID())));

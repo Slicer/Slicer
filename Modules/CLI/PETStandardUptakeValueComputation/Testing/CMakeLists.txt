@@ -9,7 +9,7 @@ if(NOT DEFINED SEM_DATA_MANAGEMENT_TARGET)
 endif()
 
 #-----------------------------------------------------------------------------
-add_executable(${CLP}Test ${CLP}Test.cxx ../itkDCMTKFileReader.cxx )
+ctk_add_executable_utf8(${CLP}Test ${CLP}Test.cxx ../itkDCMTKFileReader.cxx)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test
   ${CLP}Lib

@@ -308,7 +308,7 @@ void qSlicerMarkupsSettingsPanel::updateMarkupsLogicDefaultGlyphType()
     return;
     }
   // disable it for now; if we want a settings panel then use the same pattern that is used for default view options
-  // d->MarkupsLogic->SetDefaultMarkupsDisplayNodeGlyphTypeFromString(this->defaultGlyphType().toLatin1());
+  // d->MarkupsLogic->SetDefaultMarkupsDisplayNodeGlyphTypeFromString(this->defaultGlyphType().toUtf8());
 }
 
 // --------------------------------------------------------------------------

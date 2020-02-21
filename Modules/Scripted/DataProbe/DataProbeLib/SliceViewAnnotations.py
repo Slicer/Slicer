@@ -807,7 +807,7 @@ class SliceAnnotations(VTKObservationMixin):
               cornerAnnotation = cornerAnnotation+ text + '\n'
       sliceCornerAnnotation = self.sliceViews[sliceViewName].cornerAnnotation()
       # encode to avoid 'unicode conversion error' for patient names containing international characters
-      cornerAnnotation = slicer.util.toVTKString(cornerAnnotation)
+      cornerAnnotation = cornerAnnotation
       sliceCornerAnnotation.SetText(i, cornerAnnotation)
       textProperty = sliceCornerAnnotation.GetTextProperty()
       textProperty.SetShadow(1)

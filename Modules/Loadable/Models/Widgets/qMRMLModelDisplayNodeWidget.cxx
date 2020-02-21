@@ -412,7 +412,7 @@ void qMRMLModelDisplayNodeWidget::setActiveScalarName(const QString& arrayName)
   foreach (vtkMRMLModelDisplayNode* modelDisplayNode, modelDisplayNodesInSelection)
     {
     int wasModified = modelDisplayNode->StartModify();
-    modelDisplayNode->SetActiveScalar(arrayName.toLatin1(), d->ActiveScalarComboBox->currentArrayLocation());
+    modelDisplayNode->SetActiveScalar(arrayName.toUtf8(), d->ActiveScalarComboBox->currentArrayLocation());
 
     // if there's no color node set for a non empty array name, use a default
     if (!arrayName.isEmpty() && modelDisplayNode->GetColorNodeID() == nullptr)

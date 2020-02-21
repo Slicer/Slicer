@@ -451,7 +451,7 @@ void qSlicerDataModuleWidget::setInfoLabelFromSubjectHierarchyItem(vtkIdType ite
     {
     std::stringstream infoStream;
     shNode->PrintItem(itemID, infoStream, vtkIndent(0));
-    d->SubjectHierarchyItemInfoLabel->setText(QLatin1String(infoStream.str().c_str()));
+    d->SubjectHierarchyItemInfoLabel->setText(infoStream.str().c_str());
 
     // Connect node for updating info label
     if (!shNode->HasObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent, d->CallBack))
@@ -519,7 +519,7 @@ void qSlicerDataModuleWidget::onSubjectHierarchyItemModified(vtkIdType itemID)
 
     std::stringstream infoStream;
     shNode->PrintItem(itemID, infoStream, vtkIndent(0));
-    d->SubjectHierarchyItemInfoLabel->setText(QLatin1String(infoStream.str().c_str()));
+    d->SubjectHierarchyItemInfoLabel->setText(infoStream.str().c_str());
     }
 }
 

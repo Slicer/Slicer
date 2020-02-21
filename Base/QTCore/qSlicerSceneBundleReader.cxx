@@ -107,7 +107,7 @@ bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
   vtkNew<vtkMRMLApplicationLogic> appLogic;
   appLogic->SetMRMLScene( this->mrmlScene() );
   std::string mrmlFile = appLogic->UnpackSlicerDataBundle(
-                                          file.toLatin1(), unpackPath.toLatin1() );
+                                          file.toUtf8(), unpackPath.toUtf8() );
 
   if (mrmlFile.empty())
     {
@@ -145,12 +145,12 @@ bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
   QString mrbDirectoryPath = QFileInfo(file).dir().absolutePath();
   QString mrbBaseName = QFileInfo(file).baseName();
   QString resetURL = mrbDirectoryPath + QString("/") + mrbBaseName + QString(".mrml");
-  this->mrmlScene()->SetURL(resetURL.toLatin1());
+  this->mrmlScene()->SetURL(resetURL.toUtf8());
   qDebug() << "Reset scene to point to the MRB directory " << this->mrmlScene()->GetURL();
 
   // Change root directory to mrb file location
   QDir rootDirectory(this->mrmlScene()->GetRootDirectory());
-  this->mrmlScene()->SetRootDirectory(mrbDirectoryPath.toLatin1().constData());
+  this->mrmlScene()->SetRootDirectory(mrbDirectoryPath.toUtf8().constData());
 
   // Make storage file names relative to root directory by removing
   // the temporary unpack directory
@@ -186,11 +186,11 @@ bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
       storageFileName = rootDirectory.relativeFilePath(storageFileName);
       if (i < 0)
         {
-        storageNode->SetFileName(storageFileName.toLatin1().constData());
+        storageNode->SetFileName(storageFileName.toUtf8().constData());
         }
       else
         {
-        storageNode->ResetNthFileName(i, storageFileName.toLatin1().constData());
+        storageNode->ResetNthFileName(i, storageFileName.toUtf8().constData());
         }
       }
     }

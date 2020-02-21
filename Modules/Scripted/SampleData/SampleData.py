@@ -969,7 +969,7 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     tempFile = qt.QTemporaryFile(slicer.app.temporaryPath + "/SampleDataTest-loadSceneFile-XXXXXX.mrml");
     tempFile.open()
     tempFile.write(textwrap.dedent("""
-      <?xml version="1.0" encoding="ISO-8859-1"?>
+      <?xml version="1.0" encoding="UTF-8"?>
       <MRML  version="Slicer4.4.0" userTags="">
       </MRML>
       """).strip())
@@ -997,7 +997,7 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     tempFile = qt.QTemporaryFile(slicer.app.temporaryPath + "/SampleDataTest-loadSceneFile-XXXXXX.mrml");
     tempFile.open()
     tempFile.write(textwrap.dedent("""
-      <?xml version="1.0" encoding="ISO-8859-1"?>
+      <?xml version="1.0" encoding="UTF-8"?>
       <MRML  version="Slicer4.4.0" userTags="">
       </MRML>
       """).strip())

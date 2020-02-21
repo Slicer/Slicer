@@ -97,7 +97,7 @@ bool qSlicerTransformsReader::load(const IOProperties& properties)
     return false;
     }
   vtkMRMLTransformNode* node = d->TransformLogic->AddTransform(
-    fileName.toLatin1(), this->mrmlScene());
+    fileName.toUtf8(), this->mrmlScene());
   if (node)
     {
     this->setLoadedNodes(QStringList(QString(node->GetID())));

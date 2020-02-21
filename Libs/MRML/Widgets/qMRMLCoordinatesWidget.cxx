@@ -197,7 +197,7 @@ void qMRMLCoordinatesWidget::updateWidgetFromUnitNode()
     {
     vtkMRMLUnitNode* unitNode =
       vtkMRMLUnitNode::SafeDownCast(d->MRMLScene->GetNodeByID(
-        d->SelectionNode->GetUnitNodeID(d->Quantity.toLatin1())));
+        d->SelectionNode->GetUnitNodeID(d->Quantity.toUtf8())));
 
     if (unitNode)
       {

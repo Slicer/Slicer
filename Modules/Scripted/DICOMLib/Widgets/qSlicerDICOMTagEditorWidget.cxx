@@ -494,8 +494,8 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
     foreach (QString tagName, exportableTagsMap.keys())
       {
       // Only use series tags
-      if ( vtkSlicerSubjectHierarchyModuleLogic::IsPatientTag(tagName.toLatin1().constData())
-        || vtkSlicerSubjectHierarchyModuleLogic::IsStudyTag(tagName.toLatin1().constData()) )
+      if ( vtkSlicerSubjectHierarchyModuleLogic::IsPatientTag(tagName.toUtf8().constData())
+        || vtkSlicerSubjectHierarchyModuleLogic::IsStudyTag(tagName.toUtf8().constData()) )
         {
         continue;
         }
@@ -509,7 +509,7 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
 
       // If series item contains tag then use that value
       std::string tagAttributeName = vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix()
-        + std::string(tagName.toLatin1().constData());
+        + std::string(tagName.toUtf8().constData());
       std::string tagAttributeValue = shNode->GetItemAttribute(seriesItemID, tagAttributeName);
       if (shNode->HasItemAttribute(seriesItemID, tagAttributeName))
         {
@@ -582,7 +582,7 @@ void qSlicerDICOMTagEditorWidget::commitChangesToItems()
     QString tagName = d->TagsTable->item(row, 0)->text();
     QString tagAttributeName = QString(dicomAttributePrefix.c_str()) + tagName;
     QString tagValue = d->TagsTable->item(row, 1)->text();
-    shNode->SetItemAttribute(seriesItemID, tagAttributeName.toLatin1().constData(), tagValue.toLatin1().constData());
+    shNode->SetItemAttribute(seriesItemID, tagAttributeName.toUtf8().constData(), tagValue.toUtf8().constData());
     }
 
   // Commit changes to study
@@ -597,7 +597,7 @@ void qSlicerDICOMTagEditorWidget::commitChangesToItems()
     QString tagName = d->TagsTable->item(row, 0)->text();
     QString tagAttributeName = QString(dicomAttributePrefix.c_str()) + tagName;
     QString tagValue = d->TagsTable->item(row, 1)->text();
-    shNode->SetItemAttribute(studyItemID, tagAttributeName.toLatin1().constData(), tagValue.toLatin1().constData());
+    shNode->SetItemAttribute(studyItemID, tagAttributeName.toUtf8().constData(), tagValue.toUtf8().constData());
     }
 
   // Commit changes to patient
@@ -613,7 +613,7 @@ void qSlicerDICOMTagEditorWidget::commitChangesToItems()
     QString tagName = d->TagsTable->item(row, 0)->text();
     QString tagAttributeName = QString(dicomAttributePrefix.c_str()) + tagName;
     QString tagValue = d->TagsTable->item(row, 1)->text();
-    shNode->SetItemAttribute(patientItemID, tagAttributeName.toLatin1().constData(), tagValue.toLatin1().constData());
+    shNode->SetItemAttribute(patientItemID, tagAttributeName.toUtf8().constData(), tagValue.toUtf8().constData());
     }
 }
 

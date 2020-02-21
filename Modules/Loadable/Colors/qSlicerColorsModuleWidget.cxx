@@ -432,11 +432,11 @@ void qSlicerColorsModuleWidget::copyCurrentColorNode()
   if (currentNode->IsA("vtkMRMLColorTableNode") ||
       currentNode->IsA("vtkMRMLFreeSurferProceduralColorNode"))
     {
-    colorNode = d->colorLogic()->CopyNode(currentNode, newColorName.toLatin1());
+    colorNode = d->colorLogic()->CopyNode(currentNode, newColorName.toUtf8());
     }
   else if (currentNode->IsA("vtkMRMLProceduralColorNode"))
     {
-    colorNode = d->colorLogic()->CopyProceduralNode(currentNode, newColorName.toLatin1());
+    colorNode = d->colorLogic()->CopyProceduralNode(currentNode, newColorName.toUtf8());
     }
   else
     {

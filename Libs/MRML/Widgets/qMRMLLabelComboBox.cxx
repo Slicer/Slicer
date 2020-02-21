@@ -315,7 +315,7 @@ void qMRMLLabelComboBox::updateWidgetFromMRML()
   int actualMax = d->MaximumColorCount > 0 ? d->MaximumColorCount : numberOfColors;
   for (int i = 0 ; i < actualMax ; ++i)
     {
-    QString colorName = QLatin1String(d->ColorNode->GetColorName(i));
+    QString colorName = QString::fromUtf8(d->ColorNode->GetColorName(i));
     //qDebug() << QString("updateWidgetFromMRML - Color(index:%1, name: %2)").arg(i).arg(colorName);
 
     QIcon colorIcon(qMRMLUtils::createColorPixmap(this->style(), d->colorFromIndex(i)));

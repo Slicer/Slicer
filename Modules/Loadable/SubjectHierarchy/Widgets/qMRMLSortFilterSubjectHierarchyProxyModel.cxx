@@ -349,7 +349,7 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
       QString dataNodeClass(dataNode->GetClassName());
       foreach (const QString& nodeType, d->NodeTypes)
         {
-        if (dataNode->IsA(nodeType.toLatin1().data()))
+        if (dataNode->IsA(nodeType.toUtf8().data()))
           {
           nodeTypeAccepted = true;
           break;
@@ -364,7 +364,7 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
       {
       foreach (const QString& hideChildNodeType, d->HideChildNodeTypes)
         {
-        if (dataNode->IsA(hideChildNodeType.toLatin1().data()))
+        if (dataNode->IsA(hideChildNodeType.toUtf8().data()))
           {
           nodeTypeAccepted = false;
           }
@@ -428,7 +428,7 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
   // Filter by item attribute
   if (!d->AttributeNameFilter.isEmpty())
     {
-    std::string attributeNameFilterStr(d->AttributeNameFilter.toLatin1().constData());
+    std::string attributeNameFilterStr(d->AttributeNameFilter.toUtf8().constData());
     if (!shNode->HasItemAttribute(itemID, attributeNameFilterStr))
       {
       if (canAcceptIfAnyChildIsAccepted)
@@ -443,7 +443,7 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(vtkIdType item
       }
     else if (!d->AttributeValueFilter.isEmpty())
       {
-      std::string attributeValueFilterStr(d->AttributeValueFilter.toLatin1().constData());
+      std::string attributeValueFilterStr(d->AttributeValueFilter.toUtf8().constData());
       std::string attributeValue = shNode->GetItemAttribute(itemID, attributeNameFilterStr);
       if (attributeValue.compare(attributeValueFilterStr))
         {

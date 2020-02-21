@@ -13,7 +13,7 @@ create_test_sourcelist(Tests ${KIT}CppTests.cxx
 
 include_directories( ${CMAKE_CURRENT_BINARY_DIR})
 
-add_executable(${KIT}CxxTests ${Tests} )
+ctk_add_executable_utf8(${KIT}CxxTests ${Tests})
 target_link_libraries(${KIT}CxxTests ${KIT} )
 set_target_properties(${KIT}CxxTests PROPERTIES FOLDER "Module-${MODULE_NAME}")
 

@@ -192,10 +192,10 @@ void qMRMLSegmentationFileExportWidget::exportToFiles()
     }
 
   vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentationToFiles(
-    d->DestinationFolderButton->directory().toLatin1().constData(),
+    d->DestinationFolderButton->directory().toUtf8().constData(),
     d->SegmentationNode.GetPointer(),
     segmentIds.GetPointer(),
-    d->FileFormatComboBox->currentText().toLatin1().constData(),
+    d->FileFormatComboBox->currentText().toUtf8().constData(),
     d->CoordinateSystemComboBox->currentText() == "LPS",
     d->SizeScaleSpinBox->value(),
     d->MergeIntoSingleFileCheckBox->isChecked());

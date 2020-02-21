@@ -136,7 +136,7 @@ void qMRMLNodeAttributeTableWidget::updateWidgetFromMRML()
     d->NodeInformationGroupBox->setVisible(true);
     std::stringstream infoStream;
     d->MRMLNode->PrintSelf(infoStream, vtkIndent(0));
-    d->MRMLNodeInfoLabel->setText(QLatin1String(infoStream.str().c_str()));
+    d->MRMLNodeInfoLabel->setText(infoStream.str().c_str());
     }
   else
     {

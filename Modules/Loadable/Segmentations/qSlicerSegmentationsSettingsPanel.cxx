@@ -173,7 +173,7 @@ void qSlicerSegmentationsSettingsPanel::setDefaultTerminologyEntry(QString termi
   if (d->TerminologiesLogic && !terminologyStr.isEmpty())
     {
     vtkNew<vtkSlicerTerminologyEntry> entry;
-    std::string terminologyStdStr = d->DefaultTerminologyString.toLatin1().constData();
+    std::string terminologyStdStr = d->DefaultTerminologyString.toUtf8().constData();
     if (d->TerminologiesLogic->DeserializeTerminologyEntry(terminologyStdStr, entry))
       {
       buttonText.clear();
@@ -197,7 +197,7 @@ void qSlicerSegmentationsSettingsPanel::onEditDefaultTerminologyEntry()
     return;
   }
   vtkNew<vtkSlicerTerminologyEntry> entry;
-  std::string terminologyStdStr = d->DefaultTerminologyString.toLatin1().constData();
+  std::string terminologyStdStr = d->DefaultTerminologyString.toUtf8().constData();
   d->TerminologiesLogic->DeserializeTerminologyEntry(terminologyStdStr, entry);
   if (!qSlicerTerminologySelectorDialog::getTerminology(entry, this))
     {

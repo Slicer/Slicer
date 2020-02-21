@@ -184,7 +184,7 @@ void qSlicerTableColumnPropertiesWidget::setColumnProperty(QString propertyName,
     }
   foreach(const QString& columnName, d->ColumnNames)
     {
-    d->CurrentTableNode->SetColumnProperty(columnName.toLatin1().constData(), propertyName.toLatin1().constData(), propertyValue.toLatin1().constData());
+    d->CurrentTableNode->SetColumnProperty(columnName.toUtf8().constData(), propertyName.toUtf8().constData(), propertyValue.toUtf8().constData());
     }
 }
 
@@ -201,10 +201,10 @@ QString qSlicerTableColumnPropertiesWidget::columnProperty(QString propertyName)
     {
     return "";
     }
-  std::string commonPropertyValue = d->CurrentTableNode->GetColumnProperty(d->ColumnNames[0].toLatin1().constData(), propertyName.toLatin1().constData());
+  std::string commonPropertyValue = d->CurrentTableNode->GetColumnProperty(d->ColumnNames[0].toUtf8().constData(), propertyName.toUtf8().constData());
   foreach(const QString& columnName, d->ColumnNames)
     {
-    std::string currentPropertyValue = d->CurrentTableNode->GetColumnProperty(columnName.toLatin1().constData(), propertyName.toLatin1().constData());
+    std::string currentPropertyValue = d->CurrentTableNode->GetColumnProperty(columnName.toUtf8().constData(), propertyName.toUtf8().constData());
     if (currentPropertyValue != commonPropertyValue)
       {
       // not all column types are the same

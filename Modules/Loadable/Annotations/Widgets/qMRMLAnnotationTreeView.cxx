@@ -358,7 +358,7 @@ void qMRMLAnnotationTreeView::deleteSelected()
   for (int j=0; j < markedForDeletion.size(); ++j)
     {
 
-    vtkMRMLAnnotationNode* annotationNodeToDelete = vtkMRMLAnnotationNode::SafeDownCast(this->mrmlScene()->GetNodeByID(markedForDeletion.at(j).toLatin1()));
+    vtkMRMLAnnotationNode* annotationNodeToDelete = vtkMRMLAnnotationNode::SafeDownCast(this->mrmlScene()->GetNodeByID(markedForDeletion.at(j).toUtf8()));
     this->m_Logic->RemoveAnnotationNode(annotationNodeToDelete);
 
     }

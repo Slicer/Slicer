@@ -294,12 +294,12 @@ void qSlicerCoreApplicationPrivate::init()
 
   // Create the application Logic object,
   this->AppLogic = vtkSmartPointer<vtkSlicerApplicationLogic>::New();
-  this->AppLogic->SetTemporaryPath(q->temporaryPath().toLatin1());
+  this->AppLogic->SetTemporaryPath(q->temporaryPath().toUtf8());
   vtkPersonInformation* userInfo = this->AppLogic->GetUserInformation();
   if (userInfo)
     {
     QString userInfoString = q->userSettings()->value("UserInformation").toString();
-    userInfo->SetFromString(userInfoString.toLatin1().constData());
+    userInfo->SetFromString(userInfoString.toUtf8().constData());
     }
   q->qvtkConnect(this->AppLogic, vtkCommand::ModifiedEvent,
               q, SLOT(onSlicerApplicationLogicModified()));
@@ -429,7 +429,7 @@ void qSlicerCoreApplicationPrivate::initDataIO()
   // Default cache location, can be changed in settings.
   this->MRMLRemoteIOLogic->GetCacheManager()->SetRemoteCacheDirectory(
     QFileInfo(q->temporaryPath(), "RemoteIO").
-    absoluteFilePath().toLatin1());
+    absoluteFilePath().toUtf8());
 
   this->DataIOManagerLogic = vtkSmartPointer<vtkDataIOManagerLogic>::New();
   this->DataIOManagerLogic->SetMRMLApplicationLogic(this->AppLogic);
@@ -529,7 +529,7 @@ void qSlicerCoreApplicationPrivate::updateEnvironmentVariable(const QString& key
     return;
     }
   std::string currentValue;
-  vtksys::SystemTools::GetEnv(key.toLatin1(), currentValue);
+  vtksys::SystemTools::GetEnv(key.toUtf8(), currentValue);
   if(currentValue.size() > 0)
     {
     QString updatedValue(value);
@@ -725,7 +725,7 @@ void qSlicerCoreApplication::setEnvironmentVariable(const QString& key, const QS
   // Since QProcessEnvironment can't be used to update the environment of the
   // current process, let's use 'putenv()'.
   // See http://doc.qt.nokia.com/4.6/qprocessenvironment.html#details
-  vtksys::SystemTools::PutEnv(QString("%1=%2").arg(key).arg(value).toLatin1().constData());
+  vtksys::SystemTools::PutEnv(QString("%1=%2").arg(key).arg(value).toUtf8().constData());
 
 #ifdef Slicer_USE_PYTHONQT
   d->setPythonOsEnviron(key, value);
@@ -736,7 +736,7 @@ void qSlicerCoreApplication::setEnvironmentVariable(const QString& key, const QS
 bool qSlicerCoreApplication::isEnvironmentVariableValueSet(const QString& key, const QString& value)
 {
   std::string currentValue;
-  vtksys::SystemTools::GetEnv(key.toLatin1(), currentValue);
+  vtksys::SystemTools::GetEnv(key.toUtf8(), currentValue);
   return QString::fromStdString(currentValue).contains(value);
 }
 
@@ -913,12 +913,12 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     wchar_t** pythonArgv = new wchar_t*[pythonArgc];
     //pythonArgv[0] = new wchar_t[pythonScript.size() + 1];
     //pythonScript.toWCharArray(pythonArgv[0]);
-    pythonArgv[0] = Py_DecodeLocale(pythonScript.toLatin1(), nullptr);
+    pythonArgv[0] = Py_DecodeLocale(pythonScript.toUtf8(), nullptr);
     for(int i = 0; i < scriptArgs.count(); ++i)
       {
       //pythonArgv[i + 1] = new wchar_t[scriptArgs.at(i).size() + 1];
       //scriptArgs.at(i).toWCharArray(pythonArgv[i + 1]);
-      pythonArgv[i + 1] = Py_DecodeLocale(scriptArgs.at(i).toLatin1(), nullptr);
+      pythonArgv[i + 1] = Py_DecodeLocale(scriptArgs.at(i).toUtf8(), nullptr);
       }
 
     // See http://docs.python.org/c-api/init.html
@@ -1062,7 +1062,7 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
     }
 
   // Set the default scene save directory
-  newMRMLScene->SetRootDirectory(this->defaultScenePath().toLatin1());
+  newMRMLScene->SetRootDirectory(this->defaultScenePath().toUtf8());
 
 #ifdef Slicer_BUILD_CLI_SUPPORT
   // Register the node type for the command line modules
@@ -1250,7 +1250,7 @@ void qSlicerCoreApplication::setTemporaryPath(const QString& path)
   QSettings* appSettings = this->userSettings();
   Q_ASSERT(appSettings);
   appSettings->setValue("TemporaryPath", path);
-  this->applicationLogic()->SetTemporaryPath(path.toLatin1());
+  this->applicationLogic()->SetTemporaryPath(path.toUtf8());
 }
 
 //-----------------------------------------------------------------------------

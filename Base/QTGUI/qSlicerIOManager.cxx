@@ -255,7 +255,7 @@ bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType,
     {
     foreach(const QString& nodeID, dialog->loadedNodes())
       {
-      vtkMRMLNode* node = d->currentScene()->GetNodeByID(nodeID.toLatin1());
+      vtkMRMLNode* node = d->currentScene()->GetNodeByID(nodeID.toUtf8());
       if (node)
         {
         loadedNodes->AddItem(node);

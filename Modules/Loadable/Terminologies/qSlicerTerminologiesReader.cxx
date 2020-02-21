@@ -95,7 +95,7 @@ bool qSlicerTerminologiesReader::load(const IOProperties& properties)
     return false;
     }
 
-  bool contextLoaded = d->TerminologiesLogic->LoadContextFromFile(fileName.toLatin1().constData());
+  bool contextLoaded = d->TerminologiesLogic->LoadContextFromFile(fileName.toUtf8().constData());
   if (!contextLoaded)
     {
     this->setLoadedNodes(QStringList());

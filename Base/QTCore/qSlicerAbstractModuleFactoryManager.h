@@ -46,7 +46,7 @@ class qSlicerAbstractModuleFactoryManagerPrivate;
 /// 3) Optionally:
 ///    - specify module names to ignore: For startup speed-up and memory consummation,
 ///    it can be useful to not load some modules:
-///     factoryManager->setModulesToIgnore(QStringList(QString("Data")));
+///     factoryManager->setModulesToIgnore(QStringList(QLatin1String("Data")));
 ///    - specify an explicit list of modules to register/instantiate/load. All other discovered
 ///    modules won't be loaded.
 /// 4) scan the directories and test which file is a module and register it (not instantiated yet)

@@ -453,7 +453,7 @@ void qSlicerScalarVolumeDisplayWidget::setPreset(const QString& presetName)
     window = 1.0;
     level = 0.5;
     }
-  vtkMRMLNode* colorNode = this->mrmlScene()->GetNodeByID(colorNodeID.toLatin1());
+  vtkMRMLNode* colorNode = this->mrmlScene()->GetNodeByID(colorNodeID.toUtf8());
   if (colorNode)
     {
     this->setColorNode(colorNode);

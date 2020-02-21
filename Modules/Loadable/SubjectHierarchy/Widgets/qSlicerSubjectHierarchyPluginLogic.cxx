@@ -259,7 +259,7 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAdded(vtkObject* sceneObject, vtk
         // Should never happen! If a plugin answers positively to the canOwn question (condition of
         // reaching this point), then it has to be able to add it.
         qCritical() << Q_FUNC_INFO << ": Failed to add node " << node->GetName() <<
-          " through plugin '" << selectedPlugin->name().toLatin1().constData() << "'";
+          " through plugin '" << selectedPlugin->name().toUtf8().constData() << "'";
         }
       // Make observations if adding was successful
       else
@@ -560,7 +560,7 @@ void qSlicerSubjectHierarchyPluginLogic::addSupportedDataNodesToSubjectHierarchy
         // Should never happen! If a plugin answers positively to the canOwn question (condition of
         // reaching this point), then it has to be able to add it.
         qCritical() << Q_FUNC_INFO << ": Failed to add node " << node->GetName()
-          << " through plugin '" << selectedPlugin->name().toLatin1().constData() << "'";
+          << " through plugin '" << selectedPlugin->name().toUtf8().constData() << "'";
         continue;
         }
       }

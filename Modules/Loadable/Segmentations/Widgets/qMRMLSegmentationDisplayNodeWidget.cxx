@@ -214,7 +214,7 @@ void qMRMLSegmentationDisplayNodeWidget::updateSelectedSegmentSection()
   vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
   if (d->SegmentationDisplayNode)
     {
-    if (!d->SegmentationDisplayNode->GetSegmentDisplayProperties(d->SelectedSegmentID.toLatin1().constData(), properties))
+    if (!d->SegmentationDisplayNode->GetSegmentDisplayProperties(d->SelectedSegmentID.toUtf8().constData(), properties))
       {
       qCritical() << Q_FUNC_INFO << ": No display properties found for segment ID " << d->SelectedSegmentID;
       return;
@@ -252,7 +252,7 @@ void qMRMLSegmentationDisplayNodeWidget::updateSelectedSegmentSection()
     qCritical() << Q_FUNC_INFO << ": Invalid segmentation node!";
     return;
     }
-  vtkSegment* selectedSegment = segmentationNode->GetSegmentation()->GetSegment(d->SelectedSegmentID.toLatin1().constData());
+  vtkSegment* selectedSegment = segmentationNode->GetSegmentation()->GetSegment(d->SelectedSegmentID.toUtf8().constData());
   if (!selectedSegment)
     {
     qCritical() << Q_FUNC_INFO << ": Unable to access segment " << d->SelectedSegmentID << " in segmentation " << segmentationNode->GetName();
@@ -547,7 +547,7 @@ void qMRMLSegmentationDisplayNodeWidget::onRepresentation3DChanged(int index)
   // Get representation name from index
   QString representationName = d->comboBox_DisplayedRepresentation3D->itemText(index);
 
-  d->SegmentationDisplayNode->SetPreferredDisplayRepresentationName3D(representationName.toLatin1().constData());
+  d->SegmentationDisplayNode->SetPreferredDisplayRepresentationName3D(representationName.toUtf8().constData());
 }
 
 //-----------------------------------------------------------------------------
@@ -563,7 +563,7 @@ void qMRMLSegmentationDisplayNodeWidget::onRepresentation2DChanged(int index)
   // Get representation name from index
   QString representationName = d->comboBox_DisplayedRepresentation2D->itemText(index);
 
-  d->SegmentationDisplayNode->SetPreferredDisplayRepresentationName2D(representationName.toLatin1().constData());
+  d->SegmentationDisplayNode->SetPreferredDisplayRepresentationName2D(representationName.toUtf8().constData());
 }
 
 //-----------------------------------------------------------------------------
@@ -599,7 +599,7 @@ void qMRMLSegmentationDisplayNodeWidget::onSegmentVisibilitySliceFillChanged(int
     return;
     }
 
-  d->SegmentationDisplayNode->SetSegmentVisibility2DFill(d->SelectedSegmentID.toLatin1().constData(), visibility);
+  d->SegmentationDisplayNode->SetSegmentVisibility2DFill(d->SelectedSegmentID.toUtf8().constData(), visibility);
 }
 
 //-----------------------------------------------------------------------------
@@ -612,7 +612,7 @@ void qMRMLSegmentationDisplayNodeWidget::onSegmentVisibilitySliceOutlineChanged(
     return;
     }
 
-  d->SegmentationDisplayNode->SetSegmentVisibility2DOutline(d->SelectedSegmentID.toLatin1().constData(), visibility);
+  d->SegmentationDisplayNode->SetSegmentVisibility2DOutline(d->SelectedSegmentID.toUtf8().constData(), visibility);
 }
 
 //-----------------------------------------------------------------------------
@@ -625,7 +625,7 @@ void qMRMLSegmentationDisplayNodeWidget::onSegmentVisibility3DChanged(int visibi
     return;
     }
 
-  d->SegmentationDisplayNode->SetSegmentVisibility3D(d->SelectedSegmentID.toLatin1().constData(), visibility);
+  d->SegmentationDisplayNode->SetSegmentVisibility3D(d->SelectedSegmentID.toUtf8().constData(), visibility);
 }
 
 //-----------------------------------------------------------------------------
@@ -638,7 +638,7 @@ void qMRMLSegmentationDisplayNodeWidget::onSegmentOpacitySliceFillChanged(double
     return;
     }
 
-  d->SegmentationDisplayNode->SetSegmentOpacity2DFill(d->SelectedSegmentID.toLatin1().constData(), opacity);
+  d->SegmentationDisplayNode->SetSegmentOpacity2DFill(d->SelectedSegmentID.toUtf8().constData(), opacity);
 }
 
 //-----------------------------------------------------------------------------
@@ -651,7 +651,7 @@ void qMRMLSegmentationDisplayNodeWidget::onSegmentOpacitySliceOutlineChanged(dou
     return;
     }
 
-  d->SegmentationDisplayNode->SetSegmentOpacity2DOutline(d->SelectedSegmentID.toLatin1().constData(), opacity);
+  d->SegmentationDisplayNode->SetSegmentOpacity2DOutline(d->SelectedSegmentID.toUtf8().constData(), opacity);
 }
 
 //-----------------------------------------------------------------------------
@@ -664,5 +664,5 @@ void qMRMLSegmentationDisplayNodeWidget::onSegmentOpacity3DChanged(double opacit
     return;
     }
 
-  d->SegmentationDisplayNode->SetSegmentOpacity3D(d->SelectedSegmentID.toLatin1().constData(), opacity);
+  d->SegmentationDisplayNode->SetSegmentOpacity3D(d->SelectedSegmentID.toUtf8().constData(), opacity);
 }

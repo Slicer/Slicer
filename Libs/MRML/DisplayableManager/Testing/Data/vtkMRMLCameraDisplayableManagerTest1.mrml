@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <MRML  version="Slicer4.4.0" >
 <Selection
   id="vtkMRMLSelectionNodeSingleton" name="Selection" hideFromEditors="true" selectable="true" selected="false" singletonTag="Singleton" activeVolumeID="NULL" secondaryVolumeID="NULL" activeLabelVolumeID="NULL" activeFiducialListID="NULL" activePlaceNodeID="NULL" activePlaceNodeClassName="NULL" activeROIListID="NULL" activeCameraID="NULL" activeTableID="NULL" activeViewID="NULL" activeLayoutID="NULL" activePlotChartID="NULL"></Selection>

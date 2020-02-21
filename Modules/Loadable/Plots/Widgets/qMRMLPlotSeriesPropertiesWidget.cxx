@@ -294,7 +294,7 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::onXAxisChanged(int index)
     return;
     }
 
-  this->PlotSeriesNode->SetXColumnName(this->xAxisComboBox->itemData(index).toString().toLatin1().constData());
+  this->PlotSeriesNode->SetXColumnName(this->xAxisComboBox->itemData(index).toString().toUtf8().constData());
 }
 
 // --------------------------------------------------------------------------
@@ -305,7 +305,7 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::onLabelsChanged(int index)
     return;
   }
 
-  this->PlotSeriesNode->SetLabelColumnName(this->labelsComboBox->itemData(index).toString().toLatin1().constData());
+  this->PlotSeriesNode->SetLabelColumnName(this->labelsComboBox->itemData(index).toString().toUtf8().constData());
 }
 
 // --------------------------------------------------------------------------
@@ -316,7 +316,7 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::onYAxisChanged(int index)
     return;
     }
 
-  this->PlotSeriesNode->SetYColumnName(this->yAxisComboBox->itemData(index).toString().toLatin1().constData());
+  this->PlotSeriesNode->SetYColumnName(this->yAxisComboBox->itemData(index).toString().toUtf8().constData());
 }
 
 // --------------------------------------------------------------------------

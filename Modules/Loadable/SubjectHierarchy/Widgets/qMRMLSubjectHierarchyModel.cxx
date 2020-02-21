@@ -601,7 +601,7 @@ bool qMRMLSubjectHierarchyModel::reparent(vtkIdType itemID, vtkIdType newParentI
     {
     qCritical() << Q_FUNC_INFO << ": Failed to reparent item "
       << d->SubjectHierarchyNode->GetItemName(itemID).c_str() << " through plugin '"
-      << selectedPlugin->name().toLatin1().constData() << "'";
+      << selectedPlugin->name().toUtf8().constData() << "'";
     return false;
     }
 
@@ -1103,7 +1103,7 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
       }
     vtkSmartPointer<vtkSlicerTerminologyEntry> terminologyEntry = vtkSmartPointer<vtkSlicerTerminologyEntry>::New();
     terminologiesLogic->DeserializeTerminologyEntry(
-      item->data(qSlicerTerminologyItemDelegate::TerminologyRole).toString().toLatin1().constData(), terminologyEntry);
+      item->data(qSlicerTerminologyItemDelegate::TerminologyRole).toString().toUtf8().constData(), terminologyEntry);
     item->setToolTip(terminologiesLogic->GetInfoStringFromTerminologyEntry(terminologyEntry).c_str());
     }
   // Transform column
@@ -1227,12 +1227,12 @@ void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItemData(vtkIdTyp
   if (item->column() == this->nameColumn())
     {
     // This call renames associated data node if any
-    d->SubjectHierarchyNode->SetItemName(shItemID, item->text().toLatin1().constData());
+    d->SubjectHierarchyNode->SetItemName(shItemID, item->text().toUtf8().constData());
     }
   // Description column
   if (item->column() == this->descriptionColumn())
     {
-    std::string newDescriptionStr = item->text().toLatin1().constData();
+    std::string newDescriptionStr = item->text().toUtf8().constData();
     vtkMRMLNode* dataNode = vtkMRMLNode::SafeDownCast(d->SubjectHierarchyNode->GetItemDataNode(shItemID));
     if (!dataNode)
       {
@@ -1285,7 +1285,7 @@ void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItemData(vtkIdTyp
   if (item->column() == this->transformColumn())
     {
     QVariant transformIdData = item->data(TransformIDRole);
-    std::string newParentTransformNodeIdStr = transformIdData.toString().toLatin1().constData();
+    std::string newParentTransformNodeIdStr = transformIdData.toString().toUtf8().constData();
     vtkMRMLTransformNode* newParentTransformNode =
       vtkMRMLTransformNode::SafeDownCast( d->MRMLScene->GetNodeByID(newParentTransformNodeIdStr) );
 

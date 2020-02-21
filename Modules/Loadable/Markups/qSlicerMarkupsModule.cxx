@@ -202,7 +202,7 @@ void qSlicerMarkupsModule::readDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDispl
   if (settings.contains("Markups/GlyphType"))
     {
     markupsDisplayNode->SetGlyphType(vtkMRMLMarkupsDisplayNode::GetGlyphTypeFromString(
-      settings.value("Markups/GlyphType").toString().toLatin1()));
+      settings.value("Markups/GlyphType").toString().toUtf8()));
     }
   if (settings.contains("Markups/SelectedColor"))
     {

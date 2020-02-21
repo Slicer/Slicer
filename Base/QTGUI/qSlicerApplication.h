@@ -143,6 +143,18 @@ public:
   Q_INVOKABLE ctkDICOMBrowser* createDICOMBrowserForMainDatabase();
 #endif
 
+#ifdef Q_OS_WIN32
+  /// Get Windows operating system build number
+  Q_INVOKABLE static unsigned long int windowsOSBuildNumber();
+
+  /// Get process code page. On recent Windows versions it is expected to be UTF-8 (65001)
+  Q_INVOKABLE static unsigned int windowsActiveCodePage();
+#endif
+
+  /// Return true if process code page is UTF-8.
+  /// It is true for all MacOS and Linux versions and for Windows version 1903 (May 2019 Update) or later.
+  Q_INVOKABLE static bool isCodePageUtf8();
+
 public slots:
 
   /// Utility function that retrieve the best module for a node and trigger

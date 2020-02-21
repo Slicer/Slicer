@@ -93,7 +93,7 @@ bool qSlicerNodeWriter::canWriteObject(vtkObject* object)const
     {
     foreach(QString className, d->NodeClassNames)
       {
-      if (node->IsA(className.toLatin1()))
+      if (node->IsA(className.toUtf8()))
         {
         return true;
         }
@@ -129,7 +129,7 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
   Q_ASSERT(!properties["nodeID"].toString().isEmpty());
 
   vtkMRMLStorableNode* node = vtkMRMLStorableNode::SafeDownCast(
-    this->getNodeByID(properties["nodeID"].toString().toLatin1().data()));
+    this->getNodeByID(properties["nodeID"].toString().toUtf8().data()));
   if (!this->canWriteObject(node))
     {
     return false;
@@ -143,14 +143,14 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
 
   Q_ASSERT(!properties["fileName"].toString().isEmpty());
   QString fileName = properties["fileName"].toString();
-  snode->SetFileName(fileName.toLatin1());
+  snode->SetFileName(fileName.toUtf8());
 
   qSlicerCoreIOManager* coreIOManager =
     qSlicerCoreApplication::application()->coreIOManager();
 
   QString fileFormat =
     properties.value("fileFormat", coreIOManager->completeSlicerWritableFileNameSuffix(node)).toString();
-  snode->SetWriteFileFormat(fileFormat.toLatin1());
+  snode->SetWriteFileFormat(fileFormat.toUtf8());
   snode->SetURI(nullptr);
   if (properties.contains("useCompression"))
     {

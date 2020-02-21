@@ -73,7 +73,7 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "f4a0a6cf3460638397a91c7cbbaf21c6fd9eaa7f"
+    "1788b378ed2e4928cded2bc9ecdc2b37c7f2af5f"
     QUIET
     )
 
@@ -97,6 +97,7 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DCMAKE_CXX_EXTENSIONS:BOOL=${CMAKE_CXX_EXTENSIONS}
       # Options
       -DBUILD_TESTING:BOOL=OFF
+      -DSlicerExecutionModel_USE_UTF8:BOOL=ON
       -DITK_DIR:PATH=${ITK_DIR}
       -DSlicerExecutionModel_USE_SERIALIZER:BOOL=${Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT}
       -DSlicerExecutionModel_USE_JSONCPP:BOOL=${Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT}

@@ -238,7 +238,7 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterProxyModel
     bool hide = true;
     foreach(const QString& nodeType, d->ShowHiddenForTypes)
       {
-      if (node->IsA(nodeType.toLatin1()))
+      if (node->IsA(nodeType.toUtf8()))
         {
         hide = false;
         break;
@@ -253,7 +253,7 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterProxyModel
   if (!d->HideNodesUnaffiliatedWithNodeID.isEmpty())
     {
     vtkMRMLNode* theNode = sceneModel->mrmlScene()->GetNodeByID(
-      d->HideNodesUnaffiliatedWithNodeID.toLatin1());
+      d->HideNodesUnaffiliatedWithNodeID.toUtf8());
     bool affiliated = sceneModel->isAffiliatedNode(node, theNode);
     if (!affiliated)
       {
@@ -270,7 +270,7 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterProxyModel
   foreach(const QString& nodeType, d->NodeTypes)
     {
     // filter by node type
-    if (!node->IsA(nodeType.toLatin1().data()))
+    if (!node->IsA(nodeType.toUtf8().data()))
       {
       //std::cout << "Reject node: " << node->GetName() << "(" << node->GetID()
       //          << ") type: " << typeid(*node).name() <<std::endl;
@@ -286,7 +286,7 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterProxyModel
       {
       foreach(const QString& hideChildNodeType, d->HideChildNodeTypes)
         {
-        if (node->IsA(hideChildNodeType.toLatin1().data()))
+        if (node->IsA(hideChildNodeType.toUtf8().data()))
           {
           return Reject;
           }
@@ -303,8 +303,8 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterProxyModel
         SLOT(invalidate()),0., Qt::UniqueConnection);
 
       QString attributeName = d->Attributes[nodeType].first;
-      const char *nodeAttribute = node->GetAttribute(attributeName.toLatin1());
-      QString nodeAttributeQString = node->GetAttribute(attributeName.toLatin1());
+      const char *nodeAttribute = node->GetAttribute(attributeName.toUtf8());
+      QString nodeAttributeQString = node->GetAttribute(attributeName.toUtf8());
       QString testAttribute = d->Attributes[nodeType].second.toString();
 
       //std::cout << "attribute name = " << qPrintable(attributeName) << "\n\ttestAttribute = " << qPrintable(testAttribute) << "\n\t" << node->GetID() << " nodeAttributeQString = " << qPrintable(nodeAttributeQString) << "\n\t\tas char str = " << (nodeAttribute ? nodeAttribute : "null") << "." << std::endl;

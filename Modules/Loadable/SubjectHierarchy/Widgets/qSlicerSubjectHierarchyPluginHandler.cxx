@@ -329,7 +329,7 @@ qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::fin
     }
 
   qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin = this->findOwnerPluginForSubjectHierarchyItem(itemID);
-  this->m_MRMLScene->GetSubjectHierarchyNode()->SetItemOwnerPluginName(itemID, ownerPlugin->name().toLatin1().constData());
+  this->m_MRMLScene->GetSubjectHierarchyNode()->SetItemOwnerPluginName(itemID, ownerPlugin->name().toUtf8().constData());
   return ownerPlugin;
 }
 

@@ -563,7 +563,7 @@ QWidget* qMRMLLayoutManagerPrivate::viewWidget(vtkMRMLNode* viewNode)const
     widget = this->plotWidget(vtkMRMLPlotViewNode::SafeDownCast(viewNode));
     }
   return widget ? widget : q->mrmlViewFactory(
-        QLatin1String(viewNode->GetClassName()))->viewWidget(
+        QString::fromUtf8(viewNode->GetClassName()))->viewWidget(
         vtkMRMLAbstractViewNode::SafeDownCast(viewNode));
 }
 

@@ -90,10 +90,10 @@ int qSlicerCoreIOManagerTest1(int argc, char * argv [])
 
   for (int i = 0; i < testFileNames.size(); ++i)
     {
-    vtkSmartPointer<vtkMRMLNode> node = vtkSmartPointer<vtkMRMLNode>::Take(app.mrmlScene()->CreateNodeByClass(storageNodeClassNames[i].toLatin1().constData()));
+    vtkSmartPointer<vtkMRMLNode> node = vtkSmartPointer<vtkMRMLNode>::Take(app.mrmlScene()->CreateNodeByClass(storageNodeClassNames[i].toUtf8().constData()));
     app.mrmlScene()->AddNode(node);
     vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(node);
-    storableNode->AddDefaultStorageNode(testFileNames[i].toLatin1().constData());
+    storableNode->AddDefaultStorageNode(testFileNames[i].toUtf8().constData());
     QString ext = manager.completeSlicerWritableFileNameSuffix(storableNode);
     if (expectedExtensions[i] != ext)
       {

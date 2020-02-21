@@ -127,20 +127,20 @@ void qSlicerDICOMLoadable::copyToVtkLoadable(vtkSlicerDICOMLoadable* vtkLoadable
     return;
     }
 
-  vtkLoadable->SetName(d->Name.toLatin1().constData());
-  vtkLoadable->SetTooltip(d->Tooltip.toLatin1().constData());
-  vtkLoadable->SetWarning(d->Warning.toLatin1().constData());
+  vtkLoadable->SetName(d->Name.toUtf8().constData());
+  vtkLoadable->SetTooltip(d->Tooltip.toUtf8().constData());
+  vtkLoadable->SetWarning(d->Warning.toUtf8().constData());
   vtkLoadable->SetSelected(d->Selected);
   vtkLoadable->SetConfidence(d->Confidence);
 
   foreach(QString file, d->Files)
     {
-    vtkLoadable->AddFile(file.toLatin1().constData());
+    vtkLoadable->AddFile(file.toUtf8().constData());
     }
 
   foreach(QString referencedInstanceUID, d->ReferencedInstanceUIDs)
     {
-    vtkLoadable->AddReferencedInstanceUID(referencedInstanceUID.toLatin1().constData());
+    vtkLoadable->AddReferencedInstanceUID(referencedInstanceUID.toUtf8().constData());
     }
 }
 

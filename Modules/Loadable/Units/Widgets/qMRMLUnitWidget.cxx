@@ -337,7 +337,7 @@ void qMRMLUnitWidget::setName(const QString& newName)
 
   if (d->CurrentUnitNode)
     {
-    d->CurrentUnitNode->SetName(newName.toLatin1());
+    d->CurrentUnitNode->SetName(newName.toUtf8());
     }
 }
 
@@ -355,7 +355,7 @@ void qMRMLUnitWidget::setQuantity(const QString& newQuantity)
 
   if (d->CurrentUnitNode)
     {
-    d->CurrentUnitNode->SetQuantity(newQuantity.toLatin1());
+    d->CurrentUnitNode->SetQuantity(newQuantity.toUtf8());
     }
 }
 
@@ -373,7 +373,7 @@ void qMRMLUnitWidget::setPrefix(const QString& newPrefix)
 
   if (d->CurrentUnitNode)
     {
-    d->CurrentUnitNode->SetPrefix(newPrefix.toLatin1());
+    d->CurrentUnitNode->SetPrefix(newPrefix.toUtf8());
     }
   d->MaximumSpinBox->setPrefix(newPrefix);
   d->MinimumSpinBox->setPrefix(newPrefix);
@@ -393,7 +393,7 @@ void qMRMLUnitWidget::setSuffix(const QString& newSuffix)
 
   if (d->CurrentUnitNode)
     {
-    d->CurrentUnitNode->SetSuffix(newSuffix.toLatin1());
+    d->CurrentUnitNode->SetSuffix(newSuffix.toUtf8());
     }
   d->MaximumSpinBox->setSuffix(newSuffix);
   d->MinimumSpinBox->setSuffix(newSuffix);

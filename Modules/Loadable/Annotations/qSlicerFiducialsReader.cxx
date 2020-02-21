@@ -108,7 +108,7 @@ bool qSlicerFiducialsReader::load(const IOProperties& properties)
     return false;
     }
 
-  char * nodeIDs = d->AnnotationLogic->LoadFiducialList(fileName.toLatin1());
+  char * nodeIDs = d->AnnotationLogic->LoadFiducialList(fileName.toUtf8());
 
   if (nodeIDs)
     {

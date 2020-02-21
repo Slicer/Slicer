@@ -42,7 +42,7 @@ bool qSlicerScriptedUtils::loadSourceAsModule(const QString& moduleName,
     pyRes = PyRun_String(
           QString("import imp;imp.load_source(%2, %1);del imp;")
           .arg(qSlicerCorePythonManager::toPythonStringLiteral(fileName))
-          .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName)).toLatin1(),
+          .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName)).toUtf8(),
           Py_file_input, global_dict, local_dict);
     }
   else if (fileName.endsWith(".pyc"))
@@ -50,7 +50,7 @@ bool qSlicerScriptedUtils::loadSourceAsModule(const QString& moduleName,
     pyRes = PyRun_String(
           QString("with open(%1, 'rb') as f:import imp;imp.load_module(%2, f, %1, ('.pyc', 'rb', 2));del imp")
           .arg(qSlicerCorePythonManager::toPythonStringLiteral(fileName))
-          .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName)).toLatin1(),
+          .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName)).toUtf8(),
           Py_file_input, global_dict, local_dict);
     }
   if (!pyRes)
@@ -78,7 +78,7 @@ bool qSlicerScriptedUtils::setModuleAttribute(const QString& moduleName,
   PyObject * module = PythonQt::self()->getMainModule();
   if (!moduleName.isEmpty())
     {
-    module = PyImport_ImportModule(moduleName.toLatin1());
+    module = PyImport_ImportModule(moduleName.toUtf8());
     if (!module)
       {
       PythonQt::self()->handleError();
@@ -87,7 +87,7 @@ bool qSlicerScriptedUtils::setModuleAttribute(const QString& moduleName,
     }
 
   // Add the object to the imported module
-  int ret = PyObject_SetAttrString(module, attributeName.toLatin1(), attributeValue);
+  int ret = PyObject_SetAttrString(module, attributeName.toUtf8(), attributeValue);
   if (ret != 0)
     {
     PythonQt::self()->handleError();
@@ -174,12 +174,12 @@ PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& cla
   foreach(int methodId, this->APIMethods.keys())
     {
     QString methodName = this->APIMethods.value(methodId);
-    if (!PyObject_HasAttrString(self.object(), methodName.toLatin1()))
+    if (!PyObject_HasAttrString(self.object(), methodName.toUtf8()))
       {
       continue;
       }
     PythonQtObjectPtr method;
-    method.setNewRef(PyObject_GetAttrString(self.object(), methodName.toLatin1()));
+    method.setNewRef(PyObject_GetAttrString(self.object(), methodName.toUtf8()));
     this->PythonAPIMethods[methodId] = method;
     }
 

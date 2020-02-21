@@ -169,14 +169,14 @@ int qSlicerAnnotationModuleAnnotationPropertyDialogTest1( int, char * [] )
     pMRMLScene->AddNode(pRulerNode);
 
     QString textString = "MyTestString";
-    pLogic->SetAnnotationLinesProperties( (vtkMRMLAnnotationLinesNode*)pRulerNode, vtkSlicerAnnotationModuleLogic::TEXT, textString.toLatin1());
+    pLogic->SetAnnotationLinesProperties( (vtkMRMLAnnotationLinesNode*)pRulerNode, vtkSlicerAnnotationModuleLogic::TEXT, textString.toUtf8());
 
     QString text1 = QString(pLogic->GetAnnotationTextProperty(pRulerNode));
 
     SaveStateForUndo(pRulerNode);
 
     QString textString2 = "AnotherTestString";
-    pLogic->SetAnnotationLinesProperties( (vtkMRMLAnnotationLinesNode*)pRulerNode, vtkSlicerAnnotationModuleLogic::TEXT, textString2.toLatin1());
+    pLogic->SetAnnotationLinesProperties( (vtkMRMLAnnotationLinesNode*)pRulerNode, vtkSlicerAnnotationModuleLogic::TEXT, textString2.toUtf8());
     QString text22 = QString(pLogic->GetAnnotationTextProperty(pRulerNode));
     std::cout << qPrintable(text22) << std::endl;
 
@@ -192,7 +192,7 @@ int qSlicerAnnotationModuleAnnotationPropertyDialogTest1( int, char * [] )
     }
 
     std::cout << "SaveStateForUndo/Undo Failed!" << std::endl;
-    std::cout << "Text 1:" << qPrintable(text2) << " Text 2: " << text2.toLatin1() << std::endl;
+    std::cout << "Text 1:" << qPrintable(text2) << " Text 2: " <<qPrintable(text2) << std::endl;
     return 1;
 }
 

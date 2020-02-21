@@ -148,18 +148,18 @@ void qSlicerDICOMExportable::copyToVtkExportable(vtkSlicerDICOMExportable* vtkEx
     return;
     }
 
-  vtkExportable->SetName(d->Name.toLatin1().constData());
-  vtkExportable->SetTooltip(d->Tooltip.toLatin1().constData());
+  vtkExportable->SetName(d->Name.toUtf8().constData());
+  vtkExportable->SetTooltip(d->Tooltip.toUtf8().constData());
   vtkExportable->SetSubjectHierarchyItemID(d->SubjectHierarchyItemID);
-  vtkExportable->SetPluginClass(d->PluginClass.toLatin1().constData());
-  vtkExportable->SetDirectory(d->Directory.toLatin1().constData());
+  vtkExportable->SetPluginClass(d->PluginClass.toUtf8().constData());
+  vtkExportable->SetDirectory(d->Directory.toUtf8().constData());
   vtkExportable->SetConfidence(d->Confidence);
 
   QMapIterator<QString,QString> tagsIt(d->Tags);
   while (tagsIt.hasNext())
     {
     tagsIt.next();
-    vtkExportable->SetTag(tagsIt.key().toLatin1().constData(), tagsIt.value().toLatin1().constData());
+    vtkExportable->SetTag(tagsIt.key().toUtf8().constData(), tagsIt.value().toUtf8().constData());
     }
 }
 

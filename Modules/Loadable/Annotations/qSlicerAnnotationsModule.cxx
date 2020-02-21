@@ -67,7 +67,7 @@ void qSlicerAnnotationsModule::setup()
   foreach(const QString& name, threeDdisplayableManagers)
     {
     vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-        QString("vtkMRMLAnnotation%1DisplayableManager").arg(name).toLatin1());
+        QString("vtkMRMLAnnotation%1DisplayableManager").arg(name).toUtf8());
     }
 
   // 2D
@@ -82,7 +82,7 @@ void qSlicerAnnotationsModule::setup()
   foreach(const QString& name, slicerViewDisplayableManagers)
     {
     vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-        QString("vtkMRMLAnnotation%1DisplayableManager").arg(name).toLatin1());
+        QString("vtkMRMLAnnotation%1DisplayableManager").arg(name).toUtf8());
     }
 
   /// Register IO

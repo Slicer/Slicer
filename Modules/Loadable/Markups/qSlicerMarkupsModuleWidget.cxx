@@ -1576,7 +1576,7 @@ void qSlicerMarkupsModuleWidget::onNameFormatLineEditTextEdited(const QString te
     {
     return;
     }
-  d->MarkupsNode->SetMarkupLabelFormat(std::string(text.toLatin1()));
+  d->MarkupsNode->SetMarkupLabelFormat(std::string(text.toUtf8()));
 }
 
 //-----------------------------------------------------------------------------
@@ -1662,12 +1662,12 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
     }
   else if (column ==  d->columnIndex("Name"))
     {
-    std::string name = std::string(item->text().toLatin1());
+    std::string name = std::string(item->text().toUtf8());
     d->MarkupsNode->SetNthControlPointLabel(n, name);
     }
   else if (column ==  d->columnIndex("Description"))
     {
-    std::string description = std::string(item->text().toLatin1());
+    std::string description = std::string(item->text().toUtf8());
     d->MarkupsNode->SetNthControlPointDescription(n, description);
     }
   else if (column == d->columnIndex("R") ||
@@ -2129,7 +2129,7 @@ void qSlicerMarkupsModuleWidget::pasteSelectedFromClipboard()
       continue;
       }
 
-    storageNode->SetPointFromString(d->MarkupsNode, d->MarkupsNode->GetNumberOfControlPoints(), line.toLatin1());
+    storageNode->SetPointFromString(d->MarkupsNode, d->MarkupsNode->GetNumberOfControlPoints(), line.toUtf8());
     }
   d->MarkupsNode->DisableModifiedEventOff();
   d->MarkupsNode->Modified();

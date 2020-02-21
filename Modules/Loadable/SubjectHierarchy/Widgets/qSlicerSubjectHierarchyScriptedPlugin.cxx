@@ -159,13 +159,13 @@ bool qSlicerSubjectHierarchyScriptedPlugin::setPythonSource(const QString newPyt
   PyObject * global_dict = PyModule_GetDict(main_module);
 
   // Get a reference (or create if needed) the <moduleName> python module
-  PyObject * module = PyImport_AddModule(moduleName.toLatin1());
+  PyObject * module = PyImport_AddModule(moduleName.toUtf8());
 
   // Get a reference to the python module class to instantiate
   PythonQtObjectPtr classToInstantiate;
-  if (PyObject_HasAttrString(module, className.toLatin1()))
+  if (PyObject_HasAttrString(module, className.toUtf8()))
     {
-    classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toLatin1()));
+    classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toUtf8()));
     }
   if (!classToInstantiate)
     {
@@ -175,9 +175,9 @@ bool qSlicerSubjectHierarchyScriptedPlugin::setPythonSource(const QString newPyt
       {
       return false;
       }
-    if (PyObject_HasAttrString(module, className.toLatin1()))
+    if (PyObject_HasAttrString(module, className.toUtf8()))
       {
-      classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toLatin1()));
+      classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toUtf8()));
       }
     }
 
@@ -187,7 +187,7 @@ bool qSlicerSubjectHierarchyScriptedPlugin::setPythonSource(const QString newPyt
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerSubjectHierarchyScriptedPlugin::setPythonSource - "
                             "Failed to load subject hierarchy scripted plugin: "
-                            "class %1 was not found in %2").arg(className).arg(newPythonSource).toLatin1());
+                            "class %1 was not found in %2").arg(className).arg(newPythonSource).toUtf8());
     PythonQt::self()->handleError();
     return false;
     }

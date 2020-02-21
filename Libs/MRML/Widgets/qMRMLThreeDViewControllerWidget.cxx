@@ -350,7 +350,7 @@ void qMRMLThreeDViewControllerWidget::setViewLabel(const QString& newViewLabel)
 
   if (d->ViewLogic)
     {
-    d->ViewLogic->SetName(newViewLabel.toLatin1());
+    d->ViewLogic->SetName(newViewLabel.toUtf8());
     }
 }
 
@@ -368,7 +368,7 @@ void qMRMLThreeDViewControllerWidget::setMRMLViewNode(
   d->ViewNode = viewNode;
   this->updateWidgetFromMRMLView();
 
-  d->CameraNode = d->ViewLogic->GetCameraNode(this->mrmlScene(), d->ThreeDViewLabel.toLatin1());
+  d->CameraNode = d->ViewLogic->GetCameraNode(this->mrmlScene(), d->ThreeDViewLabel.toUtf8());
   this->qvtkReconnect(d->CameraNode, vtkMRMLCameraNode::CameraInteractionEvent,
                       this, SLOT(updateViewFromMRMLCamera()));
 

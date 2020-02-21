@@ -282,7 +282,7 @@ macro(slicerMacroBuildLoadableModule)
       EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
       )
 
-    add_executable(${KIT}GenericCxxTests ${Tests})
+    ctk_add_executable_utf8(${KIT}GenericCxxTests ${Tests})
     set_target_properties(${KIT}GenericCxxTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${Slicer_BIN_DIR})
     target_link_libraries(${KIT}GenericCxxTests ${KIT})
     if(NOT "${LOADABLEMODULE_FOLDER}" STREQUAL "")

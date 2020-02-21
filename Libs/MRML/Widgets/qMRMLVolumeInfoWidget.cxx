@@ -388,7 +388,7 @@ void qMRMLVolumeInfoWidget::setScanOrder(int index)
   QString scanOrder = d->ScanOrderComboBox->itemData(index).toString();
   vtkNew<vtkMatrix4x4> IJKToRAS;
   if (vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(
-    scanOrder.toLatin1(),
+    scanOrder.toUtf8(),
     d->VolumeNode->GetSpacing(),
     d->VolumeNode->GetImageData()->GetDimensions(),
     this->isCentered(),

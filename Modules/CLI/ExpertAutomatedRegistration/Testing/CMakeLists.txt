@@ -13,7 +13,7 @@ if(NOT DEFINED TEMP)
 endif()
 
 #-----------------------------------------------------------------------------
-add_executable(Generate${CLP}TestData Generate${CLP}TestData.cxx)
+ctk_add_executable_utf8(Generate${CLP}TestData Generate${CLP}TestData.cxx)
 target_link_libraries(Generate${CLP}TestData
   ${ITK_LIBRARIES}
   ITKFactoryRegistration

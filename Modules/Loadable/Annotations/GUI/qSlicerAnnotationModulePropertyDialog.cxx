@@ -681,14 +681,14 @@ void qSlicerAnnotationModulePropertyDialog::onCoordinateChanged(QString text)
 void qSlicerAnnotationModulePropertyDialog::onDescriptionTextChanged()
 {
   QString text = ui.DescriptionTextEdit->toPlainText();
-  this->m_logic->SetAnnotationText(this->m_id.c_str(), text.toLatin1());
+  this->m_logic->SetAnnotationText(this->m_id.c_str(), text.toUtf8());
 }
 
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onTextChanged()
 {
   QString text = ui.annotationTextEdit->toPlainText();
-  this->m_logic->SetAnnotationText(this->m_id.c_str(), text.toLatin1());
+  this->m_logic->SetAnnotationText(this->m_id.c_str(), text.toUtf8());
 }
 
 //------------------------------------------------------------------------------
@@ -1182,7 +1182,7 @@ void qSlicerAnnotationModulePropertyDialog::onPointSpecularChanged(double value)
 void qSlicerAnnotationModulePropertyDialog::onPointGlyphChanged(QString value)
 {
 //  std::cout << "OnPointGlyphChanged: " << qPrintable(value) << std::endl;
-  this->m_logic->SetAnnotationPointGlyphTypeFromString(this->m_id.c_str(), value.toLatin1());
+  this->m_logic->SetAnnotationPointGlyphTypeFromString(this->m_id.c_str(), value.toUtf8());
 }
 
 //------------------------------------------------------------------------------
@@ -1597,7 +1597,7 @@ void qSlicerAnnotationModulePropertyDialog::onNameLineEditChanged()
     }
   // change the name
   QString name = ui.nameLineEdit->text();
-  node->SetName(name.toLatin1());
+  node->SetName(name.toUtf8());
 }
 
 //-----------------------------------------------------------------------------
@@ -1800,7 +1800,7 @@ void qSlicerAnnotationModulePropertyDialog::onHierarchyPointGlyphChanged(QString
     if (allChildren[i]->GetAssociatedNode() &&
         allChildren[i]->GetAssociatedNode()->GetID())
       {
-      this->m_logic->SetAnnotationPointGlyphTypeFromString(allChildren[i]->GetAssociatedNode()->GetID(), value.toLatin1());
+      this->m_logic->SetAnnotationPointGlyphTypeFromString(allChildren[i]->GetAssociatedNode()->GetID(), value.toUtf8());
       }
     }
 }

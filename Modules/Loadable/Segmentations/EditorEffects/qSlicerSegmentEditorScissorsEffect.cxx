@@ -1277,9 +1277,9 @@ void qSlicerSegmentEditorScissorsEffect::updateMRMLFromGUI()
   QString operation = d->ConvertOperationToString(d->operationGroup->checkedId());
   QString shape = d->ConvertShapeToString(d->shapeGroup->checkedId());
   QString sliceCutMode = d->ConvertSliceCutModeToString(d->sliceCutModeGroup->checkedId());
-  this->setParameter("Operation", operation.toLatin1().constData());
-  this->setParameter("Shape", shape.toLatin1().constData());
-  this->setParameter("SliceCutMode", sliceCutMode.toLatin1().constData());
+  this->setParameter("Operation", operation.toUtf8().constData());
+  this->setParameter("Shape", shape.toUtf8().constData());
+  this->setParameter("SliceCutMode", sliceCutMode.toUtf8().constData());
   this->setParameter("SliceCutDepthMm", d->sliceCutDepthSpinBox->value());
 }
 

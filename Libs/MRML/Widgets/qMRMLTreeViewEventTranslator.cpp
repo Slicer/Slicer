@@ -53,7 +53,7 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject *Object,
                                              bool &Error)
 {
   Q_UNUSED(Error);
-  
+
   qMRMLTreeView* treeView = nullptr;
   for(QObject* test = Object; treeView == nullptr && test != nullptr; test = test->parent())
     {
@@ -194,9 +194,9 @@ void qMRMLTreeViewEventTranslator::onAboutToReparentByDnD(vtkMRMLNode* node , vt
 {
   if (node)
     {
-    QString parentID = newParent ? QString::fromLatin1(newParent->GetID()) : nullptr;
+    QString parentID = newParent ? QString::fromUtf8(newParent->GetID()) : nullptr;
     QString args = QString("%1.%2").arg(
-        QString::fromLatin1(node->GetID()),
+        QString::fromUtf8(node->GetID()),
         parentID);
     emit recordEvent(this->CurrentObject, "reParentByDragnDrop", args);
     }

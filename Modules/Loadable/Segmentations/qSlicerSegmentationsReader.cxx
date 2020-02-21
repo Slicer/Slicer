@@ -159,11 +159,11 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
       }
 
     vtkNew<vtkSegment> segment;
-    segment->SetName(name.toLatin1().constData());
+    segment->SetName(name.toUtf8().constData());
     segment->AddRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(), closedSurfaceRepresentation);
 
     vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
-      this->mrmlScene()->AddNewNodeByClass("vtkMRMLSegmentationNode", name.toLatin1().constData()));
+      this->mrmlScene()->AddNewNodeByClass("vtkMRMLSegmentationNode", name.toUtf8().constData()));
     segmentationNode->SetMasterRepresentationToClosedSurface();
     segmentationNode->CreateDefaultDisplayNodes();
     vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
@@ -186,7 +186,7 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
       autoOpacities = properties["autoOpacities"].toBool();
       }
 
-    vtkMRMLSegmentationNode* node = d->SegmentationsLogic->LoadSegmentationFromFile(fileName.toLatin1().constData(), autoOpacities);
+    vtkMRMLSegmentationNode* node = d->SegmentationsLogic->LoadSegmentationFromFile(fileName.toUtf8().constData(), autoOpacities);
     if (!node)
       {
       this->setLoadedNodes(QStringList());
@@ -197,7 +197,7 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
 
     if (properties.contains("name"))
       {
-      std::string uname = this->mrmlScene()->GetUniqueNameByString(properties["name"].toString().toLatin1());
+      std::string uname = this->mrmlScene()->GetUniqueNameByString(properties["name"].toString().toUtf8());
       node->SetName(uname.c_str());
       }
     }

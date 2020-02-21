@@ -97,16 +97,16 @@ void qMRMLSceneViewMenuPrivate::addMenuItem(vtkMRMLNode * sceneViewNode)
     q->clear();
     }
 
-  QMenu* sceneViewMenu = q->addMenu(QLatin1String(node->GetName()));
+  QMenu* sceneViewMenu = q->addMenu(QString::fromUtf8(node->GetName()));
   sceneViewMenu->setObjectName("sceneViewMenu");
 
   QAction* restoreAction = sceneViewMenu->addAction(QIcon(":/Icons/SnapshotRestore.png"), "Restore",
                                                    &this->RestoreActionMapper, SLOT(map()));
-  this->RestoreActionMapper.setMapping(restoreAction, QLatin1String(node->GetID()));
+  this->RestoreActionMapper.setMapping(restoreAction, QString::fromUtf8(node->GetID()));
 
   QAction* deleteAction = sceneViewMenu->addAction(QIcon(":/Icons/SnapshotDelete.png"), "Delete",
                                                   &this->DeleteActionMapper, SLOT(map()));
-  this->DeleteActionMapper.setMapping(deleteAction, QLatin1String(node->GetID()));
+  this->DeleteActionMapper.setMapping(deleteAction, QString::fromUtf8(node->GetID()));
 }
 
 // --------------------------------------------------------------------------
@@ -139,7 +139,7 @@ void qMRMLSceneViewMenuPrivate::removeMenuItem(vtkMRMLNode * sceneViewNode)
   QList<QAction*> actions = q->actions();
   foreach(QAction * action, actions)
     {
-    if (action->text().compare(QLatin1String(node->GetName())) == 0)
+    if (action->text().compare(QString::fromUtf8(node->GetName())) == 0)
       {
       q->removeAction(action);
       break;
@@ -178,7 +178,7 @@ bool qMRMLSceneViewMenuPrivate::hasNoSceneViewItem()const
 void qMRMLSceneViewMenuPrivate::restoreSceneView(const QString& sceneViewNodeId)
 {
   vtkMRMLSceneViewNode * sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(
-      this->MRMLScene->GetNodeByID(sceneViewNodeId.toLatin1()));
+      this->MRMLScene->GetNodeByID(sceneViewNodeId.toUtf8()));
   Q_ASSERT(sceneViewNode);
   this->MRMLScene->SaveStateForUndo();
   // pass false to not delete nodes from the scene
@@ -240,7 +240,7 @@ void qMRMLSceneViewMenuPrivate::restoreSceneView(const QString& sceneViewNodeId)
 void qMRMLSceneViewMenuPrivate::deleteSceneView(const QString& sceneViewNodeId)
 {
   vtkMRMLSceneViewNode * sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(
-      this->MRMLScene->GetNodeByID(sceneViewNodeId.toLatin1()));
+      this->MRMLScene->GetNodeByID(sceneViewNodeId.toUtf8()));
   Q_ASSERT(sceneViewNode);
   this->MRMLScene->SaveStateForUndo();
   this->MRMLScene->RemoveNode(sceneViewNode);

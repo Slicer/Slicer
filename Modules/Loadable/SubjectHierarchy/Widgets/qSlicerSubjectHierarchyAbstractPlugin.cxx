@@ -191,7 +191,7 @@ bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(vtkMRMLNod
     }
 
   // Set owner plugin to make sure the plugin that adds the item is the owner
-  shNode->SetItemOwnerPluginName(addedItemID, this->m_Name.toLatin1().constData());
+  shNode->SetItemOwnerPluginName(addedItemID, this->m_Name.toUtf8().constData());
 
   return true;
 }
@@ -309,7 +309,7 @@ bool qSlicerSubjectHierarchyAbstractPlugin::isThisPluginOwnerOfItem(vtkIdType it
     return false;
     }
 
-  return !shNode->GetItemOwnerPluginName(itemID).compare(this->m_Name.toLatin1().constData());
+  return !shNode->GetItemOwnerPluginName(itemID).compare(this->m_Name.toUtf8().constData());
 }
 
 //--------------------------------------------------------------------------

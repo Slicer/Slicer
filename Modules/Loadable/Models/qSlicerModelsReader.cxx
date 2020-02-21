@@ -101,7 +101,7 @@ bool qSlicerModelsReader::load(const IOProperties& properties)
     return false;
     }
   vtkMRMLModelNode* node = d->ModelsLogic->AddModel(
-    fileName.toLatin1());
+    fileName.toUtf8());
   if (!node)
     {
     return false;
@@ -110,7 +110,7 @@ bool qSlicerModelsReader::load(const IOProperties& properties)
   if (properties.contains("name"))
     {
     std::string uname = this->mrmlScene()->GetUniqueNameByString(
-      properties["name"].toString().toLatin1());
+      properties["name"].toString().toUtf8());
     node->SetName(uname.c_str());
     }
   return true;

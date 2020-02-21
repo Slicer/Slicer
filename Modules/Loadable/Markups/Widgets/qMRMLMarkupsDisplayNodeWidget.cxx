@@ -361,7 +361,7 @@ void qMRMLMarkupsDisplayNodeWidget::onGlyphTypeComboBoxChanged(QString value)
     {
     return;
     }
-  d->MarkupsDisplayNode->SetGlyphTypeFromString(value.toLatin1());
+  d->MarkupsDisplayNode->SetGlyphTypeFromString(value.toUtf8());
 }
 
 //-----------------------------------------------------------------------------

@@ -76,7 +76,7 @@ bool qMRMLTreeViewEventPlayer::playEvent(QObject *Object,
     {
     if(Command == "currentNodeRenamed")
       {
-      treeView->currentNode()->SetName(Arguments.toLatin1());
+      treeView->currentNode()->SetName(Arguments.toUtf8());
       // for improvement, see the method qMRMLTreeView::renameCurrentNode()
       // and set the name in the line edit, then simulate a OK
       return true;
@@ -94,7 +94,7 @@ bool qMRMLTreeViewEventPlayer::playEvent(QObject *Object,
       }
     if(Command == "editNodeRequested")
       {
-//      vtkMRMLNode* node = treeView->mrmlScene()->GetNodeByID(Arguments.toLatin1());
+//      vtkMRMLNode* node = treeView->mrmlScene()->GetNodeByID(Arguments.toUtf8());
 //      emit treeView->editNodeRequested(node);
       treeView->editCurrentNode();
       return true;
@@ -106,8 +106,8 @@ bool qMRMLTreeViewEventPlayer::playEvent(QObject *Object,
         {
         return false;
         }
-      vtkMRMLNode* node = treeView->mrmlScene()->GetNodeByID(nodes[0].toLatin1());
-      vtkMRMLNode* nodeParent = treeView->mrmlScene()->GetNodeByID(nodes[1].toLatin1());
+      vtkMRMLNode* node = treeView->mrmlScene()->GetNodeByID(nodes[0].toUtf8());
+      vtkMRMLNode* nodeParent = treeView->mrmlScene()->GetNodeByID(nodes[1].toUtf8());
       treeView->sceneModel()->reparent(node, nodeParent);
       return true;
       }

@@ -192,6 +192,6 @@ void qMRMLSceneCategoryModel::updateNodeFromItem(vtkMRMLNode* node, QStandardIte
   if (!(node->GetAttribute("Category") == nullptr &&
         category.isEmpty()))
     {
-    node->SetAttribute("Category", category.toLatin1());
+    node->SetAttribute("Category", category.toUtf8());
     }
 }

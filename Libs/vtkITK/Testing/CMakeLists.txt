@@ -5,7 +5,7 @@
 ############################################################################
 
 set(VTKITKTESTVECTORREADER_SOURCE VTKITKVectorReader.cxx)
-add_executable(VTKITKVectorReader ${VTKITKTESTVECTORREADER_SOURCE})
+ctk_add_executable_utf8(VTKITKVectorReader ${VTKITKTESTVECTORREADER_SOURCE})
 target_link_libraries(VTKITKVectorReader
   vtkITK)
 

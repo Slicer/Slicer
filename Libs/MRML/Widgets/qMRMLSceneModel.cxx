@@ -419,7 +419,7 @@ vtkMRMLNode* qMRMLSceneModel::mrmlNodeFromItem(QStandardItem* nodeItem)const
     return nullptr;
     }
   return nodeItem ? d->MRMLScene->GetNodeByID(
-    nodeItem->data(qMRMLSceneModel::UIDRole).toString().toLatin1()) : nullptr;
+    nodeItem->data(qMRMLSceneModel::UIDRole).toString().toUtf8()) : nullptr;
 }
 //------------------------------------------------------------------------------
 QStandardItem* qMRMLSceneModel::itemFromNode(vtkMRMLNode* node, int column)const
@@ -455,7 +455,7 @@ QModelIndex qMRMLSceneModel::indexFromNode(vtkMRMLNode* node, int column)const
     QStandardItem* nodeItem = this->itemFromIndex(rowCacheIt.value());
     if (nodeItem!=nullptr)
       {
-      if (nodeItem->data(qMRMLSceneModel::UIDRole).toString().compare(QLatin1String(node->GetID()))==0)
+      if (nodeItem->data(qMRMLSceneModel::UIDRole).toString().compare(QString::fromUtf8(node->GetID()))==0)
         {
         // id matched
         nodeIndex=rowCacheIt.value();
@@ -1079,7 +1079,7 @@ void qMRMLSceneModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* i
 {
   if (item->column() == this->nameColumn())
     {
-    node->SetName(item->text().toLatin1());
+    node->SetName(item->text().toUtf8());
     }
   // ToolTip can't be edited, don't change the node
   // if (item->column() == this->toolTipNameColumn())
@@ -1088,7 +1088,7 @@ void qMRMLSceneModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* i
   if (item->column() == this->idColumn())
     {
     // Too dangerous
-    //node->SetName(item->text().toLatin1());
+    //node->SetName(item->text().toUtf8());
     }
   if (item->column() == this->checkableColumn())
     {

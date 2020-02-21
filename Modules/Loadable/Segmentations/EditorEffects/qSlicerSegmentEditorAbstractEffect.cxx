@@ -819,11 +819,11 @@ QString qSlicerSegmentEditorAbstractEffect::parameter(QString name)
 
   // Get effect-specific prefixed parameter first
   QString attributeName = QString("%1.%2").arg(this->name()).arg(name);
-  const char* value = d->ParameterSetNode->GetAttribute(attributeName.toLatin1().constData());
+  const char* value = d->ParameterSetNode->GetAttribute(attributeName.toUtf8().constData());
   // Look for common parameter if effect-specific one is not found
   if (!value)
     {
-    value = d->ParameterSetNode->GetAttribute(name.toLatin1().constData());
+    value = d->ParameterSetNode->GetAttribute(name.toUtf8().constData());
     }
   if (!value)
     {
@@ -906,7 +906,7 @@ bool qSlicerSegmentEditorAbstractEffect::commonParameterDefined(QString name)
     {
     return false;
     }
-  const char* existingValue = d->ParameterSetNode->GetAttribute(name.toLatin1().constData());
+  const char* existingValue = d->ParameterSetNode->GetAttribute(name.toUtf8().constData());
   return (existingValue != nullptr && strlen(existingValue) > 0);
 }
 
@@ -930,7 +930,7 @@ void qSlicerSegmentEditorAbstractEffect::setCommonParameter(QString name, QStrin
     return;
     }
 
-  const char* oldValue = d->ParameterSetNode->GetAttribute(name.toLatin1().constData());
+  const char* oldValue = d->ParameterSetNode->GetAttribute(name.toUtf8().constData());
   if (oldValue == nullptr && value.isEmpty())
     {
     // no change
@@ -947,7 +947,7 @@ void qSlicerSegmentEditorAbstractEffect::setCommonParameter(QString name, QStrin
   d->ParameterSetNode->SetDisableModifiedEvent(1);
 
   // Set parameter as attribute
-  d->ParameterSetNode->SetAttribute(name.toLatin1().constData(), value.toLatin1().constData());
+  d->ParameterSetNode->SetAttribute(name.toUtf8().constData(), value.toUtf8().constData());
 
   // Re-enable full modified events for parameter node
   d->ParameterSetNode->SetDisableModifiedEvent(disableState);

@@ -119,7 +119,7 @@ bool qSlicerMarkupsReader::load(const IOProperties& properties)
     }
 
   // pass to logic to do the loading
-  char * nodeIDs = d->MarkupsLogic->LoadMarkups(fileName.toLatin1(), markupsClassName.toLatin1(), name.toLatin1());
+  char * nodeIDs = d->MarkupsLogic->LoadMarkups(fileName.toUtf8(), markupsClassName.toUtf8(), name.toUtf8());
   if (nodeIDs)
     {
     // returned a comma separated list of ids of the nodes that were loaded

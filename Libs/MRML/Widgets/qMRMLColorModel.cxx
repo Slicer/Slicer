@@ -315,7 +315,7 @@ int qMRMLColorModel::colorFromName(const QString& name)const
     {
     return -1;
     }
-  return d->MRMLColorNode->GetColorIndexByName(name.toLatin1());
+  return d->MRMLColorNode->GetColorIndexByName(name.toUtf8());
 }
 
 //------------------------------------------------------------------------------
@@ -435,7 +435,7 @@ void qMRMLColorModel::updateColorFromItem(int color, QStandardItem* item)
     }
   else if (item->column() == d->LabelColumn)
     {
-    colorTableNode->SetColorName(color, item->text().toLatin1());
+    colorTableNode->SetColorName(color, item->text().toUtf8());
     }
   else if (item->column() == d->OpacityColumn)
     {

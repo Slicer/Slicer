@@ -110,7 +110,7 @@ bool qSlicerScalarOverlayReader::load(const IOProperties& properties)
 
   QString modelNodeId = properties["modelNodeId"].toString();
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(
-      this->mrmlScene()->GetNodeByID(modelNodeId.toLatin1()));
+      this->mrmlScene()->GetNodeByID(modelNodeId.toUtf8()));
   if (modelNode == nullptr)
     {
     qCritical() << Q_FUNC_INFO << " failed: modelNodeId refers to invalid/non-existent node";
@@ -124,7 +124,7 @@ bool qSlicerScalarOverlayReader::load(const IOProperties& properties)
     }
 
   QStringList loadedNodes;
-  bool success = d->ModelsLogic->AddScalar(fileName.toLatin1(), modelNode);
+  bool success = d->ModelsLogic->AddScalar(fileName.toUtf8(), modelNode);
   if (success)
     {
     loadedNodes << QString(modelNodeId);

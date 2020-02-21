@@ -153,7 +153,7 @@ set(KIT_TEST_GENERATE_MOC_SRCS
 include_directories( ${CMAKE_CURRENT_BINARY_DIR})
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_executable(${KIT}CxxTests ${Tests} ${Tests_MOC_CXX} ${Tests_UtilityFiles})
+ctk_add_executable_utf8(${KIT}CxxTests ${Tests} ${Tests_MOC_CXX} ${Tests_UtilityFiles})
 target_link_libraries(${KIT}CxxTests ${KIT})
 
 set_target_properties(${KIT}CxxTests PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
@@ -244,7 +244,7 @@ simple_test( qMRMLTransformSlidersTest1 )
 simple_test( qMRMLThreeDViewTest1 )
 simple_test( qMRMLThreeDWidgetTest1 )
 SCENE_TEST(  qMRMLTreeViewTest1 vol_and_cube.mrml|DATA{${INPUT}/fixed.nrrd,cube.vtk} )
-SCENE_TEST(  qMRMLUtf8Test1 cube-utf8.mrml )
+SCENE_TEST(  qMRMLUtf8Test1 cube-utf8.mrml|DATA{${INPUT}/fixed.nrrd )
 simple_test( qMRMLUtilsTest1 )
 simple_test( qMRMLVolumeInfoWidgetTest1 )
 SCENE_TEST( qMRMLVolumeThresholdWidgetTest1 vol_and_cube.mrml|DATA{${INPUT}/fixed.nrrd,cube.vtk})

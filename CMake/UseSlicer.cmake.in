@@ -228,6 +228,7 @@ endif()
 # CMake Function(s) and Macro(s)
 #-----------------------------------------------------------------------------
 include(CMakeParseArguments)
+include(ctkFunctionAddExecutableUtf8)
 include(ctkMacroCompilePythonScript)
 include(ctkMacroWrapPythonQt)
 include(ExternalProject)

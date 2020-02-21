@@ -69,10 +69,10 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
     return nullptr;
     }
   vtkSmartPointer<vtkMRMLNode> node;
-  node.TakeReference( d->MRMLScene->CreateNodeByClass( className.toLatin1() ) );
+  node.TakeReference( d->MRMLScene->CreateNodeByClass( className.toUtf8() ) );
 
   Q_ASSERT_X(node, "createNode",
-             QString("Failed to create node of type [%1]").arg(className).toLatin1());
+             QString("Failed to create node of type [%1]").arg(className).toUtf8());
 
   if (node == nullptr)
     {
@@ -93,9 +93,9 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
     }
   else
     {
-    baseName = d->MRMLScene->GetTagByClassName(className.toLatin1());
+    baseName = d->MRMLScene->GetTagByClassName(className.toUtf8());
     }
-  node->SetName(d->MRMLScene->GetUniqueNameByString(baseName.toLatin1()));
+  node->SetName(d->MRMLScene->GetUniqueNameByString(baseName.toUtf8()));
 
   // Set node attributes
   // Attributes must be set before adding the node into the scene as the node
@@ -105,8 +105,8 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
   // it's visibility
   foreach (const QString& attributeName, d->Attributes.keys())
     {
-    node->SetAttribute(attributeName.toLatin1(),
-                       d->Attributes[attributeName].toLatin1());
+    node->SetAttribute(attributeName.toUtf8(),
+                       d->Attributes[attributeName].toUtf8());
     }
 
   emit this->nodeInitialized(node);

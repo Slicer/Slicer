@@ -772,7 +772,7 @@ vtkSmartPointer<vtkCollection> qMRMLSliceControllerWidgetPrivate::saveNodesForUn
   if (q->mrmlScene())
     {
     nodes.TakeReference(
-      q->mrmlScene()->GetNodesByClass(nodeTypes.toLatin1()));
+      q->mrmlScene()->GetNodesByClass(nodeTypes.toUtf8()));
     q->mrmlScene()->SaveStateForUndo();
     }
   return nodes;
@@ -1791,7 +1791,7 @@ void qMRMLSliceControllerWidget::setSliceViewName(const QString& newSliceViewNam
 
   if (d->SliceLogic)
     {
-    d->SliceLogic->SetName(newSliceViewName.toLatin1());
+    d->SliceLogic->SetName(newSliceViewName.toUtf8());
     }
 
   d->SliceViewName = newSliceViewName;
@@ -1852,7 +1852,7 @@ void qMRMLSliceControllerWidget::setSliceViewLabel(const QString& newSliceViewLa
     {
     return;
     }
-  d->MRMLSliceNode->SetLayoutLabel(newSliceViewLabel.toLatin1());
+  d->MRMLSliceNode->SetLayoutLabel(newSliceViewLabel.toUtf8());
 }
 
 //---------------------------------------------------------------------------
@@ -2015,7 +2015,7 @@ void qMRMLSliceControllerWidget::setSliceOrientation(const QString& orientation)
     }
 
   d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::OrientationFlag);
-  d->MRMLSliceNode->SetOrientation(orientation.toLatin1());
+  d->MRMLSliceNode->SetOrientation(orientation.toUtf8());
   d->SliceLogic->EndSliceNodeInteraction();
 }
 

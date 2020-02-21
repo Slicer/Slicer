@@ -151,7 +151,7 @@ QMRMLEVENTLOGGERWIDGET_ONEVENT_SLOT_MACRO(SceneRestored);
 //------------------------------------------------------------------------------
 void qMRMLEventLoggerWidgetPrivate::log(const char* text)
 {
-  this->log(QLatin1String(text));
+  this->log(QString::fromUtf8(text));
 }
 
 //------------------------------------------------------------------------------

@@ -185,9 +185,9 @@ void qMRMLSliceViewPrivate::initDisplayableManagers()
   displayableManagers << "vtkMRMLScalarBarDisplayableManager";
   foreach(const QString& displayableManager, displayableManagers)
     {
-    if (!factory->IsDisplayableManagerRegistered(displayableManager.toLatin1()))
+    if (!factory->IsDisplayableManagerRegistered(displayableManager.toUtf8()))
       {
-      factory->RegisterDisplayableManager(displayableManager.toLatin1());
+      factory->RegisterDisplayableManager(displayableManager.toUtf8());
       }
     }
 
@@ -278,7 +278,7 @@ void qMRMLSliceView::addDisplayableManager(const QString& displayableManagerName
   vtkSmartPointer<vtkMRMLAbstractDisplayableManager> displayableManager;
   displayableManager.TakeReference(
     vtkMRMLDisplayableManagerGroup::InstantiateDisplayableManager(
-      displayableManagerName.toLatin1()));
+      displayableManagerName.toUtf8()));
   d->DisplayableManagerGroup->AddDisplayableManager(displayableManager);
 }
 

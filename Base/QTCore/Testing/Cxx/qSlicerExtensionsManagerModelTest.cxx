@@ -232,12 +232,12 @@ void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManager
   if (!QFile::exists(copiedArchiveFile))
     {
     QVERIFY2(QFile::copy(inputArchiveFile, copiedArchiveFile),
-             QString("Failed to copy %1 into %2").arg(inputArchiveFile).arg(copiedArchiveFile).toLatin1());
+             QString("Failed to copy %1 into %2").arg(inputArchiveFile).arg(copiedArchiveFile).toUtf8());
     QFile::setPermissions(copiedArchiveFile, QFile::ReadOwner | QFile::WriteOwner);
     }
 
   QVERIFY2(this->prepareJson(QString(":/extension-%1-%2.json").arg(os).arg(extensionId)),
-           QString("Failed to prepare json for extensionId: %1-%2").arg(os).arg(extensionId).toLatin1());
+           QString("Failed to prepare json for extensionId: %1-%2").arg(os).arg(extensionId).toUtf8());
   ExtensionMetadataType metadata = model->retrieveExtensionMetadata(QString("%1").arg(extensionId));
   QVERIFY(metadata.count() > 0);
   QCOMPARE(metadata, Self::extensionMetadata(os, extensionId));
@@ -503,7 +503,7 @@ void qSlicerExtensionsManagerModelTester::testRetrieveExtensionMetadata()
   QFETCH(QString, extensionId);
   QFETCH(QString, jsonFile);
   QVERIFY2(this->prepareJson(jsonFile),
-           QString("Failed to prepare json for extensionId: %1").arg(extensionId).toLatin1());
+           QString("Failed to prepare json for extensionId: %1").arg(extensionId).toUtf8());
 
   QFETCH(QString, slicerVersion);
   qSlicerExtensionsManagerModel model;

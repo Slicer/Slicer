@@ -127,13 +127,13 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
   PyObject * global_dict = PyModule_GetDict(main_module);
 
   // Get a reference (or create if needed) the <moduleName> python module
-  PyObject * module = PyImport_AddModule(moduleName.toLatin1());
+  PyObject * module = PyImport_AddModule(moduleName.toUtf8());
 
   // Get a reference to the python module class to instantiate
   PythonQtObjectPtr classToInstantiate;
-  if (PyObject_HasAttrString(module, className.toLatin1()))
+  if (PyObject_HasAttrString(module, className.toUtf8()))
     {
-    classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toLatin1()));
+    classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toUtf8()));
     }
   if (!classToInstantiate)
     {
@@ -143,9 +143,9 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
       {
       return false;
       }
-    if (PyObject_HasAttrString(module, className.toLatin1()))
+    if (PyObject_HasAttrString(module, className.toUtf8()))
       {
-      classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toLatin1()));
+      classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toUtf8()));
       }
     }
 
@@ -155,7 +155,7 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerScriptedLoadableModuleWidget::setPythonSource - "
                             "Failed to load scripted loadable module widget: "
-                            "class %1 was not found in %2").arg(className).arg(newPythonSource).toLatin1());
+                            "class %1 was not found in %2").arg(className).arg(newPythonSource).toUtf8());
     PythonQt::self()->handleError();
     return false;
     }
@@ -218,8 +218,8 @@ bool qSlicerScriptedLoadableModuleWidget::setEditedNode(vtkMRMLNode* node,
   Q_D(qSlicerScriptedLoadableModuleWidget);
   PyObject* arguments = PyTuple_New(3);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
-  PyTuple_SET_ITEM(arguments, 1, PyString_FromString(role.toLatin1()));
-  PyTuple_SET_ITEM(arguments, 2, PyString_FromString(context.toLatin1()));
+  PyTuple_SET_ITEM(arguments, 1, PyString_FromString(role.toUtf8()));
+  PyTuple_SET_ITEM(arguments, 2, PyString_FromString(context.toUtf8()));
   PyObject* result = d->PythonCppAPI.callMethod(d->SetEditedNodeMethod, arguments);
   Py_DECREF(arguments);
   if (!result)

@@ -225,7 +225,7 @@ void qMRMLSegmentationConversionParametersWidget::populatePathsTable()
   // Get possible paths
   vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
   vtkSegmentationConverter::ConversionPathAndCostListType pathsCosts;
-  segmentation->GetPossibleConversions(d->TargetRepresentationName.toLatin1().constData(), pathsCosts);
+  segmentation->GetPossibleConversions(d->TargetRepresentationName.toUtf8().constData(), pathsCosts);
 
   if (pathsCosts.empty())
   {
@@ -420,7 +420,7 @@ void qMRMLSegmentationConversionParametersWidget::onParameterChanged(QTableWidge
   QTableWidgetItem* nameItem = d->ParametersTable->item(row, d->parametersColumnIndex("Name"));
 
   vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
-  segmentation->SetConversionParameter(nameItem->text().toLatin1().constData(), changedItem->text().toLatin1().constData());
+  segmentation->SetConversionParameter(nameItem->text().toUtf8().constData(), changedItem->text().toUtf8().constData());
 }
 
 //-----------------------------------------------------------------------------

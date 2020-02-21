@@ -71,7 +71,7 @@ bool qMRMLNodeComboBoxEventPlayer::playEvent(QObject *Object,
       }
     if (Command == "nodeRenamed")
       {
-      comboBox->currentNode()->SetName(Arguments.toLatin1());
+      comboBox->currentNode()->SetName(Arguments.toUtf8());
       return true;
       }
     }
