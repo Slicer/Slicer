@@ -1615,23 +1615,12 @@ vtkAlgorithmOutput* vtkMRMLMarkupsNode::GetCurveWorldConnection()
 //----------------------------------------------------------------------
 int vtkMRMLMarkupsNode::GetControlPointIndexFromInterpolatedPointIndex(vtkIdType interpolatedPointIndex)
 {
-  if (this->CurveGenerator->IsInterpolatingCurve())
+  vtkIdType controlPointId = this->CurveGenerator->GetControlPointIdFromInterpolatedPointId(interpolatedPointIndex);
+  if (controlPointId < 0)
     {
-    return int(floor(interpolatedPointIndex / this->CurveGenerator->GetNumberOfPointsPerInterpolatingSegment()));
+    controlPointId = this->GetNumberOfControlPoints();
     }
-  if (this->CurveGenerator->GetPolynomialPointSortingMethod() == vtkCurveGenerator::SORTING_METHOD_MINIMUM_SPANNING_TREE_POSITION)
-    {
-    // If sorting is based on spanning tree then we can insert point anywhere (so we add to the end for simplicity).
-    return this->GetNumberOfControlPoints();
-    }
-  if (this->CurveGenerator->GetCurveType() == vtkCurveGenerator::CURVE_TYPE_SHORTEST_SURFACE_DISTANCE)
-    {
-    return this->CurveGenerator->GetControlPointIdFromInterpolatedPointId(interpolatedPointIndex);
-    }
-  // In case of approximating curves, there is no clear assignment between control points and curve points.
-  vtkWarningMacro("vtkMRMLMarkupsNode::GetControlPointIndexFromInterpolatedPointIndex for non-interpolated"
-    " curves, minimum spanning tree sorting is recommended");
-  return this->GetNumberOfControlPoints();
+  return controlPointId;
 }
 
 //---------------------------------------------------------------------------

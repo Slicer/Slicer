@@ -471,6 +471,8 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     return 0;
     }
 
+  MRMLNodeModifyBlocker blocker(markupsNode);
+
   // check if it's an annotation csv file
   bool parseAsAnnotationFiducial = false;
   std::string ext = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);

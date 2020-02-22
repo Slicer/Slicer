@@ -23,6 +23,8 @@ set(${KIT}_SRCS
   vtkLinearSpline.h
   vtkParametricPolynomialApproximation.cxx
   vtkParametricPolynomialApproximation.h
+  vtkSlicerDijkstraGraphGeodesicPath.cxx
+  vtkSlicerDijkstraGraphGeodesicPath.h
   )
 
 set(${KIT}_TARGET_LIBRARIES

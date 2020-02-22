@@ -174,25 +174,28 @@ public:
   void SetCurveTypeToCardinalSpline();
   void SetCurveTypeToKochanekSpline();
   void SetCurveTypeToPolynomial();
-  void SetCurveTypeToShortestSurfaceDistance(vtkMRMLModelNode* modelNode=nullptr);
+  void SetCurveTypeToShortestDistanceOnSurface(vtkMRMLModelNode* modelNode=nullptr);
 
   /// Node reference role for the surface that is used in the shortest surface distance curve type
-  const char* GetSurfaceMeshNodeReferenceRole() { return "surfaceMesh"; };
-  const char* GetSurfaceMeshNodeReferenceMRMLAttributeName() { return "surfaceMeshRef"; };
+  const char* GetShortestDistanceSurfaceNodeReferenceRole() { return "shortestDistanceSurface"; };
+  const char* GetShortestDistanceSurfaceNodeReferenceMRMLAttributeName() { return "shortestDistanceSurfaceRef"; };
 
-  /// The model node that is used for calculating the shortest surface distance curve type
-  void SetAndObserveModelNode(vtkMRMLModelNode* modelNode);
-  vtkMRMLModelNode* GetModelNode();
+  /// The model node that is used as the surface mesh for finding the shortest distance path on the surface mesh.
+  /// Used by the ShortestDistanceOnSurface curve type.
+  void SetAndObserveShortestDistanceSurfaceNode(vtkMRMLModelNode* modelNode);
+  vtkMRMLModelNode* GetShortestDistanceSurfaceNode();
 
-  /// Whether to scale the distance of the points by some scalar weight value.
-  /// Only applies to shortest surface distance curve type.
-  bool GetUseSurfaceScalarWeights();
-  void SetUseSurfaceScalarWeights(bool useSurfaceScalarWeights);
+  /// The method that should be used to combine the distance with the scalar value.
+  /// Uses the COST_FUNCTION_X enums from vtkSlicerDijkstraGraphGeodesicPath.
+  int GetSurfaceCostFunctionType();
+  void SetSurfaceCostFunctionType(int surfaceCostFunctionType);
+  static const char* GetSurfaceCostFunctionTypeAsString(int surfaceCostFunctionType);
+  static int GetSurfaceCostFunctionTypeFromString(const char* name);
 
   /// The scalar weight function that is used for modifying the weight on each vertex.
   /// The the currently active point scalar array is availiable as the "activeScalar" variable.
-  const char* GetSurfaceScalarWeightFunction();
-  void SetSurfaceScalarWeightFunction(const char* function);
+  const char* GetSurfaceDistanceWeightingFunction();
+  void SetSurfaceDistanceWeightingFunction(const char* function);
 
   //@{
   /// Get/set how many curve points are inserted between control points.
@@ -202,9 +205,9 @@ public:
   //@}
 
 protected:
-  vtkSmartPointer<vtkTransformPolyDataFilter> PolyDataToWorldTransformer;
-  vtkSmartPointer<vtkArrayCalculator> ScalarCalculator;
-  vtkSmartPointer<vtkPassArrays> PassArray;
+  vtkSmartPointer<vtkTransformPolyDataFilter> SurfaceToWorldTransformer;
+  vtkSmartPointer<vtkArrayCalculator> SurfaceScalarCalculator;
+  vtkSmartPointer<vtkPassArrays> SurfacePassArray;
   const char* ActiveScalar;
 
 protected:
@@ -213,8 +216,8 @@ protected:
   virtual void OnNodeReferenceModified(vtkMRMLNodeReference* reference) override;
   virtual void OnNodeReferenceRemoved(vtkMRMLNodeReference* reference) override;
 
-  virtual void UpdateScalarVariables();
-  virtual void UpdateModelNode();
+  virtual void UpdateSurfaceScalarVariables();
+  virtual void OnSurfaceModelNodeChanged();
 
   vtkMRMLMarkupsCurveNode();
   ~vtkMRMLMarkupsCurveNode() override;
