@@ -163,7 +163,7 @@ if __name__ == '__main__':
         {
           "regions" : []
         },
-        "Scalar Parameters" :
+        "Scalar Parameters (\u00e1rv\u00edzt\u0171r\u0151 t\u00fck\u00f6rf\u00far\u00f3g\u00e9p)" :
         {
           "doubleVariable" : 30,
           "integerVariable" : 30
@@ -197,10 +197,18 @@ if __name__ == '__main__':
       }
     }
 
-  with open(json_file) as file:
+  with open(json_file, encoding='utf8') as file:
     data = json.load(file)
     if data != expected_json:
       print('Json comparison failed !')
+      expected_json_filename = temp_dir+'/ExecutionModelTourSerializedBaseline.json'
+      print("Expected json: " + expected_json_filename)
+      with open(expected_json_filename, 'w', encoding='utf8') as outfile:
+        json.dump(expected_json, outfile, indent="\t", ensure_ascii=False)
+      actual_json_filename = temp_dir+'/ExecutionModelTourSerializedActual.json'
+      print("Actual json: " + actual_json_filename)
+      with open(actual_json_filename, 'w', encoding='utf8') as outfile:
+        json.dump(data, outfile, indent="\t", ensure_ascii=False)
       exit(EXIT_FAILURE)
 
   # Now try to deserialize the CLI.
