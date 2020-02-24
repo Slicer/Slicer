@@ -11,7 +11,7 @@
   <parameters>
     <label>IO</label>
     <description><![CDATA[Input/output parameters]]></description>
-    <image>
+    <image type="any">
       <name>InputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>

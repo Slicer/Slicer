@@ -513,12 +513,13 @@
          </sizepolicy>
         </property>
         <property name="toolTip">
-         <string>Volume or grid transform node that will store the displacement field.</string>
+         <string>Volume or transform node that will store the displacement field. If scalar volume node is chosen then only displacement magnitude is saved. In vector volume or transform node 3D displacement vector is saved.</string>
         </property>
         <property name="nodeTypes">
          <stringlist>
           <string>vtkMRMLTransformNode</string>
           <string>vtkMRMLScalarVolumeNode</string>
+          <string>vtkMRMLVectorVolumeNode</string>
          </stringlist>
         </property>
         <property name="showChildNodeTypes">
@@ -544,24 +545,7 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="ConvertMagnitudeOnlyLabel">
-        <property name="text">
-         <string>Magnitude only:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QCheckBox" name="ConvertMagnitudeOnlyCheckBox">
-        <property name="toolTip">
-         <string>If checked, displacement magnitude values will be stored in the output volume node. If unchecked, the output node will contain displacement vectors. Always unchecked for transform output.</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" colspan="2">
+      <item row="2" column="0" colspan="2">
        <widget class="QPushButton" name="ConvertPushButton">
         <property name="text">
          <string>Apply</string>

@@ -44,6 +44,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLTransformDisplayNode.h"
+#include "vtkMRMLVectorVolumeNode.h"
 
 // VTK includes
 #include <vtkAddonMathUtilities.h>
@@ -572,14 +573,19 @@ void qSlicerTransformsModuleWidget::convert()
     qWarning("qSlicerTransformsModuleWidget::convert failed: reference volume node is invalid");
     return;
     }
-  vtkMRMLVolumeNode* outputVolumeNode = vtkMRMLVolumeNode::SafeDownCast(d->ConvertOutputDisplacementFieldNodeComboBox->currentNode());
+  vtkMRMLScalarVolumeNode* scalarOutputVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(d->ConvertOutputDisplacementFieldNodeComboBox->currentNode());
+  vtkMRMLVectorVolumeNode* vectorOutputVolumeNode = vtkMRMLVectorVolumeNode::SafeDownCast(d->ConvertOutputDisplacementFieldNodeComboBox->currentNode());
   vtkMRMLTransformNode* outputTransformNode = vtkMRMLTransformNode::SafeDownCast(d->ConvertOutputDisplacementFieldNodeComboBox->currentNode());
   vtkMRMLVolumeNode* referenceVolumeNode = vtkMRMLVolumeNode::SafeDownCast(d->ConvertReferenceVolumeNodeComboBox->currentNode());
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-  if (outputVolumeNode)
+  if (vectorOutputVolumeNode)
     {
-    bool magnitudeOnly = (d->ConvertMagnitudeOnlyCheckBox->checkState() == Qt::Checked);
-    d->logic()->CreateDisplacementVolumeFromTransform(d->MRMLTransformNode, referenceVolumeNode, magnitudeOnly, outputVolumeNode);
+    // this must be checked before scalarOutputVolumeNode, as vtkMRMLVectorVolumeNode is a vtkMRMLScalarVolumeNode as well
+    d->logic()->CreateDisplacementVolumeFromTransform(d->MRMLTransformNode, referenceVolumeNode, false /*magnitudeOnly*/, vectorOutputVolumeNode);
+    }
+  else if (scalarOutputVolumeNode)
+    {
+    d->logic()->CreateDisplacementVolumeFromTransform(d->MRMLTransformNode, referenceVolumeNode, true /*magnitudeOnly*/, scalarOutputVolumeNode);
     }
   else if (outputTransformNode)
     {
@@ -600,13 +606,6 @@ void qSlicerTransformsModuleWidget::updateConvertButtonState()
     && d->ConvertReferenceVolumeNodeComboBox->currentNode() != nullptr
     && d->ConvertOutputDisplacementFieldNodeComboBox->currentNode() != nullptr);
   d->ConvertPushButton->setEnabled(enableConvert);
-
-  bool isVolumeOutput = (vtkMRMLVolumeNode::SafeDownCast(d->ConvertOutputDisplacementFieldNodeComboBox->currentNode()) != nullptr);
-  d->ConvertMagnitudeOnlyCheckBox->setEnabled(isVolumeOutput);
-  if (!isVolumeOutput)
-    {
-    d->ConvertMagnitudeOnlyCheckBox->setChecked(false);
-    }
 }
 
 //-----------------------------------------------------------
