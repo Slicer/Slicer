@@ -1021,3 +1021,22 @@ void vtkCurveGenerator::SetSurfaceCostFunctionType(int setSurfaceCostFunctionTyp
   this->SurfacePathFilter->SetCostFunctionType(setSurfaceCostFunctionType);
   this->Modified();
 }
+
+//------------------------------------------------------------------------------
+void vtkCurveGenerator::SetInputPoints(vtkPoints* points)
+{
+  vtkNew<vtkPolyData> polyData;
+  polyData->SetPoints(points);
+  this->SetInputData(polyData);
+}
+
+//------------------------------------------------------------------------------
+vtkPoints* vtkCurveGenerator::GetOutputPoints()
+{
+  vtkPolyData* polyData = this->GetOutput();
+  if (!polyData)
+    {
+    return nullptr;
+    }
+  return polyData->GetPoints();
+}

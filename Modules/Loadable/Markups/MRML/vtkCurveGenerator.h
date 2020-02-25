@@ -178,6 +178,12 @@ public:
   /// The internal instance of the current parametric function use of the curve for other computations.
   vtkParametricFunction* GetParametricFunction() { return this->ParametricFunction.GetPointer(); };
 
+  /// Set the input control points
+  void SetInputPoints(vtkPoints* points);
+
+  /// Get the output sampled points
+  vtkPoints* GetOutputPoints();
+
 protected:
   // input parameters
   int NumberOfPointsPerInterpolatingSegment;
