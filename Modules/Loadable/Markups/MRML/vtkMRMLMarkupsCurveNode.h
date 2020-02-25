@@ -34,9 +34,11 @@
 #include <vector>
 
 class vtkArrayCalculator;
-class vtkPassArrays;
+class vtkCleanPolyData;
+class vtkPassThroughFilter;
 class vtkPlane;
 class vtkTransformPolyDataFilter;
+class vtkTriangleFilter;
 
 /// \brief MRML node to represent a curve markup
 /// Curve Markups nodes contain N control points.
@@ -205,9 +207,11 @@ public:
   //@}
 
 protected:
+  vtkSmartPointer<vtkCleanPolyData> CleanFilter;
+  vtkSmartPointer<vtkTriangleFilter> TriangleFilter;
   vtkSmartPointer<vtkTransformPolyDataFilter> SurfaceToWorldTransformer;
   vtkSmartPointer<vtkArrayCalculator> SurfaceScalarCalculator;
-  vtkSmartPointer<vtkPassArrays> SurfacePassArray;
+  vtkSmartPointer<vtkPassThroughFilter> PassThroughFilter;
   const char* ActiveScalar;
 
 protected:
