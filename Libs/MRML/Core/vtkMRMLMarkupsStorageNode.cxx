@@ -15,8 +15,6 @@
 
 ==============================================================================*/
 
-//#include "vtkMRMLMarkupsDisplayNode.h"
-//#include "vtkMRMLMarkupsNode.h"
 #include "vtkMRMLMarkupsStorageNode.h"
 
 #include "vtkMRMLScene.h"
@@ -33,7 +31,7 @@ vtkMRMLNodeNewMacro(vtkMRMLMarkupsStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsStorageNode::vtkMRMLMarkupsStorageNode()
 {
-  this->CoordinateSystem = vtkMRMLMarkupsStorageNode::RAS;
+  this->CoordinateSystem = vtkMRMLMarkupsStorageNode::LPS;
   this->DefaultWriteFileExtension = "mcsv";
 }
 
@@ -44,50 +42,50 @@ vtkMRMLMarkupsStorageNode::~vtkMRMLMarkupsStorageNode()
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsStorageNode::ReadXMLAttributes(const char** atts)
 {
-  Superclass::ReadXMLAttributes(atts);
-  const char* attName;
-  const char* attValue;
+  int disabledModify = this->StartModify();
 
-  while (*atts != nullptr)
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
+  this->Superclass::ReadXMLAttributes(atts);
 
-    if (!strcmp(attName, "coordinateSystem"))
-      {
-      this->SetCoordinateSystem(atoi(attValue));
-      }
-    }
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLEnumMacro(coordinateSystem, CoordinateSystem);
+  vtkMRMLReadXMLEndMacro();
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLStorageNode::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
-  os << "CoordinateSystem = " << this->GetCoordinateSystemAsString().c_str() << "\n";
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintEnumMacro(CoordinateSystem);
+  vtkMRMLPrintEndMacro();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsStorageNode::WriteXML(ostream& of, int nIndent)
 {
-  Superclass::WriteXML(of,nIndent);
+  // Write all attributes not equal to their defaults
+  this->Superclass::WriteXML(of, nIndent);
 
-  of << " coordinateSystem=\"" << this->CoordinateSystem << "\"";
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLEnumMacro(coordinateSystem, CoordinateSystem);
+  vtkMRMLWriteXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsStorageNode::Copy(vtkMRMLNode *anode)
 {
-  Superclass::Copy(anode);
+  int disabledModify = this->StartModify();
 
-  vtkMRMLMarkupsStorageNode *node = (vtkMRMLMarkupsStorageNode *) anode;
-  if (!node)
-    {
-    return;
-    }
+  this->Superclass::Copy(anode);
 
-  this->SetCoordinateSystem(node->GetCoordinateSystem());
+  vtkMRMLCopyBeginMacro(anode);
+  vtkMRMLCopyEnumMacro(CoordinateSystem);
+  vtkMRMLCopyEndMacro();
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -126,28 +124,19 @@ void vtkMRMLMarkupsStorageNode::InitializeSupportedWriteFileTypes()
 //----------------------------------------------------------------------------
 std::string vtkMRMLMarkupsStorageNode::GetCoordinateSystemAsString()
 {
-  std::string coordString;
-  if (this->CoordinateSystem == vtkMRMLMarkupsStorageNode::RAS)
-    {
-    coordString = std::string("RAS");
-    }
-  else if (this->CoordinateSystem == vtkMRMLMarkupsStorageNode::LPS)
-    {
-    coordString = std::string("LPS");
-    }
-  return coordString;
+  return vtkMRMLStorageNode::GetCoordinateSystemTypeAsString(this->CoordinateSystem);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsStorageNode::UseRASOn()
 {
-  this->SetCoordinateSystem(vtkMRMLMarkupsStorageNode::RAS);
+  this->SetCoordinateSystem(vtkMRMLStorageNode::CoordinateSystemRAS);
 }
 
 //----------------------------------------------------------------------------
 bool vtkMRMLMarkupsStorageNode::GetUseRAS()
 {
-  if (this->GetCoordinateSystem() == vtkMRMLMarkupsStorageNode::RAS)
+  if (this->GetCoordinateSystem() == vtkMRMLStorageNode::CoordinateSystemRAS)
     {
     return true;
     }
@@ -160,13 +149,13 @@ bool vtkMRMLMarkupsStorageNode::GetUseRAS()
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsStorageNode::UseLPSOn()
 {
-  this->SetCoordinateSystem(vtkMRMLMarkupsStorageNode::LPS);
+  this->SetCoordinateSystem(vtkMRMLStorageNode::CoordinateSystemLPS);
 }
 
 //----------------------------------------------------------------------------
 bool vtkMRMLMarkupsStorageNode::GetUseLPS()
 {
-  if (this->GetCoordinateSystem() == vtkMRMLMarkupsStorageNode::LPS)
+  if (this->GetCoordinateSystem() == vtkMRMLStorageNode::CoordinateSystemLPS)
     {
     return true;
     }
@@ -273,4 +262,27 @@ std::string vtkMRMLMarkupsStorageNode::GetFirstQuotedString(std::string inputStr
   *endCommaPos = pos;
   outputString = inputString.substr(0, *endCommaPos);
   return outputString;
+}
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLMarkupsStorageNode::GetCoordinateSystemAsString(int id)
+{
+  return vtkMRMLStorageNode::GetCoordinateSystemTypeAsString(id);
+}
+
+//-----------------------------------------------------------
+int vtkMRMLMarkupsStorageNode::GetCoordinateSystemFromString(const char* name)
+{
+  // For backward-compatibility with old scenes (magic number was used instead of string)
+  if (strcmp(name, "0") == 0)
+    {
+    return vtkMRMLStorageNode::CoordinateSystemRAS;
+    }
+  else if (strcmp(name, "1") == 0)
+    {
+    return vtkMRMLStorageNode::CoordinateSystemLPS;
+    }
+
+  // Current method, store coordinate system as string
+  return vtkMRMLStorageNode::GetCoordinateSystemTypeFromString(name);
 }

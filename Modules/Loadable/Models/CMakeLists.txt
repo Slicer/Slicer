@@ -32,6 +32,8 @@ set(MODULE_SRCS
   qSlicer${MODULE_NAME}ModuleWidget.h
   qSlicer${MODULE_NAME}Reader.cxx
   qSlicer${MODULE_NAME}Reader.h
+  qSlicer${MODULE_NAME}IOOptionsWidget.cxx
+  qSlicer${MODULE_NAME}IOOptionsWidget.h
   qSlicerScalarOverlayIOOptionsWidget.cxx
   qSlicerScalarOverlayIOOptionsWidget.h
   qSlicerScalarOverlayReader.cxx
@@ -42,12 +44,14 @@ set(MODULE_MOC_SRCS
   qSlicer${MODULE_NAME}Module.h
   qSlicer${MODULE_NAME}ModuleWidget.h
   qSlicer${MODULE_NAME}Reader.h
+  qSlicer${MODULE_NAME}IOOptionsWidget.h
   qSlicerScalarOverlayIOOptionsWidget.h
   qSlicerScalarOverlayReader.h
   )
 
 set(MODULE_UI_SRCS
   Resources/UI/qSlicer${MODULE_NAME}ModuleWidget.ui
+  Resources/UI/qSlicer${MODULE_NAME}IOOptionsWidget.ui
   Resources/UI/qSlicerScalarOverlayIOOptionsWidget.ui
   )
 

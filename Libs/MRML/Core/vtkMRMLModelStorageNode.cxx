@@ -39,6 +39,8 @@
 #include <vtkSTLWriter.h>
 #include <vtkStringArray.h>
 #include <vtksys/SystemTools.hxx>
+#include <vtkTransform.h>
+#include <vtkTransformFilter.h>
 #include <vtkTriangleFilter.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkUnstructuredGridReader.h>
@@ -90,6 +92,7 @@ vtkMRMLNodeNewMacro(vtkMRMLModelStorageNode);
 vtkMRMLModelStorageNode::vtkMRMLModelStorageNode()
 {
   this->DefaultWriteFileExtension = "vtk";
+  this->CoordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS;
 }
 
 //----------------------------------------------------------------------------
@@ -103,14 +106,41 @@ void vtkMRMLModelStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLModelStorageNode::ReadXMLAttributes(const char** atts)
+{
+  int disabledModify = this->StartModify();
+
+  this->Superclass::ReadXMLAttributes(atts);
+
+  // If no CoordinateSystem is specified then it means this is a legacy scene,
+  // which used RAS coordinate system in file.
+  this->CoordinateSystem = vtkMRMLStorageNode::CoordinateSystemRAS;
+
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLEnumMacro(coordinateSystem, CoordinateSystem);
+  vtkMRMLReadXMLEndMacro();
+
+  this->EndModify(disabledModify);
+}
+
+
+//----------------------------------------------------------------------------
 void vtkMRMLModelStorageNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
+  of << " coordinateSystem=\"" << this->GetCoordinateSystemTypeAsString(this->CoordinateSystem) << "\"";
+}
 
-  // Write coordinateSystem explicitly in the scene file. In the future
-  // we will support saving in LPS coordinate system as well, similarly
-  // to markups nodes.
-  of << " coordinateSystem=\"RAS\"";
+//---------------------------------------------------------------------------
+const char* vtkMRMLModelStorageNode::GetCoordinateSystemAsString(int id)
+{
+  return vtkMRMLStorageNode::GetCoordinateSystemTypeAsString(id);
+}
+
+//-----------------------------------------------------------
+int vtkMRMLModelStorageNode::GetCoordinateSystemFromString(const char* name)
+{
+  return vtkMRMLStorageNode::GetCoordinateSystemTypeFromString(name);
 }
 
 //----------------------------------------------------------------------------
@@ -126,6 +156,13 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     {
     vtkDebugMacro("ReadDataInternal: empty model file was not saved, ignore loading");
     return 1;
+    }
+
+  vtkMRMLModelNode *modelNode = dynamic_cast <vtkMRMLModelNode *> (refNode);
+  if (!modelNode)
+    {
+    vtkErrorMacro("ReadDataInternal: refNode is not a valid mode node");
+    return 0;
     }
 
   std::string fullName = this->GetFullNameFromFileName();
@@ -152,17 +189,17 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
   vtkDebugMacro("ReadDataInternal: extension = " << extension.c_str());
 
-  vtkMRMLModelNode* modelNode = dynamic_cast<vtkMRMLModelNode*>(refNode);
-
-  int result = 1;
+  int coordinateSystemInFileHeader = -1;
+  vtkSmartPointer<vtkPointSet> meshFromFile;
+  bool meshIsPolydata = true;
   try
     {
-    if ( extension == std::string(".g") || extension == std::string(".byu") )
+    if (extension == std::string(".g") || extension == std::string(".byu"))
       {
       vtkNew<vtkBYUReader> reader;
       reader->SetGeometryFileName(fullName.c_str());
       reader->Update();
-      modelNode->SetPolyDataConnection(reader->GetOutputPort());
+      meshFromFile = reader->GetOutput();
       }
     else if (extension == std::string(".vtk"))
       {
@@ -173,7 +210,6 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
       if (reader->IsFilePolyData())
         {
-        reader->Update();
         reader->ReadAllScalarsOn();
         reader->ReadAllVectorsOn();
         reader->ReadAllNormalsOn();
@@ -181,7 +217,8 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         reader->ReadAllColorScalarsOn();
         reader->ReadAllTCoordsOn();
         reader->ReadAllFieldsOn();
-        modelNode->SetPolyDataConnection(reader->GetOutputPort());
+        reader->Update();
+        meshFromFile = reader->GetOutput();
         }
       else if (unstructuredGridReader->IsFileUnstructuredGrid())
         {
@@ -193,48 +230,65 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         unstructuredGridReader->ReadAllTCoordsOn();
         unstructuredGridReader->ReadAllFieldsOn();
         unstructuredGridReader->Update();
-        modelNode->SetUnstructuredGridConnection(unstructuredGridReader->GetOutputPort());
+        meshFromFile = unstructuredGridReader->GetOutput();
+        meshIsPolydata = false;
         }
       else
         {
         vtkErrorMacro("File " << fullName.c_str()
                       << " is not recognized as polydata nor as an unstructured grid.");
         }
+      coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFileHeader(reader->GetHeader());
       }
     else if (extension == std::string(".vtp"))
       {
       vtkNew<vtkXMLPolyDataReader> reader;
       reader->SetFileName(fullName.c_str());
       reader->Update();
-      modelNode->SetPolyDataConnection(reader->GetOutputPort());
+      meshFromFile = reader->GetOutput();
+      coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFieldData(meshFromFile);
       }
     else if (extension == std::string(".vtu"))
       {
       vtkNew<vtkXMLUnstructuredGridReader> reader;
       reader->SetFileName(fullName.c_str());
       reader->Update();
-      modelNode->SetUnstructuredGridConnection(reader->GetOutputPort());
+      meshFromFile = reader->GetOutput();
+      meshIsPolydata = false;
+      coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFieldData(meshFromFile);
       }
     else if (extension == std::string(".stl"))
       {
       vtkNew<vtkSTLReader> reader;
       reader->SetFileName(fullName.c_str());
       reader->Update();
-      modelNode->SetPolyDataConnection(reader->GetOutputPort());
+      meshFromFile = reader->GetOutput();
+      coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFileHeader(reader->GetHeader());
       }
     else if (extension == std::string(".ply"))
       {
       vtkNew<vtkPLYReader> reader;
       reader->SetFileName(fullName.c_str());
       reader->Update();
-      modelNode->SetPolyDataConnection(reader->GetOutputPort());
+      meshFromFile = reader->GetOutput();
+      vtkStringArray* comments = reader->GetComments();
+      for (int commentIndex = 0; commentIndex < comments->GetNumberOfValues(); commentIndex++)
+        {
+        coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFileHeader(comments->GetValue(commentIndex));
+        if (coordinateSystemInFileHeader >= 0)
+          {
+          // found a comment that contains coordinate system information
+          break;
+          }
+        }
       }
     else if (extension == std::string(".obj"))
       {
       vtkNew<vtkOBJReader> reader;
       reader->SetFileName(fullName.c_str());
       reader->Update();
-      modelNode->SetPolyDataConnection(reader->GetOutputPort());
+      meshFromFile = reader->GetOutput();
+      coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFileHeader(reader->GetComment());
       }
     else if (extension == std::string(".meta"))  // model in meta format
       {
@@ -255,7 +309,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       catch(itk::ExceptionObject &ex)
         {
         std::cout<<ex.GetDescription()<<std::endl;
-        result = 0;
+        return 0;
         }
       vtkNew<vtkPolyData> vtkMesh;
       // Get the number of points in the mesh
@@ -293,8 +347,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         }
 
       vtkMesh->SetPolys(cells.GetPointer());
-
-      modelNode->SetAndObservePolyData(vtkMesh.GetPointer());
+      meshFromFile = vtkMesh;
       }
     else
       {
@@ -305,25 +358,61 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   catch (...)
     {
     vtkErrorMacro("ReadData: unknown exception while trying to read file: " << fullName.c_str());
-    result = 0;
+    return 0;
     }
+
+  if (coordinateSystemInFileHeader >= 0)
+    {
+    // coordinate system specified in the file, use it (regardless oassumingf what was the preferred coordinate system in the node)
+    this->CoordinateSystem = coordinateSystemInFileHeader;
+    }
+  else
+    {
+    // no coordinate system in the file, use the currently set coordinate system
+    vtkInfoMacro("File " << fullName.c_str() << " does not contain coordinate system information. Assuming "
+      << vtkMRMLStorageNode::GetCoordinateSystemTypeAsString(this->CoordinateSystem) << ".");
+    }
+
+  vtkSmartPointer<vtkPointSet> meshToSetInNode;
+  if (this->CoordinateSystem == vtkMRMLStorageNode::CoordinateSystemRAS)
+    {
+    // no flip of first two axes
+    meshToSetInNode = meshFromFile;
+    }
+  else
+    {
+    // transform from RAS to LPS
+    if (modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType)
+      {
+      meshToSetInNode = vtkSmartPointer<vtkPolyData>::New();
+      }
+    else
+      {
+      meshToSetInNode = vtkSmartPointer<vtkUnstructuredGrid>::New();
+      }
+    vtkMRMLModelStorageNode::ConvertBetweenRASAndLPS(meshFromFile, meshToSetInNode);
+    }
+
+  modelNode->SetAndObserveMesh(meshToSetInNode);
 
   if (modelNode->GetMesh() != nullptr)
     {
-    // is there an active scalar array?
-    if (modelNode->GetDisplayNode()
-      && modelNode->GetDisplayNode()->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseDataScalarRange)
+    for (int i=0; i<modelNode->GetNumberOfDisplayNodes(); ++i)
       {
-      double *scalarRange = modelNode->GetMesh()->GetScalarRange();
-      if (scalarRange)
+      vtkMRMLDisplayNode* displayNode = modelNode->GetNthDisplayNode(i);
+      // is there an active scalar array?
+      if (displayNode && displayNode->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseDataScalarRange)
         {
-        vtkDebugMacro("ReadDataInternal: setting scalar range " << scalarRange[0] << ", " << scalarRange[1]);
-        modelNode->GetDisplayNode()->SetScalarRange(scalarRange);
+        double *scalarRange = modelNode->GetMesh()->GetScalarRange();
+        if (scalarRange)
+          {
+          vtkDebugMacro("ReadDataInternal: setting scalar range " << scalarRange[0] << ", " << scalarRange[1]);
+          displayNode->SetScalarRange(scalarRange);
+          }
         }
-      }
+      } // For all display nodes
     }
-
-  return result;
+  return 1;
 }
 
 //----------------------------------------------------------------------------
@@ -347,15 +436,32 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
 
   // We explicitly write the coordinate system into the file header.
-  // For now, if space is not defined in a file then we assume that it is in the RAS
-  // space (for backward compatibility) but in the future we will switch to LPS by default
-  // to be consistent with image coordinate system (that is most often LPS).
   const std::string coordinateSystemTag = "SPACE"; // following NRRD naming convention
-  const std::string coordinateSystemValue = "RAS";
+  const std::string coordinateSystemStr = vtkMRMLStorageNode::GetCoordinateSystemTypeAsString(this->CoordinateSystem);
   // SPACE=RAS format follows Mimics software's convention, saving extra information into the
   // STL file header: COLOR=rgba,MATERIAL=rgbargbargba
   // (see details at https://en.wikipedia.org/wiki/STL_(file_format)#Color_in_binary_STL)
-  const std::string coordinateSytemSpecification = coordinateSystemTag + "=" + coordinateSystemValue;
+  const std::string coordinateSytemSpecification = coordinateSystemTag + "=" + coordinateSystemStr;
+
+  vtkSmartPointer<vtkPointSet> meshToWrite;
+  if (this->CoordinateSystem == vtkMRMLStorageNode::CoordinateSystemRAS)
+    {
+    // no flip of first two axes
+    meshToWrite = modelNode->GetMesh();
+    }
+  else
+    {
+    // transform from RAS to LPS
+    if (modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType)
+      {
+      meshToWrite = vtkSmartPointer<vtkPolyData>::New();
+      }
+    else
+      {
+      meshToWrite = vtkSmartPointer<vtkUnstructuredGrid>::New();
+      }
+    vtkMRMLModelStorageNode::ConvertBetweenRASAndLPS(modelNode->GetMesh(), meshToWrite);
+  }
 
   int result = 1;
   if (extension == ".vtk" &&
@@ -366,12 +472,12 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     if (modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType)
       {
       writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-      writer->SetInputConnection(modelNode->GetPolyDataConnection());
+      writer->SetInputData(meshToWrite);
       }
     else
       {
       writer = vtkSmartPointer<vtkUnstructuredGridWriter>::New();
-      writer->SetInputConnection(modelNode->GetMeshConnection());
+      writer->SetInputData(meshToWrite);
       }
 
     writer->SetFileName(fullName.c_str());
@@ -398,13 +504,13 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       {
       writer = vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
       inputData = vtkSmartPointer<vtkUnstructuredGrid>::New();
-      inputData->ShallowCopy(modelNode->GetUnstructuredGrid());
+      inputData->ShallowCopy(meshToWrite);
       }
     else
       {
       writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
       inputData = vtkSmartPointer<vtkPolyData>::New();
-      inputData->ShallowCopy(modelNode->GetPolyData());
+      inputData->ShallowCopy(meshToWrite);
       }
     writer->SetInputData(inputData);
     writer->SetFileName(fullName.c_str());
@@ -426,7 +532,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       {
       vtkNew<vtkStringArray> coordinateSystemFieldArray;
       coordinateSystemFieldArray->SetName(coordinateSystemTag.c_str());
-      coordinateSystemFieldArray->InsertNextValue(coordinateSystemValue.c_str());
+      coordinateSystemFieldArray->InsertNextValue(coordinateSystemStr.c_str());
       fieldData->AddArray(coordinateSystemFieldArray.GetPointer());
       }
     else
@@ -450,8 +556,8 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     vtkNew<vtkSTLWriter> writer;
     writer->SetFileName(fullName.c_str());
     writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII );
-    triangulator->SetInputConnection( modelNode->GetPolyDataConnection() );
-    writer->SetInputConnection( triangulator->GetOutputPort() );
+    triangulator->SetInputData(meshToWrite);
+    writer->SetInputConnection(triangulator->GetOutputPort());
     std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
     writer->SetHeader(header.c_str());
     try
@@ -469,7 +575,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     vtkNew<vtkPLYWriter> writer;
     writer->SetFileName(fullName.c_str());
     writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII );
-    triangulator->SetInputConnection( modelNode->GetPolyDataConnection() );
+    triangulator->SetInputData(meshToWrite);
     writer->SetInputConnection( triangulator->GetOutputPort() );
     std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
     writer->AddComment(coordinateSytemSpecification);
@@ -485,7 +591,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   else if (extension == ".obj")
     {
     vtkNew<vtkPolyDataMapper> mapper;
-    mapper->SetInputConnection(modelNode->GetPolyDataConnection());
+    mapper->SetInputData(vtkPolyData::SafeDownCast(meshToWrite));
     vtkNew<vtkActor> actor;
     actor->SetMapper(mapper.GetPointer());
     vtkMRMLDisplayNode* displayNode = modelNode->GetDisplayNode();
@@ -599,4 +705,69 @@ vtkMRMLModelNode* vtkMRMLModelStorageNode::GetAssociatedDataNode()
     }
 
   return nullptr;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLModelStorageNode::ConvertBetweenRASAndLPS(vtkPointSet* inputMesh, vtkPointSet* outputMesh)
+{
+  vtkNew<vtkTransform> transformRasLps;
+  transformRasLps->Scale(-1, -1, 1);
+  vtkNew<vtkTransformFilter> transformFilter;
+  transformFilter->SetTransform(transformRasLps);
+  transformFilter->SetInputData(inputMesh);
+  transformFilter->TransformAllInputVectorsOn();
+  transformFilter->Update();
+  outputMesh->ShallowCopy(transformFilter->GetOutput());
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLModelStorageNode::GetCoordinateSystemFromFileHeader(const char* header)
+{
+  if (!header)
+    {
+    return -1;
+    }
+  std::string headerStr = header;
+  if (headerStr.find("SPACE=RAS") != std::string::npos)
+    {
+    return vtkMRMLStorageNode::CoordinateSystemRAS;
+    }
+  else if (headerStr.find("SPACE=LPS") != std::string::npos)
+    {
+    return vtkMRMLStorageNode::CoordinateSystemLPS;
+    }
+  return -1;
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLModelStorageNode::GetCoordinateSystemFromFieldData(vtkPointSet* mesh)
+{
+  if (!mesh)
+    {
+    return -1;
+    }
+  vtkFieldData* fieldData = mesh->GetFieldData();
+  if (!fieldData)
+    {
+    return -1;
+    }
+  const std::string coordinateSystemTag = "SPACE"; // following NRRD naming convention
+  vtkStringArray* coordinateSystemArray = vtkStringArray::SafeDownCast(
+    fieldData->GetAbstractArray(coordinateSystemTag.c_str()));
+  if (!coordinateSystemArray || coordinateSystemArray->GetNumberOfValues() < 1)
+    {
+    return -1;
+    }
+  std::string headerStr = coordinateSystemArray->GetValue(0);
+  // We retrieved the value, now deleteit
+  fieldData->RemoveArray(coordinateSystemTag.c_str());
+  if (headerStr.find("RAS") != std::string::npos)
+    {
+    return vtkMRMLStorageNode::CoordinateSystemRAS;
+    }
+  else if (headerStr.find("LPS") != std::string::npos)
+    {
+    return vtkMRMLStorageNode::CoordinateSystemLPS;
+    }
+  return -1;
 }

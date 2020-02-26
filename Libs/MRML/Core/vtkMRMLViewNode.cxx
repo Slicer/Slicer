@@ -143,7 +143,7 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLEnumMacro(raycastTechnique, RaycastTechnique);
   vtkMRMLReadXMLIntMacro(volumeRenderingSurfaceSmoothing, VolumeRenderingSurfaceSmoothing);
   vtkMRMLReadXMLFloatMacro(volumeRenderingOversamplingFactor, VolumeRenderingOversamplingFactor);
-  vtkMRMLReadXMLIntMacro(linkedControl, LinkedControl)
+  vtkMRMLReadXMLIntMacro(linkedControl, LinkedControl);
   vtkMRMLReadXMLEndMacro();
 
   this->EndModify(disabledModify);

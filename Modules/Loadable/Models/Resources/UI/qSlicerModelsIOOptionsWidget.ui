@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qSlicerModelsIOOptionsWidget</class>
+ <widget class="qSlicerWidget" name="qSlicerModelsIOOptionsWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>151</width>
+    <height>19</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Models options</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Coordinate system:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QComboBox" name="coordinateSystemComboBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="toolTip">
+      <string>Use LPS (left-posterior-superior) for better compatibility with most software (this is the default). Use RAS (right-anterior-superior) for better compatibility with earlier Slicer versions. If coordinate system is defined in the file then that is used and this choice is ignored.</string>
+     </property>
+     <item>
+      <property name="text">
+       <string>Default</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>LPS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>RAS</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

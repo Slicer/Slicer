@@ -1404,3 +1404,36 @@ vtkMRMLStorableNode* vtkMRMLStorageNode::GetStorableNode()
   this->LastFoundStorableNode = nullptr;
   return nullptr;
 }
+
+//-----------------------------------------------------------
+const char* vtkMRMLStorageNode::GetCoordinateSystemTypeAsString(int id)
+{
+  switch (id)
+    {
+    case CoordinateSystemRAS: return "RAS";
+    case CoordinateSystemLPS: return "LPS";
+    default:
+      // invalid id
+      return "";
+    }
+}
+
+//-----------------------------------------------------------
+int vtkMRMLStorageNode::GetCoordinateSystemTypeFromString(const char* name)
+{
+  if (name == nullptr)
+    {
+    // invalid name
+    return -1;
+    }
+  for (int ii = 0; ii < CoordinateSystemType_Last; ii++)
+    {
+    if (strcmp(name, GetCoordinateSystemTypeAsString(ii)) == 0)
+      {
+      // found a matching name
+      return ii;
+      }
+    }
+  // unknown name
+  return -1;
+}

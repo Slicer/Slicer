@@ -45,6 +45,7 @@ public:
   QString description()const override;
   IOFileType fileType()const override;
   QStringList extensions()const override;
+  qSlicerIOOptions* options()const override;
 
   bool load(const IOProperties& properties) override;
 

@@ -350,6 +350,26 @@ public:
   /// Get a list of all supported compression presets
   virtual const std::vector<CompressionPreset> GetCompressionPresets();
 
+  /// Coordinate system options
+  /// LPS coordinate system is used the most commonly in medical image computing.
+  ///   Slicer is moving towards using this coordinate system in all files by default
+  ///   (while keep using RAS coordinate system internally).
+  /// RAS coordinate system is used in Slicer internally. For many years, Slicer used
+  ///   this coordinate system in files that it created, too.
+  enum
+  {
+    CoordinateSystemRAS = 0,
+    RAS = 0, ///< for backward compatibility
+    CoordinateSystemLPS = 1,
+    LPS = 1, ///< for backward compatibility
+    CoordinateSystemType_Last
+  };
+
+  ///
+  /// Convert between coordinate system ID and name
+  static const char *GetCoordinateSystemTypeAsString(int id);
+  static int GetCoordinateSystemTypeFromString(const char *name);
+
 protected:
   vtkMRMLStorageNode();
   ~vtkMRMLStorageNode() override;

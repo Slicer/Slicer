@@ -221,7 +221,8 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(vtkAlgorithmOutput* polyData)
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix )
+int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix,
+  int coordinateSystem /*=vtkMRMLStorageNode::CoordinateSystemLPS*/)
 {
   std::string ssuf = suffix;
   itksys::Directory dir;
@@ -238,7 +239,7 @@ int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix )
         {
         std::string fullPath = std::string(dir.GetPath())
             + "/" + filename;
-        if (this->AddModel(fullPath.c_str()) == nullptr)
+        if (this->AddModel(fullPath.c_str(), coordinateSystem) == nullptr)
           {
           res = 0;
           }
@@ -249,7 +250,8 @@ int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix )
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
+vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename,
+  int coordinateSystem /*=vtkMRMLStorageNode::CoordinateSystemLPS*/)
 {
   if (this->GetMRMLScene() == nullptr ||
       filename == nullptr)
@@ -294,11 +296,16 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
   if (mStorageNode->SupportedFileType(name.c_str()))
     {
     storageNode = mStorageNode.GetPointer();
+    mStorageNode->SetCoordinateSystem(coordinateSystem);
     }
   else if (fsmStorageNode->SupportedFileType(name.c_str()))
     {
     vtkDebugMacro("AddModel: have a freesurfer type model file.");
     storageNode = fsmStorageNode.GetPointer();
+    if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
+      {
+      vtkWarningMacro("Request for using LPS coordinate system for reading freesurfer model file is ignored. Loaded as RAS.");
+      }
     }
 
   /* don't read just yet, need to add to the scene first for remote reading
@@ -348,7 +355,8 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode *modelNode)
+int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode *modelNode,
+  int coordinateSystem/*=-1*/)
 {
    if (modelNode == nullptr || filename == nullptr)
     {
@@ -372,6 +380,11 @@ int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode *mod
     this->GetMRMLScene()->AddNode(storageNode);
     modelNode->SetAndObserveStorageNodeID(storageNode->GetID());
     storageNode->Delete();
+    }
+
+  if (coordinateSystem >= 0)
+    {
+    storageNode->SetCoordinateSystem(coordinateSystem);
     }
 
   // check for a remote file

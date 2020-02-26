@@ -18,6 +18,7 @@
 #include "vtkMRMLStorageNode.h"
 
 class vtkMRMLModelNode;
+class vtkPointSet;
 
 /// \brief MRML node for model storage on disk.
 ///
@@ -35,11 +36,20 @@ public:
   /// Get node XML tag name (like Storage, Model)
   const char* GetNodeTagName() override  {return "ModelStorage";}
 
+  /// Read node attributes from XML file
+  void ReadXMLAttributes(const char** atts) override;
+
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
 
   /// Return true if the reference node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+
+  /// Get/Set flag that controls if points are to be written in various coordinate systems
+  vtkSetClampMacro(CoordinateSystem, int, 0, vtkMRMLStorageNode::CoordinateSystemType_Last-1);
+  vtkGetMacro(CoordinateSystem, int);
+  static const char* GetCoordinateSystemAsString(int id);
+  static int GetCoordinateSystemFromString(const char* name);
 
 protected:
   vtkMRMLModelStorageNode();
@@ -62,6 +72,13 @@ protected:
   /// Write data from a  referenced node
   int WriteDataInternal(vtkMRMLNode *refNode) override;
 
+  static void ConvertBetweenRASAndLPS(vtkPointSet* inputMesh, vtkPointSet* outputMesh);
+
+  static int GetCoordinateSystemFromFileHeader(const char* header);
+
+  static int GetCoordinateSystemFromFieldData(vtkPointSet* mesh);
+
+  int CoordinateSystem;
 };
 
 #endif

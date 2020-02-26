@@ -19,6 +19,9 @@
 #include "vtkSlicerModuleLogic.h"
 #include "vtkSlicerModelsModuleLogicExport.h"
 
+// MRML includes
+#include "vtkMRMLStorageNode.h"
+
 // VTK includes
 #include <vtkVersion.h>
 
@@ -45,25 +48,32 @@ class VTK_SLICER_MODELS_MODULE_LOGIC_EXPORT vtkSlicerModelsLogic
 
   /// Add into the scene a new mrml model node with an existing polydata
   /// A display node is also added into the scene.
-  /// \todo Should the function AddModel also add a storage node ?
+  ///param polyData surface mesh in RAS coordinate system.
   vtkMRMLModelNode* AddModel(vtkPolyData* polyData = nullptr);
 
   /// Add into the scene a new mrml model node with an existing polydata
   /// A display node is also added into the scene.
-  /// \todo Should the function AddModel also add a storage node ?
+  ///param polyData surface mesh algorithm output in RAS coordinate system.
   vtkMRMLModelNode* AddModel(vtkAlgorithmOutput* polyData = nullptr);
 
   /// Add into the scene a new mrml model node and
   /// read it's polydata from a specified file
   /// A display node and a storage node are also added into the scene
-  vtkMRMLModelNode* AddModel(const char* filename);
+  /// \param coordinateSystem If coordinate system is not specified
+  ///   in the file then this coordinate system is used. Default is LPS.
+  vtkMRMLModelNode* AddModel(const char* filename, int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS);
 
   /// Create model nodes and
   /// read their polydata from a specified directory
-  int AddModels(const char* dirname, const char* suffix);
+  /// \param coordinateSystem If coordinate system is not specified
+  ///   in the file then this coordinate system is used. Default is LPS.
+  int AddModels(const char* dirname, const char* suffix, int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS);
 
   /// Write model's polydata  to a specified file
-  int SaveModel(const char* filename, vtkMRMLModelNode *modelNode);
+  /// \param coordinateSystem If coordinate system is not specified
+  ///   in the file then this coordinate system is used. Default is -1, which means that
+  ///   the coordinate system specified in the storage node will be used.
+  int SaveModel(const char* filename, vtkMRMLModelNode *modelNode, int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS);
 
   /// Read in a scalar overlay and add it to the model node
   /// \return True on success
@@ -95,9 +105,9 @@ protected:
 
   void OnMRMLSceneEndImport() override;
 
-private:
   /// Color logic
   vtkMRMLColorLogic* ColorLogic;
+
 };
 
 #endif

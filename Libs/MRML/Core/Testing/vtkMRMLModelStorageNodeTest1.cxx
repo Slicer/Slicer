@@ -1,12 +1,12 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
-  All Rights Reserved.
+Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
+All Rights Reserved.
 
-  See COPYRIGHT.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
+See COPYRIGHT.txt
+or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
+Program:   3D Slicer
 
 =========================================================================auto=*/
 
@@ -22,18 +22,20 @@
 #include <vtkUnstructuredGrid.h>
 #include <vtkVoxel.h>
 
+#include <array>
+
 //---------------------------------------------------------------------------
-int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkPointSet*mesh);
+int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkPointSet* mesh, int coordinateSystem);
 void CreateVoxelMeshes(vtkUnstructuredGrid* ug, vtkPolyData* poly);
 
 //---------------------------------------------------------------------------
-int vtkMRMLModelStorageNodeTest1(int argc, char * argv[] )
+int vtkMRMLModelStorageNodeTest1(int argc, char * argv[])
 {
   if (argc != 2)
-    {
+  {
     std::cerr << "Usage: " << argv[0] << " /path/to/temp" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkNew<vtkMRMLModelStorageNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
@@ -45,23 +47,27 @@ int vtkMRMLModelStorageNodeTest1(int argc, char * argv[] )
   vtkNew<vtkUnstructuredGrid> ug;
   vtkNew<vtkPolyData> poly;
   CreateVoxelMeshes(ug.GetPointer(), poly.GetPointer());
-  CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtk", ug.GetPointer()));
-  CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtu", ug.GetPointer()));
-  CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtk", poly.GetPointer()));
-  CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtp", poly.GetPointer()));
-  CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".stl", poly.GetPointer()));
-  CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".ply", poly.GetPointer()));
-  CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".obj", poly.GetPointer()));
+  for (int coordinateSystem : { vtkMRMLStorageNode::CoordinateSystemRAS, vtkMRMLStorageNode::CoordinateSystemLPS })
+    {
+    CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtk", poly.GetPointer(), coordinateSystem));
+    CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtp", poly.GetPointer(), coordinateSystem));
+    CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".stl", poly.GetPointer(), coordinateSystem));
+    CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".ply", poly.GetPointer(), coordinateSystem));
+    CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".obj", poly.GetPointer(), coordinateSystem));
+    CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtk", ug.GetPointer(), coordinateSystem));
+    CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtu", ug.GetPointer(), coordinateSystem));
+    }
 
+  std::cout << "Test passed." << std::endl;
   return EXIT_SUCCESS;
 }
 
 //---------------------------------------------------------------------------
-int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkPointSet *mesh)
+int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkPointSet *mesh, int coordinateSystem)
 {
   std::string fileName = std::string(scene->GetRootDirectory()) +
-                         std::string("/vtkMRMLModelNodeTest1") +
-                         std::string(extension);
+    std::string("/vtkMRMLModelNodeTest1") +
+    std::string(extension);
 
   int numberOfPoints = mesh->GetNumberOfPoints();
   CHECK_BOOL(numberOfPoints > 0, true);
@@ -74,20 +80,24 @@ int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkPointSet *m
 
   bool isPoly = (modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType);
   std::cout << "Testing " << extension << " for "
-            <<  (isPoly ? "polydata" : "unstructured grid")
-            << " mesh." << std::endl;
+    << (isPoly ? "polydata" : "unstructured grid")
+    << " mesh"
+    << " in coordinate system: "
+    << vtkMRMLStorageNode::GetCoordinateSystemTypeAsString(coordinateSystem) << std::endl;
 
   // Add storage node
   modelNode->AddDefaultStorageNode();
-  vtkMRMLStorageNode* storageNode = modelNode->GetStorageNode();
+  vtkMRMLModelStorageNode* storageNode = vtkMRMLModelStorageNode::SafeDownCast(modelNode->GetStorageNode());
   CHECK_NOT_NULL(storageNode);
   storageNode->SetFileName(fileName.c_str());
+  storageNode->SetCoordinateSystem(coordinateSystem);
 
   // Test writing
   CHECK_BOOL(storageNode->WriteData(modelNode.GetPointer()), true);
 
   // Clear data from model node
   modelNode->SetAndObservePolyData(nullptr);
+  storageNode->SetCoordinateSystem(vtkMRMLStorageNode::CoordinateSystemLPS);
   CHECK_NULL(modelNode->GetMesh());
 
   // Test reading
@@ -95,6 +105,26 @@ int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkPointSet *m
   vtkPointSet* mesh2 = modelNode->GetMesh();
   CHECK_NOT_NULL(mesh2);
   CHECK_INT(mesh2->GetNumberOfPoints(), numberOfPoints);
+
+  // Check extents to make sure there is no mirroring of the model due to coordinate system mismatch
+  double originalBounds[6] = { 0.0 };
+  mesh->GetBounds(originalBounds);
+  double restoredBounds[6] = { 0.0 };
+  mesh2->GetBounds(restoredBounds);
+  for (int boundsIndex = 0; boundsIndex < 6; boundsIndex++)
+    {
+    CHECK_DOUBLE_TOLERANCE(restoredBounds[boundsIndex], originalBounds[boundsIndex], 1e-3);
+    }
+
+  // Coordinate system after writing must be the one that was requested
+  CHECK_INT(storageNode->GetCoordinateSystem(), coordinateSystem);
+
+  // Check if coordinate system hint is overridden by coordinate system specified in file
+  int someDifferentCoordinateSystem =
+    coordinateSystem == vtkMRMLStorageNode::CoordinateSystemRAS ? vtkMRMLStorageNode::CoordinateSystemLPS : vtkMRMLStorageNode::CoordinateSystemRAS;
+  storageNode->SetCoordinateSystem(someDifferentCoordinateSystem);
+  CHECK_BOOL(storageNode->ReadData(modelNode.GetPointer()), true);
+  CHECK_INT(storageNode->GetCoordinateSystem(), coordinateSystem);
 
   return EXIT_SUCCESS;
 }

@@ -275,8 +275,8 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetPointFromString(vtkMRMLMarkupsNode *m
     return false;
     }
 
-  if (this->GetCoordinateSystem() != vtkMRMLMarkupsFiducialStorageNode::RAS
-    && this->GetCoordinateSystem() != vtkMRMLMarkupsFiducialStorageNode::LPS)
+  if (this->GetCoordinateSystem() != vtkMRMLStorageNode::CoordinateSystemRAS
+    && this->GetCoordinateSystem() != vtkMRMLStorageNode::CoordinateSystemLPS)
     {
     vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: invalid coordinate system");
     return false;
@@ -366,11 +366,11 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetPointFromString(vtkMRMLMarkupsNode *m
 
   markupsNode->SetNthControlPointID(pointIndex, id);
 
-  if (this->GetCoordinateSystem() == vtkMRMLMarkupsFiducialStorageNode::RAS)
+  if (this->GetCoordinateSystem() == vtkMRMLStorageNode::CoordinateSystemRAS)
     {
     markupsNode->SetNthControlPointPosition(pointIndex, xyz[0], xyz[1], xyz[2]);
     }
-  else if (this->GetCoordinateSystem() == vtkMRMLMarkupsFiducialStorageNode::LPS)
+  else if (this->GetCoordinateSystem() == vtkMRMLStorageNode::CoordinateSystemLPS)
     {
     markupsNode->SetNthControlPointPosition(pointIndex, -xyz[0], -xyz[1], xyz[2]);
     }
@@ -407,12 +407,12 @@ std::string vtkMRMLMarkupsFiducialStorageNode::GetPointAsString(vtkMRMLMarkupsNo
 
   double xyz[3] = { 0.0, 0.0, 0.0 };
   markupsNode->GetNthControlPointPosition(pointIndex, xyz);
-  if (this->GetCoordinateSystem() == vtkMRMLMarkupsFiducialStorageNode::LPS)
+  if (this->GetCoordinateSystem() == vtkMRMLStorageNode::CoordinateSystemLPS)
     {
     xyz[0] = -xyz[0];
     xyz[1] = -xyz[1];
     }
-  else if (this->GetCoordinateSystem() != vtkMRMLMarkupsFiducialStorageNode::RAS)
+  else if (this->GetCoordinateSystem() != vtkMRMLStorageNode::CoordinateSystemRAS)
     {
     vtkErrorMacro("WriteData: invalid coordinate system index " << this->GetCoordinateSystem());
     return "";
@@ -505,9 +505,6 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     // only print out the warning once
     bool printedVersionWarning = false;
 
-    // coordinate system
-    int coordinateSystemFlag = 0;
-
     while (fstr.good())
       {
       fstr.getline(line, MARKUPS_BUFFER_SIZE);
@@ -530,7 +527,7 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
           else if (lineString.find("# CoordinateSystem = ") != std::string::npos)
             {
             std::string str = lineString.substr(21,std::string::npos);
-            coordinateSystemFlag = atoi(str.c_str());
+            int coordinateSystemFlag = vtkMRMLMarkupsStorageNode::GetCoordinateSystemFromString(str.c_str());
             vtkDebugMacro("CoordinateSystem = " << coordinateSystemFlag);
             this->SetCoordinateSystem(coordinateSystemFlag);
             }
@@ -698,7 +695,7 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 
   // put down a header
   of << "# Markups fiducial file version = " << Slicer_VERSION << endl;
-  of << "# CoordinateSystem = " << this->GetCoordinateSystem() << endl;
+  of << "# CoordinateSystem = " << vtkMRMLMarkupsStorageNode::GetCoordinateSystemAsString(this->GetCoordinateSystem()) << endl;
 
   // label the columns
   // id,x,y,z,ow,ox,oy,oz,vis,sel,lock,label,desc,associatedNodeID

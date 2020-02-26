@@ -56,17 +56,12 @@ public:
 
   bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
 
-  /// Coordinate system options
-  enum
-  {
-    RAS = 0,
-    LPS
-  };
-
   /// Get/Set flag that controls if points are to be written in various coordinate systems
-  vtkSetClampMacro(CoordinateSystem, int, vtkMRMLMarkupsStorageNode::RAS, vtkMRMLMarkupsStorageNode::LPS);
+  vtkSetClampMacro(CoordinateSystem, int, 0, vtkMRMLStorageNode::CoordinateSystemType_Last-1);
   vtkGetMacro(CoordinateSystem, int);
   std::string GetCoordinateSystemAsString();
+  static const char* GetCoordinateSystemAsString(int id);
+  static int GetCoordinateSystemFromString(const char* name);
   /// Convenience methods to get/set various coordinate system values
   /// \sa SetCoordinateSystem, GetCoordinateSystem
   void UseRASOn();

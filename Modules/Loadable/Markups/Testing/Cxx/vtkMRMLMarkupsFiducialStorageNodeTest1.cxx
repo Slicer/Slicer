@@ -157,41 +157,34 @@ int vtkMRMLMarkupsFiducialStorageNodeTest1(int argc, char * argv[] )
   CHECK_BOOL(retval, true);
 
   //
-  // test with use LPS flag on
-  node1->UseLPSOn();
-  std::cout << "Writing file with use LPS flag set:\n"
+  // test with RAS coordinate system
+  node1->UseRASOn();
+  std::cout << "Writing file in RAS coordinate system:\n"
             << node1->GetFileName() << std::endl;
   retval = node1->WriteData(markupsNode.GetPointer());
   CHECK_BOOL(retval, true);
 
   // read it in after clearing out the test data
+  // Set to use LPS to verify that not this hint but the coordinate system that
+  // is specified in the file is taken into account.
   snode2->UseLPSOn();
   markupsNode2->RemoveAllControlPoints();
-  std::cout << "Reading with LPS from " << snode2->GetFileName() << std::endl;
+  std::cout << "Reading file that uses RAS coordinate system from " << snode2->GetFileName() << std::endl;
 
   retval = snode2->ReadData(markupsNode2.GetPointer());
   CHECK_BOOL(retval, true);
+  CHECK_BOOL(snode2->GetUseRAS(), true);
 
-  std::cout << "\nMarkups with LPS read from file = " << std::endl;
+  std::cout << "\nMarkups specified in RAS read from file = " << std::endl;
   markupsNode2->PrintSelf(std::cout, indent);
 
-  // check the point so that it's been converted back to be the same
-  double outputPointAfterLPS[3];
+  // check the point coordinates are correct when stored in files in RAS coordinate system
+  double outputPointLoadedFromRASFile[3];
   index = 0;
-  markupsNode2->GetNthControlPointPosition(index, outputPointAfterLPS);
-  CHECK_DOUBLE_TOLERANCE(outputPointAfterLPS[0], inputPoint[0], 0.1);
-  CHECK_DOUBLE_TOLERANCE(outputPointAfterLPS[1], inputPoint[1], 0.1);
-  CHECK_DOUBLE_TOLERANCE(outputPointAfterLPS[2], inputPoint[2], 0.1);
-
-  double lpsPoint[3];
-  markupsNode2->GetNthControlPointPosition(index, lpsPoint);
-  lpsPoint[0] = -lpsPoint[0];
-  lpsPoint[1] = -lpsPoint[1];
-  std::cout << "Successfully wrote out point as lps "
-            << lpsPoint[0] << "," << lpsPoint[1] << "," << lpsPoint[2]
-            << " and read it back in as RAS "
-            << outputPointAfterLPS[0] << "," << outputPointAfterLPS[1] << ","
-            << outputPointAfterLPS[2] << std::endl;
+  markupsNode2->GetNthControlPointPosition(index, outputPointLoadedFromRASFile);
+  CHECK_DOUBLE_TOLERANCE(outputPointLoadedFromRASFile[0], inputPoint[0], 0.1);
+  CHECK_DOUBLE_TOLERANCE(outputPointLoadedFromRASFile[1], inputPoint[1], 0.1);
+  CHECK_DOUBLE_TOLERANCE(outputPointLoadedFromRASFile[2], inputPoint[2], 0.1);
 
   // check for commas in the markup label and description
   std::string labelWithCommas = markupsNode2->GetNthControlPointLabel(commaIndex);
