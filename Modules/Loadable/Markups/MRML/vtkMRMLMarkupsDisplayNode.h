@@ -157,6 +157,14 @@ public:
   vtkBooleanMacro(PropertiesLabelVisibility, bool);
   //@}
 
+  /// Defines how points are placed and moved in views
+  enum SnapModes
+    {
+    SnapModeUnconstrained, //< point is moved independently from displayed objects in 3D views (e.g., in parallel with camera plane)
+    SnapModeToVisibleSurface, //< point is snapped to any visible surface in 3D views
+    //SnapModeToNode //< point is snapped to a specific node, not implemented yet
+    SnapMode_Last // insert new items above this line
+    };
 
   /// Which kind of glyph should be used to display this markup?
   /// Vertex2D is supposed to start at 1
@@ -196,6 +204,14 @@ public:
 
   static const char* GetGlyphTypeAsString(int g);
   static int GetGlyphTypeFromString(const char*);
+
+  /// Specifies if position of control points are snapped to selected surfaces
+  /// \sa SnapModes
+  vtkSetMacro(SnapMode, int);
+  vtkGetMacro(SnapMode, int);
+
+  static const char* GetSnapModeAsString(int g);
+  static int GetSnapModeFromString(const char*);
 
   /// Get/Set markup point size relative to the window size.
   /// This value is only used in slice views and only if SliceUseGlyphScale is set to true.
@@ -305,6 +321,8 @@ protected:
   /// Current active point or widget component type and index (hovered by the mouse or other interaction context)
   /// Map interaction context identifier (empty string for mouse) to component type enum
   std::map<std::string, ComponentInfo> ActiveComponents;
+
+  int SnapMode;
 
   bool PropertiesLabelVisibility;
   bool PointLabelsVisibility;

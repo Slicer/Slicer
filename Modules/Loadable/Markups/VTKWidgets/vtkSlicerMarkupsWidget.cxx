@@ -386,28 +386,56 @@ bool vtkSlicerMarkupsWidget::ConvertDisplayPositionToWorld(const int displayPos[
   else if (rep3d)
     {
     // 3D view
-    if (rep3d->AccuratePick(displayPos[0], displayPos[1], worldPos))
+    bool preferPickOnSurface = true;
+    if (refWorldPos != nullptr)
       {
-      return true;
+      // If reference position is provided then we may use that instead of picking on visible surface.
+      vtkMRMLMarkupsDisplayNode* markupsDisplayNode = this->GetMarkupsDisplayNode();
+      if (markupsDisplayNode)
+        {
+        preferPickOnSurface = (markupsDisplayNode->GetSnapMode() == vtkMRMLMarkupsDisplayNode::SnapModeToVisibleSurface);
+        }
       }
-    // try default picker method
-    bool success = false;
-    if (refWorldPos)
+    if (preferPickOnSurface)
       {
-      // reference position is available
-      success = rep3d->GetPointPlacer()->ComputeWorldPosition(this->Renderer,
-        doubleDisplayPos, refWorldPos, worldPos, worldOrientationMatrix);
+      // SnapModeToVisibleSurface
+      // Try to pick on surface and pick on camera plane if nothing is found.
+      if (rep3d->AccuratePick(displayPos[0], displayPos[1], worldPos))
+        {
+        return true;
+        }
+      if (refWorldPos)
+        {
+        // Reference position is available (most likely, moving the point).
+        return (rep3d->GetPointPlacer()->ComputeWorldPosition(this->Renderer,
+          doubleDisplayPos, refWorldPos, worldPos, worldOrientationMatrix));
+        }
       }
     else
       {
-      // reference position is unavailable
-      success = rep3d->GetPointPlacer()->ComputeWorldPosition(this->Renderer,
-        doubleDisplayPos, worldPos, worldOrientationMatrix);
+      // SnapModeUnconstrained
+      // Move the point relative to reference position, not restricted to surfaces if possible.
+      if (refWorldPos)
+        {
+        // Reference position is available (most likely, moving the point).
+        return (rep3d->GetPointPlacer()->ComputeWorldPosition(this->Renderer,
+          doubleDisplayPos, refWorldPos, worldPos, worldOrientationMatrix));
+        }
+      else
+        {
+        // Reference position is unavailable (e.g., not moving of an existing point but first placement)
+        // Even if the constraining on the surface is no preferred, it is still better to
+        // place it on a visible surface in 3D views rather on the .
+        if (rep3d->AccuratePick(displayPos[0], displayPos[1], worldPos))
+          {
+          return true;
+          }
+        }
       }
-    if (success)
-      {
-      return true;
-      }
+    // Last resort: place a point on the camera plane
+    // (no reference position is available and no surface is visible there)
+    return (rep3d->GetPointPlacer()->ComputeWorldPosition(this->Renderer,
+      doubleDisplayPos, worldPos, worldOrientationMatrix));
     }
   return false;
 }

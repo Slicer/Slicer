@@ -69,6 +69,8 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->GlyphSize = 5.0;  // size in world coordinate system (mm)
   this->UseGlyphScale = true; // relative size by default
 
+  this->SnapMode = vtkMRMLMarkupsDisplayNode::SnapModeToVisibleSurface;
+
   // projection settings
   this->SliceProjection = false;
   this->SliceProjectionUseFiducialColor = true;
@@ -118,6 +120,7 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLFloatMacro(glyphSize, GlyphSize);
   vtkMRMLWriteXMLBooleanMacro(useGlyphScale, UseGlyphScale);
   vtkMRMLWriteXMLEnumMacro(glyphType, GlyphType);
+  vtkMRMLWriteXMLEnumMacro(snapMode, SnapMode);
   vtkMRMLWriteXMLBooleanMacro(sliceProjection, SliceProjection);
   vtkMRMLWriteXMLBooleanMacro(sliceProjectionUseFiducialColor, SliceProjectionUseFiducialColor);
   vtkMRMLWriteXMLBooleanMacro(sliceProjectionOutlinedBehindSlicePlane, SliceProjectionOutlinedBehindSlicePlane);
@@ -146,6 +149,7 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLFloatMacro(glyphSize, GlyphSize);
   vtkMRMLReadXMLBooleanMacro(useGlyphScale, UseGlyphScale);
   vtkMRMLReadXMLEnumMacro(glyphType, GlyphType);
+  vtkMRMLReadXMLEnumMacro(snapMode, SnapMode);
   vtkMRMLReadXMLBooleanMacro(sliceProjection, SliceProjection);
   vtkMRMLReadXMLBooleanMacro(sliceProjectionUseFiducialColor, SliceProjectionUseFiducialColor);
   vtkMRMLReadXMLBooleanMacro(sliceProjectionOutlinedBehindSlicePlane, SliceProjectionOutlinedBehindSlicePlane);
@@ -205,6 +209,7 @@ void vtkMRMLMarkupsDisplayNode::Copy(vtkMRMLNode *anode)
   vtkMRMLCopyFloatMacro(GlyphSize);
   vtkMRMLCopyBooleanMacro(UseGlyphScale);
   vtkMRMLCopyEnumMacro(GlyphType);
+  vtkMRMLCopyEnumMacro(SnapMode);
   vtkMRMLCopyBooleanMacro(SliceProjection);
   vtkMRMLCopyBooleanMacro(SliceProjectionUseFiducialColor);
   vtkMRMLCopyBooleanMacro(SliceProjectionOutlinedBehindSlicePlane);
@@ -279,6 +284,39 @@ const char* vtkMRMLMarkupsDisplayNode::GetGlyphTypeAsString(int id)
   }
 }
 
+//-----------------------------------------------------------
+int vtkMRMLMarkupsDisplayNode::GetSnapModeFromString(const char* name)
+{
+  if (name == nullptr)
+    {
+    // invalid name
+    return -1;
+    }
+  for (int ii = 0; ii < SnapMode_Last; ii++)
+    {
+    if (strcmp(name, GetSnapModeAsString(ii)) == 0)
+      {
+      // found a matching name
+      return ii;
+      }
+    }
+  // unknown name
+  return -1;
+}
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLMarkupsDisplayNode::GetSnapModeAsString(int id)
+{
+  switch (id)
+  {
+  case SnapModeUnconstrained: return "unconstrained";
+  case SnapModeToVisibleSurface: return "toVisibleSurface";
+  default:
+    // invalid id
+    return "invalid";
+  }
+}
+
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
@@ -291,6 +329,7 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintFloatMacro(GlyphSize);
   vtkMRMLPrintBooleanMacro(UseGlyphScale);
   vtkMRMLPrintEnumMacro(GlyphType);
+  vtkMRMLPrintEnumMacro(SnapMode);
   vtkMRMLPrintBooleanMacro(SliceProjection);
   vtkMRMLPrintBooleanMacro(SliceProjectionUseFiducialColor);
   vtkMRMLPrintBooleanMacro(SliceProjectionOutlinedBehindSlicePlane);
