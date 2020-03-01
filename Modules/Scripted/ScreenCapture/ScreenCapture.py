@@ -1268,6 +1268,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     filePathPattern = os.path.join(outputDir, imageFileNamePattern)
     outputVideoFilePath = os.path.join(outputDir, videoFileName)
     ffmpegParams = [ffmpegPath,
+                    "-nostdin",  # disable stdin (to prevent hang when running Slicer as background process)
                     "-y", # overwrite without asking
                     "-r", str(frameRate),
                     "-start_number", "0",
