@@ -2065,20 +2065,13 @@ def plot(narray, xColumnIndex = -1, columnNames = None, title = None, show = Tru
 
   return chartNode
 
-def launchConsoleProcess(args, useStartupEnvironment=True):
+def launchConsoleProcess(args, useStartupEnvironment=True, cwd=None):
   """Launch a process. Hiding the console and captures the process output.
   The console window is hidden when running on Windows.
-  :param args: executable name, followed by
+  :param args: executable name, followed by command-line arguments
+  :param useStartupEnvironment: launch the process in the original environment as the original Slicer process
+  :param cwd: current working directory
   :return: process object.
-
-  Example 1: simple plot
-
-  .. code-block:: python
-
-    # Get sample data
-    import numpy as np
-    import SampleData
-    volumeNode = SampleData.downloadSample("MRHead")
   """
   import subprocess
   if useStartupEnvironment:
@@ -2091,9 +2084,9 @@ def launchConsoleProcess(args, useStartupEnvironment=True):
     info = subprocess.STARTUPINFO()
     info.dwFlags = 1
     info.wShowWindow = 0
-    proc = subprocess.Popen(args, env=startupEnv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, startupinfo=info)
+    proc = subprocess.Popen(args, env=startupEnv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, startupinfo=info, cwd=cwd)
   else:
-    proc = subprocess.Popen(args, env=startupEnv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+    proc = subprocess.Popen(args, env=startupEnv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, cwd=cwd)
   return proc
 
 def logProcessOutput(proc):
