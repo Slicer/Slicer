@@ -154,28 +154,28 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
   if (this->GetWriteState() == SkippedNoData)
     {
-    vtkDebugMacro("ReadDataInternal: empty model file was not saved, ignore loading");
+    vtkDebugMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): empty model file was not saved, ignore loading");
     return 1;
     }
 
   vtkMRMLModelNode *modelNode = dynamic_cast <vtkMRMLModelNode *> (refNode);
   if (!modelNode)
     {
-    vtkErrorMacro("ReadDataInternal: refNode is not a valid mode node");
+    vtkErrorMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): refNode is not a valid mode node");
     return 0;
     }
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
     {
-    vtkErrorMacro("ReadDataInternal: File name not specified");
+    vtkErrorMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): File name not specified");
     return 0;
     }
 
   // check that the file exists
   if (vtksys::SystemTools::FileExists(fullName.c_str()) == false)
     {
-    vtkErrorMacro("ReadDataInternal: model file '" << fullName.c_str() << "' not found.");
+    vtkErrorMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): model file '" << fullName.c_str() << "' not found.");
     return 0;
     }
 
@@ -187,7 +187,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     return 0;
     }
 
-  vtkDebugMacro("ReadDataInternal: extension = " << extension.c_str());
+  vtkDebugMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): extension = " << extension.c_str());
 
   int coordinateSystemInFileHeader = -1;
   vtkSmartPointer<vtkPointSet> meshFromFile;
@@ -235,7 +235,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         }
       else
         {
-        vtkErrorMacro("File " << fullName.c_str()
+        vtkErrorMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): file " << fullName.c_str()
                       << " is not recognized as polydata nor as an unstructured grid.");
         }
       coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFileHeader(reader->GetHeader());
@@ -351,13 +351,14 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       }
     else
       {
-      vtkDebugMacro("Cannot read model file '" << fullName.c_str() << "' (extension = " << extension.c_str() << ")");
+      vtkDebugMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)")
+        << "): Cannot read model file '" << fullName.c_str() << "' (extension = " << extension.c_str() << ")");
       return 0;
       }
     }
   catch (...)
     {
-    vtkErrorMacro("ReadData: unknown exception while trying to read file: " << fullName.c_str());
+    vtkErrorMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): unknown exception while trying to read file: " << fullName.c_str());
     return 0;
     }
 
@@ -369,7 +370,8 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   else
     {
     // no coordinate system in the file, use the currently set coordinate system
-    vtkInfoMacro("File " << fullName.c_str() << " does not contain coordinate system information. Assuming "
+    vtkInfoMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): File "
+      << fullName.c_str() << " does not contain coordinate system information. Assuming "
       << vtkMRMLStorageNode::GetCoordinateSystemTypeAsString(this->CoordinateSystem) << ".");
     }
 
@@ -406,7 +408,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         double *scalarRange = modelNode->GetMesh()->GetScalarRange();
         if (scalarRange)
           {
-          vtkDebugMacro("ReadDataInternal: setting scalar range " << scalarRange[0] << ", " << scalarRange[1]);
+          vtkDebugMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): setting scalar range " << scalarRange[0] << ", " << scalarRange[1]);
           displayNode->SetScalarRange(scalarRange);
           }
         }
@@ -423,7 +425,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
     {
-    vtkErrorMacro("vtkMRMLModelNode: File name not specified");
+    vtkErrorMacro("WriteDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): File name not specified");
     return 0;
     }
 
@@ -537,7 +539,8 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       }
     else
       {
-      vtkWarningMacro("vtkMRMLModelStorageNode::WriteDataInternal 'space' field already exists, cannot write coordinate system name into file");
+      vtkWarningMacro("vtkMRMLModelStorageNode::WriteDataInternal (" << (this->ID ? this->ID : "(unknown)")
+        << "): 'space' field already exists, cannot write coordinate system name into file");
       }
 
     try
@@ -637,7 +640,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   else
     {
     result = 0;
-    vtkErrorMacro( << "No file extension recognized: " << fullName.c_str() );
+    vtkErrorMacro("WriteDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): No file extension recognized: " << fullName.c_str());
     }
 
   return result;

@@ -1277,7 +1277,6 @@ vtkAbstractTransform* vtkITKTransformConverter::CreateVTKTransformFromITK(
   // Linear
   vtkNew<vtkMatrix4x4> transformMatrixVtk;
   conversionSuccess = SetVTKLinearTransformFromITK<T>(loggerObject, transformMatrixVtk.GetPointer(), transformItk);
-  std::cout << "CreateVTKTransformFromITK - SetVTKLinearTransformFromITK conversionSuccess:" << conversionSuccess << std::endl;
   if (conversionSuccess)
     {
     vtkNew<vtkTransform> linearTransformVtk;
