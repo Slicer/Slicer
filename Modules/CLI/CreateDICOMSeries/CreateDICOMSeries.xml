@@ -26,6 +26,20 @@
       <default>123456</default>
     </string>
     <string>
+      <name>patientBirthDate</name>
+      <longflag>--patientBirthDate</longflag>
+      <description><![CDATA[Patient birth date (0010,0030)]]></description>
+      <label>Patient Birth Date</label>
+      <default>20060101</default>
+    </string>
+    <string>
+      <name>patientSex</name>
+      <longflag>--patientSex</longflag>
+      <description><![CDATA[Patient sex (0010,0040)]]></description>
+      <label>Patient Sex</label>
+      <default>M</default>
+    </string>
+    <string>
       <name>patientComments</name>
       <longflag>--patientComments</longflag>
       <description><![CDATA[Patient comments (0010,4000)]]></description>

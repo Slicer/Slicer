@@ -159,12 +159,8 @@ int DoIt( int argc, char * argv[])
 
     // Image type
     itk::EncapsulateMetaData<std::string>(dictionary, "0008|0008", std::string("ORIGINAL\\PRIMARY\\AXIAL") );
-    // Patient's Birthdate
-    itk::EncapsulateMetaData<std::string>(dictionary, "0010|0030", std::string("20060101") );
     // Patient's Birth Time
     itk::EncapsulateMetaData<std::string>(dictionary, "0010|0032", std::string("010100.000000") );
-    // Patient's Sex
-    itk::EncapsulateMetaData<std::string>(dictionary, "0010|0040", std::string("M") );
     // Study Date
     itk::EncapsulateMetaData<std::string>(dictionary, "0008|0020", std::string("20050101") );
     // Study Time
@@ -186,6 +182,14 @@ int DoIt( int argc, char * argv[])
     if (!patientID.empty())
       {
       itk::EncapsulateMetaData<std::string>(dictionary, "0010|0020", patientID);
+      }
+    if (!patientBirthDate.empty())
+      {
+      itk::EncapsulateMetaData<std::string>(dictionary, "0010|0030", patientBirthDate);
+      }
+    if (!patientSex.empty())
+      {
+      itk::EncapsulateMetaData<std::string>(dictionary, "0010|0040", patientSex);
       }
     if (!patientComments.empty())
       {

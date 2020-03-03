@@ -31,7 +31,6 @@ for elements like slicer.dicomDatatabase and slicer.mrmlScene
 
 class DICOMExportScene(object):
   """Export slicer scene to dicom database
-  TODO: delete temp directories and files
   """
 
   def __init__(self,referenceFile=None):

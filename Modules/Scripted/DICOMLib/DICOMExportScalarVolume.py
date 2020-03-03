@@ -109,6 +109,8 @@ class DICOMExportScalarVolume(object):
     # Patient
     cliparameters['patientName'] = self.tags['Patient Name']
     cliparameters['patientID'] = self.tags['Patient ID']
+    cliparameters['patientBirthDate'] = self.tags['Patient Birth Date']
+    cliparameters['patientSex'] = self.tags['Patient Sex']
     cliparameters['patientComments'] = self.tags['Patient Comments']
     # Study
     cliparameters['studyID'] = self.tags['Study ID']
