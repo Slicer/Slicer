@@ -1013,6 +1013,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     imageHeightOdd = (imageSize[1] & 1 == 1)
     if imageWidthOdd or imageHeightOdd:
       imageClipper = vtk.vtkImageClip()
+      imageClipper.SetClipData(True)
       imageClipper.SetInputData(capturedImage)
       extent = capturedImage.GetExtent()
       imageClipper.SetOutputWholeExtent(extent[0], extent[1]-1 if imageWidthOdd else extent[1],
