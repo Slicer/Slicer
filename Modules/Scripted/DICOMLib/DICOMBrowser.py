@@ -579,15 +579,17 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
 
   def warnUserIfLoadableWarningsAndProceed(self):
     warningsInSelectedLoadables = False
+    details = ""
     for plugin in self.loadablesByPlugin:
       for loadable in self.loadablesByPlugin[plugin]:
         if loadable.selected and loadable.warning != "":
           warningsInSelectedLoadables = True
           logging.warning('Warning in DICOM plugin ' + plugin.loadType + ' when examining loadable ' + loadable.name +
                           ': ' + loadable.warning)
+          details += loadable.name + " [" + plugin.loadType + "]: " + loadable.warning + "\n"
     if warningsInSelectedLoadables:
       warning = "Warnings detected during load.  Examine data in Advanced mode for details.  Load anyway?"
-      if not slicer.util.confirmOkCancelDisplay(warning, parent=self):
+      if not slicer.util.confirmOkCancelDisplay(warning, parent=self, detailedText=details):
         return False
     return True
 
