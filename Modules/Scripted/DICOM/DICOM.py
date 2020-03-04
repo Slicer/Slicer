@@ -144,7 +144,6 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
         slicer.dicomDatabase.closeDatabase()
 
 
-
   def startListener(self):
 
     if not slicer.dicomDatabase.isOpen:
@@ -401,7 +400,35 @@ class DICOMFileDialog(object):
 
     return True
 
+  @staticmethod
+  def createDefaultDatabase():
+    """If DICOM database is invalid then try to create a default one. If fails then show an error message.
+    This method should only be used when user initiates DICOM import on the GUI, because the error message is
+    shown in a popup, which would block execution of auomated processing scripts.
+    Returns True if a valid DICOM database is available (has been created succussfully or it was already available).
+    """
+    if slicer.dicomDatabase and slicer.dicomDatabase.isOpen:
+      # Valid DICOM database already exists
+      return True
+
+    # Try to create a database with default settings
+    slicer.modules.DICOMInstance.browserWidget.dicomBrowser.createNewDatabaseDirectory()
+    if slicer.dicomDatabase and slicer.dicomDatabase.isOpen:
+      # DICOM database created successfully
+      return True
+
+    # Failed to create database
+    # Make sure the browser is visible then display error message
+    slicer.util.selectModule('DICOM')
+    slicer.modules.dicom.widgetRepresentation().self().onOpenBrowserWidget()
+    slicer.util.warningDisplay("Could not create a DICOM database with default settings. Please create a new database or"
+      " update the existing incompatible database using options shown in DICOM browser.")
+    return False
+
   def dropEvent(self):
+    if not DICOMFileDialog.createDefaultDatabase():
+      return
+
     if not DICOMFileDialog.validDirectories(self.directoriesToAdd):
       if not slicer.util.confirmYesNoDisplay("Import of files that have special (non-ASCII) characters in their names is not supported."
           " It is recommended to move files into a different folder and retry. Try to import from current location anyway?"):
@@ -448,6 +475,9 @@ class DICOMLoadingByDragAndDropEventFilter(qt.QWidget):
       event.ignore()
 
   def dropEvent(self, event):
+    if not DICOMFileDialog.createDefaultDatabase():
+      return
+
     if not DICOMFileDialog.validDirectories(self.directoriesToAdd):
       if not slicer.util.confirmYesNoDisplay("Import from folders with special (non-ASCII) characters in the name is not supported."
           " It is recommended to move files into a different folder and retry. Try to import from current location anyway?"):
@@ -503,7 +533,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
     # connect to the 'Show DICOM Browser' button
     self.ui.showBrowserButton.connect('clicked()', self.toggleBrowserWidget)
 
-    self.ui.importButton.connect('clicked()', self.browserWidget.dicomBrowser, 'openImportDialog()')
+    self.ui.importButton.connect('clicked()', self.importFolder)
 
     self.ui.subjectHierarchyTree.setMRMLScene(slicer.mrmlScene)
     self.ui.subjectHierarchyTree.currentItemChanged.connect(self.onCurrentItemChanged)
@@ -569,8 +599,6 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
     # If not receiving new file for 2 seconds then a database update is triggered.
     self.databaseRefreshRequestTimer.setInterval(2000)
     self.databaseRefreshRequestTimer.connect('timeout()', self.requestDatabaseRefresh)
-
-
 
 
   def enter(self):
@@ -644,6 +672,12 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
     else:
       if self.browserWidget:
         self.browserWidget.close()
+
+
+  def importFolder(self):
+    if not DICOMFileDialog.createDefaultDatabase():
+      return
+    self.browserWidget.dicomBrowser.openImportDialog()
 
 
   def onOpenBrowserWidget(self):
