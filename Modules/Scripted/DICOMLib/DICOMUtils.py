@@ -177,9 +177,11 @@ def clearDatabase(dicomDatabase=None):
 def removeEmptyDirs(path):
   for root, dirnames, filenames in os.walk(path, topdown=False):
     for dirname in dirnames:
-      print(dirname)
       removeEmptyDirs(os.path.realpath(os.path.join(root, dirname)))
+      try:
       os.rmdir(os.path.realpath(os.path.join(root, dirname)))
+      except OSError as e:
+        logging.error("Removing directory failed: " + str(e))
 
 #------------------------------------------------------------------------------
 def openTemporaryDatabase(directory=None):
