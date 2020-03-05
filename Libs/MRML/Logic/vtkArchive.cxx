@@ -1,6 +1,6 @@
 /*============================================================================
   CMake - Cross Platform Makefile Generator
-  Copyright 2000-2009 Kitware, Inc., Insight Software Consortium
+  Copyright 2000-2009 Kitware, Inc., NumFOCUS
 
   Distributed under the OSI-approved BSD License (the "License");
   see accompanying file Copyright.txt for details.
