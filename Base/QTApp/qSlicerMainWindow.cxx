@@ -933,12 +933,6 @@ void qSlicerMainWindow::on_SDBSaveToMRBAction_triggered()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindow::on_SDBSaveToDCMAction_triggered()
-{
-  // NOT IMPLEMENTED YET
-}
-
-//---------------------------------------------------------------------------
 void qSlicerMainWindow::on_FileCloseSceneAction_triggered()
 {
   Q_D(qSlicerMainWindow);

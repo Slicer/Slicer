@@ -484,21 +484,6 @@
     <string>Create a Medical Reality Bundle containing the scene.</string>
    </property>
   </action>
-  <action name="SDBSaveToDCMAction">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerSave.png</iconset>
-   </property>
-   <property name="text">
-    <string>Save Scene to DICOM MRB</string>
-   </property>
-   <property name="toolTip">
-    <string>Encapsulate MRB file as a DICOM secondary capture</string>
-   </property>
-  </action>
   <action name="FileCloseSceneAction">
    <property name="icon">
     <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">

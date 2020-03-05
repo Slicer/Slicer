@@ -79,7 +79,6 @@ public slots:
   virtual void onFileRecentLoadedActionTriggered();
   virtual void on_SDBSaveToDirectoryAction_triggered();
   virtual void on_SDBSaveToMRBAction_triggered();
-  virtual void on_SDBSaveToDCMAction_triggered();
   virtual void on_FileCloseSceneAction_triggered();
   virtual void on_LoadDICOMAction_triggered();
 
