@@ -141,7 +141,7 @@ bool vtkImageGrowCutSegment::vtkInternal::InitializationAHP(
     seedLabelVolumePtr = static_cast<LabelPixelType*>(seedLabelVolume->GetScalarPointer());
     }
   MaskPixelType* maskLabelVolumePtr = nullptr;
-  if (seedLabelVolume != nullptr)
+  if (maskLabelVolume != nullptr)
     {
     maskLabelVolumePtr = static_cast<MaskPixelType*>(maskLabelVolume->GetScalarPointer());
     }
@@ -549,6 +549,17 @@ vtkImageGrowCutSegment::vtkImageGrowCutSegment()
 vtkImageGrowCutSegment::~vtkImageGrowCutSegment()
 {
   delete this->Internal;
+}
+
+//-----------------------------------------------------------------------------
+int vtkImageGrowCutSegment::FillInputPortInformation(int port, vtkInformation * info)
+{
+  vtkImageAlgorithm::FillInputPortInformation(port, info);
+  if (port == 2)
+    {
+    info->Set(vtkAlgorithm::INPUT_IS_OPTIONAL(), 1);
+    }
+  return 1;
 }
 
 //-----------------------------------------------------------------------------
