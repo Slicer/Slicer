@@ -133,8 +133,7 @@ protected:
 };
 
 template <class TImage>
-OptimizedImageToImageRegistrationMethod<TImage>
-::OptimizedImageToImageRegistrationMethod( void )
+OptimizedImageToImageRegistrationMethod<TImage>::OptimizedImageToImageRegistrationMethod()
 {
   m_InitialTransformParameters = TransformParametersType(1);
   m_InitialTransformParameters.Fill( 0.0f ); \
@@ -174,12 +173,10 @@ OptimizedImageToImageRegistrationMethod<TImage>
   m_InterpolationMethodEnum = LINEAR_INTERPOLATION;
 
   m_FinalMetricValue = 0;
-
 }
 
 template <class TImage>
-OptimizedImageToImageRegistrationMethod<TImage>
-::~OptimizedImageToImageRegistrationMethod( void )
+OptimizedImageToImageRegistrationMethod<TImage>::~OptimizedImageToImageRegistrationMethod()
 {
 }
 
@@ -193,9 +190,7 @@ OptimizedImageToImageRegistrationMethod<TImage>
 }
 
 template <class TImage>
-void
-OptimizedImageToImageRegistrationMethod<TImage>
-::GenerateData( void )
+void OptimizedImageToImageRegistrationMethod<TImage>::GenerateData()
 {
   if( this->GetReportProgress() )
     {

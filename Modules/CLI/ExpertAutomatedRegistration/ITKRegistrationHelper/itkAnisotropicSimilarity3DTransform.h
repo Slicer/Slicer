@@ -115,7 +115,7 @@ public:
    * represents the scaling factor. */
   void SetParameters( const ParametersType & parameters ) override;
 
-  const ParametersType & GetParameters(void) const override;
+  const ParametersType& GetParameters() const override;
 
   /** Set/Get the value of the isotropic scaling factor */
   void SetScale( ScaleType scale );

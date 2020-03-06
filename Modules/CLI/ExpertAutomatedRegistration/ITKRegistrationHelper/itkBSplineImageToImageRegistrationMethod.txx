@@ -118,8 +118,7 @@ protected:
 };
 
 template <class TImage>
-BSplineImageToImageRegistrationMethod<TImage>
-::BSplineImageToImageRegistrationMethod( void )
+BSplineImageToImageRegistrationMethod<TImage>::BSplineImageToImageRegistrationMethod()
 {
   m_NumberOfControlPoints = 10;
   m_NumberOfLevels = 4;
@@ -134,8 +133,7 @@ BSplineImageToImageRegistrationMethod<TImage>
 }
 
 template <class TImage>
-BSplineImageToImageRegistrationMethod<TImage>
-::~BSplineImageToImageRegistrationMethod( void )
+BSplineImageToImageRegistrationMethod<TImage>::~BSplineImageToImageRegistrationMethod()
 {
 }
 
@@ -195,9 +193,7 @@ BSplineImageToImageRegistrationMethod<TImage>
 }
 
 template <class TImage>
-void
-BSplineImageToImageRegistrationMethod<TImage>
-::GenerateData( void )
+void BSplineImageToImageRegistrationMethod<TImage>::GenerateData()
 {
   this->SetTransform( BSplineTransformType::New() );
 
@@ -764,25 +760,22 @@ BSplineImageToImageRegistrationMethod<TImage>
 }
 
 template <class TImage>
-typename BSplineImageToImageRegistrationMethod<TImage>::TransformType
-* BSplineImageToImageRegistrationMethod<TImage>
-::GetTypedTransform( void )
-  {
+typename BSplineImageToImageRegistrationMethod<TImage>::TransformType*
+BSplineImageToImageRegistrationMethod<TImage>::GetTypedTransform()
+{
   return static_cast<TransformType  *>( Superclass::GetTransform() );
-  }
+}
 
 template <class TImage>
-const typename BSplineImageToImageRegistrationMethod<TImage>::TransformType
-* BSplineImageToImageRegistrationMethod<TImage>
-::GetTypedTransform( void ) const
-  {
+const typename BSplineImageToImageRegistrationMethod<TImage>::TransformType*
+BSplineImageToImageRegistrationMethod<TImage>::GetTypedTransform() const
+{
   return static_cast<const TransformType  *>( Superclass::GetTransform() );
-  }
+}
 
 template <class TImage>
 typename BSplineImageToImageRegistrationMethod<TImage>::BSplineTransformPointer
-BSplineImageToImageRegistrationMethod<TImage>
-::GetBSplineTransform( void ) const
+BSplineImageToImageRegistrationMethod<TImage>::GetBSplineTransform() const
 {
   typename BSplineTransformType::Pointer trans = BSplineTransformType::New();
 

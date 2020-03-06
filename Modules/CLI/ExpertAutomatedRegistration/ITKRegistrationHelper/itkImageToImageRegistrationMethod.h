@@ -120,19 +120,18 @@ public:
   itkBooleanMacro( ReportProgress );
 
   /** Return the output of the registration process, which is a Transform */
-  const TransformOutputType * GetOutput( void ) const;
+  const TransformOutputType* GetOutput() const;
 
 protected:
+  ImageToImageRegistrationMethod();
+  ~ImageToImageRegistrationMethod() override;
 
-  ImageToImageRegistrationMethod( void );
-  ~ImageToImageRegistrationMethod( void ) override;
-
-  virtual void    Initialize( void );
+  virtual void Initialize();
 
   /** Method that actually computes the registration. This method is intended
    * to be overloaded by derived classes. Those overload, however, must
    * invoke this method in the base class. */
-  void GenerateData( void ) override;
+  void GenerateData() override;
 
   void PrintSelf( std::ostream & os, Indent indent ) const override;
 
@@ -144,7 +143,7 @@ protected:
   using Superclass::MakeOutput;
   DataObjectPointer   MakeOutput( DataObjectPointerArraySizeType idx ) override;
 
-  ModifiedTimeType GetMTime( void ) const override;
+  ModifiedTimeType GetMTime() const override;
 
 protected:
 

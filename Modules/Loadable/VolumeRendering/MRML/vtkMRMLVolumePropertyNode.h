@@ -166,8 +166,8 @@ public:
   bool GetModifiedSinceRead() override;
 
 protected:
-  vtkMRMLVolumePropertyNode(void);
-  ~vtkMRMLVolumePropertyNode(void) override;
+  vtkMRMLVolumePropertyNode();
+  ~vtkMRMLVolumePropertyNode() override;
 
   static int NodesFromString(const std::string& dataString, double* &data, int nodeSize);
   static int DataFromString(const std::string& dataString, double* &data);

@@ -64,7 +64,7 @@
 #include <map>
 #include <vector>
 
-typedef void (*fp)(void);
+typedef void (*fp)();
 
 #define NUMERIC_ZERO 0.001
 

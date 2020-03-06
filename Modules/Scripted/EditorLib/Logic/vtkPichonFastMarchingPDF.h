@@ -23,9 +23,8 @@ of Intensity and Inhomogeneity
 class PichonFastMarchingPDF
 {
 public:
-
-  double getMean( void ) { return mean; };
-  double getSigma2( void ) { return sigma2; };
+  double getMean() { return mean; };
+  double getSigma2() { return sigma2; };
 
   PichonFastMarchingPDF( int realizationMax );
   ~PichonFastMarchingPDF();
@@ -33,10 +32,10 @@ public:
   void setMemory( int mem );
   void setUpdateRate( int rate );
 
-  bool willUseGaussian( void );
+  bool willUseGaussian();
 
-  void reset( void );
-  void update( void );
+  void reset();
+  void update();
 
   double value( int k );
   void addRealization( int k );
@@ -46,7 +45,7 @@ public:
   bool isUnlikelyBigGauss( double k );
   */
 
-  void show( void );
+  void show();
 
   friend class vtkFastMarching;
 

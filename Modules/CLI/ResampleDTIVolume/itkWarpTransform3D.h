@@ -39,11 +39,11 @@ public:
   /** New method for creation through the object factory.
    * NOTE: itkNewMacro is not used because we need to provide a
    * CreateAnother method for this class */
-  static Pointer New(void);
+  static Pointer New();
 
   /** CreateAnother method will clone the existing instance of this type,
    * including its internal member variables. */
-  ::itk::LightObject::Pointer CreateAnother(void) const override;
+  ::itk::LightObject::Pointer CreateAnother() const override;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(WarpTransform3D, Transform);

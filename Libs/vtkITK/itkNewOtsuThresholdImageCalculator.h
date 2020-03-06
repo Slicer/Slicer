@@ -56,7 +56,7 @@ public:
   itkSetConstObjectMacro(Image,ImageType);
 
   /** Compute the Otsu's threshold for the input image. */
-  void Compute(void);
+  void Compute();
 
   /** Return the Otsu's threshold value. */
   itkGetMacro(Threshold,PixelType);

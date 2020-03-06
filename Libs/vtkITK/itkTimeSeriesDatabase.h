@@ -85,8 +85,8 @@ public:
   itkGetMacro ( OutputDirection, typename OutputImageType::DirectionType );
 
   /** Standard method for a ImageSource object */
-  void GenerateOutputInformation(void) override;
-  void GenerateData(void) override;
+  void GenerateOutputInformation() override;
+  void GenerateData() override;
 
   /** A convenience method for reading a voxel's time course
    * Subsequent calls to voxels in the immediate region of this will be

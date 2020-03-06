@@ -71,10 +71,10 @@ public:
 
   void setActiveLabel(int label);
 
-  void initNewExpansion( void );
+  void initNewExpansion();
 
-  int nValidSeeds( void );
-  int nKnownPoints(void);
+  int nValidSeeds();
+  int nKnownPoints();
 
   void setNPointsEvolution( int n );
 
@@ -92,8 +92,8 @@ public:
 
   void show(float r);
 
-  char * cxxVersionString(void);
-  int cxxMajorVersion(void);
+  char* cxxVersionString();
+  int cxxMajorVersion();
   void tweak(char *name, double value);
 
 protected:
@@ -190,9 +190,9 @@ private:
   bool firstPassThroughShow;
 
   /// minheap methods
-  bool emptyTree(void);
+  bool emptyTree();
   void insert(const FMleaf leaf);
-  FMleaf removeSmallest( void );
+  FMleaf removeSmallest();
   void downTree(int index);
   void upTree(int index);
 
@@ -207,15 +207,15 @@ private:
   void setSeed(int index );
 
   void collectInfoSeed(int index );
-  void collectInfoAll( void );
+  void collectInfoAll();
 
   float speed(int index );
 
-  bool minHeapIsSorted( void );
+  bool minHeapIsSorted();
 
   /* perform one step of fast marching
      return the leaf which has just been added to fmsKNOWN */
-  float step( void );
+  float step();
 };
 
 #endif

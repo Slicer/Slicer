@@ -82,8 +82,8 @@ public:
   virtual bool GetModifiedSinceRead() VTK_OVERRIDE;
 
 protected:
-  vtkMRMLShaderPropertyNode(void);
-  ~vtkMRMLShaderPropertyNode(void) override;
+  vtkMRMLShaderPropertyNode();
+  ~vtkMRMLShaderPropertyNode() override;
 
 protected:
   /// Events observed on the transfer functions

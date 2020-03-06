@@ -77,7 +77,7 @@ public:
   //
   // Methods from Superclass
   //
-  void GenerateData( void ) override;
+  void GenerateData() override;
 
   //
   // Custom Methods
@@ -131,9 +131,8 @@ public:
 
   itkGetMacro( FinalMetricValue, double );
 protected:
-
-  OptimizedImageToImageRegistrationMethod( void );
-  ~OptimizedImageToImageRegistrationMethod( void ) override;
+  OptimizedImageToImageRegistrationMethod();
+  ~OptimizedImageToImageRegistrationMethod() override;
 
   itkSetMacro( FinalMetricValue, double );
 

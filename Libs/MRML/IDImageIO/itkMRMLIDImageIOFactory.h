@@ -40,8 +40,8 @@ public:
   typedef SmartPointer<const Self>  ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
-  const char* GetITKSourceVersion(void) const override;
-  const char* GetDescription(void) const override;
+  const char* GetITKSourceVersion() const override;
+  const char* GetDescription() const override;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -51,7 +51,7 @@ public:
   itkTypeMacro(MRMLIDImageIOFactory, ObjectFactoryBase);
 
   /** Register one factory of this type  */
-  static void RegisterOneFactory(void)
+  static void RegisterOneFactory()
   {
     MRMLIDImageIOFactory::Pointer nrrdFactory = MRMLIDImageIOFactory::New();
     ObjectFactoryBase::RegisterFactory(nrrdFactory);

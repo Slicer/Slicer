@@ -196,11 +196,11 @@ public:
   //  Update
   // **************
   // **************
-  void Initialize( void );
+  void Initialize();
 
   /** This class provides an Update() method to fit the appearance of a
    * ProcessObject API, but it is not a ProcessObject.  */
-  void Update( void );
+  void Update();
 
   // **************
   // **************
@@ -239,7 +239,7 @@ public:
   // Must be called after setting the BaselineImage in order to resample
   //   the moving image into the BaselineImage space, compute differences,
   //   and determine if it passed the test within the specified tolerances
-  void ComputeBaselineDifference( void );
+  void ComputeBaselineDifference();
 
   itkGetConstObjectMacro( BaselineDifferenceImage, TImage );
   itkGetConstObjectMacro( BaselineResampledMovingImage, TImage );
@@ -421,9 +421,8 @@ public:
   itkGetConstObjectMacro( BSplineTransform, BSplineTransformType );
   itkGetMacro( BSplineMetricValue, double );
 protected:
-
-  ImageToImageRegistrationHelper( void );
-  ~ImageToImageRegistrationHelper( void ) override;
+  ImageToImageRegistrationHelper();
+  ~ImageToImageRegistrationHelper() override;
 
   void PrintSelfHelper( std::ostream & os, Indent indent, const std::string basename, MetricMethodEnumType metric,
                         InterpolationMethodEnumType interpolation ) const;

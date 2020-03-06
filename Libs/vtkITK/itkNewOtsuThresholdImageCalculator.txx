@@ -43,10 +43,8 @@ NewOtsuThresholdImageCalculator<TInputImage>
 /*
  * Compute the Otsu's threshold
  */
-template<class TInputImage>
-void
-NewOtsuThresholdImageCalculator<TInputImage>
-::Compute(void)
+template <class TInputImage>
+void NewOtsuThresholdImageCalculator<TInputImage>::Compute()
 {
 
   unsigned int j;

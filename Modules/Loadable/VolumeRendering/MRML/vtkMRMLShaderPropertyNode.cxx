@@ -52,7 +52,7 @@ vtkMRMLShaderPropertyNode::vtkMRMLShaderPropertyNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLShaderPropertyNode::~vtkMRMLShaderPropertyNode(void)
+vtkMRMLShaderPropertyNode::~vtkMRMLShaderPropertyNode()
 {
   if(this->ShaderProperty)
     {

@@ -24,8 +24,7 @@ namespace itk
 {
 
 template <class TImage>
-AffineImageToImageRegistrationMethod<TImage>
-::AffineImageToImageRegistrationMethod( void )
+AffineImageToImageRegistrationMethod<TImage>::AffineImageToImageRegistrationMethod()
 {
   this->SetTransform( AffineTransformType::New() );
   this->GetTypedTransform()->SetIdentity();
@@ -72,15 +71,12 @@ AffineImageToImageRegistrationMethod<TImage>
 }
 
 template <class TImage>
-AffineImageToImageRegistrationMethod<TImage>
-::~AffineImageToImageRegistrationMethod( void )
+AffineImageToImageRegistrationMethod<TImage>::~AffineImageToImageRegistrationMethod()
 {
 }
 
 template <class TImage>
-void
-AffineImageToImageRegistrationMethod<TImage>
-::GenerateData( void )
+void AffineImageToImageRegistrationMethod<TImage>::GenerateData()
 {
   // Set the center of rotation
   this->GetTransform()->SetFixedParameters( this->GetInitialTransformFixedParameters() );
@@ -89,25 +85,22 @@ AffineImageToImageRegistrationMethod<TImage>
 }
 
 template <class TImage>
-typename AffineImageToImageRegistrationMethod<TImage>::TransformType
-* AffineImageToImageRegistrationMethod<TImage>
-::GetTypedTransform( void )
-  {
+typename AffineImageToImageRegistrationMethod<TImage>::TransformType*
+AffineImageToImageRegistrationMethod<TImage>::GetTypedTransform()
+{
   return static_cast<TransformType  *>( Superclass::GetTransform() );
-  }
+}
 
 template <class TImage>
-const typename AffineImageToImageRegistrationMethod<TImage>::TransformType
-* AffineImageToImageRegistrationMethod<TImage>
-::GetTypedTransform( void ) const
-  {
+const typename AffineImageToImageRegistrationMethod<TImage>::TransformType*
+AffineImageToImageRegistrationMethod<TImage>::GetTypedTransform() const
+{
   return static_cast<const TransformType  *>( Superclass::GetTransform() );
-  }
+}
 
 template <class TImage>
 typename AffineImageToImageRegistrationMethod<TImage>::AffineTransformPointer
-AffineImageToImageRegistrationMethod<TImage>
-::GetAffineTransform( void ) const
+AffineImageToImageRegistrationMethod<TImage>::GetAffineTransform() const
 {
   AffineTransformPointer trans = AffineTransformType::New();
 

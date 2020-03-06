@@ -12,9 +12,7 @@ namespace itk
 // Explicit New() method, used here because we need to split the itkNewMacro()
 // in order to overload the CreateAnother() method.
 template <class FieldData>
-typename WarpTransform3D<FieldData>::Pointer
-WarpTransform3D<FieldData>
-::New(void)
+typename WarpTransform3D<FieldData>::Pointer WarpTransform3D<FieldData>::New()
 {
   Pointer smartPtr = ::itk::ObjectFactory<Self>::Create();
 
@@ -29,9 +27,7 @@ WarpTransform3D<FieldData>
 // Explicit New() method, used here because we need to split the itkNewMacro()
 // in order to overload the CreateAnother() method.
 template <class FieldData>
-::itk::LightObject::Pointer
-WarpTransform3D<FieldData>
-::CreateAnother(void) const
+::itk::LightObject::Pointer WarpTransform3D<FieldData>::CreateAnother() const
 {
   ::itk::LightObject::Pointer smartPtr;
   Pointer copyPtr = Self::New().GetPointer();

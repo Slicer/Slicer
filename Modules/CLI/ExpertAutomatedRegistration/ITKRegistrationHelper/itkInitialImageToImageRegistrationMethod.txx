@@ -26,8 +26,7 @@ namespace itk
 {
 
 template <class TImage>
-InitialImageToImageRegistrationMethod<TImage>
-::InitialImageToImageRegistrationMethod( void )
+InitialImageToImageRegistrationMethod<TImage>::InitialImageToImageRegistrationMethod()
 {
   this->SetTransform( TransformType::New() );
   this->GetTypedTransform()->SetIdentity();
@@ -37,21 +36,17 @@ InitialImageToImageRegistrationMethod<TImage>
   this->m_ComputeCenterOfRotationOnly = false;
 
   this->m_UseLandmarks = false;
-
 }
 
 template <class TImage>
-InitialImageToImageRegistrationMethod<TImage>
-::~InitialImageToImageRegistrationMethod( void )
+InitialImageToImageRegistrationMethod<TImage>::~InitialImageToImageRegistrationMethod()
 {
 }
 
 /** Only the GenerateData() method should be overloaded. The Update() method
  * must not be overloaded */
 template <class TImage>
-void
-InitialImageToImageRegistrationMethod<TImage>
-::GenerateData( void )
+void InitialImageToImageRegistrationMethod<TImage>::GenerateData()
 {
   Superclass::GenerateData();
 
@@ -332,25 +327,22 @@ InitialImageToImageRegistrationMethod<TImage>
 }
 
 template <class TImage>
-typename InitialImageToImageRegistrationMethod<TImage>::TransformType
-* InitialImageToImageRegistrationMethod<TImage>
-::GetTypedTransform( void )
-  {
+typename InitialImageToImageRegistrationMethod<TImage>::TransformType*
+InitialImageToImageRegistrationMethod<TImage>::GetTypedTransform()
+{
   return static_cast<TransformType  *>( Superclass::GetTransform() );
-  }
+}
 
 template <class TImage>
-const typename InitialImageToImageRegistrationMethod<TImage>::TransformType
-* InitialImageToImageRegistrationMethod<TImage>
-::GetTypedTransform( void ) const
-  {
-  return static_cast<const TransformType  *>( this->Superclass::GetTransform() );
-  }
+const typename InitialImageToImageRegistrationMethod<TImage>::TransformType*
+InitialImageToImageRegistrationMethod<TImage>::GetTypedTransform() const
+{
+  return static_cast<const TransformType *>( this->Superclass::GetTransform() );
+}
 
 template <class TImage>
 typename InitialImageToImageRegistrationMethod<TImage>::TransformPointer
-InitialImageToImageRegistrationMethod<TImage>
-::GetAffineTransform( void ) const
+InitialImageToImageRegistrationMethod<TImage>::GetAffineTransform() const
 {
   typename TransformType::Pointer trans = TransformType::New();
 

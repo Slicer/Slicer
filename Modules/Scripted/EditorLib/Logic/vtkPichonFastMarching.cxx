@@ -167,7 +167,7 @@ inline void vtkPichonFastMarching::getMedianInhomo( int index, int &med, int &in
   */
 }
 
-void vtkPichonFastMarching::initNewExpansion( void )
+void vtkPichonFastMarching::initNewExpansion()
 {
   if(invalidInputs)
     return;
@@ -236,7 +236,7 @@ void vtkPichonFastMarching::initNewExpansion( void )
     }
 }
 
-int vtkPichonFastMarching::nValidSeeds( void )
+int vtkPichonFastMarching::nValidSeeds()
 {
   if(invalidInputs)
     return 0;
@@ -244,7 +244,7 @@ int vtkPichonFastMarching::nValidSeeds( void )
   return (int)(seedPoints.size()+tree.size());
 }
 
-int vtkPichonFastMarching::nKnownPoints(void)
+int vtkPichonFastMarching::nKnownPoints()
 {
   if(invalidInputs)
     return 0;
@@ -545,9 +545,9 @@ void vtkPichonFastMarching::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "label: " << this->label << "\n";
 }
 
-bool vtkPichonFastMarching::emptyTree(void)
+bool vtkPichonFastMarching::emptyTree()
 {
-  return (tree.size()==0);
+  return (tree.size() == 0);
 }
 
 void vtkPichonFastMarching::insert(const FMleaf leaf) {
@@ -561,7 +561,7 @@ void vtkPichonFastMarching::insert(const FMleaf leaf) {
   upTree( (int)(tree.size()-1) );
 }
 
-bool vtkPichonFastMarching::minHeapIsSorted( void )
+bool vtkPichonFastMarching::minHeapIsSorted()
 {
   int N=(int)tree.size();
   int k;
@@ -694,7 +694,8 @@ void vtkPichonFastMarching::upTree(int index) {
     }
 }
 
-FMleaf vtkPichonFastMarching::removeSmallest( void ) {
+FMleaf vtkPichonFastMarching::removeSmallest()
+{
 
   FMleaf f;
   f=tree[0];
@@ -928,7 +929,7 @@ int vtkPichonFastMarching::indexFather(int n )
   return indexMin;
 }
 
-float vtkPichonFastMarching::step( void )
+float vtkPichonFastMarching::step()
 {
   if(invalidInputs)
     return (float)INF;
@@ -1271,17 +1272,17 @@ int vtkPichonFastMarching::addSeedsFromImage(vtkImageData* label)
   return nSeeds;
 }
 
-char *vtkPichonFastMarching::cxxVersionString(void)
+char *vtkPichonFastMarching::cxxVersionString()
 {
-    char *text = new char[100];
+  char* text = new char[100];
 
-    sprintf(text,"%d.%d \t(%s)",MAJOR_VERSION,MINOR_VERSION,DATE_VERSION);
-    return text;
+  sprintf(text, "%d.%d \t(%s)", MAJOR_VERSION, MINOR_VERSION, DATE_VERSION);
+  return text;
 }
 
-int vtkPichonFastMarching::cxxMajorVersion(void)
+int vtkPichonFastMarching::cxxMajorVersion()
 {
-    return MAJOR_VERSION;
+  return MAJOR_VERSION;
 }
 
 void vtkPichonFastMarching::tweak(char *name, double value)

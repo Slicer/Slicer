@@ -7,8 +7,7 @@
 
 namespace itk {
 
-ITKFactoryRegistration_EXPORT void itkFactoryRegistration(void);
-
+ITKFactoryRegistration_EXPORT void itkFactoryRegistration();
 }
 
 #endif

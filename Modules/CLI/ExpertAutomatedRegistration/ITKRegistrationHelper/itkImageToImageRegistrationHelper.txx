@@ -250,9 +250,7 @@ ImageToImageRegistrationHelper<TImage>
 }
 
 template <class TImage>
-void
-ImageToImageRegistrationHelper<TImage>
-::Initialize( void )
+void ImageToImageRegistrationHelper<TImage>::Initialize()
 {
   // m_LoadedTransform = 0;  Not Initialized - since it is a user parameter
   m_InitialTransform = nullptr;
@@ -292,10 +290,7 @@ ImageToImageRegistrationHelper<TImage>
 
 /** This class provides an Update() method to fit the appearance of a
  * ProcessObject API, but it is not a ProcessObject.  */
-template <class TImage>
-void
-ImageToImageRegistrationHelper<TImage>
-::Update( void )
+template <class TImage> void ImageToImageRegistrationHelper<TImage>::Update()
 {
   if( !(this->m_CompletedInitialization) )
     {

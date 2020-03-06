@@ -62,7 +62,7 @@ vtkMRMLVolumePropertyNode::vtkMRMLVolumePropertyNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumePropertyNode::~vtkMRMLVolumePropertyNode(void)
+vtkMRMLVolumePropertyNode::~vtkMRMLVolumePropertyNode()
 {
   if(this->VolumeProperty)
     {
