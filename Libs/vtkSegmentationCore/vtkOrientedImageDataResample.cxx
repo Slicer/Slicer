@@ -1886,7 +1886,7 @@ void vtkOrientedImageDataResample::CastImageForValue(vtkOrientedImageData* image
       {
       scalarType = VTK_DOUBLE;
       }
-    else if (value > VTK_UNSIGNED_LONG_MAX)
+    else if (value > static_cast<double>(VTK_UNSIGNED_LONG_MAX))
       {
       scalarType = VTK_FLOAT;
       }

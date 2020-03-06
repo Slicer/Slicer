@@ -860,18 +860,18 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
           }
         if ( imageIO->GetComponentType() == itk::ImageIOBase::INT )
           {
-          min = std::numeric_limits<int32_t>::min() < min ? std::numeric_limits<int32_t>::min() : min;
-          max = std::numeric_limits<int32_t>::max() > max ? std::numeric_limits<int32_t>::max() : max;
+          min = static_cast<double>(std::numeric_limits<int32_t>::min() < min ? std::numeric_limits<int32_t>::min() : min);
+          max = static_cast<double>(std::numeric_limits<int32_t>::max() > max ? std::numeric_limits<int32_t>::max() : max);
           }
         if ( imageIO->GetComponentType() == itk::ImageIOBase::ULONG )
           { // note that on windows ULONG is only 32 bit
-          min = std::numeric_limits<uint64_t>::min() < min ? std::numeric_limits<uint64_t>::min() : min;
-          max = std::numeric_limits<uint64_t>::max() > max ? std::numeric_limits<uint64_t>::max() : max;
+          min = static_cast<double>(std::numeric_limits<uint64_t>::min() < min ? std::numeric_limits<uint64_t>::min() : min);
+          max = static_cast<double>(std::numeric_limits<uint64_t>::max() > max ? std::numeric_limits<uint64_t>::max() : max);
           }
         if ( imageIO->GetComponentType() == itk::ImageIOBase::LONG )
           { // note that on windows LONG is only 32 bit
-          min = std::numeric_limits<int64_t>::min() < min ? std::numeric_limits<int64_t>::min() : min;
-          max = std::numeric_limits<int64_t>::max() > max ? std::numeric_limits<int64_t>::max() : max;
+          min = static_cast<double>(std::numeric_limits<int64_t>::min() < min ? std::numeric_limits<int64_t>::min() : min);
+          max = static_cast<double>(std::numeric_limits<int64_t>::max() > max ? std::numeric_limits<int64_t>::max() : max);
           }
         if ( imageIO->GetComponentType() == itk::ImageIOBase::FLOAT )
           {
@@ -901,7 +901,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
           {
           scalarType = VTK_UNSIGNED_INT;
           }
-        else if( max <= std::numeric_limits<uint64_t>::max() )
+        else if( max <= static_cast<double>(std::numeric_limits<uint64_t>::max()) )
           {
           scalarType = VTK_UNSIGNED_LONG;
           }
