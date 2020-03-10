@@ -833,27 +833,27 @@ void vtkMRMLDisplayNode::SetActiveAttributeLocationFromString(const char* str)
 //-----------------------------------------------------------
 void vtkMRMLDisplayNode::SetSliceIntersectionVisibility(int on)
 {
-  vtkWarningMacro("Deprecated, please use SetVisibility2D instead");
+  vtkWarningMacro("SetSliceIntersectionVisibility method is deprecated, please use SetVisibility2D instead");
   this->SetVisibility2D(on);
 }
 
 //-----------------------------------------------------------
 int vtkMRMLDisplayNode::GetSliceIntersectionVisibility()
 {
-  vtkDebugMacro("Deprecated, please use GetVisibility2D instead");
+  vtkDebugMacro("GetSliceIntersectionVisibility method is deprecated, please use GetVisibility2D instead");
   return this->GetVisibility2D();
 }
 
 //-----------------------------------------------------------
 void vtkMRMLDisplayNode::SliceIntersectionVisibilityOn()
 {
-  vtkWarningMacro("Deprecated, please use Visibility2DOn instead");
+  vtkWarningMacro("SliceIntersectionVisibilityOn method is deprecated, please use Visibility2DOn instead");
   this->Visibility2DOn();
 }
 
 //-----------------------------------------------------------
 void vtkMRMLDisplayNode::SliceIntersectionVisibilityOff()
 {
-  vtkWarningMacro("Deprecated, please use Visibility2DOff instead");
+  vtkWarningMacro("SliceIntersectionVisibilityOff method is deprecated, please use Visibility2DOff instead");
   this->Visibility2DOff();
 }
