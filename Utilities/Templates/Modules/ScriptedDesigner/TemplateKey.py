@@ -40,6 +40,9 @@ class TemplateKeyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   """
 
   def __init__(self, parent=None):
+    """
+    Called when the user opens the module the first time and the widget is initialized.
+    """
     ScriptedLoadableModuleWidget.__init__(self, parent)
     VTKObservationMixin.__init__(self)  # needed for parameter node observation
     self.logic = None
@@ -61,20 +64,23 @@ class TemplateKeyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     # "setMRMLScene(vtkMRMLScene*)" slot.
     uiWidget.setMRMLScene(slicer.mrmlScene)
 
-    # Create a new parameterNode (it stores user's node and parameter values choices in the scene)
+    # Create a new parameterNode
+    # This parameterNode stores all user choices in parameter values, node selections, etc.
+    # so that when the scene is saved and reloaded, these settings are restored.
     self.logic = TemplateKeyLogic()
     self.ui.parameterNodeSelector.addAttribute("vtkMRMLScriptedModuleNode", "ModuleName", self.moduleName)
     self.setParameterNode(self.logic.getParameterNode())
 
     # Connections
     self.ui.parameterNodeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.setParameterNode)
+    self.ui.applyButton.connect('clicked(bool)', self.onApplyButton)
 
+    # These connections ensure that whenever user changes some settings on the GUI, that is saved in the MRML scene
+    # (in the selected parameter node).
     self.ui.inputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
     self.ui.outputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
     self.ui.imageThresholdSliderWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
     self.ui.invertOutputCheckBox.connect("toggled(bool)", self.updateParameterNodeFromGUI)
-
-    self.ui.applyButton.connect('clicked(bool)', self.onApplyButton)
 
     # Initial GUI update
     self.updateGUIFromParameterNode()
@@ -93,16 +99,26 @@ class TemplateKeyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     if inputParameterNode:
       self.logic.setDefaultParameters(inputParameterNode)
+
+    # Set parameter node in the parameter node selector widget
     wasBlocked = self.ui.parameterNodeSelector.blockSignals(True)
     self.ui.parameterNodeSelector.setCurrentNode(inputParameterNode)
     self.ui.parameterNodeSelector.blockSignals(wasBlocked)
+
     if inputParameterNode == self._parameterNode:
+      # No change
       return
+
+    # Unobserve previusly selected parameter node and add an observer to the newly selected.
+    # Changes of parameter node are observed so that whenever parameters are changed by a script or any other module
+    # those are reflected immediately in the GUI.
     if self._parameterNode is not None:
       self.removeObserver(self._parameterNode, vtk.vtkCommand.ModifiedEvent, self.updateGUIFromParameterNode)
     if inputParameterNode is not None:
       self.addObserver(inputParameterNode, vtk.vtkCommand.ModifiedEvent, self.updateGUIFromParameterNode)
     self._parameterNode = inputParameterNode
+
+    # Initial GUI update
     self.updateGUIFromParameterNode()
 
   def updateGUIFromParameterNode(self, caller=None, event=None):
@@ -118,6 +134,8 @@ class TemplateKeyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       return
 
     # Update each widget from parameter node
+    # Need to temporarily block signals to prevent infinite recursion (MRML node update triggers
+    # GUI update, which triggers MRML node update, which triggers GUI update, ...)
 
     wasBlocked = self.ui.inputSelector.blockSignals(True)
     self.ui.inputSelector.setCurrentNode(self._parameterNode.GetNodeReference("InputVolume"))
@@ -145,8 +163,8 @@ class TemplateKeyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
   def updateParameterNodeFromGUI(self, caller=None, event=None):
     """
-    This method is called when the user makes changes in the GUI.
-    The changes are saved into the parameter node (so that they are preserved when the scene is saved and loaded).
+    This method is called when the user makes any change in the GUI.
+    The changes are saved into the parameter node (so that they are restored when the scene is saved and loaded).
     """
 
     if self._parameterNode is None:
@@ -185,6 +203,9 @@ class TemplateKeyLogic(ScriptedLoadableModuleLogic):
   """
 
   def setDefaultParameters(self, parameterNode):
+    """
+    Initialize parameter node with default settings.
+    """
     if not parameterNode.GetParameter("Threshold"):
       parameterNode.SetParameter("Threshold", "50.0")
     if not parameterNode.GetParameter("Invert"):
