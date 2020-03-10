@@ -757,7 +757,12 @@ void vtkSlicerMarkupsWidget::StartWidgetInteraction(vtkMRMLInteractionEventData*
     // to add a new point with a minimum number of events.
     bool wasDisabled = markupsNode->GetDisableModifiedEvent();
     markupsNode->DisableModifiedEventOn();
-    markupsNode->SetAttribute("Markups.MovingInSliceView", rep->GetViewNode() ? rep->GetViewNode()->GetID() : "");
+    const char* layoutName = nullptr;
+    if (rep->GetViewNode() && rep->GetViewNode()->GetLayoutName())
+      {
+      layoutName = rep->GetViewNode()->GetLayoutName();
+      }
+    markupsNode->SetAttribute("Markups.MovingInSliceView", layoutName ? layoutName : "");
     std::ostringstream controlPointIndexStr;
     controlPointIndexStr << activeControlPointIndex;
     markupsNode->SetAttribute("Markups.MovingMarkupIndex", controlPointIndexStr.str().c_str());
