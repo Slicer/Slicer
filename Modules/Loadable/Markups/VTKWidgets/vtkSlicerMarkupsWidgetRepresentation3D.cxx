@@ -889,7 +889,6 @@ bool vtkSlicerMarkupsWidgetRepresentation3D::GetNthControlPointViewVisibility(in
   // SelectVisiblePoints is very sensitive to when it is executed (it has to check the z buffer after
   // opaque geometry is rendered but 2D labels are not yet), therefore we do not
   // update its output but just use the last output generated for the last rendering.
-  bool pointVisible = false;
   for (int controlPointType = 0; controlPointType <= Active; ++controlPointType)
     {
     if ((controlPointType == Unselected && markupsNode->GetNthControlPointSelected(n))
