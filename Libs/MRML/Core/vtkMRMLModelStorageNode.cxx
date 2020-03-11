@@ -191,7 +191,6 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
   int coordinateSystemInFileHeader = -1;
   vtkSmartPointer<vtkPointSet> meshFromFile;
-  bool meshIsPolydata = true;
   try
     {
     if (extension == std::string(".g") || extension == std::string(".byu"))
@@ -231,7 +230,6 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         unstructuredGridReader->ReadAllFieldsOn();
         unstructuredGridReader->Update();
         meshFromFile = unstructuredGridReader->GetOutput();
-        meshIsPolydata = false;
         }
       else
         {
@@ -254,7 +252,6 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       reader->SetFileName(fullName.c_str());
       reader->Update();
       meshFromFile = reader->GetOutput();
-      meshIsPolydata = false;
       coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFieldData(meshFromFile);
       }
     else if (extension == std::string(".stl"))
