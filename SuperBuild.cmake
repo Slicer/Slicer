@@ -127,6 +127,9 @@ if(Slicer_USE_PYTHONQT)
   list(APPEND Slicer_DEPENDENCIES
     python-pythonqt-requirements  # This provides the "packaging.version.parse()" function
     )
+  if(Slicer_USE_SCIPY)
+    list(APPEND Slicer_DEPENDENCIES python-scipy)
+  endif()
   if(Slicer_USE_NUMPY)
     list(APPEND Slicer_DEPENDENCIES python-numpy)
   endif()

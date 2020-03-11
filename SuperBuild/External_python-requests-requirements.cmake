@@ -1,16 +1,11 @@
 set(proj python-requests-requirements)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES python python-setuptools python-pip)
-
-set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
-file(WRITE ${requirements_file} [===[
-certifi==2019.9.11 --hash=sha256:fd7c7c74727ddcf00e9acd26bba8da604ffec95bf1c2144e67aff7a8b50e6cef
-idna==2.8 --hash=sha256:ea8b7f6188e6fa117537c3df7da9fc686d485087abf6ac197f9c46432f7e4a3c
-chardet==3.0.4 --hash=sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691
-urllib3==1.25.6 --hash=sha256:3de946ffbed6e6746608990594d08faac602528ac7015ac28d33cee6a45b7398
-requests==2.22.0 --hash=sha256:9cf5292fcd0f598c671cfc1e0d7d1a7f13bb8085e9a590f48c010551dc6c4b31
-]===])
+set(${proj}_DEPENDENCIES
+  python
+  python-pip
+  python-setuptools
+  )
 
 if(NOT DEFINED Slicer_USE_SYSTEM_${proj})
   set(Slicer_USE_SYSTEM_${proj} ${Slicer_USE_SYSTEM_python})
@@ -29,6 +24,14 @@ if(Slicer_USE_SYSTEM_${proj})
 endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})
+  set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
+  file(WRITE ${requirements_file} [===[
+  certifi==2019.9.11 --hash=sha256:fd7c7c74727ddcf00e9acd26bba8da604ffec95bf1c2144e67aff7a8b50e6cef
+  idna==2.8 --hash=sha256:ea8b7f6188e6fa117537c3df7da9fc686d485087abf6ac197f9c46432f7e4a3c
+  chardet==3.0.4 --hash=sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691
+  urllib3==1.25.6 --hash=sha256:3de946ffbed6e6746608990594d08faac602528ac7015ac28d33cee6a45b7398
+  requests==2.22.0 --hash=sha256:9cf5292fcd0f598c671cfc1e0d7d1a7f13bb8085e9a590f48c010551dc6c4b31
+  ]===])
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}

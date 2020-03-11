@@ -1,12 +1,11 @@
 set(proj python-pip)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES python python-ensurepip python-setuptools)
-
-set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
-file(WRITE ${requirements_file} [===[
-pip==19.3.1 --hash=sha256:6917c65fc3769ecdc61405d3dfd97afdedd75808d200b2838d7d961cebc0c2c7
-]===])
+set(${proj}_DEPENDENCIES
+  python
+  python-ensurepip
+  python-setuptools
+  )
 
 if(NOT DEFINED Slicer_USE_SYSTEM_${proj})
   set(Slicer_USE_SYSTEM_${proj} ${Slicer_USE_SYSTEM_python})
@@ -25,6 +24,10 @@ if(Slicer_USE_SYSTEM_${proj})
 endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})
+  set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
+  file(WRITE ${requirements_file} [===[
+  pip==19.3.1 --hash=sha256:6917c65fc3769ecdc61405d3dfd97afdedd75808d200b2838d7d961cebc0c2c7
+  ]===])
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}

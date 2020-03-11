@@ -1,19 +1,11 @@
 set(proj python-numpy)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES python python-setuptools python-pip)
-
-set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
-file(WRITE ${requirements_file} [===[
-nose==1.3.7 --hash=sha256:9ff7c6cc443f8c51994b34a667bbcf45afd6d945be7477b52e97516fd17c53ac  # needed for NumPy unit tests
-# Hashes correspond to the following packages:
-# - numpy-1.17.3-cp36-cp36m-win_amd64.whl
-# - numpy-1.17.3-cp36-cp36m-macosx_10_9_x86_64.whl
-# - numpy-1.17.3-cp36-cp36m-manylinux1_x86_64.whl
-numpy==1.17.3 --hash=sha256:2e418f0a59473dac424f888dd57e85f77502a593b207809211c76e5396ae4f5c \
-              --hash=sha256:669795516d62f38845c7033679c648903200980d68935baaa17ac5c7ae03ae0c \
-              --hash=sha256:4f2a2b279efde194877aff1f76cf61c68e840db242a5c7169f1ff0fd59a2b1e2
-]===])
+set(${proj}_DEPENDENCIES
+  python
+  python-pip
+  python-setuptools
+  )
 
 if(NOT DEFINED Slicer_USE_SYSTEM_${proj})
   set(Slicer_USE_SYSTEM_${proj} ${Slicer_USE_SYSTEM_python})
@@ -23,7 +15,10 @@ endif()
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(Slicer_USE_SYSTEM_${proj})
-  foreach(module_name IN ITEMS nose numpy)
+  foreach(module_name IN ITEMS
+    nose
+    numpy
+    )
     ExternalProject_FindPythonPackage(
       MODULE_NAME "${module_name}"
       REQUIRED
@@ -32,6 +27,17 @@ if(Slicer_USE_SYSTEM_${proj})
 endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})
+  set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
+  file(WRITE ${requirements_file} [===[
+  nose==1.3.7 --hash=sha256:9ff7c6cc443f8c51994b34a667bbcf45afd6d945be7477b52e97516fd17c53ac  # needed for NumPy unit tests
+  # Hashes correspond to the following packages:
+  # - numpy-1.17.3-cp36-cp36m-win_amd64.whl
+  # - numpy-1.17.3-cp36-cp36m-macosx_10_9_x86_64.whl
+  # - numpy-1.17.3-cp36-cp36m-manylinux1_x86_64.whl
+  numpy==1.17.3 --hash=sha256:2e418f0a59473dac424f888dd57e85f77502a593b207809211c76e5396ae4f5c \
+                --hash=sha256:669795516d62f38845c7033679c648903200980d68935baaa17ac5c7ae03ae0c \
+                --hash=sha256:4f2a2b279efde194877aff1f76cf61c68e840db242a5c7169f1ff0fd59a2b1e2
+  ]===])
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}

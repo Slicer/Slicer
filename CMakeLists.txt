@@ -290,6 +290,11 @@ CMAKE_DEPENDENT_OPTION(
   "Slicer_USE_PYTHONQT" OFF)
 mark_as_superbuild(Slicer_USE_NUMPY)
 
+CMAKE_DEPENDENT_OPTION(
+  Slicer_USE_SCIPY "Build Slicer with SciPy" ON
+  "Slicer_USE_PYTHONQT;Slicer_USE_NUMPY" OFF)
+mark_as_superbuild(Slicer_USE_SCIPY)
+
 option(Slicer_USE_CTKAPPLAUNCHER "Configure ctkAppLauncher." ON)
 mark_as_advanced(Slicer_USE_CTKAPPLAUNCHER)
 mark_as_superbuild(Slicer_USE_CTKAPPLAUNCHER)

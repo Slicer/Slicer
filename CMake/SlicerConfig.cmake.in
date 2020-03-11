@@ -114,6 +114,7 @@ endif()
 # --------------------------------------------------------------------------
 set(CMAKE_DEFAULT_BUILD_TYPE "@CMAKE_DEFAULT_BUILD_TYPE@")
 set(Slicer_USE_NUMPY "@Slicer_USE_NUMPY@")
+set(Slicer_USE_SCIPY "@Slicer_USE_SCIPY@")
 set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
 set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
 set(Slicer_USE_QtTesting "@Slicer_USE_QtTesting@")
@@ -269,7 +270,7 @@ set(RemoteIO_INCLUDE_DIRS "@RemoteIO_INCLUDE_DIRS_CONFIG@"
 
 set(vtkAddon_INCLUDE_DIRS "@vtkAddon_INCLUDE_DIRS_CONFIG@"
   CACHE INTERNAL "vtkAddon includes" FORCE)
-  
+
 set(vtkITK_INCLUDE_DIRS "@vtkITK_INCLUDE_DIRS_CONFIG@"
   CACHE INTERNAL "vtkITK includes" FORCE)
 
