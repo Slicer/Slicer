@@ -59,7 +59,11 @@ class vtkInformationIntegerVectorKey;
 /// (one "list" dimension and 3 spatial dimensions). Some additional metadata
 /// is stored in custom data fields (starting with Segmentation_ and SegmentN_
 /// prefix), which provide hints on how the segments should be displayed
-/// or what they contain.
+/// or what they contain. Each 3D volume is a "layer" in the image can contain many
+/// non-overlapping segments.
+/// If no segments within the segmentation overlap, then the segmentation will be
+/// saved as a 3D volume. Upon saving, segments are automatically collapsed to as
+/// few layers as possible.
 ///
 /// Common custom fields:
 ///
@@ -93,6 +97,9 @@ class vtkInformationIntegerVectorKey;
 /// - SegmentN_Extent: 6 space-separated values (minI, maxI, minJ, maxJ, minZ, maxZ) defining extent of non-empty region within the segment.
 /// - SegmentN_Tags: List of key:value pairs for storing additional information about the segmen. Key:value pair is separated by a : character,
 ///   pairs are separated from each other by | character.
+/// - SegmentN_Layer: Index of the 3D volume that contains the segment. For segmentations in which the segments do not overlap, the segmentation can
+///   be represented as a single 3D volume with 1 layer. Upon saving, segments are automatically collapsed to as few layers as possible.
+/// - SegmentN_LabelValue: The scalar value used to represent the segment within its own layer. Segments on separate layers can have the same label value.
 ///
 /// A frequently used key is "TerminologyEntry", which defines what the segment contains using DICOM compliant terminology. Value stores
 /// 7 parts: terminology context name, category, type, type modifier, anatomic context name, anatomic region, and anatomic region modifier.
