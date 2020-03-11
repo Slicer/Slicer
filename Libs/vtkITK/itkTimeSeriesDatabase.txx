@@ -575,8 +575,8 @@ void TimeSeriesDatabase<TPixel>::SetCacheSizeInMiB ( float sz )
 
 template <class TPixel>
 TimeSeriesDatabase<TPixel>::TimeSeriesDatabase ()
-: m_Cache ( 1024 )
-, m_CurrentImage(0)
+: m_CurrentImage(0)
+, m_Cache(1024)
 , m_BlocksPerFile(0)
 {
   this->m_Dimensions.SetSize ( 4 );
