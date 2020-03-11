@@ -46,6 +46,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
   def setup(self):
     # Tasks to execute after the application has started up
     slicer.app.connect("startupCompleted()", self.performPostModuleDiscoveryTasks)
+    slicer.app.connect("urlReceived(QString)", self.onURLReceived)
 
     pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
     pluginHandlerSingleton.registerPlugin(slicer.qSlicerSubjectHierarchyDICOMPlugin())
@@ -101,6 +102,40 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
       slicer.app.moduleManager().connect(
         'moduleAboutToBeUnloaded(QString)', self._onModuleAboutToBeUnloaded)
 
+  def onURLReceived(self, urlString):
+    """Process DICOM view requests. Example:
+    slicer://viewer/?studyUID=2.16.840.1.113669.632.20.121711.10000158860
+      &access_token=k0zR6WAPpNbVguQ8gGUHp6
+      &dicomweb_endpoint=http%3A%2F%2Fdemo.kheops.online%2Fapi
+      &dicomweb_uri_endpoint=%20http%3A%2F%2Fdemo.kheops.online%2Fapi%2Fwado
+    """
+
+    url = qt.QUrl(urlString)
+    if (url.authority().lower() != "viewer"):
+      return
+    query = qt.QUrlQuery(url)
+    queryMap = {}
+    for key, value in query.queryItems(qt.QUrl.FullyDecoded):
+      queryMap[key] = qt.QUrl.fromPercentEncoding(value)
+
+    if not "dicomweb_endpoint" in queryMap:
+      logging.error("Missing dicomweb_endpoint")
+      return
+    if not "studyUID" in queryMap:
+      logging.error("Missing studyUID")
+      return
+
+    accessToken = None
+    if "access_token" in queryMap:
+      accessToken = queryMap["access_token"]
+
+    slicer.util.selectModule("DICOM")
+    slicer.app.processEvents()
+    from DICOMLib import DICOMUtils
+    DICOMUtils.importFromDICOMWeb(
+      dicomWebEndpoint=queryMap["dicomweb_endpoint"],
+      studyInstanceUID=queryMap["studyUID"],
+      accessToken=accessToken)
 
   def initializeDICOMDatabase(self):
     #  Create alias for convenience

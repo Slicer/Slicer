@@ -721,17 +721,19 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
       study_instance_uid=studyInstanceUID,
       series_instance_uid=currentSeriesInstanceUID)
 
-    outputDirectoryBase = slicer.dicomDatabase.databaseDirectory + "/DICOMweb/" + qt.QDateTime.currentDateTime().toString("yyyyMMdd-hhmmss")
-    outputDirectory = qt.QTemporaryDir(outputDirectoryBase) # Add unique substring to directory
+    outputDirectoryBase = slicer.dicomDatabase.databaseDirectory + "/DICOMweb"
+    if not os.access(outputDirectoryBase, os.F_OK):
+      os.makedirs(outputDirectoryBase)
+    outputDirectoryBase += "/" + qt.QDateTime.currentDateTime().toString("yyyyMMdd-hhmmss")
+    outputDirectory = qt.QTemporaryDir(outputDirectoryBase)  # Add unique substring to directory
     outputDirectory.setAutoRemove(False)
     outputDirectoryPath = outputDirectory.path()
-    if not os.access(outputDirectoryPath, os.F_OK):
-      os.makedirs(outputDirectoryPath)
 
     for instance in instances:
       filename = outputDirectoryPath + "/" + str(fileNumber) + ".dcm"
       instance.save_as(filename)
       fileNumber += 1
+      slicer.app.processEvents()
     importDicom(outputDirectoryPath)
 
   return seriesInstanceUIDs

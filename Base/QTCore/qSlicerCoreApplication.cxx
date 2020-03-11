@@ -872,6 +872,13 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     {
     foreach(QString fileName, unparsedArguments)
       {
+      QUrl url = QUrl(fileName);
+      if (url.scheme().toLower() == this->applicationName().toLower()) // Scheme is case insensitive
+        {
+        emit urlReceived(fileName);
+        continue;
+        }
+
       QFileInfo file(fileName);
       if (file.exists())
         {
