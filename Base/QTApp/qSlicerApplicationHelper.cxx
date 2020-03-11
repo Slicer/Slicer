@@ -325,7 +325,10 @@ int qSlicerApplicationHelper::runAsAdmin(QString executable, QString parameters/
   CloseHandle(shExecInfo.hProcess);
   return exitCode;
 #else
-  qFatal() << Q_FUNC_INFO << ": not implemented for Linux and MacOSX."
+  Q_UNUSED(executable);
+  Q_UNUSED(parameters);
+  Q_UNUSED(workingDir);
+  qFatal("%s: not implemented for Linux and macOS.", Q_FUNC_INFO);
   return -1;
 #endif
 }
