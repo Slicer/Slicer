@@ -536,6 +536,11 @@ protected slots:
 signals:
   void mrmlSceneChanged(vtkMRMLScene* mrmlScene);
 
+  /// Signal is emmited when a url argument is processed with the slicer:// protocol
+  /// The url string is emitted with the signal.
+  /// Modules can connect to this signal to handle url arguments.
+  void urlReceived(QString url);
+
   /// Internal method used to move an invocation from a thread to the main thread.
   /// \sa requestInvokeEvent(), scheduleInvokeEvent()
   void invokeEventRequested(unsigned int delay, void* caller,
