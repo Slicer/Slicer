@@ -279,20 +279,7 @@ bool qSlicerApplicationHelper::checkRenderingCapabilities()
 
     // Run tscon system tool to create a new session, which terminates
     // the existing session (closes remote desktop connection).
-    SHELLEXECUTEINFO shExecInfo;
-    shExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
-    shExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-    shExecInfo.hwnd = nullptr;
-    // tscon requires administrator access, therefore "runas" verb is needed.
-    // UAC popup will be displayed.
-    shExecInfo.lpVerb = "runas";
-    shExecInfo.lpFile = "tscon.exe";
-    shExecInfo.lpParameters = "1 /dest:console";
-    shExecInfo.lpDirectory = nullptr;
-    shExecInfo.nShow = SW_MAXIMIZE;
-    shExecInfo.hInstApp = nullptr;
-    ShellExecuteEx(&shExecInfo);
-    WaitForSingleObject(shExecInfo.hProcess, INFINITE);
+    qSlicerApplicationHelper::runAsAdmin("tscon.exe", "1 /dest:console");
 
     QApplication::processEvents();
 
@@ -303,4 +290,42 @@ bool qSlicerApplicationHelper::checkRenderingCapabilities()
 #endif
 
   return (result == QMessageBox::Ignore);
+}
+
+//----------------------------------------------------------------------------
+int qSlicerApplicationHelper::runAsAdmin(QString executable, QString parameters/*=QString()*/, QString workingDir/*=QString()*/)
+{
+#if defined(_WIN32)
+  // Run tscon system tool to create a new session, which terminates
+  // the existing session (closes remote desktop connection).
+  SHELLEXECUTEINFO shExecInfo;
+  shExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+  shExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+  shExecInfo.hwnd = nullptr;
+  // tscon requires administrator access, therefore "runas" verb is needed.
+  // UAC popup will be displayed.
+  shExecInfo.lpVerb = "runas";
+  shExecInfo.lpFile = executable.toUtf8().constData();
+  shExecInfo.lpParameters = nullptr;
+  if (!parameters.isEmpty())
+    {
+    shExecInfo.lpParameters = parameters.toUtf8().constData();
+    }
+  shExecInfo.lpDirectory = nullptr;
+  if (!workingDir.isEmpty())
+    {
+    shExecInfo.lpDirectory = workingDir.toUtf8().constData();
+    }
+  shExecInfo.nShow = SW_MAXIMIZE;
+  shExecInfo.hInstApp = nullptr;
+  ShellExecuteEx(&shExecInfo);
+  WaitForSingleObject(shExecInfo.hProcess, INFINITE);
+  DWORD exitCode = 0;
+  GetExitCodeProcess(shExecInfo.hProcess, &exitCode);
+  CloseHandle(shExecInfo.hProcess);
+  return exitCode;
+#else
+  qFatal() << Q_FUNC_INFO << ": not implemented for Linux and MacOSX."
+  return -1;
+#endif
 }

@@ -65,6 +65,11 @@ public:
   /// See more information at https://issues.slicer.org/view.php?id=4252
   Q_INVOKABLE static bool checkRenderingCapabilities();
 
+  /// Run command as administrator (UAC on Windows, sudo on linux)
+  /// Currently only works on Windows.
+  /// Returns error code (0=success).
+  Q_INVOKABLE static int runAsAdmin(QString executable, QString parameters = QString(), QString workingDir = QString());
+
 private:
   Q_DISABLE_COPY(qSlicerApplicationHelper);
 };

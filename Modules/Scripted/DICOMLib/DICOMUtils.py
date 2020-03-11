@@ -678,3 +678,85 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
   slicer.mrmlScene.RemoveObserver(sceneObserverTag)
 
   return loadedNodeIDs
+
+def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=None, accessToken=None):
+  """
+  Downloads and imports DICOM series from a DICOMweb instance.
+  Example usage:
+    from DICOMLib import DICOMUtils
+
+    loadedUIDs = DICOMUtils.importFromDICOMWeb(dicomWebEndpoint="https://yourdicomweburl/dicomWebEndpoint",
+                                             studyInstanceUID="2.16.840.1.113669.632.20.1211.10000509338")
+                                             accessToken="YOUR_ACCESS_TOKEN")
+  :param dicomWebEndpoint: Endpoint URL for retrieving the study/series from DICOMweb
+  :param studyInstanceUID: UID for the study to be downloaded
+  :param seriesInstanceUID: UID for the series to be downloaded. If not specified, all series will be downloaded from the study
+  :param accessToken: Optional access token for the query
+  :return: List of imported study UIDs
+  """
+
+  from dicomweb_client.api import DICOMwebClient
+  import random
+
+  if accessToken is None:
+    client = DICOMwebClient(url = dicomWebEndpoint)
+  else:
+    client = DICOMwebClient(
+              url = dicomWebEndpoint,
+              headers = { "Authorization": "Bearer {}".format(accessToken) },
+              )
+
+  seriesList = client.search_for_series(study_instance_uid=studyInstanceUID)
+  seriesInstanceUIDs = []
+  if not seriesInstanceUID is None:
+    seriesInstanceUIDs = [seriesInstanceUID]
+  else:
+    for series in seriesList:
+      currentSeriesInstanceUID = series['0020000E']['Value'][0]
+      seriesInstanceUIDs.append(currentSeriesInstanceUID)
+
+  fileNumber = 0
+  for currentSeriesInstanceUID in seriesInstanceUIDs:
+    instances = client.retrieve_series(
+      study_instance_uid=studyInstanceUID,
+      series_instance_uid=currentSeriesInstanceUID)
+
+    outputDirectoryBase = slicer.dicomDatabase.databaseDirectory + "/DICOMweb/" + qt.QDateTime.currentDateTime().toString("yyyyMMdd-hhmmss")
+    outputDirectory = qt.QTemporaryDir(outputDirectoryBase) # Add unique substring to directory
+    outputDirectory.setAutoRemove(False)
+    outputDirectoryPath = outputDirectory.path()
+    if not os.access(outputDirectoryPath, os.F_OK):
+      os.makedirs(outputDirectoryPath)
+
+    for instance in instances:
+      filename = outputDirectoryPath + "/" + str(fileNumber) + ".dcm"
+      instance.save_as(filename)
+      fileNumber += 1
+    importDicom(outputDirectoryPath)
+
+  return seriesInstanceUIDs
+
+def registerSlicerURLHandler():
+  """
+  Registers slicer:// protocol with this executable.
+  For now, only implemented on Windows.
+  """
+  if os.name == 'nt':
+    slicerLauncherPath = os.path.abspath(slicer.app.launcherExecutableFilePath)
+    urlHandlerRegFile = r"""Windows Registry Editor Version 5.00
+[HKEY_CLASSES_ROOT\Slicer]
+@="URL:Slicer Slicer Protocol"
+"URL Protocol"=""
+[HKEY_CLASSES_ROOT\Slicer\DefaultIcon]
+@="Slicer.exe,1"
+[HKEY_CLASSES_ROOT\Slicer\shell]
+[HKEY_CLASSES_ROOT\Slicer\shell\open]
+[HKEY_CLASSES_ROOT\Slicer\shell\open\command]
+@="\"{0}\" \"%1\""
+""".format(slicerLauncherPath.replace("\\","\\\\"))
+    urlHandlerRegFilePath = slicer.app.temporaryPath+"registerSlicerUrlHandler.reg"
+    with open(urlHandlerRegFilePath, "wt") as f:
+      f.write(urlHandlerRegFile)
+    slicer.qSlicerApplicationHelper().runAsAdmin("Regedt32.exe", "/s "+urlHandlerRegFilePath)
+  else:
+    raise NotImplementedError()
