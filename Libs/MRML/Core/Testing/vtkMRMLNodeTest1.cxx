@@ -2430,7 +2430,7 @@ bool TestSetNodeReferenceIDToZeroOrEmptyString()
     {
     vtkNew<vtkMRMLNodeTestHelper1> referencingNode;
     scene->AddNode(referencingNode.GetPointer());
-    referencingNodes.push_back(referencingNode.GetPointer());
+    referencingNodes.emplace_back(referencingNode.GetPointer());
     }
 
   for (int idx = 0; idx < referencingNodeCount; ++idx)
@@ -2867,9 +2867,9 @@ int TestReadWriteXMLProperties()
   vtkNew<vtkMRMLNodeTestHelper1> node1;
 
   std::vector<std::string> testingStringsVector;
-  testingStringsVector.push_back("Several;Semicolon;In;One;String");
-  testingStringsVector.push_back("Percent%Sign");
-  testingStringsVector.push_back("%25%3B;%");
+  testingStringsVector.emplace_back("Several;Semicolon;In;One;String");
+  testingStringsVector.emplace_back("Percent%Sign");
+  testingStringsVector.emplace_back("%25%3B;%");
   node1->SetTestingStringVector(testingStringsVector);
 
   std::vector<float> testingFloatVector;

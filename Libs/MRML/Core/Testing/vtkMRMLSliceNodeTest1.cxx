@@ -106,9 +106,9 @@ int AddSliceOrientationPresetTest()
   CHECK_INT(sliceNode->GetNumberOfSliceOrientationPresets(), 3);
 
   std::vector<std::string> expectedOrientationNames;
-  expectedOrientationNames.push_back("Axial");
-  expectedOrientationNames.push_back("Sagittal");
-  expectedOrientationNames.push_back("Coronal");
+  expectedOrientationNames.emplace_back("Axial");
+  expectedOrientationNames.emplace_back("Sagittal");
+  expectedOrientationNames.emplace_back("Coronal");
 
   CHECK_INT(CheckOrientationPresetNames(sliceNode.GetPointer(),
                                         expectedOrientationNames), EXIT_SUCCESS);
@@ -155,8 +155,8 @@ int RemoveSliceOrientationPresetTest()
   CHECK_BOOL(sliceNode->RemoveSliceOrientationPreset("Twos"), true);
 
   std::vector<std::string> expectedOrientationNames;
-  expectedOrientationNames.push_back("Ones");
-  expectedOrientationNames.push_back("Threes");
+  expectedOrientationNames.emplace_back("Ones");
+  expectedOrientationNames.emplace_back("Threes");
 
   CHECK_EXIT_SUCCESS(CheckOrientationPresetNames(sliceNode.GetPointer(), expectedOrientationNames));
 
@@ -179,9 +179,9 @@ int RenameSliceOrientationPresetTest()
 
   {
     std::vector<std::string> expectedOrientationNames;
-    expectedOrientationNames.push_back("Axial");
-    expectedOrientationNames.push_back("Sagittal");
-    expectedOrientationNames.push_back("Coronal");
+    expectedOrientationNames.emplace_back("Axial");
+    expectedOrientationNames.emplace_back("Sagittal");
+    expectedOrientationNames.emplace_back("Coronal");
 
     CHECK_EXIT_SUCCESS(CheckOrientationPresetNames(sliceNode.GetPointer(), expectedOrientationNames));
   }
@@ -190,9 +190,9 @@ int RenameSliceOrientationPresetTest()
 
   {
     std::vector<std::string> expectedOrientationNames;
-    expectedOrientationNames.push_back("Foo");
-    expectedOrientationNames.push_back("Sagittal");
-    expectedOrientationNames.push_back("Coronal");
+    expectedOrientationNames.emplace_back("Foo");
+    expectedOrientationNames.emplace_back("Sagittal");
+    expectedOrientationNames.emplace_back("Coronal");
 
     CHECK_EXIT_SUCCESS(CheckOrientationPresetNames(sliceNode.GetPointer(), expectedOrientationNames));
   }
@@ -201,9 +201,9 @@ int RenameSliceOrientationPresetTest()
 
   {
     std::vector<std::string> expectedOrientationNames;
-    expectedOrientationNames.push_back("Foo");
-    expectedOrientationNames.push_back("Sagittal");
-    expectedOrientationNames.push_back("Bar");
+    expectedOrientationNames.emplace_back("Foo");
+    expectedOrientationNames.emplace_back("Sagittal");
+    expectedOrientationNames.emplace_back("Bar");
 
     CHECK_EXIT_SUCCESS(CheckOrientationPresetNames(sliceNode.GetPointer(), expectedOrientationNames));
   }
@@ -215,9 +215,9 @@ int RenameSliceOrientationPresetTest()
 
   {
     std::vector<std::string> expectedOrientationNames;
-    expectedOrientationNames.push_back("Foo");
-    expectedOrientationNames.push_back("Sagittal");
-    expectedOrientationNames.push_back("Bar");
+    expectedOrientationNames.emplace_back("Foo");
+    expectedOrientationNames.emplace_back("Sagittal");
+    expectedOrientationNames.emplace_back("Bar");
 
     CHECK_EXIT_SUCCESS(CheckOrientationPresetNames(sliceNode.GetPointer(), expectedOrientationNames));
   }

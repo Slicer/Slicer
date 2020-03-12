@@ -292,9 +292,9 @@ bool TestReadFileWithLabels(std::string filepath)
   double testArray0[3] = { 12.1, 425.576817, -454};
   double testArray1[3] = { 8796325425.01, 0.0, -1};
   std::vector< std::string > labelsIn;
-  labelsIn.push_back("x");
-  labelsIn.push_back("y");
-  labelsIn.push_back("yerr");
+  labelsIn.emplace_back("x");
+  labelsIn.emplace_back("y");
+  labelsIn.emplace_back("yerr");
 
   doubleArrayIn->AddValues(testArray0);
   doubleArrayIn->AddValues(testArray1);
@@ -363,9 +363,9 @@ bool TestReadOldFile(std::string filepath)
   double testArray0[3] = { 12.1, 425.576817, -454};
   double testArray1[3] = { 8796325425.01, 0.0, -1};
   std::vector< std::string > labelsIn;
-  labelsIn.push_back("x");
-  labelsIn.push_back("y");
-  labelsIn.push_back("yerr");
+  labelsIn.emplace_back("x");
+  labelsIn.emplace_back("y");
+  labelsIn.emplace_back("yerr");
 
   vtkNew<vtkMRMLDoubleArrayNode> doubleArrayOut;
   double testArray2[3];

@@ -501,7 +501,7 @@ void vtkMRMLAnnotationDisplayableManagerHelper::PlaceSeed(double x, double y, vt
   vtkHandleWidget * newhandle = this->SeedWidget->CreateNewHandle();
   vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(p);
 
-  this->HandleWidgetList.push_back(newhandle);
+  this->HandleWidgetList.emplace_back(newhandle);
 
   this->SeedWidget->On();
   this->SeedWidget->CompleteInteraction();

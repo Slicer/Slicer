@@ -141,22 +141,22 @@ struct BlendPipeline
       {
       if (backgroundImagePort)
         {
-        layers.push_back(SliceLayerInfo(backgroundImagePort, 1.0));
+        layers.emplace_back(backgroundImagePort, 1.0);
         }
       if (foregroundImagePort)
         {
-        layers.push_back(SliceLayerInfo(foregroundImagePort, foregroundOpacity));
+        layers.emplace_back(foregroundImagePort, foregroundOpacity);
         }
       }
     else if (sliceCompositing == vtkMRMLSliceCompositeNode::ReverseAlpha)
       {
       if (foregroundImagePort)
         {
-        layers.push_back(SliceLayerInfo(foregroundImagePort, 1.0));
+        layers.emplace_back(foregroundImagePort, 1.0);
         }
       if (backgroundImagePort)
         {
-        layers.push_back(SliceLayerInfo(backgroundImagePort, foregroundOpacity));
+        layers.emplace_back(backgroundImagePort, foregroundOpacity);
         }
       }
     else
@@ -172,13 +172,13 @@ struct BlendPipeline
         {
         this->AddSubMath->SetOperationToSubtract();
         }
-      layers.push_back(SliceLayerInfo(this->AddSubAppendRGBA->GetOutputPort(), 1.0));
+      layers.emplace_back(this->AddSubAppendRGBA->GetOutputPort(), 1.0);
       }
 
     // always blending the label layer
     if (labelImagePort)
       {
-      layers.push_back(SliceLayerInfo(labelImagePort, labelOpacity));
+      layers.emplace_back(labelImagePort, labelOpacity);
       }
   }
 

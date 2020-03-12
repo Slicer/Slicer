@@ -180,18 +180,18 @@ vtkMRMLAbstractDisplayableManager::vtkInternal::vtkInternal(
   this->InteractorStyleCallBackCommand->SetClientData(this->External);
 
   // Default Interactor style events to observe
-  this->InteractorStyleObservableEvents.push_back(std::make_pair(vtkCommand::LeftButtonPressEvent,0.0));
-  this->InteractorStyleObservableEvents.push_back(std::make_pair(vtkCommand::LeftButtonReleaseEvent,0.0));
-  this->InteractorStyleObservableEvents.push_back(std::make_pair(vtkCommand::RightButtonPressEvent,0.0));
-  this->InteractorStyleObservableEvents.push_back(std::make_pair(vtkCommand::RightButtonReleaseEvent,0.0));
-  this->InteractorStyleObservableEvents.push_back(std::make_pair(vtkCommand::MiddleButtonPressEvent,0.0));
-  this->InteractorStyleObservableEvents.push_back(std::make_pair(vtkCommand::MiddleButtonReleaseEvent,0.0));
-  this->InteractorStyleObservableEvents.push_back(std::make_pair(vtkCommand::MouseWheelBackwardEvent,0.0));
-  this->InteractorStyleObservableEvents.push_back(std::make_pair(vtkCommand::MouseWheelForwardEvent,0.0));
-  this->InteractorStyleObservableEvents.push_back(std::make_pair(vtkCommand::EnterEvent,0.0));
-  this->InteractorStyleObservableEvents.push_back(std::make_pair(vtkCommand::LeaveEvent,0.0));
-  this->InteractorStyleObservableEvents.push_back(std::make_pair(vtkCommand::Button3DEvent,0.0));
-  this->InteractorStyleObservableEvents.push_back(std::make_pair(vtkCommand::Move3DEvent,0.0));
+  this->InteractorStyleObservableEvents.emplace_back(vtkCommand::LeftButtonPressEvent,0.0);
+  this->InteractorStyleObservableEvents.emplace_back(vtkCommand::LeftButtonReleaseEvent,0.0);
+  this->InteractorStyleObservableEvents.emplace_back(vtkCommand::RightButtonPressEvent,0.0);
+  this->InteractorStyleObservableEvents.emplace_back(vtkCommand::RightButtonReleaseEvent,0.0);
+  this->InteractorStyleObservableEvents.emplace_back(vtkCommand::MiddleButtonPressEvent,0.0);
+  this->InteractorStyleObservableEvents.emplace_back(vtkCommand::MiddleButtonReleaseEvent,0.0);
+  this->InteractorStyleObservableEvents.emplace_back(vtkCommand::MouseWheelBackwardEvent,0.0);
+  this->InteractorStyleObservableEvents.emplace_back(vtkCommand::MouseWheelForwardEvent,0.0);
+  this->InteractorStyleObservableEvents.emplace_back(vtkCommand::EnterEvent,0.0);
+  this->InteractorStyleObservableEvents.emplace_back(vtkCommand::LeaveEvent,0.0);
+  this->InteractorStyleObservableEvents.emplace_back(vtkCommand::Button3DEvent,0.0);
+  this->InteractorStyleObservableEvents.emplace_back(vtkCommand::Move3DEvent,0.0);
 }
 
 //-----------------------------------------------------------------------------
@@ -411,7 +411,7 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::UpdateInteractorStyle(int e
       }
     else
       {
-      this->InteractorStyleObservableEvents.push_back(std::make_pair(eventIdToObserve,priority));
+      this->InteractorStyleObservableEvents.emplace_back(eventIdToObserve,priority);
       }
     }
 
@@ -486,7 +486,7 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::UpdateInteractor(int eventI
       }
     else
       {
-      this->InteractorObservableEvents.push_back(std::make_pair(eventIdToObserve,priority));
+      this->InteractorObservableEvents.emplace_back(eventIdToObserve,priority);
       }
     }
 

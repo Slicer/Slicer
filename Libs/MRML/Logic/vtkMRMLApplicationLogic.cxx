@@ -704,7 +704,7 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
   // the new data directory
   std::vector<std::string> pathComponents;
   vtksys::SystemTools::SplitPath(rootDir.c_str(), pathComponents);
-  pathComponents.push_back("Data");
+  pathComponents.emplace_back("Data");
   std::string dataDir =  vtksys::SystemTools::JoinPath(pathComponents);
   vtkDebugMacro("using data dir of " << dataDir);
 
@@ -1080,7 +1080,7 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene,
 
     filesVector.clear();
     filesVector.push_back(dirString);
-    filesVector.push_back(std::string("/"));
+    filesVector.emplace_back("/");
 
 #ifdef WIN32
     WIN32_FIND_DATA findData;
@@ -1110,7 +1110,7 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene,
       while ((dirp = readdir(dp)) != nullptr)
         {
         // add this file to the vector holding the base dir name
-        filesVector.push_back(std::string(dirp->d_name));
+        filesVector.emplace_back(dirp->d_name);
 #endif
 
         std::string fileToCheck = vtksys::SystemTools::JoinPath(filesVector);

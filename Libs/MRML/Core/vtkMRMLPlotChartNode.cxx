@@ -412,7 +412,7 @@ int vtkMRMLPlotChartNode::GetPlotSeriesNodeNames(std::vector<std::string> &plotS
       {
       continue;
       }
-    plotSeriesNodeNames.push_back(pnode->GetName());
+    plotSeriesNodeNames.emplace_back(pnode->GetName());
     }
 
   return static_cast<int>(plotSeriesNodeNames.size());
@@ -425,7 +425,7 @@ int vtkMRMLPlotChartNode::GetPlotSeriesNodeIDs(std::vector<std::string> &plotSer
   int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
   for (int plotIndex = 0; plotIndex < numPlotSeriesNodes; plotIndex++)
     {
-    plotSeriesNodeIDs.push_back(this->GetNthPlotSeriesNodeID(plotIndex));
+    plotSeriesNodeIDs.emplace_back(this->GetNthPlotSeriesNodeID(plotIndex));
     }
 
   return static_cast<int>(plotSeriesNodeIDs.size());

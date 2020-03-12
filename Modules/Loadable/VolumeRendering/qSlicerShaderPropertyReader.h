@@ -48,7 +48,7 @@ public:
   IOFileType fileType() const override;
   QStringList extensions() const override;
 
-  bool load(const IOProperties& properties) override;
+  bool load(const IOProperties& properties) override ;
 
 protected:
   QScopedPointer<qSlicerShaderPropertyReaderPrivate> d_ptr;

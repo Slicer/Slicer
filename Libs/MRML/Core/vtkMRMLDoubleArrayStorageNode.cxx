@@ -143,7 +143,7 @@ int vtkMRMLDoubleArrayStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
               {
               if (haslabels)
                 {
-                labels.push_back(ptr);
+                labels.emplace_back(ptr);
                 }
               else
                 {
@@ -154,7 +154,7 @@ int vtkMRMLDoubleArrayStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
               {
               if (haslabels)
                 {
-                labels.push_back(ptr);
+                labels.emplace_back(ptr);
                 }
               else
                 {
@@ -165,7 +165,7 @@ int vtkMRMLDoubleArrayStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
               {
               if (haslabels)
                 {
-                labels.push_back(ptr);
+                labels.emplace_back(ptr);
                 }
               else
                 {

@@ -1901,7 +1901,7 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarch
         const char* nodeID = (*allShNodeIt)->GetID();
         if (nodeID)
           {
-          allShNodeIDs.push_back(nodeID);
+          allShNodeIDs.emplace_back(nodeID);
           }
         }
 

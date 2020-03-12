@@ -92,11 +92,11 @@ template <class T> bool areValidNodes(const std::vector<T>& nodes,
                                       const char* testName)
 {
   std::vector<std::string> unitNodeIDs;
-  unitNodeIDs.push_back("vtkMRMLUnitNodeApplicationLength");
-  unitNodeIDs.push_back("vtkMRMLUnitNodeApplicationTime");
-  unitNodeIDs.push_back("vtkMRMLUnitNodeApplicationFrequency");
-  unitNodeIDs.push_back("vtkMRMLUnitNodeApplicationVelocity");
-  unitNodeIDs.push_back("vtkMRMLUnitNodeApplicationIntensity");
+  unitNodeIDs.emplace_back("vtkMRMLUnitNodeApplicationLength");
+  unitNodeIDs.emplace_back("vtkMRMLUnitNodeApplicationTime");
+  unitNodeIDs.emplace_back("vtkMRMLUnitNodeApplicationFrequency");
+  unitNodeIDs.emplace_back("vtkMRMLUnitNodeApplicationVelocity");
+  unitNodeIDs.emplace_back("vtkMRMLUnitNodeApplicationIntensity");
   const size_t numberOfUnits = unitNodeIDs.size();
 
   if (nodes.size() != numberOfUnits)
