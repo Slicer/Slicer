@@ -59,7 +59,7 @@ public:
     , m_Parent(NullNodeIndex)
     , m_Child(NullNodeIndex)
     , m_Degree(0)
-    , m_Mark(0)
+    , m_Mark(false)
     , m_Key(0)
     , m_Index(NullNodeIndex)
   {

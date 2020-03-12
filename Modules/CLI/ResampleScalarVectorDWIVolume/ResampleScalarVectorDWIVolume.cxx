@@ -772,13 +772,13 @@ int SeparateImages( const typename itk::VectorImage<PixelType, 3>
 // Verify if some input parameters are null
 bool VectorIsNul( std::vector<double> vec )
 {
-  bool zero = 1;
+  bool zero = true;
 
   for( ::size_t i = 0; i < vec.size(); i++ )
     {
     if( vec[i] != 0 )
       {
-      zero = 0;
+      zero = false;
       }
     }
   return zero;
@@ -1017,7 +1017,7 @@ int TransformGradients( itk::MetaDataDictionary & dico,
   typedef itk::MetaDataObject<std::string> MetaDataStringType;
   itk::MetaDataDictionary::ConstIterator itr = dico.Begin();
   itk::MetaDataDictionary::ConstIterator end = dico.End();
-  bool                                   dtmri = 0;
+  bool                                   dtmri = false;
   while( itr != end )
     {
     itk::MetaDataObjectBase::Pointer entry = itr->second;
@@ -1029,7 +1029,7 @@ int TransformGradients( itk::MetaDataDictionary & dico,
       int pos = itr->first.find( "DWMRI_gradient" );
       if( pos != -1 )
         {
-        dtmri = 1;
+        dtmri = true;
         if( inverseTransform )
           {
           std::string            tagvalue = entryvalue->GetMetaDataObjectValue();

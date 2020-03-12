@@ -627,7 +627,7 @@ void vtkMRMLLinearTransformsDisplayableManager3D::OnMRMLSceneNodeAdded(vtkMRMLNo
   // Escape if the scene a scene is being closed, imported or connected
   if (this->GetMRMLScene()->IsBatchProcessing())
     {
-    this->SetUpdateFromMRMLRequested(1);
+    this->SetUpdateFromMRMLRequested(true);
     return;
     }
 
@@ -712,7 +712,7 @@ void vtkMRMLLinearTransformsDisplayableManager3D::ProcessMRMLNodesEvents(vtkObje
 //---------------------------------------------------------------------------
 void vtkMRMLLinearTransformsDisplayableManager3D::UpdateFromMRML()
 {
-  this->SetUpdateFromMRMLRequested(0);
+  this->SetUpdateFromMRMLRequested(false);
 
   vtkMRMLScene* scene = this->GetMRMLScene();
   if (!scene)
@@ -751,13 +751,13 @@ void vtkMRMLLinearTransformsDisplayableManager3D::OnMRMLSceneStartClose()
 //---------------------------------------------------------------------------
 void vtkMRMLLinearTransformsDisplayableManager3D::OnMRMLSceneEndClose()
 {
-  this->SetUpdateFromMRMLRequested(1);
+  this->SetUpdateFromMRMLRequested(true);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLLinearTransformsDisplayableManager3D::OnMRMLSceneEndBatchProcess()
 {
-  this->SetUpdateFromMRMLRequested(1);
+  this->SetUpdateFromMRMLRequested(true);
   this->RequestRender();
 }
 
@@ -765,7 +765,7 @@ void vtkMRMLLinearTransformsDisplayableManager3D::OnMRMLSceneEndBatchProcess()
 void vtkMRMLLinearTransformsDisplayableManager3D::Create()
 {
   Superclass::Create();
-  this->SetUpdateFromMRMLRequested(1);
+  this->SetUpdateFromMRMLRequested(true);
 }
 
 //---------------------------------------------------------------------------

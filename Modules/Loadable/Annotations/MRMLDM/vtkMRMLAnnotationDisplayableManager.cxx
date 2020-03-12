@@ -284,7 +284,7 @@ void vtkMRMLAnnotationDisplayableManager::UpdateFromMRML()
   // turn off update from mrml requested, as we're doing it now, and create
   // widget requests a render which checks this flag before calling update
   // from mrml again
-  this->SetUpdateFromMRMLRequested(0);
+  this->SetUpdateFromMRMLRequested(false);
 
   // loop over the nodes for which this manager provides widgets
   std::vector<vtkMRMLNode*> nodes;
@@ -401,7 +401,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneEndClose()
   // run through all nodes and remove node and widget
   this->Helper->RemoveAllWidgetsAndNodes();
 
-  this->SetUpdateFromMRMLRequested(1);
+  this->SetUpdateFromMRMLRequested(true);
   this->RequestRender();
 
 }
@@ -1232,13 +1232,13 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
   if (!sliceNode)
     {
     vtkErrorMacro("IsWidgetDisplayable: Could not get the sliceNode.")
-    return 0;
+    return false;
     }
 
   if (!node)
     {
     vtkErrorMacro("IsWidgetDisplayable: Could not get the annotation node.")
-    return 0;
+    return false;
     }
 
   bool showWidget = true;
@@ -1248,7 +1248,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
   vtkMRMLDisplayNode *displayNode = node->GetDisplayNode();
   if (displayNode && !displayNode->IsDisplayableInView(sliceNode->GetID()))
     {
-    return 0;
+    return false;
     }
 
   // down cast the node as a control points node to get the coordinates
@@ -1257,7 +1257,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
   if (!controlPointsNode)
     {
     vtkErrorMacro("IsWidgetDisplayable: Could not get the controlpoints node.")
-    return 0;
+    return false;
     }
 
   if (this->IsInLightboxMode())

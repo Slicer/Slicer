@@ -1843,7 +1843,7 @@ void vtkOrientedImageDataResample::CastImageForValue(vtkOrientedImageData* image
   switch (scalarType)
     {
     case VTK_CHAR:
-      typeIsSigned = (bool)VTK_TYPE_CHAR_IS_SIGNED;
+      typeIsSigned = true;
       break;
     case VTK_SIGNED_CHAR:
     case VTK_SHORT:

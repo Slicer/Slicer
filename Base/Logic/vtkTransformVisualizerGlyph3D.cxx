@@ -49,7 +49,7 @@ vtkTransformVisualizerGlyph3D::vtkTransformVisualizerGlyph3D()
 {
   this->ScaleDirectional = true;
 
-  this->MagnitudeThresholding = 0;
+  this->MagnitudeThresholding = false;
   this->MagnitudeThresholdLower = 0.0;
   this->MagnitudeThresholdUpper = 100.0;
 }

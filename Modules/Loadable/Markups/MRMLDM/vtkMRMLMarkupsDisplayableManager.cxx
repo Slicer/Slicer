@@ -172,7 +172,7 @@ void vtkMRMLMarkupsDisplayableManager::UpdateFromMRML()
   // turn off update from mrml requested, as we're doing it now, and create
   // widget requests a render which checks this flag before calling update
   // from mrml again
-  this->SetUpdateFromMRMLRequested(0);
+  this->SetUpdateFromMRMLRequested(false);
 
   std::vector<vtkMRMLNode*> markupNodes;
   this->GetMRMLScene()->GetNodesByClass("vtkMRMLMarkupsNode", markupNodes);
@@ -342,7 +342,7 @@ void vtkMRMLMarkupsDisplayableManager::OnMRMLSceneEndClose()
   // run through all nodes and remove node and widget
   this->Helper->RemoveAllWidgetsAndNodes();
 
-  this->SetUpdateFromMRMLRequested(1);
+  this->SetUpdateFromMRMLRequested(true);
   this->RequestRender();
 
 }
@@ -350,7 +350,7 @@ void vtkMRMLMarkupsDisplayableManager::OnMRMLSceneEndClose()
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsDisplayableManager::OnMRMLSceneEndImport()
 {
-  this->SetUpdateFromMRMLRequested(1);
+  this->SetUpdateFromMRMLRequested(true);
   this->UpdateFromMRMLScene();
   //this->Helper->SetAllWidgetsToManipulate();
   this->RequestRender();
@@ -376,7 +376,7 @@ void vtkMRMLMarkupsDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
   // if the scene is still updating, jump out
   if (this->GetMRMLScene()->IsBatchProcessing())
     {
-    this->SetUpdateFromMRMLRequested(1);
+    this->SetUpdateFromMRMLRequested(true);
     return;
     }
 

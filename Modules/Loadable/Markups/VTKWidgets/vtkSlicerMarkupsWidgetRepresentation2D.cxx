@@ -948,7 +948,7 @@ bool vtkSlicerMarkupsWidgetRepresentation2D::IsCenterDisplayableOnSlice(vtkMRMLM
   vtkMRMLDisplayNode *displayNode = markupsNode->GetDisplayNode();
   if (displayNode && !displayNode->IsDisplayableInView(sliceNode->GetID()))
     {
-    return 0;
+    return false;
     }
 
   // down cast the node as a controlpoints node to get the coordinates

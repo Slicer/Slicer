@@ -121,7 +121,7 @@ vtkSlicerMarkupsWidgetRepresentation::vtkSlicerMarkupsWidgetRepresentation()
     this->ControlPoints[i] = nullptr;
     }
 
-  this->AlwaysOnTop = 0;
+  this->AlwaysOnTop = false;
 
 }
 

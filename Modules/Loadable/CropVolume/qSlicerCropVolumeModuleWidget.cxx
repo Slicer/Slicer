@@ -617,7 +617,7 @@ void qSlicerCropVolumeModuleWidget::updateWidgetFromMRML()
 
     d->IsotropicCheckbox->setChecked(false);
     d->SpacingScalingSpinBox->setValue(1.0);
-    d->LinearRadioButton->setChecked(1);
+    d->LinearRadioButton->setChecked(true);
     d->FillValueSpinBox->setValue(0.0);
 
     this->updateVolumeInfo();
@@ -635,10 +635,10 @@ void qSlicerCropVolumeModuleWidget::updateWidgetFromMRML()
 
   switch (d->ParametersNode->GetInterpolationMode())
     {
-    case vtkMRMLCropVolumeParametersNode::InterpolationNearestNeighbor: d->NNRadioButton->setChecked(1); break;
-    case vtkMRMLCropVolumeParametersNode::InterpolationLinear: d->LinearRadioButton->setChecked(1); break;
-    case vtkMRMLCropVolumeParametersNode::InterpolationWindowedSinc: d->WSRadioButton->setChecked(1); break;
-    case vtkMRMLCropVolumeParametersNode::InterpolationBSpline: d->BSRadioButton->setChecked(1); break;
+    case vtkMRMLCropVolumeParametersNode::InterpolationNearestNeighbor: d->NNRadioButton->setChecked(true); break;
+    case vtkMRMLCropVolumeParametersNode::InterpolationLinear: d->LinearRadioButton->setChecked(true); break;
+    case vtkMRMLCropVolumeParametersNode::InterpolationWindowedSinc: d->WSRadioButton->setChecked(true); break;
+    case vtkMRMLCropVolumeParametersNode::InterpolationBSpline: d->BSRadioButton->setChecked(true); break;
     }
   d->IsotropicCheckbox->setChecked(d->ParametersNode->GetIsotropicResampling());
   d->VisibilityButton->setChecked(d->ParametersNode->GetROINode() && (d->ParametersNode->GetROINode()->GetDisplayVisibility() != 0));

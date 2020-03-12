@@ -19,7 +19,7 @@ vtkMRMLNodeNewMacro(vtkMRMLAnnotationLinesNode);
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationLinesNode::vtkMRMLAnnotationLinesNode()
 {
-  this->InitializeLinesFlag = 0;
+  this->InitializeLinesFlag = false;
 }
 
 //----------------------------------------------------------------------------
@@ -292,7 +292,7 @@ void vtkMRMLAnnotationLinesNode::CreatePolyData()
     vtkCellArray *polyLines = vtkCellArray::New();
     this->GetPolyData()->SetLines(polyLines);
     polyLines->Delete();
-    this->InitializeLinesFlag = 1;
+    this->InitializeLinesFlag = true;
     }
 }
 

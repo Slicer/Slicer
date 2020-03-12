@@ -23,7 +23,7 @@ template <class TData>
 DiffusionTensor3DRigidTransform<TData>
 ::DiffusionTensor3DRigidTransform()
 {
-  m_PrecisionChecking = 1;
+  m_PrecisionChecking = true;
 }
 
 template <class TData>
@@ -86,7 +86,7 @@ DiffusionTensor3DRigidTransform<TData>
 {
   Matrix<double, 3, 3> result;
   result = matrix * matrix.GetTranspose();
-  bool ok = 1;
+  bool ok = true;
   if( m_PrecisionChecking )
     {
     for( int i = 0; i < 3; i++ )
@@ -95,12 +95,12 @@ DiffusionTensor3DRigidTransform<TData>
         {
         if( i != j && result[i][j] > PRECISION )
           {
-          ok = 0;
+          ok = false;
           break;
           }
         else if( i == j && ( result[i][j] < 1.0 - PRECISION || result[i][j] > 1.0 + PRECISION ) )
           {
-          ok = 0;
+          ok = false;
           break;
           }
         }

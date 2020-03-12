@@ -624,7 +624,7 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
         requestRender = this->OnMRMLDisplayableModelNodeModifiedEvent(displayableNode);
         break;
       default:
-        this->SetUpdateFromMRMLRequested(1);
+        this->SetUpdateFromMRMLRequested(true);
         break;
       }
     if (!isUpdating && requestRender)
@@ -636,7 +636,7 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
     {
     if (event == vtkCommand::ModifiedEvent)
       {
-      this->SetUpdateFromMRMLRequested(1);
+      this->SetUpdateFromMRMLRequested(true);
       }
     if (!isUpdating)
       {
@@ -650,7 +650,7 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
       {
       if (this->UpdateClipSlicesFromMRML() || this->Internal->ClippingOn)
         {
-        this->SetUpdateFromMRMLRequested(1);
+        this->SetUpdateFromMRMLRequested(true);
         }
       else
         {
@@ -688,7 +688,7 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneEndClose()
   this->RemoveModelProps();
   this->RemoveModelObservers(1);
 
-  this->SetUpdateFromMRMLRequested(1);
+  this->SetUpdateFromMRMLRequested(true);
   this->RequestRender();
 }
 
@@ -713,7 +713,7 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
     return;
     }
 
-  this->SetUpdateFromMRMLRequested(1);
+  this->SetUpdateFromMRMLRequested(true);
 
   // Escape if the scene a scene is being closed, imported or connected
   if (this->GetMRMLScene()->IsBatchProcessing())
@@ -740,7 +740,7 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
     return;
     }
 
-  this->SetUpdateFromMRMLRequested(1);
+  this->SetUpdateFromMRMLRequested(true);
 
   // Escape if the scene a scene is being closed, imported or connected
   if (this->GetMRMLScene()->IsBatchProcessing())
@@ -856,11 +856,11 @@ bool vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
     {
     this->UpdateClipSlicesFromMRML();
     this->UpdateModifiedModel(modelNode);
-    this->SetUpdateFromMRMLRequested(1);
+    this->SetUpdateFromMRMLRequested(true);
     }
   if (updateMRML)
     {
-    this->SetUpdateFromMRMLRequested(1);
+    this->SetUpdateFromMRMLRequested(true);
     }
   return updateModel || updateMRML;
 }
@@ -882,7 +882,7 @@ void vtkMRMLModelDisplayableManager::UpdateFromMRML()
 
   this->UpdateModelsFromMRML();
 
-  this->SetUpdateFromMRMLRequested(0);
+  this->SetUpdateFromMRMLRequested(false);
 }
 
 //---------------------------------------------------------------------------

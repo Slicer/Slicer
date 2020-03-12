@@ -136,9 +136,9 @@ int main(int argc, char *argv[])
     // toggle some settings
     if (i == 0)
       {
-      copiedFiducialNode->SetNthFiducialLocked(i, 1);
-      copiedFiducialNode->SetNthFiducialSelected(i, 0);
-      copiedFiducialNode->SetNthFiducialVisibility(i, 0);
+      copiedFiducialNode->SetNthFiducialLocked(i, true);
+      copiedFiducialNode->SetNthFiducialSelected(i, false);
+      copiedFiducialNode->SetNthFiducialVisibility(i, false);
       }
     }
   // write out the copy

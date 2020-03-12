@@ -121,7 +121,7 @@ int connect(
     *imagep ^= component_mask;
     axisv = 0;
     label++;
-    while (1) {
+    while (true) {
       while ( (stridev = stride[axisv]) ) {
         if ((*imagep & boundary_mask_start<<axisv) && (*(new_imagep = imagep + stridev) & component_mask)) {
           imagep = new_imagep;

@@ -143,7 +143,7 @@ FibHeapNode *FibHeap::ExtractMin()
   if (Result->m_Mark)
   {
     m_NumMarkedNodes --;
-    Result->m_Mark = 0;
+    Result->m_Mark = false;
   }
   Result->m_Degree = 0;
 
@@ -432,7 +432,7 @@ void FibHeap::Link(FibHeapNode *y, FibHeapNode *x)
   {
     m_NumMarkedNodes--;
   }
-  y->m_Mark = 0;
+  y->m_Mark = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -442,7 +442,7 @@ void FibHeap::AddToRootList(FibHeapNode *x)
   {
     m_NumMarkedNodes--;
   }
-  x->m_Mark = 0;
+  x->m_Mark = false;
 
   m_NumNodes--;
   Insert(x);
@@ -477,7 +477,7 @@ void FibHeap::CascadingCut(FibHeapNode *y)
   {
     if (y->m_Mark == 0)
     {
-      y->m_Mark = 1;
+      y->m_Mark = true;
       m_NumMarkedNodes++;
       z = nullptr;
     }

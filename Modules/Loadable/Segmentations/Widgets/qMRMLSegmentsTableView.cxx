@@ -264,7 +264,7 @@ void qMRMLSegmentsTableViewPrivate::init()
 
   this->SegmentsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
   this->SegmentsTable->horizontalHeader()->setSectionResizeMode(this->Model->nameColumn(), QHeaderView::Stretch);
-  this->SegmentsTable->horizontalHeader()->setStretchLastSection(0);
+  this->SegmentsTable->horizontalHeader()->setStretchLastSection(false);
   this->SegmentsTable->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
   // Select rows

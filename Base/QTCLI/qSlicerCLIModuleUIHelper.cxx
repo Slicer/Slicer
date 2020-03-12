@@ -754,7 +754,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createGeometryTagWidget(const ModulePa
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
   qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
-  widget->setShowHidden(0);
+  widget->setShowHidden(false);
   widget->setNodeTypes(QStringList(nodeType));
   widget->setRenameEnabled(true);
   widget->setNoneEnabled(this->isNoneEnabled(moduleParameter));

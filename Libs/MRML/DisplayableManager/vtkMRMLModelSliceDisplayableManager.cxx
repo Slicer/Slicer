@@ -171,12 +171,12 @@ bool vtkMRMLModelSliceDisplayableManager::vtkInternal::IsVisible(vtkMRMLDisplayN
 {
   if (!displayNode)
     {
-    return 0;
+    return false;
     }
   if (vtkMRMLSliceLogic::IsSliceModelDisplayNode(displayNode))
     {
     // slice intersections are displayed by vtkMRMLCrosshairDisplayableManager
-    return 0;
+    return false;
     }
   bool visibleOnNode = true;
   vtkMRMLSliceNode* sliceNode = this->SliceNode;
@@ -822,7 +822,7 @@ void vtkMRMLModelSliceDisplayableManager
   // Escape if the scene a scene is being closed, imported or connected
   if (this->GetMRMLScene()->IsBatchProcessing())
     {
-    this->SetUpdateFromMRMLRequested(1);
+    this->SetUpdateFromMRMLRequested(true);
     return;
     }
 
@@ -904,7 +904,7 @@ void vtkMRMLModelSliceDisplayableManager
 //---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager::UpdateFromMRML()
 {
-  this->SetUpdateFromMRMLRequested(0);
+  this->SetUpdateFromMRMLRequested(false);
 
   vtkMRMLScene* scene = this->GetMRMLScene();
   if (!scene)
@@ -943,18 +943,18 @@ void vtkMRMLModelSliceDisplayableManager::OnMRMLSceneStartClose()
 //---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager::OnMRMLSceneEndClose()
 {
-  this->SetUpdateFromMRMLRequested(1);
+  this->SetUpdateFromMRMLRequested(true);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager::OnMRMLSceneEndBatchProcess()
 {
-  this->SetUpdateFromMRMLRequested(1);
+  this->SetUpdateFromMRMLRequested(true);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager::Create()
 {
   this->Internal->SetSliceNode(this->GetMRMLSliceNode());
-  this->SetUpdateFromMRMLRequested(1);
+  this->SetUpdateFromMRMLRequested(true);
 }

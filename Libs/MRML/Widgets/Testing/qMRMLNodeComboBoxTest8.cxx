@@ -265,7 +265,7 @@ int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
   // enabling add action is expected to fail since a custom action
   // with same name already exists
   startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
-  nodeSelector.setAddEnabled(1);
+  nodeSelector.setAddEnabled(true);
 
   if (nodeSelector.addEnabled() != false)
     {
@@ -283,7 +283,7 @@ int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
   // enabling remove action is expected to fail since a custom action
   // with same name already exists
   startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
-  nodeSelector.setRemoveEnabled(1);
+  nodeSelector.setRemoveEnabled(true);
 
   if (nodeSelector.removeEnabled() != false)
     {
@@ -301,7 +301,7 @@ int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
   // enabling edit action is expected to fail since a custom action
   // with same name already exists
   startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
-  nodeSelector.setEditEnabled(1);
+  nodeSelector.setEditEnabled(true);
 
   if (nodeSelector.editEnabled() != false)
     {
@@ -319,7 +319,7 @@ int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
   // enabling rename action is expected to fail since a custom action
   // with same name already exists
   startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
-  nodeSelector.setRenameEnabled(1);
+  nodeSelector.setRenameEnabled(true);
 
   if (nodeSelector.renameEnabled() != false)
     {
@@ -360,7 +360,7 @@ int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
   // enabling rename action is expected to fail since a "Rename current "
   // custom action already exists
   startingActions = sceneModel2->postItems(sceneModel2->mrmlSceneItem()).size();
-  nodeSelector2.setRenameEnabled(1);
+  nodeSelector2.setRenameEnabled(true);
 
   if (nodeSelector2.renameEnabled() != false)
     {
