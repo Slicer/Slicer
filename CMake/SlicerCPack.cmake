@@ -358,7 +358,7 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
 
   if (NOT Slicer_CPACK_NSIS_INSTALL_REQUIRES_ADMIN_ACCOUNT)
     # Install as regular user (UAC dialog will not be shown).
-    SET(CPACK_NSIS_DEFINES ${CPACK_NSIS_DEFINES} "RequestExecutionLevel user")
+    set(CPACK_NSIS_DEFINES ${CPACK_NSIS_DEFINES} "RequestExecutionLevel user")
   endif()
 
   # Installers for 32- vs. 64-bit CMake:
