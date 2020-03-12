@@ -70,12 +70,12 @@ int vtkMRMLVolumeNodeTest1(int , char * [])
   double spacing[3] = {1.0, 1.0, 1.0};
   int dimensions[3] = {2, 2, 2};
   std::vector<std::string> scanOrders;
-  scanOrders.push_back("IS");
-  scanOrders.push_back("SI");
-  scanOrders.push_back("RL");
-  scanOrders.push_back("LR");
-  scanOrders.push_back("PA");
-  scanOrders.push_back("AP");
+  scanOrders.emplace_back("IS");
+  scanOrders.emplace_back("SI");
+  scanOrders.emplace_back("RL");
+  scanOrders.emplace_back("LR");
+  scanOrders.emplace_back("PA");
+  scanOrders.emplace_back("AP");
   for(std::vector<std::string>::iterator it = scanOrders.begin();
       it != scanOrders.end();
       ++it)

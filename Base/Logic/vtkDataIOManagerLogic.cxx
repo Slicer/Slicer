@@ -608,7 +608,7 @@ int vtkDataIOManagerLogic::QueueWrite ( vtkMRMLNode *node )
       dst.clear();
       pathComponents.clear();
       vtksys::SystemTools::SplitPath( cm->GetRemoteCacheDirectory(), pathComponents);
-      pathComponents.push_back (dnode->GetNthStorageNode(storageNodeIndex)->GetNthFileName(n) );
+      pathComponents.emplace_back(dnode->GetNthStorageNode(storageNodeIndex)->GetNthFileName(n));
       src = vtksys::SystemTools::JoinPath(pathComponents);
       dst = dnode->GetNthStorageNode(storageNodeIndex)->GetNthURI(n-1);
       }

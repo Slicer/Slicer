@@ -1893,7 +1893,7 @@ void vtkMRMLMarkupsNode::SetNthMeasurement(int id, vtkMRMLMeasurement* measureme
     }
   if (id >= this->GetNumberOfMeasurements())
     {
-    this->Measurements.push_back(measurement);
+    this->Measurements.emplace_back(measurement);
     }
   else
     {
@@ -1904,7 +1904,7 @@ void vtkMRMLMarkupsNode::SetNthMeasurement(int id, vtkMRMLMeasurement* measureme
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::AddMeasurement(vtkMRMLMeasurement* measurement)
 {
-  this->Measurements.push_back(measurement);
+  this->Measurements.emplace_back(measurement);
 }
 
 //---------------------------------------------------------------------------

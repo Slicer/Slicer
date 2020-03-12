@@ -244,7 +244,7 @@ bool list_archive(const char* archiveFileName, std::vector<std::string>& files)
                              archive_error_string(a));
       return false;
       }
-    files.push_back(archive_entry_pathname(entry));
+    files.emplace_back(archive_entry_pathname(entry));
     }
 
   archive_read_close(a);

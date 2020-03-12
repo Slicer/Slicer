@@ -356,7 +356,7 @@ void vtkMRMLScene::RemoveAllNodes(bool removeSingletons)
     {
     if (removeSingletons || node->GetSingletonTag() == nullptr)
       {
-      removeNodeIds.push_back(node->GetID());
+      removeNodeIds.emplace_back(node->GetID());
       }
     }
   for(std::deque< std::string >::iterator nodeIt=removeNodeIds.begin(); nodeIt!=removeNodeIds.end(); ++nodeIt)
@@ -1656,7 +1656,7 @@ std::list< std::string > vtkMRMLScene::GetNodeClassesList()
   for (this->Nodes->InitTraversal(it);
        (node = (vtkMRMLNode*)this->Nodes->GetNextItemAsObject(it)) ;)
     {
-    classes.push_back(node->GetClassName());
+    classes.emplace_back(node->GetClassName());
     }
   classes.sort();
   classes.unique();
@@ -2742,7 +2742,7 @@ void vtkMRMLScene::Undo()
     vtkMRMLNode *node  = vtkMRMLNode::SafeDownCast(currentScene->GetItemAsObject(n));
     if (node && node->GetUndoEnabled())
       {
-      currentIDs.push_back(node->GetID());
+      currentIDs.emplace_back(node->GetID());
       currentNodes.push_back(node);
       }
     }
@@ -2760,7 +2760,7 @@ void vtkMRMLScene::Undo()
       vtkMRMLNode *node  = vtkMRMLNode::SafeDownCast(undoScene->GetItemAsObject(n));
       if (node && node->GetUndoEnabled())
         {
-        undoIDs.push_back(node->GetID());
+        undoIDs.emplace_back(node->GetID());
         undoNodes.push_back(node);
         }
       }
@@ -3689,7 +3689,7 @@ void vtkMRMLScene::TrimUndoStack()
   std::list<vtkSmartPointer<vtkCollection> > removedStacks;
   while(static_cast<int>(this->UndoStack.size()) > this->MaximumNumberOfSavedUndoStates)
     {
-    removedStacks.push_back(this->UndoStack.front());
+    removedStacks.emplace_back(this->UndoStack.front());
     this->UndoStack.pop_front();
     }
 }

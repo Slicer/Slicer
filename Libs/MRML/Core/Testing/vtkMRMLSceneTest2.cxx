@@ -96,7 +96,7 @@ public:
         ++this->NumberOfSingletonNodes;
         }
 
-      this->NodeAddedClassNames.push_back(node->GetClassName());
+      this->NodeAddedClassNames.emplace_back(node->GetClassName());
       }
     else if (eid == vtkMRMLScene::NodeAboutToBeRemovedEvent)
       {

@@ -140,7 +140,7 @@ int main(int ac, char *av[])
         }
       else if( ac > 3 && strcmp(av[1], "--compare") == 0 )
         {
-        compareList.push_back( ComparePairType(av[2], av[3]) );
+        compareList.emplace_back(av[2], av[3]);
         av += 3;
         ac -= 3;
         }

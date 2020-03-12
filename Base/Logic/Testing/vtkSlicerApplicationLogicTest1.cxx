@@ -264,9 +264,9 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
   originalModelHierarchy2->SetParentNodeID(originalModelHierarchy1->GetID());
   // set up the importing
   std::vector<std::string> targetIDs;
-  targetIDs.push_back(std::string(originalModelHierarchy1->GetID()));
+  targetIDs.emplace_back(originalModelHierarchy1->GetID());
   std::vector<std::string> sourceIDs;
-  sourceIDs.push_back(std::string(originalModelHierarchy1->GetID()));
+  sourceIDs.emplace_back(originalModelHierarchy1->GetID());
   // now create a scene to import that has a hierarchy
   vtkNew<vtkMRMLScene> importScene;
   std::string filename = "applicationLogicModelHierarchyImportTestScene.mrml";

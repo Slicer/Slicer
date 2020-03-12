@@ -193,7 +193,7 @@ const std::vector<std::string> vtkStreamingVolumeCodecFactory::GetStreamingCodec
   for (codecIt = this->RegisteredCodecs.begin(); codecIt != this->RegisteredCodecs.end(); ++codecIt)
     {
     vtkSmartPointer<vtkStreamingVolumeCodec> codec = *codecIt;
-    codecClassNames.push_back(codec->GetClassName());
+    codecClassNames.emplace_back(codec->GetClassName());
     }
   return codecClassNames;
 }

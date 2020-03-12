@@ -125,7 +125,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::CreateAxis()
     {
     vtkNew<vtkVectorText> axisText;
     axisText->SetText(labels[i]);
-    this->AxisLabelTexts.push_back(axisText.GetPointer());
+    this->AxisLabelTexts.emplace_back(axisText.GetPointer());
 
     vtkNew<vtkPolyDataMapper> axisMapper;
     axisMapper->SetInputConnection(axisText->GetOutputPort());
@@ -133,7 +133,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::CreateAxis()
     vtkNew<vtkFollower> axisActor;
     axisActor->SetMapper(axisMapper.GetPointer());
     axisActor->SetPickable(0);
-    this->AxisLabelActors.push_back(axisActor.GetPointer());
+    this->AxisLabelActors.emplace_back(axisActor.GetPointer());
 
     axisActor->GetProperty()->SetColor(1, 1, 1); // White
     axisActor->GetProperty()->SetDiffuse(0.0);

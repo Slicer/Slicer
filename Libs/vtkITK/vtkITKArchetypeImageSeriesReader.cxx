@@ -220,7 +220,7 @@ itk::ImageIOBase::Pointer vtkITKArchetypeImageSeriesReader::GetImageIO(const cha
   if (this->IsOnlyFile || this->SingleFile)
     {
     this->FileNames.resize(0);
-    this->FileNames.push_back(filename);
+    this->FileNames.emplace_back(filename);
     }
   else
     {
@@ -476,8 +476,8 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         region = imageReader->GetOutput()->GetLargestPossibleRegion();
         if ( region.GetSize()[2] > 1 )
           {
-          candidateFiles.push_back( this->Archetype );
-          this->AllFileNames.push_back( this->Archetype );
+          candidateFiles.emplace_back(this->Archetype);
+          this->AllFileNames.emplace_back(this->Archetype);
           this->IsOnlyFile = true;
           }
         else
@@ -503,7 +503,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         }
       else
         {
-        this->AllFileNames.push_back( this->Archetype );
+        this->AllFileNames.emplace_back(this->Archetype);
         this->IsOnlyFile = true;
         }
       }
@@ -533,7 +533,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   if ( this->IsOnlyFile || this->SingleFile )
     {
     this->FileNames.resize( 0 );
-    this->FileNames.push_back( this->Archetype );
+    this->FileNames.emplace_back(this->Archetype);
     }
   else
     {
@@ -1631,12 +1631,12 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
         vtkMath::Subtract( tempiop, this->ScanOrigin, diff );
         float dist = vtkMath::Dot( diff, ScanAxis );
 
-        fileNameSortKey.push_back( std::make_pair(dist, k) );
+        fileNameSortKey.emplace_back(dist, k);
         }
       else
         {
         // no position info, so use the file index
-        fileNameSortKey.push_back( std::make_pair(k, k) );
+        fileNameSortKey.emplace_back(k, k);
         }
       }
     }

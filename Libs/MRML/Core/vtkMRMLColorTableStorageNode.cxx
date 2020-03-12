@@ -120,7 +120,7 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         else
           {
           vtkDebugMacro("got a line: \n\"" << line << "\"");
-          lines.push_back(std::string(line));
+          lines.emplace_back(line);
           std::stringstream ss;
           ss << line;
           int id;

@@ -1175,7 +1175,7 @@ bool vtkMRMLTableNode::SetColumnType(const std::string& columnName, int valueTyp
   std::deque< vtkSmartPointer< vtkAbstractArray > > removedColumns;
   while (table->GetNumberOfColumns() > columnIndex)
     {
-    removedColumns.push_back(table->GetColumn(table->GetNumberOfColumns()-1));
+    removedColumns.emplace_back(table->GetColumn(table->GetNumberOfColumns()-1));
     table->RemoveColumn(table->GetNumberOfColumns() - 1);
     }
   removedColumns.pop_back(); // discard the last column, that is the old column

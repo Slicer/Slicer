@@ -1241,18 +1241,18 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
   // Add a command line flag for the process information structure
   if ( commandType == SharedObjectModule )
     {
-    commandLineAsString.push_back( "--processinformationaddress" );
+    commandLineAsString.emplace_back("--processinformationaddress");
 
     char tname[256];
     sprintf(tname, "%p", node0->GetModuleDescription().GetProcessInformation());
 
-    commandLineAsString.push_back( tname );
+    commandLineAsString.emplace_back(tname);
     }
 
   // Add a command line flag for a file of return types
   if (node0->GetModuleDescription().HasReturnParameters())
     {
-    commandLineAsString.push_back( "--returnparameterfile" );
+    commandLineAsString.emplace_back("--returnparameterfile");
 
     std::ostringstream pidString;
 #ifdef _WIN32

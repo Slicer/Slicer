@@ -66,7 +66,7 @@ int testAddVolumePropertyFromFile(const std::string& temporaryDirectory)
   // set up the temporary file name
   std::vector<std::string> components;
   components.push_back(temporaryDirectory);
-  components.push_back(std::string("VolumeRenderingLogicVolumeProperty.vp"));
+  components.emplace_back("VolumeRenderingLogicVolumeProperty.vp");
   std::string fileName = vtksys::SystemTools::JoinPath(components);
   std::cout << "fileName = " << fileName.c_str() << std::endl;
 

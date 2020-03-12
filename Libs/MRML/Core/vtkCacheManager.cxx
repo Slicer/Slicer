@@ -309,7 +309,7 @@ int vtkCacheManager::GetCachedFileList ( const char *dirname )
             }
           else
             {
-            this->CachedFileList.push_back ( dir.GetFile(static_cast<unsigned long>(fileNum) ));
+            this->CachedFileList.emplace_back(dir.GetFile(static_cast<unsigned long>(fileNum)));
             }
           }
         }

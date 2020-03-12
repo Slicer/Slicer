@@ -396,7 +396,7 @@ void TimeSeriesDatabase<TPixel>::CreateFromFileArchetype ( const char* TSDFilena
 
   // Filenames
   std::vector<std::string> Filenames;
-  Filenames.push_back ( std::string ( TSDFilename ) );
+  Filenames.emplace_back(TSDFilename);
 
   // Start reading and writing out the images, 16x16x16 blocks at a time.
   for ( unsigned int i = 0; i < candidateFiles.size(); i++ )

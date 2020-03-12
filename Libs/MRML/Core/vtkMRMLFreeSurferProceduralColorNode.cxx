@@ -36,9 +36,9 @@ vtkMRMLFreeSurferProceduralColorNode::vtkMRMLFreeSurferProceduralColorNode()
 
   // get the colour file in the freesurfer share dir
   std::vector<std::string> filesVector;
-  filesVector.push_back(""); // for relative path
+  filesVector.emplace_back(""); // for relative path
   filesVector.push_back(vtkMRMLLogic::GetApplicationHomeDirectory());
-  filesVector.push_back(std::string("share/FreeSurfer/FreeSurferColorLUT20120827.txt"));
+  filesVector.emplace_back("share/FreeSurfer/FreeSurferColorLUT20120827.txt");
   std::string colorFileName = vtksys::SystemTools::JoinPath(filesVector);
   this->SetLabelsFileName(colorFileName.c_str());
 

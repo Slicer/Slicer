@@ -44,9 +44,9 @@ vtkMRMLNRRDStorageNode::vtkMRMLNRRDStorageNode()
   this->CenterImage = 0;
   this->DefaultWriteFileExtension = "nhdr";
 
-  this->CompressionPresets.push_back(vtkMRMLStorageNode::CompressionPreset(this->GetCompressionParameterFastest(), "Fastest"));
-  this->CompressionPresets.push_back(vtkMRMLStorageNode::CompressionPreset(this->GetCompressionParameterNormal(), "Normal"));
-  this->CompressionPresets.push_back(vtkMRMLStorageNode::CompressionPreset(this->GetCompressionParameterMinimumSize(), "Minimum size"));
+  this->CompressionPresets.emplace_back(this->GetCompressionParameterFastest(), "Fastest");
+  this->CompressionPresets.emplace_back(this->GetCompressionParameterNormal(), "Normal");
+  this->CompressionPresets.emplace_back(this->GetCompressionParameterMinimumSize(), "Minimum size");
 
   this->CompressionParameter = this->GetCompressionParameterFastest();
 }

@@ -111,7 +111,7 @@ void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
     if (referencingNodes.size() == 0 ||
         (referencingNodes.size() == 1 && referencingNodes[0] == node) )
       {
-      nodesToRemove.push_back(dnode);
+      nodesToRemove.emplace_back(dnode);
       }
     }
   for (int i = 0; i < displayableNode->GetNumberOfStorageNodes(); ++i)
@@ -125,7 +125,7 @@ void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
     if (referencingNodes.size() == 0 ||
         (referencingNodes.size() == 1 && referencingNodes[0] == node) )
       {
-      nodesToRemove.push_back(snode);
+      nodesToRemove.emplace_back(snode);
       }
     }
 

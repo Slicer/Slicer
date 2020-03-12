@@ -167,9 +167,9 @@ std::string vtkMRMLLogic::GetApplicationShareDirectory()
 {
   std::string applicationHome = vtkMRMLLogic::GetApplicationHomeDirectory();
   std::vector<std::string> filesVector;
-  filesVector.push_back(""); // for relative path
+  filesVector.emplace_back(""); // for relative path
   filesVector.push_back(applicationHome);
-  filesVector.push_back(MRML_APPLICATION_SHARE_SUBDIR);
+  filesVector.emplace_back(MRML_APPLICATION_SHARE_SUBDIR);
   std::string applicationShare = vtksys::SystemTools::JoinPath(filesVector);
 
   return applicationShare;

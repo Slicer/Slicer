@@ -534,8 +534,8 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       if (strcmp(thisFile,".") &&
           strcmp(thisFile,".."))
         {
-        targetPathComponents.push_back(thisFile);
-        sourcePathComponents.push_back(thisFile);
+        targetPathComponents.emplace_back(thisFile);
+        sourcePathComponents.emplace_back(thisFile);
         std::string targetFile = vtksys::SystemTools::JoinPath(targetPathComponents);
         // does the target file already exist?
         if (vtksys::SystemTools::FileExists(targetFile.c_str(), true))
@@ -850,7 +850,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
         }
       // at this point, the file name is bare of a directory, turn it into a
       // relative path from the original archetype
-      relativePathComponents.push_back(thisFile);
+      relativePathComponents.emplace_back(thisFile);
       std::string relativeFile =  vtksys::SystemTools::JoinPath(relativePathComponents);
       relativePathComponents.pop_back();
       vtkDebugMacro("UpdateFileList: " << fileNum << ", using relative file name " << relativeFile.c_str());

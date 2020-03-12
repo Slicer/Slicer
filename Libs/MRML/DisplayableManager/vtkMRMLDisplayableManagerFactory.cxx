@@ -139,7 +139,7 @@ bool vtkMRMLDisplayableManagerFactory::RegisterDisplayableManager(const char* vt
     return false;
     }
   // Register it
-  this->Internal->DisplayableManagerClassNames.push_back(vtkClassOrScriptName);
+  this->Internal->DisplayableManagerClassNames.emplace_back(vtkClassOrScriptName);
 
   this->InvokeEvent(Self::DisplayableManagerFactoryRegisteredEvent,
                     const_cast<char*>(vtkClassOrScriptName));

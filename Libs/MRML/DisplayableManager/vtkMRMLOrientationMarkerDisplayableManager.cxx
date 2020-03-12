@@ -259,10 +259,10 @@ vtkProp3D* vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::GetCubeActor
 std::string vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::GetOrientationMarkerModelPath(const char* modelFileName)
 {
   std::vector<std::string> filesVector;
-  filesVector.push_back(""); // The first two components do not add a slash.
+  filesVector.emplace_back(""); // The first two components do not add a slash.
   filesVector.push_back(vtkMRMLLogic::GetApplicationShareDirectory());
-  filesVector.push_back(ORIENTATION_MARKERS_DIR);
-  filesVector.push_back(modelFileName);
+  filesVector.emplace_back(ORIENTATION_MARKERS_DIR);
+  filesVector.emplace_back(modelFileName);
   std::string fullPath = vtksys::SystemTools::JoinPath(filesVector);
   return fullPath;
 }

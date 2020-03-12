@@ -556,7 +556,7 @@ void vtkMRMLDisplayNode::AddViewNodeID(const char* viewNodeID)
     return; // already exists, do nothing
     }
 
-  this->ViewNodeIDs.push_back(std::string(viewNodeID));
+  this->ViewNodeIDs.emplace_back(viewNodeID);
   if (this->Scene)
     {
     this->Scene->AddReferencedNodeID(viewNodeID, this);

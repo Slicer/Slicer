@@ -177,7 +177,7 @@ void vtkMRMLSliceNode::AddThreeDViewID(const char* viewNodeID)
     return; // already exists, do nothing
     }
 
-  this->ThreeDViewIDs.push_back(std::string(viewNodeID));
+  this->ThreeDViewIDs.emplace_back(viewNodeID);
   if (this->Scene)
     {
     this->Scene->AddReferencedNodeID(viewNodeID, this);
@@ -438,7 +438,7 @@ bool vtkMRMLSliceNode::AddSliceOrientationPreset(const std::string &name, vtkMat
       }
     }
 
-  this->OrientationMatrices.push_back(OrientationPresetType(name, orientationMatrix));
+  this->OrientationMatrices.emplace_back(name, orientationMatrix);
   return true;
 }
 
