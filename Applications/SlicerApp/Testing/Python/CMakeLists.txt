@@ -71,7 +71,7 @@ slicer_add_python_test(
 
 if (WIN32)
   # Test script execution with native path separator character (backslash)
-  STRING(REPLACE "/" "\\\\" nativeFilePath "${CMAKE_CURRENT_SOURCE_DIR}/bSlicerTestingExitSuccessTest.py")
+  string(REPLACE "/" "\\\\" nativeFilePath "${CMAKE_CURRENT_SOURCE_DIR}/bSlicerTestingExitSuccessTest.py")
   slicer_add_python_test(
     SCRIPT ${nativeFilePath}
     SCRIPT_ARGS --no-main-window TESTNAME_PREFIX nomainwindow_nativePath_
