@@ -1176,7 +1176,7 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeAdded(vtkMRMLScene* scene, vtkMRML
   Q_UNUSED(node);
 #ifndef QT_NO_DEBUG
   Q_D(qMRMLSceneModel);
-  Q_ASSERT(scene != 0);
+  Q_ASSERT(scene != nullptr);
   Q_ASSERT(scene == d->MRMLScene);
 #endif
 }

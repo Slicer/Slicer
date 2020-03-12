@@ -376,7 +376,7 @@ bool TestColors(vtkMRMLScene* scene,
       return false;
       }
     vtkMRMLDisplayableHierarchyNode* hierarchyNode = GetHierarchyNode(scene, level);
-    assert(hierarchyNode != 0);
+    assert(hierarchyNode != nullptr);
     vtkMRMLDisplayNode* hierarchyDisplayNode = hierarchyNode->GetDisplayNode();
     if (hierarchyDisplayNode->GetColor()[0] != hierarchyColors[level][0] ||
         hierarchyDisplayNode->GetColor()[1] != hierarchyColors[level][1] ||
@@ -411,7 +411,7 @@ bool TestVisibility(vtkMRMLScene* scene,
       return false;
       }
     vtkMRMLDisplayableHierarchyNode* hierarchyNode = GetHierarchyNode(scene, level);
-    assert(hierarchyNode != 0);
+    assert(hierarchyNode != nullptr);
     vtkMRMLDisplayNode* hierarchyDisplayNode = hierarchyNode->GetDisplayNode();
     if (hierarchyDisplayNode->GetVisibility() != hierarchyVisibility[level])
       {

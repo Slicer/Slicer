@@ -64,9 +64,9 @@ public:
   { return new vtkLinearTransformWidgetCallback; }
 
   vtkLinearTransformWidgetCallback()
-    : Widget(NULL)
-    , Node(NULL)
-    , DisplayableManager(NULL)
+    : Widget(nullptr)
+    , Node(nullptr)
+    , DisplayableManager(nullptr)
   {
   }
 

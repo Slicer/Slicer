@@ -391,7 +391,7 @@ void vtkMRMLSliceLayerLogic::UpdateNodeReferences ()
     if ( displayNode != this->VolumeDisplayNodeObserved &&
          this->VolumeDisplayNode != nullptr)
       {
-      vtkDebugMacro("vtkMRMLSliceLayerLogic::UpdateNodeReferences: new display node = " << (displayNode == 0 ? "null" : "valid") << endl);
+      vtkDebugMacro("vtkMRMLSliceLayerLogic::UpdateNodeReferences: new display node = " << (displayNode == nullptr ? "null" : "valid") << endl);
       this->VolumeDisplayNode->Delete();
       this->VolumeDisplayNode = nullptr;
       }
@@ -399,7 +399,7 @@ void vtkMRMLSliceLayerLogic::UpdateNodeReferences ()
     if ( displayNode != this->VolumeDisplayNodeObserved &&
          this->VolumeDisplayNodeUVW != nullptr)
       {
-      vtkDebugMacro("vtkMRMLSliceLayerLogic::UpdateNodeReferences: new display node = " << (displayNode == 0 ? "null" : "valid") << endl);
+      vtkDebugMacro("vtkMRMLSliceLayerLogic::UpdateNodeReferences: new display node = " << (displayNode == nullptr ? "null" : "valid") << endl);
       this->VolumeDisplayNodeUVW->Delete();
       this->VolumeDisplayNodeUVW = nullptr;
       }
