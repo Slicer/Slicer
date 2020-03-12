@@ -62,9 +62,9 @@ int vtkMRMLMarkupsFiducialStorageNodeTest1(int argc, char * argv[] )
   markupsNode->ResetNthControlPointID(index);
   std::string associatedNodeID = std::string("testingAssociatedID");
   markupsNode->SetNthControlPointAssociatedNodeID(index,associatedNodeID);
-  markupsNode->SetNthControlPointSelected(index, 0);
-  markupsNode->SetNthControlPointVisibility(index, 0);
-  markupsNode->SetNthControlPointLocked(index, 1);
+  markupsNode->SetNthControlPointSelected(index, false);
+  markupsNode->SetNthControlPointVisibility(index, false);
+  markupsNode->SetNthControlPointLocked(index, true);
 
   std::string label = std::string("Testing label");
   markupsNode->SetNthControlPointLabel(index, label);

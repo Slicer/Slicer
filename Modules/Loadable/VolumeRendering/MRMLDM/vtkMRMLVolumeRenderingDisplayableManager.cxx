@@ -1116,7 +1116,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::Create()
 {
   Superclass::Create();
   this->ObserveGraphicalResourcesCreatedEvent();
-  this->SetUpdateFromMRMLRequested(1);
+  this->SetUpdateFromMRMLRequested(true);
 }
 
 //----------------------------------------------------------------------------
@@ -1158,13 +1158,13 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneStartClose()
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneEndClose()
 {
-  this->SetUpdateFromMRMLRequested(1);
+  this->SetUpdateFromMRMLRequested(true);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneEndBatchProcess()
 {
-  this->SetUpdateFromMRMLRequested(1);
+  this->SetUpdateFromMRMLRequested(true);
   this->RequestRender();
 }
 
@@ -1198,7 +1198,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode*
     // Escape if the scene is being closed, imported or connected
     if (this->GetMRMLScene()->IsBatchProcessing())
       {
-      this->SetUpdateFromMRMLRequested(1);
+      this->SetUpdateFromMRMLRequested(true);
       return;
       }
 
@@ -1388,7 +1388,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnInteractorStyleEvent(int eventI
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayableManager::UpdateFromMRML()
 {
-  this->SetUpdateFromMRMLRequested(0);
+  this->SetUpdateFromMRMLRequested(false);
 
   vtkMRMLScene* scene = this->GetMRMLScene();
   if (!scene)

@@ -829,7 +829,7 @@ DCMTKFileReader
                    << "," << entry);
     }
   OFString ofString;
-  if(uiItem->getOFStringArray(ofString,0) != EC_Normal)
+  if(uiItem->getOFStringArray(ofString,false) != EC_Normal)
     {
     DCMTKException(<< "Can't get UID Value at tag "
                    << std::hex << group << " " << std::hex

@@ -560,12 +560,12 @@ bool TestCopyWithScene()
   //                                  C: CopySingleModified
   //
   //                            (line    , A, B, C, expectedSrcID                  , expectedCopyID           )
-  res = res && TestCopyWithScene(__LINE__, 0, 0, 0, "vtkMRMLStorageNodeTestHelper1", "vtkMRMLNodeTestHelper11");
-  res = res && TestCopyWithScene(__LINE__, 0, 0, 1, "vtkMRMLStorageNodeTestHelper1", "vtkMRMLNodeTestHelper11");
+  res = res && TestCopyWithScene(__LINE__, false, false, false, "vtkMRMLStorageNodeTestHelper1", "vtkMRMLNodeTestHelper11");
+  res = res && TestCopyWithScene(__LINE__, false, false, true, "vtkMRMLStorageNodeTestHelper1", "vtkMRMLNodeTestHelper11");
 //  res = res && TestCopyWithScene(__LINE__, 0, 1, 0, "vtkMRMLStorageNodeTestHelper1", "vtkMRMLNodeTestHelper11"); // NOT SUPPORTED
 //  res = res && TestCopyWithScene(__LINE__, 0, 1, 1, "vtkMRMLStorageNodeTestHelper1", "vtkMRMLNodeTestHelper11"); // NOT SUPPORTED
-  res = res && TestCopyWithScene(__LINE__, 1, 0, 0, "vtkMRMLNodeTestHelper11"      , "vtkMRMLNodeTestHelper12");
-  res = res && TestCopyWithScene(__LINE__, 1, 0, 1, "vtkMRMLNodeTestHelper11"      , "vtkMRMLNodeTestHelper12");
+  res = res && TestCopyWithScene(__LINE__, true, false, false, "vtkMRMLNodeTestHelper11"      , "vtkMRMLNodeTestHelper12");
+  res = res && TestCopyWithScene(__LINE__, true, false, true, "vtkMRMLNodeTestHelper11"      , "vtkMRMLNodeTestHelper12");
 //  res = res && TestCopyWithScene(__LINE__, 1, 1, 0, "vtkMRMLNodeTestHelper11"      , "vtkMRMLNodeTestHelper12"); // NOT SUPPORTED
 //  res = res && TestCopyWithScene(__LINE__, 1, 1, 1, "vtkMRMLNodeTestHelper11"      , "vtkMRMLNodeTestHelper12"); // NOT SUPPORTED
 

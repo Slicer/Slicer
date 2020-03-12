@@ -27,7 +27,7 @@ int vtkMRMLDisplayableHierarchyLogicTest1(int , char * [] )
 {
   vtkNew<vtkMRMLScene> scene;
   vtkMRMLDisplayableHierarchyLogic* displayableHierarchyLogic = vtkMRMLDisplayableHierarchyLogic::New();
-  displayableHierarchyLogic->SetDebug(1);
+  displayableHierarchyLogic->SetDebug(true);
 
   displayableHierarchyLogic->SetMRMLScene(scene.GetPointer());
 

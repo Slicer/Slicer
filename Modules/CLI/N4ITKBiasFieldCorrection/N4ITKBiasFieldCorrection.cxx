@@ -53,7 +53,7 @@ int SaveIt(ImageType::Pointer img, const char* fname)
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput( img );
   writer->SetFileName( fname );
-  writer->SetUseCompression(1);
+  writer->SetUseCompression(true);
   writer->Update();
 
   return EXIT_SUCCESS;
@@ -383,7 +383,7 @@ int main(int argc, char* * argv)
       WriterType::Pointer writer = WriterType::New();
       writer->SetFileName( outputBiasFieldName.c_str() );
       writer->SetInput( biasFieldCropper->GetOutput() );
-      writer->SetUseCompression(1);
+      writer->SetUseCompression(true);
       writer->Update();
       }
 

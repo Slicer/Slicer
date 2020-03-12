@@ -2617,7 +2617,7 @@ void qMRMLSliceControllerWidget::setLightbox(int rows, int columns)
     disableFidsMsgBox.exec();
     if (disableFidsMsgBox.clickedButton() != continueButton)
       {
-      d->actionLightbox1x1_view->setChecked(1);
+      d->actionLightbox1x1_view->setChecked(true);
       return;
       }
     }

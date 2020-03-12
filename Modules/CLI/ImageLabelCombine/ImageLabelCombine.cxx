@@ -106,7 +106,7 @@ int main( int argc, char * argv[] )
     }
 
   writer->SetInput(output);
-  writer->SetUseCompression(1);
+  writer->SetUseCompression(true);
   try
     {
     writer->Update();

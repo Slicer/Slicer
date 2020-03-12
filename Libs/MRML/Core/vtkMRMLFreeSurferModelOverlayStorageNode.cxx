@@ -534,7 +534,7 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::CopyData(vtkMRMLNode *refNode,
     }
 
   //--- try copying to destination always
-  copyOK = itksys::SystemTools::CopyAFile ( fullName.c_str(), newName.c_str(), 1 );
+  copyOK = itksys::SystemTools::CopyAFile ( fullName.c_str(), newName.c_str(), true );
   //--- try copying to destination if different
   //tst = itksys::SystemTools::CopyAFile ( fullName.c_str(), newName.c_str(), 0 );
 

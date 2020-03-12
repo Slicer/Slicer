@@ -581,7 +581,7 @@ bool vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantHasKnownScalarR
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::SphericalMeasure:
       {
-      return 1;
+      return true;
       break;
       }
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::RelativeAnisotropy:
@@ -602,11 +602,11 @@ bool vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantHasKnownScalarR
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::D33:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::Determinant:
       {
-        return 0;
+        return false;
         break;
       }
     default:
-      return 0;
+      return false;
       break;
     }
 }

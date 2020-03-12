@@ -584,7 +584,7 @@ bool vtkMRMLTableStorageNode::ReadTable(std::string filename, vtkMRMLTableNode* 
   catch (...)
     {
     vtkErrorMacro("vtkMRMLTableStorageNode::ReadTable: failed to read table file: " << filename);
-    return 0;
+    return false;
     }
 
   /// Get the info for the columns defined in the schema (Column name, component arrays, component names, scalar type)

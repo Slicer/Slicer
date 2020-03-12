@@ -77,13 +77,13 @@ struct parameters
 // Verify if some input parameters are null
 bool VectorIsNul( std::vector<double> vec )
 {
-  bool zero = 1;
+  bool zero = true;
 
   for( ::size_t i = 0; i < vec.size(); i++ )
     {
     if( vec[i] != 0 )
       {
-      zero = 0;
+      zero = false;
       }
     }
   return zero;
@@ -417,7 +417,7 @@ SetTransformAndOrder( parameters & list,
   typedef itk::DiffusionTensor3DFSAffineTransform<PixelType>
   FSAffineTransformType;
   typename NonRigidTransformType::TransformType::Pointer nonRigidFile;
-  bool precisionChecking = 1;
+  bool precisionChecking = true;
   // Get transformation matrix from the given file
   if( list.transformationFile.compare( "" ) )
     {
@@ -447,7 +447,7 @@ SetTransformAndOrder( parameters & list,
             ) // if rigid3D transform
           {
           list.transformType.assign( "rt" );
-          precisionChecking = 0;
+          precisionChecking = false;
           matrixOffsetTransform = static_cast<
               typename RigidTransformType::Rigid3DTransformType *>
             ( transform.GetPointer() );;

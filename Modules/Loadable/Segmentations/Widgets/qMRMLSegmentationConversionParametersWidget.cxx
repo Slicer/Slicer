@@ -99,14 +99,14 @@ void qMRMLSegmentationConversionParametersWidgetPrivate::init()
 
   // Set up initial look of the tables
   this->PathsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-  this->PathsTable->horizontalHeader()->setStretchLastSection(1);
+  this->PathsTable->horizontalHeader()->setStretchLastSection(true);
   this->PathsTable->setSelectionMode(QAbstractItemView::SingleSelection);
   this->PathsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
   this->PathsColumnLabels << "Cost" << "Path";
   this->PathsTable->setColumnCount(this->PathsColumnLabels.size());
 
   this->ParametersTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-  this->ParametersTable->horizontalHeader()->setStretchLastSection(1);
+  this->ParametersTable->horizontalHeader()->setStretchLastSection(true);
   this->ParametersColumnLabels << "Name" << "Value";
   this->ParametersTable->setColumnCount(this->ParametersColumnLabels.size());
   this->ParametersTable->setSelectionMode(QAbstractItemView::NoSelection);

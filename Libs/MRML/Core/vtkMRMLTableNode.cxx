@@ -115,15 +115,15 @@ void vtkMRMLTableNode::ReadXMLAttributes(const char** atts)
     attValue = *(atts++);
     if (!strcmp(attName, "locked"))
       {
-      this->SetLocked(strcmp(attValue,"true")?0:1);
+      this->SetLocked(strcmp(attValue,"true")?false:true);
       }
     else if (!strcmp(attName, "useColumnNameAsColumnHeader"))
       {
-      this->SetUseColumnNameAsColumnHeader(strcmp(attValue,"true")?0:1);
+      this->SetUseColumnNameAsColumnHeader(strcmp(attValue,"true")?false:true);
       }
     else if (!strcmp(attName, "useFirstColumnAsRowHeader"))
       {
-      this->SetUseFirstColumnAsRowHeader(strcmp(attValue,"true")?0:1);
+      this->SetUseFirstColumnAsRowHeader(strcmp(attValue,"true")?false:true);
       }
     }
 

@@ -128,7 +128,7 @@ void SkelGraph::ExtractSkeletalGraph(const unsigned char *image, const int dim[3
         else
           {
           //    multiple branches emerge -> stop, put in branchesToDo list
-          branch_done = 1;
+          branch_done = true;
           std::vector<skel_branch*> neighborBranches;
           for (std::deque<Coord3i>::iterator act_neighbor = neighbors.begin(); act_neighbor != neighbors.end(); ++act_neighbor)
             {

@@ -154,11 +154,11 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     // disable if locked
     if (fidNode->GetLocked())
       {
-      ui.RASCoordinatesWidget->setEnabled(0);
+      ui.RASCoordinatesWidget->setEnabled(false);
       }
     else
       {
-      ui.RASCoordinatesWidget->setEnabled(1);
+      ui.RASCoordinatesWidget->setEnabled(true);
       }
     }
 

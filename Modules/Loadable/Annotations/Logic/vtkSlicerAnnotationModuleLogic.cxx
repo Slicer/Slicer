@@ -3259,7 +3259,7 @@ bool vtkSlicerAnnotationModuleLogic::IsSnapshotNode(const char* id)
   if (!this->GetMRMLScene())
     {
     vtkErrorMacro("No scene defined");
-    return 0;
+    return false;
     }
   vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 

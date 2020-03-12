@@ -326,7 +326,7 @@ bool runTests(vtkMRMLScene* scene,
 
     if (!checkNodeVisibility(__LINE__,
                              yellowNode,
-                             /* expectedNodeVisibility = */ 0))
+                             /* expectedNodeVisibility = */ false))
       {
       return false;
       }
@@ -343,7 +343,7 @@ bool runTests(vtkMRMLScene* scene,
 
     if (!checkNodeVisibility(__LINE__,
                              yellowNode,
-                             /* expectedNodeVisibility = */ 1))
+                             /* expectedNodeVisibility = */ true))
       {
       return false;
       }
@@ -355,7 +355,7 @@ bool runTests(vtkMRMLScene* scene,
 
     if (!checkNodeVisibility(__LINE__,
                              yellowNode,
-                             /* expectedNodeVisibility = */ 1))
+                             /* expectedNodeVisibility = */ true))
       {
       return false;
       }

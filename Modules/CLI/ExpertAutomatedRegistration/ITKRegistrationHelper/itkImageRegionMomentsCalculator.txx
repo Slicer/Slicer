@@ -223,7 +223,7 @@ ImageRegionMomentsCalculator<TImage>::Compute()
     }
 
   /* Remember that the moments are valid */
-  m_Valid = 1;
+  m_Valid = true;
 
 }
 

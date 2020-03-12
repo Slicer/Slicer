@@ -484,7 +484,7 @@ void vtkMRMLTransformsDisplayableManager2D::OnMRMLSceneNodeAdded(vtkMRMLNode* no
   // Escape if the scene a scene is being closed, imported or connected
   if (this->GetMRMLScene()->IsBatchProcessing())
     {
-    this->SetUpdateFromMRMLRequested(1);
+    this->SetUpdateFromMRMLRequested(true);
     return;
     }
 
@@ -564,7 +564,7 @@ void vtkMRMLTransformsDisplayableManager2D::ProcessMRMLNodesEvents(vtkObject* ca
 //---------------------------------------------------------------------------
 void vtkMRMLTransformsDisplayableManager2D::UpdateFromMRML()
 {
-  this->SetUpdateFromMRMLRequested(0);
+  this->SetUpdateFromMRMLRequested(false);
 
   vtkMRMLScene* scene = this->GetMRMLScene();
   if (!scene)
@@ -603,18 +603,18 @@ void vtkMRMLTransformsDisplayableManager2D::OnMRMLSceneStartClose()
 //---------------------------------------------------------------------------
 void vtkMRMLTransformsDisplayableManager2D::OnMRMLSceneEndClose()
 {
-  this->SetUpdateFromMRMLRequested(1);
+  this->SetUpdateFromMRMLRequested(true);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLTransformsDisplayableManager2D::OnMRMLSceneEndBatchProcess()
 {
-  this->SetUpdateFromMRMLRequested(1);
+  this->SetUpdateFromMRMLRequested(true);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLTransformsDisplayableManager2D::Create()
 {
   this->Internal->SetSliceNode(this->GetMRMLSliceNode());
-  this->SetUpdateFromMRMLRequested(1);
+  this->SetUpdateFromMRMLRequested(true);
 }

@@ -233,7 +233,7 @@ void qSlicerAnnotationModuleWidget::selectAllButtonClicked()
   Q_D(qSlicerAnnotationModuleWidget);
 
   d->hierarchyTreeView->selectAll();
-  d->logic()->SetAllAnnotationsSelected(1);
+  d->logic()->SetAllAnnotationsSelected(true);
   d->logic()->SetActiveHierarchyNodeID(nullptr);
 }
 
@@ -243,7 +243,7 @@ void qSlicerAnnotationModuleWidget::unselectAllButtonClicked()
   Q_D(qSlicerAnnotationModuleWidget);
 
   d->hierarchyTreeView->clearSelection();
-  d->logic()->SetAllAnnotationsSelected(0);
+  d->logic()->SetAllAnnotationsSelected(false);
   d->logic()->SetActiveHierarchyNodeID(nullptr);
 }
 
