@@ -73,7 +73,7 @@ public:
   void Copy(vtkMRMLNode *node) override;
 
   /// Make sure display node and transform node are present and valid
-  virtual void SetScene(vtkMRMLScene* scene) override;
+  void SetScene(vtkMRMLScene* scene) override;
 
   /// Process events from the MRML scene
   void ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData) override;

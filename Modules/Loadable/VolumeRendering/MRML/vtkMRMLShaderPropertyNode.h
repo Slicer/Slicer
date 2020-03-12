@@ -58,28 +58,28 @@ public:
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
-  virtual vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
 
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
+  void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
 
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+  void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
 
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() VTK_OVERRIDE {return "ShaderProperty";}
+  const char* GetNodeTagName() VTK_OVERRIDE {return "ShaderProperty";}
 
   /// Reimplemented for internal reasons.
-  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
+  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
 
   /// Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() VTK_OVERRIDE;
+  vtkMRMLStorageNode* CreateDefaultStorageNode() VTK_OVERRIDE;
 
   /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
-  virtual bool GetModifiedSinceRead() VTK_OVERRIDE;
+  bool GetModifiedSinceRead() VTK_OVERRIDE;
 
 protected:
   vtkMRMLShaderPropertyNode();

@@ -32,13 +32,13 @@ class qSlicerTextsReader : public qSlicerFileReader
 public:
   typedef qSlicerFileReader Superclass;
   qSlicerTextsReader(QObject* parent = 0);
-  virtual ~qSlicerTextsReader();
+  ~qSlicerTextsReader() override;
 
-  virtual QString description() const;
-  virtual IOFileType fileType() const;
-  virtual QStringList extensions() const;
+  QString description() const override;
+  IOFileType fileType() const override;
+  QStringList extensions() const override;
 
-  virtual bool load(const IOProperties& properties);
+  bool load(const IOProperties& properties) override;
 
 protected:
   QScopedPointer< qSlicerTextsReaderPrivate > d_ptr;

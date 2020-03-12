@@ -33,23 +33,23 @@ public:
     CreateStorageNodeNever
   };
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  virtual void ReadXMLAttributes(const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent) override;
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode* node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() override { return "Text"; };
+  const char* GetNodeTagName() override { return "Text"; };
 
   /// Set text node contents and encoding.
   /// If the encoding is not specified, then it will not be changed from the current value.
@@ -77,11 +77,11 @@ public:
   /// Create a storage node for this node type.
   /// If it returns nullptr then it means the node can be stored
   /// in the scene (in XML), without using a storage node.
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() override;
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   /// Determines the most appropriate storage node class for the
   /// provided file name and node content.
-  virtual std::string GetDefaultStorageNodeClassName(const char* filename=nullptr) override;
+  std::string GetDefaultStorageNodeClassName(const char* filename=nullptr) override;
 
   enum
   {
@@ -91,7 +91,7 @@ public:
 
 protected:
   vtkMRMLTextNode();
-  ~vtkMRMLTextNode();
+  ~vtkMRMLTextNode() override;
   vtkMRMLTextNode(const vtkMRMLTextNode&);
   void operator=(const vtkMRMLTextNode&);
 

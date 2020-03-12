@@ -216,9 +216,9 @@ protected:
 
 protected:
   void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
-  virtual void OnNodeReferenceAdded(vtkMRMLNodeReference* reference) override;
-  virtual void OnNodeReferenceModified(vtkMRMLNodeReference* reference) override;
-  virtual void OnNodeReferenceRemoved(vtkMRMLNodeReference* reference) override;
+  void OnNodeReferenceAdded(vtkMRMLNodeReference* reference) override;
+  void OnNodeReferenceModified(vtkMRMLNodeReference* reference) override;
+  void OnNodeReferenceRemoved(vtkMRMLNodeReference* reference) override;
 
   virtual void UpdateSurfaceScalarVariables();
   virtual void OnSurfaceModelNodeChanged();

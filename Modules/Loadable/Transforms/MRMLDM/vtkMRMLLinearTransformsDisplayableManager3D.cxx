@@ -70,7 +70,7 @@ public:
   {
   }
 
-  virtual void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void *vtkNotUsed(callData))
+  void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void *vtkNotUsed(callData)) override
   {
     if ((event == vtkCommand::StartInteractionEvent) || (event == vtkCommand::EndInteractionEvent) || (event == vtkCommand::InteractionEvent))
       {

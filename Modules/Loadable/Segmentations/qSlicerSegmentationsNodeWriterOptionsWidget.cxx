@@ -33,7 +33,7 @@ class qSlicerSegmentationsNodeWriterOptionsWidgetPrivate
   : public qSlicerNodeWriterOptionsWidgetPrivate
 {
 public:
-  virtual void setupUi(QWidget* widget) override;
+  void setupUi(QWidget* widget) override;
   QCheckBox* UseReferenceGeometryCheckBox;
 };
 
