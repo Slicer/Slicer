@@ -123,7 +123,7 @@ vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::~vtkInternal()
 {
   this->SetSliceCompositeNode(nullptr);
   // everything should be empty
-  assert(this->SliceCompositeNode == 0);
+  assert(this->SliceCompositeNode == nullptr);
   assert(this->VolumeNodes.size() == 0);
   assert(this->DisplayNodes.size() == 0);
   assert(this->Actors.size() == 0);

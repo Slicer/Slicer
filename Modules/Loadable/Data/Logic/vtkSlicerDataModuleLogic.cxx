@@ -74,7 +74,7 @@ void vtkSlicerDataModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 //-----------------------------------------------------------------------------
 void vtkSlicerDataModuleLogic::RegisterNodes()
 {
-  assert(this->GetMRMLScene() != 0);
+  assert(this->GetMRMLScene() != nullptr);
 }
 
 //---------------------------------------------------------------------------

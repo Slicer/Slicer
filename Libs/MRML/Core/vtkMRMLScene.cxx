@@ -1304,7 +1304,7 @@ vtkMRMLNode* vtkMRMLScene::AddNewNodeByClassWithID(std::string className, std::s
   if (className.empty())
     {
     vtkErrorMacro("AddNewNodeByClassWithID: className is an emptry string");
-    return NULL;
+    return nullptr;
     }
 
   if (nodeID.empty())
@@ -1325,7 +1325,7 @@ vtkMRMLNode* vtkMRMLScene::AddNewNodeByClassWithID(std::string className, std::s
   if (this->NodeIDs.find(nodeID) != this->NodeIDs.end())
     {
     vtkErrorMacro("AddNewNodeByClassWithID: node already exists with ID - " << nodeID);
-    return NULL;
+    return nullptr;
     }
 
   vtkSmartPointer<vtkMRMLNode> nodeToAdd =
@@ -1910,7 +1910,7 @@ vtkMRMLNode* vtkMRMLScene::GetNodeByID(const char* id)
     {
     // Ensure the node can't be found, and there is no error with the cache
     // mechanism.
-    vtkMRMLNode* foundNode = 0;
+    vtkMRMLNode* foundNode = nullptr;
     vtkCollectionSimpleIterator it;
     for (this->Nodes->InitTraversal(it);
          (node = (vtkMRMLNode*)this->Nodes->GetNextItemAsObject(it)) ;)

@@ -38,7 +38,7 @@ public:
 
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
-  qSlicerSubjectHierarchyVisibilityPlugin(QObject* parent = NULL);
+  qSlicerSubjectHierarchyVisibilityPlugin(QObject* parent = nullptr);
   ~qSlicerSubjectHierarchyVisibilityPlugin() override;
 
 public:

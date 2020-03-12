@@ -31,7 +31,7 @@ class qSlicerTextsReader : public qSlicerFileReader
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerTextsReader(QObject* parent = 0);
+  qSlicerTextsReader(QObject* parent = nullptr);
   ~qSlicerTextsReader() override;
 
   QString description() const override;

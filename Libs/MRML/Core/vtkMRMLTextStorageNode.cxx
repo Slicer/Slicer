@@ -108,7 +108,7 @@ int vtkMRMLTextStorageNode::ReadDataInternal(vtkMRMLNode * refNode)
 bool vtkMRMLTextStorageNode::CanWriteFromReferenceNode(vtkMRMLNode * refNode)
 {
   vtkMRMLTextNode* textNode = vtkMRMLTextNode::SafeDownCast(refNode);
-  if (textNode == NULL)
+  if (textNode == nullptr)
     {
     vtkErrorMacro("vtkMRMLTextStorageNode::CanWriteFromReferenceNode: input is not a text node");
     return false;
@@ -120,7 +120,7 @@ bool vtkMRMLTextStorageNode::CanWriteFromReferenceNode(vtkMRMLNode * refNode)
 int vtkMRMLTextStorageNode::WriteDataInternal(vtkMRMLNode * refNode)
 {
   vtkMRMLTextNode* textNode = vtkMRMLTextNode::SafeDownCast(refNode);
-  if (textNode == NULL)
+  if (textNode == nullptr)
     {
     vtkErrorMacro(<< "vtkMRMLTextStorageNode::WriteDataInternal: Do not recognize node type " << refNode->GetClassName());
     return 0;

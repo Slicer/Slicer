@@ -308,7 +308,7 @@ void vtkMRMLVolumeRenderingDisplayNode::ProcessMRMLEvents(vtkObject *caller,
       shaderPropertyNode == vtkMRMLShaderPropertyNode::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
     {
-    this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
+    this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
     }
   vtkMRMLAnnotationROINode* roiNode = this->GetROINode();
   if (roiNode != nullptr &&

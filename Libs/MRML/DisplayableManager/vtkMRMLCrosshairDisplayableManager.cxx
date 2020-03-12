@@ -142,7 +142,7 @@ vtkMRMLCrosshairDisplayableManager::vtkInternal::~vtkInternal()
     }
 
   // everything should be empty
-  assert(this->CrosshairNode == 0);
+  assert(this->CrosshairNode == nullptr);
 }
 
 //---------------------------------------------------------------------------
