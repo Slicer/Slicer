@@ -62,7 +62,7 @@ protected:
   /// The fixed cost going from vertex u to v.
   /// Reimplemented to provide additonal cost function types.
   /// \sa SetCostFunctionType()
-  virtual double CalculateStaticEdgeCost(vtkDataSet* inData, vtkIdType u, vtkIdType v);
+  double CalculateStaticEdgeCost(vtkDataSet* inData, vtkIdType u, vtkIdType v) override;
 
   int CostFunctionType;
   int PreviousCostFunctionType;

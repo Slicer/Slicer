@@ -92,11 +92,11 @@ public:
 
   /// Get visibility context menu item actions to add to tree view.
   /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
-  virtual QList<QAction*> visibilityContextMenuActions()const;
+  QList<QAction*> visibilityContextMenuActions()const override;
 
   /// Show visibility context menu actions valid for a given subject hierarchy item.
   /// \param itemID Subject Hierarchy item to show the visibility context menu items for
-  virtual void showVisibilityContextMenuActionsForItem(vtkIdType itemID);
+  void showVisibilityContextMenuActionsForItem(vtkIdType itemID) override;
 
 public:
   /// Show volume in all slice views. The argument node replaces any volume shown on the specified layer

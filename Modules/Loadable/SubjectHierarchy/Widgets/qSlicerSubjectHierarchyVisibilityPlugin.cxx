@@ -53,7 +53,7 @@ protected:
   qSlicerSubjectHierarchyVisibilityPlugin* const q_ptr;
 public:
   qSlicerSubjectHierarchyVisibilityPluginPrivate(qSlicerSubjectHierarchyVisibilityPlugin& object);
-  ~qSlicerSubjectHierarchyVisibilityPluginPrivate();
+  ~qSlicerSubjectHierarchyVisibilityPluginPrivate() override;
   void init();
 public:
   QAction* ToggleVisibility2DAction;
