@@ -44,7 +44,7 @@ public:
   /// Create a new vtkMRMLShaderPropertyNode
   static vtkMRMLShaderPropertyNode *New();
   vtkTypeMacro(vtkMRMLShaderPropertyNode,vtkMRMLStorableNode);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Don't change its scalarOpacity, gradientOpacity or color on the volume property
   /// but use the methods below. It wouldn't observe them.
@@ -58,28 +58,28 @@ public:
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
-  vtkMRMLNode* CreateNodeInstance() VTK_OVERRIDE;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) VTK_OVERRIDE;
+  void ReadXMLAttributes( const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
-  void WriteXML(ostream& of, int indent) VTK_OVERRIDE;
+  void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) VTK_OVERRIDE;
+  void Copy(vtkMRMLNode *node) override;
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() VTK_OVERRIDE {return "ShaderProperty";}
+  const char* GetNodeTagName() override {return "ShaderProperty";}
 
   /// Reimplemented for internal reasons.
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData) VTK_OVERRIDE;
+  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData) override;
 
   /// Create default storage node or NULL if does not have one
-  vtkMRMLStorageNode* CreateDefaultStorageNode() VTK_OVERRIDE;
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
-  bool GetModifiedSinceRead() VTK_OVERRIDE;
+  bool GetModifiedSinceRead() override;
 
 protected:
   vtkMRMLShaderPropertyNode();
