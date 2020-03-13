@@ -31,12 +31,12 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   file(WRITE ${requirements_file} [===[
   nose==1.3.7 --hash=sha256:9ff7c6cc443f8c51994b34a667bbcf45afd6d945be7477b52e97516fd17c53ac  # needed for NumPy unit tests
   # Hashes correspond to the following packages:
-  # - numpy-1.17.3-cp36-cp36m-win_amd64.whl
-  # - numpy-1.17.3-cp36-cp36m-macosx_10_9_x86_64.whl
-  # - numpy-1.17.3-cp36-cp36m-manylinux1_x86_64.whl
-  numpy==1.17.3 --hash=sha256:2e418f0a59473dac424f888dd57e85f77502a593b207809211c76e5396ae4f5c \
-                --hash=sha256:669795516d62f38845c7033679c648903200980d68935baaa17ac5c7ae03ae0c \
-                --hash=sha256:4f2a2b279efde194877aff1f76cf61c68e840db242a5c7169f1ff0fd59a2b1e2
+  # - numpy-1.18.1-cp36-cp36m-win_amd64.whl
+  # - numpy-1.18.1-cp36-cp36m-macosx_10_9_x86_64.whl
+  # - numpy-1.18.1-cp36-cp36m-manylinux1_x86_64.whl
+  numpy==1.18.1 --hash=sha256:9acdf933c1fd263c513a2df3dceecea6f3ff4419d80bf238510976bf9bcb26cd \
+                --hash=sha256:ae0975f42ab1f28364dcda3dde3cf6c1ddab3e1d4b2909da0cb0191fa9ca0480 \
+                --hash=sha256:b765ed3930b92812aa698a455847141869ef755a87e099fddd4ccf9d81fffb57
   ]===])
 
   ExternalProject_Add(${proj}
