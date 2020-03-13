@@ -267,28 +267,12 @@ list(APPEND variables CDASH_PROJECT_NAME)
 
 #-----------------------------------------------------------------------------
 if(NOT DEFINED GIT_REPOSITORY)
-  if(NOT DEFINED SVN_REPOSITORY)
-    set(SVN_REPOSITORY "http://svn.slicer.org/Slicer4")
-  endif()
-  if(NOT DEFINED SVN_BRANCH)
-    set(SVN_BRANCH "trunk")
-  endif()
-  set(SVN_URL ${SVN_REPOSITORY}/${SVN_BRANCH})
-  set(svn_checkout_option "")
-  if(NOT "${SVN_REVISION}" STREQUAL "")
-    set(SVN_URL "${SVN_URL}@${SVN_REVISION}")
-    set(run_ctest_with_update FALSE)
-  endif()
-  set(repository ${SVN_URL})
-  list(APPEND variables SVN_REPOSITORY SVN_BRANCH SVN_REVISION SVN_URL)
-else()
-  set(repository ${GIT_REPOSITORY})
-  set(git_branch_option "")
-  if(NOT "${GIT_TAG}" STREQUAL "")
-    set(git_branch_option "-b ${GIT_TAG}")
-  endif()
-  list(APPEND variables GIT_REPOSITORY GIT_TAG)
+  set(GIT_REPOSITORY "https://github.com/Slicer/Slicer")
 endif()
+if(NOT DEFINED GIT_TAG)
+  set(GIT_TAG "master")
+endif()
+list(APPEND variables GIT_REPOSITORY GIT_TAG)
 
 #-----------------------------------------------------------------------------
 # Required executables
@@ -300,14 +284,6 @@ if(NOT EXISTS "${CTEST_GIT_COMMAND}")
   message(FATAL_ERROR "CTEST_GIT_COMMAND is set to a non-existent path [${CTEST_GIT_COMMAND}]")
 endif()
 message(STATUS "CTEST_GIT_COMMAND: ${CTEST_GIT_COMMAND}")
-
-if(NOT DEFINED CTEST_SVN_COMMAND)
-  find_program(CTEST_SVN_COMMAND NAMES svn)
-endif()
-if(NOT EXISTS "${CTEST_SVN_COMMAND}")
-  message(FATAL_ERROR "CTEST_SVN_COMMAND is set to a non-existent path [${CTEST_SVN_COMMAND}]")
-endif()
-message(STATUS "CTEST_SVN_COMMAND: ${CTEST_SVN_COMMAND}")
 
 #-----------------------------------------------------------------------------
 # Should binary directory be cleaned?
@@ -447,18 +423,9 @@ endif()
 # Source code checkout and update commands
 #-----------------------------------------------------------------------------
 if(NOT EXISTS "${CTEST_SOURCE_DIRECTORY}")
-  if(NOT DEFINED GIT_REPOSITORY)
-    set(CTEST_CHECKOUT_COMMAND "${CTEST_SVN_COMMAND} checkout ${repository} ${CTEST_SOURCE_DIRECTORY}")
-  else()
-    set(CTEST_CHECKOUT_COMMAND "${CTEST_GIT_COMMAND} clone ${git_branch_option} ${repository} ${CTEST_SOURCE_DIRECTORY}")
-  endif()
+  set(CTEST_CHECKOUT_COMMAND "${CTEST_GIT_COMMAND} clone -b ${GIT_TAG} ${GIT_REPOSITORY} ${CTEST_SOURCE_DIRECTORY}")
 endif()
-
-if(NOT DEFINED GIT_REPOSITORY)
-  set(CTEST_UPDATE_COMMAND "${CTEST_SVN_COMMAND}")
-else()
-  set(CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}")
-endif()
+set(CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}")
 
 #-----------------------------------------------------------------------------
 # run_ctest macro
@@ -493,11 +460,6 @@ CMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}")
     if(DEFINED CMAKE_OSX_DEPLOYMENT_TARGET)
       set(OPTIONAL_CACHE_CONTENT "${OPTIONAL_CACHE_CONTENT}
 CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET}")
-    endif()
-
-    if(DEFINED CTEST_SVN_COMMAND)
-      set(OPTIONAL_CACHE_CONTENT "${OPTIONAL_CACHE_CONTENT}
-Subversion_SVN_EXECUTABLE:FILEPATH=${CTEST_SVN_COMMAND}")
     endif()
 
     if(DEFINED Slicer_BUILD_WIN32_CONSOLE)
