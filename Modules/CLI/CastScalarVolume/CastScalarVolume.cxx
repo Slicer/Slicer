@@ -1,11 +1,5 @@
 /*=========================================================================
 
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Modules/CLI/Cast.cxx $
-  Language:  C++
-  Date:      $Date: 2006-12-20 16:00:24 -0500 (Wed, 20 Dec 2006) $
-  Version:   $Revision: 1892 $
-
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 

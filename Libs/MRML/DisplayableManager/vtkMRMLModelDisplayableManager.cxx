@@ -5,11 +5,6 @@
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Base/GUI/vtkMRMLModelDisplayableManager.cxx $
-  Date:      $Date: 2010-05-27 14:32:23 -0400 (Thu, 27 May 2010) $
-  Version:   $Revision: 13525 $
-
 ==========================================================================*/
 
 // MRMLDisplayableManager includes

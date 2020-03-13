@@ -1,11 +1,5 @@
 /*=========================================================================
 
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Modules/CLI/Mask.cxx $
-  Language:  C++
-  Date:      $Date: 2009-04-10 13:33:12 -0400 (Fri, 10 Apr 2009) $
-  Version:   $Revision: 9136 $
-
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
