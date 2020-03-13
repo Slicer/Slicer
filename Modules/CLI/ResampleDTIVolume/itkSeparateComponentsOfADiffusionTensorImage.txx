@@ -1,11 +1,5 @@
 /*=========================================================================
 
-  Program:   Diffusion Applications
-  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Modules/CLI/DiffusionApplications/ResampleDTI/itkDiffusionTensor3DResample.txx $
-  Language:  C++
-  Date:      $Date: 2010/04/05 10:04:59 $
-  Version:   $Revision: 1.1 $
-
   Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
 
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.

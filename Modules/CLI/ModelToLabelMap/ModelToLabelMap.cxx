@@ -1,11 +1,5 @@
 /*=========================================================================
 
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Modules/CLI/OrientImage.cxx $
-  Language:  C++
-  Date:      $Date: 2007-12-20 18:30:38 -0500 (Thu, 20 Dec 2007) $
-  Version:   $Revision: 5310 $
-
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 

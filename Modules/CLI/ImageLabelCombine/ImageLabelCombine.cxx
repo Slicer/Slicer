@@ -1,11 +1,5 @@
 /*=========================================================================
 
-  Program:   Slicer
-  Language:  C++
-  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Modules/CLI/ConfidenceConnected.cxx $
-  Date:      $Date: 2008-11-24 14:36:19 -0500 (Mon, 24 Nov 2008) $
-  Version:   $Revision: 7965 $
-
   Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
 
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.

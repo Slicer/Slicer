@@ -1,11 +1,5 @@
 /*=========================================================================
 
-  Program:   Realign Volumes
-  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Modules/CLI/ROI_InTransform/ROI_InTransform.cxx $
-  Language:  C++
-  Date:      $Date: 2012-03-06 19:15:36 -0500 (Tue, 06 Mar 2012) $
-  Version:   $Revision: 19530 $
-
   Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
 
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.

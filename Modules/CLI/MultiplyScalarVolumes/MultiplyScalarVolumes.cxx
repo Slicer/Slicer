@@ -1,11 +1,5 @@
 /*=========================================================================
 
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Modules/CLI/Multiply.cxx $
-  Language:  C++
-  Date:      $Date: 2009-05-13 17:16:00 -0400 (Wed, 13 May 2009) $
-  Version:   $Revision: 9478 $
-
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 

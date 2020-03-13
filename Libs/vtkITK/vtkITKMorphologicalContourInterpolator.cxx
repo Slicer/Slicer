@@ -5,11 +5,6 @@
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   vtkITK
-  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Libs/vtkITK/vtkITKMorphologicalContourInterpolator.cxx $
-  Date:      $Date: 2006-12-21 07:21:52 -0500 (Thu, 21 Dec 2006) $
-  Version:   $Revision: 1900 $
-
 ==========================================================================*/
 
 #include "vtkITKMorphologicalContourInterpolator.h"

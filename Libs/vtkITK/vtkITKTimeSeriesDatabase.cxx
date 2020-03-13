@@ -5,11 +5,6 @@
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   vtkITK
-  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Libs/vtkITK/vtkITKArchetypeImageSeriesReader.cxx $
-  Date:      $Date: 2008-04-03 07:35:41 -0500 (Thu, 03 Apr 2008) $
-  Version:   $Revision: 6383 $
-
 ==========================================================================*/
 #include "vtkITKTimeSeriesDatabase.h"
 
