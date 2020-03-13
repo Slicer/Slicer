@@ -240,14 +240,6 @@ void qSlicerSlicer2SceneReaderPrivate::importNode(vtkXMLDataElement* element)
     node[attName] = element->GetAttributeValue(i);
   }
 
-  //set nodeType [$element GetName]
-  //set handler ImportNode$nodeType
-  //if { [info command $handler] == "" } {
-  //  set err [$::slicer3::MRMLScene GetErrorMessagePointer]
-  //  $::slicer3::MRMLScene SetErrorMessage "$err\nno handler for $nodeType"
-  //  $::slicer3::MRMLScene SetErrorCode 1
-  //}
-
   // call the handler for this element
   //$handler node
   QString name = element->GetName();
