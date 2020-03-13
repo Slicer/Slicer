@@ -541,12 +541,6 @@ void qSlicerXcedeCatalogReaderPrivate::importEntry(vtkXMLDataElement* element)
   // //--- finally, create the node
   // set handler XcedeCatalogImportEntry$nodeType
 
-  // if { [info command $handler] == "" } {
-  //     set err [$::slicer3::MRMLScene GetErrorMessagePointer]
-  //     $::slicer3::MRMLScene SetErrorMessage "$err\nno handler for $nodeType"
-  //     $::slicer3::MRMLScene SetErrorCode 1
-  // }
-
   // // call the handler for this element
   // puts "Importing $nodeType"
   // $handler node

@@ -3504,12 +3504,6 @@ void vtkMRMLScene::SetErrorMessage(const char * message)
   this->SetErrorMessage(std::string(message));
   }
 
-//-----------------------------------------------------------------------------
-const char * vtkMRMLScene::GetErrorMessagePointer()
-  {
-  return (this->GetErrorMessage().c_str());
-  }
-
 //----------------------------------------------------------------------------
 vtkMRMLSubjectHierarchyNode* vtkMRMLScene::GetSubjectHierarchyNode()
 {

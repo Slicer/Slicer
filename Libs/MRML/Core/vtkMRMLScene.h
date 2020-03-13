@@ -510,7 +510,6 @@ public:
   const std::string& GetSceneXMLString();
 
   void SetErrorMessage(const char * message);
-  const char *GetErrorMessagePointer();
 
   vtkMRMLSubjectHierarchyNode* GetSubjectHierarchyNode();
 
