@@ -33,10 +33,9 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
   PyJWT==1.7.1 --hash=sha256:5c6eca3c2940464d106b99ba83b00c6add741c9becaec087fb7ccdefea71350e
-  six==1.12.0 --hash=sha256:3350809f0555b11f552448330d0b52d5f24c91a322ea4a15ef22629740f3761c
-  wrapt==1.11.2 --hash=sha256:565a021fd19419476b9362b05eeaa094178de64f8361e44468f9e9d7843901e1
-  Deprecated==1.2.6 --hash=sha256:b07b414c8aac88f60c1d837d21def7e83ba711052e03b3cbaff27972567a8f8d
-  PyGithub==1.44 --hash=sha256:fd10fc9006fd54080b190c5c863384381905160c8ea8e830c4a3d8219f23193d
+  wrapt==1.12.1 --hash=sha256:b62ffa81fb85f4332a4f609cab4ac40709470da05643a082ec1eb88e6d9b97d7
+  Deprecated==1.2.7 --hash=sha256:8b6a5aa50e482d8244a62e5582b96c372e87e3a28e8b49c316e46b95c76a611d
+  PyGithub==1.47 --hash=sha256:2638ea9a2070d995197dca2ac521c207f8de000cc3aa5e912e264932886781ba
   ]===])
 
   ExternalProject_Add(${proj}
