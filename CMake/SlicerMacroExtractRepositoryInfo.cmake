@@ -36,7 +36,7 @@
 # will define the following variables:
 #  <var-prefix>_WC_URL - url of the repository (at SOURCE_DIR)
 #  <var-prefix>_WC_ROOT - Same value as working copy URL
-#  <var-prefix>_WC_REVISION_NAME - url of the repository (at SOURCE_DIR)
+#  <var-prefix>_WC_REVISION_NAME - Name associated with <var-prefix>_WC_REVISION_HASH
 #  <var-prefix>_WC_REVISION_HASH - current revision
 #  <var-prefix>_WC_REVISION - Equal to <var-prefix>_WC_REVISION_HASH if not a git-svn repository
 #

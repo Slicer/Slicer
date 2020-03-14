@@ -264,9 +264,25 @@ set(Slicer_FORCED_WC_LAST_CHANGED_DATE "" CACHE STRING "Overwrite value of auto-
 mark_as_advanced(Slicer_FORCED_WC_LAST_CHANGED_DATE)
 mark_as_superbuild(Slicer_FORCED_WC_LAST_CHANGED_DATE)
 
-set(Slicer_FORCED_WC_REVISION "" CACHE STRING "Overwrite value of auto-discovered Slicer_WC_REVISION")
-mark_as_advanced(Slicer_FORCED_WC_REVISION)
-mark_as_superbuild(Slicer_FORCED_WC_REVISION)
+set(Slicer_FORCED_REVISION "" CACHE STRING "Overwrite value of automatically set Slicer_REVISION")
+mark_as_advanced(Slicer_FORCED_REVISION)
+mark_as_superbuild(Slicer_FORCED_REVISION)
+
+set(Slicer_REVISION_TYPE "CommitCount" CACHE STRING "How to set Slicer_REVISION - from commit count or git hash." FORCE)
+set_property(CACHE Slicer_REVISION_TYPE PROPERTY STRINGS
+  "CommitCount"
+  "Hash"
+  )
+mark_as_advanced(Slicer_REVISION_TYPE)
+mark_as_superbuild(Slicer_REVISION_TYPE)
+
+# Default Slicer_WC_COMMIT_COUNT_OFFSET is chosen to provide continuity of revisions when switching from SVN to git
+# at SVN revision=28825 / git hash 47deb76d7556e40de4e25e585c4b24a63a153da5 in official Slicer repository
+# (https://github.com/Slicer/Slicer.git).
+set(Slicer_WC_COMMIT_COUNT_OFFSET "3037" CACHE STRING
+  "This value is added to commit count to compute Slicer_COMMIT_COUNT (that may be used to set Slicer_REVISION).")
+mark_as_advanced(Slicer_WC_COMMIT_COUNT_OFFSET)
+mark_as_superbuild(Slicer_WC_COMMIT_COUNT_OFFSET)
 
 option(Slicer_USE_FOLDERS "Organize build targets into folders" ON)
 mark_as_superbuild(Slicer_USE_FOLDERS)
@@ -460,7 +476,7 @@ endif()
 # NOTE: Make sure to update vtkSlicerApplicationLogic::IsEmbeddedModule if
 #       the following variables are changed.
 set(Slicer_EXTENSIONS_DIRBASENAME "Extensions")
-set(Slicer_EXTENSIONS_DIRNAME "${Slicer_EXTENSIONS_DIRBASENAME}-${Slicer_WC_REVISION}")
+set(Slicer_EXTENSIONS_DIRNAME "${Slicer_EXTENSIONS_DIRBASENAME}-${Slicer_REVISION}")
 
 #-----------------------------------------------------------------------------
 # Slicer OpenGL Options

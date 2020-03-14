@@ -45,11 +45,16 @@
 #  Subversion_SVN_EXECUTABLE
 #
 # Optionally, these variable can also be set:
-#  Slicer_FORCED_WC_REVISION (default "")
-#  Slicer_FORCED_WC_LAST_CHANGED_DATE (default ""): Format YYYY-MM-DD
 #
-#  Slicer_MAIN_PROJECT_FORCED_WC_REVISION (default "")
+#  Slicer_FORCED_REVISION (default "")
+#  Slicer_REVISION_TYPE
+#  Slicer_FORCED_WC_LAST_CHANGED_DATE (default ""): Format YYYY-MM-DD
+#  Slicer_WC_COMMIT_COUNT_OFFSET
+#
+#  Slicer_MAIN_PROJECT_FORCED_REVISION (default "")
+#  Slicer_MAIN_PROJECT_REVISION_TYPE
 #  Slicer_MAIN_PROJECT_FORCED_WC_LAST_CHANGED_DATE (default ""): Format YYYY-MM-DD
+#  Slicer_MAIN_PROJECT_WC_COMMIT_COUNT_OFFSET
 #
 
 # --------------------------------------------------------------------------
@@ -93,8 +98,8 @@ if(NOT SLICER_CONFIGURE_VERSION_HEADER)
   foreach(var IN LISTS expected_defined_vars)
     list(APPEND script_args "-D${var}:STRING=${${var}}")
   endforeach()
-  if(NOT DEFINED Slicer_FORCED_WC_REVISION)
-    set(Slicer_FORCED_WC_REVISION "")
+  if(NOT DEFINED Slicer_FORCED_REVISION)
+    set(Slicer_FORCED_REVISION "")
   endif()
   if(NOT DEFINED Slicer_FORCED_WC_LAST_CHANGED_DATE)
     set(Slicer_FORCED_WC_LAST_CHANGED_DATE "")
@@ -102,11 +107,15 @@ if(NOT SLICER_CONFIGURE_VERSION_HEADER)
   add_custom_target(SlicerConfigureVersionHeader ALL
     COMMAND ${CMAKE_COMMAND}
       ${script_args}
-      -DSlicer_FORCED_WC_REVISION:STRING=${Slicer_FORCED_WC_REVISION}
+      -DSlicer_FORCED_REVISION:STRING=${Slicer_FORCED_REVISION}
+      -DSlicer_REVISION_TYPE:STRING=${Slicer_REVISION_TYPE}
       -DSlicer_FORCED_WC_LAST_CHANGED_DATE:STRING=${Slicer_FORCED_WC_LAST_CHANGED_DATE}
+      -DSlicer_WC_COMMIT_COUNT_OFFSET:STRING=${Slicer_WC_COMMIT_COUNT_OFFSET}
 
-      -DSlicer_MAIN_PROJECT_FORCED_WC_REVISION:STRING=${Slicer_MAIN_PROJECT_FORCED_WC_REVISION}
+      -DSlicer_MAIN_PROJECT_FORCED_REVISION:STRING=${Slicer_MAIN_PROJECT_FORCED_REVISION}
+      -DSlicer_MAIN_PROJECT_REVISION_TYPE:STRING=${Slicer_MAIN_PROJECT_REVISION_TYPE}
       -DSlicer_MAIN_PROJECT_FORCED_WC_LAST_CHANGED_DATE:STRING=${Slicer_MAIN_PROJECT_FORCED_WC_LAST_CHANGED_DATE}
+      -DSlicer_MAIN_PROJECT_WC_COMMIT_COUNT_OFFSET:STRING=${Slicer_MAIN_PROJECT_WC_COMMIT_COUNT_OFFSET}
 
       -DSLICER_CONFIGURE_VERSION_HEADER=1
       -P ${CMAKE_CURRENT_LIST_FILE}
@@ -126,13 +135,17 @@ set(expected_defined_vars
   Slicer_BUILDDATE
   Slicer_VERSION
   Slicer_VERSION_FULL
+  Slicer_REVISION
   Slicer_WC_REVISION
+  Slicer_WC_REVISION_HASH
   Slicer_WC_URL
 
   Slicer_MAIN_PROJECT_BUILDDATE
   Slicer_MAIN_PROJECT_VERSION
   Slicer_MAIN_PROJECT_VERSION_FULL
+  Slicer_MAIN_PROJECT_REVISION
   Slicer_MAIN_PROJECT_WC_REVISION
+  Slicer_MAIN_PROJECT_WC_REVISION_HASH
   Slicer_MAIN_PROJECT_WC_URL
   )
 foreach(var ${expected_defined_vars})

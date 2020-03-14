@@ -32,6 +32,7 @@ int vtkSlicerVersionConfigureTest1(int /*argc*/, char * /*argv*/ [])
   CHECK_STRING_DIFFERENT(Slicer_BUILDDATE, "");
   CHECK_STRING_DIFFERENT(Slicer_WC_URL, "");
   CHECK_STRING_DIFFERENT(Slicer_WC_REVISION, "");
+  CHECK_STRING_DIFFERENT(Slicer_REVISION, "");
 
   // From vtkSlicerVersionConfigureInternal
   CHECK_STRING(Slicer_OS_LINUX_NAME, "linux");

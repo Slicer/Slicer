@@ -48,6 +48,7 @@
 #  <var-prefix>_WC_LAST_CHANGED_DATE - date of last commit
 #  <var-prefix>_WC_LAST_CHANGED_REV - revision of last commit
 #  <var-prefix>_WC_LAST_CHANGED_LOG - last log of base revision
+#  <var-prefix>_WC_COMMIT_COUNT - number of commits in current branch
 #
 # Example usage:
 #   find_package(Git)
@@ -120,6 +121,11 @@ if(GIT_EXECUTABLE)
        OUTPUT_STRIP_TRAILING_WHITESPACE)
     string(REGEX REPLACE "^([0-9][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9]).*"
       "\\1" ${prefix}_WC_LAST_CHANGED_DATE "${${prefix}_show_output}")
+
+    execute_process(COMMAND ${GIT_EXECUTABLE} rev-list HEAD --count
+       WORKING_DIRECTORY ${dir}
+       OUTPUT_VARIABLE ${prefix}_WC_COMMIT_COUNT
+       OUTPUT_STRIP_TRAILING_WHITESPACE)
 
     set(${prefix}_WC_GITSVN False)
 

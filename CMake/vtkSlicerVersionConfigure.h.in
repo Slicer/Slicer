@@ -42,10 +42,30 @@
 /// \brief Source control management URL identifying Slicer project sources.
 #define Slicer_WC_URL "@Slicer_WC_URL@"
 
+/// \def Slicer_REVISION
+/// \brief Revision identifying this project sources. Can contain WC revision hash or commit count.
+/// \sa Slicer_WC_REVISION_TYPE
+#define Slicer_REVISION "@Slicer_REVISION@"
+
+/// \def Slicer_REVISION_TYPE
+/// \brief Specifies what is stored in Slicer_REVISION (hash or commit count).
+/// \sa Slicer_REVISION
+#define Slicer_REVISION_TYPE "@Slicer_REVISION_TYPE@"
+
 /// \def Slicer_WC_REVISION
 /// \brief Revision identifying this project sources.
 /// \sa Slicer_WC_URL
 #define Slicer_WC_REVISION "@Slicer_WC_REVISION@"
+
+/// \def Slicer_WC_REVISION_HASH
+/// \brief Revision hash identifying this project sources.
+/// \sa Slicer_WC_URL
+#define Slicer_WC_REVISION_HASH "@Slicer_WC_REVISION_HASH@"
+
+/// \def Slicer_WC_REVISION_HASH
+/// \brief Commit count identifying this project sources (custom commit count offset applied).
+/// \sa Slicer_REVISION
+#define Slicer_COMMIT_COUNT "@Slicer_COMMIT_COUNT@"
 
 //-----------------------------------------------------------------------------
 /// \def Slicer_MAIN_PROJECT_VERSION
@@ -68,9 +88,29 @@
 /// \brief Source control management URL identifying main project sources.
 #define Slicer_MAIN_PROJECT_WC_URL "@Slicer_MAIN_PROJECT_WC_URL@"
 
+/// \def Slicer_MAIN_PROJECT_REVISION
+/// \brief Revision identifying main project sources. Can contain WC revision hash or commit count.
+/// \sa Slicer_MAIN_PROJECT_WC_REVISION_TYPE
+#define Slicer_MAIN_PROJECT_REVISION "@Slicer_MAIN_PROJECT_REVISION@"
+
+/// \def Slicer_MAIN_PROJECT_REVISION_TYPE
+/// \brief Specifies what is stored in Slicer_MAIN_PROJECT_REVISION (hash or commit count).
+/// \sa Slicer_MAIN_PROJECT_REVISION
+#define Slicer_MAIN_PROJECT_REVISION_TYPE "@Slicer_MAIN_PROJECT_REVISION_TYPE@"
+
 /// \def Slicer_MAIN_PROJECT_WC_REVISION
 /// \brief Revision identifying main project sources.
 /// \sa Slicer_MAIN_PROJECT_WC_URL
 #define Slicer_MAIN_PROJECT_WC_REVISION "@Slicer_MAIN_PROJECT_WC_REVISION@"
+
+/// \def Slicer_MAIN_PROJECT_WC_REVISION_HASH
+/// \brief Revision hash identifying main project sources.
+/// \sa Slicer_MAIN_PROJECT_WC_URL
+#define Slicer_MAIN_PROJECT_WC_REVISION_HASH "@Slicer_MAIN_PROJECT_WC_REVISION_HASH@"
+
+/// \def Slicer_MAIN_PROJECT_WC_REVISION_HASH
+/// \brief Commit count identifying main project sources (custom commit count offset applied).
+/// \sa Slicer_MAIN_PROJECT_REVISION
+#define Slicer_MAIN_PROJECT_COMMIT_COUNT "@Slicer_MAIN_PROJECT_COMMIT_COUNT@"
 
 #endif // __vtkSlicerVersionConfigure_h

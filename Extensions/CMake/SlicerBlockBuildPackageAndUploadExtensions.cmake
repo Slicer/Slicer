@@ -9,7 +9,7 @@ set(expected_defined_vars
   Slicer_QT_VERSION_MAJOR
   Slicer_QT_VERSION_MINOR
   Slicer_EXTENSIONS_TRACK_QUALIFIER
-  Slicer_WC_REVISION
+  Slicer_REVISION
   CTEST_DROP_SITE
   )
 foreach(var ${expected_defined_vars})

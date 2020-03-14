@@ -16,7 +16,7 @@ set(expected_defined_vars
   Slicer_EXTENSIONS_CMAKE_DIR
   Slicer_QT_VERSION_MAJOR
   Slicer_QT_VERSION_MINOR
-  Slicer_WC_REVISION
+  Slicer_REVISION
   Subversion_SVN_EXECUTABLE
   )
 foreach(var ${expected_defined_vars})
@@ -107,7 +107,7 @@ set(EXTENSION_DEPENDS \"${EXTENSION_DEPENDS}\")
 set(Slicer_CMAKE_DIR \"${Slicer_CMAKE_DIR}\")
 set(Slicer_DIR \"${Slicer_DIR}\")
 set(Slicer_EXTENSIONS_TRACK_QUALIFIER \"${Slicer_EXTENSIONS_TRACK_QUALIFIER}\")
-set(Slicer_WC_REVISION \"${Slicer_WC_REVISION}\")
+set(Slicer_REVISION \"${Slicer_REVISION}\")
 set(MIDAS_PACKAGE_URL \"${MIDAS_PACKAGE_URL}\")
 set(MIDAS_PACKAGE_EMAIL \"${MIDAS_PACKAGE_EMAIL}\")
 set(MIDAS_PACKAGE_API_KEY \"${MIDAS_PACKAGE_API_KEY}\")")

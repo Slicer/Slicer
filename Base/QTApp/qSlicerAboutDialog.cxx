@@ -51,7 +51,8 @@ qSlicerAboutDialog::qSlicerAboutDialog(QWidget* parentWidget)
   d->CreditsTextBrowser->append("");
   if (!slicer->isCustomMainApplication())
     {
-    d->CreditsTextBrowser->append(slicer->applicationVersion() + " " + "r" + slicer->repositoryRevision());
+    d->CreditsTextBrowser->append(slicer->applicationVersion() + " " + "r" + slicer->revision()
+      + " / " + slicer->repositoryRevision());
     d->CreditsTextBrowser->append("");
     d->CreditsTextBrowser->append("");
     d->CreditsTextBrowser->insertHtml("<a href=\"http://download.slicer.org/\">Download</a> a newer version<br />");
