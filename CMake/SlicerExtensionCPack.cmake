@@ -29,7 +29,7 @@ endif()
 # -------------------------------------------------------------------------
 # Sanity checks
 # -------------------------------------------------------------------------
-set(expected_nonempty_vars EXTENSION_NAME Slicer_WC_REVISION Slicer_OS Slicer_ARCHITECTURE)
+set(expected_nonempty_vars EXTENSION_NAME Slicer_REVISION Slicer_OS Slicer_ARCHITECTURE)
 foreach(var ${expected_nonempty_vars})
   if("${${var}}" STREQUAL "")
     message(FATAL_ERROR "error: ${var} is either NOT defined or empty.")
@@ -88,7 +88,7 @@ if(NOT "${Slicer_CPACK_SKIP_GENERATE_EXTENSION_DESCRIPTION}")
     EXTENSION_WC_ROOT ${${EXTENSION_NAME}_WC_READONLY_ROOT}
     EXTENSION_WC_URL ${${EXTENSION_NAME}_WC_READONLY_URL}
     DESTINATION_DIR ${CMAKE_BINARY_DIR}
-    SLICER_WC_REVISION ${Slicer_WC_REVISION}
+    SLICER_REVISION ${Slicer_REVISION}
     SLICER_WC_ROOT ${Slicer_WC_ROOT}
     )
   set(description_file "${CMAKE_BINARY_DIR}/${EXTENSION_NAME}.s4ext")
@@ -121,7 +121,9 @@ set(CMAKE_PROJECT_NAME ${EXTENSION_NAME})
 set(CPACK_PACKAGE_VENDOR "NA-MIC")
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${EXTENSION_README_FILE}")
 set(CPACK_RESOURCE_FILE_LICENSE "${EXTENSION_LICENSE_FILE}")
-set(CPACK_PACKAGE_FILE_NAME "${Slicer_WC_REVISION}-${Slicer_OS}-${Slicer_ARCHITECTURE}-${EXTENSION_NAME}-${${EXTENSION_NAME}_WC_TYPE}${${EXTENSION_NAME}_WC_REVISION}-${${EXTENSION_NAME}_BUILDDATE}")
+string(CONCAT CPACK_PACKAGE_FILE_NAME
+  "${Slicer_REVISION}-${Slicer_OS}-${Slicer_ARCHITECTURE}-${EXTENSION_NAME}"
+  "-${${EXTENSION_NAME}_WC_TYPE}${${EXTENSION_NAME}_REVISION}-${${EXTENSION_NAME}_BUILDDATE}")
 #set(CPACK_PACKAGE_VERSION_MAJOR "${Slicer_VERSION_MAJOR}")
 #set(CPACK_PACKAGE_VERSION_MINOR "${Slicer_VERSION_MINOR}")
 #set(CPACK_PACKAGE_VERSION_PATCH "${Slicer_VERSION_PATCH}")

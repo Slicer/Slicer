@@ -1420,6 +1420,12 @@ QString qSlicerCoreApplication::mainApplicationRepositoryRevision()const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::mainApplicationRevision()const
+{
+  return QString(Slicer_MAIN_PROJECT_REVISION);
+}
+
+//-----------------------------------------------------------------------------
 int qSlicerCoreApplication::mainApplicationMajorVersion()const
 {
   return Slicer_MAIN_PROJECT_VERSION_MAJOR;
@@ -1495,6 +1501,12 @@ QString qSlicerCoreApplication::repositoryBranch()const
 QString qSlicerCoreApplication::repositoryRevision()const
 {
   return Slicer_WC_REVISION;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::revision()const
+{
+  return Slicer_REVISION;
 }
 
 //-----------------------------------------------------------------------------

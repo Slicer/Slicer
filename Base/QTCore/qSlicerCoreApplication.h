@@ -83,6 +83,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   Q_PROPERTY(QString repositoryUrl READ repositoryUrl CONSTANT)
   Q_PROPERTY(QString repositoryBranch READ repositoryBranch CONSTANT)
   Q_PROPERTY(QString repositoryRevision READ repositoryRevision CONSTANT)
+  Q_PROPERTY(QString revision READ revision CONSTANT)
   Q_PROPERTY(int majorVersion READ majorVersion CONSTANT)
   Q_PROPERTY(int minorVersion READ minorVersion CONSTANT)
   Q_PROPERTY(QString platform READ platform CONSTANT)
@@ -92,6 +93,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   Q_PROPERTY(QString mainApplicationName READ mainApplicationName CONSTANT)
   Q_PROPERTY(QString mainApplicationRepositoryUrl READ mainApplicationRepositoryUrl CONSTANT)
   Q_PROPERTY(QString mainApplicationRepositoryRevision READ mainApplicationRepositoryRevision CONSTANT)
+  Q_PROPERTY(QString mainApplicationRevision READ mainApplicationRevision CONSTANT)
   Q_PROPERTY(int mainApplicationMajorVersion READ mainApplicationMajorVersion CONSTANT)
   Q_PROPERTY(int mainApplicationMinorVersion READ mainApplicationMinorVersion CONSTANT)
   Q_PROPERTY(int mainApplicationPatchVersion READ mainApplicationPatchVersion CONSTANT)
@@ -386,6 +388,10 @@ public:
   /// \sa qSlicerCoreApplicationPrivate::discoverRepository
   QString mainApplicationRepositoryRevision()const;
 
+  /// Return the main application's user-friendly revision identifier.
+  /// Useful for custom applications.
+  QString mainApplicationRevision()const;
+
   /// Return the main application's major version number.
   /// Useful for custom applications.
   int mainApplicationMajorVersion() const;
@@ -419,6 +425,8 @@ public:
   /// \sa qSlicerCoreApplicationPrivate::discoverRepository
   QString repositoryRevision()const;
 
+  /// Return Slicer's user-friendly revision identifier.
+  QString revision()const;
 
   /// Return the Slicer major version number
   int majorVersion() const;

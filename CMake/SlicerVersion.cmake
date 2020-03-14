@@ -16,7 +16,6 @@
 #  Slicer_VERSION_MAJOR
 #  Slicer_VERSION_MINOR
 #  Slicer_VERSION_PATCH
-#  Subversion_SVN_EXECUTABLE
 #
 
 # --------------------------------------------------------------------------
@@ -31,7 +30,6 @@ set(expected_defined_vars
   Slicer_VERSION_MAJOR
   Slicer_VERSION_MINOR
   Slicer_VERSION_PATCH
-  Subversion_SVN_EXECUTABLE
   )
 foreach(var ${expected_defined_vars})
   if(NOT DEFINED ${var})
@@ -65,8 +63,24 @@ endif()
 string(REGEX REPLACE ".*([0-9][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9]).*" "\\1"
   Slicer_MAIN_PROJECT_BUILDDATE "${Slicer_MAIN_PROJECT_WC_LAST_CHANGED_DATE}")
 
-if(NOT "${Slicer_MAIN_PROJECT_FORCED_WC_REVISION}" STREQUAL "")
-  set(Slicer_MAIN_PROJECT_WC_REVISION "${Slicer_FORCED_WC_REVISION}")
+# Set Slicer_MAIN_PROJECT_COMMIT_COUNT from working copy commit count adjusted by a custom offset.
+if("${Slicer_MAIN_PROJECT_WC_COMMIT_COUNT_OFFSET}" STREQUAL "")
+  set(Slicer_MAIN_PROJECT_WC_COMMIT_COUNT_OFFSET "0")
+endif()
+math(EXPR Slicer_MAIN_PROJECT_COMMIT_COUNT "${Slicer_MAIN_PROJECT_WC_COMMIT_COUNT}+${Slicer_MAIN_PROJECT_WC_COMMIT_COUNT_OFFSET}")
+
+if("${Slicer_MAIN_PROJECT_REVISION_TYPE}" STREQUAL "")
+  set(Slicer_MAIN_PROJECT_REVISION_TYPE "CommitCount")
+endif()
+
+if(NOT "${Slicer_MAIN_PROJECT_FORCED_REVISION}" STREQUAL "")
+  set(Slicer_MAIN_PROJECT_REVISION "${Slicer_FORCED_REVISION}")
+elseif(Slicer_MAIN_PROJECT_REVISION_TYPE STREQUAL "CommitCount")
+  set(Slicer_MAIN_PROJECT_REVISION "${Slicer_MAIN_PROJECT_COMMIT_COUNT}")
+elseif(Slicer_MAIN_PROJECT_REVISION_TYPE STREQUAL "Hash")
+  set(Slicer_MAIN_PROJECT_REVISION "${Slicer_MAIN_PROJECT_WC_REVISION_HASH}")
+else()
+  message(FATAL_ERROR "Invalid Slicer_MAIN_PROJECT_REVISION_TYPE value: ${Slicer_MAIN_PROJECT_REVISION_TYPE}")
 endif()
 
 set(Slicer_MAIN_PROJECT_VERSION      "${Slicer_MAIN_PROJECT_VERSION_MAJOR}.${Slicer_MAIN_PROJECT_VERSION_MINOR}")
@@ -78,7 +92,7 @@ endif()
 
 if(NOT "${Slicer_MAIN_PROJECT_APPLICATION_NAME}" STREQUAL "Slicer")
   message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} version [${Slicer_MAIN_PROJECT_VERSION_FULL}]")
-  message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} revision [${Slicer_MAIN_PROJECT_WC_REVISION}]")
+  message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} revision [${Slicer_MAIN_PROJECT_REVISION}]")
 endif()
 
 #-----------------------------------------------------------------------------
@@ -95,8 +109,24 @@ endif()
 string(REGEX REPLACE ".*([0-9][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9]).*" "\\1"
   Slicer_BUILDDATE "${Slicer_WC_LAST_CHANGED_DATE}")
 
-if(NOT "${Slicer_FORCED_WC_REVISION}" STREQUAL "")
-  set(Slicer_WC_REVISION "${Slicer_FORCED_WC_REVISION}")
+# Set Slicer_COMMIT_COUNT from working copy commit count adjusted by a custom offset.
+if("${Slicer_WC_COMMIT_COUNT_OFFSET}" STREQUAL "")
+  set(Slicer_WC_COMMIT_COUNT_OFFSET "0")
+endif()
+math(EXPR Slicer_COMMIT_COUNT "${Slicer_WC_COMMIT_COUNT}+${Slicer_WC_COMMIT_COUNT_OFFSET}")
+
+if("${Slicer_REVISION_TYPE}" STREQUAL "")
+  set(Slicer_REVISION_TYPE "CommitCount")
+endif()
+
+if(NOT "${Slicer_FORCED_REVISION}" STREQUAL "")
+  set(Slicer_REVISION "${Slicer_FORCED_REVISION}")
+elseif(Slicer_REVISION_TYPE STREQUAL "CommitCount")
+  set(Slicer_REVISION "${Slicer_COMMIT_COUNT}")
+elseif(Slicer_REVISION_TYPE STREQUAL "Hash")
+  set(Slicer_REVISION "${Slicer_WC_REVISION_HASH}")
+else()
+  message(FATAL_ERROR "Invalid Slicer_REVISION_TYPE value: ${Slicer_REVISION_TYPE}")
 endif()
 
 set(Slicer_VERSION      "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
@@ -107,4 +137,4 @@ if(NOT "${Slicer_RELEASE_TYPE}" STREQUAL "Stable")
 endif()
 
 message(STATUS "Configuring Slicer version [${Slicer_VERSION_FULL}]")
-message(STATUS "Configuring Slicer revision [${Slicer_WC_REVISION}]")
+message(STATUS "Configuring Slicer revision [${Slicer_REVISION}]")

@@ -24,7 +24,7 @@
 #
 # Then, using  the 'SlicerMacroExtractRepositoryInfo' CMake module, the script
 # will also set the following variables:
-#  Slicer_WC_REVISION
+#  Slicer_REVISION
 #  Slicer_WC_LAST_CHANGED_DATE
 #
 # Finally, each time the 'packageupload' target is built, this same module will be
@@ -110,7 +110,7 @@ if(NOT PACKAGEUPLOAD)
     # Optional variables
     CTEST_MODEL
     # Variables set by SlicerMacroExtractRepositoryInfo
-    Slicer_WC_REVISION
+    Slicer_REVISION
     Slicer_WC_LAST_CHANGED_DATE
     )
     if(NOT DEFINED ${varname})
@@ -245,7 +245,7 @@ foreach(p ${package_list})
       SERVER_EMAIL ${MIDAS_PACKAGE_EMAIL}
       SERVER_APIKEY ${MIDAS_PACKAGE_API_KEY}
       SUBMISSION_TYPE ${CTEST_MODEL}
-      SOURCE_REVISION ${Slicer_WC_REVISION}
+      SOURCE_REVISION ${Slicer_REVISION}
       SOURCE_CHECKOUTDATE ${Slicer_WC_LAST_CHANGED_DATE}
       OPERATING_SYSTEM ${Slicer_OS}
       ARCHITECTURE ${Slicer_ARCHITECTURE}

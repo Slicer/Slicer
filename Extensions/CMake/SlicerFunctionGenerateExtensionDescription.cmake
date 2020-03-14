@@ -47,7 +47,7 @@ function(slicerFunctionGenerateExtensionDescription)
     EXTENSION_WC_ROOT
     EXTENSION_WC_TYPE
     EXTENSION_WC_URL
-    SLICER_WC_REVISION
+    SLICER_REVISION
     SLICER_WC_ROOT
     )
   set(multiValueArgs
@@ -62,7 +62,7 @@ function(slicerFunctionGenerateExtensionDescription)
     EXTENSION_WC_ROOT
     EXTENSION_WC_TYPE
     EXTENSION_WC_URL
-    SLICER_WC_REVISION
+    SLICER_REVISION
     SLICER_WC_ROOT
 
     )
@@ -91,7 +91,7 @@ function(slicerFunctionGenerateExtensionDescription)
   set(scm_url ${MY_EXTENSION_WC_URL})
 
   #message(MY_SLICER_WC_ROOT:${MY_SLICER_WC_ROOT})
-  #message(MY_SLICER_WC_REVISION:${MY_SLICER_WC_REVISION})
+  #message(MY_SLICER_REVISION:${MY_SLICER_REVISION})
   #message(MY_EXTENSION_WC_TYPE:${MY_EXTENSION_WC_TYPE})
   #message(MY_EXTENSION_WC_ROOT:${MY_EXTENSION_WC_ROOT})
   #message(MY_EXTENSION_WC_REVISION:${MY_EXTENSION_WC_REVISION})
@@ -100,7 +100,7 @@ function(slicerFunctionGenerateExtensionDescription)
   # are checkout on the same filesystem.
   # This is useful for testing purposes
   if(${MY_EXTENSION_WC_TYPE} STREQUAL "local" OR (${MY_EXTENSION_WC_ROOT} STREQUAL ${MY_SLICER_WC_ROOT}
-     AND ${MY_EXTENSION_WC_REVISION} STREQUAL ${MY_SLICER_WC_REVISION}))
+     AND ${MY_EXTENSION_WC_REVISION} STREQUAL ${MY_SLICER_REVISION}))
     set(scm_type local)
     set(scm_url ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
@@ -141,7 +141,7 @@ function(slicer_generate_extension_description_test)
     EXTENSION_WC_ROOT "git://github.com/jcfr/SlicerToKiwiExporter.git"
     EXTENSION_WC_TYPE "git"
     EXTENSION_WC_URL "git://github.com/jcfr/SlicerToKiwiExporter.git"
-    SLICER_WC_REVISION "21510"
+    SLICER_REVISION "21510"
     SLICER_WC_ROOT "http://svn.slicer.org/Slicer4"
     )
 

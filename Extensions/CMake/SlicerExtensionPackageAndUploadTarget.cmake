@@ -16,7 +16,7 @@
 #  EXTENSION_SUPERBUILD_BINARY_DIR
 #  EXTENSION_BUILD_SUBDIRECTORY
 #  Slicer_CMAKE_DIR
-#  Slicer_WC_REVISION
+#  Slicer_REVISION
 #  EXTENSION_NAME
 #  EXTENSION_CATEGORY
 #  EXTENSION_ICONURL
@@ -104,7 +104,7 @@ if(NOT PACKAGEUPLOAD)
     SLICER_EXTENSION_MANAGER_URL
     SLICER_EXTENSION_MANAGER_API_KEY
     CTEST_MODEL
-    Slicer_WC_REVISION
+    Slicer_REVISION
     EXTENSION_NAME
     EXTENSION_CATEGORY
     EXTENSION_ICONURL
@@ -291,7 +291,7 @@ foreach(p ${package_list})
         SERVER_APIKEY ${MIDAS_PACKAGE_API_KEY}
         TMP_DIR ${EXTENSION_BINARY_DIR}
         SUBMISSION_TYPE ${CTEST_MODEL}
-        SLICER_REVISION ${Slicer_WC_REVISION}
+        SLICER_REVISION ${Slicer_REVISION}
         EXTENSION_NAME ${EXTENSION_NAME}
         EXTENSION_CATEGORY ${EXTENSION_CATEGORY}
         EXTENSION_ICONURL ${EXTENSION_ICONURL}
@@ -337,7 +337,7 @@ foreach(p ${package_list})
             --repo_type ${EXTENSION_WC_TYPE}
             --repo_url ${EXTENSION_WC_URL}
             --revision ${EXTENSION_WC_REVISION}
-            --app_revision ${Slicer_WC_REVISION}
+            --app_revision ${Slicer_REVISION}
       RESULT_VARIABLE slicer_extension_manager_upload_status
       ERROR_FILE ${error_file}
       )

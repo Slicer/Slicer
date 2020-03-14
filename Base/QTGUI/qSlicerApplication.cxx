@@ -874,9 +874,11 @@ void qSlicerApplication::logApplicationInformation() const
          qPrintable(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
 
   // Slicer version
-  qDebug("%s: %s (revision %s) %s - %s %s",
+  qDebug("%s: %s (revision %s / %s) %s - %s %s",
          qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
-         Slicer_VERSION_FULL, qPrintable(this->repositoryRevision()),
+         Slicer_VERSION_FULL,
+         qPrintable(this->revision()),
+         qPrintable(this->repositoryRevision()),
          qPrintable(this->platform()),
          this->isInstalled() ? "installed" : "not installed",
 #ifdef _DEBUG
@@ -889,9 +891,12 @@ void qSlicerApplication::logApplicationInformation() const
   // Custom application version
   if (this->isCustomMainApplication())
     {
-    qDebug("%s: %s (revision %s)",
+    qDebug("%s: %s (revision %s / %s)",
       qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
-      Slicer_MAIN_PROJECT_VERSION_FULL, qPrintable(Slicer_MAIN_PROJECT_WC_REVISION));
+      Slicer_MAIN_PROJECT_VERSION_FULL,
+      qPrintable(Slicer_MAIN_PROJECT_REVISION),
+      qPrintable(Slicer_MAIN_PROJECT_REVISION),
+      qPrintable(Slicer_MAIN_PROJECT_WC_REVISION));
     }
 
   // Operating system

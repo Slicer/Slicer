@@ -116,9 +116,9 @@ endif()
 endfunction()
 
 # Helper function used to extract slicer revision within a header file. The revision is
-# expected to be defined using the format '#define Slicer_WC_REVISION "abcd123456"'
+# expected to be defined using the format '#define Slicer_REVISION "abcd123456"'
 function(_get_slicer_revision headerfile varname)
-  set(_macroname Slicer_WC_REVISION)
+  set(_macroname Slicer_REVISION)
   set(_revision_regex "^#define[ \t]+${_macroname}[ \t]+[\"]*([0-9A-Za-z\\.]+)[\"][ \t]*$")
   file(STRINGS "${headerfile}" _revision_string
        LIMIT_COUNT 1 REGEX ${_revision_regex})
@@ -530,9 +530,9 @@ if(NOT EXTENSIONS_BUILDSYSTEM_TESTING)
   if(NOT EXISTS "${slicer_version_header}")
     message(FATAL_ERROR "Aborting build. Could not find 'vtkSlicerVersionConfigure.h' in Slicer_DIR [${Slicer_DIR}].")
   endif()
-  _get_slicer_revision("${slicer_version_header}" Slicer_WC_REVISION)
-  message(STATUS "Slicer_WC_REVISION:${Slicer_WC_REVISION}")
-  set(Slicer_PREVIOUS_WC_REVISION ${Slicer_WC_REVISION})
+  _get_slicer_revision("${slicer_version_header}" Slicer_REVISION)
+  message(STATUS "Slicer_REVISION:${Slicer_REVISION}")
+  set(Slicer_PREVIOUS_REVISION ${Slicer_REVISION})
 
 endif()
 
