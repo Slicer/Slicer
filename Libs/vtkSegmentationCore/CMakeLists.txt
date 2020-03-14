@@ -71,6 +71,13 @@ set(vtkSegmentationCore_SRCS
 #  ABSTRACT
 #  )
 
+#
+# vtkAddon
+#
+if (Slicer_USE_SYSTEM_vtkAddon)
+  find_package(vtkAddon REQUIRED)
+endif()
+
 set(vtkSegmentationCore_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}

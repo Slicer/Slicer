@@ -60,6 +60,13 @@ if(MRML_USE_vtkTeem)
   include(${Teem_USE_FILE})
 endif()
 
+#
+# vtkAddon
+#
+if (Slicer_USE_SYSTEM_vtkAddon)
+  find_package(vtkAddon REQUIRED)
+endif()
+
 # --------------------------------------------------------------------------
 # Include dirs
 # --------------------------------------------------------------------------
