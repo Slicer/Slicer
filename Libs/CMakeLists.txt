@@ -19,8 +19,13 @@ set(SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES
   CACHE INTERNAL "SlicerExecutionModel extra executable target libraries" FORCE
   )
 
+if (NOT Slicer_USE_SYSTEM_vtkAddon)
+  list(APPEND dirs
+    vtkAddon
+    )
+endif()
+
 list(APPEND dirs
-  vtkAddon
   vtkTeem
   vtkITK
   vtkSegmentationCore
@@ -128,7 +133,6 @@ set(MRML_LIBRARIES ${_mrml_libraries} CACHE INTERNAL "MRML libraries" FORCE)
 # Set variable Slicer_Libs_VTK_WRAPPED_LIBRARIES
 #-----------------------------------------------------------------------------
 set(_vtk_wrapped_libraries
-  vtkAddon
   vtkSegmentationCore
   vtkTeem
   vtkITK
@@ -136,6 +140,12 @@ set(_vtk_wrapped_libraries
   MRMLCore
   MRMLLogic
   )
+
+if (NOT Slicer_USE_SYSTEM_vtkAddon)
+  list(APPEND _vtk_wrapped_libraries
+    vtkAddon
+    )
+endif()
 if(Slicer_USE_PYTHONQT AND VTK_WRAP_PYTHON)
   list(APPEND _vtk_wrapped_libraries MRMLDisplayableManager)
 endif()

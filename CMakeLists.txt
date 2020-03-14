@@ -272,6 +272,9 @@ option(Slicer_USE_FOLDERS "Organize build targets into folders" ON)
 mark_as_superbuild(Slicer_USE_FOLDERS)
 mark_as_advanced(Slicer_USE_FOLDERS)
 
+option(Slicer_USE_SYSTEM_vtkAddon "Build Slicer using system vtkAddon" OFF)
+mark_as_superbuild(Slicer_USE_SYSTEM_vtkAddon:BOOL)
+
 #-----------------------------------------------------------------------------
 # External projects related options
 #-----------------------------------------------------------------------------
@@ -859,8 +862,10 @@ set(SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES "" CACHE INTERNAL "Sl
 # Set Slicer builtin libraries *_DIR variables
 #-----------------------------------------------------------------------------
 set(GenerateLM_DIR ${Slicer_BINARY_DIR}/Libs/GenerateLM)
-set(vtkAddon_DIR ${Slicer_BINARY_DIR}/Libs/vtkAddon)
 set(vtkITK_DIR ${Slicer_BINARY_DIR}/Libs/vtkITK)
+if (NOT Slicer_USE_SYSTEM_vtkAddon)
+  set(vtkAddon_DIR ${Slicer_BINARY_DIR}/Libs/vtkAddon)
+endif()
 
 #-----------------------------------------------------------------------------
 # Set COVERAGE_{C,CXX}_FLAGS variables

@@ -473,6 +473,10 @@ if(WIN32)
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DSlicer_SKIP_ROOT_DIR_MAX_LENGTH_CHECK:BOOL=ON)
 endif()
 
+if (Slicer_USE_SYSTEM_vtkAddon)
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DvtkAddon_DIR:PATH=${vtkAddon_DIR})
+endif()
+
 #------------------------------------------------------------------------------
 # Customizing SlicerApp metadata
 #------------------------------------------------------------------------------
