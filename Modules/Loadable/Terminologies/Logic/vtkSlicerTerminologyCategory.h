@@ -32,8 +32,8 @@
 ///
 /// Encapsulates the mandatory and optional fields for a terminology category.
 /// The following fields inherited from \sa vtkCodedEntry:
-///   CodingSchemeDesignator: 'codingScheme' member of the category object. Value example "SRT"
-///   CodeValue: 'codeValue' member of the category object. Value example "T-D0050"
+///   CodingSchemeDesignator: 'codingScheme' member of the category object. Value example "SCT"
+///   CodeValue: 'codeValue' member of the category object. Value example "85756007"
 ///   CodeMeaning: 'codeMeaning' member of the category object. Value example "Tissue"
 ///
 class VTK_SLICER_TERMINOLOGIES_LOGIC_EXPORT vtkSlicerTerminologyCategory : public vtkCodedEntry

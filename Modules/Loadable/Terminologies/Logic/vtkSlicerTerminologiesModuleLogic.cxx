@@ -286,11 +286,11 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyCategory
     }
 
   rapidjson::Value::MemberIterator codeMeaning = categoryObject.FindMember("CodeMeaning");             // e.g. "Tissue" (mandatory)
-  rapidjson::Value::MemberIterator codingScheme = categoryObject.FindMember("CodingSchemeDesignator"); // e.g. "SRT" (mandatory)
+  rapidjson::Value::MemberIterator codingScheme = categoryObject.FindMember("CodingSchemeDesignator"); // e.g. "SCT" (mandatory)
   rapidjson::Value::MemberIterator SNOMEDCTConceptID = categoryObject.FindMember("SNOMEDCTConceptID"); // e.g. "85756007"
   rapidjson::Value::MemberIterator UMLSConceptUID = categoryObject.FindMember("UMLSConceptUID");       // e.g. "C0040300"
   rapidjson::Value::MemberIterator cid = categoryObject.FindMember("cid");                             // e.g. "7051"
-  rapidjson::Value::MemberIterator codeValue = categoryObject.FindMember("CodeValue");                 // e.g. "T-D0050" (mandatory)
+  rapidjson::Value::MemberIterator codeValue = categoryObject.FindMember("CodeValue");                 // e.g. "85756007" (mandatory)
   rapidjson::Value::MemberIterator contextGroupName = categoryObject.FindMember("contextGroupName");   // e.g. "Segmentation Property Categories"
   rapidjson::Value::MemberIterator showAnatomy = categoryObject.FindMember("showAnatomy");
   if (codingScheme == categoryObject.MemberEnd() || codeValue == categoryObject.MemberEnd() || codeMeaning == categoryObject.MemberEnd())
@@ -385,7 +385,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyTypeFrom
   rapidjson::Value::MemberIterator recommendedDisplayRGBValue = typeObject.FindMember("recommendedDisplayRGBValue");
   // e.g. "Artery" (mandatory)
   rapidjson::Value::MemberIterator codeMeaning = typeObject.FindMember("CodeMeaning");
-  // e.g. "SRT" (mandatory)
+  // e.g. "SCT" (mandatory)
   rapidjson::Value::MemberIterator codingScheme = typeObject.FindMember("CodingSchemeDesignator");
   // e.g. "artery"
   rapidjson::Value::MemberIterator slicerLabel = typeObject.FindMember("3dSlicerLabel");
@@ -395,7 +395,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyTypeFrom
   rapidjson::Value::MemberIterator UMLSConceptUID = typeObject.FindMember("UMLSConceptUID");
   // e.g. "7051"
   rapidjson::Value::MemberIterator cid = typeObject.FindMember("cid");
-  // e.g. "T-D0050" (mandatory)
+  // e.g. "85756007" (mandatory)
   rapidjson::Value::MemberIterator codeValue = typeObject.FindMember("CodeValue");
   // e.g. "Segmentation Property Categories"
   rapidjson::Value::MemberIterator contextGroupName = typeObject.FindMember("contextGroupName");

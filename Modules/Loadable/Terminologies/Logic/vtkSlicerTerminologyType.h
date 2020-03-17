@@ -32,8 +32,8 @@
 ///
 /// Encapsulates the mandatory and optional fields for a terminology type.
 /// The following fields inherited from \sa vtkCodedEntry:
-///   CodingSchemeDesignator: 'codingScheme' member of the type object. Value example "SRT"
-///   CodeValue: 'codeValue' member of the type object. Value example "T-41066"
+///   CodingSchemeDesignator: 'codingScheme' member of the type object. Value example "SCT"
+///   CodeValue: 'codeValue' member of the type object. Value example "51114001"
 ///   CodeMeaning: 'codeMeaning' member of the type object. Value example "Artery"
 ///
 

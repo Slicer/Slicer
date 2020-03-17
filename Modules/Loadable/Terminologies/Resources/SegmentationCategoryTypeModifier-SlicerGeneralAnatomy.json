@@ -5,11 +5,11 @@
     "Category": [
       {
         "CodeMeaning": "Tissue",
-        "CodingSchemeDesignator": "SRT",
+        "CodingSchemeDesignator": "SCT",
         "SNOMEDCTConceptID": "85756007",
         "cid": "7051",
         "UMLSConceptUID": "C0040300",
-        "CodeValue": "T-D0050",
+        "CodeValue": "85756007",
         "contextGroupName": "Segmentation Property Categories",
         "Type": [
           {
@@ -19,11 +19,11 @@
               128
             ],
             "CodeMeaning": "Tissue",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "tissue",
             "cid": "7165",
             "UMLSConceptUID": "C0040300",
-            "CodeValue": "T-D0050",
+            "CodeValue": "85756007",
             "contextGroupName": "Abstract Segmentation Types",
             "SNOMEDCTConceptID": "85756007",
             "3dSlicerIntegerLabel": 1
@@ -35,11 +35,11 @@
               79
             ],
             "CodeMeaning": "Artery",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "artery",
             "cid": "7166",
             "UMLSConceptUID": "C0555806",
-            "CodeValue": "T-41066",
+            "CodeValue": "51114001",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "275989006",
             "3dSlicerIntegerLabel": 17
@@ -51,11 +51,11 @@
               70
             ],
             "CodeMeaning": "Body fat",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "fat",
             "cid": "7166",
             "UMLSConceptUID": "C0344335",
-            "CodeValue": "F-03D38",
+            "CodeValue": "248300009",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "248300009",
             "3dSlicerIntegerLabel": 12
@@ -67,11 +67,11 @@
               145
             ],
             "CodeMeaning": "Bone",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "bone",
             "cid": "7166",
             "UMLSConceptUID": "C0262950",
-            "CodeValue": "T-D016E",
+            "CodeValue": "272673000",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "272673000",
             "3dSlicerIntegerLabel": 2
@@ -83,11 +83,11 @@
               220
             ],
             "CodeMeaning": "Capillary",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "capillary",
             "cid": "7166",
             "UMLSConceptUID": "C0006901",
-            "CodeValue": "T-40050",
+            "CodeValue": "20982000",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "20982000",
             "3dSlicerIntegerLabel": 18
@@ -99,11 +99,11 @@
               210
             ],
             "CodeMeaning": "Cartilage",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "cartilage",
             "cid": "7166",
             "UMLSConceptUID": "C0007301",
-            "CodeValue": "T-D021B",
+            "CodeValue": "309312004",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "309312004",
             "3dSlicerIntegerLabel": 21
@@ -115,11 +115,11 @@
               210
             ],
             "CodeMeaning": "Connective tissue",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "connective tissue",
             "cid": "7166",
             "UMLSConceptUID": "C0009780",
-            "CodeValue": "T-1A200",
+            "CodeValue": "21793004",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "21793004",
             "3dSlicerIntegerLabel": 4
@@ -131,11 +131,11 @@
               211
             ],
             "CodeMeaning": "Ligament",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "ligament",
             "cid": "7166",
             "UMLSConceptUID": "C0023685",
-            "CodeValue": "T-18010",
+            "CodeValue": "52082005",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "52082005",
             "3dSlicerIntegerLabel": 19
@@ -147,11 +147,11 @@
               100
             ],
             "CodeMeaning": "Lymph node",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "lymph node",
             "cid": "7166",
             "UMLSConceptUID": "C0024204",
-            "CodeValue": "T-C4000",
+            "CodeValue": "59441001",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "59441001",
             "3dSlicerIntegerLabel": 23
@@ -163,11 +163,11 @@
               131
             ],
             "CodeMeaning": "Lymphatic vessel",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "lymphatic vessel",
             "cid": "7166",
             "UMLSConceptUID": "C0229889",
-            "CodeValue": "T-C6010",
+            "CodeValue": "83555006",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "83555006",
             "3dSlicerIntegerLabel": 24
@@ -179,11 +179,11 @@
               242
             ],
             "CodeMeaning": "Meniscus",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "meniscus",
             "cid": "7166",
             "UMLSConceptUID": "C0224498",
-            "CodeValue": "T-15009",
+            "CodeValue": "74135004",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "74135004",
             "3dSlicerIntegerLabel": 22
@@ -195,11 +195,11 @@
               88
             ],
             "CodeMeaning": "Muscle",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "muscle",
             "cid": "7166",
             "UMLSConceptUID": "C0026845",
-            "CodeValue": "T-13001",
+            "CodeValue": "71616004",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "71616004",
             "3dSlicerIntegerLabel": 8
@@ -211,11 +211,11 @@
               49
             ],
             "CodeMeaning": "Nerve",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "nerve",
             "cid": "7166",
             "UMLSConceptUID": "C1268169",
-            "CodeValue": "T-D0598",
+            "CodeValue": "119410002",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "119410002",
             "3dSlicerIntegerLabel": 15
@@ -227,11 +227,11 @@
               101
             ],
             "CodeMeaning": "Organ",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "organ",
             "cid": "7166",
             "UMLSConceptUID": "C1285092",
-            "CodeValue": "T-1A310",
+            "CodeValue": "113343008",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "2861001",
             "3dSlicerIntegerLabel": 6
@@ -243,11 +243,11 @@
               101
             ],
             "CodeMeaning": "Skin",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "skin",
             "cid": "7166",
             "UMLSConceptUID": "C1123023",
-            "CodeValue": "T-01000",
+            "CodeValue": "39937001",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "39937001",
             "3dSlicerIntegerLabel": 3
@@ -259,11 +259,11 @@
               207
             ],
             "CodeMeaning": "Tendon",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "tendon",
             "cid": "7166",
             "UMLSConceptUID": "C0039508",
-            "CodeValue": "T-17010",
+            "CodeValue": "13024002",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "13024002",
             "3dSlicerIntegerLabel": 20
@@ -275,11 +275,11 @@
               128
             ],
             "CodeMeaning": "Tissue",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "tissue",
             "cid": "7166",
             "UMLSConceptUID": "C0040300",
-            "CodeValue": "T-D0050",
+            "CodeValue": "85756007",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "85756007",
             "3dSlicerIntegerLabel": 1
@@ -291,11 +291,11 @@
               206
             ],
             "CodeMeaning": "Vein",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "vein",
             "cid": "7166",
             "UMLSConceptUID": "C0447146",
-            "CodeValue": "T-4806E",
+            "CodeValue": "29092000",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "181378009",
             "3dSlicerIntegerLabel": 16
@@ -305,11 +305,11 @@
       },
       {
         "CodeMeaning": "Anatomical Structure",
-        "CodingSchemeDesignator": "SRT",
+        "CodingSchemeDesignator": "SCT",
         "SNOMEDCTConceptID": "123037004",
         "cid": "7051",
         "UMLSConceptUID": "C1268086",
-        "CodeValue": "T-D000A",
+        "CodeValue": "123037004",
         "contextGroupName": "Segmentation Property Categories",
         "Type": [
           {
@@ -319,9 +319,9 @@
               101
             ],
             "cid": "7154",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "abdomen",
-            "CodeValue": "T-D4000",
+            "CodeValue": "113345001",
             "UMLSConceptUID": "C0000726",
             "CodeMeaning": "Abdomen",
             "contextGroupName": "Abdominal Organ Segmentation Types",
@@ -335,9 +335,9 @@
               161
             ],
             "cid": "7154",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "abdominal cavity",
-            "CodeValue": "T-D4010",
+            "CodeValue": "52731004",
             "UMLSConceptUID": "C0230168",
             "CodeMeaning": "Abdominal cavity",
             "contextGroupName": "Abdominal Organ Segmentation Types",
@@ -351,9 +351,9 @@
               68
             ],
             "cid": "7154",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "muscles of abdominal wall",
-            "CodeValue": "T-14001",
+            "CodeValue": "195879000",
             "UMLSConceptUID": "C1279385",
             "CodeMeaning": "Abdominal wall muscle",
             "contextGroupName": "Abdominal Organ Segmentation Types",
@@ -367,9 +367,9 @@
               83
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "adenohypophysis",
-            "CodeValue": "T-B1100",
+            "CodeValue": "62818001",
             "UMLSConceptUID": "C0032008",
             "CodeMeaning": "Adenohypophysis",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -380,9 +380,9 @@
             "contextGroupName": "Abdominal Organ Segmentation Types",
             "cid": "7154",
             "CodeMeaning": "Adrenal gland",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0001625",
-            "CodeValue": "T-B3000",
+            "CodeValue": "23451007",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -391,9 +391,9 @@
                   150
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right adrenal gland",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -407,9 +407,9 @@
                   150
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left adrenal gland",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -424,9 +424,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Amygdala",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0002708",
-            "CodeValue": "T-A3230",
+            "CodeValue": "4958002",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -435,9 +435,9 @@
                   112
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right amygdaloid complex",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -451,9 +451,9 @@
                   112
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left amygdaloid complex",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -471,9 +471,9 @@
               199
             ],
             "cid": "4031",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "anus",
-            "CodeValue": "T-59900",
+            "CodeValue": "53505006",
             "UMLSConceptUID": "C0003461",
             "CodeMeaning": "Anus",
             "contextGroupName": "Common Anatomic Regions",
@@ -487,9 +487,9 @@
               76
             ],
             "cid": "7152",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "aorta",
-            "CodeValue": "T-42000",
+            "CodeValue": "15825003",
             "UMLSConceptUID": "C0003483",
             "CodeMeaning": "Aorta",
             "contextGroupName": "Cardiac Structure Segmentation Types",
@@ -503,9 +503,9 @@
               97
             ],
             "cid": "6113",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "aortic valve",
-            "CodeValue": "T-35400",
+            "CodeValue": "34202007",
             "UMLSConceptUID": "C0003501",
             "CodeMeaning": "Aortic Valve",
             "contextGroupName": "Mediastinum Anatomy Finding or Feature",
@@ -519,9 +519,9 @@
               209
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "arachnoid",
-            "CodeValue": "T-A1220",
+            "CodeValue": "75042008",
             "UMLSConceptUID": "C0003707",
             "CodeMeaning": "Arachnoid",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -543,9 +543,9 @@
                   154
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right arcuate fasciculus",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -559,9 +559,9 @@
                   154
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left arcuate fasciculus",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -579,9 +579,9 @@
               77
             ],
             "cid": "7167",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "autonomic nerve",
-            "CodeValue": "T-A9605",
+            "CodeValue": "53520000",
             "UMLSConceptUID": "C0206250",
             "CodeMeaning": "Autonomic nerve",
             "contextGroupName": "Peripheral Nervous System Segmentation Types",
@@ -595,9 +595,9 @@
               30
             ],
             "cid": "7154",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "biliary tree",
-            "CodeValue": "T-60610",
+            "CodeValue": "28273000",
             "UMLSConceptUID": "C0005400",
             "CodeMeaning": "Bile Duct",
             "contextGroupName": "Abdominal Organ Segmentation Types",
@@ -611,9 +611,9 @@
               132
             ],
             "cid": "7160",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "urinary bladder",
-            "CodeValue": "T-74000",
+            "CodeValue": "89837001",
             "UMLSConceptUID": "C0005682",
             "CodeMeaning": "Bladder",
             "contextGroupName": "Pelvic Organ Segmentation Types",
@@ -627,9 +627,9 @@
               172
             ],
             "cid": "7155",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "skeleton of thorax",
-            "CodeValue": "T-D0170",
+            "CodeValue": "272710004",
             "UMLSConceptUID": "C0448157",
             "CodeMeaning": "Bone of thorax",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
@@ -643,9 +643,9 @@
               142
             ],
             "cid": "4028",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "skeleton of neck",
-            "CodeValue": "T-D006D",
+            "CodeValue": "312779009",
             "UMLSConceptUID": "C0730130",
             "CodeMeaning": "Bone structure of head and/or neck",
             "contextGroupName": "Craniofacial Anatomic Regions",
@@ -659,9 +659,9 @@
               225
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "brain",
-            "CodeValue": "T-A0100",
+            "CodeValue": "12738006",
             "UMLSConceptUID": "C0006104",
             "CodeMeaning": "Brain",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -675,9 +675,9 @@
               255
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "CSF space",
-            "CodeValue": "T-A0109",
+            "CodeValue": "280371009",
             "UMLSConceptUID": "C0459387",
             "CodeMeaning": "Brain cerebrospinal fluid pathway",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -691,9 +691,9 @@
               215
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "ventricles of brain",
-            "CodeValue": "T-A1600",
+            "CodeValue": "35764002",
             "UMLSConceptUID": "C0007799",
             "CodeMeaning": "Brain ventricle",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -704,9 +704,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Caudate nucleus",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0007461",
-            "CodeValue": "T-A3200",
+            "CodeValue": "11000004",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -715,9 +715,9 @@
                   85
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right caudate nucleus",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -731,9 +731,9 @@
                   85
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left caudate nucleus",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -751,9 +751,9 @@
               49
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "central nervous system",
-            "CodeValue": "T-A0090",
+            "CodeValue": "21483005",
             "UMLSConceptUID": "C0927232",
             "CodeMeaning": "Central nervous system",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -767,9 +767,9 @@
               164
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "cerebellar white matter",
-            "CodeValue": "T-A6080",
+            "CodeValue": "33060004",
             "UMLSConceptUID": "C0152381",
             "CodeMeaning": "Cerebellar white matter",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -783,9 +783,9 @@
               215
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "cerebral aqueduct",
-            "CodeValue": "T-A1800",
+            "CodeValue": "80447000",
             "UMLSConceptUID": "C0007769",
             "CodeMeaning": "Cerebral aqueduct",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -796,9 +796,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Cerebral fornix",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0152334",
-            "CodeValue": "T-A2970",
+            "CodeValue": "87463005",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -807,9 +807,9 @@
                   147
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right fornix",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -823,9 +823,9 @@
                   147
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left fornix",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -843,9 +843,9 @@
               128
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "cerebral cortex",
-            "CodeValue": "T-A2020",
+            "CodeValue": "40146001",
             "UMLSConceptUID": "C0007776",
             "CodeMeaning": "Cerebral Grey Matter",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -859,9 +859,9 @@
               225
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "cerebral white matter",
-            "CodeValue": "T-A2030",
+            "CodeValue": "68523003",
             "UMLSConceptUID": "C0152295",
             "CodeMeaning": "Cerebral White Matter",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -875,12 +875,12 @@
               235
             ],
             "CodeMeaning": "Gray Matter",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "gray matter",
             "3dSlicerIntegerLabel": 13,
             "cid": "7153",
             "UMLSConceptUID": "C1300312",
-            "CodeValue": "T-A0096",
+            "CodeValue": "389081007",
             "contextGroupName": "CNSSegmentationTypes",
             "SNOMEDCTConceptID": "389081007"
           },
@@ -891,12 +891,12 @@
               210
             ],
             "CodeMeaning": "White Matter",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "white matter",
             "3dSlicerIntegerLabel": 14,
             "cid": "7153",
             "UMLSConceptUID": "C1300311",
-            "CodeValue": "T-A0095",
+            "CodeValue": "389080008",
             "contextGroupName": "CNSSegmentationTypes",
             "SNOMEDCTConceptID": "389080008"
           },
@@ -907,12 +907,12 @@
               101
             ],
             "CodeMeaning": "Liver",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "liver",
             "3dSlicerIntegerLabel": 216,
             "cid": "4030,7154",
             "UMLSConceptUID": "C0023884",
-            "CodeValue": "T-62000",
+            "CodeValue": "10200004",
             "contextGroupName": "CT,MRandPETAnatomyImaged,AbdominalSegmentationTypes",
             "SNOMEDCTConceptID": "10200004"
           },
@@ -923,12 +923,12 @@
               68
             ],
             "CodeMeaning": "Maxilla",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "maxilla",
             "3dSlicerIntegerLabel": 152,
             "cid": "4028,4031",
             "UMLSConceptUID": "C0024947",
-            "CodeValue": "T-11170",
+            "CodeValue": "70925003",
             "contextGroupName": "CraniofacialAnatomicRegions,CommonAnatomicRegions",
             "SNOMEDCTConceptID": "70925003"
           },
@@ -939,12 +939,12 @@
               109
             ],
             "CodeMeaning": "Midbrain",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "midbrain",
             "3dSlicerIntegerLabel": 69,
             "cid": "7153",
             "UMLSConceptUID": "C0025462",
-            "CodeValue": "T-A5100",
+            "CodeValue": "61962009",
             "contextGroupName": "CNSSegmentationTypes",
             "SNOMEDCTConceptID": "61962009"
           },
@@ -955,12 +955,12 @@
               217
             ],
             "CodeMeaning": "Pleura",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "pleura",
             "3dSlicerIntegerLabel": 179,
             "cid": "7155",
             "UMLSConceptUID": "C0032225",
-            "CodeValue": "T-29000",
+            "CodeValue": "3120008",
             "contextGroupName": "ThoracicSegmentationTypes",
             "SNOMEDCTConceptID": "3120008"
           },
@@ -971,12 +971,12 @@
               158
             ],
             "CodeMeaning": "Rib",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "ribs",
             "3dSlicerIntegerLabel": 201,
             "cid": "4031,6114,7155",
             "UMLSConceptUID": "C0035561",
-            "CodeValue": "T-11300",
+            "CodeValue": "113197003",
             "contextGroupName": "CommonAnatomicRegions,OsseousAnatomyFindingorFeature,ThoracicSegmentationTypes",
             "SNOMEDCTConceptID": "113197003"
           },
@@ -987,12 +987,12 @@
               162
             ],
             "CodeMeaning": "Spleen",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "spleen",
             "3dSlicerIntegerLabel": 220,
             "cid": "4030,7154",
             "UMLSConceptUID": "C0037993",
-            "CodeValue": "T-C3000",
+            "CodeValue": "78961009",
             "contextGroupName": "CT,MRandPETAnatomyImaged,AbdominalSegmentationTypes",
             "SNOMEDCTConceptID": "78961009"
           },
@@ -1003,12 +1003,12 @@
               98
             ],
             "CodeMeaning": "Telencephalon",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "telencephalon",
             "3dSlicerIntegerLabel": 40,
             "cid": "7153",
             "UMLSConceptUID": "C0039452",
-            "CodeValue": "T-A0103",
+            "CodeValue": "11628009",
             "contextGroupName": "CNSSegmentationTypes",
             "SNOMEDCTConceptID": "11628009"
           },
@@ -1019,12 +1019,12 @@
               35
             ],
             "CodeMeaning": "Vagus nerve",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "vagus nerve",
             "3dSlicerIntegerLabel": 283,
             "cid": "7167",
             "UMLSConceptUID": "C0042276",
-            "CodeValue": "T-A8640",
+            "CodeValue": "88882009",
             "contextGroupName": "PeripheralNervousSystemSegmentationTypes",
             "SNOMEDCTConceptID": "88882009"
           },
@@ -1035,9 +1035,9 @@
               207
             ],
             "cid": "4031",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "cervical vertebral column",
-            "CodeValue": "T-11501",
+            "CodeValue": "122494005",
             "UMLSConceptUID": "C0728985",
             "CodeMeaning": "Cervical spine",
             "contextGroupName": "Common Anatomic Regions",
@@ -1051,9 +1051,9 @@
               101
             ],
             "cid": "4040",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "thorax",
-            "CodeValue": "T-D3000",
+            "CodeValue": "51185008",
             "UMLSConceptUID": "C0817096",
             "CodeMeaning": "Chest",
             "contextGroupName": "Endoscopy Anatomic Regions",
@@ -1067,9 +1067,9 @@
               76
             ],
             "cid": "7155",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "muscles of thoracic wall",
-            "CodeValue": "T-14122",
+            "CodeValue": "372074006",
             "UMLSConceptUID": "C1269825",
             "CodeMeaning": "Chest wall muscle",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
@@ -1080,9 +1080,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Cingulum",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0228272",
-            "CodeValue": "T-A2840",
+            "CodeValue": "37035000",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -1091,9 +1091,9 @@
                   83
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right cingulum bundle",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -1107,9 +1107,9 @@
                   83
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left cingulum bundle",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -1124,9 +1124,9 @@
             "contextGroupName": "Thoracic Tissue Segmentation Types",
             "cid": "7155",
             "CodeMeaning": "Clavicle",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0008913",
-            "CodeValue": "T-12310",
+            "CodeValue": "51299004",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -1135,9 +1135,9 @@
                   108
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right clavicle",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -1151,9 +1151,9 @@
                   108
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left clavicle",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -1171,9 +1171,9 @@
               143
             ],
             "cid": "4031",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "colon",
-            "CodeValue": "T-59300",
+            "CodeValue": "71854001",
             "UMLSConceptUID": "C0009368",
             "CodeMeaning": "Colon",
             "contextGroupName": "Common Anatomic Regions",
@@ -1187,9 +1187,9 @@
               158
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "corpus callosum",
-            "CodeValue": "T-A2700",
+            "CodeValue": "88442005",
             "UMLSConceptUID": "C0010090",
             "CodeMeaning": "Corpus callosum",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -1200,9 +1200,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Corpus striatum",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0010097",
-            "CodeValue": "T-A3100",
+            "CodeValue": "31428008",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -1211,9 +1211,9 @@
                   190
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right striatum",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -1227,9 +1227,9 @@
                   190
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left striatum",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -1247,9 +1247,9 @@
               92
             ],
             "cid": "7167",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "cranial nerves",
-            "CodeValue": "T-A8000",
+            "CodeValue": "25238003",
             "UMLSConceptUID": "C0010268",
             "CodeMeaning": "Cranial nerve",
             "contextGroupName": "Peripheral Nervous System Segmentation Types",
@@ -1261,9 +1261,9 @@
             "cid": "7153",
             "CodeMeaning": "Diencephalon",
             "3dSlicerLabel": "diencephalon",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0012144",
-            "CodeValue": "T-A0102",
+            "CodeValue": "87563008",
             "recommendedDisplayRGBValue": [
               69,
               110,
@@ -1279,9 +1279,9 @@
               229
             ],
             "cid": "4031",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "duodenum",
-            "CodeValue": "T-58200",
+            "CodeValue": "38848004",
             "UMLSConceptUID": "C0013303",
             "CodeMeaning": "Duodenum",
             "contextGroupName": "Common Anatomic Regions",
@@ -1295,9 +1295,9 @@
               209
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "dura mater",
-            "CodeValue": "T-A1120",
+            "CodeValue": "18545000",
             "UMLSConceptUID": "C0013313",
             "CodeMeaning": "Dura mater",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -1311,9 +1311,9 @@
               143
             ],
             "cid": "7155",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "esophagus",
-            "CodeValue": "T-56000",
+            "CodeValue": "32849002",
             "UMLSConceptUID": "C0014876",
             "CodeMeaning": "Esophagus",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
@@ -1324,9 +1324,9 @@
             "contextGroupName": "Craniofacial Anatomic Regions",
             "cid": "4028",
             "CodeMeaning": "External ear",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0013453",
-            "CodeValue": "T-AB100",
+            "CodeValue": "28347008",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -1335,9 +1335,9 @@
                   90
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right external ear",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -1351,9 +1351,9 @@
                   90
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left external ear",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -1368,9 +1368,9 @@
             "contextGroupName": "Craniofacial Anatomic Regions",
             "cid": "4028",
             "CodeMeaning": "Eyeball",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0229242",
-            "CodeValue": "T-AA770",
+            "CodeValue": "79652003",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -1379,9 +1379,9 @@
                   0
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right eyeball",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -1395,9 +1395,9 @@
                   0
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left eyeball",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -1415,9 +1415,9 @@
               134
             ],
             "cid": "7160",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "female external genitalia",
-            "CodeValue": "T-80010",
+            "CodeValue": "86969008",
             "UMLSConceptUID": "C0227747",
             "CodeMeaning": "Female external genitalia",
             "contextGroupName": "Pelvic Organ Segmentation Types",
@@ -1431,9 +1431,9 @@
               147
             ],
             "cid": "7160",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "female internal genitalia",
-            "CodeValue": "T-80020",
+            "CodeValue": "87759004",
             "UMLSConceptUID": "C0227748",
             "CodeMeaning": "Female internal genitalia",
             "contextGroupName": "Pelvic Organ Segmentation Types",
@@ -1444,9 +1444,9 @@
             "contextGroupName": "Common Anatomic Regions",
             "cid": "4031",
             "CodeMeaning": "Foot",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0016504",
-            "CodeValue": "T-D9700",
+            "CodeValue": "56459004",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -1455,9 +1455,9 @@
                   101
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right foot",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -1471,9 +1471,9 @@
                   101
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left foot",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -1488,9 +1488,9 @@
             "contextGroupName": "Common Anatomic Regions",
             "cid": "4031",
             "CodeMeaning": "Forearm",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0016536",
-            "CodeValue": "T-D8500",
+            "CodeValue": "14975008",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -1499,9 +1499,9 @@
                   101
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right forearm",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -1515,9 +1515,9 @@
                   101
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left forearm",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -1535,9 +1535,9 @@
               215
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "fourth ventricle",
-            "CodeValue": "T-A1820",
+            "CodeValue": "35918002",
             "UMLSConceptUID": "C0149556",
             "CodeMeaning": "Fourth ventricle",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -1548,9 +1548,9 @@
             "contextGroupName": "Craniofacial Anatomic Regions",
             "cid": "4028",
             "CodeMeaning": "Frontal bone",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0016732",
-            "CodeValue": "T-11110",
+            "CodeValue": "74872008",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -1559,9 +1559,9 @@
                   77
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right frontal bone",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -1575,9 +1575,9 @@
                   77
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left frontal bone",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -1592,9 +1592,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Frontal lobe",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0016733",
-            "CodeValue": "T-A2200",
+            "CodeValue": "83251001",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -1603,9 +1603,9 @@
                   164
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right frontal lobe",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -1619,9 +1619,9 @@
                   164
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left frontal lobe",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -1639,9 +1639,9 @@
               98
             ],
             "cid": "4040",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "gallbladder",
-            "CodeValue": "T-63000",
+            "CodeValue": "28231008",
             "UMLSConceptUID": "C0016976",
             "CodeMeaning": "Gallbladder",
             "contextGroupName": "Endoscopy Anatomic Regions",
@@ -1652,9 +1652,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Globus pallidus",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0017651",
-            "CodeValue": "T-A3500",
+            "CodeValue": "14738005",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -1663,9 +1663,9 @@
                   126
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right pallidum",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -1679,9 +1679,9 @@
                   126
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left pallidum",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -1696,9 +1696,9 @@
             "contextGroupName": "Common Anatomic Regions",
             "cid": "4031",
             "CodeMeaning": "Hand",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0018563",
-            "CodeValue": "T-D8700",
+            "CodeValue": "85562004",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -1707,9 +1707,9 @@
                   101
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right hand",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -1723,9 +1723,9 @@
                   101
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left hand",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -1743,9 +1743,9 @@
               101
             ],
             "cid": "4031",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "head",
-            "CodeValue": "T-D1100",
+            "CodeValue": "69536005",
             "UMLSConceptUID": "C0018670",
             "CodeMeaning": "Head",
             "contextGroupName": "Common Anatomic Regions",
@@ -1759,9 +1759,9 @@
               84
             ],
             "cid": "7152",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "heart",
-            "CodeValue": "T-32000",
+            "CodeValue": "80891009",
             "UMLSConceptUID": "C0018787",
             "CodeMeaning": "Heart",
             "contextGroupName": "Cardiac Structure Segmentation Types",
@@ -1775,9 +1775,9 @@
               139
             ],
             "cid": "4028",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "hyoid bone",
-            "CodeValue": "T-11190",
+            "CodeValue": "21387005",
             "UMLSConceptUID": "C0020417",
             "CodeMeaning": "Hyoid bone",
             "contextGroupName": "Craniofacial Anatomic Regions",
@@ -1788,9 +1788,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Inferior cerebellar peduncle",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0152393",
-            "CodeValue": "T-A6640",
+            "CodeValue": "67701001",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -1799,9 +1799,9 @@
                   135
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right inferior cerebellar peduncle",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -1815,9 +1815,9 @@
                   135
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left inferior cerebellar peduncle",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -1832,9 +1832,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Inferior longitudinal fasciculus",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0228273",
-            "CodeValue": "T-A2850",
+            "CodeValue": "55233005",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -1843,9 +1843,9 @@
                   163
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right inferior longitudinal fasciculus",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -1859,9 +1859,9 @@
                   163
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left inferior longitudinal fasciculus",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -1876,9 +1876,9 @@
             "contextGroupName": "Craniofacial Anatomic Regions",
             "cid": "4028",
             "CodeMeaning": "Inner ear",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0022889",
-            "CodeValue": "T-AB700",
+            "CodeValue": "22945000",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -1887,9 +1887,9 @@
                   118
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right inner ear",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -1903,9 +1903,9 @@
                   118
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left inner ear",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -1920,9 +1920,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Insula",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0021640",
-            "CodeValue": "T-A2610",
+            "CodeValue": "36169008",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -1931,9 +1931,9 @@
                   166
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right insular lobe",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -1947,9 +1947,9 @@
                   166
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left insular lobe",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -1967,9 +1967,9 @@
               112
             ],
             "cid": "6116",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "atrial septum",
-            "CodeValue": "T-32150",
+            "CodeValue": "58095006",
             "UMLSConceptUID": "C0225836",
             "CodeMeaning": "Interatrial septum",
             "contextGroupName": "Muscular Anatomy",
@@ -1983,9 +1983,9 @@
               73
             ],
             "cid": "6116",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "ventricular septum",
-            "CodeValue": "T-32410",
+            "CodeValue": "589001",
             "UMLSConceptUID": "C0225870",
             "CodeMeaning": "Interventricular septum",
             "contextGroupName": "Muscular Anatomy",
@@ -1996,9 +1996,9 @@
             "contextGroupName": "Abdominal Organ Segmentation Types",
             "cid": "7154",
             "CodeMeaning": "Kidney",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0022646",
-            "CodeValue": "T-71000",
+            "CodeValue": "64033007",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -2007,9 +2007,9 @@
                   83
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right kidney",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -2023,9 +2023,9 @@
                   83
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left kidney",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -2040,9 +2040,9 @@
             "contextGroupName": "Endoscopy Anatomic Regions",
             "cid": "4040",
             "CodeMeaning": "Knee",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C1456798",
-            "CodeValue": "T-D9200",
+            "CodeValue": "72696002",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -2051,9 +2051,9 @@
                   101
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right knee",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -2067,9 +2067,9 @@
                   101
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left knee",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -2084,9 +2084,9 @@
             "contextGroupName": "Craniofacial Anatomic Regions",
             "cid": "4028",
             "CodeMeaning": "Lacrimal bone",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0222733",
-            "CodeValue": "T-1115A",
+            "CodeValue": "6229007",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -2095,9 +2095,9 @@
                   160
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right lacrimal bone",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -2115,9 +2115,9 @@
               243
             ],
             "cid": "4040",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "larynx",
-            "CodeValue": "T-24100",
+            "CodeValue": "4596009",
             "UMLSConceptUID": "C0023078",
             "CodeMeaning": "Larynx",
             "contextGroupName": "Endoscopy Anatomic Regions",
@@ -2128,9 +2128,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Lateral corticospinal tract",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0152402",
-            "CodeValue": "T-A7093",
+            "CodeValue": "461002",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -2139,9 +2139,9 @@
                   133
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right corticospinal tract",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -2155,9 +2155,9 @@
                   133
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left corticospinal tract",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -2172,9 +2172,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Lateral ventricle",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0152279",
-            "CodeValue": "T-A1650",
+            "CodeValue": "66720007",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -2183,9 +2183,9 @@
                   215
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right lateral ventricle",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -2199,9 +2199,9 @@
                   215
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left lateral ventricle",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -2219,9 +2219,9 @@
               13
             ],
             "cid": "7152",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "left ventricle of heart",
-            "CodeValue": "T-32600",
+            "CodeValue": "87878005",
             "UMLSConceptUID": "C0225897",
             "CodeMeaning": "Left Ventricle",
             "contextGroupName": "Cardiac Structure Segmentation Types",
@@ -2232,9 +2232,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Limbic lobe",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0458337",
-            "CodeValue": "T-A0036",
+            "CodeValue": "279215006",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -2243,9 +2243,9 @@
                   201
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right limbic lobe",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -2259,9 +2259,9 @@
                   201
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left limbic lobe",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -2279,9 +2279,9 @@
               95
             ],
             "cid": "4028",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "lips",
-            "CodeValue": "T-52000",
+            "CodeValue": "48477009",
             "UMLSConceptUID": "C0023759",
             "CodeMeaning": "Lip",
             "contextGroupName": "Craniofacial Anatomic Regions",
@@ -2292,9 +2292,9 @@
             "contextGroupName": "Common Anatomic Regions",
             "cid": "4031",
             "CodeMeaning": "Lower leg",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C1140621",
-            "CodeValue": "T-D9400",
+            "CodeValue": "30021000",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -2303,9 +2303,9 @@
                   101
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right leg",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -2319,9 +2319,9 @@
                   101
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left leg",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -2336,9 +2336,9 @@
             "contextGroupName": "Common Anatomic Regions",
             "cid": "4031",
             "CodeMeaning": "Lower limb",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0023216",
-            "CodeValue": "T-D9000",
+            "CodeValue": "61685007",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -2347,9 +2347,9 @@
                   101
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right lower limb",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -2363,9 +2363,9 @@
                   101
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left lower limb",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -2380,9 +2380,9 @@
             "contextGroupName": "Thoracic Tissue Segmentation Types",
             "cid": "7155",
             "CodeMeaning": "Lower lobe of lung",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0225758",
-            "CodeValue": "T-28830",
+            "CodeValue": "90572001",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -2391,9 +2391,9 @@
                   162
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "inferior lobe of right lung",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -2407,9 +2407,9 @@
                   162
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "inferior lobe of left lung",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -2427,9 +2427,9 @@
               102
             ],
             "cid": "4031",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "lumbar vertebral column",
-            "CodeValue": "T-11503",
+            "CodeValue": "122496007",
             "UMLSConceptUID": "C0024091",
             "CodeMeaning": "Lumbar spine",
             "contextGroupName": "Common Anatomic Regions",
@@ -2440,9 +2440,9 @@
             "contextGroupName": "Thoracic Tissue Segmentation Types",
             "cid": "7155",
             "CodeMeaning": "Lung",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0024109",
-            "CodeValue": "T-28000",
+            "CodeValue": "39607008",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -2451,9 +2451,9 @@
                   145
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right lung",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -2467,9 +2467,9 @@
                   145
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left lung",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -2487,9 +2487,9 @@
               134
             ],
             "cid": "7160",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "male external genitalia",
-            "CodeValue": "T-90010",
+            "CodeValue": "90418005",
             "UMLSConceptUID": "C0227922",
             "CodeMeaning": "Male external genitalia",
             "contextGroupName": "Pelvic Organ Segmentation Types",
@@ -2503,9 +2503,9 @@
               127
             ],
             "cid": "7160",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "male internal genitalia",
-            "CodeValue": "T-90020",
+            "CodeValue": "38242008",
             "UMLSConceptUID": "C0227923",
             "CodeMeaning": "Male internal genitalia",
             "contextGroupName": "Pelvic Organ Segmentation Types",
@@ -2519,9 +2519,9 @@
               101
             ],
             "cid": "4031",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "mandible",
-            "CodeValue": "T-11180",
+            "CodeValue": "91609006",
             "UMLSConceptUID": "C0024687",
             "CodeMeaning": "Mandible",
             "contextGroupName": "Common Anatomic Regions",
@@ -2532,9 +2532,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Medial Lemniscus",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0228420",
-            "CodeValue": "T-A5271",
+            "CodeValue": "30114003",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -2543,9 +2543,9 @@
                   103
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right medial lemniscus",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -2559,9 +2559,9 @@
                   103
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left medial lemniscus",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -2579,9 +2579,9 @@
               209
             ],
             "cid": "7155",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "mediastinum",
-            "CodeValue": "T-D3300",
+            "CodeValue": "72410000",
             "UMLSConceptUID": "C0025066",
             "CodeMeaning": "Mediastinum",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
@@ -2595,9 +2595,9 @@
               209
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "meninges",
-            "CodeValue": "T-A1110",
+            "CodeValue": "1231004",
             "UMLSConceptUID": "C0025285",
             "CodeMeaning": "Meninges",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -2608,9 +2608,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Middle cerebellar peduncle",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0152392",
-            "CodeValue": "T-A6630",
+            "CodeValue": "33723005",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -2619,9 +2619,9 @@
                   72
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right middle cerebellar peduncle",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -2635,9 +2635,9 @@
                   72
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left middle cerebellar peduncle",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -2652,9 +2652,9 @@
             "contextGroupName": "Craniofacial Anatomic Regions",
             "cid": "4028",
             "CodeMeaning": "Middle ear",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0013455",
-            "CodeValue": "T-AB300",
+            "CodeValue": "25342003",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -2663,9 +2663,9 @@
                   73
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right middle ear",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -2679,9 +2679,9 @@
                   73
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left middle ear",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -2699,9 +2699,9 @@
               140
             ],
             "cid": "7155",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "middle lobe of right lung",
-            "CodeValue": "T-28300",
+            "CodeValue": "72481006",
             "UMLSConceptUID": "C0225757",
             "CodeMeaning": "Middle lobe of right lung",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
@@ -2715,9 +2715,9 @@
               27
             ],
             "cid": "6113",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "mitral valve",
-            "CodeValue": "T-35300",
+            "CodeValue": "91134007",
             "UMLSConceptUID": "C0026264",
             "CodeMeaning": "Mitral Valve",
             "contextGroupName": "Mediastinum Anatomy Finding or Feature",
@@ -2731,9 +2731,9 @@
               77
             ],
             "cid": "4028",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "muscles of head",
-            "CodeValue": "T-13100",
+            "CodeValue": "22688005",
             "UMLSConceptUID": "C0224097",
             "CodeMeaning": "Muscle of head",
             "contextGroupName": "Craniofacial Anatomic Regions",
@@ -2747,9 +2747,9 @@
               109
             ],
             "cid": "4028",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "muscles of neck",
-            "CodeValue": "T-13300",
+            "CodeValue": "81727001",
             "UMLSConceptUID": "C0027532",
             "CodeMeaning": "Muscle of neck",
             "contextGroupName": "Craniofacial Anatomic Regions",
@@ -2763,9 +2763,9 @@
               101
             ],
             "cid": "4031",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "neck",
-            "CodeValue": "T-D1600",
+            "CodeValue": "45048000",
             "UMLSConceptUID": "C0027530",
             "CodeMeaning": "Neck",
             "contextGroupName": "Common Anatomic Regions",
@@ -2779,9 +2779,9 @@
               109
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "neurohypophysis",
-            "CodeValue": "T-B1200",
+            "CodeValue": "37512009",
             "UMLSConceptUID": "C0032009",
             "CodeMeaning": "Neurohypophysis",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -2792,9 +2792,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Occipital lobe",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0028785",
-            "CodeValue": "T-A2400",
+            "CodeValue": "31065004",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -2803,9 +2803,9 @@
                   110
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right occipital lobe",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -2819,9 +2819,9 @@
                   110
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left occipital lobe",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -2839,9 +2839,9 @@
               194
             ],
             "cid": "7154",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "omentum",
-            "CodeValue": "T-D4600",
+            "CodeValue": "27398004",
             "UMLSConceptUID": "C0028977",
             "CodeMeaning": "Omentum",
             "contextGroupName": "Abdominal Organ Segmentation Types",
@@ -2855,9 +2855,9 @@
               24
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "optic chiasm",
-            "CodeValue": "T-A800B",
+            "CodeValue": "244453006",
             "UMLSConceptUID": "C0029126",
             "CodeMeaning": "Optic chiasm",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -2868,9 +2868,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Optic radiation",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0228277",
-            "CodeValue": "T-A2880",
+            "CodeValue": "70105001",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -2879,9 +2879,9 @@
                   141
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right optic radiation",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -2895,9 +2895,9 @@
                   141
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left optic radiation",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -2912,9 +2912,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Optic tract",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0152405",
-            "CodeValue": "T-A8060",
+            "CodeValue": "53238003",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -2923,9 +2923,9 @@
                   108
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right optic tract",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -2939,9 +2939,9 @@
                   108
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left optic tract",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -2956,9 +2956,9 @@
             "contextGroupName": "Pelvic Organ Segmentation Types",
             "cid": "7160",
             "CodeMeaning": "Ovary",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0029939",
-            "CodeValue": "T-87000",
+            "CodeValue": "15497006",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -2967,9 +2967,9 @@
                   113
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right ovary",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -2983,9 +2983,9 @@
                   113
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left ovary",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -3000,9 +3000,9 @@
             "contextGroupName": "Craniofacial Anatomic Regions",
             "cid": "4028",
             "CodeMeaning": "Palatine bone",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0222734",
-            "CodeValue": "T-11160",
+            "CodeValue": "51283005",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -3011,9 +3011,9 @@
                   123
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right palatine bone",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -3027,9 +3027,9 @@
                   123
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left palatine bone",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -3047,9 +3047,9 @@
               111
             ],
             "cid": "4030",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "pancreas",
-            "CodeValue": "T-65000",
+            "CodeValue": "15776009",
             "UMLSConceptUID": "C0030274",
             "CodeMeaning": "Pancreas",
             "contextGroupName": "CT, MR and PET Anatomy Imaged",
@@ -3060,9 +3060,9 @@
             "contextGroupName": "Craniofacial Anatomic Regions",
             "cid": "4028",
             "CodeMeaning": "Parietal bone",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0030558",
-            "CodeValue": "T-11120",
+            "CodeValue": "24924006",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -3071,9 +3071,9 @@
                   109
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right parietal bone",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -3087,9 +3087,9 @@
                   109
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left parietal bone",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -3104,9 +3104,9 @@
             "contextGroupName": "Craniofacial Anatomic Regions",
             "cid": "4028",
             "CodeMeaning": "Occipital bone",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0028784",
-            "CodeValue": "T-11140",
+            "CodeValue": "31640002",
             "3dSlicerLabel": "occipital bone",
             "recommendedDisplayRGBValue": [
               255,
@@ -3122,9 +3122,9 @@
               145
             ],
             "cid": "4028",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "vomer bone",
-            "CodeValue": "T-21342",
+            "CodeValue": "87166008",
             "UMLSConceptUID": "C0242403",
             "CodeMeaning": "Vomer bone",
             "contextGroupName": "Craniofacial Anatomic Regions",
@@ -3134,9 +3134,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Parietal lobe",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0030560",
-            "CodeValue": "T-A2300",
+            "CodeValue": "16630005",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -3145,9 +3145,9 @@
                   137
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right parietal lobe",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -3161,9 +3161,9 @@
                   137
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left parietal lobe",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -3181,9 +3181,9 @@
               154
             ],
             "cid": "7152",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "pericardial cavity",
-            "CodeValue": "T-39050",
+            "CodeValue": "25489000",
             "UMLSConceptUID": "C0225972",
             "CodeMeaning": "Pericardial cavity",
             "contextGroupName": "Cardiac Structure Segmentation Types",
@@ -3197,9 +3197,9 @@
               209
             ],
             "cid": "7152",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "pericardium",
-            "CodeValue": "T-39000",
+            "CodeValue": "76848001",
             "UMLSConceptUID": "C0031050",
             "CodeMeaning": "Pericardium",
             "contextGroupName": "Cardiac Structure Segmentation Types",
@@ -3213,9 +3213,9 @@
               0
             ],
             "cid": "7167",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "peripheral nerve",
-            "CodeValue": "T-A0500",
+            "CodeValue": "84782009",
             "UMLSConceptUID": "C0031119",
             "CodeMeaning": "Peripheral nerve",
             "contextGroupName": "Peripheral Nervous System Segmentation Types",
@@ -3229,9 +3229,9 @@
               0
             ],
             "cid": "7167",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "peripheral nervous system",
-            "CodeValue": "T-A0140",
+            "CodeValue": "3058005",
             "UMLSConceptUID": "C0206417",
             "CodeMeaning": "Peripheral nervous system",
             "contextGroupName": "Peripheral Nervous System Segmentation Types",
@@ -3245,9 +3245,9 @@
               220
             ],
             "cid": "7154",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "peritoneum",
-            "CodeValue": "T-D4400",
+            "CodeValue": "15425007",
             "UMLSConceptUID": "C0031153",
             "CodeMeaning": "Peritioneum",
             "contextGroupName": "Abdominal Organ Segmentation Types",
@@ -3261,9 +3261,9 @@
               178
             ],
             "cid": "7154",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "peritoneal cavity",
-            "CodeValue": "T-D4425",
+            "CodeValue": "83670000",
             "UMLSConceptUID": "C1704247",
             "CodeMeaning": "Peritoneal cavity",
             "contextGroupName": "Abdominal Organ Segmentation Types",
@@ -3277,9 +3277,9 @@
               108
             ],
             "cid": "4040",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "pharynx",
-            "CodeValue": "T-55000",
+            "CodeValue": "54066008",
             "UMLSConceptUID": "C0031354",
             "CodeMeaning": "Pharynx",
             "contextGroupName": "Endoscopy Anatomic Regions",
@@ -3293,9 +3293,9 @@
               209
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "pia mater",
-            "CodeValue": "T-A1280",
+            "CodeValue": "23180006",
             "UMLSConceptUID": "C0031869",
             "CodeMeaning": "Pia mater",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -3309,9 +3309,9 @@
               192
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "pineal gland",
-            "CodeValue": "T-B2000",
+            "CodeValue": "45793000",
             "UMLSConceptUID": "C0031939",
             "CodeMeaning": "Pineal Gland",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -3325,9 +3325,9 @@
               110
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "pituitary gland",
-            "CodeValue": "T-B1000",
+            "CodeValue": "56329008",
             "UMLSConceptUID": "C0032005",
             "CodeMeaning": "Pituitary",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -3341,9 +3341,9 @@
               197
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "posterior commissure",
-            "CodeValue": "T-A4904",
+            "CodeValue": "279336005",
             "UMLSConceptUID": "C0152327",
             "CodeMeaning": "Posterior cerebral commissure",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -3357,9 +3357,9 @@
               140
             ],
             "cid": "7160",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "prostate",
-            "CodeValue": "T-92000",
+            "CodeValue": "41216001",
             "UMLSConceptUID": "C0033572",
             "CodeMeaning": "Prostate",
             "contextGroupName": "Pelvic Organ Segmentation Types",
@@ -3373,9 +3373,9 @@
               104
             ],
             "cid": "6113",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "pulmonary valve",
-            "CodeValue": "T-35200",
+            "CodeValue": "39057004",
             "UMLSConceptUID": "C0034086",
             "CodeMeaning": "Pulmonary valve",
             "contextGroupName": "Mediastinum Anatomy Finding or Feature",
@@ -3386,9 +3386,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Putamen",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0034169",
-            "CodeValue": "T-A3400",
+            "CodeValue": "89278009",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -3397,9 +3397,9 @@
                   166
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right putamen",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -3413,9 +3413,9 @@
                   166
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left putamen",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -3433,9 +3433,9 @@
               153
             ],
             "cid": "7154",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "retroperitoneal space",
-            "CodeValue": "T-D4900",
+            "CodeValue": "82849001",
             "UMLSConceptUID": "C0035359",
             "CodeMeaning": "Retroperitoneal space",
             "contextGroupName": "Abdominal Organ Segmentation Types",
@@ -3449,9 +3449,9 @@
               57
             ],
             "cid": "7152",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "right ventricle of heart",
-            "CodeValue": "T-32500",
+            "CodeValue": "53085002",
             "UMLSConceptUID": "C0225883",
             "CodeMeaning": "Right Ventricle",
             "contextGroupName": "Cardiac Structure Segmentation Types",
@@ -3465,9 +3465,9 @@
               117
             ],
             "cid": "4028",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "salivary glands",
-            "CodeValue": "T-61007",
+            "CodeValue": "385294005",
             "UMLSConceptUID": "C0036098",
             "CodeMeaning": "Salivary gland",
             "contextGroupName": "Craniofacial Anatomic Regions",
@@ -3478,9 +3478,9 @@
             "contextGroupName": "Pelvic Organ Segmentation Types",
             "cid": "7160",
             "CodeMeaning": "Seminal Vesicle",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0036628",
-            "CodeValue": "T-93000",
+            "CodeValue": "64739004",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -3489,9 +3489,9 @@
                   147
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right seminal vesicle",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -3505,9 +3505,9 @@
                   147
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left seminal vesicle",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -3522,9 +3522,9 @@
             "contextGroupName": "Endoscopy Anatomic Regions",
             "cid": "4040",
             "CodeMeaning": "Shoulder",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0037004",
-            "CodeValue": "T-D2220",
+            "CodeValue": "16982005",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -3533,9 +3533,9 @@
                   101
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right shoulder",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -3549,9 +3549,9 @@
                   101
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left shoulder",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -3569,9 +3569,9 @@
               92
             ],
             "cid": "7154",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "skin of abdominal wall",
-            "CodeValue": "T-02480",
+            "CodeValue": "75093004",
             "UMLSConceptUID": "C0222166",
             "CodeMeaning": "Skin of abdomen",
             "contextGroupName": "Abdominal Organ Segmentation Types",
@@ -3585,9 +3585,9 @@
               88
             ],
             "cid": "7155",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "skin of thoracic wall",
-            "CodeValue": "T-02424",
+            "CodeValue": "74160004",
             "UMLSConceptUID": "C0222149",
             "CodeMeaning": "Skin of chest",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
@@ -3601,9 +3601,9 @@
               144
             ],
             "cid": "4031",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "skull",
-            "CodeValue": "T-11100",
+            "CodeValue": "89546000",
             "UMLSConceptUID": "C0037303",
             "CodeMeaning": "Skull",
             "contextGroupName": "Common Anatomic Regions",
@@ -3617,9 +3617,9 @@
               142
             ],
             "cid": "7154",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "small bowel",
-            "CodeValue": "T-58000",
+            "CodeValue": "30315005",
             "UMLSConceptUID": "C0021852",
             "CodeMeaning": "Small Intestine",
             "contextGroupName": "Abdominal Organ Segmentation Types",
@@ -3633,9 +3633,9 @@
               107
             ],
             "cid": "4028",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "soft palate",
-            "CodeValue": "T-51120",
+            "CodeValue": "49460000",
             "UMLSConceptUID": "C0030219",
             "CodeMeaning": "Soft palate",
             "contextGroupName": "Craniofacial Anatomic Regions",
@@ -3649,9 +3649,9 @@
               49
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "spinal cord",
-            "CodeValue": "T-A7010",
+            "CodeValue": "2748008",
             "UMLSConceptUID": "C0037925",
             "CodeMeaning": "Spinal cord",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -3665,9 +3665,9 @@
               215
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "gray matter of spinal cord",
-            "CodeValue": "T-A7020",
+            "CodeValue": "12958003",
             "UMLSConceptUID": "C0475853",
             "CodeMeaning": "Spinal cord gray matter",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -3681,9 +3681,9 @@
               225
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "white matter of spinal cord",
-            "CodeValue": "T-A7070",
+            "CodeValue": "27088001",
             "UMLSConceptUID": "C0458457",
             "CodeMeaning": "Spinal cord white matter",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -3697,9 +3697,9 @@
               154
             ],
             "cid": "7155",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "sternum",
-            "CodeValue": "T-11210",
+            "CodeValue": "56873002",
             "UMLSConceptUID": "C0038293",
             "CodeMeaning": "Sternum",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
@@ -3713,9 +3713,9 @@
               105
             ],
             "cid": "4031",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "stomach",
-            "CodeValue": "T-57000",
+            "CodeValue": "69695003",
             "UMLSConceptUID": "C0038351",
             "CodeMeaning": "Stomach",
             "contextGroupName": "Common Anatomic Regions",
@@ -3729,9 +3729,9 @@
               215
             ],
             "cid": "7153",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "subarachnoid space",
-            "CodeValue": "T-A1500",
+            "CodeValue": "35951006",
             "UMLSConceptUID": "C0038527",
             "CodeMeaning": "Subarachnoid space",
             "contextGroupName": "CNS Tissue Segmentation Types",
@@ -3742,9 +3742,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Substantia nigra",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0038590",
-            "CodeValue": "T-A5160",
+            "CodeValue": "70007007",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -3753,9 +3753,9 @@
                   112
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right substantia nigra",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -3769,9 +3769,9 @@
                   112
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left substantia nigra",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -3786,9 +3786,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Superior longitudinal fasciculus",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0228270",
-            "CodeValue": "T-A2820",
+            "CodeValue": "89202009",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -3797,9 +3797,9 @@
                   88
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right superior longitudinal fasciculus",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -3813,9 +3813,9 @@
                   88
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left superior longitudinal fasciculus",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -3830,9 +3830,9 @@
             "contextGroupName": "Craniofacial Anatomic Regions",
             "cid": "4028",
             "CodeMeaning": "Temporal bone",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0039484",
-            "CodeValue": "T-11130",
+            "CodeValue": "60911003",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -3841,9 +3841,9 @@
                   152
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right temporal bone",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -3857,9 +3857,9 @@
                   152
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left temporal bone",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -3874,9 +3874,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Temporal lobe",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0039485",
-            "CodeValue": "T-A2500",
+            "CodeValue": "78277001",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -3885,9 +3885,9 @@
                   105
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right temporal lobe",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -3901,9 +3901,9 @@
                   105
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left temporal lobe",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -3918,9 +3918,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Thalamus",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0458271",
-            "CodeValue": "T-D0593",
+            "CodeValue": "119406000",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -3929,9 +3929,9 @@
                   38
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right thalamus",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -3945,9 +3945,9 @@
                   38
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left thalamus",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -3962,9 +3962,9 @@
             "contextGroupName": "Common Anatomic Regions",
             "cid": "4031",
             "CodeMeaning": "Thigh",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0039866",
-            "CodeValue": "T-D9100",
+            "CodeValue": "68367000",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -3973,9 +3973,9 @@
                   101
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right thigh",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -3989,9 +3989,9 @@
                   101
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left thigh",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -4009,9 +4009,9 @@
               134
             ],
             "cid": "7155",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "thoracic vertebral column",
-            "CodeValue": "T-11502",
+            "CodeValue": "122495006",
             "UMLSConceptUID": "C0581269",
             "CodeMeaning": "Thoracic spine",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
@@ -4025,9 +4025,9 @@
               101
             ],
             "cid": "7155",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "thorax",
-            "CodeValue": "T-D3000",
+            "CodeValue": "51185008",
             "UMLSConceptUID": "C0817096",
             "CodeMeaning": "Thorax",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
@@ -4041,9 +4041,9 @@
               103
             ],
             "cid": "7155",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "thymus",
-            "CodeValue": "T-C8000",
+            "CodeValue": "9875009",
             "UMLSConceptUID": "C0040113",
             "CodeMeaning": "Thymus",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
@@ -4057,9 +4057,9 @@
               103
             ],
             "cid": "6113",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "thymus",
-            "CodeValue": "T-C8000",
+            "CodeValue": "9875009",
             "UMLSConceptUID": "C0040113",
             "CodeMeaning": "Thymus Gland",
             "contextGroupName": "Mediastinum Anatomy Finding or Feature",
@@ -4073,9 +4073,9 @@
               114
             ],
             "cid": "6113",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "thyroid gland",
-            "CodeValue": "T-B6000",
+            "CodeValue": "69748006",
             "UMLSConceptUID": "C0040132",
             "CodeMeaning": "Thyroid",
             "contextGroupName": "Mediastinum Anatomy Finding or Feature",
@@ -4089,9 +4089,9 @@
               94
             ],
             "cid": "4028",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "tongue",
-            "CodeValue": "T-53000",
+            "CodeValue": "21974007",
             "UMLSConceptUID": "C0040408",
             "CodeMeaning": "Tongue",
             "contextGroupName": "Craniofacial Anatomic Regions",
@@ -4105,9 +4105,9 @@
               220
             ],
             "cid": "4028",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "teeth",
-            "CodeValue": "T-54010",
+            "CodeValue": "38199008",
             "UMLSConceptUID": "C0040426",
             "CodeMeaning": "Tooth",
             "contextGroupName": "Craniofacial Anatomic Regions",
@@ -4121,9 +4121,9 @@
               255
             ],
             "cid": "7155",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "trachea",
-            "CodeValue": "T-25000",
+            "CodeValue": "44567001",
             "UMLSConceptUID": "C0040578",
             "CodeMeaning": "Trachea",
             "contextGroupName": "Thoracic Tissue Segmentation Types",
@@ -4137,9 +4137,9 @@
               38
             ],
             "cid": "6113",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "tricuspid valve",
-            "CodeValue": "T-35100",
+            "CodeValue": "46030003",
             "UMLSConceptUID": "C0040960",
             "CodeMeaning": "Tricuspid Valve",
             "contextGroupName": "Mediastinum Anatomy Finding or Feature",
@@ -4150,9 +4150,9 @@
             "contextGroupName": "CNS Tissue Segmentation Types",
             "cid": "7153",
             "CodeMeaning": "Uncinate fasciculus",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0228271",
-            "CodeValue": "T-A2830",
+            "CodeValue": "26230003",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -4161,9 +4161,9 @@
                   155
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right uncinate fasciculus",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -4177,9 +4177,9 @@
                   155
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left uncinate fasciculus",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -4194,9 +4194,9 @@
             "contextGroupName": "Common Anatomic Regions",
             "cid": "4031",
             "CodeMeaning": "Upper arm",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0446516",
-            "CodeValue": "T-D8200",
+            "CodeValue": "40983000",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -4205,9 +4205,9 @@
                   101
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right arm",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -4221,9 +4221,9 @@
                   101
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left arm",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -4238,9 +4238,9 @@
             "contextGroupName": "Common Anatomic Regions",
             "cid": "4031",
             "CodeMeaning": "Upper limb",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0016555",
-            "CodeValue": "T-D8000",
+            "CodeValue": "53120007",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -4249,9 +4249,9 @@
                   101
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right upper limb",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -4265,9 +4265,9 @@
                   101
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left upper limb",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -4282,9 +4282,9 @@
             "contextGroupName": "Thoracic Tissue Segmentation Types",
             "cid": "7155",
             "CodeMeaning": "Upper lobe of lung",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0225756",
-            "CodeValue": "T-28820",
+            "CodeValue": "45653009",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -4293,9 +4293,9 @@
                   115
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "superior lobe of right lung",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -4309,9 +4309,9 @@
                   115
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "superior lobe of left lung",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -4329,9 +4329,9 @@
               223
             ],
             "cid": "4031",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "urethra",
-            "CodeValue": "T-75000",
+            "CodeValue": "13648007",
             "UMLSConceptUID": "C0041967",
             "CodeMeaning": "Urethra",
             "contextGroupName": "Common Anatomic Regions",
@@ -4345,9 +4345,9 @@
               116
             ],
             "cid": "7154",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "urinary system",
-            "CodeValue": "T-70001",
+            "CodeValue": "122489005",
             "UMLSConceptUID": "C1508753",
             "CodeMeaning": "Urinary system",
             "contextGroupName": "Abdominal Organ Segmentation Types",
@@ -4361,9 +4361,9 @@
               158
             ],
             "cid": "7160",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "uterus",
-            "CodeValue": "T-83000",
+            "CodeValue": "35039007",
             "UMLSConceptUID": "C0042149",
             "CodeMeaning": "Uterus",
             "contextGroupName": "Pelvic Organ Segmentation Types",
@@ -4377,9 +4377,9 @@
               103
             ],
             "cid": "7160",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "vagina",
-            "CodeValue": "T-82000",
+            "CodeValue": "76784001",
             "UMLSConceptUID": "C0042232",
             "CodeMeaning": "Vagina",
             "contextGroupName": "Pelvic Organ Segmentation Types",
@@ -4390,9 +4390,9 @@
             "contextGroupName": "Pelvic Organ Segmentation Types",
             "cid": "7160",
             "CodeMeaning": "Vas deferens",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0042360",
-            "CodeValue": "T-96000",
+            "CodeValue": "57671007",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -4401,9 +4401,9 @@
                   151
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right deferent duct",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -4417,9 +4417,9 @@
                   151
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "left deferent duct",
-                "CodeValue": "G-A101",
+                "CodeValue": "7771000",
                 "UMLSConceptUID": "C0205091",
                 "CodeMeaning": "Left",
                 "contextGroupName": "Laterality",
@@ -4434,9 +4434,9 @@
             "contextGroupName": "Common Anatomic Regions",
             "cid": "4031",
             "CodeMeaning": "Zygoma",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "UMLSConceptUID": "C0043539",
-            "CodeValue": "T-11166",
+            "CodeValue": "13881006",
             "Modifier": [
               {
                 "recommendedDisplayRGBValue": [
@@ -4445,9 +4445,9 @@
                   167
                 ],
                 "cid": "244",
-                "CodingSchemeDesignator": "SRT",
+                "CodingSchemeDesignator": "SCT",
                 "3dSlicerLabel": "right zygomatic bone",
-                "CodeValue": "G-A100",
+                "CodeValue": "24028007",
                 "UMLSConceptUID": "C0205090",
                 "CodeMeaning": "Right",
                 "contextGroupName": "Laterality",
@@ -4463,11 +4463,11 @@
       },
       {
         "CodeMeaning": "Physical object",
-        "CodingSchemeDesignator": "SRT",
+        "CodingSchemeDesignator": "SCT",
         "SNOMEDCTConceptID": "260787004",
         "cid": "7051",
         "UMLSConceptUID": "C0085089",
-        "CodeValue": "A-00004",
+        "CodeValue": "260787004",
         "contextGroupName": "Segmentation Property Categories",
         "Type": [
           {
@@ -4477,11 +4477,11 @@
               30
             ],
             "CodeMeaning": "Needle",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "needle",
             "cid": "6138",
             "UMLSConceptUID": "C0027551",
-            "CodeValue": "A-30360",
+            "CodeValue": "79068005",
             "contextGroupName": "Chest Non-Lesion Object Type",
             "SNOMEDCTConceptID": "79068005",
             "3dSlicerIntegerLabel": 291
@@ -4493,11 +4493,11 @@
               30
             ],
             "CodeMeaning": "Needle",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "needle",
             "cid": "7157",
             "UMLSConceptUID": "C0027551",
-            "CodeValue": "A-30360",
+            "CodeValue": "79068005",
             "contextGroupName": "Device Segmentation Types",
             "SNOMEDCTConceptID": "79068005",
             "3dSlicerIntegerLabel": 291
@@ -4509,11 +4509,11 @@
               20
             ],
             "CodeMeaning": "Foreign body",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "foreign object",
             "cid": "7158",
             "UMLSConceptUID": "C0016542",
-            "CodeValue": "M-30400",
+            "CodeValue": "19227008",
             "contextGroupName": "Artifact Segmentation Types",
             "SNOMEDCTConceptID": "19227008",
             "3dSlicerIntegerLabel": 9
@@ -4525,11 +4525,11 @@
               0
             ],
             "CodeMeaning": "Waste Material",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "waste",
             "cid": "7165",
             "UMLSConceptUID": "C0043045",
-            "CodeValue": "F-61779",
+            "CodeValue": "289925000",
             "contextGroupName": "Abstract Segmentation Types",
             "SNOMEDCTConceptID": "289925000",
             "3dSlicerIntegerLabel": 10
@@ -4539,11 +4539,11 @@
       },
       {
         "CodeMeaning": "Morphologically Altered Structure",
-        "CodingSchemeDesignator": "SRT",
+        "CodingSchemeDesignator": "SCT",
         "SNOMEDCTConceptID": "49755003",
         "cid": "7051",
         "UMLSConceptUID": "C0221198",
-        "CodeValue": "M-01000",
+        "CodeValue": "49755003",
         "contextGroupName": "Segmentation Property Categories",
         "Type": [
           {
@@ -4553,11 +4553,11 @@
               66
             ],
             "CodeMeaning": "Blood clot",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "clot",
             "cid": "7159",
             "UMLSConceptUID": "C0302148",
-            "CodeValue": "M-35000",
+            "CodeValue": "75753009",
             "contextGroupName": "Lesion Segmentation Types",
             "SNOMEDCTConceptID": "75753009",
             "3dSlicerIntegerLabel": 34
@@ -4569,11 +4569,11 @@
               100
             ],
             "CodeMeaning": "Cyst",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "cyst",
             "cid": "7159",
             "UMLSConceptUID": "C0010709",
-            "CodeValue": "M-3340A",
+            "CodeValue": "367643001",
             "contextGroupName": "Lesion Segmentation Types",
             "SNOMEDCTConceptID": "367643001",
             "3dSlicerIntegerLabel": 309
@@ -4585,11 +4585,11 @@
               228
             ],
             "CodeMeaning": "Edema",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "edema",
             "cid": "7159",
             "UMLSConceptUID": "C0013604",
-            "CodeValue": "M-36300",
+            "CodeValue": "79654002",
             "contextGroupName": "Lesion Segmentation Types",
             "SNOMEDCTConceptID": "79654002",
             "3dSlicerIntegerLabel": 31
@@ -4601,11 +4601,11 @@
               83
             ],
             "CodeMeaning": "Embolus",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "embolism",
             "cid": "7159",
             "UMLSConceptUID": "C1704212",
-            "CodeValue": "M-35300",
+            "CodeValue": "55584005",
             "contextGroupName": "Lesion Segmentation Types",
             "SNOMEDCTConceptID": "55584005",
             "3dSlicerIntegerLabel": 35
@@ -4617,11 +4617,11 @@
               28
             ],
             "CodeMeaning": "Hemorrhage",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "bleeding",
             "cid": "7159",
             "UMLSConceptUID": "C0019080",
-            "CodeValue": "M-37000",
+            "CodeValue": "50960005",
             "contextGroupName": "Lesion Segmentation Types",
             "SNOMEDCTConceptID": "50960005",
             "3dSlicerIntegerLabel": 32
@@ -4633,11 +4633,11 @@
               144
             ],
             "CodeMeaning": "Mass",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "mass",
             "cid": "7159",
             "UMLSConceptUID": "C0577559",
-            "CodeValue": "M-03000",
+            "CodeValue": "4147007",
             "contextGroupName": "Lesion Segmentation Types",
             "SNOMEDCTConceptID": "4147007",
             "3dSlicerIntegerLabel": 7
@@ -4649,11 +4649,11 @@
               216
             ],
             "CodeMeaning": "Necrosis",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "necrosis",
             "cid": "7159",
             "UMLSConceptUID": "C0027540",
-            "CodeValue": "M-54000",
+            "CodeValue": "6574001",
             "contextGroupName": "Lesion Segmentation Types",
             "SNOMEDCTConceptID": "6574001",
             "3dSlicerIntegerLabel": 33
@@ -4663,11 +4663,11 @@
       },
       {
         "CodeMeaning": "Body Substance",
-        "CodingSchemeDesignator": "SRT",
+        "CodingSchemeDesignator": "SCT",
         "SNOMEDCTConceptID": "91720002",
         "cid": "",
         "UMLSConceptUID": "C0504082",
-        "CodeValue": "T-D0080",
+        "CodeValue": "91720002",
         "contextGroupName": "",
         "Type": [
           {
@@ -4677,11 +4677,11 @@
               30
             ],
             "CodeMeaning": "Bile",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "bile",
             "cid": "7166",
             "UMLSConceptUID": "C0005388",
-            "CodeValue": "T-60650",
+            "CodeValue": "70150004",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "70150004",
             "3dSlicerIntegerLabel": 26
@@ -4693,11 +4693,11 @@
               250
             ],
             "CodeMeaning": "Body fluid",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "fluid",
             "cid": "7166",
             "UMLSConceptUID": "C0005889",
-            "CodeValue": "T-D0070",
+            "CodeValue": "32457005",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "32457005",
             "3dSlicerIntegerLabel": 30
@@ -4709,11 +4709,11 @@
               0
             ],
             "CodeMeaning": "Feces",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "feces",
             "cid": "7166",
             "UMLSConceptUID": "C0015733",
-            "CodeValue": "T-59666",
+            "CodeValue": "39477002",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "39477002",
             "3dSlicerIntegerLabel": 28
@@ -4725,11 +4725,11 @@
               255
             ],
             "CodeMeaning": "Gas",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "gas",
             "cid": "7166",
             "UMLSConceptUID": "C0017110",
-            "CodeValue": "C-10080",
+            "CodeValue": "74947009",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "74947009",
             "3dSlicerIntegerLabel": 29
@@ -4741,11 +4741,11 @@
               130
             ],
             "CodeMeaning": "Urine",
-            "CodingSchemeDesignator": "SRT",
+            "CodingSchemeDesignator": "SCT",
             "3dSlicerLabel": "urine",
             "cid": "7166",
             "UMLSConceptUID": "C0042036",
-            "CodeValue": "T-70060",
+            "CodeValue": "78014005",
             "contextGroupName": "Common Tissue Segmentation Types",
             "SNOMEDCTConceptID": "78014005",
             "3dSlicerIntegerLabel": 27

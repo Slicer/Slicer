@@ -66,7 +66,7 @@ vtkSegment::vtkSegment()
 
   // Set default terminology Tissue/Tissue from the default Slicer terminology dictionary
   this->SetTag( vtkSegment::GetTerminologyEntryTagName(),
-    "Segmentation category and type - 3D Slicer General Anatomy list~SRT^T-D0050^Tissue~SRT^T-D0050^Tissue~^^~Anatomic codes - DICOM master list~^^~^^");
+    "Segmentation category and type - 3D Slicer General Anatomy list~SCT^85756007^Tissue~SCT^85756007^Tissue~^^~Anatomic codes - DICOM master list~^^~^^");
 }
 
 //----------------------------------------------------------------------------
