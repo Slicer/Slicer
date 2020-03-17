@@ -1,6 +1,6 @@
-from __future__ import print_function
 import os, zipfile, tempfile
 import vtk, qt, ctk, slicer
+import logging
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
 
@@ -84,18 +84,18 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
       candygramValue = slicer.dicomDatabase.fileValue(f, self.tags['candygram'])
       zipSize = int(candygramValue.split(' ')[2])
     except ValueError:
-      print("Could not get zipSize for %s" % f)
+      logging.error("Could not get zipSize for %s" % f)
       return False
 
-    print('importing file: %s' % f)
-    print('size: %d' % zipSize)
+    logging.info('importing file: %s' % f)
+    logging.info('size: %d' % zipSize)
 
     # require that the databundle be the last element of the file
     # so we can seek from the end by the size of the zip data
     sceneDir = tempfile.mkdtemp('', 'sceneImport', slicer.app.temporaryPath)
     fp = open(f, 'rb')
 
-    #The previous code only works for files with odd number of bits.
+    # The previous code only works for files with odd number of bits.
     if zipSize % 2 == 0:
       fp.seek(-1 * (zipSize), os.SEEK_END)
     else:
@@ -109,12 +109,41 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
     fp.write(zipData)
     fp.close()
 
-    print('saved zip file to: %s' % zipPath)
+    logging.info('saved zip file to: %s' % zipPath)
 
+    nodesBeforeLoading = slicer.util.getNodes()
+    
     # let the scene unpack it and load it
     appLogic = slicer.app.applicationLogic()
     sceneFile = appLogic.OpenSlicerDataBundle(zipPath, sceneDir)
-    print ("loaded %s" % sceneFile)
+    logging.info("loaded %s" % sceneFile)
+
+    # Create subject hierarchy items for the loaded series.
+    # In order for the series information are saved in the scene (and subject hierarchy
+    # creation does not fail), a "main" data node needs to be selected: the first volume,
+    # model, or markups node is used as series node.
+    # TODO: Maybe all the nodes containing data could be added under the study, but
+    #   the DICOM plugins don't support it yet.
+    dataNode = None
+    nodesAfterLoading = slicer.util.getNodes()
+    loadedNodes = [node for node in list(nodesAfterLoading.values()) if node not in list(nodesBeforeLoading.values())]
+    for node in loadedNodes:
+      if node.IsA('vtkMRMLScalarVolumeNode'):
+        dataNode = node
+    if dataNode is None:
+      for node in loadedNodes:
+        if node.IsA('vtkMRMLModelNode') and node.GetName() not in ['Red Volume Slice', 'Yellow Volume Slice', 'Green Volume Slice']:
+          dataNode = node
+          break
+    if dataNode is None:
+      for node in loadedNodes:
+        if node.IsA('vtkMRMLMarkupsNode'):
+          dataNode = node
+          break
+    if dataNode is not None:
+      self.addSeriesInSubjectHierarchy(loadable,dataNode)
+    else:
+      logging.warning('Failed to find suitable series node in loaded scene')
 
     return sceneFile != ""
 
@@ -130,7 +159,7 @@ class DICOMSlicerDataBundlePlugin(object):
   def __init__(self, parent):
     parent.title = "DICOM Diffusion Volume Plugin"
     parent.categories = ["Developer Tools.DICOM Plugins"]
-    parent.contributors = ["Steve Pieper (Isomics Inc.)"]
+    parent.contributors = ["Steve Pieper (Isomics Inc.), Csaba Pinter (Pixel Medical, Inc.)"]
     parent.helpText = """
     Plugin to the DICOM Module to parse and load diffusion volumes
     from DICOM files.

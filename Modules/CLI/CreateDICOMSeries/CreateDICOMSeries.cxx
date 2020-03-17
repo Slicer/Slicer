@@ -150,6 +150,7 @@ int DoIt( int argc, char * argv[])
     else if (modality=="CR")  { sopClassUID = "1.2.840.10008.5.1.4.1.1.1"; }
     else if (modality=="NM")  { sopClassUID = "1.2.840.10008.5.1.4.1.1.20"; }
     else if (modality=="US")  { sopClassUID = "1.2.840.10008.5.1.4.1.1.6.1"; }
+    else if (modality=="SC")  { sopClassUID = "1.2.840.10008.5.1.4.1.1.7"; }
     else
       {
       std::cerr << "Unknown modality: " << modality << ". Using CT Image Storage SOP class UID." << std::endl;
