@@ -47,7 +47,7 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
 {
   this->Glypher = vtkSmartPointer<vtkGlyph3D>::New();
   this->Glypher->SetInputData(this->ControlPointsPolyData);
-  this->Glypher->SetVectorModeToUseNormal();
+  this->Glypher->SetVectorModeToFollowCameraDirection();
   this->Glypher->OrientOn();
   this->Glypher->ScalingOn();
   this->Glypher->SetScaleModeToDataScalingOff();
@@ -599,11 +599,21 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
     }
 
   int count=0;
+  vtkCamera* cam = this->Renderer->GetActiveCamera();
+  double cameraPosition[3] = { 0.0, 0.0, 0.0 };
+  double viewUp[3] = { 0.0, 1.0, 0.0 };
+  if (cam)
+    {
+    cam->GetPosition(cameraPosition);
+    cam->GetViewUp(viewUp);
+    }
   for (int i = 0; i < NumberOfControlPointTypes; i++)
     {
     ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
     if (controlPoints->Actor->GetVisibility())
       {
+      controlPoints->Glypher->SetFollowedCameraPosition(cameraPosition);
+      controlPoints->Glypher->SetFollowedCameraViewUp(viewUp);
       if (updateControlPointSize)
         {
         controlPoints->Glypher->SetScaleFactor(this->ControlPointSize);
