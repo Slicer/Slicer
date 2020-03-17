@@ -857,7 +857,9 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
       }
     else
       {
-      currentSegmentID = segmentation->GenerateUniqueSegmentID("Segment");
+      std::stringstream segmentNameSS;
+      segmentNameSS << "Segment_" << currentSegment->GetLabelValue();
+      currentSegmentID = segmentation->GenerateUniqueSegmentID(segmentNameSS.str());
       currentSegment->SetName(currentSegmentID.c_str());
       }
     segmentation->AddSegment(currentSegment, currentSegmentID);
