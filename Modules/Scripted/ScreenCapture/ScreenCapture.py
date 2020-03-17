@@ -1022,7 +1022,14 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       imageClipper.Update()
       capturedImage = imageClipper.GetOutput()
 
-    writer = vtk.vtkPNGWriter()
+    name, extension = os.path.splitext(filename)
+    if extension.lower() == '.png':
+      writer = vtk.vtkPNGWriter()
+    elif extension.lower() == '.jpg' or extension.lower() == '.jpeg':
+      writer = vtk.vtkJPEGWriter()
+    else:
+      logging.error('Unsupported image format based on file name ' + filename)
+      return
     writer.SetInputData(self.addWatermark(capturedImage))
     writer.SetFileName(filename)
     writer.Write()
