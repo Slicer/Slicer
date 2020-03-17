@@ -111,22 +111,22 @@ class vtkInformationIntegerVectorKey;
 ///
 ///   "TerminologyEntry:
 ///    Segmentation category and type - 3D Slicer General Anatomy list
-///    ~SRT^M-01000^Morphologically Altered Structure
-///    ~SRT^M-03000^Mass
+///    ~SCT^49755003^Morphologically Altered Structure
+///    ~SCT^4147007^Mass
 ///    ~^^
 ///    ~Anatomic codes - DICOM master list
-///    ~SRT^T-B3000^Adrenal gland
-///    ~SRT^G-A100^Right"
+///    ~SCT^23451007^Adrenal gland
+///    ~SCT^24028007^Right"
 ///
 ///   Interpretation:
 ///
 ///   - terminology context name: Segmentation category and type - 3D Slicer General Anatomy list
-///   - category: codingScheme=SRT, codeValue=M-01000, codeMeaning=Morphologically Altered Structure
-///   - type: codingScheme=SRT, codeValue=M-03000, codeMeaning=Mass
+///   - category: codingScheme=SCT, codeValue=49755003, codeMeaning=Morphologically Altered Structure
+///   - type: codingScheme=SCT, codeValue=4147007, codeMeaning=Mass
 ///   - type modifier: not specified
 ///   - anatomic context name: Anatomic codes - DICOM master list
-///   - anatomic region: codingScheme=SRT, codeValue=T-B3000, codeMeaning=Adrenal gland
-///   - anatomic region modifier: codingScheme=SRT, codeValue=^G-A100, codeMeaning=Right
+///   - anatomic region: codingScheme=SCT, codeValue=23451007, codeMeaning=Adrenal gland
+///   - anatomic region modifier: codingScheme=SCT, codeValue=^24028007, codeMeaning=Right
 ///
 
 class VTK_MRML_EXPORT vtkMRMLSegmentationStorageNode : public vtkMRMLStorageNode

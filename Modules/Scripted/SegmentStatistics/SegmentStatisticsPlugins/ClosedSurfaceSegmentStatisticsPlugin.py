@@ -60,12 +60,12 @@ class ClosedSurfaceSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
 
     info["volume_mm3"] = \
       self.createMeasurementInfo(name="Volume mm3", description="Volume in mm3", units="mm3",
-                                   quantityDicomCode=self.createCodedEntry("G-D705", "SRT", "Volume", True),
+                                   quantityDicomCode=self.createCodedEntry("118565006", "SCT", "Volume", True),
                                    unitsDicomCode=self.createCodedEntry("mm3", "UCUM", "cubic millimeter", True))
 
     info["volume_cm3"] = \
       self.createMeasurementInfo(name="Volume cm3", description="Volume in cm3", units="cm3",
-                                   quantityDicomCode=self.createCodedEntry("G-D705", "SRT", "Volume", True),
+                                   quantityDicomCode=self.createCodedEntry("118565006", "SCT", "Volume", True),
                                    unitsDicomCode=self.createCodedEntry("cm3", "UCUM", "cubic centimeter", True))
 
     return info[key] if key in info else None
