@@ -33,9 +33,27 @@ class DICOMExportScene(object):
   """Export slicer scene to dicom database
   """
 
-  def __init__(self,referenceFile=None):
+  def __init__(self,referenceFile=None, saveDirectoryPath=None):
+    # File used as reference for DICOM export. Provides most of the DICOM tags.
+    #   If not specified, the first file in the DICOM database is used.
     self.referenceFile = referenceFile
+    # Directory where all the intermediate files are saved.
+    self.saveDirectoryPath = saveDirectoryPath
+    # Path and filename of the Slicer Data Bundle DICOM file
     self.sdbFile = None
+    # Path to the screenshot image file that is saved with the scene and in the Secondary Capture.
+    #   If not specified, then the default scene saving method is used to generate the image.
+    self.imageFile = None
+    # Study description string to save in the tags. Default is "Slicer Scene Export"
+    self.studyDescription = None
+    # Series description string to save in the tags. Default is "Slicer Data Bundle"
+    self.seriesDescription = None
+    # Optional tags.
+    # Dictionary where the keys are the tag names (such as StudyInstanceUID), and the values are the tag values
+    self.optionalTags = {}
+    # Flag determining whether the exported Slicer Data Bundle DICOM file is copied into
+    # the database when importing, or is imported directly from the save directory
+    self.copySdbFileToDatabase = True
 
   def progress(self,string):
     # TODO: make this a callback for a gui progress dialog
@@ -51,24 +69,6 @@ class DICOMExportScene(object):
       self.addFilesToDatabase()
     return success
 
-  def getFirstFileInDatabase(self):
-    if not slicer.dicomDatabase.isOpen:
-      logging.error('DICOM database is not open')
-      return
-    for patient in slicer.dicomDatabase.patients():
-      studies = slicer.dicomDatabase.studiesForPatient(patient)
-      if len(studies) == 0:
-        continue
-      for study in studies:
-        series = slicer.dicomDatabase.seriesForStudy(study)
-        if len(series) == 0:
-          continue
-        for serie in series:
-          files = slicer.dicomDatabase.filesForSeries(serie)
-          if len(files):
-            self.referenceFile = files[0]
-          return
-
   def createDICOMFileForScene(self):
     """
     Export the scene data:
@@ -83,16 +83,31 @@ class DICOMExportScene(object):
     """
 
     # set up temp directories and files
-    self.dicomDirectory = tempfile.mkdtemp('', 'dicomExport', slicer.app.temporaryPath)
-    self.sceneDirectory = os.path.join(self.dicomDirectory,'scene')
+    if self.saveDirectoryPath is None:
+      self.saveDirectoryPath = tempfile.mkdtemp('', 'dicomExport', slicer.app.temporaryPath)
+    self.sceneDirectory = os.path.join(self.saveDirectoryPath,'scene')
     os.mkdir(self.sceneDirectory) # known to be unique
-    self.imageFile = os.path.join(self.dicomDirectory, "scene.jpg")
-    self.zipFile = os.path.join(self.dicomDirectory, "scene.zip")
-    self.dumpFile = os.path.join(self.dicomDirectory, "dump.dcm")
-    self.templateFile = os.path.join(self.dicomDirectory, "template.dcm")
-    self.sdbFile = os.path.join(self.dicomDirectory, "SlicerDataBundle.dcm")
+    self.zipFile = os.path.join(self.saveDirectoryPath, "scene.zip")
+    self.dumpFile = os.path.join(self.saveDirectoryPath, "dump.dcm")
+    self.templateFile = os.path.join(self.saveDirectoryPath, "template.dcm")
+    self.sdbFile = os.path.join(self.saveDirectoryPath, "SlicerDataBundle.dcm")
+    if self.studyDescription is None:
+      self.studyDescription = 'Slicer Scene Export'
+    if self.seriesDescription is None:
+      self.seriesDescription = 'Slicer Data Bundle'
+
+    # get the screen image if not specified
+    if self.imageFile is None:
+      self.progress('Saving Image...')
+      self.imageFile = os.path.join(self.saveDirectoryPath, "scene.jpg")
+      image = ctk.ctkWidgetsUtils.grabWidget(slicer.util.mainWindow())
+      image.save(self.imageFile)
+    imageReader = vtk.vtkJPEGReader()
+    imageReader.SetFileName(self.imageFile)
+    imageReader.Update()
+
     # Clean up paths on Windows (some commands and operations are not performed properly with mixed slash and backslash)
-    self.dicomDirectory = self.dicomDirectory.replace('\\','/')
+    self.saveDirectoryPath = self.saveDirectoryPath.replace('\\','/')
     self.sceneDirectory = self.sceneDirectory.replace('\\','/') # otherwise invalid zip file is created on Windows (with the same size strangely)
     self.imageFile = self.imageFile.replace('\\','/')
     self.zipFile = self.zipFile.replace('\\','/')
@@ -100,15 +115,7 @@ class DICOMExportScene(object):
     self.templateFile = self.templateFile.replace('\\','/')
     self.sdbFile = self.sdbFile.replace('\\','/')
 
-    # get the screen image
-    self.progress('Saving Image...')
-    image = ctk.ctkWidgetsUtils.grabWidget(slicer.util.mainWindow())
-    image.save(self.imageFile)
-    imageReader = vtk.vtkJPEGReader()
-    imageReader.SetFileName(self.imageFile)
-    imageReader.Update()
-
-    #add storage node for each storable node in the scene, add file name if file name doesn't exist
+    # add storage node for each storable node in the scene, add file name if file name doesn't exist
     # TODO: this could be moved to appLogic.SaveSceneToSlicerDataBundleDirectory
     lnodes = slicer.mrmlScene.GetNodesByClass("vtkMRMLLinearTransformNode")
     lnodes.UnRegister(slicer.mrmlScene)
@@ -137,7 +144,7 @@ class DICOMExportScene(object):
 
     # now create the dicom file
     # - create the dump (capture stdout)
-    # cmd = "dcmdump --print-all --write-pixel %s %s" % (self.dicomDirectory, self.referenceFile)
+    # cmd = "dcmdump --print-all --write-pixel %s %s" % (self.saveDirectoryPath, self.referenceFile)
     self.progress('Making dicom reference file...')
     if not self.referenceFile:
       # set reference file the first file found in the DICOM database
@@ -147,11 +154,11 @@ class DICOMExportScene(object):
         logging.error('No reference file! DICOM database is empty')
         return False
     logging.info('Using reference file ' + str(self.referenceFile))
-    args = ['--print-all', '--write-pixel', self.dicomDirectory, self.referenceFile]
+    args = ['--print-all', '--write-pixel', self.saveDirectoryPath, self.referenceFile]
     dumpByteArray = DICOMLib.DICOMCommand('dcmdump', args).start()
     dump = str(dumpByteArray.data(), encoding='utf-8')
 
-    # append this to the dumped output and save the result as self.dicomDirectory/dcm.dump
+    # append this to the dumped output and save the result as self.saveDirectoryPath/dcm.dump
     # with %s as self.zipFile and %d being its size in bytes
     zipSizeString = "%d" % zipSize
 
@@ -176,13 +183,19 @@ class DICOMExportScene(object):
     DICOMLib.DICOMCommand('dump2dcm', args).start()
 
     # now create the Secondary Capture data set
-    # cmd = "img2dcm -k 'InstanceNumber=1' -k 'SeriesDescription=Slicer Data Bundle' -df %s/template.dcm %s %s" % (self.dicomDirectory, self.imageFile, self.sdbFile)
+    # cmd = "img2dcm -k 'InstanceNumber=1' -k 'SeriesDescription=Slicer Data Bundle' -df %s/template.dcm %s %s" % (self.saveDirectoryPath, self.imageFile, self.sdbFile)
     args = [
         '-k', 'InstanceNumber=1',
-        '-k', 'StudyDescription=Slicer Scene Export',
-        '-k', 'SeriesDescription=Slicer Data Bundle',
+        '-k', 'StudyDescription=%s' % str(self.studyDescription),
+        '-k', 'SeriesDescription=%s' % str(self.seriesDescription),
         '--dataset-from', self.templateFile,
-        self.imageFile, self.sdbFile]
+        self.imageFile, self.sdbFile ]
+    argIndex = 6
+    for key, value in self.optionalTags.items():
+      args.insert(argIndex, '-k')
+      tagNameValue = '%s=%s' % (str(key), str(value))
+      args.insert(argIndex+1, tagNameValue)
+      argIndex += 2
     self.progress('Creating DICOM binary file...')
     DICOMLib.DICOMCommand('img2dcm', args).start()
 
@@ -194,6 +207,24 @@ class DICOMExportScene(object):
     self.progress('Done')
     return True
 
+  def getFirstFileInDatabase(self):
+    if not slicer.dicomDatabase.isOpen:
+      logging.error('DICOM database is not open')
+      return
+    for patient in slicer.dicomDatabase.patients():
+      studies = slicer.dicomDatabase.studiesForPatient(patient)
+      if len(studies) == 0:
+        continue
+      for study in studies:
+        series = slicer.dicomDatabase.seriesForStudy(study)
+        if len(series) == 0:
+          continue
+        for serie in series:
+          files = slicer.dicomDatabase.filesForSeries(serie)
+          if len(files):
+            self.referenceFile = files[0]
+          return
+
   def addFilesToDatabase(self):
     if not slicer.dicomDatabase.isOpen:
       slicer.util.warningDisplay("DICOM database is not open, so the (otherwise successfully) exported dataset cannot be imported back")
@@ -204,5 +235,5 @@ class DICOMExportScene(object):
     if self.sdbFile:
       files = [self.sdbFile]
     else:
-      files = glob.glob('%s/*' % self.dicomDirectory)
-    indexer.addListOfFiles( slicer.dicomDatabase, files, True)
+      files = glob.glob('%s/*' % self.saveDirectoryPath)
+    indexer.addListOfFiles( slicer.dicomDatabase, files, self.copySdbFileToDatabase)
