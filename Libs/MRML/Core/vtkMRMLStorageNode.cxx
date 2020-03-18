@@ -1225,6 +1225,7 @@ int vtkMRMLStorageNode::ReadData(vtkMRMLNode* refNode, bool temporary)
 //------------------------------------------------------------------------------
 int vtkMRMLStorageNode::WriteData(vtkMRMLNode* refNode)
 {
+  this->WriteState = this->Idle;
   if (refNode == nullptr)
     {
     vtkErrorMacro("WriteData: can't write, input node is null");
