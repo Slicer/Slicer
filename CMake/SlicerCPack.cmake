@@ -397,31 +397,21 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
 
     set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS)
     set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS)
-
-    if (Slicer_CPACK_NSIS_INSTALL_REQUIRES_ADMIN_ACCOUNT)
-      # Save file association information directly in HKEY_CLASSES_ROOT
-      # when installed as an admin.
-      SET(CR "HKCR \\\"")
-    else()
-      # Save file association information directly in HKEY_CURRENT_USER
-      # when installed without admin rights.
-      SET(CR "HKCU \\\"SOFTWARE\\Classes\\")
-    endif()
-
     foreach(ext ${FILE_EXTENSIONS})
       string(LENGTH "${ext}" len)
       math(EXPR len_m1 "${len} - 1")
       string(SUBSTRING "${ext}" 1 ${len_m1} ext_wo_dot)
       set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS
         "${CPACK_NSIS_EXTRA_INSTALL_COMMANDS}
-WriteRegStr ${CR}${APPLICATION_NAME}\\\" \\\"\\\" \\\"${APPLICATION_NAME} supported file\\\"
-WriteRegStr ${CR}${APPLICATION_NAME}\\\\shell\\\\open\\\\command\\\" \\\"\\\" \\\"$\\\\\\\"$INSTDIR\\\\${EXECUTABLE_NAME}.exe$\\\\\\\" $\\\\\\\"%1$\\\\\\\"\\\"
-WriteRegStr ${CR}${ext}\\\" \\\"\\\" \\\"${APPLICATION_NAME}\\\"
-WriteRegStr ${CR}${ext}\\\" \\\"Content Type\\\" \\\"application/x-${ext_wo_dot}\\\"
+WriteRegStr SHCTX \\\"SOFTWARE\\\\Classes\\\\${APPLICATION_NAME}\\\" \\\"\\\" \\\"${APPLICATION_NAME} supported file\\\"
+WriteRegStr SHCTX \\\"SOFTWARE\\\\Classes\\\\${APPLICATION_NAME}\\\\shell\\\\open\\\\command\\\" \
+\\\"\\\" \\\"$\\\\\\\"$INSTDIR\\\\${EXECUTABLE_NAME}.exe$\\\\\\\" $\\\\\\\"%1$\\\\\\\"\\\"
+WriteRegStr SHCTX \\\"SOFTWARE\\\\Classes\\\\${ext}\\\" \\\"\\\" \\\"${APPLICATION_NAME}\\\"
+WriteRegStr SHCTX \\\"SOFTWARE\\\\Classes\\\\${ext}\\\" \\\"Content Type\\\" \\\"application/x-${ext_wo_dot}\\\"
 ")
       set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}
-DeleteRegKey ${CR}${APPLICATION_NAME}\\\"
-DeleteRegKey ${CR}${ext}\\\"
+DeleteRegKey SHCTX \\\"SOFTWARE\\\\Classes\\\\${APPLICATION_NAME}\\\"
+DeleteRegKey SHCTX \\\"SOFTWARE\\\\Classes\\\\${ext}\\\"
 ")
     endforeach()
   endif()
