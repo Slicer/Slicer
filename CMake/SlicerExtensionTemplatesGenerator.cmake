@@ -134,8 +134,9 @@ endmacro()
 foreach(type IN ITEMS
     CLI
     Loadable
+    Scripted
+    ScriptedCLI
     ScriptedEditorEffect
-    ScriptedLoadable
     ScriptedSegmentEditorEffect
     )
   _append_extension_template_generator_commands(MODULE_TYPES ${type})
