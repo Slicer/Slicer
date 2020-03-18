@@ -178,7 +178,7 @@
       <item row="0" column="1">
        <widget class="QCheckBox" name="invertOutputCheckBox">
         <property name="toolTip">
-         <string>If checked, take screen shots for tutorials. Use Save Data to write them to disk.</string>
+         <string>If checked, values above threshold are set to 0. If unchecked, values below are set to 0.</string>
         </property>
         <property name="text">
          <string/>
