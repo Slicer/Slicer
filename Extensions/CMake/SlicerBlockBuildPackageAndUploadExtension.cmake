@@ -173,6 +173,11 @@ CMAKE_JOB_POOL_COMPILE:STRING=${CMAKE_JOB_POOL_COMPILE}
 CMAKE_JOB_POOL_LINK:STRING=${CMAKE_JOB_POOL_LINK}")
 endif()
 
+# If needed, convert to a list
+list(LENGTH EXTENSION_DEPENDS _count)
+if(_count EQUAL 1)
+  string(REPLACE " " ";" EXTENSION_DEPENDS ${EXTENSION_DEPENDS})
+endif()
 foreach(dep ${EXTENSION_DEPENDS})
   set(cmakecache_content "${cmakecache_content}
 ${dep}_BINARY_DIR:PATH=${${dep}_BINARY_DIR}
