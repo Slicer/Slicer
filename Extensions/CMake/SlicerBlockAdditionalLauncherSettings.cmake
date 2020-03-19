@@ -40,6 +40,11 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_laun
 
   # Load additional paths variables from extensions that we depend on.
   if (EXTENSION_DEPENDS)
+    # If needed, convert to a list
+    list(LENGTH EXTENSION_DEPENDS _count)
+    if(_count EQUAL 1)
+      string(REPLACE " " ";" EXTENSION_DEPENDS ${EXTENSION_DEPENDS})
+    endif()
     foreach(dep ${EXTENSION_DEPENDS})
       # When no extension dependencies are specified, "NA" value may be listed, it should be ignored.
       if (NOT "${dep}" STREQUAL "NA")
