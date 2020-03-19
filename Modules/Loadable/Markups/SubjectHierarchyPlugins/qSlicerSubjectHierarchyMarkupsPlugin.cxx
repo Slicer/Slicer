@@ -144,7 +144,8 @@ double qSlicerSubjectHierarchyMarkupsPlugin::canAddNodeToSubjectHierarchy(
            node->IsA("vtkMRMLMarkupsLineNode") ||
            node->IsA("vtkMRMLMarkupsAngleNode") ||
            node->IsA("vtkMRMLMarkupsCurveNode") ||
-           node->IsA("vtkMRMLMarkupsClosedCurveNode")
+           node->IsA("vtkMRMLMarkupsClosedCurveNode") ||
+           node->IsA("vtkMRMLMarkupsPlaneNode")
            )
     {
     // Item is a markup
@@ -175,7 +176,9 @@ double qSlicerSubjectHierarchyMarkupsPlugin::canOwnSubjectHierarchyItem(vtkIdTyp
        associatedNode->IsA("vtkMRMLMarkupsLineNode") ||
        associatedNode->IsA("vtkMRMLMarkupsAngleNode") ||
        associatedNode->IsA("vtkMRMLMarkupsCurveNode") ||
-       associatedNode->IsA("vtkMRMLMarkupsClosedCurveNode")))
+       associatedNode->IsA("vtkMRMLMarkupsClosedCurveNode") ||
+       associatedNode->IsA("vtkMRMLMarkupsPlaneNode"))
+    )
     {
     // Item is a markup
     return 0.5;
@@ -236,6 +239,10 @@ QIcon qSlicerSubjectHierarchyMarkupsPlugin::icon(vtkIdType itemID)
   else if (node->IsA("vtkMRMLMarkupsCurveNode"))
     {
     return QIcon(":Icons/MarkupsOpenCurve.png");
+    }
+  else if (node->IsA("vtkMRMLMarkupsPlaneNode"))
+    {
+    return QIcon(":Icons/MarkupsPlane.png");
     }
   return QIcon();
 }

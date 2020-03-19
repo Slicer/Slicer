@@ -5,5 +5,6 @@
     <file>Icons/MarkupsAngle.png</file>
     <file>Icons/MarkupsOpenCurve.png</file>
     <file>Icons/MarkupsClosedCurve.png</file>
+    <file>Icons/MarkupsPlane.png</file>
   </qresource>
 </RCC>

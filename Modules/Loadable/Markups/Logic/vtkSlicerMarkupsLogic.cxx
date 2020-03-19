@@ -20,15 +20,16 @@
 
 // Markups MRML includes
 #include "vtkMRMLInteractionEventData.h"
+#include "vtkMRMLMarkupsAngleNode.h"
+#include "vtkMRMLMarkupsClosedCurveNode.h"
+#include "vtkMRMLMarkupsCurveNode.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsFiducialDisplayNode.h"
 #include "vtkMRMLMarkupsFiducialNode.h"
 #include "vtkMRMLMarkupsFiducialStorageNode.h"
 #include "vtkMRMLMarkupsLineNode.h"
-#include "vtkMRMLMarkupsAngleNode.h"
-#include "vtkMRMLMarkupsCurveNode.h"
-#include "vtkMRMLMarkupsClosedCurveNode.h"
 #include "vtkMRMLMarkupsNode.h"
+#include "vtkMRMLMarkupsPlaneNode.h"
 #include "vtkMRMLMarkupsStorageNode.h"
 
 // Annotation MRML includes
@@ -203,6 +204,7 @@ void vtkSlicerMarkupsLogic::ObserveMRMLScene()
     selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLMarkupsAngleNode", ":/Icons/MarkupsAngleMouseModePlace.png", "Angle");
     selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLMarkupsCurveNode", ":/Icons/MarkupsCurveMouseModePlace.png", "Open Curve");
     selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLMarkupsClosedCurveNode", ":/Icons/MarkupsClosedCurveMouseModePlace.png", "Closed Curve");
+    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLMarkupsPlaneNode", ":/Icons/MarkupsPlaneMouseModePlace.png", "Plane");
 
     // trigger an update on the mouse mode toolbar
     this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
@@ -225,6 +227,7 @@ void vtkSlicerMarkupsLogic::RegisterNodes()
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsAngleNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsCurveNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsClosedCurveNode>::New());
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsPlaneNode>::New());
 
   // Display nodes
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsDisplayNode>::New());

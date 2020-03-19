@@ -283,7 +283,8 @@ bool vtkMRMLMarkupsFiducialStorageNode::CanReadInReferenceNode(vtkMRMLNode *refN
   return refNode->IsA("vtkMRMLMarkupsFiducialNode") ||
          refNode->IsA("vtkMRMLMarkupsLineNode") ||
          refNode->IsA("vtkMRMLMarkupsAngleNode") ||
-         refNode->IsA("vtkMRMLMarkupsCurveNode");
+         refNode->IsA("vtkMRMLMarkupsCurveNode") ||
+         refNode->IsA("vtkMRMLMarkupsPlaneNode");
 }
 
 //----------------------------------------------------------------------------

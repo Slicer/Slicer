@@ -20,7 +20,7 @@
  * @class   vtkSlicerAngleWidget
  * @brief   create an angle with a set of 3 points
  *
- * The vtkSlicerAngleWidget is used to create an angle widget wit a set of 3 points.
+ * The vtkSlicerAngleWidget is used to create an angle widget with a set of 3 points.
  *
 */
 
