@@ -116,7 +116,7 @@ protected:
   virtual bool IsControlPointDisplayableOnSlice(vtkMRMLMarkupsNode* node, int pointIndex = 0);
 
   // Update colormap based on provided base color (modulated with settings stored in the display node)
-  void UpdateDistanceColorMap(vtkDiscretizableColorTransferFunction* colormap, double color[3]);
+  virtual void UpdateDistanceColorMap(vtkDiscretizableColorTransferFunction* colormap, double color[3]);
 
   /// Check, if the point is behind in the current slice geometry
   virtual bool IsPointBehindSlice(vtkMRMLMarkupsNode* node, int pointIndex = 0);

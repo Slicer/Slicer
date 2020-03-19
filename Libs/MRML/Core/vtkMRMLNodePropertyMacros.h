@@ -130,6 +130,30 @@
     xmlWriteOutputStream << "\""; \
   }
 
+
+/// Macro for writing vtkMatrix4x4 to XML.
+#define vtkMRMLWriteXMLMatrix4x4Macro(xmlAttributeName, propertyName) \
+  { \
+    xmlWriteOutputStream << " " #xmlAttributeName "=\""; \
+    vtkMatrix4x4* matrix = this->Get##propertyName(); \
+    for (int row = 0; row < 4; row++) \
+      { \
+      for (int col = 0; col < 4; col++) \
+        { \
+        of << matrix->GetElement(row, col); \
+        if (!(row == 3 && col == 3)) \
+          { \
+          of << " "; \
+          } \
+        } \
+      if (row != 3) \
+        { \
+        of << " "; \
+        } \
+      } \
+    xmlWriteOutputStream << "\""; \
+  }
+
 /// @}
 
 //----------------------------------------------------------------------------
@@ -319,6 +343,25 @@
       } \
     this->Set##propertyName(vector); \
     }
+
+/// Macro for reading a vtkMatrix4x4* node property from XML.
+#define vtkMRMLReadXMLMatrix4x4Macro(xmlAttributeName, propertyName, vectorType) \
+  if (!strcmp(xmlReadAttName, #xmlAttributeName)) \
+    { \
+    vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New(); \
+    std::stringstream ss; \
+    double val; \
+    ss << xmlReadAttValue; \
+    for (int row = 0; row < 4; row++) \
+      { \
+      for (int col = 0; col < 4; col++) \
+        { \
+        ss >> val; \
+        matrix->SetElement(row, col, val); \
+        }  \
+      }  \
+    this->Set##propertyName(matrix); \
+  }
 
 /// @}
 
@@ -512,6 +555,19 @@
     printOutputStream << "]\n"; \
   }
 
+#define vtkMRMLPrintMatrix4x4Macro(propertyName, vectorType) \
+  { \
+    vtkMatrix4x4* matrix = this->Get##propertyName(); \
+    printOutputStream << printOutputIndent << #propertyName " :\n"; \
+    if (matrix) \
+      { \
+      matrix->PrintSelf(printOutputStream, printOutputIndent.GetNextIndent().GetNextIndent()); \
+      } \
+    else \
+      { \
+      printOutputStream << "None"; \
+      } \
+  }
 /// @}
 
 #endif // __vtkMRMLNodePropertyMacros_h

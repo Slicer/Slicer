@@ -10,6 +10,7 @@
 #include <vtkMRMLMarkupsFiducialNode.h>
 #include <vtkMRMLMarkupsLineNode.h>
 #include <vtkMRMLMarkupsNode.h>
+#include <vtkMRMLMarkupsPlaneNode.h>
 
 // MarkupsModule/VTKWidgets includes
 #include <vtkSlicerLineWidget.h>
@@ -22,6 +23,7 @@
 #include <vtkSlicerAngleWidget.h>
 #include <vtkSlicerAngleRepresentation2D.h>
 #include <vtkSlicerAngleRepresentation3D.h>
+#include <vtkSlicerPlaneWidget.h>
 #include <vtkSlicerPointsWidget.h>
 #include <vtkSlicerPointsRepresentation2D.h>
 #include <vtkSlicerPointsRepresentation3D.h>
@@ -91,6 +93,7 @@ vtkMRMLMarkupsDisplayableManager::vtkMRMLMarkupsDisplayableManager()
   this->Focus.insert("vtkMRMLMarkupsLineNode");
   this->Focus.insert("vtkMRMLMarkupsCurveNode");
   this->Focus.insert("vtkMRMLMarkupsClosedCurveNode");
+  this->Focus.insert("vtkMRMLMarkupsPlaneNode");
 
   this->Helper = vtkMRMLMarkupsDisplayableManagerHelper::New();
   this->Helper->SetDisplayableManager(this);
@@ -429,9 +432,8 @@ void vtkMRMLMarkupsDisplayableManager::RemoveObserversFromInteractionNode()
   if (interactionNode)
     {
     vtkUnObserveMRMLNodeMacro(interactionNode);
-  }
+    }
 }
-
 
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
@@ -594,6 +596,11 @@ vtkMRMLMarkupsNode* vtkMRMLMarkupsDisplayableManager::CreateNewMarkupsNode(
     {
     nodeName = "C";
     }
+  else if (markupsNodeClassName == "vtkMRMLMarkupsPlaneNode")
+    {
+    nodeName = "P";
+    }
+
   vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(
     this->GetMRMLScene()->AddNewNodeByClass(markupsNodeClassName, nodeName));
   markupsNode->AddDefaultStorageNode();
@@ -949,6 +956,10 @@ vtkSlicerMarkupsWidget * vtkMRMLMarkupsDisplayableManager::CreateWidget(vtkMRMLM
   else if (vtkMRMLMarkupsClosedCurveNode::SafeDownCast(markupsNode))
     {
     widget = vtkSlicerClosedCurveWidget::New();
+    }
+  else if (vtkMRMLMarkupsPlaneNode::SafeDownCast(markupsNode))
+    {
+    widget = vtkSlicerPlaneWidget::New();
     }
   else
     {

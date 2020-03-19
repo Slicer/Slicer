@@ -172,6 +172,7 @@ QStringList qSlicerMarkupsModule::associatedNodeTypes() const
     << "vtkMRMLMarkupsAngleNode"
     << "vtkMRMLMarkupsCurveNode"
     << "vtkMRMLMarkupsClosedCurveNode"
+    << "vtkMRMLMarkupsPlaneNode"
     << "vtkMRMLMarkupsFiducialStorageNode";
 }
 

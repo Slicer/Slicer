@@ -279,7 +279,6 @@ bool vtkMRMLMarkupsCurveNode::ResampleCurveSurface(double controlPointDistance, 
   if (parentTransformNode)
     {
     vtkNew<vtkGeneralTransform> modelToWorldTransform;
-    modelToWorldTransform->Identity();
     parentTransformNode->GetTransformToWorld(modelToWorldTransform);
     vtkNew<vtkTransformPolyDataFilter> transformPolydataFilter;
     transformPolydataFilter->SetInputData(surfacePolydata);

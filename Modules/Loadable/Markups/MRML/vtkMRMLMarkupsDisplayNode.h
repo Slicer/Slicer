@@ -87,7 +87,8 @@ public:
     ComponentNone = 0,
     ComponentControlPoint,
     ComponentCenterPoint,
-    ComponentLine
+    ComponentLine,
+    ComponentPlane
     };
   struct ComponentInfo
     {

@@ -325,6 +325,8 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
     q, SLOT(onCreateMarkupsOpenCurve()));
   QObject::connect(this->createClosedCurvePushButton, SIGNAL(clicked()),
     q, SLOT(onCreateMarkupsClosedCurve()));
+  QObject::connect(this->createPlanePushButton, SIGNAL(clicked()),
+    q, SLOT(onCreateMarkupsPlane()));
 
   // Make sure that the Jump to Slices radio buttons match the default of the
   // MRML slice node
@@ -920,6 +922,7 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
 
   vtkMRMLMarkupsCurveNode *markupsCurveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(d->MarkupsNode);
   d->resampleCurveCollapsibleButton->setVisible(markupsCurveNode != nullptr);
+  d->curveSettingsWidget->setEnabled(markupsCurveNode != nullptr);
   if (markupsCurveNode)
     {
     // Update displayed node types.
@@ -1616,6 +1619,15 @@ void qSlicerMarkupsModuleWidget::onCreateMarkupsClosedCurve()
   if (this->mrmlScene())
     {
     this->onActiveMarkupMRMLNodeAdded(this->mrmlScene()->AddNewNodeByClass("vtkMRMLMarkupsClosedCurveNode"));
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onCreateMarkupsPlane()
+{
+  if (this->mrmlScene())
+    {
+    this->onActiveMarkupMRMLNodeAdded(this->mrmlScene()->AddNewNodeByClass("vtkMRMLMarkupsPlaneNode"));
     }
 }
 
