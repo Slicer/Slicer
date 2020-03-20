@@ -27,7 +27,10 @@
 
 #include "itkNumberToString.h"
 
+#include <algorithm>
+#include <iostream>
 #include <sstream>
+#include <string>
 
 // CSV table field indexes
 static const int FIELD_ID = 0;
@@ -212,6 +215,29 @@ protected:
   char Separator;
   std::vector<std::string> Fields;
 };
+
+
+namespace
+{
+  const std::string WHITESPACE = " \n\r\t\f\v";
+
+  std::string ltrim(const std::string& s)
+    {
+    size_t start = s.find_first_not_of(WHITESPACE);
+    return (start == std::string::npos) ? "" : s.substr(start);
+    }
+
+  std::string rtrim(const std::string& s)
+    {
+    size_t end = s.find_last_not_of(WHITESPACE);
+    return (end == std::string::npos) ? "" : s.substr(0, end + 1);
+    }
+
+  std::string trim(const std::string& s)
+    {
+    return rtrim(ltrim(s));
+    }
+}
 
 //------------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLMarkupsFiducialStorageNode);
@@ -513,28 +539,27 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       if (line[0] == '#')
         {
         vtkDebugMacro("Comment line, checking:\n\"" << line << "\"");
+        std::string lineString = std::string(line);
+        lineString.erase(0, 1); // delete leading #
 
-        // if there's a space after the hash, check for the version
-        if (line[1] == ' ')
+        int separatorIndex = lineString.find('=');
+        std::string name = trim(lineString.substr(0, separatorIndex));
+        std::string value = trim(lineString.substr(separatorIndex + 1));
+
+        if (name == "Markups fiducial file version")
           {
-          vtkDebugMacro("Have a possible option in line " << line);
-          std::string lineString = std::string(line);
-          if (lineString.find("# Markups fiducial file version = ") != std::string::npos)
-            {
-            version = lineString.substr(34,std::string::npos);
-            vtkDebugMacro("Version = " << version);
-            }
-          else if (lineString.find("# CoordinateSystem = ") != std::string::npos)
-            {
-            std::string str = lineString.substr(21,std::string::npos);
-            int coordinateSystemFlag = vtkMRMLMarkupsStorageNode::GetCoordinateSystemFromString(str.c_str());
-            vtkDebugMacro("CoordinateSystem = " << coordinateSystemFlag);
-            this->SetCoordinateSystem(coordinateSystemFlag);
-            }
-          else if (lineString.find("# columns = ") != std::string::npos)
-            {
-            // the markups header, fixed
-            }
+          version = value;
+          vtkDebugMacro("Version = " << version);
+          }
+        else if (name == "CoordinateSystem")
+          {
+          int coordinateSystemFlag = vtkMRMLMarkupsStorageNode::GetCoordinateSystemFromString(value.c_str());
+          vtkDebugMacro("CoordinateSystem = " << coordinateSystemFlag);
+          this->SetCoordinateSystem(coordinateSystemFlag);
+          }
+        else if (name == "columns")
+          {
+          // the markups header, for now the header is fixed, so the listed values are ignored
           }
         }
       else
