@@ -96,7 +96,9 @@ public:
 
   ///
   /// Set the position of the camera in world coordinates.
-  /// \sa GetPosition(), SetFocalPoint(), SetViewUp()
+  /// It is recommended to call ResetClippingRange() after calling this to ensure that all
+  /// objects that should be visible are rendered.
+  /// \sa GetPosition(), SetFocalPoint(), SetViewUp(), ResetClippingRange()
   void SetPosition(double position[3]);
   inline void SetPosition(double x, double y, double z);
 
