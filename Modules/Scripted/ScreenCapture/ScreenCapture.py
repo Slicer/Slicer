@@ -198,27 +198,27 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.captureAllViewsCheckBox.setToolTip("If checked, all views will be captured. If unchecked then only the selected view will be captured.")
     outputFormLayout.addRow("Capture all views:", self.captureAllViewsCheckBox)
 
-    self.videoExportCheckBox = qt.QCheckBox(" ")
-    self.videoExportCheckBox.checked = False
-    self.videoExportCheckBox.setToolTip("If checked, exported images will be written as a video file."
-      " Requires setting of ffmpeg executable path in Advanced section.")
-
-    self.videoFormatWidget = qt.QComboBox()
-    self.videoFormatWidget.enabled = False
-    self.videoFormatWidget.setSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Preferred)
-    for videoFormatPreset in self.logic.videoFormatPresets:
-      self.videoFormatWidget.addItem(videoFormatPreset["name"])
-
-    hbox = qt.QHBoxLayout()
-    hbox.addWidget(self.videoExportCheckBox)
-    hbox.addWidget(self.videoFormatWidget)
-    outputFormLayout.addRow("Video export:", hbox)
+    self.outputTypeWidget = qt.QComboBox()
+    self.outputTypeWidget.setToolTip("Select how captured images will be saved. Video mode requires setting of ffmpeg executable path in Advanced section.")
+    self.outputTypeWidget.addItem("image series")
+    self.outputTypeWidget.addItem("video")
+    self.outputTypeWidget.addItem("lightbox image")
+    inputFormLayout.addRow("Output type:", self.outputTypeWidget)
 
     self.videoFileNameWidget = qt.QLineEdit()
     self.videoFileNameWidget.setToolTip("String that defines file name and type.")
     self.videoFileNameWidget.text = "SlicerCapture.avi"
     self.videoFileNameWidget.setEnabled(False)
-    outputFormLayout.addRow("Video file name:", self.videoFileNameWidget)
+
+    self.lightboxImageFileNameWidget = qt.QLineEdit()
+    self.lightboxImageFileNameWidget.setToolTip("String that defines output lightbox file name and type.")
+    self.lightboxImageFileNameWidget.text = "SlicerCaptureLightbox.png"
+    self.lightboxImageFileNameWidget.setEnabled(False)
+
+    hbox = qt.QHBoxLayout()
+    hbox.addWidget(self.videoFileNameWidget)
+    hbox.addWidget(self.lightboxImageFileNameWidget)
+    outputFormLayout.addRow("Output file name:", hbox)
 
     self.videoLengthSliderWidget = ctk.ctkSliderWidget()
     self.videoLengthSliderWidget.singleStep = 0.1
@@ -281,6 +281,13 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.videoExportFfmpegWarning.setVisible(False)
     advancedFormLayout.addRow("", self.videoExportFfmpegWarning)
 
+    self.videoFormatWidget = qt.QComboBox()
+    self.videoFormatWidget.enabled = False
+    self.videoFormatWidget.setSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Preferred)
+    for videoFormatPreset in self.logic.videoFormatPresets:
+      self.videoFormatWidget.addItem(videoFormatPreset["name"])
+    advancedFormLayout.addRow("Video format:", self.videoFormatWidget)
+
     self.extraVideoOptionsWidget = qt.QLineEdit()
     self.extraVideoOptionsWidget.setToolTip('Additional video conversion options passed to ffmpeg. Parameters -i (input files), -y'
       +'(overwrite without asking), -r (frame rate), -start_number are specified by the module and therefore'
@@ -292,6 +299,15 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
       "String that defines file name, type, and numbering scheme. Default: image%05d.png.")
     self.fileNamePatternWidget.text = "image_%05d.png"
     advancedFormLayout.addRow("Image file name pattern:", self.fileNamePatternWidget)
+
+    self.lightboxColumnCountSliderWidget = ctk.ctkSliderWidget()
+    self.lightboxColumnCountSliderWidget.decimals = 0
+    self.lightboxColumnCountSliderWidget.singleStep = 1
+    self.lightboxColumnCountSliderWidget.minimum = 1
+    self.lightboxColumnCountSliderWidget.maximum = 20
+    self.lightboxColumnCountSliderWidget.value = 6
+    self.lightboxColumnCountSliderWidget.setToolTip("Number of columns in lightbox image")
+    advancedFormLayout.addRow("Lightbox image columns:", self.lightboxColumnCountSliderWidget)
 
     self.maxFramesWidget = qt.QSpinBox()
     self.maxFramesWidget.setRange(1, 9999)
@@ -405,11 +421,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.sequenceBrowserNodeSelectorWidget.connect("currentNodeChanged(vtkMRMLNode*)", self.updateViewOptions)
     self.sequenceStartItemIndexWidget.connect('valueChanged(double)', self.setSequenceItemIndex)
     self.sequenceEndItemIndexWidget.connect('valueChanged(double)', self.setSequenceItemIndex)
-    self.videoExportCheckBox.connect('toggled(bool)', self.fileNamePatternWidget, 'setDisabled(bool)')
-    self.videoExportCheckBox.connect('toggled(bool)', self.videoFileNameWidget, 'setEnabled(bool)')
-    self.videoExportCheckBox.connect('toggled(bool)', self.videoFormatWidget, 'setEnabled(bool)')
-    self.videoExportCheckBox.connect('toggled(bool)', self.videoLengthSliderWidget, 'setEnabled(bool)')
-    self.videoExportCheckBox.connect('toggled(bool)', self.videoFrameRateSliderWidget, 'setEnabled(bool)')
+    self.outputTypeWidget.connect('currentIndexChanged(int)', self.updateOutputType)
     self.videoFormatWidget.connect("currentIndexChanged(int)", self.updateVideoFormat)
     self.singleStepButton.connect('toggled(bool)', self.numberOfStepsSliderWidget, 'setDisabled(bool)')
     self.maxFramesWidget.connect('valueChanged(int)', self.maxFramesChanged)
@@ -421,6 +433,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.watermarkEnabledCheckBox.connect('toggled(bool)', self.watermarkPathSelector, 'setEnabled(bool)')
 
     self.setVideoLength() # update frame rate based on video length
+    self.updateOutputType()
     self.updateVideoFormat(0)
     self.updateViewOptions()
 
@@ -435,6 +448,19 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     if not self.createdOutputFile:
       return
     qt.QDesktopServices().openUrl(qt.QUrl("file:///"+self.createdOutputFile, qt.QUrl.TolerantMode));
+
+  def updateOutputType(self, selectionIndex=0):
+    isVideo = self.outputTypeWidget.currentText == "video"
+    isLightbox = self.outputTypeWidget.currentText == "lightbox image"
+    self.fileNamePatternWidget.enabled = not (isVideo or isLightbox)
+    self.videoFileNameWidget.enabled = isVideo
+    self.videoFormatWidget.enabled = isVideo
+    self.videoLengthSliderWidget.enabled = isVideo
+    self.videoFrameRateSliderWidget.enabled = isVideo
+    self.videoFileNameWidget.setVisible(not isLightbox)
+    self.videoFileNameWidget.enabled = isVideo
+    self.lightboxImageFileNameWidget.setVisible(isLightbox)
+    self.lightboxImageFileNameWidget.enabled = isLightbox
 
   def updateVideoFormat(self, selectionIndex):
     videoFormatPreset = self.logic.videoFormatPresets[selectionIndex]
@@ -603,7 +629,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
     self.statusLabel.plainText = ''
 
-    videoOutputRequested = self.videoExportCheckBox.checked
+    videoOutputRequested = (self.outputTypeWidget.currentText == "video")
     viewNode = self.viewNodeSelector.currentNode()
     numberOfSteps = int(self.numberOfStepsSliderWidget.value)
     if self.singleStepButton.checked:
@@ -638,7 +664,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
     # Need to create a new random file pattern if video output is requested to make sure that new image files are not mixed up with
     # existing files in the output directory
-    imageFileNamePattern = self.logic.getRandomFilePattern() if videoOutputRequested else self.fileNamePatternWidget.text
+    imageFileNamePattern = self.fileNamePatternWidget.text if (self.outputTypeWidget.currentText == "image series") else self.logic.getRandomFilePattern()
 
     self.captureButton.setEnabled(True)
     self.captureButton.text = self.captureButtonLabelCancel
@@ -704,13 +730,14 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
           numberOfSteps += numberOfSteps - 2
         numberOfSteps *= numberOfRepeats
 
-      if videoOutputRequested:
-        try:
+      try:
+        if videoOutputRequested:
           self.logic.createVideo(fps, self.extraVideoOptionsWidget.text,
             outputDir, imageFileNamePattern, self.videoFileNameWidget.text)
-        except Exception as e:
-          self.logic.deleteTemporaryFiles(outputDir, imageFileNamePattern, numberOfSteps)
-          raise
+        elif (self.outputTypeWidget.currentText == "lightbox image"):
+          self.logic.createLightboxImage(int(self.lightboxColumnCountSliderWidget.value),
+            outputDir, imageFileNamePattern, numberOfSteps, self.lightboxImageFileNameWidget.text)
+      finally:
         self.logic.deleteTemporaryFiles(outputDir, imageFileNamePattern, numberOfSteps)
 
       self.addLog("Done.")
@@ -1022,17 +1049,28 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       imageClipper.Update()
       capturedImage = imageClipper.GetOutput()
 
-    name, extension = os.path.splitext(filename)
-    if extension.lower() == '.png':
-      writer = vtk.vtkPNGWriter()
-    elif extension.lower() == '.jpg' or extension.lower() == '.jpeg':
-      writer = vtk.vtkJPEGWriter()
-    else:
-      logging.error('Unsupported image format based on file name ' + filename)
-      return
+    writer = self.createImageWriter(filename)
     writer.SetInputData(self.addWatermark(capturedImage))
     writer.SetFileName(filename)
     writer.Write()
+
+  def createImageWriter(self, filename):
+    name, extension = os.path.splitext(filename)
+    if extension.lower() == '.png':
+      return vtk.vtkPNGWriter()
+    elif extension.lower() == '.jpg' or extension.lower() == '.jpeg':
+      return vtk.vtkJPEGWriter()
+    else:
+      raise ValueError('Unsupported image format based on file name ' + filename)
+
+  def createImageReader(self, filename):
+    name, extension = os.path.splitext(filename)
+    if extension.lower() == '.png':
+      return vtk.vtkPNGReader()
+    elif extension.lower() == '.jpg' or extension.lower() == '.jpeg':
+      return vtk.vtkJPEGReader()
+    else:
+      raise ValueError('Unsupported image format based on file name ' + filename)
 
   def addWatermark(self, capturedImage):
 
@@ -1261,6 +1299,49 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     sequenceBrowserNode.SetSelectedItemNumber(originalSelectedItemNumber)
     if self.cancelRequested:
       raise ValueError('User requested cancel.')
+
+  def createLightboxImage(self, numberOfColumns, outputDir, imageFileNamePattern, numberOfImages, lightboxImageFilename):
+    self.addLog("Export to lightbox image...")
+    filePathPattern = os.path.join(outputDir, imageFileNamePattern)
+    import math
+    numberOfRows = int(math.ceil(numberOfImages/numberOfColumns))
+    imageMarginSizePixels = 5
+    for row in range(numberOfRows):
+      for column in range(numberOfColumns):
+        imageIndex = row * numberOfColumns + column
+        if imageIndex >= numberOfImages:
+          break
+        sourceFilename = filePathPattern % imageIndex
+        reader = self.createImageReader(sourceFilename)
+        reader.SetFileName(sourceFilename)
+        reader.Update()
+        image = reader.GetOutput()
+
+        if imageIndex == 0:
+          # First image, initialize output lightbox image
+          imageDimensions = image.GetDimensions()
+          lightboxImageExtent = [0, numberOfColumns * imageDimensions[0] + (numberOfColumns - 1) * imageMarginSizePixels,
+            0, numberOfRows * imageDimensions[1] + (numberOfRows - 1) * imageMarginSizePixels,
+            0, 0]
+          lightboxCanvas = vtk.vtkImageCanvasSource2D()
+          lightboxCanvas.SetNumberOfScalarComponents(3)
+          lightboxCanvas.SetScalarTypeToUnsignedChar()
+          lightboxCanvas.SetExtent(lightboxImageExtent)
+          lightboxCanvas.SetDrawColor(1.0, 1.0, 1.0)
+
+        drawingPosition = [column * (imageDimensions[0] + imageMarginSizePixels),
+          lightboxImageExtent[3] - (row + 1) * (imageDimensions[1] + imageMarginSizePixels)]
+        lightboxCanvas.DrawImage(drawingPosition[0], drawingPosition[1], image)
+
+    slicer.lb = lightboxCanvas
+    lightboxCanvas.Update()
+    outputLightboxImageFilePath = os.path.join(outputDir, lightboxImageFilename)
+    writer = self.createImageWriter(outputLightboxImageFilePath)
+    writer.SetFileName(outputLightboxImageFilePath)
+    writer.SetInputData(lightboxCanvas.GetOutput())
+    writer.Write()
+
+    self.addLog("Lighbox image saved to file: "+outputLightboxImageFilePath)
 
   def createVideo(self, frameRate, extraOptions, outputDir, imageFileNamePattern, videoFileName):
     self.addLog("Export to video...")
