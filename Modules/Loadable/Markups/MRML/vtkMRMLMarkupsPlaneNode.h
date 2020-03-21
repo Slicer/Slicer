@@ -119,10 +119,9 @@ public:
 
   /// 4x4 matrix detailing the offset (rotation/translation) of the plane from the plane defined by the markup points.
   /// Default is the identity matrix.
-  vtkGetMacro(LocalToPlaneTransform, vtkMatrix4x4*);
+  virtual vtkMatrix4x4* GetLocalToPlaneTransform();
 
 protected:
-  vtkSetMacro(LocalToPlaneTransform, vtkMatrix4x4*);
 
   /// Calculates the x y and z axis of the plane from the 3 input points.
   void CalculateAxesFromPoints(const double point0[3], const double point1[3], const double point2[3], double x[3], double y[3], double z[3]);

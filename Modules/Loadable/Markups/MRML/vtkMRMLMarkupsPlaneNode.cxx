@@ -71,7 +71,7 @@ void vtkMRMLMarkupsPlaneNode::ReadXMLAttributes(const char** atts)
   Superclass::ReadXMLAttributes(atts);
   vtkMRMLReadXMLBeginMacro(atts);
   vtkMRMLReadXMLEnumMacro(sizeMode, SizeMode);
-  vtkMRMLReadXMLMatrix4x4Macro(localToPlaneTransform, LocalToPlaneTransform);
+  vtkMRMLReadXMLOwnedMatrix4x4Macro(localToPlaneTransform, LocalToPlaneTransform);
   vtkMRMLReadXMLEndMacro();
 }
 
@@ -82,13 +82,7 @@ void vtkMRMLMarkupsPlaneNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyEnumMacro(SizeMode);
-  vtkNew<vtkMatrix4x4> localToPlaneTransform;
-  if (this->SafeDownCast(copySourceNode) &&
-    this->SafeDownCast(copySourceNode)->GetLocalToPlaneTransform())
-    {
-    localToPlaneTransform->DeepCopy(this->SafeDownCast(copySourceNode)->GetLocalToPlaneTransform());
-    }
-  this->SetLocalToPlaneTransform(localToPlaneTransform);
+  vtkMRMLCopyOwnedMatrix4x4Macro(LocalToPlaneTransform);
   vtkMRMLCopyEndMacro();
 }
 
@@ -668,4 +662,10 @@ void vtkMRMLMarkupsPlaneNode::CreatePlane()
     this->SetNthControlPointPosition(1, point1[0], point1[1], point1[2]);
     this->SetNthControlPointPosition(2, point2[0], point2[1], point2[2]);
     }
+}
+
+//----------------------------------------------------------------------------
+vtkMatrix4x4* vtkMRMLMarkupsPlaneNode::GetLocalToPlaneTransform()
+{
+  return this->LocalToPlaneTransform;
 }

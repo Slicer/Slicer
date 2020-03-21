@@ -345,10 +345,12 @@
     }
 
 /// Macro for reading a vtkMatrix4x4* node property from XML.
-#define vtkMRMLReadXMLMatrix4x4Macro(xmlAttributeName, propertyName, vectorType) \
+/// "Owned" means that the node owns the matrix, the object is always valid and cannot be replaced from outside
+/// (there is no public Set...() method for the matrix).
+#define vtkMRMLReadXMLOwnedMatrix4x4Macro(xmlAttributeName, propertyName) \
   if (!strcmp(xmlReadAttName, #xmlAttributeName)) \
     { \
-    vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New(); \
+    vtkNew<vtkMatrix4x4> matrix; \
     std::stringstream ss; \
     double val; \
     ss << xmlReadAttValue; \
@@ -360,7 +362,7 @@
         matrix->SetElement(row, col, val); \
         }  \
       }  \
-    this->Set##propertyName(matrix); \
+    this->Get##propertyName()->DeepCopy(matrix); \
   }
 
 /// @}
@@ -441,6 +443,12 @@
 /// Macro for copying an iterable container (of std::string) vector node property value.
 #define vtkMRMLCopyStdStringVectorMacroMacro(propertyName) \
   this->Set##propertyName(this->SafeDownCast(copySourceNode)->Get##propertyName());
+
+/// Macro for copying a vtkMatrix4x4* property value.
+/// "Owned" means that the node owns the matrix, the object is always valid and cannot be replaced from outside
+/// (there is no public Set...() method for the matrix).
+#define vtkMRMLCopyOwnedMatrix4x4Macro(propertyName) \
+   this->Get##propertyName()->DeepCopy(this->SafeDownCast(copySourceNode)->Get##propertyName());
 
 /// @}
 
@@ -555,7 +563,7 @@
     printOutputStream << "]\n"; \
   }
 
-#define vtkMRMLPrintMatrix4x4Macro(propertyName, vectorType) \
+#define vtkMRMLPrintMatrix4x4Macro(propertyName) \
   { \
     vtkMatrix4x4* matrix = this->Get##propertyName(); \
     printOutputStream << printOutputIndent << #propertyName " :\n"; \
