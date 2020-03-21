@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>398</width>
+    <width>458</width>
     <height>506</height>
    </rect>
   </property>
@@ -359,7 +359,7 @@
       <item>
        <widget class="ctkExpandButton" name="AdditionalModulePathMoreButton">
         <property name="checked">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="mirrorOnExpand">
          <bool>true</bool>
@@ -653,7 +653,7 @@
          </sizepolicy>
         </property>
         <property name="checked">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="mirrorOnExpand">
          <bool>true</bool>
@@ -903,12 +903,28 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>640</x>
-     <y>427</y>
+     <x>451</x>
+     <y>217</y>
     </hint>
     <hint type="destinationlabel">
-     <x>617</x>
-     <y>471</y>
+     <x>438</x>
+     <y>217</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>FilterMoreButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>FilterGroupBox</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>449</x>
+     <y>261</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>391</x>
+     <y>229</y>
     </hint>
    </hints>
   </connection>
