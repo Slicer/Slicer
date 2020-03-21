@@ -87,6 +87,8 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->MRMLCommandLineModuleNodeSelector->addAttribute(
     "vtkMRMLCommandLineModuleNode", "CommandLineModule", title);
 
+  this->MRMLCommandLineModuleNodeSelector->setNodeTypeLabel("Parameter set", "vtkMRMLCommandLineModuleNode");
+
   this->addParameterGroups();
 
   // Setup AutoRun menu
