@@ -315,6 +315,8 @@ protected slots:
   /// \sa saveTreeExpandState()
   void loadTreeExpandState();
 
+  void onCustomContextMenu(const QPoint& point);
+
 protected:
   qMRMLTreeView(qMRMLTreeViewPrivate* pimpl, QWidget *parent=nullptr);
 

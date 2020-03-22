@@ -218,6 +218,9 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
   QObject::connect( this->TransformItemDelegate, SIGNAL(hardenTransformOnBranchOfCurrentItem()),
     this->Model, SLOT(onHardenTransformOnBranchOfCurrentItem()) );
 
+  q->setContextMenuPolicy(Qt::CustomContextMenu);
+  QObject::connect(q, SIGNAL(customContextMenuRequested(const QPoint&)), q, SLOT(onCustomContextMenu(const QPoint&)));
+
   // Make connections
   QObject::connect( this->Model, SIGNAL(invalidateFilter()), this->SortFilterModel, SLOT(invalidate()) );
   QObject::connect( q, SIGNAL(expanded(const QModelIndex&)), q, SLOT(onItemExpanded(const QModelIndex&)) );
@@ -951,21 +954,6 @@ bool qMRMLSubjectHierarchyTreeView::clickDecoration(QMouseEvent* e)
       // Toggle simple visibility
       this->toggleSubjectHierarchyItemVisibility(itemID);
       }
-    else if (e->button() == Qt::RightButton)
-      {
-      // If multiple items are selected then show the node menu instead of the visibility menu
-      if (d->SelectedItems.size() > 1)
-        {
-        this->populateContextMenuForItem(itemID);
-        d->NodeMenu->exec(e->globalPos());
-        }
-      else
-        {
-        // Populate then show visibility context menu if only one item is selected
-        this->populateVisibilityContextMenuForItem(itemID);
-        d->VisibilityMenu->exec(e->globalPos());
-        }
-      }
 
     return true;
     }
@@ -991,37 +979,6 @@ void qMRMLSubjectHierarchyTreeView::mousePressEvent(QMouseEvent* e)
     if (this->clickDecoration(e))
       {
       return;
-      }
-    }
-  else if (e->button() == Qt::RightButton)
-    {
-    if (!d->ContextMenuEnabled)
-      {
-      // Context menu not enabled, do not process further
-      return;
-      }
-
-    // Custom right button actions for item decorations (i.e. icon): visibility context menu
-    if (this->clickDecoration(e))
-      {
-      return;
-      }
-
-    // Get subject hierarchy item at mouse click position
-    QModelIndex index = this->indexAt(e->pos());
-    vtkIdType itemID = this->sortFilterProxyModel()->subjectHierarchyItemFromIndex(index);
-
-    // Populate context menu for the current item
-    this->populateContextMenuForItem(itemID);
-
-    // Show context menu
-    if (!itemID || itemID == d->SubjectHierarchyNode->GetSceneItemID())
-      {
-      d->SceneMenu->exec(e->globalPos());
-      }
-    else
-      {
-      d->NodeMenu->exec(e->globalPos());
       }
     }
 }
@@ -1848,4 +1805,69 @@ bool qMRMLSubjectHierarchyTreeView::showContextMenuHint(bool visibility/*=false*
     }
 
   return true;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::onCustomContextMenu(const QPoint& point)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+
+  if (!d->ContextMenuEnabled)
+    {
+    // Context menu not enabled, ignore the event
+    return;
+    }
+
+  QPoint globalPoint = this->viewport()->mapToGlobal(point);
+
+  // Custom right button actions for item decorations (i.e. icon): visibility context menu
+  QModelIndex index = this->indexAt(point);
+  QStyleOptionViewItem opt = this->viewOptions();
+  opt.rect = this->visualRect(index);
+  qobject_cast<qMRMLItemDelegate*>(this->itemDelegate())->initStyleOption(&opt, index);
+  QRect decorationElement = this->style()->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, this);
+  if (decorationElement.contains(point))
+    {
+    // Mouse event is within an item decoration
+    QModelIndex sourceIndex = this->sortFilterProxyModel()->mapToSource(index);
+    if (sourceIndex.flags() & Qt::ItemIsEnabled)
+      {
+      // Item is enabled
+      if (sourceIndex.column() == this->model()->visibilityColumn()
+        || sourceIndex.column() == this->model()->colorColumn())
+        {
+        vtkIdType itemID = d->SortFilterModel->subjectHierarchyItemFromIndex(index);
+        if (itemID) // Valid item is needed for visibility actions
+          {
+          // If multiple items are selected then show the node menu instead of the visibility menu
+          if (d->SelectedItems.size() > 1)
+            {
+            this->populateContextMenuForItem(itemID);
+            d->NodeMenu->exec(globalPoint);
+            }
+          else
+            {
+            // Populate then show visibility context menu if only one item is selected
+            this->populateVisibilityContextMenuForItem(itemID);
+            d->VisibilityMenu->exec(globalPoint);
+            }
+          return;
+          }
+        }
+      }
+    }
+
+  // Get subject hierarchy item at mouse click position
+  vtkIdType itemID = this->sortFilterProxyModel()->subjectHierarchyItemFromIndex(index);
+  // Populate context menu for the current item
+  this->populateContextMenuForItem(itemID);
+  // Show context menu
+  if (!itemID || itemID == d->SubjectHierarchyNode->GetSceneItemID())
+    {
+    d->SceneMenu->exec(globalPoint);
+    }
+  else
+    {
+    d->NodeMenu->exec(globalPoint);
+    }
 }

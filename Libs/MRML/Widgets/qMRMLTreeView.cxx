@@ -126,6 +126,9 @@ void qMRMLTreeViewPrivate::init()
   this->SceneMenu = new QMenu(q);
   this->SceneMenu->setObjectName("sceneMenuTreeView");
   this->ExpandedNodes->RemoveAllItems();
+
+  q->setContextMenuPolicy(Qt::CustomContextMenu);
+  QObject::connect(q, SIGNAL(customContextMenuRequested(const QPoint&)), q, SLOT(onCustomContextMenu(const QPoint&)));
 }
 
 //------------------------------------------------------------------------------
@@ -756,24 +759,6 @@ void qMRMLTreeView::mousePressEvent(QMouseEvent* e)
 {
   Q_D(qMRMLTreeView);
   this->QTreeView::mousePressEvent(e);
-
-  if (e->button() != Qt::RightButton)
-    {
-    return;
-    }
-  // get the index of the current column
-  QModelIndex index = this->indexAt(e->pos());
-
-  vtkMRMLNode* node = this->sortFilterProxyModel()->mrmlNodeFromIndex(index);
-
-  if (node)
-    {
-    d->NodeMenu->exec(e->globalPos());
-    }
-  else if (index == this->sortFilterProxyModel()->mrmlSceneIndex())
-    {
-    d->SceneMenu->exec(e->globalPos());
-    }
 }
 
 //------------------------------------------------------------------------------
@@ -1032,4 +1017,24 @@ bool qMRMLTreeView::eventFilter(QObject* object, QEvent* e)
     d->recomputeSizeHint();
     }
   return res;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLTreeView::onCustomContextMenu(const QPoint& point)
+{
+  Q_D(qMRMLTreeView);
+
+  // get the index of the current column
+  QModelIndex index = this->indexAt(point);
+
+  QPoint globalPoint = this->viewport()->mapToGlobal(point);
+  vtkMRMLNode* node = this->sortFilterProxyModel()->mrmlNodeFromIndex(index);
+  if (node)
+    {
+    d->NodeMenu->exec(globalPoint);
+    }
+  else if (index == this->sortFilterProxyModel()->mrmlSceneIndex())
+    {
+    d->SceneMenu->exec(globalPoint);
+    }
 }

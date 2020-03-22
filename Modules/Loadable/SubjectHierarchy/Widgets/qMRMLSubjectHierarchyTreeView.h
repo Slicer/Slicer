@@ -238,6 +238,8 @@ protected slots:
   /// Called when batch processing ends. Restores selection, which is lost when the hierarchy is rebuilt
   virtual void onMRMLSceneEndBatchProcess(vtkObject* sceneObject);
 
+  void onCustomContextMenu(const QPoint& point);
+
 protected:
   /// Set the subject hierarchy node found in the given scene. Called only internally.
   virtual void setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode);
