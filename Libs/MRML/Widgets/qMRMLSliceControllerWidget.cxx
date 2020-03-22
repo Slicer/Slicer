@@ -1264,12 +1264,6 @@ void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
     }
   bool wasBlocking = this->SliceOffsetSlider->blockSignals(true);
 
-  // Set the scale increments to match the z spacing (rotated into slice space)
-  const double * sliceSpacing = this->SliceLogic->GetLowestVolumeSliceSpacing();
-  Q_ASSERT(sliceSpacing);
-  double offsetResolution = sliceSpacing ? sliceSpacing[2] : 0;
-  q->setSliceOffsetResolution(offsetResolution);
-
   // Set slice offset range to match the field of view
   // Calculate the number of slices in the current range
   double sliceBounds[6] = {0, -1, 0, -1, 0, -1};
@@ -1282,6 +1276,16 @@ void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
     {
     q->setSliceOffsetRange(this->SliceLogic->GetSliceOffset(), this->SliceLogic->GetSliceOffset());
     }
+
+  // Set the scale increments to match the z spacing (rotated into slice space)
+  const double* sliceSpacing = this->SliceLogic->GetLowestVolumeSliceSpacing();
+  Q_ASSERT(sliceSpacing);
+  double offsetResolution = sliceSpacing ? sliceSpacing[2] : 0;
+  // For thin volumes such as ultrasound, the slice bounds may be smaller than the spacing due to floating point errors.
+  // To avoid warnings caused by the step size being larger than the slider maximum, set the step size to the smaller of
+  // the either the slice offset or the slice bounds depth.
+  offsetResolution = std::min(offsetResolution, sliceBounds[5] - sliceBounds[4]);
+  q->setSliceOffsetResolution(offsetResolution);
 
   // Update slider position
   this->SliceOffsetSlider->setValue(this->SliceLogic->GetSliceOffset());
