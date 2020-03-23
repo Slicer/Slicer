@@ -240,6 +240,9 @@ int vtkSlicerPlaneRepresentation3D::RenderTranslucentPolygonalGeometry(
   int count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
   if (this->PlaneActor->GetVisibility())
     {
+    // The internal actor needs to share property keys.
+    // This ensures the mapper state is consistent and allows depth peeling to work as expected.
+    this->PlaneActor->SetPropertyKeys(this->GetPropertyKeys());
     count += this->PlaneActor->RenderTranslucentPolygonalGeometry(viewport);
     }
   if (this->TextActor->GetVisibility())

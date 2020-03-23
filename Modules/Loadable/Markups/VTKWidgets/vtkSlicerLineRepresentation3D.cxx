@@ -101,6 +101,9 @@ int vtkSlicerLineRepresentation3D::RenderTranslucentPolygonalGeometry(
   count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
   if (this->LineActor->GetVisibility())
     {
+    // The internal actor needs to share property keys.
+    // This ensures the mapper state is consistent and allows depth peeling to work as expected.
+    this->LineActor->SetPropertyKeys(this->GetPropertyKeys());
     count += this->LineActor->RenderTranslucentPolygonalGeometry(viewport);
     }
   return count;
