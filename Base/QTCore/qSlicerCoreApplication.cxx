@@ -370,7 +370,7 @@ void qSlicerCoreApplicationPrivate::init()
   qSlicerExtensionsManagerModel * model = new qSlicerExtensionsManagerModel(q);
   model->setExtensionsSettingsFilePath(q->slicerRevisionUserSettingsFilePath());
   model->setExtensionsHistorySettingsFilePath(q->slicerUserSettingsFilePath());
-  model->setSlicerRequirements(q->repositoryRevision(), q->os(), q->arch());
+  model->setSlicerRequirements(q->revision(), q->os(), q->arch());
   q->setExtensionsManagerModel(model);
 
 # ifdef Q_OS_MAC
@@ -1139,7 +1139,7 @@ QString qSlicerCoreApplication::slicerSharePath() const
 //-----------------------------------------------------------------------------
 bool qSlicerCoreApplication::isEmbeddedModule(const QString& moduleFileName)const
 {
-  QString slicerRevision = this->repositoryRevision();
+  QString slicerRevision = this->revision();
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   slicerRevision = this->extensionsManagerModel()->slicerRevision();
 #endif
@@ -1232,7 +1232,7 @@ QString qSlicerCoreApplication::slicerRevisionUserSettingsFilePath()const
 {
   QFileInfo fileInfo = QFileInfo(this->userSettings()->fileName());
   QString prefix = fileInfo.completeBaseName();
-  QString suffix = "-" + this->repositoryRevision();
+  QString suffix = "-" + this->revision();
   bool useTmp = this->coreCommandOptions()->settingsDisabled();
   if (useTmp)
     {
