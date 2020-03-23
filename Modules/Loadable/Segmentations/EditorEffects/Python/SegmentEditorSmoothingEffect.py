@@ -44,29 +44,29 @@ If segments overlap, segment higher in the segments table will have priority. <b
     self.methodSelectorComboBox.addItem("Joint smoothing", JOINT_TAUBIN)
     self.scriptedEffect.addLabeledOptionsWidget("Smoothing method:", self.methodSelectorComboBox)
 
-    self.kernelSizeMmSpinBox = slicer.qMRMLSpinBox()
-    self.kernelSizeMmSpinBox.setMRMLScene(slicer.mrmlScene)
-    self.kernelSizeMmSpinBox.setToolTip("Diameter of the neighborhood that will be considered around each voxel. Higher value makes smoothing stronger (more details are suppressed).")
-    self.kernelSizeMmSpinBox.quantity = "length"
-    self.kernelSizeMmSpinBox.minimum = 0.0
-    self.kernelSizeMmSpinBox.value = 3.0
-    self.kernelSizeMmSpinBox.singleStep = 1.0
+    self.kernelSizeMMSpinBox = slicer.qMRMLSpinBox()
+    self.kernelSizeMMSpinBox.setMRMLScene(slicer.mrmlScene)
+    self.kernelSizeMMSpinBox.setToolTip("Diameter of the neighborhood that will be considered around each voxel. Higher value makes smoothing stronger (more details are suppressed).")
+    self.kernelSizeMMSpinBox.quantity = "length"
+    self.kernelSizeMMSpinBox.minimum = 0.0
+    self.kernelSizeMMSpinBox.value = 3.0
+    self.kernelSizeMMSpinBox.singleStep = 1.0
 
     self.kernelSizePixel = qt.QLabel()
-    self.kernelSizePixel.setToolTip("Diameter of the neighborhood in pixels. Computed from the segment's spacing and the specified kernel size.")
+    self.kernelSizePixel.setToolTip("Diameter of the neighborhood in pixel. Computed from the segment's spacing and the specified kernel size.")
 
     kernelSizeFrame = qt.QHBoxLayout()
-    kernelSizeFrame.addWidget(self.kernelSizeMmSpinBox)
+    kernelSizeFrame.addWidget(self.kernelSizeMMSpinBox)
     kernelSizeFrame.addWidget(self.kernelSizePixel)
-    self.kernelSizeMmLabel = self.scriptedEffect.addLabeledOptionsWidget("Kernel size:", kernelSizeFrame)
+    self.kernelSizeMMLabel = self.scriptedEffect.addLabeledOptionsWidget("Kernel size:", kernelSizeFrame)
 
-    self.gaussianStandardDeviationMmSpinBox = slicer.qMRMLSpinBox()
-    self.gaussianStandardDeviationMmSpinBox.setMRMLScene(slicer.mrmlScene)
-    self.gaussianStandardDeviationMmSpinBox.setToolTip("Standard deviation of the Gaussian smoothing filter coefficients. Higher value makes smoothing stronger (more details are suppressed).")
-    self.gaussianStandardDeviationMmSpinBox.quantity = "length"
-    self.gaussianStandardDeviationMmSpinBox.value = 3.0
-    self.gaussianStandardDeviationMmSpinBox.singleStep = 1.0
-    self.gaussianStandardDeviationMmLabel = self.scriptedEffect.addLabeledOptionsWidget("Standard deviation:", self.gaussianStandardDeviationMmSpinBox)
+    self.gaussianStandardDeviationMMSpinBox = slicer.qMRMLSpinBox()
+    self.gaussianStandardDeviationMMSpinBox.setMRMLScene(slicer.mrmlScene)
+    self.gaussianStandardDeviationMMSpinBox.setToolTip("Standard deviation of the Gaussian smoothing filter coefficients. Higher value makes smoothing stronger (more details are suppressed).")
+    self.gaussianStandardDeviationMMSpinBox.quantity = "length"
+    self.gaussianStandardDeviationMMSpinBox.value = 3.0
+    self.gaussianStandardDeviationMMSpinBox.singleStep = 1.0
+    self.gaussianStandardDeviationMMLabel = self.scriptedEffect.addLabeledOptionsWidget("Standard deviation:", self.gaussianStandardDeviationMMSpinBox)
 
     self.jointTaubinSmoothingFactorSlider = ctk.ctkSliderWidget()
     self.jointTaubinSmoothingFactorSlider.setToolTip("Higher value means stronger smoothing.")
@@ -83,8 +83,8 @@ If segments overlap, segment higher in the segments table will have priority. <b
     self.scriptedEffect.addOptionsWidget(self.applyButton)
 
     self.methodSelectorComboBox.connect("currentIndexChanged(int)", self.updateMRMLFromGUI)
-    self.kernelSizeMmSpinBox.connect("valueChanged(double)", self.updateMRMLFromGUI)
-    self.gaussianStandardDeviationMmSpinBox.connect("valueChanged(double)", self.updateMRMLFromGUI)
+    self.kernelSizeMMSpinBox.connect("valueChanged(double)", self.updateMRMLFromGUI)
+    self.gaussianStandardDeviationMMSpinBox.connect("valueChanged(double)", self.updateMRMLFromGUI)
     self.jointTaubinSmoothingFactorSlider.connect("valueChanged(double)", self.updateMRMLFromGUI)
     self.applyButton.connect('clicked()', self.onApply)
 
@@ -102,11 +102,11 @@ If segments overlap, segment higher in the segments table will have priority. <b
     methodIndex = self.methodSelectorComboBox.currentIndex
     smoothingMethod = self.methodSelectorComboBox.itemData(methodIndex)
     morphologicalMethod = (smoothingMethod==MEDIAN or smoothingMethod==MORPHOLOGICAL_OPENING or smoothingMethod==MORPHOLOGICAL_CLOSING)
-    self.kernelSizeMmLabel.setVisible(morphologicalMethod)
-    self.kernelSizeMmSpinBox.setVisible(morphologicalMethod)
+    self.kernelSizeMMLabel.setVisible(morphologicalMethod)
+    self.kernelSizeMMSpinBox.setVisible(morphologicalMethod)
     self.kernelSizePixel.setVisible(morphologicalMethod)
-    self.gaussianStandardDeviationMmLabel.setVisible(smoothingMethod==GAUSSIAN)
-    self.gaussianStandardDeviationMmSpinBox.setVisible(smoothingMethod==GAUSSIAN)
+    self.gaussianStandardDeviationMMLabel.setVisible(smoothingMethod==GAUSSIAN)
+    self.gaussianStandardDeviationMMSpinBox.setVisible(smoothingMethod==GAUSSIAN)
     self.jointTaubinSmoothingFactorLabel.setVisible(smoothingMethod==JOINT_TAUBIN)
     self.jointTaubinSmoothingFactorSlider.setVisible(smoothingMethod==JOINT_TAUBIN)
 
@@ -117,8 +117,8 @@ If segments overlap, segment higher in the segments table will have priority. <b
       selectedSegmentLabelmapSpacing = selectedSegmentLabelmap.GetSpacing()
 
     # size rounded to nearest odd number. If kernel size is even then image gets shifted.
-    kernelSizeMm = self.scriptedEffect.doubleParameter("KernelSizeMm")
-    kernelSizePixel = [int(round((kernelSizeMm / selectedSegmentLabelmapSpacing[componentIndex]+1)/2)*2-1) for componentIndex in range(3)]
+    kernelSizeMM = self.scriptedEffect.doubleParameter("KernelSizeMm")
+    kernelSizePixel = [int(round((kernelSizeMM / selectedSegmentLabelmapSpacing[componentIndex]+1)/2)*2-1) for componentIndex in range(3)]
     return kernelSizePixel
 
   def updateGUIFromMRML(self):
@@ -127,17 +127,17 @@ If segments overlap, segment higher in the segments table will have priority. <b
     self.methodSelectorComboBox.setCurrentIndex(methodIndex)
     self.methodSelectorComboBox.blockSignals(wasBlocked)
 
-    wasBlocked = self.kernelSizeMmSpinBox.blockSignals(True)
-    self.setWidgetMinMaxStepFromImageSpacing(self.kernelSizeMmSpinBox, self.scriptedEffect.selectedSegmentLabelmap())
-    self.kernelSizeMmSpinBox.value = self.scriptedEffect.doubleParameter("KernelSizeMm")
-    self.kernelSizeMmSpinBox.blockSignals(wasBlocked)
+    wasBlocked = self.kernelSizeMMSpinBox.blockSignals(True)
+    self.setWidgetMinMaxStepFromImageSpacing(self.kernelSizeMMSpinBox, self.scriptedEffect.selectedSegmentLabelmap())
+    self.kernelSizeMMSpinBox.value = self.scriptedEffect.doubleParameter("KernelSizeMm")
+    self.kernelSizeMMSpinBox.blockSignals(wasBlocked)
     kernelSizePixel = self.getKernelSizePixel()
-    self.kernelSizePixel.text = "{0}x{1}x{2} pixels".format(kernelSizePixel[0], kernelSizePixel[1], kernelSizePixel[2])
+    self.kernelSizePixel.text = "{0}x{1}x{2} pixel".format(kernelSizePixel[0], kernelSizePixel[1], kernelSizePixel[2])
 
-    wasBlocked = self.gaussianStandardDeviationMmSpinBox.blockSignals(True)
-    self.setWidgetMinMaxStepFromImageSpacing(self.gaussianStandardDeviationMmSpinBox, self.scriptedEffect.selectedSegmentLabelmap())
-    self.gaussianStandardDeviationMmSpinBox.value = self.scriptedEffect.doubleParameter("GaussianStandardDeviationMm")
-    self.gaussianStandardDeviationMmSpinBox.blockSignals(wasBlocked)
+    wasBlocked = self.gaussianStandardDeviationMMSpinBox.blockSignals(True)
+    self.setWidgetMinMaxStepFromImageSpacing(self.gaussianStandardDeviationMMSpinBox, self.scriptedEffect.selectedSegmentLabelmap())
+    self.gaussianStandardDeviationMMSpinBox.value = self.scriptedEffect.doubleParameter("GaussianStandardDeviationMm")
+    self.gaussianStandardDeviationMMSpinBox.blockSignals(wasBlocked)
 
     wasBlocked = self.jointTaubinSmoothingFactorSlider.blockSignals(True)
     self.jointTaubinSmoothingFactorSlider.value = self.scriptedEffect.doubleParameter("JointTaubinSmoothingFactor")
@@ -149,8 +149,8 @@ If segments overlap, segment higher in the segments table will have priority. <b
     methodIndex = self.methodSelectorComboBox.currentIndex
     smoothingMethod = self.methodSelectorComboBox.itemData(methodIndex)
     self.scriptedEffect.setParameter("SmoothingMethod", smoothingMethod)
-    self.scriptedEffect.setParameter("KernelSizeMm", self.kernelSizeMmSpinBox.value)
-    self.scriptedEffect.setParameter("GaussianStandardDeviationMm", self.gaussianStandardDeviationMmSpinBox.value)
+    self.scriptedEffect.setParameter("KernelSizeMm", self.kernelSizeMMSpinBox.value)
+    self.scriptedEffect.setParameter("GaussianStandardDeviationMm", self.gaussianStandardDeviationMMSpinBox.value)
     self.scriptedEffect.setParameter("JointTaubinSmoothingFactor", self.jointTaubinSmoothingFactorSlider.value)
 
     self.updateParameterWidgetsVisibility()
@@ -196,10 +196,10 @@ If segments overlap, segment higher in the segments table will have priority. <b
         thresh.SetOutValue(maxValue)
         thresh.SetOutputScalarType(vtk.VTK_UNSIGNED_CHAR)
 
-        standardDeviationMm = self.scriptedEffect.doubleParameter("GaussianStandardDeviationMm")
+        standardDeviationMM = self.scriptedEffect.doubleParameter("GaussianStandardDeviationMm")
         gaussianFilter = vtk.vtkImageGaussianSmooth()
         gaussianFilter.SetInputConnection(thresh.GetOutputPort())
-        gaussianFilter.SetStandardDeviation(standardDeviationMm)
+        gaussianFilter.SetStandardDeviation(standardDeviationMM)
         gaussianFilter.SetRadiusFactor(4)
 
         thresh2 = vtk.vtkImageThreshold()

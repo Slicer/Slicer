@@ -41,21 +41,21 @@ class VTK_ITK_EXPORT vtkITKImageMargin : public vtkSimpleImageToImageFilter
   vtkSetMacro(BackgroundValue, int);
 
   /// If the margin calculation should be calculated using image spacing, or using a set number of voxels
-  vtkGetMacro(CalculateMarginInMm, bool);
-  vtkSetMacro(CalculateMarginInMm, bool);
-  vtkBooleanMacro(CalculateMarginInMm, bool);
+  vtkGetMacro(CalculateMarginInMM, bool);
+  vtkSetMacro(CalculateMarginInMM, bool);
+  vtkBooleanMacro(CalculateMarginInMM, bool);
 
   /// The distance of the outer margin from the surface.
   /// Positive values are outside the foreground, and negative values are inside the foreground.
   /// Default value is 0.0.
-  vtkGetMacro(OuterMarginMm, double);
-  vtkSetMacro(OuterMarginMm, double);
+  vtkGetMacro(OuterMarginMM, double);
+  vtkSetMacro(OuterMarginMM, double);
 
   /// The distance of the inner margin from the surface.
   /// Positive values are outside the foreground, and negative values are inside the foreground.
   /// Default value is negative infinity.
-  vtkGetMacro(InnerMarginMm, double);
-  vtkSetMacro(InnerMarginMm, double);
+  vtkGetMacro(InnerMarginMM, double);
+  vtkSetMacro(InnerMarginMM, double);
 
   /// The number of voxels to the outer margin from the surface.
   /// Positive values are outside the foreground, and negative values are inside the foreground.
@@ -71,9 +71,9 @@ class VTK_ITK_EXPORT vtkITKImageMargin : public vtkSimpleImageToImageFilter
 
 protected:
   int BackgroundValue;
-  bool CalculateMarginInMm;
-  double OuterMarginMm;
-  double InnerMarginMm;
+  bool CalculateMarginInMM;
+  double OuterMarginMM;
+  double InnerMarginMM;
   double OuterMarginVoxels;
   double InnerMarginVoxels;
 
