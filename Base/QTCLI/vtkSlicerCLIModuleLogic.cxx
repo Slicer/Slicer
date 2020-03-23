@@ -2877,6 +2877,7 @@ void vtkSlicerCLIModuleLogic
     reinterpret_cast<void*>(requestTime));
 }
 
+//---------------------------------------------------------------------------
 void vtkSlicerCLIModuleLogic::AddCompleteModelHierarchyToMiniScene(vtkMRMLScene *miniscene, vtkMRMLModelHierarchyNode *mhnd,
                                                                    MRMLIDMap *sceneToMiniSceneMap, std::set<std::string> &filesToDelete)
 {
@@ -2969,4 +2970,16 @@ void vtkSlicerCLIModuleLogic::AddCompleteModelHierarchyToMiniScene(vtkMRMLScene 
       (*sceneToMiniSceneMap)[mnd->GetID()] = mcp->GetID();
       }
     }
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerCLIModuleLogic::SetDefaultParameterValue(const std::string& name, const std::string& value)
+{
+  return this->Internal->DefaultModuleDescription.SetParameterValue(name, value);
+}
+
+//---------------------------------------------------------------------------
+std::string vtkSlicerCLIModuleLogic::GetDefaultParameterValue(const std::string& name) const
+{
+  return this->Internal->DefaultModuleDescription.GetParameterValue(name);
 }

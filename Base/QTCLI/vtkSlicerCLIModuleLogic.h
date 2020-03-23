@@ -52,6 +52,17 @@ public:
   void SetDefaultModuleDescription(const ModuleDescription& moduleDescription);
   const ModuleDescription& GetDefaultModuleDescription()const;
 
+  /// Set the value of the parameter \a name.
+  /// Return true if the parameter is found and different than \a value,
+  /// false otherwise.
+  /// \sa GetDefaultParameterValue(),
+  bool SetDefaultParameterValue(const std::string& name, const std::string& value);
+
+  /// Return the default parameter value and an empty string if the parameter
+  /// can not be found.
+  /// \sa SetDefaultParameterValue()
+  std::string GetDefaultParameterValue(const std::string& name) const;
+
   /// Instantiate a default command line module node.
   /// If a default module description has been given, the node is initialized
   /// with the description.
