@@ -642,8 +642,8 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderTranslucentPolygonalGeometry(
   for (int i = 0; i < NumberOfControlPointTypes; i++)
     {
     ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
-    // The internal actor needs to share property keys. This allows depth peeling
-    // etc to work.
+    // The internal actor needs to share property keys.
+    // This ensures the mapper state is consistent and allows depth peeling to work as expected.
     controlPoints->Actor->SetPropertyKeys(this->GetPropertyKeys());
     if (controlPoints->Actor->GetVisibility())
       {
