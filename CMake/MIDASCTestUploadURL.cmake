@@ -64,7 +64,7 @@ function(midas_ctest_upload_url)
     message(STATUS "URL: ${url}")
   endif()
 
-  set(url_file "${CMAKE_CURRENT_BINARY_DIR}/midas_ctest_upload_url.url")
+  set(url_file "${CTEST_BINARY_DIRECTORY}/midas_ctest_upload_url.url")
   file(WRITE ${url_file} "${url}")
   ctest_upload(FILES ${url_file} CAPTURE_CMAKE_ERROR result_var)
   message(STATUS "Upload status: ${result_var}")
