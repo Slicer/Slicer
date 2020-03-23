@@ -80,10 +80,6 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
     }
 
   emit this->nodeInstantiated(node);
-  // Optionally adding the node into a scene must be done only in
-  // signal nodeInitialized. It's a bit arbitrary and feel free to remove
-  // the restriction.
-  Q_ASSERT(node->GetScene() == nullptr);
 
   QString baseName;
   if (d->BaseNames.contains(className) &&
@@ -112,7 +108,10 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
   emit this->nodeInitialized(node);
   // maybe the node has been added into the scene by slots connected
   // to nodeInitialized.
-  if (!node->GetScene())
+  // If node is initialized from a default node then scene may be set but the node
+  // is not added to the scene yet, therefore we check if the node is actually present
+  // in the scene (and add it if it is not present).
+  if (!node->GetScene() || !node->GetScene()->IsNodePresent(node))
     {
     vtkMRMLNode* nodeAdded = d->MRMLScene->AddNode(node);
     Q_ASSERT(nodeAdded == node ||
