@@ -40,21 +40,21 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
 
     self.scriptedEffect.addLabeledOptionsWidget("Use current segment as:", operationLayout)
 
-    self.shellThicknessMmSpinBox = slicer.qMRMLSpinBox()
-    self.shellThicknessMmSpinBox.setMRMLScene(slicer.mrmlScene)
-    self.shellThicknessMmSpinBox.setToolTip("Thickness of the hollow shell.")
-    self.shellThicknessMmSpinBox.quantity = "length"
-    self.shellThicknessMmSpinBox.minimum = 0.0
-    self.shellThicknessMmSpinBox.value = 3.0
-    self.shellThicknessMmSpinBox.singleStep = 1.0
+    self.shellThicknessMMSpinBox = slicer.qMRMLSpinBox()
+    self.shellThicknessMMSpinBox.setMRMLScene(slicer.mrmlScene)
+    self.shellThicknessMMSpinBox.setToolTip("Thickness of the hollow shell.")
+    self.shellThicknessMMSpinBox.quantity = "length"
+    self.shellThicknessMMSpinBox.minimum = 0.0
+    self.shellThicknessMMSpinBox.value = 3.0
+    self.shellThicknessMMSpinBox.singleStep = 1.0
 
-    self.shellThicknessPixel = qt.QLabel()
-    self.shellThicknessPixel.setToolTip("Closest achievable thickness. Constrained by the segmentation's binary labelmap representation spacing.")
+    self.shellThicknessLabel = qt.QLabel()
+    self.shellThicknessLabel.setToolTip("Closest achievable thickness. Constrained by the segmentation's binary labelmap representation spacing.")
 
     shellThicknessFrame = qt.QHBoxLayout()
-    shellThicknessFrame.addWidget(self.shellThicknessMmSpinBox)
-    self.shellThicknessMmLabel = self.scriptedEffect.addLabeledOptionsWidget("Shell thickness:", shellThicknessFrame)
-    self.scriptedEffect.addLabeledOptionsWidget("", self.shellThicknessPixel)
+    shellThicknessFrame.addWidget(self.shellThicknessMMSpinBox)
+    self.shellThicknessMMLabel = self.scriptedEffect.addLabeledOptionsWidget("Shell thickness:", shellThicknessFrame)
+    self.scriptedEffect.addLabeledOptionsWidget("", self.shellThicknessLabel)
 
     self.applyButton = qt.QPushButton("Apply")
     self.applyButton.objectName = self.__class__.__name__ + 'Apply'
@@ -62,7 +62,7 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
     self.scriptedEffect.addOptionsWidget(self.applyButton)
 
     self.applyButton.connect('clicked()', self.onApply)
-    self.shellThicknessMmSpinBox.connect("valueChanged(double)", self.updateMRMLFromGUI)
+    self.shellThicknessMMSpinBox.connect("valueChanged(double)", self.updateMRMLFromGUI)
     self.insideSurfaceOptionRadioButton.connect("toggled(bool)", self.insideSurfaceModeToggled)
     self.medialSurfaceOptionRadioButton.connect("toggled(bool)", self.medialSurfaceModeToggled)
     self.outsideSurfaceOptionRadioButton.connect("toggled(bool)", self.outsideSurfaceModeToggled)
@@ -81,16 +81,16 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
     if selectedSegmentLabelmap:
       selectedSegmentLabelmapSpacing = selectedSegmentLabelmap.GetSpacing()
 
-    shellThicknessMm = abs(self.scriptedEffect.doubleParameter("ShellThicknessMm"))
-    shellThicknessPixel = [int(math.floor(shellThicknessMm / selectedSegmentLabelmapSpacing[componentIndex])) for componentIndex in range(3)]
+    shellThicknessMM = abs(self.scriptedEffect.doubleParameter("ShellThicknessMm"))
+    shellThicknessPixel = [int(math.floor(shellThicknessMM / selectedSegmentLabelmapSpacing[componentIndex])) for componentIndex in range(3)]
     return shellThicknessPixel
 
   def updateGUIFromMRML(self):
-    shellThicknessMm = self.scriptedEffect.doubleParameter("ShellThicknessMm")
-    wasBlocked = self.shellThicknessMmSpinBox.blockSignals(True)
-    self.setWidgetMinMaxStepFromImageSpacing(self.shellThicknessMmSpinBox, self.scriptedEffect.selectedSegmentLabelmap())
-    self.shellThicknessMmSpinBox.value = abs(shellThicknessMm)
-    self.shellThicknessMmSpinBox.blockSignals(wasBlocked)
+    shellThicknessMM = self.scriptedEffect.doubleParameter("ShellThicknessMm")
+    wasBlocked = self.shellThicknessMMSpinBox.blockSignals(True)
+    self.setWidgetMinMaxStepFromImageSpacing(self.shellThicknessMMSpinBox, self.scriptedEffect.selectedSegmentLabelmap())
+    self.shellThicknessMMSpinBox.value = abs(shellThicknessMM)
+    self.shellThicknessMMSpinBox.blockSignals(wasBlocked)
 
     wasBlocked = self.insideSurfaceOptionRadioButton.blockSignals(True)
     self.insideSurfaceOptionRadioButton.setChecked(self.scriptedEffect.parameter("ShellMode") == INSIDE_SURFACE)
@@ -110,20 +110,20 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
       selectedSegmentLabelmapSpacing = selectedSegmentLabelmap.GetSpacing()
       shellThicknessPixel = self.getShellThicknessPixel()
       if shellThicknessPixel[0] < 1 or shellThicknessPixel[1] < 1 or shellThicknessPixel[2] < 1:
-        self.shellThicknessPixel.text = "Not feasible at current resolution."
+        self.shellThicknessLabel.text = "Not feasible at current resolution."
         self.applyButton.setEnabled(False)
       else:
-        thicknessMm = self.getShellThicknessMm()
-        self.shellThicknessPixel.text = "Actual: {0} x {1} x {2} mm.".format(*thicknessMm)
+        thicknessMM = self.getShellThicknessMM()
+        self.shellThicknessLabel.text = "Actual: {0} x {1} x {2} mm ({3}x{4}x{5} pixel)".format(*thicknessMM, *shellThicknessPixel)
         self.applyButton.setEnabled(True)
     else:
-      self.shellThicknessPixel.text = "Empty segment"
+      self.shellThicknessLabel.text = "Empty segment"
 
-    self.setWidgetMinMaxStepFromImageSpacing(self.shellThicknessMmSpinBox, self.scriptedEffect.selectedSegmentLabelmap())
+    self.setWidgetMinMaxStepFromImageSpacing(self.shellThicknessMMSpinBox, self.scriptedEffect.selectedSegmentLabelmap())
 
   def updateMRMLFromGUI(self):
     # Operation is managed separately
-    self.scriptedEffect.setParameter("ShellThicknessMm", self.shellThicknessMmSpinBox.value)
+    self.scriptedEffect.setParameter("ShellThicknessMm", self.shellThicknessMMSpinBox.value)
 
   def insideSurfaceModeToggled(self, toggled):
     if toggled:
@@ -137,18 +137,18 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
     if toggled:
       self.scriptedEffect.setParameter("ShellMode", OUTSIDE_SURFACE)
 
-  def getShellThicknessMm(self):
+  def getShellThicknessMM(self):
     selectedSegmentLabelmapSpacing = [1.0, 1.0, 1.0]
     selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()
     if selectedSegmentLabelmap:
       selectedSegmentLabelmapSpacing = selectedSegmentLabelmap.GetSpacing()
 
     shellThicknessPixel = self.getShellThicknessPixel()
-    shellThicknessMm = [abs((shellThicknessPixel[i])*selectedSegmentLabelmapSpacing[i]) for i in range(3)]
+    shellThicknessMM = [abs((shellThicknessPixel[i])*selectedSegmentLabelmapSpacing[i]) for i in range(3)]
     for i in range(3):
-      if shellThicknessMm[i] > 0:
-        shellThicknessMm[i] = round(shellThicknessMm[i], max(int(-math.floor(math.log10(shellThicknessMm[i]))),1))
-    return shellThicknessMm
+      if shellThicknessMM[i] > 0:
+        shellThicknessMM[i] = round(shellThicknessMM[i], max(int(-math.floor(math.log10(shellThicknessMM[i]))),1))
+    return shellThicknessMM
 
   def onApply(self):
 
@@ -169,23 +169,23 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
     thresh.SetOutputScalarType(selectedSegmentLabelmap.GetScalarType())
 
     shellMode = self.scriptedEffect.parameter("ShellMode")
-    shellThicknessMm = abs(self.scriptedEffect.doubleParameter("ShellThicknessMm"))
+    shellThicknessMM = abs(self.scriptedEffect.doubleParameter("ShellThicknessMm"))
     import vtkITK
     margin = vtkITK.vtkITKImageMargin()
     margin.SetInputConnection(thresh.GetOutputPort())
-    margin.CalculateMarginInMmOn()
+    margin.CalculateMarginInMMOn()
 
     spacing = selectedSegmentLabelmap.GetSpacing()
     voxelDiameter = min(selectedSegmentLabelmap.GetSpacing())
     if shellMode == MEDIAL_SURFACE:
-      margin.SetOuterMarginMm( 0.5 * shellThicknessMm)
-      margin.SetInnerMarginMm(-0.5 * shellThicknessMm + 0.5*voxelDiameter)
+      margin.SetOuterMarginMM( 0.5 * shellThicknessMM)
+      margin.SetInnerMarginMM(-0.5 * shellThicknessMM + 0.5*voxelDiameter)
     elif shellMode == INSIDE_SURFACE:
-      margin.SetOuterMarginMm(shellThicknessMm + 0.1*voxelDiameter)
-      margin.SetInnerMarginMm(0.0 + 0.1*voxelDiameter) # Don't include the original border (0.0)
+      margin.SetOuterMarginMM(shellThicknessMM + 0.1*voxelDiameter)
+      margin.SetInnerMarginMM(0.0 + 0.1*voxelDiameter) # Don't include the original border (0.0)
     elif shellMode == OUTSIDE_SURFACE:
-      margin.SetOuterMarginMm(0.0)
-      margin.SetInnerMarginMm(-shellThicknessMm + voxelDiameter)
+      margin.SetOuterMarginMM(0.0)
+      margin.SetInnerMarginMM(-shellThicknessMM + voxelDiameter)
 
     modifierLabelmap.DeepCopy(margin.GetOutput())
 

@@ -39,9 +39,9 @@ vtkStandardNewMacro(vtkITKImageMargin);
 //----------------------------------------------------------------------------
 vtkITKImageMargin::vtkITKImageMargin()
   : BackgroundValue(0)
-  , CalculateMarginInMm(true)
-  , OuterMarginMm(0.0)
-  , InnerMarginMm(vtkMath::NegInf())
+  , CalculateMarginInMM(true)
+  , OuterMarginMM(0.0)
+  , InnerMarginMM(vtkMath::NegInf())
   , OuterMarginVoxels(0.0)
   , InnerMarginVoxels(vtkMath::NegInf())
 {
@@ -80,20 +80,20 @@ sdf(itk::SmartPointer<itk::Image<InputPixelType, Dimension> > labelImage, int ba
 //----------------------------------------------------------------------------
 template <typename ImageType>
 itk::SmartPointer<ImageType>
-sdfMargin(itk::SmartPointer<ImageType> labelImage, int backgroundValue, double innerMarginMm, double outerMarginMm)
+sdfMargin(itk::SmartPointer<ImageType> labelImage, int backgroundValue, double innerMarginMM, double outerMarginMM)
 {
-  innerMarginMm -= std::numeric_limits<double>::epsilon();
-  outerMarginMm += std::numeric_limits<double>::epsilon();
+  innerMarginMM -= std::numeric_limits<double>::epsilon();
+  outerMarginMM += std::numeric_limits<double>::epsilon();
 
   using RealImageType = itk::Image<float, ImageType::ImageDimension>;
   using FloatThresholdType = itk::BinaryThresholdImageFilter<RealImageType, ImageType>;
   typename FloatThresholdType::Pointer sdfTh = FloatThresholdType::New();
   sdfTh->SetInput(sdf<typename ImageType::PixelType, ImageType::ImageDimension>(labelImage, backgroundValue));
-  if (innerMarginMm > vtkMath::NegInf())
+  if (innerMarginMM > vtkMath::NegInf())
     {
-    sdfTh->SetLowerThreshold(innerMarginMm*std::abs(innerMarginMm));
+    sdfTh->SetLowerThreshold(innerMarginMM*std::abs(innerMarginMM));
     }
-  sdfTh->SetUpperThreshold(outerMarginMm*std::abs(outerMarginMm));
+  sdfTh->SetUpperThreshold(outerMarginMM*std::abs(outerMarginMM));
   sdfTh->Update();
   return sdfTh->GetOutput();
 }
@@ -129,11 +129,11 @@ void vtkITKImageMarginExecute(vtkITKImageMargin *self, vtkImageData* input,
 
     double innerMarginDistance = self->GetInnerMarginVoxels();
     double outerMarginDistance = self->GetOuterMarginVoxels();
-    if (self->GetCalculateMarginInMm())
+    if (self->GetCalculateMarginInMM())
       {
       inImage->SetSpacing(spacing);
-      innerMarginDistance = self->GetInnerMarginMm();
-      outerMarginDistance = self->GetOuterMarginMm();
+      innerMarginDistance = self->GetInnerMarginMM();
+      outerMarginDistance = self->GetOuterMarginMM();
       }
 
     itk::SmartPointer<ImageType> outputImage;
@@ -153,7 +153,7 @@ void vtkITKImageMargin::SimpleExecute(vtkImageData *input, vtkImageData *output)
 {
   vtkDebugMacro(<< "Executing Image Margin");
 
-  if (this->GetInnerMarginMm() > this->GetOuterMarginMm())
+  if (this->GetInnerMarginMM() > this->GetOuterMarginMM())
     {
     vtkErrorMacro(<< "Outer margin must be greater than inner margin");
     }
