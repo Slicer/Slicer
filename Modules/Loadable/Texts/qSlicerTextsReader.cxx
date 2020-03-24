@@ -64,7 +64,7 @@ QString qSlicerTextsReader::description() const
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerTextsReader::fileType() const
 {
-  return "Text file";
+  return "TextFile";
 }
 
 //-----------------------------------------------------------------------------
@@ -112,6 +112,8 @@ bool qSlicerTextsReader::load(const IOProperties& properties)
     this->mrmlScene()->RemoveNode(storageNode);
     return false;
     }
+
+  this->setLoadedNodes(QStringList(QString(textNode->GetID())));
 
   return true;
 }

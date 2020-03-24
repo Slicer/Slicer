@@ -421,8 +421,7 @@ def loadColorTable(filename, returnNode=False):
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
     If returnNode is True then a status flag and loaded node are returned.
   """
-  filetype = 'ColorTableFile'
-  return loadNodeFromFile(filename, filetype, {}, returnNode)
+  return loadNodeFromFile(filename, 'ColorTableFile', {}, returnNode)
 
 def loadFiberBundle(filename, returnNode=False):
   """Load node from file.
@@ -431,8 +430,7 @@ def loadFiberBundle(filename, returnNode=False):
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
     If returnNode is True then a status flag and loaded node are returned.
   """
-  filetype = 'FiberBundleFile'
-  return loadNodeFromFile(filename, filetype, {}, returnNode)
+  return loadNodeFromFile(filename, 'FiberBundleFile', {}, returnNode)
 
 def loadFiducialList(filename, returnNode=False):
   """Load node from file.
@@ -441,8 +439,7 @@ def loadFiducialList(filename, returnNode=False):
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
     If returnNode is True then a status flag and loaded node are returned.
   """
-  filetype = 'FiducialListFile'
-  return loadNodeFromFile(filename, filetype, {}, returnNode)
+  return loadNodeFromFile(filename, 'FiducialListFile', {}, returnNode)
 
 def loadAnnotationFiducial(filename, returnNode=False):
   """Load node from file.
@@ -451,10 +448,7 @@ def loadAnnotationFiducial(filename, returnNode=False):
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
     If returnNode is True then a status flag and loaded node are returned.
   """
-  filetype = 'AnnotationFile'
-  properties = {}
-  properties['fiducial'] = 1
-  return loadNodeFromFile(filename, filetype, properties, returnNode)
+  return loadNodeFromFile(filename, 'AnnotationFile', {'fiducial': 1}, returnNode)
 
 def loadAnnotationRuler(filename, returnNode=False):
   """Load node from file.
@@ -463,10 +457,7 @@ def loadAnnotationRuler(filename, returnNode=False):
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
     If returnNode is True then a status flag and loaded node are returned.
   """
-  filetype = 'AnnotationFile'
-  properties = {}
-  properties['ruler'] = 1
-  return loadNodeFromFile(filename, filetype, properties, returnNode)
+  return loadNodeFromFile(filename, 'AnnotationFile', {'ruler': 1}, returnNode)
 
 def loadAnnotationROI(filename, returnNode=False):
   """Load node from file.
@@ -475,10 +466,7 @@ def loadAnnotationROI(filename, returnNode=False):
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
     If returnNode is True then a status flag and loaded node are returned.
   """
-  filetype = 'AnnotationFile'
-  properties = {}
-  properties['roi'] = 1
-  return loadNodeFromFile(filename, filetype, properties, returnNode)
+  return loadNodeFromFile(filename, 'AnnotationFile', {'roi': 1}, returnNode)
 
 def loadMarkupsFiducialList(filename, returnNode=False):
   """Load node from file.
@@ -487,27 +475,21 @@ def loadMarkupsFiducialList(filename, returnNode=False):
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
     If returnNode is True then a status flag and loaded node are returned.
   """
-  filetype = 'MarkupsFiducials'
-  properties = {'className': 'vtkMRMLMarkupsFiducialNode'}
-  return loadNodeFromFile(filename, filetype, properties, returnNode)
+  return loadNodeFromFile(filename, 'MarkupsFiducials', {'className': 'vtkMRMLMarkupsFiducialNode'}, returnNode)
 
 def loadMarkupsCurve(filename):
   """Load node from file.
   :param filename: full path of the file to load.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
   """
-  filetype = 'MarkupsFiducials'
-  properties = {'className': 'vtkMRMLMarkupsCurveNode'}
-  return loadNodeFromFile(filename, filetype, properties)
+  return loadNodeFromFile(filename, 'MarkupsFiducials', {'className': 'vtkMRMLMarkupsCurveNode'})
 
 def loadMarkupsClosedCurve(filename):
   """Load node from file.
   :param filename: full path of the file to load.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
   """
-  filetype = 'MarkupsFiducials'
-  properties = {'className': 'vtkMRMLMarkupsClosedCurveNode'}
-  return loadNodeFromFile(filename, filetype, properties)
+  return loadNodeFromFile(filename, 'MarkupsFiducials', {'className': 'vtkMRMLMarkupsClosedCurveNode'})
 
 def loadModel(filename, returnNode=False):
   """Load node from file.
@@ -516,8 +498,7 @@ def loadModel(filename, returnNode=False):
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
     If returnNode is True then a status flag and loaded node are returned.
   """
-  filetype = 'ModelFile'
-  return loadNodeFromFile(filename, filetype, {}, returnNode)
+  return loadNodeFromFile(filename, 'ModelFile', {}, returnNode)
 
 def loadScalarOverlay(filename, modelNodeID, returnNode=False):
   """Load node from file.
@@ -526,8 +507,7 @@ def loadScalarOverlay(filename, modelNodeID, returnNode=False):
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
     If returnNode is True then a status flag and loaded node are returned.
   """
-  filetype = 'ScalarOverlayFile'
-  return loadNodeFromFile(filename, filetype, {'modelNodeId': modelNodeID }, returnNode)
+  return loadNodeFromFile(filename, 'ScalarOverlayFile', {'modelNodeId': modelNodeID }, returnNode)
 
 def loadSegmentation(filename, returnNode=False):
   """Load node from file.
@@ -536,8 +516,7 @@ def loadSegmentation(filename, returnNode=False):
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
     If returnNode is True then a status flag and loaded node are returned.
   """
-  filetype = 'SegmentationFile'
-  return loadNodeFromFile(filename, filetype, {}, returnNode)
+  return loadNodeFromFile(filename, 'SegmentationFile', {}, returnNode)
 
 def loadTransform(filename, returnNode=False):
   """Load node from file.
@@ -546,8 +525,7 @@ def loadTransform(filename, returnNode=False):
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
     If returnNode is True then a status flag and loaded node are returned.
   """
-  filetype = 'TransformFile'
-  return loadNodeFromFile(filename, filetype, {}, returnNode)
+  return loadNodeFromFile(filename, 'TransformFile', {}, returnNode)
 
 def loadLabelVolume(filename, properties={}, returnNode=False):
   """Load node from file.
@@ -556,9 +534,7 @@ def loadLabelVolume(filename, properties={}, returnNode=False):
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
     If returnNode is True then a status flag and loaded node are returned.
   """
-  filetype = 'VolumeFile'
-  properties['labelmap'] = True
-  return loadNodeFromFile(filename, filetype, properties, returnNode)
+  return loadNodeFromFile(filename, 'VolumeFile', {'labelmap': True}, returnNode)
 
 def loadShaderProperty(filename, returnNode=False):
   """Load node from file.
@@ -567,8 +543,14 @@ def loadShaderProperty(filename, returnNode=False):
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
     If returnNode is True then a status flag and loaded node are returned.
   """
-  filetype = 'ShaderPropertyFile'
-  return loadNodeFromFile(filename, filetype, {}, returnNode)
+  return loadNodeFromFile(filename, 'ShaderPropertyFile', {}, returnNode)
+
+def loadText(filename):
+  """Load node from file.
+  :param filename: full path of the text file to load.
+  :return: loaded text node.
+  """
+  return loadNodeFromFile(filename, 'TextFile')
 
 def loadVolume(filename, properties={}, returnNode=False):
   """Load node from file.
