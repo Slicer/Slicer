@@ -678,7 +678,7 @@ bool vtkMRMLMarkupsNode::InsertControlPoint(ControlPoint *controlPoint, int targ
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointAddedEvent, static_cast<void*>(&targetIndex));
   if (controlPoint->PositionStatus == vtkMRMLMarkupsNode::PositionDefined)
     {
-    this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionUndefinedEvent, static_cast<void*>(&targetIndex));
+    this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionDefinedEvent, static_cast<void*>(&targetIndex));
     }
   this->UpdateMeasurements();
   return true;
