@@ -19,7 +19,7 @@ set(SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES
   CACHE INTERNAL "SlicerExecutionModel extra executable target libraries" FORCE
   )
 
-if (NOT Slicer_USE_SYSTEM_vtkAddon)
+if(Slicer_BUILD_vtkAddon)
   list(APPEND dirs
     vtkAddon
     )
@@ -88,7 +88,6 @@ set(MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT ${Slicer_BUILD_WEBENGINE_SUPPORT})
 # Loop over list of directories
 #-----------------------------------------------------------------------------
 foreach(dir ${dirs})
-  message(STATUS "Configuring library: ${dir}")
   string(REPLACE "/" "" dir_noslash ${dir})
   if(dir_noslash MATCHES "Widgets$")
     set(dir_noslash "q${dir_noslash}")
@@ -99,7 +98,19 @@ foreach(dir ${dirs})
   set(${dir_noslash}_INSTALL_NO_DEVELOPMENT ${Slicer_INSTALL_NO_DEVELOPMENT})
   set(${dir_noslash}_EXPORT_FILE ${Slicer_BINARY_DIR}/SlicerTargets.cmake)
   set(${dir_noslash}_FOLDER Core-Libs/${dir_noslash})
-  add_subdirectory(${dir})
+
+  # Check if library sources were specified as a remote module
+  if(DEFINED ${dir}_SOURCE_DIR AND Slicer_BUILD_${dir})
+    message(STATUS "Configuring library: ${dir} [${dir}_SOURCE_DIR: ${${dir}_SOURCE_DIR}]")
+    add_subdirectory(
+      ${${dir}_SOURCE_DIR}
+      ${CMAKE_CURRENT_BINARY_DIR}/${dir}
+      )
+  else()
+    message(STATUS "Configuring library: ${dir}")
+    add_subdirectory(${dir})
+  endif()
+
 endforeach()
 
 #-----------------------------------------------------------------------------
@@ -141,7 +152,7 @@ set(_vtk_wrapped_libraries
   MRMLLogic
   )
 
-if (NOT Slicer_USE_SYSTEM_vtkAddon)
+if(Slicer_BUILD_vtkAddon)
   list(APPEND _vtk_wrapped_libraries
     vtkAddon
     )
