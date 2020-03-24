@@ -171,8 +171,6 @@ if(_build_volume_rendering_module)
 endif()
 
 #------------------------------------------------------------------------------
-# Include remote modules
-#------------------------------------------------------------------------------
 include(ExternalProjectAddSource)
 
 macro(list_conditional_append cond list)
@@ -180,6 +178,47 @@ macro(list_conditional_append cond list)
     list(APPEND ${list} ${ARGN})
   endif()
 endmacro()
+
+#
+# Support for remote sources:
+#
+# * Calling Slicer_Remote_Add downloads the corresponding sources and set the variable
+#   <proj>_SOURCE_DIR.
+#
+# * Slicer_Remote_Add ensures <proj>_SOURCE_DIR is passed to inner build using mark_as_superbuild.
+#
+# * If <proj>_SOURCE_DIR is already defined, no sources are downloaded.
+#
+# * Specifying OPTION_NAME adds a CMake option allowing to disable the download of the sources.
+#   It is enabled by default and passed to the inner build using mark_as_superbuild.
+#
+# * Specifying labels REMOTE_MODULE or REMOTE_EXTENSION allows the corresponding sources to be
+#   be automatically added. See "Bundle remote modules and extensions adding source directories"
+#   in top-level CMakeLists.txt.
+#
+# Corresponding logic is implemented in ExternalProjectAddSource.cmake
+#
+
+#------------------------------------------------------------------------------
+# Include remote libraries
+#------------------------------------------------------------------------------
+
+Slicer_Remote_Add(vtkAddon
+  GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/vtkAddon"
+  GIT_TAG 183e5197d0eb9b5f6a353fbf126bf3347cbdeece
+  OPTION_NAME Slicer_BUILD_vtkAddon
+  )
+list_conditional_append(Slicer_BUILD_MultiVolumeExplorer Slicer_REMOTE_DEPENDENCIES MultiVolumeExplorer)
+
+set(vtkAddon_USE_UTF8 ON)
+mark_as_superbuild(vtkAddon_USE_UTF8:BOOL)
+
+set(vtkAddon_WRAP_PYTHON ${Slicer_USE_PYTHONQT})
+mark_as_superbuild(vtkAddon_WRAP_PYTHON:BOOL)
+
+#------------------------------------------------------------------------------
+# Include remote modules
+#------------------------------------------------------------------------------
 
 if(Slicer_BUILD_WEBENGINE_SUPPORT)
   Slicer_Remote_Add(jqPlot
@@ -476,10 +515,6 @@ ExternalProject_Include_Dependencies(Slicer DEPENDS_VAR Slicer_DEPENDENCIES)
 set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
 if(WIN32)
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DSlicer_SKIP_ROOT_DIR_MAX_LENGTH_CHECK:BOOL=ON)
-endif()
-
-if (Slicer_USE_SYSTEM_vtkAddon)
-  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DvtkAddon_DIR:PATH=${vtkAddon_DIR})
 endif()
 
 #------------------------------------------------------------------------------

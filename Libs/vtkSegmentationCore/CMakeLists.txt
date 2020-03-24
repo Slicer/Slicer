@@ -74,7 +74,7 @@ set(vtkSegmentationCore_SRCS
 #
 # vtkAddon
 #
-if (Slicer_USE_SYSTEM_vtkAddon)
+if(NOT Slicer_BUILD_vtkAddon)
   find_package(vtkAddon REQUIRED)
 endif()
 
