@@ -30,6 +30,8 @@ Care Ontario.
 class qSlicerSingletonViewFactoryPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerSingletonViewFactory);
+protected:
+  qSlicerSingletonViewFactory* q_ptr;
 public:
   qSlicerSingletonViewFactoryPrivate(qSlicerSingletonViewFactory& object);
   virtual ~qSlicerSingletonViewFactoryPrivate();
@@ -42,9 +44,6 @@ public:
   QString TagName;
   // Internal QWidget used to hold the widget until it is taken over by the layout manager
   QSharedPointer<QWidget> InternalWidget;
-
-protected:
-  qSlicerSingletonViewFactory* q_ptr;
 };
 
 //-----------------------------------------------------------------------------
