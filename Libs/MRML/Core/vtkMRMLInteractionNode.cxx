@@ -108,7 +108,7 @@ void vtkMRMLInteractionNode::SetCurrentInteractionMode ( int mode )
     {
     return;
     }
-  bool wasPlacing = (mode == vtkMRMLInteractionNode::Place);
+  bool wasPlacing = (this->CurrentInteractionMode == vtkMRMLInteractionNode::Place);
   this->CurrentInteractionMode = mode;
   this->Modified();
   this->InvokeCustomModifiedEvent(vtkMRMLInteractionNode::InteractionModeChangedEvent);
