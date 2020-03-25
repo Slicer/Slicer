@@ -23,22 +23,18 @@ Version:   $Revision: 1.2 $
 #include <vtkObjectFactory.h>
 #include <vtkStdString.h>
 
-// STD includes
-
-vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, SecondaryVolumeID);
-vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveLabelVolumeID);
-vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveFiducialListID);
-vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActivePlaceNodeID);
-vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveROIListID);
-vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveCameraID);
-vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveTableID);
-vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveViewID);
-vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveLayoutID);
-vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveVolumeID);
-vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActivePlotChartID);
-
-const char* vtkMRMLSelectionNode::UnitNodeReferenceRole = "unit/";
-const char* vtkMRMLSelectionNode::UnitNodeReferenceMRMLAttributeName = "UnitNodeRef";
+static const char* UNIT_NODE_REFERENCE_ROLE = "unit/";
+static const char* ACTIVE_VOLUME_REFERENCE_ROLE = "ActiveVolume";
+static const char* SECONDARY_VOLUME_REFERENCE_ROLE = "SecondaryVolume";
+static const char* ACTIVE_LABEL_VOLUME_REFERENCE_ROLE = "ActiveLabelVolume";
+static const char* ACTIVE_FIDUCIAL_LIST_REFERENCE_ROLE = "ActiveFiducialList";
+static const char* ACTIVE_PLACE_NODE_REFERENCE_ROLE = "ActivePlaceNode";
+static const char* ACTIVE_ROI_LIST_REFERENCE_ROLE = "ActiveROIList";
+static const char* ACTIVE_CAMERA_REFERENCE_ROLE = "ActiveCamera";
+static const char* ACTIVE_TABLE_REFERENCE_ROLE = "ActiveTable";
+static const char* ACTIVE_VIEW_REFERENCE_ROLE = "ActiveView";
+static const char* ACTIVE_LAYOUT_REFERENCE_ROLE = "ActiveLayout";
+static const char* ACTIVE_PLOT_CHART_REFERENCE_ROLE = "ActivePlotChart";
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLSelectionNode);
@@ -49,223 +45,36 @@ vtkMRMLSelectionNode::vtkMRMLSelectionNode()
   this->HideFromEditors = 1;
 
   this->SetSingletonTag("Singleton");
-
-  this->ActiveVolumeID = nullptr;
-  this->SecondaryVolumeID = nullptr;
-  this->ActiveLabelVolumeID = nullptr;
-  this->ActiveFiducialListID = nullptr;
-  this->ActivePlaceNodeID = nullptr;
   this->ActivePlaceNodeClassName = nullptr;
-  this->ActiveROIListID  =nullptr;
-  this->ActiveCameraID = nullptr;
-  this->ActiveTableID = nullptr;
-  this->ActiveViewID = nullptr;
-  this->ActiveLayoutID = nullptr;
-  this->ActivePlotChartID = nullptr;
 
-  this->AddNodeReferenceRole(this->GetUnitNodeReferenceRole(),
-                             this->GetUnitNodeReferenceMRMLAttributeName());
+  this->AddNodeReferenceRole(UNIT_NODE_REFERENCE_ROLE, "UnitNodeRef");
+  this->AddNodeReferenceRole(ACTIVE_VOLUME_REFERENCE_ROLE, "activeVolumeID");
+  this->AddNodeReferenceRole(SECONDARY_VOLUME_REFERENCE_ROLE, "secondaryVolumeID");
+  this->AddNodeReferenceRole(ACTIVE_LABEL_VOLUME_REFERENCE_ROLE, "ActiveLabelVolumeID");
+  this->AddNodeReferenceRole(ACTIVE_FIDUCIAL_LIST_REFERENCE_ROLE, "ActiveFiducialListID");
+  this->AddNodeReferenceRole(ACTIVE_PLACE_NODE_REFERENCE_ROLE, "ActivePlaceNodeID");
+  this->AddNodeReferenceRole(ACTIVE_ROI_LIST_REFERENCE_ROLE, "ActiveROIListID");
+  this->AddNodeReferenceRole(ACTIVE_CAMERA_REFERENCE_ROLE, "ActiveCameraID");
+  this->AddNodeReferenceRole(ACTIVE_TABLE_REFERENCE_ROLE, "ActiveTableID");
+  this->AddNodeReferenceRole(ACTIVE_VIEW_REFERENCE_ROLE, "ActiveViewID");
+  this->AddNodeReferenceRole(ACTIVE_LAYOUT_REFERENCE_ROLE, "ActiveLayoutID");
+  this->AddNodeReferenceRole(ACTIVE_PLOT_CHART_REFERENCE_ROLE, "ActivePlotChartID");
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLSelectionNode::~vtkMRMLSelectionNode()
 {
-  if (this->ActiveVolumeID)
-    {
-    delete [] this->ActiveVolumeID;
-    this->ActiveVolumeID = nullptr;
-    }
-  if (this->SecondaryVolumeID)
-    {
-    delete [] this->SecondaryVolumeID;
-    this->SecondaryVolumeID = nullptr;
-    }
-  if (this->ActiveLabelVolumeID)
-    {
-    delete [] this->ActiveLabelVolumeID;
-    this->ActiveLabelVolumeID = nullptr;
-    }
-  if (this->ActiveFiducialListID)
-    {
-    delete [] this->ActiveFiducialListID;
-    this->ActiveFiducialListID = nullptr;
-    }
-  if (this->ActivePlaceNodeID)
-    {
-    delete [] this->ActivePlaceNodeID;
-    this->ActivePlaceNodeID = nullptr;
-    }
-  this->SetActivePlaceNodeClassName(nullptr);
-  if (this->ActiveROIListID)
-    {
-    delete [] this->ActiveROIListID;
-    this->ActiveROIListID = nullptr;
-    }
-  if ( this->ActiveCameraID )
-    {
-    delete [] this->ActiveCameraID;
-    this->ActiveCameraID = nullptr;
-    }
-  if ( this->ActiveTableID )
-    {
-    delete [] this->ActiveTableID;
-    this->ActiveTableID = nullptr;
-    }
-  if ( this->ActiveViewID)
-    {
-    delete []  this->ActiveViewID;
-    this->ActiveViewID = nullptr;
-    }
-  if ( this->ActiveLayoutID)
-    {
-    delete [] this->ActiveLayoutID;
-    this->ActiveLayoutID = nullptr;
-    }
-  if ( this->ActivePlotChartID)
-    {
-    delete [] this->ActivePlotChartID;
-    this->ActivePlotChartID = nullptr;
-    }
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLSelectionNode::GetUnitNodeReferenceRole()
-{
-  return vtkMRMLSelectionNode::UnitNodeReferenceRole;
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLSelectionNode::GetUnitNodeReferenceMRMLAttributeName()
-{
-  return vtkMRMLSelectionNode::UnitNodeReferenceMRMLAttributeName;
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLSelectionNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-
-  of << " activeVolumeID=\"" << (this->ActiveVolumeID ? this->ActiveVolumeID : "NULL") << "\"";
-  of << " secondaryVolumeID=\"" << (this->SecondaryVolumeID ? this->SecondaryVolumeID : "NULL") << "\"";
-  of << " activeLabelVolumeID=\"" << (this->ActiveLabelVolumeID ? this->ActiveLabelVolumeID : "NULL") << "\"";
-  of << " activeFiducialListID=\"" << (this->ActiveFiducialListID ? this->ActiveFiducialListID : "NULL") << "\"";
-  of << " activePlaceNodeID=\"" << (this->ActivePlaceNodeID ? this->ActivePlaceNodeID : "NULL") << "\"";
-  of << " activePlaceNodeClassName=\"" << (this->ActivePlaceNodeClassName ? this->ActivePlaceNodeClassName : "NULL") << "\"";
-  of << " activeROIListID=\"" << (this->ActiveROIListID ? this->ActiveROIListID : "NULL") << "\"";
-  of << " activeCameraID=\"" << (this->ActiveCameraID ? this->ActiveCameraID : "NULL") << "\"";
-  of << " activeTableID=\"" << (this->ActiveTableID ? this->ActiveTableID : "NULL") << "\"";
-  of << " activeViewID=\"" << (this->ActiveViewID ? this->ActiveViewID : "NULL") << "\"";
-  of << " activeLayoutID=\"" << (this->ActiveLayoutID ? this->ActiveLayoutID : "NULL") << "\"";
-  of << " activePlotChartID=\"" << (this->ActivePlotChartID ? this->ActivePlotChartID : "NULL") << "\"";
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLStringMacro(activePlaceNodeClassName, ActivePlaceNodeClassName);
+  vtkMRMLWriteXMLEndMacro();
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLSelectionNode::SetSceneReferences()
-{
-  this->Superclass::SetSceneReferences();
-  this->Scene->AddReferencedNodeID(this->ActiveVolumeID, this);
-  this->Scene->AddReferencedNodeID(this->ActiveLabelVolumeID, this);
-  this->Scene->AddReferencedNodeID(this->ActiveFiducialListID, this);
-  this->Scene->AddReferencedNodeID(this->ActivePlaceNodeID, this);
-  this->Scene->AddReferencedNodeID(this->ActiveCameraID, this);
-  this->Scene->AddReferencedNodeID(this->ActiveTableID, this);
-  this->Scene->AddReferencedNodeID(this->ActiveViewID, this);
-  this->Scene->AddReferencedNodeID(this->ActiveLayoutID, this);
-  this->Scene->AddReferencedNodeID(this->ActivePlotChartID, this);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLSelectionNode::UpdateReferenceID(const char *oldID, const char *newID)
-{
-  Superclass::UpdateReferenceID(oldID, newID);
-  if (this->ActiveVolumeID && !strcmp(oldID, this->ActiveVolumeID))
-    {
-    this->SetActiveVolumeID(newID);
-    }
-  if (this->SecondaryVolumeID && !strcmp(oldID, this->SecondaryVolumeID))
-    {
-    this->SetSecondaryVolumeID(newID);
-    }
-  if (this->ActiveLabelVolumeID && !strcmp(oldID, this->ActiveLabelVolumeID))
-    {
-    this->SetActiveLabelVolumeID(newID);
-    }
-  if (this->ActiveFiducialListID && !strcmp(oldID, this->ActiveFiducialListID))
-    {
-    this->SetActiveFiducialListID(newID);
-    }
-  if (this->ActivePlaceNodeID && !strcmp(oldID, this->ActivePlaceNodeID))
-    {
-    this->SetActivePlaceNodeID(newID);
-    }
-  if ( this->ActiveCameraID && !strcmp (oldID, this->ActiveCameraID ))
-    {
-    this->SetActiveCameraID (newID);
-    }
-if ( this->ActiveTableID && !strcmp (oldID, this->ActiveTableID ))
-    {
-    this->SetActiveTableID (newID);
-    }
-  if ( this->ActiveViewID && !strcmp ( oldID, this->ActiveViewID ))
-    {
-    this->SetActiveViewID (newID );
-    }
-  if ( this->ActiveLayoutID && !strcmp ( oldID, this->ActiveLayoutID ))
-    {
-    this->SetActiveLayoutID (newID );
-    }
-  if ( this->ActivePlotChartID && !strcmp ( oldID, this->ActivePlotChartID ))
-    {
-    this->SetActivePlotChartID (newID );
-    }
-}
-
-//-----------------------------------------------------------
-void vtkMRMLSelectionNode::UpdateReferences()
-{
-   Superclass::UpdateReferences();
-
-  if (this->ActiveVolumeID != nullptr && this->Scene->GetNodeByID(this->ActiveVolumeID) == nullptr)
-    {
-    this->SetActiveVolumeID(nullptr);
-    }
-  if (this->SecondaryVolumeID != nullptr && this->Scene->GetNodeByID(this->SecondaryVolumeID) == nullptr)
-    {
-    this->SetSecondaryVolumeID(nullptr);
-    }
-  if (this->ActiveLabelVolumeID != nullptr && this->Scene->GetNodeByID(this->ActiveLabelVolumeID) == nullptr)
-    {
-    this->SetActiveLabelVolumeID(nullptr);
-    }
-  if (this->ActiveFiducialListID != nullptr && this->Scene->GetNodeByID(this->ActiveFiducialListID) == nullptr)
-    {
-    this->SetActiveFiducialListID(nullptr);
-    }
-  if (this->ActivePlaceNodeID != nullptr && this->Scene->GetNodeByID(this->ActivePlaceNodeID) == nullptr)
-    {
-    this->SetActivePlaceNodeID(nullptr);
-    }
-  if (this->ActiveViewID != nullptr && this->Scene->GetNodeByID(this->ActiveViewID) == nullptr)
-    {
-    this->SetActiveViewID(nullptr);
-    }
-  if (this->ActiveLayoutID != nullptr && this->Scene->GetNodeByID(this->ActiveLayoutID) == nullptr)
-    {
-    this->SetActiveLayoutID(nullptr);
-    }
-  if (this->ActiveCameraID != nullptr && this->Scene->GetNodeByID(this->ActiveCameraID) == nullptr)
-    {
-    this->SetActiveCameraID(nullptr);
-    }
-  if (this->ActiveTableID != nullptr && this->Scene->GetNodeByID(this->ActiveTableID) == nullptr)
-    {
-    this->SetActiveTableID(nullptr);
-    }
-  if (this->ActivePlotChartID != nullptr && this->Scene->GetNodeByID(this->ActivePlotChartID) == nullptr)
-    {
-    this->SetActivePlotChartID(nullptr);
-    }
-}
 //----------------------------------------------------------------------------
 void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
 {
@@ -273,68 +82,59 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
 
   this->Superclass::ReadXMLAttributes(atts);
 
-  const char* attName;
-  const char* attValue;
-  while (*atts != nullptr)
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName, "activeVolumeID"))
-      {
-      this->SetActiveVolumeID(attValue);
-      //this->Scene->AddReferencedNodeID(this->ActiveVolumeID, this);
-      }
-    if (!strcmp(attName, "secondaryVolumeID"))
-      {
-      this->SetSecondaryVolumeID(attValue);
-      //this->Scene->AddReferencedNodeID(this->ActiveVolumeID, this);
-      }
-    if (!strcmp(attName, "activeLabelVolumeID"))
-      {
-      this->SetActiveLabelVolumeID(attValue);
-      //this->Scene->AddReferencedNodeID(this->ActiveLabelVolumeID, this);
-      }
-    if (!strcmp(attName, "activeFiducialListID"))
-      {
-      this->SetActiveFiducialListID(attValue);
-      //this->Scene->AddReferencedNodeID(this->ActiveFiducialListID, this);
-      }
-    if (!strcmp(attName, "activePlaceNodeID"))
-      {
-      this->SetActivePlaceNodeID(attValue);
-      //this->Scene->AddReferencedNodeID(this->ActivePlaceNodeID, this);
-      }
-    if (!strcmp(attName, "activePlaceNodeClassName"))
-      {
-      this->SetActivePlaceNodeClassName(attValue);
-      }
-    if (!strcmp (attName, "activeCameraID"))
-      {
-      this->SetActiveCameraID (attValue );
-      //this->Scene->AddReferencedNodeID (this->ActiveCameraID, this);
-      }
-    if (!strcmp (attName, "activeTableID"))
-      {
-      this->SetActiveTableID (attValue );
-      //this->Scene->AddReferencedNodeID (this->ActiveTableID, this);
-      }
-    if (!strcmp (attName, "activeViewID"))
-      {
-      this->SetActiveViewID (attValue);
-      //this->Scene->AddReferencedNodeID ( this->ActiveViewID, this);
-      }
-    if (!strcmp (attName, "activeLayoutID"))
-      {
-      this->SetActiveLayoutID (attValue);
-      //this->Scene->AddReferencedNodeID ( this->ActiveLayoutID, this);
-      }
-    if (!strcmp (attName, "activePlotChartID"))
-      {
-      this->SetActivePlotChartID (attValue);
-      //this->Scene->AddReferencedNodeID ( this->ActivePlotChartID, this);
-      }
-    }
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLStringMacro(activePlaceNodeClassName, ActivePlaceNodeClassName);
+  vtkMRMLReadXMLEndMacro();
 
+  // In legacy scenes, NULL value is written for empty/nullptr values - replace those now
+  if (this->ActivePlaceNodeClassName && strcmp(this->ActivePlaceNodeClassName, "NULL") == 0)
+    {
+    SetActivePlaceNodeClassName("");
+    }
+  if (this->GetActiveVolumeID() && strcmp(this->GetActiveVolumeID(), "NULL") == 0)
+    {
+    this->SetActiveVolumeID(nullptr);
+    }
+  if (this->GetSecondaryVolumeID() && strcmp(this->GetSecondaryVolumeID(), "NULL") == 0)
+    {
+    this->SetSecondaryVolumeID(nullptr);
+    }
+  if (this->GetActiveLabelVolumeID() && strcmp(this->GetActiveLabelVolumeID(), "NULL") == 0)
+    {
+    this->SetActiveLabelVolumeID(nullptr);
+    }
+  if (this->GetActiveFiducialListID() && strcmp(this->GetActiveFiducialListID(), "NULL") == 0)
+    {
+    this->SetActiveFiducialListID(nullptr);
+    }
+  if (this->GetActivePlaceNodeID() && strcmp(this->GetActivePlaceNodeID(), "NULL") == 0)
+    {
+    this->SetActivePlaceNodeID(nullptr);
+    }
+  if (this->GetActiveROIListID() && strcmp(this->GetActiveROIListID(), "NULL") == 0)
+    {
+    this->SetActiveROIListID(nullptr);
+    }
+  if (this->GetActiveCameraID() && strcmp(this->GetActiveCameraID(), "NULL") == 0)
+    {
+    this->SetActiveCameraID(nullptr);
+    }
+  if (this->GetActiveTableID() && strcmp(this->GetActiveTableID(), "NULL") == 0)
+    {
+    this->SetActiveTableID(nullptr);
+    }
+  if (this->GetActiveViewID() && strcmp(this->GetActiveViewID(), "NULL") == 0)
+    {
+    this->SetActiveViewID(nullptr);
+    }
+  if (this->GetActiveLayoutID() && strcmp(this->GetActiveLayoutID(), "NULL") == 0)
+    {
+    this->SetActiveLayoutID(nullptr);
+    }
+  if (this->GetActivePlotChartID() && strcmp(this->GetActivePlotChartID(), "NULL") == 0)
+    {
+    this->SetActivePlotChartID(nullptr);
+    }
   this->EndModify(disabledModify);
 }
 
@@ -344,21 +144,12 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLSelectionNode::Copy(vtkMRMLNode *anode)
 {
   int disabledModify = this->StartModify();
-
   Superclass::Copy(anode);
-  vtkMRMLSelectionNode *node = vtkMRMLSelectionNode::SafeDownCast(anode);
 
-  this->SetActiveVolumeID(node->GetActiveVolumeID());
-  this->SetSecondaryVolumeID(node->GetActiveVolumeID());
-  this->SetActiveLabelVolumeID(node->GetActiveLabelVolumeID());
-  this->SetActiveFiducialListID(node->GetActiveFiducialListID());
-  this->SetActivePlaceNodeID(node->GetActivePlaceNodeID());
-  this->SetActivePlaceNodeClassName(node->GetActivePlaceNodeClassName());
-  this->SetActiveCameraID (node->GetActiveCameraID());
-  this->SetActiveTableID (node->GetActiveTableID());
-  this->SetActiveViewID (node->GetActiveViewID() );
-  this->SetActiveLayoutID (node->GetActiveLayoutID() );
-  this->SetActivePlotChartID (node->GetActivePlotChartID());
+  vtkMRMLCopyBeginMacro(anode);
+  vtkMRMLCopyStringMacro(ActivePlaceNodeClassName);
+  vtkMRMLCopyEndMacro();
+
   this->EndModify(disabledModify);
 }
 
@@ -367,12 +158,12 @@ void vtkMRMLSelectionNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
 
-  os << "ActiveVolumeID: " << ( (this->ActiveVolumeID) ? this->ActiveVolumeID : "None" ) << "\n";
-  os << "SecondaryVolumeID: " << ( (this->SecondaryVolumeID) ? this->SecondaryVolumeID : "None" ) << "\n";
-  os << "ActiveLabelVolumeID: " << ( (this->ActiveLabelVolumeID) ? this->ActiveLabelVolumeID : "None" ) << "\n";
-  os << "ActiveFiducialListID: " << ( (this->ActiveFiducialListID) ? this->ActiveFiducialListID : "None" ) << "\n";
-  os << "ActivePlaceNodeID: " << ( (this->ActivePlaceNodeID) ? this->ActivePlaceNodeID : "None" ) << "\n";
-  os << "ActivePlaceNodeClassName: " << ( (this->ActivePlaceNodeClassName) ? this->ActivePlaceNodeClassName : "None" ) << "\n";
+  Superclass::PrintSelf(os, indent);
+
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintStringMacro(ActivePlaceNodeClassName);
+  vtkMRMLPrintEndMacro();
+
   if (this->PlaceNodeClassNameList.size() > 0)
     {
     os << "Valid PlaceNode IDs: \n";
@@ -397,11 +188,6 @@ void vtkMRMLSelectionNode::PrintSelf(ostream& os, vtkIndent indent)
       os << indent.GetNextIndent() << i << ": " << this->PlaceNodeIconNameList[i] << "\n";
       }
     }
-  os << "ActiveCameraID: " << ( (this->ActiveCameraID) ? this->ActiveCameraID : "None" ) << "\n";
-  os << "ActiveTableID: " << ( (this->ActiveTableID) ? this->ActiveTableID : "None" ) << "\n";
-  os << "ActiveViewID: " << ( (this->ActiveViewID) ? this->ActiveViewID : "None" ) << "\n";
-  os << "ActiveLayoutID: " << ( (this->ActiveLayoutID) ? this->ActiveLayoutID : "None" ) << "\n";
-  os << "ActivePlotChartID: " << ( (this->ActivePlotChartID) ? this->ActivePlotChartID : "None" ) << "\n";
 }
 
 //----------------------------------------------------------------------------
@@ -523,8 +309,7 @@ void vtkMRMLSelectionNode::GetUnitNodes(std::vector<vtkMRMLUnitNode*>& units)
   for (NodeReferencesType::const_iterator it = this->NodeReferences.begin();
     it != this->NodeReferences.end(); ++it)
     {
-    if (it->first.compare(0, strlen(this->GetUnitNodeReferenceRole()),
-                          this->GetUnitNodeReferenceRole()) == 0 &&
+    if (it->first.compare(0, strlen(UNIT_NODE_REFERENCE_ROLE), UNIT_NODE_REFERENCE_ROLE) == 0 &&
         it->second.size() > 0)
       {
       // there is only one referenced node per reference role
@@ -545,15 +330,14 @@ void vtkMRMLSelectionNode::GetUnitNodeIDs(std::vector<const char*>& quantities,
   for (NodeReferencesType::const_iterator it = this->NodeReferences.begin();
     it != this->NodeReferences.end(); ++it)
     {
-    if (it->first.compare(0, strlen(this->GetUnitNodeReferenceRole()),
-                          this->GetUnitNodeReferenceRole()) == 0 &&
+    if (it->first.compare(0, strlen(UNIT_NODE_REFERENCE_ROLE), UNIT_NODE_REFERENCE_ROLE) == 0 &&
         it->second.size() > 0)
       {
       // there is only one referenced node per reference role
       vtkMRMLNodeReference * reference = it->second[0];
       if (reference)
         {
-        quantities.push_back(&reference->GetReferenceRole()[strlen(this->GetUnitNodeReferenceRole())]);
+        quantities.push_back(&reference->GetReferenceRole()[strlen(UNIT_NODE_REFERENCE_ROLE)]);
         units.push_back(reference->GetReferencedNodeID());
         }
       }
@@ -579,7 +363,7 @@ std::string vtkMRMLSelectionNode::GetPlaceNodeIconNameByIndex(int n)
 const char* vtkMRMLSelectionNode::GetUnitNodeID(const char* quantity)
 {
   std::string safeQuantity = quantity ? quantity : "";
-  std::string referenceRole = this->GetUnitNodeReferenceRole() + safeQuantity;
+  std::string referenceRole = UNIT_NODE_REFERENCE_ROLE + safeQuantity;
   return this->GetNodeReferenceID(referenceRole.c_str());
 }
 
@@ -587,7 +371,7 @@ const char* vtkMRMLSelectionNode::GetUnitNodeID(const char* quantity)
 vtkMRMLUnitNode* vtkMRMLSelectionNode::GetUnitNode(const char* quantity)
 {
   std::string safeQuantity = quantity ? quantity : "";
-  std::string referenceRole = this->GetUnitNodeReferenceRole() + safeQuantity;
+  std::string referenceRole = UNIT_NODE_REFERENCE_ROLE + safeQuantity;
   return vtkMRMLUnitNode::SafeDownCast(this->GetNodeReference(referenceRole.c_str()));
 }
 
@@ -595,7 +379,7 @@ vtkMRMLUnitNode* vtkMRMLSelectionNode::GetUnitNode(const char* quantity)
 void vtkMRMLSelectionNode::SetUnitNodeID(const char* quantity, const char* id)
 {
   std::string safeQuantity = quantity ? quantity : "";
-  std::string referenceRole = this->GetUnitNodeReferenceRole() + safeQuantity;
+  std::string referenceRole = UNIT_NODE_REFERENCE_ROLE + safeQuantity;
 
   vtkMTimeType mTime = this->GetMTime();
   this->SetAndObserveNodeReferenceID(referenceRole.c_str(), id);
@@ -655,4 +439,125 @@ void vtkMRMLSelectionNode::SetReferenceActivePlaceNodeClassName (const char *cla
 {
   this->SetActivePlaceNodeClassName(className);
   this->InvokeEvent(vtkMRMLSelectionNode::ActivePlaceNodeClassNameChangedEvent);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSelectionNode::GetActiveVolumeID()
+{
+  return this->GetNodeReferenceID(ACTIVE_VOLUME_REFERENCE_ROLE);
+}
+//----------------------------------------------------------------------------
+void vtkMRMLSelectionNode::SetActiveVolumeID(const char* id)
+{
+  this->SetNodeReferenceID(ACTIVE_VOLUME_REFERENCE_ROLE, id);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSelectionNode::GetSecondaryVolumeID()
+{
+  return this->GetNodeReferenceID(SECONDARY_VOLUME_REFERENCE_ROLE);
+}
+//----------------------------------------------------------------------------
+void vtkMRMLSelectionNode::SetSecondaryVolumeID(const char* id)
+{
+  this->SetNodeReferenceID(SECONDARY_VOLUME_REFERENCE_ROLE, id);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSelectionNode::GetActiveLabelVolumeID()
+{
+  return this->GetNodeReferenceID(ACTIVE_LABEL_VOLUME_REFERENCE_ROLE);
+}
+//----------------------------------------------------------------------------
+void vtkMRMLSelectionNode::SetActiveLabelVolumeID(const char* id)
+{
+  this->SetNodeReferenceID(ACTIVE_LABEL_VOLUME_REFERENCE_ROLE, id);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSelectionNode::GetActiveFiducialListID()
+{
+  return this->GetNodeReferenceID(ACTIVE_FIDUCIAL_LIST_REFERENCE_ROLE);
+}
+//----------------------------------------------------------------------------
+void vtkMRMLSelectionNode::SetActiveFiducialListID(const char* id)
+{
+  this->SetNodeReferenceID(ACTIVE_FIDUCIAL_LIST_REFERENCE_ROLE, id);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSelectionNode::GetActivePlaceNodeID()
+{
+  return this->GetNodeReferenceID(ACTIVE_PLACE_NODE_REFERENCE_ROLE);
+}
+//----------------------------------------------------------------------------
+void vtkMRMLSelectionNode::SetActivePlaceNodeID(const char* id)
+{
+  this->SetNodeReferenceID(ACTIVE_PLACE_NODE_REFERENCE_ROLE, id);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSelectionNode::GetActiveROIListID()
+{
+  return this->GetNodeReferenceID(ACTIVE_ROI_LIST_REFERENCE_ROLE);
+}
+//----------------------------------------------------------------------------
+void vtkMRMLSelectionNode::SetActiveROIListID(const char* id)
+{
+  this->SetNodeReferenceID(ACTIVE_ROI_LIST_REFERENCE_ROLE, id);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSelectionNode::GetActiveCameraID()
+{
+  return this->GetNodeReferenceID(ACTIVE_CAMERA_REFERENCE_ROLE);
+}
+//----------------------------------------------------------------------------
+void vtkMRMLSelectionNode::SetActiveCameraID(const char* id)
+{
+  this->SetNodeReferenceID(ACTIVE_CAMERA_REFERENCE_ROLE, id);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSelectionNode::GetActiveTableID()
+{
+  return this->GetNodeReferenceID(ACTIVE_TABLE_REFERENCE_ROLE);
+}
+//----------------------------------------------------------------------------
+void vtkMRMLSelectionNode::SetActiveTableID(const char* id)
+{
+  this->SetNodeReferenceID(ACTIVE_TABLE_REFERENCE_ROLE, id);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSelectionNode::GetActiveViewID()
+{
+  return this->GetNodeReferenceID(ACTIVE_VIEW_REFERENCE_ROLE);
+}
+//----------------------------------------------------------------------------
+void vtkMRMLSelectionNode::SetActiveViewID(const char* id)
+{
+  this->SetNodeReferenceID(ACTIVE_VIEW_REFERENCE_ROLE, id);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSelectionNode::GetActiveLayoutID()
+{
+  return this->GetNodeReferenceID(ACTIVE_LAYOUT_REFERENCE_ROLE);
+}
+//----------------------------------------------------------------------------
+void vtkMRMLSelectionNode::SetActiveLayoutID(const char* id)
+{
+  this->SetNodeReferenceID(ACTIVE_LAYOUT_REFERENCE_ROLE, id);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSelectionNode::GetActivePlotChartID()
+{
+  return this->GetNodeReferenceID(ACTIVE_PLOT_CHART_REFERENCE_ROLE);
+}
+//----------------------------------------------------------------------------
+void vtkMRMLSelectionNode::SetActivePlotChartID(const char* id)
+{
+  this->SetNodeReferenceID(ACTIVE_PLOT_CHART_REFERENCE_ROLE, id);
 }

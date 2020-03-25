@@ -150,10 +150,10 @@ void vtkMRMLSubjectHierarchyLegacyNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of,nIndent);
 
-  of << " Level=\"" << (this->Level ? this->Level : "NULL" ) << "\"";
+  of << " Level=\"" << (this->Level ? this->Level : "" ) << "\"";
 
   of << " OwnerPluginName=\""
-    << (this->OwnerPluginName ? this->OwnerPluginName : "NULL" ) << "\"";
+    << (this->OwnerPluginName ? this->OwnerPluginName : "" ) << "\"";
 
   of << " UIDs=\"";
   for (std::map<std::string, std::string>::iterator uidsIt = this->UIDs.begin(); uidsIt != this->UIDs.end(); ++uidsIt)

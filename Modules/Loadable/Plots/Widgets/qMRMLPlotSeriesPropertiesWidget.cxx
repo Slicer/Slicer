@@ -282,7 +282,7 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::onInputTableNodeChanged(vtkMRMLNode
     }
   else
     {
-    this->PlotSeriesNode->SetAndObserveTableNodeID("NULL");
+    this->PlotSeriesNode->SetAndObserveTableNodeID(nullptr);
     }
 }
 

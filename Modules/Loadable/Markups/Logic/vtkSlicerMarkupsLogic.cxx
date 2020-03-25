@@ -367,7 +367,7 @@ std::string vtkSlicerMarkupsLogic::GetActiveListID()
     return listID;
     }
 
-  char *activePlaceNodeID = selectionNode->GetActivePlaceNodeID();
+  const char *activePlaceNodeID = selectionNode->GetActivePlaceNodeID();
   // is there no active fiducial list?
   if (activePlaceNodeID == nullptr)
     {
