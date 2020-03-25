@@ -688,7 +688,7 @@ int vtkCurveGenerator::GeneratePointsFromSurface(vtkPoints* inputPoints, vtkPoly
       if (controlPointIndex == 0 || pointIndex > 0)
         {
         vtkIdType outputPointId = outputPoints->InsertNextPoint(curvePoint);
-        if (this->InterpolatedPointIdsForControlPoints.size() <= controlPointIndex)
+        if (static_cast<vtkIdType>(this->InterpolatedPointIdsForControlPoints.size()) <= controlPointIndex)
           {
           this->InterpolatedPointIdsForControlPoints.push_back(outputPointId);
           }
