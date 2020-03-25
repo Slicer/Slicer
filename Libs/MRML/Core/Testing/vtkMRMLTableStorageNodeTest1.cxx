@@ -177,7 +177,7 @@ int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkTable* tabl
     std::vector<std::string> componentNames = vtkMRMLTableNode::GetComponentNamesFromArray(column);
     std::vector<std::string> componentNames2 = vtkMRMLTableNode::GetComponentNamesFromArray(column2);
     CHECK_BOOL(componentNames.size() == componentNames2.size(), true);
-    for (int i = 0; i < componentNames.size(); ++i)
+    for (size_t i = 0; i < componentNames.size(); ++i)
       {
       std::string componentName = componentNames[i];
       std::string componentName2 = componentNames2[i];
