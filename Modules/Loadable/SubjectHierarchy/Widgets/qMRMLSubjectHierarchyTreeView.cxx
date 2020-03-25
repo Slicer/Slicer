@@ -134,6 +134,8 @@ qMRMLSubjectHierarchyTreeViewPrivate::qMRMLSubjectHierarchyTreeViewPrivate(qMRML
   , RootItemID(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   , ContextMenuEnabled(true)
   , EditActionVisible(true)
+  , SelectRoleSubMenuVisible(false)
+  , NodeMenu(nullptr)
   , RenameAction(nullptr)
   , DeleteAction(nullptr)
   , EditAction(nullptr)
@@ -141,13 +143,11 @@ qMRMLSubjectHierarchyTreeViewPrivate::qMRMLSubjectHierarchyTreeViewPrivate(qMRML
   , SelectPluginSubMenu(nullptr)
   , SelectPluginActionGroup(nullptr)
   , ExpandToDepthAction(nullptr)
-  , NodeMenu(nullptr)
   , SceneMenu(nullptr)
   , VisibilityMenu(nullptr)
   , TransformItemDelegate(nullptr)
   , SubjectHierarchyNode(nullptr)
   , HighlightReferencedItems(true)
-  , SelectRoleSubMenuVisible(false)
 {
 }
 
