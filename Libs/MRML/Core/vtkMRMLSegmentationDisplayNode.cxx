@@ -87,9 +87,9 @@ void vtkMRMLSegmentationDisplayNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
 
   of << " PreferredDisplayRepresentationName2D=\""
-    << (this->PreferredDisplayRepresentationName2D ? this->PreferredDisplayRepresentationName2D : "NULL") << "\"";
+    << (this->PreferredDisplayRepresentationName2D ? this->PreferredDisplayRepresentationName2D : "") << "\"";
   of << " PreferredDisplayRepresentationName3D=\""
-    << (this->PreferredDisplayRepresentationName3D ? this->PreferredDisplayRepresentationName3D : "NULL") << "\"";
+    << (this->PreferredDisplayRepresentationName3D ? this->PreferredDisplayRepresentationName3D : "") << "\"";
 
   of << " Visibility2DFill=\"" << (this->Visibility2DFill ? "true" : "false") << "\"";
   of << " Visibility2DOutline=\"" << (this->Visibility2DOutline ? "true" : "false") << "\"";

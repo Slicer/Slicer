@@ -113,9 +113,9 @@ void vtkMRMLApplicationLogic::vtkInternal::PropagateVolumeSelection(int layer, i
     return;
     }
 
-  char* ID = this->SelectionNode->GetActiveVolumeID();
-  char* secondID = this->SelectionNode->GetSecondaryVolumeID();
-  char* labelID = this->SelectionNode->GetActiveLabelVolumeID();
+  const char* ID = this->SelectionNode->GetActiveVolumeID();
+  const char* secondID = this->SelectionNode->GetSecondaryVolumeID();
+  const char* labelID = this->SelectionNode->GetActiveLabelVolumeID();
 
   vtkMRMLSliceCompositeNode* cnode;
   const int nnodes = this->External->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
@@ -463,7 +463,7 @@ void vtkMRMLApplicationLogic::PropagateTableSelection()
     return;
     }
 
-  char* tableId = this->Internal->SelectionNode->GetActiveTableID();
+  const char* tableId = this->Internal->SelectionNode->GetActiveTableID();
 
   const int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLTableViewNode");
   for (int i = 0; i < nnodes; i++)
@@ -486,7 +486,7 @@ void vtkMRMLApplicationLogic::PropagatePlotChartSelection()
     return;
     }
 
-  char* PlotChartId = this->Internal->SelectionNode->GetActivePlotChartID();
+  const char* PlotChartId = this->Internal->SelectionNode->GetActivePlotChartID();
 
   const int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLPlotViewNode");
   for (int i = 0; i < nnodes; i++)
