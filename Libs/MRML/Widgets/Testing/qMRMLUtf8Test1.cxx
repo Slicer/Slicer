@@ -21,6 +21,8 @@
 // QT includes
 #include <QApplication>
 #include <QDebug>
+#include <QDir>
+#include <QFile>
 #include <QLabel>
 #include <QLineEdit>
 #include <QTimer>
@@ -108,6 +110,7 @@ int qMRMLUtf8Test1(int argc, char * argv [] )
   vtkMRMLStorageNode* storageNode = vtkMRMLStorageNode::SafeDownCast(volumeNode->GetStorageNode());
   QString filenameWithSpecialChars = expectedDisplayNodeName + ".nrrd";
   storageNode->SetFileName(filenameWithSpecialChars.toUtf8().constData());
+  QFile::remove(QString::fromUtf8(myScene->GetRootDirectory()) + QDir::separator() + filenameWithSpecialChars);
   CHECK_INT(storageNode->WriteData(volumeNode), 1);
   CHECK_INT(storageNode->ReadData(volumeNode), 1);
 
