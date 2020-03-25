@@ -133,7 +133,7 @@ bool vtkSlicerPlaneWidget::ProcessPlaneMoveStart(vtkMRMLInteractionEventData* ev
 }
 
 //----------------------------------------------------------------------
-bool vtkSlicerPlaneWidget::ProcessPlaneMoveEnd(vtkMRMLInteractionEventData* eventData)
+bool vtkSlicerPlaneWidget::ProcessPlaneMoveEnd(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
 {
   vtkMRMLMarkupsDisplayNode* displayNode = this->GetMarkupsDisplayNode();
   if (!displayNode || displayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentPlane)
