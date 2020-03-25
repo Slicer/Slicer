@@ -79,9 +79,9 @@
 //-----------------------------------------------------------------------------
 qSlicerSegmentEditorAbstractEffectPrivate::qSlicerSegmentEditorAbstractEffectPrivate(qSlicerSegmentEditorAbstractEffect& object)
   : q_ptr(&object)
+  , Scene(nullptr)
   , SavedCursor(QCursor(Qt::ArrowCursor))
   , OptionsFrame(nullptr)
-  , Scene(nullptr)
 {
   this->OptionsFrame = new QFrame();
   this->OptionsFrame->setFrameShape(QFrame::NoFrame);
