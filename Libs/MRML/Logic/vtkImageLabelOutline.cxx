@@ -45,7 +45,7 @@ vtkImageLabelOutline::~vtkImageLabelOutline()
 // This templated function executes the filter for any type of data.
 template <class T>
 static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
-                     vtkImageData *inData, T *inPtr,
+                     vtkImageData *inData, T *vtkNotUsed(inPtr),
                      vtkImageData *outData,
                      int outExt[6], int id)
 {
