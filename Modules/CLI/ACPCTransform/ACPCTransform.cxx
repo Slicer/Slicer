@@ -108,8 +108,6 @@ int main(int argc, char * argv[])
     mat->SetElement(1, 1, (1.0  - (mat->GetElement(1, 0) * (mat->GetElement(1, 0) / oneAndAlpha) ) ) );
     mat->SetElement(2, 2, (1.0  - (mat->GetElement(2, 0) * (mat->GetElement(2, 0) / oneAndAlpha) ) ) );
 
-    // Check the sign of the determinant
-    double det = mat->Determinant();
     vtkNew<vtkMatrix4x4> matInverse;
     matInverse->DeepCopy(mat.GetPointer());
     matInverse->Invert();
