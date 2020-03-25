@@ -43,8 +43,8 @@ void vtkMRMLGPURayCastVolumeRenderingDisplayNode::ReadXMLAttributes(const char**
 {
   this->Superclass::ReadXMLAttributes(atts);
 
-  vtkMRMLReadXMLBeginMacro(atts);
-  vtkMRMLReadXMLEndMacro();
+//  vtkMRMLReadXMLBeginMacro(atts);
+//  vtkMRMLReadXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
