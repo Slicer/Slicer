@@ -895,7 +895,6 @@ void qSlicerApplication::logApplicationInformation() const
       qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
       Slicer_MAIN_PROJECT_VERSION_FULL,
       qPrintable(Slicer_MAIN_PROJECT_REVISION),
-      qPrintable(Slicer_MAIN_PROJECT_REVISION),
       qPrintable(Slicer_MAIN_PROJECT_WC_REVISION));
     }
 
