@@ -632,7 +632,7 @@ bool vtkMRMLTableStorageNode::WriteTable(std::string filename, vtkMRMLTableNode*
       for (int componentIndex = 0; componentIndex < numberOfComponents; ++componentIndex)
         {
         std::string newColumnName = columnName;
-        if (componentNames.size() > componentIndex)
+        if (static_cast<int>(componentNames.size()) > componentIndex)
           {
           std::stringstream newColumnNameSS;
           newColumnNameSS << columnName << COMPONENT_SEPERATOR << componentNames[componentIndex];
