@@ -505,6 +505,11 @@ public:
   /// \sa ViewNodeIDs, RemoveViewNodeID(), RemoveAllViewNodeIDs()
   void AddViewNodeID(const char* viewNodeID);
   /// Remove View Node ID for the view to display this node in.
+  /// Note that if no view node IDs are specified then the displayable
+  /// node will be shown in every views. Therefore, to hide a displayable
+  /// node from a single view, it is not necessary to call RemoveViewNodeID
+  /// (unless it had been explicitly added before) but all the other
+  /// view node IDs must be added instead.
   /// \sa ViewNodeIDs, AddViewNodeID(), RemoveAllViewNodeIDs()
   void RemoveViewNodeID(char* viewNodeID);
   /// Remove All View Node IDs for the views to display this node in.
