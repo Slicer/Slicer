@@ -121,9 +121,9 @@ void SetupVolumeNode(vtkMRMLScene* scene, vtkMRMLScalarVolumeNode* volumeNode)
   scene->AddNode(volumePropertyNode.GetPointer());
 
   vtkNew<vtkMRMLCPURayCastVolumeRenderingDisplayNode> vrDisplayNode;
-  vrDisplayNode->SetAndObserveVolumeNodeID(volumeNode->GetID());
   vrDisplayNode->SetAndObserveVolumePropertyNodeID(volumePropertyNode->GetID());
   scene->AddNode(vrDisplayNode.GetPointer());
+  volumeNode->AddAndObserveDisplayNodeID(vrDisplayNode->GetID());
 }
 
 char TestCopyImageDataEventLog[] =

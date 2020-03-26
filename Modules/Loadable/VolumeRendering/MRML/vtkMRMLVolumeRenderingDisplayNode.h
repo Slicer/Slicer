@@ -48,7 +48,6 @@ public:
   void Copy(vtkMRMLNode *node) override;
 
   const char* GetVolumeNodeID();
-  void SetAndObserveVolumeNodeID(const char *volumeNodeID);
   vtkMRMLVolumeNode* GetVolumeNode();
 
   const char* GetVolumePropertyNodeID();
@@ -95,8 +94,6 @@ protected:
 
   void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) override;
 
-  static const char* VolumeNodeReferenceRole;
-  static const char* VolumeNodeReferenceMRMLAttributeName;
   static const char* VolumePropertyNodeReferenceRole;
   static const char* VolumePropertyNodeReferenceMRMLAttributeName;
   static const char* ROINodeReferenceRole;
