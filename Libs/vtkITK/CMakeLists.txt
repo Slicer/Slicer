@@ -57,6 +57,13 @@ list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
 list(APPEND ITK_INCLUDE_DIRS ${ITKFactoryRegistration_INCLUDE_DIRS})
 include(${ITK_USE_FILE})
 
+#
+# vtkAddon
+#
+if(NOT Slicer_BUILD_vtkAddon)
+  find_package(vtkAddon REQUIRED)
+endif()
+
 # --------------------------------------------------------------------------
 # Include dirs
 # --------------------------------------------------------------------------
