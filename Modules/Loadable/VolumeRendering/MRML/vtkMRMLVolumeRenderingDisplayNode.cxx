@@ -33,8 +33,6 @@ Version:   $Revision: 1.2 $
 #include <sstream>
 
 //----------------------------------------------------------------------------
-const char* vtkMRMLVolumeRenderingDisplayNode::VolumeNodeReferenceRole = "volume";
-const char* vtkMRMLVolumeRenderingDisplayNode::VolumeNodeReferenceMRMLAttributeName = "volumeNodeID";
 const char* vtkMRMLVolumeRenderingDisplayNode::VolumePropertyNodeReferenceRole = "volumeProperty";
 const char* vtkMRMLVolumeRenderingDisplayNode::VolumePropertyNodeReferenceMRMLAttributeName = "volumePropertyNodeID";
 const char* vtkMRMLVolumeRenderingDisplayNode::ROINodeReferenceRole = "roi";
@@ -45,9 +43,6 @@ const char* vtkMRMLVolumeRenderingDisplayNode::ShaderPropertyNodeReferenceMRMLAt
 //----------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
 {
-  this->AddNodeReferenceRole(VolumeNodeReferenceRole,
-                             VolumeNodeReferenceMRMLAttributeName);
-
   vtkNew<vtkIntArray> volumePropertyEvents;
   volumePropertyEvents->InsertNextValue(vtkCommand::StartEvent);
   volumePropertyEvents->InsertNextValue(vtkCommand::EndEvent);
@@ -154,21 +149,16 @@ void vtkMRMLVolumeRenderingDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayNode::SetAndObserveVolumeNodeID(const char* volumeNodeID)
-{
-  this->SetAndObserveNodeReferenceID(VolumeNodeReferenceRole, volumeNodeID);
-}
-
-//----------------------------------------------------------------------------
 const char* vtkMRMLVolumeRenderingDisplayNode::GetVolumeNodeID()
 {
-  return this->GetNodeReferenceID(VolumeNodeReferenceRole);
+  vtkMRMLDisplayableNode* volumeNode = this->GetDisplayableNode();
+  return (volumeNode ? volumeNode->GetID() : nullptr);
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode* vtkMRMLVolumeRenderingDisplayNode::GetVolumeNode()
 {
-  return vtkMRMLVolumeNode::SafeDownCast(this->GetNodeReference(VolumeNodeReferenceRole));
+  return vtkMRMLVolumeNode::SafeDownCast(this->GetDisplayableNode());
 }
 
 //----------------------------------------------------------------------------

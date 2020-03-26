@@ -211,9 +211,15 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidgetPrivate::cr
     return nullptr;
     }
 
-  vtkMRMLVolumeRenderingDisplayNode* displayNode = logic->CreateVolumeRenderingDisplayNode();
+  vtkSmartPointer<vtkMRMLVolumeRenderingDisplayNode> displayNode =
+    vtkSmartPointer<vtkMRMLVolumeRenderingDisplayNode>::Take(logic->CreateVolumeRenderingDisplayNode());
+  displayNode->SetVisibility(0);
   q->mrmlScene()->AddNode(displayNode);
-  displayNode->Delete();
+
+  if (volumeNode)
+    {
+    volumeNode->AddAndObserveDisplayNodeID(displayNode->GetID());
+    }
 
   int wasModifying = displayNode->StartModify();
   // Initialize volume rendering without the threshold info of the Volumes module
@@ -223,17 +229,12 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidgetPrivate::cr
   displayNode->SetIgnoreVolumeDisplayNodeThreshold(this->IgnoreVolumesThresholdCheckBox->isChecked());
   // Do not show newly selected volume (because it would be triggered by simply selecting it in the combobox,
   // and it would not adhere to the customary Slicer behavior)
-  displayNode->SetVisibility(0);
   // Set selected views to the display node
   foreach (vtkMRMLAbstractViewNode* viewNode, this->ViewCheckableNodeComboBox->checkedViewNodes())
     {
     displayNode->AddViewNodeID(viewNode ? viewNode->GetID() : nullptr);
     }
   displayNode->EndModify(wasModifying);
-  if (volumeNode)
-    {
-    volumeNode->AddAndObserveDisplayNodeID(displayNode->GetID());
-    }
   return displayNode;
 }
 
