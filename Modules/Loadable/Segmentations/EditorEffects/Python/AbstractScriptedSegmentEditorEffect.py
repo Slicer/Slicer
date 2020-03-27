@@ -68,16 +68,16 @@ class AbstractScriptedSegmentEditorEffect(object):
     rasVector = self.scriptedEffect.xyToRas(xyPoint, viewWidget)
     return [rasVector.x(), rasVector.y(), rasVector.z()]
 
-  def xyzToIjk(self, xyz, viewWidget, image):
+  def xyzToIjk(self, xyz, viewWidget, image, parentTransformNode=None):
     import vtkSegmentationCorePython as vtkSegmentationCore
     xyzVector = qt.QVector3D(xyz[0], xyz[1], xyz[2])
-    ijkVector = self.scriptedEffect.xyzToIjk(xyzVector, viewWidget, image)
+    ijkVector = self.scriptedEffect.xyzToIjk(xyzVector, viewWidget, image, parentTransformNode)
     return [int(ijkVector.x()), int(ijkVector.y()), int(ijkVector.z())]
 
-  def xyToIjk(self, xy, viewWidget, image):
+  def xyToIjk(self, xy, viewWidget, image, parentTransformNode=None):
     import vtkSegmentationCorePython as vtkSegmentationCore
     xyPoint = qt.QPoint(xy[0], xy[1])
-    ijkVector = self.scriptedEffect.xyToIjk(xyPoint, viewWidget, image)
+    ijkVector = self.scriptedEffect.xyToIjk(xyPoint, viewWidget, image, parentTransformNode)
     return [int(ijkVector.x()), int(ijkVector.y()), int(ijkVector.z())]
 
   def setWidgetMinMaxStepFromImageSpacing(self, spinbox, imageData):

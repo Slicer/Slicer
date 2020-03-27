@@ -150,8 +150,13 @@ class LevelTracingPipeline(object):
     import vtkSegmentationCorePython as vtkSegmentationCore
     masterImageData = self.effect.scriptedEffect.masterVolumeImageData()
 
+    segmentationNode = self.effect.scriptedEffect.parameterSetNode().GetSegmentationNode()
+    parentTransformNode = None
+    if segmentationNode:
+      parentTransformNode = segmentationNode.GetParentTransformNode()
+
     self.xyPoints.Reset()
-    ijk = self.effect.xyToIjk(xy, self.sliceWidget, masterImageData)
+    ijk = self.effect.xyToIjk(xy, self.sliceWidget, masterImageData, parentTransformNode)
     dimensions = masterImageData.GetDimensions()
 
     for index in range(3):
@@ -166,8 +171,9 @@ class LevelTracingPipeline(object):
     # for the input volume
     sliceNode = self.effect.scriptedEffect.viewNode(self.sliceWidget)
     offset = max(sliceNode.GetDimensions())
-    i0,j0,k0 = self.effect.xyToIjk((0,0), self.sliceWidget, masterImageData)
-    i1,j1,k1 = self.effect.xyToIjk((offset,offset), self.sliceWidget, masterImageData)
+
+    i0,j0,k0 = self.effect.xyToIjk((0,0), self.sliceWidget, masterImageData, parentTransformNode)
+    i1,j1,k1 = self.effect.xyToIjk((offset,offset), self.sliceWidget, masterImageData, parentTransformNode)
     if i0 == i1:
       self.tracingFilter.SetPlaneToJK()
     if j0 == j1:
@@ -186,6 +192,10 @@ class LevelTracingPipeline(object):
     xyToIjk = vtk.vtkGeneralTransform()
     xyToIjk.PostMultiply()
     xyToIjk.Concatenate(xyToRas)
+    if parentTransformNode:
+      worldToSegmentation = vtk.vtkMatrix4x4()
+      parentTransformNode.GetMatrixTransformFromWorld(worldToSegmentation)
+      xyToIjk.Concatenate(worldToSegmentation)
     xyToIjk.Concatenate(rasToIjk)
     ijkToXy = xyToIjk.GetInverse()
     ijkToXy.TransformPoints(polyData.GetPoints(), self.xyPoints)
@@ -200,4 +210,5 @@ class LevelTracingPipeline(object):
       return
 
     # Apply poly data on modifier labelmap
-    self.effect.scriptedEffect.appendPolyMask(modifierLabelmap, self.polyData, self.sliceWidget)
+    segmentationNode = self.effect.scriptedEffect.parameterSetNode().GetSegmentationNode()
+    self.effect.scriptedEffect.appendPolyMask(modifierLabelmap, self.polyData, self.sliceWidget, segmentationNode)
