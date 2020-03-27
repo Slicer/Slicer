@@ -221,7 +221,8 @@ class DrawPipeline(object):
       modifierLabelmap = self.scriptedEffect.defaultModifierLabelmap()
 
       # Apply poly data on modifier labelmap
-      self.scriptedEffect.appendPolyMask(modifierLabelmap, self.polyData, self.sliceWidget)
+      segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
+      self.scriptedEffect.appendPolyMask(modifierLabelmap, self.polyData, self.sliceWidget, segmentationNode)
 
     self.resetPolyData()
     if lineExists:
