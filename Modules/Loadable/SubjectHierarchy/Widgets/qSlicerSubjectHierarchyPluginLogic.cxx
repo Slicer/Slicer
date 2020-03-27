@@ -406,10 +406,19 @@ void qSlicerSubjectHierarchyPluginLogic::onSceneBatchProcessEnded(vtkObject* sce
       {
       continue; // Folder type item
       }
-    if ( shNode->HasItemAttribute( itemID,
-      vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName()) )
+    if (shNode->GetItemOwnerPluginName(itemID) == "Segments")
       {
-      continue; // In virtual branch
+      // In legacy scenes, for segment virtual items, Level is set to empty
+      // (instead of VirtualBranch, as in current scenes), therefore they are not
+      // found as folder type items and the segments get removed from the scene.
+      // To fix this, we treat "Segment" type items as folder items and skip them.
+      continue;
+      }
+    if (shNode->HasItemAttribute(itemID,
+      vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName()))
+      {
+      // In virtual branch
+      continue;
       }
     if (shNode->GetItemDataNode(itemID) == nullptr)
       {
