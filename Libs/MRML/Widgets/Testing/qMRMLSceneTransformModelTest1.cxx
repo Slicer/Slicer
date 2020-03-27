@@ -137,11 +137,11 @@ int qMRMLSceneTransformModelTest1(int argc, char * argv [])
   view->show();
   view->resize(500, 800);
 
-  qMRMLTreeView treeWidget;
-  treeWidget.setWindowTitle("qMRMLTreeView");
-  treeWidget.setMRMLScene(sceneFactory.mrmlScene());
-  treeWidget.setDragDropMode(QAbstractItemView::InternalMove);
-  treeWidget.show();
+  qMRMLTreeView* treeWidget = new qMRMLTreeView;
+  treeWidget->setWindowTitle("qMRMLTreeView");
+  treeWidget->setMRMLScene(sceneFactory.mrmlScene());
+  treeWidget->setDragDropMode(QAbstractItemView::InternalMove);
+  treeWidget->show();
 
   qMRMLSortFilterProxyModel sortModel;
   sortModel.setSourceModel(&model);
@@ -157,6 +157,10 @@ int qMRMLSceneTransformModelTest1(int argc, char * argv [])
     QTimer::singleShot(200, &app, SLOT(quit()));
     }
 
-  return app.exec();
-}
+  int result = app.exec();
 
+  delete view;
+  delete treeWidget;
+
+  return result;
+}
