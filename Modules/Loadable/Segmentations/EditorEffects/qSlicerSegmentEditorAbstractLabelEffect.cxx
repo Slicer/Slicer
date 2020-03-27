@@ -120,12 +120,30 @@ void qSlicerSegmentEditorAbstractLabelEffect::updateMRMLFromGUI()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractLabelEffect::appendPolyMask(vtkOrientedImageData* input, vtkPolyData* polyData, qMRMLSliceWidget* sliceWidget)
+void qSlicerSegmentEditorAbstractLabelEffect::appendPolyMask(vtkOrientedImageData* input, vtkPolyData* polyData, qMRMLSliceWidget* sliceWidget, vtkMRMLSegmentationNode* segmentationNode/*=nullptr*/)
 {
   // Rasterize a poly data onto the input image into the slice view
   // - Points are specified in current XY space
   vtkSmartPointer<vtkOrientedImageData> polyMaskImage = vtkSmartPointer<vtkOrientedImageData>::New();
   qSlicerSegmentEditorAbstractLabelEffect::createMaskImageFromPolyData(polyData, polyMaskImage, sliceWidget);
+
+  if (segmentationNode && segmentationNode->GetParentTransformNode())
+    {
+    if (segmentationNode->GetParentTransformNode()->IsTransformToWorldLinear())
+      {
+      vtkNew<vtkMatrix4x4> worldToSegmentation;
+      segmentationNode->GetParentTransformNode()->GetMatrixTransformFromWorld(worldToSegmentation);
+      vtkNew<vtkMatrix4x4> imageToWorldMatrix;
+      polyMaskImage->GetImageToWorldMatrix(imageToWorldMatrix);
+      vtkNew<vtkMatrix4x4> imageToSegmentation;
+      vtkMatrix4x4::Multiply4x4(worldToSegmentation, imageToWorldMatrix, imageToSegmentation);
+      polyMaskImage->SetImageToWorldMatrix(imageToSegmentation);
+      }
+    else
+      {
+      qCritical() << Q_FUNC_INFO << ": Parent transform is non-linear, which cannot be handled! Skipping.";
+      }
+    }
 
   // Append poly mask onto input image
   qSlicerSegmentEditorAbstractLabelEffect::appendImage(input, polyMaskImage);
