@@ -56,6 +56,7 @@
 #include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLSubjectHierarchyNode.h"
+#include "vtkMRMLTransformNode.h"
 
 // VTK includes
 #include <vtkImageConstantPad.h>
@@ -1286,7 +1287,7 @@ QVector3D qSlicerSegmentEditorAbstractEffect::xyToRas(QPoint xy, qMRMLSliceWidge
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractEffect::xyzToIjk(double inputXyz[3], int outputIjk[3], qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image)
+void qSlicerSegmentEditorAbstractEffect::xyzToIjk(double inputXyz[3], int outputIjk[3], qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image, vtkMRMLTransformNode* parentTransformNode/*=nullptr*/)
 {
   outputIjk[0] = outputIjk[1] = outputIjk[2] = 0;
 
@@ -1298,6 +1299,26 @@ void qSlicerSegmentEditorAbstractEffect::xyzToIjk(double inputXyz[3], int output
   // Convert from XY to RAS first
   double ras[3] = {0.0, 0.0, 0.0};
   qSlicerSegmentEditorAbstractEffect::xyzToRas(inputXyz, ras, sliceWidget);
+
+  // Move point from world to same transform as image
+  if (parentTransformNode)
+    {
+    if (parentTransformNode->IsTransformToWorldLinear())
+      {
+      vtkNew<vtkMatrix4x4> worldToParentTransform;
+      parentTransformNode->GetMatrixTransformFromWorld(worldToParentTransform);
+      double worldPos[4] = { ras[0], ras[1], ras[2], 1.0 };
+      double parentPos[4] = { 0.0 };
+      worldToParentTransform->MultiplyPoint(worldPos, parentPos);
+      ras[0] = parentPos[0];
+      ras[1] = parentPos[1];
+      ras[2] = parentPos[2];
+      }
+    else
+      {
+      qCritical() << Q_FUNC_INFO << ": Parent transform is non-linear, which cannot be handled! Skipping.";
+      }
+    }
 
   // Convert RAS to image IJK
   double rast[4] = {ras[0], ras[1], ras[2], 1.0};
@@ -1313,37 +1334,38 @@ void qSlicerSegmentEditorAbstractEffect::xyzToIjk(double inputXyz[3], int output
 }
 
 //-----------------------------------------------------------------------------
-QVector3D qSlicerSegmentEditorAbstractEffect::xyzToIjk(QVector3D inputXyzVector, qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image)
+QVector3D qSlicerSegmentEditorAbstractEffect::xyzToIjk(QVector3D inputXyzVector, qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image, vtkMRMLTransformNode* parentTransformNode/*=nullptr*/)
 {
   double inputXyz[3] = {inputXyzVector.x(), inputXyzVector.y(), inputXyzVector.z()};
   int outputIjk[3] = {0, 0, 0};
-  qSlicerSegmentEditorAbstractEffect::xyzToIjk(inputXyz, outputIjk, sliceWidget, image);
+  qSlicerSegmentEditorAbstractEffect::xyzToIjk(inputXyz, outputIjk, sliceWidget, image, parentTransformNode);
+  
   QVector3D outputVector(outputIjk[0], outputIjk[1], outputIjk[2]);
   return outputVector;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractEffect::xyToIjk(QPoint xy, int outputIjk[3], qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image)
+void qSlicerSegmentEditorAbstractEffect::xyToIjk(QPoint xy, int outputIjk[3], qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image, vtkMRMLTransformNode* parentTransformNode/*=nullptr*/)
 {
   double xyz[3] = {
     static_cast<double>(xy.x()),
     static_cast<double>(xy.y()),
     0.0};
-  qSlicerSegmentEditorAbstractEffect::xyzToIjk(xyz, outputIjk, sliceWidget, image);
+  qSlicerSegmentEditorAbstractEffect::xyzToIjk(xyz, outputIjk, sliceWidget, image, parentTransformNode);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractEffect::xyToIjk(double xy[2], int outputIjk[3], qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image)
+void qSlicerSegmentEditorAbstractEffect::xyToIjk(double xy[2], int outputIjk[3], qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image, vtkMRMLTransformNode* parentTransformNode/*=nullptr*/)
 {
   double xyz[3] = {xy[0], xy[0], 0.0};
-  qSlicerSegmentEditorAbstractEffect::xyzToIjk(xyz, outputIjk, sliceWidget, image);
+  qSlicerSegmentEditorAbstractEffect::xyzToIjk(xyz, outputIjk, sliceWidget, image, parentTransformNode);
 }
 
 //-----------------------------------------------------------------------------
-QVector3D qSlicerSegmentEditorAbstractEffect::xyToIjk(QPoint xy, qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image)
+QVector3D qSlicerSegmentEditorAbstractEffect::xyToIjk(QPoint xy, qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image, vtkMRMLTransformNode* parentTransformNode/*=nullptr*/)
 {
   int outputIjk[3] = {0, 0, 0};
-  qSlicerSegmentEditorAbstractEffect::xyToIjk(xy, outputIjk, sliceWidget, image);
+  qSlicerSegmentEditorAbstractEffect::xyToIjk(xy, outputIjk, sliceWidget, image, parentTransformNode);
   QVector3D outputVector(outputIjk[0], outputIjk[1], outputIjk[2]);
   return outputVector;
 }

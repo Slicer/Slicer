@@ -39,6 +39,7 @@ class vtkMRMLScene;
 class vtkMRMLSegmentEditorNode;
 class vtkMRMLAbstractViewNode;
 class vtkMRMLSegmentationNode;
+class vtkMRMLTransformNode;
 class vtkSegment;
 class vtkRenderer;
 class vtkRenderWindow;
@@ -374,15 +375,15 @@ public:
   /// Convert XY in-slice position to RAS position, python accessor method
   Q_INVOKABLE static QVector3D xyToRas(QPoint xy, qMRMLSliceWidget* sliceWidget);
   /// Convert XYZ slice view position to image IJK position, \sa xyzToRas
-  static void xyzToIjk(double inputXyz[3], int outputIjk[3], qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image);
+  static void xyzToIjk(double inputXyz[3], int outputIjk[3], qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image, vtkMRMLTransformNode* parentTransform = nullptr);
   /// Convert XYZ slice view position to image IJK position, python accessor method, \sa xyzToRas
-  Q_INVOKABLE static QVector3D xyzToIjk(QVector3D inputXyz, qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image);
+  Q_INVOKABLE static QVector3D xyzToIjk(QVector3D inputXyz, qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image, vtkMRMLTransformNode* parentTransform = nullptr);
   /// Convert XY in-slice position to image IJK position
-  static void xyToIjk(QPoint xy, int outputIjk[3], qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image);
+  static void xyToIjk(QPoint xy, int outputIjk[3], qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image, vtkMRMLTransformNode* parentTransform = nullptr);
   /// Convert XY in-slice position to image IJK position
-  static void xyToIjk(double xy[2], int outputIjk[3], qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image);
+  static void xyToIjk(double xy[2], int outputIjk[3], qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image, vtkMRMLTransformNode* parentTransform = nullptr);
   /// Convert XY in-slice position to image IJK position, python accessor method
-  Q_INVOKABLE static QVector3D xyToIjk(QPoint xy, qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image);
+  Q_INVOKABLE static QVector3D xyToIjk(QPoint xy, qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image, vtkMRMLTransformNode* parentTransform = nullptr);
 
   Q_INVOKABLE static void forceRender(qMRMLWidget* viewWidget);
   Q_INVOKABLE static void scheduleRender(qMRMLWidget* viewWidget);
