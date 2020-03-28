@@ -286,7 +286,7 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
       inputLabelImage.SetImageToWorldMatrix(selectedSegmentLabelmapImageToWorldMatrix)
 
     xy = callerInteractor.GetEventPosition()
-    ijk = self.xyToIjk(xy, viewWidget, inputLabelImage)
+    ijk = self.xyToIjk(xy, viewWidget, inputLabelImage, segmentationNode.GetParentTransformNode())
     pixelValue = inputLabelImage.GetScalarComponentAsFloat(ijk[0], ijk[1], ijk[2], 0)
 
     try:
