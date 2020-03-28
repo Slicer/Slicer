@@ -11,16 +11,30 @@ if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 endif()
 
-# MRML scenes that are older than MRML_SUPPORT_VERSION won't be supported.
-# Or said differently, MRML_SUPPORT_VERSION is the earliest version supported
+set(MRML_APPLICATION_NAME "Slicer" CACHE STRING "Current MRML scene creator application name" )
+mark_as_advanced(MRML_APPLICATION_NAME)
+
+# The format is: 0xXXYYZZ where XX is the major version, YY the minor and
+# ZZ the patch version.
+# This format is chosen to allow easy comparison in C++ precompiler macros.
+set(MRML_APPLICATION_VERSION 0x040000 CACHE STRING "Current MRML application version" )
+mark_as_advanced(MRML_APPLICATION_VERSION)
+
+# Revision can be used to identify version with finer granularity than version.
+# It is an integer number that is incremented with each new software revision.
+set(MRML_APPLICATION_REVISION 0 CACHE STRING "Current MRML application revision number" )
+mark_as_advanced(MRML_APPLICATION_REVISION)
+
+# MRML scenes that are older than MRML_APPLICATION_SUPPORT_VERSION won't be supported.
+# Or said differently, MRML_APPLICATION_SUPPORT_VERSION is the earliest version supported
 # for a MRML scene.
 # The format is: 0xXXYYZZ where XX is the major version, YY the minor and
 # ZZ the patch version.
-# For example, set MRML_SUPPORT_VERSION to 0x040000 if you don't want to
+# For example, set MRML_APPLICATION_SUPPORT_VERSION to 0x040000 if you don't want to
 # support scenes of Slicer 3.
 # Supports Slicer3 and Slicer4 scenes by default.
-set(MRML_SUPPORT_VERSION 0x030000 CACHE STRING "MRML scene version to support " )
-mark_as_advanced(MRML_SUPPORT_VERSION)
+set(MRML_APPLICATION_SUPPORT_VERSION 0x030000 CACHE STRING "MRML application version to support" )
+mark_as_advanced(MRML_APPLICATION_SUPPORT_VERSION)
 
 option(MRML_USE_vtkTeem "Build MRML with vtkTeem support." ON)
 mark_as_advanced(MRML_USE_vtkTeem)

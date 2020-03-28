@@ -21,6 +21,7 @@
 // QtCore includes
 #include <QDebug>
 #include <QMessageBox>
+#include <QVersionNumber>
 
 #include "qSlicerSceneReader.h"
 #include "qSlicerSceneIOOptionsWidget.h"
@@ -111,15 +112,43 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
     {
     this->userMessages()->AddMessage(vtkCommand::ErrorEvent, "\n\n" + this->mrmlScene()->GetErrorMessage());
     }
-  if (this->mrmlScene()->GetLastLoadedVersion() &&
-     this->mrmlScene()->GetVersion() &&
-      strcmp(this->mrmlScene()->GetLastLoadedVersion(),
-             this->mrmlScene()->GetVersion()) > 0 )
+
+  // Display warning message if scene file was created with a different application or with a future application version
+  std::string currentApplication;
+  int currentMajor = 0;
+  int currentMinor = 0;
+  int currentPatch = 0;
+  int currentRevision = 0;
+  std::string loadedApplication;
+  int loadedMajor = 0;
+  int loadedMinor = 0;
+  int loadedPatch = 0;
+  int loadedRevision = 0;
+  if (vtkMRMLScene::ParseVersion(this->mrmlScene()->GetVersion(), currentApplication,
+    currentMajor, currentMinor, currentPatch, currentRevision)
+    && vtkMRMLScene::ParseVersion(this->mrmlScene()->GetLastLoadedVersion(), loadedApplication,
+      loadedMajor, loadedMinor, loadedPatch, loadedRevision))
     {
-    std::string msg = "Warning: scene file " + file.toStdString() + " has version " +
-      std::string(this->mrmlScene()->GetLastLoadedVersion()) + " greater than Slicer version " +
-      std::string(this->mrmlScene()->GetVersion()) + ".";
-    this->userMessages()->AddMessage(vtkCommand::WarningEvent, msg);
+    QStringList sceneVersionWarningMessages;
+    if (loadedApplication != currentApplication)
+      {
+      sceneVersionWarningMessages << tr("The scene file was saved with %1 application (this application is %2).")
+        .arg(QString::fromUtf8(loadedApplication.c_str()))
+        .arg(QString::fromUtf8(currentApplication.c_str()));
+      }
+    QVersionNumber loadedSceneVersion(loadedMajor, loadedMinor, loadedPatch);
+    QVersionNumber currentVersion(currentMajor, currentMinor, currentPatch);
+    if (loadedSceneVersion > currentVersion)
+      {
+      sceneVersionWarningMessages << tr("The scene file was created with a newer version of the application (%1) than the current version (%2).")
+        .arg(loadedSceneVersion.toString())
+        .arg(currentVersion.toString());
+      }
+    if (!sceneVersionWarningMessages.isEmpty())
+      {
+      sceneVersionWarningMessages.push_front(tr("The scene may not load correctly.").arg(file));
+      this->userMessages()->AddMessage(vtkCommand::WarningEvent, sceneVersionWarningMessages.join(" ").toStdString());
+      }
     }
 
   return res;

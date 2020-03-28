@@ -623,6 +623,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   testHelper->AddArguments(argc, const_cast<const char **>(argv));
   vtkStdString savedScene = testHelper->GetTempDirectory();
   savedScene += "/vtkMRMLCameraDisplayableManagerTest1_saved.mrml";
+  scene->SetVersion("Slicer4.4.0"); // Force scene version to be the same as in the baseline scene file
   scene->Commit(savedScene);
   if (scene->GetErrorCode() != vtkErrorCode::NoError)
     {

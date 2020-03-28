@@ -128,7 +128,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->UniqueIDs.clear();
   this->UniqueNames.clear();
 
-  this->Nodes =  vtkCollection::New();
+  this->Nodes = vtkCollection::New();
   this->MaximumNumberOfSavedUndoStates = 20;
   this->UndoFlag = false;
 
@@ -150,7 +150,17 @@ vtkMRMLScene::vtkMRMLScene()
 
   this->LastLoadedVersion = nullptr;
   this->Version = nullptr;
-  this->SetVersion(CURRENT_MRML_VERSION);
+  // versionHexMajorMinorPatch stores version number as 0xXXYYZZ (XX=major, YY=minor, ZZ=patch)
+  const int versionHexMajorMinorPatch = MRML_APPLICATION_VERSION;
+  std::stringstream versionStream; // Example: Slicer 4.11.0 123456
+  versionStream << MRML_APPLICATION_NAME
+    << " "
+    << (versionHexMajorMinorPatch >> 16) << "."
+    << ((versionHexMajorMinorPatch >> 8) & 0xFF) << "."
+    << (versionHexMajorMinorPatch & 0xFF)
+    << " "
+    << MRML_APPLICATION_REVISION;
+  this->SetVersion(versionStream.str().c_str());
 
   this->DeleteEventCallback = vtkCallbackCommand::New();
   this->DeleteEventCallback->SetClientData( reinterpret_cast<void *>(this) );
@@ -1052,7 +1062,7 @@ int vtkMRMLScene::Commit(const char* url)
 
   //--- BEGIN test of user tags
   //file << "<MRML>\n";
-  *os << "<MRML ";
+  *os << "<MRML";
 
   // write version
   if (this->GetVersion())
@@ -1083,7 +1093,7 @@ int vtkMRMLScene::Commit(const char* url)
       }
     if ( ss.str().c_str()!= nullptr )
       {
-      *os << "userTags=\"" << ss.str().c_str() << "\"";
+      *os << " userTags=\"" << ss.str().c_str() << "\"";
       }
     }
 
@@ -4492,4 +4502,47 @@ std::string vtkMRMLScene::PercentEncode(std::string s)
       }
     }
   return result.str();
+}
+
+//-----------------------------------------------------------------------------
+bool vtkMRMLScene::ParseVersion(const char* versionString, std::string& application, int& major, int& minor, int& patch, int& revision)
+{
+  if (!versionString)
+    {
+    return false;
+    }
+
+  // Old-style: "Slicer4.4.0"
+  vtksys::RegularExpression oldStyle("^Slicer([0-9]+)\\.([0-9]+)\\.([0-9]+)");
+  // New-style: "Slicer 4.4.0 123456"
+  vtksys::RegularExpression newStyle("^([^ ]+) ([0-9]+)\\.([0-9]+)\\.([0-9]+) ([0-9]+)");
+
+  application = "Slicer";
+  std::string majorStr("1");
+  std::string minorStr("0");
+  std::string patchStr("0");
+  std::string revisionStr("0");
+  if (oldStyle.find(versionString))
+    {
+    majorStr = oldStyle.match(1);
+    minorStr = oldStyle.match(2);
+    patchStr = oldStyle.match(3);
+    }
+  else if (newStyle.find(versionString))
+    {
+    application = newStyle.match(1);
+    majorStr = newStyle.match(2);
+    minorStr = newStyle.match(3);
+    patchStr = newStyle.match(4);
+    revisionStr = newStyle.match(5);
+    }
+  else
+    {
+    return false;
+    }
+  major = atoi(majorStr.c_str());
+  minor = atoi(minorStr.c_str());
+  patch = atoi(patchStr.c_str());
+  revision = atoi(revisionStr.c_str());
+  return true;
 }

@@ -167,7 +167,7 @@ void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
         }
       }
     }
-#if MRML_SUPPORT_VERSION < 0x040000
+#if MRML_APPLICATION_SUPPORT_VERSION < MRML_VERSION_CHECK(4, 0, 0)
   if (this->BackgroundColor2[0] == backGroundColorInvalid)
     {
     // BackgroundColor2 has not been set
@@ -176,7 +176,7 @@ void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
     this->BackgroundColor2[2] = this->BackgroundColor[2];
     }
 #endif
-#if MRML_SUPPORT_VERSION < 0x040200
+#if MRML_APPLICATION_SUPPORT_VERSION < MRML_VERSION_CHECK(4, 2, 0)
   // vtkMRMLAbstractViewNodes where not singletons before 4.2
   if (!this->GetLayoutName() || strlen(this->GetLayoutName()))
     {
