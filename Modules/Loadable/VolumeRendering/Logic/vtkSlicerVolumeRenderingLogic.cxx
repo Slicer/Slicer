@@ -140,7 +140,7 @@ void vtkSlicerVolumeRenderingLogic::RegisterNodes()
   this->GetMRMLScene()->RegisterNodeClass( cpuVRNode.GetPointer() );
   // Volume rendering nodes used to have the tag "VolumeRenderingParameters"
   // in scenes prior to Slicer 4.2
-#if MRML_SUPPORT_VERSION < 0x040200
+#if MRML_APPLICATION_SUPPORT_VERSION < MRML_VERSION_CHECK(4, 2, 0)
   this->GetMRMLScene()->RegisterNodeClass( cpuVRNode.GetPointer(), "VolumeRenderingParameters");
 #endif
 
