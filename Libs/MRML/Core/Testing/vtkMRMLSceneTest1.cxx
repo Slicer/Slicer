@@ -81,6 +81,29 @@ int vtkMRMLSceneTest1(int , char * [] )
   TEST_SET_GET_STRING(scene1.GetPointer(), URL);
   TEST_SET_GET_STRING(scene1.GetPointer(), RootDirectory);
 
+  // Test scene version parsing
+  std::string applicationName;
+  int major = -1;
+  int minor = -1;
+  int patch = -1;
+  int revision = -1;
+  // Old-style
+  CHECK_BOOL(vtkMRMLScene::ParseVersion("Slicer4.5.6", applicationName, major, minor, patch, revision), true);
+  CHECK_STD_STRING(applicationName, "Slicer");
+  CHECK_INT(major, 4);
+  CHECK_INT(minor, 5);
+  CHECK_INT(patch, 6);
+  // Invalid
+  CHECK_BOOL(vtkMRMLScene::ParseVersion("Slicer4.5.", applicationName, major, minor, patch, revision), false);
+  CHECK_BOOL(vtkMRMLScene::ParseVersion("Some4.5.", applicationName, major, minor, patch, revision), false);
+  // New-style
+  CHECK_BOOL(vtkMRMLScene::ParseVersion("SomeApp 71.82.93 12345", applicationName, major, minor, patch, revision), true);
+  CHECK_STD_STRING(applicationName, "SomeApp");
+  CHECK_INT(major, 71);
+  CHECK_INT(minor, 82);
+  CHECK_INT(patch, 93);
+  CHECK_INT(revision, 12345);
+
   //---------------------------------------------------------------------------
   // Test IsNodeClassRegistered
   //---------------------------------------------------------------------------

@@ -15,10 +15,6 @@ Version:   $Revision: 1.18 $
 #ifndef __vtkMRMLScene_h
 #define __vtkMRMLScene_h
 
-/// Current MRML version
-/// needs to be changed when incompatible MRML changes introduced
-#define CURRENT_MRML_VERSION "Slicer4.4.0"
-
 // MRML includes
 #include "vtkMRML.h"
 
@@ -144,7 +140,7 @@ public:
   ///
   /// The signature with tagName != 0 is useful to add support for
   /// scene backward compatibility. Calls with an obsolete tag should be
-  /// wrapped with: <code>\#if MRML_SUPPORT_VERSION < 0x0X0Y0Z</code> and <code>\#endif</code>
+  /// wrapped with: <code>\#if MRML_APPLICATION_SUPPORT_VERSION < 0x0X0Y0Z</code> and <code>\#endif</code>
   /// where X is the major version of Slicer scene to support, Y the minor and
   /// Z the patch version.
   ///
@@ -711,6 +707,10 @@ public:
   /// The current software version.
   vtkGetStringMacro(Version);
   vtkSetStringMacro(Version);
+
+  /// Parse version string.
+  /// Return true if version is successfully parsed.
+  static bool ParseVersion(const char* versionString, std::string& application, int& major, int& minor, int& patch, int& revision);
 
   /// Copies all registered nodes into the parameter scene.
   void CopyRegisteredNodesToScene(vtkMRMLScene *scene);
