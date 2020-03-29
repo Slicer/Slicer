@@ -91,6 +91,14 @@ These guidelines are largely inspired by Chris Beam's
 [How to Write a Commit Message](https://chris.beams.io/posts/git-commit/)
 post.
 
+Examples:
+  - Bad: `BUG: Check pointer validity before dereferencing` -> implementation detail, self-explanatory (by looking at the code)
+  - Good: `BUG: Fix crash in Module X when clicking Apply button`
+  - Bad: `ENH: More work in qSlicerXModuleWidget` -> more work is too vague, qSlicerXModuleWidget is too low level
+  - Good: `ENH: Add float image outputs in module X`
+  - Bad: `COMP: Typo in cmake variable` -> implementation detail, self-explanatory
+  - Good: `COMP: Fix compilation error with Numpy on Visual Studio`
+
 
 #### How to integrate a PR ?
 
