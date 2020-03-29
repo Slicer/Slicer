@@ -38,9 +38,6 @@ Based on the comments posted by the reviewers, you may have to revisit your patc
 
 We encourage all developers to:
 
-* review and follow the style guidelines described
-[on the wiki](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Style_Guide#Commits).
-
 * add or update tests. There are plenty of existing tests to inspire from. The
   testing [how-tos](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Tutorials/Testing) are
   also resourceful.
@@ -49,6 +46,51 @@ We encourage all developers to:
   mailing list. For example, update of ITK, Python, Qt or VTK version, change to
   core functionality, should be carefully reviewed and integrated. Ideally, several
   developers would test that the changes don't break extensions.
+
+#### How to write commit messages ?
+
+Write your commit messages using the standard prefixes for Slicer commit
+messages:
+
+  * `BUG:` Fix for runtime crash or incorrect result
+  * `COMP:` Compiler error or warning fix
+  * `DOC:` Documentation change
+  * `ENH:` New functionality
+  * `PERF:` Performance improvement
+  * `STYLE:` No logic impact (indentation, comments)
+  * `WIP:` Work In Progress not ready for merge
+
+The body of the message should clearly describe the motivation of the commit
+(**what**, **why**, and **how**). In order to ease the task of reviewing
+commits, the message body should follow the following guidelines:
+
+  1. Leave a blank line between the subject and the body.
+  This helps `git log` and `git rebase` work nicely, and allows to smooth
+  generation of release notes.
+  2. Try to keep the subject line below 72 characters, ideally 50.
+  3. Capitalize the subject line.
+  4. Do not end the subject line with a period.
+  5. Use the imperative mood in the subject line (e.g. `BUG: Fix spacing
+  not being considered.`).
+  6. Wrap the body at 80 characters.
+  7. Use semantic line feeds to separate different ideas, which improves the
+  readability.
+  8. Be concise, but honor the change: if significant alternative solutions
+  were available, explain why they were discarded.
+  9. If the commit refers to a topic discussed on the [Slicer forum](https://discourse.slicer.org), or fixes
+  a regression test, provide the link. If it fixes a compiler error, provide a
+  minimal verbatim message of the compiler error. If the commit closes an
+  issue, use the [GitHub issue closing
+  keywords](https://help.github.com/en/articles/closing-issues-using-keywords).
+
+Keep in mind that the significant time is invested in reviewing commits and
+*pull requests*, so following these guidelines will greatly help the people
+doing reviews.
+
+These guidelines are largely inspired by Chris Beam's
+[How to Write a Commit Message](https://chris.beams.io/posts/git-commit/)
+post.
+
 
 #### How to integrate a PR ?
 
