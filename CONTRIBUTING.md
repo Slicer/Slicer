@@ -6,7 +6,7 @@ look through the [documentation](https://www.slicer.org/wiki/Documentation/Night
 do better.
 
   * Ask a question on the [Slicer forum](https://discourse.slicer.org)
-  * Submit a feature request or bug, or add to the discussion on the [Slicer issue tracker](https://issues.slicer.org/)
+  * Use Slicer [Issues](https://github.com/Slicer/Slicer/issues) to submit a feature request or bug, or add to the discussion on an existing issue
   * Submit a [Pull Request](https://github.com/Slicer/Slicer/pulls) to improve Slicer or its documentation
 
 We encourage a range of Pull Requests, from patches that include passing tests and
