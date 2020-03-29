@@ -43,7 +43,7 @@ We encourage all developers to:
   also resourceful.
 
 * consider potential backward compatibility breakage and discuss these on the
-  mailing list. For example, update of ITK, Python, Qt or VTK version, change to
+  [Slicer forum](https://discourse.slicer.org). For example, update of ITK, Python, Qt or VTK version, change to
   core functionality, should be carefully reviewed and integrated. Ideally, several
   developers would test that the changes don't break extensions.
 
@@ -112,12 +112,9 @@ is the checklist:
 * To accommodate developers explicitly asking for more time to test the
   proposed changes, integration time can be delayed by few more days.
 
-Next, there are two scenarios:
-* You do NOT have push access: A Slicer core developer will integrate your PR. If
+* If you do NOT have push access, a Slicer core developer will integrate your PR. If
   you would like to speed up the integration, do not hesitate to send a note on
-  the mailing list.
-* You have push access: Follow [Integrating topic from external contributor](https://www.slicer.org/wiki/Slicer:git-svn#Integrating_topic_from_external_contributor)
-  instructions on the wiki.
+  the [Slicer forum](https://discourse.slicer.org).
 
 
 #### Automatic testing of pull requests
@@ -152,7 +149,7 @@ email.
    alternatives, summarize findings on the wiki or similar. [Labs](https://www.slicer.org/wiki/Documentation/Labs)
    page are usually a good ground for such summary.
 
-4. Announce on the mailing list the in-depth discussion of the topic for the
+4. Announce on the [Slicer forum](https://discourse.slicer.org) the in-depth discussion of the topic for the
    [Slicer Community hangout](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Meetings),
    encourage anyone that is interested in weighing in on the topic to join the
    discussion. If there is someone who is interested to participate in the discussion,
@@ -180,6 +177,6 @@ These currently include:
 
 *Alphabetically ordered by last name.*
 
-The Slicer community is inclusive and welcome anyone to work to become a core
+The Slicer community is inclusive and welcomes anyone to work to become a core
 developer and then a BDFL. This happens with hard work and approval of the existing
 BDFL.
