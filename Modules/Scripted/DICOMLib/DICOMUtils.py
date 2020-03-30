@@ -309,7 +309,7 @@ class TemporaryDICOMDatabase(object):
     closeTemporaryDatabase(self.originalDatabaseDir)
 
 #------------------------------------------------------------------------------
-def importDicom(dicomDataDir, dicomDatabase=None):
+def importDicom(dicomDataDir, dicomDatabase=None, copyFiles=False):
   """ Import DICOM files from folder into Slicer database
   """
   try:
@@ -317,7 +317,7 @@ def importDicom(dicomDataDir, dicomDatabase=None):
     assert indexer is not None
     if dicomDatabase is None:
       dicomDatabase = slicer.dicomDatabase
-    indexer.addDirectory( dicomDatabase, dicomDataDir )
+    indexer.addDirectory(dicomDatabase, dicomDataDir, copyFiles)
     indexer.waitForImportFinished()
   except Exception as e:
     import traceback
