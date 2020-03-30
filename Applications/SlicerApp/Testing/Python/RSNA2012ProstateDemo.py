@@ -3,6 +3,7 @@ import os
 import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
+from slicer.util import TESTING_DATA_URL
 
 #
 # RSNA2012ProstateDemo
@@ -69,7 +70,7 @@ class RSNA2012ProstateDemoTest(ScriptedLoadableModuleTest):
     SampleData.downloadFromURL(
       fileNames='RSNA2012ProstateDemo.mrb',
       loadFiles=True,
-      uris='http://slicer.kitware.com/midas3/download?items=10697',
+      uris=TESTING_DATA_URL + 'SHA256/2627388ee213564f8783d0242993212ba01189f4c6640d57c4cde4e28fc5f97b',
       checksums='SHA256:2627388ee213564f8783d0242993212ba01189f4c6640d57c4cde4e28fc5f97b')
 
     # get all scene view nodes and test switching

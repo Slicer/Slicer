@@ -4,6 +4,7 @@ import unittest
 import vtk, qt, ctk, slicer
 from DICOMLib import DICOMUtils
 from slicer.ScriptedLoadableModule import *
+from slicer.util import TESTING_DATA_URL
 
 #
 # JRC2013Vis
@@ -59,22 +60,22 @@ class JRC2013VisWidget(ScriptedLoadableModuleWidget):
     self.layout.addStretch(1)
 
   def onPart1DICOM(self):
-    tester = JRC2013VisTestTest()
+    tester = JRC2013VisTest()
     tester.setUp()
     tester.test_Part1DICOM()
 
   def onPart2Head(self):
-    tester = JRC2013VisTestTest()
+    tester = JRC2013VisTest()
     tester.setUp()
     tester.test_Part2Head()
 
   def onPart3Liver(self):
-    tester = JRC2013VisTestTest()
+    tester = JRC2013VisTest()
     tester.setUp()
     tester.test_Part3Liver()
 
   def onPart4Lung(self):
-    tester = JRC2013VisTestTest()
+    tester = JRC2013VisTest()
     tester.setUp()
     tester.test_Part4Lung()
 
@@ -95,7 +96,7 @@ class JRC2013VisWidget(ScriptedLoadableModuleWidget):
         import SampleData
         SampleData.downloadFromURL(
           fileNames='Dcmtk-db.zip',
-          uris='http://slicer.kitware.com/midas3/download?items=18822',
+          uris=TESTING_DATA_URL + 'MD5/6bfb01cf5ffb8e3af9b1c0c9556f0c6b45f0ec40305a9539ed7a9f0dcfe378e3',
           checksums='SHA256:6bfb01cf5ffb8e3af9b1c0c9556f0c6b45f0ec40305a9539ed7a9f0dcfe378e3')[0]
 
       import subprocess
@@ -144,7 +145,7 @@ class JRC2013VisLogic(ScriptedLoadableModuleLogic):
   pass
 
 
-class JRC2013VisTestTest(ScriptedLoadableModuleTest):
+class JRC2013VisTest(ScriptedLoadableModuleTest):
   """
   This is the test case for your scripted module.
   """
@@ -180,7 +181,7 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
     import SampleData
     dicomFilesDirectory = SampleData.downloadFromURL(
       fileNames='Dcmtk-db.zip',
-      uris='https://github.com/Slicer/SlicerTestingData/releases/download/MD5/7a43d121a51a631ab0df02071e5ba6ed',
+      uris=TESTING_DATA_URL + 'MD5/7a43d121a51a631ab0df02071e5ba6ed',
       checksums='MD5:7a43d121a51a631ab0df02071e5ba6ed')[0]
 
     try:
@@ -313,7 +314,7 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
     SampleData.downloadFromURL(
       fileNames='3DHeadData.mrb',
       loadFiles=True,
-      uris='http://slicer.kitware.com/midas3/download?items=8609',
+      uris=TESTING_DATA_URL + 'SHA256/e2c7944095dd92be7961bed37f3c8f49e6f40c7f31d4fe865753b6efddae7993',
       checksums='SHA256:e2c7944095dd92be7961bed37f3c8f49e6f40c7f31d4fe865753b6efddae7993')
     self.delayDisplay('Finished with download and loading\n')
 
@@ -387,7 +388,7 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
     SampleData.downloadFromURL(
       fileNames='LiverData.mrb',
       loadFiles=True,
-      uris='http://slicer.kitware.com/midas3/download?items=8611',
+      uris=TESTING_DATA_URL + 'SHA256/a39075d3e87f80bbf8eba1e0222ee68c60036e57c3db830db08f3022f424e221',
       checksums='SHA256:a39075d3e87f80bbf8eba1e0222ee68c60036e57c3db830db08f3022f424e221')
     self.delayDisplay('Finished with download and loading\n')
 
@@ -456,7 +457,7 @@ class JRC2013VisTestTest(ScriptedLoadableModuleTest):
     SampleData.downloadFromURL(
       fileNames='LungData.mrb',
       loadFiles=True,
-      uris='http://slicer.kitware.com/midas3/download?items=8612',
+      uris=TESTING_DATA_URL + 'SHA256/9da091065aa42edbba2d436a2ef21a093792e8a76455c28e5b80590b04f5a73e',
       checksums='SHA256:9da091065aa42edbba2d436a2ef21a093792e8a76455c28e5b80590b04f5a73e')
     self.delayDisplay('Finished with download and loading\n')
 

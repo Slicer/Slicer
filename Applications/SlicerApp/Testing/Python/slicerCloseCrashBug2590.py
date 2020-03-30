@@ -2,6 +2,7 @@ import os
 import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
+from slicer.util import TESTING_DATA_URL
 
 #
 # slicerCloseCrashBug2590
@@ -91,7 +92,7 @@ class slicerCloseCrashBug2590Test(ScriptedLoadableModuleTest):
     import SampleData
     SampleData.downloadFromURL(
       fileNames='RSNA2011_ChangeTracker_data.zip',
-      uris='http://slicer.kitware.com/midas3/download?items=8986',
+      uris=TESTING_DATA_URL + 'SHA256/256bf00a83884fab173edc9f83c028f654bd5eb44aeed28d2203ec76fab941ce',
       checksums='SHA256:256bf00a83884fab173edc9f83c028f654bd5eb44aeed28d2203ec76fab941ce')
 
     try:

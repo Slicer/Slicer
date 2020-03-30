@@ -1,10 +1,11 @@
 from __future__ import print_function
+import logging
 import os
 import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 from DICOMLib import DICOMUtils
-import logging
+from slicer.util import TESTING_DATA_URL
 
 #
 # SubjectHierarchyGenericSelfTest
@@ -121,7 +122,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
       os.mkdir(self.dicomDataDir)
 
     self.dicomDatabaseDir = subjectHierarchyGenericSelfTestDir + '/CtkDicomDatabase'
-    self.dicomZipFileUrl = 'http://slicer.kitware.com/midas3/download/item/137843/TestDicomCT.zip'
+    self.dicomZipFileUrl = TESTING_DATA_URL + 'SHA256/1aa0bb177bbf6471ca5f2192340a6cecdedb81b33506b03ff316c6b5f624e863'
     self.dicomZipChecksum = 'SHA256:1aa0bb177bbf6471ca5f2192340a6cecdedb81b33506b03ff316c6b5f624e863'
     self.dicomZipFilePath = subjectHierarchyGenericSelfTestDir + '/TestDicomCT.zip'
     self.expectedNumOfFilesInDicomDataDir = 10

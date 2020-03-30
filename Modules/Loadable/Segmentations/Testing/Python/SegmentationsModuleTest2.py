@@ -3,6 +3,7 @@ import unittest
 import vtk, qt, ctk, slicer
 import logging
 from slicer.ScriptedLoadableModule import *
+from slicer.util import TESTING_DATA_URL
 
 import vtkSegmentationCore
 
@@ -66,7 +67,8 @@ class SegmentationsModuleTest2(unittest.TestCase):
   def TestSection_RetrieveInputData(self):
     try:
       slicer.util.downloadAndExtractArchive(
-        'http://slicer.kitware.com/midas3/download/folder/3763/TinyPatient_Seg.zip', self.dataZipFilePath, self.segmentationsModuleTestDir,
+        TESTING_DATA_URL + 'SHA256/b902f635ef2059cd3b4ba854c000b388e4a9e817a651f28be05c22511a317ec7',
+        self.dataZipFilePath, self.segmentationsModuleTestDir,
         checksum='SHA256:b902f635ef2059cd3b4ba854c000b388e4a9e817a651f28be05c22511a317ec7')
 
       numOfFilesInDataDirTest = len([name for name in os.listdir(self.dataDir) if os.path.isfile(self.dataDir + '/' + name)])

@@ -6,6 +6,7 @@ import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 from DICOMLib import DICOMUtils
+from slicer.util import TESTING_DATA_URL
 
 #
 # DICOMReaders
@@ -67,7 +68,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Starting the DICOM test")
 
     referenceData = [
-      { "url": "http://slicer.kitware.com/midas3/download?items=292839",
+      { "url": TESTING_DATA_URL + "SHA256/3450ef9372a3460a2f181c8d3bb35a74b4f0acb10c6e18cfcf7804e1d99bf843",
         "checksum": "SHA256:3450ef9372a3460a2f181c8d3bb35a74b4f0acb10c6e18cfcf7804e1d99bf843",
         "fileName": "Mouse-MR-example-where-GDCM_fails.zip",
         "name": "Mouse-MR-example-where-GDCM_fails",
@@ -78,7 +79,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         "voxelValueQuantity": "(110852, DCM, \"MR signal intensity\")",
         "voxelValueUnits": "(1, UCUM, \"no units\")"
       },
-      { "url": "http://slicer.kitware.com/midas3/download?items=294857",
+      { "url": TESTING_DATA_URL + "SHA256/899f3f8617ca53bad7dca0b2908478319e708b48ff41dfa64b6bac1d76529928",
         "checksum": "SHA256:899f3f8617ca53bad7dca0b2908478319e708b48ff41dfa64b6bac1d76529928",
         "fileName": "deidentifiedMRHead-dcm-one-series.zip",
         "name": "deidentifiedMRHead-dcm-one-series",
@@ -91,7 +92,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
 
     # another dataset that could be added in the future - currently fails for all readers
     # due to invalid format - see https://issues.slicer.org/view.php?id=3569
-      #{ "url": "http://slicer.kitware.com/midas3/download/item/293587/RIDER_bug.zip",
+      #{ "url": TESTING_DATA_URL + "SHA256/4cbd051dc249ea47d0f7b4147ea8340ba11a4a18a1771d37c387e40538374cab",
         #"fileName": "RIDER_bug.zip",
         #"name": "RIDER_bug",
         #"seriesUID": "1.3.6.1.4.1.9328.50.7.261772317324041365541450388603508531852",
@@ -214,7 +215,7 @@ reloadScriptedModule('DICOMReaders'); import DICOMReaders; tester = DICOMReaders
     import SampleData
     dicomFilesDirectory = SampleData.downloadFromURL(
       fileNames='deidentifiedMRHead-dcm-one-series.zip',
-      uris='http://slicer.kitware.com/midas3/download?items=294857',
+      uris=TESTING_DATA_URL + 'SHA256/899f3f8617ca53bad7dca0b2908478319e708b48ff41dfa64b6bac1d76529928',
       checksums='SHA256:899f3f8617ca53bad7dca0b2908478319e708b48ff41dfa64b6bac1d76529928')[0]
     self.delayDisplay('Finished with download\n')
 
