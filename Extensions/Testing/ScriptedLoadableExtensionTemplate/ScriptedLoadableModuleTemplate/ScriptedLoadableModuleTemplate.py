@@ -1,8 +1,9 @@
+import logging
 import os
 import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
-import logging
+from slicer.util import TESTING_DATA_URL
 
 #
 # ScriptedLoadableModuleTemplate
@@ -233,14 +234,13 @@ class ScriptedLoadableModuleTemplateTest(ScriptedLoadableModuleTest):
     # first, get some data
     #
     import SampleData
-    SampleData.downloadFromURL(
-      nodeNames='FA',
-      fileNames='FA.nrrd',
-      uris='http://slicer.kitware.com/midas3/download?items=5767',
-      checksums='SHA256:12d17fba4f2e1f1a843f0757366f28c3f3e1a8bb38836f0de2a32bb1cd476560')
+    volumeNode = SampleData.downloadFromURL(
+      nodeNames='MRHead',
+      fileNames='MR-head.nrrd',
+      uris=TESTING_DATA_URL + 'SHA256/cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93',
+      checksums='SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93')
     self.delayDisplay('Finished with download and loading')
 
-    volumeNode = slicer.util.getNode(pattern="FA")
     logic = ScriptedLoadableModuleTemplateLogic()
     self.assertIsNotNone( logic.hasImageData(volumeNode) )
     self.delayDisplay('Test passed!')

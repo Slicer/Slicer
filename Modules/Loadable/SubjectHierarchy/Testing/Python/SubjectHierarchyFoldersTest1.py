@@ -3,6 +3,7 @@ import unittest
 import vtk, qt, ctk, slicer
 import logging
 from slicer.ScriptedLoadableModule import *
+from slicer.util import DATA_STORE_URL
 
 class SubjectHierarchyFoldersTest1(unittest.TestCase):
 
@@ -81,7 +82,8 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
     import SampleData
     sceneFile = SampleData.downloadFromURL(
       fileNames='NACBrainAtlas2015.mrb',
-      uris='https://slicer.kitware.com/midas3/download/bitstream/462380/nac-hncma-atlas-2015April-Slicer4-4Version.mrb',
+      # Note: this data set is from SlicerDataStore (not from SlicerTestingData) repository
+      uris=DATA_STORE_URL + 'SHA256/d69d0331d4fd2574be1459b7734921f64f5872d3cb9589ec01b2f53dadc7112f',
       checksums='SHA256:d69d0331d4fd2574be1459b7734921f64f5872d3cb9589ec01b2f53dadc7112f')[0]
 
     ioManager = slicer.app.ioManager()

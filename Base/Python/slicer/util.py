@@ -8,6 +8,20 @@ from __future__ import print_function
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
 
+TESTING_DATA_URL = "https://github.com/Slicer/SlicerTestingData/releases/download/"
+"""Base URL for downloading testing data.
+
+Datasets can be downloaded using URL of the form ``TESTING_DATA_URL + "SHA256/" + sha256ofDataSet``
+"""
+
+DATA_STORE_URL = "https://github.com/Slicer/SlicerDataStore/releases/download/"
+"""Base URL for downloading data from Slicer Data Store. Data store contains atlases,
+registration case library images, and various sample data sets.
+
+Datasets can be downloaded using URL of the form ``DATA_STORE_URL + "SHA256/" + sha256ofDataSet``
+"""
+
+
 def quit():
   exit(EXIT_SUCCESS)
 

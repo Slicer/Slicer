@@ -3,6 +3,7 @@ import os
 import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
+from slicer.util import TESTING_DATA_URL
 
 #
 # ScenePerformance
@@ -144,7 +145,8 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
   def testAll(self):
     self.setUp()
 
-    self.addURLData('http://slicer.kitware.com/midas3/download?items=10937', 'BrainAtlas2012.mrb', 'SHA256:688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1')
+    self.addURLData(TESTING_DATA_URL + 'SHA256/688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1',
+      'BrainAtlas2012.mrb', 'SHA256:688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1')
     self.modifyNodeByID('vtkMRMLScalarVolumeNode1')
     self.modifyNodeByID('vtkMRMLScalarVolumeNode2')
     self.modifyNodeByID('vtkMRMLScalarVolumeNode3')

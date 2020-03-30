@@ -3,6 +3,7 @@ import os
 import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
+from slicer.util import TESTING_DATA_URL
 
 #
 # Slicer4Minute
@@ -124,7 +125,7 @@ class Slicer4MinuteTest(ScriptedLoadableModuleTest):
     SampleData.downloadFromURL(
       fileNames='slicer4minute.mrb',
       loadFiles=True,
-      uris='http://slicer.kitware.com/midas3/download?items=8466',
+      uris=TESTING_DATA_URL + 'SHA256/5a1c78c3347f77970b1a29e718bfa10e5376214692d55a7320af94b9d8d592b8',
       checksums='SHA256:5a1c78c3347f77970b1a29e718bfa10e5376214692d55a7320af94b9d8d592b8')
     self.delayDisplay('Finished with download and loading')
 

@@ -3,6 +3,7 @@ import os
 import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
+from slicer.util import TESTING_DATA_URL
 
 #
 # AtlasTests
@@ -154,7 +155,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
     downloads = {
       'fileNames': 'Abdominal_Atlas_2012.mrb',
       'loadFiles': True,
-      'uris': 'http://slicer.kitware.com/midas3/download?items=8301',
+      'uris': TESTING_DATA_URL + 'SHA256/5d315abf7d303326669c6075f9eea927eeda2e531a5b1662cfa505806cb498ea',
       'checksums': 'SHA256:5d315abf7d303326669c6075f9eea927eeda2e531a5b1662cfa505806cb498ea',
       }
     self.perform_AtlasTest(downloads,'I')
@@ -164,7 +165,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
     downloads = {
       'fileNames': 'BrainAtlas2012.mrb',
       'loadFiles': True,
-      'uris': 'http://slicer.kitware.com/midas3/download?items=10937',
+      'uris': TESTING_DATA_URL + 'SHA256/688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1',
       'checksums': 'SHA256:688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1',
       }
     self.perform_AtlasTest(downloads,'A1_grayT1')
@@ -174,7 +175,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
     downloads = {
       'fileNames': 'KneeAtlas2012.mrb',
       'loadFiles': True,
-      'uris': 'http://slicer.kitware.com/midas3/download?items=9912',
+      'uris': TESTING_DATA_URL + 'SHA256/5d5506c07c238918d0c892e7b04c26ad7f43684d89580780bb207d1d860b0b33',
       'checksums': 'SHA256:5d5506c07c238918d0c892e7b04c26ad7f43684d89580780bb207d1d860b0b33',
       }
     self.perform_AtlasTest(downloads,'I')

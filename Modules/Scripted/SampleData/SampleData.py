@@ -1,11 +1,11 @@
 from __future__ import print_function
+import logging
 import os
+import textwrap
 import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
-from slicer.util import computeChecksum, extractAlgoAndDigest
-import logging
-import textwrap
+from slicer.util import computeChecksum, extractAlgoAndDigest, TESTING_DATA_URL
 
 #
 # SampleData methods
@@ -122,10 +122,11 @@ class SampleDataSource(object):
   Example::
 
     import SampleData
+    from slicer.util import TESTING_DATA_URL
     dataSource = SampleData.SampleDataSource(
       nodeNames='fixed',
       fileNames='fixed.nrrd',
-      uris='http://slicer.kitware.com/midas3/download/item/157188/small-mr-eye-fixed.nrrd')
+      uris=TESTING_DATA_URL + 'SHA256/b757f9c61c1b939f104e5d7861130bb28d90f33267a012eb8bb763a435f29d37')
     loadedNode = SampleData.SampleDataLogic().downloadFromSource(dataSource)[0]
   """
 
@@ -497,37 +498,50 @@ class SampleDataLogic(object):
   def registerBuiltInSampleDataSources(self):
     """Fills in the pre-define sample data sources"""
     sourceArguments = (
-        ('MRHead', None, 'http://slicer.kitware.com/midas3/download/item/292308/MR-head.nrrd', 'MR-head.nrrd', 'MRHead', 'SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93'),
-        ('CTChest', None, 'http://slicer.kitware.com/midas3/download/item/292307/CT-chest.nrrd', 'CT-chest.nrrd', 'CTChest', 'SHA256:4507b664690840abb6cb9af2d919377ffc4ef75b167cb6fd0f747befdb12e38e'),
-        ('CTACardio', None, 'http://slicer.kitware.com/midas3/download/item/292309/CTA-cardio.nrrd', 'CTA-cardio.nrrd', 'CTACardio', 'SHA256:3b0d4eb1a7d8ebb0c5a89cc0504640f76a030b4e869e33ff34c564c3d3b88ad2'),
-        ('DTIBrain', None, 'http://slicer.kitware.com/midas3/download/item/292310/DTI-brain.nrrd', 'DTI-Brain.nrrd', 'DTIBrain', 'SHA256:5c78d00c86ae8d968caa7a49b870ef8e1c04525b1abc53845751d8bce1f0b91a'),
-        ('MRBrainTumor1', None, 'http://slicer.kitware.com/midas3/download/item/292312/RegLib_C01_1.nrrd', 'RegLib_C01_1.nrrd', 'MRBrainTumor1', 'SHA256:998cb522173839c78657f4bc0ea907cea09fd04e44601f17c82ea27927937b95'),
-        ('MRBrainTumor2', None, 'http://slicer.kitware.com/midas3/download/item/292313/RegLib_C01_2.nrrd', 'RegLib_C01_2.nrrd', 'MRBrainTumor2', 'SHA256:1a64f3f422eb3d1c9b093d1a18da354b13bcf307907c66317e2463ee530b7a97'),
-        ('BaselineVolume', None, 'http://slicer.kitware.com/midas3/download/?items=2009,1', 'BaselineVolume.nrrd', 'BaselineVolume', 'SHA256:dff28a7711d20b6e16d5416535f6010eb99fd0c8468aaa39be4e39da78e93ec2'),
+        ('MRHead', None, TESTING_DATA_URL + 'SHA256/cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93',
+          'MR-head.nrrd', 'MRHead', 'SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93'),
+        ('CTChest', None, TESTING_DATA_URL + 'SHA256/4507b664690840abb6cb9af2d919377ffc4ef75b167cb6fd0f747befdb12e38e',
+          'CT-chest.nrrd', 'CTChest', 'SHA256:4507b664690840abb6cb9af2d919377ffc4ef75b167cb6fd0f747befdb12e38e'),
+        ('CTACardio', None, TESTING_DATA_URL + 'SHA256/3b0d4eb1a7d8ebb0c5a89cc0504640f76a030b4e869e33ff34c564c3d3b88ad2',
+          'CTA-cardio.nrrd', 'CTACardio', 'SHA256:3b0d4eb1a7d8ebb0c5a89cc0504640f76a030b4e869e33ff34c564c3d3b88ad2'),
+        ('DTIBrain', None, TESTING_DATA_URL + 'SHA256/5c78d00c86ae8d968caa7a49b870ef8e1c04525b1abc53845751d8bce1f0b91a',
+          'DTI-Brain.nrrd', 'DTIBrain', 'SHA256:5c78d00c86ae8d968caa7a49b870ef8e1c04525b1abc53845751d8bce1f0b91a'),
+        ('MRBrainTumor1', None, TESTING_DATA_URL + 'SHA256/998cb522173839c78657f4bc0ea907cea09fd04e44601f17c82ea27927937b95',
+          'RegLib_C01_1.nrrd', 'MRBrainTumor1', 'SHA256:998cb522173839c78657f4bc0ea907cea09fd04e44601f17c82ea27927937b95'),
+        ('MRBrainTumor2', None, TESTING_DATA_URL + 'SHA256/1a64f3f422eb3d1c9b093d1a18da354b13bcf307907c66317e2463ee530b7a97',
+          'RegLib_C01_2.nrrd', 'MRBrainTumor2', 'SHA256:1a64f3f422eb3d1c9b093d1a18da354b13bcf307907c66317e2463ee530b7a97'),
+        ('BaselineVolume', None, TESTING_DATA_URL + 'SHA256/dff28a7711d20b6e16d5416535f6010eb99fd0c8468aaa39be4e39da78e93ec2',
+          'BaselineVolume.nrrd', 'BaselineVolume', 'SHA256:dff28a7711d20b6e16d5416535f6010eb99fd0c8468aaa39be4e39da78e93ec2'),
         ('DTIVolume', None,
-          ('http://slicer.kitware.com/midas3/download/?items=2011,1',
-            'http://slicer.kitware.com/midas3/download/?items=2010,1', ),
+          (TESTING_DATA_URL + 'SHA256/d785837276758ddd9d21d76a3694e7fd866505a05bc305793517774c117cb38d',
+            TESTING_DATA_URL + 'SHA256/67564aa42c7e2eec5c3fd68afb5a910e9eab837b61da780933716a3b922e50fe', ),
           ('DTIVolume.raw.gz', 'DTIVolume.nhdr'), (None, 'DTIVolume'),
-          ('SHA256:d785837276758ddd9d21d76a3694e7fd866505a05bc305793517774c117cb38d', 'SHA256:67564aa42c7e2eec5c3fd68afb5a910e9eab837b61da780933716a3b922e50fe')),
+          ('SHA256:d785837276758ddd9d21d76a3694e7fd866505a05bc305793517774c117cb38d',
+            'SHA256:67564aa42c7e2eec5c3fd68afb5a910e9eab837b61da780933716a3b922e50fe')),
         ('DWIVolume', None,
-          ('http://slicer.kitware.com/midas3/download/?items=2142,1', 'http://slicer.kitware.com/midas3/download/?items=2141,1'),
+          (TESTING_DATA_URL + 'SHA256/cf03fd53583dc05120d3314d0a82bdf5946799b1f72f2a7f08963f3fd24ca692',
+           TESTING_DATA_URL + 'SHA256/7666d83bc205382e418444ea60ab7df6dba6a0bd684933df8809da6b476b0fed'),
           ('dwi.raw.gz', 'dwi.nhdr'), (None, 'dwi'),
-          ('SHA256:cf03fd53583dc05120d3314d0a82bdf5946799b1f72f2a7f08963f3fd24ca692', 'SHA256:7666d83bc205382e418444ea60ab7df6dba6a0bd684933df8809da6b476b0fed')),
-        ('CTAAbdomenPanoramix', 'CTA abdomen\n(Panoramix)', 'http://slicer.kitware.com/midas3/download/?items=9073,1', 'Panoramix-cropped.nrrd', 'Panoramix-cropped', 'SHA256:146af87511520c500a3706b7b2bfb545f40d5d04dd180be3a7a2c6940e447433'),
+          ('SHA256:cf03fd53583dc05120d3314d0a82bdf5946799b1f72f2a7f08963f3fd24ca692',
+            'SHA256:7666d83bc205382e418444ea60ab7df6dba6a0bd684933df8809da6b476b0fed')),
+        ('CTAAbdomenPanoramix', 'CTA abdomen\n(Panoramix)', TESTING_DATA_URL + 'SHA256/146af87511520c500a3706b7b2bfb545f40d5d04dd180be3a7a2c6940e447433',
+          'Panoramix-cropped.nrrd', 'Panoramix-cropped', 'SHA256:146af87511520c500a3706b7b2bfb545f40d5d04dd180be3a7a2c6940e447433'),
         ('CBCTDentalSurgery', None,
-          ('http://slicer.kitware.com/midas3/download/item/94510/Greyscale_presurg.gipl.gz',
-            'http://slicer.kitware.com/midas3/download/item/94509/Greyscale_postsurg.gipl.gz',),
+          (TESTING_DATA_URL + 'SHA256/7bfa16945629c319a439f414cfb7edddd2a97ba97753e12eede3b56a0eb09968',
+            TESTING_DATA_URL + 'SHA256/4cdc3dc35519bb57daeef4e5df89c00849750e778809e94971d3876f95cc7bbd',),
           ('PreDentalSurgery.gipl.gz', 'PostDentalSurgery.gipl.gz'), ('PreDentalSurgery', 'PostDentalSurgery'),
-          ('SHA256:7bfa16945629c319a439f414cfb7edddd2a97ba97753e12eede3b56a0eb09968', 'SHA256:4cdc3dc35519bb57daeef4e5df89c00849750e778809e94971d3876f95cc7bbd')),
+          ('SHA256:7bfa16945629c319a439f414cfb7edddd2a97ba97753e12eede3b56a0eb09968',
+            'SHA256:4cdc3dc35519bb57daeef4e5df89c00849750e778809e94971d3876f95cc7bbd')),
         ('MRUSProstate', 'MR-US Prostate',
-          ('http://slicer.kitware.com/midas3/download/item/142475/Case10-MR.nrrd',
-            'http://slicer.kitware.com/midas3/download/item/142476/case10_US_resampled.nrrd',),
+          (TESTING_DATA_URL + 'SHA256/4843cdc9ea5d7bcce61650d1492ce01035727c892019339dca726380496896aa',
+            TESTING_DATA_URL + 'SHA256/34decf58b1e6794069acbe947b460252262fe95b6858c5e320aeab03bc82ebb2',),
           ('Case10-MR.nrrd', 'case10_US_resampled.nrrd'), ('MRProstate', 'USProstate'),
-          ('SHA256:4843cdc9ea5d7bcce61650d1492ce01035727c892019339dca726380496896aa', 'SHA256:34decf58b1e6794069acbe947b460252262fe95b6858c5e320aeab03bc82ebb2')),
+          ('SHA256:4843cdc9ea5d7bcce61650d1492ce01035727c892019339dca726380496896aa',
+            'SHA256:34decf58b1e6794069acbe947b460252262fe95b6858c5e320aeab03bc82ebb2')),
         ('CTMRBrain', 'CT-MR Brain',
-          ('http://slicer.kitware.com/midas3/download/item/284192/CTBrain.nrrd',
-           'http://slicer.kitware.com/midas3/download/item/330508/MRBrainT1.nrrd',
-           'http://slicer.kitware.com/midas3/download/item/330509/MRBrainT2.nrrd',),
+          (TESTING_DATA_URL + 'SHA256/6a5b6caccb76576a863beb095e3bfb910c50ca78f4c9bf043aa42f976cfa53d1',
+           TESTING_DATA_URL + 'SHA256/2da3f655ed20356ee8cdf32aa0f8f9420385de4b6e407d28e67f9974d7ce1593',
+           TESTING_DATA_URL + 'SHA256/fa1fe5910a69182f2b03c0150d8151ac6c75df986449fb5a6c5ae67141e0f5e7',),
           ('CT-brain.nrrd', 'MR-brain-T1.nrrd', 'MR-brain-T2.nrrd'),
           ('CTBrain', 'MRBrainT1', 'MRBrainT2'),
           ('SHA256:6a5b6caccb76576a863beb095e3bfb910c50ca78f4c9bf043aa42f976cfa53d1',
@@ -548,8 +562,8 @@ class SampleDataLogic(object):
     iconPath = os.path.join(os.path.dirname(__file__).replace('\\','/'), 'Resources','Icons')
     self.registerCustomSampleDataSource(
       category=self.developmentCategoryName, sampleName='TinyPatient',
-      uris=['http://slicer.kitware.com/midas3/download/item/245205/TinyPatient_CT.nrrd',
-            'http://slicer.kitware.com/midas3/download/item/367020/TinyPatient_Structures.seg.nrrd'],
+      uris=[TESTING_DATA_URL + 'SHA256/c0743772587e2dd4c97d4e894f5486f7a9a202049c8575e032114c0a5c935c3b',
+            TESTING_DATA_URL + 'SHA256/3243b62bde36b1db1cdbfe204785bd4bc1fbb772558d5f8cac964cda8385d470'],
       fileNames=['TinyPatient_CT.nrrd', 'TinyPatient_Structures.seg.nrrd'],
       nodeNames=['TinyPatient_CT', 'TinyPatient_Segments'],
       thumbnailFileName=os.path.join(iconPath, 'TinyPatient.png'),
@@ -583,7 +597,7 @@ class SampleDataLogic(object):
       filePaths.append(self.downloadFileIntoCache(uri, fileName, checksum))
     return filePaths
 
-  def downloadFromSource(self,source,attemptCount=0):
+  def downloadFromSource(self, source, maximumAttemptsCount=3):
     """Given an instance of SampleDataSource, downloads the associated data and
     load them into Slicer if it applies.
 
@@ -599,76 +613,71 @@ class SampleDataLogic(object):
     If no ``nodeNames`` and no ``fileTypes`` are specified or if ``loadFiles`` are all False,
     returns the list of all downloaded filepaths.
     """
-    nodes = []
-    filePaths = []
+
+    # Input may contain urls without associated node names, which correspond to additional data files
+    # (e.g., .raw file for a .nhdr header file). Therefore we collect nodes and file paths separately
+    # and we only return file paths if no node names have been provided.
+    resultNodes = []
+    resultFilePaths = []
 
     for uri,fileName,nodeName,checksum,loadFile,loadFileType in zip(source.uris,source.fileNames,source.nodeNames,source.checksums,source.loadFiles,source.loadFileType):
 
       current_source = SampleDataSource(uris=uri, fileNames=fileName, nodeNames=nodeName, checksums=checksum, loadFiles=loadFile, loadFileType=loadFileType, loadFileProperties=source.loadFileProperties)
-      try:
-        filePath = self.downloadFileIntoCache(uri, fileName, checksum)
-      except ValueError:
-        if attemptCount < 5:
-          attemptCount += 1
-          self.logMessage('<b>Load failed! Trying to download again (%d of 5 attempts)...</b>' % (attemptCount), logging.ERROR)
+
+      for attemptsCount in range(maximumAttemptsCount):
+
+        # Download
+        try:
           filePath = self.downloadFileIntoCache(uri, fileName, checksum)
-
-      filePaths.append(filePath)
-
-      if loadFileType == 'ZipFile':
-        if loadFile == False:
-          nodes.append(filePath)
+        except ValueError:
+          self.logMessage('<b>Download failed (attempt %d of %d)...</b>' % (attemptsCount+1, maximumAttemptsCount), logging.ERROR)
           continue
-        outputDir = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory() + "/" + os.path.splitext(os.path.basename(filePath))[0]
-        qt.QDir().mkpath(outputDir)
-        success = slicer.util.extractArchive(filePath, outputDir)
-        if not success and attemptCount < 5:
-          file = qt.QFile(filePath)
-          if not file.remove():
-            self.logMessage('<b>Load failed! Unable to delete and try again loading %s!</b>' % filePath, logging.ERROR)
-            nodes.append(None)
-            break
-          attemptCount += 1
-          self.logMessage('<b>Load failed! Trying to download again (%d of 5 attempts)...</b>' % (attemptCount), logging.ERROR)
-          outputDir = self.downloadFromSource(current_source,attemptCount)[0]
-        nodes.append(outputDir)
+        resultFilePaths.append(filePath)
 
-      elif loadFileType == 'SceneFile':
-        if not loadFile:
-          nodes.append(filePath)
-          continue
-        success = self.loadScene(filePath, source.loadFileProperties.copy())
-        if not success and attemptCount < 5:
-          file = qt.QFile(filePath)
-          if not file.remove():
-            self.logMessage('<b>Load failed! Unable to delete and try again loading %s!</b>' % filePath, logging.ERROR)
-            nodes.append(None)
+        if loadFileType == 'ZipFile':
+          if loadFile == False:
+            resultNodes.append(filePath)
             break
-          attemptCount += 1
-          self.logMessage('<b>Load failed! Trying to download again (%d of 5 attempts)...</b>' % (attemptCount), logging.ERROR)
-          filePath = self.downloadFromSource(current_source,attemptCount)[0]
-        nodes.append(filePath)
-
-      elif nodeName:
-        if loadFile == False:
-          nodes.append(filePath)
-          continue
-        loadedNode = self.loadNode(filePath, nodeName, loadFileType, source.loadFileProperties.copy())
-        if loadedNode is None and attemptCount < 5:
-          file = qt.QFile(filePath)
-          if not file.remove():
-            self.logMessage('<b>Load failed! Unable to delete and try again loading %s!</b>' % filePath, logging.ERROR)
-            nodes.append(None)
+          outputDir = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory() + "/" + os.path.splitext(os.path.basename(filePath))[0]
+          qt.QDir().mkpath(outputDir)
+          if slicer.util.extractArchive(filePath, outputDir):
+            # Success
+            resultNodes.append(outputDir)
             break
-          attemptCount += 1
-          self.logMessage('<b>Load failed! Trying to download again (%d of 5 attempts)...</b>' % (attemptCount), logging.ERROR)
-          loadedNode = self.downloadFromSource(current_source,attemptCount)[0]
-        nodes.append(loadedNode)
+        elif loadFileType == 'SceneFile':
+          if not loadFile:
+            resultNodes.append(filePath)
+            break
+          if self.loadScene(filePath, source.loadFileProperties.copy()):
+            # Success
+            resultNodes.append(filePath)
+            break
+        elif nodeName:
+          if loadFile == False:
+            resultNodes.append(filePath)
+            break
+          loadedNode = self.loadNode(filePath, nodeName, loadFileType, source.loadFileProperties.copy())
+          if loadedNode:
+            # Success
+            resultNodes.append(loadedNode)
+            break
+        else:
+          # no need to load node
+          break
 
-    if nodes:
-      return nodes
+        # Failed. Clean up downloaded file (it might have been a partial download)
+        file = qt.QFile(filePath)
+        if not file.remove():
+          self.logMessage('<b>Load failed (attempt %d of %d). Unable to delete and try again loading %s</b>'
+            % (attemptsCount+1, maximumAttemptsCount, filePath), logging.ERROR)
+          resultNodes.append(loadedNode)
+          break
+        self.logMessage('<b>Load failed (attempt %d of %d)...</b>' % (attemptsCount+1, maximumAttemptsCount), logging.ERROR)
+
+    if resultNodes:
+      return resultNodes
     else:
-      return filePaths
+      return resultFilePaths
 
   def sourceForSampleName(self,sampleName):
     """For a given sample name this will search the available sources.
@@ -927,7 +936,8 @@ class SampleDataTest(ScriptedLoadableModuleTest):
 
     sceneMTime = slicer.mrmlScene.GetMTime()
     filePaths = logic.downloadFromSource(SampleDataSource(
-      uris='http://slicer.kitware.com/midas3/download/item/292308/MR-head.nrrd', fileNames='MR-head.nrrd'))
+      uris=TESTING_DATA_URL + 'SHA256/cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93',
+      fileNames='MR-head.nrrd'))
     self.assertEqual(len(filePaths), 1)
     self.assertTrue(os.path.exists(filePaths[0]))
     self.assertTrue(os.path.isfile(filePaths[0]))
@@ -935,7 +945,8 @@ class SampleDataTest(ScriptedLoadableModuleTest):
 
     sceneMTime = slicer.mrmlScene.GetMTime()
     filePaths = logic.downloadFromSource(SampleDataSource(
-      uris=['http://slicer.kitware.com/midas3/download/item/292308/MR-head.nrrd', 'http://slicer.kitware.com/midas3/download/item/292307/CT-chest.nrrd'],
+      uris=[TESTING_DATA_URL + 'SHA256/cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93',
+            TESTING_DATA_URL + 'SHA256/4507b664690840abb6cb9af2d919377ffc4ef75b167cb6fd0f747befdb12e38e'],
       fileNames=['MR-head.nrrd', 'CT-chest.nrrd']))
     self.assertEqual(len(filePaths), 2)
     self.assertTrue(os.path.exists(filePaths[0]))
@@ -948,7 +959,8 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     logic = SampleDataLogic()
     sceneMTime = slicer.mrmlScene.GetMTime()
     filePaths = logic.downloadFromSource(SampleDataSource(
-      uris='http://slicer.kitware.com/midas3/download/folder/3763/TinyPatient_Seg.zip', fileNames='TinyPatient_Seg.zip'))
+      uris=TESTING_DATA_URL + 'SHA256/b902f635ef2059cd3b4ba854c000b388e4a9e817a651f28be05c22511a317ec7',
+      fileNames='TinyPatient_Seg.zip'))
     self.assertEqual(len(filePaths), 1)
     self.assertTrue(os.path.exists(filePaths[0]))
     self.assertTrue(os.path.isdir(filePaths[0]))
@@ -958,7 +970,8 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     logic = SampleDataLogic()
     sceneMTime = slicer.mrmlScene.GetMTime()
     filePaths = logic.downloadFromSource(SampleDataSource(
-      uris='http://slicer.kitware.com/midas3/download?items=8466', loadFiles=True, fileNames='slicer4minute.mrb'))
+      uris=TESTING_DATA_URL + 'SHA256/5a1c78c3347f77970b1a29e718bfa10e5376214692d55a7320af94b9d8d592b8',
+      loadFiles=True, fileNames='slicer4minute.mrb'))
     self.assertEqual(len(filePaths), 1)
     self.assertTrue(os.path.exists(filePaths[0]))
     self.assertTrue(os.path.isfile(filePaths[0]))
@@ -986,7 +999,8 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     logic = SampleDataLogic()
     sceneMTime = slicer.mrmlScene.GetMTime()
     filePaths = logic.downloadFromSource(SampleDataSource(
-      uris='http://slicer.kitware.com/midas3/download?items=8466', fileNames='slicer4minute.mrb'))
+      uris=TESTING_DATA_URL + 'SHA256/5a1c78c3347f77970b1a29e718bfa10e5376214692d55a7320af94b9d8d592b8',
+      fileNames='slicer4minute.mrb'))
     self.assertEqual(len(filePaths), 1)
     self.assertTrue(os.path.exists(filePaths[0]))
     self.assertTrue(os.path.isfile(filePaths[0]))
@@ -1013,14 +1027,16 @@ class SampleDataTest(ScriptedLoadableModuleTest):
   def test_downloadFromSource_loadNode(self):
     logic = SampleDataLogic()
     nodes = logic.downloadFromSource(SampleDataSource(
-      uris='http://slicer.kitware.com/midas3/download/item/292308/MR-head.nrrd', fileNames='MR-head.nrrd', nodeNames='MRHead'))
+      uris=TESTING_DATA_URL + 'MD5/39b01631b7b38232a220007230624c8e',
+      fileNames='MR-head.nrrd', nodeNames='MRHead'))
     self.assertEqual(len(nodes), 1)
     self.assertEqual(nodes[0], slicer.mrmlScene.GetFirstNodeByName("MRHead"))
 
   def test_downloadFromSource_loadNodeFromMultipleFiles(self):
     logic = SampleDataLogic()
     nodes = logic.downloadFromSource(SampleDataSource(
-      uris=['http://slicer.kitware.com/midas3/download/?items=2011,1', 'http://slicer.kitware.com/midas3/download/?items=2010,1'],
+      uris=[TESTING_DATA_URL + 'SHA256/d785837276758ddd9d21d76a3694e7fd866505a05bc305793517774c117cb38d',
+            TESTING_DATA_URL + 'SHA256/67564aa42c7e2eec5c3fd68afb5a910e9eab837b61da780933716a3b922e50fe'],
       fileNames=['DTIVolume.raw.gz', 'DTIVolume.nhdr'],
       nodeNames=[None, 'DTIVolume']))
     self.assertEqual(len(nodes), 1)
@@ -1029,7 +1045,8 @@ class SampleDataTest(ScriptedLoadableModuleTest):
   def test_downloadFromSource_loadNodesWithLoadFileFalse(self):
     logic = SampleDataLogic()
     nodes = logic.downloadFromSource(SampleDataSource(
-      uris=['http://slicer.kitware.com/midas3/download/item/292308/MR-head.nrrd', 'http://slicer.kitware.com/midas3/download/item/292307/CT-chest.nrrd'],
+      uris=[TESTING_DATA_URL + 'SHA256/cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93',
+            TESTING_DATA_URL + 'SHA256/4507b664690840abb6cb9af2d919377ffc4ef75b167cb6fd0f747befdb12e38e'],
       fileNames=['MR-head.nrrd', 'CT-chest.nrrd'],
       nodeNames=['MRHead', 'CTChest'],
       loadFiles=[False, True]))
@@ -1041,7 +1058,8 @@ class SampleDataTest(ScriptedLoadableModuleTest):
   def test_downloadFromSource_loadNodes(self):
     logic = SampleDataLogic()
     nodes = logic.downloadFromSource(SampleDataSource(
-      uris=['http://slicer.kitware.com/midas3/download/item/292308/MR-head.nrrd', 'http://slicer.kitware.com/midas3/download/item/292307/CT-chest.nrrd'],
+      uris=[TESTING_DATA_URL + 'SHA256/cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93',
+            TESTING_DATA_URL + 'SHA256/4507b664690840abb6cb9af2d919377ffc4ef75b167cb6fd0f747befdb12e38e'],
       fileNames=['MR-head.nrrd', 'CT-chest.nrrd'],
       nodeNames=['MRHead', 'CTChest']))
     self.assertEqual(len(nodes), 2)
