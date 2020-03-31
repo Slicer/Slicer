@@ -36,7 +36,8 @@ Installing 3D Slicer
 
 To install Slicer, click `here <http://download.slicer.org/>`__.
 
-.. figure:: https://www.slicer.org/w/images/9/90/Screen_Shot_2016-06-01_at_1.21.15_PM.png
+.. SlicerInstallers-2020-03-25.png
+.. figure:: https://discourse-cloud-file-uploads.s3.dualstack.us-west-2.amazonaws.com/standard17/uploads/slicer/original/2X/0/08ed9782c9db80430371b4584e36411aed3aa700.png
 
   The Nightly version of 3D Slicer is updated nightly as groups of developers make changes. The Stable version of 3D 
   Slicer is not updated nightly and is more rigorously tested.
@@ -63,16 +64,19 @@ This section will introduce you to the basic functions on the main application's
 
 Open 3D Slicer and load your own data or download sample data to explore. Go ahead and click around the user interface.
 
+.. LoadingData-2016-06-06.png
+.. image:: https://discourse-cloud-file-uploads.s3.dualstack.us-west-2.amazonaws.com/standard17/uploads/slicer/original/2X/6/653db204683079c657ee3d8195839215ea6056e9.png
 
-.. image:: https://www.slicer.org/w/images/a/a6/LoadingData-16-06-06.png
-
-.. image:: https://www.slicer.org/w/images/2/22/SampleData-06-06.png
+.. SampleData-2020-03-31.png
+.. image:: https://discourse-cloud-file-uploads.s3.dualstack.us-west-2.amazonaws.com/standard17/uploads/slicer/original/2X/6/6882c496e71fd19dfd266f61d096af47c0230686.png
 
 From the Welcome panel, you can load your own data or download sample data. Sample data is often useful for exploring the features of 3D Slicer if you don't have data of your own. 
 
-.. image:: https://www.slicer.org/w/images/8/88/SliceViewOptions-2016-06-01.png
+.. SliceViewOptions-2016-06-01.png
+.. image:: https://discourse-cloud-file-uploads.s3.dualstack.us-west-2.amazonaws.com/standard17/uploads/slicer/original/2X/e/e8dab422f6724870eb1300c28c4292ab7b1c9f1b.png
 
-.. image:: https://www.slicer.org/w/images/b/b5/ModuleExtensionAccess-2016-06-01.png
+.. ModuleExtensionAccess-2016-06-01.png
+.. image:: https://discourse-cloud-file-uploads.s3.dualstack.us-west-2.amazonaws.com/standard17/uploads/slicer/original/2X/d/db3e7ea33d3237f17c8542e4a8f4c1e78c1b5384.png
 
 Click on the push pin in the top left corner of each of the Slice Viewers or the 3D Viewer to see more options. In the Slice Viewers, the horizontal bar can be used to scroll through slices or select a slice. You can explore the various options using your loaded data or downloaded sample data.
 
