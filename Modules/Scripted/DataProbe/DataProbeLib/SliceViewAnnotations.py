@@ -100,7 +100,7 @@ class SliceAnnotations(VTKObservationMixin):
 
     self.scalarBarEnabled = settingsValue('DataProbe/sliceViewAnnotations.scalarBarEnabled', 0, converter=int)
     self.scalarBarEnabledLastStatus = self.scalarBarEnabled
-    self.scalarBarSelectedLayer = 'background'
+    self.scalarBarSelectedLayer = settingsValue('DataProbe/sliceViewAnnotations.scalarBarSelectedLayer', 'background')
     self.rangeLabelFormat = settingsValue('DataProbe/sliceViewAnnotations.rangeLabelFormat', '%G')
 
     self.parameter = 'sliceViewAnnotationsEnabled'
@@ -165,8 +165,9 @@ class SliceAnnotations(VTKObservationMixin):
     self.scalarBarLayerSelectionGroupBox = find(window,'scalarBarLayerSelectionGroupBox')[0]
 
     self.backgroundRadioButton = find(window, 'backgroundRadioButton')[0]
-    self.backgroundRadioButton.checked = True
+    self.backgroundRadioButton.checked = self.scalarBarSelectedLayer == 'background'
     self.foregroundRadioButton = find(window, 'foregroundRadioButton')[0]
+    self.foregroundRadioButton.checked = self.scalarBarSelectedLayer == 'foreground'
     self.rangeLabelFormatLineEdit = find(window,'rangeLabelFormatLineEdit')[0]
     self.rangeLabelFormatLineEdit.text = self.rangeLabelFormat
 
@@ -216,6 +217,7 @@ class SliceAnnotations(VTKObservationMixin):
     settings = qt.QSettings()
     settings.setValue('DataProbe/sliceViewAnnotations.enabled', self.sliceViewAnnotationsEnabled)
     settings.setValue('DataProbe/sliceViewAnnotations.scalarBarEnabled', self.scalarBarEnabled)
+    settings.setValue('DataProbe/sliceViewAnnotations.scalarBarSelectedLayer', self.scalarBarSelectedLayer)
     self.updateEnabledButtons()
     self.updateSliceViewFromGUI()
 
@@ -245,6 +247,8 @@ class SliceAnnotations(VTKObservationMixin):
     settings = qt.QSettings()
     settings.setValue('DataProbe/sliceViewAnnotations.scalarBarEnabled',
         self.scalarBarEnabled)
+    settings.setValue('DataProbe/sliceViewAnnotations.scalarBarSelectedLayer',
+        self.scalarBarSelectedLayer)
     self.updateSliceViewFromGUI()
 
   def onCornerTextsActivationCheckBox(self):
@@ -318,6 +322,7 @@ class SliceAnnotations(VTKObservationMixin):
     settings.setValue('DataProbe/sliceViewAnnotations.bgDICOMAnnotationsPersistence',
         self.backgroundDICOMAnnotationsPersistence)
     settings.setValue('DataProbe/sliceViewAnnotations.scalarBarEnabled', self.scalarBarEnabled)
+    settings.setValue('DataProbe/sliceViewAnnotations.scalarBarSelectedLayer', self.scalarBarSelectedLayer)
     settings.setValue('DataProbe/sliceViewAnnotations.rangeLabelFormat', self.rangeLabelFormat)
     self.updateSliceViewFromGUI()
 
