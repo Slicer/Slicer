@@ -37,6 +37,10 @@ public:
 
 protected:
   vtkFSSurfaceHelper();
+
+private:
+  vtkFSSurfaceHelper(const vtkFSSurfaceHelper&) = delete;
+  void operator=(const vtkFSSurfaceHelper&) = delete;
 };
 
 #endif

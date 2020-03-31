@@ -103,7 +103,6 @@ protected:
 protected:
   vtkSegmentationHistory();
   ~vtkSegmentationHistory() override;
-  void operator=(const vtkSegmentationHistory&);
 
   typedef std::map<std::string, vtkSmartPointer<vtkSegment> > SegmentsMap;
 
@@ -124,6 +123,10 @@ protected:
   unsigned int LastRestoredState;
 
   bool RestoreStateInProgress;
+
+private:
+  vtkSegmentationHistory(const vtkSegmentationHistory&) = delete;
+  void operator=(const vtkSegmentationHistory&) = delete;
 };
 
 #endif // __vtkSegmentation_h

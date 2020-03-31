@@ -216,6 +216,10 @@ private:
   /* perform one step of fast marching
      return the leaf which has just been added to fmsKNOWN */
   float step();
+
+private:
+  vtkPichonFastMarching(const vtkPichonFastMarching&) = delete;
+  void operator=(const vtkPichonFastMarching&) = delete;
 };
 
 #endif

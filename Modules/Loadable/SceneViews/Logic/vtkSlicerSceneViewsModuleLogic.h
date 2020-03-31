@@ -105,6 +105,9 @@ private:
 
   std::string m_StringHolder;
 
+private:
+  vtkSlicerSceneViewsModuleLogic(const vtkSlicerSceneViewsModuleLogic&) = delete;
+  void operator=(const vtkSlicerSceneViewsModuleLogic&) = delete;
 };
 
 #endif

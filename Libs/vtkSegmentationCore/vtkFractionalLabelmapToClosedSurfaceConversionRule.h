@@ -79,7 +79,10 @@ protected:
 protected:
   vtkFractionalLabelmapToClosedSurfaceConversionRule();
   ~vtkFractionalLabelmapToClosedSurfaceConversionRule() override;
-  void operator=(const vtkFractionalLabelmapToClosedSurfaceConversionRule&);
+
+private:
+  vtkFractionalLabelmapToClosedSurfaceConversionRule(const vtkFractionalLabelmapToClosedSurfaceConversionRule&) = delete;
+  void operator=(const vtkFractionalLabelmapToClosedSurfaceConversionRule&) = delete;
 };
 
 #endif // __vtkFractionalLabelmapToClosedSurfaceConversionRule_h

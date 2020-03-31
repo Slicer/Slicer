@@ -311,7 +311,9 @@ private:
   /// a parent to the new hierarchy node. Return true on success, false on failure.
   bool AddHierarchyNodeForAnnotation(vtkMRMLAnnotationNode* annotationNode=nullptr);
 
-
+private:
+  vtkSlicerAnnotationModuleLogic(const vtkSlicerAnnotationModuleLogic&) = delete;
+  void operator=(const vtkSlicerAnnotationModuleLogic&) = delete;
 };
 
 #endif

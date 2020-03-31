@@ -95,13 +95,15 @@ protected:
 protected:
   vtkBinaryLabelmapToClosedSurfaceConversionRule();
   ~vtkBinaryLabelmapToClosedSurfaceConversionRule() override;
-  void operator=(const vtkBinaryLabelmapToClosedSurfaceConversionRule&);
 
 protected:
   /// Cache for storing merged closed surfaces that have been joint smoothed
   /// The key used is the binary labelmap representation, which maps to the combined vtkPolyData containing surfaces for all segments in the segmentation
   std::map<vtkOrientedImageData*, vtkSmartPointer<vtkPolyData> > JointSmoothCache;
 
+private:
+  vtkBinaryLabelmapToClosedSurfaceConversionRule(const vtkBinaryLabelmapToClosedSurfaceConversionRule&) = delete;
+  void operator=(const vtkBinaryLabelmapToClosedSurfaceConversionRule&) = delete;
 };
 
 #endif // __vtkBinaryLabelmapToClosedSurfaceConversionRule_h
