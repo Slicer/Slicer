@@ -5,8 +5,8 @@ There are many ways to contribute to Slicer, with varying levels of effort.  Do 
 look through the [documentation](https://www.slicer.org/wiki/Documentation/Nightly/Developers) first if something is unclear, and let us know how we can
 do better.
 
-  * Ask a question on the [Slicer forum](https://discourse.slicer.org)
-  * Use Slicer [Issues](https://github.com/Slicer/Slicer/issues) to submit a feature request or bug, or add to the discussion on an existing issue
+  * Ask a question on the [Slicer forum][slicer-forum]
+  * Use [Slicer issues][slicer-issues] to submit a feature request or bug, or add to the discussion on an existing issue
   * Submit a [Pull Request](https://github.com/Slicer/Slicer/pulls) to improve Slicer or its documentation
 
 We encourage a range of Pull Requests, from patches that include passing tests and
@@ -44,7 +44,7 @@ We encourage all developers to:
   also resourceful.
 
 * consider potential backward compatibility breakage and discuss these on the
-  [Slicer forum](https://discourse.slicer.org). For example, update of ITK, Python, Qt or VTK version, change to
+  [Slicer forum][slicer-forum]. For example, update of ITK, Python, Qt or VTK version, change to
   core functionality, should be carefully reviewed and integrated. Ideally, several
   developers would test that the changes don't break extensions.
 
@@ -78,7 +78,7 @@ commits, the message body should follow the following guidelines:
   readability.
   8. Be concise, but honor the change: if significant alternative solutions
   were available, explain why they were discarded.
-  9. If the commit refers to a topic discussed on the [Slicer forum](https://discourse.slicer.org), or fixes
+  9. If the commit refers to a topic discussed on the [Slicer forum][slicer-forum], or fixes
   a regression test, provide the link. If it fixes a compiler error, provide a
   minimal verbatim message of the compiler error. If the commit closes an
   issue, use the [GitHub issue closing
@@ -115,7 +115,7 @@ is the checklist:
 
 * If you do NOT have push access, a Slicer core developer will integrate your PR. If
   you would like to speed up the integration, do not hesitate to send a note on
-  the [Slicer forum](https://discourse.slicer.org).
+  the [Slicer forum][slicer-forum].
 
 
 #### Automatic testing of pull requests
@@ -141,7 +141,7 @@ email.
 
 #### Decision-making process
 
-1. Given the topic of interest, initiate discussion on the [Slicer forum](https://discourse.slicer.org).
+1. Given the topic of interest, initiate discussion on the [Slicer forum][slicer-forum].
 
 2. Identify a small circle of community members that are interested to study the
    topic in more depth.
@@ -150,7 +150,7 @@ email.
    alternatives, summarize findings on the wiki or similar. [Labs](https://www.slicer.org/wiki/Documentation/Labs)
    page are usually a good ground for such summary.
 
-4. Announce on the [Slicer forum](https://discourse.slicer.org) the in-depth discussion of the topic for the
+4. Announce on the [Slicer forum][slicer-forum] the in-depth discussion of the topic for the
    [Slicer Community hangout](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Meetings),
    encourage anyone that is interested in weighing in on the topic to join the
    discussion. If there is someone who is interested to participate in the discussion,
@@ -181,3 +181,6 @@ These currently include:
 The Slicer community is inclusive and welcomes anyone to work to become a core
 developer and then a BDFL. This happens with hard work and approval of the existing
 BDFL.
+
+[slicer-forum]: https://discourse.slicer.org
+[slicer-issues]: https://issues.slicer.org
