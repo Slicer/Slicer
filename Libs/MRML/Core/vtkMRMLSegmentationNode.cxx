@@ -972,7 +972,7 @@ void vtkMRMLSegmentationNode::GetClosedSurfaceRepresentation(const std::string s
   vtkDataObject* closedSurface = segment->GetRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
   if (!closedSurface)
     {
-    vtkErrorMacro("GetClosedSurfaceRepresentation: No closed surface representation in segment")
+    vtkErrorMacro("GetClosedSurfaceRepresentation: No closed surface representation in segment");
     return;
     }
   outputClosedSurface->DeepCopy(closedSurface);

@@ -482,7 +482,7 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(
   std::string modality(reader->GetHeaderValue("modality"));
   if (modality != "DWMRI")
     {
-    vtkErrorMacro(<< "NRRD header missing 'modality: DWMRI' tag!")
+    vtkErrorMacro(<< "NRRD header missing 'modality: DWMRI' tag!");
     return 0;
     }
 
@@ -494,7 +494,7 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(
   std::string ref_bvalue_str(reader->GetHeaderValue(dwmri_bvalue_tag.c_str()));
   if (ref_bvalue_str.empty())
     {
-    vtkErrorMacro(<< "Missing 'DWMRI_b-value' tag!")
+    vtkErrorMacro(<< "Missing 'DWMRI_b-value' tag!");
     return 0;
     }
   double ref_bvalue = atof(ref_bvalue_str.c_str());

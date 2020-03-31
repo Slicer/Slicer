@@ -103,7 +103,7 @@ vtkAbstractWidget * vtkMRMLAnnotationAngleDisplayableManager::CreateWidget(vtkMR
 
   if (!node)
     {
-    vtkErrorMacro("CreateWidget: Node not set!")
+    vtkErrorMacro("CreateWidget: Node not set!");
     return 0;
     }
 
@@ -111,7 +111,7 @@ vtkAbstractWidget * vtkMRMLAnnotationAngleDisplayableManager::CreateWidget(vtkMR
 
   if (!angleNode)
     {
-    vtkErrorMacro("CreateWidget: Could not get angle node!")
+    vtkErrorMacro("CreateWidget: Could not get angle node!");
     return 0;
     }
 
@@ -132,7 +132,7 @@ vtkAbstractWidget * vtkMRMLAnnotationAngleDisplayableManager::CreateWidget(vtkMR
 
   angleWidget->On();
 
-  vtkDebugMacro("CreateWidget: Widget was set up")
+  vtkDebugMacro("CreateWidget: Widget was set up");
 
   return angleWidget;
 
@@ -145,13 +145,13 @@ void vtkMRMLAnnotationAngleDisplayableManager::OnWidgetCreated(vtkAbstractWidget
 
   if (!widget)
     {
-    vtkErrorMacro("OnWidgetCreated: Widget was null!")
+    vtkErrorMacro("OnWidgetCreated: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("OnWidgetCreated: MRML node was null!")
+    vtkErrorMacro("OnWidgetCreated: MRML node was null!");
     return;
     }
 
@@ -208,13 +208,13 @@ void vtkMRMLAnnotationAngleDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
 
   if (!widget)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!")
+    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!")
+    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!");
     return;
     }
 
@@ -223,7 +223,7 @@ void vtkMRMLAnnotationAngleDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
 
   if (!angleWidget)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Could not get angle widget!")
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get angle widget!");
     return;
     }
 
@@ -232,13 +232,13 @@ void vtkMRMLAnnotationAngleDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
 
   if (!angleNode)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Could not get angle node!")
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get angle node!");
     return;
     }
 
   if (this->m_Updating)
     {
-    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.")
+    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.");
     return;
     }
 
@@ -265,13 +265,13 @@ void vtkMRMLAnnotationAngleDisplayableManager::UpdatePosition(vtkAbstractWidget 
 
   if (!widget)
     {
-    vtkErrorMacro("UpdatePosition: Widget was null!")
+    vtkErrorMacro("UpdatePosition: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("UpdatePosition: MRML node was null!")
+    vtkErrorMacro("UpdatePosition: MRML node was null!");
     return;
     }
 
@@ -280,7 +280,7 @@ void vtkMRMLAnnotationAngleDisplayableManager::UpdatePosition(vtkAbstractWidget 
 
   if (!angleWidget)
     {
-    vtkErrorMacro("UpdatePosition: Could not get angle widget!")
+    vtkErrorMacro("UpdatePosition: Could not get angle widget!");
     return;
     }
 
@@ -289,7 +289,7 @@ void vtkMRMLAnnotationAngleDisplayableManager::UpdatePosition(vtkAbstractWidget 
 
   if (!angleNode)
     {
-    vtkErrorMacro("UpdatePosition: Could not get angle node!")
+    vtkErrorMacro("UpdatePosition: Could not get angle node!");
     return;
     }
 
@@ -297,7 +297,7 @@ void vtkMRMLAnnotationAngleDisplayableManager::UpdatePosition(vtkAbstractWidget 
   vtkAngleRepresentation3D *rep = vtkAngleRepresentation3D::SafeDownCast(angleWidget->GetRepresentation());
   if (!rep)
     {
-    vtkErrorMacro("UpdatePosition: Could not get angle representation!")
+    vtkErrorMacro("UpdatePosition: Could not get angle representation!");
     return;
     }
   double position1[3];
@@ -323,13 +323,13 @@ void vtkMRMLAnnotationAngleDisplayableManager::PropagateWidgetToMRML(vtkAbstract
 
   if (!widget)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!")
+    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!")
+    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!");
     return;
     }
 
@@ -338,7 +338,7 @@ void vtkMRMLAnnotationAngleDisplayableManager::PropagateWidgetToMRML(vtkAbstract
 
   if (!angleWidget)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: Could not get angle widget!")
+    vtkErrorMacro("PropagateWidgetToMRML: Could not get angle widget!");
     return;
     }
 
@@ -347,13 +347,13 @@ void vtkMRMLAnnotationAngleDisplayableManager::PropagateWidgetToMRML(vtkAbstract
 
   if (!angleNode)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: Could not get angle node!")
+    vtkErrorMacro("PropagateWidgetToMRML: Could not get angle node!");
     return;
     }
 
   if (this->m_Updating)
     {
-    vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.")
+    vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.");
     return;
     }
 

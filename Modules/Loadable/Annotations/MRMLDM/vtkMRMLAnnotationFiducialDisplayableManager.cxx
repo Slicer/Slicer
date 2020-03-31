@@ -187,7 +187,7 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
 
   if (!node)
     {
-    vtkErrorMacro("CreateWidget: Node not set!")
+    vtkErrorMacro("CreateWidget: Node not set!");
     return nullptr;
     }
 
@@ -198,7 +198,7 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
 
   if (!fiducialNode)
     {
-    vtkErrorMacro("CreateWidget: Could not get fiducial node!")
+    vtkErrorMacro("CreateWidget: Could not get fiducial node!");
     return nullptr;
     }
 
@@ -304,13 +304,13 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnWidgetCreated(vtkAbstractWid
 
   if (!widget)
     {
-    vtkErrorMacro("OnWidgetCreated: Widget was null!")
+    vtkErrorMacro("OnWidgetCreated: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("OnWidgetCreated: MRML node was null!")
+    vtkErrorMacro("OnWidgetCreated: MRML node was null!");
     return;
     }
 
@@ -337,13 +337,13 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
 
   if (!widget)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!")
+    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!")
+    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!");
     return;
     }
 
@@ -352,7 +352,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
 
   if (!seedWidget)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Could not get seed widget!")
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get seed widget!");
     return;
     }
 
@@ -361,7 +361,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
 
   if (!fiducialNode)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Could not get fiducial node!")
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get fiducial node!");
     return;
     }
 
@@ -372,7 +372,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
   vtkSeedRepresentation * seedRepresentation = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
   if (!seedRepresentation)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Could not get seed representation from widget!")
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get seed representation from widget!");
     return;
     }
 
@@ -666,13 +666,13 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
 
   if (!widget)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!")
+    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!")
+    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!");
     return;
     }
 
@@ -681,7 +681,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
 
   if (!seedWidget)
    {
-   vtkErrorMacro("PropagateWidgetToMRML: Could not get seed widget!")
+   vtkErrorMacro("PropagateWidgetToMRML: Could not get seed widget!");
    return;
    }
 
@@ -700,7 +700,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
 
   if (!fiducialNode)
    {
-   vtkErrorMacro("PropagateWidgetToMRML: Could not get fiducial node!")
+   vtkErrorMacro("PropagateWidgetToMRML: Could not get fiducial node!");
    return;
    }
 
@@ -853,7 +853,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnInteractorStyleEvent(int eve
 
   if (this->GetDisableInteractorStyleEventsProcessing())
     {
-    vtkWarningMacro("OnInteractorStyleEvent: Processing of events was disabled.")
+    vtkWarningMacro("OnInteractorStyleEvent: Processing of events was disabled.");
     return;
     }
 
@@ -912,7 +912,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::UpdatePosition(vtkAbstractWidg
 
   if (!seedWidget)
    {
-   vtkErrorMacro("UpdatePosition: Could not get seed widget!")
+   vtkErrorMacro("UpdatePosition: Could not get seed widget!");
    return;
    }
 

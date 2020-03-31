@@ -141,7 +141,7 @@ vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRM
 
   if (!node)
     {
-    vtkErrorMacro("CreateWidget: Node not set!")
+    vtkErrorMacro("CreateWidget: Node not set!");
     return nullptr;
     }
 
@@ -149,7 +149,7 @@ vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRM
 
   if (!textNode)
     {
-    vtkErrorMacro("CreateWidget: Could not get text node!")
+    vtkErrorMacro("CreateWidget: Could not get text node!");
     return nullptr;
     }
 
@@ -188,7 +188,7 @@ vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRM
   // now set it up from the node
   this->PropagateMRMLToWidget(textNode, captionWidget);
 
-  vtkDebugMacro("CreateWidget: Widget was set up")
+  vtkDebugMacro("CreateWidget: Widget was set up");
 
   return captionWidget;
 
@@ -201,13 +201,13 @@ void vtkMRMLAnnotationTextDisplayableManager::OnWidgetCreated(vtkAbstractWidget 
 
   if (!widget)
     {
-    vtkErrorMacro("OnWidgetCreated: Widget was null!")
+    vtkErrorMacro("OnWidgetCreated: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("OnWidgetCreated: MRML node was null!")
+    vtkErrorMacro("OnWidgetCreated: MRML node was null!");
     return;
     }
 
@@ -233,13 +233,13 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnot
 
   if (!widget)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!")
+    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!")
+    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!");
     return;
     }
 
@@ -248,7 +248,7 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnot
 
   if (!captionWidget)
    {
-   vtkErrorMacro("PropagateMRMLToWidget: Could not get caption widget!")
+   vtkErrorMacro("PropagateMRMLToWidget: Could not get caption widget!");
    return;
    }
 
@@ -257,7 +257,7 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnot
 
   if (!textNode)
    {
-   vtkErrorMacro("PropagateMRMLToWidget: Could not get text node!")
+   vtkErrorMacro("PropagateMRMLToWidget: Could not get text node!");
    return;
    }
 
@@ -353,13 +353,13 @@ void vtkMRMLAnnotationTextDisplayableManager::UpdatePosition(vtkAbstractWidget *
 {
   if (!widget)
     {
-    vtkErrorMacro("UpdatePosition: Widget was null!")
+    vtkErrorMacro("UpdatePosition: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("UpdatePosition: MRML node was null!")
+    vtkErrorMacro("UpdatePosition: MRML node was null!");
     return;
     }
 
@@ -368,7 +368,7 @@ void vtkMRMLAnnotationTextDisplayableManager::UpdatePosition(vtkAbstractWidget *
 
   if (!captionWidget)
    {
-   vtkErrorMacro("UpdatePosition: Could not get caption widget!")
+   vtkErrorMacro("UpdatePosition: Could not get caption widget!");
    return;
    }
 
@@ -418,13 +418,13 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
 
   if (!widget)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!")
+    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!")
+    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!");
     return;
     }
 
@@ -433,7 +433,7 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
 
    if (!captionWidget)
      {
-     vtkErrorMacro("PropagateWidgetToMRML: Could not get text widget!")
+     vtkErrorMacro("PropagateWidgetToMRML: Could not get text widget!");
      return;
      }
 
@@ -442,7 +442,7 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
 
    if (!textNode)
      {
-     vtkErrorMacro("PropagateWidgetToMRML: Could not get text node!")
+     vtkErrorMacro("PropagateWidgetToMRML: Could not get text node!");
      return;
      }
 

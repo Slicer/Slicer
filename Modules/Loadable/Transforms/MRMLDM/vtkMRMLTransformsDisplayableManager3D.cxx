@@ -565,7 +565,7 @@ void vtkMRMLTransformsDisplayableManager3D::UpdateFromMRML()
   vtkMRMLScene* scene = this->GetMRMLScene();
   if (!scene)
     {
-    vtkDebugMacro( "vtkMRMLTransformsDisplayableManager3D->UpdateFromMRML: Scene is not set.")
+    vtkDebugMacro( "vtkMRMLTransformsDisplayableManager3D->UpdateFromMRML: Scene is not set.");
     return;
     }
   this->Internal->ClearDisplayableNodes();

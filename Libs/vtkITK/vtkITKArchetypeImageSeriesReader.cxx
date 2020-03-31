@@ -1038,7 +1038,7 @@ void vtkITKArchetypeImageSeriesReader::SetMetaDataScalarRangeToPointDataInfo( vt
 {
   if (data == nullptr)
     {
-    vtkWarningMacro("No image data specified, can't set scalar range information.")
+    vtkWarningMacro("No image data specified, can't set scalar range information.");
     return;
     }
 

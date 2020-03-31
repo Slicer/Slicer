@@ -102,7 +102,7 @@ vtkAbstractWidget * vtkMRMLAnnotationStickyDisplayableManager::CreateWidget(vtkM
 
   if (!node)
     {
-    vtkErrorMacro("CreateWidget: Node not set!")
+    vtkErrorMacro("CreateWidget: Node not set!");
     return 0;
     }
 
@@ -110,7 +110,7 @@ vtkAbstractWidget * vtkMRMLAnnotationStickyDisplayableManager::CreateWidget(vtkM
 
   if (!stickyNode)
     {
-    vtkErrorMacro("CreateWidget: Could not get sticky node!")
+    vtkErrorMacro("CreateWidget: Could not get sticky node!");
     return 0;
     }
 
@@ -158,13 +158,13 @@ void vtkMRMLAnnotationStickyDisplayableManager::OnWidgetCreated(vtkAbstractWidge
 
   if (!widget)
     {
-    vtkErrorMacro("OnWidgetCreated: Widget was null!")
+    vtkErrorMacro("OnWidgetCreated: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("OnWidgetCreated: MRML node was null!")
+    vtkErrorMacro("OnWidgetCreated: MRML node was null!");
     return;
     }
 
@@ -189,13 +189,13 @@ void vtkMRMLAnnotationStickyDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnn
 
   if (!widget)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!")
+    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!")
+    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!");
     return;
     }
 
@@ -204,7 +204,7 @@ void vtkMRMLAnnotationStickyDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnn
 
   if (!logoWidget)
    {
-   vtkErrorMacro("PropagateMRMLToWidget: Could not get logo widget!")
+   vtkErrorMacro("PropagateMRMLToWidget: Could not get logo widget!");
    return;
    }
 
@@ -213,13 +213,13 @@ void vtkMRMLAnnotationStickyDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnn
 
   if (!stickyNode)
    {
-   vtkErrorMacro("PropagateMRMLToWidget: Could not get sticky node!")
+   vtkErrorMacro("PropagateMRMLToWidget: Could not get sticky node!");
    return;
    }
 
   if (this->m_Updating)
     {
-    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.")
+    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.");
     return;
     }
 
@@ -262,13 +262,13 @@ void vtkMRMLAnnotationStickyDisplayableManager::PropagateWidgetToMRML(vtkAbstrac
 
   if (!widget)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!")
+    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!")
+    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!");
     return;
     }
 
@@ -277,7 +277,7 @@ void vtkMRMLAnnotationStickyDisplayableManager::PropagateWidgetToMRML(vtkAbstrac
 
    if (!logoWidget)
      {
-     vtkErrorMacro("PropagateWidgetToMRML: Could not get logo widget!")
+     vtkErrorMacro("PropagateWidgetToMRML: Could not get logo widget!");
      return;
      }
 
@@ -286,13 +286,13 @@ void vtkMRMLAnnotationStickyDisplayableManager::PropagateWidgetToMRML(vtkAbstrac
 
    if (!stickyNode)
      {
-     vtkErrorMacro("PropagateWidgetToMRML: Could not get sticky node!")
+     vtkErrorMacro("PropagateWidgetToMRML: Could not get sticky node!");
      return;
      }
 
   if (this->m_Updating)
     {
-    vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.")
+    vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.");
     return;
     }
 

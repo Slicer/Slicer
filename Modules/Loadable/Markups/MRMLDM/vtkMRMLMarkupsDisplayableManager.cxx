@@ -467,7 +467,7 @@ void vtkMRMLMarkupsDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkObj
 
   if (!caller)
     {
-    vtkErrorMacro("OnMRMLDisplayableNodeModifiedEvent: Could not get caller.")
+    vtkErrorMacro("OnMRMLDisplayableNodeModifiedEvent: Could not get caller.");
     return;
     }
 
@@ -494,7 +494,7 @@ void vtkMRMLMarkupsDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkObj
   if (viewNode)
     {
     // the associated renderWindow is a 3D View
-    vtkDebugMacro("OnMRMLDisplayableNodeModifiedEvent: This displayableManager handles a ThreeD view.")
+    vtkDebugMacro("OnMRMLDisplayableNodeModifiedEvent: This displayableManager handles a ThreeD view.");
     return;
     }
 }

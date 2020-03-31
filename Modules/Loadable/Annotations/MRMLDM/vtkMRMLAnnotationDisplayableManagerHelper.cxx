@@ -452,16 +452,16 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidgetAndNode(
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManagerHelper::PlaceSeed(double x, double y, vtkRenderWindowInteractor * interactor, vtkRenderer * renderer)
 {
-  vtkDebugMacro("PlaceSeed: " << x << ":" << y)
+  vtkDebugMacro("PlaceSeed: " << x << ":" << y);
 
   if (!interactor)
     {
-    vtkErrorMacro("PlaceSeed: No renderInteractor found.")
+    vtkErrorMacro("PlaceSeed: No renderInteractor found.");
     }
 
   if (!renderer)
     {
-    vtkErrorMacro("PlaceSeed: No renderer found.")
+    vtkErrorMacro("PlaceSeed: No renderer found.");
     }
 
   if (!this->SeedWidget)
