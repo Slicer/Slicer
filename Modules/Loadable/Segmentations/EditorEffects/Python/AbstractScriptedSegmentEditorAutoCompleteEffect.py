@@ -175,7 +175,16 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
 
   def observeSegmentation(self, observationEnabled):
     import vtkSegmentationCorePython as vtkSegmentationCore
-    segmentation = self.scriptedEffect.parameterSetNode().GetSegmentationNode().GetSegmentation()
+
+    parameterSetNode = self.scriptedEffect.parameterSetNode()
+    segmentationNode = None
+    if parameterSetNode:
+      segmentationNode = parameterSetNode.GetSegmentationNode()
+
+    segmentation = None
+    if segmentationNode:
+      segmentation = segmentationNode.GetSegmentation()
+
     if observationEnabled and self.observedSegmentation == segmentation:
       return
     if not observationEnabled and not self.observedSegmentation:
