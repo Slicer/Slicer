@@ -1166,11 +1166,16 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
 
   if (!d->ParameterSetNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node";
+    d->SegmentationNodeComboBox->setEnabled(false);
+    d->EffectsGroupBox->setEnabled(false);
+    d->MaskingGroupBox->setEnabled(false);
+    d->EffectsOptionsFrame->setEnabled(false);
+    d->MasterVolumeNodeComboBox->setEnabled(false);
     return;
     }
+  d->SegmentationNodeComboBox->setEnabled(true);
 
-  int wasModified = d->ParameterSetNode->StartModify();
+  MRMLNodeModifyBlocker blocker(d->ParameterSetNode);
 
   this->updateWidgetFromSegmentationNode();
   this->updateWidgetFromMasterVolumeNode();
@@ -1183,10 +1188,10 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
 
   double surfaceSmoothingFactor = 0;
   if (d->SegmentationNode && d->SegmentationNode->GetSegmentation())
-  {
+    {
     surfaceSmoothingFactor = QString(d->SegmentationNode->GetSegmentation()->GetConversionParameter(
       vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSmoothingFactorParameterName()).c_str()).toDouble();
-  }
+    }
   bool wasBlocked = d->SurfaceSmoothingEnabledAction->blockSignals(true);
   d->SurfaceSmoothingEnabledAction->setChecked(surfaceSmoothingFactor >= 0.0);
   d->SurfaceSmoothingEnabledAction->blockSignals(wasBlocked);
@@ -1239,8 +1244,6 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
 
   // Segmentation object might have been replaced, update selected segment
   this->onSegmentAddedRemoved();
-
-  d->ParameterSetNode->EndModify(wasModified);
 }
 
 //-----------------------------------------------------------------------------
@@ -1813,6 +1816,12 @@ void qMRMLSegmentEditorWidget::initializeParameterSetNode()
     {
     return;
     }
+
+  // Block EffectParameterModified events while we are still initializing the parameter node.
+  // Not doing so can result in a number of error messages when the scene is closed and the
+  // parameter node is reinitialized.
+  MRMLNodeModifyBlocker blocker(d->ParameterSetNode);
+
   // Set parameter set node to all effects
   foreach(qSlicerSegmentEditorAbstractEffect* effect, d->RegisteredEffects)
     {
