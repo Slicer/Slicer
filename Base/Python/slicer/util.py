@@ -282,8 +282,9 @@ def findChild(widget, name):
 
 def loadUI(path):
   """ Load UI file ``path`` and return the corresponding widget.
-  Raises a ``RuntimeError`` exception if the UI file is not found or if no
-  widget was instantiated.
+
+  :raises RuntimeError: if the UI file is not found or if no
+   widget was instantiated.
   """
   import qt
   qfile = qt.QFile(path)
@@ -312,13 +313,12 @@ def startQtDesigner(args = None):
 
 def childWidgetVariables(widget):
   """ Get child widgets as attributes of an object.
+
   Each named child widget is accessible as an attribute of the returned object,
   with the attribute name matching the child widget name.
   This function provides convenient access to widgets in a loaded UI file.
 
-  Example:
-
-  .. code-block:: python
+  Example::
 
     uiWidget = slicer.util.loadUI(myUiFilePath)
     self.ui = slicer.util.childWidgetVariables(uiWidget)
@@ -336,7 +336,9 @@ def childWidgetVariables(widget):
 def setSliceViewerLayers(background='keep-current', foreground='keep-current', label='keep-current',
                          foregroundOpacity=None, labelOpacity=None, fit=False):
   """ Set the slice views with the given nodes.
+
   If node ID is not specified (or value is 'keep-current') then the layer will not be modified.
+
   :param background: node or node ID to be used for the background layer
   :param foreground: node or node ID to be used for the foreground layer
   :param label: node or node ID to be used for the label layer
@@ -380,6 +382,7 @@ def setSliceViewerLayers(background='keep-current', foreground='keep-current', l
 
 def loadNodeFromFile(filename, filetype, properties={}, returnNode=False):
   """Load node into the scene from a file.
+
   :param filename: full path of the file to load.
   :param filetype: specifies the file type, which determines which IO class will load the file.
   :param properties: map containing additional parameters for the loading.
@@ -409,8 +412,10 @@ def loadNodeFromFile(filename, filetype, properties={}, returnNode=False):
   return loadedNode
 
 def loadNodesFromFile(filename, filetype, properties={}, returnNode=False):
-  """Load nodes into the scene from a file. It differs from `loadNodeFromFile` in that
-  it returns loaded node(s) in an iterator.
+  """Load nodes into the scene from a file.
+
+  It differs from `loadNodeFromFile` in that it returns loaded node(s) in an iterator.
+
   :param filename: full path of the file to load.
   :param filetype: specifies the file type, which determines which IO class will load the file.
   :param properties: map containing additional parameters for the loading.
@@ -430,6 +435,7 @@ def loadNodesFromFile(filename, filetype, properties={}, returnNode=False):
 
 def loadColorTable(filename, returnNode=False):
   """Load node from file.
+
   :param filename: full path of the file to load.
   :param returnNode: Deprecated.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
@@ -439,6 +445,7 @@ def loadColorTable(filename, returnNode=False):
 
 def loadFiberBundle(filename, returnNode=False):
   """Load node from file.
+
   :param filename: full path of the file to load.
   :param returnNode: Deprecated.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
@@ -448,6 +455,7 @@ def loadFiberBundle(filename, returnNode=False):
 
 def loadFiducialList(filename, returnNode=False):
   """Load node from file.
+
   :param filename: full path of the file to load.
   :param returnNode: Deprecated.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
@@ -457,6 +465,7 @@ def loadFiducialList(filename, returnNode=False):
 
 def loadAnnotationFiducial(filename, returnNode=False):
   """Load node from file.
+
   :param filename: full path of the file to load.
   :param returnNode: Deprecated.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
@@ -466,6 +475,7 @@ def loadAnnotationFiducial(filename, returnNode=False):
 
 def loadAnnotationRuler(filename, returnNode=False):
   """Load node from file.
+
   :param filename: full path of the file to load.
   :param returnNode: Deprecated.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
@@ -475,6 +485,7 @@ def loadAnnotationRuler(filename, returnNode=False):
 
 def loadAnnotationROI(filename, returnNode=False):
   """Load node from file.
+
   :param filename: full path of the file to load.
   :param returnNode: Deprecated.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
@@ -484,6 +495,7 @@ def loadAnnotationROI(filename, returnNode=False):
 
 def loadMarkupsFiducialList(filename, returnNode=False):
   """Load node from file.
+
   :param filename: full path of the file to load.
   :param returnNode: Deprecated.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
@@ -493,6 +505,7 @@ def loadMarkupsFiducialList(filename, returnNode=False):
 
 def loadMarkupsCurve(filename):
   """Load node from file.
+
   :param filename: full path of the file to load.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
   """
@@ -500,6 +513,7 @@ def loadMarkupsCurve(filename):
 
 def loadMarkupsClosedCurve(filename):
   """Load node from file.
+
   :param filename: full path of the file to load.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
   """
@@ -507,6 +521,7 @@ def loadMarkupsClosedCurve(filename):
 
 def loadModel(filename, returnNode=False):
   """Load node from file.
+
   :param filename: full path of the file to load.
   :param returnNode: Deprecated.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
@@ -516,6 +531,7 @@ def loadModel(filename, returnNode=False):
 
 def loadScalarOverlay(filename, modelNodeID, returnNode=False):
   """Load node from file.
+
   :param filename: full path of the file to load.
   :param returnNode: Deprecated.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
@@ -525,6 +541,7 @@ def loadScalarOverlay(filename, modelNodeID, returnNode=False):
 
 def loadSegmentation(filename, returnNode=False):
   """Load node from file.
+
   :param filename: full path of the file to load.
   :param returnNode: Deprecated.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
@@ -534,6 +551,7 @@ def loadSegmentation(filename, returnNode=False):
 
 def loadTransform(filename, returnNode=False):
   """Load node from file.
+
   :param filename: full path of the file to load.
   :param returnNode: Deprecated.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
@@ -550,6 +568,7 @@ def loadTable(filename):
 
 def loadLabelVolume(filename, properties={}, returnNode=False):
   """Load node from file.
+
   :param filename: full path of the file to load.
   :param returnNode: Deprecated.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
@@ -559,6 +578,7 @@ def loadLabelVolume(filename, properties={}, returnNode=False):
 
 def loadShaderProperty(filename, returnNode=False):
   """Load node from file.
+
   :param filename: full path of the file to load.
   :param returnNode: Deprecated.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
@@ -568,6 +588,7 @@ def loadShaderProperty(filename, returnNode=False):
 
 def loadText(filename):
   """Load node from file.
+
   :param filename: full path of the text file to load.
   :return: loaded text node.
   """
@@ -575,16 +596,17 @@ def loadText(filename):
 
 def loadVolume(filename, properties={}, returnNode=False):
   """Load node from file.
+
   :param filename: full path of the file to load.
   :param properties:
-  - name: this name will be used as node name for the loaded volume
-  - labelmap: interpret volume as labelmap
-  - singleFile: ignore all other files in the directory
-  - center: ignore image position
-  - discardOrientation: ignore image axis directions
-  - autoWindowLevel: compute window/level automatically
-  - show: display volume in slice viewers after loading is completed
-  - fileNames: list of filenames to load the volume from
+    - name: this name will be used as node name for the loaded volume
+    - labelmap: interpret volume as labelmap
+    - singleFile: ignore all other files in the directory
+    - center: ignore image position
+    - discardOrientation: ignore image axis directions
+    - autoWindowLevel: compute window/level automatically
+    - show: display volume in slice viewers after loading is completed
+    - fileNames: list of filenames to load the volume from
   :param returnNode: Deprecated.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
     If returnNode is True then a status flag and loaded node are returned.
@@ -594,6 +616,7 @@ def loadVolume(filename, properties={}, returnNode=False):
 
 def loadScene(filename, properties={}):
   """Load node from file.
+
   :param filename: full path of the file to load.
   :param returnNode: Deprecated.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
@@ -760,12 +783,15 @@ def reloadScriptedModule(moduleName):
   """Generic reload method for any scripted module.
 
   The function performs the following:
+
   * Ensure ``sys.path`` includes the module path and use ``imp.load_module``
     to load the associated script.
   * For the current module widget representation:
+
     * Hide all children widgets
     * Call ``cleanup()`` function and disconnect ``ScriptedLoadableModuleWidget_onModuleAboutToBeUnloaded``
     * Remove layout items
+
   * Instantiate new widget representation
   * Call ``setup()`` function
   * Update ``slicer.modules.<moduleName>Widget`` attribute
@@ -843,8 +869,10 @@ class MRMLNodeNotFoundException(Exception):
 
 def getNodes(pattern="*", scene=None, useLists=False):
   """Return a dictionary of nodes where the name or id matches the ``pattern``.
+
   By default, ``pattern`` is a wildcard and it returns all nodes associated
   with ``slicer.mrmlScene``.
+
   If multiple node share the same name, using ``useLists=False`` (default behavior)
   returns only the last node with that name. If ``useLists=True``, it returns
   a dictionary of lists of nodes.
@@ -868,10 +896,12 @@ def getNodes(pattern="*", scene=None, useLists=False):
 
 def getNode(pattern="*", index=0, scene=None):
   """Return the indexth node where name or id matches ``pattern``.
+
   By default, ``pattern`` is a wildcard and it returns the first node
   associated with ``slicer.mrmlScene``.
-  Throws MRMLNodeNotFoundException exception if no node is found
-  that matches the specified pattern.
+
+  :raises MRMLNodeNotFoundException: if no node is found
+   that matches the specified pattern.
   """
   nodes = getNodes(pattern, scene)
   if not nodes:
@@ -904,6 +934,7 @@ def getFirstNodeByClassByName(className, name, scene=None):
 
 def getFirstNodeByName(name, className=None):
   """Get the first MRML node that name starts with the specified name.
+
   Optionally specify a classname that must also match.
   """
   import slicer
@@ -927,10 +958,15 @@ class NodeModify(object):
 
 def array(pattern = "", index = 0):
   """Return the array you are "most likely to want" from the indexth
-  MRML node that matches the pattern.  Meant to be used in the python
-  console for quick debugging/testing.  More specific API should be
-  used in scripts to be sure you get exactly what you want, such as
-  arrayFromVolume, arrayFromModelPoints, and arrayFromGridTransform.
+  MRML node that matches the pattern.
+
+  .. warning::
+  
+    Meant to be used in the python console for quick debugging/testing.
+
+  More specific API should be used in scripts to be sure you get exactly
+  what you want, such as :py:meth:`arrayFromVolume`, :py:meth:`arrayFromModelPoints`,
+  and :py:meth:`arrayFromGridTransform`.
   """
   node = getNode(pattern=pattern, index=index)
   import slicer
@@ -950,6 +986,7 @@ def array(pattern = "", index = 0):
 
 def arrayFromVolume(volumeNode):
   """Return voxel array from volume node as numpy array.
+
   Voxels values are not copied. Voxel values in the volume node can be modified
   by changing values in the numpy array.
   After all modifications has been completed, call :py:meth:`arrayFromVolumeModified`.
@@ -1132,9 +1169,12 @@ def updateVTKMatrixFromArray(vmatrix, narray):
 
 def arrayFromTransformMatrix(transformNode, toWorld=False):
   """Return 4x4 transformation matrix as numpy array.
+
   :param toWorld: if set to True then the transform to world coordinate system is returned
     (effect of parent transform to the node is applied), otherwise transform to parent transform is returned.
+
   The returned array is just a copy and so any modification in the array will not affect the transform node.
+
   To set transformation matrix from a numpy array, use :py:meth:`updateTransformMatrixFromArray`.
   """
   import numpy as np
@@ -1150,6 +1190,7 @@ def arrayFromTransformMatrix(transformNode, toWorld=False):
 
 def updateTransformMatrixFromArray(transformNode, narray, toWorld = False):
   """Set transformation matrix from a numpy array of size 4x4 (toParent).
+
   :param world: if set to True then the transform will be set so that transform
     to world matrix will be equal to narray; otherwise transform to parent will be
     set as narray.
@@ -1191,13 +1232,21 @@ def arrayFromSegmentInternalBinaryLabelmap(segmentationNode, segmentId):
   Voxels values are not copied.
 
   The labelmap containing the specified segment may be a shared labelmap containing multiple segments.
-  To get and modify the array for a single segment, calling:
-  segmentationNode->GetSegmentation()->SeparateSegment(segmentId) will transfer the segment from a shared labelmap into a new layer.
-  Layers can be merged by calling segmentationNode->GetSegmentation()->CollapseBinaryLabelmaps()
+
+  To get and modify the array for a single segment, calling::
+
+    segmentationNode->GetSegmentation()->SeparateSegment(segmentId)
+
+  will transfer the segment from a shared labelmap into a new layer.
+
+  Layers can be merged by calling::
+
+    segmentationNode->GetSegmentation()->CollapseBinaryLabelmaps()
 
   If binary labelmap is the master representation then voxel values in the volume node can be modified
-  by changing values in the numpy array. After all modifications has been completed, call:
-  segmentationNode.GetSegmentation().GetSegment(segmentID).Modified()
+  by changing values in the numpy array. After all modifications has been completed, call::
+
+    segmentationNode.GetSegmentation().GetSegment(segmentID).Modified()
 
   .. warning:: Important: memory area of the returned array is managed by VTK,
     therefore values in the array may be changed, but the array must not be reallocated.
@@ -1211,10 +1260,15 @@ def arrayFromSegmentInternalBinaryLabelmap(segmentationNode, segmentId):
 
 def arrayFromSegmentBinaryLabelmap(segmentationNode, segmentId):
   """Return voxel array of a segment's binary labelmap representation as numpy array.
+
   Voxels values are copied.
+
   If binary labelmap is the master representation then voxel values in the volume node can be modified
-  by changing values in the numpy array. After all modifications has been completed, call:
-  segmentationNode.GetSegmentation().GetSegment(segmentID).Modified()
+  by changing values in the numpy array.
+
+  After all modifications have been completed, call::
+
+    segmentationNode.GetSegmentation().GetSegment(segmentID).Modified()
 
   .. warning:: Important: memory area of the returned array is managed by VTK,
     therefore values in the array may be changed, but the array must not be reallocated.
@@ -1230,9 +1284,12 @@ def arrayFromSegmentBinaryLabelmap(segmentationNode, segmentId):
 
 def arrayFromMarkupsControlPoints(markupsNode, world = False):
   """Return control point positions of a markups node as rows in a numpy array (of size Nx3).
+
   :param world: if set to True then the control points coordinates are returned in world coordinate system
     (effect of parent transform to the node is applied).
+
   The returned array is just a copy and so any modification in the array will not affect the markup node.
+
   To modify markup control points based on a numpy array, use :py:meth:`updateMarkupsControlPointsFromArray`.
   """
   numberOfControlPoints = markupsNode.GetNumberOfControlPoints()
@@ -1247,7 +1304,9 @@ def arrayFromMarkupsControlPoints(markupsNode, world = False):
 
 def updateMarkupsControlPointsFromArray(markupsNode, narray, world = False):
   """Sets control point positions in a markups node from a numpy array of size Nx3.
+
   :param world: if set to True then the control point coordinates are expected in world coordinate system.
+
   All previous content of the node is deleted.
   """
   narrayshape = narray.shape
@@ -1279,8 +1338,10 @@ def updateMarkupsControlPointsFromArray(markupsNode, narray, world = False):
 
 def arrayFromMarkupsCurvePoints(markupsNode, world = False):
   """Return interpolated curve point positions of a markups node as rows in a numpy array (of size Nx3).
+
   :param world: if set to True then the point coordinates are returned in world coordinate system
     (effect of parent transform to the node is applied).
+
   The returned array is just a copy and so any modification in the array will not affect the markup node.
   """
   import numpy as np
@@ -1342,6 +1403,7 @@ def addVolumeFromArray(narray, ijkToRAS=None, name=None, nodeClassName=None):
   """Create a new volume node from content of a numpy array and add it to the scene.
   Voxels values are deep-copied, therefore if the numpy array
   is modified after calling this method, voxel values in the volume node will not change.
+
   :param narray: numpy array containing volume voxels.
   :param ijkToRAS: 4x4 numpy array or vtk.vtkMatrix4x4 that defines mapping from IJK to RAS coordinate system (specifying origin, spacing, directions)
   :param name: volume node name
@@ -1349,15 +1411,17 @@ def addVolumeFromArray(narray, ijkToRAS=None, name=None, nodeClassName=None):
     Use ``vtkMRMLLabelMapVolumeNode`` for labelmap volume, ``vtkMRMLVectorVolumeNode`` for vector volume.
   :return: created new volume node
 
-  Example: create zero-filled volume
+  Example::
 
+    # create zero-filled volume
     import numpy as np
     volumeNode = slicer.util.addVolumeFromArray(np.zeros((30, 40, 50)))
 
-  Example: create labelmap volume filled with voxel value of 120
+  Example::
 
+    # create labelmap volume filled with voxel value of 120
     import numpy as np
-    volumeNode = slicer.util.addVolumeFromArray(np.ones((30, 40, 50),'int8') * 120,
+    volumeNode = slicer.util.addVolumeFromArray(np.ones((30, 40, 50), 'int8') * 120,
       np.diag([0.2, 0.2, 0.5, 1.0]), nodeClassName="vtkMRMLLabelMapVolumeNode")
 
   """
@@ -1403,18 +1467,19 @@ def arrayFromTableColumnModified(tableNode, columnName):
   tableNode.GetTable().Modified()
 
 def updateTableFromArray(tableNode, narrays, columnNames=None):
-  """Sets values in a table node from a numpy array.
+  """Set values in a table node from a numpy array.
+
   columnNames may contain a string or list of strings that will be used as column name(s).
   Values are copied, therefore if the numpy array  is modified after calling this method,
   values in the table node will not change.
   All previous content of the table is deleted.
 
-  Example:
+  Example::
 
-      import numpy as np
-      histogram = np.histogram(arrayFromVolume(getNode('MRHead')))
-      tableNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
-      updateTableFromArray(tableNode, histogram, ["Count", "Intensity"])
+    import numpy as np
+    histogram = np.histogram(arrayFromVolume(getNode('MRHead')))
+    tableNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
+    updateTableFromArray(tableNode, histogram, ["Count", "Intensity"])
 
   """
   import numpy as np
@@ -1565,9 +1630,12 @@ def tempDirectory(key='__SlicerTemp__',tempDir=None,includeDateTime=True):
 
 def delayDisplay(message, autoCloseMsec=1000):
   """Display an information message in a popup window for a short time.
-  If autoCloseMsec < 0 then the window is not closed until the user clicks on it
-  If 0 <= autoCloseMsec < 400 then only slicer.app.processEvents() is called.
-  If autoCloseMsec >= 400 then the window is closed after waiting for autoCloseMsec milliseconds
+
+  If ``autoCloseMsec < 0`` then the window is not closed until the user clicks on it
+
+  If ``0 <= autoCloseMsec < 400`` then only ``slicer.app.processEvents()`` is called.
+
+  If ``autoCloseMsec >= 400`` then the window is closed after waiting for autoCloseMsec milliseconds
   """
   import qt, slicer
   import logging
@@ -1659,8 +1727,12 @@ def confirmRetryCloseDisplay(text, windowTitle=None, parent=None, **kwargs):
 
 def messageBox(text, parent=None, **kwargs):
   """Displays a messagebox.
+
   ctkMessageBox is used instead of a default qMessageBox to provide "Don't show again" checkbox.
-  For example: slicer.util.messageBox("Some message", dontShowAgainSettingsKey = "MainWindow/DontShowSomeMessage")
+
+  For example::
+
+    slicer.util.messageBox("Some message", dontShowAgainSettingsKey = "MainWindow/DontShowSomeMessage")
   """
   import qt
   import ctk
@@ -1679,12 +1751,21 @@ def messageBox(text, parent=None, **kwargs):
   return mbox.exec_()
 
 def createProgressDialog(parent=None, value=0, maximum=100, labelText="", windowTitle="Processing...", **kwargs):
-  """Display a modal QProgressDialog. Go to QProgressDialog documentation
-  http://pyqt.sourceforge.net/Docs/PyQt4/qprogressdialog.html for more keyword arguments, that could be used.
-  E.g. progressbar = createProgressIndicator(autoClose=False) if you don't want the progress dialog to automatically
-  close.
-  Updating progress value with progressbar.value = 50
-  Updating label text with progressbar.labelText = "processing XYZ"
+  """Display a modal QProgressDialog.
+
+  Go to `QProgressDialog documentation <http://pyqt.sourceforge.net/Docs/PyQt4/qprogressdialog.html>`_ to
+  learn about the available keyword arguments.
+  
+  Examples::
+
+    # Prevent progress dialog from automatically closing
+    progressbar = createProgressIndicator(autoClose=False)
+
+    # Update progress value
+    progressbar.value = 50
+
+    # Update label text
+    progressbar.labelText = "processing XYZ"
   """
   import qt
   progressIndicator = qt.QProgressDialog(parent if parent else mainWindow())
@@ -1700,12 +1781,14 @@ def createProgressDialog(parent=None, value=0, maximum=100, labelText="", window
 
 def toBool(value):
   """Convert any type of value to a boolean.
+
   The function uses the following heuristic:
-  1) If the value can be converted to an integer, the integer is then
-  converted to a boolean.
-  2) If the value is a string, return True if it is equal to 'true'. False otherwise.
-  Note that the comparison is case insensitive.
-  3) If the value is neither an integer or a string, the bool() function is applied.
+
+  1. If the value can be converted to an integer, the integer is then
+     converted to a boolean.
+  2. If the value is a string, return True if it is equal to 'true'. False otherwise.
+     Note that the comparison is case insensitive.
+  3. If the value is neither an integer or a string, the bool() function is applied.
 
   >>> [toBool(x) for x in range(-2, 2)]
   [True, True, False, True]
@@ -1723,6 +1806,7 @@ def toBool(value):
 
 def settingsValue(key, default, converter=lambda v: v, settings=None):
   """Return settings value associated with key if it exists or the provided default otherwise.
+
   ``settings`` parameter is expected to be a valid ``qt.Settings`` object.
   """
   import qt
@@ -1732,22 +1816,25 @@ def settingsValue(key, default, converter=lambda v: v, settings=None):
 def clickAndDrag(widget,button='Left',start=(10,10),end=(10,40),steps=20,modifiers=[]):
   """
   Send synthetic mouse events to the specified widget (qMRMLSliceWidget or qMRMLThreeDView)
-  button : "Left", "Middle", "Right", or "None"
-  start, end : window coordinates for action
-  steps : number of steps to move in, if <2 then mouse jumps to the end position
-  modifiers : list containing zero or more of "Shift" or "Control"
 
-  Hint: for generating test data you can use this snippet of code:
+  :param button: "Left", "Middle", "Right", or "None"
+   start, end : window coordinates for action
+  :param steps: number of steps to move in, if <2 then mouse jumps to the end position
+  :param modifiers: list containing zero or more of "Shift" or "Control"
 
-layoutManager = slicer.app.layoutManager()
-threeDView = layoutManager.threeDWidget(0).threeDView()
-style = threeDView.interactorStyle()
-interactor = style.GetInteractor()
-def onClick(caller,event):
-    print(interactor.GetEventPosition())
+  .. hint::
+  
+    For generating test data you can use this snippet of code::
 
-interactor.AddObserver(vtk.vtkCommand.LeftButtonPressEvent, onClick)
+      layoutManager = slicer.app.layoutManager()
+      threeDView = layoutManager.threeDWidget(0).threeDView()
+      style = threeDView.interactorStyle()
+      interactor = style.GetInteractor()
 
+      def onClick(caller,event):
+          print(interactor.GetEventPosition())
+
+      interactor.AddObserver(vtk.vtkCommand.LeftButtonPressEvent, onClick)
   """
   style = widget.interactorStyle()
   interactor = style.GetInteractor()
@@ -1880,8 +1967,8 @@ def computeChecksum(algo, filePath):
 
   It internally reads the file by chunk of 8192 bytes.
 
-  Raises :class:`ValueError` if algo is unknown.
-  Raises :class:`IOError` if filePath does not exist.
+  :raises ValueError: if algo is unknown.
+  :raises IOError: if filePath does not exist.
   """
   import hashlib
 
@@ -1904,7 +1991,7 @@ def extractAlgoAndDigest(checksum):
   ``<algo>`` is expected to be `SHA256`, `SHA512`, or `MD5`.
   ``<digest>`` is expected to be the full length hexdecimal digest.
 
-  Raises :class:`ValueError` if checksum is incorrectly formatted.
+  :raises ValueError: if checksum is incorrectly formatted.
   """
   if checksum is None:
     return None, None
@@ -1972,6 +2059,7 @@ def getFilesInDirectory(directory, absolutePath=True):
 
 def plot(narray, xColumnIndex = -1, columnNames = None, title = None, show = True, nodes = None):
   """ Create a plot from a numpy array that contains two or more columns.
+
   :param narray: input numpy array containing data series in columns.
   :param xColumnIndex: index of column that will be used as x axis.
     If it is set to negative number (by default) then row index will be used as x coordinate.
