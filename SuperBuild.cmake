@@ -208,7 +208,7 @@ Slicer_Remote_Add(vtkAddon
   GIT_TAG af1d32d4bad5d2fab96b8eef0d7504ee27a07199
   OPTION_NAME Slicer_BUILD_vtkAddon
   )
-list_conditional_append(Slicer_BUILD_MultiVolumeExplorer Slicer_REMOTE_DEPENDENCIES MultiVolumeExplorer)
+list_conditional_append(Slicer_BUILD_vtkAddon Slicer_REMOTE_DEPENDENCIES vtkAddon)
 
 set(vtkAddon_USE_UTF8 ON)
 mark_as_superbuild(vtkAddon_USE_UTF8:BOOL)
