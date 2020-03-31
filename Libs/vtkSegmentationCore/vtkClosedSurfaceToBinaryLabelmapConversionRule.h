@@ -109,7 +109,10 @@ protected:
 protected:
   vtkClosedSurfaceToBinaryLabelmapConversionRule();
   ~vtkClosedSurfaceToBinaryLabelmapConversionRule() override;
-  void operator=(const vtkClosedSurfaceToBinaryLabelmapConversionRule&);
+
+private:
+  vtkClosedSurfaceToBinaryLabelmapConversionRule(const vtkClosedSurfaceToBinaryLabelmapConversionRule&) = delete;
+  void operator=(const vtkClosedSurfaceToBinaryLabelmapConversionRule&) = delete;
 };
 
 #endif // __vtkClosedSurfaceToBinaryLabelmapConversionRule_h

@@ -63,6 +63,10 @@ protected:
 
   int Neighbor;
   unsigned char *Mask;
+
+private:
+  vtkImageNeighborhoodFilter(const vtkImageNeighborhoodFilter&) = delete;
+  void operator=(const vtkImageNeighborhoodFilter&) = delete;
 };
 
 #endif

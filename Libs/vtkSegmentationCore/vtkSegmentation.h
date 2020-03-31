@@ -512,7 +512,6 @@ protected:
 protected:
   vtkSegmentation();
   ~vtkSegmentation() override;
-  void operator=(const vtkSegmentation&);
 
 protected:
   /// Container of segments that belong to this segmentation
@@ -554,6 +553,10 @@ protected:
   friend class vtkSlicerSegmentationsModuleLogic;
   friend class vtkSegmentationModifier;
   friend class qMRMLSegmentEditorWidgetPrivate;
+
+private:
+  vtkSegmentation(const vtkSegmentation&) = delete;
+  void operator=(const vtkSegmentation&) = delete;
 };
 
 #endif // __vtkSegmentation_h

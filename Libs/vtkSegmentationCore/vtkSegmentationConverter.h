@@ -170,7 +170,6 @@ protected:
 protected:
   vtkSegmentationConverter();
   ~vtkSegmentationConverter() override;
-  void operator=(const vtkSegmentationConverter&);
 
 protected:
   /// Converter rules. When the class is created it contains just the default converter rules but then
@@ -185,6 +184,10 @@ protected:
 
   /// Source representation to target representation rule graph
   RepresentationToRepresentationToRuleMapType RulesGraph;
+
+private:
+  vtkSegmentationConverter(const vtkSegmentationConverter&) = delete;
+  void operator=(const vtkSegmentationConverter&) = delete;
 };
 
 #endif // __vtkSegmentationConverter_h

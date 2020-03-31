@@ -51,6 +51,10 @@ protected:
 
   void ThreadedExecute(vtkImageData *inData, vtkImageData *outData,
                        int extent[6], int id) override;
+
+private:
+  vtkImageLabelOutline(const vtkImageLabelOutline&) = delete;
+  void operator=(const vtkImageLabelOutline&) = delete;
 };
 
 #endif
