@@ -1469,7 +1469,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::UpdateFromMRML()
   vtkMRMLScene* scene = this->GetMRMLScene();
   if (!scene)
     {
-    vtkDebugMacro("vtkMRMLSegmentationsDisplayableManager2D->UpdateFromMRML: Scene is not set.")
+    vtkDebugMacro("vtkMRMLSegmentationsDisplayableManager2D->UpdateFromMRML: Scene is not set.");
     return;
     }
   this->Internal->ClearDisplayableNodes();

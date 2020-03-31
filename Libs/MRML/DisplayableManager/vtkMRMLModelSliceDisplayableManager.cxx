@@ -909,7 +909,7 @@ void vtkMRMLModelSliceDisplayableManager::UpdateFromMRML()
   vtkMRMLScene* scene = this->GetMRMLScene();
   if (!scene)
     {
-    vtkDebugMacro( "vtkMRMLModelSliceDisplayableManager->UpdateFromMRML: Scene is not set.")
+    vtkDebugMacro( "vtkMRMLModelSliceDisplayableManager->UpdateFromMRML: Scene is not set.");
     return;
     }
   this->Internal->ClearDisplayableNodes();

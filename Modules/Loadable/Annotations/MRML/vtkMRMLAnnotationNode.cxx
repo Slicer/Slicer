@@ -391,7 +391,7 @@ void vtkMRMLAnnotationNode::SetAnnotationAttribute(vtkIdType id, int att, double
     }
   if (id < 0 || id >= attArray->GetSize())
     {
-      vtkErrorMacro("SetAnnotationAttribute: id is out of range: id " << id << " Size: " <<  attArray->GetSize())
+      vtkErrorMacro("SetAnnotationAttribute: id is out of range: id " << id << " Size: " <<  attArray->GetSize());
       return ;
     }
   attArray->SetValue(id,value);
@@ -403,13 +403,13 @@ int vtkMRMLAnnotationNode::DeleteAttribute(vtkIdType idEntry, vtkIdType idAtt)
   vtkBitArray *dataArray = dynamic_cast <vtkBitArray *> (this->GetAnnotationAttributes(idAtt));
   if (!dataArray)
     {
-      vtkErrorMacro("Annotation " << this->GetName() << " Attribute " << idAtt << " does not exist")
+      vtkErrorMacro("Annotation " << this->GetName() << " Attribute " << idAtt << " does not exist");
       return 0;
     }
   int n = dataArray->GetSize();
   if (idEntry < 0 || idEntry >= n)
     {
-      vtkErrorMacro("Annotation " << this->GetName() << " Annotation out of range")
+      vtkErrorMacro("Annotation " << this->GetName() << " Annotation out of range");
       return 0;
     }
 
@@ -618,7 +618,7 @@ void vtkMRMLAnnotationNode::CreateAnnotationTextDisplayNode()
   if (node) return;
   if (!this->GetScene())
     {
-      vtkErrorMacro("vtkMRMLAnnotationNode::CreateAnnotationTextDisplayNode Annotation: No scene defined" ) ;
+      vtkErrorMacro("vtkMRMLAnnotationNode::CreateAnnotationTextDisplayNode Annotation: No scene defined" );
       return;
     }
 
@@ -666,7 +666,7 @@ void vtkMRMLAnnotationNode::Initialize(vtkMRMLScene* mrmlScene)
 {
   if (!mrmlScene)
   {
-    vtkErrorMacro("Scene was null!")
+    vtkErrorMacro("Scene was null!");
     return;
   }
 
@@ -728,7 +728,7 @@ void vtkMRMLAnnotationNode::RestoreBackup()
     }
   else
     {
-    vtkErrorMacro("RestoreBackup - could not get the attached backup")
+    vtkErrorMacro("RestoreBackup - could not get the attached backup");
     }
 
 }

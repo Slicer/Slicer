@@ -553,7 +553,7 @@ void vtkMRMLAnnotationLinesNode::Initialize(vtkMRMLScene* mrmlScene)
 {
    if (!mrmlScene)
    {
-     vtkErrorMacro("Scene was null!")
+     vtkErrorMacro("Scene was null!");
      return;
    }
 

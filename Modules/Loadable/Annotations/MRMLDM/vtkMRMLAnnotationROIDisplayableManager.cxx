@@ -129,14 +129,14 @@ vtkAbstractWidget * vtkMRMLAnnotationROIDisplayableManager::CreateWidget(vtkMRML
 
   if (!node)
     {
-    vtkErrorMacro("CreateWidget: Node not set!")
+    vtkErrorMacro("CreateWidget: Node not set!");
     return nullptr;
     }
 
   vtkMRMLAnnotationROINode* roiNode = vtkMRMLAnnotationROINode::SafeDownCast(node);
   if (!roiNode)
     {
-    vtkErrorMacro("CreateWidget: Could not get ROI node!")
+    vtkErrorMacro("CreateWidget: Could not get ROI node!");
     return nullptr;
     }
 
@@ -200,13 +200,13 @@ void vtkMRMLAnnotationROIDisplayableManager::OnWidgetCreated(vtkAbstractWidget *
 
   if (!widget)
     {
-    vtkErrorMacro("OnWidgetCreated: Widget was null!")
+    vtkErrorMacro("OnWidgetCreated: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("OnWidgetCreated: MRML node was null!")
+    vtkErrorMacro("OnWidgetCreated: MRML node was null!");
     return;
     }
 
@@ -265,7 +265,7 @@ void vtkMRMLAnnotationROIDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRM
 
   if (!sliceNode)
     {
-    vtkErrorMacro("OnMRMLSliceNodeModifiedEvent: Could not get the sliceNode.")
+    vtkErrorMacro("OnMRMLSliceNodeModifiedEvent: Could not get the sliceNode.");
     return;
     }
 
@@ -296,13 +296,13 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
 
   if (!widget)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!")
+    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!")
+    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!");
     return;
     }
 
@@ -318,7 +318,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
 
   if (!roiWidget)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Could not get box widget!")
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get box widget!");
     return;
     }
 
@@ -327,13 +327,13 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
 
   if (!roiNode)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Could not get ROI node!")
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get ROI node!");
     return;
     }
 
   if (this->m_Updating)
     {
-    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.")
+    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.");
     return;
     }
 
@@ -342,7 +342,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
 
   if (!rep)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Could not get widget representation!")
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get widget representation!");
     return;
     }
 
@@ -436,7 +436,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnno
   if (!roiWidget)
     {
     // commented out by Fedorov: fails too often in ChangeTracker workflow
-    //vtkErrorMacro("PropagateMRMLToWidget: Could not get box widget!")
+    //vtkErrorMacro("PropagateMRMLToWidget: Could not get box widget!");
     return;
     }
 
@@ -445,13 +445,13 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnno
 
   if (!roiNode)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Could not get ROI node!")
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get ROI node!");
     return;
     }
 
   if (this->m_Updating)
     {
-    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.")
+    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.");
     return;
     }
 
@@ -575,13 +575,13 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWi
 {
   if (!widget)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!")
+    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!")
+    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!");
     return;
     }
 
@@ -590,7 +590,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWi
 
   if (!roiWidget)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: Could not get box widget!")
+    vtkErrorMacro("PropagateWidgetToMRML: Could not get box widget!");
     return;
     }
 
@@ -599,13 +599,13 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWi
 
   if (!roiNode)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: Could not get ROI node!")
+    vtkErrorMacro("PropagateWidgetToMRML: Could not get ROI node!");
     return;
     }
 
   if (this->m_Updating)
     {
-    vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.")
+    vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.");
     return;
     }
 

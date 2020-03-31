@@ -809,7 +809,7 @@ bool vtkSlicerMarkupsWidgetRepresentation2D::IsControlPointDisplayableOnSlice(vt
   // if there's no node, it's not visible
   if (!markupsNode)
     {
-    vtkErrorMacro("IsWidgetDisplayableOnSlice: Could not get the markups node.")
+    vtkErrorMacro("IsWidgetDisplayableOnSlice: Could not get the markups node.");
     return false;
     }
 
@@ -863,7 +863,7 @@ bool vtkSlicerMarkupsWidgetRepresentation2D::IsPointBehindSlice(vtkMRMLMarkupsNo
   // if there's no node, it's not visible
   if (!markupsNode)
     {
-    vtkErrorMacro("IsWidgetDisplayableOnSlice: Could not get the markups node.")
+    vtkErrorMacro("IsWidgetDisplayableOnSlice: Could not get the markups node.");
     return false;
     }
 
@@ -899,7 +899,7 @@ bool vtkSlicerMarkupsWidgetRepresentation2D::IsPointInFrontSlice(vtkMRMLMarkupsN
   // if there's no node, it's not visible
   if (!markupsNode)
     {
-    vtkErrorMacro("IsWidgetDisplayableOnSlice: Could not get the markups node.")
+    vtkErrorMacro("IsWidgetDisplayableOnSlice: Could not get the markups node.");
     return false;
     }
 
@@ -931,14 +931,14 @@ bool vtkSlicerMarkupsWidgetRepresentation2D::IsCenterDisplayableOnSlice(vtkMRMLM
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
   if (!sliceNode)
     {
-    vtkErrorMacro("IsWidgetDisplayableOnSlice: Could not get the sliceNode.")
+    vtkErrorMacro("IsWidgetDisplayableOnSlice: Could not get the sliceNode.");
     return false;
     }
 
   // if there's no node, it's not visible
   if (!markupsNode)
     {
-    vtkErrorMacro("IsWidgetDisplayableOnSlice: Could not get the markups node.")
+    vtkErrorMacro("IsWidgetDisplayableOnSlice: Could not get the markups node.");
     return false;
     }
 

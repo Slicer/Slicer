@@ -171,7 +171,7 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
 
   if (!node)
     {
-    vtkErrorMacro("CreateWidget: Node not set!")
+    vtkErrorMacro("CreateWidget: Node not set!");
     return nullptr;
     }
 
@@ -181,7 +181,7 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
 
   if (!rulerNode)
     {
-    vtkErrorMacro("CreateWidget: Could not get ruler node!")
+    vtkErrorMacro("CreateWidget: Could not get ruler node!");
     return nullptr;
     }
 
@@ -262,7 +262,7 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
 
   this->PropagateMRMLToWidget(rulerNode, rulerWidget);
 
-  vtkDebugMacro("CreateWidget: Widget was set up")
+  vtkDebugMacro("CreateWidget: Widget was set up");
 
   return rulerWidget;
 
@@ -275,13 +275,13 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
 
   if (!widget)
     {
-    vtkErrorMacro("OnWidgetCreated: Widget was null!")
+    vtkErrorMacro("OnWidgetCreated: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("OnWidgetCreated: MRML node was null!")
+    vtkErrorMacro("OnWidgetCreated: MRML node was null!");
     return;
     }
 
@@ -289,7 +289,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
 
   if (!widget)
     {
-    vtkErrorMacro("OnWidgetCreated: Could not get ruler widget")
+    vtkErrorMacro("OnWidgetCreated: Could not get ruler widget");
     return;
     }
 
@@ -297,7 +297,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
 
   if (!rulerNode)
     {
-    vtkErrorMacro("OnWidgetCreated: Could not get rulerNode node")
+    vtkErrorMacro("OnWidgetCreated: Could not get rulerNode node");
     return;
     }
 
@@ -369,13 +369,13 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
 
   if (!widget)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!")
+    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!")
+    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!");
     return;
     }
 
@@ -384,7 +384,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
 
   if (!rulerWidget)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Could not get ruler widget!")
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get ruler widget!");
     return;
     }
 
@@ -393,7 +393,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
 
   if (!rulerNode)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Could not get ruler node!")
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get ruler node!");
     return;
     }
 
@@ -725,13 +725,13 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
 
   if (!widget)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!")
+    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!")
+    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!");
     return;
     }
 
@@ -740,7 +740,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
 
   if (!rulerWidget)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: Could not get ruler widget!")
+    vtkErrorMacro("PropagateWidgetToMRML: Could not get ruler widget!");
     return;
     }
 
@@ -749,7 +749,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
 
   if (!rulerNode)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: Could not get ruler node!")
+    vtkErrorMacro("PropagateWidgetToMRML: Could not get ruler node!");
     return;
     }
 
@@ -923,13 +923,13 @@ void vtkMRMLAnnotationRulerDisplayableManager::UpdatePosition(vtkAbstractWidget 
 {
     if (!widget)
     {
-    vtkErrorMacro("UpdatePosition: Widget was null!")
+    vtkErrorMacro("UpdatePosition: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("UpdatePosition: MRML node was null!")
+    vtkErrorMacro("UpdatePosition: MRML node was null!");
     return;
     }
 
@@ -938,7 +938,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::UpdatePosition(vtkAbstractWidget 
 
   if (!rulerWidget)
     {
-    vtkErrorMacro("UpdatePosition: Could not get ruler widget!")
+    vtkErrorMacro("UpdatePosition: Could not get ruler widget!");
     return;
     }
 
@@ -948,7 +948,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::UpdatePosition(vtkAbstractWidget 
 
   if (!rulerNode)
     {
-    vtkErrorMacro("UpdatePosition: Could not get ruler node!")
+    vtkErrorMacro("UpdatePosition: Could not get ruler node!");
     return;
     }
 

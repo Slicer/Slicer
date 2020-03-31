@@ -101,7 +101,7 @@ vtkAbstractWidget * vtkMRMLAnnotationSplineDisplayableManager::CreateWidget(vtkM
 
   if (!node)
     {
-    vtkErrorMacro("CreateWidget: Node not set!")
+    vtkErrorMacro("CreateWidget: Node not set!");
     return 0;
     }
 
@@ -109,7 +109,7 @@ vtkAbstractWidget * vtkMRMLAnnotationSplineDisplayableManager::CreateWidget(vtkM
 
   if (!splineNode)
     {
-    vtkErrorMacro("CreateWidget: Could not get spline node!")
+    vtkErrorMacro("CreateWidget: Could not get spline node!");
     return 0;
     }
 
@@ -133,7 +133,7 @@ vtkAbstractWidget * vtkMRMLAnnotationSplineDisplayableManager::CreateWidget(vtkM
 
   rep->EndWidgetInteraction(splineNode->GetControlPointCoordinates(4));
 
-  vtkDebugMacro("CreateWidget: Widget was set up")
+  vtkDebugMacro("CreateWidget: Widget was set up");
 
   return splineWidget;
 
@@ -146,13 +146,13 @@ void vtkMRMLAnnotationSplineDisplayableManager::OnWidgetCreated(vtkAbstractWidge
 
   if (!widget)
     {
-    vtkErrorMacro("OnWidgetCreated: Widget was null!")
+    vtkErrorMacro("OnWidgetCreated: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("OnWidgetCreated: MRML node was null!")
+    vtkErrorMacro("OnWidgetCreated: MRML node was null!");
     return;
     }
 
@@ -177,13 +177,13 @@ void vtkMRMLAnnotationSplineDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnn
 
   if (!widget)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!")
+    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!")
+    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!");
     return;
     }
 
@@ -192,7 +192,7 @@ void vtkMRMLAnnotationSplineDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnn
 
   if (!splineWidget)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Could not get spline widget!")
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get spline widget!");
     return;
     }
 
@@ -201,13 +201,13 @@ void vtkMRMLAnnotationSplineDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnn
 
   if (!splineNode)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Could not get spline node!")
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get spline node!");
     return;
     }
 
   if (this->m_Updating)
     {
-    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.")
+    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.");
     return;
     }
 
@@ -242,13 +242,13 @@ void vtkMRMLAnnotationSplineDisplayableManager::PropagateWidgetToMRML(vtkAbstrac
 
   if (!widget)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!")
+    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!")
+    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!");
     return;
     }
 
@@ -257,7 +257,7 @@ void vtkMRMLAnnotationSplineDisplayableManager::PropagateWidgetToMRML(vtkAbstrac
 
   if (!splineWidget)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: Could not get spline widget!")
+    vtkErrorMacro("PropagateWidgetToMRML: Could not get spline widget!");
     return;
     }
 
@@ -266,13 +266,13 @@ void vtkMRMLAnnotationSplineDisplayableManager::PropagateWidgetToMRML(vtkAbstrac
 
   if (!splineNode)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: Could not get spline node!")
+    vtkErrorMacro("PropagateWidgetToMRML: Could not get spline node!");
     return;
     }
 
   if (this->m_Updating)
     {
-    vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.")
+    vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.");
     return;
     }
 

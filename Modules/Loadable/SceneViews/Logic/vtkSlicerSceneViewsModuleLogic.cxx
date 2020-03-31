@@ -108,13 +108,13 @@ void vtkSlicerSceneViewsModuleLogic::CreateSceneView(const char* name, const cha
 {
   if (!this->GetMRMLScene())
     {
-    vtkErrorMacro("No scene set.")
+    vtkErrorMacro("No scene set.");
     return;
     }
 
   if (!screenshot)
     {
-    vtkErrorMacro("CreateSceneView: No screenshot was set.")
+    vtkErrorMacro("CreateSceneView: No screenshot was set.");
     return;
     }
 
@@ -159,13 +159,13 @@ void vtkSlicerSceneViewsModuleLogic::
 {
   if (!this->GetMRMLScene())
     {
-    vtkErrorMacro("No scene set.")
+    vtkErrorMacro("No scene set.");
     return;
     }
 
   if (!screenshot)
     {
-    vtkErrorMacro("ModifySceneView: No screenshot was set.")
+    vtkErrorMacro("ModifySceneView: No screenshot was set.");
     return;
     }
 
@@ -173,7 +173,7 @@ void vtkSlicerSceneViewsModuleLogic::
 
   if (!viewNode)
     {
-    vtkErrorMacro("GetSceneViewName: Could not get sceneView node!")
+    vtkErrorMacro("GetSceneViewName: Could not get sceneView node!");
     return;
     }
 
@@ -204,7 +204,7 @@ vtkStdString vtkSlicerSceneViewsModuleLogic::GetSceneViewName(const char* id)
 {
   if (!this->GetMRMLScene())
     {
-    vtkErrorMacro("No scene set.")
+    vtkErrorMacro("No scene set.");
     return nullptr;
     }
 
@@ -212,7 +212,7 @@ vtkStdString vtkSlicerSceneViewsModuleLogic::GetSceneViewName(const char* id)
 
   if (!viewNode)
     {
-    vtkErrorMacro("GetSceneViewName: Could not get sceneView node!")
+    vtkErrorMacro("GetSceneViewName: Could not get sceneView node!");
     return nullptr;
     }
 
@@ -224,7 +224,7 @@ vtkStdString vtkSlicerSceneViewsModuleLogic::GetSceneViewDescription(const char*
 {
   if (!this->GetMRMLScene())
     {
-    vtkErrorMacro("No scene set.")
+    vtkErrorMacro("No scene set.");
     return nullptr;
     }
 
@@ -232,7 +232,7 @@ vtkStdString vtkSlicerSceneViewsModuleLogic::GetSceneViewDescription(const char*
 
   if (!viewNode)
     {
-    vtkErrorMacro("GetSceneViewDescription: Could not get sceneView node!")
+    vtkErrorMacro("GetSceneViewDescription: Could not get sceneView node!");
     return nullptr;
     }
 
@@ -244,7 +244,7 @@ int vtkSlicerSceneViewsModuleLogic::GetSceneViewScreenshotType(const char* id)
 {
   if (!this->GetMRMLScene())
     {
-    vtkErrorMacro("No scene set.")
+    vtkErrorMacro("No scene set.");
     return -1;
     }
 
@@ -252,7 +252,7 @@ int vtkSlicerSceneViewsModuleLogic::GetSceneViewScreenshotType(const char* id)
 
   if (!viewNode)
     {
-    vtkErrorMacro("GetSceneViewScreenshotType: Could not get sceneView node!")
+    vtkErrorMacro("GetSceneViewScreenshotType: Could not get sceneView node!");
     return -1;
     }
 
@@ -264,7 +264,7 @@ vtkImageData* vtkSlicerSceneViewsModuleLogic::GetSceneViewScreenshot(const char*
 {
   if (!this->GetMRMLScene())
     {
-    vtkErrorMacro("No scene set.")
+    vtkErrorMacro("No scene set.");
     return nullptr;
     }
 
@@ -272,7 +272,7 @@ vtkImageData* vtkSlicerSceneViewsModuleLogic::GetSceneViewScreenshot(const char*
 
   if (!viewNode)
     {
-    vtkErrorMacro("GetSceneViewScreenshot: Could not get sceneView node!")
+    vtkErrorMacro("GetSceneViewScreenshot: Could not get sceneView node!");
     return nullptr;
     }
 
@@ -284,7 +284,7 @@ void vtkSlicerSceneViewsModuleLogic::RestoreSceneView(const char* id, bool remov
 {
   if (!this->GetMRMLScene())
     {
-    vtkErrorMacro("No scene set.")
+    vtkErrorMacro("No scene set.");
     return;
     }
 
@@ -292,7 +292,7 @@ void vtkSlicerSceneViewsModuleLogic::RestoreSceneView(const char* id, bool remov
 
   if (!viewNode)
     {
-    vtkErrorMacro("RestoreSceneView: Could not get sceneView node!")
+    vtkErrorMacro("RestoreSceneView: Could not get sceneView node!");
     return;
     }
 

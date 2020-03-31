@@ -474,7 +474,7 @@ void vtkMRMLMarkupsPlaneNode::SetPlaneAxes(const double inX[3], const double inY
       vtkMath::Dot(tempY, y) <= 1 - epsilon ||
       vtkMath::Dot(tempZ, z) <= 1 - epsilon)
     {
-    vtkErrorMacro("SetPlaneAxes: Invalid direction vectors!")
+    vtkErrorMacro("SetPlaneAxes: Invalid direction vectors!");
     return;
     }
 

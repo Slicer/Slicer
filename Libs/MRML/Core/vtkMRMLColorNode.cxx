@@ -377,7 +377,7 @@ int vtkMRMLColorNode::GetColorIndexByName(const char *name)
 {
   if (name == nullptr)
     {
-    vtkErrorMacro("vtkMRMLColorNode::GetColorIndexByName: need a non-null name as argument")
+    vtkErrorMacro("vtkMRMLColorNode::GetColorIndexByName: need a non-null name as argument");
     return -1;
     }
 

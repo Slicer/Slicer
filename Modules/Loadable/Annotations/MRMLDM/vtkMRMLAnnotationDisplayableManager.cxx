@@ -172,7 +172,7 @@ void vtkMRMLAnnotationDisplayableManager::AddObserversToInteractionNode()
   vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
   if (interactionNode)
     {
-      vtkDebugMacro("AddObserversToInteractionNode: interactionNode found")
+      vtkDebugMacro("AddObserversToInteractionNode: interactionNode found");
       vtkNew<vtkIntArray> interactionEvents;
       interactionEvents->InsertNextValue(vtkMRMLInteractionNode::InteractionModeChangedEvent);
       interactionEvents->InsertNextValue(vtkMRMLInteractionNode::InteractionModePersistenceChangedEvent);
@@ -209,7 +209,7 @@ void vtkMRMLAnnotationDisplayableManager::AddObserversToSelectionNode()
   vtkMRMLSelectionNode* selectionNode = this->GetSelectionNode();
   if (selectionNode)
     {
-    vtkDebugMacro("AddObserversToSelectionNode: selectionNode found")
+    vtkDebugMacro("AddObserversToSelectionNode: selectionNode found");
     vtkNew<vtkIntArray> selectionEvents;
     selectionEvents->InsertNextValue(vtkMRMLSelectionNode::UnitModifiedEvent);
     vtkObserveMRMLNodeEventsMacro(selectionNode, selectionEvents.GetPointer());
@@ -438,7 +438,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node
   if (!this->IsManageable(node))
     {
     // jump out
-    vtkDebugMacro("OnMRMLSceneNodeAddedEvent: Not the correct displayableManager for node " << node->GetID() << ", jumping out!")
+    vtkDebugMacro("OnMRMLSceneNodeAddedEvent: Not the correct displayableManager for node " << node->GetID() << ", jumping out!");
     // also delete potential seeds
     this->m_ClickCounter->Reset();
     this->Helper->RemoveSeeds();
@@ -498,14 +498,14 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeModifiedEvent(vtkM
 
   if (this->m_Updating)
     {
-    vtkDebugMacro("OnMRMLAnnotationNodeModifiedEvent: Updating in progress.. Exit now.")
+    vtkDebugMacro("OnMRMLAnnotationNodeModifiedEvent: Updating in progress.. Exit now.");
     return;
     }
 
   vtkMRMLAnnotationNode *annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
   if (!annotationNode)
     {
-    vtkErrorMacro("OnMRMLAnnotationNodeModifiedEvent: Can not access node.")
+    vtkErrorMacro("OnMRMLAnnotationNodeModifiedEvent: Can not access node.");
     return;
     }
 
@@ -540,7 +540,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationDisplayNodeModifiedEve
 
   if (this->m_Updating)
     {
-    vtkDebugMacro("OnMRMLAnnotationDisplayNodeModifiedEvent: Updating in progress, returning.")
+    vtkDebugMacro("OnMRMLAnnotationDisplayNodeModifiedEvent: Updating in progress, returning.");
     return;
     }
 
@@ -626,7 +626,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeTransformModifiedE
   vtkMRMLAnnotationNode *annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
   if (!annotationNode)
     {
-    vtkErrorMacro("OnMRMLAnnotationNodeTransformModifiedEvent - Can not access node.")
+    vtkErrorMacro("OnMRMLAnnotationNodeTransformModifiedEvent - Can not access node.");
     return;
     }
 
@@ -658,7 +658,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeLockModifiedEvent(
   vtkMRMLAnnotationNode *annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
   if (!annotationNode)
     {
-    vtkErrorMacro("OnMRMLAnnotationNodeLockModifiedEvent - Can not access node.")
+    vtkErrorMacro("OnMRMLAnnotationNodeLockModifiedEvent - Can not access node.");
     return;
     }
   // Update the standard settings of all widgets.
@@ -673,7 +673,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtk
 
   if (!caller)
     {
-    vtkErrorMacro("OnMRMLDisplayableNodeModifiedEvent: Could not get caller.")
+    vtkErrorMacro("OnMRMLDisplayableNodeModifiedEvent: Could not get caller.");
     return;
     }
 
@@ -693,7 +693,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtk
   if (viewNode)
     {
     // the associated renderWindow is a 3D View
-    vtkDebugMacro("OnMRMLDisplayableNodeModifiedEvent: This displayableManager handles a ThreeD view.")
+    vtkDebugMacro("OnMRMLDisplayableNodeModifiedEvent: This displayableManager handles a ThreeD view.");
     return;
     }
 
@@ -717,7 +717,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
 
   if (!sliceNode)
     {
-    vtkErrorMacro("OnMRMLSliceNodeModifiedEvent: Could not get the sliceNode.")
+    vtkErrorMacro("OnMRMLSliceNodeModifiedEvent: Could not get the sliceNode.");
     return;
     }
 
@@ -1231,13 +1231,13 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
 
   if (!sliceNode)
     {
-    vtkErrorMacro("IsWidgetDisplayable: Could not get the sliceNode.")
+    vtkErrorMacro("IsWidgetDisplayable: Could not get the sliceNode.");
     return false;
     }
 
   if (!node)
     {
-    vtkErrorMacro("IsWidgetDisplayable: Could not get the annotation node.")
+    vtkErrorMacro("IsWidgetDisplayable: Could not get the annotation node.");
     return false;
     }
 
@@ -1256,7 +1256,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
 
   if (!controlPointsNode)
     {
-    vtkErrorMacro("IsWidgetDisplayable: Could not get the controlpoints node.")
+    vtkErrorMacro("IsWidgetDisplayable: Could not get the controlpoints node.");
     return false;
     }
 
@@ -1458,7 +1458,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
     vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(coords[0],coords[1]);
     if (!pokedRenderer)
       {
-      vtkErrorMacro("IsWidgetDisplayable: Could not find the poked renderer!")
+      vtkErrorMacro("IsWidgetDisplayable: Could not find the poked renderer!");
       return false;
       }
 
@@ -1484,7 +1484,7 @@ void vtkMRMLAnnotationDisplayableManager::OnInteractorStyleEvent(int eventid)
 {
   if (this->GetDisableInteractorStyleEventsProcessing())
     {
-    vtkWarningMacro("OnInteractorStyleEvent: Processing of events was disabled.")
+    vtkWarningMacro("OnInteractorStyleEvent: Processing of events was disabled.");
     return;
     }
 
@@ -1859,7 +1859,7 @@ void vtkMRMLAnnotationDisplayableManager::RestrictDisplayCoordinatesToViewport(d
   vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(coords[0],coords[1]);
   if (!pokedRenderer)
     {
-    vtkErrorMacro("RestrictDisplayCoordinatesToViewport: Could not find the poked renderer!")
+    vtkErrorMacro("RestrictDisplayCoordinatesToViewport: Could not find the poked renderer!");
     return;
     }
 
@@ -2103,7 +2103,7 @@ int vtkMRMLAnnotationDisplayableManager::GetLightboxIndex(vtkMRMLAnnotationNode 
 
   if (!controlPointsNode)
     {
-    vtkErrorMacro("GetLightboxIndex: Could not get the controlpoints node.")
+    vtkErrorMacro("GetLightboxIndex: Could not get the controlpoints node.");
     return index;
     }
 
@@ -2156,7 +2156,7 @@ bool vtkMRMLAnnotationDisplayableManager::AddAnnotation(vtkMRMLAnnotationNode *a
   vtkAbstractWidget* newWidget = this->CreateWidget(annotationNode);
   if (!newWidget)
     {
-    vtkErrorMacro("AddAnnotation: Widget was not created!")
+    vtkErrorMacro("AddAnnotation: Widget was not created!");
     return false;
     }
   this->Helper->Widgets[annotationNode] = newWidget;

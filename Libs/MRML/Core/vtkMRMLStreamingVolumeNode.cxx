@@ -272,7 +272,7 @@ bool vtkMRMLStreamingVolumeNode::EncodeImageData(bool forceKeyFrame/*=false*/)
   vtkImageData* imageData = Superclass::GetImageData();
   if (!imageData)
     {
-    vtkErrorMacro("No image data to encode!")
+    vtkErrorMacro("No image data to encode!");
     return false;
     }
 

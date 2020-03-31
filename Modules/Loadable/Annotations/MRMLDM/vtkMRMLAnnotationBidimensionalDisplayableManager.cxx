@@ -168,7 +168,7 @@ vtkAbstractWidget * vtkMRMLAnnotationBidimensionalDisplayableManager::CreateWidg
 
   if (!node)
     {
-    vtkErrorMacro("CreateWidget: Node not set!")
+    vtkErrorMacro("CreateWidget: Node not set!");
     return nullptr;
     }
 
@@ -176,7 +176,7 @@ vtkAbstractWidget * vtkMRMLAnnotationBidimensionalDisplayableManager::CreateWidg
 
   if (!bidimensionalNode)
     {
-    vtkErrorMacro("CreateWidget: Could not get bidimensional node!")
+    vtkErrorMacro("CreateWidget: Could not get bidimensional node!");
     return nullptr;
     }
 
@@ -189,7 +189,7 @@ vtkAbstractWidget * vtkMRMLAnnotationBidimensionalDisplayableManager::CreateWidg
 
   bidimensionalWidget->On();
 
-  vtkDebugMacro("CreateWidget: Widget was set up")
+  vtkDebugMacro("CreateWidget: Widget was set up");
 
   return bidimensionalWidget;
 
@@ -216,7 +216,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
 
   if (!bidimensionalWidget)
     {
-    vtkErrorMacro("OnWidgetCreated: Could not get bidimensional widget.")
+    vtkErrorMacro("OnWidgetCreated: Could not get bidimensional widget.");
     return;
     }
 
@@ -224,7 +224,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
 
   if (!bidimensionalNode)
     {
-    vtkErrorMacro("OnWidgetCreated: Could not get bidimensional node")
+    vtkErrorMacro("OnWidgetCreated: Could not get bidimensional node");
     return;
     }
 
@@ -306,13 +306,13 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateMRMLToWidget(vtk
 
   if (!widget)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!")
+    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!")
+    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!");
     return;
     }
 
@@ -321,7 +321,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateMRMLToWidget(vtk
 
   if (!bidimensionalWidget)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Could not get bidimensional widget!")
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get bidimensional widget!");
     return;
     }
 
@@ -330,7 +330,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateMRMLToWidget(vtk
 
   if (!bidimensionalNode)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Could not get bidimensional node!")
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get bidimensional node!");
     return;
     }
 
@@ -465,13 +465,13 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::UpdatePosition(vtkAbstrac
 {
     if (!widget)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!")
+    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!")
+    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!");
     return;
     }
 
@@ -480,7 +480,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::UpdatePosition(vtkAbstrac
 
   if (!bidimensionalWidget)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Could not get bidimensional widget!")
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get bidimensional widget!");
     return;
     }
 
@@ -489,7 +489,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::UpdatePosition(vtkAbstrac
 
   if (!bidimensionalNode)
     {
-    vtkErrorMacro("PropagateMRMLToWidget: Could not get bidimensional node!")
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get bidimensional node!");
     return;
     }
 
@@ -567,13 +567,13 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateWidgetToMRML(vtk
 
   if (!widget)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!")
+    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!");
     return;
     }
 
   if (!node)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!")
+    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!");
     return;
     }
 
@@ -582,7 +582,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateWidgetToMRML(vtk
 
   if (!bidimensionalWidget)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: Could not get bidimensional widget!")
+    vtkErrorMacro("PropagateWidgetToMRML: Could not get bidimensional widget!");
     return;
     }
 
@@ -591,7 +591,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateWidgetToMRML(vtk
 
   if (!bidimensionalNode)
     {
-    vtkErrorMacro("PropagateWidgetToMRML: Could not get bidimensional node!")
+    vtkErrorMacro("PropagateWidgetToMRML: Could not get bidimensional node!");
     return;
     }
 

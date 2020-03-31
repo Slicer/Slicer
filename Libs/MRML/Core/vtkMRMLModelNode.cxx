@@ -214,7 +214,7 @@ vtkPointSet *vtkMRMLModelNode::GetMesh()
 
   if (!producer)
     {
-    vtkErrorMacro("Could not retrieve mesh connection producer.")
+    vtkErrorMacro("Could not retrieve mesh connection producer.");
     return nullptr;
     }
 

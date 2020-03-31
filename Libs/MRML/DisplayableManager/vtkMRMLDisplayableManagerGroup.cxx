@@ -445,7 +445,7 @@ void vtkMRMLDisplayableManagerGroup::onDisplayableManagerFactoryRegisteredEvent(
       displayableManagerName));
   this->AddDisplayableManager(newDisplayableManager);
   vtkDebugMacro(<< "group:" << this << ", onDisplayableManagerFactoryRegisteredEvent:"
-                << displayableManagerName)
+                << displayableManagerName);
 }
 
 //----------------------------------------------------------------------------
@@ -482,7 +482,7 @@ void vtkMRMLDisplayableManagerGroup::onDisplayableManagerFactoryUnRegisteredEven
   this->Internal->NameToDisplayableManagerMap.erase(it);
 
   vtkDebugMacro(<< "group:" << this << ", onDisplayableManagerFactoryUnRegisteredEvent:"
-                << displayableManagerName)
+                << displayableManagerName);
 }
 
 //---------------------------------------------------------------------------

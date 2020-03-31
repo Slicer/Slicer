@@ -250,7 +250,7 @@ void vtkMRMLAnnotationPointDisplayNode::RestoreBackup()
     }
   else
     {
-    vtkErrorMacro("RestoreBackup - could not get the attached backup")
+    vtkErrorMacro("RestoreBackup - could not get the attached backup");
     }
 
 }

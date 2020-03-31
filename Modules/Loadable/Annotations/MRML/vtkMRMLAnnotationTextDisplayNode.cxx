@@ -302,7 +302,7 @@ void vtkMRMLAnnotationTextDisplayNode::RestoreBackup()
     }
   else
     {
-    vtkErrorMacro("RestoreBackup - could not get the attached backup:" << this->GetID())
+    vtkErrorMacro("RestoreBackup - could not get the attached backup:" << this->GetID());
     }
 
 }

@@ -1393,7 +1393,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::UpdateFromMRML()
   vtkMRMLScene* scene = this->GetMRMLScene();
   if (!scene)
     {
-    vtkDebugMacro( "vtkMRMLVolumeRenderingDisplayableManager::UpdateFromMRML: Scene is not set")
+    vtkDebugMacro( "vtkMRMLVolumeRenderingDisplayableManager::UpdateFromMRML: Scene is not set");
     return;
     }
   this->Internal->ClearDisplayableNodes();

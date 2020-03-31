@@ -316,7 +316,7 @@ int vtkSlicerCropVolumeLogic::CropVoxelBased(vtkMRMLAnnotationROINode* roi,
     }
   if (!inputVolume->GetImageData())
     {
-    vtkGenericWarningMacro("vtkSlicerCropVolumeLogic::CropVoxelBased: input image is empty")
+    vtkGenericWarningMacro("vtkSlicerCropVolumeLogic::CropVoxelBased: input image is empty");
     outputVolume->SetAndObserveImageData(nullptr);
     return 0;
     }
@@ -324,7 +324,7 @@ int vtkSlicerCropVolumeLogic::CropVoxelBased(vtkMRMLAnnotationROINode* roi,
   int outputExtent[6] = { 0, -1, 0, -1, 0, -1 };
   if (!vtkSlicerCropVolumeLogic::GetVoxelBasedCropOutputExtent(roi, inputVolume, outputExtent, limitToInputExtent))
     {
-    vtkGenericWarningMacro("vtkSlicerCropVolumeLogic::CropVoxelBased: failed to get output geometry")
+    vtkGenericWarningMacro("vtkSlicerCropVolumeLogic::CropVoxelBased: failed to get output geometry");
     return -1;
     }
 

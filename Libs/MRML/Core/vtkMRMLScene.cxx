@@ -1563,14 +1563,14 @@ int vtkMRMLScene::IsNodePresent(vtkMRMLNode *n)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::InitTraversal()
 {
-  vtkWarningMacro("Usage of vtkMRMLScene::InitTraversal() is unsafe.")
+  vtkWarningMacro("Usage of vtkMRMLScene::InitTraversal() is unsafe.");
   this->Nodes->InitTraversal();
 }
 
 //------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLScene::GetNextNode()
 {
-  vtkWarningMacro("Usage of vtkMRMLScene::GetNextNode() is unsafe.")
+  vtkWarningMacro("Usage of vtkMRMLScene::GetNextNode() is unsafe.");
   return vtkMRMLNode::SafeDownCast(this->Nodes->GetNextItemAsObject());
 }
 
@@ -1666,7 +1666,7 @@ std::list< std::string > vtkMRMLScene::GetNodeClassesList()
 //------------------------------------------------------------------------------
 vtkMRMLNode *vtkMRMLScene::GetNextNodeByClass(const char *className)
 {
-  vtkWarningMacro("Usage of vtkMRMLScene::GetNextNodeByClass(const char *) is unsafe.")
+  vtkWarningMacro("Usage of vtkMRMLScene::GetNextNodeByClass(const char *) is unsafe.");
   if (!className)
     {
     vtkErrorMacro("GetNextNodeByClass: class name is null.");
