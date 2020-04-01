@@ -46,6 +46,9 @@ protected:
   int FillInputPortInformation(int port, vtkInformation * info) override;
 
 private:
+  vtkImageGrowCutSegment(const vtkImageGrowCutSegment&) = delete;
+  void operator=(const vtkImageGrowCutSegment&) = delete;
+
   class vtkInternal;
   vtkInternal * Internal;
   double DistancePenalty;

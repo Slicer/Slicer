@@ -155,6 +155,10 @@ protected:
     ///
     /// output of colour computation
     unsigned char RGBA[4];
+
+private:
+  vtkFSLookupTable(const vtkFSLookupTable&) = delete;
+  void operator=(const vtkFSLookupTable&) = delete;
 };
 
 #endif
