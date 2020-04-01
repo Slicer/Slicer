@@ -37,6 +37,7 @@ class vtkMRMLSceneViewNode;
 
 // VTK includes
 class vtkImageData;
+#include <vtkStdString.h>
 
 #include <string>
 

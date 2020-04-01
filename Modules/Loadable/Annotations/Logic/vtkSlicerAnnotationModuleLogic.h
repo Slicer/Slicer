@@ -12,6 +12,9 @@ class vtkMRMLAnnotationNode;
 class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationTextDisplayNode;
 
+// VTK includes
+#include <vtkStdString.h>
+
 // STD includes
 #include <string>
 
