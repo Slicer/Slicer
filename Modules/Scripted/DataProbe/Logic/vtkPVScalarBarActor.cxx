@@ -42,6 +42,7 @@
 #include "vtkTextActor.h"
 #include "vtkTextProperty.h"
 #include "vtkTexture.h"
+#include "vtkUnsignedCharArray.h"
 #include "vtkWindow.h"
 
 #include <math.h>

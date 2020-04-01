@@ -23,6 +23,7 @@
 #include <vtkMRMLFiducialListNode.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkUnsignedCharArray.h>
 #include <vtkVersion.h>
 
 vtkStandardNewMacro(vtkSlicerGlyphSource2D);

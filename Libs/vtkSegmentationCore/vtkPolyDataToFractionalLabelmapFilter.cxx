@@ -26,6 +26,7 @@
 #include <vtkSegmentationConverter.h>
 
 // VTK includes
+#include <vtkIdTypeArray.h>
 #include <vtkTransform.h>
 #include <vtkImageStencilData.h>
 #include <vtkPolyData.h>

@@ -22,6 +22,7 @@
 
 // vtk includes
 #include <vtkParametricFunction.h>
+#include <vtkPointLocator.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataAlgorithm.h>
 #include <vtkSetGet.h>
