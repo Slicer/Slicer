@@ -51,7 +51,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" Packaging/s
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "slicer-v1.2.4-2020-02-07-777520bd"  # pre-v2.0 (ITK 5 as default), with patch "Propagate CMake visibility variables in external projects"
+    "7ce1f1867eaa419d0ef0f9aeb074363e85b633c4"  # slicer-v2.0rc1-2020-03-09-7ce1f1867
     QUIET
     )
 
