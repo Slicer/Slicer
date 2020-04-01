@@ -25,11 +25,12 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
+#include <QVTKOpenGLNativeWidget.h>
 #include <vtkSmartPointer.h>
 
-#include <QSurfaceFormat>
-#include <QVTKOpenGLWidget.h>
+// Qt includes
 #include <QApplication>
+#include <QSurfaceFormat>
 
 #ifdef _WIN32
 #include <Windows.h> //for SetProcessDPIAware
@@ -94,7 +95,7 @@ void qMRMLWidget::preInitializeApplication()
   SetProcessDPIAware();
 #endif
 
-  QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+  QSurfaceFormat format = QVTKOpenGLNativeWidget::defaultFormat();
 
   QString openGLProfileStr = qgetenv(MRML_APPLICATION_OPENGL_PROFILE_ENV);
   openGLProfileStr = openGLProfileStr.toLower();

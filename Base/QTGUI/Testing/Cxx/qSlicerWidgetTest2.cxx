@@ -12,7 +12,7 @@
 // this is a test of the slicer slice logic resampling pipeline
 
 // Slicer includes
-#include "vtkSlicerConfigure.h" // For Slicer_VTK_USE_QVTKOPENGLWIDGET, Slicer_BUILD_WEBENGINE_SUPPORT
+#include "vtkSlicerConfigure.h" // For Slicer_BUILD_WEBENGINE_SUPPORT
 
 // Qt includes
 #include <QApplication>
@@ -42,17 +42,13 @@
 #include <vtkMRMLColorTableNode.h>
 
 // VTK includes
+#include <QVTKOpenGLNativeWidget.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderer.h>
 #include <vtkImageMapper.h>
 #include <vtkProperty2D.h>
 #include <vtkActor2D.h>
 #include <vtkVersion.h>
-#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
-#include <QVTKOpenGLWidget.h>
-#else
-#include <QVTKWidget.h>
-#endif
 
 // STD includes
 
@@ -173,12 +169,8 @@ int qSlicerWidgetTest2(int argc, char * argv[] )
   widget->setParent(&parentWidget);
   vbox.addWidget(widget);
 
-#ifdef Slicer_VTK_USE_QVTKOPENGLWIDGET
-  QVTKOpenGLWidget * vtkWidget = new QVTKOpenGLWidget;
+  QVTKOpenGLNativeWidget * vtkWidget = new QVTKOpenGLNativeWidget;
   vtkWidget->setEnableHiDPI(true);
-#else
-  QVTKWidget* vtkWidget = new QVTKWidget();
-#endif
 
   vtkWidget->setParent(&parentWidget);
   vbox.addWidget(vtkWidget);
