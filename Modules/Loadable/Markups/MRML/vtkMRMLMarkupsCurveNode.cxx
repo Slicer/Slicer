@@ -133,11 +133,10 @@ void vtkMRMLMarkupsCurveNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsCurveNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLMarkupsCurveNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
-
-  Superclass::Copy(anode);
+  Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyEnumMacro(CurveType);

@@ -216,27 +216,27 @@ void vtkMRMLSegmentationDisplayNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSegmentationDisplayNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLSegmentationDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  bool wasModifying = this->StartModify();
-  this->Superclass::Copy(anode);
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
 
-  vtkMRMLSegmentationDisplayNode *node = vtkMRMLSegmentationDisplayNode::SafeDownCast(anode);
-  if (node)
+  vtkMRMLSegmentationDisplayNode* node = vtkMRMLSegmentationDisplayNode::SafeDownCast(anode);
+  if (!node)
     {
-    this->SetPreferredDisplayRepresentationName2D(node->GetPreferredDisplayRepresentationName2D());
-    this->SetPreferredDisplayRepresentationName3D(node->GetPreferredDisplayRepresentationName3D());
-    this->Visibility2DFill = node->Visibility2DFill;
-    this->Visibility2DOutline = node->Visibility2DOutline;
-    this->Opacity3D = node->Opacity3D;
-    this->Opacity2DFill = node->Opacity2DFill;
-    this->Opacity2DOutline = node->Opacity2DOutline;
-    this->SegmentationDisplayProperties = node->SegmentationDisplayProperties;
-    this->SegmentListUpdateSource = node->SegmentListUpdateSource;
-    this->SegmentListUpdateTime = node->SegmentListUpdateTime;
+    return;
     }
 
-  this->EndModify(wasModifying);
+  this->SetPreferredDisplayRepresentationName2D(node->GetPreferredDisplayRepresentationName2D());
+  this->SetPreferredDisplayRepresentationName3D(node->GetPreferredDisplayRepresentationName3D());
+  this->Visibility2DFill = node->Visibility2DFill;
+  this->Visibility2DOutline = node->Visibility2DOutline;
+  this->Opacity3D = node->Opacity3D;
+  this->Opacity2DFill = node->Opacity2DFill;
+  this->Opacity2DOutline = node->Opacity2DOutline;
+  this->SegmentationDisplayProperties = node->SegmentationDisplayProperties;
+  this->SegmentListUpdateSource = node->SegmentListUpdateSource;
+  this->SegmentListUpdateTime = node->SegmentListUpdateTime;
 }
 
 //----------------------------------------------------------------------------

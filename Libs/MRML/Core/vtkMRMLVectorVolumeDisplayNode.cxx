@@ -146,25 +146,22 @@ void vtkMRMLVectorVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node\"s attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLVectorVolumeDisplayNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLVectorVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  int disabledModify = this->StartModify();
-
-  Superclass::Copy(anode);
-  vtkMRMLVectorVolumeDisplayNode *node = (vtkMRMLVectorVolumeDisplayNode *) anode;
-
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
+  vtkMRMLVectorVolumeDisplayNode *node = vtkMRMLVectorVolumeDisplayNode::SafeDownCast(anode);
+  if (!node)
+    {
+    return;
+    }
   this->SetScalarMode(node->ScalarMode);
   this->SetGlyphMode(node->GlyphMode);
-
-  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVectorVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-
   Superclass::PrintSelf(os,indent);
 
   os << indent << "Scalar Mode:   " << this->ScalarMode << "\n";

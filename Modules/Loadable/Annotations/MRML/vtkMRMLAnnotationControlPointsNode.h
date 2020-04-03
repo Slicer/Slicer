@@ -51,9 +51,9 @@ public:
                         std::string prefix, int coordinateSystem = 0,
                         int multipleFlag = 1) override;
 
-  // Description:
-  // Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override {Superclass::Copy(node);}
+  /// Copy node content (excludes basic data, such as name and node references).
+  /// \sa vtkMRMLNode::CopyContent
+  vtkMRMLCopyContentDefaultMacro(vtkMRMLAnnotationControlPointsNode);
 
   void UpdateScene(vtkMRMLScene *scene) override;
 

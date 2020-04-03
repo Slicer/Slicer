@@ -101,12 +101,11 @@ void vtkMRMLCropVolumeParametersNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node\"s attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, SliceID
-void vtkMRMLCropVolumeParametersNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLCropVolumeParametersNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  int wasModified = this->StartModify();
-  Superclass::Copy(anode);
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
+
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyBooleanMacro(VoxelBased);
   vtkMRMLCopyIntMacro(InterpolationMode);
@@ -114,7 +113,6 @@ void vtkMRMLCropVolumeParametersNode::Copy(vtkMRMLNode *anode)
   vtkMRMLCopyFloatMacro(SpacingScalingConst);
   vtkMRMLCopyFloatMacro(FillValue);
   vtkMRMLCopyEndMacro();
-  this->EndModify(wasModified);
 }
 
 //----------------------------------------------------------------------------

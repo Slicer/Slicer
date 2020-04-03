@@ -228,27 +228,23 @@ void vtkMRMLAnnotationROINode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationROINode::Copy(vtkMRMLNode *anode)
+void vtkMRMLAnnotationROINode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-
-  int disabledModify = this->StartModify();
-
-  Superclass::Copy(anode);
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
 
   //  vtkObject::Copy(anode);
-  vtkMRMLAnnotationROINode *node = vtkMRMLAnnotationROINode::SafeDownCast( anode);
-  if (node)
+  vtkMRMLAnnotationROINode *node = vtkMRMLAnnotationROINode::SafeDownCast(anode);
+  if (!node)
     {
-    if (node->GetLabelText())
-      {
-      this->SetLabelText(node->GetLabelText());
-      }
-    this->SetInteractiveMode(node->InteractiveMode);
-    this->SetInsideOut(node->InsideOut);
+    return;
     }
-
-  this->EndModify(disabledModify);
-
+  if (node->GetLabelText())
+    {
+    this->SetLabelText(node->GetLabelText());
+    }
+  this->SetInteractiveMode(node->InteractiveMode);
+  this->SetInsideOut(node->InsideOut);
 }
 
 //-----------------------------------------------------------

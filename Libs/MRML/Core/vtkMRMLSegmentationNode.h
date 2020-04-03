@@ -68,11 +68,9 @@ public:
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
 
-  /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
-
-  /// Copy the entire contents of the node into this node
-  virtual void DeepCopy(vtkMRMLNode* node);
+  /// Copy node content (excludes basic data, such as name and node references).
+  /// \sa vtkMRMLNode::CopyContent
+  vtkMRMLCopyContentMacro(vtkMRMLSegmentationNode);
 
   /// Get unique node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "Segmentation";};

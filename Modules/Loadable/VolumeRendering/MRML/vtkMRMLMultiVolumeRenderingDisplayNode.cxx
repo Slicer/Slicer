@@ -58,18 +58,6 @@ void vtkMRMLMultiVolumeRenderingDisplayNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMultiVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
-{
-  int wasModifying = this->StartModify();
-  this->Superclass::Copy(anode);
-
-  //vtkMRMLCopyBeginMacro(anode);
-  //vtkMRMLCopyEndMacro();
-
-  this->EndModify(wasModifying);
-}
-
-//----------------------------------------------------------------------------
 void vtkMRMLMultiVolumeRenderingDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);

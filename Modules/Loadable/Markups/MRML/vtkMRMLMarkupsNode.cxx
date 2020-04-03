@@ -164,17 +164,19 @@ void vtkMRMLMarkupsNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLMarkupsNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  vtkMRMLMarkupsNode *node = vtkMRMLMarkupsNode::SafeDownCast(anode);
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
+
+  vtkMRMLMarkupsNode* node = vtkMRMLMarkupsNode::SafeDownCast(anode);
   if (!node)
     {
     return;
     }
 
-  int disabledModify = this->StartModify();
-
-  Superclass::Copy(anode);
+  // TODO: For now, we always deep-copy. We could improve copy performance
+  // by implementing shallow-copy.
 
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyBooleanMacro(Locked);
@@ -218,8 +220,6 @@ void vtkMRMLMarkupsNode::Copy(vtkMRMLNode *anode)
     (*controlPointCopy) = (*controlPoint);
     this->AddControlPoint(controlPointCopy);
     }
-
-  this->EndModify(disabledModify);
 }
 
 //---------------------------------------------------------------------------

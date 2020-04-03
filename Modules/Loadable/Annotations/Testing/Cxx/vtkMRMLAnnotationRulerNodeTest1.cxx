@@ -74,7 +74,10 @@ int vtkMRMLAnnotationRulerNodeTest1(int , char * [] )
 
   // Test CopyWithoutModifiedEvent
   vtkNew< vtkMRMLAnnotationRulerNode> c2Node;
-  c2Node->CopyWithoutModifiedEvent(node2.GetPointer());
+  int oldMode = c2Node->GetDisableModifiedEvent();
+  c2Node->DisableModifiedEventOn();
+  c2Node->Copy(node2.GetPointer());
+  c2Node->SetDisableModifiedEvent(oldMode);
 
   CHECK_INT(c2Node->GetPosition1()[0], node2->GetPosition1()[0]);
   CHECK_INT(c2Node->GetPosition1()[1], node2->GetPosition1()[1]);

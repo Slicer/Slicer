@@ -115,17 +115,6 @@ void vtkMRMLDiffusionImageVolumeNode::ReadXMLAttributes(const char** atts)
 
 }
 
-
-//----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLDiffusionImageVolumeNode::Copy(vtkMRMLNode *anode)
-{
-  Superclass::Copy(anode);
-  //vtkMRMLDiffusionImageVolumeNode *node = (vtkMRMLDiffusionImageVolumeNode *) anode;
-
-}
-
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode* vtkMRMLDiffusionImageVolumeNode::GetBaselineNode()
 {

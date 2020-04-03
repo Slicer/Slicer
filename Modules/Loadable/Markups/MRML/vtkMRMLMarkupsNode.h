@@ -151,8 +151,9 @@ public:
                         std::string prefix, int coordinateSystem = 0,
                         int multipleFlag = 1) override;
 
-  /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  /// Copy node content (excludes basic data, such as name and node references).
+  /// \sa vtkMRMLNode::CopyContent
+  vtkMRMLCopyContentMacro(vtkMRMLMarkupsNode);
 
   /// Alternative method to propagate events generated in Display nodes
   void ProcessMRMLEvents ( vtkObject * /*caller*/,

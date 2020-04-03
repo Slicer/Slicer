@@ -157,18 +157,17 @@ void vtkMRMLAnnotationNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLAnnotationNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  int wasModifying = this->StartModify();
-  Superclass::Copy(anode);
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
 
-  vtkMRMLAnnotationNode *node = (vtkMRMLAnnotationNode *) anode;
+  vtkMRMLAnnotationNode *node = vtkMRMLAnnotationNode::SafeDownCast(anode);
   if (!node)
     {
     return;
     }
 
-  this->SetReferenceNodeID(node->GetReferenceNodeID());
   this->SetLocked(node->GetLocked());
   this->TextList->DeepCopy(node->TextList);
 
@@ -183,7 +182,6 @@ void vtkMRMLAnnotationNode::Copy(vtkMRMLNode *anode)
     //poly->ReleaseData();
     poly->Delete();
     }
-  this->EndModify(wasModifying);
 }
 
 
@@ -690,7 +688,10 @@ void vtkMRMLAnnotationNode::CreateBackup()
 
   vtkMRMLAnnotationNode * backupNode = vtkMRMLAnnotationNode::New();
 
-  backupNode->CopyWithoutModifiedEvent(this);
+  int oldMode = backupNode->GetDisableModifiedEvent();
+  backupNode->DisableModifiedEventOn();
+  backupNode->Copy(this);
+  backupNode->SetDisableModifiedEvent(oldMode);
 
   this->m_Backup = backupNode;
 
@@ -724,7 +725,8 @@ void vtkMRMLAnnotationNode::RestoreBackup()
 
   if (this->m_Backup)
     {
-    this->CopyWithSingleModifiedEvent(this->m_Backup);
+    MRMLNodeModifyBlocker blocker(this);
+    this->Copy(this->m_Backup);
     }
   else
     {
@@ -804,10 +806,13 @@ void vtkMRMLAnnotationNode::RestoreView()
 
   // now copy our saved sliceNodes over the current ones
   // this restores the view
-  redSliceNode->CopyWithSingleModifiedEvent(this->m_RedSliceNode);
-  yellowSliceNode->CopyWithSingleModifiedEvent(this->m_YellowSliceNode);
-  greenSliceNode->CopyWithSingleModifiedEvent(this->m_GreenSliceNode);
-  cameraNode->CopyWithSingleModifiedEvent(this->m_CameraNode);
+  MRMLNodeModifyBlocker blocker1(this->m_RedSliceNode);
+  MRMLNodeModifyBlocker blocker2(this->m_YellowSliceNode);
+  MRMLNodeModifyBlocker blocker3(this->m_GreenSliceNode);
+  MRMLNodeModifyBlocker blocker4(this->m_CameraNode);
+  redSliceNode->Copy(this->m_RedSliceNode);
+  yellowSliceNode->Copy(this->m_YellowSliceNode);
+  greenSliceNode->Copy(this->m_GreenSliceNode);
+  cameraNode->Copy(this->m_CameraNode);
 
 }
-

@@ -54,18 +54,6 @@ void vtkMRMLGPURayCastVolumeRenderingDisplayNode::WriteXML(ostream& of, int nInd
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLGPURayCastVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
-{
-  int wasModifying = this->StartModify();
-  this->Superclass::Copy(anode);
-
-//  vtkMRMLCopyBeginMacro(anode);
-//  vtkMRMLCopyEndMacro();
-
-  this->EndModify(wasModifying);
-}
-
-//----------------------------------------------------------------------------
 void vtkMRMLGPURayCastVolumeRenderingDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);

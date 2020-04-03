@@ -66,8 +66,9 @@ public:
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
 
-  /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  /// Copy node content (excludes basic data, such as name and node references).
+  /// \sa vtkMRMLNode::CopyContent
+  vtkMRMLCopyContentMacro(vtkMRMLShaderPropertyNode);
 
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "ShaderProperty";}
@@ -75,7 +76,7 @@ public:
   /// Reimplemented for internal reasons.
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData) override;
 
-  /// Create default storage node or NULL if does not have one
+  /// Create default storage node or nullptr if does not have one
   vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()

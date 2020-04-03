@@ -49,6 +49,10 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "MarkupsClosedCurve";}
 
+  /// Copy node content (excludes basic data, such as name and node references).
+  /// \sa vtkMRMLNode::CopyContent
+  vtkMRMLCopyContentDefaultMacro(vtkMRMLMarkupsClosedCurveNode);
+
 protected:
   vtkMRMLMarkupsClosedCurveNode();
   ~vtkMRMLMarkupsClosedCurveNode() override;

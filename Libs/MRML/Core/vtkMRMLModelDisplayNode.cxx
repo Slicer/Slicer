@@ -114,21 +114,22 @@ void vtkMRMLModelDisplayNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLModelDisplayNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLModelDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  int disabledModify = this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
 
-  Superclass::Copy(anode);
+  vtkMRMLModelDisplayNode* node = vtkMRMLModelDisplayNode::SafeDownCast(anode);
+  if (!node)
+    {
+    return;
+    }
 
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyEnumMacro(SliceDisplayMode);
   vtkMRMLCopyBooleanMacro(ThresholdEnabled);
   vtkMRMLCopyVectorMacro(ThresholdRange, double, 2);
   vtkMRMLCopyEndMacro();
-
-  this->EndModify(disabledModify);
 }
 
 //---------------------------------------------------------------------------

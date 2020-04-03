@@ -59,12 +59,6 @@ void vtkMRMLMarkupsLineNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsLineNode::Copy(vtkMRMLNode *anode)
-{
-  Superclass::Copy(anode);
-}
-
-//----------------------------------------------------------------------------
 void vtkMRMLMarkupsLineNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);

@@ -36,6 +36,10 @@ class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeDisplayNode : public vtkMRMLVolumeDis
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "LabelMapVolumeDisplay";}
 
+  /// Copy node content (excludes basic data, such as name and node references).
+  /// \sa vtkMRMLNode::CopyContent
+  vtkMRMLCopyContentDefaultMacro(vtkMRMLLabelMapVolumeDisplayNode);
+
   ///
   /// alternative method to propagate events generated in Display nodes
   void ProcessMRMLEvents ( vtkObject * /*caller*/,

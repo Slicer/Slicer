@@ -55,9 +55,9 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "Model";};
 
- /// Description:
-  /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  /// Copy node content (excludes basic data, such as name and node references).
+  /// \sa vtkMRMLNode::CopyContent
+  vtkMRMLCopyContentMacro(vtkMRMLModelNode);
 
   /// alternative method to propagate events generated in Display nodes
   void ProcessMRMLEvents ( vtkObject * /*caller*/,

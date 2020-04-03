@@ -52,9 +52,9 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
 
-  ///
-  /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  /// Copy node content (excludes basic data, such as name and node references).
+  /// \sa vtkMRMLNode::CopyContent
+  vtkMRMLCopyContentMacro(vtkMRMLSliceNode);
 
   /// \brief Reimplemented to preserve orientation and layout color when reset.
   /// \sa GetOrientationString()

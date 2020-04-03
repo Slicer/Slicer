@@ -53,9 +53,9 @@ public:
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
 
-  ///
-  /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  /// Copy node content (excludes basic data, such as name and node references).
+  /// \sa vtkMRMLNode::CopyContent
+  vtkMRMLCopyContentMacro(vtkMRMLDoubleArrayNode);
 
   ///
   /// Get node XML tag name (like Volume, Model)
@@ -123,7 +123,7 @@ public:
   ///
   /// Get value at the data point specified by 'index' at the given 'component'
   double GetValue(int index, int component, int& success);
-  
+
   ///
   /// Get X and Y values at the data point specified by 'index'
   int GetXYValue(int index, double* x, double* y);

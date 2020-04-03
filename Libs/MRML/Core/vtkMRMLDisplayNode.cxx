@@ -223,14 +223,16 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  int disabledModify = this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
 
-  Superclass::Copy(anode);
-  vtkMRMLDisplayNode *node = (vtkMRMLDisplayNode *) anode;
+  vtkMRMLDisplayNode *node = vtkMRMLDisplayNode::SafeDownCast(anode);
+  if (!node)
+    {
+    return;
+    }
 
   // Strings
   this->SetColor(node->Color);
@@ -264,14 +266,6 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetAndObserveColorNodeID(node->ColorNodeID);
   this->SetActiveScalarName(node->ActiveScalarName);
   this->SetFolderDisplayOverrideAllowed(node->FolderDisplayOverrideAllowed);
-
-  const int ndnodes = node->GetNumberOfViewNodeIDs();
-  for (int i=0; i<ndnodes; i++)
-    {
-    this->AddViewNodeID(node->ViewNodeIDs[i].c_str());
-    }
-
-  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

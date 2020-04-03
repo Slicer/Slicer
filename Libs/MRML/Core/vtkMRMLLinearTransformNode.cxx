@@ -142,14 +142,6 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLLinearTransformNode::Copy(vtkMRMLNode *anode)
-{
-  Superclass::Copy(anode);
-}
-
-//----------------------------------------------------------------------------
 void vtkMRMLLinearTransformNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);

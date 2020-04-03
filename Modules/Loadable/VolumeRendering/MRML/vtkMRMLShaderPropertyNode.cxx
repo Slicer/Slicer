@@ -104,24 +104,18 @@ void vtkMRMLShaderPropertyNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLShaderPropertyNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLShaderPropertyNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  int disabledModify = this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
 
-  this->Superclass::Copy(anode);
-
-  vtkMRMLShaderPropertyNode *node = vtkMRMLShaderPropertyNode::SafeDownCast(anode);
+  vtkMRMLShaderPropertyNode* node = vtkMRMLShaderPropertyNode::SafeDownCast(anode);
   if (!node)
     {
-    vtkErrorMacro("CopyParameterSet: Invalid input MRML node");
+    return;
     }
-  else {
-    this->ShaderProperty->DeepCopy( node->ShaderProperty);
-  }
 
-  this->EndModify(disabledModify);
+  this->ShaderProperty->DeepCopy( node->ShaderProperty);
 }
 
 //----------------------------------------------------------------------------

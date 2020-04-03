@@ -63,14 +63,6 @@ void vtkMRMLBSplineTransformNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLBSplineTransformNode::Copy(vtkMRMLNode *anode)
-{
-  Superclass::Copy(anode);
-}
-
-//----------------------------------------------------------------------------
 void vtkMRMLBSplineTransformNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);

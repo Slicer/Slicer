@@ -271,11 +271,9 @@ protected:
     }
   }
 
-  ///
-  /// Copy the node's attributes to this object
-  /// This is used only internally.
-  /// Externally CopyWithScene has to be called.
-  void Copy(vtkMRMLNode *node) override;
+  /// Copy node content (excludes basic data, such as name and node references).
+  /// \sa vtkMRMLNode::CopyContent
+  vtkMRMLCopyContentMacro(vtkMRMLPlotSeriesNode);
 
   //----------------------------------------------------------------
   /// Data
