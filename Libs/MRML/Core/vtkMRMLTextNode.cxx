@@ -32,6 +32,7 @@ vtkMRMLNodeNewMacro(vtkMRMLTextNode);
 vtkMRMLTextNode::vtkMRMLTextNode()
   : Text("")
 {
+  this->ContentModifiedEvents->InsertNextValue(vtkMRMLTextNode::TextModifiedEvent);
 }
 
 //-----------------------------------------------------------------------------

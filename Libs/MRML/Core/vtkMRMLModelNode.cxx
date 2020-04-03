@@ -59,6 +59,8 @@ vtkMRMLModelNode::vtkMRMLModelNode()
   // for backward compatibility, we assume that if no
   // mesh were set, it is a polydata.
   this->MeshType = vtkMRMLModelNode::PolyDataMeshType;
+
+  this->ContentModifiedEvents->InsertNextValue(vtkMRMLModelNode::PolyDataModifiedEvent);
 }
 
 //----------------------------------------------------------------------------

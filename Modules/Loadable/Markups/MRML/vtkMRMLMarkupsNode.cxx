@@ -101,8 +101,8 @@ vtkMRMLMarkupsNode::vtkMRMLMarkupsNode()
   this->CurveCoordinateSystemGeneratorWorld->SetInputConnection(this->CurvePolyToWorldTransformer->GetOutputPort());
 
   this->TransformedCurvePolyLocator = vtkSmartPointer<vtkPointLocator>::New();
-
   this->InteractionHandleToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  this->ContentModifiedEvents->InsertNextValue(vtkMRMLMarkupsNode::PointModifiedEvent);
 }
 
 //----------------------------------------------------------------------------
@@ -429,8 +429,8 @@ vtkMRMLMarkupsNode::ControlPoint* vtkMRMLMarkupsNode::GetNthControlPointCustomLo
 {
   if (n < 0 || n >= this->GetNumberOfControlPoints())
     {
-    vtkErrorMacro("vtkMRMLMarkupsNode::" << failedMethodName << " failed: control point " <<
-      n << " does not exist");
+      vtkErrorMacro("vtkMRMLMarkupsNode::" << failedMethodName << " failed: control point " <<
+        n << " does not exist");
     return nullptr;
     }
 
