@@ -582,6 +582,12 @@ public:
   /// Update the stored reference to another node in the scene.
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
+  /// Return list of events that indicate that content of the node is modified.
+  /// For example, it is not enough to observe vtkCommand::ModifiedEvent to get
+  /// notified when a transform stored in a transform node is modified, but
+  /// vtkMRMLTransformableNode::TransformModifiedEvent must be observed as well.
+  vtkGetObjectMacro(ContentModifiedEvents, vtkIntArray);
+
   /// \brief Encode a URL string.
   ///
   /// Returns the string (null) if the input is null.
@@ -934,6 +940,8 @@ protected:
 
   typedef std::map< std::string, std::string > AttributesType;
   AttributesType Attributes;
+
+  vtkIntArray* ContentModifiedEvents;
 
   vtkObserverManager *MRMLObserverManager;
 

@@ -80,6 +80,13 @@ vtkMRMLSegmentationNode::vtkMRMLSegmentationNode()
   this->Segmentation = nullptr;
   vtkSmartPointer<vtkSegmentation> segmentation = vtkSmartPointer<vtkSegmentation>::New();
   this->SetAndObserveSegmentation(segmentation);
+
+  this->ContentModifiedEvents->InsertNextValue(vtkSegmentation::MasterRepresentationModified);
+  this->ContentModifiedEvents->InsertNextValue(vtkSegmentation::ContainedRepresentationNamesModified);
+  this->ContentModifiedEvents->InsertNextValue(vtkSegmentation::SegmentAdded);
+  this->ContentModifiedEvents->InsertNextValue(vtkSegmentation::SegmentRemoved);
+  this->ContentModifiedEvents->InsertNextValue(vtkSegmentation::SegmentModified);
+  this->ContentModifiedEvents->InsertNextValue(vtkSegmentation::SegmentsOrderModified);
 }
 
 //----------------------------------------------------------------------------

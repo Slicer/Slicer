@@ -67,6 +67,8 @@ vtkMRMLVolumeNode::vtkMRMLVolumeNode()
 
   this->ImageDataConnection = nullptr;
   this->DataEventForwarder = nullptr;
+
+  this->ContentModifiedEvents->InsertNextValue(vtkMRMLVolumeNode::ImageDataModifiedEvent);
 }
 
 //----------------------------------------------------------------------------

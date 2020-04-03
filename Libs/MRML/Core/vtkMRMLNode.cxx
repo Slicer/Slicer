@@ -33,6 +33,9 @@ Version:   $Revision: 1.11 $
 //------------------------------------------------------------------------------
 vtkMRMLNode::vtkMRMLNode()
 {
+  this->ContentModifiedEvents = vtkIntArray::New();
+  this->ContentModifiedEvents->InsertNextValue(vtkCommand::ModifiedEvent);
+
   // Set up callbacks
   this->MRMLCallbackCommand = vtkCallbackCommand::New();
   this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
@@ -74,6 +77,12 @@ vtkMRMLNode::~vtkMRMLNode()
     this->MRMLCallbackCommand->SetClientData( nullptr );
     this->MRMLCallbackCommand->Delete ( );
     this->MRMLCallbackCommand = nullptr;
+    }
+
+  if (this->ContentModifiedEvents)
+    {
+    this->ContentModifiedEvents->Delete();
+    this->ContentModifiedEvents = nullptr;
     }
 
   this->SetTempURLString(nullptr);
