@@ -16,9 +16,11 @@
 ==============================================================================*/
 
 // MRML includes
-#include "vtkMRMLInteractionEventData.h"
-#include "vtkMRMLMarkupsDisplayNode.h"
+#include <vtkMRMLAbstractViewNode.h>
+#include <vtkMRMLInteractionEventData.h>
+#include <vtkMRMLMarkupsDisplayNode.h>
 #include <vtkMRMLProceduralColorNode.h>
+#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkCommand.h>
@@ -521,7 +523,16 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
   markupsNode->DisableModifiedEventOn();
   if (positionStatus == vtkMRMLMarkupsNode::PositionPreview)
     {
-    markupsNode->SetAttribute("Markups.MovingInSliceView", viewNodeID);
+    const char* layoutName = nullptr;
+    if (this->GetScene())
+      {
+      vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(this->GetScene()->GetNodeByID(viewNodeID));
+      if (viewNode)
+        {
+        layoutName = viewNode->GetLayoutName();
+        }
+      }
+    markupsNode->SetAttribute("Markups.MovingInSliceView", layoutName ? layoutName : "");
     std::ostringstream controlPointIndexStr;
     controlPointIndexStr << controlPointIndex;
     markupsNode->SetAttribute("Markups.MovingMarkupIndex", controlPointIndexStr.str().c_str());
