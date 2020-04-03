@@ -41,10 +41,13 @@ class vtkTagTable;
 class vtkCallbackCommand;
 class vtkCollection;
 class vtkGeneralTransform;
+class vtkImageData;
 class vtkURIHandler;
 class vtkMRMLNode;
 class vtkMRMLSceneViewNode;
 class vtkMRMLSubjectHierarchyNode;
+class vtkMRMLStorableNode;
+class vtkMRMLStorageNode;
 
 /// \brief A set of MRML Nodes that supports serialization and undo/redo.
 ///
@@ -744,6 +747,45 @@ public:
   void SetMaximumNumberOfSavedUndoStates(int stackSize);
   vtkGetMacro(MaximumNumberOfSavedUndoStates, int);
 
+  /// \brief Write the scene to a MRML scene bundle (.mrb) file.
+  /// If thumbnail image is provided then it is saved in the scene's root folder.
+  /// Returns false if the save failed
+  bool WriteToMRB(const char* filename, vtkImageData* thumbnail=nullptr);
+
+  /// \brief Read the scene from a MRML scene bundle (.mrb) file
+  bool ReadFromMRB(const char* fullName, bool clear=false);
+
+  /// \brief Unpack the file into a temp directory and return the scene file
+  /// inside. Note that the first mrml file found in the extracted
+  /// directory will be used.
+  static std::string UnpackSlicerDataBundle(const char* sdbFilePath, const char* temporaryDirectory);
+
+  /// \brief Save the scene into a self contained directory, sdbDir
+  /// If thumbnail image is provided then it is saved in the scene's root folder.
+  /// Returns false if the save failed
+  bool SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkImageData* thumbnail = nullptr);
+
+  /// \brief Utility function to write the scene thumbnail to a file in the scene's root folder.
+  void SaveSceneScreenshot(vtkImageData* thumbnail);
+
+  /// Convert reserved characters into percent notation to avoid issues with filenames
+  /// containing things that might be mistaken, for example, for
+  /// windows drive letters.  Used internally by SaveSceneToSlicerDataBundleDirectory.
+  /// This is not a general purpose implementation; it preseves commonly used
+  /// characters for filenames but avoids known issue like slashes or colons.
+  /// Ideally a version from vtksys
+  /// or similar should be used, but nothing seems to be available.
+  /// http://en.wikipedia.org/wiki/Percent-encoding
+  /// See http://na-mic.org/Bug/view.php?id=2605
+  static std::string PercentEncode(std::string s);
+
+  /// Creates a unique (non-existent) file name by adding an index after base file name.
+  /// knownExtension specifies the extension the index should be inserted before.
+  /// It is necessary to provide extension, because there is no reliable way of correctly
+  /// determining extension automatically (for example, file extension of some.file.nii.gz
+  /// could be gz, nii.gz, or file.nii.gz and only one of them is correct).
+  static std::string CreateUniqueFileName(const std::string& filename, const std::string& knownExtension = "");
+
 protected:
 
   typedef std::map< std::string, std::set<std::string> > NodeReferencesType;
@@ -817,6 +859,9 @@ protected:
   bool IsNodeIDReservedByUndo(const std::string id) const;
 
   virtual void SetSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode*);
+
+  void SaveStorableNodeToSlicerDataBundleDirectory(vtkMRMLStorableNode* storableNode, std::string& dataDir,
+    std::map<vtkMRMLStorageNode*, std::vector<std::string> > originalStorageNodeFileNames);
 
   vtkCollection*  Nodes;
 

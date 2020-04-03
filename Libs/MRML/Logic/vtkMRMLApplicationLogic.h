@@ -241,15 +241,7 @@ protected:
   void SetSelectionNode(vtkMRMLSelectionNode* );
   void SetInteractionNode(vtkMRMLInteractionNode* );
 
-  void SaveStorableNodeToSlicerDataBundleDirectory(vtkMRMLStorableNode* storableNode,
-                                                 std::string &dataDir);
-
 private:
-
-  /// use a map to store the file names from a storage node, the 0th one is by
-  /// definition the GetFileName returned value, then the rest are at index n+1
-  /// from GetNthFileName(n)
-  std::map<vtkMRMLStorageNode*, std::vector<std::string> > OriginalStorageNodeFileNames;
 
   vtkMRMLApplicationLogic(const vtkMRMLApplicationLogic&) = delete;
   void operator=(const vtkMRMLApplicationLogic&) = delete;

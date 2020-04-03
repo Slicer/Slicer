@@ -83,120 +83,20 @@ bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
     fileInfo = QFileInfo(QDir::currentPath(), file);
     file = fileInfo.absoluteFilePath();
     }
-
-  // TODO: switch to QTemporaryDir in Qt5.
-  QString unpackPath( QDir::tempPath() +
-                        QString("/__BundleLoadTemp") +
-                          QDateTime::currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz") );
-
-  qDebug() << "Unpacking bundle " << file << " to " << unpackPath;
-
-  if (QFileInfo(unpackPath).isDir())
-    {
-    if (!ctk::removeDirRecursively(unpackPath))
-      {
-      return false;
-      }
-    }
-
-  if (!QDir().mkpath(unpackPath))
-    {
-    return false;
-    }
-
-  vtkNew<vtkMRMLApplicationLogic> appLogic;
-  appLogic->SetMRMLScene( this->mrmlScene() );
-  std::string mrmlFile = appLogic->UnpackSlicerDataBundle(
-                                          file.toUtf8(), unpackPath.toUtf8() );
-
-  if (mrmlFile.empty())
-    {
-    return false;
-    }
-
-  this->mrmlScene()->SetURL(mrmlFile.c_str());
-
   bool clear = false;
   if (properties.contains("clear"))
     {
     clear = properties["clear"].toBool();
     }
-  int res = 0;
-  if (clear)
-    {
-    res = this->mrmlScene()->Connect();
-    }
-  else
-    {
-    res = this->mrmlScene()->Import();
-    }
 
-  if (!ctk::removeDirRecursively(unpackPath))
+  bool success = this->mrmlScene()->ReadFromMRB(file.toUtf8(), clear);
+
+  if (success)
     {
-    return false;
+    // Set default scene file format to mrb
+    qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
+    coreIOManager->setDefaultSceneFileType("Medical Reality Bundle (.mrb)");
     }
 
-  qDebug() << "Loaded bundle from " << unpackPath;
-  // Set default scene file format to mrb
-  qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
-  coreIOManager->setDefaultSceneFileType("Medical Reality Bundle (.mrb)");
-
-  // since the unpack path has been deleted, reset the scene to where the data bundle is
-  QString mrbDirectoryPath = QFileInfo(file).dir().absolutePath();
-  QString mrbBaseName = QFileInfo(file).baseName();
-  QString resetURL = mrbDirectoryPath + QString("/") + mrbBaseName + QString(".mrml");
-  this->mrmlScene()->SetURL(resetURL.toUtf8());
-  qDebug() << "Reset scene to point to the MRB directory " << this->mrmlScene()->GetURL();
-
-  // Change root directory to mrb file location
-  QDir rootDirectory(this->mrmlScene()->GetRootDirectory());
-  this->mrmlScene()->SetRootDirectory(mrbDirectoryPath.toUtf8().constData());
-
-  // Make storage file names relative to root directory by removing
-  // the temporary unpack directory
-  std::vector<vtkMRMLNode *> storageNodes;
-  this->mrmlScene()->GetNodesByClass("vtkMRMLStorageNode", storageNodes);
-  for (std::vector<vtkMRMLNode *>::iterator storageNodeIt = storageNodes.begin(); storageNodeIt != storageNodes.end(); ++storageNodeIt)
-    {
-    vtkMRMLStorageNode* storageNode = vtkMRMLStorageNode::SafeDownCast(*storageNodeIt);
-    if (!storageNode)
-      {
-      continue;
-      }
-    for (int i = -1; i < storageNode->GetNumberOfFileNames(); ++i)
-      {
-      const char* storageFileNamePtr = nullptr;
-      if (i < 0)
-        {
-        storageFileNamePtr = storageNode->GetFileName();
-        }
-      else
-        {
-        storageFileNamePtr = storageNode->GetNthFileName(i);
-        }
-      if (!storageFileNamePtr)
-        {
-        continue;
-        }
-      QString storageFileName = QString(storageFileNamePtr);
-      if (!storageFileName.startsWith(unpackPath))
-        {
-        continue;
-        }
-      storageFileName = rootDirectory.relativeFilePath(storageFileName);
-      if (i < 0)
-        {
-        storageNode->SetFileName(storageFileName.toUtf8().constData());
-        }
-      else
-        {
-        storageNode->ResetNthFileName(i, storageFileName.toUtf8().constData());
-        }
-      }
-    }
-
-  // and mark storable nodes as modified since read
-  this->mrmlScene()->SetStorableNodesModifiedSinceRead();
-  // MRBs come with default scene views, but the paths of storage nodes in there can be still pointing to the bundle extraction directory that was removed. Clear out the file lists at least so that they get reset
-  return res;
+  return success;
 }
