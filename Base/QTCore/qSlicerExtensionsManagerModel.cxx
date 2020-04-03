@@ -45,7 +45,7 @@
 #include "vtkSlicerConfigure.h"
 #include "vtkSlicerVersionConfigure.h"
 
-// Logic includes
+// MRML includes
 #include "vtkArchive.h"
 
 
@@ -670,7 +670,7 @@ QString qSlicerExtensionsManagerModelPrivate::extractArchive(const QDir& extensi
   ctkScopedCurrentDir scopedCurrentDir(extensionsDir.absolutePath());
 
   std::vector<std::string> extracted_files;
-  bool success = extract_tar(qPrintable(archiveFile), /* verbose */ false, /* extract */ true, &extracted_files);
+  bool success = vtkArchive::ExtractTar(qPrintable(archiveFile), /* verbose */ false, /* extract */ true, &extracted_files);
   if(!success)
     {
     this->critical(QString("Failed to extract %1 into %2").arg(archiveFile).arg(extensionsDir.absolutePath()));
@@ -1410,7 +1410,7 @@ bool qSlicerExtensionsManagerModel::installExtension(
   Q_D(qSlicerExtensionsManagerModel);
 
   std::vector<std::string> archiveContents;
-  if (!list_archive(qPrintable(archiveFile), archiveContents))
+  if (!vtkArchive::ListArchive(qPrintable(archiveFile), archiveContents))
     {
     d->critical(
       QString("Failed to list extension archive '%1'").arg(archiveFile));

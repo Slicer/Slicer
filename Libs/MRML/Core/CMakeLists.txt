@@ -53,6 +53,11 @@ list(APPEND ITK_INCLUDE_DIRS ${ITKFactoryRegistration_INCLUDE_DIRS})
 include(${ITK_USE_FILE})
 
 #
+# LibArchive
+#
+find_package(LibArchive REQUIRED MODULE)
+
+#
 # vtkTeem
 #
 if(MRML_USE_vtkTeem)
@@ -77,6 +82,7 @@ set(include_dirs
   ${vtkITK_INCLUDE_DIRS}
   ${vtkSegmentationCore_INCLUDE_DIRS}
   ${FreeSurfer_INCLUDE_DIRS}
+  ${LibArchive_INCLUDE_DIR}
   )
 if(MRML_USE_vtkTeem)
   list(APPEND include_dirs ${vtkTeem_INCLUDE_DIRS})
@@ -109,6 +115,8 @@ endif()
 # Sources
 # --------------------------------------------------------------------------
 set(MRMLCore_SRCS
+  vtkArchive.cxx
+  vtkArchive.h
   vtkCodedEntry.cxx
   vtkEventBroker.cxx
   vtkDataFileFormatHelper.cxx
@@ -278,6 +286,7 @@ set(libs
   ${VTK_LIBRARIES}
   vtkIOInfovis
   FreeSurfer
+  ${LibArchive_LIBRARY}
   )
 if(MRML_USE_vtkTeem)
   list(APPEND libs vtkTeem)

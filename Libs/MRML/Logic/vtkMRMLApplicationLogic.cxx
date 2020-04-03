@@ -532,15 +532,13 @@ void vtkMRMLApplicationLogic::FitSliceToAll(bool onlyIfPropagateVolumeSelectionA
 //----------------------------------------------------------------------------
 bool vtkMRMLApplicationLogic::Zip(const char* zipFileName, const char* directoryToZip)
 {
-  // call function in vtkArchive
-  return zip(zipFileName, directoryToZip);
+  return vtkArchive::Zip(zipFileName, directoryToZip);
 }
 
 //----------------------------------------------------------------------------
 bool vtkMRMLApplicationLogic::Unzip(const char* zipFileName, const char* destinationDirectory)
 {
-  // call function in vtkArchive
-  return unzip(zipFileName, destinationDirectory);
+  return vtkArchive::UnZip(zipFileName, destinationDirectory);
 }
 
 //----------------------------------------------------------------------------

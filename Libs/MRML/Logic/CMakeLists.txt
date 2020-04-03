@@ -23,10 +23,6 @@ if(Slicer_USE_PYTHONQT AND NOT VTK_WRAP_PYTHON)
                       "Re-configure VTK with python wrapping.")
 endif()
 
-#
-# LibArchive
-#
-find_package(LibArchive REQUIRED MODULE)
 
 # --------------------------------------------------------------------------
 # Include dirs
@@ -37,7 +33,6 @@ set(include_dirs
   ${MRMLCore_INCLUDE_DIRS}
   ${vtkTeem_INCLUDE_DIRS}
   ${RemoteIO_INCLUDE_DIRS}
-  ${LibArchive_INCLUDE_DIR}
   )
 include_directories(${include_dirs})
 
@@ -82,12 +77,6 @@ set(MRMLLogic_SRCS
   # slicer's vtk extensions (filters)
   vtkImageLabelOutline.cxx
   vtkImageNeighborhoodFilter.cxx
-  vtkArchive.cxx
-  )
-
-# vtkArchive is not really a vtk class
-set_source_files_properties(vtkArchive.cxx
-  WRAP_EXCLUDE
   )
 
 # set hints for tcl and python
@@ -106,7 +95,6 @@ set(libs
   vtkTeem
   RemoteIO
   ${VTK_LIBRARIES}
-  ${LibArchive_LIBRARY}
   )
 
 target_link_libraries(${lib_name} ${libs})
