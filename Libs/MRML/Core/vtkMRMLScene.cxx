@@ -42,6 +42,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLLabelMapVolumeNode.h"
 #include "vtkMRMLLayoutNode.h"
+#include "vtkMRMLLinearTransformSequenceStorageNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLModelNode.h"
@@ -58,6 +59,8 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLSegmentationNode.h"
 #include "vtkMRMLSegmentationStorageNode.h"
 #include "vtkMRMLSelectionNode.h"
+#include "vtkMRMLSequenceNode.h"
+#include "vtkMRMLSequenceStorageNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSnapshotClipNode.h"
@@ -73,6 +76,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLVectorVolumeDisplayNode.h"
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
+#include "vtkMRMLVolumeSequenceStorageNode.h"
 #include "vtkURIHandler.h"
 
 #ifdef MRML_USE_vtkTeem
@@ -231,6 +235,11 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLPlotChartNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLPlotViewNode >::New() );
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLSubjectHierarchyNode>::New()); // Increments next subject hierarchy item ID
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLSequenceNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLSequenceStorageNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLLinearTransformSequenceStorageNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLVolumeSequenceStorageNode>::New());
+
 }
 
 //------------------------------------------------------------------------------

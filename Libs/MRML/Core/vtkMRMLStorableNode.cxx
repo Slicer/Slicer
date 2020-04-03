@@ -15,6 +15,7 @@ Version:   $Revision: 1.3 $
 // MRML includes
 #include "vtkMRMLStorableNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLSequenceStorageNode.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkTagTable.h"
 
@@ -446,4 +447,10 @@ bool vtkMRMLStorableNode::AddDefaultStorageNode(const char* filename /* =nullptr
   this->GetScene()->AddNode(storageNode);
   this->SetAndObserveStorageNodeID(storageNode->GetID());
   return storageNode;
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLStorageNode* vtkMRMLStorableNode:: CreateDefaultSequenceStorageNode()
+{
+  return vtkMRMLSequenceStorageNode::New();
 }

@@ -2170,7 +2170,7 @@ def setToolbarsVisible(visible, ignore=None):
   # (put in try block because Sequence Browser module is not always installed)
   try:
     import slicer
-    slicer.modules.sequencebrowser.autoShowToolBar = visible
+    slicer.modules.sequences.autoShowToolBar = visible
   except:
     # Sequences module is not installed
     pass

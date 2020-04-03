@@ -10,6 +10,8 @@ set(MODULE_PYTHON_SCRIPTS
 set(MODULE_PYTHON_RESOURCES
   Resources/Icons/BaselineVolume.png
   Resources/Icons/CTACardio.png
+  Resources/Icons/CTCardioSeq.png
+  Resources/Icons/CTPCardioSeq.png
   Resources/Icons/CTChest.png
   Resources/Icons/DTIBrain.png
   Resources/Icons/DTIVolume.png

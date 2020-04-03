@@ -218,6 +218,9 @@ public:
   /// It is computed as median value of the 8 corner voxels.
   virtual double GetImageBackgroundScalarComponentAsDouble(int component);
 
+  /// Creates the most appropriate display node class for storing a sequence of these nodes.
+  void CreateDefaultSequenceDisplayNodes() override;
+
 protected:
   vtkMRMLVolumeNode();
   ~vtkMRMLVolumeNode() override;

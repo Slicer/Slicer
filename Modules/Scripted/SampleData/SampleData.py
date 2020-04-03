@@ -497,6 +497,13 @@ class SampleDataLogic(object):
 
   def registerBuiltInSampleDataSources(self):
     """Fills in the pre-define sample data sources"""
+
+    #   Arguments:
+    #     sampleName=None, sampleDescription=None,
+    #     uris=None,
+    #     fileNames=None, nodeNames=None,
+    #     checksums=None,
+    #     loadFiles=None, customDownloader=None, thumbnailFileName=None, loadFileType=None, loadFileProperties=None
     sourceArguments = (
         ('MRHead', None, TESTING_DATA_URL + 'SHA256/cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93',
           'MR-head.nrrd', 'MRHead', 'SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93'),
@@ -547,6 +554,16 @@ class SampleDataLogic(object):
           ('SHA256:6a5b6caccb76576a863beb095e3bfb910c50ca78f4c9bf043aa42f976cfa53d1',
            'SHA256:2da3f655ed20356ee8cdf32aa0f8f9420385de4b6e407d28e67f9974d7ce1593',
            'SHA256:fa1fe5910a69182f2b03c0150d8151ac6c75df986449fb5a6c5ae67141e0f5e7')),
+        ('CTPCardioSeq', "CTP Cardio Volume Sequence",
+          'https://github.com/Slicer/SlicerDataStore/releases/download/SHA256/7fbb6ad0aed9c00820d66e143c2f037568025ed63db0a8db05ae7f26affeb1c2',
+          'CTP-cardio.seq.nrrd', 'CTPCardioSeq',
+          'SHA256:7fbb6ad0aed9c00820d66e143c2f037568025ed63db0a8db05ae7f26affeb1c2',
+          None, None, None, "SequenceFile"),
+        ('CTCardioSeq', "CT Cardio Volume Sequence",
+          'https://github.com/Slicer/SlicerDataStore/releases/download/SHA256/d1a1119969acead6c39c7c3ec69223fa2957edc561bc5bf384a203e2284dbc93',
+          'CT-cardio.seq.nrrd', 'CTCardioSeq',
+          'SHA256:d1a1119969acead6c39c7c3ec69223fa2957edc561bc5bf384a203e2284dbc93',
+          None, None, None, "SequenceFile"),
         )
 
     if self.builtInCategoryName not in slicer.modules.sampleDataSources:

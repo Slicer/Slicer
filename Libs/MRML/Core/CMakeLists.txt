@@ -153,6 +153,8 @@ set(MRMLCore_SRCS
   vtkMRMLLabelMapVolumeDisplayNode.cxx
   vtkMRMLLabelMapVolumeNode.cxx
   vtkMRMLLinearTransformNode.cxx
+  vtkMRMLLinearTransformSequenceStorageNode.cxx
+  vtkMRMLLinearTransformSequenceStorageNode.h
   vtkMRMLMarkupsStorageNode.cxx
   vtkMRMLModelDisplayNode.cxx
   vtkMRMLModelHierarchyNode.cxx
@@ -180,6 +182,10 @@ set(MRMLCore_SRCS
   vtkMRMLSegmentationDisplayNode.h
   vtkMRMLSegmentationStorageNode.cxx
   vtkMRMLSegmentationStorageNode.h
+  vtkMRMLSequenceNode.cxx
+  vtkMRMLSequenceNode.h
+  vtkMRMLSequenceStorageNode.cxx
+  vtkMRMLSequenceStorageNode.h
   vtkMRMLSelectionNode.cxx
   vtkMRMLSliceCompositeNode.cxx
   vtkMRMLSliceNode.cxx
@@ -210,6 +216,8 @@ set(MRMLCore_SRCS
   vtkMRMLGlyphableVolumeSliceDisplayNode.cxx
   vtkMRMLVolumeHeaderlessStorageNode.cxx
   vtkMRMLVolumeNode.cxx
+  vtkMRMLVolumeSequenceStorageNode.cxx
+  vtkMRMLVolumeSequenceStorageNode.h
   vtkObservation.cxx
   vtkObserverManager.cxx
   vtkMRMLLayoutNode.cxx

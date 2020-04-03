@@ -804,9 +804,14 @@ bool vtkMRMLSceneViewNode::IncludeNodeInSceneView(vtkMRMLNode *node)
     }
   bool includeInView = true;
   // check for simple node types
+  // Storable nodes cannot be restored from scene views, as they would require
+  // storage nodes to load content, therefore we do not include them in scene views
+  // (except camera, which is a storable node but actually does not require a
+  // storage node and it is important to save in scene views).
   if (node->IsA("vtkMRMLSceneViewNode") ||
       node->IsA("vtkMRMLSceneViewStorageNode") ||
-      node->IsA("vtkMRMLSnapshotClipNode"))
+      node->IsA("vtkMRMLSnapshotClipNode") ||
+      (node->IsA("vtkMRMLStorableNode") && !node->IsA("vtkMRMLCameraNode")) )
     {
     includeInView = false;
     }

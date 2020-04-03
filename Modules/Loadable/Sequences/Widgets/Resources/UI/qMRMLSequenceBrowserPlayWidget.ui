@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qMRMLSequenceBrowserPlayWidget</class>
+ <widget class="QWidget" name="qMRMLSequenceBrowserPlayWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>662</width>
+    <height>82</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>qMRMLSequenceBrowserPlayWidget</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QPushButton" name="pushButton_VcrFirst">
+     <property name="toolTip">
+      <string>First frame</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../qSlicerSequenceBrowserModuleWidgets.qrc">
+       <normaloff>:/Icons/pqVcrFirst24.png</normaloff>:/Icons/pqVcrFirst24.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="pushButton_VcrPrevious">
+     <property name="toolTip">
+      <string>Previous frame</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../qSlicerSequenceBrowserModuleWidgets.qrc">
+       <normaloff>:/Icons/pqVcrBack24.png</normaloff>:/Icons/pqVcrBack24.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="pushButton_VcrPlayPause">
+     <property name="toolTip">
+      <string>Play/Pause</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../qSlicerSequenceBrowserModuleWidgets.qrc">
+       <normaloff>:/Icons/pqVcrPlay24.png</normaloff>
+       <normalon>:/Icons/pqVcrPause24.png</normalon>:/Icons/pqVcrPlay24.png</iconset>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="pushButton_VcrNext">
+     <property name="toolTip">
+      <string>Next frame</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../qSlicerSequenceBrowserModuleWidgets.qrc">
+       <normaloff>:/Icons/pqVcrForward24.png</normaloff>:/Icons/pqVcrForward24.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="pushButton_VcrLast">
+     <property name="toolTip">
+      <string>Last frame</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../qSlicerSequenceBrowserModuleWidgets.qrc">
+       <normaloff>:/Icons/pqVcrLast24.png</normaloff>:/Icons/pqVcrLast24.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDoubleSpinBox" name="doubleSpinBox_VcrPlaybackRate">
+     <property name="suffix">
+      <string>fps</string>
+     </property>
+     <property name="decimals">
+      <number>1</number>
+     </property>
+     <property name="minimum">
+      <double>0.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1000.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>5.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>100.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="pushButton_VcrLoop">
+     <property name="toolTip">
+      <string>Loop playback</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../qSlicerSequenceBrowserModuleWidgets.qrc">
+       <normaloff>:/Icons/pqVcrLoop24.png</normaloff>:/Icons/pqVcrLoop24.png</iconset>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="pushButton_VcrRecord">
+     <property name="toolTip">
+      <string>Record proxy nodes modifications continuously</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../qSlicerSequenceBrowserModuleWidgets.qrc">
+       <normaloff>:/Icons/VcrRecord16.png</normaloff>:/Icons/VcrRecord16.png</iconset>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="pushButton_Snapshot">
+     <property name="toolTip">
+      <string>Record snapshot of current state of all proxy nodes</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../qSlicerSequenceBrowserModuleWidgets.qrc">
+       <normaloff>:/Icons/pqCamera24.png</normaloff>:/Icons/pqCamera24.png</iconset>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>pushButton_VcrFirst</tabstop>
+  <tabstop>pushButton_VcrPrevious</tabstop>
+  <tabstop>pushButton_VcrPlayPause</tabstop>
+  <tabstop>pushButton_VcrNext</tabstop>
+  <tabstop>pushButton_VcrLast</tabstop>
+  <tabstop>doubleSpinBox_VcrPlaybackRate</tabstop>
+  <tabstop>pushButton_VcrLoop</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../../../Resources/qSlicerSequenceBrowserModule.qrc"/>
+  <include location="../qSlicerSequenceBrowserModuleWidgets.qrc"/>
+ </resources>
+ <connections/>
+</ui>

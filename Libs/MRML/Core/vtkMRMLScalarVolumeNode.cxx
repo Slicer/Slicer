@@ -17,6 +17,7 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
+#include "vtkMRMLVolumeSequenceStorageNode.h"
 
 // VTK includes
 #include <vtkDataArray.h>
@@ -167,4 +168,10 @@ void vtkMRMLScalarVolumeNode::CreateDefaultDisplayNodes()
     this->GetScene()->AddNewNodeByClass("vtkMRMLScalarVolumeDisplayNode") );
   dispNode->SetDefaultColorMap();
   this->SetAndObserveDisplayNodeID(dispNode->GetID());
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLStorageNode* vtkMRMLScalarVolumeNode::CreateDefaultSequenceStorageNode()
+{
+  return vtkMRMLVolumeSequenceStorageNode::New();
 }

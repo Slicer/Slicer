@@ -180,6 +180,11 @@ public:
   /// display nodes.
   virtual void CreateDefaultDisplayNodes();
 
+  /// Creates the most appropriate display node class for storing a sequence of these nodes.
+  /// If the method is not overwritten by subclass then it creates display node by calling,
+  /// CreateDefaultDisplayNodes method.
+  virtual void CreateDefaultSequenceDisplayNodes();
+
   /// TODO: Remove these functions when removing the Annotations module
   /// Utility to return the visibility of all the display nodes.
   /// Return 0 if they are all hidden, 1 if all are visible and 2 if some are

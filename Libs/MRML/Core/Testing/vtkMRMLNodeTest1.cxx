@@ -36,6 +36,8 @@
 using namespace vtkAddonTestingUtilities;
 using namespace vtkMRMLCoreTestingUtilities;
 
+#define DISPLAY_SCENE_NODE_REFERENCES 0
+
 //---------------------------------------------------------------------------
 class vtkMRMLNodeTestHelper1 : public vtkMRMLNode
 {
@@ -2925,6 +2927,7 @@ protected:
 vtkStandardNewMacro(vtkMRMLTestScene);
 
 //----------------------------------------------------------------------------
+#if DISPLAY_SCENE_NODE_REFERENCES
 void DisplaySceneNodeReferences(
     int line, vtkMRMLTestScene::TestNodeReferencesType nodeReferences)
 {
@@ -2943,14 +2946,12 @@ void DisplaySceneNodeReferences(
     std::cout << "]" << std::endl;
     }
 }
-
+#endif
 }
 
 //----------------------------------------------------------------------------
 bool TestImportSceneReferenceValidDuringImport()
 {
-  (void)(DisplaySceneNodeReferences); // Avoid unused-function warning
-
   //
   // Create scene and register node
   //
@@ -2996,7 +2997,9 @@ bool TestImportSceneReferenceValidDuringImport()
   //    |          |-- ref [otherNode] to vtkMRMLNodeTestHelper12
   //    |          |-- ref [refrole1] to vtkMRMLNodeTestHelper11
 
-//  DisplaySceneNodeReferences(__LINE__, scene->test_NodeReferences());
+#if DISPLAY_SCENE_NODE_REFERENCES
+  DisplaySceneNodeReferences(__LINE__, scene->test_NodeReferences());
+#endif
 
   if (!CheckInt(
         __LINE__, "GetNumberOfNodes",
@@ -3072,7 +3075,9 @@ bool TestImportSceneReferenceValidDuringImport()
   //    |---- vtkMRMLNodeTestHelper15
   //               |-- ref [refrole1] to vtkMRMLNodeTestHelper14
 
-//  DisplaySceneNodeReferences(__LINE__, scene->test_NodeReferences());
+#if DISPLAY_SCENE_NODE_REFERENCES
+  DisplaySceneNodeReferences(__LINE__, scene->test_NodeReferences());
+#endif
 
   if (!CheckInt(
         __LINE__, "GetNumberOfNodes",
@@ -3167,7 +3172,9 @@ bool TestImportSceneReferenceValidDuringImport()
   //    |          |-- ref [otherNode] to vtkMRMLNodeTestHelper17
   //    |          |-- ref [refrole1] to vtkMRMLNodeTestHelper16
 
-//  DisplaySceneNodeReferences(__LINE__, scene->test_NodeReferences());
+#if DISPLAY_SCENE_NODE_REFERENCES
+  DisplaySceneNodeReferences(__LINE__, scene->test_NodeReferences());
+#endif
 
   vtkMRMLNodeTestHelper1 *node7 =
       vtkMRMLNodeTestHelper1::SafeDownCast(scene->GetNodeByID("vtkMRMLNodeTestHelper16"));

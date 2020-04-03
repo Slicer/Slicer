@@ -1,0 +1,854 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qSlicerSequencesModuleWidget</class>
+ <widget class="qSlicerWidget" name="qSlicerSequencesModuleWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>411</width>
+    <height>513</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTabWidget" name="mainTabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Browse</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Sequence browser:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBox_ActiveBrowser">
+           <property name="nodeTypes">
+            <stringlist>
+             <string>vtkMRMLSequenceBrowserNode</string>
+            </stringlist>
+           </property>
+           <property name="baseName">
+            <string>SequenceBrowser</string>
+           </property>
+           <property name="renameEnabled">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="ctkCollapsibleButton" name="InputSection">
+         <property name="text">
+          <string>Browsing</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="3" column="0" colspan="2">
+           <widget class="qMRMLSequenceBrowserSeekWidget" name="sequenceBrowserSeekWidget"/>
+          </item>
+          <item row="2" column="0" colspan="2">
+           <widget class="qMRMLSequenceBrowserPlayWidget" name="sequenceBrowserPlayWidget"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="ctkCollapsibleButton" name="SynchronizedBrowsingSection">
+         <property name="text">
+          <string>Synchronized nodes</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_9">
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBox_SynchronizeSequenceNode">
+              <property name="nodeTypes">
+               <stringlist>
+                <string>vtkMRMLSequenceNode</string>
+               </stringlist>
+              </property>
+              <property name="showChildNodeTypes">
+               <bool>false</bool>
+              </property>
+              <property name="noneEnabled">
+               <bool>true</bool>
+              </property>
+              <property name="addEnabled">
+               <bool>false</bool>
+              </property>
+              <property name="removeEnabled">
+               <bool>false</bool>
+              </property>
+              <property name="noneDisplay">
+               <string>(new sequence)</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_AddSequenceNode">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Add the selected sequence to the browser.</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_RemoveSequenceNode">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Remove the selected sequence(s) from the browser.</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QTableWidget" name="tableWidget_SynchronizedSequenceNodes">
+            <property name="horizontalScrollMode">
+             <enum>QAbstractItemView::ScrollPerPixel</enum>
+            </property>
+            <property name="columnCount">
+             <number>6</number>
+            </property>
+            <attribute name="horizontalHeaderVisible">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="horizontalHeaderCascadingSectionResizes">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string>Sequence</string>
+             </property>
+             <property name="toolTip">
+              <string>The sequence node's name.</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Proxy node</string>
+             </property>
+             <property name="toolTip">
+              <string>The &quot;proxy&quot; node for the sequence (the node to playback into or record from).</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Playback - update proxy node with sequence node contents during playback.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../../Widgets/Resources/qSlicerSequencesModuleWidgets.qrc">
+               <normaloff>:/Icons/pqVcrPlay24.png</normaloff>:/Icons/pqVcrPlay24.png</iconset>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Record - save proxy node changes into sequence node during recording.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../../Widgets/Resources/qSlicerSequencesModuleWidgets.qrc">
+               <normaloff>:/Icons/VcrRecord16.png</normaloff>:/Icons/VcrRecord16.png</iconset>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Rename</string>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the proxy node name using sequence node name and index value.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Save changes</string>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Save the proxy node current state into the sequence when not in playback or recording mode.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="ctkCollapsibleButton" name="PlottingSection">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>37</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Plotting</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <property name="collapsed">
+          <bool>true</bool>
+         </property>
+         <property name="collapsedHeight">
+          <number>6</number>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
+           <widget class="QPushButton" name="pushButton_iCharting">
+            <property name="text">
+             <string>Enable interactive charting</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="ctkVTKChartView" name="ChartView_iCharting">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>1</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="ctkCollapsibleButton" name="AdvancedSection">
+         <property name="text">
+          <string>Advanced</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <property name="collapsed">
+          <bool>true</bool>
+         </property>
+         <layout class="QFormLayout" name="formLayout_2">
+          <property name="fieldGrowthPolicy">
+           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_PlaybackItemSkippingEnabled">
+            <property name="text">
+             <string>Enable item skip during playback:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="checkBox_PlaybackItemSkippingEnabled">
+            <property name="toolTip">
+             <string>If checked, items may be skipped during playback to reach the requested frame rate. If not checked then each item is displayed during playback but the playback speed may be lower than requested.</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_RecordMasterOnly">
+            <property name="text">
+             <string>Record on master node only:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QCheckBox" name="checkBox_RecordMasterOnly">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_MasterSequence">
+            <property name="text">
+             <string>Master node:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBox_MasterSequence">
+            <property name="nodeTypes">
+             <stringlist>
+              <string>vtkMRMLSequenceNode</string>
+             </stringlist>
+            </property>
+            <property name="noneEnabled">
+             <bool>false</bool>
+            </property>
+            <property name="addEnabled">
+             <bool>false</bool>
+            </property>
+            <property name="removeEnabled">
+             <bool>true</bool>
+            </property>
+            <property name="renameEnabled">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_RecordingFrameRate">
+            <property name="text">
+             <string>Recording sampling mode:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QComboBox" name="comboBox_RecordingSamplingMode">
+            <item>
+             <property name="text">
+              <string extracomment="Record all node changes">Maximum</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string extracomment="Limit recording frame rate to playback frame rate">Limited to playback rate</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_IndexDisplayMode">
+            <property name="text">
+             <string>Index display:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QComboBox" name="comboBox_IndexDisplayMode">
+            <item>
+             <property name="text">
+              <string extracomment="Display item index of master node">Index</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string extracomment="Display index value of selected item">Index value</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_IndexDisplayDecimals">
+            <property name="text">
+             <string>Index display format:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLineEdit" name="lineEdit_IndexDisplayFormat">
+            <property name="toolTip">
+             <string>Display index string in SPRINTF format. Only the first conversion specification is replaced. Availiable specifiers are: fFgGeEs.</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Edit</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <layout class="QFormLayout" name="formLayout">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <item row="0" column="1">
+          <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBox_Sequence">
+           <property name="nodeTypes">
+            <stringlist>
+             <string>vtkMRMLSequenceNode</string>
+            </stringlist>
+           </property>
+           <property name="noneEnabled">
+            <bool>false</bool>
+           </property>
+           <property name="editEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="renameEnabled">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="Label_ActiveNode">
+           <property name="text">
+            <string>Sequence:</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="GroupBox_Sequence">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title">
+          <string>Index properties</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label_IndexName">
+            <property name="text">
+             <string>Name:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="LineEdit_IndexName">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>time</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="Label_IndexUnit">
+            <property name="text">
+             <string>Unit:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="LineEdit_IndexUnit">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>s</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_IndexType">
+            <property name="text">
+             <string>Type:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="ctkComboBox" name="ComboBox_IndexType">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="GroupBox_SequenceNodes">
+         <property name="title">
+          <string>Data nodes</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QTableWidget" name="TableWidget_DataNodes">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::SingleSelection</enum>
+            </property>
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+           </widget>
+          </item>
+          <item>
+           <widget class="ctkExpandButton" name="ExpandButton_DataNodes">
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <property name="mirrorOnExpand">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="GroupBox_NonDataNodes">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="title">
+             <string>Add/remove data nodes</string>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_2">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout">
+                 <item>
+                  <widget class="QPushButton" name="PushButton_AddDataNode">
+                   <property name="toolTip">
+                    <string>Add to sequence items</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="Label_IndexValue">
+                   <property name="text">
+                    <string>Index value:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="LineEdit_NewDataNodeIndexValue">
+                   <property name="text">
+                    <string>0</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_5">
+                 <item>
+                  <widget class="QLabel" name="Label_IndexIncrement">
+                   <property name="text">
+                    <string>Index increment:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="ctkDoubleSpinBox" name="DoubleSpinBox_IndexValueAutoIncrement">
+                   <property name="decimalsOption">
+                    <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue|ctkDoubleSpinBox::InsertDecimals</set>
+                   </property>
+                   <property name="maximum">
+                    <double>1000000.000000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>1.000000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>10</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="CheckBox_AutoAdvanceDataSelection">
+                   <property name="toolTip">
+                    <string>If enabled then after the selected node is added to the sequence items the selection moves to the next item</string>
+                   </property>
+                   <property name="text">
+                    <string>Auto-advance</string>
+                   </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <widget class="QListWidget" name="ListWidget_CandidateDataNodes">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_8">
+                 <item>
+                  <widget class="QPushButton" name="PushButton_RemoveDataNode">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../qSlicerSequencesModule.qrc">
+                     <normaloff>:/Icons/DataNodeDelete.png</normaloff>:/Icons/DataNodeDelete.png</iconset>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_2">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="Label_DataNodeType">
+                   <property name="text">
+                    <string>Node type:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="Label_DataNodeTypeValue">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>undefined</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkVTKChartView</class>
+   <extends>QOpenGLWidget</extends>
+   <header>ctkVTKChartView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkComboBox</class>
+   <extends>QComboBox</extends>
+   <header>ctkComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkDoubleSpinBox</class>
+   <extends>QWidget</extends>
+   <header>ctkDoubleSpinBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkExpandButton</class>
+   <extends>QToolButton</extends>
+   <header>ctkExpandButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSequenceBrowserPlayWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLSequenceBrowserPlayWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSequenceBrowserSeekWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLSequenceBrowserSeekWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../qSlicerSequencesModule.qrc"/>
+  <include location="../../Widgets/Resources/qSlicerSequencesModuleWidgets.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>qSlicerSequencesModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>MRMLNodeComboBox_Sequence</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>262</x>
+     <y>353</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>155</x>
+     <y>50</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ExpandButton_DataNodes</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>GroupBox_NonDataNodes</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>170</x>
+     <y>149</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>274</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerSequencesModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>MRMLNodeComboBox_ActiveBrowser</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>358</x>
+     <y>508</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>129</x>
+     <y>43</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerSequencesModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>MRMLNodeComboBox_SynchronizeSequenceNode</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>280</x>
+     <y>508</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>230</x>
+     <y>152</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerSequencesModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>MRMLNodeComboBox_MasterSequence</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>171</x>
+     <y>508</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>198</x>
+     <y>419</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

@@ -1,0 +1,13 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource>
+    <file>Icons/pqCamera24.png</file>
+    <file>Icons/pqVcrBack24.png</file>
+    <file>Icons/pqVcrFirst24.png</file>
+    <file>Icons/pqVcrForward24.png</file>
+    <file>Icons/pqVcrLast24.png</file>
+    <file>Icons/pqVcrLoop24.png</file>
+    <file>Icons/pqVcrPause24.png</file>
+    <file>Icons/pqVcrPlay24.png</file>
+    <file>Icons/VcrRecord16.png</file>
+  </qresource>
+</RCC>
