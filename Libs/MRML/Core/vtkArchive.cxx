@@ -1,14 +1,12 @@
-/*============================================================================
-  CMake - Cross Platform Makefile Generator
-  Copyright 2000-2009 Kitware, Inc., NumFOCUS
+/*=auto=========================================================================
 
-  Distributed under the OSI-approved BSD License (the "License");
-  see accompanying file Copyright.txt for details.
+Portions (c) Copyright 2017 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  This software is distributed WITHOUT ANY WARRANTY; without even the
-  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  See the License for more information.
-============================================================================*/
+See COPYRIGHT.txt
+or http://www.slicer.org/copyright/copyright.txt for details.
+
+=========================================================================auto=*/
+
 
 #include "vtkArchive.h"
 #include "vtkLoggingMacros.h"
@@ -22,6 +20,12 @@
 // STD includes
 #include <cstring>
 #include <iostream>
+
+// VTK include
+#include <vtkObjectFactory.h>
+
+vtkStandardNewMacro(vtkArchive);
+
 
 namespace
 {
@@ -217,8 +221,24 @@ long copy_data(struct archive *ar, struct archive *aw)
 
 } // end of anonymous namespace
 
+//----------------------------------------------------------------------------
+vtkArchive::vtkArchive()
+{
+}
+
+//----------------------------------------------------------------------------
+vtkArchive::~vtkArchive()
+{
+}
+
+//----------------------------------------------------------------------------
+void vtkArchive::PrintSelf(ostream& os, vtkIndent indent)
+{
+  Superclass::PrintSelf(os,indent);
+}
+
 //-----------------------------------------------------------------------------
-bool list_archive(const char* archiveFileName, std::vector<std::string>& files)
+bool vtkArchive::ListArchive(const char* archiveFileName, std::vector<std::string>& files)
 {
   struct archive* a = archive_read_new();
 
@@ -253,7 +273,7 @@ bool list_archive(const char* archiveFileName, std::vector<std::string>& files)
 }
 
 //-----------------------------------------------------------------------------
-bool extract_tar(const char* tarFileName, bool verbose, bool extract, std::vector<std::string> * extracted_files)
+bool vtkArchive::ExtractTar(const char* tarFileName, bool verbose, bool extract, std::vector<std::string> * extracted_files)
 {
   struct archive* a = archive_read_new();
   struct archive *ext = archive_write_disk_new();
@@ -346,7 +366,7 @@ bool extract_tar(const char* tarFileName, bool verbose, bool extract, std::vecto
 //-----------------------------------------------------------------------------
 // creates a zip file with the full contents of the directory (recurses)
 // zip entries will include relative path of including tail of directoryToZip
-bool zip(const char* zipFileName, const char* directoryToZip)
+bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
 {
 
   //
@@ -478,7 +498,7 @@ bool zip(const char* zipFileName, const char* directoryToZip)
 
 //-----------------------------------------------------------------------------
 // unzips zip file into destinationDirectory
-bool unzip(const char* zipFileName, const char* destinationDirectory)
+bool vtkArchive::UnZip(const char* zipFileName, const char* destinationDirectory)
 {
   //
   // Unziping the archive

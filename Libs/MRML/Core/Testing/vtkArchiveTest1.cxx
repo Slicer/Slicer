@@ -45,7 +45,7 @@ int vtkArchiveTest1(int argc, char * argv[] )
   // list files in the archive
   //
   std::vector<std::string> files;
-  if (!list_archive(argv[1], files) || files.size() != 2)
+  if (!vtkArchive::ListArchive(argv[1], files) || files.size() != 2)
     {
     std::cerr << "failed to list archive: " << argv[1] << std::endl;
     return EXIT_FAILURE;
@@ -74,7 +74,7 @@ int vtkArchiveTest1(int argc, char * argv[] )
 
   vtksys::SystemTools::MakeDirectory("archiveTest");
   vtksys::SystemTools::ChangeDirectory("archiveTest");
-  bool res = extract_tar(argv[1], true, true);
+  bool res = vtkArchive::ExtractTar(argv[1], true, true);
   if (!res)
     {
     std::cerr << "failed to extract archive :" << argc << std::endl;
@@ -120,7 +120,7 @@ int vtkArchiveTest1(int argc, char * argv[] )
                                                     std::string("/archiveTest.zip");
   std::string zipDirPath = vtksys::SystemTools::GetCurrentWorkingDirectory() +
                                                     std::string("/archiveTest");
-  res = zip(zipFilePath.c_str(), zipDirPath.c_str());
+  res = vtkArchive::Zip(zipFilePath.c_str(), zipDirPath.c_str());
   if (!res)
     {
     std::cerr << "failed to create new archive" << std::endl;
@@ -140,7 +140,7 @@ int vtkArchiveTest1(int argc, char * argv[] )
   vtksys::SystemTools::MakeDirectory("extractedArchiveTest");
 
   std::cout << "unzipping archiveTest.zip" << std::endl;
-  res = unzip(zipFilePath.c_str(), "extractedArchiveTest");
+  res = vtkArchive::UnZip(zipFilePath.c_str(), "extractedArchiveTest");
   if (!res)
     {
     std::cerr << "failed to extract new archive" << std::endl;
@@ -169,4 +169,3 @@ int vtkArchiveTest1(int argc, char * argv[] )
 
   return EXIT_SUCCESS;
 }
-
