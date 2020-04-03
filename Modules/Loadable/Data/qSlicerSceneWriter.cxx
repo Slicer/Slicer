@@ -111,12 +111,12 @@ bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
 {
   // set the mrml scene url first
   Q_ASSERT(!properties["fileName"].toString().isEmpty());
-  QString fileName = properties["fileName"].toString();
+  QFileInfo fileInfo(properties["fileName"].toString());
+  QString baseDir = fileInfo.absolutePath();
+  QString fullPath = fileInfo.absoluteFilePath();
 
-  this->mrmlScene()->SetURL(fileName.toUtf8());
-  std::string parentDir = vtksys::SystemTools::GetParentDirectory(this->mrmlScene()->GetURL());
-  this->mrmlScene()->SetRootDirectory(parentDir.c_str());
-
+  this->mrmlScene()->SetURL(fullPath.toUtf8());
+  this->mrmlScene()->SetRootDirectory(baseDir.toUtf8());
 
   if (properties.contains("screenShot"))
     {
@@ -146,80 +146,31 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
   //
 
   QFileInfo fileInfo(properties["fileName"].toString());
-  QString basePath = fileInfo.absolutePath();
-  if (!QFileInfo(basePath).isWritable())
+  QString baseDir = fileInfo.absolutePath();
+  if (!QFileInfo(baseDir).isWritable())
     {
     qWarning() << "Failed to save" << fileInfo.absoluteFilePath() << ":"
-               << "Path" << basePath << "is not writable";
+               << "Path" << baseDir << "is not writable";
+    QMessageBox::critical(nullptr, tr("Save scene as MRB"),
+      tr("Failed to save scene as %1 (path %2 is not writeable)").arg(fileInfo.absoluteFilePath()).arg(baseDir));
     return false;
     }
 
-  // TODO: switch to QTemporaryDir in Qt5.
-  // For now, create a named directory and use Qt calls to remove it
-  QString tempDir = qSlicerCoreApplication::application()->temporaryPath();
-  QFileInfo pack(QDir(tempDir), //QDir::tempPath(),
-                 QString("__BundleSaveTemp-") +
-                  QDateTime::currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz"));
-  qDebug() << "packing to " << pack.absoluteFilePath();
-
-  // make a subdirectory with the name the user has chosen
-  QFileInfo bundle = QFileInfo(QDir(pack.absoluteFilePath()),
-                               fileInfo.completeBaseName());
-  QString bundlePath = bundle.absoluteFilePath();
-  if ( bundle.exists() )
-    {
-    if ( !ctk::removeDirRecursively(bundlePath) )
-      {
-      QMessageBox::critical(nullptr, tr("Save Scene as MRB"), tr("Could not remove temp directory"));
-      return false;
-      }
-    }
-
-  if ( !QDir().mkpath(bundlePath) )
-    {
-    QMessageBox::critical(nullptr, tr("Save scene as MRB"), tr("Could not make temp directory"));
-    return false;
-    }
-
-  vtkSmartPointer<vtkImageData> imageData;
+  vtkSmartPointer<vtkImageData> thumbnail;
   if (properties.contains("screenShot"))
     {
     QPixmap screenShot = properties["screenShot"].value<QPixmap>();
     // convert to vtkImageData
-    imageData = vtkSmartPointer<vtkImageData>::New();
-    qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), imageData);
+    thumbnail = vtkSmartPointer<vtkImageData>::New();
+    qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), thumbnail);
     }
 
-  //
-  // Now save the scene into the bundle directory and then make a zip (mrb) file
-  // in the user's selected file location
-  //
-  vtkSlicerApplicationLogic* applicationLogic =
-    qSlicerCoreApplication::application()->applicationLogic();
-  Q_ASSERT(this->mrmlScene() == applicationLogic->GetMRMLScene());
-  bool retval =
-    applicationLogic->SaveSceneToSlicerDataBundleDirectory(bundlePath.toUtf8(),
-                                                           imageData);
-  if (!retval)
+  QString fullPath = fileInfo.absoluteFilePath();
+  bool success = this->mrmlScene()->WriteToMRB(fullPath.toUtf8(), thumbnail);
+  if (!success)
     {
-    QMessageBox::critical(nullptr, tr("Save scene as MRB"), tr("Failed to create bundle"));
-    return false;
-    }
-
-  qDebug() << "zipping to " << fileInfo.absoluteFilePath();
-  if ( !applicationLogic->Zip(fileInfo.absoluteFilePath().toUtf8(),
-                              bundlePath.toUtf8()) )
-    {
-    QMessageBox::critical(nullptr, tr("Save scene as MRB"), tr("Could not compress bundle"));
-    return false;
-    }
-
-  //
-  // Now clean up the temp directory
-  //
-  if ( !ctk::removeDirRecursively(bundlePath) )
-    {
-    QMessageBox::critical(nullptr, tr("Save scene as MRB"), tr("Could not remove temp directory"));
+    QMessageBox::critical(nullptr, tr("Save scene as MRB"),
+      tr("Failed to save scene as %1").arg(fileInfo.absoluteFilePath()));
     return false;
     }
 
