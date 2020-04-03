@@ -181,12 +181,8 @@ int ExerciseBasicMRMLMethods(vtkMRMLNode* node)
 
   node->Modified();
   node->InvokePendingModifiedEvent();
-  node1->SetName("copywithsinglemodified");
-  node->CopyWithSingleModifiedEvent(node1);
-  node1->SetName("copywithoutmodified");
-  node->CopyWithoutModifiedEvent(node1);
-  node1->SetName("copywithscenewithsinglemodified");
-  node->CopyWithSceneWithSingleModifiedEvent(node1);
+  node1->SetName("copywithscene");
+  node->CopyWithScene(node1);
 
   //  Test UpdateReferences()
   node->UpdateReferences();

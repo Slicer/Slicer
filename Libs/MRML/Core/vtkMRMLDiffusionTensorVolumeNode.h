@@ -40,6 +40,10 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeNode : public vtkMRMLDiffusion
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "DiffusionTensorVolume"; }
 
+  /// Copy node content (excludes basic data, such as name and node references).
+  /// \sa vtkMRMLNode::CopyContent
+  vtkMRMLCopyContentDefaultMacro(vtkMRMLDiffusionTensorVolumeNode);
+
   /// Associated volume display MRML node
   virtual void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
 

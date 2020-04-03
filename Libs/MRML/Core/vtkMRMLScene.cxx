@@ -2695,7 +2695,7 @@ void vtkMRMLScene::CopyNodeInRedoStack(vtkMRMLNode *copyNode)
   vtkMRMLNode *snode = copyNode->CreateNodeInstance();
   if (snode != nullptr)
     {
-    snode->CopyWithSceneWithSingleModifiedEvent(copyNode);
+    snode->CopyWithScene(copyNode);
     }
   vtkCollection* undoScene = this->RedoStack.back();
   int nnodes = undoScene->GetNumberOfItems();
@@ -2792,7 +2792,7 @@ void vtkMRMLScene::Undo()
       // nodes differ, copy from undo to current scene
       // but before create a copy in redo stack from current
       this->CopyNodeInRedoStack(*curIterNode);
-      (*curIterNode)->CopyWithSceneWithSingleModifiedEvent(*iterNode);
+      (*curIterNode)->CopyWithScene(*iterNode);
       }
     }
 
@@ -2924,7 +2924,7 @@ void vtkMRMLScene::Redo()
       // nodes differ, copy from redo to current scene
       // but before create a copy in undo stack from current
       this->CopyNodeInUndoStack(curIter->second);
-      curIter->second->CopyWithSceneWithSingleModifiedEvent(iter->second);
+      curIter->second->CopyWithScene(iter->second);
       }
     }
 

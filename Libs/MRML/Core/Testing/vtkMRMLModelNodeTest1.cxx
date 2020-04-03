@@ -127,10 +127,10 @@ int TestGetSetMesh()
   CHECK_POINTER(node1->GetPolyData(), poly.GetPointer());
   CHECK_POINTER(vtkPolyData::SafeDownCast(node1->GetMesh()), poly.GetPointer());
 
-  // copy poly data
+  // deep-copy polydata
   vtkNew<vtkMRMLModelNode> node2;
   node2->SetAndObserveMesh(ug.GetPointer());
-  node2->Copy(node1.GetPointer());
+  node2->CopyContent(node1.GetPointer(), true);
   CHECK_INT(node2->GetMeshType(), vtkMRMLModelNode::PolyDataMeshType)
   CHECK_NOT_NULL(node2->GetMesh());
   CHECK_NOT_NULL(node2->GetMeshConnection());
@@ -138,6 +138,15 @@ int TestGetSetMesh()
   CHECK_NOT_NULL(node2->GetPolyDataConnection());
   CHECK_NULL(node2->GetUnstructuredGrid());
   CHECK_NULL(node2->GetUnstructuredGridConnection());
+  CHECK_INT(node2->GetMesh()->GetNumberOfPoints(), node2->GetPolyData()->GetNumberOfPoints());
+  CHECK_INT(node2->GetMesh()->GetNumberOfCells(), node2->GetPolyData()->GetNumberOfCells());
+  CHECK_INT(node2->GetPolyData()->GetNumberOfPoints(), poly->GetNumberOfPoints());
+  CHECK_INT(node2->GetPolyData()->GetNumberOfCells(), poly->GetNumberOfCells());
+  CHECK_INT(vtkPolyData::SafeDownCast(node2->GetMesh())->GetNumberOfPoints(), poly->GetNumberOfPoints());
+  CHECK_INT(vtkPolyData::SafeDownCast(node2->GetMesh())->GetNumberOfCells(), poly->GetNumberOfCells());
+
+  // shallow-copy polydata
+  node2->CopyContent(node1.GetPointer(), false);
   CHECK_POINTER(node2->GetMeshConnection(), node2->GetPolyDataConnection());
   CHECK_POINTER(node2->GetPolyData(), poly.GetPointer());
   CHECK_POINTER(vtkPolyData::SafeDownCast(node2->GetMesh()), poly.GetPointer());

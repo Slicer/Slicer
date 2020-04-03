@@ -225,23 +225,22 @@ void vtkMRMLCrosshairNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node\"s attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, SliceID
-void vtkMRMLCrosshairNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLCrosshairNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  int disabledModify = this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
 
-  Superclass::Copy(anode);
-  vtkMRMLCrosshairNode *node = vtkMRMLCrosshairNode::SafeDownCast(anode);
+  vtkMRMLCrosshairNode* node = vtkMRMLCrosshairNode::SafeDownCast(anode);
+  if (!node)
+    {
+    return;
+    }
 
   this->SetCrosshairMode ( node->GetCrosshairMode() );
   this->SetCrosshairBehavior (node->GetCrosshairBehavior());
   this->SetCrosshairThickness (node->GetCrosshairThickness());
   this->SetCrosshairRAS(node->GetCrosshairRAS());
   this->SetNavigation(node->GetNavigation());
-
-  this->EndModify(disabledModify);
-
 }
 
 //----------------------------------------------------------------------------

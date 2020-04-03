@@ -197,13 +197,10 @@ void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLAbstractViewNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLAbstractViewNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  int disabledModify = this->StartModify();
-
-  Superclass::Copy(anode);
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyStringMacro(LayoutLabel);
@@ -225,13 +222,11 @@ void vtkMRMLAbstractViewNode::Copy(vtkMRMLNode *anode)
   vtkMRMLCopyEnumMacro(RulerColor);
   vtkMRMLCopyEndMacro();
 
-  vtkMRMLAbstractViewNode *node = (vtkMRMLAbstractViewNode *) anode;
+  vtkMRMLAbstractViewNode *node = vtkMRMLAbstractViewNode::SafeDownCast(anode);
   for (int i=0; i<vtkMRMLAbstractViewNode::AxisLabelsCount; i++)
     {
     this->SetAxisLabel(i,node->GetAxisLabel(i));
     }
-
-  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

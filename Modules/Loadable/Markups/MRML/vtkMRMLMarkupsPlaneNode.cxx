@@ -74,10 +74,10 @@ void vtkMRMLMarkupsPlaneNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsPlaneNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLMarkupsPlaneNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
-  Superclass::Copy(anode);
+  Superclass::CopyContent(anode, deepCopy);
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyEnumMacro(SizeMode);
   vtkMRMLCopyOwnedMatrix4x4Macro(LocalToPlaneTransform);

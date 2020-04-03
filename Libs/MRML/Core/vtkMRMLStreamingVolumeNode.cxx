@@ -338,15 +338,20 @@ void vtkMRMLStreamingVolumeNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLStreamingVolumeNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLStreamingVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  int disabledModify = this->StartModify();
-  Superclass::Copy(anode);
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
+
+  vtkMRMLStreamingVolumeNode* node = vtkMRMLStreamingVolumeNode::SafeDownCast(anode);
+  if (!node)
+    {
+    return;
+    }
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyStdStringMacro(CodecFourCC);
   this->SetAndObserveFrame(this->SafeDownCast(copySourceNode)->GetFrame());
   vtkMRMLCopyEndMacro();
-  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

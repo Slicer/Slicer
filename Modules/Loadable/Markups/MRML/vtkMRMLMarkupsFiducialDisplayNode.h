@@ -46,6 +46,10 @@ public:
   // Get node XML tag name (like Volume, Markups)
   const char* GetNodeTagName() override {return "MarkupsFiducialDisplay";};
 
+  /// Copy node content (excludes basic data, such as name and node references).
+  /// \sa vtkMRMLNode::CopyContent
+  vtkMRMLCopyContentDefaultMacro(vtkMRMLMarkupsFiducialDisplayNode);
+
 protected:
   vtkMRMLMarkupsFiducialDisplayNode();
   ~vtkMRMLMarkupsFiducialDisplayNode() override;

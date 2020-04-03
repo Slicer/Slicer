@@ -220,7 +220,10 @@ void vtkMRMLAnnotationLineDisplayNode::CreateBackup()
 {
   vtkMRMLAnnotationLineDisplayNode * backupNode = vtkMRMLAnnotationLineDisplayNode::New();
 
-  backupNode->CopyWithoutModifiedEvent(this);
+  int oldMode = backupNode->GetDisableModifiedEvent();
+  backupNode->DisableModifiedEventOn();
+  backupNode->Copy(this);
+  backupNode->SetDisableModifiedEvent(oldMode);
 
   this->m_Backup = backupNode;
 }
@@ -231,7 +234,8 @@ void vtkMRMLAnnotationLineDisplayNode::RestoreBackup()
 {
   if (this->m_Backup)
     {
-    this->CopyWithSingleModifiedEvent(this->m_Backup);
+    MRMLNodeModifyBlocker blocker(this);
+    this->Copy(this->m_Backup);
     }
   else
     {

@@ -97,14 +97,6 @@ void vtkMRMLScalarVolumeNode::ReadXMLAttributes(const char** atts)
   this->EndModify(disabledModify);
 }
 
-//----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLScalarVolumeNode::Copy(vtkMRMLNode *anode)
-{
-  Superclass::Copy(anode);
-}
-
 //-----------------------------------------------------------
 void vtkMRMLScalarVolumeNode::CreateNoneNode(vtkMRMLScene *scene)
 {

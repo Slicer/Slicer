@@ -207,15 +207,12 @@ void vtkMRMLStorableNode::ReadXMLAttributes(const char** atts)
 
 }
 
-
 //----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLStorableNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLStorableNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  int disabledModify = this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
 
-  Superclass::Copy(anode);
   vtkMRMLStorableNode *node = (vtkMRMLStorableNode *) anode;
   if (!node)
     {
@@ -248,9 +245,6 @@ void vtkMRMLStorableNode::Copy(vtkMRMLNode *anode)
         }
       }
     }
-
-  this->EndModify(disabledModify);
-
 }
 
 //----------------------------------------------------------------------------

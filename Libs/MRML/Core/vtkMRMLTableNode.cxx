@@ -130,20 +130,19 @@ void vtkMRMLTableNode::ReadXMLAttributes(const char** atts)
   this->EndModify(disabledModify);
 }
 
-
 //----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-//
-void vtkMRMLTableNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLTableNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  vtkMRMLTableNode *node = vtkMRMLTableNode::SafeDownCast(anode);
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
+
+  vtkMRMLTableNode* node = vtkMRMLTableNode::SafeDownCast(anode);
   if (!node)
     {
-    vtkErrorMacro("vtkMRMLTableNode::Copy failed: invalid or incompatible source node");
     return;
     }
-  int disabledModify = this->StartModify();
-  Superclass::Copy(anode);
+
+  // TODO: implement shallow-copy for faster copying of large tables
   // Schema
   if (this->GetSchema()!=nullptr && node->GetSchema()==nullptr)
     {
@@ -179,7 +178,6 @@ void vtkMRMLTableNode::Copy(vtkMRMLNode *anode)
   this->SetLocked(node->GetLocked());
   this->SetUseColumnNameAsColumnHeader(node->GetUseColumnNameAsColumnHeader());
   this->SetUseFirstColumnAsRowHeader(node->GetUseFirstColumnAsRowHeader());
-  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

@@ -339,13 +339,11 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node\"s attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, SliceID
-void vtkMRMLSliceCompositeNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLSliceCompositeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  int disabledModify = this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
 
-  Superclass::Copy(anode);
   vtkMRMLSliceCompositeNode *node = vtkMRMLSliceCompositeNode::SafeDownCast(anode);
 
   this->SetBackgroundVolumeID(node->GetBackgroundVolumeID());
@@ -361,8 +359,6 @@ void vtkMRMLSliceCompositeNode::Copy(vtkMRMLNode *anode)
   this->SetAnnotationSpace ( node->GetAnnotationSpace() );
   this->SetAnnotationMode ( node->GetAnnotationMode() );
   this->SetDoPropagateVolumeSelection (node->GetDoPropagateVolumeSelection());
-
-  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

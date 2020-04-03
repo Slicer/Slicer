@@ -150,12 +150,6 @@ void vtkMRMLAnnotationLinesNode::UpdateScene(vtkMRMLScene *scene)
   // => will be taken care of by vtkMRMLModelDisplayNode
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLAnnotationLinesNode::Copy(vtkMRMLNode *anode)
-{
-  Superclass::Copy(anode);
-}
-
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationLinesNode::ProcessMRMLEvents ( vtkObject *caller,
                                            unsigned long event,

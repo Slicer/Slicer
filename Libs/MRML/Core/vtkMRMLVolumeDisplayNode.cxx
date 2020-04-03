@@ -53,20 +53,16 @@ void vtkMRMLVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node\"s attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLVolumeDisplayNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  bool wasModifying = this->StartModify();
-  this->Superclass::Copy(anode);
-  vtkMRMLVolumeDisplayNode *node =
-    vtkMRMLVolumeDisplayNode::SafeDownCast(anode);
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
+  vtkMRMLVolumeDisplayNode *node = vtkMRMLVolumeDisplayNode::SafeDownCast(anode);
   if (node)
     {
     this->SetInputImageDataConnection(node->GetInputImageDataConnection());
     }
   this->UpdateImageDataPipeline();
-  this->EndModify(wasModifying);
 }
 
 //---------------------------------------------------------------------------

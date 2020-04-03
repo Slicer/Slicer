@@ -128,46 +128,47 @@ void vtkMRMLSegmentationNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLSegmentationNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  vtkMRMLSegmentationNode* otherNode = vtkMRMLSegmentationNode::SafeDownCast(anode);
-  if (!otherNode)
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
+
+  vtkMRMLSegmentationNode* node = vtkMRMLSegmentationNode::SafeDownCast(anode);
+  if (!node)
     {
-    vtkErrorMacro("vtkMRMLSegmentationNode::Copy failed: invalid input node");
     return;
     }
-
-  int wasModified = this->StartModify();
-
-  Superclass::Copy(anode);
-
-  if (otherNode->Segmentation)
+  if (deepCopy)
     {
-    if (!this->Segmentation)
+    if (node->GetSegmentation())
       {
-      vtkSmartPointer<vtkSegmentation> segmentation = vtkSmartPointer<vtkSegmentation>::New();
-      this->SetAndObserveSegmentation(segmentation);
+      if (this->GetSegmentation())
+        {
+        this->GetSegmentation()->DeepCopy(node->GetSegmentation());
+        }
+      else
+        {
+        vtkSmartPointer<vtkSegmentation> newSegmentation
+          = vtkSmartPointer<vtkSegmentation>::Take(node->GetSegmentation()->NewInstance());
+        newSegmentation->DeepCopy(node->GetSegmentation());
+        this->SetAndObserveSegmentation(newSegmentation);
+        }
       }
-    // Deep copy segmentation (containing the same segments from two segmentations is unstable)
-    this->Segmentation->DeepCopy(otherNode->GetSegmentation());
+    else
+      {
+      // input was nullptr
+      this->SetAndObserveSegmentation(nullptr);
+      }
     }
   else
     {
-    this->SetAndObserveSegmentation(nullptr);
+    // shallow-copy
+    this->SetAndObserveSegmentation(node->GetSegmentation());
     }
-
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyBooleanMacro(SegmentListFilterEnabled);
   vtkMRMLCopyStdStringMacro(SegmentListFilterOptions);
   vtkMRMLCopyEndMacro();
-
-  this->EndModify(wasModified);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::DeepCopy(vtkMRMLNode* aNode)
-{
-  Copy(aNode);
 }
 
 //----------------------------------------------------------------------------

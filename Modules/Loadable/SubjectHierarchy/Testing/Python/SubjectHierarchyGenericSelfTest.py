@@ -429,10 +429,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     sampleLabelmapNode.SetName(name)
     sampleLabelmapNode = slicer.mrmlScene.AddNode(sampleLabelmapNode)
     sampleLabelmapNode.Copy(volumeNode)
-    imageData = vtk.vtkImageData()
-    imageData.DeepCopy(volumeNode.GetImageData())
-    sampleLabelmapNode.SetAndObserveImageData(imageData)
-
+    imageData = sampleLabelmapNode.GetImageData()
     extent = imageData.GetExtent()
     for x in range(extent[0], extent[1]+1):
       for y in range(extent[2], extent[3]+1):

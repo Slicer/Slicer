@@ -400,7 +400,12 @@ void vtkMRMLSceneViewNode::StoreScene()
       vtkSmartPointer<vtkMRMLNode> newNode = vtkSmartPointer<vtkMRMLNode>::Take(node->CreateNodeInstance());
 
       newNode->SetScene(this->SnapshotScene);
-      newNode->CopyWithoutModifiedEvent(node);
+
+      int oldMode = newNode->GetDisableModifiedEvent();
+      newNode->DisableModifiedEventOn();
+      newNode->Copy(node);
+      newNode->SetDisableModifiedEvent(oldMode);
+
       newNode->SetID(node->GetID());
 
       newNode->SetAddToSceneNoModify(1);
@@ -466,7 +471,12 @@ void vtkMRMLSceneViewNode::AddMissingNodes()
       vtkSmartPointer<vtkMRMLNode> newNode = vtkSmartPointer<vtkMRMLNode>::Take(node->CreateNodeInstance());
 
       newNode->SetScene(this->SnapshotScene);
-      newNode->CopyWithoutModifiedEvent(node);
+
+      int oldMode = newNode->GetDisableModifiedEvent();
+      newNode->DisableModifiedEventOn();
+      newNode->Copy(node);
+      newNode->SetDisableModifiedEvent(oldMode);
+
       newNode->SetID(node->GetID());
 
       newNode->SetAddToSceneNoModify(1);
@@ -593,7 +603,8 @@ void vtkMRMLSceneViewNode::RestoreScene(bool removeNodes)
           {
           snode->SetScene(this->Scene);
           // to prevent copying of default info if not stored in snapshot
-          snode->CopyWithSingleModifiedEvent(node);
+          MRMLNodeModifyBlocker blocker(snode);
+          snode->Copy(node);
           // to prevent reading data on UpdateScene()
           snode->SetAddToSceneNoModify(0);
           }

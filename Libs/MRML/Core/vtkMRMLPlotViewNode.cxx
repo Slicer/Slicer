@@ -90,13 +90,10 @@ void vtkMRMLPlotViewNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLPlotViewNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLPlotViewNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  int disabledModify = this->StartModify();
-
-  this->Superclass::Copy(anode);
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyIntMacro(DoPropagatePlotChartSelection);
@@ -104,8 +101,6 @@ void vtkMRMLPlotViewNode::Copy(vtkMRMLNode *anode)
   vtkMRMLCopyBooleanMacro(EnablePointMoveAlongX);
   vtkMRMLCopyBooleanMacro(EnablePointMoveAlongY);
   vtkMRMLCopyEndMacro();
-
-  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

@@ -167,52 +167,43 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node\"s attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  int disabledModify = this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
 
-  // don't modify the input node
-  int amode = anode->GetDisableModifiedEvent();
-  anode->DisableModifiedEventOn();
-
-  Superclass::Copy(anode);
-  vtkMRMLVolumeNode *node = (vtkMRMLVolumeNode *) anode;
-
-  // Matrices
-
-  // workaround the problem when no spacing/origin/orientation is specified in the snapshots
-  // don't overwrite good values with defaults
-  if (node->GetAddToScene())
+  vtkMRMLVolumeNode* node = vtkMRMLVolumeNode::SafeDownCast(anode);
+  if (!node)
     {
-    this->CopyOrientation(node);
+    return;
+    }
+  if (deepCopy)
+    {
+    vtkSmartPointer<vtkImageData> targetImageData = node->GetImageData();
+    if (targetImageData.GetPointer() != nullptr)
+      {
+      targetImageData = vtkSmartPointer<vtkImageData>::Take(node->GetImageData()->NewInstance());
+      targetImageData->DeepCopy(node->GetImageData());
+      }
+    this->SetAndObserveImageData(targetImageData); // invokes vtkMRMLVolumeNode::ImageDataModifiedEvent, which is not masked by StartModify
+    }
+  else
+    {
+    // shallow-copy
+    this->SetAndObserveImageData(node->GetImageData()); // invokes vtkMRMLVolumeNode::ImageDataModifiedEvent, which is not masked by StartModify
     }
 
-  if (node->GetImageData() != nullptr)
-    {
-    // Only copy bulk data if it exists - this handles the case
-    // of restoring from SceneViews, where the nodes will not
-    // have bulk data.
-    this->SetImageDataConnection(node->GetImageDataConnection());
-    }
-
-  anode->SetDisableModifiedEvent(amode);
-
-  this->EndModify(disabledModify);
+  // targetScalarVolumeNode->SetAndObserveTransformNodeID is not called, as we want to keep the currently applied transform
+  this->CopyOrientation(node);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::CopyOrientation(vtkMRMLVolumeNode *node)
 {
-  double dirs[3][3];
-  node->GetIJKToRASDirections(dirs);
-
-  int disabledModify = this->StartModify();
-  this->SetIJKToRASDirections(dirs);
-  this->SetOrigin(node->GetOrigin());
-  this->SetSpacing(node->GetSpacing());
-  this->EndModify(disabledModify);
+  MRMLNodeModifyBlocker blocker(this);
+  vtkSmartPointer<vtkMatrix4x4> ijkToRasmatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  node->GetIJKToRASMatrix(ijkToRasmatrix);
+  this->SetIJKToRASMatrix(ijkToRasmatrix);
 }
 
 //----------------------------------------------------------------------------

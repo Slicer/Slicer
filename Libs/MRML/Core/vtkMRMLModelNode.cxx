@@ -72,26 +72,43 @@ vtkMRMLModelNode::~vtkMRMLModelNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLModelNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLModelNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  int disabledModify = this->StartModify();
-  this->Superclass::Copy(anode);
-  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(anode);
-  if (modelNode)
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
+
+  vtkMRMLModelNode* node = vtkMRMLModelNode::SafeDownCast(anode);
+  if (!node)
     {
-    // Only copy bulk data if it exists - this handles the case
-    // of restoring from SceneViews, where the nodes will not
-    // have bulk data.
-    if (modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType)
+    return;
+    }
+  if (deepCopy)
+    {
+    if (node->GetMesh())
       {
-      this->SetPolyDataConnection(modelNode->GetMeshConnection());
+      if (this->GetMesh() && strcmp(this->GetMesh()->GetClassName(), node->GetMesh()->GetClassName())==0)
+        {
+        this->GetMesh()->DeepCopy(node->GetMesh());
+        }
+      else
+        {
+        vtkSmartPointer<vtkPointSet> newMesh
+          = vtkSmartPointer<vtkPointSet>::Take(node->GetMesh()->NewInstance());
+        newMesh->DeepCopy(node->GetMesh());
+        this->SetAndObserveMesh(newMesh);
+        }
       }
     else
       {
-      this->SetUnstructuredGridConnection(modelNode->GetMeshConnection());
+      // input was nullptr
+      this->SetAndObserveMesh(nullptr);
       }
     }
-  this->EndModify(disabledModify);
+  else
+    {
+    // shallow-copy
+    this->SetMeshConnection(node->GetMeshConnection());
+    }
 }
 
 //---------------------------------------------------------------------------

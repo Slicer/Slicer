@@ -169,9 +169,28 @@ void vtkMRMLCameraNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLCameraNode::Copy(vtkMRMLNode* anode)
 {
-  int disabledModify = this->StartModify();
-
+  MRMLNodeModifyBlocker blocker(this);
   Superclass::Copy(anode);
+
+  vtkMRMLCameraNode* node = vtkMRMLCameraNode::SafeDownCast(anode);
+  if (!node)
+    {
+    return;
+    }
+
+  // Important, do not call SetActiveTag() or the owner of the current tag
+  // (node) will lose its tag, and the active camera will be untagged, and
+  // a the active camera of the current view will be reset to nullptr, and a
+  // new camera will be created on the fly by VTK the next time an active
+  // camera is need, one completely disconnected from Slicer3's MRML/internals
+  this->SetInternalActiveTag(node->GetActiveTag());
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLCameraNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+{
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyVectorMacro(Position, double, 3);
@@ -186,20 +205,11 @@ void vtkMRMLCameraNode::Copy(vtkMRMLNode* anode)
   if (node)
     {
     this->AppliedTransform->DeepCopy(node->GetAppliedTransform());
-
-    // Important, do not call SetActiveTag() or the owner of the current tag
-    // (node) will lose its tag, and the active camera will be untagged, and
-    // a the active camera of the current view will be reset to nullptr, and a
-    // new camera will be created on the fly by VTK the next time an active
-    // camera is need, one completely disconnected from Slicer3's MRML/internals
-    this->SetInternalActiveTag(node->GetActiveTag());
     }
 
   // Maybe the new position and focalpoint combo doesn't fit the existing
   // clipping range
   this->ResetClippingRange();
-  this->EndModify(disabledModify);
-
 }
 
 //----------------------------------------------------------------------------

@@ -198,19 +198,45 @@ void vtkMRMLDoubleArrayNode::ReadXMLAttributes(const char** atts)
 
 }
 
-
 //----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLDoubleArrayNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLDoubleArrayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
 
-  Superclass::Copy(anode);
-  //vtkMRMLDoubleArrayNode *node = (vtkMRMLDoubleArrayNode *) anode;
-  //int type = node->GetType();
-
+  vtkMRMLDoubleArrayNode* sourceDoubleArrayNode = vtkMRMLDoubleArrayNode::SafeDownCast(anode);
+  if (!sourceDoubleArrayNode)
+    {
+    return;
+    }
+  if (deepCopy)
+    {
+    if (sourceDoubleArrayNode->GetArray())
+      {
+      if (this->GetArray())
+        {
+        this->GetArray()->DeepCopy(sourceDoubleArrayNode->GetArray());
+        }
+      else
+        {
+        vtkSmartPointer<vtkDoubleArray> newArray
+          = vtkSmartPointer<vtkDoubleArray>::Take(sourceDoubleArrayNode->GetArray()->NewInstance());
+        newArray->DeepCopy(sourceDoubleArrayNode->GetArray());
+        this->SetArray(newArray);
+        }
+      }
+    else
+      {
+      // input was nullptr
+      this->SetArray(nullptr);
+      }
+    }
+  else
+    {
+    // shallow-copy
+    this->SetArray(sourceDoubleArrayNode->GetArray());
+    }
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLDoubleArrayNode::ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData )

@@ -173,14 +173,16 @@ void vtkMRMLTensorVolumeNode::SetMeasurementFrameMatrix(const double xr, const d
 }
 
 //----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLTensorVolumeNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLTensorVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  int disabledModify = this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
 
-  Superclass::Copy(anode);
-  vtkMRMLTensorVolumeNode *node = (vtkMRMLTensorVolumeNode *) anode;
+  vtkMRMLTensorVolumeNode* node = vtkMRMLTensorVolumeNode::SafeDownCast(anode);
+  if (!node)
+    {
+    return;
+    }
 
   // Matrices
   for(int i=0; i<3; i++)
@@ -191,9 +193,6 @@ void vtkMRMLTensorVolumeNode::Copy(vtkMRMLNode *anode)
       }
     }
   this->Order = node->Order;
-
-  this->EndModify(disabledModify);
-
 }
 
 //----------------------------------------------------------------------------

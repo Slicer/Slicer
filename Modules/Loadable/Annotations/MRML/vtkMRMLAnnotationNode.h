@@ -55,10 +55,9 @@ public:
   void WriteXML(ostream& of, int indent) override;
 
 
-  // Description:
-  // Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
-
+  /// Copy node content (excludes basic data, such as name and node references).
+  /// \sa vtkMRMLNode::CopyContent
+  vtkMRMLCopyContentMacro(vtkMRMLAnnotationNode);
 
   void UpdateScene(vtkMRMLScene *scene) override;
 

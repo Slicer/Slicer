@@ -52,6 +52,10 @@ public:
   /// Copy the node's attributes to this object
   void Copy(vtkMRMLNode* node) override;
 
+  /// Copy node content (excludes basic data, such as name and node references).
+  /// \sa vtkMRMLNode::CopyContent
+  vtkMRMLCopyContentMacro(vtkMRMLCameraNode);
+
   ///
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "Camera";};

@@ -418,7 +418,6 @@ bool TestCopyWithScene(
     int line,
     bool useSameClassNameForSourceAndCopy,
     bool useCopyWithSceneAfterAddingNode,
-    bool useCopyWithSceneWithSingleModifiedEvent,
     const std::string& expectedSourceID,
     const std::string& expectedCopyID)
 {
@@ -426,23 +425,21 @@ bool TestCopyWithScene(
   {
     bool Opt1; bool Opt2; bool Opt3;
     int Line; bool Activated;
-    ErrorWhenReturn(int line, bool opt1, bool opt2, bool opt3) :
-      Opt1(opt1), Opt2(opt2), Opt3(opt3), Line(line), Activated(true){}
+    ErrorWhenReturn(int line, bool opt1, bool opt2) :
+      Opt1(opt1), Opt2(opt2), Line(line), Activated(true){}
     ~ErrorWhenReturn()
     {
       if (!this->Activated) { return; }
       std::cerr << "\nLine " << this->Line << " - TestCopyWithScene failed"
                 << "\n\tuseSameClassNameForSourceAndCopy:" << this->Opt1
                 << "\n\tuseCopyWithSceneAfterAddingNode:" << this->Opt2
-                << "\n\tuseCopyWithSceneWithSingleModifiedEvent:" << this->Opt3
                 << std::endl;
     }
   };
   ErrorWhenReturn errorWhenReturn(
         line,
         useSameClassNameForSourceAndCopy,
-        useCopyWithSceneAfterAddingNode,
-        useCopyWithSceneWithSingleModifiedEvent);
+        useCopyWithSceneAfterAddingNode);
 
 
   vtkNew<vtkMRMLScene> scene;
@@ -485,31 +482,12 @@ bool TestCopyWithScene(
   vtkNew<vtkMRMLNodeCallback> spy;
   copy->AddObserver(vtkCommand::ModifiedEvent, spy.GetPointer());
 
-  // case: x, x, 1
-  if (useCopyWithSceneWithSingleModifiedEvent)
+  copy->CopyWithScene(source);
+  if (!CheckInt(
+        __LINE__, "spy->GetNumberOfModified()",
+        spy->GetNumberOfModified(), 1))
     {
-    copy->CopyWithSceneWithSingleModifiedEvent(source);
-
-    if (!CheckInt(
-          __LINE__, "spy->GetNumberOfModified()",
-          spy->GetNumberOfModified(), 1))
-      {
-      return false;
-      }
-
-    }
-  // case: x, x, 0
-  else
-    {
-    copy->CopyWithScene(source);
-
-    if (!CheckInt(
-          __LINE__, "spy->GetNumberOfModified() > 1",
-          spy->GetNumberOfModified() > 1, true))
-      {
-      return false;
-      }
-
+    return false;
     }
 
   std::string uname = scene->GetUniqueNameByString(name);
@@ -557,17 +535,16 @@ bool TestCopyWithScene()
   bool res = true;
   //                                  A: SameClass
   //                                  B: CopyAfterAdd
-  //                                  C: CopySingleModified
   //
   //                            (line    , A, B, C, expectedSrcID                  , expectedCopyID           )
-  res = res && TestCopyWithScene(__LINE__, false, false, false, "vtkMRMLStorageNodeTestHelper1", "vtkMRMLNodeTestHelper11");
-  res = res && TestCopyWithScene(__LINE__, false, false, true, "vtkMRMLStorageNodeTestHelper1", "vtkMRMLNodeTestHelper11");
-//  res = res && TestCopyWithScene(__LINE__, 0, 1, 0, "vtkMRMLStorageNodeTestHelper1", "vtkMRMLNodeTestHelper11"); // NOT SUPPORTED
-//  res = res && TestCopyWithScene(__LINE__, 0, 1, 1, "vtkMRMLStorageNodeTestHelper1", "vtkMRMLNodeTestHelper11"); // NOT SUPPORTED
-  res = res && TestCopyWithScene(__LINE__, true, false, false, "vtkMRMLNodeTestHelper11"      , "vtkMRMLNodeTestHelper12");
-  res = res && TestCopyWithScene(__LINE__, true, false, true, "vtkMRMLNodeTestHelper11"      , "vtkMRMLNodeTestHelper12");
-//  res = res && TestCopyWithScene(__LINE__, 1, 1, 0, "vtkMRMLNodeTestHelper11"      , "vtkMRMLNodeTestHelper12"); // NOT SUPPORTED
-//  res = res && TestCopyWithScene(__LINE__, 1, 1, 1, "vtkMRMLNodeTestHelper11"      , "vtkMRMLNodeTestHelper12"); // NOT SUPPORTED
+  res = res && TestCopyWithScene(__LINE__, false, false, "vtkMRMLStorageNodeTestHelper1", "vtkMRMLNodeTestHelper11");
+  res = res && TestCopyWithScene(__LINE__, false, false, "vtkMRMLStorageNodeTestHelper1", "vtkMRMLNodeTestHelper11");
+//  res = res && TestCopyWithScene(__LINE__, 0, 1, "vtkMRMLStorageNodeTestHelper1", "vtkMRMLNodeTestHelper11"); // NOT SUPPORTED
+//  res = res && TestCopyWithScene(__LINE__, 0, 1, "vtkMRMLStorageNodeTestHelper1", "vtkMRMLNodeTestHelper11"); // NOT SUPPORTED
+  res = res && TestCopyWithScene(__LINE__, true, false, "vtkMRMLNodeTestHelper11"      , "vtkMRMLNodeTestHelper12");
+  res = res && TestCopyWithScene(__LINE__, true, false, "vtkMRMLNodeTestHelper11"      , "vtkMRMLNodeTestHelper12");
+//  res = res && TestCopyWithScene(__LINE__, 1, 1, "vtkMRMLNodeTestHelper11"      , "vtkMRMLNodeTestHelper12"); // NOT SUPPORTED
+//  res = res && TestCopyWithScene(__LINE__, 1, 1, "vtkMRMLNodeTestHelper11"      , "vtkMRMLNodeTestHelper12"); // NOT SUPPORTED
 
   return res;
 }

@@ -259,12 +259,16 @@ void vtkMRMLCommandLineModuleNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLCommandLineModuleNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLCommandLineModuleNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  Superclass::Copy(anode);
-  vtkMRMLCommandLineModuleNode *node = (vtkMRMLCommandLineModuleNode *) anode;
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
+
+  vtkMRMLCommandLineModuleNode* node = vtkMRMLCommandLineModuleNode::SafeDownCast(anode);
+  if (!node)
+    {
+    return;
+    }
 
   this->SetModuleDescription(node->GetModuleDescription());
   this->SetStatus(static_cast<StatusType>(node->GetStatus()));

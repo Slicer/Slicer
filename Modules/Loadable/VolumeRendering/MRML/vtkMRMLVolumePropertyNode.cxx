@@ -131,17 +131,11 @@ void vtkMRMLVolumePropertyNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLVolumePropertyNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLVolumePropertyNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  int disabledModify = this->StartModify();
-
-  this->Superclass::Copy(anode);
-
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
   this->CopyParameterSet(anode);
-
-  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
