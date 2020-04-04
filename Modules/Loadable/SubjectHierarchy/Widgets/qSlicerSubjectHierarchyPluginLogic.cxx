@@ -564,7 +564,7 @@ void qSlicerSubjectHierarchyPluginLogic::addSupportedDataNodesToSubjectHierarchy
         // no plugin found for this node
         continue;
         }
-      if (selectedPlugin->addNodeToSubjectHierarchy(node, shNode->GetSceneItemID()))
+      if (!selectedPlugin->addNodeToSubjectHierarchy(node, shNode->GetSceneItemID()))
         {
         // Should never happen! If a plugin answers positively to the canOwn question (condition of
         // reaching this point), then it has to be able to add it.
