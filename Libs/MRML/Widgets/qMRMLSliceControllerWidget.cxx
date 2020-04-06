@@ -1284,7 +1284,10 @@ void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
   // For thin volumes such as ultrasound, the slice bounds may be smaller than the spacing due to floating point errors.
   // To avoid warnings caused by the step size being larger than the slider maximum, set the step size to the smaller of
   // the either the slice offset or the slice bounds depth.
-  offsetResolution = std::min(offsetResolution, sliceBounds[5] - sliceBounds[4]);
+  if (sliceBounds[5] - sliceBounds[4] > 0.0)
+    {
+    offsetResolution = std::min(offsetResolution, sliceBounds[5] - sliceBounds[4]);
+    }
   q->setSliceOffsetResolution(offsetResolution);
 
   // Update slider position
@@ -1914,7 +1917,7 @@ void qMRMLSliceControllerWidget::setSliceOffsetRange(double min, double max)
 void qMRMLSliceControllerWidget::setSliceOffsetResolution(double resolution)
 {
   Q_D(qMRMLSliceControllerWidget);
-  resolution = qMax(resolution, 0.000000000001);
+  resolution = qMax(resolution, 0.00000001);
   d->SliceOffsetSlider->setSingleStep(resolution);
   d->SliceOffsetSlider->setPageStep(resolution);
 }
