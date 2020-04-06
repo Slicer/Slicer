@@ -80,6 +80,11 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
       "Only this view will be captured unless 'Capture of all views' option in output section is enabled." )
     inputFormLayout.addRow("Master view: ", self.viewNodeSelector)
 
+    self.captureAllViewsCheckBox = qt.QCheckBox(" ")
+    self.captureAllViewsCheckBox.checked = False
+    self.captureAllViewsCheckBox.setToolTip("If checked, all views will be captured. If unchecked then only the selected view will be captured.")
+    inputFormLayout.addRow("Capture all views:", self.captureAllViewsCheckBox)
+
     # Mode
     self.animationModeWidget = qt.QComboBox()
     self.animationModeWidget.setToolTip("Select the property that will be adjusted")
@@ -161,6 +166,13 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.layout.addWidget(self.outputCollapsibleButton)
     outputFormLayout = qt.QFormLayout(self.outputCollapsibleButton)
 
+    self.outputTypeWidget = qt.QComboBox()
+    self.outputTypeWidget.setToolTip("Select how captured images will be saved. Video mode requires setting of ffmpeg executable path in Advanced section.")
+    self.outputTypeWidget.addItem("image series")
+    self.outputTypeWidget.addItem("video")
+    self.outputTypeWidget.addItem("lightbox image")
+    outputFormLayout.addRow("Output type:", self.outputTypeWidget)
+
     # Number of steps value
     self.numberOfStepsSliderWidget = ctk.ctkSliderWidget()
     self.numberOfStepsSliderWidget.singleStep = 1
@@ -193,18 +205,6 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
       defaultOutputPath = os.path.abspath(os.path.join(slicer.app.defaultScenePath,'SlicerCapture'))
       self.outputDirSelector.setCurrentPath(defaultOutputPath)
 
-    self.captureAllViewsCheckBox = qt.QCheckBox(" ")
-    self.captureAllViewsCheckBox.checked = False
-    self.captureAllViewsCheckBox.setToolTip("If checked, all views will be captured. If unchecked then only the selected view will be captured.")
-    outputFormLayout.addRow("Capture all views:", self.captureAllViewsCheckBox)
-
-    self.outputTypeWidget = qt.QComboBox()
-    self.outputTypeWidget.setToolTip("Select how captured images will be saved. Video mode requires setting of ffmpeg executable path in Advanced section.")
-    self.outputTypeWidget.addItem("image series")
-    self.outputTypeWidget.addItem("video")
-    self.outputTypeWidget.addItem("lightbox image")
-    inputFormLayout.addRow("Output type:", self.outputTypeWidget)
-
     self.videoFileNameWidget = qt.QLineEdit()
     self.videoFileNameWidget.setToolTip("String that defines file name and type.")
     self.videoFileNameWidget.text = "SlicerCapture.avi"
@@ -219,6 +219,13 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     hbox.addWidget(self.videoFileNameWidget)
     hbox.addWidget(self.lightboxImageFileNameWidget)
     outputFormLayout.addRow("Output file name:", hbox)
+
+    self.videoFormatWidget = qt.QComboBox()
+    self.videoFormatWidget.enabled = False
+    self.videoFormatWidget.setSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Preferred)
+    for videoFormatPreset in self.logic.videoFormatPresets:
+      self.videoFormatWidget.addItem(videoFormatPreset["name"])
+    outputFormLayout.addRow("Video format:", self.videoFormatWidget)
 
     self.videoLengthSliderWidget = ctk.ctkSliderWidget()
     self.videoLengthSliderWidget.singleStep = 0.1
@@ -280,13 +287,6 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.videoExportFfmpegWarning.connect('linkActivated(QString)', self.openURL)
     self.videoExportFfmpegWarning.setVisible(False)
     advancedFormLayout.addRow("", self.videoExportFfmpegWarning)
-
-    self.videoFormatWidget = qt.QComboBox()
-    self.videoFormatWidget.enabled = False
-    self.videoFormatWidget.setSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Preferred)
-    for videoFormatPreset in self.logic.videoFormatPresets:
-      self.videoFormatWidget.addItem(videoFormatPreset["name"])
-    advancedFormLayout.addRow("Video format:", self.videoFormatWidget)
 
     self.extraVideoOptionsWidget = qt.QLineEdit()
     self.extraVideoOptionsWidget.setToolTip('Additional video conversion options passed to ffmpeg. Parameters -i (input files), -y'
