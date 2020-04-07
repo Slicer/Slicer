@@ -182,7 +182,7 @@ public:
   /// \param parentItemID Parent item under which the created item is inserted. If top-level then use \sa GetSceneItemID
   /// \param dataNode Associated data MRML node
   /// \return ID of the item in the hierarchy that was assigned automatically when adding
-  vtkIdType CreateItem(vtkIdType parentItemID, vtkMRMLNode* dataNode);
+  vtkIdType CreateItem(vtkIdType parentItemID, vtkMRMLNode* dataNode, const char* ownerPluginName=nullptr);
   /// Generic function to create hierarchy items of given level. Convenience functions are available for frequently used levels
   /// \sa CreateSubjectItem, \sa CreateStudyItem, \sa CreateFolderItem
   /// \param parentItemID Parent item under which the created item is inserted. If top-level then use \sa GetSceneItemID

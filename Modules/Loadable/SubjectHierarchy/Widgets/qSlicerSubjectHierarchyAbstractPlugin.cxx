@@ -183,16 +183,12 @@ bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(vtkMRMLNod
     }
 
   // Create subject hierarchy item with added node
-  vtkIdType addedItemID = shNode->CreateItem(parentItemID, nodeToAdd);
+  vtkIdType addedItemID = shNode->CreateItem(parentItemID, nodeToAdd, this->m_Name.toUtf8());
   if (!addedItemID)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to add subject hierarchy item for data node " << nodeToAdd->GetName();
     return false;
     }
-
-  // Set owner plugin to make sure the plugin that adds the item is the owner
-  shNode->SetItemOwnerPluginName(addedItemID, this->m_Name.toUtf8().constData());
-
   return true;
 }
 
