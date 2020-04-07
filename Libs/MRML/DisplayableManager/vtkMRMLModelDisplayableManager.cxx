@@ -123,6 +123,8 @@ public:
   int                     ClippingMethod;
   bool                    ClippingOn;
 
+  bool IsUpdatingModelsFromMRML;
+
   vtkSmartPointer<vtkWorldPointPicker> WorldPointPicker;
   vtkSmartPointer<vtkPropPicker>       PropPicker;
   vtkSmartPointer<vtkCellPicker>       CellPicker;
@@ -158,6 +160,8 @@ vtkMRMLModelDisplayableManager::vtkInternal::vtkInternal(vtkMRMLModelDisplayable
   this->CellPicker->SetTolerance(0.00001);
   this->PointPicker = vtkSmartPointer<vtkPointPicker>::New();
   this->ResetPick();
+
+  this->IsUpdatingModelsFromMRML = false;
 }
 
 //---------------------------------------------------------------------------
@@ -888,6 +892,14 @@ void vtkMRMLModelDisplayableManager::UpdateFromMRML()
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
 {
+  // UpdateModelsFromMRML may recursively trigger calling of UpdateModelsFromMRML
+  // via node reference updates. IsUdatingModelsFromMRML flag prevents restarting
+  // UpdateModelsFromMRML if it is already in progress.
+  if (this->Internal->IsUpdatingModelsFromMRML)
+    {
+    return;
+    }
+  this->Internal->IsUpdatingModelsFromMRML = true;
   vtkMRMLScene *scene = this->GetMRMLScene();
   vtkMRMLNode *node = nullptr;
   std::vector<vtkMRMLDisplayableNode *> slices;
@@ -991,6 +1003,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
       this->UpdateModifiedModel(model);
       }
     }
+  this->Internal->IsUpdatingModelsFromMRML = false;
 }
 
 //---------------------------------------------------------------------------
