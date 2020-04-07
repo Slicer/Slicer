@@ -667,7 +667,7 @@ class SampleDataLogic(object):
 
         # Failed. Clean up downloaded file (it might have been a partial download)
         file = qt.QFile(filePath)
-        if not file.remove():
+        if file.exists() and not file.remove():
           self.logMessage('<b>Load failed (attempt %d of %d). Unable to delete and try again loading %s</b>'
             % (attemptsCount+1, maximumAttemptsCount, filePath), logging.ERROR)
           resultNodes.append(loadedNode)
