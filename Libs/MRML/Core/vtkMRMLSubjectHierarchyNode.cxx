@@ -2360,7 +2360,7 @@ void vtkMRMLSubjectHierarchyNode::RequestOwnerPluginSearch(vtkMRMLNode* dataNode
 }
 
 //---------------------------------------------------------------------------
-vtkIdType vtkMRMLSubjectHierarchyNode::CreateItem(vtkIdType parentItemID, vtkMRMLNode* dataNode)
+vtkIdType vtkMRMLSubjectHierarchyNode::CreateItem(vtkIdType parentItemID, vtkMRMLNode* dataNode, const char* ownerPluginName)
 {
   if (!dataNode)
     {
@@ -2380,6 +2380,10 @@ vtkIdType vtkMRMLSubjectHierarchyNode::CreateItem(vtkIdType parentItemID, vtkMRM
 
     // The name of the data node is used, so empty name is set
     item->Name = "";
+    if (ownerPluginName)
+      {
+      item->OwnerPluginName = ownerPluginName;
+      }
     // Reparent if given parent is valid and different than the current one
     if (item->Parent && item->Parent->ID != parentItemID && parentItemID != INVALID_ITEM_ID)
       {
@@ -2404,6 +2408,10 @@ vtkIdType vtkMRMLSubjectHierarchyNode::CreateItem(vtkIdType parentItemID, vtkMRM
 
     // Create subject hierarchy item
     vtkSmartPointer<vtkSubjectHierarchyItem> item = vtkSmartPointer<vtkSubjectHierarchyItem>::New();
+    if (ownerPluginName)
+      {
+      item->OwnerPluginName = ownerPluginName;
+      }
 
     // Make item connections
     this->Internal->AddItemObservers(item);
