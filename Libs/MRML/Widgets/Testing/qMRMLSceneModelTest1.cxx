@@ -34,7 +34,8 @@
 #include <ctkCoreTestingMacros.h>
 
 // MRML includes
-//
+#include "vtkMRMLScene.h"
+
 // VTK includes
 #include "qMRMLWidget.h"
 
@@ -57,10 +58,13 @@ int qMRMLSceneModelTest1( int argc, char * argv [] )
   CHECK_INT(sceneModel.rowCount(), 1);
 
   sceneFactory.deleteScene();
+  CHECK_INT(sceneModel.rowCount(), 0);
+
   sceneFactory.generateScene();
+  CHECK_INT(sceneModel.rowCount(), 0);
 
   sceneModel.setMRMLScene(sceneFactory.mrmlScene());
-
+  CHECK_INT(sceneModel.rowCount(), 1);
   sceneFactory.generateNode();
   sceneFactory.generateNode();
   sceneFactory.generateNode();
@@ -72,13 +76,15 @@ int qMRMLSceneModelTest1( int argc, char * argv [] )
   sceneFactory.generateNode();
   sceneFactory.generateNode();
 
-  // Check if root item + 10 nodes are shown
-  CHECK_INT(sceneModel.rowCount(sceneModel.mrmlSceneIndex()), 11);
+  // We add 10 nodes but some nodes (such as folder display node) may trigger creation of a subject
+  // hierarchy node.
+  CHECK_BOOL(sceneFactory.mrmlScene()->GetNumberOfNodes() >= 10, true);
+  CHECK_INT(sceneModel.rowCount(sceneModel.mrmlSceneIndex()), sceneFactory.mrmlScene()->GetNumberOfNodes());
 
   QStringList postNodes;
   postNodes << QString("temporary item");
   sceneModel.setPostItems(postNodes, sceneModel.mrmlSceneItem());
-  CHECK_INT(sceneModel.rowCount(sceneModel.mrmlSceneIndex()), 12);
+  CHECK_INT(sceneModel.rowCount(sceneModel.mrmlSceneIndex()), sceneFactory.mrmlScene()->GetNumberOfNodes() + 1);
 
   // test if it can be replaced
   postNodes.clear();
@@ -93,13 +99,14 @@ int qMRMLSceneModelTest1( int argc, char * argv [] )
   postScene << "post scene item";
   sceneModel.setPostItems(postScene, nullptr);
 
-  CHECK_INT(sceneModel.rowCount(sceneModel.mrmlSceneIndex()), 18);
+  CHECK_INT(sceneModel.rowCount(sceneModel.mrmlSceneIndex()), sceneFactory.mrmlScene()->GetNumberOfNodes() + 7);
 
   sceneFactory.generateNode();
   sceneFactory.generateNode();
   sceneFactory.generateNode();
+  CHECK_BOOL(sceneFactory.mrmlScene()->GetNumberOfNodes() >= 13, true);
 
-  CHECK_INT(sceneModel.rowCount(sceneModel.mrmlSceneIndex()), 21);
+  CHECK_INT(sceneModel.rowCount(sceneModel.mrmlSceneIndex()), sceneFactory.mrmlScene()->GetNumberOfNodes() + 7);
 
   CHECK_INT(sceneModel.columnCount(), 1);
   CHECK_INT(sceneModel.columnCount(sceneModel.mrmlSceneIndex()), 1);
