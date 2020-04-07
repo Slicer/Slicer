@@ -507,8 +507,13 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
     {
     foreach(const QString& node, nodes)
       {
-      loadedNodes->AddItem(
-        d->currentScene()->GetNodeByID(node.toUtf8()));
+      vtkMRMLNode* loadedNode = d->currentScene()->GetNodeByID(node.toUtf8());
+      if (!loadedNode)
+        {
+        qWarning() << Q_FUNC_INFO << " error: cannot find node by ID " << node;
+        continue;
+        }
+      loadedNodes->AddItem(loadedNode);
       }
     }
 
