@@ -113,14 +113,7 @@ class SegmentationsModuleTest2(unittest.TestCase):
     mergedLabelmap = vtkSegmentationCore.vtkOrientedImageData()
     mergedLabelmap.SetExtent(0, 10, 0, 10, 0, 10)
     mergedLabelmap.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)
-
-    threshold = vtk.vtkImageThreshold()
-    threshold.SetInputData(mergedLabelmap)
-    threshold.ThresholdBetween(0,0)
-    threshold.SetInValue(1)
-    threshold.SetOutValue(1)
-    threshold.Update()
-    mergedLabelmap.ShallowCopy(threshold.GetOutput())
+    mergedLabelmap.GetPointData().GetScalars().Fill(1)
 
     oldOverwriteMode = self.segmentEditorNode.GetOverwriteMode()
 
@@ -248,10 +241,4 @@ class SegmentationsModuleTest2(unittest.TestCase):
   def setupIslandLabelmap(self, labelmap, extent, value=1):
     labelmap.SetExtent(extent)
     labelmap.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)
-    threshold = vtk.vtkImageThreshold()
-    threshold.SetInputData(labelmap)
-    threshold.ThresholdBetween(0,0)
-    threshold.SetInValue(value)
-    threshold.SetOutValue(value)
-    threshold.Update()
-    labelmap.ShallowCopy(threshold.GetOutput())
+    labelmap.GetPointData().GetScalars().Fill(value)
