@@ -447,6 +447,8 @@ class DICOMFileDialog(object):
       return True
 
     # Try to create a database with default settings
+    if slicer.modules.DICOMInstance.browserWidget is None:
+      slicer.util.selectModule('DICOM')
     slicer.modules.DICOMInstance.browserWidget.dicomBrowser.createNewDatabaseDirectory()
     if slicer.dicomDatabase and slicer.dicomDatabase.isOpen:
       # DICOM database created successfully
