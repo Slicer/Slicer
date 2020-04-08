@@ -606,7 +606,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
           break
 
         sNode = slicer.vtkMRMLVolumeArchetypeStorageNode()
-        sNode.ResetFileNameList();
+        sNode.ResetFileNameList()
 
         frameFileList = files[frameNumber*filesPerFrame:(frameNumber+1)*filesPerFrame]
         # sv plugin will sort the filenames by geometric order
@@ -617,8 +617,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
         frame = scalarVolumePlugin.load(svLoadables[0])
 
-        if frame.GetImageData() == None:
-          raise IOError("volume frame %d is invalid" % frameNumber)
+        if frame == None or frame.GetImageData() == None:
+          raise IOError("Volume frame %d is invalid - %s" % (frameNumber, svLoadables[0].warning))
         if loadAsVolumeSequence:
           # Load into volume sequence
 
@@ -726,7 +726,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         mvNode.RemoveAttribute('MultiVolume.FrameFileList')
 
     except Exception as e:
-      logging.error("Failed to read a multivolume: {0}".format(e.message))
+      logging.error("Failed to read a multivolume: {0}".format(str(e)))
       import traceback
       traceback.print_exc()
       mvNode = None
