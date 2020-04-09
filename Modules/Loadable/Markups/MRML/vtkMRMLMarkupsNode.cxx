@@ -172,8 +172,6 @@ void vtkMRMLMarkupsNode::Copy(vtkMRMLNode *anode)
 
   this->TextList->DeepCopy(node->TextList);
 
-  this->CurveInputPoly->GetPoints()->DeepCopy(node->CurveInputPoly->GetPoints());
-
   // set max number of markups after adding the new ones
   this->LastUsedControlPointNumber = node->LastUsedControlPointNumber;
 
@@ -198,6 +196,7 @@ void vtkMRMLMarkupsNode::Copy(vtkMRMLNode *anode)
       }
     }
 
+  this->CurveInputPoly->GetPoints()->Reset();
   this->RemoveAllControlPoints();
   int numMarkups = node->GetNumberOfControlPoints();
   for (int n = 0; n < numMarkups; n++)
