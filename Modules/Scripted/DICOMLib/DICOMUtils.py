@@ -637,7 +637,7 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
   @vtk.calldata_type(vtk.VTK_OBJECT)
   def onNodeAdded(caller, event, calldata):
     node = calldata
-    if isinstance(node, slicer.vtkMRMLVolumeNode):
+    if not isinstance(node, slicer.vtkMRMLStorageNode) and not isinstance(node, slicer.vtkMRMLDisplayNode):
       loadedNodeIDs.append(node.GetID())
 
   sceneObserverTag = slicer.mrmlScene.AddObserver(slicer.vtkMRMLScene.NodeAddedEvent, onNodeAdded)
