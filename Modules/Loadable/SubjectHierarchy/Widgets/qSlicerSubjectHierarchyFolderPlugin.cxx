@@ -97,7 +97,7 @@ void qSlicerSubjectHierarchyFolderPluginPrivate::init()
   this->CreateFolderUnderNodeAction = new QAction("Create child folder",q);
   QObject::connect(this->CreateFolderUnderNodeAction, SIGNAL(triggered()), q, SLOT(createFolderUnderCurrentNode()));
 
-  this->ApplyColorToBranchAction = new QAction("Apply color to branch",q);
+  this->ApplyColorToBranchAction = new QAction("Apply color to all children",q);
   this->ApplyColorToBranchAction->setToolTip("If on, then children items will inherit the display properties (e.g. color or opacity) set to the folder");
   QObject::connect(this->ApplyColorToBranchAction, SIGNAL(toggled(bool)), q, SLOT(onApplyColorToBranchToggled(bool)));
   this->ApplyColorToBranchAction->setCheckable(true);

@@ -106,7 +106,7 @@ void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
     QTimer::singleShot(0, q, SLOT(onLayoutChanged()));
     }
 
-  this->ShowVolumesInBranchAction = new QAction("Show volumes in branch",q);
+  this->ShowVolumesInBranchAction = new QAction("Show volumes in folder",q);
   QObject::connect(this->ShowVolumesInBranchAction, SIGNAL(triggered()), q, SLOT(showVolumesInBranch()));
 
   this->ShowVolumeInForegroundAction = new QAction("Show in slice views as foreground", q);
