@@ -161,7 +161,7 @@ std::vector<std::string> vtkSlicerColorLogic::FindColorFiles(const std::vector<s
     struct dirent *dirp;
     if ((dp  = opendir(dirString.c_str())) == nullptr)
       {
-      vtkErrorMacro("\nError(" << errno << ") opening user specified color path: " << dirString.c_str() << ", no color files will be loaded from that directory\n(check View -> Application Settings -> Module Settings to adjust your User defined color file paths)");
+      vtkErrorMacro("\nError(" << errno << ") opening user specified color path: " << dirString.c_str() << ", no color files will be loaded from that directory\n(check Edit -> Application Settings -> Module Settings to adjust your User defined color file paths)");
       }
     else
       {
