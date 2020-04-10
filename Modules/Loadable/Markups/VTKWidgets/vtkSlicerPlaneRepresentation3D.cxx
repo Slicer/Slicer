@@ -123,10 +123,10 @@ void vtkSlicerPlaneRepresentation3D::BuildPlane()
   this->ArrowGlypher->SetInputData(polyData);
 
   // Update the plane
-  double size[2] = { 0 };
+  double size[3] = { 0.0 };
   markupsNode->GetSize(size);
-  vtkMath::MultiplyScalar(x, size[0]/2);
-  vtkMath::MultiplyScalar(y, size[1]/2);
+  vtkMath::MultiplyScalar(x, size[0]/2.0);
+  vtkMath::MultiplyScalar(y, size[1]/2.0);
 
   double planePoint1[3] = { 0 };
   vtkMath::Subtract(origin, x, planePoint1);
@@ -153,10 +153,7 @@ void vtkSlicerPlaneRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   this->NeedToRenderOn();
 
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!markupsNode || !this->MarkupsDisplayNode
-    || !this->MarkupsDisplayNode->GetVisibility()
-    || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID())
-    )
+  if (!markupsNode || !this->IsDisplayable())
     {
     this->VisibilityOff();
     return;

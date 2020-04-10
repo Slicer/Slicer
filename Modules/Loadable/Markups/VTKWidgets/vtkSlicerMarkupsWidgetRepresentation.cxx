@@ -23,6 +23,8 @@
 #include "vtkFocalPlanePointPlacer.h"
 #include "vtkLine.h"
 #include "vtkMarkupsGlyphSource2D.h"
+#include "vtkMRMLSliceNode.h"
+#include "vtkMRMLViewNode.h"
 #include "vtkPointData.h"
 #include "vtkPointSetToLabelHierarchy.h"
 #include "vtkRenderer.h"
@@ -560,7 +562,18 @@ double* vtkSlicerMarkupsWidgetRepresentation::GetWidgetColor(int controlPointTyp
     if (overrideHierarchyDisplayNode)
       {
       overrideHierarchyDisplayNode->GetColor(color);
-      return color;
+      if (controlPointType == Active)
+        {
+        return activeColor;
+        }
+      else
+        {
+        // Folder display has "selected" color but since usually for folders we only set
+        // the plain Color property, we always use this plain color, regardless of selected state
+        // of the control point.
+        overrideHierarchyDisplayNode->GetColor(color);
+        return color;
+        }
       }
     }
 
@@ -658,4 +671,53 @@ vtkStringArray* vtkSlicerMarkupsWidgetRepresentation::GetLabels(int controlPoint
     return nullptr;
     }
   return this->ControlPoints[controlPointType]->Labels;
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerMarkupsWidgetRepresentation::IsDisplayable()
+{
+  if (!this->MarkupsDisplayNode
+    || !this->ViewNode
+    || !this->MarkupsDisplayNode->GetVisibility()
+    || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID()))
+    {
+    return false;
+    }
+
+  // Use hierarchy display node if any, and if overriding is allowed for the current display node.
+  // If override is explicitly disabled, then do not apply hierarchy visibility either.
+  vtkMRMLDisplayNode* effectiveDisplayNode = this->MarkupsDisplayNode;
+  // If parent folder visibility is set to false then the markups is not visible
+  if (this->MarkupsDisplayNode->GetFolderDisplayOverrideAllowed())
+    {
+    vtkMRMLDisplayableNode* displayableNode = this->MarkupsDisplayNode->GetDisplayableNode();
+    // Visibility is applied regardless the fact whether there is override or not.
+    // Visibility of items defined by hierarchy is off if any of the ancestors is explicitly hidden.
+    // However, this does not apply on display nodes that do not allow overrides (FolderDisplayOverrideAllowed)
+    if (!vtkMRMLFolderDisplayNode::GetHierarchyVisibility(displayableNode))
+      {
+      return false;
+      }
+    vtkMRMLDisplayNode* overrideHierarchyDisplayNode =
+      vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(displayableNode);
+    if (overrideHierarchyDisplayNode)
+      {
+      effectiveDisplayNode = overrideHierarchyDisplayNode;
+      }
+    }
+  if (vtkMRMLSliceNode::SafeDownCast(this->ViewNode))
+    {
+    if (!this->MarkupsDisplayNode->GetVisibility2D())
+      {
+      return false;
+      }
+    }
+  if (vtkMRMLViewNode::SafeDownCast(this->ViewNode))
+    {
+    if (!this->MarkupsDisplayNode->GetVisibility3D())
+      {
+      return false;
+      }
+    }
+  return true;
 }

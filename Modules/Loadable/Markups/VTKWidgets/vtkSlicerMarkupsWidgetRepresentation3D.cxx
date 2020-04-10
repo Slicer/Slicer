@@ -460,27 +460,22 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller,
 
   Superclass::UpdateFromMRML(caller, event, callData);
 
-  // Use hierarchy information if any, and if overriding is allowed for the current display node
-  bool hierarchyVisibility = true;
-  double hierarchyOpacity = 1.0;
-  if (this->MarkupsDisplayNode->GetFolderDisplayOverrideAllowed())
-    {
-    vtkMRMLDisplayableNode* displayableNode = this->MarkupsDisplayNode->GetDisplayableNode();
-    hierarchyVisibility = vtkMRMLFolderDisplayNode::GetHierarchyVisibility(displayableNode);
-    hierarchyOpacity = vtkMRMLFolderDisplayNode::GetHierarchyOpacity(displayableNode);
-    }
-
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if ( !this->ViewNode || !markupsNode || !this->MarkupsDisplayNode
-    || !this->MarkupsDisplayNode->GetVisibility()
-    || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID())
-    || !hierarchyVisibility )
+  if (!markupsNode || !this->IsDisplayable())
     {
     this->VisibilityOff();
     return;
     }
 
   this->VisibilityOn();
+
+  // Use hierarchy information if any, and if overriding is allowed for the current display node
+  double hierarchyOpacity = 1.0;
+  if (this->MarkupsDisplayNode->GetFolderDisplayOverrideAllowed())
+    {
+    vtkMRMLDisplayableNode* displayableNode = this->MarkupsDisplayNode->GetDisplayableNode();
+    hierarchyOpacity = vtkMRMLFolderDisplayNode::GetHierarchyOpacity(displayableNode);
+    }
 
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
     {

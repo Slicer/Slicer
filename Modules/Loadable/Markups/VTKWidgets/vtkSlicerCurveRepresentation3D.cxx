@@ -65,9 +65,7 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   this->NeedToRenderOn();
 
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!markupsNode || !this->MarkupsDisplayNode
-    || !this->MarkupsDisplayNode->GetVisibility()
-    || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID()))
+  if (!markupsNode || !this->IsDisplayable())
     {
     this->VisibilityOff();
     return;

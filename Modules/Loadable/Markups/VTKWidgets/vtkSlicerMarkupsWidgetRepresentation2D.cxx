@@ -426,11 +426,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller,
     }
 
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if ( !this->ViewNode || !markupsNode || !this->MarkupsDisplayNode
-    || !this->MarkupsDisplayNode->GetVisibility()
-    || !this->MarkupsDisplayNode->GetVisibility2D()
-    || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID())
-    || !hierarchyVisibility )
+  if (!markupsNode || !this->IsDisplayable())
     {
     this->VisibilityOff();
     return;
@@ -946,7 +942,7 @@ bool vtkSlicerMarkupsWidgetRepresentation2D::IsCenterDisplayableOnSlice(vtkMRMLM
 
   // allow annotations to appear only in designated viewers
   vtkMRMLDisplayNode *displayNode = markupsNode->GetDisplayNode();
-  if (displayNode && !displayNode->IsDisplayableInView(sliceNode->GetID()))
+  if (!markupsNode || !this->IsDisplayable())
     {
     return false;
     }

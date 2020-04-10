@@ -120,6 +120,14 @@ public:
   /// controlPointType can be Unselected, Selected, Active, Project, ProjectBack.
   virtual vtkStringArray* GetLabels(int pipeline);
 
+  //@{
+  /**
+  * Returns true if the representation is displayable in the current view.
+  * It takes into account current view node's display node and parent folder's visibility.
+  */
+  bool IsDisplayable();
+  //@}
+
 protected:
   vtkSlicerMarkupsWidgetRepresentation();
   ~vtkSlicerMarkupsWidgetRepresentation() override;
