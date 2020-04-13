@@ -108,7 +108,6 @@ function(slicerFunctionGenerateExtensionDescription)
   configure_file(
     ${Slicer_EXTENSIONS_CMAKE_DIR}/../../Utilities/Templates/Extensions/extension_description.s4ext.in
     ${filename}
-    NEWLINE_STYLE LF
     )
 
   message(STATUS "Extension description has been written to: ${filename}")
