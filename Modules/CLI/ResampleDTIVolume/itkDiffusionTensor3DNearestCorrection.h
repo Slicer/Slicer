@@ -44,12 +44,8 @@ template <class TInput, class TOutput>
 class DiffusionTensor3DNearest
 {
 public:
-  DiffusionTensor3DNearest()
-  {
-  }
-  ~DiffusionTensor3DNearest()
-  {
-  }
+  DiffusionTensor3DNearest() = default;
+  ~DiffusionTensor3DNearest() = default;
   bool operator!=( const DiffusionTensor3DNearest & other ) const
   {
     return *this != other;
@@ -143,12 +139,8 @@ public:
   /** End concept checking */
 #endif
 protected:
-  DiffusionTensor3DNearestCorrectionFilter()
-  {
-  }
-  ~DiffusionTensor3DNearestCorrectionFilter() override
-  {
-  }
+  DiffusionTensor3DNearestCorrectionFilter() = default;
+  ~DiffusionTensor3DNearestCorrectionFilter() override = default;
 private:
   DiffusionTensor3DNearestCorrectionFilter( const Self & ); // purposely not implemented
   void operator=( const Self & );                           // purposely not implemented

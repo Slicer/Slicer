@@ -134,9 +134,7 @@ protected:
   AnisotropicSimilarity3DTransform(const MatrixType & matrix, const OutputVectorType & offset);
   AnisotropicSimilarity3DTransform(unsigned int paramDim);
   AnisotropicSimilarity3DTransform();
-  ~AnisotropicSimilarity3DTransform() override
-  {
-  };
+  ~AnisotropicSimilarity3DTransform() override = default;;
 
   void PrintSelf(std::ostream & os, Indent indent) const override;
 

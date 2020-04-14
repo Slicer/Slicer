@@ -50,9 +50,7 @@ vtkMRMLMarkupsPlaneNode::vtkMRMLMarkupsPlaneNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLMarkupsPlaneNode::~vtkMRMLMarkupsPlaneNode()
-{
-}
+vtkMRMLMarkupsPlaneNode::~vtkMRMLMarkupsPlaneNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::WriteXML(ostream& of, int nIndent)

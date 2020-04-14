@@ -150,9 +150,7 @@ public:
 
 protected:
   AnisotropicSimilarityLandmarkBasedTransformInitializer();
-  ~AnisotropicSimilarityLandmarkBasedTransformInitializer() override
-  {
-  }
+  ~AnisotropicSimilarityLandmarkBasedTransformInitializer() override = default;
 
   void PrintSelf(std::ostream & os, Indent indent) const override;
 

@@ -38,14 +38,10 @@
 vtkMRMLNodeNewMacro(vtkMRMLTextStorageNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLTextStorageNode::vtkMRMLTextStorageNode()
-{
-}
+vtkMRMLTextStorageNode::vtkMRMLTextStorageNode() = default;
 
 //----------------------------------------------------------------------------
-vtkMRMLTextStorageNode::~vtkMRMLTextStorageNode()
-{
-}
+vtkMRMLTextStorageNode::~vtkMRMLTextStorageNode() = default;
 
 //----------------------------------------------------------------------------
 bool vtkMRMLTextStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)

@@ -71,9 +71,7 @@ AffineImageToImageRegistrationMethod<TImage>::AffineImageToImageRegistrationMeth
 }
 
 template <class TImage>
-AffineImageToImageRegistrationMethod<TImage>::~AffineImageToImageRegistrationMethod()
-{
-}
+AffineImageToImageRegistrationMethod<TImage>::~AffineImageToImageRegistrationMethod() = default;
 
 template <class TImage>
 void AffineImageToImageRegistrationMethod<TImage>::GenerateData()

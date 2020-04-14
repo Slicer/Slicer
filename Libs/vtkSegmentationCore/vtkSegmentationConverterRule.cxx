@@ -29,7 +29,7 @@
 #include <vtkSegment.h>
 
 //----------------------------------------------------------------------------
-vtkSegmentationConverterRule::vtkSegmentationConverterRule() { }
+vtkSegmentationConverterRule::vtkSegmentationConverterRule() = default;
 
 //----------------------------------------------------------------------------
 vtkSegmentationConverterRule::~vtkSegmentationConverterRule()

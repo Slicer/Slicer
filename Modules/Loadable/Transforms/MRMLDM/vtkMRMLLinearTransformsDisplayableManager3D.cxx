@@ -63,7 +63,7 @@ public:
   static vtkLinearTransformWidgetCallback *New()
   { return new vtkLinearTransformWidgetCallback; }
 
-  vtkLinearTransformWidgetCallback() { }
+  vtkLinearTransformWidgetCallback() = default;
 
   void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void *vtkNotUsed(callData)) override
   {

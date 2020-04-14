@@ -111,9 +111,7 @@ protected:
     m_UpdateInterval = 1;
     m_DontShowParameters = false;
   }
-  ~BSplineImageRegistrationViewer() override
-  {
-  }
+  ~BSplineImageRegistrationViewer() override = default;
 
 };
 
@@ -133,9 +131,7 @@ BSplineImageToImageRegistrationMethod<TImage>::BSplineImageToImageRegistrationMe
 }
 
 template <class TImage>
-BSplineImageToImageRegistrationMethod<TImage>::~BSplineImageToImageRegistrationMethod()
-{
-}
+BSplineImageToImageRegistrationMethod<TImage>::~BSplineImageToImageRegistrationMethod() = default;
 
 template <class TImage>
 void

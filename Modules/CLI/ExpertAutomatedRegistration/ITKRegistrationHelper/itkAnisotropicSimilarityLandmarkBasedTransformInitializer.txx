@@ -29,9 +29,7 @@ namespace itk
 
 template <class TTransform, class TFixedImage, class TMovingImage>
 AnisotropicSimilarityLandmarkBasedTransformInitializer<TTransform, TFixedImage, TMovingImage>
-::AnisotropicSimilarityLandmarkBasedTransformInitializer()
-{
-}
+::AnisotropicSimilarityLandmarkBasedTransformInitializer() = default;
 
 template <class TTransform, class TFixedImage, class TMovingImage>
 void

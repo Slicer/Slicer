@@ -49,9 +49,7 @@ vtkMRMLShaderPropertyStorageNode::vtkMRMLShaderPropertyStorageNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLShaderPropertyStorageNode::~vtkMRMLShaderPropertyStorageNode()
-{
-}
+vtkMRMLShaderPropertyStorageNode::~vtkMRMLShaderPropertyStorageNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLShaderPropertyStorageNode::PrintSelf(ostream& os, vtkIndent indent)

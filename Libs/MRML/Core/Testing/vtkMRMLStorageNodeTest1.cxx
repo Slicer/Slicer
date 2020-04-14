@@ -54,7 +54,7 @@ public:
   const char* SupportedClass{nullptr};
   int ReadDataReturnValue{0};
 protected:
-  vtkMRMLStorageNodeTestHelper1() {}
+  vtkMRMLStorageNodeTestHelper1() = default;
 };
 vtkStandardNewMacro(vtkMRMLStorageNodeTestHelper1);
 

@@ -88,9 +88,7 @@ void qSlicerSubjectHierarchyVisibilityPluginPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyVisibilityPluginPrivate::~qSlicerSubjectHierarchyVisibilityPluginPrivate()
-{
-}
+qSlicerSubjectHierarchyVisibilityPluginPrivate::~qSlicerSubjectHierarchyVisibilityPluginPrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyVisibilityPlugin methods
@@ -107,9 +105,7 @@ qSlicerSubjectHierarchyVisibilityPlugin::qSlicerSubjectHierarchyVisibilityPlugin
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyVisibilityPlugin::~qSlicerSubjectHierarchyVisibilityPlugin()
-{
-}
+qSlicerSubjectHierarchyVisibilityPlugin::~qSlicerSubjectHierarchyVisibilityPlugin() = default;
 
 //---------------------------------------------------------------------------
 QList<QAction*> qSlicerSubjectHierarchyVisibilityPlugin::visibilityContextMenuActions()const

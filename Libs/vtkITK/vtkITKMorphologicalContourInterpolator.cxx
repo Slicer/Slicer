@@ -18,8 +18,7 @@
 
 vtkStandardNewMacro(vtkITKMorphologicalContourInterpolator);
 
-vtkITKMorphologicalContourInterpolator::vtkITKMorphologicalContourInterpolator() { }
-
+vtkITKMorphologicalContourInterpolator::vtkITKMorphologicalContourInterpolator() = default;
 vtkITKMorphologicalContourInterpolator::~vtkITKMorphologicalContourInterpolator() = default;
 
 

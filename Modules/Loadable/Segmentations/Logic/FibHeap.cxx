@@ -27,9 +27,7 @@ FibHeap::FibHeap()
 }
 
 //-----------------------------------------------------------------------------
-FibHeap::~FibHeap()
-{
-}
+FibHeap::~FibHeap() = default;
 
 //-----------------------------------------------------------------------------
 void FibHeap::SetHeapNodes(FibHeapNode* heapNodes)
