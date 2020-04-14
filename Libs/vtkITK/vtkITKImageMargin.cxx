@@ -38,11 +38,7 @@ vtkStandardNewMacro(vtkITKImageMargin);
 
 //----------------------------------------------------------------------------
 vtkITKImageMargin::vtkITKImageMargin()
-  : BackgroundValue(0)
-  , CalculateMarginInMM(true)
-  , OuterMarginMM(0.0)
-  , InnerMarginMM(vtkMath::NegInf())
-  , OuterMarginVoxels(0.0)
+  : InnerMarginMM(vtkMath::NegInf())
   , InnerMarginVoxels(vtkMath::NegInf())
 {
 }

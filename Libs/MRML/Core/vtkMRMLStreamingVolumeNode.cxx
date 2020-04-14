@@ -43,8 +43,6 @@ const int NUMBER_OF_INTERNAL_IMAGEDATA_OBSERVERS = 2;
 vtkMRMLStreamingVolumeNode::vtkMRMLStreamingVolumeNode()
   : Codec(nullptr)
   , Frame(nullptr)
-  , FrameDecoded(false)
-  , FrameDecodingInProgress(false)
   , FrameModifiedCallbackCommand(vtkSmartPointer<vtkCallbackCommand>::New())
 {
   this->FrameModifiedCallbackCommand->SetClientData(reinterpret_cast<void *>(this));

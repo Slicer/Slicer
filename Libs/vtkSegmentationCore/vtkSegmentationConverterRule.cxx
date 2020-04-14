@@ -29,10 +29,7 @@
 #include <vtkSegment.h>
 
 //----------------------------------------------------------------------------
-vtkSegmentationConverterRule::vtkSegmentationConverterRule()
-  : ReplaceTargetRepresentation(false)
-{
-}
+vtkSegmentationConverterRule::vtkSegmentationConverterRule() { }
 
 //----------------------------------------------------------------------------
 vtkSegmentationConverterRule::~vtkSegmentationConverterRule()

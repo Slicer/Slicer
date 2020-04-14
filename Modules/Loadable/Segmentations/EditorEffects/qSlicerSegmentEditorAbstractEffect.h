@@ -395,21 +395,21 @@ public:
 protected:
   /// Name of the effect
   QString m_Name;
-  bool m_Active;
+  bool m_Active{false};
 
   /// Flag indicating whether effect operates on individual segments (true) or the whole segmentation (false).
   /// If the selected effect works on whole segmentation, selection of the segments does not trigger creation
   /// of modifier labelmap, but it is set to empty in the parameter set node.
   /// True by default.
-  bool m_PerSegment;
+  bool m_PerSegment{true};
 
-  bool m_RequireSegments;
+  bool m_RequireSegments{true};
 
-  bool m_ShowEffectCursorInSliceView;
-  bool m_ShowEffectCursorInThreeDView;
+  bool m_ShowEffectCursorInSliceView{true};
+  bool m_ShowEffectCursorInThreeDView{false};
 
-  double m_FillValue;
-  double m_EraseValue;
+  double m_FillValue{1.0};
+  double m_EraseValue{0.0};
 
 protected:
   QScopedPointer<qSlicerSegmentEditorAbstractEffectPrivate> d_ptr;

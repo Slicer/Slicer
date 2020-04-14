@@ -60,7 +60,7 @@ namespace itk
 class DCMTKSequence
 {
 public:
-  DCMTKSequence() : m_DcmSequenceOfItems(nullptr) {}
+  DCMTKSequence()  {}
   void SetDcmSequenceOfItems(DcmSequenceOfItems *seq);
   int card();
   int GetSequence(unsigned long index,
@@ -136,7 +136,7 @@ public:
                    DCMTKSequence &target,
                    bool throwException = true);
 private:
-  DcmSequenceOfItems *m_DcmSequenceOfItems;
+  DcmSequenceOfItems *m_DcmSequenceOfItems{nullptr};
 };
 
 class DCMTKFileReader
@@ -144,13 +144,7 @@ class DCMTKFileReader
 public:
   typedef DCMTKFileReader Self;
 
-  DCMTKFileReader() : m_DFile(nullptr),
-                      m_Dataset(nullptr),
-                      m_Xfer(EXS_Unknown),
-                      m_FrameCount(0),
-                      m_FileNumber(-1L)
-    {
-    }
+  DCMTKFileReader() {}
   ~DCMTKFileReader();
 
   void SetFileName(const std::string &fileName);
@@ -364,11 +358,11 @@ private:
   static std::string ConvertFromOB(OFString &toConvert);
 
   std::string          m_FileName;
-  DcmFileFormat*       m_DFile;
-  DcmDataset *         m_Dataset;
-  E_TransferSyntax     m_Xfer;
-  Sint32               m_FrameCount;
-  long                 m_FileNumber;
+  DcmFileFormat*       m_DFile{nullptr};
+  DcmDataset *         m_Dataset{nullptr};
+  E_TransferSyntax     m_Xfer{EXS_Unknown};
+  Sint32               m_FrameCount{0};
+  long                 m_FileNumber{-1L};
 };
 
 extern bool CompareDCMTKFileReaders(DCMTKFileReader *a, DCMTKFileReader *b);

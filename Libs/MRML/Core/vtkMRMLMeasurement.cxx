@@ -19,15 +19,6 @@ vtkStandardNewMacro(vtkMRMLMeasurement);
 
 //----------------------------------------------------------------------------
 vtkMRMLMeasurement::vtkMRMLMeasurement()
-: Name(nullptr)
-, Value(0.0)
-, Units(nullptr)
-, Description(nullptr)
-, PrintFormat(nullptr)
-, QuantityCode(nullptr)
-, DerivationCode(nullptr)
-, UnitsCode(nullptr)
-, MethodCode(nullptr)
 {
   this->SetPrintFormat("%5.3f %s");
 }

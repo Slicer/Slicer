@@ -63,12 +63,7 @@ public:
   static vtkLinearTransformWidgetCallback *New()
   { return new vtkLinearTransformWidgetCallback; }
 
-  vtkLinearTransformWidgetCallback()
-    : Widget(nullptr)
-    , Node(nullptr)
-    , DisplayableManager(nullptr)
-  {
-  }
+  vtkLinearTransformWidgetCallback() { }
 
   void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void *vtkNotUsed(callData)) override
   {
@@ -113,9 +108,9 @@ public:
     this->DisplayableManager = dm;
     }
 
-  vtkAbstractWidget * Widget;
-  vtkMRMLTransformNode* Node;
-  vtkMRMLLinearTransformsDisplayableManager3D* DisplayableManager;
+  vtkAbstractWidget * Widget{nullptr};
+  vtkMRMLTransformNode* Node{nullptr};
+  vtkMRMLLinearTransformsDisplayableManager3D* DisplayableManager{nullptr};
 };
 
 //---------------------------------------------------------------------------

@@ -86,7 +86,7 @@ protected:
   void OnInteractorStyleEvent(int eventID) override;
 
 protected:
-  vtkSlicerVolumeRenderingLogic *VolumeRenderingLogic;
+  vtkSlicerVolumeRenderingLogic *VolumeRenderingLogic{nullptr};
 
 protected:
   vtkMRMLVolumeRenderingDisplayableManager(const vtkMRMLVolumeRenderingDisplayableManager&); // Not implemented

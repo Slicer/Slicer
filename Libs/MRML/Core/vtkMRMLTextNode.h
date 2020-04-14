@@ -96,8 +96,8 @@ protected:
   void operator=(const vtkMRMLTextNode&);
 
   std::string Text;
-  int Encoding;
-  int ForceCreateStorageNode;
+  int Encoding{VTK_ENCODING_US_ASCII};
+  int ForceCreateStorageNode{CreateStorageNodeAuto};
 
 };
 

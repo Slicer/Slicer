@@ -96,15 +96,15 @@ protected:
   void operator=(const vtkMRMLMeasurement&);
 
 protected:
-  char* Name;
-  double Value;
-  char* Units;
-  char* Description;
-  char* PrintFormat; // for value (double), unit (string)
-  vtkCodedEntry* QuantityCode;   // volume
-  vtkCodedEntry* DerivationCode; // min/max/mean
-  vtkCodedEntry* UnitsCode;      // cubic millimeter
-  vtkCodedEntry* MethodCode;     // Sum of segmented voxel volumes
+  char* Name{nullptr};
+  double Value{0.0};
+  char* Units{nullptr};
+  char* Description{nullptr};
+  char* PrintFormat{nullptr}; // for value (double), unit (string)
+  vtkCodedEntry* QuantityCode{nullptr};   // volume
+  vtkCodedEntry* DerivationCode{nullptr}; // min/max/mean
+  vtkCodedEntry* UnitsCode{nullptr};      // cubic millimeter
+  vtkCodedEntry* MethodCode{nullptr};     // Sum of segmented voxel volumes
 };
 
 #endif

@@ -134,11 +134,11 @@ protected:
   Array<unsigned int> m_PixelRemainder;
 
   std::string  m_Filename;
-  unsigned int m_CurrentImage;
+  unsigned int m_CurrentImage{0};
 
   std::vector<StreamPtr>   m_DatabaseFiles;
   std::vector<std::string> m_DatabaseFileNames;
-  unsigned long            m_BlocksPerFile;
+  unsigned long            m_BlocksPerFile{0};
 
   /// our cache
   struct CacheBlock

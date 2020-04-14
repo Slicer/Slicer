@@ -93,10 +93,7 @@ static const int SINGLE_SEGMENT_INDEX = -1; // used as segment index when there 
 vtkMRMLNodeNewMacro(vtkMRMLSegmentationStorageNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLSegmentationStorageNode::vtkMRMLSegmentationStorageNode()
-  : CropToMinimumExtent(false)
-{
-}
+vtkMRMLSegmentationStorageNode::vtkMRMLSegmentationStorageNode() { }
 
 //----------------------------------------------------------------------------
 vtkMRMLSegmentationStorageNode::~vtkMRMLSegmentationStorageNode()

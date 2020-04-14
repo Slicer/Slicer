@@ -194,7 +194,7 @@ public:
 
 protected:
   QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode) override;
-  vtkMRMLColorLogic* ColorLogic;
+  vtkMRMLColorLogic* ColorLogic{nullptr};
 };
 #endif
 
@@ -226,7 +226,7 @@ public:
 
 protected:
   QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode) override;
-  vtkMRMLColorLogic* ColorLogic;
+  vtkMRMLColorLogic* ColorLogic{nullptr};
 };
 
 //------------------------------------------------------------------------------

@@ -46,8 +46,6 @@ vtkMRMLNodeNewMacro(vtkMRMLSubjectHierarchyLegacyNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLSubjectHierarchyLegacyNode::vtkMRMLSubjectHierarchyLegacyNode()
-  : Level(nullptr)
-  , OwnerPluginName(nullptr)
 {
   this->SetLevel("Other");
 

@@ -152,7 +152,7 @@ protected:
   /// If true, replaces the target representation of the segment with a new object, even if one already exists
   /// If false, will only create a target representation if one already doesn't exist.
   /// False by default.
-  bool ReplaceTargetRepresentation;
+  bool ReplaceTargetRepresentation{false};
 
   friend class vtkSegmentationConverter;
 };

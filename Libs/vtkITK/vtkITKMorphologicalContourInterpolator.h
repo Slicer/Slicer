@@ -50,11 +50,11 @@ protected:
 
   void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
-  long Label;
-  int Axis;
-  bool HeuristicAlignment;
-  bool UseDistanceTransform;
-  bool UseBallStructuringElement;
+  long Label{0};
+  int Axis{-1};
+  bool HeuristicAlignment{true};
+  bool UseDistanceTransform{false};
+  bool UseBallStructuringElement{false};
 
 private:
   vtkITKMorphologicalContourInterpolator(const vtkITKMorphologicalContourInterpolator&) = delete;

@@ -182,7 +182,7 @@ public:
   static CodeIdentifier CodeIdentifierFromTerminologyType(vtkSlicerTerminologyType* type);
 
   /// Convert terminology entry VTK object to string containing identifiers
-  /// Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,  
+  /// Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,
   /// codeValue, codeMeaning triple), type, typeModifier, anatomicContextName, anatomicRegion, anatomicRegionModifier
   static std::string SerializeTerminologyEntry(vtkSlicerTerminologyEntry* entry);
 
@@ -199,7 +199,7 @@ public:
     std::string regionModifierValue, std::string regionModifierSchemeDesignator, std::string regionModifierMeaning );
 
   /// Populate terminology entry VTK object based on serialized entry
-  /// Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,  
+  /// Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,
   /// codeValue, codeMeaning triple), type, typeModifier, anatomicContextName, anatomicRegion, anatomicRegionModifier
   ///  \return Success flag
   bool DeserializeTerminologyEntry(std::string serializedEntry, vtkSlicerTerminologyEntry* entry);
@@ -226,7 +226,7 @@ protected:
 
 protected:
   /// The path from which the json files are automatically loaded on startup
-  char* UserContextsPath;
+  char* UserContextsPath{nullptr};
 
 private:
   vtkSlicerTerminologiesModuleLogic(const vtkSlicerTerminologiesModuleLogic&) = delete;

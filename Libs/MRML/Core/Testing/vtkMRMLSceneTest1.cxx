@@ -35,10 +35,10 @@ public:
     this->vtkMRMLNode::Reset(defaultNode);
     }
 
-  int ResetCount;
+  int ResetCount{0};
 
 protected:
-  vtkMRMLCustomNode():ResetCount(0){}
+  vtkMRMLCustomNode(){}
   ~vtkMRMLCustomNode() override = default;
   vtkMRMLCustomNode(const vtkMRMLCustomNode&);
   void operator=(const vtkMRMLCustomNode&);

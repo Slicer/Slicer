@@ -21,12 +21,12 @@
 ==============================================================================*/
 
 // QtGUI includes
-#include <qSlicerApplication.h> 
+#include <qSlicerApplication.h>
 
 // SubjectHierarchy includes
 #include "qSlicerSubjectHierarchyModule.h"
 #include "qSlicerSubjectHierarchyModuleWidget.h"
-#include "qSlicerSubjectHierarchySettingsPanel.h" 
+#include "qSlicerSubjectHierarchySettingsPanel.h"
 #include "vtkSlicerSubjectHierarchyModuleLogic.h"
 
 // SubjectHierarchy Plugins includes
@@ -44,17 +44,14 @@ public:
   qSlicerSubjectHierarchyModulePrivate();
   ~qSlicerSubjectHierarchyModulePrivate();
 
-  qSlicerSubjectHierarchyPluginLogic* PluginLogic;
+  qSlicerSubjectHierarchyPluginLogic* PluginLogic{nullptr};
 };
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyModulePrivate::qSlicerSubjectHierarchyModulePrivate()
-  : PluginLogic(nullptr)
-{
-}
+qSlicerSubjectHierarchyModulePrivate::qSlicerSubjectHierarchyModulePrivate() { }
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyModulePrivate::~qSlicerSubjectHierarchyModulePrivate()
@@ -124,7 +121,7 @@ void qSlicerSubjectHierarchyModule::setup()
     {
     qSlicerSubjectHierarchySettingsPanel* panel = new qSlicerSubjectHierarchySettingsPanel();
     qSlicerApplication::application()->settingsDialog()->addPanel("Subject hierarchy", panel);
-    } 
+    }
 }
 
 //-----------------------------------------------------------------------------

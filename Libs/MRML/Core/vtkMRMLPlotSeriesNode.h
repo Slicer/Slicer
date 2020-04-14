@@ -284,20 +284,20 @@ protected:
 
   ///
   /// Type of Plot (scatter, line, bar, ...).
-  int PlotType;
+  int PlotType{PlotTypeLine};
 
   std::string XColumnName;
   std::string YColumnName;
   std::string LabelColumnName;
 
-  float LineWidth;
-  int LineStyle;
+  float LineWidth{2};
+  int LineStyle{LineStyleSolid};
 
-  float MarkerSize;
-  int MarkerStyle;
+  float MarkerSize{7};
+  int MarkerStyle{MarkerStyleCircle};
 
   double Color[3];
-  double Opacity;
+  double Opacity{1.0};
 };
 
 #endif

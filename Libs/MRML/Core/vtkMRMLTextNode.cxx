@@ -31,8 +31,6 @@ vtkMRMLNodeNewMacro(vtkMRMLTextNode);
 //-----------------------------------------------------------------------------
 vtkMRMLTextNode::vtkMRMLTextNode()
   : Text("")
-  , Encoding(VTK_ENCODING_US_ASCII)
-  , ForceCreateStorageNode(CreateStorageNodeAuto)
 {
 }
 

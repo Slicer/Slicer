@@ -46,25 +46,6 @@ vtkMRMLNodeNewMacro(vtkMRMLPlotChartNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLPlotChartNode::vtkMRMLPlotChartNode()
-: Title(nullptr)
-, TitleFontSize(20)
-, TitleVisibility(true)
-, GridVisibility(true)
-, LegendVisibility(true)
-, LegendFontSize(16)
-, XAxisRangeAuto(true)
-, YAxisRangeAuto(true)
-, XAxisLogScale(false)
-, YAxisLogScale(false)
-, XAxisTitle(nullptr)
-, XAxisTitleVisibility(true)
-, YAxisTitle(nullptr)
-, YAxisTitleVisibility(true)
-, AxisTitleFontSize(16)
-, AxisLabelFontSize(12)
-, FontType(nullptr)
-, EnablePointMoveAlongX(true)
-, EnablePointMoveAlongY(true)
 {
   this->HideFromEditors = 0;
 

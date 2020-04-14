@@ -89,7 +89,6 @@ vtkCxxSetObjectMacro(vtkSlicerSegmentationsModuleLogic, TerminologiesLogic, vtkS
 
 //----------------------------------------------------------------------------
 vtkSlicerSegmentationsModuleLogic::vtkSlicerSegmentationsModuleLogic()
- : TerminologiesLogic(nullptr)
 {
   this->SubjectHierarchyUIDCallbackCommand = vtkCallbackCommand::New();
   this->SubjectHierarchyUIDCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );

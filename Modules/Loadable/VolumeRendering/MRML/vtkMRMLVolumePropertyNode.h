@@ -199,15 +199,15 @@ protected:
   vtkIntArray* ObservedEvents;
 
   /// Main parameters for visualization
-  vtkVolumeProperty* VolumeProperty;
+  vtkVolumeProperty* VolumeProperty{nullptr};
 
   /// Effective range of the transfer functions. Outside this range the functions are constant.
   /// Elements: {xMin, xMax}. Other axes not supported because the three transfer funcsions are
   /// independent value-wise, and they do not have third and fourth axes.
-  double EffectiveRange[2];
+  double EffectiveRange[2]{0.0,-1.0};
 
   /// Keep track of state of disable modified events
-  int DisabledModify;
+  int DisabledModify{0};
 
 private:
   /// Caution: Not implemented

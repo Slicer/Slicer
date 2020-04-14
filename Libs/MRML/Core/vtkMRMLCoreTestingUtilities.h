@@ -141,7 +141,7 @@ protected:
 
   void SetErrorString(int line, const char* error);
 
-  vtkMRMLNode* Node;
+  vtkMRMLNode* Node{nullptr};
   std::string ErrorString;
   std::map<unsigned long, unsigned int> ReceivedEvents;
 };

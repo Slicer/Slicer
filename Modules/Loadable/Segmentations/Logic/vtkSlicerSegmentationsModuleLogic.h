@@ -423,7 +423,7 @@ protected:
   vtkCallbackCommand* SubjectHierarchyUIDCallbackCommand;
 
   /// Terminologies module logic
-  vtkSlicerTerminologiesModuleLogic* TerminologiesLogic;
+  vtkSlicerTerminologiesModuleLogic* TerminologiesLogic{nullptr};
 
 private:
   vtkSlicerSegmentationsModuleLogic(const vtkSlicerSegmentationsModuleLogic&) = delete;

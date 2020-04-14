@@ -44,9 +44,9 @@ public:
     //std::cout << "RenderRequestCount [" << this->RenderRequestCount << "]" << std::endl;
     }
 protected:
-  vtkRenderRequestCallback():Renderer(nullptr), RenderRequestCount(0){}
-  vtkRenderer * Renderer;
-  int           RenderRequestCount;
+  vtkRenderRequestCallback() {}
+  vtkRenderer * Renderer{nullptr};
+  int           RenderRequestCount{0};
 };
 
 int vtkMRMLAnnotationNodesUndoTest1(int , char * [] )

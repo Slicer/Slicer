@@ -42,7 +42,7 @@ class qMRMLSortFilterSegmentsProxyModelPrivate
 public:
   qMRMLSortFilterSegmentsProxyModelPrivate();
 
-  bool FilterEnabled;
+  bool FilterEnabled{false};
   QString NameFilter;
   QString TextFilter;
   bool ShowStatus[vtkSlicerSegmentationsModuleLogic::LastStatus];
@@ -51,8 +51,7 @@ public:
 
 // -----------------------------------------------------------------------------
 qMRMLSortFilterSegmentsProxyModelPrivate::qMRMLSortFilterSegmentsProxyModelPrivate()
-  : FilterEnabled(false)
-  , NameFilter(QString())
+  : NameFilter(QString())
   , TextFilter(QString())
 {
   for (int i = 0; i < vtkSlicerSegmentationsModuleLogic::LastStatus; ++i)

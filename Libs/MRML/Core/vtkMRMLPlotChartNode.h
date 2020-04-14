@@ -297,27 +297,27 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
 
   static const char* PlotSeriesNodeReferenceRole;
 
-  char *Title;
-  int TitleFontSize;
-  bool TitleVisibility;
-  bool GridVisibility;
-  bool LegendVisibility;
-  int LegendFontSize;
-  bool XAxisRangeAuto;
-  bool YAxisRangeAuto;
+  char *Title{nullptr};
+  int TitleFontSize{20};
+  bool TitleVisibility{true};
+  bool GridVisibility{true};
+  bool LegendVisibility{true};
+  int LegendFontSize{16};
+  bool XAxisRangeAuto{true};
+  bool YAxisRangeAuto{true};
   double XAxisRange[2];
   double YAxisRange[2];
-  bool XAxisLogScale;
-  bool YAxisLogScale;
-  char* XAxisTitle;
-  bool XAxisTitleVisibility;
-  char* YAxisTitle;
-  bool YAxisTitleVisibility;
-  int AxisTitleFontSize;
-  int AxisLabelFontSize;
-  char* FontType;
-  bool EnablePointMoveAlongX;
-  bool EnablePointMoveAlongY;
+  bool XAxisLogScale{false};
+  bool YAxisLogScale{false};
+  char* XAxisTitle{nullptr};
+  bool XAxisTitleVisibility{true};
+  char* YAxisTitle{nullptr};
+  bool YAxisTitleVisibility{true};
+  int AxisTitleFontSize{16};
+  int AxisLabelFontSize{12};
+  char* FontType{nullptr};
+  bool EnablePointMoveAlongX{true};
+  bool EnablePointMoveAlongY{true};
 };
 
 #endif

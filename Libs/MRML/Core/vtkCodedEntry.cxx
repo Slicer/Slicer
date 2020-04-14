@@ -18,12 +18,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 vtkStandardNewMacro(vtkCodedEntry);
 
 //----------------------------------------------------------------------------
-vtkCodedEntry::vtkCodedEntry()
-: CodeValue(nullptr)
-, CodingSchemeDesignator(nullptr)
-, CodeMeaning(nullptr)
-{
-}
+vtkCodedEntry::vtkCodedEntry() { }
 
 //----------------------------------------------------------------------------
 vtkCodedEntry::~vtkCodedEntry()

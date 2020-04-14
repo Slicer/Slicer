@@ -147,20 +147,16 @@ public:
   };
 
   // Attributes
-  vtkMRMLScalarVolumeNode* VolumeNode;
-  int ChangeImageBehavior;
+  vtkMRMLScalarVolumeNode* VolumeNode{nullptr};
+  int ChangeImageBehavior{DeepCopyImage};
   vtkSmartPointer<vtkCollection> ImageDataCollection;
-  int CurrentImageData;
-  vtkRenderWindowInteractor* Interactor;
+  int CurrentImageData{-1};
+  vtkRenderWindowInteractor* Interactor{nullptr};
 };
 
 //----------------------------------------------------------------------------
 vtkChangeImageCallback::vtkChangeImageCallback()
-  : VolumeNode(nullptr)
-  , ChangeImageBehavior(DeepCopyImage)
-  , ImageDataCollection(vtkSmartPointer<vtkCollection>::New())
-  , CurrentImageData(-1)
-  , Interactor(nullptr)
+  : ImageDataCollection(vtkSmartPointer<vtkCollection>::New())
 {
   const int imageCount = 5;
   for (int i = 0; i < imageCount; ++i)

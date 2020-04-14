@@ -895,8 +895,8 @@ public:
     {
     this->RenderWindow->Render();
     }
-  vtkRenderCallback() :RenderWindow(nullptr) {}
-  vtkRenderWindow *RenderWindow;
+  vtkRenderCallback()  {}
+  vtkRenderWindow *RenderWindow{nullptr};
 };
 
 };

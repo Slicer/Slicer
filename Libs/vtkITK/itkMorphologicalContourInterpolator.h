@@ -221,11 +221,11 @@ protected:
   MorphologicalContourInterpolator();
   ~MorphologicalContourInterpolator() override {}
   typename TImage::PixelType m_Label;
-  int                        m_Axis;
-  bool                       m_HeuristicAlignment;
-  bool                       m_UseDistanceTransform;
-  bool                       m_UseBallStructuringElement;
-  bool                       m_UseCustomSlicePositions;
+  int                        m_Axis{ -1 };
+  bool                       m_HeuristicAlignment{ true };
+  bool                       m_UseDistanceTransform{ true };
+  bool                       m_UseBallStructuringElement{ false };
+  bool                       m_UseCustomSlicePositions{ false };
   IdentifierType             m_MinAlignIters; // minimum number of iterations in align method
   IdentifierType             m_MaxAlignIters; // maximum number of iterations in align method
   IdentifierType             m_ThreadCount;   // for thread local instances

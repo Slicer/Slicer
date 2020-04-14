@@ -31,11 +31,7 @@ vtkCxxSetObjectMacro(vtkMRMLScalarVolumeNode, VoxelValueQuantity, vtkCodedEntry)
 vtkCxxSetObjectMacro(vtkMRMLScalarVolumeNode, VoxelValueUnits, vtkCodedEntry);
 
 //----------------------------------------------------------------------------
-vtkMRMLScalarVolumeNode::vtkMRMLScalarVolumeNode()
-: VoxelValueQuantity(nullptr)
-, VoxelValueUnits(nullptr)
-{
-}
+vtkMRMLScalarVolumeNode::vtkMRMLScalarVolumeNode() { }
 
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode::~vtkMRMLScalarVolumeNode()

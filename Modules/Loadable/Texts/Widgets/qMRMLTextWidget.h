@@ -168,8 +168,8 @@ private:
   Q_DISABLE_COPY(qMRMLTextWidget);
 
 protected:
-  bool AutoSave;
-  bool ReadOnly;
+  bool AutoSave{false};
+  bool ReadOnly{false};
 
 };
 
