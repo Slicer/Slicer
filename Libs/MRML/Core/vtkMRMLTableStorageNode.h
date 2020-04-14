@@ -92,14 +92,15 @@ protected:
   virtual std::string GetFieldDelimiterCharacters(std::string filename);
 
   // Struct for managing column information
-  typedef struct
+  struct StructColumnInfo
   {
     std::string ColumnName;
     std::vector<vtkAbstractArray*> RawComponentArrays;
     int ScalarType = VTK_STRING;
     std::vector<std::string> ComponentNames;
     std::string NullValueString;
-  } ColumnInfo;
+  };
+  using ColumnInfo = struct StructColumnInfo;
 
   /// Determines information about the columns in the table, including column name,
   /// The raw components that should be includeded in the table, the scalar type,
