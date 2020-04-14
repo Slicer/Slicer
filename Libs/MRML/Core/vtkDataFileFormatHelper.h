@@ -8,13 +8,14 @@
 #include <vtkObject.h>
 class vtkStringArray;
 
-typedef struct
+struct ITKImageFileFormatStruct
 {
   const char *ClassName;
   const char *Description;
   const char *GenericName;
   const char *Extension;
-} ITKImageFileFormat;
+};
+using ITKImageFileFormat = struct ITKImageFileFormatStruct;
 
 class VTK_MRML_EXPORT vtkDataFileFormatHelper : public vtkObject
 {

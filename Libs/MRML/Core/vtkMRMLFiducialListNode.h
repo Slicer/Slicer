@@ -30,11 +30,12 @@ class vtkCollection;
 ///
 /// a structure used when invoking an event to let others know that two
 /// fiducials have swapped indices
-typedef struct
+struct FiducialListSwappedIndicesStruct
 {
     int first;
     int second;
-} FiducialListSwappedIndices;
+};
+using FiducialListSwappedIndices = struct FiducialListSwappedIndicesStruct;
 
 /// \brief MRML node to represent a list of points in 3D.
 ///

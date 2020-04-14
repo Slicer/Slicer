@@ -68,17 +68,19 @@ private:
 /// connectivity information for the verts and faces. Use these
 /// structures.
 #if FS_CALC_NORMALS
-typedef struct {
+struct VertexStruct {
   int numFaces;
   int faces[FS_MAX_NUM_FACES_PER_VERTEX];
   int indicesInFace[FS_MAX_NUM_FACES_PER_VERTEX];
   float x, y, z;
   float nx, ny, nz;
-} Vertex;
+};
+using Vertex = struct VertexStruct;
 
-typedef struct {
+struct FaceStruct {
   int vertices[FS_NUM_SIDES_IN_FACE];
-} Face;
+};
+using Face = struct FaceStruct;
 #endif
 
 #endif
