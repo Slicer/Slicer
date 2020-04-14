@@ -45,9 +45,7 @@ vtkMRMLViewInteractorStyle::vtkMRMLViewInteractorStyle()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLViewInteractorStyle::~vtkMRMLViewInteractorStyle()
-{
-}
+vtkMRMLViewInteractorStyle::~vtkMRMLViewInteractorStyle() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLViewInteractorStyle::PrintSelf(ostream& os, vtkIndent indent)

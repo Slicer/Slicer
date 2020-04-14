@@ -60,7 +60,7 @@ public:
     //std::cout << "RenderRequestCount [" << this->RenderRequestCount << "]" << std::endl;
     }
 protected:
-  vtkRenderRequestCallback() {}
+  vtkRenderRequestCallback() = default;
   vtkRenderer * Renderer{nullptr};
   int           RenderRequestCount{0};
 };

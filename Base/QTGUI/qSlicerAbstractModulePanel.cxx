@@ -26,7 +26,7 @@
 class qSlicerAbstractModulePanelPrivate
 {
 public:
-  qSlicerAbstractModulePanelPrivate() {}
+  qSlicerAbstractModulePanelPrivate() = default;
   qSlicerModuleManager* ModuleManager{nullptr};
 };
 
@@ -38,8 +38,7 @@ qSlicerAbstractModulePanel::qSlicerAbstractModulePanel(QWidget* _parent, Qt::Win
 }
 
 //---------------------------------------------------------------------------
-qSlicerAbstractModulePanel::~qSlicerAbstractModulePanel()
-= default;
+qSlicerAbstractModulePanel::~qSlicerAbstractModulePanel() = default;
 
 //---------------------------------------------------------------------------
 void qSlicerAbstractModulePanel::setModuleManager(qSlicerModuleManager* moduleManager)

@@ -111,9 +111,7 @@ vtkSlicerMarkupsLogic::vtkSlicerMarkupsLogic()
 }
 
 //----------------------------------------------------------------------------
-vtkSlicerMarkupsLogic::~vtkSlicerMarkupsLogic()
-{
-}
+vtkSlicerMarkupsLogic::~vtkSlicerMarkupsLogic() = default;
 
 //----------------------------------------------------------------------------
 void vtkSlicerMarkupsLogic::PrintSelf(ostream& os, vtkIndent indent)

@@ -51,7 +51,7 @@ public:
 // qSlicerSubjectHierarchyModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyModulePrivate::qSlicerSubjectHierarchyModulePrivate() { }
+qSlicerSubjectHierarchyModulePrivate::qSlicerSubjectHierarchyModulePrivate() = default;
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyModulePrivate::~qSlicerSubjectHierarchyModulePrivate()
@@ -74,8 +74,7 @@ qSlicerSubjectHierarchyModule::qSlicerSubjectHierarchyModule(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyModule::~qSlicerSubjectHierarchyModule()
-= default;
+qSlicerSubjectHierarchyModule::~qSlicerSubjectHierarchyModule() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerSubjectHierarchyModule::helpText()const

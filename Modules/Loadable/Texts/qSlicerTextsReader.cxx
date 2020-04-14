@@ -51,9 +51,7 @@ qSlicerTextsReader::qSlicerTextsReader(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTextsReader::~qSlicerTextsReader()
-{
-}
+qSlicerTextsReader::~qSlicerTextsReader() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerTextsReader::description() const

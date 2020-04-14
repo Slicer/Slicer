@@ -680,9 +680,7 @@ qSlicerCoreApplication::qSlicerCoreApplication(
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCoreApplication::~qSlicerCoreApplication()
-{
-}
+qSlicerCoreApplication::~qSlicerCoreApplication() = default;
 
 //-----------------------------------------------------------------------------
 qSlicerCoreApplication* qSlicerCoreApplication::application()

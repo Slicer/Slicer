@@ -48,12 +48,8 @@ template <class TInput, class TOutput>
 class DiffusionTensor3DZero
 {
 public:
-  DiffusionTensor3DZero()
-  {
-  }
-  ~DiffusionTensor3DZero()
-  {
-  }
+  DiffusionTensor3DZero() = default;
+  ~DiffusionTensor3DZero() = default;
   bool operator!=( const DiffusionTensor3DZero & other ) const
   {
     return *this != other;
@@ -126,12 +122,8 @@ public:
   /** End concept checking */
 #endif
 protected:
-  DiffusionTensor3DZeroCorrectionFilter()
-  {
-  }
-  ~DiffusionTensor3DZeroCorrectionFilter() override
-  {
-  }
+  DiffusionTensor3DZeroCorrectionFilter() = default;
+  ~DiffusionTensor3DZeroCorrectionFilter() override = default;
 private:
   DiffusionTensor3DZeroCorrectionFilter( const Self & ); // purposely not implemented
   void operator=( const Self & );                        // purposely not implemented

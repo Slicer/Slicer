@@ -145,9 +145,7 @@ ImageToImageRegistrationHelper<TImage>
 
 template <class TImage>
 ImageToImageRegistrationHelper<TImage>
-::~ImageToImageRegistrationHelper()
-{
-}
+::~ImageToImageRegistrationHelper() = default;
 
 template <class TImage>
 void

@@ -60,7 +60,7 @@ namespace itk
 class DCMTKSequence
 {
 public:
-  DCMTKSequence()  {}
+  DCMTKSequence()  = default;
   void SetDcmSequenceOfItems(DcmSequenceOfItems *seq);
   int card();
   int GetSequence(unsigned long index,
@@ -144,7 +144,7 @@ class DCMTKFileReader
 public:
   typedef DCMTKFileReader Self;
 
-  DCMTKFileReader() {}
+  DCMTKFileReader() = default;
   ~DCMTKFileReader();
 
   void SetFileName(const std::string &fileName);

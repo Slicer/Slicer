@@ -102,8 +102,7 @@ vtkMRMLApplicationLogic::vtkInternal::vtkInternal(vtkMRMLApplicationLogic* exter
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLApplicationLogic::vtkInternal::~vtkInternal()
-= default;
+vtkMRMLApplicationLogic::vtkInternal::~vtkInternal() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::vtkInternal::PropagateVolumeSelection(int layer, int fit)
@@ -1162,7 +1161,7 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene,
 
 //----------------------------------------------------------------------------
 vtkMRMLApplicationLogic
-::InvokeRequest::InvokeRequest() { }
+::InvokeRequest::InvokeRequest() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic

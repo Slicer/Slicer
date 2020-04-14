@@ -33,7 +33,7 @@
 vtkMRMLNodeNewMacro(vtkMRMLFolderDisplayNode);
 
 //-----------------------------------------------------------------------------
-vtkMRMLFolderDisplayNode::vtkMRMLFolderDisplayNode() { }
+vtkMRMLFolderDisplayNode::vtkMRMLFolderDisplayNode() = default;
 
 //-----------------------------------------------------------------------------
 vtkMRMLFolderDisplayNode::~vtkMRMLFolderDisplayNode() = default;

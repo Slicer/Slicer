@@ -62,9 +62,7 @@ vtkMRMLSelectionNode::vtkMRMLSelectionNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLSelectionNode::~vtkMRMLSelectionNode()
-{
-}
+vtkMRMLSelectionNode::~vtkMRMLSelectionNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLSelectionNode::WriteXML(ostream& of, int nIndent)

@@ -39,9 +39,7 @@ InitialImageToImageRegistrationMethod<TImage>::InitialImageToImageRegistrationMe
 }
 
 template <class TImage>
-InitialImageToImageRegistrationMethod<TImage>::~InitialImageToImageRegistrationMethod()
-{
-}
+InitialImageToImageRegistrationMethod<TImage>::~InitialImageToImageRegistrationMethod() = default;
 
 /** Only the GenerateData() method should be overloaded. The Update() method
  * must not be overloaded */

@@ -71,9 +71,7 @@ ImageRegionMomentsCalculator<TImage>::ImageRegionMomentsCalculator()
 // Destructor
 template <class TImage>
 ImageRegionMomentsCalculator<TImage>::
-~ImageRegionMomentsCalculator()
-{
-}
+~ImageRegionMomentsCalculator() = default;
 
 template <class TInputImage>
 void

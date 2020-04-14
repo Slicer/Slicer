@@ -48,7 +48,7 @@ static const int FIELD_ASSOCIATED_NODE_ID = 13;
 class CsvCodec
 {
 public:
-  CsvCodec()  {}
+  CsvCodec()  = default;
   ~CsvCodec()  = default;
 
   void ReadFromString(const std::string &row)
@@ -250,8 +250,7 @@ vtkMRMLMarkupsFiducialStorageNode::vtkMRMLMarkupsFiducialStorageNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLMarkupsFiducialStorageNode::~vtkMRMLMarkupsFiducialStorageNode()
-= default;
+vtkMRMLMarkupsFiducialStorageNode::~vtkMRMLMarkupsFiducialStorageNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialStorageNode::WriteXML(ostream& of, int nIndent)

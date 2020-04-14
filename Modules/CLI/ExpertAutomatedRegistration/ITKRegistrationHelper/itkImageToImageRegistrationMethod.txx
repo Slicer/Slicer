@@ -53,9 +53,7 @@ ImageToImageRegistrationMethod<TImage>::ImageToImageRegistrationMethod()
 }
 
 template <class TImage>
-ImageToImageRegistrationMethod<TImage>::~ImageToImageRegistrationMethod()
-{
-}
+ImageToImageRegistrationMethod<TImage>::~ImageToImageRegistrationMethod() = default;
 
 template <class TImage>
 void

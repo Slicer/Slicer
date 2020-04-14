@@ -38,7 +38,7 @@ public:
   int ResetCount{0};
 
 protected:
-  vtkMRMLCustomNode(){}
+  vtkMRMLCustomNode() = default;
   ~vtkMRMLCustomNode() override = default;
   vtkMRMLCustomNode(const vtkMRMLCustomNode&);
   void operator=(const vtkMRMLCustomNode&);

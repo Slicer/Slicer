@@ -126,9 +126,7 @@ protected:
     m_UpdateInterval = 1;
     m_DontShowParameters = false;
   }
-  ~ImageRegistrationViewer() override
-  {
-  }
+  ~ImageRegistrationViewer() override = default;
 
 };
 
@@ -176,9 +174,7 @@ OptimizedImageToImageRegistrationMethod<TImage>::OptimizedImageToImageRegistrati
 }
 
 template <class TImage>
-OptimizedImageToImageRegistrationMethod<TImage>::~OptimizedImageToImageRegistrationMethod()
-{
-}
+OptimizedImageToImageRegistrationMethod<TImage>::~OptimizedImageToImageRegistrationMethod() = default;
 
 template <class TImage>
 void
