@@ -1149,7 +1149,7 @@ void vtkMRMLMarkupsCurveNode::ProcessMRMLEvents(vtkObject* caller,
       }
     else
       {
-      this->UpdateSurfaceScalarVariables();
+      this->OnSurfaceModelNodeChanged();
       }
     }
   else if (caller == this->SurfaceScalarCalculator.GetPointer())
