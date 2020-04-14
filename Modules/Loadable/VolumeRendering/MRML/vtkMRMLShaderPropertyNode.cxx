@@ -35,7 +35,6 @@ vtkMRMLNodeNewMacro(vtkMRMLShaderPropertyNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLShaderPropertyNode::vtkMRMLShaderPropertyNode()
-  : ShaderProperty(nullptr)
 {
   this->ObservedEvents = vtkIntArray::New();
   this->ObservedEvents->InsertNextValue(vtkCommand::ModifiedEvent);

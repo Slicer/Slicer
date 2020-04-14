@@ -65,12 +65,12 @@ struct UpdateCheckInformation
 struct UpdateDownloadInformation
 {
   UpdateDownloadInformation(const QString& extensionId = QString())
-    : ExtensionId(extensionId), DownloadSize(0), DownloadProgress(0) {}
+    : ExtensionId(extensionId) {}
 
   QString ExtensionId;
   QString ArchiveName;
-  qint64 DownloadSize;
-  qint64 DownloadProgress;
+  qint64 DownloadSize{0};
+  qint64 DownloadProgress{0};
 };
 
 // --------------------------------------------------------------------------

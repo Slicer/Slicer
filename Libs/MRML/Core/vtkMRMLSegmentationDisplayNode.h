@@ -50,24 +50,17 @@ public:
     /// By default it's invalid (-1,-1,-1), and only valid if different than color stored in segment. Its purpose is to enable showing per-view colors
     double OverrideColor[3];
     /// Visibility
-    bool Visible; // Turns visibility on/off in general. Useful for allowing the user to show/hide a segment without changing any detailed visibility options.
-    bool Visible3D;
-    bool Visible2DFill; // This one is used for labelmap volume related operations (color table, merged labelmap)
-    bool Visible2DOutline;
+    bool Visible{true}; // Turns visibility on/off in general. Useful for allowing the user to show/hide a segment without changing any detailed visibility options.
+    bool Visible3D{true};
+    bool Visible2DFill{true}; // This one is used for labelmap volume related operations (color table, merged labelmap)
+    bool Visible2DOutline{true};
     /// Opacity
-    double Opacity3D;
-    double Opacity2DFill; // This one is used for labelmap volume related operations (color table, merged labelmap)
-    double Opacity2DOutline;
+    double Opacity3D{1.0};
+    double Opacity2DFill{1.0}; // This one is used for labelmap volume related operations (color table, merged labelmap)
+    double Opacity2DOutline{1.0};
 
     // Initialize with default values
     SegmentDisplayProperties()
-    : Visible(true)
-    , Visible3D(true)
-    , Visible2DFill(true)
-    , Visible2DOutline(true)
-    , Opacity3D(1.0)
-    , Opacity2DFill(1.0) // Default is 1, because these are relative values. Half transparency is default for the whole segmentation
-    , Opacity2DOutline(1.0)
       {
       OverrideColor[0] = SEGMENT_COLOR_NO_OVERRIDE;
       OverrideColor[1] = SEGMENT_COLOR_NO_OVERRIDE;
@@ -283,12 +276,12 @@ protected:
 protected:
   /// Name of representation that is displayed in 2D views as outline or filled area
   /// if exists. If does not exist, then master representation is displayed.
-  char* PreferredDisplayRepresentationName2D;
+  char* PreferredDisplayRepresentationName2D{nullptr};
 
   /// Name of representation that is displayed as poly data in the 3D view.
   /// If does not exist, then master representation is displayed if poly data,
   /// otherwise the first poly data representation if any.
-  char* PreferredDisplayRepresentationName3D;
+  char* PreferredDisplayRepresentationName3D{nullptr};
 
   /// List of segment display properties for all segments in associated segmentation.
   /// Maps segment identifier string (segment name by default) to properties.
@@ -296,27 +289,27 @@ protected:
 
   /// Number of segments ever added to the segmentation belonging to this display node.
   /// Used to generate new color for new segments, taken into account removed segments too.
-  unsigned int NumberOfGeneratedColors;
+  unsigned int NumberOfGeneratedColors{0};
 
   /// For checking if cached segment list in SegmentationDisplayProperties has to be updated
-  vtkMTimeType SegmentListUpdateTime;
-  vtkSegmentation* SegmentListUpdateSource;
+  vtkMTimeType SegmentListUpdateTime{0};
+  vtkSegmentation* SegmentListUpdateSource{nullptr};
 
   /// 2D fill visibility for the whole segmentation.
   /// In order for the fill to be visible, \sa Visibility, Visibility2D, and Visibility2DFill
   /// need to be all enabled.
-  bool Visibility2DFill;
+  bool Visibility2DFill{true};
   /// 2D outline visibility for the whole segmentation.
   /// In order for the outline to be visible, \sa Visibility, Visibility2D, and Visibility2DOutline
   /// need to be all enabled.
-  bool Visibility2DOutline;
+  bool Visibility2DOutline{true};
 
   /// 3D opacity for the whole segmentation
-  double Opacity3D;
+  double Opacity3D{1.0};
   /// 2D fill opacity for the whole segmentation
-  double Opacity2DFill;
+  double Opacity2DFill{0.5};
   /// 2D outline opacity for the whole segmentation
-  double Opacity2DOutline;
+  double Opacity2DOutline{1.0};
 };
 
 #endif

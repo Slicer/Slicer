@@ -994,7 +994,6 @@ void vtkSlicerTerminologiesModuleLogic::vtkInternal::GetJsonCodeFromIdentifier(
 
 //----------------------------------------------------------------------------
 vtkSlicerTerminologiesModuleLogic::vtkSlicerTerminologiesModuleLogic()
-  : UserContextsPath(nullptr)
 {
   this->Internal = new vtkInternal();
 }

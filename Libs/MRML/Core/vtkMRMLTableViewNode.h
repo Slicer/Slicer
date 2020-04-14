@@ -92,7 +92,7 @@ protected:
   static const char* TableNodeReferenceRole;
   static const char* TableNodeReferenceMRMLAttributeName;
 
-  bool DoPropagateTableSelection;
+  bool DoPropagateTableSelection{true};
 };
 
 #endif

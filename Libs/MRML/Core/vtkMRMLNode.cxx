@@ -32,23 +32,6 @@ Version:   $Revision: 1.11 $
 
 //------------------------------------------------------------------------------
 vtkMRMLNode::vtkMRMLNode()
-  : ID(nullptr)
-  // By default all MRML nodes have a blank name
-  // Must set name to nullptr first so that the SetName
-  // macro will not free memory.
-  , Name(nullptr)
-  , Description(nullptr)
-  , HideFromEditors(0)
-  , Selectable(1)
-  , Selected(0)
-  , AddToScene(1)
-  , UndoEnabled(false)
-  , SaveWithScene(true)
-  , InMRMLCallbackFlag(0)
-  , TempURLString(nullptr)
-  , SingletonTag(nullptr)
-  , DisableModifiedEvent(0)
-  , ModifiedEventPending(0)
 {
   // Set up callbacks
   this->MRMLCallbackCommand = vtkCallbackCommand::New();

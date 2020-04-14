@@ -167,17 +167,17 @@ protected:
   void operator=(const vtkMRMLSegmentEditorNode&);
 
   /// Selected segment ID
-  char* SelectedSegmentID;
+  char* SelectedSegmentID{nullptr};
 
   /// Active effect name
-  char* ActiveEffectName;
+  char* ActiveEffectName{nullptr};
 
-  int MaskMode;
-  char* MaskSegmentID;
+  int MaskMode{PaintAllowedEverywhere};
+  char* MaskSegmentID{nullptr};
 
-  int OverwriteMode;
+  int OverwriteMode{OverwriteAllSegments};
 
-  bool MasterVolumeIntensityMask;
+  bool MasterVolumeIntensityMask{false};
   double MasterVolumeIntensityMaskRange[2];
 };
 

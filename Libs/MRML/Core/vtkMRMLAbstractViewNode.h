@@ -285,21 +285,21 @@ protected:
 
   ///
   /// Views with the same ViewGroup value are in the same group.
-  int ViewGroup;
+  int ViewGroup{0};
 
   ///
   /// Label to show for the view (shortcut for the name)
-  char* LayoutLabel;
+  char* LayoutLabel{nullptr};
 
   ///
   /// Indicates whether or not the View is visible.
   /// Invisible (0) by default.
-  int Visibility;
+  int Visibility{1};
 
   ///
   /// Indicates whether or not the View is active.
   /// Inactive by default.
-  int Active;
+  int Active{0};
 
   ///
   /// Background colors
@@ -313,18 +313,18 @@ protected:
   ///
   /// For views that supports orientation marker display (where OrientationMarkerEnabled=true)
   /// these parameters define how to display the orientation marker.
-  bool OrientationMarkerEnabled;
-  int OrientationMarkerType;
-  int OrientationMarkerSize;
+  bool OrientationMarkerEnabled{false};
+  int OrientationMarkerType{OrientationMarkerTypeNone};
+  int OrientationMarkerSize{OrientationMarkerSizeMedium};
 
   static const char* OrientationMarkerHumanModelReferenceRole;
 
   ///
   /// For views that supports ruler display (where RulerEnabled=true)
   /// these parameters define how to display the ruler.
-  bool RulerEnabled;
-  int RulerType;
-  int RulerColor;
+  bool RulerEnabled{false};
+  int RulerType{RulerTypeNone};
+  int RulerColor{RulerColorWhite};
 
   ///
   /// Labels of coordinate system axes

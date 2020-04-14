@@ -244,7 +244,7 @@ protected:
   static void GetSegmentColorFromString(double color[3], std::string colorString);
 
 protected:
-  bool CropToMinimumExtent;
+  bool CropToMinimumExtent{false};
 
 protected:
   vtkMRMLSegmentationStorageNode();

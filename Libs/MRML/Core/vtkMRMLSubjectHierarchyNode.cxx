@@ -76,7 +76,7 @@ public:
   std::string Name;
 
   /// Parent
-  vtkSubjectHierarchyItem* Parent;
+  vtkSubjectHierarchyItem* Parent{nullptr};
   /// Ordered list of children
   ChildVector Children;
 
@@ -84,7 +84,7 @@ public:
   std::string OwnerPluginName;
 
   /// Flag indicating whether the branch under the item is expanded in the view
-  bool Expanded;
+  bool Expanded{true};
 
   /// List of UIDs of this subject hierarchy node
   /// UIDs can be DICOM UIDs, MIDAS urls, etc.
@@ -257,9 +257,7 @@ vtkSubjectHierarchyItem::vtkSubjectHierarchyItem()
   : ID(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   , DataNode(nullptr)
   , Name("")
-  , Parent(nullptr)
   , OwnerPluginName("")
-  , Expanded(true)
   , TemporaryID(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   , TemporaryDataNodeID("")
   , TemporaryParentItemID(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)

@@ -41,7 +41,6 @@ vtkMRMLNodeNewMacro(vtkMRMLTableViewNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLTableViewNode::vtkMRMLTableViewNode()
-: DoPropagateTableSelection(true)
 {
   this->AddNodeReferenceRole(this->GetTableNodeReferenceRole(),
                              this->GetTableNodeReferenceMRMLAttributeName());

@@ -35,7 +35,7 @@ public:
   void SetNodeCollection(vtkCollection* scene) {this->NodeCollection = scene;};
 
 protected:
-  vtkMRMLParser() : MRMLScene(nullptr),NodeCollection(nullptr){};
+  vtkMRMLParser() {};
   ~vtkMRMLParser() override  = default;
   vtkMRMLParser(const vtkMRMLParser&);
   void operator=(const vtkMRMLParser&);
@@ -44,8 +44,8 @@ protected:
   void EndElement (const char *name) override;
 
 private:
-  vtkMRMLScene* MRMLScene;
-  vtkCollection* NodeCollection;
+  vtkMRMLScene* MRMLScene{nullptr};
+  vtkCollection* NodeCollection{nullptr};
   std::stack< vtkMRMLNode *> NodeStack;
 };
 

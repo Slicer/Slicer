@@ -597,7 +597,6 @@ int ExerciseSceneLoadingMethods(const char * sceneFilePath, vtkMRMLScene* inputS
 
 //---------------------------------------------------------------------------
 vtkMRMLNodeCallback::vtkMRMLNodeCallback()
-  : Node(nullptr)
 {
   this->ResetNumberOfEvents();
 }

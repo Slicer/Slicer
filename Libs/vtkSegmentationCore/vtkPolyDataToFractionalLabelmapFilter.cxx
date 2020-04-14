@@ -116,8 +116,7 @@ namespace {
 class EdgeLocatorNode
 {
 public:
-  EdgeLocatorNode() :
-    ptId(-1), edgeId(-1), next(nullptr) {}
+  EdgeLocatorNode()  {}
 
   // Free the list that this node is the head of
   void FreeList() {
@@ -131,9 +130,9 @@ public:
       }
   }
 
-  vtkIdType ptId;
-  vtkIdType edgeId;
-  EdgeLocatorNode *next;
+  vtkIdType ptId{-1};
+  vtkIdType edgeId{-1};
+  EdgeLocatorNode *next{nullptr};
 };
 
 // The EdgeLocator class itself, for keeping track of edges

@@ -215,7 +215,7 @@ protected:
   vtkWeakPointer<vtkMRMLScene> m_MRMLScene;
 
   /// Plugin logic
-  qSlicerSubjectHierarchyPluginLogic* m_PluginLogic;
+  qSlicerSubjectHierarchyPluginLogic* m_PluginLogic{nullptr};
 
   /// Callback handling deletion of the subject hierarchy node
   vtkSmartPointer<vtkCallbackCommand> m_CallBack;

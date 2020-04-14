@@ -70,12 +70,12 @@ class VTK_ITK_EXPORT vtkITKImageMargin : public vtkSimpleImageToImageFilter
   vtkSetMacro(InnerMarginVoxels, double);
 
 protected:
-  int BackgroundValue;
-  bool CalculateMarginInMM;
-  double OuterMarginMM;
-  double InnerMarginMM;
-  double OuterMarginVoxels;
-  double InnerMarginVoxels;
+  int BackgroundValue{0};
+  bool CalculateMarginInMM{true};
+  double OuterMarginMM{0.0};
+  double InnerMarginMM{0.0};
+  double OuterMarginVoxels{0.0};
+  double InnerMarginVoxels{0.0};
 
 protected:
   vtkITKImageMargin();

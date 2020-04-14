@@ -48,7 +48,7 @@ static const int FIELD_ASSOCIATED_NODE_ID = 13;
 class CsvCodec
 {
 public:
-  CsvCodec() : Separator(',') {}
+  CsvCodec()  {}
   ~CsvCodec()  = default;
 
   void ReadFromString(const std::string &row)
@@ -212,7 +212,7 @@ protected:
     QuotedQuote
     };
 
-  char Separator;
+  char Separator{','};
   std::vector<std::string> Fields;
 };
 

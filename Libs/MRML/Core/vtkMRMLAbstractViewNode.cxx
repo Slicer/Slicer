@@ -38,16 +38,6 @@ static const char* DEFAULT_AXIS_LABELS[vtkMRMLAbstractViewNode::AxisLabelsCount]
 
 //----------------------------------------------------------------------------
 vtkMRMLAbstractViewNode::vtkMRMLAbstractViewNode()
-: ViewGroup(0)
-, LayoutLabel(nullptr)
-, Visibility(1)
-, Active(0)
-, OrientationMarkerEnabled(false)
-, OrientationMarkerType(OrientationMarkerTypeNone)
-, OrientationMarkerSize(OrientationMarkerSizeMedium)
-, RulerEnabled(false)
-, RulerType(RulerTypeNone)
-, RulerColor(RulerColorWhite)
 {
   this->BackgroundColor[0] = 0.0;
   this->BackgroundColor[1] = 0.0;

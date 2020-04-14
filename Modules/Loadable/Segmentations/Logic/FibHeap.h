@@ -58,9 +58,6 @@ public:
     , m_Right(NullNodeIndex)
     , m_Parent(NullNodeIndex)
     , m_Child(NullNodeIndex)
-    , m_Degree(0)
-    , m_Mark(false)
-    , m_Key(0)
     , m_Index(NullNodeIndex)
   {
   }
@@ -108,10 +105,10 @@ public:
   NodeIndexType m_Right;
   NodeIndexType m_Parent;
   NodeIndexType m_Child;
-  short m_Degree;
-  bool m_Mark;
+  short m_Degree{0};
+  bool m_Mark{false};
 
-  NodeKeyValueType m_Key;
+  NodeKeyValueType m_Key{0};
   NodeIndexType m_Index;
 };
 

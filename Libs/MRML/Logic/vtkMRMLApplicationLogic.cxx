@@ -1162,13 +1162,7 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene,
 
 //----------------------------------------------------------------------------
 vtkMRMLApplicationLogic
-::InvokeRequest::InvokeRequest()
-  : Delay (100)
-  , Caller(nullptr)
-  , EventID(vtkCommand::ModifiedEvent)
-  , CallData(nullptr)
-{
-}
+::InvokeRequest::InvokeRequest() { }
 
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic

@@ -53,7 +53,6 @@ vtkSegmentationConverterRuleNewMacro(vtkClosedSurfaceToBinaryLabelmapConversionR
 
 //----------------------------------------------------------------------------
 vtkClosedSurfaceToBinaryLabelmapConversionRule::vtkClosedSurfaceToBinaryLabelmapConversionRule()
-  : UseOutputImageDataGeometry(false)
 {
   this->ReplaceTargetRepresentation = true;
 

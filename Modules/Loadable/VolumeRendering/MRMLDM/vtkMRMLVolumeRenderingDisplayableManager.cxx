@@ -1079,7 +1079,6 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::FindPickedDisplayNod
 
 //---------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayableManager::vtkMRMLVolumeRenderingDisplayableManager()
-: VolumeRenderingLogic(nullptr)
 {
   this->Internal = new vtkInternal(this);
 

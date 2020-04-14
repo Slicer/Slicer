@@ -164,7 +164,6 @@ void qMRMLLayoutThreeDViewFactory::deleteView(vtkMRMLAbstractViewNode* viewNode)
 //------------------------------------------------------------------------------
 qMRMLLayoutChartViewFactory::qMRMLLayoutChartViewFactory(QObject* parent)
   : qMRMLLayoutViewFactory(parent)
-  , ColorLogic(nullptr)
 {
 }
 
@@ -260,7 +259,6 @@ QWidget* qMRMLLayoutTableViewFactory::createViewFromNode(vtkMRMLAbstractViewNode
 //------------------------------------------------------------------------------
 qMRMLLayoutPlotViewFactory::qMRMLLayoutPlotViewFactory(QObject* parent)
   : qMRMLLayoutViewFactory(parent)
-  , ColorLogic(nullptr)
 {
 }
 

@@ -100,8 +100,6 @@ void qMRMLTextWidgetPrivate::setEditing(bool editing)
 qMRMLTextWidget::qMRMLTextWidget(QWidget* parentWidget)
   : Superclass( parentWidget )
   , d_ptr(new qMRMLTextWidgetPrivate(*this))
-  , AutoSave(false)
-  , ReadOnly(false)
 {
   this->setup();
 }

@@ -84,11 +84,6 @@ template< typename TImage >
 MorphologicalContourInterpolator< TImage >
 ::MorphologicalContourInterpolator()
   : m_Label( 0 ),
-  m_Axis( -1 ),
-  m_HeuristicAlignment( true ),
-  m_UseDistanceTransform( true ),
-  m_UseBallStructuringElement( false ),
-  m_UseCustomSlicePositions( false ),
   m_MinAlignIters( std::pow( 2., static_cast< int >(TImage::ImageDimension) ) ), // smaller of this and pixel count of the search image
   m_MaxAlignIters( std::pow( 6., static_cast< int >(TImage::ImageDimension) ) ), // bigger of this and root of pixel count of the search image
   m_ThreadCount( MultiThreaderBase::GetGlobalDefaultNumberOfThreads() ),

@@ -259,12 +259,12 @@ protected:
 
   void SetCamera(vtkCamera* camera);
   void SetAndObserveCamera(vtkCamera* camera);
-  vtkCamera* Camera;
+  vtkCamera* Camera{nullptr};
 
   vtkMRMLCameraNode* FindActiveTagInScene(const char* tag);
 
   void SetInternalActiveTag(const char* id);
-  char* InternalActiveTag;
+  char* InternalActiveTag{nullptr};
 
   vtkMatrix4x4* AppliedTransform;
 

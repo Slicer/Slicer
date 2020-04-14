@@ -51,10 +51,6 @@ vtkStandardNewMacro(vtkSlicerSegmentationGeometryLogic);
 
 //----------------------------------------------------------------------------
 vtkSlicerSegmentationGeometryLogic::vtkSlicerSegmentationGeometryLogic()
-: UserSpacing{ 1.0, 1.0, 1.0 }
-, InputAxisIndexForSourceAxis{ 0, 1, 2 }
-, SourceAxisIndexForInputAxis{ 0, 1, 2 }
-
 {
   this->InputSegmentationNode = nullptr;
   this->SourceGeometryNode = nullptr;

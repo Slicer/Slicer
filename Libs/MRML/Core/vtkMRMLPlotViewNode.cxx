@@ -44,10 +44,6 @@ vtkMRMLNodeNewMacro(vtkMRMLPlotViewNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLPlotViewNode::vtkMRMLPlotViewNode()
-: DoPropagatePlotChartSelection(true)
-, InteractionMode(InteractionModePanView)
-, EnablePointMoveAlongX(true)
-, EnablePointMoveAlongY(true)
 {
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkCommand::ModifiedEvent);

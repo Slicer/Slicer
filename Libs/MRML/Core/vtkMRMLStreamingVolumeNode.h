@@ -129,8 +129,8 @@ protected:
   vtkSmartPointer<vtkStreamingVolumeCodec> Codec;
   std::string                              CodecFourCC;
   vtkSmartPointer<vtkStreamingVolumeFrame> Frame;
-  bool                                     FrameDecoded;
-  bool                                     FrameDecodingInProgress;
+  bool                                     FrameDecoded{false};
+  bool                                     FrameDecodingInProgress{false};
   vtkSmartPointer<vtkCallbackCommand>      FrameModifiedCallbackCommand;
 
 };

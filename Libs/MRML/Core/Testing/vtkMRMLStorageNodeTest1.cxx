@@ -51,13 +51,10 @@ public:
     return this->ReadDataReturnValue;
     }
 
-  const char* SupportedClass;
-  int ReadDataReturnValue;
+  const char* SupportedClass{nullptr};
+  int ReadDataReturnValue{0};
 protected:
-  vtkMRMLStorageNodeTestHelper1()
-    :SupportedClass(nullptr)
-    ,ReadDataReturnValue(0)
-  {}
+  vtkMRMLStorageNodeTestHelper1() {}
 };
 vtkStandardNewMacro(vtkMRMLStorageNodeTestHelper1);
 

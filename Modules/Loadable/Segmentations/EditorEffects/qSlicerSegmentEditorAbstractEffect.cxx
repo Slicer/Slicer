@@ -112,13 +112,6 @@ qSlicerSegmentEditorAbstractEffectPrivate::~qSlicerSegmentEditorAbstractEffectPr
 qSlicerSegmentEditorAbstractEffect::qSlicerSegmentEditorAbstractEffect(QObject* parent)
  : Superclass(parent)
  , m_Name(QString())
- , m_Active(false)
- , m_PerSegment(true)
- , m_RequireSegments(true)
- , m_ShowEffectCursorInSliceView(true)
- , m_ShowEffectCursorInThreeDView(false)
- , m_FillValue(1.0)
- , m_EraseValue(0.0)
  , d_ptr(new qSlicerSegmentEditorAbstractEffectPrivate(*this))
 {
 }
@@ -1339,7 +1332,7 @@ QVector3D qSlicerSegmentEditorAbstractEffect::xyzToIjk(QVector3D inputXyzVector,
   double inputXyz[3] = {inputXyzVector.x(), inputXyzVector.y(), inputXyzVector.z()};
   int outputIjk[3] = {0, 0, 0};
   qSlicerSegmentEditorAbstractEffect::xyzToIjk(inputXyz, outputIjk, sliceWidget, image, parentTransformNode);
-  
+
   QVector3D outputVector(outputIjk[0], outputIjk[1], outputIjk[2]);
   return outputVector;
 }

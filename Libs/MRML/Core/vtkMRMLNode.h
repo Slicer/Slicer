@@ -902,20 +902,20 @@ protected:
   /// Holders for MRML callbacks
   vtkCallbackCommand *MRMLCallbackCommand;
 
-  char *ID;
-  char *Name;
-  char *Description;
-  int HideFromEditors;
-  int Selectable;
-  int Selected;
-  int AddToScene;
-  bool UndoEnabled;
+  char *ID{nullptr};
+  char *Name{nullptr};
+  char *Description{nullptr};
+  int HideFromEditors{0};
+  int Selectable{1};
+  int Selected{0};
+  int AddToScene{1};
+  bool UndoEnabled{false};
 
-  int  SaveWithScene;
+  int  SaveWithScene{true};
 
   ///
   /// Flag to avoid event loops
-  int InMRMLCallbackFlag;
+  int InMRMLCallbackFlag{0};
 
   // We don't increase the reference count of Scene when store its pointer
   // therefore we must use a weak pointer to prevent pointer dangling when
@@ -945,12 +945,12 @@ private:
   void SetID(const char* newID);
 
   /// Variable used to manage encoded/decoded URL strings
-  char *TempURLString;
+  char *TempURLString{nullptr};
 
-  char *SingletonTag;
+  char *SingletonTag{nullptr};
 
-  int DisableModifiedEvent;
-  int ModifiedEventPending;
+  int DisableModifiedEvent{0};
+  int ModifiedEventPending{0};
   std::map<int, int> CustomModifiedEventPending; // event id, pending value (number of events grouped together)
 };
 

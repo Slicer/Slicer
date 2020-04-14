@@ -18,17 +18,9 @@
 
 vtkStandardNewMacro(vtkITKMorphologicalContourInterpolator);
 
-vtkITKMorphologicalContourInterpolator::vtkITKMorphologicalContourInterpolator()
-  : Label(0)
-  , Axis(-1)
-  , HeuristicAlignment(true)
-  , UseDistanceTransform(false)
-  , UseBallStructuringElement(false)
-{
-}
+vtkITKMorphologicalContourInterpolator::vtkITKMorphologicalContourInterpolator() { }
 
-vtkITKMorphologicalContourInterpolator::~vtkITKMorphologicalContourInterpolator()
-= default;
+vtkITKMorphologicalContourInterpolator::~vtkITKMorphologicalContourInterpolator() = default;
 
 
 template <class T>

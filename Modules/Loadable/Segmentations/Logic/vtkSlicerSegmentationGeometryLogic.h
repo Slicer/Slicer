@@ -106,15 +106,15 @@ protected:
 
   /// Explicitly specified spacing. Only applied if \sa SourceGeometryNode does not contain volume data
   /// (i.e. not a volume node nor a segmentation node with labelmap master, but an ROI, model, or segmentation with poly data master)
-  double UserSpacing[3];
+  double UserSpacing[3]{ 1.0, 1.0, 1.0 };
 
   /// Oriented image data containing output geometry. This is what the class calculates from the inputs
   vtkOrientedImageData* OutputGeometryImageData;
 
   /// Source to input axes mapping \sa matchInputAndSourceAxes
-  int InputAxisIndexForSourceAxis[3];
+  int InputAxisIndexForSourceAxis[3]{ 0, 1, 2 };
   /// Inverse permutation of \sa InputAxisIndexForSourceAxis
-  int SourceAxisIndexForInputAxis[3];
+  int SourceAxisIndexForInputAxis[3]{ 0, 1, 2 };
 
 private:
   vtkSlicerSegmentationGeometryLogic(const vtkSlicerSegmentationGeometryLogic&) = delete;

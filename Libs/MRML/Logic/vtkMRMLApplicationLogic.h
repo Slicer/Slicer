@@ -193,13 +193,13 @@ public:
   struct InvokeRequest{
     InvokeRequest();
     /// 100ms by default.
-    unsigned int Delay;
+    unsigned int Delay{100};
     /// the caller to call InvokeEvent() on.
-    vtkObject* Caller;
+    vtkObject* Caller{nullptr};
     /// The event id of InvokeEvent. ModifiedEvent by default.
-    unsigned long EventID;
+    unsigned long EventID{vtkCommand::ModifiedEvent};
     /// Optional call data. 0 by default.
-    void* CallData;
+    void* CallData{nullptr};
   };
   /// Conveniently calls an InvokeEvent on an object with a delay.
   void InvokeEventWithDelay(unsigned int delayInMs,

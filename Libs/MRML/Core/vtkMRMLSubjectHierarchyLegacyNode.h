@@ -126,10 +126,10 @@ public:
 
 protected:
   /// Level identifier (default levels are Subject and Study)
-  char* Level;
+  char* Level{nullptr};
 
   /// Name of the owner plugin that claimed this node
-  char* OwnerPluginName;
+  char* OwnerPluginName{nullptr};
 
   /// List of UIDs of this subject hierarchy node
   /// UIDs can be DICOM UIDs, MIDAS urls, etc.
