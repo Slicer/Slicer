@@ -277,7 +277,6 @@ set(BRAINSTools_options
   USE_BRAINSROIAuto:BOOL=ON
   USE_BRAINSResample:BOOL=ON
   # BRAINSTools comes with some extra tool that should not be compiled by default
-  USE_BRAINSDemonWarp:BOOL=OFF
   USE_AutoWorkup:BOOL=OFF
   USE_ReferenceAtlas:BOOL=OFF
   USE_ANTS:BOOL=OFF
@@ -288,16 +287,13 @@ set(BRAINSTools_options
   USE_BRAINSMush:BOOL=OFF
   USE_BRAINSInitializedControlPoints:BOOL=OFF
   USE_BRAINSMultiModeSegment:BOOL=OFF
-  USE_BRAINSCut:BOOL=OFF
   USE_BRAINSLandmarkInitializer:BOOL=OFF
   USE_ImageCalculator:BOOL=OFF
-  USE_BRAINSSurfaceTools:BOOL=OFF
   USE_BRAINSSnapShotWriter:BOOL=OFF
   USE_ConvertBetweenFileFormats:BOOL=OFF
   USE_BRAINSMultiSTAPLE:BOOL=OFF
   USE_BRAINSCreateLabelMapFromProbabilityMaps:BOOL=OFF
   USE_BRAINSContinuousClass:BOOL=OFF
-  USE_ICCDEF:BOOL=OFF
   USE_BRAINSPosteriorToContinuousClass:BOOL=OFF
   USE_DebugImageViewer:BOOL=OFF
   BRAINS_DEBUG_IMAGE_WRITE:BOOL=OFF
@@ -308,7 +304,7 @@ set(BRAINSTools_options
 
 Slicer_Remote_Add(BRAINSTools
   GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/Slicer/BRAINSTools.git
-  GIT_TAG d87ea8f357622c27abc6a2162b4623abe782b995 # slicer-2020-01-08-d0e6c01
+  GIT_TAG da5d1e9dab95d786f503379bd1278f52c2fef39d # slicer-2020-04-24-v5.2.0
   LICENSE_FILES "http://www.apache.org/licenses/LICENSE-2.0.txt"
   OPTION_NAME Slicer_BUILD_BRAINSTOOLS
   OPTION_DEPENDS "Slicer_BUILD_CLI_SUPPORT;Slicer_BUILD_CLI"
