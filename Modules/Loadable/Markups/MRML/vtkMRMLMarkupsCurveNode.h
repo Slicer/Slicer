@@ -222,6 +222,7 @@ protected:
 
   virtual void UpdateSurfaceScalarVariables();
   virtual void OnSurfaceModelNodeChanged();
+  virtual void OnSurfaceModelTransformChanged();
 
   vtkMRMLMarkupsCurveNode();
   ~vtkMRMLMarkupsCurveNode() override;

@@ -1135,22 +1135,9 @@ void vtkMRMLMarkupsCurveNode::ProcessMRMLEvents(vtkObject* caller,
     {
     if (event == vtkMRMLTransformableNode::TransformModifiedEvent)
       {
-      vtkMRMLTransformableNode* meshNode = vtkMRMLTransformableNode::SafeDownCast(caller);
-      if (meshNode)
-        {
-        vtkMRMLTransformNode* parentTransformNode = meshNode->GetParentTransformNode();
-        if (parentTransformNode)
-          {
-          vtkNew<vtkGeneralTransform> surfaceToWorldTransform;
-          parentTransformNode->GetTransformToWorld(surfaceToWorldTransform);
-          this->SurfaceToWorldTransformer->SetTransform(surfaceToWorldTransform);
-          }
-        }
+      this->OnSurfaceModelTransformChanged();
       }
-    else
-      {
-      this->OnSurfaceModelNodeChanged();
-      }
+    this->OnSurfaceModelNodeChanged();
     }
   else if (caller == this->SurfaceScalarCalculator.GetPointer())
     {
@@ -1166,6 +1153,7 @@ void vtkMRMLMarkupsCurveNode::OnNodeReferenceAdded(vtkMRMLNodeReference* referen
 {
   if (strcmp(reference->GetReferenceRole(), this->GetShortestDistanceSurfaceNodeReferenceRole()) == 0)
     {
+    this->OnSurfaceModelTransformChanged();
     this->OnSurfaceModelNodeChanged();
     }
 
@@ -1177,6 +1165,7 @@ void vtkMRMLMarkupsCurveNode::OnNodeReferenceModified(vtkMRMLNodeReference* refe
 {
   if (strcmp(reference->GetReferenceRole(), this->GetShortestDistanceSurfaceNodeReferenceRole()) == 0)
     {
+    this->OnSurfaceModelTransformChanged();
     this->OnSurfaceModelNodeChanged();
     }
 
@@ -1272,6 +1261,34 @@ void vtkMRMLMarkupsCurveNode::OnSurfaceModelNodeChanged()
     {
     this->CleanFilter->RemoveInputConnection(0, modelNode->GetPolyDataConnection());
     this->CurveGenerator->RemoveInputConnection(1, this->PassThroughFilter->GetOutputPort());
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsCurveNode::OnSurfaceModelTransformChanged()
+{
+  vtkMRMLModelNode* modelNode = this->GetShortestDistanceSurfaceNode();
+  if (!modelNode)
+    {
+    return;
+    }
+
+  vtkSmartPointer<vtkGeneralTransform> surfaceToWorldTransform = vtkGeneralTransform::SafeDownCast(
+    this->SurfaceToWorldTransformer->GetTransform());
+  if (!surfaceToWorldTransform)
+    {
+    surfaceToWorldTransform = vtkSmartPointer<vtkGeneralTransform>::New();
+    this->SurfaceToWorldTransformer->SetTransform(surfaceToWorldTransform);
+    }
+
+  vtkMRMLTransformNode* parentTransformNode = modelNode->GetParentTransformNode();
+  if (parentTransformNode)
+    {
+    parentTransformNode->GetTransformToWorld(surfaceToWorldTransform);
+    }
+  else
+    {
+    surfaceToWorldTransform->Identity();
     }
 }
 
