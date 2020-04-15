@@ -1003,6 +1003,7 @@ void vtkMRMLSliceIntersectionWidget::ScaleZoom(double zoomScaleFactor, vtkMRMLIn
     vtkWarningMacro("vtkMRMLSliceViewInteractorStyle::ScaleZoom: invalid zoom scale factor (" << zoomScaleFactor);
     return;
     }
+  this->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::FieldOfViewFlag);
   vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
   int wasModifying = sliceNode->StartModify();
 
@@ -1033,6 +1034,7 @@ void vtkMRMLSliceIntersectionWidget::ScaleZoom(double zoomScaleFactor, vtkMRMLIn
 
   sliceNode->UpdateMatrices();
   sliceNode->EndModify(wasModifying);
+  this->SliceLogic->EndSliceNodeInteraction();
 }
 
 //----------------------------------------------------------------------------
