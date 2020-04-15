@@ -24,15 +24,9 @@ vtkMRMLNodeNewMacro(vtkMRMLVolumePropertyNode);
 //----------------------------------------------------------------------------
 vtkMRMLVolumePropertyNode::vtkMRMLVolumePropertyNode()
   : VolumeProperty(nullptr)
-#if __cplusplus >= 201103L
   , EffectiveRange{0.0,-1.0}
-#endif
   , DisabledModify(0)
 {
-#if __cplusplus < 201103L
-  this->EffectiveRange[0] = 0.0;
-  this->EffectiveRange[1] = -1.0;
-#endif
   this->ObservedEvents = vtkIntArray::New();
   this->ObservedEvents->InsertNextValue(vtkCommand::StartEvent);
   this->ObservedEvents->InsertNextValue(vtkCommand::ModifiedEvent);
