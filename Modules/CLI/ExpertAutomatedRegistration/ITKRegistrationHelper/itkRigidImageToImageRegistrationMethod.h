@@ -45,6 +45,10 @@ public:
 
   itkNewMacro( Self );
 
+  /** Explicitly deleted functions belong in the public interface */
+  RigidImageToImageRegistrationMethod( const Self & ) = delete;
+  void operator =( const Self & ) = delete;
+
   //
   // Typedefs from Superclass
   //
@@ -120,12 +124,6 @@ protected:
   ~RigidImageToImageRegistrationMethod() override;
 
   void PrintSelf( std::ostream & os, Indent indent ) const override;
-
-private:
-
-  RigidImageToImageRegistrationMethod( const Self & );    // Purposely not implemented
-  void operator =( const Self & );                        // Purposely not implemented
-
 };
 
 } // end namespace itk
