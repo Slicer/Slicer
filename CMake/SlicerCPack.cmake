@@ -356,6 +356,10 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
 
   set(_nsis_install_root "${Slicer_CPACK_NSIS_INSTALL_ROOT}")
 
+  # Use ManifestDPIAware to improve appearance of installer
+  string(APPEND CPACK_NSIS_DEFINES "\n  ;Use ManifestDPIAware to improve appearance of installer")
+  string(APPEND CPACK_NSIS_DEFINES "\n  ManifestDPIAware true\n")
+
   if (NOT Slicer_CPACK_NSIS_INSTALL_REQUIRES_ADMIN_ACCOUNT)
     # Install as regular user (UAC dialog will not be shown).
     string(APPEND CPACK_NSIS_DEFINES "\n  ;Install as regular user (UAC dialog will not be shown).")
