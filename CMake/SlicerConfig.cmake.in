@@ -427,8 +427,6 @@ set(SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES "@SlicerExecutionMode
 # Compilation Commands
 set(Slicer_CMAKE_CXX_COMPILER "@Slicer_CMAKE_CXX_COMPILER_CONFIG@")
 set(Slicer_CMAKE_C_COMPILER   "@Slicer_CMAKE_C_COMPILER_CONFIG@")
-set(Slicer_CMAKE_CXX_FLAGS    "@Slicer_CMAKE_CXX_FLAGS_CONFIG@")
-set(Slicer_CMAKE_C_FLAGS      "@Slicer_CMAKE_C_FLAGS_CONFIG@")
 
 # With the help of SuperBuild, Slicer has been configured with specific compiler
 #
@@ -466,9 +464,6 @@ slicer_config_set_compiler_ep( CMAKE_CXX_STANDARD_REQUIRED "@Slicer_CMAKE_CXX_ST
    CACHE PATH "Whether the specified C++ standard is a requirement in Slicer build" FORCE )
 slicer_config_set_compiler_ep( CMAKE_CXX_EXTENSIONS "@Slicer_CMAKE_CXX_EXTENSIONS_CONFIG@"
    CACHE PATH "Whether compiler specific extensions are requested in Slicer build" FORCE )
-
-set(CMAKE_CXX_FLAGS    "@Slicer_CMAKE_CXX_FLAGS_CONFIG@")
-set(CMAKE_C_FLAGS      "@Slicer_CMAKE_C_FLAGS_CONFIG@")
 
 # On platform (i.e. Windows with Visual Studio) where it is possible to use
 # either a 32 or 64 bits generator, it is important to compare bitness of Slicer
