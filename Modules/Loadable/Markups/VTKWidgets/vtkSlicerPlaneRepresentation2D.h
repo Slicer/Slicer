@@ -86,7 +86,7 @@ protected:
   ~vtkSlicerPlaneRepresentation2D() override;
 
   /// Re-implemented to adjust plane opacity
-  virtual void UpdateDistanceColorMap(vtkDiscretizableColorTransferFunction* colormap, double color[3]);
+  void UpdateDistanceColorMap(vtkDiscretizableColorTransferFunction* colormap, double color[3]) override;
 
   vtkNew<vtkPlaneSource> PlaneFilter;
   vtkNew<vtkPlaneCutter> PlaneCutter;
