@@ -121,6 +121,10 @@ public:
   typedef SmartPointer<Self>       Pointer;
   typedef SmartPointer<const Self> ConstPointer;
 
+  /** Explicitly deleted functions belong in the public interface */
+  DiffusionTensor3DNearestCorrectionFilter( const Self & ) = delete;
+  void operator=( const Self & ) = delete;
+
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DNearestCorrectionFilter, UnaryFunctorImageFilter);
 
@@ -141,10 +145,6 @@ public:
 protected:
   DiffusionTensor3DNearestCorrectionFilter() = default;
   ~DiffusionTensor3DNearestCorrectionFilter() override = default;
-private:
-  DiffusionTensor3DNearestCorrectionFilter( const Self & ); // purposely not implemented
-  void operator=( const Self & );                           // purposely not implemented
-
 };
 
 } // end namespace itk

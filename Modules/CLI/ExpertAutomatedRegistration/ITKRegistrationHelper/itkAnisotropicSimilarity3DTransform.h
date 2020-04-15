@@ -63,6 +63,10 @@ public:
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro( Self );
 
+  /** Explicitly deleted functions belong in the public interface */
+  AnisotropicSimilarity3DTransform(const Self &) = delete;
+  void operator=(const Self &) = delete;
+
   /** Run-time type information (and related methods). */
   itkTypeMacro( AnisotropicSimilarity3DTransform, VersorRigid3DTransform );
 
@@ -146,8 +150,6 @@ protected:
   void ComputeMatrixParameters() override;
 
 private:
-  AnisotropicSimilarity3DTransform(const Self &); // purposely not implemented
-  void operator=(const Self &);                   // purposely not implemented
 
   VectorType           m_Scale;
 

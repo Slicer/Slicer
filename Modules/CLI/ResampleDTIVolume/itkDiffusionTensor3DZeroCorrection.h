@@ -104,6 +104,10 @@ public:
   typedef SmartPointer<Self>       Pointer;
   typedef SmartPointer<const Self> ConstPointer;
 
+  /** Explicitly deleted functions belong in the public interface */
+  DiffusionTensor3DZeroCorrectionFilter( const Self & ) = delete;
+  void operator=( const Self & ) = delete;
+
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DZeroCorrectionFilter, UnaryFunctorImageFilter);
 
@@ -124,10 +128,6 @@ public:
 protected:
   DiffusionTensor3DZeroCorrectionFilter() = default;
   ~DiffusionTensor3DZeroCorrectionFilter() override = default;
-private:
-  DiffusionTensor3DZeroCorrectionFilter( const Self & ); // purposely not implemented
-  void operator=( const Self & );                        // purposely not implemented
-
 };
 
 } // end namespace itk
