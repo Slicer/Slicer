@@ -71,7 +71,7 @@ protected:
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
   bool ProcessPlaneMoveStart(vtkMRMLInteractionEventData* event);
   bool ProcessPlaneMoveEnd(vtkMRMLInteractionEventData* event);
-  bool ProcessMouseMove(vtkMRMLInteractionEventData* eventData);
+  bool ProcessMouseMove(vtkMRMLInteractionEventData* eventData) override;
   bool ProcessPlaneTranslate(vtkMRMLInteractionEventData* event);
 
 private:
