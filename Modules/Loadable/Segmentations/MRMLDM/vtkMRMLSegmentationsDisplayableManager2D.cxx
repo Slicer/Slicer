@@ -280,11 +280,11 @@ public:
     vtkMTimeType SliceIntersectionUpdatedTime;
     };
 
-  typedef std::map<vtkSmartPointer<vtkDataObject>, Pipeline*> PipelineMapType; // first: representation object; second: display pipeline
-  typedef std::map < vtkMRMLSegmentationDisplayNode*, PipelineMapType > PipelinesCacheType;
+  using PipelineMapType = std::map<vtkSmartPointer<vtkDataObject>, Pipeline *>; // first: representation object; second: display pipeline
+  using PipelinesCacheType = std::map<vtkMRMLSegmentationDisplayNode *, PipelineMapType>;
   PipelinesCacheType DisplayPipelines;
 
-  typedef std::map < vtkMRMLSegmentationNode*, std::set< vtkMRMLSegmentationDisplayNode* > > SegmentationToDisplayCacheType;
+  using SegmentationToDisplayCacheType = std::map<vtkMRMLSegmentationNode *, std::set<vtkMRMLSegmentationDisplayNode *> >;
   SegmentationToDisplayCacheType SegmentationToDisplayNodes;
 
   // Segmentations

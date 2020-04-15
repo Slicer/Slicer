@@ -37,7 +37,7 @@
 class qSlicerSettingsStylesPanelPrivate: public Ui_qSlicerSettingsStylesPanel
 {
   Q_DECLARE_PUBLIC(qSlicerSettingsStylesPanel);
-  typedef qSlicerSettingsStylesPanelPrivate Self;
+  using Self = qSlicerSettingsStylesPanelPrivate;
 protected:
   qSlicerSettingsStylesPanel* const q_ptr;
 

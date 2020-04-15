@@ -116,7 +116,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
   Q_PROPERTY(bool showRootNode READ showRootNode WRITE setShowRootNode)
 
 public:
-  typedef QTreeView Superclass;
+  using Superclass = QTreeView;
 
   qMRMLTreeView(QWidget *parent=nullptr);
   ~qMRMLTreeView() override;

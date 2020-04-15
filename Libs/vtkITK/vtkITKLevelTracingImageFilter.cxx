@@ -54,7 +54,7 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *vtkNotUsed(self), T*
 {
 
   // Wrap scalars into an ITK image
-  typedef itk::Image<T, 3> ImageType;
+  using ImageType = itk::Image<T, 3>;
   typename ImageType::Pointer image = ImageType::New();
   image->GetPixelContainer()->SetImportPointer(scalars, dims[0]*dims[1]*dims[2], false);
   image->SetOrigin( origin );
@@ -74,12 +74,12 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *vtkNotUsed(self), T*
   image->SetRegions(region);
 
   // Extract the 2D slice to process
-  typedef itk::Image<T,2> Image2DType;
-  typedef itk::ExtractImageFilter<ImageType, Image2DType> ExtractType;
+  using Image2DType = itk::Image<T, 2>;
+  using ExtractType = itk::ExtractImageFilter<ImageType, Image2DType>;
   typename ExtractType::Pointer extract = ExtractType::New();
   extract->SetDirectionCollapseToIdentity(); //If you don't care about resulting image dimension
 
-  typedef typename ExtractType::InputImageRegionType ExtractionRegionType;
+  using ExtractionRegionType = typename ExtractType::InputImageRegionType;
   ExtractionRegionType extractRegion;
   typename ExtractionRegionType::IndexType extractIndex;
   typename ExtractionRegionType::SizeType extractSize;
@@ -89,7 +89,7 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *vtkNotUsed(self), T*
   extract->SetInput( image );
 
   // Trace the level curve using itk::LevelTracingImageFilter
-  typedef itk::LevelTracingImageFilter<Image2DType, Image2DType> LevelTracingType;
+  using LevelTracingType = itk::LevelTracingImageFilter<Image2DType, Image2DType>;
   typename LevelTracingType::Pointer tracing = LevelTracingType::New();
 
   itk::Index<2> seed2D = {{0,0}};
@@ -128,9 +128,9 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *vtkNotUsed(self), T*
   // them on the right slice: IJ, IK, JK)
   // Also put the scalars in...
 
-  typedef itk::ChainCodePath<2> ChainCodePathType;
+  using ChainCodePathType = itk::ChainCodePath<2>;
   ChainCodePathType::Pointer chain;
-  typedef ChainCodePathType::OffsetType OffsetType;
+  using OffsetType = ChainCodePathType::OffsetType;
 
   chain = tracing->GetPathOutput();
 

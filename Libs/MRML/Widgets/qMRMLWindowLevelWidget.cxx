@@ -33,7 +33,7 @@ class qMRMLWindowLevelWidgetPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLWindowLevelWidget);
 protected:
-  typedef qMRMLVolumeWidgetPrivate Superclass;
+  using Superclass = qMRMLVolumeWidgetPrivate;
 
 public:
   qMRMLWindowLevelWidgetPrivate(qMRMLWindowLevelWidget& object);

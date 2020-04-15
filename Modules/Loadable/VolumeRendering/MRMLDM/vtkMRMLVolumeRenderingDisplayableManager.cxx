@@ -124,10 +124,10 @@ public:
   };
 
   //-------------------------------------------------------------------------
-  typedef std::map < vtkMRMLVolumeRenderingDisplayNode*, const Pipeline* > PipelinesCacheType;
+  using PipelinesCacheType = std::map<vtkMRMLVolumeRenderingDisplayNode *, const Pipeline *>;
   PipelinesCacheType DisplayPipelines;
 
-  typedef std::map < vtkMRMLVolumeNode*, std::set< vtkMRMLVolumeRenderingDisplayNode* > > VolumeToDisplayCacheType;
+  using VolumeToDisplayCacheType = std::map<vtkMRMLVolumeNode *, std::set<vtkMRMLVolumeRenderingDisplayNode *> >;
   VolumeToDisplayCacheType VolumeToDisplayNodes;
 
   vtkVolumeMapper* GetVolumeMapper(vtkMRMLVolumeRenderingDisplayNode* displayNode)const;

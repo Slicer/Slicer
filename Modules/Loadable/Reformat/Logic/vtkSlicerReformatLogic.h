@@ -44,7 +44,7 @@ vtkSlicerReformatLogic : public vtkSlicerModuleLogic
 {
 public:
   static vtkSlicerReformatLogic *New();
-  typedef vtkSlicerReformatLogic Self;
+  using Self = vtkSlicerReformatLogic;
   vtkTypeMacro(vtkSlicerReformatLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

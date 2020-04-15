@@ -100,7 +100,7 @@ private:
     int Interacting;
     };
 
-  typedef std::map<std::string, SliceNodeInfos> SliceNodeStatusMap;
+  using SliceNodeStatusMap = std::map<std::string, SliceNodeInfos>;
   SliceNodeStatusMap SliceNodeInteractionStatus;
 
 };

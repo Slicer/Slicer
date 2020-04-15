@@ -44,7 +44,7 @@ qSlicerTableColumnPropertiesWidget : public qSlicerWidget
   Q_PROPERTY(bool confirmTypeChange READ confirmTypeChange WRITE setConfirmTypeChange)
 
 public:
-  typedef qSlicerWidget Superclass;
+  using Superclass = qSlicerWidget;
   qSlicerTableColumnPropertiesWidget(QWidget *parent=nullptr);
   ~qSlicerTableColumnPropertiesWidget() override;
 

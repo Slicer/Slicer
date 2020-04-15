@@ -77,7 +77,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyModel
   Q_PROPERTY (int idColumn READ idColumn WRITE setIDColumn)
 
 public:
-  typedef QStandardItemModel Superclass;
+  using Superclass = QStandardItemModel;
   qMRMLSubjectHierarchyModel(QObject *parent=nullptr);
   ~qMRMLSubjectHierarchyModel() override;
 

@@ -27,16 +27,16 @@
 #include <cerrno>
 #include <sys/types.h>
 
-typedef enum
+using ipDataType = enum
   {
   IP_BYTE = 0,     /* AVS_TYPE_BYTE    = 0 */
   IP_INT,          /* AVS_TYPE_INTEGER = 1 */
   IP_FLOAT,        /* AVS_TYPE_REAL    = 2 */
   IP_DOUBLE,       /* AVS_TYPE_DOUBLE  = 3 */
   IP_SHORT         /* AVS_TYPE_SHORT   = 4 */
-  } ipDataType;
+  };
 
-typedef union
+using ipDataUnion = union
   {
   void *_void;
   unsigned char *_byte;
@@ -44,7 +44,7 @@ typedef union
   int *_int;
   float *_float;
   double *_double;
-  } ipDataUnion;
+  };
 
 // memory allocation & handling
 size_t ipGetDataSize(const ipDataType type);
@@ -57,7 +57,6 @@ template <class T>
 inline void ipSwap(T *a, T *b)
 {
   T temp = *a; *a = *b; *b = temp;
-
 }
 
 template <class T>

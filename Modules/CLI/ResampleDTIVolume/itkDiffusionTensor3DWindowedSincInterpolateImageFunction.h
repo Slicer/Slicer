@@ -36,15 +36,13 @@ class DiffusionTensor3DWindowedSincInterpolateImageFunction
   : public DiffusionTensor3DInterpolateImageFunctionReimplementation<TData, TCoordRep>
 {
 public:
-  typedef TData                                                                          DataType;
-  typedef DiffusionTensor3DWindowedSincInterpolateImageFunction                          Self;
-  typedef DiffusionTensor3DInterpolateImageFunctionReimplementation<DataType, TCoordRep> Superclass;
-  typedef typename Superclass::ImageType                                                 ImageType;
-  typedef SmartPointer<Self>                                                             Pointer;
-  typedef SmartPointer<const Self>                                                       ConstPointer;
-  typedef WindowedSincInterpolateImageFunction<ImageType,
-                                               VRadius, TWindowFunction,
-                                               TBoundaryCondition, TCoordRep> WindowedSincInterpolateImageFunctionType;
+  using DataType = TData;
+  using Self = DiffusionTensor3DWindowedSincInterpolateImageFunction<TData, VRadius, TWindowFunction, TBoundaryCondition, TCoordRep>;
+  using Superclass = DiffusionTensor3DInterpolateImageFunctionReimplementation<DataType, TCoordRep>;
+  using ImageType = typename Superclass::ImageType;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using WindowedSincInterpolateImageFunctionType = WindowedSincInterpolateImageFunction<ImageType, VRadius, TWindowFunction, TBoundaryCondition, TCoordRep>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DWindowedSincInterpolateImageFunction, DiffusionTensor3DInterpolateImageFunctionReimplementation);

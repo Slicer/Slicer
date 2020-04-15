@@ -38,7 +38,7 @@ class Q_SLICER_MODULES_CORE_EXPORT qSlicerEventBrokerModuleWidget :
 
 public:
 
-  typedef qSlicerAbstractModuleWidget Superclass;
+  using Superclass = qSlicerAbstractModuleWidget;
   qSlicerEventBrokerModuleWidget(QWidget *parent=nullptr);
   ~qSlicerEventBrokerModuleWidget() override;
 

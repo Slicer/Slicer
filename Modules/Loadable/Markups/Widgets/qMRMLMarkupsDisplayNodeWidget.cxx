@@ -47,7 +47,7 @@ class qMRMLMarkupsDisplayNodeWidgetPrivate: public QWidget, public Ui_qMRMLMarku
 
 protected:
   qMRMLMarkupsDisplayNodeWidget* const q_ptr;
-  typedef QWidget Superclass;
+  using Superclass = QWidget;
 
 public:
   qMRMLMarkupsDisplayNodeWidgetPrivate(qMRMLMarkupsDisplayNodeWidget& object);

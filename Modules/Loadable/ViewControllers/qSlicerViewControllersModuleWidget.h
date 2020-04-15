@@ -40,7 +40,7 @@ class Q_SLICER_QTMODULES_VIEWCONTROLLERS_EXPORT qSlicerViewControllersModuleWidg
 
 public:
 
-  typedef qSlicerAbstractModuleWidget Superclass;
+  using Superclass = qSlicerAbstractModuleWidget;
   qSlicerViewControllersModuleWidget(QWidget *parent=nullptr);
   ~qSlicerViewControllersModuleWidget() override;
 

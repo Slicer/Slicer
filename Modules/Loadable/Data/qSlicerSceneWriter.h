@@ -32,7 +32,7 @@ class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneWriter
 {
   Q_OBJECT
 public:
-  typedef qSlicerFileWriter Superclass;
+  using Superclass = qSlicerFileWriter;
   qSlicerSceneWriter(QObject* parent = nullptr);
   ~qSlicerSceneWriter() override;
 

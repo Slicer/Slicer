@@ -50,7 +50,7 @@ public:
   Q_PROPERTY(bool resampleLabelmaps READ resampleLabelmaps WRITE setResampleLabelmaps)
 
 public:
-  typedef QObject Superclass;
+  using Superclass = QObject;
   qMRMLSegmentationGeometryDialog(vtkMRMLSegmentationNode* segmentationNode, QObject* parent=nullptr);
   ~qMRMLSegmentationGeometryDialog() override;
 

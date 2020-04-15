@@ -36,20 +36,20 @@ class DiffusionTensor3DPPDAffineTransform :
   public DiffusionTensor3DAffineTransform<TData>
 {
 public:
-  typedef TData                                                     DataType;
-  typedef DiffusionTensor3DPPDAffineTransform                       Self;
-  typedef DiffusionTensor3DAffineTransform<DataType>                Superclass;
-  typedef typename Superclass::TensorDataType                       TensorDataType;
-  typedef typename Superclass::MatrixDataType                       MatrixDataType;
-  typedef typename Superclass::MatrixTransformType                  MatrixTransformType;
-  typedef typename Superclass::InternalTensorDataType               InternalTensorDataType;
-  typedef typename Superclass::InternalMatrixDataType               InternalMatrixDataType;
-  typedef typename Superclass::InternalMatrixTransformType          InternalMatrixTransformType;
-  typedef SmartPointer<Self>                                        Pointer;
-  typedef SmartPointer<const Self>                                  ConstPointer;
-  typedef typename Superclass::VectorType                           VectorType;
-  typedef DiffusionTensor3DExtended<double>::EigenValuesArrayType   EValuesType;
-  typedef DiffusionTensor3DExtended<double>::EigenVectorsMatrixType EVectorsType;
+  using DataType = TData;
+  using Self = DiffusionTensor3DPPDAffineTransform<TData>;
+  using Superclass = DiffusionTensor3DAffineTransform<DataType>;
+  using TensorDataType = typename Superclass::TensorDataType;
+  using MatrixDataType = typename Superclass::MatrixDataType;
+  using MatrixTransformType = typename Superclass::MatrixTransformType;
+  using InternalTensorDataType = typename Superclass::InternalTensorDataType;
+  using InternalMatrixDataType = typename Superclass::InternalMatrixDataType;
+  using InternalMatrixTransformType = typename Superclass::InternalMatrixTransformType;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using VectorType = typename Superclass::VectorType;
+  using EValuesType = DiffusionTensor3DExtended<double>::EigenValuesArrayType;
+  using EVectorsType = DiffusionTensor3DExtended<double>::EigenVectorsMatrixType;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DPPDAffineTransform, DiffusionTensor3DAffineTransform);

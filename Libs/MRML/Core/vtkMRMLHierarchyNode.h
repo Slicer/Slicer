@@ -194,7 +194,7 @@ protected:
   void SetAssociatedNodeIDReference(const char*);
   vtkGetStringMacro(AssociatedNodeIDReference);
 
-  typedef std::map<std::string, std::vector< vtkMRMLHierarchyNode *> > HierarchyChildrenNodesType;
+  using HierarchyChildrenNodesType = std::map<std::string, std::vector<vtkMRMLHierarchyNode *> >;
 
   static std::map< vtkMRMLScene*, HierarchyChildrenNodesType> SceneHierarchyChildrenNodes;
   static std::map< vtkMRMLScene*, vtkMTimeType> SceneHierarchyChildrenNodesMTime;
@@ -205,7 +205,7 @@ protected:
   /// return number of Associated hierarchy nodes
   static int UpdateAssociatedToHierarchyMap(vtkMRMLScene *scene);
 
-  typedef std::map<std::string, vtkMRMLHierarchyNode *> AssociatedHierarchyNodesType;
+  using AssociatedHierarchyNodesType = std::map<std::string, vtkMRMLHierarchyNode *>;
 
   static std::map< vtkMRMLScene*, AssociatedHierarchyNodesType> SceneAssociatedHierarchyNodes;
 

@@ -87,8 +87,8 @@ int main( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  typedef itk::Image<itk::RGBPixel<unsigned char>,3 > ImageType;
-  typedef itk::ImageFileWriter<ImageType> WriterType;
+  using ImageType = itk::Image<itk::RGBPixel<unsigned char>, 3>;
+  using WriterType = itk::ImageFileWriter<ImageType>;
 
   vtkSmartPointer<vtkStringArray> fileNameList = vtkSmartPointer<vtkStringArray>::New();
   // create two RGB images and save as PNG

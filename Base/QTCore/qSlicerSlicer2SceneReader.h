@@ -34,7 +34,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerSlicer2SceneReader
 {
   Q_OBJECT
 public:
-  typedef qSlicerFileReader Superclass;
+  using Superclass = qSlicerFileReader;
   qSlicerSlicer2SceneReader(QObject* parent = nullptr);
   qSlicerSlicer2SceneReader(vtkSlicerApplicationLogic* logic, QObject* parent = nullptr);
   ~qSlicerSlicer2SceneReader() override;

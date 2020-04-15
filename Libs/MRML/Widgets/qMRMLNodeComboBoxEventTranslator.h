@@ -38,7 +38,7 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeComboBoxEventTranslator :
   Q_OBJECT
 
 public:
-  typedef pqWidgetEventTranslator Superclass;
+  using Superclass = pqWidgetEventTranslator;
   qMRMLNodeComboBoxEventTranslator(QObject* parent = nullptr);
 
   using Superclass::translateEvent;

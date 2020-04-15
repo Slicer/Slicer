@@ -39,7 +39,7 @@ class Q_SLICER_QTMODULES_TERMINOLOGIES_EXPORT qSlicerTerminologiesModuleWidget :
 
 public:
 
-  typedef qSlicerAbstractModuleWidget Superclass;
+  using Superclass = qSlicerAbstractModuleWidget;
   qSlicerTerminologiesModuleWidget(QWidget *parent=nullptr);
   ~qSlicerTerminologiesModuleWidget() override;
 

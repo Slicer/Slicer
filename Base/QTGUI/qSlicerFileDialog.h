@@ -47,7 +47,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerFileDialog : public QObject
   Q_PROPERTY(QString description READ description)
 
 public:
-  typedef QObject Superclass;
+  using Superclass = QObject;
   qSlicerFileDialog(QObject* parent =nullptr);
   ~qSlicerFileDialog() override;
 

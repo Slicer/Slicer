@@ -32,7 +32,7 @@ int main(int argc, char * * argv)
     return EXIT_FAILURE;
     }
 
-  typedef itk::Image<float, 3> ImageType;
+  using ImageType = itk::Image<float, 3>;
 
   ImageType::Pointer  img = ImageType::New();
   ImageType::SizeType size;
@@ -108,19 +108,19 @@ int main(int argc, char * * argv)
         {
         case 't':
           {
-          typedef itk::BSplineDeformableTransform<double, 3, 3> BSplineTransformType;
+          using BSplineTransformType = itk::BSplineDeformableTransform<double, 3, 3>;
 
-          typedef itk::TransformFileReader TransformReaderType;
+          using TransformReaderType = itk::TransformFileReader;
           TransformReaderType::Pointer transformReader = TransformReaderType::New();
           transformReader->SetFileName( argv[++argNum] );
           itk::TransformFactory<BSplineTransformType>::RegisterTransform();
           transformReader->Update();
 
-          typedef TransformReaderType::TransformListType TransformListType;
+          using TransformListType = TransformReaderType::TransformListType;
           TransformListType *         transformList = transformReader->GetTransformList();
           TransformListType::iterator transformListIt = transformList->begin();
 
-          typedef itk::ResampleImageFilter<ImageType, ImageType> ResamplerType;
+          using ResamplerType = itk::ResampleImageFilter<ImageType, ImageType>;
           while( transformListIt != transformList->end() )
             {
             ResamplerType::Pointer resampler = ResamplerType::New();
@@ -129,7 +129,7 @@ int main(int argc, char * * argv)
             if( (*transformListIt)->GetTransformTypeAsString() == "AffineTransform_double_3_3" )
               {
               std::cout << "Apply an affine transform..." << std::endl;
-              typedef itk::AffineTransform<double, 3> TransformType;
+              using TransformType = itk::AffineTransform<double, 3>;
               TransformType::Pointer transform;
               transform = static_cast<itk::AffineTransform<double, 3> *>( transformListIt->GetPointer() );
               resampler->SetTransform( transform );
@@ -179,7 +179,7 @@ int main(int argc, char * * argv)
           }
         case 'o':
           {
-          typedef itk::Euler3DTransform<double> TransformType;
+          using TransformType = itk::Euler3DTransform<double>;
           TransformType::Pointer tfm = TransformType::New();
           double                 rotX = atof( argv[++argNum] );
           double                 rotY = atof( argv[++argNum] );
@@ -192,7 +192,7 @@ int main(int argc, char * * argv)
       }
     }
 
-  typedef itk::ImageFileWriter<ImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<ImageType>;
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput( img );
   writer->SetFileName( argv[2] );

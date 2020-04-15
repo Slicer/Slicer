@@ -32,7 +32,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerFileWriterOptionsWidget
   Q_OBJECT
 
 public:
-  typedef qSlicerIOOptionsWidget Superclass;
+  using Superclass = qSlicerIOOptionsWidget;
   explicit qSlicerFileWriterOptionsWidget(QWidget* parent = nullptr);
   ~qSlicerFileWriterOptionsWidget() override;
 

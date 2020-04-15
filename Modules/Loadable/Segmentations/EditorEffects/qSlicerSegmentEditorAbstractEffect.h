@@ -87,7 +87,7 @@ public:
   Q_PROPERTY(bool showEffectCursorInThreeDView READ showEffectCursorInThreeDView WRITE setShowEffectCursorInThreeDView)
 
 public:
-  typedef QObject Superclass;
+  using Superclass = QObject;
   qSlicerSegmentEditorAbstractEffect(QObject* parent = nullptr);
   ~qSlicerSegmentEditorAbstractEffect() override;
 

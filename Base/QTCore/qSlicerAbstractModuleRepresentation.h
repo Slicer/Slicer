@@ -43,7 +43,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractModuleRepresentation : virtual 
 {
 public:
 
-  typedef qSlicerObject Superclass;
+  using Superclass = qSlicerObject;
   qSlicerAbstractModuleRepresentation();
   ~qSlicerAbstractModuleRepresentation() override;
 

@@ -128,13 +128,13 @@ public:
     bool UpdateWidgetBounds;
     };
 
-  typedef std::map < vtkMRMLTransformDisplayNode*, Pipeline* > PipelinesCacheType;
+  using PipelinesCacheType = std::map<vtkMRMLTransformDisplayNode *, Pipeline *>;
   PipelinesCacheType DisplayPipelines;
 
-  typedef std::map < vtkMRMLTransformNode*, std::set< vtkMRMLTransformDisplayNode* > > TransformToDisplayCacheType;
+  using TransformToDisplayCacheType = std::map<vtkMRMLTransformNode *, std::set<vtkMRMLTransformDisplayNode *> >;
   TransformToDisplayCacheType TransformToDisplayNodes;
 
-  typedef std::map < vtkBoxWidget2*, vtkMRMLTransformDisplayNode* > WidgetToNodeMapType;
+  using WidgetToNodeMapType = std::map<vtkBoxWidget2 *, vtkMRMLTransformDisplayNode *>;
   WidgetToNodeMapType WidgetMap;
 
   // Transforms

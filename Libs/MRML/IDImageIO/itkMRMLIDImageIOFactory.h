@@ -34,10 +34,10 @@ class MRMLIDImageIO_EXPORT MRMLIDImageIOFactory : public ObjectFactoryBase
 {
 public:
   /** Standard class typedefs. */
-  typedef MRMLIDImageIOFactory      Self;
-  typedef ObjectFactoryBase         Superclass;
-  typedef SmartPointer<Self>        Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
+  using Self = MRMLIDImageIOFactory;
+  using Superclass = ObjectFactoryBase;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Class methods used to interface with the registered factories. */
   const char* GetITKSourceVersion() const override;

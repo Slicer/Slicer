@@ -43,13 +43,13 @@ class DiffusionTensor3DFSAffineTransform :
   public DiffusionTensor3DAffineTransform<TData>
 {
 public:
-  typedef TData                                            DataType;
-  typedef DiffusionTensor3DFSAffineTransform               Self;
-  typedef DiffusionTensor3DAffineTransform<DataType>       Superclass;
-  typedef typename Superclass::MatrixTransformType         MatrixTransformType;
-  typedef typename Superclass::InternalMatrixTransformType InternalMatrixTransformType;
-  typedef SmartPointer<Self>                               Pointer;
-  typedef SmartPointer<const Self>                         ConstPointer;
+  using DataType = TData;
+  using Self = DiffusionTensor3DFSAffineTransform<TData>;
+  using Superclass = DiffusionTensor3DAffineTransform<DataType>;
+  using MatrixTransformType = typename Superclass::MatrixTransformType;
+  using InternalMatrixTransformType = typename Superclass::InternalMatrixTransformType;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   itkNewMacro(Self);
 

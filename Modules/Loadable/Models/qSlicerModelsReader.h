@@ -35,7 +35,7 @@ class qSlicerModelsReader
 {
   Q_OBJECT
 public:
-  typedef qSlicerFileReader Superclass;
+  using Superclass = qSlicerFileReader;
   qSlicerModelsReader(vtkSlicerModelsLogic* modelsLogic = nullptr, QObject* parent = nullptr);
   ~qSlicerModelsReader() override;
 

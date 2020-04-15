@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerModelsModule :
 
 public:
 
-  typedef qSlicerLoadableModule Superclass;
+  using Superclass = qSlicerLoadableModule;
   explicit qSlicerModelsModule(QObject *parent=nullptr);
   ~qSlicerModelsModule() override;
 

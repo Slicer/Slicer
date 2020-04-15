@@ -286,7 +286,7 @@ namespace itk {
 #endif /// NDEBUG
 
     private:
-      typedef typename list<KeyType>::iterator ListIteratorType;
+      using ListIteratorType = typename list<KeyType>::iterator;
 
       struct cached_value
       {
@@ -299,7 +299,7 @@ namespace itk {
         ListIteratorType cache_i;
       };
 
-      typedef typename map<KeyType, cached_value>::iterator TableIteratorType;
+      using TableIteratorType = typename map<KeyType, cached_value>::iterator;
 
       /// Maximal cache size.
       ///

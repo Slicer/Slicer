@@ -38,7 +38,7 @@ class Q_SLICER_QTMODULES_WELCOME_EXPORT qSlicerWelcomeModuleWidget :
 
 public:
 
-  typedef qSlicerAbstractModuleWidget Superclass;
+  using Superclass = qSlicerAbstractModuleWidget;
   qSlicerWelcomeModuleWidget(QWidget *parent=nullptr);
   ~qSlicerWelcomeModuleWidget() override;
 

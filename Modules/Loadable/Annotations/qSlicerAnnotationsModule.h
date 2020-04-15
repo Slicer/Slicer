@@ -21,7 +21,7 @@ class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT qSlicerAnnotationsModule :
   Q_INTERFACES(qSlicerLoadableModule);
 public:
 
-  typedef qSlicerLoadableModule Superclass;
+  using Superclass = qSlicerLoadableModule;
   qSlicerAnnotationsModule(QObject *parent=nullptr);
   ~qSlicerAnnotationsModule() override;
 

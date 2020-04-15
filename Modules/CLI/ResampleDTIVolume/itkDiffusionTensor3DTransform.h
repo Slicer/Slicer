@@ -31,18 +31,18 @@ template <class TData>
 class DiffusionTensor3DTransform : public Object
 {
 public:
-  typedef TData                               DataType;
-  typedef double                              TransformType;
-  typedef DiffusionTensor3DTransform          Self;
-  typedef Point<TransformType, 3>             PointType;
-  typedef DiffusionTensor3D<DataType>         TensorDataType;
-  typedef DiffusionTensor3DExtended<DataType> InternalTensorDataType;
-  typedef Matrix<TransformType, 3, 3>         MatrixTransformType;
-  typedef Matrix<DataType, 3, 3>              MatrixDataType;
-  typedef MatrixExtended<TransformType, 3, 3> InternalMatrixTransformType;
-  typedef MatrixExtended<DataType, 3, 3>      InternalMatrixDataType;
-  typedef SmartPointer<Self>                  Pointer;
-  typedef SmartPointer<const Self>            ConstPointer;
+  using DataType = TData;
+  using TransformType = double;
+  using Self = DiffusionTensor3DTransform<TData>;
+  using PointType = Point<TransformType, 3>;
+  using TensorDataType = DiffusionTensor3D<DataType>;
+  using InternalTensorDataType = DiffusionTensor3DExtended<DataType>;
+  using MatrixTransformType = Matrix<TransformType, 3, 3>;
+  using MatrixDataType = Matrix<DataType, 3, 3>;
+  using InternalMatrixTransformType = MatrixExtended<TransformType, 3, 3>;
+  using InternalMatrixDataType = MatrixExtended<DataType, 3, 3>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DTransform, Object);

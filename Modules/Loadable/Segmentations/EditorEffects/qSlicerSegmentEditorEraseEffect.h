@@ -36,7 +36,7 @@ public:
   Q_OBJECT
 
 public:
-  typedef qSlicerSegmentEditorPaintEffect Superclass;
+  using Superclass = qSlicerSegmentEditorPaintEffect;
   qSlicerSegmentEditorEraseEffect(QObject* parent = nullptr);
   ~qSlicerSegmentEditorEraseEffect() override;
 

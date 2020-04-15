@@ -29,16 +29,16 @@ class DiffusionTensor3DNearestNeighborInterpolateFunction :
   public DiffusionTensor3DInterpolateImageFunction<TData, TCoordRep>
 {
 public:
-  typedef TData                                               DataType;
-  typedef DiffusionTensor3DNearestNeighborInterpolateFunction Self;
-  typedef DiffusionTensor3DInterpolateImageFunction<DataType> Superclass;
-  typedef typename Superclass::TensorDataType                 TensorDataType;
-  typedef typename Superclass::DiffusionImageType             DiffusionImageType;
-  typedef typename Superclass::PointType                      PointType;
-  typedef SmartPointer<Self>                                  Pointer;
-  typedef SmartPointer<const Self>                            ConstPointer;
-  typedef ImageFunction<DiffusionImageType, DataType, double> ImageFunctionType;
-  typedef typename Superclass::ContinuousIndexType            ContinuousIndexType;
+  using DataType = TData;
+  using Self = DiffusionTensor3DNearestNeighborInterpolateFunction<TData, TCoordRep>;
+  using Superclass = DiffusionTensor3DInterpolateImageFunction<DataType>;
+  using TensorDataType = typename Superclass::TensorDataType;
+  using DiffusionImageType = typename Superclass::DiffusionImageType;
+  using PointType = typename Superclass::PointType;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using ImageFunctionType = ImageFunction<DiffusionImageType, DataType, double>;
+  using ContinuousIndexType = typename Superclass::ContinuousIndexType;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DNearestNeighborInterpolateFunction, DiffusionTensor3DInterpolateImageFunction);

@@ -66,9 +66,9 @@ void vtkITKExecuteDataFromSeriesVector(
   vtkITKArchetypeImageSeriesVectorReaderSeries* self,
   vtkImageData* data)
 {
-  typedef T VectorPixelType;
-  typedef itk::VectorImage<VectorPixelType,3> image;
-  typedef itk::ImageSource<image> FilterType;
+  using VectorPixelType = T;
+  using image = itk::VectorImage<VectorPixelType, 3>;
+  using FilterType = itk::ImageSource<image>;
   typename FilterType::Pointer filter;
   typename itk::ImageSeriesReader<image>::Pointer reader =
     itk::ImageSeriesReader<image>::New();
@@ -79,7 +79,7 @@ void vtkITKExecuteDataFromSeriesVector(
   reader->ReleaseDataFlagOn();
   reader->GetOutput()->SetVectorLength(3);
 #ifdef VTKITK_BUILD_DICOM_SUPPORT
-  typedef itk::ImageIOBase ImageIOType;
+  using ImageIOType = itk::ImageIOBase;
   ImageIOType::Pointer imageIO;
   if (self->GetDICOMImageIOApproach() == vtkITKArchetypeImageSeriesReader::GDCM)
     {

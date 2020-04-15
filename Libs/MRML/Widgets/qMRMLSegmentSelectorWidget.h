@@ -55,7 +55,7 @@ public:
 
 public:
   /// Superclass typedef
-  typedef qMRMLWidget Superclass;
+  using Superclass = qMRMLWidget;
 
   /// Constructor
   explicit qMRMLSegmentSelectorWidget(QWidget* parent = nullptr);

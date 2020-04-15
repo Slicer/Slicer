@@ -47,7 +47,7 @@ qSlicerSimpleMarkupsWidget : public qSlicerWidget
   Q_PROPERTY(int viewGroup READ viewGroup WRITE setViewGroup)
 
 public:
-  typedef qSlicerWidget Superclass;
+  using Superclass = qSlicerWidget;
   qSlicerSimpleMarkupsWidget(QWidget *parent=nullptr);
   ~qSlicerSimpleMarkupsWidget() override;
 

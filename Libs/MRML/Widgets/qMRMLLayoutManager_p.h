@@ -161,7 +161,7 @@ class QMRML_WIDGETS_EXPORT qMRMLLayoutThreeDViewFactory
 {
   Q_OBJECT
 public:
-  typedef qMRMLLayoutViewFactory Superclass;
+  using Superclass = qMRMLLayoutViewFactory;
   qMRMLLayoutThreeDViewFactory(QObject* parent = nullptr);
   ~qMRMLLayoutThreeDViewFactory() override;
 
@@ -184,7 +184,7 @@ class QMRML_WIDGETS_EXPORT qMRMLLayoutChartViewFactory
 {
   Q_OBJECT
 public:
-  typedef qMRMLLayoutViewFactory Superclass;
+  using Superclass = qMRMLLayoutViewFactory;
   qMRMLLayoutChartViewFactory(QObject* parent = nullptr);
 
   QString viewClassName()const override;
@@ -204,7 +204,7 @@ class QMRML_WIDGETS_EXPORT qMRMLLayoutTableViewFactory
 {
   Q_OBJECT
 public:
-  typedef qMRMLLayoutViewFactory Superclass;
+  using Superclass = qMRMLLayoutViewFactory;
   qMRMLLayoutTableViewFactory(QObject* parent = nullptr);
 
   QString viewClassName()const override;
@@ -219,7 +219,7 @@ class QMRML_WIDGETS_EXPORT qMRMLLayoutPlotViewFactory
 {
   Q_OBJECT
 public:
-  typedef qMRMLLayoutViewFactory Superclass;
+  using Superclass = qMRMLLayoutViewFactory;
   qMRMLLayoutPlotViewFactory(QObject* parent = nullptr);
 
   QString viewClassName()const override;
@@ -235,7 +235,7 @@ class QMRML_WIDGETS_EXPORT qMRMLLayoutSliceViewFactory
 {
   Q_OBJECT
 public:
-  typedef qMRMLLayoutViewFactory Superclass;
+  using Superclass = qMRMLLayoutViewFactory;
   qMRMLLayoutSliceViewFactory(QObject* parent = nullptr);
   ~qMRMLLayoutSliceViewFactory() override;
 

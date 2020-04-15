@@ -48,7 +48,7 @@ class Q_SLICER_QTMODULES_MODELS_WIDGETS_EXPORT qMRMLModelDisplayNodeWidget : pub
   Q_ENUMS(ControlMode)
 
 public:
-  typedef qMRMLWidget Superclass;
+  using Superclass = qMRMLWidget;
   qMRMLModelDisplayNodeWidget(QWidget* parent = nullptr);
   ~qMRMLModelDisplayNodeWidget() override;
 

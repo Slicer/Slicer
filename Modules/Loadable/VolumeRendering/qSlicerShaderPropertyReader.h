@@ -35,7 +35,7 @@ class qSlicerShaderPropertyReader
 {
   Q_OBJECT
 public:
-  typedef qSlicerFileReader Superclass;
+  using Superclass = qSlicerFileReader;
   qSlicerShaderPropertyReader(QObject* parent = nullptr);
   qSlicerShaderPropertyReader(vtkSlicerVolumeRenderingLogic* logic, QObject* parent = nullptr);
   ~qSlicerShaderPropertyReader() override;

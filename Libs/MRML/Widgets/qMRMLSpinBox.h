@@ -74,7 +74,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSpinBox : public ctkDoubleSpinBox
   Q_PROPERTY(UnitAwareProperties unitAwareProperties READ unitAwareProperties WRITE setUnitAwareProperties)
 
 public:
-  typedef ctkDoubleSpinBox Superclass;
+  using Superclass = ctkDoubleSpinBox;
 
   /// Construct an empty qMRMLSpinBox with a null scene.
   explicit qMRMLSpinBox(QWidget* parent = nullptr);

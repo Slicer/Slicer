@@ -23,29 +23,26 @@ class TransformDeformationFieldFilter
    Image<itk::Vector<TOutput, NDimensions>, NDimensions> >
 {
 public:
-  typedef TInput  InputDataType;
-  typedef TOutput OutputDataType;
+  using InputDataType = TInput;
+  using OutputDataType = TOutput;
 
-  typedef ImageToImageFilter
-  <Image<itk::Vector<InputDataType, NDimensions>, NDimensions>,
-   Image<itk::Vector<OutputDataType, NDimensions>, NDimensions> >
-  Superclass;
+  using Superclass = ImageToImageFilter<Image<itk::Vector<InputDataType, NDimensions>, NDimensions>, Image<itk::Vector<OutputDataType, NDimensions>, NDimensions> >;
 
-  typedef itk::Vector<InputDataType, NDimensions>        InputDeformationPixelType;
-  typedef Image<InputDeformationPixelType, NDimensions>  InputDeformationFieldType;
-  typedef itk::Vector<OutputDataType, NDimensions>       OutputDeformationPixelType;
-  typedef Image<OutputDeformationPixelType, NDimensions> OutputDeformationFieldType;
-  typedef TransformDeformationFieldFilter                Self;
-  typedef SmartPointer<Self>                             Pointer;
-  typedef SmartPointer<const Self>                       ConstPointer;
+  using InputDeformationPixelType = itk::Vector<InputDataType, NDimensions>;
+  using InputDeformationFieldType = Image<InputDeformationPixelType, NDimensions>;
+  using OutputDeformationPixelType = itk::Vector<OutputDataType, NDimensions>;
+  using OutputDeformationFieldType = Image<OutputDeformationPixelType, NDimensions>;
+  using Self = TransformDeformationFieldFilter<TInput, TOutput, NDimensions>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
-  typedef typename InputDeformationFieldType::Pointer                  InputDeformationFieldPointerType;
-  typedef typename OutputDeformationFieldType::Pointer                 OutputDeformationFieldPointerType;
-  typedef ImageRegionConstIteratorWithIndex<InputDeformationFieldType> InputIteratorType;
-  typedef ImageRegionIteratorWithIndex<OutputDeformationFieldType>     OutputIteratorType;
-  typedef typename OutputDeformationFieldType::RegionType              OutputDeformationFieldRegionType;
-  typedef Transform<OutputDataType, NDimensions, NDimensions>          TransformType;
-  typedef typename OutputDeformationFieldType::RegionType              OutputImageRegionType;
+  using InputDeformationFieldPointerType = typename InputDeformationFieldType::Pointer;
+  using OutputDeformationFieldPointerType = typename OutputDeformationFieldType::Pointer;
+  using InputIteratorType = ImageRegionConstIteratorWithIndex<InputDeformationFieldType>;
+  using OutputIteratorType = ImageRegionIteratorWithIndex<OutputDeformationFieldType>;
+  using OutputDeformationFieldRegionType = typename OutputDeformationFieldType::RegionType;
+  using TransformType = Transform<OutputDataType, NDimensions, NDimensions>;
+  using OutputImageRegionType = typename OutputDeformationFieldType::RegionType;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(TransformDeformationFieldFilter, ImageToImageFilter);

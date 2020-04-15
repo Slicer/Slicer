@@ -114,12 +114,10 @@ class DiffusionTensor3DNearestCorrectionFilter :
 {
 public:
   /** Standard class typedefs. */
-  typedef DiffusionTensor3DNearestCorrectionFilter Self;
-  typedef UnaryFunctorImageFilter<TInputImage, TOutputImage,
-                                  Functor::DiffusionTensor3DNearest<typename TInputImage::PixelType,
-                                                                    typename TOutputImage::PixelType> >  Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  using Self = DiffusionTensor3DNearestCorrectionFilter<TInputImage, TOutputImage>;
+  using Superclass = UnaryFunctorImageFilter<TInputImage, TOutputImage, Functor::DiffusionTensor3DNearest<typename TInputImage::PixelType, typename TOutputImage::PixelType> >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Explicitly deleted functions belong in the public interface */
   DiffusionTensor3DNearestCorrectionFilter( const Self & ) = delete;

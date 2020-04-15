@@ -56,7 +56,7 @@ public:
   /// value of the parameter (the default value if it is defined in the converter rule) and the
   /// description of the parameter that appears as tooltip in the conversion parameters widget
   /// ( name => (value, description) )
-  typedef std::map<std::string, std::pair<std::string, std::string> > ConversionParameterListType;
+  using ConversionParameterListType = std::map<std::string, std::pair<std::string, std::string> >;
 
   /// Constant to use for converter rules with "infinite" computational cost (i.e. disabled)
   /// It's about UINT_MAX / 400 (allows us to have a few hundred disabled rules)

@@ -35,7 +35,7 @@ class Q_SLICER_QTMODULES_CAMERAS_EXPORT qSlicerCamerasModuleWidget
   Q_OBJECT
 public:
 
-  typedef qSlicerAbstractModuleWidget Superclass;
+  using Superclass = qSlicerAbstractModuleWidget;
   qSlicerCamerasModuleWidget(QWidget *parent=nullptr);
   ~qSlicerCamerasModuleWidget() override;
 

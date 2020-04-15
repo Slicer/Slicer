@@ -58,14 +58,13 @@ public:
   std::vector<vtkMRMLAbstractDisplayableManager *> DisplayableManagers;
 
   // .. and its associated convenient typedef
-  typedef std::vector<vtkMRMLAbstractDisplayableManager *>::iterator DisplayableManagersIt;
+  using DisplayableManagersIt = std::vector<vtkMRMLAbstractDisplayableManager *>::iterator;
 
   // Map DisplayableManagerName -> DisplayableManagers*
   std::map<std::string, vtkMRMLAbstractDisplayableManager*> NameToDisplayableManagerMap;
 
   // .. and its associated convenient typedef
-  typedef std::map<std::string, vtkMRMLAbstractDisplayableManager*>::iterator
-      NameToDisplayableManagerMapIt;
+  using NameToDisplayableManagerMapIt = std::map<std::string, vtkMRMLAbstractDisplayableManager *>::iterator;
 
   vtkSmartPointer<vtkCallbackCommand>   CallBackCommand;
   vtkMRMLDisplayableManagerFactory*     DisplayableManagerFactory;

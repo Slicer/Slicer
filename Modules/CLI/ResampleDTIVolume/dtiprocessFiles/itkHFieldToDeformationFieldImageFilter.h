@@ -50,19 +50,19 @@ class HFieldToDeformationFieldImageFilter :
 {
 public:
   /** Standard class typedefs. */
-  typedef HFieldToDeformationFieldImageFilter           Self;
-  typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
+  using Self = HFieldToDeformationFieldImageFilter<TInputImage, TOutputImage>;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
 
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
-  typedef typename Superclass::OutputImageType OutputImageType;
-  typedef typename TOutputImage::PixelType     OutputPixelType;
-  typedef typename Superclass::InputImageType  InputImageType;
-  typedef typename TInputImage::PixelType      InputPixelType;
-  typedef typename InputPixelType::ValueType   InputValueType;
+  using OutputImageType = typename Superclass::OutputImageType;
+  using OutputPixelType = typename TOutputImage::PixelType;
+  using InputImageType = typename Superclass::InputImageType;
+  using InputPixelType = typename TInputImage::PixelType;
+  using InputValueType = typename InputPixelType::ValueType;
 
-  typedef typename TInputImage::SpacingType SpacingType;
+  using SpacingType = typename TInputImage::SpacingType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

@@ -142,7 +142,7 @@ int main(int argc, char* argv[])
 
   // only calculate if the above conditions hold
 
-  typedef  std::vector<itk::Point<double, 3> > PointList;
+  using PointList = std::vector<itk::Point<double, 3> >;
 
   PointList fixedPoints(fixedLandmarks.size() );
   PointList movingPoints(movingLandmarks.size() );
@@ -159,15 +159,14 @@ int main(int argc, char* argv[])
 
   // Our input into landmark based initialize will be of this form
   // The format for saving to slicer is defined later
-  typedef itk::Similarity3DTransform<double> SimilarityTransformType;
+  using SimilarityTransformType = itk::Similarity3DTransform<double>;
   SimilarityTransformType::Pointer transform = SimilarityTransformType::New();
   transform->SetIdentity();
   // workaround a bug in older versions of ITK
   transform->SetScale(1.0);
 
 
-  typedef itk::LandmarkBasedTransformInitializer<SimilarityTransformType,
-    itk::Image<short, 3>, itk::Image<short, 3> > InitializerType;
+  using InitializerType = itk::LandmarkBasedTransformInitializer<SimilarityTransformType, itk::Image<short, 3>, itk::Image<short, 3> >;
   InitializerType::Pointer initializer = InitializerType::New();
 
   // This expects a VersorRigid3D.  The similarity transform works because
@@ -218,7 +217,7 @@ int main(int argc, char* argv[])
 
     // Convert into an affine transform for saving to Slicer.
 
-  typedef itk::AffineTransform<double, 3> AffineTransform;
+  using AffineTransform = itk::AffineTransform<double, 3>;
   AffineTransform::Pointer fixedToMovingT = itk::AffineTransform<double, 3>::New();
 
   fixedToMovingT->SetCenter( transform->GetCenter() );
@@ -231,9 +230,9 @@ int main(int argc, char* argv[])
   AffineTransform::Pointer movingToFixedT = AffineTransform::New();
   fixedToMovingT->GetInverse( movingToFixedT );
 
-  typedef InitializerType::LandmarkPointContainer LandmarkPointContainerType;
+  using LandmarkPointContainerType = InitializerType::LandmarkPointContainer;
 
-  typedef LandmarkPointContainerType::const_iterator PointsContainerConstIterator;
+  using PointsContainerConstIterator = LandmarkPointContainerType::const_iterator;
   PointsContainerConstIterator mitr = movingPoints.begin();
   PointsContainerConstIterator fitr = fixedPoints.begin();
 

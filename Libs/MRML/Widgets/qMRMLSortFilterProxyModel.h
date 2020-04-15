@@ -118,7 +118,7 @@ public:
     UseFilters
     };
 
-  typedef QSortFilterProxyModel Superclass;
+  using Superclass = QSortFilterProxyModel;
   qMRMLSortFilterProxyModel(QObject *parent=nullptr);
   ~qMRMLSortFilterProxyModel() override;
 

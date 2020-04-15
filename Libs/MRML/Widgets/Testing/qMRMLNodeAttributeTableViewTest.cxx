@@ -43,8 +43,8 @@ class qMRMLNodeAttributeTableViewTester: public QObject
   qMRMLNodeAttributeTableView* NodeAttributeTableView;
 
 public:
-  typedef QPair<QString, QString> AttributeType;
-  typedef QPair<QString, bool> AttributeEmptyType;
+  using AttributeType = QPair<QString, QString>;
+  using AttributeEmptyType = QPair<QString, bool>;
 
 private slots:
   void init();

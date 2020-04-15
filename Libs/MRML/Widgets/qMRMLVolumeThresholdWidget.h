@@ -32,7 +32,7 @@ class QMRML_WIDGETS_EXPORT qMRMLVolumeThresholdWidget
 
 public:
   /// Constructors
-  typedef qMRMLVolumeWidget Superclass;
+  using Superclass = qMRMLVolumeWidget;
   explicit qMRMLVolumeThresholdWidget(QWidget* parent=nullptr);
   ~qMRMLVolumeThresholdWidget() override;
 

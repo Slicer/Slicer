@@ -34,9 +34,9 @@ preprocessLabelMap(typename itk::Image<pixel_t, 3>::Pointer originalLabelMap, pi
 
    */
 
-  typedef itk::Image<pixel_t, 3> image_t;
+  using image_t = itk::Image<pixel_t, 3>;
 
-  typedef itk::ImageRegionIterator<image_t> imageRegionIterator_t;
+  using imageRegionIterator_t = itk::ImageRegionIterator<image_t>;
 
   // 1.
   imageRegionIterator_t iter(originalLabelMap, originalLabelMap->GetLargestPossibleRegion() );

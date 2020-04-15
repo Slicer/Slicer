@@ -37,34 +37,34 @@
 #include <vnl/vnl_vector_fixed.h>
 
 // Define necessary types for images
-typedef double        RealType;
-typedef double        TransformRealType;
-typedef unsigned char LabelType;
+using RealType = double;
+using TransformRealType = double;
+using LabelType = unsigned char;
 const unsigned int DIM = 3;
 
-typedef unsigned short                  ScalarPixelType;
-typedef itk::DiffusionTensor3D<double>  TensorPixelType;
-typedef itk::Vector<double, 3>          DeformationPixelType;
-typedef itk::CovariantVector<double, 3> GradientPixelType;
+using ScalarPixelType = unsigned short;
+using TensorPixelType = itk::DiffusionTensor3D<double>;
+using DeformationPixelType = itk::Vector<double, 3>;
+using GradientPixelType = itk::CovariantVector<double, 3>;
 
-typedef itk::VectorImage<ScalarPixelType, DIM> VectorImageType;
-typedef itk::Image<TensorPixelType, DIM>       TensorImageType;
+using VectorImageType = itk::VectorImage<ScalarPixelType, DIM>;
+using TensorImageType = itk::Image<TensorPixelType, DIM>;
 
-typedef itk::Image<DeformationPixelType, DIM> DeformationImageType;
-typedef itk::Image<GradientPixelType, DIM>    GradientImageType;
+using DeformationImageType = itk::Image<DeformationPixelType, DIM>;
+using GradientImageType = itk::Image<GradientPixelType, DIM>;
 
-typedef itk::Image<RealType, DIM>                   RealImageType;
-typedef itk::Image<ScalarPixelType, DIM>            IntImageType;
-typedef itk::Image<LabelType, DIM>                  LabelImageType;
-typedef itk::Image<itk::RGBPixel<unsigned char>, 3> RGBImageType;
+using RealImageType = itk::Image<RealType, DIM>;
+using IntImageType = itk::Image<ScalarPixelType, DIM>;
+using LabelImageType = itk::Image<LabelType, DIM>;
+using RGBImageType = itk::Image<itk::RGBPixel<unsigned char>, 3>;
 
-typedef TensorImageType::SizeType    ImageSizeType;
-typedef TensorImageType::SpacingType ImageSpacingType;
+using ImageSizeType = TensorImageType::SizeType;
+using ImageSpacingType = TensorImageType::SpacingType;
 
-typedef itk::AffineTransform<TransformRealType, 3> AffineTransformType;
+using AffineTransformType = itk::AffineTransform<TransformRealType, 3>;
 
-typedef vnl_vector_fixed<double, 3>                      GradientType;
-typedef itk::VectorContainer<unsigned int, GradientType> GradientListType;
+using GradientType = vnl_vector_fixed<double, 3>;
+using GradientListType = itk::VectorContainer<unsigned int, GradientType>;
 
 // enum InterpolationType {NearestNeighbor, Linear, Cubic};
 // enum TensorReorientationType {FiniteStrain, PreservationPrincipalDirection};

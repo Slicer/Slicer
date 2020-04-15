@@ -26,11 +26,11 @@ template <class T, unsigned int NRows = 3, unsigned int NColumns = 3>
 class MatrixExtended : public Matrix<T, NRows, NColumns>
 {
 public:
-  typedef MatrixExtended                       Self;
-  typedef Matrix<T, NRows, NColumns>           Superclass;
-  typedef T                                    ValueType;
-  typedef T                                    ComponentType;
-  typedef vnl_matrix_fixed<T, NRows, NColumns> InternalMatrixType;
+  using Self = MatrixExtended<T, NRows, NColumns>;
+  using Superclass = Matrix<T, NRows, NColumns>;
+  using ValueType = T;
+  using ComponentType = T;
+  using InternalMatrixType = vnl_matrix_fixed<T, NRows, NColumns>;
   MatrixExtended();
   MatrixExtended( const InternalMatrixType & matrix );
   MatrixExtended( const Self & matrix );

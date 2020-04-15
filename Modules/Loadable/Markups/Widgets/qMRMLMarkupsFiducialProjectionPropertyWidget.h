@@ -46,7 +46,7 @@ qMRMLMarkupsFiducialProjectionPropertyWidget
   QVTK_OBJECT
 
 public:
-  typedef qMRMLWidget Superclass;
+  using Superclass = qMRMLWidget;
   qMRMLMarkupsFiducialProjectionPropertyWidget(QWidget *newParent = nullptr);
   ~qMRMLMarkupsFiducialProjectionPropertyWidget() override;
 

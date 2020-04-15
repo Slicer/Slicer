@@ -32,7 +32,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSortFilterHierarchyProxyModel
 {
   Q_OBJECT
 public:
-  typedef qMRMLSortFilterProxyModel Superclass;
+  using Superclass = qMRMLSortFilterProxyModel;
   qMRMLSortFilterHierarchyProxyModel(QObject *parent=nullptr);
   ~qMRMLSortFilterHierarchyProxyModel() override;
 

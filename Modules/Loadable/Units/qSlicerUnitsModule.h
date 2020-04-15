@@ -40,7 +40,7 @@ class Q_SLICER_QTMODULES_UNITS_EXPORT qSlicerUnitsModule
 
 public:
 
-  typedef qSlicerLoadableModule Superclass;
+  using Superclass = qSlicerLoadableModule;
   explicit qSlicerUnitsModule(QObject *parent=nullptr);
   ~qSlicerUnitsModule() override;
 

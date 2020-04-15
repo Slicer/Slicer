@@ -91,7 +91,7 @@ protected:
   class vtkInternal;
   vtkInternal* Internal;
 
-  typedef vtkMRMLDisplayableManagerFactory Self;
+  using Self = vtkMRMLDisplayableManagerFactory;
 
 private:
 

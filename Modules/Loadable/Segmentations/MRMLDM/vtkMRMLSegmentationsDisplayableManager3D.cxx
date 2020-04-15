@@ -82,11 +82,11 @@ public:
     vtkSmartPointer<vtkTransformPolyDataFilter> ModelWarper;
     };
 
-  typedef std::map<std::string, const Pipeline*> PipelineMapType; // first: segment ID; second: display pipeline
-  typedef std::map<vtkMRMLSegmentationDisplayNode*, PipelineMapType> PipelinesCacheType;
+  using PipelineMapType = std::map<std::string, const Pipeline *>; // first: segment ID; second: display pipeline
+  using PipelinesCacheType = std::map<vtkMRMLSegmentationDisplayNode *, PipelineMapType>;
   PipelinesCacheType DisplayPipelines;
 
-  typedef std::map < vtkMRMLSegmentationNode*, std::set< vtkMRMLSegmentationDisplayNode* > > SegmentationToDisplayCacheType;
+  using SegmentationToDisplayCacheType = std::map<vtkMRMLSegmentationNode *, std::set<vtkMRMLSegmentationDisplayNode *> >;
   SegmentationToDisplayCacheType SegmentationToDisplayNodes;
 
   // Segmentations

@@ -31,10 +31,10 @@ template <class T>
 class DiffusionTensor3DExtended : public DiffusionTensor3D<T>
 {
 public:
-  typedef T                           DataType;
-  typedef DiffusionTensor3DExtended   Self;
-  typedef DiffusionTensor3D<DataType> Superclass;
-  typedef Matrix<DataType, 3, 3>      MatrixType;
+  using DataType = T;
+  using Self = DiffusionTensor3DExtended<T>;
+  using Superclass = DiffusionTensor3D<DataType>;
+  using MatrixType = Matrix<DataType, 3, 3>;
 
   DiffusionTensor3DExtended()
    = default;

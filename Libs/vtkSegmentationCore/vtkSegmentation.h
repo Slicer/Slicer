@@ -125,7 +125,7 @@ public:
     };
 
   /// Container type for segments. Maps segment IDs to segment objects
-  typedef std::map<std::string, vtkSmartPointer<vtkSegment> > SegmentMap;
+  using SegmentMap = std::map<std::string, vtkSmartPointer<vtkSegment> >;
 
 public:
   static vtkSegmentation* New();

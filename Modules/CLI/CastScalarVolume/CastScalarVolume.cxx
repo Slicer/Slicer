@@ -29,17 +29,16 @@ int DoIt( int argc, char * argv[], Tin, Tout )
 
   PARSE_ARGS;
 
-  typedef    Tin InputPixelType;
-  typedef Tout   OutputPixelType;
+  using InputPixelType = Tin;
+  using OutputPixelType = Tout;
 
-  typedef itk::Image<InputPixelType,  3> InputImageType;
-  typedef itk::Image<OutputPixelType, 3> OutputImageType;
+  using InputImageType = itk::Image<InputPixelType, 3>;
+  using OutputImageType = itk::Image<OutputPixelType, 3>;
 
-  typedef itk::ImageFileReader<InputImageType>  ReaderType;
-  typedef itk::ImageFileWriter<OutputImageType> WriterType;
+  using ReaderType = itk::ImageFileReader<InputImageType>;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
 
-  typedef itk::CastImageFilter<
-    InputImageType, OutputImageType>  FilterType;
+  using FilterType = itk::CastImageFilter<InputImageType, OutputImageType>;
 
   typename ReaderType::Pointer reader1 = ReaderType::New();
   itk::PluginFilterWatcher watchReader1(reader1, "Read Volume",

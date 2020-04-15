@@ -34,7 +34,7 @@ class qMRMLVolumeThresholdWidgetPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLVolumeThresholdWidget);
 protected:
-  typedef qMRMLVolumeWidgetPrivate Superclass;
+  using Superclass = qMRMLVolumeWidgetPrivate;
 
 public:
   qMRMLVolumeThresholdWidgetPrivate(qMRMLVolumeThresholdWidget& object);

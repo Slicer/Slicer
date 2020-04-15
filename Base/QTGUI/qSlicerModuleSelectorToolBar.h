@@ -44,7 +44,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModuleSelectorToolBar: public QToolBar
 {
   Q_OBJECT
 public:
-  typedef QToolBar Superclass;
+  using Superclass = QToolBar;
   Q_PROPERTY(QString selectedModule READ selectedModule WRITE selectModule NOTIFY moduleSelected)
 
   /// Constructor

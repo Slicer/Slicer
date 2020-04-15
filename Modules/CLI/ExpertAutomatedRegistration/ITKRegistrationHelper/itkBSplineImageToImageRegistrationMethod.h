@@ -33,10 +33,10 @@ class BSplineImageToImageRegistrationMethod
 
 public:
 
-  typedef BSplineImageToImageRegistrationMethod           Self;
-  typedef OptimizedImageToImageRegistrationMethod<TImage> Superclass;
-  typedef SmartPointer<Self>                              Pointer;
-  typedef SmartPointer<const Self>                        ConstPointer;
+  using Self = BSplineImageToImageRegistrationMethod<TImage>;
+  using Superclass = OptimizedImageToImageRegistrationMethod<TImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   itkTypeMacro( BSplineImageToImageRegistrationMethod,
                 OptimizedImageToImageRegistrationMethod );
@@ -46,21 +46,18 @@ public:
   //
   // Typedefs from Superclass
   //
-  typedef TImage ImageType;
+  using ImageType = TImage;
   itkStaticConstMacro( ImageDimension, unsigned int,
                        TImage::ImageDimension );
 
   // Overrides the superclass' TransformType typedef
-  typedef BSplineDeformableTransform<double,
-                                     itkGetStaticConstMacro( ImageDimension ),
-                                     itkGetStaticConstMacro( ImageDimension )>
-  BSplineTransformType;
+  using BSplineTransformType = BSplineDeformableTransform<double, (Self::ImageDimension), (Self::ImageDimension)>;
 
-  typedef typename BSplineTransformType::Pointer BSplineTransformPointer;
+  using BSplineTransformPointer = typename BSplineTransformType::Pointer;
 
-  typedef BSplineTransformType TransformType;
+  using TransformType = BSplineTransformType;
 
-  typedef typename BSplineTransformType::ParametersType ParametersType;
+  using ParametersType = typename BSplineTransformType::ParametersType;
 
   //
   // Methods from Superclass
@@ -107,8 +104,8 @@ protected:
   BSplineImageToImageRegistrationMethod();
   ~BSplineImageToImageRegistrationMethod() override;
 
-  typedef InterpolateImageFunction<TImage, double> InterpolatorType;
-  typedef ImageToImageMetric<TImage, TImage>       MetricType;
+  using InterpolatorType = InterpolateImageFunction<TImage, double>;
+  using MetricType = ImageToImageMetric<TImage, TImage>;
 
   void Optimize( MetricType * metric, InterpolatorType * interpolator ) override;
 

@@ -243,7 +243,7 @@ itk::ImageIOBase::Pointer vtkITKArchetypeImageSeriesReader::GetImageIO(const cha
 #ifdef VTKITK_BUILD_DICOM_SUPPORT
   itk::ImageIOBase::Pointer dicomIO;
 #endif
-  typedef itk::Image<float, 3> ImageType;
+  using ImageType = itk::Image<float, 3>;
   itk::ImageIOBase::Pointer imageIO = nullptr;
   try
     {
@@ -348,10 +348,10 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
 
   // Since we only need origin, spacing and extents, we can use one
   // image type.
-  typedef itk::Image<float,3> ImageType;
+  using ImageType = itk::Image<float, 3>;
   itk::ImageRegion<3> region;
 
-  typedef itk::ImageSource<ImageType> FilterType;
+  using FilterType = itk::ImageSource<ImageType>;
   FilterType::Pointer filter;
 
   // First see if the archetype exists, if it's not a pointer into memory
@@ -406,7 +406,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
 #ifdef VTKITK_BUILD_DICOM_SUPPORT
       if ( this->ArchetypeIsDICOM && !this->GetSingleFile() )
         {
-        typedef itk::GDCMSeriesFileNames DICOMNameGeneratorType;
+        using DICOMNameGeneratorType = itk::GDCMSeriesFileNames;
         DICOMNameGeneratorType::Pointer inputImageFileGenerator = DICOMNameGeneratorType::New();
         std::string fileNamePath = itksys::SystemTools::GetFilenamePath( this->Archetype );
         if (fileNamePath == "")
@@ -617,8 +617,8 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       extent[4] = region.GetIndex()[2];
       extent[5] = region.GetIndex()[2] + region.GetSize()[2] - 1;
 
-      typedef std::vector<std::vector<double> >    DoubleVectorType;
-      typedef itk::MetaDataObject<DoubleVectorType>     MetaDataDoubleVectorType;
+      using DoubleVectorType = std::vector<std::vector<double> >;
+      using MetaDataDoubleVectorType = itk::MetaDataObject<DoubleVectorType>;
       const itk::MetaDataDictionary &        dictionary = imageReader->GetMetaDataDictionary();
       itk::MetaDataDictionary::ConstIterator itr = dictionary.Begin();
       itk::MetaDataDictionary::ConstIterator end = dictionary.End();
@@ -1216,7 +1216,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
   AnalyzeTime.Start();
 
   int nFiles = this->AllFileNames.size();
-  typedef itk::Image<float,3> ImageType;
+  using ImageType = itk::Image<float, 3>;
 
   this->IndexSeriesInstanceUIDs.resize( nFiles );
   this->IndexContentTime.resize( nFiles );

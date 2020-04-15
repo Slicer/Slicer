@@ -17,7 +17,7 @@ void GetImageType(const std::string & fileName,
                   itk::ImageIOBase::IOComponentType & componentType,
                   unsigned int & dimensions )
 {
-  typedef itk::Image<short, 3> ImageType;
+  using ImageType = itk::Image<short, 3>;
   itk::ImageFileReader<ImageType>::Pointer imageReader =
     itk::ImageFileReader<ImageType>::New();
   imageReader->SetFileName(fileName.c_str() );
@@ -45,9 +45,9 @@ int DoIt( int argc, char *argv[] )
     verbosity = VERBOSE;
     }
 
-  typedef typename itk::Image<T, DimensionT> ImageType;
+  using ImageType = typename itk::Image<T, DimensionT>;
 
-  typedef typename itk::ImageToImageRegistrationHelper<ImageType> RegistrationType;
+  using RegistrationType = typename itk::ImageToImageRegistrationHelper<ImageType>;
 
   typename RegistrationType::Pointer reger = RegistrationType::New();
 
@@ -295,8 +295,8 @@ int DoIt( int argc, char *argv[] )
     std::cout << "###sampleFromOverlap: " << sampleFromOverlap << std::endl;
     }
 
-  typedef typename itk::ImageFileReader<itk::Image<unsigned char, DimensionT> > ImageReader;
-  typedef typename itk::ImageMaskSpatialObject<DimensionT>                      ImageMaskSpatialObject;
+  using ImageReader = typename itk::ImageFileReader<itk::Image<unsigned char, DimensionT> >;
+  using ImageMaskSpatialObject = typename itk::ImageMaskSpatialObject<DimensionT>;
 
   // if a fixed image mask was set
   if( fixedImageMask != "" )

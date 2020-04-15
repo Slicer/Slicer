@@ -37,7 +37,7 @@ class Q_SLICER_MODULES_CORE_EXPORT qSlicerCoreModule : public qSlicerAbstractMod
 
 public:
 
-  typedef qSlicerAbstractModule Superclass;
+  using Superclass = qSlicerAbstractModule;
   qSlicerCoreModule(QObject *parent=nullptr);
   ~qSlicerCoreModule() override;
 

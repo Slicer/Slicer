@@ -845,10 +845,10 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 
   // read the DICOM dir to get the radiological data
 
-  typedef short PixelValueType;
-  typedef itk::Image< PixelValueType, 3 > VolumeType;
-  typedef itk::ImageSeriesReader< VolumeType > VolumeReaderType;
-  typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
+  using PixelValueType = short;
+  using VolumeType = itk::Image<PixelValueType, 3>;
+  using VolumeReaderType = itk::ImageSeriesReader<VolumeType>;
+  using InputNamesGeneratorType = itk::GDCMSeriesFileNames;
 
   if ( !list.PETDICOMPath.compare(""))
     {

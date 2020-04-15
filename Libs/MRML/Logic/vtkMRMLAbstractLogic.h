@@ -135,7 +135,7 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLAbstractLogic : public vtkObject
 public:
   /// Typedef for member functions of MRMLLogic that can be used as
   /// scheduled tasks.
-  typedef void (vtkMRMLAbstractLogic::*TaskFunctionPointer)(void *clientdata);
+  using TaskFunctionPointer = void (vtkMRMLAbstractLogic::*)(void *);
 
   static vtkMRMLAbstractLogic *New();
   void PrintSelf(ostream& os, vtkIndent indent) override;

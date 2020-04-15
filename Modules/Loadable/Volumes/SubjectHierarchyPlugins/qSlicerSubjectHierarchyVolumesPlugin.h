@@ -45,7 +45,7 @@ public:
   QVTK_OBJECT
 
 public:
-  typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
+  using Superclass = qSlicerSubjectHierarchyAbstractPlugin;
   qSlicerSubjectHierarchyVolumesPlugin(QObject* parent = nullptr);
   ~qSlicerSubjectHierarchyVolumesPlugin() override;
 

@@ -39,7 +39,7 @@ class qSlicerCLILoadableModuleFactoryItem
   : public ctkFactoryLibraryItem<qSlicerAbstractCoreModule>
 {
 public:
-  typedef ctkFactoryLibraryItem<qSlicerAbstractCoreModule> Superclass;
+  using Superclass = ctkFactoryLibraryItem<qSlicerAbstractCoreModule>;
   qSlicerCLILoadableModuleFactoryItem(const QString& newTempDirectory);
   bool load() override;
 
@@ -65,7 +65,7 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLILoadableModuleFactory :
   public ctkAbstractLibraryFactory<qSlicerAbstractCoreModule>
 {
 public:
-  typedef ctkAbstractLibraryFactory<qSlicerAbstractCoreModule> Superclass;
+  using Superclass = ctkAbstractLibraryFactory<qSlicerAbstractCoreModule>;
   qSlicerCLILoadableModuleFactory();
   ~qSlicerCLILoadableModuleFactory() override;
 

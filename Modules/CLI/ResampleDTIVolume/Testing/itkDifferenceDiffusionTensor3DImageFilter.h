@@ -45,10 +45,10 @@ class DifferenceDiffusionTensor3DImageFilter :
 {
 public:
   /** Standard class typedefs. */
-  typedef DifferenceDiffusionTensor3DImageFilter        Self;
-  typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
-  typedef SmartPointer<Self>                            Pointer;
-  typedef SmartPointer<const Self>                      ConstPointer;
+  using Self = DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -57,17 +57,17 @@ public:
   itkTypeMacro(DifferenceDiffusionTensor3DImageFilter, ImageToImageFilter);
 
   /** Some convenient typedefs. */
-  typedef TInputImage                                       InputImageType;
-  typedef TOutputImage                                      OutputImageType;
-  typedef typename OutputImageType::PixelType               OutputPixelType;
-  typedef typename InputImageType::PixelType                InputPixelType;
-  typedef typename OutputImageType::RegionType              OutputImageRegionType;
-  typedef typename NumericTraits<OutputPixelType>::RealType RealType;
-  typedef typename NumericTraits<RealType>::AccumulateType  AccumulateType;
+  using InputImageType = TInputImage;
+  using OutputImageType = TOutputImage;
+  using OutputPixelType = typename OutputImageType::PixelType;
+  using InputPixelType = typename InputImageType::PixelType;
+  using OutputImageRegionType = typename OutputImageType::RegionType;
+  using RealType = typename NumericTraits<OutputPixelType>::RealType;
+  using AccumulateType = typename NumericTraits<RealType>::AccumulateType;
 
-  typedef std::vector<std::vector<double> >     DoubleVectorType;
-  typedef itk::MetaDataObject<DoubleVectorType> MetaDataDoubleVectorType;
-  typedef itk::Matrix<double, 3, 3>             MatrixType;
+  using DoubleVectorType = std::vector<std::vector<double> >;
+  using MetaDataDoubleVectorType = itk::MetaDataObject<DoubleVectorType>;
+  using MatrixType = itk::Matrix<double, 3, 3>;
 
   /** Set the valid image input.  This will be input 0.  */
   virtual void SetValidInput(const InputImageType* validImage);

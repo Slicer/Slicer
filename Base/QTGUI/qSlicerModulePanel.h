@@ -48,7 +48,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulePanel
   Q_PROPERTY(bool helpAndAcknowledgmentVisible READ isHelpAndAcknowledgmentVisible WRITE setHelpAndAcknowledgmentVisible)
 
 public:
-  typedef qSlicerAbstractModulePanel Superclass;
+  using Superclass = qSlicerAbstractModulePanel;
   qSlicerModulePanel(QWidget* parent = nullptr, Qt::WindowFlags f = nullptr);
   ~qSlicerModulePanel() override;
 

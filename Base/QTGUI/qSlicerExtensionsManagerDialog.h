@@ -37,7 +37,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsManagerDialog
   Q_PROPERTY(bool restartRequested READ restartRequested WRITE setRestartRequested)
 public:
   /// Superclass typedef
-  typedef QDialog Superclass;
+  using Superclass = QDialog;
 
   /// Constructor
   explicit qSlicerExtensionsManagerDialog(QWidget* parent = nullptr);

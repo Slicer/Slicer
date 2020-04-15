@@ -50,8 +50,8 @@ protected:
   qSlicerExtensionsManageWidget* const q_ptr;
 
 public:
-  typedef qSlicerExtensionsManageWidgetPrivate Self;
-  typedef qSlicerExtensionsManagerModel::ExtensionMetadataType ExtensionMetadataType;
+  using Self = qSlicerExtensionsManageWidgetPrivate;
+  using ExtensionMetadataType = qSlicerExtensionsManagerModel::ExtensionMetadataType;
 
 
   enum DataRoles
@@ -101,7 +101,7 @@ namespace
 class qSlicerExtensionsButtonBox : public QWidget, public Ui_qSlicerExtensionsButtonBox
 {
 public:
-  typedef QWidget Superclass;
+  using Superclass = QWidget;
   qSlicerExtensionsButtonBox(QWidget* parent = nullptr) : Superclass(parent)
   {
     this->setupUi(this);
@@ -256,7 +256,7 @@ namespace
 class qSlicerExtensionsDescriptionLabel : public QLabel
 {
 public:
-  typedef QLabel Superclass;
+  using Superclass = QLabel;
 
   // --------------------------------------------------------------------------
   qSlicerExtensionsDescriptionLabel(const QString& extensionSlicerVersion, const QString& slicerRevision,

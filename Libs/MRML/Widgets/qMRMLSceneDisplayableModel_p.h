@@ -51,7 +51,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneDisplayableModelPrivate
 protected:
   Q_DECLARE_PUBLIC(qMRMLSceneDisplayableModel);
 public:
-  typedef qMRMLSceneHierarchyModelPrivate Superclass;
+  using Superclass = qMRMLSceneHierarchyModelPrivate;
   qMRMLSceneDisplayableModelPrivate(qMRMLSceneDisplayableModel& object);
   void init() override;
 

@@ -37,7 +37,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractSliceViewDisplayableMana
 {
 public:
 
-  typedef vtkMRMLAbstractSliceViewDisplayableManager Self;
+  using Self = vtkMRMLAbstractSliceViewDisplayableManager;
 
   static vtkMRMLAbstractSliceViewDisplayableManager *New();
   void PrintSelf(ostream& os, vtkIndent indent) override;

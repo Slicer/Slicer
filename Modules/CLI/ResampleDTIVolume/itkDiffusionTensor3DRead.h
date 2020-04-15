@@ -35,19 +35,19 @@ template <class TData>
 class ITK_ABI_EXPORT DiffusionTensor3DRead : public Object
 {
 public:
-  typedef TData                                DataType;
-  typedef DiffusionTensor3DRead                Self;
-  typedef Matrix<double, 3, 3>                 MatrixType;
-  typedef DiffusionTensor3D<DataType>          TensorDataType;
-  typedef Image<TensorDataType, 3>             DiffusionImageType;
-  typedef typename DiffusionImageType::Pointer DiffusionImagePointer;
-  typedef ImageFileReader<DiffusionImageType>  FileReaderType;
-  typedef MetaDataDictionary                   DictionaryType;
-  typedef MetaDataObject<std::string>          MetaDataStringType;
-  typedef std::vector<std::vector<double> >    DoubleVectorType;
-  typedef MetaDataObject<DoubleVectorType>     MetaDataDoubleVectorType;
-  typedef SmartPointer<Self>                   Pointer;
-  typedef SmartPointer<const Self>             ConstPointer;
+  using DataType = TData;
+  using Self = DiffusionTensor3DRead<TData>;
+  using MatrixType = Matrix<double, 3, 3>;
+  using TensorDataType = DiffusionTensor3D<DataType>;
+  using DiffusionImageType = Image<TensorDataType, 3>;
+  using DiffusionImagePointer = typename DiffusionImageType::Pointer;
+  using FileReaderType = ImageFileReader<DiffusionImageType>;
+  using DictionaryType = MetaDataDictionary;
+  using MetaDataStringType = MetaDataObject<std::string>;
+  using DoubleVectorType = std::vector<std::vector<double> >;
+  using MetaDataDoubleVectorType = MetaDataObject<DoubleVectorType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DRead, Object);

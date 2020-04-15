@@ -31,12 +31,12 @@
 #include <vtkXMLPolyDataReader.h>
 #include <vtkVersion.h>
 
-typedef itk::Image<unsigned char, 3> LabelImageType;
+using LabelImageType = itk::Image<unsigned char, 3>;
 
 LabelImageType::Pointer BinaryErodeFilter3D( LabelImageType::Pointer & img, unsigned int ballsize )
 {
-  typedef itk::BinaryBallStructuringElement<unsigned char, 3>                     KernalType;
-  typedef itk::BinaryErodeImageFilter<LabelImageType, LabelImageType, KernalType> ErodeFilterType;
+  using KernalType = itk::BinaryBallStructuringElement<unsigned char, 3>;
+  using ErodeFilterType = itk::BinaryErodeImageFilter<LabelImageType, LabelImageType, KernalType>;
   ErodeFilterType::Pointer erodeFilter = ErodeFilterType::New();
   erodeFilter->SetInput( img );
 
@@ -55,8 +55,8 @@ LabelImageType::Pointer BinaryErodeFilter3D( LabelImageType::Pointer & img, unsi
 
 LabelImageType::Pointer BinaryDilateFilter3D( LabelImageType::Pointer & img, unsigned int ballsize )
 {
-  typedef itk::BinaryBallStructuringElement<unsigned char, 3>                      KernalType;
-  typedef itk::BinaryDilateImageFilter<LabelImageType, LabelImageType, KernalType> DilateFilterType;
+  using KernalType = itk::BinaryBallStructuringElement<unsigned char, 3>;
+  using DilateFilterType = itk::BinaryDilateImageFilter<LabelImageType, LabelImageType, KernalType>;
   DilateFilterType::Pointer dilateFilter = DilateFilterType::New();
   dilateFilter->SetInput( img );
   KernalType           ball;
@@ -95,12 +95,12 @@ int DoIt( int argc, char * argv[])
   PARSE_ARGS;
   vtkDebugLeaks::SetExitError(true);
 
-  typedef    T InputPixelType;
+  using InputPixelType = T;
 
-  typedef itk::Image<InputPixelType,  3> InputImageType;
+  using InputImageType = itk::Image<InputPixelType, 3>;
 
-  typedef itk::ImageFileReader<InputImageType> ReaderType;
-  typedef itk::ImageFileWriter<LabelImageType> WriterType;
+  using ReaderType = itk::ImageFileReader<InputImageType>;
+  using WriterType = itk::ImageFileWriter<LabelImageType>;
 
   // Read the input volume
   typename ReaderType::Pointer reader = ReaderType::New();
@@ -194,7 +194,7 @@ int DoIt( int argc, char * argv[])
   itk::ImageRegionIteratorWithIndex<LabelImageType> itLabel(closedLabel, closedLabel->GetLargestPossibleRegion() );
 
   // do flood fill using binary threshold image function
-  typedef itk::BinaryThresholdImageFunction<LabelImageType> ImageFunctionType;
+  using ImageFunctionType = itk::BinaryThresholdImageFunction<LabelImageType>;
   ImageFunctionType::Pointer func = ImageFunctionType::New();
   func->SetInputImage( closedLabel );
   func->ThresholdBelow(1);

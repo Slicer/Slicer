@@ -35,7 +35,7 @@ class qSlicerTerminologiesReader
 {
   Q_OBJECT
 public:
-  typedef qSlicerFileReader Superclass;
+  using Superclass = qSlicerFileReader;
   qSlicerTerminologiesReader(vtkSlicerTerminologiesModuleLogic* terminologiesLogic = nullptr, QObject* parent = nullptr);
   ~qSlicerTerminologiesReader() override;
 

@@ -160,7 +160,7 @@ int TemporaryPathTest()
     return EXIT_FAILURE;
     }
 
-  typedef std::vector<std::string> TestDataType;
+  using TestDataType = std::vector<std::string>;
   TestDataType data;
   data.push_back("/tmp/slicer");
   data.push_back("/tmp/slicer/test");

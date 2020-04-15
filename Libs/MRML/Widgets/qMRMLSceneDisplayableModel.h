@@ -42,7 +42,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneDisplayableModel : public qMRMLSceneHierarc
   Q_PROPERTY (int opacityColumn READ opacityColumn WRITE setOpacityColumn)
 
 public:
-  typedef qMRMLSceneHierarchyModel Superclass;
+  using Superclass = qMRMLSceneHierarchyModel;
   qMRMLSceneDisplayableModel(QObject *parent=nullptr);
   ~qMRMLSceneDisplayableModel() override;
 

@@ -35,7 +35,7 @@ class Q_SLICER_APP_EXPORT qSlicerAppMainWindowPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerAppMainWindow);
 public:
-  typedef qSlicerMainWindowPrivate Superclass;
+  using Superclass = qSlicerMainWindowPrivate;
   qSlicerAppMainWindowPrivate(qSlicerAppMainWindow& object);
   ~qSlicerAppMainWindowPrivate() override;
 

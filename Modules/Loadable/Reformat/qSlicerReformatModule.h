@@ -38,7 +38,7 @@ qSlicerReformatModule : public qSlicerLoadableModule
 
 public:
 
-  typedef qSlicerLoadableModule Superclass;
+  using Superclass = qSlicerLoadableModule;
   explicit qSlicerReformatModule(QObject *parent=nullptr);
   ~qSlicerReformatModule() override;
 

@@ -21,7 +21,7 @@ class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qSlicerSceneViewsModule :
   Q_INTERFACES(qSlicerLoadableModule);
 public:
 
-  typedef qSlicerLoadableModule Superclass;
+  using Superclass = qSlicerLoadableModule;
   qSlicerSceneViewsModule(QObject *parent=nullptr);
   ~qSlicerSceneViewsModule() override;
 

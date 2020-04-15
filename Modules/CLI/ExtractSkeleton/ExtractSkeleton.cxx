@@ -48,16 +48,16 @@ int main(int argc, char * *argv)
   try
     {
 
-    typedef unsigned char                        InputPixelType;
-    typedef itk::Image<InputPixelType, 3>        InputImageType;
-    typedef itk::ImageFileReader<InputImageType> ReaderType;
+    using InputPixelType = unsigned char;
+    using InputImageType = itk::Image<InputPixelType, 3>;
+    using ReaderType = itk::ImageFileReader<InputImageType>;
 
-    typedef unsigned char                         OutputPixelType;
-    typedef itk::Image<OutputPixelType, 3>        OutputImageType;
-    typedef itk::ImageFileWriter<OutputImageType> WriterType;
+    using OutputPixelType = unsigned char;
+    using OutputImageType = itk::Image<OutputPixelType, 3>;
+    using WriterType = itk::ImageFileWriter<OutputImageType>;
 
-    typedef OutputImageType::PointType            OutputPointType;
-    typedef OutputImageType::IndexType            OutputIndexType;
+    using OutputPointType = OutputImageType::PointType;
+    using OutputIndexType = OutputImageType::IndexType;
 
     ReaderType::Pointer Reader = ReaderType::New();
     Reader->SetFileName(InputImageFileName.c_str() );

@@ -74,7 +74,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSliderWidget : public ctkSliderWidget
   Q_PROPERTY(UnitAwareProperties unitAwareProperties READ unitAwareProperties WRITE setUnitAwareProperties)
 
 public:
-  typedef ctkSliderWidget Superclass;
+  using Superclass = ctkSliderWidget;
 
   /// Construct an empty qMRMLSliderWidget with a null scene.
   explicit qMRMLSliderWidget(QWidget* parent = nullptr);

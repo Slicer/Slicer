@@ -136,8 +136,8 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
     //   - applicationHomeDir
     //   - slicerRevision
     //   - isEmbeddedExpected
-    typedef std::vector<std::string> TestRowType;
-    typedef std::vector< TestRowType > TestDataType;
+    using TestRowType = std::vector<std::string>;
+    using TestDataType = std::vector<TestRowType>;
     TestDataType data;
     {
       TestRowType row;

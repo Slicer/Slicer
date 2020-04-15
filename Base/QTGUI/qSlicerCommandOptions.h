@@ -38,7 +38,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerCommandOptions : public qSlicerCoreComma
   Q_PROPERTY(bool enableQtTesting READ enableQtTesting CONSTANT)
   Q_PROPERTY(bool exitAfterStartup READ exitAfterStartup CONSTANT)
 public:
-  typedef qSlicerCoreCommandOptions Superclass;
+  using Superclass = qSlicerCoreCommandOptions;
   qSlicerCommandOptions();
   ~qSlicerCommandOptions() override = default;
 

@@ -34,7 +34,7 @@ class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsNodeWriter
 {
   Q_OBJECT
 public:
-  typedef qSlicerNodeWriter Superclass;
+  using Superclass = qSlicerNodeWriter;
   qSlicerSegmentationsNodeWriter(QObject* parent);
   ~qSlicerSegmentationsNodeWriter() override;
 

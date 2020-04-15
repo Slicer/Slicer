@@ -43,7 +43,7 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeComboBoxMenuDelegate: public QAbstractItemDe
 {
   Q_OBJECT
 public:
-  typedef QAbstractItemDelegate Superclass;
+  using Superclass = QAbstractItemDelegate;
   qMRMLNodeComboBoxMenuDelegate(QObject *parent, QComboBox *cmb);
 
 protected:

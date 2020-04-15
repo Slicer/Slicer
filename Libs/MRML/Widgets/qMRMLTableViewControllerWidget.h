@@ -47,7 +47,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTableViewControllerWidget
 
 public:
   /// Superclass typedef
-  typedef qMRMLViewControllerBar Superclass;
+  using Superclass = qMRMLViewControllerBar;
 
   /// Constructors
   explicit qMRMLTableViewControllerWidget(QWidget* parent = nullptr);

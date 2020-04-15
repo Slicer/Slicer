@@ -40,7 +40,7 @@ class Q_SLICER_QTMODULES_TABLES_EXPORT qSlicerTablesModuleWidget :
 
 public:
 
-  typedef qSlicerAbstractModuleWidget Superclass;
+  using Superclass = qSlicerAbstractModuleWidget;
   qSlicerTablesModuleWidget(QWidget *parent=nullptr);
   ~qSlicerTablesModuleWidget() override;
 

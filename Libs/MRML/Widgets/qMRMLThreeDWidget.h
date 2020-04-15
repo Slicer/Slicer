@@ -49,7 +49,7 @@ class QMRML_WIDGETS_EXPORT qMRMLThreeDWidget : public qMRMLWidget
 
 public:
   /// Superclass typedef
-  typedef qMRMLWidget Superclass;
+  using Superclass = qMRMLWidget;
 
   /// Constructors
   explicit qMRMLThreeDWidget(QWidget* parent = nullptr);

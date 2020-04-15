@@ -55,13 +55,13 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerExtensionsManagerModel : public QObject
   Q_PROPERTY(QString slicerVersion READ slicerVersion WRITE setSlicerVersion NOTIFY slicerVersionChanged)
 public:
   /// Superclass typedef
-  typedef QObject Superclass;
+  using Superclass = QObject;
 
   /// Pimpl typedef
-  typedef qSlicerExtensionsManagerModelPrivate Pimpl;
+  using Pimpl = qSlicerExtensionsManagerModelPrivate;
 
   /// Self typedef
-  typedef qSlicerExtensionsManagerModel Self;
+  using Self = qSlicerExtensionsManagerModel;
 
   /// Constructor
   explicit qSlicerExtensionsManagerModel(QObject* parent = nullptr);
@@ -70,7 +70,7 @@ public:
   ~qSlicerExtensionsManagerModel() override;
 
   /// \brief Extension metadata typedef
-  typedef QVariantMap ExtensionMetadataType;
+  using ExtensionMetadataType = QVariantMap;
 
   Q_INVOKABLE QUrl serverUrl()const;
   Q_INVOKABLE QUrl serverUrlWithPackagePath()const;

@@ -42,7 +42,7 @@ class QMRML_WIDGETS_EXPORT qMRMLLinearTransformSlider : public qMRMLSliderWidget
 
 public:
   /// Constructors
-  typedef qMRMLSliderWidget Superclass;
+  using Superclass = qMRMLSliderWidget;
   explicit qMRMLLinearTransformSlider(QWidget* parent);
   ~qMRMLLinearTransformSlider() override;
 

@@ -143,7 +143,7 @@ void
 CSFLSRobustStatSegmentor3DLabelMap<TPixel>
 ::inputLableImageToSeeds()
 {
-  typedef itk::ImageRegionConstIteratorWithIndex<TLabelImage> ImageRegionConstIteratorWithIndex_t;
+  using ImageRegionConstIteratorWithIndex_t = itk::ImageRegionConstIteratorWithIndex<TLabelImage>;
   ImageRegionConstIteratorWithIndex_t it(m_inputLabelImage, m_inputLabelImage->GetLargestPossibleRegion() );
   it.GoToBegin();
 
@@ -864,8 +864,8 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
     raise(SIGABRT);
     }
 
-  typedef itk::Image<TPixel, 3> itkImage_t;
-  typedef itk::ImageRegionConstIterator<itkImage_t> itkImageRegionConstIterator_t;
+  using itkImage_t = itk::Image<TPixel, 3>;
+  using itkImageRegionConstIterator_t = itk::ImageRegionConstIterator<itkImage_t>;
 
   m_inputImageIntensityMin = std::numeric_limits<TPixel>::max(); // yes, it's twisted so easy to compute.
   m_inputImageIntensityMax = std::numeric_limits<TPixel>::min();

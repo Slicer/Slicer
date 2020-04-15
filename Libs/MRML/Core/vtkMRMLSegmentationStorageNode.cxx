@@ -317,7 +317,7 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation4DSpatial(vt
   vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
 
   // Read 4D NRRD image file
-  typedef itk::ImageFileReader<BinaryLabelmap4DImageType> FileReaderType;
+  using FileReaderType = itk::ImageFileReader<BinaryLabelmap4DImageType>;
   FileReaderType::Pointer reader = FileReaderType::New();
   reader->SetFileName(path);
   try

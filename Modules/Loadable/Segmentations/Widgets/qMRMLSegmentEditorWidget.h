@@ -77,7 +77,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentEditorWidget : pu
   Q_PROPERTY(bool unorderedEffectsVisible READ unorderedEffectsVisible WRITE setUnorderedEffectsVisible)
 
 public:
-  typedef qMRMLWidget Superclass;
+  using Superclass = qMRMLWidget;
   /// Constructor
   explicit qMRMLSegmentEditorWidget(QWidget* parent = nullptr);
   /// Destructor

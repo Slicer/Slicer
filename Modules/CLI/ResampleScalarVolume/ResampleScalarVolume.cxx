@@ -69,44 +69,25 @@ int DoIt( int argc, char * argv[], T )
   const unsigned int InputDimension = 3;
   const unsigned int OutputDimension = 3;
 
-  typedef T PixelType;
+  using PixelType = T;
 
-  typedef itk::Image<PixelType, InputDimension>
-  InputImageType;
-  typedef itk::Image<PixelType, OutputDimension>
-  OutputImageType;
-  typedef itk::ImageFileReader<InputImageType>
-  ReaderType;
-  typedef itk::IdentityTransform<double, InputDimension>
-  TransformType;
-  typedef itk::LinearInterpolateImageFunction<InputImageType, double>
-  LinearInterpolatorType;
-  typedef itk::NearestNeighborInterpolateImageFunction<InputImageType, double>
-  NearestNeighborInterpolatorType;
-  typedef itk::BSplineInterpolateImageFunction<InputImageType, double>
-  BSplineInterpolatorType;
+  using InputImageType = itk::Image<PixelType, InputDimension>;
+  using OutputImageType = itk::Image<PixelType, OutputDimension>;
+  using ReaderType = itk::ImageFileReader<InputImageType>;
+  using TransformType = itk::IdentityTransform<double, InputDimension>;
+  using LinearInterpolatorType = itk::LinearInterpolateImageFunction<InputImageType, double>;
+  using NearestNeighborInterpolatorType = itk::NearestNeighborInterpolateImageFunction<InputImageType, double>;
+  using BSplineInterpolatorType = itk::BSplineInterpolateImageFunction<InputImageType, double>;
 #define RADIUS 3
 
-  typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS,
-                                                    itk::Function::HammingWindowFunction<RADIUS> >
-   HammingInterpolatorType;
-  typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS,
-                                                    itk::Function::CosineWindowFunction<RADIUS> >
-   CosineInterpolatorType;
-  typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS,
-                                                    itk::Function::WelchWindowFunction<RADIUS> >
-   WelchInterpolatorType;
-  typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS,
-                                                    itk::Function::LanczosWindowFunction<RADIUS> >
-   LanczosInterpolatorType;
-  typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS,
-                                                    itk::Function::BlackmanWindowFunction<RADIUS> >
-   BlackmanInterpolatorType;
+  using HammingInterpolatorType = itk::WindowedSincInterpolateImageFunction<InputImageType, 3, itk::Function::HammingWindowFunction<3> >;
+  using CosineInterpolatorType = itk::WindowedSincInterpolateImageFunction<InputImageType, 3, itk::Function::CosineWindowFunction<3> >;
+  using WelchInterpolatorType = itk::WindowedSincInterpolateImageFunction<InputImageType, 3, itk::Function::WelchWindowFunction<3> >;
+  using LanczosInterpolatorType = itk::WindowedSincInterpolateImageFunction<InputImageType, 3, itk::Function::LanczosWindowFunction<3> >;
+  using BlackmanInterpolatorType = itk::WindowedSincInterpolateImageFunction<InputImageType, 3, itk::Function::BlackmanWindowFunction<3> >;
 
-  typedef itk::ResampleImageFilter<InputImageType, InputImageType>
-  ResampleFilterType;
-  typedef itk::ImageFileWriter<OutputImageType>
-  FileWriterType;
+  using ResampleFilterType = itk::ResampleImageFilter<InputImageType, InputImageType>;
+  using FileWriterType = itk::ImageFileWriter<OutputImageType>;
 
 // //////////////////////////////////////////////
 // 1) Read the input series
@@ -162,7 +143,7 @@ int DoIt( int argc, char * argv[], T )
       }
     }
   typename InputImageType::SizeType   outputSize;
-  typedef typename InputImageType::SizeType::SizeValueType SizeValueType;
+  using SizeValueType = typename InputImageType::SizeType::SizeValueType;
   outputSize[0] = static_cast<SizeValueType>(inputSize[0] * inputSpacing[0] / outputSpacing[0] + .5);
   outputSize[1] = static_cast<SizeValueType>(inputSize[1] * inputSpacing[1] / outputSpacing[1] + .5);
   outputSize[2] = static_cast<SizeValueType>(inputSize[2] * inputSpacing[2] / outputSpacing[2] + .5);

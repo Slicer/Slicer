@@ -69,7 +69,7 @@ public:
   vtkTypeMacro(vtkSlicerVolumesLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  typedef vtkSlicerVolumesLogic Self;
+  using Self = vtkSlicerVolumesLogic;
 
   /// Loading options, bitfield
   enum LoadingOptions {
@@ -83,7 +83,7 @@ public:
   /// Factory function to create a volume node, display node, and
   /// storage node, configure the in the specified scene, and
   /// initialize the storage node with the "options".
-  typedef ArchetypeVolumeNodeSet (*ArchetypeVolumeNodeSetFactory)(std::string& volumeName, vtkMRMLScene* scene, int options);
+  using ArchetypeVolumeNodeSetFactory = ArchetypeVolumeNodeSet (*)(std::string &, vtkMRMLScene *, int);
 
   virtual void SetColorLogic(vtkMRMLColorLogic* colorLogic);
   vtkMRMLColorLogic* GetColorLogic()const;
@@ -307,7 +307,7 @@ protected:
   void SetAndObserveColorToDisplayNode(vtkMRMLDisplayNode* displayNode,
                                        int labelmap, const char* filename);
 
-  typedef std::list<ArchetypeVolumeNodeSetFactory> NodeSetFactoryRegistry;
+  using NodeSetFactoryRegistry = std::list<ArchetypeVolumeNodeSetFactory>;
 
   /// Convenience function allowing to try to load a volume using a given
   /// list of \a NodeSetFactoryRegistry

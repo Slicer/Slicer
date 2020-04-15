@@ -33,15 +33,15 @@ namespace
 template <class T>
 int DoIt( int argc, char * argv[], T )
 {
-  typedef T InputPixelType;
-  typedef T OutputPixelType;
+  using InputPixelType = T;
+  using OutputPixelType = T;
 
-  typedef itk::Image<InputPixelType,  3> InputImageType;
-  typedef itk::Image<OutputPixelType, 3> OutputImageType;
+  using InputImageType = itk::Image<InputPixelType, 3>;
+  using OutputImageType = itk::Image<OutputPixelType, 3>;
 
-  typedef itk::ImageFileReader<InputImageType>                     ReaderType;
-  typedef itk::ResampleImageFilter<InputImageType, InputImageType> ResampleType;
-  typedef itk::ImageFileWriter<OutputImageType>                    WriterType;
+  using ReaderType = itk::ImageFileReader<InputImageType>;
+  using ResampleType = itk::ResampleImageFilter<InputImageType, InputImageType>;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
 
   PARSE_ARGS;
 
@@ -55,8 +55,7 @@ int DoIt( int argc, char * argv[], T )
 
   writer->SetFileName( outputVolume.c_str() );
 
-  typedef itk::CheckerBoardImageFilter<
-    InputImageType>  FilterType;
+  using FilterType = itk::CheckerBoardImageFilter<InputImageType>;
 
   typename FilterType::Pointer filter = FilterType::New();
   itk::PluginFilterWatcher watcher(filter, "CheckerBoard Image Filter",

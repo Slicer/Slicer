@@ -40,26 +40,24 @@ class DiffusionTensor3DResample
    Image<DiffusionTensor3D<TOutput>, 3> >
 {
 public:
-  typedef TInput  InputDataType;
-  typedef TOutput OutputDataType;
+  using InputDataType = TInput;
+  using OutputDataType = TOutput;
 
-  typedef ImageToImageFilter
-  <Image<DiffusionTensor3D<TInput>, 3>,
-   Image<DiffusionTensor3D<TOutput>, 3> > Superclass;
+  using Superclass = ImageToImageFilter<Image<DiffusionTensor3D<TInput>, 3>, Image<DiffusionTensor3D<TOutput>, 3> >;
 
-  typedef DiffusionTensor3D<InputDataType>                         InputTensorDataType;
-  typedef Image<InputTensorDataType, 3>                            InputImageType;
-  typedef DiffusionTensor3D<OutputDataType>                        OutputTensorDataType;
-  typedef Image<OutputTensorDataType, 3>                           OutputImageType;
-  typedef DiffusionTensor3DResample                                Self;
-  typedef SmartPointer<Self>                                       Pointer;
-  typedef SmartPointer<const Self>                                 ConstPointer;
-  typedef DiffusionTensor3DInterpolateImageFunction<InputDataType> InterpolatorType;
-  typedef DiffusionTensor3DTransform<InputDataType>                TransformType;
-  typedef typename InputImageType::Pointer                         InputImagePointerType;
-  typedef typename OutputImageType::Pointer                        OutputImagePointerType;
-  typedef itk::ImageRegionIterator<OutputImageType>                IteratorType;
-  typedef typename OutputImageType::RegionType                     OutputImageRegionType;
+  using InputTensorDataType = DiffusionTensor3D<InputDataType>;
+  using InputImageType = Image<InputTensorDataType, 3>;
+  using OutputTensorDataType = DiffusionTensor3D<OutputDataType>;
+  using OutputImageType = Image<OutputTensorDataType, 3>;
+  using Self = DiffusionTensor3DResample<TInput, TOutput>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using InterpolatorType = DiffusionTensor3DInterpolateImageFunction<InputDataType>;
+  using TransformType = DiffusionTensor3DTransform<InputDataType>;
+  using InputImagePointerType = typename InputImageType::Pointer;
+  using OutputImagePointerType = typename OutputImageType::Pointer;
+  using IteratorType = itk::ImageRegionIterator<OutputImageType>;
+  using OutputImageRegionType = typename OutputImageType::RegionType;
 // typedef typename OutputTensorDataType::RealValueType TensorRealType ;
 
   /** Run-time type information (and related methods). */

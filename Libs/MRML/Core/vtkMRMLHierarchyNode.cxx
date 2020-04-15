@@ -28,20 +28,20 @@ Version:   $Revision: 1.14 $
 vtkCxxSetReferenceStringMacro(vtkMRMLHierarchyNode, ParentNodeIDReference);
 vtkCxxSetReferenceStringMacro(vtkMRMLHierarchyNode, AssociatedNodeIDReference);
 
-typedef std::map<std::string, std::vector< vtkMRMLHierarchyNode *> > HierarchyChildrenNodesType;
+using HierarchyChildrenNodesType = std::map<std::string, std::vector<vtkMRMLHierarchyNode *> >;
 
 std::map< vtkMRMLScene*, HierarchyChildrenNodesType> vtkMRMLHierarchyNode::SceneHierarchyChildrenNodes = std::map< vtkMRMLScene*, HierarchyChildrenNodesType>();
 std::map< vtkMRMLScene*, vtkMTimeType> vtkMRMLHierarchyNode::SceneHierarchyChildrenNodesMTime = std::map< vtkMRMLScene*, vtkMTimeType>();
 
 double vtkMRMLHierarchyNode::MaximumSortingValue = 0;
 
-typedef std::map<std::string, vtkMRMLHierarchyNode *> AssociatedHierarchyNodesType;
+using AssociatedHierarchyNodesType = std::map<std::string, vtkMRMLHierarchyNode *>;
 
 std::map< vtkMRMLScene*, AssociatedHierarchyNodesType> vtkMRMLHierarchyNode::SceneAssociatedHierarchyNodes = std::map< vtkMRMLScene*, AssociatedHierarchyNodesType>();
 
 std::map< vtkMRMLScene*, vtkMTimeType> vtkMRMLHierarchyNode::SceneAssociatedHierarchyNodesMTime = std::map< vtkMRMLScene*, vtkMTimeType>();;
 
-typedef vtkMRMLHierarchyNode* const vtkMRMLHierarchyNodePointer;
+using vtkMRMLHierarchyNodePointer = vtkMRMLHierarchyNode *const;
 bool vtkMRMLHierarchyNodeSortPredicate(vtkMRMLHierarchyNodePointer d1, vtkMRMLHierarchyNodePointer d2);
 bool vtkMRMLHierarchyNodeSortPredicate(vtkMRMLHierarchyNodePointer d1, vtkMRMLHierarchyNodePointer d2)
 {

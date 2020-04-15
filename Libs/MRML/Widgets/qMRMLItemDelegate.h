@@ -43,7 +43,7 @@ class QMRML_WIDGETS_EXPORT qMRMLItemDelegate: public QStyledItemDelegate
 public:
   qMRMLItemDelegate(QObject *parent = nullptr);
   ~qMRMLItemDelegate() override;
-  typedef QStyledItemDelegate Superclass;
+  using Superclass = QStyledItemDelegate;
 
   bool isColor(const QModelIndex& index)const;
   int colorRole(const QModelIndex& index)const;

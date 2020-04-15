@@ -48,7 +48,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerLoadableModuleFactory :
 {
 public:
 
-  typedef ctkAbstractPluginFactory<qSlicerAbstractCoreModule> Superclass;
+  using Superclass = ctkAbstractPluginFactory<qSlicerAbstractCoreModule>;
   qSlicerLoadableModuleFactory();
   ~qSlicerLoadableModuleFactory() override;
 

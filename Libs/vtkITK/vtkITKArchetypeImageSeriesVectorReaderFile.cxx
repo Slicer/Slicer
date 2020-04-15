@@ -56,10 +56,10 @@ void vtkITKExecuteDataFromFileVector(
   vtkITKArchetypeImageSeriesVectorReaderFile* self,
   vtkImageData *data)
 {
-  typedef itk::VectorImage<T,3> image2;
-  typedef itk::ImageSource<image2> FilterType;
+  using image2 = itk::VectorImage<T, 3>;
+  using FilterType = itk::ImageSource<image2>;
   typename FilterType::Pointer filter;
-  typedef itk::ImageFileReader< image2 > ReaderType;
+  using ReaderType = itk::ImageFileReader<image2>;
   typename ReaderType::Pointer reader2 = ReaderType::New();
   reader2->SetFileName(self->GetFileName(0));
   if (self->GetUseNativeCoordinateOrientation())

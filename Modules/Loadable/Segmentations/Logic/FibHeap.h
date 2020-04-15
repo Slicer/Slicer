@@ -26,13 +26,13 @@
 #include <iostream>
 
 // type for cost function - single precision is enough
-typedef float NodeKeyValueType;
+using NodeKeyValueType = float;
 
 // type for storing a pixel index
 // We could use 32-bit indices for images smaller than 4GB and 64-bit indices for larger images.
 // However, >4GB images would require about 300GB RAM to store all the indices and distances,
 // so for now we only support images smaller than 4GB.
-typedef unsigned int NodeIndexType;
+using NodeIndexType = unsigned int;
 
 // .NAME FibHeapNode - Fibonacci Heap Node Class
 // .SECTION Description

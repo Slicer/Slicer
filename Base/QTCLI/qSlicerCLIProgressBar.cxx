@@ -50,7 +50,7 @@ class qSlicerCLIProgressBarPrivate
 protected:
   qSlicerCLIProgressBar* const q_ptr;
 public:
-  typedef qSlicerCLIProgressBarPrivate Self;
+  using Self = qSlicerCLIProgressBarPrivate;
   qSlicerCLIProgressBarPrivate(qSlicerCLIProgressBar& object);
 
   void init();

@@ -46,7 +46,7 @@ class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerDiffusionWeightedVolumeDi
   QVTK_OBJECT
 public:
   /// Constructors
-  typedef qSlicerWidget Superclass;
+  using Superclass = qSlicerWidget;
   explicit qSlicerDiffusionWeightedVolumeDisplayWidget(QWidget* parent = nullptr);
   ~qSlicerDiffusionWeightedVolumeDisplayWidget() override;
 

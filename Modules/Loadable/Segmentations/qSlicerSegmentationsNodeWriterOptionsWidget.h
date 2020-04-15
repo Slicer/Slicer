@@ -33,7 +33,7 @@ class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsNodeWriterOpti
   Q_OBJECT
 
 public:
-  typedef qSlicerNodeWriterOptionsWidget Superclass;
+  using Superclass = qSlicerNodeWriterOptionsWidget;
   explicit qSlicerSegmentationsNodeWriterOptionsWidget(QWidget* parent = nullptr);
   ~qSlicerSegmentationsNodeWriterOptionsWidget() override;
 

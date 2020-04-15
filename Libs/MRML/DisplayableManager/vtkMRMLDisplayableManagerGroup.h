@@ -122,7 +122,7 @@ protected:
   vtkMRMLDisplayableManagerGroup();
   ~vtkMRMLDisplayableManagerGroup() override;
 
-  typedef vtkMRMLDisplayableManagerGroup Self;
+  using Self = vtkMRMLDisplayableManagerGroup;
   static void DoCallback(vtkObject* vtk_obj, unsigned long event,
                          void* client_data, void* call_data);
   /// Trigger upon a DisplayableManager is either registered or unregistered from

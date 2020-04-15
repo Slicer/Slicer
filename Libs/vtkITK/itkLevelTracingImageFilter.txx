@@ -22,10 +22,10 @@ class LevelTracingImageFunction :
 {
 public:
   /** Standard class typedefs. */
-  typedef LevelTracingImageFunction                 Self;
-  typedef ImageFunction<TInputImage,bool,TCoordRep> Superclass;
-  typedef SmartPointer<Self>                        Pointer;
-  typedef SmartPointer<const Self>                  ConstPointer;
+  using Self = LevelTracingImageFunction<TInputImage, TCoordRep>;
+  using Superclass = ImageFunction<TInputImage, bool, TCoordRep>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(LevelTracingImageFunction, ImageFunction);
@@ -34,25 +34,25 @@ public:
   itkNewMacro(Self);
 
   /** InputImageType typedef support. */
-  typedef typename Superclass::InputImageType InputImageType;
+  using InputImageType = typename Superclass::InputImageType;
 
   /** Typedef to describe the type of pixel. */
-  typedef typename TInputImage::PixelType PixelType;
+  using PixelType = typename TInputImage::PixelType;
 
   /** SizeType of the input image */
-  typedef typename InputImageType::SizeType InputSizeType;
+  using InputSizeType = typename InputImageType::SizeType;
 
   /** Dimension underlying input image. */
   itkStaticConstMacro(ImageDimension, unsigned int,Superclass::ImageDimension);
 
   /** Point typedef support. */
-  typedef typename Superclass::PointType PointType;
+  using PointType = typename Superclass::PointType;
 
   /** Index typedef support. */
-  typedef typename Superclass::IndexType IndexType;
+  using IndexType = typename Superclass::IndexType;
 
   /** ContinuousIndex typedef support. */
-  typedef typename Superclass::ContinuousIndexType ContinuousIndexType;
+  using ContinuousIndexType = typename Superclass::ContinuousIndexType;
 
 
   /** BinaryThreshold the image at a point position
@@ -180,7 +180,7 @@ LevelTracingImageFilter<TInputImage, TOutputImage>
 }
 
 /** Smart Pointer type to a DataObject. */
-typedef DataObject::Pointer DataObjectPointer;
+using DataObjectPointer = DataObject::Pointer;
 
 template <class TInputImage, class TOutputImage>
 DataObjectPointer
@@ -465,8 +465,8 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
   outputImage->Allocate();
   outputImage->FillBuffer ( NumericTraits<OutputImagePixelType>::ZeroValue() );
 
-  typedef LevelTracingImageFunction<InputImageType, double> FunctionType;
-  typedef FloodFilledImageFunctionConditionalIterator<OutputImageType, FunctionType> IteratorType;
+  using FunctionType = LevelTracingImageFunction<InputImageType, double>;
+  using IteratorType = FloodFilledImageFunctionConditionalIterator<OutputImageType, FunctionType>;
 
   typename FunctionType::Pointer function = FunctionType::New();
   function->SetInputImage ( inputImage );

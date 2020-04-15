@@ -55,15 +55,15 @@ class ImageRegistrationViewer
   : public Command
 {
 public:
-  typedef ImageRegistrationViewer Self;
-  typedef Command                 Superclass;
-  typedef SmartPointer<Self>      Pointer;
+  using Self = ImageRegistrationViewer;
+  using Superclass = Command;
+  using Pointer = SmartPointer<Self>;
 
   itkTypeMacro( ImageRegistrationViewer, Command );
 
   itkNewMacro( ImageRegistrationViewer );
 
-  typedef SingleValuedNonLinearOptimizer OptimizerType;
+  using OptimizerType = SingleValuedNonLinearOptimizer;
 
   itkSetMacro(DontShowParameters, bool);
   itkSetMacro(UpdateInterval, int);
@@ -203,7 +203,7 @@ void OptimizedImageToImageRegistrationMethod<TImage>::GenerateData()
     {
     case MATTES_MI_METRIC:
         {
-        typedef MattesMutualInformationImageToImageMetric<TImage, TImage> TypedMetricType;
+        using TypedMetricType = MattesMutualInformationImageToImageMetric<TImage, TImage>;
 
         typename TypedMetricType::Pointer typedMetric = TypedMetricType::New();
 
@@ -437,7 +437,7 @@ void
 OptimizedImageToImageRegistrationMethod<TImage>
 ::Optimize( MetricType * metric, InterpolatorType * interpolator )
 {
-  typedef ImageRegistrationMethod<TImage, TImage> RegType;
+  using RegType = ImageRegistrationMethod<TImage, TImage>;
 
   if( m_UseEvolutionaryOptimization )
     {
@@ -446,7 +446,7 @@ OptimizedImageToImageRegistrationMethod<TImage>
       std::cout << "EVOLUTIONARY START" << std::endl;
       }
 
-    typedef OnePlusOneEvolutionaryOptimizer EvoOptimizerType;
+    using EvoOptimizerType = OnePlusOneEvolutionaryOptimizer;
     EvoOptimizerType::Pointer evoOpt = EvoOptimizerType::New();
 
     evoOpt->SetNormalVariateGenerator( Statistics::NormalVariateGenerator
@@ -471,7 +471,7 @@ OptimizedImageToImageRegistrationMethod<TImage>
 
     if( this->GetReportProgress() )
       {
-      typedef ImageRegistrationViewer ViewerCommandType;
+      using ViewerCommandType = ImageRegistrationViewer;
       typename ViewerCommandType::Pointer command = ViewerCommandType::New();
       if( this->GetTransform()->GetNumberOfParameters() > 16 )
         {
@@ -538,7 +538,7 @@ OptimizedImageToImageRegistrationMethod<TImage>
     std::cout << "GRADIENT START" << std::endl;
     }
 
-  typedef FRPROptimizer GradOptimizerType;
+  using GradOptimizerType = FRPROptimizer;
   GradOptimizerType::Pointer gradOpt = GradOptimizerType::New();
 
   gradOpt->SetMaximize( false );
@@ -554,7 +554,7 @@ OptimizedImageToImageRegistrationMethod<TImage>
 
   if( this->GetReportProgress() )
     {
-    typedef ImageRegistrationViewer ViewerCommandType;
+    using ViewerCommandType = ImageRegistrationViewer;
     typename ViewerCommandType::Pointer command = ViewerCommandType::New();
     if( this->GetTransform()->GetNumberOfParameters() > 16 )
       {

@@ -10,10 +10,10 @@
 class CSFLS
 {
 public:
-  typedef CSFLS Self;
+  using Self = CSFLS;
 
-  typedef vnl_vector_fixed<int, 3> NodeType;
-  typedef std::list<NodeType>      CSFLSLayer;
+  using NodeType = vnl_vector_fixed<int, 3>;
+  using CSFLSLayer = std::list<NodeType>;
 
   // typedef boost::shared_ptr< Self > Pointer;
 

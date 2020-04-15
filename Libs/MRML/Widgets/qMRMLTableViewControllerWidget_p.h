@@ -58,7 +58,7 @@ class qMRMLTableViewControllerWidgetPrivate
   Q_DECLARE_PUBLIC(qMRMLTableViewControllerWidget);
 
 public:
-  typedef qMRMLViewControllerBarPrivate Superclass;
+  using Superclass = qMRMLViewControllerBarPrivate;
   qMRMLTableViewControllerWidgetPrivate(qMRMLTableViewControllerWidget& object);
   ~qMRMLTableViewControllerWidgetPrivate() override;
 

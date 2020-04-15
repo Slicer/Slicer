@@ -23,7 +23,7 @@
 #include "vtkMatrix4x4.h"
 #include "vtkNew.h"
 
-typedef itk::BSplineDeformableTransform<double,3,3> itkBSplineType;
+using itkBSplineType = itk::BSplineDeformableTransform<double, 3, 3>;
 
 double DisplacementScale=0.63;
 
@@ -117,7 +117,7 @@ itkBSplineType::Pointer CreateBSplineItk(
   bspline->SetGridSpacing( spacinItk );
   bspline->SetGridDirection( directionItk );
 
-  typedef itk::AffineTransform< double,3 > BulkTransformType;
+  using BulkTransformType = itk::AffineTransform<double, 3>;
   const BulkTransformType::Pointer bulkTransform = BulkTransformType::New();
   BulkTransformType::MatrixType m;
   for (int row=0; row<3; row++)
@@ -137,7 +137,7 @@ itkBSplineType::Pointer CreateBSplineItk(
   bspline->SetBulkTransform(bulkTransform);
 
   const unsigned int numberOfParameters = bspline->GetNumberOfParameters();
-  typedef itkBSplineType::ParametersType ParametersType;
+  using ParametersType = itkBSplineType::ParametersType;
   ParametersType parameters( numberOfParameters );
   // Check if numberOfNodes = numberOfParameters / 3;
   assert( (numberOfParameters / 3) == dims[0] * dims[1] * dims[2] );

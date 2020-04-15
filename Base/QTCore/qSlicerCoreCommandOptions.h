@@ -61,7 +61,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkCommandL
   Q_PROPERTY(QStringList additionalModulePaths READ additionalModulePaths CONSTANT)
   Q_PROPERTY(QStringList modulesToIgnore READ modulesToIgnore CONSTANT)
 public:
-  typedef ctkCommandLineParser Superclass;
+  using Superclass = ctkCommandLineParser;
   qSlicerCoreCommandOptions();
   ~qSlicerCoreCommandOptions() override;
 

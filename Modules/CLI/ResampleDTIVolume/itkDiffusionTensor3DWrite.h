@@ -34,17 +34,17 @@ template <class TData>
 class DiffusionTensor3DWrite : public Object
 {
 public:
-  typedef TData                               DataType;
-  typedef DiffusionTensor3DWrite              Self;
-  typedef DiffusionTensor3D<DataType>         TensorDataType;
-  typedef Image<TensorDataType, 3>            DiffusionImageType;
-  typedef MetaDataDictionary                  DictionaryType;
-  typedef ImageFileWriter<DiffusionImageType> WriterType;
-  typedef SmartPointer<Self>                  Pointer;
-  typedef SmartPointer<const Self>            ConstPointer;
-  typedef std::vector<std::vector<double> >   DoubleVectorType;
-  typedef MetaDataObject<DoubleVectorType>    MetaDataDoubleVectorType;
-  typedef MetaDataObject<std::string>         MetaDataIntType;
+  using DataType = TData;
+  using Self = DiffusionTensor3DWrite<TData>;
+  using TensorDataType = DiffusionTensor3D<DataType>;
+  using DiffusionImageType = Image<TensorDataType, 3>;
+  using DictionaryType = MetaDataDictionary;
+  using WriterType = ImageFileWriter<DiffusionImageType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using DoubleVectorType = std::vector<std::vector<double> >;
+  using MetaDataDoubleVectorType = MetaDataObject<DoubleVectorType>;
+  using MetaDataIntType = MetaDataObject<std::string>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DWrite, Object);

@@ -28,7 +28,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerIOManager : public qSlicerCoreIOManager
   Q_OBJECT;
   QVTK_OBJECT;
 public:
-  typedef qSlicerCoreIOManager Superclass;
+  using Superclass = qSlicerCoreIOManager;
   qSlicerIOManager(QObject* parent = nullptr);
   ~qSlicerIOManager() override;
 

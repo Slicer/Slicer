@@ -57,7 +57,7 @@ class qSlicerLayoutCustomSliceViewFactory
 {
   Q_OBJECT
 public:
-  typedef qMRMLLayoutSliceViewFactory Superclass;
+  using Superclass = qMRMLLayoutSliceViewFactory;
   qSlicerLayoutCustomSliceViewFactory(QObject* parent):Superclass(parent)
   {
     this->LastNode = nullptr;
@@ -151,7 +151,7 @@ class qMRMLLayoutCustomViewFactory
 {
   Q_OBJECT
 public:
-  typedef qMRMLLayoutViewFactory Superclass;
+  using Superclass = qMRMLLayoutViewFactory;
   qMRMLLayoutCustomViewFactory(QObject* parent) : Superclass(parent)
   {
     this->LastNode = nullptr;

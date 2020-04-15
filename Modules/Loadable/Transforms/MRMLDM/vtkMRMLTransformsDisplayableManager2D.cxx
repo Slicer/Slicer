@@ -75,10 +75,10 @@ public:
     vtkSmartPointer<vtkTransformPolyDataFilter> Transformer;
     };
 
-  typedef std::map < vtkMRMLTransformDisplayNode*, const Pipeline* > PipelinesCacheType;
+  using PipelinesCacheType = std::map<vtkMRMLTransformDisplayNode *, const Pipeline *>;
   PipelinesCacheType DisplayPipelines;
 
-  typedef std::map < vtkMRMLTransformNode*, std::set< vtkMRMLTransformDisplayNode* > > TransformToDisplayCacheType;
+  using TransformToDisplayCacheType = std::map<vtkMRMLTransformNode *, std::set<vtkMRMLTransformDisplayNode *> >;
   TransformToDisplayCacheType TransformToDisplayNodes;
 
   // Transforms

@@ -28,11 +28,11 @@ namespace itk
 template <class TPixel> class TimeSeriesDatabase : public ImageSource<Image<TPixel,3> > {
 public:
 
-  typedef TimeSeriesDatabase            Self;
-  typedef ImageSource<Image<TPixel,3> > Superclass;
-  typedef SmartPointer<Self>            Pointer;
-  typedef SmartPointer<const Self>      ConstPointer;
-  typedef WeakPointer<const Self>       ConstWeakPointer;
+  using Self = TimeSeriesDatabase<TPixel>;
+  using Superclass = ImageSource<Image<TPixel, 3> >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using ConstWeakPointer = WeakPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -40,11 +40,11 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(TimeSeriesDatabase, ImageSource);
 
-  typedef Image<TPixel, 3>                  OutputImageType;
-  typedef typename OutputImageType::Pointer OutputImageTypePointer;
-  typedef Image<TPixel, 2>                  OutputSliceType;
-  typedef typename OutputSliceType::Pointer OutputSliceTypePointer;
-  typedef Array<TPixel>                     ArrayType;
+  using OutputImageType = Image<TPixel, 3>;
+  using OutputImageTypePointer = typename OutputImageType::Pointer;
+  using OutputSliceType = Image<TPixel, 2>;
+  using OutputSliceTypePointer = typename OutputSliceType::Pointer;
+  using ArrayType = Array<TPixel>;
 
   /** Connect to an existing TimeSeriesDatabase file on disk
    * The idea behind the Connect method is to associate this
@@ -115,7 +115,7 @@ protected:
   typename OutputImageType::PointType     m_OutputOrigin;
   typename OutputImageType::DirectionType m_OutputDirection;
 
-  typedef itk::TimeSeriesDatabaseHelper::counted_ptr<std::fstream> StreamPtr;
+  using StreamPtr = itk::TimeSeriesDatabaseHelper::counted_ptr<std::fstream>;
 
   static std::streampos CalculatePosition ( unsigned long index, unsigned long BlocksPerFile );
 

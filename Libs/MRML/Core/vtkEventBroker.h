@@ -52,7 +52,7 @@ public:
   vtkTypeMacro(vtkEventBroker, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  typedef std::set< vtkObservation * > ObservationVector;
+  using ObservationVector = std::set<vtkObservation *>;
 
   ///
   /// Return the singleton instance with no reference counting.
@@ -262,11 +262,11 @@ protected:
   void DetachObservation (vtkObservation *observation);
 
   friend class vtkEventBrokerInitialize;
-  typedef vtkEventBroker Self;
+  using Self = vtkEventBroker;
 
 
   ///
-  typedef std::map< vtkObject*, ObservationVector > ObjectToObservationVectorMap;
+  using ObjectToObservationVectorMap = std::map<vtkObject *, ObservationVector>;
 
   /// maps to manage quick lookup by object
   ObjectToObservationVectorMap SubjectMap;
@@ -300,7 +300,7 @@ private:
 class VTK_MRML_EXPORT vtkEventBrokerInitialize
 {
 public:
-  typedef vtkEventBrokerInitialize Self;
+  using Self = vtkEventBrokerInitialize;
 
   vtkEventBrokerInitialize();
   ~vtkEventBrokerInitialize();

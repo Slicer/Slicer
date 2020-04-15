@@ -19,7 +19,7 @@ namespace itk
                      ImageIOBase::IOPixelType &pixelType,
                      ImageIOBase::IOComponentType &componentType)
     {
-      typedef itk::Image<unsigned char, 3> ImageType;
+      using ImageType = itk::Image<unsigned char, 3>;
       itk::ImageFileReader<ImageType>::Pointer imageReader =
         itk::ImageFileReader<ImageType>::New();
       imageReader->SetFileName(fileName.c_str());

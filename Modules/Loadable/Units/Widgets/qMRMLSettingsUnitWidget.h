@@ -46,7 +46,7 @@ class Q_SLICER_MODULE_UNITS_WIDGETS_EXPORT qMRMLSettingsUnitWidget
   QVTK_OBJECT
 
 public:
-  typedef QWidget Superclass;
+  using Superclass = QWidget;
   qMRMLSettingsUnitWidget(QWidget *parent=nullptr);
   ~qMRMLSettingsUnitWidget() override;
 

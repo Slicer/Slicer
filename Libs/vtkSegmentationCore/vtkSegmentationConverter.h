@@ -47,11 +47,11 @@ class vtkOrientedImageData;
 class vtkSegmentationCore_EXPORT vtkSegmentationConverter : public vtkObject
 {
 public:
-  typedef std::vector< vtkSmartPointer<vtkSegmentationConverterRule> > ConverterRulesListType;
+  using ConverterRulesListType = std::vector<vtkSmartPointer<vtkSegmentationConverterRule> >;
 
-  typedef std::vector<vtkSegmentationConverterRule*> ConversionPathType; // Contains a list of converter rule names
-  typedef std::pair<ConversionPathType, unsigned int> ConversionPathAndCostType;
-  typedef std::vector<ConversionPathAndCostType> ConversionPathAndCostListType;
+  using ConversionPathType = std::vector<vtkSegmentationConverterRule *>; // Contains a list of converter rule names
+  using ConversionPathAndCostType = std::pair<ConversionPathType, unsigned int>;
+  using ConversionPathAndCostListType = std::vector<ConversionPathAndCostType>;
 
   /// Default representation types
   /// In binary and fractional labelmaps values <=0 are considered background voxels (outside), values>0 are foreground (inside).
@@ -178,9 +178,9 @@ protected:
   ConverterRulesListType ConverterRules;
 
   /// For each "to" representation (first) stores a rule (second)
-  typedef std::vector<vtkSegmentationConverterRule*> RulesListType;
+  using RulesListType = std::vector<vtkSegmentationConverterRule *>;
   /// For each "from" representation (first) stores an array of rules (second)
-  typedef std::map<std::string, RulesListType> RepresentationToRepresentationToRuleMapType;
+  using RepresentationToRepresentationToRuleMapType = std::map<std::string, RulesListType>;
 
   /// Source representation to target representation rule graph
   RepresentationToRepresentationToRuleMapType RulesGraph;

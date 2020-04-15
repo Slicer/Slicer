@@ -43,7 +43,7 @@ class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingSettingsPa
 
 public:
   /// Superclass typedef
-  typedef ctkSettingsPanel Superclass;
+  using Superclass = ctkSettingsPanel;
 
   /// Constructor
   explicit qSlicerVolumeRenderingSettingsPanel(QWidget* parent = nullptr);

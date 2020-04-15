@@ -44,7 +44,7 @@ qMRMLAnnotationRulerProjectionPropertyWidget
   QVTK_OBJECT
 
 public:
-  typedef qMRMLWidget Superclass;
+  using Superclass = qMRMLWidget;
   qMRMLAnnotationRulerProjectionPropertyWidget(QWidget *newParent = nullptr);
   ~qMRMLAnnotationRulerProjectionPropertyWidget() override;
 

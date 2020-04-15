@@ -110,8 +110,8 @@ AnisotropicSimilarityLandmarkBasedTransformInitializer<TTransform, TFixedImage, 
       AnisotropicSimilarity3DTransformType *transform = dynamic_cast<AnisotropicSimilarity3DTransformType *>(
           this->m_Transform.GetPointer() );
 
-      typedef typename AnisotropicSimilarity3DTransformType::OutputVectorType VectorType;
-      typedef typename AnisotropicSimilarity3DTransformType::OutputPointType  PointType;
+      using VectorType = typename AnisotropicSimilarity3DTransformType::OutputVectorType;
+      using PointType = typename AnisotropicSimilarity3DTransformType::OutputPointType;
 
       // Compute the centroids
       PointType fixedCentroid;
@@ -180,8 +180,8 @@ AnisotropicSimilarityLandmarkBasedTransformInitializer<TTransform, TFixedImage, 
       scale[1] = movingScale / fixedScale;
       scale[2] = movingScale / fixedScale;
 
-      typedef typename AnisotropicSimilarity3DTransformType::VersorType VersorType;
-      typedef typename AnisotropicSimilarity3DTransformType::MatrixType MatrixType;
+      using VersorType = typename AnisotropicSimilarity3DTransformType::VersorType;
+      using MatrixType = typename AnisotropicSimilarity3DTransformType::MatrixType;
 
       VersorType versor;
       transform->SetIdentity();
@@ -257,10 +257,7 @@ AnisotropicSimilarityLandmarkBasedTransformInitializer<TTransform, TFixedImage, 
           vnl_matrix<double> eigenVectors(4, 4);
           vnl_vector<double> eigenValues(4);
 
-          typedef itk::SymmetricEigenAnalysis<
-            itk::Matrix<double, 4, 4>,
-            vnl_vector<double>,
-            vnl_matrix<double> > SymmetricEigenAnalysisType;
+          using SymmetricEigenAnalysisType = itk::SymmetricEigenAnalysis<itk::Matrix<double, 4, 4>, vnl_vector<double>, vnl_matrix<double> >;
           SymmetricEigenAnalysisType symmetricEigenSystem(4);
 
           symmetricEigenSystem.ComputeEigenValuesAndVectors( N, eigenValues, eigenVectors );
@@ -429,8 +426,8 @@ AnisotropicSimilarityLandmarkBasedTransformInitializer<TTransform, TFixedImage, 
       Rigid2DTransformType *transform = dynamic_cast<Rigid2DTransformType *>(
           this->m_Transform.GetPointer() );
 
-      typedef typename Rigid2DTransformType::OutputVectorType VectorType;
-      typedef typename Rigid2DTransformType::OutputPointType  PointType;
+      using VectorType = typename Rigid2DTransformType::OutputVectorType;
+      using PointType = typename Rigid2DTransformType::OutputPointType;
 
       // Initialize the transform to identity
       transform->SetIdentity();

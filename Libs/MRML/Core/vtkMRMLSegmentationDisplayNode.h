@@ -71,7 +71,7 @@ public:
     // correctly for these members, so there is no need to define them.
     };
 
-  typedef std::map<std::string, SegmentDisplayProperties> SegmentDisplayPropertiesMap;
+  using SegmentDisplayPropertiesMap = std::map<std::string, SegmentDisplayProperties>;
 
 public:
   static vtkMRMLSegmentationDisplayNode *New();

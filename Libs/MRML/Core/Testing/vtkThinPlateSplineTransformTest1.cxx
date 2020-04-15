@@ -22,8 +22,8 @@
 #include "vtkPoints.h"
 #include "vtkThinPlateSplineTransform.h"
 
-typedef itk::ThinPlateSplineKernelTransform<double,3> itkThinPlateSplineType;
-typedef itkThinPlateSplineType::PointSetType PointSetType;
+using itkThinPlateSplineType = itk::ThinPlateSplineKernelTransform<double, 3>;
+using PointSetType = itkThinPlateSplineType::PointSetType;
 
 //----------------------------------------------------------------------------
 void CreateThinPlateSplineVtk(vtkThinPlateSplineTransform* tpsTransform, vtkPoints* sourceLandmarks, vtkPoints* targetLandmarks)

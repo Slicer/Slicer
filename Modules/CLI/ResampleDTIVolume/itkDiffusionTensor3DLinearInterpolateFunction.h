@@ -28,14 +28,13 @@ class DiffusionTensor3DLinearInterpolateFunction :
   public DiffusionTensor3DInterpolateImageFunctionReimplementation<TData, TCoordRep>
 {
 public:
-  typedef TData                                                                          DataType;
-  typedef DiffusionTensor3DLinearInterpolateFunction                                     Self;
-  typedef DiffusionTensor3DInterpolateImageFunctionReimplementation<DataType, TCoordRep> Superclass;
-  typedef typename Superclass::ImageType                                                 ImageType;
-  typedef SmartPointer<Self>                                                             Pointer;
-  typedef SmartPointer<const Self>                                                       ConstPointer;
-  typedef LinearInterpolateImageFunction<ImageType,
-                                         TCoordRep>                           LinearInterpolateImageFunctionType;
+  using DataType = TData;
+  using Self = DiffusionTensor3DLinearInterpolateFunction<TData, TCoordRep>;
+  using Superclass = DiffusionTensor3DInterpolateImageFunctionReimplementation<DataType, TCoordRep>;
+  using ImageType = typename Superclass::ImageType;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using LinearInterpolateImageFunctionType = LinearInterpolateImageFunction<ImageType, TCoordRep>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DLinearInterpolateFunction, DiffusionTensor3DInterpolateImageFunctionReimplementation);

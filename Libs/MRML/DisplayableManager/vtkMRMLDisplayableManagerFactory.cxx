@@ -50,7 +50,7 @@ public:
   std::vector<std::string> DisplayableManagerClassNames;
 
   // .. and its associated convenient typedef
-  typedef std::vector<std::string>::iterator DisplayableManagerClassNamesIt;
+  using DisplayableManagerClassNamesIt = std::vector<std::string>::iterator;
 
   // The application logic (can be a vtkSlicerApplicationLogic
   vtkSmartPointer<vtkMRMLApplicationLogic> ApplicationLogic;

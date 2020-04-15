@@ -53,7 +53,7 @@ class qSlicerSegmentEditorAbstractLabelEffectPrivate: public QObject
 protected:
   qSlicerSegmentEditorAbstractLabelEffect* const q_ptr;
 public:
-  typedef QObject Superclass;
+  using Superclass = QObject;
   qSlicerSegmentEditorAbstractLabelEffectPrivate(qSlicerSegmentEditorAbstractLabelEffect& object);
   ~qSlicerSegmentEditorAbstractLabelEffectPrivate() override;
 

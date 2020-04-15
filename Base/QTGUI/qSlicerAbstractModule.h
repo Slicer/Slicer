@@ -47,7 +47,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerAbstractModule
   Q_PROPERTY(QImage logo READ logo)
 public:
 
-  typedef qSlicerAbstractCoreModule Superclass;
+  using Superclass = qSlicerAbstractCoreModule;
   qSlicerAbstractModule(QObject *parent=nullptr);
   ~qSlicerAbstractModule() override;
 

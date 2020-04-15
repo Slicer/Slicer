@@ -40,7 +40,7 @@ class QMRML_WIDGETS_EXPORT qMRMLEventBrokerWidget: public QWidget
 {
   Q_OBJECT
 public:
-  typedef QWidget Superclass;
+  using Superclass = QWidget;
   explicit qMRMLEventBrokerWidget(QWidget *parent = nullptr);
   ~qMRMLEventBrokerWidget() override;
 

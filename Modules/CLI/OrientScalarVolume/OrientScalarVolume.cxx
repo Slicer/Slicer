@@ -96,16 +96,15 @@ int DoIt( int argc, char * argv[], T )
 
   PARSE_ARGS;
 
-  typedef    T PixelType;
+  using PixelType = T;
 
-  typedef itk::Image<PixelType,  3> ImageType;
+  using ImageType = itk::Image<PixelType, 3>;
 
-  typedef itk::ImageFileReader<ImageType>              ReaderType;
-  typedef itk::ImageFileWriter<ImageType>              WriterType;
-  typedef itk::ChangeInformationImageFilter<ImageType> ChangeType;
+  using ReaderType = itk::ImageFileReader<ImageType>;
+  using WriterType = itk::ImageFileWriter<ImageType>;
+  using ChangeType = itk::ChangeInformationImageFilter<ImageType>;
 
-  typedef itk::OrientImageFilter<
-    ImageType, ImageType>  FilterType;
+  using FilterType = itk::OrientImageFilter<ImageType, ImageType>;
 
   // Read the input volume
   typename ReaderType::Pointer reader1 = ReaderType::New();

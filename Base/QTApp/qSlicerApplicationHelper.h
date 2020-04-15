@@ -38,8 +38,8 @@ class Q_SLICER_BASE_QTAPP_EXPORT qSlicerApplicationHelper : public QObject
 {
   Q_OBJECT
 public:
-  typedef QObject Superclass;
-  typedef qSlicerApplicationHelper Self;
+  using Superclass = QObject;
+  using Self = qSlicerApplicationHelper;
 
   qSlicerApplicationHelper(QObject * parent = nullptr);
   ~qSlicerApplicationHelper() override;

@@ -139,7 +139,7 @@ public:
 class EdgeLocator
 {
 private:
-  typedef std::map<vtkIdType, EdgeLocatorNode> MapType;
+  using MapType = std::map<vtkIdType, EdgeLocatorNode>;
   MapType EdgeMap;
 
 public:

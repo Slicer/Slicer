@@ -38,7 +38,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsManageWidget
   Q_OBJECT
 public:
   /// Superclass typedef
-  typedef QListWidget Superclass;
+  using Superclass = QListWidget;
 
   /// Constructor
   explicit qSlicerExtensionsManageWidget(QWidget* parent = nullptr);

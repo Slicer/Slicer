@@ -44,7 +44,7 @@ class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerDTISliceDisplayWidget
 
 public:
   /// Constructors
-  typedef qSlicerWidget Superclass;
+  using Superclass = qSlicerWidget;
   explicit qSlicerDTISliceDisplayWidget(QWidget* parent=nullptr);
   ~qSlicerDTISliceDisplayWidget() override;
 

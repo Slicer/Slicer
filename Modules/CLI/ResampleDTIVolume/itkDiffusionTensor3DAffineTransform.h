@@ -30,21 +30,21 @@ class DiffusionTensor3DAffineTransform :
   public DiffusionTensor3DMatrix3x3Transform<TData>
 {
 public:
-  typedef TData                                            DataType;
-  typedef DiffusionTensor3DAffineTransform                 Self;
-  typedef DiffusionTensor3DMatrix3x3Transform<DataType>    Superclass;
-  typedef typename Superclass::PointType                   PointType;
-  typedef typename Superclass::TensorDataType              TensorDataType;
-  typedef typename Superclass::MatrixDataType              MatrixDataType;
-  typedef typename Superclass::MatrixTransformType         MatrixTransformType;
-  typedef typename Superclass::InternalTensorDataType      InternalTensorDataType;
-  typedef typename Superclass::InternalMatrixDataType      InternalMatrixDataType;
-  typedef typename Superclass::InternalMatrixTransformType InternalMatrixTransformType;
-  typedef SmartPointer<Self>                               Pointer;
-  typedef SmartPointer<const Self>                         ConstPointer;
-  typedef MatrixExtended<double, 4, 4>                     MatrixTransform4x4Type;
-  typedef AffineTransform<double, 3>                       AffineTransformType;
-  typedef typename Superclass::VectorType                  VectorType;
+  using DataType = TData;
+  using Self = DiffusionTensor3DAffineTransform<TData>;
+  using Superclass = DiffusionTensor3DMatrix3x3Transform<DataType>;
+  using PointType = typename Superclass::PointType;
+  using TensorDataType = typename Superclass::TensorDataType;
+  using MatrixDataType = typename Superclass::MatrixDataType;
+  using MatrixTransformType = typename Superclass::MatrixTransformType;
+  using InternalTensorDataType = typename Superclass::InternalTensorDataType;
+  using InternalMatrixDataType = typename Superclass::InternalMatrixDataType;
+  using InternalMatrixTransformType = typename Superclass::InternalMatrixTransformType;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using MatrixTransform4x4Type = MatrixExtended<double, 4, 4>;
+  using AffineTransformType = AffineTransform<double, 3>;
+  using VectorType = typename Superclass::VectorType;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DAffineTransform, DiffusionTensor3DMatrix3x3Transform);

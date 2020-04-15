@@ -938,7 +938,7 @@ protected:
   // the scene is deleted.
   vtkWeakPointer<vtkMRMLScene> Scene;
 
-  typedef std::map< std::string, std::string > AttributesType;
+  using AttributesType = std::map<std::string, std::string>;
   AttributesType Attributes;
 
   vtkIntArray* ContentModifiedEvents;
@@ -947,13 +947,13 @@ protected:
 
   /// NodeReferences is a map that stores vector of references for each referenceRole,
   /// the referenceRole can be any unique string, for example "display", "transform" etc.
-  typedef std::vector< vtkSmartPointer<vtkMRMLNodeReference> > NodeReferenceListType;
-  typedef std::map< std::string, NodeReferenceListType > NodeReferencesType;
+  using NodeReferenceListType = std::vector<vtkSmartPointer<vtkMRMLNodeReference> >;
+  using NodeReferencesType = std::map<std::string, NodeReferenceListType>;
   NodeReferencesType NodeReferences;
 
   std::map< std::string, std::string> NodeReferenceMRMLAttributeNames;
 
-  typedef std::map< std::string, vtkSmartPointer<vtkIntArray> > NodeReferenceEventsType;
+  using NodeReferenceEventsType = std::map<std::string, vtkSmartPointer<vtkIntArray> >;
   NodeReferenceEventsType NodeReferenceEvents; // for each role it specifies which referenced node emitted events this node should observe
 
 private:

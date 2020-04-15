@@ -31,10 +31,10 @@ class LevelTracingImageFilter:public ImageToImageFilter<TInputImage,TOutputImage
 {
 public:
   /** Standard class typedefs. */
-  typedef LevelTracingImageFilter                      Self;
-  typedef ImageToImageFilter<TInputImage,TOutputImage> Superclass;
-  typedef SmartPointer<Self>                           Pointer;
-  typedef SmartPointer<const Self>                     ConstPointer;
+  using Self = LevelTracingImageFilter<TInputImage, TOutputImage>;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -47,26 +47,26 @@ public:
   itkStaticConstMacro(ImageDimension, unsigned int,
                       TInputImage::ImageDimension);
 
-  typedef TInputImage                           InputImageType;
-  typedef typename InputImageType::Pointer      InputImagePointer;
-  typedef typename InputImageType::ConstPointer InputImageConstPointer;
-  typedef typename InputImageType::RegionType   InputImageRegionType;
-  typedef typename InputImageType::PixelType    InputImagePixelType;
-  typedef typename InputImageType::IndexType    IndexType;
-  typedef typename InputImageType::SizeType     SizeType;
+  using InputImageType = TInputImage;
+  using InputImagePointer = typename InputImageType::Pointer;
+  using InputImageConstPointer = typename InputImageType::ConstPointer;
+  using InputImageRegionType = typename InputImageType::RegionType;
+  using InputImagePixelType = typename InputImageType::PixelType;
+  using IndexType = typename InputImageType::IndexType;
+  using SizeType = typename InputImageType::SizeType;
 
-  typedef TOutputImage                         OutputImageType;
-  typedef typename OutputImageType::Pointer    OutputImagePointer;
-  typedef typename OutputImageType::RegionType OutputImageRegionType;
-  typedef typename OutputImageType::PixelType  OutputImagePixelType;
+  using OutputImageType = TOutputImage;
+  using OutputImagePointer = typename OutputImageType::Pointer;
+  using OutputImageRegionType = typename OutputImageType::RegionType;
+  using OutputImagePixelType = typename OutputImageType::PixelType;
 
-  typedef ChainCodePath<ImageDimension>       ChainCodePathType;
-  typedef typename ChainCodePathType::Pointer ChainCodePathPointer;
+  using ChainCodePathType = ChainCodePath<ImageDimension>;
+  using ChainCodePathPointer = typename ChainCodePathType::Pointer;
 
-  typedef typename ChainCodePathType::OffsetType OffsetType;
+  using OffsetType = typename ChainCodePathType::OffsetType;
 
   /** Smart Pointer type to a DataObject. */
-  typedef typename DataObject::Pointer DataObjectPointer;
+  using DataObjectPointer = typename DataObject::Pointer;
 
   /** Image dimension constants */
   itkStaticConstMacro(InputImageDimension, unsigned int,

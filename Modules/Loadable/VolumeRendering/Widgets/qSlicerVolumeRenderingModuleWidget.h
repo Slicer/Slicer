@@ -45,7 +45,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerVolumeRenderingModul
   QVTK_OBJECT
 
 public:
-  typedef qSlicerAbstractModuleWidget Superclass;
+  using Superclass = qSlicerAbstractModuleWidget;
   qSlicerVolumeRenderingModuleWidget(QWidget *parent=nullptr);
   ~qSlicerVolumeRenderingModuleWidget() override;
 

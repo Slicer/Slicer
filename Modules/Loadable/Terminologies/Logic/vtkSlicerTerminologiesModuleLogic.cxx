@@ -65,7 +65,7 @@ public:
   // rapidjson document object cannot be stored in an STL map (there are build errors
   // on Linux and Mac), therefore we store a simple pointer and create/delete
   // the document object manually
-  typedef std::map<std::string, rapidjson::Document* > TerminologyMap;
+  using TerminologyMap = std::map<std::string, rapidjson::Document *>;
   vtkInternal();
   ~vtkInternal();
 

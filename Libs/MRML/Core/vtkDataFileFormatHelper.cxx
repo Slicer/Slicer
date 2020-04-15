@@ -127,15 +127,15 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
 {
 #ifdef USE_TEMP_ITK_FILEFORMAT_TABLE
   int numFiles = sizeof(FileFormatTable)/sizeof(FileFormatTable[0]) ;
-  typedef std::set<std::string>              ArrayOfITKIOClassName;
+  using ArrayOfITKIOClassName = std::set<std::string>;
   ArrayOfITKIOClassName ITKIOClassNames;
 #else
   typedef std::vector< std::string >              ArrayOfITKExtensionsType;
 #endif
 
 //  std::map< std::string, ITKImageFileFormat >    itkWriteFormatsMap;
-  typedef itk::ImageIOBase                        IOBaseType;
-  typedef std::list<itk::LightObject::Pointer>    ArrayOfImageIOType;
+  using IOBaseType = itk::ImageIOBase;
+  using ArrayOfImageIOType = std::list<itk::LightObject::Pointer>;
   ArrayOfImageIOType allobjects = itk::ObjectFactoryBase::CreateAllInstance("itkImageIOBase");
 
   ArrayOfImageIOType::iterator itr = allobjects.begin();

@@ -43,7 +43,7 @@ public:
   Q_PROPERTY(bool overrideSectionVisible READ overrideSectionVisible WRITE setOverrideSectionVisible)
 
 public:
-  typedef QObject Superclass;
+  using Superclass = QObject;
   qSlicerTerminologySelectorDialog(QObject* parent = nullptr);
 #ifndef __VTK_WRAP__
   qSlicerTerminologySelectorDialog(

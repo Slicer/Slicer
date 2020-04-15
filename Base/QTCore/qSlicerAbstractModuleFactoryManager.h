@@ -83,10 +83,10 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractModuleFactoryManager : public Q
   /// overwhelming) to load only a subset of the modules.
   Q_PROPERTY(QStringList modulesToIgnore READ modulesToIgnore WRITE setModulesToIgnore NOTIFY modulesToIgnoreChanged)
 public:
-  typedef ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule> qSlicerFileBasedModuleFactory;
-  typedef ctkAbstractFactory<qSlicerAbstractCoreModule> qSlicerModuleFactory;
+  using qSlicerFileBasedModuleFactory = ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule>;
+  using qSlicerModuleFactory = ctkAbstractFactory<qSlicerAbstractCoreModule>;
 
-  typedef QObject Superclass;
+  using Superclass = QObject;
   qSlicerAbstractModuleFactoryManager(QObject * newParent = nullptr);
 
   /// Destructor, Deallocates resources

@@ -33,7 +33,7 @@ class QMRML_WIDGETS_EXPORT qMRMLEventBrokerConnection: public ctkVTKConnection
 Q_OBJECT
 
 public:
-  typedef ctkVTKConnection Superclass;
+  using Superclass = ctkVTKConnection;
   explicit qMRMLEventBrokerConnection(QObject* parent);
   ~qMRMLEventBrokerConnection() override;
 

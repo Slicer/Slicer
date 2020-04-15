@@ -39,7 +39,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSingletonViewFactory : public ctkLayoutV
 {
   Q_OBJECT
 public:
-  typedef ctkLayoutViewFactory Superclass;
+  using Superclass = ctkLayoutViewFactory;
   qSlicerSingletonViewFactory(QObject* parent=nullptr);
   ~qSlicerSingletonViewFactory() override;
 

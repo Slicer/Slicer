@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsModule :
   QVTK_OBJECT
 
 public:
-  typedef qSlicerLoadableModule Superclass;
+  using Superclass = qSlicerLoadableModule;
   explicit qSlicerSegmentationsModule(QObject *parent=nullptr);
   ~qSlicerSegmentationsModule() override;
 

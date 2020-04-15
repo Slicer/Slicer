@@ -49,7 +49,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneHierarchyModelPrivate: public qMRMLSceneMod
 protected:
   Q_DECLARE_PUBLIC(qMRMLSceneHierarchyModel);
 public:
-  typedef qMRMLSceneModelPrivate Superclass;
+  using Superclass = qMRMLSceneModelPrivate;
   qMRMLSceneHierarchyModelPrivate(qMRMLSceneHierarchyModel& object);
   virtual void init();
   virtual vtkMRMLHierarchyNode* CreateHierarchyNode()const;

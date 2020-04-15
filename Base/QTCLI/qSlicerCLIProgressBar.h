@@ -57,7 +57,7 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIProgressBar : public QWidget
   Q_PROPERTY(Visibility progressVisibility READ progressVisibility WRITE setProgressVisibility)
 public:
 
-  typedef QWidget Superclass;
+  using Superclass = QWidget;
   qSlicerCLIProgressBar(QWidget *parent=nullptr);
   ~qSlicerCLIProgressBar() override;
 

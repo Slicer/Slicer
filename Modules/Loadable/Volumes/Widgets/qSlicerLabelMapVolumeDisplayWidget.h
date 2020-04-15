@@ -44,7 +44,7 @@ class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerLabelMapVolumeDisplayWidg
   QVTK_OBJECT
 public:
   /// Constructors
-  typedef qSlicerWidget Superclass;
+  using Superclass = qSlicerWidget;
   explicit qSlicerLabelMapVolumeDisplayWidget(QWidget* parent);
   ~qSlicerLabelMapVolumeDisplayWidget() override;
 

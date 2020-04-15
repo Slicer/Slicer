@@ -131,7 +131,7 @@ RigidImageToImageRegistrationMethod<TImage>
   rigidTransform->SetCenter( affine->GetCenter() );
   rigidTransform->SetTranslation( affine->GetTranslation() );
 
-  typedef vnl_matrix<double> VnlMatrixType;
+  using VnlMatrixType = vnl_matrix<double>;
 
   VnlMatrixType M = affine->GetMatrix().GetVnlMatrix();
 

@@ -36,7 +36,7 @@ class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_EXPORT qMRMLSceneAnnotationModelPrivat
 protected:
   Q_DECLARE_PUBLIC(qMRMLSceneAnnotationModel);
 public:
-  typedef qMRMLSceneDisplayableModelPrivate Superclass;
+  using Superclass = qMRMLSceneDisplayableModelPrivate;
   qMRMLSceneAnnotationModelPrivate(qMRMLSceneAnnotationModel& object);
   void init() override;
 

@@ -33,7 +33,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSaveDataDialog : public qSlicerFileDialo
 {
   Q_OBJECT
 public:
-  typedef QObject Superclass;
+  using Superclass = QObject;
   qSlicerSaveDataDialog(QObject* parent = nullptr);
   ~qSlicerSaveDataDialog() override;
 

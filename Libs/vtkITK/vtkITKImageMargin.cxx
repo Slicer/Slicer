@@ -109,7 +109,7 @@ void vtkITKImageMarginExecute(vtkITKImageMargin *self, vtkImageData* input,
 
     // Wrap scalars into an ITK image
     // - mostly rely on defaults for spacing, origin etc for this filter
-    typedef itk::Image<T, 3> ImageType;
+    using ImageType = itk::Image<T, 3>;
     typename ImageType::Pointer inImage = ImageType::New();
     typename ImageType::RegionType region;
     typename ImageType::IndexType index;

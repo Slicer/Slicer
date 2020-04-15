@@ -85,7 +85,7 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox
   Q_PROPERTY(QComboBox::SizeAdjustPolicy sizeAdjustPolicy READ sizeAdjustPolicy WRITE setSizeAdjustPolicy)
 
 public:
-  typedef QWidget Superclass;
+  using Superclass = QWidget;
 
   /// Construct an empty qMRMLNodeComboBox with a null scene,
   /// no nodeType, where the hidden nodes are not forced on display.

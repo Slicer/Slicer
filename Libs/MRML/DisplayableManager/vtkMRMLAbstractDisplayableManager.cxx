@@ -59,9 +59,9 @@ vtkStandardNewMacro(vtkMRMLAbstractDisplayableManager);
 
 struct EventEquals
 {
-  typedef int first_argument_type;
-  typedef std::pair<int,float> second_argument_type;
-  typedef bool result_type;
+  using first_argument_type = int;
+  using second_argument_type = std::pair<int, float>;
+  using result_type = bool;
   bool operator()(const int& a, std::pair<int,float>& b) const
   { return a == b.first; }
 };

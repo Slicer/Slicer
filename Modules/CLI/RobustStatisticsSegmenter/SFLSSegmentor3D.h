@@ -16,30 +16,30 @@ template <typename TPixel>
 class CSFLSSegmentor3D : public CSFLS
 {
 public:
-  typedef CSFLSSegmentor3D<TPixel> Self;
+  using Self = CSFLSSegmentor3D<TPixel>;
 
-  typedef CSFLS SuperClassType;
+  using SuperClassType = CSFLS;
 
-  typedef SuperClassType::NodeType   NodeType;
-  typedef SuperClassType::CSFLSLayer CSFLSLayer;
+  using NodeType = SuperClassType::NodeType;
+  using CSFLSLayer = SuperClassType::CSFLSLayer;
   // typedef boost::shared_ptr< Self > Pointer;
 
-  typedef itk::Image<TPixel, 3>        TImage;
-  typedef itk::Image<float, 3>         TFloatImage;
-  typedef itk::Image<double, 3>        TDoubleImage;
-  typedef itk::Image<char, 3>          TCharImage;
-  typedef itk::Image<unsigned char, 3> TUCharImage;
-  typedef itk::Image<short, 3>         TShortImage;
+  using TImage = itk::Image<TPixel, 3>;
+  using TFloatImage = itk::Image<float, 3>;
+  using TDoubleImage = itk::Image<double, 3>;
+  using TCharImage = itk::Image<char, 3>;
+  using TUCharImage = itk::Image<unsigned char, 3>;
+  using TShortImage = itk::Image<short, 3>;
 
-  typedef TImage      ImageType;
-  typedef TFloatImage LSImageType;
-  typedef TCharImage  LabelImageType;
-  typedef TUCharImage MaskImageType;
-  typedef TShortImage ShortImageType;
+  using ImageType = TImage;
+  using LSImageType = TFloatImage;
+  using LabelImageType = TCharImage;
+  using MaskImageType = TUCharImage;
+  using ShortImageType = TShortImage;
 
-  typedef typename TImage::IndexType  TIndex;
-  typedef typename TImage::SizeType   TSize;
-  typedef typename TImage::RegionType TRegion;
+  using TIndex = typename TImage::IndexType;
+  using TSize = typename TImage::SizeType;
+  using TRegion = typename TImage::RegionType;
 
   CSFLSSegmentor3D();
   virtual ~CSFLSSegmentor3D()

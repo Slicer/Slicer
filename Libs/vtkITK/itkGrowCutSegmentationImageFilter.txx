@@ -298,7 +298,7 @@ ComputeLabelVolumes(TOutputImage *outputImage, std::vector< unsigned > &volumes,
   //   }
 
 #else
-  typedef LabelImageToShapeLabelMapFilter< OutputImageType > LabelFilterType;
+  using LabelFilterType = LabelImageToShapeLabelMapFilter<OutputImageType>;
   typename LabelFilterType::Pointer labelFilter = LabelFilterType::New();
 
   labelFilter->SetInput(outputImage);
@@ -415,8 +415,8 @@ void GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 InitializeDistancesImage( TInputImage *inputImage,
                           WeightImageType *distances)
 {
-  typedef ConstNeighborhoodIterator<InputImageType> InputNeighborhoodIteratorType;
-  typedef typename InputNeighborhoodIteratorType::RadiusType InputRadiusType;
+  using InputNeighborhoodIteratorType = ConstNeighborhoodIterator<InputImageType>;
+  using InputRadiusType = typename InputNeighborhoodIteratorType::RadiusType;
   InputRadiusType radiusIn = static_cast<InputRadiusType> (m_Radius);
 
   InputNeighborhoodIteratorType input(radiusIn,
@@ -812,9 +812,9 @@ void GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 
     }
 
-  typedef typename InputImageType::RegionType  InputRegionType;
-  typedef typename OutputImageType::RegionType OutputRegionType;
-  typedef typename WeightImageType::RegionType WeightRegionType;
+  using InputRegionType = typename InputImageType::RegionType;
+  using OutputRegionType = typename OutputImageType::RegionType;
+  using WeightRegionType = typename WeightImageType::RegionType;
 
   InputRegionType input;
   input.SetIndex( iIndex );
@@ -828,14 +828,14 @@ void GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   weight.SetIndex( iIndex);
   weight.SetSize( iSize);
 
-  typedef ConstNeighborhoodIterator<InputImageType> InputIteratorType;
-  typedef typename InputIteratorType::RadiusType    InputRadiusType;
+  using InputIteratorType = ConstNeighborhoodIterator<InputImageType>;
+  using InputRadiusType = typename InputIteratorType::RadiusType;
 
-  typedef NeighborhoodIterator<OutputImageType>  LabelIteratorType;
-  typedef typename LabelIteratorType::RadiusType LabelRadiusType;
+  using LabelIteratorType = NeighborhoodIterator<OutputImageType>;
+  using LabelRadiusType = typename LabelIteratorType::RadiusType;
 
-  typedef NeighborhoodIterator<WeightImageType>   WeightIteratorType;
-  typedef typename WeightIteratorType::RadiusType WeightRadiusType;
+  using WeightIteratorType = NeighborhoodIterator<WeightImageType>;
+  using WeightRadiusType = typename WeightIteratorType::RadiusType;
 
 
   InputRadiusType radiusIn; //= static_cast< InputRadiusType >(m_Radius);
@@ -861,7 +861,7 @@ void GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   /////////////////////////////////////////////////////////////////////////////////////////
 
   // Boundary Faces Calculator
-  typedef typename NeighborhoodAlgorithm::ImageBoundaryFacesCalculator< InputImageType > FaceCalculatorType;
+  using FaceCalculatorType = typename NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType>;
   FaceCalculatorType faceCalculator;
   typename FaceCalculatorType::FaceListType faceList;
 
@@ -882,13 +882,13 @@ void GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 
     LabelIteratorType oldLabelIt; //(radiusLab, labelImage, label);
 
-    typedef ImageRegionIterator< OutputImageType > IteratorOut; // newLabelIt(this->GetOutput(), label);
+    using IteratorOut = ImageRegionIterator<OutputImageType>; // newLabelIt(this->GetOutput(), label);
 
     IteratorOut newLabelIt;
 
     WeightIteratorType oldWeightIt; //(radiusWt, weightImage, weight);
 
-    typedef ImageRegionIterator< WeightImageType > IteratorWeight; //newWeightIt(m_WeightImage, weight);
+    using IteratorWeight = ImageRegionIterator<WeightImageType>; //newWeightIt(m_WeightImage, weight);
 
     IteratorWeight newWeightIt;
     IteratorWeight distancesIt;

@@ -79,7 +79,7 @@ struct DigitsToCharacters
     }
 };
 
-typedef std::pair<vtkSlicerCLIModuleLogic *, vtkMRMLCommandLineModuleNode *> LogicNodePair;
+using LogicNodePair = std::pair<vtkSlicerCLIModuleLogic *, vtkMRMLCommandLineModuleNode *>;
 class MRMLIDMap : public std::map<std::string, std::string> {};
 
 //---------------------------------------------------------------------------
@@ -205,7 +205,7 @@ public:
   std::mutex ProcessesKillLock;
   std::vector<itksysProcess*> Processes;
 
-  typedef std::vector<std::pair<vtkMTimeType, vtkMRMLCommandLineModuleNode*> > RequestType;
+  using RequestType = std::vector<std::pair<vtkMTimeType, vtkMRMLCommandLineModuleNode *> >;
   struct FindRequest
   {
     FindRequest(vtkMRMLCommandLineModuleNode* node)
@@ -897,7 +897,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
   qDebug() << "ModuleType:" << node0->GetModuleDescription().GetType().c_str();
 
   // map to keep track of MRML Ids and filenames
-  typedef std::map<std::string, std::string> MRMLIDToFileNameMap;
+  using MRMLIDToFileNameMap = std::map<std::string, std::string>;
   MRMLIDToFileNameMap nodesToReload;
   MRMLIDToFileNameMap nodesToWrite;
 

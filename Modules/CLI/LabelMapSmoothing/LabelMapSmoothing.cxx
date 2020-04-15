@@ -39,22 +39,22 @@ int main( int argc, char * argv[] )
 
 // Image Types
   const unsigned short ImageDimension = 3;
-  typedef itk::Image<float, ImageDimension>         FloatImageType;
-  typedef itk::Image<unsigned char, ImageDimension> UCharImageType;
+  using FloatImageType = itk::Image<float, ImageDimension>;
+  using UCharImageType = itk::Image<unsigned char, ImageDimension>;
 
 // Filter Types
-  typedef itk::BinaryThresholdImageFilter<UCharImageType, UCharImageType>       InputThresholdType;
-  typedef itk::MinimumMaximumImageFilter<UCharImageType>                        MinMaxType;
-  typedef itk::LabelStatisticsImageFilter<UCharImageType, UCharImageType>       LabelStatisticsType;
-  typedef itk::RegionOfInterestImageFilter<UCharImageType, UCharImageType>      ExtracterType;
-  typedef itk::AntiAliasBinaryImageFilter<UCharImageType, FloatImageType>       AntiAliasType;
-  typedef itk::DiscreteGaussianImageFilter<FloatImageType, FloatImageType>      GaussianType;
-  typedef itk::BinaryThresholdImageFilter<FloatImageType, UCharImageType>       OutputThresholdType;
-  typedef itk::PasteImageFilter<UCharImageType, UCharImageType, UCharImageType> PasteType;
+  using InputThresholdType = itk::BinaryThresholdImageFilter<UCharImageType, UCharImageType>;
+  using MinMaxType = itk::MinimumMaximumImageFilter<UCharImageType>;
+  using LabelStatisticsType = itk::LabelStatisticsImageFilter<UCharImageType, UCharImageType>;
+  using ExtracterType = itk::RegionOfInterestImageFilter<UCharImageType, UCharImageType>;
+  using AntiAliasType = itk::AntiAliasBinaryImageFilter<UCharImageType, FloatImageType>;
+  using GaussianType = itk::DiscreteGaussianImageFilter<FloatImageType, FloatImageType>;
+  using OutputThresholdType = itk::BinaryThresholdImageFilter<FloatImageType, UCharImageType>;
+  using PasteType = itk::PasteImageFilter<UCharImageType, UCharImageType, UCharImageType>;
 
 // I/O Types
-  typedef itk::ImageFileReader<UCharImageType> ReaderType;
-  typedef itk::ImageFileWriter<UCharImageType> WriterType;
+  using ReaderType = itk::ImageFileReader<UCharImageType>;
+  using WriterType = itk::ImageFileWriter<UCharImageType>;
 
 // Instances
   ReaderType::Pointer          reader = ReaderType::New();

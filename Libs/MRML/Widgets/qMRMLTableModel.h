@@ -48,7 +48,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTableModel : public QStandardItemModel
   Q_PROPERTY(bool transposed READ transposed WRITE setTransposed)
 
 public:
-  typedef QAbstractItemModel Superclass;
+  using Superclass = QAbstractItemModel;
   qMRMLTableModel(QObject *parent=nullptr);
   ~qMRMLTableModel() override;
 

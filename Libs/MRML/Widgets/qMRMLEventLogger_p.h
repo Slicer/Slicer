@@ -38,7 +38,7 @@ protected:
   qMRMLEventLogger* const q_ptr;
 public:
   qMRMLEventLoggerPrivate(qMRMLEventLogger& object);
-  typedef QObject Superclass;
+  using Superclass = QObject;
 
   void init();
 

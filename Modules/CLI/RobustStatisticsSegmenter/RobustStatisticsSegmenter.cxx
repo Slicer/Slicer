@@ -17,13 +17,13 @@ int main(int argc, char* * argv)
 {
   PARSE_ARGS;
 
-  typedef short                                         PixelType;
-  typedef CSFLSRobustStatSegmentor3DLabelMap<PixelType> SFLSRobustStatSegmentor3DLabelMap_c;
+  using PixelType = short;
+  using SFLSRobustStatSegmentor3DLabelMap_c = CSFLSRobustStatSegmentor3DLabelMap<PixelType>;
 
   // read input image
-  typedef SFLSRobustStatSegmentor3DLabelMap_c::TImage Image_t;
+  using Image_t = SFLSRobustStatSegmentor3DLabelMap_c::TImage;
 
-  typedef itk::ImageFileReader<Image_t> ImageReaderType;
+  using ImageReaderType = itk::ImageFileReader<Image_t>;
   ImageReaderType::Pointer reader = ImageReaderType::New();
   reader->SetFileName(originalImageFileName.c_str() );
   Image_t::Pointer img;
@@ -41,9 +41,9 @@ int main(int argc, char* * argv)
     }
 
   // read input label image
-  typedef SFLSRobustStatSegmentor3DLabelMap_c::TLabelImage LabelImage_t;
+  using LabelImage_t = SFLSRobustStatSegmentor3DLabelMap_c::TLabelImage;
 
-  typedef itk::ImageFileReader<LabelImage_t> LabelImageReader_t;
+  using LabelImageReader_t = itk::ImageFileReader<LabelImage_t>;
   LabelImageReader_t::Pointer readerLabel = LabelImageReader_t::New();
   readerLabel->SetFileName(labelImageFileName.c_str() );
   LabelImage_t::Pointer labelImg;
@@ -118,12 +118,12 @@ int main(int argc, char* * argv)
 
 //   seg.doSegmenation();
 
-  typedef itk::Image<short, 3> MaskImageType;
+  using MaskImageType = itk::Image<short, 3>;
 
   MaskImageType::Pointer finalMask = getFinalMask<float>(seg.mp_phi, labelValue, 2.0);
   finalMask->CopyInformation(img);
 
-  typedef itk::ImageFileWriter<MaskImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<MaskImageType>;
   WriterType::Pointer outputWriter = WriterType::New();
   outputWriter->SetFileName(segmentedImageFileName.c_str() );
   outputWriter->SetInput(finalMask);
@@ -147,7 +147,7 @@ template <typename TPixel>
 itk::Image<short, 3>::Pointer
 getFinalMask(typename itk::Image<TPixel, 3>::Pointer img, unsigned char l, TPixel thod)
 {
-  typedef itk::Image<short, 3> MaskType;
+  using MaskType = itk::Image<short, 3>;
 
   MaskType::SizeType size = img->GetLargestPossibleRegion().GetSize();
 

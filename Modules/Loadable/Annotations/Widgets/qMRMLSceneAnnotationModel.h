@@ -74,7 +74,7 @@ class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_EXPORT qMRMLSceneAnnotationModel
   Q_PROPERTY (int textColumn READ textColumn WRITE setTextColumn)
 
 public:
-  typedef qMRMLSceneDisplayableModel Superclass;
+  using Superclass = qMRMLSceneDisplayableModel;
   qMRMLSceneAnnotationModel(QObject *parent=nullptr);
   ~qMRMLSceneAnnotationModel() override;
 

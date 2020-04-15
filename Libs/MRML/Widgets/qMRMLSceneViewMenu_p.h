@@ -56,7 +56,7 @@ class qMRMLSceneViewMenuPrivate : public QObject
 protected:
   qMRMLSceneViewMenu* const q_ptr;
 public:
-  typedef QObject Superclass;
+  using Superclass = QObject;
   qMRMLSceneViewMenuPrivate(qMRMLSceneViewMenu& object);
 
   /// \brief Clear and update menu given the list of existing vtkMRMLSceneViewNode

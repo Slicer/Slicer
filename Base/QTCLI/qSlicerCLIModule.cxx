@@ -41,7 +41,7 @@
 class qSlicerCLIModulePrivate
 {
 public:
-  typedef qSlicerCLIModulePrivate Self;
+  using Self = qSlicerCLIModulePrivate;
   qSlicerCLIModulePrivate();
 
   QString           TempDirectory;

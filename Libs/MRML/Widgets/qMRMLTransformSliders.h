@@ -56,7 +56,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTransformSliders : public qMRMLWidget
 
 public:
   /// Constructors
-  typedef qMRMLWidget Superclass;
+  using Superclass = qMRMLWidget;
   explicit qMRMLTransformSliders(QWidget* parent);
   ~qMRMLTransformSliders() override;
 

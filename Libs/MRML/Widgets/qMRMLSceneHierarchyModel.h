@@ -38,7 +38,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneHierarchyModel : public qMRMLSceneModel
   Q_PROPERTY (int expandColumn READ expandColumn WRITE setExpandColumn)
 
 public:
-  typedef qMRMLSceneModel Superclass;
+  using Superclass = qMRMLSceneModel;
   qMRMLSceneHierarchyModel(QObject *parent=nullptr);
   ~qMRMLSceneHierarchyModel() override;
 

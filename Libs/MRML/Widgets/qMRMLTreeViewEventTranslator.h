@@ -38,7 +38,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeViewEventTranslator :
   Q_OBJECT
 
 public:
-  typedef pqTreeViewEventTranslator Superclass;
+  using Superclass = pqTreeViewEventTranslator;
   qMRMLTreeViewEventTranslator(QObject* parent = nullptr);
 
   using Superclass::translateEvent;

@@ -77,8 +77,8 @@ class QMRML_WIDGETS_EXPORT qMRMLSliceControllerWidgetPrivate
   Q_DECLARE_PUBLIC(qMRMLSliceControllerWidget);
 
 public:
-  typedef qMRMLSliceControllerWidgetPrivate Self;
-  typedef qMRMLViewControllerBarPrivate Superclass;
+  using Self = qMRMLSliceControllerWidgetPrivate;
+  using Superclass = qMRMLViewControllerBarPrivate;
   qMRMLSliceControllerWidgetPrivate(qMRMLSliceControllerWidget& object);
   ~qMRMLSliceControllerWidgetPrivate() override;
 

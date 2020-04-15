@@ -70,7 +70,7 @@ class QMRML_WIDGETS_EXPORT qMRMLColorModel : public QStandardItemModel
   Q_PROPERTY(int checkableColumn READ checkableColumn WRITE setCheckableColumn)
 
 public:
-  typedef QAbstractItemModel Superclass;
+  using Superclass = QAbstractItemModel;
   qMRMLColorModel(QObject *parent=nullptr);
   ~qMRMLColorModel() override;
 

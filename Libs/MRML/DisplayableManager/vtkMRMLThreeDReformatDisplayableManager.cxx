@@ -59,7 +59,7 @@ vtkStandardNewMacro(vtkMRMLThreeDReformatDisplayableManager);
 class vtkMRMLThreeDReformatDisplayableManager::vtkInternal
 {
 public:
-  typedef std::map<vtkMRMLSliceNode*, vtkImplicitPlaneWidget2*> SliceNodesLink;
+  using SliceNodesLink = std::map<vtkMRMLSliceNode *, vtkImplicitPlaneWidget2 *>;
 
   vtkInternal(vtkMRMLThreeDReformatDisplayableManager* external);
   ~vtkInternal();

@@ -50,7 +50,7 @@ class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsModuleWidget :
   QVTK_OBJECT
 
 public:
-  typedef qSlicerAbstractModuleWidget Superclass;
+  using Superclass = qSlicerAbstractModuleWidget;
   qSlicerSegmentationsModuleWidget(QWidget *parent=nullptr);
   ~qSlicerSegmentationsModuleWidget() override;
 

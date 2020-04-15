@@ -38,7 +38,7 @@ class Q_SLICER_QTMODULES_CAMERAS_EXPORT qSlicerCamerasModule
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
 public:
-  typedef qSlicerLoadableModule Superclass;
+  using Superclass = qSlicerLoadableModule;
   qSlicerCamerasModule(QObject *parent=nullptr);
   ~qSlicerCamerasModule() override;
 

@@ -43,10 +43,10 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeFactory : public QObject
 public:
 
   /// Convenient typedef
-  typedef QHash<QString,QString> AttributeType;
+  using AttributeType = QHash<QString, QString>;
 
   /// Constructors
-  typedef QObject Superclass;
+  using Superclass = QObject;
   explicit qMRMLNodeFactory(QObject* parent = nullptr);
   ~qMRMLNodeFactory() override;
 

@@ -55,7 +55,7 @@ protected:
   qMRMLViewControllerBar* const q_ptr;
 
 public:
-  typedef QObject Superclass;
+  using Superclass = QObject;
   qMRMLViewControllerBarPrivate(qMRMLViewControllerBar& object);
   ~qMRMLViewControllerBarPrivate() override;
 

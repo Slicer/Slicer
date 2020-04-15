@@ -71,7 +71,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSortFilterSubjectHier
   Q_PROPERTY(QStringList hideChildNodeTypes READ hideChildNodeTypes WRITE setHideChildNodeTypes)
 
 public:
-  typedef QSortFilterProxyModel Superclass;
+  using Superclass = QSortFilterProxyModel;
   qMRMLSortFilterSubjectHierarchyProxyModel(QObject *parent=nullptr);
   ~qMRMLSortFilterSubjectHierarchyProxyModel() override;
 

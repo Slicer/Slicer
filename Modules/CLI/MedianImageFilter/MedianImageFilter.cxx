@@ -33,11 +33,11 @@ int DoIt( int argc, char * argv[], T )
 {
   PARSE_ARGS;
 
-  typedef itk::Image<T, 3> InputImageType;
-  typedef itk::Image<T, 3> OutputImageType;
+  using InputImageType = itk::Image<T, 3>;
+  using OutputImageType = itk::Image<T, 3>;
 
-  typedef itk::ImageFileReader<InputImageType>  ReaderType;
-  typedef itk::ImageFileWriter<OutputImageType> WriterType;
+  using ReaderType = itk::ImageFileReader<InputImageType>;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
 
   typename ReaderType::Pointer reader = ReaderType::New();
   typename WriterType::Pointer writer = WriterType::New();
@@ -45,8 +45,7 @@ int DoIt( int argc, char * argv[], T )
   reader->SetFileName( inputVolume.c_str() );
   writer->SetFileName( outputVolume.c_str() );
 
-  typedef itk::MedianImageFilter<
-    InputImageType, OutputImageType>  FilterType;
+  using FilterType = itk::MedianImageFilter<InputImageType, OutputImageType>;
 
   typename FilterType::Pointer filter = FilterType::New();
 

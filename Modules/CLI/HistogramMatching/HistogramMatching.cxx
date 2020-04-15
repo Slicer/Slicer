@@ -42,20 +42,18 @@ int DoIt( int argc, char * argv[], T )
 
   const unsigned int Dimension = 3;
 
-  typedef T InputPixelType;
-  typedef T OutputPixelType;
+  using InputPixelType = T;
+  using OutputPixelType = T;
 
-  typedef itk::Image<InputPixelType,  Dimension> InputImageType;
-  typedef itk::Image<OutputPixelType, Dimension> OutputImageType;
+  using InputImageType = itk::Image<InputPixelType, Dimension>;
+  using OutputImageType = itk::Image<OutputPixelType, Dimension>;
 
   // readers/writers
-  typedef itk::ImageFileReader<InputImageType>  ReaderType;
-  typedef itk::ImageFileWriter<OutputImageType> WriterType;
+  using ReaderType = itk::ImageFileReader<InputImageType>;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
 
   // define the histogram matching
-  typedef itk::HistogramMatchingImageFilter<
-    InputImageType,
-    OutputImageType, InputPixelType>  FilterType;
+  using FilterType = itk::HistogramMatchingImageFilter<InputImageType, OutputImageType, InputPixelType>;
 
   // Creation of Reader and Writer filters
   typename ReaderType::Pointer reader1 = ReaderType::New();

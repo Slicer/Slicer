@@ -94,7 +94,7 @@ void GetImageType( std::string fileName,
                    itk::ImageIOBase::IOPixelType & pixelType,
                    itk::ImageIOBase::IOComponentType & componentType )
 {
-  typedef itk::Image<unsigned char, 3> ImageType;
+  using ImageType = itk::Image<unsigned char, 3>;
   itk::ImageFileReader<ImageType>::Pointer imageReader =
     itk::ImageFileReader<ImageType>::New();
   imageReader->SetFileName( fileName.c_str() );
@@ -113,52 +113,22 @@ InterpolationTypeFct( std::string interpolationType,
                       int numberOfThreads
                       )
 {
-  typedef itk::DiffusionTensor3DInterpolateImageFunction<PixelType>
-  InterpolatorType;
-  typedef itk::DiffusionTensor3DNearestNeighborInterpolateFunction<PixelType>
-  NearestNeighborhoodInterpolatorType;
-  typedef itk::DiffusionTensor3DLinearInterpolateFunction<PixelType>
-  LinearInterpolatorType;
-  typedef itk::ConstantBoundaryCondition<itk::Image<PixelType, 3> >
-  BoundaryConditionType;
-  typedef itk::Function::HammingWindowFunction<RADIUS>
-  HammingwindowFunctionType;
-  typedef itk::DiffusionTensor3DWindowedSincInterpolateImageFunction
-  <PixelType,
-   RADIUS,
-   HammingwindowFunctionType,
-   BoundaryConditionType> HammingWindowedSincInterpolateFunctionType;
-  typedef itk::Function::CosineWindowFunction<RADIUS>
-  CosinewindowFunctionType;
-  typedef itk::DiffusionTensor3DWindowedSincInterpolateImageFunction
-  <PixelType,
-   RADIUS,
-   CosinewindowFunctionType,
-   BoundaryConditionType> CosineWindowedSincInterpolateFunctionType;
-  typedef itk::Function::WelchWindowFunction<RADIUS>
-  WelchwindowFunctionType;
-  typedef itk::DiffusionTensor3DWindowedSincInterpolateImageFunction
-  <PixelType,
-   RADIUS,
-   WelchwindowFunctionType,
-   BoundaryConditionType> WelchWindowedSincInterpolateFunctionType;
-  typedef itk::Function::LanczosWindowFunction<RADIUS>
-  LanczoswindowFunctionType;
-  typedef itk::DiffusionTensor3DWindowedSincInterpolateImageFunction
-  <PixelType,
-   RADIUS,
-   LanczoswindowFunctionType,
-   BoundaryConditionType> LanczosWindowedSincInterpolateFunctionType;
-  typedef itk::Function::BlackmanWindowFunction<RADIUS>
-  BlackmanwindowFunctionType;
-  typedef itk::DiffusionTensor3DWindowedSincInterpolateImageFunction
-  <PixelType,
-   RADIUS,
-   BlackmanwindowFunctionType,
-   BoundaryConditionType> BlackmanWindowedSincInterpolateFunctionType;
-  typedef itk::DiffusionTensor3DBSplineInterpolateImageFunction<PixelType>
-  BSplineInterpolateImageFunctionType;
-  typedef typename InterpolatorType::Pointer InterpolatorTypePointer;
+  using InterpolatorType = itk::DiffusionTensor3DInterpolateImageFunction<PixelType>;
+  using NearestNeighborhoodInterpolatorType = itk::DiffusionTensor3DNearestNeighborInterpolateFunction<PixelType>;
+  using LinearInterpolatorType = itk::DiffusionTensor3DLinearInterpolateFunction<PixelType>;
+  using BoundaryConditionType = itk::ConstantBoundaryCondition<itk::Image<PixelType, 3> >;
+  using HammingwindowFunctionType = itk::Function::HammingWindowFunction<3>;
+  using HammingWindowedSincInterpolateFunctionType = itk::DiffusionTensor3DWindowedSincInterpolateImageFunction<PixelType, 3, HammingwindowFunctionType, BoundaryConditionType>;
+  using CosinewindowFunctionType = itk::Function::CosineWindowFunction<3>;
+  using CosineWindowedSincInterpolateFunctionType = itk::DiffusionTensor3DWindowedSincInterpolateImageFunction<PixelType, 3, CosinewindowFunctionType, BoundaryConditionType>;
+  using WelchwindowFunctionType = itk::Function::WelchWindowFunction<3>;
+  using WelchWindowedSincInterpolateFunctionType = itk::DiffusionTensor3DWindowedSincInterpolateImageFunction<PixelType, 3, WelchwindowFunctionType, BoundaryConditionType>;
+  using LanczoswindowFunctionType = itk::Function::LanczosWindowFunction<3>;
+  using LanczosWindowedSincInterpolateFunctionType = itk::DiffusionTensor3DWindowedSincInterpolateImageFunction<PixelType, 3, LanczoswindowFunctionType, BoundaryConditionType>;
+  using BlackmanwindowFunctionType = itk::Function::BlackmanWindowFunction<3>;
+  using BlackmanWindowedSincInterpolateFunctionType = itk::DiffusionTensor3DWindowedSincInterpolateImageFunction<PixelType, 3, BlackmanwindowFunctionType, BoundaryConditionType>;
+  using BSplineInterpolateImageFunctionType = itk::DiffusionTensor3DBSplineInterpolateImageFunction<PixelType>;
+  using InterpolatorTypePointer = typename InterpolatorType::Pointer;
   InterpolatorTypePointer interpol;
   if( !interpolationType.compare( "nn" ) ) // nearest neighborhood
     {
@@ -172,8 +142,7 @@ InterpolationTypeFct( std::string interpolationType,
     }
   else if( !interpolationType.compare( "ws" ) ) // windowed sinc
     {
-    typedef itk::DiffusionTensor3DInterpolateImageFunctionReimplementation<PixelType>
-    DiffusionTensor3DInterpolateImageFunctionReimplementation;
+    using DiffusionTensor3DInterpolateImageFunctionReimplementation = itk::DiffusionTensor3DInterpolateImageFunctionReimplementation<PixelType>;
     typename DiffusionTensor3DInterpolateImageFunctionReimplementation::Pointer itkReimplementationInterpol;
     if( !windowFunction.compare( "h" ) ) // Hamming window
       {
@@ -328,10 +297,8 @@ template <class PixelType>
 typename itk::DiffusionTensor3DAffineTransform<PixelType>::Pointer
 FSOrPPD( const std::string & ppd, itk::Matrix<double, 4, 4> *matrix = nullptr )
 {
-  typedef itk::DiffusionTensor3DFSAffineTransform<PixelType>
-  FSAffineTransformType;
-  typedef itk::DiffusionTensor3DPPDAffineTransform<PixelType>
-  PPDAffineTransformType;
+  using FSAffineTransformType = itk::DiffusionTensor3DFSAffineTransform<PixelType>;
+  using PPDAffineTransformType = itk::DiffusionTensor3DPPDAffineTransform<PixelType>;
   typename itk::DiffusionTensor3DAffineTransform<PixelType>::Pointer affine;
   if( !ppd.compare( "FS" ) )
     {
@@ -363,12 +330,11 @@ SetUpTransform( const parameters & list,
                 const itk::Point<double> & outputImageCenter
                 )
 {
-  typedef itk::DiffusionTensor3DTransform<PixelType> TransformType;
-  typedef itk::DiffusionTensor3DNonRigidTransform<PixelType>
-  NonRigidTransformType;
-  typedef typename TransformType::Pointer TransformTypePointer;
+  using TransformType = itk::DiffusionTensor3DTransform<PixelType>;
+  using NonRigidTransformType = itk::DiffusionTensor3DNonRigidTransform<PixelType>;
+  using TransformTypePointer = typename TransformType::Pointer;
   itk::Matrix<double, 4, 4> transformMatrix4x4;
-  typedef itk::DiffusionTensor3DRigidTransform<PixelType> RigidTransformType;
+  using RigidTransformType = itk::DiffusionTensor3DRigidTransform<PixelType>;
   TransformTypePointer transform;
   if( list.transformType.compare( "nr" ) ) // if rigid or affine transform
     {
@@ -411,11 +377,9 @@ SetTransformAndOrder( parameters & list,
                       const itk::Point<double> & outputImageCenter
                       )
 {
-  typedef itk::DiffusionTensor3DNonRigidTransform<PixelType>
-  NonRigidTransformType;
-  typedef itk::DiffusionTensor3DRigidTransform<PixelType> RigidTransformType;
-  typedef itk::DiffusionTensor3DFSAffineTransform<PixelType>
-  FSAffineTransformType;
+  using NonRigidTransformType = itk::DiffusionTensor3DNonRigidTransform<PixelType>;
+  using RigidTransformType = itk::DiffusionTensor3DRigidTransform<PixelType>;
+  using FSAffineTransformType = itk::DiffusionTensor3DFSAffineTransform<PixelType>;
   typename NonRigidTransformType::TransformType::Pointer nonRigidFile;
   bool precisionChecking = true;
   // Get transformation matrix from the given file
@@ -494,8 +458,7 @@ SetTransform( parameters & list,
               const itk::Point<double> & outputImageCenter
               )
 {
-  typedef typename itk::DiffusionTensor3DNonRigidTransform<PixelType>
-  ::TransformType TransformType;
+  using TransformType = typename itk::DiffusionTensor3DNonRigidTransform<PixelType>::TransformType;
   typename TransformType::Pointer transform;
   typename itk::DiffusionTensor3DTransform<PixelType>::Pointer tensorTransform;
   if( list.transformationFile.compare( "" ) )
@@ -574,10 +537,10 @@ itk::Matrix< double , 3 , 3 > SetOutputParameters( const parameters & list,
                           ::Pointer & image
                           )
 {
-  typedef itk::Image<unsigned char, 3>                         ImageType;
-  typedef itk::ImageFileReader<ImageType>                      ReaderType;
-  typedef itk::DiffusionTensor3DResample<PixelType, PixelType> ResamplerType;
-  typedef typename ReaderType::Pointer                         ReaderTypePointer;
+  using ImageType = itk::Image<unsigned char, 3>;
+  using ReaderType = itk::ImageFileReader<ImageType>;
+  using ResamplerType = itk::DiffusionTensor3DResample<PixelType, PixelType>;
+  using ReaderTypePointer = typename ReaderType::Pointer;
   ReaderTypePointer readerReference;
   // is there a reference image to set the size, the orientation,
   // the spacing and the origin of the output image?
@@ -736,12 +699,9 @@ void ResampleDeformationField( DeformationImageType::Pointer & field,
     {
     return;
     }
-  typedef itk::VectorLinearInterpolateImageFunction<DeformationImageType> VectorInterpolatorType;
+  using VectorInterpolatorType = itk::VectorLinearInterpolateImageFunction<DeformationImageType>;
   VectorInterpolatorType::Pointer linearVectorInterpolator = VectorInterpolatorType::New();
-  typedef itk::VectorResampleImageFilter<DeformationImageType,
-                                         DeformationImageType,
-                                         double
-                                         > ResampleImageFilter;
+  using ResampleImageFilter = itk::VectorResampleImageFilter<DeformationImageType, DeformationImageType, double>;
   ResampleImageFilter::Pointer resampleFieldFilter = ResampleImageFilter::New();
   DeformationPixelType         defaultPixel;
   defaultPixel.Fill( 0.0 );
@@ -761,18 +721,17 @@ void ResampleDeformationField( DeformationImageType::Pointer & field,
 template <class PixelType>
 int Do( parameters list )
 {
-  typedef itk::Image<itk::DiffusionTensor3D<PixelType>, 3>
-  InputImageType;
+  using InputImageType = itk::Image<itk::DiffusionTensor3D<PixelType>, 3>;
   typename InputImageType::Pointer image;
-  typedef itk::DiffusionTensor3DWrite<PixelType> WriterType;
-  typedef typename WriterType::Pointer           WriterTypePointer;
+  using WriterType = itk::DiffusionTensor3DWrite<PixelType>;
+  using WriterTypePointer = typename WriterType::Pointer;
   WriterTypePointer         writer = WriterType::New();
   itk::Matrix<double, 3, 3> measurementFrame;
   bool hasMeasurementFrame ;
   try
     {
-    typedef itk::DiffusionTensor3DRead<PixelType> ReaderType;
-    typedef typename ReaderType::Pointer          ReaderTypePointer;
+    using ReaderType = itk::DiffusionTensor3DRead<PixelType>;
+    using ReaderTypePointer = typename ReaderType::Pointer;
     ReaderTypePointer reader = ReaderType::New();
     // Read input volume
     if( list.numberOfThread )
@@ -800,9 +759,8 @@ int Do( parameters list )
     {
     RASLPS<PixelType>( image );
     }
-  typedef itk::DiffusionTensor3DInterpolateImageFunction<PixelType>
-  InterpolatorType;
-  typedef typename InterpolatorType::Pointer InterpolatorTypePointer;
+  using InterpolatorType = itk::DiffusionTensor3DInterpolateImageFunction<PixelType>;
+  using InterpolatorTypePointer = typename InterpolatorType::Pointer;
   InterpolatorTypePointer interpol;
   // Select interpolation type
   interpol = InterpolationTypeFct<PixelType>( list.interpolationType,
@@ -812,7 +770,7 @@ int Do( parameters list )
                                               );
 
   // Select the transformation
-  typedef itk::TransformFileReader::Pointer TransformReaderPointer;
+  using TransformReaderPointer = itk::TransformFileReader::Pointer;
   TransformReaderPointer transformFile;
   int                    nonRigidTransforms;
   nonRigidTransforms = ReadTransform<PixelType>( list, image, transformFile );
@@ -821,11 +779,11 @@ int Do( parameters list )
     return EXIT_FAILURE;
     }
   // if the transform is in RAS space coordinate, add a transform to transform the image into that space
-  typedef itk::DiffusionTensor3DTransform<PixelType>           TransformType;
-  typedef typename TransformType::Pointer                      TransformTypePointer;
-  typedef itk::DiffusionTensor3DResample<PixelType, PixelType> ResamplerType;
-  typedef itk::DiffusionTensor3DNonRigidTransform<PixelType>   NonRigidTransformType;
-  typedef typename ResamplerType::Pointer                      ResamplerTypePointer;
+  using TransformType = itk::DiffusionTensor3DTransform<PixelType>;
+  using TransformTypePointer = typename TransformType::Pointer;
+  using ResamplerType = itk::DiffusionTensor3DResample<PixelType, PixelType>;
+  using NonRigidTransformType = itk::DiffusionTensor3DNonRigidTransform<PixelType>;
+  using ResamplerTypePointer = typename ResamplerType::Pointer;
   typename InputImageType::Pointer dummyOutputImage = InputImageType::New();
     {                                                          // local for memory management
     ResamplerTypePointer tempResampler = ResamplerType::New(); // this resampler is just used to be able to use
@@ -862,7 +820,7 @@ int Do( parameters list )
       )
     {
     // Create warp transform
-    typedef itk::WarpTransform3D<double> WarpTransformType;
+    using WarpTransformType = itk::WarpTransform3D<double>;
     typename WarpTransformType::Pointer warpTransform = WarpTransformType::New();
     typename DeformationImageType::Pointer field;
     if( list.deffield.compare( "" ) )
@@ -891,7 +849,7 @@ int Do( parameters list )
     // Compute the transformation field adding all the transforms together
     while( list.transformationFile.compare( "" ) && transformFile->GetTransformList()->size() )
       {
-      typedef itk::TransformDeformationFieldFilter<double, double, 3> itkTransformDeformationFieldFilterType;
+      using itkTransformDeformationFieldFilterType = itk::TransformDeformationFieldFilter<double, double, 3>;
       typename itkTransformDeformationFieldFilterType::Pointer transformDeformationFieldFilter =
         itkTransformDeformationFieldFilterType::New();
       transform = SetTransform<PixelType>( list, image, transformFile, outputImageCenter );
@@ -910,7 +868,7 @@ int Do( parameters list )
         // order=3 for the BSpline seems to be standard among tools in Slicer and BRAINTools
         if( std::string(transform->GetTransform()->GetNameOfClass()) == "BSplineDeformableTransform" )
           {
-          typedef itk::BSplineDeformableTransform<double, 3, 3> BSplineDeformableTransformType;
+          using BSplineDeformableTransformType = itk::BSplineDeformableTransform<double, 3, 3>;
           BSplineDeformableTransformType::Pointer BSplineTransform;
           BSplineTransform = static_cast<BSplineDeformableTransformType *>(transform->GetTransform().GetPointer() );
           typename TransformType::Pointer bulkTransform;
@@ -941,7 +899,7 @@ int Do( parameters list )
   // multiple rigid/affine transforms: concatenate them
   else if( list.transformationFile.compare( "" ) && transformFile->GetTransformList()->size() > 1 )
     {
-    typedef itk::DiffusionTensor3DMatrix3x3Transform<PixelType> MatrixTransformType;
+    using MatrixTransformType = itk::DiffusionTensor3DMatrix3x3Transform<PixelType>;
     itk::Matrix<double, 4, 4> composedMatrix;
     composedMatrix.SetIdentity();
     itk::Matrix<double, 4, 4> tempMatrix;
@@ -1022,7 +980,7 @@ int Do( parameters list )
   // Tensors Corrections
   if( !list.correction.compare( "zero" ) )
     {
-    typedef itk::DiffusionTensor3DZeroCorrectionFilter<InputImageType, InputImageType> ZeroCorrection;
+    using ZeroCorrection = itk::DiffusionTensor3DZeroCorrectionFilter<InputImageType, InputImageType>;
     typename ZeroCorrection::Pointer zeroFilter;
     zeroFilter = ZeroCorrection::New();
     zeroFilter->SetInput( image );
@@ -1035,7 +993,7 @@ int Do( parameters list )
     }
   else if( !list.correction.compare( "abs" ) )
     {
-    typedef itk::DiffusionTensor3DAbsCorrectionFilter<InputImageType, InputImageType> AbsCorrection;
+    using AbsCorrection = itk::DiffusionTensor3DAbsCorrectionFilter<InputImageType, InputImageType>;
     typename AbsCorrection::Pointer absFilter;
     absFilter = AbsCorrection::New();
     absFilter->SetInput( image );
@@ -1048,7 +1006,7 @@ int Do( parameters list )
     }
   else if( !list.correction.compare( "nearest" ) )
     {
-    typedef itk::DiffusionTensor3DNearestCorrectionFilter<InputImageType, InputImageType> NearestCorrection;
+    using NearestCorrection = itk::DiffusionTensor3DNearestCorrectionFilter<InputImageType, InputImageType>;
     typename NearestCorrection::Pointer nearestFilter;
     nearestFilter = NearestCorrection::New();
     nearestFilter->SetInput( image );

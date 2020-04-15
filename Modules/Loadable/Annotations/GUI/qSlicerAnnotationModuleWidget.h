@@ -21,7 +21,7 @@ class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT qSlicerAnnotationModuleWidget :
   Q_OBJECT
   QVTK_OBJECT
 public:
-    typedef qSlicerAbstractModuleWidget Superclass;
+    using Superclass = qSlicerAbstractModuleWidget;
     qSlicerAnnotationModuleWidget(QWidget *parent=nullptr);
     ~qSlicerAnnotationModuleWidget() override;
 

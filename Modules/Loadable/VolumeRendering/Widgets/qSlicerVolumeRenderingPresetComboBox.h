@@ -40,7 +40,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerVolumeRenderingPrese
 
 public:
   /// Constructors
-  typedef qSlicerWidget Superclass;
+  using Superclass = qSlicerWidget;
   explicit qSlicerVolumeRenderingPresetComboBox(QWidget* parent=nullptr);
   ~qSlicerVolumeRenderingPresetComboBox() override;
 

@@ -45,7 +45,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulesListView : public QListView
              DESIGNABLE false)
 public:
   /// Superclass typedef
-  typedef QListView Superclass;
+  using Superclass = QListView;
 
   /// Constructor
   explicit qSlicerModulesListView(QWidget* parent = nullptr);

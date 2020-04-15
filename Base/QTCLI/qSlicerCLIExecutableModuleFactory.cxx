@@ -230,7 +230,7 @@ class qSlicerCLIExecutableModuleFactoryPrivate
 protected:
   qSlicerCLIExecutableModuleFactory* const q_ptr;
 public:
-  typedef qSlicerCLIExecutableModuleFactoryPrivate Self;
+  using Self = qSlicerCLIExecutableModuleFactoryPrivate;
   qSlicerCLIExecutableModuleFactoryPrivate(qSlicerCLIExecutableModuleFactory& object);
 
 private:

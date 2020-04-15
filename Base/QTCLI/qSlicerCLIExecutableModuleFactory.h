@@ -56,7 +56,7 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIExecutableModuleFactory :
   public ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule>
 {
 public:
-  typedef ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule> Superclass;
+  using Superclass = ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule>;
   qSlicerCLIExecutableModuleFactory();
   qSlicerCLIExecutableModuleFactory(const QString& tempDir);
   ~qSlicerCLIExecutableModuleFactory() override;

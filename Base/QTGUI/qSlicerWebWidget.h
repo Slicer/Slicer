@@ -51,7 +51,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebWidget
   friend class qSlicerWebEnginePage;
 public:
   /// Superclass typedef
-  typedef QWidget Superclass;
+  using Superclass = QWidget;
 
   /// Constructor
   explicit qSlicerWebWidget(QWidget* parent = nullptr);

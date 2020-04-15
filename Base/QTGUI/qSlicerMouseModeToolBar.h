@@ -45,7 +45,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerMouseModeToolBar: public QToolBar
   /// "vtkMRMLAnnotationFiducialNode" by default.
   Q_PROPERTY(QString defaultPlaceClassName READ defaultPlaceClassName WRITE setDefaultPlaceClassName)
 public:
-  typedef QToolBar Superclass;
+  using Superclass = QToolBar;
 
   /// Constructor
   /// Title is the name of the toolbar (can appear using right click on the toolbar area)

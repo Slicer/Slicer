@@ -36,18 +36,18 @@ int DoIt( int argc, char * argv[], T )
 
   PARSE_ARGS;
 
-  typedef    T InputPixelType;
-  typedef    T OutputPixelType;
+  using InputPixelType = T;
+  using OutputPixelType = T;
 
-  typedef itk::Image<InputPixelType,  3> InputImageType;
-  typedef itk::Image<OutputPixelType, 3> OutputImageType;
+  using InputImageType = itk::Image<InputPixelType, 3>;
+  using OutputImageType = itk::Image<OutputPixelType, 3>;
 
-  typedef itk::ImageFileReader<InputImageType>  ReaderType;
-  typedef itk::ImageFileWriter<OutputImageType> WriterType;
+  using ReaderType = itk::ImageFileReader<InputImageType>;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
 
-  typedef itk::BSplineInterpolateImageFunction<InputImageType>                                       Interpolator;
-  typedef itk::ResampleImageFilter<InputImageType, OutputImageType>                                  ResampleType;
-  typedef itk::ConstrainedValueAdditionImageFilter<InputImageType, OutputImageType, OutputImageType> FilterType;
+  using Interpolator = itk::BSplineInterpolateImageFunction<InputImageType>;
+  using ResampleType = itk::ResampleImageFilter<InputImageType, OutputImageType>;
+  using FilterType = itk::ConstrainedValueAdditionImageFilter<InputImageType, OutputImageType, OutputImageType>;
 
   typename ReaderType::Pointer reader1 = ReaderType::New();
   itk::PluginFilterWatcher watchReader1(reader1, "Read Volume 1",

@@ -49,7 +49,7 @@ void vtkITKWandExecute(vtkITKWandImageFilter *self, vtkImageData* input,
 
   // Wrap scalars into an ITK image
   // - mostly rely on defaults for spacing, origin etc for this filter
-  typedef itk::Image<T, 3> ImageType;
+  using ImageType = itk::Image<T, 3>;
   typename ImageType::Pointer inImage = ImageType::New();
   inImage->GetPixelContainer()->SetImportPointer(inPtr, dims[0]*dims[1]*dims[2], false);
   typename ImageType::RegionType region;
@@ -80,8 +80,8 @@ void vtkITKWandExecute(vtkITKWandImageFilter *self, vtkImageData* input,
     }
 
   // Segment using itk::WandImageFilter
-  typedef itk::Image<T,3> SegmentImageType;
-  typedef itk::ConnectedThresholdImageFilter<ImageType, SegmentImageType> WandType;
+  using SegmentImageType = itk::Image<T, 3>;
+  using WandType = itk::ConnectedThresholdImageFilter<ImageType, SegmentImageType>;
   typename WandType::Pointer wand = WandType::New();
 
   wand->SetSeed(ind);

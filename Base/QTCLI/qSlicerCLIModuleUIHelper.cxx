@@ -166,12 +166,12 @@ class qSlicerCLIModuleUIHelperPrivate
 protected:
   qSlicerCLIModuleUIHelper* const q_ptr;
 public:
-  typedef qSlicerCLIModuleUIHelperPrivate Self;
+  using Self = qSlicerCLIModuleUIHelperPrivate;
   qSlicerCLIModuleUIHelperPrivate(qSlicerCLIModuleUIHelper& object);
 
   /// Convenient typedefs
-  typedef std::vector<std::string>::const_iterator ElementConstIterator;
-  typedef std::vector<std::string>::iterator       ElementIterator;
+  using ElementConstIterator = std::vector<std::string>::const_iterator;
+  using ElementIterator = std::vector<std::string>::iterator;
 
   ///
   /// Create widget corresponding to the different parameters

@@ -30,7 +30,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerUtils
 {
 
 public:
-  typedef qSlicerUtils Self;
+  using Self = qSlicerUtils;
 
   /// Return true if the string name ends with one of these executable extension:
   /// ".bat", ".com", ".sh", ".csh", ".tcsh", ".pl", ".py", ".tcl", ".m", ".exe"

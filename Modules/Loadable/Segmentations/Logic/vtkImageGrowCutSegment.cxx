@@ -20,7 +20,7 @@ vtkStandardNewMacro(vtkImageGrowCutSegment);
 
 const int NodeKeyValueTypeID = VTK_FLOAT;  // must match NodeKeyValueType, stores "distance" (difference in voxels)
 
-typedef unsigned char MaskPixelType;
+using MaskPixelType = unsigned char;
 const int MaskPixelTypeID = VTK_UNSIGNED_CHAR;
 
 const NodeKeyValueType DIST_INF = std::numeric_limits<NodeKeyValueType>::max();

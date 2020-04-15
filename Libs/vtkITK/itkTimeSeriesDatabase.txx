@@ -362,8 +362,8 @@ void TimeSeriesDatabase<TPixel>::CreateFromFileArchetype ( const char* TSDFilena
   ArchetypeSeriesFileNames::Pointer fit = itk::ArchetypeSeriesFileNames::New();
   fit->SetArchetype ( fileNameCollapsed );
 
-  typedef Image<TPixel,3>            ImageType;
-  typedef ImageFileReader<ImageType> ReaderType;
+  using ImageType = Image<TPixel, 3>;
+  using ReaderType = ImageFileReader<ImageType>;
   ImageRegion<3>                     region;
 
   // Load the first image's size

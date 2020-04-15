@@ -41,7 +41,7 @@ class vtkDataObject;
 class vtkSegmentationCore_EXPORT vtkSegmentationConverterFactory : public vtkObject
 {
 public:
-  typedef std::vector< vtkSmartPointer<vtkSegmentationConverterRule> > RuleListType;
+  using RuleListType = std::vector<vtkSmartPointer<vtkSegmentationConverterRule> >;
 
   vtkTypeMacro(vtkSegmentationConverterFactory, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -104,7 +104,7 @@ protected:
   static void classFinalize();
 
   friend class vtkSegmentationConverterFactoryInitialize;
-  typedef vtkSegmentationConverterFactory Self;
+  using Self = vtkSegmentationConverterFactory;
 
   /// Registered converter rules
   RuleListType Rules;
@@ -114,7 +114,7 @@ protected:
 class vtkSegmentationCore_EXPORT vtkSegmentationConverterFactoryInitialize
 {
 public:
-  typedef vtkSegmentationConverterFactoryInitialize Self;
+  using Self = vtkSegmentationConverterFactoryInitialize;
 
   vtkSegmentationConverterFactoryInitialize();
   ~vtkSegmentationConverterFactoryInitialize();

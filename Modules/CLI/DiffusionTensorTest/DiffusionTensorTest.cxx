@@ -8,10 +8,10 @@
 
 int main( int argc, char * argv[] )
 {
-  typedef itk::DiffusionTensor3D<float>         TensorType;
-  typedef itk::Image<TensorType, 3>             TensorImageType;
-  typedef itk::ImageFileReader<TensorImageType> TensorReaderType;
-  typedef itk::ImageFileWriter<TensorImageType> TensorWriterType;
+  using TensorType = itk::DiffusionTensor3D<float>;
+  using TensorImageType = itk::Image<TensorType, 3>;
+  using TensorReaderType = itk::ImageFileReader<TensorImageType>;
+  using TensorWriterType = itk::ImageFileWriter<TensorImageType>;
 
   PARSE_ARGS;
 
@@ -28,7 +28,7 @@ int main( int argc, char * argv[] )
   std::cout << "Plugin received PixelType: " << pixelType << std::endl;
   std::cout << "Plugin received ComponentType: " << componentType << std::endl;
 
-  typedef itk::MetaDataDictionary DictionaryType;
+  using DictionaryType = itk::MetaDataDictionary;
   const DictionaryType & dictionary = reader->GetMetaDataDictionary();
 
   DictionaryType::ConstIterator itr = dictionary.Begin();

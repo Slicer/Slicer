@@ -75,7 +75,7 @@
 #include <sstream>
 #include <string>
 
-typedef void (*fp)();
+using fp = void (*)();
 
 #define NUMERIC_ZERO 0.001
 

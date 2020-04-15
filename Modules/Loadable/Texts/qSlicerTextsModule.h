@@ -38,7 +38,7 @@ class Q_SLICER_QTMODULES_TEXTS_EXPORT qSlicerTextsModule : public qSlicerLoadabl
   Q_INTERFACES(qSlicerLoadableModule);
 public:
 
-  typedef qSlicerLoadableModule Superclass;
+  using Superclass = qSlicerLoadableModule;
   qSlicerTextsModule(QObject *parent=nullptr);
   ~qSlicerTextsModule() override;
 

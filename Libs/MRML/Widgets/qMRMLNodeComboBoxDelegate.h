@@ -43,7 +43,7 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeComboBoxDelegate : public QItemDelegate
 {
   Q_OBJECT
 public :
-  typedef QItemDelegate Superclass;
+  using Superclass = QItemDelegate;
   qMRMLNodeComboBoxDelegate(QObject* parent, QComboBox* comboBox);
 
   static bool isSeparator(const QModelIndex &index);

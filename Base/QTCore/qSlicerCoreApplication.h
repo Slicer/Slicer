@@ -100,7 +100,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
 
 public:
 
-  typedef QApplication Superclass;
+  using Superclass = QApplication;
   qSlicerCoreApplication(int &argc, char **argv);
   ~qSlicerCoreApplication() override;
 

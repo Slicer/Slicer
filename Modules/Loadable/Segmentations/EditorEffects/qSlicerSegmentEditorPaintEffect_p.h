@@ -75,7 +75,7 @@ class qSlicerSegmentEditorPaintEffectPrivate: public QObject
 protected:
   qSlicerSegmentEditorPaintEffect* const q_ptr;
 public:
-  typedef QObject Superclass;
+  using Superclass = QObject;
   qSlicerSegmentEditorPaintEffectPrivate(qSlicerSegmentEditorPaintEffect& object);
   ~qSlicerSegmentEditorPaintEffectPrivate() override;
 

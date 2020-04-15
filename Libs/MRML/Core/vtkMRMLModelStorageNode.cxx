@@ -56,28 +56,28 @@
 #include <itkSpatialObjectReader.h>
 #include <itkSpatialObjectWriter.h>
 
-typedef itk::DefaultDynamicMeshTraits< double , 3, 3, double > MeshTrait;
-typedef itk::Mesh<double,3,MeshTrait> floatMesh;
+using MeshTrait = itk::DefaultDynamicMeshTraits<double, 3, 3, double>;
+using floatMesh = itk::Mesh<double, 3, MeshTrait>;
 
 /** Hold on to the type information specified by the template parameters. */
-typedef  floatMesh::Pointer             MeshPointer;
-typedef  MeshTrait::PointType           MeshPointType;
-typedef  MeshTrait::PixelType           MeshPixelType;
+using MeshPointer = floatMesh::Pointer;
+using MeshPointType = MeshTrait::PointType;
+using MeshPixelType = MeshTrait::PixelType;
 
 /** Some convenient typedefs. */
-typedef  floatMesh::Pointer              MeshPointer;
-typedef  floatMesh::CellTraits           CellTraits;
-typedef  floatMesh::PointsContainerPointer PointsContainerPointer;
-typedef  floatMesh::PointsContainer      PointsContainer;
-typedef  floatMesh::CellsContainerPointer CellsContainerPointer;
-typedef  floatMesh::CellsContainer       CellsContainer;
-typedef  floatMesh::PointType            PointType;
-typedef  floatMesh::CellType             CellType;
-typedef  itk::TriangleCell<CellType>   TriangleType;
+using MeshPointer = floatMesh::Pointer;
+using CellTraits = floatMesh::CellTraits;
+using PointsContainerPointer = floatMesh::PointsContainerPointer;
+using PointsContainer = floatMesh::PointsContainer;
+using CellsContainerPointer = floatMesh::CellsContainerPointer;
+using CellsContainer = floatMesh::CellsContainer;
+using PointType = floatMesh::PointType;
+using CellType = floatMesh::CellType;
+using TriangleType = itk::TriangleCell<CellType>;
 
-typedef itk::MeshSpatialObject<floatMesh> MeshSpatialObjectType;
-typedef itk::SpatialObjectReader<3,double,MeshTrait> MeshReaderType;
-typedef itk::SpatialObjectWriter<3,double,MeshTrait> MeshWriterType;
+using MeshSpatialObjectType = itk::MeshSpatialObject<floatMesh>;
+using MeshReaderType = itk::SpatialObjectReader<3, double, MeshTrait>;
+using MeshWriterType = itk::SpatialObjectWriter<3, double, MeshTrait>;
 
 
 

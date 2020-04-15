@@ -42,7 +42,7 @@ class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsSettingsPanel
 
   Q_PROPERTY(QString defaultTerminologyEntry READ defaultTerminologyEntry WRITE setDefaultTerminologyEntry)
 public:
-  typedef ctkSettingsPanel Superclass;
+  using Superclass = ctkSettingsPanel;
 
   explicit qSlicerSegmentationsSettingsPanel(QWidget* parent = nullptr);
   ~qSlicerSegmentationsSettingsPanel() override;

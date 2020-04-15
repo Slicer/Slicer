@@ -38,8 +38,8 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerLoadableModule : public qSlicerAbstractM
 
 public:
 
-  typedef qSlicerLoadableModule Self;
-  typedef qSlicerAbstractModule Superclass;
+  using Self = qSlicerLoadableModule;
+  using Superclass = qSlicerAbstractModule;
   qSlicerLoadableModule(QObject *parent=nullptr);
   ~qSlicerLoadableModule() override;
 

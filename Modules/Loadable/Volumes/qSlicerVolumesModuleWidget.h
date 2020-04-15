@@ -37,7 +37,7 @@ class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesModuleWidget :
 
 public:
 
-  typedef qSlicerAbstractModuleWidget Superclass;
+  using Superclass = qSlicerAbstractModuleWidget;
   qSlicerVolumesModuleWidget(QWidget *parent=nullptr);
   ~qSlicerVolumesModuleWidget() override;
 

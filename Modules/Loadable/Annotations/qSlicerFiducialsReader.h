@@ -34,7 +34,7 @@ class qSlicerFiducialsReader
 {
   Q_OBJECT
 public:
-  typedef qSlicerFileReader Superclass;
+  using Superclass = qSlicerFileReader;
   qSlicerFiducialsReader(QObject* parent = nullptr);
   qSlicerFiducialsReader(vtkSlicerAnnotationModuleLogic* logic, QObject* parent = nullptr);
   ~qSlicerFiducialsReader() override;

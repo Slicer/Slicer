@@ -37,7 +37,7 @@ class QMRML_WIDGETS_EXPORT qMRMLWidget : public QWidget
   Q_OBJECT
 
 public:
-  typedef QWidget Superclass;
+  using Superclass = QWidget;
   explicit qMRMLWidget(QWidget *parent=nullptr, Qt::WindowFlags f=nullptr);
   ~qMRMLWidget() override;
 

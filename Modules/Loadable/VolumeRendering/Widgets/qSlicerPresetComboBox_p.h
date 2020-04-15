@@ -49,7 +49,7 @@ class qSlicerIconComboBox : public ctkComboBox
 
 public:
   /// Constructors
-  typedef ctkComboBox Superclass;
+  using Superclass = ctkComboBox;
   explicit qSlicerIconComboBox(QWidget* parent=nullptr);
 
 public:

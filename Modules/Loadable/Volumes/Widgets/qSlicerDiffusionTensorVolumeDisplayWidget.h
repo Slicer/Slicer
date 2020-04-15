@@ -46,7 +46,7 @@ class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerDiffusionTensorVolumeDisp
   QVTK_OBJECT
 public:
   /// Constructors
-  typedef qSlicerWidget Superclass;
+  using Superclass = qSlicerWidget;
   explicit qSlicerDiffusionTensorVolumeDisplayWidget(QWidget* parent = nullptr);
   ~qSlicerDiffusionTensorVolumeDisplayWidget() override;
 

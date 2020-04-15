@@ -73,7 +73,7 @@ public:
   std::string GetModuleDescriptionAsString() const;
   void SetModuleDescription(const ModuleDescription& description);
 
-  typedef enum {
+  using StatusType = enum {
     /// Initial state of the CLI.
     Idle=0x00,
     /// State when the CLI has been requested to be executed.
@@ -98,7 +98,7 @@ public:
     CompletedWithErrors= Completed | ErrorsMask,
     /// Mask used to know if the CLI is in pending mode.
     BusyMask = Scheduled | Running | Cancelling | Completing
-  } StatusType;
+  };
 
   /// Set the status of the node (Idle, Scheduled, Running,
   /// Completed).  The "modify" parameter indicates whether the object

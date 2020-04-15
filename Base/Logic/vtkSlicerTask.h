@@ -13,7 +13,7 @@ public:
   vtkTypeMacro(vtkSlicerTask,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  typedef vtkMRMLAbstractLogic::TaskFunctionPointer TaskFunctionPointer;
+  using TaskFunctionPointer = vtkMRMLAbstractLogic::TaskFunctionPointer;
 
   ///
   /// Set the function and object to call for the task.

@@ -23,10 +23,10 @@
 #include "vtkMatrix4x4.h"
 #include "vtkNew.h"
 
-typedef double itkVectorComponentType;
-typedef itk::Vector<itkVectorComponentType, 3> itkVectorPixelType;
-typedef itk::Image<itkVectorPixelType,  3> itkDisplacementFieldType;
-typedef itk::DisplacementFieldTransform<itkVectorComponentType,3> itkGridTransformType;
+using itkVectorComponentType = double;
+using itkVectorPixelType = itk::Vector<itkVectorComponentType, 3>;
+using itkDisplacementFieldType = itk::Image<itkVectorPixelType, 3>;
+using itkGridTransformType = itk::DisplacementFieldTransform<itkVectorComponentType, 3>;
 
 
 //----------------------------------------------------------------------------

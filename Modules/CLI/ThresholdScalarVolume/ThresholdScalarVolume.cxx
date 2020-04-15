@@ -32,23 +32,19 @@ int DoIt( int argc, char * argv[] )
 
   PARSE_ARGS;
 
-  typedef    T InputPixelType;
-  typedef    T OutputPixelType;
+  using InputPixelType = T;
+  using OutputPixelType = T;
 
-  typedef itk::Image<InputPixelType,  3> InputImageType;
-  typedef itk::Image<OutputPixelType, 3> OutputImageType;
+  using InputImageType = itk::Image<InputPixelType, 3>;
+  using OutputImageType = itk::Image<OutputPixelType, 3>;
 
-  typedef itk::ImageFileReader<InputImageType>  ReaderType;
-  typedef itk::ImageFileWriter<OutputImageType> WriterType;
+  using ReaderType = itk::ImageFileReader<InputImageType>;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
 
-  typedef itk::ThresholdImageFilter<
-    InputImageType>  FilterType;
-  typedef itk::ImageSource<
-    InputImageType>  LastFilterType;
-  typedef itk::ChangeLabelImageFilter<InputImageType, InputImageType>
-    ChangeFilterType;
-  typedef itk::MaskNegatedImageFilter<
-    InputImageType, InputImageType>  NegateFilterType;
+  using FilterType = itk::ThresholdImageFilter<InputImageType>;
+  using LastFilterType = itk::ImageSource<InputImageType>;
+  using ChangeFilterType = itk::ChangeLabelImageFilter<InputImageType, InputImageType>;
+  using NegateFilterType = itk::MaskNegatedImageFilter<InputImageType, InputImageType>;
 
   typename LastFilterType::Pointer lastFilter;
   typename ChangeFilterType::Pointer changeFilter;

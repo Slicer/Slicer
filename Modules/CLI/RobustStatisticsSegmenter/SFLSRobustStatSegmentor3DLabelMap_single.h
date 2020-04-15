@@ -14,13 +14,13 @@ class CSFLSRobustStatSegmentor3DLabelMap : public CSFLSSegmentor3D<TPixel>
   /*----------------------------------------------------------------------
     just copy, not logic change */
 public:
-  typedef CSFLSSegmentor3D<TPixel> SuperClassType;
+  using SuperClassType = CSFLSSegmentor3D<TPixel>;
 
-  typedef CSFLSRobustStatSegmentor3DLabelMap<TPixel> Self;
+  using Self = CSFLSRobustStatSegmentor3DLabelMap<TPixel>;
   // typedef boost::shared_ptr< Self > Pointer;
 
-  typedef typename SuperClassType::NodeType   NodeType;
-  typedef typename SuperClassType::CSFLSLayer CSFLSLayer;
+  using NodeType = typename SuperClassType::NodeType;
+  using CSFLSLayer = typename SuperClassType::CSFLSLayer;
 
   /*================================================================================
     ctor */
@@ -40,20 +40,20 @@ public:
      ----------------------------------------------------------------------
      ---------------------------------------------------------------------- */
 
-  typedef typename SuperClassType::TShortImage TLabelImage;
-  typedef typename TLabelImage::Pointer       TLabelImagePointer;
+  using TLabelImage = typename SuperClassType::TShortImage;
+  using TLabelImagePointer = typename TLabelImage::Pointer;
 
-  typedef typename SuperClassType::TFloatImage TFloatImage;
-  typedef typename TFloatImage::Pointer        TFloatImagePointer;
+  using TFloatImage = typename SuperClassType::TFloatImage;
+  using TFloatImagePointer = typename TFloatImage::Pointer;
 
   // typedef typename SuperClassType::TDoubleImage TDoubleImage;
   // typedef typename TDoubleImage::Pointer TDoubleImagePointer;
 
-  typedef typename SuperClassType::MaskImageType TMaskImage;
+  using TMaskImage = typename SuperClassType::MaskImageType;
 
-  typedef typename SuperClassType::TIndex  TIndex;
-  typedef typename SuperClassType::TSize   TSize;
-  typedef typename SuperClassType::TRegion TRegion;
+  using TIndex = typename SuperClassType::TIndex;
+  using TSize = typename SuperClassType::TSize;
+  using TRegion = typename SuperClassType::TRegion;
 
   /* ============================================================
    * functions

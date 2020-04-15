@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_WELCOME_EXPORT qSlicerWelcomeModule :
 
 public:
 
-  typedef qSlicerLoadableModule Superclass;
+  using Superclass = qSlicerLoadableModule;
   qSlicerWelcomeModule(QObject *parent=nullptr);
   ~qSlicerWelcomeModule() override;
 

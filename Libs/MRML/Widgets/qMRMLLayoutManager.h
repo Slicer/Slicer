@@ -92,7 +92,7 @@ class QMRML_WIDGETS_EXPORT qMRMLLayoutManager : public ctkLayoutFactory
 
 public:
   /// Superclass typedef
-  typedef ctkLayoutFactory Superclass;
+  using Superclass = ctkLayoutFactory;
 
   /// Constructors
   explicit qMRMLLayoutManager(QObject* parent=nullptr);

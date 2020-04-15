@@ -37,10 +37,10 @@ namespace itk
   {
   public:
     /** Standard class typedefs. */
-    typedef InverseBSplineTransform                            Self;
-    typedef BSplineTransform<TScalar,NDimensions,VSplineOrder> Superclass;
-    typedef SmartPointer<Self>                                 Pointer;
-    typedef SmartPointer<const Self>                           ConstPointer;
+    using Self = InverseBSplineTransform<TScalar, NDimensions, VSplineOrder>;
+    using Superclass = BSplineTransform<TScalar, NDimensions, VSplineOrder>;
+    using Pointer = SmartPointer<Self>;
+    using ConstPointer = SmartPointer<const Self>;
 
       /** Run-time type information (and related methods). */
     itkTypeMacro( InverseBSplineTransform, BSplineTransform );
@@ -104,10 +104,10 @@ namespace itk
   {
   public:
     /** Standard class typedefs. */
-    typedef InverseBSplineDeformableTransform                            Self;
-    typedef BSplineDeformableTransform<TScalar,NDimensions,VSplineOrder> Superclass;
-    typedef SmartPointer<Self>                                 Pointer;
-    typedef SmartPointer<const Self>                           ConstPointer;
+    using Self = InverseBSplineDeformableTransform<TScalar, NDimensions, VSplineOrder>;
+    using Superclass = BSplineDeformableTransform<TScalar, NDimensions, VSplineOrder>;
+    using Pointer = SmartPointer<Self>;
+    using ConstPointer = SmartPointer<const Self>;
 
       /** Run-time type information (and related methods). */
     itkTypeMacro( InverseBSplineDeformableTransform, BSplineDeformableTransform );
@@ -164,10 +164,10 @@ namespace itk
   {
   public:
     /** Standard class typedefs. */
-    typedef InverseDisplacementFieldTransform            Self;
-    typedef DisplacementFieldTransform<TScalar, NDimensions> Superclass;
-    typedef SmartPointer<Self>                           Pointer;
-    typedef SmartPointer<const Self>                     ConstPointer;
+    using Self = InverseDisplacementFieldTransform<TScalar, NDimensions>;
+    using Superclass = DisplacementFieldTransform<TScalar, NDimensions>;
+    using Pointer = SmartPointer<Self>;
+    using ConstPointer = SmartPointer<const Self>;
 
     /** Run-time type information (and related methods). */
     itkTypeMacro( InverseDisplacementFieldTransform, DisplacementFieldTransform );
@@ -250,10 +250,10 @@ namespace itk
   {
   public:
     /** Standard class typedefs. */
-    typedef InverseThinPlateSplineKernelTransform            Self;
-    typedef ThinPlateSplineKernelTransform<TScalar, NDimensions> Superclass;
-    typedef SmartPointer<Self>                           Pointer;
-    typedef SmartPointer<const Self>                     ConstPointer;
+    using Self = InverseThinPlateSplineKernelTransform<TScalar, NDimensions>;
+    using Superclass = ThinPlateSplineKernelTransform<TScalar, NDimensions>;
+    using Pointer = SmartPointer<Self>;
+    using ConstPointer = SmartPointer<const Self>;
 
     /** Run-time type information (and related methods). */
     itkTypeMacro( InverseThinPlateSplineKernelTransform, ThinPlateSplineKernelTransform );
@@ -309,15 +309,15 @@ namespace itk
 
 } // end of ITK namespace
 
-typedef itk::InverseBSplineDeformableTransform< float, VTKDimension, BSPLINE_TRANSFORM_ORDER > InverseBSplineTransformFloatITKv3Type;
-typedef itk::InverseBSplineDeformableTransform< double, VTKDimension, BSPLINE_TRANSFORM_ORDER > InverseBSplineTransformDoubleITKv3Type;
-typedef itk::InverseBSplineTransform< float, VTKDimension, BSPLINE_TRANSFORM_ORDER > InverseBSplineTransformFloatITKv4Type;
-typedef itk::InverseBSplineTransform< double, VTKDimension, BSPLINE_TRANSFORM_ORDER > InverseBSplineTransformDoubleITKv4Type;
+using InverseBSplineTransformFloatITKv3Type = itk::InverseBSplineDeformableTransform<float, VTKDimension, BSPLINE_TRANSFORM_ORDER>;
+using InverseBSplineTransformDoubleITKv3Type = itk::InverseBSplineDeformableTransform<double, VTKDimension, BSPLINE_TRANSFORM_ORDER>;
+using InverseBSplineTransformFloatITKv4Type = itk::InverseBSplineTransform<float, VTKDimension, BSPLINE_TRANSFORM_ORDER>;
+using InverseBSplineTransformDoubleITKv4Type = itk::InverseBSplineTransform<double, VTKDimension, BSPLINE_TRANSFORM_ORDER>;
 
-typedef itk::InverseDisplacementFieldTransform< float, 3 > InverseDisplacementFieldTransformFloatType;
-typedef itk::InverseDisplacementFieldTransform< double, 3 > InverseDisplacementFieldTransformDoubleType;
+using InverseDisplacementFieldTransformFloatType = itk::InverseDisplacementFieldTransform<float, 3>;
+using InverseDisplacementFieldTransformDoubleType = itk::InverseDisplacementFieldTransform<double, 3>;
 
-typedef itk::InverseThinPlateSplineKernelTransform< float, 3 > InverseThinPlateSplineTransformFloatType;
-typedef itk::InverseThinPlateSplineKernelTransform< double, 3 > InverseThinPlateSplineTransformDoubleType;
+using InverseThinPlateSplineTransformFloatType = itk::InverseThinPlateSplineKernelTransform<float, 3>;
+using InverseThinPlateSplineTransformDoubleType = itk::InverseThinPlateSplineKernelTransform<double, 3>;
 
 #endif // __vtkITKTransformInverse_h

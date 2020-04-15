@@ -18,7 +18,7 @@ class Q_SLICER_QTMODULES_CROPVOLUME_EXPORT qSlicerCropVolumeModuleWidget :
 
 public:
 
-  typedef qSlicerAbstractModuleWidget Superclass;
+  using Superclass = qSlicerAbstractModuleWidget;
   qSlicerCropVolumeModuleWidget(QWidget *parent=nullptr);
   ~qSlicerCropVolumeModuleWidget() override;
 

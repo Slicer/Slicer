@@ -36,7 +36,7 @@ class Q_SLICER_MODULES_CORE_EXPORT qSlicerCoreModuleFactory :
 {
 public:
 
-  typedef ctkAbstractQObjectFactory<qSlicerAbstractCoreModule> Superclass;
+  using Superclass = ctkAbstractQObjectFactory<qSlicerAbstractCoreModule>;
   qSlicerCoreModuleFactory();
   ~qSlicerCoreModuleFactory() override;
 

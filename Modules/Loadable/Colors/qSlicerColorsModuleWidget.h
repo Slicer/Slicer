@@ -37,7 +37,7 @@ class Q_SLICER_QTMODULES_COLORS_EXPORT qSlicerColorsModuleWidget
   Q_OBJECT
 public:
 
-  typedef qSlicerAbstractModuleWidget Superclass;
+  using Superclass = qSlicerAbstractModuleWidget;
   qSlicerColorsModuleWidget(QWidget *parent=nullptr);
   ~qSlicerColorsModuleWidget() override;
 

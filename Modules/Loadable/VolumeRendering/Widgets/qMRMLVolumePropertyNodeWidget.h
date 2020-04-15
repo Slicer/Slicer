@@ -48,7 +48,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qMRMLVolumePropertyNodeWidg
 
 public:
   /// Constructors
-  typedef QWidget Superclass;
+  using Superclass = QWidget;
   explicit qMRMLVolumePropertyNodeWidget(QWidget* parent=nullptr);
   ~qMRMLVolumePropertyNodeWidget() override;
 

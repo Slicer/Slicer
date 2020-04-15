@@ -53,7 +53,7 @@ class qMRMLChartViewControllerWidgetPrivate
   Q_DECLARE_PUBLIC(qMRMLChartViewControllerWidget);
 
 public:
-  typedef qMRMLViewControllerBarPrivate Superclass;
+  using Superclass = qMRMLViewControllerBarPrivate;
   qMRMLChartViewControllerWidgetPrivate(qMRMLChartViewControllerWidget& object);
   ~qMRMLChartViewControllerWidgetPrivate() override;
 

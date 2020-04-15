@@ -76,7 +76,7 @@ class QMRML_WIDGETS_EXPORT qMRMLCoordinatesWidget : public ctkCoordinatesWidget
   Q_PROPERTY(UnitAwareProperties unitAwareProperties READ unitAwareProperties WRITE setUnitAwareProperties)
 
 public:
-  typedef ctkCoordinatesWidget Superclass;
+  using Superclass = ctkCoordinatesWidget;
 
   /// Construct an empty qMRMLSliderWidget with a null scene.
   explicit qMRMLCoordinatesWidget(QWidget* parent = nullptr);

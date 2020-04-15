@@ -66,7 +66,7 @@ public:
   /// Remove the Controller for a Node from the widget
   void removeController(vtkMRMLNode *n);
 
-  typedef std::map<vtkSmartPointer<vtkMRMLNode>, qMRMLViewControllerBar* > ControllerMapType;
+  using ControllerMapType = std::map<vtkSmartPointer<vtkMRMLNode>, qMRMLViewControllerBar *>;
   ControllerMapType ControllerMap;
 
 protected:

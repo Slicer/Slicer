@@ -39,7 +39,7 @@ class Q_SLICER_QTMODULES_TRANSFORMS_EXPORT qSlicerTransformsModule
   Q_INTERFACES(qSlicerLoadableModule);
 public:
 
-  typedef qSlicerLoadableModule Superclass;
+  using Superclass = qSlicerLoadableModule;
   qSlicerTransformsModule(QObject *parent=nullptr);
   ~qSlicerTransformsModule() override;
 

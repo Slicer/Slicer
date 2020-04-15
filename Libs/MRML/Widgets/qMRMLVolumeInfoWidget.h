@@ -42,7 +42,7 @@ class QMRML_WIDGETS_EXPORT qMRMLVolumeInfoWidget : public qMRMLWidget
   QVTK_OBJECT
   Q_PROPERTY(bool dataTypeEditable READ isDataTypeEditable WRITE setDataTypeEditable)
 public:
-  typedef qMRMLWidget Superclass;
+  using Superclass = qMRMLWidget;
 
   qMRMLVolumeInfoWidget(QWidget *parent=nullptr);
   ~qMRMLVolumeInfoWidget() override;

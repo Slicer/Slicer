@@ -44,7 +44,7 @@ class VTK_SLICER_UNITS_MODULE_LOGIC_EXPORT vtkSlicerUnitsLogic
 {
 public:
   static vtkSlicerUnitsLogic *New();
-  typedef vtkSlicerUnitsLogic Self;
+  using Self = vtkSlicerUnitsLogic;
   vtkTypeMacro(vtkSlicerUnitsLogic, vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

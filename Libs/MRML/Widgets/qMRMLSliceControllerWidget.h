@@ -63,7 +63,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSliceControllerWidget
   Q_PROPERTY(QString sliceOrientation READ sliceOrientation WRITE setSliceOrientation)
 public:
   /// Superclass typedef
-  typedef qMRMLViewControllerBar Superclass;
+  using Superclass = qMRMLViewControllerBar;
 
   /// Constructors
   explicit qMRMLSliceControllerWidget(QWidget* parent = nullptr);

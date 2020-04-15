@@ -33,7 +33,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerNodeWriterOptionsWidget
   Q_PROPERTY(bool showUseCompression READ showUseCompression WRITE setShowUseCompression)
 
 public:
-  typedef qSlicerFileWriterOptionsWidget Superclass;
+  using Superclass = qSlicerFileWriterOptionsWidget;
   explicit qSlicerNodeWriterOptionsWidget(QWidget* parent = nullptr);
   ~qSlicerNodeWriterOptionsWidget() override;
 

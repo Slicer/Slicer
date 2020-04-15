@@ -42,19 +42,19 @@ public:
 
   /// Representation models
   /// \sa GetRepresentation(), SetRepresentation()
-  typedef enum {
+  using RepresentationType = enum {
     PointsRepresentation = 0,
     WireframeRepresentation,
     SurfaceRepresentation
-  } RepresentationType;
+  };
 
   /// Interpolation models
   /// \sa GetInterpolation(), SetInterpolation()
-  typedef enum {
+  using InterpolationType = enum {
     FlatInterpolation = 0,
     GouraudInterpolation,
     PhongInterpolation
-  } InterpolationType;
+  };
 
   /// Scalar range options for displaying data associated with this display
   /// node, this setting determines if the display node, color node, or ?
@@ -68,7 +68,7 @@ public:
   /// UseManualScalarRange - use user defined values
   /// \sa ScalarRangeFlag, GetScalarRangeFlag(), SetScalarRangeFlag(),
   /// SetScalarRange(), GetScalarRange(), GetScalarRangeFlagTypeAsString()
-  typedef enum {
+  using ScalarRangeFlagType = enum {
     UseManualScalarRange = 0,
     UseDataScalarRange,
     UseColorNodeScalarRange,
@@ -76,7 +76,7 @@ public:
     UseDirectMapping,
     // insert types above this line
     NUM_SCALAR_RANGE_FLAGS
-  } ScalarRangeFlagType;
+  };
 
   enum
     {

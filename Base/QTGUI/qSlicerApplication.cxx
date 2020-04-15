@@ -114,7 +114,7 @@ class qSlicerApplicationPrivate : public qSlicerCoreApplicationPrivate
 protected:
   qSlicerApplication* const q_ptr;
 public:
-  typedef qSlicerCoreApplicationPrivate Superclass;
+  using Superclass = qSlicerCoreApplicationPrivate;
 
   qSlicerApplicationPrivate(qSlicerApplication& object,
                             qSlicerCommandOptions * commandOptions,

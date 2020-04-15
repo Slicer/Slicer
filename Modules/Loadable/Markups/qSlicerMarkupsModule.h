@@ -36,7 +36,7 @@ class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsModule :
 
 public:
 
-  typedef qSlicerLoadableModule Superclass;
+  using Superclass = qSlicerLoadableModule;
   explicit qSlicerMarkupsModule(QObject *parent=nullptr);
   ~qSlicerMarkupsModule() override;
 

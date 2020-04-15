@@ -64,10 +64,10 @@ void vtkITKImageGrowCutExecute3D(vtkImageData *inData,
   double &priorSegmentStrength,
   itk::CStyleCommand::Pointer progressCommand)
 {
-  typedef itk::Image<IT1, 3> InImageType;
+  using InImageType = itk::Image<IT1, 3>;
   typename InImageType::Pointer image = InImageType::New();
 
-  typedef itk::Image<OT, 3> OutImageType;
+  using OutImageType = itk::Image<OT, 3>;
 
   typename OutImageType::Pointer labelImage = OutImageType::New();
 
@@ -77,7 +77,7 @@ void vtkITKImageGrowCutExecute3D(vtkImageData *inData,
 
   typename OutImageType::Pointer outputImage = OutImageType::New();
 
-  typedef itk::Image<float, 3> WeightImageType;
+  using WeightImageType = itk::Image<float, 3>;
   typename WeightImageType::Pointer weightImage = WeightImageType::New();
 
   int dims[3];
@@ -220,7 +220,7 @@ void vtkITKImageGrowCutExecute3D(vtkImageData *inData,
     }
 
 
-  typedef itk::GrowCutSegmentationImageFilter<InImageType, OutImageType> FilterType;
+  using FilterType = itk::GrowCutSegmentationImageFilter<InImageType, OutImageType>;
   typename FilterType::Pointer filter = FilterType::New();
 
   filter->AddObserver(itk::ProgressEvent(), progressCommand );
@@ -253,7 +253,7 @@ void vtkITKImageGrowCutExecute3D(vtkImageData *inData,
   iRegion.SetSize( isize );
   iRegion.SetIndex( istart );
 
-  typedef itk::RegionOfInterestImageFilter< InImageType, InImageType > iFilterType;
+  using iFilterType = itk::RegionOfInterestImageFilter<InImageType, InImageType>;
   typename iFilterType::Pointer fInput = iFilterType::New();
   fInput->SetRegionOfInterest( iRegion );
 
@@ -264,7 +264,7 @@ void vtkITKImageGrowCutExecute3D(vtkImageData *inData,
   oRegion.SetSize(osize);
   oRegion.SetIndex(ostart);
 
-  typedef itk::RegionOfInterestImageFilter< OutImageType, OutImageType > oFilterType;
+  using oFilterType = itk::RegionOfInterestImageFilter<OutImageType, OutImageType>;
   typename oFilterType::Pointer fOutput = oFilterType::New();
   fOutput->SetRegionOfInterest( oRegion );
 
@@ -275,7 +275,7 @@ void vtkITKImageGrowCutExecute3D(vtkImageData *inData,
   wRegion.SetSize(wsize);
   wRegion.SetIndex(wstart);
 
-  typedef itk::RegionOfInterestImageFilter< WeightImageType, WeightImageType > wFilterType;
+  using wFilterType = itk::RegionOfInterestImageFilter<WeightImageType, WeightImageType>;
   typename wFilterType::Pointer fWeight = wFilterType::New();
   fWeight->SetRegionOfInterest( wRegion );
 

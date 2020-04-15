@@ -170,7 +170,7 @@ public:
   // Description:
   //Set labels
   //void SetLabel(std::vector< std::string > labels);
-  typedef std::vector< std::string > LabelsVectorType;
+  using LabelsVectorType = std::vector<std::string>;
   void SetLabels(const LabelsVectorType &labels);
 
   // Description:

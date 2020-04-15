@@ -40,7 +40,7 @@ class Q_SLICER_QTMODULES_PLOTS_EXPORT qSlicerPlotsModuleWidget :
 
 public:
 
-  typedef qSlicerAbstractModuleWidget Superclass;
+  using Superclass = qSlicerAbstractModuleWidget;
   qSlicerPlotsModuleWidget(QWidget *parent=nullptr);
   ~qSlicerPlotsModuleWidget() override;
 

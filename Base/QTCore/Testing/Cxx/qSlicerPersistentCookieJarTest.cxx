@@ -31,7 +31,7 @@
 class qSlicerPersistentCookieJarTester: public QObject
 {
   Q_OBJECT
-  typedef qSlicerPersistentCookieJarTester Self;
+  using Self = qSlicerPersistentCookieJarTester;
 
 private slots:
   void testDefaults();

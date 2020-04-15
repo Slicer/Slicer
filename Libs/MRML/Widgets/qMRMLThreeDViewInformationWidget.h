@@ -41,7 +41,7 @@ class QMRML_WIDGETS_EXPORT qMRMLThreeDViewInformationWidget : public qMRMLWidget
   Q_OBJECT
 public:
   /// Superclass typedef
-  typedef qMRMLWidget Superclass;
+  using Superclass = qMRMLWidget;
 
   /// Constructors
   explicit qMRMLThreeDViewInformationWidget(QWidget* parent = nullptr);

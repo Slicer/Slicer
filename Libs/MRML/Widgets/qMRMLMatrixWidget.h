@@ -43,7 +43,7 @@ class QMRML_WIDGETS_EXPORT qMRMLMatrixWidget : public ctkVTKAbstractMatrixWidget
 public:
 
   /// Constructors
-  typedef ctkVTKAbstractMatrixWidget Superclass;
+  using Superclass = ctkVTKAbstractMatrixWidget;
   explicit qMRMLMatrixWidget(QWidget* parent);
   ~qMRMLMatrixWidget() override;
 

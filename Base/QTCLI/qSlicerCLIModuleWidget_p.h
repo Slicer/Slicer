@@ -73,7 +73,7 @@ class qSlicerCLIModuleWidgetPrivate: public QObject,
 protected:
   qSlicerCLIModuleWidget* const q_ptr;
 public:
-  typedef qSlicerCLIModuleWidgetPrivate Self;
+  using Self = qSlicerCLIModuleWidgetPrivate;
   qSlicerCLIModuleWidgetPrivate(qSlicerCLIModuleWidget& object);
 
   ///
@@ -88,11 +88,11 @@ public:
   qSlicerCLIModule * module()const;
 
 
-  typedef std::vector<ModuleParameterGroup>::const_iterator ParameterGroupConstIterator;
-  typedef std::vector<ModuleParameterGroup>::iterator       ParameterGroupIterator;
+  using ParameterGroupConstIterator = std::vector<ModuleParameterGroup>::const_iterator;
+  using ParameterGroupIterator = std::vector<ModuleParameterGroup>::iterator;
 
-  typedef std::vector<ModuleParameter>::const_iterator ParameterConstIterator;
-  typedef std::vector<ModuleParameter>::iterator       ParameterIterator;
+  using ParameterConstIterator = std::vector<ModuleParameter>::const_iterator;
+  using ParameterIterator = std::vector<ModuleParameter>::iterator;
 
 
   ///

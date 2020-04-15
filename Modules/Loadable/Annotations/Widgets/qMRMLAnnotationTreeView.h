@@ -46,7 +46,7 @@ class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_EXPORT qMRMLAnnotationTreeView
   Q_OBJECT
 
 public:
-  typedef qMRMLTreeView Superclass;
+  using Superclass = qMRMLTreeView;
   qMRMLAnnotationTreeView(QWidget *parent=nullptr);
   ~qMRMLAnnotationTreeView() override;
 

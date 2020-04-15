@@ -71,7 +71,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
   Q_PROPERTY(QStringList hideChildNodeTypes READ hideChildNodeTypes WRITE setHideChildNodeTypes)
 
 public:
-  typedef QTreeView Superclass;
+  using Superclass = QTreeView;
   qMRMLSubjectHierarchyTreeView(QWidget *parent=nullptr);
   ~qMRMLSubjectHierarchyTreeView() override;
 

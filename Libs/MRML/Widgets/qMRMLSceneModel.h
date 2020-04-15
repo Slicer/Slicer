@@ -94,7 +94,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QStandardItemModel
   /// A value of -1 hides it (not tested). 0 by default
   Q_PROPERTY( int extraItemColumn READ extraItemColumn WRITE setExtraItemColumn)
 public:
-  typedef QStandardItemModel Superclass;
+  using Superclass = QStandardItemModel;
   qMRMLSceneModel(QObject *parent=nullptr);
   ~qMRMLSceneModel() override;
 

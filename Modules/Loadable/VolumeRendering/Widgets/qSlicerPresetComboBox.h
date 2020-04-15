@@ -38,7 +38,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerPresetComboBox
 
 public:
   /// Constructors
-  typedef qMRMLNodeComboBox Superclass;
+  using Superclass = qMRMLNodeComboBox;
   explicit qSlicerPresetComboBox(QWidget* parent=nullptr);
   ~qSlicerPresetComboBox() override;
 

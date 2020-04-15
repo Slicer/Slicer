@@ -32,8 +32,8 @@ namespace
 //----------------------------------------------------------------------------
 int SlicerAppMain(int argc, char* argv[])
 {
-  typedef qSlicerAppMainWindow SlicerMainWindowType;
-  typedef qSlicerStyle SlicerAppStyle;
+  using SlicerMainWindowType = qSlicerAppMainWindow;
+  using SlicerAppStyle = qSlicerStyle;
 
   qSlicerApplicationHelper::preInitializeApplication(argv[0], new SlicerAppStyle);
 

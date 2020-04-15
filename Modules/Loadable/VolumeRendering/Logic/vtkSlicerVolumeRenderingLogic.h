@@ -343,7 +343,7 @@ protected:
 
   bool UseLinearRamp;
 
-  typedef std::vector<vtkMRMLNode*> DisplayNodesType;
+  using DisplayNodesType = std::vector<vtkMRMLNode *>;
   DisplayNodesType DisplayNodes;
 
   bool LoadPresets(vtkMRMLScene* scene);

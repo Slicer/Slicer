@@ -39,7 +39,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerModuleFactoryManager
 {
   Q_OBJECT
 public:
-  typedef qSlicerAbstractModuleFactoryManager Superclass;
+  using Superclass = qSlicerAbstractModuleFactoryManager;
   qSlicerModuleFactoryManager(QObject* newParent = nullptr);
 
   /// Unloads all the modules previously loaded.

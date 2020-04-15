@@ -68,7 +68,7 @@ public:
   { DelegateITKOutputMacro ( GetThreshold ); };
 
 protected:
-  typedef itk::NewOtsuThresholdImageFilter<Superclass::InputImageType, Superclass::OutputImageType> ImageFilterType;
+  using ImageFilterType = itk::NewOtsuThresholdImageFilter<Superclass::InputImageType, Superclass::OutputImageType>;
   vtkITKNewOtsuThresholdImageFilter() : Superclass ( ImageFilterType::New() ){};
   ~vtkITKNewOtsuThresholdImageFilter() override  = default;
   ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*> ( m_Filter.GetPointer() ); }

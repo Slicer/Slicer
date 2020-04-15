@@ -25,7 +25,7 @@ class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qSlicerSceneViewsModuleWidget :
   Q_OBJECT
   QVTK_OBJECT
 public:
-    typedef qSlicerAbstractModuleWidget Superclass;
+    using Superclass = qSlicerAbstractModuleWidget;
     qSlicerSceneViewsModuleWidget(QWidget *parent=nullptr);
     ~qSlicerSceneViewsModuleWidget() override;
 

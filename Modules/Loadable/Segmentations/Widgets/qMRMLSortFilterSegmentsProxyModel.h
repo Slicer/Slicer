@@ -50,7 +50,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSortFilterSegmentsProxyM
   Q_PROPERTY(QString textFilter READ textFilter WRITE setTextFilter)
 
 public:
-  typedef QSortFilterProxyModel Superclass;
+  using Superclass = QSortFilterProxyModel;
   qMRMLSortFilterSegmentsProxyModel(QObject *parent=nullptr);
   ~qMRMLSortFilterSegmentsProxyModel() override;
 

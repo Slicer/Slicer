@@ -46,7 +46,7 @@ qMRMLTransformInfoWidget
   QVTK_OBJECT
 
 public:
-  typedef qMRMLWidget Superclass;
+  using Superclass = qMRMLWidget;
   qMRMLTransformInfoWidget(QWidget *parent=nullptr);
   ~qMRMLTransformInfoWidget() override;
 

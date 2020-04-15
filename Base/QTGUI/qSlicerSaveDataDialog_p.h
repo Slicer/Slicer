@@ -34,7 +34,7 @@ class qSlicerSaveDataDialogPrivate
 {
   Q_OBJECT
 public:
-  typedef qSlicerSaveDataDialogPrivate Self;
+  using Self = qSlicerSaveDataDialogPrivate;
   explicit qSlicerSaveDataDialogPrivate(QWidget* _parent=nullptr);
   ~qSlicerSaveDataDialogPrivate() override;
 
@@ -130,7 +130,7 @@ protected:
 class qSlicerFileNameItemDelegate : public QStyledItemDelegate
 {
 public:
-  typedef QStyledItemDelegate Superclass;
+  using Superclass = QStyledItemDelegate;
   qSlicerFileNameItemDelegate( QObject * parent = nullptr );
   QWidget* createEditor( QWidget * parent,
                                  const QStyleOptionViewItem & option,

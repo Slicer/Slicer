@@ -36,7 +36,7 @@ qSlicerReformatModuleWidget : public qSlicerAbstractModuleWidget
   Q_OBJECT
 
 public:
-  typedef qSlicerAbstractModuleWidget Superclass;
+  using Superclass = qSlicerAbstractModuleWidget;
   qSlicerReformatModuleWidget(QWidget *parent=nullptr);
   ~qSlicerReformatModuleWidget() override;
 

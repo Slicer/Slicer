@@ -37,7 +37,7 @@ class QMRML_WIDGETS_EXPORT qMRMLEventLoggerWidget: public QWidget
 {
   Q_OBJECT
 public:
-  typedef QWidget Superclass;
+  using Superclass = QWidget;
   explicit qMRMLEventLoggerWidget(QWidget *parent = nullptr);
   ~qMRMLEventLoggerWidget() override;
 

@@ -44,7 +44,7 @@ qMRMLAnnotationFiducialProjectionPropertyWidget
   QVTK_OBJECT
 
 public:
-  typedef qMRMLWidget Superclass;
+  using Superclass = qMRMLWidget;
   qMRMLAnnotationFiducialProjectionPropertyWidget(QWidget *newParent = nullptr);
   ~qMRMLAnnotationFiducialProjectionPropertyWidget() override;
 

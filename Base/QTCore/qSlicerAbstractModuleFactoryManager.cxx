@@ -41,10 +41,8 @@ public:
 
   void printAdditionalInfo();
 
-  typedef qSlicerAbstractModuleFactoryManager::qSlicerModuleFactory
-    qSlicerModuleFactory;
-  typedef qSlicerAbstractModuleFactoryManager::qSlicerFileBasedModuleFactory
-    qSlicerFileBasedModuleFactory;
+  using qSlicerModuleFactory = qSlicerAbstractModuleFactoryManager::qSlicerModuleFactory;
+  using qSlicerFileBasedModuleFactory = qSlicerAbstractModuleFactoryManager::qSlicerFileBasedModuleFactory;
   QVector<qSlicerFileBasedModuleFactory*> fileBasedFactories()const;
   QVector<qSlicerModuleFactory*> notFileBasedFactories()const;
 

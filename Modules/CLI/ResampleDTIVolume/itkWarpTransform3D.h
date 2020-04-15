@@ -16,25 +16,25 @@ template <class FieldData>
 class WarpTransform3D : public Transform<FieldData, 3, 3>
 {
 public:
-  typedef FieldData                                          FieldDataType;
-  typedef WarpTransform3D                                    Self;
-  typedef Transform<FieldDataType, 3, 3>                     Superclass;
-  typedef typename Superclass::JacobianType                  JacobianType;
-  typedef typename Superclass::JacobianPositionType          JacobianPositionType;
-  typedef typename Superclass::InputPointType                InputPointType;
-  typedef typename Superclass::InputVectorType               InputVectorType;
-  typedef typename Superclass::InputVnlVectorType            InputVnlVectorType;
-  typedef typename Superclass::InputCovariantVectorType      InputCovariantVectorType;
-  typedef typename Superclass::OutputPointType               OutputPointType;
-  typedef typename Superclass::OutputVectorType              OutputVectorType;
-  typedef typename Superclass::OutputVnlVectorType           OutputVnlVectorType;
-  typedef typename Superclass::OutputCovariantVectorType     OutputCovariantVectorType;
-  typedef DeformationImageType::Pointer                      DeformationImagePointerType;
-  typedef SmartPointer<Self>                                 Pointer;
-  typedef SmartPointer<const Self>                           ConstPointer;
-  typedef ConstNeighborhoodIterator<DeformationImageType>    ConstNeighborhoodIteratorType;
-  typedef typename ConstNeighborhoodIteratorType::RadiusType RadiusType;
-  typedef typename Superclass::ParametersType                ParametersType;
+  using FieldDataType = FieldData;
+  using Self = WarpTransform3D<FieldData>;
+  using Superclass = Transform<FieldDataType, 3, 3>;
+  using JacobianType = typename Superclass::JacobianType;
+  using JacobianPositionType = typename Superclass::JacobianPositionType;
+  using InputPointType = typename Superclass::InputPointType;
+  using InputVectorType = typename Superclass::InputVectorType;
+  using InputVnlVectorType = typename Superclass::InputVnlVectorType;
+  using InputCovariantVectorType = typename Superclass::InputCovariantVectorType;
+  using OutputPointType = typename Superclass::OutputPointType;
+  using OutputVectorType = typename Superclass::OutputVectorType;
+  using OutputVnlVectorType = typename Superclass::OutputVnlVectorType;
+  using OutputCovariantVectorType = typename Superclass::OutputCovariantVectorType;
+  using DeformationImagePointerType = DeformationImageType::Pointer;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using ConstNeighborhoodIteratorType = ConstNeighborhoodIterator<DeformationImageType>;
+  using RadiusType = typename ConstNeighborhoodIteratorType::RadiusType;
+  using ParametersType = typename Superclass::ParametersType;
 
   /** New method for creation through the object factory.
    * NOTE: itkNewMacro is not used because we need to provide a

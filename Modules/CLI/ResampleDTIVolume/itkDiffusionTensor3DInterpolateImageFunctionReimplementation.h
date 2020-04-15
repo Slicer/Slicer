@@ -33,23 +33,23 @@ class DiffusionTensor3DInterpolateImageFunctionReimplementation :
   public DiffusionTensor3DInterpolateImageFunction<TData, TCoordRep>
 {
 public:
-  typedef TData                                                          DataType;
-  typedef DiffusionTensor3DInterpolateImageFunctionReimplementation      Self;
-  typedef DiffusionTensor3DInterpolateImageFunction<DataType, TCoordRep> Superclass;
-  typedef typename Superclass::TensorDataType                            TensorDataType;
-  typedef typename Superclass::DiffusionImageType                        DiffusionImageType;
-  typedef typename Superclass::DiffusionImageTypePointer                 DiffusionImageTypePointer;
-  typedef Image<DataType, 3>                                             ImageType;
-  typedef typename ImageType::Pointer                                    ImagePointer;
-  typedef typename Superclass::PointType                                 PointType;
-  typedef SmartPointer<Self>                                             Pointer;
-  typedef SmartPointer<const Self>                                       ConstPointer;
-  typedef ImageRegionIteratorWithIndex<DiffusionImageType>               IteratorDiffusionImageType;
-  typedef ImageRegionIteratorWithIndex<ImageType>                        IteratorImageType;
-  typedef InterpolateImageFunction<ImageType, double>                    InterpolateImageFunctionType;
-  typedef typename DiffusionImageType::RegionType                        itkRegionType;
-  typedef typename DiffusionImageType::SizeType                          SizeType;
-  typedef typename Superclass::ContinuousIndexType                       ContinuousIndexType;
+  using DataType = TData;
+  using Self = DiffusionTensor3DInterpolateImageFunctionReimplementation<TData, TCoordRep>;
+  using Superclass = DiffusionTensor3DInterpolateImageFunction<DataType, TCoordRep>;
+  using TensorDataType = typename Superclass::TensorDataType;
+  using DiffusionImageType = typename Superclass::DiffusionImageType;
+  using DiffusionImageTypePointer = typename Superclass::DiffusionImageTypePointer;
+  using ImageType = Image<DataType, 3>;
+  using ImagePointer = typename ImageType::Pointer;
+  using PointType = typename Superclass::PointType;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using IteratorDiffusionImageType = ImageRegionIteratorWithIndex<DiffusionImageType>;
+  using IteratorImageType = ImageRegionIteratorWithIndex<ImageType>;
+  using InterpolateImageFunctionType = InterpolateImageFunction<ImageType, double>;
+  using itkRegionType = typename DiffusionImageType::RegionType;
+  using SizeType = typename DiffusionImageType::SizeType;
+  using ContinuousIndexType = typename Superclass::ContinuousIndexType;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DInterpolateImageFunctionReimplementation, DiffusionTensor3DInterpolateImageFunction);

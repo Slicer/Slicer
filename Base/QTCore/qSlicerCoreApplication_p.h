@@ -59,7 +59,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplicationPrivate
 protected:
   qSlicerCoreApplication* q_ptr;
 public:
-  typedef qSlicerCoreApplicationPrivate Self;
+  using Self = qSlicerCoreApplicationPrivate;
 
   qSlicerCoreApplicationPrivate(qSlicerCoreApplication& object,
                                 qSlicerCoreCommandOptions * coreCommandOptions,

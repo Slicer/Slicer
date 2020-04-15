@@ -37,7 +37,7 @@ class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerDataModule
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
 public:
-  typedef qSlicerLoadableModule Superclass;
+  using Superclass = qSlicerLoadableModule;
   qSlicerDataModule(QObject *parent=nullptr);
   ~qSlicerDataModule() override;
 

@@ -39,7 +39,7 @@ class Q_SLICER_MODULE_TEXTS_WIDGETS_EXPORT qMRMLTextWidget : public qSlicerWidge
   Q_OBJECT
 
 public:
-  typedef qSlicerWidget Superclass;
+  using Superclass = qSlicerWidget;
   qMRMLTextWidget(QWidget *parent=nullptr);
   ~qMRMLTextWidget() override;
 

@@ -49,7 +49,7 @@ public:
   vtkTypeMacro(vtkITKArchetypeImageSeriesReader,vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  typedef itk::SpatialOrientation::ValidCoordinateOrientationFlags CoordinateOrientationCode;
+  using CoordinateOrientationCode = itk::SpatialOrientation::ValidCoordinateOrientationFlags;
 
   ///
   /// Specify the archetype filename for the series.

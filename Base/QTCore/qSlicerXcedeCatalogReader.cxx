@@ -59,7 +59,7 @@ protected:
 public:
   qSlicerXcedeCatalogReaderPrivate(qSlicerXcedeCatalogReader& object);
 
-  typedef QMap<QString, QString> NodeType;
+  using NodeType = QMap<QString, QString>;
   int     GetNumberOfElements(vtkXMLDataElement* parent);
   QString nodeType(const QString& format)const;
   int     checkFormat(const QString& format)const;

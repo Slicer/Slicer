@@ -526,7 +526,7 @@ protected:
   vtkSmartPointer<vtkMatrix4x4> UVWToSlice;
   vtkSmartPointer<vtkMatrix4x4> UVWToRAS;
 
-  typedef std::pair <std::string, vtkSmartPointer<vtkMatrix3x3> > OrientationPresetType;
+  using OrientationPresetType = std::pair<std::string, vtkSmartPointer<vtkMatrix3x3> >;
   std::vector< OrientationPresetType > OrientationMatrices;
 
   int JumpMode;

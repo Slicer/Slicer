@@ -45,7 +45,7 @@ public:
   Q_OBJECT
 
 public:
-  typedef qSlicerSegmentEditorAbstractEffect Superclass;
+  using Superclass = qSlicerSegmentEditorAbstractEffect;
   qSlicerSegmentEditorAbstractLabelEffect(QObject* parent = nullptr);
   ~qSlicerSegmentEditorAbstractLabelEffect() override;
 

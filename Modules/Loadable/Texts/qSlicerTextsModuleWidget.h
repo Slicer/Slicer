@@ -35,7 +35,7 @@ class Q_SLICER_QTMODULES_TEXTS_EXPORT qSlicerTextsModuleWidget : public qSlicerA
 
 public:
 
-  typedef qSlicerAbstractModuleWidget Superclass;
+  using Superclass = qSlicerAbstractModuleWidget;
   qSlicerTextsModuleWidget(QWidget *parent=nullptr);
   ~qSlicerTextsModuleWidget() override;
 

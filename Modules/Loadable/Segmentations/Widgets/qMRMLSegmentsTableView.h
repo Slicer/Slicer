@@ -63,7 +63,7 @@ public:
   Q_PROPERTY(bool filterBarVisible READ filterBarVisible WRITE setFilterBarVisible)
   Q_PROPERTY(QString textFilter READ textFilter WRITE setTextFilter)
 
-  typedef qMRMLWidget Superclass;
+  using Superclass = qMRMLWidget;
   /// Constructor
   explicit qMRMLSegmentsTableView(QWidget* parent = nullptr);
   /// Destructor

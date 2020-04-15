@@ -44,7 +44,7 @@ protected:
   qSlicerMainWindow* const q_ptr;
 
 public:
-  typedef qSlicerMainWindowPrivate Self;
+  using Self = qSlicerMainWindowPrivate;
   qSlicerMainWindowPrivate(qSlicerMainWindow& object);
   virtual ~qSlicerMainWindowPrivate();
 

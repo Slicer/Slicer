@@ -38,7 +38,7 @@ class Q_SLICER_QTMODULES_TRANSFORMS_EXPORT qSlicerTransformsModuleWidget :
 
 public:
 
-  typedef qSlicerAbstractModuleWidget Superclass;
+  using Superclass = qSlicerAbstractModuleWidget;
   qSlicerTransformsModuleWidget(QWidget *parent=nullptr);
   ~qSlicerTransformsModuleWidget() override;
 

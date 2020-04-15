@@ -186,7 +186,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
 
 public:
 
-  typedef QObject Superclass;
+  using Superclass = QObject;
   /// Constructor
   /// Warning: If there is no parent given, make sure you delete the object.
   /// The modules can typically be instantiated before the application

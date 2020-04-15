@@ -35,7 +35,7 @@ void vtkITKMorphologicalContourInterpolatorExecute(vtkITKMorphologicalContourInt
 
   // Wrap scalars into an ITK image
   // - mostly rely on defaults for spacing, origin etc for this filter
-  typedef itk::Image<T, 3> ImageType;
+  using ImageType = itk::Image<T, 3>;
   typename ImageType::Pointer inImage = ImageType::New();
   inImage->GetPixelContainer()->SetImportPointer(inPtr, dims[0]*dims[1]*dims[2], false);
   typename ImageType::RegionType region;
@@ -53,7 +53,7 @@ void vtkITKMorphologicalContourInterpolatorExecute(vtkITKMorphologicalContourInt
 
 
   // Calculate the distance transform
-  typedef itk::MorphologicalContourInterpolator<ImageType> ContourInterpolatorType;
+  using ContourInterpolatorType = itk::MorphologicalContourInterpolator<ImageType>;
   typename ContourInterpolatorType::Pointer interpolatorFilter = ContourInterpolatorType::New();
 
   interpolatorFilter->SetLabel(static_cast<T>(self->GetLabel()));

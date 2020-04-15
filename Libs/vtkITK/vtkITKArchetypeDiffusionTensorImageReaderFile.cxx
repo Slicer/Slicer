@@ -52,11 +52,11 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
   vtkFloatArray* tensors,
   vtkImageData *data)
 {
-  typedef itk::DiffusionTensor3D<T> DiffusionTensor3DPixelType;
-  typedef itk::Image<DiffusionTensor3DPixelType,3> ImageType;
-  typedef itk::ImageSource<ImageType> FilterType;
+  using DiffusionTensor3DPixelType = itk::DiffusionTensor3D<T>;
+  using ImageType = itk::Image<DiffusionTensor3DPixelType, 3>;
+  using FilterType = itk::ImageSource<ImageType>;
   typename FilterType::Pointer filter;
-  typedef itk::ImageFileReader<ImageType> ReaderType;
+  using ReaderType = itk::ImageFileReader<ImageType>;
   typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(self->GetFileName(0));
   if (self->GetUseNativeCoordinateOrientation())

@@ -27,18 +27,18 @@ class DiffusionTensor3DNonRigidTransform :
   public DiffusionTensor3DTransform<TData>
 {
 public:
-  typedef TData                                              DataType;
-  typedef DiffusionTensor3DNonRigidTransform                 Self;
-  typedef DiffusionTensor3DTransform<DataType>               Superclass;
-  typedef typename Superclass::TensorDataType                TensorDataType;
-  typedef typename Superclass::MatrixTransformType           MatrixTransformType;
-  typedef typename Superclass::PointType                     PointType;
-  typedef SmartPointer<Self>                                 Pointer;
-  typedef SmartPointer<const Self>                           ConstPointer;
-  typedef Transform<double, 3, 3>                            TransformType;
-  typedef itk::DiffusionTensor3DPPDAffineTransform<DataType> PPDAffineTransformType;
-  typedef itk::DiffusionTensor3DFSAffineTransform<DataType>  FSAffineTransformType;
-  typedef itk::DiffusionTensor3DAffineTransform<DataType>    AffineTransform;
+  using DataType = TData;
+  using Self = DiffusionTensor3DNonRigidTransform<TData>;
+  using Superclass = DiffusionTensor3DTransform<DataType>;
+  using TensorDataType = typename Superclass::TensorDataType;
+  using MatrixTransformType = typename Superclass::MatrixTransformType;
+  using PointType = typename Superclass::PointType;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using TransformType = Transform<double, 3, 3>;
+  using PPDAffineTransformType = itk::DiffusionTensor3DPPDAffineTransform<DataType>;
+  using FSAffineTransformType = itk::DiffusionTensor3DFSAffineTransform<DataType>;
+  using AffineTransform = itk::DiffusionTensor3DAffineTransform<DataType>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DNonRigidTransform, DiffusionTensor3DTransform);

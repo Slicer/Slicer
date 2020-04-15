@@ -32,7 +32,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerCPURayCastVolumeRend
 {
   Q_OBJECT
 public:
-  typedef qSlicerVolumeRenderingPropertiesWidget Superclass;
+  using Superclass = qSlicerVolumeRenderingPropertiesWidget;
   qSlicerCPURayCastVolumeRenderingPropertiesWidget(QWidget *parent=nullptr);
   ~qSlicerCPURayCastVolumeRenderingPropertiesWidget() override;
 

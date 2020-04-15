@@ -37,7 +37,7 @@ class Q_SLICER_MODULES_CORE_EXPORT qSlicerEventBrokerModule :
   Q_OBJECT
 public:
 
-  typedef qSlicerCoreModule Superclass;
+  using Superclass = qSlicerCoreModule;
   qSlicerEventBrokerModule(QObject *parent=nullptr);
   ~qSlicerEventBrokerModule() override;
 

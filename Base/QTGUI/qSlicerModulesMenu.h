@@ -61,7 +61,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulesMenu: public QMenu
 
   Q_PROPERTY(QStringList topLevelCategoryOrder READ topLevelCategoryOrder WRITE setTopLevelCategoryOrder)
 public:
-  typedef QMenu Superclass;
+  using Superclass = QMenu;
 
   /// Constructor
   /// title is the name of the menu (can appear using right click on the

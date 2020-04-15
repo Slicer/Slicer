@@ -133,7 +133,7 @@ public:
 
   vtkSmartPointer<vtkSlicerApplicationLogic> ApplicationLogic;
   ///
-  typedef QMap<QString, QString> NodeType;
+  using NodeType = QMap<QString, QString>;
 
   void importElement(vtkXMLDataElement* element);
   void importNode(vtkXMLDataElement* node);

@@ -35,10 +35,10 @@ class RigidImageToImageRegistrationMethod
 
 public:
 
-  typedef RigidImageToImageRegistrationMethod             Self;
-  typedef OptimizedImageToImageRegistrationMethod<TImage> Superclass;
-  typedef SmartPointer<Self>                              Pointer;
-  typedef SmartPointer<const Self>                        ConstPointer;
+  using Self = RigidImageToImageRegistrationMethod<TImage>;
+  using Superclass = OptimizedImageToImageRegistrationMethod<TImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   itkTypeMacro( RigidImageToImageRegistrationMethod,
                 OptimizedImageToImageRegistrationMethod );
@@ -59,23 +59,18 @@ public:
   // Overrides the superclass' TransformType typedef
   // We must use MatrixOffsetTransformBase since no itk rigid transform is
   //   templated over ImageDimension.
-  typedef MatrixOffsetTransformBase<double,
-                                    itkGetStaticConstMacro( ImageDimension ),
-                                    itkGetStaticConstMacro( ImageDimension )>
-  RigidTransformType;
-  typedef RigidTransformType TransformType;
+  using RigidTransformType = MatrixOffsetTransformBase<double, (Self::ImageDimension), (Self::ImageDimension)>;
+  using TransformType = RigidTransformType;
 
   //
   //  Custom Typedefs
   //
-  typedef Rigid2DTransform<double>       Rigid2DTransformType;
-  typedef VersorRigid3DTransform<double> Rigid3DTransformType;
+  using Rigid2DTransformType = Rigid2DTransform<double>;
+  using Rigid3DTransformType = VersorRigid3DTransform<double>;
 
-  typedef AffineTransform<double,
-                          itkGetStaticConstMacro( ImageDimension )>
-  AffineTransformType;
+  using AffineTransformType = AffineTransform<double, (Self::ImageDimension)>;
 
-  typedef typename AffineTransformType::Pointer AffineTransformPointer;
+  using AffineTransformPointer = typename AffineTransformType::Pointer;
 
   //
   //  Superclass Methods

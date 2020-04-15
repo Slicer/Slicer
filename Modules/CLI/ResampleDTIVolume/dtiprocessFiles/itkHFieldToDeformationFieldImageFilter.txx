@@ -67,13 +67,13 @@ HFieldToDeformationFieldImageFilter<TInputImage, TOutputImage>::ComputeDisplacem
   typename InputImageType::PixelType
   hvec)
 {
-  typedef typename InputPixelType::ValueType CoordRepType;
+  using CoordRepType = typename InputPixelType::ValueType;
   const unsigned int Dimension = InputImageType::ImageDimension;
 
-  typedef itk::Point<CoordRepType, Dimension> PointType;
+  using PointType = itk::Point<CoordRepType, Dimension>;
   PointType ipt, hpt;
 
-  typedef ContinuousIndex<CoordRepType, Dimension> ContinuousIndexType;
+  using ContinuousIndexType = ContinuousIndex<CoordRepType, Dimension>;
   ContinuousIndexType hind;
   for( unsigned int i = 0; i < Dimension; ++i )
     {

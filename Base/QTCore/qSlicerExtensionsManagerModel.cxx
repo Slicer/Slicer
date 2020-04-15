@@ -144,8 +144,8 @@ public:
     MD5Role
     };
 
-  typedef qSlicerExtensionsManagerModelPrivate Self;
-  typedef qSlicerExtensionsManagerModel::ExtensionMetadataType ExtensionMetadataType;
+  using Self = qSlicerExtensionsManagerModelPrivate;
+  using ExtensionMetadataType = qSlicerExtensionsManagerModel::ExtensionMetadataType;
   qSlicerExtensionsManagerModelPrivate(qSlicerExtensionsManagerModel& object);
   void init();
 

@@ -10,7 +10,7 @@ class qSlicerSceneViewsModuleDialog : public qMRMLScreenShotDialog
 {
   Q_OBJECT
 public:
-  typedef qMRMLScreenShotDialog Superclass;
+  using Superclass = qMRMLScreenShotDialog;
 
   qSlicerSceneViewsModuleDialog();
   ~qSlicerSceneViewsModuleDialog() override;

@@ -31,14 +31,14 @@ int DoIt( int argc, char * argv[])
 {
   PARSE_ARGS;
 
-  typedef Tin     InputPixelType;
+  using InputPixelType = Tin;
 
-  typedef itk::Image<InputPixelType, 3>                        Image3DType;
-  typedef itk::Image<InputPixelType, 2>                        Image2DType;
-  typedef itk::ImageFileReader<Image3DType>                    ReaderType;
-  typedef itk::ShiftScaleImageFilter<Image3DType, Image3DType> ShiftScaleType;
-  typedef itk::ImageFileWriter<Image2DType>                    WriterType;
-  typedef itk::GDCMImageIO                                     ImageIOType;
+  using Image3DType = itk::Image<InputPixelType, 3>;
+  using Image2DType = itk::Image<InputPixelType, 2>;
+  using ReaderType = itk::ImageFileReader<Image3DType>;
+  using ShiftScaleType = itk::ShiftScaleImageFilter<Image3DType, Image3DType>;
+  using WriterType = itk::ImageFileWriter<Image2DType>;
+  using ImageIOType = itk::GDCMImageIO;
 
   typename Image3DType::Pointer image;
   typename ReaderType::Pointer  reader = ReaderType::New();
@@ -85,7 +85,7 @@ int DoIt( int argc, char * argv[])
     image = shiftScale->GetOutput();
     }
 
-  typedef itk::MetaDataDictionary DictionaryType;
+  using DictionaryType = itk::MetaDataDictionary;
   unsigned int numberOfSlices = image->GetLargestPossibleRegion().GetSize()[2];
 
   typename ImageIOType::Pointer gdcmIO = ImageIOType::New();
@@ -299,7 +299,7 @@ int DoIt( int argc, char * argv[])
     extractRegion.SetSize(extractSize);
     extractRegion.SetIndex(extractIndex);
 
-    typedef itk::ExtractImageFilter<Image3DType, Image2DType> ExtractType;
+    using ExtractType = itk::ExtractImageFilter<Image3DType, Image2DType>;
     typename ExtractType::Pointer extract = ExtractType::New();
     extract->SetDirectionCollapseToGuess();  // ITKv3 compatible, but not recommended
     extract->SetInput(image );

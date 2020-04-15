@@ -46,7 +46,7 @@ qMRMLTransformDisplayNodeWidget
   QVTK_OBJECT
 
 public:
-  typedef qMRMLWidget Superclass;
+  using Superclass = qMRMLWidget;
   qMRMLTransformDisplayNodeWidget(QWidget *newParent = nullptr);
   ~qMRMLTransformDisplayNodeWidget() override;
 

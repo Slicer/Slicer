@@ -26,12 +26,12 @@ int main( int argc, char * argv[] )
 
   PARSE_ARGS;
 
-  typedef short                               PixelType;
-  typedef itk::Image<PixelType, 3>            ImageType;
-  typedef itk::ImageFileReader<ImageType>     ReaderType;
-  typedef itk::ImageFileWriter<ImageType>     WriterType;
-  typedef itk::ImageRegionIterator<ImageType> IteratorType;
-  typedef itk::ImageDuplicator<ImageType>     DuplicatorType;
+  using PixelType = short;
+  using ImageType = itk::Image<PixelType, 3>;
+  using ReaderType = itk::ImageFileReader<ImageType>;
+  using WriterType = itk::ImageFileWriter<ImageType>;
+  using IteratorType = itk::ImageRegionIterator<ImageType>;
+  using DuplicatorType = itk::ImageDuplicator<ImageType>;
 
   ReaderType::Pointer     readerA = ReaderType::New();
   ReaderType::Pointer     readerB = ReaderType::New();

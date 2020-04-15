@@ -58,7 +58,7 @@ class qMRMLModelDisplayNodeWidgetPrivate: public QWidget, public Ui_qMRMLModelDi
 
 protected:
   qMRMLModelDisplayNodeWidget* const q_ptr;
-  typedef QWidget Superclass;
+  using Superclass = QWidget;
 
 public:
   qMRMLModelDisplayNodeWidgetPrivate(qMRMLModelDisplayNodeWidget& object);

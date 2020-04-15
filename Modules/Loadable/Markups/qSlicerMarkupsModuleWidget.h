@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsModuleWidget :
 
 public:
 
-  typedef qSlicerAbstractModuleWidget Superclass;
+  using Superclass = qSlicerAbstractModuleWidget;
   qSlicerMarkupsModuleWidget(QWidget *parent=nullptr);
   ~qSlicerMarkupsModuleWidget() override;
 

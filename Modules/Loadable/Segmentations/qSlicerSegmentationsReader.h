@@ -35,7 +35,7 @@ class qSlicerSegmentationsReader
 {
   Q_OBJECT
 public:
-  typedef qSlicerFileReader Superclass;
+  using Superclass = qSlicerFileReader;
   qSlicerSegmentationsReader(vtkSlicerSegmentationsModuleLogic* segmentationsLogic = nullptr, QObject* parent = nullptr);
   ~qSlicerSegmentationsReader() override;
 

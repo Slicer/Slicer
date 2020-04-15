@@ -44,7 +44,7 @@ class Q_SLICER_QTMODULES_SUBJECTHIERARCHY_EXPORT qSlicerSubjectHierarchyModule :
   QVTK_OBJECT
 
 public:
-  typedef qSlicerLoadableModule Superclass;
+  using Superclass = qSlicerLoadableModule;
   explicit qSlicerSubjectHierarchyModule(QObject *parent=nullptr);
   ~qSlicerSubjectHierarchyModule() override;
 

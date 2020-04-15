@@ -72,12 +72,12 @@ public:
   void RemoveAllWidgetsAndNodes();
 
   /// Map of vtkWidget indexed using associated node ID
-  typedef std::map < vtkSmartPointer<vtkMRMLMarkupsDisplayNode>, vtkSlicerMarkupsWidget* > DisplayNodeToWidgetType;
-  typedef std::map < vtkSmartPointer<vtkMRMLMarkupsDisplayNode>, vtkSlicerMarkupsWidget* >::iterator DisplayNodeToWidgetIt;
+  using DisplayNodeToWidgetType = std::map<vtkSmartPointer<vtkMRMLMarkupsDisplayNode>, vtkSlicerMarkupsWidget *>;
+  using DisplayNodeToWidgetIt = std::map<vtkSmartPointer<vtkMRMLMarkupsDisplayNode>, vtkSlicerMarkupsWidget *>::iterator;
   DisplayNodeToWidgetType MarkupsDisplayNodesToWidgets;  // display nodes with widgets assigned
 
-  typedef std::set < vtkSmartPointer<vtkMRMLMarkupsNode> > MarkupsNodesType;
-  typedef std::set < vtkSmartPointer<vtkMRMLMarkupsNode> >::iterator MarkupsNodesIt;
+  using MarkupsNodesType = std::set<vtkSmartPointer<vtkMRMLMarkupsNode> >;
+  using MarkupsNodesIt = std::set<vtkSmartPointer<vtkMRMLMarkupsNode> >::iterator;
   MarkupsNodesType MarkupsNodes; // observed markups nodes
 
   void AddMarkupsNode(vtkMRMLMarkupsNode* node);

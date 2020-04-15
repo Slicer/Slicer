@@ -35,7 +35,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerSceneBundleReader
 {
   Q_OBJECT
 public:
-  typedef qSlicerFileReader Superclass;
+  using Superclass = qSlicerFileReader;
   qSlicerSceneBundleReader(QObject* _parent = nullptr);
 
   QString description()const override;

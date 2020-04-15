@@ -63,7 +63,7 @@ public:
   void WriteXML(ostream& of, int indent, vtkMRMLNode* xmlEncoderNode);
   void DeepCopy(vtkSubjectHierarchyItem* item, bool copyChildren=true);
 
-  typedef std::vector<vtkSmartPointer<vtkSubjectHierarchyItem> > ChildVector;
+  using ChildVector = std::vector<vtkSmartPointer<vtkSubjectHierarchyItem> >;
 
 public:
   /// Incremental unique identifier of the subject hierarchy item.

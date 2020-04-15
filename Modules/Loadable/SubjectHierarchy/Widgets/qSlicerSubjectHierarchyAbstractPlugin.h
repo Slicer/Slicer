@@ -71,7 +71,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyAbs
   Q_PROPERTY(QString name READ name WRITE setName)
 
 public:
-  typedef QObject Superclass;
+  using Superclass = QObject;
   qSlicerSubjectHierarchyAbstractPlugin(QObject* parent = nullptr);
   ~qSlicerSubjectHierarchyAbstractPlugin() override;
 

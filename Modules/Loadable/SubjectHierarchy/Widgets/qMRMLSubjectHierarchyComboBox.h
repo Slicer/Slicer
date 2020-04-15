@@ -58,7 +58,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyCombo
   Q_PROPERTY(bool alignPopupVertically READ alignPopupVertically WRITE setAlignPopupVertically)
 
 public:
-  typedef ctkComboBox Superclass;
+  using Superclass = ctkComboBox;
   qMRMLSubjectHierarchyComboBox(QWidget *parent=nullptr);
   ~qMRMLSubjectHierarchyComboBox() override;
 

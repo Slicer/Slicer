@@ -54,9 +54,9 @@ class MRMLIDImageIO_EXPORT MRMLIDImageIO : public ImageIOBase
 {
 public:
   /** Standard class typedefs. */
-  typedef MRMLIDImageIO       Self;
-  typedef ImageIOBase         Superclass;
-  typedef SmartPointer<Self>  Pointer;
+  using Self = MRMLIDImageIO;
+  using Superclass = ImageIOBase;
+  using Pointer = SmartPointer<Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

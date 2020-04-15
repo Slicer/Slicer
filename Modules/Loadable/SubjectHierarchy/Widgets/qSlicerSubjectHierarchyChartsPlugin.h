@@ -38,7 +38,7 @@ public:
   Q_OBJECT
 
 public:
-  typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
+  using Superclass = qSlicerSubjectHierarchyAbstractPlugin;
   qSlicerSubjectHierarchyChartsPlugin(QObject* parent = nullptr);
   ~qSlicerSubjectHierarchyChartsPlugin() override;
 

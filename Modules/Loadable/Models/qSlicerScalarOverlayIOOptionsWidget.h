@@ -35,7 +35,7 @@ class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerScalarOverlayIOOptionsWidget
 {
   Q_OBJECT
 public:
-  typedef qSlicerIOOptionsWidget Superclass;
+  using Superclass = qSlicerIOOptionsWidget;
   qSlicerScalarOverlayIOOptionsWidget(QWidget *parent=nullptr);
   ~qSlicerScalarOverlayIOOptionsWidget() override;
 

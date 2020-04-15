@@ -36,23 +36,20 @@ class DiffusionTensor3DInterpolateImageFunction :
                        >
 {
 public:
-  typedef TData                                     TensorType;
-  typedef DiffusionTensor3DInterpolateImageFunction Self;
-  typedef DiffusionTensor3D<TensorType>             TensorDataType;
-  typedef Image<TensorDataType, 3>                  DiffusionImageType;
-  typedef typename DiffusionImageType::Pointer      DiffusionImageTypePointer;
-  typedef Point<double, 3>                          PointType;
-  typedef SmartPointer<Self>                        Pointer;
-  typedef SmartPointer<const Self>                  ConstPointer;
-  typedef typename TensorDataType::RealValueType    TensorRealType;
+  using TensorType = TData;
+  using Self = DiffusionTensor3DInterpolateImageFunction<TData, TCoordRep>;
+  using TensorDataType = DiffusionTensor3D<TensorType>;
+  using DiffusionImageType = Image<TensorDataType, 3>;
+  using DiffusionImageTypePointer = typename DiffusionImageType::Pointer;
+  using PointType = Point<double, 3>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using TensorRealType = typename TensorDataType::RealValueType;
 
-  typedef ImageFunction<Image<DiffusionTensor3D<TData>, 3>,
-                        DiffusionTensor3D<TData>,
-                        TCoordRep
-                        > Superclass;
+  using Superclass = ImageFunction<Image<DiffusionTensor3D<TData>, 3>, DiffusionTensor3D<TData>, TCoordRep>;
 
-  typedef typename Superclass::ContinuousIndexType ContinuousIndexType;
-  typedef typename Superclass::IndexType           IndexType;
+  using ContinuousIndexType = typename Superclass::ContinuousIndexType;
+  using IndexType = typename Superclass::IndexType;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DInterpolateImageFunction, ImageFunction);

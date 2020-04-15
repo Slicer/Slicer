@@ -135,8 +135,8 @@ class VTK_MRML_EXPORT vtkMRMLSegmentationStorageNode : public vtkMRMLStorageNode
   // Although internally binary labelmap representations can be of unsigned char, unsigned short
   // or short types, the output file is always unsigned char
   //TODO: This is a limitation for now
-  typedef itk::Image<unsigned char, 4> BinaryLabelmap4DImageType;
-  typedef itk::ImageRegionIteratorWithIndex<BinaryLabelmap4DImageType> BinaryLabelmap4DIteratorType;
+  using BinaryLabelmap4DImageType = itk::Image<unsigned char, 4>;
+  using BinaryLabelmap4DIteratorType = itk::ImageRegionIteratorWithIndex<BinaryLabelmap4DImageType>;
 #endif
 
 public:

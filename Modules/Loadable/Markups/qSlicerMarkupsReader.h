@@ -31,7 +31,7 @@ class qSlicerMarkupsReader
 {
   Q_OBJECT
 public:
-  typedef qSlicerFileReader Superclass;
+  using Superclass = qSlicerFileReader;
   qSlicerMarkupsReader(QObject* parent = nullptr);
   qSlicerMarkupsReader(vtkSlicerMarkupsLogic* logic, QObject* parent = nullptr);
   ~qSlicerMarkupsReader() override;

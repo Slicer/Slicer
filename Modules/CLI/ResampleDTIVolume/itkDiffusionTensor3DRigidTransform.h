@@ -30,16 +30,16 @@ class DiffusionTensor3DRigidTransform
   : public DiffusionTensor3DMatrix3x3Transform<TData>
 {
 public:
-  typedef TData                                            DataType;
-  typedef DiffusionTensor3DRigidTransform<DataType>        Self;
-  typedef DiffusionTensor3DMatrix3x3Transform<DataType>    Superclass;
-  typedef SmartPointer<Self>                               Pointer;
-  typedef SmartPointer<const Self>                         ConstPointer;
-  typedef typename Superclass::MatrixTransformType         MatrixTransformType;
-  typedef typename Superclass::InternalMatrixTransformType InternalMatrixTransformType;
-  typedef Matrix<double, 4, 4>                             MatrixTransform4x4Type;
-  typedef Rigid3DTransform<double>                         Rigid3DTransformType;
-  typedef VersorRigid3DTransform<double>                   VersorRigid3DTransformType;
+  using DataType = TData;
+  using Self = DiffusionTensor3DRigidTransform<DataType>;
+  using Superclass = DiffusionTensor3DMatrix3x3Transform<DataType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using MatrixTransformType = typename Superclass::MatrixTransformType;
+  using InternalMatrixTransformType = typename Superclass::InternalMatrixTransformType;
+  using MatrixTransform4x4Type = Matrix<double, 4, 4>;
+  using Rigid3DTransformType = Rigid3DTransform<double>;
+  using VersorRigid3DTransformType = VersorRigid3DTransform<double>;
   // /Set the 4x4 Matrix (the last row is ignored and considered to be 0,0,0,1
   void SetMatrix4x4( MatrixTransform4x4Type matrix );
 

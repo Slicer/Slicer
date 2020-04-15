@@ -33,20 +33,20 @@ class DiffusionTensor3DMatrix3x3Transform :
   public DiffusionTensor3DTransform<TData>
 {
 public:
-  typedef TData                                            DataType;
-  typedef DiffusionTensor3DMatrix3x3Transform              Self;
-  typedef DiffusionTensor3DTransform<DataType>             Superclass;
-  typedef typename Superclass::TransformType               TransformType;
-  typedef typename Superclass::TensorDataType              TensorDataType;
-  typedef typename Superclass::InternalTensorDataType      InternalTensorDataType;
-  typedef typename Superclass::PointType                   PointType;
-  typedef typename Superclass::MatrixTransformType         MatrixTransformType;
-  typedef typename Superclass::MatrixDataType              MatrixDataType;
-  typedef typename Superclass::InternalMatrixTransformType InternalMatrixTransformType;
-  typedef typename Superclass::InternalMatrixDataType      InternalMatrixDataType;
-  typedef Vector<TransformType, 3>                         VectorType;
-  typedef SmartPointer<Self>                               Pointer;
-  typedef SmartPointer<const Self>                         ConstPointer;
+  using DataType = TData;
+  using Self = DiffusionTensor3DMatrix3x3Transform<TData>;
+  using Superclass = DiffusionTensor3DTransform<DataType>;
+  using TransformType = typename Superclass::TransformType;
+  using TensorDataType = typename Superclass::TensorDataType;
+  using InternalTensorDataType = typename Superclass::InternalTensorDataType;
+  using PointType = typename Superclass::PointType;
+  using MatrixTransformType = typename Superclass::MatrixTransformType;
+  using MatrixDataType = typename Superclass::MatrixDataType;
+  using InternalMatrixTransformType = typename Superclass::InternalMatrixTransformType;
+  using InternalMatrixDataType = typename Superclass::InternalMatrixDataType;
+  using VectorType = Vector<TransformType, 3>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DMatrix3x3Transform, DiffusionTensor3DTransform);

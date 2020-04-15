@@ -117,7 +117,7 @@ AnisotropicSimilarity3DTransform<TScalarType>
     itkExceptionMacro( << "Attempting to set a non-orthogonal matrix (after removing scaling)" );
     }
 
-  typedef MatrixOffsetTransformBase<TScalarType, 3> Baseclass;
+  using Baseclass = MatrixOffsetTransformBase<TScalarType, 3>;
   this->Baseclass::SetMatrix( matrix );
 }
 
@@ -215,7 +215,7 @@ void
 AnisotropicSimilarity3DTransform<TScalarType>::ComputeJacobianWithRespectToParameters(const InputPointType & p,
                                                                                       JacobianType & jacobian) const
 {
-  typedef typename VersorType::ValueType ValueType;
+  using ValueType = typename VersorType::ValueType;
 
   // compute derivatives with respect to rotation
   const ValueType vx = this->GetVersor().GetX();

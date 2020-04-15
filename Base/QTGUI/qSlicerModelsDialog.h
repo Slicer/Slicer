@@ -35,7 +35,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModelsDialog : public qSlicerFileDialog
 {
   Q_OBJECT
 public:
-  typedef qSlicerFileDialog Superclass;
+  using Superclass = qSlicerFileDialog;
   qSlicerModelsDialog(QObject* parent =nullptr);
   ~qSlicerModelsDialog() override;
 

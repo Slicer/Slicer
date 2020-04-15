@@ -45,7 +45,7 @@ public:
   QStringList                      HiddenNodeIDs;
   QStringList                      VisibleNodeIDs;
   QString                          HideNodesUnaffiliatedWithNodeID;
-  typedef QPair<QString, QVariant> AttributeType;
+  using AttributeType = QPair<QString, QVariant>;
   QHash<QString, AttributeType>    Attributes;
   qMRMLSortFilterProxyModel::FilterType Filter;
 };

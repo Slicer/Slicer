@@ -59,7 +59,7 @@ class qMRMLThreeDViewControllerWidgetPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLThreeDViewControllerWidget);
 public:
-  typedef qMRMLViewControllerBarPrivate Superclass;
+  using Superclass = qMRMLViewControllerBarPrivate;
   qMRMLThreeDViewControllerWidgetPrivate(qMRMLThreeDViewControllerWidget& object);
   ~qMRMLThreeDViewControllerWidgetPrivate() override;
 

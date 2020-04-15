@@ -32,7 +32,7 @@ class QMRML_WIDGETS_EXPORT qMRMLCollapsibleButton : public ctkCollapsibleButton
   Q_OBJECT
 public:
   /// Superclass typedef
-  typedef ctkCollapsibleButton Superclass;
+  using Superclass = ctkCollapsibleButton;
 
   /// Constructors
   explicit qMRMLCollapsibleButton(QWidget* parent = nullptr);

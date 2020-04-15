@@ -35,7 +35,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerNodeWriter
   /// Some storage nodes don't support the compression option
   Q_PROPERTY(bool supportUseCompression READ supportUseCompression WRITE setSupportUseCompression);
 public:
-  typedef qSlicerFileWriter Superclass;
+  using Superclass = qSlicerFileWriter;
   qSlicerNodeWriter(const QString& description,
                     const qSlicerIO::IOFileType& fileType,
                     const QStringList& nodeTags,

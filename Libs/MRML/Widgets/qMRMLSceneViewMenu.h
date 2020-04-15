@@ -40,7 +40,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneViewMenu : public QMenu
   Q_PROPERTY(QString NoSceneViewText READ noSceneViewText WRITE setNoSceneViewText)
 public:
   /// Superclass typedef
-  typedef QMenu Superclass;
+  using Superclass = QMenu;
 
   /// Constructors
   explicit qMRMLSceneViewMenu(QWidget* newParent = nullptr);

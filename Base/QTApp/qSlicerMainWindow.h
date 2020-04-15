@@ -45,7 +45,7 @@ class Q_SLICER_BASE_QTAPP_EXPORT qSlicerMainWindow : public QMainWindow
 {
   Q_OBJECT
 public:
-  typedef QMainWindow Superclass;
+  using Superclass = QMainWindow;
 
   qSlicerMainWindow(QWidget *parent=nullptr);
   ~qSlicerMainWindow() override;

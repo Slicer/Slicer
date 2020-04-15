@@ -98,10 +98,10 @@ public:
     vtkSmartPointer<vtkProp> Actor;
     };
 
-  typedef std::map < vtkMRMLDisplayNode*, const Pipeline* > PipelinesCacheType;
+  using PipelinesCacheType = std::map<vtkMRMLDisplayNode *, const Pipeline *>;
   PipelinesCacheType DisplayPipelines;
 
-  typedef std::map < vtkMRMLDisplayableNode*, std::set< vtkMRMLDisplayNode* > > ModelToDisplayCacheType;
+  using ModelToDisplayCacheType = std::map<vtkMRMLDisplayableNode *, std::set<vtkMRMLDisplayNode *> >;
   ModelToDisplayCacheType ModelToDisplayNodes;
 
   // Transforms

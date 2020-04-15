@@ -27,25 +27,22 @@ class SeparateComponentsOfADiffusionTensorImage
    Image<TOutput, 3> >
 {
 public:
-  typedef TInput  InputDataType;
-  typedef TOutput OutputDataType;
+  using InputDataType = TInput;
+  using OutputDataType = TOutput;
 
-  typedef ImageToImageFilter
-  <Image<DiffusionTensor3D<TInput>, 3>,
-   Image<TOutput, 3> >
-  Superclass;
+  using Superclass = ImageToImageFilter<Image<DiffusionTensor3D<TInput>, 3>, Image<TOutput, 3> >;
 
-  typedef DiffusionTensor3D<InputDataType>              InputTensorDataType;
-  typedef Image<InputTensorDataType, 3>                 InputImageType;
-  typedef SeparateComponentsOfADiffusionTensorImage     Self;
-  typedef SmartPointer<Self>                            Pointer;
-  typedef SmartPointer<const Self>                      ConstPointer;
-  typedef typename InputImageType::Pointer              InputImagePointerType;
-  typedef Image<OutputDataType, 3>                      OutputImageType;
-  typedef typename OutputImageType::Pointer             OutputImagePointerType;
-  typedef itk::ImageRegionIterator<OutputImageType>     OutputIteratorType;
-  typedef itk::ImageRegionConstIterator<InputImageType> InputIteratorType;
-  typedef typename OutputImageType::RegionType          OutputImageRegionType;
+  using InputTensorDataType = DiffusionTensor3D<InputDataType>;
+  using InputImageType = Image<InputTensorDataType, 3>;
+  using Self = SeparateComponentsOfADiffusionTensorImage<TInput, TOutput>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using InputImagePointerType = typename InputImageType::Pointer;
+  using OutputImageType = Image<OutputDataType, 3>;
+  using OutputImagePointerType = typename OutputImageType::Pointer;
+  using OutputIteratorType = itk::ImageRegionIterator<OutputImageType>;
+  using InputIteratorType = itk::ImageRegionConstIterator<InputImageType>;
+  using OutputImageRegionType = typename OutputImageType::RegionType;
 // typedef typename OutputTensorDataType::RealValueType TensorRealType ;
 
   /** Run-time type information (and related methods). */

@@ -82,7 +82,7 @@ void GetImageType( std::string fileName,
                    itk::ImageIOBase::IOComponentType & componentType
                    )
 {
-  typedef itk::Image<unsigned char, 3> ImageType;
+  using ImageType = itk::Image<unsigned char, 3>;
   itk::ImageFileReader<ImageType>::Pointer imageReader;
   imageReader = itk::ImageFileReader<ImageType>::New();
   imageReader->SetFileName( fileName.c_str() );
@@ -212,8 +212,8 @@ SetUpTransform( parameters & list,
                 const itk::Point<double> & outputImageCenter
                 )
 {
-  typedef itk::AffineTransform<double, 3>        AffineTransformType;
-  typedef itk::MatrixOffsetTransformBase<double> RotationType;
+  using AffineTransformType = itk::AffineTransform<double, 3>;
+  using RotationType = itk::MatrixOffsetTransformBase<double>;
   itk::Matrix<double, 3, 3> transformMatrix;
   itk::Vector<double, 3>    vec;
   if( list.transformType.compare( "nr" ) )  // if rigid or affine transform
@@ -270,13 +270,13 @@ void InitializeThinPlateSplineTransform(itk::Transform<double, 3, 3>::Pointer tr
   std::string transformClassName = transform->GetNameOfClass();
   if (transformClassName == "ThinPlateSplineKernelTransform")
     {
-    typedef itk::ThinPlateSplineKernelTransform< double, 3 > ThinPlateSplineTransformType;
+    using ThinPlateSplineTransformType = itk::ThinPlateSplineKernelTransform<double, 3>;
     ThinPlateSplineTransformType* tpsTransform = static_cast<ThinPlateSplineTransformType*>(transform.GetPointer());
     tpsTransform->ComputeWMatrix();
     }
   else if (transformClassName == "CompositeTransform")
     {
-    typedef itk::CompositeTransform< double, 3 > CompositeTransformType;
+    using CompositeTransformType = itk::CompositeTransform<double, 3>;
     CompositeTransformType* compositeTransform = static_cast<CompositeTransformType*>(transform.GetPointer());
     for (unsigned int i = 0; i < compositeTransform->GetNumberOfTransforms(); ++i)
       {
@@ -294,7 +294,7 @@ SetTransformAndOrder( parameters & list,
                       const itk::Point<double> & outputImageCenter
                       )
 {
-  typedef itk::AffineTransform<double, 3>        AffineTransformType;
+  using AffineTransformType = itk::AffineTransform<double, 3>;
   if( list.transformationFile.compare( "" ) ) // Get transformation matrix from command line if no file given
     {
     std::string transformClassName = transform->GetNameOfClass();
@@ -367,7 +367,7 @@ SetTransform( parameters & list,
               const itk::Point<double> & outputImageCenter
               )
 {
-  typedef itk::Transform<double, 3, 3> TransformType;
+  using TransformType = itk::Transform<double, 3, 3>;
   typename TransformType::Pointer transform = nullptr;
   if( list.transformationFile.compare( "" ) ) // Get transformation matrix from command line if no file given
     {
@@ -462,12 +462,9 @@ void ResampleDeformationField( DeformationImageType::Pointer & field,
     {
     return;
     }
-  typedef itk::VectorLinearInterpolateImageFunction<DeformationImageType> VectorInterpolatorType;
+  using VectorInterpolatorType = itk::VectorLinearInterpolateImageFunction<DeformationImageType>;
   VectorInterpolatorType::Pointer linearVectorInterpolator = VectorInterpolatorType::New();
-  typedef itk::VectorResampleImageFilter<DeformationImageType,
-                                         DeformationImageType,
-                                         double
-                                         > ResampleImageFilter;
+  using ResampleImageFilter = itk::VectorResampleImageFilter<DeformationImageType, DeformationImageType, double>;
   ResampleImageFilter::Pointer resampleFieldFilter = ResampleImageFilter::New();
   DeformationPixelType         defaultPixel;
   defaultPixel.Fill( 0.0 );
@@ -490,10 +487,10 @@ SetAllTransform( parameters & list,
                  typename ImageType::Pointer image
                  )
 {
-  typedef itk::Transform<double, 3, 3>    TransformType;
-  typedef itk::AffineTransform<double, 3> AffineTransformType;
+  using TransformType = itk::Transform<double, 3, 3>;
+  using AffineTransformType = itk::AffineTransform<double, 3>;
   typename DeformationImageType::Pointer fieldPointer;
-  typedef itk::TransformFileReader::Pointer TransformReaderPointer;
+  using TransformReaderPointer = itk::TransformFileReader::Pointer;
   TransformReaderPointer transformFile;
   int                    nonRigidTransforms = 0;
   nonRigidTransforms = ReadTransform<ImageType>( list, image, transformFile );
@@ -534,7 +531,7 @@ SetAllTransform( parameters & list,
       )
     {
     // Create warp transform
-    typedef itk::WarpTransform3D<double> WarpTransformType;
+    using WarpTransformType = itk::WarpTransform3D<double>;
     typename WarpTransformType::Pointer warpTransform = WarpTransformType::New();
     typename DeformationImageType::Pointer field;
     if( list.deffield.compare( "" ) )
@@ -563,7 +560,7 @@ SetAllTransform( parameters & list,
     // Compute the transformation field adding all the transforms together
     while( list.transformationFile.compare( "" ) && transformFile->GetTransformList()->size() )
       {
-      typedef itk::TransformDeformationFieldFilter<double, double, 3> itkTransformDeformationFieldFilterType;
+      using itkTransformDeformationFieldFilterType = itk::TransformDeformationFieldFilter<double, double, 3>;
       typename itkTransformDeformationFieldFilterType::Pointer transformDeformationFieldFilter =
         itkTransformDeformationFieldFilterType::New();
       transform = SetTransform<ImageType>( list, image, transformFile, outputImageCenter  );
@@ -579,7 +576,7 @@ SetAllTransform( parameters & list,
                                                                                                                                                              // BSpline
         {
         // order=3 for the BSpline seems to be standard among tools in Slicer3 and BRAINTools
-        typedef itk::BSplineDeformableTransform<double, 3, 3> BSplineDeformableTransformType;
+        using BSplineDeformableTransformType = itk::BSplineDeformableTransform<double, 3, 3>;
         BSplineDeformableTransformType::Pointer BSplineTransform;
         BSplineTransform = static_cast<BSplineDeformableTransformType *>(transform.GetPointer() );
         typename TransformType::Pointer bulkTransform;
@@ -604,7 +601,7 @@ SetAllTransform( parameters & list,
   // multiple rigid/affine transforms: concatenate them
   else if( list.transformationFile.compare( "" ) && transformFile->GetTransformList()->size() > 1 )
     {
-    typedef itk::MatrixOffsetTransformBase<double, 3, 3> MatrixTransformType;
+    using MatrixTransformType = itk::MatrixOffsetTransformBase<double, 3, 3>;
     itk::Matrix<double, 4, 4> composedMatrix;
     composedMatrix.SetIdentity();
     itk::Matrix<double, 4, 4> tempMatrix;
@@ -691,7 +688,7 @@ int AddImage( typename itk::VectorImage<PixelType, 3>
               const std::vector<typename itk::Image<PixelType, 3>::Pointer> & vectorImage
               )
 {
-  typedef itk::Image<PixelType, 3> ImageType;
+  using ImageType = itk::Image<PixelType, 3>;
   imagePile->SetRegions( vectorImage.at( 0 )->GetLargestPossibleRegion().GetSize() );
   imagePile->SetOrigin( vectorImage.at( 0 )->GetOrigin() );
   imagePile->SetDirection( vectorImage.at( 0 )->GetDirection() );
@@ -701,7 +698,7 @@ int AddImage( typename itk::VectorImage<PixelType, 3>
   typename itk::ImageRegionIterator<itk::VectorImage<PixelType, 3> > out( imagePile,
                                                                           imagePile->GetLargestPossibleRegion()
                                                                           );
-  typedef typename itk::ImageRegionIterator<ImageType> IteratorImageType;
+  using IteratorImageType = typename itk::ImageRegionIterator<ImageType>;
   std::vector<IteratorImageType> in;
   for( unsigned int i = 0; i < imagePile->GetVectorLength(); i++ )
     {
@@ -730,8 +727,8 @@ int SeparateImages( const typename itk::VectorImage<PixelType, 3>
                     std::vector<typename itk::Image<PixelType, 3>::Pointer> & vectorImage
                     )
 {
-  typedef itk::Image<PixelType, 3>       ImageType;
-  typedef itk::VectorImage<PixelType, 3> VectorImageType;
+  using ImageType = itk::Image<PixelType, 3>;
+  using VectorImageType = itk::VectorImage<PixelType, 3>;
   typename itk::VectorImage<PixelType, 3>::SizeType size;
   typename itk::VectorImage<PixelType, 3>::DirectionType direction;
   typename itk::VectorImage<PixelType, 3>::PointType origin;
@@ -742,7 +739,7 @@ int SeparateImages( const typename itk::VectorImage<PixelType, 3>
   spacing = imagePile->GetSpacing();
   typename itk::ImageRegionIterator<VectorImageType> in( imagePile,
                                                          imagePile->GetLargestPossibleRegion() );
-  typedef typename itk::ImageRegionIterator<ImageType> IteratorImageType;
+  using IteratorImageType = typename itk::ImageRegionIterator<ImageType>;
   std::vector<IteratorImageType> out;
   for( unsigned int i = 0; i < imagePile->GetVectorLength(); i++ )
     {
@@ -792,8 +789,8 @@ void SetOutputParameters( const parameters & list,
                           typename ImageType::Pointer & image
                           )
 {
-  typedef itk::ImageFileReader<ImageType>                FileReaderType;
-  typedef itk::ResampleImageFilter<ImageType, ImageType> ResamplerType;
+  using FileReaderType = itk::ImageFileReader<ImageType>;
+  using ResamplerType = itk::ResampleImageFilter<ImageType, ImageType>;
   typename FileReaderType::Pointer readerReference;
   // is there a reference image to set the size, the orientation,
   // the spacing and the origin of the output image
@@ -908,13 +905,13 @@ void SetOutputParameters( const parameters & list,
 }
 
 // typedef to avoid a compilation issue with VS7
-typedef itk::Transform<double, 3, 3>::Pointer Transform3DPointer;
+using Transform3DPointer = itk::Transform<double, 3, 3>::Pointer;
 // Compute the inverse transform
 Transform3DPointer InverseTransform( const Transform3DPointer & transform )
 {
   itk::Transform<double, 3, 3>::Pointer inverseTransform;
-  typedef itk::AffineTransform<double, 3>        AffineTransformType;
-  typedef itk::MatrixOffsetTransformBase<double> RotationType;
+  using AffineTransformType = itk::AffineTransform<double, 3>;
+  using RotationType = itk::MatrixOffsetTransformBase<double>;
   try
     {
     std::string transformClassName;
@@ -969,8 +966,8 @@ itk::Matrix<double, 3, 3>
 ReadMeasurementFrame( itk::MetaDataDictionary & dico, const Transform3DPointer & inverseTransform )
 {
   itk::Matrix<double, 3, 3> measurementFrame;
-  typedef std::vector<std::vector<double> >     DoubleVectorType;
-  typedef itk::MetaDataObject<DoubleVectorType> MetaDataDoubleVectorType;
+  using DoubleVectorType = std::vector<std::vector<double> >;
+  using MetaDataDoubleVectorType = itk::MetaDataObject<DoubleVectorType>;
   itk::MetaDataDictionary::ConstIterator itr = dico.Begin();
   itk::MetaDataDictionary::ConstIterator end = dico.End();
   // We look for the measurement frame in the metadatadictionary
@@ -1014,7 +1011,7 @@ int TransformGradients( itk::MetaDataDictionary & dico,
                         const itk::Matrix<double, 3, 3> & measurementFrame
                         )
 {
-  typedef itk::MetaDataObject<std::string> MetaDataStringType;
+  using MetaDataStringType = itk::MetaDataObject<std::string>;
   itk::MetaDataDictionary::ConstIterator itr = dico.Begin();
   itk::MetaDataDictionary::ConstIterator end = dico.End();
   bool                                   dtmri = false;
@@ -1135,11 +1132,11 @@ template <class ImageType>
 typename itk::InterpolateImageFunction<ImageType, double>::Pointer
 SetInterpolator( const parameters & list )
 {
-  typedef itk::ConstantBoundaryCondition<ImageType>                       BoundaryCondition;
-  typedef itk::InterpolateImageFunction<ImageType, double>                InterpolatorType;
-  typedef itk::NearestNeighborInterpolateImageFunction<ImageType, double> NearestNeighborInterpolateType;
-  typedef itk::LinearInterpolateImageFunction<ImageType, double>          LinearInterpolateType;
-  typedef itk::BSplineInterpolateImageFunction<ImageType, double, double> BSplineInterpolateFunction;
+  using BoundaryCondition = itk::ConstantBoundaryCondition<ImageType>;
+  using InterpolatorType = itk::InterpolateImageFunction<ImageType, double>;
+  using NearestNeighborInterpolateType = itk::NearestNeighborInterpolateImageFunction<ImageType, double>;
+  using LinearInterpolateType = itk::LinearInterpolateImageFunction<ImageType, double>;
+  using BSplineInterpolateFunction = itk::BSplineInterpolateImageFunction<ImageType, double, double>;
   typename InterpolatorType::Pointer interpol;
   if( !list.interpolationType.compare( "linear" ) )
     {
@@ -1155,52 +1152,32 @@ SetInterpolator( const parameters & list )
     {
     if( !list.windowFunction.compare( "h" ) )
       {
-      typedef itk::Function::HammingWindowFunction<RADIUS> windowFunction;
-      typedef itk::WindowedSincInterpolateImageFunction<ImageType,
-                                                        RADIUS,
-                                                        windowFunction,
-                                                        BoundaryCondition,
-                                                        double> WindowedSincInterpolateImageFunctionType;
+      using windowFunction = itk::Function::HammingWindowFunction<3>;
+      using WindowedSincInterpolateImageFunctionType = itk::WindowedSincInterpolateImageFunction<ImageType, 3, windowFunction, BoundaryCondition, double>;
       interpol = WindowedSincInterpolateImageFunctionType::New();
       }
     else if( !list.windowFunction.compare( "c" ) )
       {
-      typedef itk::Function::CosineWindowFunction<RADIUS> windowFunction;
-      typedef itk::WindowedSincInterpolateImageFunction<ImageType,
-                                                        RADIUS,
-                                                        windowFunction,
-                                                        BoundaryCondition,
-                                                        double> WindowedSincInterpolateImageFunctionType;
+      using windowFunction = itk::Function::CosineWindowFunction<3>;
+      using WindowedSincInterpolateImageFunctionType = itk::WindowedSincInterpolateImageFunction<ImageType, 3, windowFunction, BoundaryCondition, double>;
       interpol = WindowedSincInterpolateImageFunctionType::New();
       }
     else if( !list.windowFunction.compare( "w" ) )
       {
-      typedef itk::Function::WelchWindowFunction<RADIUS> windowFunction;
-      typedef itk::WindowedSincInterpolateImageFunction<ImageType,
-                                                        RADIUS,
-                                                        windowFunction,
-                                                        BoundaryCondition,
-                                                        double> WindowedSincInterpolateImageFunctionType;
+      using windowFunction = itk::Function::WelchWindowFunction<3>;
+      using WindowedSincInterpolateImageFunctionType = itk::WindowedSincInterpolateImageFunction<ImageType, 3, windowFunction, BoundaryCondition, double>;
       interpol = WindowedSincInterpolateImageFunctionType::New();
       }
     else if( !list.windowFunction.compare( "l" ) )
       {
-      typedef itk::Function::LanczosWindowFunction<RADIUS> windowFunction;
-      typedef itk::WindowedSincInterpolateImageFunction<ImageType,
-                                                        RADIUS,
-                                                        windowFunction,
-                                                        BoundaryCondition,
-                                                        double> WindowedSincInterpolateImageFunctionType;
+      using windowFunction = itk::Function::LanczosWindowFunction<3>;
+      using WindowedSincInterpolateImageFunctionType = itk::WindowedSincInterpolateImageFunction<ImageType, 3, windowFunction, BoundaryCondition, double>;
       interpol = WindowedSincInterpolateImageFunctionType::New();
       }
     else if( !list.windowFunction.compare( "b" ) )
       {
-      typedef itk::Function::BlackmanWindowFunction<RADIUS> windowFunction;
-      typedef itk::WindowedSincInterpolateImageFunction<ImageType,
-                                                        RADIUS,
-                                                        windowFunction,
-                                                        BoundaryCondition,
-                                                        double> WindowedSincInterpolateImageFunctionType;
+      using windowFunction = itk::Function::BlackmanWindowFunction<3>;
+      using WindowedSincInterpolateImageFunctionType = itk::WindowedSincInterpolateImageFunction<ImageType, 3, windowFunction, BoundaryCondition, double>;
       interpol = WindowedSincInterpolateImageFunctionType::New();
       }
     }
@@ -1216,11 +1193,11 @@ SetInterpolator( const parameters & list )
 template <class PixelType>
 int Rotate( parameters & list )
 {
-  typedef itk::Image<PixelType, 3>                         ImageType;
-  typedef itk::InterpolateImageFunction<ImageType, double> InterpolatorType;
-  typedef itk::ResampleImageFilter<ImageType, ImageType>   ResampleType;
-  typedef itk::Transform<double, 3, 3>                     TransformType;
-  typedef itk::VectorImage<PixelType, 3>                   VectorImageType;
+  using ImageType = itk::Image<PixelType, 3>;
+  using InterpolatorType = itk::InterpolateImageFunction<ImageType, double>;
+  using ResampleType = itk::ResampleImageFilter<ImageType, ImageType>;
+  using TransformType = itk::Transform<double, 3, 3>;
+  using VectorImageType = itk::VectorImage<PixelType, 3>;
   typename ImageType::Pointer image;
   std::vector<typename ImageType::Pointer> vectorOfImage;
   itk::MetaDataDictionary                  dico;
@@ -1281,7 +1258,7 @@ int Rotate( parameters & list )
     }
   outputImage->SetMetaDataDictionary( dico );
   // Save transformed image
-  typedef itk::ImageFileWriter<VectorImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<VectorImageType>;
   try
     {
     typename WriterType::Pointer writer = WriterType::New();

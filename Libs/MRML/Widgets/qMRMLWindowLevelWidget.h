@@ -38,7 +38,7 @@ class QMRML_WIDGETS_EXPORT qMRMLWindowLevelWidget
 
 public:
   /// Constructors
-  typedef qMRMLVolumeWidget Superclass;
+  using Superclass = qMRMLVolumeWidget;
   explicit qMRMLWindowLevelWidget(QWidget* parentWidget = nullptr);
   ~qMRMLWindowLevelWidget() override;
 

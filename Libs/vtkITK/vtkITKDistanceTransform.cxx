@@ -43,7 +43,7 @@ void vtkITKDistanceTransformExecute(vtkITKDistanceTransform *self, vtkImageData*
 
   // Wrap scalars into an ITK image
   // - mostly rely on defaults for spacing, origin etc for this filter
-  typedef itk::Image<T, 3> ImageType;
+  using ImageType = itk::Image<T, 3>;
   typename ImageType::Pointer inImage = ImageType::New();
   inImage->GetPixelContainer()->SetImportPointer(inPtr, dims[0]*dims[1]*dims[2], false);
   typename ImageType::RegionType region;
@@ -61,8 +61,8 @@ void vtkITKDistanceTransformExecute(vtkITKDistanceTransform *self, vtkImageData*
 
 
   // Calculate the distance transform
-  typedef itk::Image<T,3> DistanceImageType;
-  typedef itk::SignedMaurerDistanceMapImageFilter<ImageType, DistanceImageType> DistanceType;
+  using DistanceImageType = itk::Image<T, 3>;
+  using DistanceType = itk::SignedMaurerDistanceMapImageFilter<ImageType, DistanceImageType>;
   typename DistanceType::Pointer dist = DistanceType::New();
 
   dist->SetBackgroundValue(static_cast<T>(self->GetBackgroundValue()));

@@ -62,10 +62,10 @@ class AnisotropicSimilarityLandmarkBasedTransformInitializer :
 {
 public:
   /** Standard class typedefs. */
-  typedef AnisotropicSimilarityLandmarkBasedTransformInitializer Self;
-  typedef Object                                                 Superclass;
-  typedef SmartPointer<Self>                                     Pointer;
-  typedef SmartPointer<const Self>                               ConstPointer;
+  using Self = AnisotropicSimilarityLandmarkBasedTransformInitializer<TTransform, TFixedImage, TMovingImage>;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro( Self );
@@ -74,8 +74,8 @@ public:
   itkTypeMacro( AnisotropicSimilarityLandmarkBasedTransformInitializer, Object );
 
   /** Type of the transform to initialize */
-  typedef TTransform                      TransformType;
-  typedef typename TransformType::Pointer TransformPointer;
+  using TransformType = TTransform;
+  using TransformPointer = typename TransformType::Pointer;
 
   /** Dimension of parameters. */
   itkStaticConstMacro(InputSpaceDimension, unsigned int, TransformType::InputSpaceDimension);
@@ -85,11 +85,11 @@ public:
   itkSetObjectMacro( Transform,   TransformType   );
 
   /** Image Types to use in the initialization of the transform */
-  typedef   TFixedImage  FixedImageType;
-  typedef   TMovingImage MovingImageType;
+  using FixedImageType = TFixedImage;
+  using MovingImageType = TMovingImage;
 
-  typedef   typename FixedImageType::ConstPointer  FixedImagePointer;
-  typedef   typename MovingImageType::ConstPointer MovingImagePointer;
+  using FixedImagePointer = typename FixedImageType::ConstPointer;
+  using MovingImagePointer = typename MovingImageType::ConstPointer;
 
   /** \deprecated
    * Set the fixed image.
@@ -119,14 +119,13 @@ public:
   itkStaticConstMacro(ImageDimension, unsigned int, FixedImageType::ImageDimension );
 
   /** Convenience typedefs */
-  typedef typename TransformType::InputPointType                InputPointType;
-  typedef typename TransformType::OutputVectorType              OutputVectorType;
-  typedef Point<double, itkGetStaticConstMacro(ImageDimension)> LandmarkPointType;
-  typedef std::vector<LandmarkPointType>                        LandmarkPointContainer;
-  typedef typename
-  LandmarkPointContainer::const_iterator         PointsContainerConstIterator;
-  typedef typename TransformType::ParametersType ParametersType;
-  typedef typename ParametersType::ValueType     ParameterValueType;
+  using InputPointType = typename TransformType::InputPointType;
+  using OutputVectorType = typename TransformType::OutputVectorType;
+  using LandmarkPointType = Point<double, (Self::ImageDimension)>;
+  using LandmarkPointContainer = std::vector<LandmarkPointType>;
+  using PointsContainerConstIterator = typename LandmarkPointContainer::const_iterator;
+  using ParametersType = typename TransformType::ParametersType;
+  using ParameterValueType = typename ParametersType::ValueType;
 
   /** Set the Fixed landmark point containers */
   void SetFixedLandmarks(const LandmarkPointContainer & fixedLandmarks)
@@ -141,9 +140,8 @@ public:
   }
 
   /**  Supported Transform typedefs */
-  typedef AnisotropicSimilarity3DTransform<ParameterValueType>
-  AnisotropicSimilarity3DTransformType;
-  typedef Rigid2DTransform<ParameterValueType> Rigid2DTransformType;
+  using AnisotropicSimilarity3DTransformType = AnisotropicSimilarity3DTransform<ParameterValueType>;
+  using Rigid2DTransformType = Rigid2DTransform<ParameterValueType>;
 
   /** Initialize the transform from the landmarks */
   virtual void InitializeTransform();
@@ -155,12 +153,12 @@ protected:
   void PrintSelf(std::ostream & os, Indent indent) const override;
 
   // Supported Transform types
-  typedef enum
+  using InputTransformType = enum
     {
     AnisotropicSimilarity3Dtransform = 1,
     Rigid2Dtransfrom,
     Else
-    } InputTransformType;
+    };
 private:
   AnisotropicSimilarityLandmarkBasedTransformInitializer(const Self &); // purposely not implemented
   void operator=(const Self &);                                         // purposely not implemented

@@ -165,7 +165,7 @@ QString qSlicerCLILoadableModuleFactoryItem::resolveXMLModuleDescriptionSymbol()
 bool qSlicerCLILoadableModuleFactoryItem::resolveSymbols(ModuleDescription& desc)
 {
   // Resolves symbol
-  typedef int (*ModuleEntryPointType)(int argc, char* argv[]);
+  using ModuleEntryPointType = int (*)(int, char **);
   ModuleEntryPointType moduleEntryPoint =
     reinterpret_cast<ModuleEntryPointType>(
       this->symbolAddress("ModuleEntryPoint"));
@@ -211,8 +211,7 @@ bool qSlicerCLILoadableModuleFactoryItem::updateLogo(qSlicerCLILoadableModuleFac
 
   if(resolvedGetModuleLogoSymbol)
     {
-    typedef const char * (*ModuleLogoFunction)(
-          int* /*width*/, int* /*height*/, int* /*pixel_size*/, unsigned long * /*bufferLength*/);
+    using ModuleLogoFunction = const char *(*)(int *, int *, int *, unsigned long *);
     ModuleLogoFunction logoFunction =
         reinterpret_cast<ModuleLogoFunction>(resolvedGetModuleLogoSymbol);
     logoImage = (*logoFunction)(&width, &height, &pixelSize, &bufferLength);
@@ -263,7 +262,7 @@ class qSlicerCLILoadableModuleFactoryPrivate
 protected:
   qSlicerCLILoadableModuleFactory* const q_ptr;
 public:
-  typedef qSlicerCLILoadableModuleFactoryPrivate Self;
+  using Self = qSlicerCLILoadableModuleFactoryPrivate;
   qSlicerCLILoadableModuleFactoryPrivate(qSlicerCLILoadableModuleFactory& object);
 
   void init();

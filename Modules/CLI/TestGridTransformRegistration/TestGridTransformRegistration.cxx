@@ -44,13 +44,13 @@ int DoIt( int argc, char * argv[], T )
 
   // typedefs
   const    unsigned int ImageDimension = 3;
-  typedef  T                                          PixelType;
-  typedef itk::Image<PixelType, ImageDimension>       InputImageType;
+  using PixelType = T;
+  using InputImageType = itk::Image<PixelType, ImageDimension>;
 
-  typedef itk::ImageFileReader<InputImageType>  FixedImageReaderType;
-  typedef itk::ImageFileReader<InputImageType>  MovingImageReaderType;
+  using FixedImageReaderType = itk::ImageFileReader<InputImageType>;
+  using MovingImageReaderType = itk::ImageFileReader<InputImageType>;
 
-  typedef itk::VectorImage<double, ImageDimension> GridType;
+  using GridType = itk::VectorImage<double, ImageDimension>;
 
   GridType::Pointer grid = GridType::New();
 
@@ -144,7 +144,7 @@ int DoIt( int argc, char * argv[], T )
 
   if( OutputTransform != "" )
     {
-    typedef itk::ImageFileWriter<GridType> GridWriterType;
+    using GridWriterType = itk::ImageFileWriter<GridType>;
 
     GridWriterType::Pointer gridWriter = GridWriterType::New();
     gridWriter->SetFileName( OutputTransform );

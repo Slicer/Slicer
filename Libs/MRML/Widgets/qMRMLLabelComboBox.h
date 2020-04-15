@@ -46,7 +46,7 @@ class QMRML_WIDGETS_EXPORT qMRMLLabelComboBox : public qMRMLWidget
 
 public:
 
-  typedef qMRMLWidget Superclass;
+  using Superclass = qMRMLWidget;
 
   /// Construct an empty qMRMLColorTableComboBox with a null scene,
   /// no nodeType, where the hidden nodes are not forced on display.

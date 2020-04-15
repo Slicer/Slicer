@@ -59,7 +59,7 @@
 
 #define ITK_TEST_DIMENSION_MAX 6
 
-typedef int (*MainFuncPointer)(int, char * [] );
+using MainFuncPointer = int (*)(int, char **);
 std::map<std::string, MainFuncPointer> StringToTestFunctionMap;
 
 #define REGISTER_TEST(test) \
@@ -98,7 +98,7 @@ int main(int ac, char* av[] )
   unsigned int numberOfPixelsTolerance = 0;
   unsigned int radiusTolerance = 0;
 
-  typedef std::pair<char *, char *> ComparePairType;
+  using ComparePairType = std::pair<char *, char *>;
   std::vector<ComparePairType> compareList;
 
   itk::itkFactoryRegistration();
@@ -263,7 +263,7 @@ int ReadImages(  const char* baselineImageFilename,
                  typename ImageType::Pointer & testImage
                  )
 {
-  typedef itk::ImageFileReader<ImageType> ReaderType;
+  using ReaderType = itk::ImageFileReader<ImageType>;
   // Read the baseline file
   typename ReaderType::Pointer baselineReader = ReaderType::New();
   baselineReader->SetFileName( baselineImageFilename );
@@ -317,10 +317,10 @@ int RegressionTestImage(const char *testImageFilename,
                         unsigned int radiusTolerance )
 {
   // Use the factory mechanism to read the test and baseline files and convert them to double
-  typedef itk::Image<double, ITK_TEST_DIMENSION_MAX>                         ImageType;
-  typedef itk::Image<itk::DiffusionTensor3D<double>, ITK_TEST_DIMENSION_MAX> DiffusionImageType;
-  typedef itk::Image<unsigned char, ITK_TEST_DIMENSION_MAX>                  OutputType;
-  typedef itk::Image<unsigned char, 2>                                       DiffOutputType;
+  using ImageType = itk::Image<double, 6>;
+  using DiffusionImageType = itk::Image<itk::DiffusionTensor3D<double>, 6>;
+  using OutputType = itk::Image<unsigned char, 6>;
+  using DiffOutputType = itk::Image<unsigned char, 2>;
 
   itk::ImageIOBase::IOPixelType     pixelTypeBaseline;
   itk::ImageIOBase::IOComponentType componentTypeBaseline;
@@ -345,9 +345,9 @@ int RegressionTestImage(const char *testImageFilename,
   DiffusionImageType::Pointer diffusionBaselineImage;
   DiffusionImageType::Pointer diffusionTestImage;
   unsigned long               status = 0;
-  typedef itk::Testing::ComparisonImageFilter<ImageType, ImageType> DiffType;
+  using DiffType = itk::Testing::ComparisonImageFilter<ImageType, ImageType>;
   DiffType::Pointer diff;
-  typedef itk::DifferenceDiffusionTensor3DImageFilter<DiffusionImageType, ImageType> DiffusionDiffType;
+  using DiffusionDiffType = itk::DifferenceDiffusionTensor3DImageFilter<DiffusionImageType, ImageType>;
   DiffusionDiffType::Pointer diffusiondiff;
   int                        returnValue;
   // If it is not a DTI, we load the image as a scalar image
@@ -397,9 +397,9 @@ int RegressionTestImage(const char *testImageFilename,
   // if there are discrepancies, create an diff image
   if( (status > numberOfPixelsTolerance) && reportErrors )
     {
-    typedef itk::RescaleIntensityImageFilter<ImageType, OutputType> RescaleType;
-    typedef itk::ImageFileWriter<DiffOutputType>                    WriterType;
-    typedef itk::ImageRegion<ITK_TEST_DIMENSION_MAX>                RegionType;
+    using RescaleType = itk::RescaleIntensityImageFilter<ImageType, OutputType>;
+    using WriterType = itk::ImageFileWriter<DiffOutputType>;
+    using RegionType = itk::ImageRegion<6>;
     OutputType::SizeType size; size.Fill(0);
 
     RescaleType::Pointer rescale = RescaleType::New();
@@ -431,7 +431,7 @@ int RegressionTestImage(const char *testImageFilename,
 
     region.SetSize(size);
 
-    typedef itk::ExtractImageFilter<OutputType, DiffOutputType> ExtractType;
+    using ExtractType = itk::ExtractImageFilter<OutputType, DiffOutputType>;
     ExtractType::Pointer extract = ExtractType::New();
     extract->SetDirectionCollapseToGuess();  // ITKv3 compatible, but not recommended
     extract->SetInput(rescale->GetOutput() );
@@ -492,7 +492,7 @@ int RegressionTestImage(const char *testImageFilename,
     // We compute the FA of both diffusion tensor images
     if( diffusion )
       {
-      typedef itk::TensorFractionalAnisotropyImageFilter<DiffusionImageType, ImageType> FAFilterType;
+      using FAFilterType = itk::TensorFractionalAnisotropyImageFilter<DiffusionImageType, ImageType>;
       FAFilterType::Pointer testFAfilter = FAFilterType::New();
       diffusionTestImage->SetRequestedRegion( region );
       testFAfilter->SetInput( diffusionTestImage );

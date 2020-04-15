@@ -48,7 +48,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentationGeometryWidg
   Q_PROPERTY(bool isotropicSpacing READ isotropicSpacing WRITE setIsotropicSpacing)
 
 public:
-  typedef qMRMLWidget Superclass;
+  using Superclass = qMRMLWidget;
   /// Constructor
   explicit qMRMLSegmentationGeometryWidget(QWidget* parent = nullptr);
   /// Destructor

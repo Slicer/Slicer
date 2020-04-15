@@ -38,7 +38,7 @@ class Q_SLICER_QTMODULES_COLORS_EXPORT qSlicerColorsModule
   Q_INTERFACES(qSlicerLoadableModule);
 
 public:
-  typedef qSlicerLoadableModule Superclass;
+  using Superclass = qSlicerLoadableModule;
   qSlicerColorsModule(QObject *parent=nullptr);
   ~qSlicerColorsModule() override;
 

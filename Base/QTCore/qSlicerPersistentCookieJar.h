@@ -42,7 +42,7 @@ class qSlicerPersistentCookieJarPrivate;
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerPersistentCookieJar: public QNetworkCookieJar
 {
 public:
-  typedef QNetworkCookieJar Superclass;
+  using Superclass = QNetworkCookieJar;
   qSlicerPersistentCookieJar(QObject *parent = nullptr);
   ~qSlicerPersistentCookieJar() override;
 

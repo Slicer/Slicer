@@ -77,9 +77,9 @@ public:
   vtkTypeMacro(vtkMRMLLayoutLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  typedef std::map<std::string, std::string> ViewAttributes;
-  typedef ViewAttributes ViewProperty;
-  typedef std::vector<ViewProperty> ViewProperties;
+  using ViewAttributes = std::map<std::string, std::string>;
+  using ViewProperty = ViewAttributes;
+  using ViewProperties = std::vector<ViewProperty>;
 
   /// Add all the layout descriptions of the known layouts
   /// TBD: could be done in vtkMRMLLayoutNode directly... not sure what's best.

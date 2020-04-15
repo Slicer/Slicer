@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsSettingsPanel
 
 public:
   /// Superclass typedef
-  typedef ctkSettingsPanel Superclass;
+  using Superclass = ctkSettingsPanel;
 
   /// Constructor
   explicit qSlicerMarkupsSettingsPanel(QWidget* parent = nullptr);

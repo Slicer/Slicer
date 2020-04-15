@@ -27,7 +27,7 @@ class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerScalarVolumeDisplayWidget
   Q_PROPERTY(bool enableMRMLWindowLevelWidget READ isMRMLWindowLevelWidgetEnabled WRITE setMRMLWindowLevelWidgetEnabled )
 public:
   /// Constructors
-  typedef qSlicerWidget Superclass;
+  using Superclass = qSlicerWidget;
   explicit qSlicerScalarVolumeDisplayWidget(QWidget* parent);
   ~qSlicerScalarVolumeDisplayWidget() override;
 

@@ -52,7 +52,7 @@ qSlicerMarkupsPlaceWidget : public qSlicerWidget
   Q_PROPERTY(bool placeModePersistency READ placeModePersistency WRITE setPlaceModePersistency)
 
 public:
-  typedef qSlicerWidget Superclass;
+  using Superclass = qSlicerWidget;
   qSlicerMarkupsPlaceWidget(QWidget *parent=nullptr);
   ~qSlicerMarkupsPlaceWidget() override;
 

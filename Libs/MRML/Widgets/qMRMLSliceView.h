@@ -44,7 +44,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSliceView
   Q_OBJECT
 public:
   /// Superclass typedef
-  typedef ctkVTKSliceView Superclass;
+  using Superclass = ctkVTKSliceView;
 
   /// Constructors
   explicit qMRMLSliceView(QWidget* parent = nullptr);

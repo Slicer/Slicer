@@ -331,10 +331,13 @@ double vtkMRMLVolumePropertyNode::NextHigher(double value)
   // Increment the value by the smallest offset possible
   // The challenge here is to find the offset, if the value is 100000000., an
   // offset of epsilon won't work.
-  typedef union {
+  using dbl_64 = union {
+
       long long i64;
+
       double d64;
-    } dbl_64;
+
+    };
   dbl_64 d;
   d.d64 = value;
   d.i64 += (value < 0.) ? -1 : 1;

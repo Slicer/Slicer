@@ -37,7 +37,7 @@ DiffusionTensor3DInterpolateImageFunctionReimplementation<TData, TCoordRep>
     {
     return;
     }
-  typedef SeparateComponentsOfADiffusionTensorImage<TData, TData> SeparateType;
+  using SeparateType = SeparateComponentsOfADiffusionTensorImage<TData, TData>;
   typename SeparateType::Pointer separateFilter = SeparateType::New();
   separateFilter->SetInput( inputImage );
   separateFilter->SetNumberOfThreads( this->m_NumberOfThreads );

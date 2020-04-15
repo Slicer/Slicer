@@ -2288,8 +2288,8 @@ void vtkSegmentation::CollapseBinaryLabelmaps(bool forceToSingleLayer/*=false*/)
     return;
     }
 
-  typedef std::pair<vtkSmartPointer<vtkOrientedImageData>, std::vector<std::string> > LayerType;
-  typedef std::vector<LayerType> LayerListType;
+  using LayerType = std::pair<vtkSmartPointer<vtkOrientedImageData>, std::vector<std::string> >;
+  using LayerListType = std::vector<LayerType>;
   std::map<std::string, int> newLabelmapValues;
   LayerListType newLayers;
   for (int i = 0; i < numberOfLayers; ++i)

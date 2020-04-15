@@ -185,17 +185,16 @@ void
 DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
 ::ThreadedGenerateData(const OutputImageRegionType &threadRegion, ThreadIdType threadId)
   {
-  typedef ConstNeighborhoodIterator<InputImageType> SmartIterator;
-  typedef ImageRegionConstIterator<InputImageType>  InputIterator;
-  typedef ImageRegionIterator<OutputImageType>      OutputIterator;
+  using SmartIterator = ConstNeighborhoodIterator<InputImageType>;
+  using InputIterator = ImageRegionConstIterator<InputImageType>;
+  using OutputIterator = ImageRegionIterator<OutputImageType>;
 
-  typedef NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType>
-  FacesCalculator;
+  using FacesCalculator = NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType>;
 
-  typedef typename FacesCalculator::RadiusType   RadiusType;
-  typedef typename FacesCalculator::FaceListType FaceListType;
-  typedef typename FaceListType::iterator        FaceListIterator;
-  typedef typename InputImageType::PixelType     InputPixelType;
+  using RadiusType = typename FacesCalculator::RadiusType;
+  using FaceListType = typename FacesCalculator::FaceListType;
+  using FaceListIterator = typename FaceListType::iterator;
+  using InputPixelType = typename InputImageType::PixelType;
 
   // Prepare standard boundary condition.
   ZeroFluxNeumannBoundaryCondition<InputImageType> nbc;

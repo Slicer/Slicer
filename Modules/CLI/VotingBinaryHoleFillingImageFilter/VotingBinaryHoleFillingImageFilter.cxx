@@ -37,14 +37,14 @@ int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
 
-  typedef   short InputPixelType;
-  typedef   short OutputPixelType;
+  using InputPixelType = short;
+  using OutputPixelType = short;
 
-  typedef itk::Image<InputPixelType,  3> InputImageType;
-  typedef itk::Image<OutputPixelType, 3> OutputImageType;
+  using InputImageType = itk::Image<InputPixelType, 3>;
+  using OutputImageType = itk::Image<OutputPixelType, 3>;
 
-  typedef itk::ImageFileReader<InputImageType>  ReaderType;
-  typedef itk::ImageFileWriter<OutputImageType> WriterType;
+  using ReaderType = itk::ImageFileReader<InputImageType>;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
 
   ReaderType::Pointer reader = ReaderType::New();
   WriterType::Pointer writer = WriterType::New();
@@ -52,8 +52,7 @@ int main( int argc, char * argv[] )
   reader->SetFileName( inputVolume.c_str() );
   writer->SetFileName( outputVolume.c_str() );
 
-  typedef itk::VotingBinaryHoleFillingImageFilter<
-    InputImageType, OutputImageType>  FilterType;
+  using FilterType = itk::VotingBinaryHoleFillingImageFilter<InputImageType, OutputImageType>;
 
   FilterType::Pointer      filter = FilterType::New();
   itk::PluginFilterWatcher watcher(filter, "Voting Binary Hole Filling",

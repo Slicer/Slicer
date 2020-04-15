@@ -35,7 +35,7 @@ class Q_SLICER_QTMODULES_DOUBLEARRAYS_EXPORT qSlicerDoubleArraysModule :
 
 public:
 
-  typedef qSlicerLoadableModule Superclass;
+  using Superclass = qSlicerLoadableModule;
   explicit qSlicerDoubleArraysModule(QObject *parent=nullptr);
   ~qSlicerDoubleArraysModule() override;
 

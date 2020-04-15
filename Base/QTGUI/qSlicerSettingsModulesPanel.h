@@ -51,7 +51,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsModulesPanel
 
 public:
   /// Superclass typedef
-  typedef ctkSettingsPanel Superclass;
+  using Superclass = ctkSettingsPanel;
 
   /// Constructor
   explicit qSlicerSettingsModulesPanel(QWidget* parent = nullptr);

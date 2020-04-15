@@ -55,7 +55,7 @@ class qMRMLPlotViewControllerWidgetPrivate
   Q_DECLARE_PUBLIC(qMRMLPlotViewControllerWidget);
 
 public:
-  typedef qMRMLViewControllerBarPrivate Superclass;
+  using Superclass = qMRMLViewControllerBarPrivate;
   qMRMLPlotViewControllerWidgetPrivate(qMRMLPlotViewControllerWidget& object);
   ~qMRMLPlotViewControllerWidgetPrivate() override;
 

@@ -36,18 +36,17 @@ int DoIt( int argc, char * argv[], T )
 
   PARSE_ARGS;
 
-  typedef    float InputPixelType;
-  typedef    T     OutputPixelType;
+  using InputPixelType = float;
+  using OutputPixelType = T;
 
-  typedef itk::Image<InputPixelType,  3> InputImageType;
-  typedef itk::Image<OutputPixelType, 3> OutputImageType;
+  using InputImageType = itk::Image<InputPixelType, 3>;
+  using OutputImageType = itk::Image<OutputPixelType, 3>;
 
-  typedef itk::ImageFileReader<InputImageType>  ReaderType;
-  typedef itk::ImageFileWriter<OutputImageType> WriterType;
+  using ReaderType = itk::ImageFileReader<InputImageType>;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
 
-  typedef itk::GradientAnisotropicDiffusionImageFilter<
-    InputImageType, InputImageType>  FilterType;
-  typedef itk::CastImageFilter<InputImageType, OutputImageType> CastType;
+  using FilterType = itk::GradientAnisotropicDiffusionImageFilter<InputImageType, InputImageType>;
+  using CastType = itk::CastImageFilter<InputImageType, OutputImageType>;
 
   typename ReaderType::Pointer reader = ReaderType::New();
   itk::PluginFilterWatcher watchReader(reader, "Read Volume",

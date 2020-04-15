@@ -30,7 +30,7 @@ class qSlicerTextsReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:
-  typedef qSlicerFileReader Superclass;
+  using Superclass = qSlicerFileReader;
   qSlicerTextsReader(QObject* parent = nullptr);
   ~qSlicerTextsReader() override;
 

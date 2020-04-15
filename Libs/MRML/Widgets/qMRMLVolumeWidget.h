@@ -42,7 +42,7 @@ class QMRML_WIDGETS_EXPORT qMRMLVolumeWidget : public QWidget
 
 public:
   /// Constructors
-  typedef QWidget Superclass;
+  using Superclass = QWidget;
   explicit qMRMLVolumeWidget(QWidget* parentWidget = nullptr);
   ~qMRMLVolumeWidget() override;
 

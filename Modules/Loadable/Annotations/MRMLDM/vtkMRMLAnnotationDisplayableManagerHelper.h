@@ -91,37 +91,37 @@ public:
   std::vector<vtkMRMLAnnotationNode*> AnnotationNodeList;
 
   /// .. and its associated convenient typedef
-  typedef std::vector<vtkMRMLAnnotationNode*>::iterator AnnotationNodeListIt;
+  using AnnotationNodeListIt = std::vector<vtkMRMLAnnotationNode *>::iterator;
 
   /// Map of vtkWidget indexed using associated node ID
   std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*> Widgets;
 
   /// .. and its associated convenient typedef
-  typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*>::iterator WidgetsIt;
+  using WidgetsIt = std::map<vtkMRMLAnnotationNode *, vtkAbstractWidget *>::iterator;
 
   /// Map of vtkWidgets to reflect the Slice intersections indexed using associated node ID
   std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*> WidgetIntersections;
 
   /// .. and its associated convenient typedef
-  typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*>::iterator WidgetIntersectionsIt;
+  using WidgetIntersectionsIt = std::map<vtkMRMLAnnotationNode *, vtkAbstractWidget *>::iterator;
 
   /// Map of vtkWidgets to reflect the Slice projection indexed using associated node ID
   std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*> WidgetOverLineProjections;
 
   /// .. and its associated convenient typedef
-  typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*>::iterator WidgetOverLineProjectionsIt;
+  using WidgetOverLineProjectionsIt = std::map<vtkMRMLAnnotationNode *, vtkAbstractWidget *>::iterator;
 
   /// Map of vtkWidgets to reflect the Slice projection indexed using associated node ID
   std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*> WidgetUnderLineProjections;
 
   /// .. and its associated convenient typedef
-  typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*>::iterator WidgetUnderLineProjectionsIt;
+  using WidgetUnderLineProjectionsIt = std::map<vtkMRMLAnnotationNode *, vtkAbstractWidget *>::iterator;
 
   /// Map of vtkWidgets to reflect the Slice projection indexed using associated node ID
   std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*> WidgetPointProjections;
 
   /// .. and its associated convenient typedef
-  typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*>::iterator WidgetPointProjectionsIt;
+  using WidgetPointProjectionsIt = std::map<vtkMRMLAnnotationNode *, vtkAbstractWidget *>::iterator;
 
   //
   // End of The Lists!!
@@ -154,7 +154,7 @@ private:
   /// List of Handles for the SeedWidget
   std::vector<vtkSmartPointer<vtkHandleWidget> > HandleWidgetList;
   /// .. and its associated convenient typedef
-  typedef std::vector<vtkSmartPointer<vtkHandleWidget> >::iterator HandleWidgetListIt;
+  using HandleWidgetListIt = std::vector<vtkSmartPointer<vtkHandleWidget> >::iterator;
 };
 
 #endif /* VTKMRMLANNOTATIONDISPLAYABLEMANAGERHELPER_H_ */

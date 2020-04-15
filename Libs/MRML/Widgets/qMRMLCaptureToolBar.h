@@ -48,7 +48,7 @@ class QMRML_WIDGETS_EXPORT qMRMLCaptureToolBar : public QToolBar
   Q_PROPERTY(bool popupsTimeOut READ popupsTimeOut WRITE setPopupsTimeOut)
 
 public:
-  typedef QToolBar Superclass;
+  using Superclass = QToolBar;
 
   /// Constructor
   /// Title is the name of the toolbar (can appear using right click on the toolbar area)

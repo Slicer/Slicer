@@ -36,7 +36,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerFileReader
 {
   Q_OBJECT
 public:
-  typedef qSlicerIO Superclass;
+  using Superclass = qSlicerIO;
   explicit qSlicerFileReader(QObject* parent = nullptr);
   ~qSlicerFileReader() override;
 

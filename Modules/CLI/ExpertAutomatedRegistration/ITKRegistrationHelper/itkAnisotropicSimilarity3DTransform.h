@@ -55,10 +55,10 @@ class AnisotropicSimilarity3DTransform :
 {
 public:
   /** Standard class typedefs. */
-  typedef AnisotropicSimilarity3DTransform    Self;
-  typedef VersorRigid3DTransform<TScalarType> Superclass;
-  typedef SmartPointer<Self>                  Pointer;
-  typedef SmartPointer<const Self>            ConstPointer;
+  using Self = AnisotropicSimilarity3DTransform<TScalarType>;
+  using Superclass = VersorRigid3DTransform<TScalarType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro( Self );
@@ -77,33 +77,31 @@ public:
   itkStaticConstMacro(ParametersDimension, unsigned int, 9);
 
   /** Parameters Type   */
-  typedef typename Superclass::ParametersType      ParametersType;
-  typedef typename Superclass::JacobianType        JacobianType;
-  typedef typename Superclass::ScalarType          ScalarType;
-  typedef typename Superclass::InputPointType      InputPointType;
-  typedef typename Superclass::OutputPointType     OutputPointType;
-  typedef typename Superclass::InputVectorType     InputVectorType;
-  typedef typename Superclass::OutputVectorType    OutputVectorType;
-  typedef typename Superclass::InputVnlVectorType  InputVnlVectorType;
-  typedef typename Superclass::OutputVnlVectorType OutputVnlVectorType;
+  using ParametersType = typename Superclass::ParametersType;
+  using JacobianType = typename Superclass::JacobianType;
+  using ScalarType = typename Superclass::ScalarType;
+  using InputPointType = typename Superclass::InputPointType;
+  using OutputPointType = typename Superclass::OutputPointType;
+  using InputVectorType = typename Superclass::InputVectorType;
+  using OutputVectorType = typename Superclass::OutputVectorType;
+  using InputVnlVectorType = typename Superclass::InputVnlVectorType;
+  using OutputVnlVectorType = typename Superclass::OutputVnlVectorType;
 
-  typedef typename Superclass::InputCovariantVectorType
-  InputCovariantVectorType;
-  typedef typename Superclass::OutputCovariantVectorType
-  OutputCovariantVectorType;
+  using InputCovariantVectorType = typename Superclass::InputCovariantVectorType;
+  using OutputCovariantVectorType = typename Superclass::OutputCovariantVectorType;
 
-  typedef typename Superclass::MatrixType        MatrixType;
-  typedef typename Superclass::InverseMatrixType InverseMatrixType;
-  typedef typename Superclass::CenterType        CenterType;
-  typedef typename Superclass::OffsetType        OffsetType;
-  typedef typename Superclass::TranslationType   TranslationType;
+  using MatrixType = typename Superclass::MatrixType;
+  using InverseMatrixType = typename Superclass::InverseMatrixType;
+  using CenterType = typename Superclass::CenterType;
+  using OffsetType = typename Superclass::OffsetType;
+  using TranslationType = typename Superclass::TranslationType;
 
   /** Versor type. */
-  typedef typename Superclass::VersorType      VersorType;
-  typedef typename Superclass::AxisType        AxisType;
-  typedef typename Superclass::AngleType       AngleType;
-  typedef typename Superclass::InputVectorType VectorType;
-  typedef          TScalarType                 ScaleType;
+  using VersorType = typename Superclass::VersorType;
+  using AxisType = typename Superclass::AxisType;
+  using AngleType = typename Superclass::AngleType;
+  using VectorType = typename Superclass::InputVectorType;
+  using ScaleType = TScalarType;
 
   /** Directly set the rotation matrix of the transform.
    * \warning The input matrix must be orthogonal with isotropic scaling

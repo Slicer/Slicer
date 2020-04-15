@@ -142,7 +142,7 @@ private:
 class DCMTKFileReader
 {
 public:
-  typedef DCMTKFileReader Self;
+  using Self = DCMTKFileReader;
 
   DCMTKFileReader() = default;
   ~DCMTKFileReader();

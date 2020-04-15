@@ -46,7 +46,7 @@ template <class  TPixelType, int Dimension>
 void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *fileName,
                       vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* MeasurementFrameMatrix=nullptr) {
 
-  typedef  itk::Image<TPixelType, Dimension> ImageType;
+  using ImageType = itk::Image<TPixelType, Dimension>;
 
   vtkMatrix4x4 *ijkToRasMatrix = vtkMatrix4x4::New();
 
@@ -126,7 +126,7 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
   origin[1] *= -1;
 
   // itk import for input itk images
-  typedef typename itk::VTKImageImport<ImageType> ImageImportType;
+  using ImageImportType = typename itk::VTKImageImport<ImageType>;
   typename ImageImportType::Pointer itkImporter = ImageImportType::New();
 
   // vtk export for  vtk image
@@ -134,7 +134,7 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
   vtkNew<vtkImageFlip> vtkFlip;
 
   // writer
-  typedef typename itk::ImageFileWriter<ImageType> ImageWriterType;
+  using ImageWriterType = typename itk::ImageFileWriter<ImageType>;
   typename ImageWriterType::Pointer   itkImageWriter =  ImageWriterType::New();
 
   if ( self->GetUseCompression() )
@@ -170,8 +170,8 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
 
   if (MeasurementFrameMatrix != nullptr)
     {
-    typedef std::vector<std::vector<double> >    DoubleVectorType;
-    typedef itk::MetaDataObject<DoubleVectorType>     MetaDataDoubleVectorType;
+    using DoubleVectorType = std::vector<std::vector<double> >;
+    using MetaDataDoubleVectorType = itk::MetaDataObject<DoubleVectorType>;
     const itk::MetaDataDictionary &        dictionary = itkImageWriter->GetMetaDataDictionary();
 
     itk::MetaDataDictionary::ConstIterator itr = dictionary.Begin();
@@ -410,25 +410,25 @@ void vtkITKImageWriter::Write()
       {
       case VTK_DOUBLE:
         {
-        typedef itk::Vector<double, 3> VectorPixelType;
+        using VectorPixelType = itk::Vector<double, 3>;
         ITKWriteVTKImage<VectorPixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
         }
         break;
       case VTK_FLOAT:
         {
-        typedef itk::Vector<float, 3> VectorPixelType;
+        using VectorPixelType = itk::Vector<float, 3>;
         ITKWriteVTKImage<VectorPixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
         }
         break;
       case VTK_UNSIGNED_SHORT:
         {
-        typedef itk::Vector<unsigned short, 3> VectorPixelType;
+        using VectorPixelType = itk::Vector<unsigned short, 3>;
         ITKWriteVTKImage<VectorPixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
         }
         break;
       case VTK_UNSIGNED_CHAR:
         {
-        typedef itk::Vector<unsigned char, 3> VectorPixelType;
+        using VectorPixelType = itk::Vector<unsigned char, 3>;
         ITKWriteVTKImage<VectorPixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
         }
         break;
@@ -444,25 +444,25 @@ void vtkITKImageWriter::Write()
       {
       case VTK_DOUBLE:
         {
-        typedef itk::Vector<double, 4> VectorPixelType;
+        using VectorPixelType = itk::Vector<double, 4>;
         ITKWriteVTKImage<VectorPixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
         }
         break;
       case VTK_FLOAT:
         {
-        typedef itk::Vector<float, 4> VectorPixelType;
+        using VectorPixelType = itk::Vector<float, 4>;
         ITKWriteVTKImage<VectorPixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
         }
         break;
       case VTK_UNSIGNED_SHORT:
         {
-        typedef itk::Vector<unsigned short, 4> VectorPixelType;
+        using VectorPixelType = itk::Vector<unsigned short, 4>;
         ITKWriteVTKImage<VectorPixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
         }
         break;
       case VTK_UNSIGNED_CHAR:
         {
-        typedef itk::Vector<unsigned char, 4> VectorPixelType;
+        using VectorPixelType = itk::Vector<unsigned char, 4>;
         ITKWriteVTKImage<VectorPixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
         }
         break;
@@ -478,7 +478,7 @@ void vtkITKImageWriter::Write()
       {
       case VTK_FLOAT:
         {
-        typedef itk::DiffusionTensor3D<float> TensorPixelType;
+        using TensorPixelType = itk::DiffusionTensor3D<float>;
         vtkNew<vtkImageData> outImage;
         outImage->SetDimensions(inputImage->GetDimensions());
         outImage->SetOrigin(0, 0, 0);

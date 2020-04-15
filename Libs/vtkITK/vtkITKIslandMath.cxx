@@ -74,7 +74,7 @@ void vtkITKIslandMathExecute(vtkITKIslandMath *self, vtkImageData* input,
 
   // Wrap scalars into an ITK image
   // - mostly rely on defaults for spacing, origin etc for this filter
-  typedef itk::Image<T, 3> ImageType;
+  using ImageType = itk::Image<T, 3>;
   typename ImageType::Pointer inImage = ImageType::New();
   typename ImageType::RegionType region;
   typename ImageType::IndexType index;
@@ -98,9 +98,9 @@ void vtkITKIslandMathExecute(vtkITKIslandMath *self, vtkImageData* input,
   // Calculate the island operation
   // ccfilter - identifies the islands
   // relabel - sorts them by size
-  typedef itk::ConnectedComponentImageFilter<ImageType, ImageType> ConnectedComponentType;
+  using ConnectedComponentType = itk::ConnectedComponentImageFilter<ImageType, ImageType>;
   typename ConnectedComponentType::Pointer ccfilter = ConnectedComponentType::New();
-  typedef itk::RelabelComponentImageFilter<ImageType, ImageType> RelabelComponentType;
+  using RelabelComponentType = itk::RelabelComponentImageFilter<ImageType, ImageType>;
   typename RelabelComponentType::Pointer relabel = RelabelComponentType::New();
 
   ccfilter->AddObserver(itk::ProgressEvent(), progressCommand);

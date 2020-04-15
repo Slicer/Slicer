@@ -38,7 +38,7 @@ class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneReader
 {
   Q_OBJECT
 public:
-  typedef qSlicerFileReader Superclass;
+  using Superclass = qSlicerFileReader;
   qSlicerSceneReader(vtkSlicerCamerasModuleLogic* camerasLogic, QObject* _parent = nullptr);
   ~qSlicerSceneReader() override;
 

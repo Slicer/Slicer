@@ -35,7 +35,7 @@ class qSlicerVolumeRenderingReader
 {
   Q_OBJECT
 public:
-  typedef qSlicerFileReader Superclass;
+  using Superclass = qSlicerFileReader;
   qSlicerVolumeRenderingReader(QObject* parent = nullptr);
   qSlicerVolumeRenderingReader(vtkSlicerVolumeRenderingLogic* logic, QObject* parent = nullptr);
   ~qSlicerVolumeRenderingReader() override;

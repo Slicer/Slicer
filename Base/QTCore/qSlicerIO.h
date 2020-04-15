@@ -43,12 +43,12 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerIO
   Q_OBJECT
 
 public:
-  typedef QObject Superclass;
+  using Superclass = QObject;
   explicit qSlicerIO(QObject* parent = nullptr);
   ~qSlicerIO() override;
 
-  typedef QString     IOFileType;
-  typedef QVariantMap IOProperties;
+  using IOFileType = QString;
+  using IOProperties = QVariantMap;
 
   /// Unique name of the reader/writer
   virtual QString description()const = 0;

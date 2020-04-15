@@ -129,9 +129,9 @@ bool vtkMRMLTransformStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile(vtkMRMLNode *refNode)
 {
-  typedef itk::TransformFileReaderTemplate<double> TransformReaderType;
-  typedef TransformReaderType::TransformListType TransformListType;
-  typedef TransformReaderType::TransformType TransformType;
+  using TransformReaderType = itk::TransformFileReaderTemplate<double>;
+  using TransformListType = TransformReaderType::TransformListType;
+  using TransformType = TransformReaderType::TransformType;
 
   vtkMRMLTransformNode *transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
   if (transformNode==nullptr)
@@ -227,7 +227,7 @@ int vtkMRMLTransformStorageNode::ReadFromImageFile(vtkMRMLNode *refNode)
 
   GridImageDoubleType::Pointer gridImage_Lps = nullptr;
 
-  typedef itk::ImageFileReader< GridImageDoubleType >  ReaderType;
+  using ReaderType = itk::ImageFileReader<GridImageDoubleType>;
   std::string fullName =  this->GetFullNameFromFileName();
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( fullName );
@@ -281,9 +281,9 @@ int vtkMRMLTransformStorageNode::ReadFromImageFile(vtkMRMLNode *refNode)
 template<typename T>
 vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::string& fullName)
 {
-  typedef itk::TransformFileReaderTemplate<T> TransformReaderType;
-  typedef typename TransformReaderType::TransformListType TransformListType;
-  typedef typename TransformReaderType::TransformType TransformType;
+  using TransformReaderType = itk::TransformFileReaderTemplate<T>;
+  using TransformListType = typename TransformReaderType::TransformListType;
+  using TransformType = typename TransformReaderType::TransformType;
 
   typename TransformReaderType::Pointer reader = TransformReaderType::New();
   reader->SetFileName( fullName );
@@ -334,7 +334,7 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
     }
   else
     {
-    typedef itk::CompositeTransformIOHelperTemplate<T> CompositeTransformIOHelper;
+    using CompositeTransformIOHelper = itk::CompositeTransformIOHelperTemplate<T>;
 
     // The composite transform is itself a list of transforms.  There is a
     // helper class in ITK to convert the internal transform list into a
@@ -344,7 +344,7 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
     // if the first transform in the list is a
     // composite transform, use its internal list
     // instead of the IO
-    typedef typename CompositeTransformIOHelper::ConstTransformListType ConstTransformListType;
+    using ConstTransformListType = typename CompositeTransformIOHelper::ConstTransformListType;
     ConstTransformListType transformList =
       compositeTransformIOHelper.GetTransformList(firstTransform);
 

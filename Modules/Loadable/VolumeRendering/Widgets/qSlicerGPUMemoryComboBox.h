@@ -38,7 +38,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerGPUMemoryComboBox
 
 public:
   /// Constructors
-  typedef QComboBox Superclass;
+  using Superclass = QComboBox;
   explicit qSlicerGPUMemoryComboBox(QWidget* parent=nullptr);
   ~qSlicerGPUMemoryComboBox() override;
 

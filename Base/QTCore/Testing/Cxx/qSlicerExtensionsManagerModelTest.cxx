@@ -38,11 +38,11 @@
 class qSlicerExtensionsManagerModelTester: public QObject
 {
   Q_OBJECT
-  typedef qSlicerExtensionsManagerModelTester Self;
-  typedef qSlicerExtensionsManagerModel::ExtensionMetadataType ExtensionMetadataType;
+  using Self = qSlicerExtensionsManagerModelTester;
+  using ExtensionMetadataType = qSlicerExtensionsManagerModel::ExtensionMetadataType;
 
 public:
-  typedef QPair<QString, int> ExtensionIdType;
+  using ExtensionIdType = QPair<QString, int>;
 
 private:
 
@@ -1866,8 +1866,10 @@ void qSlicerExtensionsManagerModelTester::testExtensionExtensionsSettingsUpdated
 // ----------------------------------------------------------------------------
 namespace
 {
-typedef void (qSlicerExtensionsManagerModel::* QStringSetter)(const QString&);
-typedef QString (qSlicerExtensionsManagerModel::* QStringGetter)()const;
+using QStringSetter = void (qSlicerExtensionsManagerModel::*)(const QString &);
+typedef QS;
+
+using QStringGetter = QString (qSlicerExtensionsManagerModel::*)() const;
 
 // ----------------------------------------------------------------------------
 void testRequirementsHelper(qSlicerExtensionsManagerModel * model,

@@ -43,7 +43,7 @@ class QMRML_WIDGETS_EXPORT qMRMLScreenShotDialog : public QDialog
   Q_PROPERTY(double scaleFactor READ scaleFactor WRITE setScaleFactor)
   Q_PROPERTY(bool showScaleFactorSpinBox READ showScaleFactorSpinBox WRITE setShowScaleFactorSpinBox)
 public:
-  typedef QDialog Superclass;
+  using Superclass = QDialog;
 
   enum WidgetType{
     ThreeD = 0,

@@ -73,7 +73,7 @@ public:
     StatusRole,
   };
 
-  typedef QStandardItemModel Superclass;
+  using Superclass = QStandardItemModel;
   qMRMLSegmentsModel(QObject *parent=nullptr);
   ~qMRMLSegmentsModel() override;
 

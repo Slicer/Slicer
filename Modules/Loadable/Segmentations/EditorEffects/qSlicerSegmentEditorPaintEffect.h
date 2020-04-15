@@ -39,7 +39,7 @@ public:
   Q_PROPERTY(double minimumPaintPointDistance READ minimumPaintPointDistance WRITE setMinimumPaintPointDistance)
   Q_PROPERTY(bool delayedPaint READ delayedPaint WRITE setDelayedPaint)
 
-  typedef qSlicerSegmentEditorAbstractLabelEffect Superclass;
+  using Superclass = qSlicerSegmentEditorAbstractLabelEffect;
   qSlicerSegmentEditorPaintEffect(QObject* parent = nullptr);
   ~qSlicerSegmentEditorPaintEffect() override;
 

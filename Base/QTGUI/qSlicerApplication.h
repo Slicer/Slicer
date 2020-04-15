@@ -61,7 +61,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerApplication : public qSlicerCoreApplicat
   Q_OBJECT
 public:
 
-  typedef qSlicerCoreApplication Superclass;
+  using Superclass = qSlicerCoreApplication;
   qSlicerApplication(int &argc, char **argv);
   ~qSlicerApplication() override;
 

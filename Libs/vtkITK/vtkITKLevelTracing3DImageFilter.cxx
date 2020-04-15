@@ -52,7 +52,7 @@ void vtkITKLevelTracing3DTrace(vtkITKLevelTracing3DImageFilter *vtkNotUsed(self)
 {
 
   // Wrap scalars into an ITK image
-  typedef itk::Image<T, 3> ImageType;
+  using ImageType = itk::Image<T, 3>;
   typename ImageType::Pointer image = ImageType::New();
   image->GetPixelContainer()->SetImportPointer(scalars, dims[0]*dims[1]*dims[2], false);
   image->SetOrigin( origin );
@@ -72,8 +72,8 @@ void vtkITKLevelTracing3DTrace(vtkITKLevelTracing3DImageFilter *vtkNotUsed(self)
   image->SetRegions(region);
 
   // Trace the level curve using itk::LevelTracingImageFilter
-  typedef itk::Image<unsigned char, 3> LabelImageType;
-  typedef itk::LevelTracingImageFilter<ImageType, LabelImageType> LevelTracingType;
+  using LabelImageType = itk::Image<unsigned char, 3>;
+  using LevelTracingType = itk::LevelTracingImageFilter<ImageType, LabelImageType>;
   typename LevelTracingType::Pointer tracing = LevelTracingType::New();
 
   typename ImageType::IndexType seedIndex;

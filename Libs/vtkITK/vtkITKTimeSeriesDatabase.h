@@ -74,12 +74,12 @@ protected:
     {
     this->vtkImporter->Delete();
     }
-  typedef short InputImagePixelType;
-  typedef short OutputImagePixelType;
-  typedef itk::Image<OutputImagePixelType, 3> OutputImageType;
-  typedef itk::VTKImageExport<OutputImageType> ImageExportType;
-  typedef itk::TimeSeriesDatabase<OutputImagePixelType> SourceType;
-  typedef SourceType ImageFilterType;
+  using InputImagePixelType = short;
+  using OutputImagePixelType = short;
+  using OutputImageType = itk::Image<OutputImagePixelType, 3>;
+  using ImageExportType = itk::VTKImageExport<OutputImageType>;
+  using SourceType = itk::TimeSeriesDatabase<OutputImagePixelType>;
+  using ImageFilterType = SourceType;
 
   SourceType::Pointer m_Filter;
   ImageExportType::Pointer itkExporter;

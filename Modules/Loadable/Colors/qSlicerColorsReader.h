@@ -34,7 +34,7 @@ class qSlicerColorsReader
 {
   Q_OBJECT
 public:
-  typedef qSlicerFileReader Superclass;
+  using Superclass = qSlicerFileReader;
   qSlicerColorsReader(vtkSlicerColorLogic* colorLogic = nullptr, QObject* parent = nullptr);
   ~qSlicerColorsReader() override;
 

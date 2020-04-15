@@ -33,7 +33,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerMultiVolumeRendering
 {
   Q_OBJECT
 public:
-  typedef qSlicerVolumeRenderingPropertiesWidget Superclass;
+  using Superclass = qSlicerVolumeRenderingPropertiesWidget;
   qSlicerMultiVolumeRenderingPropertiesWidget(QWidget *parent=nullptr);
   ~qSlicerMultiVolumeRenderingPropertiesWidget() override;
 

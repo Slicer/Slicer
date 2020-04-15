@@ -43,7 +43,7 @@ class Q_SLICER_QTMODULES_VIEWCONTROLLERS_EXPORT qSlicerViewControllersModule
 
 public:
 
-  typedef qSlicerLoadableModule Superclass;
+  using Superclass = qSlicerLoadableModule;
   qSlicerViewControllersModule(QObject *parent=nullptr);
   ~qSlicerViewControllersModule() override;
 

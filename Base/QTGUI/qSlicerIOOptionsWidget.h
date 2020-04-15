@@ -33,7 +33,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerIOOptionsWidget
 {
   Q_OBJECT
 public:
-  typedef qSlicerIOOptions Superclass;
+  using Superclass = qSlicerIOOptions;
   explicit qSlicerIOOptionsWidget(QWidget* parent = nullptr);
   ~qSlicerIOOptionsWidget() override;
 

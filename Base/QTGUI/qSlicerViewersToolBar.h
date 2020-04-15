@@ -41,7 +41,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerViewersToolBar: public QToolBar
 {
   Q_OBJECT
 public:
-  typedef QToolBar Superclass;
+  using Superclass = QToolBar;
 
   /// Constructor
   /// Title is the name of the toolbar (can appear using right click on the toolbar area)

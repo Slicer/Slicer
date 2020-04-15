@@ -41,7 +41,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsCachePanel
   QVTK_OBJECT
 public:
   /// Superclass typedef
-  typedef ctkSettingsPanel Superclass;
+  using Superclass = ctkSettingsPanel;
 
   /// Constructor
   explicit qSlicerSettingsCachePanel(QWidget* parent = nullptr);
