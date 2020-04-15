@@ -124,13 +124,7 @@ int qSlicerPyCLIModuleTest1(int argc, char * argv[])
     }
 
   QString cliPath = app.slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR + "/";
-  #if __cplusplus >= 201103L
   QStringList loadPaths = { cliPath, cliPath + app.intDir() };
-  #else
-  QStringList loadPaths;
-  loadPaths.append(cliPath);
-  loadPaths.append(cliPath + app.intDir());
-  #endif
 
   //===========================================================================
   // Ensure that PyCLI is not recognized by the scripted factory.
