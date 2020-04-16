@@ -131,11 +131,12 @@ void class::Set##name (const char* _arg)            \
 #endif
 
 // Use this macro to declare that this node supports
-// CopyContent. It also declares CopyContent method.
+// CopyContent.It also declares CopyContent and
+// HasCopyContent methods.
 //
-// This technique is needed so that we can determine if
+// The use of HasCopyContent() may be needed to determine if
 // a specific node class has implemented CopyContent (if only
-// a parent class implemented it that is not enough).
+// a parent class implemented it that may not be enough).
 //
 #ifndef vtkMRMLCopyContentMacro
 #define vtkMRMLCopyContentMacro(thisClassName) \
@@ -147,7 +148,8 @@ void class::Set##name (const char* _arg)            \
 #endif
 
 // Use this macro to declare that this node supports
-// CopyContent, without implementing CopyContent method
+// CopyContent by only declaring HasCopyContent without
+// implementing CopyContent method
 // (this is the case when parent classes copy all content).
 #ifndef vtkMRMLCopyContentDefaultMacro
 #define vtkMRMLCopyContentDefaultMacro(thisClassName) \
@@ -178,8 +180,7 @@ public:
   /// \note Subclasses should implement this method
   virtual vtkMRMLNode* CreateNodeInstance() = 0;
 
-  /// \brief Returns true if the class supports deep and shallow copying node content
-  /// (implements ShallowCopyContent and DeepCopyContent).
+  /// \brief Returns true if the class supports deep and shallow copying node content.
   virtual bool HasCopyContent() const;
 
   /// Set node attributes
@@ -240,8 +241,8 @@ public:
   /// copying may be faster but the node may share some data with the source node instead of creating
   /// an independent copy.
   /// \note
-  /// If a class implements this then make sure CopyContent method is implemented
-  /// in all parent classes as well and vtkMRMLNodeHasCopyContentMacro(ClassName) is added to the header.
+  /// If a class implements this then make sure CopyContent and HasCopyContent methods are implemented
+  /// in all parent classes by adding vtkMRMLCopyContentMacro(ClassName) to the class headers.
   virtual void CopyContent(vtkMRMLNode* node, bool deepCopy=true);
 
   /// \brief Copy the references of the node into this.
