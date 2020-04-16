@@ -96,6 +96,8 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->LineColorFadingSaturation = 1.;
   this->LineColorFadingHueOffset = 0.;
 
+  this->HandlesInteractive = false;
+
   // Line color node
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkCommand::ModifiedEvent);
@@ -133,6 +135,7 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLFloatMacro(lineColorFadingEnd, LineColorFadingEnd);
   vtkMRMLWriteXMLFloatMacro(lineColorFadingSaturation, LineColorFadingSaturation);
   vtkMRMLWriteXMLFloatMacro(lineColorFadingHueOffset, LineColorFadingHueOffset);
+  vtkMRMLWriteXMLBooleanMacro(handlesInteractive, HandlesInteractive);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -162,6 +165,7 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLFloatMacro(lineColorFadingEnd, LineColorFadingEnd);
   vtkMRMLReadXMLFloatMacro(lineColorFadingSaturation, LineColorFadingSaturation);
   vtkMRMLReadXMLFloatMacro(lineColorFadingHueOffset, LineColorFadingHueOffset);
+  vtkMRMLReadXMLBooleanMacro(handlesInteractive, HandlesInteractive);
   vtkMRMLReadXMLEndMacro();
 
   // Fix up legacy markups fiducial nodes
@@ -222,6 +226,7 @@ void vtkMRMLMarkupsDisplayNode::Copy(vtkMRMLNode *anode)
   vtkMRMLCopyFloatMacro(LineColorFadingEnd);
   vtkMRMLCopyFloatMacro(LineColorFadingSaturation);
   vtkMRMLCopyFloatMacro(LineColorFadingHueOffset);
+  vtkMRMLCopyBooleanMacro(HandlesInteractive);
   vtkMRMLCopyEndMacro();
 
   this->EndModify(disabledModify);
@@ -350,6 +355,7 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintFloatMacro(LineColorFadingEnd);
   vtkMRMLPrintFloatMacro(LineColorFadingSaturation);
   vtkMRMLPrintFloatMacro(LineColorFadingHueOffset);
+  vtkMRMLPrintBooleanMacro(HandlesInteractive);
   vtkMRMLPrintEndMacro();
 }
 

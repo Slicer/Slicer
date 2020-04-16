@@ -19,10 +19,12 @@
 // VTK includes
 #include "vtkActor2D.h"
 #include "vtkGlyph3D.h"
+#include "vtkMatrix4x4.h"
 #include "vtkPolyDataMapper.h"
 #include "vtkProperty.h"
 #include "vtkRenderer.h"
 #include "vtkSlicerLineRepresentation3D.h"
+#include "vtkTransform.h"
 #include "vtkTubeFilter.h"
 
 // MRML includes
@@ -204,4 +206,16 @@ void vtkSlicerLineRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << indent << "Line Visibility: (none)\n";
     }
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerLineRepresentation3D::UpdateInteractionPipeline()
+{
+  if (this->MarkupsNode->GetNumberOfControlPoints() < 2)
+    {
+    this->InteractionPipeline->Actor->SetVisibility(false);
+    return;
+    }
+  // Final visibility handled by superclass in vtkSlicerMarkupsWidgetRepresentation
+  Superclass::UpdateInteractionPipeline();
 }

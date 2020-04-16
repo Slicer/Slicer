@@ -105,6 +105,8 @@ protected slots:
   void deletePoint();
   /// Called when clicking on toggle select point action
   void toggleSelectPoint();
+  /// Called when clicking on handle interactive action
+  void toggleHandleInteractive();
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyMarkupsPluginPrivate> d_ptr;

@@ -22,6 +22,7 @@
 #include "vtkMRMLScene.h"
 
 // VTK includes
+#include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 
@@ -30,7 +31,6 @@
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLMarkupsAngleNode);
-
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsAngleNode::vtkMRMLMarkupsAngleNode()
@@ -92,4 +92,60 @@ void vtkMRMLMarkupsAngleNode::UpdateMeasurements()
       }
     }
   this->WriteMeasurementsToDescription();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsAngleNode::UpdateInteractionHandleToWorldMatrix()
+{
+  if (this->GetNumberOfControlPoints() < 3)
+    {
+    return;
+    }
+
+  double point0_World[3] = { 0.0 };
+  double point1_World[3] = { 0.0 };
+  double point2_World[3] = { 0.0 };
+  this->GetNthControlPointPositionWorld(0, point0_World);
+  this->GetNthControlPointPositionWorld(1, point1_World);
+  this->GetNthControlPointPositionWorld(2, point2_World);
+
+  double epsilon = 1e-5;
+  double handleX_World[3] = { 1.0, 0.0, 0.0 };
+  vtkMath::Subtract(point0_World, point1_World, handleX_World);
+  if (vtkMath::Norm(handleX_World) < epsilon)
+    {
+    return;
+    }
+  vtkMath::Normalize(handleX_World);
+
+  double vectorPoint1ToPoint2_World[3] = { 0.0 };
+  vtkMath::Subtract(point2_World, point1_World, vectorPoint1ToPoint2_World);
+  if (vtkMath::Norm(vectorPoint1ToPoint2_World) < epsilon)
+    {
+    return;
+    }
+  vtkMath::Normalize(vectorPoint1ToPoint2_World);
+
+  if (std::abs(vtkMath::Dot(handleX_World, vectorPoint1ToPoint2_World)) > 1.0 - epsilon)
+    {
+    return;
+    }
+
+  double handleZ_World[3] = { 0.0 };
+  vtkMath::Cross(handleX_World, vectorPoint1ToPoint2_World, handleZ_World);
+  vtkMath::Normalize(handleZ_World);
+
+  double handleY_World[3] = { 0.0 };
+  vtkMath::Cross(handleZ_World, handleX_World, handleY_World);
+  vtkMath::Normalize(handleY_World);
+
+  vtkNew<vtkMatrix4x4> handleToWorldMatrix;
+  for (int i = 0; i < 3; ++i)
+    {
+    handleToWorldMatrix->SetElement(i, 0, handleX_World[i]);
+    handleToWorldMatrix->SetElement(i, 1, handleY_World[i]);
+    handleToWorldMatrix->SetElement(i, 2, handleZ_World[i]);
+    handleToWorldMatrix->SetElement(i, 3, point1_World[i]);
+    }
+  this->InteractionHandleToWorldMatrix->DeepCopy(handleToWorldMatrix);
 }

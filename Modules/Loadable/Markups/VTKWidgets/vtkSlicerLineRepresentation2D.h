@@ -74,6 +74,9 @@ protected:
 
   void SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode) override;
 
+  /// Update interaction handle visibility for representation
+  void UpdateInteractionPipeline() override;
+
   vtkSmartPointer<vtkPolyData> Line;
   vtkSmartPointer<vtkPolyDataMapper2D> LineMapper;
   vtkSmartPointer<vtkActor2D> LineActor;

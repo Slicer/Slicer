@@ -11,6 +11,7 @@ set(KIT_TEST_SRCS
   vtkMRMLMarkupsNodeTest1.cxx
   vtkMRMLMarkupsNodeTest2.cxx
   vtkMRMLMarkupsNodeTest3.cxx
+  vtkMRMLMarkupsNodeTest4.cxx
   vtkMRMLMarkupsFiducialStorageNodeTest1.cxx
   vtkMRMLMarkupsFiducialStorageNodeTest2.cxx
   vtkMRMLMarkupsFiducialStorageNodeTest3.cxx
@@ -36,6 +37,7 @@ SIMPLE_TEST( vtkMRMLMarkupsFiducialNodeTest1 )
 SIMPLE_TEST( vtkMRMLMarkupsNodeTest1 )
 SIMPLE_TEST( vtkMRMLMarkupsNodeTest2 )
 SIMPLE_TEST( vtkMRMLMarkupsNodeTest3 )
+SIMPLE_TEST( vtkMRMLMarkupsNodeTest4 )
 
 SIMPLE_TEST( vtkMRMLMarkupsFiducialStorageNodeTest1 ${TEMP}/markupsFiducialStorageNode.fcsv )
 

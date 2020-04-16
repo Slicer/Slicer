@@ -30,6 +30,7 @@
 #include <vtkCommand.h>
 #include <vtkEvent.h>
 #include <vtkPointPlacer.h>
+#include <vtkTransform.h>
 
 vtkStandardNewMacro(vtkSlicerPlaneWidget);
 
@@ -212,10 +213,10 @@ bool vtkSlicerPlaneWidget::ProcessPlaneTranslate(vtkMRMLInteractionEventData* ev
       }
     }
 
-  double vector[3];
-  vector[0] = worldPos[0] - ref[0];
-  vector[1] = worldPos[1] - ref[1];
-  vector[2] = worldPos[2] - ref[2];
+  double vector_World[3];
+  vector_World[0] = worldPos[0] - ref[0];
+  vector_World[1] = worldPos[1] - ref[1];
+  vector_World[2] = worldPos[2] - ref[2];
 
   bool lockToNormal = false;
   if (lockToNormal)
@@ -223,21 +224,34 @@ bool vtkSlicerPlaneWidget::ProcessPlaneTranslate(vtkMRMLInteractionEventData* ev
     double normal[3] = { 0 };
     markupsNode->GetNormal(normal);
 
-    double magnitude = vtkMath::Dot(vector, normal);
+    double magnitude = vtkMath::Dot(vector_World, normal);
     vtkMath::MultiplyScalar(normal, magnitude);
     for (int i = 0; i < 3; ++i)
       {
-      vector[i] = normal[i];
+      vector_World[i] = normal[i];
       }
     }
 
   MRMLNodeModifyBlocker blocker(markupsNode);
-  vtkSmartPointer<vtkMatrix4x4> localToPlaneTransform = markupsNode->GetLocalToPlaneTransform();
-  for (int i = 0; i < 3; ++i)
-    {
-    double original = localToPlaneTransform->GetElement(i, 3);
-    localToPlaneTransform->SetElement(i, 3, original + vector[i]);
-    }
+
+  vtkNew<vtkMatrix4x4> worldToPlaneMatrix;
+  markupsNode->GetPlaneToWorldMatrix(worldToPlaneMatrix);
+  worldToPlaneMatrix->Invert();
+
+  vtkNew<vtkTransform> worldToPlaneTransform;
+  worldToPlaneTransform->PostMultiply();
+  worldToPlaneTransform->SetMatrix(worldToPlaneMatrix);
+  worldToPlaneTransform->Concatenate(markupsNode->GetPlaneToPlaneOffsetMatrix());
+
+  double vector_Plane[3] = { 0.0 };
+  worldToPlaneTransform->TransformVector(vector_World, vector_Plane);
+
+  vtkNew<vtkTransform> planeToPlaneOffsetTransform;
+  planeToPlaneOffsetTransform->PostMultiply();
+  planeToPlaneOffsetTransform->SetMatrix(markupsNode->GetPlaneToPlaneOffsetMatrix());
+  planeToPlaneOffsetTransform->Translate(vector_Plane);
+  markupsNode->GetPlaneToPlaneOffsetMatrix()->DeepCopy(planeToPlaneOffsetTransform->GetMatrix());
+
   markupsNode->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent);
 
   this->LastEventPosition[0] = eventPos[0];

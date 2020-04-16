@@ -237,12 +237,6 @@ public:
   /// Get best fit plane for a markup
   static bool GetBestFitPlane(vtkMRMLMarkupsNode* curveNode, vtkPlane* plane);
 
-  /// Compute least squares best fit plane
-  static bool FitPlaneToPoints(vtkPoints* curvePoints, vtkPlane* plane);
-
-  /// Compute transform that best transforms the XY plane to the best fit plane
-  static bool FitPlaneToPoints(vtkPoints* curvePoints, vtkMatrix4x4* transformToBestFitPlane);
-
 protected:
   vtkSlicerMarkupsLogic();
   ~vtkSlicerMarkupsLogic() override;

@@ -96,6 +96,7 @@ protected slots:
   void onGlyphSizeSliderWidgetChanged(double value);
   void onTextScaleSliderWidgetChanged(double value);
   void onOpacitySliderWidgetChanged(double value);
+  void onInteractionCheckBoxChanged(int state);
 
 protected:
   QScopedPointer<qMRMLMarkupsDisplayNodeWidgetPrivate> d_ptr;

@@ -175,7 +175,6 @@ void vtkSlicerPlaneRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
     }
 
   // Update plane display properties
-
   if (visible && !this->MarkupsDisplayNode->GetSliceProjection())
     {
     this->PlaneSliceDistance->Update();
@@ -186,12 +185,13 @@ void vtkSlicerPlaneRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
       }
     else
       {
-      double sliceNormalVectorXY[4] = { 0, 0, 1, 0 };
-      double sliceNormalVectorWorld[4] = { 0, 0, 1, 0 };
+      double sliceNormal_XY[4] = { 0.0, 0.0, 1.0, 0.0 };
+      double sliceNormal_World[4] = { 0, 0, 1, 0 };
       vtkMatrix4x4* xyToRAS = this->GetSliceNode()->GetXYToRAS();
-      xyToRAS->MultiplyPoint(sliceNormalVectorXY, sliceNormalVectorWorld);
-      double sliceThicknessMm = vtkMath::Norm(sliceNormalVectorWorld);
+      xyToRAS->MultiplyPoint(sliceNormal_XY, sliceNormal_World);
+      double sliceThicknessMm = vtkMath::Norm(sliceNormal_World);
       double* scalarRange = plane->GetScalarRange();
+      // If the closest point on the plane is further than a half-slice thickness, then hide the plane
       if (scalarRange[0] > 0.5 * sliceThicknessMm || scalarRange[1] < -0.5 * sliceThicknessMm)
         {
         visible = false;
@@ -260,9 +260,9 @@ void vtkSlicerPlaneRepresentation2D::UpdateDistanceColorMap(vtkDiscretizableColo
   vtkPiecewiseFunction* opacityFunction = colormap->GetScalarOpacityFunction();
   opacityFunction->RemoveAllPoints();
   opacityFunction->AddPoint(-limit, opacity * 0.2);
-  opacityFunction->AddPoint(-tolerance, opacity*0.5);
-  opacityFunction->AddPoint(tolerance, opacity*0.5);
-  opacityFunction->AddPoint(limit, opacity*0.2);
+  opacityFunction->AddPoint(-tolerance, opacity * 0.5);
+  opacityFunction->AddPoint(tolerance, opacity * 0.5);
+  opacityFunction->AddPoint(limit, opacity * 0.2);
 }
 
 //----------------------------------------------------------------------
@@ -304,12 +304,12 @@ void vtkSlicerPlaneRepresentation2D::CanInteractWithPlane(
   cellLocator->SetDataSet(this->PlaneFilter->GetOutput());
   cellLocator->BuildLocator();
 
-  const double* worldPosition = interactionEventData->GetWorldPosition();
-  double closestPoint[3];//the coordinates of the closest point will be returned here
-  double distance2; //the squared distance to the closest point will be returned here
+  const double* eventData_World = interactionEventData->GetWorldPosition();
+  double closestPoint_World[3];
+  double distance2;
   vtkIdType cellId; //the cell id of the cell containing the closest point will be returned here
   int subId; //this is rarely used (in triangle strips only, I believe)
-  cellLocator->FindClosestPoint(worldPosition, closestPoint, cellId, subId, distance2);
+  cellLocator->FindClosestPoint(eventData_World, closestPoint_World, cellId, subId, distance2);
 
   double toleranceWorld = this->ControlPointSize / 2;
   if (distance2 < toleranceWorld)
@@ -470,10 +470,15 @@ void vtkSlicerPlaneRepresentation2D::BuildPlane()
     return;
   }
 
-  double x[3], y[3], z[3] = { 0 };
-  markupsNode->GetPlaneAxesWorld(x, y, z);
+  double xAxis_World[3] = { 0.0 };
+  double yAxis_World[3] = { 0.0 };
+  double zAxis_World[3] = { 0.0 };
+  markupsNode->GetAxesWorld(xAxis_World, yAxis_World, zAxis_World);
 
-  if (vtkMath::Norm(x) <= 0.0001 || vtkMath::Norm(y) <= 0.0001 || vtkMath::Norm(z) <= 0.0001)
+  double epsilon = 1e-5;
+  if (vtkMath::Norm(xAxis_World) <= epsilon ||
+      vtkMath::Norm(yAxis_World) <= epsilon ||
+      vtkMath::Norm(zAxis_World) <= epsilon)
   {
     this->PlaneMapper->SetInputData(vtkNew<vtkPolyData>());
     this->ArrowMapper->SetInputData(vtkNew<vtkPolyData>());
@@ -483,53 +488,55 @@ void vtkSlicerPlaneRepresentation2D::BuildPlane()
   this->PlaneMapper->SetInputConnection(this->PlaneWorldToSliceTransformer->GetOutputPort());
   this->ArrowMapper->SetInputConnection(this->ArrowGlypher->GetOutputPort());
 
-  double origin[3] = { 0.0 };
-  markupsNode->GetOriginWorld(origin);
+  double origin_World[3] = { 0.0 };
+  markupsNode->GetOriginWorld(origin_World);
 
   // Update the plane
-  double size[3] = { 0.0 };
-  markupsNode->GetSize(size);
-  vtkMath::MultiplyScalar(x, size[0] / 2.0);
-  vtkMath::MultiplyScalar(y, size[1] / 2.0);
+  double bounds_Plane[6] = { 0.0 };
+  markupsNode->GetPlaneBounds(bounds_Plane);
 
-  double planePoint1[3] = { 0 };
-  vtkMath::Subtract(origin, x, planePoint1);
-  vtkMath::Subtract(planePoint1, y, planePoint1);
+  double planePoint1_World[3] = { 0.0 };
+  double planePoint2_World[3] = { 0.0 };
+  double planePoint3_World[3] = { 0.0 };
+  for (int i = 0; i < 3; ++i)
+    {
+    planePoint1_World[i] = origin_World[i]
+      + (xAxis_World[i] * bounds_Plane[0])
+      + (yAxis_World[i] * bounds_Plane[2]); // Bottom left corner (Plane filter origin)
 
-  double planePoint2[3] = { 0 };
-  vtkMath::Subtract(origin, x, planePoint2);
-  vtkMath::Add(planePoint2, y, planePoint2);
+    planePoint2_World[i] = origin_World[i]
+      + (xAxis_World[i] * bounds_Plane[0])
+      + (yAxis_World[i] * bounds_Plane[3]); // Top left corner
 
-  double planePoint3[3] = { 0 };
-  vtkMath::Add(origin, x, planePoint3);
-  vtkMath::Subtract(planePoint3, y, planePoint3);
+    planePoint3_World[i] = origin_World[i]
+      + (xAxis_World[i] * bounds_Plane[1])
+      + (yAxis_World[i] * bounds_Plane[2]); // Bottom right corner
+    }
+  this->PlaneFilter->SetOrigin(planePoint1_World);
+  this->PlaneFilter->SetPoint1(planePoint2_World);
+  this->PlaneFilter->SetPoint2(planePoint3_World);
 
-  this->PlaneFilter->SetOrigin(planePoint1);
-  this->PlaneFilter->SetPoint1(planePoint2);
-  this->PlaneFilter->SetPoint2(planePoint3);
-
-  double* arrowVectorSlice = this->WorldToSliceTransform->TransformDoubleVector(z);
+  double* arrowVectorSlice = this->WorldToSliceTransform->TransformDoubleVector(zAxis_World);
 
   // Update the normal vector
-  double epsilon = 0.001;
-  if (vtkMath::Dot(this->SlicePlane->GetNormal(), z) > 1 - epsilon)
+  if (vtkMath::Dot(this->SlicePlane->GetNormal(), zAxis_World) > 1.0 - epsilon)
     {
     this->ArrowFilter->SetGlyphTypeToCircle();
-    this->ArrowFilter->SetRotationAngle(0);
+    this->ArrowFilter->SetRotationAngle(0.0);
     }
-  else if (vtkMath::Dot(this->SlicePlane->GetNormal(), z) < -1 + epsilon)
+  else if (vtkMath::Dot(this->SlicePlane->GetNormal(), zAxis_World) < -1.0 + epsilon)
     {
     this->ArrowFilter->SetGlyphTypeToCross();
-    this->ArrowFilter->SetRotationAngle(0);
+    this->ArrowFilter->SetRotationAngle(0.0);
     }
   else
     {
     arrowVectorSlice[2] = 0.0;
 
-    double xVector[3] = { 1,0,0 };
-    double yVector[3] = { 0, 1, 0 };
-    double angle = vtkMath::DegreesFromRadians(vtkMath::AngleBetweenVectors(arrowVectorSlice, xVector));
-    if (vtkMath::Dot(arrowVectorSlice, yVector) < 0)
+    double xVector_World[3] = { 1.0, 0.0, 0.0 };
+    double yVector_World[3] = { 0.0, 1.0, 0.0 };
+    double angle = vtkMath::DegreesFromRadians(vtkMath::AngleBetweenVectors(arrowVectorSlice, xVector_World));
+    if (vtkMath::Dot(arrowVectorSlice, yVector_World) < 0.0)
       {
       angle = -angle;
       }
@@ -538,19 +545,19 @@ void vtkSlicerPlaneRepresentation2D::BuildPlane()
     this->ArrowFilter->SetRotationAngle(angle);
     }
 
-  double slicePos[2] = { 0 };
-  this->GetWorldToSliceCoordinates(origin, slicePos);
+  double origin_Slice[2] = { 0.0 };
+  this->GetWorldToSliceCoordinates(origin_World, origin_Slice);
   vtkMath::Normalize(arrowVectorSlice);
   vtkMath::MultiplyScalar(arrowVectorSlice, this->ControlPointSize);
-  vtkMath::Add(slicePos, arrowVectorSlice, slicePos);
+  vtkMath::Add(origin_Slice, arrowVectorSlice, origin_Slice);
 
-  vtkNew<vtkPoints> arrowPoints;
-  arrowPoints->InsertNextPoint(slicePos);
+  vtkNew<vtkPoints> arrowPoints_World;
+  arrowPoints_World->InsertNextPoint(origin_Slice);
 
-  vtkNew<vtkPolyData> arrowPolyData;
-  arrowPolyData->SetPoints(arrowPoints);
+  vtkNew<vtkPolyData> arrowPolyData_World;
+  arrowPolyData_World->SetPoints(arrowPoints_World);
 
-  this->ArrowGlypher->SetInputData(arrowPolyData);
+  this->ArrowGlypher->SetInputData(arrowPolyData_World);
   this->ArrowGlypher->SetScaleFactor(this->ControlPointSize*2);
 
   vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(markupsNode->GetDisplayNode());
@@ -574,12 +581,30 @@ void vtkSlicerPlaneRepresentation2D::BuildPlane()
   vtkNew<vtkPlane> planeStartFadeFar;
   planeStartFadeFar->SetOrigin(this->SlicePlane->GetOrigin());
   planeStartFadeFar->SetNormal(this->SlicePlane->GetNormal());
-  planeStartFadeFar->Push(-1*displayNode->GetLineColorFadingStart());
+  planeStartFadeFar->Push(-1.0 * displayNode->GetLineColorFadingStart());
   this->PlaneClipperStartFadeFar->SetClipFunction(planeStartFadeFar);
 
   vtkNew<vtkPlane> planeEndFadeFar;
   planeEndFadeFar->SetOrigin(this->SlicePlane->GetOrigin());
   planeEndFadeFar->SetNormal(this->SlicePlane->GetNormal());
-  planeEndFadeFar->Push(-1*displayNode->GetLineColorFadingEnd());
+  planeEndFadeFar->Push(-1.0 * displayNode->GetLineColorFadingEnd());
   this->PlaneClipperEndFadeFar->SetClipFunction(planeEndFadeFar);
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerPlaneRepresentation2D::UpdateInteractionPipeline()
+{
+  vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
+  if (!planeNode || planeNode->GetNumberOfControlPoints() < 3)
+    {
+    this->InteractionPipeline->Actor->SetVisibility(false);
+    return;
+    }
+  if (!this->PlaneActor->GetVisibility())
+    {
+    this->InteractionPipeline->Actor->SetVisibility(false);
+    return;
+    }
+
+  Superclass::UpdateInteractionPipeline();
 }

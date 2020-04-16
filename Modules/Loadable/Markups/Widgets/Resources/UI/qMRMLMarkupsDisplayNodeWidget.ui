@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>477</width>
-    <height>121</height>
+    <height>137</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -73,13 +73,6 @@
      </item>
     </layout>
    </item>
-   <item row="7" column="0">
-    <widget class="QLabel" name="textScaleLabel">
-     <property name="text">
-      <string>Text Size:</string>
-     </property>
-    </widget>
-   </item>
    <item row="7" column="1">
     <widget class="ctkSliderWidget" name="textScaleSliderWidget">
      <property name="singleStep">
@@ -93,7 +86,49 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="0" colspan="2">
+   <item row="7" column="0">
+    <widget class="QLabel" name="textScaleLabel">
+     <property name="text">
+      <string>Text Size:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QCheckBox" name="VisibilityCheckBox">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="opacityLabel">
+       <property name="text">
+        <string>Opacity:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ctkSliderWidget" name="opacitySliderWidget">
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="VisibilityLabel">
+     <property name="text">
+      <string>Visibility:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0" colspan="2">
     <widget class="ctkCollapsibleGroupBox" name="SliceDisplayCollapsibleGroupBox">
      <property name="title">
       <string>Advanced</string>
@@ -186,39 +221,30 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QCheckBox" name="VisibilityCheckBox">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="opacityLabel">
-       <property name="text">
-        <string>Opacity:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="ctkSliderWidget" name="opacitySliderWidget">
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>1.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="VisibilityLabel">
-     <property name="text">
-      <string>Visibility:</string>
+   <item row="8" column="0" colspan="2">
+    <widget class="ctkCollapsibleGroupBox" name="InteractionGroupBox">
+     <property name="title">
+      <string>Interaction</string>
      </property>
+     <property name="collapsed">
+      <bool>true</bool>
+     </property>
+     <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="interactionLabel">
+        <property name="text">
+         <string>Visible:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="interactionCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
