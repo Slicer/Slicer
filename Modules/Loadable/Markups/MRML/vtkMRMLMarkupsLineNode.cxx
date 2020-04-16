@@ -19,8 +19,10 @@
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsLineNode.h"
 #include "vtkMRMLMarkupsFiducialStorageNode.h"
+#include "vtkMatrix4x4.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLUnitNode.h"
+#include "vtkTransform.h"
 
 // VTK includes
 #include <vtkNew.h>
@@ -94,4 +96,46 @@ void vtkMRMLMarkupsLineNode::UpdateMeasurements()
     this->SetNthMeasurement(0, "length", length, unit, printFormat);
     }
   this->WriteMeasurementsToDescription();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsLineNode::UpdateInteractionHandleToWorldMatrix()
+{
+  Superclass::UpdateInteractionHandleToWorldMatrix();
+  if (this->GetNumberOfControlPoints() < 2)
+    {
+    return;
+    }
+
+  double handleX_World[4] = { 1.0, 0.0, 0.0, 0.0 };
+  this->InteractionHandleToWorldMatrix->MultiplyPoint(handleX_World, handleX_World);
+
+  double point0_World[3];
+  this->GetNthControlPointPositionWorld(0, point0_World);
+  double point1_World[3];
+  this->GetNthControlPointPositionWorld(1, point1_World);
+
+  double vectorPoint0ToPoint1_World[4] = { 0.0 };
+  vtkMath::Subtract(point1_World, point0_World, vectorPoint0ToPoint1_World);
+
+  double angle = vtkMath::DegreesFromRadians(vtkMath::AngleBetweenVectors(vectorPoint0ToPoint1_World, handleX_World));
+  double epsilon = 1e-5;
+  if (angle < epsilon)
+    {
+    return;
+    }
+
+  double rotationVector_Local[3] = { 0.0 };
+  vtkMath::Cross(handleX_World, vectorPoint0ToPoint1_World, rotationVector_Local);
+
+  double origin_World[4] = { 0.0, 0.0, 0.0, 1.0 };
+  this->InteractionHandleToWorldMatrix->MultiplyPoint(origin_World, origin_World);
+
+  vtkNew<vtkTransform> handleToWorldMatrix;
+  handleToWorldMatrix->PostMultiply();
+  handleToWorldMatrix->Concatenate(this->InteractionHandleToWorldMatrix);
+  handleToWorldMatrix->Translate(-origin_World[0], -origin_World[1], -origin_World[2]);
+  handleToWorldMatrix->RotateWXYZ(angle, rotationVector_Local);
+  handleToWorldMatrix->Translate(origin_World);
+  this->InteractionHandleToWorldMatrix->DeepCopy(handleToWorldMatrix->GetMatrix());
 }

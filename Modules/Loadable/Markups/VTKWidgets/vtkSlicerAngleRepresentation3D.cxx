@@ -394,3 +394,16 @@ void vtkSlicerAngleRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Label Format: ";
   os << this->LabelFormat << "\n";
 }
+
+//-----------------------------------------------------------------------------
+void vtkSlicerAngleRepresentation3D::UpdateInteractionPipeline()
+{
+  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  if (!markupsNode || markupsNode->GetNumberOfControlPoints() < 3)
+    {
+    this->InteractionPipeline->Actor->SetVisibility(false);
+    return;
+    }
+  // Final visibility handled by superclass in vtkSlicerMarkupsWidgetRepresentation
+  Superclass::UpdateInteractionPipeline();
+}

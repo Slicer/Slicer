@@ -38,9 +38,11 @@
 #include "vtkSlicerMarkupsWidgetRepresentation2D.h"
 #include "vtkSphereSource.h"
 #include "vtkStringArray.h"
+#include "vtkTensorGlyph.h"
 #include "vtkTextActor.h"
 #include "vtkTextProperty.h"
 #include "vtkTransform.h"
+#include "vtkTransformPolyDataFilter.h"
 
 // MRML includes
 #include <vtkMRMLFolderDisplayNode.h>
@@ -519,6 +521,15 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteract(
 
   closestDistance2 = VTK_DOUBLE_MAX; // in display coordinate system
   foundComponentIndex = -1;
+
+  // We can interact with the handle if the mouse is hovering over one of the handles (translation or rotation), in display coordinates.
+  this->CanInteractWithHandles(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
+  if (foundComponentType != vtkMRMLMarkupsDisplayNode::ComponentNone)
+    {
+    // if mouse is near a handle then select that (ignore the line + control points)
+    return;
+    }
+
   if (markupsNode->GetNumberOfControlPoints() > 2 && this->ClosedLoop && this->CenterVisibilityOnSlice)
     {
     // Check if center is selected
@@ -560,6 +571,82 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteract(
       closestDistance2 = dist2;
       foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentControlPoint;
       foundComponentIndex = i;
+      }
+    }
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation2D::CanInteractWithHandles(
+  vtkMRMLInteractionEventData* interactionEventData,
+  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
+{
+  if (!this->InteractionPipeline || !this->InteractionPipeline->Actor->GetVisibility())
+    {
+    return;
+    }
+
+  double maxPickingDistanceFromControlPoint2 = this->GetMaximumControlPointPickingDistance2();
+
+  const int* displayPosition = interactionEventData->GetDisplayPosition();
+  double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
+
+  double handleDisplayPos[4] = { 0.0, 0.0, 0.0, 1.0 };
+
+  vtkMRMLSliceNode* sliceNode = this->GetSliceNode();
+  vtkNew<vtkMatrix4x4> rasToxyMatrix;
+  vtkMatrix4x4::Invert(sliceNode->GetXYToRAS(), rasToxyMatrix);
+
+  bool handlePicked = false;
+  vtkSlicerMarkupsWidgetRepresentation::HandleInfoList handleInfoList = this->InteractionPipeline->GetHandleInfoList();
+  for (vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::HandleInfo handleInfo : handleInfoList)
+    {
+    if (!handleInfo.IsVisible())
+      {
+      continue;
+      }
+    double* handleWorldPos = handleInfo.PositionWorld;
+    rasToxyMatrix->MultiplyPoint(handleWorldPos, handleDisplayPos);
+    handleDisplayPos[2] = displayPosition3[2]; // Handles are always projected
+    double dist2 = vtkMath::Distance2BetweenPoints(handleDisplayPos, displayPosition3);
+    if (dist2 < maxPickingDistanceFromControlPoint2 && dist2 < closestDistance2)
+      {
+      closestDistance2 = dist2;
+      foundComponentType = handleInfo.ComponentType;
+      foundComponentIndex = handleInfo.Index;
+      handlePicked = true;
+      }
+    }
+
+  if (!handlePicked)
+    {
+    // Detect translation handle shaft
+    for (vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::HandleInfo handleInfo : handleInfoList)
+      {
+      if (!handleInfo.IsVisible() || handleInfo.ComponentType != vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle)
+        {
+        continue;
+        }
+
+      double* handleWorldPos = handleInfo.PositionWorld;
+      rasToxyMatrix->MultiplyPoint(handleWorldPos, handleDisplayPos);
+      handleDisplayPos[2] = displayPosition3[2]; // Handles are always projected
+      double dist2 = vtkMath::Distance2BetweenPoints(handleDisplayPos, displayPosition3);
+
+      double originWorldPos[4] = { 0.0, 0.0, 0.0, 1.0 };
+      this->InteractionPipeline->GetInteractionHandleOriginWorld(originWorldPos);
+      double originDisplayPos[4] = { 0.0 };
+      rasToxyMatrix->MultiplyPoint(originWorldPos, originDisplayPos);
+      originDisplayPos[2] = displayPosition3[2]; // Handles are always projected
+
+      double t = 0;
+      double lineDistance = vtkLine::DistanceToLine(displayPosition3, originDisplayPos, handleDisplayPos, t);
+      double lineDistance2 = lineDistance * lineDistance;
+      if (lineDistance2 < maxPickingDistanceFromControlPoint2 / 2.0 && lineDistance2 < closestDistance2)
+        {
+        closestDistance2 = lineDistance2;
+        foundComponentType = handleInfo.ComponentType;
+        foundComponentIndex = handleInfo.Index;
+        }
       }
     }
 }
@@ -622,6 +709,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteractWithLine(
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation2D::GetActors(vtkPropCollection *pc)
 {
+  Superclass::GetActors(pc);
   for (int i = 0; i < NumberOfControlPointTypes; i++)
     {
     ControlPointsPipeline2D* controlPoints = reinterpret_cast<ControlPointsPipeline2D*>(this->ControlPoints[i]);
@@ -635,6 +723,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::GetActors(vtkPropCollection *pc)
 void vtkSlicerMarkupsWidgetRepresentation2D::ReleaseGraphicsResources(
   vtkWindow *win)
 {
+  Superclass::ReleaseGraphicsResources(win);
   for (int i = 0; i < NumberOfControlPointTypes; i++)
     {
     ControlPointsPipeline2D* controlPoints = reinterpret_cast<ControlPointsPipeline2D*>(this->ControlPoints[i]);
@@ -647,7 +736,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::ReleaseGraphicsResources(
 //----------------------------------------------------------------------
 int vtkSlicerMarkupsWidgetRepresentation2D::RenderOverlay(vtkViewport *viewport)
 {
-  int count = 0;
+  int count = Superclass::RenderOverlay(viewport);
   for (int i = 0; i < NumberOfControlPointTypes; i++)
     {
     ControlPointsPipeline2D* controlPoints = reinterpret_cast<ControlPointsPipeline2D*>(this->ControlPoints[i]);
@@ -672,6 +761,13 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderOpaqueGeometry(
   vtkViewport *viewport)
 {
   int count = 0;
+  if (this->InteractionPipeline && this->InteractionPipeline->Actor->GetVisibility())
+    {
+    this->InteractionPipeline->UpdateHandleColors();
+    double interactionWidgetScale = 7.0 * this->ControlPointSize * this->ViewScaleFactorMmPerPixel;
+    this->InteractionPipeline->SetWidgetScale(interactionWidgetScale);
+    count += this->InteractionPipeline->Actor->RenderOpaqueGeometry(viewport);
+    }
   if (this->TextActor->GetVisibility())
     {
     count += this->TextActor->RenderOpaqueGeometry(viewport);
@@ -695,7 +791,7 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderOpaqueGeometry(
 int vtkSlicerMarkupsWidgetRepresentation2D::RenderTranslucentPolygonalGeometry(
   vtkViewport *viewport)
 {
-  int count = 0;
+  int count = Superclass::RenderTranslucentPolygonalGeometry(viewport);
   if (this->TextActor->GetVisibility())
     {
     count += this->TextActor->RenderTranslucentPolygonalGeometry(viewport);
@@ -1039,7 +1135,6 @@ bool vtkSlicerMarkupsWidgetRepresentation2D::GetAllControlPointsVisible()
   return true;
 }
 
-
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation2D::UpdateDistanceColorMap(
   vtkDiscretizableColorTransferFunction* colormap, double color[3])
@@ -1166,4 +1261,57 @@ double vtkSlicerMarkupsWidgetRepresentation2D::GetMaximumControlPointPickingDist
 {
   double maximumControlPointPickingDistance = this->ControlPointSize / 2.0 + this->PickingTolerance * this->ScreenScaleFactor;
   return maximumControlPointPickingDistance * maximumControlPointPickingDistance;
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation2D::SetupInteractionPipeline()
+{
+  this->InteractionPipeline = new MarkupsInteractionPipeline2D(this);
+  this->InteractionPipeline->InitializePipeline();
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation2D::UpdateInteractionPipeline()
+{
+  MarkupsInteractionPipeline2D* interactionPipeline = dynamic_cast<MarkupsInteractionPipeline2D*>(this->InteractionPipeline);
+  if (!interactionPipeline)
+    {
+    return;
+    }
+  interactionPipeline->WorldToSliceTransformFilter->SetTransform(this->WorldToSliceTransform);
+  // Final visibility handled by superclass in vtkSlicerMarkupsWidgetRepresentation
+  Superclass::UpdateInteractionPipeline();
+}
+
+//----------------------------------------------------------------------
+vtkSlicerMarkupsWidgetRepresentation2D::MarkupsInteractionPipeline2D::MarkupsInteractionPipeline2D(vtkSlicerMarkupsWidgetRepresentation* representation)
+  : MarkupsInteractionPipeline(representation)
+{
+  this->WorldToSliceTransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  this->WorldToSliceTransformFilter->SetTransform(vtkNew<vtkTransform>());
+  this->WorldToSliceTransformFilter->SetInputConnection(this->HandleToWorldTransformFilter->GetOutputPort());
+  this->Mapper->SetInputConnection(this->WorldToSliceTransformFilter->GetOutputPort());
+  this->Mapper->SetTransformCoordinate(nullptr);
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation2D::MarkupsInteractionPipeline2D::GetViewPlaneNormal(double viewPlaneNormal[3])
+{
+  if (!viewPlaneNormal)
+    {
+    return;
+    }
+
+  double tempNormal[4] = { 0, 0, 1, 0 };
+  if (this->Representation)
+    {
+    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(this->Representation->GetViewNode());
+    if (sliceNode)
+      {
+      sliceNode->GetSliceToRAS()->MultiplyPoint(tempNormal, tempNormal);
+      }
+    }
+  viewPlaneNormal[0] = tempNormal[0];
+  viewPlaneNormal[1] = tempNormal[1];
+  viewPlaneNormal[2] = tempNormal[2];
 }

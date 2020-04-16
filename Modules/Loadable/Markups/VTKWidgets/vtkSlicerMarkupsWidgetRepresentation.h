@@ -47,14 +47,25 @@
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsNode.h"
 
+class vtkActor2D;
+class vtkAppendPolyData;
+class vtkArcSource;
+class vtkArrayCalculator;
+class vtkArrowSource;
+class vtkConeSource;
+class vtkGlyph3D;
 class vtkMarkupsGlyphSource2D;
+class vtkMRMLInteractionEventData;
 class vtkPointPlacer;
 class vtkPointSetToLabelHierarchy;
+class vtkPolyDataMapper2D;
+class vtkProperty2D;
+class vtkRegularPolygonSource;
 class vtkSphereSource;
 class vtkTextActor;
 class vtkTextProperty;
-
-class vtkMRMLInteractionEventData;
+class vtkTensorGlyph;
+class vtkTubeFilter;
 
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsWidgetRepresentation : public vtkMRMLAbstractWidgetRepresentation
 {
@@ -75,6 +86,14 @@ public:
 
   /// Update the representation from markups node
   void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr) override;
+
+  /// Methods to make this class behave as a vtkProp.
+  void GetActors(vtkPropCollection*) override;
+  void ReleaseGraphicsResources(vtkWindow*) override;
+  int RenderOverlay(vtkViewport* viewport) override;
+  int RenderOpaqueGeometry(vtkViewport* viewport) override;
+  int RenderTranslucentPolygonalGeometry(vtkViewport* viewport) override;
+  vtkTypeBool HasTranslucentPolygonalGeometry() override;
 
   /// Get number of control points.
   virtual int GetNumberOfControlPoints();
@@ -128,6 +147,19 @@ public:
   bool IsDisplayable();
   //@}
 
+  /// Get the axis for the handle specified by the index
+  virtual void GetInteractionHandleAxisWorld(int index, double axis[3]);
+  /// Get the origin of the interaction handle widget
+  virtual void GetInteractionHandleOriginWorld(double origin[3]);
+  /// Get the position of the interaction handle in world coordinates
+  /// Type is specified using vtkMRMLMarkupsDisplayNode::ComponentType
+  virtual void GetInteractionHandlePositionWorld(int type, int index, double position[3]);
+  /// Get the direction vector of the interaction handle from the interaction origin
+  /// Type is specified using vtkMRMLMarkupsDisplayNode::ComponentType
+  virtual void GetInteractionHandleVector(int type, int index, double axis[3]);
+  /// Get the direction vector of the interaction handle from the interaction origin in world coordinates
+  virtual void GetInteractionHandleVectorWorld(int type, int index, double axis[3]);
+
 protected:
   vtkSlicerMarkupsWidgetRepresentation();
   ~vtkSlicerMarkupsWidgetRepresentation() override;
@@ -155,6 +187,100 @@ protected:
     vtkSmartPointer<vtkStringArray> LabelsPriority;
     vtkSmartPointer<vtkTextProperty> TextProperty;
   };
+
+  class MarkupsInteractionPipeline
+  {
+  public:
+    MarkupsInteractionPipeline(vtkMRMLAbstractWidgetRepresentation* representation);
+    virtual ~MarkupsInteractionPipeline();
+
+    vtkWeakPointer<vtkMRMLAbstractWidgetRepresentation> Representation;
+
+    vtkSmartPointer<vtkSphereSource>                    AxisRotationHandleSource;
+    vtkSmartPointer<vtkArcSource>                       AxisRotationArcSource;
+    vtkSmartPointer<vtkTubeFilter>                      AxisRotationTubeFilter;
+    vtkSmartPointer<vtkAppendPolyData>                  AxisRotationGlyphSource;
+
+    vtkSmartPointer<vtkArrowSource>                     AxisTranslationGlyphSource;
+    vtkSmartPointer<vtkTransformPolyDataFilter>         AxisTranslationGlyphTransformer;
+
+    vtkSmartPointer<vtkPolyData>                        RotationHandlePoints;
+    vtkSmartPointer<vtkPolyData>                        TranslationHandlePoints;
+
+    vtkSmartPointer<vtkTransformPolyDataFilter>         RotationScaleTransform;
+    vtkSmartPointer<vtkTransformPolyDataFilter>         TranslationScaleTransform;
+
+    vtkSmartPointer<vtkTensorGlyph>                     AxisRotationGlypher;
+    vtkSmartPointer<vtkGlyph3D>                         AxisTranslationGlypher;
+
+    vtkSmartPointer<vtkAppendPolyData>                  Append;
+    vtkSmartPointer<vtkTransformPolyDataFilter>         HandleToWorldTransformFilter;
+    vtkSmartPointer<vtkTransform>                       HandleToWorldTransform;
+    vtkSmartPointer<vtkLookupTable>                     ColorTable;
+    vtkSmartPointer<vtkPolyDataMapper2D>                Mapper;
+    vtkSmartPointer<vtkActor2D>                         Actor;
+    vtkSmartPointer<vtkProperty2D>                      Property;
+
+    double                                              StartFadeAngle;
+    double                                              EndFadeAngle;
+
+    virtual void InitializePipeline();
+    virtual void CreateRotationHandles();
+    virtual void CreateTranslationHandles();
+    virtual void UpdateHandleColors();
+
+    /// Set the scale of the interaction handles in world coordinates
+    virtual void SetWidgetScale(double scale);
+    /// Get the color of the specified handle
+    /// Type is specified using vtkMRMLMarkupsDisplayNode::ComponentType
+    virtual void GetHandleColor(int type, int index, double color[4]);
+    /// Get the opacity of the specified handle
+    virtual double GetOpacity(int type, int index);
+
+    /// Get the direction of the specified axis in world coordinates
+    virtual void GetInteractionHandleAxisWorld(int index, double axis[3]);
+    /// Get the origin of the interaction widget in world coordinates
+    virtual void GetInteractionHandleOriginWorld(double origin[3]);
+    /// Get the view plane normal for the widget in world coordinates
+    virtual void GetViewPlaneNormal(double normal[3]);
+
+    struct HandleInfo
+    {
+      HandleInfo(int index, int componentType, double positionWorld[3], double positionLocal[3], double color[4])
+        : Index(index)
+        , ComponentType(componentType)
+      {
+      for (int i = 0; i < 3; ++i)
+        {
+        this->PositionWorld[i] = positionWorld[i];
+        }
+      this->PositionWorld[3] = 1.0;
+      for (int i = 0; i < 3; ++i)
+        {
+        this->PositionLocal[i] = positionLocal[i];
+        }
+      this->PositionLocal[3] = 1.0;
+      for (int i = 0; i < 4; ++i)
+        {
+        this->Color[i] = color[i];
+        }
+      }
+      int Index;
+      int ComponentType;
+      double PositionLocal[4];
+      double PositionWorld[4];
+      double Color[4];
+      bool IsVisible()
+        {
+        double epsilon = 0.001;
+        return this->Color[3] > epsilon;
+        }
+    };
+
+    /// Get the list of info for all interaction handles
+    std::vector<HandleInfo> GetHandleInfoList();
+  };
+  typedef std::vector<MarkupsInteractionPipeline::HandleInfo> HandleInfoList;
 
   // Calculate view size and scale factor
   virtual void UpdateViewScaleFactor() = 0;
@@ -198,6 +324,12 @@ protected:
   double* GetWidgetColor(int controlPointType);
 
   ControlPointsPipeline* ControlPoints[NumberOfControlPointTypes]; // Unselected, Selected, Active, Project, ProjectBehind
+
+  virtual void SetupInteractionPipeline();
+  MarkupsInteractionPipeline* InteractionPipeline;
+
+  /// Update the interaction pipeline
+  virtual void UpdateInteractionPipeline();
 
 private:
   vtkSlicerMarkupsWidgetRepresentation(const vtkSlicerMarkupsWidgetRepresentation&) = delete;

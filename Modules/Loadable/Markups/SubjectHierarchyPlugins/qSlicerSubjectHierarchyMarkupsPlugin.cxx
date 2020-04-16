@@ -39,6 +39,7 @@
 // MRML includes
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
+#include <vtkMRMLMarkupsDisplayNode.h>
 #include <vtkMRMLMarkupsNode.h>
 #include <vtkMRMLScene.h>
 
@@ -74,6 +75,7 @@ public:
   QAction* RenamePointAction;
   QAction* DeletePointAction;
   QAction* ToggleSelectPointAction;
+  QAction* ToggleHandleInteractive;
 
   QVariantMap ViewMenuEventData;
 };
@@ -87,6 +89,7 @@ qSlicerSubjectHierarchyMarkupsPluginPrivate::qSlicerSubjectHierarchyMarkupsPlugi
 , RenamePointAction(nullptr)
 , DeletePointAction(nullptr)
 , ToggleSelectPointAction(nullptr)
+, ToggleHandleInteractive(nullptr)
 {
 }
 
@@ -106,6 +109,11 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
   this->ToggleSelectPointAction = new QAction("Toggle select point", q);
   this->ToggleSelectPointAction->setObjectName("ToggleSelectPointAction");
   QObject::connect(this->ToggleSelectPointAction, SIGNAL(triggered()), q, SLOT(toggleSelectPoint()));
+
+  this->ToggleHandleInteractive = new QAction("Interaction handles visible");
+  this->ToggleHandleInteractive->setObjectName("ToggleHandleInteractive");
+  this->ToggleHandleInteractive->setCheckable(true);
+  QObject::connect(this->ToggleHandleInteractive, SIGNAL(triggered()), q, SLOT(toggleHandleInteractive()));
 }
 
 //-----------------------------------------------------------------------------
@@ -391,7 +399,7 @@ QList<QAction*> qSlicerSubjectHierarchyMarkupsPlugin::viewContextMenuActions()co
   Q_D(const qSlicerSubjectHierarchyMarkupsPlugin);
 
   QList<QAction*> actions;
-  actions << d->RenamePointAction << d->DeletePointAction << d->ToggleSelectPointAction;
+  actions << d->RenamePointAction << d->DeletePointAction << d->ToggleSelectPointAction << d->ToggleHandleInteractive;
   return actions;
 }
 
@@ -413,15 +421,26 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
     }
 
   // Markup
-  vtkMRMLNode* associatedNode = shNode->GetItemDataNode(itemID);
-  if (associatedNode && associatedNode->IsA("vtkMRMLMarkupsNode"))
+  vtkMRMLMarkupsNode* associatedNode = vtkMRMLMarkupsNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  if (associatedNode)
     {
     d->ViewMenuEventData = eventData;
     d->ViewMenuEventData["NodeID"] = QVariant(associatedNode->GetID());
 
-    d->RenamePointAction->setVisible(true);
-    d->DeletePointAction->setVisible(true);
-    d->ToggleSelectPointAction->setVisible(true);
+    int componentType = d->ViewMenuEventData["ComponentType"].toInt();
+    bool handlesSelected = componentType == vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle ||
+      componentType == vtkMRMLMarkupsDisplayNode::ComponentRotationHandle;
+
+    d->RenamePointAction->setVisible(!handlesSelected);
+    d->DeletePointAction->setVisible(!handlesSelected);
+    d->ToggleSelectPointAction->setVisible(!handlesSelected);
+
+    vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(associatedNode->GetDisplayNode());
+    d->ToggleHandleInteractive->setVisible(displayNode != nullptr);
+    if (displayNode)
+      {
+      d->ToggleHandleInteractive->setChecked(displayNode->GetHandlesInteractive());
+      }
     }
 }
 
@@ -532,4 +551,40 @@ void qSlicerSubjectHierarchyMarkupsPlugin::toggleSelectPoint()
   int componentIndex = d->ViewMenuEventData["ComponentIndex"].toInt();
 
   markupsNode->SetNthControlPointSelected(componentIndex, !markupsNode->GetNthControlPointSelected(componentIndex));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyMarkupsPlugin::toggleHandleInteractive()
+{
+  Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
+
+  if (d->ViewMenuEventData.find("NodeID") == d->ViewMenuEventData.end())
+    {
+    qCritical() << Q_FUNC_INFO << ": No node ID found in the view menu event data";
+    return;
+    }
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access MRML scene";
+    return;
+    }
+
+  // Get markups node
+  QString nodeID = d->ViewMenuEventData["NodeID"].toString();
+  vtkMRMLNode* node = scene->GetNodeByID(nodeID.toUtf8().constData());
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(node);
+  if (!markupsNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to get markups node by ID " << nodeID;
+    return;
+    }
+
+  vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(markupsNode->GetDisplayNode());
+  if (!displayNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to get display node for " << nodeID;
+    return;
+    }
+  displayNode->SetHandlesInteractive(!displayNode->GetHandlesInteractive());
 }

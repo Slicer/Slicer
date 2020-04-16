@@ -94,7 +94,11 @@ protected:
 
   std::string LabelFormat;
 
+  // Setup the pipeline for plane display
   void BuildPlane();
+
+  // Update visibility of interaction handles for representation
+  virtual void UpdateInteractionPipeline() override;
 
 private:
   vtkSlicerPlaneRepresentation3D(const vtkSlicerPlaneRepresentation3D&) = delete;

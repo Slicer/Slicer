@@ -95,6 +95,9 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   QObject::connect(this->opacitySliderWidget, SIGNAL(valueChanged(double)),
     q, SLOT(onOpacitySliderWidgetChanged(double)));
 
+  QObject::connect(this->interactionCheckBox, SIGNAL(stateChanged(int)),
+    q, SLOT(onInteractionCheckBoxChanged(int)));
+
     // populate the glyph type combo box
   if (this->glyphTypeComboBox->count() == 0)
     {
@@ -257,6 +260,9 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
     d->textScaleSliderWidget->setMaximum(textScale);
     }
   d->textScaleSliderWidget->setValue(textScale);
+
+  bool handlesInteractive = markupsDisplayNode->GetHandlesInteractive();
+  d->interactionCheckBox->setChecked(handlesInteractive);
 
   emit displayNodeChanged();
 }
@@ -432,4 +438,15 @@ void qMRMLMarkupsDisplayNodeWidget::setMaximumMarkupsSize(double maxSize)
     {
     d->glyphSizeSliderWidget->setMaximum(maxSize);
     }
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::onInteractionCheckBoxChanged(int state)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+    {
+    return;
+    }
+  d->MarkupsDisplayNode->SetHandlesInteractive(state);
 }

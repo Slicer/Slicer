@@ -29,6 +29,9 @@
 // Slicer MRML includes
 #include "vtkMRMLScene.h"
 
+// vtkAddon includes
+#include "vtkAddonMathUtilities.h"
+
 // VTK includes
 #include <vtkAbstractTransform.h>
 #include <vtkBitArray.h>
@@ -40,11 +43,15 @@
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkPlane.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkStringArray.h>
+#include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkTrivialProducer.h>
+#include "vtk_eigen.h"
+#include VTK_EIGEN(Dense)
 
 // STD includes
 #include <sstream>
@@ -94,6 +101,8 @@ vtkMRMLMarkupsNode::vtkMRMLMarkupsNode()
   this->CurveCoordinateSystemGeneratorWorld->SetInputConnection(this->CurvePolyToWorldTransformer->GetOutputPort());
 
   this->TransformedCurvePolyLocator = vtkSmartPointer<vtkPointLocator>::New();
+
+  this->InteractionHandleToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
 }
 
 //----------------------------------------------------------------------------
@@ -111,6 +120,7 @@ void vtkMRMLMarkupsNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBeginMacro(of);
   vtkMRMLWriteXMLBooleanMacro(locked, Locked);
   vtkMRMLWriteXMLStdStringMacro(markupLabelFormat, MarkupLabelFormat);
+  vtkMRMLWriteXMLMatrix4x4Macro(interactionHandleToWorldMatrix, InteractionHandleToWorldMatrix);
   vtkMRMLWriteXMLEndMacro();
 
   int textLength = static_cast<int>(this->TextList->GetNumberOfValues());
@@ -133,6 +143,7 @@ void vtkMRMLMarkupsNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBeginMacro(atts);
   vtkMRMLReadXMLBooleanMacro(locked, Locked);
   vtkMRMLReadXMLStdStringMacro(markupLabelFormat, MarkupLabelFormat);
+  vtkMRMLReadXMLOwnedMatrix4x4Macro(interactionHandleToWorldMatrix, InteractionHandleToWorldMatrix);
   vtkMRMLReadXMLEndMacro();
 
   /* TODO: read measurements
@@ -168,6 +179,7 @@ void vtkMRMLMarkupsNode::Copy(vtkMRMLNode *anode)
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyBooleanMacro(Locked);
   vtkMRMLCopyStdStringMacro(MarkupLabelFormat);
+  vtkMRMLCopyOwnedMatrix4x4Macro(InteractionHandleToWorldMatrix);
   vtkMRMLCopyEndMacro();
 
   this->TextList->DeepCopy(node->TextList);
@@ -219,6 +231,7 @@ void vtkMRMLMarkupsNode::ProcessMRMLEvents(vtkObject *caller,
     {
     vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), nullptr, this->CurveInputPolyToWorldTransform);
     vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), nullptr, this->CurvePolyToWorldTransform);
+    this->UpdateInteractionHandleToWorldMatrix();
     this->UpdateMeasurements();
     }
   else if (caller == this->CurveGenerator.GetPointer())
@@ -237,6 +250,7 @@ void vtkMRMLMarkupsNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintBooleanMacro(Locked);
   vtkMRMLPrintStdStringMacro(MarkupLabelFormat);
+  vtkMRMLPrintMatrix4x4Macro(InteractionHandleToWorldMatrix)
   vtkMRMLPrintEndMacro();
 
   os << indent << "MaximumNumberOfControlPoints: ";
@@ -331,6 +345,8 @@ void vtkMRMLMarkupsNode::RemoveAllControlPoints()
   this->CurveInputPoly->GetPoints()->Reset();
   this->CurveInputPoly->GetPoints()->Squeeze();
 
+  this->UpdateInteractionHandleToWorldMatrix();
+
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointRemovedEvent);
   if (definedPointsExisted)
     {
@@ -413,8 +429,8 @@ vtkMRMLMarkupsNode::ControlPoint* vtkMRMLMarkupsNode::GetNthControlPointCustomLo
 {
   if (n < 0 || n >= this->GetNumberOfControlPoints())
     {
-      vtkErrorMacro("vtkMRMLMarkupsNode::" << failedMethodName << " failed: control point " <<
-        n << " does not exist");
+    vtkErrorMacro("vtkMRMLMarkupsNode::" << failedMethodName << " failed: control point " <<
+      n << " does not exist");
     return nullptr;
     }
 
@@ -486,6 +502,8 @@ int vtkMRMLMarkupsNode::AddControlPoint(ControlPoint *controlPoint)
   // TODO: set point mask based on PositionStatus
   this->CurveInputPoly->GetPoints()->InsertNextPoint(controlPoint->Position);
   this->CurveInputPoly->GetPoints()->Modified();
+
+  this->UpdateInteractionHandleToWorldMatrix();
 
   int controlPointIndex = this->GetNumberOfControlPoints() - 1;
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointAddedEvent,  static_cast<void*>(&controlPointIndex));
@@ -631,6 +649,7 @@ void vtkMRMLMarkupsNode::RemoveNthControlPoint(int pointIndex)
   this->ControlPoints.erase(this->ControlPoints.begin() + pointIndex);
 
   this->UpdateCurvePolyFromControlPoints();
+  this->UpdateInteractionHandleToWorldMatrix();
 
   if (positionWasDefined)
     {
@@ -672,6 +691,7 @@ bool vtkMRMLMarkupsNode::InsertControlPoint(ControlPoint *controlPoint, int targ
   std::vector < ControlPoint* >::iterator result = this->ControlPoints.insert(pos, controlPoint);
 
   this->UpdateCurvePolyFromControlPoints();
+  this->UpdateInteractionHandleToWorldMatrix();
 
   // let observers know that a markup was added
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointAddedEvent, static_cast<void*>(&targetIndex));
@@ -737,6 +757,7 @@ void vtkMRMLMarkupsNode::SwapControlPoints(int m1, int m2)
   *controlPoint2 = controlPoint1Backup;
 
   this->UpdateCurvePolyFromControlPoints();
+  this->UpdateInteractionHandleToWorldMatrix();
 
   // and let listeners know that two control points have changed
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&m1));
@@ -785,6 +806,8 @@ void vtkMRMLMarkupsNode::SetNthControlPointPosition(const int pointIndex,
   vtkPoints* points = this->CurveInputPoly->GetPoints();
   points->SetPoint(pointIndex, x, y, z);
   points->Modified();
+
+  this->UpdateInteractionHandleToWorldMatrix();
 
   // throw an event to let listeners know the position has changed
   int n = pointIndex;
@@ -856,6 +879,8 @@ void vtkMRMLMarkupsNode::SetNthControlPointPositionOrientationWorldFromArray(
   vtkPoints* points = this->CurveInputPoly->GetPoints();
   points->SetPoint(pointIndex, controlPoint->Position);
   points->Modified();
+
+  this->UpdateInteractionHandleToWorldMatrix();
 
   // throw an event to let listeners know the position has changed
   int n = pointIndex;
@@ -2007,4 +2032,76 @@ void vtkMRMLMarkupsNode::WriteMeasurementsToDescription()
     description += (*measurementIt)->GetName() + std::string(": ") + (*measurementIt)->GetValueWithUnitsAsPrintableString();
   }
   this->SetDescription(description.c_str());
+}
+
+//---------------------------------------------------------------------------
+vtkMatrix4x4* vtkMRMLMarkupsNode::GetInteractionHandleToWorldMatrix()
+{
+  return this->InteractionHandleToWorldMatrix;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::UpdateInteractionHandleToWorldMatrix()
+{
+  // The origin of the coordinate system is at the center of mass of the control points
+  double origin_World[3] = { 0 };
+  int numberOfControlPoints = this->GetNumberOfMarkups();
+  vtkNew<vtkPoints> controlPoints_World;
+  for (int i = 0; i < numberOfControlPoints; ++i)
+    {
+    double controlPointPosition_World[3] = { 0.0 };
+    this->GetNthControlPointPositionWorld(i, controlPointPosition_World);
+
+    origin_World[0] += controlPointPosition_World[0] / numberOfControlPoints;
+    origin_World[1] += controlPointPosition_World[1] / numberOfControlPoints;
+    origin_World[2] += controlPointPosition_World[2] / numberOfControlPoints;
+
+    controlPoints_World->InsertNextPoint(controlPointPosition_World);
+    }
+
+  for (int i = 0; i < 3; ++i)
+    {
+    this->InteractionHandleToWorldMatrix->SetElement(i, 3, origin_World[i]);
+    }
+
+  if (this->GetNumberOfControlPoints() < 3)
+    {
+    return;
+    }
+
+  // The orientation of the coordinate system is adjusted so that the z axis aligns with the normal of the
+  // best fit plane defined by the control points.
+
+  vtkNew<vtkPlane> bestFitPlane_World;
+  vtkAddonMathUtilities::FitPlaneToPoints(controlPoints_World, bestFitPlane_World);
+
+  double normal_World[3] = { 0.0 };
+  bestFitPlane_World->GetNormal(normal_World);
+
+  double handleZ_World[4] = { 0.0, 0.0, 1.0, 0.0 };
+  this->InteractionHandleToWorldMatrix->MultiplyPoint(handleZ_World, handleZ_World);
+
+  if (vtkMath::Dot(handleZ_World, normal_World) < 0.0)
+    {
+    handleZ_World[0] = -handleZ_World[0];
+    handleZ_World[1] = -handleZ_World[1];
+    handleZ_World[2] = -handleZ_World[2];
+    }
+
+  double rotationVector_World[3] = { 0.0 };
+  double angle = vtkMath::DegreesFromRadians(vtkMath::AngleBetweenVectors(handleZ_World, normal_World));
+  double epsilon = 0.001;
+  if (angle < epsilon)
+    {
+    return;
+    }
+  vtkMath::Cross(handleZ_World, normal_World, rotationVector_World);
+
+  vtkNew<vtkTransform> handleToWorldMatrix;
+  handleToWorldMatrix->PostMultiply();
+  handleToWorldMatrix->Concatenate(this->InteractionHandleToWorldMatrix);
+  handleToWorldMatrix->Translate(-origin_World[0], -origin_World[1], -origin_World[2]);
+  handleToWorldMatrix->RotateWXYZ(angle, rotationVector_World);
+  handleToWorldMatrix->Translate(origin_World);
+  this->InteractionHandleToWorldMatrix->DeepCopy(handleToWorldMatrix->GetMatrix());
 }

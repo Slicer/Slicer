@@ -94,6 +94,9 @@ protected:
 
   void BuildArc();
 
+  // Update visibility of interaction handles for representation
+  void UpdateInteractionPipeline() override;
+
 private:
   vtkSlicerAngleRepresentation3D(const vtkSlicerAngleRepresentation3D&) = delete;
   void operator=(const vtkSlicerAngleRepresentation3D&) = delete;

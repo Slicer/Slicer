@@ -52,7 +52,9 @@ class vtkMRMLUnitNode;
 /// Each ControlPoint can also be individually un/selected, un/locked, in/visible,
 /// and have a label (short, shown in the viewers) and description (longer,
 /// shown in the GUI).
-///
+/// Coordinate systems used:
+///   - Local: Local coordinates
+///   - World: All parent transforms on node applied to local.
 /// \sa vtkMRMLMarkupsDisplayNode
 /// \ingroup Slicer_QtModules_Markups
 
@@ -561,6 +563,9 @@ public:
   /// Get a copy of all control point positions in world coordinate system
   void GetControlPointPositionsWorld(vtkPoints* points);
 
+  /// 4x4 matrix detailing the orientation and position in world coordinates of the interaction handles.
+  virtual vtkMatrix4x4* GetInteractionHandleToWorldMatrix();
+
 protected:
   vtkMRMLMarkupsNode();
   ~vtkMRMLMarkupsNode() override;
@@ -605,6 +610,9 @@ protected:
   /// Helper function to write measurements to node Description property.
   /// This is a short-term solution until measurements display is properly implemented.
   virtual void WriteMeasurementsToDescription();
+
+  /// Calculates the handle to world matrix based on the current control points
+  virtual void UpdateInteractionHandleToWorldMatrix();
 
   // Used for limiting number of markups that may be placed.
   int MaximumNumberOfControlPoints;
@@ -653,6 +661,10 @@ protected:
   vtkVector3d CenterPos;
 
   std::vector< vtkSmartPointer<vtkMRMLMeasurement> > Measurements;
+
+  // Transform that moves the xyz unit vectors and origin of the interaction handles to local coordinates
+  vtkSmartPointer<vtkMatrix4x4> InteractionHandleToWorldMatrix;
+
 };
 
 #endif

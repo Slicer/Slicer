@@ -73,6 +73,9 @@ protected:
   vtkSlicerLineRepresentation3D();
   ~vtkSlicerLineRepresentation3D() override;
 
+  /// Update interaction handle visibility for representation
+  virtual void UpdateInteractionPipeline() override;
+
   vtkSmartPointer<vtkPolyData> Line;
   vtkSmartPointer<vtkPolyDataMapper> LineMapper;
   vtkSmartPointer<vtkActor> LineActor;

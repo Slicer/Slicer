@@ -88,7 +88,9 @@ public:
     ComponentControlPoint,
     ComponentCenterPoint,
     ComponentLine,
-    ComponentPlane
+    ComponentPlane,
+    ComponentRotationHandle,
+    ComponentTranslationHandle,
     };
   struct ComponentInfo
     {
@@ -313,6 +315,11 @@ public:
   vtkMRMLProceduralColorNode* GetLineColorNode();
   virtual const char* GetLineColorNodeReferenceRole();
 
+  /// The visibility and interactability of the interaction handles
+  vtkGetMacro(HandlesInteractive, bool);
+  vtkSetMacro(HandlesInteractive, bool);
+  vtkBooleanMacro(HandlesInteractive, bool);
+
 protected:
   vtkMRMLMarkupsDisplayNode();
   ~vtkMRMLMarkupsDisplayNode() override;
@@ -349,5 +356,7 @@ protected:
   double LineColorFadingEnd;
   double LineColorFadingSaturation;
   double LineColorFadingHueOffset;
+
+  bool HandlesInteractive;
 };
 #endif

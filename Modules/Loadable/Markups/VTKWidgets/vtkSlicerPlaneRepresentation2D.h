@@ -81,6 +81,9 @@ public:
 
   void BuildPlane();
 
+  // Update visibility of interaction handles for representation
+  void UpdateInteractionPipeline() override;
+
 protected:
   vtkSlicerPlaneRepresentation2D();
   ~vtkSlicerPlaneRepresentation2D() override;
