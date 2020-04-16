@@ -18,6 +18,7 @@ _sourcePatterns = [
   "*.md5",
   "*.png",
   "*.dox",
+  "*.sha256",
 ]
 
 _templateCategories = [
