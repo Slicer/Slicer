@@ -419,14 +419,6 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller,
     this->UpdatePlaneFromSliceNode();
     }
 
-  // Use hierarchy information if any, and if overriding is allowed for the current display node
-  bool hierarchyVisibility = true;
-  if (this->MarkupsDisplayNode->GetFolderDisplayOverrideAllowed())
-    {
-    vtkMRMLDisplayableNode* displayableNode = this->MarkupsDisplayNode->GetDisplayableNode();
-    hierarchyVisibility = vtkMRMLFolderDisplayNode::GetHierarchyVisibility(displayableNode);
-    }
-
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || !this->IsDisplayable())
     {
@@ -1037,7 +1029,6 @@ bool vtkSlicerMarkupsWidgetRepresentation2D::IsCenterDisplayableOnSlice(vtkMRMLM
   bool showPoint = true;
 
   // allow annotations to appear only in designated viewers
-  vtkMRMLDisplayNode *displayNode = markupsNode->GetDisplayNode();
   if (!markupsNode || !this->IsDisplayable())
     {
     return false;
