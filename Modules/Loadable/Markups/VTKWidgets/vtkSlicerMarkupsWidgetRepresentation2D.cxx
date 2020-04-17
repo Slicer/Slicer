@@ -630,7 +630,6 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteractWithHandles(
       double* handleWorldPos = handleInfo.PositionWorld;
       rasToxyMatrix->MultiplyPoint(handleWorldPos, handleDisplayPos);
       handleDisplayPos[2] = displayPosition3[2]; // Handles are always projected
-      double dist2 = vtkMath::Distance2BetweenPoints(handleDisplayPos, displayPosition3);
 
       double originWorldPos[4] = { 0.0, 0.0, 0.0, 1.0 };
       this->InteractionPipeline->GetInteractionHandleOriginWorld(originWorldPos);
