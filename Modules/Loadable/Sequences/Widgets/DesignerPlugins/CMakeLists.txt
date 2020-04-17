@@ -30,10 +30,6 @@ set(${KIT}_TARGET_LIBRARIES
   )
 
 #-----------------------------------------------------------------------------
-# Necessary to set CMAKE_LIBRARY_OUTPUT_DIRECTORY. Without that designer plugins
-# would be created in /designer directory.
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${Slicer_DIR}/bin)
-
 ctkMacroBuildQtDesignerPlugin(
   NAME ${KIT}
   EXPORT_DIRECTIVE ${${KIT}_EXPORT}
