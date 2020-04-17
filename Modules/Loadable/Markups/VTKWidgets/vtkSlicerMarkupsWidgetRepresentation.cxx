@@ -755,9 +755,6 @@ bool vtkSlicerMarkupsWidgetRepresentation::IsDisplayable()
     return false;
     }
 
-  // Use hierarchy display node if any, and if overriding is allowed for the current display node.
-  // If override is explicitly disabled, then do not apply hierarchy visibility either.
-  vtkMRMLDisplayNode* effectiveDisplayNode = this->MarkupsDisplayNode;
   // If parent folder visibility is set to false then the markups is not visible
   if (this->MarkupsDisplayNode->GetFolderDisplayOverrideAllowed())
     {
@@ -768,12 +765,6 @@ bool vtkSlicerMarkupsWidgetRepresentation::IsDisplayable()
     if (!vtkMRMLFolderDisplayNode::GetHierarchyVisibility(displayableNode))
       {
       return false;
-      }
-    vtkMRMLDisplayNode* overrideHierarchyDisplayNode =
-      vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(displayableNode);
-    if (overrideHierarchyDisplayNode)
-      {
-      effectiveDisplayNode = overrideHierarchyDisplayNode;
       }
     }
   if (vtkMRMLSliceNode::SafeDownCast(this->ViewNode))
