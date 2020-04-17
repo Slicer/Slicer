@@ -600,6 +600,7 @@ vtkMRMLMarkupsNode* vtkMRMLMarkupsDisplayableManager::CreateNewMarkupsNode(
     {
     nodeName = "P";
     }
+  nodeName = this->GetMRMLScene()->GenerateUniqueName(nodeName);
 
   vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(
     this->GetMRMLScene()->AddNewNodeByClass(markupsNodeClassName, nodeName));
