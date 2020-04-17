@@ -1234,7 +1234,7 @@ void vtkSlicerMarkupsWidget::RotateWidget(double eventPos[2])
 }
 
 //----------------------------------------------------------------------
-bool vtkSlicerMarkupsWidget::GetIntersectionOnAxisPlane(int type, int index, const double input_Display[2], double outputIntersection_World[3])
+bool vtkSlicerMarkupsWidget::GetIntersectionOnAxisPlane(int vtkNotUsed(type), int index, const double input_Display[2], double outputIntersection_World[3])
 {
   vtkSlicerMarkupsWidgetRepresentation* rep = vtkSlicerMarkupsWidgetRepresentation::SafeDownCast(this->WidgetRep);
   vtkSlicerMarkupsWidgetRepresentation2D* rep2d = vtkSlicerMarkupsWidgetRepresentation2D::SafeDownCast(this->WidgetRep);
@@ -1324,7 +1324,7 @@ bool vtkSlicerMarkupsWidget::GetIntersectionOnAxisPlane(int type, int index, con
 }
 
 //----------------------------------------------------------------------
-bool vtkSlicerMarkupsWidget::GetClosestPointOnInteractionAxis(int type, int index, const double input_Display[2], double outputClosestPoint_World[3])
+bool vtkSlicerMarkupsWidget::GetClosestPointOnInteractionAxis(int vtkNotUsed(type), int index, const double input_Display[2], double outputClosestPoint_World[3])
 {
   vtkSlicerMarkupsWidgetRepresentation* rep = vtkSlicerMarkupsWidgetRepresentation::SafeDownCast(this->WidgetRep);
   vtkSlicerMarkupsWidgetRepresentation2D* rep2d = vtkSlicerMarkupsWidgetRepresentation2D::SafeDownCast(this->WidgetRep);
