@@ -144,12 +144,11 @@ void vtkSlicerSequencesLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 //----------------------------------------------------------------------------
 vtkMRMLSequenceNode* vtkSlicerSequencesLogic::AddSequence(const char* filename)
 {
-  if (this->GetMRMLScene() == 0 || filename == 0)
+  if (this->GetMRMLScene() == nullptr || filename == nullptr)
     {
-    return 0;
+    return nullptr;
     }
   vtkNew<vtkMRMLSequenceNode> sequenceNode;
-  //vtkNew<vtkMRMLModelDisplayNode> displayNode;
   vtkNew<vtkMRMLSequenceStorageNode> sequenceStorageNode;
   vtkNew<vtkMRMLVolumeSequenceStorageNode> volumeSequenceStorageNode;
 
@@ -165,7 +164,7 @@ vtkMRMLSequenceNode* vtkSlicerSequencesLogic::AddSequence(const char* filename)
   else
     {
     vtkErrorMacro("vtkSlicerSequencesLogic::AddSequence failed: unrecognized file extension");
-    return false;
+    return nullptr;
     }
 
   // check for local or remote files
@@ -218,13 +217,13 @@ vtkMRMLSequenceNode* vtkSlicerSequencesLogic::AddSequence(const char* filename)
       vtkErrorMacro("AddSequence: error reading " << filename);
       this->GetMRMLScene()->RemoveNode(sequenceNode);
       this->GetMRMLScene()->RemoveNode(storageNode);
-      return 0;
+      return nullptr;
       }
     }
   else
     {
     vtkErrorMacro("Couldn't read file: " << filename);
-    return 0;
+    return nullptr;
     }
 
   return sequenceNode.GetPointer();
