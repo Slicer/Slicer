@@ -1152,3 +1152,21 @@ double vtkMRMLVolumeNode::GetImageBackgroundScalarComponentAsDouble(int componen
 
   return medianValue;
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeNode::CreateDefaultSequenceDisplayNodes()
+{
+  if (this->GetDisplayNode())
+    {
+    // there is a display node already
+    return;
+    }
+  this->CreateDefaultDisplayNodes();
+
+  // Turn off auto window/level for scalar volumes (it is costly to compute recommended ww/wl and image would appear to be flickering)
+  vtkMRMLScalarVolumeDisplayNode* scalarVolumeDisplayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
+  if (scalarVolumeDisplayNode)
+    {
+    scalarVolumeDisplayNode->AutoWindowLevelOff();
+    }
+}

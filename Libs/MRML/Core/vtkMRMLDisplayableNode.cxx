@@ -230,6 +230,14 @@ void vtkMRMLDisplayableNode::CreateDefaultDisplayNodes()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLDisplayableNode::CreateDefaultSequenceDisplayNodes()
+{
+  // By default, regular display nodes are created, but for some nodes
+  // slightly modified nodes may be added.
+  this->CreateDefaultDisplayNodes();
+}
+
+//---------------------------------------------------------------------------
 int vtkMRMLDisplayableNode::GetDisplayVisibility()
 {
   int ndnodes = this->GetNumberOfDisplayNodes();

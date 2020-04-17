@@ -250,9 +250,15 @@ public:
   /// Create default storage node or nullptr if does not have one
   vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
+  /// Creates the most appropriate storage node class for storing a sequence of these nodes.
+  virtual vtkMRMLStorageNode* CreateDefaultSequenceStorageNode();
+
   ///
   /// Create and observe default display node
   void CreateDefaultDisplayNodes() override;
+
+  /// Creates the most appropriate display node class for storing a sequence of these nodes.
+  void CreateDefaultSequenceDisplayNodes() override;
 
   /// Get/Set for ReadAsTransformToParent
   /// Indicates that the transform in the storage node has to be interpreted as

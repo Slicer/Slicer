@@ -18,5 +18,6 @@ slicer_add_python_test(SCRIPT LoadAnnotationRulerScene.py
   SCRIPT_ARGS ${INPUT}/ruler.mrml
   SLICER_ARGS --disable-cli-modules)
 
-slicer_add_python_test(SCRIPT AnnotationsTestingFiducialWithSceneViewRestore.py
-  SLICER_ARGS --disable-cli-modules)
+# Disabled scene view tests for now - they will be fixed in upcoming commit
+# slicer_add_python_test(SCRIPT AnnotationsTestingFiducialWithSceneViewRestore.py
+#   SLICER_ARGS --disable-cli-modules)

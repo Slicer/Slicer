@@ -16,6 +16,7 @@ set(qtmodules
   Plots
   SceneViews
   Segmentations
+  Sequences
   SlicerWelcome
   Tables
   Texts

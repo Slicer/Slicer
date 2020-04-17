@@ -18,6 +18,8 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLBSplineTransformNode.h"
 #include "vtkMRMLGridTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
+
+#include "vtkMRMLLinearTransformSequenceStorageNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTransformStorageNode.h"
 #include "vtkMRMLTransformDisplayNode.h"
@@ -1636,4 +1638,16 @@ bool vtkMRMLTransformNode::IsGeneralTransformLinear(vtkAbstractTransform* inputT
       }
     }
   return true;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLStorageNode* vtkMRMLTransformNode::CreateDefaultSequenceStorageNode()
+{
+  return vtkMRMLLinearTransformSequenceStorageNode::New();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::CreateDefaultSequenceDisplayNodes()
+{
+  // don't create display nodes for transforms by default
 }

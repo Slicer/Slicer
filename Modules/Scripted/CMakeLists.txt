@@ -1,4 +1,5 @@
 set(modules
+  CropVolumeSequence
   DataProbe
   Editor
   EditorLib
