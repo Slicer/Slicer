@@ -129,7 +129,6 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerSequencesModuleWidgetPrivate::qSlicerSequencesModuleWidgetPrivate( qSlicerSequencesModuleWidget& object )
 : q_ptr(&object)
-, DataNodeCandidatesClassName("(uninitialized)") // this will force an initial update
 , ModuleWindowInitialized(false)
 , ChartXY(0)
 , ChartTable(0)
@@ -137,6 +136,7 @@ qSlicerSequencesModuleWidgetPrivate::qSlicerSequencesModuleWidgetPrivate( qSlice
 , ArrayY1(0)
 , ArrayY2(0)
 , ArrayY3(0)
+, DataNodeCandidatesClassName("(uninitialized)") // this will force an initial update
 {
 }
 
