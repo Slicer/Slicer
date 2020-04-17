@@ -1569,6 +1569,7 @@ void qSlicerSequencesModuleWidget::updateChart()
 //-----------------------------------------------------------
 bool qSlicerSequencesModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
 {
+  Q_UNUSED(context);
   Q_D(qSlicerSequencesModuleWidget);
   if (vtkMRMLSequenceBrowserNode::SafeDownCast(node))
     {
