@@ -173,7 +173,13 @@ void vtkSlicerVolumeRenderingLogic::AddVolumeRenderingDisplayNode(vtkMRMLVolumeR
   it = this->DisplayNodes.insert(this->DisplayNodes.end(), static_cast<vtkMRMLNode*>(nullptr));
   // .. then set and observe
   vtkSetAndObserveMRMLNodeMacro(*it, node);
-  this->UpdateVolumeRenderingDisplayNode(node);
+
+  //Don't update volume rendering while a scene is being imported
+  if (!this->GetMRMLScene()->IsImporting())
+    {
+    this->UpdateVolumeRenderingDisplayNode(node);
+    }
+
 }
 
 //----------------------------------------------------------------------------
