@@ -1020,6 +1020,11 @@ def arrayFromModelPointData(modelNode, arrayName):
   narray = vtk.util.numpy_support.vtk_to_numpy(arrayVtk)
   return narray
 
+def arrayFromModelPointDataModified(modelNode, arrayName):
+  """Indicate that modification of a numpy array returned by :py:meth:`arrayFromModelPoints` has been completed."""
+  arrayVtk = modelNode.GetPolyData().GetPointData().GetArray(arrayName)
+  arrayFromModelPointsModified(modelNode)
+
 def arrayFromModelPolyIds(modelNode):
   """Return poly id array of a model node as numpy array.
 
