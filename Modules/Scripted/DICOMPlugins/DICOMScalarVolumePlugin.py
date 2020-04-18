@@ -211,8 +211,10 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     # second, for any tags that have more than one value, create a new
     # virtual series
     #
+    subseriesCount = 0
     for tag in subseriesTags:
       if len(subseriesValues[tag]) > 1:
+        subseriesCount += 1
         for valueIndex, value in enumerate(subseriesValues[tag]):
           # default loadable includes all files for series
           loadable = DICOMLoadable()
@@ -223,6 +225,12 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
           loadable.tooltip = "%d files, grouped by %s = %s. First file: %s" % (len(loadable.files), tag, value, loadable.files[0])
           loadable.selected = False
           loadables.append(loadable)
+
+    if subseriesCount == 1:
+      # only one kind of subseries, then it's probably correct
+      # so make them higher confidence than the default all-files version
+      for subseriesLoadable in loadables[1:]:
+        subseriesLoadable.confidence = .75
 
     # remove any files from loadables that don't have pixel data (no point sending them to ITK for reading)
     # also remove DICOM SEG, since it is not handled by ITK readers

@@ -362,8 +362,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         if loadable.confidence > highestConfidenceValue:
           highestConfidenceValue = loadable.confidence
       for loadable in loadablesBySeries[series]:
-        if loadable.confidence < highestConfidenceValue:
-          loadable.selected = False
+        loadable.selected = loadable.confidence == highestConfidenceValue
 
   def onSeriesSelected(self, seriesUIDList):
     self.loadableTable.setLoadables([])
