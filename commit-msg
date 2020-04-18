@@ -19,10 +19,14 @@
 
 # Based on hook scripts from Git, VTK and ParaView.
 
+# As of git 2.18
+# https://stackoverflow.com/questions/53121208/git-dir-no-longer-set-in-pre-commit-hooks
+export HOOK_GIT_DIR=${HOOK_GIT_DIR-`git rev-parse --git-dir`}
+
 # Prepare a copy of the message:
 #  - strip comment lines
 #  - stop at "diff --git" (git commit -v)
-commit_msg="$GIT_DIR/COMMIT_MSG"
+commit_msg="$HOOK_GIT_DIR/COMMIT_MSG"
 sed -n -e '/^#/d' -e '/^diff --git/q' -e 'p;d' "$1" > "$commit_msg"
 
 advice='
@@ -43,7 +47,7 @@ printErrorAndExit() {
 # Check the commit message layout with a simple state machine.
 
 msg_is_merge() {
-  test -f "$GIT_DIR/MERGE_HEAD" &&
+  test -f "$HOOK_GIT_DIR/MERGE_HEAD" &&
     echo "$line" | grep "^Merge " >/dev/null 2>&1
 }
 
