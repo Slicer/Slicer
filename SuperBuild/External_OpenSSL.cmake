@@ -133,6 +133,17 @@ ExternalProject_Execute(${proj} \"configure\" sh config --with-zlib-lib=${_zlib_
         ${${proj}_DEPENDENCIES}
       )
 
+    # To address "-Wnonportable-include-path" warning, resolve "e_os2.h" symlink found
+    # in ${EP_SOURCE_DIR}/include/openssl.
+    # See https://github.com/Slicer/Slicer/issues/4875
+    ExternalProject_Add_Step(${proj} resolve_e_os2_symlink
+      COMMAND ${CMAKE_COMMAND}
+        -DOPENSSL_SOURCE_DIR:PATH=${EP_SOURCE_DIR}
+        -P ${Slicer_SOURCE_DIR}/SuperBuild/OpenSSL_resolve_e_os2_symlink.cmake
+      DEPENDEES configure
+      DEPENDERS build
+      )
+
     if(APPLE)
       ExternalProject_Add_Step(${proj} fix_rpath
         COMMAND install_name_tool -id ${EP_SOURCE_DIR}/libcrypto.dylib ${EP_SOURCE_DIR}/libcrypto.dylib
