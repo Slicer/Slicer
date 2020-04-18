@@ -19,6 +19,10 @@
 
 # Based on hook scripts from Git, VTK and ParaView.
 
+# As of git 2.18
+# https://stackoverflow.com/questions/53121208/git-dir-no-longer-set-in-pre-commit-hooks
+export HOOK_GIT_DIR=${HOOK_GIT_DIR-`git rev-parse --git-dir`}
+
 printErrorAndExit() {
   echo 'pre-commit hook failure' 1>&2
   echo '-----------------------' 1>&2
@@ -54,7 +58,7 @@ git config --get user.email | grep '^[^@]*@[^@]*$' > /dev/null ||
 # Check that developer setup is up-to-date.
 lastSetupForDevelopment=$(git config --get hooks.SetupForDevelopment || echo 0)
 eval $(grep '^SetupForDevelopment_VERSION=' \
-  "$GIT_DIR/../Utilities/SetupForDevelopment.sh")
+  "$HOOK_GIT_DIR/../Utilities/SetupForDevelopment.sh")
 test -n "$SetupForDevelopment_VERSION" || SetupForDevelopment_VERSION=0
 if test $lastSetupForDevelopment -lt $SetupForDevelopment_VERSION; then
   printErrorAndExit '
