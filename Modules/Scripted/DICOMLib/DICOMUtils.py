@@ -32,6 +32,26 @@ def loadPatientByUID(patientUID):
       for patientUID in patientUIDs:
         loadedNodeIDs.extend(DICOMUtils.loadPatientByUID(patientUID))
 
+    This method expecs a patientUID in the form returned by
+    db.patients(), which are (integer) strings unique for the current database.
+    The actual contents of these strings are implementation specific
+    and should not be relied on (may be changed).
+    See ctkDICOMDatabasePrivate::insertPatient for more details.
+
+    See loadPatientByPatientID to use the PatientID field
+    of the dicom header.
+
+    Note that we have these methods because
+    there is no way to have a globally unique patient ID.
+    They are issued by different institutions so there may be
+    name clashes.  This is is in contrast to other places where UID is
+    used in dicom and in this code (studyUID, seriesUID, instanceUID),
+    where it is common to assume that
+    the IDs are unique because the dicom standard provides
+    mechanisms to support generating unique values
+    (although there is no way to know for sure that
+    the creator of an instance actually created a unique value
+    rather than just copying an existing one).
   """
   if not slicer.dicomDatabase.isOpen:
     raise IOError('DICOM module or database cannot be accessed')
@@ -147,6 +167,50 @@ def loadSeriesByUID(seriesUIDs):
 
   loadablesByPlugin, loadEnabled = getLoadablesFromFileLists(fileLists)
   return loadLoadables(loadablesByPlugin)
+
+#------------------------------------------------------------------------------
+def loadByInstanceUID(instanceUID):
+  """ Load with the most confident loadable that contains the instanceUID from DICOM database.
+  This helps in the case where an instance is part of a series which may offer multiple
+  loadables, such as when a series has multiple time points where
+  each corresponds to a scalar volume and you only want to load the correct one.
+  Returns list of loaded node ids (typically one node).
+
+  For example:
+    >>> uid = '1.3.6.1.4.1.14519.5.2.1.3098.5025.172915611048593327557054469973'
+    >>> import DICOMLib
+    >>> nodeIDs = DICOMLib.DICOMUtils.loadByInstanceUID(uid)
+  """
+
+  if not slicer.dicomDatabase.isOpen:
+    raise IOError('DICOM module or database cannot be accessed')
+
+  # get the loadables corresponding to this instance's series
+  filePath = slicer.dicomDatabase.fileForInstance(instanceUID)
+  seriesUID = slicer.dicomDatabase.seriesForFile(filePath)
+  fileList = slicer.dicomDatabase.filesForSeries(seriesUID)
+  loadablesByPlugin, loadEnabled = getLoadablesFromFileLists([fileList])
+  # keep only the loadables that include this instance's file and is highest confidence
+  highestConfidence = {
+    'confidence': 0,
+    'plugin': None,
+    'loadable': None
+  }
+  for plugin in loadablesByPlugin.keys():
+    loadablesWithInstance = []
+    for loadable in loadablesByPlugin[plugin]:
+      if filePath in loadable.files:
+        if loadable.confidence > highestConfidence['confidence']:
+          loadable.selected = True
+          highestConfidence = {
+            'confidence': loadable.confidence,
+            'plugin': plugin,
+            'loadable': loadable
+          }
+  filteredLoadablesByPlugin = {}
+  filteredLoadablesByPlugin[highestConfidence['plugin']] = [highestConfidence['loadable'],]
+  # load the results
+  return loadLoadables(filteredLoadablesByPlugin)
 
 #------------------------------------------------------------------------------
 def openDatabase(databaseDir):
