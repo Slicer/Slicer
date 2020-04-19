@@ -355,15 +355,20 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
           loadablesBySeries[seriesUID].append(loadable)
 
     # now for each series, find the highest confidence selected loadables
-    # and set all others to be unselected
+    # and set all others to be unselected.
+    # If there are several loadables that tie for the
+    # highest confidence value, select them all
+    # on the assumption that they represent alternate interpretations
+    # of the data or subparts of it.  The user can either use
+    # advanced mode to deselect, or simply delete the
+    # unwanted interpretations.
     for series in loadablesBySeries:
       highestConfidenceValue = -1
       for loadable in loadablesBySeries[series]:
         if loadable.confidence > highestConfidenceValue:
           highestConfidenceValue = loadable.confidence
       for loadable in loadablesBySeries[series]:
-        if loadable.confidence < highestConfidenceValue:
-          loadable.selected = False
+        loadable.selected = loadable.confidence == highestConfidenceValue
 
   def onSeriesSelected(self, seriesUIDList):
     self.loadableTable.setLoadables([])
