@@ -32,10 +32,26 @@ def loadPatientByUID(patientUID):
       for patientUID in patientUIDs:
         loadedNodeIDs.extend(DICOMUtils.loadPatientByUID(patientUID))
 
-    Note that since there is no way to have a globally unique patient ID,
-    because they are issued by different institutions and there may be
-    name clashes.  db.patients() returns values unique for the current database.
+    This method expecs a patientUID in the form returned by
+    db.patients(), which are (integer) strings unique for the current database.
+    The actual contents of these strings are implementation specific
+    and should not be relied on (may be changed).
     See ctkDICOMDatabasePrivate::insertPatient for more details.
+
+    See loadPatientByPatientID to use the PatientID field
+    of the dicom header.
+
+    Note that we have these methods because
+    there is no way to have a globally unique patient ID.
+    They are issued by different institutions so there may be
+    name clashes.  This is is in contrast to other places where UID is
+    used in dicom and in this code (studyUID, seriesUID, instanceUID),
+    where it is common to assume that
+    the IDs are unique because the dicom standard provides
+    mechanisms to support generating unique values
+    (although there is no way to know for sure that
+    the creator of an instance actually created a unique value
+    rather than just copying an existing one).
   """
   if not slicer.dicomDatabase.isOpen:
     raise IOError('DICOM module or database cannot be accessed')
@@ -173,7 +189,7 @@ def loadByInstanceUID(instanceUID):
   filePath = slicer.dicomDatabase.fileForInstance(instanceUID)
   seriesUID = slicer.dicomDatabase.seriesForFile(filePath)
   fileList = slicer.dicomDatabase.filesForSeries(seriesUID)
-  loadablesByPlugin, loadEnabled = getLoadablesFromFileLists([fileList,])
+  loadablesByPlugin, loadEnabled = getLoadablesFromFileLists([fileList])
   # keep only the loadables that include this instance's file and is highest confidence
   highestConfidence = {
     'confidence': 0,
