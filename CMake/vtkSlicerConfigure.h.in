@@ -37,7 +37,6 @@
 #cmakedefine Slicer_USE_NUMPY
 #cmakedefine Slicer_USE_PYTHONQT
 #cmakedefine Slicer_USE_PYTHONQT_WITH_OPENSSL
-#cmakedefine Slicer_USE_PYTHONQT_WITH_TCL
 #cmakedefine Slicer_USE_QtTesting
 #cmakedefine Slicer_USE_OPENTRACKER
 
@@ -109,14 +108,6 @@
 // in Slicer extension.
 #define Slicer_THIRDPARTY_BIN_DIR "@Slicer_THIRDPARTY_BIN_DIR@"
 #define Slicer_THIRDPARTY_LIB_DIR "@Slicer_THIRDPARTY_LIB_DIR@"
-
-#cmakedefine Slicer_USE_PYTHONQT_WITH_TCL
-#ifdef Slicer_USE_PYTHONQT_WITH_TCL
-#  define Slicer_TCL_TK_VERSION_DOT "@TCL_TK_VERSION_DOT@"
-#  define Slicer_TCL_TK_VERSION "@TCL_TK_VERSION@"
-#  define Slicer_INCR_TCL_VERSION_DOT "@INCR_TCL_VERSION_DOT@"
-#  define Slicer_INCR_TCL_VERSION "@INCR_TCL_VERSION@"
-#endif //Slicer_USE_PYTHONQT_WITH_TCL
 
 #cmakedefine Slicer_VTK_RENDERING_USE_OpenGL_BACKEND
 #cmakedefine Slicer_VTK_RENDERING_USE_OpenGL2_BACKEND

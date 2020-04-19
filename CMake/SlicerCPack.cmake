@@ -26,10 +26,6 @@ if(Slicer_USE_PYTHONQT AND NOT Slicer_USE_SYSTEM_python)
   # Python install rules are common to both 'bundled' and 'regular' package
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallPython.cmake)
 endif()
-if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcl)
-  # Tcl install rules are common to both 'bundled' and 'regular' package
-  include(${Slicer_CMAKE_DIR}/SlicerBlockInstallTcl.cmake)
-endif()
 
 if(NOT Slicer_USE_SYSTEM_QT)
   set(SlicerBlockInstallQtPlugins_subdirectories

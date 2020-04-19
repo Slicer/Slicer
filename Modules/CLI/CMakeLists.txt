@@ -60,13 +60,6 @@ if(Slicer_BUILD_LEGACY_CLI)
   list(APPEND cli_modules ${legacy_cli_modules})
 endif()
 
-if (Slicer_BUILD_EMSegment)
-  ## EMSegment requires some LEGACY_CLI to work. Add them if not already added
-  if(NOT Slicer_BUILD_LEGACY_CLI)
-    list(APPEND cli_modules BSplineToDeformationField)
-  endif()
-endif()
-
 if(BUILD_TESTING)
   # TODO Since the following snippet have been moved from CLI/Testing/CMakeLists.txt into
   # CLI/CMakeLists.txt, the variable SLICER_BRAINWEB_DATA_ROOT won't be set properly.
