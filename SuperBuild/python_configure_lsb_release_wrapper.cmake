@@ -1,3 +1,7 @@
+# This code causes Ubuntu 18.04 builds to fail
+# The lsb_release binary in the slicer tree
+# fails to build!
+if(OLD_LINUX_RELEASE_FIXUP)
 cmake_minimum_required(VERSION 3.13.4)
 
 foreach(varname IN ITEMS
@@ -25,3 +29,4 @@ ctkAppLauncherConfigureForExecutable(
   APPLICATION_EXECUTABLE ${LSB_RELEASE_EXECUTABLE}
   DESTINATION_DIR ${python_bin_dir}
   )
+endif()
