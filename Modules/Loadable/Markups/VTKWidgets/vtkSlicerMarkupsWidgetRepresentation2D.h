@@ -105,7 +105,7 @@ protected:
   ~vtkSlicerMarkupsWidgetRepresentation2D() override;
 
   /// Reimplemented for 2D specific mapper/actor settings
-  virtual void SetupInteractionPipeline() override;
+  void SetupInteractionPipeline() override;
 
     /// Get MRML view node as slice view node
   vtkMRMLSliceNode *GetSliceNode();
@@ -172,9 +172,9 @@ protected:
   {
   public:
     MarkupsInteractionPipeline2D(vtkSlicerMarkupsWidgetRepresentation* representation);
-    virtual ~MarkupsInteractionPipeline2D() {};
+    ~MarkupsInteractionPipeline2D() override {};
 
-    virtual void GetViewPlaneNormal(double viewPlaneNormal[3]) override;
+    void GetViewPlaneNormal(double viewPlaneNormal[3]) override;
 
     vtkSmartPointer<vtkTransformPolyDataFilter> WorldToSliceTransformFilter;
   };

@@ -45,7 +45,7 @@ public:
   explicit qSlicerSettingsInternationalizationPanel(QWidget* parent = 0);
 
   /// Destructor
-  virtual ~qSlicerSettingsInternationalizationPanel();
+  ~qSlicerSettingsInternationalizationPanel() override;
 
 public slots:
 

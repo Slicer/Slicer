@@ -37,7 +37,7 @@ class qSlicerSequencesReader
 public:
   typedef qSlicerFileReader Superclass;
   qSlicerSequencesReader(vtkSlicerSequencesLogic* sequencesLogic = 0, QObject* parent = 0);
-  virtual ~qSlicerSequencesReader();
+  ~qSlicerSequencesReader() override;
 
   void setSequencesLogic(vtkSlicerSequencesLogic* sequencesLogic);
   vtkSlicerSequencesLogic* sequencesLogic()const;

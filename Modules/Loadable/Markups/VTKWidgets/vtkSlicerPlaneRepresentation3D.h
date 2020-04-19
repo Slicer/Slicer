@@ -98,7 +98,7 @@ protected:
   void BuildPlane();
 
   // Update visibility of interaction handles for representation
-  virtual void UpdateInteractionPipeline() override;
+  void UpdateInteractionPipeline() override;
 
 private:
   vtkSlicerPlaneRepresentation3D(const vtkSlicerPlaneRepresentation3D&) = delete;

@@ -35,22 +35,22 @@ class VTK_MRML_EXPORT vtkMRMLLinearTransformSequenceStorageNode : public vtkMRML
   static vtkMRMLLinearTransformSequenceStorageNode *New();
   vtkTypeMacro(vtkMRMLLinearTransformSequenceStorageNode,vtkMRMLNRRDStorageNode);
 
-  virtual vtkMRMLNode* CreateNodeInstance() override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  virtual const char* GetNodeTagName() override {return "LinearTransformSequenceStorage";};
+  const char* GetNodeTagName() override {return "LinearTransformSequenceStorage";};
 
   /// Return true if the node can be read in.
-  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
 
   /// Return true if the node can be written by using thie writer.
-  virtual bool CanWriteFromReferenceNode(vtkMRMLNode* refNode) override;
-  virtual int WriteDataInternal(vtkMRMLNode *refNode) override;
+  bool CanWriteFromReferenceNode(vtkMRMLNode* refNode) override;
+  int WriteDataInternal(vtkMRMLNode *refNode) override;
 
   ///
   /// Return a default file extension for writting
-  virtual const char* GetDefaultWriteFileExtension() override;
+  const char* GetDefaultWriteFileExtension() override;
 
   /// Read all the fields in the metaimage file header.
   /// If sequence nodes are passed in createdNodes then they will be reused. New sequence nodes will be created if there are more transforms
@@ -66,7 +66,7 @@ class VTK_MRML_EXPORT vtkMRMLLinearTransformSequenceStorageNode : public vtkMRML
 
 protected:
   vtkMRMLLinearTransformSequenceStorageNode();
-  ~vtkMRMLLinearTransformSequenceStorageNode();
+  ~vtkMRMLLinearTransformSequenceStorageNode() override;
   vtkMRMLLinearTransformSequenceStorageNode(const vtkMRMLLinearTransformSequenceStorageNode&);
   void operator=(const vtkMRMLLinearTransformSequenceStorageNode&);
 
@@ -74,13 +74,13 @@ protected:
   /// Returns 0 by default (read not supported).
   /// This implementation delegates most everything to the superclass
   /// but it has an early exit if the file to be read is incompatible.
-  virtual int ReadDataInternal(vtkMRMLNode* refNode) override;
+  int ReadDataInternal(vtkMRMLNode* refNode) override;
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedReadFileTypes() override;
+  void InitializeSupportedReadFileTypes() override;
 
   /// Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes() override;
+  void InitializeSupportedWriteFileTypes() override;
 };
 
 #endif
