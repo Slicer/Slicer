@@ -51,6 +51,7 @@ vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
   this->ConvertToPolyDataFilter = vtkGeometryFilter::New();
   this->ThresholdEnabled = false;
   this->SliceDisplayMode = SliceDisplayIntersection;
+  this->BackfaceCulling = 0;
 
   // the default behavior for models is to use the scalar range of the data
   // to reset the display scalar range, so use the Data flag

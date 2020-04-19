@@ -194,7 +194,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     set(slicer_PYTHON_SHARED_LIBRARY_DIR ${python_DIR}/bin)
     set(PYTHON_INCLUDE_DIR ${python_DIR}/include)
     set(PYTHON_LIBRARY ${python_DIR}/libs/python36.lib)
-    set(PYTHON_EXECUTABLE ${python_DIR}/bin/SlicerPython.exe)
+    set(PYTHON_EXECUTABLE ${python_DIR}/bin/PythonSlicer.exe)
     set(slicer_PYTHON_REAL_EXECUTABLE ${python_DIR}/bin/python.exe)
   else()
     message(FATAL_ERROR "Unknown system !")

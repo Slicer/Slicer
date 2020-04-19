@@ -251,7 +251,7 @@ public:
   vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
   /// Creates the most appropriate storage node class for storing a sequence of these nodes.
-  virtual vtkMRMLStorageNode* CreateDefaultSequenceStorageNode();
+  vtkMRMLStorageNode* CreateDefaultSequenceStorageNode() override;
 
   ///
   /// Create and observe default display node

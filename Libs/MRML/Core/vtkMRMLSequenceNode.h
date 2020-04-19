@@ -165,7 +165,7 @@ public:
 
 protected:
   vtkMRMLSequenceNode();
-  ~vtkMRMLSequenceNode();
+  ~vtkMRMLSequenceNode() override;
   vtkMRMLSequenceNode(const vtkMRMLSequenceNode&);
   void operator=(const vtkMRMLSequenceNode&);
 

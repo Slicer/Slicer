@@ -56,7 +56,7 @@ public:
 
 protected:
   vtkMRMLSequenceStorageNode();
-  ~vtkMRMLSequenceStorageNode();
+  ~vtkMRMLSequenceStorageNode() override;
   vtkMRMLSequenceStorageNode(const vtkMRMLSequenceStorageNode&);
   void operator=(const vtkMRMLSequenceStorageNode&);
 

@@ -47,7 +47,7 @@ class Q_SLICER_MODULE_SEQUENCES_WIDGETS_EXPORT qMRMLSequenceBrowserPlayWidget
 public:
   typedef qMRMLWidget Superclass;
   qMRMLSequenceBrowserPlayWidget(QWidget *newParent = 0);
-  virtual ~qMRMLSequenceBrowserPlayWidget();
+  ~qMRMLSequenceBrowserPlayWidget() override;
 
   /// Add a keyboard shortcut for play/pause button
   void setPlayPauseShortcut(QString keySequence);

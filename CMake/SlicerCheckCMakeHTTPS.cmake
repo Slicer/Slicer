@@ -22,7 +22,15 @@ function(slicer_check_cmake_https)
     list(GET status 0 error_code)
     file(REMOVE ${dest})
     if(error_code)
-      message(FATAL_ERROR "error: This CMake does not support the HTTPS protocol. Ensure that CMake is compiled with CMAKE_USE_OPENSSL enabled.")
+      list(GET status 1 error_msg)
+      #
+      # A failure to download the file over https may indicate that the CMake executable
+      # used to configure the project does not support the HTTPS protocol.
+      #
+      # If you built your own version of CMake, ensure that CMake is compiled with
+      # CMAKE_USE_OPENSSL build option enabled.
+      #
+      message(FATAL_ERROR "error: ${error_msg}")
     else()
       # Save result of check, this way there will be no need for a working network connection when reconfiguring
       set(Slicer_CMake_HTTPS_Supported TRUE CACHE INTERNAL "CMake supports HTTPS protocol")
