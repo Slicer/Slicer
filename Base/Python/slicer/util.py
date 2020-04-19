@@ -1023,7 +1023,7 @@ def arrayFromModelPointData(modelNode, arrayName):
 def arrayFromModelPointDataModified(modelNode, arrayName):
   """Indicate that modification of a numpy array returned by :py:meth:`arrayFromModelPoints` has been completed."""
   arrayVtk = modelNode.GetPolyData().GetPointData().GetArray(arrayName)
-  arrayFromModelPointsModified(modelNode)
+  arrayVtk.Modified()
 
 def arrayFromModelPolyIds(modelNode):
   """Return poly id array of a model node as numpy array.
