@@ -29,12 +29,12 @@ qMRMLSequenceBrowserToolBarPlugin
 public:
   qMRMLSequenceBrowserToolBarPlugin(QObject *_parent = 0);
 
-  QWidget *createWidget(QWidget *_parent);
-  QString  domXml() const;
-  QIcon    icon() const;
-  QString  includeFile() const;
-  bool     isContainer() const;
-  QString  name() const;
+  QWidget *createWidget(QWidget *_parent) override;
+  QString  domXml() const override;
+  QIcon    icon() const override;
+  QString  includeFile() const override;
+  bool     isContainer() const override;
+  QString  name() const override;
 
 };
 

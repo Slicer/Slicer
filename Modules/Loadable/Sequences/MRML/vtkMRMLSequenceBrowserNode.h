@@ -304,7 +304,7 @@ public:
 
 protected:
   vtkMRMLSequenceBrowserNode();
-  ~vtkMRMLSequenceBrowserNode();
+  ~vtkMRMLSequenceBrowserNode() override;
   vtkMRMLSequenceBrowserNode(const vtkMRMLSequenceBrowserNode&);
   void operator=(const vtkMRMLSequenceBrowserNode&);
 

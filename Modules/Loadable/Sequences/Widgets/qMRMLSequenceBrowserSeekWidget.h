@@ -42,7 +42,7 @@ class Q_SLICER_MODULE_SEQUENCES_WIDGETS_EXPORT qMRMLSequenceBrowserSeekWidget
 public:
   typedef qMRMLWidget Superclass;
   qMRMLSequenceBrowserSeekWidget(QWidget *newParent = 0);
-  virtual ~qMRMLSequenceBrowserSeekWidget();
+  ~qMRMLSequenceBrowserSeekWidget() override;
 
   /// Get access to the internal slider widget.
   /// This allows fine-tuning of parameters such as page step.

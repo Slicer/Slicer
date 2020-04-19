@@ -96,7 +96,7 @@ public:
 
 protected:
   vtkSlicerSequencesLogic();
-  virtual ~vtkSlicerSequencesLogic();
+  ~vtkSlicerSequencesLogic() override;
 
   void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.

@@ -56,7 +56,7 @@ public:
 
   typedef qSlicerLoadableModule Superclass;
   explicit qSlicerSequencesModule(QObject *parent=0);
-  virtual ~qSlicerSequencesModule();
+  ~qSlicerSequencesModule() override;
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 

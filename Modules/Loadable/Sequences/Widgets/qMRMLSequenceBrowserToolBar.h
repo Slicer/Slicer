@@ -49,7 +49,7 @@ public:
   /// Title is the name of the toolbar (can appear using right click on the toolbar area)
   qMRMLSequenceBrowserToolBar(const QString& title, QWidget* parent = 0);
   qMRMLSequenceBrowserToolBar(QWidget* parent = 0);
-  virtual ~qMRMLSequenceBrowserToolBar();
+  ~qMRMLSequenceBrowserToolBar() override;
 
 public slots:
   virtual void setMRMLScene(vtkMRMLScene* newScene);

@@ -57,7 +57,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeSequenceStorageNode : public vtkMRMLNRRDStora
 
 protected:
   vtkMRMLVolumeSequenceStorageNode();
-  ~vtkMRMLVolumeSequenceStorageNode();
+  ~vtkMRMLVolumeSequenceStorageNode() override;
   vtkMRMLVolumeSequenceStorageNode(const vtkMRMLVolumeSequenceStorageNode&);
   void operator=(const vtkMRMLVolumeSequenceStorageNode&);
 

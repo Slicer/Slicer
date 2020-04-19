@@ -40,7 +40,7 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerSequencesModuleWidget(QWidget *parent=0);
-  virtual ~qSlicerSequencesModuleWidget();
+  ~qSlicerSequencesModuleWidget() override;
 
   /// Set up the GUI from mrml when entering
   void enter() override;
@@ -88,7 +88,7 @@ protected:
   void setEnableWidgets(bool enable);
 
 public slots:
-  void setMRMLScene(vtkMRMLScene* scene);
+  void setMRMLScene(vtkMRMLScene* scene) override;
 
 protected slots:
   void activeBrowserNodeChanged(vtkMRMLNode* node);
