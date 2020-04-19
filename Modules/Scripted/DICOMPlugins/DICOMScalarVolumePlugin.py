@@ -230,7 +230,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       # only one kind of subseries, then it's probably correct
       # so make them higher confidence than the default all-files version
       for subseriesLoadable in loadables[1:]:
-        subseriesLoadable.confidence = .75
+        subseriesLoadable.confidence = .55
 
     # remove any files from loadables that don't have pixel data (no point sending them to ITK for reading)
     # also remove DICOM SEG, since it is not handled by ITK readers
