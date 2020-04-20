@@ -226,12 +226,6 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
           loadable.selected = False
           loadables.append(loadable)
 
-    if subseriesCount == 1:
-      # only one kind of subseries, then it's probably correct
-      # so make them higher confidence than the default all-files version
-      for subseriesLoadable in loadables[1:]:
-        subseriesLoadable.confidence = .55
-
     # remove any files from loadables that don't have pixel data (no point sending them to ITK for reading)
     # also remove DICOM SEG, since it is not handled by ITK readers
     newLoadables = []
@@ -267,6 +261,17 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     #
     for loadable in loadables:
       loadable.files, distances, loadable.warning = DICOMUtils.getSortedImageFiles(loadable.files, self.epsilon)
+
+    if subseriesCount == 1 and loadables[0].warning != "":
+      # there was a sorting warning and
+      # only one kind of subseries, so it's probably correct
+      # to make the subseries a higher confidence than the default all-files version
+      for subseriesLoadable in loadables[1:]:
+        if subseriesLoadable.warning == "":
+          subseriesLoadable.confidence = .55
+    else:
+      # prefer the all-files loadable
+      loadables[0].confidence = .55
 
     return loadables
 
