@@ -60,6 +60,7 @@ public:
       InteractionModeChangedEvent = 19001,
       InteractionModePersistenceChangedEvent,
       EndPlacementEvent,
+      EditNodeEvent,
     };
 
   /// Return a text string describing the mode
@@ -77,6 +78,10 @@ public:
 /// Enable/Disable Editing of Fibers
   vtkGetMacro(EnableFiberEdit, int);
   vtkSetMacro(EnableFiberEdit, int);
+
+  /// Request the application to display user interface
+  /// that allows editing of the node.
+  void EditNode(vtkMRMLNode* node);
 
 protected:
   vtkMRMLInteractionNode();

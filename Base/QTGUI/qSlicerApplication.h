@@ -228,6 +228,11 @@ signals:
   /// \sa setRenderPaused
   void renderPaused(bool);
 
+protected slots:
+
+  /// Request editing of a MRML node
+  void editNode(vtkObject*, void*, unsigned long) override;
+
 protected:
   /// Reimplemented from qSlicerCoreApplication
   void handlePreApplicationCommandLineArguments() override;

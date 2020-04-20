@@ -74,6 +74,7 @@ public:
   bool              RemoveEnabled;
   bool              EditEnabled;
   bool              RenameEnabled;
+  QString           InteractionNodeSingletonTag;
 
   QHash<QString, QString> NodeTypeLabels;
 

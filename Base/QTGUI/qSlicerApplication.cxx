@@ -1135,3 +1135,13 @@ bool qSlicerApplication::isCodePageUtf8()
   return true;
 #endif
 }
+
+//------------------------------------------------------------------------------
+void qSlicerApplication::editNode(vtkObject*, void* callData, unsigned long)
+{
+  vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(callData);
+  if (node)
+    {
+    this->openNodeModule(node);
+    }
+}

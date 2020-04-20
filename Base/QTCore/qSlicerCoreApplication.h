@@ -518,6 +518,10 @@ protected slots:
   void processAppLogicReadData();
   void processAppLogicWriteData();
 
+  /// Editing of a MRML node has been requested.
+  /// Implemented in qSlicerApplication.
+  virtual void editNode(vtkObject*, void*, unsigned long) {};
+
   /// Set the ReturnCode flag and call QCoreApplication::exit()
   void terminate(int exitCode = qSlicerCoreApplication::ExitSuccess);
 

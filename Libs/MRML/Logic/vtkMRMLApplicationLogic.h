@@ -187,7 +187,8 @@ public:
   enum Events{
     RequestInvokeEvent = vtkCommand::UserEvent + 1,
     PauseRenderEvent = vtkCommand::UserEvent + 101,
-    ResumeRenderEvent
+    ResumeRenderEvent,
+    EditNodeEvent
   };
   /// Structure passed as calldata pointer in the RequestEvent invoked event.
   struct InvokeRequest{
@@ -231,6 +232,9 @@ public:
   /// \sa qSlicerApplication::setRenderPaused()
   virtual void ResumeRender();
 
+  /// Requests the application to show user interface for editing a node.
+  virtual void EditNode(vtkMRMLNode* node);
+
 protected:
 
   vtkMRMLApplicationLogic();
@@ -240,6 +244,8 @@ protected:
 
   void SetSelectionNode(vtkMRMLSelectionNode* );
   void SetInteractionNode(vtkMRMLInteractionNode* );
+
+  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
 private:
 

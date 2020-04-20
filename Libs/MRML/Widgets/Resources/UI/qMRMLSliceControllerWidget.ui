@@ -64,6 +64,9 @@
      <property name="removeEnabled">
       <bool>false</bool>
      </property>
+     <property name="editEnabled">
+      <bool>true</bool>
+     </property>
      <property name="renameEnabled">
       <bool>true</bool>
      </property>
@@ -188,6 +191,9 @@
      </property>
      <property name="removeEnabled">
       <bool>false</bool>
+     </property>
+     <property name="editEnabled">
+      <bool>true</bool>
      </property>
      <property name="renameEnabled">
       <bool>true</bool>
@@ -325,6 +331,9 @@
      </property>
      <property name="removeEnabled">
       <bool>false</bool>
+     </property>
+     <property name="editEnabled">
+      <bool>true</bool>
      </property>
      <property name="renameEnabled">
       <bool>true</bool>
