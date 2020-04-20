@@ -333,3 +333,10 @@ void vtkMRMLInteractionNode::SwitchToViewTransformMode()
   this->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
   this->EndModify(disabledModify);
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLInteractionNode::EditNode(vtkMRMLNode* node)
+{
+  // Observers in qSlicerCoreApplication listen for this event
+  this->InvokeEvent(EditNodeEvent, node);
+}

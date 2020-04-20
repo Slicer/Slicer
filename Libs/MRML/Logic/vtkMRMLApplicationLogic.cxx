@@ -43,6 +43,7 @@
 #include "vtkMRMLViewNode.h"
 
 // VTK includes
+#include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
 #include <vtkImageData.h>
 #include <vtkNew.h>
@@ -418,8 +419,10 @@ void vtkMRMLApplicationLogic::SetInteractionNode(vtkMRMLInteractionNode* interac
     {
     return;
     }
-  this->Internal->InteractionNode = interactionNode;
-  this->Modified();
+
+  vtkNew<vtkIntArray> events;
+  events->InsertNextValue(vtkMRMLInteractionNode::EditNodeEvent);
+  vtkSetAndObserveMRMLNodeEventsMacro(this->Internal->InteractionNode, interactionNode, events);
 }
 
 //----------------------------------------------------------------------------
@@ -795,4 +798,28 @@ void vtkMRMLApplicationLogic::ResumeRender()
   // Observers in qSlicerCoreApplication listen for ResumeRenderEvent and call resumeRender
   // to resume rendering in all views in the current layout
   this->InvokeEvent(ResumeRenderEvent);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData)
+{
+  if (vtkMRMLInteractionNode::SafeDownCast(caller) && event == vtkMRMLInteractionNode::EditNodeEvent)
+    {
+    if (callData != nullptr)
+      {
+      vtkMRMLNode* nodeToBeEdited = reinterpret_cast<vtkMRMLNode*>(callData);
+      this->EditNode(nodeToBeEdited);
+      }
+    }
+  else
+    {
+    this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::EditNode(vtkMRMLNode* node)
+{
+  // Observers in qSlicerCoreApplication listen for this event
+  this->InvokeEvent(EditNodeEvent, node);
 }

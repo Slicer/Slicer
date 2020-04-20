@@ -326,8 +326,6 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    SLOT(setMRMLScene(vtkMRMLScene*)));
   QObject::connect(this->LayoutManager, SIGNAL(layoutChanged(int)),
                    q, SLOT(onLayoutChanged(int)));
-  QObject::connect(this->LayoutManager, SIGNAL(nodeAboutToBeEdited(vtkMRMLNode*)),
-                   qSlicerApplication::application(), SLOT(openNodeModule(vtkMRMLNode*)));
 
   // TODO: When module will be managed by the layoutManager, this should be
   //       revisited.

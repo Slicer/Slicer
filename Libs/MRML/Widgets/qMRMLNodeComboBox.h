@@ -76,6 +76,14 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox
   Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled)
   Q_PROPERTY(bool renameEnabled READ renameEnabled WRITE setRenameEnabled)
 
+  /// Node editing is requested via an interaction node in the scene.
+  /// This singleton tag identifies which interaction node should be used.
+  /// In most cases, it is not necessary to change the default value.
+  /// If the value is set to empty then only nodeAboutToBeEdited signal is invoked
+  /// but node editing is not requested via interaction node.
+  /// \sa nodeAboutToBeEdited
+  Q_PROPERTY(QString interactionNodeSingletonTag READ interactionNodeSingletonTag WRITE setInteractionNodeSingletonTag)
+
   Q_PROPERTY(bool selectNodeUponCreation READ selectNodeUponCreation WRITE setSelectNodeUponCreation)
   /// This property controls the name that is displayed for the None item.
   /// "None" by default.
@@ -157,12 +165,12 @@ public:
 
   /// return the number of nodes. it can be different from count()
   /// as count includes the "AddNode", "Remove Node"... items
-  int nodeCount()const;
+  Q_INVOKABLE int nodeCount()const;
 
   /// return the vtkMRMLNode* at the corresponding index. 0 if the index is
   /// invalid
   /// \sa nodeCount(), setCurrentNode(int)
-  vtkMRMLNode* nodeFromIndex(int index)const;
+  Q_INVOKABLE vtkMRMLNode* nodeFromIndex(int index)const;
 
   /// Return the currently selected node. 0 if no node is selected
   Q_INVOKABLE vtkMRMLNode* currentNode()const;
@@ -257,6 +265,9 @@ public:
   /// Also checks for action text that will be hidden by the default action
   /// texts and doesn't add it.
   Q_INVOKABLE virtual void addMenuAction(QAction *newAction);
+
+  virtual QString interactionNodeSingletonTag()const;
+  virtual void setInteractionNodeSingletonTag(const QString& tag);
 
 public slots:
   /// Set the scene the combobox listens to. The scene is observed and when new

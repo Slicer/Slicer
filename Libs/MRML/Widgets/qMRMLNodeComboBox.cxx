@@ -38,6 +38,7 @@
 #include "qMRMLSceneModel.h"
 
 // MRML includes
+#include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 
@@ -52,6 +53,8 @@ qMRMLNodeComboBoxPrivate::qMRMLNodeComboBoxPrivate(qMRMLNodeComboBox& object)
   this->AddEnabled = true;
   this->RemoveEnabled = true;
   this->EditEnabled = false;
+  // "Singleton" is the default tag for the interaction singleton node
+  this->InteractionNodeSingletonTag = "Singleton";
   this->RenameEnabled = false;
 
   this->SelectNodeUponCreation = true;
@@ -634,8 +637,23 @@ QString qMRMLNodeComboBox::currentNodeId()const
 // --------------------------------------------------------------------------
 void qMRMLNodeComboBox::editCurrentNode()
 {
+  Q_D(const qMRMLNodeComboBox);
   vtkMRMLNode* node = this->currentNode();
   emit this->nodeAboutToBeEdited(node);
+
+  if (!d->InteractionNodeSingletonTag.isEmpty())
+    {
+    vtkMRMLInteractionNode* interactionNode = vtkMRMLInteractionNode::SafeDownCast(
+      this->mrmlScene()->GetSingletonNode(d->InteractionNodeSingletonTag.toUtf8(), "vtkMRMLInteractionNode"));
+    if (interactionNode)
+      {
+      interactionNode->EditNode(node);
+      }
+    else
+      {
+      qWarning() << Q_FUNC_INFO << " failed: interaction node not found with singleton tag " << d->InteractionNodeSingletonTag;
+      }
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -1234,4 +1252,18 @@ void qMRMLNodeComboBox::addMenuAction(QAction *newAction)
 
   // update with the new action
   d->updateActionItems(false);
+}
+
+//--------------------------------------------------------------------------
+QString qMRMLNodeComboBox::interactionNodeSingletonTag()const
+{
+  Q_D(const qMRMLNodeComboBox);
+  return d->InteractionNodeSingletonTag;
+}
+
+//--------------------------------------------------------------------------
+void qMRMLNodeComboBox::setInteractionNodeSingletonTag(const QString& tag)
+{
+  Q_D(qMRMLNodeComboBox);
+  d->InteractionNodeSingletonTag = tag;
 }
