@@ -262,6 +262,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     for loadable in loadables:
       loadable.files, distances, loadable.warning = DICOMUtils.getSortedImageFiles(loadable.files, self.epsilon)
 
+    # by default, prefer the all-files loadable
+    loadables[0].confidence = .55
     if subseriesCount == 1 and loadables[0].warning != "":
       # there was a sorting warning and
       # only one kind of subseries, so it's probably correct
@@ -269,9 +271,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       for subseriesLoadable in loadables[1:]:
         if subseriesLoadable.warning == "":
           subseriesLoadable.confidence = .55
-    else:
-      # prefer the all-files loadable
-      loadables[0].confidence = .55
+          loadables[0].confidence = .45
 
     return loadables
 
