@@ -84,8 +84,7 @@ qSlicerScriptedLoadableModuleWidget::qSlicerScriptedLoadableModuleWidget(QWidget
 
 //-----------------------------------------------------------------------------
 qSlicerScriptedLoadableModuleWidget::~qSlicerScriptedLoadableModuleWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerScriptedLoadableModuleWidget::pythonSource()const

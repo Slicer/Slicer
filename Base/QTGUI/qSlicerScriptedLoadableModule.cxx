@@ -94,8 +94,7 @@ qSlicerScriptedLoadableModule::qSlicerScriptedLoadableModule(QObject* _parentObj
 
 //-----------------------------------------------------------------------------
 qSlicerScriptedLoadableModule::~qSlicerScriptedLoadableModule()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerScriptedLoadableModule::pythonSource()const

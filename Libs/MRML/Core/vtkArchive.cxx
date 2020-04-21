@@ -223,13 +223,11 @@ long copy_data(struct archive *ar, struct archive *aw)
 
 //----------------------------------------------------------------------------
 vtkArchive::vtkArchive()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkArchive::~vtkArchive()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkArchive::PrintSelf(ostream& os, vtkIndent indent)

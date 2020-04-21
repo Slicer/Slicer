@@ -426,8 +426,7 @@ qSlicerSequencesModuleWidget::qSlicerSequencesModuleWidget(QWidget* _parent)
 
 //-----------------------------------------------------------------------------
 qSlicerSequencesModuleWidget::~qSlicerSequencesModuleWidget()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerSequencesModuleWidget::setup ()

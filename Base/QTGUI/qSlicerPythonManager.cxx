@@ -25,8 +25,7 @@ qSlicerPythonManager::qSlicerPythonManager(QObject* _parent) : Superclass(_paren
 
 //-----------------------------------------------------------------------------
 qSlicerPythonManager::~qSlicerPythonManager()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerPythonManager::preInitialization()

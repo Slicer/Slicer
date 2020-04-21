@@ -33,13 +33,11 @@ vtkMRMLNodeNewMacro(vtkMRMLVolumeSequenceStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeSequenceStorageNode::vtkMRMLVolumeSequenceStorageNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeSequenceStorageNode::~vtkMRMLVolumeSequenceStorageNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 bool vtkMRMLVolumeSequenceStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)

@@ -58,12 +58,11 @@
 vtkStandardNewMacro(vtkSlicerSequencesLogic);
 
 //----------------------------------------------------------------------------
-vtkSlicerSequencesLogic::vtkSlicerSequencesLogic() { }
+vtkSlicerSequencesLogic::vtkSlicerSequencesLogic() = default;
 
 //----------------------------------------------------------------------------
 vtkSlicerSequencesLogic::~vtkSlicerSequencesLogic()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkSlicerSequencesLogic::PrintSelf(ostream& os, vtkIndent indent)

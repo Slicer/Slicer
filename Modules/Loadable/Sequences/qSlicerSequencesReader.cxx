@@ -59,8 +59,7 @@ qSlicerSequencesReader::qSlicerSequencesReader(vtkSlicerSequencesLogic* sequence
 
 //-----------------------------------------------------------------------------
 qSlicerSequencesReader::~qSlicerSequencesReader()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 void qSlicerSequencesReader::setSequencesLogic(vtkSlicerSequencesLogic* newSequencesLogic)
