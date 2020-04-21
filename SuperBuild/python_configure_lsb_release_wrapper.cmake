@@ -13,6 +13,11 @@ endforeach()
 find_package(CTKAppLauncher REQUIRED)
 
 get_filename_component(python_bin_dir "${PYTHON_REAL_EXECUTABLE}" PATH)
+get_filename_component(python_bin_realdir "${python_bin_dir}" REALPATH)
+if( NOT "${python_bin_dir}" STREQUAL "${python_bin_realdir}")
+  message(STATUS "${python_bin_dir}!=${python_bin_realdir}")
+  message(FATAL_ERROR "${PYTHON_REAL_EXECUTABLE} must not be a symlinked path, use PYTHON_REAL_EXECUTABLE:PATH=${python_bin_realdir}")
+endif()
 
 # Configure wrapper for lsb_release to support pip installation
 # of packages on system where "lsb_release" is it self implemented

@@ -50,6 +50,15 @@ if(NOT DEFINED Slicer_VERSION_PATCH)
 endif()
 project(Slicer VERSION "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}.${Slicer_VERSION_PATCH}")
 
+
+#-----------------------------------------------------------------------------
+# Slicer builds fail when build directory is a simlink
+get_filename_component(Slicer_BINARY_DIR_realdir "${Slicer_BINARY_DIR}" REALPATH)
+if( NOT "${Slicer_BINARY_DIR_realdir}" STREQUAL "${Slicer_BINARY_DIR}")
+  message(FATAL_ERROR "${Slicer_BINARY_DIR} must not be a symlinked path, configure with Slicer_BINARY_DIR:PATH=${Slicer_BINARY_DIR_realdir}")
+endif()
+
+
 #-----------------------------------------------------------------------------
 # Update CMake module path
 #------------------------------------------------------------------------------
