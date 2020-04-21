@@ -312,8 +312,7 @@ qSlicerReformatModuleWidget::qSlicerReformatModuleWidget(
 }
 
 //------------------------------------------------------------------------------
-qSlicerReformatModuleWidget::~qSlicerReformatModuleWidget()
-= default;
+qSlicerReformatModuleWidget::~qSlicerReformatModuleWidget() = default;
 
 //------------------------------------------------------------------------------
 void qSlicerReformatModuleWidget::setup()

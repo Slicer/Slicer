@@ -33,12 +33,10 @@
 vtkStandardNewMacro(vtkAnnotationROIWidget2D);
 
 //----------------------------------------------------------------------------
-vtkAnnotationROIWidget2D::vtkAnnotationROIWidget2D()
-= default;
+vtkAnnotationROIWidget2D::vtkAnnotationROIWidget2D() = default;
 
 //----------------------------------------------------------------------------
-vtkAnnotationROIWidget2D::~vtkAnnotationROIWidget2D()
-= default;
+vtkAnnotationROIWidget2D::~vtkAnnotationROIWidget2D() = default;
 
 //----------------------------------------------------------------------
 void vtkAnnotationROIWidget2D::CreateDefaultRepresentation()

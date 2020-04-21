@@ -31,12 +31,10 @@
 // qSlicerStylePlugin methods
 
 //-----------------------------------------------------------------------------
-qSlicerStylePlugin::qSlicerStylePlugin()
-= default;
+qSlicerStylePlugin::qSlicerStylePlugin() = default;
 
 //-----------------------------------------------------------------------------
-qSlicerStylePlugin::~qSlicerStylePlugin()
-= default;
+qSlicerStylePlugin::~qSlicerStylePlugin() = default;
 
 //-----------------------------------------------------------------------------
 QStyle* qSlicerStylePlugin::create( const QString & key )

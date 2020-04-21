@@ -93,8 +93,7 @@ vtkMRMLRubberBandWidgetRepresentation::vtkInternal
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLRubberBandWidgetRepresentation::vtkInternal::~vtkInternal()
-= default;
+vtkMRMLRubberBandWidgetRepresentation::vtkInternal::~vtkInternal() = default;
 
 //----------------------------------------------------------------------
 vtkMRMLRubberBandWidgetRepresentation::vtkMRMLRubberBandWidgetRepresentation()

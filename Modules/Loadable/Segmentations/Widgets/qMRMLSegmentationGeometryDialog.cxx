@@ -59,8 +59,7 @@ qMRMLSegmentationGeometryDialogPrivate::qMRMLSegmentationGeometryDialogPrivate(q
 }
 
 //-----------------------------------------------------------------------------
-qMRMLSegmentationGeometryDialogPrivate::~qMRMLSegmentationGeometryDialogPrivate()
-= default;
+qMRMLSegmentationGeometryDialogPrivate::~qMRMLSegmentationGeometryDialogPrivate() = default;
 
 //-----------------------------------------------------------------------------
 void qMRMLSegmentationGeometryDialogPrivate::init()
@@ -113,8 +112,7 @@ qMRMLSegmentationGeometryDialog::qMRMLSegmentationGeometryDialog(vtkMRMLSegmenta
 }
 
 //-----------------------------------------------------------------------------
-qMRMLSegmentationGeometryDialog::~qMRMLSegmentationGeometryDialog()
-= default;
+qMRMLSegmentationGeometryDialog::~qMRMLSegmentationGeometryDialog() = default;
 
 //-----------------------------------------------------------------------------
 bool qMRMLSegmentationGeometryDialog::editEnabled()const

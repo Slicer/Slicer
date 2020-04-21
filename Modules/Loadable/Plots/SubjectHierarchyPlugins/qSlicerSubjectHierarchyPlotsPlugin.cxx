@@ -86,8 +86,7 @@ void qSlicerSubjectHierarchyPlotsPluginPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyPlotsPluginPrivate::~qSlicerSubjectHierarchyPlotsPluginPrivate()
-= default;
+qSlicerSubjectHierarchyPlotsPluginPrivate::~qSlicerSubjectHierarchyPlotsPluginPrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyPlotsPlugin methods
@@ -103,8 +102,7 @@ qSlicerSubjectHierarchyPlotsPlugin::qSlicerSubjectHierarchyPlotsPlugin(QObject* 
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyPlotsPlugin::~qSlicerSubjectHierarchyPlotsPlugin()
-= default;
+qSlicerSubjectHierarchyPlotsPlugin::~qSlicerSubjectHierarchyPlotsPlugin() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPlotsPlugin::setPlotsLogic(vtkSlicerPlotsLogic* plotsLogic)

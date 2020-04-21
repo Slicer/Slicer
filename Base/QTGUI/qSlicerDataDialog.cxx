@@ -114,8 +114,7 @@ qSlicerDataDialogPrivate::qSlicerDataDialogPrivate(QWidget* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerDataDialogPrivate::~qSlicerDataDialogPrivate()
-= default;
+qSlicerDataDialogPrivate::~qSlicerDataDialogPrivate() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerDataDialogPrivate::addDirectory()
@@ -505,8 +504,7 @@ qSlicerDataDialog::qSlicerDataDialog(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerDataDialog::~qSlicerDataDialog()
-= default;
+qSlicerDataDialog::~qSlicerDataDialog() = default;
 
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerDataDialog::fileType()const

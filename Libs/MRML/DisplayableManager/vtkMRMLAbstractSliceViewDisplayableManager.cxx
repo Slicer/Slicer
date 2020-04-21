@@ -42,12 +42,10 @@ vtkStandardNewMacro(vtkMRMLAbstractSliceViewDisplayableManager);
 // vtkMRMLAbstractSliceViewDisplayableManager methods
 
 //----------------------------------------------------------------------------
-vtkMRMLAbstractSliceViewDisplayableManager::vtkMRMLAbstractSliceViewDisplayableManager()
-= default;
+vtkMRMLAbstractSliceViewDisplayableManager::vtkMRMLAbstractSliceViewDisplayableManager() = default;
 
 //----------------------------------------------------------------------------
-vtkMRMLAbstractSliceViewDisplayableManager::~vtkMRMLAbstractSliceViewDisplayableManager()
-= default;
+vtkMRMLAbstractSliceViewDisplayableManager::~vtkMRMLAbstractSliceViewDisplayableManager() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLAbstractSliceViewDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)

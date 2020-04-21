@@ -52,8 +52,7 @@ vtkMRMLNRRDStorageNode::vtkMRMLNRRDStorageNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLNRRDStorageNode::~vtkMRMLNRRDStorageNode()
-= default;
+vtkMRMLNRRDStorageNode::~vtkMRMLNRRDStorageNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLNRRDStorageNode::WriteXML(ostream& of, int nIndent)

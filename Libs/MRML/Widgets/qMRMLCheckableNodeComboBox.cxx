@@ -55,8 +55,7 @@ qMRMLCheckableNodeComboBoxPrivate
 }
 
 // -----------------------------------------------------------------------------
-qMRMLCheckableNodeComboBoxPrivate::~qMRMLCheckableNodeComboBoxPrivate()
-= default;
+qMRMLCheckableNodeComboBoxPrivate::~qMRMLCheckableNodeComboBoxPrivate() = default;
 
 // -----------------------------------------------------------------------------
 void qMRMLCheckableNodeComboBoxPrivate::init(QAbstractItemModel* model)
@@ -99,8 +98,7 @@ qMRMLCheckableNodeComboBox::qMRMLCheckableNodeComboBox(QWidget* parentWidget)
 }
 
 // --------------------------------------------------------------------------
-qMRMLCheckableNodeComboBox::~qMRMLCheckableNodeComboBox()
-= default;
+qMRMLCheckableNodeComboBox::~qMRMLCheckableNodeComboBox() = default;
 
 // --------------------------------------------------------------------------
 QList<vtkMRMLNode*> qMRMLCheckableNodeComboBox::checkedNodes()const

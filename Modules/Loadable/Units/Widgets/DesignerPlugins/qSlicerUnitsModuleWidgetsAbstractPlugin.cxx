@@ -22,8 +22,7 @@
 
 //-----------------------------------------------------------------------------
 qSlicerUnitsModuleWidgetsAbstractPlugin
-::qSlicerUnitsModuleWidgetsAbstractPlugin()
-= default;
+::qSlicerUnitsModuleWidgetsAbstractPlugin() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerUnitsModuleWidgetsAbstractPlugin::group() const

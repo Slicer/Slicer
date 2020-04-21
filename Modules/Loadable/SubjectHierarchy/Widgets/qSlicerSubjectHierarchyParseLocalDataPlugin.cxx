@@ -79,8 +79,7 @@ void qSlicerSubjectHierarchyParseLocalDataPluginPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyParseLocalDataPluginPrivate::~qSlicerSubjectHierarchyParseLocalDataPluginPrivate()
-= default;
+qSlicerSubjectHierarchyParseLocalDataPluginPrivate::~qSlicerSubjectHierarchyParseLocalDataPluginPrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyParseLocalDataPlugin methods
@@ -97,8 +96,7 @@ qSlicerSubjectHierarchyParseLocalDataPlugin::qSlicerSubjectHierarchyParseLocalDa
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyParseLocalDataPlugin::~qSlicerSubjectHierarchyParseLocalDataPlugin()
-= default;
+qSlicerSubjectHierarchyParseLocalDataPlugin::~qSlicerSubjectHierarchyParseLocalDataPlugin() = default;
 
 //-----------------------------------------------------------------------------
 QList<QAction*> qSlicerSubjectHierarchyParseLocalDataPlugin::sceneContextMenuActions()const

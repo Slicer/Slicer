@@ -72,8 +72,7 @@ qSlicerWebEnginePage::qSlicerWebEnginePage(QWebEngineProfile *profile, QObject *
 }
 
 // --------------------------------------------------------------------------
-qSlicerWebEnginePage::~qSlicerWebEnginePage()
-= default;
+qSlicerWebEnginePage::~qSlicerWebEnginePage() = default;
 
 // --------------------------------------------------------------------------
 qSlicerWebWidgetPrivate::qSlicerWebWidgetPrivate(qSlicerWebWidget& object)
@@ -84,8 +83,7 @@ qSlicerWebWidgetPrivate::qSlicerWebWidgetPrivate(qSlicerWebWidget& object)
 }
 
 // --------------------------------------------------------------------------
-qSlicerWebWidgetPrivate::~qSlicerWebWidgetPrivate()
-= default;
+qSlicerWebWidgetPrivate::~qSlicerWebWidgetPrivate() = default;
 
 // --------------------------------------------------------------------------
 void qSlicerWebWidgetPrivate::initializeWebChannel(QWebChannel* webChannel)
@@ -256,8 +254,7 @@ qSlicerWebWidget::qSlicerWebWidget(
 }
 
 // --------------------------------------------------------------------------
-qSlicerWebWidget::~qSlicerWebWidget()
-= default;
+qSlicerWebWidget::~qSlicerWebWidget() = default;
 
 // --------------------------------------------------------------------------
 bool qSlicerWebWidget::handleExternalUrlWithDesktopService() const

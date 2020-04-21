@@ -68,8 +68,7 @@ qSlicerSegmentationsIOOptionsWidget::qSlicerSegmentationsIOOptionsWidget(QWidget
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentationsIOOptionsWidget::~qSlicerSegmentationsIOOptionsWidget()
-= default;
+qSlicerSegmentationsIOOptionsWidget::~qSlicerSegmentationsIOOptionsWidget() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentationsIOOptionsWidget::updateProperties()

@@ -72,8 +72,7 @@ vtkMRMLPlotSeriesNode::vtkMRMLPlotSeriesNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLPlotSeriesNode::~vtkMRMLPlotSeriesNode()
-= default;
+vtkMRMLPlotSeriesNode::~vtkMRMLPlotSeriesNode() = default;
 
 //----------------------------------------------------------------------------
 const char *vtkMRMLPlotSeriesNode::GetTableNodeReferenceRole()

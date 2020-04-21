@@ -20,8 +20,7 @@
 
 #include "qMRMLWidgetsAbstractPlugin.h"
 
-qMRMLWidgetsAbstractPlugin::qMRMLWidgetsAbstractPlugin()
-= default;
+qMRMLWidgetsAbstractPlugin::qMRMLWidgetsAbstractPlugin() = default;
 
 QString qMRMLWidgetsAbstractPlugin::group() const
 {

@@ -64,8 +64,7 @@ qSlicerGPUMemoryComboBoxPrivate::qSlicerGPUMemoryComboBoxPrivate(
 }
 
 //-----------------------------------------------------------------------------
-qSlicerGPUMemoryComboBoxPrivate::~qSlicerGPUMemoryComboBoxPrivate()
-= default;
+qSlicerGPUMemoryComboBoxPrivate::~qSlicerGPUMemoryComboBoxPrivate() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerGPUMemoryComboBoxPrivate::init()
@@ -162,8 +161,7 @@ qSlicerGPUMemoryComboBox::qSlicerGPUMemoryComboBox(QWidget* parentWidget)
 }
 
 // --------------------------------------------------------------------------
-qSlicerGPUMemoryComboBox::~qSlicerGPUMemoryComboBox()
-= default;
+qSlicerGPUMemoryComboBox::~qSlicerGPUMemoryComboBox() = default;
 
 //-----------------------------------------------------------------------------
 int qSlicerGPUMemoryComboBox::totalGPUMemoryInMB()const

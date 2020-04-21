@@ -160,8 +160,7 @@ qSlicerPresetComboBox::qSlicerPresetComboBox(QWidget* parentWidget)
 }
 
 // --------------------------------------------------------------------------
-qSlicerPresetComboBox::~qSlicerPresetComboBox()
-= default;
+qSlicerPresetComboBox::~qSlicerPresetComboBox() = default;
 
 // --------------------------------------------------------------------------
 void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)

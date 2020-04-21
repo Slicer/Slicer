@@ -21,8 +21,7 @@
 #include "qSlicerSegmentationsModuleWidgetsAbstractPlugin.h"
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentationsModuleWidgetsAbstractPlugin::qSlicerSegmentationsModuleWidgetsAbstractPlugin()
-= default;
+qSlicerSegmentationsModuleWidgetsAbstractPlugin::qSlicerSegmentationsModuleWidgetsAbstractPlugin() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerSegmentationsModuleWidgetsAbstractPlugin::group() const

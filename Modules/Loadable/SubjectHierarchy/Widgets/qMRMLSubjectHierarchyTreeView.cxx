@@ -371,8 +371,7 @@ qMRMLSubjectHierarchyTreeView::qMRMLSubjectHierarchyTreeView(QWidget *parent)
 }
 
 //------------------------------------------------------------------------------
-qMRMLSubjectHierarchyTreeView::~qMRMLSubjectHierarchyTreeView()
-= default;
+qMRMLSubjectHierarchyTreeView::~qMRMLSubjectHierarchyTreeView() = default;
 
 //------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode)

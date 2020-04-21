@@ -71,8 +71,7 @@ qSlicerExtensionDownloadTask::qSlicerExtensionDownloadTask(
 }
 
 //-----------------------------------------------------------------------------
-qSlicerExtensionDownloadTask::~qSlicerExtensionDownloadTask()
-= default;
+qSlicerExtensionDownloadTask::~qSlicerExtensionDownloadTask() = default;
 
 //-----------------------------------------------------------------------------
 QVariantMap qSlicerExtensionDownloadTask::metadata() const

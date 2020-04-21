@@ -67,8 +67,7 @@ vtkAnnotationROIWidget::vtkAnnotationROIWidget()
 }
 
 //----------------------------------------------------------------------------
-vtkAnnotationROIWidget::~vtkAnnotationROIWidget()
-= default;
+vtkAnnotationROIWidget::~vtkAnnotationROIWidget() = default;
 
 //----------------------------------------------------------------------
 void vtkAnnotationROIWidget::SelectAction(vtkAbstractWidget *w)

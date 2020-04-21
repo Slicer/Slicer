@@ -117,8 +117,7 @@ qMRMLScalarInvariantComboBox::qMRMLScalarInvariantComboBox(QWidget* parentWidget
 }
 
 //------------------------------------------------------------------------------
-qMRMLScalarInvariantComboBox::~qMRMLScalarInvariantComboBox()
-= default;
+qMRMLScalarInvariantComboBox::~qMRMLScalarInvariantComboBox() = default;
 
 //------------------------------------------------------------------------------
 vtkMRMLDiffusionTensorDisplayPropertiesNode* qMRMLScalarInvariantComboBox::displayPropertiesNode()const

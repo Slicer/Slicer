@@ -80,10 +80,8 @@ public:
                                       typename InputImageType::IndexType ind,
                                       typename InputImageType::PixelType hvec);
 protected:
-  HFieldToDeformationFieldImageFilter()
-   = default;
-  ~HFieldToDeformationFieldImageFilter() override
-   = default;
+  HFieldToDeformationFieldImageFilter() = default;
+  ~HFieldToDeformationFieldImageFilter() override = default;
 private:
   HFieldToDeformationFieldImageFilter(const Self &) = delete;
   void operator=(const Self &) = delete;

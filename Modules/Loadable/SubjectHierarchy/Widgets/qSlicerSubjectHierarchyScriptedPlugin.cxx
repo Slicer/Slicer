@@ -104,8 +104,7 @@ qSlicerSubjectHierarchyScriptedPluginPrivate::qSlicerSubjectHierarchyScriptedPlu
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyScriptedPluginPrivate::~qSlicerSubjectHierarchyScriptedPluginPrivate()
-= default;
+qSlicerSubjectHierarchyScriptedPluginPrivate::~qSlicerSubjectHierarchyScriptedPluginPrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyScriptedPlugin methods
@@ -119,8 +118,7 @@ qSlicerSubjectHierarchyScriptedPlugin::qSlicerSubjectHierarchyScriptedPlugin(QOb
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyScriptedPlugin::~qSlicerSubjectHierarchyScriptedPlugin()
-= default;
+qSlicerSubjectHierarchyScriptedPlugin::~qSlicerSubjectHierarchyScriptedPlugin() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerSubjectHierarchyScriptedPlugin::pythonSource()const

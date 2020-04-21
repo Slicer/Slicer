@@ -82,8 +82,7 @@ qSlicerSettingsUserInformationPanel::qSlicerSettingsUserInformationPanel(QWidget
 }
 
 // --------------------------------------------------------------------------
-qSlicerSettingsUserInformationPanel::~qSlicerSettingsUserInformationPanel()
-= default;
+qSlicerSettingsUserInformationPanel::~qSlicerSettingsUserInformationPanel() = default;
 
 // --------------------------------------------------------------------------
 void qSlicerSettingsUserInformationPanel::setUserInformation(vtkPersonInformation* userInfo)

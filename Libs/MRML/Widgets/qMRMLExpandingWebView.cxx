@@ -63,8 +63,7 @@ qMRMLExpandingWebViewPrivate::qMRMLExpandingWebViewPrivate(qMRMLExpandingWebView
 }
 
 //---------------------------------------------------------------------------
-qMRMLExpandingWebViewPrivate::~qMRMLExpandingWebViewPrivate()
-= default;
+qMRMLExpandingWebViewPrivate::~qMRMLExpandingWebViewPrivate() = default;
 
 //---------------------------------------------------------------------------
 void qMRMLExpandingWebViewPrivate::init()

@@ -54,8 +54,7 @@ public:
 // qSlicerVolumeRenderingModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerVolumeRenderingModulePrivate::qSlicerVolumeRenderingModulePrivate()
-= default;
+qSlicerVolumeRenderingModulePrivate::qSlicerVolumeRenderingModulePrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerVolumeRenderingModule methods
@@ -68,8 +67,7 @@ qSlicerVolumeRenderingModule::qSlicerVolumeRenderingModule(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerVolumeRenderingModule::~qSlicerVolumeRenderingModule()
-= default;
+qSlicerVolumeRenderingModule::~qSlicerVolumeRenderingModule() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerVolumeRenderingModule::helpText()const

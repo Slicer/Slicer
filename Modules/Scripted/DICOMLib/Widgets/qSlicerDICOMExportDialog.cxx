@@ -97,8 +97,7 @@ qSlicerDICOMExportDialogPrivate::qSlicerDICOMExportDialogPrivate(qSlicerDICOMExp
 }
 
 //-----------------------------------------------------------------------------
-qSlicerDICOMExportDialogPrivate::~qSlicerDICOMExportDialogPrivate()
-= default;
+qSlicerDICOMExportDialogPrivate::~qSlicerDICOMExportDialogPrivate() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerDICOMExportDialogPrivate::init()
@@ -153,8 +152,7 @@ qSlicerDICOMExportDialog::qSlicerDICOMExportDialog(QObject* parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerDICOMExportDialog::~qSlicerDICOMExportDialog()
-= default;
+qSlicerDICOMExportDialog::~qSlicerDICOMExportDialog() = default;
 
 //-----------------------------------------------------------------------------
 bool qSlicerDICOMExportDialog::exec(vtkIdType itemToSelect/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)

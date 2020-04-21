@@ -54,8 +54,7 @@ qMRMLWindowLevelWidgetPrivate
 }
 
 // --------------------------------------------------------------------------
-qMRMLWindowLevelWidgetPrivate::~qMRMLWindowLevelWidgetPrivate()
-= default;
+qMRMLWindowLevelWidgetPrivate::~qMRMLWindowLevelWidgetPrivate() = default;
 
 // --------------------------------------------------------------------------
 void qMRMLWindowLevelWidgetPrivate::init()
@@ -140,8 +139,7 @@ qMRMLWindowLevelWidget::qMRMLWindowLevelWidget(QWidget* parentWidget)
 }
 
 // --------------------------------------------------------------------------
-qMRMLWindowLevelWidget::~qMRMLWindowLevelWidget()
-= default;
+qMRMLWindowLevelWidget::~qMRMLWindowLevelWidget() = default;
 
 // --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::setAutoWindowLevel(ControlMode autoWindowLevel)

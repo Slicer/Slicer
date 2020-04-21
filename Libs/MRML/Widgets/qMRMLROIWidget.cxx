@@ -77,8 +77,7 @@ qMRMLROIWidget::qMRMLROIWidget(QWidget* _parent)
 }
 
 // --------------------------------------------------------------------------
-qMRMLROIWidget::~qMRMLROIWidget()
-= default;
+qMRMLROIWidget::~qMRMLROIWidget() = default;
 
 // --------------------------------------------------------------------------
 vtkMRMLROINode* qMRMLROIWidget::mrmlROINode()const

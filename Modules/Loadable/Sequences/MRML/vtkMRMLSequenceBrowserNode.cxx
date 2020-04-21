@@ -127,8 +127,7 @@ vtkMRMLSequenceBrowserNode::vtkMRMLSequenceBrowserNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLSequenceBrowserNode::~vtkMRMLSequenceBrowserNode()
-= default;
+vtkMRMLSequenceBrowserNode::~vtkMRMLSequenceBrowserNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLSequenceBrowserNode::WriteXML(ostream& of, int nIndent)

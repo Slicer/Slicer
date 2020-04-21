@@ -38,8 +38,7 @@ qMRMLThreeDViewInformationWidgetPrivate::qMRMLThreeDViewInformationWidgetPrivate
 }
 
 //---------------------------------------------------------------------------
-qMRMLThreeDViewInformationWidgetPrivate::~qMRMLThreeDViewInformationWidgetPrivate()
-= default;
+qMRMLThreeDViewInformationWidgetPrivate::~qMRMLThreeDViewInformationWidgetPrivate() = default;
 
 //---------------------------------------------------------------------------
 void qMRMLThreeDViewInformationWidgetPrivate::setupUi(qMRMLWidget* widget)
@@ -80,8 +79,7 @@ qMRMLThreeDViewInformationWidget::qMRMLThreeDViewInformationWidget(QWidget* _par
 }
 
 // --------------------------------------------------------------------------
-qMRMLThreeDViewInformationWidget::~qMRMLThreeDViewInformationWidget()
-= default;
+qMRMLThreeDViewInformationWidget::~qMRMLThreeDViewInformationWidget() = default;
 
 //---------------------------------------------------------------------------
 vtkMRMLViewNode* qMRMLThreeDViewInformationWidget::mrmlViewNode()const

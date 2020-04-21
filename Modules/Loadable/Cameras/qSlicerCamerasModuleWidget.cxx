@@ -44,8 +44,7 @@ qSlicerCamerasModuleWidget::qSlicerCamerasModuleWidget(QWidget* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCamerasModuleWidget::~qSlicerCamerasModuleWidget()
-= default;
+qSlicerCamerasModuleWidget::~qSlicerCamerasModuleWidget() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerCamerasModuleWidget::setup()

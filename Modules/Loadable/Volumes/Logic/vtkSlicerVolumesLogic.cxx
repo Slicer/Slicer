@@ -407,8 +407,7 @@ vtkSlicerVolumesLogic::vtkSlicerVolumesLogic()
 }
 
 //----------------------------------------------------------------------------
-vtkSlicerVolumesLogic::~vtkSlicerVolumesLogic()
-= default;
+vtkSlicerVolumesLogic::~vtkSlicerVolumesLogic() = default;
 
 //----------------------------------------------------------------------------
 void vtkSlicerVolumesLogic::ProcessMRMLNodesEvents(vtkObject *vtkNotUsed(caller),

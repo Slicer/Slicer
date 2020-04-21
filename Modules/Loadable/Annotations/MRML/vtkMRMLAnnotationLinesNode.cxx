@@ -23,8 +23,7 @@ vtkMRMLAnnotationLinesNode::vtkMRMLAnnotationLinesNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLAnnotationLinesNode::~vtkMRMLAnnotationLinesNode()
-= default;
+vtkMRMLAnnotationLinesNode::~vtkMRMLAnnotationLinesNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationLinesNode::WriteXML(ostream& of, int nIndent)

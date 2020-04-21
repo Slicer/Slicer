@@ -60,8 +60,7 @@ public:
 // vtkInternal methods
 
 //----------------------------------------------------------------------------
-vtkMRMLDisplayableManagerFactory::vtkInternal::vtkInternal()
-= default;
+vtkMRMLDisplayableManagerFactory::vtkInternal::vtkInternal() = default;
 
 //----------------------------------------------------------------------------
 // vtkMRMLDisplayableManagerFactory methods

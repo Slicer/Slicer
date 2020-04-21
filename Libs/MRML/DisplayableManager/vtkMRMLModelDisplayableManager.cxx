@@ -165,8 +165,7 @@ vtkMRMLModelDisplayableManager::vtkInternal::vtkInternal(vtkMRMLModelDisplayable
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLModelDisplayableManager::vtkInternal::~vtkInternal()
-= default;
+vtkMRMLModelDisplayableManager::vtkInternal::~vtkInternal() = default;
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::vtkInternal::CreateClipSlices()

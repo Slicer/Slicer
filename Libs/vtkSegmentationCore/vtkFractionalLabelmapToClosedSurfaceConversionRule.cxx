@@ -56,8 +56,7 @@ vtkFractionalLabelmapToClosedSurfaceConversionRule::vtkFractionalLabelmapToClose
 }
 
 //----------------------------------------------------------------------------
-vtkFractionalLabelmapToClosedSurfaceConversionRule::~vtkFractionalLabelmapToClosedSurfaceConversionRule()
-= default;
+vtkFractionalLabelmapToClosedSurfaceConversionRule::~vtkFractionalLabelmapToClosedSurfaceConversionRule() = default;
 
 //----------------------------------------------------------------------------
 unsigned int vtkFractionalLabelmapToClosedSurfaceConversionRule::GetConversionCost(

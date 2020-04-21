@@ -52,8 +52,7 @@ vtkMRMLTransformStorageNode::vtkMRMLTransformStorageNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLTransformStorageNode::~vtkMRMLTransformStorageNode()
-= default;
+vtkMRMLTransformStorageNode::~vtkMRMLTransformStorageNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLTransformStorageNode::WriteXML(ostream& of, int nIndent)

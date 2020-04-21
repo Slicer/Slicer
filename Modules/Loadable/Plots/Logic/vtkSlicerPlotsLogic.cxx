@@ -46,12 +46,10 @@
 vtkStandardNewMacro(vtkSlicerPlotsLogic);
 
 //----------------------------------------------------------------------------
-vtkSlicerPlotsLogic::vtkSlicerPlotsLogic()
-= default;
+vtkSlicerPlotsLogic::vtkSlicerPlotsLogic() = default;
 
 //----------------------------------------------------------------------------
-vtkSlicerPlotsLogic::~vtkSlicerPlotsLogic()
-= default;
+vtkSlicerPlotsLogic::~vtkSlicerPlotsLogic() = default;
 
 //----------------------------------------------------------------------------
 void vtkSlicerPlotsLogic::PrintSelf(ostream& os, vtkIndent indent)

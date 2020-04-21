@@ -114,8 +114,7 @@ qSlicerVolumeDisplayWidget::qSlicerVolumeDisplayWidget(QWidget* parentWidget)
 }
 
 // --------------------------------------------------------------------------
-qSlicerVolumeDisplayWidget::~qSlicerVolumeDisplayWidget()
-= default;
+qSlicerVolumeDisplayWidget::~qSlicerVolumeDisplayWidget() = default;
 
 // --------------------------------------------------------------------------
 void qSlicerVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNode)

@@ -190,8 +190,7 @@ qSlicerWelcomeModuleWidget::qSlicerWelcomeModuleWidget(QWidget* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerWelcomeModuleWidget::~qSlicerWelcomeModuleWidget()
-= default;
+qSlicerWelcomeModuleWidget::~qSlicerWelcomeModuleWidget() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerWelcomeModuleWidget::setup()

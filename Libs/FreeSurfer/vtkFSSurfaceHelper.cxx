@@ -21,8 +21,7 @@
 vtkStandardNewMacro(vtkFSSurfaceHelper);
 
 //-------------------------------------------------------------------------
-vtkFSSurfaceHelper::vtkFSSurfaceHelper()
-= default;
+vtkFSSurfaceHelper::vtkFSSurfaceHelper() = default;
 
 //-------------------------------------------------------------------------
 void vtkFSSurfaceHelper::ComputeTkRegVox2RASMatrix ( double* spacing,

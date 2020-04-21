@@ -48,8 +48,7 @@ vtkAnnotationRulerRepresentation3D::vtkAnnotationRulerRepresentation3D()
 }
 
 //---------------------------------------------------------------------------
-vtkAnnotationRulerRepresentation3D::~vtkAnnotationRulerRepresentation3D()
-= default;
+vtkAnnotationRulerRepresentation3D::~vtkAnnotationRulerRepresentation3D() = default;
 
 //----------------------------------------------------------------------
 void vtkAnnotationRulerRepresentation3D::BuildRepresentation()

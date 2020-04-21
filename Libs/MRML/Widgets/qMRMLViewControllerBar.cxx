@@ -213,8 +213,7 @@ qMRMLViewControllerBar::qMRMLViewControllerBar(qMRMLViewControllerBarPrivate* pi
 }
 
 // --------------------------------------------------------------------------
-qMRMLViewControllerBar::~qMRMLViewControllerBar()
-= default;
+qMRMLViewControllerBar::~qMRMLViewControllerBar() = default;
 
 
 // --------------------------------------------------------------------------

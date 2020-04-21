@@ -104,8 +104,7 @@ void qSlicerSubjectHierarchyFolderPluginPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyFolderPluginPrivate::~qSlicerSubjectHierarchyFolderPluginPrivate()
-= default;
+qSlicerSubjectHierarchyFolderPluginPrivate::~qSlicerSubjectHierarchyFolderPluginPrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyFolderPlugin methods
@@ -122,8 +121,7 @@ qSlicerSubjectHierarchyFolderPlugin::qSlicerSubjectHierarchyFolderPlugin(QObject
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyFolderPlugin::~qSlicerSubjectHierarchyFolderPlugin()
-= default;
+qSlicerSubjectHierarchyFolderPlugin::~qSlicerSubjectHierarchyFolderPlugin() = default;
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyFolderPlugin::canAddNodeToSubjectHierarchy(

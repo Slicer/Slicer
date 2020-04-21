@@ -95,8 +95,7 @@ qSlicerModuleFactoryFilterModel::qSlicerModuleFactoryFilterModel(QObject* parent
 }
 
 // --------------------------------------------------------------------------
-qSlicerModuleFactoryFilterModel::~qSlicerModuleFactoryFilterModel()
-= default;
+qSlicerModuleFactoryFilterModel::~qSlicerModuleFactoryFilterModel() = default;
 
 // --------------------------------------------------------------------------
 bool qSlicerModuleFactoryFilterModel::showToLoad()const

@@ -60,8 +60,7 @@ qSlicerSegmentationsNodeWriter::qSlicerSegmentationsNodeWriter(QObject* parentOb
 }
 
 //----------------------------------------------------------------------------
-qSlicerSegmentationsNodeWriter::~qSlicerSegmentationsNodeWriter()
-= default;
+qSlicerSegmentationsNodeWriter::~qSlicerSegmentationsNodeWriter() = default;
 
 //----------------------------------------------------------------------------
 bool qSlicerSegmentationsNodeWriter::write(const qSlicerIO::IOProperties& properties)

@@ -69,8 +69,7 @@ qSlicerScriptedFileWriterPrivate::qSlicerScriptedFileWriterPrivate()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerScriptedFileWriterPrivate::~qSlicerScriptedFileWriterPrivate()
-= default;
+qSlicerScriptedFileWriterPrivate::~qSlicerScriptedFileWriterPrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerScriptedFileWriter methods
@@ -83,8 +82,7 @@ qSlicerScriptedFileWriter::qSlicerScriptedFileWriter(QObject* parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerScriptedFileWriter::~qSlicerScriptedFileWriter()
-= default;
+qSlicerScriptedFileWriter::~qSlicerScriptedFileWriter() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerScriptedFileWriter::pythonSource()const

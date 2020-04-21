@@ -294,8 +294,7 @@ qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent) : Superclass(_parent)
 }
 
 // --------------------------------------------------------------------------
-qMRMLThreeDView::~qMRMLThreeDView()
-= default;
+qMRMLThreeDView::~qMRMLThreeDView() = default;
 
 //------------------------------------------------------------------------------
 void qMRMLThreeDView::addDisplayableManager(const QString& displayableManagerName)

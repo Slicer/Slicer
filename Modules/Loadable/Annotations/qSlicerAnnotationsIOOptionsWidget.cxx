@@ -94,8 +94,7 @@ qSlicerAnnotationsIOOptionsWidget::qSlicerAnnotationsIOOptionsWidget(QWidget* pa
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAnnotationsIOOptionsWidget::~qSlicerAnnotationsIOOptionsWidget()
-= default;
+qSlicerAnnotationsIOOptionsWidget::~qSlicerAnnotationsIOOptionsWidget() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationsIOOptionsWidget::updateProperties()

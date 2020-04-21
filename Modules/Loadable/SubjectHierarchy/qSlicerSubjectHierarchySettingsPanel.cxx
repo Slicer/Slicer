@@ -113,8 +113,7 @@ qSlicerSubjectHierarchySettingsPanel::qSlicerSubjectHierarchySettingsPanel(QWidg
 }
 
 // --------------------------------------------------------------------------
-qSlicerSubjectHierarchySettingsPanel::~qSlicerSubjectHierarchySettingsPanel()
-= default;
+qSlicerSubjectHierarchySettingsPanel::~qSlicerSubjectHierarchySettingsPanel() = default;
 
 // --------------------------------------------------------------------------
 void qSlicerSubjectHierarchySettingsPanel::setAutoDeleteSubjectHierarchyChildrenEnabled(bool on)

@@ -23,8 +23,7 @@
 #include "qSlicerDICOMLibModuleWidgetsAbstractPlugin.h"
 
 //-----------------------------------------------------------------------------
-qSlicerDICOMLibModuleWidgetsAbstractPlugin::qSlicerDICOMLibModuleWidgetsAbstractPlugin()
-= default;
+qSlicerDICOMLibModuleWidgetsAbstractPlugin::qSlicerDICOMLibModuleWidgetsAbstractPlugin() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerDICOMLibModuleWidgetsAbstractPlugin::group() const

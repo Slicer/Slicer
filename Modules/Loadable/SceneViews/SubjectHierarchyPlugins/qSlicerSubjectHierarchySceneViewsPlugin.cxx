@@ -81,8 +81,7 @@ void qSlicerSubjectHierarchySceneViewsPluginPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchySceneViewsPluginPrivate::~qSlicerSubjectHierarchySceneViewsPluginPrivate()
-= default;
+qSlicerSubjectHierarchySceneViewsPluginPrivate::~qSlicerSubjectHierarchySceneViewsPluginPrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchySceneViewsPlugin methods
@@ -99,8 +98,7 @@ qSlicerSubjectHierarchySceneViewsPlugin::qSlicerSubjectHierarchySceneViewsPlugin
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchySceneViewsPlugin::~qSlicerSubjectHierarchySceneViewsPlugin()
-= default;
+qSlicerSubjectHierarchySceneViewsPlugin::~qSlicerSubjectHierarchySceneViewsPlugin() = default;
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchySceneViewsPlugin::canAddNodeToSubjectHierarchy(

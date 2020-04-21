@@ -95,8 +95,7 @@ qMRMLSettingsUnitWidget::qMRMLSettingsUnitWidget(QWidget* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qMRMLSettingsUnitWidget::~qMRMLSettingsUnitWidget()
-= default;
+qMRMLSettingsUnitWidget::~qMRMLSettingsUnitWidget() = default;
 
 //-----------------------------------------------------------------------------
 void qMRMLSettingsUnitWidget::setUnitsLogic(vtkSlicerUnitsLogic* logic)

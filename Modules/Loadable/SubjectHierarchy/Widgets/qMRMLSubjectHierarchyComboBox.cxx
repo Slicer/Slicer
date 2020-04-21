@@ -126,8 +126,7 @@ qMRMLSubjectHierarchyComboBox::qMRMLSubjectHierarchyComboBox(QWidget* parentWidg
 }
 
 // --------------------------------------------------------------------------
-qMRMLSubjectHierarchyComboBox::~qMRMLSubjectHierarchyComboBox()
-= default;
+qMRMLSubjectHierarchyComboBox::~qMRMLSubjectHierarchyComboBox() = default;
 
 //------------------------------------------------------------------------------
 vtkMRMLSubjectHierarchyNode* qMRMLSubjectHierarchyComboBox::subjectHierarchyNode()const

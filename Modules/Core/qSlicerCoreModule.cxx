@@ -37,8 +37,7 @@ qSlicerCoreModule::qSlicerCoreModule(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCoreModule::~qSlicerCoreModule()
-= default;
+qSlicerCoreModule::~qSlicerCoreModule() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerCoreModule::setup()

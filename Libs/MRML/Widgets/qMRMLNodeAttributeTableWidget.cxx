@@ -75,8 +75,7 @@ qMRMLNodeAttributeTableWidget::qMRMLNodeAttributeTableWidget(QWidget* _parent)
 }
 
 // --------------------------------------------------------------------------
-qMRMLNodeAttributeTableWidget::~qMRMLNodeAttributeTableWidget()
-= default;
+qMRMLNodeAttributeTableWidget::~qMRMLNodeAttributeTableWidget() = default;
 
 // --------------------------------------------------------------------------
 vtkMRMLNode* qMRMLNodeAttributeTableWidget::mrmlNode()const

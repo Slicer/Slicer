@@ -36,12 +36,10 @@
 vtkStandardNewMacro(vtkSlicerDoubleArraysLogic);
 
 //----------------------------------------------------------------------------
-vtkSlicerDoubleArraysLogic::vtkSlicerDoubleArraysLogic()
-= default;
+vtkSlicerDoubleArraysLogic::vtkSlicerDoubleArraysLogic() = default;
 
 //----------------------------------------------------------------------------
-vtkSlicerDoubleArraysLogic::~vtkSlicerDoubleArraysLogic()
-= default;
+vtkSlicerDoubleArraysLogic::~vtkSlicerDoubleArraysLogic() = default;
 
 //----------------------------------------------------------------------------
 void vtkSlicerDoubleArraysLogic::PrintSelf(ostream& os, vtkIndent indent)

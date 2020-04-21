@@ -21,8 +21,7 @@
 #include "qSlicerVolumeRenderingModuleWidgetsAbstractPlugin.h"
 
 //-----------------------------------------------------------------------------
-qSlicerVolumeRenderingModuleWidgetsAbstractPlugin::qSlicerVolumeRenderingModuleWidgetsAbstractPlugin()
-= default;
+qSlicerVolumeRenderingModuleWidgetsAbstractPlugin::qSlicerVolumeRenderingModuleWidgetsAbstractPlugin() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerVolumeRenderingModuleWidgetsAbstractPlugin::group() const

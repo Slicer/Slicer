@@ -78,8 +78,7 @@ qMRMLSceneAnnotationModel::qMRMLSceneAnnotationModel(
 }
 
 //------------------------------------------------------------------------------
-qMRMLSceneAnnotationModel::~qMRMLSceneAnnotationModel()
-= default;
+qMRMLSceneAnnotationModel::~qMRMLSceneAnnotationModel() = default;
 
 //------------------------------------------------------------------------------
 bool qMRMLSceneAnnotationModel::areAnnotationsParent()const

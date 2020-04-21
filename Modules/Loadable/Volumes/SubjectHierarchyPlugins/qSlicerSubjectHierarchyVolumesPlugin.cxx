@@ -119,8 +119,7 @@ void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyVolumesPluginPrivate::~qSlicerSubjectHierarchyVolumesPluginPrivate()
-= default;
+qSlicerSubjectHierarchyVolumesPluginPrivate::~qSlicerSubjectHierarchyVolumesPluginPrivate() = default;
 
 //-----------------------------------------------------------------------------
 bool qSlicerSubjectHierarchyVolumesPluginPrivate::resetFieldOfViewOnShow()
@@ -166,8 +165,7 @@ qSlicerSubjectHierarchyVolumesPlugin::qSlicerSubjectHierarchyVolumesPlugin(QObje
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyVolumesPlugin::~qSlicerSubjectHierarchyVolumesPlugin()
-= default;
+qSlicerSubjectHierarchyVolumesPlugin::~qSlicerSubjectHierarchyVolumesPlugin() = default;
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyVolumesPlugin::canAddNodeToSubjectHierarchy(

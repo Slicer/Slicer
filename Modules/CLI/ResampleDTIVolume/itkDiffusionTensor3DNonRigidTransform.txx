@@ -21,8 +21,7 @@ namespace itk
 
 template <class TData>
 DiffusionTensor3DNonRigidTransform<TData>
-::DiffusionTensor3DNonRigidTransform()
-= default;
+::DiffusionTensor3DNonRigidTransform() = default;
 
 template <class TData>
 void

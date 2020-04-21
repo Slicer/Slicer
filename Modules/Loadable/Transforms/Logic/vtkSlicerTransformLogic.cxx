@@ -80,12 +80,10 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 vtkStandardNewMacro(vtkSlicerTransformLogic);
 
 //----------------------------------------------------------------------------
-vtkSlicerTransformLogic::vtkSlicerTransformLogic()
-= default;
+vtkSlicerTransformLogic::vtkSlicerTransformLogic() = default;
 
 //----------------------------------------------------------------------------
-vtkSlicerTransformLogic::~vtkSlicerTransformLogic()
-= default;
+vtkSlicerTransformLogic::~vtkSlicerTransformLogic() = default;
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerTransformLogic::hardenTransform(vtkMRMLTransformableNode* transformableNode)

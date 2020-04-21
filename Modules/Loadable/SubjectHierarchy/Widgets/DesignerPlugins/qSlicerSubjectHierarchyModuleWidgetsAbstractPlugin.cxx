@@ -23,8 +23,7 @@
 #include "qSlicerSubjectHierarchyModuleWidgetsAbstractPlugin.h"
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyModuleWidgetsAbstractPlugin::qSlicerSubjectHierarchyModuleWidgetsAbstractPlugin()
-= default;
+qSlicerSubjectHierarchyModuleWidgetsAbstractPlugin::qSlicerSubjectHierarchyModuleWidgetsAbstractPlugin() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerSubjectHierarchyModuleWidgetsAbstractPlugin::group() const

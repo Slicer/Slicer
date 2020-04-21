@@ -71,8 +71,7 @@ vtkSlicerPlaneRepresentation3D::vtkSlicerPlaneRepresentation3D()
 }
 
 //----------------------------------------------------------------------
-vtkSlicerPlaneRepresentation3D::~vtkSlicerPlaneRepresentation3D()
-= default;
+vtkSlicerPlaneRepresentation3D::~vtkSlicerPlaneRepresentation3D() = default;
 
 //----------------------------------------------------------------------
 bool vtkSlicerPlaneRepresentation3D::GetTransformationReferencePoint(double referencePointWorld[3])

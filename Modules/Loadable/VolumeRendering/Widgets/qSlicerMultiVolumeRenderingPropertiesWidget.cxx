@@ -56,8 +56,7 @@ qSlicerMultiVolumeRenderingPropertiesWidgetPrivate
 
 // --------------------------------------------------------------------------
 qSlicerMultiVolumeRenderingPropertiesWidgetPrivate::
-~qSlicerMultiVolumeRenderingPropertiesWidgetPrivate()
-= default;
+~qSlicerMultiVolumeRenderingPropertiesWidgetPrivate() = default;
 
 // --------------------------------------------------------------------------
 void qSlicerMultiVolumeRenderingPropertiesWidgetPrivate
@@ -97,8 +96,7 @@ qSlicerMultiVolumeRenderingPropertiesWidget
 }
 
 //-----------------------------------------------------------------------------
-qSlicerMultiVolumeRenderingPropertiesWidget::~qSlicerMultiVolumeRenderingPropertiesWidget()
-= default;
+qSlicerMultiVolumeRenderingPropertiesWidget::~qSlicerMultiVolumeRenderingPropertiesWidget() = default;
 
 //-----------------------------------------------------------------------------
 vtkMRMLMultiVolumeRenderingDisplayNode* qSlicerMultiVolumeRenderingPropertiesWidget

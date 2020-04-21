@@ -48,8 +48,7 @@ qSlicerViewControllersModule::qSlicerViewControllersModule(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerViewControllersModule::~qSlicerViewControllersModule()
-= default;
+qSlicerViewControllersModule::~qSlicerViewControllersModule() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerViewControllersModule::acknowledgementText()const

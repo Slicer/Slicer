@@ -81,8 +81,7 @@ qMRMLColorTableComboBox::qMRMLColorTableComboBox(QWidget* parentWidget)
 }
 
 // --------------------------------------------------------------------------
-qMRMLColorTableComboBox::~qMRMLColorTableComboBox()
-= default;
+qMRMLColorTableComboBox::~qMRMLColorTableComboBox() = default;
 
 // --------------------------------------------------------------------------
 QAbstractItemModel* qMRMLColorTableComboBox::createSceneModel()

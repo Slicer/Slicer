@@ -86,8 +86,7 @@ qMRMLAnnotationFiducialProjectionPropertyWidget
 
 //-----------------------------------------------------------------------------
 qMRMLAnnotationFiducialProjectionPropertyWidget
-::~qMRMLAnnotationFiducialProjectionPropertyWidget()
-= default;
+::~qMRMLAnnotationFiducialProjectionPropertyWidget() = default;
 
 //-----------------------------------------------------------------------------
 void qMRMLAnnotationFiducialProjectionPropertyWidget

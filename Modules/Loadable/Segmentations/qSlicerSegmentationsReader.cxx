@@ -58,8 +58,7 @@ qSlicerSegmentationsReader::qSlicerSegmentationsReader(vtkSlicerSegmentationsMod
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentationsReader::~qSlicerSegmentationsReader()
-= default;
+qSlicerSegmentationsReader::~qSlicerSegmentationsReader() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentationsReader::setSegmentationsLogic(vtkSlicerSegmentationsModuleLogic* newSegmentationsLogic)

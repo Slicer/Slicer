@@ -108,8 +108,7 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLMarkupsDisplayNode::~vtkMRMLMarkupsDisplayNode()
-= default;
+vtkMRMLMarkupsDisplayNode::~vtkMRMLMarkupsDisplayNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)

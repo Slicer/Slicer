@@ -60,8 +60,7 @@ public:
 // qSlicerMarkupsModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerMarkupsModulePrivate::qSlicerMarkupsModulePrivate()
-= default;
+qSlicerMarkupsModulePrivate::qSlicerMarkupsModulePrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerMarkupsModule methods
@@ -80,8 +79,7 @@ QStringList qSlicerMarkupsModule::categories()const
 }
 
 //-----------------------------------------------------------------------------
-qSlicerMarkupsModule::~qSlicerMarkupsModule()
-= default;
+qSlicerMarkupsModule::~qSlicerMarkupsModule() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerMarkupsModule::helpText()const

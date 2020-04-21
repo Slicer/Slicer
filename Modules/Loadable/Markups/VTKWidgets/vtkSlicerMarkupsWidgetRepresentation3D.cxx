@@ -115,8 +115,7 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
   this->LabelsActor->DragableOff();
 };
 
-vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::~ControlPointsPipeline3D()
-= default;
+vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::~ControlPointsPipeline3D() = default;
 
 //----------------------------------------------------------------------
 vtkSlicerMarkupsWidgetRepresentation3D::vtkSlicerMarkupsWidgetRepresentation3D()
@@ -143,8 +142,7 @@ vtkSlicerMarkupsWidgetRepresentation3D::vtkSlicerMarkupsWidgetRepresentation3D()
 }
 
 //----------------------------------------------------------------------
-vtkSlicerMarkupsWidgetRepresentation3D::~vtkSlicerMarkupsWidgetRepresentation3D()
-= default;
+vtkSlicerMarkupsWidgetRepresentation3D::~vtkSlicerMarkupsWidgetRepresentation3D() = default;
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation3D::UpdateNthPointAndLabelFromMRML(int vtkNotUsed(n))

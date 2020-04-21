@@ -65,8 +65,7 @@ qSlicerVolumeRenderingPropertiesWidget
 }
 
 //-----------------------------------------------------------------------------
-qSlicerVolumeRenderingPropertiesWidget::~qSlicerVolumeRenderingPropertiesWidget()
-= default;
+qSlicerVolumeRenderingPropertiesWidget::~qSlicerVolumeRenderingPropertiesWidget() = default;
 
 //-----------------------------------------------------------------------------
 vtkMRMLNode* qSlicerVolumeRenderingPropertiesWidget::mrmlNode()const

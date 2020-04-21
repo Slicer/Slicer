@@ -40,8 +40,7 @@ public:
 // qSlicerReformatModulePrivate methods
 
 //------------------------------------------------------------------------------
-qSlicerReformatModulePrivate::qSlicerReformatModulePrivate()
-= default;
+qSlicerReformatModulePrivate::qSlicerReformatModulePrivate() = default;
 
 //------------------------------------------------------------------------------
 // qSlicerReformatModule methods
@@ -54,8 +53,7 @@ qSlicerReformatModule(QObject* _parent) : Superclass(_parent),
 }
 
 //------------------------------------------------------------------------------
-qSlicerReformatModule::~qSlicerReformatModule()
-= default;
+qSlicerReformatModule::~qSlicerReformatModule() = default;
 
 //------------------------------------------------------------------------------
 QString qSlicerReformatModule::helpText()const

@@ -74,8 +74,7 @@ qSlicerScriptedFileDialogPrivate::qSlicerScriptedFileDialogPrivate()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerScriptedFileDialogPrivate::~qSlicerScriptedFileDialogPrivate()
-= default;
+qSlicerScriptedFileDialogPrivate::~qSlicerScriptedFileDialogPrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerScriptedFileDialog methods
@@ -88,8 +87,7 @@ qSlicerScriptedFileDialog::qSlicerScriptedFileDialog(QObject* parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerScriptedFileDialog::~qSlicerScriptedFileDialog()
-= default;
+qSlicerScriptedFileDialog::~qSlicerScriptedFileDialog() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerScriptedFileDialog::pythonSource()const

@@ -57,8 +57,7 @@ qSlicerTransformsModule::qSlicerTransformsModule(QObject* _parentObject)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTransformsModule::~qSlicerTransformsModule()
-= default;
+qSlicerTransformsModule::~qSlicerTransformsModule() = default;
 
 //-----------------------------------------------------------------------------
 QIcon qSlicerTransformsModule::icon()const

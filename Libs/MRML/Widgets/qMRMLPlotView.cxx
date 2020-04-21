@@ -84,8 +84,7 @@ qMRMLPlotViewPrivate::qMRMLPlotViewPrivate(qMRMLPlotView& object)
 }
 
 //---------------------------------------------------------------------------
-qMRMLPlotViewPrivate::~qMRMLPlotViewPrivate()
-= default;
+qMRMLPlotViewPrivate::~qMRMLPlotViewPrivate() = default;
 
 //---------------------------------------------------------------------------
 void qMRMLPlotViewPrivate::init()

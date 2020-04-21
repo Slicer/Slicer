@@ -49,8 +49,7 @@ qSlicerScalarOverlayIOOptionsWidget::qSlicerScalarOverlayIOOptionsWidget(QWidget
 }
 
 //-----------------------------------------------------------------------------
-qSlicerScalarOverlayIOOptionsWidget::~qSlicerScalarOverlayIOOptionsWidget()
-= default;
+qSlicerScalarOverlayIOOptionsWidget::~qSlicerScalarOverlayIOOptionsWidget() = default;
 
 //-----------------------------------------------------------------------------
 bool qSlicerScalarOverlayIOOptionsWidget::isValid()const

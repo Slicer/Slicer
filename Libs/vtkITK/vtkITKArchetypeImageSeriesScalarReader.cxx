@@ -48,12 +48,10 @@ vtkAOSDataArrayTemplate<T>* DownCast(vtkAbstractArray* a)
 };
 
 //----------------------------------------------------------------------------
-vtkITKArchetypeImageSeriesScalarReader::vtkITKArchetypeImageSeriesScalarReader()
-= default;
+vtkITKArchetypeImageSeriesScalarReader::vtkITKArchetypeImageSeriesScalarReader() = default;
 
 //----------------------------------------------------------------------------
-vtkITKArchetypeImageSeriesScalarReader::~vtkITKArchetypeImageSeriesScalarReader()
-= default;
+vtkITKArchetypeImageSeriesScalarReader::~vtkITKArchetypeImageSeriesScalarReader() = default;
 
 //----------------------------------------------------------------------------
 void vtkITKArchetypeImageSeriesScalarReader::PrintSelf(ostream& os, vtkIndent indent)

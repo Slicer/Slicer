@@ -69,8 +69,7 @@ qSlicerScriptedLoadableModuleWidgetPrivate::qSlicerScriptedLoadableModuleWidgetP
 }
 
 //-----------------------------------------------------------------------------
-qSlicerScriptedLoadableModuleWidgetPrivate::~qSlicerScriptedLoadableModuleWidgetPrivate()
-= default;
+qSlicerScriptedLoadableModuleWidgetPrivate::~qSlicerScriptedLoadableModuleWidgetPrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerScriptedLoadableModuleWidget methods
@@ -83,8 +82,7 @@ qSlicerScriptedLoadableModuleWidget::qSlicerScriptedLoadableModuleWidget(QWidget
 }
 
 //-----------------------------------------------------------------------------
-qSlicerScriptedLoadableModuleWidget::~qSlicerScriptedLoadableModuleWidget()
-= default;
+qSlicerScriptedLoadableModuleWidget::~qSlicerScriptedLoadableModuleWidget() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerScriptedLoadableModuleWidget::pythonSource()const

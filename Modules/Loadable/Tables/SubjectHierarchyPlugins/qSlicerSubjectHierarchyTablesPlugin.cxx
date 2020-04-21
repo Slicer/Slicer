@@ -88,8 +88,7 @@ void qSlicerSubjectHierarchyTablesPluginPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyTablesPluginPrivate::~qSlicerSubjectHierarchyTablesPluginPrivate()
-= default;
+qSlicerSubjectHierarchyTablesPluginPrivate::~qSlicerSubjectHierarchyTablesPluginPrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyTablesPlugin methods
@@ -106,8 +105,7 @@ qSlicerSubjectHierarchyTablesPlugin::qSlicerSubjectHierarchyTablesPlugin(QObject
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyTablesPlugin::~qSlicerSubjectHierarchyTablesPlugin()
-= default;
+qSlicerSubjectHierarchyTablesPlugin::~qSlicerSubjectHierarchyTablesPlugin() = default;
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyTablesPlugin::canAddNodeToSubjectHierarchy(

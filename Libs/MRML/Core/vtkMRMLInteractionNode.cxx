@@ -26,8 +26,7 @@ vtkMRMLInteractionNode::vtkMRMLInteractionNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLInteractionNode::~vtkMRMLInteractionNode()
-= default;
+vtkMRMLInteractionNode::~vtkMRMLInteractionNode() = default;
 
 //----------------------------------------------------------------------------
 int vtkMRMLInteractionNode::GetInteractionModeByString ( const char * modeString )

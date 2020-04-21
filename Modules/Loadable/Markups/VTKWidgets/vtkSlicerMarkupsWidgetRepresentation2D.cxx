@@ -100,8 +100,7 @@ vtkSlicerMarkupsWidgetRepresentation2D::ControlPointsPipeline2D::ControlPointsPi
   this->LabelsActor->SetMapper(this->LabelsMapper);
 }
 
-vtkSlicerMarkupsWidgetRepresentation2D::ControlPointsPipeline2D::~ControlPointsPipeline2D()
-= default;
+vtkSlicerMarkupsWidgetRepresentation2D::ControlPointsPipeline2D::~ControlPointsPipeline2D() = default;
 
 //----------------------------------------------------------------------
 vtkSlicerMarkupsWidgetRepresentation2D::vtkSlicerMarkupsWidgetRepresentation2D()
@@ -130,8 +129,7 @@ vtkSlicerMarkupsWidgetRepresentation2D::vtkSlicerMarkupsWidgetRepresentation2D()
 }
 
 //----------------------------------------------------------------------
-vtkSlicerMarkupsWidgetRepresentation2D::~vtkSlicerMarkupsWidgetRepresentation2D()
-= default;
+vtkSlicerMarkupsWidgetRepresentation2D::~vtkSlicerMarkupsWidgetRepresentation2D() = default;
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation2D::GetSliceToWorldCoordinates(const double slicePos[2],

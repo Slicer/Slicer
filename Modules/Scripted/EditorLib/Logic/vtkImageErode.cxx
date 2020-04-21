@@ -33,8 +33,7 @@ vtkImageErode::vtkImageErode()
 
 
 //----------------------------------------------------------------------------
-vtkImageErode::~vtkImageErode()
-= default;
+vtkImageErode::~vtkImageErode() = default;
 
 //----------------------------------------------------------------------------
 // Description:

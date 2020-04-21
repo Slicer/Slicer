@@ -50,8 +50,7 @@ qSlicerModelsIOOptionsWidget::qSlicerModelsIOOptionsWidget(QWidget* parentWidget
 }
 
 //-----------------------------------------------------------------------------
-qSlicerModelsIOOptionsWidget::~qSlicerModelsIOOptionsWidget()
-= default;
+qSlicerModelsIOOptionsWidget::~qSlicerModelsIOOptionsWidget() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerModelsIOOptionsWidget::updateProperties()

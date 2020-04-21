@@ -94,8 +94,7 @@ void qSlicerSubjectHierarchyLabelMapsPluginPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyLabelMapsPluginPrivate::~qSlicerSubjectHierarchyLabelMapsPluginPrivate()
-= default;
+qSlicerSubjectHierarchyLabelMapsPluginPrivate::~qSlicerSubjectHierarchyLabelMapsPluginPrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyLabelMapsPlugin methods
@@ -112,8 +111,7 @@ qSlicerSubjectHierarchyLabelMapsPlugin::qSlicerSubjectHierarchyLabelMapsPlugin(Q
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyLabelMapsPlugin::~qSlicerSubjectHierarchyLabelMapsPlugin()
-= default;
+qSlicerSubjectHierarchyLabelMapsPlugin::~qSlicerSubjectHierarchyLabelMapsPlugin() = default;
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyLabelMapsPlugin::canAddNodeToSubjectHierarchy(

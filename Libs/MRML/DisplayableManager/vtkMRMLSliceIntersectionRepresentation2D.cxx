@@ -194,8 +194,7 @@ vtkMRMLSliceIntersectionRepresentation2D::vtkInternal
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceIntersectionRepresentation2D::vtkInternal::~vtkInternal()
-= default;
+vtkMRMLSliceIntersectionRepresentation2D::vtkInternal::~vtkInternal() = default;
 
 
 //---------------------------------------------------------------------------

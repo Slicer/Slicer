@@ -31,8 +31,7 @@ vtkMRMLDoubleArrayStorageNode::vtkMRMLDoubleArrayStorageNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLDoubleArrayStorageNode::~vtkMRMLDoubleArrayStorageNode()
-= default;
+vtkMRMLDoubleArrayStorageNode::~vtkMRMLDoubleArrayStorageNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLDoubleArrayStorageNode::PrintSelf(ostream& os, vtkIndent indent)

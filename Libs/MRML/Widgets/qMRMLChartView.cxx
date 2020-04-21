@@ -93,8 +93,7 @@ qMRMLChartViewPrivate::qMRMLChartViewPrivate(qMRMLChartView& object)
 }
 
 //---------------------------------------------------------------------------
-qMRMLChartViewPrivate::~qMRMLChartViewPrivate()
-= default;
+qMRMLChartViewPrivate::~qMRMLChartViewPrivate() = default;
 
 //---------------------------------------------------------------------------
 void qMRMLChartViewPrivate::init()

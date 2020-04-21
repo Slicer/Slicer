@@ -64,8 +64,7 @@ qMRMLChartViewControllerWidgetPrivate::qMRMLChartViewControllerWidgetPrivate(
 }
 
 //---------------------------------------------------------------------------
-qMRMLChartViewControllerWidgetPrivate::~qMRMLChartViewControllerWidgetPrivate()
-= default;
+qMRMLChartViewControllerWidgetPrivate::~qMRMLChartViewControllerWidgetPrivate() = default;
 
 //---------------------------------------------------------------------------
 void qMRMLChartViewControllerWidgetPrivate::setupPopupUi()

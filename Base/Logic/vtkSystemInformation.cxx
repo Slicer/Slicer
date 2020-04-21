@@ -9,8 +9,7 @@ vtkSystemInformation::vtkSystemInformation()
   this->RenderingCapabilities = 0;
 }
 
-vtkSystemInformation::~vtkSystemInformation()
-= default;
+vtkSystemInformation::~vtkSystemInformation() = default;
 
 const char * vtkSystemInformation::GetVendorString()
 {

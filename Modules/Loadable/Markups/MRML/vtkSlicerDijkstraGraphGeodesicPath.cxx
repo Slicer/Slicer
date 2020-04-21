@@ -40,8 +40,7 @@ vtkSlicerDijkstraGraphGeodesicPath::vtkSlicerDijkstraGraphGeodesicPath()
 }
 
 //------------------------------------------------------------------------------
-vtkSlicerDijkstraGraphGeodesicPath::~vtkSlicerDijkstraGraphGeodesicPath()
-= default;
+vtkSlicerDijkstraGraphGeodesicPath::~vtkSlicerDijkstraGraphGeodesicPath() = default;
 
 //------------------------------------------------------------------------------
 void vtkSlicerDijkstraGraphGeodesicPath::PrintSelf(std::ostream &os, vtkIndent indent)

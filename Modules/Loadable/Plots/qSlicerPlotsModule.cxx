@@ -44,8 +44,7 @@ public:
 // qSlicerPlotsModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerPlotsModulePrivate::qSlicerPlotsModulePrivate()
-= default;
+qSlicerPlotsModulePrivate::qSlicerPlotsModulePrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerPlotsModule methods
@@ -58,8 +57,7 @@ qSlicerPlotsModule::qSlicerPlotsModule(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerPlotsModule::~qSlicerPlotsModule()
-= default;
+qSlicerPlotsModule::~qSlicerPlotsModule() = default;
 
 //-----------------------------------------------------------------------------
 QIcon qSlicerPlotsModule::icon()const

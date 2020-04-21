@@ -21,8 +21,7 @@
 #include "qSlicerAnnotationModuleWidgetsAbstractPlugin.h"
 
 //-----------------------------------------------------------------------------
-qSlicerAnnotationModuleWidgetsAbstractPlugin::qSlicerAnnotationModuleWidgetsAbstractPlugin()
-= default;
+qSlicerAnnotationModuleWidgetsAbstractPlugin::qSlicerAnnotationModuleWidgetsAbstractPlugin() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerAnnotationModuleWidgetsAbstractPlugin::group() const

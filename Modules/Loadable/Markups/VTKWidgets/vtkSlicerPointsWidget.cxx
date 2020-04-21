@@ -26,12 +26,10 @@
 vtkStandardNewMacro(vtkSlicerPointsWidget);
 
 //----------------------------------------------------------------------
-vtkSlicerPointsWidget::vtkSlicerPointsWidget()
-= default;
+vtkSlicerPointsWidget::vtkSlicerPointsWidget() = default;
 
 //----------------------------------------------------------------------
-vtkSlicerPointsWidget::~vtkSlicerPointsWidget()
-= default;
+vtkSlicerPointsWidget::~vtkSlicerPointsWidget() = default;
 
 //----------------------------------------------------------------------
 void vtkSlicerPointsWidget::CreateDefaultRepresentation(

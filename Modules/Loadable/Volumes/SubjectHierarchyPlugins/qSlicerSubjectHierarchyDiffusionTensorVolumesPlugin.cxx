@@ -97,8 +97,7 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate::~qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate()
-= default;
+qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate::~qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin methods
@@ -115,8 +114,7 @@ qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::qSlicerSubjectHierarchyDiff
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::~qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin()
-= default;
+qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::~qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin() = default;
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::canAddNodeToSubjectHierarchy(

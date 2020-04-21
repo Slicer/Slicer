@@ -61,8 +61,7 @@ qSlicerShaderPropertyReader::qSlicerShaderPropertyReader(vtkSlicerVolumeRenderin
 }
 
 //-----------------------------------------------------------------------------
-qSlicerShaderPropertyReader::~qSlicerShaderPropertyReader()
-= default;
+qSlicerShaderPropertyReader::~qSlicerShaderPropertyReader() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerShaderPropertyReader::setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* logic)

@@ -26,12 +26,10 @@ Version:   $Revision: 1.14 $
 vtkMRMLNodeNewMacro(vtkMRMLVectorVolumeNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLVectorVolumeNode::vtkMRMLVectorVolumeNode()
-= default;
+vtkMRMLVectorVolumeNode::vtkMRMLVectorVolumeNode() = default;
 
 //----------------------------------------------------------------------------
-vtkMRMLVectorVolumeNode::~vtkMRMLVectorVolumeNode()
-= default;
+vtkMRMLVectorVolumeNode::~vtkMRMLVectorVolumeNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLVectorVolumeNode::WriteXML(ostream& of, int nIndent)

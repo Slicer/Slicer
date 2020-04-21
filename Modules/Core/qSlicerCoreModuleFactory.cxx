@@ -74,8 +74,7 @@ qSlicerCoreModuleFactory::qSlicerCoreModuleFactory()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCoreModuleFactory::~qSlicerCoreModuleFactory()
-= default;
+qSlicerCoreModuleFactory::~qSlicerCoreModuleFactory() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerCoreModuleFactory::registerItems()

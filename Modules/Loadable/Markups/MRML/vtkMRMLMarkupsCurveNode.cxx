@@ -101,8 +101,7 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLMarkupsCurveNode::~vtkMRMLMarkupsCurveNode()
-= default;
+vtkMRMLMarkupsCurveNode::~vtkMRMLMarkupsCurveNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::WriteXML(ostream& of, int nIndent)

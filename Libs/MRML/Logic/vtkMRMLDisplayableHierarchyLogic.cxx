@@ -28,12 +28,10 @@
 vtkStandardNewMacro(vtkMRMLDisplayableHierarchyLogic);
 
 //----------------------------------------------------------------------------
-vtkMRMLDisplayableHierarchyLogic::vtkMRMLDisplayableHierarchyLogic()
-= default;
+vtkMRMLDisplayableHierarchyLogic::vtkMRMLDisplayableHierarchyLogic() = default;
 
 //----------------------------------------------------------------------------
-vtkMRMLDisplayableHierarchyLogic::~vtkMRMLDisplayableHierarchyLogic()
-= default;
+vtkMRMLDisplayableHierarchyLogic::~vtkMRMLDisplayableHierarchyLogic() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableHierarchyLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)

@@ -62,8 +62,7 @@ qSlicerAnnotationsReader::qSlicerAnnotationsReader(vtkSlicerAnnotationModuleLogi
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAnnotationsReader::~qSlicerAnnotationsReader()
-= default;
+qSlicerAnnotationsReader::~qSlicerAnnotationsReader() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationsReader::setAnnotationLogic(vtkSlicerAnnotationModuleLogic* logic)

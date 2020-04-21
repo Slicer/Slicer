@@ -579,8 +579,7 @@ qSlicerViewersToolBar::qSlicerViewersToolBar(QWidget* parentWidget):Superclass(p
 }
 
 //---------------------------------------------------------------------------
-qSlicerViewersToolBar::~qSlicerViewersToolBar()
-= default;
+qSlicerViewersToolBar::~qSlicerViewersToolBar() = default;
 
 //---------------------------------------------------------------------------
 void qSlicerViewersToolBar::setApplicationLogic(vtkSlicerApplicationLogic* appLogic)

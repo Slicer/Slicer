@@ -37,8 +37,7 @@ qSlicerCamerasModule::qSlicerCamerasModule(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCamerasModule::~qSlicerCamerasModule()
-= default;
+qSlicerCamerasModule::~qSlicerCamerasModule() = default;
 
 //-----------------------------------------------------------------------------
 QStringList qSlicerCamerasModule::categories()const

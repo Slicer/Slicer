@@ -319,8 +319,7 @@ qMRMLSegmentsTableView::qMRMLSegmentsTableView(QWidget* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qMRMLSegmentsTableView::~qMRMLSegmentsTableView()
-= default;
+qMRMLSegmentsTableView::~qMRMLSegmentsTableView() = default;
 
 //-----------------------------------------------------------------------------
 void qMRMLSegmentsTableView::setSegmentationNode(vtkMRMLNode* node)

@@ -98,8 +98,7 @@ qSlicerSegmentEditorScriptedLabelEffectPrivate::qSlicerSegmentEditorScriptedLabe
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentEditorScriptedLabelEffectPrivate::~qSlicerSegmentEditorScriptedLabelEffectPrivate()
-= default;
+qSlicerSegmentEditorScriptedLabelEffectPrivate::~qSlicerSegmentEditorScriptedLabelEffectPrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSegmentEditorScriptedLabelEffect methods
@@ -113,8 +112,7 @@ qSlicerSegmentEditorScriptedLabelEffect::qSlicerSegmentEditorScriptedLabelEffect
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentEditorScriptedLabelEffect::~qSlicerSegmentEditorScriptedLabelEffect()
-= default;
+qSlicerSegmentEditorScriptedLabelEffect::~qSlicerSegmentEditorScriptedLabelEffect() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerSegmentEditorScriptedLabelEffect::pythonSource()const

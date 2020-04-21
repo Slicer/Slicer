@@ -79,8 +79,7 @@ qSlicerViewControllersModuleWidgetPrivate::qSlicerViewControllersModuleWidgetPri
 }
 
 //-----------------------------------------------------------------------------
-qSlicerViewControllersModuleWidgetPrivate::~qSlicerViewControllersModuleWidgetPrivate()
-= default;
+qSlicerViewControllersModuleWidgetPrivate::~qSlicerViewControllersModuleWidgetPrivate() = default;
 
 //-----------------------------------------------------------------------------
 void
@@ -221,8 +220,7 @@ qSlicerViewControllersModuleWidget::qSlicerViewControllersModuleWidget(QWidget* 
 }
 
 //-----------------------------------------------------------------------------
-qSlicerViewControllersModuleWidget::~qSlicerViewControllersModuleWidget()
-= default;
+qSlicerViewControllersModuleWidget::~qSlicerViewControllersModuleWidget() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerViewControllersModuleWidget::setup()

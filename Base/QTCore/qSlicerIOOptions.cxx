@@ -22,8 +22,7 @@
 #include "qSlicerIOOptions_p.h"
 
 //------------------------------------------------------------------------------
-qSlicerIOOptionsPrivate::~qSlicerIOOptionsPrivate()
-= default;
+qSlicerIOOptionsPrivate::~qSlicerIOOptionsPrivate() = default;
 
 //------------------------------------------------------------------------------
 qSlicerIOOptions::qSlicerIOOptions()
@@ -38,8 +37,7 @@ qSlicerIOOptions::qSlicerIOOptions(qSlicerIOOptionsPrivate* pimpl)
 }
 
 //------------------------------------------------------------------------------
-qSlicerIOOptions::~qSlicerIOOptions()
-= default;
+qSlicerIOOptions::~qSlicerIOOptions() = default;
 
 //------------------------------------------------------------------------------
 bool qSlicerIOOptions::isValid()const

@@ -95,8 +95,7 @@ qMRMLSegmentationFileExportWidget::qMRMLSegmentationFileExportWidget(QWidget* _p
 }
 
 //-----------------------------------------------------------------------------
-qMRMLSegmentationFileExportWidget::~qMRMLSegmentationFileExportWidget()
-= default;
+qMRMLSegmentationFileExportWidget::~qMRMLSegmentationFileExportWidget() = default;
 
 //-----------------------------------------------------------------------------
 vtkMRMLSegmentationNode* qMRMLSegmentationFileExportWidget::segmentationNode() const

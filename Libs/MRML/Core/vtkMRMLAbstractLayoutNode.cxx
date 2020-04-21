@@ -28,8 +28,7 @@ vtkMRMLAbstractLayoutNode::vtkMRMLAbstractLayoutNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLAbstractLayoutNode::~vtkMRMLAbstractLayoutNode()
-= default;
+vtkMRMLAbstractLayoutNode::~vtkMRMLAbstractLayoutNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLAbstractLayoutNode::WriteXML(ostream& of, int nIndent)

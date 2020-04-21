@@ -73,8 +73,7 @@ qSlicerPersistentCookieJar::qSlicerPersistentCookieJar(QObject * parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerPersistentCookieJar::~qSlicerPersistentCookieJar()
-= default;
+qSlicerPersistentCookieJar::~qSlicerPersistentCookieJar() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerPersistentCookieJar::filePath()const

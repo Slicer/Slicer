@@ -29,8 +29,7 @@ vtkMRMLHierarchyStorageNode::vtkMRMLHierarchyStorageNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLHierarchyStorageNode::~vtkMRMLHierarchyStorageNode()
-= default;
+vtkMRMLHierarchyStorageNode::~vtkMRMLHierarchyStorageNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLHierarchyStorageNode::PrintSelf(ostream& os, vtkIndent indent)

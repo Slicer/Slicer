@@ -23,12 +23,10 @@ vtkStandardNewMacro(vtkSlicerSceneViewsModuleLogic)
 //-----------------------------------------------------------------------------
 // vtkSlicerSceneViewsModuleLogic methods
 //-----------------------------------------------------------------------------
-vtkSlicerSceneViewsModuleLogic::vtkSlicerSceneViewsModuleLogic()
-= default;
+vtkSlicerSceneViewsModuleLogic::vtkSlicerSceneViewsModuleLogic() = default;
 
 //-----------------------------------------------------------------------------
-vtkSlicerSceneViewsModuleLogic::~vtkSlicerSceneViewsModuleLogic()
-= default;
+vtkSlicerSceneViewsModuleLogic::~vtkSlicerSceneViewsModuleLogic() = default;
 
 //-----------------------------------------------------------------------------
 void vtkSlicerSceneViewsModuleLogic::PrintSelf(ostream& os, vtkIndent indent)

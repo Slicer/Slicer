@@ -50,8 +50,7 @@ qSlicerEventBrokerModuleWidget::qSlicerEventBrokerModuleWidget(QWidget* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerEventBrokerModuleWidget::~qSlicerEventBrokerModuleWidget()
-= default;
+qSlicerEventBrokerModuleWidget::~qSlicerEventBrokerModuleWidget() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerEventBrokerModuleWidget::setup()

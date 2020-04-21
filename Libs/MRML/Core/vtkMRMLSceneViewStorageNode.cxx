@@ -47,8 +47,7 @@ vtkMRMLSceneViewStorageNode::vtkMRMLSceneViewStorageNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLSceneViewStorageNode::~vtkMRMLSceneViewStorageNode()
-= default;
+vtkMRMLSceneViewStorageNode::~vtkMRMLSceneViewStorageNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLSceneViewStorageNode::PrintSelf(ostream& os, vtkIndent indent)

@@ -29,8 +29,7 @@ qSlicerSceneViewsModule::qSlicerSceneViewsModule(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSceneViewsModule::~qSlicerSceneViewsModule()
-= default;
+qSlicerSceneViewsModule::~qSlicerSceneViewsModule() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerSceneViewsModule::setup()

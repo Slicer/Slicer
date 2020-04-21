@@ -35,8 +35,7 @@ vtkMRMLModelHierarchyNode::vtkMRMLModelHierarchyNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLModelHierarchyNode::~vtkMRMLModelHierarchyNode()
-= default;
+vtkMRMLModelHierarchyNode::~vtkMRMLModelHierarchyNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLModelHierarchyNode::WriteXML(ostream& of, int nIndent)

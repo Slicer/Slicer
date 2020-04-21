@@ -37,8 +37,7 @@ qSlicerWelcomeModule::qSlicerWelcomeModule(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerWelcomeModule::~qSlicerWelcomeModule()
-= default;
+qSlicerWelcomeModule::~qSlicerWelcomeModule() = default;
 
 //-----------------------------------------------------------------------------
 QStringList qSlicerWelcomeModule::categories()const

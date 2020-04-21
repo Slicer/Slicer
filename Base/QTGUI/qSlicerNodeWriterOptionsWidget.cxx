@@ -27,8 +27,7 @@
 #include <vtkMRMLStorageNode.h>
 
 //------------------------------------------------------------------------------
-qSlicerNodeWriterOptionsWidgetPrivate::~qSlicerNodeWriterOptionsWidgetPrivate()
-= default;
+qSlicerNodeWriterOptionsWidgetPrivate::~qSlicerNodeWriterOptionsWidgetPrivate() = default;
 
 //------------------------------------------------------------------------------
 void qSlicerNodeWriterOptionsWidgetPrivate::setupUi(QWidget* widget)
@@ -57,8 +56,7 @@ qSlicerNodeWriterOptionsWidget::qSlicerNodeWriterOptionsWidget(QWidget* parentWi
 }
 
 //------------------------------------------------------------------------------
-qSlicerNodeWriterOptionsWidget::~qSlicerNodeWriterOptionsWidget()
-= default;
+qSlicerNodeWriterOptionsWidget::~qSlicerNodeWriterOptionsWidget() = default;
 
 //------------------------------------------------------------------------------
 bool qSlicerNodeWriterOptionsWidget::isValid()const

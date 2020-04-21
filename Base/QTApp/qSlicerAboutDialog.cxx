@@ -79,5 +79,4 @@ void qSlicerAboutDialog::setLogo(const QPixmap& newLogo)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAboutDialog::~qSlicerAboutDialog()
-= default;
+qSlicerAboutDialog::~qSlicerAboutDialog() = default;

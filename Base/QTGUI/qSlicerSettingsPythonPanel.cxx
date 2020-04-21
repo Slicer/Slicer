@@ -170,8 +170,7 @@ qSlicerSettingsPythonPanel::qSlicerSettingsPythonPanel(QWidget* _parent)
 }
 
 // --------------------------------------------------------------------------
-qSlicerSettingsPythonPanel::~qSlicerSettingsPythonPanel()
-= default;
+qSlicerSettingsPythonPanel::~qSlicerSettingsPythonPanel() = default;
 
 // --------------------------------------------------------------------------
 void qSlicerSettingsPythonPanel::onBackgroundColorChanged(const QColor& newColor)

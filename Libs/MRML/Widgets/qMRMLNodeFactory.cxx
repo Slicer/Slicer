@@ -52,8 +52,7 @@ qMRMLNodeFactory::qMRMLNodeFactory(QObject* _parent)
 }
 
 //------------------------------------------------------------------------------
-qMRMLNodeFactory::~qMRMLNodeFactory()
-= default;
+qMRMLNodeFactory::~qMRMLNodeFactory() = default;
 
 //------------------------------------------------------------------------------
 CTK_SET_CPP(qMRMLNodeFactory, vtkMRMLScene*, setMRMLScene, MRMLScene);

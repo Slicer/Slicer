@@ -47,8 +47,7 @@ vtkMRMLTableViewNode::vtkMRMLTableViewNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLTableViewNode::~vtkMRMLTableViewNode()
-= default;
+vtkMRMLTableViewNode::~vtkMRMLTableViewNode() = default;
 
 //----------------------------------------------------------------------------
 const char* vtkMRMLTableViewNode::GetNodeTagName()

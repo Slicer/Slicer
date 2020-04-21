@@ -79,8 +79,7 @@ public:
 // qSlicerSegmentationsModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentationsModulePrivate::qSlicerSegmentationsModulePrivate()
-= default;
+qSlicerSegmentationsModulePrivate::qSlicerSegmentationsModulePrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSegmentationsModule methods
@@ -93,8 +92,7 @@ qSlicerSegmentationsModule::qSlicerSegmentationsModule(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentationsModule::~qSlicerSegmentationsModule()
-= default;
+qSlicerSegmentationsModule::~qSlicerSegmentationsModule() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerSegmentationsModule::helpText()const

@@ -53,12 +53,10 @@ Version:   $Revision: 1.2 $
 vtkMRMLNodeNewMacro(vtkMRMLFreeSurferModelOverlayStorageNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLFreeSurferModelOverlayStorageNode::vtkMRMLFreeSurferModelOverlayStorageNode()
-= default;
+vtkMRMLFreeSurferModelOverlayStorageNode::vtkMRMLFreeSurferModelOverlayStorageNode() = default;
 
 //----------------------------------------------------------------------------
-vtkMRMLFreeSurferModelOverlayStorageNode::~vtkMRMLFreeSurferModelOverlayStorageNode()
-= default;
+vtkMRMLFreeSurferModelOverlayStorageNode::~vtkMRMLFreeSurferModelOverlayStorageNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLFreeSurferModelOverlayStorageNode::PrintSelf(ostream& os, vtkIndent indent)

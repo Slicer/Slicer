@@ -64,8 +64,7 @@ qMRMLLinearTransformSlider::qMRMLLinearTransformSlider(QWidget* sliderParent)
 }
 
 // --------------------------------------------------------------------------
-qMRMLLinearTransformSlider::~qMRMLLinearTransformSlider()
-= default;
+qMRMLLinearTransformSlider::~qMRMLLinearTransformSlider() = default;
 
 // --------------------------------------------------------------------------
 void qMRMLLinearTransformSlider::setTypeOfTransform(TransformType _typeOfTransform)

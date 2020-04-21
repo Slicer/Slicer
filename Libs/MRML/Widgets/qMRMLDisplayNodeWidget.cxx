@@ -93,8 +93,7 @@ qMRMLDisplayNodeWidget::qMRMLDisplayNodeWidget(QWidget *_parent)
 }
 
 //------------------------------------------------------------------------------
-qMRMLDisplayNodeWidget::~qMRMLDisplayNodeWidget()
-= default;
+qMRMLDisplayNodeWidget::~qMRMLDisplayNodeWidget() = default;
 
 
 //------------------------------------------------------------------------------

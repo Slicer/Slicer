@@ -105,8 +105,7 @@ vtkMRMLTransformDisplayNode::vtkMRMLTransformDisplayNode()
 
 
 //----------------------------------------------------------------------------
-vtkMRMLTransformDisplayNode::~vtkMRMLTransformDisplayNode()
-= default;
+vtkMRMLTransformDisplayNode::~vtkMRMLTransformDisplayNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLTransformDisplayNode::WriteXML(ostream& of, int nIndent)

@@ -11,12 +11,10 @@
 vtkMRMLNodeNewMacro(vtkMRMLAnnotationHierarchyNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLAnnotationHierarchyNode::vtkMRMLAnnotationHierarchyNode()
-= default;
+vtkMRMLAnnotationHierarchyNode::vtkMRMLAnnotationHierarchyNode() = default;
 
 //----------------------------------------------------------------------------
-vtkMRMLAnnotationHierarchyNode::~vtkMRMLAnnotationHierarchyNode()
-= default;
+vtkMRMLAnnotationHierarchyNode::~vtkMRMLAnnotationHierarchyNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)

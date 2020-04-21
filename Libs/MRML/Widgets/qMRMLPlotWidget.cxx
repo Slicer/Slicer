@@ -66,8 +66,7 @@ qMRMLPlotWidgetPrivate::qMRMLPlotWidgetPrivate(qMRMLPlotWidget& object)
 }
 
 //---------------------------------------------------------------------------
-qMRMLPlotWidgetPrivate::~qMRMLPlotWidgetPrivate()
-= default;
+qMRMLPlotWidgetPrivate::~qMRMLPlotWidgetPrivate() = default;
 
 //---------------------------------------------------------------------------
 void qMRMLPlotWidgetPrivate::init()
