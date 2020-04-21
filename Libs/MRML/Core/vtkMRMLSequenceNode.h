@@ -191,12 +191,12 @@ protected:
   /// Describes index of the sequence node
   std::string IndexName;
   std::string IndexUnit;
-  int IndexType;
-  double NumericIndexValueTolerance;
+  int IndexType{vtkMRMLSequenceNode::NumericIndex};
+  double NumericIndexValueTolerance{0.001};
 
   /// Need to store the nodes in the scene, because for reading/writing nodes
   /// we need MRML storage nodes, which only work if they refer to a data node in the same scene
-  vtkMRMLScene* SequenceScene;
+  vtkMRMLScene* SequenceScene{0};
 
   /// List of data items (the scene may contain some more nodes, such as storage nodes)
   std::deque< IndexEntryType > IndexEntries;
