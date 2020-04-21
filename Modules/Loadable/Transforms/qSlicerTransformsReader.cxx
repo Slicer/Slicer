@@ -50,8 +50,7 @@ qSlicerTransformsReader::qSlicerTransformsReader(
 
 
 //-----------------------------------------------------------------------------
-qSlicerTransformsReader::~qSlicerTransformsReader()
-= default;
+qSlicerTransformsReader::~qSlicerTransformsReader() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerTransformsReader::setTransformLogic(vtkSlicerTransformLogic* newTransformLogic)

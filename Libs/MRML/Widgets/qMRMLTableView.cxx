@@ -85,8 +85,7 @@ qMRMLTableViewPrivate::qMRMLTableViewPrivate(qMRMLTableView& object)
 }
 
 //---------------------------------------------------------------------------
-qMRMLTableViewPrivate::~qMRMLTableViewPrivate()
-= default;
+qMRMLTableViewPrivate::~qMRMLTableViewPrivate() = default;
 
 //------------------------------------------------------------------------------
 void qMRMLTableViewPrivate::init()
@@ -190,8 +189,7 @@ qMRMLTableView::qMRMLTableView(QWidget *_parent)
 }
 
 //------------------------------------------------------------------------------
-qMRMLTableView::~qMRMLTableView()
-= default;
+qMRMLTableView::~qMRMLTableView() = default;
 
 //------------------------------------------------------------------------------
 qMRMLTableModel* qMRMLTableView::tableModel()const

@@ -27,9 +27,7 @@
 vtkStandardNewMacro(vtkMRMLLightBoxRendererManagerProxy );
 
 //---------------------------------------------------------------------------
-vtkMRMLLightBoxRendererManagerProxy::vtkMRMLLightBoxRendererManagerProxy()
-= default;
+vtkMRMLLightBoxRendererManagerProxy::vtkMRMLLightBoxRendererManagerProxy() = default;
 
 //---------------------------------------------------------------------------
-vtkMRMLLightBoxRendererManagerProxy::~vtkMRMLLightBoxRendererManagerProxy()
-= default;
+vtkMRMLLightBoxRendererManagerProxy::~vtkMRMLLightBoxRendererManagerProxy() = default;

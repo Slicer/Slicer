@@ -42,8 +42,7 @@ vtkSlicerPlaneWidget::vtkSlicerPlaneWidget()
 }
 
 //----------------------------------------------------------------------
-vtkSlicerPlaneWidget::~vtkSlicerPlaneWidget()
-= default;
+vtkSlicerPlaneWidget::~vtkSlicerPlaneWidget() = default;
 
 //----------------------------------------------------------------------
 void vtkSlicerPlaneWidget::CreateDefaultRepresentation(

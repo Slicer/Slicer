@@ -116,8 +116,7 @@ qSlicerSubjectHierarchyPluginLogic::qSlicerSubjectHierarchyPluginLogic(QObject* 
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyPluginLogic::~qSlicerSubjectHierarchyPluginLogic()
-= default;
+qSlicerSubjectHierarchyPluginLogic::~qSlicerSubjectHierarchyPluginLogic() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginLogic::registerCorePlugins()

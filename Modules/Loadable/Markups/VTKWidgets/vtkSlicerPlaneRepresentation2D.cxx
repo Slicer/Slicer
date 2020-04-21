@@ -135,8 +135,7 @@ vtkSlicerPlaneRepresentation2D::vtkSlicerPlaneRepresentation2D()
 }
 
 //----------------------------------------------------------------------
-vtkSlicerPlaneRepresentation2D::~vtkSlicerPlaneRepresentation2D()
-= default;
+vtkSlicerPlaneRepresentation2D::~vtkSlicerPlaneRepresentation2D() = default;
 
 //----------------------------------------------------------------------
 bool vtkSlicerPlaneRepresentation2D::GetTransformationReferencePoint(double referencePointWorld[3])

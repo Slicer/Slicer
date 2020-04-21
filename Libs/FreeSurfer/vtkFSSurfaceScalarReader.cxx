@@ -31,8 +31,7 @@ vtkFSSurfaceScalarReader::vtkFSSurfaceScalarReader()
 }
 
 //-------------------------------------------------------------------------
-vtkFSSurfaceScalarReader::~vtkFSSurfaceScalarReader()
-= default;
+vtkFSSurfaceScalarReader::~vtkFSSurfaceScalarReader() = default;
 
 //-------------------------------------------------------------------------
 vtkFloatArray * vtkFSSurfaceScalarReader::GetOutput()

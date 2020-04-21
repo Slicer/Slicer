@@ -554,8 +554,7 @@ qSlicerTerminologyNavigatorWidget::qSlicerTerminologyNavigatorWidget(QWidget* _p
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologyNavigatorWidget::~qSlicerTerminologyNavigatorWidget()
-= default;
+qSlicerTerminologyNavigatorWidget::~qSlicerTerminologyNavigatorWidget() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyNavigatorWidget::terminologyInfo(TerminologyInfoBundle &terminologyInfo)

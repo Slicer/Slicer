@@ -104,8 +104,7 @@ public:
     outlinePropertyThin->SetLineStipplePattern(0xff00); // Note: line stipple may not be supported in VTK OpenGL2 backend
     outlinePropertyThin->SetLineWidth(1);
     };
-  ~ScissorsPipeline() override
-     = default;
+  ~ScissorsPipeline() override = default;
 public:
   bool IsDragging;
   vtkSmartPointer<vtkActor2D> Actor;
@@ -1064,8 +1063,7 @@ qSlicerSegmentEditorScissorsEffect::qSlicerSegmentEditorScissorsEffect(QObject* 
 }
 
 //----------------------------------------------------------------------------
-qSlicerSegmentEditorScissorsEffect::~qSlicerSegmentEditorScissorsEffect()
-= default;
+qSlicerSegmentEditorScissorsEffect::~qSlicerSegmentEditorScissorsEffect() = default;
 
 //---------------------------------------------------------------------------
 QIcon qSlicerSegmentEditorScissorsEffect::icon()

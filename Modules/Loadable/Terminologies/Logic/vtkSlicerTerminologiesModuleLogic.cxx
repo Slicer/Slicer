@@ -166,8 +166,7 @@ public:
 // vtkInternal methods
 
 //---------------------------------------------------------------------------
-vtkSlicerTerminologiesModuleLogic::vtkInternal::vtkInternal()
-= default;
+vtkSlicerTerminologiesModuleLogic::vtkInternal::vtkInternal() = default;
 
 //---------------------------------------------------------------------------
 vtkSlicerTerminologiesModuleLogic::vtkInternal::~vtkInternal()

@@ -69,8 +69,7 @@ qSlicerDICOMExportablePrivate::qSlicerDICOMExportablePrivate()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerDICOMExportablePrivate::~qSlicerDICOMExportablePrivate()
-= default;
+qSlicerDICOMExportablePrivate::~qSlicerDICOMExportablePrivate() = default;
 
 
 //-----------------------------------------------------------------------------
@@ -84,8 +83,7 @@ qSlicerDICOMExportable::qSlicerDICOMExportable(QObject* parentObject)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerDICOMExportable::~qSlicerDICOMExportable()
-= default;
+qSlicerDICOMExportable::~qSlicerDICOMExportable() = default;
 
 //-----------------------------------------------------------------------------
 CTK_SET_CPP(qSlicerDICOMExportable, const QString&, setName, Name)

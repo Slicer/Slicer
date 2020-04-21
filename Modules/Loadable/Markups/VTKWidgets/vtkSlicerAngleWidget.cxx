@@ -36,8 +36,7 @@ vtkSlicerAngleWidget::vtkSlicerAngleWidget()
 }
 
 //----------------------------------------------------------------------
-vtkSlicerAngleWidget::~vtkSlicerAngleWidget()
-= default;
+vtkSlicerAngleWidget::~vtkSlicerAngleWidget() = default;
 
 //----------------------------------------------------------------------
 void vtkSlicerAngleWidget::CreateDefaultRepresentation(

@@ -8,12 +8,10 @@
 vtkMRMLNodeNewMacro(vtkMRMLAnnotationFiducialNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLAnnotationFiducialNode::vtkMRMLAnnotationFiducialNode()
-= default;
+vtkMRMLAnnotationFiducialNode::vtkMRMLAnnotationFiducialNode() = default;
 
 //----------------------------------------------------------------------------
-vtkMRMLAnnotationFiducialNode::~vtkMRMLAnnotationFiducialNode()
-= default;
+vtkMRMLAnnotationFiducialNode::~vtkMRMLAnnotationFiducialNode() = default;
 
 //---------------------------------------------------------------------------
 int vtkMRMLAnnotationFiducialNode::SetFiducial(double newControl[3],int selectedFlag, int visibleFlag)

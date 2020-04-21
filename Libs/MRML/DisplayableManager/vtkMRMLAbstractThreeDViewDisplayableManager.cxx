@@ -39,12 +39,10 @@ vtkStandardNewMacro(vtkMRMLAbstractThreeDViewDisplayableManager);
 // vtkMRMLAbstractThreeDViewDisplayableManager methods
 
 //----------------------------------------------------------------------------
-vtkMRMLAbstractThreeDViewDisplayableManager::vtkMRMLAbstractThreeDViewDisplayableManager()
-= default;
+vtkMRMLAbstractThreeDViewDisplayableManager::vtkMRMLAbstractThreeDViewDisplayableManager() = default;
 
 //----------------------------------------------------------------------------
-vtkMRMLAbstractThreeDViewDisplayableManager::~vtkMRMLAbstractThreeDViewDisplayableManager()
-= default;
+vtkMRMLAbstractThreeDViewDisplayableManager::~vtkMRMLAbstractThreeDViewDisplayableManager() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLAbstractThreeDViewDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)

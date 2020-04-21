@@ -48,8 +48,7 @@ public:
 // qSlicerTablesModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerTablesModulePrivate::qSlicerTablesModulePrivate()
-= default;
+qSlicerTablesModulePrivate::qSlicerTablesModulePrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerTablesModule methods
@@ -62,8 +61,7 @@ qSlicerTablesModule::qSlicerTablesModule(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTablesModule::~qSlicerTablesModule()
-= default;
+qSlicerTablesModule::~qSlicerTablesModule() = default;
 
 //-----------------------------------------------------------------------------
 QIcon qSlicerTablesModule::icon()const

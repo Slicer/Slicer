@@ -21,9 +21,7 @@
 vtkStandardNewMacro(vtkSlicerPointsRepresentation2D);
 
 //----------------------------------------------------------------------
-vtkSlicerPointsRepresentation2D::vtkSlicerPointsRepresentation2D()
-= default;
+vtkSlicerPointsRepresentation2D::vtkSlicerPointsRepresentation2D() = default;
 
 //----------------------------------------------------------------------
-vtkSlicerPointsRepresentation2D::~vtkSlicerPointsRepresentation2D()
-= default;
+vtkSlicerPointsRepresentation2D::~vtkSlicerPointsRepresentation2D() = default;

@@ -62,8 +62,7 @@ qSlicerSubjectHierarchyTextsPluginPrivate::qSlicerSubjectHierarchyTextsPluginPri
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyTextsPluginPrivate::~qSlicerSubjectHierarchyTextsPluginPrivate()
-= default;
+qSlicerSubjectHierarchyTextsPluginPrivate::~qSlicerSubjectHierarchyTextsPluginPrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyTextsPlugin methods
@@ -77,8 +76,7 @@ qSlicerSubjectHierarchyTextsPlugin::qSlicerSubjectHierarchyTextsPlugin(QObject* 
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyTextsPlugin::~qSlicerSubjectHierarchyTextsPlugin()
-= default;
+qSlicerSubjectHierarchyTextsPlugin::~qSlicerSubjectHierarchyTextsPlugin() = default;
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyTextsPlugin::canAddNodeToSubjectHierarchy(

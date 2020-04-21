@@ -75,8 +75,7 @@ vtkSlicerLineRepresentation2D::vtkSlicerLineRepresentation2D()
 }
 
 //----------------------------------------------------------------------
-vtkSlicerLineRepresentation2D::~vtkSlicerLineRepresentation2D()
-= default;
+vtkSlicerLineRepresentation2D::~vtkSlicerLineRepresentation2D() = default;
 
 //----------------------------------------------------------------------
 void vtkSlicerLineRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)

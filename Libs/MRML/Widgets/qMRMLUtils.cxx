@@ -46,8 +46,7 @@ qMRMLUtils::qMRMLUtils(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qMRMLUtils::~qMRMLUtils()
-= default;
+qMRMLUtils::~qMRMLUtils() = default;
 
 //------------------------------------------------------------------------------
 void qMRMLUtils::vtkMatrixToQVector(vtkMatrix4x4* matrix, QVector<double> & vector)

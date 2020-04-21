@@ -112,8 +112,7 @@ qSlicerDirectoryListView::qSlicerDirectoryListView(QWidget* _parent)
 }
 
 // --------------------------------------------------------------------------
-qSlicerDirectoryListView::~qSlicerDirectoryListView()
-= default;
+qSlicerDirectoryListView::~qSlicerDirectoryListView() = default;
 
 // --------------------------------------------------------------------------
 QStringList qSlicerDirectoryListView::directoryList(bool absolutePath)const

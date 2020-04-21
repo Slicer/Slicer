@@ -56,8 +56,7 @@ qSlicerAppMainWindowPrivate::qSlicerAppMainWindowPrivate(qSlicerAppMainWindow& o
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAppMainWindowPrivate::~qSlicerAppMainWindowPrivate()
-= default;
+qSlicerAppMainWindowPrivate::~qSlicerAppMainWindowPrivate() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerAppMainWindowPrivate::init()
@@ -170,8 +169,7 @@ qSlicerAppMainWindow::qSlicerAppMainWindow(qSlicerAppMainWindowPrivate* pimpl,
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAppMainWindow::~qSlicerAppMainWindow()
-= default;
+qSlicerAppMainWindow::~qSlicerAppMainWindow() = default;
 
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_HelpKeyboardShortcutsAction_triggered()

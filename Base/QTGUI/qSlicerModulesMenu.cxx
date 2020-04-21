@@ -378,8 +378,7 @@ qSlicerModulesMenu::qSlicerModulesMenu(QWidget* parentWidget)
 }
 
 //---------------------------------------------------------------------------
-qSlicerModulesMenu::~qSlicerModulesMenu()
-= default;
+qSlicerModulesMenu::~qSlicerModulesMenu() = default;
 
 //---------------------------------------------------------------------------
 void qSlicerModulesMenu::setDuplicateActions(bool duplicate)

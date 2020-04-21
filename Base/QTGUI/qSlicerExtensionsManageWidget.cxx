@@ -595,8 +595,7 @@ qSlicerExtensionsManageWidget::qSlicerExtensionsManageWidget(QWidget* _parent)
 }
 
 // --------------------------------------------------------------------------
-qSlicerExtensionsManageWidget::~qSlicerExtensionsManageWidget()
-= default;
+qSlicerExtensionsManageWidget::~qSlicerExtensionsManageWidget() = default;
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsManagerModel* qSlicerExtensionsManageWidget::extensionsManagerModel()const

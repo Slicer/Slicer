@@ -42,8 +42,7 @@ vtkSlicerCurveWidget::vtkSlicerCurveWidget()
 }
 
 //----------------------------------------------------------------------
-vtkSlicerCurveWidget::~vtkSlicerCurveWidget()
-= default;
+vtkSlicerCurveWidget::~vtkSlicerCurveWidget() = default;
 
 //----------------------------------------------------------------------
 void vtkSlicerCurveWidget::CreateDefaultRepresentation(

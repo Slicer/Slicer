@@ -67,8 +67,7 @@ vtkMRMLThreeDViewDisplayableManagerFactory::
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLThreeDViewDisplayableManagerFactory::~vtkMRMLThreeDViewDisplayableManagerFactory()
-= default;
+vtkMRMLThreeDViewDisplayableManagerFactory::~vtkMRMLThreeDViewDisplayableManagerFactory() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLThreeDViewDisplayableManagerFactory::PrintSelf(ostream& os, vtkIndent indent)

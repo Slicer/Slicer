@@ -114,8 +114,7 @@ public:
 // vtkMRMLAnnotationROIDisplayableManager methods
 
 //---------------------------------------------------------------------------
-vtkMRMLAnnotationROIDisplayableManager::~vtkMRMLAnnotationROIDisplayableManager()
-= default;
+vtkMRMLAnnotationROIDisplayableManager::~vtkMRMLAnnotationROIDisplayableManager() = default;
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationROIDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 {

@@ -1014,8 +1014,7 @@ qSlicerExtensionsManagerModel::qSlicerExtensionsManagerModel(QObject* _parent)
 }
 
 // --------------------------------------------------------------------------
-qSlicerExtensionsManagerModel::~qSlicerExtensionsManagerModel()
-= default;
+qSlicerExtensionsManagerModel::~qSlicerExtensionsManagerModel() = default;
 
 // --------------------------------------------------------------------------
 QUrl qSlicerExtensionsManagerModel::serverUrl()const

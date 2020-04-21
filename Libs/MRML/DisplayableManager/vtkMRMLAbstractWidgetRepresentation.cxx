@@ -36,8 +36,7 @@ vtkMRMLAbstractWidgetRepresentation::vtkMRMLAbstractWidgetRepresentation()
 }
 
 //----------------------------------------------------------------------
-vtkMRMLAbstractWidgetRepresentation::~vtkMRMLAbstractWidgetRepresentation()
-= default;
+vtkMRMLAbstractWidgetRepresentation::~vtkMRMLAbstractWidgetRepresentation() = default;
 
 //----------------------------------------------------------------------
 void vtkMRMLAbstractWidgetRepresentation

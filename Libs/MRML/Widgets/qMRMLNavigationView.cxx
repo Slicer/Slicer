@@ -54,8 +54,7 @@ qMRMLNavigationViewPrivate::qMRMLNavigationViewPrivate(qMRMLNavigationView& obje
 }
 
 //---------------------------------------------------------------------------
-qMRMLNavigationViewPrivate::~qMRMLNavigationViewPrivate()
-= default;
+qMRMLNavigationViewPrivate::~qMRMLNavigationViewPrivate() = default;
 
 // --------------------------------------------------------------------------
 // qMRMLNavigationView methods
@@ -72,8 +71,7 @@ qMRMLNavigationView::qMRMLNavigationView(QWidget* _parent) : Superclass(_parent)
 }
 
 // --------------------------------------------------------------------------
-qMRMLNavigationView::~qMRMLNavigationView()
-= default;
+qMRMLNavigationView::~qMRMLNavigationView() = default;
 
 //------------------------------------------------------------------------------
 void qMRMLNavigationView::setMRMLScene(vtkMRMLScene* newScene)

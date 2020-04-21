@@ -176,8 +176,7 @@ qMRMLTransformDisplayNodeWidget
 
 //-----------------------------------------------------------------------------
 qMRMLTransformDisplayNodeWidget
-::~qMRMLTransformDisplayNodeWidget()
-= default;
+::~qMRMLTransformDisplayNodeWidget() = default;
 
 //-----------------------------------------------------------------------------
 void qMRMLTransformDisplayNodeWidget

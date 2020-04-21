@@ -240,8 +240,7 @@ qMRMLUnitWidget::qMRMLUnitWidget(QWidget* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qMRMLUnitWidget::~qMRMLUnitWidget()
-= default;
+qMRMLUnitWidget::~qMRMLUnitWidget() = default;
 
 //-----------------------------------------------------------------------------
 qMRMLUnitWidget::UnitProperties qMRMLUnitWidget::displayedProperties() const

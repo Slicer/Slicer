@@ -40,8 +40,7 @@ qSlicerWidget::qSlicerWidget(QWidget * _parent, Qt::WindowFlags f)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerWidget::~qSlicerWidget()
-= default;
+qSlicerWidget::~qSlicerWidget() = default;
 
 //-----------------------------------------------------------------------------
 //CTK_SET_CPP(qSlicerWidget, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);

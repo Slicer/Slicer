@@ -15,8 +15,7 @@ vtkSlicerTask::vtkSlicerTask()
   this->Type = vtkSlicerTask::Undefined;
 }
 //----------------------------------------------------------------------------
-vtkSlicerTask::~vtkSlicerTask()
-= default;
+vtkSlicerTask::~vtkSlicerTask() = default;
 
 //----------------------------------------------------------------------------
 void vtkSlicerTask::SetTaskFunction(vtkMRMLAbstractLogic *object,

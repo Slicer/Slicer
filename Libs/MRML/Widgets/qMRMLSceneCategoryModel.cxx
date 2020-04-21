@@ -56,8 +56,7 @@ qMRMLSceneCategoryModel::qMRMLSceneCategoryModel(QObject *vparent)
 }
 
 //------------------------------------------------------------------------------
-qMRMLSceneCategoryModel::~qMRMLSceneCategoryModel()
-= default;
+qMRMLSceneCategoryModel::~qMRMLSceneCategoryModel() = default;
 
 //------------------------------------------------------------------------------
 QStandardItem* qMRMLSceneCategoryModel::itemFromCategory(const QString& category)const

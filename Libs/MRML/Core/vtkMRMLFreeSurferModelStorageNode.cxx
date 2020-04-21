@@ -48,8 +48,7 @@ vtkMRMLFreeSurferModelStorageNode::vtkMRMLFreeSurferModelStorageNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLFreeSurferModelStorageNode::~vtkMRMLFreeSurferModelStorageNode()
-= default;
+vtkMRMLFreeSurferModelStorageNode::~vtkMRMLFreeSurferModelStorageNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLFreeSurferModelStorageNode::WriteXML(ostream& of, int indent)

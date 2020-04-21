@@ -42,8 +42,7 @@ qSlicerSegmentEditorEraseEffectPrivate::qSlicerSegmentEditorEraseEffectPrivate(q
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentEditorEraseEffectPrivate::~qSlicerSegmentEditorEraseEffectPrivate()
-= default;
+qSlicerSegmentEditorEraseEffectPrivate::~qSlicerSegmentEditorEraseEffectPrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSegmentEditorEraseEffect methods
@@ -59,8 +58,7 @@ qSlicerSegmentEditorEraseEffect::qSlicerSegmentEditorEraseEffect(QObject* parent
 }
 
 //----------------------------------------------------------------------------
-qSlicerSegmentEditorEraseEffect::~qSlicerSegmentEditorEraseEffect()
-= default;
+qSlicerSegmentEditorEraseEffect::~qSlicerSegmentEditorEraseEffect() = default;
 
 //---------------------------------------------------------------------------
 QIcon qSlicerSegmentEditorEraseEffect::icon()

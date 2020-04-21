@@ -40,8 +40,7 @@ qSlicerModelsDialogPrivate::qSlicerModelsDialogPrivate(qSlicerModelsDialog& obje
 }
 
 //-----------------------------------------------------------------------------
-qSlicerModelsDialogPrivate::~qSlicerModelsDialogPrivate()
-= default;
+qSlicerModelsDialogPrivate::~qSlicerModelsDialogPrivate() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerModelsDialogPrivate::init()
@@ -98,8 +97,7 @@ qSlicerModelsDialog::qSlicerModelsDialog(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerModelsDialog::~qSlicerModelsDialog()
-= default;
+qSlicerModelsDialog::~qSlicerModelsDialog() = default;
 
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerModelsDialog::fileType()const

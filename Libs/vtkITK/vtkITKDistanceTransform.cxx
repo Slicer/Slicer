@@ -26,8 +26,7 @@ vtkITKDistanceTransform::vtkITKDistanceTransform()
   this->BackgroundValue = 0;
 }
 
-vtkITKDistanceTransform::~vtkITKDistanceTransform()
-= default;
+vtkITKDistanceTransform::~vtkITKDistanceTransform() = default;
 
 
 template <class T>

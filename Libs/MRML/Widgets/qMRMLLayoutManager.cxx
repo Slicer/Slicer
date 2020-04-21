@@ -932,8 +932,7 @@ qMRMLLayoutManager::qMRMLLayoutManager(qMRMLLayoutManagerPrivate* pimpl,
 }
 
 // --------------------------------------------------------------------------
-qMRMLLayoutManager::~qMRMLLayoutManager()
-= default;
+qMRMLLayoutManager::~qMRMLLayoutManager() = default;
 
 // --------------------------------------------------------------------------
 bool qMRMLLayoutManager::isEnabled()const

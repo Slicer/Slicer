@@ -34,12 +34,10 @@
 vtkMRMLNodeNewMacro(vtkMRMLLabelMapVolumeNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLLabelMapVolumeNode::vtkMRMLLabelMapVolumeNode()
-= default;
+vtkMRMLLabelMapVolumeNode::vtkMRMLLabelMapVolumeNode() = default;
 
 //----------------------------------------------------------------------------
-vtkMRMLLabelMapVolumeNode::~vtkMRMLLabelMapVolumeNode()
-= default;
+vtkMRMLLabelMapVolumeNode::~vtkMRMLLabelMapVolumeNode() = default;
 
 //-----------------------------------------------------------
 void vtkMRMLLabelMapVolumeNode::CreateNoneNode(vtkMRMLScene *scene)

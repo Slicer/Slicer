@@ -34,8 +34,7 @@ vtkITKWandImageFilter::vtkITKWandImageFilter()
   this->DynamicRangePercentage = 0.1;
 }
 
-vtkITKWandImageFilter::~vtkITKWandImageFilter()
-= default;
+vtkITKWandImageFilter::~vtkITKWandImageFilter() = default;
 
 
 template <class T>

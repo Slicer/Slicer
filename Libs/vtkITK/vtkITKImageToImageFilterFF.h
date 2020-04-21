@@ -65,8 +65,7 @@ protected:
     this->vtkCast->SetOutputScalarTypeToFloat();
   };
 
-  ~vtkITKImageToImageFilterFF() override
-   = default;
+  ~vtkITKImageToImageFilterFF() override = default;
 
 private:
   vtkITKImageToImageFilterFF(const vtkITKImageToImageFilterFF&) = delete;

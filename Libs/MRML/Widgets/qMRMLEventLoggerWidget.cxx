@@ -80,8 +80,7 @@ qMRMLEventLoggerWidget::qMRMLEventLoggerWidget(QWidget *_parent):Superclass(_par
 #undef QMRMLEVENTLOGGERWIDGET_CONNECT_SLOT_MACRO
 
 //------------------------------------------------------------------------------
-qMRMLEventLoggerWidget::~qMRMLEventLoggerWidget()
-= default;
+qMRMLEventLoggerWidget::~qMRMLEventLoggerWidget() = default;
 
 //------------------------------------------------------------------------------
 void qMRMLEventLoggerWidget::setMRMLScene(vtkMRMLScene* scene)

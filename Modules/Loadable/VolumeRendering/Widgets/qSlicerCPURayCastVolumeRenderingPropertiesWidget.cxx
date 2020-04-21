@@ -55,8 +55,7 @@ qSlicerCPURayCastVolumeRenderingPropertiesWidgetPrivate
 
 // --------------------------------------------------------------------------
 qSlicerCPURayCastVolumeRenderingPropertiesWidgetPrivate::
-~qSlicerCPURayCastVolumeRenderingPropertiesWidgetPrivate()
-= default;
+~qSlicerCPURayCastVolumeRenderingPropertiesWidgetPrivate() = default;
 
 // --------------------------------------------------------------------------
 void qSlicerCPURayCastVolumeRenderingPropertiesWidgetPrivate
@@ -96,8 +95,7 @@ qSlicerCPURayCastVolumeRenderingPropertiesWidget
 
 //-----------------------------------------------------------------------------
 qSlicerCPURayCastVolumeRenderingPropertiesWidget
-::~qSlicerCPURayCastVolumeRenderingPropertiesWidget()
-= default;
+::~qSlicerCPURayCastVolumeRenderingPropertiesWidget() = default;
 
 //-----------------------------------------------------------------------------
 vtkMRMLCPURayCastVolumeRenderingDisplayNode* qSlicerCPURayCastVolumeRenderingPropertiesWidget

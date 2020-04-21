@@ -87,8 +87,7 @@ qMRMLModelInfoWidget::qMRMLModelInfoWidget(QWidget *_parent)
 }
 
 //------------------------------------------------------------------------------
-qMRMLModelInfoWidget::~qMRMLModelInfoWidget()
-= default;
+qMRMLModelInfoWidget::~qMRMLModelInfoWidget() = default;
 
 
 //------------------------------------------------------------------------------

@@ -76,8 +76,7 @@ vtkCurveGenerator::vtkCurveGenerator()
 }
 
 //------------------------------------------------------------------------------
-vtkCurveGenerator::~vtkCurveGenerator()
-= default;
+vtkCurveGenerator::~vtkCurveGenerator() = default;
 
 //------------------------------------------------------------------------------
 void vtkCurveGenerator::PrintSelf(std::ostream &os, vtkIndent indent)

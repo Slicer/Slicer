@@ -44,8 +44,7 @@ vtkMRMLAnnotationSnapshotStorageNode::vtkMRMLAnnotationSnapshotStorageNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLAnnotationSnapshotStorageNode::~vtkMRMLAnnotationSnapshotStorageNode()
-= default;
+vtkMRMLAnnotationSnapshotStorageNode::~vtkMRMLAnnotationSnapshotStorageNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationSnapshotStorageNode::PrintSelf(ostream& os, vtkIndent indent)

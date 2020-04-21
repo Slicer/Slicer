@@ -44,8 +44,7 @@ vtkITKImageMargin::vtkITKImageMargin()
 }
 
 //----------------------------------------------------------------------------
-vtkITKImageMargin::~vtkITKImageMargin()
-= default;
+vtkITKImageMargin::~vtkITKImageMargin() = default;
 
 //----------------------------------------------------------------------------
 void vtkITKImageMargin::PrintSelf(ostream& os, vtkIndent indent)

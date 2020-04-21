@@ -94,8 +94,7 @@ qSlicerActionsDialog::qSlicerActionsDialog(QWidget* parentWidget)
 }
 
 //------------------------------------------------------------------------------
-qSlicerActionsDialog::~qSlicerActionsDialog()
-= default;
+qSlicerActionsDialog::~qSlicerActionsDialog() = default;
 
 //------------------------------------------------------------------------------
 void qSlicerActionsDialog::addAction(QAction* action, const QString& group)

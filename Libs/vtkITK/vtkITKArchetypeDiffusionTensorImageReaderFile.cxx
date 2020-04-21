@@ -31,12 +31,10 @@
 vtkStandardNewMacro(vtkITKArchetypeDiffusionTensorImageReaderFile);
 
 //----------------------------------------------------------------------------
-vtkITKArchetypeDiffusionTensorImageReaderFile::vtkITKArchetypeDiffusionTensorImageReaderFile()
-= default;
+vtkITKArchetypeDiffusionTensorImageReaderFile::vtkITKArchetypeDiffusionTensorImageReaderFile() = default;
 
 //----------------------------------------------------------------------------
-vtkITKArchetypeDiffusionTensorImageReaderFile::~vtkITKArchetypeDiffusionTensorImageReaderFile()
-= default;
+vtkITKArchetypeDiffusionTensorImageReaderFile::~vtkITKArchetypeDiffusionTensorImageReaderFile() = default;
 
 //----------------------------------------------------------------------------
 void vtkITKArchetypeDiffusionTensorImageReaderFile::PrintSelf(ostream& os, vtkIndent indent)

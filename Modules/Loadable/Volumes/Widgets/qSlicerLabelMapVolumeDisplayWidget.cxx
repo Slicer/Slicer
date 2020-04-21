@@ -54,8 +54,7 @@ qSlicerLabelMapVolumeDisplayWidgetPrivate::qSlicerLabelMapVolumeDisplayWidgetPri
 }
 
 //-----------------------------------------------------------------------------
-qSlicerLabelMapVolumeDisplayWidgetPrivate::~qSlicerLabelMapVolumeDisplayWidgetPrivate()
-= default;
+qSlicerLabelMapVolumeDisplayWidgetPrivate::~qSlicerLabelMapVolumeDisplayWidgetPrivate() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerLabelMapVolumeDisplayWidgetPrivate::init()
@@ -81,8 +80,7 @@ qSlicerLabelMapVolumeDisplayWidget::qSlicerLabelMapVolumeDisplayWidget(QWidget* 
 }
 
 // --------------------------------------------------------------------------
-qSlicerLabelMapVolumeDisplayWidget::~qSlicerLabelMapVolumeDisplayWidget()
-= default;
+qSlicerLabelMapVolumeDisplayWidget::~qSlicerLabelMapVolumeDisplayWidget() = default;
 
 // --------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode* qSlicerLabelMapVolumeDisplayWidget::volumeNode()const

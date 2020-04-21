@@ -100,8 +100,7 @@ qSlicerSegmentEditorScriptedEffectPrivate::qSlicerSegmentEditorScriptedEffectPri
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentEditorScriptedEffectPrivate::~qSlicerSegmentEditorScriptedEffectPrivate()
-= default;
+qSlicerSegmentEditorScriptedEffectPrivate::~qSlicerSegmentEditorScriptedEffectPrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSegmentEditorScriptedEffect methods
@@ -115,8 +114,7 @@ qSlicerSegmentEditorScriptedEffect::qSlicerSegmentEditorScriptedEffect(QObject *
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentEditorScriptedEffect::~qSlicerSegmentEditorScriptedEffect()
-= default;
+qSlicerSegmentEditorScriptedEffect::~qSlicerSegmentEditorScriptedEffect() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerSegmentEditorScriptedEffect::pythonSource()const

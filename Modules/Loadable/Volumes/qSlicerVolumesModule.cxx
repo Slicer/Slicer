@@ -59,8 +59,7 @@ qSlicerVolumesModule::qSlicerVolumesModule(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerVolumesModule::~qSlicerVolumesModule()
-= default;
+qSlicerVolumesModule::~qSlicerVolumesModule() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerVolumesModule::helpText()const

@@ -20,8 +20,7 @@
 
 #include "qSlicerQTCLIAbstractPlugin.h"
 
-qSlicerQTCLIAbstractPlugin::qSlicerQTCLIAbstractPlugin()
-= default;
+qSlicerQTCLIAbstractPlugin::qSlicerQTCLIAbstractPlugin() = default;
 
 QString qSlicerQTCLIAbstractPlugin::group() const
 {

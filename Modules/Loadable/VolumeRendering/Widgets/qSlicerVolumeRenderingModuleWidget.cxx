@@ -81,8 +81,7 @@ qSlicerVolumeRenderingModuleWidgetPrivate::qSlicerVolumeRenderingModuleWidgetPri
 }
 
 //-----------------------------------------------------------------------------
-qSlicerVolumeRenderingModuleWidgetPrivate::~qSlicerVolumeRenderingModuleWidgetPrivate()
-= default;
+qSlicerVolumeRenderingModuleWidgetPrivate::~qSlicerVolumeRenderingModuleWidgetPrivate() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingModuleWidget* q)
@@ -250,8 +249,7 @@ qSlicerVolumeRenderingModuleWidget::qSlicerVolumeRenderingModuleWidget(QWidget* 
 }
 
 //-----------------------------------------------------------------------------
-qSlicerVolumeRenderingModuleWidget::~qSlicerVolumeRenderingModuleWidget()
-= default;
+qSlicerVolumeRenderingModuleWidget::~qSlicerVolumeRenderingModuleWidget() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerVolumeRenderingModuleWidget::setup()

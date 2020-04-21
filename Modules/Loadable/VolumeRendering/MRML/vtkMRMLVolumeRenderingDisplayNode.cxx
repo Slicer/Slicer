@@ -80,8 +80,7 @@ vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumeRenderingDisplayNode::~vtkMRMLVolumeRenderingDisplayNode()
-= default;
+vtkMRMLVolumeRenderingDisplayNode::~vtkMRMLVolumeRenderingDisplayNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayNode::ReadXMLAttributes(const char** atts)

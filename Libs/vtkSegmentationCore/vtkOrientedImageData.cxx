@@ -47,8 +47,7 @@ vtkOrientedImageData::vtkOrientedImageData()
 }
 
 //----------------------------------------------------------------------------
-vtkOrientedImageData::~vtkOrientedImageData()
-= default;
+vtkOrientedImageData::~vtkOrientedImageData() = default;
 
 //----------------------------------------------------------------------------
 void vtkOrientedImageData::PrintSelf(ostream& os, vtkIndent indent)

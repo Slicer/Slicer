@@ -66,8 +66,7 @@ qSlicerTablesReader
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTablesReader::~qSlicerTablesReader()
-= default;
+qSlicerTablesReader::~qSlicerTablesReader() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerTablesReader::setLogic(vtkSlicerTablesLogic* logic)

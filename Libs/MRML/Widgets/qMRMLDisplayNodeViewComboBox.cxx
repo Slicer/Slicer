@@ -80,8 +80,7 @@ qMRMLDisplayNodeViewComboBox::qMRMLDisplayNodeViewComboBox(QWidget* parentWidget
 }
 
 // --------------------------------------------------------------------------
-qMRMLDisplayNodeViewComboBox::~qMRMLDisplayNodeViewComboBox()
-= default;
+qMRMLDisplayNodeViewComboBox::~qMRMLDisplayNodeViewComboBox() = default;
 
 // --------------------------------------------------------------------------
 vtkMRMLDisplayNode* qMRMLDisplayNodeViewComboBox::mrmlDisplayNode()const

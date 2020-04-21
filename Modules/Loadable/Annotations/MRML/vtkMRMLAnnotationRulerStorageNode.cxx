@@ -10,12 +10,10 @@
 vtkMRMLNodeNewMacro(vtkMRMLAnnotationRulerStorageNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLAnnotationRulerStorageNode::vtkMRMLAnnotationRulerStorageNode()
-= default;
+vtkMRMLAnnotationRulerStorageNode::vtkMRMLAnnotationRulerStorageNode() = default;
 
 //----------------------------------------------------------------------------
-vtkMRMLAnnotationRulerStorageNode::~vtkMRMLAnnotationRulerStorageNode()
-= default;
+vtkMRMLAnnotationRulerStorageNode::~vtkMRMLAnnotationRulerStorageNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationRulerStorageNode::WriteXML(ostream& of, int nIndent)

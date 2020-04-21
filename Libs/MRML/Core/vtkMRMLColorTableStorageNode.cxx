@@ -37,8 +37,7 @@ vtkMRMLColorTableStorageNode::vtkMRMLColorTableStorageNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLColorTableStorageNode::~vtkMRMLColorTableStorageNode()
-= default;
+vtkMRMLColorTableStorageNode::~vtkMRMLColorTableStorageNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLColorTableStorageNode::PrintSelf(ostream& os, vtkIndent indent)

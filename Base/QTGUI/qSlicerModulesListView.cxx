@@ -250,8 +250,7 @@ qSlicerModulesListView::qSlicerModulesListView(QWidget* _parent)
 }
 
 // --------------------------------------------------------------------------
-qSlicerModulesListView::~qSlicerModulesListView()
-= default;
+qSlicerModulesListView::~qSlicerModulesListView() = default;
 
 // --------------------------------------------------------------------------
 void qSlicerModulesListView::setFactoryManager(qSlicerAbstractModuleFactoryManager* factoryManager)

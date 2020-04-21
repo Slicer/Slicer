@@ -182,8 +182,7 @@ qSlicerSaveDataDialogPrivate::qSlicerSaveDataDialogPrivate(QWidget* parentWidget
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSaveDataDialogPrivate::~qSlicerSaveDataDialogPrivate()
-= default;
+qSlicerSaveDataDialogPrivate::~qSlicerSaveDataDialogPrivate() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerSaveDataDialogPrivate::setMRMLScene(vtkMRMLScene* scene)
@@ -1422,8 +1421,7 @@ qSlicerSaveDataDialog::qSlicerSaveDataDialog(QObject* parentObject)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSaveDataDialog::~qSlicerSaveDataDialog()
-= default;
+qSlicerSaveDataDialog::~qSlicerSaveDataDialog() = default;
 
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerSaveDataDialog::fileType()const

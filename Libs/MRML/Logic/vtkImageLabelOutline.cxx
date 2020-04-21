@@ -36,8 +36,7 @@ vtkImageLabelOutline::vtkImageLabelOutline()
 
 
 //----------------------------------------------------------------------------
-vtkImageLabelOutline::~vtkImageLabelOutline()
-= default;
+vtkImageLabelOutline::~vtkImageLabelOutline() = default;
 //----------------------------------------------------------------------------
 
 

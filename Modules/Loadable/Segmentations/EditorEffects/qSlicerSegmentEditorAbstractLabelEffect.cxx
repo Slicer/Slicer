@@ -64,8 +64,7 @@ qSlicerSegmentEditorAbstractLabelEffectPrivate::qSlicerSegmentEditorAbstractLabe
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentEditorAbstractLabelEffectPrivate::~qSlicerSegmentEditorAbstractLabelEffectPrivate()
-= default;
+qSlicerSegmentEditorAbstractLabelEffectPrivate::~qSlicerSegmentEditorAbstractLabelEffectPrivate() = default;
 
 //-----------------------------------------------------------------------------
 
@@ -81,8 +80,7 @@ qSlicerSegmentEditorAbstractLabelEffect::qSlicerSegmentEditorAbstractLabelEffect
 }
 
 //----------------------------------------------------------------------------
-qSlicerSegmentEditorAbstractLabelEffect::~qSlicerSegmentEditorAbstractLabelEffect()
-= default;
+qSlicerSegmentEditorAbstractLabelEffect::~qSlicerSegmentEditorAbstractLabelEffect() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractLabelEffect::referenceGeometryChanged()

@@ -36,8 +36,7 @@ qSlicerFileWriter::qSlicerFileWriter(QObject* parentObject)
 }
 
 //----------------------------------------------------------------------------
-qSlicerFileWriter::~qSlicerFileWriter()
-= default;
+qSlicerFileWriter::~qSlicerFileWriter() = default;
 
 //----------------------------------------------------------------------------
 bool qSlicerFileWriter::canWriteObject(vtkObject* object)const

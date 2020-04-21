@@ -123,8 +123,7 @@ qMRMLCoordinatesWidget::qMRMLCoordinatesWidget(QWidget* _parent)
 }
 
 //------------------------------------------------------------------------------
-qMRMLCoordinatesWidget::~qMRMLCoordinatesWidget()
-= default;
+qMRMLCoordinatesWidget::~qMRMLCoordinatesWidget() = default;
 
 //-----------------------------------------------------------------------------
 void qMRMLCoordinatesWidget::setQuantity(const QString& quantity)

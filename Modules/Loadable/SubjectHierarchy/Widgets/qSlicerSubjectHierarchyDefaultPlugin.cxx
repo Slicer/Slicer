@@ -74,8 +74,7 @@ qSlicerSubjectHierarchyDefaultPluginPrivate::qSlicerSubjectHierarchyDefaultPlugi
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyDefaultPluginPrivate::~qSlicerSubjectHierarchyDefaultPluginPrivate()
-= default;
+qSlicerSubjectHierarchyDefaultPluginPrivate::~qSlicerSubjectHierarchyDefaultPluginPrivate() = default;
 
 //------------------------------------------------------------------------------
 void qSlicerSubjectHierarchyDefaultPluginPrivate::init()
@@ -107,8 +106,7 @@ qSlicerSubjectHierarchyDefaultPlugin::qSlicerSubjectHierarchyDefaultPlugin(QObje
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyDefaultPlugin::~qSlicerSubjectHierarchyDefaultPlugin()
-= default;
+qSlicerSubjectHierarchyDefaultPlugin::~qSlicerSubjectHierarchyDefaultPlugin() = default;
 
 //----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyDefaultPlugin::setDefaultVisibilityIcons(QIcon visibleIcon, QIcon hiddenIcon, QIcon partiallyVisibleIcon)

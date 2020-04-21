@@ -1065,8 +1065,7 @@ qMRMLSegmentEditorWidget::qMRMLSegmentEditorWidget(QWidget* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qMRMLSegmentEditorWidget::~qMRMLSegmentEditorWidget()
-= default;
+qMRMLSegmentEditorWidget::~qMRMLSegmentEditorWidget() = default;
 
 //-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::updateEffectList()

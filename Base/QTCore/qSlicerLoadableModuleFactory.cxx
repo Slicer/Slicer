@@ -35,8 +35,7 @@
 #include <vtksys/SystemTools.hxx>
 
 //-----------------------------------------------------------------------------
-qSlicerLoadableModuleFactoryItem::qSlicerLoadableModuleFactoryItem()
-= default;
+qSlicerLoadableModuleFactoryItem::qSlicerLoadableModuleFactoryItem() = default;
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractCoreModule* qSlicerLoadableModuleFactoryItem::instanciator()
@@ -108,8 +107,7 @@ qSlicerLoadableModuleFactory::qSlicerLoadableModuleFactory()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerLoadableModuleFactory::~qSlicerLoadableModuleFactory()
-= default;
+qSlicerLoadableModuleFactory::~qSlicerLoadableModuleFactory() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerLoadableModuleFactory::registerItems()

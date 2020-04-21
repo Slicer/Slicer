@@ -13,12 +13,10 @@
 vtkMRMLNodeNewMacro(vtkMRMLAnnotationControlPointsStorageNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLAnnotationControlPointsStorageNode::vtkMRMLAnnotationControlPointsStorageNode()
-= default;
+vtkMRMLAnnotationControlPointsStorageNode::vtkMRMLAnnotationControlPointsStorageNode() = default;
 
 //----------------------------------------------------------------------------
-vtkMRMLAnnotationControlPointsStorageNode::~vtkMRMLAnnotationControlPointsStorageNode()
-= default;
+vtkMRMLAnnotationControlPointsStorageNode::~vtkMRMLAnnotationControlPointsStorageNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationControlPointsStorageNode::PrintSelf(ostream& os, vtkIndent indent)

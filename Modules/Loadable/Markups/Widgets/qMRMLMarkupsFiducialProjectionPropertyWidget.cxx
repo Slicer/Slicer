@@ -89,8 +89,7 @@ qMRMLMarkupsFiducialProjectionPropertyWidget
 
 //-----------------------------------------------------------------------------
 qMRMLMarkupsFiducialProjectionPropertyWidget
-::~qMRMLMarkupsFiducialProjectionPropertyWidget()
-= default;
+::~qMRMLMarkupsFiducialProjectionPropertyWidget() = default;
 
 //-----------------------------------------------------------------------------
 void qMRMLMarkupsFiducialProjectionPropertyWidget

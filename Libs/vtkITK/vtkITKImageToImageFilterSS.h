@@ -74,8 +74,7 @@ protected:
     this->vtkCast->SetOutputScalarTypeToShort();
   };
 
-  ~vtkITKImageToImageFilterSS() override
-   = default;
+  ~vtkITKImageToImageFilterSS() override = default;
 
 private:
   vtkITKImageToImageFilterSS(const vtkITKImageToImageFilterSS&) = delete;

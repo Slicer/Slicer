@@ -109,8 +109,7 @@ void qSlicerSubjectHierarchyDICOMPluginPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyDICOMPluginPrivate::~qSlicerSubjectHierarchyDICOMPluginPrivate()
-= default;
+qSlicerSubjectHierarchyDICOMPluginPrivate::~qSlicerSubjectHierarchyDICOMPluginPrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyDICOMPlugin methods
@@ -127,8 +126,7 @@ qSlicerSubjectHierarchyDICOMPlugin::qSlicerSubjectHierarchyDICOMPlugin(QObject* 
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyDICOMPlugin::~qSlicerSubjectHierarchyDICOMPlugin()
-= default;
+qSlicerSubjectHierarchyDICOMPlugin::~qSlicerSubjectHierarchyDICOMPlugin() = default;
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyDICOMPlugin::canAddNodeToSubjectHierarchy(

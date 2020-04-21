@@ -48,8 +48,7 @@ qSlicerModuleManager::qSlicerModuleManager(QObject* newParent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerModuleManager::~qSlicerModuleManager()
-= default;
+qSlicerModuleManager::~qSlicerModuleManager() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerModuleManager::printAdditionalInfo()

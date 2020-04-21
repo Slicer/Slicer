@@ -214,8 +214,7 @@ qMRMLSegmentsModel::qMRMLSegmentsModel(qMRMLSegmentsModelPrivate* pimpl, QObject
 }
 
 //------------------------------------------------------------------------------
-qMRMLSegmentsModel::~qMRMLSegmentsModel()
-= default;
+qMRMLSegmentsModel::~qMRMLSegmentsModel() = default;
 
 //------------------------------------------------------------------------------
 void qMRMLSegmentsModel::setSegmentationNode(vtkMRMLSegmentationNode* segmentationNode)

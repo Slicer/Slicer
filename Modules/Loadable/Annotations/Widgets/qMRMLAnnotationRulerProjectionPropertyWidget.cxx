@@ -94,8 +94,7 @@ qMRMLAnnotationRulerProjectionPropertyWidget
 
 //-----------------------------------------------------------------------------
 qMRMLAnnotationRulerProjectionPropertyWidget
-::~qMRMLAnnotationRulerProjectionPropertyWidget()
-= default;
+::~qMRMLAnnotationRulerProjectionPropertyWidget() = default;
 
 //-----------------------------------------------------------------------------
 void qMRMLAnnotationRulerProjectionPropertyWidget

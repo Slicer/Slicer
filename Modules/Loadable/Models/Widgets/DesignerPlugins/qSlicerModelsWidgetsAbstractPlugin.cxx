@@ -21,8 +21,7 @@
 #include "qSlicerModelsWidgetsAbstractPlugin.h"
 
 //-----------------------------------------------------------------------------
-qSlicerModelsWidgetsAbstractPlugin::qSlicerModelsWidgetsAbstractPlugin()
-= default;
+qSlicerModelsWidgetsAbstractPlugin::qSlicerModelsWidgetsAbstractPlugin() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerModelsWidgetsAbstractPlugin::group() const

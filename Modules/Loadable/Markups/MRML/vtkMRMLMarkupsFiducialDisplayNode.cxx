@@ -37,5 +37,4 @@ vtkMRMLMarkupsFiducialDisplayNode::vtkMRMLMarkupsFiducialDisplayNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLMarkupsFiducialDisplayNode::~vtkMRMLMarkupsFiducialDisplayNode()
-= default;
+vtkMRMLMarkupsFiducialDisplayNode::~vtkMRMLMarkupsFiducialDisplayNode() = default;

@@ -41,8 +41,7 @@ vtkITKLevelTracingImageFilter::vtkITKLevelTracingImageFilter()
   this->Plane = 2;  // Default to XY plane
 }
 
-vtkITKLevelTracingImageFilter::~vtkITKLevelTracingImageFilter()
-= default;
+vtkITKLevelTracingImageFilter::~vtkITKLevelTracingImageFilter() = default;
 
 
 template <class T>

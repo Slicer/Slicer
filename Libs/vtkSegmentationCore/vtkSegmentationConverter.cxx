@@ -54,8 +54,7 @@ vtkSegmentationConverter::vtkSegmentationConverter()
 }
 
 //----------------------------------------------------------------------------
-vtkSegmentationConverter::~vtkSegmentationConverter()
-= default;
+vtkSegmentationConverter::~vtkSegmentationConverter() = default;
 
 //----------------------------------------------------------------------------
 void vtkSegmentationConverter::PrintSelf(ostream& os, vtkIndent indent)

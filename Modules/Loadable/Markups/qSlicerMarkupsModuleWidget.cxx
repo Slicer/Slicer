@@ -169,8 +169,7 @@ int qSlicerMarkupsModuleWidgetPrivate::columnIndex(QString label)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerMarkupsModuleWidgetPrivate::~qSlicerMarkupsModuleWidgetPrivate()
-= default;
+qSlicerMarkupsModuleWidgetPrivate::~qSlicerMarkupsModuleWidgetPrivate() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)

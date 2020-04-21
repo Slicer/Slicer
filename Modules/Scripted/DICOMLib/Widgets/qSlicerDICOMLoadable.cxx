@@ -71,8 +71,7 @@ qSlicerDICOMLoadablePrivate::qSlicerDICOMLoadablePrivate()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerDICOMLoadablePrivate::~qSlicerDICOMLoadablePrivate()
-= default;
+qSlicerDICOMLoadablePrivate::~qSlicerDICOMLoadablePrivate() = default;
 
 
 //-----------------------------------------------------------------------------
@@ -86,8 +85,7 @@ qSlicerDICOMLoadable::qSlicerDICOMLoadable(QObject* parentObject)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerDICOMLoadable::~qSlicerDICOMLoadable()
-= default;
+qSlicerDICOMLoadable::~qSlicerDICOMLoadable() = default;
 
 //-----------------------------------------------------------------------------
 CTK_SET_CPP(qSlicerDICOMLoadable, const QString&, setName, Name)

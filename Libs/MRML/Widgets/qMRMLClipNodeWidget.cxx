@@ -119,8 +119,7 @@ qMRMLClipNodeWidget::qMRMLClipNodeWidget(QWidget *_parent)
 }
 
 //------------------------------------------------------------------------------
-qMRMLClipNodeWidget::~qMRMLClipNodeWidget()
-= default;
+qMRMLClipNodeWidget::~qMRMLClipNodeWidget() = default;
 
 //------------------------------------------------------------------------------
 vtkMRMLClipModelsNode* qMRMLClipNodeWidget::mrmlClipNode()const

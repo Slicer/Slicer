@@ -38,8 +38,7 @@ qSlicerIOOptionsWidget
 {
 }
 //------------------------------------------------------------------------------
-qSlicerIOOptionsWidget::~qSlicerIOOptionsWidget()
-= default;
+qSlicerIOOptionsWidget::~qSlicerIOOptionsWidget() = default;
 
 //------------------------------------------------------------------------------
 bool qSlicerIOOptionsWidget::isValid()const

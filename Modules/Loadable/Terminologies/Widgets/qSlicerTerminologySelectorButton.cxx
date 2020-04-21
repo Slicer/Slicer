@@ -104,8 +104,7 @@ qSlicerTerminologySelectorButton::qSlicerTerminologySelectorButton(QWidget* _par
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologySelectorButton::~qSlicerTerminologySelectorButton()
-= default;
+qSlicerTerminologySelectorButton::~qSlicerTerminologySelectorButton() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologySelectorButton::changeTerminology()

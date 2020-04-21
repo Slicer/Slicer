@@ -61,8 +61,7 @@ qSlicerSegmentationsNodeWriterOptionsWidget::qSlicerSegmentationsNodeWriterOptio
 }
 
 //------------------------------------------------------------------------------
-qSlicerSegmentationsNodeWriterOptionsWidget::~qSlicerSegmentationsNodeWriterOptionsWidget()
-= default;
+qSlicerSegmentationsNodeWriterOptionsWidget::~qSlicerSegmentationsNodeWriterOptionsWidget() = default;
 
 //------------------------------------------------------------------------------
 void qSlicerSegmentationsNodeWriterOptionsWidget::setObject(vtkObject* object)

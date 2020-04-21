@@ -107,8 +107,7 @@ qSlicerSettingsExtensionsPanel::qSlicerSettingsExtensionsPanel(QWidget* _parent)
 }
 
 // --------------------------------------------------------------------------
-qSlicerSettingsExtensionsPanel::~qSlicerSettingsExtensionsPanel()
-= default;
+qSlicerSettingsExtensionsPanel::~qSlicerSettingsExtensionsPanel() = default;
 
 // --------------------------------------------------------------------------
 void qSlicerSettingsExtensionsPanel::onExtensionsManagerEnabled(bool value)

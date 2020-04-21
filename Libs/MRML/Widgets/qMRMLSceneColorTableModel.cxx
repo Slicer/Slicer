@@ -78,8 +78,7 @@ qMRMLSceneColorTableModel::qMRMLSceneColorTableModel(QObject *vparent)
 }
 
 //------------------------------------------------------------------------------
-qMRMLSceneColorTableModel::~qMRMLSceneColorTableModel()
-= default;
+qMRMLSceneColorTableModel::~qMRMLSceneColorTableModel() = default;
 
 //------------------------------------------------------------------------------
 void qMRMLSceneColorTableModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column)

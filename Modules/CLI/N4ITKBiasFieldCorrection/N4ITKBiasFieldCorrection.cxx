@@ -24,8 +24,7 @@ public:
   typedef itk::SmartPointer<Self> Pointer;
   itkNewMacro( Self );
 protected:
-  CommandIterationUpdate()
-   = default;
+  CommandIterationUpdate() = default;
 public:
 
   void Execute(itk::Object *caller, const itk::EventObject & event) override

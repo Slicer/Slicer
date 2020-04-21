@@ -254,8 +254,7 @@ qSlicerCLIExecutableModuleFactory::qSlicerCLIExecutableModuleFactory()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCLIExecutableModuleFactory::~qSlicerCLIExecutableModuleFactory()
-= default;
+qSlicerCLIExecutableModuleFactory::~qSlicerCLIExecutableModuleFactory() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIExecutableModuleFactory::registerItems()

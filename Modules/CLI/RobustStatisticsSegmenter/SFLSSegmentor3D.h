@@ -42,8 +42,7 @@ public:
   typedef typename TImage::RegionType TRegion;
 
   CSFLSSegmentor3D();
-  virtual ~CSFLSSegmentor3D()
-   = default;
+  virtual ~CSFLSSegmentor3D() = default;
 
   /* New */
   // static Pointer New() { return Pointer(new Self); }

@@ -76,8 +76,7 @@ qSlicerScriptedLoadableModulePrivate::qSlicerScriptedLoadableModulePrivate()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerScriptedLoadableModulePrivate::~qSlicerScriptedLoadableModulePrivate()
-= default;
+qSlicerScriptedLoadableModulePrivate::~qSlicerScriptedLoadableModulePrivate() = default;
 
 
 //-----------------------------------------------------------------------------
@@ -93,8 +92,7 @@ qSlicerScriptedLoadableModule::qSlicerScriptedLoadableModule(QObject* _parentObj
 }
 
 //-----------------------------------------------------------------------------
-qSlicerScriptedLoadableModule::~qSlicerScriptedLoadableModule()
-= default;
+qSlicerScriptedLoadableModule::~qSlicerScriptedLoadableModule() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerScriptedLoadableModule::pythonSource()const

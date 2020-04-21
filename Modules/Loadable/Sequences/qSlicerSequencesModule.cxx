@@ -155,8 +155,7 @@ qSlicerSequencesModule::qSlicerSequencesModule(QObject* _parent)
 
 
 //-----------------------------------------------------------------------------
-qSlicerSequencesModule::~qSlicerSequencesModule()
-= default;
+qSlicerSequencesModule::~qSlicerSequencesModule() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerSequencesModule::helpText()const

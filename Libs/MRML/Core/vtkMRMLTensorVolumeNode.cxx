@@ -41,8 +41,7 @@ vtkMRMLTensorVolumeNode::vtkMRMLTensorVolumeNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLTensorVolumeNode::~vtkMRMLTensorVolumeNode()
-= default;
+vtkMRMLTensorVolumeNode::~vtkMRMLTensorVolumeNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLTensorVolumeNode::WriteXML(ostream& of, int nIndent)

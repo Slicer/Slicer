@@ -120,8 +120,7 @@ vtkITKImageThresholdCalculator::vtkITKImageThresholdCalculator()
 }
 
 //----------------------------------------------------------------------------
-vtkITKImageThresholdCalculator::~vtkITKImageThresholdCalculator()
-= default;
+vtkITKImageThresholdCalculator::~vtkITKImageThresholdCalculator() = default;
 
 //----------------------------------------------------------------------------
 void vtkITKImageThresholdCalculator::PrintSelf(ostream& os, vtkIndent indent)

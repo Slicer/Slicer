@@ -24,8 +24,7 @@
 #include "qSlicerTransformsModuleWidgetsAbstractPlugin.h"
 
 //-----------------------------------------------------------------------------
-qSlicerTransformsModuleWidgetsAbstractPlugin::qSlicerTransformsModuleWidgetsAbstractPlugin()
-= default;
+qSlicerTransformsModuleWidgetsAbstractPlugin::qSlicerTransformsModuleWidgetsAbstractPlugin() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerTransformsModuleWidgetsAbstractPlugin::group() const

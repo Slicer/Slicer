@@ -63,8 +63,7 @@ public:
     this->LastNode = nullptr;
   }
 
-  ~qSlicerLayoutCustomSliceViewFactory() override
-   = default;
+  ~qSlicerLayoutCustomSliceViewFactory() override = default;
 
   vtkWeakPointer<vtkMRMLSliceNode> LastNode;
 

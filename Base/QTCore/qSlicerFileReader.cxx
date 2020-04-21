@@ -42,8 +42,7 @@ qSlicerFileReader::qSlicerFileReader(QObject* _parent)
 }
 
 //----------------------------------------------------------------------------
-qSlicerFileReader::~qSlicerFileReader()
-= default;
+qSlicerFileReader::~qSlicerFileReader() = default;
 
 //----------------------------------------------------------------------------
 QStringList qSlicerFileReader::extensions()const

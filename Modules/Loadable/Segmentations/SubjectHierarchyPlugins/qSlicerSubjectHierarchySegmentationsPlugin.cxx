@@ -124,8 +124,7 @@ void qSlicerSubjectHierarchySegmentationsPluginPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchySegmentationsPluginPrivate::~qSlicerSubjectHierarchySegmentationsPluginPrivate()
-= default;
+qSlicerSubjectHierarchySegmentationsPluginPrivate::~qSlicerSubjectHierarchySegmentationsPluginPrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchySegmentationsPlugin methods
@@ -142,8 +141,7 @@ qSlicerSubjectHierarchySegmentationsPlugin::qSlicerSubjectHierarchySegmentations
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchySegmentationsPlugin::~qSlicerSubjectHierarchySegmentationsPlugin()
-= default;
+qSlicerSubjectHierarchySegmentationsPlugin::~qSlicerSubjectHierarchySegmentationsPlugin() = default;
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchySegmentationsPlugin::canAddNodeToSubjectHierarchy(

@@ -105,8 +105,7 @@ public:
     this->WorldToSliceTransform = vtkSmartPointer<vtkTransform>::New();
     this->SlicePlane = vtkSmartPointer<vtkPlane>::New();
     };
-  virtual ~BrushPipeline()
-     = default;
+  virtual ~BrushPipeline() = default;
   virtual void SetBrushVisibility(bool visibility) = 0;
   virtual void SetFeedbackVisibility(bool visibility) = 0;
 
@@ -153,8 +152,7 @@ public:
     this->FeedbackActor->SetMapper(this->FeedbackMapper);
     this->FeedbackActor->VisibilityOff();
     };
-  ~BrushPipeline2D() override
-     = default;
+  ~BrushPipeline2D() override = default;
 
   void SetBrushVisibility(bool visibility) override
     {
@@ -195,8 +193,7 @@ public:
     this->FeedbackActor->SetMapper(this->FeedbackMapper);
     this->FeedbackActor->VisibilityOff();
     };
-  ~BrushPipeline3D() override
-     = default;
+  ~BrushPipeline3D() override = default;
   void SetBrushVisibility(bool visibility) override
     {
     this->BrushActor->SetVisibility(visibility);
@@ -1010,8 +1007,7 @@ qSlicerSegmentEditorPaintEffect::qSlicerSegmentEditorPaintEffect(QObject* parent
 }
 
 //----------------------------------------------------------------------------
-qSlicerSegmentEditorPaintEffect::~qSlicerSegmentEditorPaintEffect()
-= default;
+qSlicerSegmentEditorPaintEffect::~qSlicerSegmentEditorPaintEffect() = default;
 
 //---------------------------------------------------------------------------
 QIcon qSlicerSegmentEditorPaintEffect::icon()

@@ -355,8 +355,7 @@ qSlicerCLIModuleWidget::qSlicerCLIModuleWidget(QWidget* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCLIModuleWidget::~qSlicerCLIModuleWidget()
-= default;
+qSlicerCLIModuleWidget::~qSlicerCLIModuleWidget() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidget::setup()

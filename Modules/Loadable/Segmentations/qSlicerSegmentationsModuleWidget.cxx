@@ -100,8 +100,7 @@ qSlicerSegmentationsModuleWidgetPrivate::qSlicerSegmentationsModuleWidgetPrivate
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentationsModuleWidgetPrivate::~qSlicerSegmentationsModuleWidgetPrivate()
-= default;
+qSlicerSegmentationsModuleWidgetPrivate::~qSlicerSegmentationsModuleWidgetPrivate() = default;
 
 //-----------------------------------------------------------------------------
 vtkSlicerSegmentationsModuleLogic*
@@ -140,8 +139,7 @@ qSlicerSegmentationsModuleWidget::qSlicerSegmentationsModuleWidget(QWidget* _par
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentationsModuleWidget::~qSlicerSegmentationsModuleWidget()
-= default;
+qSlicerSegmentationsModuleWidget::~qSlicerSegmentationsModuleWidget() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentationsModuleWidget::enter()

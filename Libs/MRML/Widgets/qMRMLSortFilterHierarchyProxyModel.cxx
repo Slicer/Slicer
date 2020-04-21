@@ -38,8 +38,7 @@ public:
 };
 
 // -----------------------------------------------------------------------------
-qMRMLSortFilterHierarchyProxyModelPrivate::qMRMLSortFilterHierarchyProxyModelPrivate()
-= default;
+qMRMLSortFilterHierarchyProxyModelPrivate::qMRMLSortFilterHierarchyProxyModelPrivate() = default;
 
 // -----------------------------------------------------------------------------
 // qMRMLSortFilterHierarchyProxyModel
@@ -52,8 +51,7 @@ qMRMLSortFilterHierarchyProxyModel::qMRMLSortFilterHierarchyProxyModel(QObject *
 }
 
 //------------------------------------------------------------------------------
-qMRMLSortFilterHierarchyProxyModel::~qMRMLSortFilterHierarchyProxyModel()
-= default;
+qMRMLSortFilterHierarchyProxyModel::~qMRMLSortFilterHierarchyProxyModel() = default;
 
 //------------------------------------------------------------------------------
 qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterHierarchyProxyModel

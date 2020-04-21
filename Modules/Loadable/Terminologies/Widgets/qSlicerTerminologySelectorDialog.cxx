@@ -60,8 +60,7 @@ qSlicerTerminologySelectorDialogPrivate::qSlicerTerminologySelectorDialogPrivate
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologySelectorDialogPrivate::~qSlicerTerminologySelectorDialogPrivate()
-= default;
+qSlicerTerminologySelectorDialogPrivate::~qSlicerTerminologySelectorDialogPrivate() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologySelectorDialogPrivate::init()
@@ -121,8 +120,7 @@ qSlicerTerminologySelectorDialog::qSlicerTerminologySelectorDialog(
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologySelectorDialog::~qSlicerTerminologySelectorDialog()
-= default;
+qSlicerTerminologySelectorDialog::~qSlicerTerminologySelectorDialog() = default;
 
 //-----------------------------------------------------------------------------
 bool qSlicerTerminologySelectorDialog::exec()

@@ -75,8 +75,7 @@ void qSlicerSubjectHierarchyCloneNodePluginPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyCloneNodePluginPrivate::~qSlicerSubjectHierarchyCloneNodePluginPrivate()
-= default;
+qSlicerSubjectHierarchyCloneNodePluginPrivate::~qSlicerSubjectHierarchyCloneNodePluginPrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyCloneNodePlugin methods
@@ -93,8 +92,7 @@ qSlicerSubjectHierarchyCloneNodePlugin::qSlicerSubjectHierarchyCloneNodePlugin(Q
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyCloneNodePlugin::~qSlicerSubjectHierarchyCloneNodePlugin()
-= default;
+qSlicerSubjectHierarchyCloneNodePlugin::~qSlicerSubjectHierarchyCloneNodePlugin() = default;
 
 //---------------------------------------------------------------------------
 QList<QAction*> qSlicerSubjectHierarchyCloneNodePlugin::itemContextMenuActions()const

@@ -19,8 +19,7 @@ vtkMRMLAnnotationStorageNode::vtkMRMLAnnotationStorageNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLAnnotationStorageNode::~vtkMRMLAnnotationStorageNode()
-= default;
+vtkMRMLAnnotationStorageNode::~vtkMRMLAnnotationStorageNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationStorageNode::PrintSelf(ostream& os, vtkIndent indent)

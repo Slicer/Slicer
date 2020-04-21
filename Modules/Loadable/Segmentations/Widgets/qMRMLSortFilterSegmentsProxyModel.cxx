@@ -77,8 +77,7 @@ qMRMLSortFilterSegmentsProxyModel::qMRMLSortFilterSegmentsProxyModel(QObject *vp
 }
 
 //------------------------------------------------------------------------------
-qMRMLSortFilterSegmentsProxyModel::~qMRMLSortFilterSegmentsProxyModel()
-= default;
+qMRMLSortFilterSegmentsProxyModel::~qMRMLSortFilterSegmentsProxyModel() = default;
 
 //-----------------------------------------------------------------------------
 vtkMRMLSegmentationNode* qMRMLSortFilterSegmentsProxyModel::segmentationNode()const

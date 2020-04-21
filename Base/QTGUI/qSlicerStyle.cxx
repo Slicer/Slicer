@@ -41,8 +41,7 @@ qSlicerStyle::qSlicerStyle()
 }
 
 // --------------------------------------------------------------------------
-qSlicerStyle::~qSlicerStyle()
-= default;
+qSlicerStyle::~qSlicerStyle() = default;
 
 //------------------------------------------------------------------------------
 QStyle::SubControl qSlicerStyle::hitTestComplexControl(ComplexControl cc, const QStyleOptionComplex *opt,

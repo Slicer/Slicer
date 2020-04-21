@@ -274,8 +274,7 @@ qMRMLSceneModel::qMRMLSceneModel(qMRMLSceneModelPrivate* pimpl, QObject *parentO
 }
 
 //------------------------------------------------------------------------------
-qMRMLSceneModel::~qMRMLSceneModel()
-= default;
+qMRMLSceneModel::~qMRMLSceneModel() = default;
 
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::setPreItems(const QStringList& extraItems, QStandardItem* parent)

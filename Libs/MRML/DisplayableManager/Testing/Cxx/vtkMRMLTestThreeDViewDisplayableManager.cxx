@@ -56,8 +56,7 @@ vtkMRMLTestThreeDViewDisplayableManager::vtkInternal::vtkInternal(vtkMRMLTestThr
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLTestThreeDViewDisplayableManager::vtkInternal::~vtkInternal()
-= default;
+vtkMRMLTestThreeDViewDisplayableManager::vtkInternal::~vtkInternal() = default;
 
 //---------------------------------------------------------------------------
 // vtkMRMLTestThreeDViewDisplayableManager methods

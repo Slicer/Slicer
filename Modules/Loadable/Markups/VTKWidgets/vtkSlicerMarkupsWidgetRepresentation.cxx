@@ -123,8 +123,7 @@ vtkSlicerMarkupsWidgetRepresentation::ControlPointsPipeline::ControlPointsPipeli
 };
 
 //----------------------------------------------------------------------
-vtkSlicerMarkupsWidgetRepresentation::ControlPointsPipeline::~ControlPointsPipeline()
-= default;
+vtkSlicerMarkupsWidgetRepresentation::ControlPointsPipeline::~ControlPointsPipeline() = default;
 
 //----------------------------------------------------------------------
 vtkSlicerMarkupsWidgetRepresentation::vtkSlicerMarkupsWidgetRepresentation()
@@ -1030,8 +1029,7 @@ vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::MarkupsInterac
 }
 
 //----------------------------------------------------------------------
-vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::~MarkupsInteractionPipeline()
-= default;
+vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::~MarkupsInteractionPipeline() = default;
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::InitializePipeline()
