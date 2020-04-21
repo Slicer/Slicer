@@ -60,14 +60,6 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     endif()
   endif()
 
-  set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
-  if(Slicer_USE_PYTHONQT_WITH_TCL)
-    # Tcl libraries
-    if(item MATCHES "tcl-build/lib/lib[^/]+\\.dylib$")
-      set(path "@fixup_path@/lib/TclTk")
-    endif()
-  endif()
-
   set(Slicer_BUILD_CLI_SUPPORT "@Slicer_BUILD_CLI_SUPPORT@")
   if(Slicer_BUILD_CLI_SUPPORT)
     if(item MATCHES "@Slicer_BINARY_INNER_SUBDIR@/@Slicer_CLIMODULES_LIB_DIR@/[^/]+\\.dylib$")

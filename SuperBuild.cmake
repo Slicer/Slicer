@@ -153,9 +153,6 @@ if(Slicer_USE_PYTHONQT)
       message(STATUS "--------------------------------------------------")
     endif()
   endif()
-  if(Slicer_USE_PYTHONQT_WITH_TCL AND UNIX)
-    list(APPEND Slicer_DEPENDENCIES incrTcl)
-  endif()
 endif()
 
 if(Slicer_USE_TBB)
@@ -324,26 +321,6 @@ if(Slicer_BUILD_BRAINSTOOLS)
   set(BRAINSCommonLib_DIR "${Slicer_BINARY_DIR}/${Slicer_BINARY_INNER_SUBDIR}/Modules/Remote/BRAINSTools/BRAINSCommonLib")
   mark_as_superbuild(BRAINSCommonLib_DIR:PATH)
 endif()
-
-Slicer_Remote_Add(EMSegment
-  SVN_REPOSITORY "http://svn.slicer.org/Slicer3/branches/Slicer4-EMSegment"
-  SVN_REVISION -r "17153"
-  LICENSE_FILES "https://www.slicer.org/LICENSE"
-  VERSION ${Slicer_VERSION}
-  OPTION_NAME Slicer_BUILD_EMSegment
-  OPTION_DEPENDS "Slicer_BUILD_BRAINSTOOLS;Slicer_BUILD_QTLOADABLEMODULES;Slicer_USE_PYTHONQT_WITH_TCL;Subversion_FOUND"
-  LABELS REMOTE_MODULE
-  )
-list_conditional_append(Slicer_BUILD_EMSegment Slicer_REMOTE_DEPENDENCIES EMSegment)
-
-Slicer_Remote_Add(OtsuThresholdImageFilter
-  GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/Slicer-OtsuThresholdImageFilter"
-  GIT_TAG c14d5b8ee7a39bcdcc026d6a83957551a47a62bf
-  OPTION_NAME Slicer_BUILD_OtsuThresholdImageFilter
-  OPTION_DEPENDS "Slicer_BUILD_EMSegment"
-  LABELS REMOTE_MODULE
-  )
-list_conditional_append(Slicer_BUILD_OtsuThresholdImageFilter Slicer_REMOTE_DEPENDENCIES OtsuThresholdImageFilter)
 
 Slicer_Remote_Add(DataStore
   GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/Slicer-DataStore"

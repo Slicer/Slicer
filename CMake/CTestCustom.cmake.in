@@ -48,21 +48,6 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "Microsoft SDKs."
   "VC.include."
 
-  # Tcl
-  "tcl.tcl.unix.*warning: cast"
-  #  warning: '...' is deprecated (declared at ...)
-  "tcl.tcl.unix.*warning:.*is deprecated"
-  "tcl.tcl.unix.*warning:.*ignoring return value of"
-
-  # Tk
-  "tcl.tk.unix.*warning: cast"
-  "System.Library.Frameworks.Tk.framework.Headers.X11.Xlib.h.*warning: function declaration isn't a prototype"
-  "tcl.tk.unix.*warning:.*ignoring return value of"
-
-  # incrTcl
-  "generic.itk_(option|archetype).*warning"
-  "generic.itcl_.*warning"
-
   # qt suppressions from vtk...
   # Some Slicer dashboards include building bits of Qt which produce lots of
   # the following warnings when built with the MS compilers. Qt guys should
@@ -142,9 +127,6 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "/usr/bin/ranlib: .*lib(dcmtls|oflog).a.*has no symbols"
   "ld.*has different visibility.*(libdcmdata|libdcmnet|libdcmimgle|liboflog|libofstd).a"
   "DCMTK.(ofstd|dcmdata|dcmjpls|dcmnet|dcmimage|dcmimgle|dcmpstat|dcmqrdb).(lib|include|apps).*conversion from '(size_t|SOCKET)' to '.*', possible loss of data"
-
-  # EMSegment
-  "warning: the use of .mktemp. is dangerous, better use .mkstemp."
 
   # JsonCpp
   "json.(reader|value).h.*warning C4275.*non dll-interface class"
