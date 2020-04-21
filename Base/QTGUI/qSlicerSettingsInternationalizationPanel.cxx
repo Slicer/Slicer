@@ -87,8 +87,7 @@ qSlicerSettingsInternationalizationPanel::qSlicerSettingsInternationalizationPan
 
 // --------------------------------------------------------------------------
 qSlicerSettingsInternationalizationPanel::~qSlicerSettingsInternationalizationPanel()
-{
-}
+= default;
 
 // --------------------------------------------------------------------------
 void qSlicerSettingsInternationalizationPanel::enableInternationalization(bool value)

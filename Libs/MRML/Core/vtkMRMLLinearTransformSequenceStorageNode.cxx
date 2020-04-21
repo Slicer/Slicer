@@ -43,13 +43,11 @@ vtkMRMLNodeNewMacro(vtkMRMLLinearTransformSequenceStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLLinearTransformSequenceStorageNode::vtkMRMLLinearTransformSequenceStorageNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkMRMLLinearTransformSequenceStorageNode::~vtkMRMLLinearTransformSequenceStorageNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 bool vtkMRMLLinearTransformSequenceStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)

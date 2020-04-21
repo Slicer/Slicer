@@ -84,8 +84,7 @@ qSlicerScriptedFileWriter::qSlicerScriptedFileWriter(QObject* parent)
 
 //-----------------------------------------------------------------------------
 qSlicerScriptedFileWriter::~qSlicerScriptedFileWriter()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerScriptedFileWriter::pythonSource()const

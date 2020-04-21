@@ -62,7 +62,7 @@ static const char* PROXY_NODE_COPY_ATTRIBUTE_NAME = "proxyNodeCopy";
 // Declare the Synchronization Properties struct
 struct vtkMRMLSequenceBrowserNode::SynchronizationProperties
   {
-  SynchronizationProperties() { }
+  SynchronizationProperties() = default;
 
   void FromString( std::string str );
   std::string ToString();
@@ -128,8 +128,7 @@ vtkMRMLSequenceBrowserNode::vtkMRMLSequenceBrowserNode()
 
 //----------------------------------------------------------------------------
 vtkMRMLSequenceBrowserNode::~vtkMRMLSequenceBrowserNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLSequenceBrowserNode::WriteXML(ostream& of, int nIndent)

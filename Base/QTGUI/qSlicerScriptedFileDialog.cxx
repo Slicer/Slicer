@@ -89,8 +89,7 @@ qSlicerScriptedFileDialog::qSlicerScriptedFileDialog(QObject* parent)
 
 //-----------------------------------------------------------------------------
 qSlicerScriptedFileDialog::~qSlicerScriptedFileDialog()
-{
-}
+= default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerScriptedFileDialog::pythonSource()const

@@ -43,13 +43,11 @@ vtkMRMLNodeNewMacro(vtkMRMLSequenceStorageNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLSequenceStorageNode::vtkMRMLSequenceStorageNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 vtkMRMLSequenceStorageNode::~vtkMRMLSequenceStorageNode()
-{
-}
+= default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLSequenceStorageNode::PrintSelf(ostream& os, vtkIndent indent)
