@@ -320,18 +320,18 @@ protected:
   std::string GetSynchronizationPostfixFromSequenceID(const char* sequenceNodeID);
 
 protected:
-  bool PlaybackActive;
-  double PlaybackRateFps;
-  bool PlaybackItemSkippingEnabled;
-  bool PlaybackLooped;
-  int SelectedItemNumber;
+  bool PlaybackActive{false};
+  double PlaybackRateFps{10.0};
+  bool PlaybackItemSkippingEnabled{true};
+  bool PlaybackLooped{true};
+  int SelectedItemNumber{-1};
 
-  bool RecordingActive;
+  bool RecordingActive{false};
   double RecordingTimeOffsetSec; // difference between universal time and index value
   double LastSaveProxyNodesStateTimeSec;
-  bool RecordMasterOnly;
-  int RecordingSamplingMode;
-  int IndexDisplayMode;
+  bool RecordMasterOnly{false};
+  int RecordingSamplingMode{vtkMRMLSequenceBrowserNode::SamplingLimitedToPlaybackFrameRate};
+  int IndexDisplayMode{vtkMRMLSequenceBrowserNode::IndexDisplayAsIndexValue};
   std::string IndexDisplayFormat;
 
   // Unique postfixes for storing references to sequence nodes, proxy nodes, and properties
@@ -339,7 +339,7 @@ protected:
   std::vector< std::string > SynchronizationPostfixes;
 
   // Counter that is used for generating the unique (only for this class) proxy node postfix strings
-  int LastPostfixIndex;
+  int LastPostfixIndex{0};
 
 private:
   struct SynchronizationProperties;

@@ -62,21 +62,15 @@ static const char* PROXY_NODE_COPY_ATTRIBUTE_NAME = "proxyNodeCopy";
 // Declare the Synchronization Properties struct
 struct vtkMRMLSequenceBrowserNode::SynchronizationProperties
   {
-  SynchronizationProperties():
-    Playback(true),
-    Recording(false), // to only show recording controls if it's explicitly asked by the user
-    OverwriteProxyName(false), // make sure proxy node names are not accidentally overwritten
-    SaveChanges(false) // to prevent accidental sequence node changes by default
-    {
-    }
+  SynchronizationProperties() { }
 
   void FromString( std::string str );
   std::string ToString();
 
-  bool Playback;
-  bool Recording;
-  bool OverwriteProxyName; // change proxy node name during replay (includes index value)
-  bool SaveChanges; // save proxy node changes into the sequence
+  bool Playback{true};
+  bool Recording{false};
+  bool OverwriteProxyName{false}; // change proxy node name during replay (includes index value)
+  bool SaveChanges{false}; // save proxy node changes into the sequence
 };
 
 void vtkMRMLSequenceBrowserNode::SynchronizationProperties::FromString( std::string str )
@@ -125,17 +119,7 @@ vtkMRMLNodeNewMacro(vtkMRMLSequenceBrowserNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLSequenceBrowserNode::vtkMRMLSequenceBrowserNode()
-: PlaybackActive(false)
-, PlaybackRateFps(10.0)
-, PlaybackItemSkippingEnabled(true)
-, PlaybackLooped(true)
-, SelectedItemNumber(-1)
-, RecordingActive(false)
-, RecordMasterOnly(false)
-, RecordingSamplingMode(vtkMRMLSequenceBrowserNode::SamplingLimitedToPlaybackFrameRate)
-, IndexDisplayMode(vtkMRMLSequenceBrowserNode::IndexDisplayAsIndexValue)
-, IndexDisplayFormat("%.2f")
-, LastPostfixIndex(0)
+: IndexDisplayFormat("%.2f")
 {
   this->SetHideFromEditors(false);
   this->RecordingTimeOffsetSec = vtkTimerLog::GetUniversalTime();

@@ -113,8 +113,8 @@ protected:
 
 private:
 
-  bool UpdateProxyNodesFromSequencesInProgress;
-  bool UpdateSequencesFromProxyNodesInProgress;
+  bool UpdateProxyNodesFromSequencesInProgress{false};
+  bool UpdateSequencesFromProxyNodesInProgress{false};
 
   vtkSlicerSequencesLogic(const vtkSlicerSequencesLogic&); // Not implemented
   void operator=(const vtkSlicerSequencesLogic&);               // Not implemented
