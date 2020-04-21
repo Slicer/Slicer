@@ -160,11 +160,11 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     seriesName = self.defaultSeriesNodeName(seriesUID)
 
     # default loadable includes all files for series
-    loadable = DICOMLoadable()
-    loadable.files = files
-    loadable.name = seriesName
-    loadable.tooltip = "%d files, first file: %s" % (len(loadable.files), loadable.files[0])
-    loadable.selected = True
+    allFilesLoadable = DICOMLoadable()
+    allFilesLoadable.files = files
+    allFilesLoadable.name = seriesName
+    allFilesLoadable.tooltip = "%d files, first file: %s" % (len(allFilesLoadable.files), allFilesLoadable.files[0])
+    allFilesLoadable.selected = True
     # add it to the list of loadables later, if pixel data is available in at least one file
 
     # make subseries volumes based on tag differences
@@ -189,7 +189,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     #
     subseriesFiles = {}
     subseriesValues = {}
-    for file in loadable.files:
+    for file in allFilesLoadable.files:
       # check for subseries values
       for tag in subseriesTags:
         value = slicer.dicomDatabase.fileValue(file,self.tags[tag])
@@ -205,7 +205,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     loadables = []
 
     # Pixel data is available, so add the default loadable to the output
-    loadables.append(loadable)
+    loadables.append(allFilesLoadable)
 
     #
     # second, for any tags that have more than one value, create a new
@@ -258,20 +258,18 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     #
     # now for each series and subseries, sort the images
     # by position and check for consistency
+    # then adjust confidence values based on warnings
     #
     for loadable in loadables:
       loadable.files, distances, loadable.warning = DICOMUtils.getSortedImageFiles(loadable.files, self.epsilon)
 
-    # by default, prefer the all-files loadable
-    loadables[0].confidence = .55
-    if subseriesCount == 1 and loadables[0].warning != "":
+    if subseriesCount == 1 and allFilesLoadable.warning != "":
       # there was a sorting warning and
       # only one kind of subseries, so it's probably correct
-      # to make the subseries a higher confidence than the default all-files version
-      for subseriesLoadable in loadables[1:]:
-        if subseriesLoadable.warning == "":
-          subseriesLoadable.confidence = .55
-          loadables[0].confidence = .45
+      # to have lower confidence in the default all-files version
+      for loadable in loadables:
+        if loadable != allFilesLoadable and loadable.warning == "":
+          allFilesLoadable.confidence = .45
 
     return loadables
 
