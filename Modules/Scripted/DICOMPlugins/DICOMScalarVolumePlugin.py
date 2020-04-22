@@ -266,10 +266,15 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     if subseriesCount == 1 and allFilesLoadable.warning != "":
       # there was a sorting warning and
       # only one kind of subseries, so it's probably correct
-      # to have lower confidence in the default all-files version
+      # to have lower confidence in the default all-files version.
       for loadable in loadables:
         if loadable != allFilesLoadable and loadable.warning == "":
           allFilesLoadable.confidence = .45
+    # if the allFilesLoadable is selected, turn down confidence in the subseries
+    if allFilesLoadable.confidence != .45:
+      for loadable in loadables:
+        if loadable != allFilesLoadable:
+          loadable.confidence = .45
 
     return loadables
 
