@@ -1219,6 +1219,11 @@ void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItemData(vtkIdTyp
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
     return;
     }
+  if (!item)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid item";
+    return;
+    }
 
   qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin =
     qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(shItemID);
