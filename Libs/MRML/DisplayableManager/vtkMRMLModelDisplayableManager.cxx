@@ -1112,6 +1112,8 @@ void vtkMRMLModelDisplayableManager::UpdateModelMesh(vtkMRMLDisplayableNode *dis
         }
       }
 
+    vtkMRMLModelNode::MeshTypeHint meshType = modelNode ? modelNode->GetMeshType() : vtkMRMLModelNode::PolyDataMeshType;
+
     std::map<std::string, vtkProp3D *>::iterator ait;
     ait = this->Internal->DisplayedActors.find(displayNode->GetID());
     if (ait == this->Internal->DisplayedActors.end() )
@@ -1136,10 +1138,10 @@ void vtkMRMLModelDisplayableManager::UpdateModelMesh(vtkMRMLDisplayableNode *dis
         // caches information to skip steps if the display node has already rendered. but we
         // can have rendered a display node but not rendered its current mesh.
         vtkActor *actor = vtkActor::SafeDownCast(prop);
-        if (actor)
+        bool mapperUpdateNeeded = true; // mapper might not match the mesh type
+        if (actor && actor->GetMapper())
           {
           vtkMapper *mapper = actor->GetMapper();
-
           if (transformFilter)
             {
             mapper->SetInputConnection(transformFilter->GetOutputPort());
@@ -1148,11 +1150,16 @@ void vtkMRMLModelDisplayableManager::UpdateModelMesh(vtkMRMLDisplayableNode *dis
             {
             mapper->SetInputConnection(meshConnection);
             }
+          if ((meshType == vtkMRMLModelNode::UnstructuredGridMeshType && mapper->IsA("vtkDataSetMapper"))
+            || (meshType == vtkMRMLModelNode::PolyDataMeshType && mapper->IsA("vtkPolyDataMapper")))
+            {
+            mapperUpdateNeeded = false;
+            }
           }
         vtkMRMLTransformNode* tnode = displayableNode->GetParentTransformNode();
         // clipped model could be transformed
         // TODO: handle non-linear transforms
-        if (clipping == 0 || tnode == nullptr || !tnode->IsTransformToWorldLinear())
+        if ((clipping == 0 || tnode == nullptr || !tnode->IsTransformToWorldLinear()) && !mapperUpdateNeeded)
           {
           continue;
           }
@@ -1163,7 +1170,6 @@ void vtkMRMLModelDisplayableManager::UpdateModelMesh(vtkMRMLDisplayableNode *dis
     vtkAlgorithm *clipper = nullptr;
     if(actor)
       {
-      vtkMRMLModelNode::MeshTypeHint meshType = modelNode ? modelNode->GetMeshType() : vtkMRMLModelNode::PolyDataMeshType;
       if (this->Internal->ClippingOn && modelDisplayNode != nullptr && clipping)
         {
         clipper = this->CreateTransformedClipper(modelNode->GetParentTransformNode(), meshType);
