@@ -697,10 +697,10 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         appLogic.PropagateVolumeSelection()
 
         # Show sequence browser toolbar
-        sequenceBrowserModule = slicer.modules.sequencebrowser
-        if sequenceBrowserModule.autoShowToolBar:
-          sequenceBrowserModule.setToolBarActiveBrowserNode(sequenceBrowserNode)
-          sequenceBrowserModule.setToolBarVisible(True)
+        sequencesModule = slicer.modules.sequences
+        if sequencesModule.autoShowToolBar:
+          sequencesModule.setToolBarActiveBrowserNode(sequenceBrowserNode)
+          sequencesModule.setToolBarVisible(True)
 
       else:
         # Finalize multi-volume import
