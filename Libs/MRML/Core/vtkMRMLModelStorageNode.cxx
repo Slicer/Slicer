@@ -381,7 +381,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   else
     {
     // transform from RAS to LPS
-    if (modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType)
+    if (meshFromFile->IsA("vtkPolyData"))
       {
       meshToSetInNode = vtkSmartPointer<vtkPolyData>::New();
       }
@@ -391,7 +391,6 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       }
     vtkMRMLModelStorageNode::ConvertBetweenRASAndLPS(meshFromFile, meshToSetInNode);
     }
-
   modelNode->SetAndObserveMesh(meshToSetInNode);
 
   if (modelNode->GetMesh() != nullptr)

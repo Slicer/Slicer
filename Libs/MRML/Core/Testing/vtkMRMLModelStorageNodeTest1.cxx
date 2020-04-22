@@ -72,6 +72,9 @@ int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkPointSet *m
   int numberOfPoints = mesh->GetNumberOfPoints();
   CHECK_BOOL(numberOfPoints > 0, true);
 
+  int numberOfCells = mesh->GetNumberOfCells();
+  CHECK_BOOL(numberOfCells > 0, true);
+
   // Add model node
   vtkNew<vtkMRMLModelNode> modelNode;
   modelNode->SetAndObserveMesh(mesh);
@@ -105,6 +108,7 @@ int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkPointSet *m
   vtkPointSet* mesh2 = modelNode->GetMesh();
   CHECK_NOT_NULL(mesh2);
   CHECK_INT(mesh2->GetNumberOfPoints(), numberOfPoints);
+  CHECK_INT(mesh2->GetNumberOfCells(), numberOfCells);
 
   // Check extents to make sure there is no mirroring of the model due to coordinate system mismatch
   double originalBounds[6] = { 0.0 };
