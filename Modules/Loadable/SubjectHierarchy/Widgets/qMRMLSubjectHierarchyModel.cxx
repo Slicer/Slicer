@@ -1156,6 +1156,12 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
 //------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItem(vtkIdType shItemID, QStandardItem* item)
 {
+  if (!item)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid item";
+    return;
+    }
+
   //int wasModifying = node->StartModify(); //TODO: Add feature to item if there are performance issues
   this->updateSubjectHierarchyItemFromItemData(shItemID, item);
   //node->EndModify(wasModifying);
