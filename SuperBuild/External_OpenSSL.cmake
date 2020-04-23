@@ -91,6 +91,17 @@ set(ENV{VS_UNICODE_OUTPUT} \"\")
   # This is required when building Slicer using a cronjob where the
   # default environment is restricted.
   set(ENV{PATH} \"/usr/sbin:\$ENV{PATH}\")
+
+  # Allow the SDKROOT to be found on macOS when building OpenSSL.
+  # For more details, see https://github.com/Slicer/Slicer/issues/4681.
+  # This is needed to find standard header files and avoid errors
+  # like the following:
+  # | ./cryptlib.h:62:11: fatal error: 'stdlib.h' file not found
+  # | # include <stdlib.h>
+  # |
+  if(NOT DEFINED ENV{SDKROOT})
+    set(ENV{SDKROOT} \"\${CMAKE_OSX_SYSROOT}\")
+  endif()
 ")
     endif()
 
@@ -107,17 +118,17 @@ ExternalProject_Execute(${proj} \"configure\" sh config --with-zlib-lib=${_zlib_
   )
 ")
 
+    # build step
+    set(_build_script ${CMAKE_BINARY_DIR}/${proj}_build_step.cmake)
+    file(WRITE ${_build_script}
+"include(\"${_env_script}\")
+# Unset MAKEFLAGS to avoid \"warning: -jN forced in submake: disabling jobserver mode.\"
+unset(ENV{MAKEFLAGS})
+set(${proj}_WORKING_DIR \"${EP_SOURCE_DIR}\")
+ExternalProject_Execute(${proj} \"build\" make -j1 build_libs)
+")
+
     #------------------------------------------------------------------------------
-    set(BUILD_COMMAND_MAKE_ENV)
-    if(APPLE)
-       # Allow the SDKROOT to be found on mac when
-       # building OpenSSL. This is needed to find
-       # standard header files and avoid errors like
-       # | ./cryptlib.h:62:11: fatal error: 'stdlib.h' file not found
-       # | # include <stdlib.h>
-       # |
-       set(BUILD_COMMAND_MAKE_ENV "SDKROOT=${CMAKE_OSX_SYSROOT}")
-    endif()
     ExternalProject_Add(${proj}
       ${${proj}_EP_ARGS}
       URL ${OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_URL}
@@ -127,7 +138,7 @@ ExternalProject_Execute(${proj} \"configure\" sh config --with-zlib-lib=${_zlib_
       BUILD_IN_SOURCE 1
       PATCH_COMMAND ${CMAKE_COMMAND} -P ${_configure_script}
       CONFIGURE_COMMAND ""
-      BUILD_COMMAND ${BUILD_COMMAND_MAKE_ENV} make -j1 build_libs
+      BUILD_COMMAND ${CMAKE_COMMAND} -P ${_build_script}
       INSTALL_COMMAND ""
       DEPENDS
         ${${proj}_DEPENDENCIES}
