@@ -401,10 +401,8 @@ vtkMRMLNode* vtkMRMLSequenceNode::SetDataNodeAtValue(vtkMRMLNode* node, const st
     vtkErrorMacro("vtkMRMLSequenceNode::SetDataNodeAtValue failed, invalid node");
     return nullptr;
     }
-  if (!this->SequenceScene)
-    {
-    this->SequenceScene = vtkMRMLScene::New();
-    }
+  // Make sure the sequence scene is created
+  this->GetSequenceScene();
   // Add a copy of the node to the sequence's scene
   vtkMRMLNode* newNode = this->DeepCopyNodeToScene(node, this->SequenceScene);
   int seqItemIndex = this->GetItemNumberFromIndexValue(indexValue);
@@ -526,9 +524,9 @@ int vtkMRMLSequenceNode::GetItemNumberFromIndexValue(const std::string& indexVal
 //---------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLSequenceNode::GetDataNodeAtValue(const std::string& indexValue, bool exactMatchRequired /* =true */)
 {
-  if (this->SequenceScene==nullptr)
+  if (!this->SequenceScene)
     {
-    // no dat nodes are stored
+    // no data nodes are stored
     return nullptr;
     }
   int seqItemIndex = this->GetItemNumberFromIndexValue(indexValue, exactMatchRequired);
@@ -645,8 +643,12 @@ vtkMRMLNode* vtkMRMLSequenceNode::GetNthDataNode(int itemNumber)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLScene* vtkMRMLSequenceNode::GetSequenceScene()
+vtkMRMLScene* vtkMRMLSequenceNode::GetSequenceScene(bool autoCreate/*=true*/)
 {
+  if (!this->SequenceScene && autoCreate)
+    {
+    this->SequenceScene = vtkMRMLScene::New();
+    }
   return this->SequenceScene;
 }
 
@@ -708,8 +710,9 @@ void vtkMRMLSequenceNode::UpdateScene(vtkMRMLScene *scene)
 //-----------------------------------------------------------
 void vtkMRMLSequenceNode::UpdateSequenceIndex()
 {
-  if (this->SequenceScene)
+  if (!this->SequenceScene)
     {
+    // nothing to update
     return;
     }
   for (std::deque< IndexEntryType >::iterator indexIt = this->IndexEntries.begin(); indexIt != this->IndexEntries.end(); ++indexIt)

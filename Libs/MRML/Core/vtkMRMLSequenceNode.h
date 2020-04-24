@@ -140,7 +140,9 @@ public:
   std::string GetDataNodeTagName();
 
   /// Return the internal scene that stores all the data nodes.
-  vtkMRMLScene* GetSequenceScene();
+  /// If autoCreate is enabled then the sequence scene is created
+  /// (if it has not been created already).
+  vtkMRMLScene* GetSequenceScene(bool autoCreate=true);
 
   /// Create default storage node. Uses vtkMRMLSequenceStorageNode unless the data node
   /// requests a more specific storage node class.
