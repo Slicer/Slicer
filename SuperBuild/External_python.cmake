@@ -211,8 +211,21 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     #       are specified in SlicerBlockInstallPython.cmake
 
     if(UNIX AND NOT APPLE)
+      set(_msg "Checking if lsb_wrapper wrapper is needed")
+      ExternalProject_Message(${proj} "${_msg}")
       find_program(LSB_RELEASE_EXECUTABLE NAMES lsb_release)
+      set(_configure_lsb_release_wrapper FALSE)
       if(LSB_RELEASE_EXECUTABLE)
+        file(STRINGS ${LSB_RELEASE_EXECUTABLE} _content LIMIT_INPUT 80)
+        list(GET _content 0 _first_line)
+        # Generate lsb_release wrapper only if the executable is a script that
+        # (1) has a "shebang" and (2) does NOT contain "-Es" option.
+        # See https://bugs.launchpad.net/ubuntu/+source/lsb/+bug/938869/comments/28
+        if(${_first_line} MATCHES "^#!" AND NOT ${_first_line} MATCHES "-Es")
+          set(_configure_lsb_release_wrapper TRUE)
+        endif()
+      endif()
+      if(_configure_lsb_release_wrapper)
         ExternalProject_Add_Step(${proj} configure_lsb_release_wrapper
           COMMAND ${CMAKE_COMMAND}
             -DCTKAppLauncher_DIR:PATH=${CTKAppLauncher_DIR}
@@ -221,6 +234,9 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
             -P ${Slicer_SOURCE_DIR}/SuperBuild/python_configure_lsb_release_wrapper.cmake
           DEPENDEES install
           )
+        ExternalProject_Message(${proj} "${_msg} - yes")
+      else()
+        ExternalProject_Message(${proj} "${_msg} - no")
       endif()
     endif()
   endif()
