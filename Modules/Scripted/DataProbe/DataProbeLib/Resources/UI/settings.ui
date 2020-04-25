@@ -257,7 +257,7 @@
      <item>
       <widget class="ctkCollapsibleButton" name="scalarBarCollapsibleButton">
        <property name="text">
-        <string>ScalarBar</string>
+        <string>Color Scalar Bar</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
