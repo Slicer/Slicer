@@ -195,7 +195,7 @@
    <item>
     <widget class="ctkCollapsibleButton" name="ScalarBarCollapsibleButton">
      <property name="text">
-      <string>Scalar Bar</string>
+      <string>Color Scalar Bar</string>
      </property>
      <property name="collapsed">
       <bool>true</bool>
