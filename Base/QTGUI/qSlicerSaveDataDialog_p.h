@@ -48,6 +48,8 @@ public:
   /// node IDs in the internal scene view scenes as well.
   static vtkMRMLNode* getNodeByID(char *id, vtkMRMLScene* scene);
 
+  void formatChanged(int row);
+
 public slots:
   void setDirectory(const QString& newDirectory);
   void selectModifiedSceneData();
@@ -67,6 +69,7 @@ protected slots:
   void onSceneFormatChanged();
   void enableNodes(bool);
   void saveSceneAsDataBundle();
+  void onItemChanged(QTableWidgetItem*);
 
 protected:
   enum ColumnType
@@ -132,14 +135,10 @@ class qSlicerFileNameItemDelegate : public QStyledItemDelegate
 public:
   typedef QStyledItemDelegate Superclass;
   qSlicerFileNameItemDelegate( QObject * parent = nullptr );
-  QWidget* createEditor( QWidget * parent,
-                                 const QStyleOptionViewItem & option,
-                                 const QModelIndex & index ) const override;
-  void setModelData(QWidget *editor,
-                            QAbstractItemModel *model,
-                            const QModelIndex &index) const override;
-  static QString fixupFileName(const QString& fileName, const QString& extension,
+  static QString forceFileNameExtension(const QString& fileName, const QString& extension,
                                vtkMRMLScene *mrmlScene, const QString &nodeID);
+  static QString forceFileNameValidCharacters(const QString& filename);
+
   /// Generate a regular expression that can ensure a filename has a valid
   /// extension.
   /// Example of supported extensions:

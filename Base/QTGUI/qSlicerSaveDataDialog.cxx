@@ -74,67 +74,42 @@ qSlicerFileNameItemDelegate::qSlicerFileNameItemDelegate( QObject * parent )
 }
 
 //-----------------------------------------------------------------------------
-QWidget* qSlicerFileNameItemDelegate
-::createEditor(QWidget * parent, const QStyleOptionViewItem & option,
-               const QModelIndex & index ) const
+QString qSlicerFileNameItemDelegate::forceFileNameValidCharacters(const QString& filename)
 {
-  QWidget* widget =this->Superclass::createEditor(parent, option, index);
-  QLineEdit* lineEdit = qobject_cast<QLineEdit*>(widget);
-  if (lineEdit)
+  // Remove characters that are likely to cause problems in filename
+  QString sanitizedFilename;
+  QRegExp regExp = qSlicerFileNameItemDelegate::fileNameRegExp();
+  for (int i = 0; i < filename.size(); ++i)
     {
-    QString extension = index.data(qSlicerSaveDataDialogPrivate::FileExtensionRole).toString();
-    lineEdit->setValidator(
-      new QRegExpValidator(qSlicerFileNameItemDelegate::fileNameRegExp(extension), lineEdit));
+    if (regExp.exactMatch(QString(filename[i])))
+      {
+      sanitizedFilename += filename[i];
+      }
     }
-  return widget;
+  return sanitizedFilename;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerFileNameItemDelegate
-::setModelData(QWidget *editor, QAbstractItemModel *model,
-               const QModelIndex &index) const
-{
-  QLineEdit* lineEdit = qobject_cast<QLineEdit*>(editor);
-  if (lineEdit)
-    {
-    QString extension = model->data(index, qSlicerSaveDataDialogPrivate::FileExtensionRole).toString();
-    QString nodeID = model->data(index, qSlicerSaveDataDialogPrivate::UIDRole).toString();
-    lineEdit->setText(
-      qSlicerFileNameItemDelegate::fixupFileName(lineEdit->text(), extension, this->MRMLScene, nodeID));
-    }
-  this->Superclass::setModelData(editor, model, index);
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerFileNameItemDelegate::fixupFileName(const QString& fileName, const QString& extension,
+QString qSlicerFileNameItemDelegate::forceFileNameExtension(const QString& fileName, const QString& extension,
                                                    vtkMRMLScene* mrmlScene, const QString& nodeID)
 {
-  QString fixup;
-  QRegExp regExp = qSlicerFileNameItemDelegate::fileNameRegExp();
-  for (int i = 0; i < fileName.size(); ++i)
+  QString strippedFileName = qSlicerFileNameItemDelegate::forceFileNameValidCharacters(fileName);
+  if(!mrmlScene)
     {
-    if (regExp.exactMatch(fileName[i]))
-      {
-      fixup += fileName[i];
-      }
+    // no scene is set, cannot check extension
+    return strippedFileName;
     }
-
-  QString strippedFileName = fixup;
-  if(mrmlScene)
+  vtkObject* object = mrmlScene;
+  if (!nodeID.isEmpty())
     {
-    vtkObject * object = mrmlScene;
-    if (!nodeID.isEmpty())
-      {
-      object = qSlicerSaveDataDialogPrivate::getNodeByID(nodeID.toUtf8().data(), mrmlScene);
-      }
-    if (!object)
-      {
-      qCritical() << Q_FUNC_INFO << " failed: node not found by ID " << qPrintable(nodeID);
-      return QString();
-      }
-    strippedFileName = qSlicerSaveDataDialogPrivate::stripKnownExtension(fixup, object);
-    strippedFileName += extension;
+    object = qSlicerSaveDataDialogPrivate::getNodeByID(nodeID.toUtf8().data(), mrmlScene);
     }
+  if (!object)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: node not found by ID " << qPrintable(nodeID);
+    return QString();
+    }
+  strippedFileName = qSlicerSaveDataDialogPrivate::stripKnownExtension(strippedFileName, object) + extension;
   return strippedFileName;
 }
 
@@ -192,6 +167,9 @@ qSlicerSaveDataDialogPrivate::qSlicerSaveDataDialogPrivate(QWidget* parentWidget
           this, SLOT(saveSceneAsDataBundle()));
   connect(this->ShowMoreCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(showMoreColumns(bool)));
+
+  connect(this->FileWidget, SIGNAL(itemChanged(QTableWidgetItem*)),
+          this, SLOT(onItemChanged(QTableWidgetItem*)));
 
   if (!qSlicerApplication::application()->userSettings()->contains(SHOW_OPTIONS_SETTINGS_KEY))
     {
@@ -511,17 +489,9 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
 QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
 {
   // Remove characters from node name that cannot be used in file names
-  // (same method as in qSlicerFileNameItemDelegate::fixupFileName)
+  // (same method as in qSlicerFileNameItemDelegate::forceFileNameExtension)
   QString inputNodeName(node->GetName() ? node->GetName() : "");
-  QString safeNodeName;
-  QRegExp regExp = qSlicerFileNameItemDelegate::fileNameRegExp();
-  for (int i = 0; i < inputNodeName.size(); ++i)
-    {
-    if (regExp.exactMatch(QString(inputNodeName[i])))
-      {
-      safeNodeName += inputNodeName[i];
-      }
-    }
+  QString safeNodeName = qSlicerFileNameItemDelegate::forceFileNameValidCharacters(inputNodeName);
 
   vtkMRMLStorageNode* snode = node->GetStorageNode();
   if (snode == nullptr)
@@ -715,7 +685,7 @@ QTableWidgetItem* qSlicerSaveDataDialogPrivate
 ::createFileNameItem(const QFileInfo& fileInfo, const QString& extension, const QString& nodeID)
 {
   QTableWidgetItem* fileNameItem = new QTableWidgetItem(
-    qSlicerFileNameItemDelegate::fixupFileName(fileInfo.fileName(), extension, this->mrmlScene(), nodeID));
+    qSlicerFileNameItemDelegate::forceFileNameExtension(fileInfo.fileName(), extension, this->mrmlScene(), nodeID));
   if (!extension.isEmpty())
     {
     fileNameItem->setData(Self::FileExtensionRole, extension);
@@ -1251,6 +1221,15 @@ void qSlicerSaveDataDialogPrivate::formatChanged()
     }
   Q_ASSERT(row < rowCount);
 
+  this->formatChanged(row);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSaveDataDialogPrivate::formatChanged(int row)
+{
+  QComboBox* formatComboBox = qobject_cast<QComboBox*>(
+    this->FileWidget->cellWidget(row, FileFormatColumn));
+
   // In case the combobox was editable (hack to display custom text), we now
   // don't need this property anymore.
   formatComboBox->setEditable(false);
@@ -1270,7 +1249,7 @@ void qSlicerSaveDataDialogPrivate::formatChanged()
   // Update fileName based on new selected extension
   QString nodeID = fileNameItem->data(Self::UIDRole).toString();
   fileNameItem->setText(
-        qSlicerFileNameItemDelegate::fixupFileName(fileNameItem->text(), extension, this->MRMLScene, nodeID));
+        qSlicerFileNameItemDelegate::forceFileNameExtension(fileNameItem->text(), extension, this->MRMLScene, nodeID));
 
   // If the user changed the format, that means he wants to save the node
   // Select the row to mark the node to be saved.
@@ -1319,6 +1298,55 @@ void qSlicerSaveDataDialogPrivate::showMoreColumns(bool show)
   this->updateSize();
 
   qSlicerApplication::application()->userSettings()->setValue(SHOW_OPTIONS_SETTINGS_KEY, show);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSaveDataDialogPrivate::onItemChanged(QTableWidgetItem* widgetItem)
+{
+  if (widgetItem->column() != FileNameColumn)
+    {
+    return;
+    }
+  vtkMRMLScene* mrmlScene = this->MRMLScene;
+  if (!mrmlScene)
+    {
+    return;
+    }
+
+  /// If filename is changed then we need to validate if it matches any of the supported
+  /// file extension. If it does then update the file format selector.
+  /// If it does not match any of the file extensions then the current file extension will
+  /// be added (this way when the user just enters filename, the extension is added automatically).
+  QTableWidgetItem* fileNameItem = this->FileWidget->item(widgetItem->row(), FileNameColumn);
+  QString strippedFileName = qSlicerFileNameItemDelegate::forceFileNameValidCharacters(fileNameItem->text());
+
+  // Determine current file extension
+  vtkObject* objectToSave = mrmlScene;
+  QString nodeID = fileNameItem->data(Self::UIDRole).toString();
+  if (!nodeID.isEmpty())
+    {
+    objectToSave = qSlicerSaveDataDialogPrivate::getNodeByID(nodeID.toUtf8().data(), mrmlScene);
+    if (!objectToSave)
+      {
+      qCritical() << Q_FUNC_INFO << " failed: node not found by ID " << qPrintable(nodeID);
+      return;
+      }
+    }
+  QString currentExtension = Self::extractKnownExtension(strippedFileName, objectToSave);
+
+  // Update file format selector according to current extension
+  QComboBox* fileFormatsWidget = qobject_cast<QComboBox*>(this->FileWidget->cellWidget(widgetItem->row(), FileFormatColumn));
+  int newFormat = fileFormatsWidget->findData(currentExtension);
+  if (newFormat >= 0)
+    {
+    // current extension matches a supported format, update the format selector widget accordingly
+    fileFormatsWidget->setCurrentIndex(newFormat);
+    }
+  else
+    {
+    // does not match any supported format, reset the filename
+    this->formatChanged(widgetItem->row());
+    }
 }
 
 //-----------------------------------------------------------------------------
