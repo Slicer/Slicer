@@ -83,4 +83,15 @@
       <default>true</default>
     </boolean>
   </parameters>
+  <parameters advanced="true">
+    <label>Advanced</label>
+    <boolean>
+      <name>Debug</name>
+      <label>Debug</label>
+      <description><![CDATA[Turn this flag on to log more details during execution.]]></description>
+      <flag>-d</flag>
+      <longflag>--debug</longflag>
+      <default>false</default>
+    </boolean>
+  </parameters>
 </executable>

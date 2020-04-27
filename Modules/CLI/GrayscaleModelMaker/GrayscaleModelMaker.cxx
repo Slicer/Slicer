@@ -14,342 +14,220 @@ Version:   $Revision$
 
 #include "GrayscaleModelMakerCLP.h"
 
-#include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
-#include "vtkITKArchetypeImageSeriesScalarReader.h"
-#include "vtkImageData.h"
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
-  #include <vtkFlyingEdges3D.h>
-#else
-  #include <vtkMarchingCubes.h>
-#endif
-#include "vtkWindowedSincPolyDataFilter.h"
-#include "vtkTransform.h"
 #include "vtkDecimatePro.h"
-#include "vtkTransformPolyDataFilter.h"
-#include "vtkReverseSense.h"
-#include "vtkPolyDataNormals.h"
-#include "vtkStripper.h"
-#include "vtkXMLPolyDataWriter.h"
+#include "vtkFlyingEdges3D.h"
 #include "vtkImageChangeInformation.h"
+#include "vtkImageData.h"
+#include "vtkPolyDataNormals.h"
+#include "vtkReverseSense.h"
+#include "vtkStripper.h"
+#include "vtkTransform.h"
+#include "vtkTransformPolyDataFilter.h"
+#include "vtkWindowedSincPolyDataFilter.h"
+#include "vtkXMLPolyDataWriter.h"
 
+#include "vtkITKArchetypeImageSeriesScalarReader.h"
 #include "vtkPluginFilterWatcher.h"
 #include "ModuleDescriptionParser.h"
 #include "ModuleDescription.h"
-#include "vtkDebugLeaks.h"
 
-int main(int argc, char * argv[])
+int main(int argc, char* argv[])
 {
   PARSE_ARGS;
-  vtkDebugLeaks::SetExitError(true);
-
-  ModuleDescription       module;
-  ModuleDescriptionParser parser;
-  if( parser.Parse(GetXMLModuleDescription(), module) )
-    {
-    std::cerr << argv[0] << ": One or more XML errors detected." << std::endl;
-    return EXIT_FAILURE;
-    }
-  std::cout << "Module Description Information" << std::endl;
-  std::cout << "\tCategory is: " << module.GetCategory() << std::endl;
-  std::cout << "\tTitle is: " << module.GetTitle() << std::endl;
-  std::cout << "\tDescription is: " << module.GetDescription() << std::endl;
-  std::cout << "\tVersion is: " << module.GetVersion() << std::endl;
-  std::cout << "\tDocumentationURL is: " << module.GetDocumentationURL() << std::endl;
-  std::cout << "\tLicense is: " << module.GetLicense() << std::endl;
-  std::cout << "\tContributor is: " << module.GetContributor() << std::endl;
-  std::cout << "\tAcknowledgements: " << module.GetAcknowledgements() << std::endl;
-
-  bool debug = false;
-
-  if( debug )
+  if (Debug)
     {
     std::cout << "The input volume is: " << InputVolume << std::endl;
     std::cout << "The output geometry is: " << OutputGeometry << std::endl;
     std::cout << "The threshold is: " << Threshold << std::endl;
     }
 
-  // vtk and helper variables
-  vtkITKArchetypeImageSeriesReader* reader = nullptr;
-  vtkImageData *                    image;
-  vtkWindowedSincPolyDataFilter *   smootherSinc = nullptr;
-  vtkDecimatePro *                  decimator = nullptr;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
-  vtkFlyingEdges3D *                mcubes = nullptr;
-#else
-  vtkMarchingCubes *                mcubes = nullptr;
-#endif
-  vtkTransform *                    transformIJKtoRAS = nullptr;
-  vtkReverseSense *                 reverser = nullptr;
-  vtkTransformPolyDataFilter *      transformer = nullptr;
-  vtkPolyDataNormals *              normals = nullptr;
-  vtkStripper *                     stripper = nullptr;
-  vtkXMLPolyDataWriter *            writer = nullptr;
-
   // check for the input file
   // - strings that start with slicer: are shared memory references, so they won't exist.
   //   The memory address starts with 0x in linux but not on Windows
-  if( InputVolume.find(std::string("slicer:") ) != 0 )
+  if (InputVolume.find(std::string("slicer:")) != 0)
     {
     // check for the input file
-    FILE * infile;
-    infile = fopen(InputVolume.c_str(), "r");
-    if( infile == nullptr )
+    FILE* infile = fopen(InputVolume.c_str(), "r");
+    if (infile == nullptr)
       {
-      std::cerr << "ERROR: cannot open input volume file " << InputVolume << endl;
+      std::cerr << "ERROR: cannot open input volume file " << InputVolume << std::endl;
       return EXIT_FAILURE;
       }
     fclose(infile);
     }
 
-  // Read the file
-  reader = vtkITKArchetypeImageSeriesScalarReader::New();
-  reader->SetArchetype(InputVolume.c_str() );
-  reader->SetOutputScalarTypeToNative();
-  reader->SetDesiredCoordinateOrientationToNative();
-  reader->SetUseNativeOriginOn();
-  reader->Update();
+  vtkSmartPointer<vtkImageData> image_IJK;
+  vtkNew<vtkTransform> transformIJKtoRAS;
+  {
+    // Read the file
+    vtkNew<vtkITKArchetypeImageSeriesScalarReader> reader;
+    reader->SetArchetype(InputVolume.c_str());
+    reader->SetOutputScalarTypeToNative();
+    reader->SetDesiredCoordinateOrientationToNative();
+    reader->SetUseNativeOriginOn();
+    reader->Update();
+    if (Debug)
+      {
+      std::cout << "Done reading the file " << InputVolume << endl;
+      }
+    transformIJKtoRAS->SetMatrix(reader->GetRasToIjkMatrix());
+    transformIJKtoRAS->Inverse();
 
-  std::cout << "Done reading the file " << InputVolume << endl;
-
-  vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
-  ici->SetInputConnection(reader->GetOutputPort() );
-  ici->SetOutputSpacing( 1, 1, 1 );
-  ici->SetOutputOrigin( 0, 0, 0 );
-  ici->Update();
-
-  ici->Update();
-  image = ici->GetOutput();
+    vtkNew<vtkImageChangeInformation> ici;
+    ici->SetInputConnection(reader->GetOutputPort());
+    ici->SetOutputSpacing(1, 1, 1);
+    ici->SetOutputOrigin(0, 0, 0);
+    ici->Update();
+    image_IJK = ici->GetOutput();
+  }
 
   // Get the dimensions, marching cubes only works on 3d
   int extents[6];
-  image->GetExtent(extents);
-  if( debug )
+  image_IJK->GetExtent(extents);
+  if (Debug)
     {
     std::cout << "Image data extents: " << extents[0] << " " << extents[1] << " " << extents[2] << " " << extents[3]
-              << " " << extents[4] << " " << extents[5] << endl;
+      << " " << extents[4] << " " << extents[5] << endl;
     }
-  if( extents[0] == extents[1] ||
-      extents[2] == extents[3] ||
-      extents[4] == extents[5] )
+  if (extents[0] >= extents[1] ||
+    extents[2] >= extents[3] ||
+    extents[4] >= extents[5])
     {
-    std::cerr << "The volume is not 3D.\n";
-    std::cerr << "\tImage data extents: " << extents[0] << " " << extents[1] << " " << extents[2] << " "
-              << extents[3] << " " << extents[4] << " " << extents[5] << endl;
+    std::cerr << "The volume is not 3D. Image file: " << InputVolume << ", extents: " << extents[0] << " " << extents[1] << " " << extents[2] << " "
+      << extents[3] << " " << extents[4] << " " << extents[5] << endl;
     return EXIT_FAILURE;
     }
-  // Get the RAS to IJK matrix and invert it to get the IJK to RAS which will need
-  // to be applied to the model as it will be built in pixel space
 
-  transformIJKtoRAS = vtkTransform::New();
-  transformIJKtoRAS->SetMatrix(reader->GetRasToIjkMatrix() );
-  if( debug )
-    {
-    std::cout << "RasToIjk matrix from file = ";
-    transformIJKtoRAS->GetMatrix()->Print(std::cout);
-    }
-  transformIJKtoRAS->Inverse();
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
-  mcubes = vtkFlyingEdges3D::New();
-#else
-  mcubes = vtkMarchingCubes::New();
-#endif
-  vtkPluginFilterWatcher watchMCubes(mcubes,
-                                     "Marching Cubes",
-                                     CLPProcessInformation,
-                                     1.0 / 7.0, 0.0);
+  vtkSmartPointer<vtkPolyData> mesh_IJK;
 
-  mcubes->SetInputConnection(ici->GetOutputPort() );
-  mcubes->SetValue(0, Threshold);
-  mcubes->ComputeScalarsOff();
-  mcubes->ComputeGradientsOff();
-  mcubes->ComputeNormalsOff();
-  mcubes->ReleaseDataFlagOn();
-  mcubes->Update();
-
-  if( debug )
-    {
-    std::cout << "Number of polygons = " << (mcubes->GetOutput() )->GetNumberOfPolys() << endl;
-    }
-
-  // TODO: look at vtkQuadraticDecimation
-  decimator = vtkDecimatePro::New();
-  vtkPluginFilterWatcher watchDecimator(decimator,
-                                        "Decimator",
-                                        CLPProcessInformation,
-                                        1.0 / 7.0, 1.0 / 7.0);
-  decimator->SetInputConnection(mcubes->GetOutputPort() );
-  decimator->SetFeatureAngle(60);
-  decimator->SplittingOff();
-  decimator->PreserveTopologyOn();
-
-  decimator->SetMaximumError(1);
-  decimator->SetTargetReduction(Decimate);
-  decimator->ReleaseDataFlagOff();
-
-
-  std::cout << "Decimating ... \n";
-  // TODO add progress to decimator
-  decimator->Update();
-  if( debug )
-    {
-    std::cout << "After decimation, number of polygons = " << (decimator->GetOutput() )->GetNumberOfPolys() << endl;
-    }
-
-  if( (transformIJKtoRAS->GetMatrix() )->Determinant() < 0 )
-    {
-    if( debug )
+  {
+    vtkNew<vtkFlyingEdges3D>          mcubes;
+    vtkPluginFilterWatcher watchMCubes(mcubes, "Marching Cubes", CLPProcessInformation, 1.0 / 7.0, 0.0);
+    mcubes->SetInputData(image_IJK);
+    mcubes->SetValue(0, Threshold);
+    mcubes->ComputeScalarsOff();
+    mcubes->ComputeGradientsOff();
+    mcubes->ComputeNormalsOff();
+    mcubes->Update();
+    if (Debug)
       {
-      std::cout << "Determinant " << (transformIJKtoRAS->GetMatrix() )->Determinant()
-                << " is less than zero, reversing...\n";
+      std::cout << "Number of polygons = " << (mcubes->GetOutput())->GetNumberOfPolys() << endl;
       }
-    reverser = vtkReverseSense::New();
-    vtkPluginFilterWatcher watchReverser(reverser,
-                                         "Reversor",
-                                         CLPProcessInformation,
-                                         1.0 / 7.0, 2.0 / 7.0);
-    reverser->SetInputConnection(decimator->GetOutputPort() );
+    mesh_IJK = mcubes->GetOutput();
+  }
+
+  // Convert the mesh from voxel space to physical space before decimating or smoothing,
+  // as they rely on actual size and aspect ratio of the mesh.
+  {
+    if (Debug)
+      {
+      std::cout << "Transforming to mesh to RAS coordinate system" << std::endl;
+      std::cout << "IJK to RAS matrix from file = ";
+      transformIJKtoRAS->GetMatrix()->Print(std::cout);
+      }
+    vtkNew<vtkTransformPolyDataFilter> transformer;
+    vtkPluginFilterWatcher watchTranformer(transformer, "Transformer", CLPProcessInformation, 1.0 / 7.0, 4.0 / 7.0);
+    transformer->SetInputData(mesh_IJK);
+    transformer->SetTransform(transformIJKtoRAS);
+    transformer->Update();
+    mesh_IJK = transformer->GetOutput();
+  }
+
+  if ((transformIJKtoRAS->GetMatrix())->Determinant() < 0)
+    {
+    if (Debug)
+      {
+      std::cout << "Determinant " << (transformIJKtoRAS->GetMatrix())->Determinant()
+        << " is less than zero, reversing..." << std::endl;
+      }
+    vtkNew<vtkReverseSense> reverser;
+    vtkPluginFilterWatcher watchReverser(reverser, "Reversor", CLPProcessInformation, 1.0 / 7.0, 2.0 / 7.0);
+    reverser->SetInputData(mesh_IJK);
     reverser->ReverseNormalsOn();
-    reverser->ReleaseDataFlagOn();
-    // TODO: add progress
+    reverser->Update();
+    mesh_IJK = reverser->GetOutput();
     }
 
-  smootherSinc = vtkWindowedSincPolyDataFilter::New();
-  vtkPluginFilterWatcher watchSmoother(smootherSinc,
-                                       "Smoother",
-                                       CLPProcessInformation,
-                                       1.0 / 7.0, 3.0 / 7.0);
-  smootherSinc->SetPassBand(0.1);
-  if( Smooth == 1 )
+  if (Decimate > 0)
     {
-    std::cerr << "Warning: Smoothing iterations of 1 not allowed for Sinc filter, using 2" << endl;
-    Smooth = 2;
-    }
-  if( (transformIJKtoRAS->GetMatrix() )->Determinant() < 0 )
-    {
-    smootherSinc->SetInputConnection(reverser->GetOutputPort() );
-    }
-  else
-    {
-    smootherSinc->SetInputConnection(decimator->GetOutputPort() );
-    }
-  smootherSinc->SetNumberOfIterations(Smooth);
-  smootherSinc->FeatureEdgeSmoothingOff();
-  smootherSinc->BoundarySmoothingOff();
-  smootherSinc->ReleaseDataFlagOn();
-
-  // TODO: insert progress
-  std::cout << "Smoothing...\n";
-  smootherSinc->Update();
-  transformer = vtkTransformPolyDataFilter::New();
-  vtkPluginFilterWatcher watchTranformer(transformer,
-                                         "Transformer",
-                                         CLPProcessInformation,
-                                         1.0 / 7.0, 4.0 / 7.0);
-  transformer->SetInputConnection(smootherSinc->GetOutputPort() );
-  if( (transformIJKtoRAS->GetMatrix() )->Determinant() < 0 )
-    {
-    transformer->SetInputConnection(reverser->GetOutputPort() );
-    }
-  else
-    {
-    transformer->SetInputConnection(decimator->GetOutputPort() );
+    if (Debug)
+      {
+      std::cout << "Decimating ... " << std::endl;
+      }
+    // TODO: look at vtkQuadraticDecimation, it produces nicer mesh
+    vtkNew<vtkDecimatePro> decimator;
+    vtkPluginFilterWatcher watchDecimator(decimator, "Decimator", CLPProcessInformation, 1.0 / 7.0, 1.0 / 7.0);
+    decimator->SetInputData(mesh_IJK);
+    decimator->SetFeatureAngle(60);
+    decimator->SplittingOff();
+    decimator->PreserveTopologyOn();
+    decimator->SetMaximumError(1);
+    decimator->SetTargetReduction(Decimate);
+    // TODO add progress to decimator
+    decimator->Update();
+    if (Debug)
+      {
+      std::cout << "After decimation, number of polygons = " << (decimator->GetOutput())->GetNumberOfPolys() << endl;
+      }
+    mesh_IJK = decimator->GetOutput();
     }
 
-  transformer->SetTransform(transformIJKtoRAS);
-  if( debug )
+  if (Smooth > 0)
     {
-    std::cout << "Transforming using inversed matrix:\n";
-    transformIJKtoRAS->GetMatrix()->Print(std::cout);
+    if (Debug)
+      {
+      std::cout << "Smoothing..." << std::endl;
+      }
+    vtkNew<vtkWindowedSincPolyDataFilter> smootherSinc;
+    vtkPluginFilterWatcher watchSmoother(smootherSinc, "Smoother", CLPProcessInformation, 1.0 / 7.0, 3.0 / 7.0);
+    smootherSinc->SetPassBand(0.1);
+    if (Smooth == 1)
+      {
+      std::cerr << "Warning: Smoothing iterations of 1 not allowed for Sinc filter, using 2" << endl;
+      Smooth = 2;
+      }
+    smootherSinc->SetInputData(mesh_IJK);
+    smootherSinc->SetNumberOfIterations(Smooth);
+    smootherSinc->FeatureEdgeSmoothingOff();
+    smootherSinc->BoundarySmoothingOff();
+    smootherSinc->Update();
+    mesh_IJK = smootherSinc->GetOutput();
     }
 
-  // TODO: add progress
-  transformer->ReleaseDataFlagOn();
-
-  normals = vtkPolyDataNormals::New();
-  vtkPluginFilterWatcher watchNormals(normals,
-                                      "Normals",
-                                      CLPProcessInformation,
-                                      1.0 / 7.0, 5.0 / 7.0);
-  if( PointNormals )
+  if (Debug)
     {
-    normals->ComputePointNormalsOn();
+    std::cout << "Computing normals..." << std::endl;
     }
-  else
-    {
-    normals->ComputePointNormalsOff();
-    }
-  normals->SetInputConnection(transformer->GetOutputPort() );
+  vtkNew<vtkPolyDataNormals> normals;
+  vtkPluginFilterWatcher watchNormals(normals, "Normals", CLPProcessInformation, 1.0 / 7.0, 5.0 / 7.0);
+  normals->SetComputePointNormals(PointNormals);
+  normals->SetInputData(mesh_IJK);
   normals->SetFeatureAngle(60);
   normals->SetSplitting(SplitNormals);
-  std::cout << "Splitting normals...\n";
-  // TODO: add progress
-  normals->ReleaseDataFlagOn();
 
-  stripper = vtkStripper::New();
-  vtkPluginFilterWatcher watchStripper(stripper,
-                                       "Stripper",
-                                       CLPProcessInformation,
-                                       1.0 / 7.0, 6.0 / 7.0);
-  stripper->SetInputConnection(normals->GetOutputPort() );
-  std::cout << "Stripping...\n";
-  // TODO: add progress
-  stripper->ReleaseDataFlagOff();
-
-
-  // the poly data output from the stripper can be set as an input to a model's polydata
+  if (Debug)
+    {
+    std::cout << "Triangle stripping..." << std::endl;
+    }
+  vtkNew<vtkStripper> stripper;
+  vtkPluginFilterWatcher watchStripper(stripper, "Stripper", CLPProcessInformation, 1.0 / 7.0, 6.0 / 7.0);
+  stripper->SetInputConnection(normals->GetOutputPort());
   stripper->Update();
-  // but for now we're just going to write it out
+  vtkPolyData* meshToWrite = stripper->GetOutput();
 
-  writer = vtkXMLPolyDataWriter::New();
-  writer->SetInputConnection(stripper->GetOutputPort() );
-  writer->SetFileName(OutputGeometry.c_str() );
+  if (Debug)
+    {
+    std::cout << "Write result to file..." << std::endl;
+    }
+  vtkNew<vtkXMLPolyDataWriter> writer;
+  writer->SetInputData(meshToWrite);
+  writer->SetFileName(OutputGeometry.c_str());
   // TODO: add progress
   writer->Write();
 
-// Cleanup
-  if( reader )
+  if (Debug)
     {
-    reader->Delete();
-    }
-  if( ici )
-    {
-    ici->Delete();
-    }
-  if( transformIJKtoRAS )
-    {
-    transformIJKtoRAS->Delete();
-    }
-  if( mcubes )
-    {
-    mcubes->Delete();
-    }
-  if( decimator )
-    {
-    decimator->Delete();
-    }
-  if( reverser )
-    {
-    reverser->Delete();
-    }
-  if( smootherSinc )
-    {
-    smootherSinc->Delete();
-    }
-  if( transformer )
-    {
-    transformer->Delete();
-    }
-  if( normals )
-    {
-    normals->Delete();
-    }
-  if( stripper )
-    {
-    stripper->Delete();
-    }
-  if( writer )
-    {
-    writer->Delete();
+    std::cout << "Done." << std::endl;
     }
   return EXIT_SUCCESS;
 }
