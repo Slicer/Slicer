@@ -971,6 +971,11 @@ bool qMRMLSegmentEditorWidgetPrivate::segmentationIJKToRAS(vtkMatrix4x4* ijkToRa
     {
     return false;
     }
+  if (!this->updateReferenceGeometryImage())
+    {
+    return false;
+    }
+
   vtkMRMLSegmentationNode* segmentationNode = this->ParameterSetNode->GetSegmentationNode();
   if (!segmentationNode || !segmentationNode->GetSegmentation())
     {
@@ -3653,7 +3658,7 @@ void qMRMLSegmentEditorWidget::updateSliceRotateWarningButtonVisibility()
 void qMRMLSegmentEditorWidget::rotateSliceViewsToSegmentation()
 {
   Q_D(qMRMLSegmentEditorWidget);
-    vtkNew<vtkMatrix4x4> segmentationIJKToRAS;
+  vtkNew<vtkMatrix4x4> segmentationIJKToRAS;
   if (!d->segmentationIJKToRAS(segmentationIJKToRAS.GetPointer()))
     {
     // segmentation orientation cannot be determined
