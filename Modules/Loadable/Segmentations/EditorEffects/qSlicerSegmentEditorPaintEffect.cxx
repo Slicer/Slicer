@@ -601,7 +601,7 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintBrushes(
   for (int pointIndex = 0; pointIndex < numberOfPoints; pointIndex++)
     {
     double* shiftDouble = paintCoordinates_Ijk->GetPoint(pointIndex);
-    int shift[3] = {int(shiftDouble[0]+0.5), int(shiftDouble[1]+0.5), int(shiftDouble[2]+0.5)};
+    int shift[3] = {vtkMath::Round(shiftDouble[0]), vtkMath::Round(shiftDouble[1]), vtkMath::Round(shiftDouble[2])};
     brushPositioner->SetExtentTranslation(shift);
     brushPositioner->Update();
     vtkNew<vtkOrientedImageData> orientedBrushPositionerOutput;
