@@ -1721,7 +1721,17 @@ void qMRMLSegmentEditorWidget::setMRMLScene(vtkMRMLScene* newScene)
     return;
     }
 
-  Superclass::setMRMLScene(newScene);
+  // Setting the scene would trigger MRML node update from GUI
+  // (selection of first node in combo box)
+  // but GUI has not been fully update yet from MRML, so
+  // we must prevent these MRML node updates.
+  // A full update of widgets from MRML is performed after
+  // scene update in the widgets is completed.
+  {
+    const QSignalBlocker blocker1(d->SegmentationNodeComboBox);
+    const QSignalBlocker blocker2(d->MasterVolumeNodeComboBox);
+    Superclass::setMRMLScene(newScene);
+  }
 
   // Make connections that depend on the Slicer application
   QObject::connect( qSlicerApplication::application()->layoutManager(), SIGNAL(layoutChanged(int)), this, SLOT(onLayoutChanged(int)) );
