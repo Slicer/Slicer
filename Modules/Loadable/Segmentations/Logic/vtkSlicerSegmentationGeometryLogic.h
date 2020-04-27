@@ -88,6 +88,18 @@ protected:
   ~vtkSlicerSegmentationGeometryLogic() override;
 
 protected:
+
+  /// Calculate output geometry into \sa GeometryImageData with current options from image
+  /// or segmentation that uses labelmap as master representation.
+  /// \return Error message. Empty when successful
+  std::string CalculateOutputGeometryFromImage();
+
+  /// Calculate output geometry into \sa GeometryImageData with current options from node bounds.
+  /// If keepCurrentAxisDirections is true then the current axes directions will be preserved,
+  /// otherwise the source axes directions are used.
+  /// \return Error message. Empty when successful
+  std::string CalculateOutputGeometryFromBounds(bool keepCurrentAxisDirections);
+
   /// Input segmentation MRML node to modify the labelmap geometry of
   vtkMRMLSegmentationNode* InputSegmentationNode;
 
