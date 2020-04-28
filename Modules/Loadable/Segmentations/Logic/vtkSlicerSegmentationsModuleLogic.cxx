@@ -1781,12 +1781,12 @@ bool vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
     false, segmentIdsToOverwrite, &modifiedSegmentIDs);
 
   // Re-convert all other representations
+  bool conversionHappened = false;
   std::vector<std::string> representationNames;
   vtkSegment* segment = segmentation->GetSegment(segmentID);
   if (segment)
     {
     segment->GetContainedRepresentationNames(representationNames);
-    bool conversionHappened = false;
     for (std::vector<std::string>::iterator reprIt = representationNames.begin();
       reprIt != representationNames.end(); ++reprIt)
       {
@@ -1805,6 +1805,12 @@ bool vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
         conversionHappened |= segmentation->ConvertSegmentsUsingPath(modifiedSegmentIDs, cheapestPath, true);
         }
       }
+    }
+
+  if (conversionHappened)
+    {
+    const char* segmentIdChar = segmentID.c_str();
+    segmentationNode->GetSegmentation()->InvokeEvent(vtkSegmentation::RepresentationModified, (void*)segmentIdChar);
     }
 
   return result;
