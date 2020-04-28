@@ -12,295 +12,135 @@
 // ModelToLabelMap includes
 #include "ModelToLabelMapCLP.h"
 
-// ITK includes
-#include "itkBinaryBallStructuringElement.h"
-#include "itkBinaryErodeImageFilter.h"
-#include "itkBinaryDilateImageFilter.h"
-#include "itkBinaryThresholdImageFunction.h"
-#include "itkFloodFilledImageFunctionConditionalIterator.h"
-#include "itkImageFileWriter.h"
-#include "itkPluginUtilities.h"
-#include <itksys/SystemTools.hxx>
-
 // VTK includes
-#include <vtkDebugLeaks.h>
+#include <vtkImageData.h>
+#include <vtkImageStencil.h>
 #include <vtkNew.h>
-#include <vtkSmartPointer.h>
-#include <vtkPolyDataPointSampler.h>
-#include <vtkPolyDataReader.h>
-#include <vtkXMLPolyDataReader.h>
-#include <vtkVersion.h>
+#include <vtkPointData.h>
+#include <vtkPolyData.h>
+#include <vtkPolyDataNormals.h>
+#include <vtkPolyDataToImageStencil.h>
+#include <vtkStripper.h>
+#include <vtkTransform.h>
+#include <vtkTransformPolyDataFilter.h>
+#include <vtkTriangleFilter.h>
 
-typedef itk::Image<unsigned char, 3> LabelImageType;
+// MRML includes
+#include "vtkMRMLModelNode.h"
+#include "vtkMRMLModelStorageNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLLabelMapVolumeNode.h"
+#include "vtkMRMLVolumeArchetypeStorageNode.h"
+#include "vtkOrientedImageData.h"
 
-LabelImageType::Pointer BinaryErodeFilter3D( LabelImageType::Pointer & img, unsigned int ballsize )
-{
-  typedef itk::BinaryBallStructuringElement<unsigned char, 3>                     KernalType;
-  typedef itk::BinaryErodeImageFilter<LabelImageType, LabelImageType, KernalType> ErodeFilterType;
-  ErodeFilterType::Pointer erodeFilter = ErodeFilterType::New();
-  erodeFilter->SetInput( img );
-
-  KernalType           ball;
-  KernalType::SizeType ballSize;
-  for( int k = 0; k < 3; k++ )
-    {
-    ballSize[k] = ballsize;
-    }
-  ball.SetRadius(ballSize);
-  ball.CreateStructuringElement();
-  erodeFilter->SetKernel( ball );
-  erodeFilter->Update();
-  return erodeFilter->GetOutput();
-}
-
-LabelImageType::Pointer BinaryDilateFilter3D( LabelImageType::Pointer & img, unsigned int ballsize )
-{
-  typedef itk::BinaryBallStructuringElement<unsigned char, 3>                      KernalType;
-  typedef itk::BinaryDilateImageFilter<LabelImageType, LabelImageType, KernalType> DilateFilterType;
-  DilateFilterType::Pointer dilateFilter = DilateFilterType::New();
-  dilateFilter->SetInput( img );
-  KernalType           ball;
-  KernalType::SizeType ballSize;
-  for( int k = 0; k < 3; k++ )
-    {
-    ballSize[k] = ballsize;
-    }
-  ball.SetRadius(ballSize);
-  ball.CreateStructuringElement();
-  dilateFilter->SetKernel( ball );
-  dilateFilter->Update();
-  return dilateFilter->GetOutput();
-}
-
-LabelImageType::Pointer BinaryOpeningFilter3D( LabelImageType::Pointer & img, unsigned int ballsize )
-{
-  LabelImageType::Pointer imgErode = BinaryErodeFilter3D( img, ballsize);
-
-  return BinaryDilateFilter3D( imgErode, ballsize );
-}
-
-LabelImageType::Pointer BinaryClosingFilter3D( LabelImageType::Pointer & img, unsigned int ballsize )
-{
-  LabelImageType::Pointer imgDilate = BinaryDilateFilter3D( img, ballsize );
-
-  return BinaryErodeFilter3D( imgDilate, ballsize );
-}
-
-//
-// Description: A templated procedure to execute the algorithm
-template <class T>
-int DoIt( int argc, char * argv[])
-{
-
-  PARSE_ARGS;
-  vtkDebugLeaks::SetExitError(true);
-
-  typedef    T InputPixelType;
-
-  typedef itk::Image<InputPixelType,  3> InputImageType;
-
-  typedef itk::ImageFileReader<InputImageType> ReaderType;
-  typedef itk::ImageFileWriter<LabelImageType> WriterType;
-
-  // Read the input volume
-  typename ReaderType::Pointer reader = ReaderType::New();
-  itk::PluginFilterWatcher watchReader(reader, "Read Input Volume",
-                                       CLPProcessInformation);
-  reader->SetFileName( InputVolume.c_str() );
-  reader->Update();
-
-  // output label map
-  LabelImageType::Pointer label = LabelImageType::New();
-  label->CopyInformation( reader->GetOutput() );
-  label->SetRegions( label->GetLargestPossibleRegion() );
-  label->Allocate();
-  label->FillBuffer( 0 );
-
-  // read the poly data
-  vtkSmartPointer<vtkPolyData> polyData;
-  vtkSmartPointer<vtkPolyDataReader> pdReader;
-  vtkSmartPointer<vtkXMLPolyDataReader> pdxReader;
-
-  // do we have vtk or vtp models?
-  std::string extension = itksys::SystemTools::LowerCase( itksys::SystemTools::GetFilenameLastExtension(surface) );
-  if( extension.empty() )
-    {
-    std::cerr << "Failed to find an extension for " << surface << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  if( extension == std::string(".vtk") )
-    {
-    pdReader = vtkSmartPointer<vtkPolyDataReader>::New();
-    pdReader->SetFileName(surface.c_str() );
-    pdReader->Update();
-    polyData = pdReader->GetOutput();
-    }
-  else if( extension == std::string(".vtp") )
-    {
-    pdxReader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
-    pdxReader->SetFileName(surface.c_str() );
-    pdxReader->Update();
-    polyData = pdxReader->GetOutput();
-    }
-  if( polyData == nullptr )
-    {
-    std::cerr << "Failed to read surface " << surface << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  // LPS vs RAS
-
-  vtkPoints * allPoints = polyData->GetPoints();
-  for( int k = 0; k < allPoints->GetNumberOfPoints(); k++ )
-    {
-    double* point = polyData->GetPoint( k );
-    point[0] = -point[0];
-    point[1] = -point[1];
-    allPoints->SetPoint( k, point[0], point[1], point[2] );
-    }
-
-  // do it
-  vtkNew<vtkPolyDataPointSampler> sampler;
-
-  sampler->SetInputData( polyData );
-  sampler->SetDistance( sampleDistance );
-  sampler->GenerateEdgePointsOn();
-  sampler->GenerateInteriorPointsOn();
-  sampler->GenerateVertexPointsOn();
-  sampler->Update();
-
-  std::cout << polyData->GetNumberOfPoints() << std::endl;
-  std::cout << sampler->GetOutput()->GetNumberOfPoints() << std::endl;
-  for( int k = 0; k < sampler->GetOutput()->GetNumberOfPoints(); k++ )
-    {
-    double *                  pt = sampler->GetOutput()->GetPoint( k );
-    LabelImageType::PointType pitk;
-    pitk[0] = pt[0];
-    pitk[1] = pt[1];
-    pitk[2] = pt[2];
-    LabelImageType::IndexType idx;
-    label->TransformPhysicalPointToIndex( pitk, idx );
-
-    if( label->GetLargestPossibleRegion().IsInside(idx) )
-      {
-      label->SetPixel( idx, 255 );
-      }
-    }
-
-  // do morphological closing
-  unsigned int                                      kernelRadius = 2;
-  LabelImageType::Pointer                           closedLabel = BinaryClosingFilter3D( label, kernelRadius );
-  itk::ImageRegionIteratorWithIndex<LabelImageType> itLabel(closedLabel, closedLabel->GetLargestPossibleRegion() );
-
-  // do flood fill using binary threshold image function
-  typedef itk::BinaryThresholdImageFunction<LabelImageType> ImageFunctionType;
-  ImageFunctionType::Pointer func = ImageFunctionType::New();
-  func->SetInputImage( closedLabel );
-  func->ThresholdBelow(1);
-
-  LabelImageType::IndexType idx;
-  LabelImageType::PointType COG;
-
-  // set the centre of gravity
-  // double *bounds = polyData->GetBounds();
-  COG.Fill(0.0);
-  for( vtkIdType k = 0; k < polyData->GetNumberOfPoints(); k++ )
-    {
-    double *pt = polyData->GetPoint( k );
-    for( int m = 0; m < 3; m++ )
-      {
-      COG[m] += pt[m];
-      }
-    }
-  for( int m = 0; m < 3; m++ )
-    {
-    COG[m] /= static_cast<float>( polyData->GetNumberOfPoints() );
-    }
-
-  label->TransformPhysicalPointToIndex( COG, idx );
-
-  itk::FloodFilledImageFunctionConditionalIterator<LabelImageType, ImageFunctionType> floodFill( closedLabel, func, idx );
-  for( floodFill.GoToBegin(); !floodFill.IsAtEnd(); ++floodFill )
-    {
-    LabelImageType::IndexType i = floodFill.GetIndex();
-    closedLabel->SetPixel( i, 255 );
-    }
-  LabelImageType::Pointer finalLabel = BinaryClosingFilter3D( closedLabel, kernelRadius );
-  for( itLabel.GoToBegin(); !itLabel.IsAtEnd(); ++itLabel )
-    {
-    LabelImageType::IndexType i = itLabel.GetIndex();
-    if (finalLabel->GetPixel(i) == 255)
-      {
-      label->SetPixel( i, labelValue );
-      }
-    else
-      {
-      label->SetPixel( i, finalLabel->GetPixel(i) );
-      }
-    }
-
-  typename WriterType::Pointer writer = WriterType::New();
-  itk::PluginFilterWatcher watchWriter(writer,
-                                       "Write Volume",
-                                       CLPProcessInformation);
-  writer->SetFileName( OutputVolume.c_str() );
-  writer->SetInput( label );
-  writer->SetUseCompression(true);
-  writer->Update();
-
-  return EXIT_SUCCESS;
-}
 
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
 
-  itk::ImageIOBase::IOPixelType     pixelType;
-  itk::ImageIOBase::IOComponentType componentType;
-
-  try
+  // read the poly data
+  vtkNew<vtkMRMLModelStorageNode> modelStorageNode;
+  vtkNew<vtkMRMLModelNode> modelNode;
+  modelStorageNode->SetFileName(surface.c_str());
+  if (!modelStorageNode->ReadData(modelNode))
     {
-    itk::GetImageType(InputVolume, pixelType, componentType);
-
-    // This filter handles all types on input, but only produces
-    // signed types
-
-    switch( componentType )
-      {
-      case itk::ImageIOBase::UCHAR:
-      case itk::ImageIOBase::CHAR:
-        return DoIt<char>( argc, argv );
-        break;
-      case itk::ImageIOBase::USHORT:
-      case itk::ImageIOBase::SHORT:
-        return DoIt<short>( argc, argv );
-        break;
-      case itk::ImageIOBase::UINT:
-      case itk::ImageIOBase::INT:
-        return DoIt<int>( argc, argv );
-        break;
-      case itk::ImageIOBase::ULONG:
-      case itk::ImageIOBase::LONG:
-        return DoIt<long>( argc, argv );
-        break;
-      case itk::ImageIOBase::FLOAT:
-        return DoIt<float>( argc, argv );
-        break;
-      case itk::ImageIOBase::DOUBLE:
-        return DoIt<double>( argc, argv );
-        break;
-      case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
-      default:
-        std::cout << "unknown component type" << std::endl;
-        break;
-      }
-    }
-  catch( itk::ExceptionObject & excep )
-    {
-    std::cerr << argv[0] << ": exception caught !" << std::endl;
-    std::cerr << excep << std::endl;
+    std::cerr << "Failed to read input model file " << surface << std::endl;
     return EXIT_FAILURE;
     }
+  vtkSmartPointer<vtkPolyData> closedSurfacePolyData_RAS = modelNode->GetPolyData();
+  if (!closedSurfacePolyData_RAS || closedSurfacePolyData_RAS->GetNumberOfPoints() < 2 || closedSurfacePolyData_RAS->GetNumberOfCells() < 2)
+    {
+    std::cerr << "Invalid polydata in model file " << surface << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  vtkNew<vtkMRMLScalarVolumeNode> referenceVolumeNode;
+  vtkNew<vtkMRMLVolumeArchetypeStorageNode> referenceVolumeStorageNode;
+  referenceVolumeStorageNode->SetFileName(InputVolume.c_str());
+  if (!referenceVolumeStorageNode->ReadData(referenceVolumeNode))
+    {
+    std::cerr << "Failed to read input volume file " << InputVolume << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (!referenceVolumeNode->GetImageData())
+    {
+    std::cerr << "Invalid input volume file " << InputVolume << std::endl;
+    return EXIT_FAILURE;
+    }
+  int* referenceVolumeExtent = referenceVolumeNode->GetImageData()->GetExtent();
+  if (referenceVolumeExtent[0]>= referenceVolumeExtent[1]
+    || referenceVolumeExtent[2] >= referenceVolumeExtent[3]
+    || referenceVolumeExtent[4] >= referenceVolumeExtent[5])
+    {
+    std::cerr << "Empty input volume file " << InputVolume << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  vtkNew<vtkOrientedImageData> binaryLabelmap;
+  binaryLabelmap->SetExtent(referenceVolumeExtent);
+  binaryLabelmap->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
+  void* binaryLabelmapVoxelsPointer = binaryLabelmap->GetScalarPointerForExtent(binaryLabelmap->GetExtent());
+  if (!binaryLabelmapVoxelsPointer)
+    {
+    std::cerr << "Failed to allocate memory for output labelmap image" << std::endl;
+    return EXIT_FAILURE;
+    }
+  binaryLabelmap->GetPointData()->GetScalars()->Fill(0); // background voxels are 0
+
+  // Now the output labelmap image data contains the right geometry.
+  // We need to apply inverse of geometry matrix to the input poly data so that we can perform
+  // the conversion in IJK space, because the filters do not support oriented image data.
+  vtkNew<vtkMatrix4x4> ijkToRASMatrix;
+  referenceVolumeNode->GetIJKToRASMatrix(ijkToRASMatrix);
+  vtkNew<vtkTransform> rasToIJKTransform;
+  rasToIJKTransform->SetMatrix(ijkToRASMatrix);
+  rasToIJKTransform->Inverse();
+
+  // Leave to identity matrix in binary labelmap volume so that we can perform the stencil operation in IJK space,
+  // and now we convert the closed surface to IJK space, too.
+  vtkNew<vtkTransformPolyDataFilter> transformPolyDataFilter;
+  transformPolyDataFilter->SetInputData(closedSurfacePolyData_RAS);
+  transformPolyDataFilter->SetTransform(rasToIJKTransform);
+
+  // Compute polydata normals
+  vtkNew<vtkPolyDataNormals> normalFilter;
+  normalFilter->SetInputConnection(transformPolyDataFilter->GetOutputPort());
+  normalFilter->ConsistencyOn();
+
+  // Make sure that we have a clean triangle polydata
+  vtkNew<vtkTriangleFilter> triangle;
+  triangle->SetInputConnection(normalFilter->GetOutputPort());
+
+  // Convert to triangle strip
+  vtkNew<vtkStripper> stripper;
+  stripper->SetInputConnection(triangle->GetOutputPort());
+
+  // Convert polydata to stencil
+  vtkNew<vtkPolyDataToImageStencil> polyDataToImageStencil;
+  polyDataToImageStencil->SetInputConnection(stripper->GetOutputPort());
+  polyDataToImageStencil->SetOutputSpacing(binaryLabelmap->GetSpacing());
+  polyDataToImageStencil->SetOutputOrigin(binaryLabelmap->GetOrigin());
+  polyDataToImageStencil->SetOutputWholeExtent(binaryLabelmap->GetExtent());
+
+  // Convert stencil to image
+  vtkNew<vtkImageStencil> stencil;
+  stencil->SetInputData(binaryLabelmap);
+  stencil->SetStencilConnection(polyDataToImageStencil->GetOutputPort());
+  stencil->ReverseStencilOn();
+  stencil->SetBackgroundValue(labelValue);
+  stencil->Update();
+
+  vtkNew<vtkMRMLLabelMapVolumeNode> outputVolumeNode;
+  outputVolumeNode->SetAndObserveImageData(stencil->GetOutput());
+  outputVolumeNode->SetIJKToRASMatrix(ijkToRASMatrix);
+
+  vtkNew<vtkMRMLVolumeArchetypeStorageNode> outputVolumeStorageNode;
+  outputVolumeStorageNode->SetFileName(OutputVolume.c_str());
+  if (!outputVolumeStorageNode->WriteData(outputVolumeNode))
+    {
+    std::cerr << "Failed to write output volume file " << OutputVolume << std::endl;
+    return EXIT_FAILURE;
+    }
+
   return EXIT_SUCCESS;
 }
