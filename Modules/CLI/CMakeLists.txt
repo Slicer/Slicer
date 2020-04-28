@@ -10,7 +10,6 @@ set(cli_modules
   CurvatureAnisotropicDiffusion
   ExecutionModelTour
   ExtractSkeleton
-  FreesurferSurfaceSectionExtraction
   GaussianBlurImageFilter
   GradientAnisotropicDiffusion
   GrayscaleFillHoleImageFilter
