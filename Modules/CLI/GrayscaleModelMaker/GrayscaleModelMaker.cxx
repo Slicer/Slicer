@@ -15,11 +15,13 @@ Version:   $Revision$
 #include "GrayscaleModelMakerCLP.h"
 
 #include "vtkDecimatePro.h"
+#include "vtkFieldData.h"
 #include "vtkFlyingEdges3D.h"
 #include "vtkImageChangeInformation.h"
 #include "vtkImageData.h"
 #include "vtkPolyDataNormals.h"
 #include "vtkReverseSense.h"
+#include "vtkStringArray.h"
 #include "vtkStripper.h"
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
@@ -57,7 +59,7 @@ int main(int argc, char* argv[])
     }
 
   vtkSmartPointer<vtkImageData> image_IJK;
-  vtkNew<vtkTransform> transformIJKtoRAS;
+  vtkNew<vtkTransform> transformIJKtoLPS;
   {
     // Read the file
     vtkNew<vtkITKArchetypeImageSeriesScalarReader> reader;
@@ -70,8 +72,10 @@ int main(int argc, char* argv[])
       {
       std::cout << "Done reading the file " << InputVolume << endl;
       }
-    transformIJKtoRAS->SetMatrix(reader->GetRasToIjkMatrix());
-    transformIJKtoRAS->Inverse();
+    vtkNew<vtkMatrix4x4> ijkToRasMatrix;
+    vtkMatrix4x4::Invert(reader->GetRasToIjkMatrix(), ijkToRasMatrix);
+    transformIJKtoLPS->Scale(-1.0, -1.0, 1.0); // RAS to LPS
+    transformIJKtoLPS->Concatenate(ijkToRasMatrix);
 
     vtkNew<vtkImageChangeInformation> ici;
     ici->SetInputConnection(reader->GetOutputPort());
@@ -98,54 +102,49 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
-  vtkSmartPointer<vtkPolyData> mesh_IJK;
-
-  {
-    vtkNew<vtkFlyingEdges3D>          mcubes;
-    vtkPluginFilterWatcher watchMCubes(mcubes, "Marching Cubes", CLPProcessInformation, 1.0 / 7.0, 0.0);
-    mcubes->SetInputData(image_IJK);
-    mcubes->SetValue(0, Threshold);
-    mcubes->ComputeScalarsOff();
-    mcubes->ComputeGradientsOff();
-    mcubes->ComputeNormalsOff();
-    mcubes->Update();
-    if (Debug)
-      {
-      std::cout << "Number of polygons = " << (mcubes->GetOutput())->GetNumberOfPolys() << endl;
-      }
-    mesh_IJK = mcubes->GetOutput();
-  }
+  vtkNew<vtkFlyingEdges3D> mcubes;
+  vtkPluginFilterWatcher watchMCubes(mcubes, "Marching Cubes", CLPProcessInformation, 1.0 / 7.0, 0.0);
+  mcubes->SetInputData(image_IJK);
+  mcubes->SetValue(0, Threshold);
+  mcubes->ComputeScalarsOff();
+  mcubes->ComputeGradientsOff();
+  mcubes->ComputeNormalsOff();
+  if (Debug)
+    {
+    std::cout << "Number of polygons = " << (mcubes->GetOutput())->GetNumberOfPolys() << endl;
+    }
 
   // Convert the mesh from voxel space to physical space before decimating or smoothing,
   // as they rely on actual size and aspect ratio of the mesh.
+  vtkSmartPointer<vtkPolyData> mesh_LPS;
   {
     if (Debug)
       {
-      std::cout << "Transforming to mesh to RAS coordinate system" << std::endl;
-      std::cout << "IJK to RAS matrix from file = ";
-      transformIJKtoRAS->GetMatrix()->Print(std::cout);
+      std::cout << "Transforming to mesh to LPS coordinate system" << std::endl;
+      std::cout << "IJK to LPS matrix from file = ";
+      transformIJKtoLPS->GetMatrix()->Print(std::cout);
       }
     vtkNew<vtkTransformPolyDataFilter> transformer;
     vtkPluginFilterWatcher watchTranformer(transformer, "Transformer", CLPProcessInformation, 1.0 / 7.0, 4.0 / 7.0);
-    transformer->SetInputData(mesh_IJK);
-    transformer->SetTransform(transformIJKtoRAS);
+    transformer->SetInputConnection(mcubes->GetOutputPort());
+    transformer->SetTransform(transformIJKtoLPS);
     transformer->Update();
-    mesh_IJK = transformer->GetOutput();
+    mesh_LPS = transformer->GetOutput();
   }
 
-  if ((transformIJKtoRAS->GetMatrix())->Determinant() < 0)
+  if ((transformIJKtoLPS->GetMatrix())->Determinant() < 0)
     {
     if (Debug)
       {
-      std::cout << "Determinant " << (transformIJKtoRAS->GetMatrix())->Determinant()
+      std::cout << "Determinant " << (transformIJKtoLPS->GetMatrix())->Determinant()
         << " is less than zero, reversing..." << std::endl;
       }
     vtkNew<vtkReverseSense> reverser;
     vtkPluginFilterWatcher watchReverser(reverser, "Reversor", CLPProcessInformation, 1.0 / 7.0, 2.0 / 7.0);
-    reverser->SetInputData(mesh_IJK);
+    reverser->SetInputData(mesh_LPS);
     reverser->ReverseNormalsOn();
     reverser->Update();
-    mesh_IJK = reverser->GetOutput();
+    mesh_LPS = reverser->GetOutput();
     }
 
   if (Decimate > 0)
@@ -157,7 +156,7 @@ int main(int argc, char* argv[])
     // TODO: look at vtkQuadraticDecimation, it produces nicer mesh
     vtkNew<vtkDecimatePro> decimator;
     vtkPluginFilterWatcher watchDecimator(decimator, "Decimator", CLPProcessInformation, 1.0 / 7.0, 1.0 / 7.0);
-    decimator->SetInputData(mesh_IJK);
+    decimator->SetInputData(mesh_LPS);
     decimator->SetFeatureAngle(60);
     decimator->SplittingOff();
     decimator->PreserveTopologyOn();
@@ -169,7 +168,7 @@ int main(int argc, char* argv[])
       {
       std::cout << "After decimation, number of polygons = " << (decimator->GetOutput())->GetNumberOfPolys() << endl;
       }
-    mesh_IJK = decimator->GetOutput();
+    mesh_LPS = decimator->GetOutput();
     }
 
   if (Smooth > 0)
@@ -186,12 +185,12 @@ int main(int argc, char* argv[])
       std::cerr << "Warning: Smoothing iterations of 1 not allowed for Sinc filter, using 2" << endl;
       Smooth = 2;
       }
-    smootherSinc->SetInputData(mesh_IJK);
+    smootherSinc->SetInputData(mesh_LPS);
     smootherSinc->SetNumberOfIterations(Smooth);
     smootherSinc->FeatureEdgeSmoothingOff();
     smootherSinc->BoundarySmoothingOff();
     smootherSinc->Update();
-    mesh_IJK = smootherSinc->GetOutput();
+    mesh_LPS = smootherSinc->GetOutput();
     }
 
   if (Debug)
@@ -201,7 +200,7 @@ int main(int argc, char* argv[])
   vtkNew<vtkPolyDataNormals> normals;
   vtkPluginFilterWatcher watchNormals(normals, "Normals", CLPProcessInformation, 1.0 / 7.0, 5.0 / 7.0);
   normals->SetComputePointNormals(PointNormals);
-  normals->SetInputData(mesh_IJK);
+  normals->SetInputData(mesh_LPS);
   normals->SetFeatureAngle(60);
   normals->SetSplitting(SplitNormals);
 
@@ -214,6 +213,14 @@ int main(int argc, char* argv[])
   stripper->SetInputConnection(normals->GetOutputPort());
   stripper->Update();
   vtkPolyData* meshToWrite = stripper->GetOutput();
+
+  // Save coordinate system information in the output model
+  vtkNew<vtkFieldData> fieldData;
+  meshToWrite->SetFieldData(fieldData);
+  vtkNew<vtkStringArray> coordinateSystemFieldArray;
+  coordinateSystemFieldArray->SetName("SPACE");
+  coordinateSystemFieldArray->InsertNextValue("LPS");
+  fieldData->AddArray(coordinateSystemFieldArray);
 
   if (Debug)
     {

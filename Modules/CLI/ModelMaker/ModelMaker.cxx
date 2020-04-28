@@ -303,12 +303,14 @@ int main(int argc, char * argv[])
   vtkSmartPointer<vtkThreshold>               threshold;
   vtkSmartPointer<vtkImageToStructuredPoints> imageToStructuredPoints;
   vtkSmartPointer<vtkGeometryFilter>          geometryFilter;
-  vtkSmartPointer<vtkTransform>               transformIJKtoRAS;
+  vtkSmartPointer<vtkTransform>               transformIJKtoLPS;
   vtkSmartPointer<vtkReverseSense>            reverser;
   vtkSmartPointer<vtkTransformPolyDataFilter> transformer;
   vtkSmartPointer<vtkPolyDataNormals>         normals;
   vtkSmartPointer<vtkStripper>                stripper;
   vtkSmartPointer<vtkPolyDataWriter>          writer;
+
+  const char modelFileHeader[] = "3D Slicer output. SPACE=LPS"; // models are saved in LPS coordinate system
 
   // keep track of number of models that will be generated, for filter
   // watcher reporting
@@ -852,22 +854,19 @@ int main(int argc, char * argv[])
               << extents[3] << " " << extents[4] << " " << extents[5] << endl;
     return EXIT_FAILURE;
     }
-  // Get the RAS to IJK matrix and invert it to get the IJK to RAS which will need
+  // Get the RAS to IJK matrix and invert it and flip the first to axis directions to get the IJK to LPS which will need
   // to be applied to the model as it will be built in pixel space
-  if (transformIJKtoRAS)
+  if (transformIJKtoLPS)
     {
-    transformIJKtoRAS->SetInput(nullptr);
-    transformIJKtoRAS = nullptr;
+    transformIJKtoLPS->SetInput(nullptr);
+    transformIJKtoLPS = nullptr;
     }
-  transformIJKtoRAS = vtkSmartPointer<vtkTransform>::New();
-  transformIJKtoRAS->SetMatrix(reader->GetRasToIjkMatrix());
-  if (debug)
-    {
-    // std::cout << "RasToIjk matrix from file = ";
-    // transformIJKtoRAS->GetMatrix()->Print(std::cout);
-    // std::cout << endl;
-    }
-  transformIJKtoRAS->Inverse();
+  transformIJKtoLPS = vtkSmartPointer<vtkTransform>::New();
+
+  vtkNew<vtkMatrix4x4> ijkToRasMatrix;
+  vtkMatrix4x4::Invert(reader->GetRasToIjkMatrix(), ijkToRasMatrix);
+  transformIJKtoLPS->Scale(-1.0, -1.0, 1.0); // RAS to LPS
+  transformIJKtoLPS->Concatenate(ijkToRasMatrix);
 
   //
   // Loop through all the labels
@@ -1146,9 +1145,9 @@ int main(int argc, char * argv[])
         {
         std::cout << "Cannot create a model from label " << i
                   << "\nNo polygons can be created,\nthere may be no voxels with this label in the volume." << endl;
-        if (transformIJKtoRAS)
+        if (transformIJKtoLPS)
           {
-          transformIJKtoRAS = nullptr;
+          transformIJKtoLPS = nullptr;
           }
         if (imageThreshold)
           {
@@ -1186,6 +1185,7 @@ int main(int argc, char * argv[])
                                            currentFilterOffset / numFilterSteps);
         currentFilterOffset += 1.0;
         writer->SetInputConnection(cubes->GetOutputPort());
+        writer->SetHeader(modelFileHeader);
         writer->SetFileType(2);
         std::string fileName;
         if (rootDir != "")
@@ -1282,6 +1282,7 @@ int main(int argc, char * argv[])
                                            currentFilterOffset / numFilterSteps);
         currentFilterOffset += 1.0;
         writer->SetInputConnection(decimator->GetOutputPort());
+        writer->SetHeader(modelFileHeader);
         writer->SetFileType(2);
         std::string fileName;
         if (rootDir != "")
@@ -1305,19 +1306,19 @@ int main(int argc, char * argv[])
         writer->SetInputData(nullptr);
         writer = nullptr;
         }
-      if (transformIJKtoRAS == nullptr ||
-          transformIJKtoRAS->GetMatrix() == nullptr)
+      if (transformIJKtoLPS == nullptr ||
+          transformIJKtoLPS->GetMatrix() == nullptr)
         {
-        std::cout << "transformIJKtoRAS is "
-                  << (transformIJKtoRAS ==
+        std::cout << "transformIJKtoLPS is "
+                  << (transformIJKtoLPS ==
             nullptr ? "null" : "okay") << ", it's matrix is "
-                  << (transformIJKtoRAS->GetMatrix() == nullptr ? "null" : "okay") << endl;
+                  << (transformIJKtoLPS->GetMatrix() == nullptr ? "null" : "okay") << endl;
         }
-      else if ((transformIJKtoRAS->GetMatrix())->Determinant() < 0)
+      else if ((transformIJKtoLPS->GetMatrix())->Determinant() < 0)
         {
         if (debug)
           {
-          std::cout << "Determinant " << (transformIJKtoRAS->GetMatrix())->Determinant()
+          std::cout << "Determinant " << (transformIJKtoLPS->GetMatrix())->Determinant()
                     << " is less than zero, reversing..." << endl;
           }
         if (reverser)
@@ -1370,7 +1371,7 @@ int main(int argc, char * argv[])
             std::cerr << "Warning: Smoothing iterations of 1 not allowed for Sinc filter, using 2" << endl;
             Smooth = 2;
             }
-          if ((transformIJKtoRAS->GetMatrix())->Determinant() < 0)
+          if ((transformIJKtoLPS->GetMatrix())->Determinant() < 0)
             {
             smootherSinc->SetInputConnection(reverser->GetOutputPort());
             }
@@ -1417,7 +1418,7 @@ int main(int argc, char * argv[])
           smootherPoly->SetFeatureAngle(60);
           smootherPoly->SetConvergence(0);
 
-          if ((transformIJKtoRAS->GetMatrix())->Determinant() < 0)
+          if ((transformIJKtoLPS->GetMatrix())->Determinant() < 0)
             {
             smootherPoly->SetInputConnection(reverser->GetOutputPort());
             }
@@ -1458,6 +1459,7 @@ int main(int argc, char * argv[])
             {
             writer->SetInputConnection(smootherPoly->GetOutputPort());
             }
+          writer->SetHeader(modelFileHeader);
           writer->SetFileType(2);
           std::string fileName;
           if (rootDir != "")
@@ -1513,7 +1515,7 @@ int main(int argc, char * argv[])
         }
       else
         {
-        if ((transformIJKtoRAS->GetMatrix())->Determinant() < 0)
+        if ((transformIJKtoLPS->GetMatrix())->Determinant() < 0)
           {
           transformer->SetInputConnection(reverser->GetOutputPort());
           }
@@ -1523,10 +1525,10 @@ int main(int argc, char * argv[])
           }
         }
 
-      transformer->SetTransform(transformIJKtoRAS);
+      transformer->SetTransform(transformIJKtoLPS);
       if (debug)
         {
-        // transformIJKtoRAS->GetMatrix()->Print(std::cout);
+        // transformIJKtoLPS->GetMatrix()->Print(std::cout);
         }
 
       transformer->ReleaseDataFlagOn();
@@ -1608,6 +1610,7 @@ int main(int argc, char * argv[])
         watchWriter.QuietOn();
         }
       writer->SetInputConnection(stripper->GetOutputPort());
+      writer->SetHeader(modelFileHeader);
       writer->SetFileType(2);
       std::string fileName;
       if (rootDir != "")
@@ -1936,14 +1939,14 @@ int main(int argc, char * argv[])
     geometryFilter->SetInputData(nullptr);
     geometryFilter = nullptr;
     }
-  if (transformIJKtoRAS)
+  if (transformIJKtoLPS)
     {
     if (debug)
       {
-      std::cout << "Deleting transform ijk to ras" << endl;
+      std::cout << "Deleting transform ijk to lps" << endl;
       }
-    transformIJKtoRAS->SetInput(nullptr);
-    transformIJKtoRAS = nullptr;
+    transformIJKtoLPS->SetInput(nullptr);
+    transformIJKtoLPS = nullptr;
     }
   if (reverser)
     {
