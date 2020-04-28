@@ -23,6 +23,7 @@ import sys
 from recommonmark.parser import CommonMarkParser
 
 sys.path.insert(0, os.path.abspath('../Base/Python'))
+sys.path.append(os.path.abspath("./_sphinxext"))
 
 
 # -- General configuration ------------------------------------------------
@@ -36,6 +37,7 @@ sys.path.insert(0, os.path.abspath('../Base/Python'))
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'workaround_recommonmark_issue_191'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
