@@ -1534,9 +1534,17 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMasterVolumeNode()
   d->MasterVolumeNodeComboBox->setCurrentNode(d->MasterVolumeNode);
   d->MasterVolumeNodeComboBox->blockSignals(wasBlocked);
 
+  if (d->MasterVolumeNode && d->AutoShowMasterVolumeNode)
+    {
+    this->showMasterVolumeInSliceViewers();
+    }
+
   this->onMasterVolumeImageDataModified();
 
   emit masterVolumeNodeChanged(d->MasterVolumeNode);
+
+  // Notify effects about change
+  d->notifyEffectsOfMasterVolumeNodeChange();
 }
 
 //-----------------------------------------------------------------------------
@@ -1734,7 +1742,13 @@ void qMRMLSegmentEditorWidget::setMRMLScene(vtkMRMLScene* newScene)
   }
 
   // Make connections that depend on the Slicer application
-  QObject::connect( qSlicerApplication::application()->layoutManager(), SIGNAL(layoutChanged(int)), this, SLOT(onLayoutChanged(int)) );
+
+  // Observe layout manager (may not be available if running without main window)
+  if (qSlicerApplication::application()->layoutManager())
+    {
+    QObject::connect(qSlicerApplication::application()->layoutManager(), SIGNAL(layoutChanged(int)),
+      this, SLOT(onLayoutChanged(int)));
+    }
 
   vtkMRMLInteractionNode *interactionNode = nullptr;
   if (newScene)
@@ -1852,7 +1866,23 @@ void qMRMLSegmentEditorWidget::initializeParameterSetNode()
 void qMRMLSegmentEditorWidget::setSegmentationNode(vtkMRMLNode* node)
 {
   Q_D(qMRMLSegmentEditorWidget);
-  d->SegmentationNodeComboBox->setCurrentNode(node);
+
+  if (!d->ParameterSetNode)
+    {
+    if (node)
+      {
+      qCritical() << Q_FUNC_INFO << " failed: need to set segment editor node first";
+      }
+    return;
+    }
+  if (d->ParameterSetNode->GetSegmentationNode() == node)
+    {
+    // no change
+    return;
+    }
+
+  this->setActiveEffect(nullptr); // deactivate current effect when we switch to a different segmentation
+  d->ParameterSetNode->SetAndObserveSegmentationNode(vtkMRMLSegmentationNode::SafeDownCast(node));
 }
 
 //-----------------------------------------------------------------------------
@@ -1866,7 +1896,13 @@ vtkMRMLNode* qMRMLSegmentEditorWidget::segmentationNode()const
 void qMRMLSegmentEditorWidget::setSegmentationNodeID(const QString& nodeID)
 {
   Q_D(qMRMLSegmentEditorWidget);
-  d->SegmentationNodeComboBox->setCurrentNodeID(nodeID);
+  if (!this->mrmlScene())
+    {
+    qCritical() << Q_FUNC_INFO << " failed: MRML scene is not set";
+    return;
+    }
+  this->setSegmentationNode(vtkMRMLSegmentationNode::SafeDownCast(
+    this->mrmlScene()->GetNodeByID(nodeID.toUtf8())));
 }
 
 //------------------------------------------------------------------------------
@@ -1895,58 +1931,65 @@ QString qMRMLSegmentEditorWidget::currentSegmentID()const
 void qMRMLSegmentEditorWidget::setMasterVolumeNode(vtkMRMLNode* node)
 {
   Q_D(qMRMLSegmentEditorWidget);
-  if (node && !d->MasterVolumeNodeComboBox->isEnabled())
+  if (!d->ParameterSetNode || !this->segmentationNode())
     {
-    qCritical() << Q_FUNC_INFO << ": Cannot set master volume until segmentation is selected";
+    if (node)
+      {
+      qCritical() << Q_FUNC_INFO << " failed: need to set segment editor and segmentation nodes first";
+      }
     return;
     }
-  d->MasterVolumeNodeComboBox->setCurrentNode(node);
+
+  // Set master volume to parameter set node
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node);
+  if (d->ParameterSetNode->GetMasterVolumeNode() == volumeNode)
+    {
+    return;
+    }
+
+  d->ParameterSetNode->SetAndObserveMasterVolumeNode(volumeNode);
 }
 
 //-----------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSegmentEditorWidget::masterVolumeNode()const
 {
   Q_D(const qMRMLSegmentEditorWidget);
-  return d->MasterVolumeNodeComboBox->currentNode();
+  if (!d->ParameterSetNode)
+    {
+    return nullptr;
+    }
+  return d->ParameterSetNode->GetMasterVolumeNode();
 }
 
 //------------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::setMasterVolumeNodeID(const QString& nodeID)
 {
   Q_D(qMRMLSegmentEditorWidget);
-  if (!d->MasterVolumeNodeComboBox->isEnabled())
+  if (!this->mrmlScene())
     {
-    qCritical() << Q_FUNC_INFO << ": Cannot set master volume until segmentation is selected";
+    qCritical() << Q_FUNC_INFO << " failed: MRML scene is not set";
     return;
     }
-  d->MasterVolumeNodeComboBox->setCurrentNodeID(nodeID);
+  this->setMasterVolumeNode(this->mrmlScene()->GetNodeByID(nodeID.toUtf8()));
 }
 
 //------------------------------------------------------------------------------
 QString qMRMLSegmentEditorWidget::masterVolumeNodeID()const
 {
   Q_D(const qMRMLSegmentEditorWidget);
-  return d->MasterVolumeNodeComboBox->currentNodeID();
+  vtkMRMLNode* masterVolumeNode = this->masterVolumeNode();
+  if (!masterVolumeNode || !masterVolumeNode->GetID())
+    {
+    return "";
+    }
+  return masterVolumeNode->GetID();
 }
 
 //-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::onSegmentationNodeChanged(vtkMRMLNode* node)
 {
   Q_D(qMRMLSegmentEditorWidget);
-
-  if (!d->ParameterSetNode)
-    {
-    d->SegmentationNodeComboBox->blockSignals(true);
-    d->SegmentationNodeComboBox->setCurrentNode(nullptr);
-    d->SegmentationNodeComboBox->blockSignals(false);
-
-    qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node";
-    return;
-    }
-
-  this->setActiveEffect(nullptr); // deactivate current effect when we switch to a different segmentation
-  d->ParameterSetNode->SetAndObserveSegmentationNode(vtkMRMLSegmentationNode::SafeDownCast(node));
-  this->updateWidgetFromMRML();
+  this->setSegmentationNode(node);
 }
 
 //-----------------------------------------------------------------------------
@@ -2009,40 +2052,7 @@ void qMRMLSegmentEditorWidget::setCurrentSegmentID(const QString segmentID)
 void qMRMLSegmentEditorWidget::onMasterVolumeNodeChanged(vtkMRMLNode* node)
 {
   Q_D(qMRMLSegmentEditorWidget);
-
-  if (!d->ParameterSetNode)
-    {
-    d->MasterVolumeNodeComboBox->blockSignals(true);
-    d->MasterVolumeNodeComboBox->setCurrentNode(nullptr);
-    d->MasterVolumeNodeComboBox->blockSignals(false);
-
-    qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node";
-    return;
-    }
-
-  // Cannot set master volume if no segmentation node is selected
-  vtkMRMLSegmentationNode* segmentationNode = d->ParameterSetNode->GetSegmentationNode();
-  if (!segmentationNode)
-    {
-    return;
-    }
-
-  // Set master volume to parameter set node
-  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node);
-  if (d->ParameterSetNode->GetMasterVolumeNode() != volumeNode)
-    {
-    int wasModified = d->ParameterSetNode->StartModify();
-    d->ParameterSetNode->SetAndObserveMasterVolumeNode(volumeNode);
-    d->ParameterSetNode->EndModify(wasModified);
-
-    if (volumeNode && d->AutoShowMasterVolumeNode)
-      {
-      this->showMasterVolumeInSliceViewers();
-      }
-
-    // Notify effects about change
-    d->notifyEffectsOfMasterVolumeNodeChange();
-    }
+  this->setMasterVolumeNode(node);
 }
 
 //-----------------------------------------------------------------------------
@@ -2386,7 +2396,7 @@ void qMRMLSegmentEditorWidget::showMasterVolumeInSliceViewers(bool forceShowInBa
     {
     return;
     }
-    qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
   if (!layoutManager)
     {
     // application is closing
@@ -3605,8 +3615,10 @@ void qMRMLSegmentEditorWidget::setAutoShowMasterVolumeNode(bool autoShow)
 void qMRMLSegmentEditorWidget::updateSliceRotateWarningButtonVisibility()
 {
   Q_D(qMRMLSegmentEditorWidget);
+  vtkMRMLSegmentationNode* segmentationNode = d->ParameterSetNode ? d->ParameterSetNode->GetSegmentationNode() : nullptr;
   vtkNew<vtkMatrix4x4> segmentationIJKToRAS;
-  if (!d->segmentationIJKToRAS(segmentationIJKToRAS.GetPointer()))
+  if (!segmentationNode || !segmentationNode->GetSegmentation()
+    || !d->segmentationIJKToRAS(segmentationIJKToRAS.GetPointer()))
     {
     // segmentation orientation cannot be determined
     d->SliceRotateWarningButton->hide();
