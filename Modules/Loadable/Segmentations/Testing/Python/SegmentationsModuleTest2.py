@@ -110,7 +110,13 @@ class SegmentationsModuleTest2(unittest.TestCase):
     self.segmentation.AddEmptySegment("Segment_1")
     self.segmentation.AddEmptySegment("Segment_2")
 
+    defaultModifierLabelmap = self.paintEffect.defaultModifierLabelmap()
+    self.ijkToRas = vtk.vtkMatrix4x4()
+    defaultModifierLabelmap.GetImageToWorldMatrix(self.ijkToRas)
+
+
     mergedLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+    mergedLabelmap.SetImageToWorldMatrix(self.ijkToRas)
     mergedLabelmap.SetExtent(0, 10, 0, 10, 0, 10)
     mergedLabelmap.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)
     mergedLabelmap.GetPointData().GetScalars().Fill(1)
@@ -196,6 +202,7 @@ class SegmentationsModuleTest2(unittest.TestCase):
       voxelSizeSum += size
 
     mergedLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+    mergedLabelmap.SetImageToWorldMatrix(self.ijkToRas)
     mergedLabelmapExtent = [0, totalSize-1, 0, 0, 0, 0]
     self.setupIslandLabelmap(mergedLabelmap, mergedLabelmapExtent, 0)
 
@@ -208,6 +215,7 @@ class SegmentationsModuleTest2(unittest.TestCase):
     startExtent = 0
     for size in islandSizes:
       islandLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+      islandLabelmap.SetImageToWorldMatrix(self.ijkToRas)
       islandExtent = [startExtent, startExtent+size-1, 0, 0, 0, 0]
       self.setupIslandLabelmap(islandLabelmap, islandExtent)
       self.paintEffect.modifySelectedSegmentByLabelmap(islandLabelmap, self.paintEffect.ModificationModeAdd)
@@ -224,6 +232,7 @@ class SegmentationsModuleTest2(unittest.TestCase):
     self.assertIsNotNone(segment)
 
     labelmap = slicer.vtkOrientedImageData()
+    labelmap.SetImageToWorldMatrix(self.ijkToRas)
     segmentID = self.segmentation.GetNthSegmentID(segmentIndex)
     self.segmentationNode.GetBinaryLabelmapRepresentation(segmentID, labelmap)
 

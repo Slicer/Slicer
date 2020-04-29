@@ -20,7 +20,6 @@ ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
   NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   --compare DATA{${BASELINE}/OAS10001-255.mha}
             ${TEMP}/${CLP}TestOutput.mha
-  --compareNumberOfPixelsTolerance 20
   ModuleEntryPoint
     DATA{${INPUT}/OAS10001.nii.gz}
     DATA{${INPUT}/OAS10001-Transformed.vtp}
@@ -34,7 +33,6 @@ ExternalData_add_test(${SEM_DATA_MANAGEMENT_TARGET}
   NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   --compare DATA{${BASELINE}/OAS10001-128.mha}
             ${TEMP}/${CLP}TestLabelValueOutput.mha
-  --compareNumberOfPixelsTolerance 20
   ModuleEntryPoint
     --labelValue 128
     DATA{${INPUT}/OAS10001.nii.gz}

@@ -25,7 +25,7 @@ Program:   3D Slicer
 #include <array>
 
 //---------------------------------------------------------------------------
-int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkPointSet* mesh, int coordinateSystem);
+int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkPointSet* mesh, int coordinateSystem, bool cellsMayBeSubdivided = false);
 void CreateVoxelMeshes(vtkUnstructuredGrid* ug, vtkPolyData* poly);
 
 //---------------------------------------------------------------------------
@@ -51,8 +51,8 @@ int vtkMRMLModelStorageNodeTest1(int argc, char * argv[])
     {
     CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtk", poly.GetPointer(), coordinateSystem));
     CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtp", poly.GetPointer(), coordinateSystem));
-    CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".stl", poly.GetPointer(), coordinateSystem));
-    CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".ply", poly.GetPointer(), coordinateSystem));
+    CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".stl", poly.GetPointer(), coordinateSystem, true));
+    CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".ply", poly.GetPointer(), coordinateSystem, true));
     CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".obj", poly.GetPointer(), coordinateSystem));
     CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtk", ug.GetPointer(), coordinateSystem));
     CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtu", ug.GetPointer(), coordinateSystem));
@@ -63,7 +63,7 @@ int vtkMRMLModelStorageNodeTest1(int argc, char * argv[])
 }
 
 //---------------------------------------------------------------------------
-int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkPointSet *mesh, int coordinateSystem)
+int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkPointSet *mesh, int coordinateSystem, bool cellsMayBeSubdivided/*=false*/)
 {
   std::string fileName = std::string(scene->GetRootDirectory()) +
     std::string("/vtkMRMLModelNodeTest1") +
@@ -108,7 +108,16 @@ int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkPointSet *m
   vtkPointSet* mesh2 = modelNode->GetMesh();
   CHECK_NOT_NULL(mesh2);
   CHECK_INT(mesh2->GetNumberOfPoints(), numberOfPoints);
-  CHECK_INT(mesh2->GetNumberOfCells(), numberOfCells);
+  if (cellsMayBeSubdivided)
+    {
+    // cells may be subdivided when written to file, so we don't check for strict equality
+    // but check if we have at least that many as in the original mesh
+    CHECK_BOOL(mesh2->GetNumberOfCells() >= numberOfCells, true);
+    }
+  else
+    {
+    CHECK_INT(mesh2->GetNumberOfCells(), numberOfCells);
+    }
 
   // Check extents to make sure there is no mirroring of the model due to coordinate system mismatch
   double originalBounds[6] = { 0.0 };
