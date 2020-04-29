@@ -1031,7 +1031,7 @@ bool vtkOrientedImageDataResample::PadImageToContainImage(vtkOrientedImageData* 
     }
 
   // Get transform between input and contained
-  vtkSmartPointer<vtkTransform> containedImageToInputImageTransform = vtkSmartPointer<vtkTransform>::New();
+  vtkNew<vtkTransform> containedImageToInputImageTransform;
   vtkOrientedImageDataResample::GetTransformBetweenOrientedImages(containedImage, inputImage, containedImageToInputImageTransform);
 
   // Calculate output extent in reference frame for padding if requested. Use all bounding box corners
@@ -1040,7 +1040,9 @@ bool vtkOrientedImageDataResample::PadImageToContainImage(vtkOrientedImageData* 
   vtkOrientedImageDataResample::TransformExtent(containedExtent, containedImageToInputImageTransform, containedImageExtentInInputImageFrame);
 
   // Return with failure if output extent is invalid
-  if ( containedImageExtentInInputImageFrame[0] > containedImageExtentInInputImageFrame[1] || containedImageExtentInInputImageFrame[2] > containedImageExtentInInputImageFrame[3] || containedImageExtentInInputImageFrame[4] > containedImageExtentInInputImageFrame[5] )
+  if ( containedImageExtentInInputImageFrame[0] > containedImageExtentInInputImageFrame[1]
+    || containedImageExtentInInputImageFrame[2] > containedImageExtentInInputImageFrame[3]
+    || containedImageExtentInInputImageFrame[4] > containedImageExtentInInputImageFrame[5] )
     {
     return false;
     }
@@ -1048,6 +1050,17 @@ bool vtkOrientedImageDataResample::PadImageToContainImage(vtkOrientedImageData* 
   // Make sure input image data fits into the extent. If padding is disabled, then output extent is the reference extent
   int inputImageExtent[6] = {0,-1,0,-1,0,-1};
   inputImage->GetExtent(inputImageExtent);
+
+  if (inputImageExtent[0] > inputImageExtent[1] || inputImageExtent[2] > inputImageExtent[3] || inputImageExtent[4] > inputImageExtent[5])
+    {
+    // input image is empty, set it to the required output extent
+    outputImage->SetExtent(containedImageExtentInInputImageFrame);
+    outputImage->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
+    outputImage->GetPointData()->GetScalars()->Fill(0);
+    return true;
+    }
+
+  // input image is not empty
   int unionExtent[6] = { std::min(containedImageExtentInInputImageFrame[0],inputImageExtent[0]), std::max(containedImageExtentInInputImageFrame[1],inputImageExtent[1]),
                          std::min(containedImageExtentInInputImageFrame[2],inputImageExtent[2]), std::max(containedImageExtentInInputImageFrame[3],inputImageExtent[3]),
                          std::min(containedImageExtentInInputImageFrame[4],inputImageExtent[4]), std::max(containedImageExtentInInputImageFrame[5],inputImageExtent[5]) };
@@ -1067,18 +1080,17 @@ bool vtkOrientedImageDataResample::PadImageToContainImage(vtkOrientedImageData* 
 
   if (paddingRequired)
     {
+    // Output may be same as input, so save the geometry information before overwriting it
+    vtkNew<vtkMatrix4x4> inputImageToWorldMatrix;
+    inputImage->GetImageToWorldMatrix(inputImageToWorldMatrix);
+
     // Pad image by expansion extent (extents are fitted to the structure, dilate will reach the edge of the image)
-    vtkSmartPointer<vtkImageConstantPad> padder = vtkSmartPointer<vtkImageConstantPad>::New();
+    vtkNew<vtkImageConstantPad> padder;
     padder->SetInputData(inputImage);
     padder->SetOutputWholeExtent(unionExtent);
     padder->Update();
-
-    // Output may be same as input, so save the geometry information before overwriting it
-    vtkSmartPointer<vtkMatrix4x4> inputImageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
-    inputImage->GetImageToWorldMatrix(inputImageToWorldMatrix);
-
-    // Set output
     outputImage->ShallowCopy(padder->GetOutput());
+
     outputImage->SetGeometryFromImageToWorldMatrix(inputImageToWorldMatrix);
     }
   else
