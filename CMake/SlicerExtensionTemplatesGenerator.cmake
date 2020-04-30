@@ -71,9 +71,6 @@ macro(_append_extension_template_generator_commands)
   # Set defaults
   if(NOT MY_EXTENSION_NAME)
     list(GET MY_MODULE_TYPES 0 extension_name_prefix)
-    if("${extension_name_prefix}" STREQUAL "ScriptedEditorEffect")
-      set(extension_name_prefix "Editor")
-    endif()
     set(MY_EXTENSION_NAME "${extension_name_prefix}ExtensionTemplate")
   endif()
   if(NOT MY_EXTENSION_TYPE)
@@ -98,13 +95,6 @@ macro(_append_extension_template_generator_commands)
     set(module_name "${module_type}ModuleTemplate")
     if(extension_type STREQUAL "superbuild")
       set(module_name "Super${module_name}")
-    endif()
-
-    if("${module_type}" STREQUAL "ScriptedEditorEffect")
-      set(module_name "EditorEffectTemplate")
-      list(APPEND additional_wizard_args
-        --templateKey ${module_type}=TemplateKeyEffect
-        )
     endif()
 
     list(APPEND wizard_add_module_args
@@ -136,7 +126,6 @@ foreach(type IN ITEMS
     Loadable
     Scripted
     ScriptedCLI
-    ScriptedEditorEffect
     ScriptedSegmentEditorEffect
     )
   _append_extension_template_generator_commands(MODULE_TYPES ${type})

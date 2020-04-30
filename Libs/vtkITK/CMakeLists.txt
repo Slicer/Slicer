@@ -110,18 +110,13 @@ set(vtkITK_SRCS
   vtkITKImageWriter.cxx
   vtkITKImageToImageFilter.h
   vtkITKImageToImageFilterFF.h
-  vtkITKImageToImageFilterSS.h
   vtkITKGradientAnisotropicDiffusionImageFilter.cxx
   vtkITKDistanceTransform.cxx
   vtkITKLabelShapeStatistics.cxx
   vtkITKLevelTracingImageFilter.cxx
   vtkITKLevelTracing3DImageFilter.cxx
-  vtkITKWandImageFilter.cxx
-  vtkITKNewOtsuThresholdImageFilter.cxx
-  vtkITKTimeSeriesDatabase.cxx
   vtkITKIslandMath.cxx
   vtkITKImageMargin.cxx
-  vtkITKGrowCutSegmentationImageFilter.cxx
   vtkITKMorphologicalContourInterpolator.cxx
   )
 
@@ -131,6 +126,7 @@ set(vtkITK_SRCS
 set(vtkITK_SRCS_not_used
   vtkITKImageToImageFilter2DFF.h
   vtkITKImageToImageFilterFUL.h
+  vtkITKImageToImageFilterSS.h
   vtkITKImageToImageFilterULUL.h
   vtkITKImageToImageFilterUSUL.h
   vtkITKImageToImageFilterUSUS.h
