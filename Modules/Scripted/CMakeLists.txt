@@ -1,8 +1,6 @@
 set(modules
   CropVolumeSequence
   DataProbe
-  Editor
-  EditorLib
   LabelStatistics
   PerformanceTests
   SampleData

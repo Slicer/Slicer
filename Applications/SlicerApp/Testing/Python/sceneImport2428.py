@@ -4,9 +4,6 @@ import vtk, qt, ctk, slicer
 
 from slicer.ScriptedLoadableModule import *
 
-import EditorLib
-from EditorLib import EditUtil
-
 #
 # sceneImport2428
 #
@@ -104,43 +101,33 @@ class sceneImport2428Test(ScriptedLoadableModuleTest):
     import SampleData
     head = SampleData.downloadSample("MRHead")
 
-    #
-    # create a label map and set it for editing
-    #
-    self.delayDisplay("Setting up LabelMap")
-    volumesLogic = slicer.modules.volumes.logic()
-    headLabel = volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, head, head.GetName() + '-label' )
+    # Create segmentation
+    segmentationNode = slicer.vtkMRMLSegmentationNode()
+    slicer.mrmlScene.AddNode(segmentationNode)
+    segmentationNode.CreateDefaultDisplayNodes() # only needed for display
+    segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(head)
+
+    # Add a few segments
+    segments = [
+      ["Segment A", [0,65,32], 25, [1.0,0.0,0.0]],
+      ["Segment B", [1, -14, 30], 30, [1.0,1.0,0.0]],
+      ["Segment C", [0, 28, -7], 15, [0.0,1.0,1.0]],
+      ["Segment D", [31, 33, 27], 25, [0.0,0.0,1.0]] ]
+    for [name, position, radius, color] in segments:
+      seed = vtk.vtkSphereSource()
+      seed.SetCenter(position)
+      seed.SetRadius(radius)
+      seed.Update()
+      segmentationNode.AddSegmentFromClosedSurfaceRepresentation(seed.GetOutput(), name, color)
+
+    # Export to labelmap volume
+    headLabel = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLLabelMapVolumeNode')
+    slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(segmentationNode, headLabel, referenceVolumeNode)
+
     selectionNode = slicer.app.applicationLogic().GetSelectionNode()
     selectionNode.SetActiveVolumeID( head.GetID() )
     selectionNode.SetActiveLabelVolumeID( headLabel.GetID() )
     slicer.app.applicationLogic().PropagateVolumeSelection(0)
-
-    #
-    # got to the editor and do some drawing
-    #
-    self.delayDisplay("Setting up Editor and drawing")
-    parameterNode = EditUtil.getParameterNode()
-    lm = slicer.app.layoutManager()
-    paintEffectOptions = EditorLib.PaintEffectOptions()
-    paintEffectOptions.setMRMLDefaults()
-    paintEffectOptions.__del__()
-
-    self.delayDisplay('Paint radius is %s' % parameterNode.GetParameter('PaintEffect,radius'))
-    sliceWidget = lm.sliceWidget('Red')
-    size = min(sliceWidget.width,sliceWidget.height)
-    step = int(size / 12)
-    center = int(size / 2)
-    parameterNode.SetParameter('PaintEffect,radius', '20')
-    paintTool = EditorLib.PaintEffectTool(sliceWidget)
-    self.delayDisplay('Paint radius is %s, tool radius is %d' % (parameterNode.GetParameter('PaintEffect,radius'),paintTool.radius))
-    for label in range(1,5):
-      EditUtil.setLabel(label)
-      pos = center - 2*step + (step * label)
-      self.delayDisplay('Painting %d, at  (%d,%d)' % (label,pos,pos),200)
-      paintTool.paintAddPoint(pos,pos)
-      paintTool.paintApply()
-    paintTool.cleanup()
-    paintTool = None
 
     #
     # now build:
