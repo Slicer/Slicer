@@ -101,6 +101,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="createPlanePushButton">
+       <property name="toolTip">
+        <string>Create plane markup</string>
+       </property>
        <property name="text">
         <string/>
        </property>
