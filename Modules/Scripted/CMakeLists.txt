@@ -1,7 +1,6 @@
 set(modules
   CropVolumeSequence
   DataProbe
-  LabelStatistics
   PerformanceTests
   SampleData
   ScreenCapture

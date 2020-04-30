@@ -405,7 +405,6 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   slicer_add_python_unittest(SCRIPT SlicerMRBSaveRestoreCheckPathsTest.py)
   slicer_add_python_unittest(SCRIPT Slicer4Minute.py)
   slicer_add_python_unittest(SCRIPT SlicerBoundsTest.py)
-  slicer_add_python_unittest(SCRIPT Charting.py)
   if(Slicer_BUILD_WEBENGINE_SUPPORT)
     slicer_add_python_unittest(SCRIPT WebEngine.py)
   endif()
@@ -434,7 +433,6 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     SlicerMRBSaveRestoreCheckPathsTest.py
     Slicer4Minute.py
     SlicerBoundsTest.py
-    Charting.py
     WebEngine.py
     SliceLinkLogic.py
     ScenePerformance.py

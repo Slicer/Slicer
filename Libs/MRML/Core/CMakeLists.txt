@@ -139,8 +139,6 @@ set(MRMLCore_SRCS
   vtkMRMLAbstractLayoutNode.cxx
   vtkMRMLAbstractViewNode.cxx
   vtkMRMLCameraNode.cxx
-  vtkMRMLChartNode.cxx
-  vtkMRMLChartViewNode.cxx
   vtkMRMLClipModelsNode.cxx
   vtkMRMLColorNode.cxx
   vtkMRMLColors.cxx
@@ -245,9 +243,6 @@ set(MRMLCore_SRCS
   vtkTagTable.cxx
   vtkMRMLdGEMRICProceduralColorNode.cxx
   vtkMRMLPETProceduralColorNode.cxx
-  # Classes for 2D Plotting
-  vtkMRMLDoubleArrayNode.cxx
-  vtkMRMLDoubleArrayStorageNode.cxx
   # Note: when you add new node types, add
   # register code to the vtkMRMLScene constructor
   )

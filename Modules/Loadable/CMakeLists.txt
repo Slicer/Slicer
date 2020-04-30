@@ -11,7 +11,6 @@ set(qtmodules
   Markups
   Transforms
   Data
-  DoubleArrays
   Models
   Plots
   SceneViews

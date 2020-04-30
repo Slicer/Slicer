@@ -22,7 +22,7 @@
 #define __qSlicerApplication_h
 
 // Qt includes
-#include <QPalette>
+class QPalette;
 
 // CTK includes
 #include <ctkPimpl.h>

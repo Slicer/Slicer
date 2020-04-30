@@ -22,15 +22,11 @@ Version:   $Revision: 1.18 $
 
 #include "vtkMRMLBSplineTransformNode.h"
 #include "vtkMRMLCameraNode.h"
-#include "vtkMRMLChartNode.h"
-#include "vtkMRMLChartViewNode.h"
 #include "vtkMRMLClipModelsNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
-#include "vtkMRMLDoubleArrayNode.h"
-#include "vtkMRMLDoubleArrayStorageNode.h"
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLFiducialListStorageNode.h"
 #include "vtkMRMLFolderDisplayNode.h"
@@ -229,12 +225,8 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTransformNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLGridTransformNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLBSplineTransformNode >::New() );
-  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLDoubleArrayNode >::New() );
-  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLDoubleArrayStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLCrosshairNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLInteractionNode >::New() );
-  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLChartNode >::New() );
-  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLChartViewNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTableNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTableStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTableViewNode >::New() );

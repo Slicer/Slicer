@@ -229,14 +229,6 @@ set(MRMLWidgets_SRCS
 
 if(MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT)
   list(APPEND MRMLWidgets_SRCS
-    qMRMLChartView.cxx
-    qMRMLChartView.h
-    qMRMLChartView_p.h
-    qMRMLChartViewControllerWidget.cxx
-    qMRMLChartViewControllerWidget.h
-    qMRMLChartViewControllerWidget_p.h
-    qMRMLChartWidget.cxx
-    qMRMLChartWidget.h
     qMRMLExpandingWebView.cxx
     qMRMLExpandingWebView.h
     qMRMLExpandingWebView_p.h
@@ -337,11 +329,6 @@ set(MRMLWidgets_MOC_SRCS
 
 if(MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT)
   list(APPEND MRMLWidgets_MOC_SRCS
-    qMRMLChartView.h
-    qMRMLChartView_p.h
-    qMRMLChartViewControllerWidget.h
-    qMRMLChartViewControllerWidget_p.h
-    qMRMLChartWidget.h
     qMRMLExpandingWebView.h
     qMRMLExpandingWebView_p.h
     )
@@ -374,22 +361,9 @@ set(MRMLWidgets_UI_SRCS
   Resources/UI/qMRMLWindowLevelWidget.ui
   )
 
-if(MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT)
-  list(APPEND MRMLWidgets_UI_SRCS
-    Resources/UI/qMRMLChartViewControllerWidget.ui
-    )
-endif()
-
 set(MRMLWidgets_QRC_SRCS
   Resources/qMRMLWidgets.qrc
   )
-
-if(MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT)
-  configure_file(Resources/jqPlot.qrc.in ${qMRMLWidgets_BINARY_DIR}/Resources/jqPlot.qrc)
-  list(APPEND MRMLWidgets_QRC_SRCS
-    ${qMRMLWidgets_BINARY_DIR}/Resources/jqPlot.qrc
-    )
-endif()
 
 if(Slicer_USE_QtTesting)
   list(APPEND MRMLWidgets_SRCS
