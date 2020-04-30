@@ -70,7 +70,7 @@ public:
     PaintAllowedOutsideVisibleSegments,
     /// Modification is allowed only over the area covered by segment specified in MaskSegmentID.
     PaintAllowedInsideSingleSegment,
-    /// Insert valid types above this line
+    // Insert valid types above this line
     PaintAllowed_Last
     };
 
@@ -82,8 +82,8 @@ public:
     OverwriteVisibleSegments,
     /// Areas added to selected segment will be removed from all other segments. (overlap with all other segments)
     OverwriteNone,
-
-    Overwrite_Last /// Insert valid types above this line
+    // Insert valid types above this line
+    Overwrite_Last
     };
 
 public:
@@ -91,7 +91,7 @@ public:
   vtkTypeMacro(vtkMRMLSegmentEditorNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  /// Create instance of a GAD node.
+  /// Create a new node of this type.
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Set node attributes from name/value pairs
@@ -106,59 +106,81 @@ public:
   /// Get unique node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "SegmentEditor"; }
 
+  //@{ 
+  /// Convert between constants IDs to/from string
   static int ConvertOverwriteModeFromString(const char* modeStr);
   static const char* ConvertOverwriteModeToString(int mode);
   static const char* ConvertMaskModeToString(int mode);
   static int ConvertMaskModeFromString(const char* modeStr);
+  //@}
 
 public:
-  /// Get master volume node
+
+  //@{
+  /// Get/set master volume node.
+  /// Master volume node is used when editing requires an underlying image.
   vtkMRMLScalarVolumeNode* GetMasterVolumeNode();
-  /// Set and observe master volume node
   void SetAndObserveMasterVolumeNode(vtkMRMLScalarVolumeNode* node);
+  //@}
 
-  /// Get segmentation node
+  //@{
+  /// Get/set segmentation node
   vtkMRMLSegmentationNode* GetSegmentationNode();
-  /// Set and observe segmentation node
   void SetAndObserveSegmentationNode(vtkMRMLSegmentationNode* node);
+  //@}
 
-  /// Get selected segment ID
+  //@{
+  /// Get/set selected segment ID.
+  /// This is the segment that is currently being edited.
   vtkGetStringMacro(SelectedSegmentID);
-  /// Set selected segment ID
   vtkSetStringMacro(SelectedSegmentID);
+  //@}
 
-  /// Get name of the active effect.
+  //@{
+  /// Get/set name of the active effect.
   vtkGetStringMacro(ActiveEffectName);
-  /// Select the active effect.
   vtkSetStringMacro(ActiveEffectName);
+  //@}
 
-  /// Defines which areas are editable.
-  /// Uses PAINT_ALLOWED_... constants.
+  //@{
+  /// Defines which areas in the segmentation are editable.
+  /// Uses PaintAllowed_... constants.
+  /// \sa PaintAllowedEverywhere, PaintAllowedInsideAllSegments, PaintAllowedInsideVisibleSegments,  
+  /// PaintAllowedOutsideAllSegments, PaintAllowedOutsideVisibleSegments, PaintAllowedInsideSingleSegment
   vtkSetMacro(MaskMode, int);
   vtkGetMacro(MaskMode, int);
+  //@}
 
-  /// Set mask segment ID.
-  /// Painting is only allowed within the area of the mask segment if mask mode is PAINT_ALLOWED_INSIDE_SINGLE_SEGMENT.
+  //@{ 
+  /// Get/set mask segment ID.
+  /// Painting is only allowed within the area of the mask segment if mask mode is PaintAllowedInsideSingleSegment.
+  /// \sa PaintAllowedInsideSingleSegment, SetMaskMode
   vtkGetStringMacro(MaskSegmentID);
-  /// Get mask segment ID.
   vtkSetStringMacro(MaskSegmentID);
+  //@}
 
-  /// Restrict editable area to regions where mask volume intensity is in the specified range.
+  //@{ 
+  /// Restrict editable area to regions where master volume intensity is in the specified range.
   vtkBooleanMacro(MasterVolumeIntensityMask, bool);
   vtkGetMacro(MasterVolumeIntensityMask, bool);
   vtkSetMacro(MasterVolumeIntensityMask, bool);
+  //@}
 
-  /// Set mask volume intensity range for masking.
+  //@{ 
+  /// Get/set master volume intensity range for masking.
+  /// If MasterVolumeIntensityMask is enabled then only those areas are editable where
+  /// master volume voxels are in this intensity range.
   /// \sa SetMasterVolumeIntensityMask()
   vtkSetVector2Macro(MasterVolumeIntensityMaskRange, double);
-  /// Get mask volume intensity range for masking.
-  /// \sa SetMasterVolumeIntensityMask()
   vtkGetVector2Macro(MasterVolumeIntensityMaskRange, double);
+  //@}
 
+  //@{
   /// Defines which areas are overwritten in other segments.
-  /// Uses OVERWRITE_... constants.
+  /// Uses Overwrite... constants.
   vtkSetMacro(OverwriteMode, int);
   vtkGetMacro(OverwriteMode, int);
+  //@}
 
 protected:
   vtkMRMLSegmentEditorNode();
