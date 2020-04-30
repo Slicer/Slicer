@@ -178,16 +178,13 @@
    </attribute>
    <addaction name="ViewLayoutConventionalAction"/>
    <addaction name="ViewLayoutConventionalWidescreenAction"/>
-   <addaction name="ViewLayoutConventionalQuantitativeAction"/>
    <addaction name="ViewLayoutConventionalPlotAction"/>
    <addaction name="ViewLayoutFourUpAction"/>
-   <addaction name="ViewLayoutFourUpQuantitativeAction"/>
    <addaction name="ViewLayoutFourUpPlotAction"/>
    <addaction name="ViewLayoutDual3DAction"/>
    <addaction name="ViewLayoutTriple3DAction"/>
    <addaction name="ViewLayoutOneUp3DAction"/>
    <addaction name="ViewLayout3DTableAction"/>
-   <addaction name="ViewLayoutOneUpQuantitativeAction"/>
    <addaction name="ViewLayoutOneUpPlotAction"/>
    <addaction name="ViewLayoutOneUpRedSliceAction"/>
    <addaction name="ViewLayoutOneUpYellowSliceAction"/>
@@ -198,7 +195,6 @@
    <addaction name="ViewLayoutCompareWidescreenAction"/>
    <addaction name="ViewLayoutCompareGridAction"/>
    <addaction name="ViewLayoutThreeOverThreeAction"/>
-   <addaction name="ViewLayoutThreeOverThreeQuantitativeAction"/>
    <addaction name="ViewLayoutThreeOverThreePlotAction"/>
    <addaction name="ViewLayoutFourOverFourAction"/>
    <addaction name="ViewLayoutSideBySideAction"/>
@@ -256,62 +252,18 @@
       <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
        <normaloff>:/Icons/LayoutChooseView.png</normaloff>:/Icons/LayoutChooseView.png</iconset>
      </property>
-     <widget class="QMenu" name="menuConventionalQuantitative">
-      <property name="title">
-       <string>Conventional Quantitative</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-        <normaloff>:/Icons/LayoutConvetionalQuantitativeView.png</normaloff>:/Icons/LayoutConvetionalQuantitativeView.png</iconset>
-      </property>
-      <addaction name="ViewLayoutConventionalQuantitativeAction"/>
-      <addaction name="ViewLayoutConventionalPlotAction"/>
-     </widget>
-     <widget class="QMenu" name="menuFourUpQuantitative">
-      <property name="title">
-       <string>Four-Up Quantitative</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-        <normaloff>:/Icons/LayoutFourUpQuantitativeView.png</normaloff>:/Icons/LayoutFourUpQuantitativeView.png</iconset>
-      </property>
-      <addaction name="ViewLayoutFourUpQuantitativeAction"/>
-      <addaction name="ViewLayoutFourUpPlotAction"/>
-      <addaction name="ViewLayoutFourUpPlotTableAction"/>
-     </widget>
-     <widget class="QMenu" name="menuOneUpQuantitative">
-      <property name="title">
-       <string>One-Up Quantitative</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-        <normaloff>:/Icons/LayoutOneUpQuantitativeView.png</normaloff>:/Icons/LayoutOneUpQuantitativeView.png</iconset>
-      </property>
-      <addaction name="ViewLayoutOneUpQuantitativeAction"/>
-      <addaction name="ViewLayoutOneUpPlotAction"/>
-     </widget>
-     <widget class="QMenu" name="menuThreeOverThreeQuantitative">
-      <property name="title">
-       <string>Three over three Quantitative</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-        <normaloff>:/Icons/LayoutThreeOverThreeQuantitativeView.png</normaloff>:/Icons/LayoutThreeOverThreeQuantitativeView.png</iconset>
-      </property>
-      <addaction name="ViewLayoutThreeOverThreeQuantitativeAction"/>
-      <addaction name="ViewLayoutThreeOverThreePlotAction"/>
-     </widget>
      <addaction name="ViewLayoutConventionalAction"/>
      <addaction name="ViewLayoutConventionalWidescreenAction"/>
-     <addaction name="menuConventionalQuantitative"/>
+     <addaction name="ViewLayoutConventionalPlotAction"/>
      <addaction name="ViewLayoutFourUpAction"/>
      <addaction name="ViewLayoutFourUpTableAction"/>
-     <addaction name="menuFourUpQuantitative"/>
+     <addaction name="ViewLayoutFourUpPlotAction"/>
+     <addaction name="ViewLayoutFourUpPlotTableAction"/>
      <addaction name="ViewLayoutDual3DAction"/>
      <addaction name="ViewLayoutTriple3DAction"/>
      <addaction name="ViewLayoutOneUp3DAction"/>
      <addaction name="ViewLayout3DTableAction"/>
-     <addaction name="menuOneUpQuantitative"/>
+     <addaction name="ViewLayoutOneUpPlotAction"/>
      <addaction name="ViewLayoutOneUpRedSliceAction"/>
      <addaction name="ViewLayoutOneUpYellowSliceAction"/>
      <addaction name="ViewLayoutOneUpGreenSliceAction"/>
@@ -321,7 +273,7 @@
      <addaction name="ViewLayoutCompareWidescreenAction"/>
      <addaction name="ViewLayoutCompareGridAction"/>
      <addaction name="ViewLayoutThreeOverThreeAction"/>
-     <addaction name="menuThreeOverThreeQuantitative"/>
+     <addaction name="ViewLayoutThreeOverThreePlotAction"/>
      <addaction name="ViewLayoutFourOverFourAction"/>
      <addaction name="ViewLayoutTwoOverTwoAction"/>
      <addaction name="ViewLayoutSideBySideAction"/>
@@ -695,21 +647,6 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="ViewLayoutConventionalQuantitativeAction">
-   <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutConvetionalQuantitativeView.png</normaloff>:/Icons/LayoutConvetionalQuantitativeView.png</iconset>
-   </property>
-   <property name="text">
-    <string>Standard</string>
-   </property>
-   <property name="toolTip">
-    <string>Conventional Quantitative uses jqPlot</string>
-   </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
-   </property>
-  </action>
   <action name="ViewLayoutFourUpAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
@@ -717,21 +654,6 @@
    </property>
    <property name="text">
     <string>Four-Up</string>
-   </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
-   </property>
-  </action>
-  <action name="ViewLayoutFourUpQuantitativeAction">
-   <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutFourUpQuantitativeView.png</normaloff>:/Icons/LayoutFourUpQuantitativeView.png</iconset>
-   </property>
-   <property name="text">
-    <string>Standard</string>
-   </property>
-   <property name="toolTip">
-    <string>Four-Up Quantitative uses jqPlot</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
@@ -768,21 +690,6 @@
    </property>
    <property name="text">
     <string>3D Table</string>
-   </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
-   </property>
-  </action>
-  <action name="ViewLayoutOneUpQuantitativeAction">
-   <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutOneUpQuantitativeView.png</normaloff>:/Icons/LayoutOneUpQuantitativeView.png</iconset>
-   </property>
-   <property name="text">
-    <string>Standard</string>
-   </property>
-   <property name="toolTip">
-    <string>One-Up Quantitative uses jqPlot</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
@@ -1122,18 +1029,6 @@
     <bool>false</bool>
    </property>
   </action>
-  <action name="ViewLayoutThreeOverThreeQuantitativeAction">
-   <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutThreeOverThreeQuantitativeView.png</normaloff>:/Icons/LayoutThreeOverThreeQuantitativeView.png</iconset>
-   </property>
-   <property name="text">
-    <string>Standard</string>
-   </property>
-   <property name="toolTip">
-    <string>Three Over Three Quantitative uses jqPlot</string>
-   </property>
-  </action>
   <action name="ViewLayoutSideBySideAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
@@ -1197,10 +1092,10 @@
      <normaloff>:/Icons/LayoutOneUpQuantitativeView.png</normaloff>:/Icons/LayoutOneUpQuantitativeView.png</iconset>
    </property>
    <property name="text">
-    <string>Interactive</string>
+    <string>Plot only</string>
    </property>
    <property name="toolTip">
-    <string>One-Up Quantitative uses VTK plot</string>
+    <string>Plot view</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
@@ -1212,10 +1107,10 @@
      <normaloff>:/Icons/LayoutFourUpQuantitativeView.png</normaloff>:/Icons/LayoutFourUpQuantitativeView.png</iconset>
    </property>
    <property name="text">
-    <string>Interactive</string>
+    <string>Four-Up Plot</string>
    </property>
    <property name="toolTip">
-    <string>Four-Up Quantitative uses VTKPlot</string>
+    <string>Three slices and a plot in four-Up layout</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
@@ -1227,10 +1122,10 @@
      <normaloff>:/Icons/LayoutConvetionalQuantitativeView.png</normaloff>:/Icons/LayoutConvetionalQuantitativeView.png</iconset>
    </property>
    <property name="text">
-    <string>Interactive</string>
+    <string>Conventional Plot</string>
    </property>
    <property name="toolTip">
-    <string>Conventional Quantitative uses VTKPlot</string>
+    <string>Conventional three slices and 3D view with an additional plot</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
@@ -1242,10 +1137,10 @@
      <normaloff>:/Icons/LayoutThreeOverThreeQuantitativeView.png</normaloff>:/Icons/LayoutThreeOverThreeQuantitativeView.png</iconset>
    </property>
    <property name="text">
-    <string>Interactive</string>
+    <string>Three over three Plot</string>
    </property>
    <property name="toolTip">
-    <string>Three Over Three Quantitative uses VTKPlot</string>
+    <string>Three plots over three slices</string>
    </property>
   </action>
   <action name="ViewLayoutFourUpTableAction">
@@ -1263,10 +1158,10 @@
      <normaloff>:/Icons/LayoutFourUpQuantitativeTableView.png</normaloff>:/Icons/LayoutFourUpQuantitativeTableView.png</iconset>
    </property>
    <property name="text">
-    <string>Table</string>
+    <string>Four-Up Quantitative</string>
    </property>
    <property name="toolTip">
-    <string>vtkPlot and Table</string>
+    <string>Four-up slice and 3D view with an additional table and plot</string>
    </property>
   </action>
   <action name="WindowToolbarsResetToDefaultAction">

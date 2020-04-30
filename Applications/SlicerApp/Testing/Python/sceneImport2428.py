@@ -122,7 +122,7 @@ class sceneImport2428Test(ScriptedLoadableModuleTest):
 
     # Export to labelmap volume
     headLabel = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLLabelMapVolumeNode')
-    slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(segmentationNode, headLabel, referenceVolumeNode)
+    slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(segmentationNode, headLabel, head)
 
     selectionNode = slicer.app.applicationLogic().GetSelectionNode()
     selectionNode.SetActiveVolumeID( head.GetID() )

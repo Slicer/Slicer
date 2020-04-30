@@ -48,11 +48,9 @@
 
 // MRML includes
 #include <vtkMRMLScene.h>
-#include <vtkMRMLDoubleArrayNode.h>
 #include <vtkMRMLPlotSeriesNode.h>
 #include <vtkMRMLPlotChartNode.h>
 #include <vtkMRMLPlotViewNode.h>
-#include <vtkMRMLSceneViewNode.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLTableNode.h>
 

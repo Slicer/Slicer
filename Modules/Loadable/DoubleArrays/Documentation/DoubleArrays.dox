@@ -1,6 +1,0 @@
-/**
-\defgroup Slicer_QtModules_DoubleArrays DoubleArrays
-\ingroup Slicer_QtModules
-This module allows to handle vtkMRMLDoubleArrayNodes
-
-*/

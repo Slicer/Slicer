@@ -1616,8 +1616,7 @@ QString qSlicerCoreApplication::libraries()const
     "<a href=\"https://www.qt.io/\">Qt</a>, "
     "<a href=\"http://teem.sf.net\">Teem</a>, "
     "<a href=\"http://www.python.org/\">Python</a>, "
-    "<a href=\"http://dicom.offis.de/dcmtk\">DCMTK</a>, "
-    "<a href=\"http://www.jqplot.com/\">JQPlot</a><br />");
+    "<a href=\"http://dicom.offis.de/dcmtk\">DCMTK</a><br />");
   return librariesText;
 }
 

@@ -43,10 +43,8 @@
 
 // MRML includes
 #include <vtkMRMLScene.h>
-#include <vtkMRMLDoubleArrayNode.h>
 #include <vtkMRMLTableViewNode.h>
 #include <vtkMRMLTableNode.h>
-#include <vtkMRMLSceneViewNode.h>
 
 // STD include
 #include <string>

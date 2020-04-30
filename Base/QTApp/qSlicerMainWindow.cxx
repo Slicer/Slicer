@@ -378,18 +378,6 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   QObject::connect(this->LayoutMenu, SIGNAL(triggered(QAction*)),
                    q, SLOT(onLayoutActionTriggered(QAction*)));
 
-  QObject::connect(this->menuConventionalQuantitative, SIGNAL(triggered(QAction*)),
-                   q, SLOT(onLayoutActionTriggered(QAction*)));
-
-  QObject::connect(this->menuFourUpQuantitative, SIGNAL(triggered(QAction*)),
-                   q, SLOT(onLayoutActionTriggered(QAction*)));
-
-  QObject::connect(this->menuOneUpQuantitative, SIGNAL(triggered(QAction*)),
-                   q, SLOT(onLayoutActionTriggered(QAction*)));
-
-  QObject::connect(this->menuThreeOverThreeQuantitative, SIGNAL(triggered(QAction*)),
-                   q, SLOT(onLayoutActionTriggered(QAction*)));
-
   this->ViewToolBar->addWidget(this->LayoutButton);
   QObject::connect(this->ViewToolBar,
                    SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
@@ -1243,10 +1231,8 @@ void qSlicerMainWindow::setupMenuActions()
 
   d->ViewLayoutConventionalAction->setData(vtkMRMLLayoutNode::SlicerLayoutConventionalView);
   d->ViewLayoutConventionalWidescreenAction->setData(vtkMRMLLayoutNode::SlicerLayoutConventionalWidescreenView);
-  d->ViewLayoutConventionalQuantitativeAction->setData(vtkMRMLLayoutNode::SlicerLayoutConventionalQuantitativeView);
   d->ViewLayoutConventionalPlotAction->setData(vtkMRMLLayoutNode::SlicerLayoutConventionalPlotView);
   d->ViewLayoutFourUpAction->setData(vtkMRMLLayoutNode::SlicerLayoutFourUpView);
-  d->ViewLayoutFourUpQuantitativeAction->setData(vtkMRMLLayoutNode::SlicerLayoutFourUpQuantitativeView);
   d->ViewLayoutFourUpPlotAction->setData(vtkMRMLLayoutNode::SlicerLayoutFourUpPlotView);
   d->ViewLayoutFourUpPlotTableAction->setData(vtkMRMLLayoutNode::SlicerLayoutFourUpPlotTableView);
   d->ViewLayoutFourUpTableAction->setData(vtkMRMLLayoutNode::SlicerLayoutFourUpTableView);
@@ -1254,7 +1240,6 @@ void qSlicerMainWindow::setupMenuActions()
   d->ViewLayoutTriple3DAction->setData(vtkMRMLLayoutNode::SlicerLayoutTriple3DEndoscopyView);
   d->ViewLayoutOneUp3DAction->setData(vtkMRMLLayoutNode::SlicerLayoutOneUp3DView);
   d->ViewLayout3DTableAction->setData(vtkMRMLLayoutNode::SlicerLayout3DTableView);
-  d->ViewLayoutOneUpQuantitativeAction->setData(vtkMRMLLayoutNode::SlicerLayoutOneUpQuantitativeView);
   d->ViewLayoutOneUpPlotAction->setData(vtkMRMLLayoutNode::SlicerLayoutOneUpPlotView);
   d->ViewLayoutOneUpRedSliceAction->setData(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
   d->ViewLayoutOneUpYellowSliceAction->setData(vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView);
@@ -1265,7 +1250,6 @@ void qSlicerMainWindow::setupMenuActions()
   d->ViewLayoutCompareWidescreenAction->setData(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView);
   d->ViewLayoutCompareGridAction->setData(vtkMRMLLayoutNode::SlicerLayoutCompareGridView);
   d->ViewLayoutThreeOverThreeAction->setData(vtkMRMLLayoutNode::SlicerLayoutThreeOverThreeView);
-  d->ViewLayoutThreeOverThreeQuantitativeAction->setData(vtkMRMLLayoutNode::SlicerLayoutThreeOverThreeQuantitativeView);
   d->ViewLayoutThreeOverThreePlotAction->setData(vtkMRMLLayoutNode::SlicerLayoutThreeOverThreePlotView);
   d->ViewLayoutFourOverFourAction->setData(vtkMRMLLayoutNode::SlicerLayoutFourOverFourView);
   d->ViewLayoutTwoOverTwoAction->setData(vtkMRMLLayoutNode::SlicerLayoutTwoOverTwoView);
@@ -1542,42 +1526,6 @@ void qSlicerMainWindow::onLayoutActionTriggered(QAction* action)
       }
     }
 
-  foreach(QAction* maction, d->menuConventionalQuantitative->actions())
-    {
-    if (action->text() == maction->text())
-      {
-      found = true;
-      break;
-      }
-    }
-
-  foreach(QAction* maction, d->menuFourUpQuantitative->actions())
-    {
-    if (action->text() == maction->text())
-      {
-      found = true;
-      break;
-      }
-    }
-
-  foreach(QAction* maction, d->menuOneUpQuantitative->actions())
-    {
-    if (action->text() == maction->text())
-      {
-      found = true;
-      break;
-      }
-    }
-
-  foreach(QAction* maction, d->menuThreeOverThreeQuantitative->actions())
-    {
-    if (action->text() == maction->text())
-      {
-      found = true;
-      break;
-      }
-    }
-
   if (found && !action->data().isNull())
     {
     this->setLayout(action->data().toInt());
@@ -1638,38 +1586,6 @@ void qSlicerMainWindow::onLayoutChanged(int layout)
   // at startup, when layout is set to SlicerLayoutInitialView = 0).
 
   foreach(QAction* action, d->LayoutMenu->actions())
-    {
-    if (!action->menu() && action->data().toInt() == layout)
-      {
-      d->LayoutButton->setDefaultAction(action);
-      }
-    }
-
-  foreach(QAction* action, d->menuConventionalQuantitative->actions())
-    {
-    if (!action->menu() && action->data().toInt() == layout)
-      {
-      d->LayoutButton->setDefaultAction(action);
-      }
-    }
-
-  foreach(QAction* action, d->menuFourUpQuantitative->actions())
-    {
-    if (!action->menu() && action->data().toInt() == layout)
-      {
-      d->LayoutButton->setDefaultAction(action);
-      }
-    }
-
-  foreach(QAction* action, d->menuOneUpQuantitative->actions())
-    {
-    if (!action->menu() && action->data().toInt() == layout)
-      {
-      d->LayoutButton->setDefaultAction(action);
-      }
-    }
-
-  foreach(QAction* action, d->menuThreeOverThreeQuantitative->actions())
     {
     if (!action->menu() && action->data().toInt() == layout)
       {

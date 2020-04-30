@@ -223,18 +223,6 @@ mark_as_superbuild(vtkAddon_WRAP_PYTHON:BOOL)
 # Include remote modules
 #------------------------------------------------------------------------------
 
-if(Slicer_BUILD_WEBENGINE_SUPPORT)
-  Slicer_Remote_Add(jqPlot
-    URL https://github.com/Slicer/SlicerBinaryDependencies/releases/download/jqplot/jquery.jqplot.1.0.4r1115.tar.gz
-    URL_MD5 5c5d73730145c3963f09e1d3ca355580
-    LICENSE_FILES "MIT-LICENSE.txt"
-    VERSION "1.0.4"
-    SOURCE_DIR_VAR jqPlot_DIR
-    LABELS FIND_PACKAGE
-    )
-  list(APPEND Slicer_REMOTE_DEPENDENCIES jqPlot)
-endif()
-
 option(Slicer_BUILD_MULTIVOLUME_SUPPORT "Build MultiVolume support." ON)
 mark_as_advanced(Slicer_BUILD_MULTIVOLUME_SUPPORT)
 
