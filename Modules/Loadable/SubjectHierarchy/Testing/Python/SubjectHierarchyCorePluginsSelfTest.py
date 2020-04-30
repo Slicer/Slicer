@@ -92,7 +92,6 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
 
     self.section_SetupPathsAndNames()
     self.section_MarkupRole()
-    self.section_ChartRole()
     self.section_CloneNode()
 
   # ------------------------------------------------------------------------------
@@ -100,7 +99,6 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     # Set constants
     self.invalidItemID = slicer.vtkMRMLSubjectHierarchyNode.GetInvalidItemID()
     self.sampleMarkupName = 'SampleMarkup'
-    self.sampleChartName = 'SampleChart'
     self.studyItemID = self.invalidItemID
     self.cloneNodeNamePostfix = slicer.qSlicerSubjectHierarchyCloneNodePlugin().getCloneNodeNamePostfix()
 
@@ -130,27 +128,6 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     self.assertEqual( markupsShItemID, markupsShItemID2 )
     self.assertEqual( shNode.GetItemParent(markupsShItemID), self.studyItemID )
     self.assertEqual( shNode.GetItemOwnerPluginName(markupsShItemID), 'Markups' )
-
-  # ------------------------------------------------------------------------------
-  def section_ChartRole(self):
-    self.delayDisplay("Chart role",self.delayMs)
-
-    shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
-    self.assertIsNotNone( shNode )
-
-    # Create sample chart node
-    chartNode = slicer.vtkMRMLChartNode()
-    slicer.mrmlScene.AddNode(chartNode)
-    chartNode.SetName(self.sampleChartName)
-    chartShItemID = shNode.GetItemByDataNode(chartNode)
-    self.assertIsNotNone( chartShItemID )
-    self.assertEqual( shNode.GetItemOwnerPluginName(chartShItemID), 'Charts' )
-
-    # Add chart under study
-    chartShItemID2 = shNode.CreateItem(self.studyItemID, chartNode)
-    self.assertEqual( chartShItemID, chartShItemID2 )
-    self.assertEqual( shNode.GetItemParent(chartShItemID), self.studyItemID )
-    self.assertEqual( shNode.GetItemOwnerPluginName(chartShItemID), 'Charts' )
 
   # ------------------------------------------------------------------------------
   def section_CloneNode(self):
