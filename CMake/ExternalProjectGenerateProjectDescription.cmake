@@ -65,8 +65,8 @@
 #!
 function(ExternalProject_GenerateProjectDescription_Step projectname)
   set(options)
-  set(oneValueArgs NAME SOURCE_DIR VERSION LICENSE_FILES)
-  set(multiValueArgs)
+  set(oneValueArgs NAME SOURCE_DIR VERSION)
+  set(multiValueArgs LICENSE_FILES)
   cmake_parse_arguments(_epgpd "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   set(name ${projectname})
@@ -125,6 +125,7 @@ set(license_found 0)
 foreach(license_file IN LISTS license_files)
   if(IS_ABSOLUTE \${license_file})
     set(filepath \${license_file})
+    get_filename_component(license_file \${license_file} NAME)
   else()
     set(filepath \${SOURCE_DIR}/\${license_file})
   endif()
