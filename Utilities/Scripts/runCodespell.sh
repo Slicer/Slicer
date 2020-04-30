@@ -26,7 +26,6 @@ codespell -q6 --skip="\
 ./Base/QTCLI/vtkSlicerCLIModuleLogic.cxx,\
 ./Base/QTCore/Resources/Certs/README,\
 ./Libs/MRML/Core/vtkMRMLCoreTestingUtilities.cxx,\
-./Libs/vtkITK/vtkITKGrowCutSegmentationImageFilter.cxx,\
 ./Libs/vtkITK/itkConstrainedValueMultiplicationImageFilter.h,\
 ./Libs/vtkITK/itkLevelTracingImageFilter.h,\
 ./Modules/CLI/ExtractSkeleton/tilg_iso_3D.cxx,\

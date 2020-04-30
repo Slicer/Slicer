@@ -44,7 +44,7 @@
     </parameter>
     <parameter>
       <label>Scalars Type</label>
-      <description><![CDATA[Tells the computer representation of each pixel.  Most operations work independent of scalar type.  Label map volumes must be of type Short for use with the Editor module.]]></description>
+      <description><![CDATA[Tells the computer representation of each pixel.  Most operations work independent of scalar type.]]></description>
     </parameter>
     <parameter>
       <label>Filename</label>
