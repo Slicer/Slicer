@@ -44,6 +44,10 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
       -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
       -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
       -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
+      # We use release-mode Python for debug-mode application builds.
+      # Leaving PYTHON_DEBUG_LIBRARY undefined could result in using
+      # a random debug-mode Python library found somewhere on the system.
+      -DPYTHON_DEBUG_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
       )
   endif()
 
