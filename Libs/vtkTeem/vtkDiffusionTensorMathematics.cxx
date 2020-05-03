@@ -40,12 +40,11 @@ extern "C" {
 #include <limits>
 
 #define VTK_EPS 1e-16
-#define DOUBLE_NAN (std::numeric_limits<double>::quiet_NaN())
 #define MAX(a,b) (((a)>(b))?(a):(b))
 #define MAX3(a,b,c) (MAX(a,MAX(b,c)))
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MIN3(a,b,c) (MIN(a,MIN(b,c)))
-#define OUT_OF_RANGE_TO_NAN(v, a, b) (( ((a) <= (v)) && ((v) <= (b)))?(v):(DOUBLE_NAN))
+#define OUT_OF_RANGE_TO_BOUNDRY(v, a, b) ( ((v) <= (a)) ? (a) : (((v) >= (b)) ? (b) : (v)))
 
 vtkCxxSetObjectMacro(vtkDiffusionTensorMathematics,TensorRotationMatrix,vtkMatrix4x4);
 vtkCxxSetObjectMacro(vtkDiffusionTensorMathematics,ScalarMask,vtkImageData);
@@ -573,11 +572,11 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
               vtkGenericWarningMacro( "Warning: Negative Eigenvalues after positivity fix" );
           } else {
             if (w[0] < 0)
-              w[0] = DOUBLE_NAN;
+              w[0] = 0;
             if (w[1] < 0)
-              w[1] = DOUBLE_NAN;
+              w[1] = 0;
             if (w[2] < 0)
-              w[2] = DOUBLE_NAN;
+              w[2] = 0;
           }
 
           // pixel operation
@@ -996,11 +995,6 @@ double vtkDiffusionTensorMathematics::Trace(double D[3][3])
 
 double vtkDiffusionTensorMathematics::Trace(double w[3])
 {
-  if ((w[0] <= VTK_EPS) || (w[1] <= VTK_EPS) || (w[2] <= VTK_EPS))
-  {
-    return DOUBLE_NAN;
-  }
-
   return ( w[0] + w[1] + w[2] );
 }
 
@@ -1033,17 +1027,17 @@ double vtkDiffusionTensorMathematics::FractionalAnisotropy(double w[3])
 
 double vtkDiffusionTensorMathematics::LinearMeasure(double w[3])
 {
-  return OUT_OF_RANGE_TO_NAN((w[0] - w[1])/MAX(w[0], VTK_EPS), 0, 1);
+  return OUT_OF_RANGE_TO_BOUNDRY((w[0] - w[1])/MAX(w[0], VTK_EPS), 0, 1);
 }
 
 double vtkDiffusionTensorMathematics::PlanarMeasure(double w[3])
 {
-  return OUT_OF_RANGE_TO_NAN((w[1] - w[2]) / MAX(w[0], VTK_EPS), 0, 1);
+  return OUT_OF_RANGE_TO_BOUNDRY((w[1] - w[2]) / MAX(w[0], VTK_EPS), 0, 1);
 }
 
 double vtkDiffusionTensorMathematics::SphericalMeasure(double w[3])
 {
-  return OUT_OF_RANGE_TO_NAN((w[2]) / MAX(w[0], VTK_EPS), 0, 1);
+  return OUT_OF_RANGE_TO_BOUNDRY((w[2]) / MAX(w[0], VTK_EPS), 0, 1);
 }
 
 
@@ -1074,11 +1068,6 @@ double vtkDiffusionTensorMathematics::PerpendicularDiffusivity(double w[3])
 
 double vtkDiffusionTensorMathematics::MeanDiffusivity(double w[3])
 {
-  if ((w[0] <= VTK_EPS) || (w[1] <= VTK_EPS) || (w[2] <= VTK_EPS))
-  {
-    return DOUBLE_NAN;
-  }
-
   return ( ( w[0] + w[1] + w[2] ) / 3 );
 }
 
