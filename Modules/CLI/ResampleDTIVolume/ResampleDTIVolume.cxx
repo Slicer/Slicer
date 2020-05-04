@@ -31,6 +31,8 @@
 #include "itkTransformDeformationFieldFilter.h"
 #include <itkVectorResampleImageFilter.h>
 #include <itkBSplineDeformableTransform.h>
+#include <itkThinPlateSplineKernelTransform.h>
+#include <itkTransformFactory.h>
 
 // Use an anonymous namespace to keep class types and function names
 // from colliding when module is used as shared object module.  Every
@@ -1130,6 +1132,14 @@ int main( int argc, char * argv[] )
     std::cerr << "Argument(s) having wrong size" << std::endl;
     return EXIT_FAILURE;
     }
+
+  // Thin-plate spline transform is not registered in transform factory by default in recent
+  // ITK versions, so we need to register it manually.
+  typedef itk::ThinPlateSplineKernelTransform<float, 3> ThinPlateSplineTransformFloatType;
+  typedef itk::ThinPlateSplineKernelTransform<double, 3> ThinPlateSplineTransformDoubleType;
+  itk::TransformFactory<ThinPlateSplineTransformFloatType>::RegisterTransform();
+  itk::TransformFactory<ThinPlateSplineTransformDoubleType>::RegisterTransform();
+
   itk::ImageIOBase::IOPixelType     pixelType;
   itk::ImageIOBase::IOComponentType componentType;
   // Check the input image pixel type

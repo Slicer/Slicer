@@ -27,6 +27,7 @@
 #include <itkVectorResampleImageFilter.h>
 #include <itkWindowedSincInterpolateImageFunction.h>
 #include <itkConstantBoundaryCondition.h>
+#include <itkTransformFactory.h>
 
 // ResampleScalarVectorDWIVolume includes
 #include "ResampleScalarVectorDWIVolumeCLP.h"
@@ -1343,6 +1344,14 @@ int main( int argc, char * argv[] )
     std::cerr << "Argument(s) having wrong size" << std::endl;
     return EXIT_FAILURE;
     }
+
+  // Thin-plate spline transform is not registered in transform factory by default in recent
+  // ITK versions, so we need to register it manually.
+  typedef itk::ThinPlateSplineKernelTransform<float,3> ThinPlateSplineTransformFloatType;
+  typedef itk::ThinPlateSplineKernelTransform<double,3> ThinPlateSplineTransformDoubleType;
+  itk::TransformFactory<ThinPlateSplineTransformFloatType>::RegisterTransform();
+  itk::TransformFactory<ThinPlateSplineTransformDoubleType>::RegisterTransform(); 
+
   itk::ImageIOBase::IOPixelType     pixelType;
   itk::ImageIOBase::IOComponentType componentType;
   GetImageType( list.inputVolume, pixelType, componentType );
