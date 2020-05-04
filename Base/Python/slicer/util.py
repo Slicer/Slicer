@@ -541,6 +541,13 @@ def loadTransform(filename, returnNode=False):
   """
   return loadNodeFromFile(filename, 'TransformFile', {}, returnNode)
 
+def loadTable(filename):
+  """Load table node from file.
+  :param filename: full path of the file to load.
+  :return: loaded table node
+  """
+  return loadNodeFromFile(filename, 'TableFile')
+
 def loadLabelVolume(filename, properties={}, returnNode=False):
   """Load node from file.
   :param filename: full path of the file to load.
@@ -1436,6 +1443,42 @@ def updateTableFromArray(tableNode, narrays, columnNames=None):
       vcolumn.SetName(columnNames[columnIndex])
     tableNode.AddColumn(vcolumn)
   return tableNode
+
+def dataframeFromTable(tableNode):
+  """Convert table node content to pandas dataframe.
+  Table content is copied. Therefore, changes in table node do not affect the dataframe,
+  and dataframe changes do not affect the original table node.
+  """
+  try:
+    # Suppress "lzma compression not available" UserWarning when loading pandas
+    import warnings
+    with warnings.catch_warnings():
+      warnings.simplefilter(action='ignore', category=UserWarning)
+      import pandas as pd
+  except ImportError:
+      raise ImportError("Displaying a table node requires installation of pandas Python package. You can install it by running `slicer.util.pip_install('pandas')`")
+  dataframe = pd.DataFrame()
+  vtable = tableNode.GetTable()
+  for columnIndex in range (vtable.GetNumberOfColumns()):
+    vcolumn = vtable.GetColumn(columnIndex)
+    column = []
+    numberOfComponents = vcolumn.GetNumberOfComponents()
+    if numberOfComponents==1:
+      # most common, simple case
+      for rowIndex in range(vcolumn.GetNumberOfValues()):
+        column.append(vcolumn.GetValue(rowIndex))
+    else:
+      # rare case: column contains multiple components
+      valueIndex = 0
+      for rowIndex in range(vcolumn.GetNumberOfTuples()):
+        item = []
+        for componentIndex in range(numberOfComponents):
+          item.append(vcolumn.GetValue(valueIndex))
+          valueIndex += 1
+        column.append(item)
+    dataframe[vcolumn.GetName()] = column
+  return dataframe
+
 
 #
 # VTK
