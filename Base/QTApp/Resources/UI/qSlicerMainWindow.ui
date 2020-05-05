@@ -501,7 +501,10 @@
   </action>
   <action name="FileExitAction">
    <property name="text">
-    <string>E&amp;xit</string>
+    <string>Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
    <property name="toolTip">
     <string>Quit the application</string>
