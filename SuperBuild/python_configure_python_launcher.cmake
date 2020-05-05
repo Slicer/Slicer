@@ -1,7 +1,55 @@
 cmake_minimum_required(VERSION 3.13.4)
 
+#
+# This script implements different actions that may be selected
+# by setting the ACTION variable.
+#
+# Available actions are the following:
+#
+# - default
+# - replace_application_name
+#
+
+if(NOT "${ACTION}" MATCHES "^default|replace_application_name$")
+  message(FATAL_ERROR "Unknown ACTION [${ACTION}]. Supported action are 'replace_application_name' and 'default'")
+endif()
+
+# Requirements common to all actions
+foreach(varname IN ITEMS
+  PYTHON_REAL_EXECUTABLE
+  )
+  if("${${varname}}" STREQUAL "")
+    message(FATAL_ERROR "${varname} is empty")
+  endif()
+endforeach()
+
+get_filename_component(python_bin_dir "${PYTHON_REAL_EXECUTABLE}" PATH)
+
+# --------------------------------------------------------------------------
+# replace_application_name
+if("${ACTION}" STREQUAL "replace_application_name")
+  # LauncherSettings
+  set(filename "${python_bin_dir}/PythonSlicerLauncherSettings.ini")
+  message(STATUS "Replacing 'name=PythonSlicer' with 'name=Slicer' in ${filename}")
+  file(READ ${filename} content)
+  string(REPLACE "name=PythonSlicer" "name=Slicer" content ${content})
+  file(WRITE ${filename} ${content})
+
+  # LauncherSettingsToInstall
+  set(filename "${python_bin_dir}/PythonSlicerLauncherSettingsToInstall.ini")
+  message(STATUS "Replacing 'name=PythonSlicer' with 'name=Slicer' in ${filename}")
+  file(READ ${filename} content)
+  string(REPLACE "name=PythonSlicer" "name=Slicer" content ${content})
+  file(WRITE ${filename} ${content})
+
+  return()
+endif()
+
+# --------------------------------------------------------------------------
+# default
 foreach(varname IN ITEMS
   CMAKE_EXECUTABLE_SUFFIX
+  SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME
   )
   if(NOT DEFINED ${varname})
     message(FATAL_ERROR "${varname} is not defined")
@@ -12,7 +60,6 @@ foreach(varname IN ITEMS
   CTKAppLauncher_DIR
   python_DIR
   PYTHON_ENABLE_SSL
-  PYTHON_REAL_EXECUTABLE
   PYTHON_SHARED_LIBRARY_DIR
   PYTHON_SITE_PACKAGES_SUBDIR
   PYTHON_STDLIB_SUBDIR
@@ -21,6 +68,9 @@ foreach(varname IN ITEMS
   Slicer_LIB_DIR
   Slicer_SHARE_DIR
   Slicer_SOURCE_DIR
+  Slicer_REVISION
+  Slicer_ORGANIZATION_DOMAIN
+  Slicer_ORGANIZATION_NAME
   )
   if("${${varname}}" STREQUAL "")
     message(FATAL_ERROR "${varname} is empty")
@@ -28,8 +78,6 @@ foreach(varname IN ITEMS
 endforeach()
 
 find_package(CTKAppLauncher REQUIRED)
-
-get_filename_component(python_bin_dir "${PYTHON_REAL_EXECUTABLE}" PATH)
 
 #
 # Settings specific to the build tree.
@@ -134,8 +182,19 @@ set(PYTHONLAUNCHER_PYTHONPATH_INSTALLED
 #  * Install rules for PythonSlicerLauncherSettingsToInstall.ini and PythonSlicer executable
 #  are specified in SlicerBlockInstallPython.cmake
 #
-
+#  * Since the setting "name=<launcherName>" is initially set to "PythonSlicer" based on the
+#  launcher name by calling ctkAppLauncherConfigureForExecutable() below, it is
+#  explicitly updated to "Slicer" in a second step using the action "replace_application_name"
+#  implemented above.
+#
 set(_python_launcher_config_params
+
+  # Application properties required to lookup user revision settings
+  APPLICATION_REVISION ${Slicer_REVISION}
+  ORGANIZATION_DOMAIN ${Slicer_ORGANIZATION_DOMAIN}
+  ORGANIZATION_NAME ${Slicer_ORGANIZATION_NAME}
+  USER_ADDITIONAL_SETTINGS_FILEBASENAME ${SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME}
+
   SPLASHSCREEN_DISABLED
 
   # Additional settings exclude groups
