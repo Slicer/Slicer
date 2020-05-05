@@ -32,10 +32,18 @@
 const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()
 {
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
-  Q_ASSERT(app);
+  if (!app)
+    {
+    qCritical("qSlicerCLIModuleFactoryHelper::modulePaths failed: qSlicerCoreApplication is not instantiated");
+    return QStringList();
+    }
 
   // slicerHome shouldn't be empty
-  Q_ASSERT(!app->slicerHome().isEmpty());
+  if (!app->slicerHome().isEmpty())
+    {
+    qCritical("qSlicerCLIModuleFactoryHelper::modulePaths failed: app->slicerHome() is empty");
+    return QStringList();
+    }
 
   QStringList defaultCmdLineModulePaths;
   if (QFile::exists(app->slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR))
