@@ -355,7 +355,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
         else:
           b.connect('clicked()', lambda s=source: logic.downloadFromSource(s))
 
-  def logMessage(self, message, logLevel=logging.INFO):
+  def logMessage(self, message, logLevel=logging.DEBUG):
     # Set text color based on log level
     if logLevel >= logging.ERROR:
       message = '<font color="red">' + message + '</font>'
@@ -494,6 +494,7 @@ class SampleDataLogic(object):
     self.registerDevelopmentSampleDataSources()
     if slicer.app.testingEnabled():
       self.registerTestingDataSources()
+    self.downloadPercent = 0
 
   def registerBuiltInSampleDataSources(self):
     """Fills in the pre-define sample data sources"""
@@ -760,8 +761,8 @@ class SampleDataLogic(object):
       nodes = self.downloadFromSource(source)
     return nodes
 
-  def logMessage(self,message,logLevel=logging.INFO):
-    print(message)
+  def logMessage(self, message, logLevel=logging.DEBUG):
+    logging.log(logLevel, message)
 
   """Utility methods for backwards compatibility"""
   def downloadMRHead(self):
@@ -827,13 +828,12 @@ class SampleDataLogic(object):
     :param name: File name that will be downloaded.
     :param checksum: Checksum formatted as ``<algo>:<digest>`` to verify the downloaded file. For example, ``SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93``.
     """
+    self.downloadPercent = 0
     filePath = destFolderPath + '/' + name
     (algo, digest) = extractAlgoAndDigest(checksum)
     if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
       import urllib.request, urllib.parse, urllib.error
       self.logMessage('<b>Requesting download</b> <i>%s</i> from %s ...' % (name, uri))
-      # add a progress bar
-      self.downloadPercent = 0
       try:
         urllib.request.urlretrieve(uri, filePath, self.reportHook)
         self.logMessage('<b>Download finished</b>')
@@ -848,6 +848,7 @@ class SampleDataLogic(object):
           self.logMessage('<b>Checksum verification failed. Computed checksum %s different from expected checksum %s</b>' % (current_digest, digest))
           qt.QFile(filePath).remove()
         else:
+          self.downloadPercent = 100
           self.logMessage('<b>Checksum OK</b>')
     else:
       if algo is not None:
@@ -858,8 +859,10 @@ class SampleDataLogic(object):
           qt.QFile(filePath).remove()
           return self.downloadFile(uri, destFolderPath, name, checksum)
         else:
+          self.downloadPercent = 100
           self.logMessage('<b>File already exists and checksum is OK - reusing it.</b>')
       else:
+        self.downloadPercent = 100
         self.logMessage('<b>File already exists in cache - reusing it.</b>')
     return filePath
 
