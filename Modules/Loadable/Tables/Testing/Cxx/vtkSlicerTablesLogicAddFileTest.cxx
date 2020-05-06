@@ -20,7 +20,7 @@
 
 ==============================================================================*/
 
-// DoubleArrays logic
+// Tables logic
 #include "vtkSlicerTablesLogic.h"
 
 // MRML includes

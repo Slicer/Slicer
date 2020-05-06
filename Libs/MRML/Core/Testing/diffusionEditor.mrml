@@ -13,10 +13,6 @@
  id="vtkMRMLLinearTransformNode1" name="IGTDataManagerTransform" hideFromEditors="true" selectable="true"  matrixTransformToParent="1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1"></LinearTransform>
 <Model
  id="vtkMRMLModelNode1" name="igt_matrix_0" hideFromEditors="true" selectable="true"  transformNodeRef="vtkMRMLLinearTransformNode1" displayNodeRef="vtkMRMLModelDisplayNode1"></Model>
-<ScriptedModule
- id="vtkMRMLScriptedModuleNode1" name="vtkMRMLScriptedModuleNode1" hideFromEditors="true" selectable="true"  ModuleName ="Editor" parameter0= "label 1"></ScriptedModule>
-<ScriptedModule
- id="vtkMRMLScriptedModuleNode2" name="vtkMRMLScriptedModuleNode1" hideFromEditors="true" selectable="true"  ModuleName ="Editor" parameter0= "label 1"></ScriptedModule>
 <NRRDStorage
  id="vtkMRMLNRRDStorageNode1" name="vtkMRMLNRRDStorageNode1" hideFromEditors="true" selectable="true"  fileName="TestData/helix-DWI.nhdr" useCompression="1" readState="0" writeState="0" centerImage="0"></NRRDStorage>
 <DiffusionWeightedVolumeDisplay
