@@ -1521,7 +1521,7 @@ def dataframeFromTable(tableNode):
       warnings.simplefilter(action='ignore', category=UserWarning)
       import pandas as pd
   except ImportError:
-      raise ImportError("Displaying a table node requires installation of pandas Python package. You can install it by running `slicer.util.pip_install('pandas')`")
+    raise ImportError("Failed to convert to pandas dataframe. Please install pandas by running `slicer.util.pip_install('pandas')`")
   dataframe = pd.DataFrame()
   vtable = tableNode.GetTable()
   for columnIndex in range (vtable.GetNumberOfColumns()):
@@ -1544,6 +1544,49 @@ def dataframeFromTable(tableNode):
     dataframe[vcolumn.GetName()] = column
   return dataframe
 
+def dataframeFromMarkups(markupsNode):
+  """Convert table node content to pandas dataframe.
+  Table content is copied. Therefore, changes in table node do not affect the dataframe,
+  and dataframe changes do not affect the original table node.
+  """
+  try:
+    # Suppress "lzma compression not available" UserWarning when loading pandas
+    import warnings
+    with warnings.catch_warnings():
+      warnings.simplefilter(action='ignore', category=UserWarning)
+      import pandas as pd
+  except ImportError:
+    raise ImportError("Failed to convert to pandas dataframe. Please install pandas by running `slicer.util.pip_install('pandas')`")
+
+  label = []
+  description = []
+  positionWorldR = []
+  positionWorldA = []
+  positionWorldS = []
+  selected = []
+  visible = []
+
+  numberOfControlPoints = markupsNode.GetNumberOfControlPoints()
+  for controlPointIndex in range(numberOfControlPoints):
+    label.append(markupsNode.GetNthControlPointLabel(controlPointIndex))
+    description.append(markupsNode.GetNthControlPointDescription(controlPointIndex))
+    p=[0,0,0]
+    markupsNode.GetNthControlPointPositionWorld(controlPointIndex, p)
+    positionWorldR.append(p[0])
+    positionWorldA.append(p[1])
+    positionWorldS.append(p[2])
+    selected.append(markupsNode.GetNthControlPointSelected(controlPointIndex) != 0)
+    visible.append(markupsNode.GetNthControlPointVisibility(controlPointIndex) != 0)
+
+  dataframe = pd.DataFrame({
+    'label': label,
+    'position.R': positionWorldR,
+    'position.A': positionWorldA,
+    'position.S': positionWorldS,
+    'selected': selected,
+    'visible': visible,
+    'description': description})
+  return dataframe
 
 #
 # VTK
