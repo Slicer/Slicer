@@ -130,6 +130,8 @@ public:
   /// \sa SetStatus(), GetStatus(), BusyMask, Cancel()
   bool IsBusy()const;
 
+  int GetProgress()const;
+
   /// Set a request to stop the processing of the CLI.
   /// Do nothing if the module is not "busy".
   /// \sa IsBusy(), Cancelling, Cancelled

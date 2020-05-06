@@ -568,6 +568,12 @@ bool vtkMRMLCommandLineModuleNode::IsBusy() const
 }
 
 //----------------------------------------------------------------------------
+int vtkMRMLCommandLineModuleNode::GetProgress() const
+{
+  return vtkMath::Round(this->GetModuleDescription().GetProcessInformation()->Progress * 100.0);
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLCommandLineModuleNode::SetAutoRun(bool autoRun)
 {
   if (this->Internal->AutoRun == autoRun)
