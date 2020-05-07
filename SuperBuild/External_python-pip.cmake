@@ -26,7 +26,7 @@ endif()
 if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
-  pip==20.0.2 --hash=sha256:4ae14a42d8adba3205ebeb38aa68cfc0b6c346e1ae2e699a0b3bad4da19cef5c
+  pip==20.1 --hash=sha256:4fdc7fd2db7636777d28d2e1432e2876e30c2b790d461f135716577f73104369
   ]===])
 
   ExternalProject_Add(${proj}
