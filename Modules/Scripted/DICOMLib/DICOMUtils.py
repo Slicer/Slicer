@@ -116,7 +116,7 @@ def getDatabasePatientUIDByPatientID(patientID):
       continue
     firstFile = filePaths[0]
     # Get PatientID from first file
-    currentPatientID = slicer.dicomDatabase.fileValue(firstFile, "0010,0020")
+    currentPatientID = slicer.dicomDatabase.fileValue(slicer.util.longPath(firstFile), "0010,0020")
     if currentPatientID == patientID:
       return patientUID
   return None
