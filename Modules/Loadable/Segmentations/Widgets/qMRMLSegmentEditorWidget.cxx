@@ -1429,6 +1429,17 @@ void qMRMLSegmentEditorWidget::updateWidgetFromSegmentationNode()
 
   // Save segmentation node selection
   vtkMRMLSegmentationNode* segmentationNode = d->ParameterSetNode->GetSegmentationNode();
+
+  // This block is outside (segmentationNode != d->SegmentationNode) block because
+  // first valid node may be selected in the combobox automatically, therefore
+  // d->SegmentationNodeComboBox->currentNode() may initially differ from d->SegmentationNode.
+  if (segmentationNode != d->SegmentationNodeComboBox->currentNode())
+    {
+    bool wasBlocked = d->SegmentationNodeComboBox->blockSignals(true);
+    d->SegmentationNodeComboBox->setCurrentNode(segmentationNode);
+    d->SegmentationNodeComboBox->blockSignals(wasBlocked);
+    }
+
   if (segmentationNode != d->SegmentationNode)
     {
     // Connect events needed to update closed surface button
@@ -1441,11 +1452,7 @@ void qMRMLSegmentEditorWidget::updateWidgetFromSegmentationNode()
     qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::MasterRepresentationModified, this, SLOT(updateSliceRotateWarningButtonVisibility()));
     d->SegmentationNode = segmentationNode;
 
-    bool wasBlocked = d->SegmentationNodeComboBox->blockSignals(true);
-    d->SegmentationNodeComboBox->setCurrentNode(d->SegmentationNode);
-    d->SegmentationNodeComboBox->blockSignals(wasBlocked);
-
-    wasBlocked = d->SegmentsTableView->blockSignals(true);
+    bool wasBlocked = d->SegmentsTableView->blockSignals(true);
     d->SegmentsTableView->setSegmentationNode(d->SegmentationNode);
     d->SegmentsTableView->blockSignals(wasBlocked);
 
