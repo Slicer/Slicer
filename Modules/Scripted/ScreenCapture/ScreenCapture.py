@@ -738,7 +738,8 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
           self.logic.createLightboxImage(int(self.lightboxColumnCountSliderWidget.value),
             outputDir, imageFileNamePattern, numberOfSteps, self.lightboxImageFileNameWidget.text)
       finally:
-        self.logic.deleteTemporaryFiles(outputDir, imageFileNamePattern, numberOfSteps)
+        if not self.outputTypeWidget.currentText == "image series":
+          self.logic.deleteTemporaryFiles(outputDir, imageFileNamePattern, numberOfSteps)
 
       self.addLog("Done.")
       self.createdOutputFile = os.path.join(outputDir, self.videoFileNameWidget.text) if videoOutputRequested else outputDir
