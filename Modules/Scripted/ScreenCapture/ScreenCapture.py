@@ -1328,13 +1328,14 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
           lightboxCanvas.SetNumberOfScalarComponents(3)
           lightboxCanvas.SetScalarTypeToUnsignedChar()
           lightboxCanvas.SetExtent(lightboxImageExtent)
-          lightboxCanvas.SetDrawColor(1.0, 1.0, 1.0)
+          # Fill background with black
+          lightboxCanvas.SetDrawColor(50, 50, 50)
+          lightboxCanvas.FillBox(*lightboxImageExtent[0:4])
 
         drawingPosition = [column * (imageDimensions[0] + imageMarginSizePixels),
           lightboxImageExtent[3] - (row + 1) * (imageDimensions[1] + imageMarginSizePixels)]
         lightboxCanvas.DrawImage(drawingPosition[0], drawingPosition[1], image)
 
-    slicer.lb = lightboxCanvas
     lightboxCanvas.Update()
     outputLightboxImageFilePath = os.path.join(outputDir, lightboxImageFilename)
     writer = self.createImageWriter(outputLightboxImageFilePath)
