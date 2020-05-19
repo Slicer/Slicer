@@ -37,7 +37,9 @@ sys.path.append(os.path.abspath("./_sphinxext"))
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'workaround_recommonmark_issue_191'
+    'workaround_recommonmark_issue_191',
+    'recommonmark',
+    'sphinx_markdown_tables',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
