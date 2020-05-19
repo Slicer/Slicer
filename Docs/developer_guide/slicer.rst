@@ -28,13 +28,16 @@ slicer.logic module
     :undoc-members:
     :show-inheritance:
 
-slicer.slicerqt module
-----------------------
+.. Commented out for now, because it breaks documentation building on Windows
+.. (Sphinx returns with an error code and nothing is generated)
 
-.. automodule:: slicer.slicerqt
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. slicer.slicerqt module
+.. ----------------------
+
+.. .. automodule:: slicer.slicerqt
+..     :members:
+..     :undoc-members:
+..     :show-inheritance:
 
 slicer.testing module
 ---------------------
