@@ -46,6 +46,12 @@ class vtkTriangleFilter;
 ///
 /// Markups is intended to be used for manual marking/editing of point positions.
 ///
+/// Coordinate systems used:
+///   - Local: Current node's coordinate system where the position of the control and curve points are defined.
+///            Local coordinates can be converted to world by concatenating all parent transforms on the current node.
+///   - Surface: Model node's coordinate system where the polydata used for ShortestDistanceOnSurface pathfinding is defined.
+///            Surface coordinates can be converted to world by concatenating all parent transforms on the surface node.
+///   - World: Patient coordinate system (RAS)
 /// \ingroup Slicer_QtModules_Markups
 class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsCurveNode : public vtkMRMLMarkupsNode
 {
@@ -210,7 +216,7 @@ public:
 protected:
   vtkSmartPointer<vtkCleanPolyData> CleanFilter;
   vtkSmartPointer<vtkTriangleFilter> TriangleFilter;
-  vtkSmartPointer<vtkTransformPolyDataFilter> SurfaceToWorldTransformer;
+  vtkSmartPointer<vtkTransformPolyDataFilter> SurfaceToLocalTransformer;
   vtkSmartPointer<vtkArrayCalculator> SurfaceScalarCalculator;
   vtkSmartPointer<vtkPassThroughFilter> PassThroughFilter;
   const char* ActiveScalar;

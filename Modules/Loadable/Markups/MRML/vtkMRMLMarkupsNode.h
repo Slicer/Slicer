@@ -637,9 +637,6 @@ protected:
   // Line cells connect all points into a curve.
   vtkSmartPointer<vtkPolyData> CurveInputPoly;
 
-  vtkSmartPointer<vtkTransformPolyDataFilter> CurveInputPolyToWorldTransformer;
-  vtkSmartPointer<vtkGeneralTransform> CurveInputPolyToWorldTransform;
-
   vtkSmartPointer<vtkTransformPolyDataFilter> CurvePolyToWorldTransformer;
   vtkSmartPointer<vtkGeneralTransform> CurvePolyToWorldTransform;
 
