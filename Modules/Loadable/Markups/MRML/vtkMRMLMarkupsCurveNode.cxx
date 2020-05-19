@@ -72,12 +72,12 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   this->TriangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
   this->TriangleFilter->SetInputConnection(this->CleanFilter->GetOutputPort());
 
-  this->SurfaceToWorldTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  this->SurfaceToWorldTransformer->SetTransform(vtkNew<vtkGeneralTransform>());
-  this->SurfaceToWorldTransformer->SetInputConnection(this->TriangleFilter->GetOutputPort());
+  this->SurfaceToLocalTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  this->SurfaceToLocalTransformer->SetTransform(vtkNew<vtkGeneralTransform>());
+  this->SurfaceToLocalTransformer->SetInputConnection(this->TriangleFilter->GetOutputPort());
 
   this->SurfaceScalarCalculator = vtkSmartPointer<vtkArrayCalculator>::New();
-  this->SurfaceScalarCalculator->SetInputConnection(this->SurfaceToWorldTransformer->GetOutputPort());
+  this->SurfaceScalarCalculator->SetInputConnection(this->SurfaceToLocalTransformer->GetOutputPort());
   this->SurfaceScalarCalculator->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
   this->SurfaceScalarCalculator->SetAttributeTypeToPointData();
   this->SurfaceScalarCalculator->SetResultArrayName("weights");
@@ -85,7 +85,7 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   this->SetSurfaceDistanceWeightingFunction("activeScalar");
 
   this->PassThroughFilter = vtkSmartPointer<vtkPassThroughFilter>::New();
-  this->PassThroughFilter->SetInputConnection(this->SurfaceToWorldTransformer->GetOutputPort());
+  this->PassThroughFilter->SetInputConnection(this->SurfaceToLocalTransformer->GetOutputPort());
 
   this->CurveGenerator->SetCurveTypeToCardinalSpline();
   this->CurveGenerator->SetNumberOfPointsPerInterpolatingSegment(10);
@@ -1130,18 +1130,19 @@ void vtkMRMLMarkupsCurveNode::ProcessMRMLEvents(vtkObject* caller,
                                              unsigned long event,
                                              void* callData)
 {
-  if (caller == this->GetNodeReference(this->GetShortestDistanceSurfaceNodeReferenceRole()))
+  if (event == vtkMRMLTransformableNode::TransformModifiedEvent)
     {
-    if (event == vtkMRMLTransformableNode::TransformModifiedEvent)
-      {
-      this->OnSurfaceModelTransformChanged();
-      }
-    this->OnSurfaceModelNodeChanged();
+    this->OnSurfaceModelTransformChanged();
     }
   else if (caller == this->SurfaceScalarCalculator.GetPointer())
     {
     int n = -1;
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
+    }
+
+  if (caller == this->GetNodeReference(this->GetShortestDistanceSurfaceNodeReferenceRole()))
+    {
+    this->OnSurfaceModelNodeChanged();
     }
 
   Superclass::ProcessMRMLEvents(caller, event, callData);
@@ -1207,7 +1208,7 @@ void vtkMRMLMarkupsCurveNode::SetSurfaceCostFunctionType(int surfaceCostFunction
   // Trying to run SurfaceScalarCalculator without an active scalar will result in an error message.
   if (surfaceCostFunctionType == vtkSlicerDijkstraGraphGeodesicPath::COST_FUNCTION_TYPE_DISTANCE)
     {
-    this->PassThroughFilter->SetInputConnection(this->SurfaceToWorldTransformer->GetOutputPort());
+    this->PassThroughFilter->SetInputConnection(this->SurfaceToLocalTransformer->GetOutputPort());
     }
   else
     {
@@ -1272,23 +1273,15 @@ void vtkMRMLMarkupsCurveNode::OnSurfaceModelTransformChanged()
     return;
     }
 
-  vtkSmartPointer<vtkGeneralTransform> surfaceToWorldTransform = vtkGeneralTransform::SafeDownCast(
-    this->SurfaceToWorldTransformer->GetTransform());
-  if (!surfaceToWorldTransform)
+  vtkSmartPointer<vtkGeneralTransform> surfaceToLocalTransform = vtkGeneralTransform::SafeDownCast(
+    this->SurfaceToLocalTransformer->GetTransform());
+  if (!surfaceToLocalTransform)
     {
-    surfaceToWorldTransform = vtkSmartPointer<vtkGeneralTransform>::New();
-    this->SurfaceToWorldTransformer->SetTransform(surfaceToWorldTransform);
+    surfaceToLocalTransform = vtkSmartPointer<vtkGeneralTransform>::New();
+    this->SurfaceToLocalTransformer->SetTransform(surfaceToLocalTransform);
     }
 
-  vtkMRMLTransformNode* parentTransformNode = modelNode->GetParentTransformNode();
-  if (parentTransformNode)
-    {
-    parentTransformNode->GetTransformToWorld(surfaceToWorldTransform);
-    }
-  else
-    {
-    surfaceToWorldTransform->Identity();
-    }
+  vtkMRMLTransformNode::GetTransformBetweenNodes(modelNode->GetParentTransformNode(), this->GetParentTransformNode(), surfaceToLocalTransform);
 }
 
 //---------------------------------------------------------------------------
