@@ -84,7 +84,7 @@ Effects operate either by clicking the Apply button in the effect options sectio
 ~~~~~~~~~~~~~
 
 .. paint.png
-.. |paint| image:: https://discourse-cloud-file-uploads.s3.dualstack.us-west-2.amazonaws.com/standard17/uploads/slicer/original/2X/c/c3beff05e351575a39056425a2359fd08347f0dd.png
+.. |paint| image:: https://github.com/Slicer/Slicer/releases/download/docs-resources/module-segmenteditor-paint.png
 
 - Pick the radius (in millimeters) of the brush to apply
 - Left click to apply single circle
@@ -106,7 +106,7 @@ Effects operate either by clicking the Apply button in the effect options sectio
 ~~~~~~~~~~~~~~~~~~
 
 .. draw.png
-.. |draw| image:: https://discourse-cloud-file-uploads.s3.dualstack.us-west-2.amazonaws.com/standard17/uploads/slicer/original/2X/8/88a4d28ed4bdcee3b2fd489d90ecc8d2b348baf7.png
+.. |draw| image:: https://github.com/Slicer/Slicer/releases/download/docs-resources/module-segmenteditor-draw.png
 
 - Left click to lay individual points of an outline
 - Left drag to lay down a continuous line of points
@@ -124,7 +124,7 @@ Effects operate either by clicking the Apply button in the effect options sectio
 ~~~~~~~~~~~~~~~~~~~~
 
 .. erase.png
-.. |erase| image:: https://discourse-cloud-file-uploads.s3.dualstack.us-west-2.amazonaws.com/standard17/uploads/slicer/original/2X/0/0d42d8bd2f93e796f7ddde7d49488bba48fe1f32.png
+.. |erase| image:: https://github.com/Slicer/Slicer/releases/download/docs-resources/module-segmenteditor-erase.png
 
 Same as the Paint effect, but the highlighted regions are removed from the selected segment instead of added.
 
@@ -144,7 +144,7 @@ If Masking / Editable area is set to a specific segment then the highlighted reg
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. level_tracing.png
-.. |level_tracing| image:: https://discourse-cloud-file-uploads.s3.dualstack.us-west-2.amazonaws.com/standard17/uploads/slicer/original/2X/c/c5cb671faa575f696048d32c05d4224a9a1db20e.png
+.. |level_tracing| image:: https://github.com/Slicer/Slicer/releases/download/docs-resources/module-segmenteditor-level-tracing.png
 
 - Moving the mouse defines an outline where the pixels all have the same background value as the current background pixel
 - Clicking the left mouse button applies that outline to the label map
@@ -153,7 +153,7 @@ If Masking / Editable area is set to a specific segment then the highlighted reg
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. grow_from_seeds.png
-.. |grow_from_seeds| image:: https://discourse-cloud-file-uploads.s3.dualstack.us-west-2.amazonaws.com/standard17/uploads/slicer/original/2X/1/13209b35eab2b7c88e66263e91182a9d13945ba2.png
+.. |grow_from_seeds| image:: https://github.com/Slicer/Slicer/releases/download/docs-resources/module-segmenteditor-grow-from-seeds.png
 
 Draw segment inside each anatomical structure. This method will start from these "seeds" and grow them to achieve complete segmentation.
 
@@ -175,7 +175,7 @@ Notes:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. fill_between_slices.png
-.. |fill_between_slices| image:: https://discourse-cloud-file-uploads.s3.dualstack.us-west-2.amazonaws.com/standard17/uploads/slicer/original/2X/3/3da7a0ff33a9ad0735e5d3412f4b802a06964c12.png
+.. |fill_between_slices| image:: https://github.com/Slicer/Slicer/releases/download/docs-resources/module-segmenteditor-fill-between-slices.png
 
 Create complete segmentation on selected slices using any editor effect. You can skip any number of slices between segmented slices. This method will fill the skipped slices by interpolating between segmented slices.
 
@@ -199,7 +199,7 @@ Notes:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. threshold.png
-.. |threshold| image:: https://discourse-cloud-file-uploads.s3.dualstack.us-west-2.amazonaws.com/standard17/uploads/slicer/original/2X/d/dc43ec5d8947c4eb0ce1234ee3ce652c39964be4.png
+.. |threshold| image:: https://github.com/Slicer/Slicer/releases/download/docs-resources/module-segmenteditor-threshold.png
 
 Use Threshold to determine a threshold range and save results to selected segment or use it as Editable intensity range.
 
@@ -207,7 +207,7 @@ Use Threshold to determine a threshold range and save results to selected segmen
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. margin.png
-.. |margin| image:: https://discourse-cloud-file-uploads.s3.dualstack.us-west-2.amazonaws.com/standard17/uploads/slicer/original/2X/d/d2af9c2bc7f8fd0e83d8ca450c51625825379172.png
+.. |margin| image:: https://github.com/Slicer/Slicer/releases/download/docs-resources/module-segmenteditor-margin.png
 
 Grows or shrinks the selected segment by the specified margin.
 
@@ -215,7 +215,7 @@ Grows or shrinks the selected segment by the specified margin.
 ~~~~~~~~~~~~~~~~~~~~~
 
 .. smoothing.png
-.. |smoothing| image:: https://discourse-cloud-file-uploads.s3.dualstack.us-west-2.amazonaws.com/standard17/uploads/slicer/original/2X/3/3b844b566f7597461dc725ee4f06d38305a6f5c9.png
+.. |smoothing| image:: https://github.com/Slicer/Slicer/releases/download/docs-resources/module-segmenteditor-smoothing.png
 
 Smoothes selected labelmap or all labelmaps (only for Joint smoothing method).
   
@@ -223,7 +223,7 @@ Smoothes selected labelmap or all labelmaps (only for Joint smoothing method).
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. scissors.png
-.. |scissors| image:: https://discourse-cloud-file-uploads.s3.dualstack.us-west-2.amazonaws.com/standard17/uploads/slicer/original/2X/2/2a35d8c37c82b26de6410a2dea4563c482888419.png
+.. |scissors| image:: https://github.com/Slicer/Slicer/releases/download/docs-resources/module-segmenteditor-scissors.png
 
 Clip segments to the specified region or fill regions of a segment (typically used with masking). Regions can be drawn on both slice view or 3D views.
 
@@ -234,7 +234,7 @@ Clip segments to the specified region or fill regions of a segment (typically us
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. islands.png
-.. |islands| image:: https://discourse-cloud-file-uploads.s3.dualstack.us-west-2.amazonaws.com/standard17/uploads/slicer/original/2X/b/b1af78c3c8f1629a51a688c84f436195ee5f430e.png
+.. |islands| image:: https://github.com/Slicer/Slicer/releases/download/docs-resources/module-segmenteditor-islands.png
 
 
 Use this tool to create a unique segment for each connected region of the selected segment. Connected regions are defined as groups of pixels which touch each other but are surrounded by zero valued voxels.
@@ -246,7 +246,7 @@ Use this tool to create a unique segment for each connected region of the select
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. logical_operators.png
-.. |logical_operators| image:: https://discourse-cloud-file-uploads.s3.dualstack.us-west-2.amazonaws.com/standard17/uploads/slicer/original/2X/c/cd59b6cd578fa0e38d438fbbfb1d8e8ddabeca83.png
+.. |logical_operators| image:: https://github.com/Slicer/Slicer/releases/download/docs-resources/module-segmenteditor-logical-operators.png
 
 Apply Boolean operators to selected segment or combine segments.
 
