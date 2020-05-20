@@ -15,7 +15,13 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTextEdit" name="TextEdit"/>
+    <widget class="QTextEdit" name="TextEdit">
+     <property name="font">
+      <font>
+       <family>Courier</family>
+      </font>
+     </property>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="ButtonLayout">
