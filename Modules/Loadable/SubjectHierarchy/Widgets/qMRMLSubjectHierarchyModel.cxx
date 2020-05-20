@@ -1303,7 +1303,8 @@ void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItemData(vtkIdTyp
     // No action if the chosen transform is the same as the applied one
     vtkMRMLTransformableNode* dataNode = vtkMRMLTransformableNode::SafeDownCast(
       d->SubjectHierarchyNode->GetItemDataNode(shItemID) );
-    if (dataNode && dataNode->GetParentTransformNode() == newParentTransformNode)
+    vtkMRMLTransformNode* currentTransformNode = (dataNode ? dataNode->GetParentTransformNode() : nullptr);
+    if (currentTransformNode == newParentTransformNode)
       {
       return;
       }
