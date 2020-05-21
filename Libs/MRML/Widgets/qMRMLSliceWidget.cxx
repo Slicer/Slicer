@@ -94,6 +94,12 @@ void qMRMLSliceWidgetPrivate::endProcessing()
 }
 
 // --------------------------------------------------------------------------
+void qMRMLSliceWidgetPrivate::endCloseScene()
+{
+    this->SliceView->unsetViewCursor();
+}
+
+// --------------------------------------------------------------------------
 void qMRMLSliceWidgetPrivate::setImageDataConnection(vtkAlgorithmOutput * imageDataConnection)
 {
   //qDebug() << "qMRMLSliceWidgetPrivate::setImageDataConnection";
@@ -134,6 +140,10 @@ void qMRMLSliceWidget::setMRMLScene(vtkMRMLScene* newScene)
   d->qvtkReconnect(
     this->mrmlScene(), newScene,
     vtkMRMLScene::EndBatchProcessEvent, d, SLOT(endProcessing()));
+
+  d->qvtkReconnect(
+      this->mrmlScene(), newScene,
+      vtkMRMLScene::EndCloseEvent, d, SLOT(endCloseScene()));
 }
 
 //---------------------------------------------------------------------------
