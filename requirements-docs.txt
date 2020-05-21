@@ -3,5 +3,5 @@ pygments
 recommonmark
 sphinx
 sphinx-issues
+sphinx-markdown-tables
 sphinx_rtd_theme
-
