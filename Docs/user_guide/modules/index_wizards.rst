@@ -6,4 +6,4 @@ Wizards
 
 .. toctree::
 
-    module_comparevolumes.md
+    comparevolumes.md

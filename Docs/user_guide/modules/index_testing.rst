@@ -6,5 +6,5 @@ Testing
 
 .. toctree::
 
-    module_PerformanceTests.md
-    module_SelfTests.md
+    performancetests.md
+    selftests.md

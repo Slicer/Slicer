@@ -6,8 +6,8 @@ Sequences
 
 .. toctree::
 
-    module_Sequences.md
-    module_Sequences.md
-    module_CropVolumeSequences.md
-    module_MultiVolumeImporter.md
-    module_MultiVolumeExplorer.md
+    sequences.md
+    sequences.md
+    cropvolumesequences.md
+    multivolumeimporter.md
+    multivolumeexplorer.md

@@ -6,8 +6,8 @@ Quantification
 
 .. toctree::
 
-    module_dataprobe.md
-    module_labelstatistics.md
-    module_brainslabelstats.md
-    module_petstandarduptakevaluecomputation.md
-    module_segmentstatistics.md
+    dataprobe.md
+    labelstatistics.md
+    brainslabelstats.md
+    petstandarduptakevaluecomputation.md
+    segmentstatistics.md

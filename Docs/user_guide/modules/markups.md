@@ -139,8 +139,8 @@ Then comes the fiducials, one per line, for example:
 
 ## Related modules
 
-- This module will replace [Annotations](module_Annotations) module.
-- [Endoscopy](module_Endoscopy) module uses fiducials
+- This module will replace [Annotations](Annotations) module.
+- [Endoscopy](Endoscopy) module uses fiducials
 
 ## References
 

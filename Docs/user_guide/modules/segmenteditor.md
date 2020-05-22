@@ -2,7 +2,7 @@
 
 This is a module for segmentation of volumes. Segmentations (also known as contouring) delineate structures of interest. Some of the tools mimic a painting interface like photoshop or gimp, but work on 3D arrays of voxels rather than on 2D pixels. This module is a new, improved version of the legacy Editor module. The Segment Editor contains many of the same functionalities and many more. New features include: overlapping segments, display in both 2D and 3D views, per-segment visualization options, editing in 3D views, create segmentation by interpolating or extrapolating segmentation on a few slices, editing on slices in any orientation.
 
-It is important to remember that Segment Editor does not edit labelmap volumes, as Editor does. Segment editor creates segmentations, which can do many things that labelmap volumes cannot (overlapping contours, show/hide segments individually, show in 3D view, etc). Segmentations can be converted to labelmap volumes and models using the Import/Export section of [Segmentations](module_Segmentations) module.
+It is important to remember that Segment Editor does not edit labelmap volumes, as Editor does. Segment editor creates segmentations, which can do many things that labelmap volumes cannot (overlapping contours, show/hide segments individually, show in 3D view, etc). Segmentations can be converted to labelmap volumes and models using the Import/Export section of [Segmentations](Segmentations) module.
 
 ## Keyboard shortcuts
 
@@ -174,9 +174,9 @@ Apply Boolean operators to selected segment or combine segments.
 
 ## Related Modules
 
-- [Segment Statistics](module_segmentstatistics) module computes volume, surface, mean intensity, and various other metrics for each segment.
-- [Segmentations](module_segmentations) module allows changing visualization options, exporting/importing segments to/from other nodes (models, labelmap volumes), and moving or copying segments between segmentation nodes.
-- [Data](module_data) module shows all segmentations and segments in a tree structure. Commonly used operations are available by right-clicking on an item in the tree.
+- [Segment Statistics](segmentstatistics) module computes volume, surface, mean intensity, and various other metrics for each segment.
+- [Segmentations](segmentations) module allows changing visualization options, exporting/importing segments to/from other nodes (models, labelmap volumes), and moving or copying segments between segmentation nodes.
+- [Data](data) module shows all segmentations and segments in a tree structure. Commonly used operations are available by right-clicking on an item in the tree.
 - Editor module is the predecessor of this module. Segment Editor provides all its features and many more.
 
 ## Information for Developers

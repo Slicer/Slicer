@@ -6,10 +6,10 @@ Diffusion
 
 .. toctree::
 
-    module_DMRIInstall.md
+    dmriinstall.md
 
-    module_DWIConvert.md
+    dwiconvert.md
 
-    module_BRAINSDWICleanup.md
-    module_ResampleDTIVolume.md
-    module_ResampleScalarVectorDWIVolume.md
+    brainsdwicleanup.md
+    resampledtivolume.md
+    resamplescalarvectordwivolume.md

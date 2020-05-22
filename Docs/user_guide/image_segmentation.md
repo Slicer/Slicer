@@ -7,7 +7,7 @@
 Segmentation of images (also known as contouring or annotation) is a procedure to delinate regions in the image, typically corresponding to anatomical structures, lesions, and various other object space. 
 It is a very common procedure in medical image computing, as it is required for visualization of certain structures, quantification (measuring volume, surface, shape properties), 3D printing, and masking (restricting processing or analysis to a specific region), etc.
 
-Segmentation may be performed manually, for example by iterating through all the slices of an image and drawing a contour at the boundary; but often semi-automatic or fully automatic methods are used. [Segment Editor](module_SegmentEditor) module offers a wide range of segmentation methods.
+Segmentation may be performed manually, for example by iterating through all the slices of an image and drawing a contour at the boundary; but often semi-automatic or fully automatic methods are used. [Segment Editor](SegmentEditor) module offers a wide range of segmentation methods.
 
 Result of a segmentation is stored in `segmentation` node in 3D Slicer. A segmentation node consists of multiple segments.
 
@@ -31,7 +31,7 @@ Binary labelmap representation is probably the most commonly used representation
 
 There are many modules in 3D Slicer for manipulating segmentations.
 
-### [Segmentations module](modules/module_segmentations)
+### [Segmentations module](modules/segmentations)
 
 Features:
 - Create/delete segmentation nodes
@@ -43,14 +43,14 @@ Features:
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/image_segmentation_segmentations_module.png)
 
-### [Segment editor module](modules/module_segmenteditor)
+### [Segment editor module](modules/segmenteditor)
 
 - Edit labelmap representation
 - Shortcuts to common operations (show/hide in 3D, edit smoothing options, file export of closed surface representation)
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/image_segmentation_segment_editor_module.png)
 
-### [Segment statistics module](modules/module_segmentstatistics)
+### [Segment statistics module](modules/segmentstatistics)
 
 Computes basic properties for each segment, such as volume, surface, mininum/maximum/mean intensity, shape properties.
 

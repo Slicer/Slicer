@@ -6,7 +6,7 @@ Developer tools
 
 .. toctree::
 
-    module_Cameras.md
-    module_EventBroker.md
-    module_ExecutionModelTour.md
-    module_ExtensionWizard.md
+    cameras.md
+    eventbroker.md
+    executionmodeltour.md
+    extensionwizard.md

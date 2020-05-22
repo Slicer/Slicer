@@ -43,19 +43,47 @@ How to learn Slicer?
 
 You may try to figure out how the application works by loading data sets and explore what you can do.
 
+#### Load data
+
 Open 3D Slicer and using the Welcome panel either load your own data or download sample data to explore. Sample data is often useful for trying the features of 3D Slicer if you don't have data of your own.
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/getting_started_load_data.png)
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/getting_started_sample_data.png)
 
+#### View data
+
 You can customize views by clicking on the push pin in the top left corner of viewer. In the slice viewers, the horizontal bar can be used to scroll through slices or select a slice.
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/getting_started_view_controllers.png)
 
-3D Slicer is built on a modular architecture. Choose a module to process or analyze your data. More modules can be installed using the Extension manager.
+#### Process data
+
+3D Slicer is built on a modular architecture. Choose a module to process or analyze your data. Most important modules are the followings (complete list is available in [Modules](modules/index) section):
+
+- [Welcome](modules/welcome): The default module when 3D Slicer is started. The panel features options for loading data and customizing 3D Slicer. Below those options are drop-down boxes that contain essential information for using 3D Slicer.
+- [Data](modules/data): acts as a central data-organizing hub. Lists all data currently in the scene and allows basic operations such as search, rename, delete and move.
+- [DICOM](modules/dicom): Import and export DICOM objects, such as images, segmentations, strucutre sets, radiation therapy objects, etc.
+- [Volumes](modules/volumes):: Used for changing the appearance of various volume types.
+- [Volume Rendering](modules/volumerendering): Provides interactive visualization of 3D image data.
+- [Segmentations](modules/segmentations): Edit display properties and import/export segmentations.
+- [Segment Editor](modules/segmenteditor): Segment 3D volumes using various manual, semi-automatic, and automatic tools.
+- [Markups](modules/markups): Allows the creation and editing of markups associated with a scene. Currently, lists of fiducially are supported as markups.
+- [Models](modules/models): Loads and adjusts display parameters of models. Allows the user to change the appearance of and organize 3D surface models.
+- [Transforms](modules/transforms): This module is used for creating and editing transformation matrices. You can establish these relations by moving nodes from the Transformable list to the Transformed list or by dragging the nodes under the Transformation nodes in the Data module.
+
+#### Extensions
+
+3D Slicer supports plug-ins that are called extensions. An extension could be seen as a delivery package bundling together one or more Slicer modules. After installing an extension, the associated modules will be presented to the user as built-in ones. Extensions can be downloaded from the extension manager to selectively install features that are useful for the end-user.
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/getting_started_module_list.png)
+
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/getting_started_extensions_manager.png)
+
+For details about downloading extensions, see [Extension Manager documentation](extensions_manager).
+Click [here](https://www.slicer.org/wiki/Documentation/Nightly/ModuleExtensionListing/Extensions_by_category) for a full list of extensions. The links on the page will provide documentation for each extension.
+
+Slicer is extensible. If you are interested in customizing or adding functionality to Slicer, click [here](https://www.slicer.org/wiki/Documentation/Nightly/Training#Tutorials_for_software_developers).
 
 ### Tutorials
 

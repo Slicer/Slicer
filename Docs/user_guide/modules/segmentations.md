@@ -15,7 +15,7 @@ Motivation, features, and details of the infrastructure are explained in [these 
 
 ### Edit segmentation
 
-Segmentation can be edited using [Segment Editor](module_SegmentEditor) module.
+Segmentation can be edited using [Segment Editor](segmenteditor) module.
 
 ### Import an existing segmentation from volume file
 
@@ -103,7 +103,7 @@ See Script repository's [Segmentations section](https://www.slicer.org/wiki/Docu
 
 -  Segments table
     -  Add/remove segments
-    -  Edit selected: takes user to [Segment Editor](Module_SegmentEditor) module
+    -  Edit selected: takes user to [Segment Editor](SegmentEditor) module
     -  Set visibility and per-segment display settings, opacity, color, segment name
 -  Display
     -  Segmentations-wide display settings (not per-segment!): visibility, opacity (will be multiplied with per-segment opacity for display)
@@ -136,7 +136,7 @@ See Script repository's [Segmentations section](https://www.slicer.org/wiki/Docu
 
 -  [Segmentation tutorials](https://www.slicer.org/wiki/Documentation/Nightly/Training#Segmentation)
 
-## Information for Developers
+## Information for developers
 
 
 -  [vtkSegmentationCore on GitHub](https://github.com/Slicer/Slicer/tree/master/Libs/vtkSegmentationCore) (within Slicer)
@@ -144,9 +144,9 @@ See Script repository's [Segmentations section](https://www.slicer.org/wiki/Docu
 -  [Segmentations Labs page](https://www.slicer.org/wiki/Documentation/Labs/Segmentations)
 -  [Manipulation of segmentations from Python scripts - examples in script repository](https://www.slicer.org/wiki/Documentation/Nightly/ScriptRepository)
 
-## Similar Modules
+## Related modules
 
-- [Segment Editor](module_SegmentEditor) module is for editing segments of a segmentation node
+- [Segment Editor](segmenteditor) module is for editing segments of a segmentation node
 - Editor module: the legacy Editor module has been replaced by Segment Editor module.
 
 ## References

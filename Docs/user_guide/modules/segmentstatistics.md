@@ -38,8 +38,8 @@ Labelmap statistics are calculated using the binary labelmap representation of t
 
 ## Related Modules
 
-- [Segmentations](module_segmentations) module allows changing visualization options, exporting/importing segments to/from other nodes (models, labelmap volumes), and moving or copying segments between segmentation nodes.
-- [Segment Editor](module_segmenteditor) module for segmentation of volumes using tools for editing (paint, draw, erase, level tracing, grow from seeds, threshold, etc.)
+- [Segmentations](segmentations) module allows changing visualization options, exporting/importing segments to/from other nodes (models, labelmap volumes), and moving or copying segments between segmentation nodes.
+- [Segment Editor](segmenteditor) module for segmentation of volumes using tools for editing (paint, draw, erase, level tracing, grow from seeds, threshold, etc.)
 
 ## Information for developers
 
