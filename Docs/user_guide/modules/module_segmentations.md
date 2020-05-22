@@ -1,6 +1,6 @@
 # Segmentations
 
-## Module Description
+## Overview
 
 The Segmentations module manages segmentations. Each segmentation can contain multiple segments, which correspond to one structure or ROI. Each segment can contain multiple data representations for the same structure, and the module supports automatic conversion between these representations (the default ones are: planar contour, binary labelmap, closed surface model), as well as advanced display settings and import/export features.
 
@@ -153,19 +153,19 @@ See Script repository's [Segmentations section](https://www.slicer.org/wiki/Docu
 
 - [Development notes](https://github.com/SlicerRt/SlicerRT/wiki/Segmentation)
 
-## Introduction and Acknowledgements
-
-This work is funded in part by An Applied Cancer Research Unit of Cancer Care Ontario with funds provided by the Ministry of Health and Long-Term Care and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO) to provide free, open-source toolset for radiotherapy and related image-guided interventions.
-
-Contact: [Csaba Pinter](https://discourse.slicer.org/u/cpinter/)
+## Contributors
 
 Authors:
-- Csaba Pinter(PerkLab, Queen's University)
+- Csaba Pinter (PerkLab, Queen's University)
 - Andras Lasso (PerkLab, Queen's University)
 - Kyle Sunderland (PerkLab, Queen's University)
 
+## Acknowledgements
 
-| ![logo-perklab](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo-perklab.png)  | ![logo-cco](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo-cco.png)       |
-|--------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
-| ![logo-namic](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo-namic.png)      | ![logo-ocairo](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo-ocairo.png) |
-| ![logo-isomics](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo-isomics.png)   |                                                                                         |
+This work is funded in part by An Applied Cancer Research Unit of Cancer Care Ontario with funds provided by the Ministry of Health and Long-Term Care and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO) to provide free, open-source toolset for radiotherapy and related image-guided interventions.
+
+![PerkLab, Queen's University](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_perklab.png)
+![Cancer Care Ontario (CCO)](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_cco.png)
+![National Alliance in Medical Image Computing (NA-MIC)](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_namic.png)
+![Ontario Consortion for Adaptive Interventions in Radiation Oncology (OCAIRO)](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_ocairo.png)
+![Isomics](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_isomics.png)

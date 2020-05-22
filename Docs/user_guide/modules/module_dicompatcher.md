@@ -1,15 +1,10 @@
-.. _module_dicompatcher:
-
-=============
-DICOM Patcher
-=============
+# DICOM Patcher
 
 This module fixes common errors in DICOM files to make them possible to import them into Slicer.
 
 DICOM is a large and complex standard and device manufacturers and third-party software deveopers often make mistakes in their implementation. DICOM patcher module can recognize some common mistakes and certain known device-specific mistakes and create a modified copy of the DICOM files.
 
-Panels and their use
---------------------
+## Panels and their use
 
 - Input DICOM directory: folder containing the original, invalid DICOM files
 - Output DICOM directory: folder that will contain the new, corrected DICOM files, typically this is a new, empty folder that is not a subfolder of the input DICOM directory
@@ -22,8 +17,7 @@ Panels and their use
 - Import: import fixed up files into Slicer DICOM database
 - Go to DICOM module: switches to DICOM module, to see the imported DICOM files in the DICOM browser
 
-Tutorial
---------
+## Tutorial
 
 - If you have already attempted to import files from the input folder then delete that from the Slicer DICOM database: go to `DICOM` module, right-click on the imported patient, and click `Delete`.
 - Go to `DICOM Patcher` module (in `Utilities` category)
@@ -34,26 +28,21 @@ Tutorial
 - Click `Import` button to import fixed up files into Slicer DICOM database
 - Click `Go to DICOM module` to see the imported DICOM files in the DICOM browser
 
-Related Modules
----------------
+## Related Modules
 
-- :ref:`module_dicom` DICOM browser that lists all data sets in Slicer's DICOM database.
+- [DICOM](module_dicom) DICOM browser that lists all data sets in Slicer's DICOM database.
 
-Information for Developers
---------------------------
+## Information for Developers
 
-This is a Python scripted module. Source code is available at `<https://github.com/Slicer/Slicer/blob/master/Modules/Scripted/DICOMPatcher/DICOMPatcher.py>`_.
+This is a Python scripted module. Source code is available [here](https://github.com/Slicer/Slicer/blob/master/Modules/Scripted/DICOMPatcher/DICOMPatcher.py).
 
-Contributors
-------------
+## Contributors
 
-- Contributors: Andras Lasso (PerkLab, Queen's University)
+Authors:
+- Andras Lasso (PerkLab, Queen's University)
 
-Acknowledgements
-----------------
+## Acknowledgements
 
 This module is partly funded by an Applied Cancer Research Unit of Cancer Care Ontario with funds provided by the Ministry of Health and Long-Term Care and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO) to provide free, open-source toolset for radiotherapy and related image-guided interventions.
 
-+------------------+
-|  |perklab_logo|  |
-+------------------+
+![PerkLab, Queen's University](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_perklab.png)

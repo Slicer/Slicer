@@ -1,1 +1,3 @@
+# Contributing
+
 .. mdinclude:: ../../CONTRIBUTING.md
