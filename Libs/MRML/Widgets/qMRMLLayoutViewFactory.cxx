@@ -274,6 +274,10 @@ void qMRMLLayoutViewFactory::setMRMLScene(vtkMRMLScene* scene)
 QWidget* qMRMLLayoutViewFactory::viewWidget(int id)const
 {
   Q_D(const qMRMLLayoutViewFactory);
+  if (id < 0 || id >= d->Views.size())
+    {
+    return nullptr;
+    }
   return d->Views.values().at(id);
 }
 
