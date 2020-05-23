@@ -29,9 +29,32 @@ To download Slicer, click [here](http://download.slicer.org/).
 
 ![SlicerInstallers-2020-03-25](https://github.com/Slicer/Slicer/releases/download/docs-resources/getting_started_download.png)
 
-The Nightly version of 3D Slicer is updated nightly as groups of developers make changes. The Stable version of 3D Slicer is not updated nightly and is more rigorously tested.
+The "Preview Release" of 3D Slicer is updated every night and contains latest developments: new features and fixes. The "Stable Release" is updated about once a year nightly and is more rigorously tested.
 
-Once downloaded, follow the instructions below to complete installation.
+Slicer is generally simple to install on all platforms. It is possible to install multiple versions of the application on the same user account and they will not interfere with each other. If you run into mysterious problems with your installation you can try deleting the [Settings Files](settings.html#settings-file-location).
+
+Once downloaded, follow the instructions below to complete installation:
+
+### Windows
+
+- Run the installer
+- Run Slicer from the Windows start menu
+- Use "Apps & features" in Windows settings to remove the application
+
+### Mac
+
+- Drag the Slicer application to your Applications folder or other location of your choice.
+- You cannot install extensions into the read-only volume so you must copy before installing extensions.
+- Delete the Slicer.app folder to uninstall
+
+### Linux
+
+- Open the tar.gz archive and copy directory to the location of your choice. Run the Slicer executable.
+- Remove the directory to uninstall
+
+The following may be needed on fresh debian or ubuntu:
+
+    sudo apt-get install libpulse-dev libnss3 libglu1-mesa
 
 ## Using Slicer
 
@@ -80,7 +103,7 @@ You can customize views by clicking on the push pin in the top left corner of vi
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/getting_started_extensions_manager.png)
 
-For details about downloading extensions, see [Extension Manager documentation](extensions_manager).
+For details about downloading extensions, see [Extension Manager documentation](extension_manager).
 Click [here](https://www.slicer.org/wiki/Documentation/Nightly/ModuleExtensionListing/Extensions_by_category) for a full list of extensions. The links on the page will provide documentation for each extension.
 
 Slicer is extensible. If you are interested in customizing or adding functionality to Slicer, click [here](https://www.slicer.org/wiki/Documentation/Nightly/Training#Tutorials_for_software_developers).
