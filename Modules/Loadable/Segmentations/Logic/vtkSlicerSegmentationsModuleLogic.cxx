@@ -1091,7 +1091,14 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
   short colorIndex = 1;
   for (std::vector<std::string>::iterator segmentIt = exportedSegmentIDs.begin(); segmentIt != exportedSegmentIDs.end(); ++segmentIt, ++colorIndex)
     {
-    const char* segmentName = segmentationNode->GetSegmentation()->GetSegment(*segmentIt)->GetName();
+    vtkSegment* segment = segmentationNode->GetSegmentation()->GetSegment(*segmentIt);
+    if (!segment)
+      {
+      vtkWarningWithObjectMacro(segmentationNode, "ExportSegmentsToLabelmapNode: failed to set color table entry, could not find segment by ID " << *segmentIt);
+      colorTableNode->SetColor(colorIndex, "(none)", 0.0, 0.0, 0.0);
+      continue;
+      }
+    const char* segmentName = segment->GetName();
     vtkVector3d color = displayNode->GetSegmentColor(*segmentIt);
     colorTableNode->SetColor(colorIndex, segmentName, color.GetX(), color.GetY(), color.GetZ());
     }

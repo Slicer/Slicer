@@ -751,7 +751,7 @@ bool vtkSegmentation::SetSegmentIndex(const std::string& segmentId, unsigned int
   std::deque< std::string >::iterator foundIt = std::find(this->SegmentIds.begin(), this->SegmentIds.end(), segmentId);
   if (foundIt == this->SegmentIds.end())
     {
-    vtkErrorMacro("vtkSegmentation::SetSegmentIndex failed: segment " << segmentId << " not found");
+    vtkErrorMacro("vtkSegmentation::SetSegmentIndex failed: segment not found by ID " << segmentId);
     return false;
     }
   this->SegmentIds.erase(foundIt);
@@ -1449,6 +1449,7 @@ bool vtkSegmentation::GenerateMergedLabelmap(
     }
 
   // Create shared labelmap
+  bool success = false;
   short colorIndex = backgroundColorIndex + 1;
   for (std::vector<std::string>::iterator segmentIdIt = sharedSegmentIDs.begin(); segmentIdIt != sharedSegmentIDs.end(); ++segmentIdIt, ++colorIndex)
     {
@@ -1456,7 +1457,8 @@ bool vtkSegmentation::GenerateMergedLabelmap(
     vtkSegment* currentSegment = this->GetSegment(currentSegmentId);
     if (!currentSegment)
       {
-      vtkWarningMacro("GenerateSharedLabelmap: Segment not found: " << currentSegmentId);
+      vtkErrorMacro("GenerateSharedLabelmap: Segment not found by ID: " << currentSegmentId);
+      success = false;
       continue;
       }
 
@@ -1482,6 +1484,8 @@ bool vtkSegmentation::GenerateMergedLabelmap(
       if (!vtkOrientedImageDataResample::ResampleOrientedImageToReferenceGeometry(
         representationBinaryLabelmap, sharedImageToWorldMatrix, resampledBinaryLabelmap))
         {
+        vtkErrorMacro("GenerateSharedLabelmap: ResampleOrientedImageToReferenceGeometry failed for segment " << currentSegmentId);
+        success = false;
         continue;
         }
 
@@ -1510,7 +1514,7 @@ bool vtkSegmentation::GenerateMergedLabelmap(
       colorIndex);
     }
 
-  return true;
+  return success;
 }
 
 //---------------------------------------------------------------------------
@@ -1930,7 +1934,7 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
     vtkSegment* currentSegment = this->GetSegment(*segmentIt);
     if (!currentSegment)
       {
-      vtkWarningMacro("DetermineCommonLabelmapGeometry: Segment ID " << (*segmentIt) << " not found in segmentation");
+      vtkWarningMacro("DetermineCommonLabelmapGeometry: Segment not found by ID " << (*segmentIt));
       continue;
       }
     vtkOrientedImageData* currentBinaryLabelmap = vtkOrientedImageData::SafeDownCast(
@@ -2025,7 +2029,7 @@ void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6],
     vtkSegment* currentSegment = this->GetSegment(*segmentIt);
     if (!currentSegment)
       {
-      vtkWarningMacro("DetermineCommonLabelmapGeometry: Segment ID " << (*segmentIt) << " not found in segmentation");
+      vtkWarningMacro("DetermineCommonLabelmapGeometry: Segment not found by ID " << (*segmentIt));
       continue;
       }
     vtkOrientedImageData* currentBinaryLabelmap = vtkOrientedImageData::SafeDownCast(
