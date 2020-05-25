@@ -1138,6 +1138,7 @@ void vtkMRMLMarkupsCurveNode::ProcessMRMLEvents(vtkObject* caller,
     {
     int n = -1;
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
+    this->StorableModifiedTime.Modified();
     }
 
   if (caller == this->GetNodeReference(this->GetShortestDistanceSurfaceNodeReferenceRole()))

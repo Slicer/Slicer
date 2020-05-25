@@ -231,6 +231,7 @@ void vtkMRMLMarkupsNode::ProcessMRMLEvents(vtkObject *caller,
     {
     int n = -1;
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
+    this->StorableModifiedTime.Modified();
     }
   Superclass::ProcessMRMLEvents(caller, event, callData);
 }
@@ -505,6 +506,7 @@ int vtkMRMLMarkupsNode::AddControlPoint(ControlPoint *controlPoint)
     {
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionDefinedEvent, static_cast<void*>(&controlPointIndex));
     }
+  this->StorableModifiedTime.Modified();
   this->UpdateMeasurements();
   return controlPointIndex;
 }
@@ -645,6 +647,7 @@ void vtkMRMLMarkupsNode::RemoveNthControlPoint(int pointIndex)
     }
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&pointIndex));
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointRemovedEvent, static_cast<void*>(&pointIndex));
+  this->StorableModifiedTime.Modified();
   this->UpdateMeasurements();
 }
 
@@ -750,6 +753,7 @@ void vtkMRMLMarkupsNode::SwapControlPoints(int m1, int m2)
   // and let listeners know that two control points have changed
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&m1));
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&m2));
+  this->StorableModifiedTime.Modified();
   this->UpdateMeasurements();
 }
 
@@ -808,6 +812,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointPosition(const int pointIndex,
     {
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionUndefinedEvent, static_cast<void*>(&n));
     }
+  this->StorableModifiedTime.Modified();
   this->UpdateMeasurements();
 }
 
@@ -881,6 +886,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointPositionOrientationWorldFromArray(
   {
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionUndefinedEvent, static_cast<void*>(&n));
   }
+  this->StorableModifiedTime.Modified();
   this->UpdateMeasurements();
 }
 
@@ -932,6 +938,7 @@ void vtkMRMLMarkupsNode::SetCenterPosition(const double x, const double y, const
 {
   this->CenterPos.Set(x,y,z);
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::CenterPointModifiedEvent);
+  this->StorableModifiedTime.Modified();
 }
 
 //-----------------------------------------------------------
@@ -973,6 +980,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointOrientation(int n, double w, double x
   vtkMRMLMarkupsNode::ConvertOrientationWXYZToMatrix(wxyz, controlPoint->OrientationMatrix);
 
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
+  this->StorableModifiedTime.Modified();
   this->UpdateMeasurements();
 }
 
@@ -1095,6 +1103,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointAssociatedNodeID(int n, std::string i
     }
   controlPoint->AssociatedNodeID = std::string(id.c_str());
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
+  this->StorableModifiedTime.Modified();
   this->UpdateMeasurements();
 }
 
@@ -1185,6 +1194,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointSelected(int n, bool flag)
     }
   controlPoint->Selected = flag;
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
+  this->StorableModifiedTime.Modified();
   this->UpdateMeasurements();
 }
 
@@ -1214,6 +1224,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointLocked(int n, bool flag)
     }
   controlPoint->Locked = flag;
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
+  this->StorableModifiedTime.Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -1243,6 +1254,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointVisibility(int n, bool flag)
     }
   controlPoint->Visibility = flag;
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
+  this->StorableModifiedTime.Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -1271,6 +1283,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointLabel(int n, std::string label)
     }
   controlPoint->Label = label;
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
+  this->StorableModifiedTime.Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -1299,6 +1312,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointDescription(int n, std::string descri
     }
   controlPoint->Description = description;
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
+  this->StorableModifiedTime.Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -1720,6 +1734,7 @@ void vtkMRMLMarkupsNode::UnsetNthControlPointPosition(int n)
     }
   controlPoint->PositionStatus = PositionUndefined;
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
+  this->StorableModifiedTime.Modified();
   this->UpdateMeasurements();
 }
 
