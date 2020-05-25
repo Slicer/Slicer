@@ -190,9 +190,12 @@ void qSlicerSubjectHierarchyPluginLogic::observeNode(vtkMRMLNode* node)
 
   // Observe display modified event so that display node menu events can be managed by subject hierarchy
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
-  if (displayableNode)
+
+  // qvtkReconnect would delete connections to all other displayable nodes that have been observed, so we need to
+  // add connection using qvtkIsConnected and qvtkConnect.
+  if (displayableNode && !qvtkIsConnected(displayableNode, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT(onDisplayNodeModified(vtkObject*, vtkObject*))))
     {
-    qvtkReconnect( displayableNode, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT( onDisplayNodeModified(vtkObject*, vtkObject*) ) );
+    qvtkConnect(displayableNode, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT(onDisplayNodeModified(vtkObject*, vtkObject*)));
     }
 }
 
