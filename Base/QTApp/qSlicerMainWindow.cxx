@@ -1101,20 +1101,22 @@ void qSlicerMainWindow::closeEvent(QCloseEvent *event)
 
   if (d->confirmCloseApplication())
     {
+    // Proceed with closing the application
+
     // Exit current module to leave it a chance to change the UI (e.g. layout)
     // before writing settings.
     d->ModuleSelectorToolBar->selectModule("");
 
     d->writeSettings();
     event->accept();
+
+    QTimer::singleShot(0, qApp, SLOT(closeAllWindows()));
     }
   else
     {
+    // Request is cancelled, application will not be closed
     event->ignore();
-    }
-  if (event->isAccepted())
-    {
-    QTimer::singleShot(0, qApp, SLOT(closeAllWindows()));
+    d->IsClosing = false;
     }
 }
 
