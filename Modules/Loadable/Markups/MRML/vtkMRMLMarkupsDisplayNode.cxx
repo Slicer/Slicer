@@ -88,7 +88,9 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   // Set active component defaults for mouse (identified by empty string)
   this->ActiveComponents[GetDefaultContextName()] = ComponentInfo();
 
+  this->CurveLineSizeMode = vtkMRMLMarkupsDisplayNode::UseLineThickness;
   this->LineThickness = 0.2;
+  this->LineDiameter = 1.0;
 
   // Line color variables
   this->LineColorFadingStart = 1.;
@@ -130,7 +132,9 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(sliceProjectionOutlinedBehindSlicePlane, SliceProjectionOutlinedBehindSlicePlane);
   vtkMRMLWriteXMLVectorMacro(sliceProjectionColor, SliceProjectionColor, double, 3);
   vtkMRMLWriteXMLFloatMacro(sliceProjectionOpacity, SliceProjectionOpacity);
+  vtkMRMLWriteXMLEnumMacro(curveLineSizeMode, CurveLineSizeMode);
   vtkMRMLWriteXMLFloatMacro(lineThickness, LineThickness);
+  vtkMRMLWriteXMLFloatMacro(lineDiameter, LineDiameter);
   vtkMRMLWriteXMLFloatMacro(lineColorFadingStart, LineColorFadingStart);
   vtkMRMLWriteXMLFloatMacro(lineColorFadingEnd, LineColorFadingEnd);
   vtkMRMLWriteXMLFloatMacro(lineColorFadingSaturation, LineColorFadingSaturation);
@@ -160,7 +164,9 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(sliceProjectionOutlinedBehindSlicePlane, SliceProjectionOutlinedBehindSlicePlane);
   vtkMRMLReadXMLVectorMacro(sliceProjectionColor, SliceProjectionColor, double, 3);
   vtkMRMLReadXMLFloatMacro(sliceProjectionOpacity, SliceProjectionOpacity);
+  vtkMRMLReadXMLEnumMacro(curveLineSizeMode, CurveLineSizeMode);
   vtkMRMLReadXMLFloatMacro(lineThickness, LineThickness);
+  vtkMRMLReadXMLFloatMacro(lineDiameter, LineDiameter);
   vtkMRMLReadXMLFloatMacro(lineColorFadingStart, LineColorFadingStart);
   vtkMRMLReadXMLFloatMacro(lineColorFadingEnd, LineColorFadingEnd);
   vtkMRMLReadXMLFloatMacro(lineColorFadingSaturation, LineColorFadingSaturation);
@@ -218,7 +224,9 @@ void vtkMRMLMarkupsDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
   vtkMRMLCopyBooleanMacro(SliceProjectionOutlinedBehindSlicePlane);
   vtkMRMLCopyVectorMacro(SliceProjectionColor, double, 3);
   vtkMRMLCopyFloatMacro(SliceProjectionOpacity);
+  vtkMRMLCopyEnumMacro(CurveLineSizeMode);
   vtkMRMLCopyFloatMacro(LineThickness);
+  vtkMRMLCopyFloatMacro(LineDiameter);
   vtkMRMLCopyFloatMacro(LineColorFadingStart);
   vtkMRMLCopyFloatMacro(LineColorFadingEnd);
   vtkMRMLCopyFloatMacro(LineColorFadingSaturation);
@@ -320,6 +328,51 @@ const char* vtkMRMLMarkupsDisplayNode::GetSnapModeAsString(int id)
 }
 
 //----------------------------------------------------------------------------
+const char* vtkMRMLMarkupsDisplayNode::GetCurveLineSizeModeAsString()
+{
+  return vtkMRMLMarkupsDisplayNode::GetCurveLineSizeModeAsString(this->CurveLineSizeMode);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsDisplayNode::SetCurveLineSizeModeFromString(const char* modeString)
+{
+  this->SetCurveLineSizeMode(vtkMRMLMarkupsDisplayNode::GetCurveLineSizeModeFromString(modeString));
+}
+
+//-----------------------------------------------------------
+int vtkMRMLMarkupsDisplayNode::GetCurveLineSizeModeFromString(const char* name)
+{
+  if (name == nullptr)
+    {
+    // invalid name
+    return 0;
+    }
+  for (int ii = 0; ii < CurveLineSizeMode_Last; ii++)
+    {
+    if (strcmp(name, GetCurveLineSizeModeAsString(ii)) == 0)
+      {
+      // found a matching name
+      return ii;
+      }
+    }
+  // unknown name
+  return -1;
+}
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLMarkupsDisplayNode::GetCurveLineSizeModeAsString(int id)
+{
+  switch (id)
+  {
+  case UseLineThickness: return "UseLineThickness";
+  case UseLineDiameter: return "UseLineDiameter";
+  default:
+    // invalid id
+    return "Invalid";
+  }
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
@@ -345,7 +398,9 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
     }
   os << "\n";
   }
+  vtkMRMLPrintEnumMacro(CurveLineSizeMode);
   vtkMRMLPrintFloatMacro(LineThickness);
+  vtkMRMLPrintFloatMacro(LineDiameter);
   vtkMRMLPrintFloatMacro(LineColorFadingStart);
   vtkMRMLPrintFloatMacro(LineColorFadingEnd);
   vtkMRMLPrintFloatMacro(LineColorFadingSaturation);

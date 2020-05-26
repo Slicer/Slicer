@@ -40,8 +40,8 @@ class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsDisplayNode : public 
 {
 public:
   static vtkMRMLMarkupsDisplayNode *New();
-  vtkTypeMacro ( vtkMRMLMarkupsDisplayNode,vtkMRMLDisplayNode );
-  void PrintSelf ( ostream& os, vtkIndent indent ) override;
+  vtkTypeMacro(vtkMRMLMarkupsDisplayNode,vtkMRMLDisplayNode);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -60,14 +60,13 @@ public:
   vtkMRMLCopyContentMacro(vtkMRMLMarkupsDisplayNode);
 
   /// Get node XML tag name (like Volume, Markups)
-  const char* GetNodeTagName() override {return "MarkupsDisplay";};
+  const char* GetNodeTagName() override { return "MarkupsDisplay"; };
 
   /// Finds the storage node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   /// Alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents(vtkObject * /*caller*/,
-                         unsigned long /*event*/, void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/ ) override;
 
   /// Convenience function for getting the displayable markups node
   vtkMRMLMarkupsNode* GetMarkupsNode();
@@ -160,7 +159,7 @@ public:
   vtkBooleanMacro(PropertiesLabelVisibility, bool);
   //@}
 
-  /// Defines how points are placed and moved in views
+  /// Define how points are placed and moved in views
   enum SnapModes
     {
     SnapModeUnconstrained, //< point is moved independently from displayed objects in 3D views (e.g., in parallel with camera plane)
@@ -203,7 +202,7 @@ public:
 
   /// Return a string representing the glyph type, set it from a string
   const char* GetGlyphTypeAsString();
-  void SetGlyphTypeFromString(const char *glyphString);
+  void SetGlyphTypeFromString(const char* glyphString);
 
   static const char* GetGlyphTypeAsString(int g);
   static int GetGlyphTypeFromString(const char*);
@@ -276,31 +275,58 @@ public:
   vtkSetClampMacro(SliceProjectionOpacity, double, 0.0, 1.0);
   vtkGetMacro(SliceProjectionOpacity, double);
 
-  /// Configures line thickness.
+  /// Way of determining line radius of markup curves. Default is relative thickness
+  /// Current mode is stored in \sa CurveLineSizeMode
+  enum CurveLineSizeModes
+    {
+    UseLineThickness = 0,
+    UseLineDiameter,
+    CurveLineSizeMode_Last // insert new types above this line
+    };
+
+  /// Configure mode of determining line radius of markup curves.
+  /// Default is relative thickness. Available modes in \sa CurveLineSizeModes
+  vtkSetMacro(CurveLineSizeMode, int);
+  vtkGetMacro(CurveLineSizeMode, int);
+  const char* GetCurveLineSizeModeAsString();
+  void SetCurveLineSizeModeFromString(const char* modeString);
+  static const char* GetCurveLineSizeModeAsString(int mode);
+  static int GetCurveLineSizeModeFromString(const char*);
+
+  /// Configure line thickness
   /// Thickness is specified relative to markup point size
   /// (1.0 means line diameter is the same as diameter of point glyphs).
+  /// This relative value is used if \sa CurveLineSizeMode is UseLineThickness
+  /// For absolute control of thickness, \sa LineDiameter should be used.
   vtkGetMacro(LineThickness, double);
   vtkSetMacro(LineThickness, double);
 
-  /// Configures the line color fading appearance
-  /// Default value = 1.0
-  vtkGetMacro (LineColorFadingStart, double);
-  vtkSetMacro (LineColorFadingStart, double);
+  /// Configure line diameter
+  /// Diameter is specified in absolute mm value
+  /// This absolute value is used if \sa CurveLineSizeMode is UseLineDiameter
+  /// For relative control of diameter, \sa LineThickness should be used.
+  vtkGetMacro(LineDiameter, double);
+  vtkSetMacro(LineDiameter, double);
 
-  /// Configures the line color fading appearance
+  /// Configure the line color fading appearance
+  /// Default value = 1.0
+  vtkGetMacro(LineColorFadingStart, double);
+  vtkSetMacro(LineColorFadingStart, double);
+
+  /// Configure the line color fading appearance
   /// Default value = 10.0
-  vtkGetMacro (LineColorFadingEnd, double);
-  vtkSetMacro (LineColorFadingEnd, double);
+  vtkGetMacro(LineColorFadingEnd, double);
+  vtkSetMacro(LineColorFadingEnd, double);
 
   /// Configures the line color fading appearance
   /// Default value = 1.0
-  vtkSetClampMacro (LineColorFadingSaturation, double, 0.0, 1.0);
-  vtkGetMacro (LineColorFadingSaturation, double);
+  vtkSetClampMacro(LineColorFadingSaturation, double, 0.0, 1.0);
+  vtkGetMacro(LineColorFadingSaturation, double);
 
   /// Configures the line color fading appearance
   /// Default value = 0.0
-  vtkSetClampMacro (LineColorFadingHueOffset, double, 0.0, 1.0);
-  vtkGetMacro (LineColorFadingHueOffset, double);
+  vtkSetClampMacro(LineColorFadingHueOffset, double, 0.0, 1.0);
+  vtkGetMacro(LineColorFadingHueOffset, double);
 
   /// Set the line color node ID used for the projection on the line actors on the 2D viewers.
   /// Setting a line color node allows to define any arbitrary color mapping.
@@ -351,7 +377,10 @@ protected:
   static const char* LineColorNodeReferenceRole;
   static const char* LineColorNodeReferenceMRMLAttributeName;
 
+  int CurveLineSizeMode;
   double LineThickness;
+  double LineDiameter;
+
   double LineColorFadingStart;
   double LineColorFadingEnd;
   double LineColorFadingSaturation;
