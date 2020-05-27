@@ -20,13 +20,13 @@
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsStorageNode.h"
 #include "vtkMRMLMarkupsNode.h"
+#include "vtkMRMLMarkupsLineNode.h"
 #include "vtkURIHandler.h"
 #include "vtkMRMLScene.h"
 #include "vtkPolyData.h"
 
 // VTK includes
 #include <vtkNew.h>
-
 
 int vtkMRMLMarkupsStorageNodeTest1(int vtkNotUsed(argc), char * vtkNotUsed(argv)[] )
 {

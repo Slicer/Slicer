@@ -21,7 +21,6 @@
 // MRML includes
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsPlaneNode.h"
-#include "vtkMRMLMarkupsFiducialStorageNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTransformNode.h"
 

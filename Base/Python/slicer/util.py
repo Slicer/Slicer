@@ -494,30 +494,31 @@ def loadAnnotationROI(filename, returnNode=False):
   return loadNodeFromFile(filename, 'AnnotationFile', {'roi': 1}, returnNode)
 
 def loadMarkupsFiducialList(filename, returnNode=False):
-  """Load node from file.
-
-  :param filename: full path of the file to load.
-  :param returnNode: Deprecated.
-  :return: loaded node (if multiple nodes are loaded then a list of nodes).
-    If returnNode is True then a status flag and loaded node are returned.
+  """Deprecated. Use loadMarkups function instead.
   """
-  return loadNodeFromFile(filename, 'MarkupsFiducials', {'className': 'vtkMRMLMarkupsFiducialNode'}, returnNode)
+  if returnNode:
+    return loadMarkups(filename)
+  else:
+    node = loadMarkups(filename)
+    return [node is not None, node]
 
 def loadMarkupsCurve(filename):
-  """Load node from file.
-
-  :param filename: full path of the file to load.
-  :return: loaded node (if multiple nodes are loaded then a list of nodes).
+  """Deprecated. Use loadMarkups function instead.
   """
-  return loadNodeFromFile(filename, 'MarkupsFiducials', {'className': 'vtkMRMLMarkupsCurveNode'})
+  return loadMarkups(filename)
 
 def loadMarkupsClosedCurve(filename):
+  """Deprecated. Use loadMarkups function instead.
+  """
+  return loadMarkups(filename)
+
+def loadMarkups(filename):
   """Load node from file.
 
   :param filename: full path of the file to load.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
   """
-  return loadNodeFromFile(filename, 'MarkupsFiducials', {'className': 'vtkMRMLMarkupsClosedCurveNode'})
+  return loadNodeFromFile(filename, 'MarkupsFile')
 
 def loadModel(filename, returnNode=False):
   """Load node from file.

@@ -20,7 +20,6 @@
 // MRML includes
 #include "vtkCurveGenerator.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
-#include "vtkMRMLMarkupsFiducialStorageNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLUnitNode.h"

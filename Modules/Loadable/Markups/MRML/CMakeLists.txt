@@ -1,10 +1,13 @@
 project(vtkSlicer${MODULE_NAME}ModuleMRML)
 
+find_package(RapidJSON REQUIRED)
+
 set(KIT ${PROJECT_NAME})
 
 set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_MRML_EXPORT")
 
 set(${KIT}_INCLUDE_DIRECTORIES
+  ${RapidJSON_INCLUDE_DIR}
   )
 
 set(${KIT}_SRCS
@@ -18,6 +21,7 @@ set(${KIT}_SRCS
   vtkMRML${MODULE_NAME}PlaneNode.cxx
   vtkMRML${MODULE_NAME}Node.cxx
   vtkMRML${MODULE_NAME}FiducialStorageNode.cxx
+  vtkMRML${MODULE_NAME}JsonStorageNode.cxx
   vtkCurveGenerator.cxx
   vtkCurveGenerator.h
   vtkLinearSpline.cxx

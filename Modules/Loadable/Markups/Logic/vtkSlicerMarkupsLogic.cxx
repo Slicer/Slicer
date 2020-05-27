@@ -27,6 +27,7 @@
 #include "vtkMRMLMarkupsFiducialDisplayNode.h"
 #include "vtkMRMLMarkupsFiducialNode.h"
 #include "vtkMRMLMarkupsFiducialStorageNode.h"
+#include "vtkMRMLMarkupsJsonStorageNode.h"
 #include "vtkMRMLMarkupsLineNode.h"
 #include "vtkMRMLMarkupsNode.h"
 #include "vtkMRMLMarkupsPlaneNode.h"
@@ -234,6 +235,7 @@ void vtkSlicerMarkupsLogic::RegisterNodes()
   // Storage Nodes
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsStorageNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsFiducialStorageNode>::New());
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsJsonStorageNode>::New());
 }
 
 //---------------------------------------------------------------------------
@@ -675,35 +677,103 @@ void vtkSlicerMarkupsLogic::FocusCameraOnNthPointInMarkup(
 }
 
 //---------------------------------------------------------------------------
-char* vtkSlicerMarkupsLogic::LoadMarkupsFiducials(const char* fileName, const char* fidsName/*=nullptr*/)
+char* vtkSlicerMarkupsLogic::LoadMarkups(const char* fileName, const char* nodeName/*=nullptr*/)
 {
-  return this->LoadMarkups(fileName, "vtkMRMLMarkupsFiducialNode", fidsName);
+  if (!fileName)
+    {
+    vtkErrorMacro("vtkSlicerMarkupsLogic::LoadMarkups failed: invalid fileName");
+    return nullptr;
+    }
+
+  // get file extension
+  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName);
+  if( extension.empty() )
+    {
+    vtkErrorMacro("vtkSlicerMarkupsLogic::LoadMarkups failed: no file extension specified: " << fileName);
+    return nullptr;
+    }
+
+  //
+  if (extension == std::string(".json"))
+    {
+    return this->LoadMarkupsFromJson(fileName, nodeName);
+    }
+  else if (extension == std::string(".fcsv"))
+    {
+    return this->LoadMarkupsFromFcsv(fileName, nodeName);
+    }
+  else
+    {
+    vtkErrorMacro("vtkSlicerMarkupsLogic::LoadMarkups failed: unrecognized file extension in " << fileName);
+    return nullptr;
+    }
 }
 
 //---------------------------------------------------------------------------
-char * vtkSlicerMarkupsLogic::LoadMarkups(const char* fileName, const char* markupsNodeClassName, const char* nodeName/*=nullptr*/)
+char* vtkSlicerMarkupsLogic::LoadMarkupsFiducials(const char* fileName, const char* fidsName/*=nullptr*/)
 {
-  if (!fileName || !markupsNodeClassName)
+
+  return this->LoadMarkups(fileName, fidsName);
+}
+
+//---------------------------------------------------------------------------
+char* vtkSlicerMarkupsLogic::LoadMarkupsFromJson(const char* fileName, const char* nodeName/*=nullptr*/)
+{
+  if (!fileName)
     {
     vtkErrorMacro("LoadMarkups: null file or markups class name, cannot load");
     return nullptr;
     }
 
-  vtkDebugMacro("LoadMarkups, file name = " << fileName << ", class name = " << markupsNodeClassName
-    << ", nodeName = " << (nodeName ? nodeName : "null"));
+  vtkDebugMacro("LoadMarkups, file name = " << fileName << ", nodeName = " << (nodeName ? nodeName : "null"));
 
-  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass(markupsNodeClassName, nodeName));
+  // make a storage node and fiducial node and set the file name
+  vtkMRMLMarkupsJsonStorageNode* storageNode = vtkMRMLMarkupsJsonStorageNode::SafeDownCast(
+    this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLMarkupsJsonStorageNode"));
+  if (!storageNode)
+    {
+    vtkErrorMacro("LoadMarkups: failed to instantiate markups storage node by class vtkMRMLMarkupsJsonStorageNode");
+    return nullptr;
+    }
+
+  vtkMRMLMarkupsNode* markupsNode = storageNode->AddNewMarkupsNodeFromFile(fileName, nodeName);
   if (!markupsNode)
     {
-    vtkErrorMacro("LoadMarkups: failed to instantiate markups node by class " << markupsNodeClassName);
+    return nullptr;
+    }
+
+  return markupsNode->GetID();
+}
+
+//---------------------------------------------------------------------------
+char * vtkSlicerMarkupsLogic::LoadMarkupsFromFcsv(const char* fileName, const char* nodeName/*=nullptr*/)
+{
+  if (!fileName)
+    {
+    vtkErrorMacro("LoadMarkups: null file or markups class name, cannot load");
+    return nullptr;
+    }
+
+  vtkDebugMacro("LoadMarkups, file name = " << fileName << ", nodeName = " << (nodeName ? nodeName : "null"));
+
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", nodeName));
+  if (!markupsNode)
+    {
+    vtkErrorMacro("LoadMarkups: failed to instantiate markups node by class vtkMRMLMarkupsFiducialNode");
     return nullptr;
     }
 
   // make a storage node and fiducial node and set the file name
-  vtkSmartPointer<vtkMRMLStorageNode> storageNode = vtkSmartPointer<vtkMRMLStorageNode>::Take(markupsNode->CreateDefaultStorageNode());
+  vtkMRMLStorageNode* storageNode = vtkMRMLStorageNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLMarkupsFiducialStorageNode"));
+  if (!storageNode)
+    {
+    vtkErrorMacro("LoadMarkups: failed to instantiate markups storage node by class vtkMRMLMarkupsFiducialNode");
+    this->GetMRMLScene()->RemoveNode(markupsNode);
+    return nullptr;
+    }
+
   storageNode->SetFileName(fileName);
   // add the nodes to the scene and set up the observation on the storage node
-  this->GetMRMLScene()->AddNode(storageNode.GetPointer());
   markupsNode->SetAndObserveStorageNodeID(storageNode->GetID());
 
   // read the file
@@ -719,7 +789,6 @@ char * vtkSlicerMarkupsLogic::LoadMarkups(const char* fileName, const char* mark
     }
 
   return nodeID;
-
 }
 
 //---------------------------------------------------------------------------
@@ -930,7 +999,7 @@ bool vtkSlicerMarkupsLogic::CopyNthControlPointToNewList(int n, vtkMRMLMarkupsNo
   *newControlPoint = *markupsNode->GetNthControlPoint(n);
 
   // add it to the destination list
-  newMarkupsNode->AddControlPoint(newControlPoint);
+  newMarkupsNode->AddControlPoint(newControlPoint, false);
 
   return true;
 }
