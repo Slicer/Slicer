@@ -1449,7 +1449,7 @@ bool vtkSegmentation::GenerateMergedLabelmap(
     }
 
   // Create shared labelmap
-  bool success = false;
+  bool success = true;
   short colorIndex = backgroundColorIndex + 1;
   for (std::vector<std::string>::iterator segmentIdIt = sharedSegmentIDs.begin(); segmentIdIt != sharedSegmentIDs.end(); ++segmentIdIt, ++colorIndex)
     {
