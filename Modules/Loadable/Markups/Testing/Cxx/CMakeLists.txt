@@ -12,10 +12,10 @@ set(KIT_TEST_SRCS
   vtkMRMLMarkupsNodeTest2.cxx
   vtkMRMLMarkupsNodeTest3.cxx
   vtkMRMLMarkupsNodeTest4.cxx
-  vtkMRMLMarkupsFiducialStorageNodeTest1.cxx
   vtkMRMLMarkupsFiducialStorageNodeTest2.cxx
   vtkMRMLMarkupsFiducialStorageNodeTest3.cxx
   vtkMRMLMarkupsStorageNodeTest1.cxx
+  vtkMRMLMarkupsStorageNodeTest2.cxx
   vtkSlicerMarkupsLogicTest1.cxx
   vtkSlicerMarkupsLogicTest2.cxx
   vtkSlicerMarkupsLogicTest3.cxx
@@ -39,8 +39,6 @@ SIMPLE_TEST( vtkMRMLMarkupsNodeTest2 )
 SIMPLE_TEST( vtkMRMLMarkupsNodeTest3 )
 SIMPLE_TEST( vtkMRMLMarkupsNodeTest4 )
 
-SIMPLE_TEST( vtkMRMLMarkupsFiducialStorageNodeTest1 ${TEMP}/markupsFiducialStorageNode.fcsv )
-
 # test legacy Slicer3 fcsv file
 SIMPLE_TEST( vtkMRMLMarkupsFiducialStorageNodeTest2 ${INPUT}/slicer3.fcsv )
 
@@ -48,6 +46,7 @@ SIMPLE_TEST( vtkMRMLMarkupsFiducialStorageNodeTest2 ${INPUT}/slicer3.fcsv )
 SIMPLE_TEST( vtkMRMLMarkupsFiducialStorageNodeTest3 ${INPUT}/slicer4.acsv )
 
 SIMPLE_TEST( vtkMRMLMarkupsStorageNodeTest1 )
+SIMPLE_TEST( vtkMRMLMarkupsStorageNodeTest2 ${TEMP} )
 
 # logic tests
 SIMPLE_TEST( vtkSlicerMarkupsLogicTest1 )

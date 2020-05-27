@@ -18,7 +18,6 @@
 // MRML includes
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsLineNode.h"
-#include "vtkMRMLMarkupsFiducialStorageNode.h"
 #include "vtkMatrix4x4.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLUnitNode.h"

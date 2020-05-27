@@ -18,7 +18,6 @@
 // MRML includes
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsAngleNode.h"
-#include "vtkMRMLMarkupsFiducialStorageNode.h"
 #include "vtkMRMLScene.h"
 
 // VTK includes
