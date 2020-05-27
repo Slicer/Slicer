@@ -77,9 +77,12 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store',
-    "developer_guide/*"  # uncomment to only build user guide
-]
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+
+# Set EXCLUDE_DEVELOPER_GUIDE=True environment variable to exclude developer guide.
+# It is useful for quicker documentation generation while eiditin user manual.
+if os.environ.get('EXCLUDE_DEVELOPER_GUIDE', None) == 'True':
+    exclude_patterns.append('developer_guide/*')
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
