@@ -126,6 +126,9 @@ protected:
   vtkMRMLScene* MRMLScene;
   QString MRMLSceneRootDirectoryBeforeSaving;
 
+  // Items are currently being added to the scene, indicates that no GUI updates should be performed.
+  bool PopulatingItems;
+
   friend class qSlicerFileNameItemDelegate;
 };
 

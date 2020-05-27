@@ -177,6 +177,8 @@ qSlicerSaveDataDialogPrivate::qSlicerSaveDataDialogPrivate(QWidget* parentWidget
     }
   this->ShowMoreCheckBox->setChecked(qSlicerApplication::application()->userSettings()->value(SHOW_OPTIONS_SETTINGS_KEY).toBool());
   this->showMoreColumns(this->ShowMoreCheckBox->isChecked());
+
+  this->PopulatingItems = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -233,6 +235,8 @@ void qSlicerSaveDataDialogPrivate::populateItems()
     {
     return;
     }
+
+  this->PopulatingItems = true;
 
   QDir newDir(this->MRMLScene->GetRootDirectory());
   if (!newDir.exists())
@@ -295,6 +299,8 @@ void qSlicerSaveDataDialogPrivate::populateItems()
 
   // Enable/disable nodes depending on the scene file format
   this->onSceneFormatChanged();
+
+  this->PopulatingItems = false;
 
   this->updateSize();
 }
@@ -899,11 +905,14 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
 QFileInfo qSlicerSaveDataDialogPrivate::file(int row)const
 {
   QTableWidgetItem* fileNameItem = this->FileWidget->item(row, FileNameColumn);
-  Q_ASSERT(fileNameItem);
-
   ctkDirectoryButton* fileDirectoryButton = qobject_cast<ctkDirectoryButton*>(
     this->FileWidget->cellWidget(row, FileDirectoryColumn));
-  Q_ASSERT(fileDirectoryButton);
+
+  if (!fileNameItem || !fileDirectoryButton)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: filename or directory button not found";
+    return QFileInfo();
+    }
 
   QDir directory = fileDirectoryButton->directory();
   return QFileInfo(directory, fileNameItem->text());
@@ -1309,6 +1318,10 @@ void qSlicerSaveDataDialogPrivate::onItemChanged(QTableWidgetItem* widgetItem)
     }
   vtkMRMLScene* mrmlScene = this->MRMLScene;
   if (!mrmlScene)
+    {
+    return;
+    }
+  if (this->PopulatingItems)
     {
     return;
     }
