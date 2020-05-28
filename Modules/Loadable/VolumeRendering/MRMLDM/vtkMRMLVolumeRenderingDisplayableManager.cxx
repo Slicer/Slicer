@@ -29,6 +29,7 @@
 
 // MRML includes
 #include "vtkMRMLAnnotationROINode.h"
+#include "vtkMRMLFolderDisplayNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLTransformNode.h"
@@ -331,6 +332,15 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UseDisplayNode(vtkMR
 //---------------------------------------------------------------------------
 bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::IsVisible(vtkMRMLVolumeRenderingDisplayNode* displayNode)
 {
+  if (displayNode && displayNode->GetFolderDisplayOverrideAllowed())
+    {
+    vtkMRMLDisplayableNode* displayableNode = displayNode->GetDisplayableNode();
+    if (!vtkMRMLFolderDisplayNode::GetHierarchyVisibility(displayableNode))
+      {
+      return false;
+      }
+    }
+
   return displayNode && displayNode->GetVisibility() && displayNode->GetVisibility3D()
     && displayNode->GetVisibility(this->External->GetMRMLViewNode()->GetID())
     && displayNode->GetOpacity() > 0;
