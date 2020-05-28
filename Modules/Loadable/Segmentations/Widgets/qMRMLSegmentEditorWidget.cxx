@@ -243,6 +243,9 @@ public:
   /// Structure containing necessary objects for each slice and 3D view handling interactions
   QVector<SegmentEditorEventObservation> EventObservations;
 
+  /// List of view node IDs where custom cursor is set
+  QSet<QString> CustomCursorInViewNodeIDs;
+
   /// Indicates if views and layouts are observed
   /// (essentially, the widget is active).
   bool ViewsObserved;
@@ -813,37 +816,53 @@ void qMRMLSegmentEditorWidgetPrivate::setEffectCursor(qSlicerSegmentEditorAbstra
   foreach(QString sliceViewName, layoutManager->sliceViewNames())
     {
     qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);
+    QString viewNodeID = QString::fromStdString(sliceWidget->mrmlSliceNode()->GetID());
     if (!this->segmentationDisplayableInView(sliceWidget->mrmlSliceNode()))
       {
-      continue;
+      // segmentation is not displayable in this view anymore
+      if (!this->CustomCursorInViewNodeIDs.contains(viewNodeID))
+        {
+        // we did not use this view previously either, so don't change the cursor there
+        continue;
+        }
       }
     if (effect && effect->showEffectCursorInSliceView())
       {
       sliceWidget->sliceView()->setViewCursor(effect->createCursor(sliceWidget));
       sliceWidget->sliceView()->setDefaultViewCursor(effect->createCursor(sliceWidget));
+      this->CustomCursorInViewNodeIDs.insert(viewNodeID);
       }
     else
       {
       sliceWidget->sliceView()->setViewCursor(QCursor());
       sliceWidget->sliceView()->setDefaultViewCursor(QCursor());
+      this->CustomCursorInViewNodeIDs.remove(viewNodeID);
       }
     }
   for (int threeDViewId = 0; threeDViewId < layoutManager->threeDViewCount(); ++threeDViewId)
     {
     qMRMLThreeDWidget* threeDWidget = layoutManager->threeDWidget(threeDViewId);
+    QString viewNodeID = QString::fromStdString(threeDWidget->mrmlViewNode()->GetID());
     if (!this->segmentationDisplayableInView(threeDWidget->mrmlViewNode()))
       {
-      continue;
+      // segmentation is not displayable in this view anymore
+      if (!this->CustomCursorInViewNodeIDs.contains(viewNodeID))
+        {
+        // we did not use this view previously either, so don't change the cursor there
+        continue;
+        }
       }
     if (effect && effect->showEffectCursorInThreeDView())
       {
       threeDWidget->threeDView()->setViewCursor(effect->createCursor(threeDWidget));
       threeDWidget->threeDView()->setDefaultViewCursor(effect->createCursor(threeDWidget));
+      this->CustomCursorInViewNodeIDs.insert(viewNodeID);
       }
     else
       {
       threeDWidget->threeDView()->setViewCursor(QCursor());
       threeDWidget->threeDView()->setDefaultViewCursor(QCursor());
+      this->CustomCursorInViewNodeIDs.remove(viewNodeID);
       }
     }
 }
