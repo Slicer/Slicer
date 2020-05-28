@@ -927,6 +927,7 @@ void vtkSegmentation::ApplyLinearTransform(vtkAbstractTransform* transform)
 
   // Apply linear transform for each segment:
   // Harden transform on master representation if poly data, apply directions if oriented image data
+  std::set<vtkDataObject*> transformedDataObjects;
   for (SegmentMap::iterator it = this->Segments.begin(); it != this->Segments.end(); ++it)
     {
     vtkDataObject* currentMasterRepresentation = it->second->GetRepresentation(this->MasterRepresentationName);
@@ -935,6 +936,11 @@ void vtkSegmentation::ApplyLinearTransform(vtkAbstractTransform* transform)
       vtkErrorMacro("ApplyLinearTransform: Cannot get master representation (" << this->MasterRepresentationName << ") from segment!");
       return;
       }
+    if (transformedDataObjects.find(currentMasterRepresentation) != transformedDataObjects.end())
+      {
+      continue;
+      }
+    transformedDataObjects.insert(currentMasterRepresentation);
 
     vtkPolyData* currentMasterRepresentationPolyData = vtkPolyData::SafeDownCast(currentMasterRepresentation);
     vtkOrientedImageData* currentMasterRepresentationOrientedImageData = vtkOrientedImageData::SafeDownCast(currentMasterRepresentation);
@@ -974,6 +980,7 @@ void vtkSegmentation::ApplyNonLinearTransform(vtkAbstractTransform* transform)
   this->Converter->ApplyTransformOnReferenceImageGeometry(transform);
 
   // Harden transform on master representation (both image data and poly data) for each segment individually
+  std::set<vtkDataObject*> transformedDataObjects;
   for (SegmentMap::iterator it = this->Segments.begin(); it != this->Segments.end(); ++it)
     {
     vtkDataObject* currentMasterRepresentation = it->second->GetRepresentation(this->MasterRepresentationName);
@@ -982,6 +989,11 @@ void vtkSegmentation::ApplyNonLinearTransform(vtkAbstractTransform* transform)
       vtkErrorMacro("ApplyNonLinearTransform: Cannot get master representation (" << this->MasterRepresentationName << ") from segment!");
       return;
       }
+    if (transformedDataObjects.find(currentMasterRepresentation) != transformedDataObjects.end())
+      {
+      continue;
+      }
+    transformedDataObjects.insert(currentMasterRepresentation);
 
     vtkPolyData* currentMasterRepresentationPolyData = vtkPolyData::SafeDownCast(currentMasterRepresentation);
     vtkOrientedImageData* currentMasterRepresentationOrientedImageData = vtkOrientedImageData::SafeDownCast(currentMasterRepresentation);
