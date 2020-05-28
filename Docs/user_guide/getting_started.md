@@ -17,8 +17,7 @@ GPU: Graphics must support minimum OpenGL 3.2. Integrated graphics card is suffi
 
 ### Recommended operating system versions
 - Windows 10, 64-bit
-- Mac OS X Lion
-  - On Mac OS X Maverick - Make sure to install this update: http://support.apple.com/kb/DL1754
+- macOS Catalina
 - Linux: recent versions of popular distributions should work. Ubuntu and Fedora are the most widely used distribution among the developers. The SlicerPreview nightly build system runs CentOS 7.
 
 32 bit versus 64 bit: Many clinical research tasks, such as processing of large CT or MR volumetric datasets, require more memory than can be accommodated with a 32 bit program. Therefore, we only make 64-bit Slicer versions available. Developers can build 32-bit version on their own if they need to run Slicer on a 32-bit operating system.
