@@ -7,14 +7,14 @@ This is a module for the calculation of statistics related to the structure of s
 Labelmap statistics are calculated using the binary labelmap representation of the segment.
 
 - Voxel count: the number of voxels in the segment
-- Volume mm\ :sup:`3`: the volume of the segment in mm\ :sup:`3`
-- Volume cm\ :sup:`3`: the volume of the segment in cm\ :sup:`3`
+- Volume mm3 the volume of the segment in mm3
+- Volume cm3 the volume of the segment in cm3
 - Centroid: the center of mass of the segment in RAS coordinates
 - Feret diameter: the diameter of a sphere that can encompass the entire segment
-- Surface area mm\ :sup:`2`: the volume of the segment in mm\ :sup:`2`
-- Roundness: the roundness of the segment. Calculated from ratio of the area of the sphere calculated from the feret diameter by the actual area. Value of 1 represents a spherical structure. (http://hdl.handle.net/1926/584)
-- Flatness: the flatness of the segment. Calculated from square root of the ratio of the second smallest principal moment by the smallest. Value of 0 represents a flat structure. (http://hdl.handle.net/1926/584)
-- Elongation: the elongation of the segment. Calculated from square root of the ratio of the second largest principal moment by the second smallest. (http://hdl.handle.net/1926/584)
+- Surface area mm2: the volume of the segment in mm2
+- Roundness: the roundness of the segment. Calculated from ratio of the area of the sphere calculated from the Feret diameter by the actual area. Value of 1 represents a spherical structure. See detailed definition [here](http://hdl.handle.net/1926/584).
+- Flatness: the flatness of the segment. Calculated from square root of the ratio of the second smallest principal moment by the smallest. Value of 0 represents a flat structure. See detailed definition [here](http://hdl.handle.net/1926/584).
+- Elongation: the elongation of the segment. Calculated from square root of the ratio of the second largest principal moment by the second smallest. See detailed definition [here](http://hdl.handle.net/1926/584).
 - Principal moments: the principal moments of inertia for each axes of the segment
 - Principal axes: the principal axes of rotation of the segment
 - Oriented bounding box: the non-axis aligned bounding box that encompasses the segment
@@ -22,8 +22,8 @@ Labelmap statistics are calculated using the binary labelmap representation of t
 ## Scalar volume statistics
 
 - Voxel count: the number of voxels in the segment
-- Volume mm\ :sup:`3`: the volume of the segment in mm\ :sup:`3`
-- Volume cm\ :sup:`3`: the volume of the segment in cm\ :sup:`3`
+- Volume mm3 the volume of the segment in mm3
+- Volume cm3 the volume of the segment in cm3
 - Minimum: the minimum scalar value behind the segment
 - Maximum: the maximum scalar value behind the segment
 - Mean: the mean scalar value behind the segment
@@ -32,9 +32,9 @@ Labelmap statistics are calculated using the binary labelmap representation of t
 
 ## Closed surface statistics
 
-- Surface area mm\ :sup:`2`: the volume of the segment in mm\ :sup:`2`
-- Volume mm\ :sup:`3`: the volume of the segment in mm\ :sup:`3`
-- Volume cm\ :sup:`3`: the volume of the segment in cm\ :sup:`3`
+- Surface area mm2: the volume of the segment in mm2
+- Volume mm3 the volume of the segment in mm3
+- Volume cm3 the volume of the segment in cm3
 
 ## Related Modules
 
