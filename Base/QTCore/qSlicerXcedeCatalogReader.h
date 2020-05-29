@@ -21,7 +21,7 @@
 #ifndef __qSlicerXcedeCatalogReader
 #define __qSlicerXcedeCatalogReader
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerFileReader.h"
 
 class qSlicerXcedeCatalogReaderPrivate;

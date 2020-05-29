@@ -22,7 +22,7 @@
 #include <QDebug>
 
 
-// SlicerQt includes
+// Slicer includes
 #include "qMRMLUnitWidget.h"
 #include "ui_qMRMLUnitWidget.h"
 

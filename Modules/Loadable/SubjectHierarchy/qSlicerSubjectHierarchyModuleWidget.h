@@ -23,7 +23,7 @@
 #ifndef __qSlicerSubjectHierarchyModuleWidget_h
 #define __qSlicerSubjectHierarchyModuleWidget_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
 
 #include "qSlicerSubjectHierarchyModuleExport.h"

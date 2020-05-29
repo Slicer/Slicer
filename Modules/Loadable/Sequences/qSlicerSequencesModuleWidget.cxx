@@ -21,7 +21,7 @@
 #include <QListWidgetItem>
 #include <QtPlugin>
 
-// SlicerQt includes
+// Slicer includes
 #include "qMRMLSequenceBrowserToolBar.h"
 #include "qSlicerApplication.h"
 #include "qSlicerLayoutManager.h"

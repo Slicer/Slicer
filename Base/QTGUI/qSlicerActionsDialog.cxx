@@ -27,7 +27,7 @@
 #include <QWebEngineView>
 #endif
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerActionsDialog.h"
 #include "qSlicerCoreApplication.h"
 #include "ui_qSlicerActionsDialog.h"

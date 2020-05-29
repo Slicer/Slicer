@@ -43,7 +43,7 @@
 #include <ctkVTKObject.h>
 #include "qSlicerBaseQTGUIExport.h"
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerMouseModeToolBar.h"
 
 // MRMLLogic includes

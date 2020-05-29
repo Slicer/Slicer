@@ -15,14 +15,14 @@
   This file was originally developed by Csaba Pinter, PerkLab, Queen's University
   and was supported through the Applied Cancer Research Unit program of Cancer Care
   Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care
-   
+
 ==============================================================================*/
 
 /// Qt includes
 #include <QFileInfo>
 #include <QSettings>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerApplication.h"
 
 // CTK includes

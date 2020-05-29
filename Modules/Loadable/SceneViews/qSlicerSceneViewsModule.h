@@ -1,7 +1,7 @@
 #ifndef __qSlicerSceneViewsModule_h
 #define __qSlicerSceneViewsModule_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerLoadableModule.h"
 
 // CTK includes

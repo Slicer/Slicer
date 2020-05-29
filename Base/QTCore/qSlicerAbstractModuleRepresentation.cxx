@@ -13,7 +13,7 @@
 // Qt includes
 #include <QDebug>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerAbstractCoreModule.h"
 #include "qSlicerAbstractModuleRepresentation.h"
 

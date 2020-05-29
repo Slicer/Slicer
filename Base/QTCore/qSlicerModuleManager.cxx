@@ -20,7 +20,7 @@
 
 // Qt includes
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerModuleManager.h"
 #include "qSlicerCoreApplication.h"
 #include "qSlicerAbstractCoreModule.h"

@@ -29,7 +29,7 @@
 #include <QFileInfo>
 #include <QAction>
 
-// SlicerQt includes
+// Slicerncludes
 #include "qSlicerScriptedUtils_p.h"
 
 // PythonQt includes

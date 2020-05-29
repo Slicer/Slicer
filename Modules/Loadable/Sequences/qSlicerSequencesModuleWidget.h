@@ -18,7 +18,7 @@
 #ifndef __qSlicerSequencesModuleWidget_h
 #define __qSlicerSequencesModuleWidget_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
 
 #include "qSlicerSequencesModuleExport.h"

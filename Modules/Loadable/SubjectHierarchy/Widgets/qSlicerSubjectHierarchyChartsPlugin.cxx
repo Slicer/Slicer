@@ -40,7 +40,7 @@
 #include <QStandardItem>
 #include <QAction>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerLayoutManager.h"
 

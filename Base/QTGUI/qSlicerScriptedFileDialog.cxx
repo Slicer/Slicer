@@ -25,7 +25,7 @@
 // PythonQt includes
 #include <PythonQt.h>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerScriptedFileDialog.h"
 #include "qSlicerScriptedUtils_p.h"
 

@@ -21,7 +21,7 @@
 #ifndef __qMRMLTextWidget_h
 #define __qMRMLTextWidget_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerWidget.h"
 
 // Text widgets includes

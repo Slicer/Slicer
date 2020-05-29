@@ -33,7 +33,7 @@
 #include <ctkCheckableModelHelper.h>
 #include <ctkVTKWidgetsUtils.h>
 
-/// SlicerQt includes
+/// Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerCoreIOManager.h"
 #include "qSlicerFileWriterOptionsWidget.h"

@@ -81,7 +81,7 @@
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
 
-// SlicerQt includes
+// Slicer includes
 #include <qSlicerApplication.h>
 #include <qSlicerLayoutManager.h>
 #include "qSlicerModuleManager.h"

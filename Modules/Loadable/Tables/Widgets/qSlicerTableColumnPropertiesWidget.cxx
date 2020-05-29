@@ -24,7 +24,7 @@
 // Markups includes
 //#include <vtkSlicerTablesLogic.h>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerAbstractCoreModule.h"

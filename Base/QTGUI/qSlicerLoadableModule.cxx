@@ -32,7 +32,7 @@
 # include <ctkScopedCurrentDir.h>
 #endif
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerLoadableModule.h"
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerCoreApplication.h"

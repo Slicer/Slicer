@@ -27,7 +27,7 @@
 // CTK includes
 #include <ctkUtils.h>
 
-// SlicerQt includes
+// Slicer includes
 #include <qSlicerUtils.h>
 
 // Slicer includes

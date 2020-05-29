@@ -24,7 +24,7 @@
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 #include "qSlicerSubjectHierarchyRegisterPlugin.h"
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerApplication.h"
 

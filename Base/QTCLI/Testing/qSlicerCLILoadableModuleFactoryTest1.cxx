@@ -20,7 +20,7 @@
 
 // Qt includes
 
-// SlicerQt includes
+// Slicer includes
 #include <qSlicerCLILoadableModuleFactory.h>
 
 // STD includes

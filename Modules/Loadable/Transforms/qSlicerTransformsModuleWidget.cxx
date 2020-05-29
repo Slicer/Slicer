@@ -29,7 +29,7 @@
 // C++ includes
 #include <cmath>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerTransformsModuleWidget.h"
 #include "ui_qSlicerTransformsModuleWidget.h"
 

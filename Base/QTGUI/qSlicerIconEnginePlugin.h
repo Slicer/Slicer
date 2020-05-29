@@ -24,7 +24,7 @@
 // Qt includes
 #include <ctkIconEnginePlugin.h>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerIconEnginePluginExport.h"
 
 /// Customized ctkIconEnginePlugin to look for icons in specific directories.

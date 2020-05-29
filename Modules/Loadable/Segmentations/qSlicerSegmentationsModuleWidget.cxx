@@ -33,7 +33,7 @@
 // Terminologies includes
 #include "vtkSlicerTerminologiesModuleLogic.h"
 
-// SlicerQt includes
+// Slicer includes
 #include <qSlicerApplication.h>
 #include <qSlicerAbstractModuleWidget.h>
 #include <qSlicerSubjectHierarchyAbstractPlugin.h>

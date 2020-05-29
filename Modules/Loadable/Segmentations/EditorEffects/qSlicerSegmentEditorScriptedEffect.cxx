@@ -28,7 +28,7 @@
 #include <QDir>
 #include <QFileInfo>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerScriptedUtils_p.h"
 #include "qSlicerUtils.h"
 

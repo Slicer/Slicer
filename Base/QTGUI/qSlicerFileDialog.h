@@ -30,7 +30,7 @@ class QDropEvent;
 // CTK includes
 #include <ctkPimpl.h>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerIO.h"
 #include "qSlicerBaseQTGUIExport.h"
 

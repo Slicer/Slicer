@@ -48,7 +48,7 @@
 #include <QStandardItem>
 #include <QAction>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
 
 //-----------------------------------------------------------------------------

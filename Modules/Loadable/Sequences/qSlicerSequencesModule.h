@@ -21,7 +21,7 @@
 // CTK includes
 #include <ctkVTKObject.h>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerLoadableModule.h"
 
 #include "vtkSlicerConfigure.h" // For Slicer_HAVE_QT5

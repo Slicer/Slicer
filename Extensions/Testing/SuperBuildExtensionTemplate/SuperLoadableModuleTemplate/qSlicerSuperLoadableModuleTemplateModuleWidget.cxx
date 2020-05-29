@@ -18,7 +18,7 @@
 // Qt includes
 #include <QDebug>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerSuperLoadableModuleTemplateModuleWidget.h"
 #include "ui_qSlicerSuperLoadableModuleTemplateModuleWidget.h"
 

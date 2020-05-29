@@ -22,7 +22,7 @@
 #include <QDebug>
 #include <QDir>
 
-/// SlicerQt includes
+/// Slicer includes
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCoreIOManager.h"
 #include "qSlicerSlicer2SceneReader.h"

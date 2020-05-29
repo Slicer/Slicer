@@ -43,7 +43,7 @@ class QAction;
 // CTK includes
 #include <ctkPimpl.h>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerCLIModuleWidget.h"
 #include "ui_qSlicerCLIModuleWidget.h"
 #include "qSlicerCLIModuleWidget.h"

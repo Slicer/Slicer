@@ -23,7 +23,7 @@
 #ifndef __qSlicerTerminologiesModule_h
 #define __qSlicerTerminologiesModule_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerLoadableModule.h"
 
 #include "qSlicerTerminologiesModuleExport.h"
@@ -45,18 +45,18 @@ public:
   ~qSlicerTerminologiesModule() override;
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
-  
+
   /// Help to use the module
   QString helpText()const override;
 
   /// Return acknowledgments
   QString acknowledgementText()const override;
-  
+
   /// Return the authors of the module
-  QStringList contributors()const override; 
+  QStringList contributors()const override;
 
   /// Return the categories for the module
-  QStringList categories()const override; 
+  QStringList categories()const override;
 
   /// List dependencies
   QStringList dependencies()const override;

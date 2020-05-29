@@ -33,7 +33,7 @@
 // Qt includes
 #include <QDebug>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerAbstractModuleWidget.h"
 

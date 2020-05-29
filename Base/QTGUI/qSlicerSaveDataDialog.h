@@ -21,7 +21,7 @@
 #ifndef __qSlicerSaveDataDialog_h
 #define __qSlicerSaveDataDialog_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerFileDialog.h"
 #include "qSlicerBaseQTGUIExport.h"
 

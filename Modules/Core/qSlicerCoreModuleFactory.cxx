@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 
-// SlicerQt/CoreModules includes
+// Slicer/CoreModules includes
 #include "qSlicerCoreModuleFactory.h"
 #include "qSlicerEventBrokerModule.h"
 #include "qSlicerUtils.h"

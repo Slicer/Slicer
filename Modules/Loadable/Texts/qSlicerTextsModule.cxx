@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerCoreIOManager.h"
 #include <qSlicerNodeWriter.h>

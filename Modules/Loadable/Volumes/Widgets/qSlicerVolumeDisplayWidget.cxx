@@ -1,6 +1,6 @@
 // Qt includes
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerDiffusionTensorVolumeDisplayWidget.h"
 #include "qSlicerDiffusionWeightedVolumeDisplayWidget.h"
 #include "qSlicerLabelMapVolumeDisplayWidget.h"

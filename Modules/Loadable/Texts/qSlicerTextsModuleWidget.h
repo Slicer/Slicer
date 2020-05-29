@@ -21,7 +21,7 @@
 #ifndef __qSlicerTextsModuleWidget_h
 #define __qSlicerTextsModuleWidget_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
 
 // Texts includes

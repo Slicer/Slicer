@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerWelcomeModule.h"
 #include "qSlicerWelcomeModuleWidget.h"
 

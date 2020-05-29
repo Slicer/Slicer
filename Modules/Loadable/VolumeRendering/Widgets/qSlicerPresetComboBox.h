@@ -24,7 +24,7 @@
 // MRMLWidgets includes
 #include <qMRMLNodeComboBox.h>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerVolumeRenderingModuleWidgetsExport.h"
 
 class vtkMRMLNode;

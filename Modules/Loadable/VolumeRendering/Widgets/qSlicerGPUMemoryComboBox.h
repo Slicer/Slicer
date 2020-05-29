@@ -24,7 +24,7 @@
 // Qt includes
 #include <QComboBox>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerVolumeRenderingModuleWidgetsExport.h"
 
 class qSlicerGPUMemoryComboBoxPrivate;

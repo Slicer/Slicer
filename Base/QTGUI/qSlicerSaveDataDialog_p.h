@@ -18,7 +18,7 @@
 #include <QFileInfo>
 #include <QStyledItemDelegate>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerIOOptions.h"
 #include "qSlicerSaveDataDialog.h"
 #include "ui_qSlicerSaveDataDialog.h"

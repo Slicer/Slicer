@@ -22,7 +22,7 @@
 #include <QDockWidget>
 #include <QTimer>
 
-// SlicerQt includes
+// Slicer includes
 #include <qSlicerApplication.h>
 #include <qSlicerCoreModuleFactory.h>
 #include <qSlicerModuleManager.h>

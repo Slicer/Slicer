@@ -25,7 +25,7 @@
 #include <QRegExp>
 #include <QStringList>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerUtils.h"
 
 // SlicerLogic includes

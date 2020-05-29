@@ -21,7 +21,7 @@
 #ifndef __qSlicerScalarOverlayReader_h
 #define __qSlicerScalarOverlayReader_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerFileReader.h"
 class qSlicerScalarOverlayReaderPrivate;
 

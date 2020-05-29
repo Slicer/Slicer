@@ -13,7 +13,7 @@
 #ifndef __qSlicerPythonManager_h
 #define __qSlicerPythonManager_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerCorePythonManager.h"
 #include "qSlicerBaseQTGUIExport.h"
 

@@ -23,7 +23,7 @@
 #ifndef __qSlicerTablesReader
 #define __qSlicerTablesReader
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerFileReader.h"
 
 class qSlicerTablesReaderPrivate;

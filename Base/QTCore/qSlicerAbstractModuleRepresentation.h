@@ -27,7 +27,7 @@
 // CTK includes
 #include <ctkPimpl.h>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerObject.h"
 
 #include "qSlicerBaseQTCoreExport.h"

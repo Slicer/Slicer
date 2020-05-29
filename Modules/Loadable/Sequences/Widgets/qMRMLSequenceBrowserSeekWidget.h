@@ -22,7 +22,7 @@
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
-// SlicerQt includes
+// Slicer includes
 #include "qMRMLWidget.h"
 
 #include "qSlicerSequencesModuleWidgetsExport.h"

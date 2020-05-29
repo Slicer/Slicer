@@ -28,7 +28,7 @@
 // C++ includes
 #include <cmath>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerTablesModuleWidget.h"
 #include "ui_qSlicerTablesModuleWidget.h"
 

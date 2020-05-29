@@ -11,7 +11,7 @@
 // CTK includes
 #include "ctkScreenshotDialog.h"
 
-/// SlicerQt includes
+/// Slicer includes
 #include "qSlicerIOManager.h"
 #include "qSlicerDataDialog.h"
 #include "qSlicerModelsDialog.h"

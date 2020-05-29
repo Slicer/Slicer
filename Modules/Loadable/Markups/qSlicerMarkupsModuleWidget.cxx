@@ -34,7 +34,7 @@
 // CTK includes
 #include "ctkMessageBox.h"
 
-// SlicerQt includes
+// Slicer includes
 #include "qMRMLSceneModel.h"
 #include "qMRMLSortFilterSubjectHierarchyProxyModel.h"
 #include "qMRMLSubjectHierarchyModel.h"

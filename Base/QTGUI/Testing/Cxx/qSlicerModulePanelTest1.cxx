@@ -21,7 +21,7 @@
 // Qt includes
 #include <QTimer>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerModulePanel.h"
 

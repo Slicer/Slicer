@@ -24,7 +24,7 @@
 // CTK includes
 #include <ctkPimpl.h>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerIOOptionsWidget.h"
 
 // Volumes includes

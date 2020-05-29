@@ -20,7 +20,7 @@
 // CTK includes
 #include <ctkPimpl.h>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerDataDialog.h"
 #include "ui_qSlicerDataDialog.h"
 

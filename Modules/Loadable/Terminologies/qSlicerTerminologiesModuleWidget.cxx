@@ -20,7 +20,7 @@
 
 ==============================================================================*/
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerTerminologiesModuleWidget.h"
 #include "ui_qSlicerTerminologiesModule.h"
 

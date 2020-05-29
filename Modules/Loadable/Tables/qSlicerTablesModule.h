@@ -23,7 +23,7 @@
 #ifndef __qSlicerTablesModule_h
 #define __qSlicerTablesModule_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerLoadableModule.h"
 
 #include "qSlicerTablesModuleExport.h"

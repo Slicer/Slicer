@@ -14,7 +14,7 @@
 #include <QDebug>
 #include <QVariant>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerPythonManager.h"
 

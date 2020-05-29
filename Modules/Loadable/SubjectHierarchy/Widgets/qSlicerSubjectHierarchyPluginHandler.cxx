@@ -35,7 +35,7 @@
 #include <QInputDialog>
 #include <QSettings>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerApplication.h"
 
 // VTK includes

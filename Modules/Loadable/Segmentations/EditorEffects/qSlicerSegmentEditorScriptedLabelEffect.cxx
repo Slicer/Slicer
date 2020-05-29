@@ -27,7 +27,7 @@
 #include <QDebug>
 #include <QFileInfo>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerScriptedUtils_p.h"
 
 // PythonQt includes

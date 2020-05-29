@@ -23,7 +23,7 @@
 #ifndef __qSlicerSubjectHierarchyPluginLogic_h
 #define __qSlicerSubjectHierarchyPluginLogic_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerObject.h"
 
 // CTK includes
@@ -39,7 +39,7 @@
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
 class QAction;
-class qSlicerSubjectHierarchyPluginLogicPrivate; 
+class qSlicerSubjectHierarchyPluginLogicPrivate;
 class qSlicerSubjectHierarchyAbstractPlugin;
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy
@@ -126,8 +126,8 @@ protected slots:
   void editProperties();
 
 protected:
-  QScopedPointer<qSlicerSubjectHierarchyPluginLogicPrivate> d_ptr; 
-  
+  QScopedPointer<qSlicerSubjectHierarchyPluginLogicPrivate> d_ptr;
+
 private:
   Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyPluginLogic);
   Q_DISABLE_COPY(qSlicerSubjectHierarchyPluginLogic);

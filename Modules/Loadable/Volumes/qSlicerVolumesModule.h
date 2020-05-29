@@ -21,7 +21,7 @@
 #ifndef __qSlicerVolumesModule_h
 #define __qSlicerVolumesModule_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerLoadableModule.h"
 
 #include "qSlicerVolumesModuleExport.h"
