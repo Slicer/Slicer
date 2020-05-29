@@ -53,7 +53,7 @@ class vtkMRMLPlotViewNode;
 class vtkCollection;
 class vtkRenderer;
 
-/// MRML layout manager that instantiates the QT widgets and layouts from the
+/// MRML layout manager that instantiates the Qt widgets and layouts from the
 /// layout node and the view nodes in the scene.
 /// The management (creation, configuration and deletion) of the view widgets
 /// are delegated to qMRMLLayoutViewFactory.

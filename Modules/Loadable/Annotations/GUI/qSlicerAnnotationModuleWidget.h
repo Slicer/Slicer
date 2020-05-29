@@ -4,7 +4,7 @@
 // CTK includes
 #include <ctkVTKObject.h>
 
-// SlicerQT includes
+// SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
 #include "../qSlicerAnnotationsModuleExport.h"
 

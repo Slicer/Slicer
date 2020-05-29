@@ -26,7 +26,7 @@ limitations under the License.
 #include <vtkStringArray.h>
 #include <vtksys/SystemTools.hxx>
 
-// QT includes
+// Qt includes
 #include <QDateTime>
 #include <QDebug>
 #include <QDir>

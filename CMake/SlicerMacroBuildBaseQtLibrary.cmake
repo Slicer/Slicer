@@ -32,10 +32,10 @@
 #   SRCS .................: List of source files
 #
 #   MOC_SRCS .............: Optional list of headers to run through the meta object compiler (moc)
-#                           using QT(4|5)_WRAP_CPP CMake macro
+#                           using Qt(4|5)_WRAP_CPP CMake macro
 #
 #   UI_SRCS ..............: Optional list of UI file to run through UI compiler (uic) using
-#                           QT(4|5)_WRAP_UI CMake macro
+#                           Qt(4|5)_WRAP_UI CMake macro
 #
 #   INCLUDE_DIRECTORIES ..: Optional list of extra folder that should be included. See implementation
 #                           for the list of folder included by default.
@@ -44,7 +44,7 @@
 #                           CMake macro. See implementation for the list of libraries added by default.
 #
 #   RESOURCES ............: Optional list of files that should be converted into resource header
-#                           using QT(4|5)_ADD_RESOURCES
+#                           using Qt(4|5)_ADD_RESOURCES
 #
 # Options:
 #

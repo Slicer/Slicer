@@ -45,7 +45,7 @@
 #include <itksys/SystemTools.hxx>
 #include <itksys/RegularExpression.hxx>
 
-// QT includes
+// Qt includes
 #include <QDebug>
 
 #if defined(__APPLE__) && (MAC_OS_X_VERSION_MAX_ALLOWED >= 1030)

@@ -224,15 +224,15 @@ mark_as_superbuild(Slicer_BUILD_I18N_SUPPORT)
 option(Slicer_BUILD_WEBENGINE_SUPPORT "Build Slicer with Qt WebEngine support" ON)
 mark_as_superbuild(Slicer_BUILD_WEBENGINE_SUPPORT)
 
-option(Slicer_BUILD_QTLOADABLEMODULES "Build Slicer QT Loadable Modules" ON)
+option(Slicer_BUILD_QTLOADABLEMODULES "Build Slicer Qt Loadable Modules" ON)
 mark_as_advanced(Slicer_BUILD_QTLOADABLEMODULES)
 mark_as_superbuild(Slicer_BUILD_QTLOADABLEMODULES)
 
-option(Slicer_USE_PYTHONQT "Integrate a python-QT interpreter into Slicer." ON)
+option(Slicer_USE_PYTHONQT "Integrate a Python-Qt interpreter into Slicer." ON)
 mark_as_superbuild(Slicer_USE_PYTHONQT)
 
 CMAKE_DEPENDENT_OPTION(
-  Slicer_BUILD_QTSCRIPTEDMODULES "Build Slicer Python QT Modules" ON
+  Slicer_BUILD_QTSCRIPTEDMODULES "Build Slicer Python Qt Modules" ON
   "Slicer_USE_PYTHONQT" OFF)
 mark_as_advanced(Slicer_BUILD_QTSCRIPTEDMODULES)
 mark_as_superbuild(Slicer_BUILD_QTSCRIPTEDMODULES)
@@ -796,7 +796,7 @@ endif()
 #-----------------------------------------------------------------------------
 find_package(VTK ${Slicer_VTK_VERSION_MAJOR} COMPONENTS ${Slicer_VTK_COMPONENTS} REQUIRED NO_MODULE)
 if(NOT TARGET vtkGUISupportQt)
-  message(FATAL_ERROR "error: VTK was not configured to use QT, you probably need "
+  message(FATAL_ERROR "error: VTK was not configured to use Qt, you probably need "
                     "to recompile it with VTK_USE_GUISUPPORT ON, VTK_Group_Qt ON, "
                     "Note that Qt >= ${Slicer_REQUIRED_QT_VERSION} is *required*")
 endif()

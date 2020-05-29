@@ -1,7 +1,7 @@
 #include "qSlicerAnnotationModulePropertyDialog.h"
 #include "ui_qSlicerAnnotationModulePropertyDialog.h"
 
-// QT includes
+// Qt includes
 #include <QButtonGroup>
 #include <QList>
 #include <QFontMetrics>

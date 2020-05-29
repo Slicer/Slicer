@@ -15,7 +15,7 @@
 
 ==============================================================================*/
 
-// QT includes
+// Qt includes
 #include <QAction>
 #include <QApplication>
 #include <QTimer>

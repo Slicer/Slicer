@@ -21,7 +21,7 @@
 #ifndef __qSlicerCLIExecutableModuleFactory_h
 #define __qSlicerCLIExecutableModuleFactory_h
 
-// SlicerQT includes
+// SlicerQt includes
 #include "qSlicerAbstractCoreModule.h"
 #include "qSlicerBaseQTCLIExport.h"
 class qSlicerCLIModule;

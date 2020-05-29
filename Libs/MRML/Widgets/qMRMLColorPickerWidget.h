@@ -21,7 +21,7 @@
 #ifndef __qMRMLColorPickerWidget_h
 #define __qMRMLColorPickerWidget_h
 
-//QT include
+// Qt include
 #include <QModelIndex>
 
 // qMRML includes

@@ -37,7 +37,7 @@
 
 // ITK includes
 
-// SlicerQT includes
+// SlicerQt includes
 #include "qSlicerCLIModuleUIHelper.h"
 #include "qSlicerCLIModuleWidget.h"
 

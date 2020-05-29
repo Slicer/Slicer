@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 
-// QT includes
+// Qt includes
 #include <QApplication>
 #include <QTimer>
 #include <QVBoxLayout>

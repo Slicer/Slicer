@@ -65,7 +65,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "[Qq]t.*ui_"
   "[Qq]t.*note: see reference"
   "[Qq]t.*warning C4714"
-  # Suppress warning caused when QT 'foreach' loops are combined
+  # Suppress warning caused when Qt 'foreach' loops are combined
   ".*warning: declaration of '_container_' shadows a previous local"
 
   # Make

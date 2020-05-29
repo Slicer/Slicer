@@ -20,7 +20,7 @@
 
 #include "vtkSlicerConfigure.h" // Slicer_VTK_RENDERING_USE_{OpenGL|OpenGL2}_BACKEND
 
-// QT includes
+// Qt includes
 #include <QApplication>
 #include <QTimer>
 

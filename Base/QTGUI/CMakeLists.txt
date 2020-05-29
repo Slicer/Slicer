@@ -304,7 +304,7 @@ if(Slicer_USE_PYTHONQT)
   )
 endif()
 
-# Additional Target libraries (QT libs already included)
+# Additional Target libraries (Qt libs already included)
 set(KIT_target_libraries
   qSlicerBaseQTCore
   qMRMLWidgets

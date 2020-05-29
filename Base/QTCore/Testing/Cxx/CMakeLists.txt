@@ -120,7 +120,7 @@ if(BUILD_TESTING)
   # Add Tests
   #
 
-  # Remark: qSlicerModuleFactoryManager class is tested within Applications/SlicerQT/Testing
+  # Remark: qSlicerModuleFactoryManager class is tested within Applications/SlicerQt/Testing
 
   simple_test( qSlicerCoreApplicationTest1)
   set_property(TEST qSlicerCoreApplicationTest1 PROPERTY LABELS ${LIBRARY_NAME})

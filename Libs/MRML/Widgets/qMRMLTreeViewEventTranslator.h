@@ -21,7 +21,7 @@
 #ifndef __qMRMLTreeViewEventTranslator_h
 #define __qMRMLTreeViewEventTranslator_h
 
-// QT includes
+// Qt includes
 #include "QModelIndexList"
 
 // QtTesting includes

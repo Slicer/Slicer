@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 
-// QT includes
+// Qt includes
 #include <QDebug>
 
 #include "qSlicerCLIModuleWidget.h"
