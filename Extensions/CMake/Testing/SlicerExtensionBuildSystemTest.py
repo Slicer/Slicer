@@ -429,7 +429,7 @@ set(EXTENSIONS_INDEX_GIT_TAG "origin/${{EXTENSIONS_TRACK_QUALIFIER}}") # origin/
 
 set(EXTENSIONS_INDEX_GIT_REPOSITORY git://github.com/jcfr/ExtensionsIndex.git)
 
-set(BUILD_OPTIONS_STRING "${{MY_BITNESS}}bits-QT${{MY_QT_VERSION}}-PythonQt-With-Tcl-CLI")
+set(BUILD_OPTIONS_STRING "${{MY_BITNESS}}bits-Qt${{MY_QT_VERSION}}-PythonQt-With-Tcl-CLI")
 
 set(dir_suffix ${{BUILD_OPTIONS_STRING}}-${{CTEST_BUILD_CONFIGURATION}}-${{SCRIPT_MODE}})
 
