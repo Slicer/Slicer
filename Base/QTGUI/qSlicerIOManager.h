@@ -16,7 +16,7 @@
 
 #include "qSlicerBaseQTGUIExport.h"
 
-/// QT declarations
+/// Qt declarations
 class QDragEnterEvent;
 class QDropEvent;
 class QWidget;

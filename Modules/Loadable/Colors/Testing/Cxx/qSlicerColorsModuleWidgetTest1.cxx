@@ -24,7 +24,7 @@
 // Slicer includes
 #include "vtkSlicerConfigure.h"
 
-// SlicerQT includes
+// SlicerQt includes
 #include "qSlicerApplication.h"
 #include "qSlicerColorsModule.h"
 #include "qSlicerColorsModuleWidget.h"

@@ -17,7 +17,7 @@
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
-// QT includes
+// Qt includes
 #include <QButtonGroup>
 #include <QFileDialog>
 #include <QMetaProperty>

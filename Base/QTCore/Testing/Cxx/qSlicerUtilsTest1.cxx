@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 
-// QT includes
+// Qt includes
 #include <QDir>
 #include <QStringList>
 #include <QTextStream>

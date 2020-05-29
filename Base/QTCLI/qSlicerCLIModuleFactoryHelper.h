@@ -21,7 +21,7 @@
 #ifndef __qSlicerCLIModuleFactoryHelper_h
 #define __qSlicerCLIModuleFactoryHelper_h
 
-/// QT includes
+/// Qt includes
 #include <QStringList>
 
 #include "qSlicerBaseQTCLIExport.h"

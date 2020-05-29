@@ -6,7 +6,7 @@
 
 // CTK includes
 #include "ctkCollapsibleButton.h"
-// QT includes
+// Qt includes
 #include <QButtonGroup>
 #include <QList>
 #include <QFontMetrics>

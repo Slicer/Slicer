@@ -24,7 +24,7 @@
 // QtCLI includes
 #include "qSlicerCLIModuleFactoryHelper.h"
 
-// SlicerQT includes
+// SlicerQt includes
 #include "qSlicerCoreApplication.h" // For: Slicer_CLIMODULES_LIB_DIR
 #include "qSlicerUtils.h"
 

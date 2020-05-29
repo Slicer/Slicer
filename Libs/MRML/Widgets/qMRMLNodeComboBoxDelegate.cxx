@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 
-//QT include
+// Qt include
 #include <QAbstractItemView>
 #include <QComboBox>
 #include <QPainter>

@@ -21,7 +21,7 @@
 #ifndef __qMRMLNodeComboBoxEventTranslator_h
 #define __qMRMLNodeComboBoxEventTranslator_h
 
-// QT includes
+// Qt includes
 #include "QModelIndexList"
 
 // QtTesting includes

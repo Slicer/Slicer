@@ -21,7 +21,7 @@
 #ifndef __qMRMLNodeComboBoxDelegate_h
 #define __qMRMLNodeComboBoxDelegate_h
 
-//QT includes
+// Qt includes
 #include <QItemDelegate>
 
 // MRMLWidgets includes
@@ -35,7 +35,7 @@
 /// highlight color to indicates that the item is not really selectable
 /// but correspond to an action.
 
-/// We reimplemente the code form QT "QComboBoxDelegate" used in the class QComboBox.
+/// We reimplemente the code form Qt "QComboBoxDelegate" used in the class QComboBox.
 
 class QComboBox;
 

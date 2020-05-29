@@ -23,7 +23,7 @@
 
 // qMRML includes
 
-// QT includes
+// Qt includes
 
 // --------------------------------------------------------------------------
 qMRMLSceneFactoryWidgetPlugin::qMRMLSceneFactoryWidgetPlugin(QObject *_parent)

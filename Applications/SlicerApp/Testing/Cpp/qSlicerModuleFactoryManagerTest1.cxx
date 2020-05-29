@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 
-// QT includes
+// Qt includes
 
 // SlicerApp includes
 #include <qSlicerModuleFactoryManager.h>

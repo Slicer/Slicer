@@ -1,5 +1,5 @@
 
-// QT includes
+// Qt includes
 #include <QApplication>
 #include <QDebug>
 #include <QString>

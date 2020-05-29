@@ -5,7 +5,7 @@
 #include "ctkMessageBox.h"
 #include "ctkFittedTextBrowser.h"
 
-// QT includes
+// Qt includes
 #include <QDebug>
 #include <QLabel>
 #include <QMainWindow>

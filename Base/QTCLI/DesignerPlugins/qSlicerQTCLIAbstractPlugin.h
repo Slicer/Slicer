@@ -21,7 +21,7 @@
 #ifndef __qSlicerQTCLIAbstractPlugin_h
 #define __qSlicerQTCLIAbstractPlugin_h
 
-// QT includes
+// Qt includes
 #include <QtGlobal>
 #include <QtUiPlugin/QDesignerCustomWidgetInterface>
 

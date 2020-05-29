@@ -21,7 +21,7 @@
 #ifndef __qMRMLViewControllerBar_h
 #define __qMRMLViewControllerBar_h
 
-// QT includes
+// Qt includes
 class QLabel;
 class QLayout;
 class QToolButton;

@@ -43,7 +43,7 @@ set(KIT_UI_SRCS
   Resources/UI/qSlicerMainWindow.ui
   )
 
-# Additional Target libraries (QT libs already included)
+# Additional Target libraries (Qt libs already included)
 set(KIT_target_libraries
   # ${QT_LIBRARIES} # Not needed: All dependencies are transitively satisfied by other targets
   qSlicerModulesCore

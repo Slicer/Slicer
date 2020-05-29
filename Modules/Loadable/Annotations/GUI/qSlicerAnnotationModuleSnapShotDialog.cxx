@@ -1,4 +1,4 @@
-// QT includes
+// Qt includes
 #include <QVariant>
 
 // QSlicer includes

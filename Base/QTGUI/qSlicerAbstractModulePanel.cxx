@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 
-// SlicerQT includes
+// SlicerQt includes
 #include "qSlicerAbstractModulePanel.h"
 #include "qSlicerModuleManager.h"
 

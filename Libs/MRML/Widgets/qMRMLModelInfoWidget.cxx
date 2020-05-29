@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 
-// QT includes
+// Qt includes
 
 // qMRML includes
 #include "qMRMLModelInfoWidget.h"

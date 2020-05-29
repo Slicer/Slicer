@@ -1,4 +1,4 @@
-// QT includes
+// Qt includes
 #include <QButtonGroup>
 #include <QDebug>
 #include <QFileDialog>
@@ -327,7 +327,7 @@ bool qSlicerAnnotationModuleReportDialog::saveReport()
     QStringList list = imgdir.split("/");
     QString imgshortdir = list[list.size() - 1];
 
-    // replace all QT icon and image paths with real filepathes
+    // replace all Qt icon and image paths with real filepathes
     QString tempPath = qSlicerCoreApplication::application()->temporaryPath();
 
     report.replace(QString(":/Icons/"), imgshortdir.append("/"));
