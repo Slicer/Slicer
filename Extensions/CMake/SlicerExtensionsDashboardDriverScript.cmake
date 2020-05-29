@@ -210,7 +210,7 @@ if(NOT DEFINED CTEST_BUILD_NAME)
     QT_VERSION
     BUILD_NAME_SUFFIX
     )
-  set(name "${OPERATING_SYSTEM}-${COMPILER}-${BITNESS}bits-QT${QT_VERSION}")
+  set(name "${OPERATING_SYSTEM}-${COMPILER}-${BITNESS}bits-Qt${QT_VERSION}")
   if(NOT "${BUILD_NAME_SUFFIX}" STREQUAL "")
     set(name "${name}-${BUILD_NAME_SUFFIX}")
   endif()
