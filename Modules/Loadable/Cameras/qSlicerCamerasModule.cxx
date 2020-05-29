@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerCamerasModule.h"
 #include "qSlicerCamerasModuleWidget.h"
 #include "vtkSlicerCamerasModuleLogic.h"

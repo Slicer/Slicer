@@ -21,7 +21,7 @@
 #ifndef __qSlicerVolumesReader_h
 #define __qSlicerVolumesReader_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerFileReader.h"
 class qSlicerVolumesReaderPrivate;
 class vtkSlicerVolumesLogic;

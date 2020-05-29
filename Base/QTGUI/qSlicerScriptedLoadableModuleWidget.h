@@ -21,7 +21,7 @@
 #ifndef __qSlicerScriptedLoadableModuleWidget_h
 #define __qSlicerScriptedLoadableModuleWidget_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
 
 #include "qSlicerBaseQTGUIExport.h"

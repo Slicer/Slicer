@@ -22,7 +22,7 @@
 #include <QDebug>
 #include <QSettings>
 
-// SlicerQt includes
+// Slicer includes
 
 // Slices QTModule includes
 #include "qSlicerViewControllersModule.h"

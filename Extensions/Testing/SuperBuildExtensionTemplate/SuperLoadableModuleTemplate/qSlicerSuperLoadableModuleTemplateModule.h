@@ -18,7 +18,7 @@
 #ifndef __qSlicerSuperLoadableModuleTemplateModule_h
 #define __qSlicerSuperLoadableModuleTemplateModule_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerLoadableModule.h"
 
 #include "qSlicerSuperLoadableModuleTemplateModuleExport.h"

@@ -5,7 +5,7 @@
 // CTK includes
 #include <ctkFlowLayout.h>
 
-// SlicerQt includes
+// Slicer includes
 #include <qSlicerAbstractCoreModule.h>
 #include <qSlicerApplication.h>
 #include <qSlicerLayoutManager.h>

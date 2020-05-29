@@ -18,7 +18,7 @@
 #ifndef __qSlicerDoubleArraysModule_h
 #define __qSlicerDoubleArraysModule_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerLoadableModule.h"
 
 #include "qSlicerDoubleArraysModuleExport.h"

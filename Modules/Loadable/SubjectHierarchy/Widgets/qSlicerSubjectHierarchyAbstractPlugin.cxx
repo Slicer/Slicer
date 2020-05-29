@@ -30,7 +30,7 @@
 #include <QAction>
 #include <QColor>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerModuleManager.h"

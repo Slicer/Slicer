@@ -58,7 +58,7 @@
 #include <QSslSocket>
 #endif
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerCoreApplication_p.h"
 #include "qSlicerCoreCommandOptions.h"
 #include "qSlicerCoreIOManager.h"

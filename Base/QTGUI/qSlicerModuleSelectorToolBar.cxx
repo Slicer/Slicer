@@ -34,7 +34,7 @@
 #include "ctkComboBox.h"
 #include "ctkMenuComboBox.h"
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerModuleSelectorToolBar.h"
 #include "qSlicerModulesMenu.h"
 

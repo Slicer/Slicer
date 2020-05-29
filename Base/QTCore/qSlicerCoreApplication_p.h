@@ -41,7 +41,7 @@
 // CTK includes
 #include <ctkErrorLogAbstractModel.h>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerBaseQTCoreExport.h"
 #include "qSlicerCoreApplication.h"
 

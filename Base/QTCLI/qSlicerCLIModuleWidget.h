@@ -25,7 +25,7 @@
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
 
 #include "qSlicerBaseQTCLIExport.h"

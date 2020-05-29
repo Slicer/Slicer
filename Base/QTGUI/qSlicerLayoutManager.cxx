@@ -28,7 +28,7 @@
 #include <qMRMLSliceWidget.h>
 #include <qMRMLSliceControllerWidget.h>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerLayoutManager.h"
 #include "qSlicerApplication.h"
 

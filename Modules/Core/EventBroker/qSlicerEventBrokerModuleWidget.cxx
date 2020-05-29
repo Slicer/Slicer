@@ -20,7 +20,7 @@
 
 // Qt includes
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerEventBrokerModuleWidget.h"
 #include "ui_qSlicerEventBrokerModuleWidget.h"
 

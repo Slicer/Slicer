@@ -26,7 +26,7 @@
 #include <QDebug>
 #include <QFileInfo>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerVolumesIOOptionsWidget.h"
 #include "qSlicerVolumesReader.h"
 

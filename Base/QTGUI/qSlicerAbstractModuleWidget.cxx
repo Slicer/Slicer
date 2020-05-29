@@ -19,7 +19,7 @@
 ==============================================================================*/
 // Qt includes
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerAbstractModule.h"
 #include "qSlicerAbstractModuleWidget.h"
 

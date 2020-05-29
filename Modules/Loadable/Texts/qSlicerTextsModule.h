@@ -21,7 +21,7 @@
 #ifndef __qSlicerTextsModule_h
 #define __qSlicerTextsModule_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerLoadableModule.h"
 
 // Texts includes

@@ -21,7 +21,7 @@
 // Qt includes
 #include <QToolButton>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerLayoutManager.h"
 #include "qMRMLSliceWidget.h"

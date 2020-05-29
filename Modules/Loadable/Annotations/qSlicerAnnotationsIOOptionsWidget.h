@@ -21,7 +21,7 @@
 #ifndef __qSlicerAnnotationsIOOptionsWidget_h
 #define __qSlicerAnnotationsIOOptionsWidget_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerIOOptionsWidget.h"
 
 // Annotations includes

@@ -29,7 +29,7 @@
 #include "vtkSlicerTerminologiesModuleLogic.h"
 #include "vtkSlicerTerminologyEntry.h"
 
-// SlicerQt includes
+// Slicer includes
 #include <qSlicerCoreApplication.h>
 #include <qSlicerModuleManager.h>
 #include <qSlicerAbstractCoreModule.h>
@@ -72,8 +72,8 @@ void qSlicerTerminologyItemDelegate::setEditorData(QWidget *editor, const QModel
       {
       qCritical() << Q_FUNC_INFO << ": Terminologies module is not found";
       return;
-      } 
-    
+      }
+
     terminologyButton->setProperty("changeDataOnSet", false);
 
     // Get string list value from model index
@@ -111,7 +111,7 @@ void qSlicerTerminologyItemDelegate::setModelData(QWidget *editor, QAbstractItem
     {
     qCritical() << Q_FUNC_INFO << ": Terminologies module is not found";
     return;
-    } 
+    }
 
   // Get terminology (changed by the user) from the terminology button
   qSlicerTerminologySelectorButton* terminologyButton = qobject_cast<qSlicerTerminologySelectorButton*>(editor);

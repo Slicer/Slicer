@@ -35,7 +35,7 @@
 #include "vtkArchive.h"
 #include "vtkMRMLApplicationLogic.h"
 
-/// SlicerQt includes
+/// Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerDataDialog_p.h"
 #include "qSlicerIOManager.h"

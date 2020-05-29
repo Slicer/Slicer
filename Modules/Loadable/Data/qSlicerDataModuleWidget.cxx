@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerDataModuleWidget.h"
 #include "ui_qSlicerDataModuleWidget.h"
 #include "qSlicerApplication.h"

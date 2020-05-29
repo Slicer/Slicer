@@ -22,7 +22,7 @@
 #include <QFileDialog>
 #include <QStyle>
 
-/// SlicerQt includes
+/// Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerIOManager.h"
 #include "qSlicerModelsDialog_p.h"

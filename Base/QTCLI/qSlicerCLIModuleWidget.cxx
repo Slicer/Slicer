@@ -24,7 +24,7 @@
 #include <QFormLayout>
 #include <QMenu>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerCLIModule.h"
 #include "qSlicerCLIModuleWidget_p.h"
 #include "vtkSlicerCLIModuleLogic.h"
@@ -387,7 +387,7 @@ void qSlicerCLIModuleWidget::enter()
     this->setCurrentCommandLineModuleNode(node);
     Q_ASSERT(d->CommandLineModuleNode);
     }
-} 
+}
 
 //-----------------------------------------------------------------------------
 vtkMRMLCommandLineModuleNode * qSlicerCLIModuleWidget::currentCommandLineModuleNode()const

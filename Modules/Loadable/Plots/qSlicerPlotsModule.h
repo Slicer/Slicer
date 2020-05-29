@@ -23,7 +23,7 @@
 #ifndef __qSlicerPlotsModule_h
 #define __qSlicerPlotsModule_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerLoadableModule.h"
 
 #include "qSlicerPlotsModuleExport.h"

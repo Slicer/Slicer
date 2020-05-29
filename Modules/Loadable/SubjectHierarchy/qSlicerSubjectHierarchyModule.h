@@ -26,7 +26,7 @@
 // CTK includes
 #include "ctkVTKObject.h"
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerLoadableModule.h"
 
 #include "qSlicerSubjectHierarchyModuleExport.h"
@@ -84,7 +84,7 @@ protected slots:
   void onLogicModified();
 
 protected:
-  QScopedPointer<qSlicerSubjectHierarchyModulePrivate> d_ptr; 
+  QScopedPointer<qSlicerSubjectHierarchyModulePrivate> d_ptr;
 
 private:
   Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyModule);

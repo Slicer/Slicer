@@ -25,7 +25,7 @@
 #include <QDialog>
 #include <QScopedPointer>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerBaseQTGUIExport.h"
 class qSlicerActionsDialogPrivate;
 

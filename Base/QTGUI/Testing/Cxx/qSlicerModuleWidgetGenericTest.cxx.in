@@ -33,7 +33,7 @@
 // CTK includes
 #include <ctkErrorLogModel.h>
 
-// SlicerQt includes
+// Slicer includes
 #include <qSlicerAbstractModuleRepresentation.h>
 #include <qSlicerAbstractModuleWidget.h>
 #include <qSlicerApplication.h>

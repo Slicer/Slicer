@@ -23,7 +23,7 @@
 #include <QMenu>
 #include <QString>
 
-// SlicerQt includes
+// Slicer includes
 #include "qMRMLSliceControllerWidget_p.h" // For updateSliceOrientationSelector
 #include "vtkMRMLSliceNode.h"
 #include "vtkSlicerReformatLogic.h"

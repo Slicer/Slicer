@@ -23,7 +23,7 @@
 #ifndef __qSlicerTerminologiesModuleWidget_h
 #define __qSlicerTerminologiesModuleWidget_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
 
 #include "qSlicerTerminologiesModuleExport.h"
@@ -45,7 +45,7 @@ public:
 
 protected:
   QScopedPointer<qSlicerTerminologiesModuleWidgetPrivate> d_ptr;
-  
+
   void setup() override;
 
 private:

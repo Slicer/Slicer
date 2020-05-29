@@ -31,7 +31,7 @@
 #include <string>
 #include <cctype>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerTextsReader.h"
 
 // VTK includes

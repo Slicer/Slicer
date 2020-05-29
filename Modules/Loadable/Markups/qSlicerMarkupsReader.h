@@ -18,7 +18,7 @@
 #ifndef __qSlicerMarkupsReader
 #define __qSlicerMarkupsReader
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerFileReader.h"
 
 class qSlicerMarkupsReaderPrivate;

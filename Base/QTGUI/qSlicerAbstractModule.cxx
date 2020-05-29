@@ -21,7 +21,7 @@
 // Qt includes
 #include <QAction>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerAbstractModule.h"
 
 class qSlicerAbstractModulePrivate

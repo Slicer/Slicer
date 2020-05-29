@@ -21,7 +21,7 @@
 // Qt includes
 #include <QDir>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerCoreApplication.h"
 #include "qSlicerAbstractModuleFactoryManager.h"
 #include "qSlicerAbstractCoreModule.h"

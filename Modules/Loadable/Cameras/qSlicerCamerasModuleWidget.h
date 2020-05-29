@@ -21,7 +21,7 @@
 #ifndef __qSlicerCamerasModuleWidget_h
 #define __qSlicerCamerasModuleWidget_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerCamerasModuleExport.h"
 

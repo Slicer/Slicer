@@ -29,7 +29,7 @@
 #include <qMRMLPlotWidget.h>
 #include <qMRMLPlotViewControllerWidget.h>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerViewControllersModuleWidget.h"
 #include "ui_qSlicerViewControllersModuleWidget.h"
 #include "qSlicerApplication.h"

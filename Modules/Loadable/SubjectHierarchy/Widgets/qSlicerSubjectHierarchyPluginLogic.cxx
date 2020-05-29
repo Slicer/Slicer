@@ -42,7 +42,7 @@
 #include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLInteractionEventData.h"
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerApplication.h"
 
 // Qt includes

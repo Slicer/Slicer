@@ -21,7 +21,7 @@
 #ifndef __qSlicerColorsReader_h
 #define __qSlicerColorsReader_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerFileReader.h"
 class qSlicerColorsReaderPrivate;
 

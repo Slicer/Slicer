@@ -42,7 +42,7 @@
 // VTKSYS includes
 #include <vtksys/SystemTools.hxx>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCoreIOManager.h"
 

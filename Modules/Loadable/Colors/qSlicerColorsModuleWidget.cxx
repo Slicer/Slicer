@@ -25,7 +25,7 @@
 // CTK includes
 #include <ctkVTKScalarsToColorsView.h>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerLayoutManager.h"
 #include "qSlicerColorsModuleWidget.h"

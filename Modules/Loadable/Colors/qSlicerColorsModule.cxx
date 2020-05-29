@@ -24,7 +24,7 @@
 // CTK includes
 #include <ctkColorDialog.h>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerCoreIOManager.h"
 #include "qSlicerNodeWriter.h"

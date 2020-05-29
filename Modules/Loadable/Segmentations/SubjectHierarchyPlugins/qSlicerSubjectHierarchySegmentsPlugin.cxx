@@ -45,7 +45,7 @@
 #include <QAction>
 #include <QMenu>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerLayoutManager.h"
 #include "qMRMLSliceWidget.h"

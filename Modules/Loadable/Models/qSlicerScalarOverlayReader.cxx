@@ -21,7 +21,7 @@
 // Qt includes
 #include <QDebug>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerScalarOverlayIOOptionsWidget.h"
 #include "qSlicerScalarOverlayReader.h"
 

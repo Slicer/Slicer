@@ -21,7 +21,7 @@
 #ifndef __qSlicerScriptedFileWriter_h
 #define __qSlicerScriptedFileWriter_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerFileWriter.h"
 #include "qSlicerBaseQTCoreExport.h"
 

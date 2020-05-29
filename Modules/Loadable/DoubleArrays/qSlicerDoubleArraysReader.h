@@ -21,7 +21,7 @@
 #ifndef __qSlicerDoubleArraysReader
 #define __qSlicerDoubleArraysReader
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerFileReader.h"
 class qSlicerDoubleArraysReaderPrivate;
 class vtkSlicerDoubleArraysLogic;

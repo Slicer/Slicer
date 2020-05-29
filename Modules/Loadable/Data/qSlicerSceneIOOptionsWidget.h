@@ -21,7 +21,7 @@
 #ifndef __qSlicerSceneIOOptionsWidget_h
 #define __qSlicerSceneIOOptionsWidget_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerIOOptionsWidget.h"
 
 // Cameras includes

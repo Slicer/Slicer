@@ -28,7 +28,7 @@
 #include <QDebug>
 #include <QWidget>
 
-// SlicerQt includes
+// Slicer includes
 #include "qMRMLSettingsUnitWidget.h"
 #include "qMRMLUnitWidget.h"
 #include "ui_qMRMLSettingsUnitWidget.h"

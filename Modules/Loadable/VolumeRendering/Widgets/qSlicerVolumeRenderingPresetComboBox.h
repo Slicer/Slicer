@@ -21,7 +21,7 @@
 #ifndef __qSlicerVolumeRenderingPresetComboBox_h
 #define __qSlicerVolumeRenderingPresetComboBox_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerWidget.h"
 #include "qSlicerVolumeRenderingModuleWidgetsExport.h"
 

@@ -25,7 +25,7 @@
 #include <ctkFileDialog.h>
 #include <ctkUtils.h>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerFileReader.h"
 #include "qSlicerIOManager.h"

@@ -1,7 +1,7 @@
 #ifndef __qSlicerCropVolumeModuleWidget_h
 #define __qSlicerCropVolumeModuleWidget_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
 
 #include "qSlicerCropVolumeModuleExport.h"

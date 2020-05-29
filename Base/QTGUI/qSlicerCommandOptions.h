@@ -21,7 +21,7 @@
 #ifndef __qSlicerCommandOptions_h
 #define __qSlicerCommandOptions_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerCoreCommandOptions.h"
 
 #include "qSlicerBaseQTGUIExport.h"

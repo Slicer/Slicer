@@ -22,7 +22,7 @@
 #ifndef __qSlicerMultiVolumeRenderingPropertiesWidget_h
 #define __qSlicerMultiVolumeRenderingPropertiesWidget_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerVolumeRenderingPropertiesWidget.h"
 class qSlicerMultiVolumeRenderingPropertiesWidgetPrivate;
 class vtkMRMLMultiVolumeRenderingDisplayNode;

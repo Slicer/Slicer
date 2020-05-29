@@ -25,7 +25,7 @@
 #include <QWebEngineView>
 #endif
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerWidget.h"
 #include "qMRMLWidget.h"
 

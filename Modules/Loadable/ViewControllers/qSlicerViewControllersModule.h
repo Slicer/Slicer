@@ -21,7 +21,7 @@
 #ifndef __qSlicerViewControllersModule_h
 #define __qSlicerViewControllersModule_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerLoadableModule.h"
 
 #include "qSlicerViewControllersModuleExport.h"

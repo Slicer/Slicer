@@ -27,7 +27,7 @@
 #include "qMRMLSubjectHierarchyModel.h"
 #include "qMRMLSortFilterSubjectHierarchyProxyModel.h"
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerModelsModuleWidget.h"
 #include "ui_qSlicerModelsModuleWidget.h"
 

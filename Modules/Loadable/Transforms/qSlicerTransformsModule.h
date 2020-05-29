@@ -21,7 +21,7 @@
 #ifndef __qSlicerTransformsModule_h
 #define __qSlicerTransformsModule_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerLoadableModule.h"
 
 // Transforms includes

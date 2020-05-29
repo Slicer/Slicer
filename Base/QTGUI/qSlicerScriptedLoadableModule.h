@@ -24,7 +24,7 @@
 // Qt includes
 #include <QVariantMap>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerLoadableModule.h"
 
 #include "qSlicerBaseQTGUIExport.h"

@@ -21,7 +21,7 @@
 #ifndef __qSlicerColorsModuleWidget_h
 #define __qSlicerColorsModuleWidget_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
 
 // Colors includes

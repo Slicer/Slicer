@@ -21,7 +21,7 @@
 #ifndef __qSlicerCPURayCastVolumeRenderingPropertiesWidget_h
 #define __qSlicerCPURayCastVolumeRenderingPropertiesWidget_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerVolumeRenderingPropertiesWidget.h"
 class qSlicerCPURayCastVolumeRenderingPropertiesWidgetPrivate;
 class vtkMRMLCPURayCastVolumeRenderingDisplayNode;

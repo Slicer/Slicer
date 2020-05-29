@@ -18,7 +18,7 @@
 // Qt includes
 #include <QFileInfo>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerMarkupsReader.h"
 
 // Logic includes

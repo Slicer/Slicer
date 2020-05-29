@@ -46,7 +46,7 @@
 #include <QAction>
 #include <QMessageBox>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
 
 // MRML widgets includes

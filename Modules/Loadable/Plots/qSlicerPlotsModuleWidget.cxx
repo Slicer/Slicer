@@ -26,7 +26,7 @@
 // C++ includes
 #include <cmath>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerLayoutManager.h"

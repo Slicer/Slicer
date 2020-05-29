@@ -26,7 +26,7 @@
 //  - Slicer_USE_PYTHONQT
 #include "vtkSlicerConfigure.h"
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerLoadableModuleFactory.h"
 #include "qSlicerCoreApplication.h"
 #include "qSlicerUtils.h"

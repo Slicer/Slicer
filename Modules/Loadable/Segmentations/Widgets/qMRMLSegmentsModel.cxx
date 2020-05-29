@@ -29,7 +29,7 @@
 // qMRML includes
 #include "qMRMLSegmentsModel_p.h"
 
-// SlicerQt includes
+// Slicer includes
 #include <qSlicerApplication.h>
 #include <qSlicerCoreApplication.h>
 #include <qSlicerModuleManager.h>

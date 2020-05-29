@@ -4,7 +4,7 @@
 // Slicer includes
 #include "vtkSlicerConfigure.h"
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerMouseModeToolBar.h"
 

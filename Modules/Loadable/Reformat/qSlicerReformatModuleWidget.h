@@ -21,7 +21,7 @@
 #ifndef __qSlicerReformatModuleWidget_h
 #define __qSlicerReformatModuleWidget_h
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
 
 #include "qSlicerReformatModuleExport.h"

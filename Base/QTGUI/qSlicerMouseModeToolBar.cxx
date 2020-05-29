@@ -30,7 +30,7 @@
 #include <vtkMRMLViewNode.h>
 #include <vtkMRMLWindowLevelWidget.h>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerApplication.h"
 #include "qSlicerLayoutManager.h"
 #include "qMRMLThreeDView.h"

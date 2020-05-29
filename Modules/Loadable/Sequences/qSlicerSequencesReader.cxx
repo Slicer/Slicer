@@ -21,7 +21,7 @@
 // Qt includes
 #include <QFileInfo>
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerSequencesReader.h"
 #include "qSlicerSequencesModule.h"
 

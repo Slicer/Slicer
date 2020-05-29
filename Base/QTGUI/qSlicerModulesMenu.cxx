@@ -26,7 +26,7 @@
 #include "qSlicerAbstractModule.h"
 #include "qSlicerModuleManager.h"
 
-// SlicerQt includes
+// Slicer includes
 #include "qSlicerModulesMenu.h"
 
 class qSlicerModulesMenuPrivate
