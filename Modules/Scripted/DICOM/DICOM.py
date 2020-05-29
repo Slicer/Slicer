@@ -376,12 +376,13 @@ class DICOMFileDialog(object):
   def isMimeDataAccepted(self):
     """Checks the dropped data and returns true if it is one or
     more directories"""
-    self.directoriesToAdd = DICOMFileDialog.foldersFromMimeData(self.qSlicerFileDialog.mimeData())
+    self.directoriesToAdd, _ = DICOMFileDialog.pathsFromMimeData(self.qSlicerFileDialog.mimeData())
     self.qSlicerFileDialog.acceptMimeData(len(self.directoriesToAdd) != 0)
 
   @staticmethod
-  def foldersFromMimeData(mimeData, acceptFiles=False):
+  def pathsFromMimeData(mimeData):
     directoriesToAdd = []
+    filesToAdd = []
     if mimeData.hasFormat('text/uri-list'):
       urls = mimeData.urls()
       for url in urls:
@@ -390,9 +391,9 @@ class DICOMFileDialog(object):
         pathInfo.setFile(localPath) # information about the path
         if pathInfo.isDir(): # if it is a directory we add the files to the dialog
           directoriesToAdd.append(localPath)
-        elif acceptFiles:
-          directoriesToAdd.append(pathInfo.absolutePath())
-    return directoriesToAdd
+        else:
+          filesToAdd.append(localPath)
+    return directoriesToAdd, filesToAdd
 
   @staticmethod
   def isAscii(s):
@@ -505,8 +506,8 @@ class DICOMLoadingByDragAndDropEventFilter(qt.QWidget):
     Read up on https://doc.qt.io/qt-5.12/dnd.html#dropping
     Input: Event (QEvent)
     """
-    self.directoriesToAdd = DICOMFileDialog.foldersFromMimeData(event.mimeData(), acceptFiles=True)
-    if self.directoriesToAdd:
+    self.directoriesToAdd, self.filesToAdd = DICOMFileDialog.pathsFromMimeData(event.mimeData())
+    if self.directoriesToAdd or self.filesToAdd:
       event.acceptProposedAction()  # allows drop event to proceed
     else:
       event.ignore()
@@ -515,14 +516,14 @@ class DICOMLoadingByDragAndDropEventFilter(qt.QWidget):
     if not DICOMFileDialog.createDefaultDatabase():
       return
 
-    if not DICOMFileDialog.validDirectories(self.directoriesToAdd):
+    if not DICOMFileDialog.validDirectories(self.directoriesToAdd) or not DICOMFileDialog.validDirectories(self.filesToAdd):
       if not slicer.util.confirmYesNoDisplay("Import from folders with special (non-ASCII) characters in the name is not supported."
           " It is recommended to move files into a different folder and retry. Try to import from current location anyway?"):
         self.directoriesToAdd = []
         return
 
     slicer.modules.DICOMInstance.browserWidget.dicomBrowser.importDirectories(self.directoriesToAdd)
-    self.directoriesToAdd = []
+    slicer.modules.DICOMInstance.browserWidget.dicomBrowser.importFiles(self.filesToAdd)
 
 
 #
