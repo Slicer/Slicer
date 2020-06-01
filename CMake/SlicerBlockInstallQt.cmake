@@ -12,6 +12,7 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
     find_package(Qt5 REQUIRED
       COMPONENTS
         Qml
+        QmlModels
         Quick
         QuickWidgets
       OPTIONAL_COMPONENTS
@@ -19,6 +20,7 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
       )
     list(APPEND QT_LIBRARIES
       "Qt5::Qml"
+      "Qt5::QmlModels"
       "Qt5::Quick"
       "Qt5::QuickWidgets"
       "Qt5::WebEngineCore"
