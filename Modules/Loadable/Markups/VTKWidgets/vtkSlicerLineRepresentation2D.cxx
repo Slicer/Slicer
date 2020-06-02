@@ -99,7 +99,39 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned
     this->MarkupsDisplayNode->GetLineDiameter() : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() );
   this->TubeFilter->SetRadius(diameter * 0.5);
 
-  this->LineActor->SetVisibility(markupsNode->GetNumberOfControlPoints() == 2);
+  this->LineActor->SetVisibility(markupsNode->GetNumberOfDefinedControlPoints(true) == 2);
+
+  if (markupsNode->GetNumberOfDefinedControlPoints(true) == 2)
+    {
+    double p1[3] = { 0.0 };
+    double p2[3] = { 0.0 };
+    this->GetNthControlPointDisplayPosition(0, p1);
+    this->GetNthControlPointDisplayPosition(1, p2);
+    double textPos[2] = { (p1[0] + p2[0]) / 2.0, (p1[1] + p2[1]) / 2.0 };
+    /*
+    l1 = vtkMath::Normalize(vector1);
+    l2 = vtkMath::Normalize(vector2);
+    length = l1 < l2 ? l1 : l2;
+    const double angleTextPlacementRatio = 0.7;
+    const double lText = length * angleTextPlacementRatio;
+    double vector3[3] = { vector1[0] + vector2[0],
+                          vector1[1] + vector2[1],
+                          vector1[2] + vector2[2] };
+    vtkMath::Normalize(vector3);
+    double textPos[3] = { lText * vector3[0] + c[0],
+                          lText * vector3[1] + c[1],
+                          lText * vector3[2] + c[2] };
+                          */
+    this->TextActor->SetDisplayPosition(static_cast<int>(textPos[0]), static_cast<int>(textPos[1]));
+    this->TextActor->SetVisibility(
+      this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
+      && this->AnyPointVisibilityOnSlice
+      && markupsNode->GetNumberOfDefinedControlPoints(true) == 2);
+    }
+  else
+    {
+    this->TextActor->SetVisibility(false);
+    }
 
   int controlPointType = Active;
   if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentLine)
@@ -107,6 +139,7 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned
     controlPointType = this->GetAllControlPointsSelected() ? Selected : Unselected;
     }
   this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
+  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
 
   if (this->MarkupsDisplayNode->GetLineColorNode() && this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction())
     {
@@ -130,7 +163,7 @@ void vtkSlicerLineRepresentation2D::CanInteract(
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
+  if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1
     || !interactionEventData )
     {
     return;

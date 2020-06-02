@@ -37,7 +37,6 @@ class vtkActor;
 class vtkArcSource;
 class vtkPolyDataMapper;
 class vtkPolyData;
-class vtkTextActor;
 class vtkTubeFilter;
 
 class vtkMRMLInteractionEventData;
@@ -85,12 +84,8 @@ protected:
   vtkSmartPointer<vtkPolyDataMapper>    ArcMapper;
   vtkSmartPointer<vtkActor>             ArcActor;
 
-  vtkSmartPointer<vtkTextActor>         TextActor;
-
   vtkSmartPointer<vtkTubeFilter>              TubeFilter;
   vtkSmartPointer<vtkTubeFilter>              ArcTubeFilter;
-
-  std::string LabelFormat;
 
   void BuildArc();
 

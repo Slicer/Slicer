@@ -47,6 +47,8 @@
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsNode.h"
 
+#include "vtkSmartPointer.h"
+
 class vtkActor2D;
 class vtkAppendPolyData;
 class vtkArcSource;

@@ -259,7 +259,7 @@ public:
   /// Return the number of control points that are stored in this node
   int GetNumberOfControlPoints();
   /// Return the number of control points that are already placed (not being previewed or undefined).
-  int GetNumberOfDefinedControlPoints();
+  int GetNumberOfDefinedControlPoints(bool includePreview=false);
   /// \deprecated Use GetNumberOfControlPoints() instead.
   int GetNumberOfMarkups() { return this->GetNumberOfControlPoints(); };
   /// \deprecated Use GetNumberOfControlPoints() instead.
@@ -576,6 +576,8 @@ public:
   /// 4x4 matrix detailing the orientation and position in world coordinates of the interaction handles.
   virtual vtkMatrix4x4* GetInteractionHandleToWorldMatrix();
 
+  virtual std::string GetPropertiesLabelText();
+
 protected:
   vtkMRMLMarkupsNode();
   ~vtkMRMLMarkupsNode() override;
@@ -668,6 +670,8 @@ protected:
   vtkVector3d CenterPos;
 
   std::vector< vtkSmartPointer<vtkMRMLMeasurement> > Measurements;
+
+  std::string PropertiesLabelText;
 
   // Transform that moves the xyz unit vectors and origin of the interaction handles to local coordinates
   vtkSmartPointer<vtkMatrix4x4> InteractionHandleToWorldMatrix;

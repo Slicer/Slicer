@@ -123,6 +123,10 @@ protected:
 
   vtkSmartPointer<vtkCellPicker> AccuratePicker;
 
+  double TextActorPositionWorld[3];
+  bool TextActorOccluded;
+  bool HideTextActorIfAllPointsOccluded;
+
 private:
   vtkSlicerMarkupsWidgetRepresentation3D(const vtkSlicerMarkupsWidgetRepresentation3D&) = delete;
   void operator=(const vtkSlicerMarkupsWidgetRepresentation3D&) = delete;

@@ -25,6 +25,7 @@
 #include "vtkPointData.h"
 #include "vtkProperty.h"
 #include "vtkRenderer.h"
+#include "vtkSelectVisiblePoints.h"
 #include "vtkSlicerAngleRepresentation3D.h"
 #include "vtkTextActor.h"
 #include "vtkTextProperty.h"
@@ -67,11 +68,7 @@ vtkSlicerAngleRepresentation3D::vtkSlicerAngleRepresentation3D()
   this->ArcActor->SetMapper(this->ArcMapper);
   this->ArcActor->SetProperty(this->GetControlPointsPipeline(Unselected)->Property);
 
-  this->TextActor = vtkSmartPointer<vtkTextActor>::New();
-  this->TextActor->SetInput("0");
-  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(Unselected)->TextProperty);
-
-  this->LabelFormat = "%-#6.3g";
+  this->HideTextActorIfAllPointsOccluded = true;
 }
 
 //----------------------------------------------------------------------
@@ -81,7 +78,7 @@ vtkSlicerAngleRepresentation3D::~vtkSlicerAngleRepresentation3D() = default;
 bool vtkSlicerAngleRepresentation3D::GetTransformationReferencePoint(double referencePointWorld[3])
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!markupsNode || markupsNode->GetNumberOfControlPoints() < 2)
+  if (!markupsNode || markupsNode->GetNumberOfDefinedControlPoints(true) < 2)
     {
     return false;
     }
@@ -93,14 +90,9 @@ bool vtkSlicerAngleRepresentation3D::GetTransformationReferencePoint(double refe
 void vtkSlicerAngleRepresentation3D::BuildArc()
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!markupsNode)
+  if (!markupsNode || markupsNode->GetNumberOfDefinedControlPoints(true) != 3)
     {
-    return;
-    }
-
-  // Build Arc
-  if (markupsNode->GetNumberOfControlPoints() != 3)
-    {
+    this->TextActor->SetVisibility(false);
     return;
     }
 
@@ -127,7 +119,6 @@ void vtkSlicerAngleRepresentation3D::BuildArc()
   double vector2[3] = { p2[0] - c[0], p2[1] - c[1], p2[2] - c[2] };
   double l1 = vtkMath::Normalize(vector1);
   double l2 = vtkMath::Normalize(vector2);
-  double angle = acos(vtkMath::Dot(vector1, vector2));
 
   // Place the label and place the arc
   const double length = l1 < l2 ? l1 : l2;
@@ -147,24 +138,15 @@ void vtkSlicerAngleRepresentation3D::BuildArc()
   this->Arc->SetCenter(c);
   this->Arc->Update();
 
-  char buf[80] = {0};
-  snprintf(buf, sizeof(buf)-1, this->LabelFormat.c_str(), vtkMath::DegreesFromRadians(angle));
-  this->TextActor->SetInput(buf);
-
   double vector3[3] = { vector1[0] + vector2[0],
                         vector1[1] + vector2[1],
                         vector1[2] + vector2[2] };
   vtkMath::Normalize(vector3);
-  double textPos[3] = { lText * vector3[0] + c[0],
-                        lText * vector3[1] + c[1],
-                        lText * vector3[2] + c[2]};
 
-  this->Renderer->SetWorldPoint(textPos);
-  this->Renderer->WorldToDisplay();
-  this->Renderer->GetDisplayPoint(textPos);
-
-  this->TextActor->SetDisplayPosition(static_cast<int>(textPos[0]),
-                                      static_cast<int>(textPos[1]));
+  this->TextActor->SetVisibility(this->MarkupsDisplayNode->GetPropertiesLabelVisibility());
+  this->TextActorPositionWorld[0] = lText * vector3[0] + c[0];
+  this->TextActorPositionWorld[1] = lText * vector3[1] + c[1];
+  this->TextActorPositionWorld[2] = lText * vector3[2] + c[2];
 }
 
 //----------------------------------------------------------------------
@@ -190,8 +172,6 @@ void vtkSlicerAngleRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
 
   // Update lines display properties
 
-  this->TextActor->SetVisibility(this->MarkupsDisplayNode->GetPropertiesLabelVisibility());
-
   this->UpdateRelativeCoincidentTopologyOffsets(this->LineMapper);
   this->UpdateRelativeCoincidentTopologyOffsets(this->ArcMapper);
 
@@ -203,8 +183,7 @@ void vtkSlicerAngleRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   bool lineVisibility = this->GetAllControlPointsVisible();
 
   this->LineActor->SetVisibility(lineVisibility);
-  this->ArcActor->SetVisibility(lineVisibility && markupsNode->GetNumberOfControlPoints() == 3);
-  this->TextActor->SetVisibility(lineVisibility && markupsNode->GetNumberOfControlPoints() == 3);
+  this->ArcActor->SetVisibility(lineVisibility && markupsNode->GetNumberOfDefinedControlPoints(true) == 3);
 
   int controlPointType = Active;
   if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentLine)
@@ -222,7 +201,6 @@ void vtkSlicerAngleRepresentation3D::GetActors(vtkPropCollection *pc)
   this->Superclass::GetActors(pc);
   this->LineActor->GetActors(pc);
   this->ArcActor->GetActors(pc);
-  this->TextActor->GetActors(pc);
 }
 
 //----------------------------------------------------------------------
@@ -232,7 +210,6 @@ void vtkSlicerAngleRepresentation3D::ReleaseGraphicsResources(
   this->Superclass::ReleaseGraphicsResources(win);
   this->LineActor->ReleaseGraphicsResources(win);
   this->ArcActor->ReleaseGraphicsResources(win);
-  this->TextActor->ReleaseGraphicsResources(win);
 }
 
 //----------------------------------------------------------------------
@@ -247,10 +224,6 @@ int vtkSlicerAngleRepresentation3D::RenderOverlay(vtkViewport *viewport)
   if (this->ArcActor->GetVisibility())
     {
     count +=  this->ArcActor->RenderOverlay(viewport);
-    }
-  if (this->TextActor->GetVisibility())
-    {
-    count +=  this->TextActor->RenderOverlay(viewport);
     }
   return count;
 }
@@ -272,10 +245,6 @@ int vtkSlicerAngleRepresentation3D::RenderOpaqueGeometry(
     {
     this->ArcTubeFilter->SetRadius(diameter * 0.5);
     count += this->ArcActor->RenderOpaqueGeometry(viewport);
-    }
-  if (this->TextActor->GetVisibility())
-    {
-    count += this->TextActor->RenderOpaqueGeometry(viewport);
     }
   return count;
 }
@@ -300,10 +269,6 @@ int vtkSlicerAngleRepresentation3D::RenderTranslucentPolygonalGeometry(
     this->ArcActor->SetPropertyKeys(this->GetPropertyKeys());
     count += this->ArcActor->RenderTranslucentPolygonalGeometry(viewport);
     }
-  if (this->TextActor->GetVisibility())
-    {
-    count += this->TextActor->RenderTranslucentPolygonalGeometry(viewport);
-    }
   return count;
 }
 
@@ -319,10 +284,6 @@ vtkTypeBool vtkSlicerAngleRepresentation3D::HasTranslucentPolygonalGeometry()
     return true;
     }
   if (this->ArcActor->GetVisibility() && this->ArcActor->HasTranslucentPolygonalGeometry())
-    {
-    return true;
-    }
-  if (this->TextActor->GetVisibility() && this->TextActor->HasTranslucentPolygonalGeometry())
     {
     return true;
     }
@@ -346,7 +307,7 @@ void vtkSlicerAngleRepresentation3D::CanInteract(
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
+  if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1
     || !interactionEventData )
     {
     return;
@@ -384,25 +345,13 @@ void vtkSlicerAngleRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << indent << "Arc Visibility: (none)\n";
     }
-
-  if (this->TextActor)
-    {
-    os << indent << "Text Visibility: " << this->TextActor->GetVisibility() << "\n";
-    }
-  else
-    {
-    os << indent << "Text Visibility: (none)\n";
-    }
-
-  os << indent << "Label Format: ";
-  os << this->LabelFormat << "\n";
 }
 
 //-----------------------------------------------------------------------------
 void vtkSlicerAngleRepresentation3D::UpdateInteractionPipeline()
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!markupsNode || markupsNode->GetNumberOfControlPoints() < 3)
+  if (!markupsNode || markupsNode->GetNumberOfDefinedControlPoints(true) < 3)
     {
     this->InteractionPipeline->Actor->SetVisibility(false);
     return;

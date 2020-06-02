@@ -96,8 +96,6 @@ vtkSlicerAngleRepresentation2D::vtkSlicerAngleRepresentation2D()
   this->ArcActor = vtkSmartPointer<vtkActor2D>::New();
   this->ArcActor->SetMapper(this->ArcMapper);
   this->ArcActor->SetProperty(this->GetControlPointsPipeline(Unselected)->Property);
-
-  this->LabelFormat = "%s: %-#6.3g";
 }
 
 //----------------------------------------------------------------------
@@ -107,7 +105,7 @@ vtkSlicerAngleRepresentation2D::~vtkSlicerAngleRepresentation2D() = default;
 bool vtkSlicerAngleRepresentation2D::GetTransformationReferencePoint(double referencePointWorld[3])
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!markupsNode || markupsNode->GetNumberOfControlPoints() < 2)
+  if (!markupsNode || markupsNode->GetNumberOfDefinedControlPoints(true) < 2)
     {
     return false;
     }
@@ -119,8 +117,9 @@ bool vtkSlicerAngleRepresentation2D::GetTransformationReferencePoint(double refe
 void vtkSlicerAngleRepresentation2D::BuildArc()
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!markupsNode || markupsNode->GetNumberOfControlPoints() != 3)
+  if (!markupsNode || markupsNode->GetNumberOfDefinedControlPoints(true) != 3)
     {
+    this->TextActor->SetVisibility(false);
     return;
     }
 
@@ -189,6 +188,10 @@ void vtkSlicerAngleRepresentation2D::BuildArc()
 
   this->TextActor->SetDisplayPosition(static_cast<int>(textPos[0]),
                                       static_cast<int>(textPos[1]));
+  this->TextActor->SetVisibility(
+    this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
+    && this->AnyPointVisibilityOnSlice
+    && markupsNode->GetNumberOfDefinedControlPoints(true) == 3);
 }
 
 //----------------------------------------------------------------------
@@ -217,17 +220,18 @@ void vtkSlicerAngleRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   this->TubeFilter->SetRadius(diameter * 0.5);
   this->ArcTubeFilter->SetRadius(diameter * 0.5);
 
-  this->LineActor->SetVisibility(markupsNode->GetNumberOfControlPoints() >= 2);
-  this->ArcActor->SetVisibility(markupsNode->GetNumberOfControlPoints() == 3);
+  int numberOfDefinedControlPoints = markupsNode->GetNumberOfDefinedControlPoints(true);
+  this->LineActor->SetVisibility(numberOfDefinedControlPoints >= 2);
+  this->ArcActor->SetVisibility(numberOfDefinedControlPoints == 3);
 
   int controlPointType = Unselected;
   if (this->MarkupsDisplayNode->GetActiveComponentType() == vtkMRMLMarkupsDisplayNode::ComponentLine)
     {
     controlPointType = Active;
     }
-  else if ((markupsNode->GetNumberOfControlPoints() > 0 && !markupsNode->GetNthControlPointSelected(0)) ||
-           (markupsNode->GetNumberOfControlPoints() > 1 && !markupsNode->GetNthControlPointSelected(1)) ||
-           (markupsNode->GetNumberOfControlPoints() > 2 && !markupsNode->GetNthControlPointSelected(2)))
+  else if ((numberOfDefinedControlPoints > 0 && !markupsNode->GetNthControlPointSelected(0)) ||
+           (numberOfDefinedControlPoints > 1 && !markupsNode->GetNthControlPointSelected(1)) ||
+           (numberOfDefinedControlPoints > 2 && !markupsNode->GetNthControlPointSelected(2)))
     {
     controlPointType = Unselected;
     }
@@ -263,7 +267,7 @@ void vtkSlicerAngleRepresentation2D::CanInteract(
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
+  if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1
     || !this->GetVisibility() || !interactionEventData )
     {
     return;
@@ -280,7 +284,7 @@ void vtkSlicerAngleRepresentation2D::CanInteract(
 
   double maxPickingDistanceFromControlPoint2 = this->GetMaximumControlPointPickingDistance2();
 
-  vtkIdType numberOfPoints = markupsNode->GetNumberOfControlPoints();
+  vtkIdType numberOfPoints = markupsNode->GetNumberOfDefinedControlPoints(true);
 
   double pointDisplayPos1[4] = { 0.0, 0.0, 0.0, 1.0 };
   double pointWorldPos1[4] = { 0.0, 0.0, 0.0, 1.0 };
@@ -433,9 +437,6 @@ void vtkSlicerAngleRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << indent << "Arc Visibility: (none)\n";
     }
-
-  os << indent << "Label Format: ";
-  os << this->LabelFormat << "\n";
 }
 
 //-----------------------------------------------------------------------------
@@ -461,7 +462,7 @@ void vtkSlicerAngleRepresentation2D::SetMarkupsNode(vtkMRMLMarkupsNode *markupsN
 void vtkSlicerAngleRepresentation2D::UpdateInteractionPipeline()
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!markupsNode || markupsNode->GetNumberOfControlPoints() < 3)
+  if (!markupsNode || markupsNode->GetNumberOfDefinedControlPoints(true) < 3)
     {
     this->InteractionPipeline->Actor->SetVisibility(false);
     return;

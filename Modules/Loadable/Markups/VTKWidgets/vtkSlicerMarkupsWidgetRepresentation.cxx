@@ -132,11 +132,12 @@ vtkSlicerMarkupsWidgetRepresentation::vtkSlicerMarkupsWidgetRepresentation()
   this->ScreenSizePixel = 1000;
 
   this->ControlPointSize = 3.0;
-  this->NeedToRender             = false;
-  this->ClosedLoop               = 0;
+  this->NeedToRender = false;
+  this->ClosedLoop = 0;
 
   this->TextActor = vtkSmartPointer<vtkTextActor>::New();
-  this->TextActor->SetInput("");
+  // hide by default, if a concrete class implements properties display, it will enable it
+  this->TextActor->SetVisibility(false);
 
   this->PointPlacer = vtkSmartPointer<vtkFocalPlanePointPlacer>::New();
 
@@ -540,7 +541,15 @@ void vtkSlicerMarkupsWidgetRepresentation::UpdateFromMRML(
     this->SetMarkupsNode(markupsNode);
     }
 
-  this->TextActor->SetVisibility(this->MarkupsDisplayNode->GetPropertiesLabelVisibility());
+  if (this->MarkupsNode)
+    {
+    this->TextActor->SetInput(this->MarkupsNode->GetPropertiesLabelText().c_str());
+    }
+  else
+    {
+    this->TextActor->SetInput("");
+    }
+
 
   this->NeedToRenderOn(); // TODO: to improve performance, call this only if it is actually needed
 

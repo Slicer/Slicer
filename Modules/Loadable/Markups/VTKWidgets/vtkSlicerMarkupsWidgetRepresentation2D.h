@@ -159,7 +159,8 @@ protected:
   ControlPointsPipeline2D* GetControlPointsPipeline(int controlPointType);
 
   vtkSmartPointer<vtkIntArray> PointsVisibilityOnSlice;
-  bool                         CenterVisibilityOnSlice;
+  bool                         CenterVisibilityOnSlice = { false };
+  bool                         AnyPointVisibilityOnSlice = { false };  // at least one point is visible
 
   vtkSmartPointer<vtkTransform> WorldToSliceTransform;
   vtkSmartPointer<vtkPlane> SlicePlane;

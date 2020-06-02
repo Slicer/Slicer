@@ -134,6 +134,13 @@ vtkSlicerMarkupsWidgetRepresentation3D::vtkSlicerMarkupsWidgetRepresentation3D()
   reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[Active])->Actor->DragableOff();
 
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(Unselected)->TextProperty);
+  this->TextActorPositionWorld[0] = 0.0;
+  this->TextActorPositionWorld[1] = 0.0;
+  this->TextActorPositionWorld[2] = 0.0;
+  this->TextActorOccluded = false;
+  // this requires computation of point occlusion, which is expensive if there are thousands of control points,
+  // so disable by default
+  this->HideTextActorIfAllPointsOccluded = false;
 
   this->ControlPointSize = 10; // will be set from the markup's GlyphScale
 
@@ -639,6 +646,8 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller,
       }
     }
 
+  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(Unselected)->TextProperty);
+
   /* TODO: implement this for better performance
   if (event == )
     {
@@ -670,6 +679,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::GetActors(vtkPropCollection *pc)
     controlPoints->Actor->GetActors(pc);
     controlPoints->LabelsActor->GetActors(pc);
     }
+  this->TextActor->GetActors(pc);
 }
 
 //----------------------------------------------------------------------
@@ -683,6 +693,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::ReleaseGraphicsResources(
     controlPoints->Actor->ReleaseGraphicsResources(win);
     controlPoints->LabelsActor->ReleaseGraphicsResources(win);
     }
+  this->TextActor->ReleaseGraphicsResources(win);
 }
 
 //----------------------------------------------------------------------
@@ -700,6 +711,10 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOverlay(vtkViewport *viewport)
       {
       count += controlPoints->LabelsActor->RenderOverlay(viewport);
       }
+    }
+  if (this->TextActor->GetVisibility() && !this->TextActorOccluded)
+    {
+    count +=  this->TextActor->RenderOverlay(viewport);
     }
   return count;
 }
@@ -758,12 +773,46 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
       {
       count += controlPoints->LabelsActor->RenderOpaqueGeometry(viewport);
       }
-    else if (controlPoints->Actor->GetVisibility())
+    else if (controlPoints->Actor->GetVisibility() || this->HideTextActorIfAllPointsOccluded)
       {
       // if only control points are visible then just compute if control points are occluded
       controlPoints->SelectVisiblePoints->Update();
       }
     }
+
+  this->TextActorOccluded = false;
+  if (this->TextActor->GetVisibility() && this->MarkupsNode)
+    {
+    // Only show text actor if at least one of the control points are visible
+    if (this->HideTextActorIfAllPointsOccluded)
+      {
+      this->TextActorOccluded = true;
+      int numberOfControlPoints = this->MarkupsNode->GetNumberOfControlPoints();
+      for (int i = 0; i < numberOfControlPoints; i++)
+        {
+        if (this->GetNthControlPointViewVisibility(0))
+          {
+          this->TextActorOccluded = false;
+          break;
+          }
+        }
+      }
+
+    // Update displayed properties text position from 3D position
+    this->Renderer->SetWorldPoint(this->TextActorPositionWorld);
+    this->Renderer->WorldToDisplay();
+    double textActorPositionDisplay[3] = { 0.0 };
+    this->Renderer->GetDisplayPoint(textActorPositionDisplay);
+    this->TextActor->SetDisplayPosition(
+      static_cast<int>(textActorPositionDisplay[0]),
+      static_cast<int>(textActorPositionDisplay[1]));
+
+    if (!this->TextActorOccluded)
+      {
+      count += this->TextActor->RenderOpaqueGeometry(viewport);
+      }
+    }
+
   return count;
 }
 
@@ -787,6 +836,10 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderTranslucentPolygonalGeometry(
       count += controlPoints->LabelsActor->RenderTranslucentPolygonalGeometry(viewport);
       }
     }
+  if (this->TextActor->GetVisibility() && !this->TextActorOccluded)
+    {
+    count += this->TextActor->RenderTranslucentPolygonalGeometry(viewport);
+    }
   return count;
 }
 
@@ -808,6 +861,10 @@ vtkTypeBool vtkSlicerMarkupsWidgetRepresentation3D::HasTranslucentPolygonalGeome
       {
       return true;
       }
+    }
+  if (this->TextActor->GetVisibility() && !this->TextActorOccluded && this->TextActor->HasTranslucentPolygonalGeometry())
+    {
+    return true;
     }
   return false;
 }
@@ -862,6 +919,14 @@ void vtkSlicerMarkupsWidgetRepresentation3D::PrintSelf(ostream& os,
       {
       os << indent << "Property: (none)\n";
       }
+    }
+  if (this->TextActor)
+    {
+    os << indent << "Text Visibility: " << this->TextActor->GetVisibility() << "\n";
+    }
+  else
+    {
+    os << indent << "Text Visibility: (none)\n";
     }
 }
 

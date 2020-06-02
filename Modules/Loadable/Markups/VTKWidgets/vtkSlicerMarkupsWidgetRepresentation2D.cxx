@@ -462,11 +462,17 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller,
   this->UpdateControlPointSize();
 
   // Points widgets have only one Markup/Representation
+  this->AnyPointVisibilityOnSlice = false;
   for (int pointIndex = 0; pointIndex < markupsNode->GetNumberOfControlPoints(); pointIndex++)
     {
     bool visibility =  this->IsControlPointDisplayableOnSlice(markupsNode, pointIndex);
+    if (visibility)
+      {
+      this->AnyPointVisibilityOnSlice = true;
+      }
     this->SetNthControlPointSliceVisibility(pointIndex, visibility);
     }
+
   if (markupsNode->GetCurveClosed())
     {
     bool visibility = this->IsCenterDisplayableOnSlice(markupsNode);
@@ -741,7 +747,7 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderOverlay(vtkViewport *viewport)
   if (this->TextActor->GetVisibility())
     {
     count += this->TextActor->RenderOverlay(viewport);
-}
+    }
   return count;
 }
 

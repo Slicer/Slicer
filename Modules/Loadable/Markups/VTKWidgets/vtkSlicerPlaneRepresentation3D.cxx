@@ -14,7 +14,7 @@
 
   This file was originally developed by Kyle Sunderland, PerkLab, Queen's University
   and was supported through CANARIE's Research Software Program, Cancer
-  Care Ontario, OpenAnatomy, and Brigham and Women’s Hospital through NIH grant R01MH112748.
+  Care Ontario, OpenAnatomy, and Brigham and Womenï¿½s Hospital through NIH grant R01MH112748.
 
 ==============================================================================*/
 
@@ -175,7 +175,8 @@ void vtkSlicerPlaneRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   // Update plane display properties
   this->PlaneActor->SetVisibility(markupsNode->GetNumberOfControlPoints() >= 3);
 
-  this->TextActor->SetVisibility(this->MarkupsDisplayNode->GetPropertiesLabelVisibility());
+  this->TextActor->SetVisibility(this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
+    && markupsNode->GetNumberOfControlPoints() > 0);
 
   this->UpdateRelativeCoincidentTopologyOffsets(this->PlaneMapper);
 

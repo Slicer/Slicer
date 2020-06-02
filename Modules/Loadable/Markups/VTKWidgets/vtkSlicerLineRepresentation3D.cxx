@@ -24,6 +24,8 @@
 #include "vtkProperty.h"
 #include "vtkRenderer.h"
 #include "vtkSlicerLineRepresentation3D.h"
+#include "vtkTextActor.h"
+#include "vtkTextProperty.h"
 #include "vtkTransform.h"
 #include "vtkTubeFilter.h"
 
@@ -48,6 +50,8 @@ vtkSlicerLineRepresentation3D::vtkSlicerLineRepresentation3D()
   this->LineActor = vtkSmartPointer<vtkActor>::New();
   this->LineActor->SetMapper(this->LineMapper);
   this->LineActor->SetProperty(this->GetControlPointsPipeline(Unselected)->Property);
+
+  this->HideTextActorIfAllPointsOccluded = true;
 }
 
 //----------------------------------------------------------------------
@@ -171,6 +175,23 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned
     controlPointType = this->GetAllControlPointsSelected() ? Selected : Unselected;
     }
   this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
+  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
+
+  if (markupsNode->GetNumberOfDefinedControlPoints(true) == 2 && this->GetAllControlPointsVisible())
+    {
+    this->TextActor->SetVisibility(true);
+    double p1[3] = { 0.0 };
+    double p2[3] = { 0.0 };
+    markupsNode->GetNthControlPointPositionWorld(0, p1);
+    markupsNode->GetNthControlPointPositionWorld(1, p2);
+    this->TextActorPositionWorld[0] = (p1[0] + p2[0]) / 2.0;
+    this->TextActorPositionWorld[1] = (p1[1] + p2[1]) / 2.0;
+    this->TextActorPositionWorld[2] = (p1[2] + p2[2]) / 2.0;
+    }
+  else
+    {
+    this->TextActor->SetVisibility(false);
+    }
 }
 
 //----------------------------------------------------------------------
@@ -180,7 +201,7 @@ void vtkSlicerLineRepresentation3D::CanInteract(
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
+  if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1
     || !interactionEventData )
     {
     return;
@@ -214,7 +235,7 @@ void vtkSlicerLineRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)
 //-----------------------------------------------------------------------------
 void vtkSlicerLineRepresentation3D::UpdateInteractionPipeline()
 {
-  if (this->MarkupsNode->GetNumberOfControlPoints() < 2)
+  if (this->MarkupsNode->GetNumberOfDefinedControlPoints(true) < 2)
     {
     this->InteractionPipeline->Actor->SetVisibility(false);
     return;

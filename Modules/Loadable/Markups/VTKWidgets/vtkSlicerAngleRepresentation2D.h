@@ -99,8 +99,6 @@ protected:
   vtkSmartPointer<vtkSampleImplicitFunctionFilter> LineSliceDistance;
   vtkSmartPointer<vtkSampleImplicitFunctionFilter> ArcSliceDistance;
 
-  std::string LabelFormat;
-
 private:
   vtkSlicerAngleRepresentation2D(const vtkSlicerAngleRepresentation2D&) = delete;
   void operator=(const vtkSlicerAngleRepresentation2D&) = delete;

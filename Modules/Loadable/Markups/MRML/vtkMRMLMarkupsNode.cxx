@@ -1742,13 +1742,17 @@ void vtkMRMLMarkupsNode::UnsetNthControlPointPosition(int n)
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLMarkupsNode::GetNumberOfDefinedControlPoints()
+int vtkMRMLMarkupsNode::GetNumberOfDefinedControlPoints(bool includePreview/*=false*/)
 {
   int numberOfDefinedControlPoints = 0;
   for (ControlPointsListType::iterator controlPointIt = this->ControlPoints.begin();
     controlPointIt != this->ControlPoints.end(); ++controlPointIt)
     {
     if ((*controlPointIt)->PositionStatus == PositionDefined)
+      {
+      numberOfDefinedControlPoints++;
+      }
+    else if (includePreview && (*controlPointIt)->PositionStatus == PositionPreview)
       {
       numberOfDefinedControlPoints++;
       }
@@ -2027,16 +2031,42 @@ vtkMRMLUnitNode* vtkMRMLMarkupsNode::GetUnitNode(const char* quantity)
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::WriteMeasurementsToDescription()
 {
+  this->PropertiesLabelText.clear();
+  if (this->GetName())
+    {
+    this->PropertiesLabelText += this->GetName();
+    if (!this->Measurements.empty())
+      {
+      this->PropertiesLabelText += ":";
+      }
+    }
+
   std::string description;
   for (std::vector< vtkSmartPointer<vtkMRMLMeasurement> >::iterator measurementIt = this->Measurements.begin();
     measurementIt != this->Measurements.end(); ++measurementIt)
-  {
+    {
+    std::string measurementText = (*measurementIt)->GetName() + std::string(": ") + (*measurementIt)->GetValueWithUnitsAsPrintableString();
+
+    // description
     if (!description.empty())
       {
+      // not the first measurement, add a separator
       description += "; ";
       }
-    description += (*measurementIt)->GetName() + std::string(": ") + (*measurementIt)->GetValueWithUnitsAsPrintableString();
-  }
+    description += measurementText;
+
+    // properties label
+    if (this->Measurements.size() == 1)
+      {
+      // if there is only one measurement then show it in the same line
+      // and don't include the measurement to make display more compact
+      this->PropertiesLabelText += " " + (*measurementIt)->GetValueWithUnitsAsPrintableString();
+      }
+    else
+      {
+      this->PropertiesLabelText += "\n" + measurementText;
+      }
+    }
   this->SetDescription(description.c_str());
 }
 
@@ -2156,4 +2186,10 @@ int vtkMRMLMarkupsNode::GetPositionStatusFromString(const char* name)
   // name not found
   vtkGenericWarningMacro("Unknown position status: " << name);
   return -1;
+}
+
+//---------------------------------------------------------------------------
+std::string vtkMRMLMarkupsNode::GetPropertiesLabelText()
+{
+  return this->PropertiesLabelText;
 }
