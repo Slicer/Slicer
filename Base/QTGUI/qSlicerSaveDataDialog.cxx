@@ -370,7 +370,7 @@ void qSlicerSaveDataDialogPrivate::populateScene()
                    this, SLOT(onSceneFormatChanged()));
 
   // Scene FileName
-  QTableWidgetItem* fileNameItem = this->createFileNameItem(sceneFileInfo, ".mrml", /* nodeID = */ QString());
+  QTableWidgetItem* fileNameItem = this->createFileNameItem(sceneFileInfo, currentExtension, /* nodeID = */ QString());
   this->FileWidget->setItem( row, FileNameColumn, fileNameItem);
 
   // Scene Directory

@@ -146,6 +146,13 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
 
   QFileInfo fileInfo(properties["fileName"].toString());
   QString baseDir = fileInfo.absolutePath();
+  QString fullPath = fileInfo.absoluteFilePath();
+
+  // Save URL and root directory so next time when the scene is saved,
+  // again, the same folder and filename is used by default.
+  this->mrmlScene()->SetURL(fullPath.toUtf8());
+  this->mrmlScene()->SetRootDirectory(baseDir.toUtf8());
+
   if (!QFileInfo(baseDir).isWritable())
     {
     qWarning() << "Failed to save" << fileInfo.absoluteFilePath() << ":"
@@ -164,7 +171,6 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
     qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), thumbnail);
     }
 
-  QString fullPath = fileInfo.absoluteFilePath();
   bool success = this->mrmlScene()->WriteToMRB(fullPath.toUtf8(), thumbnail);
   if (!success)
     {
