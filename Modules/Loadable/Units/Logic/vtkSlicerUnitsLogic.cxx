@@ -163,7 +163,7 @@ void vtkSlicerUnitsLogic::ObserveMRMLScene()
 void vtkSlicerUnitsLogic::AddDefaultsUnits()
 {
   vtkMRMLUnitNode* node =
-    this->AddUnitNode("ApplicationLength", "length", "", "mm", 3);
+    this->AddUnitNode("ApplicationLength", "length", "", "mm", 4);
   node->SetSaveWithScene(false);
   this->SetDefaultUnit(node->GetQuantity(), node->GetID());
 
