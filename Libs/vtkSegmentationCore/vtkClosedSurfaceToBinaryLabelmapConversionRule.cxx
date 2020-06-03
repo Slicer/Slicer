@@ -123,6 +123,8 @@ vtkDataObject* vtkClosedSurfaceToBinaryLabelmapConversionRule::ConstructRepresen
 //----------------------------------------------------------------------------
 bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment)
 {
+  vtkSmartPointer<vtkOrientedImageData> outputGeometryLabelmap = vtkOrientedImageData::SafeDownCast(
+    segment->GetRepresentation(this->GetTargetRepresentationName()));
   this->CreateTargetRepresentation(segment);
 
   // Check validity of source and target representation objects
@@ -158,6 +160,11 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment
       vtkErrorMacro("Convert: Failed to calculate output image geometry!");
       return false;
       }
+    }
+  else if (outputGeometryLabelmap)
+    {
+    std::string geometryString = vtkSegmentationConverter::SerializeImageGeometry(outputGeometryLabelmap);
+    vtkSegmentationConverter::DeserializeImageGeometry(geometryString, binaryLabelmap, false);
     }
 
   // Allocate output image data
