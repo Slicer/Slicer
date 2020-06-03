@@ -74,7 +74,9 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   markupsNode->SetNthControlPointLabel(modifiedPointIndex, label);
   std::string desc = std::string("description with spaces");
   markupsNode->SetNthControlPointDescription(modifiedPointIndex, desc);
-  double inputPoint[3] = {-9.9, 1.1, 0.87};
+  // NAN should not be present, but we test this case anyway
+  // to make sure that having a NAN does not break reading or writing.
+  double inputPoint[3] = {-9.9, 1.1, NAN};
   markupsNode->SetNthControlPointPositionFromArray(modifiedPointIndex, inputPoint);
 
   // and add a markup with 1 point, default values

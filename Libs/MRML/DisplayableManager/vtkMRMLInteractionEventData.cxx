@@ -35,6 +35,15 @@ vtkMRMLInteractionEventData::vtkMRMLInteractionEventData()
   this->WorldPosition[0] = 0.0;
   this->WorldPosition[1] = 0.0;
   this->WorldPosition[2] = 0.0;
+  this->WorldOrientation[0] = 0.0;
+  this->WorldOrientation[1] = 0.0;
+  this->WorldOrientation[2] = 0.0;
+  this->WorldOrientation[3] = 1.0;
+  this->WorldDirection[0] = 0.0;
+  this->WorldDirection[1] = 0.0;
+  this->WorldDirection[2] = 1.0;
+  this->TrackPadPosition[0] = 0.0;
+  this->TrackPadPosition[1] = 0.0;
   this->DisplayPositionValid = false;
   this->WorldPositionValid = false;
   this->WorldPositionAccurate = false;

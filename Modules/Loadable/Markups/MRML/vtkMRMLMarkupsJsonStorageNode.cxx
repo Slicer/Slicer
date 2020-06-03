@@ -28,6 +28,15 @@
 
 #include "itkNumberToString.h"
 
+// Relax JSON standard and allow reading/writing of nan and inf
+// values. Such values should not normally occur, but if they do then
+// it is easier to troubleshoot problems if numerical values are the
+// same in memory and files.
+// kWriteNanAndInfFlag = 2,        //!< Allow writing of Infinity, -Infinity and NaN.
+#define RAPIDJSON_WRITE_DEFAULT_FLAGS 2
+// kParseNanAndInfFlag = 256,      //!< Allow parsing NaN, Inf, Infinity, -Inf and -Infinity as doubles.
+#define RAPIDJSON_PARSE_DEFAULT_FLAGS 256
+
 #include "rapidjson/document.h"     // rapidjson's DOM-style API
 #include "rapidjson/prettywriter.h" // for stringify JSON
 #include "rapidjson/filereadstream.h"
