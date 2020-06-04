@@ -28,10 +28,11 @@ For Slicer-4.10 documentation, refer to the `3D Slicer wiki <https://www.slicer.
    user_guide/settings
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Developer Guide:
 
    developer_guide/api
+   developer_guide/mrml_overview
    developer_guide/contributing
    developer_guide/authors
 

@@ -7,7 +7,7 @@ There are two major types of data that can be loaded to Slicer:
 - **Non-DICOM**, covering all types of data ranging from images and models to tables and point lists.
 
   - Loading can happen in two ways: drag&drop file on the Slicer window, or by using the Load Data button on the toolbar ![](../../Base/QTGUI/Resources/Icons/Medium/SlicerLoadData.png).
-  - Saving happens with the Save Data toolbar button ![saveDataButton](../../Base/QTGUI/Resources/Icons/Medium/SlicerSave.png).
+  - Saving happens with the Save Data toolbar button ![](../../Base/QTGUI/Resources/Icons/Medium/SlicerSave.png).
 
 Data available in Slicer can be reviewed in the Data module, which can be found on the toolbar or the modules list ![](../../Modules/Loadable/Data/Resources/Icons/SubjectHierarchy.png). More details about the module can be found on the [Slicer wiki](https://www.slicer.org/wiki/Documentation/Nightly/Modules/Data).
 
