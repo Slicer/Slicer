@@ -198,6 +198,16 @@ class ExtensionWizard(object):
 
     :param args.destination: Location (directory) of the extension to publish.
     :type args.destination: :class:`str`
+    :param args.cmakefile:
+      Name of the CMake file where `EXTENSION_*` CMake variables
+      are set. Default is `CMakeLists.txt`.
+    :type args.cmakefile:
+      :class:`str`
+    :param args.name:
+      Name of extension. Default is value associated with `project()`
+      statement.
+    :type args.name:
+      :class:`str`
 
     This creates a public github repository for an extension (whose name is the
     extension name), adds it as a remote of the extension's local repository,
@@ -260,8 +270,11 @@ class ExtensionWizard(object):
 
     try:
       # Get extension name
-      p = ExtensionProject(args.destination)
-      name = p.project
+      p = ExtensionProject(args.destination, filename=args.cmakefile)
+      if args.name is None:
+          name = p.project
+      else:
+          name = args.name
       logging.debug("extension name: '%s'", name)
 
       # Create github remote
@@ -348,6 +361,16 @@ class ExtensionWizard(object):
       Location (directory) of the extension to contribute.
     :type args.destination:
       :class:`str`
+    :param args.cmakefile:
+      Name of the CMake file where `EXTENSION_*` CMake variables
+      are set. Default is `CMakeLists.txt`.
+    :type args.cmakefile:
+      :class:`str`
+    :param args.name:
+      Name of extension. Default is value associated with `project()`
+      statement.
+    :type args.name:
+      :class:`str`
     :param args.target:
       Name of branch which the extension targets (must match a branch name in
       the extension index repository).
@@ -400,8 +423,11 @@ class ExtensionWizard(object):
       if r is None:
         die("extension repository not found")
 
-      xd = ExtensionDescription(repo=r)
-      name = ExtensionProject(localRoot(r)).project
+      xd = ExtensionDescription(repo=r, cmakefile=args.cmakefile)
+      if args.name is None:
+          name = ExtensionProject(localRoot(r), filename=args.cmakefile).project
+      else:
+          name = args.name
       logging.debug("extension name: '%s'", name)
 
       # Validate that extension has a SCM URL
@@ -608,6 +634,10 @@ class ExtensionWizard(object):
                         help="print the extension description (s4ext)"
                              " to standard output")
 
+    parser.add_argument("--name", metavar="NAME",
+                        help="name of the extension"
+                             " (default: value assocated with 'project()' statement)")
+
     parser.add_argument("--publish", action="store_true",
                         help="publish the extension in the destination"
                              " directory to github (account required)")
@@ -627,14 +657,20 @@ class ExtensionWizard(object):
                         help="location of output files / extension source"
                              " (default: '.')")
 
+    parser.add_argument("cmakefile", default="CMakeLists.txt", nargs="?",
+                        help="name of the CMake file where EXTENSION_* CMake variables are set"
+                             " (default: 'CMakeLists.txt')")
+
     args = parser.parse_args(args)
     initLogging(logging.getLogger(), args)
 
     # The following arguments are only available if haveGit() is True
-    if not haveGit() and (args.publish or args.contribute):
+    if not haveGit() and (args.publish or args.contribute or args.name):
         option = "--publish"
         if args.contribute:
             option = "--contribute"
+        elif args.name:
+            option = "--name"
         die(textwrap.dedent(
             """\
             Option '%s' is not available.

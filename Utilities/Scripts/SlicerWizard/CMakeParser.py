@@ -346,6 +346,8 @@ class CMakeScript(object):
         self._content = self._content[1:]
         return Command(text=command, arguments=arguments, indent=indent,
                        prefix=prefix, suffix=argIndent + ")")
+      elif self._is(self._reComment):
+        arguments.append(self._parseComment(self._match, argIndent))
 
       else:
         arguments.append(self._parseArgument(argIndent))
