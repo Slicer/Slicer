@@ -36,27 +36,28 @@ class ExtensionProject(object):
   _referencedVariables = re.compile(r"\$\{([\w_\/\.\+\-]+)\}")
 
   #---------------------------------------------------------------------------
-  def __init__(self, path, encoding=None):
+  def __init__(self, path, encoding=None, filename="CMakeLists.txt", ):
     """
     :param path: Top level directory of the extension project.
     :type path: :class:`str`
     :param encoding: Encoding of extension CMakeLists.txt.
     :type encoding: :class:`str` or ``None``
+    :param filename: CMake file to parse. Default is `CMakeLists.txt`.
+    :type filename: :class:`str`
 
     If ``encoding`` is ``None``, the encoding will be guessed using
     :meth:`~SlicerWizard.Utilities.detectEncoding`.
     """
-
-    cmakeFile = os.path.join(path, "CMakeLists.txt")
+    cmakeFile = os.path.join(path, filename)
     if not os.path.exists(cmakeFile):
-      raise IOError("CMakeLists.txt not found")
+      raise IOError("%s not found" % filename)
 
     self._scriptContents, self._encoding = self._parse(cmakeFile, encoding=encoding)
     try:
       self._scriptPath = cmakeFile
       self.getValue("EXTENSION_HOMEPAGE")
     except KeyError:
-      for cmakeFile in self._collect_cmakefiles(path):
+      for cmakeFile in self._collect_cmakefiles(path, filename):
         self._scriptContents, self._encoding = self._parse(cmakeFile, encoding=encoding)
         try:
           self._scriptPath = cmakeFile
@@ -66,14 +67,14 @@ class ExtensionProject(object):
           continue
 
   @staticmethod
-  def _collect_cmakefiles(path):
-    """Return list of CMakeLists.txt found in `path` at depth=1"""
+  def _collect_cmakefiles(path, filename="CMakeLists.txt"):
+    """Return list of `filename` found in `path` at depth=1"""
     cmakeFiles = []
     dirnames = []
     for _, dirnames, _ in os.walk(path):
       break
     for dirname in dirnames:
-      cmakeFile = os.path.join(path, dirname, "CMakeLists.txt")
+      cmakeFile = os.path.join(path, dirname, filename)
       if os.path.exists(cmakeFile):
         cmakeFiles.append(cmakeFile)
     return cmakeFiles
@@ -243,7 +244,8 @@ class ExtensionProject(object):
     build script. By default, no substitution is performed (the result is taken
     from the raw argument). If more than one ``set()`` command sets the same
     ``name``, the result is the raw argument to the last such command. If the
-    value consists of more than one argument, only the first is returned.
+    value consists of more than one argument, they are all concatenated together
+    while stripping newlines, tabs and extra whitespaces.
 
     If ``substitute`` is ``True``, each occurrence of '``${var}``' will be
     replaced with the corresponding variable if it has been set. Variable
@@ -269,7 +271,7 @@ class ExtensionProject(object):
          t.arguments[0].text == name:
         if len(t.arguments) < 2:
           return None
-        value = t.arguments[1].text
+        value = " ".join([argument.text for argument in t.arguments[1:] if isinstance(argument, CMakeParser.String)])
         if substitute:
           value = self.substituteVariableReferences(value)
         return value

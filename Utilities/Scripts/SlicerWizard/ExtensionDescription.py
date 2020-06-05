@@ -22,7 +22,7 @@ class ExtensionDescription(object):
   DESCRIPTION_FILE_TEMPLATE = None
 
   #---------------------------------------------------------------------------
-  def __init__(self, repo=None, filepath=None, sourcedir=None):
+  def __init__(self, repo=None, filepath=None, sourcedir=None, cmakefile="CMakeLists.txt"):
     """
     :param repo:
       Extension repository from which to create the description.
@@ -37,6 +37,11 @@ class ExtensionDescription(object):
       Path to an extension source directory.
     :type sourcedir:
       :class:`str` or ``None``.
+    :param cmakefile:
+      Name of the CMake file where `EXTENSION_*` CMake variables
+      are set. Default is `CMakeLists.txt`.
+    :type cmakefile:
+      :class:`str`
 
     :raises:
       * :exc:`~exceptions.KeyError` if the extension description is missing a
@@ -132,7 +137,7 @@ class ExtensionDescription(object):
       setattr(self, "scmrevision", "NA")
 
     if sourcedir is not None:
-      p = ExtensionProject(sourcedir)
+      p = ExtensionProject(sourcedir, filename=cmakefile)
       self._setProjectAttribute("homepage", p, required=True)
       self._setProjectAttribute("category", p, required=True)
       self._setProjectAttribute("description", p)
