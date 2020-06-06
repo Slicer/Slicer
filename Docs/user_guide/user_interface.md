@@ -6,7 +6,7 @@ Slicer stores all loaded data in a data repository, called the "scene" (or Slice
 
 Slicer provides a large number "modules", each implementing a specific set of functions for creating or manipulating data in the scene. Modules typically do not interact with each other directly: they just all operate on the data nodes in the scene. Slicer package contains over 100 built-in modules and additional modules can be installed by using the Extension Manager.
 
-![Slicer application main window](https://github.com/Slicer/Slicer/releases/download/docs-resources/user_interface_main_window.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/user_interface_main_window.png)
 
 ### Module Panel
 
@@ -32,7 +32,7 @@ Toolbar provides quick access to commonly used functions. Individual toolbar pan
 
 **Module Selection** toolbar is used for selecting the currently active "module". The toolbar provides options for searching for module names (`Ctrl` + `f` or click on magnify glass icon) or selecting from a menu. **Module history dropdown button** shows the list of recently used modules. **Arrow buttons** can be used for going back to/returning from previously used module.
 
-![Module selection toolbar](https://github.com/Slicer/Slicer/releases/download/docs-resources/user_interface_module_toolbar.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/user_interface_module_toolbar.png)
 
 **Favorite modules** toolbar contains a list of most frequently used modules. The list can be customized using menu: Edit / Application settings / Modules / Favorite Modules. Drag-and-drop modules from the Modules list to the Favorite Modules list to add a module.
 
@@ -47,7 +47,7 @@ This panel may display application status, such as current operation in progress
 Holding down the `Shift` key while moving the mouse in any slice or 3D view will cause the Crosshair to move to the selected position in all views. By default, when the Crosshair is moved in any views, all slice views are scrolled to the same RAS position indexed by the mouse. This feature is useful when inspecting.
 
 To show/hide the Crosshair position, click crosshair icon
-![crosshair](../../Libs/MRML/Widgets/Resources/Icons/SlicesCrosshair.png).
+![](../../Libs/MRML/Widgets/Resources/Icons/SlicesCrosshair.png).
 
 To customize behavior and appearance of the Crosshair, click the "down arrow" button on the right side of the crosshair icon.
 
@@ -55,7 +55,7 @@ To customize behavior and appearance of the Crosshair, click the "down arrow" bu
 
 Slicer has two mouse modes: **Transform** (which allows interactive rotate, translate and zoom operations), and **Place** (which permits objects to be interactively placed in slice and 3D views).
 
-![Mouse modes](https://github.com/Slicer/Slicer/releases/download/docs-resources/user_interface_mousemode_toolbar.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/user_interface_mousemode_toolbar.png)
 
 The toolbar icons that switch between these mouse modes are shown from left to right above, respectively. Place Fiducial is the default place option as shown above; options to place both Ruler and Region of Interest Widgets are also available from the drop-down Place Mode menu.
 
@@ -67,7 +67,7 @@ Displays a rendered 3D view of the scene along with visual references to specify
 
 Default orientation axes: A = anterior, P = posterior, R = right, L = left, S = superior and I = inferior.
 
-![3D view controls](https://github.com/Slicer/Slicer/releases/download/docs-resources/user_interface_3d_view_controls.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/user_interface_3d_view_controls.png)
 
 3D View Controls: The blue bar across any 3D View shows a pushpin icon on its left. When the mouse rolls over this icon, a panel for configuring the 3D View is displayed. The panel is hidden when the mouse moves away. For persistent display of this panel, just click the pushpin icon.
 
@@ -75,13 +75,15 @@ Default orientation axes: A = anterior, P = posterior, R = right, L = left, S = 
 
 Three default slice views are provided (with Red, Yellow and Green colored bars) in which Axial, Saggital, Coronal or Oblique 2D slices of volume images can be displayed. Additional generic slice views have a grey colored bar and an identifying number in their upper left corner.
 
-![Slice view controls](https://github.com/Slicer/Slicer/releases/download/docs-resources/user_interface_slice_view_controls.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/user_interface_slice_view_controls.png)
 
 Slice View Controls: The colored bar across any Slice View shows a pushpin icon on its left. When the mouse rolls over this icon, a panel for configuring the slice view is displayed. The panel is hidden when the mouse moves away. For persistent display of this panel, just click the pushpin icon. For more options, click the double-arrow icon.
 
 View Controllers module provides an alternate way of displaying these controllers in the Module Panel.
 
-[comment]: <> (TODO: add Chart and Table views)
+- **Reset field of view** (small square) centers the slice on the current background volume
+- **Link** button synchronizes properties (which volumes are displayed, zoom factor, position of parallel views, opacities, etc.) between all slice views in the same view group. Long-click on the button exposes **hot-linked** option, which controls when properties are synchronized (immediately or when the mouse button is released).
+- **Eye** button in the top row can show the current slice in 3D views. Drop-down menu of the button contains advanced options to customize how this slice is rendered: "...match volume" means that the properties are taken from the full volume, while "...match 2D" means that the properties are copied from the current slice view (for example, copies zoom and pan position). Typically these differences are subtle and the settings can be left at default.
 
 ## Mouse & Keyboard Shortcuts
 
