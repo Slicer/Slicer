@@ -376,6 +376,68 @@ def setSliceViewerLayers(background='keep-current', foreground='keep-current', l
         if sliceLogic:
           sliceLogic.FitSliceToAll()
 
+def setToolbarsVisible(visible, ignore=None):
+  """Show/hide all existing toolbars, except those listed in
+  ignore list.
+  """
+
+  for toolbar in mainWindow().findChildren('QToolBar'):
+    if ignore is not None and toolbar in ignore:
+      continue
+    toolbar.setVisible(visible)
+
+  # Prevent sequence browser toolbar showing up automatically
+  # when a sequence is loaded.
+  # (put in try block because Sequence Browser module is not always installed)
+  try:
+    import slicer
+    slicer.modules.sequences.autoShowToolBar = visible
+  except:
+    # Sequences module is not installed
+    pass
+
+def setMenuBarsVisible(visible, ignore=None):
+  """Show/hide all menu bars, except those listed in
+  ignore list."""
+  for menubar in mainWindow().findChildren('QMenuBar'):
+    if ignore is not None and menubar in ignore:
+      continue
+    menubar.setVisible(visible)
+
+def setPythonConsoleVisible(visible):
+  """Show/hide Python console."""
+  mainWindow().pythonConsole().parent().setVisible(visible)
+
+def setStatusBarVisible(visible):
+  """Show/hide status bar"""
+  mainWindow(verbose=False).statusBar().setVisible(visible)
+
+def setViewControllersVisible(visible):
+  """Show/hide view controller toolbar at the top of slice and 3D views"""
+  import slicer
+  lm = slicer.app.layoutManager()
+  for viewIndex in range(lm.threeDViewCount):
+    lm.threeDWidget(viewIndex).threeDController().setVisible(visible)
+  for sliceViewName in lm.sliceViewNames():
+    lm.sliceWidget(sliceViewName).sliceController().setVisible(visible)
+  for viewIndex in range(lm.tableViewCount):
+    lm.tableWidget(viewIndex).tableController().setVisible(visible)
+  for viewIndex in range(lm.plotViewCount):
+    lm.plotWidget(viewIndex).plotController().setVisible(visible)
+
+def forceRenderAllViews():
+  """Force rendering of all views"""
+  import slicer
+  lm = slicer.app.layoutManager()
+  for viewIndex in range(lm.threeDViewCount):
+    lm.threeDWidget(viewIndex).threeDView().forceRender()
+  for sliceViewName in lm.sliceViewNames():
+    lm.sliceWidget(sliceViewName).sliceView().forceRender()
+  for viewIndex in range(lm.tableViewCount):
+    lm.tableWidget(viewIndex).tableView().repaint()
+  for viewIndex in range(lm.plotViewCount):
+    lm.plotWidget(viewIndex).plotView().repaint()
+
 #
 # IO
 #
@@ -842,6 +904,32 @@ def reloadScriptedModule(moduleName):
   setattr(slicer.modules, widgetName, widget)
 
   return reloaded_module
+
+def setModulePanelTitleVisible(visible):
+  """Show/hide module panel title bar at the top of module panel.
+  If the title bar is not visible then it is not possible to drag and dock the
+  module panel to a different location."""
+  modulePanelDockWidget = mainWindow().findChildren('QDockWidget','PanelDockWidget')[0]
+  if visible:
+    modulePanelDockWidget.setTitleBarWidget(None)
+  else:
+    import qt
+    modulePanelDockWidget.setTitleBarWidget(qt.QWidget(modulePanelDockWidget))
+
+def setApplicationLogoVisible(visible):
+  """Show/hide application logo at the top of module panel."""
+  widget = findChild(mainWindow(), "LogoLabel")
+  widget.setVisible(visible)
+
+def setModuleHelpSectionVisible(visible):
+  """Show/hide Help section at the top of module panel."""
+  modulePanel = findChild(mainWindow(), "ModulePanel")
+  modulePanel.helpAndAcknowledgmentVisible = visible
+
+def setDataProbeVisible(visible):
+  """Show/hide Data probe at the bottom of module panel."""
+  widget = findChild(mainWindow(), "DataProbeCollapsibleWidget")
+  widget.setVisible(visible)
 
 #
 # Layout
@@ -2335,90 +2423,29 @@ def pip_install(req):
   proc=launchConsoleProcess(command_line, useStartupEnvironment = False)
   logProcessOutput(proc)
 
-def setToolbarsVisible(visible, ignore=None):
-  """Show/hide all existing toolbars, except those listed in
-  ignore list.
+def longPath(path):
   """
+  Make long paths work on Windows, where the maximum path length is 260 characters.
+  For example, the files in the DICOM database may have paths longer than this limit.
+  Accessing these can be made safe by prefixing it with the UNC prefix ('\\?\').
 
-  for toolbar in mainWindow().findChildren('QToolBar'):
-    if ignore is not None and toolbar in ignore:
-      continue
-    toolbar.setVisible(visible)
+  :param string path: Path to be made safe if too long
 
-  # Prevent sequence browser toolbar showing up automatically
-  # when a sequence is loaded.
-  # (put in try block because Sequence Browser module is not always installed)
-  try:
-    import slicer
-    slicer.modules.sequences.autoShowToolBar = visible
-  except:
-    # Sequences module is not installed
-    pass
-
-def setMenuBarsVisible(visible, ignore=None):
-  """Show/hide all menu bars, except those listed in
-  ignore list."""
-  for menubar in mainWindow().findChildren('QMenuBar'):
-    if ignore is not None and menubar in ignore:
-      continue
-    menubar.setVisible(visible)
-
-def setPythonConsoleVisible(visible):
-  """Show/hide Python console."""
-  mainWindow().pythonConsole().parent().setVisible(visible)
-
-def setStatusBarVisible(visible):
-  """Show/hide status bar"""
-  mainWindow(verbose=False).statusBar().setVisible(visible)
-
-def setViewControllersVisible(visible):
-  """Show/hide view controller toolbar at the top of slice and 3D views"""
-  import slicer
-  lm = slicer.app.layoutManager()
-  for viewIndex in range(lm.threeDViewCount):
-    lm.threeDWidget(viewIndex).threeDController().setVisible(visible)
-  for sliceViewName in lm.sliceViewNames():
-    lm.sliceWidget(sliceViewName).sliceController().setVisible(visible)
-  for viewIndex in range(lm.tableViewCount):
-    lm.tableWidget(viewIndex).tableController().setVisible(visible)
-  for viewIndex in range(lm.plotViewCount):
-    lm.plotWidget(viewIndex).plotController().setVisible(visible)
-
-def forceRenderAllViews():
-  """Force rendering of all views"""
-  import slicer
-  lm = slicer.app.layoutManager()
-  for viewIndex in range(lm.threeDViewCount):
-    lm.threeDWidget(viewIndex).threeDView().forceRender()
-  for sliceViewName in lm.sliceViewNames():
-    lm.sliceWidget(sliceViewName).sliceView().forceRender()
-  for viewIndex in range(lm.tableViewCount):
-    lm.tableWidget(viewIndex).tableView().repaint()
-  for viewIndex in range(lm.plotViewCount):
-    lm.plotWidget(viewIndex).plotView().repaint()
-
-def setModulePanelTitleVisible(visible):
-  """Show/hide module panel title bar at the top of module panel.
-  If the title bar is not visible then it is not possible to drag and dock the
-  module panel to a different location."""
-  modulePanelDockWidget = mainWindow().findChildren('QDockWidget','PanelDockWidget')[0]
-  if visible:
-    modulePanelDockWidget.setTitleBarWidget(None)
-  else:
-    import qt
-    modulePanelDockWidget.setTitleBarWidget(qt.QWidget(modulePanelDockWidget))
-
-def setApplicationLogoVisible(visible):
-  """Show/hide application logo at the top of module panel."""
-  widget = findChild(mainWindow(), "LogoLabel")
-  widget.setVisible(visible)
-
-def setModuleHelpSectionVisible(visible):
-  """Show/hide Help section at the top of module panel."""
-  modulePanel = findChild(mainWindow(), "ModulePanel")
-  modulePanel.helpAndAcknowledgmentVisible = visible
-
-def setDataProbeVisible(visible):
-  """Show/hide Data probe at the bottom of module panel."""
-  widget = findChild(mainWindow(), "DataProbeCollapsibleWidget")
-  widget.setVisible(visible)
+  :return string: Safe path
+  """
+  # Return path as is if conversion is disabled
+  longPathConversionEnabled = settingsValue('General/LongPathConversionEnabled', True, converter=toBool)
+  if not longPathConversionEnabled:
+    return path
+  # Return path as is on operating systems other than Windows
+  import qt
+  sysInfo = qt.QSysInfo()
+  if sysInfo.productType() != 'windows':
+    return path
+  # Skip prefixing relative paths as UNC prefix wors only on absolute paths
+  if not qt.QDir.isAbsolutePath(path):
+    return path
+  # Return path as is if UNC prefix is already applied
+  if path[:4] == '\\\\?\\':
+    return path
+  return u"\\\\?\\" + path.replace('/', '\\')
