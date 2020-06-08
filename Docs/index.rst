@@ -33,6 +33,7 @@ For Slicer-4.10 documentation, refer to the `3D Slicer wiki <https://www.slicer.
 
    developer_guide/api
    developer_guide/mrml_overview
+   developer_guide/python_faq
    developer_guide/contributing
    developer_guide/authors
 

@@ -1,0 +1,63 @@
+# Extensions
+
+## Overview
+An extension could be seen as a delivery package bundling together one or more Slicer modules. After installing an extension, the associated modules will be presented to the user the same way as built-in modules.
+
+The Slicer community maintains a website referred to as the Slicer Extensions Manager (also known as Slicer App Store or Slicer Extensions Index) to allow users to find, download, and install of extensions.
+
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/extension_manager.png)
+
+## How to create an extension?
+
+If you have developed a script or module that you would like to share with others then it is recommended to add it to an extension to distribute it.
+
+- Scan through the [user](https://www.slicer.org/wiki/Documentation/Nightly/FAQ/Extensions) and [developer](https://www.slicer.org/wiki/Documentation/Nightly/Developers/FAQ/Extensions) extension FAQs
+- Inform a community about your plans on the [https://discourse.slicer.org Slicer forum] to get information about potential parallel efforts (other developers may already work on a similar idea and you could join or build on each other's work), past efforts (related tools might have been available in earlier Slicer versions or in other software that you may reuse), and get early feedback from prospective users. You may also seek advice on the name of your extension and how to organize features into modules. All these can save you a lot of time in the long term.
+- If developing [C++ loadable or CLI modules](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Modules) (not needed if developing in Python): [build Slicer application](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Build_Instructions) in "Release" mode.
+- Use the [Extension Wizard module](https://www.slicer.org/wiki/Documentation/Nightly/Developers/ExtensionWizard) in Slicer to create an extension that will contain your module(s). To learn about extension description file format see [here](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Extensions/DescriptionFile).
+- Upload source code of your extension to a publicly available repository. It is recommended to start the repository name with "Slicer" (to make Slicer extensions easier to identify) followed by your extension name (for example, "Sequences" extension is stored in "SlicerSequences" repository). However, this is not a mandatory requirement. If you have a compelling reason not to use Slicer prefix, please make a note while making the pull request. See more requirements in the [new extension submission checklist](https://github.com/Slicer/ExtensionsIndex/blob/master/.github/PULL_REQUEST_TEMPLATE.md#todo-list-for-submitting-a-new-extension).
+  - GitHub is recommended (due to large user community, free public project hosting): [join Github](https://github.com/join) and [setup Git](https://help.github.com/articles/set-up-git#set-up-git).
+- If developing [C++ loadable or CLI modules](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Modules) (not needed if developing in Python): [Build your extension](https://www.slicer.org/wiki/Documentation/Nightly/Developers/FAQ/Extensions#How_to_build_an_extension_.3F)
+- Test your extension:
+  - If you have built your extension then build the PACKAGE target to create a package file that you can install from the Extension Manager by clicking the small tool icon in the top-right corner.
+  - If you have not built your extension then set up your extension manually: [Build your extension](https://www.slicer.org/wiki/Documentation/Nightly/Developers/FAQ#How_to_manually_install_an_extension.3F)
+
+## Documentation
+
+Keep documentation with your extension's source code and keep it up-to-date whenever the software changes.
+
+Add at least a README.md file in the root of the source code repository, which describes what the extension is for and how it works. Minimum information that is needed to make your extension usable is described in the [extension submission checklist](https://github.com/Slicer/ExtensionsIndex/blob/master/.github/PULL_REQUEST_TEMPLATE.md#todo-list-for-submitting-a-new-extension).
+
+Extension documentation examples:
+- https://github.com/NVIDIA/ai-assisted-annotation-client/tree/master/slicer-plugin
+- https://github.com/lassoan/SlicerSegmentMesher
+- https://github.com/moselhy/SlicerSequenceRegistration
+- http://dmri.slicer.org/
+
+## Distributing an extension
+
+If your extension is ready for distribution (you have completed [extension submission checklist](https://github.com/Slicer/ExtensionsIndex/blob/master/.github/PULL_REQUEST_TEMPLATE.md#todo-list-for-submitting-a-new-extension)) then submit it to the Slicer Extensions Index:
+
+- Fork ExtensionIndex repository on GitHub by clicking ''Fork'' button on https://github.com/Slicer/ExtensionsIndex page
+- Add your .s4ext file to your forked repository: it can be done using a git client or simply by clicking ''Upload files'' button
+- Create a pull request: by clicking ''Create pull request'' button
+
+## Continuous Integration
+
+If you shared your extension by using the ExtensionWizard, make sure you know about the Slicer testing dashboard: 
+
+![](http://slicer.cdash.org/index.php?project=Slicer4&display=project)
+
+The dashboard will attempt to check out the source code of your extension, build, test and package it on Linux, MacOSX and Windows platforms. 
+
+To find your extension, use the following link replacing `SlicerMyExtension` with the name of your extension:
+
+http://slicer.cdash.org/index.php?project=Slicer4&filtercount=1&showfilters=1&field1=buildname&compare1=63&value1=SlicerMyExtension
+
+For example, here is the link to check the status of the `SlicerDMRI` extension:
+
+http://slicer.cdash.org/index.php?project=Slicer4&filtercount=1&showfilters=1&field1=buildname&compare1=63&value1=SlicerDMRI
+
+If you see red in any of the columns for your extension, click on the hyperlinked number of errors to see the details.
+
+Always check the dashboard after you first introduce your extension, or after you make any changes to the code!
