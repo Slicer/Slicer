@@ -49,9 +49,6 @@ public:
     {
     public:
       CodeIdentifier()
-        : CodingSchemeDesignator("")
-        , CodeValue("")
-        , CodeMeaning("")
         { };
       CodeIdentifier(std::string codingSchemeDesignator, std::string codeValue, std::string codeMeaning)
         : CodingSchemeDesignator(codingSchemeDesignator)
@@ -101,7 +98,6 @@ public:
   void GetLoadedAnatomicContextNames(vtkStringArray* anatomicContextNames);
 
   /// Get terminology categories from a terminology as collection of \sa vtkSlicerTerminologyCategory container objects
-  /// Note: Separate function from \sa FindCategoryNamesInTerminology for python compatibility
   /// \param categories Output argument containing all the \sa vtkSlicerTerminologyCategory objects created
   ///   from the categories found in the given terminology
   /// \return Success flag
@@ -115,9 +111,15 @@ public:
   /// \param category Output argument containing the details of the found category if any (if return value is true)
   /// \return Success flag
   bool GetCategoryInTerminology(std::string terminologyName, CodeIdentifier categoryId, vtkSlicerTerminologyCategory* categoryObject);
+  /// Get number of categories in a terminology
+  int GetNumberOfCategoriesInTerminology(std::string terminologyName);
+  /// Get a category from a terminology by index.
+  /// \param categoryIndex specifies which category to return
+  /// \param category category is returned in this object
+  /// \return Success flag
+  bool GetNthCategoryInTerminology(std::string terminologyName, int categoryIndex, vtkSlicerTerminologyCategory* category);
 
   /// Get terminology types from a terminology category as collection of \sa vtkSlicerTerminologyType container objects
-  /// Note: Separate function from \sa FindTypeNamesInTerminologyCategory for python compatibility
   /// \param typeCollection Output argument containing all the \sa vtkSlicerTerminologyType objects created
   ///   from the types found in the given terminology category
   /// \return Success flag
@@ -131,6 +133,15 @@ public:
   /// \param type Output argument containing the details of the found type if any (if return value is true)
   /// \return Success flag
   bool GetTypeInTerminologyCategory(std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId, vtkSlicerTerminologyType* typeObject);
+  /// Get number of types in the chosen category in a terminology
+  int GetNumberOfTypesInTerminologyCategory(std::string terminologyName, vtkSlicerTerminologyCategory* category);
+  /// Get a terminology type by index
+  /// \param terminologyName input terminology name
+  /// \param category input category
+  /// \param typeIndex index of type to return
+  /// \param typeObject output type
+  /// \return Success flag
+  bool GetNthTypeInTerminologyCategory(std::string terminologyName, vtkSlicerTerminologyCategory* category, int typeIndex, vtkSlicerTerminologyType* type);
 
   /// Get terminology type modifiers from a terminology type as collection of \sa vtkSlicerTerminologyType container objects
   /// \param typeModifierCollection Output argument containing all the \sa vtkSlicerTerminologyType objects created
@@ -142,15 +153,23 @@ public:
   /// \return Success flag
   bool GetTypeModifierInTerminologyType(std::string terminologyName,
     CodeIdentifier categoryId, CodeIdentifier typeId, CodeIdentifier modifierId, vtkSlicerTerminologyType* typeModifier);
+  /// Get number of type modifiers for the chosen category and type in a terminology
+  int GetNumberOfTypeModifiersInTerminologyType(std::string terminologyName, vtkSlicerTerminologyCategory* category, vtkSlicerTerminologyType* type);
+  /// Get a terminology type by index
+  /// \param terminologyName input terminology name
+  /// \param category input category
+  /// \param typeObject input type
+  /// \param typeModifierIndex index of type modifier to return
+  /// \param typeModifier output type modifier
+  /// \return Success flag
+  bool GetNthTypeModifierInTerminologyType(std::string terminologyName, vtkSlicerTerminologyCategory* category, vtkSlicerTerminologyType* type, int typeModifierIndex, vtkSlicerTerminologyType* typeModifier);
 
   /// Get anatomic regions from an anatomic context as collection of \sa vtkSlicerTerminologyType container objects
-  /// Note: Separate function from \sa FindRegionNamesInAnatomicContext for python compatibility
   /// \param regionCollection Output argument containing all the \sa vtkSlicerTerminologyType objects created
   ///   from the regions found in the given anatomic context
   /// \return Success flag
   bool GetRegionsInAnatomicContext(std::string anatomicContextName, std::vector<CodeIdentifier>& regions);
   /// Get all region names (codeMeaning) in an anatomic context
-  /// Note: Separate function from \sa FindRegionNamesInAnatomicContext for python compatibility
   /// \return Success flag
   bool FindRegionsInAnatomicContext(std::string anatomicContextName, std::vector<CodeIdentifier>& regions, std::string search);
   /// Get a region with given name from an anatomic context

@@ -1469,19 +1469,64 @@ bool vtkSlicerTerminologiesModuleLogic::FindCategoriesInTerminology(std::string 
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetCategoryInTerminology(std::string terminologyName, CodeIdentifier categoryId, vtkSlicerTerminologyCategory* category)
+int vtkSlicerTerminologiesModuleLogic::GetNumberOfCategoriesInTerminology(std::string terminologyName)
 {
-  if (!category || categoryId.CodingSchemeDesignator.empty() || categoryId.CodeValue.empty())
+  rapidjson::Value& categoryArray = this->Internal->GetCategoryArrayInTerminology(terminologyName);
+  if (categoryArray.IsNull())
     {
+    vtkErrorMacro("GetNumberOfCategoriesInTerminology: Failed to find category array in terminology '" << terminologyName << "'");
+    return 0;
+    }
+  return categoryArray.Size();
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::GetNthCategoryInTerminology(std::string terminologyName, int categoryIndex, vtkSlicerTerminologyCategory* category)
+{
+  rapidjson::Value& categoryArray = this->Internal->GetCategoryArrayInTerminology(terminologyName);
+  if (categoryArray.IsNull())
+    {
+    vtkErrorMacro("GetNthCategoryInTerminology failed: Failed to find category array in terminology '" << terminologyName << "'");
+    return false;
+    }
+  if (!category)
+    {
+    vtkErrorMacro("GetNthCategoryInTerminology failed: category is invalid");
     return false;
     }
 
-  rapidjson::Value& categoryObject = this->Internal->GetCategoryInTerminology(terminologyName, categoryId);
-  if (categoryObject.IsNull())
+  if (categoryIndex < 0 || categoryIndex >= categoryArray.Size())
     {
-    vtkErrorMacro("GetCategoryInTerminology: Failed to find category '" << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
+    vtkErrorMacro("GetNthCategoryInTerminology failed: category index of " << categoryIndex << " is out of range"
+      << " (number of categories: " << categoryArray.Size() << ")");
     return false;
     }
+
+  rapidjson::Value& categoryObject = categoryArray[categoryIndex];
+  if (categoryObject.IsNull())
+    {
+    vtkErrorMacro("GetCategoryInTerminology: Failed to find category in terminology '" << terminologyName << "'");
+    return false;
+    }
+
+  // Category found
+  return this->Internal->PopulateTerminologyCategoryFromJson(categoryObject, category);
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::GetCategoryInTerminology(std::string terminologyName, CodeIdentifier categoryId, vtkSlicerTerminologyCategory* category)
+{
+  if (!category || categoryId.CodingSchemeDesignator.empty() || categoryId.CodeValue.empty())
+  {
+    return false;
+  }
+
+  rapidjson::Value& categoryObject = this->Internal->GetCategoryInTerminology(terminologyName, categoryId);
+  if (categoryObject.IsNull())
+  {
+    vtkErrorMacro("GetCategoryInTerminology: Failed to find category '" << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
+    return false;
+  }
 
   // Category found
   return this->Internal->PopulateTerminologyCategoryFromJson(categoryObject, category);
@@ -1545,6 +1590,53 @@ bool vtkSlicerTerminologiesModuleLogic::FindTypesInTerminologyCategory(
 }
 
 //---------------------------------------------------------------------------
+int vtkSlicerTerminologiesModuleLogic::GetNumberOfTypesInTerminologyCategory(std::string terminologyName, vtkSlicerTerminologyCategory* category)
+{
+  CodeIdentifier categoryId = this->CodeIdentifierFromTerminologyCategory(category);
+  rapidjson::Value& typeArray = this->Internal->GetTypeArrayInTerminologyCategory(terminologyName, categoryId);
+  if (typeArray.IsNull())
+    {
+    vtkErrorMacro("GetNumberOfTypesInTerminologyCategory: Failed to find type array in category '"
+      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
+    return 0;
+    }
+  return typeArray.Size();
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::GetNthTypeInTerminologyCategory(std::string terminologyName, vtkSlicerTerminologyCategory* category,
+  int typeIndex, vtkSlicerTerminologyType* type)
+{
+  CodeIdentifier categoryId = this->CodeIdentifierFromTerminologyCategory(category);
+  rapidjson::Value& typeArray = this->Internal->GetTypeArrayInTerminologyCategory(terminologyName, categoryId);
+  if (typeArray.IsNull())
+    {
+    vtkErrorMacro("GetNthTypeInTerminologyCategory: Failed to find type array in category '"
+      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
+    return false;
+    }
+  if (!type)
+    {
+    vtkErrorMacro("GetNthTypeInTerminologyCategory failed: invalid type");
+    return false;
+    }
+
+  if (typeIndex < 0 || typeIndex >= typeArray.Size())
+    {
+    vtkErrorMacro("GetNthTypeInTerminologyCategory failed: typeIndex of " << typeIndex << " is out of range (number of types: " << typeArray.Size() << ")");
+    return false;
+    }
+  rapidjson::Value& typeObject = typeArray[typeIndex];
+  if (!typeObject.IsObject())
+    {
+    vtkErrorMacro("GetNthTypeInTerminologyCategory failed: invalid type");
+    return false;
+    }
+  // Type found
+  return this->Internal->PopulateTerminologyTypeFromJson(typeObject, type);
+}
+
+//---------------------------------------------------------------------------
 bool vtkSlicerTerminologiesModuleLogic::GetTypeInTerminologyCategory(
   std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId, vtkSlicerTerminologyType* type)
 {
@@ -1600,6 +1692,59 @@ bool vtkSlicerTerminologiesModuleLogic::GetTypeModifiersInTerminologyType(
     } // For each type modifier index
 
   return true;
+}
+
+//---------------------------------------------------------------------------
+int vtkSlicerTerminologiesModuleLogic::GetNumberOfTypeModifiersInTerminologyType(
+  std::string terminologyName, vtkSlicerTerminologyCategory* category, vtkSlicerTerminologyType* type)
+{
+  CodeIdentifier categoryId = this->CodeIdentifierFromTerminologyCategory(category);
+  CodeIdentifier typeId = this->CodeIdentifierFromTerminologyType(type);
+  rapidjson::Value& typeModifierArray = this->Internal->GetTypeModifierArrayInTerminologyType(terminologyName, categoryId, typeId);
+  if (typeModifierArray.IsNull())
+    {
+    vtkErrorMacro("GetNumberOfTypeModifiersInTerminologyType: Failed to find type modifier array for type '" << typeId.CodeMeaning << "' in category '"
+      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
+    return 0;
+    }
+  return typeModifierArray.Size();
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::GetNthTypeModifierInTerminologyType(
+  std::string terminologyName, vtkSlicerTerminologyCategory* category, vtkSlicerTerminologyType* type, int typeModifierIndex,
+  vtkSlicerTerminologyType* typeModifier)
+{
+  CodeIdentifier categoryId = this->CodeIdentifierFromTerminologyCategory(category);
+  CodeIdentifier typeId = this->CodeIdentifierFromTerminologyType(type);
+  rapidjson::Value& typeModifierArray = this->Internal->GetTypeModifierArrayInTerminologyType(terminologyName, categoryId, typeId);
+  if (typeModifierArray.IsNull())
+    {
+    vtkErrorMacro("GetNthTypeModifierInTerminologyType: Failed to find type modifier array for type '" << typeId.CodeMeaning << "' in category '"
+      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
+    return 0;
+    }
+  if (!typeModifier)
+    {
+    vtkErrorMacro("GetNthTypeModifierInTerminologyType failed: typeModifier is invalid");
+    return false;
+    }
+  if (typeModifierIndex < 0 || typeModifierIndex >= typeModifierArray.Size())
+    {
+    vtkErrorMacro("GetNthTypeModifierInTerminologyType failed: type modifier index of " << typeModifierIndex << " is out of range"
+      << " (number of type modifiers: " << typeModifierArray.Size() << ")");
+    return false;
+    }
+
+  rapidjson::Value& typeModifierObject = typeModifierArray[typeModifierIndex];
+  if (typeModifierObject.IsNull())
+    {
+    vtkErrorMacro("GetNthTypeModifierInTerminologyType: Failed to find type modifier in terminology '" << terminologyName << "'");
+    return false;
+    }
+
+  // Type modifier found
+  return this->Internal->PopulateTerminologyTypeFromJson(typeModifierObject, typeModifier);
 }
 
 //---------------------------------------------------------------------------
