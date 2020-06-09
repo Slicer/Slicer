@@ -40,6 +40,7 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLModelNode.h>
+#include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLSliceNode.h>
 
 // Slicer includes
@@ -194,6 +195,8 @@ public:
   QIcon StatusIcons[vtkSlicerSegmentationsModuleLogic::LastStatus];
   QPushButton* ShowStatusButtons[vtkSlicerSegmentationsModuleLogic::LastStatus];
   QTimer FilterParameterChangedTimer;
+
+  bool JumpToSelectedSegmentEnabled;
 };
 
 //-----------------------------------------------------------------------------
@@ -205,6 +208,7 @@ qMRMLSegmentsTableViewPrivate::qMRMLSegmentsTableViewPrivate(qMRMLSegmentsTableV
   , IsFilterBarVisible(false)
   , Model(nullptr)
   , SortFilterModel(nullptr)
+  , JumpToSelectedSegmentEnabled(false)
 {
   for (int status = 0; status < vtkSlicerSegmentationsModuleLogic::LastStatus; ++status)
     {
@@ -446,7 +450,7 @@ void qMRMLSegmentsTableView::onSegmentsTableClicked(const QModelIndex& modelInde
         break;
       }
     vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(segment, status);
-  }
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -556,6 +560,10 @@ QTableView* qMRMLSegmentsTableView::tableWidget()
 void qMRMLSegmentsTableView::onSegmentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
   Q_D(qMRMLSegmentsTableView);
+  if (d->JumpToSelectedSegmentEnabled)
+    {
+    this->jumpSlices();
+    }
   if (d->SegmentsTable->signalsBlocked())
     {
     return;
@@ -1225,14 +1233,14 @@ void qMRMLSegmentsTableView::jumpSlices()
   QStringList selectedSegmentIDs = this->selectedSegmentIDs();
   if (selectedSegmentIDs.size() == 0)
     {
-    qWarning() << Q_FUNC_INFO << ": No segment selected";
+    // No segment selected
     return;
     }
 
   Q_D(qMRMLSegmentsTableView);
   if (!d->SegmentationNode)
     {
-    qCritical() << Q_FUNC_INFO << ": No current segmentation node";
+    // No current segmentation node
     return;
     }
 
@@ -1273,6 +1281,16 @@ void qMRMLSegmentsTableView::jumpSlices()
       continue;
       }
     sliceNode->JumpSliceByCentering(segmentCenterPosition[0], segmentCenterPosition[1], segmentCenterPosition[2]);
+    // snap to IJK to make sure slice is not positioned at the boundary of two voxels
+    vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
+    if (appLogic)
+      {
+      vtkMRMLSliceLogic* sliceLogic = appLogic->GetSliceLogic(sliceNode);
+      if (sliceLogic)
+        {
+        sliceLogic->SnapSliceOffsetToIJK();
+        }
+      }
     }
 }
 
@@ -1395,4 +1413,18 @@ QStringList qMRMLSegmentsTableView::displayedSegmentIDs()const
     displayedSegmentIDs << d->SortFilterModel->segmentIDFromIndex(d->SortFilterModel->index(row, 0));
     }
   return displayedSegmentIDs;
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSegmentsTableView::setJumpToSelectedSegmentEnabled(bool enable)
+{
+  Q_D(qMRMLSegmentsTableView);
+  d->JumpToSelectedSegmentEnabled = enable;
+}
+
+// --------------------------------------------------------------------------
+bool qMRMLSegmentsTableView::jumpToSelectedSegmentEnabled()const
+{
+  Q_D(const qMRMLSegmentsTableView);
+  return d->JumpToSelectedSegmentEnabled;
 }

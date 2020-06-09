@@ -62,6 +62,7 @@ public:
   Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly)
   Q_PROPERTY(bool filterBarVisible READ filterBarVisible WRITE setFilterBarVisible)
   Q_PROPERTY(QString textFilter READ textFilter WRITE setTextFilter)
+  Q_PROPERTY(bool jumpToSelectedSegmentEnabled READ jumpToSelectedSegmentEnabled WRITE setJumpToSelectedSegmentEnabled)
 
   typedef qMRMLWidget Superclass;
   /// Constructor
@@ -148,6 +149,9 @@ public slots:
   /// Segment's center is determined as the center of bounding box.
   void jumpSlices();
 
+  /// Enables automatic jumping to current segment when selection is changed.
+  void setJumpToSelectedSegmentEnabled(bool enable);
+
   /// Set the status of the selected segments
   void setSelectedSegmentsStatus(int status=-1);
 
@@ -165,6 +169,9 @@ public slots:
   /// Set if the specified status should be shown in the table
   /// \sa statusShown
   void setStatusShown(int status, bool shown);
+
+  /// Returns true if automatic jump to current segment is enabled.
+  bool jumpToSelectedSegmentEnabled()const;
 
 signals:
   /// Emitted if selection changes

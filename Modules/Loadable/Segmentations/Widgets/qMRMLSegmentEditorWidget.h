@@ -75,6 +75,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentEditorWidget : pu
   Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly)
   Q_PROPERTY(Qt::ToolButtonStyle effectButtonStyle READ effectButtonStyle WRITE setEffectButtonStyle)
   Q_PROPERTY(bool unorderedEffectsVisible READ unorderedEffectsVisible WRITE setUnorderedEffectsVisible)
+  Q_PROPERTY(bool jumpToSelectedSegmentEnabled READ jumpToSelectedSegmentEnabled WRITE setJumpToSelectedSegmentEnabled)
 
 public:
   typedef qMRMLWidget Superclass;
@@ -194,6 +195,9 @@ public:
   /// \sa SetInteractionNode()
   Q_INVOKABLE vtkMRMLInteractionNode* interactionNode() const;
 
+  /// Returns true if automatic jump to current segment is enabled.
+  bool jumpToSelectedSegmentEnabled()const;
+
 public slots:
   /// Set the MRML \a scene associated with the widget
   void setMRMLScene(vtkMRMLScene* newScene) override;
@@ -305,6 +309,13 @@ public slots:
   /// Positive offset will move down the table
   /// Negative offset will move up the table
   void selectSegmentAtOffset (int offset);
+
+  /// Jump position of all slice views to show the segment's center.
+/// Segment's center is determined as the center of bounding box.
+  void jumpSlices();
+
+  /// Enables automatic jumping to current segment when selection is changed.
+  void setJumpToSelectedSegmentEnabled(bool enable);
 
 signals:
   /// Emitted if different segment is selected in the segment list.

@@ -3838,3 +3838,17 @@ void qMRMLSegmentEditorWidget::selectSegmentAtOffset (int offset)
     }
   this->setCurrentSegmentID(selectedSegmentID.toStdString().c_str());
 }
+
+// --------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::setJumpToSelectedSegmentEnabled(bool enable)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  d->SegmentsTableView->setJumpToSelectedSegmentEnabled(enable);
+}
+
+// --------------------------------------------------------------------------
+bool qMRMLSegmentEditorWidget::jumpToSelectedSegmentEnabled()const
+{
+  Q_D(const qMRMLSegmentEditorWidget);
+  return d->SegmentsTableView->jumpToSelectedSegmentEnabled();
+}
