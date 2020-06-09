@@ -168,6 +168,7 @@ qSlicerExtensionsRestoreWidgetPrivate::qSlicerExtensionsRestoreWidgetPrivate(qSl
 void qSlicerExtensionsRestoreWidgetPrivate::init()
 {
   this->nrOfExtensionsToInstall = 0;
+  this->currentExtensionToInstall = -1;
   this->headlessMode = false;
   setupUi();
 }
@@ -411,7 +412,7 @@ void qSlicerExtensionsRestoreWidgetPrivate
 {
   Q_Q(qSlicerExtensionsRestoreWidget);
   this->currentExtensionToInstall++;
-  if (this->currentExtensionToInstall < this->nrOfExtensionsToInstall)
+  if (this->currentExtensionToInstall >=0 && this->currentExtensionToInstall < this->nrOfExtensionsToInstall)
     {
     q->extensionsManagerModel()->downloadAndInstallExtension(extensionsToInstall.at(currentExtensionToInstall));
     }
