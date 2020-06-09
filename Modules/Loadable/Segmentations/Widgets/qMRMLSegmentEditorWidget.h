@@ -75,6 +75,8 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentEditorWidget : pu
   Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly)
   Q_PROPERTY(Qt::ToolButtonStyle effectButtonStyle READ effectButtonStyle WRITE setEffectButtonStyle)
   Q_PROPERTY(bool unorderedEffectsVisible READ unorderedEffectsVisible WRITE setUnorderedEffectsVisible)
+  Q_PROPERTY(QString defaultTerminologyEntrySettingsKey READ defaultTerminologyEntrySettingsKey WRITE setDefaultTerminologyEntrySettingsKey)
+  Q_PROPERTY(QString defaultTerminologyEntry READ defaultTerminologyEntry WRITE setDefaultTerminologyEntry)
   Q_PROPERTY(bool jumpToSelectedSegmentEnabled READ jumpToSelectedSegmentEnabled WRITE setJumpToSelectedSegmentEnabled)
 
 public:
@@ -194,6 +196,24 @@ public:
   /// Get current interaction node.
   /// \sa SetInteractionNode()
   Q_INVOKABLE vtkMRMLInteractionNode* interactionNode() const;
+
+  /// Set settings key that stores defaultTerminologyEntry. If set to empty string then
+  /// the defaultTerminologyEntry is not saved to/loaded from application settings.
+  /// By default it is set to "Segmentations/DefaultTerminologyEntry".
+  /// If settings key is changed then the current default terminology entry is not written
+  /// into application settings (as it would overwrite its current value in the settings,
+  /// which is usually not the expected behavior).
+  void setDefaultTerminologyEntrySettingsKey(const QString& terminologyEntrySettingsKey);
+  /// Get settings key that stores defaultTerminologyEntry.
+  /// \sa setDefaultTerminologyEntrySettingsKey
+  QString defaultTerminologyEntrySettingsKey() const;
+
+  /// Set terminology entry string that is used for the first segment by default.
+  /// The value is alwo written to application settings, if defaultTerminologyEntrySettingsKey is not empty.
+  void setDefaultTerminologyEntry(const QString& terminologyEntry);
+  /// Get terminology entry string that is used for the first segment by default.
+  /// The value is read from application settings, if defaultTerminologyEntrySettingsKey is not empty.
+  QString defaultTerminologyEntry();
 
   /// Returns true if automatic jump to current segment is enabled.
   bool jumpToSelectedSegmentEnabled()const;
