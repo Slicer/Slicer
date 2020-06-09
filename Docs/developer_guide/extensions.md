@@ -29,10 +29,12 @@ Keep documentation with your extension's source code and keep it up-to-date when
 Add at least a README.md file in the root of the source code repository, which describes what the extension is for and how it works. Minimum information that is needed to make your extension usable is described in the [extension submission checklist](https://github.com/Slicer/ExtensionsIndex/blob/master/.github/PULL_REQUEST_TEMPLATE.md#todo-list-for-submitting-a-new-extension).
 
 Extension documentation examples:
-- https://github.com/NVIDIA/ai-assisted-annotation-client/tree/master/slicer-plugin
-- https://github.com/lassoan/SlicerSegmentMesher
-- https://github.com/moselhy/SlicerSequenceRegistration
-- http://dmri.slicer.org/
+- [SegmentMesher](https://github.com/lassoan/SlicerSegmentMesher)
+- [SequenceRegistration](https://github.com/moselhy/SlicerSequenceRegistration)
+- [AI-assisted annotation client](https://github.com/NVIDIA/ai-assisted-annotation-client/tree/master/slicer-plugin)
+- [SlicerDMRI](http://dmri.slicer.org/) - large extension documented using Github pages
+
+CLI module documentation can be automatically generated in mediawiki format using [this script](https://github.com/Slicer/Slicer/blob/master/Utilities/Scripts/SEMToMediaWiki.py). The script
 
 ## Distributing an extension
 
@@ -44,11 +46,11 @@ If your extension is ready for distribution (you have completed [extension submi
 
 ## Continuous Integration
 
-If you shared your extension by using the ExtensionWizard, make sure you know about the Slicer testing dashboard: 
+If you shared your extension by using the ExtensionWizard, make sure you know about the Slicer testing dashboard:
 
 ![](http://slicer.cdash.org/index.php?project=Slicer4&display=project)
 
-The dashboard will attempt to check out the source code of your extension, build, test and package it on Linux, MacOSX and Windows platforms. 
+The dashboard will attempt to check out the source code of your extension, build, test and package it on Linux, MacOSX and Windows platforms.
 
 To find your extension, use the following link replacing `SlicerMyExtension` with the name of your extension:
 
@@ -60,4 +62,4 @@ http://slicer.cdash.org/index.php?project=Slicer4&filtercount=1&showfilters=1&fi
 
 If you see red in any of the columns for your extension, click on the hyperlinked number of errors to see the details.
 
-Always check the dashboard after you first introduce your extension, or after you make any changes to the code!
+Always check the dashboard after you first introduce your extension, or after you make any changes to the code.
