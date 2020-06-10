@@ -827,8 +827,13 @@ bool qMRMLTreeView::clickDecoration(const QModelIndex& index)
 void qMRMLTreeView::toggleVisibility(const QModelIndex& index)
 {
   vtkMRMLNode* node = this->sortFilterProxyModel()->mrmlNodeFromIndex(index);
-  vtkMRMLDisplayNode* displayNode =
-    vtkMRMLDisplayNode::SafeDownCast(node);
+  vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(node);
+  vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
+
+  if (displayableNode && displayableNode->GetDisplayNode())
+    {
+    displayNode = displayableNode->GetDisplayNode();
+    }
 
   vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
     this->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
