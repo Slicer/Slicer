@@ -693,7 +693,7 @@ vtkMRMLMarkupsNode* vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile(con
     delete jsonRoot;
     return nullptr;
     }
-  if (markupIndex >= markups.GetArray().Size())
+  if (markupIndex >= static_cast<int>(markups.GetArray().Size()))
     {
     vtkErrorMacro("vtkMRMLMarkupsStorageNode::AddNewMarkupsNodeFromFile failed: cannot read markup from file " << filePath
       << " requested markup index " << markupIndex << " is not found (number of available markups: " << markups.GetArray().Size());
