@@ -196,6 +196,8 @@ protected:
 //------------------------------------------------------------------------------
 int qMRMLLayoutManagerWithCustomFactoryTest(int argc, char * argv[] )
 {
+  (void)checkViewArrangement; // Fix -Wunused-function warning
+
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
