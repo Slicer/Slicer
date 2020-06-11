@@ -13,7 +13,6 @@
 =========================================================================auto=*/
 
 // CLI invocation
-#include <qSlicerCLIModule.h>
 #include <vtkSlicerCLIModuleLogic.h>
 
 // CropLogic includes

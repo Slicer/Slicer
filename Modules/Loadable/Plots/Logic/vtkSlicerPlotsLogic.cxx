@@ -23,10 +23,6 @@
 // Plots Logic includes
 #include "vtkSlicerPlotsLogic.h"
 
-// Slicer includes
-#include <qSlicerApplication.h>
-#include <qSlicerLayoutManager.h>
-
 // MRML includes
 #include <vtkMRMLPlotChartNode.h>
 #include <vtkMRMLLayoutNode.h>
@@ -106,20 +102,16 @@ void vtkSlicerPlotsLogic::ShowChartInLayout(vtkMRMLPlotChartNode* chartNode)
   vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(this->GetMRMLScene()->GetFirstNodeByClass("vtkMRMLLayoutNode"));
   if (layoutNode)
     {
-    qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
-    if (layoutManager)
+    int currentLayout = layoutNode->GetViewArrangement();
+    int layoutWithPlot = vtkSlicerPlotsLogic::GetLayoutWithPlot(currentLayout);
+    if (currentLayout != layoutWithPlot)
       {
-      int currentLayout = layoutManager->layout();
-      int layoutWithPlot = vtkSlicerPlotsLogic::GetLayoutWithPlot(currentLayout);
-      if (currentLayout != layoutWithPlot)
-        {
-        layoutNode->SetViewArrangement(layoutWithPlot);
-        }
+      layoutNode->SetViewArrangement(layoutWithPlot);
       }
     }
 
   // Show plot in viewers
-  vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
+  vtkSlicerApplicationLogic* appLogic = this->GetApplicationLogic();
   if (appLogic)
     {
     vtkMRMLSelectionNode* selectionNode = appLogic->GetSelectionNode();
