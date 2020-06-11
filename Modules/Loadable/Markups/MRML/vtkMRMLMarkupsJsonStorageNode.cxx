@@ -710,7 +710,17 @@ vtkMRMLMarkupsNode* vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile(con
     return nullptr;
     }
   std::string markupsType = markup["type"].GetString();
-  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(scene->AddNewNodeByClass(className.c_str(), nodeName ? nodeName : ""));
+
+  std::string newNodeName;
+  if (nodeName && strlen(nodeName)>0)
+    {
+    newNodeName = nodeName;
+    }
+  else
+    {
+    newNodeName = scene->GetUniqueNameByString(this->GetFileNameWithoutExtension(filePath).c_str());
+    }
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(scene->AddNewNodeByClass(className.c_str(), newNodeName));
   if (!markupsNode)
     {
     vtkErrorMacro("vtkMRMLMarkupsStorageNode::ReadDataInternal failed: cannot instantiate class '" << className);

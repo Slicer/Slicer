@@ -102,7 +102,7 @@ bool qSlicerMarkupsReader::load(const IOProperties& properties)
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
 
-  QString name = QFileInfo(fileName).baseName();
+  QString name;
   if (properties.contains("name"))
     {
     name = properties["name"].toString();

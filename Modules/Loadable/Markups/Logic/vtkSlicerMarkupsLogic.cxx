@@ -755,20 +755,28 @@ char * vtkSlicerMarkupsLogic::LoadMarkupsFromFcsv(const char* fileName, const ch
     }
 
   vtkDebugMacro("LoadMarkups, file name = " << fileName << ", nodeName = " << (nodeName ? nodeName : "null"));
-
-  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", nodeName));
-  if (!markupsNode)
-    {
-    vtkErrorMacro("LoadMarkups: failed to instantiate markups node by class vtkMRMLMarkupsFiducialNode");
-    return nullptr;
-    }
-
   // make a storage node and fiducial node and set the file name
   vtkMRMLStorageNode* storageNode = vtkMRMLStorageNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLMarkupsFiducialStorageNode"));
   if (!storageNode)
     {
     vtkErrorMacro("LoadMarkups: failed to instantiate markups storage node by class vtkMRMLMarkupsFiducialNode");
-    this->GetMRMLScene()->RemoveNode(markupsNode);
+    return nullptr;
+    }
+
+  std::string newNodeName;
+  if (nodeName && strlen(nodeName)>0)
+    {
+    newNodeName = nodeName;
+    }
+  else
+    {
+    newNodeName = this->GetMRMLScene()->GetUniqueNameByString(storageNode->GetFileNameWithoutExtension(fileName).c_str());
+    }
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", newNodeName));
+  if (!markupsNode)
+    {
+    vtkErrorMacro("LoadMarkups: failed to instantiate markups node by class vtkMRMLMarkupsFiducialNode");
+    this->GetMRMLScene()->RemoveNode(storageNode);
     return nullptr;
     }
 
