@@ -1495,7 +1495,7 @@ bool vtkSlicerTerminologiesModuleLogic::GetNthCategoryInTerminology(std::string 
     return false;
     }
 
-  if (categoryIndex < 0 || categoryIndex >= categoryArray.Size())
+  if (categoryIndex < 0 || categoryIndex >= static_cast<int>(categoryArray.Size()))
     {
     vtkErrorMacro("GetNthCategoryInTerminology failed: category index of " << categoryIndex << " is out of range"
       << " (number of categories: " << categoryArray.Size() << ")");
@@ -1621,7 +1621,7 @@ bool vtkSlicerTerminologiesModuleLogic::GetNthTypeInTerminologyCategory(std::str
     return false;
     }
 
-  if (typeIndex < 0 || typeIndex >= typeArray.Size())
+  if (typeIndex < 0 || typeIndex >= static_cast<int>(typeArray.Size()))
     {
     vtkErrorMacro("GetNthTypeInTerminologyCategory failed: typeIndex of " << typeIndex << " is out of range (number of types: " << typeArray.Size() << ")");
     return false;
@@ -1729,7 +1729,7 @@ bool vtkSlicerTerminologiesModuleLogic::GetNthTypeModifierInTerminologyType(
     vtkErrorMacro("GetNthTypeModifierInTerminologyType failed: typeModifier is invalid");
     return false;
     }
-  if (typeModifierIndex < 0 || typeModifierIndex >= typeModifierArray.Size())
+  if (typeModifierIndex < 0 || typeModifierIndex >= static_cast<int>(typeModifierArray.Size()))
     {
     vtkErrorMacro("GetNthTypeModifierInTerminologyType failed: type modifier index of " << typeModifierIndex << " is out of range"
       << " (number of type modifiers: " << typeModifierArray.Size() << ")");
