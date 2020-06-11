@@ -728,7 +728,7 @@ vtkMRMLMarkupsNode* vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile(con
     displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(markupsNode->GetDisplayNode());
     if (displayNode && markup.HasMember("display"))
       {
-      success == success && this->Internal->UpdateMarkupsDisplayNodeFromJsonValue(displayNode, markup);
+      success = success && this->Internal->UpdateMarkupsDisplayNodeFromJsonValue(displayNode, markup);
       }
     }
 
