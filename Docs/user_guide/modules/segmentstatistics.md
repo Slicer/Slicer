@@ -12,9 +12,9 @@ Labelmap statistics are calculated using the binary labelmap representation of t
 - Centroid: the center of mass of the segment in RAS coordinates
 - Feret diameter: the diameter of a sphere that can encompass the entire segment
 - Surface area mm2: the volume of the segment in mm2
-- Roundness: the roundness of the segment. Calculated from ratio of the area of the sphere calculated from the Feret diameter by the actual area. Value of 1 represents a spherical structure. See detailed definition [here](http://hdl.handle.net/1926/584).
-- Flatness: the flatness of the segment. Calculated from square root of the ratio of the second smallest principal moment by the smallest. Value of 0 represents a flat structure. See detailed definition [here](http://hdl.handle.net/1926/584).
-- Elongation: the elongation of the segment. Calculated from square root of the ratio of the second largest principal moment by the second smallest. See detailed definition [here](http://hdl.handle.net/1926/584).
+- Roundness: the roundness of the segment. Calculated from ratio of the area of the sphere calculated from the Feret diameter by the actual area. Value of 1 represents a spherical structure. See detailed definition [here](https://www.insight-journal.org/browse/publication/301).
+- Flatness: the flatness of the segment. Calculated from square root of the ratio of the second smallest principal moment by the smallest. Value of 0 represents a flat structure. See detailed definition [here](https://www.insight-journal.org/browse/publication/301).
+- Elongation: the elongation of the segment. Calculated from square root of the ratio of the second largest principal moment by the second smallest. See detailed definition [here](https://www.insight-journal.org/browse/publication/301).
 - Principal moments: the principal moments of inertia for each axes of the segment
 - Principal axes: the principal axes of rotation of the segment
 - Oriented bounding box: the non-axis aligned bounding box that encompasses the segment
@@ -60,8 +60,8 @@ Authors:
 This module is partly funded by an Applied Cancer Research Unit of Cancer Care Ontario with funds provided by the Ministry of Health and Long-Term Care and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO) to provide free, open-source toolset for radiotherapy and related image-guided interventions.
 The work is part of the `National Alliance for Medical Image Computing <http://www.na-mic.org/>`_ (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
 
-![PerkLab, Queen's University](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_perklab.png)
-![Isomics](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_isomics.png)
-![National Alliance in Medical Image Computing (NA-MIC)](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_namic.png)
-![NAC](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_nac.png)
-![General Electric](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_ge.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_perklab.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_isomics.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_namic.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_nac.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_ge.png)

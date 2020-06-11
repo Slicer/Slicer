@@ -27,11 +27,11 @@ GPU: Graphics must support minimum OpenGL 3.2. Integrated graphics card is suffi
 
 To download Slicer, click [here](http://download.slicer.org/).
 
-![SlicerInstallers-2020-03-25](https://github.com/Slicer/Slicer/releases/download/docs-resources/getting_started_download.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/getting_started_download.png)
 
 The "Preview Release" of 3D Slicer is updated every night and contains latest developments: new features and fixes. The "Stable Release" is updated about once a year nightly and is more rigorously tested.
 
-Slicer is generally simple to install on all platforms. It is possible to install multiple versions of the application on the same user account and they will not interfere with each other. If you run into mysterious problems with your installation you can try deleting the [Settings Files](settings.html#settings-file-location).
+Slicer is generally simple to install on all platforms. It is possible to install multiple versions of the application on the same user account and they will not interfere with each other. If you run into mysterious problems with your installation you can try deleting the [application settings files](settings.html#settings-file-location).
 
 Once downloaded, follow the instructions below to complete installation:
 

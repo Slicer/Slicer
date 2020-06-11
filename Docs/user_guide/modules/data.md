@@ -49,7 +49,7 @@ Double-click the cell of the node or branch to transform in the transform column
 
 Contains all the objects in the Subject hierarchy in a tree representation.
 
-![Subject hierarchy tab](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_data_subjecthierarchy.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_data_subjecthierarchy.png)
 
 Folder structure:
 
@@ -61,7 +61,7 @@ Folder structure:
   - Drag&drop manually under a hierarchy node
   - Create model or other (e.g. annotation) hierarchies, and see the same structure in subject hierarchy
 
-![Create folder structure from directory structure](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_data_create_hierarchy_from_directory.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_data_create_hierarchy_from_directory.png)
 
 Operations (accessible in the context menu of the nodes by right-clicking them):
 
@@ -96,13 +96,13 @@ Subject hierarchy item information section: Displays detailed information about 
 - **Show MRML ID's**: Show/hide in the tree view a second column containing the node ID of the nodes. Hidden by default
 - **Show hidden nodes**: Show/hide the hidden nodes. By default, only the main nodes are shown
 
-![Transform hierarchy tab](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_data_transform_hierarchy.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_data_transform_hierarchy.png)
 
 ### All nodes tab
 
 List of all nodes in the scene. Supports Edit properties, Rename, Delete.
 
-![All nodes tab](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_data_allnodes.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_data_allnodes.png)
 
 ### Common section for all tabs
 
@@ -148,8 +148,8 @@ Authors:
 
 This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. This work was also funded by An Applied Cancer Research Unit of Cancer Care Ontario with funds provided by the Ministry of Health, Canada
 
-![National Alliance in Medical Image Computing (NA-MIC)](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_namic.png)
-![Kitware](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_kitware.png)
-![Isomics](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_isomics.png)
-![Harvard Surgical Planning Laboratory (SPL)](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_spl.png)
-![Cancer Care Ontario (CCO)](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_cco.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_namic.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_kitware.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_isomics.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_spl.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_cco.png)

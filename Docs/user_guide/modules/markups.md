@@ -4,7 +4,7 @@
 
 This module is used to create and edit markups (fiducial list, line, angle, curve, plane, etc.) and adjust their display properties.
 
-![Markups node types](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_markups_types.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_markups_types.png)
 
 ## How to
 
@@ -14,7 +14,7 @@ This module is used to create and edit markups (fiducial list, line, angle, curv
 
 Click the down-arrow icon on the button to choose markups type.
 
-![Create and place button on toolbar](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_markups_place_toolbar.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_markups_place_toolbar.png)
 
 Click "Persistent" checkbox to keep placing more points after the current markups is completed.
 
@@ -158,5 +158,5 @@ Authors:
 
 This work is part of the National Alliance for Medical Image Computing (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. Information on NA-MIC can be obtained from the [NA-MIC website](http://www.na-mic.org/).
 
-![Harvard Surgical Planning Laboratory (SPL)](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_spl.png)
-![PerkLab, Queen's University](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_perklab.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_spl.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/logo_perklab.png)
