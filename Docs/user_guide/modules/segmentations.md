@@ -54,7 +54,7 @@ Tip: Selection of a `master volume` is required for editing a segmentation. If n
 
 ### Export segmentation to model (surface mesh) file
 
-Direct file export is available for STL and OBJ files:
+Segments can be exported to STL or OBJ files for 3D printing or visualization/processing in external software:
 
 - Open `Export to files` section in `Segmentations` module (or in `Segment editor` module: choose `Export to files`, in the drop-down menu of `Segmentations` button)
 - Choose destination folder, file format, etc.
