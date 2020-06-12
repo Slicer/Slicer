@@ -56,6 +56,10 @@ public:
   vtkMRMLScene* mrmlScene()const;
   QString quantity()const;
 
+  /// When symmetricMoves is true, moving a handle will move the other handle
+  /// symmetrically, otherwise the handles are independent. False by default.
+  void setSymmetricMoves(bool symmetry) override;
+
 public slots:
   /// Set the palette of the minimum handle
   void setMinimumHandlePalette(const QPalette& palette);
@@ -79,6 +83,7 @@ protected slots:
 protected:
   qMRMLSpinBox* MinSpinBox;
   qMRMLSpinBox* MaxSpinBox;
+  QAction* SymmetricAction;
 };
 
 /// qMRMLDoubleRangeSlider is a wrapper around a ctkDoubleRangeSlider

@@ -67,15 +67,15 @@ qMRMLRangeWidget::qMRMLRangeWidget(QWidget* parentWidget)
   QWidgetAction* rangeAction = new QWidgetAction(this);
   rangeAction->setDefaultWidget(rangeWidget);
 
-  QAction* symmetricAction = new QAction(tr("Symmetric handles"),this);
-  symmetricAction->setCheckable(true);
-  connect(symmetricAction, SIGNAL(toggled(bool)),
+  this->SymmetricAction = new QAction(tr("Symmetric handles"),this);
+  this->SymmetricAction->setCheckable(true);
+  connect(this->SymmetricAction, SIGNAL(toggled(bool)),
           this, SLOT(updateSymmetricMoves(bool)));
-  symmetricAction->setChecked(this->symmetricMoves());
+  this->SymmetricAction->setChecked(this->symmetricMoves());
 
   QMenu* optionsMenu = new QMenu(this);
   optionsMenu->addAction(rangeAction);
-  optionsMenu->addAction(symmetricAction);
+  optionsMenu->addAction(this->SymmetricAction);
 
   QToolButton* optionsButton = new QToolButton(this);
   optionsButton->setIcon(QIcon(":Icons/SliceMoreOptions.png"));
@@ -139,6 +139,18 @@ void qMRMLRangeWidget::updateRange()
 void qMRMLRangeWidget::updateSymmetricMoves(bool symmetric)
 {
   this->setSymmetricMoves(symmetric);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLRangeWidget::setSymmetricMoves(bool symmetry)
+{
+  if (symmetry==this->symmetricMoves())
+    {
+    return;
+    }
+  ctkRangeWidget::setSymmetricMoves(symmetry);
+  const QSignalBlocker blocker(this->SymmetricAction);
+  this->SymmetricAction->setChecked(symmetry);
 }
 
 //-----------------------------------------------------------------------------
