@@ -107,7 +107,7 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
     this->glyphTypeComboBox->setEnabled(false);
     for (int i = min; i <= max; i++)
       {
-      this->glyphTypeComboBox->addItem(displayNode->GetGlyphTypeAsString(i));
+      this->glyphTypeComboBox->addItem(displayNode->GetGlyphTypeAsString(i), displayNode->GetGlyphTypeAsString(i));
       }
     this->glyphTypeComboBox->setEnabled(true);
     }
