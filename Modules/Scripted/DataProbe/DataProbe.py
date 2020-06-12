@@ -417,7 +417,9 @@ class DataProbeInfoWidget(object):
 
     self.viewerFrame.layout().addStretch(1)
 
-    def _setFixedFontFamily(widget, family='Monospace'):
+    def _setFixedFontFamily(widget, family=None):
+      if family is None:
+        family = qt.QFontDatabase.systemFont(qt.QFontDatabase.FixedFont).family()
       font = widget.font
       font.setFamily(family)
       widget.font = font
