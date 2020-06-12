@@ -429,6 +429,9 @@
               <property name="flat">
                <bool>false</bool>
               </property>
+              <property name="checkBoxControlsButtonToggleState">
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
             <item>
