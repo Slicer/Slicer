@@ -39,54 +39,34 @@ QPalette qSlicerDarkStyle::standardPalette()const
 {
   QPalette palette = this->Superclass::standardPalette();
 
-  // From darkest to lightest
-  palette.setColor(QPalette::Shadow, "#0d0d0f");
-
-  palette.setColor(QPalette::AlternateBase, "#4d4d3f");
-  palette.setColor(QPalette::ToolTipBase, "#3d3d3f");
-
-  // Cleanlooks style requires a window gradient if a button gradient is used.
-  QLinearGradient windowGradient;
-  windowGradient.setColorAt(0., QColor("#424244"));
-  windowGradient.setColorAt(1., QColor("#424244"));
-  QBrush windowBrush(windowGradient);
-  windowBrush.setColor(QColor("#424244"));
-  palette.setBrush(QPalette::Window, windowBrush);
-  windowGradient.setColorAt(0., QColor("#222224"));
-  windowGradient.setColorAt(1., QColor("#222224"));
-  windowBrush = QBrush(windowGradient);
-  windowBrush.setColor(QColor("#222224"));
-  palette.setBrush(QPalette::Disabled, QPalette::Window, windowBrush);
-
-  palette.setColor(QPalette::Base, "#525254");
+  // See https://doc.qt.io/qt-5/qpalette.html#ColorRole-enum
+  // Central color roles
+  palette.setColor(QPalette::Window, "#353535");
+  palette.setColor(QPalette::WindowText, Qt::white);
+  palette.setColor(QPalette::Disabled, QPalette::WindowText, "#7f7f7f");
+  palette.setColor(QPalette::Base, "#2d2d2d");
   palette.setColor(QPalette::Disabled, QPalette::Base, "#323234");
-
-  palette.setColor(QPalette::Dark, "#3d3d3f");
-  palette.setColor(QPalette::Mid, "#4d4d4f");
-  QLinearGradient buttonGradient(0.,0.,0.,1.);
-  buttonGradient.setColorAt(0., QColor("#6d6d6f"));
-  buttonGradient.setColorAt(1., QColor("#5d5d5f"));
-  QBrush buttonBrush(buttonGradient);
-  buttonBrush.setColor(QColor("#626264")); // for the scrollbars
-  palette.setBrush(QPalette::Active, QPalette::Button, buttonBrush);
-  palette.setBrush(QPalette::Inactive, QPalette::Button, buttonBrush);
-
-  buttonGradient.setColorAt(0., QColor("#424244"));
-  buttonGradient.setColorAt(1., QColor("#525254"));
-  buttonBrush = QBrush(buttonGradient);
-  buttonBrush.setColor(QColor("#4d4d4f"));
-  palette.setBrush(QPalette::Disabled, QPalette::Button, buttonBrush);
-  palette.setColor(QPalette::Midlight, "#727274");
-  palette.setColor(QPalette::Light, "#828284");
-
-  palette.setColor(QPalette::WindowText, "#e2e2e4");
-  palette.setColor(QPalette::Disabled, QPalette::WindowText, "#323234");
-  palette.setColor(QPalette::Text, "#f2f2f4");
-  palette.setColor(QPalette::Disabled, QPalette::Text, "#828284");
-  palette.setColor(QPalette::ToolTipText, "#e2e2e4");
-  palette.setColor(QPalette::ButtonText, "#ededef");
-  palette.setColor(QPalette::Disabled, QPalette::ButtonText, "#727274");
-
-  palette.setColor(QPalette::BrightText, Qt::white);
+  palette.setColor(QPalette::AlternateBase, "#424242");
+  palette.setColor(QPalette::ToolTipBase, Qt::white);
+  palette.setColor(QPalette::ToolTipText, "#353535");
+  palette.setColor(QPalette::Text, Qt::white);
+  palette.setColor(QPalette::Disabled, QPalette::Text, "#7f7f7f");
+  palette.setColor(QPalette::Button, "#353535");
+  palette.setColor(QPalette::ButtonText, Qt::white);
+  palette.setColor(QPalette::Disabled, QPalette::ButtonText, "#7f7f7f");
+  palette.setColor(QPalette::BrightText, Qt::red);
+  // Color roles used mostly for 3D bevel and shadow effects.
+  palette.setColor(QPalette::Light, "#828284");  // Lighter than Button color.
+  palette.setColor(QPalette::Midlight, "#5c5c5d");  // Between Button and Light.
+  palette.setColor(QPalette::Dark, "#232323");  // Darker than Button.
+  palette.setColor(QPalette::Mid, "#2c2c2c");  // Between Button and Dark.
+  palette.setColor(QPalette::Shadow, "#141414");  // A very dark color.
+  // Color roles relate to selected (marked) items
+  palette.setColor(QPalette::Highlight, "#3ca4ff");
+  palette.setColor(QPalette::Disabled, QPalette::Highlight, "#505050");
+  palette.setColor(QPalette::HighlightedText, Qt::white);
+  palette.setColor(QPalette::Disabled, QPalette::HighlightedText, "#7f7f7f");
+  // Color roles related to hyperlinks
+  palette.setColor(QPalette::Link, "#3ca4ff");
   return palette;
 }
