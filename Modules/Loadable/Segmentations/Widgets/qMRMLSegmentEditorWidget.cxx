@@ -3081,6 +3081,11 @@ void qMRMLSegmentEditorWidget::toggleMasterVolumeIntensityMaskEnabled()
 void qMRMLSegmentEditorWidget::undo()
 {
   Q_D(qMRMLSegmentEditorWidget);
+  if (!d->SegmentationNode)
+    {
+    return;
+    }
+
   MRMLNodeModifyBlocker blocker(d->SegmentationNode);
   d->SegmentationHistory->RestorePreviousState();
   d->SegmentationNode->InvokeCustomModifiedEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, d->SegmentationNode->GetDisplayNode());
@@ -3090,6 +3095,11 @@ void qMRMLSegmentEditorWidget::undo()
 void qMRMLSegmentEditorWidget::redo()
 {
   Q_D(qMRMLSegmentEditorWidget);
+  if (!d->SegmentationNode)
+    {
+    return;
+    }
+
   MRMLNodeModifyBlocker blocker(d->SegmentationNode);
   d->SegmentationHistory->RestoreNextState();
   d->SegmentationNode->InvokeCustomModifiedEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, d->SegmentationNode->GetDisplayNode());
