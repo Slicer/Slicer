@@ -501,6 +501,21 @@ QList<vtkIdType> qSlicerSubjectHierarchyPluginHandler::currentItems()
   return this->m_CurrentItems;
 }
 
+//------------------------------------------------------------------------------
+void qSlicerSubjectHierarchyPluginHandler::currentItems(vtkIdList* selectedItems)
+{
+  if (!selectedItems)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid item list";
+    return;
+    }
+
+  foreach (vtkIdType item, this->m_CurrentItems)
+    {
+    selectedItems->InsertNextId(item);
+    }
+}
+
 //-----------------------------------------------------------------------------
 bool qSlicerSubjectHierarchyPluginHandler::autoDeleteSubjectHierarchyChildren()const
 {
