@@ -119,6 +119,7 @@ public:
   /// IMPORTANT NOTE: This function is solely used for plugin-provided context menus. This is NOT to be used for getting the
   ///                 selected items of individual widgets (tree views, comboboxes).
   Q_INVOKABLE QList<vtkIdType> currentItems();
+  Q_INVOKABLE void currentItems(vtkIdList* selectedItems);
 
   Q_INVOKABLE bool autoDeleteSubjectHierarchyChildren()const;
   Q_INVOKABLE void setAutoDeleteSubjectHierarchyChildren(bool flag);
