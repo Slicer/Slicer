@@ -8,6 +8,8 @@
     <file>Icons/Transform.png</file>
     <file>Icons/Unknown.png</file>
     <file>Icons/Warning.png</file>
+    <file>Icons/NoTransform.png</file>
+    <file>Icons/FolderTransform.png</file>
     <file>Icons/LinearTransform.png</file>
     <file>Icons/DeformableTransform.png</file>
   </qresource>

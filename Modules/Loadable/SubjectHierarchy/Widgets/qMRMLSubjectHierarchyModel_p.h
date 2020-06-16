@@ -97,6 +97,8 @@ public:
   QIcon UnknownIcon;
   QIcon WarningIcon;
 
+  QIcon NoTransformIcon;
+  QIcon FolderTransformIcon;
   QIcon LinearTransformIcon;
   QIcon DeformableTransformIcon;
 

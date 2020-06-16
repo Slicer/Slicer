@@ -96,7 +96,7 @@ void qSlicerSubjectHierarchyTransformsPluginPrivate::init()
   this->IdentityAction = new QAction("Reset transform to identity",q);
   QObject::connect(this->IdentityAction, SIGNAL(triggered()), q, SLOT(identity()));
 
-  this->ToggleInteractionBoxAction = new QAction("Toggle interaction box",q);
+  this->ToggleInteractionBoxAction = new QAction("Interaction in 3D view",q);
   QObject::connect(this->ToggleInteractionBoxAction, SIGNAL(toggled(bool)), q, SLOT(toggleInteractionBox(bool)));
   this->ToggleInteractionBoxAction->setCheckable(true);
   this->ToggleInteractionBoxAction->setChecked(false);

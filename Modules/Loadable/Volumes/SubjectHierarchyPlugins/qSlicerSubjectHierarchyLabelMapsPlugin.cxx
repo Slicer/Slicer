@@ -87,7 +87,7 @@ void qSlicerSubjectHierarchyLabelMapsPluginPrivate::init()
 {
   Q_Q(qSlicerSubjectHierarchyLabelMapsPlugin);
 
-  this->ToggleOutlineVisibilityAction = new QAction("Toggle 2D outline visibility",q);
+  this->ToggleOutlineVisibilityAction = new QAction("2D outline visibility",q);
   QObject::connect(this->ToggleOutlineVisibilityAction, SIGNAL(toggled(bool)), q, SLOT(toggle2DOutlineVisibility(bool)));
   this->ToggleOutlineVisibilityAction->setCheckable(true);
   this->ToggleOutlineVisibilityAction->setChecked(false);

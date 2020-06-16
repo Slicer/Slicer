@@ -240,6 +240,11 @@ protected slots:
 
   void onCustomContextMenu(const QPoint& point);
 
+  virtual void onTransformActionSelected();
+  virtual void onTransformInteractionInViewToggled(bool show);
+  virtual void onTransformEditProperties();
+  virtual void onCreateNewTransform();
+
 protected:
   /// Set the subject hierarchy node found in the given scene. Called only internally.
   virtual void setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode);
@@ -254,6 +259,8 @@ protected:
   virtual void populateContextMenuForItem(vtkIdType itemID);
   /// Populate visibility context menu for given subject hierarchy item
   virtual void populateVisibilityContextMenuForItem(vtkIdType itemID);
+  /// Populate transform context menu for given subject hierarchy item
+  virtual void populateTransformContextMenuForItem(vtkIdType itemID);
 
   /// Handles clicks on the decoration of items (i.e. icon). In visibility column this means either toggle
   /// visibility or show visibility context menu.

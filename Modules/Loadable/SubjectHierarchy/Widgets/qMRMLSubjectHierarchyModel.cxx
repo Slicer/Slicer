@@ -77,6 +77,8 @@ qMRMLSubjectHierarchyModelPrivate::qMRMLSubjectHierarchyModelPrivate(qMRMLSubjec
   this->UnknownIcon = QIcon(":Icons/Unknown.png");
   this->WarningIcon = QIcon(":Icons/Warning.png");
 
+  this->NoTransformIcon = QIcon(":/Icons/NoTransform.png");
+  this->FolderTransformIcon = QIcon(":/Icons/FolderTransform.png");
   this->LinearTransformIcon = QIcon(":/Icons/LinearTransform.png");
   this->DeformableTransformIcon = QIcon(":Icons/DeformableTransform.png");
 
@@ -851,7 +853,7 @@ QFlags<Qt::ItemFlag> qMRMLSubjectHierarchyModel::subjectHierarchyItemFlags(vtkId
     return flags;
     }
 
-  if (column == this->nameColumn() || column == this->colorColumn() || column == this->transformColumn()
+  if (column == this->nameColumn() || column == this->colorColumn()
     || column == this->descriptionColumn())
     {
     flags |= Qt::ItemIsEditable;
@@ -1113,10 +1115,12 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
       item->setData( "Transform", Qt::WhatsThisRole );
       }
 
+    QIcon icon;
     vtkMRMLNode* dataNode = d->SubjectHierarchyNode->GetItemDataNode(shItemID);
     vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(dataNode);
     if (transformableNode)
       {
+      icon = d->NoTransformIcon;
       vtkMRMLTransformNode* parentTransformNode = ( transformableNode->GetParentTransformNode() ? transformableNode->GetParentTransformNode() : nullptr );
       QString transformNodeId( parentTransformNode ? parentTransformNode->GetID() : "" );
       QString transformNodeName( parentTransformNode ? parentTransformNode->GetName() : "" );
@@ -1125,29 +1129,24 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
         {
         item->setData(transformNodeId, TransformIDRole);
         item->setToolTip( parentTransformNode ? tr("%1 (%2)").arg(parentTransformNode->GetName()).arg(parentTransformNode->GetID()) : "" );
-
         if (parentTransformNode)
-        {
-          QIcon icon = (parentTransformNode->IsLinear() ? d->LinearTransformIcon : d->DeformableTransformIcon);
-          if (item->icon().cacheKey() != icon.cacheKey()) // Only set if it changed (https://bugreports.qt-project.org/browse/QTBUG-20248)
-            {
-            item->setIcon(icon);
-            }
-          }
-        else
           {
-          item->setIcon(QIcon());
+          icon = (parentTransformNode->IsLinear() ? d->LinearTransformIcon : d->DeformableTransformIcon);
           }
         }
-      else
-        {
-        item->setIcon(QIcon());
-        }
+      }
+    else if (d->SubjectHierarchyNode->GetNumberOfItemChildren(shItemID, true))
+      {
+      icon = d->FolderTransformIcon;
+      item->setToolTip(tr("Apply transform to children"));
       }
     else
       {
-      item->setToolTip(tr("No transform can be directly applied on non-transformable nodes,\n"
-        "however a transform can be chosen to apply it on all the children") );
+      item->setToolTip(tr("This node is not transformable"));
+      }
+    if (item->icon().cacheKey() != icon.cacheKey()) // Only set if it changed (https://bugreports.qt-project.org/browse/QTBUG-20248)
+      {
+      item->setIcon(icon);
       }
     }
 }

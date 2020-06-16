@@ -112,12 +112,12 @@ void qSlicerSubjectHierarchySegmentationsPluginPrivate::init()
   this->ConvertModelsToSegmentationAction = new QAction("Convert models to segmentation node",q);
   QObject::connect(this->ConvertModelsToSegmentationAction, SIGNAL(triggered()), q, SLOT(convertModelsToSegmentation()));
 
-  this->Toggle2DFillVisibilityAction = new QAction("Toggle 2D fill visibility",q);
+  this->Toggle2DFillVisibilityAction = new QAction("2D fill visibility",q);
   QObject::connect(this->Toggle2DFillVisibilityAction, SIGNAL(toggled(bool)), q, SLOT(toggle2DFillVisibility(bool)));
   this->Toggle2DFillVisibilityAction->setCheckable(true);
   this->Toggle2DFillVisibilityAction->setChecked(false);
 
-  this->Toggle2DOutlineVisibilityAction = new QAction("Toggle 2D outline visibility",q);
+  this->Toggle2DOutlineVisibilityAction = new QAction("2D outline visibility",q);
   QObject::connect(this->Toggle2DOutlineVisibilityAction, SIGNAL(toggled(bool)), q, SLOT(toggle2DOutlineVisibility(bool)));
   this->Toggle2DOutlineVisibilityAction->setCheckable(true);
   this->Toggle2DOutlineVisibilityAction->setChecked(false);

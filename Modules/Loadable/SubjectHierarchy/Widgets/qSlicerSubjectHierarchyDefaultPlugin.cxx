@@ -55,7 +55,6 @@ public:
   QIcon HiddenIcon;
   QIcon PartiallyVisibleIcon;
 
-  QAction* ToggleVisibilityAction;
   QAction* ShowAllChildrenAction;
   QAction* HideAllChildrenAction;
 };
@@ -66,7 +65,6 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyDefaultPluginPrivate::qSlicerSubjectHierarchyDefaultPluginPrivate(qSlicerSubjectHierarchyDefaultPlugin& object)
 : q_ptr(&object)
-, ToggleVisibilityAction(nullptr)
 , ShowAllChildrenAction(nullptr)
 , HideAllChildrenAction(nullptr)
 {
@@ -80,9 +78,6 @@ qSlicerSubjectHierarchyDefaultPluginPrivate::~qSlicerSubjectHierarchyDefaultPlug
 void qSlicerSubjectHierarchyDefaultPluginPrivate::init()
 {
   Q_Q(qSlicerSubjectHierarchyAbstractPlugin);
-
-  this->ToggleVisibilityAction = new QAction("Toggle visibility",q);
-  QObject::connect(this->ToggleVisibilityAction, SIGNAL(triggered()), q, SLOT(toggleVisibility()));
 
   this->ShowAllChildrenAction = new QAction("Show all children",q);
   QObject::connect(this->ShowAllChildrenAction, SIGNAL(triggered()), q, SLOT(showAllChildren()));
@@ -203,7 +198,6 @@ QList<QAction*> qSlicerSubjectHierarchyDefaultPlugin::visibilityContextMenuActio
   Q_D(const qSlicerSubjectHierarchyDefaultPlugin);
 
   QList<QAction*> actions;
-  actions << d->ToggleVisibilityAction << d->ShowAllChildrenAction << d->HideAllChildrenAction;
   return actions;
 }
 
@@ -222,9 +216,6 @@ void qSlicerSubjectHierarchyDefaultPlugin::showVisibilityContextMenuActionsForIt
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
     }
-
-  // Toggle visibility is visible for every item
-  d->ToggleVisibilityAction->setVisible(true);
 
   // Show child-related actions only if there are children to the item
   std::vector<vtkIdType> childItems;
