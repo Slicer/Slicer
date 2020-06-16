@@ -53,13 +53,23 @@ To customize behavior and appearance of the Crosshair, click the "down arrow" bu
 
 ### Mouse Modes
 
-Slicer has multiple mouse modes: **Transform** (which allows interactive rotate, translate and zoom operations), **Window Level** to adjust brightness/contrast of the image volumes, and **Place** (which permits objects to be interactively placed in slice and 3D views).
+Slicer has multiple mouse modes: **Transform** (which allows interactive rotate, translate and zoom operations), **Window/Level** to adjust brightness/contrast of the image volumes, and **Place** (which permits objects to be interactively placed in slice and 3D views).
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/user_interface_mousemode_toolbar.png)
 
 The toolbar icons that switch between these mouse modes are shown from left to right above, respectively. Place Fiducial is the default place option as shown above; options to place other nodes such as Ruler and Region of Interest Widgets are also available from the drop-down Place Mode menu.
 
 > **Note:** Transform mode is the default interaction mode. By default, Place mode persists for one "place" operation after the Place Mode icon is selected, and then the mode switches back to Transform. Place mode can be made persistent (useful for creating multiple fiducial points, rulers, etc.) by checking the Persistent checkbox shown rightmost in the Mouse Mode Toolbar.
+
+#### Adjusting image window/level
+
+Medical images typically contain thousands of gray levels, but regular computer displays can display only 256 gray levels, and the human eye also has limitation in what minimum contrast difference it can notice (see [Kimpe 2007](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3043920/) for more specific information). Therefore, medical images are displayed with adjustable brightness/contrast (window/level).
+
+By default 3D Slicer uses window/level setting that is specified in the DICOM file. If it is not available then window/level is set so that the entire intensity range of the image (except top/bottom 0.1%, to not let a very thin tail of the intensity distribution to decrease the image contrast too much).
+
+Window/level can be manually adjusted anytime by clicking on "Adjust window/level" button on the toolbar then left-click-and-drag in any of the slice viewers. Optimal window/level can be computed for a chosen area by lef-click-and-dragging while holding down <kbd>Ctrl</kbd> key.
+
+[![](https://img.youtube.com/vi/u1B0F1KcVsk/0.jpg)](https://youtu.be/u1B0F1KcVsk "Demo video of how to adjust image window/level")
 
 ### 3D View
 
