@@ -33,7 +33,8 @@ To download Slicer, click [here](http://download.slicer.org/).
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/getting_started_download.png)
 
-The "Preview Release" of 3D Slicer is updated every night and contains latest developments: new features and fixes. The "Stable Release" is updated about once a year nightly and is more rigorously tested.
+The "Preview Release" of 3D Slicer is updated daily (process starts at 11pm ET and takes few hours to complete) and represents the latest development including new features and fixes.
+The "Stable Release" is usually updated a few times a year and is more rigorously tested.
 
 Slicer is generally simple to install on all platforms. It is possible to install multiple versions of the application on the same user account and they will not interfere with each other. If you run into mysterious problems with your installation you can try deleting the [application settings files](settings.html#settings-file-location).
 
