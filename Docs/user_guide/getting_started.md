@@ -23,7 +23,7 @@ Welcome to the 3D Slicer community. This page contains information that you need
 - Display: a minimum resolution of 1024 by 768 (1280 by 1024 or better is recommended).
 - Graphics: . Dedicated graphics hardware (discrete GPU) memory is recommended for fast volume rendering.
 GPU: Graphics must support minimum OpenGL 3.2. Integrated graphics card is sufficient for basic visualization. Discrete graphics card (such as NVidia GPU) is recommended for interactive 3D volume rendering and fast rendering of complex scenes. GPU texture memory (VRAM) should be larger than your largest dataset (e.g., working with 2GB data, get VRAM > 4GB) and check that your images fit in maximum texture dimensions of your GPU hardware. Except rendering, most calculations are performed on CPU, therefore having a faster GPU will generally not impact the overall speed of the application.
-- Some computations in 3D Slicer are multi-threaded and will benefit from multi core, multi CPU configurations. Minimum Intel Core i5 CPU is recommended. On desktop computers, Intel Core i7 CPU is recommended.
+- Some computations in 3D Slicer are multi-threaded and will benefit from multi core, multi CPU configurations.
 - Interface device: a three button mouse with scroll wheel is recommended. Pen, multi-touchscreen, touchpad, and graphic tablet are supported. All OpenVR-compatible virtual reality headsets are supported for virtual reality display.
 - Internet connection to access extensions, Python packages, online documentation, sample data sets, and tutorials.
 
