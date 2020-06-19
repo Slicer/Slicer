@@ -47,6 +47,8 @@ public:
   QRect subControlRect(ComplexControl control, const QStyleOptionComplex *option,
                                SubControl subControl, const QWidget *widget) const override;
   QPalette standardPalette()const override;
+  QPalette standardLightPalette()const;
+  QPalette standardDarkPalette()const;
   int styleHint(StyleHint hint, const QStyleOption *opt, const QWidget *widget,
                         QStyleHintReturn *returnData) const override;
 

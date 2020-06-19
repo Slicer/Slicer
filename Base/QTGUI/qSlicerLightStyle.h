@@ -18,25 +18,25 @@
 
 ==============================================================================*/
 
-// Qt includes
-#include <QLinearGradient>
-#include <QPalette>
+#ifndef __qSlicerLightStyle_h
+#define __qSlicerLightStyle_h
 
-// qMRML includes
-#include "qSlicerDarkStyle.h"
+// Slicer includes
+#include "qSlicerStyle.h"
+#include "qSlicerBaseQTGUIExport.h"
 
-// --------------------------------------------------------------------------
-// qSlicerStyle methods
-
-// --------------------------------------------------------------------------
-qSlicerDarkStyle::qSlicerDarkStyle() = default;
-
-// --------------------------------------------------------------------------
-qSlicerDarkStyle::~qSlicerDarkStyle() = default;
-
-//------------------------------------------------------------------------------
-QPalette qSlicerDarkStyle::standardPalette()const
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerLightStyle : public qSlicerStyle
 {
-  QPalette palette = this->Superclass::standardDarkPalette();
-  return palette;
-}
+  Q_OBJECT
+public:
+  /// Superclass typedef
+  typedef qSlicerStyle Superclass;
+
+  /// Constructors
+  qSlicerLightStyle();
+  ~qSlicerLightStyle() override;
+
+  QPalette standardPalette() const override;
+};
+
+#endif

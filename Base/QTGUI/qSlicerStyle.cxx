@@ -25,6 +25,7 @@
 #include <QEvent>
 #include <QGroupBox>
 #include <QScrollBar>
+#include <QSettings>
 #include <QStyleOptionGroupBox>
 
 // qMRML includes
@@ -189,16 +190,89 @@ QRect qSlicerStyle::subControlRect(ComplexControl control, const QStyleOptionCom
 //------------------------------------------------------------------------------
 QPalette qSlicerStyle::standardPalette()const
 {
+  QPalette palette = standardLightPalette();
+
+  #ifdef Q_OS_WIN
+    // Qt on macOS already dynamically picks light/dark theme based on the OS setting
+    QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", QSettings::NativeFormat);
+    if (settings.value("AppsUseLightTheme") == 0)
+      {
+      palette = standardDarkPalette();
+      }
+  #endif
+  return palette;
+}
+
+//------------------------------------------------------------------------------
+QPalette qSlicerStyle::standardLightPalette()const
+{
   QPalette palette = this->Superclass::standardPalette();
-  palette.setColor(QPalette::Button, "#fcfcfc");
-  palette.setColor(QPalette::Light, "#c8c8c8");
-  palette.setColor(QPalette::Midlight, "#e6e6e6");
-  palette.setColor(QPalette::Dark, "#aaaaaa");
-  palette.setColor(QPalette::Mid, "#c8c8c8");
-  palette.setColor(QPalette::Base, Qt::white);
+  // Customizations from the standard style ("fusion")
+  // See https://doc.qt.io/qt-5/qpalette.html#ColorRole-enum
+  // Central color roles
   palette.setColor(QPalette::Window, Qt::white);
-  palette.setColor(QPalette::Shadow, "#5a5a5a");
-  palette.setColor(QPalette::AlternateBase, QColor("#e4e4fe"));
+  palette.setColor(QPalette::WindowText, Qt::black);
+  palette.setColor(QPalette::Disabled, QPalette::WindowText, "#bebebe");
+  palette.setColor(QPalette::Base, Qt::white);
+  palette.setColor(QPalette::Disabled, QPalette::Base, Qt::white);
+  palette.setColor(QPalette::AlternateBase, "#e4e4fe");
+  palette.setColor(QPalette::ToolTipBase, "#ffffdc");
+  palette.setColor(QPalette::ToolTipText, Qt::black);
+  palette.setColor(QPalette::Text, Qt::black);
+  palette.setColor(QPalette::Disabled, QPalette::Text, "#bebebe");
+  palette.setColor(QPalette::Button, "#fcfcfc");
+  palette.setColor(QPalette::ButtonText, Qt::black);
+  palette.setColor(QPalette::Disabled, QPalette::ButtonText, "#bebebe");
+  palette.setColor(QPalette::BrightText, Qt::red);
+  // Color roles used mostly for 3D bevel and shadow effects.
+  palette.setColor(QPalette::Light, "#c8c8c8");  // Lighter than Button color.
+  palette.setColor(QPalette::Midlight, "#e6e6e6");  // Between Button and Light.
+  palette.setColor(QPalette::Dark, "#aaaaaa");  // Darker than Button.
+  palette.setColor(QPalette::Mid, "#c8c8c8");  // Between Button and Dark.
+  palette.setColor(QPalette::Shadow, "#5a5a5a");  // A very dark color.
+  // Color roles relate to selected (marked) items
+  palette.setColor(QPalette::Highlight, "#308cc6");
+  palette.setColor(QPalette::Disabled, QPalette::Highlight, "#919191");
+  palette.setColor(QPalette::HighlightedText, Qt::white);
+  palette.setColor(QPalette::Disabled, QPalette::HighlightedText, Qt::white);
+  // Color roles related to hyperlinks
+  palette.setColor(QPalette::Link, "#0000ff");
+  return palette;
+}
+
+//------------------------------------------------------------------------------
+QPalette qSlicerStyle::standardDarkPalette()const
+{
+  QPalette palette = this->Superclass::standardPalette();
+  // See https://doc.qt.io/qt-5/qpalette.html#ColorRole-enum
+  // Central color roles
+  palette.setColor(QPalette::Window, "#323232");
+  palette.setColor(QPalette::WindowText, Qt::white);
+  palette.setColor(QPalette::Disabled, QPalette::WindowText, "#6d6d6d");
+  palette.setColor(QPalette::Base, "#1e1e1e");
+  palette.setColor(QPalette::Disabled, QPalette::Base, "#1e1e1e");
+  palette.setColor(QPalette::AlternateBase, "#323232");
+  palette.setColor(QPalette::ToolTipBase, Qt::white);
+  palette.setColor(QPalette::ToolTipText, "#323232");
+  palette.setColor(QPalette::Text, Qt::white);
+  palette.setColor(QPalette::Disabled, QPalette::Text, "#6d6d6d");
+  palette.setColor(QPalette::Button, "#323232");
+  palette.setColor(QPalette::ButtonText, Qt::white);
+  palette.setColor(QPalette::Disabled, QPalette::ButtonText, "#b4b4b4");
+  palette.setColor(QPalette::BrightText, Qt::red);
+  // Color roles used mostly for 3D bevel and shadow effects.
+  palette.setColor(QPalette::Light, "#828284");  // Lighter than Button color.
+  palette.setColor(QPalette::Midlight, "#5a5a5b");  // Between Button and Light.
+  palette.setColor(QPalette::Dark, "#232323");  // Darker than Button.
+  palette.setColor(QPalette::Mid, "#2b2b2b");  // Between Button and Dark.
+  palette.setColor(QPalette::Shadow, "#141414");  // A very dark color.
+  // Color roles relate to selected (marked) items
+  palette.setColor(QPalette::Highlight, "#3ca4ff");
+  palette.setColor(QPalette::Disabled, QPalette::Highlight, "#505050");
+  palette.setColor(QPalette::HighlightedText, Qt::white);
+  palette.setColor(QPalette::Disabled, QPalette::HighlightedText, "#6d6d6d");
+  // Color roles related to hyperlinks
+  palette.setColor(QPalette::Link, "#3ca4ff");
   return palette;
 }
 

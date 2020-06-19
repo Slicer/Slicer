@@ -24,6 +24,7 @@
 
 // qMRML includes
 #include "qSlicerStyle.h"
+#include "qSlicerLightStyle.h"
 #include "qSlicerDarkStyle.h"
 #include "qSlicerStylePlugin.h"
 
@@ -43,6 +44,10 @@ QStyle* qSlicerStylePlugin::create( const QString & key )
     {
     return new qSlicerStyle();
     }
+  if (key.compare("Light Slicer", Qt::CaseInsensitive) == 0)
+    {
+    return new qSlicerLightStyle();
+    }
   if (key.compare("Dark Slicer", Qt::CaseInsensitive) == 0)
     {
     return new qSlicerDarkStyle();
@@ -53,6 +58,6 @@ QStyle* qSlicerStylePlugin::create( const QString & key )
 //-----------------------------------------------------------------------------
 QStringList qSlicerStylePlugin::keys() const
 {
-  return QStringList() << "Slicer" <<"Dark Slicer";
+  return QStringList() << "Slicer" << "Light Slicer" << "Dark Slicer";
 }
 

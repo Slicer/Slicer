@@ -2,7 +2,7 @@
 
 ## Overview
 
-The application settings dialog allows users to customize application behavior. 
+The application settings dialog allows users to customize application behavior.
 
 After starting Slicer, it can be accessed clicking in menu: `Edit` / `Application Settings`.
 
@@ -38,7 +38,7 @@ Directory where modules can store their temporary outputs if needed.
 
 List of directories scanned at startup to load additional modules. Any CLI, Loadable or scripted modules located in these paths will be loaded. Extensions are listed in the list, to remove an extension, use the [Extension Manager](extension_manager) instead.
 
-It is also possible to start slicer by temporarily adding module paths (not saved in settings) by passing the arguments in the command line. 
+It is also possible to start slicer by temporarily adding module paths (not saved in settings) by passing the arguments in the command line.
 
 For example this command will start Slicer trying to load CLIs found in the specified directory:
 
@@ -50,7 +50,7 @@ List of modules loaded, ignored or failed to load in Slicer. An unchecked checkb
 
 -  Black: module successfully loaded in Slicer
 -  Gray: module not loaded because it has been ignored (unchecked)
--  Red: module failed to load. There are multiple reasons why a module can fail to load. 
+-  Red: module failed to load. There are multiple reasons why a module can fail to load.
 
 Look at startup [log outputs](https://www.slicer.org/wiki/Documentation/Nightly/SlicerApplication/ErrorLog) to have more informations.
 If a module is not loaded in Slicer (ignored or failed), all dependent modules won't be loaded. You can verify the dependencies of a module in the tooltip of the module.
@@ -68,6 +68,18 @@ List of modules that appear in the Favorites toolbar:
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/settings_favorites_toolbar.png)
 
 To add a module, drag&drop it from the *Modules* list above. Then use the advanced panel (>>) to reorganize/delete the modules within the toolbar.
+
+### Appearance
+
+#### Style
+
+The overall theme of Slicer is controlled by the selected Style:
+- Slicer (default): it sets the style based on theme settings set by the operating system.
+  For example, on Windows if [dark mode][(https://blogs.windows.com/windowsexperience/2016/08/08/windows-10-tip-personalize-your-pc-by-enabling-the-dark-theme/)]
+  is turned on for apps, then the `Dark Slicer` style will be used upon launching Slicer. Currently, automatic detection of dark mode is not available on Linux,
+  therefore use needs to manually select `Dark Slicer` style for a dark color scheme.
+- Light Slicer: application window background is bright, regardless of operating system settings.
+- Dark Slicer: application window background is dark, regardless of operating system settings.
 
 ## Information for Advanced Users
 

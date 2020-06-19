@@ -23,20 +23,20 @@
 #include <QPalette>
 
 // qMRML includes
-#include "qSlicerDarkStyle.h"
+#include "qSlicerLightStyle.h"
 
 // --------------------------------------------------------------------------
 // qSlicerStyle methods
 
 // --------------------------------------------------------------------------
-qSlicerDarkStyle::qSlicerDarkStyle() = default;
+qSlicerLightStyle::qSlicerLightStyle() = default;
 
 // --------------------------------------------------------------------------
-qSlicerDarkStyle::~qSlicerDarkStyle() = default;
+qSlicerLightStyle::~qSlicerLightStyle() = default;
 
 //------------------------------------------------------------------------------
-QPalette qSlicerDarkStyle::standardPalette()const
+QPalette qSlicerLightStyle::standardPalette()const
 {
-  QPalette palette = this->Superclass::standardDarkPalette();
+  QPalette palette = this->Superclass::standardLightPalette();
   return palette;
 }
