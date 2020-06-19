@@ -6,6 +6,18 @@ Welcome to the 3D Slicer community. This page contains information that you need
 
 3D Slicer runs on any Windows, Mac, or Linux computer that was released in the last 5 years. Older computers may work (depending mainly on graphics capabilites). Slicer can also run on virtual machines and docker containers.
 
+### Operating system versions
+
+|               |Windows                                        |macOS                             |Linux                                     |
+|---------------|-----------------------------------------------|----------------------------------|------------------------------------------|
+|Stable Release |Windows 10 or later<br>Windows 8.1<br>Windows 7|OS X Mavericks (10.9) or later    |Ubuntu 16.04 or later<br>CentOS 7 or later|
+|Preview Release|Windows 10 or later<br>Windows 8.1<br>Windows 7|macOS High Sierra (10.13) or later|Ubuntu 18.04 or later<br>CentOS 7 or later|
+
+**Notes:**
+- It is always recommended to use the latest public release of Windows or macOS.  For Linux, this would be the latest LTS (Long-term-support) version.
+- Slicer is expected to work on the vast majority of desktop and server Linux distributions. The system is required to provide at least GLIBC 2.17 and GLIBCCC 3.4.19. For more details, read [here](https://www.python.org/dev/peps/pep-0599/#the-manylinux2014-policy).
+- Only 64-bit Slicer installers are available to download. Developers can attempt to build 32-bit versions on their own if they need to run Slicer on a 32-bit operating system. That said, this should be carefully considered as many clinical research tasks, such as processing of large CT or MR volumetric datasets, require more memory than can be accommodated with a 32-bit program.
+
 ### Recommended hardware configuration:
 - Memory: more than 4GB (8 or more is recommended). As a general rule, have 10x more memory than the amount of data that you load.
 - Display: a minimum resolution of 1024 by 768 (1280 by 1024 or better is recommended).
@@ -14,13 +26,6 @@ GPU: Graphics must support minimum OpenGL 3.2. Integrated graphics card is suffi
 - Some computations in 3D Slicer are multi-threaded and will benefit from multi core, multi CPU configurations. Minimum Intel Core i5 CPU is recommended. On desktop computers, Intel Core i7 CPU is recommended.
 - Interface device: a three button mouse with scroll wheel is recommended. Pen, multi-touchscreen, touchpad, and graphic tablet are supported. All OpenVR-compatible virtual reality headsets are supported for virtual reality display.
 - Internet connection to access extensions, Python packages, online documentation, sample data sets, and tutorials.
-
-### Recommended operating system versions
-- Windows 10, 64-bit
-- macOS Catalina (MacOS High Sierra or later required)
-- Linux: recent versions of popular distributions should work. Ubuntu and Fedora are the most widely used distribution among the developers. The SlicerPreview nightly build system runs CentOS 7.
-
-32 bit versus 64 bit: Many clinical research tasks, such as processing of large CT or MR volumetric datasets, require more memory than can be accommodated with a 32 bit program. Therefore, we only make 64-bit Slicer versions available. Developers can build 32-bit version on their own if they need to run Slicer on a 32-bit operating system.
 
 ## Installing 3D Slicer
 
