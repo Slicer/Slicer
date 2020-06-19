@@ -1,8 +1,8 @@
 .. _modules_index_registration:
 
-#########
+############
 Registration
-#########
+############
 
 .. toctree::
 

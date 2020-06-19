@@ -1,8 +1,8 @@
 .. _modules_index_surfacemodels:
 
-#########
+##############
 Surface models
-#########
+##############
 
 .. toctree::
 
