@@ -32,10 +32,6 @@ if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
   if(Slicer_USE_PYTHONQT)
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
       -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
-      # We use release-mode Python for debug-mode application builds.
-      # Leaving PYTHON_DEBUG_LIBRARY undefined could result in using
-      # a random debug-mode Python library found somewhere on the system.
-      -DPYTHON_DEBUG_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
       -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
       -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}
       )
