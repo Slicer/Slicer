@@ -45,7 +45,8 @@ public:
   QString pythonSource()const;
 
   /// \warning Setting the source is a no-op. See detailed comment in the source code.
-  bool setPythonSource(const QString& newPythonSource, const QString& className = QLatin1String(""));
+  /// If missingClassIsExpected is true (default) then missing class is expected and not treated as an error.
+  bool setPythonSource(const QString& newPythonSource, const QString& className = QLatin1String(""), bool missingClassIsExpected = true);
 
   /// Convenience method allowing to retrieve the associated scripted instance
   Q_INVOKABLE PyObject* self() const;

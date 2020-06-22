@@ -185,11 +185,3 @@ class SegmentEditorTest(ScriptedLoadableModuleTest):
     """
     self.delayDisplay("Starting the test")
     self.delayDisplay('Test passed!')
-
-#
-# Class for avoiding python error that is caused by the method SegmentEditor::setup
-# http://www.na-mic.org/Bug/view.php?id=3871
-#
-class SegmentEditorFileWriter(object):
-  def __init__(self, parent):
-    pass

@@ -26,7 +26,7 @@
 #include <PythonQtConversion.h>
 
 // Slicer includes
-#include "qSlicerScriptedFileWriter.h"
+#include "qSlicerScriptedFileReader.h"
 #include "qSlicerScriptedUtils_p.h"
 
 // VTK includes
@@ -34,19 +34,18 @@
 #include <vtkPythonUtil.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerScriptedFileWriterPrivate
+class qSlicerScriptedFileReaderPrivate
 {
 public:
-  typedef qSlicerScriptedFileWriterPrivate Self;
-  qSlicerScriptedFileWriterPrivate();
-  virtual ~qSlicerScriptedFileWriterPrivate();
+  typedef qSlicerScriptedFileReaderPrivate Self;
+  qSlicerScriptedFileReaderPrivate();
+  virtual ~qSlicerScriptedFileReaderPrivate();
 
   enum {
     DescriptionMethod = 0,
     FileTypeMethod,
-    CanWriteObjectMethod,
     ExtensionsMethod,
-    WriteMethod,
+    LoadMethod,
     };
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
@@ -56,45 +55,44 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-// qSlicerScriptedFileWriterPrivate methods
+// qSlicerScriptedFileReaderPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerScriptedFileWriterPrivate::qSlicerScriptedFileWriterPrivate()
+qSlicerScriptedFileReaderPrivate::qSlicerScriptedFileReaderPrivate()
 {
   this->PythonCppAPI.declareMethod(Self::DescriptionMethod, "description");
   this->PythonCppAPI.declareMethod(Self::FileTypeMethod, "fileType");
-  this->PythonCppAPI.declareMethod(Self::CanWriteObjectMethod, "canWriteObject");
   this->PythonCppAPI.declareMethod(Self::ExtensionsMethod, "extensions");
-  this->PythonCppAPI.declareMethod(Self::WriteMethod, "write");
+  this->PythonCppAPI.declareMethod(Self::LoadMethod, "load");
 }
 
 //-----------------------------------------------------------------------------
-qSlicerScriptedFileWriterPrivate::~qSlicerScriptedFileWriterPrivate() = default;
+qSlicerScriptedFileReaderPrivate::~qSlicerScriptedFileReaderPrivate() = default;
 
 //-----------------------------------------------------------------------------
-// qSlicerScriptedFileWriter methods
+// qSlicerScriptedFileReader methods
 
 //-----------------------------------------------------------------------------
-qSlicerScriptedFileWriter::qSlicerScriptedFileWriter(QObject* parent)
+qSlicerScriptedFileReader::qSlicerScriptedFileReader(QObject* parent)
   : Superclass(parent)
-  , d_ptr(new qSlicerScriptedFileWriterPrivate)
+  , d_ptr(new qSlicerScriptedFileReaderPrivate)
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerScriptedFileWriter::~qSlicerScriptedFileWriter() = default;
+qSlicerScriptedFileReader::~qSlicerScriptedFileReader() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerScriptedFileWriter::pythonSource()const
+QString qSlicerScriptedFileReader::pythonSource()const
 {
-  Q_D(const qSlicerScriptedFileWriter);
+  Q_D(const qSlicerScriptedFileReader);
   return d->PythonSource;
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedFileWriter::setPythonSource(const QString& newPythonSource, const QString& _className, bool missingClassIsExpected)
+bool qSlicerScriptedFileReader::setPythonSource(const QString& newPythonSource, const QString& _className, bool missingClassIsExpected)
 {
-  Q_D(qSlicerScriptedFileWriter);
+  Q_D(qSlicerScriptedFileReader);
 
   if (!Py_IsInitialized())
     {
@@ -113,9 +111,9 @@ bool qSlicerScriptedFileWriter::setPythonSource(const QString& newPythonSource, 
   if (className.isEmpty())
     {
     className = moduleName;
-    if (!moduleName.endsWith("FileWriter"))
+    if (!moduleName.endsWith("FileReader"))
       {
-      className.append("FileWriter");
+      className.append("FileReader");
       }
     }
   d->PythonClassName = className;
@@ -140,8 +138,8 @@ bool qSlicerScriptedFileWriter::setPythonSource(const QString& newPythonSource, 
     {
     PythonQt::self()->handleError();
     PyErr_SetString(PyExc_RuntimeError,
-                    QString("qSlicerScriptedFileWriter::setPythonSource - "
-                            "Failed to load scripted file writer: "
+                    QString("qSlicerScriptedFileReader::setPythonSource - "
+                            "Failed to load scripted file Reader: "
                             "class %1 was not found in file %2").arg(className).arg(newPythonSource).toUtf8());
     return false;
     }
@@ -158,16 +156,16 @@ bool qSlicerScriptedFileWriter::setPythonSource(const QString& newPythonSource, 
 }
 
 //-----------------------------------------------------------------------------
-PyObject* qSlicerScriptedFileWriter::self() const
+PyObject* qSlicerScriptedFileReader::self() const
 {
-  Q_D(const qSlicerScriptedFileWriter);
+  Q_D(const qSlicerScriptedFileReader);
   return d->PythonCppAPI.pythonSelf();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerScriptedFileWriter::description()const
+QString qSlicerScriptedFileReader::description()const
 {
-  Q_D(const qSlicerScriptedFileWriter);
+  Q_D(const qSlicerScriptedFileReader);
 
   PyObject * result = d->PythonCppAPI.callMethod(d->DescriptionMethod);
   if (!result)
@@ -186,9 +184,9 @@ QString qSlicerScriptedFileWriter::description()const
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerScriptedFileWriter::fileType()const
+qSlicerIO::IOFileType qSlicerScriptedFileReader::fileType()const
 {
-  Q_D(const qSlicerScriptedFileWriter);
+  Q_D(const qSlicerScriptedFileReader);
 
   PyObject * result = d->PythonCppAPI.callMethod(d->FileTypeMethod);
   if (!result)
@@ -206,37 +204,10 @@ qSlicerIO::IOFileType qSlicerScriptedFileWriter::fileType()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedFileWriter::canWriteObject(vtkObject* object)const
+QStringList qSlicerScriptedFileReader::extensions()const
 {
-  Q_D(const qSlicerScriptedFileWriter);
-
-  PyObject * arguments = PyTuple_New(1);
-  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(object));
-  PyObject * result = d->PythonCppAPI.callMethod(d->CanWriteObjectMethod, arguments);
-  Py_DECREF(arguments);
-  if (!result)
-    {
-    return false;
-    }
-  if (!PyBool_Check(result))
-    {
-    qWarning() << d->PythonSource
-               << " - In" << d->PythonClassName << "class, function 'canWriteObject' "
-               << "is expected to return a boolean !";
-    return false;
-    }
-  return result == Py_True;
-}
-
-//-----------------------------------------------------------------------------
-QStringList qSlicerScriptedFileWriter::extensions(vtkObject* object)const
-{
-  Q_D(const qSlicerScriptedFileWriter);
-
-  PyObject * arguments = PyTuple_New(1);
-  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(object));
-  PyObject * result = d->PythonCppAPI.callMethod(d->ExtensionsMethod, arguments);
-  Py_DECREF(arguments);
+  Q_D(const qSlicerScriptedFileReader);
+  PyObject * result = d->PythonCppAPI.callMethod(d->ExtensionsMethod);
   if (!result)
     {
     return QStringList();
@@ -267,12 +238,12 @@ QStringList qSlicerScriptedFileWriter::extensions(vtkObject* object)const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedFileWriter::write(const qSlicerIO::IOProperties& properties)
+bool qSlicerScriptedFileReader::load(const qSlicerIO::IOProperties& properties)
 {
-  Q_D(qSlicerScriptedFileWriter);
+  Q_D(qSlicerScriptedFileReader);
   PyObject * arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PythonQtConv::QVariantMapToPyObject(properties));
-  PyObject * result = d->PythonCppAPI.callMethod(d->WriteMethod, arguments);
+  PyObject * result = d->PythonCppAPI.callMethod(d->LoadMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
     {

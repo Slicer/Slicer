@@ -341,17 +341,6 @@ class DICOMSettingsPanel(ctk.ctkSettingsPanel):
     self.ui = _ui_DICOMSettingsPanel(self)
 
 
-
-#
-# Class for avoiding python error that is caused by the method DICOM::setup
-# http://www.na-mic.org/Bug/view.php?id=3871
-#
-class DICOMFileWriter(object):
-  def __init__(self, parent):
-    pass
-
-
-
 #
 # DICOM file dialog
 #

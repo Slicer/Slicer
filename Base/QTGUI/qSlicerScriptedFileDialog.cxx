@@ -97,7 +97,7 @@ QString qSlicerScriptedFileDialog::pythonSource()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedFileDialog::setPythonSource(const QString& newPythonSource, const QString& _className)
+bool qSlicerScriptedFileDialog::setPythonSource(const QString& newPythonSource, const QString& _className, bool missingClassIsExpected)
 {
   Q_D(qSlicerScriptedFileDialog);
 
@@ -136,6 +136,12 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& newPythonSource, 
     {
     classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toUtf8()));
     }
+  else if (missingClassIsExpected)
+    {
+    // Class is not defined for this object, but this is expected, not an error
+    return false;
+    }
+
   if (!classToInstantiate)
     {
     // HACK The file dialog class definition is expected to be available after executing the

@@ -941,15 +941,6 @@ class SegmentStatisticsSlicelet(Slicelet):
     super(SegmentStatisticsSlicelet,self).__init__(SegmentStatisticsWidget)
 
 
-#
-# Class for avoiding python error that is caused by the method SegmentStatistics::setup
-# http://www.na-mic.org/Bug/view.php?id=3871
-#
-class SegmentStatisticsFileWriter(object):
-  def __init__(self, parent):
-    pass
-
-
 if __name__ == "__main__":
   # TODO: need a way to access and parse command line arguments
   # TODO: ideally command line args should handle --xml

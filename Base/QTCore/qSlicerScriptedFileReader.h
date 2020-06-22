@@ -18,11 +18,11 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerScriptedFileWriter_h
-#define __qSlicerScriptedFileWriter_h
+#ifndef __qSlicerScriptedFileReader_h
+#define __qSlicerScriptedFileReader_h
 
 // Slicer includes
-#include "qSlicerFileWriter.h"
+#include "qSlicerFileReader.h"
 #include "qSlicerBaseQTCoreExport.h"
 
 // Forward Declare PyObject*
@@ -30,17 +30,18 @@
 struct _object;
 typedef _object PyObject;
 #endif
-class qSlicerScriptedFileWriterPrivate;
+class qSlicerScriptedFileReaderPrivate;
+class vtkObject;
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedFileWriter
-  : public qSlicerFileWriter
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedFileReader
+  : public qSlicerFileReader
 {
   Q_OBJECT
 
 public:
-  typedef qSlicerFileWriter Superclass;
-  qSlicerScriptedFileWriter(QObject* parent = nullptr);
-  ~qSlicerScriptedFileWriter() override;
+  typedef qSlicerFileReader Superclass;
+  qSlicerScriptedFileReader(QObject* parent = nullptr);
+  ~qSlicerScriptedFileReader() override;
 
   QString pythonSource()const;
 
@@ -60,23 +61,19 @@ public:
   IOFileType fileType()const override;
 
   /// Reimplemented to propagate to python methods
-  /// \sa qSlicerFileWriter::canWriteObject()
-  bool canWriteObject(vtkObject* object)const override;
+  /// \sa qSlicerFileReader::extensions()
+  QStringList extensions()const override;
 
   /// Reimplemented to propagate to python methods
-  /// \sa qSlicerFileWriter::extensions()
-  QStringList extensions(vtkObject* object)const override;
-
-  /// Reimplemented to propagate to python methods
-  /// \sa qSlicerFileWriter::write()
-  bool write(const qSlicerIO::IOProperties& properties) override;
+  /// \sa qSlicerFileReader::write()
+  bool load(const qSlicerIO::IOProperties& properties) override;
 
 protected:
-  QScopedPointer<qSlicerScriptedFileWriterPrivate> d_ptr;
+  QScopedPointer<qSlicerScriptedFileReaderPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerScriptedFileWriter);
-  Q_DISABLE_COPY(qSlicerScriptedFileWriter);
+  Q_DECLARE_PRIVATE(qSlicerScriptedFileReader);
+  Q_DISABLE_COPY(qSlicerScriptedFileReader);
 };
 
 #endif
