@@ -784,11 +784,17 @@ bool qSlicerCoreIOManager::examineFileInfoList(QFileInfoList &fileInfoList, QFil
   QList<qSlicerFileReader*> res;
   foreach(qSlicerFileReader* reader, d->Readers)
     {
+    // TODO: currently the first reader that accepts the list will be used, but nothing
+    // guarantees that the first reader is the most suitable choice (e.g., volume reader
+    // grabs all file sequences, while they may not be sequence of frames but sequence of models, etc.).
+    // There should be a mechanism (e.g., using confidence values or based on most specific extension)
+    // to decide which reader should be used.
+    // Multiple readers cannot be returned because they might not remove exactly the same set of files from the info list.
     if (reader->examineFileInfoList(fileInfoList, archetypeFileInfo, ioProperties))
       {
       readerDescription = reader->description();
-      return (true);
+      return true;
       }
     }
-  return (false);
+  return false;
 }

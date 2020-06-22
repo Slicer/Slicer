@@ -163,23 +163,7 @@ void qSlicerDataDialogPrivate::addDirectory(const QDir& directory)
   QFileInfo archetypeEntry;
   if (coreIOManager->examineFileInfoList(fileInfoList, archetypeEntry, readerDescription, ioProperties))
     {
-    this->addFile(archetypeEntry);
-    QString filePath = archetypeEntry.absoluteFilePath();
-    QList<QTableWidgetItem *> items = this->FileWidget->findItems(filePath, Qt::MatchExactly);
-    if (items.isEmpty())
-      {
-      qWarning() << "Couldn't add archetype widget for file: " << filePath;
-      }
-    else
-      {
-      QTableWidgetItem *item = items[0];
-      QWidget *cellWidget = this->FileWidget->cellWidget(item->row(), TypeColumn);
-      QComboBox *descriptionComboBox = dynamic_cast<QComboBox *>(cellWidget);
-      descriptionComboBox->setCurrentIndex(descriptionComboBox->findText(readerDescription));
-      cellWidget = this->FileWidget->cellWidget(item->row(), OptionsColumn);
-      qSlicerIOOptionsWidget *ioOptionsWidget = dynamic_cast<qSlicerIOOptionsWidget *> (cellWidget);
-      ioOptionsWidget->updateGUI(ioProperties);
-      }
+    this->addFile(archetypeEntry, readerDescription, &ioProperties);
     }
 
   //
@@ -201,7 +185,7 @@ void qSlicerDataDialogPrivate::addDirectory(const QDir& directory)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerDataDialogPrivate::addFile(const QFileInfo& file)
+void qSlicerDataDialogPrivate::addFile(const QFileInfo& file, const QString& readerDescription, qSlicerIO::IOProperties* ioProperties)
 {
   if (!file.isFile() || !file.exists() || !file.isReadable())
     {
@@ -227,8 +211,15 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file)
   //
   qSlicerCoreIOManager* coreIOManager =
     qSlicerCoreApplication::application()->coreIOManager();
-  QStringList fileDescriptions =
-    coreIOManager->fileDescriptions(file.absoluteFilePath());
+  QStringList fileDescriptions;
+  if (readerDescription.isEmpty())
+    {
+    fileDescriptions = coreIOManager->fileDescriptions(file.absoluteFilePath());
+    }
+  else
+    {
+    fileDescriptions << readerDescription;
+    }
   if (fileDescriptions.isEmpty())
     {
     return;
@@ -263,6 +254,15 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file)
                    this, SLOT(onFileTypeActivated(QString)));
   this->FileWidget->setCellWidget(row, TypeColumn, descriptionComboBox);
   descriptionComboBox->setCurrentIndex(0);
+  if (!readerDescription.isEmpty() && ioProperties != nullptr)
+    {
+    qSlicerIOOptionsWidget* ioOptionsWidget = dynamic_cast<qSlicerIOOptionsWidget*> (this->FileWidget->cellWidget(row, OptionsColumn));
+    if (ioOptionsWidget)
+      {
+      ioOptionsWidget->updateGUI(*ioProperties);
+      }
+    }
+
   this->FileWidget->setSortingEnabled(sortingEnabled);
 }
 
@@ -439,7 +439,8 @@ bool qSlicerDataDialogPrivate::checkAndHandleArchive(const QFileInfo& file)
 {
   if (file.suffix().toLower() == "zip")
     {
-    if (QMessageBox::question(this, tr("Open archive?"), tr("The selected file is a .zip archive, open it and load contents?")))
+    if (QMessageBox::question(this, tr("Open archive?"),
+      tr("The selected file is a .zip archive, open it and load contents?")) == QMessageBox::Yes)
       {
       this->temporaryArchiveDirectory.reset(new QTemporaryDir());
       if (this->temporaryArchiveDirectory->isValid())

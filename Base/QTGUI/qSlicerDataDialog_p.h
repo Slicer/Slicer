@@ -63,7 +63,9 @@ protected:
   void addDirectory(const QDir& directory);
   // addFile doesn't resize the columns to contents (as it might be a bit too
   // time consuming if you do it for every file added).
-  void addFile(const QFileInfo& file);
+  // If a readerDescription is specified then only that reader will be offered. If ioProperties is specified as well then
+  // it will be used to initialize the reader properties widget.
+  void addFile(const QFileInfo& file, const QString& readerDescription=QString(), qSlicerIO::IOProperties* ioProperties=nullptr);
   void setFileOptions(int row, const QString& filePath, const QString& fileDescription);
   /// Return the row the last signal comes from.
   int senderRow()const;
