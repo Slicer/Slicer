@@ -1526,7 +1526,7 @@ void qSlicerMainWindow::onLayoutActionTriggered(QAction* action)
       }
     }
 
-  if (found)
+  if (found && !action->data().isNull())
     {
     this->setLayout(action->data().toInt());
     }
