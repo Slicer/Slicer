@@ -19,6 +19,7 @@
 
 // VTK includes
 #include <vtkActor.h>
+#include <vtkAVSucdReader.h>
 #include <vtkBYUReader.h>
 #include <vtkCellArray.h>
 #include <vtkDataSetSurfaceFilter.h>
@@ -244,6 +245,13 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       reader->Update();
       meshFromFile = reader->GetOutput();
       coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFieldData(meshFromFile);
+      }
+    else if (extension == std::string(".ucd"))
+      {
+      vtkNew<vtkAVSucdReader> reader;
+      reader->SetFileName(fullName.c_str());
+      reader->Update();
+      meshFromFile = reader->GetOutput();
       }
     else if (extension == std::string(".vtu"))
       {
@@ -653,6 +661,7 @@ void vtkMRMLModelStorageNode::InitializeSupportedReadFileTypes()
   this->SupportedReadFileTypes->InsertNextValue("vtkXMLPolyDataReader (.meta)");
   this->SupportedReadFileTypes->InsertNextValue("STL (.stl)");
   this->SupportedReadFileTypes->InsertNextValue("PLY (.ply)");
+  this->SupportedReadFileTypes->InsertNextValue("UCD (.ucd)");
   this->SupportedReadFileTypes->InsertNextValue("Wavefront OBJ (.obj)");
 }
 
