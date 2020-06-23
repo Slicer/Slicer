@@ -114,7 +114,7 @@ set(ENV{VS_UNICODE_OUTPUT} \"\")
 set(${proj}_WORKING_DIR \"${EP_SOURCE_DIR}\")
 ExternalProject_Execute(${proj} \"configure-zlib\" cp ${ZLIB_LIBRARY} ${_zlib_library_dir}/libz.a
   )
-ExternalProject_Execute(${proj} \"configure\" sh config --with-zlib-lib=${_zlib_library_dir} --with-zlib-include=${ZLIB_INCLUDE_DIR} threads zlib shared
+ExternalProject_Execute(${proj} \"configure\" sh config --prefix=${EP_SOURCE_DIR} --openssldir=${EP_SOURCE_DIR} --libdir=${EP_SOURCE_DIR} --with-zlib-lib=${_zlib_library_dir} --with-zlib-include=${ZLIB_INCLUDE_DIR} threads zlib shared
   )
 ")
 
@@ -154,16 +154,6 @@ ExternalProject_Execute(${proj} \"build\" make -j1 build_libs)
       DEPENDEES configure
       DEPENDERS build
       )
-
-    if(APPLE)
-      ExternalProject_Add_Step(${proj} fix_rpath
-        COMMAND install_name_tool -id ${EP_SOURCE_DIR}/libcrypto.dylib ${EP_SOURCE_DIR}/libcrypto.dylib
-        COMMAND install_name_tool
-          -change /usr/local/ssl/lib/libcrypto.1.0.0.dylib ${EP_SOURCE_DIR}/libcrypto.dylib
-          -id ${EP_SOURCE_DIR}/libssl.dylib ${EP_SOURCE_DIR}/libssl.dylib
-        DEPENDEES build
-        )
-    endif()
 
     set(OpenSSL_DIR ${EP_SOURCE_DIR})
     set(OPENSSL_INCLUDE_DIR ${OpenSSL_DIR}/include)
