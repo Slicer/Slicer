@@ -14,12 +14,10 @@ Version:   $Revision: 1.3 $
 
 // MRML includes
 #include "vtkEventBroker.h"
-#include "vtkMRMLFreeSurferProceduralColorNode.h"
-#include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
-#include "vtkMRMLFreeSurferModelStorageNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLModelStorageNode.h"
+#include <vtkMRMLProceduralColorNode.h>
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLScene.h"
 
@@ -626,7 +624,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
     vtkMRMLProceduralColorNode *colorNode = vtkMRMLProceduralColorNode::New();
     colorNode->SetName(composedName.c_str());
     // set the type to avoid error messages when copy it, as the default is -1
-    colorNode->SetType(vtkMRMLFreeSurferProceduralColorNode::Custom);
+    colorNode->SetType(vtkMRMLProceduralColorNode::User);
     vtkColorTransferFunction *func = colorNode->GetColorTransferFunction();
 
     // adapted from FS code that assumed that one scalar was curvature, the
@@ -835,21 +833,6 @@ vtkMRMLStorageNode* vtkMRMLModelNode::CreateDefaultStorageNode()
 //---------------------------------------------------------------------------
 std::string vtkMRMLModelNode::GetDefaultStorageNodeClassName(const char* filename /* =nullptr */)
 {
-  if (!filename)
-    {
-    return "vtkMRMLModelStorageNode";
-    }
-  // Appropriate storage node depends on the file extension.
-  vtkSmartPointer<vtkMRMLFreeSurferModelStorageNode> fssn = vtkSmartPointer<vtkMRMLFreeSurferModelStorageNode>::New();
-  if (fssn->SupportedFileType(filename))
-    {
-    return "vtkMRMLFreeSurferModelStorageNode";
-    }
-  vtkSmartPointer<vtkMRMLFreeSurferModelOverlayStorageNode> fson = vtkSmartPointer<vtkMRMLFreeSurferModelOverlayStorageNode>::New();
-  if (fson->SupportedFileType(filename))
-    {
-    return "vtkMRMLFreeSurferModelOverlayStorageNode";
-    }
   return "vtkMRMLModelStorageNode";
 }
 
@@ -884,7 +867,7 @@ void vtkMRMLModelNode::CreateDefaultDisplayNodes()
     dispNode->SetScalarVisibility(1);
     dispNode->SetActiveScalarName(this->GetMesh()->GetPointData()->GetAttribute(0)->GetName());
     // use the fs red green colour node for now
-    dispNode->SetAndObserveColorNodeID("vtkMRMLFreeSurferProceduralColorNodeRedGreen");
+    dispNode->SetAndObserveColorNodeID("vtkMRMLProceduralColorNodeRedGreenBlue");
     }
 
   this->SetAndObserveDisplayNodeID( dispNode->GetID() );

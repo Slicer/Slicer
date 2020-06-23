@@ -501,3 +501,16 @@ bool vtkMRMLColorNode::GetModifiedSinceRead()
     (this->GetScalarsToColors() &&
      this->GetScalarsToColors()->GetMTime() > this->GetStoredTime());
 }
+
+//---------------------------------------------------------------------------
+vtkLookupTable* vtkMRMLColorNode::CreateLookupTableCopy()
+{
+  vtkLookupTable* copiedLut = copiedLut = vtkLookupTable::New();
+  copiedLut->DeepCopy(this->GetLookupTable());
+
+  // Workaround for VTK bug in vtkLookupTable::DeepCopy
+  // (special colors are not copied)
+  copiedLut->BuildSpecialColors();
+
+  return copiedLut;
+}

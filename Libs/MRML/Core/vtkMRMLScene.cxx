@@ -34,8 +34,6 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLFiducialListStorageNode.h"
 #include "vtkMRMLFolderDisplayNode.h"
-#include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
-#include "vtkMRMLFreeSurferModelStorageNode.h"
 #include "vtkMRMLGridTransformNode.h"
 #include "vtkMRMLHierarchyStorageNode.h"
 #include "vtkMRMLInteractionNode.h"
@@ -46,6 +44,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLModelNode.h"
+#include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLPlotChartNode.h"
 #include "vtkMRMLPlotSeriesNode.h"
 #include "vtkMRMLPlotViewNode.h"
@@ -170,8 +169,6 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLModelNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLLinearTransformNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLModelStorageNode >::New() );
-  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLFreeSurferModelStorageNode >::New() );
-  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLFreeSurferModelOverlayStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLModelDisplayNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLClipModelsNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLFiducialListNode >::New() );

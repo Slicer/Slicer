@@ -18,7 +18,6 @@
 // MRML includes
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
-#include "vtkMRMLFreeSurferProceduralColorNode.h"
 #include "vtkMRMLdGEMRICProceduralColorNode.h"
 #include "vtkMRMLPETProceduralColorNode.h"
 #include "vtkMRMLProceduralColorStorageNode.h"
@@ -133,9 +132,6 @@ void vtkMRMLColorLogic::AddDefaultColorNodes()
   // add default procedural nodes, including a random one
   this->AddDefaultProceduralNodes();
 
-  // add freesurfer nodes
-  this->AddFreeSurferNodes();
-
   // add the PET nodes
   this->AddPETNodes();
 
@@ -188,22 +184,6 @@ void vtkMRMLColorLogic::RemoveDefaultColorNodes()
     }
   basicNode->Delete();
 
-  // remove freesurfer nodes
-  vtkMRMLFreeSurferProceduralColorNode *basicFSNode = vtkMRMLFreeSurferProceduralColorNode::New();
-  vtkMRMLFreeSurferProceduralColorNode *fsnode;
-  for (int i = basicFSNode->GetFirstType(); i <= basicFSNode->GetLastType(); i++)
-    {
-    basicFSNode->SetType(i);
-    const char* id = this->GetFreeSurferColorNodeID(i);
-    vtkDebugMacro("vtkMRMLColorLogic::RemoveDefaultColorNodes: trying to find node with id " << id << endl);
-    fsnode =  vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
-    if (fsnode != nullptr)
-      {
-      this->GetMRMLScene()->RemoveNode(fsnode);
-      }
-    }
-  basicFSNode->Delete();
-
    // remove the procedural color nodes (after the fs proc nodes as
    // getting them by class)
   std::vector<vtkMRMLNode *> procNodes;
@@ -217,13 +197,6 @@ void vtkMRMLColorLogic::RemoveDefaultColorNodes()
       // it's one we added
       this->GetMRMLScene()->RemoveNode(procNode);
       }
-    }
-
-  // remove the fs lookup table node
-  node = vtkMRMLColorTableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->GetDefaultFreeSurferLabelMapColorNodeID()));
-  if (node != nullptr)
-    {
-    this->GetMRMLScene()->RemoveNode(node);
     }
 
   // remove the PET nodes
@@ -282,14 +255,6 @@ void vtkMRMLColorLogic::RemoveDefaultColorNodes()
 const char *vtkMRMLColorLogic::GetColorTableNodeID(int type)
 {
   vtkNew<vtkMRMLColorTableNode> basicNode;
-  basicNode->SetType(type);
-  return vtkMRMLColorLogic::GetColorNodeID(basicNode.GetPointer());
-}
-
-//----------------------------------------------------------------------------
-const char * vtkMRMLColorLogic::GetFreeSurferColorNodeID(int type)
-{
-  vtkNew<vtkMRMLFreeSurferProceduralColorNode> basicNode;
   basicNode->SetType(type);
   return vtkMRMLColorLogic::GetColorNodeID(basicNode.GetPointer());
 }
@@ -366,7 +331,7 @@ const char *vtkMRMLColorLogic::GetDefaultEditorColorNodeID()
 //----------------------------------------------------------------------------
 const char *vtkMRMLColorLogic::GetDefaultModelColorNodeID()
 {
-  return vtkMRMLColorLogic::GetFreeSurferColorNodeID(vtkMRMLFreeSurferProceduralColorNode::Heat);
+  return vtkMRMLColorLogic::GetProceduralColorNodeID("RedGreenBlue");
 }
 
 //----------------------------------------------------------------------------
@@ -379,12 +344,6 @@ const char *vtkMRMLColorLogic::GetDefaultChartColorNodeID()
 const char *vtkMRMLColorLogic::GetDefaultPlotColorNodeID()
 {
   return vtkMRMLColorLogic::GetProceduralColorNodeID("RandomIntegers");
-}
-
-//----------------------------------------------------------------------------
-const char * vtkMRMLColorLogic::GetDefaultFreeSurferLabelMapColorNodeID()
-{
-  return vtkMRMLColorLogic::GetFreeSurferColorNodeID(vtkMRMLFreeSurferProceduralColorNode::Labels);
 }
 
 //----------------------------------------------------------------------------
@@ -561,57 +520,6 @@ vtkMRMLProceduralColorNode* vtkMRMLColorLogic::CreateRedGreenBlueNode()
   procNode->SetNamesFromColors();
 
   return procNode;
-}
-
-//------------------------------------------------------------------------------
-vtkMRMLFreeSurferProceduralColorNode* vtkMRMLColorLogic::CreateFreeSurferNode(int type)
-{
-  vtkMRMLFreeSurferProceduralColorNode *node = vtkMRMLFreeSurferProceduralColorNode::New();
-  vtkDebugMacro("vtkMRMLColorLogic::AddDefaultColorNodes: setting free surfer proc color node type to " << type);
-  node->SetType(type);
-  node->SetAttribute("Category", "FreeSurfer");
-  node->SaveWithSceneOff();
-  if (node->GetTypeAsString() == nullptr)
-    {
-    vtkWarningMacro("Node type as string is null");
-    node->SetName("NoName");
-    }
-  else
-    {
-    node->SetName(node->GetTypeAsString());
-    }
-  vtkDebugMacro("vtkMRMLColorLogic::AddDefaultColorNodes: set proc node name to " << node->GetName());
-  /*
-  if (this->GetFreeSurferColorNodeID(i) == nullptr)
-    {
-    vtkDebugMacro("Error getting default node id for freesurfer node " << i);
-    }
-  */
-  vtkDebugMacro("vtkMRMLColorLogic::AddDefaultColorNodes: Getting default fs color node id for type " << type);
-  node->SetSingletonTag(node->GetTypeAsString());
-  return node;
-}
-
-//------------------------------------------------------------------------------
-vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateFreeSurferFileNode(const char* fileName)
-{
-  if (fileName == nullptr)
-    {
-    vtkErrorMacro("Unable to get the labels file name, not adding");
-    return nullptr;
-    }
-
-  vtkMRMLColorTableNode* node = this->CreateFileNode(fileName);
-
-  if (!node)
-    {
-    return nullptr;
-    }
-  node->SetAttribute("Category", "FreeSurfer");
-  node->SetName("FreeSurferLabels");
-  node->SetSingletonTag(node->GetTypeAsString());
-
-  return node;
 }
 
 //--------------------------------------------------------------------------------
@@ -865,45 +773,6 @@ void vtkMRMLColorLogic::AddDefaultProceduralNodes()
 }
 
 //----------------------------------------------------------------------------------------
-void vtkMRMLColorLogic::AddFreeSurferNode(int type)
-{
-  vtkMRMLFreeSurferProceduralColorNode* node = this->CreateFreeSurferNode(type);
-  //if (this->GetMRMLScene()->GetNodeByID(node->GetSingletonTag()) == nullptr)
-    {
-    //this->GetMRMLScene()->RequestNodeID(node, node->GetSingletonTag());
-    this->GetMRMLScene()->AddNode(node);
-    vtkDebugMacro("vtkMRMLColorLogic::AddDefaultColorNodes: added node " << node->GetID() << ", requested id was " << node->GetSingletonTag()<< ", type = " << node->GetTypeAsString() << endl);
-    }
-  //else
-  //  {
-  //  vtkDebugMacro("vtkMRMLColorLogic::AddDefaultColorNodes: didn't add node " << node->GetID() << " as it was already in the scene.\n");
-  //  }
-  node->Delete();
-}
-
-//----------------------------------------------------------------------------------------
-void vtkMRMLColorLogic::AddFreeSurferFileNode(vtkMRMLFreeSurferProceduralColorNode* basicFSNode)
-{
-  vtkMRMLColorTableNode* node = this->CreateFreeSurferFileNode(basicFSNode->GetLabelsFileName());
-  if (node)
-    {
-    //if (this->GetMRMLScene()->GetNodeByID(node->GetSingletonTag()) == nullptr)
-      {
-      //this->GetMRMLScene()->RequestNodeID(node, node->GetSingletonTag());
-      this->GetMRMLScene()->AddNode(node);
-      }
-    //else
-    //  {
-    //  vtkDebugMacro("Unable to add a new colour node " << node->GetSingletonTag()
-    //                << " with freesurfer colours, from file: "
-    //                << node->GetStorageNode()->GetFileName()
-    //                << " as there is already a node with this id in the scene");
-    //  }
-    node->Delete();
-    }
-}
-
-//----------------------------------------------------------------------------------------
 void vtkMRMLColorLogic::AddPETNode(int type)
 {
   vtkDebugMacro("AddDefaultColorNodes: adding PET nodes");
@@ -993,23 +862,6 @@ void vtkMRMLColorLogic::AddDefaultTableNodes()
       }
     }
   basicNode->Delete();
-}
-
-//----------------------------------------------------------------------------------------
-void vtkMRMLColorLogic::AddFreeSurferNodes()
-{
-  vtkDebugMacro("AddDefaultColorNodes: Adding Freesurfer nodes");
-  vtkMRMLFreeSurferProceduralColorNode* basicFSNode = vtkMRMLFreeSurferProceduralColorNode::New();
-  vtkDebugMacro("AddDefaultColorNodes: first type = " <<  basicFSNode->GetFirstType() << ", last type = " <<  basicFSNode->GetLastType());
-  for (int type = basicFSNode->GetFirstType(); type <= basicFSNode->GetLastType(); ++type)
-    {
-    this->AddFreeSurferNode(type);
-    }
-
-  // add a regular colour tables holding the freesurfer volume file colours and
-  // surface colours
-  this->AddFreeSurferFileNode(basicFSNode);
-  basicFSNode->Delete();
 }
 
 //----------------------------------------------------------------------------------------

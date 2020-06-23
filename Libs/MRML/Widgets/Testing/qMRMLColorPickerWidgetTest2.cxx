@@ -33,7 +33,6 @@
 
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
-#include <vtkMRMLFreeSurferProceduralColorNode.h>
 #include <vtkMRMLPETProceduralColorNode.h>
 #include <vtkMRMLScene.h>
 
@@ -54,10 +53,6 @@ int qMRMLColorPickerWidgetTest2(int argc, char * argv [])
   vtkNew<vtkMRMLColorTableNode> colorTableNode;
   colorTableNode->SetType(vtkMRMLColorTableNode::Labels);
   scene->AddNode(colorTableNode.GetPointer());
-
-  vtkNew<vtkMRMLFreeSurferProceduralColorNode> colorFreeSurferNode;
-  colorFreeSurferNode->SetTypeToRedBlue();
-  scene->AddNode(colorFreeSurferNode.GetPointer());
 
   colorPickerWidget.setMRMLScene(scene.GetPointer());
 

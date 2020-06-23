@@ -57,7 +57,6 @@ set(include_dirs
   ${MRMLCore_INCLUDE_DIRS}
   ${MRMLLogic_INCLUDE_DIRS}
   ${vtkTeem_INCLUDE_DIRS}
-  ${FreeSurfer_INCLUDE_DIRS}
   ${RemoteIO_INCLUDE_DIRS}
   ${LibArchive_INCLUDE_DIR}
   )

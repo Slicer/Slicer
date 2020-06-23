@@ -1049,7 +1049,7 @@ void qMRMLModelDisplayNodeWidget::setSliceDisplayMode(int newMode)
       && newMode == vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection
       && modelDisplayNode->GetDistanceEncodedProjectionColorNodeID() == nullptr)
       {
-      modelDisplayNode->SetAndObserveDistanceEncodedProjectionColorNodeID("vtkMRMLFreeSurferProceduralColorNodeRedGreen");
+      modelDisplayNode->SetAndObserveDistanceEncodedProjectionColorNodeID("vtkMRMLProceduralColorNodeRedGreenBlue");
       }
     modelDisplayNode->SetSliceDisplayMode(newMode);
     modelDisplayNode->EndModify(wasModified);

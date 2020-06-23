@@ -206,12 +206,6 @@ void vtkMRMLColorTableNode::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << "Look up table:\n";
     this->LookupTable->PrintSelf(os, indent.GetNextIndent());
     }
-/*  if (this->FSLookupTable != nullptr)
-    {
-    os << indent << "FreeSurfer look up table:\n";
-    this->FSLookupTable->PrintSelf(os, indent.GetNextIndent());
-    }
-*/
 }
 
 //----------------------------------------------------------------------------

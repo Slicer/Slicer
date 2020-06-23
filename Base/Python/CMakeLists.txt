@@ -6,7 +6,6 @@ set(Slicer_PYTHON_SCRIPTS
   slicer/slicerqt
   slicer/testing
   slicer/util
-  freesurfer
   mrml
   vtkAddon
   vtkITK
