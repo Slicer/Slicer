@@ -75,10 +75,6 @@ class VTK_SLICER_MODELS_MODULE_LOGIC_EXPORT vtkSlicerModelsLogic
   ///   the coordinate system specified in the storage node will be used.
   int SaveModel(const char* filename, vtkMRMLModelNode *modelNode, int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS);
 
-  /// Read in a scalar overlay and add it to the model node
-  /// \return True on success
-  bool AddScalar(const char* filename, vtkMRMLModelNode *modelNode);
-
   /// Transform models's polydata
   static void TransformModel(vtkMRMLTransformNode *tnode,
                               vtkMRMLModelNode *modelNode,

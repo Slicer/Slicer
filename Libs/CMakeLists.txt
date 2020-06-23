@@ -29,7 +29,6 @@ list(APPEND dirs
   vtkTeem
   vtkITK
   vtkSegmentationCore
-  FreeSurfer
   MRML/Core
   )
 if(Slicer_BUILD_CLI_SUPPORT)
@@ -147,7 +146,6 @@ set(_vtk_wrapped_libraries
   vtkSegmentationCore
   vtkTeem
   vtkITK
-  FreeSurfer
   MRMLCore
   MRMLLogic
   )

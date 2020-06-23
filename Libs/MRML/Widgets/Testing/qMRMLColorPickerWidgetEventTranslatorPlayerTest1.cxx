@@ -40,7 +40,6 @@
 
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
-#include <vtkMRMLFreeSurferProceduralColorNode.h>
 #include <vtkMRMLPETProceduralColorNode.h>
 #include <vtkMRMLScene.h>
 
@@ -105,11 +104,6 @@ int qMRMLColorPickerWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   scene2->AddNode(colorTableNode.GetPointer());
 
   widget2->setMRMLScene(scene2.GetPointer());
-
-  vtkNew<vtkMRMLFreeSurferProceduralColorNode> colorFreeSurferNode;
-  colorFreeSurferNode->SetTypeToRedBlue();
-  scene2->AddNode(colorFreeSurferNode.GetPointer());
-
 
   // for some reasons it generate a warning if the type is changed.
   colorTableNode->NamesInitialisedOff();

@@ -112,11 +112,6 @@ public:
   /// Return true if the display node is a model
   bool IsModelDisplayable(vtkMRMLDisplayNode* node)const;
 
-  /// Helper function for copying lookup tables
-  /// It handles special types of lookup tables and fixes
-  /// error in vtkLoookupTable copy.
-  static vtkLookupTable* CreateLookupTableCopy(vtkLookupTable* source);
-
   /// Helper function for determining what type of scalar is active.
   /// \return True if attribute location in display node is vtkAssignAttribute::CELL_DATA
   ///   or active cell scalar name in the model node is vtkDataSetAttributes::SCALARS.

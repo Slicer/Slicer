@@ -81,7 +81,6 @@ set(include_dirs
   ${vtkAddon_INCLUDE_DIRS}
   ${vtkITK_INCLUDE_DIRS}
   ${vtkSegmentationCore_INCLUDE_DIRS}
-  ${FreeSurfer_INCLUDE_DIRS}
   ${LibArchive_INCLUDE_DIR}
   )
 if(MRML_USE_vtkTeem)
@@ -143,9 +142,6 @@ set(MRMLCore_SRCS
   vtkMRMLFiducialListNode.cxx
   vtkMRMLFiducialListStorageNode.cxx
   vtkMRMLFolderDisplayNode.cxx
-  vtkMRMLFreeSurferModelOverlayStorageNode.cxx
-  vtkMRMLFreeSurferModelStorageNode.cxx
-  vtkMRMLFreeSurferProceduralColorNode.cxx
   vtkMRMLHierarchyNode.cxx
   vtkMRMLHierarchyStorageNode.cxx
   vtkMRMLDisplayableHierarchyNode.cxx
@@ -293,7 +289,6 @@ set(libs
   ${ITK_LIBRARIES}
   ${VTK_LIBRARIES}
   vtkIOInfovis
-  FreeSurfer
   ${LibArchive_LIBRARY}
   )
 if(MRML_USE_vtkTeem)

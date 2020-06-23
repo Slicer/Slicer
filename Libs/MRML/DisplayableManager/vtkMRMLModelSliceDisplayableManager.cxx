@@ -549,12 +549,10 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
         }
       else
         {
-        vtkLookupTable* dNodeLUT = (colorNode ? colorNode->GetLookupTable() : nullptr);
+        vtkSmartPointer<vtkLookupTable> dNodeLUT = vtkSmartPointer<vtkLookupTable>::Take(colorNode ? colorNode->CreateLookupTableCopy() : nullptr);
         if (dNodeLUT)
           {
           mapper->SetScalarRange(displayNode->GetScalarRange());
-          lut = vtkSmartPointer<vtkLookupTable>::Take(
-            vtkMRMLModelDisplayableManager::CreateLookupTableCopy(dNodeLUT));
           lut->SetAlpha(hierarchyOpacity * displayNode->GetSliceIntersectionOpacity());
           }
         }
@@ -605,12 +603,10 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
         // values range. It is therefore necessary to make a copy
         // of the colorNode vtkLookupTable in order not to impact
         // that lookup table original range.
-        vtkLookupTable* dNodeLUT = displayNode->GetColorNode() ?
-          displayNode->GetColorNode()->GetLookupTable() : nullptr;
-        vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::Take(
-          vtkMRMLModelDisplayableManager::CreateLookupTableCopy(dNodeLUT));
-        lut->SetAlpha(hierarchyOpacity * displayNode->GetSliceIntersectionOpacity());
-        mapper->SetLookupTable(lut.GetPointer());
+        vtkSmartPointer<vtkLookupTable> dNodeLUT = vtkSmartPointer<vtkLookupTable>::Take(displayNode->GetColorNode() ?
+          displayNode->GetColorNode()->CreateLookupTableCopy() : nullptr);
+        dNodeLUT->SetAlpha(hierarchyOpacity * displayNode->GetSliceIntersectionOpacity());
+        mapper->SetLookupTable(dNodeLUT);
         }
 
       // Set scalar range

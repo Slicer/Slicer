@@ -17,7 +17,6 @@
 // MRML includes
 class vtkMRMLColorNode;
 class vtkMRMLColorTableNode;
-class vtkMRMLFreeSurferProceduralColorNode;
 class vtkMRMLProceduralColorNode;
 class vtkMRMLPETProceduralColorNode;
 class vtkMRMLdGEMRICProceduralColorNode;
@@ -131,7 +130,6 @@ public:
   /// \sa AddLabelsNode()
   /// \sa AddDefaultTableNodes()
   /// \sa AddDefaultProceduralNodes()
-  /// \sa AddFreeSurferNodes()
   /// \sa AddPETNodes()
   /// \sa AddDGEMRICNodes()
   /// \sa AddDefaultFileNodes()
@@ -145,9 +143,6 @@ public:
 
   /// Return the default color table node id for a given type
   static const char * GetColorTableNodeID(int type);
-
-  /// Return the default freesurfer color node id for a given type
-  static const char * GetFreeSurferColorNodeID(int type);
 
   /// Return the default dGEMRIC color node id for a given type
   static const char * GetdGEMRICColorNodeID(int type);
@@ -166,9 +161,6 @@ public:
   /// \warning You are responsible to delete the returned string.
   static const char * GetFileColorNodeID(const char *fileName);
   static std::string  GetFileColorNodeSingletonTag(const char * fileName);
-
-  /// Return a default color node id for a freesurfer label map volume
-  virtual const char * GetDefaultFreeSurferLabelMapColorNodeID();
 
   /// Return a default color node id for a volume
   virtual const char * GetDefaultVolumeColorNodeID();
@@ -238,8 +230,6 @@ protected:
   vtkMRMLColorTableNode* CreateDefaultTableNode(int type);
   vtkMRMLProceduralColorNode* CreateRandomNode();
   vtkMRMLProceduralColorNode* CreateRedGreenBlueNode();
-  vtkMRMLFreeSurferProceduralColorNode* CreateFreeSurferNode(int type);
-  vtkMRMLColorTableNode* CreateFreeSurferFileNode(const char* fileName);
   vtkMRMLPETProceduralColorNode* CreatePETColorNode(int type);
   vtkMRMLdGEMRICProceduralColorNode* CreatedGEMRICColorNode(int type);
   vtkMRMLColorTableNode* CreateDefaultFileNode(const std::string& colorname);
@@ -250,15 +240,12 @@ protected:
   void AddLabelsNode();
   void AddDefaultTableNode(int i);
   void AddDefaultProceduralNodes();
-  void AddFreeSurferNode(int type);
-  void AddFreeSurferFileNode(vtkMRMLFreeSurferProceduralColorNode* basicFSNode);
   void AddPETNode(int type);
   void AddDGEMRICNode(int type);
   void AddDefaultFileNode(int i);
   void AddUserFileNode(int i);
 
   void AddDefaultTableNodes();
-  void AddFreeSurferNodes();
   void AddPETNodes();
   void AddDGEMRICNodes();
   void AddDefaultFileNodes();

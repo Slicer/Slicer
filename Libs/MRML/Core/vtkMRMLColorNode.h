@@ -200,6 +200,11 @@ public:
     File = 14,
   };
 
+  /// Helper function for copying lookup tables
+  /// It handles special types of lookup tables and fixes
+  /// error in vtkLoookupTable copy.
+  virtual vtkLookupTable* CreateLookupTableCopy();
+
 protected:
   vtkMRMLColorNode();
   ~vtkMRMLColorNode() override;
