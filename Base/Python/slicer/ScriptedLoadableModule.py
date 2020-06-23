@@ -1,7 +1,7 @@
 from __future__ import print_function
 import os, string
 import unittest
-import qt, ctk, slicer
+import vtk, qt, ctk, slicer
 import logging
 import importlib
 
