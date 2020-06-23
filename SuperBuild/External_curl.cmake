@@ -86,6 +86,7 @@ if((NOT DEFINED CURL_INCLUDE_DIR
       -DCMAKE_C_FLAGS:STRING=${${proj}_CMAKE_C_FLAGS}
       -DCMAKE_DEBUG_POSTFIX:STRING=
       -DCMAKE_INSTALL_PREFIX:PATH=${EP_INSTALL_DIR}
+      -DCMAKE_INSTALL_LIBDIR:STRING=lib  # Override value set in GNUInstallDirs CMake module
       -DBUILD_TESTING:BOOL=OFF
       -DBUILD_CURL_EXE:BOOL=OFF
       -DBUILD_SHARED_LIBS:BOOL=OFF  # Before enabling this option, see https://github.com/Slicer/curl/commit/ca5fe8e63df7faea0bfb988ef3fe58f538e6950b
