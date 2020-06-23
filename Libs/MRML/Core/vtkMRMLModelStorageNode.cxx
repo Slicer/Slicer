@@ -42,6 +42,7 @@
 #include <vtksys/SystemTools.hxx>
 #include <vtkTransform.h>
 #include <vtkTransformFilter.h>
+#include <vtkTransformPolyDataFilter.h>
 #include <vtkTriangleFilter.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkUnstructuredGridReader.h>
@@ -719,12 +720,25 @@ void vtkMRMLModelStorageNode::ConvertBetweenRASAndLPS(vtkPointSet* inputMesh, vt
 {
   vtkNew<vtkTransform> transformRasLps;
   transformRasLps->Scale(-1, -1, 1);
-  vtkNew<vtkTransformFilter> transformFilter;
-  transformFilter->SetTransform(transformRasLps);
-  transformFilter->SetInputData(inputMesh);
-  transformFilter->TransformAllInputVectorsOn();
-  transformFilter->Update();
-  outputMesh->ShallowCopy(transformFilter->GetOutput());
+  // vtkTransformPolyDataFilter preserves texture coordinates, while vtkTransformFilter removes them,
+  // therefore we must use vtkTransformPolyDataFilter for surface meshes.
+  if (inputMesh->IsA("vtkPolyData"))
+    {
+    vtkNew<vtkTransformPolyDataFilter> transformFilter;
+    transformFilter->SetTransform(transformRasLps);
+    transformFilter->SetInputData(inputMesh);
+    transformFilter->Update();
+    outputMesh->ShallowCopy(transformFilter->GetOutput());
+    }
+  else
+    {
+    vtkNew<vtkTransformFilter> transformFilter;
+    transformFilter->SetTransform(transformRasLps);
+    transformFilter->SetInputData(inputMesh);
+    transformFilter->TransformAllInputVectorsOn();
+    transformFilter->Update();
+    outputMesh->ShallowCopy(transformFilter->GetOutput());
+    }
 }
 
 //----------------------------------------------------------------------------
