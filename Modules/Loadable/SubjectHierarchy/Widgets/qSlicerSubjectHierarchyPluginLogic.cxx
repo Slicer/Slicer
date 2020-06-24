@@ -510,6 +510,10 @@ void qSlicerSubjectHierarchyPluginLogic::onDisplayMenuEvent(vtkObject* displayNo
   foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
     {
     plugin->hideAllContextMenuActions();
+    foreach (QAction *action, plugin->viewContextMenuActions())
+      {
+      d->ViewMenu->addAction(action);
+      }
     plugin->showViewContextMenuActionsForItem(itemID, eventDataMap);
     }
 
