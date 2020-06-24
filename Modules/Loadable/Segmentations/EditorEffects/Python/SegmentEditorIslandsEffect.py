@@ -164,8 +164,8 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
       if selectedSegmentName is not None and selectedSegmentName != "":
         baseSegmentName = selectedSegmentName
 
-      labelValues = vtk.vtkIntArray();
-      slicer.vtkSlicerSegmentationsModuleLogic.GetAllLabelValues(labelValues, islandImage);
+      labelValues = vtk.vtkIntArray()
+      slicer.vtkSlicerSegmentationsModuleLogic.GetAllLabelValues(labelValues, islandImage)
 
       # Erase segment from in original labelmap.
       # Individuall islands will be added back later.
@@ -195,16 +195,23 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
           name = baseSegmentName + "_" + str(i+1)
           segment.SetName(name)
           segment.AddRepresentation(slicer.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName(),
-            selectedSegment.GetRepresentation(slicer.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName()));
+            selectedSegment.GetRepresentation(slicer.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName()))
           segmentation.AddSegment(segment)
           segmentID = segmentation.GetSegmentIdBySegment(segment)
           segment.SetLabelValue(segmentation.GetUniqueLabelValueForSharedLabelmap(selectedSegmentID))
 
         threshold = vtk.vtkImageThreshold()
         threshold.SetInputData(islandMath.GetOutput())
-        threshold.ThresholdBetween(labelValue, labelValue)
-        threshold.SetInValue(1)
-        threshold.SetOutValue(0)
+        if not split and maxNumberOfSegments <= 0:
+          # no need to split segments and no limit on number of segments, so we can lump all islands into one segment
+          threshold.ThresholdByLower(0)
+          threshold.SetInValue(0)
+          threshold.SetOutValue(1)
+        else:
+          # copy only selected islands; or copy islands into different segments
+          threshold.ThresholdBetween(labelValue, labelValue)
+          threshold.SetInValue(1)
+          threshold.SetOutValue(0)
         threshold.Update()
 
         modificationMode = slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeAdd
@@ -221,6 +228,10 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
         # method call to import all the resulting segments at once but that would put all the imported segments
         # in a new layer. By using modifySegmentByLabelmap, the number of layers will not increase.
         self.scriptedEffect.modifySegmentByLabelmap(segmentationNode, segmentID, modifierImage, modificationMode)
+
+        if not split and maxNumberOfSegments <= 0:
+          # all islands lumped into one segment, so we are done
+          break
 
     qt.QApplication.restoreOverrideCursor()
 
