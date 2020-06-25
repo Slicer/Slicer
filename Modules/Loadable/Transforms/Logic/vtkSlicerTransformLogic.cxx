@@ -17,7 +17,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include "vtkMRMLColorNode.h"
 #include "vtkMRMLGridTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
-#include "vtkMRMLMarkupsFiducialNode.h"
+#include "vtkMRMLMarkupsNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
@@ -1208,7 +1208,7 @@ void vtkSlicerTransformLogic::GetContourVisualization3d(vtkPolyData* output, vtk
 //----------------------------------------------------------------------------
 bool vtkSlicerTransformLogic::GetVisualization2d(vtkPolyData* output_RAS,
   vtkMRMLTransformDisplayNode* displayNode, vtkMRMLSliceNode* sliceNode,
-  vtkMRMLMarkupsFiducialNode* glyphPointsNode /*=nullptr*/)
+  vtkMRMLMarkupsNode* glyphPointsNode /*=nullptr*/)
 {
   if (displayNode == nullptr || output_RAS == nullptr || sliceNode == nullptr)
   {
@@ -1320,7 +1320,7 @@ bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output, vtkMRMLTra
     return false;
     }
   vtkSmartPointer<vtkPoints> samplePoints_RAS;
-  vtkMRMLMarkupsFiducialNode* glyphPointsNode = vtkMRMLMarkupsFiducialNode::SafeDownCast(regionNode);
+  vtkMRMLMarkupsNode* glyphPointsNode = vtkMRMLMarkupsNode::SafeDownCast(regionNode);
   if (glyphPointsNode != nullptr)
     {
     samplePoints_RAS = vtkSmartPointer<vtkPoints>::New();
@@ -1443,7 +1443,7 @@ vtkSlicerTransformLogic::TransformKind vtkSlicerTransformLogic::GetTransformKind
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerTransformLogic::GetMarkupsAsPoints(vtkMRMLMarkupsFiducialNode* markupsFiducialNode, vtkPoints* samplePoints_RAS)
+void vtkSlicerTransformLogic::GetMarkupsAsPoints(vtkMRMLMarkupsNode* markupsNode, vtkPoints* samplePoints_RAS)
 {
   if (samplePoints_RAS == nullptr)
     {
@@ -1451,17 +1451,17 @@ void vtkSlicerTransformLogic::GetMarkupsAsPoints(vtkMRMLMarkupsFiducialNode* mar
     return;
     }
   samplePoints_RAS->Initialize();
-  if (!markupsFiducialNode)
+  if (!markupsNode)
     {
     return;
     }
-  int numberOfFiducials = markupsFiducialNode->GetNumberOfFiducials();
-  samplePoints_RAS->SetNumberOfPoints(numberOfFiducials);
-  for (int fiducialIndex = 0; fiducialIndex < numberOfFiducials; fiducialIndex++)
+  int numberOfControlPoints = markupsNode->GetNumberOfControlPoints();
+  samplePoints_RAS->SetNumberOfPoints(numberOfControlPoints);
+  for (int controlPointIndex = 0; controlPointIndex < numberOfControlPoints; controlPointIndex++)
     {
-    double fiducialPosition_RAS[4] = { 0, 0, 0, 1 };
-    markupsFiducialNode->GetNthFiducialWorldCoordinates(fiducialIndex, fiducialPosition_RAS);
-    samplePoints_RAS->SetPoint(fiducialIndex, fiducialPosition_RAS);
+    double controlPointPosition_RAS[4] = { 0, 0, 0, 1 };
+    markupsNode->GetNthControlPointPositionWorld(controlPointIndex, controlPointPosition_RAS);
+    samplePoints_RAS->SetPoint(controlPointIndex, controlPointPosition_RAS);
     }
 }
 

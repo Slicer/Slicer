@@ -886,7 +886,7 @@
               </property>
               <property name="nodeTypes">
                <stringlist>
-                <string>vtkMRMLMarkupsFiducialNode</string>
+                <string>vtkMRMLMarkupsNode</string>
                </stringlist>
               </property>
               <property name="noneEnabled">

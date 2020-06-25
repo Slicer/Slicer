@@ -32,7 +32,7 @@
 
 // MRML includes
 class vtkMRMLDisplayableNode;
-class vtkMRMLMarkupsFiducialNode;
+class vtkMRMLMarkupsNode;
 class vtkMRMLScalarVolumeNode;
 class vtkMRMLScene;
 class vtkMRMLSliceNode;
@@ -75,7 +75,7 @@ class VTK_SLICER_TRANSFORMS_MODULE_LOGIC_EXPORT vtkSlicerTransformLogic : public
   /// Generate polydata for 2D transform visualization
   /// Return true on success.
   static bool GetVisualization2d(vtkPolyData* output_RAS, vtkMRMLTransformDisplayNode* displayNode,
-    vtkMRMLSliceNode* sliceNode, vtkMRMLMarkupsFiducialNode* glyphPointsNode = nullptr);
+    vtkMRMLSliceNode* sliceNode, vtkMRMLMarkupsNode* glyphPointsNode = nullptr);
 
   /// Generate polydata for 2D transform visualization
   /// Return true on success.
@@ -240,7 +240,7 @@ protected:
     vtkMatrix4x4* roiToRAS, int* roiSize, double pointSpacingMm, int pointGroupSize=1, int* numGridPoints=nullptr);
 
   /// Get markup points as vtkPoints in RAS coordinate system.
-  static void  GetMarkupsAsPoints(vtkMRMLMarkupsFiducialNode* markupsNode, vtkPoints* samplePoints_RAS);
+  static void  GetMarkupsAsPoints(vtkMRMLMarkupsNode* markupsNode, vtkPoints* samplePoints_RAS);
 
 };
 
