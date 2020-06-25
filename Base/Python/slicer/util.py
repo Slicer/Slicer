@@ -334,7 +334,7 @@ def childWidgetVariables(widget):
   return ui
 
 def setSliceViewerLayers(background='keep-current', foreground='keep-current', label='keep-current',
-                         foregroundOpacity=None, labelOpacity=None, fit=False):
+                         foregroundOpacity=None, labelOpacity=None, fit=False, rotateToVolumePlane=False):
   """ Set the slice views with the given nodes.
 
   If node ID is not specified (or value is 'keep-current') then the layer will not be modified.
@@ -344,6 +344,7 @@ def setSliceViewerLayers(background='keep-current', foreground='keep-current', l
   :param label: node or node ID to be used for the label layer
   :param foregroundOpacity: opacity of the foreground layer
   :param labelOpacity: opacity of the label layer
+  :param rotateToVolumePlane: rotate views to closest axis of the selected background, foreground, or label volume
   :param fit: fit slice views to their content (position&zoom to show all visible layers)
   """
   import slicer
@@ -366,6 +367,20 @@ def setSliceViewerLayers(background='keep-current', foreground='keep-current', l
           sliceViewer.SetLabelVolumeID(_nodeID(label))
       if labelOpacity is not None:
           sliceViewer.SetLabelOpacity(labelOpacity)
+
+  if rotateToVolumePlane:
+    if background != 'keep-current':
+      volumeNode = slicer.mrmlScene.GetNodeByID(_nodeID(background))
+    elif foreground != 'keep-current':
+      volumeNode = slicer.mrmlScene.GetNodeByID(_nodeID(foreground))
+    elif label != 'keep-current':
+      volumeNode = slicer.mrmlScene.GetNodeByID(_nodeID(label))
+    else:
+      volumeNode = None
+    if volumeNode:
+      layoutManager = slicer.app.layoutManager()
+      for sliceViewName in layoutManager.sliceViewNames():
+        layoutManager.sliceWidget(sliceViewName).mrmlSliceNode().RotateToVolumePlane(volumeNode)
 
   if fit:
     layoutManager = slicer.app.layoutManager()
