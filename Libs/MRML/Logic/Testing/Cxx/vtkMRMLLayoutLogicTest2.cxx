@@ -54,8 +54,8 @@ int vtkMRMLLayoutLogicTest2(int , char * [] )
     }
   if (logic->GetViewNodes()->GetItemAsObject(0) != viewNode.GetPointer() ||
       logic->GetViewNodes()->GetItemAsObject(1) != redSliceNode.GetPointer() ||
-      logic->GetViewNodes()->GetItemAsObject(2) != yellowSliceNode.GetPointer() ||
-      logic->GetViewNodes()->GetItemAsObject(3) != greenSliceNode.GetPointer())
+      logic->GetViewNodes()->GetItemAsObject(2) != greenSliceNode.GetPointer() ||
+      logic->GetViewNodes()->GetItemAsObject(3) != yellowSliceNode.GetPointer())
     {
     std::cerr << __LINE__ << " Wrong nodes returned: "
               << vtkMRMLNode::SafeDownCast(logic->GetViewNodes()->GetItemAsObject(0))->GetID() << " "
@@ -64,7 +64,7 @@ int vtkMRMLLayoutLogicTest2(int , char * [] )
               << vtkMRMLNode::SafeDownCast(logic->GetViewNodes()->GetItemAsObject(3))->GetID() << " "
               << std::endl << "  instead of :"
               << viewNode->GetID() << " " << redSliceNode->GetID() << " "
-              << yellowSliceNode->GetID() << " " << greenSliceNode->GetID() << " "
+              << greenSliceNode->GetID() << " " << yellowSliceNode->GetID() << " "
               << "Pointers: "
               << logic->GetViewNodes()->GetItemAsObject(0) << " "
               << logic->GetViewNodes()->GetItemAsObject(1) << " "
