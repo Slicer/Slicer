@@ -780,7 +780,7 @@ vtkIdType vtkMRMLMarkupsCurveNode::GetCurvePointIndexFromControlPointIndex(int c
 {
   if (this->CurveGenerator->IsInterpolatingCurve())
     {
-    return controlPointIndex * this->CurveGenerator->GetNumberOfPointsPerInterpolatingSegment() + 1;
+    return controlPointIndex * this->CurveGenerator->GetNumberOfPointsPerInterpolatingSegment();
     }
   else
     {
@@ -936,7 +936,8 @@ bool vtkMRMLMarkupsCurveNode::GetCurvePointToWorldTransformAtPointIndex(vtkIdTyp
   vtkIdType n = curvePoly->GetNumberOfPoints();
   if (curvePointIndex < 0 || curvePointIndex >= n)
     {
-    vtkErrorMacro("vtkMRMLMarkupsCurveNode::GetCurvePointToWorldTransformAtPointIndex failed: Invalid curvePointIndex");
+    vtkErrorMacro("vtkMRMLMarkupsCurveNode::GetCurvePointToWorldTransformAtPointIndex failed: Invalid curvePointIndex "
+      << curvePointIndex << " (number of curve points: " << n << ")");
     return false;
     }
   curvePointToWorld->Identity();
