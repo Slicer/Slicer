@@ -38,42 +38,60 @@
 int CheckCurvePointDistances(vtkMRMLMarkupsCurveNode* curveNode, double expectedRegularDistance,
   double expectedDistanceSecondLast, double expectedDistanceLast, double tolerance, bool distanceOnCurve = false, bool verbose = false)
 {
-  if (verbose)
+  bool rerunWithReporting = false;
+  while (true)
     {
-    std::cout << "CheckCurvePointDistances:" << std::endl;
-    }
-  int lastPointIndex = (curveNode->GetCurveClosed() ? curveNode->GetNumberOfControlPoints() : curveNode->GetNumberOfControlPoints() - 1);
-  for (int pointIndex = 0; pointIndex < lastPointIndex; pointIndex++)
-    {
-    double actualDistance;
-    if (distanceOnCurve)
-    {
-      actualDistance = curveNode->GetCurveLengthBetweenStartEndPointsWorld(
-        curveNode->GetCurvePointIndexFromControlPointIndex(pointIndex % curveNode->GetNumberOfControlPoints()),
-        curveNode->GetCurvePointIndexFromControlPointIndex((pointIndex + 1) % curveNode->GetNumberOfControlPoints()));
-    }
-    else
-    {
-      actualDistance = sqrt(vtkMath::Distance2BetweenPoints(
-        curveNode->GetNthControlPointPosition(pointIndex % curveNode->GetNumberOfControlPoints()),
-        curveNode->GetNthControlPointPosition((pointIndex + 1) % curveNode->GetNumberOfControlPoints())));
-    }
-    double expectedDistance = expectedRegularDistance;
-    if (pointIndex == curveNode->GetNumberOfControlPoints() - 2)
+    if (verbose || rerunWithReporting)
       {
-      expectedDistance = expectedDistanceLast;
+      std::cout << "CheckCurvePointDistances:" << std::endl;
       }
-    else if (pointIndex == curveNode->GetNumberOfControlPoints() - 3)
+    int lastPointIndex = (curveNode->GetCurveClosed() ? curveNode->GetNumberOfControlPoints() : curveNode->GetNumberOfControlPoints() - 1);
+    for (int pointIndex = 0; pointIndex < lastPointIndex; pointIndex++)
       {
-      expectedDistance = expectedDistanceSecondLast;
+      double actualDistance;
+      if (distanceOnCurve)
+        {
+        actualDistance = curveNode->GetCurveLengthBetweenStartEndPointsWorld(
+          curveNode->GetCurvePointIndexFromControlPointIndex(pointIndex % curveNode->GetNumberOfControlPoints()),
+          curveNode->GetCurvePointIndexFromControlPointIndex((pointIndex + 1) % curveNode->GetNumberOfControlPoints()));
+        }
+      else
+        {
+        actualDistance = sqrt(vtkMath::Distance2BetweenPoints(
+          curveNode->GetNthControlPointPosition(pointIndex % curveNode->GetNumberOfControlPoints()),
+          curveNode->GetNthControlPointPosition((pointIndex + 1) % curveNode->GetNumberOfControlPoints())));
+        }
+      double expectedDistance = expectedRegularDistance;
+      if (pointIndex == lastPointIndex - 1)
+        {
+        expectedDistance = expectedDistanceLast;
+        }
+      else if (pointIndex == lastPointIndex - 2)
+        {
+        expectedDistance = expectedDistanceSecondLast;
+        }
+      if (verbose || rerunWithReporting)
+        {
+        std::cout << "  " << pointIndex << ":  expected = " << expectedDistance << " ["
+          << expectedDistance-tolerance << ", " << expectedDistance + tolerance << "]    actual = " << actualDistance
+          << " (error=" << actualDistance- expectedDistance << ")" << std::endl;
+        }
+      if (fabs(actualDistance - expectedDistance) > tolerance)
+        {
+        // error found, rerun with reporting
+        if (!rerunWithReporting)
+          {
+          rerunWithReporting = true;
+          continue;
+          }
+        else
+          {
+          std::cout << "    -> ERROR - actual value is out of tolerance range" << std::endl;
+          }
+        }
       }
-    if (verbose)
-      {
-      std::cout << "  " << pointIndex << ":  " << actualDistance << std::endl;
-      }
-    CHECK_DOUBLE_TOLERANCE(actualDistance, expectedDistance, tolerance);
+    return rerunWithReporting ? EXIT_FAILURE : EXIT_SUCCESS;
     }
-  return EXIT_SUCCESS;
 }
 
 int vtkMRMLMarkupsNodeTest3(int , char * [] )
@@ -175,15 +193,15 @@ int vtkMRMLMarkupsNodeTest3(int , char * [] )
   samplingDistance = closedCurveNode->GetCurveLengthWorld() / 10.4;
   closedCurveNode->ResampleCurveWorld(samplingDistance);
   CHECK_INT(closedCurveNode->GetNumberOfControlPoints(), 10);
-  CHECK_EXIT_SUCCESS(CheckCurvePointDistances(closedCurveNode, samplingDistance, 10.9, 10.7,
-    samplingDistance / 5.0, distanceOnCurve, verbose));
+  CHECK_EXIT_SUCCESS(CheckCurvePointDistances(closedCurveNode, samplingDistance, 10.84, 10.82,
+    samplingDistance / 100.0, distanceOnCurve, verbose));
   CHECK_DOUBLE_TOLERANCE(closedCurveNode->GetCurveLengthWorld(), closedCurveLength, circumferenceTol * 3);
 
   samplingDistance = closedCurveNode->GetCurveLengthWorld() / 10.6;
   closedCurveNode->ResampleCurveWorld(samplingDistance);
   CHECK_INT(closedCurveNode->GetNumberOfControlPoints(), 11);
-  CHECK_EXIT_SUCCESS(CheckCurvePointDistances(closedCurveNode, samplingDistance, 7.0, 7.2,
-    samplingDistance / 5.0, distanceOnCurve, verbose));
+  CHECK_EXIT_SUCCESS(CheckCurvePointDistances(closedCurveNode, samplingDistance, 7.09, 7.12,
+    samplingDistance / 100.0, distanceOnCurve, verbose));
   CHECK_DOUBLE_TOLERANCE(closedCurveNode->GetCurveLengthWorld(), closedCurveLength, circumferenceTol * 3);
 
   std::cout << "Success." << std::endl;
