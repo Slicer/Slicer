@@ -39,6 +39,7 @@ Version:   $Revision: 1.14 $
 #include <vtkPoints.h>
 #include <vtkThinPlateSplineTransform.h>
 #include <vtkTransform.h>
+#include <vtksys/SystemTools.hxx>
 
 // STD includes
 #include <sstream>
@@ -1191,6 +1192,22 @@ void vtkMRMLTransformNode::Inverse()
   this->StorableModifiedTime.Modified();
   this->Modified();
   this->TransformModified();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::InverseName()
+{
+  std::string nodeName = (this->GetName() ? this->GetName() : "");
+  const std::string inverseSuffix(" (-)"); // this could be moved to a member variable
+  if (vtksys::SystemTools::StringEndsWith(nodeName, inverseSuffix.c_str()))
+    {
+    nodeName.erase(nodeName.size() - inverseSuffix.size(), inverseSuffix.size());
+    }
+  else
+    {
+    nodeName += inverseSuffix;
+    }
+  this->SetName(nodeName.c_str());
 }
 
 //----------------------------------------------------------------------------

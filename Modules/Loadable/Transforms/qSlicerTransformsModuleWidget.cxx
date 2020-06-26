@@ -398,7 +398,9 @@ void qSlicerTransformsModuleWidget::invert()
   d->TranslationSliders->resetUnactiveSliders();
   d->RotationSliders->resetUnactiveSliders();
 
+  MRMLNodeModifyBlocker blocker(d->MRMLTransformNode);
   d->MRMLTransformNode->Inverse();
+  d->MRMLTransformNode->InverseName();
 }
 
 //-----------------------------------------------------------------------------
