@@ -338,6 +338,11 @@ foreach(p ${package_list})
             --repo_url ${EXTENSION_WC_URL}
             --revision ${EXTENSION_WC_REVISION}
             --app_revision ${Slicer_REVISION}
+            --category ${EXTENSION_CATEGORY}
+            --desc ${EXTENSION_DESCRIPTION}
+            --icon_url ${EXTENSION_ICONURL}
+            --homepage ${EXTENSION_HOMEPAGE}
+            --screenshots ${EXTENSION_SCREENSHOTURLS}
       RESULT_VARIABLE slicer_extension_manager_upload_status
       ERROR_FILE ${error_file}
       )
