@@ -2392,6 +2392,9 @@ def logProcessOutput(proc):
     raise CalledProcessError(retcode, proc.args, output=proc.stdout, stderr=proc.stderr)
 
 def _executePythonModule(module, args):
+  """Execute a Python module as a script in Slicer's Python environment.
+  Internally python -m is called with the module name and additional arguments.
+  """
   # Determine pythonSlicerExecutablePath
   try:
     from slicer import app
