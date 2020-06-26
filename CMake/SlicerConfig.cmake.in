@@ -248,9 +248,6 @@ set(Slicer_ModuleMRML_INCLUDE_DIRS "@Slicer_ModuleMRML_INCLUDE_DIRS_CONFIG@"
 set(Slicer_ModuleWidgets_INCLUDE_DIRS "@Slicer_ModuleWidgets_INCLUDE_DIRS_CONFIG@"
   CACHE INTERNAL "Slicer Module widgets includes" FORCE)
 
-set(FreeSurfer_INCLUDE_DIRS "@FreeSurfer_INCLUDE_DIRS_CONFIG@"
-  CACHE INTERNAL "FreeSurfer includes" FORCE)
-
 set(ITKFactoryRegistration_INCLUDE_DIRS "@ITKFactoryRegistration_INCLUDE_DIRS_CONFIG@"
   CACHE INTERNAL "ITKFactoryRegistration includes" FORCE)
 

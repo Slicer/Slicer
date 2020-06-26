@@ -43,7 +43,6 @@ set(Slicer_CMAKE_DIR "${Slicer_HOME}/@Slicer_INSTALL_LIB_DIR@/CMake")
 
 # Slicer Libs library directories.
 set(Slicer_Libs_LIBRARY_DIRS
-  "${Slicer_HOME}/lib/FreeSurfer"
   "${Slicer_HOME}/lib/IGT"
   "${Slicer_HOME}/lib/ITKCommandIO"
   "${Slicer_HOME}/lib/LoadableModule"
@@ -64,7 +63,6 @@ set(Slicer_Libs_LIBRARY_DIRS
 
 # Slicer Libs include file directories.
 set(Slicer_Libs_INCLUDE_DIRS
-  "${Slicer_HOME}/include/FreeSurfer"
   "${Slicer_HOME}/include/IGT"
   "${Slicer_HOME}/include/ITKCommandIO"
   "${Slicer_HOME}/include/LoadableModule"

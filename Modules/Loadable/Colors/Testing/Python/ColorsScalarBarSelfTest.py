@@ -109,9 +109,6 @@ class ColorsScalarBarSelfTestTest(ScriptedLoadableModuleTest):
       colorNode = slicer.mrmlScene.GetNthNodeByClass(n, 'vtkMRMLColorNode')
       useColorNameAsLabelCheckbox.setChecked(checked)
       print("%d/%d" % (n, numColorNodes-1))
-      # TODO Fix displayed of FreeSurferLabels. See https://issues.slicer.org/view.php?id=4688
-      if colorNode.GetName() == "FreeSurferLabels":
-        continue
       self.delayDisplay('Setting Color Node To %s' % colorNode.GetName())
       activeColorNodeSelector.setCurrentNodeID(colorNode.GetID())
       # use the delay display here to ensure a render

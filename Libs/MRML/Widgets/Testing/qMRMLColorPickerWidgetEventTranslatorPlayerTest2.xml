@@ -8,7 +8,6 @@
         <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd000000000000037f0000013700000004000000040000000800000008fc00000000"/>
     </settings>
     <events>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget2/ColorTableComboBox/1ctkTreeComboBox0" command="indexChanged" arguments="vtkMRMLFreeSurferProceduralColorNode1"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget2/ColorTableComboBox/1ctkTreeComboBox0" command="indexChanged" arguments="vtkMRMLPETProceduralColorNode1"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget2/ColorTableComboBox/1ctkTreeComboBox0" command="indexChanged" arguments="vtkMRMLColorTableNode1"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget2/MRMLColorListView/qt_scrollarea_vcontainer/1QScrollBar0" command="mousePress" arguments="1,1,0,6,20"/>

@@ -52,8 +52,6 @@ namespace
 //----------------------------------------------------------------------------
 int TestDefaults()
 {
-  // To load the freesurfer file, SLICER_HOME is requested
-  //vtksys::SystemTools::PutEnv("SLICER_HOME=..." );
   vtkNew<vtkMRMLScene> scene;
   vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::New();
 

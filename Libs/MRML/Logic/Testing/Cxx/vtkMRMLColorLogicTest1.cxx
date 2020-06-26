@@ -65,7 +65,6 @@ namespace
 //----------------------------------------------------------------------------
 bool TestPerformance()
 {
-  // To load freesurfer files, MRML_APPLICATION_HOME_DIR_ENV environment variable has to be set
   vtkNew<vtkMRMLScene> scene;
   vtkMRMLColorLogic* colorLogic = vtkMRMLColorLogic::New();
 
@@ -146,7 +145,6 @@ bool TestNodeIDs()
       return false;
       }
     }
-  // To load freesurfer files, MRML_APPLICATION_HOME_DIR_ENV environment variable has to be set
   return true;
 }
 
@@ -191,13 +189,6 @@ bool TestDefaults()
               << colorLogic->GetDefaultChartColorNodeID() << std::endl;
     return false;
     }
-  //if (scene->GetNodeByID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID()) == 0)
-  //  {
-  //  std::cerr << "Line " << __LINE__
-  //            << " - Can't find default free surfer color node with ID: "
-  //            << colorLogic->GetDefaultFreeSurferLabelMapColorNodeID() << std::endl;
-  //  return false;
-  //  }
   return true;
 }
 
