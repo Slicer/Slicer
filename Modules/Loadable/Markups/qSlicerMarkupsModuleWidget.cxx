@@ -2590,12 +2590,18 @@ void qSlicerMarkupsModuleWidget::onApplyCurveResamplingPushButtonClicked()
     }
   if(outputNode != inputNode)
     {
+    MRMLNodeModifyBlocker blocker(outputNode);
     vtkNew<vtkPoints> originalControlPoints;
     inputNode->GetControlPointPositionsWorld(originalControlPoints);
     outputNode->SetControlPointPositionsWorld(originalControlPoints);
     vtkNew<vtkStringArray> originalLabels;
     inputNode->GetControlPointLabels(originalLabels);
     outputNode->SetControlPointLabels(originalLabels, originalControlPoints);
+    outputNode->SetCurveType(inputNode->GetCurveType());
+    outputNode->SetNumberOfPointsPerInterpolatingSegment(inputNode->GetNumberOfPointsPerInterpolatingSegment());
+    outputNode->SetAndObserveShortestDistanceSurfaceNode(inputNode->GetShortestDistanceSurfaceNode());
+    outputNode->SetSurfaceCostFunctionType(inputNode->GetSurfaceCostFunctionType());
+    outputNode->SetSurfaceDistanceWeightingFunction(inputNode->GetSurfaceDistanceWeightingFunction());
     }
   double sampleDist = outputNode->GetCurveLengthWorld() / (resampleNumberOfPoints - 1);
   vtkMRMLModelNode* constraintNode = vtkMRMLModelNode::SafeDownCast(d->resampleCurveConstraintNodeSelector->currentNode());
