@@ -8,7 +8,6 @@ Python
 .. toctree::
    :maxdepth: 4
 
-   freesurfer
    mrml
    saferef
    slicer

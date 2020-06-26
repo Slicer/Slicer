@@ -130,11 +130,6 @@
         <file alias="Warm2">Icons/LUTs/discreteWarm2.png</file>
         <file alias="Warm3">Icons/LUTs/discreteWarm3.png</file>
         <file alias="Yellow">Icons/LUTs/discreteYellow.png</file>
-        <file alias="BlueRed">Icons/LUTs/freeSurferBlueRed.png</file>
-        <file alias="GreenRed">Icons/LUTs/freeSurferGreenRed.png</file>
-        <file alias="Heat">Icons/LUTs/freeSurferHeat.png</file>
-        <file alias="RedBlue">Icons/LUTs/freeSurferRedBlue.png</file>
-        <file alias="RedGreen">Icons/LUTs/freeSurferRedGreen.png</file>
         <file alias="GenericAnatomyColors">Icons/LUTs/genericAnatomyColors.png</file>
         <file alias="GenericColors">Icons/LUTs/genericColors.png</file>
         <file alias="UserDefined">Icons/LUTs/labelsCustom.png</file>
