@@ -1065,7 +1065,7 @@ def array(pattern = "", index = 0):
   MRML node that matches the pattern.
 
   .. warning::
-  
+
     Meant to be used in the python console for quick debugging/testing.
 
   More specific API should be used in scripts to be sure you get exactly
@@ -1902,7 +1902,7 @@ def createProgressDialog(parent=None, value=0, maximum=100, labelText="", window
 
   Go to `QProgressDialog documentation <http://pyqt.sourceforge.net/Docs/PyQt4/qprogressdialog.html>`_ to
   learn about the available keyword arguments.
-  
+
   Examples::
 
     # Prevent progress dialog from automatically closing
@@ -1970,7 +1970,7 @@ def clickAndDrag(widget,button='Left',start=(10,10),end=(10,40),steps=20,modifie
   :param modifiers: list containing zero or more of "Shift" or "Control"
 
   .. hint::
-  
+
     For generating test data you can use this snippet of code::
 
       layoutManager = slicer.app.layoutManager()
@@ -2391,28 +2391,7 @@ def logProcessOutput(proc):
   if retcode != 0:
     raise CalledProcessError(retcode, proc.args, output=proc.stdout, stderr=proc.stderr)
 
-def pip_install(req):
-  """Install python packages.
-  Currently, the method simply calls ``python -m pip install`` but in the future further checks, optimizations,
-  user confirmation may be implemented, therefore it is recommended over to use this method call instead of a plain
-  pip install.
-  :param req: requirement specifier, same format as used by pip (https://docs.python.org/3/installing/index.html)
-
-  Example: calling from Slicer GUI
-
-  .. code-block:: python
-
-    pip_install("tensorflow keras scikit-learn ipywidgets")
-
-  Example: calling from PythonSlicer console
-
-  .. code-block:: python
-
-    from slicer.util import pip_install
-    pip_install("tensorflow")
-
-  """
-
+def _executePythonModule(module, args):
   # Determine pythonSlicerExecutablePath
   try:
     from slicer import app
@@ -2433,10 +2412,57 @@ def pip_install(req):
     if os.name == 'nt':
       pythonSlicerExecutablePath += ".exe"
 
-  command_line = [pythonSlicerExecutablePath, "-m", "pip", "install"]
-  command_line.extend(req.split(" "))
-  proc=launchConsoleProcess(command_line, useStartupEnvironment = False)
+  commandLine = [pythonSlicerExecutablePath, "-m", module, *args]
+  proc = launchConsoleProcess(commandLine, useStartupEnvironment=False)
   logProcessOutput(proc)
+
+def pip_install(requirements):
+  """Install python packages.
+  Currently, the method simply calls ``python -m pip install`` but in the future further checks, optimizations,
+  user confirmation may be implemented, therefore it is recommended to use this method call instead of a plain
+  pip install.
+  :param requirements: requirement specifier, same format as used by pip (https://docs.python.org/3/installing/index.html)
+
+  Example: calling from Slicer GUI
+
+  .. code-block:: python
+
+    pip_install("tensorflow keras scikit-learn ipywidgets")
+
+  Example: calling from PythonSlicer console
+
+  .. code-block:: python
+
+    from slicer.util import pip_install
+    pip_install("tensorflow")
+
+  """
+  args = 'install', *requirements.split()
+  _executePythonModule('pip', args)
+
+def pip_uninstall(requirements):
+  """Uninstall python packages.
+  Currently, the method simply calls ``python -m pip uninstall`` but in the future further checks, optimizations,
+  user confirmation may be implemented, therefore it is recommended to use this method call instead of a plain
+  pip uninstall.
+  :param requirements: requirement specifier, same format as used by pip (https://docs.python.org/3/installing/index.html)
+
+  Example: calling from Slicer GUI
+
+  .. code-block:: python
+
+    pip_uninstall("tensorflow keras scikit-learn ipywidgets")
+
+  Example: calling from PythonSlicer console
+
+  .. code-block:: python
+
+    from slicer.util import pip_uninstall
+    pip_uninstall("tensorflow")
+
+  """
+  args = 'uninstall', *requirements.split(), '--yes'
+  _executePythonModule('pip', args)
 
 def longPath(path):
   """
