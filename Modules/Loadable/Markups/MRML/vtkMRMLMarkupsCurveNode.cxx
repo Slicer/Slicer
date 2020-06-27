@@ -1259,7 +1259,7 @@ void vtkMRMLMarkupsCurveNode::OnSurfaceModelNodeChanged()
     }
   else
     {
-    this->CleanFilter->RemoveInputConnection(0, modelNode->GetPolyDataConnection());
+    this->CleanFilter->RemoveAllInputs();
     this->CurveGenerator->RemoveInputConnection(1, this->PassThroughFilter->GetOutputPort());
     }
 }
