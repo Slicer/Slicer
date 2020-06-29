@@ -82,6 +82,7 @@ void qSlicerModulesMenuPrivate::init()
 {
   Q_Q(qSlicerModulesMenu);
   this->AllModulesMenu = new QMenu(qSlicerModulesMenu::tr("All Modules"), q);
+  this->AllModulesMenu->setStyleSheet("QMenu { menu-scrollable: 1; }");
 
   this->addDefaultCategories();
 
