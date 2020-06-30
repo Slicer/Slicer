@@ -85,7 +85,19 @@ function(SlicerMacroTranslation)
     if(Slicer_UPDATE_TRANSLATION)
       QT5_CREATE_TRANSLATION(QM_OUTPUT_FILES ${FILES_TO_TRANSLATE} ${TS_FILES})
     else()
-      QT5_ADD_TRANSLATION(QM_OUTPUT_FILES ${TS_FILES})
+      # Find existing TS files and only add translation if at least one translation file exist to avoid error
+      # (Case may exist if Slicer_UPDATE_TRANSLATION is disabled and translation files were never
+      # generated for the input language)
+      set(EXISTING_TS_FILES)
+      foreach(TS_FILE ${TS_FILES})
+        if(EXISTS ${TS_FILE})
+          list(APPEND EXISTING_TS_FILES ${TS_FILE})
+        endif()
+      endforeach()
+
+      if(EXISTING_TS_FILES)
+        QT5_ADD_TRANSLATION(QM_OUTPUT_FILES ${EXISTING_TS_FILES})
+      endif()
     endif()
 
   # ---------------------------------------------------------------------------------

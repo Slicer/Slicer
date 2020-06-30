@@ -436,8 +436,10 @@ include(SlicerFunctionAddPythonQtResources)
 if(Slicer_BUILD_I18N_SUPPORT)
   set(Slicer_LANGUAGES
     "fr"
+    CACHE STRING "Semicolon separated list of supported Slicer languages. Expected format : language[_country] (both en and en_US are supported)."
     )
-  set_property(GLOBAL PROPERTY Slicer_LANGUAGES ${Slicer_LANGUAGES})
+  mark_as_advanced(Slicer_LANGUAGES)
+  mark_as_superbuild(Slicer_LANGUAGES)
 endif()
 
 #-----------------------------------------------------------------------------

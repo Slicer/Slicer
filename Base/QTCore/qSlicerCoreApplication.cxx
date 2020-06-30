@@ -763,6 +763,39 @@ void qSlicerCoreApplicationPrivate::parseArguments()
     }
 }
 
+//----------------------------------------------------------------------------
+QStringList qSlicerCoreApplicationPrivate::findTranslationFilesWithLanguageExtension(const QString& dir, const QString& languageExtension)
+{
+  const QString localeFilter = QString("*%1.qm").arg(languageExtension);
+  return QDir(dir).entryList(QStringList(localeFilter));
+}
+
+//----------------------------------------------------------------------------
+QStringList qSlicerCoreApplicationPrivate::findTranslationFiles(const QString& dir, const QString& settingsLanguage)
+{
+  // If settings language is empty don't search translation files (application default)
+  if (settingsLanguage.isEmpty())
+    {
+    return QStringList{};
+    }
+
+  // Try to find the translation files using specific language extension
+  // (In case of fr_FR -> look for *fr_FR.qm files).
+  QStringList files = findTranslationFilesWithLanguageExtension(dir, settingsLanguage);
+  if (files.isEmpty())
+    {
+    // If no specific translations have been found, look for a generic language extension
+    // (In case of fr_FR -> look for *fr.qm files).
+    const QString genericExtension = settingsLanguage.split("_")[0];
+    if (genericExtension != settingsLanguage)
+      {
+      files = findTranslationFilesWithLanguageExtension(dir, genericExtension);
+      }
+    }
+
+  return files;
+}
+
 //-----------------------------------------------------------------------------
 // qSlicerCoreApplication methods
 
@@ -1888,12 +1921,7 @@ void qSlicerCoreApplication::loadTranslations(const QString& dir)
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
   Q_ASSERT(app);
 
-  QString localeFilter =
-      QString( QString("*") + app->settings()->value("language").toString());
-  localeFilter += QString(".qm");
-
-  QDir directory(dir);
-  QStringList qmFiles = directory.entryList(QStringList(localeFilter));
+  QStringList qmFiles = qSlicerCoreApplicationPrivate::findTranslationFiles(dir, app->settings()->value("language").toString());
 
   foreach(QString qmFile, qmFiles)
     {
