@@ -6,34 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>249</width>
-    <height>292</height>
+    <width>279</width>
+    <height>286</height>
    </rect>
   </property>
-  <layout class="QFormLayout" name="formLayout">
-   <item row="7" column="0" colspan="2">
-    <widget class="QPushButton" name="applyButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="toolTip">
-      <string>Run the algorithm.</string>
-     </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="ctkCollapsibleButton" name="inputsCollapsibleButton">
      <property name="text">
-      <string>Apply</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="2">
-    <widget class="ctkCollapsibleButton" name="basicCollapsibleButton">
-     <property name="text">
-      <string>Thresholding</string>
+      <string>Inputs</string>
      </property>
      <layout class="QFormLayout" name="formLayout_2">
       <item row="0" column="0">
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Input Volume:</string>
+         <string>Input volume:</string>
         </property>
        </widget>
       </item>
@@ -58,14 +45,49 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_2">
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Output Volume:</string>
+         <string>Image threshold:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="2" column="1">
+       <widget class="ctkSliderWidget" name="imageThresholdSliderWidget">
+        <property name="toolTip">
+         <string>Set threshold value for computing the output image. Voxels that have intensities lower than this value will set to zero.</string>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="minimum">
+         <double>-100.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>500.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.500000000000000</double>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleButton" name="outputsCollapsibleButton">
+     <property name="text">
+      <string>Outputs</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_4">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Thresholded volume:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
        <widget class="qMRMLNodeComboBox" name="outputSelector">
         <property name="toolTip">
          <string>Pick the output to the algorithm.</string>
@@ -89,77 +111,41 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_3">
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_5">
         <property name="text">
-         <string>Image threshold:</string>
+         <string>Inverted volume:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="ctkSliderWidget" name="imageThresholdSliderWidget">
+      <item row="1" column="1">
+       <widget class="qMRMLNodeComboBox" name="invertedOutputSelector">
         <property name="toolTip">
-         <string>Set threshold value for computing the output image. Voxels that have intensities lower than this value will set to zero.</string>
+         <string>Result with inverted threshold will be written into this volume</string>
         </property>
-        <property name="singleStep">
-         <double>0.100000000000000</double>
+        <property name="nodeTypes">
+         <stringlist>
+          <string>vtkMRMLScalarVolumeNode</string>
+         </stringlist>
         </property>
-        <property name="minimum">
-         <double>-100.000000000000000</double>
+        <property name="showChildNodeTypes">
+         <bool>false</bool>
         </property>
-        <property name="maximum">
-         <double>100.000000000000000</double>
+        <property name="noneEnabled">
+         <bool>true</bool>
         </property>
-        <property name="value">
-         <double>0.500000000000000</double>
+        <property name="addEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="removeEnabled">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="parameterSetLabel">
-     <property name="text">
-      <string>Paremeter set: </string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="qMRMLNodeComboBox" name="parameterNodeSelector">
-     <property name="toolTip">
-      <string>Pick node to store parameter set</string>
-     </property>
-     <property name="nodeTypes">
-      <stringlist>
-       <string>vtkMRMLScriptedModuleNode</string>
-      </stringlist>
-     </property>
-     <property name="showHidden">
-      <bool>true</bool>
-     </property>
-     <property name="baseName">
-      <string>TemplateKey</string>
-     </property>
-     <property name="renameEnabled">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="0">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="6" column="0" colspan="2">
+   <item>
     <widget class="ctkCollapsibleButton" name="advancedCollapsibleButton">
      <property name="text">
       <string>Advanced</string>
@@ -187,6 +173,32 @@
       </item>
      </layout>
     </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="applyButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="toolTip">
+      <string>Run the algorithm.</string>
+     </property>
+     <property name="text">
+      <string>Apply</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
@@ -227,8 +239,8 @@
      <y>132</y>
     </hint>
     <hint type="destinationlabel">
-     <x>140</x>
-     <y>66</y>
+     <x>248</x>
+     <y>61</y>
     </hint>
    </hints>
   </connection>
@@ -243,24 +255,24 @@
      <y>135</y>
     </hint>
     <hint type="destinationlabel">
-     <x>93</x>
-     <y>89</y>
+     <x>220</x>
+     <y>161</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>TemplateKey</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>parameterNodeSelector</receiver>
+   <receiver>invertedOutputSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>28</x>
-     <y>267</y>
+     <x>161</x>
+     <y>8</y>
     </hint>
     <hint type="destinationlabel">
-     <x>192</x>
-     <y>18</y>
+     <x>173</x>
+     <y>176</y>
     </hint>
    </hints>
   </connection>
