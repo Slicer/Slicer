@@ -439,7 +439,6 @@ endif()
     set(TS_DIR
       "${CMAKE_CURRENT_SOURCE_DIR}/Resources/Translations/"
     )
-    get_property(Slicer_LANGUAGES GLOBAL PROPERTY Slicer_LANGUAGES)
 
     include(SlicerMacroTranslation)
     SlicerMacroTranslation(
