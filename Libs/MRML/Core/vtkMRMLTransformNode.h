@@ -349,6 +349,10 @@ public:
   /// Internally it does not perform any actual computation just switches ToParent and FromParent.
   void Inverse();
 
+  /// Update the node's name to reflect that the node content is inverted.
+  /// Inversion is implemented by adding/removing " (-)" suffix.
+  virtual void InverseName();
+
   /// Get the latest modification time of the stored transform
   vtkMTimeType GetTransformToWorldMTime();
 

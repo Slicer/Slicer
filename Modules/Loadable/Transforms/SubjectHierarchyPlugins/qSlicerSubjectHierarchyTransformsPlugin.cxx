@@ -408,7 +408,9 @@ void qSlicerSubjectHierarchyTransformsPlugin::invert()
     shNode->GetItemDataNode(currentItemID) );
   if (transformNode)
     {
+    MRMLNodeModifyBlocker blocker(transformNode);
     transformNode->Inverse();
+    transformNode->InverseName();
     }
 }
 
