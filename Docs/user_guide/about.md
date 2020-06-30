@@ -127,4 +127,4 @@ It is recommended to post any questions, bug reports, or enhancement requests to
 
 Our online issue tracker is available [here](https://issues.slicer.org).
 
-For commercial/confidential consulting, contact one of the [commercial partners](commercial_use).
+For commercial/confidential consulting, contact one of the [commercial partners](#commercial-partners).
