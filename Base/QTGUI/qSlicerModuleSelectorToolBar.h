@@ -74,6 +74,8 @@ public slots:
   void selectNextModule();
   void selectPreviousModule();
 
+  void showModuleFinder();
+
 signals:
   /// The signal is fired every time a module is selected. The QAction of the
   /// module is triggered.

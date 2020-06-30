@@ -143,8 +143,8 @@ QString qSlicerColorsModule::helpText()const
 {
   QString help =
     "The <b>Colors Module</b> manages color look up tables.<br>"
-    "For more information see <a href=\"%1/Documentation/%2.%3/Modules/Colors\">"
-    "%1/Documentation/%2.%3/Modules/Colors</a><br>"
+    "For more information see the <a href=\"%1/Documentation/%2.%3/Modules/Colors\">"
+    "online documentation</a><br>"
     "Tables are used by mappers to translate between an integer and a colour "
     "value for display of models and volumes.<br>Slicer supports three kinds "
     "of tables:<br>"
@@ -165,10 +165,7 @@ QString qSlicerColorsModule::helpText()const
 QString qSlicerColorsModule::acknowledgementText()const
 {
   QString about =
-    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer "
-    "Community.<br>"
-    "See <a href=\"http://www.slicer.org\">www.slicer.org</a> for details."
-    "This Color module was developed by Nicole Aucoin, SPL, BWH (Ron Kikinis).";
+    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.";
   return about;
 }
 
@@ -178,6 +175,7 @@ QStringList qSlicerColorsModule::contributors()const
   QStringList moduleContributors;
   moduleContributors << QString("Nicole Aucoin (SPL, BWH)");
   moduleContributors << QString("Julien Finet (Kitware)");
+  moduleContributors << QString("Ron Kikinis (SPL, BWH)");
   return moduleContributors;
 }
 

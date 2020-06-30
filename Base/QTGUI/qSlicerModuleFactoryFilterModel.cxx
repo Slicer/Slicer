@@ -47,6 +47,9 @@ public:
   bool ShowLoaded;
   bool ShowIgnored;
   bool ShowFailed;
+  bool ShowBuiltIn;
+  bool ShowTesting;
+  bool ShowHidden;
 
   QStringList ShowModules;
   bool HideAllWhenShowModulesIsEmpty;
@@ -82,6 +85,9 @@ qSlicerModuleFactoryFilterModelPrivate::qSlicerModuleFactoryFilterModelPrivate(q
   this->ShowToIgnore = true;
   this->ShowIgnored = true;
   this->ShowFailed = true;
+  this->ShowBuiltIn = true;
+  this->ShowTesting = true;
+  this->ShowHidden = true;
   this->HideAllWhenShowModulesIsEmpty = false;
 }
 
@@ -172,6 +178,50 @@ void qSlicerModuleFactoryFilterModel::setShowFailed(bool show)
   this->invalidateFilter();
 }
 
+// --------------------------------------------------------------------------
+bool qSlicerModuleFactoryFilterModel::showBuiltIn()const
+{
+  Q_D(const qSlicerModuleFactoryFilterModel);
+  return d->ShowBuiltIn;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerModuleFactoryFilterModel::setShowBuiltIn(bool show)
+{
+  Q_D(qSlicerModuleFactoryFilterModel);
+  d->ShowBuiltIn = show;
+  this->invalidateFilter();
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerModuleFactoryFilterModel::showHidden()const
+{
+  Q_D(const qSlicerModuleFactoryFilterModel);
+  return d->ShowHidden;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerModuleFactoryFilterModel::setShowHidden(bool show)
+{
+  Q_D(qSlicerModuleFactoryFilterModel);
+  d->ShowHidden = show;
+  this->invalidateFilter();
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerModuleFactoryFilterModel::showTesting()const
+{
+  Q_D(const qSlicerModuleFactoryFilterModel);
+  return d->ShowTesting;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerModuleFactoryFilterModel::setShowTesting(bool show)
+{
+  Q_D(qSlicerModuleFactoryFilterModel);
+  d->ShowTesting = show;
+  this->invalidateFilter();
+}
 
 // --------------------------------------------------------------------------
 QStringList qSlicerModuleFactoryFilterModel::showModules()const
@@ -268,6 +318,30 @@ bool qSlicerModuleFactoryFilterModel::filterAcceptsRow(int sourceRow, const QMod
   if (!d->ShowFailed)
     {
     if (this->sourceModel()->data(sourceIndex, Qt::ForegroundRole).value<QBrush>() == QBrush(Qt::red))
+      {
+      return false;
+      }
+    }
+  if (!d->ShowBuiltIn)
+    {
+    // qSlicerModulesListViewPrivate::IsBuiltInRole = Qt::UserRole+1
+    if (this->sourceModel()->data(sourceIndex, Qt::UserRole+1).toBool())
+      {
+      return false;
+      }
+    }
+  if (!d->ShowTesting)
+    {
+    // qSlicerModulesListViewPrivate::IsTestingRole = Qt::UserRole+2
+    if (this->sourceModel()->data(sourceIndex, Qt::UserRole+2).toBool())
+      {
+      return false;
+      }
+    }
+  if (!d->ShowHidden)
+    {
+    // qSlicerModulesListViewPrivate::IsHiddenRole = Qt::UserRole+3
+    if (this->sourceModel()->data(sourceIndex, Qt::UserRole+3).toBool())
       {
       return false;
       }

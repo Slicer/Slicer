@@ -20,7 +20,8 @@ class DICOMPatcher(ScriptedLoadableModule):
     self.parent.dependencies = ["DICOM"]
     self.parent.contributors = ["Andras Lasso (PerkLab)"]
     self.parent.helpText = """Fix common issues in DICOM files. This module may help fixing DICOM files that Slicer fails to import."""
-    self.parent.acknowledgementText = """ """
+    self.parent.helpText += parent.defaultDocumentationLink
+    self.parent.acknowledgementText = """This file was originally developed by Andras Lasso, PerkLab."""
 
 #
 # DICOMPatcherWidget

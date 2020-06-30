@@ -67,7 +67,7 @@ QString qSlicerTerminologiesModule::helpText()const
 {
   QString help = 
     "The Terminologies module enables viewing and editing terminology dictionaries used for segmentation"
-    "For more information see <a href=\"%1/Documentation/%2.%3/Modules/Terminologies\">%1/Documentation/%2.%3/Modules/Models</a><br>";
+    "For more information see the <a href=\"%1/Documentation/%2.%3/Modules/Terminologies\">online documentation</a>.<br>";
   return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 

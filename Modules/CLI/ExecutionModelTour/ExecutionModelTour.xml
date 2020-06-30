@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <executable>
-  <category>Developer Tools</category>
+  <category>Testing</category>
   <title>Execution Model Tour</title>
   <description><![CDATA[Shows one of each type of parameter.]]></description>
   <version>0.1.0.$Revision$(alpha)</version>

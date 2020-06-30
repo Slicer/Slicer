@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <executable>
-  <category>Legacy.Work in Progress.Diffusion Tensor.Test</category>
+  <category>Testing.Legacy</category>
   <title>Simple IO Test</title>
   <description><![CDATA[Simple test of tensor IO]]></description>
   <version>0.1.0.$Revision$(alpha)</version>

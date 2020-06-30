@@ -141,9 +141,15 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   Q_PROPERTY(QStringList contributors READ contributors)
 
   /// This property holds the URL of the module for the Slicer wiki.
-  /// It can be used in the help/ackknowledgement.
-  /// \todo Is the slicerWikiUrl module property obsolete ? should it be static ?
+  /// It can be used in the help/acknowledgement.
+  /// This method is being phased out, as module documentations is moving to ReadTheDocs.
+  /// Modules that already documented on ReadTheDocs can use defaultDocumentationLink property instead.
   Q_PROPERTY(QString slicerWikiUrl READ slicerWikiUrl)
+
+  /// Auto-generated string that contains a paragraph that links to the
+  /// default module documentation location on ReadTheDocs.
+  /// It can be used in the help/acknowledgement.
+  Q_PROPERTY(QString defaultDocumentationLink READ defaultDocumentationLink);
 
   /// This property holds the module name list of the module dependencies.
   /// It is used to order the loading of the modules. When setup() is called
@@ -197,8 +203,14 @@ public:
 
   virtual void printAdditionalInfo();
 
-  /// Convenient method to return slicer wiki URL
+  /// Convenience method to return slicer wiki URL
   QString slicerWikiUrl()const{ return "http://www.slicer.org/slicerWiki/index.php"; }
+
+  /// Convenience method that returns a string that can be inserted into the application help text that contains
+  /// link to the module's documentation in current Slicer version's documentation on ReadTheDocs.
+  /// The text is "For more information, see the online documentation."
+  /// and it points to https://slicer.readthedocs.io/en/(version)/user_guide/modules/(modulename).html
+  QString defaultDocumentationLink()const;
 
   /// Initialize the module, an appLogic must be given to
   /// initialize the module

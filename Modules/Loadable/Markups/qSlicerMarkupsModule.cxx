@@ -86,10 +86,9 @@ QString qSlicerMarkupsModule::helpText()const
 {
   QString help =
     "A module to create and manage markups in 2D and 3D."
-    " Replaces the Annotations module for fiducials.\n"
-    "<a href=\"%1/Documentation/%2.%3/Modules/Markups\">"
-    "%1/Documentation/%2.%3/Modules/Markups</a>\n";
-  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
+    " Replaces the Annotations module for fiducials.";
+  help += this->defaultDocumentationLink();
+  return help;
 }
 
 //-----------------------------------------------------------------------------

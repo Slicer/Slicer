@@ -70,7 +70,7 @@ QString qSlicerPlotsModule::helpText()const
 {
   QString help =
     "The Plots module allows editing properties of plots.<br>"
-    "For more information see <a href=\"%1/Documentation/%2.%3/Modules/Plots\">%1/Documentation/%2.%3/Modules/Plots</a><br>";
+    "For more information see the <a href=\"%1/Documentation/%2.%3/Developers/Plots\">oneline documentation</a>.<br>";
   return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 
