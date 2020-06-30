@@ -234,14 +234,21 @@ class ScriptedLoadableModuleLogic(object):
     Return the first available parameter node for this module
     If no parameter nodes are available for this module then a new one is created.
     """
-    numberOfScriptedModuleNodes =  slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScriptedModuleNode")
-    for nodeIndex in range(numberOfScriptedModuleNodes):
-      parameterNode  = slicer.mrmlScene.GetNthNodeByClass( nodeIndex, "vtkMRMLScriptedModuleNode" )
-      if parameterNode.GetAttribute("ModuleName") == self.moduleName:
+    if self.isSingletonParameterNode:
+      parameterNode = slicer.mrmlScene.GetSingletonNode(self.moduleName, "vtkMRMLScriptedModuleNode")
+      if parameterNode:
+        # After close scene, ModuleName attribute may be removed, restore it now
+        if parameterNode.GetAttribute("ModuleName") != self.moduleName:
+          parameterNode.SetAttribute("ModuleName", self.moduleName)
         return parameterNode
+    else:
+      numberOfScriptedModuleNodes =  slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScriptedModuleNode")
+      for nodeIndex in range(numberOfScriptedModuleNodes):
+        parameterNode  = slicer.mrmlScene.GetNthNodeByClass( nodeIndex, "vtkMRMLScriptedModuleNode" )
+        if parameterNode.GetAttribute("ModuleName") == self.moduleName:
+          return parameterNode
     # no parameter node was found for this module, therefore we add a new one now
-    parameterNode = self.createParameterNode()
-    slicer.mrmlScene.AddNode(parameterNode)
+    parameterNode = slicer.mrmlScene.AddNode(self.createParameterNode())
     return parameterNode
 
   def getAllParameterNodes(self):
