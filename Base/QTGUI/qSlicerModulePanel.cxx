@@ -179,6 +179,7 @@ void qSlicerModulePanel::addModule(qSlicerAbstractCoreModule* module)
       }
     help = qSlicerUtils::replaceWikiUrlVersion(module->helpText(), wikiVersion);
     }
+  help.replace("\\n", "<br>");
 
   d->HelpCollapsibleButton->setVisible(this->isHelpAndAcknowledgmentVisible() && !help.isEmpty());
   d->HelpLabel->setHtml(help);

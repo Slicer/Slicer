@@ -154,14 +154,13 @@ QImage qSlicerCLIModule::logo()const
 QString qSlicerCLIModule::helpText()const
 {
   Q_D(const qSlicerCLIModule);
-  QString help =
-    "%1<br>"
-    "For more detailed documentation see the online documentation at "
-    "<a href=\"%2\">%2</a>";
-
-  return help.arg(
-    QString::fromStdString(d->Desc.GetDescription())).arg(
-    QString::fromStdString(d->Desc.GetDocumentationURL()));
+  QString help = QString::fromStdString(d->Desc.GetDescription());
+  if (!d->Desc.GetDocumentationURL().empty())
+    {
+    help += QString("<p>For more information see the <a href=\"%1\">online documentation</a>.</p>")
+      .arg(QString::fromStdString(d->Desc.GetDocumentationURL()));
+    }
+  return help;
 }
 
 //-----------------------------------------------------------------------------

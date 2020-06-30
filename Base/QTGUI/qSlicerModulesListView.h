@@ -37,6 +37,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulesListView : public QListView
   Q_OBJECT
   /// False by default
   Q_PROPERTY(bool checkBoxVisible READ isCheckBoxVisible WRITE setCheckBoxVisible )
+  Q_PROPERTY(QStringList modules READ modules)
   Q_PROPERTY(QStringList checkedModules READ checkedModules
              WRITE setCheckedModules NOTIFY checkedModulesChanged
              DESIGNABLE false)
@@ -53,12 +54,11 @@ public:
   /// Destructor
   ~qSlicerModulesListView() override;
 
-  /// Set the module factory manager that contains the list of modules
+  /// Get the module factory manager that contains the list of modules
   /// and modules to ignore
-  void setFactoryManager(qSlicerAbstractModuleFactoryManager* manager);
-  qSlicerAbstractModuleFactoryManager* factoryManager()const;
+  Q_INVOKABLE qSlicerAbstractModuleFactoryManager* factoryManager()const;
 
-  qSlicerModuleFactoryFilterModel* filterModel()const;
+  Q_INVOKABLE qSlicerModuleFactoryFilterModel* filterModel()const;
 
   /// Return the list of all loaded, ignored and toIgnore modules.
   QStringList modules()const;
@@ -73,7 +73,12 @@ public:
   QStringList uncheckedModules()const;
 
 public slots:
+  /// Set the module factory manager that contains the list of modules
+  /// and modules to ignore
+  void setFactoryManager(qSlicerAbstractModuleFactoryManager* manager);
+
   void setCheckBoxVisible(bool show);
+
   /// Check the modules in the \a moduleNames list. Uncheck the modules
   /// not in the \a moduleNames list.
   void setCheckedModules(const QStringList& moduleNames);

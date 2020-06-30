@@ -36,11 +36,11 @@ class ExtensionWizard(object):
     parent.dependencies = []
     parent.contributors = ["Matthew Woehlke (Kitware)"]
     parent.helpText = """
-    This module provides tools to create and manage extensions from within Slicer.
-    """
+This module provides tools to create and manage extensions from within Slicer.
+"""
     parent.acknowledgementText = """
-    This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
-    See <a>http://www.slicer.org</a> for details."""
+This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
+"""
     self.parent = parent
 
     self.settingsPanel = SettingsPanel()

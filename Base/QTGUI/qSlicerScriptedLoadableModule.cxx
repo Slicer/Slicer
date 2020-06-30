@@ -119,6 +119,7 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
 
   // Extract moduleName from the provided filename
   QString moduleName = QFileInfo(newPythonSource).baseName();
+  this->setName(moduleName);
   QString className = moduleName;
 
   // Get a reference to the main module and global dictionary

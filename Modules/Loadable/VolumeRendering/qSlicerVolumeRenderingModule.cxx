@@ -79,10 +79,8 @@ QString qSlicerVolumeRenderingModule::helpText()const
     "The module permits selection of preset transfer functions to colorize and set opacity "
     "of data in a task-appropriate way, and tools to customize the transfer functions that specify "
     "these parameters.<br/>"
-    "<a href=\"%1/Documentation/%2.%3/Modules/VolumeRendering\">"
-    "%1/Documentation/%2.%3/Modules/VolumeRendering</a><br/>"
-    "Tutorials are available at <a href=\"%1/Documentation/%2.%3/Modules/VolumeRendering\">"
-    "%1/Documentation/%2.%3/Modules/VolumeRendering</a>");
+    "For more information and tutorials see the <a href=\"%1/Documentation/%2.%3/Modules/VolumeRendering\">"
+    "online documentation</a><br/>");
   return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 
@@ -97,10 +95,8 @@ QString qSlicerVolumeRenderingModule::acknowledgementText()const
     "<td><img src=\":Logos/BIRN-NoText.png\" alt\"BIRN\"></td>"
     "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
     "</tr></table></center>"
-    "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. "
-    "See <a href=\"http://www.slicer.org\">slicer.org</a> for details.<br/>"
-    "Some of the transfer functions were contributed by Kitware Inc. (VolView)"
-    ;
+    "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community."
+    "Some of the transfer functions were contributed by Kitware Inc. (VolView)";
   return acknowledgement;
 }
 

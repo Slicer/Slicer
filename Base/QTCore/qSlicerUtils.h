@@ -26,6 +26,8 @@
 
 #include "qSlicerBaseQTCoreExport.h"
 
+class qSlicerAbstractCoreModule;
+
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerUtils
 {
 
@@ -52,6 +54,11 @@ public:
   /// \note Associated \a fileName is expected to match the following
   /// regular expression: "(lib)?qSlicer.+Module\\.(so, dll, dylib)"
   static bool isLoadableModule(const QString& filePath);
+
+  /// Return \a true is the module is for testing purposes.
+  /// These modules are for testing and for troubleshooting and normally should not be displayed
+  /// to end users.
+  static bool isTestingModule(qSlicerAbstractCoreModule* module);
 
   /// Look for target file in build intermediate directory.
   /// On windows, the intermediate directory includes: . Debug RelWithDebInfo Release MinSizeRel

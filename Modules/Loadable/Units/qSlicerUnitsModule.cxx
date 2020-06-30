@@ -77,11 +77,7 @@ QString qSlicerUnitsModule::acknowledgementText()const
     "<td><img src=\":Logos/BIRN-NoText.png\" alt\"BIRN\"></td>"
     "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
     "</tr></table></center>"
-    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer "
-    "Community. See <a href=\"http://www.slicer.org\">http://www.slicer.org"
-    "</a> for details.<br>"
-    "The Units module was contributed by Johan Andruejol, Kitware Inc "
-    "and Julien Finet, Kitware Inc.<br><br>");
+    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.");
   return acknowledgement;
 }
 //-----------------------------------------------------------------------------

@@ -76,8 +76,8 @@ QString qSlicerCamerasModule::helpText()const
     "active camera for the selected view.<br>"
     "WARNING: this is rather experimental at the moment (fiducials, IO/data, "
     "closing the scene are probably broken for new views).<br>"
-    "<a href=\"%1/Documentation/%2.%3/Modules/Cameras\">"
-    "%1/Documentation/%2.%3/Modules/Cameras</a>\n");
+    "For more information see the <a href=\"%1/Documentation/%2.%3/Modules/Cameras\">"
+    "online documentation</a>\n");
   return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 
@@ -92,8 +92,7 @@ QString qSlicerCamerasModule::acknowledgementText()const
     "<td><img src=\":Logos/BIRN-NoText.png\" alt\"BIRN\"></td>"
     "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
     "</tr></table></center>"
-    "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. "
-    "See <a href=\"http://www.slicer.org\">slicer.org</a> for details.");
+    "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.");
   return acknowledgement;
 }
 

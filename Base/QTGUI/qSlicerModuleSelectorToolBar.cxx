@@ -23,18 +23,21 @@
 #include <QDebug>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QStyleOptionButton>
 #include <QToolButton>
 
 // CTK includes
-#include "qSlicerAbstractModule.h"
-#include "qSlicerApplication.h"
-#include "qSlicerModuleManager.h"
 #include "ctkComboBox.h"
 #include "ctkMenuComboBox.h"
 
 // Slicer includes
+#include "qSlicerAbstractModule.h"
+#include "qSlicerApplication.h"
+#include "qSlicerModuleFactoryManager.h"
+#include "qSlicerModuleFinderDialog.h"
+#include "qSlicerModuleManager.h"
 #include "qSlicerModuleSelectorToolBar.h"
 #include "qSlicerModulesMenu.h"
 
@@ -50,10 +53,11 @@ public:
   void insertActionOnTop(QAction* action, QMenu* menu);
   QAction* lastSelectedAction()const;
 
+  qSlicerModuleFinderDialog* ModuleFinder;
   qSlicerModulesMenu* ModulesMenu;
 
+  QToolButton*      ModuleFinderButton;
   ctkMenuComboBox*  ModulesComboBox;
-
   QMenu*            HistoryMenu;
   QToolButton*      HistoryButton;
   QToolButton*      PreviousButton;
@@ -67,7 +71,9 @@ public:
 qSlicerModuleSelectorToolBarPrivate::qSlicerModuleSelectorToolBarPrivate(qSlicerModuleSelectorToolBar& object)
   : q_ptr(&object)
 {
+  this->ModuleFinder = nullptr;
   this->ModulesMenu = nullptr;
+  this->ModuleFinderButton = nullptr;
   this->ModulesComboBox = nullptr;
   this->HistoryMenu = nullptr;
   this->HistoryButton = nullptr;
@@ -88,6 +94,21 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   // Modules Label
   q->addWidget(new QLabel(qSlicerModuleSelectorToolBar::tr("Modules:"), q));
 
+  this->ModuleFinder = new qSlicerModuleFinderDialog(q);
+
+  // Module finder
+  this->ModuleFinderButton = new QToolButton(q);
+  const QIcon searchIcon = QIcon::fromTheme("edit-find", QPixmap(":/Icons/Search.png"));
+  this->ModuleFinderButton->setIcon(searchIcon);
+  this->ModuleFinderButton->setText(qSlicerModuleSelectorToolBar::tr("Find"));
+  this->ModuleFinderButton->setToolTip(qSlicerModuleSelectorToolBar::tr("Find module"));
+  QObject::connect(this->ModuleFinderButton, SIGNAL(clicked(bool)),
+    q, SLOT(showModuleFinder()));
+  q->addWidget(this->ModuleFinderButton);
+  QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
+    this->ModuleFinderButton, SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
+  this->ModuleFinderButton->setShortcut(QKeySequence(Qt::ControlModifier + Qt::Key_F));
+
   // Modules comboBox
   this->ModulesComboBox = new ctkMenuComboBox(q);
   this->ModulesComboBox->setToolTip(qSlicerModuleSelectorToolBar::tr("Select a module from the module list"));
@@ -101,7 +122,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   QObject::connect(this->ModulesMenu, SIGNAL(currentModuleChanged(QString)),
                    q, SLOT(onModuleSelected(QString)));
   this->ModulesComboBox->setMenu(this->ModulesMenu);
-  this->ModulesComboBox->toolButtonInternal()->setShortcut(QKeySequence("Ctrl+F"));
+  this->ModulesComboBox->setSearchIconVisible(false); // we use the module finder instead;
 
   // History
   this->HistoryMenu = new QMenu(qSlicerModuleSelectorToolBar::tr("Modules history"), q);
@@ -225,6 +246,7 @@ void qSlicerModuleSelectorToolBar::setModuleManager(qSlicerModuleManager* module
                         this, SLOT(moduleRemoved(QString)));
     }
   d->ModulesMenu->setModuleManager(moduleManager);
+  d->ModuleFinder->setFactoryManager(moduleManager->factoryManager());
 
   if (moduleManager)
     {
@@ -322,6 +344,18 @@ void qSlicerModuleSelectorToolBar::actionSelected(QAction* action)
     d->ModulesComboBox->clearActiveAction();
     }
   emit moduleSelected(action ? action->data().toString() : QString());
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModuleSelectorToolBar::showModuleFinder()
+{
+  Q_D(qSlicerModuleSelectorToolBar);
+  d->ModuleFinder->setFocusToModuleTitleFilter();
+  int result = d->ModuleFinder->exec();
+  if (result == QMessageBox::Accepted)
+    {
+    this->selectModule(d->ModuleFinder->currentModuleName());
+    }
 }
 
 //---------------------------------------------------------------------------

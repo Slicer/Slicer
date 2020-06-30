@@ -55,10 +55,6 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulesMenu: public QMenu
   /// only the future added modules
   Q_PROPERTY(bool showHiddenModules READ showHiddenModules WRITE setShowHiddenModules)
 
-  /// By default (isAllModulesCategoryVisible = true), setting this property controls
-  /// the visibility of the "All Modules" category.
-  Q_PROPERTY(bool allModulesCategoryVisible READ isAllModulesCategoryVisible WRITE setAllModulesCategoryVisible)
-
   Q_PROPERTY(QStringList topLevelCategoryOrder READ topLevelCategoryOrder WRITE setTopLevelCategoryOrder)
 public:
   typedef QMenu Superclass;
@@ -94,12 +90,6 @@ public:
   void setShowHiddenModules(bool show);
   bool showHiddenModules()const;
 
-  /// Return menu associated with the special "All Modules" category.
-  Q_INVOKABLE QMenu* allModulesCategory()const;
-
-  void setAllModulesCategoryVisible(bool visible);
-  bool isAllModulesCategoryVisible()const;
-
   void setTopLevelCategoryOrder(const QStringList& categories);
   QStringList topLevelCategoryOrder()const;
 
@@ -107,10 +97,7 @@ public:
   ///
   /// Sub-category can be specified using a "dot" separator (i.e. "CategoryName.SubCategoryName")
   ///
-  /// \note The special catergory "All Modules" can not be removed with this function. Instead
-  /// consider setting \a allModulesCategoryVisible property.
-  ///
-  /// \sa removeModule(), setAllModulesCategoryVisible()
+  /// \sa removeModule()
   Q_INVOKABLE bool removeCategory(const QString& categoryName);
 
 public slots:
@@ -130,11 +117,10 @@ public slots:
   /// Return true if the module was found and removed.
   ///
   /// By default, matching module entries are removed from the top-level category,
-  /// the custom and pre-defined categories as well as the "All Modules" special
-  /// category. Setting \a removeFromAllModules to false allows to change this.
+  /// the custom and pre-defined categories.
   ///
   /// \a removeFromAllModules to false allows to change this.
-  bool removeModule(const QString& moduleName, bool removeFromAllModules=true);
+  bool removeModule(const QString& moduleName);
 
   /// Select a module by title. It looks for the module action and triggers it.
   /// \sa setCurrentModule()
@@ -154,7 +140,7 @@ public slots:
   /// category. Setting \a removeFromAllModules to false allows to change this.
   ///
   /// Return true if the module was found and removed.
-  bool removeModule(qSlicerAbstractCoreModule*, bool removeFromAllModules=true);
+  bool removeModule(qSlicerAbstractCoreModule*);
 
 signals:
   /// The signal is fired every time a module is selected. The QAction of the

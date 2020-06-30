@@ -98,9 +98,13 @@ qSlicerSegmentationsModule::~qSlicerSegmentationsModule() = default;
 QString qSlicerSegmentationsModule::helpText()const
 {
   QString help =
-    "The Segmentations module manages segmentations. "
-    "For more information see <a href=\"%1/Documentation/%2.%3/Modules/Segmentations\">%1/Documentation/%2.%3/Modules/Segmentations</a><br>";
-  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
+    "Segmentations module manages segmentations. Each segmentation can contain"
+    " multiple segments, which correspond to one structure or ROI. Each segment"
+    " can contain multiple data representations for the same structure, and the"
+    " module supports automatic conversion between these representations"
+    " as well as advanced display settings and import/export features.";
+  help += this->defaultDocumentationLink();
+  return help;
 }
 
 //-----------------------------------------------------------------------------

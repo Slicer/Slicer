@@ -97,7 +97,7 @@ QString qSlicerTransformsModule::helpText()const
 {
   QString help =
     "The Transforms Module creates and edits transforms.<br>"
-    "<a href=%1/Documentation/%2.%3/Modules/Transforms>%1/Documentation/%2.%3/Modules/Transforms</a>";
+    "For more information see the <a href=%1/Documentation/%2.%3/Modules/Transforms>online documentation</a>.<br>";
   return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 
@@ -105,11 +105,7 @@ QString qSlicerTransformsModule::helpText()const
 QString qSlicerTransformsModule::acknowledgementText()const
 {
   QString acknowledgement =
-    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer "
-    "Community.<br>"
-    "See <a href=\"http://www.slicer.org\">www.slicer.org</a> for details.<br>"
-    "The Transforms module was contributed by Alex Yarmarkovich, Isomics Inc. "
-    "with help from others at SPL, BWH (Ron Kikinis) and Kitware Inc.";
+    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.";
   return acknowledgement;
 }
 
@@ -122,6 +118,7 @@ QStringList qSlicerTransformsModule::contributors()const
   moduleContributors << QString("Julien Finet (Kitware)");
   moduleContributors << QString("Andras Lasso (PerkLab, Queen's)");
   moduleContributors << QString("Franklin King (PerkLab, Queen's)");
+  moduleContributors << QString("Ron Kikinis (SPL, BWH)");
   return moduleContributors;
 }
 

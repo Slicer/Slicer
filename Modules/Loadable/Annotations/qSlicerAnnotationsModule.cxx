@@ -123,11 +123,12 @@ vtkMRMLAbstractLogic* qSlicerAnnotationsModule::createLogic()
 //-----------------------------------------------------------------------------
 QString qSlicerAnnotationsModule::helpText() const
 {
-  QString help = QString("The Annotations module, create and edit supplementary information associated with a scene.<br>"
-                         "Currently supported annotations are fiducial points, rulers, and regions of interest (ROIs).<br>"
-                         "<a href=\"%1/Documentation/%2.%3/Modules/Annotations\">"
-                         "%1/Documentation/%2.%3/Modules/Annotations</a><br>");
-
+  QString help = QString(
+  "Annotations module, create and edit supplementary information associated with a scene.<br>"
+  "The module will soon be replaced by Markups module."
+  "Currently supported annotations are fiducial points, rulers, and regions of interest (ROIs).<br>"
+  "For more information see the <a href=\"%1/Documentation/%2.%3/Modules/Annotations\">"
+  "online documentation</a><br>");
   return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 

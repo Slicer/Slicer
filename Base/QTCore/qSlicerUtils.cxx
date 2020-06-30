@@ -27,6 +27,7 @@
 
 // Slicer includes
 #include "qSlicerUtils.h"
+#include "qSlicerAbstractCoreModule.h"
 
 // SlicerLogic includes
 #include "vtkSlicerApplicationLogic.h"
@@ -95,6 +96,20 @@ bool qSlicerUtils::isLoadableModule(const QString& filePath)
   // See http://stackoverflow.com/questions/899422/regular-expression-for-a-string-that-does-not-start-with-a-sequence
   QRegExp regex("(libqSlicer.+Module\\.(so|dylib))|((?!lib)qSlicer.+Module\\.(dll|DLL))");
   return regex.exactMatch(QFileInfo(filePath).fileName());
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerUtils::isTestingModule(qSlicerAbstractCoreModule* module)
+{
+  const QStringList& categories = module->categories();
+  foreach(const QString & category, categories)
+    {
+    if (category.split('.').takeFirst() != "Testing")
+      {
+      return false;
+      }
+    }
+  return true;
 }
 
 //------------------------------------------------------------------------------

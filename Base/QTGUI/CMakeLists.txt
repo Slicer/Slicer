@@ -54,6 +54,8 @@ set(KIT_SRCS
 
   qSlicerModuleFactoryFilterModel.cxx
   qSlicerModuleFactoryFilterModel.h
+  qSlicerModuleFinderDialog.cxx
+  qSlicerModuleFinderDialog.h
   qSlicerModulesListView.cxx
   qSlicerModulesListView.h
   qSlicerModulesMenu.cxx
@@ -196,6 +198,7 @@ set(KIT_MOC_SRCS
   qSlicerModelsDialog_p.h
 
   qSlicerModuleFactoryFilterModel.h
+  qSlicerModuleFinderDialog.h
   qSlicerModulesListView.h
   qSlicerModulesMenu.h
   qSlicerModulePanel.h
@@ -273,6 +276,7 @@ set(KIT_UI_SRCS
   Resources/UI/qSlicerActionsDialog.ui
   Resources/UI/qSlicerDataDialog.ui
   Resources/UI/qSlicerModelsDialog.ui
+  Resources/UI/qSlicerModuleFinderDialog.ui
   Resources/UI/qSlicerModulePanel.ui
   Resources/UI/qSlicerNodeWriterOptionsWidget.ui
   Resources/UI/qSlicerSaveDataDialog.ui

@@ -128,10 +128,9 @@ QString qSlicerDataModule::helpText()const
     "presented for access and manipulation is the Data module. It allows organizing "
     "the data in folders or patient/study trees (automatically done for DICOM), "
     "visualizing any displayable data, transformation of whole branches, and a "
-    "multitude of data type specific features.<br>"
-    "<a href=\"%1/Documentation/%2.%3/Modules/Data\">"
-    "%1/Documentation/%2.%3/Modules/Data</a>");
-  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
+    "multitude of data type specific features.");
+  help += this->defaultDocumentationLink();
+  return help;
 }
 
 //-----------------------------------------------------------------------------
@@ -146,8 +145,7 @@ QString qSlicerDataModule::acknowledgementText()const
     "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
     "</tr></table></center>"
     "This work was supported by NA-MIC, NAC, BIRN, NCIGT, CTSC, and the Slicer "
-    "Community.<br>"
-    "See <a href=\"http://www.slicer.org\">www.slicer.org</a> for details.<br>";
+    "Community.";
   return about;
 }
 

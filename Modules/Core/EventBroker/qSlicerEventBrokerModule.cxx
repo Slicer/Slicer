@@ -59,8 +59,8 @@ QStringList qSlicerEventBrokerModule::categories()const
 //-----------------------------------------------------------------------------
 QString qSlicerEventBrokerModule::helpText()const
 {
-  QString help = "<a href=\"%1/Documentation/%2.%3/Modules/EventBroker\">"
-    "%1/Documentation/%2.%3/Modules/EventBroker</a>\n";
+  QString help = "For more information see the <a href=\"%1/Documentation/%2.%3/Modules/EventBroker\">"
+    "online documentation</a>\n";
   return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 

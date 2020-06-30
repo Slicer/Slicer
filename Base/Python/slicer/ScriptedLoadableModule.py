@@ -48,7 +48,7 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
     """
     if not docPage:
       docPage = "Modules/"+self.moduleName
-    linkText = 'See <a href="{0}/Documentation/{1}.{2}/{3}">the documentation</a> for more information.'.format(
+    linkText = '<p>For more information see the <a href="{0}/Documentation/{1}.{2}/{3}">online documentation</a>.</p>'.format(
       self.parent.slicerWikiUrl, slicer.app.majorVersion, slicer.app.minorVersion, docPage)
     return linkText
 

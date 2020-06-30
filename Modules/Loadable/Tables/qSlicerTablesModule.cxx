@@ -72,7 +72,6 @@ QIcon qSlicerTablesModule::icon()const
 //-----------------------------------------------------------------------------
 QString qSlicerTablesModule::helpText()const
 {
-  return "This module provides support for data table nodes";
   QString help =
     "The Tables module allows displaying and editing of spreadsheets.<br>"
     "For more information see <a href=\"%1/Documentation/%2.%3/Modules/Tables\">%1/Documentation/%2.%3/Modules/Tables</a><br>";

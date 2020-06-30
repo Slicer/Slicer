@@ -61,8 +61,8 @@ QString qSlicerReformatModule::helpText()const
   QString help =
       "The Transforms Reformat Widget Module creates "
       "and edits the Slice Node transforms.<br>"
-      "<a href=\"%1/Documentation/%2.%3/Modules/Reformat\">"
-      "%1/Documentation/%2.%3/Modules/Reformat</a>\n";
+      "For more information see the <a href=\"%1/Documentation/%2.%3/Modules/Reformat\">"
+      "online documentation</a>.\n";
   return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 
@@ -70,11 +70,7 @@ QString qSlicerReformatModule::helpText()const
 QString qSlicerReformatModule::acknowledgementText()const
 {
   QString acknowledgement =
-    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer "
-    "Community.<br>"
-    "See <a href=\"http://www.slicer.org\">www.slicer.org</a> for details.<br>"
-    "The Slice Node Transform module was contributed by "
-    "Michael Jeulin-Lagarrigue, Kitware Inc.";
+    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.";
   return acknowledgement;
 }
 

@@ -25,12 +25,14 @@
 #include <QListView>
 #include <QSortFilterProxyModel>
 #include <QStandardItemModel>
+#include <QTextDocument>
 
 // QtCore includes
 #include "qSlicerAbstractCoreModule.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerAbstractModuleFactoryManager.h"
 #include "qSlicerModuleFactoryManager.h"
+#include "qSlicerUtils.h"
 
 // QtGUI includes
 #include "qSlicerModuleFactoryFilterModel.h"
@@ -48,6 +50,15 @@ protected:
   qSlicerModulesListView* const q_ptr;
 
 public:
+  enum CustomRole
+    {
+    ModuleNameRole = Qt::UserRole,
+    IsBuiltInRole = Qt::UserRole + 1,
+    IsTestingRole = Qt::UserRole + 2,
+    IsHiddenRole = Qt::UserRole + 3,
+    FullTextSearchRole = Qt::UserRole + 4
+    };
+
   qSlicerModulesListViewPrivate(qSlicerModulesListView& object);
   void init();
 
@@ -96,7 +107,7 @@ void qSlicerModulesListViewPrivate::init()
 void qSlicerModulesListViewPrivate::updateItem(QStandardItem* item)
 {
   Q_Q(qSlicerModulesListView);
-  QString moduleName = item->data(Qt::UserRole).toString();
+  QString moduleName = item->data(qSlicerModulesListViewPrivate::ModuleNameRole).toString();
   item->setCheckable(true);
   // The module is ignored, therefore it hasn't been loaded
   if (this->FactoryManager != nullptr && this->FactoryManager->ignoredModuleNames().contains(moduleName))
@@ -131,23 +142,55 @@ void qSlicerModulesListViewPrivate::updateItem(QStandardItem* item)
     {
     item->setData(QVariant(), Qt::CheckStateRole);
     }
-  QString text = moduleName;
-  QString tooltip = moduleName;
   qSlicerAbstractCoreModule* coreModule = (this->FactoryManager ? this->FactoryManager->moduleInstance(moduleName) : nullptr);
   if (coreModule)
     {
-    text = coreModule->title();
+    item->setText(coreModule->title());
+
+    // Create text for tooltip: title (name), help text, dependency
+    QString tooltip = QString("%1 (%2)").arg(coreModule->title()).arg(moduleName);
+    QString helpText = coreModule->helpText();
+    helpText.replace("\\n", "<br>");
+    if (!helpText.isEmpty())
+      {
+      tooltip += QString("<br><br>%1").arg(helpText);
+      }
     if (coreModule->dependencies().count() > 0)
       {
-      tooltip += QString("(%1)").arg(coreModule->dependencies().join(", "));
+      tooltip += QString("<br><br>Requires: %1").arg(coreModule->dependencies().join(", "));
       }
+    item->setToolTip(tooltip);
+
+    // Create text that can be used as full-text search for a module.
+    // It includes module title, name, and help text. Help text is converted to plain text
+    // to only search in displayed text and not in the content of html tags.
+    QTextDocument helpTextDoc;
+    helpTextDoc.setHtml(coreModule->helpText());
+    QTextDocument acknowledgementTextDoc;
+    acknowledgementTextDoc.setHtml(coreModule->acknowledgementText());
+    QString contributors = coreModule->contributors().join(",");
+    QString searchText = QString("%1 %2 %3 %4 %5")
+      .arg(coreModule->title())
+      .arg(moduleName)
+      .arg(helpTextDoc.toPlainText())
+      .arg(acknowledgementTextDoc.toPlainText())
+      .arg(contributors);
+    item->setData(searchText, qSlicerModulesListViewPrivate::FullTextSearchRole);
     }
-  item->setText(text);
-  item->setToolTip(tooltip);
-  qSlicerAbstractModule* module =
-    qobject_cast<qSlicerAbstractModule*>(coreModule);
+  else
+    {
+    item->setText(moduleName);
+    item->setToolTip("");
+    item->setData(moduleName, qSlicerModulesListViewPrivate::FullTextSearchRole);
+    }
+
+  qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(coreModule);
   if (module)
     {
+    item->setData(module->isBuiltIn(), qSlicerModulesListViewPrivate::IsBuiltInRole);
+    item->setData(qSlicerUtils::isTestingModule(module), qSlicerModulesListViewPrivate::IsTestingRole);
+    item->setData(module->isHidden(), qSlicerModulesListViewPrivate::IsHiddenRole);
+
     // See QTBUG-20248
     bool block = this->ModulesListModel->blockSignals(true);
     item->setIcon(module->icon());
@@ -190,8 +233,9 @@ QStandardItem* qSlicerModulesListViewPrivate
 ::moduleItem(const QString& moduleName)const
 {
   QModelIndex start = this->ModulesListModel->index(0, 0);
-  QModelIndexList moduleIndexes = this->ModulesListModel->match(start, Qt::UserRole, moduleName,
-                                                                /* hits= */ 1, Qt::MatchExactly);
+  QModelIndexList moduleIndexes = this->ModulesListModel->match(
+    start, qSlicerModulesListViewPrivate::ModuleNameRole, moduleName,
+    /* hits= */ 1, Qt::MatchExactly);
   if (moduleIndexes.count() == 0)
     {
     return nullptr;
@@ -206,7 +250,7 @@ QStringList qSlicerModulesListViewPrivate
   QStringList modules;
   foreach(const QModelIndex& index, indexes)
     {
-    modules << index.data(Qt::UserRole).toString();
+    modules << index.data(qSlicerModulesListViewPrivate::ModuleNameRole).toString();
     }
   return modules;
 }
@@ -435,7 +479,7 @@ void qSlicerModulesListView::addModule(const QString& moduleName)
   Q_D(qSlicerModulesListView);
   Q_ASSERT(d->moduleItem(moduleName) == nullptr);
   QStandardItem * item = new QStandardItem();
-  item->setData(moduleName, Qt::UserRole);
+  item->setData(moduleName, qSlicerModulesListViewPrivate::ModuleNameRole);
   d->updateItem(item);
   int index = d->sortedInsertionIndex(moduleName);
   d->ModulesListModel->insertRow(index, item);
@@ -479,7 +523,7 @@ void qSlicerModulesListView::onItemChanged(QStandardItem* item)
     {
     return;
     }
-  QString moduleName = item->data(Qt::UserRole).toString();
+  QString moduleName = item->data(qSlicerModulesListViewPrivate::ModuleNameRole).toString();
   qSlicerAbstractCoreModule* module = d->FactoryManager->moduleInstance(moduleName);
   if (item->checkState() == Qt::Checked)
     {

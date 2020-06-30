@@ -68,8 +68,8 @@ QString qSlicerSceneViewsModule::helpText() const
     "visibility of the elements and capture interesting scene views. "
     "Unexpected behavior may occur if you add or delete data from the scene "
     "while saving and restoring scene views.\n"
-    "<a href=\"%1/Documentation/%2.%3/Modules/SceneViews\">"
-    "%1/Documentation/%2.%3/Modules/SceneViews</a>\n";
+    "For more information see the <a href=\"%1/Documentation/%2.%3/Modules/SceneViews\">"
+    "online documentation</a>.\n";
 
   return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }

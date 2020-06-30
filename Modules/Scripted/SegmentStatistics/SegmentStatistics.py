@@ -27,7 +27,7 @@ Requires segment labelmap representation and selection of a scalar volume
 Closed surface statistics (CS): surface mm2, volume mm3, volume cm3 (computed from closed surface).
 Requires segment closed surface representation.
 """
-    self.parent.helpText += self.getDefaultModuleDocumentationLink()
+    self.parent.helpText += parent.defaultDocumentationLink
     self.parent.acknowledgementText = """
 Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details.
 """

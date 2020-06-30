@@ -25,6 +25,7 @@
 // Slicer includes
 #include "qSlicerAbstractCoreModule.h"
 #include "qSlicerAbstractModuleRepresentation.h"
+#include "qSlicerCoreApplication.h"
 
 // SlicerLogic includes
 #include "vtkSlicerModuleLogic.h"
@@ -318,4 +319,21 @@ void qSlicerAbstractCoreModule::representationDeleted(qSlicerAbstractModuleRepre
 QStringList qSlicerAbstractCoreModule::associatedNodeTypes()const
 {
   return QStringList();
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerAbstractCoreModule::defaultDocumentationLink()const
+{
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+
+  // Use "latest" version for Preview (installed preview release) and Experimental (developer build),
+  // and use "majorVersion.minorVersion" for Stable release.
+  QString version = QLatin1String("latest");
+  if (app->releaseType() == "Stable")
+    {
+    version = QString("%1.%2").arg(app->majorVersion()).arg(app->minorVersion());
+    }
+  QString url = QString("https://slicer.readthedocs.io/en/%1/user_guide/modules/%2.html").arg(version).arg(this->name().toLower());
+  QString linkText = QString("<p>For more information see the <a href=\"%1\">online documentation</a>.</p>").arg(url);
+  return linkText;
 }

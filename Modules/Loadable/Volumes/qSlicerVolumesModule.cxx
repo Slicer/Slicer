@@ -68,8 +68,8 @@ QString qSlicerVolumesModule::helpText()const
     "The Volumes Module is the interface for adjusting Window, Level, Threshold, "
     "Color LUT and other parameters that control the display of volume image data "
     "in the scene.<br>"
-    "<a href=\"%1/Documentation/%2.%3/Modules/Volumes\">"
-    "%1/Documentation/%2.%3/Modules/Volumes</a><br>");
+    "For more information see the <a href=\"%1/Documentation/%2.%3/Modules/Volumes\">"
+    "online documentation</a>.<br>");
   return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 
@@ -84,12 +84,7 @@ QString qSlicerVolumesModule::acknowledgementText()const
     "<td><img src=\":Logos/BIRN-NoText.png\" alt\"BIRN\"></td>"
     "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
     "</tr></table></center>"
-    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer "
-    "Community. See <a href=\"http://www.slicer.org\">http://www.slicer.org"
-    "</a> for details.<br>"
-    "The Volumes module was contributed by Alex Yarmarkovich, Isomics Inc. "
-    "(Steve Pieper) and Julien Finet, Kitware Inc. with help from others at "
-    "SPL, BWH (Ron Kikinis).<br><br>");
+    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.");
   return acknowledgement;
 }
 
@@ -101,6 +96,7 @@ QStringList qSlicerVolumesModule::contributors()const
   moduleContributors << QString("Julien Finet (Kitware)");
   moduleContributors << QString("Alex Yarmarkovich (Isomics)");
   moduleContributors << QString("Nicole Aucoin (SPL, BWH)");
+  moduleContributors << QString("Ron Kikinis (SPL, BWH)");
   return moduleContributors;
 }
 
