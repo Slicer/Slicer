@@ -63,7 +63,7 @@ qSlicerAbstractCoreModulePrivate::qSlicerAbstractCoreModulePrivate()
   this->Name = "NA";
   this->WidgetRepresentation = nullptr;
   this->Installed = false;
-  this->BuiltIn = false;
+  this->BuiltIn = true;
   this->WidgetRepresentationCreationEnabled = true;
 }
 
