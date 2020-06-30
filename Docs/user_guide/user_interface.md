@@ -94,6 +94,15 @@ View Controllers module provides an alternate way of displaying these controller
 - **Reset field of view** (small square) centers the slice on the current background volume
 - **Link** button synchronizes properties (which volumes are displayed, zoom factor, position of parallel views, opacities, etc.) between all slice views in the same view group. Long-click on the button exposes **hot-linked** option, which controls when properties are synchronized (immediately or when the mouse button is released).
 - **Eye** button in the top row can show the current slice in 3D views. Drop-down menu of the button contains advanced options to customize how this slice is rendered: "...match volume" means that the properties are taken from the full volume, while "...match 2D" means that the properties are copied from the current slice view (for example, copies zoom and pan position). Typically these differences are subtle and the settings can be left at default.
+- **Orientation Selection** displays allows you to choose the orientation for this slice view.
+- **Lightbox** to select a mosiac (a.k.a. contact sheet) view.  Not all operations work in this mode and it may be removed in the future.
+- **Reformat** allows interactive manipulation of the slice orientation.
+- **Blending options** how foreground and background layers are mixed.
+- **Spacing and Field of View** Spacing defines the increment for the slice offset slider.  Field of view sets the zoom level for the slice.
+- **Rotate to Volume Plane** changes the orientation of the slice to match the closest acquisition orientation of the displayed volume
+- **Show Orientation Marker** controls display of human, cube, etc in lower right corner
+- **Ruler** controls display of ruler in slice view
+
 
 ## Mouse & Keyboard Shortcuts
 
