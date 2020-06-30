@@ -197,7 +197,6 @@ void qSlicerModulePanel::addModule(qSlicerAbstractCoreModule* module)
   if (!module->contributors().isEmpty())
     {
     QString contributors = module->contributors().join(", ");
-    contributors.replace(contributors.lastIndexOf(","), 1, " and");
     QString contributorsText = QString("<br/><u>Contributors:</u> <i>") + contributors + "</i><br/>";
     d->AcknowledgementLabel->append(contributorsText);
     }
