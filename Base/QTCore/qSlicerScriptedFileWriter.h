@@ -37,6 +37,9 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedFileWriter
 {
   Q_OBJECT
 
+  /// This property allows the writer to report back what nodes it was able to write
+  Q_PROPERTY(QStringList writtenNodes READ writtenNodes WRITE setWrittenNodes)
+
 public:
   typedef qSlicerFileWriter Superclass;
   qSlicerScriptedFileWriter(QObject* parent = nullptr);
@@ -70,6 +73,19 @@ public:
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerFileWriter::write()
   bool write(const qSlicerIO::IOProperties& properties) override;
+
+  /// Added so node writers can report back written nodes
+  /// \sa qSlicerFileWriter::writtenNodex()
+  void addWrittenNode(const QString& writtenNode);
+
+  /// Reimplemented to propagate to python methods
+  /// \sa qSlicerFileWriter::writtenNodes()
+  QStringList writtenNodes()const override {
+    return Superclass::writtenNodes();
+  };
+  void setWrittenNodes(const QStringList& nodes) override {
+    Superclass::setWrittenNodes(nodes);
+  };
 
 protected:
   QScopedPointer<qSlicerScriptedFileWriterPrivate> d_ptr;
