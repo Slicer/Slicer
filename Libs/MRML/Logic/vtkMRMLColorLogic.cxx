@@ -640,7 +640,7 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateFileNode(const char* fileName)
     }
 
   ctnode->GetStorageNode()->SetFileName(fileName);
-  std::string basename = vtksys::SystemTools::GetFilenameWithoutExtension(fileName);
+  std::string basename = ctnode->GetStorageNode()->GetFileNameWithoutExtension(fileName);
   if (this->GetMRMLScene())
     {
     std::string uname(this->GetMRMLScene()->GetUniqueNameByString(basename.c_str()));
@@ -693,7 +693,7 @@ vtkMRMLProceduralColorNode* vtkMRMLColorLogic::CreateProceduralFileNode(const ch
   colorStorageNode->Delete();
 
   cpnode->GetStorageNode()->SetFileName(fileName);
-  std::string basename = vtksys::SystemTools::GetFilenameWithoutExtension(fileName);
+  std::string basename = cpnode->GetStorageNode()->GetFileNameWithoutExtension(fileName);
   if (this->GetMRMLScene())
     {
     std::string uname(this->GetMRMLScene()->GetUniqueNameByString(basename.c_str()));

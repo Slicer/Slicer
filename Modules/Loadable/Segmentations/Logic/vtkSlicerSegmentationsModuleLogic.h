@@ -74,7 +74,7 @@ public:
   /// \param filename Path and name of file containing segmentation (nrrd, vtm, etc.)
   /// \param autoOpacities Optional flag determining whether segment opacities are calculated automatically based on containment. True by default
   /// \return Loaded segmentation node
-  vtkMRMLSegmentationNode* LoadSegmentationFromFile(const char* filename, bool autoOpacities = true);
+  vtkMRMLSegmentationNode* LoadSegmentationFromFile(const char* filename, bool autoOpacities = true, const char* nodeName=nullptr);
 
   /// Create labelmap volume MRML node from oriented image data.
   /// Creates a display node if a display node does not exist. Shifts image extent to start from zero.

@@ -591,8 +591,7 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
                 {
                 vtkDebugMacro("Got point string = " << component.c_str());
                 // use the file name for the point label
-                std::string filenameName = vtksys::SystemTools::GetFilenameName(this->GetFileName());
-                label = vtksys::SystemTools::GetFilenameWithoutExtension(filenameName);
+                label = this->GetFileNameWithoutExtension(this->GetFileName());
                 markupsNode->SetNthControlPointLabel(thisMarkupNumber,label);
                 }
 

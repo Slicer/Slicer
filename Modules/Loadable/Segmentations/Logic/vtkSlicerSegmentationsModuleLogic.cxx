@@ -244,7 +244,8 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeF
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::LoadSegmentationFromFile(const char* fileName, bool autoOpacities/*=true*/)
+vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::LoadSegmentationFromFile(const char* fileName,
+  bool autoOpacities/*=true*/, const char* nodeName/*=nullptr*/)
 {
   if (this->GetMRMLScene() == nullptr || fileName == nullptr)
     {
@@ -261,8 +262,16 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::LoadSegmentationFrom
     return nullptr;
     }
 
-  std::string baseName = vtksys::SystemTools::GetFilenameWithoutExtension(fileName);
-  std::string uname( this->GetMRMLScene()->GetUniqueNameByString(baseName.c_str()));
+  std::string uname;
+  if (nodeName && strlen(nodeName)>0)
+    {
+    uname = nodeName;
+    }
+  else
+    {
+    uname = this->GetMRMLScene()->GetUniqueNameByString(storageNode->GetFileNameWithoutExtension(fileName).c_str());
+    }
+
   segmentationNode->SetName(uname.c_str());
   std::string storageUName = uname + "_Storage";
   storageNode->SetName(storageUName.c_str());

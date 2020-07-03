@@ -302,7 +302,7 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(const char* filename,
   */
   if (storageNode != nullptr)
     {
-    std::string baseName = itksys::SystemTools::GetFilenameWithoutExtension(fname);
+    std::string baseName = storageNode->GetFileNameWithoutExtension(fname.c_str());
     std::string uname( this->GetMRMLScene()->GetUniqueNameByString(baseName.c_str()));
     modelNode->SetName(uname.c_str());
 
