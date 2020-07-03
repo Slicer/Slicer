@@ -96,9 +96,6 @@ int qSlicerStyle::pixelMetric(PixelMetric metric, const QStyleOption * option,
 {
   switch(metric)
     {
-    case QStyle::PM_ButtonMargin:
-      return 3; // 6 by default
-      break;
     case QStyle::PM_LayoutLeftMargin:
     case QStyle::PM_LayoutTopMargin:
     case QStyle::PM_LayoutRightMargin:
@@ -268,4 +265,3 @@ bool qSlicerStyle::eventFilter(QObject* obj, QEvent* event)
     }
   return this->Superclass::eventFilter(obj, event);
 }
-
