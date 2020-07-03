@@ -957,7 +957,8 @@ bool vtkSlicerSegmentationsModuleLogic::ExportAllSegmentsToModels(vtkMRMLSegment
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode,
-  std::vector<std::string>& segmentIDs, vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode /*=nullptr*/)
+  std::vector<std::string>& segmentIDs, vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode /*=nullptr*/,
+  int extentComputationMode /*=vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS*/)
 {
   if (!segmentationNode)
     {
@@ -1019,7 +1020,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
 
   // Generate shared labelmap for the exported segments
   vtkSmartPointer<vtkOrientedImageData> sharedImage_Segmentation = vtkSmartPointer<vtkOrientedImageData>::New();
-  if (!segmentationNode->GenerateMergedLabelmap(sharedImage_Segmentation, vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS,
+  if (!segmentationNode->GenerateMergedLabelmap(sharedImage_Segmentation, extentComputationMode,
     referenceGeometry_Segmentation, segmentIDs))
     {
     vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsToLabelmapNode: Failed to generate shared labelmap");
@@ -1129,7 +1130,8 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode,
-  vtkStringArray* segmentIds, vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode /*=nullptr*/)
+  vtkStringArray* segmentIds, vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode /*=nullptr*/,
+  int extentComputationMode /*=vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS*/)
 {
   std::vector<std::string> segmentIdsVector;
   if (segmentIds == nullptr)
@@ -1141,12 +1143,14 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
     {
     segmentIdsVector.push_back(segmentIds->GetValue(segmentIndex));
     }
-  return vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(segmentationNode, segmentIdsVector, labelmapNode, referenceVolumeNode);
+  return vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(segmentationNode, segmentIdsVector, labelmapNode,
+    referenceVolumeNode, extentComputationMode);
 }
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ExportVisibleSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode,
-  vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode /*=nullptr*/)
+  vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode /*=nullptr*/,
+  int extentComputationMode /*=vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS*/)
 {
   if (!segmentationNode)
     {
@@ -1158,14 +1162,16 @@ bool vtkSlicerSegmentationsModuleLogic::ExportVisibleSegmentsToLabelmapNode(vtkM
   vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
   displayNode->GetVisibleSegmentIDs(visibleSegmentIDs);
 
-  return vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(segmentationNode, visibleSegmentIDs, labelmapNode, referenceVolumeNode);
+  return vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(segmentationNode, visibleSegmentIDs, labelmapNode,
+    referenceVolumeNode, extentComputationMode);
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSlicerSegmentationsModuleLogic::ExportAllSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode, vtkMRMLLabelMapVolumeNode* labelmapNode)
+bool vtkSlicerSegmentationsModuleLogic::ExportAllSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode, vtkMRMLLabelMapVolumeNode* labelmapNode,
+  int extentComputationMode /*=vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS*/)
 {
   std::vector<std::string> segmentIDs;
-  return vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(segmentationNode, segmentIDs, labelmapNode);
+  return vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(segmentationNode, segmentIDs, labelmapNode, nullptr, extentComputationMode);
 }
 
 //-----------------------------------------------------------------------------

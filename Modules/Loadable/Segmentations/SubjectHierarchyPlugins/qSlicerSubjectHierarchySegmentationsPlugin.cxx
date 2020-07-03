@@ -959,7 +959,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::exportToBinaryLabelmap()
   // Export visible segments into a multi-label labelmap volume
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
   success = vtkSlicerSegmentationsModuleLogic::ExportVisibleSegmentsToLabelmapNode(
-    segmentationNode, newLabelmapNode, referenceVolumeNode );
+    segmentationNode, newLabelmapNode, referenceVolumeNode, vtkSegmentation::EXTENT_REFERENCE_GEOMETRY);
   QApplication::restoreOverrideCursor();
   if (!success)
     {

@@ -170,28 +170,40 @@ public:
   /// \param segmentIds List of segment IDs to export
   /// \param labelmapNode Labelmap node to export the segments to
   /// \param referenceVolumeNode If specified, then the merged labelmap node will match the geometry of referenceVolumeNode
+  /// \param extentComputationMode If referenceVolumeNode is not specified then labelmap extents will be determined based on this value.
+  ///   By default, the minimum necessary size is used. Set value to vtkSegmentation::EXTENT_REFERENCE_GEOMETRY to use reference geometry extent.
   static bool ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode, std::vector<std::string>& segmentIDs,
-    vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode = nullptr);
+    vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode = nullptr,
+    int extentComputationMode = vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS);
 
   /// Export multiple segments into a multi-label labelmap volume node
   /// \param segmentationNode Segmentation node from which the the segments are exported
   /// \param segmentIds List of segment IDs to export
   /// \param labelmapNode Labelmap node to export the segments to
   /// \param referenceVolumeNode If specified, then the merged labelmap node will match the geometry of referenceVolumeNode
+  /// \param extentComputationMode If referenceVolumeNode is not specified then labelmap extents will be determined based on this value.
+  ///   By default, the minimum necessary size is used. Set value to vtkSegmentation::EXTENT_REFERENCE_GEOMETRY to use reference geometry extent.
   static bool ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* segmentIDs,
-    vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode = nullptr);
+    vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode = nullptr,
+    int extentComputationMode = vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS);
 
   /// Export visible segments into a multi-label labelmap volume node
   /// \param segmentationNode Segmentation node from which the the visible segments are exported
   /// \param labelmapNode Labelmap node to export the segments to
   /// \param referenceVolumeNode If specified, then the merged labelmap node will match the geometry of referenceVolumeNode
+  /// \param extentComputationMode If referenceVolumeNode is not specified then labelmap extents will be determined based on this value.
+  ///   By default, the minimum necessary size is used. Set value to vtkSegmentation::EXTENT_REFERENCE_GEOMETRY to use reference geometry extent.
   static bool ExportVisibleSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode,
-    vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode = nullptr);
+    vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode = nullptr,
+    int extentComputationMode = vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS);
 
   /// Export all segments into a multi-label labelmap volume node
   /// \param segmentationNode Segmentation node from which the the segments are exported
   /// \param labelmapNode Labelmap node to export the segments to
-  static bool ExportAllSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode, vtkMRMLLabelMapVolumeNode* labelmapNode);
+  /// \param extentComputationMode Labelmap extents will be determined based on this value.
+  ///   By default, the minimum necessary size is used. Set value to vtkSegmentation::EXTENT_REFERENCE_GEOMETRY to use reference geometry extent.
+  static bool ExportAllSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode, vtkMRMLLabelMapVolumeNode* labelmapNode,
+    int extentComputationMode = vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS);
 
   /// Import all labels from a labelmap node to a segmentation node, each label to a separate segment.
   /// The colors of the new segments are set from the color table corresponding to the labelmap volume.

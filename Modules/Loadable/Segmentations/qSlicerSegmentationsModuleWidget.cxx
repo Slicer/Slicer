@@ -906,7 +906,7 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
     // Export selected segments into a multi-label labelmap volume
     QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
     bool success = vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(currentSegmentationNode, segmentIDs, labelmapNode,
-      vtkMRMLVolumeNode::SafeDownCast(d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->currentNode()));
+      vtkMRMLVolumeNode::SafeDownCast(d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->currentNode()), vtkSegmentation::EXTENT_REFERENCE_GEOMETRY);
     QApplication::restoreOverrideCursor();
     if (!success)
       {
