@@ -189,7 +189,7 @@ vtkMRMLSequenceNode* vtkSlicerSequencesLogic::AddSequence(const char* filename)
   // check to see which node can read this type of file
   if (storageNode->SupportedFileType(name.c_str()))
     {
-    std::string baseName = vtksys::SystemTools::GetFilenameWithoutExtension(fname);
+    std::string baseName = storageNode->GetFileNameWithoutExtension(fname.c_str());
     std::string uname(this->GetMRMLScene()->GetUniqueNameByString(baseName.c_str()));
     sequenceNode->SetName(uname.c_str());
 

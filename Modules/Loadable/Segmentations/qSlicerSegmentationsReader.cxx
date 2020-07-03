@@ -116,6 +116,12 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
     return false;
     }
 
+  QString name;
+  if (properties.contains("name"))
+    {
+    name = properties["name"].toString();
+    }
+
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName.toStdString());
 
   if (extension.compare(".stl") == 0 || extension.compare(".obj") == 0)
@@ -151,10 +157,9 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
       return false;
       }
 
-    QString name = QFileInfo(fileName).baseName();
-    if (properties.contains("name"))
+    if (name.isEmpty())
       {
-      name = properties["name"].toString();
+      name = QFileInfo(fileName).completeBaseName();
       }
 
     vtkNew<vtkSegment> segment;
@@ -162,7 +167,7 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
     segment->AddRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(), closedSurfaceRepresentation);
 
     vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
-      this->mrmlScene()->AddNewNodeByClass("vtkMRMLSegmentationNode", name.toUtf8().constData()));
+      this->mrmlScene()->AddNewNodeByClass("vtkMRMLSegmentationNode", this->mrmlScene()->GetUniqueNameByString(name.toUtf8())));
     segmentationNode->SetMasterRepresentationToClosedSurface();
     segmentationNode->CreateDefaultDisplayNodes();
     vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
@@ -185,7 +190,7 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
       autoOpacities = properties["autoOpacities"].toBool();
       }
 
-    vtkMRMLSegmentationNode* node = d->SegmentationsLogic->LoadSegmentationFromFile(fileName.toUtf8().constData(), autoOpacities);
+    vtkMRMLSegmentationNode* node = d->SegmentationsLogic->LoadSegmentationFromFile(fileName.toUtf8().constData(), autoOpacities, name.toUtf8());
     if (!node)
       {
       this->setLoadedNodes(QStringList());
@@ -193,12 +198,6 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
       }
 
     this->setLoadedNodes( QStringList(QString(node->GetID())) );
-
-    if (properties.contains("name"))
-      {
-      std::string uname = this->mrmlScene()->GetUniqueNameByString(properties["name"].toString().toUtf8());
-      node->SetName(uname.c_str());
-      }
     }
 
   return true;
