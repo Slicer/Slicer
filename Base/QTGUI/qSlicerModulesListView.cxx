@@ -124,7 +124,7 @@ void qSlicerModulesListViewPrivate::updateItem(QStandardItem* item)
   // Loaded module
   else
     {
-    item->setForeground(QBrush()); // reset color
+    item->setForeground(q->palette().color(QPalette::Normal, QPalette::Text));
     }
   if (this->CheckBoxVisible)
     {
