@@ -26,130 +26,6 @@
       <property name="fieldGrowthPolicy">
        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
       </property>
-      <item row="1" column="0">
-       <widget class="QLabel" name="BackgroundColorLabel">
-        <property name="text">
-         <string>Background color:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="ctkColorPickerButton" name="BackgroundColorPicker"/>
-      </item>
-      <item row="2" column="0" colspan="2">
-       <widget class="Line" name="ShellDisplayFirstLine">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="PromptColorLabel">
-        <property name="text">
-         <string>Prompt color:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="ctkColorPickerButton" name="PromptColorPicker"/>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="OutputTextColorLabel">
-        <property name="text">
-         <string>Output text color:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="ctkColorPickerButton" name="OutputTextColorPicker"/>
-      </item>
-      <item row="5" column="0">
-       <widget class="QLabel" name="ErrorTextColorLabel">
-        <property name="text">
-         <string>Error text color:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1">
-       <widget class="ctkColorPickerButton" name="ErrorTextColorPicker"/>
-      </item>
-      <item row="6" column="0">
-       <widget class="QLabel" name="StdinTextColorLabel">
-        <property name="text">
-         <string>Standard input text color:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="1">
-       <widget class="ctkColorPickerButton" name="StdinTextColorPicker"/>
-      </item>
-      <item row="7" column="0">
-       <widget class="QLabel" name="CommandTextColorLabel">
-        <property name="text">
-         <string>Command text color:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="1">
-       <widget class="ctkColorPickerButton" name="CommandTextColorPicker"/>
-      </item>
-      <item row="8" column="0">
-       <widget class="QLabel" name="WelcomeTextColorLabel">
-        <property name="text">
-         <string>Welcome text color:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="1">
-       <widget class="ctkColorPickerButton" name="WelcomeTextColorPicker"/>
-      </item>
-      <item row="10" column="0" colspan="2">
-       <widget class="Line" name="ShellDisplaySecondLine">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="9" column="0">
-       <widget class="QLabel" name="ScrollBarPolicyLabel">
-        <property name="text">
-         <string>Scrollbar is:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="9" column="1">
-       <widget class="QComboBox" name="ScrollBarPolicyComboBox">
-        <item>
-         <property name="text">
-          <string>Visible if needed</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Disabled</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Always visible</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item row="11" column="0">
-       <widget class="QLabel" name="PromptFontLabel">
-        <property name="text">
-         <string>Shell font:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="11" column="1">
-       <widget class="ctkFontButton" name="pythonFontButton">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="DockableWindowLabel">
         <property name="text">
@@ -167,6 +43,20 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="PromptFontLabel">
+        <property name="text">
+         <string>Shell font:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="ctkFontButton" name="pythonFontButton">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -177,11 +67,6 @@
    <class>ctkCheckBox</class>
    <extends>QCheckBox</extends>
    <header>ctkCheckBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkColorPickerButton</class>
-   <extends>QPushButton</extends>
-   <header>ctkColorPickerButton.h</header>
   </customwidget>
   <customwidget>
    <class>ctkFontButton</class>
