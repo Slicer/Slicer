@@ -123,6 +123,8 @@ protected slots:
   virtual void onLayoutChanged(int);
   virtual void onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel logLevel);
 
+  virtual void onStyleChanged();
+
 #ifdef Slicer_USE_PYTHONQT
   virtual void onPythonConsoleUserInput(const QString&);
 #endif
@@ -156,6 +158,8 @@ protected:
 
   void closeEvent(QCloseEvent *event) override;
   void showEvent(QShowEvent *event) override;
+
+  void changeEvent(QEvent* event) override;
 
 protected:
   QScopedPointer<qSlicerMainWindowPrivate> d_ptr;
