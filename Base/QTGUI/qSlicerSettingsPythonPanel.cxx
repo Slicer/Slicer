@@ -72,51 +72,11 @@ void qSlicerSettingsPythonPanelPrivate::init()
 
   // Set default properties
 
-  this->BackgroundColorPicker->setColor(this->PythonConsole->backgroundColor());
-
-  this->PromptColorPicker->setColor(this->PythonConsole->promptColor());
-
-  this->OutputTextColorPicker->setColor(this->PythonConsole->outputTextColor());
-
-  this->ErrorTextColorPicker->setColor(this->PythonConsole->errorTextColor());
-
-  this->StdinTextColorPicker->setColor(this->PythonConsole->stdinTextColor());
-
-  this->CommandTextColorPicker->setColor(this->PythonConsole->commandTextColor());
-
-  this->WelcomeTextColorPicker->setColor(this->PythonConsole->welcomeTextColor());
-
-  this->ScrollBarPolicyComboBox->setCurrentIndex(this->PythonConsole->scrollBarPolicy());
-
   this->pythonFontButton->setCurrentFont(this->PythonConsole->shellFont());
 
   //
   // Connect panel widgets with associated slots
   //
-
-  QObject::connect(this->BackgroundColorPicker, SIGNAL(colorChanged(QColor)),
-                   q, SLOT(onBackgroundColorChanged(QColor)));
-
-  QObject::connect(this->PromptColorPicker, SIGNAL(colorChanged(QColor)),
-                   q, SLOT(onPromptColorChanged(QColor)));
-
-  QObject::connect(this->OutputTextColorPicker, SIGNAL(colorChanged(QColor)),
-                   q, SLOT(onOutputTextColorChanged(QColor)));
-
-  QObject::connect(this->ErrorTextColorPicker, SIGNAL(colorChanged(QColor)),
-                   q, SLOT(onErrorTextColorChanged(QColor)));
-
-  QObject::connect(this->StdinTextColorPicker, SIGNAL(colorChanged(QColor)),
-                   q, SLOT(onStdinTextColorChanged(QColor)));
-
-  QObject::connect(this->CommandTextColorPicker, SIGNAL(colorChanged(QColor)),
-                   q, SLOT(onCommandTextColorChanged(QColor)));
-
-  QObject::connect(this->WelcomeTextColorPicker, SIGNAL(colorChanged(QColor)),
-                   q, SLOT(onWelcomeTextColorChanged(QColor)));
-
-  QObject::connect(this->ScrollBarPolicyComboBox, SIGNAL(currentIndexChanged(int)),
-                   q, SLOT(onScrollBarPolicyChanged(int)));
 
   QObject::connect(this->pythonFontButton, SIGNAL(currentFontChanged(QFont)),
                    q, SLOT(onFontChanged(QFont)));
@@ -128,30 +88,6 @@ void qSlicerSettingsPythonPanelPrivate::init()
     "checked", SIGNAL(toggled(bool)),
     "Display Python interactor in a window that can be placed inside the main window.",
     ctkSettingsPanel::OptionRequireRestart);
-
-  q->registerProperty("Python/BackgroundColor", this->BackgroundColorPicker, "color",
-                      SIGNAL(colorChanged(QColor)));
-
-  q->registerProperty("Python/PromptColor", this->PromptColorPicker, "color",
-                      SIGNAL(colorChanged(QColor)));
-
-  q->registerProperty("Python/OutputTextColor", this->OutputTextColorPicker, "color",
-                      SIGNAL(colorChanged(QColor)));
-
-  q->registerProperty("Python/ErrorTextColor", this->ErrorTextColorPicker, "color",
-                      SIGNAL(colorChanged(QColor)));
-
-  q->registerProperty("Python/StdinTextColor", this->StdinTextColorPicker, "color",
-                      SIGNAL(colorChanged(QColor)));
-
-  q->registerProperty("Python/CommandTextColor", this->CommandTextColorPicker, "color",
-                      SIGNAL(colorChanged(QColor)));
-
-  q->registerProperty("Python/WelcomeTextColor", this->WelcomeTextColorPicker, "color",
-                      SIGNAL(colorChanged(QColor)));
-
-  q->registerProperty("Python/ScrollBarPolicy", this->ScrollBarPolicyComboBox, "currentIndex",
-                      SIGNAL(currentIndexChanged(int)));
 
   q->registerProperty("Python/Font", this->pythonFontButton, "currentFont",
                       SIGNAL(currentFontChanged(QFont)));
@@ -171,62 +107,6 @@ qSlicerSettingsPythonPanel::qSlicerSettingsPythonPanel(QWidget* _parent)
 
 // --------------------------------------------------------------------------
 qSlicerSettingsPythonPanel::~qSlicerSettingsPythonPanel() = default;
-
-// --------------------------------------------------------------------------
-void qSlicerSettingsPythonPanel::onBackgroundColorChanged(const QColor& newColor)
-{
-  Q_D(qSlicerSettingsPythonPanel);
-  d->PythonConsole->setBackgroundColor(newColor);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerSettingsPythonPanel::onPromptColorChanged(const QColor& newColor)
-{
-  Q_D(qSlicerSettingsPythonPanel);
-  d->PythonConsole->setPromptColor(newColor);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerSettingsPythonPanel::onOutputTextColorChanged(const QColor& newColor)
-{
-  Q_D(qSlicerSettingsPythonPanel);
-  d->PythonConsole->setOutputTextColor(newColor);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerSettingsPythonPanel::onErrorTextColorChanged(const QColor& newColor)
-{
-  Q_D(qSlicerSettingsPythonPanel);
-  d->PythonConsole->setErrorTextColor(newColor);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerSettingsPythonPanel::onStdinTextColorChanged(const QColor& newColor)
-{
-  Q_D(qSlicerSettingsPythonPanel);
-  d->PythonConsole->setStdinTextColor(newColor);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerSettingsPythonPanel::onCommandTextColorChanged(const QColor& newColor)
-{
-  Q_D(qSlicerSettingsPythonPanel);
-  d->PythonConsole->setCommandTextColor(newColor);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerSettingsPythonPanel::onWelcomeTextColorChanged(const QColor& newColor)
-{
-  Q_D(qSlicerSettingsPythonPanel);
-  d->PythonConsole->setWelcomeTextColor(newColor);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerSettingsPythonPanel::onScrollBarPolicyChanged(int index)
-{
-  Q_D(qSlicerSettingsPythonPanel);
-  d->PythonConsole->setScrollBarPolicy(static_cast<Qt::ScrollBarPolicy>(index));
-}
 
 // --------------------------------------------------------------------------
 void qSlicerSettingsPythonPanel::onFontChanged(const QFont& font)

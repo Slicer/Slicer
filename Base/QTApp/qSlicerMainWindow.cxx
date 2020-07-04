@@ -482,6 +482,8 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
       this->PythonConsoleToggleViewAction = new QAction("", this->ViewMenu);
       this->PythonConsoleToggleViewAction->setCheckable(true);
       }
+    q->pythonConsole()->setScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    this->updatePythonConsolePalette();
     QObject::connect(q->pythonConsole(), SIGNAL(aboutToExecute(const QString&)),
       q, SLOT(onPythonConsoleUserInput(const QString&)));
     // Set up show/hide action
@@ -499,6 +501,41 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
     {
     qWarning("qSlicerMainWindowPrivate::setupUi: Failed to create Python console");
     }
+#endif
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMainWindowPrivate::updatePythonConsolePalette()
+{
+  Q_Q(qSlicerMainWindow);
+#ifdef Slicer_USE_PYTHONQT
+  ctkPythonConsole* pythonConsole = q->pythonConsole();
+  if (!pythonConsole)
+    {
+    return;
+    }
+  QPalette palette = qSlicerApplication::application()->palette();
+
+  // pythonConsole->setBackgroundColor is not called, because by default
+  // the background color of the current palette is used, which is good.
+
+  // Color of the >> prompt. Blue in both bright and dark styles (brighter in dark style).
+  pythonConsole->setPromptColor(palette.color(QPalette::Highlight));
+
+  // Color of text that user types in the console. Blue in both bright and dark styles (brighter in dark style).
+  pythonConsole->setCommandTextColor(palette.color(QPalette::Link));
+
+  // Color of output of commands. Black in bright style, white in dark style.
+  pythonConsole->setOutputTextColor(palette.color(QPalette::WindowText));
+
+  // Color of error messages. Red in both bright and dark styles.
+  pythonConsole->setErrorTextColor(palette.color(QPalette::BrightText));
+
+  // Color of welcome message (printed when the terminal is reset)
+  // and "user input" (this does not seem to be used in Slicer).
+  // Gray in both bright and dark styles.
+  pythonConsole->setStdinTextColor(palette.color(QPalette::Disabled, QPalette::WindowText));   // gray
+  pythonConsole->setWelcomeTextColor(palette.color(QPalette::Disabled, QPalette::WindowText)); // gray
 #endif
 }
 
@@ -1656,4 +1693,20 @@ bool qSlicerMainWindow::eventFilter(QObject* object, QEvent* event)
     }
 #endif
   return this->Superclass::eventFilter(object, event);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::changeEvent(QEvent* event)
+{
+  Q_D(qSlicerMainWindow);
+  switch (event->type())
+    {
+    case QEvent::PaletteChange:
+      {
+      d->updatePythonConsolePalette();
+      break;
+      }
+    default:
+      break;
+    }
 }

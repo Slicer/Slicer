@@ -48,22 +48,7 @@ public:
   ~qSlicerSettingsPythonPanel() override;
 
 protected slots:
-
-  void onBackgroundColorChanged(const QColor& newColor);
-
-  void onPromptColorChanged(const QColor& newColor);
-  void onOutputTextColorChanged(const QColor& newColor);
-  void onErrorTextColorChanged(const QColor& newColor);
-  void onStdinTextColorChanged(const QColor& newColor);
-  void onCommandTextColorChanged(const QColor& newColor);
-  void onWelcomeTextColorChanged(const QColor& newColor);
-
-  void onScrollBarPolicyChanged(int index);
-
   void onFontChanged(const QFont& font);
-//  void onFontChanged(const QFont& font);
-//  void onShowToolTipsToggled(bool);
-//  void onShowToolButtonTextToggled(bool enable);
 
 protected:
   QScopedPointer<qSlicerSettingsPythonPanelPrivate> d_ptr;

@@ -207,6 +207,11 @@ void qSlicerApplicationPrivate::init()
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
     {
+    // Initialize method prints the welcome message and a prompt, so we need to set these colors now.
+    // All the other colors will be set later in the main window.
+    QPalette palette = qSlicerApplication::application()->palette();
+    q->pythonConsole()->setWelcomeTextColor(palette.color(QPalette::Disabled, QPalette::WindowText));
+    q->pythonConsole()->setPromptColor(palette.color(QPalette::Highlight));
     q->pythonConsole()->initialize(q->pythonManager());
     QStringList autocompletePreferenceList;
     autocompletePreferenceList

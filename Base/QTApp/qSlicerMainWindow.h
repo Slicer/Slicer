@@ -157,6 +157,8 @@ protected:
   void closeEvent(QCloseEvent *event) override;
   void showEvent(QShowEvent *event) override;
 
+  void changeEvent(QEvent* event) override;
+
 protected:
   QScopedPointer<qSlicerMainWindowPrivate> d_ptr;
 
