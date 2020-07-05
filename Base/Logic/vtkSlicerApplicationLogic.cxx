@@ -707,6 +707,18 @@ bool vtkSlicerApplicationLogic::IsEmbeddedModule(const std::string& filePath,
   std::string extensionPath = itksys::SystemTools::GetFilenamePath(filePath);
   bool isEmbedded = itksys::SystemTools::StringStartsWith(extensionPath.c_str(), applicationHomeDir.c_str());
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  // If settings are stored in application home directory then extensions are installed within the home directory
+  // in <applicationHomeDir>/<Slicer_ORGANIZATION_NAME/DOMAIN>/<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>.
+  // Therefore we consider the module not embedded it it is within <Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision> folder.
+  // It would be even more robust if we checked <organization>/<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>
+  // subfolder, but getting organization folder name from Slicer_ORGANIZATION_NAME/Slicer_ORGANIZATION_DOMAIN values is not a trivial,
+  // so for now we do not check the organization.
+#ifdef Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR
+  if (isEmbedded && extensionPath.find(Slicer_EXTENSIONS_DIRBASENAME "-" + slicerRevision) != std::string::npos)
+    {
+    isEmbedded = false;
+    }
+#endif
   // On MacOSX extensions are installed in the "<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>"
   // folder being a sub directory of the application dir, an extra test is required to make sure the
   // tested filePath doesn't belong to that "<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>" folder.

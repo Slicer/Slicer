@@ -27,6 +27,7 @@
 
 // QtGUI includes
 #include "qSlicerApplication.h"
+#include "qSlicerRelativePathMapper.h"
 #include "qSlicerSettingsStylesPanel.h"
 #include "ui_qSlicerSettingsStylesPanel.h"
 
@@ -93,9 +94,11 @@ void qSlicerSettingsStylesPanelPrivate::init()
   // Additional path setting
   QObject::connect(this->AdditionalStylePathsView,
     SIGNAL(directoryListChanged()), q, SLOT(onAdditionalStylePathsChanged()));
+  qSlicerRelativePathMapper* relativePathMapper = new qSlicerRelativePathMapper(
+    this->AdditionalStylePathsView, "directoryList", SIGNAL(directoryListChanged()));
   q->registerProperty("Styles/AdditionalPaths",
-                      this->AdditionalStylePathsView,
-                      "directoryList", SIGNAL(directoryListChanged()),
+                      relativePathMapper,
+                      "relativePaths", SIGNAL(relativePathsChanged(QStringList)),
                       "Additional style paths",
                       ctkSettingsPanel::OptionRequireRestart);
 
@@ -243,8 +246,8 @@ void qSlicerSettingsStylesPanel::onAddStyleAdditionalPathClicked()
 {
   Q_D(qSlicerSettingsStylesPanel);
   qSlicerCoreApplication* coreApp = qSlicerCoreApplication::application();
-  QString extensionInstallPath =
-    coreApp->revisionUserSettings()->value("Extensions/InstallPath").toString();
+  QString extensionInstallPath = coreApp->toSlicerHomeAbsolutePath(
+    coreApp->revisionUserSettings()->value("Extensions/InstallPath").toString());
   QString path = QFileDialog::getExistingDirectory(
       this, tr("Select a path containing a \"styles\" plugin directory"),
       extensionInstallPath);

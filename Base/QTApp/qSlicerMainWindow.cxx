@@ -639,7 +639,9 @@ QList<qSlicerIO::IOProperties> qSlicerMainWindowPrivate::readRecentlyLoadedFiles
     {
     settings.setArrayIndex(i);
     QVariant file = settings.value("file");
-    fileProperties << file.toMap();
+    qSlicerIO::IOProperties properties = file.toMap();
+    properties["fileName"] = qSlicerApplication::application()->toSlicerHomeAbsolutePath(properties["fileName"].toString());
+    fileProperties << properties;
     }
   settings.endArray();
 
@@ -654,7 +656,9 @@ void qSlicerMainWindowPrivate::writeRecentlyLoadedFiles(const QList<qSlicerIO::I
   for (int i = 0; i < fileProperties.size(); ++i)
     {
     settings.setArrayIndex(i);
-    settings.setValue("file", fileProperties.at(i));
+    qSlicerIO::IOProperties properties = fileProperties.at(i);
+    properties["fileName"] = qSlicerApplication::application()->toSlicerHomeRelativePath(properties["fileName"].toString());
+    settings.setValue("file", properties);
     }
   settings.endArray();
 }

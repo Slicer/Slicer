@@ -101,13 +101,18 @@ def initLogging(logger):
 initLogging(logging.getLogger())
 
 def getSlicerRCFileName():
-  """Return slicer resource script file name '~/.slicerrc.py'"""
+  """Return application startup file (Slicer resource script) file name.
+  If a .slicerrc.py file is found in slicer.app.slicerHome folder then that will be used.
+  If that is not found then the path defined in SLICERRC environment variable will be used.
+  If that environment variable is not specified then .slicerrc.py in the user's home folder
+  will be used ('~/.slicerrc.py')."""
   import os
-  if 'SLICERRC' in os.environ:
-    rcfile = os.environ['SLICERRC']
-  else:
-    import os.path
-    rcfile = os.path.expanduser( '~/.slicerrc.py' )
+  rcfile = os.path.join(slicer.app.slicerHome,".slicerrc.py")
+  if not os.path.exists(rcfile):
+    if 'SLICERRC' in os.environ:
+      rcfile = os.environ['SLICERRC']
+    else:
+      rcfile = os.path.expanduser( '~/.slicerrc.py' )
   rcfile = rcfile.replace('\\','/') # make slashed consistent on Windows
   return rcfile
 

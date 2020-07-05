@@ -471,6 +471,22 @@ public:
   /// If error is true then the message is printed on stderr, otherwise on stdout.
   Q_INVOKABLE void showConsoleMessage(QString message, bool error=true) const;
 
+  /// Converts relative path to absolute path using slicerHome directory.
+  /// Returns absolute path unchanged.
+  Q_INVOKABLE QString toSlicerHomeAbsolutePath(const QString& path) const;
+
+  /// Converts paths within slicerHome directory to relative paths.
+  /// Leaves other paths unchanged.
+  Q_INVOKABLE QString toSlicerHomeRelativePath(const QString& path) const;
+
+  /// Converts relative path to absolute path using slicerHome directory.
+  /// Returns absolute path unchanged.
+  Q_INVOKABLE QStringList toSlicerHomeAbsolutePaths(const QStringList& path) const;
+
+  /// Converts paths within slicerHome directory to relative paths.
+  /// Leaves other paths unchanged.
+  Q_INVOKABLE QStringList toSlicerHomeRelativePaths(const QStringList& path) const;
+
 public slots:
 
   /// Restart the application with the arguments passed at startup time

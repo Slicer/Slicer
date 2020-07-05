@@ -132,7 +132,8 @@ void qSlicerIOManagerPrivate::readSettings()
 
   if (!settings.value("favoritesPaths").toList().isEmpty())
     {
-    foreach (const QString& varUrl, settings.value("favoritesPaths").toStringList())
+    QStringList paths = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePaths(settings.value("favoritesPaths").toStringList());
+    foreach (const QString& varUrl, paths)
       {
       this->Favorites << QUrl(varUrl);
       }
@@ -156,7 +157,8 @@ void qSlicerIOManagerPrivate::writeSettings()
     {
     list << url.toString();
     }
-  settings.setValue("favoritesPaths", QVariant(list));
+  QStringList paths = qSlicerCoreApplication::application()->toSlicerHomeRelativePaths(list);
+  settings.setValue("favoritesPaths", QVariant(paths));
   settings.endGroup();
 }
 

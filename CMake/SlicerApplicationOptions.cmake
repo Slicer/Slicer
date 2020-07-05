@@ -164,3 +164,26 @@ if(WIN32)
   message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} install root [${Slicer_CPACK_NSIS_INSTALL_ROOT}]")
 
 endif()
+
+#-----------------------------------------------------------------------------
+# Set Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR
+#-----------------------------------------------------------------------------
+#
+# If Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR is enabled (default) then revision-specific
+# settings (such as Slicer-12345.ini) and extensions are stored in application
+# home directory, within (OrganizationName) subdirectory.
+# Non-revision-specific settings (such as Slicer.ini) is still stored in
+# the user profile directory and shared between all installed applications,
+# unless a setting file is found in the application home (in which case settings
+# are stored in this local file, making the installation fully self-contained).
+#
+# If Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR is disabled then all settings and extensions
+# are always written in the the user profile, which is useful if application
+# home directory is read-only.
+#
+# Since Python packages are always installed in the application home directory,
+# it is recommended to install the application in a writeable directory and
+# enable Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR.
+#
+option(Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR "Store all settings in the application home directory (makes the application portable)" ON)
+mark_as_superbuild(Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR:BOOL)

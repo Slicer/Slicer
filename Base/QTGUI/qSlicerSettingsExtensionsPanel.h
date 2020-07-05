@@ -53,7 +53,7 @@ signals:
 protected slots:
   void onExtensionsManagerEnabled(bool value);
   /// \todo This slot does nothing.
-  void onExensionsPathChanged(const QString& path);
+  void onExtensionsPathChanged(const QString& path);
 
 protected:
   QScopedPointer<qSlicerSettingsExtensionsPanelPrivate> d_ptr;

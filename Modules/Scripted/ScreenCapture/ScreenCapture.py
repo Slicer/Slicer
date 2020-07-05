@@ -917,16 +917,16 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
   def getFfmpegPath(self):
     settings = qt.QSettings()
     if settings.contains('General/ffmpegPath'):
-      return settings.value('General/ffmpegPath')
+      return slicer.app.toSlicerHomeAbsolutePath(settings.value('General/ffmpegPath'))
     return ''
 
   def setFfmpegPath(self, ffmpegPath):
     # don't save it if already saved
     settings = qt.QSettings()
     if settings.contains('General/ffmpegPath'):
-      if ffmpegPath == settings.value('General/ffmpegPath'):
+      if ffmpegPath == slicer.app.toSlicerHomeAbsolutePath(settings.value('General/ffmpegPath')):
         return
-    settings.setValue('General/ffmpegPath',ffmpegPath)
+    settings.setValue('General/ffmpegPath', slicer.app.toSlicerHomeRelativePath(ffmpegPath))
 
   def setWatermarkPosition(self, watermarkPosition):
     self.watermarkPosition = watermarkPosition

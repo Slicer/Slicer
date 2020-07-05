@@ -12,15 +12,22 @@ import SlicerWizard.Utilities
 from ExtensionWizardLib import *
 
 #-----------------------------------------------------------------------------
-def _settingsList(settings, key):
+def _settingsList(settings, key, convertToAbsolutePaths=False):
   # Return a settings value as a list (even if empty or a single value)
 
   value = settings.value(key)
-
+  if value is None:
+    return []
   if isinstance(value, str):
-    return [value]
+    value = [value]
 
-  return [] if value is None else value
+  if convertToAbsolutePaths:
+    absolutePaths = []
+    for path in value:
+      absolutePaths.append(slicer.app.toSlicerHomeAbsolutePath(path))
+    return absolutePaths
+  else:
+    return value
 
 #=============================================================================
 #
@@ -179,7 +186,7 @@ class ExtensionWizardWidget(object):
 
     # Read base template paths
     s = qt.QSettings()
-    for path in _settingsList(s, userTemplatePathKey()):
+    for path in _settingsList(s, userTemplatePathKey(), convertToAbsolutePaths=True):
       try:
         self.templateManager.addPath(path)
       except:
@@ -189,7 +196,7 @@ class ExtensionWizardWidget(object):
     # Read per-category template paths
     s.beginGroup(userTemplatePathKey())
     for c in s.allKeys():
-      for path in _settingsList(s, c):
+      for path in _settingsList(s, c, convertToAbsolutePaths=True):
         try:
           self.templateManager.addCategoryPath(c, path)
         except:
@@ -338,7 +345,7 @@ class ExtensionWizardWidget(object):
         # Add module(s) to permanent search paths, if requested
         if dlg.addToSearchPaths:
           settings = slicer.app.revisionUserSettings()
-          rawSearchPaths = list(_settingsList(settings, "Modules/AdditionalPaths"))
+          rawSearchPaths = list(_settingsList(settings, "Modules/AdditionalPaths", convertToAbsolutePaths=True))
           searchPaths = [qt.QDir(path) for path in rawSearchPaths]
           modified = False
 
@@ -351,7 +358,7 @@ class ExtensionWizardWidget(object):
               modified = True
 
           if modified:
-            settings.setValue("Modules/AdditionalPaths", rawSearchPaths)
+            settings.setValue("Modules/AdditionalPaths", slicer.app.toSlicerHomeRelativePaths(rawSearchPaths))
 
         # Enable developer mode (shows Reload&Test section, etc.), if requested
         if dlg.enableDeveloperMode:

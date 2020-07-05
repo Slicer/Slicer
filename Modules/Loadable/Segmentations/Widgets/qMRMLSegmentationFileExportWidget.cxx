@@ -42,6 +42,7 @@
 #include <QUrl>
 
 // Slicer includes
+#include "qSlicerCoreApplication.h"
 #include <vtkMRMLSliceLogic.h>
 #include <vtkSlicerApplicationLogic.h>
 
@@ -180,7 +181,8 @@ void qMRMLSegmentationFileExportWidget::updateWidgetFromSettings()
   d->FileFormatComboBox->setCurrentIndex(d->FileFormatComboBox->findText(fileFormat));
   this->setFileFormat(fileFormat);
 
-  d->DestinationFolderButton->setDirectory(settings.value(d->SettingsKey + "/DestinationFolder", ".").toString());
+  QString path = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePath(settings.value(d->SettingsKey + "/DestinationFolder", ".").toString());
+  d->DestinationFolderButton->setDirectory(path);
   d->VisibleSegmentsOnlyCheckBox->setChecked(settings.value(d->SettingsKey + "/VisibleSegmentsOnly", false).toBool());
 
   d->MergeIntoSingleSTLFileCheckBox->setChecked(settings.value(d->SettingsKey + "/MergeIntoSingleFile", false).toBool());
@@ -206,7 +208,8 @@ void qMRMLSegmentationFileExportWidget::updateSettingsFromWidget()
   QSettings settings;
 
   settings.setValue(d->SettingsKey + "/FileFormat", d->FileFormatComboBox->currentText());
-  settings.setValue(d->SettingsKey + "/DestinationFolder", d->DestinationFolderButton->directory());
+  QString path = qSlicerCoreApplication::application()->toSlicerHomeRelativePath(d->DestinationFolderButton->directory());
+  settings.setValue(d->SettingsKey + "/DestinationFolder", path);
   settings.setValue(d->SettingsKey + "/VisibleSegmentsOnly", d->VisibleSegmentsOnlyCheckBox->isChecked());
   settings.setValue(d->SettingsKey + "/MergeIntoSingleFile", d->MergeIntoSingleSTLFileCheckBox->isChecked());
   settings.setValue(d->SettingsKey + "/SizeScale", d->SizeScaleSpinBox->value());

@@ -30,6 +30,7 @@
 #include "qSlicerModuleManager.h"
 #include "qSlicerModulesMenu.h"
 #include "qSlicerModuleSelectorToolBar.h"
+#include "qSlicerRelativePathMapper.h"
 #include "qSlicerSettingsModulesPanel.h"
 #include "ui_qSlicerSettingsModulesPanel.h"
 
@@ -158,12 +159,16 @@ void qSlicerSettingsModulesPanelPrivate::init()
                       "currentModule", SIGNAL(currentModuleChanged(QString)));
   q->registerProperty("Modules/FavoriteModules", this->FavoritesModulesListView->filterModel(),
                       "showModules", SIGNAL(showModulesChanged(QStringList)));
-  q->registerProperty("Modules/TemporaryDirectory", this->TemporaryDirectoryButton,
-                      "directory", SIGNAL(directoryChanged(QString)));
+  qSlicerRelativePathMapper* relativePathMapper = new qSlicerRelativePathMapper(
+    this->TemporaryDirectoryButton, "directory", SIGNAL(directoryChanged(QString)));
+  q->registerProperty("Modules/TemporaryDirectory", relativePathMapper,
+                      "relativePath", SIGNAL(relativePathChanged(QString)));
   q->registerProperty("Modules/ShowHiddenModules", this->ShowHiddenModulesCheckBox,
                       "checked", SIGNAL(toggled(bool)));
-  q->registerProperty("Modules/AdditionalPaths", this->AdditionalModulePathsView,
-                      "directoryList", SIGNAL(directoryListChanged()),
+  qSlicerRelativePathMapper* relativePathMapper2 = new qSlicerRelativePathMapper(
+    this->AdditionalModulePathsView, "directoryList", SIGNAL(directoryListChanged()));
+  q->registerProperty("Modules/AdditionalPaths", relativePathMapper2,
+                      "relativePaths", SIGNAL(relativePathsChanged(QStringList)),
                       "Additional module paths", ctkSettingsPanel::OptionRequireRestart,
                       coreApp->revisionUserSettings());
 
@@ -303,16 +308,19 @@ void qSlicerSettingsModulesPanel::onAddModulesAdditionalPathClicked()
 {
   Q_D(qSlicerSettingsModulesPanel);
   qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
+  QString mostRecentPath = coreApp->toSlicerHomeAbsolutePath(
+    coreApp->revisionUserSettings()->value("Modules/MostRecentlySelectedPath").toString());
   QString path = QFileDialog::getExistingDirectory(
         this, tr("Select folder"),
-        coreApp->revisionUserSettings()->value("Modules/MostRecentlySelectedPath").toString());
+        mostRecentPath);
   // An empty directory means that the user cancelled the dialog.
   if (path.isEmpty())
     {
     return;
     }
   d->AdditionalModulePathsView->addDirectory(path);
-  coreApp->revisionUserSettings()->setValue("Modules/MostRecentlySelectedPath", path);
+  coreApp->revisionUserSettings()->setValue("Modules/MostRecentlySelectedPath",
+    coreApp->toSlicerHomeRelativePath(path));
 }
 
 // --------------------------------------------------------------------------
