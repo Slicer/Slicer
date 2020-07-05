@@ -71,6 +71,7 @@ void qSlicerExtensionsManagerDialogPrivate::init()
   // only if it applies. Note also that keep track of "EnvironmentVariables/PYTHONPATH'
   // isn't required, "Modules/AdditionalPaths" is enough to know if we should restart.
   QSettings * settings = qSlicerCoreApplication::application()->revisionUserSettings();
+    // this->PreviousModulesAdditionalPaths contain the raw (relative or absolute) paths, not converted to absolute
   this->PreviousModulesAdditionalPaths = settings->value("Modules/AdditionalPaths").toStringList();
   this->PreviousExtensionsScheduledForUninstall = settings->value("Extensions/ScheduledForUninstall").toStringList();
   this->PreviousExtensionsScheduledForUpdate = settings->value("Extensions/ScheduledForUpdate").toMap();
@@ -165,6 +166,7 @@ void qSlicerExtensionsManagerDialog::onModelUpdated()
   Q_ASSERT(this->extensionsManagerModel());
   bool shouldRestart = false;
   qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
+  // this->PreviousModulesAdditionalPaths contain the raw (relative or absolute) paths, not converted to absolute
   if (d->PreviousModulesAdditionalPaths
       != coreApp->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList() ||
       d->PreviousExtensionsScheduledForUninstall

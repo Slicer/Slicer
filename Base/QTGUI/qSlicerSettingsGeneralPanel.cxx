@@ -32,6 +32,7 @@
 
 // QtGUI includes
 #include "qSlicerApplication.h"
+#include "qSlicerRelativePathMapper.h"
 #include "qSlicerSettingsGeneralPanel.h"
 #include "ui_qSlicerSettingsGeneralPanel.h"
 
@@ -118,8 +119,9 @@ void qSlicerSettingsGeneralPanelPrivate::init()
   // Default values
 
   this->DefaultScenePathButton->setDirectory(qSlicerCoreApplication::application()->defaultScenePath());
-  q->registerProperty("DefaultScenePath", this->DefaultScenePathButton,"directory",
-                      SIGNAL(directoryChanged(QString)),
+  qSlicerRelativePathMapper* relativePathMapper = new qSlicerRelativePathMapper(this->DefaultScenePathButton, "directory", SIGNAL(directoryChanged(QString)));
+  q->registerProperty("DefaultScenePath", relativePathMapper, "relativePath",
+                      SIGNAL(relativePathChanged(QString)),
                       "Default scene path",
                      ctkSettingsPanel::OptionRequireRestart);
   QObject::connect(this->DefaultScenePathButton, SIGNAL(directoryChanged(QString)),

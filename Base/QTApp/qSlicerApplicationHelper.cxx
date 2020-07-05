@@ -204,7 +204,7 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
     }
 #endif
   moduleFactoryManager->addSearchPaths(
-    app->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList());
+    app->toSlicerHomeAbsolutePaths(app->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList()));
 
   QStringList modulesToAlwaysIgnore =
     app->revisionUserSettings()->value("Modules/IgnoreModules").toStringList();

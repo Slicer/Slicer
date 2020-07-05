@@ -19,7 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QApplication>
+#include <qSlicerCoreApplication.h>
 #include <QScriptEngine>
 
 // CTK includes
@@ -352,11 +352,6 @@ void qSlicerExtensionsManagerModelTester::initTestCase()
 
   this->TemporaryDirName =
       QString("qSlicerExtensionsManagerModelTester.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
-
-  // Setup QApplication for settings
-  qApp->setOrganizationName("NA-MIC");
-  qApp->setOrganizationDomain("www.slicer.org/tests");
-  qApp->setApplicationName("SlicerTests");
 
   QSettings().clear();
 }
@@ -2050,6 +2045,12 @@ void qSlicerExtensionsManagerModelTester::testSetSlicerVersion_data()
 }
 
 // ----------------------------------------------------------------------------
-CTK_TEST_MAIN(qSlicerExtensionsManagerModelTest)
+int qSlicerExtensionsManagerModelTest(int argc, char* argv[])
+{
+  qSlicerCoreApplication app(argc, argv);
+  QTEST_DISABLE_KEYPAD_NAVIGATION
+  qSlicerExtensionsManagerModelTester tc;
+  return QTest::qExec(&tc, argc, argv);
+}
 #include "moc_qSlicerExtensionsManagerModelTest.cxx"
 

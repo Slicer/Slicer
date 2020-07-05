@@ -32,6 +32,8 @@
 #define VTKSLICER_STATIC
 #endif
 
+#cmakedefine Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR
+
 #cmakedefine Slicer_USE_IGSTK
 #cmakedefine Slicer_USE_NAVITRACK
 #cmakedefine Slicer_USE_NUMPY

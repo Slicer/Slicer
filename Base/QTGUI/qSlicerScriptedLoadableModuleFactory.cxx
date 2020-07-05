@@ -131,7 +131,7 @@ QStringList qSlicerScriptedLoadableModuleFactoryPrivate::modulePaths() const
   // Add the default modules directory (based on the slicer
   // installation or build tree) to the user paths
   QSettings * settings = app->revisionUserSettings();
-  QStringList additionalModulePaths = settings->value("Modules/AdditionalPaths").toStringList();
+  QStringList additionalModulePaths = app->toSlicerHomeAbsolutePaths(settings->value("Modules/AdditionalPaths").toStringList());
   QStringList qtModulePaths = additionalModulePaths + defaultQTModulePaths;
 
 //  qDebug() << "scriptedModulePaths:" << qtModulePaths;

@@ -59,7 +59,7 @@ const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()
     }
 
   QSettings * settings = app->revisionUserSettings();
-  QStringList additionalModulePaths = settings->value("Modules/AdditionalPaths").toStringList();
+  QStringList additionalModulePaths = app->toSlicerHomeAbsolutePaths(settings->value("Modules/AdditionalPaths").toStringList());
   QStringList cmdLineModulePaths = additionalModulePaths + defaultCmdLineModulePaths;
   foreach(const QString& path, cmdLineModulePaths)
     {

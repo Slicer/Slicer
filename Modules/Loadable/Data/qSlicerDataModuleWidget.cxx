@@ -49,7 +49,6 @@
 // Qt includes
 #include <QAction>
 #include <QDebug>
-#include <QSettings>
 #include <QTimer>
 
 //-----------------------------------------------------------------------------

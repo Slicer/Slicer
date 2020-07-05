@@ -43,6 +43,7 @@
 #include <qRestResult.h>
 
 // QtCore includes
+#include "qSlicerCoreApplication.h"
 #include "qSlicerExtensionsManagerModel.h"
 #include "vtkSlicerConfigure.h"
 #include "vtkSlicerVersionConfigure.h"
@@ -492,9 +493,9 @@ void qSlicerExtensionsManagerModelPrivate::addExtensionPathToApplicationSettings
 {
   Q_Q(qSlicerExtensionsManagerModel);
   QSettings settings(q->extensionsSettingsFilePath(), QSettings::IniFormat);
-  QStringList additionalPaths = settings.value("Modules/AdditionalPaths").toStringList();
+  QStringList additionalPaths = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePaths(settings.value("Modules/AdditionalPaths").toStringList());
   settings.setValue("Modules/AdditionalPaths",
-                    appendToPathList(additionalPaths, q->extensionModulePaths(extensionName)));
+    qSlicerCoreApplication::application()->toSlicerHomeRelativePaths(appendToPathList(additionalPaths, q->extensionModulePaths(extensionName))));
 }
 
 // --------------------------------------------------------------------------
@@ -502,9 +503,9 @@ void qSlicerExtensionsManagerModelPrivate::removeExtensionPathFromApplicationSet
 {
   Q_Q(qSlicerExtensionsManagerModel);
   QSettings settings(q->extensionsSettingsFilePath(), QSettings::IniFormat);
-  QStringList additionalPaths = settings.value("Modules/AdditionalPaths").toStringList();
+  QStringList additionalPaths = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePaths(settings.value("Modules/AdditionalPaths").toStringList());
   settings.setValue("Modules/AdditionalPaths",
-                    removeFromPathList(additionalPaths, q->extensionModulePaths(extensionName)));
+    qSlicerCoreApplication::application()->toSlicerHomeRelativePaths(removeFromPathList(additionalPaths, q->extensionModulePaths(extensionName))));
 }
 
 // --------------------------------------------------------------------------
@@ -520,27 +521,28 @@ void qSlicerExtensionsManagerModelPrivate::addExtensionPathToLauncherSettings(co
     this->warning(qSlicerExtensionsManagerModel::tr("Failed to open extensions settings file %1").arg(this->ExtensionsSettingsFilePath));
     return;
     }
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
 
-  QStringList libraryPath = qSlicerExtensionsManagerModel::readArrayValues(settings, "LibraryPaths", "path");
+  QStringList libraryPath = app->toSlicerHomeAbsolutePaths(qSlicerExtensionsManagerModel::readArrayValues(settings, "LibraryPaths", "path"));
   qSlicerExtensionsManagerModel::writeArrayValues(settings,
-                         appendToPathList(libraryPath, this->extensionLibraryPaths(extensionName)),
+                         app->toSlicerHomeRelativePaths(appendToPathList(libraryPath, this->extensionLibraryPaths(extensionName))),
                          "LibraryPaths", "path");
 
-  QStringList paths = qSlicerExtensionsManagerModel::readArrayValues(settings, "Paths", "path");
+  QStringList paths = app->toSlicerHomeAbsolutePaths(qSlicerExtensionsManagerModel::readArrayValues(settings, "Paths", "path"));
   qSlicerExtensionsManagerModel::writeArrayValues(settings,
-                         appendToPathList(paths, this->extensionPaths(extensionName)),
+                         app->toSlicerHomeRelativePaths(appendToPathList(paths, this->extensionPaths(extensionName))),
                          "Paths", "path");
 
 #ifdef Slicer_USE_PYTHONQT
-  QStringList pythonPaths = qSlicerExtensionsManagerModel::readArrayValues(settings, "PYTHONPATH", "path");
+  QStringList pythonPaths = app->toSlicerHomeAbsolutePaths(qSlicerExtensionsManagerModel::readArrayValues(settings, "PYTHONPATH", "path"));
   qSlicerExtensionsManagerModel::writeArrayValues(settings,
-                         appendToPathList(pythonPaths, this->extensionPythonPaths(extensionName)),
+                         app->toSlicerHomeRelativePaths(appendToPathList(pythonPaths, this->extensionPythonPaths(extensionName))),
                          "PYTHONPATH", "path");
 #endif
 
-  QStringList qtPluginPaths = qSlicerExtensionsManagerModel::readArrayValues(settings, "QT_PLUGIN_PATH", "path");
+  QStringList qtPluginPaths = app->toSlicerHomeAbsolutePaths(qSlicerExtensionsManagerModel::readArrayValues(settings, "QT_PLUGIN_PATH", "path"));
   qSlicerExtensionsManagerModel::writeArrayValues(settings,
-                         appendToPathList(qtPluginPaths, this->extensionQtPluginPaths(extensionName)),
+                         app->toSlicerHomeRelativePaths(appendToPathList(qtPluginPaths, this->extensionQtPluginPaths(extensionName))),
                          "QT_PLUGIN_PATH", "path");
 }
 
@@ -557,27 +559,28 @@ void qSlicerExtensionsManagerModelPrivate::removeExtensionPathFromLauncherSettin
     this->warning(qSlicerExtensionsManagerModel::tr("Failed to open extensions settings file: %1").arg(this->ExtensionsSettingsFilePath));
     return;
     }
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
 
-  QStringList libraryPath = qSlicerExtensionsManagerModel::readArrayValues(settings, "LibraryPaths", "path");
+  QStringList libraryPath = app->toSlicerHomeAbsolutePaths(qSlicerExtensionsManagerModel::readArrayValues(settings, "LibraryPaths", "path"));
   qSlicerExtensionsManagerModel::writeArrayValues(settings,
-                         removeFromPathList(libraryPath, this->extensionLibraryPaths(extensionName)),
+                         app->toSlicerHomeRelativePaths(removeFromPathList(libraryPath, this->extensionLibraryPaths(extensionName))),
                          "LibraryPaths", "path");
 
-  QStringList paths = qSlicerExtensionsManagerModel::readArrayValues(settings, "Paths", "path");
+  QStringList paths = app->toSlicerHomeAbsolutePaths(qSlicerExtensionsManagerModel::readArrayValues(settings, "Paths", "path"));
   qSlicerExtensionsManagerModel::writeArrayValues(settings,
-                         removeFromPathList(paths, this->extensionPaths(extensionName)),
+                         app->toSlicerHomeRelativePaths(removeFromPathList(paths, this->extensionPaths(extensionName))),
                          "Paths", "path");
 
 #ifdef Slicer_USE_PYTHONQT
-  QStringList pythonPaths = qSlicerExtensionsManagerModel::readArrayValues(settings, "PYTHONPATH", "path");
+  QStringList pythonPaths = app->toSlicerHomeAbsolutePaths(qSlicerExtensionsManagerModel::readArrayValues(settings, "PYTHONPATH", "path"));
   qSlicerExtensionsManagerModel::writeArrayValues(settings,
-                         removeFromPathList(pythonPaths, this->extensionPythonPaths(extensionName)),
+                         app->toSlicerHomeRelativePaths(removeFromPathList(pythonPaths, this->extensionPythonPaths(extensionName))),
                          "PYTHONPATH", "path");
 #endif
 
-  QStringList qtPluginPaths = qSlicerExtensionsManagerModel::readArrayValues(settings, "QT_PLUGIN_PATH", "path");
+  QStringList qtPluginPaths = app->toSlicerHomeAbsolutePaths(qSlicerExtensionsManagerModel::readArrayValues(settings, "QT_PLUGIN_PATH", "path"));
   qSlicerExtensionsManagerModel::writeArrayValues(settings,
-                         removeFromPathList(qtPluginPaths, this->extensionQtPluginPaths(extensionName)),
+                         app->toSlicerHomeRelativePaths(removeFromPathList(qtPluginPaths, this->extensionQtPluginPaths(extensionName))),
                          "QT_PLUGIN_PATH", "path");
 }
 
@@ -1108,7 +1111,7 @@ QUrl qSlicerExtensionsManagerModel::serverUrlWithExtensionsStorePath()const
 QString qSlicerExtensionsManagerModel::extensionsInstallPath()const
 {
   QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
-  return settings.value("Extensions/InstallPath").toString();
+  return qSlicerCoreApplication::application()->toSlicerHomeAbsolutePath(settings.value("Extensions/InstallPath").toString());
 }
 
 // --------------------------------------------------------------------------

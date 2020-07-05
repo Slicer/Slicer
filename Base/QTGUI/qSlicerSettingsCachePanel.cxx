@@ -25,6 +25,7 @@
 // CTK includes
 
 // QtGUI includes
+#include "qSlicerRelativePathMapper.h"
 #include "qSlicerSettingsCachePanel.h"
 #include "ui_qSlicerSettingsCachePanel.h"
 
@@ -113,8 +114,9 @@ void qSlicerSettingsCachePanel::setCacheManager(vtkCacheManager* cacheManager)
   // Default values
   this->updateFromCacheManager();
 
-  this->registerProperty("Cache/Path", d->CachePathButton, "directory",
-                         SIGNAL(directoryChanged(QString)));
+  qSlicerRelativePathMapper* relativePathMapper = new qSlicerRelativePathMapper(d->CachePathButton, "directory", SIGNAL(directoryChanged(QString)));
+  this->registerProperty("Cache/Path", relativePathMapper, "relativePath",
+                         SIGNAL(relativePathChanged(QString)));
   this->registerProperty("Cache/Size", d->CacheSizeSpinBox, "value",
                          SIGNAL(valueChanged(int)));
   this->registerProperty("Cache/FreeBufferSize", d->CacheFreeBufferSpinBox, "value",

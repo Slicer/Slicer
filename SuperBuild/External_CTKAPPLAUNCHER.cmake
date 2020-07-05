@@ -24,22 +24,23 @@ if(Slicer_USE_CTKAPPLAUNCHER)
   if(NOT DEFINED CTKAppLauncher_DIR)
 
     SlicerMacroGetOperatingSystemArchitectureBitness(VAR_PREFIX CTKAPPLAUNCHER)
-    set(launcher_version "0.1.27")
+    set(launcher_version "0.1.28")
     # On windows, use i386 launcher unconditionally
     if("${CTKAPPLAUNCHER_OS}" STREQUAL "win")
       set(CTKAPPLAUNCHER_ARCHITECTURE "i386")
-      set(md5 "3f05dcc605ac2144edc69b28c27bb8d1")
+      set(md5 "130a9c869844452b9693156bcc71ba2f")
     elseif("${CTKAPPLAUNCHER_OS}" STREQUAL "linux")
-      set(md5 "a9a8aab9c0e91cdd0b5265eb799daf74")
+      set(md5 "c574f95b210c99741c1dbd87889ad346")
     elseif("${CTKAPPLAUNCHER_OS}" STREQUAL "macosx")
-      set(md5 "a9de73a1609c988167884efa23819287")
+      set(md5 "a006790521ce69312e3ed024a32316ee")
     endif()
 
     set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj})
 
+    set(CTKAppLauncherFileName CTKAppLauncher-${launcher_version}-${CTKAPPLAUNCHER_OS}-${CTKAPPLAUNCHER_ARCHITECTURE}.tar.gz)
     ExternalProject_Add(${proj}
       ${${proj}_EP_ARGS}
-      URL https://github.com/commontk/AppLauncher/releases/download/v${launcher_version}/CTKAppLauncher-${launcher_version}-${CTKAPPLAUNCHER_OS}-${CTKAPPLAUNCHER_ARCHITECTURE}.tar.gz
+      URL https://github.com/commontk/AppLauncher/releases/download/v${launcher_version}/${CTKAppLauncherFileName}
       URL_MD5 ${md5}
       DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
       SOURCE_DIR ${EP_BINARY_DIR}

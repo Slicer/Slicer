@@ -793,7 +793,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         # TODO: deal with Debug/RelWithDebInfo on windows
 
         # set up temp dir
-        tmpDir = slicer.app.userSettings().value('Modules/TemporaryDirectory')
+        tmpDir = slicer.app.temporaryPath
         if not os.path.exists(tmpDir):
           os.mkdir(tmpDir)
         self.tmpDir = tmpDir + '/DICOM'
