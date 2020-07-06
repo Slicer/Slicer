@@ -236,7 +236,7 @@ protected:
   vtkMRMLMarkupsCurveNode(const vtkMRMLMarkupsCurveNode&);
   void operator=(const vtkMRMLMarkupsCurveNode&);
 
-  void UpdateMeasurements() override;
+  void UpdateMeasurementsInternal() override;
 };
 
 #endif

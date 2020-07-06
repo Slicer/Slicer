@@ -96,6 +96,8 @@ vtkMRMLMarkupsNode::vtkMRMLMarkupsNode()
   this->TransformedCurvePolyLocator = vtkSmartPointer<vtkPointLocator>::New();
   this->InteractionHandleToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   this->ContentModifiedEvents->InsertNextValue(vtkMRMLMarkupsNode::PointModifiedEvent);
+
+  this->IsUpdatingPoints = false;
 }
 
 //----------------------------------------------------------------------------
@@ -228,9 +230,11 @@ void vtkMRMLMarkupsNode::ProcessMRMLEvents(vtkObject *caller,
     }
   else if (caller == this->CurveGenerator.GetPointer())
     {
+    this->UpdateMeasurements();
     int n = -1;
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
     this->StorableModifiedTime.Modified();
+    this->Modified();
     }
   Superclass::ProcessMRMLEvents(caller, event, callData);
 }
@@ -843,7 +847,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointPositionWorldFromArray(
     return;
     }
   double markupxyz[3] = { 0.0 };
-  TransformPointFromWorld(pos, markupxyz);
+  this->TransformPointFromWorld(pos, markupxyz);
   this->SetNthControlPointPositionFromArray(pointIndex, markupxyz, positionStatus);
 }
 
@@ -1820,7 +1824,10 @@ void vtkMRMLMarkupsNode::SetControlPointPositionsWorld(vtkPoints* points)
     this->RemoveAllControlPoints();
     return;
     }
+
   int wasModified = this->StartModify();
+  this->IsUpdatingPoints = true;
+
   vtkIdType numberOfPoints = points->GetNumberOfPoints();
   for (vtkIdType pointIndex = 0; pointIndex < numberOfPoints; pointIndex++)
     {
@@ -1840,6 +1847,9 @@ void vtkMRMLMarkupsNode::SetControlPointPositionsWorld(vtkPoints* points)
     {
     this->RemoveNthControlPoint(this->GetNumberOfControlPoints() - 1);
     }
+
+  this->IsUpdatingPoints = false;
+  this->UpdateMeasurements();
   this->EndModify(wasModified);
 }
 
@@ -1995,6 +2005,17 @@ void vtkMRMLMarkupsNode::RemoveAllMeasurements()
 
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::UpdateMeasurements()
+{
+  if (this->IsUpdatingPoints)
+    {
+    return;
+    }
+
+  this->UpdateMeasurementsInternal();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::UpdateMeasurementsInternal()
 {
   // child classes override this function to compute measurements
   this->RemoveAllMeasurements();

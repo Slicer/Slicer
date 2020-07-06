@@ -63,7 +63,7 @@ void vtkMRMLMarkupsLineNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsLineNode::UpdateMeasurements()
+void vtkMRMLMarkupsLineNode::UpdateMeasurementsInternal()
 {
   this->RemoveAllMeasurements();
   if (this->GetNumberOfDefinedControlPoints(true) == 2)
