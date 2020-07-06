@@ -60,7 +60,7 @@ void vtkMRMLMarkupsAngleNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsAngleNode::UpdateMeasurements()
+void vtkMRMLMarkupsAngleNode::UpdateMeasurementsInternal()
 {
   this->RemoveAllMeasurements();
   if (this->GetNumberOfDefinedControlPoints(true) == 3)

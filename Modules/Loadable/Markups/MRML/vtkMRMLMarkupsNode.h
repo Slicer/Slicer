@@ -617,7 +617,12 @@ protected:
 
   void OnTransformNodeReferenceChanged(vtkMRMLTransformNode* transformNode) override;
 
-  virtual void UpdateMeasurements();
+  /// Calls UpdateMeasurementsInternal()
+  void UpdateMeasurements();
+
+  /// Calculates the updated measurements
+  /// Should be overwritten by child classes to compute measurements
+  virtual void UpdateMeasurementsInternal();
 
   /// Helper function to write measurements to node Description property.
   /// This is a short-term solution until measurements display is properly implemented.
@@ -676,6 +681,8 @@ protected:
   // Transform that moves the xyz unit vectors and origin of the interaction handles to local coordinates
   vtkSmartPointer<vtkMatrix4x4> InteractionHandleToWorldMatrix;
 
+  /// Flag set from SetControlPointPositionsWorld that pauses update of measurements until the update is complete.
+  bool IsUpdatingPoints;
 };
 
 #endif

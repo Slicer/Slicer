@@ -977,7 +977,6 @@ int vtkMRMLMarkupsCurveNode::GetCurveType()
 void vtkMRMLMarkupsCurveNode::SetCurveType(int type)
 {
   this->CurveGenerator->SetCurveType(type);
-  this->Modified();
 }
 
 //-----------------------------------------------------------
@@ -1101,7 +1100,7 @@ vtkIdType vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurveWorld(const 
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsCurveNode::UpdateMeasurements()
+void vtkMRMLMarkupsCurveNode::UpdateMeasurementsInternal()
 {
   this->RemoveAllMeasurements();
   if (this->GetNumberOfDefinedControlPoints() > 1)
@@ -1135,9 +1134,24 @@ void vtkMRMLMarkupsCurveNode::ProcessMRMLEvents(vtkObject* caller,
     }
   else if (caller == this->SurfaceScalarCalculator.GetPointer())
     {
+    this->UpdateMeasurements();
     int n = -1;
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
     this->StorableModifiedTime.Modified();
+    }
+  else if (caller == this->CurveGenerator.GetPointer())
+    {
+    int surfaceCostFunctionType = this->CurveGenerator->GetSurfaceCostFunctionType();
+    // Change the pass through filter input depending on if we need the scalar values.
+    // Trying to run SurfaceScalarCalculator without an active scalar will result in an error message.
+    if (surfaceCostFunctionType == vtkSlicerDijkstraGraphGeodesicPath::COST_FUNCTION_TYPE_DISTANCE)
+      {
+      this->PassThroughFilter->SetInputConnection(this->SurfaceToLocalTransformer->GetOutputPort());
+      }
+    else
+      {
+      this->PassThroughFilter->SetInputConnection(this->SurfaceScalarCalculator->GetOutputPort());
+      }
     }
 
   if (caller == this->GetNodeReference(this->GetShortestDistanceSurfaceNodeReferenceRole()))
@@ -1204,18 +1218,6 @@ int vtkMRMLMarkupsCurveNode::GetSurfaceCostFunctionType()
 void vtkMRMLMarkupsCurveNode::SetSurfaceCostFunctionType(int surfaceCostFunctionType)
 {
   this->CurveGenerator->SetSurfaceCostFunctionType(surfaceCostFunctionType);
-  // Change the pass through filter input depending on if we need the scalar values.
-  // Trying to run SurfaceScalarCalculator without an active scalar will result in an error message.
-  if (surfaceCostFunctionType == vtkSlicerDijkstraGraphGeodesicPath::COST_FUNCTION_TYPE_DISTANCE)
-    {
-    this->PassThroughFilter->SetInputConnection(this->SurfaceToLocalTransformer->GetOutputPort());
-    }
-  else
-    {
-    this->PassThroughFilter->SetInputConnection(this->SurfaceScalarCalculator->GetOutputPort());
-    }
-  this->UpdateMeasurements();
-  this->Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -1239,6 +1241,12 @@ const char* vtkMRMLMarkupsCurveNode::GetSurfaceDistanceWeightingFunction()
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::SetSurfaceDistanceWeightingFunction(const char* function)
 {
+  const char* currentFunction = this->SurfaceScalarCalculator->GetFunction();
+  if ((currentFunction && function && strcmp(this->SurfaceScalarCalculator->GetFunction(), function) == 0) ||
+    currentFunction == nullptr && function == nullptr)
+    {
+    return;
+    }
   this->SurfaceScalarCalculator->SetFunction(function);
   this->UpdateSurfaceScalarVariables();
   this->UpdateMeasurements();
@@ -1255,7 +1263,6 @@ void vtkMRMLMarkupsCurveNode::OnSurfaceModelNodeChanged()
     {
     this->CleanFilter->SetInputConnection(modelNode->GetPolyDataConnection());
     this->CurveGenerator->SetInputConnection(1, this->PassThroughFilter->GetOutputPort());
-    this->UpdateMeasurements();
     }
   else
     {

@@ -1015,9 +1015,13 @@ int vtkCurveGenerator::GetSurfaceCostFunctionType()
 }
 
 //------------------------------------------------------------------------------
-void vtkCurveGenerator::SetSurfaceCostFunctionType(int setSurfaceCostFunctionType)
+void vtkCurveGenerator::SetSurfaceCostFunctionType(int surfaceCostFunctionType)
 {
-  this->SurfacePathFilter->SetCostFunctionType(setSurfaceCostFunctionType);
+  if (this->SurfacePathFilter->GetCostFunctionType() == surfaceCostFunctionType)
+    {
+    return;
+    }
+  this->SurfacePathFilter->SetCostFunctionType(surfaceCostFunctionType);
   this->Modified();
 }
 
