@@ -452,8 +452,13 @@ void qMRMLSegmentationGeometryWidget::setReferenceImageGeometryForSegmentationNo
     {
     referenceGeometryNodeID = d->Logic->GetSourceGeometryNode()->GetID();
     }
-  d->SegmentationNode->SetNodeReferenceID(
-    vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str(), referenceGeometryNodeID);
+
+  // If the reference geometry node is the same as the segmentation node, then don't change the node reference
+  if (vtkMRMLSegmentationNode::SafeDownCast(d->Logic->GetSourceGeometryNode()) != d->SegmentationNode)
+    {
+    d->SegmentationNode->SetNodeReferenceID(
+      vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str(), referenceGeometryNodeID);
+    }
 
   // Note: it could be also useful to save oversampling value and isotropic flag,
   // we could then allow the user to modify these settings instead of always
