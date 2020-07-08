@@ -33,6 +33,7 @@
 
 // MRML includes
 #include "vtkMRMLInteractionEventData.h"
+#include "vtkMRMLMarkupsAngleNode.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 
 vtkStandardNewMacro(vtkSlicerAngleRepresentation3D);
@@ -89,12 +90,15 @@ bool vtkSlicerAngleRepresentation3D::GetTransformationReferencePoint(double refe
 //----------------------------------------------------------------------
 void vtkSlicerAngleRepresentation3D::BuildArc()
 {
-  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  vtkMRMLMarkupsAngleNode* markupsNode = vtkMRMLMarkupsAngleNode::SafeDownCast(this->GetMarkupsNode());
   if (!markupsNode || markupsNode->GetNumberOfDefinedControlPoints(true) != 3)
     {
     this->TextActor->SetVisibility(false);
     return;
     }
+
+  double angle = markupsNode->GetAngleDegrees();
+  bool longArc = (angle > 180.0 || angle < 0.0) && (markupsNode->GetAngleMeasurementMode() == vtkMRMLMarkupsAngleNode::OrientedPositive);
 
   double p1[3] = {0.0};
   double c[3] = {0.0};
@@ -122,8 +126,17 @@ void vtkSlicerAngleRepresentation3D::BuildArc()
 
   // Place the label and place the arc
   const double length = l1 < l2 ? l1 : l2;
-  const double anglePlacementRatio = 0.5;
-  const double angleTextPlacementRatio = 0.7;
+  double anglePlacementRatio = 0.5;
+  double angleTextPlacementRatio = 0.7;
+  if (markupsNode->GetAngleMeasurementMode() == vtkMRMLMarkupsAngleNode::OrientedPositive)
+    {
+    // Reduce arc size if angle>180deg (it just takes too much space).
+    // arcLengthAdjustmentFactor is a sigmoid function that is 1.0 for angle<180 and 0.5 for angle>180,
+    // with a smooth transition.
+    double arcLengthAdjustmentFactor = 0.5 + 0.5 / (1+exp((angle-180.0)*0.1));
+    anglePlacementRatio *= arcLengthAdjustmentFactor;
+    angleTextPlacementRatio *= arcLengthAdjustmentFactor;
+    }
   const double lArc = length * anglePlacementRatio;
   const double lText = length * angleTextPlacementRatio;
   double arcp1[3] = { lArc * vector1[0] + c[0],
@@ -136,6 +149,7 @@ void vtkSlicerAngleRepresentation3D::BuildArc()
   this->Arc->SetPoint1(arcp1);
   this->Arc->SetPoint2(arcp2);
   this->Arc->SetCenter(c);
+  this->Arc->SetNegative(longArc);
   this->Arc->Update();
 
   double vector3[3] = { vector1[0] + vector2[0],
@@ -144,9 +158,9 @@ void vtkSlicerAngleRepresentation3D::BuildArc()
   vtkMath::Normalize(vector3);
 
   this->TextActor->SetVisibility(this->MarkupsDisplayNode->GetPropertiesLabelVisibility());
-  this->TextActorPositionWorld[0] = lText * vector3[0] + c[0];
-  this->TextActorPositionWorld[1] = lText * vector3[1] + c[1];
-  this->TextActorPositionWorld[2] = lText * vector3[2] + c[2];
+  this->TextActorPositionWorld[0] = lText * (longArc ? -1.0 : 1.0) * vector3[0] + c[0];
+  this->TextActorPositionWorld[1] = lText * (longArc ? -1.0 : 1.0) * vector3[1] + c[1];
+  this->TextActorPositionWorld[2] = lText * (longArc ? -1.0 : 1.0) * vector3[2] + c[2];
 }
 
 //----------------------------------------------------------------------

@@ -33,6 +33,8 @@ vtkMRMLNodeNewMacro(vtkMRMLMarkupsAngleNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsAngleNode::vtkMRMLMarkupsAngleNode()
+  : AngleMeasurementMode(Minimal)
+  , OrientationRotationAxis{0.0, 0.0, 1.0}
 {
   this->MaximumNumberOfControlPoints = 3;
   this->RequiredNumberOfControlPoints = 3;
@@ -45,18 +47,191 @@ vtkMRMLMarkupsAngleNode::~vtkMRMLMarkupsAngleNode() = default;
 void vtkMRMLMarkupsAngleNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of,nIndent);
+
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLEnumMacro(angleMeasurementMode, AngleMeasurementMode);
+  vtkMRMLWriteXMLVectorMacro(orientationRotationAxis, OrientationRotationAxis, double, 3);
+  vtkMRMLWriteXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsAngleNode::ReadXMLAttributes(const char** atts)
 {
   Superclass::ReadXMLAttributes(atts);
+
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLEnumMacro(angleMeasurementMode, AngleMeasurementMode);
+  vtkMRMLReadXMLVectorMacro(orientationRotationAxis, OrientationRotationAxis, double, 3);
+  vtkMRMLReadXMLEndMacro();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsAngleNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+{
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
+
+  vtkMRMLCopyBeginMacro(anode);
+  vtkMRMLCopyEnumMacro(AngleMeasurementMode);
+  vtkMRMLCopyVectorMacro(OrientationRotationAxis, double, 3);
+  vtkMRMLCopyEndMacro();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsAngleNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
+
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintEnumMacro(AngleMeasurementMode);
+  vtkMRMLPrintVectorMacro(OrientationRotationAxis, double, 3);
+  vtkMRMLPrintEndMacro();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsAngleNode::SetAngleMeasurementMode(int type)
+{
+  this->AngleMeasurementMode = type;
+  this->Modified();
+  this->UpdateMeasurementsInternal();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsAngleNode::SetOrientationRotationAxis(double r, double a, double s)
+{
+  this->OrientationRotationAxis[0] = r;
+  this->OrientationRotationAxis[1] = a;
+  this->OrientationRotationAxis[2] = s;
+  this->Modified();
+  this->UpdateMeasurementsInternal();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsAngleNode::SetOrientationRotationAxis(double ras[3])
+{
+  this->SetOrientationRotationAxis(ras[0], ras[1], ras[2]);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLMarkupsAngleNode::GetAngleMeasurementModeAsString(int id)
+{
+  switch (id)
+    {
+    case vtkMRMLMarkupsAngleNode::Minimal:
+      {
+      return "minimal";
+      }
+    case vtkMRMLMarkupsAngleNode::OrientedPositive:
+      {
+      return "orientedPositive";
+      }
+    case vtkMRMLMarkupsAngleNode::OrientedSigned:
+      {
+      return "orientedSigned";
+      }
+    default:
+      {
+      vtkGenericWarningMacro("Unknown angle mode type: " << id);
+      return "";
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLMarkupsAngleNode::GetAngleMeasurementModeFromString(const char* name)
+{
+  if (name == nullptr)
+    {
+    // invalid name
+    vtkGenericWarningMacro("Invalid angle mode name");
+    return -1;
+    }
+  for (int i = 0; i < vtkMRMLMarkupsAngleNode::AngleMeasurementMode_Last; i++)
+    {
+    if (strcmp(name, vtkMRMLMarkupsAngleNode::GetAngleMeasurementModeAsString(i)) == 0)
+      {
+      // found a matching name
+      return i;
+      }
+    }
+  // name not found
+  vtkGenericWarningMacro("Unknown angle mode name: " << name);
+  return -1;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsAngleNode::SetAngleMeasurementModeToMinimal()
+{
+  this->SetAngleMeasurementMode(vtkMRMLMarkupsAngleNode::Minimal);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsAngleNode::SetAngleMeasurementModeToOrientedSigned()
+{
+  this->SetAngleMeasurementMode(vtkMRMLMarkupsAngleNode::OrientedSigned);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsAngleNode::SetAngleMeasurementModeToOrientedPositive()
+{
+  this->SetAngleMeasurementMode(vtkMRMLMarkupsAngleNode::OrientedPositive);
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLMarkupsAngleNode::GetAngleDegrees()
+{
+  if (this->GetNumberOfDefinedControlPoints(true) != 3)
+    {
+    vtkErrorMacro("Angle markups require exactly three control points");
+    return 0.0;
+    }
+
+  double p1[3] = { 0.0 };
+  double c[3] = { 0.0 };
+  double p2[3] = { 0.0 };
+  this->GetNthControlPointPositionWorld(0, p1);
+  this->GetNthControlPointPositionWorld(1, c);
+  this->GetNthControlPointPositionWorld(2, p2);
+
+  if ( vtkMath::Distance2BetweenPoints(p1, c) <= VTK_DBL_EPSILON
+    && vtkMath::Distance2BetweenPoints(p2, c) <= VTK_DBL_EPSILON )
+    {
+    return 0.0;
+    }
+
+  double vector1[3] = { p1[0] - c[0], p1[1] - c[1], p1[2] - c[2] };
+  double vector2[3] = { p2[0] - c[0], p2[1] - c[1], p2[2] - c[2] };
+  vtkMath::Normalize(vector1);
+  vtkMath::Normalize(vector2);
+  double angle_Rad = acos(vtkMath::Dot(vector1, vector2));
+  double angle_Deg = vtkMath::DegreesFromRadians(angle_Rad);
+  if (this->AngleMeasurementMode == Minimal)
+    {
+    return angle_Deg;
+    }
+  else
+    {
+    double vector1_vector2_Cross[3] = {0.0, 0.0, 0.0};
+    vtkMath::Cross(vector1, vector2, vector1_vector2_Cross);
+    if (vtkMath::Dot(vector1_vector2_Cross, this->OrientationRotationAxis) >= 0)
+      {
+      return angle_Deg;
+      }
+    else
+      {
+      if (this->AngleMeasurementMode == OrientedSigned)
+        {
+        return (-1.0) * angle_Deg;
+        }
+      else if (this->AngleMeasurementMode == OrientedPositive)
+        {
+        return 360.0 - angle_Deg;
+        }
+      }
+    }
+
+  vtkErrorMacro("Invalid angle mode " << this->AngleMeasurementMode);
+  return 0.0;
 }
 
 //---------------------------------------------------------------------------
@@ -72,15 +247,10 @@ void vtkMRMLMarkupsAngleNode::UpdateMeasurementsInternal()
     this->GetNthControlPointPositionWorld(1, c);
     this->GetNthControlPointPositionWorld(2, p2);
 
-    if (vtkMath::Distance2BetweenPoints(p1, c) > VTK_DBL_EPSILON
-      && vtkMath::Distance2BetweenPoints(p2, c) > VTK_DBL_EPSILON)
+    if ( vtkMath::Distance2BetweenPoints(p1, c) > VTK_DBL_EPSILON
+      && vtkMath::Distance2BetweenPoints(p2, c) > VTK_DBL_EPSILON )
       {
-      double vector1[3] = { p1[0] - c[0], p1[1] - c[1], p1[2] - c[2] };
-      double vector2[3] = { p2[0] - c[0], p2[1] - c[1], p2[2] - c[2] };
-      vtkMath::Normalize(vector1);
-      vtkMath::Normalize(vector2);
-      double angle = vtkMath::DegreesFromRadians(acos(vtkMath::Dot(vector1, vector2)));
-      this->SetNthMeasurement(0, "angle", angle, "deg", "%3.1f%s");
+      this->SetNthMeasurement(0, "angle", this->GetAngleDegrees(), "deg", "%3.1f%s");
       }
     }
   this->WriteMeasurementsToDescription();

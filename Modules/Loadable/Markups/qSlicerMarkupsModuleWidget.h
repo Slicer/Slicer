@@ -69,7 +69,7 @@ public:
   /// Check Red volume slice spacing to make sure that the glyph and text scale
   /// slider maximums allow the glyphs to be scaled so that they can be shown
   /// on volumes with spacing larger than the default. Find the maximum background
-  /// volume spacing and multiply it by the volume spacing scale facotr
+  /// volume spacing and multiply it by the volume spacing scale factor
   /// \sa volumeSpacingScaleFactor
   void updateMaximumScaleFromVolumes();
   /// Refresh a row of the gui from the mth markup in the currently active
@@ -123,8 +123,13 @@ public slots:
   void onResetToDefaultDisplayPropertiesPushButtonClicked();
   void onSaveToDefaultDisplayPropertiesPushButtonClicked();
 
-  //Resample Curve button slot
+  /// Resample Curve button slot
   void onApplyCurveResamplingPushButtonClicked();
+
+  /// Change angle mode of current angle markup if combobox selection is made.
+  void onAngleMeasurementModeChanged();
+  /// Update angle measurement rotation axis if the user edits the column vector
+  void onRotationAxisChanged();
 
   /// List button slots
   void onVisibilityOnAllMarkupsInListPushButtonClicked();
@@ -148,7 +153,7 @@ public slots:
   /// Update the combo box from the selection node
   void onSelectionNodeActivePlaceNodeIDChanged();
 
-  /// When the user clicks in the comob box to create a new markups node,
+  /// When the user clicks in the combo box to create a new markups node,
   /// make sure that a display node is added
   void onActiveMarkupMRMLNodeAdded(vtkMRMLNode *markupsNode);
 
@@ -226,7 +231,7 @@ public slots:
   /// update visibility of the coordinate columns in the table
   void onHideCoordinateColumnsToggled(bool checked);
 
-  /// update the coordinates shown in the table to be either the transformed coordiantes (checked) or the untransformed coordiantes (unchecked)
+  /// update the coordinates shown in the table to be either the transformed coordinates (checked) or the untransformed coordinates (unchecked)
   void onTransformedCoordinatesToggled(bool checked);
 
   /// Change in a widget related to a surface curve type parameter
