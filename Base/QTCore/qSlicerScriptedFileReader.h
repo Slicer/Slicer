@@ -38,6 +38,9 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedFileReader
 {
   Q_OBJECT
 
+  /// This property allows the reader to report back what nodes it was able to load
+  Q_PROPERTY(QStringList loadedNodes READ loadedNodes WRITE setLoadedNodes)
+
 public:
   typedef qSlicerFileReader Superclass;
   qSlicerScriptedFileReader(QObject* parent = nullptr);
@@ -67,6 +70,17 @@ public:
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerFileReader::write()
   bool load(const qSlicerIO::IOProperties& properties) override;
+
+  /// Reimplemented to support python methods and q_property
+  /// Exposes setLoadedNodes, which is protected in superclass
+  /// \sa qSlicerFileReader::loadedNodes()
+  /// \sa qSlicerFileWriter::writtenNodes()
+  QStringList loadedNodes()const override {
+    return Superclass::loadedNodes();
+  };
+  void setLoadedNodes(const QStringList& nodes) override {
+    Superclass::setLoadedNodes(nodes);
+  };
 
 protected:
   QScopedPointer<qSlicerScriptedFileReaderPrivate> d_ptr;

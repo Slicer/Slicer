@@ -78,8 +78,10 @@ public:
   /// \sa qSlicerFileWriter::writtenNodex()
   void addWrittenNode(const QString& writtenNode);
 
-  /// Reimplemented to propagate to python methods
+  /// Reimplemented to support python methods and q_property
+  /// Exposes setWrittenNodes, which is protected in superclass
   /// \sa qSlicerFileWriter::writtenNodes()
+  /// \sa qSlicerFileReader::loadedNodes()
   QStringList writtenNodes()const override {
     return Superclass::writtenNodes();
   };
