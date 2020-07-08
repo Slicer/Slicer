@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>440</width>
-    <height>787</height>
+    <height>563</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1070,6 +1070,73 @@
      </layout>
     </widget>
    </item>
+   <item>
+    <widget class="ctkCollapsibleButton" name="angleModeCollapsibleButton">
+     <property name="text">
+      <string>Angle Settings</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>Angle mode:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="angleModeComboBox">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;- Unsigned: Minimal angle, between [0..180)&lt;br/&gt;- Oriented signed: Oriented angle [-180..180), using rotation axis in right-hand rule&lt;br/&gt;- Oriented positive: Oriented angle [0..360), using rotation axis in right-hand rule&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>Unsigned</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Oriented signed</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Oriented positive</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_9">
+        <property name="text">
+         <string>Rotation axis:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="ctkMatrixWidget" name="rotationAxisMatrixWidget">
+        <property name="columnCount">
+         <number>1</number>
+        </property>
+        <property name="rowCount">
+         <number>3</number>
+        </property>
+        <property name="minimum">
+         <double>0.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="decimals">
+         <number>4</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -1128,6 +1195,11 @@
    <extends>QFrame</extends>
    <header>ctkExpandableWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkMatrixWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkMatrixWidget.h</header>
   </customwidget>
   <customwidget>
    <class>ctkMenuButton</class>

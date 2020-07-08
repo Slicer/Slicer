@@ -447,6 +447,11 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   QObject::connect(this->resampleCurveButton, SIGNAL(clicked()),
     q, SLOT(onApplyCurveResamplingPushButtonClicked()));
 
+  this->angleModeCollapsibleButton->setVisible(false);
+  QObject::connect(this->angleModeComboBox, SIGNAL(currentIndexChanged(int)),
+    q, SLOT(onAngleModeChanged()));
+  QObject::connect(this->rotationAxisMatrixWidget, SIGNAL(matrixChanged()),
+    q, SLOT(onRotationAxisMatrixChanged()));
 
   this->curveTypeComboBox->clear();
   for (int curveType = 0; curveType < vtkCurveGenerator::CURVE_TYPE_LAST; ++curveType)
@@ -919,8 +924,10 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
     this->updateRow(m);
     }
 
-  vtkMRMLMarkupsCurveNode *markupsCurveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(d->MarkupsNode);
+  vtkMRMLMarkupsCurveNode* markupsCurveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(d->MarkupsNode);
   d->resampleCurveCollapsibleButton->setVisible(markupsCurveNode != nullptr);
+  vtkMRMLMarkupsAngleNode* markupsAngleNode = vtkMRMLMarkupsAngleNode::SafeDownCast(d->MarkupsNode);
+  d->angleModeCollapsibleButton->setVisible(markupsAngleNode != nullptr);
   d->curveSettingsWidget->setEnabled(markupsCurveNode != nullptr);
   if (markupsCurveNode)
     {
@@ -988,6 +995,17 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
       }
     d->scalarFunctionPrefixLabel->setText(prefixString);
     d->scalarFunctionSuffixLabel->setText(suffixString);
+    }
+  if (markupsAngleNode)
+    {
+    double axisVector[3] = {0.0, 0.0, 0.0};
+    markupsAngleNode->GetOrientationRotationAxis(axisVector);
+    bool wasBlocked = d->rotationAxisMatrixWidget->blockSignals(true);
+    for (int i=0; i<3; ++i)
+      {
+      d->rotationAxisMatrixWidget->setValue(i, 0, axisVector[i]);
+      }
+    d->rotationAxisMatrixWidget->blockSignals(wasBlocked);
     }
 
   if (markupsCurveNode && markupsCurveNode->GetCurveType() == vtkCurveGenerator::CURVE_TYPE_SHORTEST_DISTANCE_ON_SURFACE)
@@ -2618,6 +2636,39 @@ void qSlicerMarkupsModuleWidget::onApplyCurveResamplingPushButtonClicked()
     {
     outputNode->ResampleCurveWorld(sampleDist);
     }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onAngleModeChanged()
+{
+  Q_D(qSlicerMarkupsModuleWidget);
+  vtkMRMLMarkupsAngleNode* markupsAngleNode = vtkMRMLMarkupsAngleNode::SafeDownCast(d->MarkupsNode);
+  if (!markupsAngleNode)
+    {
+    return;
+    }
+
+  markupsAngleNode->SetAngleMode(d->angleModeComboBox->currentIndex());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onRotationAxisMatrixChanged()
+{
+  Q_D(qSlicerMarkupsModuleWidget);
+
+  vtkMRMLMarkupsAngleNode* markupsAngleNode = vtkMRMLMarkupsAngleNode::SafeDownCast(d->MarkupsNode);
+  if (!markupsAngleNode)
+    {
+    return;
+    }
+
+  QVector<double> axisVector = d->rotationAxisMatrixWidget->values();
+  if (axisVector.size() != 3)
+    {
+    qWarning() << Q_FUNC_INFO << ": Invalid rotation axis vector size";
+    return;
+    }
+  markupsAngleNode->SetOrientationRotationAxis(axisVector[0], axisVector[1], axisVector[2]);
 }
 
 //-----------------------------------------------------------------------------
