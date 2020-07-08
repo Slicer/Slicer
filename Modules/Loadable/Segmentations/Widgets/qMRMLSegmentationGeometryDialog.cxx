@@ -166,6 +166,8 @@ bool qMRMLSegmentationGeometryDialog::exec()
     return result;
     }
 
+  MRMLNodeModifyBlocker blocker(d->SegmentationNode);
+
   // Apply geometry after clean exit
   if (d->GeometryWidget->editEnabled())
     {

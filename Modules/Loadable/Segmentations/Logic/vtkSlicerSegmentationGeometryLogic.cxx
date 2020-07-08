@@ -64,7 +64,7 @@ vtkSlicerSegmentationGeometryLogic::vtkSlicerSegmentationGeometryLogic()
 vtkSlicerSegmentationGeometryLogic::~vtkSlicerSegmentationGeometryLogic()
 {
   this->SetInputSegmentationNode(nullptr);
-
+  this->SetSourceGeometryNode(nullptr);
   if (this->OutputGeometryImageData)
     {
     this->OutputGeometryImageData->Delete();
