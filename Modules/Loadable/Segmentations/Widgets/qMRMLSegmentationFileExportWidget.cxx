@@ -142,7 +142,12 @@ void qMRMLSegmentationFileExportWidget::updateWidgetFromSettings()
 
   d->DestinationFolderButton->setDirectory(settings.value(d->SettingsKey + "/DestinationFolder", ".").toString());
   d->VisibleSegmentsOnlyCheckBox->setChecked(settings.value(d->SettingsKey + "/VisibleSegmentsOnly", false).toBool());
-  d->MergeIntoSingleFileCheckBox->setChecked(settings.value(d->SettingsKey + "/MergeIntoSingleFile", false).toBool());
+
+  d->MergeIntoSingleSTLFileCheckBox->setChecked(settings.value(d->SettingsKey + "/MergeIntoSingleFile", false).toBool());
+  bool stl = fileFormat == "STL";
+  d->MergeIntoSingleSTLFileCheckBox->setVisible(stl);
+  d->MergeIntoSingleOBJFileCheckBox->setVisible(!stl);
+
   d->SizeScaleSpinBox->setValue(settings.value(d->SettingsKey + "/SizeScale", 1.0).toDouble());
   d->ShowDestinationFolderOnExportCompleteCheckBox->setChecked(settings.value(d->SettingsKey + "/ShowDestinationFolderOnExportComplete", true).toBool());
 
@@ -165,7 +170,7 @@ void qMRMLSegmentationFileExportWidget::updateSettingsFromWidget()
   settings.setValue(d->SettingsKey + "/FileFormat", d->FileFormatComboBox->currentText());
   settings.setValue(d->SettingsKey + "/DestinationFolder", d->DestinationFolderButton->directory());
   settings.setValue(d->SettingsKey + "/VisibleSegmentsOnly", d->VisibleSegmentsOnlyCheckBox->isChecked());
-  settings.setValue(d->SettingsKey + "/MergeIntoSingleFile", d->MergeIntoSingleFileCheckBox->isChecked());
+  settings.setValue(d->SettingsKey + "/MergeIntoSingleFile", d->MergeIntoSingleSTLFileCheckBox->isChecked());
   settings.setValue(d->SettingsKey + "/SizeScale", d->SizeScaleSpinBox->value());
   settings.setValue(d->SettingsKey + "/ShowDestinationFolderOnExportComplete", d->ShowDestinationFolderOnExportCompleteCheckBox->isChecked());
   settings.setValue(d->SettingsKey + "/CoordinateSystem", d->CoordinateSystemComboBox->currentText());
@@ -190,6 +195,8 @@ void qMRMLSegmentationFileExportWidget::exportToFiles()
     displayNode->GetVisibleSegmentIDs(segmentIds);
     }
 
+  bool merge = d->MergeIntoSingleSTLFileCheckBox->isChecked(); // merge is only used for STL format
+
   vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentationToFiles(
     d->DestinationFolderButton->directory().toUtf8().constData(),
     d->SegmentationNode.GetPointer(),
@@ -197,7 +204,7 @@ void qMRMLSegmentationFileExportWidget::exportToFiles()
     d->FileFormatComboBox->currentText().toUtf8().constData(),
     d->CoordinateSystemComboBox->currentText() == "LPS",
     d->SizeScaleSpinBox->value(),
-    d->MergeIntoSingleFileCheckBox->isChecked());
+    merge);
 
   QApplication::restoreOverrideCursor();
 
@@ -235,5 +242,7 @@ void qMRMLSegmentationFileExportWidget::setSettingsKey(const QString& key)
 void qMRMLSegmentationFileExportWidget::setFileFormat(const QString& formatStr)
 {
   Q_D(qMRMLSegmentationFileExportWidget);
-  d->MergeIntoSingleFileCheckBox->setEnabled(formatStr == "STL");
+  bool stl = formatStr == "STL";
+  d->MergeIntoSingleSTLFileCheckBox->setVisible(stl);
+  d->MergeIntoSingleOBJFileCheckBox->setVisible(!stl);
 }

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>415</width>
+    <width>326</width>
     <height>184</height>
    </rect>
   </property>
@@ -103,22 +103,6 @@
       </widget>
      </item>
     </layout>
-   </item>
-   <item row="6" column="1">
-    <widget class="QCheckBox" name="MergeIntoSingleFileCheckBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="toolTip">
-      <string>Export all segments to a single output file.</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
    </item>
    <item row="10" column="1">
     <widget class="QCheckBox" name="ShowDestinationFolderOnExportCompleteCheckBox">
@@ -223,6 +207,42 @@
      </property>
     </widget>
    </item>
+   <item row="6" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QCheckBox" name="MergeIntoSingleOBJFileCheckBox">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>Export all segments to a single OBJ file. It is always enabled for OBJ files, as segments can be distinguished based on their material.</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="MergeIntoSingleSTLFileCheckBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Export all segments to a single output STL file.</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -247,7 +267,6 @@
   <tabstop>DestinationFolderButton</tabstop>
   <tabstop>ShowDestinationFolderButton</tabstop>
   <tabstop>FileFormatComboBox</tabstop>
-  <tabstop>MergeIntoSingleFileCheckBox</tabstop>
   <tabstop>VisibleSegmentsOnlyCheckBox</tabstop>
   <tabstop>SizeScaleSpinBox</tabstop>
   <tabstop>CoordinateSystemComboBox</tabstop>
