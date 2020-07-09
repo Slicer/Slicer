@@ -63,9 +63,9 @@ public:
   virtual bool load(const IOProperties& properties);
 
   /// Return the list of generated nodes from loading the file(s) in load().
-  /// Empty list of load() failed
+  /// Empty list if load() failed
   /// \sa setLoadedNodes(), load()
-  QStringList loadedNodes()const;
+  virtual QStringList loadedNodes()const;
 
   /// Implements the file list examination for the corresponding method in the core
   /// IO manager.
@@ -75,7 +75,7 @@ public:
 protected:
   /// Must be called in load() on success with the list of nodes added into the
   /// scene.
-  void setLoadedNodes(const QStringList& nodes);
+  virtual void setLoadedNodes(const QStringList& nodes);
 
 protected:
   QScopedPointer<qSlicerFileReaderPrivate> d_ptr;
