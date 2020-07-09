@@ -258,7 +258,26 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
   vtkMRMLSegmentEditorNode* parameterSetNode = this->parameterSetNode();
   if (!parameterSetNode)
     {
-    qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node!";
+    qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node";
+    this->defaultModifierLabelmap();
+    return;
+    }
+
+  if (!segmentationNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid segmentation";
+    this->defaultModifierLabelmap();
+    return;
+    }
+
+  vtkSegment* segment = nullptr;
+  if (segmentID)
+    {
+    segment = segmentationNode->GetSegmentation()->GetSegment(segmentID);
+    }
+  if (!segment)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid segment";
     this->defaultModifierLabelmap();
     return;
     }
@@ -323,20 +342,6 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
     vtkOrientedImageDataResample::ApplyImageMask(modifierLabelmap.GetPointer(), thresholdMask, this->m_EraseValue);
     }
 
-  if (!d->ParameterSetNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node";
-    this->defaultModifierLabelmap();
-    return;
-    }
-
-  if (!segmentationNode || !segmentID)
-    {
-    qCritical() << Q_FUNC_INFO << ": Invalid segment";
-    this->defaultModifierLabelmap();
-    return;
-    }
-
   if (!modifierLabelmap)
     {
     // If per-segment flag is off, then it is not an error (the effect itself has written it back to segmentation)
@@ -394,7 +399,6 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
     segmentIDsToOverwrite.clear();
     }
 
-  vtkSegment* segment = segmentationNode->GetSegmentation()->GetSegment(segmentID);
   std::vector<std::string> sharedSegmentIDs;
   segmentationNode->GetSegmentation()->GetSegmentIDsSharingBinaryLabelmapRepresentation(segmentID, sharedSegmentIDs, false);
 
