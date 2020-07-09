@@ -93,6 +93,7 @@ void qSlicerModuleFinderDialogPrivate::init()
     q, SLOT(onSelectionChanged(QItemSelection, QItemSelection)));
 
   this->FilterTitleSearchBox->installEventFilter(q);
+  this->ModuleListView->viewport()->installEventFilter(q);
 
   QPushButton* okButton = this->ButtonBox->button(QDialogButtonBox::Ok);
   okButton->setText(q->tr("Switch to module"));
@@ -339,6 +340,12 @@ bool qSlicerModuleFinderDialog::eventFilter(QObject* target, QEvent* event)
           }
         }
       }
+    }
+  else if (target == d->ModuleListView->viewport() && event->type() == QEvent::MouseButtonDblClick)
+    {
+    // accept selection on double-click
+    this->accept();
+    return true;
     }
   return this->Superclass::eventFilter(target, event);
 }
