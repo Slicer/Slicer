@@ -38,6 +38,7 @@
 #include "qSlicerSubjectHierarchyVisibilityPlugin.h"
 
 // MRML includes
+#include "vtkMRMLAbstractViewNode.h"
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLInteractionEventData.h"
@@ -485,6 +486,10 @@ void qSlicerSubjectHierarchyPluginLogic::onDisplayMenuEvent(vtkObject* displayNo
   QVariantMap eventDataMap;
   eventDataMap["ComponentType"] = QVariant(eventData->GetComponentType());
   eventDataMap["ComponentIndex"] = QVariant(eventData->GetComponentIndex());
+  if (eventData->GetViewNode())
+    {
+    eventDataMap["ViewNodeID"] = QVariant(eventData->GetViewNode()->GetID());
+    }
 
   // Get subject hierarchy item ID
   vtkIdType itemID = shNode->GetItemByDataNode(displayableNode);
