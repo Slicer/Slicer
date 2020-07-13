@@ -100,7 +100,10 @@ If Masking / Editable area is set to a specific segment then the highlighted reg
 
 Draw segment inside each anatomical structure. This method will start from these "seeds" and grow them to achieve complete segmentation.
 
-- Initialize: Click this button after initial segmentation is completed (by using other editor effects). Initial computation may take more time than subsequent updates. Master volume, auto-complete method, segmentation extent will be locked after initialization, therefore if any of these have to be changed then click Cancel and initialize again.
+- Initialize: Click this button after initial segmentation is completed (by using other editor effects).
+Initial computation may take more time than subsequent updates.
+Master volume and auto-complete method will be locked after initialization,
+therefore if either of these have to be changed then click Cancel and initialize again.
 - Update: Update completed segmentation based on changed inputs.
 - Auto-update: activate this option to automatically updating result preview when segmentation is changed.
 - Cancel: Remove result preview. Seeds are kept unchanged, so parameters can be changed and segmentation can be restarted by clicking Initialize.
@@ -111,14 +114,16 @@ Notes:
 - Only visible segments are used by this effect.
 - At least two segments are required.
 - If a part of a segment is erased or painting is removed using Undo (and not overwritten by another segment) then it is recommended to cancel and initialize. The reason is that effect of adding more information (painting more seeds) can be propagated to the complete segmentation, but removing information (removing some seed regions) will not change the complete segmentation.
-- Extent of segmentation is limited to the bounding box defined by seed segments. The reason is that this makes computation faster and reduces memory usage for small segments. The extent can be made arbitrarily large by adding seeds at  bondaries of the preferred extent.
 - The method uses grow-cut algorithm: Liangjia Zhu, Ivan Kolesov, Yi Gao, Ron Kikinis, Allen Tannenbaum. An Effective Interactive Medical Image Segmentation Method Using Fast GrowCut, International Conference on Medical Image Computing and Computer Assisted Intervention (MICCAI), Interactive Medical Image Computing Workshop, 2014.
 
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_fill_between_slices.png) Fill between slices
 
 Create complete segmentation on selected slices using any editor effect. You can skip any number of slices between segmented slices. This method will fill the skipped slices by interpolating between segmented slices.
 
-- Initialize: Click this button after initial segmentation is completed (by using other editor effects). Initial computation may take more time than subsequent updates. Master volume, auto-complete method, segmentation extent will be locked after initialization, therefore if any of these have to be changed then click Cancel and initialize again.
+- Initialize: Click this button after initial segmentation is completed (by using other editor effects).
+Initial computation may take more time than subsequent updates.
+Master volume and auto-complete method will be locked after initialization,
+therefore if either of these have to be changed then click Cancel and initialize again.
 - Update: Update completed segmentation based on changed inputs.
 - Auto-update: activate this option to automatically updating result preview when segmentation is changed.
 - Cancel: Remove result preview. Seeds are kept unchanged, so parameters can be changed and segmentation can be restarted by clicking Initialize.
