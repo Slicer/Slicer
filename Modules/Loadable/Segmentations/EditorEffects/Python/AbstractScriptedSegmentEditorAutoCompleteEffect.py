@@ -33,6 +33,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     self.selectedSegmentIds = None
     self.selectedSegmentModifiedTimes = {} # map from segment ID to ModifiedTime
     self.clippedMasterImageData = None
+    self.clippedMaskImageData = None
 
     # Observation for auto-update
     self.observedSegmentation = None
@@ -46,6 +47,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     self.delayedAutoUpdateTimer.connect('timeout()', self.onPreview)
 
     self.extentGrowthRatio = 0.1  # extent of seed region will be grown outside by this much
+    self.minimumExtentMargin = 3
 
 
   def __del__(self, scriptedEffect):
@@ -276,6 +278,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     self.selectedSegmentIds = None
     self.selectedSegmentModifiedTimes = {}
     self.clippedMasterImageData = None
+    self.clippedMaskImageData = None
     self.updateGUIFromMRML()
 
   def onCancel(self):
@@ -352,25 +355,68 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
       slicer.vtkSegmentationConverter.GetSegmentationClosedSurfaceRepresentationName())
     return containsClosedSurfaceRepresentation
 
+  def effectiveExtentChanged(self):
+    if self.mergedLabelmapGeometryImage is None:
+      return True
+    if self.selectedSegmentIds is None:
+      return True
+
+    import vtkSegmentationCorePython as vtkSegmentationCore
+
+    segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
+
+    # The effective extent for the current input segments
+    effectiveGeometryImage = slicer.vtkOrientedImageData()
+    effectiveGeometryString = segmentationNode.GetSegmentation().DetermineCommonLabelmapGeometry(
+      vtkSegmentationCore.vtkSegmentation.EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, self.selectedSegmentIds)
+    if effectiveGeometryString is None:
+        return True
+    vtkSegmentationCore.vtkSegmentationConverter.DeserializeImageGeometry(effectiveGeometryString, effectiveGeometryImage)
+
+    masterImageData = self.scriptedEffect.masterVolumeImageData()
+    masterImageExtent = masterImageData.GetExtent()
+
+    # The effective extent of the selected segments
+    effectiveLabelExtent = effectiveGeometryImage.GetExtent()
+    # Current extent used for auto-complete preview
+    currentLabelExtent = self.mergedLabelmapGeometryImage.GetExtent()
+
+    # Determine if the current merged labelmap extent has less than a 3 voxel margin around the effective segment extent (limited by the master image extent)
+    return ((masterImageExtent[0] != currentLabelExtent[0] and currentLabelExtent[0] > effectiveLabelExtent[0] - self.minimumExtentMargin) or
+            (masterImageExtent[1] != currentLabelExtent[1] and currentLabelExtent[1] < effectiveLabelExtent[1] + self.minimumExtentMargin) or
+            (masterImageExtent[2] != currentLabelExtent[2] and currentLabelExtent[2] > effectiveLabelExtent[2] - self.minimumExtentMargin) or
+            (masterImageExtent[3] != currentLabelExtent[3] and currentLabelExtent[3] < effectiveLabelExtent[3] + self.minimumExtentMargin) or
+            (masterImageExtent[4] != currentLabelExtent[4] and currentLabelExtent[4] > effectiveLabelExtent[4] - self.minimumExtentMargin) or
+            (masterImageExtent[5] != currentLabelExtent[5] and currentLabelExtent[5] < effectiveLabelExtent[5] + self.minimumExtentMargin))
+
   def preview(self):
     # Get master volume image data
     import vtkSegmentationCorePython as vtkSegmentationCore
-    masterImageData = self.scriptedEffect.masterVolumeImageData()
 
     # Get segmentation
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
 
     previewNode = self.getPreviewNode()
-    if (not previewNode or not self.mergedLabelmapGeometryImage
-      or (self.clippedMasterImageDataRequired and not self.clippedMasterImageData)):
+    previewOpacity = self.getPreviewOpacity()
+    previewShow3D = self.getPreviewShow3D()
 
+    # If the selectedSegmentIds have been specified, then they shouldn't be overwritten here
+    currentSelectedSegmentIds = self.selectedSegmentIds
+
+    if self.effectiveExtentChanged():
       self.reset()
-      # Compute merged labelmap extent (effective extent slightly expanded)
-      self.selectedSegmentIds = vtk.vtkStringArray()
-      segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(self.selectedSegmentIds)
+
+      # Restore the selectedSegmentIds
+      self.selectedSegmentIds = currentSelectedSegmentIds
+      if self.selectedSegmentIds is None:
+        self.selectedSegmentIds = vtk.vtkStringArray()
+        segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(self.selectedSegmentIds)
       if self.selectedSegmentIds.GetNumberOfValues() < self.minimumNumberOfSegments:
         logging.error("Auto-complete operation skipped: at least {0} visible segments are required".format(self.minimumNumberOfSegments))
+        self.selectedSegmentIds = None
         return
+
+      # Compute merged labelmap extent (effective extent slightly expanded)
       if not self.mergedLabelmapGeometryImage:
         self.mergedLabelmapGeometryImage = slicer.vtkOrientedImageData()
       commonGeometryString = segmentationNode.GetSegmentation().DetermineCommonLabelmapGeometry(
@@ -380,6 +426,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         return
       vtkSegmentationCore.vtkSegmentationConverter.DeserializeImageGeometry(commonGeometryString, self.mergedLabelmapGeometryImage)
 
+      masterImageData = self.scriptedEffect.masterVolumeImageData()
       masterImageExtent = masterImageData.GetExtent()
       labelsEffectiveExtent = self.mergedLabelmapGeometryImage.GetExtent()
       # Margin size is relative to combined seed region size, but minimum of 3 voxels
@@ -487,6 +534,10 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
 
       # Automatically hide result segments that are background (all eight corners are non-zero)
       previewNode.GetDisplayNode().SetSegmentVisibility3D(segmentID, not self.isBackgroundLabelmap(newSegmentLabelmap))
+
+    # If the preview was reset, we need to restore the visibility options
+    self.setPreviewOpacity(previewOpacity)
+    self.setPreviewShow3D(previewShow3D)
 
     self.updateGUIFromMRML()
 
