@@ -38,7 +38,7 @@ To create a Slicer package including python libraries, you can *NOT* provide you
     DESTINATION "${Slicer_INSTALL_ROOT}lib/Python/${PYTHON_STDLIB_SUBDIR}/"
     COMPONENT Runtime
     USE_SOURCE_PERMISSIONS
-    REGEX "lib2to3/" EXCLUDE
+    REGEX "lib2to3/tests/" EXCLUDE
     REGEX "lib[-]old/" EXCLUDE
     REGEX "plat[-].*" EXCLUDE
     REGEX "/test/" EXCLUDE
