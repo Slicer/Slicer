@@ -25,6 +25,7 @@
 #include <QtGlobal>
 #include <QMainWindow>
 #include <QSurfaceFormat>
+#include <QSysInfo>
 
 #if defined(Q_OS_WIN32)
   #include <QtPlatformHeaders\QWindowsWindowFunctions> // for setHasBorderInFullScreen
@@ -393,13 +394,29 @@ bool qSlicerApplication::notify(QObject *receiver, QEvent *event)
     {
     return QApplication::notify(receiver, event);
     }
-  catch( std::exception& exception )
+  catch( std::bad_alloc& exception )
     {
     QString errorMessage;
-    errorMessage = tr("%1 has caught an internal error.\n\n").arg(this->applicationName());
-    errorMessage += tr("You may be able to continue from this point, but results are undefined.\n\n");
-    errorMessage += tr("Suggested action is to save your work and restart.");
-    errorMessage += tr("\n\nIf you have a repeatable sequence of steps that causes this message, ");
+    errorMessage = tr("%1 has caught an application error, ").arg(this->applicationName());
+    errorMessage += tr("please save your work and restart.\n\n");
+    errorMessage += tr("The application has run out of memory. ");
+    if (!QSysInfo::kernelType().compare(tr("winnt")))
+      {
+      errorMessage += tr("Increasing virtual memory size in system settings or adding more RAM may fix this issue.\n\n");
+      }
+    else if (!QSysInfo::kernelType().compare(tr("linux")))
+      {
+      errorMessage += tr("Increasing swap size in system settings or adding more RAM may fix this issue.\n\n");
+      }
+    else if (!QSysInfo::kernelType().compare(tr("darwin")))
+      {
+      errorMessage += tr("Increasing free disk space or adding more RAM may fix this issue.\n\n");
+      }
+    else
+      {
+      errorMessage += tr("Adding more RAM may fix this issue.\n\n");
+      }
+    errorMessage += tr("If you have a repeatable sequence of steps that causes this message, ");
     errorMessage += tr("please report the issue following instructions available at http://slicer.org\n\n\n");
     errorMessage += tr("The message detail is:\n\n");
     errorMessage += tr("Exception thrown in event: ") + exception.what();
@@ -410,7 +427,26 @@ bool qSlicerApplication::notify(QObject *receiver, QEvent *event)
       }
     else
       {
-      QMessageBox::critical(this->mainWindow(),tr("Internal Error"), errorMessage);
+      QMessageBox::critical(this->mainWindow(),tr("Application Error"), errorMessage);
+      }
+    }
+  catch( std::exception& exception )
+    {
+    QString errorMessage;
+    errorMessage = tr("%1 has caught an application error, ").arg(this->applicationName());
+    errorMessage += tr("please save your work and restart.\n\n");
+    errorMessage += tr("If you have a repeatable sequence of steps that causes this message, ");
+    errorMessage += tr("please report the issue following instructions available at http://slicer.org\n\n\n");
+    errorMessage += tr("The message detail is:\n\n");
+    errorMessage += tr("Exception thrown in event: ") + exception.what();
+    qCritical() << errorMessage;
+    if (this->commandOptions()->isTestingEnabled())
+      {
+      this->exit(EXIT_FAILURE);
+      }
+    else
+      {
+      QMessageBox::critical(this->mainWindow(),tr("Application Error"), errorMessage);
       }
     }
   return false;
