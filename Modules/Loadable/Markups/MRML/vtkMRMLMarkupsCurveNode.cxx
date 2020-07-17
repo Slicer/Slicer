@@ -691,7 +691,7 @@ bool vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(double f
         // reached end of curve before getting at the requested distance
         // return closest
         foundClosestPointIndex = (pointId < 0 ? 0 : numberOfCurvePoints - 1);
-        curvePoints->GetPoint(startCurvePointId, foundCurvePosition);
+        curvePoints->GetPoint(foundClosestPointIndex, foundCurvePosition);
         return false;
         }
       }
@@ -878,6 +878,15 @@ vtkIdType vtkMRMLMarkupsCurveNode::GetCurvePointIndexAlongCurveWorld(vtkIdType s
   vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(foundCurvePosition, foundClosestPointIndex,
     startCurvePointId, distanceFromStartPoint, points, this->CurveClosed);
   return foundClosestPointIndex;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLMarkupsCurveNode::GetPositionAlongCurveWorld(double foundCurvePosition[3], vtkIdType startCurvePointId, double distanceFromStartPoint)
+{
+  vtkPoints* points = this->GetCurvePointsWorld();
+  vtkIdType foundClosestPointIndex = -1;
+  return vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(foundCurvePosition, foundClosestPointIndex,
+    startCurvePointId, distanceFromStartPoint, points, this->CurveClosed);
 }
 
 //---------------------------------------------------------------------------

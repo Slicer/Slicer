@@ -159,6 +159,13 @@ public:
   /// \return found point index, -1 in case of an error
   vtkIdType GetCurvePointIndexAlongCurveWorld(vtkIdType startCurvePointId, double distanceFromStartPoint);
 
+  /// Get position of a point along the curve relative to the specified start point index.
+  /// The returned position can be between curve points (to match the requested distance as accurately as possible).
+  /// \param startCurvePointId index of the curve point to start the distance measurement from
+  /// \param distanceFromStartPoint distance from the start point
+  /// \return true if a point found exactly at the requested distance
+  bool GetPositionAlongCurveWorld(double foundCurvePosition[3], vtkIdType startCurvePointId, double distanceFromStartPoint);
+
   /// Get direction vector at specified curve point index, in World coordinate system.
   /// \return true on success.
   bool GetCurveDirectionAtPointIndexWorld(vtkIdType curvePointIndex, double directionVectorWorld[3]);
