@@ -289,9 +289,11 @@ void qSlicerModuleFinderDialog::onSelectionChanged(const QItemSelection& selecte
 
   // scroll to the top
   QTextCursor cursor = d->ModuleDescriptionBrowser->textCursor();
-  //cursor.setPosition(0);
   cursor.movePosition(QTextCursor::Start);
   d->ModuleDescriptionBrowser->setTextCursor(cursor);
+
+  QPushButton* okButton = d->ButtonBox->button(QDialogButtonBox::Ok);
+  okButton->setEnabled(module != nullptr);
 }
 
 //---------------------------------------------------------------------------

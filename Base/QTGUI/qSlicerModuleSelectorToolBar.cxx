@@ -352,7 +352,7 @@ void qSlicerModuleSelectorToolBar::showModuleFinder()
   Q_D(qSlicerModuleSelectorToolBar);
   d->ModuleFinder->setFocusToModuleTitleFilter();
   int result = d->ModuleFinder->exec();
-  if (result == QMessageBox::Accepted)
+  if (result == QMessageBox::Accepted && !d->ModuleFinder->currentModuleName().isEmpty())
     {
     this->selectModule(d->ModuleFinder->currentModuleName());
     }
