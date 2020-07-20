@@ -30,7 +30,7 @@
 # If no SOURCE_DIR is provided, it will default to CMAKE_SOURCE_DIR.
 #
 # The macro will define the following variables:
-#  <var-prefix>_WC_TYPE - Either 'git', 'svn' or 'local' - The type will also be 'svn' if 'git-svn' is used.
+#  <var-prefix>_WC_TYPE - Either 'git' or 'local'
 #
 # If a GIT repository is associated with SOURCE_DIR, the macro
 # will define the following variables:
@@ -38,22 +38,12 @@
 #  <var-prefix>_WC_ROOT - Same value as working copy URL
 #  <var-prefix>_WC_REVISION_NAME - Name associated with <var-prefix>_WC_REVISION_HASH
 #  <var-prefix>_WC_REVISION_HASH - current revision
-#  <var-prefix>_WC_REVISION - Equal to <var-prefix>_WC_REVISION_HASH if not a git-svn repository
+#  <var-prefix>_WC_REVISION - Equal to <var-prefix>_WC_REVISION_HASH
 #
-# If a SVN or GIT-SVN repository is associated with SOURCE_DIR, the macro
-# will define the following variables:
-#  <var-prefix>_WC_URL - url of the repository (at SOURCE_DIR)
-#  <var-prefix>_WC_ROOT - root url of the associated SVN repository
-#  <var-prefix>_WC_REVISION - current revision
-#  <var-prefix>_WC_LAST_CHANGED_AUTHOR - author of last commit
-#  <var-prefix>_WC_LAST_CHANGED_DATE - date of last commit
-#  <var-prefix>_WC_LAST_CHANGED_REV - revision of last commit
-#  <var-prefix>_WC_INFO
-#
-# If source directory is not a SVN or GIT, the macro will return early
+# If source directory is not GIT, the macro will return early
 # displaying an warning message:
 #
-#   -- Skipping repository info extraction: directory [/path/to/src] is not a GIT or SVN checkout
+#   -- Skipping repository info extraction: directory [/path/to/src] is not a GIT checkout
 
 macro(SlicerMacroExtractRepositoryInfo)
   include(CMakeParseArguments)
@@ -75,21 +65,12 @@ macro(SlicerMacroExtractRepositoryInfo)
 
   # Clear variables
   set(${wc_info_prefix}_WC_TYPE local)
-  set(${wc_info_prefix}_WC_INFO)
-
-  # Clear SVN, GIT_SVN specific variables
   set(${wc_info_prefix}_WC_URL "NA")
   set(${wc_info_prefix}_WC_ROOT "NA")
-  set(${wc_info_prefix}_WC_REVISION 0)
-  set(${wc_info_prefix}_WC_LAST_CHANGED_AUTHOR)
-  set(${wc_info_prefix}_WC_LAST_CHANGED_DATE "0000-00-00")
-  set(${wc_info_prefix}_WC_LAST_CHANGED_REV)
-  # Clear GIT specific variables
   set(${wc_info_prefix}_WC_REVISION_NAME "NA")
   set(${wc_info_prefix}_WC_REVISION_HASH "NA")
 
-  if(NOT EXISTS ${MY_SOURCE_DIR}/.git
-      AND NOT EXISTS ${MY_SOURCE_DIR}/.svn)
+  if(NOT EXISTS ${MY_SOURCE_DIR}/.git)
 
     message(AUTHOR_WARNING "Skipping repository info extraction: directory [${MY_SOURCE_DIR}] is not a GIT or SVN checkout")
 
@@ -108,34 +89,8 @@ macro(SlicerMacroExtractRepositoryInfo)
 
       set(${wc_info_prefix}_WC_TYPE git)
       GIT_WC_INFO(${MY_SOURCE_DIR} ${wc_info_prefix})
-      if(${wc_info_prefix}_WC_GITSVN)
-        set(${wc_info_prefix}_WC_TYPE svn)
-      endif()
-
-    else()
-
-      find_package(Subversion)
-      if (${Subversion_FOUND})
-        # Is <SOURCE_DIR> a svn working copy ?
-        execute_process(COMMAND ${Subversion_SVN_EXECUTABLE} info
-          WORKING_DIRECTORY ${MY_SOURCE_DIR}
-          RESULT_VARIABLE Subversion_result
-          OUTPUT_QUIET
-          ERROR_QUIET)
-
-        if(${Subversion_result} EQUAL 0)
-
-          set(${wc_info_prefix}_WC_TYPE svn)
-          Subversion_WC_INFO(${MY_SOURCE_DIR} ${wc_info_prefix})
-
-        endif()
-      else()
-        message(WARNING "Subversion is not found. Cannot extract information from SVN repositories.")
-      endif()
 
     endif()
   endif()
 
 endmacro()
-
-

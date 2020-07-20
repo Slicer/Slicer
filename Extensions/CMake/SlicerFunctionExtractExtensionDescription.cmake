@@ -29,10 +29,8 @@ endif()
 # is used to extract information associated with a given extension <file>.
 #
 # The function defines the following variables in the caller scope:
-#  <var-prefix>_EXT_SCM - type of source repository (i.e. 'svn', 'git', 'local')
+#  <var-prefix>_EXT_SCM - type of source repository (i.e. 'git', 'local')
 #  <var-prefix>_EXT_SCMURL - URL of the associated source repository
-#  <var-prefix>_EXT_SVNUSERNAME - Username for Subversion checkout and update
-#  <var-prefix>_EXT_SVNPASSWORD - Password for Subversion checkout and update
 #  <var-prefix>_EXT_SCMREVISION - REVISION associated with the source repository
 #  <var-prefix>_EXT_BUILD_SUBDIRECTORY - Corresponds to the extension inner build directory (default is ".")
 #  <var-prefix>_EXT_DEPENDS - list of dependencies
@@ -116,8 +114,6 @@ function(slicer_extract_extension_description_test)
     SCMREVISION
     )
   set(optional
-    #SVNUSERNAME
-    #SVNPASSWORD
     DEPENDS
     BUILD_SUBDIRECTORY
     HOMEPAGE

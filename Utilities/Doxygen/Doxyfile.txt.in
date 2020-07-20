@@ -764,7 +764,6 @@ EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = moc_*.cxx \
                          ui_*.h \
                          */.git/* \
-                         */.svn/* \
                          */Testing/* \
                          */Plugins/* \
                          */CMake/* \
