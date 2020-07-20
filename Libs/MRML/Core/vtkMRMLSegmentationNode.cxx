@@ -655,19 +655,9 @@ bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage, 
     return false;
     }
 
-  // Always allow paint inside edited segment
-  if (paintInsideSegments)
+  if (!paintInsideSegments)
     {
-    // include edited segment in "inside" mask
-    if (std::find(maskSegmentIDs.begin(), maskSegmentIDs.end(), editedSegmentID) == maskSegmentIDs.end())
-      {
-      // add it if it's not in the segment list already
-      maskSegmentIDs.push_back(editedSegmentID);
-      }
-    }
-  else
-    {
-    // exclude edited segment from "outside" mask
+    // Exclude edited segment from "outside" mask
     maskSegmentIDs.erase(std::remove(maskSegmentIDs.begin(), maskSegmentIDs.end(), editedSegmentID), maskSegmentIDs.end());
     }
 
