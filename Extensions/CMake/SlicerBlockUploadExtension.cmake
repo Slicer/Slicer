@@ -17,7 +17,6 @@ set(expected_defined_vars
   Slicer_QT_VERSION_MAJOR
   Slicer_QT_VERSION_MINOR
   Slicer_REVISION
-  Subversion_SVN_EXECUTABLE
   )
 foreach(var ${expected_defined_vars})
   if(NOT DEFINED ${var})
@@ -31,9 +30,6 @@ set(expected_existing_vars
   Slicer_CMAKE_DIR
   Slicer_DIR
   Slicer_EXTENSIONS_CMAKE_DIR
-  # Since new extension generated from the SuperBuild template
-  # do not require SVN, we do not require it.
-  # Subversion_SVN_EXECUTABLE
   )
 foreach(var ${expected_existing_vars})
   if(NOT EXISTS "${${var}}")
@@ -78,7 +74,6 @@ set(EXTENSION_SCRIPT ${Slicer_EXTENSIONS_CMAKE_DIR}/SlicerBlockBuildPackageAndUp
 set(EXTENSION_COMMAND_ARG_LIST
 "set(CTEST_CMAKE_GENERATOR \"${Slicer_EXTENSION_CMAKE_GENERATOR}\")
 set(GIT_EXECUTABLE \"${GIT_EXECUTABLE}\")
-set(Subversion_SVN_EXECUTABLE \"${Subversion_SVN_EXECUTABLE}\")
 set(CMAKE_MAKE_PROGRAM \"${CMAKE_MAKE_PROGRAM}\")
 set(CMAKE_C_COMPILER \"${CMAKE_C_COMPILER}\")
 set(CMAKE_CXX_COMPILER \"${CMAKE_CXX_COMPILER}\")

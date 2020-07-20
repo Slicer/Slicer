@@ -143,9 +143,6 @@ test_big_endian(CMAKE_WORDS_BIGENDIAN)
 #-----------------------------------------------------------------------------
 # Prerequisites
 #-----------------------------------------------------------------------------
-find_package(Subversion)
-mark_as_superbuild(Subversion_SVN_EXECUTABLE)
-
 find_package(Git)
 if(NOT GIT_FOUND)
   message(FATAL_ERROR "error: Install Git and try to re-configure")
@@ -1162,7 +1159,6 @@ if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
   install(DIRECTORY
     Testing
     DESTINATION ${Slicer_INSTALL_SHARE_DIR} COMPONENT Development
-    PATTERN ".svn" EXCLUDE
     PATTERN "CMakeLists.txt" EXCLUDE
     )
 endif()

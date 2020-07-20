@@ -345,14 +345,6 @@ if(NOT EXISTS "${CTEST_GIT_COMMAND}")
 endif()
 message(STATUS "CTEST_GIT_COMMAND: ${CTEST_GIT_COMMAND}")
 
-if(NOT DEFINED CTEST_SVN_COMMAND)
-  find_program(CTEST_SVN_COMMAND NAMES svn)
-endif()
-if(NOT EXISTS "${CTEST_SVN_COMMAND}")
-  message(WARNING "CTEST_SVN_COMMAND is set to a non-existent path [${CTEST_SVN_COMMAND}]")
-endif()
-message(STATUS "CTEST_SVN_COMMAND: ${CTEST_SVN_COMMAND}")
-
 #-----------------------------------------------------------------------------
 set(CTEST_COMMAND ${CMAKE_CTEST_COMMAND})
 
@@ -587,11 +579,6 @@ CMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}")
       if(DEFINED CMAKE_OSX_DEPLOYMENT_TARGET)
         set(OPTIONAL_CACHE_CONTENT "${OPTIONAL_CACHE_CONTENT}
 CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET}")
-      endif()
-
-      if(DEFINED CTEST_SVN_COMMAND)
-        set(OPTIONAL_CACHE_CONTENT "${OPTIONAL_CACHE_CONTENT}
-Subversion_SVN_EXECUTABLE:FILEPATH=${CTEST_SVN_COMMAND}")
       endif()
 
       #-----------------------------------------------------------------------------

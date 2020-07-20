@@ -64,7 +64,6 @@ function(slicerFunctionGenerateExtensionDescription)
     EXTENSION_WC_URL
     SLICER_REVISION
     SLICER_WC_ROOT
-
     )
   foreach(var ${expected_nonempty_vars})
     if("${MY_${var}}" STREQUAL "")
@@ -140,8 +139,8 @@ function(slicer_generate_extension_description_test)
     EXTENSION_WC_ROOT "https://github.com/jcfr/SlicerToKiwiExporter.git"
     EXTENSION_WC_TYPE "git"
     EXTENSION_WC_URL "https://github.com/jcfr/SlicerToKiwiExporter.git"
-    SLICER_REVISION "21510"
-    SLICER_WC_ROOT "http://svn.slicer.org/Slicer4"
+    SLICER_REVISION "29196"
+    SLICER_WC_ROOT "https://github.com/Slicer/Slicer.git"
     )
 
   # Generate description file of an extension *without* dependencies
