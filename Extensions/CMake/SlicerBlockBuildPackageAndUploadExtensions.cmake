@@ -128,20 +128,6 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
     endif()
     set(ext_ep_options_repository
       GIT_REPOSITORY ${EXTENSION_EXT_SCMURL} GIT_TAG ${ext_revision})
-  elseif("${EXTENSION_EXT_SCM}" STREQUAL "svn")
-    set(EXTENSION_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME})
-    if("${ext_revision}" STREQUAL "")
-      set(ext_revision "HEAD")
-    endif()
-    set(ext_ep_options_repository
-      SVN_REPOSITORY ${EXTENSION_EXT_SCMURL} SVN_REVISION -r ${ext_revision})
-    if(NOT ${EXTENSION_EXT_SVNUSERNAME} STREQUAL "")
-       list(APPEND ext_ep_options_repository
-         SVN_USERNAME "${EXTENSION_EXT_SVNUSERNAME}"
-         SVN_PASSWORD "${EXTENSION_EXT_SVNPASSWORD}"
-         SVN_TRUST_CERT 1
-         )
-    endif()
   elseif("${EXTENSION_EXT_SCM}" STREQUAL "local")
     set(EXTENSION_SOURCE_DIR ${EXTENSION_EXT_SCMURL})
     if(NOT IS_ABSOLUTE ${EXTENSION_SOURCE_DIR})
