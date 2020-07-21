@@ -29,6 +29,7 @@
 #include "ui_qMRMLVolumeInfoWidget.h"
 
 // MRML includes
+#include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
@@ -368,12 +369,24 @@ bool qMRMLVolumeInfoWidget::isCentered()const
 void qMRMLVolumeInfoWidget::center()
 {
   Q_D(qMRMLVolumeInfoWidget);
-  double origin[3];
-  if (!d->centeredOrigin(origin))
+  double centerOrigin[3];
+  if (!d->centeredOrigin(centerOrigin))
     {
     return;
     }
-  d->VolumeNode->SetOrigin(origin);
+  double volumeOrigin[3];
+  d->VolumeNode->GetOrigin(volumeOrigin);
+  vtkNew<vtkMatrix4x4> transformMatrix;
+  transformMatrix->SetElement(0, 3, centerOrigin[0]-volumeOrigin[0]);
+  transformMatrix->SetElement(1, 3, centerOrigin[1]-volumeOrigin[1]);
+  transformMatrix->SetElement(2, 3, centerOrigin[2]-volumeOrigin[2]);
+  std::string transformName = d->VolumeNode->GetName();
+  transformName.append("-CenteringTransform");
+  vtkNew<vtkMRMLLinearTransformNode> centeringTransform;
+  centeringTransform->ApplyTransformMatrix(transformMatrix);
+  centeringTransform->SetName(transformName.c_str());
+  this->mrmlScene()->AddNode(centeringTransform.GetPointer());
+  d->VolumeNode->SetAndObserveTransformNodeID(centeringTransform->GetID());
 }
 
 //------------------------------------------------------------------------------
