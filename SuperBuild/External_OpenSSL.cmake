@@ -94,6 +94,7 @@ You could either:
 include(\"${Slicer_CMAKE_DIR}/ExternalProjectForNonCMakeProject.cmake\")
 set(CMAKE_BINARY_DIR \"${CMAKE_BINARY_DIR}\")
 set(ENV{VS_UNICODE_OUTPUT} \"\")
+set(Slicer_USE_SYSTEM_zlib ${Slicer_USE_SYSTEM_zlib})
 ")
     if(APPLE)
       file(APPEND ${_env_script}
@@ -124,8 +125,10 @@ set(ENV{VS_UNICODE_OUTPUT} \"\")
     file(WRITE ${_configure_script}
 "include(\"${_env_script}\")
 set(${proj}_WORKING_DIR \"${EP_SOURCE_DIR}\")
+if(NOT Slicer_USE_SYSTEM_zlib)
 ExternalProject_Execute(${proj} \"configure-zlib\" cp ${ZLIB_LIBRARY} ${_zlib_library_dir}/libz.a
   )
+endif()
 ExternalProject_Execute(${proj} \"configure\" sh config --prefix=${EP_SOURCE_DIR} --openssldir=${EP_SOURCE_DIR} --libdir=${EP_SOURCE_DIR} --with-zlib-lib=${_zlib_library_dir} --with-zlib-include=${ZLIB_INCLUDE_DIR} threads zlib shared
   )
 ")
