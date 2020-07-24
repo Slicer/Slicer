@@ -150,6 +150,15 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
     return loadables
 
+  def cleanNodeName(self, value):
+    cleanValue = value
+    cleanValue = cleanValue.replace("|", "-")
+    cleanValue = cleanValue.replace("/", "-")
+    cleanValue = cleanValue.replace("\\", "-")
+    cleanValue = cleanValue.replace("*", "(star)")
+    cleanValue = cleanValue.replace("\\", "-")
+    return cleanValue
+
   def examineFiles(self,files):
     """ Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
@@ -162,7 +171,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     # default loadable includes all files for series
     allFilesLoadable = DICOMLoadable()
     allFilesLoadable.files = files
-    allFilesLoadable.name = seriesName
+    allFilesLoadable.name = self.cleanNodeName(seriesName)
     allFilesLoadable.tooltip = "%d files, first file: %s" % (len(allFilesLoadable.files), allFilesLoadable.files[0])
     allFilesLoadable.selected = True
     # add it to the list of loadables later, if pixel data is available in at least one file
@@ -171,8 +180,9 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     subseriesTags = [
         "seriesInstanceUID",
         "acquisitionNumber",
-        # GE volume viewer puts an overview slice and reconstructed slices in one series, using two different image types.
-        # Splitting based on image type allows loading of these volumes.
+        # GE volume viewer and Siemens Axiom CBCT systems put an overview (localizer) slice and all the reconstructed slices
+        # in one series, using two different image types. Splitting based on image type allows loading of these volumes
+        # (loading the series without localizer).
         "imageType",
         "imageOrientationPatient",
         "diffusionGradientOrientation",
@@ -181,6 +191,14 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     if self.allowLoadingByTime():
       subseriesTags.append("contentTime")
       subseriesTags.append("triggerTime")
+
+    # Values for these tags will only be enumerated (value itself will not be part of the loadable name)
+    # because the vale itself is usually too long and complicated to be displayed to users
+    subseriesTagsToEnumerateValues = [
+      "seriesInstanceUID",
+      "imageOrientationPatient",
+      "diffusionGradientOrientation",
+    ]
 
     #
     # first, look for subseries within this series
@@ -212,6 +230,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     # virtual series
     #
     subseriesCount = 0
+    # List of loadables that look like subseries that contain the full series except a single frame
+    probableLocalizerFreeLoadables = []
     for tag in subseriesTags:
       if len(subseriesValues[tag]) > 1:
         subseriesCount += 1
@@ -221,10 +241,19 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
           loadable.files = subseriesFiles[tag,value]
           # value can be a long string (and it will be used for generating node name)
           # therefore use just an index instead
-          loadable.name = seriesName + " - %s %d" % (tag,valueIndex+1)
-          loadable.tooltip = "%d files, grouped by %s = %s. First file: %s" % (len(loadable.files), tag, value, loadable.files[0])
+          if tag in subseriesTagsToEnumerateValues:
+            loadable.name = seriesName + " - %s %d" % (tag, valueIndex+1)
+          else:
+            loadable.name = seriesName + " - %s %s" % (tag, value)
+          loadable.name = self.cleanNodeName(loadable.name)
+          loadable.tooltip = "%d files, grouped by %s = %s. First file: %s. %s = %s" % (len(loadable.files), tag, value, loadable.files[0], tag, value)
           loadable.selected = False
           loadables.append(loadable)
+          if len(subseriesValues[tag]) == 2:
+            otherValue = subseriesValues[tag][1-valueIndex]
+            if len(subseriesFiles[tag,value]) > 1 and len(subseriesFiles[tag, otherValue]) == 1:
+              # this looks like a subseries without a localizer image
+              probableLocalizerFreeLoadables.append(loadable)
 
     # remove any files from loadables that don't have pixel data (no point sending them to ITK for reading)
     # also remove DICOM SEG, since it is not handled by ITK readers
@@ -263,17 +292,29 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     for loadable in loadables:
       loadable.files, distances, loadable.warning = DICOMUtils.getSortedImageFiles(loadable.files, self.epsilon)
 
-    if subseriesCount == 1 and allFilesLoadable.warning != "":
-      # there was a sorting warning and
-      # only one kind of subseries, so it's probably correct
-      # to have lower confidence in the default all-files version.
-      for loadable in loadables:
-        if loadable != allFilesLoadable and loadable.warning == "":
-          allFilesLoadable.confidence = .45
-    # if the allFilesLoadable is selected, turn down confidence in the subseries
-    if allFilesLoadable.confidence != .45:
-      for loadable in loadables:
-        if loadable != allFilesLoadable:
+    loadablesBetterThanAllFiles = []
+    if allFilesLoadable.warning != "":
+      for probableLocalizerFreeLoadable in probableLocalizerFreeLoadables:
+        if probableLocalizerFreeLoadable.warning == "":
+          # localizer-free loadables are better then all files, if they don't have warning
+          loadablesBetterThanAllFiles.append(probableLocalizerFreeLoadable)
+      if not loadablesBetterThanAllFiles and subseriesCount == 1:
+        # there was a sorting warning and
+        # only one kind of subseries, so it's probably correct
+        # to have lower confidence in the default all-files version.
+        for loadable in loadables:
+          if loadable != allFilesLoadable and loadable.warning == "":
+            loadablesBetterThanAllFiles.append(loadable)
+
+    # if there are loadables that are clearly better then all files, then use those (otherwise use all files loadable)
+    preferredLoadables = loadablesBetterThanAllFiles if loadablesBetterThanAllFiles else [allFilesLoadable]
+    # reduce confidence and deselect all non-preferred loadables
+    for loadable in loadables:
+      if loadable in preferredLoadables:
+        loadable.selected = True
+      else:
+        loadable.selected = False
+        if loadable.confidence > .45:
           loadable.confidence = .45
 
     return loadables
