@@ -45,10 +45,10 @@ public:
   /// Example: "Image (*.jpg *.png *.tiff)", "Model (*.vtk)"
   virtual QStringList extensions()const;
 
-  /// Based on the file extensions, returns true if the file can be read,
-  /// false otherwise.
-  /// This function is relatively fast as it doesn't try to access the file.
-  bool canLoadFile(const QString& file)const;
+  /// Returns true if the reader can load this file.
+  /// Default implementation is a simple and fast, it just checks
+  /// if file extension matches any of the wildcards returned by extensions() method.
+  virtual bool canLoadFile(const QString& file)const;
 
   /// Return the matching name filters -> if the fileName is "myimage.nrrd"
   /// and the supported extensions are "Volumes (*.mha *.nrrd *.raw)",
