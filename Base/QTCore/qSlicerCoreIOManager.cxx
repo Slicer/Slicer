@@ -98,7 +98,7 @@ QList<qSlicerFileReader*> qSlicerCoreIOManagerPrivate::readers(const QString& fi
     // in longestExtensionMatch variable.
     int longestExtensionMatch = 0;
     QStringList matchedNameFilters = reader->supportedNameFilters(fileName, &longestExtensionMatch);
-    if (!matchedNameFilters.empty())
+    if (!matchedNameFilters.empty() && reader->canLoadFile(fileName))
       {
       matchingReadersSortedByConfidence.insert(longestExtensionMatch, reader);
       }

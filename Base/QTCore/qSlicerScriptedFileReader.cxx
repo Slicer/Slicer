@@ -45,6 +45,7 @@ public:
     DescriptionMethod = 0,
     FileTypeMethod,
     ExtensionsMethod,
+    CanLoadFileMethod,
     LoadMethod,
     };
 
@@ -63,6 +64,7 @@ qSlicerScriptedFileReaderPrivate::qSlicerScriptedFileReaderPrivate()
   this->PythonCppAPI.declareMethod(Self::DescriptionMethod, "description");
   this->PythonCppAPI.declareMethod(Self::FileTypeMethod, "fileType");
   this->PythonCppAPI.declareMethod(Self::ExtensionsMethod, "extensions");
+  this->PythonCppAPI.declareMethod(Self::CanLoadFileMethod, "canLoadFile");
   this->PythonCppAPI.declareMethod(Self::LoadMethod, "load");
 }
 
@@ -235,6 +237,29 @@ QStringList qSlicerScriptedFileReader::extensions()const
     }
   Py_DECREF(resultAsTuple);
   return extensionList;
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerScriptedFileReader::canLoadFile(const QString& file)const
+{
+  Q_D(const qSlicerScriptedFileReader);
+  PyObject* arguments = PyTuple_New(1);
+  PyTuple_SET_ITEM(arguments, 0, PyString_FromString(file.toUtf8()));
+  PyObject* result = d->PythonCppAPI.callMethod(d->CanLoadFileMethod, arguments);
+  Py_DECREF(arguments);
+  if (!result)
+    {
+    // Method call failed (probably an omitted function), call default implementation
+    return this->Superclass::canLoadFile(file);
+    }
+  if (!PyBool_Check(result))
+    {
+    qWarning() << d->PythonSource
+               << " - In" << d->PythonClassName << "class, function 'canLoadFile' "
+               << "is expected to return a boolean!";
+    return false;
+    }
+  return result == Py_True;
 }
 
 //-----------------------------------------------------------------------------

@@ -68,6 +68,10 @@ public:
   QStringList extensions()const override;
 
   /// Reimplemented to propagate to python methods
+  /// \sa qSlicerFileReader::canLoadFile()
+  bool canLoadFile(const QString& file)const override;
+
+  /// Reimplemented to propagate to python methods
   /// \sa qSlicerFileReader::write()
   bool load(const qSlicerIO::IOProperties& properties) override;
 
