@@ -150,6 +150,15 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
     return loadables
 
+  def cleanNodeName(self, value):
+    cleanValue = value
+    cleanValue = cleanValue.replace("|", "-")
+    cleanValue = cleanValue.replace("/", "-")
+    cleanValue = cleanValue.replace("\\", "-")
+    cleanValue = cleanValue.replace("*", "(star)")
+    cleanValue = cleanValue.replace("\\", "-")
+    return cleanValue
+
   def examineFiles(self,files):
     """ Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
@@ -162,7 +171,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     # default loadable includes all files for series
     allFilesLoadable = DICOMLoadable()
     allFilesLoadable.files = files
-    allFilesLoadable.name = seriesName
+    allFilesLoadable.name = self.cleanNodeName(seriesName)
     allFilesLoadable.tooltip = "%d files, first file: %s" % (len(allFilesLoadable.files), allFilesLoadable.files[0])
     allFilesLoadable.selected = True
     # add it to the list of loadables later, if pixel data is available in at least one file
@@ -182,6 +191,14 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     if self.allowLoadingByTime():
       subseriesTags.append("contentTime")
       subseriesTags.append("triggerTime")
+
+    # Values for these tags will only be enumerated (value itself will not be part of the loadable name)
+    # because the vale itself is usually too long and complicated to be displayed to users
+    subseriesTagsToEnumerateValues = [
+      "seriesInstanceUID",
+      "imageOrientationPatient",
+      "diffusionGradientOrientation",
+    ]
 
     #
     # first, look for subseries within this series
@@ -224,8 +241,12 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
           loadable.files = subseriesFiles[tag,value]
           # value can be a long string (and it will be used for generating node name)
           # therefore use just an index instead
-          loadable.name = seriesName + " - %s %d" % (tag,valueIndex+1)
-          loadable.tooltip = "%d files, grouped by %s = %s. First file: %s" % (len(loadable.files), tag, value, loadable.files[0])
+          if tag in subseriesTagsToEnumerateValues:
+            loadable.name = seriesName + " - %s %d" % (tag, valueIndex+1)
+          else:
+            loadable.name = seriesName + " - %s %s" % (tag, value)
+          loadable.name = self.cleanNodeName(loadable.name)
+          loadable.tooltip = "%d files, grouped by %s = %s. First file: %s. %s = %s" % (len(loadable.files), tag, value, loadable.files[0], tag, value)
           loadable.selected = False
           loadables.append(loadable)
           if len(subseriesValues[tag]) == 2:
