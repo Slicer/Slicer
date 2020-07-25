@@ -110,6 +110,7 @@ protected slots:
 protected:
   QScopedPointer<qSlicerModulesListViewPrivate> d_ptr;
 
+  void changeEvent(QEvent* e) override;
   void keyPressEvent(QKeyEvent * event) override;
 
 private:

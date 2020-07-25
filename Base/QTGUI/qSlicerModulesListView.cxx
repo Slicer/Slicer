@@ -563,3 +563,20 @@ void qSlicerModulesListView::keyPressEvent(QKeyEvent * event)
     }
   this->Superclass::keyPressEvent(event);
 }
+
+//---------------------------------------------------------------------------
+void qSlicerModulesListView::changeEvent(QEvent* e)
+{
+  Q_D(qSlicerModulesListView);
+  switch (e->type())
+    {
+    case QEvent::PaletteChange:
+      {
+      this->updateModules();
+      break;
+      }
+    default:
+      break;
+    }
+  QListView::changeEvent(e);
+}
