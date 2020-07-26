@@ -40,16 +40,17 @@ endif()
 if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
-  pydicom==1.4.2 --hash=sha256:f315ba2296346f4f9913c269618201e170b9326362e2ada6041ca91b7cb2117b
+  pydicom==2.0.0 --hash=sha256:667c5bf9ca52f440e538c9d03ce86b04555c10d069472a5db53103fe40d310c0
   # Hashes correspond to the following packages:
-  #  - Pillow-7.0.0-cp36-cp36m-win_amd64.whl
-  #  - Pillow-7.0.0-cp36-cp36m-macosx_10_6_intel.whl
-  #  - Pillow-7.0.0-cp36-cp36m-manylinux1_x86_64.whl
-  pillow==7.0.0 --hash=sha256:bf598d2e37cf8edb1a2f26ed3fb255191f5232badea4003c16301cb94ac5bdd0 \
-                --hash=sha256:ab76e5580b0ed647a8d8d2d2daee170e8e9f8aad225ede314f684e297e3643c2 \
-                --hash=sha256:8ac6ce7ff3892e5deaab7abaec763538ffd011f74dc1801d93d3c5fc541feee2
-  six==1.14.0 --hash=sha256:8f3cd2e254d8f793e7f3d6d9df77b92252b52637291d0f0da013c76ea2724b6c
-  dicomweb-client==0.21.0 --hash=sha256:e8b46e517a5399b85b2f4e724e54bfe3a934bc22c9c2ba3d0e92eb3e87846228
+  #  - Pillow-7.2.0-cp36-cp36m-win_amd64.whl
+  #  - Pillow-7.2.0-cp36-cp36m-macosx_10_10_x86_64.whl
+  #  - Pillow-7.2.0-cp36-cp36m-manylinux1_x86_64.whl
+  pillow==7.2.0 --hash=sha256:ffe538682dc19cc542ae7c3e504fdf54ca7f86fb8a135e59dd6bc8627eae6cce \
+                --hash=sha256:ec29604081f10f16a7aea809ad42e27764188fc258b02259a03a8ff7ded3808d \
+                --hash=sha256:0a80dd307a5d8440b0a08bd7b81617e04d870e40a3e46a32d9c246e54705e86f
+  six==1.15.0 --hash=sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced
+  retrying==1.3.3 --hash=sha256:08c039560a6da2fe4f2c426d0766e284d3b736e355f8dd24b37367b0bb41973b
+  dicomweb-client==0.41.0 --hash=sha256:e79163362d2af9399d4661216d6bcc3de9af755a1eec36995d35e3e135f22fa0
   ]===])
 
   ExternalProject_Add(${proj}
