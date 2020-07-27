@@ -182,28 +182,34 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
   def onApply(self):
     """Calculate the label statistics
     """
-    if not self.outputTableSelector.currentNode():
-      newTable = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
-      self.outputTableSelector.setCurrentNode(newTable)
-    # Lock GUI
-    self.applyButton.text = "Working..."
-    self.applyButton.setEnabled(False)
-    slicer.app.processEvents()
-    # set up parameters for computation
-    self.logic.getParameterNode().SetParameter("Segmentation", self.segmentationSelector.currentNode().GetID())
-    if self.scalarSelector.currentNode():
-      self.logic.getParameterNode().SetParameter("ScalarVolume", self.scalarSelector.currentNode().GetID())
-    else:
-      self.logic.getParameterNode().UnsetParameter("ScalarVolume")
-    self.logic.getParameterNode().SetParameter("MeasurementsTable", self.outputTableSelector.currentNode().GetID())
-    # Compute statistics
-    self.logic.computeStatistics()
-    self.logic.exportToTable(self.outputTableSelector.currentNode())
-    # Unlock GUI
-    self.applyButton.setEnabled(True)
-    self.applyButton.text = "Apply"
 
-    self.logic.showTable(self.outputTableSelector.currentNode())
+    try:
+      if not self.outputTableSelector.currentNode():
+        newTable = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
+        self.outputTableSelector.setCurrentNode(newTable)
+      # Lock GUI
+      self.applyButton.text = "Working..."
+      self.applyButton.setEnabled(False)
+      slicer.app.processEvents()
+      # set up parameters for computation
+      self.logic.getParameterNode().SetParameter("Segmentation", self.segmentationSelector.currentNode().GetID())
+      if self.scalarSelector.currentNode():
+        self.logic.getParameterNode().SetParameter("ScalarVolume", self.scalarSelector.currentNode().GetID())
+      else:
+        self.logic.getParameterNode().UnsetParameter("ScalarVolume")
+      self.logic.getParameterNode().SetParameter("MeasurementsTable", self.outputTableSelector.currentNode().GetID())
+      # Compute statistics
+      self.logic.computeStatistics()
+      self.logic.exportToTable(self.outputTableSelector.currentNode())
+      self.logic.showTable(self.outputTableSelector.currentNode())
+    except Exception as e:
+      slicer.util.errorDisplay("Failed to compute statistics: "+str(e))
+      import traceback
+      traceback.print_exc()
+    finally:
+      # Unlock GUI
+      self.applyButton.setEnabled(True)
+      self.applyButton.text = "Apply"
 
   def onEditParameters(self, pluginName=None):
     """Open dialog box to edit plugin's parameters"""
@@ -422,20 +428,36 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
     self.reset()
 
     segmentationNode = slicer.mrmlScene.GetNodeByID(self.getParameterNode().GetParameter("Segmentation"))
+    transformedSegmentationNode = None
+    try:
+      if not segmentationNode.GetParentTransformNode() is None:
+        # Create a temporary segmentation and harden the transform to ensure that the statistics are calculated
+        # in world coordinates
+        transformedSegmentationNode = slicer.vtkMRMLSegmentationNode()
+        transformedSegmentationNode.Copy(segmentationNode)
+        transformedSegmentationNode.HideFromEditorsOn()
+        slicer.mrmlScene.AddNode(transformedSegmentationNode)
+        transformedSegmentationNode.HardenTransform()
+        self.getParameterNode().SetParameter("Segmentation", transformedSegmentationNode.GetID())
 
-    # Get segment ID list
-    visibleSegmentIds = vtk.vtkStringArray()
-    if self.getParameterNode().GetParameter('visibleSegmentsOnly')=='True':
-      segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(visibleSegmentIds)
-    else:
-      segmentationNode.GetSegmentation().GetSegmentIDs(visibleSegmentIds)
-    if visibleSegmentIds.GetNumberOfValues() == 0:
-      logging.debug("computeStatistics will not return any results: there are no visible segments")
+      # Get segment ID list
+      visibleSegmentIds = vtk.vtkStringArray()
+      if self.getParameterNode().GetParameter('visibleSegmentsOnly')=='True':
+        segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(visibleSegmentIds)
+      else:
+        segmentationNode.GetSegmentation().GetSegmentIDs(visibleSegmentIds)
+      if visibleSegmentIds.GetNumberOfValues() == 0:
+        logging.debug("computeStatistics will not return any results: there are no visible segments")
 
-    # update statistics for all segment IDs
-    for segmentIndex in range(visibleSegmentIds.GetNumberOfValues()):
-      segmentID = visibleSegmentIds.GetValue(segmentIndex)
-      self.updateStatisticsForSegment(segmentID)
+      # update statistics for all segment IDs
+      for segmentIndex in range(visibleSegmentIds.GetNumberOfValues()):
+        segmentID = visibleSegmentIds.GetValue(segmentIndex)
+        self.updateStatisticsForSegment(segmentID)
+    finally:
+      if not transformedSegmentationNode is None:
+        # We made a copy and hardened the segmentation transform
+        self.getParameterNode().SetParameter("Segmentation", segmentationNode.GetID())
+        slicer.mrmlScene.RemoveNode(transformedSegmentationNode)
 
   def updateStatisticsForSegment(self, segmentID):
     """
