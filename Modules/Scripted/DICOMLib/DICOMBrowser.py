@@ -1,4 +1,5 @@
 from __future__ import print_function
+import ctk
 import os, copy
 import qt
 import vtk
@@ -112,7 +113,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
     #
     self.loadableTableFrame = qt.QWidget()
     self.loadableTableFrame.setMaximumHeight(200)
-    self.loadableTableLayout = qt.QFormLayout(self.loadableTableFrame)
+    self.loadableTableLayout = qt.QVBoxLayout(self.loadableTableFrame)
     self.layout().addWidget(self.loadableTableFrame)
 
     self.loadableTableLayout.addWidget(self.userFrame)
@@ -174,7 +175,15 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
     # Plugin selection widget
     #
     self.pluginSelector = DICOMLib.DICOMPluginSelector(self)
-    self.loadableTableLayout.addRow(self.pluginSelector, self.loadableTable)
+    self.pluginSelector.visible = False
+    loadableTableRowLayout = qt.QHBoxLayout()
+    self.pluginSelectorExpandButton = ctk.ctkExpandButton()
+    self.pluginSelectorExpandButton.mirrorOnExpand = True
+    self.pluginSelectorExpandButton.connect('toggled(bool)', self.pluginSelector, 'setVisible(bool)')
+    loadableTableRowLayout.addWidget(self.pluginSelector)
+    loadableTableRowLayout.addWidget(self.pluginSelectorExpandButton)
+    loadableTableRowLayout.addWidget(self.loadableTable)
+    self.loadableTableLayout.addLayout(loadableTableRowLayout)
     self.checkBoxByPlugins = []
 
     for pluginClass in slicer.modules.dicomPlugins:
@@ -681,9 +690,10 @@ class DICOMLoadableTable(qt.QTableWidget):
     self.setHorizontalHeaderLabels(['DICOM Data', 'Reader', 'Warnings'])
     self.setSelectionBehavior(qt.QTableView.SelectRows)
     self.horizontalHeader().setSectionResizeMode(qt.QHeaderView.Stretch)
-    self.horizontalHeader().setSectionResizeMode(0, qt.QHeaderView.ResizeToContents)
-    self.horizontalHeader().setSectionResizeMode(1, qt.QHeaderView.Stretch)
+    self.horizontalHeader().setSectionResizeMode(0, qt.QHeaderView.Interactive)
+    self.horizontalHeader().setSectionResizeMode(1, qt.QHeaderView.ResizeToContents)
     self.horizontalHeader().setSectionResizeMode(2, qt.QHeaderView.Stretch)
+    self.horizontalScrollMode = qt.QAbstractItemView.ScrollPerPixel
 
   def addLoadableRow(self, loadable, row, reader):
     self.insertRow(row)
