@@ -65,6 +65,8 @@ qSlicerSegmentationsIOOptionsWidget::qSlicerSegmentationsIOOptionsWidget(QWidget
 
   connect(d->AutoOpacitiesCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(updateProperties()));
+  connect(d->ColorNodeSelector, SIGNAL(currentNodeIDChanged(QString)),
+          this, SLOT(updateProperties()));
 }
 
 //-----------------------------------------------------------------------------
@@ -76,4 +78,5 @@ void qSlicerSegmentationsIOOptionsWidget::updateProperties()
   Q_D(qSlicerSegmentationsIOOptionsWidget);
 
   d->Properties["autoOpacities"] = d->AutoOpacitiesCheckBox->isChecked();
+  d->Properties["colorNodeID"] = d->ColorNodeSelector->currentNodeID();
 }

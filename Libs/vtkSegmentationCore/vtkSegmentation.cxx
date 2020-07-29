@@ -1374,8 +1374,8 @@ bool vtkSegmentation::GenerateMergedLabelmap(
   vtkOrientedImageData* sharedImageData,
   int extentComputationMode,
   vtkOrientedImageData* sharedLabelmapGeometry/*=nullptr*/,
-  const std::vector<std::string>& segmentIDs/*=std::vector<std::string>()*/
-)
+  const std::vector<std::string>& segmentIDs/*=std::vector<std::string>()*/,
+  vtkIntArray* labelValues/*=nullptr*/)
 {
   if (!sharedImageData)
     {
@@ -1398,6 +1398,12 @@ bool vtkSegmentation::GenerateMergedLabelmap(
   else
     {
     sharedSegmentIDs = segmentIDs;
+    }
+
+  if (labelValues && labelValues->GetNumberOfValues() != sharedSegmentIDs.size())
+    {
+    vtkErrorMacro("GenerateSharedLabelmap: Number of label values does not equal the number of segment IDs");
+    return false;
     }
 
   // Determine common labelmap geometry that will be used for the shared labelmap
@@ -1462,8 +1468,8 @@ bool vtkSegmentation::GenerateMergedLabelmap(
 
   // Create shared labelmap
   bool success = true;
-  short colorIndex = backgroundColorIndex + 1;
-  for (std::vector<std::string>::iterator segmentIdIt = sharedSegmentIDs.begin(); segmentIdIt != sharedSegmentIDs.end(); ++segmentIdIt, ++colorIndex)
+  short segmentIndex = 0;
+  for (std::vector<std::string>::iterator segmentIdIt = sharedSegmentIDs.begin(); segmentIdIt != sharedSegmentIDs.end(); ++segmentIdIt, ++segmentIndex)
     {
     std::string currentSegmentId = *segmentIdIt;
     vtkSegment* currentSegment = this->GetSegment(currentSegmentId);
@@ -1516,6 +1522,12 @@ bool vtkSegmentation::GenerateMergedLabelmap(
     thresholdedLabelmap->CopyDirections(binaryLabelmap);
     binaryLabelmap = thresholdedLabelmap;
 
+    int labelValue = backgroundColorIndex + 1 + segmentIndex;
+    if (labelValues)
+      {
+      labelValue = labelValues->GetValue(segmentIndex);
+      }
+
     // Copy image data voxels into shared labelmap with the proper color index
     vtkOrientedImageDataResample::ModifyImage(
       sharedImageData,
@@ -1523,7 +1535,7 @@ bool vtkSegmentation::GenerateMergedLabelmap(
       vtkOrientedImageDataResample::OPERATION_MASKING,
       nullptr,
       0,
-      colorIndex);
+      labelValue);
     }
 
   return success;

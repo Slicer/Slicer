@@ -71,6 +71,8 @@ signals:
   void exportToFilesDone();
 
 public slots:
+  void setMRMLScene(vtkMRMLScene* mrmlScene) override;
+
   /// Set segmentation MRML node
   void setSegmentationNode(vtkMRMLSegmentationNode* node);
   void setSegmentationNode(vtkMRMLNode* node);
@@ -82,9 +84,13 @@ public slots:
   void updateWidgetFromSettings();
   void updateSettingsFromWidget();
 
+  void updateWidgetFromMRML();
+
 protected slots:
 
   void setFileFormat(const QString&);
+  void setColorNodeID(const QString&);
+  void setUseLabelsFromColorNode(bool useColorNode);
 
 protected:
   QScopedPointer<qMRMLSegmentationFileExportWidgetPrivate> d_ptr;

@@ -802,6 +802,8 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
       }
     }
 
+  vtkMRMLColorTableNode* exportColorTableNode = segmentationNode->GetLabelmapConversionColorTableNode();
+
   // Add the created segments to the segmentation
   for (int segmentIndex = 0; segmentIndex < static_cast<int>(segments.size()); ++segmentIndex)
     {
@@ -855,7 +857,20 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
       {
       std::stringstream segmentNameSS;
       segmentNameSS << "Segment_" << currentSegment->GetLabelValue();
-      currentSegmentID = segmentation->GenerateUniqueSegmentID(segmentNameSS.str());
+      std::string segmentName = segmentNameSS.str();
+      if (exportColorTableNode)
+        {
+        const char* colorName = exportColorTableNode->GetColorName(currentSegment->GetLabelValue());
+        if (colorName)
+          {
+          segmentName = colorName;
+          }
+
+        double color[4] = { 0.0, 0.0, 0.0 };
+        exportColorTableNode->GetColor(currentSegment->GetLabelValue(), color);
+        currentSegment->SetColor(color);
+        }
+      currentSegmentID = segmentation->GenerateUniqueSegmentID(segmentName);
       currentSegment->SetName(currentSegmentID.c_str());
       }
     segmentation->AddSegment(currentSegment, currentSegmentID);

@@ -40,6 +40,7 @@
 class vtkAbstractTransform;
 class vtkCallbackCommand;
 class vtkCollection;
+class vtkIntArray;
 class vtkStringArray;
 
 /// \ingroup SegmentationCore
@@ -309,8 +310,18 @@ public:
 #ifndef __VTK_WRAP__
   /// Create a merged labelmap from the segment IDs
   /// If no segment IDs are specified, then all segments will be merged
+  /// \param mergedImageData Output image data for the merged labelmap image data. Voxels of background volume will be
+  /// of signed short type. Label value of n-th segment in segmentIDs list will be (n + 1), or will be specified in labelValues.
+  /// Label value of background = 0.
+  /// \param extentComputationMode Input that determines how to compute extents (EXTENT_REFERENCE_GEOMETRY, EXTENT_UNION_OF_SEGMENTS,
+  ///   EXTENT_UNION_OF_SEGMENTS_PADDED, EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, or EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED).
+  /// \param mergedLabelmapGeometry Determines geometry of merged labelmap if not nullptr, automatically determined otherwise
+  /// \param segmentIDs List of IDs of segments to include in the merged labelmap. If empty or missing, then all segments are included
+  /// \param labelValues Input list of label values that will be used in the merged labelmap.
+  ///   If not specified, then the label values in the segmentation will be used.
+  ///   The size of the array should match the number of segment IDs used in the merged labelmap.
   bool GenerateMergedLabelmap(vtkOrientedImageData* mergedImageData, int extentComputationMode, vtkOrientedImageData* mergedLabelmapGeometry = nullptr,
-    const std::vector<std::string>& segmentIDs = std::vector<std::string>());
+    const std::vector<std::string>& segmentIDs = std::vector<std::string>(), vtkIntArray* labelValues = nullptr);
 #endif // __VTK_WRAP__
 
  /// Shared labelmap utility functions

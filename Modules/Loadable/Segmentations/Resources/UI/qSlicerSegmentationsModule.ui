@@ -635,13 +635,39 @@
           </widget>
          </item>
          <item row="2" column="0">
-          <widget class="QLabel" name="label_TerminologyContext">
+          <widget class="QLabel" name="UseColorTableValuesLabel">
            <property name="text">
-            <string>Terminology context:</string>
+            <string>Use color table values:</string>
            </property>
           </widget>
          </item>
          <item row="2" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QCheckBox" name="UseColorTableValuesCheckBox">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="qMRMLNodeComboBox" name="ColorTableNodeSelector">
+             <property name="nodeTypes">
+              <stringlist>
+               <string>vtkMRMLColorTableNode</string>
+              </stringlist>
+             </property>
+             <property name="addEnabled">
+              <bool>false</bool>
+             </property>
+             <property name="removeEnabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="3" column="1">
           <widget class="ctkComboBox" name="ComboBox_TerminologyContext">
            <property name="toolTip">
             <string>Labels of the imported labelmap will be mapped to terminology entries of this context</string>
@@ -651,6 +677,13 @@
            </property>
            <property name="defaultText">
             <string>Choose terminology...</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_TerminologyContext">
+           <property name="text">
+            <string>Terminology context:</string>
            </property>
           </widget>
          </item>
@@ -731,11 +764,11 @@
       </item>
       <item row="2" column="0">
        <widget class="QLabel" name="label_OverwriteSegmentsText">
-        <property name="text">
-         <string>Force collapse to single layer:</string>
-        </property>
         <property name="toolTip">
          <string>Forcing all segments to a single layer will modify overlapping segments. Regions where multiple segments overlap will be assigned to the segment closest to the end of the segment list.</string>
+        </property>
+        <property name="text">
+         <string>Force collapse to single layer:</string>
         </property>
        </widget>
       </item>
@@ -757,11 +790,11 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="text">
-         <string>Collapse labelmap layers</string>
-        </property>
         <property name="toolTip">
          <string>Minimize the number of layers by moving segments to shared layers to minimize memory usage. Contents of segments are not modified unless there are overlapping segments and collapsing to a single layer is forced.</string>
+        </property>
+        <property name="text">
+         <string>Collapse labelmap layers</string>
         </property>
        </widget>
       </item>
@@ -979,6 +1012,22 @@
     <hint type="destinationlabel">
      <x>275</x>
      <y>708</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerSegmentationsModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ColorTableNodeSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>169</x>
+     <y>431</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>224</x>
+     <y>699</y>
     </hint>
    </hints>
   </connection>

@@ -190,7 +190,15 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
       autoOpacities = properties["autoOpacities"].toBool();
       }
 
-    vtkMRMLSegmentationNode* node = d->SegmentationsLogic->LoadSegmentationFromFile(fileName.toUtf8().constData(), autoOpacities, name.toUtf8());
+    vtkMRMLColorTableNode* colorTableNode = nullptr;
+    if (properties.contains("colorNodeID"))
+      {
+      std::string nodeID = properties["colorNodeID"].toString().toStdString();
+      colorTableNode = vtkMRMLColorTableNode::SafeDownCast(this->mrmlScene()->GetNodeByID(nodeID));
+      }
+
+    vtkMRMLSegmentationNode* node = d->SegmentationsLogic->LoadSegmentationFromFile(
+      fileName.toUtf8().constData(), autoOpacities, name.toUtf8(), colorTableNode);
     if (!node)
       {
       this->setLoadedNodes(QStringList());

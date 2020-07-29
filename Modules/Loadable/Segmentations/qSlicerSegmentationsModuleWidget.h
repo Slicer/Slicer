@@ -125,6 +125,8 @@ protected slots:
   void updateImportExportWidgets();
   void onImportExportApply();
   void onImportExportClearSelection();
+  void updateExportColorWidgets();
+  void onExportColorTableChanged();
 
   void onMoveFromCurrentSegmentation();
   void onCopyFromCurrentSegmentation();
