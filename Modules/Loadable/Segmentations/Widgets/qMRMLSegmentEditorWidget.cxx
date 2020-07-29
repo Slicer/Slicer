@@ -3567,6 +3567,7 @@ void qMRMLSegmentEditorWidget::onExportToFilesActionClicked()
   // Create file export widget to allow user editing conversion details
 
   qMRMLSegmentationFileExportWidget* exportToFileWidget = new qMRMLSegmentationFileExportWidget(exportDialog);
+  exportToFileWidget->setMRMLScene(this->mrmlScene());
   exportToFileWidget->setSegmentationNode(d->SegmentationNode);
   exportToFileWidget->setSettingsKey("ExportSegmentsToFiles");
   layout->addWidget(exportToFileWidget);

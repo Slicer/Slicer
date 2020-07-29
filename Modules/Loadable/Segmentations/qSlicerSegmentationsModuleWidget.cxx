@@ -241,6 +241,9 @@ void qSlicerSegmentationsModuleWidget::updateWidgetFromMRML()
   // Update copy/move/import/export buttons from selection
   this->updateCopyMoveButtonStates();
 
+  // Update export color checkbox/selector
+  this->updateExportColorWidgets();
+
   // Update layer info widgets
   this->updateLayerWidgets();
 
@@ -332,6 +335,11 @@ void qSlicerSegmentationsModuleWidget::init()
     this, SLOT(onImportExportApply()));
   connect(d->pushButton_ClearSelection, SIGNAL(clicked()),
     this, SLOT(onImportExportClearSelection()));
+
+  connect(d->UseColorTableValuesCheckBox, SIGNAL(clicked()),
+    this, SLOT(updateExportColorWidgets()));
+  connect(d->ColorTableNodeSelector, SIGNAL(currentNodeIDChanged(const QString&)),
+    this, SLOT(onExportColorTableChanged()));
 
   d->ExportToFilesWidget->setSettingsKey("ExportSegmentsToFiles");
   connect(d->MRMLNodeComboBox_Segmentation, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
@@ -662,6 +670,33 @@ void qSlicerSegmentationsModuleWidget::updateImportExportWidgets()
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerSegmentationsModuleWidget::updateExportColorWidgets()
+{
+  Q_D(qSlicerSegmentationsModuleWidget);
+  d->ColorTableNodeSelector->setEnabled(d->UseColorTableValuesCheckBox->isChecked());
+
+  vtkMRMLColorTableNode* exportColorTableNode = nullptr;
+  if (d->SegmentationNode)
+    {
+    exportColorTableNode = d->SegmentationNode->GetLabelmapConversionColorTableNode();
+    }
+  d->ColorTableNodeSelector->setCurrentNode(exportColorTableNode);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentationsModuleWidget::onExportColorTableChanged()
+{
+  Q_D(qSlicerSegmentationsModuleWidget);
+  if (!d->SegmentationNode)
+    {
+    return;
+    }
+
+  std::string currentNodeID = d->ColorTableNodeSelector->currentNodeID().toStdString();
+  d->SegmentationNode->SetLabelmapConversionColorTableNodeID(currentNodeID.c_str());
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSegmentationsModuleWidget::onImportExportApply()
 {
   Q_D(qSlicerSegmentationsModuleWidget);
@@ -900,13 +935,20 @@ bool qSlicerSegmentationsModuleWidget::exportFromCurrentSegmentation()
     folderItem = shNode->CreateFolderItem(shNode->GetSceneItemID(), shNode->GenerateUniqueItemName(exportedItemName));
     }
 
+  vtkMRMLColorTableNode* colorTableNode = nullptr;
+  if (d->UseColorTableValuesCheckBox->isChecked())
+    {
+    colorTableNode = vtkMRMLColorTableNode::SafeDownCast(d->ColorTableNodeSelector->currentNode());
+    }
+
   // Do the export
   if (labelmapNode)
     {
     // Export selected segments into a multi-label labelmap volume
     QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
     bool success = vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(currentSegmentationNode, segmentIDs, labelmapNode,
-      vtkMRMLVolumeNode::SafeDownCast(d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->currentNode()), vtkSegmentation::EXTENT_REFERENCE_GEOMETRY);
+      vtkMRMLVolumeNode::SafeDownCast(d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->currentNode()), vtkSegmentation::EXTENT_REFERENCE_GEOMETRY,
+      colorTableNode);
     QApplication::restoreOverrideCursor();
     if (!success)
       {

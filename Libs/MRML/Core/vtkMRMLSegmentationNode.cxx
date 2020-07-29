@@ -87,6 +87,9 @@ vtkMRMLSegmentationNode::vtkMRMLSegmentationNode()
   this->ContentModifiedEvents->InsertNextValue(vtkSegmentation::SegmentRemoved);
   this->ContentModifiedEvents->InsertNextValue(vtkSegmentation::SegmentModified);
   this->ContentModifiedEvents->InsertNextValue(vtkSegmentation::SegmentsOrderModified);
+
+  this->AddNodeReferenceRole(this->GetLabelmapConversionColorTableNodeReferenceRole(),
+    this->GetLabelmapConversionColorTableNodeReferenceMRMLAttributeName());
 }
 
 //----------------------------------------------------------------------------
@@ -538,15 +541,16 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(
   vtkOrientedImageData* mergedImageData,
   int extentComputationMode,
   vtkOrientedImageData* mergedLabelmapGeometry/*=nullptr*/,
-  const std::vector<std::string>& segmentIDs/*=std::vector<std::string>()*/
+  const std::vector<std::string>& segmentIDs/*=std::vector<std::string>()*/,
+  vtkIntArray* labelValues/*=nullptr*/
   )
 {
-  return this->Segmentation->GenerateMergedLabelmap(mergedImageData, extentComputationMode, mergedLabelmapGeometry, segmentIDs);
+  return this->Segmentation->GenerateMergedLabelmap(mergedImageData, extentComputationMode, mergedLabelmapGeometry, segmentIDs, labelValues);
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLSegmentationNode::GenerateMergedLabelmapForAllSegments(vtkOrientedImageData* mergedImageData, int extentComputationMode,
-  vtkOrientedImageData* mergedLabelmapGeometry /*=nullptr*/, vtkStringArray* segmentIDs /*=nullptr*/)
+  vtkOrientedImageData* mergedLabelmapGeometry /*=nullptr*/, vtkStringArray* segmentIDs /*=nullptr*/, vtkIntArray* labelValues/*nullptr*/)
 {
   std::vector<std::string> segmentIDsVector;
   if (segmentIDs)
@@ -556,7 +560,7 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmapForAllSegments(vtkOrientedIm
       segmentIDsVector.push_back(segmentIDs->GetValue(i));
       }
     }
-  return this->GenerateMergedLabelmap(mergedImageData, extentComputationMode, mergedLabelmapGeometry, segmentIDsVector);
+  return this->GenerateMergedLabelmap(mergedImageData, extentComputationMode, mergedLabelmapGeometry, segmentIDsVector, labelValues);
 }
 
 //-----------------------------------------------------------------------------
@@ -1178,4 +1182,16 @@ void vtkMRMLSegmentationNode::GetSegmentCenterRAS(const std::string& segmentID, 
     centerRAS[1] = segmentCenterPositionRAS[1];
     centerRAS[2] = segmentCenterPositionRAS[2];
     }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSegmentationNode::SetLabelmapConversionColorTableNodeID(const char* labelmapConversionColorTableNodeID)
+{
+  this->SetNodeReferenceID(this->GetLabelmapConversionColorTableNodeReferenceRole(), labelmapConversionColorTableNodeID);
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLColorTableNode* vtkMRMLSegmentationNode::GetLabelmapConversionColorTableNode()
+{
+  return vtkMRMLColorTableNode::SafeDownCast(this->GetNodeReference(this->GetLabelmapConversionColorTableNodeReferenceRole()));
 }
