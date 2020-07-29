@@ -53,6 +53,11 @@ vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
   this->SliceDisplayMode = SliceDisplayIntersection;
   this->BackfaceCulling = 0;
 
+  // Backface color has slightly different hue and less saturated compared to frontface
+  this->BackfaceColorHSVOffset[0] = -0.05;
+  this->BackfaceColorHSVOffset[1] = -0.1;
+  this->BackfaceColorHSVOffset[2] = 0.0;
+
   // the default behavior for models is to use the scalar range of the data
   // to reset the display scalar range, so use the Data flag
   this->SetScalarRangeFlag(vtkMRMLDisplayNode::UseDataScalarRange);
@@ -83,6 +88,7 @@ void vtkMRMLModelDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintEnumMacro(SliceDisplayMode);
   vtkMRMLPrintBooleanMacro(ThresholdEnabled);
   vtkMRMLPrintVectorMacro(ThresholdRange, double, 2);
+  vtkMRMLPrintVectorMacro(BackfaceColorHSVOffset, double, 3);
   vtkMRMLPrintEndMacro();
 }
 
@@ -96,6 +102,7 @@ void vtkMRMLModelDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLEnumMacro(sliceDisplayMode, SliceDisplayMode);
   vtkMRMLWriteXMLBooleanMacro(thresholdEnabled, ThresholdEnabled);
   vtkMRMLWriteXMLVectorMacro(thresholdRange, ThresholdRange, double, 2);
+  vtkMRMLWriteXMLVectorMacro(backfaceColorHSVOffset, BackfaceColorHSVOffset, double, 3);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -109,6 +116,7 @@ void vtkMRMLModelDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLEnumMacro(sliceDisplayMode, SliceDisplayMode);
   vtkMRMLReadXMLBooleanMacro(thresholdEnabled, ThresholdEnabled);
   vtkMRMLReadXMLVectorMacro(thresholdRange, ThresholdRange, double, 2);
+  vtkMRMLReadXMLVectorMacro(backfaceColorHSVOffset, BackfaceColorHSVOffset, double, 3);
   vtkMRMLReadXMLEndMacro();
 
   this->EndModify(disabledModify);
@@ -130,6 +138,7 @@ void vtkMRMLModelDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
   vtkMRMLCopyEnumMacro(SliceDisplayMode);
   vtkMRMLCopyBooleanMacro(ThresholdEnabled);
   vtkMRMLCopyVectorMacro(ThresholdRange, double, 2);
+  vtkMRMLCopyVectorMacro(BackfaceColorHSVOffset, double, 3);
   vtkMRMLCopyEndMacro();
 }
 

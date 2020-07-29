@@ -135,6 +135,10 @@ public slots:
   void setLineWidth(double);
   void setShowFaces(int);
   void setColor(const QColor&);
+  void setBackfaceHueOffset(double newOffset);
+  void setBackfaceSaturationOffset(double newOffset);
+  void setBackfaceBrightnessOffset(double newOffset);
+
   void setOpacity(double);
   void setEdgeVisibility(bool);
   void setEdgeColor(const QColor&);

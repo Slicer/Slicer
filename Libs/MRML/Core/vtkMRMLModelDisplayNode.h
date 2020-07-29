@@ -170,6 +170,12 @@ public:
   /// Returns the current active scalar array (based on active scalar name and location)
   virtual vtkDataArray* GetActiveScalarArray();
 
+  ///
+  /// Set color of backface surface as HSV (hue, saturation, brighness) offset compared to node color.
+  /// Values are in [-1, 1] range, 0 value means same as node color.
+  vtkSetVector3Macro(BackfaceColorHSVOffset, double);
+  vtkGetVector3Macro(BackfaceColorHSVOffset, double);
+
 protected:
   vtkMRMLModelDisplayNode();
   ~vtkMRMLModelDisplayNode() override;
@@ -223,6 +229,8 @@ protected:
 
   /// Temporary variable to allow GetThresholdRange() method to return threshold range as a pointer
   double ThresholdRangeTemp[2];
+
+  double BackfaceColorHSVOffset[3];
 };
 
 #endif
