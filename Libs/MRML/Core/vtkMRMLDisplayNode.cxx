@@ -74,9 +74,10 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
   this->ScalarRange[0] = 0;
   this->ScalarRange[1] = 100;
 
-  this->Color[0] = 0.5;
-  this->Color[1] = 0.5;
-  this->Color[2] = 0.5;
+  // Set default color to yellow to have some contrast compared to grayscale images
+  this->Color[0] = 0.9;
+  this->Color[1] = 0.9;
+  this->Color[2] = 0.3;
   this->EdgeColor[0] = 0.0;
   this->EdgeColor[1] = 0.0;
   this->EdgeColor[2] = 0.0;
