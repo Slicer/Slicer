@@ -1591,6 +1591,37 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
         actor->SetTexture(nullptr);
         actor->ForceOpaqueOff();
         }
+
+      // Set backface properties
+      vtkProperty* actorBackfaceProperties = actor->GetBackfaceProperty();
+      if (!actorBackfaceProperties)
+        {
+        vtkNew<vtkProperty> newActorBackfaceProperties;
+        actor->SetBackfaceProperty(newActorBackfaceProperties);
+        actorBackfaceProperties = newActorBackfaceProperties;
+        }
+      actorBackfaceProperties->DeepCopy(actorProperties);
+
+      double offsetHsv[3];
+      modelDisplayNode->GetBackfaceColorHSVOffset(offsetHsv);
+
+      double colorHsv[3];
+      vtkMath::RGBToHSV(actorProperties->GetColor(), colorHsv);
+      double colorRgb[3];
+      colorHsv[0] += offsetHsv[0];
+      // wrap around hue value
+      if (colorHsv[0] < 0.0)
+        {
+        colorHsv[0] += 1.0;
+        }
+      else if (colorHsv[0] > 1.0)
+        {
+        colorHsv[0] -= 1.0;
+        }
+      colorHsv[1] = vtkMath::ClampValue<double>(colorHsv[1] + offsetHsv[1], 0, 1);
+      colorHsv[2] = vtkMath::ClampValue<double>(colorHsv[2] + offsetHsv[2], 0, 1);
+      vtkMath::HSVToRGB(colorHsv, colorRgb);
+      actorBackfaceProperties->SetColor(colorRgb);
       }
     else if (imageActor)
       {

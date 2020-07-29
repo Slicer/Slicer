@@ -136,6 +136,13 @@ void qMRMLModelDisplayNodeWidgetPrivate::init()
   q->connect(this->EdgeColorPickerButton, SIGNAL(colorChanged(QColor)),
     q, SLOT(setEdgeColor(QColor)));
 
+  q->connect(this->BackfaceHueOffsetSpinBox, SIGNAL(valueChanged(double)),
+    q, SLOT(setBackfaceHueOffset(double)));
+  q->connect(this->BackfaceSaturationOffsetSpinBox, SIGNAL(valueChanged(double)),
+    q, SLOT(setBackfaceSaturationOffset(double)));
+  q->connect(this->BackfaceBrightnessOffsetSpinBox, SIGNAL(valueChanged(double)),
+    q, SLOT(setBackfaceBrightnessOffset(double)));
+
   q->connect(this->LightingCheckBox, SIGNAL(toggled(bool)),
     q, SLOT(setLighting(bool)));
   q->connect(this->InterpolationComboBox, SIGNAL(currentIndexChanged(int)),
@@ -701,8 +708,11 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   d->PointSizeSliderWidget->setEnabled(showPointSize);
 
   d->LineWidthSliderWidget->setValue(d->CurrentDisplayNode->GetLineWidth());
-  bool showLineWidth = (d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_WIREFRAME)
-    || (d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_SURFACE && d->CurrentDisplayNode->GetEdgeVisibility());
+  // Enable line width editing in REPRESENTATION_SURFACE mode regardless of edge visibility,
+  // because if the model consists only of lines then line width will make a difference
+  // even if edge visibility is disabled.
+  bool showLineWidth = (d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_WIREFRAME
+    || d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_SURFACE);
   d->LineWidthSliderWidget->setEnabled(showLineWidth);
 
   if (!d->CurrentDisplayNode->GetFrontfaceCulling() && d->CurrentDisplayNode->GetBackfaceCulling())
@@ -733,6 +743,21 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   bool showEdgeColor =
     (d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_SURFACE && d->CurrentDisplayNode->GetEdgeVisibility());
   d->EdgeColorPickerButton->setEnabled(showEdgeColor);
+
+  if (d->CurrentModelDisplayNode)
+    {
+    double hsvOffset[3];
+    d->CurrentModelDisplayNode->GetBackfaceColorHSVOffset(hsvOffset);
+    QSignalBlocker blocker1(d->BackfaceHueOffsetSpinBox);
+    QSignalBlocker blocker2(d->BackfaceSaturationOffsetSpinBox);
+    QSignalBlocker blocker3(d->BackfaceSaturationOffsetSpinBox);
+    d->BackfaceHueOffsetSpinBox->setValue(hsvOffset[0]);
+    d->BackfaceSaturationOffsetSpinBox->setValue(hsvOffset[1]);
+    d->BackfaceBrightnessOffsetSpinBox->setValue(hsvOffset[2]);
+    }
+  d->BackfaceHueOffsetSpinBox->setEnabled(d->CurrentModelDisplayNode != nullptr);
+  d->BackfaceSaturationOffsetSpinBox->setEnabled(d->CurrentModelDisplayNode != nullptr);
+  d->BackfaceBrightnessOffsetSpinBox->setEnabled(d->CurrentModelDisplayNode != nullptr);
 
   d->LightingCheckBox->setChecked(d->CurrentDisplayNode->GetLighting());
   d->InterpolationComboBox->setCurrentIndex(d->CurrentDisplayNode->GetInterpolation());
@@ -1077,6 +1102,60 @@ void qMRMLModelDisplayNodeWidget::setLineWidth(double newLineWidth)
   foreach (vtkMRMLDisplayNode* displayNode, displayNodesInSelection)
     {
     displayNode->SetLineWidth(newLineWidth);
+    }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLModelDisplayNodeWidget::setBackfaceHueOffset(double newOffset)
+{
+  Q_D(qMRMLModelDisplayNodeWidget);
+  QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
+  foreach(vtkMRMLDisplayNode* displayNode, displayNodesInSelection)
+    {
+    vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
+    if (!modelDisplayNode)
+      {
+      continue;
+      }
+    double hsvOffset[3];
+    modelDisplayNode->GetBackfaceColorHSVOffset(hsvOffset);
+    modelDisplayNode->SetBackfaceColorHSVOffset(newOffset, hsvOffset[1], hsvOffset[2]);
+    }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLModelDisplayNodeWidget::setBackfaceSaturationOffset(double newOffset)
+{
+  Q_D(qMRMLModelDisplayNodeWidget);
+  QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
+  foreach(vtkMRMLDisplayNode* displayNode, displayNodesInSelection)
+    {
+    vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
+    if (!modelDisplayNode)
+      {
+      continue;
+      }
+    double hsvOffset[3];
+    modelDisplayNode->GetBackfaceColorHSVOffset(hsvOffset);
+    modelDisplayNode->SetBackfaceColorHSVOffset(hsvOffset[0], newOffset, hsvOffset[2]);
+    }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLModelDisplayNodeWidget::setBackfaceBrightnessOffset(double newOffset)
+{
+  Q_D(qMRMLModelDisplayNodeWidget);
+  QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
+  foreach(vtkMRMLDisplayNode* displayNode, displayNodesInSelection)
+    {
+    vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
+    if (!modelDisplayNode)
+      {
+      continue;
+      }
+    double hsvOffset[3];
+    modelDisplayNode->GetBackfaceColorHSVOffset(hsvOffset);
+    modelDisplayNode->SetBackfaceColorHSVOffset(hsvOffset[0], hsvOffset[1], newOffset);
     }
 }
 
