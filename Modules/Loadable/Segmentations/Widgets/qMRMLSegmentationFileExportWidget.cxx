@@ -318,6 +318,7 @@ void qMRMLSegmentationFileExportWidget::setFileFormat(const QString& formatStr)
 //-----------------------------------------------------------------------------
 void qMRMLSegmentationFileExportWidget::setUseLabelsFromColorNode(bool useColorNode)
 {
+  Q_UNUSED(useColorNode);
   Q_D(qMRMLSegmentationFileExportWidget);
   d->ColorTableNodeSelector->setEnabled(d->UseColorTableValuesCheckBox->isEnabled() && d->UseColorTableValuesCheckBox->isChecked());
 }
