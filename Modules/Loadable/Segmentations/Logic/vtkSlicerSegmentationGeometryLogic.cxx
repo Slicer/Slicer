@@ -129,7 +129,8 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometry()
   vtkMRMLAnnotationROINode* sourceRoiNode = vtkMRMLAnnotationROINode::SafeDownCast(this->SourceGeometryNode);
   vtkMRMLSegmentationNode* sourceSegmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->SourceGeometryNode);
 
-  if (sourceVolumeNode || this->IsSourceSegmentationWithBinaryLabelmapMaster())
+  if (sourceVolumeNode
+      || (sourceSegmentationNode && this->IsSourceSegmentationWithBinaryLabelmapMaster()))
     {
     //TODO: Fractional labelmaps cannot be used yet as source, as DetermineCommonLabelmapGeometry only supports binary labelmaps
     return this->CalculateOutputGeometryFromImage();
