@@ -34,9 +34,13 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   # - numpy-1.19.1-cp36-cp36m-win_amd64.whl
   # - numpy-1.19.1-cp36-cp36m-macosx_10_9_x86_64.whl
   # - numpy-1.19.1-cp36-cp36m-manylinux1_x86_64.whl
+  # - numpy-1.19.1-cp36-cp36m-manylinux2010_x86_64.whl
+  # - numpy-1.19.1-cp36-cp36m-manylinux2014_aarch64.whl
   numpy==1.19.1 --hash=sha256:082f8d4dd69b6b688f64f509b91d482362124986d98dc7dc5f5e9f9b9c3bb983 \
                 --hash=sha256:b1cca51512299841bf69add3b75361779962f9cee7d9ee3bb446d5982e925b69 \
-                --hash=sha256:cf1347450c0b7644ea142712619533553f02ef23f92f781312f6a3553d031fc7
+                --hash=sha256:cf1347450c0b7644ea142712619533553f02ef23f92f781312f6a3553d031fc7 \
+                --hash=sha256:3673c8b2b29077f1b7b3a848794f8e11f401ba0b71c49fbd26fb40b71788b132 \
+                --hash=sha256:56ef7f56470c24bb67fb43dae442e946a6ce172f97c69f8d067ff8550cf782ff
   ]===])
 
   ExternalProject_Add(${proj}
