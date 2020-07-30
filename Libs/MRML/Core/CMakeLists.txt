@@ -152,6 +152,7 @@ set(MRMLCore_SRCS
   vtkMRMLLinearTransformSequenceStorageNode.cxx
   vtkMRMLLinearTransformSequenceStorageNode.h
   vtkMRMLMarkupsStorageNode.cxx
+  vtkMRMLMessageCollection.cxx
   vtkMRMLModelDisplayNode.cxx
   vtkMRMLModelHierarchyNode.cxx
   vtkMRMLModelNode.cxx
