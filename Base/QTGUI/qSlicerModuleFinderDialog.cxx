@@ -87,7 +87,7 @@ void qSlicerModuleFinderDialogPrivate::init()
   QObject::connect(this->ShowTestingCheckBox, SIGNAL(toggled(bool)),
     q, SLOT(setShowTestingModules(bool)));
   QObject::connect(this->FilterTitleSearchBox, SIGNAL(textChanged(QString)),
-    q, SLOT(setModuleTitleFilterText(QString)));
+    q, SLOT(onModuleTitleFilterTextChanged()));
 
   QObject::connect(this->ModuleListView->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
     q, SLOT(onSelectionChanged(QItemSelection, QItemSelection)));
@@ -369,6 +369,13 @@ void qSlicerModuleFinderDialog::setFocusToModuleTitleFilter()
 
 //---------------------------------------------------------------------------
 void qSlicerModuleFinderDialog::setModuleTitleFilterText(const QString& text)
+{
+  Q_D(qSlicerModuleFinderDialog);
+  d->FilterTitleSearchBox->setText(text);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModuleFinderDialog::onModuleTitleFilterTextChanged()
 {
   Q_D(qSlicerModuleFinderDialog);
   qSlicerModuleFactoryFilterModel* filterModel = d->ModuleListView->filterModel();
