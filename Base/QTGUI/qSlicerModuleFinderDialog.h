@@ -56,6 +56,7 @@ public Q_SLOTS:
 
 protected Q_SLOTS:
   void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+  void onModuleTitleFilterTextChanged();
 
 protected:
   QScopedPointer<qSlicerModuleFinderDialogPrivate> d_ptr;
