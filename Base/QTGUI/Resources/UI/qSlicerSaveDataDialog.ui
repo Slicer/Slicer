@@ -38,7 +38,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="6">
+   <item row="1" column="0" colspan="7">
     <widget class="QTableWidget" name="FileWidget">
      <property name="editTriggers">
       <set>QAbstractItemView::AllEditTriggers</set>
@@ -82,6 +82,11 @@
      <column>
       <property name="text">
        <string>Status</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Notes</string>
       </property>
      </column>
     </widget>

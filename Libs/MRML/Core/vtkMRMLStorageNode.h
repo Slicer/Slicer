@@ -17,7 +17,9 @@
 
 // MRML includes
 #include "vtkMRMLNode.h"
+#include "vtkCommand.h"
 class vtkMRMLStorableNode;
+class vtkMRMLMessageCollection;
 
 class vtkURIHandler;
 
@@ -369,6 +371,9 @@ public:
   static const char *GetCoordinateSystemTypeAsString(int id);
   static int GetCoordinateSystemTypeFromString(const char *name);
 
+  const vtkMRMLMessageCollection *GetUserMessages() const { return this->UserMessages; }
+  vtkMRMLMessageCollection *GetUserMessages() { return this->UserMessages; }
+
 protected:
   vtkMRMLStorageNode();
   ~vtkMRMLStorageNode() override;
@@ -439,6 +444,10 @@ protected:
   vtkTimeStamp* StoredTime;
 
   vtkWeakPointer<vtkMRMLStorableNode> LastFoundStorableNode;
+
+  // Record warnings and errors associated with this
+  // vtkMRMLStorableNode.
+  vtkMRMLMessageCollection *UserMessages;
 };
 
 #endif

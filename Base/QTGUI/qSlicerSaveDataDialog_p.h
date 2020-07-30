@@ -81,7 +81,8 @@ protected:
     OptionsColumn = 3,
     NodeNameColumn = 4,
     NodeTypeColumn = 5,
-    NodeStatusColumn = 6
+    NodeStatusColumn = 6,
+    UserMessagesColumn = 7
   };
 
   enum CustomRole
@@ -97,6 +98,7 @@ protected:
   void              restoreAfterSaving();
   void              setSceneRootDirectory(const QString& rootDirectory);
   void              updateOptionsWidget(int row);
+  void              updateUserMessagesItem(int row);
 
   QString           sceneFileFormat()const;
 
@@ -110,6 +112,9 @@ protected:
   QWidget*          createFileFormatsWidget(vtkMRMLStorableNode* node, QFileInfo& fileInfo);
   QTableWidgetItem* createFileNameItem(const QFileInfo& fileInfo, const QString& extension, const QString& nodeID);
   ctkDirectoryButton* createFileDirectoryWidget(const QFileInfo& fileInfo);
+  QWidget*          createUserMessagesItem(vtkMRMLStorableNode *node);
+  void              makeUserMessages(vtkMRMLStorableNode *node, QWidget *userMessagesLayoutItem);
+  void              clearUserMessages();
 
   static QString extractKnownExtension(const QString& fileName, vtkObject* object);
   static QString stripKnownExtension(const QString& fileName, vtkObject* object);
