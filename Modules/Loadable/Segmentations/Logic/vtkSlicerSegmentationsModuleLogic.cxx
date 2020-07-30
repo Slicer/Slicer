@@ -1123,7 +1123,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
   int numberOfColors = exportedSegmentIDs.size() + 1;
   if (labelValues)
     {
-    for (int i = 0; i < exportedSegmentIDs.size(); ++i)
+    for (int i = 0; i < static_cast<int>(exportedSegmentIDs.size()); ++i)
       {
       numberOfColors = std::max(numberOfColors, labelValues->GetValue(i) + 1);
       }
