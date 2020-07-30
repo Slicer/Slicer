@@ -485,8 +485,6 @@ vtkMRMLTransformNode* qMRMLSubjectHierarchyTreeViewPrivate::firstAppliedTransfor
     this->SubjectHierarchyNode->GetItemChildren(itemID, childItemIDs, true);
     childItemIDs.insert(childItemIDs.begin(), itemID);
 
-    bool foundTransform = false;
-    vtkMRMLTransformNode* commonTransformNode = nullptr;
     // Apply transform to the node and all its suitable children
     for (std::vector<vtkIdType>::iterator childItemIDsIt = childItemIDs.begin();
       childItemIDsIt != childItemIDs.end(); ++childItemIDsIt)
