@@ -74,7 +74,7 @@ protected:
 
   ///
   /// A helper class that describes a single message
-  struct Message
+  struct VTK_MRML_EXPORT Message
     {
     Message(unsigned long messageType, const std::string &messageText);
 
