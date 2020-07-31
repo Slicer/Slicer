@@ -221,6 +221,13 @@ public:
   /// Creates the most appropriate display node class for storing a sequence of these nodes.
   void CreateDefaultSequenceDisplayNodes() override;
 
+  /// Returns true if the volume center is in the origin.
+  bool IsCentered();
+
+  /// Add a transform to the scene that puts the center of the volume in the origin.
+  /// Returns true if the parent transform is changed.
+  bool AddCenteringTransform();
+
 protected:
   vtkMRMLVolumeNode();
   ~vtkMRMLVolumeNode() override;
@@ -247,6 +254,10 @@ protected:
   /// Return the bounds of the node transformed or not depending on
   /// the useTransform parameter and the rasToSlice transform
   virtual void GetBoundsInternal(double bounds[6], vtkMatrix4x4* rasToSlice, bool useTransform);
+
+  /// Returns the origin that would put the volume center in the origin.
+  /// If useParentTransform is false then parent transform is ignored.
+  void GetCenterPositionRAS(double* centerPositionRAS, bool useParentTransform=true);
 
   /// these are unit length direction cosines
   double IJKToRASDirections[3][3];

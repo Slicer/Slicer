@@ -29,6 +29,7 @@
 #include "ui_qMRMLVolumeInfoWidget.h"
 
 // MRML includes
+#include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
@@ -54,7 +55,6 @@ protected:
 public:
   qMRMLVolumeInfoWidgetPrivate(qMRMLVolumeInfoWidget& object);
   void init();
-  bool centeredOrigin(double* origin)const;
 
   vtkWeakPointer<vtkMRMLVolumeNode> VolumeNode;
 };
@@ -111,35 +111,6 @@ void qMRMLVolumeInfoWidgetPrivate::init()
   // Window level presets are read-only
   q->setDataTypeEditable(false);
   q->setEnabled(this->VolumeNode != nullptr);
-}
-
-//------------------------------------------------------------------------------
-bool qMRMLVolumeInfoWidgetPrivate::centeredOrigin(double* origin)const
-{
-  vtkImageData *imageData = this->VolumeNode ? this->VolumeNode->GetImageData() : nullptr;
-  if (!imageData)
-    {
-    qWarning() << __FUNCTION__ << "No image data, can't retrieve origin.";
-    return false;
-    }
-
-  int *dims = imageData->GetDimensions();
-  double dimsH[4];
-  dimsH[0] = dims[0] - 1;
-  dimsH[1] = dims[1] - 1;
-  dimsH[2] = dims[2] - 1;
-  dimsH[3] = 0.;
-
-  vtkNew<vtkMatrix4x4> ijkToRAS;
-  this->VolumeNode->GetIJKToRASMatrix(ijkToRAS.GetPointer());
-  double rasCorner[4];
-  ijkToRAS->MultiplyPoint(dimsH, rasCorner);
-
-  origin[0] = -0.5 * rasCorner[0];
-  origin[1] = -0.5 * rasCorner[1];
-  origin[2] = -0.5 * rasCorner[2];
-
-  return true;
 }
 
 //------------------------------------------------------------------------------
@@ -353,27 +324,21 @@ void qMRMLVolumeInfoWidget::setImageOrigin(double* origin)
 bool qMRMLVolumeInfoWidget::isCentered()const
 {
   Q_D(const qMRMLVolumeInfoWidget);
-  double centerOrigin[3];
-  if (!d->centeredOrigin(centerOrigin))
+  if (!d->VolumeNode)
     {
-    return false;
+    return true;
     }
-  double* volumeOrigin = d->VolumeNode->GetOrigin();
-  return qFuzzyCompare(centerOrigin[0], volumeOrigin[0]) &&
-         qFuzzyCompare(centerOrigin[1], volumeOrigin[1]) &&
-         qFuzzyCompare(centerOrigin[2], volumeOrigin[2]);
+  return d->VolumeNode->IsCentered();
 }
 
 //------------------------------------------------------------------------------
 void qMRMLVolumeInfoWidget::center()
 {
   Q_D(qMRMLVolumeInfoWidget);
-  double origin[3];
-  if (!d->centeredOrigin(origin))
+  if (d->VolumeNode)
     {
-    return;
+    d->VolumeNode->AddCenteringTransform();
     }
-  d->VolumeNode->SetOrigin(origin);
 }
 
 //------------------------------------------------------------------------------
