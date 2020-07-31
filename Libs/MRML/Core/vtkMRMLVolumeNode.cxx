@@ -1244,7 +1244,7 @@ bool vtkMRMLVolumeNode::AddCenteringTransform()
   if (!scene)
     {
     vtkErrorMacro("vtkMRMLVolumeNode::AddCenteringTransform failed: invalid scene");
-    return nullptr;
+    return false;
     }
   std::string transformName = this->GetName();
   transformName.append(" centering transform");
