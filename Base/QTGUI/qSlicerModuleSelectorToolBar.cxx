@@ -54,6 +54,9 @@ public:
   QAction* lastSelectedAction()const;
 
   qSlicerModuleFinderDialog* ModuleFinder;
+#ifdef Q_OS_WIN32
+  Qt::WindowFlags NormalModuleFinderFlags;
+#endif
   qSlicerModulesMenu* ModulesMenu;
 
   QToolButton*      ModuleFinderButton;
@@ -95,6 +98,9 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   q->addWidget(new QLabel(qSlicerModuleSelectorToolBar::tr("Modules:"), q));
 
   this->ModuleFinder = new qSlicerModuleFinderDialog(q);
+#ifdef Q_OS_WIN32
+  this->NormalModuleFinderFlags = this->ModuleFinder->windowFlags();
+#endif
 
   // Module finder
   this->ModuleFinderButton = new QToolButton(q);
@@ -350,12 +356,28 @@ void qSlicerModuleSelectorToolBar::actionSelected(QAction* action)
 void qSlicerModuleSelectorToolBar::showModuleFinder()
 {
   Q_D(qSlicerModuleSelectorToolBar);
+#ifdef Q_OS_WIN32
+  d->ModuleFinder->setWindowFlags(d->NormalModuleFinderFlags);
+#endif
   d->ModuleFinder->setFocusToModuleTitleFilter();
   int result = d->ModuleFinder->exec();
   if (result == QMessageBox::Accepted && !d->ModuleFinder->currentModuleName().isEmpty())
     {
     this->selectModule(d->ModuleFinder->currentModuleName());
     }
+#ifdef Q_OS_WIN32
+  // On Windows, dialog boxes that are just hidden but not deleted appear in
+  // taskbar preview (hover over the application icon in the taskbar, wait for the
+  // small preview window to appear, then hover over the preview window), which
+  // is quite confusing.
+  // Deleting and recreating the module finder for each module switch would solve
+  // the problem, but rebuilding the view can take noticeable amount of time, so
+  // it is better to create the window only once.
+  // Setting window style to Qt::Tool excludes the window from taskbar preview,
+  // but it also interferes with style and focus behavior of the window.
+  // Therefore we set this style, but only while the finder is hidden.
+  d->ModuleFinder->setWindowFlag(Qt::Tool, false);
+#endif
 }
 
 //---------------------------------------------------------------------------
