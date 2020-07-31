@@ -162,6 +162,9 @@ bool qSlicerSubjectHierarchyPluginHandler::registerPlugin(qSlicerSubjectHierarch
   // Add the plugin to the list
   this->m_RegisteredPlugins << pluginToRegister;
 
+  // Update timestamp
+  this->LastPluginRegistrationTime = QDateTime::currentDateTimeUtc();
+
   return true;
 }
 
@@ -462,7 +465,7 @@ void qSlicerSubjectHierarchyPluginHandler::setPluginLogic(qSlicerSubjectHierarch
   // Register view menu actions of those plugins that were registered before the PluginLogic was set.
   if (this->m_PluginLogic)
     {
-    foreach(qSlicerSubjectHierarchyAbstractPlugin * pluginToRegister, this->m_RegisteredPlugins)
+    foreach(qSlicerSubjectHierarchyAbstractPlugin* pluginToRegister, this->m_RegisteredPlugins)
       {
       foreach(QAction * action, pluginToRegister->viewContextMenuActions())
         {
