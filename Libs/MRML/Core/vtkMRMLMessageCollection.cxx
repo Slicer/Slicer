@@ -63,9 +63,12 @@ vtkMRMLMessageCollection
 ::GetNumberOfMessagesOfType(unsigned long messageType) const
 {
   int response = 0;
-  for (int i = 0; i < this->Messages.size(); ++i)
+  for (int i = 0; i < static_cast<int>(this->Messages.size()); ++i)
     {
-    response += static_cast<int>(GetNthMessageType(i) == messageType);
+    if (this->GetNthMessageType(i) == messageType)
+      {
+      ++response;
+      }
     }
   return response;
 }
