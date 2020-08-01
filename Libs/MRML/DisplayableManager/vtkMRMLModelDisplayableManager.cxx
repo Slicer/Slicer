@@ -621,12 +621,12 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
           break;
           } // else fall through
       case vtkCommand::ModifiedEvent:
-        VTK_FALLTHROUGH;
       case vtkMRMLModelNode::MeshModifiedEvent:
+      case vtkMRMLTransformableNode::TransformModifiedEvent:
         requestRender = this->OnMRMLDisplayableModelNodeModifiedEvent(displayableNode);
         break;
       default:
-        this->SetUpdateFromMRMLRequested(true);
+        // We don't expect any other types of events.
         break;
       }
     if (!isUpdating && requestRender)
@@ -856,9 +856,7 @@ bool vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
     }
   if (updateModel)
     {
-    this->UpdateClipSlicesFromMRML();
     this->UpdateModifiedModel(modelNode);
-    this->SetUpdateFromMRMLRequested(true);
     }
   if (updateMRML)
     {
@@ -891,7 +889,7 @@ void vtkMRMLModelDisplayableManager::UpdateFromMRML()
 void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
 {
   // UpdateModelsFromMRML may recursively trigger calling of UpdateModelsFromMRML
-  // via node reference updates. IsUdatingModelsFromMRML flag prevents restarting
+  // via node reference updates. IsUpdatingModelsFromMRML flag prevents restarting
   // UpdateModelsFromMRML if it is already in progress.
   if (this->Internal->IsUpdatingModelsFromMRML)
     {
