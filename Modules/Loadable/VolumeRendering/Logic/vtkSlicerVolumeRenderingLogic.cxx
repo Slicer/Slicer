@@ -259,9 +259,13 @@ void vtkSlicerVolumeRenderingLogic::ChangeVolumeRenderingMethod(const char* disp
   for (displayIt = displayNodesCopy.begin(); displayIt != displayNodesCopy.end(); ++displayIt)
     {
     vtkMRMLVolumeRenderingDisplayNode* oldDisplayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(*displayIt);
+    if (!oldDisplayNode)
+      {
+      // node may have been deleted
+      continue;
+      }
     vtkSmartPointer<vtkMRMLVolumeRenderingDisplayNode> newDisplayNode =
       vtkSmartPointer<vtkMRMLVolumeRenderingDisplayNode>::Take(this->CreateVolumeRenderingDisplayNode(displayNodeClassName));
-    vtkMRMLDisplayableNode* displayableNode = oldDisplayNode->GetDisplayableNode();
     if (!newDisplayNode)
       {
       vtkErrorMacro("ChangeVolumeRenderingMethod: Failed to create display node of type " << displayNodeClassName);
@@ -269,8 +273,15 @@ void vtkSlicerVolumeRenderingLogic::ChangeVolumeRenderingMethod(const char* disp
       }
     this->GetMRMLScene()->AddNode(newDisplayNode);
     newDisplayNode->vtkMRMLVolumeRenderingDisplayNode::Copy(oldDisplayNode);
+    vtkMRMLDisplayableNode* displayableNode = oldDisplayNode->GetDisplayableNode();
     this->GetMRMLScene()->RemoveNode(oldDisplayNode);
-    displayableNode->AddAndObserveDisplayNodeID(newDisplayNode->GetID());
+    // Assign updated display node to displayable node.
+    // There may be orphan volume rendering display nodes in the scene (without being assigned to a displayable node),
+    // but we leave them alone, as maybe they are just temporarily not used.
+    if (displayableNode)
+      {
+      displayableNode->AddAndObserveDisplayNodeID(newDisplayNode->GetID());
+      }
     }
 
   this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
