@@ -332,7 +332,7 @@ function(fixup_bundle_with_plugins app)
       endforeach()
       # Update executable
       execute_process(COMMAND install_name_tool
-        -rpath "@executable_path/Frameworks" "@loader_path/../../../../../../../../"
+        -add_rpath "@loader_path/../../../../../../../../"
         ${changes} "${qtwebengineprocess_executable}"
         )
       # Create relative symlinks in <package_root>/Contents/Frameworks/QtWebEngineCore.framework
