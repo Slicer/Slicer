@@ -229,27 +229,6 @@ if(RUN_CTEST_BUILD)
 endif()
 
 #-----------------------------------------------------------------------------
-# Test extension
-if(BUILD_TESTING AND RUN_CTEST_TEST)
-  #message("----------- [ Testing extension ${EXTENSION_NAME} ] -----------")
-  # Check if there are tests to run
-  execute_process(COMMAND ${CMAKE_CTEST_COMMAND} -C ${CTEST_BUILD_CONFIGURATION} -N
-    WORKING_DIRECTORY ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY}
-    OUTPUT_VARIABLE output
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-  string(REGEX REPLACE ".*Total Tests: ([0-9]+)" "\\1" test_count "${output}")
-  if("${test_count}" GREATER 0)
-    ctest_test(
-        BUILD ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY}
-        PARALLEL_LEVEL ${CTEST_PARALLEL_LEVEL})
-    if(RUN_CTEST_SUBMIT)
-      ctest_submit(PARTS Test)
-    endif()
-  endif()
-endif()
-
-#-----------------------------------------------------------------------------
 # Package extension
 if(build_errors GREATER "0")
   message(WARNING "Skip extension packaging: ${build_errors} build error(s) occurred !")
@@ -287,5 +266,26 @@ else()
         ctest_submit(PARTS Upload)
       endif()
     endforeach()
+  endif()
+endif()
+
+#-----------------------------------------------------------------------------
+# Test extension
+if(BUILD_TESTING AND RUN_CTEST_TEST)
+  #message("----------- [ Testing extension ${EXTENSION_NAME} ] -----------")
+  # Check if there are tests to run
+  execute_process(COMMAND ${CMAKE_CTEST_COMMAND} -C ${CTEST_BUILD_CONFIGURATION} -N
+    WORKING_DIRECTORY ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY}
+    OUTPUT_VARIABLE output
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+  string(REGEX REPLACE ".*Total Tests: ([0-9]+)" "\\1" test_count "${output}")
+  if("${test_count}" GREATER 0)
+    ctest_test(
+        BUILD ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY}
+        PARALLEL_LEVEL ${CTEST_PARALLEL_LEVEL})
+    if(RUN_CTEST_SUBMIT)
+      ctest_submit(PARTS Test)
+    endif()
   endif()
 endif()
