@@ -536,46 +536,6 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     set(slicer_build_dir "${CTEST_BINARY_DIRECTORY}/Slicer-build")
 
     #-----------------------------------------------------------------------------
-    # Test
-    #-----------------------------------------------------------------------------
-    if(run_ctest_with_test)
-      ctest_test(
-        BUILD "${slicer_build_dir}"
-        #INCLUDE_LABEL ${label}
-        PARALLEL_LEVEL ${CTEST_PARALLEL_LEVEL}
-        EXCLUDE ${TEST_TO_EXCLUDE_REGEX})
-      # runs only tests that have a LABELS property matching "${label}"
-      if(run_ctest_submit)
-        ctest_submit(PARTS Test)
-      endif()
-    endif()
-
-    #-----------------------------------------------------------------------------
-    # Global coverage ...
-    #-----------------------------------------------------------------------------
-    if(WITH_COVERAGE AND CTEST_COVERAGE_COMMAND AND run_ctest_with_coverage)
-      # HACK Unfortunately ctest_coverage ignores the BUILD argument, try to force it...
-      if(EXISTS ${slicer_build_dir}/CMakeFiles/TargetDirectories.txt)
-        file(READ ${slicer_build_dir}/CMakeFiles/TargetDirectories.txt slicer_build_coverage_dirs)
-        file(APPEND "${CTEST_BINARY_DIRECTORY}/CMakeFiles/TargetDirectories.txt" "${slicer_build_coverage_dirs}")
-      endif()
-      ctest_coverage(BUILD "${slicer_build_dir}")
-      if(run_ctest_submit)
-        ctest_submit(PARTS Coverage)
-      endif()
-    endif()
-
-    #-----------------------------------------------------------------------------
-    # Global dynamic analysis ...
-    #-----------------------------------------------------------------------------
-    if(WITH_MEMCHECK AND CTEST_MEMORYCHECK_COMMAND AND run_ctest_with_memcheck)
-        ctest_memcheck(BUILD "${slicer_build_dir}")
-        if(run_ctest_submit)
-          ctest_submit(PARTS MemCheck)
-        endif()
-    endif()
-
-    #-----------------------------------------------------------------------------
     # Package and upload
     #-----------------------------------------------------------------------------
     if(WITH_PACKAGES AND (run_ctest_with_packages OR run_ctest_with_upload))
@@ -620,6 +580,46 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         endif()
 
       endif()
+    endif()
+
+    #-----------------------------------------------------------------------------
+    # Test
+    #-----------------------------------------------------------------------------
+    if(run_ctest_with_test)
+      ctest_test(
+        BUILD "${slicer_build_dir}"
+        #INCLUDE_LABEL ${label}
+        PARALLEL_LEVEL ${CTEST_PARALLEL_LEVEL}
+        EXCLUDE ${TEST_TO_EXCLUDE_REGEX})
+      # runs only tests that have a LABELS property matching "${label}"
+      if(run_ctest_submit)
+        ctest_submit(PARTS Test)
+      endif()
+    endif()
+
+    #-----------------------------------------------------------------------------
+    # Global coverage ...
+    #-----------------------------------------------------------------------------
+    if(WITH_COVERAGE AND CTEST_COVERAGE_COMMAND AND run_ctest_with_coverage)
+      # HACK Unfortunately ctest_coverage ignores the BUILD argument, try to force it...
+      if(EXISTS ${slicer_build_dir}/CMakeFiles/TargetDirectories.txt)
+        file(READ ${slicer_build_dir}/CMakeFiles/TargetDirectories.txt slicer_build_coverage_dirs)
+        file(APPEND "${CTEST_BINARY_DIRECTORY}/CMakeFiles/TargetDirectories.txt" "${slicer_build_coverage_dirs}")
+      endif()
+      ctest_coverage(BUILD "${slicer_build_dir}")
+      if(run_ctest_submit)
+        ctest_submit(PARTS Coverage)
+      endif()
+    endif()
+
+    #-----------------------------------------------------------------------------
+    # Global dynamic analysis ...
+    #-----------------------------------------------------------------------------
+    if(WITH_MEMCHECK AND CTEST_MEMORYCHECK_COMMAND AND run_ctest_with_memcheck)
+        ctest_memcheck(BUILD "${slicer_build_dir}")
+        if(run_ctest_submit)
+          ctest_submit(PARTS MemCheck)
+        endif()
     endif()
 
     #-----------------------------------------------------------------------------
