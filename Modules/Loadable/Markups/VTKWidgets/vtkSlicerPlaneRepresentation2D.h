@@ -88,8 +88,8 @@ protected:
   vtkSlicerPlaneRepresentation2D();
   ~vtkSlicerPlaneRepresentation2D() override;
 
-  /// Re-implemented to adjust plane opacity
-  void UpdateDistanceColorMap(vtkDiscretizableColorTransferFunction* colormap, double color[3]) override;
+  virtual void UpdatePlaneFillColorMap(vtkDiscretizableColorTransferFunction* colormap, double color[3]);
+  virtual void UpdatePlaneOutlineColorMap(vtkDiscretizableColorTransferFunction* colormap, double color[3]);
 
   vtkNew<vtkPlaneSource> PlaneFilter;
   vtkNew<vtkPlaneCutter> PlaneCutter;
@@ -103,20 +103,21 @@ protected:
   vtkNew<vtkCompositeDataGeometryFilter> PlaneCompositeFilter;
   vtkNew<vtkAppendPolyData> PlaneAppend;
   vtkNew<vtkTransformPolyDataFilter> PlaneWorldToSliceTransformer;
-  vtkNew<vtkPolyDataMapper2D> PlaneMapper;
-  vtkNew<vtkActor2D> PlaneActor;
+  vtkNew<vtkPolyDataMapper2D> PlaneFillMapper;
+  vtkNew<vtkActor2D> PlaneFillActor;
 
-  vtkNew<vtkFeatureEdges> PlaneBorderFilter;
-  vtkNew<vtkTransformPolyDataFilter> PlaneBorderWorldToSliceTransformer;
-  vtkNew<vtkPolyDataMapper2D> PlaneBorderMapper;
-  vtkNew<vtkActor2D> PlaneBorderActor;
+  vtkNew<vtkFeatureEdges> PlaneOutlineFilter;
+  vtkNew<vtkDiscretizableColorTransferFunction> PlaneOutlineColorMap;
+  vtkNew<vtkTransformPolyDataFilter> PlaneOutlineWorldToSliceTransformer;
+  vtkNew<vtkPolyDataMapper2D> PlaneOutlineMapper;
+  vtkNew<vtkActor2D> PlaneOutlineActor;
 
   vtkNew<vtkMarkupsGlyphSource2D> ArrowFilter;
   vtkNew<vtkGlyph2D> ArrowGlypher;
   vtkNew<vtkPolyDataMapper2D> ArrowMapper;
   vtkNew<vtkActor2D> ArrowActor;
 
-  vtkNew<vtkDiscretizableColorTransferFunction> ColorMap;
+  vtkNew<vtkDiscretizableColorTransferFunction> PlaneFillColorMap;
   vtkNew<vtkSampleImplicitFunctionFilter> PlaneSliceDistance;
   std::string LabelFormat;
 

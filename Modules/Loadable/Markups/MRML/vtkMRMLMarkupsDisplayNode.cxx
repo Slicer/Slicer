@@ -84,6 +84,10 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
 
   this->PropertiesLabelVisibility = true;
   this->PointLabelsVisibility = false;
+  this->FillVisibility = true;
+  this->OutlineVisibility = true;
+  this->FillOpacity = 0.5;
+  this->OutlineOpacity = 1.0;
 
   // Set active component defaults for mouse (identified by empty string)
   this->ActiveComponents[GetDefaultContextName()] = ComponentInfo();
@@ -139,6 +143,10 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLFloatMacro(lineColorFadingSaturation, LineColorFadingSaturation);
   vtkMRMLWriteXMLFloatMacro(lineColorFadingHueOffset, LineColorFadingHueOffset);
   vtkMRMLWriteXMLBooleanMacro(handlesInteractive, HandlesInteractive);
+  vtkMRMLWriteXMLBooleanMacro(fillVisibility, FillVisibility);
+  vtkMRMLWriteXMLBooleanMacro(outlineVisibility, OutlineVisibility);
+  vtkMRMLWriteXMLFloatMacro(fillOpacity, FillOpacity);
+  vtkMRMLWriteXMLFloatMacro(outlineOpacity, OutlineOpacity);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -171,6 +179,10 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLFloatMacro(lineColorFadingSaturation, LineColorFadingSaturation);
   vtkMRMLReadXMLFloatMacro(lineColorFadingHueOffset, LineColorFadingHueOffset);
   vtkMRMLReadXMLBooleanMacro(handlesInteractive, HandlesInteractive);
+  vtkMRMLReadXMLBooleanMacro(fillVisibility, FillVisibility);
+  vtkMRMLReadXMLBooleanMacro(outlineVisibility, OutlineVisibility);
+  vtkMRMLReadXMLFloatMacro(fillOpacity, FillOpacity);
+  vtkMRMLReadXMLFloatMacro(outlineOpacity, OutlineOpacity);
   vtkMRMLReadXMLEndMacro();
 
   // Fix up legacy markups fiducial nodes
@@ -231,6 +243,10 @@ void vtkMRMLMarkupsDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
   vtkMRMLCopyFloatMacro(LineColorFadingSaturation);
   vtkMRMLCopyFloatMacro(LineColorFadingHueOffset);
   vtkMRMLCopyBooleanMacro(HandlesInteractive);
+  vtkMRMLCopyBooleanMacro(FillVisibility);
+  vtkMRMLCopyBooleanMacro(OutlineVisibility);
+  vtkMRMLCopyFloatMacro(FillOpacity);
+  vtkMRMLCopyFloatMacro(OutlineOpacity);
   vtkMRMLCopyEndMacro();
 }
 
@@ -405,6 +421,10 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintFloatMacro(LineColorFadingSaturation);
   vtkMRMLPrintFloatMacro(LineColorFadingHueOffset);
   vtkMRMLPrintBooleanMacro(HandlesInteractive);
+  vtkMRMLPrintBooleanMacro(FillVisibility);
+  vtkMRMLPrintBooleanMacro(OutlineVisibility);
+  vtkMRMLPrintFloatMacro(FillOpacity);
+  vtkMRMLPrintFloatMacro(OutlineOpacity);
   vtkMRMLPrintEndMacro();
 }
 

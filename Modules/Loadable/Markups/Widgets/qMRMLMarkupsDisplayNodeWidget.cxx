@@ -98,6 +98,13 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   QObject::connect(this->interactionCheckBox, SIGNAL(stateChanged(int)),
     q, SLOT(onInteractionCheckBoxChanged(int)));
 
+  QObject::connect(this->FillVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setFillVisibility(bool)));
+  QObject::connect(this->OutlineVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setOutlineVisibility(bool)));
+  QObject::connect(this->FillOpacitySliderWidget, SIGNAL(valueChanged(double)),
+    q, SLOT(onFillOpacitySliderWidgetChanged(double)));
+  QObject::connect(this->OutlineOpacitySliderWidget, SIGNAL(valueChanged(double)),
+    q, SLOT(onOutlineOpacitySliderWidgetChanged(double)));
+
     // populate the glyph type combo box
   if (this->glyphTypeComboBox->count() == 0)
     {
@@ -263,6 +270,23 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
 
   bool handlesInteractive = markupsDisplayNode->GetHandlesInteractive();
   d->interactionCheckBox->setChecked(handlesInteractive);
+
+  bool wasBlocking = false;
+  wasBlocking = d->FillVisibilityCheckBox->blockSignals(true);
+  d->FillVisibilityCheckBox->setChecked(d->MarkupsDisplayNode ? d->MarkupsDisplayNode->GetFillVisibility() : false);
+  d->FillVisibilityCheckBox->blockSignals(wasBlocking);
+
+  wasBlocking = d->OutlineVisibilityCheckBox->blockSignals(true);
+  d->OutlineVisibilityCheckBox->setChecked(d->MarkupsDisplayNode ? d->MarkupsDisplayNode->GetOutlineVisibility() : false);
+  d->OutlineVisibilityCheckBox->blockSignals(wasBlocking);
+
+  wasBlocking = d->FillOpacitySliderWidget->blockSignals(true);
+  d->FillOpacitySliderWidget->setValue(d->MarkupsDisplayNode ? d->MarkupsDisplayNode->GetFillOpacity() : 0.0);
+  d->FillOpacitySliderWidget->blockSignals(wasBlocking);
+
+  wasBlocking = d->OutlineOpacitySliderWidget->blockSignals(true);
+  d->OutlineOpacitySliderWidget->setValue(d->MarkupsDisplayNode ? d->MarkupsDisplayNode->GetOutlineOpacity() : 0.0);
+  d->OutlineOpacitySliderWidget->blockSignals(wasBlocking);
 
   emit displayNodeChanged();
 }
@@ -449,4 +473,48 @@ void qMRMLMarkupsDisplayNodeWidget::onInteractionCheckBoxChanged(int state)
     return;
     }
   d->MarkupsDisplayNode->SetHandlesInteractive(state);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::setFillVisibility(bool visibility)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+    {
+    return;
+    }
+  d->MarkupsDisplayNode->SetFillVisibility(visibility);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::setOutlineVisibility(bool visibility)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+    {
+    return;
+    }
+  d->MarkupsDisplayNode->SetOutlineVisibility(visibility);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::onFillOpacitySliderWidgetChanged(double opacity)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+    {
+    return;
+    }
+  d->MarkupsDisplayNode->SetFillOpacity(opacity);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::onOutlineOpacitySliderWidgetChanged(double opacity)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+    {
+    return;
+    }
+  d->MarkupsDisplayNode->SetOutlineOpacity(opacity);
 }
