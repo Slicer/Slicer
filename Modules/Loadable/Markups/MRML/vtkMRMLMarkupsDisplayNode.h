@@ -159,6 +159,38 @@ public:
   vtkBooleanMacro(PropertiesLabelVisibility, bool);
   //@}
 
+  //@{
+  /**
+   * Control visibility of representation fill.
+   */
+  vtkSetMacro(FillVisibility, bool);
+  vtkGetMacro(FillVisibility, bool);
+  vtkBooleanMacro(FillVisibility, bool);
+
+  //@{
+  /**
+   * Control visibility of representation outline.
+   */
+  vtkSetMacro(OutlineVisibility, bool);
+  vtkGetMacro(OutlineVisibility, bool);
+  vtkBooleanMacro(OutlineVisibility, bool);
+
+  //@{
+  /**
+   * Control opacity of representation fill.
+   */
+  vtkSetMacro(FillOpacity, double);
+  vtkGetMacro(FillOpacity, double);
+  vtkBooleanMacro(FillOpacity, double);
+
+  //@{
+  /**
+   * Control opacity of representation edges.
+   */
+  vtkSetMacro(OutlineOpacity, double);
+  vtkGetMacro(OutlineOpacity, double);
+  vtkBooleanMacro(OutlineOpacity, double);
+
   /// Define how points are placed and moved in views
   enum SnapModes
     {
@@ -360,6 +392,10 @@ protected:
 
   bool PropertiesLabelVisibility;
   bool PointLabelsVisibility;
+  bool FillVisibility;
+  bool OutlineVisibility;
+  double FillOpacity;
+  double OutlineOpacity;
   double TextScale;
   int GlyphType;
   double GlyphScale;

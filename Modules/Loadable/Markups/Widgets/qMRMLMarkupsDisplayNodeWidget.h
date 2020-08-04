@@ -85,6 +85,11 @@ public slots:
   void setMaximumMarkupsScale(double maxScale);
   void setMaximumMarkupsSize(double maxScale);
 
+  void setFillVisibility(bool visibility);
+  void setOutlineVisibility(bool visibility);
+  void onFillOpacitySliderWidgetChanged(double opacity);
+  void onOutlineOpacitySliderWidgetChanged(double opacity);
+
 protected slots:
   void updateWidgetFromMRML();
   vtkMRMLSelectionNode* getSelectionNode(vtkMRMLScene *mrmlScene);
