@@ -245,6 +245,12 @@ protected:
   void ProcessReadSceneData( ReadDataRequest &req );
   void ProcessWriteSceneData( WriteDataRequest &req );
 
+  /// Set background thread (background processing, networking) priority, which
+  /// can be set via an environment variable SLICER_BACKGROUND_THREAD_PRIORITY.
+  /// Value of the variable must be an integer
+  /// specifying background threads priority (default: 20).
+  virtual void SetCurrentThreadPriorityToBackground();
+
 private:
   vtkSlicerApplicationLogic(const vtkSlicerApplicationLogic&);
   void operator=(const vtkSlicerApplicationLogic&);

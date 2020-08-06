@@ -263,35 +263,18 @@ void vtkSlicerApplicationLogic::TerminateProcessingThread()
 
 //----------------------------------------------------------------------------
 itk::ITK_THREAD_RETURN_TYPE
-vtkSlicerApplicationLogic
-::ProcessingThreaderCallback( void *arg )
+vtkSlicerApplicationLogic::ProcessingThreaderCallback(void* arg)
 {
+  vtkSlicerApplicationLogic* appLogic = (vtkSlicerApplicationLogic*)(((itk::PlatformMultiThreader::WorkUnitInfo*)(arg))->UserData);
+  if (!appLogic)
+    {
+    vtkGenericWarningMacro("vtkSlicerApplicationLogic::ProcessingThreaderCallback failed: invalid appLogic");
+    return itk::ITK_THREAD_RETURN_DEFAULT_VALUE;
+    }
 
-#ifdef ITK_USE_WIN32_THREADS
-  // Adjust the priority of this thread
-  SetThreadPriority(GetCurrentThread(),
-                    THREAD_PRIORITY_BELOW_NORMAL);
-#endif
+  appLogic->SetCurrentThreadPriorityToBackground();
 
-#ifdef ITK_USE_PTHREADS
-  // Adjust the priority of all PROCESS level threads.  Not a perfect solution.
-  int which = PRIO_PROCESS;
-  id_t pid;
-  int priority = 20;
-  int ret;
-
-  pid = getpid();
-  ret = setpriority(which, pid, priority);
-  (void)ret; // unused variable
-#endif
-
-  // pull out the reference to the appLogic
-  vtkSlicerApplicationLogic *appLogic
-    = (vtkSlicerApplicationLogic*)
-    (((itk::PlatformMultiThreader::WorkUnitInfo *)(arg))->UserData);
-
-  // Tell the app to start processing any tasks slated for the
-  // processing thread
+  // Start background processing tasks in this thread
   appLogic->ProcessProcessingTasks();
 
   return itk::ITK_THREAD_RETURN_DEFAULT_VALUE;
@@ -345,35 +328,18 @@ void vtkSlicerApplicationLogic::ProcessProcessingTasks()
 }
 
 itk::ITK_THREAD_RETURN_TYPE
-vtkSlicerApplicationLogic
-::NetworkingThreaderCallback( void *arg )
+vtkSlicerApplicationLogic::NetworkingThreaderCallback(void* arg)
 {
+  vtkSlicerApplicationLogic* appLogic = (vtkSlicerApplicationLogic*)(((itk::PlatformMultiThreader::WorkUnitInfo*)(arg))->UserData);
+  if (!appLogic)
+    {
+    vtkGenericWarningMacro("vtkSlicerApplicationLogic::NetworkingThreaderCallback failed: invalid appLogic");
+    return itk::ITK_THREAD_RETURN_DEFAULT_VALUE;
+    }
 
-#ifdef ITK_USE_WIN32_THREADS
-  // Adjust the priority of this thread
-  SetThreadPriority(GetCurrentThread(),
-                    THREAD_PRIORITY_BELOW_NORMAL);
-#endif
+  appLogic->SetCurrentThreadPriorityToBackground();
 
-#ifdef ITK_USE_PTHREADS
-  // Adjust the priority of all PROCESS level threads.  Not a perfect solution.
-  int which = PRIO_PROCESS;
-  id_t pid;
-  int priority = 20;
-  int ret;
-
-  pid = getpid();
-  ret = setpriority(which, pid, priority);
-  (void)ret; // unused variable
-#endif
-
-  // pull out the reference to the appLogic
-  vtkSlicerApplicationLogic *appLogic
-    = (vtkSlicerApplicationLogic*)
-    (((itk::PlatformMultiThreader::WorkUnitInfo *)(arg))->UserData);
-
-  // Tell the app to start processing any tasks slated for the
-  // processing thread
+  // Start network communication tasks in this thread
   appLogic->ProcessNetworkingTasks();
 
   return itk::ITK_THREAD_RETURN_DEFAULT_VALUE;
@@ -972,4 +938,46 @@ std::string vtkSlicerApplicationLogic::GetModuleSlicerXYLibDirectory(const std::
 vtkPersonInformation* vtkSlicerApplicationLogic::GetUserInformation()
 {
   return this->UserInformation;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationLogic::SetCurrentThreadPriorityToBackground()
+{
+  int processingThreadPriority = 0;
+  bool isPriorityEnvSet = false;
+  const char* slicerProcThreadPrio = itksys::SystemTools::GetEnv("SLICER_BACKGROUND_THREAD_PRIORITY");
+  if (slicerProcThreadPrio)
+    {
+    const std::string priorityStr = slicerProcThreadPrio;
+    try
+      {
+      processingThreadPriority = std::stoi(priorityStr);
+      isPriorityEnvSet = true;
+      }
+    catch(...)
+      {
+      vtkWarningMacro("Invalid SLICER_BACKGROUND_THREAD_PRIORITY value (" << priorityStr << "), expected an integer");
+      }
+    }
+
+#ifdef ITK_USE_WIN32_THREADS
+  // Adjust the priority of this thread
+  bool ret = SetThreadPriority(GetCurrentThread(), isPriorityEnvSet ? processingThreadPriority : THREAD_PRIORITY_BELOW_NORMAL);
+  if (!ret)
+    {
+    vtkWarningMacro("SetThreadPriority did not succeed.");
+    }
+#endif
+
+#ifdef ITK_USE_PTHREADS
+  // Adjust the priority of all PROCESS level threads.  Not a perfect solution.
+  int which = PRIO_PROCESS;
+  int priority = isPriorityEnvSet ? processingThreadPriority : 20;
+  id_t pid = getpid();
+  int ret = setpriority(which, pid, priority);
+  if (ret != 0)
+    {
+    vtkWarningMacro("setpriority did not succeed. You need root privileges to set a priority < 0.");
+    }
+#endif
 }
