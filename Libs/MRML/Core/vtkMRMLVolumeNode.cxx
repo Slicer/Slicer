@@ -896,9 +896,10 @@ void vtkMRMLVolumeNode::GetRASBounds(double bounds[6])
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeNode::GetSliceBounds(double bounds[6], vtkMatrix4x4* rasToSlice)
+void vtkMRMLVolumeNode::GetSliceBounds(double bounds[6],
+  vtkMatrix4x4* rasToSlice, bool useVoxelCenter/*=false*/)
 {
-  vtkMRMLVolumeNode::GetBoundsInternal(bounds, rasToSlice, true);
+  vtkMRMLVolumeNode::GetBoundsInternal(bounds, rasToSlice, true, useVoxelCenter);
 }
 
 //---------------------------------------------------------------------------
@@ -909,8 +910,7 @@ void vtkMRMLVolumeNode::GetBounds(double bounds[6])
 
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeNode::GetBoundsInternal(double bounds[6],
-                                          vtkMatrix4x4* rasToSlice,
-                                          bool useTransform)
+  vtkMatrix4x4* rasToSlice, bool useTransform, bool useVoxelCenter/*=false*/)
 {
   vtkMath::UninitializeBounds(bounds);
   vtkImageData *volumeImage = this->GetImageData();
@@ -958,11 +958,22 @@ void vtkMRMLVolumeNode::GetBoundsInternal(double bounds[6],
       {
       for (int k=0; k<2; k++)
         {
-        doubleDimensions[0] = i*(dimensions[0]) - 0.5;
-        doubleDimensions[1] = j*(dimensions[1]) - 0.5;
-        doubleDimensions[2] = k*(dimensions[2]) - 0.5;
-        double* rasHDimensions = transform->TransformDoublePoint(doubleDimensions);
-        boundingBox.AddPoint(rasHDimensions);
+        if (useVoxelCenter)
+          {
+          doubleDimensions[0] = i * (dimensions[0] - 1);
+          doubleDimensions[1] = j * (dimensions[1] - 1);
+          doubleDimensions[2] = k * (dimensions[2] - 1);
+          double* rasHDimensions = transform->TransformDoublePoint(doubleDimensions);
+          boundingBox.AddPoint(rasHDimensions);
+          }
+        else
+          {
+          doubleDimensions[0] = i * dimensions[0] - 0.5;
+          doubleDimensions[1] = j * dimensions[1] - 0.5;
+          doubleDimensions[2] = k * dimensions[2] - 0.5;
+          double* rasHDimensions = transform->TransformDoublePoint(doubleDimensions);
+          boundingBox.AddPoint(rasHDimensions);
+          }
         }
       }
     }

@@ -1474,7 +1474,8 @@ void vtkMRMLSliceLogic::GetVolumeSliceDimensions(vtkMRMLVolumeNode *volumeNode, 
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::GetVolumeSliceBounds(vtkMRMLVolumeNode *volumeNode, double sliceBounds[6])
+void vtkMRMLSliceLogic::GetVolumeSliceBounds(vtkMRMLVolumeNode *volumeNode,
+  double sliceBounds[6], bool useVoxelCenter/*=false*/)
 {
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
 
@@ -1495,7 +1496,7 @@ void vtkMRMLSliceLogic::GetVolumeSliceBounds(vtkMRMLVolumeNode *volumeNode, doub
   rasToSlice->SetElement(2, 3, 0.0);
   rasToSlice->Invert();
 
-  volumeNode->GetSliceBounds(sliceBounds, rasToSlice.GetPointer());
+  volumeNode->GetSliceBounds(sliceBounds, rasToSlice.GetPointer(), useVoxelCenter);
 }
 
 //----------------------------------------------------------------------------
@@ -1845,7 +1846,7 @@ double *vtkMRMLSliceLogic::GetLowestVolumeSliceSpacing()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::GetLowestVolumeSliceBounds(double sliceBounds[6])
+void vtkMRMLSliceLogic::GetLowestVolumeSliceBounds(double sliceBounds[6], bool useVoxelCenter/*=false*/)
 {
   vtkMRMLVolumeNode *volumeNode;
   for ( int layer=0; layer < 3; layer++ )
@@ -1853,11 +1854,11 @@ void vtkMRMLSliceLogic::GetLowestVolumeSliceBounds(double sliceBounds[6])
     volumeNode = this->GetLayerVolumeNode (layer);
     if (volumeNode)
       {
-      return this->GetVolumeSliceBounds( volumeNode, sliceBounds );
+      return this->GetVolumeSliceBounds(volumeNode, sliceBounds, useVoxelCenter);
       }
     }
   // return the default values
-  return this->GetVolumeSliceBounds( nullptr, sliceBounds );
+  return this->GetVolumeSliceBounds(nullptr, sliceBounds, useVoxelCenter);
 }
 
 #define LARGE_BOUNDS_NUM 1.0e10
@@ -2028,7 +2029,6 @@ void vtkMRMLSliceLogic::SetSliceExtentsToSliceNode()
     }
  else if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatchVolumes)
     {
-    // TODO: the GetLowestVolumeSliceSpacing currently returns spacing not lowest spacing
     double *spacing = this->GetLowestVolumeSliceSpacing();
     double minSpacing = spacing[0];
     minSpacing = minSpacing < spacing[1] ? minSpacing:spacing[1];
@@ -2049,7 +2049,6 @@ void vtkMRMLSliceLogic::SetSliceExtentsToSliceNode()
     }
   else if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceFOVMatch2DViewSpacingMatchVolumes)
     {
-    // TODO: the GetLowestVolumeSliceSpacing currently returns spacing not lowest spacing
     double *spacing = this->GetLowestVolumeSliceSpacing();
     double minSpacing = spacing[0];
     minSpacing = minSpacing < spacing[1] ? minSpacing:spacing[1];

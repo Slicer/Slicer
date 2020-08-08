@@ -1256,29 +1256,30 @@ void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
   bool wasBlocking = this->SliceOffsetSlider->blockSignals(true);
 
   // Set slice offset range to match the field of view
-  // Calculate the number of slices in the current range
+  // Calculate the number of slices in the current range.
+  // Extent is between the farthest voxel centers (not voxel sides).
   double sliceBounds[6] = {0, -1, 0, -1, 0, -1};
-  this->SliceLogic->GetLowestVolumeSliceBounds(sliceBounds);
-  if (sliceBounds[4] <= sliceBounds[5])
+  this->SliceLogic->GetLowestVolumeSliceBounds(sliceBounds, true);
+
+  const double* sliceSpacing = this->SliceLogic->GetLowestVolumeSliceSpacing();
+  Q_ASSERT(sliceSpacing);
+  double offsetResolution = sliceSpacing ? sliceSpacing[2] : 1.0;
+
+  bool singleSlice = ((sliceBounds[5] - sliceBounds[4]) < offsetResolution);
+  if (singleSlice)
     {
-    q->setSliceOffsetRange(sliceBounds[4], sliceBounds[5]);
+    // add one blank slice before and after the current slice to make the slider appear in the center when
+    // we are centered on the slice
+    double centerPos = (sliceBounds[4] + sliceBounds[5]) / 2.0;
+    q->setSliceOffsetRange(centerPos - offsetResolution, centerPos + offsetResolution);
     }
   else
     {
-    q->setSliceOffsetRange(this->SliceLogic->GetSliceOffset(), this->SliceLogic->GetSliceOffset());
+    // there are at least two slices in the range
+    q->setSliceOffsetRange(sliceBounds[4], sliceBounds[5]);
     }
 
   // Set the scale increments to match the z spacing (rotated into slice space)
-  const double* sliceSpacing = this->SliceLogic->GetLowestVolumeSliceSpacing();
-  Q_ASSERT(sliceSpacing);
-  double offsetResolution = sliceSpacing ? sliceSpacing[2] : 0;
-  // For thin volumes such as ultrasound, the slice bounds may be smaller than the spacing due to floating point errors.
-  // To avoid warnings caused by the step size being larger than the slider maximum, set the step size to the smaller of
-  // the either the slice offset or the slice bounds depth.
-  if (sliceBounds[5] - sliceBounds[4] > 0.0)
-    {
-    offsetResolution = std::min(offsetResolution, sliceBounds[5] - sliceBounds[4]);
-    }
   q->setSliceOffsetResolution(offsetResolution);
 
   // Update slider position

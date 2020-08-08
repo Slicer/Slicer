@@ -216,7 +216,9 @@ public:
   /// Get the min/max bounds of the volume
   /// - note these are not translated by the current slice offset so they can
   ///   be used to calculate the range (e.g. of a slider) that operates in slice space
-  void GetVolumeSliceBounds(vtkMRMLVolumeNode *volumeNode, double sliceBounds[6]);
+  /// If useVoxelCenter is set to false (default) then bounds of voxel sides are returned
+  /// (otherwise then bounds of voxels centers are returned).
+  void GetVolumeSliceBounds(vtkMRMLVolumeNode *volumeNode, double sliceBounds[6], bool useVoxelCenter=false);
 
   ///
   /// adjust the node's field of view to match the extent of current background volume
@@ -263,18 +265,21 @@ public:
   void ResizeSliceNode(double newWidth, double newHeight);
 
   ///
-  /// Get the spacing of the volume, transformed to slice space
+  /// Get the spacing of the lowest volume layer (background, foreground, label),
+  /// transformed to slice space
   /// - to be used, for example, to set the slice increment for stepping a single
   ///   voxel relative to the current slice view
   /// - returns first non-null layer
   double *GetLowestVolumeSliceSpacing();
 
   ///
-  /// Get the min/max bounds of the volume
+  /// Get the min/max bounds of the lowest volume layer (background, foreground, label)
   /// - note these are not translated by the current slice offset so they can
   ///   be used to calculate the range (e.g. of a slider) that operates in slice space
   /// - returns first non-null layer
-  void GetLowestVolumeSliceBounds(double sliceBounds[6]);
+  /// If useVoxelCenter is set to false (default) then bounds of voxel sides are returned
+  /// (otherwise then bounds of voxels centers are returned).
+  void GetLowestVolumeSliceBounds(double sliceBounds[6], bool useVoxelCenter=false);
 
   ///
   /// Get/Set the current distance from the origin to the slice plane
