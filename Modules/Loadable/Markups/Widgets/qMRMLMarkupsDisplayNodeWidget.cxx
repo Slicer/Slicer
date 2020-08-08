@@ -29,6 +29,7 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLMarkupsDisplayNode.h>
+#include <vtkMRMLMarkupsFiducialNode.h>
 #include <vtkMRMLMarkupsNode.h>
 #include <vtkMRMLSelectionNode.h>
 
@@ -87,6 +88,12 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
     q, SLOT(onGlyphScaleSliderWidgetChanged(double)));
   QObject::connect(this->glyphSizeSliderWidget, SIGNAL(valueChanged(double)),
     q, SLOT(onGlyphSizeSliderWidgetChanged(double)));
+  QObject::connect(this->curveLineSizeIsAbsoluteButton, SIGNAL(toggled(bool)),
+    q, SLOT(setCurveLineSizeIsAbsolute(bool)));
+  QObject::connect(this->curveLineThicknessSliderWidget, SIGNAL(valueChanged(double)),
+    q, SLOT(onCurveLineThicknessSliderWidgetChanged(double)));
+  QObject::connect(this->curveLineDiameterSliderWidget, SIGNAL(valueChanged(double)),
+    q, SLOT(onCurveLineDiameterSliderWidgetChanged(double)));
   QObject::connect(this->PointLabelsVisibilityCheckBox, SIGNAL(toggled(bool)),
     q, SLOT(setPointLabelsVisibility(bool)));
   QObject::connect(this->textScaleSliderWidget, SIGNAL(valueChanged(double)),
@@ -145,6 +152,9 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
 
   this->glyphSizeSliderWidget->setVisible(this->glyphSizeIsAbsoluteButton->isChecked());
   this->glyphScaleSliderWidget->setHidden(this->glyphSizeIsAbsoluteButton->isChecked());
+
+  this->curveLineDiameterSliderWidget->setVisible(this->glyphSizeIsAbsoluteButton->isChecked());
+  this->curveLineThicknessSliderWidget->setHidden(this->glyphSizeIsAbsoluteButton->isChecked());
 
   // Disable until a valid display node is set
   this->setEnabled(false);
@@ -237,7 +247,7 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
     d->glyphTypeComboBox->setCurrentIndex(glyphTypeIndex);
     }
 
-  d->glyphSizeIsAbsoluteButton->setChecked(d->MarkupsDisplayNode ? !d->MarkupsDisplayNode->GetUseGlyphScale() : false);
+  d->glyphSizeIsAbsoluteButton->setChecked(!markupsDisplayNode->GetUseGlyphScale());
 
   // glyph scale
   double glyphScale = markupsDisplayNode->GetGlyphScale();
@@ -256,8 +266,36 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
     d->glyphSizeSliderWidget->setMaximum(glyphSize);
     }
   d->glyphSizeSliderWidget->setValue(glyphSize);
+  d->glyphSizeSliderWidget->setMRMLScene(markupsDisplayNode->GetScene());
 
-  d->PointLabelsVisibilityCheckBox->setChecked(d->MarkupsDisplayNode ? d->MarkupsDisplayNode->GetPointLabelsVisibility() : false);
+  d->curveLineSizeIsAbsoluteButton->setChecked(markupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter);
+
+  // curve thickness
+  double lineThicknessPercentage = markupsDisplayNode->GetLineThickness() * 100.0;
+  // make sure that the slider can accommodate this scale
+  if (lineThicknessPercentage > d->curveLineThicknessSliderWidget->maximum())
+    {
+    d->curveLineThicknessSliderWidget->setMaximum(lineThicknessPercentage);
+    }
+  d->curveLineThicknessSliderWidget->setValue(lineThicknessPercentage);
+
+  // line diameter
+  double lineDiameter = markupsDisplayNode->GetLineDiameter();
+  // make sure that the slider can accommodate this scale
+  if (lineDiameter > d->curveLineDiameterSliderWidget->maximum())
+    {
+    d->curveLineDiameterSliderWidget->setMaximum(lineDiameter);
+    }
+  d->curveLineDiameterSliderWidget->setValue(lineDiameter);
+
+  // Only enable line size editing if not fiducial node
+  bool lineSizeEnabled = (vtkMRMLMarkupsFiducialNode::SafeDownCast(markupsDisplayNode->GetDisplayableNode()) == nullptr);
+  d->curveLineSizeIsAbsoluteButton->setEnabled(lineSizeEnabled);
+  d->curveLineDiameterSliderWidget->setEnabled(lineSizeEnabled);
+  d->curveLineThicknessSliderWidget->setEnabled(lineSizeEnabled);
+  d->curveLineDiameterSliderWidget->setMRMLScene(markupsDisplayNode->GetScene());
+
+  d->PointLabelsVisibilityCheckBox->setChecked(markupsDisplayNode->GetPointLabelsVisibility());
 
   // text scale
   double textScale = markupsDisplayNode->GetTextScale();
@@ -357,6 +395,25 @@ bool qMRMLMarkupsDisplayNodeWidget::glyphSizeIsAbsolute()const
   return d->glyphSizeIsAbsoluteButton->isChecked();
 }
 
+//------------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::setCurveLineSizeIsAbsolute(bool absolute)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode.GetPointer())
+    {
+    return;
+    }
+  d->MarkupsDisplayNode->SetCurveLineSizeMode(absolute ?
+    vtkMRMLMarkupsDisplayNode::UseLineDiameter : vtkMRMLMarkupsDisplayNode::UseLineThickness);
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLMarkupsDisplayNodeWidget::curveLineSizeIsAbsolute()const
+{
+  Q_D(const qMRMLMarkupsDisplayNodeWidget);
+  return d->curveLineSizeIsAbsoluteButton->isChecked();
+}
+
 //-----------------------------------------------------------------------------
 void qMRMLMarkupsDisplayNodeWidget::onSelectedColorPickerButtonChanged(QColor color)
 {
@@ -414,6 +471,28 @@ void qMRMLMarkupsDisplayNodeWidget::onGlyphSizeSliderWidgetChanged(double value)
     return;
     }
   d->MarkupsDisplayNode->SetGlyphSize(value);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::onCurveLineThicknessSliderWidgetChanged(double percentValue)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+    {
+    return;
+    }
+  d->MarkupsDisplayNode->SetLineThickness(percentValue * 0.01);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::onCurveLineDiameterSliderWidgetChanged(double value)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+    {
+    return;
+    }
+  d->MarkupsDisplayNode->SetLineDiameter(value);
 }
 
 //-----------------------------------------------------------------------------
