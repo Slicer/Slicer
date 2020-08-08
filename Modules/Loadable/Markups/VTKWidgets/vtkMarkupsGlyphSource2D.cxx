@@ -349,13 +349,14 @@ void vtkMarkupsGlyphSource2D::CreateSquare(vtkPoints *pts, vtkCellArray *lines,
 void vtkMarkupsGlyphSource2D::CreateCircle(vtkPoints *pts, vtkCellArray *lines,
                                            vtkCellArray *polys, vtkUnsignedCharArray *colors)
 {
-  vtkIdType ptIds[9];
-  double x[3], theta;
+  const unsigned int numberOfPoints = 16;
+  vtkIdType ptIds[numberOfPoints+1];
+  double x[3];
 
-  // generate eight points in a circle
+  // generate points in a circle
   x[2] = 0.0;
-  theta = 2.0 * vtkMath::Pi() / 8.0;
-  for (int i=0; i<8; i++)
+  double theta = 2.0 * vtkMath::Pi() / double(numberOfPoints);
+  for (int i=0; i<numberOfPoints; i++)
     {
     x[0] = 0.5 * cos((double)i*theta);
     x[1] = 0.5 * sin((double)i*theta);
@@ -364,12 +365,12 @@ void vtkMarkupsGlyphSource2D::CreateCircle(vtkPoints *pts, vtkCellArray *lines,
 
   if (this->Filled)
     {
-    polys->InsertNextCell(8,ptIds);
+    polys->InsertNextCell(numberOfPoints, ptIds);
     }
   else
     {
-    ptIds[8] = ptIds[0];
-    lines->InsertNextCell(9,ptIds);
+    ptIds[numberOfPoints] = ptIds[0];
+    lines->InsertNextCell(numberOfPoints+1,ptIds);
     }
   colors->InsertNextValue(this->RGB[0]);
   colors->InsertNextValue(this->RGB[1]);
