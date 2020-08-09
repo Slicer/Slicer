@@ -127,7 +127,7 @@ vtkSlicerPlaneRepresentation2D::vtkSlicerPlaneRepresentation2D()
   this->ArrowGlypher->SetSourceConnection(this->ArrowFilter->GetOutputPort());
 
   this->ArrowMapper->SetInputConnection(this->ArrowGlypher->GetOutputPort());
-  this->ArrowMapper->SetScalarVisibility(true);
+  this->ArrowMapper->ScalarVisibilityOff();
 
   this->ArrowActor->SetMapper(this->ArrowMapper);
   this->ArrowActor->SetProperty(this->GetControlPointsPipeline(Unselected)->Property);
@@ -237,7 +237,6 @@ void vtkSlicerPlaneRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
     vtkColorTransferFunction* colormap = this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction();
     this->PlaneFillMapper->SetLookupTable(colormap);
     this->PlaneOutlineMapper->SetLookupTable(colormap);
-    this->ArrowMapper->SetLookupTable(colormap);
     }
   else
     {
@@ -248,7 +247,6 @@ void vtkSlicerPlaneRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
 
     this->PlaneFillMapper->SetLookupTable(this->PlaneFillColorMap);
     this->PlaneOutlineMapper->SetLookupTable(this->PlaneOutlineColorMap);
-    this->ArrowMapper->SetLookupTable(this->PlaneFillColorMap);
     }
 }
 
@@ -256,7 +254,9 @@ void vtkSlicerPlaneRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
 void vtkSlicerPlaneRepresentation2D::UpdatePlaneFillColorMap(vtkDiscretizableColorTransferFunction* colormap, double color[3])
 {
   Superclass::UpdateDistanceColorMap(colormap, color);
-  double opacity = this->MarkupsDisplayNode->GetOpacity() * this->MarkupsDisplayNode->GetFillOpacity();
+  double opacity = this->MarkupsDisplayNode->GetFillVisibility()
+    ? this->MarkupsDisplayNode->GetOpacity() * this->MarkupsDisplayNode->GetFillOpacity()
+    : 0.0;
   double limit = this->MarkupsDisplayNode->GetLineColorFadingEnd();
   double tolerance = this->MarkupsDisplayNode->GetLineColorFadingStart();
   vtkPiecewiseFunction* opacityFunction = colormap->GetScalarOpacityFunction();
@@ -271,7 +271,9 @@ void vtkSlicerPlaneRepresentation2D::UpdatePlaneFillColorMap(vtkDiscretizableCol
 void vtkSlicerPlaneRepresentation2D::UpdatePlaneOutlineColorMap(vtkDiscretizableColorTransferFunction* colormap, double color[3])
 {
   Superclass::UpdateDistanceColorMap(colormap, color);
-  double opacity = this->MarkupsDisplayNode->GetOpacity() * this->MarkupsDisplayNode->GetOutlineOpacity();
+  double opacity = this->MarkupsDisplayNode->GetOutlineVisibility()
+    ? this->MarkupsDisplayNode->GetOpacity() * this->MarkupsDisplayNode->GetOutlineOpacity()
+    : 0.0;
   vtkPiecewiseFunction* opacityFunction = colormap->GetScalarOpacityFunction();
   opacityFunction->RemoveAllPoints();
   opacityFunction->AddPoint(0.0, opacity);
