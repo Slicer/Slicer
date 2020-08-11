@@ -60,7 +60,7 @@ endmacro()
 
 _define_metadata(
   "SCM"
-  "Source code management system: git or svn"
+  "Source code management system: git"
   1
   "")
 
@@ -72,17 +72,6 @@ _define_metadata("SCMURL"
 _define_metadata("SCMREVISION"
   "Revision allowing to checkout the expected source code"
   1
-  "")
-
-_define_metadata(
-  "SVNUSERNAME"
-  "Allow to specify username associated with svn checkout"
-  0
-  "")
-
-_define_metadata("SVNPASSWORD"
-  "Allow to specify password associated with svn checkout"
-  0
   "")
 
 _define_metadata("DEPENDS"
@@ -203,8 +192,6 @@ function(slicer_extension_description_spec_defaults_test)
     SCMREVISION
     )
   set(optional
-    SVNUSERNAME
-    SVNPASSWORD
     DEPENDS
     BUILD_SUBDIRECTORY
     HOMEPAGE

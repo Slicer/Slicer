@@ -4,7 +4,7 @@
 # - the value can be blank
 #
 
-# This is source code manager (i.e. svn)
+# This is source code manager
 scm ${scm_type}
 scmurl ${scm_url}
 scmrevision ${MY_EXTENSION_WC_REVISION}
