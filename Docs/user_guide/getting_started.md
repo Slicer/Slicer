@@ -14,7 +14,7 @@ Welcome to the 3D Slicer community. This page contains information that you need
 |Preview Release|Windows 10 or later<br>Windows 8.1<br>Windows 7|macOS High Sierra (10.13) or later|Ubuntu 18.04 or later<br>CentOS 7 or later|
 
 **Notes:**
-- It is always recommended to use the latest public release of Windows or macOS.  For Linux, this would be the latest LTS (Long-term-support) version.
+- It is always recommended to use the latest public release of Windows or macOS. For Linux, this would be the latest LTS (Long-term-support) version.
 - Slicer is expected to work on the vast majority of desktop and server Linux distributions. The system is required to provide at least GLIBC 2.17 and GLIBCCC 3.4.19. For more details, read [here](https://www.python.org/dev/peps/pep-0599/#the-manylinux2014-policy).
 - Only 64-bit Slicer installers are available to download. Developers can attempt to build 32-bit versions on their own if they need to run Slicer on a 32-bit operating system. That said, this should be carefully considered as many clinical research tasks, such as processing of large CT or MR volumetric datasets, require more memory than can be accommodated with a 32-bit program.
 
@@ -48,9 +48,11 @@ Once downloaded, follow the instructions below to complete installation:
 
 ### Mac
 
-- Drag the Slicer application to your Applications folder or other location of your choice.
+- Drag the Slicer application (Slicer.app) to your Applications folder or other location of your choice.
 - You cannot install extensions into the read-only volume so you must copy before installing extensions.
 - Delete the Slicer.app folder to uninstall
+
+Installing Preview Release: Currently, preview release packages are not signed. Therefore, when the application is started the first time the following message is displayed: "Slicer... can't be opened because it is from an unidentified developer". To resolve this error, locate the application in Finder and right-click (two-finger click) and click `Open`. When it says `This app can’t be opened` go ahead and hit cancel. Right click again and say `Open` (yes, you need to repeat the same as you did before - the outcome will be different than the first time). Click the `Open` (or `Open anyway`) button to start the application. See more explanation and alternative techniques [here](https://support.apple.com/en-my/guide/mac-help/mh40616/mac).
 
 ### Linux
 
