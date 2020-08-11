@@ -23,6 +23,8 @@
 
 // QtGUI includes
 #include "qSlicerApplication.h"
+#include "qSlicerModuleFactoryManager.h"
+#include "qSlicerModuleManager.h" 
 #include "qSlicerSettingsDeveloperPanel.h"
 #include "ui_qSlicerSettingsDeveloperPanel.h"
 
@@ -72,6 +74,10 @@ void qSlicerSettingsDeveloperPanelPrivate::init()
                       "checked", SIGNAL(toggled(bool)),
                       "Enable/Disable developer mode", ctkSettingsPanel::OptionRequireRestart);
 
+  q->registerProperty("Developer/PreserveCLIModuleDataFiles", this->PreserveCLIModuleDataFilesCheckBox,
+    "checked", SIGNAL(toggled(bool)),
+    "Preserve CLI module input/output files", ctkSettingsPanel::OptionRequireRestart);
+
   q->registerProperty("Developer/SelfTestDisplayMessageDelay", this->SelfTestMessageDelaySlider,
                       "value", SIGNAL(valueChanged(double)),
                       "Time to wait before resuming self-test execution and hiding messages displayed to the user");
@@ -83,6 +89,8 @@ void qSlicerSettingsDeveloperPanelPrivate::init()
   // Actions to propagate to the application when settings are changed
   QObject::connect(this->DeveloperModeEnabledCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(enableDeveloperMode(bool)));
+  QObject::connect(this->PreserveCLIModuleDataFilesCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(preserveCLIModuleDataFiles(bool)));
   QObject::connect(this->QtTestingEnabledCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(enableQtTesting(bool)));
 
@@ -107,6 +115,12 @@ qSlicerSettingsDeveloperPanel::~qSlicerSettingsDeveloperPanel() = default;
 
 // --------------------------------------------------------------------------
 void qSlicerSettingsDeveloperPanel::enableDeveloperMode(bool value)
+{
+  Q_UNUSED(value);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsDeveloperPanel::preserveCLIModuleDataFiles(bool value)
 {
   Q_UNUSED(value);
 }

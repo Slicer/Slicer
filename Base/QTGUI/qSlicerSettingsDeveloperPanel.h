@@ -52,6 +52,7 @@ public slots:
 protected slots:
   void enableDeveloperMode(bool value);
   void enableQtTesting(bool value);
+  void preserveCLIModuleDataFiles(bool value);
 
 protected:
   QScopedPointer<qSlicerSettingsDeveloperPanelPrivate> d_ptr;

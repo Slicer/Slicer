@@ -92,7 +92,7 @@ vtkMRMLAbstractLogic* qSlicerCLIModule::createLogic()
 
   // In developer mode keep the CLI modules input and output files
   QSettings settings;
-  bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
+  bool developerModeEnabled = settings.value("Developer/PreserveCLIModuleDataFiles", false).toBool();
   if (developerModeEnabled)
     {
     logic->DeleteTemporaryFilesOff();
