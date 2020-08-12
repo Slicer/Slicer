@@ -191,7 +191,7 @@ public:
   /// - PointRemovedEvent: control point(s) deleted. Modified event is NOT invoked.
   /// - PointModifiedEvent: existing control point(s) modified, added, or removed. Modified event is NOT invoked.
   /// - PointStartInteractionEvent when starting interacting with a control point.
-  /// - PointEndInteractionEvent when an interaction eith a control point process finishes.
+  /// - PointEndInteractionEvent when an interaction with a control point process finishes.
   /// - CenterPointModifiedEvent when position of the centerpoint is changed (displayed for example for closed curves)
   ///
   /// Event data for Point* events: Event callData is control point index address (int*). If the pointer is nullptr
@@ -646,7 +646,7 @@ protected:
   // Computes tangent and smooth normal for each curve point.
   // It provides a fully specified coordinate system at each point of the curve,
   // which is useful for image reslicing or defining camera pose.
-  // Curve is defined in the world coordinate sytem.
+  // Curve is defined in the world coordinate system.
   vtkSmartPointer<vtkFrenetSerretFrame> CurveCoordinateSystemGeneratorWorld;
 
   // Stores control point positions in a polydata (in local coordinate system).

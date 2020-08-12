@@ -35,6 +35,7 @@
 
 class vtkArrayCalculator;
 class vtkCleanPolyData;
+class vtkCurveMeasurementsCalculator;
 class vtkPassThroughFilter;
 class vtkPlane;
 class vtkTransformPolyDataFilter;
@@ -209,7 +210,7 @@ public:
   static int GetSurfaceCostFunctionTypeFromString(const char* name);
 
   /// The scalar weight function that is used for modifying the weight on each vertex.
-  /// The the currently active point scalar array is availiable as the "activeScalar" variable.
+  /// The the currently active point scalar array is available as the "activeScalar" variable.
   const char* GetSurfaceDistanceWeightingFunction();
   void SetSurfaceDistanceWeightingFunction(const char* function);
 
@@ -220,12 +221,17 @@ public:
   void SetNumberOfPointsPerInterpolatingSegment(int pointsPerSegment);
   //@}
 
+  /// TODO:
+  bool GetCalculateCurvature();
+  void SetCalculateCurvature(bool on);
+
 protected:
   vtkSmartPointer<vtkCleanPolyData> CleanFilter;
   vtkSmartPointer<vtkTriangleFilter> TriangleFilter;
   vtkSmartPointer<vtkTransformPolyDataFilter> SurfaceToLocalTransformer;
   vtkSmartPointer<vtkArrayCalculator> SurfaceScalarCalculator;
   vtkSmartPointer<vtkPassThroughFilter> PassThroughFilter;
+  vtkSmartPointer<vtkCurveMeasurementsCalculator> CurveMeasurementsCalculator;
   const char* ActiveScalar;
 
 protected:

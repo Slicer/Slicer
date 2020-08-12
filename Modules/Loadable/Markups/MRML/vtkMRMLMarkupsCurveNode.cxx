@@ -19,6 +19,7 @@
 
 // MRML includes
 #include "vtkCurveGenerator.h"
+#include "vtkCurveMeasurementsCalculator.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTransformNode.h"
@@ -95,6 +96,11 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   events->InsertNextTuple1(vtkMRMLModelNode::MeshModifiedEvent);
   events->InsertNextTuple1(vtkMRMLTransformableNode::TransformModifiedEvent);
   this->AddNodeReferenceRole(this->GetShortestDistanceSurfaceNodeReferenceRole(), this->GetShortestDistanceSurfaceNodeReferenceMRMLAttributeName(), events);
+
+  // Insert curve measurements calculator between curve generator and world transformer filters
+  this->CurveMeasurementsCalculator = vtkSmartPointer<vtkCurveMeasurementsCalculator>::New();
+  this->CurveMeasurementsCalculator->SetInputConnection(this->CurveGenerator->GetOutputPort());
+  this->CurvePolyToWorldTransformer->SetInputConnection(this->CurveMeasurementsCalculator->GetOutputPort());
 
   this->ActiveScalar = "";
 }
@@ -1128,6 +1134,8 @@ void vtkMRMLMarkupsCurveNode::UpdateMeasurementsInternal()
       printFormat = unitNode->GetDisplayStringFormat();
       }
     this->SetNthMeasurement(0, "length", length, unit, printFormat);
+
+    this->CurveMeasurementsCalculator->Update();
     }
   this->WriteMeasurementsToDescription();
 }
@@ -1375,4 +1383,23 @@ void vtkMRMLMarkupsCurveNode::UpdateSurfaceScalarVariables()
   // Changing the variables doesn't invoke modified, so we need to invoke it here.
   this->SurfaceScalarCalculator->Modified();
   this->Modified();
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLMarkupsCurveNode::GetCalculateCurvature()
+{
+  return this->CurveMeasurementsCalculator->GetCalculateCurvature();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsCurveNode::SetCalculateCurvature(bool on)
+{
+  if (on == this->CurveMeasurementsCalculator->GetCalculateCurvature())
+    {
+    return;
+    }
+
+  this->CurveMeasurementsCalculator->SetCalculateCurvature(on);
+  this->CurveGenerator->Modified();
+  this->CurveMeasurementsCalculator->Update();
 }
