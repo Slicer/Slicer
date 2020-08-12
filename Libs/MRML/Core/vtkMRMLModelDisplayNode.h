@@ -87,7 +87,7 @@ public:
   /// This is the mesh that needs to be connected with the mappers.
   /// Return 0 if there is no input mesh but it is required.
   /// GetOutputMesh() should be reimplemented only if the model display
-  /// node doesn't take a mesh as input but produce an oustput mesh.
+  /// node doesn't take a mesh as input but produce an output mesh.
   /// In all other cases, GetOutputMeshConnection() should be reimplemented.
   /// \sa GetOutputMeshConnection()
   virtual vtkPointSet* GetOutputMesh();
@@ -111,16 +111,6 @@ public:
   /// Reimplemented to update pipeline with new value
   /// \sa SetActiveScalarName()
   void SetActiveAttributeLocation(int location) override;
-
-  /// Sets active scalar name and attribute location in one step.
-  /// It is preferable to use this method instead of calling SetActiveScalarName
-  /// and SetActiveAttributeLocation separately, to avoid transient states when
-  /// scalar name and location are temporarily inconsistent.
-  virtual void SetActiveScalar(const char *scalarName, int location);
-
-  /// Reimplemented to update scalar range accordingly
-  /// \sa SetActiveScalarName()
-  void SetScalarRangeFlag(int flag) override;
 
   /// Set whether to threshold the model display node.
   /// \sa ThresholdEnabled, GetThresholdEnabled()
@@ -167,11 +157,13 @@ public:
   virtual const char* GetDistanceEncodedProjectionColorNodeID();
   virtual vtkMRMLColorNode* GetDistanceEncodedProjectionColorNode();
 
-  /// Returns the current active scalar array (based on active scalar name and location)
-  virtual vtkDataArray* GetActiveScalarArray();
+  /// Get data set containing the scalar arrays for this node type.
+  /// For models it is the input mesh
+  virtual vtkDataSet* GetScalarDataSet() override;
+  /// Return the current active scalar array (based on active scalar name and location)
+  virtual vtkDataArray* GetActiveScalarArray() override;
 
-  ///
-  /// Set color of backface surface as HSV (hue, saturation, brighness) offset compared to node color.
+  /// Set color of backface surface as HSV (hue, saturation, brightness) offset compared to node color.
   /// Values are in [-1, 1] range, 0 value means same as node color.
   vtkSetVector3Macro(BackfaceColorHSVOffset, double);
   vtkGetVector3Macro(BackfaceColorHSVOffset, double);
@@ -191,11 +183,7 @@ protected:
 
   /// Update the AssignAttribute filter based on
   /// its ActiveScalarName and its ActiveAttributeLocation
-  virtual void UpdateAssignedAttribute();
-
-  /// Update the ScalarRange based on the ScalarRangeFlag.
-  /// If UseManualScalarRange is selected then the method has no effect.
-  virtual void UpdateScalarRange();
+  virtual void UpdateAssignedAttribute() override;
 
   /// Filter that changes the active scalar of the input mesh
   /// using the ActiveScalarName and ActiveAttributeLocation properties.

@@ -29,6 +29,7 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPiecewiseFunction.h>
+#include <vtkPointData.h>
 #include <vtkTextProperty.h>
 #include <vtksys/SystemTools.hxx>
 
@@ -957,4 +958,41 @@ void vtkMRMLMarkupsDisplayNode::GetColorFromString(const std::string& inputStrin
       }
     colorF[i] = componentF;
     }
+}
+
+//-----------------------------------------------------------
+vtkDataSet* vtkMRMLMarkupsDisplayNode::GetScalarDataSet()
+{
+  if (this->GetMarkupsNode())
+    {
+    return this->GetMarkupsNode()->GetCurveWorld();
+    }
+  return nullptr;
+}
+
+//-----------------------------------------------------------
+vtkDataArray* vtkMRMLMarkupsDisplayNode::GetActiveScalarArray()
+{
+  if (this->GetActiveScalarName() == nullptr || strcmp(this->GetActiveScalarName(),"") == 0)
+    {
+    return nullptr;
+    }
+  if (!this->GetMarkupsNode())
+    {
+    return nullptr;
+    }
+  if (!this->GetMarkupsNode()->GetCurveWorld())
+    {
+    return nullptr;
+    }
+
+  return this->GetMarkupsNode()->GetCurveWorld()->GetPointData()->GetArray(this->GetActiveScalarName());
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsDisplayNode::UpdateAssignedAttribute()
+{
+  this->UpdateScalarRange();
+
+  this->GetMarkupsNode()->UpdateAssignedAttribute();
 }

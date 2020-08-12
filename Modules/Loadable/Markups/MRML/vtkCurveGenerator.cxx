@@ -534,6 +534,11 @@ int vtkCurveGenerator::GeneratePoints(vtkPoints* inputPoints, vtkPolyData* input
   this->OutputCurveLength = 0.0;
   this->InterpolatedPointIdsForControlPoints.clear();
 
+  // Initialize pedigree IDs array
+  vtkNew<vtkDoubleArray> outputPedigreeIdArray;
+  outputPedigreeIdArray->SetName("PedigreeIDs");
+  outputPedigreeIdArray->SetNumberOfComponents(1);
+
   switch (this->CurveType)
   {
   case vtkCurveGenerator::CURVE_TYPE_LINEAR_SPLINE:
@@ -541,14 +546,14 @@ int vtkCurveGenerator::GeneratePoints(vtkPoints* inputPoints, vtkPolyData* input
   case vtkCurveGenerator::CURVE_TYPE_KOCHANEK_SPLINE:
   case vtkCurveGenerator::CURVE_TYPE_POLYNOMIAL:
     {
-    if (!this->GeneratePointsFromFunction(inputPoints, outputPoints))
+    if (!this->GeneratePointsFromFunction(inputPoints, outputPoints, outputPedigreeIdArray))
       {
       return 0;
       }
     break;
     }
   case vtkCurveGenerator::CURVE_TYPE_SHORTEST_DISTANCE_ON_SURFACE:
-    if (!this->GeneratePointsFromSurface(inputPoints, inputSurface, outputPoints))
+    if (!this->GeneratePointsFromSurface(inputPoints, inputSurface, outputPoints, outputPedigreeIdArray))
       {
       return 0;
       }
@@ -561,11 +566,12 @@ int vtkCurveGenerator::GeneratePoints(vtkPoints* inputPoints, vtkPolyData* input
   }
 
   outputPolyData->SetPoints(outputPoints);
+  outputPolyData->GetPointData()->AddArray(outputPedigreeIdArray);
   return 1;
 }
 
 //------------------------------------------------------------------------------
-int vtkCurveGenerator::GeneratePointsFromFunction(vtkPoints* inputPoints, vtkPoints* outputPoints)
+int vtkCurveGenerator::GeneratePointsFromFunction(vtkPoints* inputPoints, vtkPoints* outputPoints, vtkDoubleArray* outputPedigreeIdArray)
 {
   int numberOfInputPoints = inputPoints->GetNumberOfPoints();
   if (numberOfInputPoints <= 1)
@@ -613,7 +619,14 @@ int vtkCurveGenerator::GeneratePointsFromFunction(vtkPoints* inputPoints, vtkPoi
     }
 
   int totalNumberOfPoints = this->NumberOfPointsPerInterpolatingSegment * numberOfSegments + 1;
-  double previousPoint[3];
+
+  // Initialize pedigree ID array
+  outputPedigreeIdArray->Initialize();
+  outputPedigreeIdArray->SetNumberOfTuples(totalNumberOfPoints);
+  outputPedigreeIdArray->Reset();
+  outputPedigreeIdArray->FillComponent(0, 0.0);
+
+  double previousPoint[3] = { 0.0 };
   for (int pointIndex = 0; pointIndex < totalNumberOfPoints; pointIndex++)
     {
     double sampleParameter = pointIndex / (double)(totalNumberOfPoints - 1);
@@ -628,12 +641,21 @@ int vtkCurveGenerator::GeneratePointsFromFunction(vtkPoints* inputPoints, vtkPoi
     previousPoint[0] = curvePoint[0];
     previousPoint[1] = curvePoint[1];
     previousPoint[2] = curvePoint[2];
+
+    // Calculate pedigree ID for point
+    int correspondingControlPointIndex = pointIndex / this->NumberOfPointsPerInterpolatingSegment;
+    int interpolatedPointIndexAfterControlPoint = pointIndex % this->NumberOfPointsPerInterpolatingSegment;
+    double pedigreeId = correspondingControlPointIndex
+      + (double)interpolatedPointIndexAfterControlPoint / this->NumberOfPointsPerInterpolatingSegment;
+    outputPedigreeIdArray->InsertValue(pointIndex, pedigreeId);
   }
+
   return 1;
 }
 
 //------------------------------------------------------------------------------
-int vtkCurveGenerator::GeneratePointsFromSurface(vtkPoints* inputPoints, vtkPolyData* inputSurface, vtkPoints* outputPoints)
+int vtkCurveGenerator::GeneratePointsFromSurface(
+  vtkPoints* inputPoints, vtkPolyData* inputSurface, vtkPoints* outputPoints, vtkDoubleArray* outputPedigreeIdArray)
 {
   // If there is no surface, there are no points. Don't report as an error.
   if (!inputSurface)
@@ -704,6 +726,27 @@ int vtkCurveGenerator::GeneratePointsFromSurface(vtkPoints* inputPoints, vtkPoly
       }
     }
   this->InterpolatedPointIdsForControlPoints.push_back(outputPoints->GetNumberOfPoints() - 1);
+
+  // Generate pedigree IDs array
+  outputPedigreeIdArray->Initialize();
+  outputPedigreeIdArray->SetNumberOfTuples(outputPoints->GetNumberOfPoints());
+  outputPedigreeIdArray->Reset();
+  outputPedigreeIdArray->FillComponent(0, 0.0);
+  outputPedigreeIdArray->InsertValue(0, 0.0);
+  int controlPointId = 0;
+  for (int outPointIndex = 1; outPointIndex < outputPoints->GetNumberOfPoints(); ++outPointIndex)
+    {
+    if (outPointIndex > this->InterpolatedPointIdsForControlPoints[controlPointId])
+      {
+      ++controlPointId;
+      }
+
+    vtkIdType prevControlPointInterpolatedId = this->InterpolatedPointIdsForControlPoints[controlPointId-1];
+    vtkIdType currControlPointInterpolatedId = this->InterpolatedPointIdsForControlPoints[controlPointId];
+    double pedigreeId = controlPointId - 1
+      + (double)(outPointIndex-prevControlPointInterpolatedId) / (currControlPointInterpolatedId-prevControlPointInterpolatedId);
+    outputPedigreeIdArray->InsertValue(outPointIndex, pedigreeId);
+    }
 
   return 1;
 }
@@ -823,7 +866,7 @@ void vtkCurveGenerator::SortByMinimumSpanningTreePosition(vtkPoints* points, vtk
   // 1. construct an undirected graph
   std::vector< double > distances(numberOfPoints * numberOfPoints);
   distances.assign(numberOfPoints * numberOfPoints, 0.0);
-  // 2. find the two farthest-seperated vertices in the distances array
+  // 2. find the two farthest-separated vertices in the distances array
   int treeStartIndex = 0;
   int treeEndIndex = 0;
   double maximumDistance = 0;

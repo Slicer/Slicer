@@ -34,7 +34,9 @@
 #include <vector>
 
 class vtkArrayCalculator;
+class vtkAssignAttribute;
 class vtkCleanPolyData;
+class vtkCurveMeasurementsCalculator;
 class vtkPassThroughFilter;
 class vtkPlane;
 class vtkTransformPolyDataFilter;
@@ -52,6 +54,35 @@ class vtkTriangleFilter;
 ///   - Surface: Model node's coordinate system where the polydata used for ShortestDistanceOnSurface pathfinding is defined.
 ///            Surface coordinates can be converted to world by concatenating all parent transforms on the surface node.
 ///   - World: Patient coordinate system (RAS)
+///
+/// Markups measurement pipeline:
+///
+/// +------------------------------------------vtkMarkupsCurveNode-----------------------------------------------+
+/// |  +-vtkMRMLMarkupsNode-+                                                             === : Display pipeline |
+/// |  |                    |        +-vtkCurveGenerator-+                                                       |
+/// |  |   CurveInputPoly=============                   | : Generate interpolated curve from the control points |
+/// |  |   Measurements--------+     +---------║---------+                                                       |
+/// |  |                    |  |               ║                                                                 |
+/// |  +--------------------+  |               ║                                                                 |
+/// |                         ++-vtkCurveMeasurementsCalculator-+                                                |
+/// |                         |                                 | : Add measurements as data arrays to the curve |
+/// |                         +----------------║----------------+   poly data                                    |
+/// |                                          ║                                                                 |
+/// |                                          ║                                                                 |
+/// |                         +---vtkTransformPolyDataFilter----+                                                |
+/// |                         |  (CurvePolyToWorldTransformer)  |                                                |
+/// |                         +----------------║----------------+                                                |
+/// |                                          ║                                                                 |
+/// +------------------------------------------║-----------------------------------------------------------------+
+///                                            ║
+///                          +-----------------║-------vtkSlicerCurveRepresentation3D----------------------+
+///                          |                 ║                                                           |
+///                          |                 ║(vtkCleaner in between)                                    |
+///                          |        +--vtkTubeFilter--+                                                  |
+///                          |        |                 =========> vtkPolyDataMapper => vtkActor           |
+///                          |        +-----------------+                                                  |
+///                          +-----------------------------------------------------------------------------+
+///
 /// \ingroup Slicer_QtModules_Markups
 class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsCurveNode : public vtkMRMLMarkupsNode
 {
@@ -209,7 +240,7 @@ public:
   static int GetSurfaceCostFunctionTypeFromString(const char* name);
 
   /// The scalar weight function that is used for modifying the weight on each vertex.
-  /// The the currently active point scalar array is availiable as the "activeScalar" variable.
+  /// The the currently active point scalar array is available as the "activeScalar" variable.
   const char* GetSurfaceDistanceWeightingFunction();
   void SetSurfaceDistanceWeightingFunction(const char* function);
 
@@ -220,13 +251,34 @@ public:
   void SetNumberOfPointsPerInterpolatingSegment(int pointsPerSegment);
   //@}
 
+  //@{
+  /// Set/Get flag determining whether to calculate curvature
+  bool GetCalculateCurvature();
+  void SetCalculateCurvature(bool on);
+  //@}
+
+  //@{
+  /// Set/Get flag determining whether to interpolate control point measurements
+  bool GetInterpolateControlPointMeasurement();
+  void SetInterpolateControlPointMeasurement(bool on);
+  //@}
+
+  /// Update scalar range and update markups pipeline when the active scalar array is changed
+  virtual void UpdateAssignedAttribute() override;
+
 protected:
   vtkSmartPointer<vtkCleanPolyData> CleanFilter;
   vtkSmartPointer<vtkTriangleFilter> TriangleFilter;
   vtkSmartPointer<vtkTransformPolyDataFilter> SurfaceToLocalTransformer;
   vtkSmartPointer<vtkArrayCalculator> SurfaceScalarCalculator;
-  vtkSmartPointer<vtkPassThroughFilter> PassThroughFilter;
-  const char* ActiveScalar;
+  vtkSmartPointer<vtkPassThroughFilter> SurfaceScalarPassThroughFilter;
+  vtkSmartPointer<vtkCurveMeasurementsCalculator> CurveMeasurementsCalculator;
+  const char* ShortestDistanceSurfaceActiveScalar;
+
+  /// Filter that changes the active scalar of the input mesh using the ActiveScalarName
+  /// and ActiveAttributeLocation properties. This can be useful to specify what field
+  /// array is the color array that needs to be used by the VTK mappers.
+  vtkSmartPointer<vtkAssignAttribute> ScalarDisplayAssignAttribute;
 
 protected:
   void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;

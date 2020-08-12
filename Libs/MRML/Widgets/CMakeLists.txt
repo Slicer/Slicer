@@ -141,6 +141,8 @@ set(MRMLWidgets_SRCS
   qMRMLROIWidget.h
   qMRMLScalarInvariantComboBox.cxx
   qMRMLScalarInvariantComboBox.h
+  qMRMLScalarsDisplayWidget.cxx
+  qMRMLScalarsDisplayWidget.h
   qMRMLSceneCategoryModel.cxx
   qMRMLSceneCategoryModel.h
   qMRMLSceneColorTableModel.cxx
@@ -284,6 +286,7 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLRangeWidget.h
   qMRMLROIWidget.h
   qMRMLScalarInvariantComboBox.h
+  qMRMLScalarsDisplayWidget.h
   qMRMLSceneCategoryModel.h
   qMRMLSceneColorTableModel.h
   qMRMLSceneFactoryWidget.h
@@ -355,6 +358,7 @@ set(MRMLWidgets_UI_SRCS
   Resources/UI/qMRMLNodeAttributeTableWidget.ui
   Resources/UI/qMRMLPlotViewControllerWidget.ui
   Resources/UI/qMRMLROIWidget.ui
+  Resources/UI/qMRMLScalarsDisplayWidget.ui
   Resources/UI/qMRMLSceneFactoryWidget.ui
   Resources/UI/qMRMLScreenShotDialog.ui
   Resources/UI/qMRMLSegmentSelectorWidget.ui

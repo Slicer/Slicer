@@ -18,14 +18,16 @@
 // MRML includes
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsLineNode.h"
-#include "vtkMatrix4x4.h"
+#include "vtkMRMLMeasurementLength.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLUnitNode.h"
-#include "vtkTransform.h"
 
 // VTK includes
+#include <vtkCollection.h>
+#include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkTransform.h>
 
 // STD includes
 #include <sstream>
@@ -39,6 +41,12 @@ vtkMRMLMarkupsLineNode::vtkMRMLMarkupsLineNode()
 {
   this->MaximumNumberOfControlPoints = 2;
   this->RequiredNumberOfControlPoints = 2;
+
+  // Setup measurements calculated for this markup type
+  vtkNew<vtkMRMLMeasurementLength> lengthMeasurement;
+  lengthMeasurement->SetName("length");
+  lengthMeasurement->SetInputMRMLNode(this);
+  this->Measurements->AddItem(lengthMeasurement);
 }
 
 //----------------------------------------------------------------------------
@@ -76,23 +84,19 @@ double vtkMRMLMarkupsLineNode::GetLineLengthWorld()
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsLineNode::UpdateMeasurementsInternal()
 {
-  this->RemoveAllMeasurements();
   if (this->GetNumberOfDefinedControlPoints(true) == 2)
     {
-    double length = this->GetLineLengthWorld();
-    std::string printFormat;
-    std::string unit = "mm";
-    vtkMRMLUnitNode* unitNode = GetUnitNode("length");
-    if (unitNode)
+    // Calculate enabled measurements
+    for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
       {
-      if (unitNode->GetSuffix())
+      vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
+        this->Measurements->GetItemAsObject(index) );
+      if (currentMeasurement && currentMeasurement->GetEnabled())
         {
-        unit = unitNode->GetSuffix();
+        currentMeasurement->ClearValue();
+        currentMeasurement->Compute();
         }
-      length = unitNode->GetDisplayValueFromValue(length);
-      printFormat = unitNode->GetDisplayStringFormat();
       }
-    this->SetNthMeasurement(0, "length", length, unit, printFormat);
     }
   this->WriteMeasurementsToDescription();
 }

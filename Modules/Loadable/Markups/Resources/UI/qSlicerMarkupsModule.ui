@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>274</width>
-    <height>390</height>
+    <width>329</width>
+    <height>347</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Module Template</string>
+   <string>Markups</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -150,6 +150,9 @@
         <property name="selectionMode">
          <enum>QAbstractItemView::ExtendedSelection</enum>
         </property>
+        <property name="indentation">
+         <number>8</number>
+        </property>
         <property name="editMenuActionVisible">
          <bool>false</bool>
         </property>
@@ -159,7 +162,7 @@
     </widget>
    </item>
    <item>
-    <widget class="qMRMLCollapsibleButton" name="CollapsibleGroupBox">
+    <widget class="qMRMLCollapsibleButton" name="displayCollapsibleButton">
      <property name="text">
       <string>Display</string>
      </property>
@@ -1174,6 +1177,12 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>qMRMLWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
@@ -1181,7 +1190,7 @@
   </customwidget>
   <customwidget>
    <class>qMRMLMarkupsDisplayNodeWidget</class>
-   <extends>QWidget</extends>
+   <extends>qMRMLWidget</extends>
    <header>qMRMLMarkupsDisplayNodeWidget.h</header>
   </customwidget>
   <customwidget>
@@ -1269,8 +1278,8 @@
      <y>393</y>
     </hint>
     <hint type="destinationlabel">
-     <x>290</x>
-     <y>770</y>
+     <x>268</x>
+     <y>480</y>
     </hint>
    </hints>
   </connection>
@@ -1285,8 +1294,8 @@
      <y>393</y>
     </hint>
     <hint type="destinationlabel">
-     <x>290</x>
-     <y>774</y>
+     <x>268</x>
+     <y>484</y>
     </hint>
    </hints>
   </connection>
@@ -1301,8 +1310,24 @@
      <y>285</y>
     </hint>
     <hint type="destinationlabel">
-     <x>260</x>
-     <y>553</y>
+     <x>264</x>
+     <y>453</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerMarkupsModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>markupsDisplayWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>2</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>109</x>
+     <y>203</y>
     </hint>
    </hints>
   </connection>
