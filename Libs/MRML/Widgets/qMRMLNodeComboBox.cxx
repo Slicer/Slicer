@@ -683,7 +683,13 @@ void qMRMLNodeComboBox::emitCurrentNodeChanged()
   vtkMRMLNode*  node = d->mrmlNode(currentIndex);
   if (!node && ((!d->NoneEnabled &&currentIndex != -1) || (d->NoneEnabled && currentIndex != 0)) )
     {
-    this->setCurrentNode(this->nodeFromIndex(this->nodeCount()-1));
+    // we only set the current node if the new selected is different
+    // (not nullptr) to avoid warning in QAccessibleTable::child
+    vtkMRMLNode* newSelectedNode = this->nodeFromIndex(this->nodeCount() - 1);
+    if (newSelectedNode)
+      {
+      this->setCurrentNode(newSelectedNode);
+      }
     }
   else
     {
