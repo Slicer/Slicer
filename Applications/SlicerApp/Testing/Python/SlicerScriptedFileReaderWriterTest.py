@@ -141,14 +141,16 @@ class SlicerScriptedFileReaderWriterTestTest(ScriptedLoadableModuleTest):
     import shutil
     shutil.rmtree(self.tempDir, True)
 
-  def test_Writer(self):
+  def test_WriterReader(self):
+    # Writer and reader tests are put in the same function to ensure
+    # that writing is done before reading (it generates input data for reading).
+
     self.delayDisplay('Testing node writer')
     slicer.mrmlScene.Clear()
     textNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLTextNode')
     textNode.SetText(self.textInNode)
     self.assertTrue(slicer.util.saveNode(textNode, self.validFilename, {'fileType': 'MyFileType'}))
 
-  def test_Reader(self):
     self.delayDisplay('Testing node reader')
     slicer.mrmlScene.Clear()
     loadedNode = slicer.util.loadNodeFromFile(self.validFilename, 'MyFileType')
