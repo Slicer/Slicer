@@ -1657,14 +1657,12 @@ const char* vtkMRMLModelDisplayableManager::GetActiveScalarName(
         meshConnection->GetProducer()->Update();
         }
       }
-    activeScalarName =
-      modelNode->GetActiveCellScalarName(vtkDataSetAttributes::SCALARS);
+    activeScalarName = modelNode->GetActiveCellScalarName(vtkDataSetAttributes::SCALARS);
     if (activeScalarName)
       {
       return activeScalarName;
       }
-    activeScalarName =
-      modelNode->GetActivePointScalarName(vtkDataSetAttributes::SCALARS);
+    activeScalarName = modelNode->GetActivePointScalarName(vtkDataSetAttributes::SCALARS);
     if (activeScalarName)
       {
       return activeScalarName;

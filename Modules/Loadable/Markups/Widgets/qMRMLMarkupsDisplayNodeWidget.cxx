@@ -174,13 +174,18 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   this->curveLineDiameterSliderWidget->setVisible(this->glyphSizeIsAbsoluteButton->isChecked());
   this->curveLineThicknessSliderWidget->setHidden(this->glyphSizeIsAbsoluteButton->isChecked());
 
+  q->connect(this->ScalarsDisplayWidget, SIGNAL(scalarRangeModeValueChanged(qMRMLScalarsDisplayWidget::ControlMode)),
+    q, SIGNAL(scalarRangeModeValueChanged(qMRMLScalarsDisplayWidget::ControlMode)));
+  q->connect(this->ScalarsDisplayWidget, SIGNAL(displayNodeChanged()),
+    q, SIGNAL(displayNodeChanged()));
+
   // Disable until a valid display node is set
   this->setEnabled(false);
 }
 
 //------------------------------------------------------------------------------
 qMRMLMarkupsDisplayNodeWidget::qMRMLMarkupsDisplayNodeWidget(QWidget *_parent)
-  : QWidget(_parent)
+  : qMRMLWidget(_parent)
   , d_ptr(new qMRMLMarkupsDisplayNodeWidgetPrivate(*this))
 {
   Q_D(qMRMLMarkupsDisplayNodeWidget);
@@ -227,8 +232,13 @@ void qMRMLMarkupsDisplayNodeWidget::setMRMLMarkupsDisplayNode(vtkMRMLMarkupsDisp
     {
     return;
     }
+
   qvtkReconnect(d->MarkupsDisplayNode, markupsDisplayNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
   d->MarkupsDisplayNode = markupsDisplayNode;
+
+  // Set display node to scalars display widget
+  d->ScalarsDisplayWidget->setMRMLDisplayNode(markupsDisplayNode);
+
   this->updateWidgetFromMRML();
 }
 
@@ -395,6 +405,9 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
   wasBlocking = d->TextBackgroundColorPickerButton->blockSignals(true);
   d->TextBackgroundColorPickerButton->setColor(QColor::fromRgbF(textBackgroundColorF[0], textBackgroundColorF[1], textBackgroundColorF[2]));
   d->TextBackgroundColorPickerButton->blockSignals(wasBlocking);
+
+  // Scalars
+  d->ScalarsDisplayWidget->updateWidgetFromMRML();
 
   emit displayNodeChanged();
 }

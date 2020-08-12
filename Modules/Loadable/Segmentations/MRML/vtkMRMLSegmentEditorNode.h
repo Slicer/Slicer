@@ -80,7 +80,7 @@ public:
     OverwriteAllSegments=0,
     /// Areas added to selected segment will be removed from all visible segments. (no overlap with visible, overlap possible with hidden)
     OverwriteVisibleSegments,
-    /// Areas added to selected segment will be removed from all other segments. (overlap with all other segments)
+    /// Areas added to selected segment will not be removed from any segments. (overlap with all other segments)
     OverwriteNone,
     // Insert valid types above this line
     Overwrite_Last

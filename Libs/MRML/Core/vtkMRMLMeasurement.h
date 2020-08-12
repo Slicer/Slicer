@@ -12,10 +12,12 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 
 // MRML includes
 #include <vtkCodedEntry.h>
-#include "vtkMRML.h"
+#include "vtkMRMLNode.h"
 
 // VTK includes
+#include <vtkDoubleArray.h>
 #include <vtkObject.h>
+#include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
 /// \brief Class for storing well-defined measurement results, using coded entries.
@@ -37,8 +39,19 @@ public:
   /// Reset state of object
   virtual void Initialize();
 
+  /// Clear value and derived variables
+  virtual void ClearValue();
+
   /// Copy one type into another (deep copy)
   virtual void Copy(vtkMRMLMeasurement* aEntry);
+
+  /// Perform calculation on \sa InputMRMLNode and store the result internally
+  virtual void Compute() {};
+
+  /// Enabled
+  vtkSetMacro(Enabled, bool);
+  vtkGetMacro(Enabled, bool);
+  vtkBooleanMacro(Enabled, bool);
 
   /// Measurement name
   vtkGetStringMacro(Name);
@@ -60,34 +73,44 @@ public:
   vtkGetStringMacro(PrintFormat);
   vtkSetStringMacro(PrintFormat);
 
-  // Copies content of coded entry
+  /// Copy content of coded entry
   void SetQuantityCode(vtkCodedEntry* entry);
   vtkGetObjectMacro(QuantityCode, vtkCodedEntry);
 
-  // Copies content of coded entry
+  /// Copy content of coded entry
   void SetDerivationCode(vtkCodedEntry* entry);
   vtkGetObjectMacro(DerivationCode, vtkCodedEntry);
 
-  // Copies content of coded entry
+  /// Copy content of coded entry
   void SetUnitsCode(vtkCodedEntry* entry);
   vtkGetObjectMacro(UnitsCode, vtkCodedEntry);
 
-  // Copies content of coded entry
+  /// Copy content of coded entry
   void SetMethodCode(vtkCodedEntry* entry);
   vtkGetObjectMacro(MethodCode, vtkCodedEntry);
 
-  ///
   /// Get measurement value and units as a single human-readable string.
   std::string GetValueWithUnitsAsPrintableString();
 
-  ///
   /// Get content of the object as a single machine-readable string.
   std::string GetAsString();
 
-  ///
   /// Set content of the object from a single machine-readable string.
   /// \return true on success
   bool SetFromString(const std::string& content);
+
+  /// Set the per-control point measurement values
+  void SetControlPointValues(vtkDoubleArray* inputValues);
+  vtkGetObjectMacro(ControlPointValues, vtkDoubleArray);
+
+  /// Set the per-control point measurement values
+  //void SetPolyDataValues(vtkPolyData* inputValues);
+  //vtkGetObjectMacro(PolyDataValues, vtkPolyData);
+
+  /// Set input MRML node used for calculating the measurement \sa Execute
+  void SetInputMRMLNode(vtkMRMLNode* node);
+  /// Get input MRML node used for calculating the measurement \sa Execute
+  vtkMRMLNode* GetInputMRMLNode();
 
 protected:
   vtkMRMLMeasurement();
@@ -96,6 +119,7 @@ protected:
   void operator=(const vtkMRMLMeasurement&);
 
 protected:
+  bool Enabled{true};
   char* Name{nullptr};
   double Value{0.0};
   char* Units{nullptr};
@@ -105,6 +129,13 @@ protected:
   vtkCodedEntry* DerivationCode{nullptr}; // min/max/mean
   vtkCodedEntry* UnitsCode{nullptr};      // cubic millimeter
   vtkCodedEntry* MethodCode{nullptr};     // Sum of segmented voxel volumes
+
+  /// Per-control point measurements
+  vtkDoubleArray* ControlPointValues{nullptr};
+  /// Measurement or displayed surface element stored in poly data
+  //vtkPolyData* PolyDataValues{nullptr};
+  /// MRML node used to calculate the measurement \sa Execute
+  vtkWeakPointer<vtkMRMLNode> InputMRMLNode;
 };
 
 #endif

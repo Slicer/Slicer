@@ -59,6 +59,7 @@
 #include "qMRMLRangeWidgetPlugin.h"
 #include "qMRMLROIWidgetPlugin.h"
 #include "qMRMLScalarInvariantComboBoxPlugin.h"
+#include "qMRMLScalarsDisplayWidgetPlugin.h"
 #include "qMRMLSliceControllerWidgetPlugin.h"
 #include "qMRMLSliceInformationWidgetPlugin.h"
 #include "qMRMLSliceWidgetPlugin.h"
@@ -119,6 +120,7 @@ public:
             << new qMRMLRangeWidgetPlugin
             << new qMRMLROIWidgetPlugin
             << new qMRMLScalarInvariantComboBoxPlugin
+            << new qMRMLScalarsDisplayWidgetPlugin
             << new qMRMLSceneFactoryWidgetPlugin
             << new qMRMLSliceControllerWidgetPlugin
             << new qMRMLSliceInformationWidgetPlugin

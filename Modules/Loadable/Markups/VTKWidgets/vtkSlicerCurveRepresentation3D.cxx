@@ -21,6 +21,7 @@
 #include "vtkCellLocator.h"
 #include "vtkCleanPolyData.h"
 #include "vtkGlyph3D.h"
+#include "vtkLookupTable.h"
 #include "vtkPolyDataMapper.h"
 #include "vtkPointData.h"
 #include "vtkProperty.h"
@@ -29,6 +30,7 @@
 #include "vtkTubeFilter.h"
 
 // MRML includes
+#include "vtkMRMLColorNode.h"
 #include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 
@@ -147,6 +149,55 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
       this->GetControlPointsPipeline(centerControlPointType)->Actor->VisibilityOn();
       this->GetControlPointsPipeline(centerControlPointType)->LabelsActor->VisibilityOff();
       }
+    }
+
+  // Scalars
+  this->LineMapper->SetScalarVisibility(this->MarkupsDisplayNode->GetScalarVisibility());
+  // if the scalars are visible, set active scalars, the lookup table and the scalar range
+  if (this->MarkupsDisplayNode->GetScalarVisibility())
+    {
+    // Set active display property so that it can be distinguished, given that color cannot be used for this when scalars are visible
+    vtkProperty* activePipelineProperty =
+      reinterpret_cast<vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D*>(this->ControlPoints[Active])->Property;
+    this->PreviousSpecularLightingCoeff = activePipelineProperty->GetSpecular();
+    activePipelineProperty->SetSpecular(1.0);
+
+    if (this->LineActor->GetVisibility())
+      {
+      this->LineMapper->SetScalarModeToUsePointData();
+
+      if (this->MarkupsDisplayNode->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseDirectMapping)
+        {
+        this->LineMapper->UseLookupTableScalarRangeOn(); // avoid warning about bad table range
+        this->LineMapper->SetColorModeToDirectScalars();
+        this->LineMapper->SetLookupTable(nullptr);
+        }
+      else
+        {
+        this->LineMapper->UseLookupTableScalarRangeOff();
+        this->LineMapper->SetColorModeToMapScalars();
+
+        // The renderer uses the lookup table scalar range to render colors. By default, UseLookupTableScalarRange
+        // is set to false and SetScalarRange can be used on the mapper to map scalars into the lookup table. When set
+        // to true, SetScalarRange has no effect and it is necessary to force the scalarRange on the lookup table manually.
+        // Whichever way is used, the look up table range needs to be changed to render the correct scalar values, thus
+        // one lookup table can not be shared by multiple mappers if any of those mappers needs to map using its scalar
+        // values range. It is therefore necessary to make a copy of the colorNode vtkLookupTable in order not to impact
+        // that lookup table original range.
+        vtkSmartPointer<vtkLookupTable> dNodeLUT = vtkSmartPointer<vtkLookupTable>::Take(
+          this->MarkupsDisplayNode->GetColorNode() ? this->MarkupsDisplayNode->GetColorNode()->CreateLookupTableCopy() : nullptr);
+        this->LineMapper->SetLookupTable(dNodeLUT);
+        }
+
+      // Set scalar range
+      this->LineMapper->SetScalarRange(this->MarkupsDisplayNode->GetScalarRange());
+      }
+    }
+  else
+    {
+    vtkProperty* activePipelineProperty =
+      reinterpret_cast<vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D*>(this->ControlPoints[Active])->Property;
+    activePipelineProperty->SetSpecular(this->PreviousSpecularLightingCoeff);
     }
 }
 

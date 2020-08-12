@@ -42,3 +42,7 @@ slicerMacroBuildScriptedModule(
   )
 slicer_add_python_unittest(SCRIPT MarkupsInViewsSelfTest.py
                            SLICER_ARGS --disable-cli-modules)
+
+# Test curvature computation
+slicer_add_python_test(SCRIPT MarkupsCurveMeasurementsTest.py
+                       SLICER_ARGS --disable-cli-modules)

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>297</width>
-    <height>405</height>
+    <width>427</width>
+    <height>459</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -475,121 +475,9 @@
      <property name="collapsed">
       <bool>true</bool>
      </property>
-     <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0">
-      <item row="3" column="1" colspan="2">
-       <widget class="QComboBox" name="DisplayedScalarRangeModeComboBox">
-        <property name="toolTip">
-         <string>Set the scalar range mode flag. Data (auto) updates the Display Scalar Range from the scalar range of the data. Direct color mapping option bypasses lookup table and uses scalar values as RGB color.</string>
-        </property>
-        <item>
-         <property name="text">
-          <string>Active scalar (auto)</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Color table (LUT)</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Data type</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Manual</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Direct color mapping</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="ScalarRangeModeLabel">
-        <property name="text">
-         <string>Scalar Range Mode:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="ScalarsColorTableLabel">
-        <property name="text">
-         <string>Color Table:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="ActiveScalarLabel">
-        <property name="text">
-         <string>Active Scalar:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="ScalarsVisibilityLabel">
-        <property name="text">
-         <string>Visible:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" colspan="2">
-       <widget class="qMRMLColorTableComboBox" name="ScalarsColorNodeComboBox"/>
-      </item>
-      <item row="0" column="1">
-       <widget class="QCheckBox" name="ScalarsVisibilityCheckBox">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" colspan="2">
-       <widget class="ctkVTKDataSetArrayComboBox" name="ActiveScalarComboBox"/>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="DisplayedScalarRangeLabel">
-        <property name="text">
-         <string>Displayed Range:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1">
-       <widget class="QCheckBox" name="ThresholdCheckBox">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="toolTip">
-         <string>Apply thresholding to your displayed model based on its scalar values. Some cells normals might be flipped, in which case you
-should set &quot;backface&quot; and &quot;frontface&quot; to OFF in the Representation options to visualize all cells.</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0">
-       <widget class="QLabel" name="ThresholdLabel">
-        <property name="text">
-         <string>Threshold:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1" colspan="2">
-       <widget class="qMRMLRangeWidget" name="DisplayedScalarRangeWidget">
-        <property name="toolTip">
-         <string>Set the display scalar range, used when the Display option is selected.</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="2">
-       <widget class="ctkRangeWidget" name="ThresholdRangeWidget">
-        <property name="toolTip">
-         <string>Range used to threshold scalar values.</string>
-        </property>
-       </widget>
+     <layout class="QGridLayout" name="gridLayout" columnstretch="0,0">
+      <item row="0" column="0" colspan="2">
+       <widget class="qMRMLScalarsDisplayWidget" name="ScalarsDisplayWidget"/>
       </item>
      </layout>
     </widget>
@@ -696,20 +584,15 @@ should set &quot;backface&quot; and &quot;frontface&quot; to OFF in the Represen
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qMRMLRangeWidget</class>
-   <extends>ctkRangeWidget</extends>
-   <header>qMRMLRangeWidget.h</header>
+   <class>qMRMLScalarsDisplayWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLScalarsDisplayWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLWidget</class>
    <extends>QWidget</extends>
    <header>qMRMLWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkVTKDataSetArrayComboBox</class>
-   <extends>QComboBox</extends>
-   <header>ctkVTKDataSetArrayComboBox.h</header>
   </customwidget>
   <customwidget>
    <class>ctkVTKSurfaceMaterialPropertyWidget</class>
@@ -738,16 +621,28 @@ should set &quot;backface&quot; and &quot;frontface&quot; to OFF in the Represen
    <header>ctkMaterialPropertyWidget.h</header>
   </customwidget>
   <customwidget>
-   <class>ctkRangeWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkRangeWidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
    <header>ctkSliderWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>qMRMLModelDisplayNodeWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ScalarsDisplayWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>140</x>
+     <y>5</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>62</x>
+     <y>505</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

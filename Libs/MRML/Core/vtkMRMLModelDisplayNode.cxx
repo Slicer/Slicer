@@ -23,7 +23,6 @@ Version:   $Revision: 1.3 $
 #include <vtkCommand.h>
 #include <vtkGeometryFilter.h>
 #include <vtkIntArray.h>
-#include <vtkLookupTable.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPassThrough.h>
@@ -402,36 +401,6 @@ void vtkMRMLModelDisplayNode::SetActiveAttributeLocation(int location)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayNode::SetActiveScalar(const char *scalarName, int location)
-{
-  if (location == this->ActiveAttributeLocation
-    && ((scalarName && this->ActiveScalarName && !strcmp(scalarName, this->ActiveScalarName))
-        || (scalarName == nullptr && this->ActiveScalarName == nullptr)))
-    {
-    // no change
-    return;
-    }
-  int wasModifying = this->StartModify();
-  this->Superclass::SetActiveScalarName(scalarName);
-  this->Superclass::SetActiveAttributeLocation(location);
-  this->UpdateAssignedAttribute();
-  this->EndModify(wasModifying);
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLModelDisplayNode::SetScalarRangeFlag(int flag)
-{
-  if (flag == this->ScalarRangeFlag)
-    {
-    return;
-    }
-  int wasModifying = this->StartModify();
-  this->Superclass::SetScalarRangeFlag(flag);
-  this->UpdateScalarRange();
-  this->EndModify(wasModifying);
-}
-
-//---------------------------------------------------------------------------
 void vtkMRMLModelDisplayNode::UpdateAssignedAttribute()
 {
   this->AssignAttribute->Assign(
@@ -451,68 +420,10 @@ void vtkMRMLModelDisplayNode::UpdateAssignedAttribute()
   this->UpdateScalarRange();
 }
 
-//---------------------------------------------------------------------------
-void vtkMRMLModelDisplayNode::UpdateScalarRange()
+//-----------------------------------------------------------
+vtkDataSet* vtkMRMLModelDisplayNode::GetScalarDataSet()
 {
-  if (!this->GetInputMesh())
-    {
-    return;
-    }
-
-  if (this->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseManualScalarRange)
-    {
-    return;
-    }
-
-  double newScalarRange[2] = { 0.0, -1.0 };
-  int flag = this->GetScalarRangeFlag();
-  if (flag == vtkMRMLDisplayNode::UseDataScalarRange)
-    {
-    vtkDataArray *dataArray = this->GetActiveScalarArray();
-    if (dataArray)
-      {
-      dataArray->GetRange(newScalarRange);
-      }
-    }
-  else if (flag == vtkMRMLDisplayNode::UseColorNodeScalarRange)
-    {
-    if (this->GetColorNode())
-      {
-      vtkLookupTable* lut = this->GetColorNode()->GetLookupTable();
-      if (lut)
-        {
-        double* lutRange = lut->GetRange();
-        newScalarRange[0] = lutRange[0];
-        newScalarRange[1] = lutRange[1];
-        }
-      else
-        {
-        vtkWarningMacro("Can not use color node scalar range since model "
-                        << "display node color node does not have a lookup table.");
-        }
-      }
-    else
-      {
-      vtkWarningMacro("Can not use color node scalar range since model "
-                      << "display node does not have a color node.");
-      }
-    }
-  else if (flag == vtkMRMLDisplayNode::UseDataTypeScalarRange)
-    {
-    vtkDataArray *dataArray = this->GetActiveScalarArray();
-    if (dataArray)
-      {
-      newScalarRange[0] = dataArray->GetDataTypeMin();
-      newScalarRange[1] = dataArray->GetDataTypeMax();
-      }
-    else
-      {
-      vtkWarningMacro("Can not use data type scalar range since the model display node's"
-                      << "mesh does not have an active scalar array.");
-      }
-    }
-
-  this->SetScalarRange(newScalarRange);
+  return this->GetInputMesh();
 }
 
 //-----------------------------------------------------------

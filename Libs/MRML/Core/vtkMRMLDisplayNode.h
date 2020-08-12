@@ -22,6 +22,7 @@ class vtkMRMLDisplayableNode;
 
 // VTK includes
 class vtkAlgorithmOutput;
+class vtkDataSet;
 class vtkImageData;
 class vtkPolyData;
 
@@ -415,6 +416,14 @@ public:
   /// \sa SetScalarRangeFlag(), SetAutoScalarRange(), GetAutoScalarRange()
   void AutoScalarRangeOn();
   void AutoScalarRangeOff();
+  /// Update the AssignAttribute filter based on
+  /// its ActiveScalarName and its ActiveAttributeLocation
+  /// To be re-implemented in subclasses
+  virtual void UpdateAssignedAttribute() {};
+  /// Update the ScalarRange based on the \sa ScalarRangeFlag.
+  /// If \sa UseManualScalarRange is selected then the method has no effect.
+  /// To be re-implemented in subclasses
+  virtual void UpdateScalarRange();
 
   /// Set the scalar range of the display node.
   /// \sa ScalarRange, GetScalarRange()
@@ -425,7 +434,8 @@ public:
 
   /// Set the scalar range to use with color mapping
   /// \sa ScalarRangeFlag, GetScalarRangeFlag(), SetScalarRangeFlagFromString()
-  vtkSetMacro(ScalarRangeFlag, int);
+  /// \sa SetActiveScalarName()
+  void SetScalarRangeFlag(int flag);
   /// Get the interpolation of the surface.
   /// \sa ScalarRangeFlag, SetScalarRangeFlag(), GetScalarRangeFlagAsString()
   vtkGetMacro(ScalarRangeFlag, int);
@@ -501,6 +511,18 @@ public:
   /// Set the active attribute location of the display node from string
   /// \sa ActiveAttributeLocation, SetActiveAttributeLocation()
   void SetActiveAttributeLocationFromString(const char* str);
+  /// Sets active scalar name and attribute location in one step.
+  /// It is preferable to use this method instead of calling SetActiveScalarName
+  /// and SetActiveAttributeLocation separately, to avoid transient states when
+  /// scalar name and location are temporarily inconsistent.
+  virtual void SetActiveScalar(const char *scalarName, int location);
+
+  /// Get data set containing the scalar arrays for this node type.
+  /// For example for models it is the input mesh, and for markups the curve poly data
+  virtual vtkDataSet* GetScalarDataSet() { return nullptr; };
+  /// Return the current active scalar array (based on active scalar name and location)
+  /// To be re-implemented in subclasses based on their contained data
+  virtual vtkDataArray* GetActiveScalarArray() { return nullptr; };
 
   /// Add View Node ID for the view to display this node in.
   /// \sa ViewNodeIDs, RemoveViewNodeID(), RemoveAllViewNodeIDs()

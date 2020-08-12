@@ -402,6 +402,15 @@ public:
   vtkSetMacro(HandlesInteractive, bool);
   vtkBooleanMacro(HandlesInteractive, bool);
 
+  /// Get data set containing the scalar arrays for this node type.
+  /// For markups it is the curve poly data
+  virtual vtkDataSet* GetScalarDataSet() override;
+  /// Return the current active scalar array (based on active scalar name and location)
+  virtual vtkDataArray* GetActiveScalarArray() override;
+
+  /// Update scalar range and update markups pipeline when the active scalar array is changed
+  virtual void UpdateAssignedAttribute() override;
+
 protected:
   vtkMRMLMarkupsDisplayNode();
   ~vtkMRMLMarkupsDisplayNode() override;

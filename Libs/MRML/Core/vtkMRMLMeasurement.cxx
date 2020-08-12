@@ -19,6 +19,7 @@ vtkStandardNewMacro(vtkMRMLMeasurement);
 
 //----------------------------------------------------------------------------
 vtkMRMLMeasurement::vtkMRMLMeasurement()
+  : InputMRMLNode(nullptr)
 {
   this->SetPrintFormat("%5.3f %s");
 }
@@ -44,6 +45,7 @@ std::string vtkMRMLMeasurement::GetValueWithUnitsAsPrintableString()
 //----------------------------------------------------------------------------
 void vtkMRMLMeasurement::Initialize()
 {
+  this->SetEnabled(true);
   this->SetName(nullptr);
   this->SetValue(0.0);
   this->SetUnits(nullptr);
@@ -53,12 +55,28 @@ void vtkMRMLMeasurement::Initialize()
   this->SetDerivationCode(nullptr);
   this->SetUnitsCode(nullptr);
   this->SetMethodCode(nullptr);
+  this->SetControlPointValues(nullptr);
+  //this->SetPolyDataValues(nullptr);
+  this->SetInputMRMLNode(nullptr);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMeasurement::ClearValue()
+{
+  this->SetValue(0.0);
+
+  // If we clear this then every time certain things in the markups node changes
+  // that calls curveGenerator->Modified() (e.g. SetInterpolateControlPointMeasurement)
+  // which is supposed to use just these control point values, the UpdateMeasurementsInternal
+  // call clears the value, thus deleting the control point data.
+  //this->SetControlPointValues(nullptr);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMeasurement::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
+  os << indent << "Enabled: " << (this->Enabled ? "true" : "false") << "\n";
   os << indent << "Name: " << (this->Name ? this->Name : "(none)") << "\n";
   os << indent << "PrintableValue: " << this->GetValueWithUnitsAsPrintableString();
   os << indent << "Value: " << this->Value << "\n";
@@ -90,6 +108,7 @@ void vtkMRMLMeasurement::Copy(vtkMRMLMeasurement* src)
     {
     return;
     }
+  this->SetEnabled(src->Enabled);
   this->SetName(src->GetName());
   this->SetValue(src->GetValue());
   this->SetUnits(src->GetUnits());
@@ -99,6 +118,9 @@ void vtkMRMLMeasurement::Copy(vtkMRMLMeasurement* src)
   this->SetDerivationCode(src->DerivationCode);
   this->SetUnitsCode(src->UnitsCode);
   this->SetMethodCode(src->MethodCode);
+  this->SetControlPointValues(src->ControlPointValues);
+  this->SetInputMRMLNode(src->InputMRMLNode);
+  //this->SetPolyDataValues(src->PolyDataValues);
 }
 
 //----------------------------------------------------------------------------
@@ -253,4 +275,59 @@ void vtkMRMLMeasurement::SetMethodCode(vtkCodedEntry* entry)
     this->MethodCode = vtkCodedEntry::New();
     }
   this->MethodCode->Copy(entry);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMeasurement::SetControlPointValues(vtkDoubleArray* inputValues)
+{
+  if (!inputValues)
+    {
+    if (this->ControlPointValues)
+      {
+      this->ControlPointValues->Delete();
+      this->ControlPointValues = nullptr;
+      }
+    return;
+    }
+  if (!this->ControlPointValues)
+    {
+    this->ControlPointValues = vtkDoubleArray::New();
+    }
+  this->ControlPointValues->DeepCopy(inputValues);
+}
+
+////----------------------------------------------------------------------------
+//void vtkMRMLMeasurement::SetPolyDataValues(vtkPolyData* inputValues)
+//{
+//  if (!inputValues)
+//    {
+//    if (this->PolyDataValues)
+//      {
+//      this->PolyDataValues->Delete();
+//      this->PolyDataValues = nullptr;
+//      }
+//    return;
+//    }
+//  if (!this->PolyDataValues)
+//    {
+//    this->PolyDataValues = vtkPolyData::New();
+//    }
+//  this->PolyDataValues->DeepCopy(inputValues);
+//}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMeasurement::SetInputMRMLNode(vtkMRMLNode* node)
+{
+  this->InputMRMLNode = node;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLNode* vtkMRMLMeasurement::GetInputMRMLNode()
+{
+  if (this->InputMRMLNode.GetPointer())
+    {
+    return this->InputMRMLNode.GetPointer();
+    }
+
+  return nullptr;
 }
