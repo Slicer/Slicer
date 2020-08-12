@@ -1354,11 +1354,7 @@ WriteCLI(std::vector<std::string>& commandLine, std::string prefix,
   int numControlPoints = this->GetNumberOfControlPoints();
 
   // check if the coordinate system flag is set to LPS, otherwise assume RAS
-  bool useLPS = false;
-  if (coordinateSystem == 1)
-    {
-    useLPS = true;
-    }
+  bool useLPS = (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS);
 
   // loop over the control points
   for (int m = 0; m < numControlPoints; m++)

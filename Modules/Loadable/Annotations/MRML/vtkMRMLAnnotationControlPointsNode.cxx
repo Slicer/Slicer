@@ -130,12 +130,12 @@ WriteCLI(std::vector<std::string>& commandLine, std::string prefix,
         {
         ss << ",";
         }
-      if (coordinateSystem == 0)
+      if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemRAS)
         {
         // RAS
         ss << ptr[0] << "," <<  ptr[1] << "," <<  ptr[2] ;
         }
-      else if (coordinateSystem == 1)
+      else if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
         {
         // LPS
         double lps[3];

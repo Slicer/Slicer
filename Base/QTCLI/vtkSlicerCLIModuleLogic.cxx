@@ -1092,25 +1092,14 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       }
 
     // check for a point file that may need to set a coordinate system flag
-    // vtkMRMLMarkupsFiducialNode *fidNode = vtkMRMLMarkupsFiducialNode::SafeDownCast(nd);
     if (out && out->IsA("vtkMRMLMarkupsStorageNode"))
       {
-      // parameter flag?
-      std::string coordinateSystemStr = nd->GetAttribute("Markups.CoordinateSystem");
-      int coordinateSystemFlag = 0;
-      if (coordinateSystemStr.compare("lps") == 0)
-        {
-        coordinateSystemFlag = 1;
-        }
-      else
-        {
-        vtkErrorMacro("Invalid coordinateSystemFlag value: " << coordinateSystemFlag);
-        }
-      // have a markups storage node, is there a coordinate flag?
+      // Set requested coordinate system
+      int coordinateSystem = this->GetCoordinateSystemFromString(nd->GetAttribute("Markups.CoordinateSystem"));
       vtkMRMLMarkupsStorageNode *markupsStorage = vtkMRMLMarkupsStorageNode::SafeDownCast(out);
       if (markupsStorage)
         {
-        markupsStorage->SetCoordinateSystem(coordinateSystemFlag);
+        markupsStorage->SetCoordinateSystem(coordinateSystem);
         }
       }
 
@@ -1414,19 +1403,8 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           }
         if ((*pit).GetTag() == "point")
           {
-          // check for a coordinate system flag
-          std::string coordinateSystemStr = (*pit).GetCoordinateSystem();
-          // markups storage has RAS as 0, LPS as 1
-          int coordinateSystemFlag = 0;
-          if (coordinateSystemStr.compare("lps") == 0)
-            {
-            coordinateSystemFlag = 1;
-            }
-          else
-            {
-            vtkErrorMacro("Invalid coordinateSystemFlag value:" << coordinateSystemFlag);
-            }
-
+          // get coordinate system
+          int coordinateSystem = this->GetCoordinateSystemFromString((*pit).GetCoordinateSystem().c_str());
           // get the fiducial list node
           vtkMRMLNode *node
             = this->GetMRMLScene()->GetNodeByID((*pit).GetValue().c_str());
@@ -1478,7 +1456,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
               {
               multipleFlag = 0;
               }
-            markups->WriteCLI(commandLineAsString, prefix+flag, coordinateSystemFlag, multipleFlag);
+            markups->WriteCLI(commandLineAsString, prefix+flag, coordinateSystem, multipleFlag);
             }
           else if (points)
             {
@@ -1510,7 +1488,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
                 if (displayableNode)
                   {
                   vtkDebugMacro("Found displayable node with id " << displayableNode->GetID());
-                  displayableNode->WriteCLI(commandLineAsString, prefix+flag, coordinateSystemFlag);
+                  displayableNode->WriteCLI(commandLineAsString, prefix+flag, coordinateSystem);
                   if (multipleFlag == 0)
                     {
                     // only write out the first child in the hierarchy
@@ -1524,18 +1502,8 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           }
         if ((*pit).GetTag() == "pointfile")
           {
-          // check for a coordinate system flag
-          std::string coordinateSystemStr = (*pit).GetCoordinateSystem();
-          // markups storage has RAS as 0, LPS as 1
-          int coordinateSystemFlag = 0;
-          if (coordinateSystemStr.compare("lps") == 0)
-            {
-            coordinateSystemFlag = 1;
-            }
-          else
-            {
-            vtkErrorMacro("Invalid coordinateSystemFlag value:" << coordinateSystemFlag);
-            }
+          // get coordinate system
+          int coordinateSystem = this->GetCoordinateSystemFromString((*pit).GetCoordinateSystem().c_str());
           // get the fiducial list node
           vtkMRMLNode *node
             = this->GetMRMLScene()->GetNodeByID((*pit).GetValue().c_str());
@@ -1548,26 +1516,15 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
               vtkMRMLMarkupsStorageNode *markupsStorageNode = vtkMRMLMarkupsStorageNode::SafeDownCast(mrmlStorageNode);
               if (markupsStorageNode)
                 {
-                markupsStorageNode->SetCoordinateSystem(coordinateSystemFlag);
+                markupsStorageNode->SetCoordinateSystem(coordinateSystem);
                 }
               }
             }
           }
         if ((*pit).GetTag() == "region")
           {
-          // check for a coordinate system flag
-          std::string coordinateSystemStr = (*pit).GetCoordinateSystem();
-          // markups storage has RAS as 0, LPS as 1
-          int coordinateSystemFlag = 0;
-          if (coordinateSystemStr.compare("lps") == 0)
-            {
-            coordinateSystemFlag = 1;
-            }
-          else
-            {
-            vtkErrorMacro("Invalid coordinateSystemFlag value:" << coordinateSystemFlag);
-            }
-
+          // get coordinate system
+          int coordinateSystem = this->GetCoordinateSystemFromString((*pit).GetCoordinateSystem().c_str());
           // check multiple flag
           int multipleFlag = 1;
           if ((*pit).GetMultiple() == "false")
@@ -1619,7 +1576,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
             }
           else if (roi && roi->IsA("vtkMRMLAnnotationROINode"))
             {
-            roi->WriteCLI(commandLineAsString, prefix+flag, coordinateSystemFlag, multipleFlag);
+            roi->WriteCLI(commandLineAsString, prefix+flag, coordinateSystem, multipleFlag);
             }
           else if (points)
             {
@@ -1645,7 +1602,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
                   }
                 if (displayableNode)
                   {
-                  displayableNode->WriteCLI(commandLineAsString, prefix+flag, coordinateSystemFlag, multipleFlag);
+                  displayableNode->WriteCLI(commandLineAsString, prefix+flag, coordinateSystem, multipleFlag);
                   }
                 }
               }
@@ -2982,4 +2939,34 @@ bool vtkSlicerCLIModuleLogic::SetDefaultParameterValue(const std::string& name, 
 std::string vtkSlicerCLIModuleLogic::GetDefaultParameterValue(const std::string& name) const
 {
   return this->Internal->DefaultModuleDescription.GetParameterValue(name);
+}
+
+//---------------------------------------------------------------------------
+int vtkSlicerCLIModuleLogic::GetCoordinateSystemFromString(const char* coordinateSystemStrPtr) const
+{
+  int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS;
+  if (!coordinateSystemStrPtr)
+    {
+    // empty, use default
+    return coordinateSystem;
+    }
+  std::string coordinateSystemStr = coordinateSystemStrPtr;
+  if (coordinateSystemStr.empty())
+    {
+    // empty, use default
+    return coordinateSystem;
+    }
+  if (coordinateSystemStr.compare("ras") == 0)
+    {
+    coordinateSystem = vtkMRMLStorageNode::CoordinateSystemRAS;
+    }
+  else if (coordinateSystemStr.compare("lps") == 0)
+    {
+    coordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS;
+    }
+  else
+    {
+    vtkErrorMacro("Invalid coordinateSystemFlag value: " << coordinateSystem << ", assuming lps");
+    }
+  return coordinateSystem;
 }

@@ -65,7 +65,7 @@ public:
   /// Write this node's information to a vector of strings for passing to a CLI.
   /// If the prefix is not an empty string, it gets pushed onto the vector
   /// of strings before the information.
-  /// coordinateSystemFlag = 0 for RAS, 1 for LPS, 2 for IJK
+  /// coordinateSystemFlag = vtkMRMLStorageNode::CoordinateSystemRAS or vtkMRMLStorageNode::CoordinateSystemLPS
   /// multipleFlag = 1 for the whole list, 0 for the first in the list
   virtual void WriteCLI(std::vector<std::string>& vtkNotUsed(commandLine),
                         std::string vtkNotUsed(prefix),

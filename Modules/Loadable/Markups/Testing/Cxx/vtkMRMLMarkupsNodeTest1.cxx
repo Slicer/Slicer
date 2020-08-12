@@ -19,6 +19,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLMarkupsNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLStorageNode.h"
 
 // VTK includes
 #include <vtkIndent.h>
@@ -336,7 +337,7 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
   node1->PrintSelf(std::cout, indent);
   std::vector<std::string> commandLine1;
   std::string prefix = "point";
-  node1->WriteCLI(commandLine1, prefix, 0);
+  node1->WriteCLI(commandLine1, prefix, vtkMRMLStorageNode::CoordinateSystemRAS);
   std::cout << "Wrote RAS points to CLI as:" << std::endl;
   for (unsigned int i = 0; i < commandLine1.size(); ++i)
     {
@@ -345,7 +346,7 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
   CHECK_INT(commandLine1.size(), numMarkups * 2);
 
   std::vector<std::string> commandLine2;
-  node1->WriteCLI(commandLine2, prefix, 1);
+  node1->WriteCLI(commandLine2, prefix, vtkMRMLStorageNode::CoordinateSystemLPS);
   std::cout << "Wrote LPS points to CLI as:" << std::endl;;
   for (unsigned int i = 0; i < commandLine2.size(); ++i)
     {
@@ -355,7 +356,7 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
 
   // single point test
   std::vector<std::string> commandLine3;
-  node1->WriteCLI(commandLine3, prefix, 0, 0);
+  node1->WriteCLI(commandLine3, prefix, vtkMRMLStorageNode::CoordinateSystemRAS, 0);
   std::cout << "Wrote single RAS markup to CLI (command line size "
             << commandLine3.size() << ") :" << std::endl;
   for (unsigned int i = 0; i < commandLine3.size(); ++i)

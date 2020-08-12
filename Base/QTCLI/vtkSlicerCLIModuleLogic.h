@@ -167,6 +167,8 @@ protected:
   // Any files that will be created by writing out the miniscene are added to filesToDelete (i.e. models)
   void AddCompleteModelHierarchyToMiniScene(vtkMRMLScene*, vtkMRMLModelHierarchyNode*, MRMLIDMap* sceneToMiniSceneMap, std::set<std::string> &filesToDelete);
 
+  int GetCoordinateSystemFromString(const char* coordinateSystemStr)const;
+
 private:
   vtkSlicerCLIModuleLogic();
   ~vtkSlicerCLIModuleLogic() override;

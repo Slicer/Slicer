@@ -14,16 +14,12 @@
 namespace
 {
   // Function to convert a point from std::vector to itk::Point
-  // this also performs the RAS -> LPS conversion necessary
-  // from slicer -> ITK
   itk::Point<double, 3>
     convertStdVectorToITKPoint(const std::vector<float> & vec)
   {
     itk::Point<double, 3> p;
-
-    // convert RAS to LPS
-    p[0] = -vec[0];
-    p[1] = -vec[1];
+    p[0] = vec[0];
+    p[1] = vec[1];
     p[2] = vec[2];
     return p;
   }
@@ -147,7 +143,7 @@ int main(int argc, char* argv[])
   PointList fixedPoints(fixedLandmarks.size() );
   PointList movingPoints(movingLandmarks.size() );
 
-  // Convert both points lists to ITK points and convert RAS -> LPS
+  // Convert both points lists to ITK points
 
   std::transform(fixedLandmarks.begin(), fixedLandmarks.end(),
     fixedPoints.begin(),
