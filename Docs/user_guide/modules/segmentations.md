@@ -94,55 +94,55 @@ To re-convert an existing representation (to use different conversion path or pa
 See Script repository's [Segmentations section](https://www.slicer.org/wiki/Documentation/Nightly/ScriptRepository#Segmentations) for examples.
 
 ### DICOM export
--  The master representation is used when exporting into DICOM
--  DICOM RT structure set export is available if `SlicerRT` extension is installed
--  DICOM Segmentation Object export if `QuantitativeReporting` extension is installed
+- The master representation is used when exporting into DICOM
+- DICOM RT structure set export is available if `SlicerRT` extension is installed
+- DICOM Segmentation Object export if `QuantitativeReporting` extension is installed
 
 
 ## Panels and their use
 
--  Segments table
-    -  Add/remove segments
-    -  Edit selected: takes user to [Segment Editor](SegmentEditor) module
-    -  Set visibility and per-segment display settings, opacity, color, segment name
--  Display
-    -  Segmentations-wide display settings (not per-segment!): visibility, opacity (will be multiplied with per-segment opacity for display)
-    -  Views: Individual views to show the active segmentation in
-    -  Slice intersection thickness
-    -  Representation in 3D/2D views: The representation to be shown in the 3D and 2D views. Useful if there are multiple representations available, for example if we want to show the closed surface in the 3D view but the labelmap in the slice views
--  Representations
-    -  List of supported representations and related operations 
-    -  The already existing representations have a green tick, the master representation (that is the source of all conversions and the representation that can be edited) a gold star
-    -  The buttons in each row can be used to create, remove, update a representation
-        -  Advanced conversion is possible (to use the non-default path or conversion parameters) by long-pressing the Create or Update button
-        -  Existing representations can be made master by clicking Make master. The master representation is used as source for conversions, it is the one that can be edited, and saved to disk
--  Copy/move (import/export)
-    -  Left panel lists the segments in the active segmentation
-    -  Right panel shows the external data container
-    -  The arrow buttons van be used to copy (with plus sign) or move (no plus sign) segments between the segmentation and the external node
-    -  New labelmap or model can be created by clicking the appropriate button on the top of the right panel
-    -  Multiple segments can be exported into a labelmap. In case of overlapping segments, the subsequent segments will overwrite the previous ones!
+- Segments table
+    - Add/remove segments
+    - Edit selected: takes user to [Segment Editor](SegmentEditor) module
+    - Set visibility and per-segment display settings, opacity, color, segment name
+- Display
+    - Segmentations-wide display settings (not per-segment!): visibility, opacity (will be multiplied with per-segment opacity for display)
+    - Views: Individual views to show the active segmentation in
+    - Slice intersection thickness
+    - Representation in 3D/2D views: The representation to be shown in the 3D and 2D views. Useful if there are multiple representations available, for example if we want to show the closed surface in the 3D view but the labelmap in the slice views
+- Representations
+    - List of supported representations and related operations 
+    - The already existing representations have a green tick, the master representation (that is the source of all conversions and the representation that can be edited) a gold star
+    - The buttons in each row can be used to create, remove, update a representation
+        - Advanced conversion is possible (to use the non-default path or conversion parameters) by long-pressing the Create or Update button
+        - Existing representations can be made master by clicking Make master. The master representation is used as source for conversions, it is the one that can be edited, and saved to disk
+- Copy/move (import/export)
+    - Left panel lists the segments in the active segmentation
+    - Right panel shows the external data container
+    - The arrow buttons van be used to copy (with plus sign) or move (no plus sign) segments between the segmentation and the external node
+    - New labelmap or model can be created by clicking the appropriate button on the top of the right panel
+    - Multiple segments can be exported into a labelmap. In case of overlapping segments, the subsequent segments will overwrite the previous ones!
 
 **Subject hierarchy**
--  Segmentations are shown in subject hierarchy as any other node, with the exception that the contained segments are in a "virtual branch".
-    -  The segments can be moved between segmentations, but drag&drop to anywhere other than under another segmentation is not allowed
--  Special subject hierarchy features for segmentations
-    -  Create representation: Create the chosen representation using the default path
--  Special subject hierarchy features for segments
-    -  Show only this segment: Useful if only one segment needs to be shown and there are many, so clicking the eye buttons woud take a long time
-    -  Show all segments
+- Segmentations are shown in subject hierarchy as any other node, with the exception that the contained segments are in a "virtual branch".
+    - The segments can be moved between segmentations, but drag&drop to anywhere other than under another segmentation is not allowed
+- Special subject hierarchy features for segmentations
+    - Create representation: Create the chosen representation using the default path
+- Special subject hierarchy features for segments
+    - Show only this segment: Useful if only one segment needs to be shown and there are many, so clicking the eye buttons woud take a long time
+    - Show all segments
 
 ## Tutorials
 
--  [Segmentation tutorials](https://www.slicer.org/wiki/Documentation/Nightly/Training#Segmentation)
+- [Segmentation tutorials](https://www.slicer.org/wiki/Documentation/Nightly/Training#Segmentation)
 
 ## Information for developers
 
 
--  [vtkSegmentationCore on GitHub](https://github.com/Slicer/Slicer/tree/master/Libs/vtkSegmentationCore) (within Slicer)
--  [Segmentations Slicer module on GitHub](https://github.com/Slicer/Slicer/tree/master/Modules/Loadable/Segmentations)
--  [Segmentations Labs page](https://www.slicer.org/wiki/Documentation/Labs/Segmentations)
--  [Manipulation of segmentations from Python scripts - examples in script repository](https://www.slicer.org/wiki/Documentation/Nightly/ScriptRepository)
+- [vtkSegmentationCore on GitHub](https://github.com/Slicer/Slicer/tree/master/Libs/vtkSegmentationCore) (within Slicer)
+- [Segmentations Slicer module on GitHub](https://github.com/Slicer/Slicer/tree/master/Modules/Loadable/Segmentations)
+- [Segmentations Labs page](https://www.slicer.org/wiki/Documentation/Labs/Segmentations)
+- [Manipulation of segmentations from Python scripts - examples in script repository](https://www.slicer.org/wiki/Documentation/Nightly/ScriptRepository)
 
 ## Related modules
 

@@ -47,8 +47,7 @@ The following keyboard shortcuts are active when you are in the Editor module.  
 
 ## Tutorials
 
-- [Tutorial for 3D printing](https://www.slicer.org/wiki/Documentation/Nightly/Training#Segmentation_for_3D_printing): create a 3D-printable STL model from a section of the spinal column, segmented from a CT image, attached to a base designed in CAD software.
-
+- [Segmentation tutorials](https://www.slicer.org/wiki/Documentation/Nightly/Training#Segmentation)
 
 ## Effects
 

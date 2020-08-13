@@ -6,7 +6,7 @@
 - [Git](https://git-scm.com/download/win) >= 1.7.10
   - Note CMake must be able to find `git.exe` and `patch.exe`. If git is installed in the default location then they may be found there, but if they are not found then either add the folder that contains them to `PATH` environment variable; or set `GIT_EXECUTABLE` and `Patch_EXECUTABLE` as environment variables or as CMake variables at configure time.
 - [NSIS](http://nsis.sourceforge.net/Download) (optional): Needed if packaging Slicer. Make sure you install the language packs.
-- [Qt5](https://www.qt.io/download-open-source): Download Qt universal installer and install Qt 5.15 along with qtscript and qtwebengine components.
+- [Qt5](https://www.qt.io/download-open-source): Download Qt universal installer and install Qt 5.15 components: MSVC2019 64-bit, Qt Script, Qt WebEngine. Installing Sources and Qt Debug Information Files are recommended for debugging (they allow stepping into Qt files with the debugger in debug-mode builds).
 - [Visual Studio](https://visualstudio.microsoft.com/downloads/)
   - any edition can be used (including the free Community edition)
   - when configuring the installer, enable installation of Visual Studio 2019 (v142) toolset and component Programming languages / Visual C++ / Common Tools for Visual C++ (in some distributions, this option is not enabled by default)
@@ -14,7 +14,7 @@
 Other versions:
 - Visual Studio 2017 (v141) toolset is not tested anymore but probably still works. Qt-5.15 requires v142 redistributables, so either these extra DLL files need to be added to the installation package or each user may need to install "Microsoft Visual C++ Redistributable" package.
 - Visual Studio 2015 (v140) toolset is not tested anymore and probably does not work. Requires Qt 5.10.x to build due to QtWebEngine.
-- Cygwin: not testes and not recommended. Building with cygwin gcc not supported, but the cygwin shell environment can be used to run git, svn, etc.
+- Cygwin: not tested and not recommended. Building with cygwin gcc not supported, but the cygwin shell environment can be used to run git, svn, etc.
 
 ## Set up source and build folders
 
