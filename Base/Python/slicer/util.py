@@ -333,6 +333,117 @@ def childWidgetVariables(widget):
       setattr(ui, childWidget.name, childWidget)
   return ui
 
+def addParameterEditWidgetConnections(parameterEditWidgets, updateParameterNodeFromGUI):
+  """ Add connections to get notification of a widget change.
+
+  The function is useful for calling updateParameterNodeFromGUI method in scripted module widgets.
+
+  Note: Only a few widget classes are supported now. More will be added later. Report any missing classes at discourse.slicer.org.
+
+  Example::
+
+    class SurfaceToolboxWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
+      ...
+      def setup(self):
+        ...
+        self.parameterEditWidgets = [
+          (self.ui.inputModelSelector, "inputModel"),
+          (self.ui.outputModelSelector, "outputModel"),
+          (self.ui.decimationButton, "decimation"),
+          ...]
+        slicer.util.addParameterEditWidgetConnections(self.parameterEditWidgets, self.updateParameterNodeFromGUI)
+
+      def updateGUIFromParameterNode(self, caller=None, event=None):
+        if self._parameterNode is None or self._updatingGUIFromParameterNode:
+          return
+        self._updatingGUIFromParameterNode = True
+        slicer.util.updateParameterEditWidgetsFromNode(self.parameterEditWidgets, self._parameterNode)
+        self._updatingGUIFromParameterNode = False
+
+      def updateParameterNodeFromGUI(self, caller=None, event=None):
+        if self._parameterNode is None or self._updatingGUIFromParameterNode:
+          return
+        wasModified = self._parameterNode.StartModify()  # Modify all properties in a single batch
+        slicer.util.updateNodeFromParameterEditWidgets(self.parameterEditWidgets, self._parameterNode)
+        self._parameterNode.EndModify(wasModified)
+  """
+
+  for (widget, parameterName) in parameterEditWidgets:
+    widgetClassName = widget.className()
+    if widgetClassName=="QSpinBox":
+      widget.connect("valueChanged(int)", updateParameterNodeFromGUI)
+    elif widgetClassName=="QCheckBox":
+      widget.connect("clicked()", updateParameterNodeFromGUI)
+    elif widgetClassName=="QPushButton":
+      widget.connect("toggled(bool)", updateParameterNodeFromGUI)
+    elif widgetClassName=="qMRMLNodeComboBox":
+      widget.connect("currentNodeIDChanged(QString)", updateParameterNodeFromGUI)
+    elif widgetClassName=="QComboBox":
+      widget.connect("currentIndexChanged(int)", updateParameterNodeFromGUI)
+    elif widgetClassName=="ctkSliderWidget":
+      widget.connect("valueChanged(double)", updateParameterNodeFromGUI)
+
+def removeParameterEditWidgetConnections(parameterEditWidgets, updateParameterNodeFromGUI):
+  """ Remove connections created by :py:meth:`addParameterEditWidgetConnections`.
+  """
+
+  for (widget, parameterName) in parameterEditWidgets:
+    widgetClassName = widget.className()
+    if widgetClassName=="QSpinBox":
+      widget.disconnect("valueChanged(int)", updateParameterNodeFromGUI)
+    elif widgetClassName=="QPushButton":
+      widget.disconnect("toggled(bool)", updateParameterNodeFromGUI)
+    elif widgetClassName=="qMRMLNodeComboBox":
+      widget.disconnect("currentNodeIDChanged(QString)", updateParameterNodeFromGUI)
+    elif widgetClassName=="QComboBox":
+      widget.disconnect("currentIndexChanged(int)", updateParameterNodeFromGUI)
+    elif widgetClassName=="ctkSliderWidget":
+      widget.disconnect("valueChanged(double)", updateParameterNodeFromGUI)
+
+def updateParameterEditWidgetsFromNode(parameterEditWidgets, parameterNode):
+  """ Update widgets from values stored in a vtkMRMLScriptedModuleNode.
+
+  The function is useful for implementing updateGUIFromParameterNode.
+
+  Note: Only a few widget classes are supported now. More will be added later. Report any missing classes at discourse.slicer.org.
+
+  See example in :py:meth:`addParameterEditWidgetConnections` documentation.
+  """
+
+  for (widget, parameterName) in parameterEditWidgets:
+    widgetClassName = widget.className()
+    if widgetClassName=="QSpinBox":
+      widget.value = int(float(parameterNode.GetParameter(parameterName)))
+    if widgetClassName=="ctkSliderWidget":
+      widget.value = float(parameterNode.GetParameter(parameterName))
+    elif widgetClassName=="QCheckBox" or widgetClassName=="QPushButton":
+      widget.checked = parameterNode.GetParameter(parameterName) == "true"
+    elif widgetClassName=="QComboBox":
+      widget.setCurrentText(parameterNode.GetParameter(parameterName))
+    elif widgetClassName=="qMRMLNodeComboBox":
+      widget.currentNodeID = parameterNode.GetNodeReferenceID(parameterName)
+
+def updateNodeFromParameterEditWidgets(parameterEditWidgets, parameterNode):
+  """ Update vtkMRMLScriptedModuleNode from widgets.
+
+  The function is useful for implementing updateParameterNodeFromGUI.
+
+  Note: Only a few widget classes are supported now. More will be added later. Report any missing classes at discourse.slicer.org.
+
+  See example in :py:meth:`addParameterEditWidgetConnections` documentation.
+  """
+
+  for (widget, parameterName) in parameterEditWidgets:
+    widgetClassName = widget.className()
+    if widgetClassName=="QSpinBox" or widgetClassName=="ctkSliderWidget":
+      parameterNode.SetParameter(parameterName, str(widget.value))
+    elif widgetClassName=="QCheckBox" or widgetClassName=="QPushButton":
+      parameterNode.SetParameter(parameterName, "true" if widget.checked else "false")
+    elif widgetClassName=="QComboBox":
+      parameterNode.SetParameter(parameterName, widget.currentText)
+    elif widgetClassName=="qMRMLNodeComboBox":
+      parameterNode.SetNodeReferenceID(parameterName, widget.currentNodeID)
+
 def setSliceViewerLayers(background='keep-current', foreground='keep-current', label='keep-current',
                          foregroundOpacity=None, labelOpacity=None, fit=False, rotateToVolumePlane=False):
   """ Set the slice views with the given nodes.
