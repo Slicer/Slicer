@@ -1156,7 +1156,7 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
     {
     return false;
     }
-  else if (eid == vtkCommand::MouseWheelForwardEvent)
+  else if (eid == vtkCommand::MouseWheelForwardEvent || eid == vtkCommand::MouseWheelLeftEvent)
     {
     if (shiftKeyPressed)
       {
@@ -1167,17 +1167,18 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
       return false;
       }
     }
-  else if (eid == vtkCommand::MouseWheelBackwardEvent)
+  else if (eid == vtkCommand::MouseWheelBackwardEvent || eid == vtkCommand::MouseWheelRightEvent)
     {
     if (shiftKeyPressed)
       {
-    scaleDiameterRequested = (1.0 - zoomFactor);
+      scaleDiameterRequested = (1.0 - zoomFactor);
       }
     else
       {
       return false;
       }
     }
+
   if (scaleDiameterRequested > 0)
     {
     d->scaleDiameter(scaleDiameterRequested);
