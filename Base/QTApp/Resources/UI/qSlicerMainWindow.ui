@@ -671,7 +671,7 @@
     <string>Feedback: report usability issue (www)</string>
    </property>
    <property name="toolTip">
-    <string>Open your favorite web browser to http://www.na-mic.org/Bug/my_view_page.php so that any usability issue you encounter can quickly be captured.</string>
+    <string>Open your favorite web browser to https://github.com/Slicer/Slicer/issues so that any usability issue you encounter can quickly be captured.</string>
    </property>
   </action>
   <action name="FeedbackMakeFeatureRequestAction">
@@ -679,7 +679,7 @@
     <string>Feedback: make a feature request (www)</string>
    </property>
    <property name="toolTip">
-    <string>Open your Firefox web browser to http://www.na-mic.org/Bug/my_view_page.php so that community feature requests can easily be collected.</string>
+    <string>Open your Firefox web browser to https://github.com/Slicer/Slicer/issues so that community feature requests can easily be collected.</string>
    </property>
   </action>
   <action name="DebugLoadModuleAction">
