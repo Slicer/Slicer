@@ -1065,7 +1065,7 @@ vtkSlicerVolumesLogic::CompareVolumeGeometry(vtkMRMLScalarVolumeNode *volumeNode
       double volumeValue1, volumeValue2;
       // set the floating point precision to match the precision of the espilon
       // used for the fuzzy compare (need fixed so precision applies to right
-      // of the decimal point see https://www.na-mic.org/Bug/view.php?id=3776).
+      // of the decimal point see https://github.com/Slicer/Slicer/issues/3776).
       warnings << std::fixed;
       warnings << std::setprecision(this->GetCompareVolumeGeometryPrecision());
       // sanity check versus the volume spacings

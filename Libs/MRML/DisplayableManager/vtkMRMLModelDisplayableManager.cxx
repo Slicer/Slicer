@@ -1581,7 +1581,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
         // Force actors to be treated as opaque. Otherwise, transparent
         // elements in the texture cause the actor to be treated as
         // translucent, i.e. rendered without writing to the depth buffer.
-        // See http://www.na-mic.org/Bug/view.php?id=4253.
+        // See https://github.com/Slicer/Slicer/issues/4253.
         actor->SetForceOpaque(actorProperties->GetOpacity() >= 1.0);
         }
       else

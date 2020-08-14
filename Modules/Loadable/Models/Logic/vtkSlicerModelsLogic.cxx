@@ -468,7 +468,7 @@ void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
     // Exclude vtkMRMLModelNode subclasses by comparing classname.
     // Doing so will avoid updating annotation and fiber bundle node
     // visibility since they derive from vtkMRMLModelNode
-    // See http://www.na-mic.org/Bug/view.php?id=2576
+    // See https://github.com/Slicer/Slicer/issues/2576
     if (mrmlNode != nullptr
         && !vtkMRMLSliceLogic::IsSliceModelNode(mrmlNode)
         && strcmp(mrmlNode->GetClassName(), "vtkMRMLModelNode") == 0)

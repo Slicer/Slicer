@@ -1310,7 +1310,7 @@ void qSlicerMainWindow::on_EditApplicationSettingsAction_triggered()
 
   // Reload settings to apply any changes that have been made outside of the
   // dialog (e.g. changes to module paths due to installing extensions). See
-  // http://na-mic.org/Mantis/view.php?id=3658.
+  // https://github.com/Slicer/Slicer/issues/3658.
   settingsDialog->reloadSettings();
 
   // Now show the dialog

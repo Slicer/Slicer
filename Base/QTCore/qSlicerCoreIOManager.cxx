@@ -141,7 +141,7 @@ QList<qSlicerFileWriter*> qSlicerCoreIOManagerPrivate::writers(
       {
       foreach(const QString& extension, ctk::nameFilterToExtensions(nameFilter))
         {
-        // HACK - See http://www.na-mic.org/Bug/view.php?id=3322
+        // HACK - See https://github.com/Slicer/Slicer/issues/3322
         QString extensionWithStar(extension);
         if (!extensionWithStar.startsWith("*"))
           {
@@ -629,7 +629,7 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
 
   Q_ASSERT(parameters.contains("fileName"));
 
-  // HACK - See http://www.na-mic.org/Bug/view.php?id=3322
+  // HACK - See https://github.com/Slicer/Slicer/issues/3322
   //        Sort writers to ensure generic ones are last.
   const QList<qSlicerFileWriter*> writers = d->writers(fileType, parameters);
   if (writers.isEmpty())

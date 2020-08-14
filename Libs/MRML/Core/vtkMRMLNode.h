@@ -262,7 +262,7 @@ public:
   /// \bug Calling vtkMRMLScene::AddNode(vtkMRMLNode*) **before**
   /// CopyWithScene(vtkMRMLNode*) is **NOT** supported, it will unsynchronize
   /// the node internal caches.
-  /// See [#4078](http://www.na-mic.org/Bug/view.php?id=4078)
+  /// See [#4078](https://github.com/Slicer/Slicer/issues/4078)
   ///
   /// \sa vtkMRMLScene::AddNode(vtkMRMLNode*)
   void CopyWithScene(vtkMRMLNode *node);

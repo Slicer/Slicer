@@ -106,7 +106,7 @@ int removeRestoreEditAndRestore()
     scene->GetNodeByID("vtkMRMLScalarVolumeNode1"));
   scene->RemoveNode(volumeNode);
 
-  // TODO: We expect errors here because of http://www.na-mic.org/Bug/view.php?id=2816 is not resolved.
+  // TODO: We expect errors here because of https://github.com/Slicer/Slicer/issues/2816 is not resolved.
   // Once that bug is fixed, RestoreScene() should not throw any errors, and so the
   // TESTING_OUTPUT_ASSERT_ERRORS_BEGIN/END macros should be removed.
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();

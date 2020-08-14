@@ -151,7 +151,7 @@ public:
   /// Ideally a version from vtksys
   /// or similar should be used, but nothing seems to be available.
   /// http://en.wikipedia.org/wiki/Percent-encoding
-  /// See http://na-mic.org/Bug/view.php?id=2605
+  /// See https://github.com/Slicer/Slicer/issues/2605
   static std::string PercentEncode(std::string s);
 
   /// Save the scene into a self contained directory, sdbDir
