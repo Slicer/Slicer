@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QRandomGenerator>
 
 // qMRML includes
 #include "qMRMLSceneFactoryWidget.h"
@@ -41,6 +42,7 @@ public:
   void setNodeActionsEnabled(bool enable);
 
   vtkMRMLScene*  MRMLScene;
+  QRandomGenerator RandomGenerator;
 };
 
 // --------------------------------------------------------------------------
@@ -48,6 +50,7 @@ qMRMLSceneFactoryWidgetPrivate::qMRMLSceneFactoryWidgetPrivate(qMRMLSceneFactory
   : q_ptr(&object)
 {
   this->MRMLScene = nullptr;
+  // RandomGenerator is not seeded with random number to make behavior reproducible
 }
 
 // --------------------------------------------------------------------------
@@ -134,12 +137,12 @@ vtkMRMLNode* qMRMLSceneFactoryWidget::generateNode()
   if (nodeClassName.isEmpty())
     {
     int numClasses = d->MRMLScene->GetNumberOfRegisteredNodeClasses();
-    int classNumber = rand() % numClasses;
+    int classNumber = d->RandomGenerator.generate() % numClasses;
     vtkMRMLNode* node = d->MRMLScene->GetNthRegisteredNodeClass(classNumber);
     Q_ASSERT(node);
     while (node->GetSingletonTag())
       {
-      classNumber = rand() % numClasses;
+      classNumber = d->RandomGenerator.generate() % numClasses;
       node = d->MRMLScene->GetNthRegisteredNodeClass(classNumber);
       Q_ASSERT(node);
       }
@@ -184,7 +187,7 @@ void qMRMLSceneFactoryWidget::deleteNode()
     {
     return;
     }
-  vtkMRMLNode* node = d->MRMLScene->GetNthNode(rand() % numNodes);
+  vtkMRMLNode* node = d->MRMLScene->GetNthNode(d->RandomGenerator.generate() % numNodes);
   d->MRMLScene->RemoveNode(node);
   // FIXME: disable delete button when there is no more nodes in the scene to delete
   emit mrmlNodeRemoved(node);
@@ -202,7 +205,7 @@ void qMRMLSceneFactoryWidget::deleteNode(const QString& className)
     qDebug() << "qMRMLSceneFactoryWidget::deleteNode(" <<className <<") no node";
     return;
     }
-  vtkMRMLNode* node = d->MRMLScene->GetNthNodeByClass(rand() % numNodes, className.toUtf8());
+  vtkMRMLNode* node = d->MRMLScene->GetNthNodeByClass(d->RandomGenerator.generate() % numNodes, className.toUtf8());
   qDebug() << "qMRMLSceneFactoryWidget::deleteNode(" <<className <<") ==" << node->GetClassName();
   d->MRMLScene->RemoveNode(node);
   // FIXME: disable delete button when there is no more nodes in the scene to delete

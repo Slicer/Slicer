@@ -30,6 +30,7 @@ Version:   $Revision: 1.18 $
 // STD includes
 #include <list>
 #include <map>
+#include <random>
 #include <set>
 #include <string>
 #include <vector>
@@ -919,6 +920,8 @@ protected:
   char * LastLoadedVersion;
 
   vtkCallbackCommand *DeleteEventCallback;
+
+  std::default_random_engine RandomGenerator;
 
 private:
 

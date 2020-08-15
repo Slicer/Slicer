@@ -45,8 +45,9 @@
 
 // STD includes
 #include <algorithm>
-#include <vector>
+#include <random>
 #include <sstream>
+#include <vector>
 
 //----------------------------------------------------------------------------
 const double vtkMRMLSegmentationDisplayNode::SEGMENT_COLOR_NO_OVERRIDE = -1.0;
@@ -907,9 +908,10 @@ void vtkMRMLSegmentationDisplayNode::GenerateSegmentColor(double color[3], int c
   if (!genericAnatomyColorNode || colorNumber == -1)
     {
     // Generate random color if default color table is not available (such as in logic tests)
-    color[0] = rand() * 1.0 / RAND_MAX;
-    color[1] = rand() * 1.0 / RAND_MAX;
-    color[2] = rand() * 1.0 / RAND_MAX;
+    std::default_random_engine randomGenerator(std::random_device{}());
+    color[0] = static_cast<double>(randomGenerator()) / randomGenerator.max();
+    color[1] = static_cast<double>(randomGenerator()) / randomGenerator.max();
+    color[2] = static_cast<double>(randomGenerator()) / randomGenerator.max();
     return;
     }
 

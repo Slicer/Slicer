@@ -57,6 +57,7 @@
 #include <cassert>
 #include <ctime>
 #include <mutex>
+#include <random>
 #include <set>
 
 #ifdef _WIN32
@@ -202,6 +203,8 @@ public:
 
   int RedirectModuleStreams;
 
+  std::default_random_engine RandomGenerator;
+
   std::mutex ProcessesKillLock;
   std::vector<itksysProcess*> Processes;
 
@@ -297,6 +300,8 @@ vtkStandardNewMacro(vtkSlicerCLIModuleLogic);
 vtkSlicerCLIModuleLogic::vtkSlicerCLIModuleLogic()
 {
   this->Internal = new vtkInternal();
+
+  this->Internal->RandomGenerator.seed(std::random_device{}());
 
   this->Internal->DeleteTemporaryFiles = 1;
   this->Internal->AllowInMemoryTransfer = 1;
@@ -1254,12 +1259,11 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         "0123456789"
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz";
-    srand(time(nullptr));
 
     std::ostringstream code;
     for (int ii = 0; ii < 10; ii++)
       {
-      code << alphanum[rand() % (sizeof(alphanum)-1)];
+      code << alphanum[this->Internal->RandomGenerator() % (sizeof(alphanum)-1)];
       }
     std::string returnFile = temporaryDirectory + "/" + pidString.str()
       + "_" + code.str() + ".params";

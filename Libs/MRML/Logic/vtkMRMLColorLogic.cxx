@@ -37,6 +37,7 @@
 #include <cassert>
 #include <ctype.h> // For isspace
 #include <functional>
+#include <random>
 #include <sstream>
 
 //----------------------------------------------------------------------------
@@ -484,15 +485,17 @@ vtkMRMLProceduralColorNode* vtkMRMLColorLogic::CreateRandomNode()
   procNode->SaveWithSceneOff();
   procNode->SetSingletonTag(procNode->GetTypeAsString());
 
+  std::default_random_engine randomGenerator(std::random_device{}());
+
   vtkColorTransferFunction *func = procNode->GetColorTransferFunction();
   const int dimension = 1000;
   double table[3*dimension];
   double* tablePtr = table;
   for (int i = 0; i < dimension; ++i)
     {
-    *tablePtr++ = static_cast<double>(rand())/RAND_MAX;
-    *tablePtr++ = static_cast<double>(rand())/RAND_MAX;
-    *tablePtr++ = static_cast<double>(rand())/RAND_MAX;
+    *tablePtr++ = static_cast<double>(randomGenerator()) / randomGenerator.max();
+    *tablePtr++ = static_cast<double>(randomGenerator()) / randomGenerator.max();
+    *tablePtr++ = static_cast<double>(randomGenerator()) / randomGenerator.max();
     }
   func->BuildFunctionFromTable(VTK_INT_MIN, VTK_INT_MAX, dimension, table);
   func->Build();

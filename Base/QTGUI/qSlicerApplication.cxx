@@ -24,6 +24,7 @@
 #include <QFile>
 #include <QtGlobal>
 #include <QMainWindow>
+#include <QRandomGenerator>
 #include <QSurfaceFormat>
 #include <QSysInfo>
 
@@ -809,10 +810,12 @@ void qSlicerApplication::setupFileLogging()
 
   // Add new log file path for the current session
   QString tempDir = this->temporaryPath();
-  QString currentLogFilePath = tempDir + QString("/") + this->applicationName() + QString("_") +
-    this->revision() + QString("_") +
-    QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss") +
-    QString(".log");
+  QString currentLogFilePath = QString("%1/%2_%3_%4_%5.log")
+    .arg(tempDir)
+    .arg(this->applicationName())
+    .arg(this->revision())
+    .arg(QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss"))
+    .arg(QRandomGenerator::global()->generate() % 1000, 3, 10, QLatin1Char('0'));
   logFilePaths.prepend(currentLogFilePath);
 
   // Save settings

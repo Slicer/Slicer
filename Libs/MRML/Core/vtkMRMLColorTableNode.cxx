@@ -24,6 +24,7 @@ Version:   $Revision: 1.0 $
 #include <vtkObjectFactory.h>
 
 // STD includes
+#include <random>
 #include <sstream>
 
 //------------------------------------------------------------------------------
@@ -1198,6 +1199,7 @@ void vtkMRMLColorTableNode::SetType(int type)
     else if (this->Type == this->Random)
       {
       int size = 255;
+      std::default_random_engine randomGenerator(std::random_device{}());
 
       this->GetLookupTable()->SetNumberOfTableValues(size + 1);
       this->GetLookupTable()->SetTableRange(0, 255);
@@ -1205,9 +1207,9 @@ void vtkMRMLColorTableNode::SetType(int type)
       for (int i = 1; i <= size; i++)
         {
         // table values have to be 0-1
-        double r = (rand()%255)/255.0;
-        double g = (rand()%255)/255.0;
-        double b = (rand()%255)/255.0;
+        double r = static_cast<double>(randomGenerator()) / randomGenerator.max();
+        double g = static_cast<double>(randomGenerator()) / randomGenerator.max();
+        double b = static_cast<double>(randomGenerator()) / randomGenerator.max();
 
         this->GetLookupTable()->SetTableValue(i, r, g, b, 1.0);
         }
