@@ -82,8 +82,7 @@ int vtkTeemNRRDWriter::FillInputPortInformation(
 // Writes all the data from the input.
 void vtkTeemNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &kind, size_t &numComp, int &vtkType, void **buffer)
 {
-
-  vtkDataArray *array;
+  vtkDataArray *array = nullptr;
   this->DiffusionWeightedData = 0;
   if ((array = static_cast<vtkDataArray *> (in->GetPointData()->GetScalars())))
     {
@@ -139,6 +138,13 @@ void vtkTeemNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &kind, 
      kind = nrrdKind3DMatrix;
      numComp = array->GetNumberOfComponents();
      }
+   else
+     {
+     *buffer = nullptr;
+     vtkType = VTK_VOID;
+     kind = nrrdKindUnknown;
+     numComp = 0;
+     }
 
   if (this->VectorAxisKind != nrrdKindUnknown)
     {
@@ -189,19 +195,7 @@ int vtkTeemNRRDWriter::VTKToNrrdPixelType( const int vtkPixelType )
 
 void* vtkTeemNRRDWriter::MakeNRRD()
   {
-  Nrrd *nrrd = nrrdNew();
-  int kind[NRRD_DIM_MAX];
-  size_t size[NRRD_DIM_MAX];
-  unsigned int nrrdDim, baseDim, spaceDim;
-  double spaceDir[NRRD_DIM_MAX][NRRD_SPACE_DIM_MAX];
-  double origin[NRRD_DIM_MAX];
-  void *buffer;
-  int vtkType;
-
   // Fill in image information.
-
-  //vtkImageData *input = this->GetInput();
-
   if (this->Space != nrrdSpaceRightAnteriorSuperior && this->Space != nrrdSpaceRightAnteriorSuperiorTime)
     {
     if (this->GetInput()->GetPointData()->GetTensors())
@@ -217,9 +211,15 @@ void* vtkTeemNRRDWriter::MakeNRRD()
     }
 
   // Find Pixel type from data and select a buffer.
-  this->vtkImageDataInfoToNrrdInfo(this->GetInput(),kind[0],size[0],vtkType, &buffer);
+  int kind[NRRD_DIM_MAX] = { nrrdKindUnknown };
+  size_t size[NRRD_DIM_MAX] = { 0 };
+  int vtkType = VTK_VOID;
+  void* buffer = nullptr;
+  this->vtkImageDataInfoToNrrdInfo(this->GetInput(), kind[0], size[0], vtkType, &buffer);
 
-  spaceDim = 3; // VTK is always 3D volumes.
+  double spaceDir[NRRD_DIM_MAX][NRRD_SPACE_DIM_MAX] = { 0.0 };
+  unsigned int baseDim = 0;
+  const unsigned int spaceDim = 3; // VTK is always 3D volumes.
   if (size[0] > 1)
     {
     // the range axis has no space direction
@@ -233,7 +233,7 @@ void* vtkTeemNRRDWriter::MakeNRRD()
     {
     baseDim = 0;
     }
-  nrrdDim = baseDim + spaceDim;
+  unsigned int nrrdDim = baseDim + spaceDim;
 
   vtkNew<vtkMatrix4x4> rasToSpaceMatrix;
   switch (this->Space)
@@ -253,20 +253,20 @@ void* vtkTeemNRRDWriter::MakeNRRD()
   vtkNew<vtkMatrix4x4> ijkToSpaceMatrix;
   vtkMatrix4x4::Multiply4x4(rasToSpaceMatrix, this->IJKToRASMatrix, ijkToSpaceMatrix);
 
-  unsigned int axi;
-  for (axi=0; axi < spaceDim; axi++)
+  double origin[NRRD_DIM_MAX] = { 0.0 };
+  for (unsigned int axi=0; axi < spaceDim; axi++)
     {
     size[axi+baseDim] = this->GetInput()->GetDimensions()[axi];
     kind[axi+baseDim] = nrrdKindDomain;
     origin[axi] = ijkToSpaceMatrix->GetElement((int) axi,3);
 
-    //double spacing = this->GetInput()->GetSpacing()[axi];
     for (unsigned int saxi=0; saxi < spaceDim; saxi++)
       {
       spaceDir[axi+baseDim][saxi] = ijkToSpaceMatrix->GetElement(saxi,axi);
       }
     }
 
+  Nrrd* nrrd = nrrdNew();
   if (nrrdWrap_nva(nrrd, const_cast<void *> (buffer),
                    this->VTKToNrrdPixelType( vtkType ),
                    nrrdDim, size)
@@ -278,7 +278,6 @@ void* vtkTeemNRRDWriter::MakeNRRD()
                       << this->GetFileName() << ":\n" << err);
     // Free the nrrd struct but don't touch nrrd->data
     nrrd = nrrdNix(nrrd);
-    this->WriteErrorOn();
     return nullptr;
     }
   nrrdAxisInfoSet_nva(nrrd, nrrdAxisInfoKind, kind);
@@ -407,6 +406,8 @@ void vtkTeemNRRDWriter::WriteData()
   Nrrd* nrrd = (Nrrd*)this->MakeNRRD();
   if (nrrd == nullptr)
     {
+    vtkErrorMacro("Failed to initialize NRRD image writing for " << this->GetFileName());
+    this->WriteErrorOn();
     return;
     }
 
@@ -448,7 +449,6 @@ void vtkTeemNRRDWriter::WriteData()
   // Free the nrrd struct but don't touch nrrd->data
   nrrd = nrrdNix(nrrd);
   nio = nrrdIoStateNix(nio);
-  return;
 }
 
 void vtkTeemNRRDWriter::PrintSelf(ostream& os, vtkIndent indent)

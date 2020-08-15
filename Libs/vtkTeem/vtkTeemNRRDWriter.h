@@ -63,6 +63,7 @@ public:
   void SetFileTypeToASCII() {this->SetFileType(VTK_ASCII);};
   void SetFileTypeToBinary() {this->SetFileType(VTK_BINARY);};
 
+  /// Flag that is set by WriteData() if writing fails.
   vtkBooleanMacro(WriteError, int);
   vtkSetMacro(WriteError, int);
   vtkGetMacro(WriteError, int);
