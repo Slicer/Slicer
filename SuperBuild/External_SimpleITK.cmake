@@ -40,18 +40,18 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   file(WRITE ${_install_script}
 "include(\"${_env_script}\")
 set(${proj}_WORKING_DIR \"${CMAKE_BINARY_DIR}/${proj}-build/SimpleITK-build/Wrapping/Python\")
-ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" Packaging/setup.py install)
+ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py install)
 ")
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/Slicer/SimpleITK.git"
+    "${EP_GIT_PROTOCOL}://github.com/SimpleITK/SimpleITK.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "7ce1f1867eaa419d0ef0f9aeb074363e85b633c4"  # slicer-v2.0rc1-2020-03-09-7ce1f1867
+    "v2.0rc3"  # v2.0rc3 is paired with a specific SimpleITKFilters remote module git tag in the ITK project
     QUIET
     )
 

@@ -93,6 +93,8 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     -DITK_LEGACY_REMOVE:BOOL=OFF   #<-- Allow LEGACY ITKv4 features for now.
     -DITK_LEGACY_SILENT:BOOL=ON    #<-- Silence for initial ITKv5 migration.
     -DModule_ITKDeprecated:BOOL=ON #<-- Needed for ITKv5 now. (itkMultiThreader.h and MutexLock backwards compatibility.)
+    -DModule_SimpleITKFilters:BOOL=${Slicer_USE_SimpleITK}
+    -DModule_SimpleITKFilters_GIT_TAG:STRING=ce51d77771a54e7e0791fadb15e50dc38cbd8358
     )
 
 
