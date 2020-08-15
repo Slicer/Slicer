@@ -119,6 +119,8 @@ vtkCxxSetObjectMacro(vtkMRMLScene, URIHandlerCollection, vtkCollection)
 //------------------------------------------------------------------------------
 vtkMRMLScene::vtkMRMLScene()
 {
+  this->RandomGenerator.seed(std::random_device{}());
+
   this->NodeIDsMTime = 0;
 
   this->RegisteredNodeClasses.clear();
@@ -3714,7 +3716,7 @@ bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail/*=nu
   // Use the output directory as temporary directory.
   // This may not be ideal if the output directory has limited storage space (e.g., USB stick).
   std::stringstream tempDirStr;
-  tempDirStr << mrbDir<< "/" << vtksys::SystemTools::GetCurrentDateTime("__BundleSaveTemp-%F_%H+M+%S.") << (rand() % 1000);
+  tempDirStr << mrbDir<< "/" << vtksys::SystemTools::GetCurrentDateTime("__BundleSaveTemp-%F_%H%M%S_") << (this->RandomGenerator() % 1000);
   std::string tempDir = tempDirStr.str();
   vtkDebugMacro("Packing to " << tempDir);
 
@@ -3776,7 +3778,7 @@ bool vtkMRMLScene::ReadFromMRB(const char* fullName, bool clear/*=false*/)
     tempBaseDir = this->GetDataIOManager()->GetCacheManager()->GetRemoteCacheDirectory();
     }
   std::stringstream unpackDirStr;
-  unpackDirStr << tempBaseDir << "/" << vtksys::SystemTools::GetCurrentDateTime("__BundleLoadTemp-%F_%H+M+%S.") << (rand() % 1000);
+  unpackDirStr << tempBaseDir << "/" << vtksys::SystemTools::GetCurrentDateTime("__BundleLoadTemp-%F_%H%M%S_") << (this->RandomGenerator() % 1000);
   std::string unpackDir = unpackDirStr.str();
   vtkDebugMacro("Unpacking bundle to " << unpackDir);
 
