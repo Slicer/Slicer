@@ -923,6 +923,11 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
     {
     // Get poly data representation
     vtkPolyData* currentPolyData = vtkPolyData::SafeDownCast(multiBlockDataset->GetBlock(blockIndex));
+    if (!currentPolyData)
+      {
+      vtkErrorMacro("ReadPolyDataRepresentation: Could not read block " << blockIndex);
+      continue;
+      }
 
     // Set master representation if it has not been set yet
     // (there is no global place to store it, but every segment field data contains a copy of it)
