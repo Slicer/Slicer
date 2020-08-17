@@ -605,7 +605,10 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
         // that lookup table original range.
         vtkSmartPointer<vtkLookupTable> dNodeLUT = vtkSmartPointer<vtkLookupTable>::Take(displayNode->GetColorNode() ?
           displayNode->GetColorNode()->CreateLookupTableCopy() : nullptr);
-        dNodeLUT->SetAlpha(hierarchyOpacity * displayNode->GetSliceIntersectionOpacity());
+        if (dNodeLUT)
+          {
+          dNodeLUT->SetAlpha(hierarchyOpacity * displayNode->GetSliceIntersectionOpacity());
+          }
         mapper->SetLookupTable(dNodeLUT);
         }
 
