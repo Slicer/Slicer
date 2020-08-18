@@ -16,6 +16,7 @@
 #include <QDialog>
 #include <QDir>
 #include <QFileInfo>
+#include <QMessageBox>
 #include <QStyledItemDelegate>
 
 // Slicer includes
@@ -23,6 +24,7 @@
 #include "qSlicerSaveDataDialog.h"
 #include "ui_qSlicerSaveDataDialog.h"
 
+class ctkPathLineEdit;
 class vtkMRMLNode;
 class vtkMRMLStorableNode;
 class vtkObject;
@@ -81,8 +83,7 @@ protected:
     OptionsColumn = 3,
     NodeNameColumn = 4,
     NodeTypeColumn = 5,
-    NodeStatusColumn = 6,
-    UserMessagesColumn = 7
+    NodeStatusColumn = 6
   };
 
   enum CustomRole
@@ -94,11 +95,10 @@ protected:
 
   int               findSceneRow()const;
   bool              mustSceneBeSaved()const;
-  bool              prepareForSaving();
-  void              restoreAfterSaving();
   void              setSceneRootDirectory(const QString& rootDirectory);
   void              updateOptionsWidget(int row);
-  void              updateUserMessagesItem(int row);
+  void              updateStatusIconFromStorageNode(int row);
+  void              setStatusIcon(int row, QIcon& icon, const QString& message);
 
   QString           sceneFileFormat()const;
 
@@ -111,10 +111,8 @@ protected:
   QTableWidgetItem* createNodeStatusItem(vtkMRMLStorableNode* node, const QFileInfo& fileInfo);
   QWidget*          createFileFormatsWidget(vtkMRMLStorableNode* node, QFileInfo& fileInfo);
   QTableWidgetItem* createFileNameItem(const QFileInfo& fileInfo, const QString& extension, const QString& nodeID);
-  ctkDirectoryButton* createFileDirectoryWidget(const QFileInfo& fileInfo);
-  QWidget*          createUserMessagesItem(vtkMRMLStorableNode *node);
-  void              makeUserMessages(vtkMRMLStorableNode *node, QWidget *userMessagesLayoutItem);
-  void              clearUserMessages();
+  ctkPathLineEdit*  createFileDirectoryWidget(const QFileInfo& fileInfo);
+  void              clearUserMessagesInStorageNodes();
 
   static QString extractKnownExtension(const QString& fileName, vtkObject* object);
   static QString stripKnownExtension(const QString& fileName, vtkObject* object);
@@ -125,6 +123,8 @@ protected:
   QString           type(int row)const;
   qSlicerIOOptions* options(int row)const;
 
+  bool confirmOverwrite(const QString& filepath);
+
   /// Helper function for finding a node in the main scene and all scene view scenes
   vtkMRMLNode*      getNodeByID(char *id)const;
 
@@ -133,6 +133,11 @@ protected:
 
   // Items are currently being added to the scene, indicates that no GUI updates should be performed.
   bool PopulatingItems;
+
+  QMessageBox::StandardButton ConfirmOverwriteAnswer;
+  bool CancelRequested;
+  QIcon WarningIcon;
+  QIcon ErrorIcon;
 
   friend class qSlicerFileNameItemDelegate;
 };

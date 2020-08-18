@@ -15,6 +15,7 @@ Version:   $Revision: 1.6 $
 // MRML includes
 #include "vtkDataFileFormatHelper.h"
 #include "vtkDataIOManager.h"
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScene.h"
 #ifdef MRML_USE_vtkTeem
 #include "vtkMRMLVectorVolumeNode.h"
@@ -33,10 +34,12 @@ Version:   $Revision: 1.6 $
 #include <vtksys/SystemTools.hxx>
 
 // VTK includes
+#include <vtkAddonMathUtilities.h>
 #include <vtkCallbackCommand.h>
 #include <vtkDataArray.h>
 #include <vtkErrorCode.h>
 #include <vtkImageChangeInformation.h>
+#include <vtkMatrix3x3.h>
 #include <vtkNew.h>
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
@@ -607,8 +610,36 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       }
     }
 
-  return result;
+  // Display warning if saving VTK file with non-LPS axes (VTK cannot store axis directions)
+  std::string lowerCaseFileName = vtksys::SystemTools::LowerCase(fullName);
+  if (vtksys::SystemTools::StringEndsWith(lowerCaseFileName, ".vtk"))
+    {
+    vtkNew<vtkMatrix4x4> currentIjkToRasDirection;
+    volNode->GetRASToIJKMatrix(currentIjkToRasDirection.GetPointer());
+    double unitScale[3] = { 1.0, 1.0, 1.0 };
+    vtkAddonMathUtilities::NormalizeOrientationMatrixColumns(currentIjkToRasDirection, unitScale);
 
+    vtkNew<vtkMatrix3x3> identityIjkToRasDirection;
+    identityIjkToRasDirection->SetElement(0, 0, -1.0);
+    identityIjkToRasDirection->SetElement(1, 1, -1.0);
+
+    if (!vtkAddonMathUtilities::MatrixAreEqual(currentIjkToRasDirection, identityIjkToRasDirection))
+      {
+      this->GetUserMessages()->AddMessage(vtkCommand::WarningEvent,
+        "VTK file format can only store LPS axis oriented images. Orientation of the saved image may be incorrect.");
+      }
+    }
+
+  // Display warnings for Analyze files
+  if (vtksys::SystemTools::StringEndsWith(lowerCaseFileName, ".hdr")
+    || vtksys::SystemTools::StringEndsWith(lowerCaseFileName, ".img")
+    || vtksys::SystemTools::StringEndsWith(lowerCaseFileName, ".img.gz"))
+    {
+    this->GetUserMessages()->AddMessage(vtkCommand::WarningEvent,
+      "Analyze file format is not recommended, as its image orientation specification is ambiguous.");
+    }
+
+  return result;
 }
 
 //----------------------------------------------------------------------------
