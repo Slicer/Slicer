@@ -317,7 +317,7 @@ vtkMRMLTableViewNode* qSlicerSubjectHierarchyTablesPlugin::getTableViewNode()con
 
   for (int i = 0; i<layoutManager->tableViewCount(); i++)
     {
-    qMRMLTableWidget* tableWidget = layoutManager->tableWidget(0);
+    qMRMLTableWidget* tableWidget = layoutManager->tableWidget(i);
     if (!tableWidget)
       {
       // invalid plot widget

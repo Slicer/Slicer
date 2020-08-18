@@ -379,7 +379,7 @@ vtkMRMLPlotViewNode* qSlicerSubjectHierarchyPlotsPlugin::getPlotViewNode()const
 
   for (int i=0; i<layoutManager->plotViewCount(); i++)
     {
-    qMRMLPlotWidget* plotWidget = layoutManager->plotWidget(0);
+    qMRMLPlotWidget* plotWidget = layoutManager->plotWidget(i);
     if (!plotWidget)
       {
       // invalid plot widget
