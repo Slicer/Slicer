@@ -803,6 +803,19 @@ def loadVolume(filename, properties={}, returnNode=False):
   filetype = 'VolumeFile'
   return loadNodeFromFile(filename, filetype, properties, returnNode)
 
+def loadSequence(filename, properties={}):
+  """Load sequence (4D data set) from file.
+
+  :param filename: full path of the file to load.
+  :param properties:
+    - name: this name will be used as node name for the loaded volume
+    - show: display volume in slice viewers after loading is completed
+    - colorNodeID: color node to set in the proxy nodes's display node
+  :return: loaded sequence node.
+  """
+  filetype = 'SequenceFile'
+  return loadNodeFromFile(filename, filetype, properties)
+
 def loadScene(filename, properties={}):
   """Load node from file.
 
