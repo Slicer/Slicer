@@ -29,6 +29,7 @@
 
 class qMRMLThreeDViewPrivate;
 class vtkMRMLAbstractDisplayableManager;
+class vtkMRMLCameraNode;
 class vtkMRMLScene;
 class vtkMRMLViewNode;
 class vtkCollection;
@@ -79,6 +80,9 @@ public:
   Q_INVOKABLE void resetCamera(bool resetRotation = true,
                                bool resetTranslation = true,
                                bool resetDistance = true);
+
+  /// Returns camera node of the 3D view
+  Q_INVOKABLE vtkMRMLCameraNode* cameraNode();
 
   /// Set cursor in the view area
   Q_INVOKABLE void setViewCursor(const QCursor &);

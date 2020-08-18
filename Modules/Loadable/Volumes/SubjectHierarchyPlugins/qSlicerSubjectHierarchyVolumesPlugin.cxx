@@ -125,7 +125,7 @@ qSlicerSubjectHierarchyVolumesPluginPrivate::~qSlicerSubjectHierarchyVolumesPlug
 bool qSlicerSubjectHierarchyVolumesPluginPrivate::resetFieldOfViewOnShow()
 {
   QSettings settings;
-  return settings.value("SubjectHierarchy/ResetFieldOfViewOnShowVolume", false).toBool();
+  return settings.value("SubjectHierarchy/ResetFieldOfViewOnShowVolume", true).toBool();
 }
 
 //------------------------------------------------------------------------------

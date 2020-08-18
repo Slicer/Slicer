@@ -308,6 +308,18 @@ void qMRMLThreeDView::addDisplayableManager(const QString& displayableManagerNam
 }
 
 //------------------------------------------------------------------------------
+vtkMRMLCameraNode* qMRMLThreeDView::cameraNode()
+{
+  vtkMRMLThreeDViewInteractorStyle* style = vtkMRMLThreeDViewInteractorStyle::SafeDownCast(this->interactorStyle());
+  if (!style)
+    {
+    return nullptr;
+    }
+  vtkMRMLCameraNode* cam = style->GetCameraNode();
+  return cam;
+}
+
+//------------------------------------------------------------------------------
 void qMRMLThreeDView::rotateToViewAxis(unsigned int axisId)
 {
   vtkMRMLThreeDViewInteractorStyle* style =

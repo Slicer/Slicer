@@ -27,13 +27,16 @@
 // Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerApplication.h"
+#include "qSlicerLayoutManager.h"
 
 // Volume Rendering includes
 #include "vtkSlicerVolumeRenderingLogic.h"
 
 // MRML includes
+#include <vtkMRMLCameraNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeNode.h>
+#include <vtkMRMLViewNode.h>
 #include <vtkMRMLVolumeRenderingDisplayNode.h>
 #include <vtkMRMLVolumePropertyNode.h>
 
@@ -44,9 +47,12 @@
 // Qt includes
 #include <QDebug>
 #include <QAction>
+#include <QSettings>
 
 // MRML widgets includes
 #include "qMRMLNodeComboBox.h"
+#include "qMRMLThreeDView.h"
+#include "qMRMLThreeDWidget.h"
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
@@ -210,6 +216,55 @@ void qSlicerSubjectHierarchyVolumeRenderingPlugin::toggleVolumeRenderingForCurre
     return;
     }
 
+  if (on)
+    {
+    QSettings settings;
+    bool resetFieldOfView = settings.value("SubjectHierarchy/ResetFieldOfViewOnShowVolume", true).toBool();
+    if (resetFieldOfView)
+      {
+      double rasBounds[6] = { 0.0 };
+      volumeNode->GetRASBounds(rasBounds);
+      double cameraFocalPoint[3] =
+        {
+        (rasBounds[0] + rasBounds[1]) / 2.0,
+        (rasBounds[2] + rasBounds[3]) / 2.0,
+        (rasBounds[4] + rasBounds[5]) / 2.0,
+        };
+      qMRMLLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+      if (layoutManager)
+        {
+        for (int i = 0; i < layoutManager->threeDViewCount(); i++)
+          {
+          qMRMLThreeDWidget* threeDWidget = layoutManager->threeDWidget(i);
+          if (!threeDWidget)
+            {
+            continue;
+            }
+          vtkMRMLViewNode* viewNode = threeDWidget->mrmlViewNode();
+          if (!viewNode)
+            {
+            continue;
+            }
+          if (!displayNode->IsDisplayableInView(viewNode->GetID()))
+            {
+            continue;
+            }
+          qMRMLThreeDView* threeDView = threeDWidget->threeDView();
+          if (!threeDView)
+            {
+            continue;
+            }
+          vtkMRMLCameraNode* cameraNode = threeDView->cameraNode();
+          if (!cameraNode)
+            {
+            continue;
+            }
+          cameraNode->SetFocalPoint(cameraFocalPoint);
+          cameraNode->ResetClippingRange();
+          }
+        }
+      }
+    }
   displayNode->SetVisibility(on);
 }
 
