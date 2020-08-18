@@ -134,6 +134,12 @@ public:
   /// Common properties of the display nodes are propagated.
   void ChangeVolumeRenderingMethod(const char* displayNodeClassName = nullptr);
 
+  /// Set volume rendering properties that seems well suited for the volume.
+  /// The function uses heuristics to detect what kind of volume it is (CT, MRI, other),
+  /// based on its intensity range and choses preset accoringly.
+  /// Returns false is volume type could not be detected and so properties are not changed.
+  bool SetRecommendedVolumeRenderingProperties(vtkMRMLVolumeRenderingDisplayNode* vrDisplayNode);
+
   /// Applies the properties (window level, threshold and color function) of
   /// a volume display node to the volume rendering display node.
   /// If displayNode is 0, it uses the first display node.

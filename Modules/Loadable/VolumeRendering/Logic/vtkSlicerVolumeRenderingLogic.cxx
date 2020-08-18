@@ -828,6 +828,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::CreateDefaultV
   if (!volumePropertyNode)
     {
     this->UpdateDisplayNodeFromVolumeNode(displayNode, volumeNode);
+    this->SetRecommendedVolumeRenderingProperties(displayNode);
     volumePropertyNode = displayNode->GetVolumePropertyNode();
     }
   if (!volumePropertyNode)
@@ -1384,4 +1385,44 @@ int vtkSlicerVolumeRenderingLogic::LoadCustomPresetsScene(const char* sceneFileP
 
   this->PresetsScene->SetURL(sceneFilePath);
   return this->PresetsScene->Import();
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerVolumeRenderingLogic::SetRecommendedVolumeRenderingProperties(vtkMRMLVolumeRenderingDisplayNode* vspNode)
+{
+  if (vspNode == nullptr || vspNode->GetVolumePropertyNode() == nullptr)
+    {
+    vtkErrorMacro("SetRecommendedVolumeRenderingProperties: invalid input display or volume property node");
+    return false;
+    }
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode());
+  if (!volumeNode || !volumeNode->GetImageData())
+    {
+    vtkErrorMacro("SetRecommendedVolumeRenderingProperties: invalid volume node");
+    return false;
+    }
+
+  if (volumeNode->IsA("vtkMRMLLabelMapVolumeNode"))
+    {
+    return false;
+    }
+
+  double* scalarRange = volumeNode->GetImageData()->GetScalarRange();
+  double scalarRangeSize = scalarRange[1] - scalarRange[0];
+
+  if (scalarRangeSize > 50.0 && scalarRangeSize < 1500.0 && this->GetPresetByName("MR-Default"))
+    {
+    // small dynamic range, probably MRI
+    vspNode->GetVolumePropertyNode()->Copy(this->GetPresetByName("MR-Default"));
+    return true;
+    }
+
+  if (scalarRangeSize >= 1500.0 && scalarRangeSize < 10000.0 && this->GetPresetByName("CT-Chest-Contrast-Enhanced"))
+    {
+    // larger dynamic range, probably CT
+    vspNode->GetVolumePropertyNode()->Copy(this->GetPresetByName("CT-Chest-Contrast-Enhanced"));
+    return true;
+    }
+
+  return false;
 }
