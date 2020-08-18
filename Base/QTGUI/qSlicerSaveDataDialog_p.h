@@ -98,7 +98,7 @@ protected:
   void              setSceneRootDirectory(const QString& rootDirectory);
   void              updateOptionsWidget(int row);
   void              updateStatusIconFromStorageNode(int row);
-  void              setStatusIcon(int row, QIcon& icon, const QString& message);
+  void              setStatusIcon(int row, const QIcon& icon, const QString& message);
 
   QString           sceneFileFormat()const;
 

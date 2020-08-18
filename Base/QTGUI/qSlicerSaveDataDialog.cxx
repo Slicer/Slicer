@@ -1392,7 +1392,7 @@ void qSlicerSaveDataDialogPrivate
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSaveDataDialogPrivate::setStatusIcon(int row, QIcon& icon, const QString& message)
+void qSlicerSaveDataDialogPrivate::setStatusIcon(int row, const QIcon& icon, const QString& message)
 {
   QTableWidgetItem* fileNameItem = this->FileWidget->item(row, FileNameColumn);
   fileNameItem->setIcon(icon);
