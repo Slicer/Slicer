@@ -33,6 +33,7 @@
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
 #include <ctkCheckableModelHelper.h>
+#include <ctkPathLineEdit.h>
 #include <ctkVTKWidgetsUtils.h>
 
 /// Slicer includes
@@ -135,6 +136,14 @@ qSlicerSaveDataDialogPrivate::qSlicerSaveDataDialogPrivate(QWidget* parentWidget
   this->MRMLScene = nullptr;
 
   this->setupUi(this);
+
+  this->ErrorLabel->setVisible(false);
+  this->ConfirmOverwriteAnswer = QMessageBox::Ignore;
+  this->CancelRequested = false;
+
+  this->WarningIcon.addPixmap(qApp->style()->standardPixmap(QStyle::SP_MessageBoxWarning));
+  this->ErrorIcon.addPixmap(qApp->style()->standardPixmap(QStyle::SP_MessageBoxCritical));
+
   this->FileWidget->setItemDelegateForColumn(
     FileNameColumn, new qSlicerFileNameItemDelegate(this));
   this->FileWidget->verticalHeader()->setVisible(false);
@@ -221,10 +230,10 @@ void qSlicerSaveDataDialogPrivate::setDirectory(const QString& newDirectory)
       {
       continue;
       }
-    ctkDirectoryButton* directoryItemButton = qobject_cast<ctkDirectoryButton*>(
+    ctkPathLineEdit* directoryItemEdit = qobject_cast<ctkPathLineEdit*>(
       this->FileWidget->cellWidget(row, FileDirectoryColumn));
-    Q_ASSERT(directoryItemButton);
-    directoryItemButton->setDirectory(newDir.path());
+    Q_ASSERT(directoryItemEdit);
+    directoryItemEdit->setCurrentPath(newDir.path());
     }
 }
 
@@ -233,6 +242,7 @@ void qSlicerSaveDataDialogPrivate::populateItems()
 {
   // clear the list
   this->FileWidget->setRowCount(0);
+  this->ErrorLabel->setVisible(false);
   if (this->MRMLScene == nullptr)
     {
     return;
@@ -377,15 +387,10 @@ void qSlicerSaveDataDialogPrivate::populateScene()
   this->FileWidget->setItem( row, FileNameColumn, fileNameItem);
 
   // Scene Directory
-  ctkDirectoryButton* sceneDirectoryButton =
+  ctkPathLineEdit* sceneDirectoryEdit =
       this->createFileDirectoryWidget(sceneFileInfo);
 
-  this->FileWidget->setCellWidget(row, FileDirectoryColumn, sceneDirectoryButton);
-
-  // Scene User Messages
-  vtkMRMLStorableNode * const storableNode = vtkMRMLStorableNode::SafeDownCast(this->object(row));
-  QWidget * const userMessagesItem = this->createUserMessagesItem(storableNode);
-  this->FileWidget->setCellWidget(row, UserMessagesColumn, userMessagesItem);
+  this->FileWidget->setCellWidget(row, FileDirectoryColumn, sceneDirectoryEdit);
 
   // Scene Selected
   QTableWidgetItem* selectItem = this->FileWidget->item(row, SelectColumn);
@@ -488,10 +493,6 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
   // File Directory
   QWidget* directoryWidget = this->createFileDirectoryWidget(fileInfo);
   this->FileWidget->setCellWidget(row, FileDirectoryColumn, directoryWidget);
-
-  // User messages
-  QWidget *userMessagesItem = this->createUserMessagesItem(storableNode);
-  this->FileWidget->setCellWidget(row, UserMessagesColumn, userMessagesItem);
 
   // Select modified nodes by default
   QTableWidgetItem* selectItem = this->FileWidget->item(row, SelectColumn);
@@ -712,78 +713,23 @@ QTableWidgetItem* qSlicerSaveDataDialogPrivate
 }
 
 //-----------------------------------------------------------------------------
-ctkDirectoryButton* qSlicerSaveDataDialogPrivate::createFileDirectoryWidget(const QFileInfo& fileInfo)
+ctkPathLineEdit* qSlicerSaveDataDialogPrivate::createFileDirectoryWidget(const QFileInfo& fileInfo)
 {
-  // TODO: use QSignalMapper
-  ctkDirectoryButton * directoryButton = new ctkDirectoryButton(fileInfo.absolutePath(),this->FileWidget);
-  directoryButton->setOptions(ctkDirectoryButton::DontUseNativeDialog);
-  directoryButton->setAcceptMode(QFileDialog::AcceptSave);
-  return directoryButton;
+  ctkPathLineEdit* directoryEdit = new ctkPathLineEdit(this->FileWidget);
+  directoryEdit->setCurrentPath(fileInfo.absolutePath());
+  ctkPathLineEdit::Filters filters = directoryEdit->filters();
+  filters.setFlag(ctkPathLineEdit::Writable);
+  filters.setFlag(ctkPathLineEdit::Dirs);
+  filters.setFlag(ctkPathLineEdit::Files, false);
+  directoryEdit->setFilters(filters);
+  directoryEdit->setSizeAdjustPolicy(ctkPathLineEdit::AdjustToMinimumContentsLength);
+  directoryEdit->setShowHistoryButton(false);
+  return directoryEdit;
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSaveDataDialogPrivate
-::makeUserMessages(vtkMRMLStorableNode *node, QWidget *userMessagesWidget)
-{
-  QHBoxLayout * const userMessagesLayout = userMessagesWidget ?
-    dynamic_cast<QHBoxLayout *>(userMessagesWidget->layout()) : nullptr;
-
-  if (!userMessagesLayout)
-    {
-    return;
-    }
-
-  static const QPixmap okayIcon = qApp->style()->standardPixmap(QStyle::SP_DialogApplyButton);
-  static const QPixmap warningIcon = qApp->style()->standardPixmap(QStyle::SP_MessageBoxWarning).scaledToHeight(18);
-  static const QPixmap errorIcon = qApp->style()->standardPixmap(QStyle::SP_MessageBoxCritical).scaledToHeight(18);
-  static const QPixmap questionIcon = qApp->style()->standardPixmap(QStyle::SP_MessageBoxQuestion).scaledToHeight(18);
-
-  const vtkMRMLStorageNode * const snode = node ? node->GetStorageNode() : nullptr;
-
-  // Clear out any existing items in the userMessagesLayout
-  QLayoutItem *layoutItem = nullptr;
-  while ((layoutItem = userMessagesLayout->takeAt(0)) != nullptr)
-    {
-    delete layoutItem;
-    }
-  // Put new widgets into the userMessagesLayout
-  if (snode && snode->GetUserMessages()->GetNumberOfMessages() > 0)
-    {
-    // There is at least one message from the storage node.
-    const vtkMRMLMessageCollection * const messageCollection = snode->GetUserMessages();
-    const int numberOfMessages = messageCollection->GetNumberOfMessages();
-
-    for (int index = 0; index < numberOfMessages; ++index)
-      {
-      const unsigned long messageType = messageCollection->GetNthMessageType(index);
-      const std::string messageText = messageCollection->GetNthMessageText(index);
-      // Locate the appropriate icon.
-      const QPixmap *icon = nullptr;
-      switch (messageType)
-        {
-        case vtkCommand::WarningEvent:
-          icon = &warningIcon;
-          break;
-        case vtkCommand::ErrorEvent:
-          icon = &errorIcon;
-          break;
-        default:
-          icon = &questionIcon;
-          break;
-        }
-      // Use icon in widget.  SetToolTip for widget.  Install widget in layout.
-      QLabel *messageLabel = new QLabel;
-      messageLabel->setPixmap(*icon);
-      messageLabel->setToolTip(QString(tr(messageText.c_str())));
-      userMessagesLayout->addWidget(messageLabel);
-      }
-    }
-  userMessagesWidget->show();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSaveDataDialogPrivate
-::clearUserMessages()
+::clearUserMessagesInStorageNodes()
 {
   for (int row = 0; row < this->FileWidget->rowCount(); ++row)
     {
@@ -794,18 +740,6 @@ void qSlicerSaveDataDialogPrivate
       snode->GetUserMessages()->ClearMessages();
       }
     }
-}
-
-//-----------------------------------------------------------------------------
-QWidget *qSlicerSaveDataDialogPrivate
-::createUserMessagesItem(vtkMRMLStorableNode *node)
-{
-  QHBoxLayout * const userMessagesLayout = new QHBoxLayout;
-  userMessagesLayout->setEnabled(true);
-  QWidget * const qWidget = new QWidget;
-  qWidget->setLayout(userMessagesLayout);
-  this->makeUserMessages(node, qWidget);
-  return qWidget;
 }
 
 //-----------------------------------------------------------------------------
@@ -860,42 +794,65 @@ void qSlicerSaveDataDialogPrivate::accept()
 //-----------------------------------------------------------------------------
 bool qSlicerSaveDataDialogPrivate::save()
 {
+  bool success = true;
+
+  this->ErrorLabel->setVisible(false);
+  this->ConfirmOverwriteAnswer = QMessageBox::Ignore;
+  this->CancelRequested = false;
+
+  QFileInfo sceneFile = this->sceneFile();
+  const int sceneRow = this->findSceneRow();
+  bool saveSceneFile = this->mustSceneBeSaved();
+  this->setStatusIcon(sceneRow, QIcon(), QString());
+  if (saveSceneFile)
+    {
+    if (sceneFile.exists())
+      {
+      saveSceneFile = this->confirmOverwrite(sceneFile.absoluteFilePath());
+      if (!saveSceneFile)
+        {
+        this->setStatusIcon(sceneRow, this->ErrorIcon, tr("Scene file was not saved because user chose not to overwrite existing file: %1.")
+          .arg(sceneFile.absoluteFilePath()));
+        success = false;
+        }
+      }
+    }
+
   // Set the root directory to the scene so that the nodes paths are points
   // to the new scene path. It's important to have the right node paths
   // relatively to the scene in the saved mrml scene file.
-  if (!this->prepareForSaving())
-    {
-    return false;
-    }
+  this->MRMLSceneRootDirectoryBeforeSaving = this->MRMLScene->GetRootDirectory();
+  this->setSceneRootDirectory(sceneFile.absoluteDir().absolutePath().toUtf8());
+
   // Save the nodes first then the scene
   // Saving the nodes first ensures that the saved scene will points to the
   // potentially new path of the nodes.
   if (!this->saveNodes())
     {
-    return false;
+    success = false;
     }
-  if (this->mustSceneBeSaved())
+
+  if (saveSceneFile && !this->CancelRequested)
     {
     if (!this->saveScene())
       {
-      return false;
+      success = false;
       }
     }
   else
     {
     // restore the root directory only if the scene is not saved
-    this->restoreAfterSaving();
+    this->setSceneRootDirectory(this->MRMLSceneRootDirectoryBeforeSaving);
     }
-  // Save was a total success.  The user messages are no longer relevant.
-  this->clearUserMessages();
-  return true;
+
+  this->ErrorLabel->setVisible(!success);
+  return success;
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerSaveDataDialogPrivate::saveNodes()
 {
   bool doneWithSaveDataDialog = true;
-  QMessageBox::StandardButton forceOverwrite = QMessageBox::Ignore;
   QList<qSlicerIO::IOProperties> files;
   const int sceneRow = this->findSceneRow();
   for (int row = 0; row < this->FileWidget->rowCount(); ++row)
@@ -913,6 +870,13 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
     Q_ASSERT(selectItem);
     Q_ASSERT(nodeNameItem);
 
+    this->setStatusIcon(row, QIcon(), QString());
+
+    if (this->CancelRequested)
+      {
+      continue;
+      }
+
     // don't save unchecked nodes
     if (selectItem->checkState() != Qt::Checked ||
         (selectItem->flags() & Qt::ItemIsEnabled) == 0)
@@ -928,18 +892,14 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
     vtkMRMLStorableNode* const storableNode = vtkMRMLStorableNode::SafeDownCast(this->object(row));
     vtkMRMLStorageNode* const snode = storableNode ? storableNode->GetStorageNode() : nullptr;
 
+    if (snode)
+      {
+      snode->GetUserMessages()->ClearMessages();
+      }
+
     if (file.fileName().isEmpty())
       {
-      if (snode)
-        {
-        snode->GetUserMessages()->AddMessage(vtkCommand::WarningEvent,
-          (tr("Node %1 not saved, file name is empty.").arg(nodeNameItem->text())).toStdString());
-        }
-      else
-        {
-        QMessageBox::warning(this, tr("Saving node..."),
-          tr("Node %1 not saved, file name is empty.").arg(nodeNameItem->text()));
-        }
+      this->setStatusIcon(row, this->ErrorIcon, tr("Node %1 not saved, file name is empty.").arg(nodeNameItem->text()));
       doneWithSaveDataDialog = false;
       continue;
       }
@@ -947,27 +907,11 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
     // check if the file already exists
     if (file.exists())
       {
-      QMessageBox::StandardButton answer = forceOverwrite;
-      if (answer == QMessageBox::Ignore)
+      if (!this->confirmOverwrite(file.absoluteFilePath()))
         {
-        answer = QMessageBox::question(this, tr("Saving node..."),
-          tr("The file: %1 already exists."
-            " Do you want to replace it ?").arg(file.absoluteFilePath()),
-          QMessageBox::Yes | QMessageBox::No |
-          QMessageBox::YesToAll | QMessageBox::NoToAll,
-          QMessageBox::Yes);
-        if (answer == QMessageBox::YesToAll || answer == QMessageBox::NoToAll)
-          {
-          forceOverwrite = answer;
-          }
-        }
-      if (answer == QMessageBox::No || answer == QMessageBox::NoToAll)
-        {
-        if (snode)
-          {
-          snode->GetUserMessages()->AddMessage(vtkCommand::WarningEvent,
-            (tr("The file: %1 already exists. Not replaced.").arg(file.absoluteFilePath())).toStdString());
-          }
+        this->setStatusIcon(row, this->ErrorIcon, tr("Node %1 was not saved because user chose not to overwrite existing file: %2.")
+          .arg(nodeNameItem->text())
+          .arg(file.absoluteFilePath()) );
         doneWithSaveDataDialog = false;
         continue;
         }
@@ -988,50 +932,46 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
     savingParameters["nodeID"] = QString(node->GetID());
     savingParameters["fileName"] = file.absoluteFilePath();
     savingParameters["fileFormat"] = format;
-    bool res = coreIOManager->saveNodes(fileType, savingParameters);
+
+    QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+    bool success = coreIOManager->saveNodes(fileType, savingParameters);
+    QApplication::restoreOverrideCursor();
 
     // node has failed to be written
-    if (!res)
+    if (!success)
       {
-      QMessageBox::StandardButton answer =
-        QMessageBox::question(this, tr("Saving node..."),
-                              tr("Cannot write data file: %1.\n"
-                                 "Do you want to continue saving?").arg(file.absoluteFilePath()),
-                              QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-      if (answer == QMessageBox::No)
-        {
-        if (snode)
-          {
-          snode->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent,
-            (tr("Cannot write data file: %1. Stopping save operation at user's request.").arg(file.absoluteFilePath())).toStdString());
-          }
-        return false;
-        }
-
       if (snode)
         {
-        snode->GetUserMessages()->AddMessage(vtkCommand::WarningEvent,
+        // Make sure an error message is added if saving returns with error
+        snode->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent,
           (tr("Cannot write data file: %1.").arg(file.absoluteFilePath())).toStdString());
+        this->updateStatusIconFromStorageNode(row);
+        }
+      else
+        {
+        this->setStatusIcon(row, this->ErrorIcon, tr("Failed to save node %1 to file %2.")
+          .arg(nodeNameItem->text())
+          .arg(file.absoluteFilePath()));
         }
       doneWithSaveDataDialog = false;
       continue;
       }
 
-    // clean up node after successfully saving
+    // Display any warning or error messages from the storage node
     if (snode)
       {
-      snode->GetUserMessages()->ClearMessages();
+      if (snode->GetUserMessages()->GetNumberOfMessages() > 0)
+        {
+        doneWithSaveDataDialog = false;
+        }
+      this->updateStatusIconFromStorageNode(row);
       }
-    nodeNameItem->setCheckState(Qt::Unchecked);
-    nodeStatusItem->setText("Not Modified");
-    }
 
-  // Updating the messages is useful only if the dialog box is not about to go away.  doneWithSaveDataDialog==false
-  // means that the dialog box is not about to go away but there are other that it could remain, so, just in case, we
-  // will prepare the messages as if the dialog box is not going away.
-  for (int row = 0; row < this->FileWidget->rowCount(); ++row)
-    {
-    updateUserMessagesItem(row);
+    selectItem->setCheckState(
+      storableNode->GetModifiedSinceRead() ? Qt::Checked : Qt::Unchecked);
+
+    selectItem->setCheckState(Qt::Unchecked);
+    nodeStatusItem->setText("Not Modified");
     }
   this->updateSize();
 
@@ -1042,16 +982,16 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
 QFileInfo qSlicerSaveDataDialogPrivate::file(int row)const
 {
   QTableWidgetItem* fileNameItem = this->FileWidget->item(row, FileNameColumn);
-  ctkDirectoryButton* fileDirectoryButton = qobject_cast<ctkDirectoryButton*>(
+  ctkPathLineEdit* fileDirectoryEdit = qobject_cast<ctkPathLineEdit*>(
     this->FileWidget->cellWidget(row, FileDirectoryColumn));
 
-  if (!fileNameItem || !fileDirectoryButton)
+  if (!fileNameItem || !fileDirectoryEdit)
     {
     qCritical() << Q_FUNC_INFO << " failed: filename or directory button not found";
     return QFileInfo();
     }
 
-  QDir directory = fileDirectoryButton->directory();
+  QDir directory = fileDirectoryEdit->currentPath();
   return QFileInfo(directory, fileNameItem->text());
 }
 
@@ -1172,10 +1112,10 @@ QFileInfo qSlicerSaveDataDialogPrivate::sceneFile()const
   int sceneRow = this->findSceneRow();
 
   QTableWidgetItem* fileNameItem = this->FileWidget->item(sceneRow, FileNameColumn);
-  ctkDirectoryButton* fileDirectoryButton = qobject_cast<ctkDirectoryButton*>(
+  ctkPathLineEdit* fileDirectoryEdit = qobject_cast<ctkPathLineEdit*>(
     this->FileWidget->cellWidget(sceneRow, FileDirectoryColumn));
 
-  QDir directory = fileDirectoryButton->directory();
+  QDir directory = fileDirectoryEdit->currentPath();
   QFileInfo file = QFileInfo(directory, fileNameItem->text());
   if (file.fileName().isEmpty())
     {
@@ -1188,34 +1128,6 @@ QFileInfo qSlicerSaveDataDialogPrivate::sceneFile()const
 QString qSlicerSaveDataDialogPrivate::sceneFileFormat()const
 {
   return this->format(this->findSceneRow());
-}
-
-//-----------------------------------------------------------------------------
-bool qSlicerSaveDataDialogPrivate::prepareForSaving()
-{
-  QFileInfo file = this->sceneFile();
-  if (file.exists() && this->mustSceneBeSaved())
-    {
-    QMessageBox::StandardButton answer =
-      QMessageBox::question(this, "Saving scene", "Scene file \""
-                            + file.absoluteFilePath() +"\" already exists. "
-                            "Do you want to replace it ?",
-                            QMessageBox::Cancel | QMessageBox::Ok,  QMessageBox::Cancel);
-    if (answer != QMessageBox::Ok)
-      {
-      return false;
-      }
-    }
-  this->MRMLSceneRootDirectoryBeforeSaving = this->MRMLScene->GetRootDirectory();
-  this->setSceneRootDirectory(file.absoluteDir().absolutePath().toUtf8());
-  return true;
-}
-
-
-//-----------------------------------------------------------------------------
-void qSlicerSaveDataDialogPrivate::restoreAfterSaving()
-{
-  this->setSceneRootDirectory(this->MRMLSceneRootDirectoryBeforeSaving);
 }
 
 //-----------------------------------------------------------------------------
@@ -1247,22 +1159,22 @@ bool qSlicerSaveDataDialogPrivate::saveScene()
   if (qSlicerApplication::application()->layoutManager())
     {
     QWidget* widget = qSlicerApplication::application()->layoutManager()->viewport();
-    this->hide();  // don't block the screenshot
     QImage screenShot = ctk::grabVTKWidget(widget);
-    this->show();
     properties["screenShot"] = screenShot;
     }
 
-  qSlicerIOOptions* options = this->options(this->findSceneRow());
+  int row = this->findSceneRow();
+  qSlicerIOOptions* options = this->options(row);
   if (options)
     {
     properties.unite(options->properties());
     }
 
-  bool res = qSlicerApplication::application()->coreIOManager()->saveNodes(
-    QString("SceneFile"), properties);
+  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+  bool success = qSlicerApplication::application()->coreIOManager()->saveNodes(QString("SceneFile"), properties);
+  QApplication::restoreOverrideCursor();
 
-  if (res)
+  if (success)
     {
     qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
     Q_ASSERT(coreIOManager);
@@ -1270,21 +1182,14 @@ bool qSlicerSaveDataDialogPrivate::saveScene()
       {
       coreIOManager->setDefaultSceneFileType(this->sceneFileFormat());
       }
+    this->setStatusIcon(row, QIcon(), QString());
     }
   else
     {
-    QMessageBox::StandardButton answer =
-      QMessageBox::question(this, tr("Saving scene..."),
-                            tr("Cannot write scene file: %1.\n"
-                               "Do you want to ignore this error and close saving?").arg(file.absoluteFilePath()),
-                            QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-    if (answer == QMessageBox::Yes)
-      {
-      res = true;
-      }
+    this->setStatusIcon(row, this->ErrorIcon, tr("Cannot write scene file: %1.").arg(file.absoluteFilePath()));
     }
 
-  return res;
+  return success;
 }
 
 //-----------------------------------------------------------------------------
@@ -1436,11 +1341,62 @@ void qSlicerSaveDataDialogPrivate::updateOptionsWidget(int row)
 
 //-----------------------------------------------------------------------------
 void qSlicerSaveDataDialogPrivate
-::updateUserMessagesItem(int row)
+::updateStatusIconFromStorageNode(int row)
 {
   vtkMRMLStorableNode * const node = vtkMRMLStorableNode::SafeDownCast(this->object(row));
-  QWidget * const userMessagesWidget = this->FileWidget->cellWidget(row, UserMessagesColumn);
-  this->makeUserMessages(node, userMessagesWidget);
+
+  QString messagesStr;
+  bool warningFound = false;
+  bool errorFound = false;
+
+  const vtkMRMLStorageNode* const snode = node ? node->GetStorageNode() : nullptr;
+  if (snode && snode->GetUserMessages()->GetNumberOfMessages() > 0)
+    {
+    // There is at least one message from the storage node.
+    const vtkMRMLMessageCollection* const messageCollection = snode->GetUserMessages();
+    const int numberOfMessages = messageCollection->GetNumberOfMessages();
+
+    for (int index = 0; index < numberOfMessages; ++index)
+      {
+      const unsigned long messageType = messageCollection->GetNthMessageType(index);
+      const std::string messageText = messageCollection->GetNthMessageText(index);
+      if (!messageText.empty() && numberOfMessages > 1)
+        {
+        messagesStr += "- ";
+        }
+      switch (messageType)
+        {
+      case vtkCommand::WarningEvent:
+        warningFound = true;
+        if (!messageText.empty())
+          {
+          messagesStr.append(tr("Warning: "));
+          }
+        break;
+      case vtkCommand::ErrorEvent:
+        errorFound = true;
+        if (!messageText.empty())
+          {
+          messagesStr.append(tr("Error: "));
+          }
+        break;
+        }
+      if (!messageText.empty())
+        {
+        messagesStr.append(tr(messageText.c_str())+"\n");
+        }
+      }
+    }
+
+  this->setStatusIcon(row, errorFound ? this->ErrorIcon : (warningFound ? this->WarningIcon : QIcon()), messagesStr);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSaveDataDialogPrivate::setStatusIcon(int row, QIcon& icon, const QString& message)
+{
+  QTableWidgetItem* fileNameItem = this->FileWidget->item(row, FileNameColumn);
+  fileNameItem->setIcon(icon);
+  fileNameItem->setToolTip(message);
 }
 
 //-----------------------------------------------------------------------------
@@ -1513,15 +1469,11 @@ void qSlicerSaveDataDialogPrivate::updateSize()
 {
   // let's try to resize the columns according to their new contents
   this->FileWidget->resizeColumnsToContents();
-  // let's try to show the whole table on screen
-  // TODO: find a function in Qt that does it automatically.
-  this->resize(this->layout()->contentsMargins().left()
-               + this->FileWidget->frameWidth()
-//               + this->FileWidget->verticalHeader()->sizeHint().width()
-               + this->FileWidget->horizontalHeader()->length()
-               + this->FileWidget->frameWidth()
-               + this->layout()->contentsMargins().right(),
-               this->sizeHint().height());
+
+  // Prevent collapsing the directory column
+  this->FileWidget->horizontalHeader()->setMinimumSectionSize(40);
+
+  this->FileWidget->horizontalHeader()->setSectionResizeMode(FileDirectoryColumn, QHeaderView::Stretch);
 }
 
 //-----------------------------------------------------------------------------
@@ -1557,8 +1509,6 @@ void qSlicerSaveDataDialogPrivate::enableNodes(bool enable)
     fileFormatWidget->setEnabled(enable);
     QWidget* fileDirectoryWidget = this->FileWidget->cellWidget(i, FileDirectoryColumn);
     fileDirectoryWidget->setEnabled(enable);
-    QWidget* userMessagesWidget = this->FileWidget->cellWidget(i, UserMessagesColumn);
-    userMessagesWidget->setEnabled(enable);
     }
 }
 
@@ -1604,4 +1554,27 @@ bool qSlicerSaveDataDialog::exec(const qSlicerIO::IOProperties& readerProperties
     return false;
     }
   return true;
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerSaveDataDialogPrivate::confirmOverwrite(const QString& filepath)
+{
+  QMessageBox::StandardButton answer = this->ConfirmOverwriteAnswer;
+  if (answer != QMessageBox::NoToAll && answer != QMessageBox::YesToAll)
+  {
+    answer = QMessageBox::question(this, tr("Saving file..."),
+      tr("The file: %1 already exists. Do you want to replace it ?").arg(filepath),
+      QMessageBox::Yes | QMessageBox::No |
+      QMessageBox::YesToAll | QMessageBox::NoToAll | QMessageBox::Cancel,
+      QMessageBox::Yes);
+    if (answer == QMessageBox::YesToAll || answer == QMessageBox::NoToAll)
+      {
+      this->ConfirmOverwriteAnswer = answer;
+      }
+    if (answer == QMessageBox::Cancel)
+      {
+      this->CancelRequested = true;
+      }
+    }
+  return (answer == QMessageBox::Yes || answer == QMessageBox::YesToAll);
 }
