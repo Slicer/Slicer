@@ -110,12 +110,6 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
 
 
   ///
-  /// \deprecated This member has no effect anymore and will be removed in the future.
-  vtkSetMacro(Navigation, int);
-  vtkGetMacro(Navigation, int);
-  vtkBooleanMacro(Navigation, int);
-
-  ///
   /// Name of the layout
   void SetCrosshairName(const char *name) {
     this->SetSingletonTag(name);
@@ -160,8 +154,6 @@ protected:
   int CrosshairMode;
   int CrosshairThickness;
   int CrosshairBehavior;
-
-  int Navigation;
 
   double CrosshairRAS[3];
   int LightBoxPane;
