@@ -35,19 +35,22 @@ part of the *superbuild*:
   - Private
 - libXt
   
-### Debian Stable (Buster)
+### Debian 10 Stable (Buster)
 
 Install the development tools and the support libraries:
 ```
-sudo apt install git subversion build-essential cmake cmake-curses-gui cmake-qt-gui qt5-default qt5multimedia-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev  lqtbase5-private-dev libqt5x11extras5-dev libxt-dev 
+sudo apt install git subversion build-essential cmake cmake-curses-gui cmake-qt-gui qt5-default qt5multimedia-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev  lqtbase5-private-dev libqt5x11extras5-dev libxt-dev libssl-dev
 ```
 
-### Debian Testing (Bullseye)
+### Debian Testing (Bullseye) and Debian 9
+
+*This option is not suggested since it does not work with standard packages.  Debian 9 Qt 5.7 packages will not work with current Slicer 4.11.  Checked 2020-08-19.  May be possible to build from source or install other packages.  In addition, for Debian 9 you also need to build cmake from source as [described here](https://cmake.org/install/) or otherwise get a newer version than is supplied by the distribution.*
 
 Install the development tools and the support libraries:
 ```
-sudo apt install git subversion build-essential cmake cmake-curses-gui cmake-qt-gui qt5-default qtmultimedia5-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev qtbase5-private-dev libqt5x11extras5-dev libxt-dev 
+sudo apt install git subversion build-essential cmake cmake-curses-gui cmake-qt-gui qt5-default qtmultimedia5-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev qtbase5-private-dev libqt5x11extras5-dev libxt-dev libssl-dev
 ```
+
 ### Ubuntu 20.04 (Focal Fossa)
 
 Install the development tools and the support libraries:
