@@ -1,6 +1,6 @@
 <MRML  version="Slicer4" userTags="">
 <Crosshair
-  id="vtkMRMLCrosshairNodedefault"  name="Crosshair"  hideFromEditors="true"  selectable="true"  selected="false"  crosshairMode="NoCrosshair"  navigation="false"  crosshairBehavior="Normal"  crosshairThickness="Fine"  crosshairRAS="0 0 0"></Crosshair>
+  id="vtkMRMLCrosshairNodedefault"  name="Crosshair"  hideFromEditors="true"  selectable="true"  selected="false"  crosshairMode="NoCrosshair"  crosshairBehavior="Normal"  crosshairThickness="Fine"  crosshairRAS="0 0 0"></Crosshair>
  <Selection
   id="vtkMRMLSelectionNodeSingleton"  name="Selection"  hideFromEditors="true"  selectable="true"  selected="false"  attributes="Category:"  activeVolumeID="NULL"  secondaryVolumeID="NULL"  activeLabelVolumeID="NULL"  activeFiducialListID="NULL"  activeAnnotationID="NULL"  activeROIListID="NULL"  activeCameraID="NULL"  activeViewID="NULL"  activeLayoutID="NULL" ></Selection>
  <Interaction
@@ -50,7 +50,7 @@
   id="vtkMRMLHierarchyNode2"  name="SceneViewHierarchy"  hideFromEditors="true"  selectable="true"  selected="false"  attributes="Category:"  parentNodeRef="vtkMRMLHierarchyNode1"  associatedNodeRef="vtkMRMLSceneViewNode1"  sortingValue="3"  allowMultipleChildren="true" ></Hierarchy>
  <SceneView
   id="vtkMRMLSceneViewNode1"  name="Master Scene View"  hideFromEditors="false"  selectable="true"  selected="false"  attributes="Category:"  storageNodeRef="vtkMRMLSceneViewStorageNode1"  userTags=""  screenshotType="4"  sceneViewDescription="Scene at MRML file save point" >  <Crosshair
-    id="vtkMRMLCrosshairNodedefault"    name="Crosshair"    hideFromEditors="true"    selectable="true"    selected="false"    crosshairMode="NoCrosshair"    navigation="false"    crosshairBehavior="Normal"    crosshairThickness="Fine"    crosshairRAS="0 0 0"  ></Crosshair>
+    id="vtkMRMLCrosshairNodedefault"    name="Crosshair"    hideFromEditors="true"    selectable="true"    selected="false"    crosshairMode="NoCrosshair"    crosshairBehavior="Normal"    crosshairThickness="Fine"    crosshairRAS="0 0 0"  ></Crosshair>
   <Selection
     id="vtkMRMLSelectionNodeSingleton"    name="Selection"    hideFromEditors="true"    selectable="true"    selected="false"    attributes="Category:"    activeVolumeID="NULL"    secondaryVolumeID="NULL"    activeLabelVolumeID="NULL"    activeFiducialListID="NULL"    activeAnnotationID="vtkMRMLAnnotationRulerNode"    activeROIListID="NULL"    activeCameraID="NULL"    activeViewID="NULL"    activeLayoutID="NULL"  ></Selection>
   <Interaction

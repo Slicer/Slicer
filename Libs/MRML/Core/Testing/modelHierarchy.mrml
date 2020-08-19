@@ -1,6 +1,6 @@
 <MRML  version="Slicer4" userTags="">
 <Crosshair
-  id="vtkMRMLCrosshairNode1"  name="vtkMRMLCrosshairNode1"  hideFromEditors="true"  selectable="true"  selected="false"  crosshairMode="NoCrosshair"  navigation="true"  crosshairBehavior="Normal"  crosshairThickness="Fine"  crosshairRAS="0 0 0"></Crosshair>
+  id="vtkMRMLCrosshairNode1"  name="vtkMRMLCrosshairNode1"  hideFromEditors="true"  selectable="true"  selected="false"  crosshairMode="NoCrosshair"  crosshairBehavior="Normal"  crosshairThickness="Fine"  crosshairRAS="0 0 0"></Crosshair>
  <Selection
   id="vtkMRMLSelectionNodeSingleton"  name="vtkMRMLSelectionNode1"  hideFromEditors="true"  selectable="true"  selected="false"  activeVolumeID="NULL"  secondaryVolumeID="NULL"  activeLabelVolumeID="NULL"  activeFiducialListID="NULL"  activeAnnotationID="NULL"  activeROIListID="NULL"  activeCameraID="NULL"  activeViewID="NULL"  activeLayoutID="NULL" ></Selection>
  <Interaction
