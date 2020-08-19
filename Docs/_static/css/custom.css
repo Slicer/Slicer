@@ -1,0 +1,64 @@
+.body{
+    color:#576071;
+}
+.wy-nav-content{
+    max-width: 100%;
+}
+ a{
+    color:#3266AF
+}
+ a:hover{
+    background: white;
+}
+ p{
+    line-height: 1.7;
+    padding-bottom: 1%;
+}
+ .wy-nav-side{
+    background:#3364A8;
+}
+.wy-side-nav-search{
+    background-color:#e8ecf3;
+}
+.wy-side-nav-search img {
+    display: inline;
+    background-color:#e8ecf3;
+}
+.wy-side-nav-search .wy-dropdown>a, .wy-side-nav-search>a {
+    color:#576071;
+}
+.wy-menu-vertical header, .wy-menu-vertical p.caption {
+    color:#BAD7FF;
+    text-decoration: underline;
+}
+.wy-menu-vertical a {
+    color:white;
+}
+.wy-nav-side l1:hover{
+    background:#3D72BC;
+}
+.wy-nav-side a:visited{
+    color: white;
+}
+.wy-side-nav-search a:visited{
+    color: #576071;
+}
+ a:visited{
+    color: #EB8F68;
+}
+.wy-menu-vertical a:hover{
+    background-color:#3D72BC;
+}
+.wy-menu-vertical li.current a:hover{
+    background:#E5F2EB
+}
+.wy-menu-vertical li.current {
+    background:#f2f9f5;
+}
+.wy-menu-vertical li.toctree-l2.current>a, .wy-menu-vertical li.toctree-l2.current li.toctree-l3>a {
+    background:#E1F0E8
+}
+.wy-menu-vertical li.toctree-l3.current>a, .wy-menu-vertical li.toctree-l3.current li.toctree-l4>a {
+    background: #D4ECDE;
+}
+
