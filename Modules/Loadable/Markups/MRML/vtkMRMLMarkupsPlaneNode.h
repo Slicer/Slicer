@@ -107,7 +107,7 @@ public:
   void GetNormalWorld(double normal[3]);
   void SetNormalWorld(const double normal[3]);
 
-  /// The normal vector of the plane.
+  /// The origin of the plane.
   /// Calculated as the location of the 0th markup point, and translated by the PlaneToPlaneOffsetMatrix.
   void GetOrigin(double origin[3]);
   void SetOrigin(const double origin[3]);
@@ -132,6 +132,15 @@ public:
   /// 4x4 matrix detailing the offset (rotation/translation) of the plane from the plane defined by the markup points.
   /// Default is the identity matrix.
   virtual vtkMatrix4x4* GetPlaneToPlaneOffsetMatrix();
+
+  /// Get the closest position on the plane in world coordinates.
+  /// Returns the signed distance from the input point to the plane. Positive distance is in the direction of the plane normal,
+  /// and negative distance is in the opposite direction.
+  /// \param posWorld input position
+  /// \param closestPosWorld: output found closest position
+  /// \param infinitePlane if false, the closest position will be restricted to the plane bounds
+  /// \return Signed distance from the point to the plane. Positive distance is in the direction of the plane normal
+  double GetClosestPointOnPlaneWorld(const double posWorld[3], double closestPosWorld[3], bool infinitePlane = true);
 
 protected:
 
