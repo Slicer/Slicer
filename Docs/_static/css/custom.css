@@ -61,4 +61,8 @@
 .wy-menu-vertical li.toctree-l3.current>a, .wy-menu-vertical li.toctree-l3.current li.toctree-l4>a {
     background: #D4ECDE;
 }
+a.icon-home img.logo {
+    width: 64px;
+    height: 64px;
+}
 
