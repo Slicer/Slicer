@@ -214,8 +214,6 @@ public:
   void ReparentChildrenToParent();
   /// Remove all children. Do not delete data nodes from the scene. Used in destructor, and for deleting virtual branches
   void RemoveAllChildren();
-  /// Remove all observers from item and its data node if any
-  //void RemoveAllObservers(); //TODO: Needed? (the callback object belongs to the SH node so introduction of a new member would be needed)
 
 // Utility functions
 public:
@@ -1235,17 +1233,6 @@ void vtkSubjectHierarchyItem::RemoveAllChildren()
 }
 
 //---------------------------------------------------------------------------
-//void vtkSubjectHierarchyItem::RemoveAllObservers()
-//{
-//  if (this->DataNode)
-//    {
-//    this->DataNode->RemoveObservers(vtkCommand::ModifiedEvent, this->ItemEventCallbackCommand);
-//    this->DataNode->RemoveObservers(vtkMRMLTransformableNode::TransformModifiedEvent, this->ItemEventCallbackCommand);
-//    this->DataNode->RemoveObservers(vtkMRMLDisplayableNode::DisplayModifiedEvent, this->ItemEventCallbackCommand);
-//    }
-//}
-
-//---------------------------------------------------------------------------
 void vtkSubjectHierarchyItem::SetUID(std::string uidName, std::string uidValue)
 {
   // Use the find function to prevent adding an empty UID to the map
@@ -1761,7 +1748,6 @@ vtkMRMLSubjectHierarchyNode::vtkMRMLSubjectHierarchyNode()
 vtkMRMLSubjectHierarchyNode::~vtkMRMLSubjectHierarchyNode()
 {
   // Clean up observation
-  this->Internal->SceneItem->RemoveAllObservers();
   this->ItemEventCallbackCommand->SetClientData(nullptr);
 
   delete this->Internal;
@@ -3393,20 +3379,35 @@ void vtkMRMLSubjectHierarchyNode::ItemEventCallback(vtkObject* caller, unsigned 
       break;
 
     case vtkMRMLTransformableNode::TransformModifiedEvent:
+      {
+      vtkMRMLNode* dataNode = vtkMRMLNode::SafeDownCast(caller);
+      if (dataNode)
+        {
+        // Trigger update if data node's transform was modified
+        vtkIdType itemID = self->GetItemByDataNode(dataNode);
+        if (itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+          {
+          self->InvokeCustomModifiedEvent(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemTransformModifiedEvent, (void*)&itemID);
+          }
+        }
+      }
+      break;
+
     case vtkMRMLDisplayableNode::DisplayModifiedEvent:
       {
       vtkMRMLNode* dataNode = vtkMRMLNode::SafeDownCast(caller);
       if (dataNode)
         {
-        // Trigger view update if data node's transform or display was modified
+        // Trigger view update if data node's display was modified
         vtkIdType itemID = self->GetItemByDataNode(dataNode);
         if (itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
           {
-          self->InvokeCustomModifiedEvent(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent, (void*)&itemID);
+          self->InvokeCustomModifiedEvent(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent, (void*)&itemID);
           }
         }
       }
       break;
+
     default:
       vtkErrorWithObjectMacro(self, "vtkMRMLSubjectHierarchyNode::ItemEventCallback: Unknown event ID " << eid);
       return;

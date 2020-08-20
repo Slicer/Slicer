@@ -171,6 +171,8 @@ void qSlicerModelsModuleWidget::enter()
     }
   qvtkConnect( shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent,
     this, SLOT( onSubjectHierarchyItemModified(vtkObject*,void*) ) );
+  qvtkConnect( shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent,
+    this, SLOT( onSubjectHierarchyItemModified(vtkObject*,void*) ) );
 
   this->Superclass::enter();
 }
@@ -188,6 +190,8 @@ void qSlicerModelsModuleWidget::exit()
     return;
     }
   qvtkDisconnect( shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent,
+    this, SLOT( onSubjectHierarchyItemModified(vtkObject*,void*) ) );
+  qvtkDisconnect( shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent,
     this, SLOT( onSubjectHierarchyItemModified(vtkObject*,void*) ) );
 
   this->Superclass::exit();

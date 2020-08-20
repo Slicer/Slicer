@@ -32,7 +32,7 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
     # This plugin cannot own any items (it's not a role but a function plugin),
     # but the it can be decided the following way:
     # pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
-    # shNode = pluginHandlerSingleton.subjectHierarchyNode()
+    # shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
     # associatedNode = shNode.GetItemDataNode(itemID)
     # if associatedNode is not None and associatedNode.IsA("vtkMRMLMyNode"):
     #   return 1.0
@@ -80,8 +80,9 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
     currentItemID = pluginHandlerSingleton.currentItem()
     if not currentItemID:
       logging.error("Invalid current item")
+      return
 
-    shNode = pluginHandlerSingleton.subjectHierarchyNode()
+    shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
     volumeNode = shNode.GetItemDataNode(currentItemID)
 
     # Switch to Segment Editor module
@@ -91,7 +92,6 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
     # Create new segmentation only if there is no segmentation node, or the current segmentation is not empty
     # (switching to the module will create an empty segmentation if there is none in the scene, but not otherwise)
     segmentationNode = editorWidget.parameterSetNode.GetSegmentationNode()
-    import vtkSegmentationCorePython as vtkSegmentationCore
     if segmentationNode is None or segmentationNode.GetSegmentation().GetNumberOfSegments() > 0:
       segmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode')
       editorWidget.parameterSetNode.SetAndObserveSegmentationNode(segmentationNode)
