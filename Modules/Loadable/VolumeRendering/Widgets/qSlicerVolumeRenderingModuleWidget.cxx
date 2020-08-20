@@ -125,6 +125,10 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   q->addRenderingMethodWidget("vtkMRMLMultiVolumeRenderingDisplayNode",
                               new qSlicerMultiVolumeRenderingPropertiesWidget);
 
+  // Currently, VTK ignores GPU memory size request - hide it on the GUI to not confuse users
+  this->MemorySizeLabel->hide();
+  this->MemorySizeComboBox->hide();
+
   QObject::connect(this->MemorySizeComboBox, SIGNAL(editTextChanged(QString)),
                    q, SLOT(onCurrentMemorySizeChanged()));
   QObject::connect(this->MemorySizeComboBox, SIGNAL(currentIndexChanged(int)),

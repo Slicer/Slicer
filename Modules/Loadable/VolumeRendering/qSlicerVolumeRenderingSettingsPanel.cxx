@@ -111,6 +111,11 @@ void qSlicerVolumeRenderingSettingsPanelPrivate::init()
   //
   // GPU memory
   //
+
+  // Currently, VTK ignores GPU memory size request - hide it on the GUI to not confuse users
+  this->GPUMemoryLabel->hide();
+  this->GPUMemoryComboBox->hide();
+
   QObject::connect(this->GPUMemoryComboBox, SIGNAL(editTextChanged(QString)),
                    q, SLOT(onGPUMemoryChanged()));
   QObject::connect(this->GPUMemoryComboBox, SIGNAL(currentTextChanged(QString)),
