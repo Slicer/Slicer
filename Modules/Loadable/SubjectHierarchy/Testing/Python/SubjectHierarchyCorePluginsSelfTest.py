@@ -94,6 +94,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     self.section_MarkupRole()
     self.section_ChartRole()
     self.section_CloneNode()
+    self.section_SegmentEditor()
 
   # ------------------------------------------------------------------------------
   def section_SetupPathsAndNames(self):
@@ -108,7 +109,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
   def section_MarkupRole(self):
     self.delayDisplay("Markup role",self.delayMs)
 
-    shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
     self.assertIsNotNone( shNode )
 
     # Create sample markups node
@@ -135,7 +136,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
   def section_ChartRole(self):
     self.delayDisplay("Chart role",self.delayMs)
 
-    shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
     self.assertIsNotNone( shNode )
 
     # Create sample chart node
@@ -156,7 +157,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
   def section_CloneNode(self):
     self.delayDisplay("Clone node",self.delayMs)
 
-    shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
     self.assertIsNotNone( shNode )
 
     markupsNode = slicer.util.getNode(self.sampleMarkupName)
@@ -198,3 +199,47 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     inSameStudy = slicer.vtkSlicerSubjectHierarchyModuleLogic.AreItemsInSameBranch(
       shNode, markupsShItemID, clonedMarkupsShItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelStudy())
     self.assertTrue( inSameStudy )
+
+  # ------------------------------------------------------------------------------
+  def section_SegmentEditor(self):
+    self.delayDisplay("Segment Editor",self.delayMs)
+
+    shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
+    self.assertIsNotNone( shNode )
+
+    import SampleData
+    mrHeadNode = SampleData.SampleDataLogic().downloadMRHead()
+
+    # Make sure Data module is initialized because the use case tested below
+    # (https://github.com/Slicer/Slicer/issues/4877) needs an initialized SH
+    # tree view so that applyReferenceHighlightForItems is run
+    slicer.util.selectModule('Data')
+
+    folderItem = shNode.CreateFolderItem(shNode.GetSceneItemID(), 'TestFolder')
+
+    mrHeadItem = shNode.GetItemByDataNode(mrHeadNode)
+    shNode.SetItemParent(mrHeadItem, folderItem)
+
+    dataModuleWidget = slicer.modules.data.widgetRepresentation()
+    treeView = slicer.util.findChildren(dataModuleWidget, className='qMRMLSubjectHierarchyTreeView')[0]
+    treeView.setCurrentItem(mrHeadItem)
+
+    pluginHandler = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
+    segmentEditorPlugin = pluginHandler.pluginByName('SegmentEditor').self()
+    segmentEditorPlugin.segmentEditorAction.trigger()
+
+    # Get segmentation node automatically created by "Segment this..." action
+    segmentationNode = None
+    segmentationNodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLSegmentationNode')
+    segmentationNodes.UnRegister(None)
+    for i in range(segmentationNodes.GetNumberOfItems()):
+      currentSegNode = segmentationNodes.GetItemAsObject(i)
+      if currentSegNode.GetNodeReferenceID(currentSegNode.GetReferenceImageGeometryReferenceRole()) == mrHeadNode.GetID():
+        segmentationNode = currentSegNode
+        break
+
+    self.assertIsNotNone(segmentationNode)
+
+    segmentationItem = shNode.GetItemByDataNode(segmentationNode)
+    self.assertEqual( shNode.GetItemParent(segmentationItem), shNode.GetItemParent(mrHeadItem) )
+    self.assertEqual( segmentationNode.GetName()[:len(mrHeadNode.GetName())], mrHeadNode.GetName() )

@@ -542,6 +542,8 @@ void qMRMLSubjectHierarchyTreeView::setSubjectHierarchyNode(vtkMRMLSubjectHierar
 
   qvtkReconnect( shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent,
                  this, SLOT( onSubjectHierarchyItemModified(vtkObject*,void*) ) );
+  qvtkReconnect( shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemTransformModifiedEvent,
+                 this, SLOT( onSubjectHierarchyItemTransformModified(vtkObject*,void*) ) );
 
   if (!shNode)
     {
@@ -1197,7 +1199,7 @@ void qMRMLSubjectHierarchyTreeView::onSelectionChanged(const QItemSelection& sel
   // Cache selected item(s) so that currentItem and currentItems can return them quickly
   d->SelectedItems = selectedShItems;
 
-  // Highlight items referenced by DICOM in case of single-selection
+  // Highlight items referenced by DICOM or node reference
   //   Referenced SOP instance UIDs (in attribute named vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName())
   //   -> SH item instance UIDs (serialized string lists in subject hierarchy UID vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName())
   if (this->highlightReferencedItems())
@@ -1969,14 +1971,6 @@ void qMRMLSubjectHierarchyTreeView::onSubjectHierarchyItemModified(vtkObject *ca
     itemID = *itemIdPtr;
     }
 
-  // Highlight items referenced by DICOM in case of single-selection
-  //   Referenced SOP instance UIDs (in attribute named vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName())
-  //   -> SH item instance UIDs (serialized string lists in subject hierarchy UID vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName())
-  if (this->highlightReferencedItems() && d->SelectedItems.count() == 1)
-    {
-    this->applyReferenceHighlightForItems(d->SelectedItems);
-    }
-
   // Forward `currentItemModified` if the modified item or one of
   // its children was selected, to adequately update other widgets
   // that use that modified item such as qMRMLSubjectHierarchyComboBox
@@ -1984,6 +1978,67 @@ void qMRMLSubjectHierarchyTreeView::onSubjectHierarchyItemModified(vtkObject *ca
   if (selectedId != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
     {
     emit currentItemModified(selectedId);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::onSubjectHierarchyItemTransformModified(vtkObject *caller, void *callData)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  Q_UNUSED(callData);
+
+  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(caller);
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+
+  qMRMLSubjectHierarchyModel* sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->model());
+  int nameColumn = sceneModel->nameColumn();
+
+  // Update highlighting based on associated transforms
+  // Note: applyReferenceHighlightForItems does not work here because the transform modified event is
+  //       invoked before the scene updates the cached node references
+  if (this->highlightReferencedItems())
+    {
+    // Remove highlighting from all transforms
+    std::vector<vtkMRMLNode*> transformNodes;
+    this->mrmlScene()->GetNodesByClass("vtkMRMLTransformNode", transformNodes);
+    for (std::vector<vtkMRMLNode*>::iterator it = transformNodes.begin(); it != transformNodes.end(); ++it)
+      {
+      vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(*it);
+      if (transformNode && !transformNode->GetHideFromEditors())
+        {
+        vtkIdType transformItem = shNode->GetItemByDataNode(transformNode);
+        QStandardItem* item = sceneModel->itemFromSubjectHierarchyItem(transformItem, nameColumn);
+        if (item)
+          {
+          item->setBackground(Qt::transparent);
+          }
+        d->HighlightedItems.removeAt(d->HighlightedItems.indexOf(transformItem));
+        }
+      }
+
+    foreach (vtkIdType itemID, d->SelectedItems)
+      {
+      vtkMRMLTransformableNode* node = vtkMRMLTransformableNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+      if (node == nullptr)
+        {
+        continue;
+        }
+      vtkMRMLTransformNode* transformNode = node->GetParentTransformNode();
+      if (transformNode)
+        {
+        vtkIdType transformItem = shNode->GetItemByDataNode(transformNode);
+        QStandardItem* item = sceneModel->itemFromSubjectHierarchyItem(transformItem, nameColumn);
+        if (item)
+          {
+          item->setBackground(Qt::yellow);
+          }
+        d->HighlightedItems.append(transformItem);
+        }
+      }
     }
 }
 

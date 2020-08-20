@@ -69,6 +69,8 @@ public:
     SubjectHierarchyItemAboutToBeRemovedEvent,
     SubjectHierarchyItemRemovedEvent,
     SubjectHierarchyItemModifiedEvent,
+    SubjectHierarchyItemDisplayModifiedEvent,
+    SubjectHierarchyItemTransformModifiedEvent,
     SubjectHierarchyItemReparentedEvent,
     /// Event invoked when UID is added to subject hierarchy item. Useful when using UIDs
     /// to find related nodes, and the nodes are loaded sequentially in unspecified order.
