@@ -66,7 +66,7 @@ in `Description` column in `Add data...` window. This only available for nrrd an
 - In the Volume Information section set the correct Image Spacing and Image Origin values
 - Most modules require grayscale image as input. The loaded color image can be converted to a grayscale image by using the `Vector to scalar volume` module
 
-These steps are also demonstrated in this video: https://youtu.be/BcnpzYE8VO8
+These steps are also demonstrated in [this video](https://youtu.be/BcnpzYE8VO8).
 
 Note: Consumer file formats, such as jpg, png, and tiff are not well suited for 3D medical image storage due to the following serious limitations:
 - Storage is often limited to bit depth of 8 bits per channel: this causes significant data loss, especially for CT images.
@@ -81,7 +81,7 @@ Note: Consumer file formats, such as jpg, png, and tiff are not well suited for 
 - Volume Information: Information about the selected volume. Some fields can be edited to correctly describe the volume, for example, when loading incompletely specified image data such as a sequence of jpeg files. Use caution however, since changing properties such as Image Spacing will impact the physical accuracy of some calculations such as Label Statistics.
   - Image Dimensions: The number of pixels in "IJK" space - this is the way the data is arranged in memory. The IJK indices (displayed in the DataProbe) go from 0 to dimension-1 in each direction.
   - Image Spacing: The physical distance between pixel centers when mapped to patient space expressed in millimeters.
-  - Image Origin: The location of the center of the 0,0,0 (IJK) pixel expressed with respect to patient space. Patient space is organized with respect to the subject's Right, Anterior, and Superior anatomical directions. See http://www.slicer.org/slicerWiki/index.php/Coordinate_systems for more information.
+  - Image Origin: The location of the center of the 0,0,0 (IJK) pixel expressed with respect to patient space. Patient space is organized with respect to the subject's Right, Anterior, and Superior anatomical directions. See [coordinate systems page](http://www.slicer.org/slicerWiki/index.php/Coordinate_systems) for more information.
   - IJK to RAS Direction Matrix: The trasnform matrix from the IJK to RAS coordinate systems
   - Center Volume: This button will apply a transform to the volume that shifts its center to the origin in patient space. Harden the transform on the volume to permanently change the image origin.
   - Scan Order: Describes the image orientation (how the IJK space is oriented with respect to patient RAS.
