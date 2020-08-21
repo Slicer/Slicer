@@ -1,13 +1,6 @@
 # Supported Data Formats
 
-# Scenes
-
-- **MRML (Medical Reality Markup Language File)** (.mrml): MRML file is a xml-formatted text file with scene metadata and pointers to externally stored data files. See [MRML overview](mrml_overview). Coordinate system: RAS.
-- **MRB (Medical Reality Bundle)** (.mrb, .zip): MRB is a binary format encapsulating all scene data (bulk data and metadata). Internally it uses zip format. Any .zip file that contains a self-contained data tree including a .mrml file can be opened. Coordinate system: RAS. Note: only .mrb file extension can be chosen for writing, but after that the file can be manually renamed to .zip.
-- **Data collections in XNAT Catalog format (.xcat; reading only)
-- **Data collections in XNAT Archive format (.xar; reading only)
-
-# Images
+## Images
 
 Readers may support 2D, 3D, and 4D images of various types, such as scalar, vector, DWI or DTI, containing images, dose maps, displacement fields, etc.
 
@@ -53,7 +46,7 @@ Readers may support 2D, 3D, and 4D images of various types, such as scalar, vect
 - OpenIGTLink extension:
   - **PLUS toolkit configuration file** (.plus.xml): configuration file for real-time data acquisition from imaging and tracking devices and various sensors
 
-# Models
+## Models
 
 Surface or volumetric meshes.
 
@@ -68,31 +61,38 @@ Surface or volumetric meshes.
 - [FreeSurfer extension](https://github.com/PerkLab/SlicerFreeSurfer):
   - **Freesurfer surfaces** (.orig, .inflated, .sphere, .white, .smoothwm, .pial; read-only)
 
-# Segmentations
+## Segmentations
 
 - **Segmentation labelmap representation** (.seg.nrrd, .nrrd, .nii, .nii.gz, .hdr): 3D volume (4D volume if there are overlapping segments) with [custom fields](https://apidocs.slicer.org/master/classvtkMRMLSegmentationStorageNode.html) specifying segment names, terminology, colors, etc.
 - **Segmentation closed surface representation** (.vtm): saved as VTK multiblock data set, contains [custom fields](https://apidocs.slicer.org/master/classvtkMRMLSegmentationStorageNode.html) specifying segment names, terminology, colors, etc.
 - **Labelmap volume** (.nrrd, .nii, .nii.gz, .hdr): segment names can be defined by using a color table. To write segmentation in these formats, segmentation node has to be exported to labelmap volume.
 - **Closed surface** (.stl, .obj): Single segment can be read from each file. Segmentation module's `Export to files` feature can be used to export directly to these formats.
 - SlicerOpenAnatomy extension:
-  - **glTF** (.gltf, writing only)
+  - **GL Transmission Format** (.glTF, writing only)
 
-# Transforms
+## Transforms
 
 - [**ITK HDF transform**](http://www.itk.org/ItkSoftwareGuide.pdf) (.h5): For linear, b-spline, grid (displacement field), thin-plate spline, and composite transforms. Coordinate system: LPS.
 - [**ITK TXT transform**](http://www.itk.org/ItkSoftwareGuide.pdf) (.tfm, .txt): For linear, b-spline, and thin-plate spline, and composite transforms. Coordinate system: LPS.
 - [**Matlab MAT file**](http://www.itk.org/ItkSoftwareGuide.pdf) (.mat): For linear and b-spline transforms. Coordinate system: LPS.
-- Displacement field (.nrrd, .nhdr, .mha, .mhd, .nii, .nii.gz): For storing grid transform. Coordinate system: LPS.
+- **Displacement field** (.nrrd, .nhdr, .mha, .mhd, .nii, .nii.gz): For storing grid transform as a vector image, each voxel containing displacement vector. Coordinate system: LPS.
 - [SlicerRT extension](http://www.slicerrt.org/)
   - **Pinnacle DVF** (.dvf)
 
-# Markups
+## Markups
 
 - **Markups JSON** (.mkp.json): fiducial list, line, curve, closed curve, plane, etc. Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in image header.
 - **Markups CSV** (.fcsv): fiducial list points legacy file format. Default coordinate system: LPS. Coordinate system (LPS/RAS) can be specified in image header.
 - **Annotation CSV** (.acsv): annotation ruler, ROI
 
-# Other
+## Scenes
+
+- **MRML (Medical Reality Markup Language File)** (.mrml): MRML file is a xml-formatted text file with scene metadata and pointers to externally stored data files. See [MRML overview](mrml_overview). Coordinate system: RAS.
+- **MRB (Medical Reality Bundle)** (.mrb, .zip): MRB is a binary format encapsulating all scene data (bulk data and metadata). Internally it uses zip format. Any .zip file that contains a self-contained data tree including a .mrml file can be opened. Coordinate system: RAS. Note: only .mrb file extension can be chosen for writing, but after that the file can be manually renamed to .zip.
+- **Data collections in XNAT Catalog format** (.xcat; reading only)
+- **Data collections in XNAT Archive format** (.xar; reading only)
+
+## Other
 
 - **Text** (.txt, .xml., json)
 - **Table** (.csv, .tsv)
@@ -102,7 +102,7 @@ Surface or volumetric meshes.
 - **Terminology** (.term.json, .json): dictionary of standard DICOM or other terms
 - **Node sequence** (.seq.mrb): sequence of any MRML node (for storage of 4D data)
 
-# What if your data is not supported?
+## What if your data is not supported?
 
 If any of the above listed file formats cannot be loaded then report the issue on the [Slicer forum](https://discourse.slicer.org/).
 
