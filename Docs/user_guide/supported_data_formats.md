@@ -6,10 +6,12 @@ Readers may support 2D, 3D, and 4D images of various types, such as scalar, vect
 
 - [**DICOM**](https://www.dicomstandard.org/) (.dcm, or any other): Slicer core supports reading and writing of some data types, while extensions add support for additional ones. Coordinate system: LPS (as defined by DICOM standard).
   - Supported DICOM information objects:
-    - Slicer core: CT, MRI, PET, X-ray, some ultrasound images
+    - Slicer core: CT, MRI, PET, X-ray, some ultrasound images; secondary capture with Slicer scene (MRB) in private tag
     - [Quantitative Reporting extension](https://qiicr.gitbooks.io/quantitativereporting-guide): DICOM Segmentation objects, Structured reports
     - [SlicerRT extension](http://www.slicerrt.org/): DICOM RT Structure Set, RT Dose, RT Plan, RT Image
     - [SlicerHeart extension](https://github.com/SlicerHeart/SlicerHeart): 2D/3D/4D ultrasound (GE, Philips, Eigen Artemis, and other)
+    - [SlicerDMRI](https://dmri.slicer.org) tractography storage
+    - [SlicerDcm2nii](https://github.com/SlicerDMRI/SlicerDcm2nii) diffusion weighted MR
   - Notes:
     - For a number of dMRI formats we recommend use of the [DICOM to NRRD converter](https://www.slicer.org/wiki/Documentation/Nightly/Modules/DicomToNrrdConverter) before loading the data into Slicer.
     - Image volumes, RT structure sets, dose volumes, etc. can be exported using DICOM module's export feature.
@@ -88,7 +90,7 @@ Surface or volumetric meshes.
 ## Scenes
 
 - **MRML (Medical Reality Markup Language File)** (.mrml): MRML file is a xml-formatted text file with scene metadata and pointers to externally stored data files. See [MRML overview](mrml_overview). Coordinate system: RAS.
-- **MRB (Medical Reality Bundle)** (.mrb, .zip): MRB is a binary format encapsulating all scene data (bulk data and metadata). Internally it uses zip format. Any .zip file that contains a self-contained data tree including a .mrml file can be opened. Coordinate system: RAS. Note: only .mrb file extension can be chosen for writing, but after that the file can be manually renamed to .zip.
+- **MRB (Medical Reality Bundle)** (.mrb, .zip): MRB is a binary format encapsulating all scene data (bulk data and metadata). Internally it uses zip format. Any .zip file that contains a self-contained data tree including a .mrml file can be opened. Coordinate system: RAS. Note: only .mrb file extension can be chosen for writing, but after that the file can be manually renamed to .zip if you need access to internal data.
 - **Data collections in XNAT Catalog format** (.xcat; reading only)
 - **Data collections in XNAT Archive format** (.xar; reading only)
 
