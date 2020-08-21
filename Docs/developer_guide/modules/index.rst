@@ -10,3 +10,4 @@ Modules usually interact with each other only indirectly, by making changes and 
 
     markups.md
     volumerendering.md
+    volumes.md
