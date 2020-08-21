@@ -21,8 +21,6 @@ A region can be represented in different ways, for example as a binary labelmap 
 | easy 2D viewing and editing, <br>always valid (even if<br>transformed or edited)     | easy 3D visualization                                                                                   | quite easy 2D viewing<br>and editing,<br>always valid,<br>quite accurate | accurate 2D viewing and editing                |
 | inaccurate (finite resolution)<br>requires lots of memory<br>if overlap is allowed | difficult to edit,<br>can be invalid<br>(e.g., self-intersecting),<br>especially after non-linear<br>transformation | requires lots of memory                                         | ambiguous in 3D,<br>poor quality<br>3D visualization |
 
-[comment]: <> (This is table was created and can be edited at https://tableconvert.com/)
-
 Each segment stored in multiple `representations`. One representation is designated as the `master representation` (marked with a "gold star" on the user interface). The master representation is the only editable representation, it is the only one that is stored when saving to file, and all other representations are computed from it automatically.
 
 Binary labelmap representation is probably the most commonly used representation because this representation is the easiest to edit. Most software that use this representation, store all segments in a single 3D array, therefore each voxel can belong to a single segment: segments cannot overlap. In 3D Slicer, overlapping between segments is allowed. To store overlapping segments in binary labelmaps, segments are organized into `layers`. Each layer is stored internally as a separate 3D volume, and one volume may be shared between many non-overlapping segments to conserve memory.
