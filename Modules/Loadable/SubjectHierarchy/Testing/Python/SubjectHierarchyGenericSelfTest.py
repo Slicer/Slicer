@@ -96,7 +96,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
     self.section_SetupPathsAndNames()
     self.section_ClearScene()
-    self.section_LoadDicomData()
+    self.section_LoadDicomDataWitchBatchProcessing()
     self.section_SaveScene()
     self.section_AddNodeToSubjectHierarchy()
     self.section_CLI()
@@ -131,6 +131,8 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
     self.invalidItemID = slicer.vtkMRMLSubjectHierarchyNode.GetInvalidItemID()
 
+    self.loadedDicomStudyName = 'No study description (20110101)'
+    self.loadedDicomVolumeName = '303: Unnamed Series'
     self.patientItemID = self.invalidItemID # To be filled in after adding
     self.patientOriginalName = ''
     self.patientNewName = 'TestPatient_1'
@@ -163,16 +165,22 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     # Make sure there is only one subject hierarchy node after closing the scene
     self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSubjectHierarchyNode'), 1 )
 
-    shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
     self.assertIsNotNone( shNode )
 
   # ------------------------------------------------------------------------------
-  def section_LoadDicomData(self):
+  def section_LoadDicomDataWitchBatchProcessing(self):
     try:
+      # Open Data module so that a subject hierarchy scene model is active
+      # (which caused problems with batch processing)
+      slicer.util.selectModule('Data')
+
       # Open test database and empty it
       with DICOMUtils.TemporaryDICOMDatabase(self.dicomDatabaseDir) as db:
         self.assertTrue( db.isOpen )
         self.assertEqual( slicer.dicomDatabase, db)
+
+        slicer.mrmlScene.StartState(slicer.vtkMRMLScene.BatchProcessState)
 
         # Download, unzip, import, and load data. Verify loaded nodes.
         loadedNodes = {'vtkMRMLScalarVolumeNode':1}
@@ -182,7 +190,15 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
             {}, loadedNodes, checksum=self.dicomZipChecksum) as success:
           self.assertTrue(success)
 
+        slicer.mrmlScene.EndState(slicer.vtkMRMLScene.BatchProcessState)
+
       self.assertEqual( len( slicer.util.getNodes('vtkMRMLSubjectHierarchyNode*') ), 1 )
+
+      shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
+      self.assertIsNotNone( shNode )
+      loadedDicomVolumeItemID = shNode.GetItemByName(self.loadedDicomVolumeName)
+      loadedDicomStudyItemID = shNode.GetItemByName(self.loadedDicomStudyName)
+      self.assertEqual( shNode.GetItemParent(loadedDicomVolumeItemID), loadedDicomStudyItemID )
 
     except Exception as e:
       import traceback
@@ -227,7 +243,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.assertIsNotNone( shTreeView )
     shModel = shTreeView.model()
     self.assertIsNotNone( shModel )
-    shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
     self.assertIsNotNone( shNode )
 
     # Get and check subject hierarchy items for the data nodes
@@ -268,7 +284,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
   def section_CLI(self):
     self.delayDisplay("Test command-line interface",self.delayMs)
 
-    shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
     self.assertIsNotNone( shNode )
 
     # Get CT volume
@@ -295,7 +311,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
   def section_CreateSecondBranch(self):
     self.delayDisplay("Create second branch in subject hierarchy",self.delayMs)
 
-    shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
     self.assertIsNotNone( shNode )
 
     # Create second patient, study, and a folder
@@ -334,7 +350,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
   def section_ReparentNodeInSubjectHierarchy(self):
     self.delayDisplay("Reparent node in subject hierarchy",self.delayMs)
 
-    shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
     self.assertIsNotNone( shNode )
 
     # Get subject hierarchy scene model
@@ -364,7 +380,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
   def section_LoadScene(self):
     self.delayDisplay("Load scene",self.delayMs)
 
-    shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
     self.assertIsNotNone( shNode )
 
     # Rename existing items so that when the scene is loaded again they are different
@@ -406,7 +422,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     # Test case for https://issues.slicer.org/view.php?id=4713
     self.delayDisplay("Test circular parenthood",self.delayMs)
 
-    shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
     self.assertIsNotNone( shNode )
 
     sceneItemID = shNode.GetSceneItemID()

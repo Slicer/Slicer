@@ -54,6 +54,7 @@
 #include "qSlicerSubjectHierarchyAbstractPlugin.h"
 #include "qSlicerSubjectHierarchyDefaultPlugin.h"
 
+
 //------------------------------------------------------------------------------
 qMRMLSubjectHierarchyModelPrivate::qMRMLSubjectHierarchyModelPrivate(qMRMLSubjectHierarchyModel& object)
   : q_ptr(&object)
@@ -787,10 +788,20 @@ void qMRMLSubjectHierarchyModel::updateFromSubjectHierarchy()
     d->RowCache[d->SubjectHierarchyNode->GetSceneItemID()] = this->subjectHierarchySceneItem()->index();
     }
 
-
   // Get all subject hierarchy items
   std::vector<vtkIdType> allItemIDs;
   d->SubjectHierarchyNode->GetItemChildren(d->SubjectHierarchyNode->GetSceneItemID(), allItemIDs, true);
+
+  // Update all items
+  for (std::vector<vtkIdType>::iterator itemIt=allItemIDs.begin(); itemIt!=allItemIDs.end(); ++itemIt)
+    {
+    vtkIdType itemID = (*itemIt);
+    for (int col=0; col<this->columnCount(); ++col)
+      {
+      QStandardItem* item = this->itemFromSubjectHierarchyItem(itemID, col);
+      this->updateItemFromSubjectHierarchyItem(item, itemID, col);
+      }
+    }
 
   // Update expanded states (during inserting the update calls did not find valid indices, so
   // expand and collapse statuses were not set in the tree view)
