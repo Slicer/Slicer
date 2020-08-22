@@ -34,7 +34,7 @@ class EditBox(VTKObservationMixin):
     self.effectCursors = {}
     self.effectActionGroup = qt.QActionGroup(parent)
     self.effectActionGroup.connect('triggered(QAction*)', self._onEffectActionTriggered)
-    self.effectActionGroup.exclusive = True
+    self.effectActionGroup.setExclusive(True)
     self.currentEffect = None
     self.undoRedo = UndoRedo()
     self.undoRedo.stateChangedCallback = self.updateUndoRedoButtons
