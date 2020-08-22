@@ -359,6 +359,8 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     return containsClosedSurfaceRepresentation
 
   def effectiveExtentChanged(self):
+    if self.getPreviewNode() is None:
+      return True
     if self.mergedLabelmapGeometryImage is None:
       return True
     if self.selectedSegmentIds is None:
