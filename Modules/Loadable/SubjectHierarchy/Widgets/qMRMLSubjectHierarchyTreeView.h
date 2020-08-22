@@ -280,6 +280,8 @@ protected:
   /// within the branch that has the input item id as its root
   vtkIdType firstSelectedSubjectHierarchyItemInBranch(vtkIdType itemID);
 
+  void changeEvent(QEvent* e) override;
+
 protected:
   QScopedPointer<qMRMLSubjectHierarchyTreeViewPrivate> d_ptr;
 
