@@ -30,7 +30,6 @@
 // GDCM includes
 #include "gdcmDict.h"           /// access to dictionary
 #include "gdcmDictEntry.h"      /// access to dictionary
-#include "gdcmGlobal.h"         /// access to dictionary
 #endif
 
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesVectorReaderSeries);
