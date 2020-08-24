@@ -696,6 +696,9 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         selNode.SetReferenceActiveVolumeID(imageProxyVolumeNode.GetID())
         appLogic.PropagateVolumeSelection()
 
+        # Show under the right patient/study in subject hierarchy
+        self.addSeriesInSubjectHierarchy(loadable, imageProxyVolumeNode)
+
         # Show sequence browser toolbar
         sequencesModule = slicer.modules.sequences
         if sequencesModule.autoShowToolBar:
@@ -713,6 +716,9 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         mvNode.SetNumberOfFrames(nFrames)
         mvNode.SetName(loadable.name)
         slicer.mrmlScene.AddNode(mvNode)
+
+        # Show under the right patient/study in subject hierarchy
+        self.addSeriesInSubjectHierarchy(loadable, mvNode)
 
         #
         # automatically select the volume to display
