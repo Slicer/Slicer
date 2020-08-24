@@ -434,6 +434,5 @@ std::string vtkClosedSurfaceToBinaryLabelmapConversionRule::GetDefaultImageGeome
 
   // Serialize geometry
   std::string serializedGeometry = vtkSegmentationConverter::SerializeImageGeometry(geometryMatrix, extent);
-  this->ConversionParameters[vtkSegmentationConverter::GetReferenceImageGeometryParameterName()].first = serializedGeometry;
   return serializedGeometry;
 }
