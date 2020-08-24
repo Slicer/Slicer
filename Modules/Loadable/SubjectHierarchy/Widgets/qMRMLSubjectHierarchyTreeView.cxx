@@ -1817,7 +1817,7 @@ void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForItems(QList<vtkIdT
   foreach (vtkIdType highlightedItemID, d->HighlightedItems)
     {
     QStandardItem* item = sceneModel->itemFromSubjectHierarchyItem(highlightedItemID, nameColumn);
-    if (item)
+    if (item && this->sortFilterProxyModel()->filterAcceptsItem(highlightedItemID))
       {
       item->setBackground(Qt::transparent);
       }
@@ -1882,7 +1882,7 @@ void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForItems(QList<vtkIdT
       if (referencedItem && referencedItem != itemID)
         {
         QStandardItem* item = sceneModel->itemFromSubjectHierarchyItem(referencedItem, nameColumn);
-        if (item && !d->HighlightedItems.contains(referencedItem))
+        if (item && !d->HighlightedItems.contains(referencedItem) && this->sortFilterProxyModel()->filterAcceptsItem(referencedItem))
           {
           item->setBackground(d->IndirectReferenceColor);
           d->HighlightedItems.append(referencedItem);
@@ -1895,7 +1895,8 @@ void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForItems(QList<vtkIdT
       {
       vtkIdType referencedItem = (*itemIt);
       QStandardItem* item = sceneModel->itemFromSubjectHierarchyItem(referencedItem, nameColumn);
-      if (item) // Note: these items have been added as the recursively referenced items already
+      // Note: these items have been added as the recursively referenced items already
+      if (item && this->sortFilterProxyModel()->filterAcceptsItem(referencedItem))
         {
         item->setBackground(d->DirectReferenceColor);
         }
@@ -1905,7 +1906,7 @@ void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForItems(QList<vtkIdT
       {
       vtkIdType referencingItem = (*itemIt);
       QStandardItem* item = sceneModel->itemFromSubjectHierarchyItem(referencingItem, nameColumn);
-      if (item && !d->HighlightedItems.contains(referencingItem))
+      if (item && !d->HighlightedItems.contains(referencingItem) && this->sortFilterProxyModel()->filterAcceptsItem(referencingItem))
         {
         item->setBackground(d->ReferencingColor);
         d->HighlightedItems.append(referencingItem);
