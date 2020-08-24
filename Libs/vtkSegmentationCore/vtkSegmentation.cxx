@@ -1997,6 +1997,13 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
       return std::string("");
       }
     referenceGeometryString = vtkSegmentationConverter::SerializeImageGeometry(highestResolutionLabelmap);
+
+    // We were supposed to use the extent from the reference geometry string, however it did  not exist.
+    // Instead, calculate extent from effective extent of segments.
+    if (extentComputationMode == EXTENT_REFERENCE_GEOMETRY)
+      {
+      extentComputationMode = EXTENT_UNION_OF_EFFECTIVE_SEGMENTS;
+      }
     }
 
   vtkSmartPointer<vtkOrientedImageData> commonGeometryImage = vtkSmartPointer<vtkOrientedImageData>::New();
