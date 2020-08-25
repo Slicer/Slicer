@@ -441,7 +441,7 @@
   this->Set##propertyName(this->SafeDownCast(copySourceNode)->Get##propertyName());
 
 /// Macro for copying an iterable container (of std::string) vector node property value.
-#define vtkMRMLCopyStdStringVectorMacroMacro(propertyName) \
+#define vtkMRMLCopyStdStringVectorMacro(propertyName) \
   this->Set##propertyName(this->SafeDownCast(copySourceNode)->Get##propertyName());
 
 /// Macro for copying a vtkMatrix4x4* property value.
