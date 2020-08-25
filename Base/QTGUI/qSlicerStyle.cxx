@@ -259,7 +259,7 @@ QPalette qSlicerStyle::standardDarkPalette()const
   palette.setColor(QPalette::Button, "#323232");
   palette.setColor(QPalette::ButtonText, Qt::white);
   palette.setColor(QPalette::Disabled, QPalette::ButtonText, "#b4b4b4");
-  palette.setColor(QPalette::BrightText, Qt::red);
+  palette.setColor(QPalette::BrightText, "#ff4444"); // Lighter than Qt::red
   // Color roles used mostly for 3D bevel and shadow effects.
   palette.setColor(QPalette::Light, "#828284");  // Lighter than Button color.
   palette.setColor(QPalette::Midlight, "#5a5a5b");  // Between Button and Light.
