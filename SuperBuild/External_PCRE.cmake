@@ -47,12 +47,12 @@ ExternalProject_Execute(${proj} \"configure\" sh ${EP_SOURCE_DIR}/configure
     --prefix=${EP_INSTALL_DIR} --disable-shared)
 ")
 
-  set(_version "8.38")
+  set(_version "8.44")
 
   ExternalProject_add(PCRE
     ${${proj}_EP_ARGS}
     URL https://github.com/Slicer/SlicerBinaryDependencies/releases/download/PCRE/pcre-${_version}.tar.gz
-    URL_MD5 8a353fe1450216b6655dfcf3561716d9
+    URL_HASH SHA512=abac4c4f9df9e61d7d7761a9c50843882611752e1df0842a54318f358c28f5953025eba2d78997d21ee690756b56cc9f1c04a5ed591dd60654cc78ba16d9ecfb
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
