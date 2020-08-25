@@ -1,16 +1,6 @@
 {
   "extensions": [
     {
-      "name": "LongitudinalPETCT",
-      "repository": "https://github.com/QIICR/LongitudinalPETCT",
-      "typeDescription": "PET Images",
-      "tagValues": {
-        "Modality": [
-          "PT"
-        ]
-      }
-    },
-    {
       "name": "PETDICOMExtension",
       "repository": "https://github.com/QIICR/Slicer-PETDICOMExtension.git",
       "typeDescription": "PET Images and real world value mappings",
