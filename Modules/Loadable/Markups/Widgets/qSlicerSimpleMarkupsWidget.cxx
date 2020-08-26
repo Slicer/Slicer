@@ -130,8 +130,16 @@ void qSlicerSimpleMarkupsWidget::setup()
   connect( d->MarkupsPlaceWidget, SIGNAL( activeMarkupsPlaceModeChanged(bool) ), this, SIGNAL( activeMarkupsPlaceModeChanged(bool) ) );
 
   d->MarkupsControlPointsTableWidget->setColumnCount( CONTROL_POINT_COLUMNS );
-  d->MarkupsControlPointsTableWidget->setHorizontalHeaderLabels( QStringList() << "Label" << "X" << "Y" << "Z" );
-  d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode( QHeaderView::Stretch );
+  d->MarkupsControlPointsTableWidget->setHorizontalHeaderLabels( QStringList() << "Label" << "R" << "A" << "S" );
+  d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+  d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+  d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+  d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+
+  // Reduce row height to minimum necessary
+  d->MarkupsControlPointsTableWidget->setWordWrap(true);
+  d->MarkupsControlPointsTableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
   d->MarkupsControlPointsTableWidget->setContextMenuPolicy( Qt::CustomContextMenu );
   d->MarkupsControlPointsTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows); // only select rows rather than cells
 
@@ -590,7 +598,11 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
     d->MarkupsControlPointsTableWidget->clear();
     d->MarkupsControlPointsTableWidget->setRowCount( currentMarkupsNode->GetNumberOfControlPoints() );
     d->MarkupsControlPointsTableWidget->setColumnCount( CONTROL_POINT_COLUMNS );
-    d->MarkupsControlPointsTableWidget->setHorizontalHeaderLabels( QStringList() << "Label" << "X" << "Y" << "Z" );
+    d->MarkupsControlPointsTableWidget->setHorizontalHeaderLabels( QStringList() << "Label" << "R" << "A" << "S" );
+    d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    d->MarkupsControlPointsTableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
 
     double controlPointPosition[ 3 ] = { 0, 0, 0 };
     std::string controlPointLabel;
