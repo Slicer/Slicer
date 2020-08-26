@@ -62,17 +62,24 @@ void vtkMRMLMarkupsLineNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
 }
 
+//----------------------------------------------------------------------------
+double vtkMRMLMarkupsLineNode::GetLineLengthWorld()
+{
+  double p1[3] = { 0.0 };
+  double p2[3] = { 0.0 };
+  this->GetNthControlPointPositionWorld(0, p1);
+  this->GetNthControlPointPositionWorld(1, p2);
+  double length = sqrt(vtkMath::Distance2BetweenPoints(p1, p2));
+  return length;
+}
+
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsLineNode::UpdateMeasurementsInternal()
 {
   this->RemoveAllMeasurements();
   if (this->GetNumberOfDefinedControlPoints(true) == 2)
     {
-    double p1[3] = { 0.0 };
-    double p2[3] = { 0.0 };
-    this->GetNthControlPointPositionWorld(0, p1);
-    this->GetNthControlPointPositionWorld(1, p2);
-    double length = sqrt(vtkMath::Distance2BetweenPoints(p1, p2));
+    double length = this->GetLineLengthWorld();
     std::string printFormat;
     std::string unit = "mm";
     vtkMRMLUnitNode* unitNode = GetUnitNode("length");

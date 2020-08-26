@@ -61,6 +61,9 @@ public:
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentDefaultMacro(vtkMRMLMarkupsLineNode);
 
+  /// Return line length (distance between the two line endpoints) in world coordinate system.
+  virtual double GetLineLengthWorld();
+
 protected:
   vtkMRMLMarkupsLineNode();
   ~vtkMRMLMarkupsLineNode() override;
