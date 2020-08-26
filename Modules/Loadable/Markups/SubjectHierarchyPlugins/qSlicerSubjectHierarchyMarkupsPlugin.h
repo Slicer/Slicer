@@ -98,6 +98,14 @@ public:
   /// \param eventData Supplementary data for the item that may be considered for the menu (sub-item ID, attribute, etc.)
   void showViewContextMenuActionsForItem(vtkIdType itemID, QVariantMap eventData) override;
 
+  /// Get view context menu item actions that are available when right-clicking an object in the views.
+  /// These item context menu actions can be shown in the implementations of \sa showViewContextMenuActionsForItem
+  QList<QAction*> itemContextMenuActions()const override;
+
+  /// Show context menu actions valid for a given subject hierarchy item.
+  /// \param itemID Subject Hierarchy item to show the context menu items for
+  void showContextMenuActionsForItem(vtkIdType itemID) override;
+
 protected slots:
   /// Called when clicking on rename point action
   void renamePoint();
@@ -107,7 +115,8 @@ protected slots:
   void toggleSelectPoint();
   /// Called when clicking on handle interactive action
   void toggleHandleInteractive();
-
+  /// Called when clicking on a measurement action
+  void toggleMeasurement();
 protected:
   QScopedPointer<qSlicerSubjectHierarchyMarkupsPluginPrivate> d_ptr;
 

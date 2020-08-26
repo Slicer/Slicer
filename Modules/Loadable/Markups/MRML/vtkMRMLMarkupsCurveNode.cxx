@@ -97,6 +97,8 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   this->AddNodeReferenceRole(this->GetShortestDistanceSurfaceNodeReferenceRole(), this->GetShortestDistanceSurfaceNodeReferenceMRMLAttributeName(), events);
 
   this->ActiveScalar = "";
+
+  this->MeasurementsInDescription = { "length" };
 }
 
 //----------------------------------------------------------------------------

@@ -46,6 +46,7 @@
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkStringArray.h>
+#include <vtksys/SystemTools.hxx>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkTrivialProducer.h>
@@ -116,6 +117,7 @@ void vtkMRMLMarkupsNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(locked, Locked);
   vtkMRMLWriteXMLStdStringMacro(markupLabelFormat, MarkupLabelFormat);
   vtkMRMLWriteXMLMatrix4x4Macro(interactionHandleToWorldMatrix, InteractionHandleToWorldMatrix);
+  vtkMRMLWriteXMLStdStringVectorMacro(measurementsInDescription, MeasurementsInDescription, std::vector);
   vtkMRMLWriteXMLEndMacro();
 
   int textLength = static_cast<int>(this->TextList->GetNumberOfValues());
@@ -139,6 +141,7 @@ void vtkMRMLMarkupsNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(locked, Locked);
   vtkMRMLReadXMLStdStringMacro(markupLabelFormat, MarkupLabelFormat);
   vtkMRMLReadXMLOwnedMatrix4x4Macro(interactionHandleToWorldMatrix, InteractionHandleToWorldMatrix);
+  vtkMRMLReadXMLStdStringVectorMacro(measurementsInDescription, MeasurementsInDescription, std::vector);
   vtkMRMLReadXMLEndMacro();
 
   /* TODO: read measurements
@@ -177,6 +180,7 @@ void vtkMRMLMarkupsNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
   vtkMRMLCopyBooleanMacro(Locked);
   vtkMRMLCopyStdStringMacro(MarkupLabelFormat);
   vtkMRMLCopyOwnedMatrix4x4Macro(InteractionHandleToWorldMatrix);
+  vtkMRMLCopyStdStringVectorMacro(MeasurementsInDescription);
   vtkMRMLCopyEndMacro();
 
   this->TextList->DeepCopy(node->TextList);
@@ -248,6 +252,7 @@ void vtkMRMLMarkupsNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBooleanMacro(Locked);
   vtkMRMLPrintStdStringMacro(MarkupLabelFormat);
   vtkMRMLPrintMatrix4x4Macro(InteractionHandleToWorldMatrix)
+  vtkMRMLPrintStdStringVectorMacro(MeasurementsInDescription, std::vector);
   vtkMRMLPrintEndMacro();
 
   os << indent << "MaximumNumberOfControlPoints: ";
@@ -2062,7 +2067,13 @@ void vtkMRMLMarkupsNode::WriteMeasurementsToDescription()
   for (std::vector< vtkSmartPointer<vtkMRMLMeasurement> >::iterator measurementIt = this->Measurements.begin();
     measurementIt != this->Measurements.end(); ++measurementIt)
     {
-    std::string measurementText = (*measurementIt)->GetName() + std::string(": ") + (*measurementIt)->GetValueWithUnitsAsPrintableString();
+    std::string measurementName = (*measurementIt)->GetName();
+    if (std::find(this->MeasurementsInDescription.begin(), this->MeasurementsInDescription.end(), measurementName) == this->MeasurementsInDescription.end())
+      {
+      continue;
+      }
+
+    std::string measurementText = measurementName + std::string(": ") + (*measurementIt)->GetValueWithUnitsAsPrintableString();
 
     // description
     if (!description.empty())
@@ -2084,7 +2095,24 @@ void vtkMRMLMarkupsNode::WriteMeasurementsToDescription()
       this->PropertiesLabelText += "\n" + measurementText;
       }
     }
+
+  if (description.empty())
+    {
+    this->PropertiesLabelText.clear();
+    }
+
   this->SetDescription(description.c_str());
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::SetMeasurementsInDescription(const std::vector<std::string> measurementsInDescription)
+{
+  if (this->MeasurementsInDescription != measurementsInDescription)
+    {
+    this->MeasurementsInDescription = measurementsInDescription;
+    this->WriteMeasurementsToDescription();
+    this->Modified();
+    }
 }
 
 //---------------------------------------------------------------------------

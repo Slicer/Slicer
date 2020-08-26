@@ -26,6 +26,9 @@
 // Markups includes
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 
+// vktAddon includes
+#include <vtkAddonSetGet.h>
+
 // VTK includes
 #include <vtkPointLocator.h>
 #include <vtkSmartPointer.h>
@@ -578,6 +581,11 @@ public:
 
   virtual std::string GetPropertiesLabelText();
 
+  /// List of measurements that should be added to the discription in WriteMeasurementsToDescription.
+  /// Affects the measurements included in the 3D/Slice view labels, and in the markups tree view description.
+  vtkGetStdVectorMacro(MeasurementsInDescription, std::vector<std::string>);
+  void SetMeasurementsInDescription(const std::vector<std::string> measurementsInDescription);
+
 protected:
   vtkMRMLMarkupsNode();
   ~vtkMRMLMarkupsNode() override;
@@ -626,6 +634,7 @@ protected:
 
   /// Helper function to write measurements to node Description property.
   /// This is a short-term solution until measurements display is properly implemented.
+  /// The measurements that are written to the description can be controlled by MeasurementsInDescription.
   virtual void WriteMeasurementsToDescription();
 
   /// Calculates the handle to world matrix based on the current control points
@@ -675,6 +684,7 @@ protected:
   vtkVector3d CenterPos;
 
   std::vector< vtkSmartPointer<vtkMRMLMeasurement> > Measurements;
+  std::vector<std::string> MeasurementsInDescription;
 
   std::string PropertiesLabelText;
 

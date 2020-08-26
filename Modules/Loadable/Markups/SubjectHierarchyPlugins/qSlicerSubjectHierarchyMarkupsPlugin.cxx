@@ -51,10 +51,12 @@
 #include <vtkSmartPointer.h>
 
 // Qt includes
+#include <QAction>
 #include <QDebug>
 #include <QInputDialog>
+#include <QMenu>
 #include <QStandardItem>
-#include <QAction>
+#include <QSharedPointer>
 
 // Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
@@ -76,8 +78,10 @@ public:
   QAction* DeletePointAction;
   QAction* ToggleSelectPointAction;
   QAction* ToggleHandleInteractive;
-
+  QAction* MeasurementsAction;
+  QSharedPointer<QMenu> MeasurementsSubMenu;
   QVariantMap ViewMenuEventData;
+  QVariantMap ItemEventData;
 };
 
 //-----------------------------------------------------------------------------
@@ -90,6 +94,8 @@ qSlicerSubjectHierarchyMarkupsPluginPrivate::qSlicerSubjectHierarchyMarkupsPlugi
 , DeletePointAction(nullptr)
 , ToggleSelectPointAction(nullptr)
 , ToggleHandleInteractive(nullptr)
+, MeasurementsAction(nullptr)
+, MeasurementsSubMenu(nullptr)
 {
 }
 
@@ -114,6 +120,13 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
   this->ToggleHandleInteractive->setObjectName("ToggleHandleInteractive");
   this->ToggleHandleInteractive->setCheckable(true);
   QObject::connect(this->ToggleHandleInteractive, SIGNAL(triggered()), q, SLOT(toggleHandleInteractive()));
+
+  this->MeasurementsAction = new QAction("Measurements", q);
+  this->MeasurementsAction->setObjectName("MeasurementsAction");
+
+  this->MeasurementsSubMenu = QSharedPointer<QMenu>(new QMenu());
+  this->MeasurementsSubMenu->setObjectName("MeasurementsSubMenu");
+  this->MeasurementsAction->setMenu(this->MeasurementsSubMenu.data());
 }
 
 //-----------------------------------------------------------------------------
@@ -392,10 +405,9 @@ QColor qSlicerSubjectHierarchyMarkupsPlugin::getDisplayColor(vtkIdType itemID, Q
 }
 
 //-----------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyMarkupsPlugin::viewContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyMarkupsPlugin::viewContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyMarkupsPlugin);
-
   QList<QAction*> actions;
   actions << d->RenamePointAction << d->DeletePointAction << d->ToggleSelectPointAction << d->ToggleHandleInteractive;
   return actions;
@@ -440,6 +452,112 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
       d->ToggleHandleInteractive->setChecked(displayNode->GetHandlesInteractive());
       }
     }
+}
+
+//-----------------------------------------------------------------------------
+QList<QAction*> qSlicerSubjectHierarchyMarkupsPlugin::itemContextMenuActions() const
+{
+  Q_D(const qSlicerSubjectHierarchyMarkupsPlugin);
+  QList<QAction*> actions;
+  actions << d->MeasurementsAction;
+  return actions;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyMarkupsPlugin::showContextMenuActionsForItem(vtkIdType itemID)
+{
+  Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
+
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+
+  // Remove existing actions from the submenu
+  for (QAction* action : d->MeasurementsSubMenu->actions())
+    {
+    d->MeasurementsSubMenu->removeAction(action);
+    action->deleteLater();
+    }
+
+  // Markup node
+  vtkMRMLMarkupsNode* associatedNode = vtkMRMLMarkupsNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  d->MeasurementsAction->setVisible(false);
+  if (associatedNode)
+    {
+    d->ItemEventData["NodeID"] = QVariant(associatedNode->GetID());
+
+    // If we have fewer than 1 measurement, toggling the option will have no effect.
+    if (associatedNode->GetNumberOfMeasurements() > 0)
+      {
+      std::vector<std::string> measurementsInDescription = associatedNode->GetMeasurementsInDescription();
+
+      for (int i = 0; i < associatedNode->GetNumberOfMeasurements(); ++i)
+        {
+        vtkMRMLMeasurement* measurement = associatedNode->GetNthMeasurement(i);
+        if (!measurement)
+          {
+          continue;
+          }
+
+        QString name = measurement->GetName();
+        bool checked = std::find(measurementsInDescription.begin(), measurementsInDescription.end(), name.toStdString()) != measurementsInDescription.end();
+
+        // Create a toggleable option for each measurement in the context menu
+        QAction* measurementAction = new QAction(d->MeasurementsSubMenu.data());
+        d->MeasurementsSubMenu->addAction(measurementAction);
+        measurementAction->setCheckable(true);
+        measurementAction->setChecked(checked);
+        measurementAction->setData(name);
+        if (name.size() > 0)
+          {
+          // Capitalize the first letter of the measurement name
+          name.replace(0, 1, name[0].toUpper());
+          }
+        measurementAction->setText(name);
+        QObject::connect(measurementAction, SIGNAL(triggered()), this, SLOT(toggleMeasurement()));
+        }
+      d->MeasurementsAction->setVisible(true);
+      }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyMarkupsPlugin::toggleMeasurement()
+{
+  Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
+  if (d->ItemEventData.find("NodeID") == d->ItemEventData.end())
+    {
+    qCritical() << Q_FUNC_INFO << ": No node ID found in the view menu event data";
+    return;
+    }
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access MRML scene";
+    return;
+    }
+  QString nodeID = d->ItemEventData["NodeID"].toString();
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(scene->GetNodeByID(nodeID.toUtf8().constData()));
+
+  std::vector<std::string> descriptionMeasurements;
+  for (QAction* action : d->MeasurementsSubMenu->actions())
+    {
+    if (!action->isChecked())
+      {
+      continue;
+      }
+    QString data = action->data().toString();
+    descriptionMeasurements.push_back(data.toStdString());
+    }
+  markupsNode->SetMeasurementsInDescription(descriptionMeasurements);
 }
 
 //-----------------------------------------------------------------------------

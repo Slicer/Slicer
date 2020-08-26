@@ -38,6 +38,8 @@ vtkMRMLMarkupsAngleNode::vtkMRMLMarkupsAngleNode()
 {
   this->MaximumNumberOfControlPoints = 3;
   this->RequiredNumberOfControlPoints = 3;
+
+  this->MeasurementsInDescription = { "angle" };
 }
 
 //----------------------------------------------------------------------------
