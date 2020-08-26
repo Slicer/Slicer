@@ -198,7 +198,7 @@ After building, run the tests in the  `Slicer-SuperBuild/Slicer-build` directory
 
 Start a terminal and type the following (you can replace 4 by the number of processor cores in the computer):
 ```
-cd ~/Projects/Slicer-SuperBuild/Slicer-build
+cd Slicer-SuperBuild-Debug/Slicer-build
 ctest -j4
 ```
 
@@ -206,7 +206,6 @@ ctest -j4
 
 Start a terminal and type the following:
 ```
-cd ~/Projects/Slicer-SuperBuild
-cd Slicer-build
+cd Slicer-SuperBuild-Debug/Slicer-build
 make package
 ```
