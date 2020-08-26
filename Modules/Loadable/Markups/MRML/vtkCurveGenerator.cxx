@@ -725,7 +725,11 @@ int vtkCurveGenerator::GenerateLines(vtkPolyData* polyData)
     if (lines->GetNumberOfCells() == 1)
       {
       vtkIdType currentNumberOfCellPoints = 0;
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+      const vtkIdType* currentCellPoints = nullptr;
+#else
       vtkIdType* currentCellPoints = nullptr;
+#endif
       lines->GetCell(0, currentNumberOfCellPoints, currentCellPoints);
 
       if (currentNumberOfCellPoints == numberOfCellPoints)

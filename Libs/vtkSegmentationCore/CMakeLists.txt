@@ -149,11 +149,13 @@ if(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
   set(Slicer_Wrapped_LIBRARIES
     )
 
-  foreach(library ${PROJECT_NAME})
-    if(TARGET ${library}PythonD)
-      list(APPEND Slicer_Wrapped_LIBRARIES ${library}PythonD)
-    endif()
-  endforeach()
+  if(${VTK_VERSION} VERSION_LESS "8.90")
+    foreach(library ${PROJECT_NAME})
+      if(TARGET ${library}PythonD)
+        list(APPEND Slicer_Wrapped_LIBRARIES ${library}PythonD)
+      endif()
+    endforeach()
+  endif()
 
   include(vtkMacroKitPythonWrap)
 
@@ -165,11 +167,16 @@ if(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
     )
 
   # Export target
-  export(TARGETS ${PROJECT_NAME}Python ${PROJECT_NAME}PythonD APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
+  export(TARGETS ${PROJECT_NAME}Python APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
+  if(${VTK_VERSION} VERSION_LESS "8.90")
+    export(TARGETS ${PROJECT_NAME}PythonD APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
+  endif()
   # Folder
   if(NOT "${${PROJECT_NAME}_FOLDER}" STREQUAL "")
     set_target_properties(${PROJECT_NAME}Python PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
-    set_target_properties(${PROJECT_NAME}PythonD PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+    if(${VTK_VERSION} VERSION_LESS "8.90")
+      set_target_properties(${PROJECT_NAME}PythonD PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+    endif()
     if(TARGET ${PROJECT_NAME}Hierarchy)
       set_target_properties(${PROJECT_NAME}Hierarchy PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
     endif()

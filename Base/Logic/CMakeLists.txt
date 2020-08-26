@@ -158,7 +158,7 @@ endif()
 
 if(Slicer_USE_PYTHONQT)
   set(VTK_COMMON_PYTHON_LIBRARY
-    vtkWrappingPythonCore # For vtkPythonUtil
+    ${VTK_TARGET_PREFIX}WrappingPythonCore # For vtkPythonUtil
     )
   list(APPEND libs
     ${VTK_COMMON_PYTHON_LIBRARY}
@@ -195,18 +195,32 @@ install(TARGETS ${lib_name}
 if(VTK_WRAP_PYTHON)
   include(vtkMacroKitPythonWrap)
 
+  set(_python_wrapped_libraries
+    )
+
+  if(${VTK_VERSION} VERSION_LESS "8.90")
+    list(APPEND _python_wrapped_libraries
+      MRMLLogicPythonD
+      )
+  endif()
+
   vtkMacroKitPythonWrap(
     KIT_NAME ${lib_name}
     KIT_SRCS ${SlicerBaseLogic_SRCS}
-    KIT_PYTHON_LIBRARIES MRMLLogicPythonD
+    KIT_PYTHON_LIBRARIES ${_python_wrapped_libraries}
     KIT_INSTALL_BIN_DIR ${Slicer_INSTALL_BIN_DIR}
     KIT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR}
     )
   # Export target
-  set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${lib_name}Python ${lib_name}PythonD)
+  set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${lib_name}Python)
+  if(${VTK_VERSION} VERSION_LESS "8.90")
+    set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${lib_name}PythonD)
+  endif()
 
   set_target_properties(${lib_name}Python PROPERTIES FOLDER "Core-Base")
-  set_target_properties(${lib_name}PythonD PROPERTIES FOLDER "Core-Base")
+  if(${VTK_VERSION} VERSION_LESS "8.90")
+    set_target_properties(${lib_name}PythonD PROPERTIES FOLDER "Core-Base")
+  endif()
   if(TARGET ${lib_name}Hierarchy)
     set_target_properties(${lib_name}Hierarchy PROPERTIES FOLDER "Core-Base")
   endif()

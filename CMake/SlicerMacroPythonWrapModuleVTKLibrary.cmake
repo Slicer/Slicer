@@ -64,9 +64,11 @@ macro(SlicerMacroPythonWrapModuleVTKLibrary)
   endforeach()
 
   set(Slicer_Libs_VTK_PYTHON_WRAPPED_LIBRARIES)
-  foreach(lib ${Slicer_Libs_VTK_WRAPPED_LIBRARIES})
-    list(APPEND Slicer_Libs_VTK_PYTHON_WRAPPED_LIBRARIES ${lib}PythonD)
-  endforeach()
+  if(${VTK_VERSION} VERSION_LESS "8.90")
+    foreach(lib ${Slicer_Libs_VTK_WRAPPED_LIBRARIES})
+      list(APPEND Slicer_Libs_VTK_PYTHON_WRAPPED_LIBRARIES ${lib}PythonD)
+    endforeach()
+  endif()
 
   set(PYTHONWRAPMODULEVTKLIBRARY_Wrapped_LIBRARIES
     ${Slicer_Libs_VTK_PYTHON_WRAPPED_LIBRARIES}

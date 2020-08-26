@@ -29,8 +29,8 @@ set(${KIT}_SRCS
   )
 
 set(${KIT}_VTK_LIBRARIES
-  vtkRenderingVolume
-  vtkRenderingVolume${VTK_RENDERING_BACKEND}
+  ${VTK_TARGET_PREFIX}RenderingVolume
+  ${VTK_TARGET_PREFIX}RenderingVolume${VTK_RENDERING_BACKEND}
   )
 
 set(${KIT}_TARGET_LIBRARIES

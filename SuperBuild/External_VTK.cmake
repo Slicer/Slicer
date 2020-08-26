@@ -32,6 +32,8 @@ endif()
 if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM_${proj})
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
+  set(EXTERNAL_PROJECT_OPTIONAL_VTK8_CMAKE_CACHE_ARGS)
+  set(EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS)
 
   set(VTK_WRAP_PYTHON OFF)
 
@@ -45,31 +47,59 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
       -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
       -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
       )
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
+      -DVTK_PYTHON_VERSION:STRING=3
+      -DPython3_ROOT_DIR:PATH=${Python3_ROOT_DIR}
+      -DPython3_INCLUDE_DIR:PATH=${Python3_INCLUDE_DIR}
+      -DPython3_LIBRARY:FILEPATH=${Python3_LIBRARY}
+      -DPython3_LIBRARY_DEBUG:FILEPATH=${Python3_LIBRARY_DEBUG}
+      -DPython3_LIBRARY_RELEASE:FILEPATH=${Python3_LIBRARY_RELEASE}
+      -DPython3_EXECUTABLE:FILEPATH=${Python3_EXECUTABLE}
+      )
   endif()
 
   # Markups module needs vtkFrenetSerretFrame, which is available in
   # SplineDrivenImageSlicer remote module.
-  list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK8_CMAKE_CACHE_ARGS
     -DModule_SplineDrivenImageSlicer:BOOL=ON
     )
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
+    -DVTK_MODULE_ENABLE_VTK_SplineDrivenImageSlicer:BOOL=YES
+    )
 
-  list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
+    -DVTK_MODULE_ENABLE_VTK_ChartsCore:STRING=YES
+    -DVTK_MODULE_ENABLE_VTK_ViewsContext2D:STRING=YES
+    -DVTK_MODULE_ENABLE_VTK_RenderingContext2D:STRING=YES
+    -DVTK_MODULE_ENABLE_VTK_RenderingContextOpenGL2:STRING=YES
+    )
+
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK8_CMAKE_CACHE_ARGS
     -DVTK_USE_GUISUPPORT:BOOL=ON
     -DVTK_USE_QVTK_QTOPENGL:BOOL=ON
     -DModule_vtkTestingRendering:BOOL=ON
     )
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
-      -DVTK_QT_VERSION:STRING=5
-      -DVTK_Group_Qt:BOOL=ON
-      -DQt5_DIR:FILEPATH=${Qt5_DIR}
-      )
-  if("${Slicer_VTK_RENDERING_BACKEND}" STREQUAL "OpenGL2")
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
-      -DModule_vtkGUISupportQtOpenGL:BOOL=ON
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
+    -DVTK_MODULE_ENABLE_VTK_GUISupportQt:STRING=YES
+    -DVTK_GROUP_ENABLE_Qt:STRING=YES
     )
+
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+    -DVTK_QT_VERSION:STRING=5
+    -DVTK_Group_Qt:BOOL=ON
+    -DQt5_DIR:FILEPATH=${Qt5_DIR}
+    )
+
+  if("${Slicer_VTK_RENDERING_BACKEND}" STREQUAL "OpenGL2")
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK8_CMAKE_CACHE_ARGS
+      -DModule_vtkGUISupportQtOpenGL:BOOL=ON
+      )
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
+      -DVTK_MODULE_ENABLE_VTK_GUISupportQtOpenGL:STRING=YES
+      )
   endif()
   if(Slicer_USE_TBB)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK8_CMAKE_CACHE_ARGS
       -DTBB_INCLUDE_DIR:PATH=${TBB_INCLUDE_DIR}
       -DTBB_LIBRARY_DEBUG:FILEPATH=${TBB_LIBRARY_DEBUG}
       -DTBB_LIBRARY_RELEASE:FILEPATH=${TBB_LIBRARY_RELEASE}
@@ -79,6 +109,9 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
       -DTBB_MALLOC_PROXY_INCLUDE_DIR:PATH=${TBB_MALLOC_PROXY_INCLUDE_DIR}
       -DTBB_MALLOC_PROXY_LIBRARY_DEBUG:FILEPATH=${TBB_MALLOC_PROXY_LIBRARY_DEBUG}
       -DTBB_MALLOC_PROXY_LIBRARY_RELEASE:FILEPATH=${TBB_MALLOC_PROXY_LIBRARY_RELEASE}
+      )
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
+      -DTBB_DIR:PATH=${TBB_INSTALL_DIR}/tbb${tbb_ver}/cmake
       )
   endif()
   if(APPLE)
@@ -114,18 +147,42 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
       )
   endif()
 
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK8_CMAKE_CACHE_ARGS
+    -DBUILD_TESTING:BOOL=OFF
+    -DBUILD_EXAMPLES:BOOL=OFF
+    -DBUILD_SHARED_LIBS:BOOL=ON
+    -DVTK_USE_PARALLEL:BOOL=ON
+    -DVTK_WRAP_TCL:BOOL=OFF
+    -DModule_vtkAcceleratorsVTKm:BOOL=OFF
+    )
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
+    -DVTK_BUILD_TESTING:STRING=OFF
+    -DVTK_MODULE_ENABLE_VTK_AcceleratorsVTKm:BOOL=OFF
+    -DCMAKE_INSTALL_LIBDIR:STRING=lib # Force value to prevent lib64 from being used on Linux
+    # These options have been removed in VTK >= 8.90:
+    # - BUILD_EXAMPLE
+    # - BUILD_SHARED_LIBS
+    # - VTK_USE_PARALLEL
+    # - VTK_WRAP_TCL
+    )
+
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
     "${EP_GIT_PROTOCOL}://github.com/slicer/VTK.git"
     QUIET
     )
 
-set(_git_tag)
-if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "8")
-  set(_git_tag "97904fdcc7e73446b3131f32eac9fc9781b23c2d") # slicer-v8.2.0-2018-10-02-74d9488523
-else()
-  message(FATAL_ERROR "error: Unsupported Slicer_VTK_VERSION_MAJOR: ${Slicer_VTK_VERSION_MAJOR}")
-endif()
+  set(_git_tag)
+  if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "8")
+    set(_git_tag "97904fdcc7e73446b3131f32eac9fc9781b23c2d") # slicer-v8.2.0-2018-10-02-74d9488523
+    set(vtk_egg_info_version "8.2.0")
+  elseif("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
+    set(_git_tag "2f4e011bfcf95cb6c10ac42403b37f3fc7808048") # slicer-v9.0.20200929-3fa220f28e
+    set(vtk_egg_info_version "9.0.20200825")
+  else()
+    message(FATAL_ERROR "error: Unsupported Slicer_VTK_VERSION_MAJOR: ${Slicer_VTK_VERSION_MAJOR}")
+  endif()
+
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
     ${_git_tag}
@@ -149,13 +206,8 @@ endif()
       -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}
       -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=${CMAKE_CXX_STANDARD_REQUIRED}
       -DCMAKE_CXX_EXTENSIONS:BOOL=${CMAKE_CXX_EXTENSIONS}
-      -DBUILD_TESTING:BOOL=OFF
-      -DBUILD_EXAMPLES:BOOL=OFF
-      -DBUILD_SHARED_LIBS:BOOL=ON
-      -DVTK_USE_PARALLEL:BOOL=ON
       -DVTK_DEBUG_LEAKS:BOOL=${VTK_DEBUG_LEAKS}
       -DVTK_LEGACY_REMOVE:BOOL=ON
-      -DVTK_WRAP_TCL:BOOL=OFF
       #-DVTK_USE_RPATH:BOOL=ON # Unused
       -DVTK_WRAP_PYTHON:BOOL=${VTK_WRAP_PYTHON}
       -DVTK_INSTALL_RUNTIME_DIR:PATH=${Slicer_INSTALL_BIN_DIR}
@@ -169,8 +221,8 @@ endif()
       -DVTK_ENABLE_KITS:BOOL=ON
       -DVTK_RENDERING_BACKEND:STRING=${Slicer_VTK_RENDERING_BACKEND}
       -DVTK_SMP_IMPLEMENTATION_TYPE:STRING=${Slicer_VTK_SMP_IMPLEMENTATION_TYPE}
-      -DModule_vtkAcceleratorsVTKm:BOOL=OFF
       ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS}
+      ${EXTERNAL_PROJECT_OPTIONAL_VTK${Slicer_VTK_VERSION_MAJOR}_CMAKE_CACHE_ARGS}
     INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}
@@ -179,7 +231,7 @@ endif()
   if(Slicer_USE_PYTHONQT AND NOT Slicer_USE_SYSTEM_python)
     # Create the vtk-*.egg-info directory to prevent pip from re-installing
     # vtk package as a wheel when listed as dependency in Slicer extension.
-    set(_vtk_egg_info_dir "${python_DIR}/${PYTHON_SITE_PACKAGES_SUBDIR}/vtk-8.2.0-py3.6.egg-info")
+    set(_vtk_egg_info_dir "${python_DIR}/${PYTHON_SITE_PACKAGES_SUBDIR}/vtk-${vtk_egg_info_version}-py3.6.egg-info")
     ExternalProject_Add_Step(${proj} create_egg_info
       COMMAND ${CMAKE_COMMAND} -E make_directory ${_vtk_egg_info_dir}
       COMMAND ${CMAKE_COMMAND} -E touch ${_vtk_egg_info_dir}/PKG-INFO
@@ -218,9 +270,15 @@ endif()
         ${VTK_DIR}/${_library_output_subdir}/python3.6/site-packages
         )
     else()
-      set(${proj}_PYTHONPATH_LAUNCHER_BUILD
-        ${VTK_DIR}/${_library_output_subdir}/<CMAKE_CFG_INTDIR>/Lib/site-packages
-        )
+      if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
+        set(${proj}_PYTHONPATH_LAUNCHER_BUILD
+          ${VTK_DIR}/${_library_output_subdir}/Lib/site-packages
+          )
+      else()
+        set(${proj}_PYTHONPATH_LAUNCHER_BUILD
+          ${VTK_DIR}/${_library_output_subdir}/<CMAKE_CFG_INTDIR>/Lib/site-packages
+          )
+      endif()
     endif()
 
   mark_as_superbuild(

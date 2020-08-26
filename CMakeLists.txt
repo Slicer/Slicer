@@ -328,15 +328,10 @@ option(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT "Build Slicer with parameter ser
 mark_as_superbuild(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
 
 set(_default_vtk "8")
-set(Slicer_VTK_VERSION_MAJOR ${_default_vtk} CACHE STRING "VTK major version")
-set_property(CACHE Slicer_VTK_VERSION_MAJOR PROPERTY STRINGS "8")
-if(NOT "${Slicer_VTK_VERSION_MAJOR}" MATCHES "^(8)$")
-  if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
-    set(Slicer_VTK_VERSION_MAJOR 8 CACHE STRING "The VTK major version (7 or 8)." FORCE)
-    message(WARNING "Forcing Slicer_VTK_VERSION_MAJOR to 8 because VTK version was changed from 9.0 to 8.2. See http://vtk.1045678.n5.nabble.com/Discussion-OK-to-change-VTK-s-version-number-from-9-0-to-8-2-tt5748702.html")
-  else()
-    message(FATAL_ERROR "error: Slicer_VTK_VERSION_MAJOR must be 8.")
-  endif()
+set(Slicer_VTK_VERSION_MAJOR ${_default_vtk} CACHE STRING "VTK major version (8 or 9)")
+set_property(CACHE Slicer_VTK_VERSION_MAJOR PROPERTY STRINGS "8" "9")
+if(NOT "${Slicer_VTK_VERSION_MAJOR}" MATCHES "^(8|9)$")
+  message(FATAL_ERROR "error: Slicer_VTK_VERSION_MAJOR must be 8 or 9.")
 endif()
 mark_as_superbuild(Slicer_VTK_VERSION_MAJOR)
 
@@ -511,42 +506,55 @@ message(STATUS "  Slicer_VTK_VERSION_MAJOR is ${Slicer_VTK_VERSION_MAJOR}")
 #-----------------------------------------------------------------------------
 # Slicer_VTK_COMPONENTS
 #-----------------------------------------------------------------------------
+if (Slicer_VTK_VERSION_MAJOR VERSION_LESS "9")
+  set(VTK_COMPONENT_PREFIX "vtk")
+  set(VTK_TARGET_PREFIX "vtk")
+else()
+  set(VTK_COMPONENT_PREFIX "")
+  set(VTK_TARGET_PREFIX "VTK::")
+endif()
 set(Slicer_VTK_COMPONENTS
-  vtkFiltersExtraction
-  vtkFiltersFlowPaths
-  vtkFiltersGeometry
-  vtkGUISupportQtOpenGL
-  vtkGUISupportQtSQL
-  vtkIOExport
-  vtkIOImage
-  vtkIOLegacy
-  vtkIOPLY
-  vtkIOXML
-  vtkImagingMath
-  vtkImagingMorphological
-  vtkImagingStatistics
-  vtkImagingStencil
-  vtkInteractionImage
-  vtkRenderingContext${Slicer_VTK_RENDERING_BACKEND}
-  vtkRenderingQt
-  vtkRenderingVolume${Slicer_VTK_RENDERING_BACKEND}
-  vtkTestingRendering
-  vtkViewsQt
-  vtkzlib
+  ${VTK_COMPONENT_PREFIX}FiltersExtraction
+  ${VTK_COMPONENT_PREFIX}FiltersFlowPaths
+  ${VTK_COMPONENT_PREFIX}FiltersGeometry
+  ${VTK_COMPONENT_PREFIX}FiltersParallel
+  ${VTK_COMPONENT_PREFIX}GUISupportQtSQL
+  ${VTK_COMPONENT_PREFIX}IOExport
+  ${VTK_COMPONENT_PREFIX}IOImage
+  ${VTK_COMPONENT_PREFIX}IOLegacy
+  ${VTK_COMPONENT_PREFIX}IOPLY
+  ${VTK_COMPONENT_PREFIX}IOXML
+  ${VTK_COMPONENT_PREFIX}ImagingMath
+  ${VTK_COMPONENT_PREFIX}ImagingMorphological
+  ${VTK_COMPONENT_PREFIX}ImagingStatistics
+  ${VTK_COMPONENT_PREFIX}ImagingStencil
+  ${VTK_COMPONENT_PREFIX}InteractionImage
+  ${VTK_COMPONENT_PREFIX}RenderingContext${Slicer_VTK_RENDERING_BACKEND}
+  ${VTK_COMPONENT_PREFIX}RenderingQt
+  ${VTK_COMPONENT_PREFIX}RenderingVolume${Slicer_VTK_RENDERING_BACKEND}
+  ${VTK_COMPONENT_PREFIX}TestingRendering
+  ${VTK_COMPONENT_PREFIX}ViewsQt
+  ${VTK_COMPONENT_PREFIX}zlib
   )
-if(Slicer_USE_PYTHONQT)
+if (Slicer_VTK_VERSION_MAJOR VERSION_LESS "9")
   list(APPEND Slicer_VTK_COMPONENTS
-    vtkWrappingPythonCore
+    ${VTK_COMPONENT_PREFIX}GUISupportQtOpenGL
     )
 endif()
-if(UNIX AND NOT APPLE)
+
+if(Slicer_USE_PYTHONQT)
+  list(APPEND Slicer_VTK_COMPONENTS
+    ${VTK_COMPONENT_PREFIX}WrappingPythonCore
+    )
+endif()
+if(UNIX AND NOT APPLE AND Slicer_VTK_VERSION_MAJOR VERSION_LESS "9")
   find_package(FontConfig QUIET)
   if(FONTCONFIG_FOUND)
     list(APPEND Slicer_VTK_COMPONENTS
-      vtkRenderingFreeTypeFontConfig
+      ${VTK_COMPONENT_PREFIX}RenderingFreeTypeFontConfig
       )
     if(TARGET vtkRenderingFreeTypeOpenGL)
-      list(APPEND VTK_LIBRARIES vtkRenderingFreeTypeOpenGL)
+      list(APPEND VTK_LIBRARIES ${VTK_TARGET_PREFIX}RenderingFreeTypeOpenGL)
     endif()
   endif()
 endif()
@@ -797,13 +805,22 @@ endif()
 #-----------------------------------------------------------------------------
 # VTK
 #-----------------------------------------------------------------------------
-find_package(VTK ${Slicer_VTK_VERSION_MAJOR} COMPONENTS ${Slicer_VTK_COMPONENTS} REQUIRED NO_MODULE)
-if(NOT TARGET vtkGUISupportQt)
+find_package(VTK REQUIRED)
+if (VTK_VERSION VERSION_LESS "8.90")
+  find_package(VTK ${Slicer_VTK_VERSION_MAJOR} COMPONENTS ${Slicer_VTK_COMPONENTS} REQUIRED NO_MODULE)
+  include(${VTK_USE_FILE})
+  set(VTK_GUI_SUPPORT_QT_TARGET_NAME "vtkGUISupportQt")
+else()
+  set(VTK_LIBRARIES "")
+  find_package(VTK ${Slicer_VTK_VERSION_MAJOR} COMPONENTS ${Slicer_VTK_COMPONENTS} REQUIRED)
+  set(VTK_GUI_SUPPORT_QT_TARGET_NAME "VTK::GUISupportQt")
+endif ()
+
+if(NOT TARGET ${VTK_GUI_SUPPORT_QT_TARGET_NAME})
   message(FATAL_ERROR "error: VTK was not configured to use Qt, you probably need "
                     "to recompile it with VTK_USE_GUISUPPORT ON, VTK_Group_Qt ON, "
                     "Note that Qt >= ${Slicer_REQUIRED_QT_VERSION} is *required*")
 endif()
-include(${VTK_USE_FILE})
 set(VTK_RENDERING_BACKEND "${Slicer_VTK_RENDERING_BACKEND}")
 
 #-----------------------------------------------------------------------------

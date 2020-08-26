@@ -52,6 +52,7 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
+#include <vtkVersionMacros.h>
 
 //--------------------------------------------------------------------------
 // qMRMLThreeDViewPrivate methods
@@ -546,35 +547,41 @@ vtkMRMLAbstractDisplayableManager* qMRMLThreeDView::displayableManagerByClassNam
 void qMRMLThreeDView::setViewCursor(const QCursor &cursor)
 {
   this->setCursor(cursor);
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   if (this->VTKWidget() != nullptr)
-   {
-    this->VTKWidget()->setQVTKCursor(cursor);
-    }
+    {
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION > 2)
+    this->VTKWidget()->setCursor(cursor);  // TODO: test if cursor settings works
+#elif (VTK_MAJOR_VERSION == 8 && VTK_MINOR_VERSION == 2)
+    this->VTKWidget()->setQVTKCursor(cursor);  // TODO: test if cursor settings works
 #endif
+    }
 }
 
 // --------------------------------------------------------------------------
 void qMRMLThreeDView::unsetViewCursor()
 {
   this->unsetCursor();
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   if (this->VTKWidget() != nullptr)
     {
     // TODO: it would be better to restore default cursor, but QVTKOpenGLNativeWidget
     // API does not have an accessor method to the default cursor.
-    this->VTKWidget()->setQVTKCursor(QCursor(Qt::ArrowCursor));
-    }
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION > 2)
+    this->VTKWidget()->setCursor(QCursor(Qt::ArrowCursor));  // TODO: test if cursor settings works
+#elif (VTK_MAJOR_VERSION == 8 && VTK_MINOR_VERSION == 2)
+    this->VTKWidget()->setQVTKCursor(QCursor(Qt::ArrowCursor));  // TODO: test if cursor settings works
 #endif
+    }
 }
 
 // --------------------------------------------------------------------------
 void qMRMLThreeDView::setDefaultViewCursor(const QCursor &cursor)
 {
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   if (this->VTKWidget() != nullptr)
     {
-    this->VTKWidget()->setDefaultQVTKCursor(cursor);
-    }
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION > 2)
+    this->VTKWidget()->setDefaultCursor(cursor);  // TODO: test if cursor settings works
+#elif (VTK_MAJOR_VERSION == 8 && VTK_MINOR_VERSION == 2)
+    this->VTKWidget()->setDefaultQVTKCursor(cursor);  // TODO: test if cursor settings works
 #endif
+    }
 }

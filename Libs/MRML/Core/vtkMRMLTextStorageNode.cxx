@@ -138,7 +138,7 @@ int vtkMRMLTextStorageNode::WriteDataInternal(vtkMRMLNode * refNode)
       }
     }
 
-  ofstream file;
+  std::ofstream file;
   file.open(fullName);
   file << textNode->GetText();
   this->StageWriteData(refNode);

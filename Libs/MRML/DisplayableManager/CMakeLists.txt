@@ -168,7 +168,7 @@ set(libs
 
 if(MRMLDisplayableManager_USE_PYTHON)
   set(VTK_COMMON_PYTHON_LIBRARY
-    vtkWrappingPythonCore # For vtkPythonUtil
+    ${VTK_TARGET_PREFIX}WrappingPythonCore # For vtkPythonUtil
     )
   list(APPEND libs
     ${VTK_COMMON_PYTHON_LIBRARY} # For vtkPythonUtils
@@ -230,19 +230,32 @@ install(TARGETS ${lib_name}
 if(MRMLDisplayableManager_USE_PYTHON)
   include(vtkMacroKitPythonWrap)
 
+  set(_python_wrapped_libraries)
+
+  if(${VTK_VERSION} VERSION_LESS "8.90")
+    list(APPEND _python_wrapped_libraries
+      MRMLLogicPythonD
+      )
+  endif()
+
   vtkMacroKitPythonWrap(
     KIT_NAME ${lib_name}
     KIT_SRCS ${KIT_SRCS}
-    KIT_PYTHON_LIBRARIES MRMLLogicPythonD
+    KIT_PYTHON_LIBRARIES ${_python_wrapped_libraries}
     KIT_INSTALL_BIN_DIR ${${PROJECT_NAME}_INSTALL_BIN_DIR}
     KIT_INSTALL_LIB_DIR ${${PROJECT_NAME}_INSTALL_LIB_DIR}
     )
   # Export target
-  export(TARGETS ${lib_name}Python ${lib_name}PythonD APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
+  export(TARGETS ${lib_name}Python APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
+  if(${VTK_VERSION} VERSION_LESS "8.90")
+    export(TARGETS ${lib_name}PythonD APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
+  endif()
   # Folder
   if(NOT "${${PROJECT_NAME}_FOLDER}" STREQUAL "")
     set_target_properties(${lib_name}Python PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
-    set_target_properties(${lib_name}PythonD PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+    if(${VTK_VERSION} VERSION_LESS "8.90")
+      set_target_properties(${lib_name}PythonD PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+    endif()
     if(TARGET ${lib_name}Hierarchy)
       set_target_properties(${lib_name}Hierarchy PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
     endif()

@@ -4,7 +4,15 @@ include(${Slicer_CMAKE_DIR}/SlicerCheckModuleEnabled.cmake)  # For slicer_is_loa
 # Install VTK
 # -------------------------------------------------------------------------
 if(NOT "${VTK_DIR}" STREQUAL "" AND EXISTS "${VTK_DIR}/CMakeCache.txt")
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${VTK_DIR};VTK;RuntimeLibraries;/")
+  if(${VTK_VERSION} VERSION_GREATER_EQUAL "8.90")
+    set(_runtime_component "runtime")
+  else()
+    set(_runtime_component "RuntimeLibraries")
+  endif()
+  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${VTK_DIR};VTK;${_runtime_component};/")
+  if(${VTK_VERSION} VERSION_GREATER_EQUAL "8.90" AND Slicer_USE_PYTHONQT)
+    set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${VTK_DIR};VTK;python;/")
+  endif()
 endif()
 
 # -------------------------------------------------------------------------

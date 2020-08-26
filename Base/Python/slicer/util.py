@@ -155,7 +155,7 @@ def importModuleObjects(from_module_name, dest_module_name, type_info):
   dest_module = sys.modules[dest_module_name]
 
   # Skip if module has already been loaded
-  if from_module_name in sys.modules:
+  if from_module_name in dir(dest_module):
     return
 
   # Obtain a reference to the module identified by 'from_module_name'

@@ -498,11 +498,8 @@ set(MRMLWidgets_LIBRARIES
   ${CTK_LIBRARIES}
   MRMLLogic
   MRMLDisplayableManager
+  ${VTK_TARGET_PREFIX}RenderingQt
   )
-list(APPEND MRMLWidgets_LIBRARIES
-  vtkRenderingQt
-  )
-
 
 target_link_libraries(${lib_name} ${MRMLWidgets_LIBRARIES})
 

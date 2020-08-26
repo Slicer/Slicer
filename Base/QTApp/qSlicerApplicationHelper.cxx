@@ -64,6 +64,10 @@
 // VTK includes
 #include <vtksys/SystemTools.hxx>
 #include <vtkNew.h>
+#include <vtkVersionMacros.h>
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+#include <vtkLogger.h>
+#endif
 
 // PythonQt includes
 #ifdef Slicer_USE_PYTHONQT
@@ -87,6 +91,9 @@ qSlicerApplicationHelper::~qSlicerApplicationHelper() = default;
 void qSlicerApplicationHelper::preInitializeApplication(
     const char* argv0, ctkProxyStyle* style)
 {
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  vtkLogger::SetStderrVerbosity(vtkLogger::VERBOSITY_OFF);
+#endif
   itk::itkFactoryRegistration();
   qMRMLWidget::preInitializeApplication();
 
