@@ -1777,6 +1777,11 @@ void vtkMRMLSubjectHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyNode::PrintItem(vtkIdType itemID, ostream& os, vtkIndent indent)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("PrintItem: Invalid item ID given");
+    return;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2009,6 +2014,11 @@ vtkIdType vtkMRMLSubjectHierarchyNode::GetSceneItemID()
 //----------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyNode::SetItemDataNode(vtkIdType itemID, vtkMRMLNode* dataNode)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("SetItemDataNode: Invalid item ID given");
+    return;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2035,6 +2045,11 @@ void vtkMRMLSubjectHierarchyNode::SetItemDataNode(vtkIdType itemID, vtkMRMLNode*
 //----------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLSubjectHierarchyNode::GetItemDataNode(vtkIdType itemID)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("GetItemDataNode: Invalid item ID given");
+    return nullptr;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2048,6 +2063,11 @@ vtkMRMLNode* vtkMRMLSubjectHierarchyNode::GetItemDataNode(vtkIdType itemID)
 //----------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyNode::SetItemName(vtkIdType itemID, std::string name)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("SetItemName: Invalid item ID given");
+    return;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2086,6 +2106,11 @@ void vtkMRMLSubjectHierarchyNode::SetItemName(vtkIdType itemID, std::string name
 //----------------------------------------------------------------------------
 std::string vtkMRMLSubjectHierarchyNode::GetItemName(vtkIdType itemID)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("GetItemName: Invalid item ID given");
+    return std::string();
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2099,6 +2124,11 @@ std::string vtkMRMLSubjectHierarchyNode::GetItemName(vtkIdType itemID)
 //----------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyNode::SetItemLevel(vtkIdType itemID, std::string level)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("SetItemLevel: Invalid item ID given");
+    return;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2115,6 +2145,11 @@ void vtkMRMLSubjectHierarchyNode::SetItemLevel(vtkIdType itemID, std::string lev
 //----------------------------------------------------------------------------
 std::string vtkMRMLSubjectHierarchyNode::GetItemLevel(vtkIdType itemID)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("GetItemLevel: Invalid item ID given");
+    return std::string();
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2128,6 +2163,11 @@ std::string vtkMRMLSubjectHierarchyNode::GetItemLevel(vtkIdType itemID)
 //----------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyNode::SetItemOwnerPluginName(vtkIdType itemID, std::string ownerPluginName)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("SetItemOwnerPluginName: Invalid item ID given");
+    return;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2145,6 +2185,11 @@ void vtkMRMLSubjectHierarchyNode::SetItemOwnerPluginName(vtkIdType itemID, std::
 //----------------------------------------------------------------------------
 std::string vtkMRMLSubjectHierarchyNode::GetItemOwnerPluginName(vtkIdType itemID)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("GetItemOwnerPluginName: Invalid item ID given");
+    return std::string();
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2158,6 +2203,11 @@ std::string vtkMRMLSubjectHierarchyNode::GetItemOwnerPluginName(vtkIdType itemID
 //----------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyNode::SetItemExpanded(vtkIdType itemID, bool expanded)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("SetItemExpanded: Invalid item ID given");
+    return;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2175,6 +2225,11 @@ void vtkMRMLSubjectHierarchyNode::SetItemExpanded(vtkIdType itemID, bool expande
 //----------------------------------------------------------------------------
 bool vtkMRMLSubjectHierarchyNode::GetItemExpanded(vtkIdType itemID)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("GetItemExpanded: Invalid item ID given");
+    return false;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2188,11 +2243,16 @@ bool vtkMRMLSubjectHierarchyNode::GetItemExpanded(vtkIdType itemID)
 //----------------------------------------------------------------------------
 int vtkMRMLSubjectHierarchyNode::GetItemPositionUnderParent(vtkIdType itemID)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("GetItemPositionUnderParent: Invalid item ID given");
+    return -1;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
     vtkErrorMacro("GetItemPositionUnderParent: Failed to find subject hierarchy item by ID " << itemID);
-    return false;
+    return -1;
     }
   return item->GetPositionUnderParent();
 }
@@ -2200,11 +2260,16 @@ int vtkMRMLSubjectHierarchyNode::GetItemPositionUnderParent(vtkIdType itemID)
 //----------------------------------------------------------------------------
 vtkIdType vtkMRMLSubjectHierarchyNode::GetItemByPositionUnderParent(vtkIdType parentItemID, int position)
 {
+  if (!parentItemID)
+    {
+    vtkWarningMacro("GetItemPositionUnderParent: Invalid item ID given");
+    return INVALID_ITEM_ID;
+    }
   vtkSubjectHierarchyItem* parentItem = this->Internal->FindItemByID(parentItemID);
   if (!parentItem)
     {
     vtkErrorMacro("GetItemByPositionUnderParent: Failed to find subject hierarchy item by ID " << parentItemID);
-    return false;
+    return INVALID_ITEM_ID;
     }
   return parentItem->GetChildByPositionUnderParent(position);
 }
@@ -2212,6 +2277,11 @@ vtkIdType vtkMRMLSubjectHierarchyNode::GetItemByPositionUnderParent(vtkIdType pa
 //----------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyNode::SetItemUID(vtkIdType itemID, std::string uidName, std::string uidValue)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("SetItemUID: Invalid item ID given");
+    return;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2225,6 +2295,11 @@ void vtkMRMLSubjectHierarchyNode::SetItemUID(vtkIdType itemID, std::string uidNa
 //----------------------------------------------------------------------------
 std::string vtkMRMLSubjectHierarchyNode::GetItemUID(vtkIdType itemID, std::string uidName)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("GetItemUID: Invalid item ID given");
+    return std::string();
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2239,6 +2314,11 @@ std::string vtkMRMLSubjectHierarchyNode::GetItemUID(vtkIdType itemID, std::strin
 //----------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyNode::SetItemAttribute(vtkIdType itemID, std::string attributeName, std::string attributeValue)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("SetItemAttribute: Invalid item ID given");
+    return;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2252,6 +2332,11 @@ void vtkMRMLSubjectHierarchyNode::SetItemAttribute(vtkIdType itemID, std::string
 //---------------------------------------------------------------------------
 bool vtkMRMLSubjectHierarchyNode::RemoveItemAttribute(vtkIdType itemID, std::string attributeName)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("RemoveItemAttribute: Invalid item ID given");
+    return false;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2266,6 +2351,11 @@ bool vtkMRMLSubjectHierarchyNode::RemoveItemAttribute(vtkIdType itemID, std::str
 //----------------------------------------------------------------------------
 std::string vtkMRMLSubjectHierarchyNode::GetItemAttribute(vtkIdType itemID, std::string attributeName)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("GetItemAttribute: Invalid item ID given");
+    return std::string();
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2279,6 +2369,11 @@ std::string vtkMRMLSubjectHierarchyNode::GetItemAttribute(vtkIdType itemID, std:
 //---------------------------------------------------------------------------
 std::vector<std::string> vtkMRMLSubjectHierarchyNode::GetItemAttributeNames(vtkIdType itemID)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("GetItemAttributeNames: Invalid item ID given");
+    return std::vector<std::string>();
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2292,6 +2387,11 @@ std::vector<std::string> vtkMRMLSubjectHierarchyNode::GetItemAttributeNames(vtkI
 //---------------------------------------------------------------------------
 bool vtkMRMLSubjectHierarchyNode::HasItemAttribute(vtkIdType itemID, std::string attributeName)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("HasItemAttribute: Invalid item ID given");
+    return false;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2305,6 +2405,13 @@ bool vtkMRMLSubjectHierarchyNode::HasItemAttribute(vtkIdType itemID, std::string
 //---------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyNode::ItemModified(vtkIdType itemID)
 {
+  // Do not propagate event on invalid item ID
+  if (!itemID)
+    {
+    vtkErrorMacro("ItemModified: Invalid item ID given");
+    return;
+    }
+
   // Not used, but we need to make sure that the item exists
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
@@ -2320,6 +2427,13 @@ void vtkMRMLSubjectHierarchyNode::ItemModified(vtkIdType itemID)
 //---------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyNode::RequestOwnerPluginSearch(vtkIdType itemID)
 {
+  // Do not propagate event on invalid item ID
+  if (!itemID)
+    {
+    vtkErrorMacro("RequestOwnerPluginSearch: Invalid item ID given");
+    return;
+    }
+
   // Not used, but we need to make sure that the item exists
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
@@ -2459,6 +2573,11 @@ vtkIdType vtkMRMLSubjectHierarchyNode::CreateFolderItem(vtkIdType parentItemID, 
 //----------------------------------------------------------------------------
 bool vtkMRMLSubjectHierarchyNode::RemoveItem(vtkIdType itemID, bool removeDataNode/*=true*/, bool recursive/*=true*/)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("RemoveItem: Invalid item ID given");
+    return false;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2546,6 +2665,11 @@ bool vtkMRMLSubjectHierarchyNode::RemoveItem(vtkIdType itemID, bool removeDataNo
 //----------------------------------------------------------------------------
 bool vtkMRMLSubjectHierarchyNode::RemoveItemChildren(vtkIdType itemID, bool removeDataNodes/*=true*/, bool recursive/*=true*/)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("RemoveItemChildren: Invalid item ID given");
+    return false;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2578,6 +2702,16 @@ void vtkMRMLSubjectHierarchyNode::RemoveAllItems(bool removeDataNode/*=false*/)
 //----------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyNode::SetItemParent(vtkIdType itemID, vtkIdType parentItemID, bool enableCircularCheck/*=true*/)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("SetItemParent: Invalid item ID given");
+    return;
+    }
+  if (!parentItemID)
+    {
+    vtkWarningMacro("SetItemParent: Invalid parent item ID given");
+    return;
+    }
   if (itemID == parentItemID)
     {
     vtkErrorMacro("SetItemParent: Cannot set an item as its own parent: " << itemID);
@@ -2624,6 +2758,11 @@ void vtkMRMLSubjectHierarchyNode::SetItemParent(vtkIdType itemID, vtkIdType pare
 //----------------------------------------------------------------------------
 vtkIdType vtkMRMLSubjectHierarchyNode::GetItemParent(vtkIdType itemID)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("GetItemParent: Invalid item ID given");
+    return INVALID_ITEM_ID;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2643,6 +2782,11 @@ void vtkMRMLSubjectHierarchyNode::GetItemChildren(vtkIdType itemID, std::vector<
 {
   childIDs.clear();
 
+  if (!itemID)
+    {
+    vtkWarningMacro("GetItemChildren: Invalid item ID given");
+    return;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2819,6 +2963,11 @@ void vtkMRMLSubjectHierarchyNode::GetItemsByName(std::string name, vtkIdList* fo
 //---------------------------------------------------------------------------
 vtkIdType vtkMRMLSubjectHierarchyNode::GetItemChildWithName(vtkIdType parentItemID, std::string name, bool recursive/*=false*/)
 {
+  if (!parentItemID)
+    {
+    vtkWarningMacro("GetItemChildWithName: Invalid parent item ID given");
+    return INVALID_ITEM_ID;
+    }
   vtkSubjectHierarchyItem* parentItem = this->Internal->FindItemByID(parentItemID);
   if (!parentItem)
     {
@@ -2845,6 +2994,11 @@ vtkIdType vtkMRMLSubjectHierarchyNode::GetItemChildWithName(vtkIdType parentItem
 //---------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyNode::GetDataNodesInBranch(vtkIdType itemID, vtkCollection* dataNodeCollection, const char* childClass/*=nullptr*/)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("GetDataNodesInBranch: Invalid item ID given");
+    return;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2967,6 +3121,11 @@ vtkMRMLDisplayNode* vtkMRMLSubjectHierarchyNode::GetDisplayNodeForItem(vtkIdType
 //---------------------------------------------------------------------------
 bool vtkMRMLSubjectHierarchyNode::IsItemLevel(vtkIdType itemID, std::string level)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("IsItemLevel: Invalid item ID given");
+    return false;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -2980,6 +3139,11 @@ bool vtkMRMLSubjectHierarchyNode::IsItemLevel(vtkIdType itemID, std::string leve
 //---------------------------------------------------------------------------
 bool vtkMRMLSubjectHierarchyNode::IsItemVirtualBranchParent(vtkIdType itemID)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("IsItemVirtualBranchParent: Invalid item ID given");
+    return false;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -3308,6 +3472,11 @@ int vtkMRMLSubjectHierarchyNode::GetNumberOfItems()
 //---------------------------------------------------------------------------
 int vtkMRMLSubjectHierarchyNode::GetNumberOfItemChildren(vtkIdType itemID, bool recursive/*=false*/)
 {
+  if (!itemID)
+    {
+    vtkWarningMacro("GetNumberOfItemChildren: Invalid item ID given");
+    return -1;
+    }
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
     {
@@ -3422,6 +3591,6 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNod
     vtkGenericWarningMacro("vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode: Invalid scene given");
     return nullptr;
     }
-  return scene->GetSubjectHierarchyNode();
 
+  return scene->GetSubjectHierarchyNode();
 }
