@@ -394,6 +394,32 @@ if(WIN32)
   ExternalProject_Message(${proj} "PYTHON_DEBUG_LIBRARY:${PYTHON_DEBUG_LIBRARY}")
 endif()
 
+# Variable expected by FindPython3 CMake module
+set(Python3_ROOT_DIR ${python_DIR})
+set(Python3_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
+set(Python3_LIBRARY ${PYTHON_LIBRARY})
+set(Python3_LIBRARY_DEBUG ${PYTHON_LIBRARY})
+set(Python3_LIBRARY_RELEASE ${PYTHON_LIBRARY})
+set(Python3_EXECUTABLE ${PYTHON_EXECUTABLE})
+
+mark_as_superbuild(
+  VARS
+    Python3_ROOT_DIR:PATH
+    Python3_INCLUDE_DIR:PATH
+    Python3_LIBRARY:FILEPATH
+    Python3_LIBRARY_DEBUG:FILEPATH
+    Python3_LIBRARY_RELEASE:FILEPATH
+    Python3_EXECUTABLE:FILEPATH
+  LABELS "FIND_PACKAGE"
+  )
+
+ExternalProject_Message(${proj} "Python3_ROOT_DIR:${Python3_ROOT_DIR}")
+ExternalProject_Message(${proj} "Python3_INCLUDE_DIR:${Python3_INCLUDE_DIR}")
+ExternalProject_Message(${proj} "Python3_LIBRARY:${Python3_LIBRARY}")
+ExternalProject_Message(${proj} "Python3_LIBRARY_DEBUG:${Python3_LIBRARY_DEBUG}")
+ExternalProject_Message(${proj} "Python3_LIBRARY_RELEASE:${Python3_LIBRARY_RELEASE}")
+ExternalProject_Message(${proj} "Python3_EXECUTABLE:${Python3_EXECUTABLE}")
+
 #!
 #! ExternalProject_PythonModule_InstallTreeCleanup(<proj> <modname> "[<dirname1>;[<dirname2>;[...]]]"))
 #!

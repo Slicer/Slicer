@@ -202,7 +202,7 @@ endmacro()
 
 Slicer_Remote_Add(vtkAddon
   GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/vtkAddon"
-  GIT_TAG a64d854cd826fb90b2aeb88907e948b3639f517f
+  GIT_TAG 5df87dee75c049320943f445200b4cbe7309f811
   OPTION_NAME Slicer_BUILD_vtkAddon
   )
 list_conditional_append(Slicer_BUILD_vtkAddon Slicer_REMOTE_DEPENDENCIES vtkAddon)
@@ -354,7 +354,7 @@ list_conditional_append(Slicer_BUILD_LandmarkRegistration Slicer_REMOTE_DEPENDEN
 
 Slicer_Remote_Add(SurfaceToolbox
   GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/SlicerSurfaceToolbox"
-  GIT_TAG 28b2567f8c155d4665ae5c684c5d8ad9e7961934
+  GIT_TAG 501a0c7c5754d90c1ad7f2341e5bc250c923e66d
   OPTION_NAME Slicer_BUILD_SurfaceToolbox
   OPTION_DEPENDS "Slicer_USE_PYTHONQT"
   LABELS REMOTE_MODULE

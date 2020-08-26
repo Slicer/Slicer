@@ -32,6 +32,20 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
+  set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
+
+  if(Slicer_VTK_VERSION_MAJOR STREQUAL "9" AND Slicer_USE_PYTHONQT)
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+      # Required by FindPython3 CMake module used by VTK
+      -DPython3_ROOT_DIR:PATH=${Python3_ROOT_DIR}
+      -DPython3_INCLUDE_DIR:PATH=${Python3_INCLUDE_DIR}
+      -DPython3_LIBRARY:FILEPATH=${Python3_LIBRARY}
+      -DPython3_LIBRARY_DEBUG:FILEPATH=${Python3_LIBRARY_DEBUG}
+      -DPython3_LIBRARY_RELEASE:FILEPATH=${Python3_LIBRARY_RELEASE}
+      -DPython3_EXECUTABLE:FILEPATH=${Python3_EXECUTABLE}
+      )
+  endif()
+
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${Slicer_${proj}_GIT_REPOSITORY}"
@@ -51,6 +65,7 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DJsonCpp_INCLUDE_DIR:PATH=${JsonCpp_INCLUDE_DIR}
       -DJsonCpp_LIBRARY:PATH=${JsonCpp_LIBRARY}
       -DITK_DIR:PATH=${ITK_DIR}
+      ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS}
     INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}

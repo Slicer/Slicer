@@ -127,17 +127,31 @@ endif()
 if(VTK_WRAP_PYTHON)
   include(vtkMacroKitPythonWrap)
 
+  set(_python_wrapped_libraries
+    )
+
+  if(${VTK_VERSION} VERSION_LESS "8.90")
+    list(APPEND _python_wrapped_libraries
+      SlicerBaseLogicPythonD
+      )
+  endif()
+
   vtkMacroKitPythonWrap(
     KIT_NAME ${PROJECT_NAME}
     KIT_SRCS ${KIT_VTK_SRCS}
     KIT_INSTALL_BIN_DIR ${Slicer_INSTALL_BIN_DIR}
     KIT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR}
-    KIT_PYTHON_LIBRARIES SlicerBaseLogicPythonD
+    KIT_PYTHON_LIBRARIES ${_python_wrapped_libraries}
     )
-  set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${PROJECT_NAME}Python ${PROJECT_NAME}PythonD)
+  set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${PROJECT_NAME}Python)
+  if(${VTK_VERSION} VERSION_LESS "8.90")
+    set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${PROJECT_NAME}PythonD)
+  endif()
   # Folder
   set_target_properties(${PROJECT_NAME}Python PROPERTIES FOLDER "Core-Base")
-  set_target_properties(${PROJECT_NAME}PythonD PROPERTIES FOLDER "Core-Base")
+  if(${VTK_VERSION} VERSION_LESS "8.90")
+    set_target_properties(${PROJECT_NAME}PythonD PROPERTIES FOLDER "Core-Base")
+  endif()
   if(TARGET ${PROJECT_NAME}Hierarchy)
     set_target_properties(${PROJECT_NAME}Hierarchy PROPERTIES FOLDER "Core-Base")
   endif()

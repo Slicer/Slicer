@@ -1184,7 +1184,7 @@ void vtkSlicerMarkupsWidget::RotateWidget(double eventPos[2])
     double intersection_World[3] = { 0.0 };
     if (!this->GetIntersectionOnAxisPlane(vtkMRMLMarkupsDisplayNode::ComponentRotationHandle, index, eventPos_Display, intersection_World))
       {
-      vtkWarningMacro("RotateWidget: Could not calculate intended orientation")
+      vtkWarningMacro("RotateWidget: Could not calculate intended orientation");
       return;
       }
 

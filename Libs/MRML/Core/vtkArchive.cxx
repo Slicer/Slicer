@@ -530,7 +530,7 @@ bool vtkArchive::UnZip(const char* zipFileName, const char* destinationDirectory
     return false;
     }
 
-  std::string cwd = vtksys::SystemTools::GetCurrentWorkingDirectory(true);
+  std::string cwd = vtksys::SystemTools::GetCurrentWorkingDirectory();
 
   if ( vtksys::SystemTools::ChangeDirectory(destinationDirectory) )
     {
