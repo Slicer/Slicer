@@ -49,19 +49,19 @@
     background-color:#3D72BC;
 }
 .wy-menu-vertical li.current a:hover{
-    background:#E5F2EB;
+    background:#fdfffe;
 }
 .wy-menu-vertical li.current {
     background:#f2f9f5;
 }
 .wy-menu-vertical li.toctree-l2.current>a, .wy-menu-vertical li.toctree-l2.current li.toctree-l3>a {
-    background:#E1F0E8;
+    background:#e9f6ef;
 }
 .wy-menu-vertical li.toctree-l2.current>a:hover, .wy-menu-vertical li.toctree-l2.current li.toctree-l3>a:hover {
     background:#f6fffa;
 }
 .wy-menu-vertical li.toctree-l3.current>a, .wy-menu-vertical li.toctree-l3.current li.toctree-l4>a {
-    background: #D4ECDE;
+    background: #e1f3e8;
 }
 .wy-menu-vertical li.toctree-l3.current>a:hover, .wy-menu-vertical li.toctree-l3.current li.toctree-l4>a:hover {
     background: #f3fff7;
