@@ -373,6 +373,19 @@ public:
   vtkMRMLProceduralColorNode* GetLineColorNode();
   virtual const char* GetLineColorNodeReferenceRole();
 
+  /// Displays the occluded regions of the markup on top of other objects.
+  /// Opacity can be adjusted with OccludedOpacity
+  /// \sa SetOccludedOpacity, GetOccludedOpacity
+  vtkGetMacro(OccludedVisibility, bool);
+  vtkSetMacro(OccludedVisibility, bool);
+  vtkBooleanMacro(OccludedVisibility, bool);
+
+  /// Opacity of the occluded parts of the markup.
+  /// 0.0 results in the markup being fully transparent, while 1.0 is fully opaque.
+  /// \sa SetOccludedVisibility, GetOccludedVisibility
+  vtkGetMacro(OccludedOpacity, double);
+  vtkSetMacro(OccludedOpacity, double);
+
   /// The visibility and interactability of the interaction handles
   vtkGetMacro(HandlesInteractive, bool);
   vtkSetMacro(HandlesInteractive, bool);
@@ -421,6 +434,9 @@ protected:
   double LineColorFadingEnd;
   double LineColorFadingSaturation;
   double LineColorFadingHueOffset;
+
+  bool OccludedVisibility;
+  double OccludedOpacity;
 
   bool HandlesInteractive;
 };

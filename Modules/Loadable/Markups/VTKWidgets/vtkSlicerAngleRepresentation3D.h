@@ -87,6 +87,12 @@ protected:
   vtkSmartPointer<vtkTubeFilter>              TubeFilter;
   vtkSmartPointer<vtkTubeFilter>              ArcTubeFilter;
 
+  vtkSmartPointer<vtkPolyDataMapper>    LineOccludedMapper;
+  vtkSmartPointer<vtkActor>             LineOccludedActor;
+
+  vtkSmartPointer<vtkPolyDataMapper>    ArcOccludedMapper;
+  vtkSmartPointer<vtkActor>             ArcOccludedActor;
+
   void BuildArc();
 
   // Update visibility of interaction handles for representation

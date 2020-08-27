@@ -91,6 +91,8 @@ public slots:
   void setOutlineVisibility(bool visibility);
   void onFillOpacitySliderWidgetChanged(double opacity);
   void onOutlineOpacitySliderWidgetChanged(double opacity);
+  void setOccludedVisibility(bool visibility);
+  void setOccludedOpacity(double OccludedOpacity);
 
 protected slots:
   void updateWidgetFromMRML();

@@ -102,6 +102,9 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->LineColorFadingSaturation = 1.;
   this->LineColorFadingHueOffset = 0.;
 
+  this->OccludedVisibility = false;
+  this->OccludedOpacity = 0.3;
+
   this->HandlesInteractive = false;
 
   // Line color node
@@ -147,6 +150,8 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(outlineVisibility, OutlineVisibility);
   vtkMRMLWriteXMLFloatMacro(fillOpacity, FillOpacity);
   vtkMRMLWriteXMLFloatMacro(outlineOpacity, OutlineOpacity);
+  vtkMRMLWriteXMLBooleanMacro(occludedVisibility, OccludedVisibility);
+  vtkMRMLWriteXMLFloatMacro(occludedOpacity, OccludedOpacity);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -183,6 +188,8 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(outlineVisibility, OutlineVisibility);
   vtkMRMLReadXMLFloatMacro(fillOpacity, FillOpacity);
   vtkMRMLReadXMLFloatMacro(outlineOpacity, OutlineOpacity);
+  vtkMRMLReadXMLBooleanMacro(occludedVisibility, OccludedVisibility);
+  vtkMRMLReadXMLFloatMacro(occludedOpacity, OccludedOpacity);
   vtkMRMLReadXMLEndMacro();
 
   // Fix up legacy markups fiducial nodes
@@ -247,6 +254,8 @@ void vtkMRMLMarkupsDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
   vtkMRMLCopyBooleanMacro(OutlineVisibility);
   vtkMRMLCopyFloatMacro(FillOpacity);
   vtkMRMLCopyFloatMacro(OutlineOpacity);
+  vtkMRMLCopyBooleanMacro(OccludedVisibility);
+  vtkMRMLCopyFloatMacro(OccludedOpacity);
   vtkMRMLCopyEndMacro();
 }
 
@@ -425,6 +434,8 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBooleanMacro(OutlineVisibility);
   vtkMRMLPrintFloatMacro(FillOpacity);
   vtkMRMLPrintFloatMacro(OutlineOpacity);
+  vtkMRMLPrintBooleanMacro(OccludedVisibility);
+  vtkMRMLPrintFloatMacro(OccludedOpacity);
   vtkMRMLPrintEndMacro();
 }
 

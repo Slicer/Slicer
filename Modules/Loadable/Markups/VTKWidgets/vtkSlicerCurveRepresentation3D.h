@@ -84,6 +84,9 @@ protected:
   vtkSmartPointer<vtkPolyDataMapper> LineMapper;
   vtkSmartPointer<vtkActor> LineActor;
 
+  vtkSmartPointer<vtkPolyDataMapper> LineOccludedMapper;
+  vtkSmartPointer<vtkActor> LineOccludedActor;
+
   vtkSmartPointer<vtkTubeFilter> TubeFilter;
 
   vtkSmartPointer<vtkCellLocator> CurvePointLocator;

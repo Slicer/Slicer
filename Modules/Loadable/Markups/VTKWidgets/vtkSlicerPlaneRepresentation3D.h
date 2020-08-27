@@ -100,6 +100,9 @@ protected:
   vtkNew<vtkPolyDataMapper>  PlaneMapper;
   vtkNew<vtkActor>           PlaneActor;
 
+  vtkNew<vtkPolyDataMapper>  PlaneOccludedMapper;
+  vtkNew<vtkActor>           PlaneOccludedActor;
+
   vtkNew<vtkLookupTable>    PlaneColorLUT;
 
   std::string LabelFormat;

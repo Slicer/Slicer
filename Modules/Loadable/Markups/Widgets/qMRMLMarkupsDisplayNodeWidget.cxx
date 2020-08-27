@@ -112,7 +112,11 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   QObject::connect(this->OutlineOpacitySliderWidget, SIGNAL(valueChanged(double)),
     q, SLOT(onOutlineOpacitySliderWidgetChanged(double)));
 
-    // populate the glyph type combo box
+  QObject::connect(this->OccludedVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setOccludedVisibility(bool)));
+  QObject::connect(this->OccludedOpacitySliderWidget, SIGNAL(valueChanged(double)),
+    q, SLOT(setOccludedOpacity(double)));
+
+  // populate the glyph type combo box
   if (this->glyphTypeComboBox->count() == 0)
     {
     vtkNew<vtkMRMLMarkupsDisplayNode> displayNode;
@@ -325,6 +329,14 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
   wasBlocking = d->OutlineOpacitySliderWidget->blockSignals(true);
   d->OutlineOpacitySliderWidget->setValue(d->MarkupsDisplayNode ? d->MarkupsDisplayNode->GetOutlineOpacity() : 0.0);
   d->OutlineOpacitySliderWidget->blockSignals(wasBlocking);
+
+  wasBlocking = d->OccludedVisibilityCheckBox->blockSignals(true);
+  d->OccludedVisibilityCheckBox->setChecked(d->MarkupsDisplayNode ? d->MarkupsDisplayNode->GetOccludedVisibility() : false);
+  d->OccludedVisibilityCheckBox->blockSignals(wasBlocking);
+
+  wasBlocking = d->OccludedOpacitySliderWidget->blockSignals(true);
+  d->OccludedOpacitySliderWidget->setValue(d->MarkupsDisplayNode ? d->MarkupsDisplayNode->GetOccludedOpacity() : 0.0);
+  d->OccludedOpacitySliderWidget->blockSignals(wasBlocking);
 
   emit displayNodeChanged();
 }
@@ -596,4 +608,26 @@ void qMRMLMarkupsDisplayNodeWidget::onOutlineOpacitySliderWidgetChanged(double o
     return;
     }
   d->MarkupsDisplayNode->SetOutlineOpacity(opacity);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::setOccludedVisibility(bool visibility)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+    {
+    return;
+    }
+  d->MarkupsDisplayNode->SetOccludedVisibility(visibility);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::setOccludedOpacity(double OccludedOpacity)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+  {
+    return;
+  }
+  d->MarkupsDisplayNode->SetOccludedOpacity(OccludedOpacity);
 }

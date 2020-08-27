@@ -85,6 +85,11 @@ public:
   /// Useful for non-regression tests that need to inspect internal state of the widget.
   bool GetNthControlPointViewVisibility(int n);
 
+  /// Relative offset used for rendering occluded actors.
+  /// Default value is -25000.
+  vtkSetMacro(OccludedRelativeOffset, double);
+  vtkGetMacro(OccludedRelativeOffset, double);
+
 protected:
   vtkSlicerMarkupsWidgetRepresentation3D();
   ~vtkSlicerMarkupsWidgetRepresentation3D() override;
@@ -113,6 +118,15 @@ protected:
     // Properties used to control the appearance of selected objects and
     // the manipulator in general.
     vtkSmartPointer<vtkProperty> Property;
+
+    vtkSmartPointer<vtkPointSetToLabelHierarchy> OccludedPointSetToLabelHierarchyFilter;
+    vtkSmartPointer<vtkLabelPlacementMapper> LabelsOccludedMapper;
+    vtkSmartPointer<vtkActor2D> LabelsOccludedActor;
+    vtkSmartPointer<vtkTextProperty> OccludedTextProperty;
+
+    vtkSmartPointer<vtkPolyDataMapper> OccludedMapper;
+    vtkSmartPointer<vtkActor> OccludedActor;
+    vtkSmartPointer<vtkProperty> OccludedProperty;
   };
 
   ControlPointsPipeline3D* GetControlPointsPipeline(int controlPointType);
@@ -121,11 +135,20 @@ protected:
 
   virtual void UpdateAllPointsAndLabelsFromMRML();
 
+  /// Update the occluded relative offsets for an occluded mapper
+  /// Allows occluded regions to be rendered on top.
+  /// Sets the folowing parameter on the mappers:
+  /// - RelativeCoincidentTopologyLineOffsetParameters
+  /// - RelativeCoincidentTopologyPolygonOffsetParameters
+  /// - RelativeCoincidentTopologyPointOffsetParameter
+  virtual void UpdateOccludedRelativeCoincidentTopologyOffsets(vtkMapper* mapper);
+
   vtkSmartPointer<vtkCellPicker> AccuratePicker;
 
   double TextActorPositionWorld[3];
   bool TextActorOccluded;
   bool HideTextActorIfAllPointsOccluded;
+  double OccludedRelativeOffset;
 
 private:
   vtkSlicerMarkupsWidgetRepresentation3D(const vtkSlicerMarkupsWidgetRepresentation3D&) = delete;
