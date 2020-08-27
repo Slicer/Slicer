@@ -10,6 +10,9 @@
  a:hover{
     background: white;
 }
+ a:visited{
+    color:#3266AF
+}
  p{
     margin: 0 0 15px
 }
@@ -42,10 +45,10 @@
 .wy-side-nav-search a:visited{
     color: #576071;
 }
- a:visited{
-    color: #EB8F68;
-}
 .wy-menu-vertical a:hover{
+    background-color:#3D72BC;
+}
+.wy-menu-vertical a:visited{
     background-color:#3D72BC;
 }
 .wy-menu-vertical li.current a:hover{
