@@ -11,8 +11,7 @@
     background: white;
 }
  p{
-    line-height: 1.7;
-    padding-bottom: 1%;
+    margin: 0 0 15px
 }
  .wy-nav-side{
     background:#3364A8;
@@ -65,4 +64,13 @@ a.icon-home img.logo {
     width: 64px;
     height: 64px;
 }
-
+.rst-content .toctree-wrapper>p.caption, h3, h4, h5, h6, legend {
+    margin-bottom: 3px;
+    color: #576071;
+}
+.rst-content .toctree-wrapper>p.caption, h2 {
+    color: #474e5a;
+}
+.rst-content .toctree-wrapper>p.caption, h1 {
+    color: #2e323a;
+}
