@@ -890,7 +890,7 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
     qSlicerIOOptions* options = this->options(row);
     vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(this->object(row));
     vtkMRMLStorableNode* const storableNode = vtkMRMLStorableNode::SafeDownCast(this->object(row));
-    vtkMRMLStorageNode* const snode = storableNode ? storableNode->GetStorageNode() : nullptr;
+    vtkMRMLStorageNode* snode = storableNode ? storableNode->GetStorageNode() : nullptr;
 
     if (snode)
       {
@@ -938,6 +938,8 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
     QApplication::restoreOverrideCursor();
 
     // node has failed to be written
+    // get storage node again because the writer plugin may replace the storage node with a different class
+    snode = storableNode->GetStorageNode();
     if (!success)
       {
       if (snode)

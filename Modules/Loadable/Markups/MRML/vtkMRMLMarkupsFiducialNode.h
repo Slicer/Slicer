@@ -124,9 +124,6 @@ public:
   /// Create and observe default display node(s)
   void CreateDefaultDisplayNodes() override;
 
-  /// Create default storage node or nullptr if does not have one
-  vtkMRMLStorageNode* CreateDefaultStorageNode() override;
-
 protected:
   vtkMRMLMarkupsFiducialNode();
   ~vtkMRMLMarkupsFiducialNode() override;

@@ -38,6 +38,8 @@ set(MODULE_SRCS
   qSlicer${MODULE_NAME}Reader.h
   qSlicer${MODULE_NAME}SettingsPanel.cxx
   qSlicer${MODULE_NAME}SettingsPanel.h
+  qSlicer${MODULE_NAME}Writer.cxx
+  qSlicer${MODULE_NAME}Writer.h
   )
 
 set(MODULE_MOC_SRCS
@@ -45,6 +47,7 @@ set(MODULE_MOC_SRCS
   qSlicer${MODULE_NAME}ModuleWidget.h
   qSlicer${MODULE_NAME}Reader.h
   qSlicer${MODULE_NAME}SettingsPanel.h
+  qSlicer${MODULE_NAME}Writer.h
   )
 
 set(MODULE_UI_SRCS

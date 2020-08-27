@@ -19,6 +19,7 @@
 #include "vtkMRMLMarkupsNode.h"
 
 #include "vtkMRMLScene.h"
+#include "vtkMRMLMessageCollection.h"
 #include "vtkSlicerVersionConfigure.h"
 
 #include "vtkObjectFactory.h"
@@ -705,6 +706,9 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a known markups node");
     return 0;
     }
+
+  this->GetUserMessages()->AddMessage(vtkCommand::WarningEvent,
+    "fcsv file format only stores control point coordinates and a limited set of display properties.");
 
   // open the file for writing
   fstream of;
