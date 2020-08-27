@@ -225,18 +225,3 @@ void vtkMRMLMarkupsFiducialNode::CreateDefaultDisplayNodes()
     }
   this->SetAndObserveDisplayNodeID(dispNode->GetID());
 }
-
-//-------------------------------------------------------------------------
-vtkMRMLStorageNode* vtkMRMLMarkupsFiducialNode::CreateDefaultStorageNode()
-{
-  vtkMRMLScene* scene = this->GetScene();
-  if (scene == nullptr)
-    {
-    vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
-    return nullptr;
-    }
-  // Use csv-based vtkMRMLMarkupsFiducialStorageNode as default storage node
-  // by default for backward compatibility.
-  return vtkMRMLStorageNode::SafeDownCast(
-    scene->CreateNodeByClass("vtkMRMLMarkupsFiducialStorageNode"));
-}
