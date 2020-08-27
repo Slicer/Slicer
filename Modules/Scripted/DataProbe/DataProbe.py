@@ -74,6 +74,7 @@ class DataProbeInfoWidget(object):
     self.iconsDIR = modulePath + '/Resources/Icons'
 
     self.showImage = False
+    self.undocked = False
 
     # Used in _createMagnifiedPixmap()
     self.imageCrop = vtk.vtkExtractVOI()
@@ -204,6 +205,7 @@ class DataProbeInfoWidget(object):
         self.layerIJKs[layer].setText( "" )
         self.layerValues[layer].setText( "" )
       self.imageLabel.hide()
+      self.floatingImageLabel.hide()
       self.viewerColor.hide()
       self.viewInfo.hide()
       self.viewerFrame.hide()
@@ -275,12 +277,37 @@ class DataProbeInfoWidget(object):
         self.imageLabel.setPixmap(pixmap)
         self.onShowImage(self.showImage)
 
+        # show the floating image region
+        if self.undocked:
+          if not self.floatingImageLabel.isVisible():
+            self.floatingImageLabel.show()
+
+          point = qt.QCursor().pos()
+          offset = qt.QPoint(10, 10)  # offset the region to keep away from cursor
+          regionPos = point + offset
+          self.floatingImageLabel.move(regionPos)
+
+          # need to create a new pixmap as the floating region may not be the same size as the docked widget
+          pixmap = self._createMagnifiedPixmap(
+            xyz, sliceLogic.GetBlend().GetOutputPort(), self.floatingImageLabel.size, color)
+          self.floatingImageLabel.setPixmap(pixmap)
+
+          # make the undocked region circular
+          width = self.floatingImageLabel.width
+          height = self.floatingImageLabel.height
+          side = min(width, height)
+          region = qt.QRegion(0, 0, side, side, qt.QRegion.Ellipse)
+          self.floatingImageLabel.setMask(region)
+
     if hasattr(self.frame.parent(), 'text'):
       sceneName = slicer.mrmlScene.GetURL()
       if sceneName != "":
         self.frame.parent().text = "Data Probe: %s" % self.fitName(sceneName,nameSize=2*self.nameSize)
       else:
         self.frame.parent().text = "Data Probe"
+
+    if not (self.undocked and self.showImage):
+      self.floatingImageLabel.hide()
 
   def generateViewDescription(self, xyz, ras, sliceNode, sliceLogic):
 
@@ -395,6 +422,11 @@ class DataProbeInfoWidget(object):
     self.showImageBox.connect("toggled(bool)", self.onShowImage)
     self.showImageBox.setChecked(False)
 
+    self.undockWidgetBox = qt.QCheckBox("Follow Cursor", self.showImageFrame)
+    self.showImageFrame.layout().addWidget(self.undockWidgetBox)
+    self.undockWidgetBox.connect("toggled(bool)", self.onUndockWidgetToggled)
+    self.undockWidgetBox.setChecked(False)
+
     self.imageLabel = qt.QLabel()
 
     # qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Expanding)
@@ -406,6 +438,12 @@ class DataProbeInfoWidget(object):
     #self.imageLabel.setScaledContents(True)
     self.frame.layout().addWidget(self.imageLabel)
     self.onShowImage(False)
+
+    # create a copy of the imageLabel to follow the cursor
+    self.floatingImageLabel = qt.QLabel()
+    self.floatingImageLabel.setMinimumSize(qt.QSize(200, 200))
+    self.floatingImageLabel.setWindowFlags(qt.Qt.Window | qt.Qt.FramelessWindowHint)
+    self.floatingImageLabel.hide()
 
     # top row - things about the viewer itself
     self.viewerFrame = qt.QFrame(self.frame)
@@ -483,6 +521,13 @@ class DataProbeInfoWidget(object):
       self.imageLabel.hide()
       pixmap = qt.QPixmap()
       self.imageLabel.setPixmap(pixmap)
+
+  def onUndockWidgetToggled(self, value=False):
+    self.undocked = value
+    if not value:
+      pixmap = qt.QPixmap()
+      self.floatingImageLabel.setPixmap(pixmap)
+      self.floatingImageLabel.hide()
 
 #
 # DataProbe widget
