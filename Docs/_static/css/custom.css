@@ -83,3 +83,6 @@ a.icon-home img.logo {
 .rst-content .toctree-wrapper>p.caption, h1 {
     color: #2e323a;
 }
+.rst-content dl dd {
+    margin: 0px;
+}
