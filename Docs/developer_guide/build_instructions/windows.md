@@ -9,7 +9,7 @@
 - [Qt5](https://www.qt.io/download-open-source): Download Qt universal installer and install Qt 5.15 components: MSVC2019 64-bit, Qt Script, Qt WebEngine. Installing Sources and Qt Debug Information Files are recommended for debugging (they allow stepping into Qt files with the debugger in debug-mode builds).
 - [Visual Studio](https://visualstudio.microsoft.com/downloads/)
   - any edition can be used (including the free Community edition)
-  - when configuring the installer, enable installation of Visual Studio 2019 (v142) toolset and component Programming languages / Visual C++ / Common Tools for Visual C++ (in some distributions, this option is not enabled by default)
+  - when configuring the installer, enable `Desktop development with C++` and in installation details, check `MSVC v142 - VS2019 C++ x64...` (Visual Studio 2019 v142 toolset with 64-bit support) - in some distributions, this option is not enabled by default
 
 Other versions:
 - Visual Studio 2017 (v141) toolset is not tested anymore but probably still works. Qt-5.15 requires v142 redistributables, so either these extra DLL files need to be added to the installation package or each user may need to install "Microsoft Visual C++ Redistributable" package.
