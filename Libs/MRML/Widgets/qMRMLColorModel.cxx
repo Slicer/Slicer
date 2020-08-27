@@ -336,11 +336,10 @@ void qMRMLColorModel::updateNode()
     return;
     }
 
-  QObject::disconnect(this, SIGNAL(itemChanged(QStandardItem*)),
-                      this, SLOT(onItemChanged(QStandardItem*)));
-
   this->setRowCount(
     d->MRMLColorNode->GetNumberOfColors() + (this->noneEnabled() ? 1 : 0));
+
+  bool wasBlocked = this->blockSignals(true);
   int startIndex = (this->noneEnabled() ? 1 : 0);
   for (int color = 0; color < d->MRMLColorNode->GetNumberOfColors(); ++color)
     {
@@ -356,10 +355,7 @@ void qMRMLColorModel::updateNode()
       this->updateItemFromColor(colorItem, color, j);
       }
     }
-
-  QObject::connect(this, SIGNAL(itemChanged(QStandardItem*)),
-                   this, SLOT(onItemChanged(QStandardItem*)),
-                   Qt::UniqueConnection);
+  this->blockSignals(wasBlocked);
 
   d->IsUpdatingWidgetFromMRML = false;
 }
