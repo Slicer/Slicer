@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>281</width>
-    <height>145</height>
+    <width>280</width>
+    <height>102</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,53 +21,41 @@
   </property>
   <layout class="QFormLayout" name="formLayout">
    <property name="labelAlignment">
-    <set>Qt::AlignCenter</set>
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
    </property>
    <property name="formAlignment">
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
    </property>
-   <property name="margin">
+   <property name="topMargin">
     <number>0</number>
    </property>
-   <item row="0" column="0">
+   <property name="rightMargin">
+    <number>5</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item row="1" column="0">
     <widget class="QLabel" name="point2DProjectionLabel">
      <property name="toolTip">
       <string>Turn on/off visualization of projected fiducial on 2D viewers</string>
      </property>
      <property name="text">
-      <string>2D Projection</string>
+      <string>Projection Visibility:</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="ctkCheckBox" name="point2DProjectionCheckBox">
-     <property name="toolTip">
-      <string>Turn on/off visualization of projected fiducial on 2D viewers</string>
-     </property>
-     <property name="indicatorIcon">
-      <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-       <normaloff>:/Icons/XLarge/SlicerVisible.png</normaloff>
-       <normalon>:/Icons/XLarge/SlicerInvisible.png</normalon>:/Icons/XLarge/SlicerVisible.png</iconset>
-     </property>
-     <property name="indicatorIconSize">
-      <size>
-       <width>23</width>
-       <height>23</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="pointProjectionColorLabel">
      <property name="toolTip">
       <string>Color of the projected fiducial on 2D viewers</string>
      </property>
      <property name="text">
-      <string>Projection Color</string>
+      <string>Projection Color:</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="3" column="1">
     <widget class="ctkColorPickerButton" name="pointProjectionColorPickerButton">
      <property name="minimumSize">
       <size>
@@ -93,17 +81,17 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
+   <item row="5" column="0">
     <widget class="QLabel" name="pointOutlinedBehindSlicePlaneLabel">
      <property name="toolTip">
       <string>Fiducial projection is displayed filled (opacity = Projection Opacity) when on top of slice plane, outlined when behind, and with full opacity when in the plane. Outline isn't used for some glyphs (Dash2D, Cross2D, Starburst).</string>
      </property>
      <property name="text">
-      <string>Outlined Behind Slice Plane</string>
+      <string>Outlined Behind Slice Plane:</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="5" column="1">
     <widget class="QCheckBox" name="pointOutlinedBehindSlicePlaneCheckBox">
      <property name="toolTip">
       <string>Fiducial projection is displayed filled (opacity = Projection Opacity) when on top of slice plane, outlined when behind, and with full opacity when in the plane. Outline isn't used for some glyphs (Dash2D, Cross2D, Starburst).</string>
@@ -116,17 +104,17 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QLabel" name="pointUseFiducialColorLabel">
      <property name="toolTip">
       <string>Use the same color as fiducial</string>
      </property>
      <property name="text">
-      <string>Use Fiducial Color</string>
+      <string>Use Fiducial Color:</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="2" column="1">
     <widget class="QCheckBox" name="pointUseFiducialColorCheckBox">
      <property name="toolTip">
       <string>Use the same color as fiducial</string>
@@ -139,28 +127,45 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="projectionOpacityLabel">
-     <property name="text">
-      <string>Projection Opacity</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1">
-    <widget class="ctkSliderWidget" name="projectionOpacitySliderWidget">
-     <property name="toolTip">
-      <string>The opacity of the projection.</string>
-     </property>
-     <property name="singleStep">
-      <double>0.100000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>1.000000000000000</double>
-     </property>
-     <property name="value">
-      <double>0.6</double>
-     </property>
-    </widget>
+   <item row="1" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="ctkCheckBox" name="point2DProjectionCheckBox">
+       <property name="toolTip">
+        <string>Turn on/off visualization of projected fiducial on 2D viewers</string>
+       </property>
+       <property name="indicatorIconSize">
+        <size>
+         <width>23</width>
+         <height>23</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="projectionOpacityLabel">
+       <property name="text">
+        <string>Opacity:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ctkSliderWidget" name="projectionOpacitySliderWidget">
+       <property name="toolTip">
+        <string>The opacity of the projection.</string>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>0.600000000000000</double>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

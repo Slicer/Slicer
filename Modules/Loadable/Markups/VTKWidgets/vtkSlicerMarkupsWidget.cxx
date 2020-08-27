@@ -92,6 +92,9 @@ vtkSlicerMarkupsWidget::vtkSlicerMarkupsWidget()
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
   this->SetEventTranslation(WidgetStateOnWidget, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
   this->SetEventTranslation(WidgetStateDefine, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
+
+  this->SetKeyboardEventTranslation(WidgetStateDefine, vtkEvent::AnyModifier, 0, 0, "Shift_L", WidgetEventMouseMove);
+  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::AnyModifier, 0, 0, "Shift_L", WidgetEventMouseMove);
 }
 
 //----------------------------------------------------------------------
