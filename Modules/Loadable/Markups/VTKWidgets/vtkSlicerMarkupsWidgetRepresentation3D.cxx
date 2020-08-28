@@ -94,8 +94,11 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
   this->SelectVisiblePoints = vtkSmartPointer<vtkSelectVisiblePoints>::New();
   this->SelectVisiblePoints->SetInputData(this->LabelControlPointsPolyData);
   this->SelectVisiblePoints->SetTolerance(0.0); // we will set tolerance in world coordinate system
+  this->SelectVisiblePoints->SetOutput(vtkNew<vtkPolyData>());
 
-  this->PointSetToLabelHierarchyFilter->SetInputConnection(this->SelectVisiblePoints->GetOutputPort());
+  // The SelectVisiblePoints filter should not be added to any pipeline with SetInputConnection.
+  // Updates to SelectVisiblePoints must only happen at the start of the RenderOverlay function.
+  this->PointSetToLabelHierarchyFilter->SetInputData(this->SelectVisiblePoints->GetOutput());
 
   this->LabelsMapper = vtkSmartPointer<vtkLabelPlacementMapper>::New();
   this->LabelsMapper->SetInputConnection(this->PointSetToLabelHierarchyFilter->GetOutputPort());
@@ -703,6 +706,7 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOverlay(vtkViewport *viewport)
   for (int i = 0; i < NumberOfControlPointTypes; i++)
     {
     ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
+    controlPoints->SelectVisiblePoints->Update();
     if (controlPoints->Actor->GetVisibility())
       {
       count += controlPoints->Actor->RenderOverlay(viewport);
@@ -712,9 +716,38 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOverlay(vtkViewport *viewport)
       count += controlPoints->LabelsActor->RenderOverlay(viewport);
       }
     }
-  if (this->TextActor->GetVisibility() && !this->TextActorOccluded)
+
+  this->TextActorOccluded = false;
+  if (this->TextActor->GetVisibility() && this->MarkupsNode)
     {
-    count +=  this->TextActor->RenderOverlay(viewport);
+    // Only show text actor if at least one of the control points are visible
+    if (this->HideTextActorIfAllPointsOccluded)
+    {
+      this->TextActorOccluded = true;
+      int numberOfControlPoints = this->MarkupsNode->GetNumberOfControlPoints();
+      for (int i = 0; i < numberOfControlPoints; i++)
+      {
+        if (this->GetNthControlPointViewVisibility(0))
+        {
+          this->TextActorOccluded = false;
+          break;
+        }
+      }
+    }
+
+    // Update displayed properties text position from 3D position
+    this->Renderer->SetWorldPoint(this->TextActorPositionWorld);
+    this->Renderer->WorldToDisplay();
+    double textActorPositionDisplay[3] = { 0.0 };
+    this->Renderer->GetDisplayPoint(textActorPositionDisplay);
+    this->TextActor->SetDisplayPosition(
+      static_cast<int>(textActorPositionDisplay[0]),
+      static_cast<int>(textActorPositionDisplay[1]));
+
+    if (!this->TextActorOccluded)
+      {
+      count +=  this->TextActor->RenderOverlay(viewport);
+      }
     }
   return count;
 }
@@ -790,44 +823,7 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
       {
       count += controlPoints->LabelsActor->RenderOpaqueGeometry(viewport);
       }
-    else if (controlPoints->Actor->GetVisibility() || this->HideTextActorIfAllPointsOccluded)
-      {
-      // if only control points are visible then just compute if control points are occluded
-      controlPoints->SelectVisiblePoints->Update();
-      }
-    }
-
-  this->TextActorOccluded = false;
-  if (this->TextActor->GetVisibility() && this->MarkupsNode)
-    {
-    // Only show text actor if at least one of the control points are visible
-    if (this->HideTextActorIfAllPointsOccluded)
-      {
-      this->TextActorOccluded = true;
-      int numberOfControlPoints = this->MarkupsNode->GetNumberOfControlPoints();
-      for (int i = 0; i < numberOfControlPoints; i++)
-        {
-        if (this->GetNthControlPointViewVisibility(0))
-          {
-          this->TextActorOccluded = false;
-          break;
-          }
-        }
-      }
-
-    // Update displayed properties text position from 3D position
-    this->Renderer->SetWorldPoint(this->TextActorPositionWorld);
-    this->Renderer->WorldToDisplay();
-    double textActorPositionDisplay[3] = { 0.0 };
-    this->Renderer->GetDisplayPoint(textActorPositionDisplay);
-    this->TextActor->SetDisplayPosition(
-      static_cast<int>(textActorPositionDisplay[0]),
-      static_cast<int>(textActorPositionDisplay[1]));
-
-    if (!this->TextActorOccluded)
-      {
-      count += this->TextActor->RenderOpaqueGeometry(viewport);
-      }
+    count += this->TextActor->RenderOpaqueGeometry(viewport);
     }
 
   return count;
