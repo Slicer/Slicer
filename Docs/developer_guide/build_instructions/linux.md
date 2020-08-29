@@ -209,3 +209,7 @@ Start a terminal and type the following:
 cd Slicer-SuperBuild-Debug/Slicer-build
 make package
 ```
+
+## Common errors
+
+See list of issues common to all operating systems on [Common errors](common_errors) page.
