@@ -715,13 +715,8 @@ QTableWidgetItem* qSlicerSaveDataDialogPrivate
 //-----------------------------------------------------------------------------
 ctkPathLineEdit* qSlicerSaveDataDialogPrivate::createFileDirectoryWidget(const QFileInfo& fileInfo)
 {
-  ctkPathLineEdit* directoryEdit = new ctkPathLineEdit(this->FileWidget);
+  ctkPathLineEdit* directoryEdit = new ctkPathLineEdit("Output folder", QStringList(), ctkPathLineEdit::Dirs, this->FileWidget);
   directoryEdit->setCurrentPath(fileInfo.absolutePath());
-  ctkPathLineEdit::Filters filters = directoryEdit->filters();
-  filters.setFlag(ctkPathLineEdit::Writable);
-  filters.setFlag(ctkPathLineEdit::Dirs);
-  filters.setFlag(ctkPathLineEdit::Files, false);
-  directoryEdit->setFilters(filters);
   directoryEdit->setSizeAdjustPolicy(ctkPathLineEdit::AdjustToMinimumContentsLength);
   directoryEdit->setShowHistoryButton(false);
   return directoryEdit;
