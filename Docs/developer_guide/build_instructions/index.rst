@@ -10,3 +10,4 @@ Build Instructions
    windows.md
    macos.md
    linux.md
+   common_errors.md
