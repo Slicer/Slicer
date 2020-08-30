@@ -119,15 +119,15 @@ List of all nodes in the scene. Supports Edit properties, Rename, Delete.
 - Code snippets accessing and manipulating subject hierarchy items can be found in the [script repository](https://www.slicer.org/wiki/Documentation/Nightly/ScriptRepository#Subject_hierarchy)
 - **Implementing new plugins**: Plugins are the real power of subject hierarchy, as they provide support for data node types, and add functionality to the context menu items.
 To create a C++ plugin, implement a child class of qSlicerSubjectHierarchyAbstractPlugin, for Python plugin see below. Many examples can be found in Slicer core and in the SlicerRT extension, look for folders named SubjectHierarchyPlugins.
-  - Writing plugins in **Python**:
-    - Child class of AbstractScriptedSubjectHierarchyPlugin which is a Python adaptor of the C++ qSlicerSubjectHierarchyScriptedPlugin class
-    - Example: [Annotations](https://github.com/Slicer/Slicer/blob/master/Modules/Loadable/Annotations/SubjectHierarchyPlugins/AnnotationsSubjectHierarchyPlugin.py) role plugin, [function plugin](https://github.com/Slicer/Slicer/blob/master/Modules/Scripted/SegmentEditor/SubjectHierarchyPlugins/SegmentEditorSubjectHierarchyPlugin.py)
-  - **Role** plugins: add support for new data node types
-    - Defines: ownership, icon, tooltip, edit properties, help text (in the yellow question mark popup), visibility icon, set/get display visibility, displayed node name (if different than name of the node object)
-    - Existing plugins in Slicer core: Markups, Models, SceneViews, Charts, Folder, Tables, Transforms, LabelMaps, Volumes
-  -  **Function** plugins: add feature in right-click context menu for certain types of nodes
-    - Defines: list of contect menu actions for nodes and the scene, types of nodes for which the action shows up, functions handling the defined action
-    - Existing plugins in Slicer core: CloneNode, ParseLocalData, Register, Segment, DICOM, Volumes, Markups, Models, Annotations, Segmentations, Segments, etc.
+    - Writing plugins in **Python**:
+        - Child class of AbstractScriptedSubjectHierarchyPlugin which is a Python adaptor of the C++ qSlicerSubjectHierarchyScriptedPlugin class
+        - Example: [Annotations](https://github.com/Slicer/Slicer/blob/master/Modules/Loadable/Annotations/SubjectHierarchyPlugins/AnnotationsSubjectHierarchyPlugin.py) role plugin, [function plugin](https://github.com/Slicer/Slicer/blob/master/Modules/Scripted/SegmentEditor/SubjectHierarchyPlugins/SegmentEditorSubjectHierarchyPlugin.py)
+    - **Role** plugins: add support for new data node types
+        - Defines: ownership, icon, tooltip, edit properties, help text (in the yellow question mark popup), visibility icon, set/get display visibility, displayed node name (if different than name of the node object)
+        - Existing plugins in Slicer core: Markups, Models, SceneViews, Charts, Folder, Tables, Transforms, LabelMaps, Volumes
+    -  **Function** plugins: add feature in right-click context menu for certain types of nodes
+        - Defines: list of contect menu actions for nodes and the scene, types of nodes for which the action shows up, functions handling the defined action
+        - Existing plugins in Slicer core: CloneNode, ParseLocalData, Register, Segment, DICOM, Volumes, Markups, Models, Annotations, Segmentations, Segments, etc.
 
 ## References
 
