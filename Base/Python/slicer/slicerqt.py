@@ -78,7 +78,7 @@ def initLogging(logger):
   if slicer.util.toBool(qt.QSettings().value("Developer/DeveloperMode")):
     # Prints info message to stdout (anything on stdout will also show up in the application log)
     consoleInfoHandler = logging.StreamHandler(sys.stdout)
-    consoleInfoHandler.setLevel(logging.INFO)
+    consoleInfoHandler.setLevel(logging.DEBUG)
     # Filter messages at WARNING level or above (they will be printed on stderr)
     consoleInfoHandler.addFilter(_LogReverseLevelFilter(logging.WARNING))
     logger.addHandler(consoleInfoHandler)
