@@ -69,23 +69,24 @@ def initLogging(logger):
   # and all console outputs are sent automatically to the application log anyway.
   applicationLogHandler = SlicerApplicationLogHandler()
   applicationLogHandler.setLevel(logging.DEBUG)
-  # We could filter out messages at INFO level or above (as they will be printed on the console anyway) by adding
+  # We could filter out messages at INFO level or above (as in Developer Mode they will be printed on the console anyway) by adding
   # applicationLogHandler.addFilter(_LogReverseLevelFilter(logging.INFO))
   # but then we would not log file name and line number of info, warning, and error level messages.
   applicationLogHandler.setFormatter(logging.Formatter('%(message)s'))
   logger.addHandler(applicationLogHandler)
 
-  # Prints info message to stdout (anything on stdout will also show up in the application log)
-  consoleInfoHandler = logging.StreamHandler(sys.stdout)
-  consoleInfoHandler.setLevel(logging.INFO)
-  # Filter messages at WARNING level or above (they will be printed on stderr)
-  consoleInfoHandler.addFilter(_LogReverseLevelFilter(logging.WARNING))
-  logger.addHandler(consoleInfoHandler)
+  if slicer.util.toBool(qt.QSettings().value("Developer/DeveloperMode")):
+    # Prints info message to stdout (anything on stdout will also show up in the application log)
+    consoleInfoHandler = logging.StreamHandler(sys.stdout)
+    consoleInfoHandler.setLevel(logging.INFO)
+    # Filter messages at WARNING level or above (they will be printed on stderr)
+    consoleInfoHandler.addFilter(_LogReverseLevelFilter(logging.WARNING))
+    logger.addHandler(consoleInfoHandler)
 
-  # Prints error and warning messages to stderr (anything on stderr will also show it in the application log)
-  consoleErrorHandler = logging.StreamHandler(sys.stderr)
-  consoleErrorHandler.setLevel(logging.WARNING)
-  logger.addHandler(consoleErrorHandler)
+    # Prints error and warning messages to stderr (anything on stderr will also show it in the application log)
+    consoleErrorHandler = logging.StreamHandler(sys.stderr)
+    consoleErrorHandler.setLevel(logging.WARNING)
+    logger.addHandler(consoleErrorHandler)
 
   # Log debug messages from scripts by default, as they are useful for troubleshooting with users
   logger.setLevel(logging.DEBUG)
