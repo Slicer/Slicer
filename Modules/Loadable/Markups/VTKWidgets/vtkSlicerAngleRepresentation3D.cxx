@@ -42,6 +42,7 @@ vtkStandardNewMacro(vtkSlicerAngleRepresentation3D);
 vtkSlicerAngleRepresentation3D::vtkSlicerAngleRepresentation3D()
 {
   this->Line = vtkSmartPointer<vtkPolyData>::New();
+
   this->Arc = vtkSmartPointer<vtkArcSource>::New();
   this->Arc->SetResolution(30);
 
@@ -55,12 +56,20 @@ vtkSlicerAngleRepresentation3D::vtkSlicerAngleRepresentation3D()
   this->ArcTubeFilter->SetNumberOfSides(20);
   this->ArcTubeFilter->SetRadius(1);
 
+  // Mappers
   this->LineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->LineMapper->SetInputConnection(this->TubeFilter->GetOutputPort());
 
   this->ArcMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->ArcMapper->SetInputConnection(this->ArcTubeFilter->GetOutputPort());
 
+  this->LineOccludedMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  this->LineOccludedMapper->SetInputConnection(this->TubeFilter->GetOutputPort());
+
+  this->ArcOccludedMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  this->ArcOccludedMapper->SetInputConnection(this->ArcTubeFilter->GetOutputPort());
+
+  // Actors
   this->LineActor = vtkSmartPointer<vtkActor>::New();
   this->LineActor->SetMapper(this->LineMapper);
   this->LineActor->SetProperty(this->GetControlPointsPipeline(Unselected)->Property);
@@ -68,12 +77,6 @@ vtkSlicerAngleRepresentation3D::vtkSlicerAngleRepresentation3D()
   this->ArcActor = vtkSmartPointer<vtkActor>::New();
   this->ArcActor->SetMapper(this->ArcMapper);
   this->ArcActor->SetProperty(this->GetControlPointsPipeline(Unselected)->Property);
-
-  this->LineOccludedMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  this->LineOccludedMapper->SetInputConnection(this->TubeFilter->GetOutputPort());
-
-  this->ArcOccludedMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  this->ArcOccludedMapper->SetInputConnection(this->ArcTubeFilter->GetOutputPort());
 
   this->LineOccludedActor = vtkSmartPointer<vtkActor>::New();
   this->LineOccludedActor->SetMapper(this->LineOccludedMapper);
@@ -200,10 +203,8 @@ void vtkSlicerAngleRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
 
   // Update lines display properties
 
-  this->UpdateRelativeCoincidentTopologyOffsets(this->LineMapper);
-  this->UpdateRelativeCoincidentTopologyOffsets(this->ArcMapper);
-  this->UpdateOccludedRelativeCoincidentTopologyOffsets(this->LineOccludedMapper);
-  this->UpdateOccludedRelativeCoincidentTopologyOffsets(this->ArcOccludedMapper);
+  this->UpdateRelativeCoincidentTopologyOffsets(this->LineMapper, this->LineOccludedMapper);
+  this->UpdateRelativeCoincidentTopologyOffsets(this->ArcMapper, this->ArcOccludedMapper);
 
   double diameter = ( this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ?
     this->MarkupsDisplayNode->GetLineDiameter() : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() );

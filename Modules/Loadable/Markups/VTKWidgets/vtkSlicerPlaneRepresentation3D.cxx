@@ -75,6 +75,9 @@ vtkSlicerPlaneRepresentation3D::vtkSlicerPlaneRepresentation3D()
   this->ArrowGlypher->SetScaleModeToDataScalingOff();
   this->ArrowGlypher->SetInputArrayToProcess(1, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, vtkDataSetAttributes::SCALARS);
 
+  this->PlaneOutlineFilter->CappingOff();
+
+  // Color filters
   this->ArrowColorFilter->SetInputConnection(this->ArrowGlypher->GetOutputPort());
   this->ArrowColorFilter->SetFunction(arrowFunction.c_str());
   this->ArrowColorFilter->SetResultArrayName("component");
@@ -84,8 +87,6 @@ vtkSlicerPlaneRepresentation3D::vtkSlicerPlaneRepresentation3D()
   std::stringstream outlineFunctionSS;
   outlineFunctionSS << OUTLINE_COMPONENT;
   std::string outlineFunction = outlineFunctionSS.str();
-
-  this->PlaneOutlineFilter->CappingOff();
 
   this->PlaneOutlineColorFilter->SetInputConnection(this->PlaneOutlineFilter->GetOutputPort());
   this->PlaneOutlineColorFilter->SetFunction(outlineFunction.c_str());
@@ -107,6 +108,7 @@ vtkSlicerPlaneRepresentation3D::vtkSlicerPlaneRepresentation3D()
   this->Append->AddInputConnection(this->PlaneOutlineColorFilter->GetOutputPort());
   this->Append->AddInputConnection(this->PlaneFillColorFilter->GetOutputPort());
 
+  // Mappers
   this->PlaneMapper->SetInputConnection(this->Append->GetOutputPort());
   this->PlaneMapper->SetColorModeToMapScalars();
   this->PlaneMapper->SetScalarModeToUsePointFieldData();
@@ -116,9 +118,6 @@ vtkSlicerPlaneRepresentation3D::vtkSlicerPlaneRepresentation3D()
   this->PlaneMapper->SetArrayAccessMode(VTK_GET_ARRAY_BY_NAME);
   this->PlaneMapper->SetArrayName("component");
 
-  this->PlaneActor->SetMapper(this->PlaneMapper);
-  this->PlaneActor->SetProperty(this->GetControlPointsPipeline(Unselected)->Property);
-
   this->PlaneOccludedMapper->SetInputConnection(this->Append->GetOutputPort());
   this->PlaneOccludedMapper->SetColorModeToMapScalars();
   this->PlaneOccludedMapper->SetScalarModeToUsePointFieldData();
@@ -127,6 +126,10 @@ vtkSlicerPlaneRepresentation3D::vtkSlicerPlaneRepresentation3D()
   this->PlaneOccludedMapper->SetLookupTable(this->PlaneColorLUT);
   this->PlaneOccludedMapper->SetArrayAccessMode(VTK_GET_ARRAY_BY_NAME);
   this->PlaneOccludedMapper->SetArrayName("component");
+
+  // Actors
+  this->PlaneActor->SetMapper(this->PlaneMapper);
+  this->PlaneActor->SetProperty(this->GetControlPointsPipeline(Unselected)->Property);
 
   this->PlaneOccludedActor->SetMapper(this->PlaneOccludedMapper);
   this->PlaneOccludedActor->SetProperty(this->GetControlPointsPipeline(Unselected)->OccludedProperty);
@@ -277,8 +280,7 @@ void vtkSlicerPlaneRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   this->TextActor->SetVisibility(this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
     && markupsNode->GetNumberOfControlPoints() > 0);
 
-  this->UpdateRelativeCoincidentTopologyOffsets(this->PlaneMapper);
-  this->UpdateOccludedRelativeCoincidentTopologyOffsets(this->PlaneOccludedMapper);
+  this->UpdateRelativeCoincidentTopologyOffsets(this->PlaneMapper, this->PlaneOccludedMapper);
 
   int controlPointType = Active;
   if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentPlane)

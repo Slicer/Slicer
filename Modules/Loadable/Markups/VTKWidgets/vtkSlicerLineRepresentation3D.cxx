@@ -44,15 +44,17 @@ vtkSlicerLineRepresentation3D::vtkSlicerLineRepresentation3D()
   this->TubeFilter->SetNumberOfSides(20);
   this->TubeFilter->SetRadius(1);
 
+  // Mappers
   this->LineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->LineMapper->SetInputConnection(this->TubeFilter->GetOutputPort());
 
+  this->LineOccludedMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  this->LineOccludedMapper->SetInputConnection(this->TubeFilter->GetOutputPort());
+
+  // Actors
   this->LineActor = vtkSmartPointer<vtkActor>::New();
   this->LineActor->SetMapper(this->LineMapper);
   this->LineActor->SetProperty(this->GetControlPointsPipeline(Unselected)->Property);
-
-  this->LineOccludedMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  this->LineOccludedMapper->SetInputConnection(this->TubeFilter->GetOutputPort());
 
   this->LineOccludedActor = vtkSmartPointer<vtkActor>::New();
   this->LineOccludedActor->SetMapper(this->LineOccludedMapper);
@@ -190,8 +192,7 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned
 
   // Line display
 
-  this->UpdateRelativeCoincidentTopologyOffsets(this->LineMapper);
-  this->UpdateOccludedRelativeCoincidentTopologyOffsets(this->LineOccludedMapper);
+  this->UpdateRelativeCoincidentTopologyOffsets(this->LineMapper, this->LineOccludedMapper);
 
   double diameter = ( this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ?
     this->MarkupsDisplayNode->GetLineDiameter() : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() );

@@ -86,6 +86,8 @@ public:
   bool GetNthControlPointViewVisibility(int n);
 
   /// Relative offset used for rendering occluded actors.
+  /// The range of coincident offset can be betweeen +/- 65000.
+  /// Positive values move the occluded objects away from the camera, and negative values towards.
   /// Default value is -25000.
   vtkSetMacro(OccludedRelativeOffset, double);
   vtkGetMacro(OccludedRelativeOffset, double);
@@ -108,25 +110,27 @@ protected:
     ControlPointsPipeline3D();
     ~ControlPointsPipeline3D() override;
 
-    vtkSmartPointer<vtkSelectVisiblePoints> SelectVisiblePoints;
-    vtkSmartPointer<vtkIdTypeArray> ControlPointIndices;  // store original ID to determine which control point is actually visible
-    vtkSmartPointer<vtkActor> Actor;
-    vtkSmartPointer<vtkPolyDataMapper> Mapper;
     vtkSmartPointer<vtkGlyph3D> Glypher;
-    vtkSmartPointer<vtkActor2D> LabelsActor;
-    vtkSmartPointer<vtkLabelPlacementMapper> LabelsMapper;
+
     // Properties used to control the appearance of selected objects and
     // the manipulator in general.
-    vtkSmartPointer<vtkProperty> Property;
-
-    vtkSmartPointer<vtkPointSetToLabelHierarchy> OccludedPointSetToLabelHierarchyFilter;
-    vtkSmartPointer<vtkLabelPlacementMapper> LabelsOccludedMapper;
-    vtkSmartPointer<vtkActor2D> LabelsOccludedActor;
+    vtkSmartPointer<vtkProperty>     Property;
+    vtkSmartPointer<vtkProperty>     OccludedProperty;
     vtkSmartPointer<vtkTextProperty> OccludedTextProperty;
 
-    vtkSmartPointer<vtkPolyDataMapper> OccludedMapper;
-    vtkSmartPointer<vtkActor> OccludedActor;
-    vtkSmartPointer<vtkProperty> OccludedProperty;
+    vtkSmartPointer<vtkSelectVisiblePoints>      SelectVisiblePoints;
+    vtkSmartPointer<vtkIdTypeArray>              ControlPointIndices;  // store original ID to determine which control point is actually visible
+    vtkSmartPointer<vtkPointSetToLabelHierarchy> OccludedPointSetToLabelHierarchyFilter;
+
+    vtkSmartPointer<vtkPolyDataMapper>       Mapper;
+    vtkSmartPointer<vtkPolyDataMapper>       OccludedMapper;
+    vtkSmartPointer<vtkLabelPlacementMapper> LabelsMapper;
+    vtkSmartPointer<vtkLabelPlacementMapper> LabelsOccludedMapper;
+
+    vtkSmartPointer<vtkActor>   Actor;
+    vtkSmartPointer<vtkActor>   OccludedActor;
+    vtkSmartPointer<vtkActor2D> LabelsActor;
+    vtkSmartPointer<vtkActor2D> LabelsOccludedActor;
   };
 
   ControlPointsPipeline3D* GetControlPointsPipeline(int controlPointType);
@@ -141,7 +145,7 @@ protected:
   /// - RelativeCoincidentTopologyLineOffsetParameters
   /// - RelativeCoincidentTopologyPolygonOffsetParameters
   /// - RelativeCoincidentTopologyPointOffsetParameter
-  virtual void UpdateOccludedRelativeCoincidentTopologyOffsets(vtkMapper* mapper);
+  void UpdateRelativeCoincidentTopologyOffsets(vtkMapper* mapper, vtkMapper* occludedMapper);
 
   vtkSmartPointer<vtkCellPicker> AccuratePicker;
 
