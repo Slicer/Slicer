@@ -38,6 +38,7 @@ public:
   QAction* installSelectedAction() const;
 
   // Events
+  void changeEvent(QEvent* e) override;
   void showEvent(QShowEvent* event) override;
 
 protected slots :

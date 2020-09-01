@@ -64,10 +64,11 @@ public:
   {
     QRect r = option.rect;
 
-    QPen enabledPen(QColor::fromRgb(0, 0, 0), 1, Qt::SolidLine);
-    QPen disabledPen(QColor::fromRgb(125, 125, 125), 1, Qt::SolidLine);
-    QPen candidatePen(QColor::fromRgb(0, 200, 50), 1, Qt::SolidLine);
-    QPen installedPen(QColor::fromRgb(0, 50, 200), 1, Qt::SolidLine);
+    QPalette palette = qSlicerApplication::application()->palette();
+    QPen enabledPen(palette.color(QPalette::WindowText), 1, Qt::SolidLine);    
+    QPen disabledPen(palette.color(QPalette::Disabled, QPalette::WindowText), 1, Qt::SolidLine);
+    QPen candidatePen(palette.color(QPalette::Highlight), 1, Qt::SolidLine);
+    QPen installedPen(palette.color(QPalette::WindowText), 1, Qt::SolidLine);
 
     // GET DATA
     QString title             = index.data(Qt::DisplayRole).toString();
@@ -490,6 +491,23 @@ qSlicerExtensionsManagerModel* qSlicerExtensionsRestoreWidget
 {
   Q_D(const qSlicerExtensionsRestoreWidget);
   return d->ExtensionsManagerModel;
+}
+
+//---------------------------------------------------------------------------
+void qSlicerExtensionsRestoreWidget::changeEvent(QEvent* e)
+{
+  Q_D(qSlicerExtensionsRestoreWidget);
+  switch (e->type())
+    {
+    case QEvent::PaletteChange:
+      {
+      this->repaint();
+      break;
+      }
+    default:
+      break;
+    }
+  Superclass::changeEvent(e);
 }
 
 // --------------------------------------------------------------------------
