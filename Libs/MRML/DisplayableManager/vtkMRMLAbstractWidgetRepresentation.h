@@ -145,7 +145,7 @@ public:
   /// using the renderer of this class.
   void GetRendererComputedDisplayPositionFromWorldPosition(const double worldPos[3], double displayPos[2]);
 
-  void UpdateRelativeCoincidentTopologyOffsets(vtkMapper* mapper);
+  virtual void UpdateRelativeCoincidentTopologyOffsets(vtkMapper* mapper);
 
   /// The renderer in which this widget is placed
   vtkWeakPointer<vtkRenderer> Renderer;

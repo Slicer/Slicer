@@ -80,14 +80,14 @@ protected:
 
   void SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode) override;
 
-  vtkSmartPointer<vtkPolyData> Line;
-  vtkSmartPointer<vtkPolyDataMapper> LineMapper;
-  vtkSmartPointer<vtkActor> LineActor;
-
-  vtkSmartPointer<vtkPolyDataMapper> LineOccludedMapper;
-  vtkSmartPointer<vtkActor> LineOccludedActor;
-
+  vtkSmartPointer<vtkPolyData>   Line;
   vtkSmartPointer<vtkTubeFilter> TubeFilter;
+
+  vtkSmartPointer<vtkPolyDataMapper> LineMapper;
+  vtkSmartPointer<vtkPolyDataMapper> LineOccludedMapper;
+
+  vtkSmartPointer<vtkActor> LineActor;
+  vtkSmartPointer<vtkActor> LineOccludedActor;
 
   vtkSmartPointer<vtkCellLocator> CurvePointLocator;
 

@@ -55,10 +55,10 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
   this->Glypher->ScalingOn();
   this->Glypher->SetScaleModeToDataScalingOff();
   this->Glypher->SetScaleFactor(1.0);
-
   // By default the Points are rendered as spheres
   this->Glypher->SetSourceConnection(this->GlyphSourceSphere->GetOutputPort());
 
+  // Properties
   this->Property = vtkSmartPointer<vtkProperty>::New();
   this->Property->SetRepresentationToSurface();
   this->Property->SetColor(0.4, 1.0, 1.0);
@@ -71,31 +71,15 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
   this->Property->SetLineWidth(2.);
   this->Property->SetOpacity(1.);
 
-  this->Mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  this->Mapper->SetInputConnection(this->Glypher->GetOutputPort());
-  // This turns on resolve coincident topology for everything
-  // as it is a class static on the mapper
-  vtkMapper::SetResolveCoincidentTopologyToPolygonOffset();
-  this->Mapper->ScalarVisibilityOff();
-
-  this->Actor = vtkSmartPointer<vtkActor>::New();
-  this->Actor->SetMapper(this->Mapper);
-  this->Actor->SetProperty(this->Property);
-
-  this->OccludedMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  this->OccludedMapper->SetInputConnection(this->Glypher->GetOutputPort());
-  this->OccludedMapper->ScalarVisibilityOff();
-
   this->OccludedProperty = vtkSmartPointer<vtkProperty>::New();
   this->OccludedProperty->DeepCopy(this->Property);
   this->OccludedProperty->SetOpacity(0.0);
 
-  this->OccludedActor = vtkSmartPointer<vtkActor>::New();
-  this->OccludedActor->SetMapper(this->OccludedMapper);
-  this->OccludedActor->SetProperty(this->OccludedProperty);
+  this->OccludedTextProperty = vtkSmartPointer<vtkTextProperty>::New();
+  this->OccludedTextProperty->ShallowCopy(this->TextProperty);
+  this->OccludedTextProperty->SetOpacity(0.0);
 
-  // Labels
-
+  // Label point filters
   this->ControlPointIndices = vtkSmartPointer<vtkIdTypeArray>::New();
   this->ControlPointIndices->SetName("controlPointIndices");
   this->ControlPointIndices->Allocate(100);
@@ -112,11 +96,27 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
   // Updates to SelectVisiblePoints must only happen at the start of the RenderOverlay function.
   this->PointSetToLabelHierarchyFilter->SetInputData(this->SelectVisiblePoints->GetOutput());
 
+  this->OccludedPointSetToLabelHierarchyFilter = vtkSmartPointer<vtkPointSetToLabelHierarchy>::New();
+  this->OccludedPointSetToLabelHierarchyFilter->SetTextProperty(this->OccludedTextProperty);
+  this->OccludedPointSetToLabelHierarchyFilter->SetLabelArrayName("labels");
+  this->OccludedPointSetToLabelHierarchyFilter->SetPriorityArrayName("priority");
+  this->OccludedPointSetToLabelHierarchyFilter->SetInputData(this->LabelControlPointsPolyData);
+
+  // Mappers
+  this->Mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  this->Mapper->SetInputConnection(this->Glypher->GetOutputPort());
+  // This turns on resolve coincident topology for everything
+  // as it is a class static on the mapper
+  vtkMapper::SetResolveCoincidentTopologyToPolygonOffset();
+  this->Mapper->ScalarVisibilityOff();
+
+  this->OccludedMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  this->OccludedMapper->SetInputConnection(this->Glypher->GetOutputPort());
+  this->OccludedMapper->ScalarVisibilityOff();
+
   this->LabelsMapper = vtkSmartPointer<vtkLabelPlacementMapper>::New();
   this->LabelsMapper->SetInputConnection(this->PointSetToLabelHierarchyFilter->GetOutputPort());
-
   this->LabelsMapper->PlaceAllLabelsOn();
-
   /*
   We could consider showing labels with semi-transparent background:
   this->LabelsMapper->SetShapeToRect();
@@ -124,25 +124,23 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
   this->LabelsMapper->SetBackgroundOpacity(0.4);
   */
 
+  this->LabelsOccludedMapper = vtkSmartPointer<vtkLabelPlacementMapper>::New();
+  this->LabelsOccludedMapper->SetInputConnection(this->OccludedPointSetToLabelHierarchyFilter->GetOutputPort());
+  this->LabelsOccludedMapper->PlaceAllLabelsOn();
+
+  // Actors
+  this->Actor = vtkSmartPointer<vtkActor>::New();
+  this->Actor->SetMapper(this->Mapper);
+  this->Actor->SetProperty(this->Property);
+
+  this->OccludedActor = vtkSmartPointer<vtkActor>::New();
+  this->OccludedActor->SetMapper(this->OccludedMapper);
+  this->OccludedActor->SetProperty(this->OccludedProperty);
+
   this->LabelsActor = vtkSmartPointer<vtkActor2D>::New();
   this->LabelsActor->SetMapper(this->LabelsMapper);
   this->LabelsActor->PickableOff();
   this->LabelsActor->DragableOff();
-
-  // Occluded label actor
-  this->OccludedTextProperty = vtkSmartPointer<vtkTextProperty>::New();
-  this->OccludedTextProperty->ShallowCopy(this->TextProperty);
-  this->OccludedTextProperty->SetOpacity(0.0);
-
-  this->OccludedPointSetToLabelHierarchyFilter = vtkSmartPointer<vtkPointSetToLabelHierarchy>::New();
-  this->OccludedPointSetToLabelHierarchyFilter->SetTextProperty(this->OccludedTextProperty);
-  this->OccludedPointSetToLabelHierarchyFilter->SetLabelArrayName("labels");
-  this->OccludedPointSetToLabelHierarchyFilter->SetPriorityArrayName("priority");
-  this->OccludedPointSetToLabelHierarchyFilter->SetInputData(this->LabelControlPointsPolyData);
-
-  this->LabelsOccludedMapper = vtkSmartPointer<vtkLabelPlacementMapper>::New();
-  this->LabelsOccludedMapper->SetInputConnection(this->OccludedPointSetToLabelHierarchyFilter->GetOutputPort());
-  this->LabelsOccludedMapper->PlaceAllLabelsOn();
 
   this->LabelsOccludedActor = vtkSmartPointer<vtkActor2D>::New();
   this->LabelsOccludedActor->SetMapper(this->LabelsOccludedMapper);
@@ -182,7 +180,12 @@ vtkSlicerMarkupsWidgetRepresentation3D::vtkSlicerMarkupsWidgetRepresentation3D()
   this->AccuratePicker = vtkSmartPointer<vtkCellPicker>::New();
   this->AccuratePicker->SetTolerance(.005);
 
-  this->OccludedRelativeOffset = -25000; /// Default occluded relative offset
+  // Using the minimum value of -65000 creates a lot of rendering artifacts on the occluded objects, as all of the
+  // pixels in the occluded object will have the same depth buffer value (0.0).
+  // Using a default value of -25000 strikes a balance between rendering the occluded objects on top of other objects,
+  // while still providing enough leeway to ensure that occluded actors are rendered correctly relative to themselves
+  // and to other occluded actors.
+  this->OccludedRelativeOffset = -25000;
 }
 
 //----------------------------------------------------------------------
@@ -235,8 +238,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
       continue;
       }
 
-    this->UpdateRelativeCoincidentTopologyOffsets(controlPoints->Mapper);
-    this->UpdateOccludedRelativeCoincidentTopologyOffsets(controlPoints->OccludedMapper);
+    this->UpdateRelativeCoincidentTopologyOffsets(controlPoints->Mapper, controlPoints->OccludedMapper);
 
     controlPoints->Glypher->SetScaleFactor(this->ControlPointSize);
 
@@ -695,7 +697,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller,
       // To prevent some rendering artifacts, and to ensure that the occluded actor does not block point visibility,
       // the maximum opacity of the occluded actor is required to be almost, but not fully opaque.
       double occludedOpacity =
-        std::min(0.99999999, this->MarkupsDisplayNode->GetOccludedOpacity() * opacity);
+        std::min(0.99, this->MarkupsDisplayNode->GetOccludedOpacity() * opacity);
       controlPoints->OccludedProperty->SetOpacity(occludedOpacity);
       controlPoints->OccludedTextProperty->SetOpacity(occludedOpacity);
       }
@@ -890,7 +892,7 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
     {
     ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[i]);
     if (controlPoints->Actor->GetVisibility())
-    {
+      {
       controlPoints->Glypher->SetFollowedCameraPosition(cameraPosition);
       controlPoints->Glypher->SetFollowedCameraViewUp(viewUp);
       if (updateControlPointSize)
@@ -1257,16 +1259,25 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateInteractionPipeline()
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation3D::UpdateOccludedRelativeCoincidentTopologyOffsets(vtkMapper* mapper)
+void vtkSlicerMarkupsWidgetRepresentation3D::UpdateRelativeCoincidentTopologyOffsets(vtkMapper* mapper, vtkMapper* occludedMapper)
 {
   Superclass::UpdateRelativeCoincidentTopologyOffsets(mapper);
+
+  if (!occludedMapper)
+    {
+    return;
+    }
+
+  Superclass::UpdateRelativeCoincidentTopologyOffsets(occludedMapper);
+
   if (!this->MarkupsDisplayNode
     || !this->MarkupsDisplayNode->GetOccludedVisibility()
     || this->MarkupsDisplayNode->GetOccludedOpacity() <= 0.0)
     {
     return;
     }
-  mapper->SetRelativeCoincidentTopologyLineOffsetParameters(-1, this->OccludedRelativeOffset);
-  mapper->SetRelativeCoincidentTopologyPolygonOffsetParameters(-1, this->OccludedRelativeOffset);
-  mapper->SetRelativeCoincidentTopologyPointOffsetParameter(this->OccludedRelativeOffset);
+
+  occludedMapper->SetRelativeCoincidentTopologyLineOffsetParameters(-1, this->OccludedRelativeOffset);
+  occludedMapper->SetRelativeCoincidentTopologyPolygonOffsetParameters(-1, this->OccludedRelativeOffset);
+  occludedMapper->SetRelativeCoincidentTopologyPointOffsetParameter(this->OccludedRelativeOffset);
 }

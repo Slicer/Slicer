@@ -76,22 +76,20 @@ protected:
   vtkSlicerAngleRepresentation3D();
   ~vtkSlicerAngleRepresentation3D() override;
 
-  vtkSmartPointer<vtkPolyData>                Line;
-  vtkSmartPointer<vtkPolyDataMapper>    LineMapper;
-  vtkSmartPointer<vtkActor>             LineActor;
+  vtkSmartPointer<vtkPolyData>   Line;
+  vtkSmartPointer<vtkArcSource>  Arc;
+  vtkSmartPointer<vtkTubeFilter> TubeFilter;
+  vtkSmartPointer<vtkTubeFilter> ArcTubeFilter;
 
-  vtkSmartPointer<vtkArcSource>               Arc;
-  vtkSmartPointer<vtkPolyDataMapper>    ArcMapper;
-  vtkSmartPointer<vtkActor>             ArcActor;
+  vtkSmartPointer<vtkPolyDataMapper> LineMapper;
+  vtkSmartPointer<vtkPolyDataMapper> ArcMapper;
+  vtkSmartPointer<vtkPolyDataMapper> LineOccludedMapper;
+  vtkSmartPointer<vtkPolyDataMapper> ArcOccludedMapper;
 
-  vtkSmartPointer<vtkTubeFilter>              TubeFilter;
-  vtkSmartPointer<vtkTubeFilter>              ArcTubeFilter;
-
-  vtkSmartPointer<vtkPolyDataMapper>    LineOccludedMapper;
-  vtkSmartPointer<vtkActor>             LineOccludedActor;
-
-  vtkSmartPointer<vtkPolyDataMapper>    ArcOccludedMapper;
-  vtkSmartPointer<vtkActor>             ArcOccludedActor;
+  vtkSmartPointer<vtkActor> LineActor;
+  vtkSmartPointer<vtkActor> ArcActor;
+  vtkSmartPointer<vtkActor> LineOccludedActor;
+  vtkSmartPointer<vtkActor> ArcOccludedActor;
 
   void BuildArc();
 

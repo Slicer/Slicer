@@ -626,8 +626,8 @@ void qMRMLMarkupsDisplayNodeWidget::setOccludedOpacity(double OccludedOpacity)
 {
   Q_D(qMRMLMarkupsDisplayNodeWidget);
   if (!d->MarkupsDisplayNode)
-  {
+    {
     return;
-  }
+    }
   d->MarkupsDisplayNode->SetOccludedOpacity(OccludedOpacity);
 }

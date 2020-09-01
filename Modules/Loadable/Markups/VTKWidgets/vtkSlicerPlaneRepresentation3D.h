@@ -87,21 +87,19 @@ protected:
   ~vtkSlicerPlaneRepresentation3D() override;
 
   vtkNew<vtkPlaneSource>     PlaneFillFilter;
-  vtkNew<vtkArrayCalculator> PlaneFillColorFilter;
-
   vtkNew<vtkArrowSource>     ArrowFilter;
   vtkNew<vtkGlyph3D>         ArrowGlypher;
-  vtkNew<vtkArrayCalculator> ArrowColorFilter;
-
   vtkNew<vtkTubeFilter>      PlaneOutlineFilter;
+  vtkNew<vtkArrayCalculator> ArrowColorFilter;
   vtkNew<vtkArrayCalculator> PlaneOutlineColorFilter;
-
+  vtkNew<vtkArrayCalculator> PlaneFillColorFilter;
   vtkNew<vtkAppendPolyData>  Append;
-  vtkNew<vtkPolyDataMapper>  PlaneMapper;
-  vtkNew<vtkActor>           PlaneActor;
 
-  vtkNew<vtkPolyDataMapper>  PlaneOccludedMapper;
+  vtkNew<vtkActor>           PlaneActor;
   vtkNew<vtkActor>           PlaneOccludedActor;
+
+  vtkNew<vtkPolyDataMapper>  PlaneMapper;
+  vtkNew<vtkPolyDataMapper>  PlaneOccludedMapper;
 
   vtkNew<vtkLookupTable>    PlaneColorLUT;
 
