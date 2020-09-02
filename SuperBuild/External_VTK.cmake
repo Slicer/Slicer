@@ -179,7 +179,7 @@ endif()
   if(Slicer_USE_PYTHONQT AND NOT Slicer_USE_SYSTEM_python)
     # Create the vtk-*.egg-info directory to prevent pip from re-installing
     # vtk package as a wheel when listed as dependency in Slicer extension.
-    set(_vtk_egg_info_dir "${python_DIR}/${PYTHON_SITE_PACKAGES_SUBDIR}/vtk-8.2.0-py3.6.egg-info")
+    set(_vtk_egg_info_dir "${python_DIR}/${PYTHON_SITE_PACKAGES_SUBDIR}/vtk-8.2.0-py3.8.egg-info")
     ExternalProject_Add_Step(${proj} create_egg_info
       COMMAND ${CMAKE_COMMAND} -E make_directory ${_vtk_egg_info_dir}
       COMMAND ${CMAKE_COMMAND} -E touch ${_vtk_egg_info_dir}/PKG-INFO
@@ -215,7 +215,7 @@ endif()
   # pythonpath
     if(UNIX)
       set(${proj}_PYTHONPATH_LAUNCHER_BUILD
-        ${VTK_DIR}/${_library_output_subdir}/python3.6/site-packages
+        ${VTK_DIR}/${_library_output_subdir}/python3.8/site-packages
         )
     else()
       set(${proj}_PYTHONPATH_LAUNCHER_BUILD
@@ -237,7 +237,7 @@ endif()
     # in a standard location using CMake/SlicerBlockInstallExternalPythonModules.cmake
     if(UNIX)
       set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
-        <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_INSTALL_LIB_DIR}/python3.6/site-packages
+        <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_INSTALL_LIB_DIR}/python3.8/site-packages
         )
     else()
       set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
@@ -245,7 +245,7 @@ endif()
         # Adding the following line is needed only for (<VTK_MAJOR_VERSION>.<VTK_MINOR_VERSION> <= 8.1),
         # but since we only have Slicer_VTK_VERSION_MAJOR variable, following the update of VTK
         # version from 9.0 to 8.2, there is no way to discriminate between 8.1 and 8.2.
-        <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_INSTALL_LIB_DIR}/python3.6/site-packages
+        <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_INSTALL_LIB_DIR}/python3.8/site-packages
         )
     endif()
     mark_as_superbuild(
