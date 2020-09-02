@@ -212,7 +212,8 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned
     && this->LineActor->GetVisibility()
     && this->MarkupsDisplayNode->GetOccludedVisibility());
 
-  if (markupsNode->GetNumberOfDefinedControlPoints(true) == 2 && this->GetAllControlPointsVisible())
+  if (markupsNode->GetNumberOfDefinedControlPoints(true) == 2 && this->GetAllControlPointsVisible()
+    && this->MarkupsDisplayNode->GetPropertiesLabelVisibility())
     {
     this->TextActor->SetVisibility(true);
     double p1[3] = { 0.0 };
