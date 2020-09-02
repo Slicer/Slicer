@@ -695,6 +695,14 @@ foreach(dep QT ${Slicer_DEPENDENCIES})
 endforeach()
 
 #-----------------------------------------------------------------------------
+# Update CMake module path
+#------------------------------------------------------------------------------
+set(CMAKE_MODULE_PATH
+  ${vtkAddon_CMAKE_DIR}
+  ${CMAKE_MODULE_PATH}
+  )
+
+#-----------------------------------------------------------------------------
 # Folders
 #-----------------------------------------------------------------------------
 set_property(GLOBAL PROPERTY USE_FOLDERS ${Slicer_USE_FOLDERS})
@@ -854,6 +862,9 @@ if(Slicer_USE_PYTHONQT)
 
   # Enable qMRMLWidgets python wrapping
   set(MRMLWidgets_WRAP_PYTHON ON)
+
+  # See vtkAddon/CMake/vtkMacroKitPythonWrap.cmake
+  set(Slicer_VTK_WRAP_HIERARCHY_DIR ${Slicer_BINARY_DIR})
 endif()
 
 #-----------------------------------------------------------------------------
