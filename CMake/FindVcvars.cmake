@@ -116,8 +116,8 @@ cmake_minimum_required(VERSION 3.13.4)
 # Global variables used only in this script (unset at the end)
 set(_Vcvars_MSVC_ARCH_REGEX "^(32|64)$")
 set(_Vcvars_MSVC_VERSION_REGEX "^[0-9][0-9][0-9][0-9]$")
-set(_Vcvars_SUPPORTED_MSVC_VERSIONS 1926 1925 1924 1923 1922 1921 1920
-                                    1916 1915 1914 1913 1912 1911 1910 1900 
+set(_Vcvars_SUPPORTED_MSVC_VERSIONS 1927 1926 1925 1924 1923 1922 1921 1920
+                                    1916 1915 1914 1913 1912 1911 1910 1900
                                     1800 1700 1600 1500 1400)
 
 function(_vcvars_message)
@@ -131,7 +131,9 @@ function(Vcvars_ConvertMsvcVersionToVsVersion msvc_version output_var)
     message(FATAL_ERROR "msvc_version is expected to match `${_Vcvars_MSVC_VERSION_REGEX}`")
   endif()
   # See https://en.wikipedia.org/wiki/Microsoft_Visual_C%2B%2B#Internal_version_numbering
-  if(msvc_version EQUAL 1926)     # VS 2019
+  if(msvc_version EQUAL 1927)     # VS 2019
+    set(vs_version "16.7")
+  elseif(msvc_version EQUAL 1926) # VS 2019
     set(vs_version "16.6")
   elseif(msvc_version EQUAL 1925) # VS 2019
     set(vs_version "16.5")
