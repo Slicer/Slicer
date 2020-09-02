@@ -23,7 +23,7 @@ endif()
 #       by ExternalProjectDependency module.
 #       That way, the variable are available in External_tcl.cmake despite the fact
 #       the "tcl" project does NOT directly depend on "python".
-set(PYTHON_STDLIB_SUBDIR lib/python3.8)
+set(PYTHON_STDLIB_SUBDIR lib/python3.6)
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   set(PYTHON_STDLIB_SUBDIR Lib)
 endif()
@@ -36,8 +36,8 @@ if(Slicer_USE_SYSTEM_${proj})
   unset(PYTHON_INCLUDE_DIR CACHE)
   unset(PYTHON_LIBRARY CACHE)
   unset(PYTHON_EXECUTABLE CACHE)
-  find_package(PythonLibs 3.8 REQUIRED)
-  find_package(PythonInterp 3.8 REQUIRED)
+  find_package(PythonLibs 3.6 REQUIRED)
+  find_package(PythonInterp 3.6 REQUIRED)
   set(PYTHON_INCLUDE_DIR ${PYTHON_INCLUDE_DIRS})
   set(PYTHON_LIBRARY ${PYTHON_LIBRARIES})
   set(PYTHON_EXECUTABLE ${PYTHON_EXECUTABLE})
@@ -47,11 +47,11 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
    OR NOT DEFINED PYTHON_LIBRARY
    OR NOT DEFINED PYTHON_EXECUTABLE) AND NOT Slicer_USE_SYSTEM_${proj})
 
-  set(python_SOURCE_DIR "${CMAKE_BINARY_DIR}/Python-3.8.7")
+  set(python_SOURCE_DIR "${CMAKE_BINARY_DIR}/Python-3.6.12")
 
   ExternalProject_Add(python-source
-    URL "https://www.python.org/ftp/python/3.8.5/Python-3.8.5.tgz"
-    URL_MD5 "c83551d83bf015134b4b2249213f3f85"
+    URL "https://www.python.org/ftp/python/3.6.12/Python-3.6.12.tgz"
+    URL_MD5 "00c3346f314072fcc810d4a51d06f04e"
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${python_SOURCE_DIR}
     CONFIGURE_COMMAND ""
@@ -169,8 +169,8 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
       set(python_IMPORT_SUFFIX dylib)
     endif()
     set(slicer_PYTHON_SHARED_LIBRARY_DIR ${python_DIR}/lib)
-    set(PYTHON_INCLUDE_DIR ${python_DIR}/include/python3.8m)
-    set(PYTHON_LIBRARY ${python_DIR}/lib/libpython3.8m.${python_IMPORT_SUFFIX})
+    set(PYTHON_INCLUDE_DIR ${python_DIR}/include/python3.6m)
+    set(PYTHON_LIBRARY ${python_DIR}/lib/libpython3.6m.${python_IMPORT_SUFFIX})
     set(PYTHON_EXECUTABLE ${python_DIR}/bin/PythonSlicer)
     set(slicer_PYTHON_REAL_EXECUTABLE ${python_DIR}/bin/python)
   elseif(WIN32)

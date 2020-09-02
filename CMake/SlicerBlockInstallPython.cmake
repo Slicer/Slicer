@@ -60,7 +60,7 @@ To create a Slicer package including python libraries, you can *NOT* provide you
         PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ)
       # Explicitly call "slicerStripInstalledLibrary" because directly
       # calling "slicerInstallLibrary" improperly gets the python library
-      # filename ("libpython3" instead of "libpython3.8m").
+      # filename ("libpython3" instead of "libpython3.6m").
       #
       # This happens because "slicerInstallLibrary" internally uses
       # "get_filename_component" with the NAME_WE option.
@@ -127,7 +127,7 @@ To create a Slicer package including python libraries, you can *NOT* provide you
   # Install headers
   set(python_include_subdir /Include/)
   if(UNIX)
-    set(python_include_subdir /include/python3.8m/)
+    set(python_include_subdir /include/python3.6m/)
   endif()
 
   install(FILES "${PYTHON_DIR}${python_include_subdir}/pyconfig.h"
