@@ -207,6 +207,9 @@ Slicer_Remote_Add(vtkAddon
   )
 list_conditional_append(Slicer_BUILD_vtkAddon Slicer_REMOTE_DEPENDENCIES vtkAddon)
 
+set(vtkAddon_CMAKE_DIR ${vtkAddon_SOURCE_DIR}/CMake)
+mark_as_superbuild(vtkAddon_CMAKE_DIR:PATH)
+
 set(vtkAddon_USE_UTF8 ON)
 mark_as_superbuild(vtkAddon_USE_UTF8:BOOL)
 

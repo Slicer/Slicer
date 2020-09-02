@@ -83,11 +83,13 @@ endif()
 # --------------------------------------------------------------------------
 set(Slicer_CMAKE_DIR "@Slicer_CMAKE_DIR@")
 set(Slicer_EXTENSIONS_CMAKE_DIR "@Slicer_EXTENSIONS_CMAKE_DIR@")
+set(vtkAddon_CMAKE_DIR "@vtkAddon_CMAKE_DIR@")
 
 # Update CMAKE_MODULE_PATH
 set(CMAKE_MODULE_PATH
   ${Slicer_CMAKE_DIR}
   ${Slicer_EXTENSIONS_CMAKE_DIR}
+  ${vtkAddon_CMAKE_DIR}
   ${CMAKE_MODULE_PATH}
   )
 
@@ -226,6 +228,9 @@ set(Slicer_VTK_VERSION_MAJOR "@Slicer_VTK_VERSION_MAJOR@")
 
 # Slicer include directories for module Widget
 @Slicer_INCLUDE_MODULE_WIDGET_DIRS_CONFIG@
+
+# See vtkAddon/CMake/vtkMacroKitPythonWrap.cmake
+set(Slicer_VTK_WRAP_HIERARCHY_DIR "@Slicer_VTK_WRAP_HIERARCHY_DIR@")
 
 # Slicer VTK wrap hierarchy files
 @Slicer_WRAP_HIERARCHY_FILES_CONFIG@
