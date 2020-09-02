@@ -297,7 +297,11 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
     parameterSetNode->GetMasterVolumeIntensityMask())
     {
     vtkNew<vtkOrientedImageData> maskImage;
-    maskImage->DeepCopy(modifierLabelmap);
+    maskImage->SetExtent(modifierLabelmap->GetExtent());
+    maskImage->SetSpacing(modifierLabelmap->GetSpacing());
+    maskImage->SetOrigin(modifierLabelmap->GetOrigin());
+    maskImage->CopyDirections(modifierLabelmap);
+    maskImage->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
     vtkOrientedImageDataResample::FillImage(maskImage, m_EraseValue);
 
     // Apply mask to modifier labelmap if masking is enabled
