@@ -154,8 +154,8 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "warning: the use of .tmpnam_r. is dangerous, better use .mkstemp."
 
   # Python - Windows
-  "(P|p)ython-3.6.7.(M|m)odules"
-  "(P|p)ython-3.6.7.PC"
+  "(P|p)ython-3.6.12.(M|m)odules"
+  "(P|p)ython-3.6.12.PC"
   "Include\\um\\winsock2.h.*warning C4005: 'INVALID_SOCKET': macro redefinition"
   # Python - Linux
   "Objects.unicodeobject.c.*warning:.*differ in signedness"
