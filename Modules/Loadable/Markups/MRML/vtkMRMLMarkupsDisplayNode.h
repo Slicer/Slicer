@@ -29,8 +29,14 @@
 #include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLMarkupsNode.h"
 
+// vtkAddon includes
+#include <vtkAddonSetGet.h>
+
 // STD includes
 #include <map>
+
+// VTK include
+#include <vtkTextProperty.h>
 
 class vtkMRMLInteractionEventData;
 class vtkMRMLProceduralColorNode;
@@ -386,6 +392,11 @@ public:
   vtkGetMacro(OccludedOpacity, double);
   vtkSetMacro(OccludedOpacity, double);
 
+  /// Text property object that controls the display properties of text actors in 2D and 3D.
+  /// The text object property controls background color/opacity, frame size/color, font, etc.
+  /// This function should always return a valid vtkTextProperty pointer.
+  vtkGetObjectMacro(TextProperty, vtkTextProperty);
+
   /// The visibility and interactability of the interaction handles
   vtkGetMacro(HandlesInteractive, bool);
   vtkSetMacro(HandlesInteractive, bool);
@@ -396,6 +407,25 @@ protected:
   ~vtkMRMLMarkupsDisplayNode() override;
   vtkMRMLMarkupsDisplayNode( const vtkMRMLMarkupsDisplayNode& );
   void operator= ( const vtkMRMLMarkupsDisplayNode& );
+
+  // Set the text style from a string
+  // String format follows html-style conventions
+  void SetTextPropertyFromString(std::string textPropertyString);
+
+  // Return a string representing the text style
+  // String format follows html-style conventions
+  std::string GetTextPropertyAsString();
+
+  // Returns a string containing the text style of the vtkTextProperty
+  // String format follows html-style conventions
+  static std::string GetTextPropertyAsString(vtkTextProperty* property);
+
+  // Update the style of a vtkTextProperty from a string
+  // String format follows html-style conventions
+  static void UpdateTextPropertyFromString(std::string inputString, vtkTextProperty* property);
+
+  // Get the color from a string of the form: rgba(0,0,0,0)
+  static void GetColorFromString(const std::string& colorString, double color[4]);
 
   /// Current active point or widget component type and index (hovered by the mouse or other interaction context)
   /// Map interaction context identifier (empty string for mouse) to component type enum
@@ -437,6 +467,8 @@ protected:
 
   bool OccludedVisibility;
   double OccludedOpacity;
+
+  vtkTextProperty* TextProperty;
 
   bool HandlesInteractive;
 };

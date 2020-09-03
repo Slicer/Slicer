@@ -107,6 +107,9 @@ protected slots:
   void onCurveLineDiameterSliderWidgetChanged(double value);
   void onTextScaleSliderWidgetChanged(double value);
   void onOpacitySliderWidgetChanged(double value);
+
+  void setTextProperty();
+
   void onInteractionCheckBoxChanged(int state);
 
 protected:
