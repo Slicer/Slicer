@@ -685,13 +685,15 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller,
     controlPoints->Property->SetColor(color);
     controlPoints->Property->SetOpacity(opacity);
 
+    controlPoints->TextProperty->ShallowCopy(this->MarkupsDisplayNode->GetTextProperty());
     controlPoints->TextProperty->SetColor(color);
     controlPoints->TextProperty->SetOpacity(opacity);
-    controlPoints->TextProperty->SetFontSize(static_cast<int>(5. * this->MarkupsDisplayNode->GetTextScale()));
+    controlPoints->TextProperty->SetFontSize(static_cast<int>(this->MarkupsDisplayNode->GetTextProperty()->GetFontSize()
+      * this->MarkupsDisplayNode->GetTextScale()));
+    controlPoints->TextProperty->SetBackgroundOpacity(opacity * this->MarkupsDisplayNode->GetTextProperty()->GetBackgroundOpacity());
 
     controlPoints->OccludedProperty->SetColor(color);
-    controlPoints->OccludedTextProperty->SetColor(color);
-    controlPoints->OccludedTextProperty->SetFontSize(controlPoints->TextProperty->GetFontSize());
+    controlPoints->OccludedTextProperty->ShallowCopy(controlPoints->TextProperty);
     if (this->MarkupsDisplayNode->GetOccludedVisibility() && this->MarkupsDisplayNode->GetOccludedOpacity() > 0.0)
       {
       // To prevent some rendering artifacts, and to ensure that the occluded actor does not block point visibility,
@@ -700,6 +702,8 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller,
         std::min(0.99, this->MarkupsDisplayNode->GetOccludedOpacity() * opacity);
       controlPoints->OccludedProperty->SetOpacity(occludedOpacity);
       controlPoints->OccludedTextProperty->SetOpacity(occludedOpacity);
+      controlPoints->OccludedTextProperty->SetBackgroundOpacity(occludedOpacity
+        * this->MarkupsDisplayNode->GetTextProperty()->GetBackgroundOpacity());
       }
     else
       {

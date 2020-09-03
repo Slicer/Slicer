@@ -433,9 +433,12 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller,
     controlPoints->Property->SetColor(color);
     controlPoints->Property->SetOpacity(opacity);
 
+    controlPoints->TextProperty->ShallowCopy(this->MarkupsDisplayNode->GetTextProperty());
     controlPoints->TextProperty->SetColor(color);
     controlPoints->TextProperty->SetOpacity(opacity);
-    controlPoints->TextProperty->SetFontSize(static_cast<int>(5. * this->MarkupsDisplayNode->GetTextScale()));
+    controlPoints->TextProperty->SetFontSize(static_cast<int>(this->MarkupsDisplayNode->GetTextProperty()->GetFontSize()
+      * this->MarkupsDisplayNode->GetTextScale()));
+    controlPoints->TextProperty->SetBackgroundOpacity(opacity * this->MarkupsDisplayNode->GetTextProperty()->GetBackgroundOpacity());
 
     vtkMarkupsGlyphSource2D* glyphSource = this->GetControlPointsPipeline(controlPointType)->GlyphSource2D;
     if (this->MarkupsDisplayNode->GlyphTypeIs3D())
