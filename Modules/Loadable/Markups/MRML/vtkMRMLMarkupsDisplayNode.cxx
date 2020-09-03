@@ -834,7 +834,7 @@ void vtkMRMLMarkupsDisplayNode::UpdateTextPropertyFromString(std::string inputSt
       {
       size_t pos = value.find("px");
       std::stringstream ss;
-      vtkVariant size = value.substr(0, pos);
+      vtkVariant size = vtkVariant(value.substr(0, pos));
       textProperty->SetFontSize(size.ToInt());
       }
     else if (key == "font-style")
@@ -870,7 +870,7 @@ void vtkMRMLMarkupsDisplayNode::UpdateTextPropertyFromString(std::string inputSt
       {
       size_t pos = value.find("px");
       std::stringstream ss;
-      vtkVariant size = value.substr(0, pos);
+      vtkVariant size = vtkVariant(value.substr(0, pos));
       textProperty->SetFrameWidth(size.ToInt());
       }
     else if (key == "text-shadow")
@@ -884,7 +884,7 @@ void vtkMRMLMarkupsDisplayNode::UpdateTextPropertyFromString(std::string inputSt
           {
           size_t pos = shadowProperty.find("px");
           std::stringstream ss;
-          vtkVariant offset = shadowProperty.substr(0, pos);
+          vtkVariant offset = vtkVariant(shadowProperty.substr(0, pos));
           if (shadowPropertyIndex == SHADOW_H_OFFSET_INDEX)
             {
             shadowOffset[0] = offset.ToInt();
