@@ -38,15 +38,13 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/Slicer/LibArchive.git"
+    "${EP_GIT_PROTOCOL}://github.com/libarchive/libarchive.git"
     QUIET
     )
 
-  # master (v3.4.0) with patches:
-  # - disabling LHA (See #4407)
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "92ad4c79e46805ce2dfbc46746e10d204108655e" # slicer-v3.4.0-2019-06-11-614110e7
+    "34940ef6ea0b21d77cb501d235164ad88f19d40c"  # master (v3.4.3) with fix-enum-cases
     QUIET
     )
 
