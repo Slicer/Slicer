@@ -880,8 +880,8 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
       // In case of parallel projection, glyphs must face the camera plane normal
       // and not towards the camera position.
       // Glyph filter can only set direction by specifying a point all glyphs face towards.
-      // To approximage facing the camera plane normal, we report a much farther camera position
-      // to the glypher. This way direction vectors form any points to the far point are approximately
+      // To approximate facing the camera plane normal, we report a much farther camera position
+      // to the glypher. This way direction vectors form any points to the far point are
       // approximately parallel to the camera plane normal.
       double dop[3] = { 0.0 };
       cam->GetDirectionOfProjection(dop);
