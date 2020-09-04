@@ -116,7 +116,7 @@ void qSlicerMarkupsWriter::setStorageNodeClass(vtkMRMLStorableNode* storableNode
 bool qSlicerMarkupsWriter::write(const qSlicerIO::IOProperties& properties)
 {
   vtkMRMLStorableNode* node = vtkMRMLStorableNode::SafeDownCast(this->getNodeByID(properties["nodeID"].toString().toUtf8().data()));
-  std::string fileName = properties["fileName"].toString().toUtf8();
+  std::string fileName = properties["fileName"].toString().toStdString();
 
   vtkNew<vtkMRMLMarkupsFiducialStorageNode> fcsvStorageNode;
   std::string fcsvCompatibleFileExtension = fcsvStorageNode->GetSupportedFileExtension(fileName.c_str(), false, true);
