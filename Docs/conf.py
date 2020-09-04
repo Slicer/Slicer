@@ -95,7 +95,7 @@ rst_prolog = open('global.rst.in', 'r').read()
 
 # If given, this must be the name of an image file (path relative to the configuration directory) that is the logo of the docs.
 # It is placed at the top of the sidebar; its width should therefore not exceed 200 pixels
-html_logo = '_static/images/3D-Slicer-Mark.svg'
+html_logo = '_static/images/3D-Slicer-Mark.png'
 
 # -- Options for HTML output ----------------------------------------------
 
