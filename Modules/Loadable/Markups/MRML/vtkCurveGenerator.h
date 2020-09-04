@@ -185,6 +185,25 @@ public:
   /// Get the output sampled points
   vtkPoints* GetOutputPoints();
 
+  /// Calculates point parameters for use in vtkParametricPolynomialApproximation
+  /// The parameter values are based on the point index and range from 0.0 at the start to 1.0 at the end of the line.
+  /// \sa SortByMinimumSpanningTreePosition
+  /// \param inputPoints Input list of points. The points form a continuous line from the first to last point.
+  /// \param outputParameters Parameters used by vtkParametricPolynomialApproximation to approximate a polynomial from the input points.
+  static void SortByIndex(vtkPoints* inputPoints, vtkDoubleArray* outputParameters);
+
+  /// Calculates point parameters for use in vtkParametricPolynomialApproximation
+  /// The parameter values are calculated using the following algorithm:
+  /// 1. Construct an undirected graph as a 2D array
+  /// 2. Find the two vertices that are the farthest apart
+  /// 3. Run prim's algorithm on the graph
+  /// 4. Extract the "trunk" path from the last vertex to the first
+  /// 5. Based on the distance along that path, assign each vertex a polynomial parameter value
+  /// \sa SortByIndex
+  /// \param inputPoints Input point cloud that should be sorted to form a continuous line.
+  /// \param outputParameters Parameters used by vtkParametricPolynomialApproximation to approximate a polynomial from the input points.
+  static void SortByMinimumSpanningTreePosition(vtkPoints* inputPoints, vtkDoubleArray* outputParameters);
+
 protected:
   // input parameters
   int NumberOfPointsPerInterpolatingSegment;
@@ -220,9 +239,6 @@ protected:
   int GeneratePointsFromFunction(vtkPoints* inputPoints, vtkPoints* outputPoints);
   int GeneratePointsFromSurface(vtkPoints* inputPoints, vtkPolyData* inputSurface, vtkPoints* outputPoints);
   int GenerateLines(vtkPolyData* polyData);
-
-  static void SortByIndex(vtkPoints*, vtkDoubleArray*);
-  static void SortByMinimumSpanningTreePosition(vtkPoints*, vtkDoubleArray*);
 
   int FillInputPortInformation(int port, vtkInformation* info) override;
   int RequestData(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector) override;
