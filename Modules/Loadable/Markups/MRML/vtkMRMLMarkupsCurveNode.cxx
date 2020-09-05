@@ -99,6 +99,7 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
 
   // Insert curve measurements calculator between curve generator and world transformer filters
   this->CurveMeasurementsCalculator = vtkSmartPointer<vtkCurveMeasurementsCalculator>::New();
+  //this->CurveMeasurementsCalculator->SetMeasurementList (vtkColl.) //TODO:
   this->CurveMeasurementsCalculator->SetInputConnection(this->CurveGenerator->GetOutputPort());
   this->CurvePolyToWorldTransformer->SetInputConnection(this->CurveMeasurementsCalculator->GetOutputPort());
 

@@ -44,6 +44,7 @@ std::string vtkMRMLMeasurement::GetValueWithUnitsAsPrintableString()
 //----------------------------------------------------------------------------
 void vtkMRMLMeasurement::Initialize()
 {
+  this->SetEnabled(true);
   this->SetName(nullptr);
   this->SetValue(0.0);
   this->SetUnits(nullptr);
@@ -53,12 +54,15 @@ void vtkMRMLMeasurement::Initialize()
   this->SetDerivationCode(nullptr);
   this->SetUnitsCode(nullptr);
   this->SetMethodCode(nullptr);
+  this->SetControlPointValues(nullptr);
+  //this->SetPolyDataValues(nullptr);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMeasurement::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
+  os << indent << "Enabled: " << (this->Enabled ? "true" : "false") << "\n";
   os << indent << "Name: " << (this->Name ? this->Name : "(none)") << "\n";
   os << indent << "PrintableValue: " << this->GetValueWithUnitsAsPrintableString();
   os << indent << "Value: " << this->Value << "\n";
@@ -90,6 +94,7 @@ void vtkMRMLMeasurement::Copy(vtkMRMLMeasurement* src)
     {
     return;
     }
+  this->SetEnabled(src->Enabled);
   this->SetName(src->GetName());
   this->SetValue(src->GetValue());
   this->SetUnits(src->GetUnits());
@@ -99,6 +104,8 @@ void vtkMRMLMeasurement::Copy(vtkMRMLMeasurement* src)
   this->SetDerivationCode(src->DerivationCode);
   this->SetUnitsCode(src->UnitsCode);
   this->SetMethodCode(src->MethodCode);
+  this->SetControlPointValues(src->ControlPointValues);
+  //this->SetPolyDataValues(src->PolyDataValues);
 }
 
 //----------------------------------------------------------------------------
@@ -254,3 +261,41 @@ void vtkMRMLMeasurement::SetMethodCode(vtkCodedEntry* entry)
     }
   this->MethodCode->Copy(entry);
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLMeasurement::SetControlPointValues(vtkDoubleArray* inputValues)
+{
+  if (!inputValues)
+    {
+    if (this->ControlPointValues)
+      {
+      this->ControlPointValues->Delete();
+      this->ControlPointValues = nullptr;
+      }
+    return;
+    }
+  if (!this->ControlPointValues)
+    {
+    this->ControlPointValues = vtkDoubleArray::New();
+    }
+  this->ControlPointValues->DeepCopy(inputValues);
+}
+
+////----------------------------------------------------------------------------
+//void vtkMRMLMeasurement::SetPolyDataValues(vtkPolyData* inputValues)
+//{
+//  if (!inputValues)
+//    {
+//    if (this->PolyDataValues)
+//      {
+//      this->PolyDataValues->Delete();
+//      this->PolyDataValues = nullptr;
+//      }
+//    return;
+//    }
+//  if (!this->PolyDataValues)
+//    {
+//    this->PolyDataValues = vtkPolyData::New();
+//    }
+//  this->PolyDataValues->DeepCopy(inputValues);
+//}

@@ -38,7 +38,7 @@ class vtkMRMLUnitNode;
 /// MarkupsNodes contains a list of points (ControlPoint).
 /// Each markupNode is defined by a certain number of control points:
 /// N for fiducials, 2 for rulers, 3 for angles and N for curves.
-/// MarkupNodes are stricly connected with the VTKWidget representations. For each
+/// MarkupNodes are strictly connected with the VTKWidget representations. For each
 /// MarkupNode there is a representation in each view. The representations are handled
 /// by the VTKWidget (there is one widget for each MRMLMarkupsNode per view).
 /// Visualization parameters for these nodes are controlled by the
@@ -59,6 +59,8 @@ class vtkMRMLUnitNode;
 /// \ingroup Slicer_QtModules_Markups
 
 class vtkAlgorithmOutput;
+class vtkCollection;
+class vtkDataArray;
 class vtkGeneralTransform;
 class vtkMatrix4x4;
 class vtkMRMLMarkupsDisplayNode;
@@ -631,54 +633,55 @@ protected:
   /// Calculates the handle to world matrix based on the current control points
   virtual void UpdateInteractionHandleToWorldMatrix();
 
-  // Used for limiting number of markups that may be placed.
+  /// Used for limiting number of markups that may be placed.
   int MaximumNumberOfControlPoints;
   int RequiredNumberOfControlPoints;
 
   bool CurveClosed;
 
-  // Vector of control points
+  /// Vector of control points
   ControlPointsListType ControlPoints;
 
-  // Converts curve control points to curve points.
+  /// Converts curve control points to curve points.
   vtkSmartPointer<vtkCurveGenerator> CurveGenerator;
 
-  // Computes tangent and smooth normal for each curve point.
-  // It provides a fully specified coordinate system at each point of the curve,
-  // which is useful for image reslicing or defining camera pose.
-  // Curve is defined in the world coordinate system.
+  /// Computes tangent and smooth normal for each curve point.
+  /// It provides a fully specified coordinate system at each point of the curve,
+  /// which is useful for image reslicing or defining camera pose.
+  /// Curve is defined in the world coordinate system.
   vtkSmartPointer<vtkFrenetSerretFrame> CurveCoordinateSystemGeneratorWorld;
 
-  // Stores control point positions in a polydata (in local coordinate system).
-  // Line cells connect all points into a curve.
+  /// Stores control point positions in a polydata (in local coordinate system).
+  /// Line cells connect all points into a curve.
   vtkSmartPointer<vtkPolyData> CurveInputPoly;
 
   vtkSmartPointer<vtkTransformPolyDataFilter> CurvePolyToWorldTransformer;
   vtkSmartPointer<vtkGeneralTransform> CurvePolyToWorldTransform;
 
-  // Point locator that allows quick finding of interpolated point in the world
-  // coordinate system (in transformed CurvePoly).
+  /// Point locator that allows quick finding of interpolated point in the world
+  /// coordinate system (in transformed CurvePoly).
   vtkSmartPointer<vtkPointLocator> TransformedCurvePolyLocator;
 
-  // Locks all the points and GUI
+  /// Locks all the points and GUI
   int Locked;
 
   std::string MarkupLabelFormat;
 
-  // Keep track of the number of markups that were added to the list, always
-  // incrementing, not decreasing when they're removed. Used to help create
-  // unique names and ids. Reset to 0 when \sa RemoveAllControlPoints called
+  /// Keep track of the number of markups that were added to the list, always
+  /// incrementing, not decreasing when they're removed. Used to help create
+  /// unique names and ids. Reset to 0 when \sa RemoveAllControlPoints called
   int LastUsedControlPointNumber;
 
-  // Markup centerpoint (in local coordinates).
-  // It may be used as rotation center or as a handle to grab the widget by.
+  /// Markup centerpoint (in local coordinates).
+  /// It may be used as rotation center or as a handle to grab the widget by.
   vtkVector3d CenterPos;
 
-  std::vector< vtkSmartPointer<vtkMRMLMeasurement> > Measurements;
+  /// List of measurements stored for the markup
+  vtkCollection* Measurements;
 
   std::string PropertiesLabelText;
 
-  // Transform that moves the xyz unit vectors and origin of the interaction handles to local coordinates
+  /// Transform that moves the xyz unit vectors and origin of the interaction handles to local coordinates
   vtkSmartPointer<vtkMatrix4x4> InteractionHandleToWorldMatrix;
 
   /// Flag set from SetControlPointPositionsWorld that pauses update of measurements until the update is complete.

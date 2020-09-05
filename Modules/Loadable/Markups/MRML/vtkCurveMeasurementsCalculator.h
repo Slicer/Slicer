@@ -42,12 +42,16 @@ public:
   vtkBooleanMacro(CalculateCurvature, bool);
 
   /// TODO:
+  vtkSetMacro(InterpolateControlPointMeasurement, bool);
+  vtkGetMacro(InterpolateControlPointMeasurement, bool);
+  vtkBooleanMacro(InterpolateControlPointMeasurement, bool);
 
 protected:
   bool CalculatePolyDataCurvature(vtkPolyData* polyData);
 
 protected:
   bool CalculateCurvature;
+  bool InterpolateControlPointMeasurement;
 
   int FillInputPortInformation(int port, vtkInformation* info) override;
   int RequestData(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector) override;
