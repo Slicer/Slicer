@@ -763,7 +763,8 @@ def loadLabelVolume(filename, properties={}, returnNode=False):
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
     If returnNode is True then a status flag and loaded node are returned.
   """
-  return loadNodeFromFile(filename, 'VolumeFile', {'labelmap': True}, returnNode)
+  properties['labelmap'] = True
+  return loadNodeFromFile(filename, 'VolumeFile', properties, returnNode)
 
 def loadShaderProperty(filename, returnNode=False):
   """Load node from file.
