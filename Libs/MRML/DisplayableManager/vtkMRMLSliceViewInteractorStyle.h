@@ -47,14 +47,6 @@ public:
   vtkTypeMacro(vtkMRMLSliceViewInteractorStyle,vtkMRMLViewInteractorStyle);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  ///
-  /// Events are either handled here by changing the slice node
-  /// and composite node (sometimes using the logic's methods) or
-  /// they are passed to the vtkInteractorStyleUser, which conditionally
-  /// passes them to observers if there are any.
-  void OnMouseMove() override;
-  void OnLeave() override;
-
   /// Give a chance to displayable managers to process the event.
   /// Return true if the event is processed.
   using vtkMRMLViewInteractorStyle::DelegateInteractionEventToDisplayableManagers;

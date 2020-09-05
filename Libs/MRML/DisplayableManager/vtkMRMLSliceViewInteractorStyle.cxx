@@ -75,45 +75,6 @@ void vtkMRMLSliceViewInteractorStyle::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceViewInteractorStyle::OnMouseMove()
-{
-  if (this->EnableCursorUpdate)
-    {
-    // Update the cursor position (show coordinates of current position in the data probe, etc.)
-    vtkMRMLScene *scene = this->SliceLogic->GetMRMLScene();
-    vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(scene);
-    if (crosshairNode)
-      {
-      int eventPosition[2] = { 0 };
-      this->GetInteractor()->GetEventPosition(eventPosition[0], eventPosition[1]);
-      vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
-      double xyz[3] = { 0.0 };
-      vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(this->GetInteractor(),
-        sliceNode, eventPosition[0], eventPosition[1], xyz);
-      crosshairNode->SetCursorPositionXYZ(xyz, sliceNode);
-      }
-    }
-
-  this->Superclass::OnMouseMove();
-}
-
-
-//----------------------------------------------------------------------------
-void vtkMRMLSliceViewInteractorStyle::OnLeave()
-{
-  if (this->EnableCursorUpdate)
-    {
-    vtkMRMLScene *scene = this->SliceLogic->GetMRMLScene();
-    vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(scene);
-    if (crosshairNode)
-      {
-      crosshairNode->SetCursorPositionInvalid();
-      }
-    }
-  this->Superclass::OnLeave();
-}
-
-//----------------------------------------------------------------------------
 bool vtkMRMLSliceViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(vtkEventData* inputEventData)
 {
   if (!this->DisplayableManagers || !inputEventData)
@@ -143,6 +104,33 @@ bool vtkMRMLSliceViewInteractorStyle::DelegateInteractionEventToDisplayableManag
   ed->SetDisplayPosition(displayPositionCorrected);
   ed->SetWorldPosition(worldPosition);
   ed->SetAttributesFromInteractor(this->GetInteractor());
+
+  // Update cursor position
+  if (this->EnableCursorUpdate)
+    {
+    if (inputEventData->GetType() == vtkCommand::MouseMoveEvent)
+      {
+      // Update the cursor position (show coordinates of current position in the data probe, etc.)
+      vtkMRMLScene* scene = this->SliceLogic->GetMRMLScene();
+      vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(scene);
+      if (crosshairNode)
+        {
+        double xyz[3] = { 0.0 };
+        vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(this->GetInteractor(),
+          sliceNode, displayPositionInt[0], displayPositionInt[1], xyz);
+        crosshairNode->SetCursorPositionXYZ(xyz, sliceNode);
+        }
+      }
+    else if (inputEventData->GetType() == vtkCommand::LeaveEvent)
+      {
+      vtkMRMLScene* scene = this->SliceLogic->GetMRMLScene();
+      vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(scene);
+      if (crosshairNode)
+        {
+        crosshairNode->SetCursorPositionInvalid();
+        }
+      }
+    }
 
   return this->DelegateInteractionEventDataToDisplayableManagers(ed);
 }
