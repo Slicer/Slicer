@@ -107,6 +107,8 @@ qSlicerMainWindowPrivate::qSlicerMainWindowPrivate(qSlicerMainWindow& object)
   this->PythonConsoleToggleViewAction = nullptr;
 #endif
   this->ErrorLogWidget = nullptr;
+  this->ErrorLogDockWidget = nullptr;
+  this->ErrorLogToggleViewAction = nullptr;
   this->ErrorLogToolButton = nullptr;
   this->ModuleSelectorToolBar = nullptr;
   this->LayoutManager = nullptr;
@@ -455,6 +457,22 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->ErrorLogWidget = new ctkErrorLogWidget;
   this->ErrorLogWidget->setErrorLogModel(
     qSlicerApplication::application()->errorLogModel());
+  this->ErrorLogDockWidget = new QDockWidget(qSlicerMainWindow::tr("Error Log"));
+  this->ErrorLogDockWidget->setObjectName("ErrorLogDockWidget");
+  this->ErrorLogDockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
+  this->ErrorLogDockWidget->setWidget(this->ErrorLogWidget);
+  this->ErrorLogToggleViewAction = this->ErrorLogDockWidget->toggleViewAction();
+  // Set default state
+  q->addDockWidget(Qt::BottomDockWidgetArea, this->ErrorLogDockWidget);
+  this->ErrorLogDockWidget->hide();
+  // Set up show/hide action
+  this->ErrorLogToggleViewAction->setText(qSlicerMainWindow::tr("&Error Log"));
+  this->ErrorLogToggleViewAction->setToolTip(qSlicerMainWindow::tr(
+    "Raise the error log display."));
+  this->ErrorLogToggleViewAction->setShortcut(QKeySequence("Ctrl+0"));
+  QObject::connect(this->ErrorLogToggleViewAction, SIGNAL(toggled(bool)),
+    q, SLOT(onErrorLogToggled(bool)));
+  this->ViewMenu->addAction(this->ErrorLogToggleViewAction);
 
   //----------------------------------------------------------------------------
   // Python console
@@ -755,7 +773,7 @@ void qSlicerMainWindowPrivate::setupStatusBar()
 {
   Q_Q(qSlicerMainWindow);
   this->ErrorLogToolButton = new QToolButton();
-  this->ErrorLogToolButton->setDefaultAction(this->WindowErrorLogAction);
+  this->ErrorLogToolButton->setDefaultAction(this->ErrorLogToggleViewAction);
   q->statusBar()->addPermanentWidget(this->ErrorLogToolButton);
 
   QObject::connect(qSlicerApplication::application()->errorLogModel(),
@@ -1008,12 +1026,42 @@ void qSlicerMainWindow::setLayoutNumberOfCompareViewColumns(int num)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMainWindow::on_WindowErrorLogAction_triggered()
+void qSlicerMainWindow::onErrorLogToggled(bool toggled)
 {
   Q_D(qSlicerMainWindow);
-  d->ErrorLogWidget->show();
-  d->ErrorLogWidget->activateWindow();
-  d->ErrorLogWidget->raise();
+  ctkErrorLogWidget* errorLogWidget = this->errorLogWidget();
+  if (!errorLogWidget)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: error log widget is not available";
+    return;
+    }
+  if (d->ErrorLogDockWidget)
+    {
+    // Dockable Error Log widget
+    if (toggled)
+      {
+      d->ErrorLogDockWidget->activateWindow();
+      QTextEdit* textEditWidget = errorLogWidget->findChild<QTextEdit*>();
+      if (textEditWidget)
+        {
+        textEditWidget->setFocus();
+        }
+      }
+    }
+  else
+    {
+    // Independent Error Log widget
+    if (toggled)
+      {
+      errorLogWidget->show();
+      errorLogWidget->activateWindow();
+      errorLogWidget->raise();
+      }
+    else
+      {
+      errorLogWidget->hide();
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -1252,7 +1300,7 @@ void qSlicerMainWindow::setupMenuActions()
   d->ViewLayoutCompareGrid_3x3_viewersAction->setData(3);
   d->ViewLayoutCompareGrid_4x4_viewersAction->setData(4);
 
-  d->WindowErrorLogAction->setIcon(
+  d->ErrorLogToggleViewAction->setIcon(
     this->style()->standardIcon(QStyle::SP_MessageBoxInformation));
 
   if (this->errorLogWidget())
@@ -1306,15 +1354,15 @@ void qSlicerMainWindow::onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel lo
   Q_D(qSlicerMainWindow);
   if(logLevel == ctkErrorLogLevel::Error)
     {
-    d->WindowErrorLogAction->setIcon(
+    d->ErrorLogToggleViewAction->setIcon(
       this->style()->standardIcon(QStyle::SP_MessageBoxCritical));
     }
   else if(logLevel == ctkErrorLogLevel::Warning)
     {
-      QIcon currentIcon = d->WindowErrorLogAction->icon();
+      QIcon currentIcon = d->ErrorLogToggleViewAction->icon();
       if(this->style()->standardIcon(QStyle::SP_MessageBoxCritical).pixmap(QSize(32, 32)).toImage() != currentIcon.pixmap(QSize(32, 32)).toImage())
         {
-        d->WindowErrorLogAction->setIcon(
+        d->ErrorLogToggleViewAction->setIcon(
           this->style()->standardIcon(QStyle::SP_MessageBoxWarning));
         }
     }
@@ -1671,7 +1719,7 @@ bool qSlicerMainWindow::eventFilter(QObject* object, QEvent* event)
     if (event->type() == QEvent::ActivationChange
         && this->errorLogWidget()->isActiveWindow())
       {
-      d->WindowErrorLogAction->setIcon(
+      d->ErrorLogToggleViewAction->setIcon(
         this->style()->standardIcon(QStyle::SP_MessageBoxInformation));
       }
     }

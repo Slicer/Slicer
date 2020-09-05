@@ -72,6 +72,8 @@ public:
   QAction*                        PythonConsoleToggleViewAction;
 #endif
   ctkErrorLogWidget*              ErrorLogWidget;
+  QDockWidget*                    ErrorLogDockWidget;
+  QAction*                        ErrorLogToggleViewAction;
   QToolButton*                    ErrorLogToolButton;
   qSlicerModuleSelectorToolBar*   ModuleSelectorToolBar;
   QStringList                     FavoriteModules;

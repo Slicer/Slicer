@@ -345,8 +345,6 @@
     <addaction name="WindowToolbarsResetToDefaultAction"/>
     <addaction name="ModuleHomeAction"/>
     <addaction name="separator"/>
-    <addaction name="WindowErrorLogAction"/>
-    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="HelpMenu">
     <property name="title">
@@ -653,17 +651,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+6</string>
-   </property>
-  </action>
-  <action name="WindowErrorLogAction">
-   <property name="text">
-    <string>&amp;Error Log</string>
-   </property>
-   <property name="toolTip">
-    <string>Raise the error log display.</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+0</string>
    </property>
   </action>
   <action name="FeedbackReportUsabilityIssueAction">

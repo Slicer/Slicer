@@ -99,8 +99,8 @@ public slots:
   virtual void setLayoutNumberOfCompareViewColumns(int);
 
   virtual void onPythonConsoleToggled(bool);
+  virtual void onErrorLogToggled(bool);
 
-  virtual void on_WindowErrorLogAction_triggered();
   virtual void on_WindowToolbarsResetToDefaultAction_triggered();
 
   virtual void on_EditApplicationSettingsAction_triggered();
