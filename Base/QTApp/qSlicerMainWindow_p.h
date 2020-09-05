@@ -65,8 +65,6 @@ public:
   virtual bool confirmCloseApplication();
   virtual bool confirmCloseScene();
 
-  void setErrorLogIconHighlighted(bool);
-
   void updatePythonConsolePalette();
 
 #ifdef Slicer_USE_PYTHONQT

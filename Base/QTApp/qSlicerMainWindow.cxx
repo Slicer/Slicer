@@ -764,22 +764,6 @@ void qSlicerMainWindowPrivate::setupStatusBar()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMainWindowPrivate::setErrorLogIconHighlighted(bool highlighted)
-{
-  Q_Q(qSlicerMainWindow);
-  QIcon defaultIcon = q->style()->standardIcon(QStyle::SP_MessageBoxCritical);
-  QIcon icon = defaultIcon;
-  if(!highlighted)
-    {
-    QIcon disabledIcon;
-    disabledIcon.addPixmap(
-          defaultIcon.pixmap(QSize(32, 32), QIcon::Disabled, QIcon::On), QIcon::Active, QIcon::On);
-    icon = disabledIcon;
-    }
-  this->WindowErrorLogAction->setIcon(icon);
-}
-
-//-----------------------------------------------------------------------------
 // qSlicerMainWindow methods
 
 //-----------------------------------------------------------------------------
@@ -1269,11 +1253,10 @@ void qSlicerMainWindow::setupMenuActions()
   d->ViewLayoutCompareGrid_4x4_viewersAction->setData(4);
 
   d->WindowErrorLogAction->setIcon(
-    this->style()->standardIcon(QStyle::SP_MessageBoxCritical));
+    this->style()->standardIcon(QStyle::SP_MessageBoxInformation));
 
   if (this->errorLogWidget())
     {
-    d->setErrorLogIconHighlighted(false);
     this->errorLogWidget()->installEventFilter(this);
     }
 #ifdef Slicer_USE_PYTHONQT
@@ -1321,9 +1304,19 @@ void qSlicerMainWindow::on_LoadDICOMAction_triggered()
 void qSlicerMainWindow::onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel logLevel)
 {
   Q_D(qSlicerMainWindow);
-  if(logLevel > ctkErrorLogLevel::Info)
+  if(logLevel == ctkErrorLogLevel::Error)
     {
-    d->setErrorLogIconHighlighted(true);
+    d->WindowErrorLogAction->setIcon(
+      this->style()->standardIcon(QStyle::SP_MessageBoxCritical));
+    }
+  else if(logLevel == ctkErrorLogLevel::Warning)
+    {
+      QIcon currentIcon = d->WindowErrorLogAction->icon();
+      if(this->style()->standardIcon(QStyle::SP_MessageBoxCritical).pixmap(QSize(32, 32)).toImage() != currentIcon.pixmap(QSize(32, 32)).toImage())
+        {
+        d->WindowErrorLogAction->setIcon(
+          this->style()->standardIcon(QStyle::SP_MessageBoxWarning));
+        }
     }
 }
 
@@ -1678,7 +1671,8 @@ bool qSlicerMainWindow::eventFilter(QObject* object, QEvent* event)
     if (event->type() == QEvent::ActivationChange
         && this->errorLogWidget()->isActiveWindow())
       {
-      d->setErrorLogIconHighlighted(false);
+      d->WindowErrorLogAction->setIcon(
+        this->style()->standardIcon(QStyle::SP_MessageBoxInformation));
       }
     }
 #ifdef Slicer_USE_PYTHONQT
