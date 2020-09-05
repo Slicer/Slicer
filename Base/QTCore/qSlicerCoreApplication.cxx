@@ -96,6 +96,9 @@
 #include <ctkAppLauncherEnvironment.h>
 #include <ctkAppLauncherSettings.h>
 
+// CTK includes
+#include <ctkErrorLogWidget.h>
+
 // VTK includes
 #include <vtkNew.h>
 #include <vtksys/SystemTools.hxx>
@@ -1358,6 +1361,20 @@ ctkErrorLogAbstractModel* qSlicerCoreApplication::errorLogModel()const
 {
   Q_D(const qSlicerCoreApplication);
   return d->ErrorLogModel.data();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::setErrorLogWidget(ctkErrorLogWidget* ErrorLogWidget)
+{
+  Q_D(qSlicerCoreApplication);
+  d->ErrorLogWidget = ErrorLogWidget;
+}
+
+//-----------------------------------------------------------------------------
+ctkErrorLogWidget* qSlicerCoreApplication::errorLogWidget()const
+{
+  Q_D(const qSlicerCoreApplication);
+  return d->ErrorLogWidget.data();
 }
 
 //-----------------------------------------------------------------------------

@@ -454,25 +454,27 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   //----------------------------------------------------------------------------
   // Error log widget
   //----------------------------------------------------------------------------
-  this->ErrorLogWidget = new ctkErrorLogWidget;
-  this->ErrorLogWidget->setErrorLogModel(
-    qSlicerApplication::application()->errorLogModel());
-  this->ErrorLogDockWidget = new QDockWidget(qSlicerMainWindow::tr("Error Log"));
-  this->ErrorLogDockWidget->setObjectName("ErrorLogDockWidget");
-  this->ErrorLogDockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
-  this->ErrorLogDockWidget->setWidget(this->ErrorLogWidget);
-  this->ErrorLogToggleViewAction = this->ErrorLogDockWidget->toggleViewAction();
-  // Set default state
-  q->addDockWidget(Qt::BottomDockWidgetArea, this->ErrorLogDockWidget);
-  this->ErrorLogDockWidget->hide();
-  // Set up show/hide action
-  this->ErrorLogToggleViewAction->setText(qSlicerMainWindow::tr("&Error Log"));
-  this->ErrorLogToggleViewAction->setToolTip(qSlicerMainWindow::tr(
-    "Raise the error log display."));
-  this->ErrorLogToggleViewAction->setShortcut(QKeySequence("Ctrl+0"));
-  QObject::connect(this->ErrorLogToggleViewAction, SIGNAL(toggled(bool)),
-    q, SLOT(onErrorLogToggled(bool)));
-  this->ViewMenu->addAction(this->ErrorLogToggleViewAction);
+  if (q->errorLogWidget())
+    {
+    q->errorLogWidget()->setErrorLogModel(
+      qSlicerApplication::application()->errorLogModel());
+    this->ErrorLogDockWidget = new QDockWidget(qSlicerMainWindow::tr("Error Log"));
+    this->ErrorLogDockWidget->setObjectName("ErrorLogDockWidget");
+    this->ErrorLogDockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
+    this->ErrorLogDockWidget->setWidget(q->errorLogWidget());
+    this->ErrorLogToggleViewAction = this->ErrorLogDockWidget->toggleViewAction();
+    // Set default state
+    q->addDockWidget(Qt::BottomDockWidgetArea, this->ErrorLogDockWidget);
+    this->ErrorLogDockWidget->hide();
+    // Set up show/hide action
+    this->ErrorLogToggleViewAction->setText(qSlicerMainWindow::tr("&Error Log"));
+    this->ErrorLogToggleViewAction->setToolTip(qSlicerMainWindow::tr(
+      "Raise the error log display."));
+    this->ErrorLogToggleViewAction->setShortcut(QKeySequence("Ctrl+0"));
+    QObject::connect(this->ErrorLogToggleViewAction, SIGNAL(toggled(bool)),
+      q, SLOT(onErrorLogToggled(bool)));
+    this->ViewMenu->addAction(this->ErrorLogToggleViewAction);
+    }
 
   //----------------------------------------------------------------------------
   // Python console
@@ -854,8 +856,7 @@ void qSlicerMainWindow::onPythonConsoleUserInput(const QString& cmd)
 //---------------------------------------------------------------------------
 ctkErrorLogWidget* qSlicerMainWindow::errorLogWidget()const
 {
-  Q_D(const qSlicerMainWindow);
-  return d->ErrorLogWidget;
+  return qSlicerCoreApplication::application()->errorLogWidget();
 }
 
 //---------------------------------------------------------------------------
@@ -1716,11 +1717,13 @@ bool qSlicerMainWindow::eventFilter(QObject* object, QEvent* event)
   Q_D(qSlicerMainWindow);
   if (object == this->errorLogWidget())
     {
-    if (event->type() == QEvent::ActivationChange
-        && this->errorLogWidget()->isActiveWindow())
+    if (event->type() == QEvent::Hide)
       {
+      bool wasBlocked = d->ErrorLogToggleViewAction->blockSignals(true);
+      d->ErrorLogToggleViewAction->setChecked(false);
       d->ErrorLogToggleViewAction->setIcon(
         this->style()->standardIcon(QStyle::SP_MessageBoxInformation));
+      d->ErrorLogToggleViewAction->blockSignals(wasBlocked);
       }
     }
 #ifdef Slicer_USE_PYTHONQT
