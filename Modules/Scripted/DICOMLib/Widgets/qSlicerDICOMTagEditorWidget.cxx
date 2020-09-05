@@ -24,6 +24,8 @@
 #include "qSlicerDICOMTagEditorWidget.h"
 #include "qSlicerDICOMExportable.h"
 
+#include <qSlicerApplication.h>
+
 // Qt includes
 #include <QDebug>
 #include <QHeaderView>
@@ -94,7 +96,9 @@ qSlicerDICOMTagEditorWidgetPrivate::qSlicerDICOMTagEditorWidgetPrivate(qSlicerDI
   this->TagsTable = nullptr;
   this->StudyTagsHeaderRow = 0;
 
-  this->HeaderItemColor = QColor::fromRgb(240, 240, 240);
+  QPalette palette = qSlicerApplication::application()->palette();
+
+  this->HeaderItemColor = palette.color(QPalette::AlternateBase);
   this->HeaderItemFont = QFont();
   this->HeaderItemFont.setBold(true);
 }
