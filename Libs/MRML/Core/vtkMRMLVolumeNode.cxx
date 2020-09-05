@@ -1265,7 +1265,7 @@ bool vtkMRMLVolumeNode::AddCenteringTransform()
   centeringTransformMatrix->SetElement(0, 3, -centerPositionRAS[0]);
   centeringTransformMatrix->SetElement(1, 3, -centerPositionRAS[1]);
   centeringTransformMatrix->SetElement(2, 3, -centerPositionRAS[2]);
-  centeringTransform->SetAndObserveMatrixTransformToParent(centeringTransformMatrix);
+  centeringTransform->SetMatrixTransformToParent(centeringTransformMatrix);
   this->SetAndObserveTransformNodeID(centeringTransform->GetID());
 
   // Place transform in the same subject hierarchy folder as the volume node
