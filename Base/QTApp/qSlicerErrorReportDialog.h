@@ -45,6 +45,7 @@ protected slots:
   void onLogFileOpen();
   void onLogCopy();
   void onLogFileSelectionChanged();
+  void onLogFileEditClicked(bool editable);
 
 protected:
   QScopedPointer<qSlicerErrorReportDialogPrivate> d_ptr;
