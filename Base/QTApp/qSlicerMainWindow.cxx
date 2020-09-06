@@ -32,10 +32,13 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QQueue>
+#include <QScrollBar>
 #include <QSettings>
 #include <QShowEvent>
 #include <QSignalMapper>
 #include <QStyle>
+#include <QTableView>
+#include <QTextBrowser>
 #include <QTextEdit>
 #include <QTimer>
 #include <QToolButton>
@@ -1046,6 +1049,16 @@ void qSlicerMainWindow::onErrorLogToggled(bool toggled)
       if (textEditWidget)
         {
         textEditWidget->setFocus();
+        }
+      QTableView* logTableView = errorLogWidget->findChild<QTableView*>();
+      if (logTableView)
+        {
+        logTableView->scrollToBottom();
+        }
+      QTextBrowser* textBrowserWidget = errorLogWidget->findChild<QTextBrowser*>();
+      if (textBrowserWidget)
+        {
+        textBrowserWidget->verticalScrollBar()->setValue(textBrowserWidget->verticalScrollBar()->maximum());
         }
       }
     }
