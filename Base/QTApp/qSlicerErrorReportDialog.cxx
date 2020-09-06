@@ -62,6 +62,7 @@ qSlicerErrorReportDialog::qSlicerErrorReportDialog(QWidget* parentWidget)
   QObject::connect(d->RecentLogFilesComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(onLogFileSelectionChanged()));
   QObject::connect(d->LogCopyToClipboardPushButton, SIGNAL(clicked()), this, SLOT(onLogCopy()));
   QObject::connect(d->LogFileOpenPushButton, SIGNAL(clicked()), this, SLOT(onLogFileOpen()));
+  QObject::connect(d->LogFileEditCheckBox, SIGNAL(clicked(bool)), this, SLOT(onLogFileEditClicked(bool)));
 
   connect(d->ButtonBox, SIGNAL(rejected()), this, SLOT(close()));
 
@@ -101,4 +102,11 @@ void qSlicerErrorReportDialog::onLogFileOpen()
 {
   Q_D(qSlicerErrorReportDialog);
   QDesktopServices::openUrl(QUrl("file:///"+d->RecentLogFilesComboBox->currentText(), QUrl::TolerantMode));
+}
+
+// --------------------------------------------------------------------------
+void qSlicerErrorReportDialog::onLogFileEditClicked(bool editable)
+{
+  Q_D(qSlicerErrorReportDialog);
+  d->LogText->setReadOnly(!editable);
 }

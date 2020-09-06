@@ -62,6 +62,9 @@
        <height>50</height>
       </size>
      </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item row="4" column="0" colspan="2">
@@ -83,6 +86,13 @@
        </property>
        <property name="autoDefault">
         <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="LogFileEditCheckBox">
+       <property name="text">
+        <string>Edit Log</string>
        </property>
       </widget>
      </item>
