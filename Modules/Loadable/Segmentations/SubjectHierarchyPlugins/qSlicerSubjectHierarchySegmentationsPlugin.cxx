@@ -795,6 +795,12 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentModified(vtkObject* ca
   if (shNode->GetItemName(segmentShItemID).compare(segment->GetName() ? segment->GetName() : ""))
     {
     shNode->SetItemName(segmentShItemID, (segment->GetName() ? segment->GetName() : ""));
+    // modified event is triggered by the name change, so there is no need for invoking modified event
+    }
+  else
+    {
+    shNode->InvokeCustomModifiedEvent(
+      vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent, (void*)&segmentShItemID);
     }
 }
 
