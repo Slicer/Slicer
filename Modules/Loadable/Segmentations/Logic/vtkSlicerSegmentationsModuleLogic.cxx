@@ -41,6 +41,7 @@
 #include <vtkCallbackCommand.h>
 #include <vtkDataObject.h>
 #include <vtkGeneralTransform.h>
+#include <vtkGeometryFilter.h>
 #include <vtkImageAccumulate.h>
 #include <vtkImageConstantPad.h>
 #include <vtkImageMathematics.h>
@@ -62,6 +63,7 @@
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkTriangleFilter.h>
 #include <vtkTrivialProducer.h>
+#include <vtkUnstructuredGrid.h>
 #include <vtksys/SystemTools.hxx>
 #include <vtksys/RegularExpression.hxx>
 
@@ -572,9 +574,21 @@ vtkSegment* vtkSlicerSegmentationsModuleLogic::CreateSegmentFromModelNode(vtkMRM
     vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::CreateSegmentFromModelNode: Invalid model MRML node");
     return nullptr;
     }
-  if (!modelNode->GetPolyData())
+  vtkSmartPointer<vtkPolyData> inputPolyData;
+  if (modelNode->GetPolyData())
     {
-    vtkErrorWithObjectMacro(modelNode, "CreateSegmentFromModelNode: Model node does not contain poly data");
+    inputPolyData = modelNode->GetPolyData();
+    }
+  else if (modelNode->GetUnstructuredGrid())
+    {
+    vtkNew<vtkGeometryFilter> extractSurface;
+    extractSurface->SetInputData(modelNode->GetUnstructuredGrid());
+    extractSurface->Update();
+    inputPolyData = extractSurface->GetOutput();
+    }
+  else
+    {
+    vtkErrorWithObjectMacro(modelNode, "CreateSegmentFromModelNode: Model node does not contain poly or unstructured grid");
     return nullptr;
     }
 
@@ -616,20 +630,20 @@ vtkSegment* vtkSlicerSegmentationsModuleLogic::CreateSegmentFromModelNode(vtkMRM
       }
 
     vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-    transformFilter->SetInputData(modelNode->GetPolyData());
+    transformFilter->SetInputData(inputPolyData);
     transformFilter->SetTransform(modelToSegmentationTransform);
     transformFilter->Update();
     polyDataCopy->DeepCopy(transformFilter->GetOutput());
     }
   else
     {
-    polyDataCopy->DeepCopy(modelNode->GetPolyData());
+    polyDataCopy->DeepCopy(inputPolyData);
     }
 
   // Add model poly data as closed surface representation
   segment->AddRepresentation(
     vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(),
-    polyDataCopy );
+    polyDataCopy);
 
   return segment;
 }
@@ -1237,7 +1251,7 @@ bool vtkSlicerSegmentationsModuleLogic::ImportModelToSegmentationNode(vtkMRMLMod
     vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ImportModelToSegmentationNode: Invalid segmentation node");
     return false;
     }
-  if (!modelNode || !modelNode->GetPolyData())
+  if (!modelNode || !modelNode->GetMesh())
     {
     vtkErrorWithObjectMacro(segmentationNode, "ImportModelToSegmentationNode: Invalid model node");
     return false;
