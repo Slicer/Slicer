@@ -172,6 +172,7 @@ public:
   void ClearDisplayableNodes();
   /// Calculate minimum sample distance as minimum of that for shown volumes, and set it to multi-volume mapper
   void UpdateMultiVolumeMapperSampleDistance();
+  int GetNextAvailableMultiVolumeActorPortIndex();
 
   void FindPickedDisplayNodeFromVolumeActor(vtkVolume* volume);
 
@@ -189,9 +190,6 @@ public:
 
   /// When interaction is >0, we are in interactive mode (low level of detail)
   int Interaction;
-
-  /// Used to determine the port index in the multi-volume actor
-  unsigned int NextMultiVolumeActorPortIndex;
 
   /// Picker of volume in renderer
   vtkSmartPointer<vtkVolumePicker> VolumePicker;
@@ -220,8 +218,6 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::vtkInternal(vtkMRMLVolume
 , AddingVolumeNode(false)
 , OriginalDesiredUpdateRate(0.0) // 0 fps is a special value that means it hasn't been set
 , Interaction(0)
-  //TODO: Change back to 0 once the VTK issue https://gitlab.kitware.com/vtk/vtk/issues/17325 is fixed
-, NextMultiVolumeActorPortIndex(1)
 , PickedNodeID("")
 {
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
@@ -399,6 +395,39 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetPipeline(vtkMRMLVolume
 }
 
 //---------------------------------------------------------------------------
+int vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetNextAvailableMultiVolumeActorPortIndex()
+{
+  //TODO: Change back "port = 1" to to "port = 0" once the VTK issue https://gitlab.kitware.com/vtk/vtk/issues/17325 is fixed
+  const int MAXIMUM_NUMBER_OF_MULTIVOLUME_ACTORS = 10;
+  for (int port = 1; port < MAXIMUM_NUMBER_OF_MULTIVOLUME_ACTORS; port++)
+    {
+    // Find out if port is used
+    bool portIsUsed = false;
+    for (Pipeline* pipeline : this->DisplayPipelines)
+      {
+      PipelineMultiVolume* pipelineMulti = dynamic_cast<PipelineMultiVolume*>(pipeline);
+      if (!pipelineMulti)
+        {
+        continue;
+        }
+      if (pipelineMulti->ActorPortIndex == port)
+        {
+        portIsUsed = true;
+        break;
+        }
+      }
+    // If not used then it is good, this is the next available port
+    if (!portIsUsed)
+      {
+      return port;
+      }
+    }
+  // No available port is found
+  vtkErrorWithObjectMacro(this->External, "Maximum number of multivolumes (" << MAXIMUM_NUMBER_OF_MULTIVOLUME_ACTORS << ") reached.");
+  return -1;
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::AddVolumeNode(vtkMRMLVolumeNode* node)
 {
   if (this->AddingVolumeNode)
@@ -498,13 +527,13 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::AddDisplayNode(vtkMR
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 2)
   else if (displayNode->IsA("vtkMRMLMultiVolumeRenderingDisplayNode"))
     {
-    if (this->NextMultiVolumeActorPortIndex >= 10)
+    int actorPortIndex = this->GetNextAvailableMultiVolumeActorPortIndex();
+    if (actorPortIndex < 0)
       {
-      vtkErrorWithObjectMacro(this->External, "AddDisplayNode: Multi-volume only supports 10 volumes in the pipeline. Cannot add volume "
-        << volumeNode->GetName());
+      vtkErrorWithObjectMacro(this->External, "AddDisplayNode: Cannot add Cannot add volume " << volumeNode->GetName() << "to multi-volume renderer");
       return;
       }
-    PipelineMultiVolume* pipelineMulti = new PipelineMultiVolume(this->NextMultiVolumeActorPortIndex++);
+    PipelineMultiVolume* pipelineMulti = new PipelineMultiVolume(actorPortIndex);
     pipelineMulti->DisplayNode = displayNode;
     // Create a dummy volume for port zero if this is the first volume. Necessary because the first transform is ignored,
     // see https://gitlab.kitware.com/vtk/vtk/issues/17325
@@ -592,11 +621,18 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::RemovePipelineIt(Pipeline
       this->MultiVolumeMapper->RemoveInputConnection(pipelineMulti->ActorPortIndex, 0);
       this->MultiVolumeActor->RemoveVolume(pipelineMulti->ActorPortIndex);
 
-      // Decrease next actor port index
-      this->NextMultiVolumeActorPortIndex--;
-
       // Remove common actor from renderer and local cache if the last volume have been removed
-      if (this->NextMultiVolumeActorPortIndex == 0)
+      bool foundMultiVolumeActor = false;
+      for (Pipeline* pipeline : this->DisplayPipelines)
+        {
+        PipelineMultiVolume* pipelineMulti = dynamic_cast<PipelineMultiVolume*>(pipeline);
+        if (pipelineMulti)
+          {
+          foundMultiVolumeActor = true;
+          break;
+          }
+        }
+      if (!foundMultiVolumeActor)
         {
         this->External->GetRenderer()->RemoveVolume(this->MultiVolumeActor);
         }
@@ -741,6 +777,20 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
         this->MultiVolumeMapper->RemoveInputConnection(pipelineMulti->ActorPortIndex, 0);
         this->MultiVolumeActor->RemoveVolume(pipelineMulti->ActorPortIndex);
         }
+
+      // Workaround: if none of the volumes are visible then VTK renders a gray box,
+      // so we need to hide the actor to prevent this.
+      bool foundVisibleMultiVolumeActor = false;
+      for (Pipeline* pipeline : this->DisplayPipelines)
+        {
+        PipelineMultiVolume* pipelineMulti = dynamic_cast<PipelineMultiVolume*>(pipeline);
+        if (pipelineMulti && pipelineMulti->VolumeActor && pipelineMulti->VolumeActor->GetVisibility())
+          {
+          foundVisibleMultiVolumeActor = true;
+          break;
+          }
+        }
+      this->MultiVolumeActor->SetVisibility(foundVisibleMultiVolumeActor);
       }
     }
 #endif
