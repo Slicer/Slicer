@@ -81,6 +81,7 @@ ExternalProject_Execute(${proj} \"configure\" sh ${EP_SOURCE_DIR}/configure
     --prefix=${EP_INSTALL_DIR}
     --with-pcre-prefix=${PCRE_DIR}
     --without-octave
+    --without-java
     --with-python=${PYTHON_EXECUTABLE})
 ")
 
