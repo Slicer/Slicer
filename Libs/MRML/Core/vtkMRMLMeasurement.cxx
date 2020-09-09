@@ -19,6 +19,7 @@ vtkStandardNewMacro(vtkMRMLMeasurement);
 
 //----------------------------------------------------------------------------
 vtkMRMLMeasurement::vtkMRMLMeasurement()
+  : InputMRMLNode(nullptr)
 {
   this->SetPrintFormat("%5.3f %s");
 }
@@ -56,6 +57,7 @@ void vtkMRMLMeasurement::Initialize()
   this->SetMethodCode(nullptr);
   this->SetControlPointValues(nullptr);
   //this->SetPolyDataValues(nullptr);
+  this->SetInputMRMLNode(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -105,6 +107,7 @@ void vtkMRMLMeasurement::Copy(vtkMRMLMeasurement* src)
   this->SetUnitsCode(src->UnitsCode);
   this->SetMethodCode(src->MethodCode);
   this->SetControlPointValues(src->ControlPointValues);
+  this->SetInputMRMLNode(src->InputMRMLNode);
   //this->SetPolyDataValues(src->PolyDataValues);
 }
 
@@ -299,3 +302,20 @@ void vtkMRMLMeasurement::SetControlPointValues(vtkDoubleArray* inputValues)
 //    }
 //  this->PolyDataValues->DeepCopy(inputValues);
 //}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMeasurement::SetInputMRMLNode(vtkMRMLNode* node)
+{
+  this->InputMRMLNode = node;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLNode* vtkMRMLMeasurement::GetInputMRMLNode()
+{
+  if (this->InputMRMLNode.GetPointer())
+    {
+    return this->InputMRMLNode.GetPointer();
+    }
+
+  return nullptr;
+}

@@ -104,6 +104,11 @@ public:
   //void SetPolyDataValues(vtkPolyData* inputValues);
   //vtkGetObjectMacro(PolyDataValues, vtkPolyData);
 
+  /// Set input MRML node used for calculating the measurement \sa Execute
+  void SetInputMRMLNode(vtkMRMLNode* node);
+  /// Get input MRML node used for calculating the measurement \sa Execute
+  vtkMRMLNode* GetInputMRMLNode();
+
 protected:
   vtkMRMLMeasurement();
   ~vtkMRMLMeasurement() override;

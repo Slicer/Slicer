@@ -184,6 +184,7 @@ public:
     vtkCodedEntry* unitsCode = nullptr, vtkCodedEntry* methodCode = nullptr);
   void RemoveNthMeasurement(int id);
   void RemoveAllMeasurements();
+  void InitializeAllMeasurements();
   //@}
 
   /// Invoke events when control points change, passing the control point index if applicable.
@@ -580,6 +581,9 @@ public:
 
   virtual std::string GetPropertiesLabelText();
 
+  /// Utility function to get unit node from scene
+  vtkMRMLUnitNode* GetUnitNode(const char* quantity);
+
 protected:
   vtkMRMLMarkupsNode();
   ~vtkMRMLMarkupsNode() override;
@@ -587,9 +591,6 @@ protected:
   void operator=(const vtkMRMLMarkupsNode&);
 
   vtkSmartPointer<vtkStringArray> TextList;
-
-  /// Utility function to get unit node from scene
-  vtkMRMLUnitNode* GetUnitNode(const char* quantity);
 
   /// Set label of closest control point.
   /// If one control point is closest to multiple labels then all of them will be assigned to the same control point,

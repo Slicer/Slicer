@@ -28,6 +28,8 @@ set(${KIT}_SRCS
   vtkCurveMeasurementsCalculator.h
   vtkLinearSpline.cxx
   vtkLinearSpline.h
+  vtkMRMLMeasurementLength.cxx
+  vtkMRMLMeasurementLength.h
   vtkParametricPolynomialApproximation.cxx
   vtkParametricPolynomialApproximation.h
   vtkSlicerDijkstraGraphGeodesicPath.cxx

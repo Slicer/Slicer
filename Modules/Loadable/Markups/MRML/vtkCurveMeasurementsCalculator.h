@@ -19,10 +19,11 @@
 #define __vtkCurveMeasurementsCalculator_h
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataAlgorithm.h>
 #include <vtkSetGet.h>
-#include <vtkSmartPointer.h>
+#include <vtkWeakPointer.h>
 
 // Export
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
@@ -35,6 +36,11 @@ public:
   static vtkCurveMeasurementsCalculator* New();
 
   void PrintSelf(ostream& os, vtkIndent indent) override;
+
+  //vtkSetObjectMacro(Measurements, vtkCollection);
+  //vtkGetObjectMacro(Measurements, vtkCollection);
+  void SetMeasurements(vtkCollection* measurements);
+  vtkCollection* GetMeasurements();
 
   /// TODO:
   vtkSetMacro(CalculateCurvature, bool);
@@ -50,6 +56,7 @@ protected:
   bool CalculatePolyDataCurvature(vtkPolyData* polyData);
 
 protected:
+  vtkWeakPointer<vtkCollection> Measurements;
   bool CalculateCurvature;
   bool InterpolateControlPointMeasurement;
 

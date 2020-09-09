@@ -1003,6 +1003,7 @@ vtkIdType vtkCurveGenerator::GetControlPointIdFromInterpolatedPointId(vtkIdType 
     }
   else if (this->IsInterpolatingCurve())
     {
+    //TODO: Add pedigree ID array (PedigreeIds) (where?) with the control points their integer IDs and the rest an interpolated floating point value
     controlId = int(floor(interpolatedPointId / this->GetNumberOfPointsPerInterpolatingSegment()));
     }
   return controlId;

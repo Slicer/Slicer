@@ -18,6 +18,9 @@
 // Markups MRML includes
 #include "vtkCurveMeasurementsCalculator.h"
 
+// MRML includes
+#include <vtkMRMLMeasurement.h>
+
 // VTK includes
 #include <vtkCellArray.h>
 #include <vtkCellData.h>
@@ -52,6 +55,33 @@ void vtkCurveMeasurementsCalculator::PrintSelf(std::ostream &os, vtkIndent inden
   Superclass::PrintSelf(os, indent);
   os << indent << "CalculateCurvature: " << this->CalculateCurvature << std::endl;
 }
+
+//----------------------------------------------------------------------------------
+void vtkCurveMeasurementsCalculator::SetMeasurements(vtkCollection* measurements)
+{
+  if (this->Measurements == measurements)
+    {
+    return;
+    }
+  this->Measurements = measurements;
+}
+
+//----------------------------------------------------------------------------------
+vtkCollection* vtkCurveMeasurementsCalculator::GetMeasurements()
+{
+  return this->Measurements.GetPointer();
+}
+
+////----------------------------------------------------------------------------
+//void vtkCurveMeasurementsCalculator::SetAndObserveMeasurements(vtkMRMLMeasurement* measurements)
+//{
+//  if (measurements==this->Measurements)
+//    {
+//    return;
+//    }
+//  vtkSetAndObserveMRMLObjectMacro(this->Measurements, measurements);
+//  this->Modified();
+//}
 
 //----------------------------------------------------------------------------
 int vtkCurveMeasurementsCalculator::FillInputPortInformation(
@@ -111,6 +141,9 @@ int vtkCurveMeasurementsCalculator::RequestData(
     {
     outputPolyData->GetPointData()->RemoveArray("Curvature");
     }
+
+  //TODO: If we interpolate then go through measurements, and interpolate those that
+  // contain control point data and is enabled
 
   outputPolyData->Squeeze();
   return 1;

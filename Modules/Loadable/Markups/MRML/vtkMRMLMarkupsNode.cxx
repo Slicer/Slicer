@@ -140,7 +140,7 @@ void vtkMRMLMarkupsNode::ReadXMLAttributes(const char** atts)
   int disabledModify = this->StartModify();
 
   this->RemoveAllControlPoints();
-  this->RemoveAllMeasurements();
+  this->InitializeAllMeasurements();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -2009,6 +2009,20 @@ void vtkMRMLMarkupsNode::RemoveAllMeasurements()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::InitializeAllMeasurements()
+{
+  for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
+    {
+    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
+      this->Measurements->GetItemAsObject(index) );
+    if (currentMeasurement)
+      {
+      currentMeasurement->Initialize();
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::UpdateMeasurements()
 {
   if (this->IsUpdatingPoints)
@@ -2023,7 +2037,7 @@ void vtkMRMLMarkupsNode::UpdateMeasurements()
 void vtkMRMLMarkupsNode::UpdateMeasurementsInternal()
 {
   // child classes override this function to compute measurements
-  this->RemoveAllMeasurements();
+  this->InitializeAllMeasurements();
 }
 
 //---------------------------------------------------------------------------
