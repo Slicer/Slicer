@@ -72,17 +72,6 @@ vtkCollection* vtkCurveMeasurementsCalculator::GetMeasurements()
   return this->Measurements.GetPointer();
 }
 
-////----------------------------------------------------------------------------
-//void vtkCurveMeasurementsCalculator::SetAndObserveMeasurements(vtkMRMLMeasurement* measurements)
-//{
-//  if (measurements==this->Measurements)
-//    {
-//    return;
-//    }
-//  vtkSetAndObserveMRMLObjectMacro(this->Measurements, measurements);
-//  this->Modified();
-//}
-
 //----------------------------------------------------------------------------
 int vtkCurveMeasurementsCalculator::FillInputPortInformation(
   int port, vtkInformation* info)

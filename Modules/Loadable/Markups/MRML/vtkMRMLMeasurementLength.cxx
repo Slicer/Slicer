@@ -21,6 +21,7 @@
 
 // Markups includes
 #include "vtkMRMLMarkupsCurveNode.h"
+#include "vtkMRMLMarkupsLineNode.h"
 
 vtkStandardNewMacro(vtkMRMLMeasurementLength);
 
@@ -45,13 +46,30 @@ void vtkMRMLMeasurementLength::Execute()
     {
     return;
     }
-  vtkMRMLMarkupsCurveNode* curveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(this->InputMRMLNode);
 
-  double length = curveNode->GetCurveLengthWorld();
+  vtkMRMLMarkupsCurveNode* curveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(this->InputMRMLNode);
+  vtkMRMLMarkupsLineNode* lineNode = vtkMRMLMarkupsLineNode::SafeDownCast(this->InputMRMLNode);
+  vtkMRMLUnitNode* unitNode = nullptr;
+
+  double length = 0.0;
+  if (curveNode)
+    {
+    length = curveNode->GetCurveLengthWorld();
+    unitNode = curveNode->GetUnitNode("length");
+    }
+  else if (lineNode)
+    {
+    length = lineNode->GetLineLengthWorld();
+    unitNode = lineNode->GetUnitNode("length");
+    }
+  else
+    {
+    vtkErrorMacro("Execute: Markup type not supported by this measurement: " << this->InputMRMLNode->GetClassName());
+    return;
+    }
 
   std::string printFormat;
   std::string unit = "mm";
-  vtkMRMLUnitNode* unitNode = curveNode->GetUnitNode("length");
   if (unitNode)
     {
     if (unitNode->GetSuffix())

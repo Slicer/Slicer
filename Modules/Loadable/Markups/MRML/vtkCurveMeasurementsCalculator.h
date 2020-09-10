@@ -37,8 +37,6 @@ public:
 
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  //vtkSetObjectMacro(Measurements, vtkCollection);
-  //vtkGetObjectMacro(Measurements, vtkCollection);
   void SetMeasurements(vtkCollection* measurements);
   vtkCollection* GetMeasurements();
 

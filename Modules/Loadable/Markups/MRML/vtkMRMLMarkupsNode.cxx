@@ -140,7 +140,7 @@ void vtkMRMLMarkupsNode::ReadXMLAttributes(const char** atts)
   int disabledModify = this->StartModify();
 
   this->RemoveAllControlPoints();
-  this->InitializeAllMeasurements();
+  this->ClearValueForAllMeasurements();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -2009,7 +2009,7 @@ void vtkMRMLMarkupsNode::RemoveAllMeasurements()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsNode::InitializeAllMeasurements()
+void vtkMRMLMarkupsNode::ClearValueForAllMeasurements()
 {
   for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
     {
@@ -2017,7 +2017,7 @@ void vtkMRMLMarkupsNode::InitializeAllMeasurements()
       this->Measurements->GetItemAsObject(index) );
     if (currentMeasurement)
       {
-      currentMeasurement->Initialize();
+      currentMeasurement->ClearValue();
       }
     }
 }
@@ -2037,7 +2037,7 @@ void vtkMRMLMarkupsNode::UpdateMeasurements()
 void vtkMRMLMarkupsNode::UpdateMeasurementsInternal()
 {
   // child classes override this function to compute measurements
-  this->InitializeAllMeasurements();
+  this->ClearValueForAllMeasurements();
 }
 
 //---------------------------------------------------------------------------
@@ -2087,6 +2087,11 @@ void vtkMRMLMarkupsNode::WriteMeasurementsToDescription()
   for (this->Measurements->InitTraversal(it);
       (currentMeasurement=vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetNextItemAsObject(it)));)
     {
+    if (!currentMeasurement->GetEnabled() || !currentMeasurement->GetName())
+      {
+      continue;
+      }
+
     std::string measurementText = currentMeasurement->GetName() + std::string(": ") + currentMeasurement->GetValueWithUnitsAsPrintableString();
 
     // description

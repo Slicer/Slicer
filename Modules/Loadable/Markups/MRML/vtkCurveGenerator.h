@@ -217,8 +217,8 @@ protected:
   void SetParametricFunctionToKochanekSpline(vtkPoints* inputPoints);
   void SetParametricFunctionToPolynomial(vtkPoints* inputPoints);
   int GeneratePoints(vtkPoints* inputPoints, vtkPolyData* inputSurface, vtkPolyData* outputPolyData);
-  int GeneratePointsFromFunction(vtkPoints* inputPoints, vtkPoints* outputPoints);
-  int GeneratePointsFromSurface(vtkPoints* inputPoints, vtkPolyData* inputSurface, vtkPoints* outputPoints);
+  int GeneratePointsFromFunction(vtkPoints* inputPoints, vtkPoints* outputPoints, vtkDoubleArray* outputPedigreeIdArray);
+  int GeneratePointsFromSurface(vtkPoints* inputPoints, vtkPolyData* inputSurface, vtkPoints* outputPoints, vtkDoubleArray* outputPedigreeIdArray);
   int GenerateLines(vtkPolyData* polyData);
 
   static void SortByIndex(vtkPoints*, vtkDoubleArray*);

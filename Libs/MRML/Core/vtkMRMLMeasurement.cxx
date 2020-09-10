@@ -61,6 +61,13 @@ void vtkMRMLMeasurement::Initialize()
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLMeasurement::ClearValue()
+{
+  this->SetValue(0.0);
+  this->SetControlPointValues(nullptr);
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLMeasurement::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
