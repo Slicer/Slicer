@@ -1375,3 +1375,27 @@ void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::GetIntera
   double handleOrigin[3] = { 0,0,0 };
   this->HandleToWorldTransform->TransformPoint(handleOrigin, originWorld);
 }
+
+int vtkSlicerMarkupsWidgetRepresentation::GetGlyphTypeSourceFromDisplay(int glyphTypeDisplay)
+{
+  switch (glyphTypeDisplay)
+    {
+    case vtkMRMLMarkupsDisplayNode::GlyphTypeInvalid: return vtkMarkupsGlyphSource2D::GlyphNone;
+    case vtkMRMLMarkupsDisplayNode::StarBurst2D: return vtkMarkupsGlyphSource2D::GlyphStarBurst;
+    case vtkMRMLMarkupsDisplayNode::Cross2D: return vtkMarkupsGlyphSource2D::GlyphCross;
+    case vtkMRMLMarkupsDisplayNode::CrossDot2D: return vtkMarkupsGlyphSource2D::GlyphCrossDot;
+    case vtkMRMLMarkupsDisplayNode::ThickCross2D: return vtkMarkupsGlyphSource2D::GlyphThickCross;
+    case vtkMRMLMarkupsDisplayNode::Dash2D: return vtkMarkupsGlyphSource2D::GlyphDash;
+    case vtkMRMLMarkupsDisplayNode::Sphere3D: return vtkMarkupsGlyphSource2D::GlyphCircle;
+    case vtkMRMLMarkupsDisplayNode::Vertex2D: return vtkMarkupsGlyphSource2D::GlyphVertex;
+    case vtkMRMLMarkupsDisplayNode::Circle2D: return vtkMarkupsGlyphSource2D::GlyphCircle;
+    case vtkMRMLMarkupsDisplayNode::Triangle2D: return vtkMarkupsGlyphSource2D::GlyphTriangle;
+    case vtkMRMLMarkupsDisplayNode::Square2D: return vtkMarkupsGlyphSource2D::GlyphSquare;
+    case vtkMRMLMarkupsDisplayNode::Diamond2D: return vtkMarkupsGlyphSource2D::GlyphDiamond;
+    case vtkMRMLMarkupsDisplayNode::Arrow2D: return vtkMarkupsGlyphSource2D::GlyphArrow;
+    case vtkMRMLMarkupsDisplayNode::ThickArrow2D: return vtkMarkupsGlyphSource2D::GlyphThickArrow;
+    case vtkMRMLMarkupsDisplayNode::HookedArrow2D: return vtkMarkupsGlyphSource2D::GlyphHookedArrow;
+    default:
+      return -1;
+    }
+}

@@ -211,20 +211,20 @@ public:
   enum GlyphShapes
     {
     GlyphTypeInvalid = 0,
-    Vertex2D,
-    Dash2D,
+    StarBurst2D,
     Cross2D,
+    CrossDot2D,
     ThickCross2D,
+    Dash2D,
+    Sphere3D,
+    Vertex2D,
+    Circle2D,
     Triangle2D,
     Square2D,
-    Circle2D,
     Diamond2D,
     Arrow2D,
     ThickArrow2D,
     HookedArrow2D,
-    StarBurst2D,
-    Sphere3D,
-    Diamond3D,
     GlyphType_Last // insert new types above this line
     };
   /// Return the min/max glyph types, for iterating over them in tcl

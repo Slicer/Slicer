@@ -57,8 +57,6 @@
 
 #include "vtkMRMLMarkupsPlaneNode.h"
 
-#include "vtkMarkupsGlyphSource2D.h"
-
 vtkStandardNewMacro(vtkSlicerPlaneRepresentation2D);
 
 //----------------------------------------------------------------------

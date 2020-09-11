@@ -36,9 +36,6 @@
 //----------------------------------------------------------------------
 vtkMRMLAbstractWidget::vtkMRMLAbstractWidget()
 {
-  this->ApplicationLogic = nullptr;
-  this->Renderer = nullptr;
-
   this->WidgetRep = nullptr;
   this->WidgetState = vtkMRMLAbstractWidget::WidgetStateIdle;
 
@@ -342,6 +339,12 @@ void vtkMRMLAbstractWidget::NeedToRenderOff()
     this->WidgetRep->NeedToRenderOff();
     }
 */
+}
+
+//----------------------------------------------------------------------
+vtkRenderer* vtkMRMLAbstractWidget::GetRenderer()
+{
+  return this->Renderer;
 }
 
 //----------------------------------------------------------------------

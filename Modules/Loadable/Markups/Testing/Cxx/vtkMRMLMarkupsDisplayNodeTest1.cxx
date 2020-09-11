@@ -53,6 +53,10 @@ int vtkMRMLMarkupsDisplayNodeTest1(int , char * [] )
             << ", as string = "
             << node1->GetGlyphTypeAsString(vtkMRMLMarkupsDisplayNode::Cross2D)
             << std::endl;
+  std::cout << "    CrossDot2D = " << vtkMRMLMarkupsDisplayNode::CrossDot2D
+            << ", as string = "
+            << node1->GetGlyphTypeAsString(vtkMRMLMarkupsDisplayNode::CrossDot2D)
+            << std::endl;
   std::cout << "    ThickCross2D = " << vtkMRMLMarkupsDisplayNode::ThickCross2D
             << ", as string = " <<
             node1->GetGlyphTypeAsString(vtkMRMLMarkupsDisplayNode::ThickCross2D)
@@ -93,35 +97,6 @@ int vtkMRMLMarkupsDisplayNodeTest1(int , char * [] )
             << ", as string = "
             << node1->GetGlyphTypeAsString(vtkMRMLMarkupsDisplayNode::Sphere3D)
             << std::endl;
-  std::cout << "    Diamond3D = " << vtkMRMLMarkupsDisplayNode::Diamond3D
-            << ", as string = "
-            << node1->GetGlyphTypeAsString(vtkMRMLMarkupsDisplayNode::Diamond3D)
-            << std::endl;
-
-  // semantic assumptions
-  if (node1->GetMinimumGlyphType() != vtkMRMLMarkupsDisplayNode::Vertex2D)
-    {
-    std::cerr << "Error: minimum glyph type " << node1->GetMinimumGlyphType()
-              << " != Vertex2d: " << vtkMRMLMarkupsDisplayNode::Vertex2D
-              << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (vtkMRMLMarkupsDisplayNode::Vertex2D != 1)
-    {
-    std::cerr << "ERROR: Vertex2D (" << vtkMRMLMarkupsDisplayNode::Vertex2D
-              << ") is not defined as 1!"
-              << " Setting glyph types on the source class won't work!"
-              << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  if (node1->GetMaximumGlyphType() != vtkMRMLMarkupsDisplayNode::Diamond3D)
-    {
-    std::cerr << "Error: maximum glyph type " << node1->GetMaximumGlyphType()
-              << " != Diamond3D: " << vtkMRMLMarkupsDisplayNode::Diamond3D
-              << std::endl;
-    return EXIT_FAILURE;
-    }
 
   // spot test int to string mapping
   node1->SetGlyphType(vtkMRMLMarkupsDisplayNode::Sphere3D);

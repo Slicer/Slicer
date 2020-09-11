@@ -166,6 +166,9 @@ protected:
   vtkSlicerMarkupsWidgetRepresentation();
   ~vtkSlicerMarkupsWidgetRepresentation() override;
 
+  // Convert glyph types from display node enums to 2D glyph source enums
+  static int GetGlyphTypeSourceFromDisplay(int glyphTypeDisplay);
+
   class ControlPointsPipeline
   {
   public:

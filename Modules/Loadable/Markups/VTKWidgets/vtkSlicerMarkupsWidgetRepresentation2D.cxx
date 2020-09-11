@@ -59,8 +59,8 @@ vtkSlicerMarkupsWidgetRepresentation2D::ControlPointsPipeline2D::ControlPointsPi
 
   this->Property = vtkSmartPointer<vtkProperty2D>::New();
   this->Property->SetColor(0.4, 1.0, 1.0);
-  this->Property->SetPointSize(10.);
-  this->Property->SetLineWidth(2.);
+  this->Property->SetPointSize(3.);
+  this->Property->SetLineWidth(3.);
   this->Property->SetOpacity(1.);
 
   this->Mapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
@@ -448,7 +448,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller,
       }
     else
       {
-      glyphSource->SetGlyphType(this->MarkupsDisplayNode->GetGlyphType());
+      glyphSource->SetGlyphType(this->GetGlyphTypeSourceFromDisplay(this->MarkupsDisplayNode->GetGlyphType()));
       }
 
     if (this->MarkupsDisplayNode->GetSliceProjectionOutlinedBehindSlicePlane() && controlPointType == ProjectBack)

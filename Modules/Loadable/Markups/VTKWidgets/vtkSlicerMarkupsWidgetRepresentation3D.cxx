@@ -67,8 +67,8 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
   this->Property->SetSpecular(0.0);
   this->Property->SetShading(true);
   this->Property->SetSpecularPower(1.0);
-  this->Property->SetPointSize(10.);
-  this->Property->SetLineWidth(2.);
+  this->Property->SetPointSize(3.);
+  this->Property->SetLineWidth(3.);
   this->Property->SetOpacity(1.);
 
   this->OccludedProperty = vtkSmartPointer<vtkProperty>::New();
@@ -719,7 +719,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller,
     else
       {
       vtkMarkupsGlyphSource2D* glyphSource = this->GetControlPointsPipeline(controlPointType)->GlyphSource2D;
-      glyphSource->SetGlyphType(this->MarkupsDisplayNode->GetGlyphType());
+      glyphSource->SetGlyphType(this->GetGlyphTypeSourceFromDisplay(this->MarkupsDisplayNode->GetGlyphType()));
       this->GetControlPointsPipeline(controlPointType)->Glypher->SetSourceConnection(glyphSource->GetOutputPort());
       }
     }

@@ -15,12 +15,17 @@
 
 ==============================================================================*/
 
-///  vtkMarkupsGlyphSource2D - copies and extends vtkGlyphSource2D to
-/// provide Slicer glyphs represented by poly data
+/// vtkMarkupsGlyphSource2D - copies and extends vtkGlyphSource2D to
+/// provide glyphs optimized to be used as point markers.
 ///
 /// vtkMarkupsGlyphSource2D can generate a family of 2D glyphs each of which lies
-/// in the x-y plane (i.e., the z-coordinate is zero). The class is a helper
-/// class to be used with vtkGlyph2D and vtkXYPlotActor.
+/// in the x-y plane (i.e., the z-coordinate is zero).
+///
+/// Notable differences compared to the base VTK implementation:
+/// - Endpoint of arrows is the origin (unlike vtkGlyphSource2D that places
+///   center of the arrow shaft in the origin).
+/// - Setting a glyph "filled" does not make it thick.
+/// - Additional glyph types (starburst, crosshair with dot)
 //
 /// To use this class, specify the glyph type to use and its
 /// attributes. Attributes include its position (i.e., center point), scale,
@@ -38,9 +43,6 @@
 // VTK includes
 #include "vtkGlyphSource2D.h"
 #include "vtkPolyDataAlgorithm.h"
-
-/// when add new glyph types, make sure to increase the clamp
-#define VTK_STARBURST_GLYPH 12
 
 class vtkPoints;
 class vtkUnsignedCharArray;
@@ -102,24 +104,43 @@ public:
   vtkGetMacro(RotationAngle,double);
 
   /// Specify the type of glyph to generate.
-  vtkSetClampMacro(GlyphType,int,VTK_NO_GLYPH,VTK_STARBURST_GLYPH);
+  vtkSetClampMacro(GlyphType,int, GlyphNone, GlyphType_Last-1);
   vtkGetMacro(GlyphType,int);
-  void SetGlyphTypeToNone() {this->SetGlyphType(VTK_NO_GLYPH);}
-  void SetGlyphTypeToVertex() {this->SetGlyphType(VTK_VERTEX_GLYPH);}
-  void SetGlyphTypeToDash() {this->SetGlyphType(VTK_DASH_GLYPH);}
-  void SetGlyphTypeToCross() {this->SetGlyphType(VTK_CROSS_GLYPH);}
-  void SetGlyphTypeToThickCross() {this->SetGlyphType(VTK_THICKCROSS_GLYPH);}
-  void SetGlyphTypeToTriangle() {this->SetGlyphType(VTK_TRIANGLE_GLYPH);}
-  void SetGlyphTypeToSquare() {this->SetGlyphType(VTK_SQUARE_GLYPH);}
-  void SetGlyphTypeToCircle() {this->SetGlyphType(VTK_CIRCLE_GLYPH);}
-  void SetGlyphTypeToDiamond() {this->SetGlyphType(VTK_DIAMOND_GLYPH);}
-  void SetGlyphTypeToArrow() {this->SetGlyphType(VTK_ARROW_GLYPH);}
-  void SetGlyphTypeToThickArrow() {this->SetGlyphType(VTK_THICKARROW_GLYPH);}
-  void SetGlyphTypeToHookedArrow() {this->SetGlyphType(VTK_HOOKEDARROW_GLYPH);}
-  void SetGlyphTypeToStarBurst() {this->SetGlyphType(VTK_STARBURST_GLYPH);}
+  void SetGlyphTypeToNone() {this->SetGlyphType(GlyphNone);}
+  void SetGlyphTypeToStarBurst() {this->SetGlyphType(GlyphStarBurst);}
+  void SetGlyphTypeToCross() {this->SetGlyphType(GlyphCross);}
+  void SetGlyphTypeToCrossDot() { this->SetGlyphType(GlyphCrossDot); }
+  void SetGlyphTypeToThickCross() {this->SetGlyphType(GlyphThickCross);}
+  void SetGlyphTypeToVertex() {this->SetGlyphType(GlyphVertex);}
+  void SetGlyphTypeToDash() {this->SetGlyphType(GlyphDash);}
+  void SetGlyphTypeToTriangle() {this->SetGlyphType(GlyphTriangle);}
+  void SetGlyphTypeToSquare() {this->SetGlyphType(GlyphSquare);}
+  void SetGlyphTypeToCircle() {this->SetGlyphType(GlyphCircle);}
+  void SetGlyphTypeToDiamond() {this->SetGlyphType(GlyphDiamond);}
+  void SetGlyphTypeToArrow() {this->SetGlyphType(GlyphArrow);}
+  void SetGlyphTypeToThickArrow() {this->SetGlyphType(GlyphThickArrow);}
+  void SetGlyphTypeToHookedArrow() {this->SetGlyphType(GlyphHookedArrow);}
 
-  void SetGlyphTypeAsString(const char* type);
   void SetNextGlyphType();
+
+  enum GlyphTypes
+    {
+    GlyphNone = 0,
+    GlyphStarBurst,
+    GlyphCross,
+    GlyphCrossDot,
+    GlyphThickCross,
+    GlyphVertex,
+    GlyphDash,
+    GlyphTriangle,
+    GlyphSquare,
+    GlyphCircle,
+    GlyphDiamond,
+    GlyphArrow,
+    GlyphThickArrow,
+    GlyphHookedArrow,
+    GlyphType_Last // insert new types above this line
+    };
 
 protected:
   vtkMarkupsGlyphSource2D();
@@ -131,10 +152,10 @@ protected:
   double Scale;
   double Scale2;
   double Color[3];
-  int   Filled;
-  int   Dash;
-  int   Cross;
-  int   GlyphType;
+  int Filled;
+  int Dash;
+  int Cross;
+  int GlyphType;
   double RotationAngle;
 
   void TransformGlyph(vtkPoints *pts);
@@ -146,7 +167,7 @@ protected:
   void CreateDash(vtkPoints *pts, vtkCellArray *lines,
                   vtkCellArray *polys, vtkUnsignedCharArray *colors, double scale = 1.0);
   void CreateCross(vtkPoints *pts, vtkCellArray *lines,
-                   vtkCellArray *polys, vtkUnsignedCharArray *colors, double scale = 1.0);
+                   vtkCellArray *polys, vtkUnsignedCharArray *colors, double scale = 1.0, bool dot=false);
   void CreateThickCross(vtkPoints *pts, vtkCellArray *lines,
                         vtkCellArray *polys, vtkUnsignedCharArray *colors);
   void CreateTriangle(vtkPoints *pts, vtkCellArray *lines,

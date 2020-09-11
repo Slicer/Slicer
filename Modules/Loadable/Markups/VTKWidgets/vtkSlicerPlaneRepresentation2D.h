@@ -34,6 +34,7 @@
 
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
 #include "vtkSlicerMarkupsWidgetRepresentation2D.h"
+#include "vtkGlyphSource2D.h"
 
 class vtkAppendPolyData;
 class vtkClipPolyData;
@@ -112,7 +113,7 @@ protected:
   vtkNew<vtkPolyDataMapper2D> PlaneOutlineMapper;
   vtkNew<vtkActor2D> PlaneOutlineActor;
 
-  vtkNew<vtkMarkupsGlyphSource2D> ArrowFilter;
+  vtkNew<vtkGlyphSource2D> ArrowFilter;
   vtkNew<vtkGlyph2D> ArrowGlypher;
   vtkNew<vtkPolyDataMapper2D> ArrowMapper;
   vtkNew<vtkActor2D> ArrowActor;

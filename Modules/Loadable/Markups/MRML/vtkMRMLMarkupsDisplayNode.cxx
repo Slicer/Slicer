@@ -321,6 +321,7 @@ const char* vtkMRMLMarkupsDisplayNode::GetGlyphTypeAsString(int id)
   case Vertex2D: return "Vertex2D";
   case Dash2D: return "Dash2D";
   case Cross2D: return "Cross2D";
+  case CrossDot2D: return "CrossDot2D";
   case ThickCross2D: return "ThickCross2D";
   case Triangle2D: return "Triangle2D";
   case Square2D: return "Square2D";
@@ -331,7 +332,6 @@ const char* vtkMRMLMarkupsDisplayNode::GetGlyphTypeAsString(int id)
   case HookedArrow2D: return "HookedArrow2D";
   case StarBurst2D: return "StarBurst2D";
   case Sphere3D: return "Sphere3D";
-  case Diamond3D: return "Diamond3D";
   case GlyphTypeInvalid:
   default:
     // invalid id
@@ -489,7 +489,7 @@ void vtkMRMLMarkupsDisplayNode::UpdateScene(vtkMRMLScene *scene)
 //---------------------------------------------------------------------------
 int  vtkMRMLMarkupsDisplayNode::GlyphTypeIs3D(int glyphType)
 {
-  if (glyphType >= vtkMRMLMarkupsDisplayNode::Sphere3D)
+  if (glyphType == vtkMRMLMarkupsDisplayNode::Sphere3D)
     {
     return 1;
     }
