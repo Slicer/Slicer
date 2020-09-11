@@ -52,11 +52,11 @@
 #include <vtkMRMLTransformNode.h>
 
 //----------------------------------------------------------------------
-static const double INTERACTION_HANDLE_RADIUS = 0.125;
+static const double INTERACTION_HANDLE_RADIUS = 0.0625;
 static const double INTERACTION_HANDLE_DIAMETER = INTERACTION_HANDLE_RADIUS * 2.0;
 static const double INTERACTION_HANDLE_ROTATION_ARC_TUBE_RADIUS = INTERACTION_HANDLE_RADIUS * 0.4;
 static const double INTERACTION_HANDLE_ROTATION_ARC_RADIUS = 0.80;
-static const double INTERACTION_HANDLE_SCALE_FACTOR = 7.0;
+static const double INTERACTION_HANDLE_SCALE_FACTOR = 3.5;
 
 //----------------------------------------------------------------------
 vtkSlicerMarkupsWidgetRepresentation::ControlPointsPipeline::ControlPointsPipeline()
@@ -841,6 +841,7 @@ int vtkSlicerMarkupsWidgetRepresentation::RenderTranslucentPolygonalGeometry(vtk
   int count = 0;
   if (this->InteractionPipeline && this->InteractionPipeline->Actor->GetVisibility())
     {
+    this->InteractionPipeline->Actor->SetPropertyKeys(this->GetPropertyKeys());
     count += this->InteractionPipeline->Actor->RenderTranslucentPolygonalGeometry(viewport);
     }
   return count;
@@ -939,6 +940,8 @@ vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::MarkupsInterac
 
   this->AxisRotationHandleSource = vtkSmartPointer<vtkSphereSource>::New();
   this->AxisRotationHandleSource->SetRadius(INTERACTION_HANDLE_RADIUS);
+  this->AxisRotationHandleSource->SetPhiResolution(16);
+  this->AxisRotationHandleSource->SetThetaResolution(16);
 
   this->AxisRotationArcSource = vtkSmartPointer<vtkArcSource>::New();
   this->AxisRotationArcSource->SetAngle(90);
@@ -949,11 +952,13 @@ vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::MarkupsInterac
   this->AxisRotationArcSource->SetPoint2(
     INTERACTION_HANDLE_ROTATION_ARC_RADIUS / sqrt(2) - INTERACTION_HANDLE_ROTATION_ARC_RADIUS,
     INTERACTION_HANDLE_ROTATION_ARC_RADIUS/sqrt(2), 0);
-  this->AxisRotationArcSource->SetResolution(6);
+  this->AxisRotationArcSource->SetResolution(16);
 
   this->AxisRotationTubeFilter = vtkSmartPointer<vtkTubeFilter>::New();
   this->AxisRotationTubeFilter->SetInputConnection(this->AxisRotationArcSource->GetOutputPort());
   this->AxisRotationTubeFilter->SetRadius(INTERACTION_HANDLE_ROTATION_ARC_TUBE_RADIUS);
+  this->AxisRotationTubeFilter->SetNumberOfSides(16);
+  this->AxisRotationTubeFilter->SetCapping(true);
 
   this->AxisRotationGlyphSource = vtkSmartPointer <vtkAppendPolyData>::New();
   this->AxisRotationGlyphSource->AddInputConnection(this->AxisRotationHandleSource->GetOutputPort());
@@ -962,6 +967,8 @@ vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::MarkupsInterac
   this->AxisTranslationGlyphSource = vtkSmartPointer<vtkArrowSource>::New();
   this->AxisTranslationGlyphSource->SetTipRadius(INTERACTION_HANDLE_RADIUS);
   this->AxisTranslationGlyphSource->SetTipLength(INTERACTION_HANDLE_DIAMETER);
+  this->AxisTranslationGlyphSource->SetTipResolution(16);
+  this->AxisTranslationGlyphSource->SetShaftResolution(16);
   this->AxisTranslationGlyphSource->InvertOn();
 
   vtkNew<vtkTransform> translationGlyphTransformer;
