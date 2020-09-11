@@ -1134,6 +1134,7 @@ void vtkMRMLMarkupsCurveNode::UpdateMeasurementsInternal()
         this->Measurements->GetItemAsObject(index) );
       if (currentMeasurement && currentMeasurement->GetEnabled())
         {
+        currentMeasurement->ClearValue();
         currentMeasurement->Execute();
         }
       }
@@ -1405,6 +1406,25 @@ void vtkMRMLMarkupsCurveNode::SetCalculateCurvature(bool on)
     }
 
   this->CurveMeasurementsCalculator->SetCalculateCurvature(on);
+  this->CurveGenerator->Modified();
+  this->CurveMeasurementsCalculator->Update();
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLMarkupsCurveNode::GetInterpolateControlPointMeasurement()
+{
+  return this->CurveMeasurementsCalculator->GetInterpolateControlPointMeasurement();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsCurveNode::SetInterpolateControlPointMeasurement(bool on)
+{
+  if (on == this->CurveMeasurementsCalculator->GetInterpolateControlPointMeasurement())
+    {
+    return;
+    }
+
+  this->CurveMeasurementsCalculator->SetInterpolateControlPointMeasurement(on);
   this->CurveGenerator->Modified();
   this->CurveMeasurementsCalculator->Update();
 }

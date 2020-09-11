@@ -39,6 +39,9 @@ public:
   /// Reset state of object
   virtual void Initialize();
 
+  /// Clear value and derived variables
+  virtual void ClearValue();
+
   /// Copy one type into another (deep copy)
   virtual void Copy(vtkMRMLMeasurement* aEntry);
 

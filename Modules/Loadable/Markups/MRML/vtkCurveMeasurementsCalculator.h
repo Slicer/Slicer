@@ -37,26 +37,35 @@ public:
 
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
+  //@{
+  /// Set/Get measurement collection.
+  /// The measurements that are enabled and contain control point data are used for interpolation
   void SetMeasurements(vtkCollection* measurements);
   vtkCollection* GetMeasurements();
+  //@}
 
-  /// TODO:
+  //@{
+  /// Set/Get flag determining whether to calculate curvature
   vtkSetMacro(CalculateCurvature, bool);
   vtkGetMacro(CalculateCurvature, bool);
   vtkBooleanMacro(CalculateCurvature, bool);
+  //@}
 
-  /// TODO:
+  //@{
+  /// Set/Get flag determining whether to interpolate control point measurements
   vtkSetMacro(InterpolateControlPointMeasurement, bool);
   vtkGetMacro(InterpolateControlPointMeasurement, bool);
   vtkBooleanMacro(InterpolateControlPointMeasurement, bool);
+  //@}
 
 protected:
   bool CalculatePolyDataCurvature(vtkPolyData* polyData);
+  bool InterpolateControlPointMeasurementToPolyData(vtkPolyData* outputPolyData);
 
 protected:
   vtkWeakPointer<vtkCollection> Measurements;
-  bool CalculateCurvature;
-  bool InterpolateControlPointMeasurement;
+  bool CalculateCurvature{false};
+  bool InterpolateControlPointMeasurement{false};
 
   int FillInputPortInformation(int port, vtkInformation* info) override;
   int RequestData(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector) override;

@@ -221,9 +221,17 @@ public:
   void SetNumberOfPointsPerInterpolatingSegment(int pointsPerSegment);
   //@}
 
-  /// TODO:
+  //@{
+  /// Set/Get flag determining whether to calculate curvature
   bool GetCalculateCurvature();
   void SetCalculateCurvature(bool on);
+  //@}
+
+  //@{
+  /// Set/Get flag determining whether to interpolate control point measurements
+  bool GetInterpolateControlPointMeasurement();
+  void SetInterpolateControlPointMeasurement(bool on);
+  //@}
 
 protected:
   vtkSmartPointer<vtkCleanPolyData> CleanFilter;

@@ -40,8 +40,6 @@ vtkCurveMeasurementsCalculator::vtkCurveMeasurementsCalculator()
 {
   this->SetNumberOfInputPorts(1);
 
-  this->CalculateCurvature = false;
-
   // timestamps for input and output are the same, initially
   this->Modified();
 }
@@ -131,8 +129,16 @@ int vtkCurveMeasurementsCalculator::RequestData(
     outputPolyData->GetPointData()->RemoveArray("Curvature");
     }
 
-  //TODO: If we interpolate then go through measurements, and interpolate those that
-  // contain control point data and is enabled
+  // If interpolating measurements is enabled then go through measurements, and
+  // interpolate those that contain control point data and are enabled
+  if (this->InterpolateControlPointMeasurement)
+    {
+    this->InterpolateControlPointMeasurementToPolyData(outputPolyData);
+    }
+  else
+    {
+    //TODO: Remove arrays? Prefix their names with "Interpolated:"?
+    }
 
   outputPolyData->Squeeze();
   return 1;
@@ -253,6 +259,94 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
   // Set curvature array to output
   polyData->GetPointData()->AddArray(curvatureValues);
   polyData->GetPointData()->SetActiveScalars("Curvature"); //TODO: Do it here or in displayable manager when turning off curvature visibility?
+
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyData(vtkPolyData* outputPolyData)
+{
+  if (!this->Measurements)
+    {
+    return false;
+    }
+  if (!outputPolyData)
+    {
+    return false;
+    }
+  vtkIdType numberOfPoints = outputPolyData->GetNumberOfPoints();
+  if (numberOfPoints == 0 || outputPolyData->GetNumberOfLines() == 0)
+    {
+    // vtkErrorMacro("InterpolateControlPointMeasurementToPolyData: No points or lines in input poly data");
+    return false;
+    }
+  vtkDoubleArray* pedigreeIdsArray = vtkDoubleArray::SafeDownCast(outputPolyData->GetPointData()->GetArray("PedigreeIDs"));
+  if (!pedigreeIdsArray)
+    {
+    vtkErrorMacro("InterpolateControlPointMeasurementToPolyData: Missing PedigreeIDs array in the curve poly data");
+    return false;
+    }
+  if (pedigreeIdsArray->GetNumberOfTuples() != numberOfPoints)
+    {
+    vtkErrorMacro("InterpolateControlPointMeasurementToPolyData: Size mismatch between PedigreeIDs array ("
+      << pedigreeIdsArray->GetNumberOfTuples() << ") and polydata points (" << numberOfPoints << ")");
+    return false;
+    }
+
+  // Calculate and set interpolated control point measurements in poly data
+  for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
+    {
+    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
+      this->Measurements->GetItemAsObject(index) );
+
+    if (!currentMeasurement || !currentMeasurement->GetEnabled())
+      {
+      continue;
+      }
+    vtkDoubleArray* controlPointValues = currentMeasurement->GetControlPointValues();
+    if (!controlPointValues || controlPointValues->GetNumberOfTuples() < 2)
+      {
+      continue;
+      }
+    if (controlPointValues->GetNumberOfComponents() != 1)
+      {
+      //TODO: Add support for more components
+      vtkWarningMacro("InterpolateControlPointMeasurementToPolyData: Only the interpolation of single component control point measurements is implemented");
+      return false;
+      }
+
+    vtkNew<vtkDoubleArray> interpolatedMeasurement;
+    std::string arrayName = std::string("Interpolated:") + (currentMeasurement->GetName() ? std::string(currentMeasurement->GetName()) : "Unknown");
+    interpolatedMeasurement->SetName(arrayName.c_str());
+    interpolatedMeasurement->SetNumberOfComponents(1);
+    interpolatedMeasurement->SetNumberOfTuples(numberOfPoints);
+    interpolatedMeasurement->Reset();
+    interpolatedMeasurement->FillComponent(0,0.0);
+
+    // Perform interpolation on the control points measurement values in each enabled measurement
+    for (vtkIdType pointIdx = 0; pointIdx < numberOfPoints; ++pointIdx)
+      {
+      // Based on the pedigree IDs calculate the interpolated value for each point in the polydata
+      double pedigreeID = pedigreeIdsArray->GetValue(pointIdx);
+      vtkIdType controlPointIndex = vtkIdType(pedigreeID);
+      double fractionValue = pedigreeID - controlPointIndex;
+      double currentControlPointValue = controlPointValues->GetValue(controlPointIndex);
+      if (fractionValue < VTK_DBL_EPSILON)
+        {
+        // Point corresponds to a control point
+        interpolatedMeasurement->InsertValue(pointIdx, currentControlPointValue);
+        }
+      else
+        {
+        // Need to interpolate
+        double nextControlPointValue = controlPointValues->GetValue(controlPointIndex+1);
+        double interpolatedValue = currentControlPointValue + fractionValue * (nextControlPointValue-currentControlPointValue);
+        interpolatedMeasurement->InsertValue(pointIdx, interpolatedValue);
+        }
+      }
+
+    outputPolyData->GetPointData()->AddArray(interpolatedMeasurement);
+    }
 
   return true;
 }

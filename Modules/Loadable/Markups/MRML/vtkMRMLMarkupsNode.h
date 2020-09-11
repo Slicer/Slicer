@@ -184,7 +184,7 @@ public:
     vtkCodedEntry* unitsCode = nullptr, vtkCodedEntry* methodCode = nullptr);
   void RemoveNthMeasurement(int id);
   void RemoveAllMeasurements();
-  void InitializeAllMeasurements();
+  void ClearValueForAllMeasurements();
   //@}
 
   /// Invoke events when control points change, passing the control point index if applicable.
@@ -257,7 +257,7 @@ public:
   /// Return true if n is a valid control point, false otherwise.
   bool ControlPointExists(int n);
 
-  /// Depreceated. Use ControlPointExists instead.
+  /// Deprecated. Use ControlPointExists instead.
   bool MarkupExists(int n) { return this->ControlPointExists(n); }
   /// Return the number of control points that are stored in this node
   int GetNumberOfControlPoints();
@@ -273,7 +273,7 @@ public:
   std::vector<ControlPoint*>* GetControlPoints();
   /// Add n control points.
   /// If point is specified then all control point positions will be initialized to that position,
-  /// otherwise control poin positions are initialized to (0,0,0).
+  /// otherwise control point positions are initialized to (0,0,0).
   /// If requested number of points would result more points than the maximum allowed number of points
   /// then no points are added at all.
   /// Return index of the last placed control point, -1 on failure.
