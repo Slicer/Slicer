@@ -88,6 +88,7 @@ bool qSlicerLoadableModule::importModulePythonExtensions(
         "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleLogicPython.*');"
         "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleMRMLPython.*');"
         "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleMRMLDisplayableManagerPython.*');"
+        "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleVTKWidgetsPython.*');"
         ).arg(qSlicerCorePythonManager::toPythonStringLiteral(scopedCurrentDir.currentPath())));
   pythonManager->executeString(QString(
         "from slicer.util import importQtClassesFromDirectory;"
