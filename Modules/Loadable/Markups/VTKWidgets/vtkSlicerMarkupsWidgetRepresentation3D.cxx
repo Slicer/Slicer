@@ -889,7 +889,7 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
       double distance = 100.0 * viewportHeight;
       cameraPosition[0] -= dop[0] * distance;
       cameraPosition[1] -= dop[1] * distance;
-      cameraPosition[2] += dop[2] * distance;
+      cameraPosition[2] -= dop[2] * distance;
       }
     }
   for (int i = 0; i < NumberOfControlPointTypes; i++)
