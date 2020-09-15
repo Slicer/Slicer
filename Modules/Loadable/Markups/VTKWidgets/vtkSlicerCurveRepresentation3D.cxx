@@ -148,6 +148,9 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
       this->GetControlPointsPipeline(centerControlPointType)->LabelsActor->VisibilityOff();
       }
     }
+
+  // Scalars
+  //TODO:
 }
 
 //----------------------------------------------------------------------

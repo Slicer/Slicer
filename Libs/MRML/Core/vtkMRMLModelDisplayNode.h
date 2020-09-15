@@ -87,7 +87,7 @@ public:
   /// This is the mesh that needs to be connected with the mappers.
   /// Return 0 if there is no input mesh but it is required.
   /// GetOutputMesh() should be reimplemented only if the model display
-  /// node doesn't take a mesh as input but produce an oustput mesh.
+  /// node doesn't take a mesh as input but produce an output mesh.
   /// In all other cases, GetOutputMeshConnection() should be reimplemented.
   /// \sa GetOutputMeshConnection()
   virtual vtkPointSet* GetOutputMesh();

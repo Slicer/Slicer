@@ -40,7 +40,7 @@ void vtkMRMLMeasurementLength::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMeasurementLength::Execute()
+void vtkMRMLMeasurementLength::Compute()
 {
   if (!this->InputMRMLNode)
     {

@@ -1923,6 +1923,24 @@ int vtkMRMLMarkupsNode::GetNumberOfMeasurements()
 }
 
 //---------------------------------------------------------------------------
+int vtkMRMLMarkupsNode::GetNumberOfEnabledMeasurements()
+{
+  int numberOfEnabledMeasurements = 0;
+  vtkMRMLMeasurement* currentMeasurement = nullptr;
+  vtkCollectionSimpleIterator it;
+  for (this->Measurements->InitTraversal(it);
+      (currentMeasurement=vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetNextItemAsObject(it)));)
+    {
+    if (currentMeasurement->GetEnabled())
+      {
+      numberOfEnabledMeasurements++;
+      }
+    }
+
+  return numberOfEnabledMeasurements;
+}
+
+//---------------------------------------------------------------------------
 vtkMRMLMeasurement* vtkMRMLMarkupsNode::GetNthMeasurement(int id)
 {
   if (id < 0 || id >= this->GetNumberOfMeasurements())
@@ -2075,7 +2093,7 @@ void vtkMRMLMarkupsNode::WriteMeasurementsToDescription()
   if (this->GetName())
     {
     this->PropertiesLabelText += this->GetName();
-    if (this->Measurements->GetNumberOfItems() > 0)
+    if (this->GetNumberOfEnabledMeasurements() > 0)
       {
       this->PropertiesLabelText += ":";
       }
@@ -2087,7 +2105,7 @@ void vtkMRMLMarkupsNode::WriteMeasurementsToDescription()
   for (this->Measurements->InitTraversal(it);
       (currentMeasurement=vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetNextItemAsObject(it)));)
     {
-    if (!currentMeasurement->GetEnabled() || !currentMeasurement->GetName())
+    if (!currentMeasurement->GetEnabled() || !currentMeasurement->GetName() || !currentMeasurement->GetPrintFormat())
       {
       continue;
       }

@@ -1135,7 +1135,7 @@ void vtkMRMLMarkupsCurveNode::UpdateMeasurementsInternal()
       if (currentMeasurement && currentMeasurement->GetEnabled())
         {
         currentMeasurement->ClearValue();
-        currentMeasurement->Execute();
+        currentMeasurement->Compute();
         }
       }
 

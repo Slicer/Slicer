@@ -46,7 +46,7 @@ public:
   virtual void Copy(vtkMRMLMeasurement* aEntry);
 
   /// Perform calculation on \sa InputMRMLNode and store the result internally
-  virtual void Execute() {};
+  virtual void Compute() {};
 
   /// Enabled
   vtkSetMacro(Enabled, bool);

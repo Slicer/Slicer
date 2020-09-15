@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>274</width>
-    <height>390</height>
+    <width>293</width>
+    <height>347</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Module Template</string>
+   <string>Markups</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -150,6 +150,9 @@
         <property name="selectionMode">
          <enum>QAbstractItemView::ExtendedSelection</enum>
         </property>
+        <property name="indentation">
+         <number>8</number>
+        </property>
         <property name="editMenuActionVisible">
          <bool>false</bool>
         </property>
@@ -159,7 +162,7 @@
     </widget>
    </item>
    <item>
-    <widget class="qMRMLCollapsibleButton" name="CollapsibleGroupBox">
+    <widget class="qMRMLCollapsibleButton" name="displayCollapsibleButton">
      <property name="text">
       <string>Display</string>
      </property>

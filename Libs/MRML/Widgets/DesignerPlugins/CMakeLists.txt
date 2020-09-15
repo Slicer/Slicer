@@ -67,6 +67,8 @@ set(${KIT}_SRCS
   qMRMLROIWidgetPlugin.h
   qMRMLScalarInvariantComboBoxPlugin.cxx
   qMRMLScalarInvariantComboBoxPlugin.h
+  qMRMLScalarsDisplayWidgetPlugin.cxx
+  qMRMLScalarsDisplayWidgetPlugin.h
   qMRMLSceneFactoryWidgetPlugin.cxx
   qMRMLSceneFactoryWidgetPlugin.h
   qMRMLSliceControllerWidgetPlugin.cxx
@@ -136,6 +138,7 @@ set(${KIT}_MOC_SRCS
   qMRMLRangeWidgetPlugin.h
   qMRMLROIWidgetPlugin.h
   qMRMLScalarInvariantComboBoxPlugin.h
+  qMRMLScalarsDisplayWidgetPlugin.h
   qMRMLSceneFactoryWidgetPlugin.h
   qMRMLSliceControllerWidgetPlugin.h
   qMRMLSliceInformationWidgetPlugin.h

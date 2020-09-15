@@ -175,6 +175,7 @@ public:
    * Get/set measurement data, such as length, angle, diameter, cross-section area.
    */
   int GetNumberOfMeasurements();
+  int GetNumberOfEnabledMeasurements();
   vtkMRMLMeasurement* GetNthMeasurement(int id);
   void AddMeasurement(vtkMRMLMeasurement* measurement);
   void SetNthMeasurement(int id, vtkMRMLMeasurement* measurement);

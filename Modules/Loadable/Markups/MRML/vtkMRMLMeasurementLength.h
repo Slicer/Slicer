@@ -34,7 +34,7 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Calculate length of \sa InputMRMLNode curve markup node and store the result internally
-  void Execute() override;
+  void Compute() override;
 
 protected:
   vtkMRMLMeasurementLength();
