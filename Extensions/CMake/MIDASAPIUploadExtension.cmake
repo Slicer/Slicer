@@ -127,7 +127,7 @@ function(midas_api_upload_extension)
   set(params "${params}&release=${release}")
   set(url "${MY_SERVER_URL}/api/json?method=${api_method}${params}")
 
-  file(UPLOAD ${MY_PACKAGE_FILEPATH} ${url} INACTIVITY_TIMEOUT 120 STATUS status LOG log SHOW_PROGRESS)
+  file(UPLOAD ${MY_PACKAGE_FILEPATH} ${url} INACTIVITY_TIMEOUT 240 STATUS status LOG log SHOW_PROGRESS)
   string(REGEX REPLACE ".*{\"stat\":[ ]*\"([^\"]*)\".*" "\\1" status ${log})
 
   set(api_call_log ${CMAKE_CURRENT_BINARY_DIR}/${api_method}_response.txt)
