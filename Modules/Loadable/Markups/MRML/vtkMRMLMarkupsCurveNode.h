@@ -56,34 +56,31 @@ class vtkTriangleFilter;
 ///
 /// Markups measurement pipeline:
 ///
-/// +------------------------------Markups node logic (e.g. vtkMarkupsCurveNode)---------------------------------+
-/// |  +--------------------+                                                                                    |
-/// |  | vtkMRMLMarkupsNode |                                                                                    |
-/// |  | ------------------ |  pipe  +-------------------+                                                       |
-/// |  |   CurveInputPoly------------+ vtkCurveGenerator | : Generate interpolated curve from the control points |
-/// |  |   Measurements----------+   +---------|---------+                                                       |
-/// |  +--------------------+    |             |                                                                 |
-/// |                            |             |pipe                                                             |
-/// |                            |             |                                                                 |
-/// |                         +--|-------------|---------------+                                                 |
-/// |                         | vtkCurveMeasurementsCalculator | : Add measurements as data arrays to the curve  |
-/// |                         +----------------|---------------+   poly data that is displayed as scalars        |
-/// |                                          |pipe                                                             |
-/// |                         +----------------|---------------+                                                 |
-/// |                         |   vtkTransformPolyDataFilter   |                                                 |
-/// |                         |  (CurvePolyToWorldTransformer) |                                                 |
-/// |                         +----------------|---------------+                                                 |
-/// |                                          |                                                                 |
-/// +------------------------------------------------------------------------------------------------------------+
-///                                            |
-///                +------Markup representation|logic (e.g. vtkSlicerCurveRepresentation3D)------+
-///                |                           |                                                 |
-///                |                           |pipe                                             |
-///                |                           |(vtkCleaner in between)                          |
-///                |                  +--------|--------+                                        |
-///                |                  |  vtkTubeFilter  +--------> vtkPolyDataMapper -> vtkActor |
-///                |                  +-----------------+                                        |
-///                +-----------------------------------------------------------------------------+
+/// +------------------------------------------vtkMarkupsCurveNode-----------------------------------------------+
+/// |  +-vtkMRMLMarkupsNode-+                                                             === : Display pipeline |
+/// |  |                    |        +-vtkCurveGenerator-+                                                       |
+/// |  |   CurveInputPoly=============                   | : Generate interpolated curve from the control points |
+/// |  |   Measurements--------+     +---------║---------+                                                       |
+/// |  |                    |  |               ║                                                                 |
+/// |  +--------------------+  |               ║                                                                 |
+/// |                         ++-vtkCurveMeasurementsCalculator-+                                                |
+/// |                         |                                 | : Add measurements as data arrays to the curve |
+/// |                         +----------------║----------------+   poly data                                    |
+/// |                                          ║                                                                 |
+/// |                                          ║                                                                 |
+/// |                         +---vtkTransformPolyDataFilter----+                                                |
+/// |                         |  (CurvePolyToWorldTransformer)  |                                                |
+/// |                         +----------------║----------------+                                                |
+/// |                                          ║                                                                 |
+/// +------------------------------------------║-----------------------------------------------------------------+
+///                                            ║
+///                          +-----------------║-------vtkSlicerCurveRepresentation3D----------------------+
+///                          |                 ║                                                           |
+///                          |                 ║(vtkCleaner in between)                                    |
+///                          |        +--vtkTubeFilter--+                                                  |
+///                          |        |                 =========> vtkPolyDataMapper => vtkActor           |
+///                          |        +-----------------+                                                  |
+///                          +-----------------------------------------------------------------------------+
 ///
 /// \ingroup Slicer_QtModules_Markups
 class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsCurveNode : public vtkMRMLMarkupsNode

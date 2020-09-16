@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>qMRMLMarkupsDisplayNodeWidget</class>
- <widget class="QWidget" name="qMRMLMarkupsDisplayNodeWidget">
+ <widget class="qMRMLWidget" name="qMRMLMarkupsDisplayNodeWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>320</width>
-    <height>137</height>
+    <width>348</width>
+    <height>170</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,13 +26,6 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item row="0" column="0">
-    <widget class="QLabel" name="VisibilityLabel">
-     <property name="text">
-      <string>Visibility:</string>
-     </property>
-    </widget>
-   </item>
    <item row="8" column="0" colspan="2">
     <widget class="ctkCollapsibleGroupBox" name="InteractionGroupBox">
      <property name="title">
@@ -59,10 +52,10 @@
      </layout>
     </widget>
    </item>
-   <item row="7" column="0">
-    <widget class="QLabel" name="textScaleLabel">
+   <item row="5" column="0">
+    <widget class="QLabel" name="glyphScaleLabel">
      <property name="text">
-      <string>Text Size:</string>
+      <string>Glyph Size:</string>
      </property>
     </widget>
    </item>
@@ -112,8 +105,78 @@
      </item>
     </layout>
    </item>
+   <item row="10" column="0" colspan="2">
+    <widget class="ctkCollapsibleGroupBox" name="ScalarsCollapsibleGroupBox">
+     <property name="title">
+      <string>Scalars</string>
+     </property>
+     <property name="collapsed">
+      <bool>true</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_5">
+      <item row="0" column="0">
+       <widget class="qMRMLScalarsDisplayWidget" name="ScalarsDisplayWidget"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="VisibilityLabel">
+     <property name="text">
+      <string>Visibility:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="textScaleLabel">
+     <property name="text">
+      <string>Text Size:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QCheckBox" name="VisibilityCheckBox">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="opacityLabel">
+       <property name="text">
+        <string>Opacity:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ctkSliderWidget" name="opacitySliderWidget">
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="7" column="1">
+    <widget class="ctkSliderWidget" name="textScaleSliderWidget">
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>20.000000000000000</double>
+     </property>
+     <property name="suffix">
+      <string> %</string>
+     </property>
+    </widget>
+   </item>
    <item row="9" column="0" colspan="2">
-    <widget class="ctkCollapsibleGroupBox" name="SliceDisplayCollapsibleGroupBox">
+    <widget class="ctkCollapsibleGroupBox" name="AdvancedCollapsibleGroupBox">
      <property name="title">
       <string>Advanced</string>
      </property>
@@ -417,54 +480,6 @@
      </layout>
     </widget>
    </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="glyphScaleLabel">
-     <property name="text">
-      <string>Glyph Size:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QCheckBox" name="VisibilityCheckBox">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="opacityLabel">
-       <property name="text">
-        <string>Opacity:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="ctkSliderWidget" name="opacitySliderWidget">
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>1.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="7" column="1">
-    <widget class="ctkSliderWidget" name="textScaleSliderWidget">
-     <property name="singleStep">
-      <double>0.100000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>20.000000000000000</double>
-     </property>
-     <property name="suffix">
-      <string> %</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -485,6 +500,11 @@
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLScalarsDisplayWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLScalarsDisplayWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLSliderWidget</class>
@@ -529,12 +549,12 @@
    <slot>setHidden(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>129</x>
-     <y>186</y>
+     <x>134</x>
+     <y>53</y>
     </hint>
     <hint type="destinationlabel">
-     <x>174</x>
-     <y>186</y>
+     <x>240</x>
+     <y>52</y>
     </hint>
    </hints>
   </connection>
@@ -545,12 +565,28 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>114</x>
-     <y>188</y>
+     <x>134</x>
+     <y>53</y>
     </hint>
     <hint type="destinationlabel">
-     <x>300</x>
-     <y>188</y>
+     <x>346</x>
+     <y>52</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qMRMLMarkupsDisplayNodeWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ScalarsDisplayWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>67</x>
+     <y>4</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>68</x>
+     <y>214</y>
     </hint>
    </hints>
   </connection>

@@ -25,6 +25,7 @@ Version:   $Revision: 1.3 $
 #include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
 #include <vtkImageData.h>
+#include <vtkLookupTable.h>
 #include <vtksys/SystemTools.hxx>
 
 // STD includes
@@ -768,6 +769,99 @@ void vtkMRMLDisplayNode::SetScalarRangeFlagFromString(const char* str)
     scalarRangeFlag = atoi(str);
     }
   this->SetScalarRangeFlag(scalarRangeFlag);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLDisplayNode::SetScalarRangeFlag(int flag)
+{
+  if (flag == this->ScalarRangeFlag)
+    {
+    return;
+    }
+  MRMLNodeModifyBlocker blocker(this);
+  this->ScalarRangeFlag = flag;
+  this->Modified();
+  this->UpdateScalarRange();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLDisplayNode::UpdateScalarRange()
+{
+  if (!this->GetScalarDataSet())
+    {
+    return;
+    }
+
+  if (this->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseManualScalarRange)
+    {
+    return;
+    }
+
+  double newScalarRange[2] = { 0.0, -1.0 };
+  int flag = this->GetScalarRangeFlag();
+  if (flag == vtkMRMLDisplayNode::UseDataScalarRange)
+    {
+    vtkDataArray *dataArray = this->GetActiveScalarArray();
+    if (dataArray)
+      {
+      dataArray->GetRange(newScalarRange);
+      }
+    }
+  else if (flag == vtkMRMLDisplayNode::UseColorNodeScalarRange)
+    {
+    if (this->GetColorNode())
+      {
+      vtkLookupTable* lut = this->GetColorNode()->GetLookupTable();
+      if (lut)
+        {
+        double* lutRange = lut->GetRange();
+        newScalarRange[0] = lutRange[0];
+        newScalarRange[1] = lutRange[1];
+        }
+      else
+        {
+        vtkWarningMacro("Can not use color node scalar range since model "
+                        << "display node color node does not have a lookup table.");
+        }
+      }
+    else
+      {
+      vtkWarningMacro("Can not use color node scalar range since model "
+                      << "display node does not have a color node.");
+      }
+    }
+  else if (flag == vtkMRMLDisplayNode::UseDataTypeScalarRange)
+    {
+    vtkDataArray *dataArray = this->GetActiveScalarArray();
+    if (dataArray)
+      {
+      newScalarRange[0] = dataArray->GetDataTypeMin();
+      newScalarRange[1] = dataArray->GetDataTypeMax();
+      }
+    else
+      {
+      vtkWarningMacro("Can not use data type scalar range since the model display node's"
+                      << "mesh does not have an active scalar array.");
+      }
+    }
+
+  this->SetScalarRange(newScalarRange);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLDisplayNode::SetActiveScalar(const char *scalarName, int location)
+{
+  if (location == this->ActiveAttributeLocation
+    && ((scalarName && this->ActiveScalarName && !strcmp(scalarName, this->ActiveScalarName))
+        || (scalarName == nullptr && this->ActiveScalarName == nullptr)))
+    {
+    // no change
+    return;
+    }
+  MRMLNodeModifyBlocker blocker(this);
+  this->SetActiveScalarName(scalarName);
+  this->SetActiveAttributeLocation(location);
+  this->UpdateAssignedAttribute();
 }
 
 //-----------------------------------------------------------

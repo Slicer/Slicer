@@ -115,6 +115,7 @@ private:
   Q_DECLARE_PRIVATE(qMRMLScalarsDisplayWidget);
   Q_DISABLE_COPY(qMRMLScalarsDisplayWidget);
   friend class qMRMLModelDisplayNodeWidget;
+  friend class qMRMLMarkupsDisplayNodeWidget;
 };
 
 #endif

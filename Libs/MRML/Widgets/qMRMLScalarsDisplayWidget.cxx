@@ -215,19 +215,18 @@ void qMRMLScalarsDisplayWidget::setActiveScalarName(const QString& arrayName)
 {
   Q_D(qMRMLScalarsDisplayWidget);
 
-  QList<vtkMRMLModelDisplayNode*> currentModelDisplayNodes = d->currentModelDisplayNodes();
-  foreach (vtkMRMLModelDisplayNode* modelDisplayNode, currentModelDisplayNodes)
+  foreach (vtkMRMLDisplayNode* displayNode, d->CurrentDisplayNodes)
     {
-    int wasModified = modelDisplayNode->StartModify();
-    modelDisplayNode->SetActiveScalar(arrayName.toUtf8(), d->ActiveScalarComboBox->currentArrayLocation());
+    int wasModified = displayNode->StartModify();
+    displayNode->SetActiveScalar(arrayName.toUtf8(), d->ActiveScalarComboBox->currentArrayLocation());
 
     // if there's no color node set for a non empty array name, use a default
-    if (!arrayName.isEmpty() && modelDisplayNode->GetColorNodeID() == nullptr)
+    if (!arrayName.isEmpty() && displayNode->GetColorNodeID() == nullptr)
       {
       const char* colorNodeID = "vtkMRMLColorTableNodeFileViridis.txt";
-      modelDisplayNode->SetAndObserveColorNodeID(colorNodeID);
+      displayNode->SetAndObserveColorNodeID(colorNodeID);
       }
-    modelDisplayNode->EndModify(wasModified);
+    displayNode->EndModify(wasModified);
     }
 }
 
@@ -270,8 +269,7 @@ void qMRMLScalarsDisplayWidget::setScalarRangeMode(ControlMode controlMode)
   Q_D(qMRMLScalarsDisplayWidget);
 
   bool modified = false;
-  QList<vtkMRMLModelDisplayNode*> currentModelDisplayNodes = d->currentModelDisplayNodes();
-  foreach (vtkMRMLModelDisplayNode* modelDisplayNode, currentModelDisplayNodes)
+  foreach (vtkMRMLDisplayNode* displayNode, d->CurrentDisplayNodes)
     {
     int newScalarRangeMode = vtkMRMLDisplayNode::UseManualScalarRange;
     switch (controlMode)
@@ -283,10 +281,10 @@ void qMRMLScalarsDisplayWidget::setScalarRangeMode(ControlMode controlMode)
       case DirectMapping: newScalarRangeMode = vtkMRMLDisplayNode::UseDirectMapping; break;
       }
 
-    int currentScalarRangeMode = modelDisplayNode->GetScalarRangeFlag();
+    int currentScalarRangeMode = displayNode->GetScalarRangeFlag();
     if (currentScalarRangeMode != newScalarRangeMode)
       {
-      modelDisplayNode->SetScalarRangeFlag(newScalarRangeMode);
+      displayNode->SetScalarRangeFlag(newScalarRangeMode);
       modified = true;
       }
     }
@@ -444,6 +442,11 @@ void qMRMLScalarsDisplayWidget::updateWidgetFromMRML()
   vtkMRMLDisplayNode* firstDisplayNode = (d->CurrentDisplayNodes.size() > 0 ? d->CurrentDisplayNodes[0] : nullptr);
   vtkMRMLModelDisplayNode* firstModelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(firstDisplayNode);
 
+  // The Threshold section is only available for models
+  d->ThresholdLabel->setVisible(firstModelDisplayNode != nullptr);
+  d->ThresholdCheckBox->setVisible(firstModelDisplayNode != nullptr);
+  d->ThresholdRangeWidget->setVisible(firstModelDisplayNode != nullptr);
+
   this->setEnabled(firstDisplayNode != nullptr);
   if (!firstDisplayNode)
     {
@@ -461,13 +464,10 @@ void qMRMLScalarsDisplayWidget::updateWidgetFromMRML()
     }
 
   double dataRange[2] = { 0.0, 0.0 };
-  if (firstModelDisplayNode)
+  vtkDataArray* dataArray = firstDisplayNode->GetActiveScalarArray();
+  if (dataArray)
     {
-    vtkDataArray* dataArray = firstModelDisplayNode->GetActiveScalarArray();
-    if (dataArray)
-      {
-      dataArray->GetRange(dataRange);
-      }
+    dataArray->GetRange(dataRange);
     }
 
   // Update scalar values, range, decimals and single step
@@ -566,13 +566,13 @@ void qMRMLScalarsDisplayWidget::updateWidgetFromMRML()
   d->DisplayedScalarRangeModeComboBox->blockSignals(wasBlocking);
 
   wasBlocking = d->ActiveScalarComboBox->blockSignals(true);
-  d->ActiveScalarComboBox->setEnabled(firstModelDisplayNode); //TODO: Enable for non-models
-  if (firstModelDisplayNode)
+  d->ActiveScalarComboBox->setEnabled(firstDisplayNode);
+  if (firstDisplayNode)
     {
-    d->ActiveScalarComboBox->setDataSet(firstModelDisplayNode->GetInputMesh());
-    if (d->ActiveScalarComboBox->currentArrayName() != firstModelDisplayNode->GetActiveScalarName())
+    d->ActiveScalarComboBox->setDataSet(firstDisplayNode->GetScalarDataSet());
+    if (d->ActiveScalarComboBox->currentArrayName() != firstDisplayNode->GetActiveScalarName())
       {
-      d->ActiveScalarComboBox->setCurrentArray(firstModelDisplayNode->GetActiveScalarName());
+      d->ActiveScalarComboBox->setCurrentArray(firstDisplayNode->GetActiveScalarName());
       // Array location would need to be set in d->ActiveScalarComboBox if
       // same scalar name is used in multiple locations.
       }
@@ -584,13 +584,11 @@ void qMRMLScalarsDisplayWidget::updateWidgetFromMRML()
     {
     d->ScalarsColorNodeComboBox->setMRMLScene(this->mrmlScene());
     }
-  if ( firstModelDisplayNode
-    && d->ScalarsColorNodeComboBox->currentNodeID() != firstModelDisplayNode->GetColorNodeID() )
+  if (d->ScalarsColorNodeComboBox->currentNodeID() != firstDisplayNode->GetColorNodeID() )
     {
-    d->ScalarsColorNodeComboBox->setCurrentNodeID(firstModelDisplayNode->GetColorNodeID());
+    d->ScalarsColorNodeComboBox->setCurrentNodeID(firstDisplayNode->GetColorNodeID());
     }
-  d->ScalarsColorNodeComboBox->setEnabled( firstModelDisplayNode &&
-    firstModelDisplayNode->GetScalarRangeFlag() != vtkMRMLDisplayNode::UseDirectMapping );
+  d->ScalarsColorNodeComboBox->setEnabled(firstDisplayNode->GetScalarRangeFlag() != vtkMRMLDisplayNode::UseDirectMapping );
   d->ScalarsColorNodeComboBox->blockSignals(wasBlocking);
 
   emit displayNodeChanged();

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>615</width>
-    <height>790</height>
+    <width>318</width>
+    <height>722</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -230,12 +230,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qMRMLWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>qMRMLClipNodeWidget</class>
    <extends>QWidget</extends>
    <header>qMRMLClipNodeWidget.h</header>
@@ -249,6 +243,13 @@
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLWidget.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>

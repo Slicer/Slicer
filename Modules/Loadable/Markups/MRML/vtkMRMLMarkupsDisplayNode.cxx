@@ -29,6 +29,7 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPiecewiseFunction.h>
+#include <vtkPointData.h>
 
 // STL includes
 #include <sstream>
@@ -695,4 +696,33 @@ int vtkMRMLMarkupsDisplayNode::GetActiveControlPoint(std::string context)
 vtkMRMLMarkupsNode* vtkMRMLMarkupsDisplayNode::GetMarkupsNode()
 {
   return vtkMRMLMarkupsNode::SafeDownCast(this->GetDisplayableNode());
+}
+
+//-----------------------------------------------------------
+vtkDataSet* vtkMRMLMarkupsDisplayNode::GetScalarDataSet()
+{
+  if (this->GetMarkupsNode())
+    {
+    return this->GetMarkupsNode()->GetCurveWorld();
+    }
+  return nullptr;
+}
+
+//-----------------------------------------------------------
+vtkDataArray* vtkMRMLMarkupsDisplayNode::GetActiveScalarArray()
+{
+  if (this->GetActiveScalarName() == nullptr || strcmp(this->GetActiveScalarName(),"") == 0)
+    {
+    return nullptr;
+    }
+  if (!this->GetMarkupsNode())
+    {
+    return nullptr;
+    }
+  if (!this->GetMarkupsNode()->GetCurveWorld())
+    {
+    return nullptr;
+    }
+
+  return this->GetMarkupsNode()->GetCurveWorld()->GetPointData()->GetArray(this->GetActiveScalarName());
 }
