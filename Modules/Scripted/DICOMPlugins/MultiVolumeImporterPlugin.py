@@ -7,6 +7,7 @@ import DICOMLib
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
 import logging
+from slicer.util import settingsValue, toBool
 
 #
 # This is the plugin to handle translation of DICOM objects
@@ -77,6 +78,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTagsUnits['DeltaStartTime'] = "sec"
     self.epsilon = epsilon
 
+    self.detailedLogging = False
+
   @staticmethod
   def settingsPanelEntry(panel, parent):
     """Create a settings panel entry for this plugin class.
@@ -103,6 +106,11 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     Top-level examine() calls various individual strategies implemented in examineFiles*().
     """
+
+    self.detailedLogging = settingsValue('DICOM/detailedLogging', False, converter=toBool)
+    timer = vtk.vtkTimerLog()
+    timer.StartTimer()
+
     loadables = []
     allfiles = []
     for files in fileLists:
@@ -156,6 +164,10 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
        # append
        loadables += seqLoadables
 
+    timer.StopTimer()
+    if self.detailedLogging:
+      logging.debug('MultiVolumeImporterPlugin: found {0} loadables in {1} files in {2:.1f}sec.'.format(len(loadables), len(allfiles), timer.GetElapsedTime()))
+
     return loadables
 
   def examineFilesMultiseries(self,files):
@@ -165,12 +177,15 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     parsing multivolumes out.
     """
 
-    logging.debug('MultiVolumeImportPlugin:examineMultiseries')
+    if self.detailedLogging:
+      logging.debug('MultiVolumeImporterPlugin: examineMultiseries')
+
     loadables = []
 
     mvNodes = self.initMultiVolumes(files,prescribedTags=['SeriesTime','AcquisitionTime','FlipAngle','CardiacCycle'])
 
-    logging.debug('DICOMMultiVolumePlugin found '+str(len(mvNodes))+' multivolumes!')
+    if self.detailedLogging:
+      logging.debug('MultiVolumeImporterPlugin: found {0} multivolumes!'.format(len(mvNodes)))
 
     for mvNode in mvNodes:
       tagName = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
@@ -453,7 +468,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     to the same series, and all instances within the same frame have the same value for one of the attributes defined in self.multiVolumeTags
     """
 
-    logging.debug("MultiVolumeImportPlugin::examine")
+    if self.detailedLogging:
+      logging.debug("MultiVolumeImporterPlugin: examine")
 
     """ Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
@@ -493,7 +509,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
       mvNodes = self.initMultiVolumes(subseriesLists[key])
 
-      logging.debug('DICOMMultiVolumePlugin found '+str(len(mvNodes))+' multivolumes!')
+      if self.detailedLogging:
+        logging.debug('MultiVolumeImporterPlugin: found '+str(len(mvNodes))+' multivolumes!')
 
       for mvNode in mvNodes:
         tagName = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
@@ -842,15 +859,28 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         continue
 
       tagValues = sorted(tagValue2FileList.keys())
-      # sort the frames
-      firstFrameSize = len(tagValue2FileList[tagValues[0]])
-      frameInvalid = False
-      for tagValue in tagValues:
-        if len(tagValue2FileList[tagValue]) != firstFrameSize:
-          # number of frames does not match
 
-          frameInvalid = True
-      if frameInvalid == True:
+      # Check if the number of frames is the same in each volume
+      slicesPerFrame = {}  # key: number of slices, value: list of tagValue values that has this many slices
+      for tagValue in tagValues:
+        numberOfSlices = len(tagValue2FileList[tagValue])
+        if numberOfSlices in slicesPerFrame.keys():
+          slicesPerFrame[numberOfSlices].append(tagValue)
+        else:
+          slicesPerFrame[numberOfSlices] = [tagValue]
+
+      if len(slicesPerFrame) > 1:
+        # We only accept volumes that has the same number of slices per frame.
+        # There are multiple different slicesPerFrame values, therefore it is rejected.
+        if self.detailedLogging:
+          seriesNumber = slicer.dicomDatabase.fileValue(file, self.tags['seriesNumber'])
+          seriesDescription = slicer.dicomDatabase.fileValue(file, self.tags['seriesDescription'])
+          seriesInstanceUid = slicer.dicomDatabase.fileValue(file, self.tags['seriesInstanceUID'])
+          msg = "MultiVolumeImporterPlugin: series {0}: {1} ({2}) is not accepted as multi-volume because number of slices varies across frames.".format(
+            seriesNumber, seriesDescription, seriesInstanceUid)
+          for numberOfSlices in slicesPerFrame:
+            msg += " {0} slices are found for {1}={2}.".format(numberOfSlices, frameTag, slicesPerFrame[numberOfSlices])
+          logging.debug(msg)
         continue
 
       # TODO: add a check to confirm individual frames have the same geometry
