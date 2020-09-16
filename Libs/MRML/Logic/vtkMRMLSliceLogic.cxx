@@ -1525,44 +1525,68 @@ double *vtkMRMLSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode *volumeNode)
     return (pspacing);
     }
 
-  // Compute slice spacing as the diameter of an ellipsoid that has the same diameters as a volume voxel.
-  // If the slice axis direction is aligned exactly with a voxel axis then the spacing equals voxel size along that axis.
-  // If the slice axis is not aligned with any voxel axis then it'll be smoothly interpolated.
+  // Compute slice spacing from the volume axis closest matching the slice axis, projected to the slice axis.
 
   vtkNew<vtkMatrix4x4> ijkToWorld;
-  volumeNode->GetIJKToRASMatrix(ijkToWorld.GetPointer());
+  volumeNode->GetIJKToRASMatrix(ijkToWorld);
 
   // Apply transform to the volume axes, if the volume is transformed with a linear transform
   vtkMRMLTransformNode *transformNode = volumeNode->GetParentTransformNode();
   if ( transformNode != nullptr &&  transformNode->IsTransformToWorldLinear() )
     {
     vtkNew<vtkMatrix4x4> volumeRASToWorld;
-    transformNode->GetMatrixTransformToWorld(volumeRASToWorld.GetPointer());
+    transformNode->GetMatrixTransformToWorld(volumeRASToWorld);
     //rasToRAS->Invert();
-    vtkMatrix4x4::Multiply4x4(volumeRASToWorld.GetPointer(), ijkToWorld.GetPointer(), ijkToWorld.GetPointer());
+    vtkMatrix4x4::Multiply4x4(volumeRASToWorld, ijkToWorld, ijkToWorld);
     }
 
   vtkNew<vtkMatrix4x4> worldToIJK;
-  vtkMatrix4x4::Invert(ijkToWorld.GetPointer(), worldToIJK.GetPointer());
-
+  vtkMatrix4x4::Invert(ijkToWorld, worldToIJK);
   vtkNew<vtkMatrix4x4> sliceToIJK;
-  vtkMatrix4x4::Multiply4x4(worldToIJK.GetPointer(), sliceNode->GetSliceToRAS(), sliceToIJK.GetPointer());
+  vtkMatrix4x4::Multiply4x4(worldToIJK, sliceNode->GetSliceToRAS(), sliceToIJK);
+  vtkNew<vtkMatrix4x4> ijkToSlice;
+  vtkMatrix4x4::Invert(sliceToIJK, ijkToSlice);
 
-  // Make the slice spacing 1 voxel
-  double scale[3] = {1.0};
-  vtkAddonMathUtilities::NormalizeOrientationMatrixColumns(sliceToIJK.GetPointer(), scale);
-
-  // Convert spacing value from voxel to physical (mm)
-  double* volumeSpacing = volumeNode->GetSpacing();
-  for (int i = 0; i < 3; i++)
+  // Find the volume IJK axis that has the most similar direction to the slice axis.
+  // Use the spacing component of this volume IJK axis parallel to the slice axis.
+  double scale[3]; // unused
+  vtkAddonMathUtilities::NormalizeOrientationMatrixColumns(sliceToIJK, scale);
+  // after normalization, sliceToIJK only contains slice axis directions
+  for (int sliceAxisIndex = 0; sliceAxisIndex < 3; sliceAxisIndex++)
     {
-    sliceToIJK->SetElement(0, i, sliceToIJK->GetElement(0, i) * volumeSpacing[0]);
-    sliceToIJK->SetElement(1, i, sliceToIJK->GetElement(1, i) * volumeSpacing[1]);
-    sliceToIJK->SetElement(2, i, sliceToIJK->GetElement(2, i) * volumeSpacing[2]);
+    // Slice axis direction in IJK coordinate system
+    double sliceAxisDirection_I = fabs(sliceToIJK->GetElement(0, sliceAxisIndex));
+    double sliceAxisDirection_J = fabs(sliceToIJK->GetElement(1, sliceAxisIndex));
+    double sliceAxisDirection_K = fabs(sliceToIJK->GetElement(2, sliceAxisIndex));
+    if (sliceAxisDirection_I > sliceAxisDirection_J)
+      {
+      if (sliceAxisDirection_I > sliceAxisDirection_K)
+        {
+        // this sliceAxis direction is closest volume I axis direction
+        this->SliceSpacing[sliceAxisIndex] = fabs(ijkToSlice->GetElement(sliceAxisIndex, 0 /*I*/));
+        }
+      else
+        {
+        // this sliceAxis direction is closest volume K axis direction
+        this->SliceSpacing[sliceAxisIndex] = fabs(ijkToSlice->GetElement(sliceAxisIndex, 2 /*K*/));
+        }
+      }
+    else
+      {
+      if (sliceAxisDirection_J > sliceAxisDirection_K)
+        {
+        // this sliceAxis direction is closest volume J axis direction
+        this->SliceSpacing[sliceAxisIndex] = fabs(ijkToSlice->GetElement(sliceAxisIndex, 1 /*J*/));
+        }
+      else
+        {
+        // this sliceAxis direction is closest volume K axis direction
+        this->SliceSpacing[sliceAxisIndex] = fabs(ijkToSlice->GetElement(sliceAxisIndex, 2 /*K*/));
+        }
+      }
     }
 
-  vtkAddonMathUtilities::NormalizeOrientationMatrixColumns(sliceToIJK.GetPointer(), this->SliceSpacing);
-  return (this->SliceSpacing);
+  return this->SliceSpacing;
 }
 
 //----------------------------------------------------------------------------
