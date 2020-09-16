@@ -322,6 +322,15 @@ class _ui_DICOMSettingsPanel(object):
       "DICOM/automaticallyLoadReferences", loadReferencesComboBox,
       "currentUserDataAsString", str(qt.SIGNAL("currentIndexChanged(int)")))
 
+    detailedLoggingCheckBox = qt.QCheckBox()
+    detailedLoggingCheckBox.toolTip = ("Log more details during DICOM operations."
+      " Useful for investigating DICOM loading issues but may impact performance.")
+    genericGroupBoxFormLayout.addRow("Detailed logging:", detailedLoggingCheckBox)
+    detailedLoggingMapper = ctk.ctkBooleanMapper(detailedLoggingCheckBox, "checked", str(qt.SIGNAL("toggled(bool)")))
+    parent.registerProperty(
+      "DICOM/detailedLogging", detailedLoggingMapper,
+      "valueAsInt", str(qt.SIGNAL("valueAsIntChanged(int)")))
+
     vBoxLayout.addWidget(genericGroupBox)
 
     # Add settings panel for the plugins
