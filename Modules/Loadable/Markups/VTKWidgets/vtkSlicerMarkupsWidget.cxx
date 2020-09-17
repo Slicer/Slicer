@@ -1018,6 +1018,7 @@ void vtkSlicerMarkupsWidget::ScaleWidget(double eventPos[2])
     return;
     }
 
+  double center[3] = { 0. };
   double ref[3] = { 0. };
   double worldPos[3], worldOrient[9];
 
@@ -1033,6 +1034,8 @@ void vtkSlicerMarkupsWidget::ScaleWidget(double eventPos[2])
     slicePos[0] = eventPos[0];
     slicePos[1] = eventPos[1];
     rep2d->GetSliceToWorldCoordinates(slicePos, worldPos);
+
+    rep2d->GetTransformationReferencePoint(center);
     }
   else if (rep3d)
     {
@@ -1061,10 +1064,9 @@ void vtkSlicerMarkupsWidget::ScaleWidget(double eventPos[2])
       {
       return;
       }
-    }
 
-  double center[3];
-  rep3d->GetTransformationReferencePoint(center);
+    rep3d->GetTransformationReferencePoint(center);
+    }
 
   double r2 = vtkMath::Distance2BetweenPoints(ref, center);
   double d2 = vtkMath::Distance2BetweenPoints(worldPos, center);
