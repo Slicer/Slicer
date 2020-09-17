@@ -12,8 +12,16 @@ include(${SlicerExecutionModel_USE_FILE})
 
 #-----------------------------------------------------------------------------
 set(${MODULE_NAME}_TARGET_LIBRARIES
-  vtkITK ModuleDescriptionParser MRMLCore SlicerBaseCLI ${VTK_LIBRARIES}
+  ModuleDescriptionParser
+  MRMLCore
+  SlicerBaseCLI
+  vtkITK
+  ${VTK_LIBRARIES}
+  vtkTeem
   )
+
+#-----------------------------------------------------------------------------
+include_directories(BEFORE ${vtkTeem_INCLUDE_DIRS})
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

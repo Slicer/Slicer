@@ -1,6 +1,9 @@
 
 #include "ProbeVolumeWithModelCLP.h"
 
+// vtkTeem includes
+#include <vtkTeemNRRDReader.h>
+
 // VTK includes
 #include <vtkImageData.h>
 #include <vtkNew.h>
@@ -15,8 +18,6 @@
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelStorageNode.h"
 
-#include "vtkITKArchetypeImageSeriesScalarReader.h"
-
 #include <vtksys/SystemTools.hxx>
 
 int main(int argc, char* argv[])
@@ -24,17 +25,15 @@ int main(int argc, char* argv[])
   PARSE_ARGS;
 
   // Read the file
-  vtkNew<vtkITKArchetypeImageSeriesScalarReader> readerVol;
-  readerVol->SetArchetype(InputVolume.c_str());
-  readerVol->SetOutputScalarTypeToNative();
-  readerVol->SetDesiredCoordinateOrientationToNative();
-  readerVol->SetUseNativeOriginOn();
+  // Use vtkTeemNRRDReader because it supports both scalar and vector volumes.
+  vtkNew<vtkTeemNRRDReader> readerVol;
+  readerVol->SetFileName(InputVolume.c_str());
   readerVol->Update();
   vtkImageData* volume = readerVol->GetOutput();
   int* extent = volume->GetExtent();
   if (extent[0]>extent[1] || extent[2] > extent[3] || extent[4] > extent[5])
     {
-    std::cerr << "Input image file is empty: " << InputModel << std::endl;
+    std::cerr << "Input image file is empty: " << InputVolume << std::endl;
     return EXIT_FAILURE;
     }
   std::cout << "Done reading the file " << InputVolume << endl;
