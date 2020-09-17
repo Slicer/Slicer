@@ -313,6 +313,7 @@ void vtkMRMLScene::SceneCallback( vtkObject *vtkNotUsed(caller),
 //------------------------------------------------------------------------------
 void vtkMRMLScene::Clear(int removeSingletons)
 {
+  vtkInfoMacro("vtkMRMLScene::Clear");
 #ifdef MRMLSCENE_VERBOSE
   vtkTimerLog* timer = vtkTimerLog::New();
   timer->StartTimer();
@@ -758,6 +759,7 @@ int vtkMRMLScene::Connect()
 //------------------------------------------------------------------------------
 int vtkMRMLScene::Import()
 {
+  vtkInfoMacro("vtkMRMLScene::Import");
 #ifdef MRMLSCENE_VERBOSE
   vtkTimerLog* addNodesTimer = vtkTimerLog::New();
   vtkTimerLog* updateSceneTimer = vtkTimerLog::New();
