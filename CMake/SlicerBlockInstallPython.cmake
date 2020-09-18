@@ -42,7 +42,6 @@ To create a Slicer package including python libraries, you can *NOT* provide you
     REGEX "lib[-]old/" EXCLUDE
     REGEX "plat[-].*" EXCLUDE
     REGEX "/test/" EXCLUDE
-    REGEX "wsgiref*" EXCLUDE
     ${extra_exclude_pattern}
     )
   slicerStripInstalledLibrary(
