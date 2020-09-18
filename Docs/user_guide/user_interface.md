@@ -111,7 +111,6 @@ View Controllers module provides an alternate way of displaying these controller
 | Shortcut | Operation |
 | -------- | --------- |
 | `Ctrl` + `f` | find module by name (hit `Enter` to select) |
-| `Ctrl` + `a` | add data from file |
 | `Ctrl` + `o` | add data from file |
 | `Ctrl` + `s` | save data to files |
 | `Ctrl` + `w` | close scene |

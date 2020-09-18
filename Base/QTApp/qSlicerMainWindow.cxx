@@ -142,13 +142,6 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   qSlicerApplication * app = qSlicerApplication::application();
 
   //----------------------------------------------------------------------------
-  // Load data shortcuts for backward compatibility
-  //----------------------------------------------------------------------------
-  QList<QKeySequence> addShortcuts = this->FileAddDataAction->shortcuts();
-  addShortcuts << QKeySequence(Qt::CTRL + Qt::Key_A);
-  this->FileAddDataAction->setShortcuts(addShortcuts);
-
-  //----------------------------------------------------------------------------
   // Recently loaded files
   //----------------------------------------------------------------------------
   QObject::connect(app->coreIOManager(), SIGNAL(newFileLoaded(qSlicerIO::IOProperties)),
