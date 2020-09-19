@@ -74,6 +74,8 @@ Note: Consumer file formats, such as jpg, png, and tiff are not well suited for 
   the user and provided to the software that imports the images. If the information is not entered correctly
   then the images may appear distorted and measurements on the images may provide incorrect results.
 - No standard way of indicating slice order: data may be easily get corrupted due to incorrectly ordered or missing frames.
+- Also consider the [Image Stacks](https://github.com/SlicerMorph/S_2020/blob/master/Day_1/ImageStacks/ImageStacks.md) provided by the [SlicerMorph](https://slicermorph.github.io/) extension to work with large sets of high resolution images.
+
 
 ## Panels and their use
 
@@ -119,6 +121,7 @@ Note: Consumer file formats, such as jpg, png, and tiff are not well suited for 
 - Vector to scalar volume: convert vector volume to scalar volume
 - Extensions:
   -  Image Maker: create a volume from scratch
+  - [Image Stacks](https://github.com/SlicerMorph/S_2020/blob/master/Day_1/ImageStacks/ImageStacks.md) provided by the [SlicerMorph](https://slicermorph.github.io/) extension.
 
 ## Contributors
 
