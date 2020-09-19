@@ -56,7 +56,7 @@ in `Description` column in `Add data...` window. This only available for nrrd an
 
 Consider the [Image Stacks](https://github.com/SlicerMorph/S_2020/blob/master/Day_1/ImageStacks/ImageStacks.md) provided by the [SlicerMorph](https://slicermorph.github.io/) extension to work with large sets of high resolution images.  It allows you to automatically convert RGB to grayscale scalar volume, specify image spacing, and downsample large images.
 
-Alternatively you can load and manipulate the data directly using functionality in the core Slicer app:
+Alternatively you can load and manipulate the data directly using functionality in the core Slicer modules:
 - Choose from the menu: File / Add Data
 - Click `Choose File(s) to Add` button and select any of the files in the sequence in the displayed dialog.
   Important: do not choose multiple files or the entire parent folder, just a single file of the sequence.
