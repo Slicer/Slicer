@@ -54,6 +54,9 @@ in `Description` column in `Add data...` window. This only available for nrrd an
 
 ### Load a series of png, jpeg, or tiff images as volume
 
+Consider the [Image Stacks](https://github.com/SlicerMorph/S_2020/blob/master/Day_1/ImageStacks/ImageStacks.md) provided by the [SlicerMorph](https://slicermorph.github.io/) extension to work with large sets of high resolution images.  It allows you to automatically convert RGB to grayscale scalar volume, specify image spacing, and downsample large images.
+
+Alternatively you can load and manipulate the data directly using functionality in the core Slicer modules:
 - Choose from the menu: File / Add Data
 - Click `Choose File(s) to Add` button and select any of the files in the sequence in the displayed dialog.
   Important: do not choose multiple files or the entire parent folder, just a single file of the sequence.
@@ -74,6 +77,8 @@ Note: Consumer file formats, such as jpg, png, and tiff are not well suited for 
   the user and provided to the software that imports the images. If the information is not entered correctly
   then the images may appear distorted and measurements on the images may provide incorrect results.
 - No standard way of indicating slice order: data may be easily get corrupted due to incorrectly ordered or missing frames.
+
+
 
 ## Panels and their use
 
@@ -119,6 +124,7 @@ Note: Consumer file formats, such as jpg, png, and tiff are not well suited for 
 - Vector to scalar volume: convert vector volume to scalar volume
 - Extensions:
   -  Image Maker: create a volume from scratch
+  - [Image Stacks](https://github.com/SlicerMorph/S_2020/blob/master/Day_1/ImageStacks/ImageStacks.md) provided by the [SlicerMorph](https://slicermorph.github.io/) extension.
 
 ## Contributors
 
