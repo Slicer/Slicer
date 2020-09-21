@@ -885,18 +885,18 @@ void vtkMRMLSegmentationNode::RemoveBinaryLabelmapRepresentation()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::GetBinaryLabelmapRepresentation(const std::string segmentId, vtkOrientedImageData* outputBinaryLabelmap)
+bool vtkMRMLSegmentationNode::GetBinaryLabelmapRepresentation(const std::string segmentId, vtkOrientedImageData* outputBinaryLabelmap)
 {
   if (!this->Segmentation)
     {
     vtkErrorMacro("GetBinaryLabelmapRepresentation: Invalid segmentation");
-    return;
+    return false;
     }
   vtkSegment* segment = this->Segmentation->GetSegment(segmentId);
   if (!segment)
     {
     vtkErrorMacro("GetBinaryLabelmapRepresentation: Invalid segment");
-    return;
+    return false;
     }
 
   vtkOrientedImageData* binaryLabelmap = vtkOrientedImageData::SafeDownCast(
@@ -904,7 +904,7 @@ void vtkMRMLSegmentationNode::GetBinaryLabelmapRepresentation(const std::string 
   if (!binaryLabelmap)
     {
     vtkErrorMacro("GetBinaryLabelmapRepresentation: No binary labelmap representation in segment");
-    return;
+    return false;
     }
 
   vtkNew<vtkImageThreshold> threshold;
@@ -916,6 +916,7 @@ void vtkMRMLSegmentationNode::GetBinaryLabelmapRepresentation(const std::string 
 
   outputBinaryLabelmap->ShallowCopy(threshold->GetOutput());
   outputBinaryLabelmap->CopyDirections(binaryLabelmap);
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -958,26 +959,27 @@ void vtkMRMLSegmentationNode::RemoveClosedSurfaceRepresentation()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::GetClosedSurfaceRepresentation(const std::string segmentId, vtkPolyData* outputClosedSurface)
+bool vtkMRMLSegmentationNode::GetClosedSurfaceRepresentation(const std::string segmentId, vtkPolyData* outputClosedSurface)
 {
   if (!this->Segmentation)
     {
     vtkErrorMacro("GetClosedSurfaceRepresentation: Invalid segmentation");
-    return;
+    return false;
     }
   vtkSegment* segment = this->Segmentation->GetSegment(segmentId);
   if (!segment)
     {
     vtkErrorMacro("GetClosedSurfaceRepresentation: Invalid segment");
-    return;
+    return false;
     }
   vtkDataObject* closedSurface = segment->GetRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
   if (!closedSurface)
     {
     vtkErrorMacro("GetClosedSurfaceRepresentation: No closed surface representation in segment");
-    return;
+    return false;
     }
   outputClosedSurface->DeepCopy(closedSurface);
+  return true;
 }
 
 //---------------------------------------------------------------------------
