@@ -59,5 +59,5 @@ simple_test(qSlicer${MODULE_NAME}ModuleWidgetTest2 DATA{${MRML_CORE_INPUT}/fixed
 simple_test(vtkMRMLShaderPropertyStorageNodeTest1 ${TEMP})
 simple_test(vtkMRMLVolumePropertyNodeTest1 ${INPUT}/volRender.mrml)
 simple_test(vtkMRMLVolumePropertyStorageNodeTest1)
-simple_test(vtkMRMLVolumeRenderingDisplayableManagerTest1)
+simple_test(vtkMRMLVolumeRenderingDisplayableManagerTest1 ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/VolumeRendering)
 simple_test(vtkMRMLVolumeRenderingMultiVolumeTest)

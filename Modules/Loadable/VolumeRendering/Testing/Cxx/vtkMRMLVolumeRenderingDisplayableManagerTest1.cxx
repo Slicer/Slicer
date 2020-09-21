@@ -61,6 +61,12 @@ const char vtkMRMLVolumeRenderingDisplayableManagerTest1EventLog[] =
 //----------------------------------------------------------------------------
 int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
 {
+  if (argc < 2)
+    {
+    std::cerr << "Must pass share directory as first argument to test" << std::endl;
+    }
+  const char *moduleShareDirectory = argv[1];
+
   // Renderer, RenderWindow and Interactor
   vtkNew<vtkRenderer> renderer;
   vtkNew<vtkRenderWindow> renderWindow;
@@ -133,6 +139,7 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
   vtkNew<vtkSlicerVolumeRenderingLogic> vrLogic;
   vrLogic->SetDefaultRenderingMethod("vtkMRMLGPURayCastVolumeRenderingDisplayNode");
   vrLogic->SetMRMLScene(scene);
+  vrLogic->SetModuleShareDirectory(moduleShareDirectory);
 
   vrLogic->CreateDefaultVolumeRenderingNodes(volumeNode.GetPointer());
   vtkMRMLVolumeRenderingDisplayNode* vrDisplayNode = vrLogic->GetFirstVolumeRenderingDisplayNode(volumeNode.GetPointer());
