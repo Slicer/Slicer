@@ -43,6 +43,7 @@
 #include <vtkMRMLColorLogic.h>
 #include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLViewLogic.h>
+#include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 
 // MRML includes
 #include <vtkMRMLLayoutNode.h>
@@ -378,7 +379,8 @@ QWidget* qMRMLLayoutSliceViewFactory::createViewFromNode(vtkMRMLAbstractViewNode
   sliceWidget->setMRMLScene(this->mrmlScene());
   sliceWidget->setMRMLSliceNode(sliceNode);
   sliceWidget->setSliceLogics(this->sliceLogics());
-
+  vtkMRMLApplicationLogic* applicationLogic = vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic();
+  sliceWidget->sliceLogic()->SetMRMLApplicationLogic(applicationLogic);
   this->sliceLogics()->AddItem(sliceWidget->sliceLogic());
 
   return sliceWidget;

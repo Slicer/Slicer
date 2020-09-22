@@ -898,6 +898,7 @@ void vtkSlicerMarkupsLogic::CopyBasicDisplayProperties(vtkMRMLMarkupsDisplayNode
     vtkErrorMacro("vtkSlicerMarkupsLogic::CopyBasicDisplayProperties failed: invalid input nodes");
     return;
     }
+  MRMLNodeModifyBlocker blocker(targetDisplayNode);
   targetDisplayNode->SetSelectedColor(sourceDisplayNode->GetSelectedColor());
   targetDisplayNode->SetColor(sourceDisplayNode->GetColor());
   targetDisplayNode->SetOpacity(sourceDisplayNode->GetOpacity());

@@ -13,6 +13,7 @@
 =========================================================================auto=*/
 
 // MRMLLogic includes
+#include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceLayerLogic.h"
 
@@ -572,6 +573,13 @@ void vtkMRMLSliceLogic
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
 {
+  // Slice update may trigger redrawing many nodes, pause the render to
+  // not spend time with intermediate renderings
+  vtkMRMLApplicationLogic* appLogic = this->GetMRMLApplicationLogic();
+  if (appLogic)
+    {
+    appLogic->PauseRender();
+    }
 
   //
   // if we don't have layers yet, create them
@@ -677,6 +685,12 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
   // This is called when a slice layer is modified, so pass it on
   // to anyone interested in changes to this sub-pipeline
   this->Modified();
+
+  // All the updates are done, allow rendering again
+  if (appLogic)
+    {
+    appLogic->ResumeRender();
+    }
 }
 
 //----------------------------------------------------------------------------
