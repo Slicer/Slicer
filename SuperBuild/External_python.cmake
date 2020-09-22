@@ -108,13 +108,13 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/lassoan/python-cmake-buildsystem.git"
+    "${EP_GIT_PROTOCOL}://github.com/python-cmake-buildsystem/python-cmake-buildsystem.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "add-lzma-support"
+    "dca8bee81e29b452560bd969d67e7d08237e23d6"
     QUIET
     )
 
