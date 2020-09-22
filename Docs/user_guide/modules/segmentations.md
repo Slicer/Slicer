@@ -41,6 +41,14 @@ Tip: To show the segmentation in 3D, go to `Segmentations` module and in `Repres
 - In `Description` column choose `Segmentation`
 - Click `OK`
 
+If the model contains very thin and delicate structures then default resolution for binary labelmap representation may be not sufficient for editing. Default resolution is computed so that the labelmap contains a total of approximately 256x256x256 voxels. To make the resolution finer:
+- Go to Segmentations module
+- In Representations section, click Binary labelmap -> Create, then Update
+- In the displayed popup:
+  - In Conversion path section, click Closed surface -> Binary labelmap
+  - In Conversion parameters section, set oversampling factor to 2 (if this is not enough then you can try 2.5, 3, 4, ...) - larger values increase more memory usage and computation time (oversampling factor of 2x increases memory usage by 2^3 = 8x).
+  - Click Convert
+
 Other mesh file formats can be loaded as model and then converted to segmentation node:
 - Drag-and-drop the volume file to the application window (or use menu: `File` / `Add Data`, then select the file)
 - Click `OK`
