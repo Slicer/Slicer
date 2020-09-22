@@ -362,7 +362,6 @@ QColor qSlicerSubjectHierarchyMarkupsPlugin::getDisplayColor(vtkIdType itemID, Q
   if (!displayNode)
     {
     // this is normal when the markups node is being created
-    qDebug() << Q_FUNC_INFO << ": No display node";
     return QColor(0,0,0,0);
     }
 
