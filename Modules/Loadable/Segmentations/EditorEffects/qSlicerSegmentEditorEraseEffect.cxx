@@ -71,7 +71,7 @@ QIcon qSlicerSegmentEditorEraseEffect::icon()
 //---------------------------------------------------------------------------
 QString const qSlicerSegmentEditorEraseEffect::helpText()const
 {
-  return "<html>Erase fom current segment with a round brush<br>."
+  return "<html>Erase from current segment with a round brush<br>."
     "<p><ul style=\"margin: 0\">"
     "<li><b>Left-button drag-and-drop:</b> erase from segment around the mouse pointer.</li>"
     "<li><b>Shift + mouse wheel</b> or <b>+/- keys:</b> adjust brush size.</li>"
