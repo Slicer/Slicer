@@ -9,6 +9,7 @@ if(NOT Slicer_USE_SYSTEM_python)
   list(APPEND ${proj}_DEPENDENCIES
     bzip2
     CTKAPPLAUNCHER
+    lzma
     zlib
     sqlite
     )
@@ -107,13 +108,13 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/python-cmake-buildsystem/python-cmake-buildsystem.git"
+    "${EP_GIT_PROTOCOL}://github.com/lassoan/python-cmake-buildsystem.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "a1ce7c2cf346ce62648d8c3e9e5cae7f655d4309"
+    "add-lzma-support"
     QUIET
     )
 
@@ -148,6 +149,8 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
       -DINSTALL_WINDOWS_TRADITIONAL:BOOL=OFF
       -DBZIP2_INCLUDE_DIR:PATH=${BZIP2_INCLUDE_DIR}
       -DBZIP2_LIBRARIES:FILEPATH=${BZIP2_LIBRARIES}
+      -DLZMA_LIBRARY:FILEPATH=${lzma_LIBRARY}
+      -DLZMA_INCLUDE_PATH:PATH=${lzma_INCLUDE_DIR}
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
       -DSQLITE3_LIBRARY:FILEPATH=${sqlite_LIBRARY}
