@@ -103,9 +103,10 @@ public:
   /// The ID is resolved to pointer after import ends, and this member is set to INVALID_ITEM_ID.
   vtkIdType TemporaryParentItemID;
 
-  /// Item cache to speed up lookup by ID that needs to be performed many times.
+  /// Item and data node cache to speed up lookups that are needed many times.
   /// It can be static as the item IDs are unique in one application session.
   static std::map<vtkIdType, vtkSubjectHierarchyItem*> ItemCache;
+  static std::map<vtkMRMLNode*, vtkSubjectHierarchyItem*> DataNodeCache;
 
 // Get/set functions
 public:
@@ -246,6 +247,7 @@ vtkStandardNewMacro(vtkSubjectHierarchyItem);
 vtkIdType vtkSubjectHierarchyItem::NextSubjectHierarchyItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID + 1;
 
 std::map<vtkIdType, vtkSubjectHierarchyItem*> vtkSubjectHierarchyItem::ItemCache = std::map<vtkIdType, vtkSubjectHierarchyItem*>();
+std::map<vtkMRMLNode*, vtkSubjectHierarchyItem*> vtkSubjectHierarchyItem::DataNodeCache = std::map<vtkMRMLNode*, vtkSubjectHierarchyItem*>();
 
 //---------------------------------------------------------------------------
 // vtkSubjectHierarchyItem methods
@@ -299,6 +301,10 @@ vtkIdType vtkSubjectHierarchyItem::AddToTree(vtkSubjectHierarchyItem* parent, vt
 
     // Add to cache
     vtkSubjectHierarchyItem::ItemCache[this->ID] = this;
+    if (dataNode)
+      {
+      vtkSubjectHierarchyItem::DataNodeCache[dataNode] = this;
+      }
     }
   else
     {
@@ -334,7 +340,7 @@ vtkIdType vtkSubjectHierarchyItem::AddToTree(vtkSubjectHierarchyItem* parent, st
     vtkSmartPointer<vtkSubjectHierarchyItem> childPointer(this);
     this->Parent->Children.push_back(childPointer);
 
-    // Add to cache
+    // Add to cache (DataNode is nullptr, so no need to add to node cache)
     vtkSubjectHierarchyItem::ItemCache[this->ID] = this;
     }
   else if (! ( (!name.compare("Scene") && !level.compare("Scene"))
@@ -709,30 +715,36 @@ vtkSubjectHierarchyItem* vtkSubjectHierarchyItem::FindChildByID(vtkIdType itemID
     {
     return itemIt->second;
     }
-  else
-    {
-    vtkWarningMacro("FindChildByID: Item cache does not contain requested ID " << itemID);
-    }
+  // It is not an error if item is not found in cache. It happens normally when
+  // scene has just been closed and widgets are updating themselves and trying to look up their selected item.
 
   // On failure to look up in cache (should not happen), traverse tree to find item
   ChildVector::iterator childIt;
+  vtkSubjectHierarchyItem* foundItem = nullptr;
   for (childIt=this->Children.begin(); childIt!=this->Children.end(); ++childIt)
     {
     vtkSubjectHierarchyItem* currentItem = childIt->GetPointer();
     if (itemID == currentItem->ID)
       {
-      return currentItem;
+      foundItem = currentItem;
+      break;
       }
     if (recursive)
       {
       vtkSubjectHierarchyItem* foundItemInBranch = currentItem->FindChildByID(itemID);
       if (foundItemInBranch)
         {
-        return foundItemInBranch;
+        foundItem = foundItemInBranch;
+        break;
         }
       }
     }
-  return nullptr;
+  if (foundItem)
+    {
+    vtkSubjectHierarchyItem::ItemCache[itemID] = this;
+    }
+
+  return foundItem;
 }
 
 //---------------------------------------------------------------------------
@@ -1113,6 +1125,10 @@ bool vtkSubjectHierarchyItem::RemoveChild(vtkSubjectHierarchyItem* item)
 
   // Remove from cache
   vtkSubjectHierarchyItem::ItemCache.erase(removedItem->ID);
+  if (removedItem->DataNode)
+    {
+    vtkSubjectHierarchyItem::DataNodeCache.erase(removedItem->DataNode);
+    }
 
   // Invoke events
   this->InvokeEvent(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent, item);
@@ -1157,6 +1173,10 @@ bool vtkSubjectHierarchyItem::RemoveChild(vtkIdType itemID)
 
   // Remove from cache
   vtkSubjectHierarchyItem::ItemCache.erase(removedItem->ID);
+  if (removedItem->DataNode)
+    {
+    vtkSubjectHierarchyItem::DataNodeCache.erase(removedItem->DataNode);
+    }
 
   // Invoke events
   this->InvokeEvent(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent, removedItem.GetPointer());
@@ -2036,7 +2056,23 @@ void vtkMRMLSubjectHierarchyNode::SetItemDataNode(vtkIdType itemID, vtkMRMLNode*
     return;
     }
 
+  // Remove old cached node
+  if (item->DataNode)
+    {
+    auto itemIt = vtkSubjectHierarchyItem::DataNodeCache.find(item->DataNode);
+    if (itemIt != vtkSubjectHierarchyItem::DataNodeCache.end())
+      {
+      vtkSubjectHierarchyItem::DataNodeCache.erase(itemIt);
+      }
+    }
+
   item->DataNode = dataNode;
+
+  // Add new node to cache
+  if (item->DataNode)
+    {
+    vtkSubjectHierarchyItem::DataNodeCache[item->DataNode] = item;
+    }
 
   // Add observers for data node
   this->Internal->AddItemObservers(item);
@@ -2908,7 +2944,31 @@ vtkIdType vtkMRMLSubjectHierarchyNode::GetItemByDataNode(vtkMRMLNode* dataNode)
     return INVALID_ITEM_ID;
     }
 
+  auto itemIt = vtkSubjectHierarchyItem::DataNodeCache.find(dataNode);
+  if (itemIt != vtkSubjectHierarchyItem::DataNodeCache.end())
+    {
+    if (itemIt->second)
+      {
+      if (itemIt->second->DataNode == dataNode)
+        {
+        // found it in cache
+        return itemIt->second->ID;
+        }
+      else
+        {
+        vtkErrorMacro("vtkSubjectHierarchyItem::DataNodeCache inconsistency found");
+        vtkSubjectHierarchyItem::DataNodeCache.erase(itemIt);
+        }
+      }
+    }
+
   vtkSubjectHierarchyItem* item = this->Internal->SceneItem->FindChildByDataNode(dataNode);
+  if (item)
+    {
+    // item was not in the cache, add it now
+    vtkErrorMacro("vtkSubjectHierarchyItem::DataNodeCache item was missing");
+    vtkSubjectHierarchyItem::DataNodeCache[dataNode] = item;
+    }
   return (item ? item->ID : INVALID_ITEM_ID);
 }
 
