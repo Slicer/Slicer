@@ -9,7 +9,7 @@ if(NOT Slicer_USE_SYSTEM_python)
   list(APPEND ${proj}_DEPENDENCIES
     bzip2
     CTKAPPLAUNCHER
-    lzma
+    LZMA
     zlib
     sqlite
     )

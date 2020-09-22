@@ -1,5 +1,5 @@
 
-set( proj lzma )
+set(proj LZMA)
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "")
