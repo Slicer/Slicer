@@ -70,7 +70,7 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
   if(WIN32)
     set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/lzma.lib)
   else()
-    set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/lzma.a)
+    set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/liblzma.a)
   endif()
 
 else()
