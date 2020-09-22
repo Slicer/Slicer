@@ -31,8 +31,8 @@ if((NOT DEFINED LZMA_INCLUDE_DIR
     QUIET
     )
 
-  # Use v5.2.2 to satisfy CPython 3.7 Windows build requirements
-  # See https://github.com/python/cpython/blob/3.7/PCbuild/readme.txt
+  # Use v5.2.2 to satisfy CPython 3.6 Windows build requirements
+  # See https://github.com/python/cpython/blob/3.6/PCbuild/readme.txt
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
     "v5.2.2"
