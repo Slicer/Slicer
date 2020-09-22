@@ -625,8 +625,14 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::RemovePipelineIt(Pipeline
       bool foundMultiVolumeActor = false;
       for (Pipeline* pipeline : this->DisplayPipelines)
         {
-        PipelineMultiVolume* pipelineMulti = dynamic_cast<PipelineMultiVolume*>(pipeline);
-        if (pipelineMulti)
+        PipelineMultiVolume* otherPipelineMulti = dynamic_cast<PipelineMultiVolume*>(pipeline);
+        if (otherPipelineMulti == pipelineMulti)
+          {
+          // this is the current pipeline, which will be deleted in a moment
+          // so it does not count as a pipeline that still uses multivolume actor
+          continue;
+          }
+        if (otherPipelineMulti)
           {
           foundMultiVolumeActor = true;
           break;
