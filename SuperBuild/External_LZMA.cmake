@@ -31,9 +31,11 @@ if((NOT DEFINED LZMA_INCLUDE_DIR
     QUIET
     )
 
+  # Use v5.2.2 to satisfy CPython 3.7 Windows build requirements
+  # See https://github.com/python/cpython/blob/3.7/PCbuild/readme.txt
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "v5.2.4"
+    "v5.2.2"
     QUIET
     )
 
@@ -72,9 +74,9 @@ if((NOT DEFINED LZMA_INCLUDE_DIR
 
   set(${proj}_INCLUDE_DIR ${EP_INSTALL_DIR}/include)
   if(WIN32)
-    set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/liblzma.lib)
+    set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/lzma.lib)
   else()
-    set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/libliblzma.a)
+    set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/liblzma.a)
   endif()
 
 else()
