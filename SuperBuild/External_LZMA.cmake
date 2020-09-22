@@ -8,22 +8,22 @@ set(${proj}_DEPENDENCIES "")
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(Slicer_USE_SYSTEM_${proj})
-  unset(LZMA_INCLUDE_DIR CACHE)
-  unset(LZMA_LIBRARY CACHE)
-  find_path(LZMA_INCLUDE_PATH lzma.h)
-  find_library(LZMA_LIBRARY lzma)
+  unset(${proj}_INCLUDE_DIR CACHE)
+  unset(${proj}_LIBRARY CACHE)
+  find_path(${proj}_INCLUDE_PATH lzma.h)
+  find_library(${proj}_LIBRARY lzma)
 endif()
 
 # Sanity checks
-if(DEFINED LZMA_INCLUDE_DIR AND NOT EXISTS ${LZMA_INCLUDE_DIR})
-  message(FATAL_ERROR "LZMA_INCLUDE_DIR variable is defined but corresponds to nonexistent directory")
+if(DEFINED ${proj}_INCLUDE_DIR AND NOT EXISTS ${${proj}_INCLUDE_DIR})
+  message(FATAL_ERROR "${proj}_INCLUDE_DIR variable is defined but corresponds to nonexistent directory")
 endif()
-if(DEFINED LZMA_LIBRARY AND NOT EXISTS ${LZMA_LIBRARY})
-  message(FATAL_ERROR "LZMA_LIBRARY variable is defined but corresponds to nonexistent directory")
+if(DEFINED ${proj}_LIBRARY AND NOT EXISTS ${${proj}_LIBRARY})
+  message(FATAL_ERROR "${proj}_LIBRARY variable is defined but corresponds to nonexistent directory")
 endif()
 
-if((NOT DEFINED LZMA_INCLUDE_DIR
-   OR NOT DEFINED LZMA_LIBRARY) AND NOT Slicer_USE_SYSTEM_${proj})
+if((NOT DEFINED ${proj}_INCLUDE_DIR
+   OR NOT DEFINED ${proj}_LIBRARY) AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
@@ -85,12 +85,12 @@ endif()
 
 mark_as_superbuild(
   VARS
-    LZMA_INCLUDE_DIR:PATH
-    LZMA_LIBRARY:FILEPATH
+    ${proj}_INCLUDE_DIR:PATH
+    ${proj}_LIBRARY:FILEPATH
   LABELS "FIND_PACKAGE"
   )
 
 if(Slicer_USE_SYSTEM_${proj})
-  ExternalProject_Message(${proj} "LZMA_INCLUDE_DIR:${LibArchive_INCLUDE_DIR}")
-  ExternalProject_Message(${proj} "LZMA_LIBRARY:${LibArchive_LIBRARY}")
+  ExternalProject_Message(${proj} "${proj}_INCLUDE_DIR:${${proj}_INCLUDE_DIR}")
+  ExternalProject_Message(${proj} "${proj}_LIBRARY:${${proj}_LIBRARY}")
 endif()
