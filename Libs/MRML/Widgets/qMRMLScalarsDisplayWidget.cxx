@@ -252,7 +252,10 @@ void qMRMLScalarsDisplayWidget::setScalarsColorNode(vtkMRMLColorNode* colorNode)
 
   foreach (vtkMRMLDisplayNode* displayNode, d->CurrentDisplayNodes)
     {
-    displayNode->SetAndObserveColorNodeID(colorNode ? colorNode->GetID() : nullptr);
+    if (displayNode)
+      {
+      displayNode->SetAndObserveColorNodeID(colorNode ? colorNode->GetID() : nullptr);
+      }
     }
 }
 

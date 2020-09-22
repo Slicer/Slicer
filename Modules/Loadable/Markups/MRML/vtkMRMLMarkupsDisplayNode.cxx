@@ -726,3 +726,9 @@ vtkDataArray* vtkMRMLMarkupsDisplayNode::GetActiveScalarArray()
 
   return this->GetMarkupsNode()->GetCurveWorld()->GetPointData()->GetArray(this->GetActiveScalarName());
 }
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsDisplayNode::UpdateAssignedAttribute()
+{
+  this->UpdateScalarRange();
+}
