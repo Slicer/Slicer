@@ -22,13 +22,13 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/nextgis-borsch/lib_lzma.git"
+    "${EP_GIT_PROTOCOL}://github.com/Slicer/lib_lzma.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "v5.2.2"
+    "v5.2.4"
     QUIET
     )
 
@@ -68,9 +68,9 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
   set(${proj}_DIR ${EP_BINARY_DIR})
   set(${proj}_INCLUDE_DIR ${EP_INSTALL_DIR}/include)
   if(WIN32)
-    set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/lzma.lib)
+    set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/liblzma.lib)
   else()
-    set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/liblzma.a)
+    set(${proj}_LIBRARY ${EP_INSTALL_DIR}/lib/libliblzma.a)
   endif()
 
 else()
