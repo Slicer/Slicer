@@ -1,20 +1,6 @@
 
 set(proj LZMA)
 
-#
-# By default, this external project downloads, configures and builds <proj> and passes
-# the following variables to the main superbuild project using `mark_as_superbuild`:
-#
-# * LZMA_INCLUDE_DIR
-# * LZMA_LIBRARY
-#
-# If both variables are set, <proj> is NOT downloaded, configured and built and
-# the variables are just passed to the main superbuild project.
-#
-# If Slicer_USE_SYSTEM_<proj> variable is set, the variables are unset from the cache
-# and the <proj> is expected to be found on the system.
-#
-
 # Set dependency list
 set(${proj}_DEPENDENCIES "")
 
