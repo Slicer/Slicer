@@ -88,13 +88,14 @@ vtkSlicerMarkupsWidget::vtkSlicerMarkupsWidget()
   // Update active component
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
   this->SetEventTranslation(WidgetStateOnWidget, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
-  this->SetEventTranslation(WidgetStateDefine, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
+  // Allow AnyModifier when defining the markup position. This allows the markup preview to be continually updated, even
+  // when using shift + mouse-move to change the slice positions.
+  // We still do not allow shift+left click for placement however, so that the shift + left-click-and-drag interaction can
+  // still be used to pan the slice.
+  this->SetEventTranslation(WidgetStateDefine, vtkCommand::MouseMoveEvent, vtkEvent::AnyModifier, WidgetEventMouseMove);
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
   this->SetEventTranslation(WidgetStateOnWidget, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
   this->SetEventTranslation(WidgetStateDefine, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
-
-  this->SetKeyboardEventTranslation(WidgetStateDefine, vtkEvent::AnyModifier, 0, 0, "Shift_L", WidgetEventMouseMove);
-  this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::AnyModifier, 0, 0, "Shift_L", WidgetEventMouseMove);
 }
 
 //----------------------------------------------------------------------

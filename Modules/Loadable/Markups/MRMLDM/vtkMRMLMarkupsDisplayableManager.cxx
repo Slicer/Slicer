@@ -639,9 +639,15 @@ vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManager::FindClosestWidget(vtkM
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &closestDistance2)
 {
+  vtkMRMLInteractionNode* interactionNode = this->GetInteractionNode();
   // New point can be placed anywhere
   int eventid = eventData->GetType();
-  if ( (eventid == vtkCommand::MouseMoveEvent && eventData->GetModifiers() == vtkEvent::NoModifier)
+  // We allow mouse move with the shift modifier to be processed while in place mode so that we can continue to update the
+  // preview positionm, even when using shift + mouse-move to adjust the crosshair position.
+  if ((eventid == vtkCommand::MouseMoveEvent
+       && (eventData->GetModifiers() == vtkEvent::NoModifier ||
+          (eventData->GetModifiers() & vtkEvent::ShiftModifier &&
+           interactionNode && interactionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)))
     || eventid == vtkCommand::Move3DEvent
     /*|| (eventid == vtkCommand::LeftButtonPressEvent && eventData->GetModifiers() == vtkEvent::NoModifier)
     || eventid == vtkCommand::LeftButtonReleaseEvent
@@ -649,7 +655,6 @@ bool vtkMRMLMarkupsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInterac
     || eventid == vtkCommand::EnterEvent
     || eventid == vtkCommand::LeaveEvent*/)
     {
-    vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
     vtkMRMLSelectionNode *selectionNode = this->GetSelectionNode();
     if (!interactionNode || !selectionNode)
       {
