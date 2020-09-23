@@ -251,6 +251,18 @@ bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteracti
     return true;
     }
 
+  // By processing the SetCrosshairPosition action at this point, rather than in ProcessInteractionEvent,
+  // we allow other widgets to perform actions at the same time.
+  // For example, this allows markup preview to remain visible in place mode while adjusting slice position
+  // with shift + mouse-move.
+  if (this->GetActionEnabled(ActionSetCrosshairPosition)
+    && this->WidgetState == WidgetStateIdle
+    && eventData->GetType() == vtkCommand::MouseMoveEvent
+    && eventData->GetModifiers() & vtkEvent::ShiftModifier)
+    {
+    this->ProcessSetCrosshair(eventData);
+    }
+
   distance2 = 1e10; // we can process this event but we let more specific widgets to claim it (if they are closer)
   return true;
 }
@@ -339,7 +351,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
       processedEvent = this->ProcessEndMouseDrag(eventData);
       break;
     case WidgetEventSetCrosshairPosition:
-      processedEvent = this->ProcessSetCrosshair(eventData);
+      // Event is handled in CanProcessInteractionEvent
       break;
     case WidgetEventToggleLabelOpacity:
       {
