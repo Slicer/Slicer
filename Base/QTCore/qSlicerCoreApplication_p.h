@@ -156,6 +156,7 @@ public:
 
   /// ErrorLogModel - It should exist only one instance of the ErrorLogModel
   QSharedPointer<ctkErrorLogAbstractModel> ErrorLogModel;
+  QPointer<ctkErrorLogWidget> ErrorLogWidget; // it may be owned by a widget, so we cannot refer to it by a strong pointer
 
   /// ReturnCode flag
   int                                         ReturnCode;

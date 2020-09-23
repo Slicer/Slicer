@@ -65,8 +65,6 @@ public:
   virtual bool confirmCloseApplication();
   virtual bool confirmCloseScene();
 
-  void setErrorLogIconHighlighted(bool);
-
   void updatePythonConsolePalette();
 
 #ifdef Slicer_USE_PYTHONQT
@@ -74,6 +72,8 @@ public:
   QAction*                        PythonConsoleToggleViewAction;
 #endif
   ctkErrorLogWidget*              ErrorLogWidget;
+  QDockWidget*                    ErrorLogDockWidget;
+  QAction*                        ErrorLogToggleViewAction;
   QToolButton*                    ErrorLogToolButton;
   qSlicerModuleSelectorToolBar*   ModuleSelectorToolBar;
   QStringList                     FavoriteModules;

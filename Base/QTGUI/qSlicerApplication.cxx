@@ -37,6 +37,7 @@
 // CTK includes
 #include <ctkColorDialog.h>
 #include <ctkErrorLogModel.h>
+#include <ctkErrorLogWidget.h>
 #include <ctkErrorLogFDMessageHandler.h>
 #include <ctkErrorLogQtMessageHandler.h>
 #include <ctkErrorLogStreamMessageHandler.h>
@@ -251,6 +252,7 @@ void qSlicerApplicationPrivate::init()
 
   q->setupFileLogging();
   q->logApplicationInformation();
+  q->setErrorLogWidget(new ctkErrorLogWidget());
 
   //----------------------------------------------------------------------------
   // Settings Dialog
@@ -384,6 +386,14 @@ qSlicerApplication::~qSlicerApplication()
       }
     }
 #endif
+ctkErrorLogWidget* errorLogPtr = this->errorLogWidget();
+if (errorLogPtr)
+  {
+  if (errorLogPtr->parent() == nullptr)
+    {
+    delete errorLogPtr;
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -498,6 +508,12 @@ ctkPythonConsole* qSlicerApplication::pythonConsole()
   return Superclass::pythonConsole();
 }
 #endif
+
+//-----------------------------------------------------------------------------
+ctkErrorLogWidget* qSlicerApplication::errorLogWidget()
+{
+  return Superclass::errorLogWidget();
+}
 
 #ifdef Slicer_USE_QtTesting
 //-----------------------------------------------------------------------------

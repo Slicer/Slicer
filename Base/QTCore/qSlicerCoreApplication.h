@@ -39,6 +39,7 @@
 class ctkDICOMDatabase;
 #endif
 class ctkErrorLogAbstractModel;
+class ctkErrorLogWidget;
 class QSettings;
 class qSlicerCoreIOManager;
 class qSlicerCoreCommandOptions;
@@ -333,8 +334,17 @@ public:
   void setExtensionsManagerModel(qSlicerExtensionsManagerModel* model);
 #endif
 
-  /// Get errorLogModel
+  /// Get the Error Log model
   Q_INVOKABLE ctkErrorLogAbstractModel* errorLogModel()const;
+
+  /// Get the Error Log widget
+  ctkErrorLogWidget* errorLogWidget()const;
+
+  /// Set the error log widget
+  /// \note qSlicerCoreApplication will not take ownership of the object,
+  /// because it will be owned by the widget that it is part of
+  /// (either it is part of the main window or a top-level window).
+  void setErrorLogWidget(ctkErrorLogWidget* errorLogWidget);
 
   /// Get the module manager
   Q_INVOKABLE qSlicerModuleManager* moduleManager()const;

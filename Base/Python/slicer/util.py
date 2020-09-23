@@ -534,6 +534,10 @@ def setPythonConsoleVisible(visible):
   """Show/hide Python console."""
   mainWindow().pythonConsole().parent().setVisible(visible)
 
+def setErrorLogWidgetVisible(visible):
+  """Show/hide the Error Log widget."""
+  mainWindow().errorLogWidget().parent().setVisible(visible)
+
 def setStatusBarVisible(visible):
   """Show/hide status bar"""
   mainWindow(verbose=False).statusBar().setVisible(visible)
@@ -763,8 +767,7 @@ def loadLabelVolume(filename, properties={}, returnNode=False):
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
     If returnNode is True then a status flag and loaded node are returned.
   """
-  properties['labelmap'] = True
-  return loadNodeFromFile(filename, 'VolumeFile', properties, returnNode)
+  return loadNodeFromFile(filename, 'VolumeFile', {'labelmap': True}, returnNode)
 
 def loadShaderProperty(filename, returnNode=False):
   """Load node from file.

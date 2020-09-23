@@ -93,6 +93,8 @@ public:
   Q_INVOKABLE ctkPythonConsole * pythonConsole();
 #endif
 
+  Q_INVOKABLE ctkErrorLogWidget * errorLogWidget();
+
   #ifdef Slicer_USE_QtTesting
   /// Get test utility
   Q_INVOKABLE ctkQtTestingUtility* testingUtility();
