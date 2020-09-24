@@ -202,6 +202,12 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
   // Set generic MRML item delegate
   q->setItemDelegate(new qMRMLItemDelegate(q));
 
+  // Set appropriate defaults
+  q->setIndentation(8);
+  q->setDragDropMode(QAbstractItemView::InternalMove);
+  q->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  q->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
+
   // Create default menu actions
   this->NodeMenu = new QMenu(q);
   this->NodeMenu->setObjectName("nodeMenuTreeView");
