@@ -91,6 +91,8 @@ protected:
 
   vtkSmartPointer<vtkCellLocator> CurvePointLocator;
 
+  double PreviousSpecularLightingCoeff{0.0};
+
 private:
   vtkSlicerCurveRepresentation3D(const vtkSlicerCurveRepresentation3D&) = delete;
   void operator=(const vtkSlicerCurveRepresentation3D&) = delete;

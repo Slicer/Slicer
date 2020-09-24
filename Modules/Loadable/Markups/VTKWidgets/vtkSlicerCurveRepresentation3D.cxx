@@ -159,7 +159,7 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
     // Set active display property so that it can be distinguished, given that color cannot be used for this when scalars are visible
     vtkProperty* activePipelineProperty =
       reinterpret_cast<vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D*>(this->ControlPoints[Active])->Property;
-    //activePipelineProperty->SetSpecularColor(0.4, 1.0, 0.);
+    this->PreviousSpecularLightingCoeff = activePipelineProperty->GetSpecular();
     activePipelineProperty->SetSpecular(1.0);
 
     if (this->LineActor->GetVisibility())
@@ -197,7 +197,7 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
     {
     vtkProperty* activePipelineProperty =
       reinterpret_cast<vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D*>(this->ControlPoints[Active])->Property;
-    activePipelineProperty->SetSpecular(0.0);
+    activePipelineProperty->SetSpecular(this->PreviousSpecularLightingCoeff);
     }
 }
 
