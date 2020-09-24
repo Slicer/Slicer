@@ -218,7 +218,10 @@ void qMRMLScalarsDisplayWidget::setActiveScalarName(const QString& arrayName)
   foreach (vtkMRMLDisplayNode* displayNode, d->CurrentDisplayNodes)
     {
     int wasModified = displayNode->StartModify();
+
+    bool wasBlocked = d->ActiveScalarComboBox->blockSignals(true); // Prevent circular calls
     displayNode->SetActiveScalar(arrayName.toUtf8(), d->ActiveScalarComboBox->currentArrayLocation());
+    d->ActiveScalarComboBox->blockSignals(wasBlocked);
 
     // if there's no color node set for a non empty array name, use a default
     if (!arrayName.isEmpty() && displayNode->GetColorNodeID() == nullptr)
