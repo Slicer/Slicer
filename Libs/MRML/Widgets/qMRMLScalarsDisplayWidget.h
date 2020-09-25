@@ -108,6 +108,9 @@ protected slots:
   /// Update the widget from volume display node properties
   void updateWidgetFromMRML();
 
+  /// Set active scalar when the user changes selection
+  void onCurrentArrayActivated();
+
 protected:
   QScopedPointer<qMRMLScalarsDisplayWidgetPrivate> d_ptr;
 

@@ -83,8 +83,8 @@ void qMRMLScalarsDisplayWidgetPrivate::init()
   // Scalar
   QObject::connect(this->ScalarsVisibilityCheckBox, SIGNAL(toggled(bool)),
     q, SLOT(setScalarsVisibility(bool)));
-  QObject::connect(this->ActiveScalarComboBox, SIGNAL(currentArrayChanged(QString)),
-    q, SLOT(setActiveScalarName(QString)));
+  QObject::connect(this->ActiveScalarComboBox, SIGNAL(activated(int)),
+    q, SLOT(onCurrentArrayActivated()));
   QObject::connect(this->ScalarsColorNodeComboBox,
     SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(setScalarsColorNode(vtkMRMLNode*)));
   // scalar range
@@ -211,6 +211,13 @@ bool qMRMLScalarsDisplayWidget::scalarsVisibility()const
 }
 
 //------------------------------------------------------------------------------
+void qMRMLScalarsDisplayWidget::onCurrentArrayActivated()
+{
+  Q_D(qMRMLScalarsDisplayWidget);
+  this->setActiveScalarName(d->ActiveScalarComboBox->currentArrayName());
+}
+
+//------------------------------------------------------------------------------
 void qMRMLScalarsDisplayWidget::setActiveScalarName(const QString& arrayName)
 {
   Q_D(qMRMLScalarsDisplayWidget);
@@ -219,9 +226,7 @@ void qMRMLScalarsDisplayWidget::setActiveScalarName(const QString& arrayName)
     {
     int wasModified = displayNode->StartModify();
 
-    bool wasBlocked = d->ActiveScalarComboBox->blockSignals(true); // Prevent circular calls
     displayNode->SetActiveScalar(arrayName.toUtf8(), d->ActiveScalarComboBox->currentArrayLocation());
-    d->ActiveScalarComboBox->blockSignals(wasBlocked);
 
     // if there's no color node set for a non empty array name, use a default
     if (!arrayName.isEmpty() && displayNode->GetColorNodeID() == nullptr)
@@ -575,7 +580,10 @@ void qMRMLScalarsDisplayWidget::updateWidgetFromMRML()
   d->ActiveScalarComboBox->setEnabled(firstDisplayNode);
   if (firstDisplayNode)
     {
-    d->ActiveScalarComboBox->setDataSet(firstDisplayNode->GetScalarDataSet());
+    if (d->ActiveScalarComboBox->dataSet() != firstDisplayNode->GetScalarDataSet())
+      {
+      d->ActiveScalarComboBox->setDataSet(firstDisplayNode->GetScalarDataSet());
+      }
     if (d->ActiveScalarComboBox->currentArrayName() != firstDisplayNode->GetActiveScalarName())
       {
       d->ActiveScalarComboBox->setCurrentArray(firstDisplayNode->GetActiveScalarName());
