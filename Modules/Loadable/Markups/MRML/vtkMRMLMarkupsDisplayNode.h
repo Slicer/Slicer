@@ -397,7 +397,7 @@ public:
   /// Return the current active scalar array (based on active scalar name and location)
   virtual vtkDataArray* GetActiveScalarArray() override;
 
-  /// Update scalar range when the active scalar array is changed
+  /// Update scalar range and update markups pipeline when the active scalar array is changed
   virtual void UpdateAssignedAttribute() override;
 
 protected:

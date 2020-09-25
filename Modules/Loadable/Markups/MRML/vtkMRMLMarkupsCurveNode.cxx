@@ -29,6 +29,7 @@
 
 // VTK includes
 #include <vtkArrayCalculator.h>
+#include <vtkAssignAttribute.h>
 #include <vtkBoundingBox.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCellLocator.h>
@@ -85,8 +86,8 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   this->SurfaceScalarCalculator->SetResultArrayType(VTK_FLOAT);
   this->SetSurfaceDistanceWeightingFunction("activeScalar");
 
-  this->PassThroughFilter = vtkSmartPointer<vtkPassThroughFilter>::New();
-  this->PassThroughFilter->SetInputConnection(this->SurfaceToLocalTransformer->GetOutputPort());
+  this->SurfaceScalarPassThroughFilter = vtkSmartPointer<vtkPassThroughFilter>::New();
+  this->SurfaceScalarPassThroughFilter->SetInputConnection(this->SurfaceToLocalTransformer->GetOutputPort());
 
   this->CurveGenerator->SetCurveTypeToCardinalSpline();
   this->CurveGenerator->SetNumberOfPointsPerInterpolatingSegment(10);
@@ -108,9 +109,12 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   this->CurveMeasurementsCalculator = vtkSmartPointer<vtkCurveMeasurementsCalculator>::New();
   this->CurveMeasurementsCalculator->SetMeasurements(this->Measurements);
   this->CurveMeasurementsCalculator->SetInputConnection(this->CurveGenerator->GetOutputPort());
+
+  this->ScalarDisplayAssignAttribute = vtkSmartPointer<vtkAssignAttribute>::New();
+
   this->CurvePolyToWorldTransformer->SetInputConnection(this->CurveMeasurementsCalculator->GetOutputPort());
 
-  this->ActiveScalar = "";
+  this->ShortestDistanceSurfaceActiveScalar = "";
 }
 
 //----------------------------------------------------------------------------
@@ -1169,11 +1173,11 @@ void vtkMRMLMarkupsCurveNode::ProcessMRMLEvents(vtkObject* caller,
     // Trying to run SurfaceScalarCalculator without an active scalar will result in an error message.
     if (surfaceCostFunctionType == vtkSlicerDijkstraGraphGeodesicPath::COST_FUNCTION_TYPE_DISTANCE)
       {
-      this->PassThroughFilter->SetInputConnection(this->SurfaceToLocalTransformer->GetOutputPort());
+      this->SurfaceScalarPassThroughFilter->SetInputConnection(this->SurfaceToLocalTransformer->GetOutputPort());
       }
     else
       {
-      this->PassThroughFilter->SetInputConnection(this->SurfaceScalarCalculator->GetOutputPort());
+      this->SurfaceScalarPassThroughFilter->SetInputConnection(this->SurfaceScalarCalculator->GetOutputPort());
       }
     }
 
@@ -1285,12 +1289,12 @@ void vtkMRMLMarkupsCurveNode::OnSurfaceModelNodeChanged()
   if (modelNode)
     {
     this->CleanFilter->SetInputConnection(modelNode->GetPolyDataConnection());
-    this->CurveGenerator->SetInputConnection(1, this->PassThroughFilter->GetOutputPort());
+    this->CurveGenerator->SetInputConnection(1, this->SurfaceScalarPassThroughFilter->GetOutputPort());
     }
   else
     {
     this->CleanFilter->RemoveAllInputs();
-    this->CurveGenerator->RemoveInputConnection(1, this->PassThroughFilter->GetOutputPort());
+    this->CurveGenerator->RemoveInputConnection(1, this->SurfaceScalarPassThroughFilter->GetOutputPort());
     }
 }
 
@@ -1337,19 +1341,19 @@ void vtkMRMLMarkupsCurveNode::UpdateSurfaceScalarVariables()
 
   const char* activeScalarName = modelNode->GetActivePointScalarName(vtkDataSetAttributes::SCALARS);
   bool activeScalarChanged = false;
-  if (!activeScalarName && this->ActiveScalar)
+  if (!activeScalarName && this->ShortestDistanceSurfaceActiveScalar)
     {
     activeScalarChanged = true;
     }
-  else if (activeScalarName && !this->ActiveScalar)
+  else if (activeScalarName && !this->ShortestDistanceSurfaceActiveScalar)
     {
     activeScalarChanged = true;
     }
-  else if (activeScalarName && this->ActiveScalar && strcmp(activeScalarName, this->ActiveScalar) != 0)
+  else if (activeScalarName && this->ShortestDistanceSurfaceActiveScalar && strcmp(activeScalarName, this->ShortestDistanceSurfaceActiveScalar) != 0)
     {
     activeScalarChanged = true;
     }
-  this->ActiveScalar = activeScalarName;
+  this->ShortestDistanceSurfaceActiveScalar = activeScalarName;
 
   int numberOfArraysInMesh = pointData->GetNumberOfArrays();
   int numberOfArraysInCalculator = this->SurfaceScalarCalculator->GetNumberOfScalarArrays();
@@ -1427,4 +1431,27 @@ void vtkMRMLMarkupsCurveNode::SetInterpolateControlPointMeasurement(bool on)
   this->CurveMeasurementsCalculator->SetInterpolateControlPointMeasurement(on);
   this->CurveGenerator->Modified();
   this->CurveMeasurementsCalculator->Update();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsCurveNode::UpdateAssignedAttribute()
+{
+  vtkMRMLMarkupsDisplayNode* displayNode = this->GetMarkupsDisplayNode();
+
+  this->ScalarDisplayAssignAttribute->Assign(
+    displayNode->GetActiveScalarName(),
+    vtkDataSetAttributes::SCALARS,
+    displayNode->GetActiveAttributeLocation() >= 0 ? displayNode->GetActiveAttributeLocation() : vtkAssignAttribute::POINT_DATA);
+
+  // Connect assign attributes filter if scalar visibility is on
+  if (displayNode->GetScalarVisibility())
+    {
+    this->ScalarDisplayAssignAttribute->SetInputConnection(this->CurveMeasurementsCalculator->GetOutputPort());
+    this->CurvePolyToWorldTransformer->SetInputConnection(this->ScalarDisplayAssignAttribute->GetOutputPort());
+    }
+  else
+    {
+    this->ScalarDisplayAssignAttribute->RemoveAllInputConnections(0);
+    this->CurvePolyToWorldTransformer->SetInputConnection(this->CurveMeasurementsCalculator->GetOutputPort());
+    }
 }

@@ -731,4 +731,6 @@ vtkDataArray* vtkMRMLMarkupsDisplayNode::GetActiveScalarArray()
 void vtkMRMLMarkupsDisplayNode::UpdateAssignedAttribute()
 {
   this->UpdateScalarRange();
+
+  this->GetMarkupsNode()->UpdateAssignedAttribute();
 }

@@ -189,6 +189,7 @@ void qMRMLScalarsDisplayWidget::setMRMLDisplayNode(vtkMRMLDisplayNode* displayNo
   d->CurrentDisplayNodes.clear();
   d->CurrentDisplayNodes << displayNode;
 
+  displayNode->UpdateScalarRange();
   this->updateWidgetFromMRML();
 }
 

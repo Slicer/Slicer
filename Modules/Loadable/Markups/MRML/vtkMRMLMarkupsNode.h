@@ -585,6 +585,10 @@ public:
   /// Utility function to get unit node from scene
   vtkMRMLUnitNode* GetUnitNode(const char* quantity);
 
+  /// Update the AssignAttribute filter based on its ActiveScalarName and its ActiveAttributeLocation
+  /// To be re-implemented in subclasses
+  virtual void UpdateAssignedAttribute() {};
+
 protected:
   vtkMRMLMarkupsNode();
   ~vtkMRMLMarkupsNode() override;

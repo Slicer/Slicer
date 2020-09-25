@@ -34,6 +34,7 @@
 #include <vector>
 
 class vtkArrayCalculator;
+class vtkAssignAttribute;
 class vtkCleanPolyData;
 class vtkCurveMeasurementsCalculator;
 class vtkPassThroughFilter;
@@ -262,14 +263,22 @@ public:
   void SetInterpolateControlPointMeasurement(bool on);
   //@}
 
+  /// Update scalar range and update markups pipeline when the active scalar array is changed
+  virtual void UpdateAssignedAttribute() override;
+
 protected:
   vtkSmartPointer<vtkCleanPolyData> CleanFilter;
   vtkSmartPointer<vtkTriangleFilter> TriangleFilter;
   vtkSmartPointer<vtkTransformPolyDataFilter> SurfaceToLocalTransformer;
   vtkSmartPointer<vtkArrayCalculator> SurfaceScalarCalculator;
-  vtkSmartPointer<vtkPassThroughFilter> PassThroughFilter;
+  vtkSmartPointer<vtkPassThroughFilter> SurfaceScalarPassThroughFilter;
   vtkSmartPointer<vtkCurveMeasurementsCalculator> CurveMeasurementsCalculator;
-  const char* ActiveScalar;
+  const char* ShortestDistanceSurfaceActiveScalar;
+
+  /// Filter that changes the active scalar of the input mesh using the ActiveScalarName
+  /// and ActiveAttributeLocation properties. This can be useful to specify what field
+  /// array is the color array that needs to be used by the VTK mappers.
+  vtkSmartPointer<vtkAssignAttribute> ScalarDisplayAssignAttribute;
 
 protected:
   void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
