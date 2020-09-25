@@ -201,6 +201,7 @@ void qMRMLScalarsDisplayWidget::setScalarsVisibility(bool visible)
   foreach (vtkMRMLDisplayNode* displayNode, d->CurrentDisplayNodes)
     {
     displayNode->SetScalarVisibility(visible);
+    displayNode->UpdateAssignedAttribute();
     }
 }
 
