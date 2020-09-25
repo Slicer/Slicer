@@ -17,6 +17,7 @@
 
 // MRML includes
 #include "vtkMRMLAbstractSliceViewDisplayableManager.h"
+#include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLCrosshairDisplayableManager.h"
 #include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLDisplayableManagerGroup.h"
@@ -82,7 +83,15 @@ bool vtkMRMLSliceViewInteractorStyle::DelegateInteractionEventToDisplayableManag
     //this->SetMouseCursor(VTK_CURSOR_DEFAULT);
     return false;
     }
-
+  vtkMRMLApplicationLogic* appLogic = nullptr;
+  if (this->GetSliceLogic())
+    {
+    appLogic = this->GetSliceLogic()->GetMRMLApplicationLogic();
+    }
+  if (appLogic)
+    {
+    appLogic->PauseRender();
+    }
   // Get display and world position
   int* displayPositionInt = this->GetInteractor()->GetEventPosition();
   vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(displayPositionInt[0], displayPositionInt[1]);
@@ -132,7 +141,12 @@ bool vtkMRMLSliceViewInteractorStyle::DelegateInteractionEventToDisplayableManag
       }
     }
 
-  return this->DelegateInteractionEventDataToDisplayableManagers(ed);
+  bool result = this->DelegateInteractionEventDataToDisplayableManagers(ed);
+  if (appLogic)
+    {
+    appLogic->ResumeRender();
+    }
+  return result;
 }
 
 //----------------------------------------------------------------------------
