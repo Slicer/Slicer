@@ -23,6 +23,10 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
       "Qt5::QuickWidgets"
       "Qt5::WebEngineCore"
       )
+    # QmlModels moved into its own library in Qt >= 5.14
+    if(TARGET Qt5::QmlModels)
+      list(APPEND QT_LIBRARIES "Qt5::QmlModels")
+    endif()
     if(TARGET Qt5::Positioning)
       list(APPEND QT_LIBRARIES "Qt5::Positioning")
     endif()
