@@ -336,15 +336,13 @@ list_conditional_append(Slicer_BUILD_DataStore Slicer_REMOTE_DEPENDENCIES DataSt
 
 Slicer_Remote_Add(CompareVolumes
   GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/pieper/CompareVolumes"
-  GIT_TAG 34f1b3da761f25227d6785b13b5700b8d446992d
+  GIT_TAG 94224926fa0b0900597343e4db991fd028136bd2
   OPTION_NAME Slicer_BUILD_CompareVolumes
   OPTION_DEPENDS "Slicer_USE_PYTHONQT"
   LABELS REMOTE_MODULE
   )
 list_conditional_append(Slicer_BUILD_CompareVolumes Slicer_REMOTE_DEPENDENCIES CompareVolumes)
 
-# Disable this module until it can be ported to the new markups code
-# Tracked at https://github.com/pieper/LandmarkRegistration/issues/29
 Slicer_Remote_Add(LandmarkRegistration
   GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/pieper/LandmarkRegistration"
   GIT_TAG c1385ba2cd5069a018cd97c19085788006276918
