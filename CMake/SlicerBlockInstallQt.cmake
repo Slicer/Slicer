@@ -24,7 +24,9 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
       "Qt5::WebEngineCore"
       )
     # QmlModels moved into its own library in Qt >= 5.14
-    if(TARGET Qt5::QmlModels)
+    # Since windeployqt implicitly copies "Qt5QmlModels.dll" when
+    # "-qml" is specified, exclude it on Windows.
+    if(TARGET Qt5::QmlModels AND NOT WIN32)
       list(APPEND QT_LIBRARIES "Qt5::QmlModels")
     endif()
     if(TARGET Qt5::Positioning)
