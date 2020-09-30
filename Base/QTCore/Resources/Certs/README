@@ -36,6 +36,7 @@ be (re-)generated.
 
 Step1: Download the list of trusted CAs from mozilla website [4]
 
+ cd Base/QTCore/Resources/Certs                           &&
  certhost='https://github.com/mozilla/gecko-dev'          &&
  certdir='/blob/master/security/nss/lib/ckfw/builtins'    &&
  url="$certhost$certdir/certdata.txt?raw=true"            &&
