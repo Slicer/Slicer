@@ -20,6 +20,10 @@ if(NOT Slicer_USE_SYSTEM_${proj})
 
   include(ExternalProjectForNonCMakeProject)
 
+  set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
+  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
+
   # Variables used to update PATH, LD_LIBRARY_PATH or DYLD_LIBRARY_PATH in env. script below
   if(WIN32)
     set(_varname "PATH")
@@ -53,6 +57,31 @@ if(NOT Slicer_USE_SYSTEM_${proj})
       # ITK
       ${ITK_DIR}/${_lib_subdir}
       )
+  endif()
+
+  if(Slicer_USE_SimpleITK_SHARED)
+    if(CMAKE_CONFIGURATION_TYPES)
+      foreach(config ${CMAKE_CONFIGURATION_TYPES})
+        list(APPEND _paths
+          # SimpleITK
+          ${EP_BINARY_DIR}/SimpleITK-build/${_lib_subdir}/${config}
+          # DCMTK
+          ${DCMTK_DIR}/${_lib_subdir}/${config}
+          )
+      endforeach()
+    else()
+      list(APPEND _paths
+        # SimpleITK
+        ${EP_BINARY_DIR}/SimpleITK-build/${_lib_subdir}
+        # DCMTK
+        ${DCMTK_DIR}/${_lib_subdir}
+        )
+    endif()
+
+    # TBB
+    if(Slicer_USE_TBB)
+      list(APPEND _paths ${TBB_BIN_DIR})
+    endif()
   endif()
 
   list(JOIN _paths "${_path_sep}" _paths)
@@ -96,11 +125,6 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
     "v2.0.0"  # Paired with a specific SimpleITKFilters remote module git tag in the ITK project
     QUIET
     )
-
-  set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
-  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
-
 
   # A separate project is used to download, so that the SuperBuild
   # subdirectory can be use for SimpleITK's SuperBuild to build
