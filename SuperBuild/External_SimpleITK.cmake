@@ -20,9 +20,32 @@ if(NOT Slicer_USE_SYSTEM_${proj})
 
   include(ExternalProjectForNonCMakeProject)
 
+  # Variables used to update PATH, LD_LIBRARY_PATH or DYLD_LIBRARY_PATH in env. script below
+  if(WIN32)
+    set(_varname "PATH")
+    set(_path_sep ";")
+  elseif(UNIX)
+    set(_path_sep ":")
+    if(APPLE)
+      set(_varname "DYLD_LIBRARY_PATH")
+    else()
+      set(_varname "LD_LIBRARY_PATH")
+    endif()
+  endif()
+
   # environment
   set(_env_script ${CMAKE_BINARY_DIR}/${proj}_Env.cmake)
   ExternalProject_Write_SetPythonSetupEnv_Commands(${_env_script})
+  file(APPEND ${_env_script}
+"#------------------------------------------------------------------------------
+# Added by '${CMAKE_CURRENT_LIST_FILE}'
+set(ENV{${_varname}} \"${ITK_DIR}/lib${_path_sep}\$ENV{${_varname}}\")
+set(ENV{${_varname}} \"${ITK_DIR}/bin${_path_sep}\$ENV{${_varname}}\")
+set(ENV{${_varname}} \"${ITK_DIR}/bin/Release${_path_sep}\$ENV{${_varname}}\")
+set(ENV{${_varname}} \"${ITK_DIR}/bin/MinSizeRel${_path_sep}\$ENV{${_varname}}\")
+set(ENV{${_varname}} \"${ITK_DIR}/bin/RelWithDebInfo${_path_sep}\$ENV{${_varname}}\")
+set(ENV{${_varname}} \"${ITK_DIR}/bin/Debug${_path_sep}\$ENV{${_varname}}\")
+")
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
