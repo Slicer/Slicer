@@ -33,18 +33,37 @@ if(NOT Slicer_USE_SYSTEM_${proj})
     endif()
   endif()
 
+  # Used below to both set the env. script and the launcher settings
+  set(_lib_subdir lib)
+  if(WIN32)
+    set(_lib_subdir bin)
+  endif()
+
+  set(_paths)
+
+  if(CMAKE_CONFIGURATION_TYPES)
+    foreach(config ${CMAKE_CONFIGURATION_TYPES})
+      list(APPEND _paths
+        # ITK
+        ${ITK_DIR}/${_lib_subdir}/${config}
+        )
+    endforeach()
+  else()
+    list(APPEND _paths
+      # ITK
+      ${ITK_DIR}/${_lib_subdir}
+      )
+  endif()
+
+  list(JOIN _paths "${_path_sep}" _paths)
+
   # environment
   set(_env_script ${CMAKE_BINARY_DIR}/${proj}_Env.cmake)
   ExternalProject_Write_SetPythonSetupEnv_Commands(${_env_script})
   file(APPEND ${_env_script}
 "#------------------------------------------------------------------------------
 # Added by '${CMAKE_CURRENT_LIST_FILE}'
-set(ENV{${_varname}} \"${ITK_DIR}/lib${_path_sep}\$ENV{${_varname}}\")
-set(ENV{${_varname}} \"${ITK_DIR}/bin${_path_sep}\$ENV{${_varname}}\")
-set(ENV{${_varname}} \"${ITK_DIR}/bin/Release${_path_sep}\$ENV{${_varname}}\")
-set(ENV{${_varname}} \"${ITK_DIR}/bin/MinSizeRel${_path_sep}\$ENV{${_varname}}\")
-set(ENV{${_varname}} \"${ITK_DIR}/bin/RelWithDebInfo${_path_sep}\$ENV{${_varname}}\")
-set(ENV{${_varname}} \"${ITK_DIR}/bin/Debug${_path_sep}\$ENV{${_varname}}\")
+set(ENV{${_varname}} \"${_paths}${_path_sep}\$ENV{${_varname}}\")
 ")
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
@@ -144,11 +163,6 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
     DEPENDS SimpleITK-download ${${proj}_DEPENDENCIES}
     )
   set(SimpleITK_DIR ${CMAKE_BINARY_DIR}/SimpleITK-build/SimpleITK-build)
-
-  set(_lib_subdir lib)
-  if(WIN32)
-    set(_lib_subdir bin)
-  endif()
 
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree
