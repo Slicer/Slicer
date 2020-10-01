@@ -177,7 +177,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
     set(_git_tag "97904fdcc7e73446b3131f32eac9fc9781b23c2d") # slicer-v8.2.0-2018-10-02-74d9488523
     set(vtk_egg_info_version "8.2.0")
   elseif("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
-    set(_git_tag "2f4e011bfcf95cb6c10ac42403b37f3fc7808048") # slicer-v9.0.20200929-3fa220f28e
+    set(_git_tag "1ecbd5001edd6a8ae3c725d8486f51f39afc0b2e") # slicer-v9.0.20200929-3fa220f28e
     set(vtk_egg_info_version "9.0.20200825")
   else()
     message(FATAL_ERROR "error: Unsupported Slicer_VTK_VERSION_MAJOR: ${Slicer_VTK_VERSION_MAJOR}")
@@ -289,17 +289,46 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
   #-----------------------------------------------------------------------------
   # Launcher setting specific to install tree
 
-  # pythonpath
   if(NOT APPLE)
     # This is not required for macOS where VTK python package is installed
     # in a standard location using CMake/SlicerBlockInstallExternalPythonModules.cmake
+
+    # library paths
+    if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
+      if(UNIX)
+        set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
+          <APPLAUNCHER_SETTINGS_DIR>/../lib
+          )
+      else()
+        set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
+          <APPLAUNCHER_SETTINGS_DIR>/../bin
+          )
+      endif()
+      mark_as_superbuild(
+        VARS ${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
+        LABELS "LIBRARY_PATHS_LAUNCHER_INSTALLED"
+        )
+    endif()
+
+    # pythonpath
+    if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
+      set(_library_install_subdir "bin")
+      if(UNIX)
+        set(_library_install_subdir "lib")
+      endif()
+    else()
+      set(_library_install_subdir ${Slicer_INSTALL_BIN_DIR})
+      if(UNIX)
+        set(_library_install_subdir ${Slicer_INSTALL_LIB_DIR})
+      endif()
+    endif()
     if(UNIX)
       set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
-        <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_INSTALL_LIB_DIR}/python3.6/site-packages
+        <APPLAUNCHER_SETTINGS_DIR>/../${_library_install_subdir}/python3.6/site-packages
         )
     else()
       set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
-        <APPLAUNCHER_SETTINGS_DIR>/../${Slicer_INSTALL_BIN_DIR}/Lib/site-packages
+        <APPLAUNCHER_SETTINGS_DIR>/../${_library_install_subdir}/Lib/site-packages
         # Adding the following line is needed only for (<VTK_MAJOR_VERSION>.<VTK_MINOR_VERSION> <= 8.1),
         # but since we only have Slicer_VTK_VERSION_MAJOR variable, following the update of VTK
         # version from 9.0 to 8.2, there is no way to discriminate between 8.1 and 8.2.

@@ -3,6 +3,8 @@ if(NOT APPLE)
   message(FATAL_ERROR "This module was designed for macOS")
 endif()
 
+if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "8")
+
 # Install VTK python module
 set(VTK_PYTHON_MODULE "${VTK_DIR}/lib/python3.6/site-packages")
 set(_vtk_package "vtk")
@@ -31,6 +33,21 @@ file(GLOB vtk_python_modules "${VTK_DIR}/${vtk_python_library_subdir}/*Python.so
 install(FILES ${vtk_python_modules}
         DESTINATION ${Slicer_INSTALL_LIB_DIR}
         COMPONENT Runtime)
+
+
+else()
+
+# Install VTK python module
+set(VTK_PYTHON_MODULE "${VTK_DIR}/lib/python3.6/site-packages")
+install(DIRECTORY ${VTK_PYTHON_MODULE}/vtkmodules
+  DESTINATION ${Slicer_INSTALL_BIN_DIR}/Python
+  USE_SOURCE_PERMISSIONS
+  COMPONENT Runtime)
+install(FILES ${VTK_PYTHON_MODULE}/vtk.py
+  DESTINATION ${Slicer_INSTALL_BIN_DIR}/Python
+  COMPONENT Runtime)
+
+endif()
 
 # Install CTK python modules
 install(DIRECTORY ${CTK_DIR}/CTK-build/bin/Python/ctk ${CTK_DIR}/CTK-build/bin/Python/qt
