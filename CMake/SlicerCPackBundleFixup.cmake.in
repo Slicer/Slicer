@@ -60,6 +60,10 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     if(item MATCHES "lib-dynload/[^/]+\\.so$")
       set(path "@fixup_path@/lib/Python/${PYTHON_STDLIB_SUBDIR}/lib-dynload")
     endif()
+    # VTK python modules
+    if(item MATCHES "vtkmodules/[^/]+\\.so$")
+      set(path "@fixup_path@/bin/Python/vtkmodules")
+    endif()
   endif()
 
   set(Slicer_USE_SimpleITK "@Slicer_USE_SimpleITK@")
