@@ -9,5 +9,6 @@ Modules usually interact with each other only indirectly, by making changes and 
 .. toctree::
 
     markups.md
+    segmenteditor.md
     volumerendering.md
     volumes.md
