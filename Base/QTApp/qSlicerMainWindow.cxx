@@ -521,8 +521,18 @@ void qSlicerMainWindowPrivate::updatePythonConsolePalette()
   // Color of output of commands. Black in bright style, white in dark style.
   pythonConsole->setOutputTextColor(palette.color(QPalette::WindowText));
 
-  // Color of error messages. Red in both bright and dark styles.
-  pythonConsole->setErrorTextColor(palette.color(QPalette::BrightText));
+  // Color of error messages. Red in both bright and dark styles, but slightly brighter in dark style.
+  QColor textColor = q->palette().color(QPalette::Normal, QPalette::Text);
+  if (textColor.lightnessF() < 0.5)
+    {
+    // Light theme
+    pythonConsole->setErrorTextColor(QColor::fromRgb(240, 0, 0)); // darker than Qt::red
+    }
+  else
+    {
+    // Dark theme
+    pythonConsole->setErrorTextColor(QColor::fromRgb(255, 68, 68)); // lighter than Qt::red
+    }
 
   // Color of welcome message (printed when the terminal is reset)
   // and "user input" (this does not seem to be used in Slicer).
