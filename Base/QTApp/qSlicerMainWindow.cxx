@@ -964,6 +964,7 @@ void qSlicerMainWindow::on_FileCloseSceneAction_triggered()
   Q_D(qSlicerMainWindow);
   if (d->confirmCloseScene())
     {
+    qDebug("Close main MRML scene");
     qSlicerCoreApplication::application()->mrmlScene()->Clear(false);
     // Make sure we don't remember the last scene's filename to prevent
     // accidentally overwriting the scene.

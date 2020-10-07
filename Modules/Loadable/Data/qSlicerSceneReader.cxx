@@ -88,6 +88,7 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
   int res = 0;
   if (clear)
     {
+    qDebug("Clear and import into main MRML scene");
     res = this->mrmlScene()->Connect();
     if (res)
       {
@@ -101,6 +102,7 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
     bool wasCopying = d->CamerasLogic->GetCopyImportedCameras();
     bool copyCameras = properties.value("copyCameras", wasCopying).toBool();
     d->CamerasLogic->SetCopyImportedCameras(copyCameras);
+    qDebug("Import into main MRML scene");
     res = this->mrmlScene()->Import();
     d->CamerasLogic->SetCopyImportedCameras(wasCopying);
     }
