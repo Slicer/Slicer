@@ -29,6 +29,7 @@
 
 #include "vtkMRMLSegmentationDisplayNode.h"
 #include "vtkMRMLSegmentationNode.h"
+#include "vtkMRMLVolumeNode.h"
 
 // VTK includes
 #include <vtkStringArray.h>
@@ -128,10 +129,21 @@ void qMRMLSegmentationFileExportWidget::setSegmentationNode(vtkMRMLSegmentationN
   Q_D(qMRMLSegmentationFileExportWidget);
 
   qvtkReconnect(d->SegmentationNode, node, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->SegmentationNode, node, vtkMRMLSegmentationNode::ReferenceImageGeometryChangedEvent, this,
+    SLOT(onSegmentationReferenceImageGeometryChanged()));
+
+  bool nodeChanged = d->SegmentationNode != node;
 
   d->SegmentationNode = node;
   this->setEnabled(d->SegmentationNode.GetPointer() != nullptr);
   this->updateWidgetFromMRML();
+
+  // Get reference volume node
+  if (nodeChanged)
+    {
+    this->onSegmentationReferenceImageGeometryChanged();
+    }
+
 }
 
 //-----------------------------------------------------------------------------
@@ -203,6 +215,20 @@ void qMRMLSegmentationFileExportWidget::updateSettingsFromWidget()
 }
 
 //-----------------------------------------------------------------------------
+void qMRMLSegmentationFileExportWidget::onSegmentationReferenceImageGeometryChanged()
+{
+  Q_D(qMRMLSegmentationFileExportWidget);
+  if (!d->SegmentationNode)
+    {
+    return;
+    }
+
+  vtkMRMLNode* referenceVolumeNode = d->SegmentationNode->GetNodeReference(
+    vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str());
+  d->ReferenceVolumeComboBox->setCurrentNode(referenceVolumeNode);
+}
+
+//-----------------------------------------------------------------------------
 void qMRMLSegmentationFileExportWidget::exportToFiles()
 {
   Q_D(qMRMLSegmentationFileExportWidget);
@@ -259,6 +285,8 @@ void qMRMLSegmentationFileExportWidget::exportToFiles()
       segmentIds.GetPointer(),
       extension,
       d->UseCompressionCheckBox->isChecked(),
+      vtkMRMLVolumeNode::SafeDownCast(d->ReferenceVolumeComboBox->currentNode()),
+      vtkSegmentation::EXTENT_REFERENCE_GEOMETRY,
       labelmapConversionColorTableNode);
     }
 
@@ -299,20 +327,21 @@ void qMRMLSegmentationFileExportWidget::setFileFormat(const QString& formatStr)
 {
   Q_D(qMRMLSegmentationFileExportWidget);
 
-  bool stl = formatStr == "STL";
-  bool model = stl || formatStr == "OBJ";
+  bool formatIsSTL = formatStr == "STL";
+  bool formatIsModel = formatIsSTL || formatStr == "OBJ";
 
-  d->MergeIntoSingleSTLFileCheckBox->setVisible(stl);
-  d->MergeIntoSingleSTLFileCheckBox->setEnabled(model);
+  d->MergeIntoSingleSTLFileCheckBox->setVisible(formatIsSTL);
+  d->MergeIntoSingleSTLFileCheckBox->setEnabled(formatIsModel);
 
-  d->MergeIntoSingleOBJFileCheckBox->setVisible(!stl);
-  d->MergeIntoSingleOBJFileCheckBox->setEnabled(model);
+  d->MergeIntoSingleOBJFileCheckBox->setVisible(!formatIsSTL);
+  d->MergeIntoSingleOBJFileCheckBox->setEnabled(formatIsModel);
 
-  d->CoordinateSystemComboBox->setEnabled(model);
-  d->SizeScaleSpinBox->setEnabled(model);
-  d->UseCompressionCheckBox->setEnabled(!model);
-  d->UseColorTableValuesCheckBox->setEnabled(!model);
-  d->ColorTableNodeSelector->setEnabled(!model && d->UseColorTableValuesCheckBox->isChecked());
+  d->CoordinateSystemComboBox->setEnabled(formatIsModel);
+  d->ReferenceVolumeComboBox->setEnabled(!formatIsModel);
+  d->SizeScaleSpinBox->setEnabled(formatIsModel);
+  d->UseCompressionCheckBox->setEnabled(!formatIsModel);
+  d->UseColorTableValuesCheckBox->setEnabled(!formatIsModel);
+  d->ColorTableNodeSelector->setEnabled(!formatIsModel && d->UseColorTableValuesCheckBox->isChecked());
 }
 
 //-----------------------------------------------------------------------------

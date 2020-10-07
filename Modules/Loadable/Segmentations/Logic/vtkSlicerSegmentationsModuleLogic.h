@@ -275,9 +275,12 @@ public:
   /// \param segmentIds List of segment ids to get values for. The order of segmentIds dictates the order of the returned label values.
   /// \param extension The file extension used for the output file. "nrrd" by default.
   /// \param useCompression If compression should be applied to the output file.
+  /// \param referenceVolumeNode If specified, then the saved segmentation will match the geometry of referenceVolumeNode
+  /// \param extentComputationMode If referenceVolumeNode is not specified then the saved segmentation extents will be determined based on this value.
   /// \param colorTableNode Color table node used to set the exported labelmap values for the segments.
   static bool ExportSegmentsBinaryLabelmapRepresentationToFiles(std::string destinationFolder,
     vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* segmentIds = nullptr, std::string extension = "nrrd", bool useCompression = false,
+    vtkMRMLVolumeNode* referenceVolumeNode = nullptr, int extentComputationMode = vtkSegmentation::EXTENT_REFERENCE_GEOMETRY,
     vtkMRMLColorTableNode* colorTableNode = nullptr);
 
   /// Create representation of only one segment in a segmentation.
@@ -420,6 +423,9 @@ public:
   ///   overwrite each other, but the result is guaranteed to have one layer
   /// \return True if the representation was created, False otherwise
   static void CollapseBinaryLabelmaps(vtkMRMLSegmentationNode* segmentationNode, bool forceToSingleLayer);
+
+  static void GenerateMergedLabelmapInReferenceGeometry(vtkMRMLSegmentationNode* segmentationNode, vtkMRMLVolumeNode* referenceVolumeNode,
+    vtkStringArray* segmentIDs, int extentComputationMode, vtkOrientedImageData* mergedLabelmap_Reference);
 
 public:
   /// Set Terminologies module logic

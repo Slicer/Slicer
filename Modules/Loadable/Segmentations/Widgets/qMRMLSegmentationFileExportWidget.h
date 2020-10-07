@@ -86,6 +86,8 @@ public slots:
 
   void updateWidgetFromMRML();
 
+  void onSegmentationReferenceImageGeometryChanged();
+
 protected slots:
 
   void setFileFormat(const QString&);

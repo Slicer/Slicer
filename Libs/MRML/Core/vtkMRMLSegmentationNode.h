@@ -290,6 +290,12 @@ public:
   void SetLabelmapConversionColorTableNodeID(const char* labelmapConversionColorTableNodeID);
   vtkMRMLColorTableNode* GetLabelmapConversionColorTableNode();
 
+  /// ReferenceImageGeometryChangedEvent is fired when the ReferenceImageGeometry node reference is Added, Modified, or Removed
+  enum
+  {
+    ReferenceImageGeometryChangedEvent = 23000
+  };
+
 protected:
   /// Set segmentation object
   vtkSetObjectMacro(Segmentation, vtkSegmentation);
@@ -315,6 +321,15 @@ protected:
 
   static const char* GetLabelmapConversionColorTableNodeReferenceRole() { return "labelmapConversionColorTableNode"; };
   static const char* GetLabelmapConversionColorTableNodeReferenceMRMLAttributeName() { return "labelmapConversionColorTableNodeRef"; };
+
+  /// Reimplemented to invoke ReferenceImageGeometryChangedEvent
+  void OnNodeReferenceAdded(vtkMRMLNodeReference* reference) override;
+
+  /// Reimplemented to invoke ReferenceImageGeometryChangedEvent
+  void OnNodeReferenceModified(vtkMRMLNodeReference* reference) override;
+
+  /// Reimplemented to invoke ReferenceImageGeometryChangedEvent
+  void OnNodeReferenceRemoved(vtkMRMLNodeReference* reference) override;
 
 protected:
   vtkMRMLSegmentationNode();

@@ -977,6 +977,60 @@ bool vtkSlicerSegmentationsModuleLogic::ExportAllSegmentsToModels(vtkMRMLSegment
 }
 
 //-----------------------------------------------------------------------------
+void vtkSlicerSegmentationsModuleLogic::GenerateMergedLabelmapInReferenceGeometry(vtkMRMLSegmentationNode* segmentationNode,
+  vtkMRMLVolumeNode* referenceVolumeNode, vtkStringArray* segmentIDs, int extentComputationMode, vtkOrientedImageData* mergedLabelmap_Reference)
+{
+  // Get reference geometry in the segmentation node's coordinate system
+  vtkSmartPointer<vtkOrientedImageData> referenceGeometry_Reference; // reference geometry in reference node coordinate system
+  vtkSmartPointer<vtkOrientedImageData> referenceGeometry_Segmentation;
+  vtkSmartPointer<vtkGeneralTransform> referenceGeometryToSegmentationTransform;
+  if (referenceVolumeNode && referenceVolumeNode->GetImageData())
+    {
+    // Create (non-allocated) image data that matches reference geometry
+    referenceGeometry_Reference = vtkSmartPointer<vtkOrientedImageData>::New();
+    referenceGeometry_Reference->SetExtent(referenceVolumeNode->GetImageData()->GetExtent());
+    vtkSmartPointer<vtkMatrix4x4> ijkToRasMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+    referenceVolumeNode->GetIJKToRASMatrix(ijkToRasMatrix);
+    referenceGeometry_Reference->SetGeometryFromImageToWorldMatrix(ijkToRasMatrix);
+
+    // Transform it to the segmentation node coordinate system
+    referenceGeometry_Segmentation = vtkSmartPointer<vtkOrientedImageData>::New();
+    referenceGeometry_Segmentation->DeepCopy(referenceGeometry_Reference);
+
+    // Get transform between reference volume and segmentation node
+    if (referenceVolumeNode->GetParentTransformNode() != segmentationNode->GetParentTransformNode())
+      {
+      referenceGeometryToSegmentationTransform = vtkSmartPointer<vtkGeneralTransform>::New();
+      vtkMRMLTransformNode::GetTransformBetweenNodes(referenceVolumeNode->GetParentTransformNode(),
+        segmentationNode->GetParentTransformNode(), referenceGeometryToSegmentationTransform);
+      vtkOrientedImageDataResample::TransformOrientedImage(referenceGeometry_Segmentation, referenceGeometryToSegmentationTransform, true /* geometry only */);
+      }
+    }
+
+  // Generate shared labelmap for the exported segments in segmentation coordinates
+  vtkSmartPointer<vtkOrientedImageData> sharedImage_Segmentation = vtkSmartPointer<vtkOrientedImageData>::New();
+  if (!segmentationNode->GenerateMergedLabelmapForAllSegments(sharedImage_Segmentation, extentComputationMode,
+    referenceGeometry_Segmentation, segmentIDs))
+    {
+    vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsToLabelmapNode: Failed to generate shared labelmap");
+    return;
+    }
+
+  // Transform shared labelmap to reference geometry coordinate system
+  if (referenceGeometryToSegmentationTransform)
+    {
+    vtkAbstractTransform* segmentationToReferenceGeometryTransform = referenceGeometryToSegmentationTransform->GetInverse();
+    segmentationToReferenceGeometryTransform->Update();
+    vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(sharedImage_Segmentation, referenceGeometry_Reference, mergedLabelmap_Reference,
+      false /* nearest neighbor interpolation*/, false /* no padding */, segmentationToReferenceGeometryTransform);
+    }
+  else
+    {
+    mergedLabelmap_Reference->DeepCopy(sharedImage_Segmentation);
+    }
+}
+
+//-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode,
   std::vector<std::string>& segmentIDs, vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode /*=nullptr*/,
   int extentComputationMode /*=vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS*/, vtkMRMLColorTableNode* exportColorTable/*=nullptr*/)
@@ -1013,31 +1067,14 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
     }
   labelmapNode->SetAndObserveTransformNodeID(parentTransformNode ? parentTransformNode->GetID() : "");
 
-  // Get reference geometry in the segmentation node's coordinate system
-  vtkSmartPointer<vtkOrientedImageData> referenceGeometry_Reference; // reference geometry in reference node coordinate system
-  vtkSmartPointer<vtkOrientedImageData> referenceGeometry_Segmentation; // reference geometry in segmentation coordinate system
-  vtkSmartPointer<vtkGeneralTransform> referenceGeometryToSegmentationTransform;
-  if (referenceVolumeNode && referenceVolumeNode->GetImageData())
+  vtkNew<vtkOrientedImageData> mergedLabelmap_Reference;
+  vtkNew<vtkStringArray> segmentIDsArray;
+  for (std::string segmentID : segmentIDs)
     {
-    // Create (non-allocated) image data that matches reference geometry
-    referenceGeometry_Reference = vtkSmartPointer<vtkOrientedImageData>::New();
-    referenceGeometry_Reference->SetExtent(referenceVolumeNode->GetImageData()->GetExtent());
-    vtkSmartPointer<vtkMatrix4x4> ijkToRasMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
-    referenceVolumeNode->GetIJKToRASMatrix(ijkToRasMatrix);
-    referenceGeometry_Reference->SetGeometryFromImageToWorldMatrix(ijkToRasMatrix);
-
-    // Transform it to the segmentation node coordinate system
-    referenceGeometry_Segmentation = vtkSmartPointer<vtkOrientedImageData>::New();
-    referenceGeometry_Segmentation->DeepCopy(referenceGeometry_Reference);
-    // Apply parent transform of the volume node if any
-    if (referenceVolumeNode->GetParentTransformNode() != segmentationNode->GetParentTransformNode())
-      {
-      referenceGeometryToSegmentationTransform = vtkSmartPointer<vtkGeneralTransform>::New();
-      vtkMRMLTransformNode::GetTransformBetweenNodes(referenceVolumeNode->GetParentTransformNode(),
-        segmentationNode->GetParentTransformNode(), referenceGeometryToSegmentationTransform);
-      vtkOrientedImageDataResample::TransformOrientedImage(referenceGeometry_Segmentation, referenceGeometryToSegmentationTransform, true /* geometry only */);
-      }
+    segmentIDsArray->InsertNextValue(segmentID);
     }
+  vtkSlicerSegmentationsModuleLogic::GenerateMergedLabelmapInReferenceGeometry(segmentationNode, referenceVolumeNode,
+    segmentIDsArray, extentComputationMode, mergedLabelmap_Reference);
 
   vtkSmartPointer<vtkIntArray> labelValues = nullptr;
   if (exportColorTable)
@@ -1051,33 +1088,8 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
     vtkSlicerSegmentationsModuleLogic::GetLabelValuesFromColorNode(segmentationNode, exportColorTable, segmentIdsArray, labelValues);
     }
 
-  // Generate shared labelmap for the exported segments
-  vtkSmartPointer<vtkOrientedImageData> sharedImage_Segmentation = vtkSmartPointer<vtkOrientedImageData>::New();
-  if (!segmentationNode->GenerateMergedLabelmap(sharedImage_Segmentation, extentComputationMode,
-    referenceGeometry_Segmentation, segmentIDs, labelValues))
-    {
-    vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsToLabelmapNode: Failed to generate shared labelmap");
-    return false;
-    }
-
-  // Transform shared labelmap to reference geometry coordinate system
-  vtkSmartPointer<vtkOrientedImageData> sharedImage_Reference;
-  if (referenceGeometryToSegmentationTransform)
-    {
-    sharedImage_Reference = vtkSmartPointer<vtkOrientedImageData>::New();
-    vtkAbstractTransform* segmentationToReferenceGeometryTransform = referenceGeometryToSegmentationTransform->GetInverse();
-    segmentationToReferenceGeometryTransform->Update();
-    vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(sharedImage_Segmentation, referenceGeometry_Reference, sharedImage_Reference,
-      false /* nearest neighbor interpolation*/, false /* no padding */, segmentationToReferenceGeometryTransform);
-    }
-  else
-    {
-    sharedImage_Reference = sharedImage_Segmentation;
-    }
-  sharedImage_Segmentation = nullptr; // free up memory
-
   // Export shared labelmap to the output node
-  if (!vtkSlicerSegmentationsModuleLogic::CreateLabelmapVolumeFromOrientedImageData(sharedImage_Reference, labelmapNode))
+  if (!vtkSlicerSegmentationsModuleLogic::CreateLabelmapVolumeFromOrientedImageData(mergedLabelmap_Reference, labelmapNode))
     {
     vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsToLabelmapNode: Failed to create labelmap from shared segments image");
     return false;
@@ -2312,6 +2324,7 @@ void vtkSlicerSegmentationsModuleLogic::GetLabelValuesFromColorNode(vtkMRMLSegme
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsBinaryLabelmapRepresentationToFiles(std::string destinationFolder,
   vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* segmentIds/*=nullptr*/, std::string extension/*="NRRD"*/, bool useCompression/*=false*/,
+  vtkMRMLVolumeNode* referenceVolumeNode /*=nullptr*/, int extentComputationMode /*=vtkSegmentation::EXTENT_REFERENCE_GEOMETRY*/,
   vtkMRMLColorTableNode* colorTableNode/*=nullptr*/)
 {
   if (!segmentationNode)
@@ -2327,11 +2340,13 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsBinaryLabelmapRepresentati
     vtkSlicerSegmentationsModuleLogic::GetLabelValuesFromColorNode(segmentationNode, colorTableNode, segmentIds, labelValues);
     }
 
-  vtkNew<vtkOrientedImageData> mergedLabelmap;
-  segmentationNode->GenerateMergedLabelmapForAllSegments(mergedLabelmap, vtkSegmentation::EXTENT_REFERENCE_GEOMETRY, nullptr, segmentIds, labelValues);
+
+  vtkNew<vtkOrientedImageData> mergedLabelmap_Reference;
+  vtkSlicerSegmentationsModuleLogic::GenerateMergedLabelmapInReferenceGeometry(segmentationNode, referenceVolumeNode,
+    segmentIds, extentComputationMode, mergedLabelmap_Reference);
 
   vtkNew<vtkMatrix4x4> rasToIJKMatrix;
-  mergedLabelmap->GetWorldToImageMatrix(rasToIJKMatrix);
+  mergedLabelmap_Reference->GetWorldToImageMatrix(rasToIJKMatrix);
 
   std::string safeFileName = vtkSlicerSegmentationsModuleLogic::GetSafeFileName(segmentationNode->GetName());
   std::string fullNameWithoutExtension = destinationFolder + "/" + safeFileName;
@@ -2339,7 +2354,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsBinaryLabelmapRepresentati
   std::string fullNameWithExtension = fullNameWithoutExtension + "." + fileExtension;
 
   vtkNew<vtkITKImageWriter> writer;
-  writer->SetInputData(mergedLabelmap);
+  writer->SetInputData(mergedLabelmap_Reference);
   writer->SetRasToIJKMatrix(rasToIJKMatrix);
   writer->SetFileName(fullNameWithExtension.c_str());
   writer->SetUseCompression(useCompression);
