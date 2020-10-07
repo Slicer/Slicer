@@ -46,20 +46,21 @@ void vtkMRMLTextNode::SetText(const std::string &text, int encoding/*-1*/)
 {
   vtkDebugMacro( << this->GetClassName() << " (" << this << "): setting Text to " << text);
 
-  int wasModifying = this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
   if (encoding >= 0)
     {
     this->SetEncoding(encoding);
     }
   if (this->Text == text)
     {
-    this->EndModify(wasModifying);
     return;
     }
   this->Text = text;
+  // this indicates that the text (that is stored in a separate file) is modified
+  // and therefore the object will be marked as changed for file saving
+  this->StorableModifiedTime.Modified();
   this->InvokeCustomModifiedEvent(vtkMRMLTextNode::TextModifiedEvent);
   this->Modified();
-  this->EndModify(wasModifying);
 }
 
 //----------------------------------------------------------------------------
@@ -67,12 +68,17 @@ void vtkMRMLTextNode::SetEncoding(int encoding)
 {
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting encoding to " << encoding);
   int clampedEncoding = std::max(VTK_ENCODING_NONE, std::min(encoding, VTK_ENCODING_UNKNOWN));
-  if (this->Encoding != clampedEncoding)
+  if (this->Encoding == clampedEncoding)
     {
-    this->Encoding = clampedEncoding;
-    this->InvokeCustomModifiedEvent(vtkMRMLTextNode::TextModifiedEvent);
-    this->Modified();
+    return;
     }
+  MRMLNodeModifyBlocker blocker(this);
+  this->Encoding = clampedEncoding;
+  // this indicates that the text (that is stored in a separate file) is modified
+  // and therefore the object will be marked as changed for file saving
+  this->StorableModifiedTime.Modified();
+  this->InvokeCustomModifiedEvent(vtkMRMLTextNode::TextModifiedEvent);
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -111,13 +117,12 @@ std::string vtkMRMLTextNode::GetEncodingAsString()
 //----------------------------------------------------------------------------
 void vtkMRMLTextNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
   Superclass::ReadXMLAttributes(atts);
   vtkMRMLReadXMLBeginMacro(atts);
   vtkMRMLReadXMLStdStringMacro(text, Text);
   vtkMRMLReadXMLIntMacro(encoding, Encoding);
   vtkMRMLReadXMLEndMacro();
-  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

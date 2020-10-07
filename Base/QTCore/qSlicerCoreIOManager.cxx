@@ -210,18 +210,25 @@ qSlicerIO::IOFileType qSlicerCoreIOManager
 
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerCoreIOManager
-::fileWriterFileType(vtkObject* object)const
+::fileWriterFileType(vtkObject* object, const QString& format/*=QString()*/)const
 {
   Q_D(const qSlicerCoreIOManager);
   QList<qSlicerIO::IOFileType> matchingFileTypes;
+  // closest match is the writer that supports the node type but not
+  // that specific extension
+  QString closestMatch = QString("NoFile");
   foreach (const qSlicerFileWriter* writer, d->Writers)
     {
     if (writer->canWriteObject(object))
       {
-      return writer->fileType();
+      closestMatch = writer->fileType();
+      if (format.isEmpty() || writer->extensions(object).contains(format))
+        {
+        return writer->fileType();
+        }
       }
     }
-  return QString("NoFile");
+  return closestMatch;
 }
 
 //-----------------------------------------------------------------------------

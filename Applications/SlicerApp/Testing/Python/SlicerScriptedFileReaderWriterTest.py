@@ -40,6 +40,10 @@ class SlicerScriptedFileReaderWriterTestFileReader(object):
     return ['My file type (*.mft)']
 
   def canLoadFile(self, filePath):
+    # Only enable this reader in testing mode
+    if not slicer.app.testingEnabled():
+      return False
+
     firstLine = ''
     with open(filePath, 'r') as f:
       firstLine = f.readline()
@@ -95,6 +99,10 @@ class SlicerScriptedFileReaderWriterTestFileWriter(object):
     return ['My file type (*.mft)']
 
   def canWriteObject(self, obj):
+    # Only enable this writer in testing mode
+    if not slicer.app.testingEnabled():
+      return False
+
     return bool(obj.IsA("vtkMRMLTextNode"))
 
   def write(self, properties):

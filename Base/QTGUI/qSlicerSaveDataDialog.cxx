@@ -916,7 +916,8 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
     qSlicerCoreIOManager* coreIOManager =
       qSlicerCoreApplication::application()->coreIOManager();
     Q_ASSERT(coreIOManager);
-    qSlicerIO::IOFileType fileType = coreIOManager->fileWriterFileType(node);
+
+    qSlicerIO::IOFileType fileType = coreIOManager->fileWriterFileType(node, format);
     qSlicerIO::IOProperties savingParameters;
     if (options)
       {
