@@ -1187,3 +1187,33 @@ vtkMRMLColorTableNode* vtkMRMLSegmentationNode::GetLabelmapConversionColorTableN
 {
   return vtkMRMLColorTableNode::SafeDownCast(this->GetNodeReference(this->GetLabelmapConversionColorTableNodeReferenceRole()));
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLSegmentationNode::OnNodeReferenceAdded(vtkMRMLNodeReference* reference)
+{
+  this->Superclass::OnNodeReferenceAdded(reference);
+  if (std::string(reference->GetReferenceRole()) == this->GetReferenceImageGeometryReferenceRole())
+    {
+    this->InvokeCustomModifiedEvent(vtkMRMLSegmentationNode::ReferenceImageGeometryChangedEvent, reference->GetReferencedNode());
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSegmentationNode::OnNodeReferenceModified(vtkMRMLNodeReference* reference)
+{
+  this->Superclass::OnNodeReferenceModified(reference);
+  if (std::string(reference->GetReferenceRole()) == this->GetReferenceImageGeometryReferenceRole())
+    {
+    this->InvokeCustomModifiedEvent(vtkMRMLSegmentationNode::ReferenceImageGeometryChangedEvent, reference->GetReferencedNode());
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSegmentationNode::OnNodeReferenceRemoved(vtkMRMLNodeReference* reference)
+{
+  this->Superclass::OnNodeReferenceRemoved(reference);
+  if (std::string(reference->GetReferenceRole()) == this->GetReferenceImageGeometryReferenceRole())
+    {
+    this->InvokeCustomModifiedEvent(vtkMRMLSegmentationNode::ReferenceImageGeometryChangedEvent, reference->GetReferencedNode());
+    }
+}
