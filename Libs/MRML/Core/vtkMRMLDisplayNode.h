@@ -416,9 +416,10 @@ public:
   /// \sa SetScalarRangeFlag(), SetAutoScalarRange(), GetAutoScalarRange()
   void AutoScalarRangeOn();
   void AutoScalarRangeOff();
-  /// Update the AssignAttribute filter based on
-  /// its ActiveScalarName and its ActiveAttributeLocation
-  /// To be re-implemented in subclasses
+  /// Update the AssignAttribute filter based on its ActiveScalarName
+  /// and its ActiveAttributeLocation
+  /// To be re-implemented in subclasses if scalar display is supported,
+  /// to change active scalar and modify display pipeline if needed.
   virtual void UpdateAssignedAttribute() {};
   /// Update the ScalarRange based on the \sa ScalarRangeFlag.
   /// If \sa UseManualScalarRange is selected then the method has no effect.
@@ -435,7 +436,7 @@ public:
   /// Set the scalar range to use with color mapping
   /// \sa ScalarRangeFlag, GetScalarRangeFlag(), SetScalarRangeFlagFromString()
   /// \sa SetActiveScalarName()
-  void SetScalarRangeFlag(int flag);
+  virtual void SetScalarRangeFlag(int flag);
   /// Get the interpolation of the surface.
   /// \sa ScalarRangeFlag, SetScalarRangeFlag(), GetScalarRangeFlagAsString()
   vtkGetMacro(ScalarRangeFlag, int);

@@ -1294,9 +1294,32 @@ def arrayFromModelPointData(modelNode, arrayName):
   return narray
 
 def arrayFromModelPointDataModified(modelNode, arrayName):
-  """Indicate that modification of a numpy array returned by :py:meth:`arrayFromModelPoints` has been completed."""
+  """Indicate that modification of a numpy array returned by :py:meth:`arrayFromModelPointData` has been completed."""
   arrayVtk = modelNode.GetPolyData().GetPointData().GetArray(arrayName)
   arrayVtk.Modified()
+
+def arrayFromMarkupsControlPointData(markupsNode, arrayName):
+  """Return control point data array of a markups node as numpy array.
+
+  .. warning:: Important: memory area of the returned array is managed by VTK,
+    therefore values in the array may be changed, but the array must not be reallocated.
+    See :py:meth:`arrayFromVolume` for details.
+  """
+  import vtk.util.numpy_support
+  for measurementIndex in range(markupsNode.GetNumberOfMeasurements()):
+    measurement = markupsNode.GetNthMeasurement(measurementIndex)
+    doubleArrayVtk = measurement.GetControlPointValues()
+    if doubleArrayVtk and doubleArrayVtk.GetName() == arrayName:
+      narray = vtk.util.numpy_support.vtk_to_numpy(doubleArrayVtk)
+      return narray
+
+def arrayFromMarkupsControlPointDataModified(markupsNode, arrayName):
+  """Indicate that modification of a numpy array returned by :py:meth:`arrayFromMarkupsControlPointData` has been completed."""
+  for measurementIndex in range(markupsNode.GetNumberOfMeasurements()):
+    measurement = markupsNode.GetNthMeasurement(measurementIndex)
+    doubleArrayVtk = measurement.GetControlPointValues()
+    if doubleArrayVtk and doubleArrayVtk.GetName() == arrayName:
+      doubleArrayVtk.Modified()
 
 def arrayFromModelPolyIds(modelNode):
   """Return poly id array of a model node as numpy array.
@@ -1440,7 +1463,7 @@ def updateTransformMatrixFromArray(transformNode, narray, toWorld = False):
     transformNode.SetMatrixTransformToParent(vmatrix)
 
 def arrayFromGridTransformModified(gridTransformNode):
-  """Indicate that modification of a numpy array returned by :py:meth:`arrayFromModelPoints` has been completed."""
+  """Indicate that modification of a numpy array returned by :py:meth:`arrayFromGridTransform` has been completed."""
   transformGrid = gridTransformNode.GetTransformFromParent()
   displacementGrid = transformGrid.GetDisplacementGrid()
   displacementGrid.GetPointData().GetScalars().Modified()
@@ -1689,7 +1712,7 @@ def arrayFromTableColumn(tableNode, columnName):
   return narray
 
 def arrayFromTableColumnModified(tableNode, columnName):
-  """Indicate that modification of a numpy array returned by :py:meth:`arrayFromModelPoints` has been completed."""
+  """Indicate that modification of a numpy array returned by :py:meth:`arrayFromTableColumn` has been completed."""
   import vtk.util.numpy_support
   columnData = tableNode.GetTable().GetColumnByName(columnName)
   columnData.Modified()

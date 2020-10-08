@@ -28,6 +28,8 @@
 // Export
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 
+class vtkCallbackCommand;
+
 /// Filter that generates curves between points of an input polydata
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkCurveMeasurementsCalculator : public vtkPolyDataAlgorithm
 {
@@ -62,10 +64,17 @@ protected:
   bool CalculatePolyDataCurvature(vtkPolyData* polyData);
   bool InterpolateControlPointMeasurementToPolyData(vtkPolyData* outputPolyData);
 
+  /// Callback function observing data array modified events.
+  /// If a data array to interpolate is modified, then the interpolation needs to be re-run.
+  static void OnControlPointArrayModified(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
+
 protected:
   vtkWeakPointer<vtkCollection> Measurements;
   bool CalculateCurvature{false};
   bool InterpolateControlPointMeasurement{false};
+
+  /// Command handling data array modified events
+  vtkCallbackCommand* ControlPointArrayModifiedCallbackCommand;
 
   int FillInputPortInformation(int port, vtkInformation* info) override;
   int RequestData(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector) override;

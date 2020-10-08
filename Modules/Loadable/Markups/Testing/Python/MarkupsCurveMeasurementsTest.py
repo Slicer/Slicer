@@ -47,7 +47,7 @@ if curvatureArray.GetMaxId() != curvePointData.GetNumberOfTuples()-1:
   exceptionMessage = "Unexpected number of values in curvature data array: " + str(curvatureArray.GetMaxId())
   raise Exception(exceptionMessage)
 
-if curvatureArray.GetMaxNorm() - 0.9816015970208652 > 0.0001:
+if abs(curvatureArray.GetMaxNorm() - 0.9816015970208652) > 0.0001:
   exceptionMessage = "Unexpected maximum norm in curvature data array: " + str(curvatureArray.GetMaxNorm())
   raise Exception(exceptionMessage)
 

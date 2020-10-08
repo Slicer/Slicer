@@ -72,9 +72,17 @@
      <property name="toolTip">
       <string>Set the scalar range mode flag. Data (auto) updates the Display Scalar Range from the scalar range of the data. Direct color mapping option bypasses lookup table and uses scalar values as RGB color.</string>
      </property>
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
      <item>
       <property name="text">
-       <string>Active scalar (auto)</string>
+       <string>Manual</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Data scalar range (auto)</string>
       </property>
      </item>
      <item>
@@ -85,11 +93,6 @@
      <item>
       <property name="text">
        <string>Data type</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Manual</string>
       </property>
      </item>
      <item>

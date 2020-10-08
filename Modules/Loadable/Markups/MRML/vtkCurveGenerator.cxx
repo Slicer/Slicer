@@ -643,6 +643,10 @@ int vtkCurveGenerator::GeneratePointsFromFunction(vtkPoints* inputPoints, vtkPoi
     previousPoint[2] = curvePoint[2];
 
     // Calculate pedigree ID for point
+    // Each poly data point corresponding to a control point has the same ID as the control point index,
+    // and the interpolating segment is a fractional value:
+    //   Control points:   0,                  1,                  2, ...
+    //   Poly data points: 0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1,75, 2, ...
     int correspondingControlPointIndex = pointIndex / this->NumberOfPointsPerInterpolatingSegment;
     int interpolatedPointIndexAfterControlPoint = pointIndex % this->NumberOfPointsPerInterpolatingSegment;
     double pedigreeId = correspondingControlPointIndex

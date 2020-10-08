@@ -58,7 +58,7 @@ signals:
   /// Signal sent if the any property in the display node is changed
   void displayNodeChanged();
   /// Signal sent if the auto/manual value is updated
-  void scalarRangeModeValueChanged(qMRMLScalarsDisplayWidget::ControlMode value);
+  void scalarRangeModeValueChanged(vtkMRMLDisplayNode::ScalarRangeFlagType value);
 
 public slots:
   /// Set the markups display node to show edit properties of

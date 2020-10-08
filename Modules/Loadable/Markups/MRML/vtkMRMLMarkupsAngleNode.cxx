@@ -18,9 +18,11 @@
 // MRML includes
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsAngleNode.h"
+#include "vtkMRMLMeasurementAngle.h"
 #include "vtkMRMLScene.h"
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
@@ -38,6 +40,12 @@ vtkMRMLMarkupsAngleNode::vtkMRMLMarkupsAngleNode()
 {
   this->MaximumNumberOfControlPoints = 3;
   this->RequiredNumberOfControlPoints = 3;
+
+  // Setup measurements calculated for this markup type
+  vtkNew<vtkMRMLMeasurementAngle> angleMeasurement;
+  angleMeasurement->SetName("angle");
+  angleMeasurement->SetInputMRMLNode(this);
+  this->Measurements->AddItem(angleMeasurement);
 }
 
 //----------------------------------------------------------------------------
@@ -237,20 +245,18 @@ double vtkMRMLMarkupsAngleNode::GetAngleDegrees()
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsAngleNode::UpdateMeasurementsInternal()
 {
-  this->RemoveAllMeasurements();
   if (this->GetNumberOfDefinedControlPoints(true) == 3)
     {
-    double p1[3] = { 0.0 };
-    double c[3] = { 0.0 };
-    double p2[3] = { 0.0 };
-    this->GetNthControlPointPositionWorld(0, p1);
-    this->GetNthControlPointPositionWorld(1, c);
-    this->GetNthControlPointPositionWorld(2, p2);
-
-    if ( vtkMath::Distance2BetweenPoints(p1, c) > VTK_DBL_EPSILON
-      && vtkMath::Distance2BetweenPoints(p2, c) > VTK_DBL_EPSILON )
+    // Calculate enabled measurements
+    for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
       {
-      this->SetNthMeasurement(0, "angle", this->GetAngleDegrees(), "deg", "%3.1f%s");
+      vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
+        this->Measurements->GetItemAsObject(index) );
+      if (currentMeasurement && currentMeasurement->GetEnabled())
+        {
+        currentMeasurement->ClearValue();
+        currentMeasurement->Compute();
+        }
       }
     }
   this->WriteMeasurementsToDescription();

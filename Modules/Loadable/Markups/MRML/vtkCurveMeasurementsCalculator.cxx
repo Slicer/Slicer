@@ -19,9 +19,11 @@
 #include "vtkCurveMeasurementsCalculator.h"
 
 // MRML includes
+#include <vtkEventBroker.h>
 #include <vtkMRMLMeasurement.h>
 
 // VTK includes
+#include <vtkCallbackCommand.h>
 #include <vtkCellArray.h>
 #include <vtkCellData.h>
 #include <vtkDoubleArray.h>
@@ -40,12 +42,24 @@ vtkCurveMeasurementsCalculator::vtkCurveMeasurementsCalculator()
 {
   this->SetNumberOfInputPorts(1);
 
+  this->ControlPointArrayModifiedCallbackCommand = vtkCallbackCommand::New();
+  this->ControlPointArrayModifiedCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
+  this->ControlPointArrayModifiedCallbackCommand->SetCallback( vtkCurveMeasurementsCalculator::OnControlPointArrayModified );
+
   // timestamps for input and output are the same, initially
   this->Modified();
 }
 
 //------------------------------------------------------------------------------
-vtkCurveMeasurementsCalculator::~vtkCurveMeasurementsCalculator() = default;
+vtkCurveMeasurementsCalculator::~vtkCurveMeasurementsCalculator()
+{
+  if (this->ControlPointArrayModifiedCallbackCommand)
+    {
+    this->ControlPointArrayModifiedCallbackCommand->SetClientData(nullptr);
+    this->ControlPointArrayModifiedCallbackCommand->Delete();
+    this->ControlPointArrayModifiedCallbackCommand = nullptr;
+    }
+}
 
 //------------------------------------------------------------------------------
 void vtkCurveMeasurementsCalculator::PrintSelf(std::ostream &os, vtkIndent indent)
@@ -137,7 +151,7 @@ int vtkCurveMeasurementsCalculator::RequestData(
     }
   else
     {
-    //TODO: Remove arrays? Prefix their names with "Interpolated:"?
+    //TODO: Remove arrays?
     }
 
   outputPolyData->Squeeze();
@@ -157,10 +171,8 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
     return false;
     }
 
-  // Note: This algorithm has been ported from CurveMaker
+  // Note: This algorithm has been ported from CurveMaker and further improved
   //       https://github.com/tokjun/CurveMaker/blob/master/CurveMaker/CurveMaker.py
-  // TODO: This routine does not consider a closed loop. If a closed loop is specified,
-  //       It needs to calculate the curvature of two ends differently.
 
   vtkPoints* points = polyData->GetPoints();
   vtkCellArray* lines = polyData->GetLines();
@@ -258,7 +270,6 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
 
   // Set curvature array to output
   polyData->GetPointData()->AddArray(curvatureValues);
-  polyData->GetPointData()->SetActiveScalars("Curvature"); //TODO: Do it here or in displayable manager when turning off curvature visibility?
 
   return true;
 }
@@ -277,7 +288,6 @@ bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyDat
   vtkIdType numberOfPoints = outputPolyData->GetNumberOfPoints();
   if (numberOfPoints == 0 || outputPolyData->GetNumberOfLines() == 0)
     {
-    // vtkErrorMacro("InterpolateControlPointMeasurementToPolyData: No points or lines in input poly data");
     return false;
     }
   vtkDoubleArray* pedigreeIdsArray = vtkDoubleArray::SafeDownCast(outputPolyData->GetPointData()->GetArray("PedigreeIDs"));
@@ -315,6 +325,11 @@ bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyDat
       return false;
       }
 
+    // Observe control point data array. If it is modified, then interpolation needs to be re-run
+    vtkEventBroker::GetInstance()->AddObservation(
+      controlPointValues, vtkCommand::ModifiedEvent, this, this->ControlPointArrayModifiedCallbackCommand);
+    controlPointValues->Register(this);
+
     vtkNew<vtkDoubleArray> interpolatedMeasurement;
     std::string arrayName = std::string("Interpolated:") + (currentMeasurement->GetName() ? std::string(currentMeasurement->GetName()) : "Unknown");
     interpolatedMeasurement->SetName(arrayName.c_str());
@@ -349,4 +364,12 @@ bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyDat
     }
 
   return true;
+}
+
+//---------------------------------------------------------------------------
+void vtkCurveMeasurementsCalculator::OnControlPointArrayModified(
+  vtkObject* caller, unsigned long vtkNotUsed(eid), void* clientData, void* callData)
+{
+  vtkCurveMeasurementsCalculator* self = reinterpret_cast<vtkCurveMeasurementsCalculator*>(clientData);
+  self->Modified();
 }
