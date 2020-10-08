@@ -22,12 +22,14 @@
 // MRMLWidgets includes
 #include "qMRMLWidget.h"
 
+// MRML includes
+#include "vtkMRMLDisplayNode.h"
+
 // CTK includes
 #include <ctkVTKObject.h>
 
 class qMRMLScalarsDisplayWidgetPrivate;
 class vtkMRMLColorNode;
-class vtkMRMLDisplayNode;
 class vtkMRMLNode;
 
 class QMRML_WIDGETS_EXPORT qMRMLScalarsDisplayWidget : public qMRMLWidget
@@ -35,8 +37,7 @@ class QMRML_WIDGETS_EXPORT qMRMLScalarsDisplayWidget : public qMRMLWidget
   Q_OBJECT
   QVTK_OBJECT
 
-  Q_PROPERTY(ControlMode scalarRangeMode READ scalarRangeMode WRITE setScalarRangeMode)
-  Q_ENUMS(ControlMode)
+  Q_PROPERTY(vtkMRMLDisplayNode::ScalarRangeFlagType scalarRangeMode READ scalarRangeMode WRITE setScalarRangeMode)
 
 public:
   /// Constructors
@@ -46,25 +47,17 @@ public:
 
   /// Get the (first) current display node
   vtkMRMLDisplayNode* mrmlDisplayNode()const;
-  /// Get current display nodes (if multi selection)
+  /// Get current display nodes. This is for supporting changing properties
+  /// in case of multiple nodes are selected (e.g., in subject hierarchy folders).
   QList<vtkMRMLDisplayNode*> mrmlDisplayNodes()const;
 
   bool scalarsVisibility()const;
   QString activeScalarName()const;
   vtkMRMLColorNode* scalarsColorNode()const;
 
-  enum ControlMode
-  {
-    Data = 0,
-    LUT = 1,
-    DataType = 2,
-    Manual = 3,
-    DirectMapping = 4
-  };
-
   /// Set scalar range mode
-  void setScalarRangeMode(ControlMode controlMode);
-  ControlMode scalarRangeMode() const;
+  void setScalarRangeMode(vtkMRMLDisplayNode::ScalarRangeFlagType mode);
+  vtkMRMLDisplayNode::ScalarRangeFlagType scalarRangeMode() const;
 
   /// Get minimum of the scalar display range
   double minimumValue()const;
@@ -74,7 +67,7 @@ public:
 
 signals:
   /// Signal sent if the auto/manual value is updated
-  void scalarRangeModeValueChanged(qMRMLScalarsDisplayWidget::ControlMode value);
+  void scalarRangeModeValueChanged(vtkMRMLDisplayNode::ScalarRangeFlagType mode);
   /// Signal sent if the any property in the display node is changed
   void displayNodeChanged();
 

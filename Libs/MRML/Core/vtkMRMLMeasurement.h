@@ -10,6 +10,8 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #ifndef __vtkMRMLMeasurement_h
 #define __vtkMRMLMeasurement_h
 
+//#define USE_POLYDATA_MEASUREMENTS
+
 // MRML includes
 #include <vtkCodedEntry.h>
 #include "vtkMRMLNode.h"
@@ -39,7 +41,8 @@ public:
   /// Reset state of object
   virtual void Initialize();
 
-  /// Clear value and derived variables
+  /// Clear measured value
+  /// Note: per-control-point values are not cleared
   virtual void ClearValue();
 
   /// Copy one type into another (deep copy)
@@ -103,9 +106,11 @@ public:
   void SetControlPointValues(vtkDoubleArray* inputValues);
   vtkGetObjectMacro(ControlPointValues, vtkDoubleArray);
 
-  /// Set the per-control point measurement values
-  //void SetPolyDataValues(vtkPolyData* inputValues);
-  //vtkGetObjectMacro(PolyDataValues, vtkPolyData);
+#ifdef USE_POLYDATA_MEASUREMENTS
+  /// Set the per-polydata point measurement values
+  void SetPolyDataValues(vtkPolyData* inputValues);
+  vtkGetObjectMacro(PolyDataValues, vtkPolyData);
+#endif
 
   /// Set input MRML node used for calculating the measurement \sa Execute
   void SetInputMRMLNode(vtkMRMLNode* node);
@@ -132,8 +137,10 @@ protected:
 
   /// Per-control point measurements
   vtkDoubleArray* ControlPointValues{nullptr};
+#ifdef USE_POLYDATA_MEASUREMENTS
   /// Measurement or displayed surface element stored in poly data
-  //vtkPolyData* PolyDataValues{nullptr};
+  vtkPolyData* PolyDataValues{nullptr};
+#endif
   /// MRML node used to calculate the measurement \sa Execute
   vtkWeakPointer<vtkMRMLNode> InputMRMLNode;
 };

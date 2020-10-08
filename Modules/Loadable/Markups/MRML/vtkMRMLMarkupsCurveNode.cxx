@@ -109,6 +109,7 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   this->CurveMeasurementsCalculator = vtkSmartPointer<vtkCurveMeasurementsCalculator>::New();
   this->CurveMeasurementsCalculator->SetMeasurements(this->Measurements);
   this->CurveMeasurementsCalculator->SetInputConnection(this->CurveGenerator->GetOutputPort());
+  this->CurveMeasurementsCalculator->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
 
   this->ScalarDisplayAssignAttribute = vtkSmartPointer<vtkAssignAttribute>::New();
 
@@ -1178,6 +1179,14 @@ void vtkMRMLMarkupsCurveNode::ProcessMRMLEvents(vtkObject* caller,
     else
       {
       this->SurfaceScalarPassThroughFilter->SetInputConnection(this->SurfaceScalarCalculator->GetOutputPort());
+      }
+    }
+  else if (caller == this->CurveMeasurementsCalculator.GetPointer())
+    {
+    vtkMRMLMarkupsDisplayNode* displayNode = this->GetMarkupsDisplayNode();
+    if (displayNode)
+      {
+      this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, displayNode);
       }
     }
 

@@ -172,20 +172,32 @@ public:
 
   //@{
   /**
-   * Get/set measurement data, such as length, angle, diameter, cross-section area.
+   * Get measurement data, such as length, angle, diameter, cross-section area.
+   * Add/remove/clear measurements.
    */
   int GetNumberOfMeasurements();
   int GetNumberOfEnabledMeasurements();
   vtkMRMLMeasurement* GetNthMeasurement(int id);
   void AddMeasurement(vtkMRMLMeasurement* measurement);
+  void RemoveNthMeasurement(int id);
+  void ClearValueForAllMeasurements();
+  //@}
+  //@{
+  /**
+   * Set measurement data, such as length, angle, diameter, cross-section area.
+   *
+   * IMPORTANT: These functions should not be used any more. Setting measurements now
+   * happens in the \sa UpdateMeasurementsInternal functions by calling Compute on the
+   * measurements. Similarly, RemoveAllMeasurements should not be called to clear the values,
+   * because the measurements are not set externally but added internally in the constructors
+   * and only updated (Compute called) as needed.
+   */
   void SetNthMeasurement(int id, vtkMRMLMeasurement* measurement);
   void SetNthMeasurement(int id, const std::string& name, double value, const std::string &units,
     std::string printFormat = "", const std::string description = "",
     vtkCodedEntry* quantityCode = nullptr, vtkCodedEntry* derivationCode = nullptr,
     vtkCodedEntry* unitsCode = nullptr, vtkCodedEntry* methodCode = nullptr);
-  void RemoveNthMeasurement(int id);
   void RemoveAllMeasurements();
-  void ClearValueForAllMeasurements();
   //@}
 
   /// Invoke events when control points change, passing the control point index if applicable.

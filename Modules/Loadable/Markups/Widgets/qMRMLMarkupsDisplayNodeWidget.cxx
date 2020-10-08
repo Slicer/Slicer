@@ -174,8 +174,8 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   this->curveLineDiameterSliderWidget->setVisible(this->glyphSizeIsAbsoluteButton->isChecked());
   this->curveLineThicknessSliderWidget->setHidden(this->glyphSizeIsAbsoluteButton->isChecked());
 
-  q->connect(this->ScalarsDisplayWidget, SIGNAL(scalarRangeModeValueChanged(qMRMLScalarsDisplayWidget::ControlMode)),
-    q, SIGNAL(scalarRangeModeValueChanged(qMRMLScalarsDisplayWidget::ControlMode)));
+  q->connect(this->ScalarsDisplayWidget, SIGNAL(scalarRangeModeValueChanged(vtkMRMLDisplayNode::ScalarRangeFlagType)),
+    q, SIGNAL(scalarRangeModeValueChanged(vtkMRMLDisplayNode::ScalarRangeFlagType)));
   q->connect(this->ScalarsDisplayWidget, SIGNAL(displayNodeChanged()),
     q, SIGNAL(displayNodeChanged()));
 

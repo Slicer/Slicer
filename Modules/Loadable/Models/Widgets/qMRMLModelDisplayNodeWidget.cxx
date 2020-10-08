@@ -143,8 +143,8 @@ void qMRMLModelDisplayNodeWidgetPrivate::init()
   q->connect(this->InterpolationComboBox, SIGNAL(currentIndexChanged(int)),
     q, SLOT(setInterpolation(int)));
 
-  q->connect(this->ScalarsDisplayWidget, SIGNAL(scalarRangeModeValueChanged(qMRMLScalarsDisplayWidget::ControlMode)),
-    q, SIGNAL(scalarRangeModeValueChanged(qMRMLScalarsDisplayWidget::ControlMode)));
+  q->connect(this->ScalarsDisplayWidget, SIGNAL(scalarRangeModeValueChanged(vtkMRMLDisplayNode::ScalarRangeFlagType)),
+    q, SIGNAL(scalarRangeModeValueChanged(vtkMRMLDisplayNode::ScalarRangeFlagType)));
   q->connect(this->ScalarsDisplayWidget, SIGNAL(displayNodeChanged()),
     q, SIGNAL(displayNodeChanged()));
 

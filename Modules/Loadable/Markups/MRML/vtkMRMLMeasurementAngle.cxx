@@ -16,51 +16,64 @@
 ==============================================================================*/
 
 // MRML includes
-#include "vtkMRMLMeasurementLength.h"
+#include "vtkMRMLMeasurementAngle.h"
 #include "vtkMRMLUnitNode.h"
 
 // Markups includes
-#include "vtkMRMLMarkupsCurveNode.h"
-#include "vtkMRMLMarkupsLineNode.h"
+#include "vtkMRMLMarkupsAngleNode.h"
 
-vtkStandardNewMacro(vtkMRMLMeasurementLength);
+vtkStandardNewMacro(vtkMRMLMeasurementAngle);
 
 //----------------------------------------------------------------------------
-vtkMRMLMeasurementLength::vtkMRMLMeasurementLength()
+vtkMRMLMeasurementAngle::vtkMRMLMeasurementAngle()
 {
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLMeasurementLength::~vtkMRMLMeasurementLength() = default;
+vtkMRMLMeasurementAngle::~vtkMRMLMeasurementAngle() = default;
 
 //----------------------------------------------------------------------------
-void vtkMRMLMeasurementLength::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLMeasurementAngle::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMeasurementLength::Compute()
+void vtkMRMLMeasurementAngle::Compute()
 {
   if (!this->InputMRMLNode)
     {
     return;
     }
 
-  vtkMRMLMarkupsCurveNode* curveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(this->InputMRMLNode);
-  vtkMRMLMarkupsLineNode* lineNode = vtkMRMLMarkupsLineNode::SafeDownCast(this->InputMRMLNode);
+  vtkMRMLMarkupsAngleNode* angleNode = vtkMRMLMarkupsAngleNode::SafeDownCast(this->InputMRMLNode);
   vtkMRMLUnitNode* unitNode = nullptr;
 
-  double length = 0.0;
-  if (curveNode)
+  double angle = 0.0;
+  if (angleNode)
     {
-    length = curveNode->GetCurveLengthWorld();
-    unitNode = curveNode->GetUnitNode("length");
-    }
-  else if (lineNode)
-    {
-    length = lineNode->GetLineLengthWorld();
-    unitNode = lineNode->GetUnitNode("length");
+    if (angleNode->GetNumberOfDefinedControlPoints(true) != 3)
+      {
+      vtkErrorMacro("Compute: Angle nodes must have exactly three control points ("
+        << angleNode->GetNumberOfDefinedControlPoints(true) << " found)");
+      return;
+      }
+    double p1[3] = { 0.0 };
+    double c[3] = { 0.0 };
+    double p2[3] = { 0.0 };
+    angleNode->GetNthControlPointPositionWorld(0, p1);
+    angleNode->GetNthControlPointPositionWorld(1, c);
+    angleNode->GetNthControlPointPositionWorld(2, p2);
+
+    if ( vtkMath::Distance2BetweenPoints(p1, c) < VTK_DBL_EPSILON
+      || vtkMath::Distance2BetweenPoints(p2, c) < VTK_DBL_EPSILON )
+      {
+      vtkErrorMacro("Compute: Control points are too close to each other to compute angle reliably");
+      return;
+      }
+
+    angle = angleNode->GetAngleDegrees();
+    unitNode = angleNode->GetUnitNode("angle");
     }
   else
     {
@@ -69,22 +82,22 @@ void vtkMRMLMeasurementLength::Compute()
     }
 
   std::string printFormat;
-  std::string unit = "mm";
+  std::string unit = "deg";
   if (unitNode)
     {
     if (unitNode->GetSuffix())
       {
       unit = unitNode->GetSuffix();
       }
-    length = unitNode->GetDisplayValueFromValue(length);
+    angle = unitNode->GetDisplayValueFromValue(angle);
     printFormat = unitNode->GetDisplayStringFormat();
     }
   else
     {
-    printFormat = "%-#4.4gmm";
+    printFormat = "%3.1f%s";
     }
 
-  this->SetValue(length);
+  this->SetValue(angle);
   this->SetUnits(unit.c_str());
   this->SetPrintFormat(printFormat.c_str());
 }

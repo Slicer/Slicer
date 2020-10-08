@@ -56,7 +56,9 @@ void vtkMRMLMeasurement::Initialize()
   this->SetUnitsCode(nullptr);
   this->SetMethodCode(nullptr);
   this->SetControlPointValues(nullptr);
-  //this->SetPolyDataValues(nullptr);
+#ifdef USE_POLYDATA_MEASUREMENTS
+  this->SetPolyDataValues(nullptr);
+#endif
   this->SetInputMRMLNode(nullptr);
 }
 
@@ -65,11 +67,11 @@ void vtkMRMLMeasurement::ClearValue()
 {
   this->SetValue(0.0);
 
-  // If we clear this then every time certain things in the markups node changes
-  // that calls curveGenerator->Modified() (e.g. SetInterpolateControlPointMeasurement)
-  // which is supposed to use just these control point values, the UpdateMeasurementsInternal
+  // Note: this->SetControlPointValues(nullptr); is not called here, because if we clear
+  // this then every time certain things in the markups node changes that calls
+  // curveGenerator->Modified() (e.g. SetInterpolateControlPointMeasurement), which is
+  // supposed to use just these control point values, the UpdateMeasurementsInternal
   // call clears the value, thus deleting the control point data.
-  //this->SetControlPointValues(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -120,7 +122,9 @@ void vtkMRMLMeasurement::Copy(vtkMRMLMeasurement* src)
   this->SetMethodCode(src->MethodCode);
   this->SetControlPointValues(src->ControlPointValues);
   this->SetInputMRMLNode(src->InputMRMLNode);
-  //this->SetPolyDataValues(src->PolyDataValues);
+#ifdef USE_POLYDATA_MEASUREMENTS
+  this->SetPolyDataValues(src->PolyDataValues);
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -296,24 +300,26 @@ void vtkMRMLMeasurement::SetControlPointValues(vtkDoubleArray* inputValues)
   this->ControlPointValues->DeepCopy(inputValues);
 }
 
-////----------------------------------------------------------------------------
-//void vtkMRMLMeasurement::SetPolyDataValues(vtkPolyData* inputValues)
-//{
-//  if (!inputValues)
-//    {
-//    if (this->PolyDataValues)
-//      {
-//      this->PolyDataValues->Delete();
-//      this->PolyDataValues = nullptr;
-//      }
-//    return;
-//    }
-//  if (!this->PolyDataValues)
-//    {
-//    this->PolyDataValues = vtkPolyData::New();
-//    }
-//  this->PolyDataValues->DeepCopy(inputValues);
-//}
+#ifdef USE_POLYDATA_MEASUREMENTS
+//----------------------------------------------------------------------------
+void vtkMRMLMeasurement::SetPolyDataValues(vtkPolyData* inputValues)
+{
+  if (!inputValues)
+    {
+    if (this->PolyDataValues)
+      {
+      this->PolyDataValues->Delete();
+      this->PolyDataValues = nullptr;
+      }
+    return;
+    }
+  if (!this->PolyDataValues)
+    {
+    this->PolyDataValues = vtkPolyData::New();
+    }
+  this->PolyDataValues->DeepCopy(inputValues);
+}
+#endif
 
 //----------------------------------------------------------------------------
 void vtkMRMLMeasurement::SetInputMRMLNode(vtkMRMLNode* node)

@@ -28,6 +28,8 @@ set(${KIT}_SRCS
   vtkCurveMeasurementsCalculator.h
   vtkLinearSpline.cxx
   vtkLinearSpline.h
+  vtkMRMLMeasurementAngle.cxx
+  vtkMRMLMeasurementAngle.h
   vtkMRMLMeasurementLength.cxx
   vtkMRMLMeasurementLength.h
   vtkParametricPolynomialApproximation.cxx
