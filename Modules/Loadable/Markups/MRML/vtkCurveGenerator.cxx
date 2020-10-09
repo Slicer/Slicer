@@ -51,7 +51,7 @@ vtkCurveGenerator::vtkCurveGenerator()
   this->SetNumberOfInputPorts(2);
 
   this->SetCurveTypeToLinearSpline();
-  this->CurveIsLoop = false;
+  this->CurveIsClosed = false;
   this->NumberOfPointsPerInterpolatingSegment = 5;
   this->KochanekBias = 0.0;
   this->KochanekContinuity = 0.0;
@@ -84,7 +84,7 @@ void vtkCurveGenerator::PrintSelf(std::ostream &os, vtkIndent indent)
   Superclass::PrintSelf(os, indent);
   os << indent << "InputParameters size: " << (this->InputParameters != nullptr ? this->InputParameters->GetNumberOfTuples() : 0) << std::endl;
   os << indent << "CurveType: " << this->GetCurveTypeAsString(this->CurveType) << std::endl;
-  os << indent << "CurveIsLoop: " << this->CurveIsLoop << std::endl;
+  os << indent << "CurveIsClosed: " << this->CurveIsClosed << std::endl;
   os << indent << "KochanekBias: " << this->KochanekBias << std::endl;
   os << indent << "KochanekContinuity: " << this->KochanekContinuity << std::endl;
   os << indent << "KochanekTension: " << this->KochanekTension << std::endl;
@@ -371,7 +371,7 @@ void vtkCurveGenerator::SetParametricFunctionToSpline(vtkPoints* inputPoints, vt
   parametricSpline->SetYSpline(ySpline);
   parametricSpline->SetZSpline(zSpline);
   parametricSpline->SetPoints(inputPoints);
-  parametricSpline->SetClosed(this->CurveIsLoop);
+  parametricSpline->SetClosed(this->CurveIsClosed);
   parametricSpline->SetParameterizeByLength(false);
   this->ParametricFunction = parametricSpline;
 }
@@ -609,7 +609,7 @@ int vtkCurveGenerator::GeneratePointsFromFunction(vtkPoints* inputPoints, vtkPoi
     }
 
   int numberOfSegments = 0; // temporary value
-  if (this->CurveIsLoop && this->CurveType != vtkCurveGenerator::CURVE_TYPE_POLYNOMIAL)
+  if (this->CurveIsClosed && this->CurveType != vtkCurveGenerator::CURVE_TYPE_POLYNOMIAL)
     {
     numberOfSegments = numberOfInputPoints;
     }
@@ -675,7 +675,7 @@ int vtkCurveGenerator::GeneratePointsFromSurface(
     }
 
   vtkIdType numberOfSegments = 0;
-  if (this->CurveIsLoop)
+  if (this->CurveIsClosed)
     {
     numberOfSegments = numberOfInputPoints;
     }
@@ -764,8 +764,8 @@ int vtkCurveGenerator::GenerateLines(vtkPolyData* polyData)
   vtkNew<vtkCellArray> lines;
   if (numberOfPoints > 1)
     {
-    bool loop = (numberOfPoints > 2 && this->CurveIsLoop);
-    vtkIdType numberOfCellPoints = (loop ? numberOfPoints + 1 : numberOfPoints);
+    bool closed = (numberOfPoints > 2 && this->CurveIsClosed);
+    vtkIdType numberOfCellPoints = (closed ? numberOfPoints + 1 : numberOfPoints);
 
     // Only regenerate indices if necessary
     bool needToUpdateLines = true;
@@ -793,7 +793,7 @@ int vtkCurveGenerator::GenerateLines(vtkPolyData* polyData)
         {
         lines->InsertCellPoint(i);
         }
-      if (loop)
+      if (closed)
         {
         lines->InsertCellPoint(0);
         }

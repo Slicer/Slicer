@@ -47,9 +47,9 @@ public:
 
   /// This indicates whether the curve should loop back in on itself,
   /// connecting the last point back to the first point (disabled by default).
-  vtkSetMacro(CurveIsLoop, bool);
-  vtkGetMacro(CurveIsLoop, bool);
-  vtkBooleanMacro(CurveIsLoop, bool);
+  vtkSetMacro(CurveIsClosed, bool);
+  vtkGetMacro(CurveIsClosed, bool);
+  vtkBooleanMacro(CurveIsClosed, bool);
 
   /// Type of curve to generate
   enum
@@ -208,7 +208,7 @@ protected:
   // input parameters
   int NumberOfPointsPerInterpolatingSegment;
   int CurveType;
-  bool CurveIsLoop;
+  bool CurveIsClosed;
   double KochanekBias;
   double KochanekContinuity;
   double KochanekTension;
