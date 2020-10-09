@@ -120,6 +120,7 @@ set(MRMLCore_SRCS
   vtkEventBroker.cxx
   vtkDataFileFormatHelper.cxx
   vtkMRMLMeasurement.cxx
+  vtkMRMLMeasurementConstant.cxx
   vtkMRMLLogic.cxx
   vtkMRMLAbstractLayoutNode.cxx
   vtkMRMLAbstractViewNode.cxx

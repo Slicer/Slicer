@@ -310,7 +310,7 @@ protected:
 
   vtkSmartPointer<vtkTextActor> TextActor;
 
-  vtkTypeBool ClosedLoop;
+  vtkTypeBool CurveClosed;
 
   /// Convenience method.
   virtual bool GetAllControlPointsVisible();

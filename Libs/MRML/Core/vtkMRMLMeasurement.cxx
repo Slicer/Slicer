@@ -15,8 +15,6 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 // STD include
 #include <sstream>
 
-vtkStandardNewMacro(vtkMRMLMeasurement);
-
 //----------------------------------------------------------------------------
 vtkMRMLMeasurement::vtkMRMLMeasurement()
   : InputMRMLNode(nullptr)

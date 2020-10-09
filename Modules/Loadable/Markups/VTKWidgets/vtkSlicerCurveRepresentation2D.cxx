@@ -140,7 +140,7 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   // Display center position
   // It would be cleaner to use a dedicated actor for this instead of using the control points actors
   // as it would give flexibility in what glyph we use, it would not interfere with active control point display, etc.
-  if (this->ClosedLoop && markupsNode->GetNumberOfControlPoints() > 2 && this->CenterVisibilityOnSlice && !allNodesHidden)
+  if (this->CurveClosed && markupsNode->GetNumberOfControlPoints() > 2 && this->CenterVisibilityOnSlice && !allNodesHidden)
     {
     double centerPosWorld[3], centerPosDisplay[3], orient[3] = { 0 };
     markupsNode->GetCenterPosition(centerPosWorld);

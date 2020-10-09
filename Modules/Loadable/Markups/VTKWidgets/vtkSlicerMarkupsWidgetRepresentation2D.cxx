@@ -529,7 +529,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteract(
     return;
     }
 
-  if (markupsNode->GetNumberOfControlPoints() > 2 && this->ClosedLoop && this->CenterVisibilityOnSlice)
+  if (markupsNode->GetNumberOfControlPoints() > 2 && this->CurveClosed && this->CenterVisibilityOnSlice)
     {
     // Check if center is selected
     double centerPosWorld[3], centerPosDisplay[3];

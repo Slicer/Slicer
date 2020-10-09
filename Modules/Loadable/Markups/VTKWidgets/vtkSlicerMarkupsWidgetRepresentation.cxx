@@ -133,7 +133,7 @@ vtkSlicerMarkupsWidgetRepresentation::vtkSlicerMarkupsWidgetRepresentation()
 
   this->ControlPointSize = 3.0;
   this->NeedToRender = false;
-  this->ClosedLoop = 0;
+  this->CurveClosed = 0;
 
   this->TextActor = vtkSmartPointer<vtkTextActor>::New();
   // hide by default, if a concrete class implements properties display, it will enable it
@@ -285,7 +285,7 @@ int vtkSlicerMarkupsWidgetRepresentation::FindClosestPointOnWidget(
       }
     else
       {
-      if (!this->ClosedLoop)
+      if (!this->CurveClosed)
         {
         continue;
         }
@@ -347,7 +347,7 @@ int vtkSlicerMarkupsWidgetRepresentation::FindClosestPointOnWidget(
       *idx = closestNode+1;
       return 1;
       }
-    else if (this->ClosedLoop)
+    else if (this->CurveClosed)
       {
       *idx = 0;
       return 1;

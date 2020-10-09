@@ -46,6 +46,8 @@ vtkCurveMeasurementsCalculator::vtkCurveMeasurementsCalculator()
   this->ControlPointArrayModifiedCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
   this->ControlPointArrayModifiedCallbackCommand->SetCallback( vtkCurveMeasurementsCalculator::OnControlPointArrayModified );
 
+  this->ObservedControlPointArrays = vtkCollection::New();
+
   // timestamps for input and output are the same, initially
   this->Modified();
 }
@@ -53,11 +55,27 @@ vtkCurveMeasurementsCalculator::vtkCurveMeasurementsCalculator()
 //------------------------------------------------------------------------------
 vtkCurveMeasurementsCalculator::~vtkCurveMeasurementsCalculator()
 {
+  // Remove observations before deleting control point array callback and observed arrays collection
+  for (int idx=0; idx<this->ObservedControlPointArrays->GetNumberOfItems(); ++idx)
+    {
+    vtkDoubleArray* observedArray = vtkDoubleArray::SafeDownCast(this->ObservedControlPointArrays->GetItemAsObject(idx));
+    if (observedArray)
+      {
+      observedArray->RemoveObserver(this->ControlPointArrayModifiedCallbackCommand);
+      }
+    }
+
   if (this->ControlPointArrayModifiedCallbackCommand)
     {
     this->ControlPointArrayModifiedCallbackCommand->SetClientData(nullptr);
     this->ControlPointArrayModifiedCallbackCommand->Delete();
     this->ControlPointArrayModifiedCallbackCommand = nullptr;
+    }
+
+  if (this->ObservedControlPointArrays)
+    {
+    this->ObservedControlPointArrays->Delete();
+    this->ObservedControlPointArrays = nullptr;
     }
 }
 
@@ -66,6 +84,7 @@ void vtkCurveMeasurementsCalculator::PrintSelf(std::ostream &os, vtkIndent inden
 {
   Superclass::PrintSelf(os, indent);
   os << indent << "CalculateCurvature: " << this->CalculateCurvature << std::endl;
+  os << indent << "InterpolateControlPointMeasurement: " << this->InterpolateControlPointMeasurement << std::endl;
 }
 
 //----------------------------------------------------------------------------------
@@ -116,12 +135,6 @@ int vtkCurveMeasurementsCalculator::RequestData(
     return 1;
     }
 
-  // vtkPoints* inputPoints = inputPolyData->GetPoints();
-  // if (!inputPoints)
-    // {
-    // return 1;
-    // }
-
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
   vtkPolyData* outputPolyData = vtkPolyData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
@@ -149,10 +162,6 @@ int vtkCurveMeasurementsCalculator::RequestData(
     {
     this->InterpolateControlPointMeasurementToPolyData(outputPolyData);
     }
-  else
-    {
-    //TODO: Remove arrays?
-    }
 
   outputPolyData->Squeeze();
   return 1;
@@ -167,7 +176,6 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
     }
   if (polyData->GetNumberOfPoints() == 0 || polyData->GetNumberOfLines() == 0)
     {
-    // vtkErrorMacro("CalculatePolyDataCurvature: No points or lines in input poly data");
     return false;
     }
 
@@ -179,7 +187,8 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
   vtkNew<vtkIdList> linePoints;
 
   lines->GetCell(0, linePoints);
-  vtkIdType numberOfPoints = linePoints->GetNumberOfIds();
+  vtkIdType numberOfPoints = // Last point in closed curve line is the first point
+    (this->CurveIsClosed ? linePoints->GetNumberOfIds()-1 : linePoints->GetNumberOfIds());
 
   // Initialize curvature array
   vtkNew<vtkDoubleArray> curvatureValues;
@@ -208,11 +217,19 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
   double currentLength = 0.0;
   double length = 0.0;
 
-  curvatureValues->InsertValue(linePoints->GetId(0), 0.0); // The curvature for the first cell is 0.0
+  // The curvature for the first cell is 0.0 for open curves
+  curvatureValues->InsertValue(linePoints->GetId(0), 0.0);
 
   prevPoint[0] = currPoint[0]; prevPoint[1] = currPoint[1]; prevPoint[2] = currPoint[2];
-  for (vtkIdType idx=1; idx<numberOfPoints-1; ++idx)
+  for (vtkIdType idx=1; idx<numberOfPoints; ++idx)
     {
+    if (!this->CurveIsClosed && idx == numberOfPoints-1)
+      {
+      // Only calculate first point curvature for closed curves i.e. loops,
+      // for which the last point is the first point
+      break;
+      }
+
     currPoint = points->GetPoint(linePoints->GetId(idx+1));
 
     diffVector[0] = currPoint[0]-prevPoint[0];
@@ -259,8 +276,19 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
       }
     } // For each line point
 
-  // Final point
-  curvatureValues->InsertValue(linePoints->GetId(numberOfPoints-1), 0.0); // The curvature for the last cell is 0.0
+  if (!this->CurveIsClosed)
+    {
+    // The curvature for the last cell by definition is 0.0 for open curves
+    curvatureValues->InsertValue(linePoints->GetId(numberOfPoints-1), 0.0);
+    }
+  else
+    {
+    // Use the adjacent values for closed curve instead of the singular values
+    curvatureValues->SetComponent(linePoints->GetId(0), 0,
+      curvatureValues->GetValue(linePoints->GetId(1)));
+    curvatureValues->SetComponent(linePoints->GetId(numberOfPoints-1), 0,
+      curvatureValues->GetValue(linePoints->GetId(numberOfPoints-2)));
+    }
 
   currentLength = sqrt( (prevPoint[0]-prevMeanPoint[0])*(prevPoint[0]-prevMeanPoint[0])
                       + (prevPoint[1]-prevMeanPoint[1])*(prevPoint[1]-prevMeanPoint[1])
@@ -290,7 +318,7 @@ bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyDat
     {
     return false;
     }
-  vtkDoubleArray* pedigreeIdsArray = vtkDoubleArray::SafeDownCast(outputPolyData->GetPointData()->GetArray("PedigreeIDs"));
+  vtkDoubleArray* pedigreeIdsArray = vtkDoubleArray::SafeDownCast(outputPolyData->GetPointData()->GetAbstractArray("PedigreeIDs"));
   if (!pedigreeIdsArray)
     {
     vtkErrorMacro("InterpolateControlPointMeasurementToPolyData: Missing PedigreeIDs array in the curve poly data");
@@ -326,9 +354,9 @@ bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyDat
       }
 
     // Observe control point data array. If it is modified, then interpolation needs to be re-run
-    vtkEventBroker::GetInstance()->AddObservation(
-      controlPointValues, vtkCommand::ModifiedEvent, this, this->ControlPointArrayModifiedCallbackCommand);
-    controlPointValues->Register(this);
+    controlPointValues->AddObserver(vtkCommand::ModifiedEvent, this->ControlPointArrayModifiedCallbackCommand);
+    vtkWeakPointer<vtkDoubleArray> controlPointArrayWeakPointer(controlPointValues);
+    this->ObservedControlPointArrays->AddItem(controlPointArrayWeakPointer);
 
     vtkNew<vtkDoubleArray> interpolatedMeasurement;
     std::string arrayName = std::string("Interpolated:") + (currentMeasurement->GetName() ? std::string(currentMeasurement->GetName()) : "Unknown");

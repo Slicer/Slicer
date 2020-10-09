@@ -355,7 +355,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
     return;
     }
 
-  if (markupsNode->GetNumberOfControlPoints() > 2 && this->ClosedLoop)
+  if (markupsNode->GetNumberOfControlPoints() > 2 && this->CurveClosed)
     {
     // Check if center is selected
     double centerPosWorld[3], centerPosDisplay[3];

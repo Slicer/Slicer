@@ -21,6 +21,7 @@
 #include "vtkCurveGenerator.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsStorageNode.h"
+#include "vtkMRMLMeasurementConstant.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLUnitNode.h"
@@ -1986,15 +1987,20 @@ void vtkMRMLMarkupsNode::SetNthMeasurement(int id,
     vtkErrorMacro("vtkMRMLMarkupsNode::SetNthMeasurement failed: id out of range");
     return;
     }
-  vtkSmartPointer<vtkMRMLMeasurement> measurement;
+  vtkSmartPointer<vtkMRMLMeasurementConstant> measurement;
   if (id >= this->GetNumberOfMeasurements())
     {
-    measurement = vtkSmartPointer<vtkMRMLMeasurement>::New();
+    measurement = vtkSmartPointer<vtkMRMLMeasurementConstant>::New();
     this->Measurements->AddItem(measurement);
     }
   else
     {
-    measurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(id));
+    measurement = vtkMRMLMeasurementConstant::SafeDownCast(this->Measurements->GetItemAsObject(id));
+    if (measurement == nullptr)
+      {
+      vtkErrorMacro("SetNthMeasurement: Cannot set non-constant measurement manually (ID: " << id << ")");
+      return;
+      }
     }
   measurement->SetName(name.c_str());
   measurement->SetValue(value);

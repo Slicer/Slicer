@@ -15,26 +15,29 @@
 
 ==============================================================================*/
 
-#include "vtkMRMLMarkupsClosedCurveNode.h"
-
 // MRML includes
-#include "vtkCurveGenerator.h"
-#include "vtkCurveMeasurementsCalculator.h"
+#include "vtkMRMLMeasurementConstant.h"
 
-// VTK includes
-#include <vtkNew.h>
-#include <vtkObjectFactory.h>
+vtkStandardNewMacro(vtkMRMLMeasurementConstant);
 
 //----------------------------------------------------------------------------
-vtkMRMLNodeNewMacro(vtkMRMLMarkupsClosedCurveNode);
-
-//----------------------------------------------------------------------------
-vtkMRMLMarkupsClosedCurveNode::vtkMRMLMarkupsClosedCurveNode()
+vtkMRMLMeasurementConstant::vtkMRMLMeasurementConstant()
 {
-  this->CurveClosed = true;
-  this->CurveGenerator->SetCurveIsClosed(true);
-  this->CurveMeasurementsCalculator->SetCurveIsClosed(true);
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLMarkupsClosedCurveNode::~vtkMRMLMarkupsClosedCurveNode() = default;
+vtkMRMLMeasurementConstant::~vtkMRMLMeasurementConstant() = default;
+
+//----------------------------------------------------------------------------
+void vtkMRMLMeasurementConstant::PrintSelf(ostream& os, vtkIndent indent)
+{
+  Superclass::PrintSelf(os,indent);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMeasurementConstant::Compute()
+{
+  // No action is needed because this class is a constant variant of the dynamic
+  // vtkMRMLMeasurement. Typically all measurements calculate their own value from
+  // its input MRML node. This class is to be able to store constant measurements.
+}
