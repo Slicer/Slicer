@@ -682,8 +682,6 @@ qSlicerMarkupsModuleWidget::qSlicerMarkupsModuleWidget(QWidget* _parent)
   : Superclass( _parent )
     , d_ptr( new qSlicerMarkupsModuleWidgetPrivate(*this) )
 {
-  this->pToAddShortcut = nullptr;
-
   this->volumeSpacingScaleFactor = 10.0;
 }
 
@@ -742,9 +740,6 @@ void qSlicerMarkupsModuleWidget::enter()
     this->setMRMLMarkupsNode(markupsNode);
     }
 
-  // install some shortcuts for use while in this module
-  this->installShortcuts();
-
   // check the max scales against volume spacing, they might need to be updated
   this->updateMaximumScaleFromVolumes();
 }
@@ -791,30 +786,6 @@ void qSlicerMarkupsModuleWidget::checkForAnnotationFiducialConversion()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::installShortcuts()
-{
-  // add some shortcut keys
-  if (this->pToAddShortcut == nullptr)
-    {
-    this->pToAddShortcut = new QShortcut(QKeySequence(QString("p")), this);
-    }
-  QObject::connect(this->pToAddShortcut, SIGNAL(activated()),
-                   this, SLOT(onPKeyActivated()));
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::removeShortcuts()
-{
-  if (this->pToAddShortcut != nullptr)
-    {
-    //qDebug() << "removeShortcuts";
-    this->pToAddShortcut->disconnect(SIGNAL(activated()));
-    // TODO: when parent is set to null, using the mouse to place a fid when outside the Markups module is triggering a crash
-    //       this->pToAddShortcut->setParent(nullptr);
-    }
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::convertAnnotationFiducialsToMarkups()
 {
   if (this->markupsLogic())
@@ -829,8 +800,6 @@ void qSlicerMarkupsModuleWidget::exit()
   this->Superclass::exit();
 
   // qDebug() << "exit widget";
-
-  this->removeShortcuts();
 
   // remove mrml scene observations, don't need to update the GUI while the
   // module is not showing
