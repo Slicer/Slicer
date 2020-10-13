@@ -51,10 +51,6 @@ public:
   /// Disconnect from scene when exiting
   void exit() override;
 
-  /// Manage short cuts that allow key bindings for certain functions
-  void installShortcuts();
-  void removeShortcuts();
-
   /// Get the logic in the proper class
   vtkSlicerMarkupsLogic *markupsLogic();
 
@@ -251,7 +247,6 @@ private:
   Q_DECLARE_PRIVATE(qSlicerMarkupsModuleWidget);
   Q_DISABLE_COPY(qSlicerMarkupsModuleWidget);
 
-  QShortcut *pToAddShortcut;
 };
 
 #endif
