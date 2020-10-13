@@ -552,6 +552,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
         vtkSmartPointer<vtkLookupTable> dNodeLUT = vtkSmartPointer<vtkLookupTable>::Take(colorNode ? colorNode->CreateLookupTableCopy() : nullptr);
         if (dNodeLUT)
           {
+          lut = dNodeLUT;
           mapper->SetScalarRange(displayNode->GetScalarRange());
           lut->SetAlpha(hierarchyOpacity * displayNode->GetSliceIntersectionOpacity());
           }
