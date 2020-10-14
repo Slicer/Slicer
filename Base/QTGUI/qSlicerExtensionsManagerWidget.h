@@ -51,6 +51,9 @@ public:
   Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel()const;
   Q_INVOKABLE void setExtensionsManagerModel(qSlicerExtensionsManagerModel* model);
 
+  /// Shows a popup if operations are still in progress, asking if the user wants to stop them.
+  bool confirmClose();
+
 public slots:
   void refreshInstallWidget();
 
@@ -70,6 +73,8 @@ protected slots:
 
 protected:
   void timerEvent(QTimerEvent*) override;
+
+  void processSearchTextChange();
 
   QScopedPointer<qSlicerExtensionsManagerWidgetPrivate> d_ptr;
 

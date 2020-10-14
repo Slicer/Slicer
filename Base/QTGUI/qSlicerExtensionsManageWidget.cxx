@@ -83,6 +83,8 @@ public:
   QSignalMapper DownloadMapper;
   QHash<QString, QNetworkReply*> Downloads;
 
+  QString SearchText;
+
   qSlicerExtensionsManagerModel * ExtensionsManagerModel;
 };
 
@@ -511,6 +513,16 @@ void qSlicerExtensionsManageWidgetPrivate::addExtensionItem(const ExtensionMetad
     }
   Q_ASSERT(this->extensionItem(extensionName) == nullptr);
   QString description = metadata.value("description").toString();
+  if (!this->SearchText.isEmpty())
+    {
+    // filtering is enabled
+    if (!extensionName.contains(this->SearchText, Qt::CaseInsensitive) &&
+      !description.contains(this->SearchText, Qt::CaseInsensitive))
+      {
+      // search text is not found, skip it
+      return;
+      }
+    }
   QString extensionSlicerRevision = metadata.value("slicer_revision").toString();
   bool enabled = QVariant::fromValue(metadata.value("enabled")).toBool();
 
@@ -930,4 +942,23 @@ void qSlicerExtensionsManageWidget::onIconDownloadComplete(
     }
 
   reply->deleteLater();
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManageWidget::setSearchText(const QString& newText)
+{
+  Q_D(qSlicerExtensionsManageWidget);
+  if (d->SearchText == newText)
+    {
+    return;
+    }
+  d->SearchText = newText;
+  this->onModelUpdated();
+}
+
+// --------------------------------------------------------------------------
+QString qSlicerExtensionsManageWidget::searchText() const
+{
+  Q_D(const qSlicerExtensionsManageWidget);
+  return d->SearchText;
 }

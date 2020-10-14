@@ -245,12 +245,15 @@ public:
   QString SlicerVersion;
 
   QStandardItemModelWithRole Model;
+
+  int ActiveTaskCount;
 };
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsManagerModelPrivate::qSlicerExtensionsManagerModelPrivate(qSlicerExtensionsManagerModel& object)
   : q_ptr(&object)
   , NewExtensionEnabledByDefault(true)
+  , ActiveTaskCount(0)
 {
 }
 
@@ -929,7 +932,7 @@ QVariantMap qSlicerExtensionsManagerModelPrivate::getExtensionsInfoFromPreviousI
         }
       curExtensionInfo.insert("IsInstalled", q->isExtensionInstalled(extensionName));
       bool isCompatible = true;
-
+      QString description;
       if (!q->isExtensionInstalled(extensionName))
         {
         qMidasAPI::ParametersType parameters;
@@ -938,15 +941,18 @@ QVariantMap qSlicerExtensionsManagerModelPrivate::getExtensionsInfoFromPreviousI
         parameters["os"] = q->slicerOs();
         parameters["arch"] = q->slicerArch();
         const ExtensionMetadataType& metaData = retrieveExtensionMetadata(parameters);
+        description = metaData.value("description").toString();
         extensionId = metaData.value("extension_id").toString();     //retrieve updated extension id for not installed extensions
         isCompatible = (this->isExtensionCompatible(metaData, this->SlicerRevision, this->SlicerOs, this->SlicerArch).length() == 0);
         }
       else
         {
         const ExtensionMetadataType& metaData = q->extensionMetadata(extensionName);
+        description = metaData.value("description").toString();
         extensionId = metaData.value("extension_id").toString();
         isCompatible = (q->isExtensionCompatible(extensionName).length() == 0);
         }
+      curExtensionInfo.insert("Description", description);
       curExtensionInfo.insert("ExtensionId", extensionId);
       curExtensionInfo.insert("IsCompatible", isCompatible);
       extensionsHistoryInformation.insert(extensionName, curExtensionInfo);
@@ -1142,10 +1148,16 @@ bool qSlicerExtensionsManagerModel::isExtensionInstalled(const QString& extensio
 }
 
 // --------------------------------------------------------------------------
-int qSlicerExtensionsManagerModel::numberOfInstalledExtensions()const
+int qSlicerExtensionsManagerModel::installedExtensionsCount()const
 {
   Q_D(const qSlicerExtensionsManagerModel);
   return d->Model.rowCount();
+}
+
+// --------------------------------------------------------------------------
+int qSlicerExtensionsManagerModel::numberOfInstalledExtensions()const
+{
+  return this->installedExtensionsCount();
 }
 
 // --------------------------------------------------------------------------
@@ -1326,6 +1338,7 @@ qSlicerExtensionsManagerModelPrivate::downloadExtension(
     this->NetworkManager.get(QNetworkRequest(downloadUrl));
   qSlicerExtensionDownloadTask* const task =
     new qSlicerExtensionDownloadTask(reply);
+  this->ActiveTaskCount++;
 
   task->setMetadata(extensionMetadata);
   emit q->downloadStarted(reply);
@@ -1374,6 +1387,7 @@ void qSlicerExtensionsManagerModel::onInstallDownloadFinished(
   Q_D(qSlicerExtensionsManagerModel);
 
   task->deleteLater();
+  d->ActiveTaskCount--;
 
   QNetworkReply* const reply = task->reply();
   QUrl downloadUrl = reply->url();
@@ -1780,6 +1794,7 @@ void qSlicerExtensionsManagerModel::onUpdateDownloadFinished(
 
   // Mark task for clean-up
   task->deleteLater();
+  d->ActiveTaskCount--;
 
   // Get network reply
   QNetworkReply* const reply = task->reply();
@@ -2643,4 +2658,11 @@ QStringList qSlicerExtensionsManagerModel::checkInstallPrerequisites() const
     errors << error;
     }
   return errors;
+}
+
+// --------------------------------------------------------------------------
+int qSlicerExtensionsManagerModel::activeTaskCount() const
+{
+  Q_D(const qSlicerExtensionsManagerModel);
+  return d->ActiveTaskCount;
 }

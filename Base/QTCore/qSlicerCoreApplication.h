@@ -325,10 +325,10 @@ public:
 #endif
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  /// Get extension manager model
+  /// Get extensions manager model
   Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel()const;
 
-  /// Set the extension manager model
+  /// Set the extensions manager model
   /// \note qSlicerCoreApplication takes ownership of the object
   void setExtensionsManagerModel(qSlicerExtensionsManagerModel* model);
 #endif

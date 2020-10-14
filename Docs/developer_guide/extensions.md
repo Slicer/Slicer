@@ -5,7 +5,7 @@ An extension could be seen as a delivery package bundling together one or more S
 
 The Slicer community maintains a website referred to as the Slicer Extensions Manager (also known as Slicer App Store or Slicer Extensions Index) to allow users to find, download, and install of extensions.
 
-![](https://github.com/Slicer/Slicer/releases/download/docs-resources/extension_manager.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/extensions_manager.png)
 
 ## How to create an extension?
 
@@ -19,7 +19,7 @@ If you have developed a script or module that you would like to share with other
   - GitHub is recommended (due to large user community, free public project hosting): [join Github](https://github.com/join) and [setup Git](https://help.github.com/articles/set-up-git#set-up-git).
 - If developing [C++ loadable or CLI modules](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Modules) (not needed if developing in Python): [Build your extension](https://www.slicer.org/wiki/Documentation/Nightly/Developers/FAQ/Extensions#How_to_build_an_extension_.3F)
 - Test your extension:
-  - If you have built your extension then build the PACKAGE target to create a package file that you can install from the Extension Manager by clicking the small tool icon in the top-right corner.
+  - If you have built your extension then build the PACKAGE target to create a package file that you can install from the Extensions Manager by clicking the small tool icon in the top-right corner.
   - If you have not built your extension then set up your extension manually: [Build your extension](https://www.slicer.org/wiki/Documentation/Nightly/Developers/FAQ#How_to_manually_install_an_extension.3F)
 
 ## Documentation

@@ -565,7 +565,7 @@
      <normaloff>:/Icons/ExtensionDefaultIcon.png</normaloff>:/Icons/ExtensionDefaultIcon.png</iconset>
    </property>
    <property name="text">
-    <string>Extension Manager</string>
+    <string>Extensions Manager</string>
    </property>
    <property name="toolTip">
     <string>Raise the &quot;Extensions Manager&quot; wizard that provides status and information about available extensions</string>

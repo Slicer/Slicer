@@ -103,13 +103,13 @@ You can customize views by clicking on the push pin in the top left corner of vi
 
 #### Extensions
 
-3D Slicer supports plug-ins that are called extensions. An extension could be seen as a delivery package bundling together one or more Slicer modules. After installing an extension, the associated modules will be presented to the user as built-in ones. Extensions can be downloaded from the extension manager to selectively install features that are useful for the end-user.
+3D Slicer supports plug-ins that are called extensions. An extension could be seen as a delivery package bundling together one or more Slicer modules. After installing an extension, the associated modules will be presented to the user as built-in ones. Extensions can be downloaded from the extensions manager to selectively install features that are useful for the end-user.
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/getting_started_module_list.png)
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/getting_started_extensions_manager.png)
 
-For details about downloading extensions, see [Extension Manager documentation](extension_manager).
+For details about downloading extensions, see [Extensions Manager documentation](extensions_manager).
 Click [here](https://www.slicer.org/wiki/Documentation/Nightly/ModuleExtensionListing/Extensions_by_category) for a full list of extensions. The links on the page will provide documentation for each extension.
 
 Slicer is extensible. If you are interested in customizing or adding functionality to Slicer, click [here](https://www.slicer.org/wiki/Documentation/Nightly/Training#Tutorials_for_software_developers).

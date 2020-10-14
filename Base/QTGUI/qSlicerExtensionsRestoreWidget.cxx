@@ -148,6 +148,7 @@ public:
   QAction* installSelectedAction;
   QCheckBox *checkOnStartup;
   QCheckBox *silentInstallOnStartup;
+  QString SearchText;
   QListWidget *extensionList;
   QStringList extensionsToInstall;
   QVariantMap extensionRestoreInformation;
@@ -162,7 +163,7 @@ public:
 qSlicerExtensionsRestoreWidgetPrivate::qSlicerExtensionsRestoreWidgetPrivate(qSlicerExtensionsRestoreWidget& object)
 :q_ptr(&object)
 {
-
+  this->ExtensionsManagerModel = nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -293,7 +294,7 @@ void qSlicerExtensionsRestoreWidgetPrivate
         {
         QString text = qSlicerExtensionsRestoreWidget::tr(
           "%1 compatible extension(s) from a previous Slicer installation found. Do you want to install? "
-          "(For details see: Extension Manager > Restore Extensions)").arg(candidateIds.length());
+          "(For details see: Extensions Manager > Restore Extensions)").arg(candidateIds.length());
 
         ctkMessageBox checkHistoryMessage;
         checkHistoryMessage.setText(text);
@@ -318,13 +319,28 @@ void qSlicerExtensionsRestoreWidgetPrivate
   Q_Q(qSlicerExtensionsRestoreWidget);
 
   extensionList->clear();
+  if (!q->extensionsManagerModel())
+    {
+    // extensions manager model is not set yet
+    return;
+    }
   QVariantMap extensionInfo = q->extensionsManagerModel()->getExtensionHistoryInformation();
 
   foreach(QString extensionName, extensionInfo.keys())
     {
-    QListWidgetItem* extensionItem = new QListWidgetItem;
-
     QVariantMap currentInfo = extensionInfo.value(extensionName).toMap();
+
+    if (!this->SearchText.isEmpty())
+      {
+      // filtering is enabled
+      QString description = currentInfo.value("Description").toString();
+      if (!extensionName.contains(this->SearchText, Qt::CaseInsensitive) &&
+        !description.contains(this->SearchText, Qt::CaseInsensitive))
+        {
+      // search text is not found, skip it
+      continue;
+        }
+      }
 
     QString title                   = extensionName;
     bool isCompatible               = currentInfo.value("IsCompatible").toBool();
@@ -333,32 +349,34 @@ void qSlicerExtensionsRestoreWidgetPrivate
     bool wasInstalledInLastRevision = currentInfo.value("WasInstalledInLastRevision").toBool();
     bool isItemEnabled              = isCompatible && !isInstalled;
     bool isItemChecked              = isItemEnabled && wasInstalledInLastRevision;
-    QString description;
+    QString itemDescription;
+
+    QListWidgetItem* extensionItem = new QListWidgetItem;
 
     if (isInstalled)
       {
-      description = qSlicerExtensionsRestoreWidget::tr("currently installed");
+      itemDescription = qSlicerExtensionsRestoreWidget::tr("currently installed");
       }
     else if (isCompatible)
       {
       if (wasInstalledInLastRevision)
         {
-        description = qSlicerExtensionsRestoreWidget::tr("was used in previously installed Slicer version (%1)").arg(usedLastInRevision);
+        itemDescription = qSlicerExtensionsRestoreWidget::tr("was used in previously installed Slicer version (%1)").arg(usedLastInRevision);
         }
       else
         {
-        description = qSlicerExtensionsRestoreWidget::tr("was last used in Slicer version %1").arg(usedLastInRevision);
+        itemDescription = qSlicerExtensionsRestoreWidget::tr("was last used in Slicer version %1").arg(usedLastInRevision);
         }
       }
     else
       {
-      description = qSlicerExtensionsRestoreWidget::tr(
+      itemDescription = qSlicerExtensionsRestoreWidget::tr(
             "not compatible with current Slicer version (was last used in Slicer version %1)").arg(usedLastInRevision);
       }
 
     extensionItem->setData(qSlicerRestoreExtensions::IdRole, currentInfo.value("ExtensionId").toString());
     extensionItem->setData(qSlicerRestoreExtensions::CheckedRole, isItemChecked);
-    extensionItem->setData(qSlicerRestoreExtensions::DescriptionRole, description);
+    extensionItem->setData(qSlicerRestoreExtensions::DescriptionRole, itemDescription);
     extensionItem->setData(qSlicerRestoreExtensions::EnabledRole, isItemEnabled);
     extensionItem->setData(qSlicerRestoreExtensions::RestoreCandidateRole, wasInstalledInLastRevision); //details added for color coding
     extensionItem->setData(qSlicerRestoreExtensions::InstalledRole, isInstalled);
@@ -412,6 +430,12 @@ void qSlicerExtensionsRestoreWidgetPrivate
 ::downloadAndInstallNextExtension()
 {
   Q_Q(qSlicerExtensionsRestoreWidget);
+  if (!q->extensionsManagerModel())
+    {
+    // extensions manager model is not set yet
+    qWarning() << Q_FUNC_INFO << " failed: extensions manager model is invalid";
+    return;
+    }
   this->currentExtensionToInstall++;
   if (this->currentExtensionToInstall >=0 && this->currentExtensionToInstall < this->nrOfExtensionsToInstall)
     {
@@ -640,4 +664,35 @@ void qSlicerExtensionsRestoreWidget
 {
   Q_D(qSlicerExtensionsRestoreWidget);
   d->processExtensionsHistoryInformationOnStartup(extensionInfo);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsRestoreWidget::setSearchText(const QString& newText)
+{
+  Q_D(qSlicerExtensionsRestoreWidget);
+  if (d->SearchText == newText)
+    {
+    return;
+    }
+  d->SearchText = newText;
+  d->setupList();
+}
+
+// --------------------------------------------------------------------------
+QString qSlicerExtensionsRestoreWidget::searchText() const
+{
+  Q_D(const qSlicerExtensionsRestoreWidget);
+  return d->SearchText;
+}
+
+// --------------------------------------------------------------------------
+int qSlicerExtensionsRestoreWidget::pendingOperationsCount() const
+{
+  Q_D(const qSlicerExtensionsRestoreWidget);
+  if (d->currentExtensionToInstall < 0)
+    {
+    // installation is not in progress
+    return 0;
+    }
+  return (d->nrOfExtensionsToInstall - d->currentExtensionToInstall);
 }

@@ -117,8 +117,8 @@ private slots:
   void testIsExtensionInstalled();
   void testIsExtensionInstalled_data();
 
-  void testNumberOfInstalledExtensions();
-  void testNumberOfInstalledExtensions_data();
+  void testInstalledExtensionsCount();
+  void testInstalledExtensionsCount_data();
 
   void testInstalledExtensions();
   void testInstalledExtensions_data();
@@ -402,7 +402,7 @@ void qSlicerExtensionsManagerModelTester::testDefaults()
   QCOMPARE(metadata.count(), 0);
 
   QCOMPARE(model.isExtensionInstalled(""), false);
-  QCOMPARE(model.numberOfInstalledExtensions(), 0);
+  QCOMPARE(model.installedExtensionsCount(), 0);
   QCOMPARE(model.installedExtensions(), QStringList());
   QCOMPARE(model.isExtensionEnabled(""), false);
   QCOMPARE(model.slicerRevision(), QString());
@@ -774,7 +774,7 @@ void qSlicerExtensionsManagerModelTester::testInstallExtension()
     {
     this->installHelper(&model, operatingSystem, extensionId, this->Tmp.absolutePath());
 
-    QCOMPARE(model.numberOfInstalledExtensions(), extensionId + 1);
+    QCOMPARE(model.installedExtensionsCount(), extensionId + 1);
 
     QString extensionName = this->expectedExtensionNames().at(extensionId);
 
@@ -802,7 +802,7 @@ void qSlicerExtensionsManagerModelTester::testInstallExtension()
   QCOMPARE(spyModelUpdated.count(), 0);
   QCOMPARE(spyExtensionUninstalled.count(), 0);
   QCOMPARE(spySlicerRequirementsChanged.count(), 0);
-  QCOMPARE(model.numberOfInstalledExtensions(), 4);
+  QCOMPARE(model.installedExtensionsCount(), 4);
 }
 
 // ----------------------------------------------------------------------------
@@ -1107,7 +1107,7 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
     QCOMPARE(spySlicerRequirementsChanged.count(), 0);
 
     QCOMPARE(model.installedExtensions(), this->expectedExtensionNames());
-    QCOMPARE(model.numberOfInstalledExtensions(), 4);
+    QCOMPARE(model.installedExtensionsCount(), 4);
 
     model.updateModel();
 
@@ -1118,7 +1118,7 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
     QCOMPARE(spySlicerRequirementsChanged.count(), 0);
 
     QCOMPARE(model.installedExtensions(), this->expectedExtensionNames());
-    QCOMPARE(model.numberOfInstalledExtensions(), 4);
+    QCOMPARE(model.installedExtensionsCount(), 4);
   }
   {
     qSlicerExtensionsManagerModel model;
@@ -1163,7 +1163,7 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
     QCOMPARE(spySlicerRequirementsChanged.count(), 0);
 
     QCOMPARE(model.installedExtensions(), this->expectedExtensionNames());
-    QCOMPARE(model.numberOfInstalledExtensions(), 4);
+    QCOMPARE(model.installedExtensionsCount(), 4);
   }
 }
 
@@ -1250,7 +1250,7 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionInstalled_data()
 }
 
 // ----------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelTester::testNumberOfInstalledExtensions()
+void qSlicerExtensionsManagerModelTester::testInstalledExtensionsCount()
 {
   QVERIFY(this->resetTmp());
 
@@ -1262,7 +1262,7 @@ void qSlicerExtensionsManagerModelTester::testNumberOfInstalledExtensions()
   QFETCH(QString, architecture);
   QFETCH(QString, slicerRevision);
   QFETCH(QList<int>, extensionIdsToInstall);
-  QFETCH(int, expectedNumberOfInstalledExtensions);
+  QFETCH(int, expectedInstalledExtensionsCount);
 
   {
     qSlicerExtensionsManagerModel model;
@@ -1272,25 +1272,25 @@ void qSlicerExtensionsManagerModelTester::testNumberOfInstalledExtensions()
       {
       this->installHelper(&model, operatingSystem, extensionIdToInstall, this->Tmp.absolutePath());
       }
-    QCOMPARE(model.numberOfInstalledExtensions(), expectedNumberOfInstalledExtensions);
+    QCOMPARE(model.installedExtensionsCount(), expectedInstalledExtensionsCount);
   }
   {
     qSlicerExtensionsManagerModel model;
     model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.updateModel();
-    QCOMPARE(model.numberOfInstalledExtensions(), expectedNumberOfInstalledExtensions);
+    QCOMPARE(model.installedExtensionsCount(), expectedInstalledExtensionsCount);
   }
 }
 
 // ----------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelTester::testNumberOfInstalledExtensions_data()
+void qSlicerExtensionsManagerModelTester::testInstalledExtensionsCount_data()
 {
   QTest::addColumn<QString>("operatingSystem");
   QTest::addColumn<QString>("architecture");
   QTest::addColumn<QString>("slicerRevision");
   QTest::addColumn<QList<int> >("extensionIdsToInstall");
-  QTest::addColumn<int>("expectedNumberOfInstalledExtensions");
+  QTest::addColumn<int>("expectedInstalledExtensionsCount");
 
   QString operatingSystem = Slicer_OS_LINUX_NAME;
   QString architecture("amd64");
@@ -1568,13 +1568,13 @@ void qSlicerExtensionsManagerModelTester::testExtensionAdditionalPathsSettingsUp
   model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
   model.updateModel();
 
-  QCOMPARE(model.numberOfInstalledExtensions(), extensionIdToUninstall == -1 ? 0 : 1);
+  QCOMPARE(model.installedExtensionsCount(), extensionIdToUninstall == -1 ? 0 : 1);
   if (extensionIdToUninstall >= 0)
     {
     model.setSlicerVersion(this->slicerVersion(operatingSystem, extensionIdToUninstall));
     this->uninstallHelper(&model, this->expectedExtensionNames().at(extensionIdToUninstall));
     }
-  QCOMPARE(model.numberOfInstalledExtensions(), 0);
+  QCOMPARE(model.installedExtensionsCount(), 0);
 
   if (extensionIdToInstall >= 0)
     {
@@ -1734,13 +1734,13 @@ void qSlicerExtensionsManagerModelTester::testExtensionExtensionsSettingsUpdated
   model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
   model.updateModel();
 
-  QCOMPARE(model.numberOfInstalledExtensions(), extensionIdToUninstall.second == -1 ? 0 : 1);
+  QCOMPARE(model.installedExtensionsCount(), extensionIdToUninstall.second == -1 ? 0 : 1);
   if (extensionIdToUninstall.second >= 0)
     {
     model.setSlicerVersion(this->slicerVersion(extensionIdToUninstall.first, extensionIdToUninstall.second));
     this->uninstallHelper(&model, this->expectedExtensionNames().at(extensionIdToUninstall.second));
     }
-  QCOMPARE(model.numberOfInstalledExtensions(), 0);
+  QCOMPARE(model.installedExtensionsCount(), 0);
 
   if (extensionIdToInstall.second >= 0)
     {

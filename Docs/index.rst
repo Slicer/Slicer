@@ -24,7 +24,7 @@ For Slicer-4.10 documentation, refer to the `3D Slicer wiki <https://www.slicer.
    user_guide/data_loading_and_saving
    user_guide/image_segmentation
    user_guide/modules/index.rst
-   user_guide/extension_manager
+   user_guide/extensions_manager
    user_guide/supported_data_formats
    user_guide/settings
 

@@ -54,6 +54,10 @@ public:
   /// \sa restartRequested()
   void setRestartRequested(bool value);
 
+  void closeEvent(QCloseEvent* event) override;
+  void accept() override;
+  void reject() override;
+
 protected slots:
   void onModelUpdated();
 
