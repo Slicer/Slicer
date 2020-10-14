@@ -25,7 +25,7 @@
      <item row="0" column="0">
       <widget class="QLabel" name="ExtensionsManagerEnabledLabel">
        <property name="text">
-        <string>Enable extension manager:</string>
+        <string>Enable extensions manager:</string>
        </property>
       </widget>
      </item>
@@ -80,7 +80,7 @@
    <item>
     <widget class="QPushButton" name="OpenExtensionsManagerPushButton">
      <property name="text">
-      <string>Open Extension Manager...</string>
+      <string>Open Extensions Manager...</string>
      </property>
      <property name="icon">
       <iconset resource="../qSlicerBaseQTGUI.qrc">

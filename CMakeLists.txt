@@ -253,7 +253,7 @@ CMAKE_DEPENDENT_OPTION(
 option(Slicer_BUILD_QT_DESIGNER_PLUGINS "Build Qt designer plugins" ON)
 mark_as_superbuild(Slicer_BUILD_QT_DESIGNER_PLUGINS)
 
-option(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT "Build Slicer extension manager" ON)
+option(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT "Build Slicer extensions manager" ON)
 mark_as_superbuild(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
 
 CMAKE_DEPENDENT_OPTION(Slicer_UPDATE_TRANSLATION "update translation" OFF "Slicer_BUILD_I18N_SUPPORT" OFF)

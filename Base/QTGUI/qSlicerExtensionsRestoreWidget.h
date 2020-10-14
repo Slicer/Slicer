@@ -19,6 +19,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsRestoreWidget
   : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(QString searchText READ searchText WRITE setSearchText)
 public:
   /// Superclass typedef
   typedef QWidget Superclass;
@@ -32,6 +33,9 @@ public:
   Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel()const;
   Q_INVOKABLE void setExtensionsManagerModel(qSlicerExtensionsManagerModel* model);
 
+  /// Allow filtering of extensions list
+  QString searchText()const;
+
   // Actions
   QAction* selectAllAction() const;
   QAction* deselectAllAction() const;
@@ -40,6 +44,12 @@ public:
   // Events
   void changeEvent(QEvent* e) override;
   void showEvent(QShowEvent* event) override;
+
+  /// Number of operations in progress
+  int pendingOperationsCount() const;
+
+public slots:
+  void setSearchText(const QString& newText);
 
 protected slots :
   void onSelectAllExtensionsTriggered();

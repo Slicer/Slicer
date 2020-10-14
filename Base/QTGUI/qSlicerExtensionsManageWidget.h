@@ -36,6 +36,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsManageWidget
   : public QListWidget
 {
   Q_OBJECT
+  Q_PROPERTY(QString searchText READ searchText WRITE setSearchText)
 public:
   /// Superclass typedef
   typedef QListWidget Superclass;
@@ -49,11 +50,15 @@ public:
   Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel()const;
   Q_INVOKABLE void setExtensionsManagerModel(qSlicerExtensionsManagerModel* model);
 
+  /// Allow filtering of extensions list
+  QString searchText()const;
+
 signals:
   void linkActivated(const QUrl& link);
 
 public slots:
   void displayExtensionDetails(const QString& extensionName);
+  void setSearchText(const QString& newText);
 
 protected slots:
   void setExtensionEnabled(const QString& extensionName);

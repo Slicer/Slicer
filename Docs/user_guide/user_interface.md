@@ -4,7 +4,7 @@
 
 Slicer stores all loaded data in a data repository, called the "scene" (or Slicer scene or MRML scene). Each data set, such as an image volume, surface model, or point set, is represented in the scene as a "node".
 
-Slicer provides a large number "modules", each implementing a specific set of functions for creating or manipulating data in the scene. Modules typically do not interact with each other directly: they just all operate on the data nodes in the scene. Slicer package contains over 100 built-in modules and additional modules can be installed by using the Extension Manager.
+Slicer provides a large number "modules", each implementing a specific set of functions for creating or manipulating data in the scene. Modules typically do not interact with each other directly: they just all operate on the data nodes in the scene. Slicer package contains over 100 built-in modules and additional modules can be installed by using the Extensions Manager.
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/user_interface_main_window.png)
 
@@ -24,7 +24,7 @@ The Layout Toolbar provides a drop-down menu of layouts useful for many types of
 
 - **File**: Functions for loading a previouly saved scene or individual datasets of various types, and for downloading sample datasets from the internet. An option for saving scenes and data is also provided here. **Add Data** allows loading data from files. **DICOM** module is recommended to import data from DICOM files and loading of imported DICOM data. **Save** opens the "Save Data" window, which offers a variety of options for saving all data or selected datasets.
 - **Edit**: Contains an option for showing Application Settings, which allows users to customize appearance and behavior of Slicer, such as modules displayed in the toolbar, application font size, temporary directory location, location of additional Slicer modules to include.
-- **View**: Functions for showing/hiding additional windows and widgets, such as **Extension Manager** for installing extensions from Slicer app store, **Error Log** for checking if the application encountered any potential errors, **Python Interactor** for getting a Python console to interact with the loaded data or modules, **show/hide toolbars**, or **switch view layout**.
+- **View**: Functions for showing/hiding additional windows and widgets, such as **Extensions Manager** for installing extensions from Slicer app store, **Error Log** for checking if the application encountered any potential errors, **Python Interactor** for getting a Python console to interact with the loaded data or modules, **show/hide toolbars**, or **switch view layout**.
 
 ### Toolbar
 
@@ -118,7 +118,7 @@ View Controllers module provides an alternate way of displaying these controller
 | `Ctrl` + `1` | show Application Help |
 | `Ctrl` + `2` | show Application Settings |
 | `Ctrl` + `3` | show/hide Python Interactor |
-| `Ctrl` + `4` | show Extension Manager |
+| `Ctrl` + `4` | show Extensions Manager |
 | `Ctrl` + `5` | show/hide Module Panel |
 | `Ctrl` + `h` | open default startup module (configurable in Application Settings) |
 

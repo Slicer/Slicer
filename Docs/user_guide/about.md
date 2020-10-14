@@ -13,7 +13,7 @@ Highlights:
 - Multi organ: from head to toe.
 - Support for multi-modality imaging including, MRI, CT, US, nuclear medicine, and microscopy.
 - Real-time interface for medical devices, such as surgical navigation systems, imaging systems, robotic devices, and sensors.
-- Highly extensible: users can easily add more capabilities by installing additional modules from the Extension manager, running custom Python scripts in the built-in Python console, run any executables from the application's user interface, or implement custom modules in Python or C++.
+- Highly extensible: users can easily add more capabilities by installing additional modules from the Extensions manager, running custom Python scripts in the built-in Python console, run any executables from the application's user interface, or implement custom modules in Python or C++.
 - Large and active user community.
 
 ## License

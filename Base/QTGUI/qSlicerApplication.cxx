@@ -22,11 +22,14 @@
 #include <QAction>
 #include <QDebug>
 #include <QFile>
+#include <QLabel>
 #include <QtGlobal>
 #include <QMainWindow>
+#include <QDialog>
 #include <QRandomGenerator>
 #include <QSurfaceFormat>
 #include <QSysInfo>
+#include <QVBoxLayout>
 
 #if defined(Q_OS_WIN32)
   #include <QtPlatformHeaders\QWindowsWindowFunctions> // for setHasBorderInFullScreen
@@ -140,6 +143,7 @@ public:
   ctkSettingsDialog*      SettingsDialog;
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   qSlicerExtensionsManagerDialog* ExtensionsManagerDialog;
+  bool IsExtensionsManagerDialogOpen;
 #endif
 #ifdef Slicer_USE_QtTesting
   ctkQtTestingUtility*    TestingUtility;
@@ -161,6 +165,7 @@ qSlicerApplicationPrivate::qSlicerApplicationPrivate(
   this->SettingsDialog = nullptr;
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   this->ExtensionsManagerDialog = nullptr;
+  this->IsExtensionsManagerDialogOpen = false;
 #endif
 #ifdef Slicer_USE_QtTesting
   this->TestingUtility = nullptr;
@@ -733,6 +738,28 @@ void qSlicerApplication::setHasBorderInFullScreen(bool hasBorder)
 void qSlicerApplication::openExtensionsManagerDialog()
 {
   Q_D(qSlicerApplication);
+  // While the extensions manager is starting up, GUI events may be processed, causing repeated call of this method.
+  // IsExtensionsManagerDialogOpen flag prevents creating multiple extensions manager dialogs.
+  if (d->IsExtensionsManagerDialogOpen)
+    {
+    // already displayed
+    return;
+    }
+  d->IsExtensionsManagerDialogOpen = true;
+
+  // Startup of extensions manager can take tens of seconds.
+  // Display a popup to let the user know.
+  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+  QDialog* startupInProgressDialog = new QDialog(this->mainWindow(), Qt::FramelessWindowHint | Qt::Dialog);
+  QVBoxLayout* layout = new QVBoxLayout();
+  startupInProgressDialog->setLayout(layout);
+  layout->setMargin(20);
+  QLabel* label = new QLabel();
+  label->setText(tr("Extensions manager is starting, please wait..."));
+  layout->addWidget(label);
+  startupInProgressDialog->show();
+  this->processEvents();
+
   if(!d->ExtensionsManagerDialog)
     {
     d->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(nullptr);
@@ -743,12 +770,20 @@ void qSlicerApplication::openExtensionsManagerDialog()
     // The first time the dialog is open, resize it.
     d->ExtensionsManagerDialog->resize(this->mainWindow()->size());
     }
-  d->ExtensionsManagerDialog->setExtensionsManagerModel(
-        this->extensionsManagerModel());
-  if (d->ExtensionsManagerDialog->exec() == QDialog::Accepted)
+  // This call takes most of the startup time
+  d->ExtensionsManagerDialog->setExtensionsManagerModel(this->extensionsManagerModel());
+
+  // Hide the popup window.
+  QApplication::restoreOverrideCursor();
+  startupInProgressDialog->hide();
+  startupInProgressDialog->deleteLater();
+
+  bool accepted = (d->ExtensionsManagerDialog->exec() == QDialog::Accepted);
+  if (accepted)
     {
     this->confirmRestart();
     }
+  d->IsExtensionsManagerDialogOpen = false;
 }
 #endif
 
@@ -1135,7 +1170,13 @@ bool qSlicerApplication::launchDesigner(const QStringList& args/*=QStringList()*
 #ifdef Q_OS_WIN32
   designerExecutable += ".exe";
 #endif
-  return QProcess::startDetached(designerExecutable, args);
+  QProcess process;
+  // Some extensions can modify the startup environment so that designer crashes during startup.
+  // Therefore, we use the startup environment instead of the current environment.
+  process.setProcessEnvironment(this->startupEnvironment());
+  process.setProgram(designerExecutable);
+  process.setArguments(args);
+  return process.startDetached();
 }
 
 

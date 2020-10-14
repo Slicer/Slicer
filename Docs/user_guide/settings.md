@@ -36,7 +36,7 @@ Directory where modules can store their temporary outputs if needed.
 
 #### Additional module paths
 
-List of directories scanned at startup to load additional modules. Any CLI, Loadable or scripted modules located in these paths will be loaded. Extensions are listed in the list, to remove an extension, use the [Extension Manager](extension_manager) instead.
+List of directories scanned at startup to load additional modules. Any CLI, Loadable or scripted modules located in these paths will be loaded. Extensions are listed in the list, to remove an extension, use the [Extensions Manager](extensions_manager) instead.
 
 It is also possible to start slicer by temporarily adding module paths (not saved in settings) by passing the arguments in the command line.
 

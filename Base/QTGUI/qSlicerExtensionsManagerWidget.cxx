@@ -35,6 +35,7 @@
 
 // CTK includes
 #include <ctkSearchBox.h>
+#include <ctkMessageBox.h>
 
 // QtGUI includes
 #include "qSlicerExtensionsManagerWidget.h"
@@ -103,16 +104,14 @@ public:
 };
 
 // --------------------------------------------------------------------------
-class qSlicerExtensionsToolsWidget : public QStackedWidget, public Ui_qSlicerExtensionsToolsWidget
+class qSlicerExtensionsToolsWidget : public QWidget, public Ui_qSlicerExtensionsToolsWidget
 {
 public:
-  qSlicerExtensionsToolsWidget(QWidget * parent = nullptr) : QStackedWidget(parent)
+  qSlicerExtensionsToolsWidget(QWidget * parent = nullptr) : QWidget(parent)
   {
     this->setupUi(this);
 
-    setThemeIcon(this->ManageConfigureButton, "configure");
-    setThemeIcon(this->InstallConfigureButton, "configure");
-    setThemeIcon(this->RestoreConfigureButton, "configure");
+    setThemeIcon(this->ConfigureButton, "configure");
     setThemeIcon(this->CheckForUpdatesAction, "view-refresh");
 
     const QIcon searchIcon =
@@ -121,51 +120,24 @@ public:
       QIcon::fromTheme(this->layoutDirection() == Qt::LeftToRight
                        ? "edit-clear-locationbar-rtl"
                        : "edit-clear-locationbar-ltr",
-                       this->ManageSearchBox->clearIcon());
+                       this->SearchBox->clearIcon());
 
-    const QFontMetrics fm = this->ManageSearchBox->fontMetrics();
+    const QFontMetrics fm = this->SearchBox->fontMetrics();
     const int searchWidth = 24 * fm.averageCharWidth() + 40;
 
-    this->ManageSearchBox->setClearIcon(clearIcon);
-    this->ManageSearchBox->setSearchIcon(searchIcon);
-    this->ManageSearchBox->setShowSearchIcon(true);
-    this->ManageSearchBox->setFixedWidth(searchWidth);
-
-    this->InstallSearchBox->setClearIcon(clearIcon);
-    this->InstallSearchBox->setSearchIcon(searchIcon);
-    this->InstallSearchBox->setShowSearchIcon(true);
-    this->InstallSearchBox->setFixedWidth(searchWidth);
-
-    this->RestoreSearchBox->setClearIcon(clearIcon);
-    this->RestoreSearchBox->setSearchIcon(searchIcon);
-    this->RestoreSearchBox->setShowSearchIcon(true);
-    this->RestoreSearchBox->setFixedWidth(searchWidth);
+    this->SearchBox->setClearIcon(clearIcon);
+    this->SearchBox->setSearchIcon(searchIcon);
+    this->SearchBox->setShowSearchIcon(true);
+    this->SearchBox->setFixedWidth(searchWidth);
 
     // manage
-    QMenu * manageConfigureMenu = new QMenu(this);
-    manageConfigureMenu->addAction(this->CheckForUpdatesAction);
-    manageConfigureMenu->addAction(this->AutoUpdateAction);
-    manageConfigureMenu->addSeparator();
-    manageConfigureMenu->addAction(this->InstallFromFileAction);
+    QMenu * configureMenu = new QMenu(this);
+    configureMenu->addAction(this->CheckForUpdatesAction);
+    configureMenu->addAction(this->AutoUpdateAction);
 
-    this->ManageConfigureButton->setMenu(manageConfigureMenu);
-    invalidateSizeHint(this->ManageConfigureButton);
-
-    // install
-    QMenu * installConfigureMenu = new QMenu(this);
-    installConfigureMenu->addAction(this->InstallFromFileAction);
-
-    this->InstallConfigureButton->setMenu(installConfigureMenu);
-    invalidateSizeHint(this->InstallConfigureButton);
-
-    // restore
-    this->RestoreConfigureMenu = new QMenu(this);
-
-    this->RestoreConfigureButton->setMenu(this->RestoreConfigureMenu);
-    invalidateSizeHint(this->RestoreConfigureButton);
+    this->ConfigureButton->setMenu(configureMenu);
+    invalidateSizeHint(this->ConfigureButton);
   }
-
-  QMenu* RestoreConfigureMenu;
 };
 
 }
@@ -187,7 +159,8 @@ public:
 #endif
 
   qSlicerExtensionsToolsWidget* toolsWidget;
-  QString lastSearchText;
+  QString lastInstallWidgetSearchText;
+  QUrl lastInstallWidgetUrl;
   int searchTimerId;
 };
 
@@ -238,10 +211,6 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
 
   // Search field and configure button
   this->toolsWidget = new qSlicerExtensionsToolsWidget;
-  this->toolsWidget->RestoreConfigureMenu->addAction(this->ExtensionsRestoreWidget->selectAllAction());
-  this->toolsWidget->RestoreConfigureMenu->addAction(this->ExtensionsRestoreWidget->deselectAllAction());
-  this->toolsWidget->RestoreConfigureMenu->addSeparator();
-  this->toolsWidget->RestoreConfigureMenu->addAction(this->ExtensionsRestoreWidget->installSelectedAction());
 
   QSettings settings;
   this->toolsWidget->AutoUpdateAction->setChecked(
@@ -251,8 +220,6 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
 
   QObject::connect(this->tabWidget, SIGNAL(currentChanged(int)),
                    actionsWidget, SLOT(setCurrentIndex(int)));
-  QObject::connect(this->tabWidget, SIGNAL(currentChanged(int)),
-                   this->toolsWidget, SLOT(setCurrentIndex(int)));
 
   QObject::connect(this->ExtensionsManageWidget, SIGNAL(linkActivated(QUrl)),
                    q, SLOT(onManageLinkActivated(QUrl)));
@@ -262,7 +229,7 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
                    SIGNAL(urlChanged(QUrl)),
                    q, SLOT(onManageUrlChanged(QUrl)));
 
-  QObject::connect(this->toolsWidget->InstallSearchBox,
+  QObject::connect(this->toolsWidget->SearchBox,
                    SIGNAL(textEdited(QString)),
                    q, SLOT(onSearchTextChanged(QString)));
 
@@ -278,8 +245,8 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
                    SIGNAL(triggered(bool)),
                    q, SLOT(onCheckForUpdatesTriggered()));
 
-  QObject::connect(this->toolsWidget->InstallFromFileAction,
-                   SIGNAL(triggered(bool)),
+  QObject::connect(this->toolsWidget->InstallFromFileButton,
+                   SIGNAL(clicked()),
                    q, SLOT(onInstallFromFileTriggered()));
 }
 
@@ -358,12 +325,12 @@ void qSlicerExtensionsManagerWidget::onModelUpdated()
   Q_D(qSlicerExtensionsManagerWidget);
 
   int manageExtensionsTabIndex = d->tabWidget->indexOf(d->ManageExtensionsTab);
-  int numberOfInstalledExtensions = this->extensionsManagerModel()->numberOfInstalledExtensions();
+  int installedExtensionsCount = this->extensionsManagerModel()->installedExtensionsCount();
 
   d->tabWidget->setTabText(manageExtensionsTabIndex,
-                           QString("Manage Extensions (%1)").arg(numberOfInstalledExtensions));
+                           QString("Manage Extensions (%1)").arg(installedExtensionsCount));
 
-  if (numberOfInstalledExtensions == 0)
+  if (installedExtensionsCount == 0)
     {
     d->tabWidget->setTabEnabled(manageExtensionsTabIndex, false);
     d->tabWidget->setCurrentWidget(d->InstallExtensionsTab);
@@ -388,13 +355,41 @@ void qSlicerExtensionsManagerWidget::onCurrentTabChanged(int index)
 {
   Q_D(qSlicerExtensionsManagerWidget);
   Q_UNUSED(index);
-#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
-  QWebEngineHistory* history = d->ExtensionsManageBrowser->webView()->history();
-  if (history->canGoBack())
+  if (d->tabWidget->currentWidget() == d->ManageExtensionsTab)
     {
-    history->goToItem(history->items().first());
+    d->toolsWidget->SearchBox->setEnabled(true);
+    }
+  else if (d->tabWidget->currentWidget() == d->restoreExtensionsTab)
+    {
+    d->toolsWidget->SearchBox->setEnabled(true);
+    }
+#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
+  else if (d->tabWidget->currentWidget() == d->InstallExtensionsTab)
+    {
+    QWebEngineHistory* history = d->ExtensionsManageBrowser->webView()->history();
+    if (history->canGoBack())
+      {
+      history->goToItem(history->items().first());
+      }
+    if (d->lastInstallWidgetUrl.path().endsWith("/slicerappstore"))
+      {
+      d->toolsWidget->SearchBox->setEnabled(true);
+      // When URL is changed because user clicked on a link then we want the search text
+      // to be reset. However, when user is entering text in the searchbox (it has the focus)
+      // then we must not overwrite the search text.
+      if (!d->toolsWidget->SearchBox->hasFocus())
+        {
+        QString lastSearchTextLoaded = QUrlQuery(d->lastInstallWidgetUrl).queryItemValue("search");
+        d->toolsWidget->SearchBox->setText(lastSearchTextLoaded);
+        }
+      }
+    else
+      {
+      d->toolsWidget->SearchBox->setEnabled(false);
+      }
     }
 #endif
+  this->processSearchTextChange();
 }
 
 // --------------------------------------------------------------------------
@@ -420,62 +415,75 @@ void qSlicerExtensionsManagerWidget::onManageUrlChanged(const QUrl& newUrl)
 void qSlicerExtensionsManagerWidget::onInstallUrlChanged(const QUrl& newUrl)
 {
   Q_D(qSlicerExtensionsManagerWidget);
+  // refresh tools widget state (it should be only enabled if browsing the appstore)
   if (newUrl.path().endsWith("/slicerappstore"))
     {
-    d->toolsWidget->InstallSearchBox->setEnabled(true);
+    d->toolsWidget->SearchBox->setEnabled(true);
     // When URL is changed because user clicked on a link then we want the search text
     // to be reset. However, when user is entering text in the searchbox (it has the focus)
     // then we must not overwrite the search text.
-    if (!d->toolsWidget->InstallSearchBox->hasFocus())
+    if (!d->toolsWidget->SearchBox->hasFocus())
       {
       QString lastSearchTextLoaded = QUrlQuery(newUrl).queryItemValue("search");
-      d->toolsWidget->InstallSearchBox->setText(lastSearchTextLoaded);
+      d->toolsWidget->SearchBox->setText(lastSearchTextLoaded);
       }
     }
   else
     {
-    d->toolsWidget->InstallSearchBox->setEnabled(false);
+    d->toolsWidget->SearchBox->setEnabled(false);
     }
+  d->lastInstallWidgetUrl = newUrl;
 }
 
 // --------------------------------------------------------------------------
 void qSlicerExtensionsManagerWidget::onSearchTextChanged(const QString& newText)
 {
-#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
   Q_D(qSlicerExtensionsManagerWidget);
   if (d->searchTimerId)
     {
     this->killTimer(d->searchTimerId);
     d->searchTimerId = 0;
     }
-  if (newText != d->lastSearchText)
+  d->searchTimerId = this->startTimer(500);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerWidget::processSearchTextChange()
+{
+  Q_D(qSlicerExtensionsManagerWidget);
+  const QString& searchText = d->toolsWidget->SearchBox->text();
+  if (d->tabWidget->currentWidget() == d->ManageExtensionsTab)
     {
-    d->searchTimerId = this->startTimer(500);
+    d->ExtensionsManageWidget->setSearchText(searchText);
     }
-#else
-  Q_UNUSED(newText);
+  else if (d->tabWidget->currentWidget() == d->restoreExtensionsTab)
+    {
+    d->ExtensionsRestoreWidget->setSearchText(searchText);
+    }
+#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
+  else if (d->tabWidget->currentWidget() == d->InstallExtensionsTab)
+    {
+    if (searchText != d->lastInstallWidgetSearchText)
+      {
+      d->ExtensionsInstallWidget->webView()->page()->runJavaScript(
+        "midas.slicerappstore.search = " + jsQuote(searchText) + ";"
+        "midas.slicerappstore.applyFilter();");
+      d->lastInstallWidgetSearchText = searchText;
+      }
+    }
 #endif
 }
 
 // --------------------------------------------------------------------------
 void qSlicerExtensionsManagerWidget::timerEvent(QTimerEvent* e)
 {
-#ifdef Slicer_BUILD_WEBENGINE_SUPPORT
   Q_D(qSlicerExtensionsManagerWidget);
   if (e->timerId() == d->searchTimerId)
     {
-    const QString& searchText = d->toolsWidget->InstallSearchBox->text();
-    if (searchText != d->lastSearchText)
-      {
-      d->ExtensionsInstallWidget->webView()->page()->runJavaScript(
-        "midas.slicerappstore.search = " + jsQuote(searchText) + ";"
-        "midas.slicerappstore.applyFilter();");
-      d->lastSearchText = searchText;
-      }
+    this->processSearchTextChange();
     this->killTimer(d->searchTimerId);
     d->searchTimerId = 0;
     }
-#endif
   QObject::timerEvent(e);
 }
 
@@ -517,4 +525,28 @@ void qSlicerExtensionsManagerWidget::onMessageLogged(
     {
     QMessageBox::information(this, "Install extension", text);
     }
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerWidget::confirmClose()
+{
+  Q_D(qSlicerExtensionsManagerWidget);
+  int numberOfPendingOperations = 0;
+  numberOfPendingOperations += d->ExtensionsRestoreWidget->pendingOperationsCount();
+  if (this->extensionsManagerModel())
+    {
+    numberOfPendingOperations += this->extensionsManagerModel()->activeTaskCount();
+    }
+  if (numberOfPendingOperations == 0)
+    {
+    return true;
+    }
+
+  ctkMessageBox confirmDialog;
+  confirmDialog.setText(tr("Install/uninstall operations are still in progress. ")
+    + tr("Click OK to wait for them to complete or choose Ignore to close the Extensions Manager now."));
+  confirmDialog.setIcon(QMessageBox::Question);
+  confirmDialog.setStandardButtons(QMessageBox::Ok | QMessageBox::Ignore);
+  bool closeConfirmed = (confirmDialog.exec() == QMessageBox::Ignore);
+  return closeConfirmed;
 }

@@ -41,7 +41,7 @@ class DMRIInstall(ScriptedLoadableModule):
   errorText = textwrap.dedent(
   """
   <h5 style="color:red">The SlicerDMRI extension is currently unavailable.</h5><br>
-  Please try a manual installation via the Extension Manager,
+  Please try a manual installation via the Extensions Manager,
   and contact the Slicer forum at:<br><br>
 
   &nbsp;&nbsp;<a href="https://discourse.slicer.org">https://discourse.slicer.org</a><br><br>

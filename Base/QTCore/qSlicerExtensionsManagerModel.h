@@ -44,6 +44,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerExtensionsManagerModel : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(int numberOfInstalledExtensions READ numberOfInstalledExtensions NOTIFY modelUpdated)
+  Q_PROPERTY(int installedExtensionsCount READ installedExtensionsCount NOTIFY modelUpdated)
   Q_PROPERTY(QStringList installedExtensions READ installedExtensions NOTIFY modelUpdated)
   Q_PROPERTY(QStringList enabledExtensions READ enabledExtensions NOTIFY modelUpdated)
   Q_PROPERTY(bool newExtensionEnabledByDefault READ newExtensionEnabledByDefault WRITE setNewExtensionEnabledByDefault NOTIFY newExtensionEnabledByDefaultChanged)
@@ -90,15 +91,19 @@ public:
   Q_INVOKABLE ExtensionMetadataType extensionMetadata(const QString& extensionName)const;
 
   /// \brief Return True if the \a extensionName is installed
-  /// \sa installExtension, numberOfInstalledExtensions, installedExtensions, extensionInstalled
+  /// \sa installExtension, installedExtensionsCount, installedExtensions, extensionInstalled
   Q_INVOKABLE bool isExtensionInstalled(const QString& extensionName)const;
 
   /// \brief Return the number of installed extensions
   /// \sa installExtension, isExtensionInstalled, installedExtensions, extensionInstalled
+  int installedExtensionsCount()const;
+
+  /// \brief Return the number of installed extensions. Deprecated, use installedExtensionsCount instead.
+  /// \sa installExtension, isExtensionInstalled, installedExtensions, extensionInstalled
   int numberOfInstalledExtensions()const;
 
   /// \brief Return names of all installed extensions
-  /// \sa installExtension, numberOfInstalledExtensions, isExtensionInstalled, extensionInstalled
+  /// \sa installExtension, installedExtensionsCount, isExtensionInstalled, extensionInstalled
   QStringList installedExtensions()const;
 
   /// \brief Return True if the \a extensionName is enabled
@@ -339,6 +344,9 @@ public slots:
   QStringList checkInstallPrerequisites() const;
 
   void updateModel();
+
+  /// Number of operations in progress
+  int activeTaskCount() const;
 
 signals:
 

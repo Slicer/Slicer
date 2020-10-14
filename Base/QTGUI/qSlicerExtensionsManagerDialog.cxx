@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QCloseEvent>
 #include <QPushButton>
 
 // QtGUI includes
@@ -174,4 +175,38 @@ void qSlicerExtensionsManagerDialog::onModelUpdated()
     shouldRestart = true;
     }
   this->setRestartRequested(shouldRestart);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerDialog::closeEvent(QCloseEvent* event)
+{
+  Q_D(qSlicerExtensionsManagerDialog);
+  if (d->ExtensionsManagerWidget->confirmClose())
+    {
+    event->accept(); // close window
+    }
+  else
+    {
+    event->ignore(); // ignore close event
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerExtensionsManagerDialog::accept()
+{
+  Q_D(qSlicerExtensionsManagerDialog);
+  if (d->ExtensionsManagerWidget->confirmClose())
+    {
+    Superclass::accept(); // close window
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerExtensionsManagerDialog::reject()
+{
+  Q_D(qSlicerExtensionsManagerDialog);
+  if (d->ExtensionsManagerWidget->confirmClose())
+    {
+    Superclass::reject(); // close window
+    }
 }

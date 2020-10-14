@@ -209,7 +209,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
     signals during the same operation, so we collapse them
     into a single check for compatible extensions."""
     if not hasattr(slicer.app, 'extensionsManagerModel'):
-      # Slicer may not be built with extension manager support
+      # Slicer may not be built with extensions manager support
       return
     if not self.extensionCheckPending:
       self.extensionCheckPending = True
@@ -245,7 +245,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
           # only display each extension name only once
           message += '  ' + extensionName + '\n'
           displayedExtensionNames.append(extensionName)
-      message += "\nYou can install extensions using the Extension Manager option from the View menu."
+      message += "\nYou can install extensions using the Extensions Manager option from the View menu."
       slicer.util.infoDisplay(message, parent=self, windowTitle='DICOM')
 
   def checkForExtensions(self):
