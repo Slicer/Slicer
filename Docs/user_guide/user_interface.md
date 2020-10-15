@@ -139,6 +139,7 @@ view will not activate the view.
 | `left arrow` / `right arrow` | move to previous/next slice |
 | `b` / `f` | move to previous/next slice |
 | `Shift` + `mouse move` | move crosshair in all views |
+| `Ctrl` + `Alt` + `left-click` + `drag` | rotate slice intersection of other views (`Slice intersections` must be enabled in `Crosshair selection` toolbar) |
 | `v` | toggle slice visibility in 3D view |
 | `r` | reset zoom and pan to default |
 | `g` | toggle segmentation or labelmap volume | | | visibility |
