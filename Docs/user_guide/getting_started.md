@@ -8,10 +8,9 @@ Welcome to the 3D Slicer community. This page contains information that you need
 
 ### Operating system versions
 
-|               |Windows                                        |macOS                             |Linux                                     |
-|---------------|-----------------------------------------------|----------------------------------|------------------------------------------|
-|Stable Release |Windows 10 or later<br>Windows 8.1<br>Windows 7|OS X Mavericks (10.9) or later    |Ubuntu 16.04 or later<br>CentOS 7 or later|
-|Preview Release|Windows 10 or later<br>Windows 8.1<br>Windows 7|macOS High Sierra (10.13) or later|Ubuntu 18.04 or later<br>CentOS 7 or later|
+|Windows                                        |macOS                             |Linux                                     |
+|-----------------------------------------------|----------------------------------|------------------------------------------|
+|Windows 10 or later<br>Windows 8.1<br>Windows 7|macOS High Sierra (10.13) or later|Ubuntu 18.04 or later<br>CentOS 7 or later|
 
 **Notes:**
 - It is always recommended to use the latest public release of Windows or macOS. For Linux, this would be the latest LTS (Long-term-support) version.
