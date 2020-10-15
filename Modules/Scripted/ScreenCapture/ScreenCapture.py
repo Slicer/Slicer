@@ -885,7 +885,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     # List of mirror sites to attempt download ffmpeg pre-built binaries from
     urls = []
     if os.name == 'nt':
-      urls.append('http://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-3.2.4-win64-static.zip')
+      urls.append('https://github.com/Slicer/SlicerBinaryDependencies/releases/download/ffmpeg/ffmpeg-3.2.4-win64-static.zip')
     else:
       # TODO: implement downloading for Linux/MacOS?
       pass
