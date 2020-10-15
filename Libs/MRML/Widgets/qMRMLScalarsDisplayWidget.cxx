@@ -150,15 +150,23 @@ void qMRMLScalarsDisplayWidget::setMRMLDisplayNodes(QList<vtkMRMLDisplayNode*> d
 {
   Q_D(qMRMLScalarsDisplayWidget);
 
-  // Set first node as current node (the properties of which that the widget displays)
-  if (displayNodes.size() > 0)
-    {
-    this->setMRMLDisplayNode(displayNodes[0]);
-    }
+  displayNodes.removeAll(nullptr);
+
+  // Only the first display node is observed
+  qvtkReconnect(
+    (d->CurrentDisplayNodes.size() > 0 ? d->CurrentDisplayNodes[0] : nullptr),
+    (displayNodes.size() > 0 ? displayNodes[0] : nullptr),
+    vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
   d->CurrentDisplayNodes = displayNodes;
-}
 
+  if (d->CurrentDisplayNodes.size() > 0)
+    {
+    d->CurrentDisplayNodes[0]->UpdateScalarRange();
+    }
+
+  this->updateWidgetFromMRML();
+}
 
 //------------------------------------------------------------------------------
 void qMRMLScalarsDisplayWidget::setMRMLDisplayNode(vtkMRMLNode* node)
@@ -170,19 +178,12 @@ void qMRMLScalarsDisplayWidget::setMRMLDisplayNode(vtkMRMLNode* node)
 void qMRMLScalarsDisplayWidget::setMRMLDisplayNode(vtkMRMLDisplayNode* displayNode)
 {
   Q_D(qMRMLScalarsDisplayWidget);
-  if (d->CurrentDisplayNodes.size() == 1 && d->CurrentDisplayNodes[0] == displayNode)
+  QList<vtkMRMLDisplayNode*> displayNodes;
+  if (displayNode)
     {
-    return;
+    displayNodes << displayNode;
     }
-
-  qvtkReconnect( (d->CurrentDisplayNodes.size() > 0 ? d->CurrentDisplayNodes[0] : nullptr),
-    displayNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()) );
-
-  d->CurrentDisplayNodes.clear();
-  d->CurrentDisplayNodes << displayNode;
-
-  displayNode->UpdateScalarRange();
-  this->updateWidgetFromMRML();
+  this->setMRMLDisplayNodes(displayNodes);
 }
 
 //------------------------------------------------------------------------------
