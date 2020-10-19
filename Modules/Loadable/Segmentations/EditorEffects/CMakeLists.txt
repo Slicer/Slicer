@@ -38,6 +38,8 @@ if(Slicer_USE_PYTHONQT)
     qSlicerSegmentEditorScriptedEffect.h
     qSlicerSegmentEditorScriptedLabelEffect.cxx
     qSlicerSegmentEditorScriptedLabelEffect.h
+    qSlicerSegmentEditorScriptedPaintEffect.cxx
+    qSlicerSegmentEditorScriptedPaintEffect.h
     )
 endif()
 
@@ -56,6 +58,7 @@ if(Slicer_USE_PYTHONQT)
   list(APPEND ${KIT}_MOC_SRCS
     qSlicerSegmentEditorScriptedEffect.h
     qSlicerSegmentEditorScriptedLabelEffect.h
+    qSlicerSegmentEditorScriptedPaintEffect.h
     )
 endif()
 

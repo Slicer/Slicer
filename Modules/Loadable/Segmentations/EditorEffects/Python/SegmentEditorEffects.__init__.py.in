@@ -1,6 +1,7 @@
 
 from .AbstractScriptedSegmentEditorEffect import *
 from .AbstractScriptedSegmentEditorLabelEffect import *
+from .AbstractScriptedSegmentEditorPaintEffect import *
 from .AbstractScriptedSegmentEditorAutoCompleteEffect import *
 
 from .SegmentEditorDrawEffect import *

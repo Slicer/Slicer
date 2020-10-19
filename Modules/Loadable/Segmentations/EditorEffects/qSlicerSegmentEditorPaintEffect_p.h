@@ -80,8 +80,10 @@ public:
   ~qSlicerSegmentEditorPaintEffectPrivate() override;
 
   /// Depending on the \sa DelayedPaint mode, either paint the given point or queue
-  /// it up with a marker for later painting
-  void paintAddPoint(qMRMLWidget* viewWidget, double pixelPositionWorld[3]);
+  /// it up with a marker for later painting.
+  /// If lastBrushPosition_World is specified then multiple points are added along a line
+  /// that connects the current and last brush position, to ensure a smooth and continuous brush stroke.
+  void paintAddPoint(qMRMLWidget* viewWidget, double pixelPositionWorld[3], double* lastBrushPosition_World=nullptr);
 
   /// Update paint circle glyph
   void updateBrush(qMRMLWidget* viewWidget, BrushPipeline* brush);
@@ -102,9 +104,6 @@ protected:
 
   /// Delete all brush pipelines
   void clearBrushPipelines();
-
-  /// Paint labelmap
-  void paintApply(qMRMLWidget* viewWidget);
 
   /// Paint brushes to the modifier labelmap
   void paintBrushes(vtkOrientedImageData* modifierLabelmap, qMRMLWidget* viewWidget, vtkPoints* pixelPositions_World, int extent[6]=nullptr);
@@ -153,10 +152,19 @@ public:
   vtkSmartPointer<vtkPoints> PaintCoordinates_World;
   vtkSmartPointer<vtkPolyData> FeedbackPointsPolyData;
 
-  // If a new point is added at less than this squared distance
-  // then the point is not added. It can be used for limiting number of
-  // points to improve performance.
+  /// If a new point is added at less than this squared distance
+  /// then the point is not added. It can be used for limiting number of
+  /// points to improve performance.
   double MinimumPaintPointDistance2;
+
+  /// Maximum distance between points of a continuous paint stroke.
+  /// Defined as fraction of brush size.
+  /// Smaller value creates more continuous strokes, even when mouse moves quickly.
+  double MaximumPointDistanceInStroke;
+
+  /// Previous brush position in the current stroke.
+  double LastBrushPosition_World[3];
+  bool LastBrushPositionValid;
 
   QList<vtkActor2D*> FeedbackActors;
   QMap<qMRMLWidget*, BrushPipeline*> BrushPipelines;
@@ -168,6 +176,7 @@ public:
   int ActiveViewLastInteractionPosition[2];
   int ActiveViewLastPaintPosition[2];
 
+  QFrame* PaintOptionsFrame;
   QFrame* BrushDiameterFrame;
   qMRMLSpinBox* BrushDiameterSpinBox;
   ctkDoubleSlider* BrushDiameterSlider;

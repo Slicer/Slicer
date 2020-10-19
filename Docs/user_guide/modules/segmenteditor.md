@@ -148,6 +148,17 @@ Grows or shrinks the selected segment by the specified margin.
 
 Smoothes selected labelmap or all labelmaps (only for Joint smoothing method).
 
+By clicking `Apply` button, the entire segmentation is smoothed.
+
+To smooth a specific region, left click and drag in any slice or 3D view. Same smoothing method and strength is used as for the whole-segmentation mode (size of the brush does not affect smoothing strength, just makes it easier to designate a larger region).
+
+Available methods:
+- Median: removes small extrusions and fills small gaps while keeps smooth contours mostly unchanged. Applied to selected segment only.</li>
+- Opening: removes extrusions smaller than the specified kernel size. Does not add anything to the segment. Applied to selected segment only.</li>
+- Closing: fills sharp corners and holes smaller than the specified kernel size. Does not remove anything from the segment. Applied to selected segment only.</li>
+- Gaussian: smoothes all details. Strong smoothing as achievable, but tends to shrink the segment. Applied to selected segment only.</li>
+- Joint smoothing: smoothes multiple segments at once, preserving watertight interface between them. If segments overlap, segment higher in the segments table will have priority. Applied to all visible segments.
+
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_scissors.png) Scissors
 
 Clip segments to the specified region or fill regions of a segment (typically used with masking). Regions can be drawn on both slice view or 3D views.

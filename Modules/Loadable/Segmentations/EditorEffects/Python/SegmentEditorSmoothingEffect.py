@@ -3,17 +3,17 @@ import vtk, qt, ctk, slicer
 import logging
 from SegmentEditorEffects import *
 
-class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorEffect):
+class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorPaintEffect):
   """ SmoothingEffect is an Effect that smoothes a selected segment
   """
 
   def __init__(self, scriptedEffect):
     scriptedEffect.name = 'Smoothing'
-    AbstractScriptedSegmentEditorEffect.__init__(self, scriptedEffect)
+    AbstractScriptedSegmentEditorPaintEffect.__init__(self, scriptedEffect)
 
   def clone(self):
     import qSlicerSegmentationsEditorEffectsPythonQt as effects
-    clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
+    clonedEffect = effects.qSlicerSegmentEditorScriptedPaintEffect(None)
     clonedEffect.setPythonSource(__file__.replace('\\','/'))
     return clonedEffect
 
@@ -24,7 +24,8 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorEffect):
     return qt.QIcon()
 
   def helpText(self):
-    return """<html>Make segment boundaries smoother<br> by removing extrusions and filling small holes. Available methods:<p>
+    return """<html>Make segment boundaries smoother<br> by removing extrusions and filling small holes. The effect can be either applied locally
+(by painting in viewers) or to the whole segment (by clicking Apply button). Available methods:<p>
 <ul style="margin: 0">
 <li><b>Median:</b> removes small details while keeps smooth contours mostly unchanged. Applied to selected segment only.</li>
 <li><b>Opening:</b> removes extrusions smaller than the specified kernel size. Applied to selected segment only.</li>
@@ -88,9 +89,14 @@ If segments overlap, segment higher in the segments table will have priority. <b
     self.jointTaubinSmoothingFactorSlider.connect("valueChanged(double)", self.updateMRMLFromGUI)
     self.applyButton.connect('clicked()', self.onApply)
 
-  def createCursor(self, widget):
-    # Turn off effect-specific cursor for this effect
-    return slicer.util.mainWindow().cursor
+    # Customize smoothing brush
+    self.scriptedEffect.setColorSmudgeCheckboxVisible(False)
+    self.paintOptionsGroupBox = ctk.ctkCollapsibleGroupBox()
+    self.paintOptionsGroupBox.setTitle("Smoothing brush options")
+    self.paintOptionsGroupBox.setLayout(qt.QVBoxLayout())
+    self.paintOptionsGroupBox.layout().addWidget(self.scriptedEffect.paintOptionsFrame())
+    self.paintOptionsGroupBox.collapsed = True
+    self.scriptedEffect.addOptionsWidget(self.paintOptionsGroupBox)
 
   def setMRMLDefaults(self):
     self.scriptedEffect.setParameterDefault("SmoothingMethod", MEDIAN)
@@ -159,7 +165,9 @@ If segments overlap, segment higher in the segments table will have priority. <b
   # Effect specific methods (the above ones are the API methods to override)
   #
 
-  def onApply(self):
+  def onApply(self, maskImage=None, maskExtent=None):
+    """maskImage: contains nonzero where smoothing will be applied
+    """
     try:
       # This can be a long operation - indicate it to the user
       qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
@@ -168,13 +176,54 @@ If segments overlap, segment higher in the segments table will have priority. <b
 
       smoothingMethod = self.scriptedEffect.parameter("SmoothingMethod")
       if smoothingMethod == JOINT_TAUBIN:
-        self.smoothMultipleSegments()
+        self.smoothMultipleSegments(maskImage, maskExtent)
       else:
-        self.smoothSelectedSegment()
+        self.smoothSelectedSegment(maskImage, maskExtent)
     finally:
       qt.QApplication.restoreOverrideCursor()
 
-  def smoothSelectedSegment(self):
+  def clipImage(self, inputImage, maskExtent, margin):
+    clipper = vtk.vtkImageClip()
+    clipper.SetOutputWholeExtent(maskExtent[0] - margin[0], maskExtent[1] + margin[0],
+                                 maskExtent[2] - margin[1], maskExtent[3] + margin[1],
+                                 maskExtent[4] - margin[2], maskExtent[5] + margin[2])
+    clipper.SetInputData(inputImage)
+    clipper.SetClipData(True)
+    clipper.Update()
+    clippedImage = slicer.vtkOrientedImageData()
+    clippedImage.ShallowCopy(clipper.GetOutput())
+    clippedImage.CopyDirections(inputImage)
+    return clippedImage
+
+  def modifySelectedSegmentByLabelmap(self, smoothedImage, selectedSegmentLabelmap, modifierLabelmap, maskImage, maskExtent):
+    if maskImage:
+      smoothedClippedSelectedSegmentLabelmap = slicer.vtkOrientedImageData()
+      smoothedClippedSelectedSegmentLabelmap.ShallowCopy(smoothedImage)
+      smoothedClippedSelectedSegmentLabelmap.CopyDirections(modifierLabelmap)
+
+      # fill smoothed selected segment outside the painted region to 1 so that in the end the image is not modified by OPERATION_MINIMUM
+      fillValue = 1.0
+      slicer.vtkOrientedImageDataResample.ApplyImageMask(smoothedClippedSelectedSegmentLabelmap, maskImage, fillValue, False)
+      # set original segment labelmap outside painted region, solid 1 inside painted region
+      slicer.vtkOrientedImageDataResample.ModifyImage(maskImage, selectedSegmentLabelmap,
+                                                      slicer.vtkOrientedImageDataResample.OPERATION_MAXIMUM)
+      slicer.vtkOrientedImageDataResample.ModifyImage(maskImage, smoothedClippedSelectedSegmentLabelmap,
+                                                      slicer.vtkOrientedImageDataResample.OPERATION_MINIMUM)
+
+      updateExtent = [0, -1, 0, -1, 0, -1]
+      modifierExtent = modifierLabelmap.GetExtent()
+      for i in range(3):
+        updateExtent[2 * i] = min(maskExtent[2 * i], modifierExtent[2 * i])
+        updateExtent[2 * i + 1] = max(maskExtent[2 * i + 1], modifierExtent[2 * i + 1])
+
+      self.scriptedEffect.modifySelectedSegmentByLabelmap(maskImage,
+                                                          slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet,
+                                                          updateExtent)
+    else:
+      modifierLabelmap.DeepCopy(smoothedImage)
+      self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
+
+  def smoothSelectedSegment(self, maskImage=None, maskExtent=None):
     try:
 
       # Get master volume image data
@@ -188,19 +237,30 @@ If segments overlap, segment higher in the segments table will have priority. <b
 
       if smoothingMethod == GAUSSIAN:
         maxValue = 255
+        radiusFactor = 4.0
+        standardDeviationMM = self.scriptedEffect.doubleParameter("GaussianStandardDeviationMm")
+        spacing = modifierLabelmap.GetSpacing()
+        standardDeviationPixel = [1.0, 1.0, 1.0]
+        radiusPixel = [3, 3, 3]
+        for idx in range(3):
+          standardDeviationPixel[idx] = standardDeviationMM / spacing[idx]
+          radiusPixel[idx] = int(standardDeviationPixel[idx] * radiusFactor) + 1
+        if maskExtent:
+          clippedSelectedSegmentLabelmap = self.clipImage(selectedSegmentLabelmap, maskExtent, radiusPixel)
+        else:
+          clippedSelectedSegmentLabelmap = selectedSegmentLabelmap
 
         thresh = vtk.vtkImageThreshold()
-        thresh.SetInputData(selectedSegmentLabelmap)
+        thresh.SetInputData(clippedSelectedSegmentLabelmap)
         thresh.ThresholdByLower(0)
         thresh.SetInValue(0)
         thresh.SetOutValue(maxValue)
         thresh.SetOutputScalarType(vtk.VTK_UNSIGNED_CHAR)
 
-        standardDeviationMM = self.scriptedEffect.doubleParameter("GaussianStandardDeviationMm")
         gaussianFilter = vtk.vtkImageGaussianSmooth()
         gaussianFilter.SetInputConnection(thresh.GetOutputPort())
-        gaussianFilter.SetStandardDeviation(standardDeviationMM)
-        gaussianFilter.SetRadiusFactor(4)
+        gaussianFilter.SetStandardDeviation(*standardDeviationPixel)
+        gaussianFilter.SetRadiusFactor(radiusFactor)
 
         thresh2 = vtk.vtkImageThreshold()
         thresh2.SetInputConnection(gaussianFilter.GetOutputPort())
@@ -209,27 +269,33 @@ If segments overlap, segment higher in the segments table will have priority. <b
         thresh2.SetOutValue(0)
         thresh2.SetOutputScalarType(selectedSegmentLabelmap.GetScalarType())
         thresh2.Update()
-        modifierLabelmap.DeepCopy(thresh2.GetOutput())
+
+        self.modifySelectedSegmentByLabelmap(thresh2.GetOutput(), selectedSegmentLabelmap, modifierLabelmap, maskImage, maskExtent)
 
       else:
         # size rounded to nearest odd number. If kernel size is even then image gets shifted.
         kernelSizePixel = self.getKernelSizePixel()
 
+        if maskExtent:
+          clippedSelectedSegmentLabelmap = self.clipImage(selectedSegmentLabelmap, maskExtent, kernelSizePixel)
+        else:
+          clippedSelectedSegmentLabelmap = selectedSegmentLabelmap
+
         if smoothingMethod == MEDIAN:
           # Median filter does not require a particular label value
           smoothingFilter = vtk.vtkImageMedian3D()
-          smoothingFilter.SetInputData(selectedSegmentLabelmap)
+          smoothingFilter.SetInputData(clippedSelectedSegmentLabelmap)
 
         else:
           # We need to know exactly the value of the segment voxels, apply threshold to make force the selected label value
           labelValue = 1
           backgroundValue = 0
           thresh = vtk.vtkImageThreshold()
-          thresh.SetInputData(selectedSegmentLabelmap)
+          thresh.SetInputData(clippedSelectedSegmentLabelmap)
           thresh.ThresholdByLower(0)
           thresh.SetInValue(backgroundValue)
           thresh.SetOutValue(labelValue)
-          thresh.SetOutputScalarType(selectedSegmentLabelmap.GetScalarType())
+          thresh.SetOutputScalarType(clippedSelectedSegmentLabelmap.GetScalarType())
 
           smoothingFilter = vtk.vtkImageOpenClose3D()
           smoothingFilter.SetInputConnection(thresh.GetOutputPort())
@@ -242,15 +308,13 @@ If segments overlap, segment higher in the segments table will have priority. <b
 
         smoothingFilter.SetKernelSize(kernelSizePixel[0],kernelSizePixel[1],kernelSizePixel[2])
         smoothingFilter.Update()
-        modifierLabelmap.DeepCopy(smoothingFilter.GetOutput())
+
+        self.modifySelectedSegmentByLabelmap(smoothingFilter.GetOutput(), selectedSegmentLabelmap, modifierLabelmap, maskImage, maskExtent)
 
     except IndexError:
       logging.error('apply: Failed to apply smoothing')
 
-    # Apply changes
-    self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
-
-  def smoothMultipleSegments(self):
+  def smoothMultipleSegments(self, maskImage=None, maskExtent=None):
     import vtkSegmentationCorePython as vtkSegmentationCore
 
     # Generate merged labelmap of all visible segments
@@ -349,6 +413,28 @@ If segments overlap, segment higher in the segments table will have priority. <b
       self.scriptedEffect.modifySegmentByLabelmap(segmentationNode, segmentId, smoothedBinaryLabelMap,
         slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet, False)
     self.scriptedEffect.parameterSetNode().SetOverwriteMode(oldOverwriteMode)
+
+  def paintApply(self, viewWidget):
+
+    # Current limitation: smoothing brush is not implemented for joint smoothing
+    smoothingMethod = self.scriptedEffect.parameter("SmoothingMethod")
+    if smoothingMethod == JOINT_TAUBIN:
+      self.scriptedEffect.clearBrushes()
+      self.scriptedEffect.forceRender(viewWidget)
+      slicer.util.messageBox("Smoothing brush is not available for 'joint smoothing' method.")
+      return
+
+    modifierLabelmap = self.scriptedEffect.defaultModifierLabelmap()
+    maskImage = slicer.vtkOrientedImageData()
+    maskImage.DeepCopy(modifierLabelmap)
+    maskExtent = self.scriptedEffect.paintBrushesIntoLabelmap(maskImage, viewWidget)
+    self.scriptedEffect.clearBrushes()
+    self.scriptedEffect.forceRender(viewWidget)
+    if maskExtent[0]>maskExtent[1] or maskExtent[2]>maskExtent[3] or maskExtent[4]>maskExtent[5]:
+      return
+
+    self.scriptedEffect.saveStateForUndo()
+    self.onApply(maskImage, maskExtent)
 
 MEDIAN = 'MEDIAN'
 GAUSSIAN = 'GAUSSIAN'

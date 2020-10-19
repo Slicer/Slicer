@@ -8,6 +8,7 @@ configure_file(
 set(SegmentEditorEffects_PYTHON_SCRIPTS
   AbstractScriptedSegmentEditorEffect
   AbstractScriptedSegmentEditorLabelEffect
+  AbstractScriptedSegmentEditorPaintEffect
   AbstractScriptedSegmentEditorAutoCompleteEffect
   SegmentEditorDrawEffect
   SegmentEditorFillBetweenSlicesEffect
