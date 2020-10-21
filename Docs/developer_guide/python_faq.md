@@ -22,3 +22,23 @@ Complete example: *How to emulate selection of `FOV, spacing match Volumes` chec
 sliceNode = slicer.mrmlScene.GetNodeByID('vtkMRMLSliceNodeRed')
 sliceNode.SetSliceResolutionMode(slicer.vtkMRMLSliceNode.SliceResolutionMatchVolumes)
 ```
+
+### How to type file paths in Python
+
+New Python users on Windows often suprised when they enter a path that contain backslash character (`\`) and it just does not work. Since backslash (`\`) is an escape character in Python, it requires special attention when used in string literals. For example, this is incorrect:
+
+    somePath = "F:\someFolder\myfile.nrrd"  # incorrect (\s and \m are interpreted as special characters)
+
+The easiest method for using a path that contains backslash character is to declare the text as "raw string" by prepending an `r` character. This is correct:
+
+    somePath = r"F:\someFolder\myfile.nrrd"
+
+It is possible to keep the text as regular string and typing double-backslash instead of . This is correct:
+
+    somePath = "F:\\someFolder\\myfile.nrrd"
+
+In most places, unix-type separators can be used instead of backslash. This is correct:
+
+    somePath = "F:/someFolder/myfile.nrrd"
+
+See more information in Python documentation: https://docs.python.org/3/tutorial/introduction.html?#strings
