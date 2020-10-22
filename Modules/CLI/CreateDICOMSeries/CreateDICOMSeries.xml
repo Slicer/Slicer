@@ -142,11 +142,25 @@
   <parameters advanced="true">
     <label>Image Parameters</label>
     <description><![CDATA[Parameters that apply to the images and data in each image]]></description>
+    <string>
+      <label>Window center</label>
+      <name>windowCenter</name>
+      <longflag>--windowCenter</longflag>
+      <description><![CDATA[Window center (0028,1050). Specify a linear conversion from stored pixel values (after Rescale Slope and Intercepthave been applied) to values to be displayed. Window Center contains the input value that is the center of the window. If either window center or width is undefined then the window is set to the full intensity ange of the image.]]></description>
+      <default></default>
+    </string>
+    <string>
+      <label>Window width</label>
+      <name>windowWidth</name>
+      <longflag>--windowWidth</longflag>
+      <description><![CDATA[Window width (0028,1051). Specify a linear conversion from stored pixel values (after Rescale Slope and Intercepthave been applied) to values to be displayed. Window Width contains the width of the window. If either window center or width is undefined then the window is set to the full intensity ange of the image.]]></description>
+      <default></default>
+    </string>
     <double>
       <label>Rescale intercept</label>
       <name>rescaleIntercept</name>
       <longflag>--rescaleIntercept</longflag>
-      <description><![CDATA[Rescale interscept (0028,1052). Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleIntercept.  Default is 0.0. Data values are converted on write (the data is scaled and shifted so that the slope and interscept will bring it back to the current intensity range).]]></description>
+      <description><![CDATA[Rescale intercept (0028,1052). Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleIntercept.  Default is 0.0. Data values are converted on write (the data is scaled and shifted so that the slope and interscept will bring it back to the current intensity range).]]></description>
       <default>0.0000</default>
     </double>
     <double>

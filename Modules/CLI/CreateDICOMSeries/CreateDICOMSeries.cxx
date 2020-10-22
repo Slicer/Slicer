@@ -304,33 +304,46 @@ int DoIt( int argc, char * argv[])
     extract->SetDirectionCollapseToGuess();  // ITKv3 compatible, but not recommended
     extract->SetInput(image );
     extract->SetExtractionRegion(extractRegion);
-    extract->GetOutput()->SetMetaDataDictionary(dictionary);
     extract->Update();
 
-    itk::ImageRegionIterator<Image2DType> it( extract->GetOutput(), extract->GetOutput()->GetLargestPossibleRegion() );
-    typename Image2DType::PixelType                minValue = itk::NumericTraits<typename Image2DType::PixelType>::max();
-    typename Image2DType::PixelType                maxValue = itk::NumericTraits<typename Image2DType::PixelType>::min();
-    for( it.GoToBegin(); !it.IsAtEnd(); ++it )
+    // If window center and width are specified then use the same values for all slices.
+    // Otherwise use the full scalar range of voxels in the current slice.
+    std::string currentWindowCenter = windowCenter;
+    std::string currentWindowWidth = windowWidth;
+    if (currentWindowCenter.empty() || currentWindowWidth.empty())
       {
-      typename Image2DType::PixelType p = it.Get();
-      if( p > maxValue )
+      // Window width and center are required attributes (if VOI LUT sequence is not present), therefore
+      // if the value is not specified then set it to include the full range of voxel values.
+      itk::ImageRegionIterator<Image2DType> it( extract->GetOutput(), extract->GetOutput()->GetLargestPossibleRegion() );
+      typename Image2DType::PixelType                minValue = itk::NumericTraits<typename Image2DType::PixelType>::max();
+      typename Image2DType::PixelType                maxValue = itk::NumericTraits<typename Image2DType::PixelType>::min();
+      for( it.GoToBegin(); !it.IsAtEnd(); ++it )
         {
-        maxValue = p;
+        typename Image2DType::PixelType p = it.Get();
+        if( p > maxValue )
+          {
+          maxValue = p;
+          }
+        if( p < minValue )
+          {
+          minValue = p;
+          }
         }
-      if( p < minValue )
-        {
-        minValue = p;
-        }
-      }
-    typename Image2DType::PixelType windowCenter = (minValue + maxValue) / 2;
-    typename Image2DType::PixelType windowWidth = (maxValue - minValue);
+      double windowCenterValue = static_cast<double>(minValue + maxValue) / 2.0;
+      double windowWidthValue = static_cast<double>(maxValue - minValue);
 
-    value.str("");
-    value << windowCenter;
-    itk::EncapsulateMetaData<std::string>(dictionary, "0028|1050", value.str() );
-    value.str("");
-    value << windowWidth;
-    itk::EncapsulateMetaData<std::string>(dictionary, "0028|1051", value.str() );
+      value.str("");
+      value << windowCenterValue;
+      currentWindowCenter = value.str();
+
+      value.str("");
+      value << windowWidthValue;
+      currentWindowWidth = value.str();
+      }
+    itk::EncapsulateMetaData<std::string>(dictionary, "0028|1050", currentWindowCenter);
+    itk::EncapsulateMetaData<std::string>(dictionary, "0028|1051", currentWindowWidth);
+
+    extract->GetOutput()->SetMetaDataDictionary(dictionary);
 
     typename WriterType::Pointer writer = WriterType::New();
     char                imageNumber[BUFSIZ];

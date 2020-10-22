@@ -126,6 +126,10 @@ class DICOMExportScalarVolume(object):
     cliparameters['seriesDate'] = self.tags['Series Date']
     cliparameters['seriesTime'] = self.tags['Series Time']
     # Image
+    displayNode = self.volumeNode.GetDisplayNode()
+    if displayNode:
+      cliparameters['windowCenter'] = str(displayNode.GetLevel())
+      cliparameters['windowWidth'] = str(displayNode.GetWindow())
     cliparameters['contentDate'] = self.tags['Content Date']
     cliparameters['contentTime'] = self.tags['Content Time']
 
