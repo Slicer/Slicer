@@ -8,14 +8,9 @@ Welcome to the 3D Slicer community. This page contains information that you need
 
 ### Operating system versions
 
-|Windows                                        |macOS                             |Linux                                     |
-|-----------------------------------------------|----------------------------------|------------------------------------------|
-|Windows 10 or later<br>Windows 8.1<br>Windows 7|macOS High Sierra (10.13) or later|Ubuntu 18.04 or later<br>CentOS 7 or later|
-
-**Notes:**
-- It is always recommended to use the latest public release of Windows or macOS. For Linux, this would be the latest LTS (Long-term-support) version.
-- Slicer is expected to work on the vast majority of desktop and server Linux distributions. The system is required to provide at least GLIBC 2.17 and GLIBCCC 3.4.19. For more details, read [here](https://www.python.org/dev/peps/pep-0599/#the-manylinux2014-policy).
-- Only 64-bit Slicer installers are available to download. Developers can attempt to build 32-bit versions on their own if they need to run Slicer on a 32-bit operating system. That said, this should be carefully considered as many clinical research tasks, such as processing of large CT or MR volumetric datasets, require more memory than can be accommodated with a 32-bit program.
+- Windows: Windows 10, with all recommended updates installed. Windows 10 Version 1903 (May 2019 Update) version is required for support of international characters (UTF-8) in filenames and text. Microsoft does not support Windows 8.1 and Windows 7 anymore and Slicer is not tested on these legacy operating system versions, but may still work.
+- macOS: macOS High Sierra (10.13) or later. Latest public release is recommended.
+- Linux: Ubuntu 18.04 or later<br>CentOS 7 or later. Latest LTS (Long-term-support) version is recommended.
 
 ### Recommended hardware configuration
 - Memory: more than 4GB (8 or more is recommended). As a general rule, have 10x more memory than the amount of data that you load.
@@ -32,10 +27,11 @@ To download Slicer, click [here](http://download.slicer.org/).
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/getting_started_download.png)
 
-The "Preview Release" of 3D Slicer is updated daily (process starts at 11pm ET and takes few hours to complete) and represents the latest development including new features and fixes.
-The "Stable Release" is usually updated a few times a year and is more rigorously tested.
-
-Slicer is generally simple to install on all platforms. It is possible to install multiple versions of the application on the same user account and they will not interfere with each other. If you run into mysterious problems with your installation you can try deleting the [application settings files](settings.html#settings-file-location).
+**Notes:**
+- The "Preview Release" of 3D Slicer is updated daily (process starts at 11pm ET and takes few hours to complete) and represents the latest development including new features and fixes.
+- The "Stable Release" is usually updated a few times a year and is more rigorously tested.
+- Slicer is generally simple to install on all platforms. It is possible to install multiple versions of the application on the same user account and they will not interfere with each other. If you run into mysterious problems with your installation you can try deleting the [application settings files](settings.html#settings-file-location).
+- Only 64-bit Slicer installers are available to download. Developers can attempt to build 32-bit versions on their own if they need to run Slicer on a 32-bit operating system. That said, this should be carefully considered as many clinical research tasks, such as processing of large CT or MR volumetric datasets, require more memory than can be accommodated with a 32-bit program.
 
 Once downloaded, follow the instructions below to complete installation:
 
@@ -61,6 +57,9 @@ Installing Preview Release: Currently, preview release packages are not signed. 
 The following may be needed on fresh debian or ubuntu:
 
     sudo apt-get install libpulse-dev libnss3 libglu1-mesa
+    sudo apt-get install --reinstall libxcb-xinerama0
+
+**Note:** Slicer is expected to work on the vast majority of desktop and server Linux distributions. The system is required to provide at least GLIBC 2.17 and GLIBCCC 3.4.19. For more details, read [here](https://www.python.org/dev/peps/pep-0599/#the-manylinux2014-policy).
 
 ## Using Slicer
 
