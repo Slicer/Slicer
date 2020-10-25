@@ -31,16 +31,16 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   file(WRITE ${requirements_file} [===[
   nose==1.3.7 --hash=sha256:9ff7c6cc443f8c51994b34a667bbcf45afd6d945be7477b52e97516fd17c53ac  # needed for NumPy unit tests
   # Hashes correspond to the following packages:
-  # - numpy-1.19.1-cp36-cp36m-win_amd64.whl
-  # - numpy-1.19.1-cp36-cp36m-macosx_10_9_x86_64.whl
-  # - numpy-1.19.1-cp36-cp36m-manylinux1_x86_64.whl
-  # - numpy-1.19.1-cp36-cp36m-manylinux2010_x86_64.whl
-  # - numpy-1.19.1-cp36-cp36m-manylinux2014_aarch64.whl
-  numpy==1.19.1 --hash=sha256:082f8d4dd69b6b688f64f509b91d482362124986d98dc7dc5f5e9f9b9c3bb983 \
-                --hash=sha256:b1cca51512299841bf69add3b75361779962f9cee7d9ee3bb446d5982e925b69 \
-                --hash=sha256:cf1347450c0b7644ea142712619533553f02ef23f92f781312f6a3553d031fc7 \
-                --hash=sha256:3673c8b2b29077f1b7b3a848794f8e11f401ba0b71c49fbd26fb40b71788b132 \
-                --hash=sha256:56ef7f56470c24bb67fb43dae442e946a6ce172f97c69f8d067ff8550cf782ff
+  # - numpy-1.19.2-cp36-cp36m-win_amd64.whl
+  # - numpy-1.19.2-cp36-cp36m-macosx_10_9_x86_64.whl
+  # - numpy-1.19.2-cp36-cp36m-manylinux1_x86_64.whl
+  # - numpy-1.19.2-cp36-cp36m-manylinux2010_x86_64.whl
+  # - numpy-1.19.2-cp36-cp36m-manylinux2014_aarch64.whl
+  numpy==1.19.2 --hash=sha256:967c92435f0b3ba37a4257c48b8715b76741410467e2bdb1097e8391fccfae15 \
+                --hash=sha256:b594f76771bc7fc8a044c5ba303427ee67c17a09b36e1fa32bde82f5c419d17a \
+                --hash=sha256:3733640466733441295b0d6d3dcbf8e1ffa7e897d4d82903169529fd3386919a \
+                --hash=sha256:7c6646314291d8f5ea900a7ea9c4261f834b5b62159ba2abe3836f4fa6705526 \
+                --hash=sha256:7118f0a9f2f617f921ec7d278d981244ba83c85eea197be7c5a4f84af80a9c3c
   ]===])
 
   ExternalProject_Add(${proj}
