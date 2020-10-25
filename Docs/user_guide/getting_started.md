@@ -63,7 +63,7 @@ The following may be needed on fresh debian or ubuntu:
     sudo apt-get install --reinstall libxcb-xinerama0
 
 #### ArchLinux
-ArchLinux runs the `strip` utility by default; this needs to be disabled in order to run Slicer binaries.
+ArchLinux runs the `strip` utility by default; this needs to be disabled in order to run Slicer binaries.  For more information see [this thread on the Slicer Forum](https://discourse.slicer.org/t/could-not-load-dicom-data/14211/5).
 
 ## Using Slicer
 
