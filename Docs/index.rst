@@ -15,6 +15,7 @@ For Slicer-4.10 documentation, refer to the `3D Slicer wiki <https://www.slicer.
 
    user_guide/about
    user_guide/getting_started
+   user_guide/get_help
 
    user_guide/user_interface
    user_guide/data_loading_and_saving
