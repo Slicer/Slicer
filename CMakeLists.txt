@@ -170,6 +170,7 @@ mark_as_superbuild(Slicer_REQUIRED_QT_VERSION)
 # option(BUILD_SHARED_LIBS "Build Slicer with shared libraries." ON)
 set(BUILD_SHARED_LIBS ON)
 mark_as_superbuild(BUILD_SHARED_LIBS:BOOL)
+set(Slicer_BUILD_SHARED ${BUILD_SHARED_LIBS})
 
 #-----------------------------------------------------------------------------
 # Slicer application options
