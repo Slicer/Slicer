@@ -57,9 +57,15 @@ qSlicerErrorReportDialog::qSlicerErrorReportDialog(QWidget* parentWidget)
   d->InstructionsLabel->setText(instructionsText);
 
   QStringList logFilePaths = qSlicerApplication::application()->recentLogFiles();
-  d->RecentLogFilesComboBox->addItems(logFilePaths);
+  d->RecentLogFilesComboBox->addPaths(logFilePaths);
+  if (d->RecentLogFilesComboBox->count() > 0)
+    {
+    d->RecentLogFilesComboBox->setCurrentIndex(d->RecentLogFilesComboBox->model()->index(0, 0));
+    }
 
-  QObject::connect(d->RecentLogFilesComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(onLogFileSelectionChanged()));
+
+  //QObject::connect(d->RecentLogFilesComboBox, SIGNAL(currentTextChanged(QString)), this, SLOT(onLogFileSelectionChanged()));
+  QObject::connect(d->RecentLogFilesComboBox, SIGNAL(currentPathChanged(QString,QString)), this, SLOT(onLogFileSelectionChanged()));
   QObject::connect(d->LogCopyToClipboardPushButton, SIGNAL(clicked()), this, SLOT(onLogCopy()));
   QObject::connect(d->LogFileOpenPushButton, SIGNAL(clicked()), this, SLOT(onLogFileOpen()));
   QObject::connect(d->LogFileEditCheckBox, SIGNAL(clicked(bool)), this, SLOT(onLogFileEditClicked(bool)));
@@ -84,7 +90,7 @@ void qSlicerErrorReportDialog::onLogCopy()
 void qSlicerErrorReportDialog::onLogFileSelectionChanged()
 {
   Q_D(qSlicerErrorReportDialog);
-  QFile f(d->RecentLogFilesComboBox->currentText());
+  QFile f(d->RecentLogFilesComboBox->currentPath());
   if (f.open(QFile::ReadOnly | QFile::Text))
     {
     QTextStream in(&f);
@@ -101,7 +107,7 @@ void qSlicerErrorReportDialog::onLogFileSelectionChanged()
 void qSlicerErrorReportDialog::onLogFileOpen()
 {
   Q_D(qSlicerErrorReportDialog);
-  QDesktopServices::openUrl(QUrl("file:///"+d->RecentLogFilesComboBox->currentText(), QUrl::TolerantMode));
+  QDesktopServices::openUrl(QUrl("file:///"+d->RecentLogFilesComboBox->currentPath(), QUrl::TolerantMode));
 }
 
 // --------------------------------------------------------------------------

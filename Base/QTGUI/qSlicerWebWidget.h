@@ -103,6 +103,16 @@ public slots:
 
   void onDownloadFinished(QNetworkReply* reply);
 
+  /// Renders the current content of the page into a PDF document and saves it in the location specified in filePath.
+  ///
+  /// The page size and orientation of the produced PDF document are taken from the values specified in pageLayout.
+  /// This method issues an asynchronous request for printing the web page into a PDF and returns immediately.
+  /// To be informed about the result of the request, connect to the signal pdfPrintingFinished().
+  ///
+  /// If a file already exists at the provided file path, it will be overwritten.
+  /// \sa QWebEnginePage::printToPdf
+  void printToPdf(const QString& filePath);
+
 signals:
   /// emited with result of evalJS
   void evalResult(QString js, QString result);
@@ -111,6 +121,9 @@ signals:
   void loadStarted();
   void loadProgress(int progress);
   void loadFinished(bool ok);
+
+  /// signal passed through from QWebEnginePage
+  void pdfPrintingFinished(const QString &filePath, bool success);
 
 protected slots:
   virtual void initJavascript();

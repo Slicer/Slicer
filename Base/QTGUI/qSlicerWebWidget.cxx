@@ -145,6 +145,9 @@ void qSlicerWebWidgetPrivate::init()
   QObject::connect(this->WebView, SIGNAL(loadProgress(int)),
                    this->ProgressBar, SLOT(setValue(int)));
 
+  QObject::connect(this->WebEnginePage, SIGNAL(pdfPrintingFinished(QString, bool)),
+                   q, SIGNAL(pdfPrintingFinished(QString, bool)));
+
   this->ProgressBar->setVisible(false);
 }
 
@@ -378,6 +381,13 @@ void qSlicerWebWidget::onDownloadFinished(QNetworkReply* reply)
   Q_UNUSED(reply);
   d->ProgressBar->reset();
   d->ProgressBar->setVisible(false);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerWebWidget::printToPdf(const QString& filePath)
+{
+  Q_D(qSlicerWebWidget);
+  d->WebEnginePage->printToPdf(filePath);
 }
 
 // --------------------------------------------------------------------------

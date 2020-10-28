@@ -30,12 +30,14 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
   # Hashes correspond to the following packages:
-  # - scipy-1.5.2-cp36-cp36m-win_amd64.whl
-  # - scipy-1.5.2-cp36-cp36m-macosx_10_9_x86_64.whl
-  # - scipy-1.5.2-cp36-cp36m-manylinux1_x86_64.whl
-  scipy==1.5.2 --hash=sha256:8e28e74b97fc8d6aa0454989db3b5d36fc27e69cef39a7ee5eaf8174ca1123cb \
-              --hash=sha256:cca9fce15109a36a0a9f9cfc64f870f1c140cb235ddf27fe0328e6afb44dfed0 \
-              --hash=sha256:07e52b316b40a4f001667d1ad4eb5f2318738de34597bd91537851365b6c61f1
+  # - scipy-1.5.3-cp36-cp36m-win_amd64.whl
+  # - scipy-1.5.3-cp36-cp36m-macosx_10_9_x86_64.whl
+  # - scipy-1.5.3-cp36-cp36m-manylinux1_x86_64.whl
+  # - scipy-1.5.3-cp36-cp36m-manylinux2014_aarch64.whl
+  scipy==1.5.3 --hash=sha256:ffcbd331f1ffa82e22f1d408e93c37463c9a83088243158635baec61983aaacf \
+               --hash=sha256:f574558f1b774864516f3c3fe072ebc90a29186f49b720f60ed339294b7f32ac \
+               --hash=sha256:b9751b39c52a3fa59312bd2e1f40144ee26b51404db5d2f0d5259c511ff6f614 \
+               --hash=sha256:d5e3cc60868f396b78fc881d2c76460febccfe90f6d2f082b9952265c79a8788
   ]===])
 
   ExternalProject_Add(${proj}

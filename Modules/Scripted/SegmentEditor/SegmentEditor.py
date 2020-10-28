@@ -83,7 +83,8 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     segmentEditorSingletonTag = "SegmentEditor"
     segmentEditorNode = slicer.mrmlScene.GetSingletonNode(segmentEditorSingletonTag, "vtkMRMLSegmentEditorNode")
     if segmentEditorNode is None:
-      segmentEditorNode = slicer.vtkMRMLSegmentEditorNode()
+      segmentEditorNode = slicer.mrmlScene.CreateNodeByClass("vtkMRMLSegmentEditorNode")
+      segmentEditorNode.UnRegister(None)
       segmentEditorNode.SetSingletonTag(segmentEditorSingletonTag)
       segmentEditorNode = slicer.mrmlScene.AddNode(segmentEditorNode)
     if self.parameterSetNode == segmentEditorNode:
