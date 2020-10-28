@@ -1320,6 +1320,16 @@ bool qSlicerSegmentEditorScissorsEffect::processInteractionEvents(
 
   if (eid == vtkCommand::LeftButtonPressEvent)
     {
+    // Warn the user if current segment is not visible
+    int confirmedEditingAllowed = this->confirmCurrentSegmentVisible();
+    if (confirmedEditingAllowed == NotConfirmed || confirmedEditingAllowed == ConfirmedWithDialog)
+      {
+      // If user had to move the mouse to click on the popup, so we cannot continue with painting
+      // from the current mouse position. User will need to click again.
+      // The dialog is not displayed again for the same segment.
+      return false;
+      }
+
     pipeline->IsDragging = true;
     //this->cursorOff(viewWidget);
     vtkVector2i eventPosition;

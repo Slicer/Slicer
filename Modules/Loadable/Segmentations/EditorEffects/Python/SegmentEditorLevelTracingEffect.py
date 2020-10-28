@@ -56,6 +56,10 @@ follows the same intensity value back to the starting point within the current s
       return abortEvent
 
     if eventId == vtk.vtkCommand.LeftButtonPressEvent:
+      # Make sure the user wants to do the operation, even if the segment is not visible
+      if not self.scriptedEffect.confirmCurrentSegmentVisible():
+        return abortEvent
+
       self.scriptedEffect.saveStateForUndo()
 
       # Get modifier labelmap

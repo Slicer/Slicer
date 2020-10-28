@@ -1192,20 +1192,6 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
 
   if (worldPositionValid && eid == vtkCommand::LeftButtonPressEvent && !shiftKeyPressed)
     {
-    d->IsPainting = true;
-    if (!this->integerParameter("BrushPixelMode"))
-      {
-      //this->cursorOff(sliceWidget);
-      }
-    QList<qMRMLWidget*> viewWidgets = d->BrushPipelines.keys();
-    if (!this->parameterSetNode())
-      {
-      return false;
-      }
-    foreach (qMRMLWidget* viewWidget, viewWidgets)
-      {
-      d->BrushPipelines[viewWidget]->SetFeedbackVisibility(d->DelayedPaint);
-      }
     if (this->m_AlwaysErase)
       {
       // Erase effect
@@ -1233,6 +1219,29 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
         {
         this->m_Erase = false;
         }
+      }
+    // Warn the user if current segment is not visible
+    int confirmedEditingAllowed = this->confirmCurrentSegmentVisible();
+    if (confirmedEditingAllowed == NotConfirmed || confirmedEditingAllowed == ConfirmedWithDialog)
+      {
+      // If user had to move the mouse to click on the popup, so we cannot continue with painting
+      // from the current mouse position. User will need to click again.
+      // The dialog is not displayed again for the same segment.
+      return false;
+      }
+    d->IsPainting = true;
+    if (!this->integerParameter("BrushPixelMode"))
+      {
+      //this->cursorOff(sliceWidget);
+      }
+    QList<qMRMLWidget*> viewWidgets = d->BrushPipelines.keys();
+    if (!this->parameterSetNode())
+      {
+      return false;
+      }
+    foreach (qMRMLWidget* viewWidget, viewWidgets)
+      {
+      d->BrushPipelines[viewWidget]->SetFeedbackVisibility(d->DelayedPaint);
       }
     // Start point of a paint stroke
     d->LastBrushPosition_World[0] = brushPosition_World[0];

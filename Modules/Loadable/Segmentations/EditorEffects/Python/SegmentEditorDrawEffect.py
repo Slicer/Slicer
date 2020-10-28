@@ -55,6 +55,13 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
       return abortEvent
 
     if eventId == vtk.vtkCommand.LeftButtonPressEvent:
+      # Make sure the user wants to do the operation, even if the segment is not visible
+      confirmedEditingAllowed = self.scriptedEffect.confirmCurrentSegmentVisible()
+      if confirmedEditingAllowed == self.scriptedEffect.NotConfirmed or confirmedEditingAllowed == self.scriptedEffect.ConfirmedWithDialog:
+        # If user had to move the mouse to click on the popup, so we cannot continue with painting
+        # from the current mouse position. User will need to click again.
+        # The dialog is not displayed again for the same segment.
+        return abortEvent
       pipeline.actionState = "drawing"
       self.scriptedEffect.cursorOff(viewWidget)
       xy = callerInteractor.GetEventPosition()

@@ -168,13 +168,16 @@ If segments overlap, segment higher in the segments table will have priority. <b
   def onApply(self, maskImage=None, maskExtent=None):
     """maskImage: contains nonzero where smoothing will be applied
     """
+    smoothingMethod = self.scriptedEffect.parameter("SmoothingMethod")
+    if smoothingMethod != JOINT_TAUBIN:
+      # Make sure the user wants to do the operation, even if the segment is not visible
+      if not self.scriptedEffect.confirmCurrentSegmentVisible():
+        return
+
     try:
       # This can be a long operation - indicate it to the user
       qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
-
       self.scriptedEffect.saveStateForUndo()
-
-      smoothingMethod = self.scriptedEffect.parameter("SmoothingMethod")
       if smoothingMethod == JOINT_TAUBIN:
         self.smoothMultipleSegments(maskImage, maskExtent)
       else:

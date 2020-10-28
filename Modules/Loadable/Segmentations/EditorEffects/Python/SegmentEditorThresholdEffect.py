@@ -577,6 +577,9 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
       logging.error("Unknown AutoThresholdMode {0}".format(autoThresholdMode))
 
   def onApply(self):
+    if not self.scriptedEffect.confirmCurrentSegmentVisible():
+      return
+
     try:
       # Get master volume image data
       import vtkSegmentationCorePython as vtkSegmentationCore

@@ -33,15 +33,16 @@
 #include <vtkOrientedImageDataResample.h>
 
 // Qt includes
+#include <QColor>
 #include <QDebug>
 #include <QFormLayout>
+#include <QFrame>
 #include <QImage>
 #include <QLabel>
-#include <QPixmap>
 #include <QPainter>
 #include <QPaintDevice>
-#include <QFrame>
-#include <QColor>
+#include <QPixmap>
+#include <QSettings>
 
 // Slicer includes
 #include "qMRMLSliceWidget.h"
@@ -72,6 +73,9 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
 #include <vtkWeakPointer.h>
+
+// CTK includes
+#include <ctkMessageBox.h>
 
 //-----------------------------------------------------------------------------
 // qSlicerSegmentEditorAbstractEffectPrivate methods
@@ -948,6 +952,105 @@ bool qSlicerSegmentEditorAbstractEffect::commonParameterDefined(QString name)
     }
   const char* existingValue = d->ParameterSetNode->GetAttribute(name.toUtf8().constData());
   return (existingValue != nullptr && strlen(existingValue) > 0);
+}
+
+//-----------------------------------------------------------------------------
+int qSlicerSegmentEditorAbstractEffect::confirmCurrentSegmentVisible()
+{
+  if (!this->parameterSetNode())
+    {
+    // no parameter set node - do not prevent operation
+    return ConfirmedWithoutDialog;
+    }
+  vtkMRMLSegmentationNode* segmentationNode = this->parameterSetNode()->GetSegmentationNode();
+  if (!segmentationNode)
+    {
+    // no segmentation node - do not prevent operation
+    return ConfirmedWithoutDialog;
+    }
+  char* segmentID = this->parameterSetNode()->GetSelectedSegmentID();
+  if (!segmentID || strlen(segmentID)==0)
+    {
+    // no selected segment, probably this effect operates on the entire segmentation - do not prevent operation
+    return ConfirmedWithoutDialog;
+    }
+
+  // If segment visibility is already confirmed for this segment then we don't need to ask again
+  // (important for effects that are interrupted when painting/drawing on the image, because displaying a popup
+  // interferes with painting on the image)
+  vtkSegment* selectedSegment = nullptr;
+  if (segmentationNode->GetSegmentation())
+    {
+    selectedSegment = segmentationNode->GetSegmentation()->GetSegment(segmentID);
+    }
+  if (this->m_AlreadyConfirmedSegmentVisible == selectedSegment)
+    {
+    return ConfirmedWithoutDialog;
+    }
+
+  int numberOfDisplayNodes = segmentationNode->GetNumberOfDisplayNodes();
+  for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
+    {
+    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetNthDisplayNode(displayNodeIndex));
+    if (displayNode->GetVisibility() && displayNode->GetSegmentVisibility(segmentID))
+      {
+      // segment already visible
+      return ConfirmedWithoutDialog;
+      }
+    }
+
+  ctkMessageBox* confirmCurrentSegmentVisibleMsgBox = new ctkMessageBox(nullptr);
+  confirmCurrentSegmentVisibleMsgBox->setAttribute(Qt::WA_DeleteOnClose);
+  confirmCurrentSegmentVisibleMsgBox->setWindowTitle("Operate on invisible segment?");
+  confirmCurrentSegmentVisibleMsgBox->setText("The currently selected segment is hidden. Would you like to make it visible?");
+
+  confirmCurrentSegmentVisibleMsgBox->addButton(QMessageBox::Yes);
+  confirmCurrentSegmentVisibleMsgBox->addButton(QMessageBox::No);
+  confirmCurrentSegmentVisibleMsgBox->addButton(QMessageBox::Cancel);
+
+  confirmCurrentSegmentVisibleMsgBox->setDontShowAgainVisible(true);
+  confirmCurrentSegmentVisibleMsgBox->setDontShowAgainSettingsKey("Segmentations/ConfirmEditHiddenSegment");
+  confirmCurrentSegmentVisibleMsgBox->addDontShowAgainButtonRole(QMessageBox::YesRole);
+  confirmCurrentSegmentVisibleMsgBox->addDontShowAgainButtonRole(QMessageBox::NoRole);
+
+  confirmCurrentSegmentVisibleMsgBox->setIcon(QMessageBox::Question);
+
+  QSettings settings;
+  int savedButtonSelection = settings.value(confirmCurrentSegmentVisibleMsgBox->dontShowAgainSettingsKey(), static_cast<int>(QMessageBox::InvalidRole)).toInt();
+
+  int resultCode = confirmCurrentSegmentVisibleMsgBox->exec();
+
+  // Cancel means that user did not let the operation to proceed
+  if (resultCode == QMessageBox::Cancel)
+    {
+    return NotConfirmed;
+    }
+
+  // User chose to show the current segment
+  if (resultCode == QMessageBox::Yes)
+    {
+    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
+    if (displayNode)
+      {
+      displayNode->SetVisibility(true);
+      displayNode->SetSegmentVisibility(segmentID, true);
+      }
+    }
+  else
+    {
+    // User confirmed that it is OK to work on this invisible segment
+    this->m_AlreadyConfirmedSegmentVisible = selectedSegment;
+    }
+
+  // User confirmed that the operation can go on (did not click Cancel)
+  if (savedButtonSelection == static_cast<int>(QMessageBox::InvalidRole))
+    {
+    return ConfirmedWithDialog;
+    }
+  else
+    {
+    return ConfirmedWithoutDialog;
+    }
 }
 
 //-----------------------------------------------------------------------------

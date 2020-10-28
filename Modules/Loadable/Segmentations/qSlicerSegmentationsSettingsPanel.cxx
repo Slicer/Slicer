@@ -23,6 +23,7 @@
 // Qt includes
 #include <QDebug>
 #include <QSettings>
+#include <QMessageBox>
 
 // QtGUI includes
 #include "qSlicerAbstractCoreModule.h"
@@ -97,6 +98,12 @@ void qSlicerSegmentationsSettingsPanelPrivate::init()
   q->registerProperty("Segmentations/DefaultTerminologyEntry", q,
                       "defaultTerminologyEntry", SIGNAL(defaultTerminologyEntryChanged(QString)),
                       "Defult terminology entry", ctkSettingsPanel::OptionNone);
+
+  this->AllowEditingHiddenSegmentComboBox->addItem("Ask user", QMessageBox::InvalidRole);
+  this->AllowEditingHiddenSegmentComboBox->addItem("Always make visible", QMessageBox::Yes);
+  this->AllowEditingHiddenSegmentComboBox->addItem("Always allow", QMessageBox::No);
+  q->registerProperty("Segmentations/ConfirmEditHiddenSegment", this->AllowEditingHiddenSegmentComboBox,
+    "currentUserDataAsString", SIGNAL(currentIndexChanged(int)));
 
   // Actions to propagate to the application when settings are changed
   QObject::connect(this->AutoOpacitiesCheckBox, SIGNAL(toggled(bool)),

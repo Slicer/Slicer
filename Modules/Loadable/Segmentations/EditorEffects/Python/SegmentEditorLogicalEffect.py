@@ -176,6 +176,10 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     return invertedModifierLabelmap
 
   def onApply(self):
+    # Make sure the user wants to do the operation, even if the segment is not visible
+    if not self.scriptedEffect.confirmCurrentSegmentVisible():
+      return
+
     import vtkSegmentationCorePython as vtkSegmentationCore
 
     self.scriptedEffect.saveStateForUndo()

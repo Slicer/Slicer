@@ -109,6 +109,9 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
     return operationName in [KEEP_SELECTED_ISLAND, REMOVE_SELECTED_ISLAND, ADD_SELECTED_ISLAND]
 
   def onApply(self):
+    # Make sure the user wants to do the operation, even if the segment is not visible
+    if not self.scriptedEffect.confirmCurrentSegmentVisible():
+      return
     operationName = self.scriptedEffect.parameter("Operation")
     minimumSize = self.scriptedEffect.integerParameter("MinimumSize")
     if operationName == KEEP_LARGEST_ISLAND:
@@ -249,6 +252,10 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
       return abortEvent
 
     if eventId != vtk.vtkCommand.LeftButtonPressEvent:
+      return abortEvent
+
+    # Make sure the user wants to do the operation, even if the segment is not visible
+    if not self.scriptedEffect.confirmCurrentSegmentVisible():
       return abortEvent
 
     abortEvent = True

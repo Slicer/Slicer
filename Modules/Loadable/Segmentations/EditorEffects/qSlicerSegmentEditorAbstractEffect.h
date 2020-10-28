@@ -31,6 +31,9 @@
 #include <QList>
 #include <QVector3D>
 
+// VTK includes
+#include "vtkWeakPointer.h"
+
 class qSlicerSegmentEditorAbstractEffectPrivate;
 
 class vtkActor2D;
@@ -59,6 +62,7 @@ class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorAbstractEffect :
 {
 public:
   Q_OBJECT
+  Q_ENUMS(ConfirmationResult)
   Q_ENUMS(ModificationMode)
 
   /// This property stores the name of the effect
@@ -100,6 +104,13 @@ public:
     ModificationModeAdd,
     ModificationModeRemove,
     ModificationModeRemoveAll
+    };
+
+  enum ConfirmationResult
+    {
+    NotConfirmed,
+    ConfirmedWithoutDialog,
+    ConfirmedWithDialog,
     };
 
   /// Get icon for effect to be displayed in segment editor
@@ -324,6 +335,13 @@ public:
   /// Returns true if the common parameter is already defined.
   Q_INVOKABLE bool commonParameterDefined(QString name);
 
+  /// If current segment is not visible then asks the user to confirm
+  /// that the operation is intended to be performed on the current segment.
+  /// Returns NotConfirmed (0) if operation should not proceed with the current segment.
+  /// Returns ConfirmedWithoutDialog if operation should proceed with the current segment and dialog was not displayed.
+  /// Returns ConfirmedWithDialog if operation should proceed with the current segment and dialog was displayed.
+  Q_INVOKABLE int confirmCurrentSegmentVisible();
+
   Q_INVOKABLE vtkOrientedImageData* modifierLabelmap();
 
   /// Reset modifier labelmap to default (resets geometry, clears content)
@@ -410,6 +428,10 @@ protected:
 
   double m_FillValue{1.0};
   double m_EraseValue{0.0};
+
+  /// No confirmation will be displayed for editing this segment.
+  /// This is needed to ensure that editing of a hidden segment is only asked once.
+  vtkWeakPointer<vtkSegment> m_AlreadyConfirmedSegmentVisible;
 
 protected:
   QScopedPointer<qSlicerSegmentEditorAbstractEffectPrivate> d_ptr;
