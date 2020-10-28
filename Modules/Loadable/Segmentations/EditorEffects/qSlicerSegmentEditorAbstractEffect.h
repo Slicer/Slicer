@@ -324,6 +324,8 @@ public:
   /// Returns true if the common parameter is already defined.
   Q_INVOKABLE bool commonParameterDefined(QString name);
 
+  Q_INVOKABLE bool confirmCurrentSegmentVisible();
+
   Q_INVOKABLE vtkOrientedImageData* modifierLabelmap();
 
   /// Reset modifier labelmap to default (resets geometry, clears content)

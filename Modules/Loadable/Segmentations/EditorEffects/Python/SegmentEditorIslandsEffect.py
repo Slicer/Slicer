@@ -109,14 +109,17 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
     return operationName in [KEEP_SELECTED_ISLAND, REMOVE_SELECTED_ISLAND, ADD_SELECTED_ISLAND]
 
   def onApply(self):
-    operationName = self.scriptedEffect.parameter("Operation")
-    minimumSize = self.scriptedEffect.integerParameter("MinimumSize")
-    if operationName == KEEP_LARGEST_ISLAND:
-      self.splitSegments(minimumSize = minimumSize, maxNumberOfSegments = 1)
-    elif operationName == REMOVE_SMALL_ISLANDS:
-      self.splitSegments(minimumSize = minimumSize, split = False)
-    elif operationName == SPLIT_ISLANDS_TO_SEGMENTS:
-      self.splitSegments(minimumSize = minimumSize)
+    # Visibility check - Make sure the user wants to do the operation, even if the
+    # segment is not visible.
+    if self.scriptedEffect.confirmCurrentSegmentVisible():
+      operationName = self.scriptedEffect.parameter("Operation")
+      minimumSize = self.scriptedEffect.integerParameter("MinimumSize")
+      if operationName == KEEP_LARGEST_ISLAND:
+        self.splitSegments(minimumSize = minimumSize, maxNumberOfSegments = 1)
+      elif operationName == REMOVE_SMALL_ISLANDS:
+        self.splitSegments(minimumSize = minimumSize, split = False)
+      elif operationName == SPLIT_ISLANDS_TO_SEGMENTS:
+        self.splitSegments(minimumSize = minimumSize)
 
   def splitSegments(self, minimumSize = 0, maxNumberOfSegments = 0, split = True):
     """

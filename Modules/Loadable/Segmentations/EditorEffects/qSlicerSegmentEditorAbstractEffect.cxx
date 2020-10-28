@@ -73,6 +73,9 @@
 #include <vtkSmartPointer.h>
 #include <vtkWeakPointer.h>
 
+// CTK includes
+#include <ctkMessageBox.h>
+
 //-----------------------------------------------------------------------------
 // qSlicerSegmentEditorAbstractEffectPrivate methods
 
@@ -949,6 +952,49 @@ bool qSlicerSegmentEditorAbstractEffect::commonParameterDefined(QString name)
   const char* existingValue = d->ParameterSetNode->GetAttribute(name.toUtf8().constData());
   return (existingValue != nullptr && strlen(existingValue) > 0);
 }
+
+//-----------------------------------------------------------------------------
+bool qSlicerSegmentEditorAbstractEffect::confirmCurrentSegmentVisible()
+{
+  vtkMRMLSegmentationNode* segmentationNode = this->parameterSetNode()->GetSegmentationNode();
+  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
+  char* segmentID = this->parameterSetNode()->GetSelectedSegmentID();
+  if (displayNode->GetSegmentVisibility(segmentID) == false)
+  {
+    ctkMessageBox* confirmCurrentSegmentVisibleMsgBox = new ctkMessageBox(nullptr);
+    confirmCurrentSegmentVisibleMsgBox->setAttribute(Qt::WA_DeleteOnClose);
+    confirmCurrentSegmentVisibleMsgBox->setWindowTitle("Operate on invisible segment?");
+    confirmCurrentSegmentVisibleMsgBox->setText("The currently selected segment is hidden. Would you like to make it visible?");
+
+    confirmCurrentSegmentVisibleMsgBox->addButton(QMessageBox::Yes);
+    confirmCurrentSegmentVisibleMsgBox->addButton(QMessageBox::No);
+    confirmCurrentSegmentVisibleMsgBox->addButton(QMessageBox::Cancel);
+
+    // This is from the Don't Confirm Scene Close message box. Should this dialog have a
+    // 'don't show this again' option?
+    //confirmCurrentSegmentVisibleMsgBox->setDontShowAgainVisible(true);
+    //confirmCurrentSegmentVisibleMsgBox->setDontShowAgainSettingsKey("MainWindow/DontConfirmSceneClose");
+
+    confirmCurrentSegmentVisibleMsgBox->setIcon(QMessageBox::Question);
+
+    int resultCode = confirmCurrentSegmentVisibleMsgBox->exec();
+
+    if (resultCode == QMessageBox::Yes)
+      {
+        displayNode->SetSegmentVisibility(segmentID, true);
+      }
+
+    // On Cancel, don't do anything.
+    if (resultCode == QMessageBox::Cancel)
+      {
+        return false;
+      }
+  }
+
+  // Fall-through case - segment is visible
+  return true;
+}
+
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractEffect::setParameterDefault(QString name, QString value)
