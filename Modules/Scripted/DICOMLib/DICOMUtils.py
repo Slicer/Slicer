@@ -729,9 +729,10 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
       # during loading. These must be added to the database.
       for derivedItem in loadable.derivedItems:
         indexer = ctk.ctkDICOMIndexer()
-        cancelled = progressCallback("{0} ({1})".format(loadable.name, derivedItem), step*100/len(selectedLoadables))
-        if cancelled:
-          break
+        if progressCallback:
+          cancelled = progressCallback("{0} ({1})".format(loadable.name, derivedItem), step*100/len(selectedLoadables))
+          if cancelled:
+            break
         indexer.addFile(slicer.dicomDatabase, derivedItem)
     except AttributeError:
       # no derived items or some other attribute error
