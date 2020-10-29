@@ -88,6 +88,16 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
     {
     ControlPointsPipeline3D* controlPoints = this->GetControlPointsPipeline(controlPointType);
+    if (controlPointType == Project || controlPointType == ProjectBack)
+      {
+      // no projection display in 3D
+      controlPoints->Actor->SetVisibility(false);
+      controlPoints->OccludedActor->SetVisibility(false);
+      controlPoints->LabelsActor->SetVisibility(false);
+      controlPoints->LabelsOccludedActor->SetVisibility(false);
+      continue;
+      }
+
     // For backward compatibility, we hide labels if text scale is set to 0.
     controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility()
       && this->MarkupsDisplayNode->GetTextScale() > 0.0);
