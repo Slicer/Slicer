@@ -272,7 +272,11 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue(
   // clear out the list
   markupsNode->RemoveAllControlPoints();
 
-  std::string coordinateSystemStr = markupObject["coordinateSystem"].GetString();
+  std::string coordinateSystemStr = "LPS";
+  if (markupObject.HasMember("coordinateSystem"))
+    {
+    coordinateSystemStr = markupObject["coordinateSystem"].GetString();
+    }
   if (!coordinateSystemStr.empty())
     {
     int coordinateSystemFlag = vtkMRMLMarkupsStorageNode::GetCoordinateSystemFromString(coordinateSystemStr.c_str());
