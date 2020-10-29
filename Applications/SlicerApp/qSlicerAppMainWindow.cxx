@@ -234,7 +234,7 @@ void qSlicerAppMainWindow::on_HelpInterfaceDocumentationAction_triggered()
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_HelpSlicerPublicationsAction_triggered()
 {
-  QDesktopServices::openUrl(QUrl("http://www.spl.harvard.edu/publications/pages/display/?collection=11"));
+  QDesktopServices::openUrl(QUrl("https://scholar.google.com/scholar?&as_sdt=1%2C22&as_vis=1&q=%28%223D+Slicer%22+OR+%22slicer+org%22+OR+Slicer3D%29+-Slic3r+&btnG="));
 }
 
 //---------------------------------------------------------------------------

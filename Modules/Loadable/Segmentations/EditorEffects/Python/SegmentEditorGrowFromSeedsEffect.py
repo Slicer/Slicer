@@ -44,7 +44,7 @@ updated automatically within a few seconds</li>
 <li>Click <dfn>Apply</dfn> to update segmentation with the previewed result.</li>
 </ul><p>
 If segments overlap, segment higher in the segments table will have priority.
-The effect uses <a href="https://www.spl.harvard.edu/publications/item/view/2761">fast grow-cut method</a>.
+The effect uses <a href="http://interactivemedical.org/imic2014/CameraReadyPapers/Paper%204/IMIC_ID4_FastGrowCut.pdf">fast grow-cut method</a>.
 <p></html>"""
 
 
