@@ -175,6 +175,10 @@ public:
   // Acknowledge rendering request (rendering completed)
   virtual void NeedToRenderOff();
 
+  virtual vtkWidgetEventTranslator* GetEventTranslator(int widgetState);
+
+  virtual int GetNumberOfEventTranslators();
+
 protected:
   vtkMRMLAbstractWidget();
   ~vtkMRMLAbstractWidget() override;
