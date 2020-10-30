@@ -33,7 +33,7 @@ class DICOMExportScene(object):
   """Export slicer scene to dicom database
   """
 
-  def __init__(self,referenceFile=None, saveDirectoryPath=None):
+  def __init__(self, referenceFile, saveDirectoryPath=None):
     # File used as reference for DICOM export. Provides most of the DICOM tags.
     #   If not specified, the first file in the DICOM database is used.
     self.referenceFile = referenceFile
@@ -51,9 +51,6 @@ class DICOMExportScene(object):
     # Optional tags.
     # Dictionary where the keys are the tag names (such as StudyInstanceUID), and the values are the tag values
     self.optionalTags = {}
-    # Flag determining whether the exported Slicer Data Bundle DICOM file is copied into
-    # the database when importing, or is imported directly from the save directory
-    self.copySdbFileToDatabase = True
 
   def progress(self,string):
     # TODO: make this a callback for a gui progress dialog
@@ -62,11 +59,6 @@ class DICOMExportScene(object):
   def export(self):
     # Perform export
     success = self.createDICOMFileForScene()
-
-    # Get flag from application settings whether exported data needs to be imported
-    importExportedData = settingsValue('DICOM/ImportExportedDataset', False, converter=toBool)
-    if success and importExportedData:
-      self.addFilesToDatabase()
     return success
 
   def createDICOMFileForScene(self):
@@ -85,8 +77,6 @@ class DICOMExportScene(object):
     # set up temp directories and files
     if self.saveDirectoryPath is None:
       self.saveDirectoryPath = tempfile.mkdtemp('', 'dicomExport', slicer.app.temporaryPath)
-    self.sceneDirectory = os.path.join(self.saveDirectoryPath,'scene')
-    os.mkdir(self.sceneDirectory) # known to be unique
     self.zipFile = os.path.join(self.saveDirectoryPath, "scene.zip")
     self.dumpFile = os.path.join(self.saveDirectoryPath, "dump.dcm")
     self.templateFile = os.path.join(self.saveDirectoryPath, "template.dcm")
@@ -108,51 +98,24 @@ class DICOMExportScene(object):
 
     # Clean up paths on Windows (some commands and operations are not performed properly with mixed slash and backslash)
     self.saveDirectoryPath = self.saveDirectoryPath.replace('\\','/')
-    self.sceneDirectory = self.sceneDirectory.replace('\\','/') # otherwise invalid zip file is created on Windows (with the same size strangely)
     self.imageFile = self.imageFile.replace('\\','/')
     self.zipFile = self.zipFile.replace('\\','/')
     self.dumpFile = self.dumpFile.replace('\\','/')
     self.templateFile = self.templateFile.replace('\\','/')
     self.sdbFile = self.sdbFile.replace('\\','/')
 
-    # add storage node for each storable node in the scene, add file name if file name doesn't exist
-    # TODO: this could be moved to appLogic.SaveSceneToSlicerDataBundleDirectory
-    lnodes = slicer.mrmlScene.GetNodesByClass("vtkMRMLLinearTransformNode")
-    lnodes.UnRegister(slicer.mrmlScene)
-    lnum = lnodes.GetNumberOfItems()
-    for itemNum in range(lnum):
-      print(itemNum)
-      node = lnodes.GetItemAsObject(itemNum)
-      snode = node.GetStorageNode()
-      if snode is None:
-        print("something is none")
-        snode = node.CreateDefaultStorageNode()
-        slicer.mrmlScene.AddNode(snode)
-        node.SetAndObserveStorageNodeID(snode.GetID())
-      if snode.GetFileName() is None:
-        snode.SetFileName(node.GetID()+".h5")
-
     # save the scene to the temp dir
-    self.progress('Saving scene...')
-    appLogic = slicer.app.applicationLogic()
-    appLogic.SaveSceneToSlicerDataBundleDirectory(self.sceneDirectory, imageReader.GetOutput())
+    self.progress('Saving scene into MRB...')
+    if not slicer.mrmlScene.WriteToMRB(self.zipFile, imageReader.GetOutput()):
+      logging.error('Failed to save scene into MRB file: ' + self.zipFile)
+      return False
 
-    # make the zip file
-    self.progress('Making zip...')
-    appLogic.Zip(self.zipFile, self.sceneDirectory)
     zipSize = os.path.getsize(self.zipFile)
 
     # now create the dicom file
     # - create the dump (capture stdout)
     # cmd = "dcmdump --print-all --write-pixel %s %s" % (self.saveDirectoryPath, self.referenceFile)
     self.progress('Making dicom reference file...')
-    if not self.referenceFile:
-      # set reference file the first file found in the DICOM database
-      self.getFirstFileInDatabase()
-      # if there is still no reference file, then there are no files in the database, cannot continue
-      if not self.referenceFile:
-        logging.error('No reference file! DICOM database is empty')
-        return False
     logging.info('Using reference file ' + str(self.referenceFile))
     args = ['--print-all', '--write-pixel', self.saveDirectoryPath, self.referenceFile]
     dumpByteArray = DICOMLib.DICOMCommand('dcmdump', args).start()
@@ -206,34 +169,3 @@ class DICOMExportScene(object):
 
     self.progress('Done')
     return True
-
-  def getFirstFileInDatabase(self):
-    if not slicer.dicomDatabase.isOpen:
-      logging.error('DICOM database is not open')
-      return
-    for patient in slicer.dicomDatabase.patients():
-      studies = slicer.dicomDatabase.studiesForPatient(patient)
-      if len(studies) == 0:
-        continue
-      for study in studies:
-        series = slicer.dicomDatabase.seriesForStudy(study)
-        if len(series) == 0:
-          continue
-        for serie in series:
-          files = slicer.dicomDatabase.filesForSeries(serie)
-          if len(files):
-            self.referenceFile = files[0]
-          return
-
-  def addFilesToDatabase(self):
-    if not slicer.dicomDatabase.isOpen:
-      slicer.util.warningDisplay("DICOM database is not open, so the (otherwise successfully) exported dataset cannot be imported back")
-      return
-    self.progress('Adding to DICOM Database...')
-    indexer = ctk.ctkDICOMIndexer()
-    destinationDir = os.path.dirname(slicer.dicomDatabase.databaseFilename)
-    if self.sdbFile:
-      files = [self.sdbFile]
-    else:
-      files = glob.glob('%s/*' % self.saveDirectoryPath)
-    indexer.addListOfFiles( slicer.dicomDatabase, files, self.copySdbFileToDatabase)

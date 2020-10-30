@@ -3,6 +3,8 @@ import vtk, qt, ctk, slicer
 import logging
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
+from DICOMLib import DICOMExportScene
+
 
 #
 # This is the plugin to handle translation of encapsulated MRML
@@ -11,18 +13,19 @@ from DICOMLib import DICOMLoadable
 #
 
 class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
-  """ SlicerDataBundle specific interpretation code
+  """ DICOM import/export plugin for Slicer Scene Bundle
+  (MRML scene file embedded in private tag of a DICOM file)
   """
 
   def __init__(self):
-    super(DICOMSlicerDataBundlePluginClass,self).__init__()
+    super(DICOMSlicerDataBundlePluginClass, self).__init__()
     self.loadType = "Slicer Data Bundle"
     self.tags['seriesDescription'] = "0008,103e"
     self.tags['candygram'] = "cadb,0010"
     self.tags['zipSize'] = "cadb,1008"
     self.tags['zipData'] = "cadb,1010"
 
-  def examineForImport(self,fileLists):
+  def examineForImport(self, fileLists):
     """ Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
     fileLists parameter.
@@ -35,10 +38,10 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
       else:
         loadablesForFiles = self.examineFiles(files)
         loadables += loadablesForFiles
-        self.cacheLoadables(files,loadablesForFiles)
+        self.cacheLoadables(files, loadablesForFiles)
     return loadables
 
-  def examineFiles(self,files):
+  def examineFiles(self, files):
     """ Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
     files parameter.
@@ -69,7 +72,7 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
         loadables.append(loadable)
     return loadables
 
-  def load(self,loadable):
+  def load(self, loadable):
     """Load the selection as a data bundle
     by extracting the embedded zip file and passing it to the application logic
     """
@@ -99,20 +102,20 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
     if zipSize % 2 == 0:
       fp.seek(-1 * (zipSize), os.SEEK_END)
     else:
-      fp.seek(-1 * (1+zipSize), os.SEEK_END)
+      fp.seek(-1 * (1 + zipSize), os.SEEK_END)
     zipData = fp.read(zipSize)
     fp.close()
 
     # save to a temp zip file
-    zipPath = os.path.join(sceneDir,'scene.zip')
-    fp = open(zipPath,'wb')
+    zipPath = os.path.join(sceneDir, 'scene.zip')
+    fp = open(zipPath, 'wb')
     fp.write(zipData)
     fp.close()
 
     logging.info('saved zip file to: %s' % zipPath)
 
     nodesBeforeLoading = slicer.util.getNodes()
-    
+
     # let the scene unpack it and load it
     appLogic = slicer.app.applicationLogic()
     sceneFile = appLogic.OpenSlicerDataBundle(zipPath, sceneDir)
@@ -126,13 +129,15 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
     #   the DICOM plugins don't support it yet.
     dataNode = None
     nodesAfterLoading = slicer.util.getNodes()
-    loadedNodes = [node for node in list(nodesAfterLoading.values()) if node not in list(nodesBeforeLoading.values())]
+    loadedNodes = [node for node in list(nodesAfterLoading.values()) if
+             node not in list(nodesBeforeLoading.values())]
     for node in loadedNodes:
       if node.IsA('vtkMRMLScalarVolumeNode'):
         dataNode = node
     if dataNode is None:
       for node in loadedNodes:
-        if node.IsA('vtkMRMLModelNode') and node.GetName() not in ['Red Volume Slice', 'Yellow Volume Slice', 'Green Volume Slice']:
+        if node.IsA('vtkMRMLModelNode') and node.GetName() not in ['Red Volume Slice', 'Yellow Volume Slice',
+                                       'Green Volume Slice']:
           dataNode = node
           break
     if dataNode is None:
@@ -141,11 +146,85 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
           dataNode = node
           break
     if dataNode is not None:
-      self.addSeriesInSubjectHierarchy(loadable,dataNode)
+      self.addSeriesInSubjectHierarchy(loadable, dataNode)
     else:
       logging.warning('Failed to find suitable series node in loaded scene')
 
     return sceneFile != ""
+
+  def examineForExport(self, subjectHierarchyItemID):
+    """Return a list of DICOMExportable instances that describe the
+    available techniques that this plugin offers to convert MRML
+    data into DICOM data
+    """
+
+    # Define basic properties of the exportable
+    exportable = slicer.qSlicerDICOMExportable()
+    exportable.name = "Slicer data bundle"
+    exportable.tooltip = "Creates a series that embeds the entire Slicer scene in a private DICOM tag"
+    exportable.subjectHierarchyItemID = subjectHierarchyItemID
+    exportable.pluginClass = self.__module__
+    exportable.confidence = 0.1  # There could be more specialized volume types
+
+    # Do not define tags (exportable.setTag) because they would overwrite values in the reference series
+
+    return [exportable]
+
+  def export(self, exportables):
+    shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    if shNode is None:
+      error = "Invalid subject hierarchy"
+      logging.error(error)
+      return error
+    dicomFiles = []
+    for exportable in exportables:
+      # Find reference series (series that will be modified into a scene data bundle)
+      # Get DICOM UID - can be study instance UID or series instance UID
+      dicomUid = shNode.GetItemUID(exportable.subjectHierarchyItemID,
+                     slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName())
+      if not dicomUid:
+        continue
+      # Get series instance UID
+      if shNode.GetItemLevel(exportable.subjectHierarchyItemID) == slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelStudy():
+        # Study is selected
+        seriesInstanceUids = slicer.dicomDatabase.seriesForStudy(dicomUid)
+        seriesInstanceUid = seriesInstanceUids[0] if seriesInstanceUids else None
+      else:
+        # Series is selected
+        seriesInstanceUid = dicomUid
+      # Get first file of the series
+      dicomFiles = slicer.dicomDatabase.filesForSeries(seriesInstanceUid)
+      if not dicomFiles:
+        continue
+      break
+    if not dicomFiles:
+      error = "Slicer data bundle export failed. No file is found for any of the selected items."
+      logging.error(error)
+      return error
+
+    # Assemble tags dictionary for volume export
+    tags = {}
+    tags['PatientName'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientNameTagName())
+    tags['PatientID'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientIDTagName())
+    tags['PatientBirthDate'] = exportable.tag(
+      slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientBirthDateTagName())
+    tags['PatientSex'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientSexTagName())
+    tags['PatientComments'] = exportable.tag(
+      slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientCommentsTagName())
+
+    tags['StudyDate'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDateTagName())
+    tags['StudyTime'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyTimeTagName())
+    tags['StudyDescription'] = exportable.tag(
+      slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDescriptionTagName())
+
+    # Perform export
+    exporter = DICOMExportScene(dicomFiles[0], exportable.directory)
+    exporter.optionalTags = tags
+    exporter.export()
+
+    # Success
+    return ""
+
 
 #
 # DICOMSlicerDataBundlePlugin
@@ -156,20 +235,21 @@ class DICOMSlicerDataBundlePlugin(object):
   This class is the 'hook' for slicer to detect and recognize the plugin
   as a loadable scripted module
   """
+
   def __init__(self, parent):
     parent.title = "DICOM Diffusion Volume Plugin"
     parent.categories = ["Developer Tools.DICOM Plugins"]
     parent.contributors = ["Steve Pieper (Isomics Inc.), Csaba Pinter (Pixel Medical, Inc.)"]
     parent.helpText = """
-    Plugin to the DICOM Module to parse and load diffusion volumes
-    from DICOM files.
-    No module interface here, only in the DICOM module
-    """
+Plugin to the DICOM Module to parse and load diffusion volumes
+from DICOM files.
+No module interface here, only in the DICOM module
+"""
     parent.acknowledgementText = """
-    This DICOM Plugin was developed by
-    Steve Pieper, Isomics, Inc.
-    and was partially funded by NIH grant 3P41RR013218.
-    """
+This DICOM Plugin was developed by
+Steve Pieper, Isomics, Inc.
+and was partially funded by NIH grant 3P41RR013218.
+"""
 
     # don't show this module - it only appears in the DICOM module
     parent.hidden = True
@@ -183,12 +263,13 @@ class DICOMSlicerDataBundlePlugin(object):
       slicer.modules.dicomPlugins = {}
     slicer.modules.dicomPlugins['DICOMSlicerDataBundlePlugin'] = DICOMSlicerDataBundlePluginClass
 
+
 #
 # DICOMSlicerDataBundleWidget
 #
 
 class DICOMSlicerDataBundleWidget(object):
-  def __init__(self, parent = None):
+  def __init__(self, parent=None):
     self.parent = parent
 
   def setup(self):

@@ -349,11 +349,14 @@ class DICOMSender(DICOMProcess):
   (Uses storescu from dcmtk)
   """
 
-  def __init__(self,files,address,port,progressCallback=None):
+  def __init__(self,files,address,port,protocol=None,progressCallback=None):
+    """protocol can be DIMSE (default) or DICOMweb
+    """
     super(DICOMSender,self).__init__()
     self.files = files
     self.address = address
     self.port = port
+    self.protocol = protocol if protocol else "DIMSE"
     self.progressCallback = progressCallback
     if not self.progressCallback:
       self.progressCallback = self.defaultProgressCallback
@@ -367,9 +370,25 @@ class DICOMSender(DICOMProcess):
 
   def send(self):
     self.progressCallback("Starting send to %s:%s" % (self.address, self.port))
-    for file in self.files:
-      self.start(file)
-      self.progressCallback("Sent %s to %s:%s" % (file, self.address, self.port))
+
+    if self.protocol == "DICOMweb":
+      # DICOMweb
+      try:
+        import dicomweb_client
+      except ModuleNotFoundError:
+        pip_install('dicomweb-client')
+      for file in self.files:
+        self.progressCallback("Sending %s to %s using %s" % (file, self.address, self.protocol))
+        from dicomweb_client.api import DICOMwebClient
+        client = DICOMwebClient(url=self.address, chunk_size=50000)
+        import pydicom
+        dataset = pydicom.dcmread(file)
+        client.store_instances(datasets=[dataset])
+    else:
+      # DIMSE (traditional DICOM networking)
+      for file in self.files:
+        self.start(file)
+        self.progressCallback("Sent %s to %s:%s" % (file, self.address, self.port))
 
   def start(self,file):
     self.storeSCUExecutable = self.exeDir+'/storescu'+self.exeExtension
