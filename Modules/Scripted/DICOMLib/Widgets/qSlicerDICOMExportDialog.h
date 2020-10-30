@@ -32,9 +32,10 @@
 // MRML includes
 #include "vtkMRMLSubjectHierarchyNode.h"
 
+class QDir;
+class QItemSelection;
 class qSlicerDICOMExportDialogPrivate;
 class vtkMRMLScene;
-class QItemSelection;
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 class Q_SLICER_MODULE_DICOMLIB_WIDGETS_EXPORT qSlicerDICOMExportDialog : public QObject
@@ -89,14 +90,14 @@ protected slots:
   void onSaveTagsCheckBoxToggled(bool);
 
   /// Handle import exported dataset checkbox toggles
-  void onImportExportedDatasetCheckBoxToggled(bool);
+  void onExportToFolderCheckBoxToggled(bool);
 
 protected:
   /// Export selected node based on the selected exportable
-  void exportSeries();
+  bool exportSeries(const QDir& outputFolder);
 
   /// Export entire scene as a secondary capture containing an MRB
-  void exportEntireScene();
+  bool exportEntireScene(const QDir& outputFolder);
 
 protected:
   QScopedPointer<qSlicerDICOMExportDialogPrivate> d_ptr;

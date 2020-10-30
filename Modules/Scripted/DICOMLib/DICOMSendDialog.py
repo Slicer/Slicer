@@ -24,6 +24,7 @@ class DICOMSendDialog(qt.QDialog):
     self.settings = qt.QSettings()
     self.sendAddress = self.settings.value('DICOM.sendAddress')
     self.sendPort = self.settings.value('DICOM.sendPort')
+    self.sendProtocol = self.settings.value('DICOM.sendProtocol', "DIMSE")  # DIMSE or DICOMweb
 
     self.open()
 
@@ -38,7 +39,8 @@ class DICOMSendDialog(qt.QDialog):
     self.dicomEntries = {}
     self.dicomParameters = {
       "Destination Address": self.sendAddress,
-      "Destination Port": self.sendPort
+      "Destination Port": self.sendPort,
+      "Protocol": self.sendProtocol
     }
     for label in self.dicomParameters.keys():
       self.dicomEntries[label] = qt.QLineEdit()
@@ -59,15 +61,18 @@ class DICOMSendDialog(qt.QDialog):
   def onOk(self):
     address = self.dicomEntries['Destination Address'].text
     port = self.dicomEntries['Destination Port'].text
+    protocol = self.dicomEntries['Protocol'].text
     self.settings.setValue('DICOM.sendAddress', address)
     self.settings.setValue('DICOM.sendPort', port)
+    self.settings.setValue('DICOM.sendProtocol', protocol)
     self.progress = slicer.util.createProgressDialog(value=0, maximum=len(self.files))
     self.progressValue = 0
 
     try:
-      DICOMLib.DICOMSender(self.files, address, port, progressCallback=self.onProgress)
+      DICOMLib.DICOMSender(self.files, address, port, protocol, progressCallback=self.onProgress)
     except Exception as result:
       slicer.util.warningDisplay('Could not send data: %s' % result, windowTitle='DICOM Send', parent=self)
+
     self.progress.close()
     self.progress = None
     self.progressValue = None

@@ -52,6 +52,7 @@
 
 // SlicerApp includes
 #include <qSlicerApplication.h>
+#include <qSlicerCorePythonManager.h>
 
 // CTK includes
 // XXX Avoid  warning: "HAVE_XXXX" redefined
@@ -116,12 +117,6 @@ void qSlicerDICOMExportDialogPrivate::init()
   // Empty error label (was not empty to indicate its purpose in designer)
   this->ErrorLabel->setText(QString());
 
-  // Set Slicer DICOM database folder as default output folder
-  if (qSlicerApplication::application()->dicomDatabase())
-    {
-    this->DirectoryButton_OutputFolder->setDirectory(qSlicerApplication::application()->dicomDatabase()->databaseDirectory());
-    }
-
   // Make connections
   connect(this->SubjectHierarchyTreeView, SIGNAL(currentItemChanged(vtkIdType)),
     q, SLOT(onCurrentItemChanged(vtkIdType)));
@@ -135,8 +130,8 @@ void qSlicerDICOMExportDialogPrivate::init()
     q, SLOT(onExportSeriesRadioButtonToggled(bool)) );
   connect(this->SaveTagsCheckBox, SIGNAL(toggled(bool)),
     q, SLOT(onSaveTagsCheckBoxToggled(bool)) );
-  connect(this->ImportExportedDatasetCheckBox, SIGNAL(toggled(bool)),
-    q, SLOT(onImportExportedDatasetCheckBoxToggled(bool)) );
+  connect(this->ExportToFolderCheckBox, SIGNAL(toggled(bool)),
+    q, SLOT(onExportToFolderCheckBoxToggled(bool)) );
 }
 
 //-----------------------------------------------------------------------------
@@ -196,10 +191,10 @@ void qSlicerDICOMExportDialog::makeDialogSelections()
 
   // Set checkbox state from application settings
   QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
-  if (settings->contains("DICOM/ImportExportedDataset"))
+  if (settings->contains("DICOM/ExportToFolder"))
     {
-    bool importExportedDataset = settings->value("DICOM/ImportExportedDataset").toBool();
-    d->ImportExportedDatasetCheckBox->setChecked(importExportedDataset);
+    bool exportToFolder = settings->value("DICOM/ExportToFolder").toBool();
+    d->ExportToFolderCheckBox->setChecked(exportToFolder);
     }
 }
 
@@ -412,7 +407,7 @@ void qSlicerDICOMExportDialog::onExportSeriesRadioButtonToggled(bool seriesOn)
     d->groupBox_2SelectExportType->setEnabled(true);
     d->groupBox_3EditDICOMTags->setEnabled(true);
     d->SaveTagsCheckBox->setEnabled(true);
-    d->DirectoryButton_OutputFolder->setEnabled(true);
+    d->ExportFrame->setEnabled(true);
     d->ErrorLabel->setText(QString());
     }
   // Export entire scene
@@ -422,7 +417,7 @@ void qSlicerDICOMExportDialog::onExportSeriesRadioButtonToggled(bool seriesOn)
     d->groupBox_2SelectExportType->setEnabled(false);
     d->groupBox_3EditDICOMTags->setEnabled(false);
     d->SaveTagsCheckBox->setEnabled(false);
-    d->DirectoryButton_OutputFolder->setEnabled(false);
+    d->ExportFrame->setEnabled(false);
     d->ErrorLabel->setText(QString());
     }
 }
@@ -432,17 +427,92 @@ void qSlicerDICOMExportDialog::onExport()
 {
   Q_D(qSlicerDICOMExportDialog);
 
+  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+
+  if (d->ExportToFolderCheckBox->isChecked())
+    {
+    d->PathLineEdit_OutputFolder->addCurrentPathToHistory();
+    }
+
   // Clear error label
   d->ErrorLabel->setText(QString());
 
+  // Get output directory
+  QDir outputFolder(d->PathLineEdit_OutputFolder->currentPath());
+
+  // Determine whether output directory is a Slicer DICOM database
+  bool exportToDatabase = !d->ExportToFolderCheckBox->isChecked();
+
+  // Set output folder to a temporary location if the output directory is a DICOM database
+  if (exportToDatabase)
+    {
+    // Save to temporary folder and store files in database directory when adding
+    outputFolder.setPath(qSlicerApplication::application()->temporaryPath());
+    QString tempSubDirName = QString("DICOMExportTemp_%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss"));
+    outputFolder.mkdir(tempSubDirName);
+    outputFolder.cd(tempSubDirName);
+    }
+
   // Call export function based on radio button choice
+  bool exportSuccess = false;
   if (d->ExportSeriesRadioButton->isChecked())
     {
-    this->exportSeries();
+    exportSuccess = this->exportSeries(outputFolder);
     }
   else
     {
-    this->exportEntireScene();
+    exportSuccess = this->exportEntireScene(outputFolder);
+    }
+
+  if (exportToDatabase)
+    {
+    // Add exported files to DICOM database
+    if (exportSuccess)
+      {
+      ctkDICOMDatabase* dicomDatabase = qSlicerApplication::application()->dicomDatabase();
+      if (!dicomDatabase)
+        {
+        d->ErrorLabel->setText("No DICOM database is set, so the data (that was successfully exported) cannot be imported back");
+        return;
+        }
+      ctkDICOMIndexer indexer;
+      indexer.setDatabase(dicomDatabase);
+      indexer.addDirectory(outputFolder.absolutePath(), true);
+      }
+    // Remove temporary DICOM folder if exported to the DICOM database folder
+    foreach(QString file, outputFolder.entryList())
+      {
+      outputFolder.remove(file);
+      }
+    QString tempSubDirName = outputFolder.dirName();
+    outputFolder.cdUp();
+    outputFolder.rmdir(tempSubDirName);
+    }
+
+  QApplication::restoreOverrideCursor();
+
+  if (exportSuccess)
+    {
+    // Show result popup
+    QString message = tr("DICOM dataset successfully exported to ");
+    if (exportToDatabase)
+      {
+      message += tr("the DICOM database");
+      }
+    else
+      {
+      message += outputFolder.absolutePath();
+      }
+    QMessageBox::information(nullptr, tr("Export successful"), message);
+
+    if (exportToDatabase)
+      {
+      // Show and update DICOM browser if it was requested
+      this->showUpdatedDICOMBrowser();
+      }
+
+    // Close the export dialog after successful export
+    d->done(0);
     }
 }
 
@@ -459,11 +529,11 @@ void qSlicerDICOMExportDialog::onSaveTagsCheckBoxToggled(bool on)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerDICOMExportDialog::onImportExportedDatasetCheckBoxToggled(bool on)
+void qSlicerDICOMExportDialog::onExportToFolderCheckBoxToggled(bool on)
 {
   // Write checkbox state into application settings so that it is remembered across sessions
   QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
-  settings->setValue("DICOM/ImportExportedDataset", on);
+  settings->setValue("DICOM/ExportToFolder", on);
 }
 
 //-----------------------------------------------------------------------------
@@ -486,25 +556,9 @@ void qSlicerDICOMExportDialog::showUpdatedDICOMBrowser()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerDICOMExportDialog::exportSeries()
+bool qSlicerDICOMExportDialog::exportSeries(const QDir& outputFolder)
 {
   Q_D(qSlicerDICOMExportDialog);
-
-  // Get output directory
-  QDir outputFolder(d->DirectoryButton_OutputFolder->directory());
-
-  // Determine whether output directory is a Slicer DICOM database
-  bool isDicomDatabaseFolder = outputFolder.entryList().contains("ctkDICOM.sql");
-
-  // Set output folder to a temporary location if the output directory is a DICOM database
-  if (isDicomDatabaseFolder)
-    {
-    // Save to temporary folder and store files in database directory when adding
-    outputFolder.setPath(qSlicerApplication::application()->temporaryPath());
-    QString tempSubDirName = QString("DICOMExportTemp_%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss"));
-    outputFolder.mkdir(tempSubDirName);
-    outputFolder.cd(tempSubDirName);
-    }
 
   // Commit changes to exported series item(s) and their study and patient
   // parents after successful export if user requested it
@@ -515,7 +569,7 @@ void qSlicerDICOMExportDialog::exportSeries()
 
   if (d->DICOMTagEditorWidget->exportables().isEmpty())
     {
-    return;
+    return false;
     }
 
   // Assemble list of exportables to pass to the DICOM plugin.
@@ -548,96 +602,28 @@ void qSlicerDICOMExportDialog::exportSeries()
     {
     // Invalid return value from DICOM exporter (it never returned)
     d->ErrorLabel->setText("Error occurred in exporter");
-    return;
+    return false;
     }
   else if (!errorMessage.isEmpty())
     {
     // Exporter encountered error
     d->ErrorLabel->setText(errorMessage);
-    return;
+    return false;
     }
 
-  // Import exported files to DICOM database if requested
-  if (d->ImportExportedDatasetCheckBox->isChecked())
-    {
-    ctkDICOMDatabase* dicomDatabase = qSlicerApplication::application()->dicomDatabase();
-    if (!dicomDatabase)
-      {
-      d->ErrorLabel->setText("No DICOM database is set, so the data (that was successfully exported) cannot be imported back");
-      return;
-      }
-    ctkDICOMIndexer indexer;
-    indexer.setDatabase(dicomDatabase);
-    indexer.addDirectory(outputFolder.absolutePath(), false);
-    }
-
-  // Remove temporary DICOM folder if exported to the DICOM database folder
-  if (isDicomDatabaseFolder)
-    {
-    foreach(QString file, outputFolder.entryList())
-      {
-      outputFolder.remove(file);
-      }
-    QString tempSubDirName = outputFolder.dirName();
-    outputFolder.cdUp();
-    outputFolder.rmdir(tempSubDirName);
-    }
-
-  // Indicate success
-  if (d->ImportExportedDatasetCheckBox->isChecked())
-    {
-    // Show and update DICOM browser if it was requested
-    this->showUpdatedDICOMBrowser();
-    }
-  else
-    {
-    QString message = QString("DICOM dataset successfully exported to %1%2").arg(
-      isDicomDatabaseFolder ? "the DICOM database folder " : "").arg(outputFolder.absolutePath());
-    QMessageBox::information(nullptr, tr("Export successful"), message);
-    }
-
-  // Close the export dialog after successful export
-  d->done(0);
+  return true;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerDICOMExportDialog::exportEntireScene()
+bool qSlicerDICOMExportDialog::exportEntireScene(const QDir& outputFolder)
 {
   Q_D(qSlicerDICOMExportDialog);
-
-  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-
   PythonQt::init();
   PythonQtObjectPtr exportContext = PythonQt::self()->getMainModule();
   exportContext.evalScript( QString(
     "import DICOMLib\n"
-    "exporter = DICOMLib.DICOMExportScene()\n"
-    "success = exporter.export()\n") );
+    "exporter = DICOMLib.DICOMExportScene(saveDirectoryPath=%1)\n"
+    "success = exporter.export()\n").arg(qSlicerCorePythonManager::toPythonStringLiteral(outputFolder.absolutePath())) );
   bool success = exportContext.getVariable("success").toBool();
-
-  QApplication::restoreOverrideCursor();
-
-  if (success)
-    {
-    // Indicate success
-    if (d->ImportExportedDatasetCheckBox->isChecked())
-      {
-      // Show and update DICOM browser if it was requested
-      this->showUpdatedDICOMBrowser();
-      }
-    else
-      {
-      QString message = QString("Scene successfully exported as DICOM to %1/dicomExport").arg(
-        qSlicerApplication::application()->temporaryPath());
-      QMessageBox::information(nullptr, tr("Export successful"), message);
-      }
-    }
-  else
-    {
-    d->ErrorLabel->setText("Failed to export scene to DICOM. See log for errors");
-    return;
-    }
-
-  // Close the export dialog after successful export
-  d->done(0);
+  return success;
 }
