@@ -108,20 +108,16 @@ Data nodes loaded into the scene can be directly exported as DICOM files in the 
 
 DICOM is also a network communication standard, which specifies how data can be transferred between systems. Slicer offers the following feaures:
 - DICOM listener (C-STORE SCP): to receive any data that is sent from a remote computer and store in Slicer DICOM database
-- DICOM sender (C-STORE SCU): select data from Slicer DICOM database and send it to a remote computer. Supports both `DIMSE` and `DICOMweb` protocols.
+- DICOM sender (C-STORE SCU): select data from Slicer DICOM database and send it to a remote computer. Supports both traditional DIMSE and new DICOMweb protocols.
 - Query/retrieve (C-FIND SCU, C-FIND SCU): query list of images available on a remote server and retrieve selected data.
 
 *Note:* In order to use these features, you must coordinate with the operators of the other DICOM nodes with which you wish to communicate.  For example, you must work out agreement on such topics as network ports and application entity titles (AE Titles). Be aware that not all equipment supports all networking options, so configuration may be challenging and is often difficult to troubleshoot.
 
-*Connection ports*: Port 104 is the standard DICOM port. All ports below 1024 require root access on unix-like systems (Linux and Mac).  So you can run Slicer with the sudo command to be able to open the port for the DICOM Listener.  Or you can use a different port, like 11112.  You need to configure that on both sides of the connection.  You can only have one process at a time listening on a port so if you have a listener running the second one won't start up.  Also if something adverse happens (a crash) the port may be kept open an you need to either kill the storescp helper process (or just reboot the computer) to free the port.  Consult the Look at [error log](https://www.slicer.org/wiki/Documentation/Nightly/SlicerApplication/ErrorLog) for diagnostic information.
+*Connection ports*: Port 104 is the standard DICOM port. All ports below 1024 require root access on unix-like systems (Linux and Mac).  So you can run Slicer with the sudo command to be able to open the port for the DICOM Listener.  Or you can use a different port, like 11112. You need to configure that on both sides of the connection. You can only have one process at a time listening on a port so if you have a listener running the second one won't start up. Also if something adverse happens (a crash) the port may be kept open an you need to either kill the storescp helper process (or just reboot the computer) to free the port. Consult the Look at [error log](https://www.slicer.org/wiki/Documentation/Nightly/SlicerApplication/ErrorLog) for diagnostic information.
 
 #### DICOMweb networking
 
-Slicer supports sending (C-STORE SCU) using DICOMweb protocol.
-In send data window, set:
-- Destination Address: complete server URL (including port number, if any)
-- Destination Port: content of this field is ignored.
-- Protocol: `DICOMweb`
+Slicer supports sending of DICOM items to a remote server using DICOMweb protocol. In send data window, set the full server URL in "Destination Address" and choose "DICOMweb" protocol.
 
 ### View DICOM metadata
 
@@ -156,7 +152,7 @@ Additional options:
     - **View DICOM metadata:** view metadata stored in file headers of selected series
     - **Delete:** delete the selected item from the database. If the data set was copied into the DICOM database then the DICOM files are deleted, too.
     - **Export to file system:** export selected items to DICOM files into a selected folder
-    - **Send to DICOM server:** send selected items to a DICOM C-store SCP server
+    - **Send to DICOM server:** send selected items to a remote DICOM server using DIMSE (C-store SCP) or DICOMweb (STOW-RS) protocol.
 
 Advanced loading (allows loading DICOM data sets using non-default options):
 

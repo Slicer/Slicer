@@ -21,11 +21,9 @@ class DICOMSendDialog(qt.QDialog):
     self.setWindowModality(1)
     self.setLayout(qt.QVBoxLayout())
     self.files = files
-    self.settings = qt.QSettings()
-    self.sendAddress = self.settings.value('DICOM.sendAddress')
-    self.sendPort = self.settings.value('DICOM.sendPort')
-    self.sendProtocol = self.settings.value('DICOM.sendProtocol', "DIMSE")  # DIMSE or DICOMweb
-
+    self.cancelRequested = False
+    self.sendingIsInProgress = False
+    self.setMinimumWidth(200)
     self.open()
 
   def open(self):
@@ -36,63 +34,70 @@ class DICOMSendDialog(qt.QDialog):
     self.dicomFrame = qt.QFrame(self)
     self.dicomFormLayout = qt.QFormLayout()
     self.dicomFrame.setLayout(self.dicomFormLayout)
-    self.dicomEntries = {}
-    self.dicomParameters = {
-      "Destination Address": self.sendAddress,
-      "Destination Port": self.sendPort,
-      "Protocol": self.sendProtocol
-    }
-    for label in self.dicomParameters.keys():
-      self.dicomEntries[label] = qt.QLineEdit()
-      self.dicomEntries[label].text = self.dicomParameters[label]
-      self.dicomFormLayout.addRow(label + ": ", self.dicomEntries[label])
+
+    self.settings = qt.QSettings()
+
+    self.protocolSelectorCombobox = qt.QComboBox()
+    self.protocolSelectorCombobox.addItems(["DIMSE","DICOMweb"])
+    self.protocolSelectorCombobox.setCurrentText(self.settings.value('DICOM/Send/Protocol', 'DIMSE'))
+    self.dicomFormLayout.addRow("Protocol: ", self.protocolSelectorCombobox)
+
+    self.serverAddressLineEdit = qt.QLineEdit()
+    self.serverAddressLineEdit.setToolTip("Address includes hostname and port number in standard URL format (hostname:port).")
+    self.serverAddressLineEdit.text = self.settings.value('DICOM/Send/URL', '')
+    self.dicomFormLayout.addRow("Destination Address: ", self.serverAddressLineEdit)
+
     self.layout().addWidget(self.dicomFrame)
 
     # button box
-    bbox = qt.QDialogButtonBox(self)
-    bbox.addButton(bbox.Ok)
-    bbox.addButton(bbox.Cancel)
-    bbox.accepted.connect(self.onOk)
-    bbox.rejected.connect(self.onCancel)
-    self.layout().addWidget(bbox)
+    self.bbox = qt.QDialogButtonBox(self)
+    self.bbox.addButton(self.bbox.Ok)
+    self.bbox.addButton(self.bbox.Cancel)
+    self.bbox.accepted.connect(self.onOk)
+    self.bbox.rejected.connect(self.onCancel)
+    self.layout().addWidget(self.bbox)
+
+    self.progressBar = qt.QProgressBar(self.parent().window())
+    self.progressBar.hide()
+    self.dicomFormLayout.addRow(self.progressBar)
 
     qt.QDialog.open(self)
 
   def onOk(self):
-    address = self.dicomEntries['Destination Address'].text
-    port = self.dicomEntries['Destination Port'].text
-    protocol = self.dicomEntries['Protocol'].text
-    self.settings.setValue('DICOM.sendAddress', address)
-    self.settings.setValue('DICOM.sendPort', port)
-    self.settings.setValue('DICOM.sendProtocol', protocol)
-    self.progress = slicer.util.createProgressDialog(value=0, maximum=len(self.files))
-    self.progressValue = 0
+    self.sendingIsInProgress = True
+    address = self.serverAddressLineEdit.text
+    protocol = self.protocolSelectorCombobox.currentText
+    self.settings.setValue('DICOM/Send/URL', address)
+    self.settings.setValue('DICOM/Send/Protocol', protocol)
+    self.progressBar.value = 0
+    self.progressBar.maximum = len(self.files)+1
+    self.progressBar.show()
+    self.cancelRequested = False
+    okButton = self.bbox.button(self.bbox.Ok)
 
     try:
-      DICOMLib.DICOMSender(self.files, address, port, protocol, progressCallback=self.onProgress)
+      #qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
+      okButton.enabled = False
+      DICOMLib.DICOMSender(self.files, address, protocol, progressCallback=self.onProgress)
+      logging.debug("DICOM sending of %s files succeeded" % len(self.files))
+      self.close()
     except Exception as result:
-      slicer.util.warningDisplay('Could not send data: %s' % result, windowTitle='DICOM Send', parent=self)
+      import traceback
+      slicer.util.errorDisplay("DICOM sending failed: %s" % str(result), parent=self.parent().window(), detailedText=traceback.format_exc())
 
-    self.progress.close()
-    self.progress = None
-    self.progressValue = None
-    self.close()
+    #qt.QApplication.restoreOverrideCursor()
+    okButton.enabled = True
+    self.sendingIsInProgress = False
 
   def onCancel(self):
-    self.close()
+    if self.sendingIsInProgress:
+      self.cancelRequested = True
+    else:
+      self.close()
 
   def onProgress(self, message):
-    self.progress.show()
-    self.progress.activateWindow()
-    self.centerProgress()
-    self.progressValue += 1
-    self.progress.setValue(self.progressValue)
-    self.progress.setLabelText(message)
+    self.progressBar.value += 1
+    # message can be long, do not display it, but still log it (might be useful for troubleshooting)
+    logging.debug("DICOM send: " + message)
     slicer.app.processEvents()
-
-  def centerProgress(self):
-    mainWindow = slicer.util.mainWindow()
-    screenMainPos = mainWindow.pos
-    x = screenMainPos.x() + int((mainWindow.width - self.progress.width)/2)
-    y = screenMainPos.y() + int((mainWindow.height - self.progress.height)/2)
-    self.progress.move(x,y)
+    return not self.cancelRequested

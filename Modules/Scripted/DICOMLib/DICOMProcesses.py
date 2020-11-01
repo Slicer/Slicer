@@ -349,14 +349,14 @@ class DICOMSender(DICOMProcess):
   (Uses storescu from dcmtk)
   """
 
-  def __init__(self,files,address,port,protocol=None,progressCallback=None):
-    """protocol can be DIMSE (default) or DICOMweb
+  def __init__(self,files,address,protocol=None,progressCallback=None):
+    """protocol: can be DIMSE (default) or DICOMweb
+    port: optional (if not specified then address URL should contain it)
     """
     super(DICOMSender,self).__init__()
     self.files = files
-    self.address = address
-    self.port = port
-    self.protocol = protocol if protocol else "DIMSE"
+    self.destinationUrl = qt.QUrl().fromUserInput(address)
+    self.protocol = protocol if protocol is not None else "DIMSE"
     self.progressCallback = progressCallback
     if not self.progressCallback:
       self.progressCallback = self.defaultProgressCallback
@@ -369,18 +369,20 @@ class DICOMSender(DICOMProcess):
     logging.debug(s)
 
   def send(self):
-    self.progressCallback("Starting send to %s:%s" % (self.address, self.port))
+    self.progressCallback("Starting send to %s using self.protocol" % self.destinationUrl.toString())
 
     if self.protocol == "DICOMweb":
       # DICOMweb
       try:
         import dicomweb_client
       except ModuleNotFoundError:
+        logging.info("Installing dicomweb-client for sending DICOM using DICOMweb protocol")
         pip_install('dicomweb-client')
       for file in self.files:
-        self.progressCallback("Sending %s to %s using %s" % (file, self.address, self.protocol))
+        if not self.progressCallback("Sending %s to %s using %s" % (file, self.destinationUrl.toString(), self.protocol)):
+          raise UserWarning("Sending was cancelled, upload is incomplete.")
         from dicomweb_client.api import DICOMwebClient
-        client = DICOMwebClient(url=self.address, chunk_size=50000)
+        client = DICOMwebClient(url=self.destinationUrl.toString(), chunk_size=500000)
         import pydicom
         dataset = pydicom.dcmread(file)
         client.store_instances(datasets=[dataset])
@@ -388,14 +390,15 @@ class DICOMSender(DICOMProcess):
       # DIMSE (traditional DICOM networking)
       for file in self.files:
         self.start(file)
-        self.progressCallback("Sent %s to %s:%s" % (file, self.address, self.port))
+        if not self.progressCallback("Sent %s to %s:%s" % (file, self.destinationUrl.host(), self.destinationUrl.port())):
+          raise UserWarning("Sending was cancelled, upload is incomplete.")
 
   def start(self,file):
     self.storeSCUExecutable = self.exeDir+'/storescu'+self.exeExtension
     # run the process!
     ### TODO: maybe use dcmsend (is smarter about the compress/decompress)
     ### TODO: add option in dialog to set AETitle
-    args = [str(self.address), str(self.port), "-aec", "CTK", file]
+    args = [self.destinationUrl.host(), str(self.destinationUrl.port()), "-aec", "CTK", file]
     super(DICOMSender,self).start(self.storeSCUExecutable, args)
     self.process.waitForFinished()
     if self.process.ExitStatus() == qt.QProcess.CrashExit or self.process.exitCode() != 0:
@@ -404,7 +407,7 @@ class DICOMSender(DICOMProcess):
       logging.debug('DICOM process error code is: %d' % self.process.error())
       logging.debug('DICOM process standard out is: %s' % stdout)
       logging.debug('DICOM process standard error is: %s' % stderr)
-      raise UserWarning("Could not send %s to %s:%s" % (file, self.address, self.port))
+      raise UserWarning("Could not send %s to %s:%s" % (file, self.destinationUrl.host(), self.destinationUrl.port()))
 
 
 class DICOMTestingQRServer(object):
