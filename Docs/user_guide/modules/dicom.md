@@ -125,12 +125,6 @@ Slicer supports sending of DICOM items to a remote server using DICOMweb protoco
 2. Right-click on the item in the DICOM database window that you want to inspect
 3. Choose "View DICOM metadata"
 
-To obtain DICOM metadata (for example, for sharing for troubleshooting purposes):
-1. Click Copy Metadata button
-2. Paste the copied text to any text editor
-3. **Remove patient name, birthdate, ID, and all other patient identifiable information**
-4. Copy-paste remaining text to Slicer forum post or email
-
 ## Panels and their use
 
 ### Basic usage
@@ -196,20 +190,24 @@ If none of the above helps then check the Slicer error logs and report the error
 DICOM is a complex way to represent data, and often scanners and other software will generate 'non-standard' files that claim to be DICOM but really aren't compliant with the specification.  In addition, the specification itself has many variations and special formats that Slicer is not able to understand.  Slicer is used most often with CT and MR DICOM objects, so these will typically work.
 
 If you have trouble importing DICOM data here are some steps to try:
--  Make sure you are following the [DICOM](Module_DICOM) module documentation.
--  We are constantly improving the application (new preview version is released every day), so there is a chance that the problem you encountered is addressed in a recent version. Try loading the data using the latest stable and the latest nightly versions of Slicer.
--  Make sure the Slicer temporary folder is writeable. Temporary folder can be selected in menu: Edit / Application Settings / Modules / Temporary directory.
--  Try moving the data and the database directory to a path that includes only US English characters (ASCII) to avoid possible parsing errors. No special, international characters are allowed.
--  Make sure the database directory is on a drive that has enough free space (1GB free space should be enough). If you are running out of space then you may see this error message in an "Internal Error" popup window: *Exception thrown in event: Calling methods on uninitialized ctkDICOMItem*
--  To confirm that your installation of Sicer is reading data correctly, try loading other data, such as [this anonymized sample DICOM series (CT scan)](https://s3.amazonaws.com/IsomicsPublic/SampleData/QIN-HEADNECK-01-0024-CT.zip)
--  Try import using different DICOM readers: in Application settings / DICOM / DICOMScalarVolumePlugin / DICOM reader approach: switch from DCMTK to GDCM (or GDCM to DCMTK), restart Slicer, and attempt to load the data set again.
--  See if the SlicerDcm2nii extension will convert your images. You can install this module using the Extension manager. Once installed you will be able to use the Dcm2niixGUI module from slicer.
--  Try the [DICOM Patcher](dicompatcher) module.
--  Review the Error Log (menu: View / Error log) for information.
--  Try loading the data by selecting one of the files in the [Add data](../data_loading_and_saving).  *Note: be sure to turn on Show Options and then turn off the Single File option in order to load the selected series as a volume*. In general, this is not recommended, as the loaded data may be incomplete or distorted, but it might work in some cases when proper DICOM loading fails.
--  If you are still unable to load the data, you may need to find a utility that converts the data into something Slicer can read.  Sometimes tools like [FreeSurfer](http://surfer.nmr.mgh.harvard.edu/), [FSL](http://fsl.fmrib.ox.ac.uk/fsl/fslwiki/) or [MRIcron](https://www.nitrc.org/projects/mricron ) can understand special formats that Slicer does not handle natively.  These systems typically export [NIfTI](http://nifti.nimh.nih.gov/nifti-1/) files that slicer can read.
--  For archival studies, are you sure that your data is in DICOM format, or is it possible the data is stored in one of the proprietary [MR](http://www.dclunie.com/medical-image-faq/html/part4.html) or [CT](http://www.dclunie.com/medical-image-faq/html/part3.html) formats that predated DICOM? If the latter, you may want to try the dcm2nii tool distributed with [MRIcron](https://www.nitrc.org/frs/?group_id=152) up until 2016. More recent versions of MRIcorn include dcm2niix, which is better for modern DICOM images. However, the legacy dcm2nii includes support for proprietary formats from GE, Philips, Siemens and Elscint.
--  If you are sure that the DICOM files do not contain patient confidential information, you may post a sample dataset on a web site and ask for help from [Slicer forum](https://discourse.slicer.org).  *Please be careful not to accidentally reveal private health information*.  If you want to remove identifiers from the DICOM files you may want to look at [DicomCleaner](http://www.dclunie.com/pixelmed/software/webstart/DicomCleanerUsage.html), [gdcmanon](http://gdcm.sourceforge.net/html/gdcmanon.html) or [the RSNA Clinical Trial Processor](http://mircwiki.rsna.org/index.php?title=CTP-The_RSNA_Clinical_Trial_Processor) software.
+- Make sure you are following the [DICOM](Module_DICOM) module documentation.
+- We are constantly improving the application (new preview version is released every day), so there is a chance that the problem you encountered is addressed in a recent version. Try loading the data using the latest stable and the latest nightly versions of Slicer.
+- Make sure the Slicer temporary folder is writeable. Temporary folder can be selected in menu: Edit / Application Settings / Modules / Temporary directory.
+- Try moving the data and the database directory to a path that includes only US English characters (ASCII) to avoid possible parsing errors. No special, international characters are allowed.
+- Make sure the database directory is on a drive that has enough free space (1GB free space should be enough). If you are running out of space then you may see this error message in an "Internal Error" popup window: *Exception thrown in event: Calling methods on uninitialized ctkDICOMItem*
+- To confirm that your installation of Sicer is reading data correctly, try loading other data, such as [this anonymized sample DICOM series (CT scan)](https://s3.amazonaws.com/IsomicsPublic/SampleData/QIN-HEADNECK-01-0024-CT.zip)
+- Try import using different DICOM readers: in Application settings / DICOM / DICOMScalarVolumePlugin / DICOM reader approach: switch from DCMTK to GDCM (or GDCM to DCMTK), restart Slicer, and attempt to load the data set again.
+- See if the SlicerDcm2nii extension will convert your images. You can install this module using the Extension manager. Once installed you will be able to use the Dcm2niixGUI module from slicer.
+- Try the [DICOM Patcher](dicompatcher) module.
+- Review the Error Log (menu: View / Error log) for information.
+- Try loading the data by selecting one of the files in the [Add data](../data_loading_and_saving).  *Note: be sure to turn on Show Options and then turn off the Single File option in order to load the selected series as a volume*. In general, this is not recommended, as the loaded data may be incomplete or distorted, but it might work in some cases when proper DICOM loading fails.
+- If you are still unable to load the data, you may need to find a utility that converts the data into something Slicer can read.  Sometimes tools like [FreeSurfer](http://surfer.nmr.mgh.harvard.edu/), [FSL](http://fsl.fmrib.ox.ac.uk/fsl/fslwiki/) or [MRIcron](https://www.nitrc.org/projects/mricron ) can understand special formats that Slicer does not handle natively.  These systems typically export [NIfTI](http://nifti.nimh.nih.gov/nifti-1/) files that slicer can read.
+- For archival studies, are you sure that your data is in DICOM format, or is it possible the data is stored in one of the proprietary [MR](http://www.dclunie.com/medical-image-faq/html/part4.html) or [CT](http://www.dclunie.com/medical-image-faq/html/part3.html) formats that predated DICOM? If the latter, you may want to try the dcm2nii tool distributed with [MRIcron](https://www.nitrc.org/frs/?group_id=152) up until 2016. More recent versions of MRIcorn include dcm2niix, which is better for modern DICOM images. However, the legacy dcm2nii includes support for proprietary formats from GE, Philips, Siemens and Elscint.
+- If none of the above help, then you can get help from the Slicer developer team, by posting on the [Slicer forum](https://discourse.slicer.org) a short description of what you expect the data set to contain and the following information about the data set:
+  - You may share the DICOM files if they do not contain patient confidential information: upload the dataset somewhere (Dropbox, OneDrive, Google drive, ...) and post the download link. *Please be careful not to accidentally reveal private health information (patient name, birthdate, ID, etc.)*. If you want to remove identifiers from the DICOM files you may want to look at [DicomCleaner](http://www.dclunie.com/pixelmed/software/webstart/DicomCleanerUsage.html), [gdcmanon](http://gdcm.sourceforge.net/html/gdcmanon.html) or [the RSNA Clinical Trial Processor](http://mircwiki.rsna.org/index.php?title=CTP-The_RSNA_Clinical_Trial_Processor) software.
+  - If it is not feasible to share the DICOM files, you may share the DICOM metadata and application log instead. Make sure to **remove patient name, birthdate, ID, and all other private health information** from the text, upload the files somewhere (Dropbox, OneDrive, Google drive, ...), and post the download link.
+    - To obtain DICOM metadata: right-click on the series in the DICOM browser, select View metadata, and click Copy Metadata button. Paste the copied text to any text editor.
+    - To obtain detailed application log of the DICOM loading: Enable detailed logging for DICOM (menu: Edit / Application settings / DICOM / Detailed logging), then attempt to load the series (select the series in the DICOM browser and click "Load" button), and retrieve the log (menu: Help / Report a bug -> Copy log messages to clipboard).
 
 ### Something is displayed, but it is not what I expected
 
