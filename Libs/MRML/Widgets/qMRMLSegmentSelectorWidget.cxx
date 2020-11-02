@@ -182,8 +182,13 @@ void qMRMLSegmentSelectorWidget::populateSegmentCombobox()
 {
   Q_D(qMRMLSegmentSelectorWidget);
 
+  bool wasBlocked = d->comboBox_Segment->blockSignals(true);
   d->comboBox_Segment->clear();
+  d->comboBox_Segment->blockSignals(wasBlocked);
+
+  wasBlocked = d->CheckableComboBox_Segment->blockSignals(true);
   d->CheckableComboBox_Segment->clear();
+  d->CheckableComboBox_Segment->blockSignals(wasBlocked);
 
   // Check if segmentation is valid and non-empty
   if (!d->SegmentationNode || !d->SegmentationNode->GetSegmentation() || d->SegmentationNode->GetSegmentation()->GetNumberOfSegments() == 0)
@@ -205,14 +210,14 @@ void qMRMLSegmentSelectorWidget::populateSegmentCombobox()
     d->CheckableComboBox_Segment->setVisible(true);
 
     // Block signals so that onSegmentMultiSelectionChanged function is not called when populating
-    bool wasBlocked = d->CheckableComboBox_Segment->blockSignals(true);
+    wasBlocked = d->CheckableComboBox_Segment->blockSignals(true);
 
     // Add items for each segment
     vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
     std::vector< std::string > segmentIDs;
     segmentation->GetSegmentIDs(segmentIDs);
     for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
-    {
+      {
       QString segmentId(segmentIdIt->c_str());
       vtkSegment* segment = segmentation->GetSegment(*segmentIdIt);
 
@@ -221,18 +226,18 @@ void qMRMLSegmentSelectorWidget::populateSegmentCombobox()
       d->CheckableComboBox_Segment->addItem(name, QVariant(segmentId));
       }
 
-    // Restore stored selection
-    this->setSelectedSegmentIDs(d->SelectedSegmentIDs);
-
     // Unblock signals
     d->CheckableComboBox_Segment->blockSignals(wasBlocked);
+
+    // Restore stored selection
+    this->setSelectedSegmentIDs(d->SelectedSegmentIDs);
     }
   else
     {
     d->comboBox_Segment->setVisible(true);
 
     // Block signals so that onCurrentSegmentChanged function is not called when populating
-    bool wasBlocked = d->comboBox_Segment->blockSignals(true);
+    wasBlocked = d->comboBox_Segment->blockSignals(true);
 
     // Add 'None' item if enabled
     if (this->noneEnabled())
@@ -252,14 +257,27 @@ void qMRMLSegmentSelectorWidget::populateSegmentCombobox()
       d->comboBox_Segment->addItem(name, QVariant(segmentId));
       }
 
-    // Set invalid selection so that callback function is called when first segment is selected later
-    d->comboBox_Segment->setCurrentIndex(-1);
-
     // Unblock signals
     d->comboBox_Segment->blockSignals(wasBlocked);
 
-    // Make sure fist segment is selected (we checked before that there is at least one segment)
-    d->comboBox_Segment->setCurrentIndex(this->noneEnabled() ? 1 : 0);
+    if ((this->noneEnabled() && d->CurrentSegmentID.isEmpty()) ||
+      (!d->CurrentSegmentID.isEmpty() &&
+      std::find(segmentIDs.begin(), segmentIDs.end(), d->CurrentSegmentID.toStdString()) != segmentIDs.end())) // Current segment removed
+      {
+      // Restore stored selection
+      wasBlocked = d->comboBox_Segment->blockSignals(true);
+      this->setCurrentSegmentID(d->CurrentSegmentID);
+      d->comboBox_Segment->blockSignals(wasBlocked);
+      }
+    else
+      {
+      // Set invalid selection so that callback function is called when first segment is selected later
+      wasBlocked = d->comboBox_Segment->blockSignals(true);
+      d->comboBox_Segment->setCurrentIndex(-1);
+      d->comboBox_Segment->blockSignals(wasBlocked);
+      // Make sure first segment is selected (we checked before that there is at least one segment)
+      d->comboBox_Segment->setCurrentIndex(this->noneEnabled() ? 1 : 0);
+      }
     }
 }
 
@@ -392,6 +410,7 @@ void qMRMLSegmentSelectorWidget::setSelectedSegmentIDs(QStringList segmentIDList
     segmentIDList.removeAll(invalidID);
     }
 
+  bool selectionChanged = d->SelectedSegmentIDs != segmentIDList;
   d->SelectedSegmentIDs = segmentIDList;
 
   // Update checkbox states in checkable combobox
@@ -411,6 +430,11 @@ void qMRMLSegmentSelectorWidget::setSelectedSegmentIDs(QStringList segmentIDList
     }
   d->CheckableComboBox_Segment->blockSignals(wasBlocked);
   d->CheckableComboBox_Segment->repaint();
+
+  if (!wasBlocked && selectionChanged)
+    {
+    this->onSegmentMultiSelectionChanged();
+    }
 }
 
 //--------------------------------------------------------------------------

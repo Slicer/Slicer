@@ -76,6 +76,7 @@ set(TEST_SOURCES
   qMRMLSceneTransformModelTest2.cxx
   qMRMLSceneDisplayableModelTest1.cxx
   qMRMLSceneDisplayableModelTest2.cxx
+  qMRMLSegmentSelectorWidgetTest1.cxx
   qMRMLSliceControllerWidgetTest.cxx
   qMRMLSliceWidgetTest1.cxx
   qMRMLSliceWidgetTest2.cxx
