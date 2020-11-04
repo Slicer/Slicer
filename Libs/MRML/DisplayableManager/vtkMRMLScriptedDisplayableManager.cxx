@@ -297,7 +297,7 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& pytho
     PyObject * pyRes = nullptr;
     if (pythonSource.find(".py") != std::string::npos)
       {
-      std::string pyRunStr = std::string("execfile('") + pythonSource + std::string("')");
+      std::string pyRunStr = std::string("exec(open('") + pythonSource + std::string("').read())");
       pyRes = PyRun_String(pyRunStr.c_str(),
                            Py_file_input, global_dict, global_dict);
       }
