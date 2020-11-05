@@ -89,9 +89,8 @@ void vtkMRMLMarkupsLineNode::UpdateMeasurementsInternal()
     // Calculate enabled measurements
     for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
       {
-      vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
-        this->Measurements->GetItemAsObject(index) );
-      if (currentMeasurement && currentMeasurement->GetEnabled())
+      vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
+      if (currentMeasurement && currentMeasurement->GetEnabled() && !currentMeasurement->IsA("vtkMRMLMeasurementConstant"))
         {
         currentMeasurement->ClearValue();
         currentMeasurement->Compute();

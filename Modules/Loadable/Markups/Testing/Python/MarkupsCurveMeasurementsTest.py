@@ -174,3 +174,34 @@ if abs(interpolatedRadiusArray.GetValue(570) - 12.765926543271583) > 0.0001:
   raise Exception(exceptionMessage)
 
 print('Control point measurement interpolation test finished successfully')
+
+#
+# Test curvature computation for a circle-shaped closed curve
+#
+
+radius = 35
+numberOfControlPoints = 40
+import math
+closedCurveNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsClosedCurveNode")
+for controlPointIndex in range(numberOfControlPoints):
+    angle = 2.0*math.pi * controlPointIndex/numberOfControlPoints
+    closedCurveNode.AddControlPoint(vtk.vtkVector3d(radius * math.sin(angle), radius * math.cos(angle), 0.0))
+
+# Turn on curvature calculation in curve node
+closedCurveNode.SetCalculateCurvature(True)
+
+curvePolyData = closedCurveNode.GetCurveWorld()
+curvatureArray = curvePolyData.GetPointData().GetArray('Curvature')
+
+if curvatureArray.GetNumberOfValues() < 10:
+  exceptionMessage = "Many values are expected in the curvature array, instead found just %d" % curvatureArray.GetNumberOfValues()
+  raise Exception(exceptionMessage)
+
+if abs(curvatureArray.GetRange()[0] - 1/radius) > 1e-4:
+  exceptionMessage = "Unexpected minimum in curvature data array: " + str(curvatureArray.GetRange()[0])
+  raise Exception(exceptionMessage)
+if abs(curvatureArray.GetRange()[1] - 1/radius) > 1e-4:
+  exceptionMessage = "Unexpected maximum in curvature data array: " + str(curvatureArray.GetRange()[1])
+  raise Exception(exceptionMessage)
+
+print('Radius of curvature computation is verified successfully')
