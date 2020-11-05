@@ -22,6 +22,7 @@
 #include "vtkCurveMeasurementsCalculator.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMeasurementLength.h"
+#include "vtkMRMLMeasurementConstant.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLUnitNode.h"
@@ -99,12 +100,6 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   events->InsertNextTuple1(vtkMRMLTransformableNode::TransformModifiedEvent);
   this->AddNodeReferenceRole(this->GetShortestDistanceSurfaceNodeReferenceRole(), this->GetShortestDistanceSurfaceNodeReferenceMRMLAttributeName(), events);
 
-  // Setup measurements calculated for this markup type
-  vtkNew<vtkMRMLMeasurementLength> lengthMeasurement;
-  lengthMeasurement->SetName("length");
-  lengthMeasurement->SetInputMRMLNode(this);
-  this->Measurements->AddItem(lengthMeasurement);
-
   // Insert curve measurements calculator between curve generator and world transformer filters
   this->CurveMeasurementsCalculator = vtkSmartPointer<vtkCurveMeasurementsCalculator>::New();
   this->CurveMeasurementsCalculator->SetMeasurements(this->Measurements);
@@ -116,6 +111,28 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   this->CurvePolyToWorldTransformer->SetInputConnection(this->CurveMeasurementsCalculator->GetOutputPort());
 
   this->ShortestDistanceSurfaceActiveScalar = "";
+
+  // Setup measurements calculated for this markup type
+  vtkNew<vtkMRMLMeasurementLength> lengthMeasurement;
+  lengthMeasurement->SetName("length");
+  lengthMeasurement->SetInputMRMLNode(this);
+  this->Measurements->AddItem(lengthMeasurement);
+
+  vtkMRMLUnitNode* lengthUnitNode = this->GetUnitNode("length");
+  std::string inverseLengthUnit = (lengthUnitNode ? lengthUnitNode->GetSuffix() : "mm");
+  inverseLengthUnit.append("-1");
+
+  vtkNew<vtkMRMLMeasurementConstant> curvatureMeanMeasurement;
+  curvatureMeanMeasurement->SetName(this->CurveMeasurementsCalculator->GetMeanCurvatureName());
+  curvatureMeanMeasurement->SetUnits(inverseLengthUnit.c_str());
+  curvatureMeanMeasurement->SetEnabled(false); // Curvature calculation is off by default
+  this->Measurements->AddItem(curvatureMeanMeasurement);
+
+  vtkNew<vtkMRMLMeasurementConstant> curvatureMaxMeasurement;
+  curvatureMaxMeasurement->SetName(this->CurveMeasurementsCalculator->GetMaxCurvatureName());
+  curvatureMaxMeasurement->SetUnits(inverseLengthUnit.c_str());
+  curvatureMaxMeasurement->SetEnabled(false); // Curvature calculation is off by default
+  this->Measurements->AddItem(curvatureMaxMeasurement);
 }
 
 //----------------------------------------------------------------------------
@@ -1135,9 +1152,8 @@ void vtkMRMLMarkupsCurveNode::UpdateMeasurementsInternal()
     // Calculate enabled measurements
     for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
       {
-      vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
-        this->Measurements->GetItemAsObject(index) );
-      if (currentMeasurement && currentMeasurement->GetEnabled())
+      vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
+      if (currentMeasurement && currentMeasurement->GetEnabled() && !currentMeasurement->IsA("vtkMRMLMeasurementConstant"))
         {
         currentMeasurement->ClearValue();
         currentMeasurement->Compute();
@@ -1419,6 +1435,22 @@ void vtkMRMLMarkupsCurveNode::SetCalculateCurvature(bool on)
     }
 
   this->CurveMeasurementsCalculator->SetCalculateCurvature(on);
+
+  for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
+    {
+    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
+    if ( currentMeasurement->GetName()
+      && ( !strcmp(currentMeasurement->GetName(), this->CurveMeasurementsCalculator->GetMeanCurvatureName())
+        || !strcmp(currentMeasurement->GetName(), this->CurveMeasurementsCalculator->GetMaxCurvatureName()) ) )
+      {
+      currentMeasurement->SetEnabled(on);
+      if (!on)
+        {
+        currentMeasurement->ClearValue();
+        }
+      }
+    }
+
   this->CurveGenerator->Modified();
   this->CurveMeasurementsCalculator->Update();
 }

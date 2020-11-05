@@ -296,6 +296,25 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
   length += currentLength;
   meanKappa = meanKappa / length;
 
+  // Set mean and max curvature to measurements
+  // Calculate and set interpolated control point measurements in poly data
+  for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
+    {
+    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
+    if (!currentMeasurement || !currentMeasurement->GetEnabled())
+      {
+      continue;
+      }
+    if (currentMeasurement->GetName() && !strcmp(currentMeasurement->GetName(), this->GetMeanCurvatureName()))
+      {
+      currentMeasurement->SetValue(meanKappa);
+      }
+    else if (currentMeasurement->GetName() && !strcmp(currentMeasurement->GetName(), this->GetMaxCurvatureName()))
+      {
+      currentMeasurement->SetValue(maxKappa);
+      }
+    }
+
   // Set curvature array to output
   polyData->GetPointData()->AddArray(curvatureValues);
 
@@ -334,9 +353,7 @@ bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyDat
   // Calculate and set interpolated control point measurements in poly data
   for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
     {
-    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
-      this->Measurements->GetItemAsObject(index) );
-
+    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
     if (!currentMeasurement || !currentMeasurement->GetEnabled())
       {
       continue;

@@ -68,6 +68,11 @@ public:
   vtkBooleanMacro(InterpolateControlPointMeasurement, bool);
   //@}
 
+  /// Get name of mean curvature measurement
+  static const char* GetMeanCurvatureName() { return "curvature mean"; };
+  /// Get name of max curvature measurement
+  static const char* GetMaxCurvatureName() { return "curvature max"; };
+
 protected:
   bool CalculatePolyDataCurvature(vtkPolyData* polyData);
   bool InterpolateControlPointMeasurementToPolyData(vtkPolyData* outputPolyData);
