@@ -437,18 +437,35 @@ void qSlicerSubjectHierarchyPluginLogic::onSceneBatchProcessEnded(vtkObject* sce
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginLogic::onDisplayNodeModified(vtkObject* displayableNodeObject, vtkObject* displayNodeObject)
 {
-  Q_UNUSED(displayableNodeObject);
-
   vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(displayNodeObject);
-  if (!displayNode)
+  if (displayNode)
     {
-    qCritical() << Q_FUNC_INFO<< ": Invalid object type calling display node modified event";
-    return;
+    if (!qvtkIsConnected(displayNode, vtkMRMLDisplayNode::MenuEvent, this, SLOT(onDisplayMenuEvent(vtkObject*, vtkObject*))))
+      {
+      qvtkConnect(displayNode, vtkMRMLDisplayNode::MenuEvent, this, SLOT(onDisplayMenuEvent(vtkObject*, vtkObject*)));
+      }
     }
-
-  if (!qvtkIsConnected(displayNode, vtkMRMLDisplayNode::MenuEvent, this, SLOT(onDisplayMenuEvent(vtkObject*, vtkObject*))))
+  else
     {
-    qvtkConnect( displayNode, vtkMRMLDisplayNode::MenuEvent, this, SLOT( onDisplayMenuEvent(vtkObject*, vtkObject*) ) );
+    // end of batch processing, no display node object is provided (as multiple display nodes may have been changed)
+    // update the observer on all of them
+    vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(displayableNodeObject);
+    if (displayableNode)
+      {
+      int numberOfDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
+      for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
+        {
+        vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(displayNodeIndex);
+        if (!displayNode)
+          {
+          continue;
+          }
+        if (!qvtkIsConnected(displayNode, vtkMRMLDisplayNode::MenuEvent, this, SLOT(onDisplayMenuEvent(vtkObject*, vtkObject*))))
+          {
+          qvtkConnect(displayNode, vtkMRMLDisplayNode::MenuEvent, this, SLOT(onDisplayMenuEvent(vtkObject*, vtkObject*)));
+          }
+        }
+      }
     }
 }
 
