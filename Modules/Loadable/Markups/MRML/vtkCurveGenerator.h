@@ -51,6 +51,15 @@ public:
   vtkGetMacro(CurveIsClosed, bool);
   vtkBooleanMacro(CurveIsClosed, bool);
 
+  //@{
+  /// These methods are deprecated and will be removed in the future.
+  /// Use SetCurveIsClosed, GetCurveIsClosed, CurveIsCloseOn, CurveIsCloseOff methods instead.
+  void SetCurveIsLoop(bool loop) { this->SetCurveIsClosed(loop); }
+  void CurveIsLoopOn() { this->SetCurveIsClosed(true); }
+  void CurveIsLoopOff() { this->SetCurveIsClosed(false); }
+  bool GetCurveIsLoop() { return this->GetCurveIsClosed(); }
+  //@}
+
   /// Type of curve to generate
   enum
     {
