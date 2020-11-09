@@ -87,22 +87,26 @@ Three default slice views are provided (with Red, Yellow and Green colored bars)
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/user_interface_slice_view_controls.png)
 
-Slice View Controls: The colored bar across any Slice View shows a pushpin icon on its left. When the mouse rolls over this icon, a panel for configuring the slice view is displayed. The panel is hidden when the mouse moves away. For persistent display of this panel, just click the pushpin icon. For more options, click the double-arrow icon.
+Slice View Controls: The colored bar across any slice view shows a pushpin icon on its left (**Show view controls**). When the mouse rolls over this icon, a panel for configuring the slice view is displayed. The panel is hidden when the mouse moves away. For persistent display of this panel, just click the pushpin icon. For more options, click the double-arrow icon (**Show all options**).
 
 View Controllers module provides an alternate way of displaying these controllers in the Module Panel.
 
 - **Reset field of view** (small square) centers the slice on the current background volume
-- **Link** button synchronizes properties (which volumes are displayed, zoom factor, position of parallel views, opacities, etc.) between all slice views in the same view group. Long-click on the button exposes **hot-linked** option, which controls when properties are synchronized (immediately or when the mouse button is released).
-- **Eye** button in the top row can show the current slice in 3D views. Drop-down menu of the button contains advanced options to customize how this slice is rendered: "...match volume" means that the properties are taken from the full volume, while "...match 2D" means that the properties are copied from the current slice view (for example, copies zoom and pan position). Typically these differences are subtle and the settings can be left at default.
-- **Orientation Selection** displays allows you to choose the orientation for this slice view.
+- **Show in 3D** "eye" button in the top row can show the current slice in 3D views. Drop-down menu of the button contains advanced options to customize how this slice is rendered: "...match volume" means that the properties are taken from the full volume, while "...match 2D" means that the properties are copied from the current slice view (for example, copies zoom and pan position). Typically these differences are subtle and the settings can be left at default.
+- **Slice orientation** displays allows you to choose the orientation for this slice view.
 - **Lightbox** to select a mosiac (a.k.a. contact sheet) view.  Not all operations work in this mode and it may be removed in the future.
 - **Reformat** allows interactive manipulation of the slice orientation.
-- **Blending options** how foreground and background layers are mixed.
-- **Spacing and Field of View** Spacing defines the increment for the slice offset slider.  Field of view sets the zoom level for the slice.
-- **Rotate to Volume Plane** changes the orientation of the slice to match the closest acquisition orientation of the displayed volume
-- **Show Orientation Marker** controls display of human, cube, etc in lower right corner
-- **Ruler** controls display of ruler in slice view
-
+- **Slice offset slider** allows slicing through the volume. Step size is set to the background volume's spacing by default but can be modified by clicking on "Spacing and field of view" button.
+- **Blending mode** specifies how foreground and background layers are mixed.
+- **Spacing and field of view** Spacing defines the increment for the slice offset slider. Field of view sets the zoom level for the slice.
+- **Rotate to volume plane** changes the orientation of the slice to match the closest acquisition orientation of the displayed volume.
+- **Orientation Marker** controls display of human, cube, etc in lower right corner.
+- **Ruler** controls display of ruler in slice view. 
+- **View link** button synchronizes properties (which volumes are displayed, zoom factor, position of parallel views, opacities, etc.) between all slice views in the same view group. Long-click on the button exposes **hot-linked** option, which controls when properties are synchronized (immediately or when the mouse button is released).
+- **Layer visibility** "eye" buttons and **Layer opacity** spinboxes control visibility of segmentations and volumes in the slice view.
+- **Foreground volume opacity** slider allows fading between foreground and background volumes.
+- **Interpolation** allows displaying voxel values without interpolation. Recommended to keep interpolation enabled, and only disable it for testing and troubleshooting.
+- **Node selectors** are used to choose which background, foreground, and labelmap volumes and segmentations to display in this slice view. Note: multiple segmentations can be displayed in a slice view, but slice view controls only allow adjusting visibility of the currently selected segmentation node.
 
 ## Mouse & Keyboard Shortcuts
 
