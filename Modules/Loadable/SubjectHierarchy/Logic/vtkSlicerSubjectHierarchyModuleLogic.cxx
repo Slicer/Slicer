@@ -410,7 +410,7 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::CloneSubjectHierarchyItem(
         {
         clonedDisplayNode = vtkSmartPointer<vtkMRMLDisplayNode>::Take( vtkMRMLDisplayNode::SafeDownCast(
           scene->CreateNodeByClass(displayableDataNode->GetDisplayNode()->GetClassName()) ) );
-        clonedDisplayNode->Copy(displayableDataNode->GetDisplayNode());
+        clonedDisplayNode->CopyContent(displayableDataNode->GetDisplayNode());
         std::string clonedDisplayNodeName = clonedDataNodeName + "_Display";
         clonedDisplayNode->SetName(clonedDisplayNodeName.c_str());
         scene->AddNode(clonedDisplayNode);
@@ -433,7 +433,7 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::CloneSubjectHierarchyItem(
         {
         clonedStorageNode = vtkSmartPointer<vtkMRMLStorageNode>::Take( vtkMRMLStorageNode::SafeDownCast(
           scene->CreateNodeByClass(storableDataNode->GetStorageNode()->GetClassName()) ) );
-        clonedStorageNode->Copy(storableDataNode->GetStorageNode());
+        clonedStorageNode->CopyContent(storableDataNode->GetStorageNode());
         if (storableDataNode->GetStorageNode()->GetFileName())
           {
           std::string clonedStorageNodeFileName = std::string(storableDataNode->GetStorageNode()->GetFileName()) + std::string(CLONED_NODE_NAME_POSTFIX);
@@ -446,7 +446,7 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::CloneSubjectHierarchyItem(
 
     // Copy data node
     // Display and storage nodes might be involved in the copy process, so they are needed to be set up before the copy operation
-    clonedDataNode->Copy(associatedDataNode);
+    clonedDataNode->CopyContent(associatedDataNode);
     clonedDataNode->SetName(clonedDataNodeName.c_str());
     // Copy overwrites display and storage node references too, need to restore
     if (clonedDisplayNode.GetPointer())
