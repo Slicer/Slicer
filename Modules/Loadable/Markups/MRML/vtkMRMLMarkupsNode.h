@@ -640,8 +640,8 @@ protected:
   /// Calls UpdateMeasurementsInternal()
   void UpdateMeasurements();
 
-  /// Calculates the updated measurements
-  /// Should be overwritten by child classes to compute measurements
+  /// Calculate the updated measurements.
+  /// May be overridden in subclasses to compute special measurements (for example that apply on the curve polydata).
   virtual void UpdateMeasurementsInternal();
 
   /// Helper function to write measurements to node Description property.
@@ -651,11 +651,14 @@ protected:
   /// Calculates the handle to world matrix based on the current control points
   virtual void UpdateInteractionHandleToWorldMatrix();
 
-  /// Used for limiting number of markups that may be placed.
-  int MaximumNumberOfControlPoints;
-  int RequiredNumberOfControlPoints;
+  /// Used for limiting number of control points that may be placed.
+  /// This is a soft limit at which automatic placement stops.
+  int RequiredNumberOfControlPoints{0};
+  /// Used for limiting number of control points that may be placed.
+  /// This is a hard limit at which new control points cannot be added.
+  int MaximumNumberOfControlPoints{0};
 
-  bool CurveClosed;
+  bool CurveClosed{false};
 
   /// Vector of control points
   ControlPointsListType ControlPoints;
@@ -681,14 +684,14 @@ protected:
   vtkSmartPointer<vtkPointLocator> TransformedCurvePolyLocator;
 
   /// Locks all the points and GUI
-  int Locked;
+  int Locked{0};
 
-  std::string MarkupLabelFormat;
+  std::string MarkupLabelFormat{"%N-%d"};
 
   /// Keep track of the number of markups that were added to the list, always
   /// incrementing, not decreasing when they're removed. Used to help create
   /// unique names and ids. Reset to 0 when \sa RemoveAllControlPoints called
-  int LastUsedControlPointNumber;
+  int LastUsedControlPointNumber{0};
 
   /// Markup centerpoint (in local coordinates).
   /// It may be used as rotation center or as a handle to grab the widget by.
@@ -703,7 +706,7 @@ protected:
   vtkSmartPointer<vtkMatrix4x4> InteractionHandleToWorldMatrix;
 
   /// Flag set from SetControlPointPositionsWorld that pauses update of measurements until the update is complete.
-  bool IsUpdatingPoints;
+  bool IsUpdatingPoints{false};
 };
 
 #endif

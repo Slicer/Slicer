@@ -65,14 +65,7 @@ vtkMRMLNodeNewMacro(vtkMRMLMarkupsNode);
 vtkMRMLMarkupsNode::vtkMRMLMarkupsNode()
 {
   this->TextList = vtkSmartPointer<vtkStringArray>::New();
-  this->Locked = 0;
 
-  this->CurveClosed = false;
-
-  this->RequiredNumberOfControlPoints = 0;
-  this->MaximumNumberOfControlPoints = 0;
-  this->MarkupLabelFormat = std::string("%N-%d");
-  this->LastUsedControlPointNumber = 0;
   this->CenterPos.Set(0,0,0);
 
   this->CurveInputPoly = vtkSmartPointer<vtkPolyData>::New();
@@ -98,8 +91,6 @@ vtkMRMLMarkupsNode::vtkMRMLMarkupsNode()
   this->TransformedCurvePolyLocator = vtkSmartPointer<vtkPointLocator>::New();
   this->InteractionHandleToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   this->ContentModifiedEvents->InsertNextValue(vtkMRMLMarkupsNode::PointModifiedEvent);
-
-  this->IsUpdatingPoints = false;
 
   this->Measurements = vtkCollection::New();
 }
@@ -2060,8 +2051,18 @@ void vtkMRMLMarkupsNode::UpdateMeasurements()
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::UpdateMeasurementsInternal()
 {
-  // child classes override this function to compute measurements
-  this->ClearValueForAllMeasurements();
+  // Calculate enabled measurements
+  for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
+    {
+    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
+    if (currentMeasurement && currentMeasurement->GetEnabled() && !currentMeasurement->IsA("vtkMRMLMeasurementConstant"))
+      {
+      currentMeasurement->ClearValue();
+      currentMeasurement->Compute();
+      }
+    }
+
+  this->WriteMeasurementsToDescription();
 }
 
 //---------------------------------------------------------------------------

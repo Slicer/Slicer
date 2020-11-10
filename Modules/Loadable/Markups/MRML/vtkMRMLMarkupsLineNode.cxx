@@ -82,25 +82,6 @@ double vtkMRMLMarkupsLineNode::GetLineLengthWorld()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsLineNode::UpdateMeasurementsInternal()
-{
-  if (this->GetNumberOfDefinedControlPoints(true) == 2)
-    {
-    // Calculate enabled measurements
-    for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
-      {
-      vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
-      if (currentMeasurement && currentMeasurement->GetEnabled() && !currentMeasurement->IsA("vtkMRMLMeasurementConstant"))
-        {
-        currentMeasurement->ClearValue();
-        currentMeasurement->Compute();
-        }
-      }
-    }
-  this->WriteMeasurementsToDescription();
-}
-
-//---------------------------------------------------------------------------
 void vtkMRMLMarkupsLineNode::UpdateInteractionHandleToWorldMatrix()
 {
   Superclass::UpdateInteractionHandleToWorldMatrix();

@@ -125,8 +125,6 @@ protected:
   /// Calculates the handle to world matrix based on the current control points
   void UpdateInteractionHandleToWorldMatrix() override;
 
-  void UpdateMeasurementsInternal() override;
-
 protected:
   /// Rotation axis for calculating right-hand rule angles.
   /// Right-hand rule: angle is positive if p2->p1 is rotated to p2->p3 by counter-clockwise rotation
