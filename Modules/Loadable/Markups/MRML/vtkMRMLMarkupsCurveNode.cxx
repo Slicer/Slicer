@@ -1147,24 +1147,11 @@ vtkIdType vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurveWorld(const 
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::UpdateMeasurementsInternal()
 {
-  if (this->GetNumberOfDefinedControlPoints() > 1)
-    {
-    // Calculate enabled measurements
-    for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
-      {
-      vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
-      if (currentMeasurement && currentMeasurement->GetEnabled() && !currentMeasurement->IsA("vtkMRMLMeasurementConstant"))
-        {
-        currentMeasurement->ClearValue();
-        currentMeasurement->Compute();
-        }
-      }
+  // Execute curve measurements calculator (curvature, interpolate control point measurements
+  // and store the results in the curve poly data points as scalars for visualization)
+  this->CurveMeasurementsCalculator->Update();
 
-    // Execute curve measurements calculator (curvature, interpolate control point measurements
-    // and store the results in the curve poly data points as scalars for visualization)
-    this->CurveMeasurementsCalculator->Update();
-    }
-  this->WriteMeasurementsToDescription();
+  Superclass::UpdateMeasurementsInternal();
 }
 
 //---------------------------------------------------------------------------

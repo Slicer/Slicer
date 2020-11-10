@@ -70,8 +70,6 @@ protected:
   vtkMRMLMarkupsLineNode(const vtkMRMLMarkupsLineNode&);
   void operator=(const vtkMRMLMarkupsLineNode&);
 
-  void UpdateMeasurementsInternal() override;
-
   /// Calculates the handle to world matrix based on the current control points
   void UpdateInteractionHandleToWorldMatrix() override;
 };
