@@ -56,6 +56,8 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
     supportedSOPClassUIDs = [
       '1.2.840.10008.5.1.4.1.1.12.1',  # X-Ray Angiographic Image Storage
       '1.2.840.10008.5.1.4.1.1.3.1',  # Ultrasound Multiframe Image Storage
+      '1.2.840.10008.5.1.4.1.1.6.1',  # Ultrasound Image Storage
+      '1.2.840.10008.5.1.4.1.1.7',  # Secondary Capture Image Storage (only accepted if modality is US or XA)
       ]
 
     # Each instance will be a loadable, that will result in one sequence browser node
@@ -80,7 +82,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
         sopClassUID = slicer.dicomDatabase.fileValue(filePath, self.tags['sopClassUID'])
         if not (sopClassUID in supportedSOPClassUIDs):
           # Unsupported class
-          return []
+          continue
       except Exception as e:
         # Quick check could not be completed (probably Slicer DICOM database is not initialized).
         # No problem, we'll try to parse the file and check the SOP class UID then.
@@ -90,11 +92,17 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
         ds = dicom.read_file(filePath, stop_before_pixels=True)
       except Exception as e:
         logging.debug("Failed to parse DICOM file: {0}".format(str(e)))
-        return []
+        continue
 
       if not (ds.SOPClassUID in supportedSOPClassUIDs):
         # Unsupported class
-        return []
+        continue
+
+      if ds.SOPClassUID == '1.2.840.10008.5.1.4.1.1.7':
+        if ds.Modality != 'US' and ds.Modality != 'XA':
+          # practice of dumping secondary capture images into the same series
+          # is only prevalent in US and XA modalities
+          continue
 
       if not (ds.InstanceNumber in instanceNumberToLoadableIndex.keys()):
         # new instance number
