@@ -267,10 +267,12 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
           newFiles.append(file)
         if slicer.dicomDatabase.fileValue(file,self.tags['sopClassUID'])=='1.2.840.10008.5.1.4.1.1.66.4':
           excludedLoadable = True
-          logging.error('Please install Quantitative Reporting extension to enable loading of DICOM Segmentation objects')
+          if 'DICOMSegmentationPlugin' not in slicer.modules.dicomPlugins:
+            logging.warning('Please install Quantitative Reporting extension to enable loading of DICOM Segmentation objects')
         elif slicer.dicomDatabase.fileValue(file,self.tags['sopClassUID'])=='1.2.840.10008.5.1.4.1.1.481.3':
           excludedLoadable = True
-          logging.error('Please install SlicerRT extension to enable loading of DICOM RT Structure Set objects')
+          if 'DicomRtImportExportPlugin' not in slicer.modules.dicomPlugins:
+            logging.warning('Please install SlicerRT extension to enable loading of DICOM RT Structure Set objects')
       if len(newFiles) > 0 and not excludedLoadable:
         loadable.files = newFiles
         loadable.grayscale = ('MONOCHROME' in slicer.dicomDatabase.fileValue(newFiles[0],self.tags['photometricInterpretation']))

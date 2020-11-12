@@ -647,6 +647,7 @@ def refreshDICOMWidget():
 def getLoadablesFromFileLists(fileLists, pluginClassNames=None, messages=None, progressCallback=None, pluginInstances=None):
   """Take list of file lists, return loadables by plugin dictionary
   """
+  detailedLogging = slicer.util.settingsValue('DICOM/detailedLogging', False, converter=slicer.util.toBool)
   loadablesByPlugin = {}
   loadEnabled = False
   if not isinstance(fileLists, list) or len(fileLists) == 0 or not type(fileLists[0]) in [tuple, list]:
@@ -668,6 +669,8 @@ def getLoadablesFromFileLists(fileLists, pluginClassNames=None, messages=None, p
       if cancelled:
         break
     try:
+      if detailedLogging:
+        logging.debug("Examine for import using " + pluginClassName)
       loadablesByPlugin[plugin] = plugin.examineForImport(fileLists)
       # If regular method is not overridden (so returns empty list), try old function
       # Ensuring backwards compatibility: examineForImport used to be called examine
