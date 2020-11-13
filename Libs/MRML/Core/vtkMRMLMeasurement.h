@@ -47,6 +47,14 @@ public:
   /// Copy one type into another (deep copy)
   virtual void Copy(vtkMRMLMeasurement* aEntry);
 
+  /// Measurement computation status
+  enum ComputationResult
+  {
+    Success = 0,
+    InsufficientInput,
+    InternalError
+  };
+
   /// Perform calculation on \sa InputMRMLNode and store the result internally.
   /// The subclasses need to implement this function
   virtual void Compute() = 0;
@@ -134,6 +142,7 @@ protected:
   vtkCodedEntry* DerivationCode{nullptr}; // min/max/mean
   vtkCodedEntry* UnitsCode{nullptr};      // cubic millimeter
   vtkCodedEntry* MethodCode{nullptr};     // Sum of segmented voxel volumes
+  ComputationResult LastComputationResult{InsufficientInput};
 
   /// Per-control point measurements
   vtkDoubleArray* ControlPointValues{nullptr};

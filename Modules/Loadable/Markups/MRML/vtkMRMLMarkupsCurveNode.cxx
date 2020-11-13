@@ -1149,7 +1149,10 @@ void vtkMRMLMarkupsCurveNode::UpdateMeasurementsInternal()
 {
   // Execute curve measurements calculator (curvature, interpolate control point measurements
   // and store the results in the curve poly data points as scalars for visualization)
-  this->CurveMeasurementsCalculator->Update();
+  if (this->CurveMeasurementsCalculator)
+    {
+    this->CurveMeasurementsCalculator->Update();
+    }
 
   Superclass::UpdateMeasurementsInternal();
 }

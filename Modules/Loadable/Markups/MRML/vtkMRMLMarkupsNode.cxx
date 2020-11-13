@@ -2077,6 +2077,7 @@ vtkMRMLUnitNode* vtkMRMLMarkupsNode::GetUnitNode(const char* quantity)
     {
     return nullptr;
     }
+
   vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
     this->GetScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   if (!selectionNode)
@@ -2086,10 +2087,9 @@ vtkMRMLUnitNode* vtkMRMLMarkupsNode::GetUnitNode(const char* quantity)
     }
   vtkMRMLUnitNode* unitNode = vtkMRMLUnitNode::SafeDownCast(this->GetScene()->GetNodeByID(
     selectionNode->GetUnitNodeID(quantity)));
-  if (!unitNode)
-    {
-    vtkWarningMacro("vtkMRMLMarkupsNode::GetUnitNode failed: unit node not found by name " << quantity);
-    }
+
+  // Do not log warning if null, because for example there is no 'angle' unit node, and in
+  // that case hundreds of warnings would be thrown in a non erroneous situation.
   return unitNode;
 }
 

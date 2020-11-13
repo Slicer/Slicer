@@ -43,6 +43,7 @@ void vtkMRMLMeasurementAngle::Compute()
 {
   if (!this->InputMRMLNode)
     {
+    this->LastComputationResult = vtkMRMLMeasurement::InsufficientInput;
     return;
     }
 
@@ -54,8 +55,9 @@ void vtkMRMLMeasurementAngle::Compute()
     {
     if (angleNode->GetNumberOfDefinedControlPoints(true) != 3)
       {
-      vtkErrorMacro("Compute: Angle nodes must have exactly three control points ("
+      vtkDebugMacro("Compute: Angle nodes must have exactly three control points ("
         << angleNode->GetNumberOfDefinedControlPoints(true) << " found)");
+      this->LastComputationResult = vtkMRMLMeasurement::InsufficientInput;
       return;
       }
     double p1[3] = { 0.0 };
@@ -69,6 +71,7 @@ void vtkMRMLMeasurementAngle::Compute()
       || vtkMath::Distance2BetweenPoints(p2, c) < VTK_DBL_EPSILON )
       {
       vtkErrorMacro("Compute: Control points are too close to each other to compute angle reliably");
+      this->LastComputationResult = vtkMRMLMeasurement::InsufficientInput;
       return;
       }
 
@@ -78,6 +81,7 @@ void vtkMRMLMeasurementAngle::Compute()
   else
     {
     vtkErrorMacro("Compute: Markup type not supported by this measurement: " << this->InputMRMLNode->GetClassName());
+    this->LastComputationResult = vtkMRMLMeasurement::InsufficientInput;
     return;
     }
 
@@ -100,4 +104,6 @@ void vtkMRMLMeasurementAngle::Compute()
   this->SetValue(angle);
   this->SetUnits(unit.c_str());
   this->SetPrintFormat(printFormat.c_str());
+
+  this->LastComputationResult = vtkMRMLMeasurement::Success;
 }
