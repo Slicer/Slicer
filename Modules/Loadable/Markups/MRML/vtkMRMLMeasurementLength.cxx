@@ -44,6 +44,7 @@ void vtkMRMLMeasurementLength::Compute()
 {
   if (!this->InputMRMLNode)
     {
+    this->LastComputationResult = vtkMRMLMeasurement::InsufficientInput;
     return;
     }
 
@@ -54,17 +55,32 @@ void vtkMRMLMeasurementLength::Compute()
   double length = 0.0;
   if (curveNode)
     {
+    if (curveNode->GetNumberOfDefinedControlPoints(true) < 2)
+      {
+      vtkDebugMacro("Compute: Angle nodes must have exactly three control points ("
+        << curveNode->GetNumberOfDefinedControlPoints(true) << " found)");
+      this->LastComputationResult = vtkMRMLMeasurement::InsufficientInput;
+      return;
+      }
     length = curveNode->GetCurveLengthWorld();
     unitNode = curveNode->GetUnitNode("length");
     }
   else if (lineNode)
     {
+    if (lineNode->GetNumberOfDefinedControlPoints(true) < 2)
+      {
+      vtkDebugMacro("Compute: Angle nodes must have exactly three control points ("
+        << lineNode->GetNumberOfDefinedControlPoints(true) << " found)");
+      this->LastComputationResult = vtkMRMLMeasurement::InsufficientInput;
+      return;
+      }
     length = lineNode->GetLineLengthWorld();
     unitNode = lineNode->GetUnitNode("length");
     }
   else
     {
     vtkErrorMacro("Compute: Markup type not supported by this measurement: " << this->InputMRMLNode->GetClassName());
+    this->LastComputationResult = vtkMRMLMeasurement::InsufficientInput;
     return;
     }
 
@@ -87,4 +103,6 @@ void vtkMRMLMeasurementLength::Compute()
   this->SetValue(length);
   this->SetUnits(unit.c_str());
   this->SetPrintFormat(printFormat.c_str());
+
+  this->LastComputationResult = vtkMRMLMeasurement::Success;
 }
