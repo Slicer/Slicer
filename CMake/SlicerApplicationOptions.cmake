@@ -116,6 +116,17 @@ endif()
 mark_as_superbuild(${Slicer_MAIN_PROJECT_APPLICATION_NAME}_SOURCE_DIR)
 
 #-----------------------------------------------------------------------------
+# Set application bundle identifier for macOS
+#-----------------------------------------------------------------------------
+if(APPLE)
+  if(NOT DEFINED Slicer_MACOSX_BUNDLE_GUI_IDENTIFIER)
+    set(Slicer_MACOSX_BUNDLE_GUI_IDENTIFIER "org.slicer.slicer")
+  endif()
+  mark_as_superbuild(Slicer_MACOSX_BUNDLE_GUI_IDENTIFIER)
+  message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} application bundle identifier [${Slicer_MACOSX_BUNDLE_GUI_IDENTIFIER}]")
+endif()
+
+#-----------------------------------------------------------------------------
 # Set default installation folder and admin account requirement for Windows
 #-----------------------------------------------------------------------------
 if(WIN32)
