@@ -308,10 +308,12 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
     if (currentMeasurement->GetName() && !strcmp(currentMeasurement->GetName(), this->GetMeanCurvatureName()))
       {
       currentMeasurement->SetValue(meanKappa);
+      currentMeasurement->Compute(); // Have the measurement set the computation result to OK
       }
     else if (currentMeasurement->GetName() && !strcmp(currentMeasurement->GetName(), this->GetMaxCurvatureName()))
       {
       currentMeasurement->SetValue(maxKappa);
+      currentMeasurement->Compute(); // Have the measurement set the computation result to OK
       }
     }
 

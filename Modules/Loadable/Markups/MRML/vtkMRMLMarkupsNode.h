@@ -504,7 +504,7 @@ public:
   /// Get the markup node label format string that defines the markup names.
   /// \sa SetMarkupLabelFormat
   std::string GetMarkupLabelFormat();
-  /// Set the markup node label format strign that defines the markup names,
+  /// Set the markup node label format string that defines the markup names,
   /// then invoke the LabelFormatModifedEvent
   /// In standard printf notation, with the addition of %N being replaced
   /// by the list name.
@@ -707,6 +707,8 @@ protected:
 
   /// Flag set from SetControlPointPositionsWorld that pauses update of measurements until the update is complete.
   bool IsUpdatingPoints{false};
+
+  friend class qSlicerMarkupsModuleWidget; // To directly access measurements
 };
 
 #endif

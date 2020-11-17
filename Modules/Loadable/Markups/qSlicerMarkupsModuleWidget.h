@@ -233,6 +233,19 @@ public slots:
   /// Change in a widget related to a surface curve type parameter
   void onCurveTypeParameterChanged();
 
+  /// Make sure all measurements in the current markups node are observed
+  void observeMeasurementsInCurrentMarkupsNode();
+  /// Update measurements description label
+  void updateMeasurementsDescriptionLabel();
+  /// Populate measurement settings frame from the available measurements in the current markup
+  void populateMeasurementSettingsTable();
+  /// Update observations on measurements when their container is modified (i.e. measurement added or removed)
+  void onMeasurementsCollectionModified();
+  /// Update measurement information on GUI when a measurement is modified
+  void onMeasurementModified(vtkObject* caller);
+  /// Enable/disable measurement when an enable checkbox has been toggled
+  void onMeasurementEnabledCheckboxToggled(bool on);
+
 protected:
   QScopedPointer<qSlicerMarkupsModuleWidgetPrivate> d_ptr;
 
@@ -246,7 +259,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerMarkupsModuleWidget);
   Q_DISABLE_COPY(qSlicerMarkupsModuleWidget);
-
 };
 
 #endif

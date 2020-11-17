@@ -48,9 +48,11 @@ public:
   virtual void Copy(vtkMRMLMeasurement* aEntry);
 
   /// Measurement computation status
+  /// \sa LastComputationResult, GetLastComputationResult(),
+  /// GetLastComputationResultAsString()
   enum ComputationResult
   {
-    Success = 0,
+    OK = 0,
     InsufficientInput,
     InternalError
   };
@@ -99,6 +101,11 @@ public:
   /// Copy content of coded entry
   void SetMethodCode(vtkCodedEntry* entry);
   vtkGetObjectMacro(MethodCode, vtkCodedEntry);
+
+  /// Get last computation result
+  vtkGetMacro(LastComputationResult, int);
+  /// Get last computation result as human-readable string
+  const char* GetLastComputationResultAsPrintableString();
 
   /// Get measurement value and units as a single human-readable string.
   std::string GetValueWithUnitsAsPrintableString();

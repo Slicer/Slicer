@@ -40,5 +40,5 @@ void vtkMRMLMeasurementConstant::Compute()
   // No action is needed because this class is a constant variant of the dynamic
   // vtkMRMLMeasurement. Typically all measurements calculate their own value from
   // its input MRML node. This class is to be able to store constant measurements.
-  this->LastComputationResult = vtkMRMLMeasurement::Success;
+  this->LastComputationResult = vtkMRMLMeasurement::OK;
 }

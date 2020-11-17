@@ -35,6 +35,7 @@
 
 class vtkArrayCalculator;
 class vtkAssignAttribute;
+class vtkCallbackCommand;
 class vtkCleanPolyData;
 class vtkCurveMeasurementsCalculator;
 class vtkPassThroughFilter;
@@ -280,6 +281,9 @@ protected:
   /// array is the color array that needs to be used by the VTK mappers.
   vtkSmartPointer<vtkAssignAttribute> ScalarDisplayAssignAttribute;
 
+  /// Command handling curvature measurement modified events to propagate enabled state
+  vtkCallbackCommand* CurvatureMeasurementModifiedCallbackCommand;
+
 protected:
   void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
   void OnNodeReferenceAdded(vtkMRMLNodeReference* reference) override;
@@ -296,6 +300,9 @@ protected:
   void operator=(const vtkMRMLMarkupsCurveNode&);
 
   void UpdateMeasurementsInternal() override;
+
+  /// Callback function observing curvature measurement modified events to propagate enabled state
+  static void OnCurvatureMeasurementModified(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
 };
 
 #endif

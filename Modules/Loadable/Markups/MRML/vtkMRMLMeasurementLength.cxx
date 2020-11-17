@@ -104,5 +104,5 @@ void vtkMRMLMeasurementLength::Compute()
   this->SetUnits(unit.c_str());
   this->SetPrintFormat(printFormat.c_str());
 
-  this->LastComputationResult = vtkMRMLMeasurement::Success;
+  this->LastComputationResult = vtkMRMLMeasurement::OK;
 }
