@@ -26,6 +26,7 @@ Care Ontario.
 #include <vtkAlgorithmOutput.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCommand.h>
+#include <vtkMatrix4x4.h>
 
 // vtkAddon includes
 #include <vtkStreamingVolumeCodecFactory.h>
@@ -279,7 +280,6 @@ bool vtkMRMLStreamingVolumeNode::EncodeImageData(bool forceKeyFrame/*=false*/)
     return false;
     }
 
-
   vtkSmartPointer<vtkStreamingVolumeFrame> frame = vtkSmartPointer<vtkStreamingVolumeFrame>::New();
   if (!this->Codec->EncodeImageData(imageData, frame, forceKeyFrame))
     {
@@ -340,16 +340,48 @@ void vtkMRMLStreamingVolumeNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLStreamingVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
-  Superclass::CopyContent(anode, deepCopy);
 
-  vtkMRMLStreamingVolumeNode* node = vtkMRMLStreamingVolumeNode::SafeDownCast(anode);
-  if (!node)
+  vtkMRMLStreamingVolumeNode* streamingVolumeNode = vtkMRMLStreamingVolumeNode::SafeDownCast(anode);
+  if (!streamingVolumeNode)
     {
-    return;
+    // Other node is not a streaming volume node.
+    // We don't need to worry about it trying to decode the frame.
+    Superclass::CopyContent(anode, deepCopy);
     }
+  else
+    {
+    // If the source node is a vtkMRMLStreamingVolumeNode, we should not call Superclass::CopyContent(),
+    // since the vtkMRMLVolumeNode::CopyContent() function would cause the source node to decode its frame.
+
+    vtkMRMLDisplayableNode::CopyContent(anode, deepCopy);
+
+    /// Duplicated from vtkMRMLVolumeNode::CopyContent()
+    vtkAlgorithm* producer = this->ImageDataConnection ?
+      this->ImageDataConnection->GetProducer() : nullptr;
+    vtkImageData* sourceImageData = vtkImageData::SafeDownCast(
+      producer ? producer->GetOutputDataObject(
+        this->ImageDataConnection->GetIndex()) : nullptr);
+
+    vtkSmartPointer<vtkImageData> targetImageData = sourceImageData;
+    if (deepCopy && sourceImageData)
+      {
+      targetImageData = vtkSmartPointer<vtkImageData>::Take(sourceImageData->NewInstance());
+      targetImageData->DeepCopy(sourceImageData);
+      }
+    this->SetAndObserveImageData(targetImageData);
+    this->CopyOrientation(streamingVolumeNode);
+
+    /// Duplicated from vtkMRMLTensorVolumeNode::CopyContent()
+    vtkNew<vtkMatrix4x4> measurementFrameMatrix;
+    streamingVolumeNode->GetMeasurementFrameMatrix(measurementFrameMatrix);
+    this->SetMeasurementFrameMatrix(measurementFrameMatrix);
+    this->Order = streamingVolumeNode->GetOrder();
+    }
+
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyStdStringMacro(CodecFourCC);
   this->SetAndObserveFrame(this->SafeDownCast(copySourceNode)->GetFrame());
+  vtkMRMLCopyStdStringMacro(CodecParameterString);
   vtkMRMLCopyEndMacro();
 }
 
