@@ -335,3 +335,17 @@ vtkMRMLNode* vtkMRMLMeasurement::GetInputMRMLNode()
 
   return nullptr;
 }
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLMeasurement::GetLastComputationResultAsPrintableString()
+{
+  switch (this->LastComputationResult)
+    {
+    case OK: return "OK";
+    case InsufficientInput: return "Insufficient input";
+    case InternalError: return "Internal error";
+    default:
+      // invalid id
+      return "";
+    }
+}

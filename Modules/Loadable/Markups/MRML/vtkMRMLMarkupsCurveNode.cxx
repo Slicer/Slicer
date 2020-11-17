@@ -133,10 +133,24 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   curvatureMaxMeasurement->SetUnits(inverseLengthUnit.c_str());
   curvatureMaxMeasurement->SetEnabled(false); // Curvature calculation is off by default
   this->Measurements->AddItem(curvatureMaxMeasurement);
+
+  this->CurvatureMeasurementModifiedCallbackCommand = vtkCallbackCommand::New();
+  this->CurvatureMeasurementModifiedCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
+  this->CurvatureMeasurementModifiedCallbackCommand->SetCallback( vtkMRMLMarkupsCurveNode::OnCurvatureMeasurementModified );
+  curvatureMeanMeasurement->AddObserver(vtkCommand::ModifiedEvent, this->CurvatureMeasurementModifiedCallbackCommand);
+  curvatureMaxMeasurement->AddObserver(vtkCommand::ModifiedEvent, this->CurvatureMeasurementModifiedCallbackCommand);
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLMarkupsCurveNode::~vtkMRMLMarkupsCurveNode() = default;
+vtkMRMLMarkupsCurveNode::~vtkMRMLMarkupsCurveNode()
+{
+  if (this->CurvatureMeasurementModifiedCallbackCommand)
+    {
+    this->CurvatureMeasurementModifiedCallbackCommand->SetClientData(nullptr);
+    this->CurvatureMeasurementModifiedCallbackCommand->Delete();
+    this->CurvatureMeasurementModifiedCallbackCommand = nullptr;
+    }
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::WriteXML(ostream& of, int nIndent)
@@ -1484,5 +1498,41 @@ void vtkMRMLMarkupsCurveNode::UpdateAssignedAttribute()
     {
     this->ScalarDisplayAssignAttribute->RemoveAllInputConnections(0);
     this->CurvePolyToWorldTransformer->SetInputConnection(this->CurveMeasurementsCalculator->GetOutputPort());
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsCurveNode::OnCurvatureMeasurementModified(
+  vtkObject* caller, unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
+{
+  vtkMRMLMarkupsCurveNode* self = reinterpret_cast<vtkMRMLMarkupsCurveNode*>(clientData);
+  vtkMRMLMeasurementConstant* measurement = reinterpret_cast<vtkMRMLMeasurementConstant*>(caller);
+  if (!self || !measurement)
+    {
+    return;
+    }
+
+  // If a measurement was enabled or disabled
+  bool newEnabledState = measurement->GetEnabled();
+  if (self->CurveMeasurementsCalculator->GetCalculateCurvature() != newEnabledState)
+    {
+    // Propagate enabled state to curve measurements calculator
+    self->SetCalculateCurvature(measurement->GetEnabled());
+
+    // Make sure the enabled state is toggled for the other curvature measurement as well, because they are calculated together
+    for (int index=0; index<self->Measurements->GetNumberOfItems(); ++index)
+      {
+      vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(self->Measurements->GetItemAsObject(index));
+      if ( currentMeasurement->GetName()
+        && ( !strcmp(currentMeasurement->GetName(), self->CurveMeasurementsCalculator->GetMeanCurvatureName())
+          || !strcmp(currentMeasurement->GetName(), self->CurveMeasurementsCalculator->GetMaxCurvatureName()) ) )
+        {
+        currentMeasurement->SetEnabled(newEnabledState);
+        if (!newEnabledState)
+          {
+          currentMeasurement->ClearValue();
+          }
+        }
+      }
     }
 }

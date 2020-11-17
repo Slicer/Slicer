@@ -74,6 +74,7 @@
 
 static const int JUMP_MODE_COMBOBOX_INDEX_OFFSET = 0;
 static const int JUMP_MODE_COMBOBOX_INDEX_CENTERED = 1;
+static const char* NAME_PROPERTY = "name";
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Markups
@@ -479,6 +480,9 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
     q, SLOT(onCurveTypeParameterChanged()));
   QObject::connect(this->scalarFunctionLineEdit, SIGNAL(textChanged(QString)),
     this->editScalarFunctionDelay, SLOT(start()));
+
+  // hide measurement settings table until markups node containing measurement is set
+  this->measurementSettingsTableWidget->setVisible(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -799,11 +803,26 @@ void qSlicerMarkupsModuleWidget::exit()
 {
   this->Superclass::exit();
 
-  // qDebug() << "exit widget";
-
   // remove mrml scene observations, don't need to update the GUI while the
   // module is not showing
   this->qvtkDisconnectAll();
+
+  // remove observations from measurements
+  Q_D(qSlicerMarkupsModuleWidget);
+  if (d->MarkupsNode)
+    {
+    for (int i=0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
+      {
+      vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
+        d->MarkupsNode->Measurements->GetItemAsObject(i) );
+      if (currentMeasurement)
+        {
+        qvtkDisconnect(currentMeasurement, vtkCommand::ModifiedEvent, this, SLOT(onMeasurementModified()));
+        }
+      }
+    qvtkDisconnect(d->MarkupsNode->Measurements, vtkCommand::ModifiedEvent,
+      this, SLOT(onMeasurementsCollectionModified()));
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -815,7 +834,6 @@ vtkSlicerMarkupsLogic *qSlicerMarkupsModuleWidget::markupsLogic()
     }
   return vtkSlicerMarkupsLogic::SafeDownCast(this->logic());
 }
-
 
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
@@ -2278,7 +2296,23 @@ void qSlicerMarkupsModuleWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsN
   qvtkReconnect(d->MarkupsNode, markupsNode, vtkMRMLTransformableNode::TransformModifiedEvent,
     this, SLOT(onActiveMarkupsNodeTransformModifiedEvent()));
 
+  // measurements
+  if (d->MarkupsNode)
+    {
+    qvtkDisconnect(d->MarkupsNode->Measurements, vtkCommand::ModifiedEvent,
+      this, SLOT(onMeasurementsCollectionModified()));
+    }
+  if (markupsNode)
+    {
+    qvtkConnect(markupsNode->Measurements, vtkCommand::ModifiedEvent,
+      this, SLOT(onMeasurementsCollectionModified()));
+    }
+
   d->MarkupsNode = markupsNode;
+
+  this->observeMeasurementsInCurrentMarkupsNode();
+  this->updateMeasurementsDescriptionLabel();
+  this->populateMeasurementSettingsTable();
 
   this->updateWidgetFromMRML();
 }
@@ -2381,8 +2415,6 @@ void qSlicerMarkupsModuleWidget::onSliceIntersectionsVisibilityToggled(bool flag
 void qSlicerMarkupsModuleWidget::onNewMarkupWithCurrentDisplayPropertiesTriggered()
 {
   Q_D(qSlicerMarkupsModuleWidget);
-
-//  qDebug() << "onNewMarkupWithCurrentDisplayPropertiesTriggered";
 
   // get the active list
   if (!d->MarkupsNode)
@@ -2668,4 +2700,175 @@ void qSlicerMarkupsModuleWidget::onCurveTypeParameterChanged()
   std::string functionString = d->scalarFunctionLineEdit->text().toStdString();
   curveNode->SetSurfaceCostFunctionType(d->costFunctionComboBox->currentData().toInt());
   curveNode->SetSurfaceDistanceWeightingFunction(functionString.c_str());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onMeasurementsCollectionModified()
+{
+  // Make sure all measurements are observed
+  this->observeMeasurementsInCurrentMarkupsNode();
+
+  // Reconstruct measurement settings table
+  this->populateMeasurementSettingsTable();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::observeMeasurementsInCurrentMarkupsNode()
+  {
+  Q_D(qSlicerMarkupsModuleWidget);
+  if (!d->MarkupsNode)
+    {
+    return;
+    }
+
+  for (int i=0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
+    {
+    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
+      d->MarkupsNode->Measurements->GetItemAsObject(i) );
+    if (!currentMeasurement)
+      {
+      continue;
+      }
+
+    if (!qvtkIsConnected(currentMeasurement, vtkCommand::ModifiedEvent, this, SLOT(onMeasurementModified(vtkObject*))))
+      {
+      qvtkConnect(currentMeasurement, vtkCommand::ModifiedEvent, this, SLOT(onMeasurementModified(vtkObject*)));
+      }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onMeasurementModified(vtkObject* caller)
+{
+  Q_D(qSlicerMarkupsModuleWidget);
+
+  // Update measurements description label
+  this->updateMeasurementsDescriptionLabel();
+
+  // Update settings for modified measurement
+  vtkMRMLMeasurement* measurement = vtkMRMLMeasurement::SafeDownCast(caller);
+  if (measurement)
+    {
+    QString measurementName(measurement->GetName());
+    if (measurementName.isEmpty())
+      {
+      qWarning() << Q_FUNC_INFO << ": Cannot update settings UI for modified measurement because it has an empty name";
+      }
+    else
+      {
+      QList<QTableWidgetItem*> nameItemsFound = d->measurementSettingsTableWidget->findItems(measurementName, Qt::MatchExactly);
+      foreach (QTableWidgetItem* nameItem, nameItemsFound)
+        {
+        QCheckBox* checkbox = qobject_cast<QCheckBox*>(d->measurementSettingsTableWidget->cellWidget(nameItem->row(), 1));
+        checkbox->setChecked(measurement->GetEnabled());
+        }
+      }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::updateMeasurementsDescriptionLabel()
+{
+  Q_D(qSlicerMarkupsModuleWidget);
+
+  if (!d->MarkupsNode)
+    {
+    d->measurementsLabel->setText("No measurement");
+    return;
+    }
+
+  QString measurementsString;
+  for (int i=0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
+    {
+    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
+      d->MarkupsNode->Measurements->GetItemAsObject(i) );
+    if (!currentMeasurement || !currentMeasurement->GetEnabled())
+      {
+      continue;
+      }
+    measurementsString.append(currentMeasurement->GetName());
+    measurementsString.append(": ");
+    if (currentMeasurement->GetLastComputationResult() == vtkMRMLMeasurement::OK)
+      {
+      measurementsString.append(currentMeasurement->GetValueWithUnitsAsPrintableString().c_str());
+      }
+    else
+      {
+      measurementsString.append(currentMeasurement->GetLastComputationResultAsPrintableString());
+      }
+    if (i != d->MarkupsNode->Measurements->GetNumberOfItems() - 1)
+      {
+      measurementsString.append("\n");
+      }
+    }
+  d->measurementsLabel->setText(measurementsString.isEmpty() ? tr("No measurement") : measurementsString);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::populateMeasurementSettingsTable()
+{
+  Q_D(qSlicerMarkupsModuleWidget);
+
+  d->measurementSettingsTableWidget->clear();
+  d->measurementSettingsTableWidget->setVisible(
+    d->MarkupsNode != nullptr && d->MarkupsNode->Measurements->GetNumberOfItems() > 0 );
+
+  if (!d->MarkupsNode)
+    {
+    return;
+    }
+
+  d->measurementSettingsTableWidget->setHorizontalHeaderLabels(QStringList() << "Name" << "Enabled");
+  d->measurementSettingsTableWidget->setRowCount(d->MarkupsNode->Measurements->GetNumberOfItems());
+  for (int i=0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
+    {
+    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
+      d->MarkupsNode->Measurements->GetItemAsObject(i) );
+    if (!currentMeasurement)
+      {
+      continue;
+      }
+
+    QTableWidgetItem* nameItem = new QTableWidgetItem(currentMeasurement->GetName());
+    d->measurementSettingsTableWidget->setItem(i, 0, nameItem);
+
+    QCheckBox* enabledCheckbox = new QCheckBox();
+    enabledCheckbox->setChecked(currentMeasurement->GetEnabled());
+    enabledCheckbox->setProperty(NAME_PROPERTY, currentMeasurement->GetName());
+    QObject::connect(enabledCheckbox, SIGNAL(toggled(bool)), this, SLOT(onMeasurementEnabledCheckboxToggled(bool)));
+    d->measurementSettingsTableWidget->setCellWidget(i, 1, enabledCheckbox);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onMeasurementEnabledCheckboxToggled(bool on)
+{
+  Q_D(qSlicerMarkupsModuleWidget);
+  if (!d->MarkupsNode)
+    {
+    return;
+    }
+
+  // Get measurement name from checkbox
+  QCheckBox* checkbox = qobject_cast<QCheckBox*>(this->sender());
+  QString measurementName = checkbox->property(NAME_PROPERTY).toString();
+
+  // Enable/disable measurement with name
+  for (int i=0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
+    {
+    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
+      d->MarkupsNode->Measurements->GetItemAsObject(i) );
+    if (!currentMeasurement)
+      {
+      continue;
+      }
+
+    if (!measurementName.compare(currentMeasurement->GetName()))
+      {
+      currentMeasurement->SetEnabled(on);
+      }
+    }
+
+  // Make sure the subject hierarchy description is updated as well
+  d->MarkupsNode->WriteMeasurementsToDescription();
 }
