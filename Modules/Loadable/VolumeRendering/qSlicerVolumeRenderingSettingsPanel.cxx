@@ -87,6 +87,7 @@ void qSlicerVolumeRenderingSettingsPanelPrivate::init()
     {
     this->QualityControlComboBox->addItem(vtkMRMLViewNode::GetVolumeRenderingQualityAsString(qualityIndex));
     }
+  this->QualityControlComboBox->setCurrentText(vtkMRMLViewNode::GetVolumeRenderingQualityAsString(vtkMRMLViewNode::Normal));
   QObject::connect(this->QualityControlComboBox, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(onDefaultQualityChanged(int)));
   q->registerProperty("VolumeRendering/DefaultQuality", q,
@@ -230,7 +231,7 @@ void qSlicerVolumeRenderingSettingsPanel::onVolumeRenderingLogicModified()
   const char* defaultRenderingMethod = d->VolumeRenderingLogic->GetDefaultRenderingMethod();
   if (defaultRenderingMethod == nullptr)
     {
-    defaultRenderingMethod = "vtkMRMLCPURayCastVolumeRenderingDisplayNode";
+    defaultRenderingMethod = "vtkMRMLGPURayCastVolumeRenderingDisplayNode";
     }
   int defaultRenderingMethodIndex = d->RenderingMethodComboBox->findData(
     QString(defaultRenderingMethod));
