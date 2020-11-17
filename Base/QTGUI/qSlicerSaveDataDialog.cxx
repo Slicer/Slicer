@@ -1381,7 +1381,11 @@ void qSlicerSaveDataDialogPrivate
         }
       if (!messageText.empty())
         {
-        messagesStr.append(tr(messageText.c_str())+"\n");
+        messagesStr.append(tr(messageText.c_str()));
+        if (index < numberOfMessages - 1)
+          {
+          messagesStr.append("\n");
+          }
         }
       }
     }

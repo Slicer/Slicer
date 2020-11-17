@@ -12,6 +12,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include <sstream>
 
 #include "vtkMRMLLinearTransformSequenceStorageNode.h"
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLSequenceStorageNode.h"
 
 #include "vtkAddonMathUtilities.h"
@@ -535,7 +536,7 @@ bool vtkMRMLLinearTransformSequenceStorageNode::CanWriteFromReferenceNode(vtkMRM
   vtkMRMLSequenceNode* sequenceNode = vtkMRMLSequenceNode::SafeDownCast(refNode);
   if (sequenceNode == NULL)
     {
-    vtkErrorMacro("vtkMRMLLinearTransformSequenceStorageNode::CanWriteFromReferenceNode: input is not a sequence node");
+    this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only sequence nodes can be written in this format."));
     return false;
     }
   int numberOfFrameVolumes = sequenceNode->GetNumberOfDataNodes();
@@ -544,8 +545,9 @@ bool vtkMRMLLinearTransformSequenceStorageNode::CanWriteFromReferenceNode(vtkMRM
     vtkMRMLTransformNode* transform = vtkMRMLTransformNode::SafeDownCast(sequenceNode->GetNthDataNode(frameIndex));
     if (transform == NULL || !transform->IsLinear())
       {
-      vtkErrorMacro("vtkMRMLLinearTransformSequenceStorageNode::CanWriteFromReferenceNode:"
+      vtkDebugMacro("vtkMRMLLinearTransformSequenceStorageNode::CanWriteFromReferenceNode:"
         << " only linear transform nodes can be written (frame " << frameIndex << ")");
+      this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only linear transform nodes can be written in this format."));
       return false;
       }
     }
@@ -558,14 +560,15 @@ int vtkMRMLLinearTransformSequenceStorageNode::WriteDataInternal(vtkMRMLNode *re
   vtkMRMLSequenceNode* sequenceNode = vtkMRMLSequenceNode::SafeDownCast(refNode);
   if (sequenceNode == NULL)
     {
-    vtkErrorMacro(<< "vtkMRMLLinearTransformSequenceStorageNode::WriteDataInternal: Do not recognize node type " << refNode->GetClassName());
+    vtkDebugMacro(<< "vtkMRMLLinearTransformSequenceStorageNode::WriteDataInternal: Do not recognize node type " << refNode->GetClassName());
+    this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only sequence nodes can be written in this format."));
     return 0;
     }
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string(""))
     {
-    vtkErrorMacro("WriteData: File name not specified");
+    this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("File name is not specified."));
     return 0;
     }
 
@@ -584,7 +587,7 @@ int vtkMRMLLinearTransformSequenceStorageNode::WriteDataInternal(vtkMRMLNode *re
   transformNames.push_back(transformName);
   if (!vtkMRMLLinearTransformSequenceStorageNode::WriteSequenceMetafileTransforms(fullName, transformSequenceNodes, transformNames, sequenceNode, NULL))
     {
-    vtkErrorMacro(<< "vtkMRMLLinearTransformSequenceStorageNode::WriteDataInternal failed");
+    this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Writing transforms to sequence metafile failed."));
     return 0;
     }
 

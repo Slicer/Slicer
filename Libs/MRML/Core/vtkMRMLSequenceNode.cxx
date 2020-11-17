@@ -20,7 +20,6 @@
 #include "vtkMRMLSequenceNode.h"
 #include "vtkMRMLSequenceStorageNode.h"
 #include "vtkMRMLStorableNode.h"
-#include "vtkMRMLVolumeSequenceStorageNode.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>

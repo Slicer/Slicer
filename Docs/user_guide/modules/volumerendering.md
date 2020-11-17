@@ -49,15 +49,15 @@ This is accomplished by specifying color and opacity for each voxel, based on it
   - Shift: Move all the inner points (first and last excluded) of the current transfer functions to the right/left (lower/higher). It can be useful when a preset defines a ramp from 0 to 200 but your data requires a ramp from 1000 to 1200.
   - Crop: Simple controls for the cropping box (ROI). More controls are available in the "Advanced..." section. Enable/Disable cropping of the volume. Show/Hide the cropping box. Reset the box ROI to the volume's bounds.
   - Rendering: Select a volume rendering method. A default method can be set in the application settings Volume Rendering panel.
-    - VTK CPU Ray Casting (default): Available on all computers, regardless of capabilities of graphics hardware. The volume rendering is enterily realized on the CPU, therefore it is slower than other options.
-    - VTK GPU Ray Casting: Uses graphics hardware for rendering, typically much faster than CPU volume rendering. This is the recommended method for computers that have sufficiant graphics capabilities. It supports surface smoothing to remove staircase artifacts.
+    - VTK CPU Ray Casting: Available on all computers, regardless of capabilities of graphics hardware. The volume rendering is enterily realized on the CPU, therefore it is slower than other options.
+    - VTK GPU Ray Casting (default): Uses graphics hardware for rendering, typically much faster than CPU volume rendering. This is the recommended method for computers that have sufficiant graphics capabilities. It supports surface smoothing to remove staircase artifacts.
     - VTK Multi-Volume: Uses graphics hardware for rendering. Can render multiple overlapping volumes. Currently does not support cropping.
 - Advanced: More controls to control the volume rendering. Contains 3 tabs: "Techniques", "Volume Properties" and "ROI"
   - Techniques: Advanced properties of the current volume rendering method.
     - Quality:
-      - Adaptive (default): quality is reduced while interacting with the view (rotating, changing volume rendering settings, etc.).
+      - Adaptive: quality is reduced while interacting with the view (rotating, changing volume rendering settings, etc.).
         - Interactive speed: Ensure the given frame per second (FPS) is enforced in the views during interaction. The higher the FPS, the lower the resolution of the volume rendering
-      - Normal: fixed rendering quality, should work well for volumes that the renderer can handle without difficulties.
+      - Normal (default): fixed rendering quality, should work well for volumes that the renderer can handle without difficulties.
       - Maximum: oversamples the image to achieve higher image quality, at the cost of slowing down the rendering.
     - Technique:
       - Composite with shading (default): display as a shaded surface
