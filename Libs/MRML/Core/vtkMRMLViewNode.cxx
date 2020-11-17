@@ -57,7 +57,7 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->RulerEnabled = true;
   this->GPUMemorySize = 0; // Means application default
   this->ExpectedFPS = 8.;
-  this->VolumeRenderingQuality = vtkMRMLViewNode::Adaptive;
+  this->VolumeRenderingQuality = vtkMRMLViewNode::Normal;
   this->RaycastTechnique = vtkMRMLViewNode::Composite;
   this->VolumeRenderingSurfaceSmoothing = false;
   this->VolumeRenderingOversamplingFactor = 2.0;

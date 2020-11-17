@@ -66,13 +66,13 @@ int testDefaultRenderingMethod(const std::string& moduleShareDirectory)
   logic->SetMRMLScene(scene.GetPointer());
   displayNode = logic->CreateVolumeRenderingDisplayNode();
   CHECK_NOT_NULL(displayNode);
-  CHECK_BOOL(displayNode->IsA("vtkMRMLCPURayCastVolumeRenderingDisplayNode"), true);
+  CHECK_BOOL(displayNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode"), true);
   displayNode->Delete();
 
-  logic->SetDefaultRenderingMethod("vtkMRMLGPURayCastVolumeRenderingDisplayNode");
+  logic->SetDefaultRenderingMethod("vtkMRMLCPURayCastVolumeRenderingDisplayNode");
   displayNode = logic->CreateVolumeRenderingDisplayNode();
   CHECK_NOT_NULL(displayNode);
-  CHECK_BOOL(displayNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode"), true);
+  CHECK_BOOL(displayNode->IsA("vtkMRMLCPURayCastVolumeRenderingDisplayNode"), true);
   displayNode->Delete();
 
   return EXIT_SUCCESS;
