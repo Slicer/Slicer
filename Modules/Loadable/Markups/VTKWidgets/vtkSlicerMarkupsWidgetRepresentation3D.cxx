@@ -89,7 +89,10 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
 
   this->SelectVisiblePoints = vtkSmartPointer<vtkSelectVisiblePoints>::New();
   this->SelectVisiblePoints->SetInputData(this->LabelControlPointsPolyData);
-  this->SelectVisiblePoints->SetTolerance(0.0); // we will set tolerance in world coordinate system
+  // Set tiny tolerance to account for updated the z-buffer computation and coincident topology
+  // resolution strategy integrated in VTK9. World tolerance based on control point size is set
+  // later.
+  this->SelectVisiblePoints->SetTolerance(1e-4);
   this->SelectVisiblePoints->SetOutput(vtkNew<vtkPolyData>());
 
   // The SelectVisiblePoints filter should not be added to any pipeline with SetInputConnection.
@@ -902,7 +905,7 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
       if (updateControlPointSize)
         {
         controlPoints->Glypher->SetScaleFactor(this->ControlPointSize);
-        controlPoints->SelectVisiblePoints->SetToleranceWorld(this->ControlPointSize * 0.5);
+        controlPoints->SelectVisiblePoints->SetToleranceWorld(this->ControlPointSize * 0.7);
         }
       count += controlPoints->Actor->RenderOpaqueGeometry(viewport);
       }
@@ -1205,7 +1208,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateControlPointSize()
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
     {
     ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[controlPointType]);
-    controlPoints->SelectVisiblePoints->SetToleranceWorld(this->ControlPointSize*0.5);
+    controlPoints->SelectVisiblePoints->SetToleranceWorld(this->ControlPointSize * 0.7);
     }
 }
 
