@@ -221,15 +221,8 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
   curvatureValues->InsertValue(linePoints->GetId(0), 0.0);
 
   prevPoint[0] = currPoint[0]; prevPoint[1] = currPoint[1]; prevPoint[2] = currPoint[2];
-  for (vtkIdType idx=1; idx<numberOfPoints; ++idx)
+  for (vtkIdType idx=1; idx<numberOfPoints-1; ++idx)
     {
-    if (!this->CurveIsClosed && idx == numberOfPoints-1)
-      {
-      // Only calculate first point curvature for closed curves i.e. loops,
-      // for which the last point is the first point
-      break;
-      }
-
     currPoint = points->GetPoint(linePoints->GetId(idx+1));
 
     diffVector[0] = currPoint[0]-prevPoint[0];
@@ -286,7 +279,7 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
     // Use the adjacent values for closed curve instead of the singular values
     curvatureValues->SetComponent(linePoints->GetId(0), 0,
       curvatureValues->GetValue(linePoints->GetId(1)));
-    curvatureValues->SetComponent(linePoints->GetId(numberOfPoints-1), 0,
+    curvatureValues->InsertValue(linePoints->GetId(numberOfPoints-1),
       curvatureValues->GetValue(linePoints->GetId(numberOfPoints-2)));
     }
 
