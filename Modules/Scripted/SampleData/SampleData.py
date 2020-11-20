@@ -532,8 +532,6 @@ class SampleDataLogic(object):
           ('dwi.raw.gz', 'dwi.nhdr'), (None, 'dwi'),
           ('SHA256:cf03fd53583dc05120d3314d0a82bdf5946799b1f72f2a7f08963f3fd24ca692',
             'SHA256:7666d83bc205382e418444ea60ab7df6dba6a0bd684933df8809da6b476b0fed')),
-        ('CTAAbdomenPanoramix', 'CTA abdomen\n(Panoramix)', TESTING_DATA_URL + 'SHA256/146af87511520c500a3706b7b2bfb545f40d5d04dd180be3a7a2c6940e447433',
-          'Panoramix-cropped.nrrd', 'Panoramix-cropped', 'SHA256:146af87511520c500a3706b7b2bfb545f40d5d04dd180be3a7a2c6940e447433'),
         ('CBCTDentalSurgery', None,
           (TESTING_DATA_URL + 'SHA256/7bfa16945629c319a439f414cfb7edddd2a97ba97753e12eede3b56a0eb09968',
             TESTING_DATA_URL + 'SHA256/4cdc3dc35519bb57daeef4e5df89c00849750e778809e94971d3876f95cc7bbd',),
