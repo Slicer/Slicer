@@ -1321,8 +1321,8 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         if imageIndex == 0:
           # First image, initialize output lightbox image
           imageDimensions = image.GetDimensions()
-          lightboxImageExtent = [0, numberOfColumns * imageDimensions[0] + (numberOfColumns - 1) * imageMarginSizePixels,
-            0, numberOfRows * imageDimensions[1] + (numberOfRows - 1) * imageMarginSizePixels,
+          lightboxImageExtent = [0, numberOfColumns * imageDimensions[0] + (numberOfColumns - 1) * imageMarginSizePixels - 1,
+            0, numberOfRows * imageDimensions[1] + (numberOfRows - 1) * imageMarginSizePixels - 1,
             0, 0]
           lightboxCanvas = vtk.vtkImageCanvasSource2D()
           lightboxCanvas.SetNumberOfScalarComponents(3)
@@ -1333,7 +1333,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
           lightboxCanvas.FillBox(*lightboxImageExtent[0:4])
 
         drawingPosition = [column * (imageDimensions[0] + imageMarginSizePixels),
-          lightboxImageExtent[3] - (row + 1) * (imageDimensions[1] + imageMarginSizePixels)]
+          lightboxImageExtent[3] - (row + 1) * imageDimensions[1] - row * imageMarginSizePixels + 1]
         lightboxCanvas.DrawImage(drawingPosition[0], drawingPosition[1], image)
 
     lightboxCanvas.Update()
