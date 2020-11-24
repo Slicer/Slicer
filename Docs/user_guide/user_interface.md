@@ -71,6 +71,8 @@ Window/level can be manually adjusted anytime by clicking on "Adjust window/leve
 
 [![](https://img.youtube.com/vi/u1B0F1KcVsk/0.jpg)](https://youtu.be/u1B0F1KcVsk "Demo video of how to adjust image window/level")
 
+Additional window/level options, presets, intensity histogram, automatic adjustments are available in Display section of [Volumes](modules/volumes) module.
+
 ### 3D View
 
 Displays a rendered 3D view of the scene along with visual references to specify orientation and scale.
