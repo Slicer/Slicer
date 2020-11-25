@@ -57,7 +57,7 @@ if(NOT SWIG_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
     set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/Swig)
     set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/Swig-b)
-    set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/Swig-install)
+    set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/Swig-i)
 
     include(ExternalProjectForNonCMakeProject)
 

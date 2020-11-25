@@ -7,7 +7,7 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT AND Slicer_USE_PYTHONQT)
     set(PYTHON python)
   else()
     find_program(PYTHON python
-      PATHS ${Slicer_SUPERBUILD_DIR}/python-install/bin
+      PATHS ${Slicer_SUPERBUILD_DIR}/python-i/bin
       NO_DEFAULT_PATH
       )
   endif()

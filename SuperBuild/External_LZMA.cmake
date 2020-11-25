@@ -41,7 +41,7 @@ if((NOT DEFINED ${proj}_INCLUDE_DIR
 
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-b)
-  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
+  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-i)
   set(EP_INSTALL_LIBDIR "lib")
 
   set(${proj}_CMAKE_C_FLAGS ${ep_common_c_flags})

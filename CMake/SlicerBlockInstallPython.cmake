@@ -10,7 +10,7 @@ if(Slicer_USE_PYTHONQT)
     endif()
   endforeach()
 
-  set(PYTHON_DIR "${Slicer_SUPERBUILD_DIR}/python-install")
+  set(PYTHON_DIR "${Slicer_SUPERBUILD_DIR}/python-i")
   if(NOT EXISTS "${PYTHON_DIR}/${PYTHON_STDLIB_SUBDIR}")
     message(WARNING "###############################################################################
 Skipping generation of python install rules

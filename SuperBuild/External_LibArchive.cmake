@@ -50,7 +50,7 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
 
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-b)
-  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
+  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-i)
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
@@ -94,7 +94,7 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
 
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
-  set(LibArchive_DIR ${CMAKE_BINARY_DIR}/LibArchive-install)
+  set(LibArchive_DIR ${EP_INSTALL_DIR})
 
   set(LibArchive_INCLUDE_DIR ${LibArchive_DIR}/include)
   if(WIN32)

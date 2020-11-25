@@ -103,7 +103,7 @@ class JRC2013VisWidget(ScriptedLoadableModuleWidget):
       dcmqrscpExeOptions = (
         '/bin',
         '/../CTK-b/CMakeExternals/Install/bin',
-        '/../DCMTK-install/bin',
+        '/../DCMTK-i/bin',
         '/../DCMTK-b/bin',
         '/../DCMTK-b/bin/Release'
         '/../DCMTK-b/bin/Debug'
@@ -199,7 +199,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
       dcmqrscpExeOptions = (
         '/bin',
         '/../CTK-b/CMakeExternals/Install/bin',
-        '/../DCMTK-install/bin',
+        '/../DCMTK-i/bin',
         '/../DCMTK-b/bin',
         '/../DCMTK-b/bin/Release',
         '/../DCMTK-b/bin/Debug',
