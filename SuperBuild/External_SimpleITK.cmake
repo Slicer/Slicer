@@ -110,7 +110,7 @@ set(ENV{${_varname}} \"${_paths}${_path_sep}\$ENV{${_varname}}\")
   set(_install_script ${CMAKE_BINARY_DIR}/${proj}_install_step.cmake)
   file(WRITE ${_install_script}
 "include(\"${_env_script}\")
-set(${proj}_WORKING_DIR \"${CMAKE_BINARY_DIR}/${proj}-build/SimpleITK-build/Wrapping/Python\")
+set(${proj}_WORKING_DIR \"${EP_BINARY_DIR}/SimpleITK-build/Wrapping/Python\")
 ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py install)
 ")
 
@@ -186,7 +186,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
     #
     DEPENDS SimpleITK-download ${${proj}_DEPENDENCIES}
     )
-  set(SimpleITK_DIR ${CMAKE_BINARY_DIR}/SimpleITK-build/SimpleITK-build)
+  set(SimpleITK_DIR ${EP_BINARY_DIR}/SimpleITK-build)
 
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree

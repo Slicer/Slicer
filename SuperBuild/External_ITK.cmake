@@ -173,7 +173,7 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
-  set(ITK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  set(ITK_DIR ${EP_BINARY_DIR})
 
   if(NOT DEFINED ITK_VALGRIND_SUPPRESSIONS_FILE)
     set(ITK_VALGRIND_SUPPRESSIONS_FILE ${EP_SOURCE_DIR}/CMake/InsightValgrind.supp)
