@@ -22,7 +22,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   #
 
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/PCRE)
-  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/PCRE-build)
+  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/PCRE-b)
   set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/PCRE-install)
 
   include(ExternalProjectForNonCMakeProject)

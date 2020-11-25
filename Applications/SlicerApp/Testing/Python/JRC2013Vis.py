@@ -102,13 +102,13 @@ class JRC2013VisWidget(ScriptedLoadableModuleWidget):
       import subprocess
       dcmqrscpExeOptions = (
         '/bin',
-        '/../CTK-build/CMakeExternals/Install/bin',
+        '/../CTK-b/CMakeExternals/Install/bin',
         '/../DCMTK-install/bin',
-        '/../DCMTK-build/bin',
-        '/../DCMTK-build/bin/Release'
-        '/../DCMTK-build/bin/Debug'
-        '/../DCMTK-build/bin/RelWithDebInfo'
-        '/../DCMTK-build/bin/MinSizeRel'
+        '/../DCMTK-b/bin',
+        '/../DCMTK-b/bin/Release'
+        '/../DCMTK-b/bin/Debug'
+        '/../DCMTK-b/bin/RelWithDebInfo'
+        '/../DCMTK-b/bin/MinSizeRel'
         )
 
       dcmqrscpExePath = None
@@ -198,13 +198,13 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
 
       dcmqrscpExeOptions = (
         '/bin',
-        '/../CTK-build/CMakeExternals/Install/bin',
+        '/../CTK-b/CMakeExternals/Install/bin',
         '/../DCMTK-install/bin',
-        '/../DCMTK-build/bin',
-        '/../DCMTK-build/bin/Release',
-        '/../DCMTK-build/bin/Debug',
-        '/../DCMTK-build/bin/RelWithDebInfo'
-        '/../DCMTK-build/bin/MinSizeRel'
+        '/../DCMTK-b/bin',
+        '/../DCMTK-b/bin/Release',
+        '/../DCMTK-b/bin/Debug',
+        '/../DCMTK-b/bin/RelWithDebInfo'
+        '/../DCMTK-b/bin/MinSizeRel'
         )
 
       dcmqrscpExePath = None

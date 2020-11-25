@@ -29,12 +29,12 @@ class DICOMProcess(object):
     self.process = None
     self.connections = {}
     pathOptions = (
-        '/../DCMTK-build/bin/Debug',
-        '/../DCMTK-build/bin/Release',
-        '/../DCMTK-build/bin/RelWithDebInfo',
-        '/../DCMTK-build/bin/MinSizeRel',
-        '/../DCMTK-build/bin',
-        '/../CTK-build/CMakeExternals/Install/bin',
+        '/../DCMTK-b/bin/Debug',
+        '/../DCMTK-b/bin/Release',
+        '/../DCMTK-b/bin/RelWithDebInfo',
+        '/../DCMTK-b/bin/MinSizeRel',
+        '/../DCMTK-b/bin',
+        '/../CTK-b/CMakeExternals/Install/bin',
         '/bin'
         )
 
