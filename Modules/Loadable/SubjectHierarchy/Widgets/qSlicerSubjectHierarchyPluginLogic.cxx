@@ -222,11 +222,10 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAdded(vtkObject* sceneObject, vtk
 
     // Add subject hierarchy node for the added data node
     // Don't add to subject hierarchy automatically one-by-one if importing scene, because the SH nodes may be stored in the scene and loaded
-    // Also abort if invalid or hidden node or if explicitly excluded from subject hierarchy before even adding to the scene
-    if ( scene->IsImporting()
-      || !node
-      || node->GetHideFromEditors()
-      || node->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyExcludeFromTreeAttributeName().c_str()) )
+    // Also abort if invalid or hidden node. The HideFromEditors flag is not considered to work dynamically, meaning that
+    // we don't expect changes on the UI when we set it after adding it to the scene, so not adding it to SH should not cause issues.
+    // The GetSubjectHierarchyExcludeFromTreeAttributeName attribute on the other hand is dynamic, so we add the node to SH despite that.
+    if (scene->IsImporting() || !node || node->GetHideFromEditors())
       {
       return;
       }
@@ -562,9 +561,10 @@ void qSlicerSubjectHierarchyPluginLogic::addSupportedDataNodesToSubjectHierarchy
   for (std::vector<vtkMRMLNode*>::iterator nodeIt = supportedNodes.begin(); nodeIt != supportedNodes.end(); ++nodeIt)
     {
     vtkMRMLNode* node = (*nodeIt);
-    // Do not add into subject hierarchy if hidden or excluded
-    if ( node->GetHideFromEditors()
-      || node->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyExcludeFromTreeAttributeName().c_str()))
+    // Do not add into subject hierarchy if hidden. The HideFromEditors flag is not considered to work dynamically, meaning that
+    // we don't expect changes on the UI when we set it after adding it to the scene, so not adding it to SH should not cause issues.
+    // The GetSubjectHierarchyExcludeFromTreeAttributeName attribute on the other hand is dynamic, so we add the node to SH despite that.
+    if (node->GetHideFromEditors())
       {
       continue;
       }
