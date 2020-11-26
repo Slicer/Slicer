@@ -1736,11 +1736,37 @@ void vtkMRMLMarkupsNode::UnsetNthControlPointPosition(int n)
     // no change
     return;
     }
+  double markupPos[3] = { 0, 0, 0 };
+  this->SetNthControlPointPositionFromArray(n, markupPos);
   controlPoint->PositionStatus = PositionUndefined;
+  this->SetNthControlPointVisibility(n, false);
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
   this->StorableModifiedTime.Modified();
   this->UpdateMeasurements();
 }
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::SetNthControlPointPositionMissing(int n)
+{
+    ControlPoint* controlPoint = this->GetNthControlPointCustomLog(n, "MissingNthControlPointPosition");
+    if (!controlPoint)
+    {
+        return;
+    }
+    if (controlPoint->PositionStatus == PositionMissing)
+    {
+        // no change
+        return;
+    }
+    controlPoint->PositionStatus = PositionMissing;
+    double markupPos[3] = { 0, 0, 0 };
+    this->SetNthControlPointPositionFromArray(n, markupPos);
+    this->SetNthControlPointVisibility(n, false);
+    this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
+    this->StorableModifiedTime.Modified();
+    this->UpdateMeasurements();
+}
+
 
 //---------------------------------------------------------------------------
 int vtkMRMLMarkupsNode::GetNumberOfDefinedControlPoints(bool includePreview/*=false*/)
@@ -2230,6 +2256,10 @@ const char* vtkMRMLMarkupsNode::GetPositionStatusAsString(int id)
     case vtkMRMLMarkupsNode::PositionDefined:
       {
       return "defined";
+      }
+    case vtkMRMLMarkupsNode::PositionMissing:
+      {
+      return "missing";
       }
     default:
       {

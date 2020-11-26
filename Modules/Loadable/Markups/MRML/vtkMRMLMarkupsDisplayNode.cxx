@@ -615,12 +615,31 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
     }
 
   bool addNewControlPoint = false;
+  int pointStatus = 0;
   if (controlPointIndex < 0 || controlPointIndex >= markupsNode->GetNumberOfControlPoints())
     {
     // Determine new control point index. Now we assume that new point is added to the end,
     // but in the future we may place existing points.
-    controlPointIndex = markupsNode->GetNumberOfControlPoints();
-    addNewControlPoint = true;
+    int undefinedIndex = -1;
+    int numberOfControlPoints = markupsNode->GetNumberOfControlPoints();
+    for (int i = 0; i < numberOfControlPoints; i++)
+      {
+      pointStatus = markupsNode->GetNthControlPointPositionStatus(i);
+      if (pointStatus == 0)
+        {
+        undefinedIndex = i;
+        break;
+        }
+      }
+    if (undefinedIndex >= 0)
+      {
+      controlPointIndex = undefinedIndex;
+      }
+    else
+      {
+      controlPointIndex = markupsNode->GetNumberOfControlPoints();
+      addNewControlPoint = true;
+      }
     }
 
   // Update active component but not yet fire modified event because the control
@@ -686,6 +705,10 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
     // Update existing control point
     markupsNode->SetNthControlPointPositionOrientationWorldFromArray(controlPointIndex,
       pointWorld, orientationMatrixWorld, associatedNodeID, positionStatus);
+    if (pointStatus == 0)
+      {
+      markupsNode->SetNthControlPointVisibility(controlPointIndex, true);
+      }
     }
 
   if (activeComponentChanged)

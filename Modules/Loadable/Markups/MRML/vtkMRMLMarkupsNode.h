@@ -233,11 +233,13 @@ public:
   /// - Undefined: position is undefined (coordinate values must not be used).
   /// - Preview: point is being placed, position is tentative.
   /// - Defined: position is specified.
+  /// - Missing: point is undefined and placement should not be attempted
   enum
   {
     PositionUndefined,
     PositionPreview,
     PositionDefined,
+    PositionMissing,
     PositionStatus_Last
   };
 
@@ -326,6 +328,9 @@ public:
 
   /// Set control point status to undefined.
   void UnsetNthControlPointPosition(int pointIndex);
+
+  /// Set control point status to ignored.
+  void SetNthControlPointPositionMissing(int pointIndex);
 
   /// Remove Nth Control Point
   void RemoveNthControlPoint(int pointIndex);
