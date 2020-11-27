@@ -973,12 +973,15 @@ void vtkSlicerMarkupsWidget::TranslateWidget(double eventPos[2])
     // Only perform constrained translation if the length of the axis is non-zero.
     if (vtkMath::Norm(translationAxis_World) > 0)
       {
-      double translationHandle_World[3] = { 0 };
-      rep->GetInteractionHandlePositionWorld(vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle, index, translationHandle_World);
+      double lastEventPositionOnAxis_World[3] = { 0.0, 0.0, 0.0 };
+      this->GetClosestPointOnInteractionAxis(
+        vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle, index, this->LastEventPosition, lastEventPositionOnAxis_World);
 
-      double translationDestination_World[3] = { 0 };
-      this->GetClosestPointOnInteractionAxis(vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle, index, eventPos, translationDestination_World);
-      vtkMath::Subtract(translationDestination_World, translationHandle_World, translationVector_World);
+      double eventPositionOnAxis_World[3] = { 0.0, 0.0, 0.0 };
+      this->GetClosestPointOnInteractionAxis(
+        vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle, index, eventPos, eventPositionOnAxis_World);
+
+      vtkMath::Subtract(eventPositionOnAxis_World, lastEventPositionOnAxis_World, translationVector_World);
       double distance = vtkMath::Norm(translationVector_World);
       if (vtkMath::Dot(translationVector_World, translationAxis_World) < 0)
         {
@@ -1181,8 +1184,9 @@ void vtkSlicerMarkupsWidget::RotateWidget(double eventPos[2])
   if (this->GetActiveComponentType() == vtkMRMLMarkupsDisplayNode::ComponentRotationHandle)
     {
     int index = this->GetMarkupsDisplayNode()->GetActiveComponentIndex();
-    double intersection_World[3] = { 0.0 };
-    if (!this->GetIntersectionOnAxisPlane(vtkMRMLMarkupsDisplayNode::ComponentRotationHandle, index, eventPos_Display, intersection_World))
+    double eventPositionOnAxisPlane_World[3] = { 0.0, 0.0, 0.0 };
+    if (!this->GetIntersectionOnAxisPlane(
+      vtkMRMLMarkupsDisplayNode::ComponentRotationHandle, index, eventPos, eventPositionOnAxisPlane_World))
       {
       vtkWarningMacro("RotateWidget: Could not calculate intended orientation");
       return;
@@ -1192,10 +1196,19 @@ void vtkSlicerMarkupsWidget::RotateWidget(double eventPos[2])
     double origin_World[3] = { 0.0, 0.0, 0.0 };
     rep->GetInteractionHandleOriginWorld(origin_World);
 
-    double rotationHandleVector_World[3] = { 0.0 };
-    rep->GetInteractionHandleVectorWorld(vtkMRMLMarkupsDisplayNode::ComponentRotationHandle, index, rotationHandleVector_World);
-    double destinationVector_World[3] = { 0.0 };
-    vtkMath::Subtract(intersection_World, origin_World, destinationVector_World);
+    double lastEventPositionOnAxisPlane_World[3] = { 0.0, 0.0, 0.0 };
+    if (!this->GetIntersectionOnAxisPlane(
+      vtkMRMLMarkupsDisplayNode::ComponentRotationHandle, index, this->LastEventPosition,lastEventPositionOnAxisPlane_World))
+      {
+      vtkWarningMacro("RotateWidget: Could not calculate previous orientation");
+      return;
+      }
+
+    double rotationHandleVector_World[3] = { 0.0, 0.0, 0.0 };
+    vtkMath::Subtract(lastEventPositionOnAxisPlane_World, origin_World, rotationHandleVector_World);
+
+    double destinationVector_World[3] = { 0.0, 0.0, 0.0 };
+    vtkMath::Subtract(eventPositionOnAxisPlane_World, origin_World, destinationVector_World);
 
     angle = vtkMath::DegreesFromRadians(vtkMath::AngleBetweenVectors(rotationHandleVector_World, destinationVector_World));
     vtkMath::Cross(rotationHandleVector_World, destinationVector_World, rotationNormal_World);
@@ -1215,7 +1228,7 @@ void vtkSlicerMarkupsWidget::RotateWidget(double eventPos[2])
   vtkNew<vtkTransform> rotateTransform;
   rotateTransform->Translate(origin_World);
   rotateTransform->RotateWXYZ(angle, rotationAxis_World);
-  rotateTransform->Translate(-1.0 * origin_World[0], -1.0 * origin_World[1], -1.0 * origin_World[2]);
+  rotateTransform->Translate(-origin_World[0], -origin_World[1], -origin_World[2]);
 
   MRMLNodeModifyBlocker blocker(markupsNode);
 
