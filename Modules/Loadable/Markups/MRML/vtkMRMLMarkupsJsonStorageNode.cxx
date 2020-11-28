@@ -45,11 +45,6 @@
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/filewritestream.h"
 
-#include <sstream>
-
-// Separator characters when writing/reading arrays
-const std::string TUPLE_SEPARATOR = "|";
-const std::string COMPONENT_SEPARATOR = ";";
 
 namespace
 {
@@ -143,7 +138,7 @@ rapidjson::Document* vtkMRMLMarkupsJsonStorageNode::vtkInternal::CreateJsonDocum
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadVector(rapidjson::Value& item, double v[3], int numberOfComponents/*=3*/)
+bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadVector(rapidjson::Value& item, double* v, int numberOfComponents/*=3*/)
 {
   if (!item.IsArray())
     {
@@ -370,61 +365,57 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements(rapidjson::Val
 
     if (measurementItem.HasMember("controlPointValues"))
       {
-      std::string controlPointValuesStr(measurementItem["controlPointValues"].GetString());
-
-      vtkNew<vtkDoubleArray> controlPointValues;
-
-      size_t tupleSeparatorPos = controlPointValuesStr.find(TUPLE_SEPARATOR);
-      bool numOfComponentsValid = false;
-      int numOfComponents = vtkVariant(controlPointValuesStr.substr(0, tupleSeparatorPos)).ToInt(&numOfComponentsValid);
-      controlPointValuesStr = controlPointValuesStr.substr(tupleSeparatorPos+1);
-
-      tupleSeparatorPos = controlPointValuesStr.find(TUPLE_SEPARATOR);
-      bool numOfTuplesValid = false;
-      int numOfTuples = vtkVariant(controlPointValuesStr.substr(0, tupleSeparatorPos)).ToInt(&numOfTuplesValid);
-      controlPointValuesStr = controlPointValuesStr.substr(tupleSeparatorPos+1);
-
-      if (!numOfComponentsValid || !numOfTuplesValid)
+      rapidjson::Value& controlPointValuesItem = measurementItem["controlPointValues"];
+      if (!controlPointValuesItem.IsArray())
         {
-        vtkErrorWithObjectMacro(this->External,
-          "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements: Unable to read control point values due to invalid array properties");
-        return false;
+        vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements failed:"
+          << " controlPointValues must be an array in measurement " << measurementName);
+        continue;
         }
-      controlPointValues->SetNumberOfComponents(numOfComponents);
-      controlPointValues->SetNumberOfTuples(numOfTuples);
-
-      bool ok = false;
-      size_t componentSeparatorPos = 0;
-      for (int tupleIdx=0; tupleIdx<numOfTuples; ++tupleIdx)
+      int numberOfTuples = controlPointValuesItem.GetArray().Size();
+      if (numberOfTuples < 1)
         {
-        tupleSeparatorPos = controlPointValuesStr.find(TUPLE_SEPARATOR);
-        if (tupleSeparatorPos == std::string::npos && tupleIdx < numOfTuples-1)
+        // no values stored in the array
+        continue;
+        }
+      rapidjson::Value& firstControlPointValue = controlPointValuesItem.GetArray()[0];
+      vtkNew<vtkDoubleArray> controlPointValues;
+      if (firstControlPointValue.IsDouble())
+        {
+        controlPointValues->SetNumberOfValues(numberOfTuples);
+        double* values = controlPointValues->GetPointer(0);
+        bool success = this->ReadVector(controlPointValuesItem, values, numberOfTuples);
+        if (!success)
           {
-          vtkErrorWithObjectMacro(this->External,
-            "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements: Unable to read control point values after tuple "
-            << tupleIdx << " (number of expected tuples: " << numOfTuples << ")");
-          return false;
+          vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements failed:"
+            << " error while reading controlPointValues array from measurement " << measurementName);
+          continue;
           }
-        std::string tupleStr = controlPointValuesStr.substr(0, tupleSeparatorPos);
-
-        for (int compIdx=0; compIdx<numOfComponents; ++compIdx)
+        }
+      else if (firstControlPointValue.IsArray())
+        {
+        int numberOfComponents = firstControlPointValue.GetArray().Size();
+        controlPointValues->SetNumberOfComponents(numberOfComponents);
+        controlPointValues->SetNumberOfTuples(numberOfTuples);
+        double* values = controlPointValues->GetPointer(0);
+        for (auto& value : controlPointValuesItem.GetArray())
           {
-          componentSeparatorPos = tupleStr.find(COMPONENT_SEPARATOR);
-          double value = vtkVariant(tupleStr.substr(0, componentSeparatorPos)).ToDouble(&ok);
-          if (!ok)
+          bool success = this->ReadVector(controlPointValuesItem, values, numberOfComponents);
+          if (!success)
             {
-            vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements: "
-              "Unable to read control point values due to invalid component in tuple " << tupleIdx);
-            return false;
+            vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements failed:"
+              << " error while reading controlPointValues array (all items are expected to contain the same number of components)"
+              << " in measurement " << measurementName);
+            continue;
             }
-          controlPointValues->SetComponent(tupleIdx, compIdx, value);
-          if (compIdx < numOfComponents-1)
-            {
-            tupleStr = tupleStr.substr(componentSeparatorPos+1);
-            }
+          values += numberOfComponents;
           }
-
-        controlPointValuesStr = controlPointValuesStr.substr(tupleSeparatorPos+1);
+        }
+      else
+        {
+        vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements failed:"
+          << " invalid controlPointValues content (must contain array of doubles or arrays) in measurement " << measurementName);
+        continue;
         }
       measurement->SetControlPointValues(controlPointValues);
       }
@@ -781,27 +772,33 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteMeasurements(
 
     if (measurement->GetControlPointValues())
       {
+      writer.Key("controlPointValues");
       vtkDoubleArray* controlPointValues = measurement->GetControlPointValues();
-      std::stringstream arrayStream;
       int numberOfComponents = controlPointValues->GetNumberOfComponents();
       int numberOfTuples = controlPointValues->GetNumberOfTuples();
-      arrayStream << numberOfComponents << TUPLE_SEPARATOR << numberOfTuples << TUPLE_SEPARATOR;
-      for (int tupleIndex=0; tupleIndex<numberOfTuples; ++tupleIndex)
+      if (numberOfComponents == 1)
         {
-        for (int componentIndex=0; componentIndex<numberOfComponents; ++componentIndex)
+        // write single-component array as single array
+        double* values = controlPointValues->GetPointer(0);
+        // WriteVector() method would write all values in a single line, so we do not use it here
+        writer.StartArray();
+        for (int tupleIndex = 0; tupleIndex < numberOfTuples; ++tupleIndex)
           {
-          arrayStream << controlPointValues->GetComponent(tupleIndex, componentIndex);
-          if (componentIndex < numberOfComponents-1)
-            {
-            arrayStream << COMPONENT_SEPARATOR;
-            }
+          writer.Double(values[tupleIndex]);
           }
-        if (tupleIndex < numberOfTuples-1)
-          {
-          arrayStream << TUPLE_SEPARATOR;
-          }
+        writer.EndArray();
         }
-      writer.Key("controlPointValues"); writer.String(arrayStream.str().c_str());
+      else
+        {
+        // write multi-component array as an array of arrays
+        writer.StartArray();
+        for (int tupleIndex=0; tupleIndex<numberOfTuples; ++tupleIndex)
+          {
+          double* tuple = controlPointValues->GetTuple(tupleIndex);
+          this->WriteVector(writer, tuple, numberOfComponents);
+          }
+        writer.EndArray();
+        }
       }
 
     writer.EndObject();
@@ -859,7 +856,7 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteDisplayProperties(
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteVector(
-  rapidjson::PrettyWriter<rapidjson::FileWriteStream>& writer, double v[3], int numberOfComponents/*=3*/)
+  rapidjson::PrettyWriter<rapidjson::FileWriteStream>& writer, double* v, int numberOfComponents/*=3*/)
 {
   writer.SetFormatOptions(rapidjson::kFormatSingleLineArray);
   writer.StartArray();
