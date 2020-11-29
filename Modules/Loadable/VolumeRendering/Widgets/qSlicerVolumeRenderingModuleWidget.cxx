@@ -401,7 +401,7 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
   // Techniques tab
   QSettings settings;
   QString defaultRenderingMethod =
-    settings.value("VolumeRendering/RenderingMethod", QString("vtkMRMLCPURayCastVolumeRenderingDisplayNode")).toString();
+    settings.value("VolumeRendering/RenderingMethod", QString("vtkMRMLGPURayCastVolumeRenderingDisplayNode")).toString();
   QString currentRenderingMethod = displayNode ? QString(displayNode->GetClassName()) : defaultRenderingMethod;
   d->RenderingMethodComboBox->setCurrentIndex(d->RenderingMethodComboBox->findData(currentRenderingMethod) );
   d->MemorySizeComboBox->setCurrentGPUMemory(firstViewNode ? firstViewNode->GetGPUMemorySize() : 0);
