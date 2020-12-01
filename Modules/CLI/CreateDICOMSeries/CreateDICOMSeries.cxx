@@ -9,6 +9,8 @@ command line processing and additional features have been added.
 #pragma warning ( disable : 4786 )
 #endif
 
+#include <ctime>
+
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkExtractImageFilter.h"
@@ -25,6 +27,18 @@ command line processing and additional features have been added.
 //
 namespace
 {
+
+// Create a random string from A-Z characters
+std::string GenerateRandomCapitalLetters(int numberOfCharacters)
+  {
+  std::string id;
+  std::string randomId;
+  for (int i = 0; i < numberOfCharacters; i++)
+    {
+    id += static_cast<char>('A' + rand() % 24);
+    }
+  return id;
+  }
 
 template <class Tin>
 int DoIt( int argc, char * argv[])
@@ -92,19 +106,268 @@ int DoIt( int argc, char * argv[])
   DictionaryType       dictionary;
 
   // Progress
-  std::cout << "<filter-start>"
-            << std::endl;
-  std::cout << "<filter-name>"
-            << "ImageFileWriter"
-            << "</filter-name>"
-            << std::endl;
-  std::cout << "<filter-comment>"
-            << " \"" << "Creating DICOM"
-            << " \""
-            << std::endl;
-  std::cout << "</filter-start>"
-            << std::endl;
+  std::cout << "<filter-start>" << std::endl;
+  std::cout << "<filter-name>ImageFileWriter</filter-name>" << std::endl;
+  std::cout << "<filter-comment>Creating DICOM</filter-comment>" << std::endl;
+  std::cout << "</filter-start>" << std::endl;
   std::cout << std::flush;
+
+  // Initialize the random generator
+  srand((unsigned)time(0));
+
+  std::ostringstream value;
+
+  // Get current time (this will be used everywhere where the current date or time is needed)
+  std::time_t t = std::time(nullptr);
+  std::tm tm = *std::localtime(&t);
+  value.str("");
+  value << std::put_time(&tm, "%H%M%S");
+  std::string timeNow = value.str();
+  value.str("");
+  value << std::put_time(&tm, "%Y%m%d");
+  std::string dateNow = value.str();
+
+  // -----------------------------------------
+  // SOP Common tags
+
+  // SOP class UID (required)
+  std::string sopClassUID;
+  // We use ORIGINAL\PRIMARY so that we simulate real image acquisitions
+  std::string imageType;
+  if (modality == "MR")
+    {
+    sopClassUID = "1.2.840.10008.5.1.4.1.1.4";
+    imageType = "ORIGINAL\\PRIMARY\\MPR"; // type 1
+    }
+  else if (modality == "CR")
+    {
+    sopClassUID = "1.2.840.10008.5.1.4.1.1.1";
+    imageType = "ORIGINAL\\PRIMARY\\SINGLE PLANE";
+    }
+  else if (modality == "NM")
+    {
+    sopClassUID = "1.2.840.10008.5.1.4.1.1.20";
+    imageType = "ORIGINAL\\PRIMARY\\STATIC";
+    }
+  else if (modality == "US")
+    {
+    sopClassUID = "1.2.840.10008.5.1.4.1.1.6.1";
+    // We could use a generic value, such as "ORIGINAL\\PRIMARY\\ABDDOMINAL\\1",
+    // but since Image Type is required, empty if unknown (required but can be empty), we just leave it empty.
+    imageType = "";
+    }
+  else if (modality == "SC")
+    {
+    // Scondary capture, converted from non-DICOM (scanned drawings, screenshots, etc.)
+    sopClassUID = "1.2.840.10008.5.1.4.1.1.7";
+    // Value 3 shall identify any Image IOD specific specialization (optional), may be encoded with zero-length
+    imageType = "ORIGINAL\\PRIMARY\\";
+    }
+  else // CT or other
+    {
+    if (modality != "CT")
+      {
+      std::cerr << "Unknown modality: " << modality << ". Using CT Image Storage SOP class UID." << std::endl;
+      }
+    sopClassUID = "1.2.840.10008.5.1.4.1.1.2"; // CT Image Storage
+    imageType = "ORIGINAL\\PRIMARY\\AXIAL"; // type 1
+    // Rescale Type is set to US (unspecified) in GDCM if the attribute is not set, which would not be optimal for CT,
+    // therefore Rescale Type is set to HU (Hounsfield unit) here.
+    if (rescaleType.empty())
+      {
+      rescaleType = "HU";
+      }
+  }
+  itk::EncapsulateMetaData<std::string>(dictionary, "0008|0016", sopClassUID);
+  itk::EncapsulateMetaData<std::string>(dictionary, "0008|0008", imageType);
+  itk::EncapsulateMetaData<std::string>(dictionary, "0028|1054", rescaleType);
+
+  // -----------------------------------------
+  // Patient tags
+
+  // Patient name (required, empty if unknown)
+  itk::EncapsulateMetaData<std::string>(dictionary, "0010|0010", patientName);
+
+  // Patient ID (required, empty if unknown)
+  // It is recommended to set it, since there is no such thing as patient UID in DICOM.
+  if (patientID=="[random]")
+    {
+    patientID = GenerateRandomCapitalLetters(6);
+    }
+  itk::EncapsulateMetaData<std::string>(dictionary, "0010|0020", patientID);
+
+  // Patient's sex (required, empty if unknown). Can be M, F, O.
+  if (patientSex == "[unknown]" || patientSex.empty())
+    {
+    patientSex.clear();
+    }
+  else if (patientSex != "M" && patientSex != "F" && patientSex != "O")
+    {
+    std::cerr << "Invalid patientSex: " << patientSex << ". Setting the attribute to empty instead." << std::endl;
+    patientSex.clear();
+    }
+  itk::EncapsulateMetaData<std::string>(dictionary, "0010|0040", patientSex);
+
+  // Patient comments (optional)
+  if (!patientComments.empty())
+    {
+    itk::EncapsulateMetaData<std::string>(dictionary, "0010|4000", patientComments);
+    }
+
+  // Patient's birth date (required, empty if unknown)
+  itk::EncapsulateMetaData<std::string>(dictionary, "0010|0030", patientBirthDate);
+
+  // -----------------------------------------
+  // Study tags
+
+  // Study ID (required, empty if unknown)
+  // Study instance UID can be a very long string, therefore it is recommended
+  // to set a short human-readable study ID.
+  if (studyID == "[random]")
+    {
+    studyID = GenerateRandomCapitalLetters(4);
+    }
+
+  itk::EncapsulateMetaData<std::string>(dictionary, "0020|0010", studyID);
+
+  // Accession Number (required, empty if unknown)
+  itk::EncapsulateMetaData<std::string>(dictionary, "0008|0050", std::string(""));
+
+  // Study Date (required, empty if unknown)
+  if (!studyDate.empty())
+    {
+    if (studyDate == "[now]")
+      {
+      studyDate = dateNow;
+      }
+    }
+  itk::EncapsulateMetaData<std::string>(dictionary, "0008|0020", studyDate);
+
+  // Study Time (required, empty if unknown)
+  if (!studyTime.empty())
+    {
+    if (studyTime == "[now]")
+      {
+      studyTime = timeNow;
+      }
+    }
+  itk::EncapsulateMetaData<std::string>(dictionary, "0008|0030", studyTime);
+
+  // Referring Physician's Name (required, empty if unknown)
+  itk::EncapsulateMetaData<std::string>(dictionary, "0008|0090", std::string(""));
+
+  // Study comments
+  // This attribute is retired (it should not be used anymore),
+  // but it is useful to be able to add a free-form comment to a study
+  // therefore we keep this option.
+  if (!studyComments.empty())
+    {
+    itk::EncapsulateMetaData<std::string>(dictionary, "0032|4000", studyComments);
+    }
+
+  // Study description (optional)
+  if (!studyDescription.empty())
+    {
+    itk::EncapsulateMetaData<std::string>(dictionary, "0008|1030", studyDescription);
+    }
+
+  // -----------------------------------------
+  // Device tags
+
+  // Manufacturer (optional)
+  if (!manufacturer.empty())
+    {
+    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0070", manufacturer);
+    }
+
+  // Manufacturer's model name (optional)
+  if (!model.empty())
+    {
+    itk::EncapsulateMetaData<std::string>(dictionary, "0008|1090", model);
+    }
+
+  // -----------------------------------------
+  // Series tags
+
+  // Patient Position (conditionally required, empty if unknown)
+  // HFS (head-first supine), FFS, ...
+  itk::EncapsulateMetaData<std::string>(dictionary, "0018|5100", patientPosition);
+
+  // Position Reference Indicator (required, empty if unknown)
+  itk::EncapsulateMetaData<std::string>(dictionary, "0020|1040", std::string(""));
+
+  // Modality (required)
+  itk::EncapsulateMetaData<std::string>(dictionary, "0008|0060", modality);
+
+  // Series number (required, empty if unknown)
+  itk::EncapsulateMetaData<std::string>(dictionary, "0020|0011", seriesNumber);
+
+  // Series description (optional)
+  if (!seriesDescription.empty())
+    {
+    itk::EncapsulateMetaData<std::string>(dictionary, "0008|103e", seriesDescription);
+    }
+
+  // Series date and time (optional)
+  if (!seriesDate.empty())
+    {
+    if (seriesDate == "[now]")
+      {
+      seriesDate = dateNow;
+      }
+    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0021", seriesDate);
+    }
+  if (!seriesTime.empty())
+    {
+    if (seriesTime == "[now]")
+      {
+      seriesTime = timeNow;
+      }
+    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0031", seriesTime);
+    }
+
+  // Content date and time (required if time sequence)
+  if (!contentDate.empty())
+    {
+    if (contentDate == "[now]")
+      {
+      contentDate = dateNow;
+      }
+    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0023", contentDate);
+    }
+  if (!contentTime.empty())
+    {
+    if (contentTime == "[now]")
+      {
+      contentTime = timeNow;
+      }
+    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0033", contentTime);
+    }
+
+  // Set study, series, and frame of reference UIDs
+  if (studyInstanceUID.empty() && seriesInstanceUID.empty() && frameOfReferenceInstanceUID.empty())
+    {
+    // no UIDs are specified, so we ask ITK DICOM IO to generate them.
+    gdcmIO->SetKeepOriginalUID(false);
+    }
+  else
+    {
+    // ITK DICOM IO either sets all UIDs or none of them, so we return with error if not all UIDs are specified
+    if (studyInstanceUID.empty() || seriesInstanceUID.empty() || frameOfReferenceInstanceUID.empty())
+      {
+      std::cerr << "If any of UIDs (studyInstanceUID, seriesInstanceUID, and frameOfReferenceInstanceUID)"
+        << " are specified then all of them must be specified." << std::endl;
+      return EXIT_FAILURE;
+      }
+    gdcmIO->SetKeepOriginalUID(true);
+    itk::EncapsulateMetaData<std::string>(dictionary, "0020|000d", studyInstanceUID);
+    itk::EncapsulateMetaData<std::string>(dictionary, "0020|000e", seriesInstanceUID);
+    itk::EncapsulateMetaData<std::string>(dictionary, "0020|0052", frameOfReferenceInstanceUID);
+    }
+
+  // -----------------------------------------
+  // For each slice
+
   float progress = 1.0 / (float) numberOfSlices;
   for( unsigned int i = 0; i < numberOfSlices; i++ )
     {
@@ -114,8 +377,12 @@ int DoIt( int argc, char * argv[])
               << std::endl
               << std::flush;
 
-    // Set all required DICOM fields
     std::ostringstream value;
+
+    // Instance Number (required, empty if unknown)
+    value.str("");
+    value << i + 1;
+    itk::EncapsulateMetaData<std::string>(dictionary, "0020|0013", value.str());
 
     // Image Position (Patient)
     typename Image3DType::PointType    origin;
@@ -137,141 +404,6 @@ int DoIt( int argc, char * argv[])
     value.str("");
     value << spacing[2];
     itk::EncapsulateMetaData<std::string>(dictionary, "0018|0050", value.str() );
-
-    // Instance Number
-    value.str("");
-    value << i + 1;
-    itk::EncapsulateMetaData<std::string>(dictionary, "0020|0013", value.str() );
-
-    // SOP class UID
-    std::string sopClassUID;
-    if      (modality=="CT")  { sopClassUID = "1.2.840.10008.5.1.4.1.1.2"; }
-    else if (modality=="MR")  { sopClassUID = "1.2.840.10008.5.1.4.1.1.4"; }
-    else if (modality=="CR")  { sopClassUID = "1.2.840.10008.5.1.4.1.1.1"; }
-    else if (modality=="NM")  { sopClassUID = "1.2.840.10008.5.1.4.1.1.20"; }
-    else if (modality=="US")  { sopClassUID = "1.2.840.10008.5.1.4.1.1.6.1"; }
-    else if (modality=="SC")  { sopClassUID = "1.2.840.10008.5.1.4.1.1.7"; }
-    else
-      {
-      std::cerr << "Unknown modality: " << modality << ". Using CT Image Storage SOP class UID." << std::endl;
-      sopClassUID = "1.2.840.10008.5.1.4.1.1.2"; // CT Image Storage
-      }
-    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0016", sopClassUID);
-
-    // Image type
-    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0008", std::string("ORIGINAL\\PRIMARY\\AXIAL") );
-    // Patient's Birth Time
-    itk::EncapsulateMetaData<std::string>(dictionary, "0010|0032", std::string("010100.000000") );
-    // Study Date
-    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0020", std::string("20050101") );
-    // Study Time
-    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0030", std::string("010100.000000") );
-    // Accession Number
-    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0050", std::string("1") );
-    // Referring Physician's Name
-    itk::EncapsulateMetaData<std::string>(dictionary, "0008|0090", std::string("Unknown") );
-    // Patient Position
-    itk::EncapsulateMetaData<std::string>(dictionary, "0018|5100", std::string("HFS") );
-    // Position Reference Indicator
-    itk::EncapsulateMetaData<std::string>(dictionary, "0020|1040", std::string("SN") );
-
-    // Parameters from the command line
-    if (!patientName.empty())
-      {
-      itk::EncapsulateMetaData<std::string>(dictionary, "0010|0010", patientName);
-      }
-    if (!patientID.empty())
-      {
-      itk::EncapsulateMetaData<std::string>(dictionary, "0010|0020", patientID);
-      }
-    if (!patientBirthDate.empty())
-      {
-      itk::EncapsulateMetaData<std::string>(dictionary, "0010|0030", patientBirthDate);
-      }
-    if (!patientSex.empty())
-      {
-      itk::EncapsulateMetaData<std::string>(dictionary, "0010|0040", patientSex);
-      }
-    if (!patientComments.empty())
-      {
-      itk::EncapsulateMetaData<std::string>(dictionary, "0010|4000", patientComments);
-      }
-    if (!studyID.empty())
-      {
-      itk::EncapsulateMetaData<std::string>(dictionary, "0020|0010", studyID);
-      }
-    if (!studyDate.empty())
-      {
-      itk::EncapsulateMetaData<std::string>(dictionary, "0008|0020", studyDate);
-      }
-    if (!studyTime.empty())
-      {
-      itk::EncapsulateMetaData<std::string>(dictionary, "0008|0030", studyTime);
-      }
-    if (!studyComments.empty())
-      {
-      itk::EncapsulateMetaData<std::string>(dictionary, "0032|4000", studyComments);
-      }
-    if (!studyDescription.empty())
-      {
-      itk::EncapsulateMetaData<std::string>(dictionary, "0008|1030", studyDescription);
-      }
-    if (!modality.empty())
-      {
-      itk::EncapsulateMetaData<std::string>(dictionary, "0008|0060", modality);
-      }
-    if (!manufacturer.empty())
-      {
-      itk::EncapsulateMetaData<std::string>(dictionary, "0008|0070", manufacturer);
-      }
-    if (!model.empty())
-      {
-      itk::EncapsulateMetaData<std::string>(dictionary, "0008|1090", model);
-      }
-    if (!seriesNumber.empty())
-      {
-      itk::EncapsulateMetaData<std::string>(dictionary, "0020|0011", seriesNumber);
-      }
-    if (!seriesDescription.empty())
-      {
-      itk::EncapsulateMetaData<std::string>(dictionary, "0008|103e", seriesDescription);
-      }
-    if (!seriesDate.empty())
-      {
-      itk::EncapsulateMetaData<std::string>(dictionary, "0008|0021", seriesDate);
-      }
-    if (!seriesTime.empty())
-      {
-      itk::EncapsulateMetaData<std::string>(dictionary, "0008|0031", seriesTime);
-      }
-    if (!contentDate.empty())
-      {
-      itk::EncapsulateMetaData<std::string>(dictionary, "0008|0023", contentDate);
-      }
-    if (!contentTime.empty())
-      {
-      itk::EncapsulateMetaData<std::string>(dictionary, "0008|0033", contentTime);
-      }
-
-    if (studyInstanceUID.empty() && seriesInstanceUID.empty() && frameOfReferenceInstanceUID.empty())
-      {
-      // No UIDs are specified, so we ask ITK DICOM IO to generate them.
-      gdcmIO->SetKeepOriginalUID(false);
-      }
-    else
-      {
-      // ITK DICOM IO either sets all UIDs or none of them, so we return with error if not all UIDs are specified
-      if (studyInstanceUID.empty() || seriesInstanceUID.empty() || frameOfReferenceInstanceUID.empty())
-        {
-        std::cerr << "If any of UIDs (studyInstanceUID, seriesInstanceUID, and frameOfReferenceInstanceUID)"
-          << " are specified then all of them must be specified." << std::endl;
-        return EXIT_FAILURE;
-        }
-      gdcmIO->SetKeepOriginalUID(true);
-      itk::EncapsulateMetaData<std::string>(dictionary, "0020|000d", studyInstanceUID);
-      itk::EncapsulateMetaData<std::string>(dictionary, "0020|000e", seriesInstanceUID);
-      itk::EncapsulateMetaData<std::string>(dictionary, "0020|0052", frameOfReferenceInstanceUID);
-      }
 
     // Always set the rescale interscept and rescale slope (even if
     // they are at their defaults of 0 and 1 respectively).
@@ -329,8 +461,8 @@ int DoIt( int argc, char * argv[])
           minValue = p;
           }
         }
-      double windowCenterValue = static_cast<double>(minValue + maxValue) / 2.0;
-      double windowWidthValue = static_cast<double>(maxValue - minValue);
+      double windowCenterValue = (static_cast<double>(minValue) + static_cast<double>(maxValue)) / 2.0;
+      double windowWidthValue = (static_cast<double>(maxValue) - static_cast<double>(minValue));
 
       value.str("");
       value << windowCenterValue;
@@ -346,10 +478,21 @@ int DoIt( int argc, char * argv[])
     extract->GetOutput()->SetMetaDataDictionary(dictionary);
 
     typename WriterType::Pointer writer = WriterType::New();
-    char                imageNumber[BUFSIZ];
+    char                imageNumber[BUFSIZ+1];
+    imageNumber[BUFSIZ] = '\0';
+
 #if WIN32
 #define snprintf sprintf_s
 #endif
+    // On Windows, it is hard to pass a string such as "%04d" via command-line, as the % is interpreted as an escape character,
+    // therefore we allow the user to omit the leading "%". If the format string does not start with "%" then we add it here.
+    if (!dicomNumberFormat.empty())
+      {
+      if (dicomNumberFormat[0] != '%')
+        {
+        dicomNumberFormat = "%" + dicomNumberFormat;
+        }
+      }
     snprintf(imageNumber, BUFSIZ, dicomNumberFormat.c_str(), i + 1);
     value.str("");
     value << dicomDirectory << "/" << dicomPrefix << imageNumber << ".dcm";
@@ -369,12 +512,8 @@ int DoIt( int argc, char * argv[])
       return EXIT_FAILURE;
       }
     }
-  std::cout << "<filter-end>"
-            << std::endl;
-  std::cout << "<filter-name>"
-            << "ImageFileWriter"
-            << "</filter-name>"
-            << std::endl;
+  std::cout << "<filter-end>" << std::endl;
+  std::cout << "<filter-name>ImageFileWriter</filter-name>" << std::endl;
   std::cout << "</filter-end>";
   std::cout << std::flush;
 

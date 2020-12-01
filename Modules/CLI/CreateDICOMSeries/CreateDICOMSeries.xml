@@ -8,43 +8,113 @@
   <license/>
   <contributor>Bill Lorensen (GE)</contributor>
   <acknowledgements><![CDATA[This command module was derived from Insight/Examples (copyright) Insight Software Consortium]]></acknowledgements>
+  <parameters>
+    <label>Input</label>
+    <description><![CDATA[Input parameters]]></description>
+    <image>
+      <name>inputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description><![CDATA[Input volume to be resampled]]></description>
+    </image>
+  </parameters>
+  <parameters>
+    <label>Output</label>
+    <description><![CDATA[Output parameters]]></description>
+    <directory>
+      <label>DICOM Directory</label>
+      <name>dicomDirectory</name>
+      <longflag>--dicomDirectory</longflag>
+      <description><![CDATA[The directory to contain the DICOM series.]]></description>
+      <default>./</default>
+    </directory>
+    <string>
+      <label>DICOM filename prefix</label>
+      <name>dicomPrefix</name>
+      <longflag>--dicomPrefix</longflag>
+      <description><![CDATA[The prefix of the DICOM filename.]]></description>
+      <default>IMG</default>
+    </string>
+    <string>
+      <label>DICOM file number format</label>
+      <name>dicomNumberFormat</name>
+      <longflag>--dicomNumberFormat</longflag>
+      <description><![CDATA[The printf-style format to be used when creating the per-slice DICOM filename. The leading % sign can be omitted.]]></description>
+      <default>%04d</default>
+    </string>
+    <boolean>
+      <label>Reverse Slices</label>
+      <name>reverseImages</name>
+      <longflag>--reverseImages</longflag>
+      <description><![CDATA[Reverse the slices.]]></description>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <label>Use Compression</label>
+      <name>useCompression</name>
+      <longflag>--useCompression</longflag>
+      <description><![CDATA[Compress the output pixel data.]]></description>
+      <default>false</default>
+    </boolean>
+    <string-enumeration>
+      <label>Filter Settings</label>
+      <name>Type</name>
+      <label>Output Type:</label>
+      <description><![CDATA[Type for the new output volume.]]></description>
+      <longflag>--type</longflag>
+      <flag>--t</flag>
+      <default>Short</default>
+      <element>UnsignedChar</element>
+      <element>Char</element>
+      <element>UnsignedChar</element>
+      <element>Short</element>
+      <element>UnsignedShort</element>
+      <element>Int</element>
+      <element>UnsignedInt</element>
+    </string-enumeration>
+  </parameters>
   <parameters advanced="true">
     <label>Patient Parameters</label>
     <description><![CDATA[Parameters that apply to a patient]]></description>
     <string>
+      <label>Patient Name</label>
       <name>patientName</name>
       <longflag>--patientName</longflag>
       <description><![CDATA[The name of the patient (0010,0010)]]></description>
-      <label>Patient Name</label>
       <default>Anonymous</default>
     </string>
     <string>
+      <label>Patient ID</label>
       <name>patientID</name>
       <longflag>--patientID</longflag>
-      <description><![CDATA[The patient ID (0010,0020)]]></description>
-      <label>Patient ID</label>
-      <default>123456</default>
+      <description><![CDATA[The patient ID (0010,0020). If set to [random] then a random ID will be generated.]]></description>
+      <default>[random]</default>
     </string>
     <string>
+      <label>Patient Birth Date</label>
       <name>patientBirthDate</name>
       <longflag>--patientBirthDate</longflag>
-      <description><![CDATA[Patient birth date (0010,0030)]]></description>
-      <label>Patient Birth Date</label>
-      <default>20060101</default>
+      <description><![CDATA[Patient birth date (0010,0030) in the format YYYYMMDD.]]></description>
+      <default></default>
     </string>
-    <string>
+    <string-enumeration>
+      <label>Patient Sex</label>
       <name>patientSex</name>
       <longflag>--patientSex</longflag>
-      <description><![CDATA[Patient sex (0010,0040)]]></description>
-      <label>Patient Sex</label>
-      <default>M</default>
-    </string>
+      <description><![CDATA[Patient sex (0010,0040). M=male, F=female, O=other, [unknown]=not specified]]></description>
+      <default>[unknown]</default>
+      <element>[unknown]</element>
+      <element>M</element>
+      <element>F</element>
+      <element>O</element>
+    </string-enumeration>
     <string>
+      <label>Patient Comments</label>
       <name>patientComments</name>
       <longflag>--patientComments</longflag>
       <description><![CDATA[Patient comments (0010,4000)]]></description>
-      <label>Patient Comments</label>
-      <default>None</default>
+      <default></default>
     </string>
   </parameters>
   <parameters advanced="true">
@@ -55,56 +125,62 @@
       <longflag>--studyID</longflag>
       <description><![CDATA[The study ID (0020,0010)]]></description>
       <label>Study ID</label>
-      <default>123456</default>
+      <default>[random]</default>
     </string>
     <string>
+      <label>Study Date</label>
       <name>studyDate</name>
       <longflag>--studyDate</longflag>
-      <description><![CDATA[The date of the study (0008,0020)]]></description>
-      <label>Study Date</label>
-      <default>20060101</default>
+      <description><![CDATA[The date of the study (0008,0020) in the format YYYYMMDD. If set to "[now]" then the current date is used.]]></description>
+      <default>[now]</default>
     </string>
     <string>
+      <label>Study Time</label>
       <name>studyTime</name>
       <longflag>--studyTime</longflag>
-      <description><![CDATA[The time of the study (0008,0030)]]></description>
-      <label>Study Time</label>
-      <default></default>
+      <description><![CDATA[The time of the study (0008,0030) in the format HHMMSS. If set to "[now]" then the current time is used.]]></description>
+      <default>[now]</default>
     </string>
     <string>
+      <label>Study Comments</label>
       <name>studyComments</name>
       <longflag>--studyComments</longflag>
       <description><![CDATA[Study comments (0032,4000)]]></description>
-      <label>Study Comments</label>
-      <default>None</default>
+      <default></default>
     </string>
     <string>
+      <label>Study Description</label>
       <name>studyDescription</name>
       <longflag>--studyDescription</longflag>
       <description><![CDATA[Study description (0008,1030)]]></description>
-      <label>Study Descriptions</label>
-      <default>None</default>
+      <default></default>
     </string>
-    <string>
+    <string-enumeration>
+      <label>Modality</label>
       <name>modality</name>
       <longflag>--modality</longflag>
       <description><![CDATA[Modality (0008,0060)]]></description>
-      <label>Modality</label>
+      <element>CT</element>
+      <element>MR</element>
+      <element>NM</element>
+      <element>US</element>
+      <element>CR</element>
+      <element>SC</element>
       <default>CT</default>
-    </string>
+    </string-enumeration>
     <string>
+      <label>Manufacturer</label>
       <name>manufacturer</name>
       <longflag>--manufacturer</longflag>
       <description><![CDATA[Manufacturer (0008,0070)]]></description>
-      <label>Manufacturer</label>
-      <default>GE Medical Systems</default>
+      <default>3D Slicer</default>
     </string>
     <string>
+      <label>Model</label>
       <name>model</name>
       <longflag>--model</longflag>
       <description><![CDATA[model (0008,1090)]]></description>
-      <label>Model</label>
-      <default>None</default>
+      <default></default>
     </string>
   </parameters>
   <parameters advanced="true">
@@ -115,29 +191,52 @@
       <longflag>--seriesNumber</longflag>
       <description><![CDATA[The series number (0020,0011)]]></description>
       <label>Series Number</label>
-      <default>123456</default>
+      <default>1</default>
     </string>
     <string>
+      <label>Series Description</label>
       <name>seriesDescription</name>
       <longflag>--seriesDescription</longflag>
       <description><![CDATA[Series description (0008,103E)]]></description>
-      <label>Series Description</label>
-      <default>None</default>
+      <default></default>
     </string>
     <string>
+      <label>Series Date</label>
       <name>seriesDate</name>
       <longflag>--seriesDate</longflag>
-      <description><![CDATA[The date of the series (0008,0021)]]></description>
-      <label>Series Date</label>
-      <default></default>
+      <description><![CDATA[The date of the series (0008,0021) in the format YYYYMMDD. If set to "[now]" then the current date is used.]]></description>
+      <default>[now]</default>
     </string>
     <string>
+      <label>Series Time</label>
       <name>seriesTime</name>
       <longflag>--seriesTime</longflag>
-      <description><![CDATA[The time of the series (0008,0031)]]></description>
-      <label>Series Time</label>
-      <default></default>
+      <description><![CDATA[The time of the series (0008,0031) in the format HHMMSS. If set to "[now]" then the current time is used.]]></description>
+      <default>[now]</default>
     </string>
+    <string-enumeration>
+      <label>Patient Position:</label>
+      <name>patientPosition</name>
+      <description><![CDATA[Patient position descriptor relative to the equipment.]]></description>
+      <longflag>--patientPosition</longflag>
+      <default>HFS</default>
+      <element>HFS</element>
+      <element>HFP</element>
+      <element>HFDR</element>
+      <element>HFDL</element>
+      <element>FFDR</element>
+      <element>FFDL</element>
+      <element>FFP</element>
+      <element>FFS</element>
+      <element>LFP</element>
+      <element>LFS</element>
+      <element>RFP</element>
+      <element>RFS</element>
+      <element>AFDR</element>
+      <element>AFDL</element>
+      <element>PFDR</element>
+      <element>PFDL</element>
+    </string-enumeration>
   </parameters>
   <parameters advanced="true">
     <label>Image Parameters</label>
@@ -171,18 +270,25 @@
       <default>1.0000</default>
     </double>
     <string>
-      <name>contentDate</name>
-      <longflag>--contentDate</longflag>
-      <description><![CDATA[The date of the image content (0008,0023)]]></description>
-      <label>Content Date</label>
+      <label>Rescale Type</label>
+      <name>rescaleType</name>
+      <longflag>--rescaleType</longflag>
+      <description><![CDATA[Specifies the output units of the rescaled image (0008,1054). Leave it blank to set it automatically (Hounsfield unit for CT, unspecified for others).]]></description>
       <default></default>
     </string>
     <string>
+      <label>Content Date</label>
+      <name>contentDate</name>
+      <longflag>--contentDate</longflag>
+      <description><![CDATA[The date of the image content (0008,0023) in the format YYYYMMDD. If set to "[now]" then the current date is used.]]></description>
+      <default>[now]</default>
+    </string>
+    <string>
+      <label>Content Time</label>
       <name>contentTime</name>
       <longflag>--contentTime</longflag>
-      <description><![CDATA[The time of the image content (0008,0033)]]></description>
-      <label>Content Time</label>
-      <default></default>
+      <description><![CDATA[The time of the image content (0008,0033) in the format HHMMSS. If set to "[now]" then the current time is used.]]></description>
+      <default>[now]</default>
     </string>
   </parameters>
   <parameters advanced="true">
@@ -191,89 +297,23 @@
     <string>
       <name>studyInstanceUID</name>
       <longflag>--studyInstanceUID</longflag>
-      <description><![CDATA[The study instance UID (0020,000d)]]></description>
+      <description><![CDATA[The study instance UID (0020,000d). Leave it blank to generate UIDs automatically.]]></description>
       <label>Study Instance UID</label>
       <default></default>
     </string>
     <string>
+      <label>Series Instance UID</label>
       <name>seriesInstanceUID</name>
       <longflag>--seriesInstanceUID</longflag>
-      <description><![CDATA[The series instance UID (0020,000e)]]></description>
-      <label>Series Instance UID</label>
+      <description><![CDATA[The series instance UID (0020,000e). Leave it blank to generate UIDs automatically.]]></description>
       <default></default>
     </string>
     <string>
+      <label>Frame of Reference Instance UID</label>
       <name>frameOfReferenceInstanceUID</name>
       <longflag>--frameOfReferenceInstanceUID</longflag>
-      <description><![CDATA[The frame of reference instance UID (0020,0052)]]></description>
-      <label>Frame of Reference Instance UID</label>
+      <description><![CDATA[The frame of reference instance UID (0020,0052). Leave it blank to generate UIDs automatically.]]></description>
       <default></default>
     </string>
-  </parameters>
-  <parameters>
-    <label>Input</label>
-    <description><![CDATA[Input parameters]]></description>
-    <image>
-      <name>inputVolume</name>
-      <label>Input Volume</label>
-      <channel>input</channel>
-      <index>0</index>
-      <description><![CDATA[Input volume to be resampled]]></description>
-    </image>
-  </parameters>
-  <parameters>
-    <label>Output</label>
-    <description><![CDATA[Output parameters]]></description>
-    <directory>
-      <name>dicomDirectory</name>
-      <longflag>--dicomDirectory</longflag>
-      <description><![CDATA[The directory to contain the DICOM series.]]></description>
-      <label>DICOM Directory</label>
-      <default>./</default>
-    </directory>
-    <string>
-      <name>dicomPrefix</name>
-      <longflag>--dicomPrefix</longflag>
-      <description><![CDATA[The prefix of the DICOM filename.]]></description>
-      <label>DICOM filename prefix</label>
-      <default>IMG</default>
-    </string>
-    <string>
-      <name>dicomNumberFormat</name>
-      <longflag>--dicomNumberFormat</longflag>
-      <description><![CDATA[The printf-style format to be used when creating the per-slice DICOM filename.]]></description>
-      <label>DICOM file number format</label>
-      <default>%04d</default>
-    </string>
-    <boolean>
-      <name>reverseImages</name>
-      <longflag>--reverseImages</longflag>
-      <description><![CDATA[Reverse the slices.]]></description>
-      <label>Reverse Slices</label>
-      <default>false</default>
-    </boolean>
-    <boolean>
-      <name>useCompression</name>
-      <longflag>--useCompression</longflag>
-      <description><![CDATA[Compress the output pixel data.]]></description>
-      <label>Use Compression</label>
-      <default>false</default>
-    </boolean>
-    <label>Filter Settings</label>
-    <string-enumeration>
-      <name>Type</name>
-      <label>Output Type:</label>
-      <description><![CDATA[Type for the new output volume.]]></description>
-      <longflag>--type</longflag>
-      <flag>--t</flag>
-      <default>Short</default>
-      <element>UnsignedChar</element>
-      <element>Char</element>
-      <element>UnsignedChar</element>
-      <element>Short</element>
-      <element>UnsignedShort</element>
-      <element>Int</element>
-      <element>UnsignedInt</element>
-    </string-enumeration>
   </parameters>
 </executable>
