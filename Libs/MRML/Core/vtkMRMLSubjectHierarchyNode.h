@@ -33,8 +33,10 @@
 #include <vtkMRMLSubjectHierarchyConstants.h>
 
 class vtkCallbackCommand;
+class vtkIdList;
 class vtkMRMLDisplayNode;
 class vtkMRMLTransformNode;
+class vtkMRMLAbstractViewNode;
 
 /// \ingroup Slicer_MRML_Core
 /// \brief MRML node to represent a complete subject hierarchy tree
@@ -82,8 +84,22 @@ public:
     /// Event invoked when item resolving starts (e.g. after scene import)
     SubjectHierarchyStartResolveEvent,
     /// Event invoked when item resolving finished (e.g. after scene import)
-    SubjectHierarchyEndResolveEvent
+    SubjectHierarchyEndResolveEvent,
+    /// Event invoked when showing of subject hierarchy items in a specific view is requested
+    /// (processed by the widget classes, by delegating to the owner subject hierarchy plugin).
+    /// For internal use only.
+    /// Use vtkMRMLSubjectHierarchyNode::ShowItemsInView or qSlicerSubjectHierarchyPluginHandler::showItemsInView
+    /// method to request view of subject hierarchy items in a view.
+    SubjectHierarchyItemsShowInViewRequestedEvent,
   };
+
+  /// Event data used with SubjectHierarchyItemsShowInViewRequestedEvent.
+  /// For internal use only.
+  struct SubjectHierarchyItemsShowInViewRequestedEventData
+    {
+    vtkIdList* itemIDsToShow = nullptr;
+    vtkMRMLAbstractViewNode* viewNode = nullptr;
+    };
 
 public:
   static vtkMRMLSubjectHierarchyNode *New();
@@ -389,6 +405,9 @@ public:
 
   /// Ensure the consistency and validity of the SH node in the scene
   static vtkMRMLSubjectHierarchyNode* ResolveSubjectHierarchy(vtkMRMLScene* scene);
+
+  /// Show items in selected view (used for drag&drop of subject hierarchy items into the viewer)
+  void ShowItemsInView(vtkIdList* itemIDs, vtkMRMLAbstractViewNode* viewNode);
 
 protected:
   /// Callback function for all events from the subject hierarchy items

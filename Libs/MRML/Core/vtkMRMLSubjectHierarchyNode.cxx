@@ -3654,3 +3654,13 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNod
 
   return scene->GetSubjectHierarchyNode();
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLSubjectHierarchyNode::ShowItemsInView(vtkIdList* itemIDs, vtkMRMLAbstractViewNode* viewNode)
+{
+  SubjectHierarchyItemsShowInViewRequestedEventData eventData;
+  eventData.itemIDsToShow = itemIDs;
+  eventData.viewNode = viewNode;
+  this->InvokeEvent(SubjectHierarchyItemsShowInViewRequestedEvent, &eventData);
+  // The event will be processed by qSlicerSubjectHierarchyPluginHandler
+}

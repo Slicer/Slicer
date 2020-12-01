@@ -330,3 +330,16 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::onTractographyInteract
 
   qSlicerApplication::application()->openNodeModule(shNode->GetItemDataNode(currentItemID));
 }
+
+//-----------------------------------------------------------------------------
+bool qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow)
+{
+  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
+    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
+  if (!volumesPlugin)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access Volumes subject hierarchy plugin";
+    return false;
+    }
+  return volumesPlugin->showItemInView(itemID, viewNode, allItemsToShow);
+}

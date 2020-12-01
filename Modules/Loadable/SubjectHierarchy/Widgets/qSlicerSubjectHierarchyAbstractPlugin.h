@@ -39,6 +39,7 @@ class QStandardItem;
 class QAction;
 class QColor;
 class qSlicerAbstractModuleWidget;
+class vtkMRMLAbstractViewNode;
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 ///    In Widgets, not Plugins because the paths and libs need to be exported to extensions
@@ -202,6 +203,12 @@ public:
   /// Reparent an item that was already in the subject hierarchy under a new parent.
   /// \return True if reparented successfully, false otherwise
   virtual bool reparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID);
+
+  /// Show an item in a selected view.
+  /// List of all other item IDs that will be shown in this request is also provided, as it may help
+  /// in determining the optimal view setup. For example, if multiple volume nodes will be shown
+  /// then the first node may be displayed as background and the second as foreground.
+  virtual bool showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow);
 
 // Utility functions
 public:

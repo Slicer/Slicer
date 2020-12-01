@@ -27,6 +27,7 @@
 // MRML includes
 #include "qMRMLWidgetsExport.h"
 
+class QDropEvent;
 class qMRMLSliceViewPrivate;
 class vtkCollection;
 class vtkMRMLAbstractDisplayableManager;
@@ -97,6 +98,9 @@ public:
   Q_INVOKABLE void unsetViewCursor();
   /// Set default cursor in the view area
   Q_INVOKABLE void setDefaultViewCursor(const QCursor &cursor);
+
+  void dragEnterEvent(QDragEnterEvent* event) override;
+  void dropEvent(QDropEvent* event) override;
 
 public slots:
 

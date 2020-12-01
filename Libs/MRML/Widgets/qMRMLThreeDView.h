@@ -27,6 +27,7 @@
 
 #include "qMRMLWidgetsExport.h"
 
+class QDropEvent;
 class qMRMLThreeDViewPrivate;
 class vtkMRMLAbstractDisplayableManager;
 class vtkMRMLCameraNode;
@@ -92,6 +93,9 @@ public:
 
   /// Set default cursor in the view area
   Q_INVOKABLE void setDefaultViewCursor(const QCursor &cursor);
+
+  void dragEnterEvent(QDragEnterEvent* event) override;
+  void dropEvent(QDropEvent* event) override;
 
 public slots:
 
