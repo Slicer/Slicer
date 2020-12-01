@@ -121,11 +121,14 @@
     vectorType<std::string> vector = Get##propertyName(); \
     for (vectorType<std::string>::iterator it=vector.begin(); it!=vector.end(); it++) \
       { \
+      if (it==vector.begin()) \
+        { \
+        xmlWriteOutputStream << ";"; \
+        } \
       std::string attributeValue = *it; \
       vtksys::SystemTools::ReplaceString(attributeValue, "%", "%25"); \
       vtksys::SystemTools::ReplaceString(attributeValue, ";", "%3B"); \
       xmlWriteOutputStream << vtkMRMLNode::XMLAttributeEncodeString(attributeValue); \
-      xmlWriteOutputStream << ";"; \
       } \
     xmlWriteOutputStream << "\""; \
   }

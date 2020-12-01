@@ -211,14 +211,20 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
       this->SetScalarRangeFlag(vtkMRMLDisplayNode::UseManualScalarRange);
       }
     }
-  if (!strcmp(xmlReadAttValue, "viewNodeRef"))
+  if (!strcmp(xmlReadAttName, "viewNodeRef"))
     {
-    std::stringstream ss(xmlReadAttValue);
-    while (!ss.eof())
+    std::string nodeIds = xmlReadAttValue;
+    // Legacy scenes used " " as separator, replace that by ";".
+    vtksys::SystemTools::ReplaceString(nodeIds, " ", ";");
+    std::stringstream ss(nodeIds);
+    std::string nodeId;
+    while (std::getline(ss, nodeId, ';'))
       {
-      std::string id;
-      ss >> id;
-      this->AddViewNodeID(id.c_str());
+      if (nodeId.empty())
+        {
+        continue;
+        }
+      this->AddViewNodeID(nodeId.c_str());
       }
     }
   vtkMRMLReadXMLEndMacro();
