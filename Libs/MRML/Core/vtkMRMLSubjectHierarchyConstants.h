@@ -127,6 +127,8 @@ public:
   static const std::vector<std::string> GetDICOMStudyTagNames()
   {
     std::vector<std::string> studyTagNames;
+    studyTagNames.push_back(vtkMRMLSubjectHierarchyConstants::GetDICOMStudyInstanceUIDTagName());
+    studyTagNames.push_back(vtkMRMLSubjectHierarchyConstants::GetDICOMStudyIDTagName());
     studyTagNames.push_back(vtkMRMLSubjectHierarchyConstants::GetDICOMStudyDescriptionTagName());
     studyTagNames.push_back(vtkMRMLSubjectHierarchyConstants::GetDICOMStudyDateTagName());
     studyTagNames.push_back(vtkMRMLSubjectHierarchyConstants::GetDICOMStudyTimeTagName());
