@@ -98,6 +98,9 @@ public:
   /// \param itemID Subject Hierarchy item to show the visibility context menu items for
   void showVisibilityContextMenuActionsForItem(vtkIdType itemID) override;
 
+  /// Show an item in a selected view.
+  bool showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow) override;
+
 public:
   /// Show volume in all slice views. The argument node replaces any volume shown on the specified layer
   /// \param node Volume node to show

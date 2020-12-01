@@ -20,10 +20,13 @@
 
 // Qt includes
 #include <QDebug>
+#include <QDropEvent>
 #include <QEvent>
 #include <QFileInfo>
 #include <QHBoxLayout>
+#include <QMimeData>
 #include <QToolButton>
+#include <QUrl>
 
 // CTK includes
 #include <ctkAxesWidget.h>
@@ -33,6 +36,7 @@
 // qMRML includes
 #include "qMRMLColors.h"
 #include "qMRMLSliceView_p.h"
+#include "qMRMLUtils.h"
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLAbstractDisplayableManager.h>
@@ -44,8 +48,13 @@
 #include <vtkMRMLSliceViewInteractorStyle.h>
 
 // MRML includes
+#include <vtkMRMLLabelMapVolumeNode.h>
+#include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLSliceLogic.h>
+#include <vtkMRMLSubjectHierarchyNode.h>
+#include <vtkMRMLVolumeNode.h>
 
 // VTK includes
 #include <vtkCollection.h>
@@ -266,6 +275,7 @@ qMRMLSliceView::qMRMLSliceView(QWidget* _parent) : Superclass(_parent)
 {
   Q_D(qMRMLSliceView);
   d->init();
+  setAcceptDrops(true);
 }
 
 // --------------------------------------------------------------------------
@@ -470,4 +480,37 @@ void qMRMLSliceView::setDefaultViewCursor(const QCursor &cursor)
     this->VTKWidget()->setDefaultQVTKCursor(cursor);  // TODO: test if cursor settings works
 #endif
     }
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceView::dragEnterEvent(QDragEnterEvent* event)
+{
+  Q_D(qMRMLSliceView);
+  vtkNew<vtkIdList> shItemIdList;
+  qMRMLUtils::mimeDataToSubjectHierarchyItemIDs(event->mimeData(), shItemIdList);
+  if (shItemIdList->GetNumberOfIds() > 0)
+    {
+    event->accept();
+    return;
+    }
+  Superclass::dragEnterEvent(event);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSliceView::dropEvent(QDropEvent* event)
+{
+  Q_D(qMRMLSliceView);
+  vtkNew<vtkIdList> shItemIdList;
+  qMRMLUtils::mimeDataToSubjectHierarchyItemIDs(event->mimeData(), shItemIdList);
+  if (!shItemIdList->GetNumberOfIds())
+    {
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(d->MRMLScene);
+  if (!shNode)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: invalid subject hierarchy node";
+    return;
+    }
+  shNode->ShowItemsInView(shItemIdList, this->mrmlSliceNode());
 }

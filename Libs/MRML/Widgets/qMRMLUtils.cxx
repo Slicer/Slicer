@@ -19,8 +19,11 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QStyle>
+#include <QMimeData>
 #include <QPainter>
+#include <QStyle>
+#include <QUrl>
+#include <QUrlQuery>
 
 // CTK includes
 #include "ctkVTKWidgetsUtils.h"
@@ -180,5 +183,28 @@ void qMRMLUtils::qColorToColor(const QColor &qcolor, double* color)
     color[0] = qcolor.redF();
     color[1] = qcolor.greenF();
     color[2] = qcolor.blueF();
+    }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLUtils::mimeDataToSubjectHierarchyItemIDs(const QMimeData* mimeData, vtkIdList* idList)
+{
+  if (!mimeData->hasFormat("text/uri-list") || !idList)
+    {
+    return;
+    }
+  idList->Reset();
+  foreach(QUrl url, mimeData->urls())
+    {
+    if (!url.isValid() || url.isEmpty())
+      {
+      continue;
+      }
+    if (url.scheme() != "mrml" || url.host() != "scene" || url.path() != "/subjecthierarchy/item")
+      {
+      continue;
+      }
+    QUrlQuery query(url.query());
+    idList->InsertNextId(query.queryItemValue("id").toLong());
     }
 }

@@ -197,6 +197,9 @@ public:
   /// \param shNode the subject hierarchy node to observe
   void observeSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode);
 
+  /// Show a list of items in a selected view (used for drag&drop of items into a view node)
+  void showItemsInView(vtkIdList* itemIDsToShow, vtkMRMLAbstractViewNode* viewNode);
+
 protected:
   /// Handle subject hierarchy node events
   static void onSubjectHierarchyNodeEvent(vtkObject* caller, unsigned long event, void* clientData, void* callData);

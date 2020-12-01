@@ -37,8 +37,13 @@
 #include "qSlicerAbstractModuleWidget.h"
 
 // MRML includes
+#include <vtkMRMLAbstractViewNode.h>
+#include <vtkMRMLDisplayableNode.h>
+#include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLSliceNode.h>
 #include <vtkMRMLSubjectHierarchyNode.h>
+#include <vtkMRMLViewNode.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -340,4 +345,65 @@ void qSlicerSubjectHierarchyAbstractPlugin::hideAllContextMenuActions()const
     {
     action->setVisible(false);
     }
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerSubjectHierarchyAbstractPlugin::showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow)
+{
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return false;
+    }
+  vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  if (!displayableNode)
+    {
+    return false;
+    }
+  displayableNode->CreateDefaultDisplayNodes();
+  vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(displayableNode->GetDisplayNode());
+  if (!displayNode)
+    {
+    // This method can only handle displayable nodes
+    return false;
+    }
+  if (viewNode)
+    {
+    // Show in specific view
+    MRMLNodeModifyBlocker blocker(displayNode);
+    if (!displayNode->GetVisibility())
+      {
+      displayNode->SetVisibility(true);
+      // This was hidden in all views, show it only in the currently selected view
+      displayNode->RemoveAllViewNodeIDs();
+      }
+    displayNode->AddViewNodeID(viewNode->GetID());
+    if (displayNode->GetOpacity() <= 0.0)
+      {
+      displayNode->SetOpacity(1.0);
+      }
+    if (vtkMRMLSliceNode::SafeDownCast(viewNode))
+      {
+      displayNode->SetVisibility2D(true);
+      }
+    if (vtkMRMLViewNode::SafeDownCast(viewNode))
+      {
+      displayNode->SetVisibility3D(true);
+      }
+    }
+  else
+    {
+    // Show in all views
+    MRMLNodeModifyBlocker blocker(displayNode);
+    displayNode->RemoveAllViewNodeIDs();
+    displayNode->SetVisibility(true);
+    if (displayNode->GetOpacity() <= 0.0)
+      {
+      displayNode->SetOpacity(1.0);
+      }
+    displayNode->SetVisibility2D(true);
+    displayNode->SetVisibility3D(true);
+    }
+  return true;
 }

@@ -91,6 +91,10 @@ public:
   /// \param itemID Subject Hierarchy item to show the visibility context menu items for
   void showVisibilityContextMenuActionsForItem(vtkIdType itemID) override;
 
+  /// Show an item in a selected view.
+  /// Calls Volumes plugin's showItemInView implementation.
+  bool showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow) override;
+
 public:
   /// Show labelmap in all slice views. The argument node replaces any labelmap shown on the label layer
   void showLabelMapInAllViews(vtkMRMLLabelMapVolumeNode* node);

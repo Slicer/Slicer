@@ -27,8 +27,10 @@
 #include <QIcon>
 #include <QPixmap>
 
+#include "vtkIdList.h"
 #include "qMRMLWidgetsExport.h"
 
+class QMimeData;
 class QStyle;
 class vtkMRMLNode;
 class vtkMRMLTransformNode;
@@ -74,6 +76,8 @@ public:
 
   /// Convert QColor to C++ RGB array
   Q_INVOKABLE static void qColorToColor(const QColor &qcolor, double* color);
+
+  Q_INVOKABLE static void mimeDataToSubjectHierarchyItemIDs(const QMimeData* mimeData, vtkIdList* idList);
 
 private:
   Q_DISABLE_COPY(qMRMLUtils);

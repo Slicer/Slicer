@@ -55,6 +55,8 @@ protected slots:
   void toggleCurrentItemVisibility2D(bool on);
   /// Toggle 3D visibility on currently selected subject hierarchy item
   void toggleCurrentItemVisibility3D(bool on);
+  /// Makes the node visible in all views (otherwise it is just visible in selected views)
+  void showInAllViews();
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyVisibilityPluginPrivate> d_ptr;

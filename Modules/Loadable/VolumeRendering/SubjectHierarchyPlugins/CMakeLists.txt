@@ -9,6 +9,7 @@ set(${KIT}_INCLUDE_DIRECTORIES
   ${vtkSlicerVolumeRenderingModuleLogic_INCLUDE_DIRS}
   ${qSlicerSubjectHierarchyModuleWidgets_INCLUDE_DIRS}
   ${vtkSlicerSubjectHierarchyModuleLogic_INCLUDE_DIRS}
+  ${qSlicerVolumesSubjectHierarchyPlugins_INCLUDE_DIRS}
   ${qMRMLWidgets_INCLUDE_DIRS}
   ${MRMLLogic_INCLUDE_DIRS}
   ${MRMLCore_INCLUDE_DIRS}
@@ -33,6 +34,7 @@ set(${KIT}_TARGET_LIBRARIES
   vtkSlicer${MODULE_NAME}ModuleMRML
   vtkSlicer${MODULE_NAME}ModuleLogic
   qSlicerSubjectHierarchyModuleWidgets
+  qSlicerVolumesSubjectHierarchyPlugins
   vtkSlicerSubjectHierarchyModuleLogic
   qMRMLWidgets
   MRMLLogic

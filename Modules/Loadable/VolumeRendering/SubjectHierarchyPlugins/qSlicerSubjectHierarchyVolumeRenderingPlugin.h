@@ -29,6 +29,8 @@
 #include "qSlicerVolumeRenderingSubjectHierarchyPluginsExport.h"
 
 class qSlicerSubjectHierarchyVolumeRenderingPluginPrivate;
+class vtkMRMLViewNode;
+class vtkMRMLDisplayNode;
 class vtkSlicerVolumeRenderingLogic;
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
@@ -54,6 +56,16 @@ public:
   /// \param itemID Subject Hierarchy item to show the visibility context menu items for
   void showVisibilityContextMenuActionsForItem(vtkIdType itemID) override;
 
+  /// Show an item in a selected view.
+  /// Calls Volumes plugin's showItemInView implementation and adds support for showing a volume
+  /// in 3D views using volume rendering.
+  /// Returns true on success.
+  bool showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow) override;
+
+  /// Show/hide volume rendering in a view.
+  /// If viewNode is nullptr then it is displayed in all 3D views in the current layout.
+  bool showVolumeRendering(bool show, vtkIdType itemID, vtkMRMLViewNode* viewNode=nullptr);
+
 protected slots:
   /// Toggle volume rendering option for current volume item
   void toggleVolumeRenderingForCurrentItem(bool);
@@ -62,6 +74,8 @@ protected slots:
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyVolumeRenderingPluginPrivate> d_ptr;
+
+  void resetFieldOfView(vtkMRMLDisplayNode* displayNode, vtkMRMLViewNode* viewNode=nullptr);
 
 private:
   Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyVolumeRenderingPlugin);

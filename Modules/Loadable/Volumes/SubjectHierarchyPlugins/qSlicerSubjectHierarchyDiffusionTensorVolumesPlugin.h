@@ -90,6 +90,10 @@ public:
   /// \param itemID Subject Hierarchy item to show the context menu items for
   void showContextMenuActionsForItem(vtkIdType itemID) override;
 
+  /// Show an item in a selected view.
+  /// Calls Volumes plugin's showItemInView implementation.
+  bool showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow) override;
+
 protected slots:
   void onTractographyLabelMapSeeding();
   void onTractographyInteractiveSeeding();

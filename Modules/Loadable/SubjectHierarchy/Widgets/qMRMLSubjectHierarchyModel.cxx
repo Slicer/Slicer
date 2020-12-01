@@ -26,6 +26,7 @@
 #include <QApplication>
 #include <QMessageBox>
 #include <QTimer>
+#include <QUrl>
 
 // qMRML includes
 #include "qMRMLSubjectHierarchyModel_p.h"
@@ -646,11 +647,14 @@ bool qMRMLSubjectHierarchyModel::moveToRow(vtkIdType itemID, int newRow)
 QMimeData* qMRMLSubjectHierarchyModel::mimeData(const QModelIndexList& indexes)const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
+  d->DraggedSubjectHierarchyItems.clear();
   if (!indexes.size())
     {
     return nullptr;
     }
+  QList<QUrl> selectedShItemUrls;
   QModelIndexList allColumnsIndexes;
+  vtkMRMLSubjectHierarchyNode* shNode = this->subjectHierarchyNode();
   foreach(const QModelIndex& index, indexes)
     {
     QModelIndex parent = index.parent();
@@ -660,13 +664,19 @@ QMimeData* qMRMLSubjectHierarchyModel::mimeData(const QModelIndexList& indexes)c
       }
     if (index.column() == 0) // Prevent duplicate IDs
       {
-      d->DraggedSubjectHierarchyItems << this->subjectHierarchyItemFromIndex(index);
+      vtkIdType itemId = this->subjectHierarchyItemFromIndex(index);
+      d->DraggedSubjectHierarchyItems << itemId;
+      QString urlString = QString("mrml://scene/subjecthierarchy/item?id=%1").arg(itemId);
+      selectedShItemUrls.push_back(QUrl(urlString));
       }
     }
   // Remove duplicates (mixes up order of items)
   allColumnsIndexes = allColumnsIndexes.toSet().toList();
 
-  return this->QStandardItemModel::mimeData(allColumnsIndexes);
+  QMimeData* mimeData = this->QStandardItemModel::mimeData(allColumnsIndexes);
+  mimeData->setUrls(selectedShItemUrls);
+
+  return mimeData;
 }
 
 //------------------------------------------------------------------------------

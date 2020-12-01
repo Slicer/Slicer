@@ -20,9 +20,11 @@
 
 // Qt includes
 #include <QDebug>
+#include <QDropEvent>
 #include <QEvent>
 #include <QFileInfo>
 #include <QHBoxLayout>
+#include <QMimeData>
 #include <QToolButton>
 
 // CTK includes
@@ -31,6 +33,7 @@
 // qMRML includes
 #include "qMRMLColors.h"
 #include "qMRMLThreeDView_p.h"
+#include "qMRMLUtils.h"
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLAbstractDisplayableManager.h>
@@ -44,6 +47,7 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLCameraNode.h>
 #include <vtkMRMLCrosshairNode.h>
+#include <vtkMRMLSubjectHierarchyNode.h>
 
 // VTK includes
 #include <vtkCallbackCommand.h>
@@ -281,6 +285,7 @@ qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent) : Superclass(_parent)
 {
   Q_D(qMRMLThreeDView);
   d->init();
+  setAcceptDrops(true);
 
   vtkRenderWindowInteractor* renderWindowInteractor = this->interactor();
 
@@ -584,4 +589,37 @@ void qMRMLThreeDView::setDefaultViewCursor(const QCursor &cursor)
     this->VTKWidget()->setDefaultQVTKCursor(cursor);  // TODO: test if cursor settings works
 #endif
     }
+}
+
+//---------------------------------------------------------------------------
+void qMRMLThreeDView::dragEnterEvent(QDragEnterEvent* event)
+{
+  Q_D(qMRMLThreeDView);
+  vtkNew<vtkIdList> shItemIdList;
+  qMRMLUtils::mimeDataToSubjectHierarchyItemIDs(event->mimeData(), shItemIdList);
+  if (shItemIdList->GetNumberOfIds() > 0)
+    {
+    event->accept();
+    return;
+    }
+  Superclass::dragEnterEvent(event);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLThreeDView::dropEvent(QDropEvent* event)
+{
+  Q_D(qMRMLThreeDView);
+  vtkNew<vtkIdList> shItemIdList;
+  qMRMLUtils::mimeDataToSubjectHierarchyItemIDs(event->mimeData(), shItemIdList);
+  if (!shItemIdList->GetNumberOfIds())
+    {
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(d->MRMLScene);
+  if (!shNode)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: invalid subject hierarchy node";
+    return;
+    }
+  shNode->ShowItemsInView(shItemIdList, this->mrmlViewNode());
 }

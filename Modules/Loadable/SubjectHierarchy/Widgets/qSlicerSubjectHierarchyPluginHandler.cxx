@@ -408,6 +408,7 @@ void qSlicerSubjectHierarchyPluginHandler::observeSubjectHierarchyNode(vtkMRMLSu
 
     shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent, m_CallBack);
     shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested, m_CallBack);
+    shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemsShowInViewRequestedEvent, m_CallBack);
   }
 }
 
@@ -660,6 +661,36 @@ void qSlicerSubjectHierarchyPluginHandler::onSubjectHierarchyNodeEvent(
         {
         qCritical() << Q_FUNC_INFO << ": No subject hierarchy node could be retrieved from the scene";
         }
+      }
+    }
+  // Handle scene events
+  else if (event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemsShowInViewRequestedEvent)
+  {
+    if (!callData)
+      {
+      qCritical() << Q_FUNC_INFO << ": SubjectHierarchyItemsShowInViewEvent processing failed, invalid event data";
+      return;
+      }
+    vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemsShowInViewRequestedEventData* showNodesEventData
+      = reinterpret_cast<vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemsShowInViewRequestedEventData*>(callData);
+    pluginHandler->showItemsInView(showNodesEventData->itemIDsToShow, showNodesEventData->viewNode);
+  }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyPluginHandler::showItemsInView(vtkIdList* itemIDsToShow, vtkMRMLAbstractViewNode* viewNode)
+{
+  if (!itemIDsToShow)
+    {
+    return;
+    }
+  for (int index = 0; index < itemIDsToShow->GetNumberOfIds(); ++index)
+    {
+    vtkIdType itemID = itemIDsToShow->GetId(index);
+    qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin = this->getOwnerPluginForSubjectHierarchyItem(itemID);
+    if (ownerPlugin)
+      {
+      ownerPlugin->showItemInView(itemID, viewNode, itemIDsToShow);
       }
     }
 }
