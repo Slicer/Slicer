@@ -41,6 +41,7 @@ class SegmentationsModuleTest2(unittest.TestCase):
     self.TestSection_SetupScene()
     self.TestSection_SharedLabelmapMultipleLayerEditing()
     self.TestSection_IslandEffects()
+    self.TestSection_MarginEffects()
     logging.info('Test finished')
 
   #------------------------------------------------------------------------------
@@ -251,3 +252,110 @@ class SegmentationsModuleTest2(unittest.TestCase):
     labelmap.SetExtent(extent)
     labelmap.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)
     labelmap.GetPointData().GetScalars().Fill(value)
+
+  #------------------------------------------------------------------------------
+  def TestSection_MarginEffects(self):
+    logging.info("Running test on margin effect")
+
+    slicer.modules.segmenteditor.widgetRepresentation().self().editor.effectByName("Margin")
+
+    self.segmentation.RemoveAllSegments()
+    segment1Id = self.segmentation.AddEmptySegment("Segment_1")
+    segment1 = self.segmentation.GetSegment(segment1Id)
+    segment1.SetLabelValue(1)
+
+    segment2Id = self.segmentation.AddEmptySegment("Segment_2")
+    segment2 = self.segmentation.GetSegment(segment2Id)
+    segment2.SetLabelValue(2)
+
+    binaryLabelmapRepresentationName = slicer.vtkSegmentationConverter.GetBinaryLabelmapRepresentationName()
+    dataTypes = [
+      vtk.VTK_CHAR,
+      vtk.VTK_SIGNED_CHAR,
+      vtk.VTK_UNSIGNED_CHAR,
+      vtk.VTK_SHORT,
+      vtk.VTK_UNSIGNED_SHORT,
+      vtk.VTK_INT,
+      vtk.VTK_UNSIGNED_INT,
+      vtk.VTK_LONG,
+      vtk.VTK_UNSIGNED_LONG,
+      vtk.VTK_FLOAT,
+      vtk.VTK_DOUBLE,
+      #vtk.VTK_LONG_LONG, # These types are unsupported in ITK
+      #vtk.VTK_UNSIGNED_LONG_LONG,
+    ]
+    logging.info("Testing shared labelmaps")
+    for dataType in dataTypes:
+      initialLabelmap = slicer.vtkOrientedImageData()
+      initialLabelmap.SetImageToWorldMatrix(self.ijkToRas)
+      initialLabelmap.SetExtent(0, 10, 0, 10, 0, 10)
+      segment1.AddRepresentation(binaryLabelmapRepresentationName, initialLabelmap)
+      segment2.AddRepresentation(binaryLabelmapRepresentationName, initialLabelmap)
+
+      self.runMarginEffect(segment1, segment2, dataType, self.segmentEditorNode.OverwriteAllSegments)
+      self.assertEqual(self.segmentation.GetNumberOfLayers(), 1)
+      self.runMarginEffect(segment1, segment2, dataType, self.segmentEditorNode.OverwriteNone)
+      self.assertEqual(self.segmentation.GetNumberOfLayers(), 2)
+
+    logging.info("Testing separate labelmaps")
+    for dataType in dataTypes:
+      segment1Labelmap = slicer.vtkOrientedImageData()
+      segment1Labelmap.SetImageToWorldMatrix(self.ijkToRas)
+      segment1Labelmap.SetExtent(0, 10, 0, 10, 0, 10)
+      segment1.AddRepresentation(binaryLabelmapRepresentationName, segment1Labelmap)
+
+      segment2Labelmap = slicer.vtkOrientedImageData()
+      segment2Labelmap.DeepCopy(segment1Labelmap)
+      segment2.AddRepresentation(binaryLabelmapRepresentationName, segment2Labelmap)
+
+      self.runMarginEffect(segment1, segment2, dataType, self.segmentEditorNode.OverwriteAllSegments)
+      self.assertEqual(self.segmentation.GetNumberOfLayers(), 2)
+      self.runMarginEffect(segment1, segment2, dataType, self.segmentEditorNode.OverwriteNone)
+      self.assertEqual(self.segmentation.GetNumberOfLayers(), 2)
+
+  def runMarginEffect(self, segment1, segment2, dataType, overwriteMode):
+    logging.info("Running margin effect with data type: {0}, and overwriteMode {1}".format(dataType, overwriteMode))
+    marginEffect = slicer.modules.segmenteditor.widgetRepresentation().self().editor.effectByName("Margin")
+
+    marginEffect.setParameter("MarginSizeMm", 50.0)
+
+    oldOverwriteMode = self.segmentEditorNode.GetOverwriteMode()
+    self.segmentEditorNode.SetOverwriteMode(overwriteMode)
+
+    segment1Labelmap = segment1.GetRepresentation(self.binaryLabelmapReprName)
+    segment1Labelmap.AllocateScalars(dataType, 1)
+    segment1Labelmap.GetPointData().GetScalars().Fill(0)
+
+    segment2Labelmap = segment2.GetRepresentation(self.binaryLabelmapReprName)
+    segment2Labelmap.AllocateScalars(dataType, 1)
+    segment2Labelmap.GetPointData().GetScalars().Fill(0)
+
+    segment1Position_IJK = [5, 5, 5]
+    segment1Labelmap.SetScalarComponentFromDouble(segment1Position_IJK[0], segment1Position_IJK[1], segment1Position_IJK[2], 0, segment1.GetLabelValue())
+    segment2Position_IJK = [6, 5, 6]
+    segment2Labelmap.SetScalarComponentFromDouble(segment2Position_IJK[0], segment2Position_IJK[1], segment2Position_IJK[2], 0, segment2.GetLabelValue())
+
+    self.checkSegmentVoxelCount(0, 1)
+    self.checkSegmentVoxelCount(1, 1)
+
+    marginEffect.self().onApply()
+    self.checkSegmentVoxelCount(0, 9) # Margin grow
+    self.checkSegmentVoxelCount(1, 1)
+
+    marginEffect.self().onApply()
+    self.checkSegmentVoxelCount(0, 37) # Margin grow
+    if overwriteMode == slicer.vtkMRMLSegmentEditorNode.OverwriteAllSegments:
+      self.checkSegmentVoxelCount(1, 0) # Overwritten
+    else:
+      self.checkSegmentVoxelCount(1, 1) # Not overwritten
+
+    marginEffect.setParameter("MarginSizeMm", -50.0)
+    marginEffect.self().onApply()
+
+    self.checkSegmentVoxelCount(0, 9) # Margin shrink
+    if overwriteMode == slicer.vtkMRMLSegmentEditorNode.OverwriteAllSegments:
+      self.checkSegmentVoxelCount(1, 0) # Overwritten
+    else:
+      self.checkSegmentVoxelCount(1, 1) # Not overwritten
+
+    self.segmentEditorNode.SetOverwriteMode(oldOverwriteMode)
