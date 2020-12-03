@@ -42,3 +42,42 @@ In most places, unix-type separators can be used instead of backslash. This is c
     somePath = "F:/someFolder/myfile.nrrd"
 
 See more information in Python documentation: https://docs.python.org/3/tutorial/introduction.html?#strings
+
+### How to include Python modules in an extension
+
+Sometimes, it is convenient to add Python modules to the Slicer scripted loadable modules.
+For example, the files associated with a Slicer module could look like this:
+
+    .
+    ├── CMakeLists.txt
+    ├── MySlicerModuleLib
+    │   ├── __init__.py
+    │   ├── cool_maths.py
+    │   └── utils.py
+    └── MySlicerModule.py
+
+So that the following code can run within `MySlicerModule.py`:
+
+```python
+from MySlicerModuleLib import utils, cool_maths
+```
+
+By default, only the Slicer module (`MySlicerModule.py`) will be downloaded when installing the extension using the [Extensions Manager](https://www.slicer.org/wiki/Documentation/4.10/SlicerApplication/ExtensionsManager) (see [a related issue on GitHub](https://github.com/Slicer/ExtensionsIndex/issues/1749)).
+To make sure all the necessary files are downloaded, the `CMakeLists.txt` file associated with the Slicer module needs to be modified.
+Initially, the second section of `CMakeLists.txt` will look like this:
+
+    set(MODULE_PYTHON_SCRIPTS
+      ${MODULE_NAME}.py
+      )
+
+All the necessary files need to be added to the list.
+In our example:
+
+    set(MODULE_PYTHON_SCRIPTS
+      ${MODULE_NAME}.py
+      ${MODULE_NAME}Lib/__init__
+      ${MODULE_NAME}Lib/utils
+      ${MODULE_NAME}Lib/cool_maths
+      )
+
+No that the `.py` extension is not necessary.
