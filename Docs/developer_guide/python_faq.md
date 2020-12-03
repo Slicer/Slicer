@@ -80,4 +80,4 @@ In our example:
       ${MODULE_NAME}Lib/cool_maths
       )
 
-No that the `.py` extension is not necessary.
+Note that the `.py` extension is not necessary.
