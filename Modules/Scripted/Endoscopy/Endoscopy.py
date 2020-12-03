@@ -81,8 +81,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
     cameraNodeSelector.connect('currentNodeChanged(bool)', self.enableOrDisableCreateButton)
     cameraNodeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.setCameraNode)
     pathFormLayout.addRow("Camera:", cameraNodeSelector)
-    self.parent.connect('mrmlSceneChanged(vtkMRMLScene*)',
-                        cameraNodeSelector, 'setMRMLScene(vtkMRMLScene*)')
 
     # Input fiducials node selector
     inputFiducialsNodeSelector = slicer.qMRMLNodeComboBox()
@@ -95,8 +93,18 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
     inputFiducialsNodeSelector.removeEnabled = False
     inputFiducialsNodeSelector.connect('currentNodeChanged(bool)', self.enableOrDisableCreateButton)
     pathFormLayout.addRow("Input Fiducials:", inputFiducialsNodeSelector)
-    self.parent.connect('mrmlSceneChanged(vtkMRMLScene*)',
-                        inputFiducialsNodeSelector, 'setMRMLScene(vtkMRMLScene*)')
+
+    # Output path node selector
+    outputPathNodeSelector = slicer.qMRMLNodeComboBox()
+    outputPathNodeSelector.objectName = 'outputPathNodeSelector'
+    outputPathNodeSelector.toolTip = "Select a fiducial list to define control points for the path."
+    outputPathNodeSelector.nodeTypes = ['vtkMRMLModelNode']
+    outputPathNodeSelector.noneEnabled = False
+    outputPathNodeSelector.addEnabled = True
+    outputPathNodeSelector.removeEnabled = True
+    outputPathNodeSelector.renameEnabled = True
+    outputPathNodeSelector.connect('currentNodeChanged(bool)', self.enableOrDisableCreateButton)
+    pathFormLayout.addRow("Output Path:", outputPathNodeSelector)
 
     # CreatePath button
     createPathButton = qt.QPushButton("Create path")
@@ -160,6 +168,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
     # Set local var as instance attribute
     self.cameraNodeSelector = cameraNodeSelector
     self.inputFiducialsNodeSelector = inputFiducialsNodeSelector
+    self.outputPathNodeSelector = outputPathNodeSelector
     self.createPathButton = createPathButton
     self.flythroughCollapsibleButton = flythroughCollapsibleButton
     self.frameSlider = frameSlider
@@ -168,6 +177,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
     cameraNodeSelector.setMRMLScene(slicer.mrmlScene)
     inputFiducialsNodeSelector.setMRMLScene(slicer.mrmlScene)
+    outputPathNodeSelector.setMRMLScene(slicer.mrmlScene)
 
 
   def setCameraNode(self, newCameraNode):
@@ -210,20 +220,23 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
   def enableOrDisableCreateButton(self):
     """Connected to both the fiducial and camera node selector. It allows to
     enable or disable the 'create path' button."""
-    self.createPathButton.enabled = self.cameraNodeSelector.currentNode() is not None and self.inputFiducialsNodeSelector.currentNode() is not None
+    self.createPathButton.enabled = (self.cameraNodeSelector.currentNode() is not None
+      and self.inputFiducialsNodeSelector.currentNode() is not None
+      and self.outputPathNodeSelector.currentNode() is not None)
 
   def onCreatePathButtonClicked(self):
     """Connected to 'create path' button. It allows to:
       - compute the path
       - create the associated model"""
 
-    fiducialsNode = self.inputFiducialsNodeSelector.currentNode();
+    fiducialsNode = self.inputFiducialsNodeSelector.currentNode()
+    outputPathNode = self.outputPathNodeSelector.currentNode()
     print("Calculating Path...")
     result = EndoscopyComputePath(fiducialsNode)
     print("-> Computed path contains %d elements" % len(result.path))
 
     print("Create Model...")
-    model = EndoscopyPathModel(result.path, fiducialsNode)
+    model = EndoscopyPathModel(result.path, fiducialsNode, outputPathNode)
     print("-> Model created")
 
     # Update frame slider range
@@ -271,50 +284,57 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
       nextStep = 0
     self.frameSlider.value = nextStep
 
-  def flyTo(self, f):
-    """ Apply the fth step in the path to the global camera"""
-    if self.path:
-      f = int(f)
-      p = self.path[f]
-      wasModified = self.cameraNode.StartModify()
-      self.camera.SetPosition(*p)
-      foc = self.path[f+1]
-      self.camera.SetFocalPoint(*foc)
-      self.camera.OrthogonalizeViewUp()
+  def flyTo(self, pathPointIndex):
+    """ Apply the pathPointIndex-th step in the path to the global camera"""
 
-      toParent = vtk.vtkMatrix4x4()
-      self.transform.GetMatrixTransformToParent(toParent)
-      toParent.SetElement(0 ,3, p[0])
-      toParent.SetElement(1, 3, p[1])
-      toParent.SetElement(2, 3, p[2])
+    if self.path is None:
+      return
 
-      # Set up transform orientation component so that
-      # Z axis is aligned with view direction and
-      # Y vector is aligned with the curve's plane normal.
-      # This can be used for example to show a reformatted slice
-      # using with SlicerIGT extension's VolumeResliceDriver module.
-      import numpy as np
-      zVec = (foc-p)/np.linalg.norm(foc-p)
-      yVec = self.pathPlaneNormal
-      xVec = np.cross(yVec, zVec)
-      toParent.SetElement(0, 0, xVec[0])
-      toParent.SetElement(1, 0, xVec[1])
-      toParent.SetElement(2, 0, xVec[2])
-      toParent.SetElement(0, 1, yVec[0])
-      toParent.SetElement(1, 1, yVec[1])
-      toParent.SetElement(2, 1, yVec[2])
-      toParent.SetElement(0, 2, zVec[0])
-      toParent.SetElement(1, 2, zVec[1])
-      toParent.SetElement(2, 2, zVec[2])
+    pathPointIndex = int(pathPointIndex)
+    cameraPosition = self.path[pathPointIndex]
+    wasModified = self.cameraNode.StartModify()
 
-      self.transform.SetMatrixTransformToParent(toParent)
+    self.camera.SetPosition(cameraPosition)
+    focalPointPosition = self.path[pathPointIndex+1]
+    self.camera.SetFocalPoint(*focalPointPosition)
+    self.camera.OrthogonalizeViewUp()
 
-      self.cameraNode.EndModify(wasModified)
-      self.cameraNode.ResetClippingRange()
+    toParent = vtk.vtkMatrix4x4()
+    self.transform.GetMatrixTransformToParent(toParent)
+    toParent.SetElement(0 ,3, cameraPosition[0])
+    toParent.SetElement(1, 3, cameraPosition[1])
+    toParent.SetElement(2, 3, cameraPosition[2])
+
+    # Set up transform orientation component so that
+    # Z axis is aligned with view direction and
+    # Y vector is aligned with the curve's plane normal.
+    # This can be used for example to show a reformatted slice
+    # using with SlicerIGT extension's VolumeResliceDriver module.
+    import numpy as np
+    zVec = (focalPointPosition-cameraPosition)/np.linalg.norm(focalPointPosition-cameraPosition)
+    yVec = self.pathPlaneNormal
+    xVec = np.cross(yVec, zVec)
+    xVec /= np.linalg.norm(xVec)
+    yVec = np.cross(zVec, xVec)
+    toParent.SetElement(0, 0, xVec[0])
+    toParent.SetElement(1, 0, xVec[1])
+    toParent.SetElement(2, 0, xVec[2])
+    toParent.SetElement(0, 1, yVec[0])
+    toParent.SetElement(1, 1, yVec[1])
+    toParent.SetElement(2, 1, yVec[2])
+    toParent.SetElement(0, 2, zVec[0])
+    toParent.SetElement(1, 2, zVec[1])
+    toParent.SetElement(2, 2, zVec[2])
+
+    self.transform.SetMatrixTransformToParent(toParent)
+
+    self.cameraNode.EndModify(wasModified)
+    self.cameraNode.ResetClippingRange()
 
 class EndoscopyComputePath(object):
   """Compute path given a list of fiducials.
-  A Hermite spline interpolation is used. See http://en.wikipedia.org/wiki/Cubic_Hermite_spline
+  If a point list is received then curve points are generated using Hermite spline interpolation.
+  See http://en.wikipedia.org/wiki/Cubic_Hermite_spline
 
   Example:
     result = EndoscopyComputePath(fiducialListNode)
@@ -327,6 +347,25 @@ class EndoscopyComputePath(object):
     self.dl = dl # desired world space step size (in mm)
     self.dt = dl # current guess of parametric stepsize
     self.fids = fiducialListNode
+
+    # Already a curve, just get the points, sampled at equal distances.
+    if (self.fids.GetClassName() == "vtkMRMLMarkupsCurveNode"
+      or self.fids.GetClassName() == "vtkMRMLMarkupsClosedCurveNode"):
+      # Temporarily increase the number of points per segment, to get a very smooth curve
+      pointsPerSegment = int(self.fids.GetCurveLengthWorld() / self.dl / self.fids.GetNumberOfControlPoints()) + 1
+      originalPointsPerSegment = self.fids.GetNumberOfPointsPerInterpolatingSegment()
+      if originalPointsPerSegment<pointsPerSegment:
+        self.fids.SetNumberOfPointsPerInterpolatingSegment(pointsPerSegment)
+      # Get equidistant points
+      resampledPoints = vtk.vtkPoints()
+      slicer.vtkMRMLMarkupsCurveNode.ResamplePoints(self.fids.GetCurvePointsWorld(), resampledPoints, self.dl, self.fids.GetCurveClosed())
+      # Restore original number of pointsPerSegment
+      if originalPointsPerSegment<pointsPerSegment:
+        self.fids.SetNumberOfPointsPerInterpolatingSegment(originalPointsPerSegment)
+      # Get it as a numpy array as an independent copy
+      import vtk.util.numpy_support as VN
+      self.path = VN.vtk_to_numpy(resampledPoints.GetData())
+      return
 
     # hermite interpolation functions
     self.h00 = lambda t: 2*t**3 - 3*t**2     + 1
@@ -349,8 +388,7 @@ class EndoscopyComputePath(object):
         coords = [0,0,0]
         f.GetFiducialCoordinates(coords)
         self.p[i] = coords
-    elif (self.fids.GetClassName() == "vtkMRMLMarkupsFiducialNode"
-      or self.fids.GetClassName() == "vtkMRMLMarkupsCurveNode"):
+    elif self.fids.GetClassName() == "vtkMRMLMarkupsFiducialNode":
       # slicer4 Markups node
       self.n = self.fids.GetNumberOfControlPoints()
       n = self.n
@@ -457,7 +495,7 @@ class EndoscopyPathModel(object):
        - Add one point per path point.
        - Add a single polyline
   """
-  def __init__(self, path, fiducialListNode):
+  def __init__(self, path, fiducialListNode, outputPathNode=None):
 
     fids = fiducialListNode
     scene = slicer.mrmlScene
@@ -489,45 +527,33 @@ class EndoscopyPathModel(object):
     self.planePosition, self.planeNormal = self.planeFit(pointsArray.T)
 
     # Create model node
-    model = slicer.vtkMRMLModelNode()
-    model.SetScene(scene)
-    model.SetName(scene.GenerateUniqueName("Path-%s" % fids.GetName()))
+    model = outputPathNode
+    if not model:
+      model = scene.AddNewNodeByClass("vtkMRMLModelNode", scene.GenerateUniqueName("Path-%s" % fids.GetName()))
+      model.CreateDefaultDisplayNodes()
+      model.GetDisplayNode().SetColor(1,1,0) # yellow
+
     model.SetAndObservePolyData(polyData)
 
-    # Create display node
-    modelDisplay = slicer.vtkMRMLModelDisplayNode()
-    modelDisplay.SetColor(1,1,0) # yellow
-    modelDisplay.SetScene(scene)
-    scene.AddNode(modelDisplay)
-    model.SetAndObserveDisplayNodeID(modelDisplay.GetID())
-
-    # Add to scene
-    scene.AddNode(model)
-
     # Camera cursor
-    sphere = vtk.vtkSphereSource()
-    sphere.Update()
+    cursor = model.GetNodeReference("CameraCursor")
+    if not cursor:
+      # Create model node
+      cursor = scene.AddNewNodeByClass("vtkMRMLModelNode", scene.GenerateUniqueName("Cursor-%s" % fids.GetName()))
+      model.SetNodeReferenceID("CameraCursor", cursor.GetID())
+      cursor.CreateDefaultDisplayNodes()
+      cursor.GetDisplayNode().SetColor(1,0,0)  # red
+      cursor.GetDisplayNode().BackfaceCullingOn()  # so that the camera can see through the cursor from inside
+      # Add a sphere as cursor
+      sphere = vtk.vtkSphereSource()
+      sphere.Update()
+      cursor.SetPolyDataConnection(sphere.GetOutputPort())
 
-    # Create model node
-    cursor = slicer.vtkMRMLModelNode()
-    cursor.SetScene(scene)
-    cursor.SetName(scene.GenerateUniqueName("Cursor-%s" % fids.GetName()))
-    cursor.SetPolyDataConnection(sphere.GetOutputPort())
-
-    # Create display node
-    cursorModelDisplay = slicer.vtkMRMLModelDisplayNode()
-    cursorModelDisplay.SetColor(1,0,0) # red
-    cursorModelDisplay.SetScene(scene)
-    scene.AddNode(cursorModelDisplay)
-    cursor.SetAndObserveDisplayNodeID(cursorModelDisplay.GetID())
-
-    # Add to scene
-    scene.AddNode(cursor)
-
-    # Create transform node
-    transform = slicer.vtkMRMLLinearTransformNode()
-    transform.SetName(scene.GenerateUniqueName("Transform-%s" % fids.GetName()))
-    scene.AddNode(transform)
+    # Transform node
+    transform = model.GetNodeReference("CameraTransform")
+    if not transform:
+      transform = scene.AddNewNodeByClass("vtkMRMLLinearTransformNode", scene.GenerateUniqueName("Transform-%s" % fids.GetName()))
+      model.SetNodeReferenceID("CameraTransform", transform.GetID())
     cursor.SetAndObserveTransformNodeID(transform.GetID())
 
     self.transform = transform
