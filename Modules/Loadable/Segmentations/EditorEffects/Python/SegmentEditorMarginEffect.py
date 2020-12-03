@@ -148,6 +148,8 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
     modifierLabelmap = self.scriptedEffect.defaultModifierLabelmap()
     selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()
 
+    marginSizeMM = self.scriptedEffect.doubleParameter("MarginSizeMm")
+
     # We need to know exactly the value of the segment voxels, apply threshold to make force the selected label value
     labelValue = 1
     backgroundValue = 0
@@ -157,21 +159,32 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
     thresh.SetInValue(backgroundValue)
     thresh.SetOutValue(labelValue)
     thresh.SetOutputScalarType(selectedSegmentLabelmap.GetScalarType())
-
-    marginSizeMM = self.scriptedEffect.doubleParameter("MarginSizeMm")
     if (marginSizeMM < 0):
-      # The border voxel starts at zero, if we need to account for this single voxel thickness in the margin size.
-      # Currently this is done by reducing the magnitude of the margin size by 0.9 * the smallest spacing.
-      voxelDiameter = min(selectedSegmentLabelmap.GetSpacing())
-      marginSizeMM += 0.9*voxelDiameter
+      # The distance filter used in the margin filter starts at zero at the border voxels,
+      # so if we need to shrink the margin, it is more accurate to invert the labelmap and
+      # use positive distance when calculating the margin
+      thresh.SetInValue(labelValue)
+      thresh.SetOutValue(backgroundValue)
 
     import vtkITK
     margin = vtkITK.vtkITKImageMargin()
     margin.SetInputConnection(thresh.GetOutputPort())
     margin.CalculateMarginInMMOn()
-    margin.SetOuterMarginMM(marginSizeMM)
+    margin.SetOuterMarginMM(abs(marginSizeMM))
     margin.Update()
-    modifierLabelmap.ShallowCopy(margin.GetOutput())
+
+    if marginSizeMM >= 0:
+      modifierLabelmap.ShallowCopy(margin.GetOutput())
+    else:
+      # If we are shrinking then the result needs to be inverted.
+      thresh = vtk.vtkImageThreshold()
+      thresh.SetInputData(margin.GetOutput())
+      thresh.ThresholdByLower(0)
+      thresh.SetInValue(labelValue)
+      thresh.SetOutValue(backgroundValue)
+      thresh.SetOutputScalarType(selectedSegmentLabelmap.GetScalarType())
+      thresh.Update()
+      modifierLabelmap.ShallowCopy(thresh.GetOutput())
 
     # Apply changes
     self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)

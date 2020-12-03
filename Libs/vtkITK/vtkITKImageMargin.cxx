@@ -193,6 +193,8 @@ void vtkITKImageMargin::SimpleExecute(vtkImageData *input, vtkImageData *output)
       vtkTemplateMacroCase(VTK_CHAR, char, CALL);                               \
       vtkTemplateMacroCase(VTK_SIGNED_CHAR, signed char, CALL);                 \
       vtkTemplateMacroCase(VTK_UNSIGNED_CHAR, unsigned char, CALL);             \
+      vtkTemplateMacroCase(VTK_FLOAT, float, CALL);                             \
+      vtkTemplateMacroCase(VTK_DOUBLE, double, CALL);                           \
       default:
         {
         vtkErrorMacro(<< "Incompatible data type for this version of ITK.");
