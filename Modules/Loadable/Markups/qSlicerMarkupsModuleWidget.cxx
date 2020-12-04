@@ -2782,7 +2782,7 @@ void qSlicerMarkupsModuleWidget::updateMeasurementsDescriptionLabel()
     {
     vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
       d->MarkupsNode->Measurements->GetItemAsObject(i) );
-    if (!currentMeasurement || !currentMeasurement->GetEnabled())
+    if (!currentMeasurement || !currentMeasurement->GetEnabled() || !currentMeasurement->GetValueDefined())
       {
       continue;
       }
@@ -2837,6 +2837,7 @@ void qSlicerMarkupsModuleWidget::populateMeasurementSettingsTable()
     enabledCheckbox->setProperty(NAME_PROPERTY, currentMeasurement->GetName());
     QObject::connect(enabledCheckbox, SIGNAL(toggled(bool)), this, SLOT(onMeasurementEnabledCheckboxToggled(bool)));
     d->measurementSettingsTableWidget->setCellWidget(i, 1, enabledCheckbox);
+    d->measurementSettingsTableWidget->setRowHeight(i, enabledCheckbox->sizeHint().height());
     }
 }
 

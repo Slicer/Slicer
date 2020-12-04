@@ -33,7 +33,11 @@ std::string vtkMRMLMeasurement::GetValueWithUnitsAsPrintableString()
 {
   if (!this->PrintFormat)
     {
-    return  "";
+    return "";
+    }
+  if (!this->ValueDefined)
+    {
+    return "(undefined)";
     }
   char buf[80] = { 0 };
   snprintf(buf, sizeof(buf) - 1, this->PrintFormat, this->Value, this->Units);
@@ -46,6 +50,7 @@ void vtkMRMLMeasurement::Initialize()
   this->SetEnabled(true);
   this->SetName(nullptr);
   this->SetValue(0.0);
+  this->ValueDefined = false;
   this->SetUnits(nullptr);
   this->SetPrintFormat("%5.3f %s");
   this->SetDescription(nullptr);
@@ -64,6 +69,7 @@ void vtkMRMLMeasurement::Initialize()
 void vtkMRMLMeasurement::ClearValue()
 {
   this->SetValue(0.0);
+  this->ValueDefined = false;
 
   // Note: this->SetControlPointValues(nullptr); is not called here, because if we clear
   // this then every time certain things in the markups node changes that calls
@@ -80,6 +86,7 @@ void vtkMRMLMeasurement::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Name: " << (this->Name ? this->Name : "(none)") << "\n";
   os << indent << "PrintableValue: " << this->GetValueWithUnitsAsPrintableString();
   os << indent << "Value: " << this->Value << "\n";
+  os << indent << "ValueDefined: " << (this->ValueDefined ? "true" : "false") << "\n";
   os << indent << "Units: " << (this->Units ? this->Units : "(none)") << "\n";
   os << indent << "PrintFormat: " << (this->PrintFormat ? this->PrintFormat : "(none)") << "\n";
   os << indent << "Description: " << (this->Description ? this->Description : "(none)") << "\n";
@@ -111,6 +118,7 @@ void vtkMRMLMeasurement::Copy(vtkMRMLMeasurement* src)
   this->SetEnabled(src->Enabled);
   this->SetName(src->GetName());
   this->SetValue(src->GetValue());
+  this->ValueDefined = src->GetValueDefined();
   this->SetUnits(src->GetUnits());
   this->SetPrintFormat(src->GetPrintFormat());
   this->SetDescription(src->GetDescription());
@@ -348,4 +356,16 @@ const char* vtkMRMLMeasurement::GetLastComputationResultAsPrintableString()
       // invalid id
       return "";
     }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMeasurement::SetValue(double value)
+{
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Value to " << value);
+  if (this->Value != value)
+  {
+    this->Value = value;
+    this->ValueDefined = true;
+    this->Modified();
+  }
 }

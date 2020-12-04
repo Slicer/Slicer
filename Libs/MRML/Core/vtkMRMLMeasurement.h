@@ -72,7 +72,10 @@ public:
 
   /// Measured quantity value
   vtkGetMacro(Value, double);
-  vtkSetMacro(Value, double);
+  void SetValue(double value);
+
+  /// Value defined flag (whether a computed value has been set or not)
+  vtkGetMacro(ValueDefined, bool);
 
   /// Measurement unit
   vtkGetStringMacro(Units);
@@ -142,6 +145,7 @@ protected:
   bool Enabled{true};
   char* Name{nullptr};
   double Value{0.0};
+  bool ValueDefined{false};
   char* Units{nullptr};
   char* Description{nullptr};
   char* PrintFormat{nullptr}; // for value (double), unit (string)

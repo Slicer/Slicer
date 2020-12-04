@@ -23,6 +23,7 @@ vtkStandardNewMacro(vtkMRMLMeasurementConstant);
 //----------------------------------------------------------------------------
 vtkMRMLMeasurementConstant::vtkMRMLMeasurementConstant()
 {
+  this->LastComputationResult = vtkMRMLMeasurement::OK;
 }
 
 //----------------------------------------------------------------------------
