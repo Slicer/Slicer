@@ -1163,7 +1163,7 @@ void vtkMRMLMarkupsCurveNode::UpdateMeasurementsInternal()
 {
   // Execute curve measurements calculator (curvature, interpolate control point measurements
   // and store the results in the curve poly data points as scalars for visualization)
-  if (this->CurveMeasurementsCalculator)
+  if (this->CurveMeasurementsCalculator && this->GetNumberOfControlPoints() > 1)
     {
     this->CurveMeasurementsCalculator->Update();
     }
@@ -1482,6 +1482,10 @@ void vtkMRMLMarkupsCurveNode::SetInterpolateControlPointMeasurement(bool on)
 void vtkMRMLMarkupsCurveNode::UpdateAssignedAttribute()
 {
   vtkMRMLMarkupsDisplayNode* displayNode = this->GetMarkupsDisplayNode();
+  if (!displayNode)
+    {
+    return;
+    }
 
   this->ScalarDisplayAssignAttribute->Assign(
     displayNode->GetActiveScalarName(),

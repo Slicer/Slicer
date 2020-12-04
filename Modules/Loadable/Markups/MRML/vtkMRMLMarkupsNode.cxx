@@ -821,7 +821,13 @@ void vtkMRMLMarkupsNode::SetNthControlPointPosition(const int pointIndex,
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionUndefinedEvent, static_cast<void*>(&n));
     }
   this->StorableModifiedTime.Modified();
+
   this->UpdateMeasurements();
+
+  if (this->GetDisplayNode())
+    {
+    this->GetDisplayNode()->UpdateScalarRange();
+    }
 }
 
 //-----------------------------------------------------------
