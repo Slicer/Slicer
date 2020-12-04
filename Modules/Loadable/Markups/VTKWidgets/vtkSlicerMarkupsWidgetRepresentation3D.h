@@ -146,6 +146,7 @@ protected:
   /// - RelativeCoincidentTopologyPolygonOffsetParameters
   /// - RelativeCoincidentTopologyPointOffsetParameter
   void UpdateRelativeCoincidentTopologyOffsets(vtkMapper* mapper, vtkMapper* occludedMapper);
+  using vtkMRMLAbstractWidgetRepresentation::UpdateRelativeCoincidentTopologyOffsets;
 
   vtkSmartPointer<vtkCellPicker> AccuratePicker;
 
