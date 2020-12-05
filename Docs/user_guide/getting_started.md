@@ -85,7 +85,9 @@ Open 3D Slicer and using the Welcome panel either load your own data or download
 
 #### View data
 
-You can customize views by clicking on the push pin in the top left corner of viewer. In the slice viewers, the horizontal bar can be used to scroll through slices or select a slice.
+Data module's Subject hierarchy tab shows all data sets in the scene. Click the "eye" icon to show/hide an item in all views.
+
+You can customize views (show orientation marker, ruler, change orientation, transparency) by clicking on the push pin in the top left corner of viewer. In the slice viewers, the horizontal bar can be used to scroll through slices or select a slice.
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/getting_started_view_controllers.png)
 
@@ -96,7 +98,7 @@ You can customize views by clicking on the push pin in the top left corner of vi
 - [Welcome](modules/welcome): The default module when 3D Slicer is started. The panel features options for loading data and customizing 3D Slicer. Below those options are drop-down boxes that contain essential information for using 3D Slicer.
 - [Data](modules/data): acts as a central data-organizing hub. Lists all data currently in the scene and allows basic operations such as search, rename, delete and move.
 - [DICOM](modules/dicom): Import and export DICOM objects, such as images, segmentations, strucutre sets, radiation therapy objects, etc.
-- [Volumes](modules/volumes):: Used for changing the appearance of various volume types.
+- [Volumes](modules/volumes): Used for changing the appearance of various volume types.
 - [Volume Rendering](modules/volumerendering): Provides interactive visualization of 3D image data.
 - [Segmentations](modules/segmentations): Edit display properties and import/export segmentations.
 - [Segment Editor](modules/segmenteditor): Segment 3D volumes using various manual, semi-automatic, and automatic tools.

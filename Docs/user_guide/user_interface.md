@@ -42,6 +42,18 @@ This panel may display application status, such as current operation in progress
 
 ## Interacting with views
 
+### Selecting displayed data
+
+Data module's Subject hierarchy tab shows all data sets in the scene. Click the "eye" icon to show/hide an item in all views. Drag-and-drop an item into a view to show it in that view.
+
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/drag_to_view.gif)
+
+Multiple items can be selected in the subject hierarchy tree using Ctrl-Left-Click or Shift-Left-Click and dragged at once into selected view. If two volumes are dragged into a view at the same time then they will be both shown, blended together.
+
+If a view is displayed only in selected views, you can right-click on the item and select "Show in all views" to quickly show in all views.
+
+If view link is enabled for a slice view then dragging a volume to any of the views will show the volume in all the views in that group.
+
 ### View Cross-Reference
 
 Holding down the `Shift` key while moving the mouse in any slice or 3D view will cause the Crosshair to move to the selected position in all views. By default, when the Crosshair is moved in any views, all slice views are scrolled to the same RAS position indexed by the mouse. This feature is useful when inspecting.
