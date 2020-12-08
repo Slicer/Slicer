@@ -31,33 +31,31 @@ Binary labelmap representation is probably the most commonly used representation
 
 There are many modules in 3D Slicer for manipulating segmentations.
 
-### [Segmentations module](modules/segmentations)
+### Segmentations module
 
-Features:
-- Create/delete segmentation nodes
-- Create/delete/update representations
-- Edit display properties
-- Copy/move segments between segmentation nodes
-- Import/export of segments to different MRML nodes
-- File export of closed surface representation
+Adjust display properties of segmentations, manage segment representations and layers, copy/move segments between segmentation nodes, convert between segmentation and models and labelmap volumes, export to files.
+
+See more information in [Segmentations module documentation](modules/segmentations).
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/image_segmentation_segmentations_module.png)
 
-### [Segment editor module](modules/segmenteditor)
+### Segment editor module
 
-- Edit labelmap representation
-- Shortcuts to common operations (show/hide in 3D, edit smoothing options, file export of closed surface representation)
+Create and edit segmentations from volumes using manual (paint, draw, ...), semi-automatic (thresholding, region growing, interpolation, ...) and automatic (NVidia AIAA,...) tools. A number of editor effects are built into the Segment Editor module and many more are provided by extensions (in Segmentations category in the Extensions Manager).
+
+To get started, check out [segmentation tutorials](https://www.slicer.org/wiki/Documentation/Nightly/Training#Segmentation) and [Segment Editor module documentation](modules/segmenteditor).
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/image_segmentation_segment_editor_module.png)
 
-### [Segment statistics module](modules/segmentstatistics)
+### Segment statistics module
 
-Computes basic properties for each segment, such as volume, surface, mininum/maximum/mean intensity, shape properties.
+Computes intensity and geometric properties for each segment, such as volume, surface, mininum/maximum/mean intensity, oriented boudning box, sphericity, etc. See more information in [Segment statistics module documentation](modules/segmentstatistics).
 
-### [Segment comparison module](https://www.slicer.org/wiki/Documentation/Nightly/Modules/SegmentComparison)
+### Segment comparison module
 
-Compute similarity between two segments based on metrics such as Hausdorff distance and Dice coefficient. Provided by SlicerRT extension.
+Compute similarity between two segments based on metrics such as Hausdorff distance and Dice coefficient. Provided by SlicerRT extension. See more information in [Segment comparison module documentation](https://www.slicer.org/wiki/Documentation/Nightly/Modules/SegmentComparison).
 
-### [Segment registration module](https://github.com/SlicerRt/SegmentRegistration)
+### Segment registration module
 
 Compute rigid or deformable transform that aligns two selected segments. Provided by SegmentRegistration extension.
+See more information in [Segment registration module documentation](https://github.com/SlicerRt/SegmentRegistration).

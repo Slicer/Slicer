@@ -1,8 +1,10 @@
 # Segment editor
 
-This is a module for segmentation of volumes. Segmentations (also known as contouring) delineate structures of interest. Some of the tools mimic a painting interface like photoshop or gimp, but work on 3D arrays of voxels rather than on 2D pixels. This module is a new, improved version of the legacy Editor module. The Segment Editor contains many of the same functionalities and many more. New features include: overlapping segments, display in both 2D and 3D views, per-segment visualization options, editing in 3D views, create segmentation by interpolating or extrapolating segmentation on a few slices, editing on slices in any orientation.
+This is a module is for specifying segments (structures of interest) in 2D/3D/4D images. Some of the tools mimic a painting interface like photoshop or gimp, but work on 3D arrays of voxels rather than on 2D pixels. The module offers editing of overlapping segments, display in both 2D and 3D views, fine-grained visualization options, editing in 3D views, create segmentation by interpolating or extrapolating segmentation on a few slices, editing on slices in any orientation.
 
-It is important to remember that Segment Editor does not edit labelmap volumes, as Editor does. Segment editor creates segmentations, which can do many things that labelmap volumes cannot (overlapping contours, show/hide segments individually, show in 3D view, etc). Segmentations can be converted to labelmap volumes and models using the Import/Export section of [Segmentations](Segmentations) module.
+Segment Editor does not edit labelmap volumes or models, but segmentations can be easily converted to/from labelmap volumes and models using the Import/Export section of [Segmentations](Segmentations) module.
+
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/image_segmentation_segment_editor_module.png)
 
 ## Keyboard shortcuts
 
@@ -24,6 +26,10 @@ The following keyboard shortcuts are active when you are in the Editor module.  
 | `Shift` + `1`, `2`, … `0` | select effect (11-20)                  |
 | `i`                       | toggle masking by intensity range      |
 
+## Tutorials
+
+- [Segmentation tutorials](https://www.slicer.org/wiki/Documentation/Nightly/Training#Segmentation)
+
 ## Panels and their use
 
 - Segmentation: Choose the segmentation to edit
@@ -44,10 +50,6 @@ The following keyboard shortcuts are active when you are in the Editor module.  
     - Overwrite all: Segment will not overlap (default).
     - Overwrite visible: Visible segments will not overlap with each other. Hidden segments will not be overwritten by changes done to visible segments.
     - Allow overlap: Changing one segment will not change any other.
-
-## Tutorials
-
-- [Segmentation tutorials](https://www.slicer.org/wiki/Documentation/Nightly/Training#Segmentation)
 
 ## Effects
 
