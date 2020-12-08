@@ -301,12 +301,49 @@ bool qSlicerSubjectHierarchyVolumeRenderingPlugin::showVolumeRendering(bool show
     }
   else
     {
+    // there is no volume rendering display node
+    if (!show)
+      {
+      // not visible and should not be visible, so we are done
+      return true;
+      }
     displayNode = d->VolumeRenderingLogic->CreateDefaultVolumeRenderingNodes(volumeNode);
     }
   if (!displayNode)
     {
     qCritical() << Q_FUNC_INFO << ": Failed to create volume rendering display node for scalar volume node " << volumeNode->GetName();
     return false;
+    }
+
+  if (viewNode)
+    {
+    // Show/hide in specific view
+    MRMLNodeModifyBlocker blocker(displayNode);
+    if (show)
+      {
+      // show
+      if (!wasVisible)
+        {
+        displayNode->SetVisibility(true);
+        // This was hidden in all views, show it only in the currently selected view
+        displayNode->RemoveAllViewNodeIDs();
+        }
+      displayNode->AddViewNodeID(viewNode->GetID());
+      }
+    else
+      {
+      // This hides the volume rendering in all views, which is a bit more than asked for,
+      // but since drag-and-drop to view only requires selective showing (and not selective hiding),
+      // this should be good enough. The behavior can be refined later if needed.
+      displayNode->SetVisibility(false);
+      }
+    }
+  else
+    {
+    // Show in all views
+    MRMLNodeModifyBlocker blocker(displayNode);
+    displayNode->RemoveAllViewNodeIDs();
+    displayNode->SetVisibility(show);
     }
 
   if (show)
@@ -317,26 +354,6 @@ bool qSlicerSubjectHierarchyVolumeRenderingPlugin::showVolumeRendering(bool show
       {
       this->resetFieldOfView(displayNode, viewNode);
       }
-    }
-
-  if (viewNode)
-    {
-    // Show in specific view
-    MRMLNodeModifyBlocker blocker(displayNode);
-    if (!wasVisible)
-      {
-      displayNode->SetVisibility(true);
-      // This was hidden in all views, show it only in the currently selected view
-      displayNode->RemoveAllViewNodeIDs();
-      }
-    displayNode->AddViewNodeID(viewNode->GetID());
-    }
-  else
-    {
-    // Show in all views
-    MRMLNodeModifyBlocker blocker(displayNode);
-    displayNode->RemoveAllViewNodeIDs();
-    displayNode->SetVisibility(true);
     }
 
   return true;
