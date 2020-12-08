@@ -111,6 +111,10 @@ public:
 
   mutable QList<vtkIdType> DraggedSubjectHierarchyItems;
   bool DelayedItemChangedInvoked;
+  /// Indicates that the last drag-and-drop operation was finished with dropping inside the widget.
+  /// It is necessary to distinguish between internal and external drops, because internal drop
+  /// results in reparenting and there are additional steps necessary to handle that (e.g., restore item selection).
+  bool IsDroppedInside;
 
   // Keep a list of QStandardItem instead of subject hierarchy item because they are likely to be
   // unreachable when browsing the model

@@ -68,6 +68,7 @@ qMRMLSubjectHierarchyModelPrivate::qMRMLSubjectHierarchyModelPrivate(qMRMLSubjec
   , SubjectHierarchyNode(nullptr)
   , MRMLScene(nullptr)
   , TerminologiesModuleLogic(nullptr)
+  , IsDroppedInside(false)
 {
   this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
   this->PendingItemModified = -1; // -1 means not updating
@@ -648,6 +649,7 @@ QMimeData* qMRMLSubjectHierarchyModel::mimeData(const QModelIndexList& indexes)c
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   d->DraggedSubjectHierarchyItems.clear();
+  const_cast<qMRMLSubjectHierarchyModelPrivate*>(d)->IsDroppedInside = false;
   if (!indexes.size())
     {
     return nullptr;
@@ -683,9 +685,11 @@ QMimeData* qMRMLSubjectHierarchyModel::mimeData(const QModelIndexList& indexes)c
 bool qMRMLSubjectHierarchyModel::dropMimeData( const QMimeData *data, Qt::DropAction action,
                                             int row, int column, const QModelIndex &parent )
 {
+  Q_D(qMRMLSubjectHierarchyModel);
   Q_UNUSED(column);
   // We want to do drag&drop only into the first item of a line (and not on a
   // random column.
+  d->IsDroppedInside = true;
   bool res = this->Superclass::dropMimeData(
     data, action, row, 0, parent.sibling(parent.row(), 0));
   return res;
@@ -1615,7 +1619,7 @@ void qMRMLSubjectHierarchyModel::onItemChanged(QStandardItem* item)
     }
   // When a drag&drop occurs, the order of the items called with onItemChanged is
   // random, it could be the item in column 1 then the item in column 0
-  if (d->DraggedSubjectHierarchyItems.count())
+  if (!d->DraggedSubjectHierarchyItems.empty())
     {
     // Item changed will be triggered multiple times in course of the drag&drop event. Setting this flag
     // makes sure the final onItemChanged with the collected DraggedSubjectHierarchyItems is called only once.
@@ -1642,12 +1646,16 @@ void qMRMLSubjectHierarchyModel::delayedItemChanged()
       draggedShItemID, this->itemFromSubjectHierarchyItem(draggedShItemID) );
     }
 
-  // Re-select dropped items
-  emit requestSelectItems(d->DraggedSubjectHierarchyItems);
-
+  // Re-select dropped items.
+  // Only needed if drag-and-dropping inside the widget (reparenting removes selection).
+  if (d->IsDroppedInside)
+    {
+    emit requestSelectItems(d->DraggedSubjectHierarchyItems);
+    }
   // Reset state
   d->DraggedSubjectHierarchyItems.clear();
   d->DelayedItemChangedInvoked = false;
+  d->IsDroppedInside = false;
 }
 
 //------------------------------------------------------------------------------
