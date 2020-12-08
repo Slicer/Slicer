@@ -392,11 +392,18 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
       segmentThreshold->SetOutputScalarTypeToUnsignedChar();
       segmentThreshold->Update();
 
-      vtkNew<vtkOrientedImageData> segmentOutsideMask;
-      segmentOutsideMask->ShallowCopy(segmentThreshold->GetOutput());
-      segmentOutsideMask->CopyDirections(segmentLayerLabelmap);
-      vtkOrientedImageDataResample::ModifyImage(segmentOutsideMask, maskImage, vtkOrientedImageDataResample::OPERATION_MINIMUM);
-      vtkOrientedImageDataResample::ModifyImage(modifierLabelmap, segmentOutsideMask, vtkOrientedImageDataResample::OPERATION_MAXIMUM);
+      int segmentThresholdExtent[6] = { 0, -1, 0, -1, 0, -1 };
+      segmentThreshold->GetOutput()->GetExtent(segmentThresholdExtent);
+      if (segmentThresholdExtent[0] <= segmentThresholdExtent[1]
+        && segmentThresholdExtent[2] <= segmentThresholdExtent[3]
+        && segmentThresholdExtent[4] <= segmentThresholdExtent[5])
+        {
+        vtkNew<vtkOrientedImageData> segmentOutsideMask;
+        segmentOutsideMask->ShallowCopy(segmentThreshold->GetOutput());
+        segmentOutsideMask->CopyDirections(segmentLayerLabelmap);
+        vtkOrientedImageDataResample::ModifyImage(segmentOutsideMask, maskImage, vtkOrientedImageDataResample::OPERATION_MINIMUM);
+        vtkOrientedImageDataResample::ModifyImage(modifierLabelmap, segmentOutsideMask, vtkOrientedImageDataResample::OPERATION_MAXIMUM);
+        }
       }
     }
 
