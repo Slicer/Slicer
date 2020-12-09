@@ -300,7 +300,7 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
     endif()
 
     #------------------------------------------------------------------------------
-    set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
+    set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}-i)
 
     ExternalProject_Add(${proj}
       ${${proj}_EP_ARGS}

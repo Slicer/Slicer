@@ -788,7 +788,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         self.exeDir = slicer.app.slicerHome
         if slicer.app.intDir:
           self.exeDir = self.exeDir + '/' + slicer.app.intDir
-        self.exeDir = self.exeDir + '/../CTK-build/DCMTK-build'
+        self.exeDir = self.exeDir + '/../CTK-b/DCMTK-build'
 
         # TODO: deal with Debug/RelWithDebInfo on windows
 

@@ -18,7 +18,7 @@ else ()
 endif ()
 
 #------------------------------------------------------------------------------
-set(TBB_INSTALL_DIR "${CMAKE_BINARY_DIR}/${proj}-install")
+set(TBB_INSTALL_DIR "${CMAKE_BINARY_DIR}/${proj}-i")
 ExternalProject_Message(${proj} "TBB_INSTALL_DIR:${TBB_INSTALL_DIR}")
 
 ExternalProject_Add(${proj}

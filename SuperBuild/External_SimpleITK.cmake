@@ -21,8 +21,8 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   include(ExternalProjectForNonCMakeProject)
 
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
-  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
+  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-b)
+  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-i)
 
   # Variables used to update PATH, LD_LIBRARY_PATH or DYLD_LIBRARY_PATH in env. script below
   if(WIN32)

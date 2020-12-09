@@ -190,7 +190,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
     )
 
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
-  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-b)
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}

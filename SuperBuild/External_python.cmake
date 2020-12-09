@@ -119,7 +119,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     )
 
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
-  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-b)
   set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
 
   # If it applies, prepend "CMAKE_ARGS"

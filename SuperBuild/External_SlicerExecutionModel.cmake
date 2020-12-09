@@ -90,7 +90,7 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     )
 
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
-  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-b)
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
