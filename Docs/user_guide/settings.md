@@ -1,12 +1,10 @@
 # Application settings
 
-## Overview
+## Editing application settings
 
 The application settings dialog allows users to customize application behavior.
 
 After starting Slicer, it can be accessed clicking in menu: `Edit` / `Application Settings`.
-
-## Panels
 
 ### General
 
@@ -118,3 +116,25 @@ This file is named like `Slicer-<REVISION>.ini` and it stores settings applying 
 To display the exact location of this settings file, enter the following in the Python interactor:
 
     slicer.app.slicerRevisionUserSettingsFilePath
+
+### Application startup file
+
+Each time Slicer starts, it will look up for a startup script file named <code>.slicerrc.py</code> in your home (user profile) folder. Content of this file is executed automatically at each startup of Slicer.
+
+You can find the path to the startup script in Slicer by opening in the menu: Edit / Application Settings. ''Application startup script'' path is shown in the ''General'' section (or running `getSlicerRCFileName()` command in Slicer Python console).
+
+The default name and location of the file can be overridden by setting `SLICERRC` environment variable before launching Slicer.
+
+### Runtime environment variables
+
+The following environment variables can be set before the application is started to fine-tune its behavior:
+
+- `PYTHONNOUSERSITE`: if it is set to `1` then import of user site packages is disabled.
+- `QT_ENABLE_HIGHDPI_SCALING`: see [Qt documentation](https://doc.qt.io/qt-5/highdpi.html)
+- `QT_SCALE_FACTOR_ROUNDING_POLICY`: see [Qt documentation](https://doc.qt.io/qt-5/highdpi.html)
+- `QTWEBENGINE_REMOTE_DEBUGGING`: port number for Qt webengine remote debugger. Default value is `1337`.
+- `SLICER_OPENGL_PROFILE`: Requested OpenGL profile. Valid values are `no` (no profile), `core` (core profile),
+  and `compatibility` (compatiblity profile). Default value is `compatibility` on Windows systems.
+- `SLICER_BACKGROUND_THREAD_PRIORITY`: Set priority for background processing tasks. On Linux, it may affect the
+  entire process priority. An integer value is expected, default = `20` on Linux and macOS, and `-1` on Windows.
+- `SLICERRC`: Custom application startup file path. Contains a full path to a Python script. By default it is `~/.slicerrc.py` (where ~ is the home or user profile folder).
