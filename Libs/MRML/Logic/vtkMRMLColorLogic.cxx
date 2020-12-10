@@ -21,6 +21,7 @@
 #include "vtkMRMLdGEMRICProceduralColorNode.h"
 #include "vtkMRMLPETProceduralColorNode.h"
 #include "vtkMRMLProceduralColorStorageNode.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
 
 // VTK sys includes
@@ -314,6 +315,17 @@ const char *vtkMRMLColorLogic::GetFileColorNodeID(const char * fileName)
 //----------------------------------------------------------------------------
 const char *vtkMRMLColorLogic::GetDefaultVolumeColorNodeID()
 {
+  // If color node is specified in default vtkMRMLScalarVolumeDisplayNode then use that.
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (scene)
+    {
+    vtkMRMLScalarVolumeDisplayNode* defaultDisplayNode =
+      vtkMRMLScalarVolumeDisplayNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLScalarVolumeDisplayNode"));
+    if (defaultDisplayNode && defaultDisplayNode->GetColorNodeID())
+      {
+      return defaultDisplayNode->GetColorNodeID();
+      }
+    }
   return vtkMRMLColorLogic::GetColorTableNodeID(vtkMRMLColorTableNode::Grey);
 }
 

@@ -166,7 +166,12 @@ void vtkMRMLScalarVolumeNode::CreateDefaultDisplayNodes()
     }
   vtkMRMLScalarVolumeDisplayNode* dispNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
     this->GetScene()->AddNewNodeByClass("vtkMRMLScalarVolumeDisplayNode") );
-  dispNode->SetDefaultColorMap();
+  // If color node is already specified (via default display node mechanism) then use that,
+  // otherwise set the default color specified in this class.
+  if (!dispNode->GetColorNodeID())
+    {
+    dispNode->SetDefaultColorMap();
+    }
   this->SetAndObserveDisplayNodeID(dispNode->GetID());
 }
 
