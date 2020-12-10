@@ -110,7 +110,7 @@ class DICOMExportScalarVolume(object):
     cliparameters['patientName'] = self.tags['Patient Name']
     cliparameters['patientID'] = self.tags['Patient ID']
     cliparameters['patientBirthDate'] = self.tags['Patient Birth Date']
-    cliparameters['patientSex'] = self.tags['Patient Sex']
+    cliparameters['patientSex'] = self.tags['Patient Sex'] if self.tags['Patient Sex'] else "[unknown]"
     cliparameters['patientComments'] = self.tags['Patient Comments']
     # Study
     cliparameters['studyID'] = self.tags['Study ID']
@@ -152,4 +152,6 @@ class DICOMExportScalarVolume(object):
       return False
     dicomWrite = slicer.modules.createdicomseries
     cliNode = slicer.cli.run(dicomWrite, None, cliparameters, wait_for_completion=True)
-    return cliNode is not None
+    success = (cliNode.GetStatus() == cliNode.Completed)
+    slicer.mrmlScene.RemoveNode(cliNode)
+    return success
