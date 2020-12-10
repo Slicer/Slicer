@@ -183,6 +183,9 @@ Apply Boolean operators to selected segment or combine segments.
 
 - A large radius paint brush with threshold painting is often a very fast way to segment anatomy that is consistently brighter or darker than the surrounding region, but partially connected to similar nearby structures (this happens a lot).
 - Use the slice viewer menus to control the label map opacity and display mode (to show outlines only or full volume).
+- The spacing of the internal binary labelmap representation in the segmentation must be 2-5x smaller than your maximum acceptable surface error in the produced surface. If the input volume's resolution is highly anisotropic (spacing value is not the same along the 3 axis) or its spacing is not small enough then it is recommended to either
+  - A. crop and resample the input volume using Crop volume module (make spacing smaller and isotropic and crop the volume to keep the data size under control), or
+  - B. use “Specify geometry” button in Segment Editor to specify finer resolution for the internal labelmap representation than the input image.
 
 ## Limitations
 
