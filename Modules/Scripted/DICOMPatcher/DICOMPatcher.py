@@ -70,6 +70,13 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
       " Enable this option if a separate patient directory is created for each patched file.")
     parametersFormLayout.addRow("Force same patient name and ID in each directory", self.forceSamePatientNameIdInEachDirectoryCheckBox)
 
+    self.forceSameSeriesInstanceUidInEachDirectoryCheckBox = qt.QCheckBox()
+    self.forceSameSeriesInstanceUidInEachDirectoryCheckBox.checked = False
+    self.forceSameSeriesInstanceUidInEachDirectoryCheckBox.setToolTip("Generate a new series instance UID for each directory"
+      " and set it in all files in that same directory."
+      " Enable this option to force placing all frames in a folder into a single volume.")
+    parametersFormLayout.addRow("Force same series instance UID in each directory", self.forceSameSeriesInstanceUidInEachDirectoryCheckBox)
+
     self.generateMissingIdsCheckBox = qt.QCheckBox()
     self.generateMissingIdsCheckBox.checked = True
     self.generateMissingIdsCheckBox.setToolTip("Generate missing patient, study, series IDs. It is assumed that"
@@ -134,6 +141,8 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
       self.logic.clearRules()
       if self.forceSamePatientNameIdInEachDirectoryCheckBox.checked:
         self.logic.addRule("ForceSamePatientNameIdInEachDirectory")
+      if self.forceSameSeriesInstanceUidInEachDirectoryCheckBox.checked:
+        self.logic.addRule("ForceSameSeriesInstanceUidInEachDirectory")
       if self.generateMissingIdsCheckBox.checked:
         self.logic.addRule("GenerateMissingIDs")
       self.logic.addRule("RemoveDICOMDIR")
@@ -212,6 +221,23 @@ class ForceSamePatientNameIdInEachDirectory(DICOMPatcherRule):
     # Set the same patient name and ID as the first file in the directory
     ds.PatientName = self.patientName
     ds.PatientID = self.patientID
+
+class ForceSameSeriesInstanceUidInEachDirectory(DICOMPatcherRule):
+  def __init__(self):
+    self.requiredTags = ['SeriesInstanceUID']
+  def processStart(self, inputRootDir, outputRootDir):
+    self.seriesIndex = 0
+  def processDirectory(self, currentSubDir):
+    self.firstFileInDirectory = True
+    self.seriesIndex += 1
+  def processDataSet(self, ds):
+    import pydicom
+    if self.firstFileInDirectory:
+      # Get seriesInstanceUID for this folder and save it
+      self.firstFileInDirectory = False
+      self.seriesInstanceUID = pydicom.uid.generate_uid(None)
+    # Set the same patient name and ID as the first file in the directory
+    ds.SeriesInstanceUID = self.seriesInstanceUID
 
 class GenerateMissingIDs(DICOMPatcherRule):
   def __init__(self):
