@@ -358,6 +358,10 @@ int qSlicerSubjectHierarchyVolumesPlugin::getDisplayVisibility(vtkIdType itemID)
   for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
     {
     vtkMRMLDisplayNode* displayNode = volumeNode->GetNthDisplayNode(displayNodeIndex);
+    if (!displayNode)
+      {
+      continue;
+      }
     if (vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode))
       {
       // scalar volume display node does not control visibility, visibility in those
