@@ -305,33 +305,47 @@ class DICOMPlugin(object):
           studyItemName += ' (' + str(studyDate) + ')'
         shn.SetItemName(studyItemID, studyItemName)
 
-  def mapSOPClassUIDToDICOMQuantityAndUnits(self, classUID):
-
+  def mapSOPClassUIDToModality(self, sopClassUID):
+    # Note more specialized definitions can be specified for MR by more
+    # specialized plugins, see codes 110800 and on in
+    # http://dicom.nema.org/medical/dicom/current/output/chtml/part16/chapter_D.html
     MRname2UID = {
-        "MR Image Storage": "1.2.840.10008.5.1.4.1.1.4",
-        "Enhanced MR Image Storage": "1.2.840.10008.5.1.4.1.1.4.1",
-        "Legacy Converted Enhanced MR Image Storage": "1.2.840.10008.5.1.4.1.1.4.4"
-        }
-
+      "MR Image Storage": "1.2.840.10008.5.1.4.1.1.4",
+      "Enhanced MR Image Storage": "1.2.840.10008.5.1.4.1.1.4.1",
+      "Legacy Converted Enhanced MR Image Storage": "1.2.840.10008.5.1.4.1.1.4.4"
+      }
     CTname2UID = {
-        "CT Image Storage": "1.2.840.10008.5.1.4.1.1.2",
-        "Enhanced CT Image Storage": "1.2.840.10008.5.1.4.1.1.2.1",
-        "Legacy Converted Enhanced CT Image Storage": "1.2.840.10008.5.1.4.1.1.2.2"
-        }
+      "CT Image Storage": "1.2.840.10008.5.1.4.1.1.2",
+      "Enhanced CT Image Storage": "1.2.840.10008.5.1.4.1.1.2.1",
+      "Legacy Converted Enhanced CT Image Storage": "1.2.840.10008.5.1.4.1.1.2.2"
+      }
+    PETname2UID = {
+      "Positron Emission Tomography Image Storage": "1.2.840.10008.5.1.4.1.1.128",
+      "Enhanced PET Image Storage": "1.2.840.10008.5.1.4.1.1.130",
+      "Legacy Converted Enhanced PET Image Storage": "1.2.840.10008.5.1.4.1.1.128.1"
+      }
+
+    if sopClassUID in MRname2UID.values():
+      return "MR"
+    elif sopClassUID in CTname2UID.values():
+      return "CT"
+    elif sopClassUID in PETname2UID.values():
+      return "PT"
+    else:
+      return None
+
+  def mapSOPClassUIDToDICOMQuantityAndUnits(self, sopClassUID):
 
     quantity = None
     units = None
 
-    # Note more specialized definitions can be specified for MR by more
-    # specialized plugins, see codes 110800 and on in
-    # http://dicom.nema.org/medical/dicom/current/output/chtml/part16/chapter_D.html
-    if classUID in MRname2UID.values():
+    modality = self.mapSOPClassUIDToModality(sopClassUID)
+    if modality == "MR":
       quantity = slicer.vtkCodedEntry()
       quantity.SetValueSchemeMeaning("110852", "DCM", "MR signal intensity")
       units = slicer.vtkCodedEntry()
       units.SetValueSchemeMeaning("1", "UCUM", "no units")
-
-    if classUID in CTname2UID.values():
+    elif modality == "CT":
       quantity = slicer.vtkCodedEntry()
       quantity.SetValueSchemeMeaning("112031", "DCM", "Attenuation Coefficient")
       units = slicer.vtkCodedEntry()
