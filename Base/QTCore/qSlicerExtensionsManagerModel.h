@@ -346,7 +346,7 @@ public slots:
   void updateModel();
 
   /// Number of operations in progress
-  int activeTaskCount() const;
+  QStringList activeTasks() const;
 
 signals:
 

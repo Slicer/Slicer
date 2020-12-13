@@ -531,20 +531,25 @@ void qSlicerExtensionsManagerWidget::onMessageLogged(
 bool qSlicerExtensionsManagerWidget::confirmClose()
 {
   Q_D(qSlicerExtensionsManagerWidget);
-  int numberOfPendingOperations = 0;
-  numberOfPendingOperations += d->ExtensionsRestoreWidget->pendingOperationsCount();
+  QStringList pendingOperations;
+  int numberOfPendingRestoreOperations = d->ExtensionsRestoreWidget->pendingOperationsCount();
+  if (numberOfPendingRestoreOperations > 0)
+    {
+    pendingOperations.append(tr("restore %1 extension(s)").arg(numberOfPendingRestoreOperations));
+    }
   if (this->extensionsManagerModel())
     {
-    numberOfPendingOperations += this->extensionsManagerModel()->activeTaskCount();
+    pendingOperations.append(this->extensionsManagerModel()->activeTasks());
     }
-  if (numberOfPendingOperations == 0)
+  if (pendingOperations.empty())
     {
     return true;
     }
 
   ctkMessageBox confirmDialog;
-  confirmDialog.setText(tr("Install/uninstall operations are still in progress. ")
-    + tr("Click OK to wait for them to complete or choose Ignore to close the Extensions Manager now."));
+  confirmDialog.setText(tr("Install/uninstall operations are still in progress:\n- ")
+    + pendingOperations.join("\n- ")
+    + tr("\n\nClick OK to wait for them to complete, or choose Ignore to close the Extensions Manager now."));
   confirmDialog.setIcon(QMessageBox::Question);
   confirmDialog.setStandardButtons(QMessageBox::Ok | QMessageBox::Ignore);
   bool closeConfirmed = (confirmDialog.exec() == QMessageBox::Ignore);

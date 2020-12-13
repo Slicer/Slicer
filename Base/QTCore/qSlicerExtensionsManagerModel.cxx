@@ -25,6 +25,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QScopedPointer>
 #include <QSettings>
 #include <QStandardItemModel>
 #include <QTemporaryFile>
@@ -39,6 +40,7 @@
 
 // qRestAPI includes
 #include <qMidasAPI.h>
+#include <qRestResult.h>
 
 // QtCore includes
 #include "qSlicerExtensionsManagerModel.h"
@@ -233,6 +235,8 @@ public:
   qMidasAPI CheckForUpdatesApi;
   QHash<QUuid, UpdateCheckInformation> CheckForUpdatesRequests;
 
+  qMidasAPI GetExtensionMetadataApi;
+
   QHash<QString, UpdateDownloadInformation> AvailableUpdates;
 
   QString ExtensionsSettingsFilePath;
@@ -246,14 +250,17 @@ public:
 
   QStandardItemModelWithRole Model;
 
-  int ActiveTaskCount;
+  // Restore previous extension tab may want to run lots of queries.
+  // Results are cached in this variable to improve performance.
+  QMap<QString, ExtensionMetadataType> MidasResponseCache;
+
+  QMap<qSlicerExtensionDownloadTask*, QString> ActiveTasks;
 };
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsManagerModelPrivate::qSlicerExtensionsManagerModelPrivate(qSlicerExtensionsManagerModel& object)
   : q_ptr(&object)
   , NewExtensionEnabledByDefault(true)
-  , ActiveTaskCount(0)
 {
 }
 
@@ -981,20 +988,70 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
 {
   Q_Q(const qSlicerExtensionsManagerModel);
 
-  bool ok = false;
-  QList<QVariantMap> results = qMidasAPI::synchronousQuery(
-        ok, q->serverUrl().toString(),
-        "midas.slicerpackages.extension.list", parameters);
-  if (!ok || results.count() != 1)
-    {
-    this->critical(results[0]["queryError"].toString());
-    return ExtensionMetadataType();
-    }
-  ExtensionMetadataType result = results.at(0);
+  ExtensionMetadataType result;
 
-  if (!qSlicerExtensionsManagerModelPrivate::validateExtensionMetadata(result))
+  QString midasResponseCacheKey = q->serverUrl().toString();
+  foreach(const QString & parametersName, parameters.keys())
     {
-    return ExtensionMetadataType();
+    midasResponseCacheKey += ";" + parameters[parametersName];
+    }
+  if (this->MidasResponseCache.contains(midasResponseCacheKey))
+    {
+    result = this->MidasResponseCache[midasResponseCacheKey];
+    }
+  else
+    {
+    this->GetExtensionMetadataApi.setServerUrl(q->serverUrl().toString());
+    int maxWaitingTimeInMSecs = 2500;
+    this->GetExtensionMetadataApi.setTimeOut(maxWaitingTimeInMSecs);
+    QUuid queryUuid = this->GetExtensionMetadataApi.get("midas.slicerpackages.extension.list", parameters);
+
+    QScopedPointer<qRestResult> restResult(this->GetExtensionMetadataApi.takeResult(queryUuid));
+    QString errorText; // if any error occurs then this will be set to non-empty
+    if(restResult)
+      {
+      QList<QVariantMap> results = restResult->results();
+      // extension manager returned OK
+      if (results.count() == 0)
+        {
+        // Extension information not found.
+        // Not an error (it means that extension is not available for the
+        // specific revision and operating system), just return an empty result.
+        }
+      else if (results.count() == 1)
+        {
+        // extension manager returned 1 result, we can use this
+        result = results.at(0);
+        if (!qSlicerExtensionsManagerModelPrivate::validateExtensionMetadata(result))
+          {
+          errorText = "invalid response received";
+          }
+        }
+      else
+        {
+        // extension manager returned multiple results, this is not expected, do not use the results
+        errorText = QString("expected 1 results, received %1").arg(results.count());
+        }
+      }
+    else
+      {
+      if (this->GetExtensionMetadataApi.error() == qRestAPI::UnknownError)
+        {
+        errorText = "unknown error";
+        }
+      else
+        {
+        errorText = this->GetExtensionMetadataApi.errorString();
+        }
+      }
+    if (!errorText.isEmpty())
+      {
+      this->critical(QString("Error retrieving extension metadata: %1 (%2)")
+        .arg(parameters.values().join(', '))
+        .arg(errorText));
+      return ExtensionMetadataType();
+      }
+    this->MidasResponseCache[midasResponseCacheKey] = result;
     }
 
   ExtensionMetadataType updatedExtensionMetadata;
@@ -1338,7 +1395,7 @@ qSlicerExtensionsManagerModelPrivate::downloadExtension(
     this->NetworkManager.get(QNetworkRequest(downloadUrl));
   qSlicerExtensionDownloadTask* const task =
     new qSlicerExtensionDownloadTask(reply);
-  this->ActiveTaskCount++;
+  this->ActiveTasks[task] = QString("install %1 extension").arg(extensionMetadata["extensionname"].toString());
 
   task->setMetadata(extensionMetadata);
   emit q->downloadStarted(reply);
@@ -1387,7 +1444,6 @@ void qSlicerExtensionsManagerModel::onInstallDownloadFinished(
   Q_D(qSlicerExtensionsManagerModel);
 
   task->deleteLater();
-  d->ActiveTaskCount--;
 
   QNetworkReply* const reply = task->reply();
   QUrl downloadUrl = reply->url();
@@ -1398,6 +1454,7 @@ void qSlicerExtensionsManagerModel::onInstallDownloadFinished(
   if (reply->error())
     {
     d->critical(QString("Failed downloading: %1").arg(downloadUrl.toString()));
+    d->ActiveTasks.remove(task);
     return;
     }
 
@@ -1407,6 +1464,7 @@ void qSlicerExtensionsManagerModel::onInstallDownloadFinished(
   if (!file.open())
     {
     d->critical(QString("Could not create temporary file for writing: %1").arg(file.errorString()));
+    d->ActiveTasks.remove(task);
     return;
     }
   file.write(reply->readAll());
@@ -1414,6 +1472,7 @@ void qSlicerExtensionsManagerModel::onInstallDownloadFinished(
   const ExtensionMetadataType& extensionMetadata =
     this->filterExtensionMetadata(task->metadata());
   this->installExtension(extensionName, extensionMetadata, file.fileName());
+  d->ActiveTasks.remove(task);
 }
 
 // --------------------------------------------------------------------------
@@ -1794,7 +1853,6 @@ void qSlicerExtensionsManagerModel::onUpdateDownloadFinished(
 
   // Mark task for clean-up
   task->deleteLater();
-  d->ActiveTaskCount--;
 
   // Get network reply
   QNetworkReply* const reply = task->reply();
@@ -1808,6 +1866,7 @@ void qSlicerExtensionsManagerModel::onUpdateDownloadFinished(
   if (reply->error())
     {
     d->critical("Failed downloading: " + downloadUrl.toString());
+    d->ActiveTasks.remove(task);
     return;
     }
 
@@ -1823,6 +1882,7 @@ void qSlicerExtensionsManagerModel::onUpdateDownloadFinished(
     if (!QDir(this->extensionsInstallPath()).mkpath(".updates"))
       {
       d->critical("Could not create directory for update archive");
+      d->ActiveTasks.remove(task);
       return;
       }
 
@@ -1841,6 +1901,7 @@ void qSlicerExtensionsManagerModel::onUpdateDownloadFinished(
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
       {
       d->critical("Could not create file for writing: " + file.errorString());
+      d->ActiveTasks.remove(task);
       return;
       }
 
@@ -1851,6 +1912,7 @@ void qSlicerExtensionsManagerModel::onUpdateDownloadFinished(
     iter->ArchiveName = archivePath;
     this->scheduleExtensionForUpdate(extensionName);
     }
+  d->ActiveTasks.remove(task);
 }
 
 // --------------------------------------------------------------------------
@@ -2661,8 +2723,8 @@ QStringList qSlicerExtensionsManagerModel::checkInstallPrerequisites() const
 }
 
 // --------------------------------------------------------------------------
-int qSlicerExtensionsManagerModel::activeTaskCount() const
+QStringList qSlicerExtensionsManagerModel::activeTasks() const
 {
   Q_D(const qSlicerExtensionsManagerModel);
-  return d->ActiveTaskCount;
+  return d->ActiveTasks.values();
 }

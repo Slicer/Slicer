@@ -753,10 +753,15 @@ void qSlicerApplication::openExtensionsManagerDialog()
   QDialog* startupInProgressDialog = new QDialog(this->mainWindow(), Qt::FramelessWindowHint | Qt::Dialog);
   QVBoxLayout* layout = new QVBoxLayout();
   startupInProgressDialog->setLayout(layout);
-  layout->setMargin(20);
+  QFrame* frame = new QFrame();
+  frame->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  layout->addWidget(frame);
+  QVBoxLayout* innerLayout = new QVBoxLayout();
+  frame->setLayout(innerLayout);
+  innerLayout->setMargin(20);
   QLabel* label = new QLabel();
   label->setText(tr("Extensions manager is starting, please wait..."));
-  layout->addWidget(label);
+  innerLayout->addWidget(label);
   startupInProgressDialog->show();
   this->processEvents();
 

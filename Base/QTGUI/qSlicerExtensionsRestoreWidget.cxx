@@ -337,8 +337,8 @@ void qSlicerExtensionsRestoreWidgetPrivate
       if (!extensionName.contains(this->SearchText, Qt::CaseInsensitive) &&
         !description.contains(this->SearchText, Qt::CaseInsensitive))
         {
-      // search text is not found, skip it
-      continue;
+        // search text is not found, skip it
+        continue;
         }
       }
 
