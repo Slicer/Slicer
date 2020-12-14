@@ -10,7 +10,7 @@ This module is used to create and edit markups (fiducial list, line, angle, curv
 
 ### Place new markups
 
-1. Click "Create and place" button on the toolbar to activate place mode. 
+1. Click "Create and place" button on the toolbar to activate place mode.
 
 Click the down-arrow icon on the button to choose markups type.
 
@@ -55,16 +55,20 @@ Display section:
   - Glyph Type: Select the symbol that will be used to mark each location. Default is the Sphere3D.
   - Point Labels: check to display label for each control point.
   - Fiducial projection: A widget that controls the projection of the fiducials in the 2D viewers onto slices around the one on which the fiducial has been placed.
-    - 2D Projection: Toggle the eye icon open or closed to enable or disable visualization of projectied fiducial on 2D viewers.
+    - 2D Projection: Toggle the eye icon open or closed to enable or disable visualization of projected fiducial on 2D viewers.
     - Use Fiducial Color: If checked, color the projections the same color as the fiducials.
     - Projection Color: If not using fiducial color for the projection, use this color.
     - Outlined Behind Slice Plane: Fiducial projection is displayed filled (opacity = Projection Opacity) when on top of slice plane, outlined when behind, and with full opacity when in the plane. Outline isn't used for some glyphs (Dash2D, Cross2D, Starburst).
     - Projection Opacity: A value between 0 (invisible) and 1 (fully visible) for displaying the fiducial projection.
     - Reset to Defaults: Reset the display properties of this markups node to the system defaults.
     - Save to Defaults: Save the display properties of this markups node to be the new system defaults.
+- Scalars: Color markup according to a scalar, e.g. a per-control-point measurement (see Measurements section below)
+  - Visible: Whether scalar coloring should be shown or the original color of the markup
+  - Active Scalar: Which scalar array to use for coloring
+  - Color Table: Palette used for coloring
+  - Scalar Range Mode: Method for determining the range of the scalars (automatic range calculation based on the data is the default)
 
 Control points section:
-
 - Interaction in views: toggle the markups lock state (if it can be moved by mouse interactions in the viewers), which will override the individual markup lock settings.
 - Click to Jump Slices: If checked, click in name column to jump slices to that point. The radio buttons control if the slice is centered on the markup or not after the jump. Right click in the table allows jumping 2D slices to a highlighted fiducial (uses the center/offset radio button settings). Once checked, arrow keys moving the highlighted row will also jump slice viewers to that markup position.
 - Buttons: These buttons apply changes to markups in the selected list.
@@ -91,6 +95,16 @@ Control points section:
     - Apply: Rename all markups in this list according to the current name format, trying to preserve numbers. A quick way to re-number all the fiducials according to their index is to use a name format with no number in it, rename, then add the number format specifier %d to the format and rename one more time.
     - Reset: Reset the name format field to the default value, %N-%d.
 
+Measurements section:
+- This section lists the available measurements of the selected markup
+  - `length` for line and curve
+  - `angle` for angle markups
+  - `curvature mean` and `curvature max` for curve markups
+- In the table below the measurement descriptions, the measurements can be enabled/disabled
+  - Basic measurements (e.g. length, angle) are enabled by default
+  - Curve markups support curvature calculation, which is off by default
+    - When turned on, the curvature data can be displayed as scalar coloring (see Display/Scalars above)
+
 Curve settings section:
 - Curve type:
   - linear: control points are connected with straight line
@@ -99,7 +113,7 @@ Curve settings section:
   - shortest distance on surface: curve points are forced to be on the selected model's surface, connected with a minimal-cost path
 - Surface: surface used for `shortest distance on surface` curve type and cost function that is minimized to find path connecting two control points
 
-Resample section: Replace control points by curve points sampled at equal distances. If a model node is selected for `Constrain points to surface` then the resampled points will be projected to the chosedn model surface.
+Resample section: Replace control points by curve points sampled at equal distances. If a model node is selected for `Constrain points to surface` then the resampled points will be projected to the chosen model surface.
 
 ## Information for developers
 
@@ -153,6 +167,7 @@ Authors:
 - Davide Punzo (Kapteyn Astronomical Institute, University of Groningen)
 - Kyle Sunderland (PerkLab, Queen's University)
 - Nicole Aucoin (SPL, BWH)
+- Csaba Pinter (Pixel Medical / Ebatinca)
 
 ## Acknowledgements
 
