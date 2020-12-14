@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>329</width>
-    <height>505</height>
+    <width>300</width>
+    <height>425</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -741,6 +741,9 @@
     <widget class="ctkCollapsibleButton" name="measurementsCollapsibleButton">
      <property name="text">
       <string>Measurements</string>
+     </property>
+     <property name="collapsed">
+      <bool>true</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_7">
       <item>
