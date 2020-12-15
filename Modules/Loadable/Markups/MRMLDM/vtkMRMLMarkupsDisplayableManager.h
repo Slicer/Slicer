@@ -30,7 +30,8 @@
 // VTK includes
 #include <vtkSlicerMarkupsWidget.h>
 
-#include <set>
+// STD includes
+#include <map>
 
 class vtkMRMLMarkupsNode;
 class vtkSlicerViewerWidget;
@@ -49,6 +50,12 @@ public:
   static vtkMRMLMarkupsDisplayableManager *New();
   vtkTypeMacro(vtkMRMLMarkupsDisplayableManager, vtkMRMLAbstractDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
+
+  // Registers the markup node and the associated type of widget. Pass onto
+  // these derivatives of vtkMRMLNode and vtkSlicerMarkupsWidget.
+  void RegisterMarkup(vtkMRMLMarkupsNode* node,
+                      vtkSlicerMarkupsWidget* widget,
+                      const std::string& name);
 
   /// Check if this is a 2d SliceView displayable manager, returns true if so,
   /// false otherwise. Checks return from GetSliceNode for non null, which means
@@ -138,8 +145,12 @@ protected:
   /// \sa IsManageable(vtkMRMLNode*), IsCorrectDisplayableManager()
   virtual bool IsManageable(const char* nodeClassName);
 
-  /// Contains class names of markups nodes that this displayable manager can handle
-  std::set<std::string> Focus;
+  /// Contains types of markups nodes that this displayable manager can
+  /// handle as well as the associated widgets.
+  std::map<std::string, vtkSlicerMarkupsWidget*> MarkupsNodesWidgets;
+
+  /// Relates types of markups and node naming strings
+  std::map<std::string, std::string> MarkupsNames;
 
   /// Respond to interactor style events
   void OnInteractorStyleEvent(int eventid) override;

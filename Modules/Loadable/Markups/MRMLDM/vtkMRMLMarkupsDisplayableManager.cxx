@@ -88,18 +88,20 @@ vtkStandardNewMacro (vtkMRMLMarkupsDisplayableManager);
 //---------------------------------------------------------------------------
 vtkMRMLMarkupsDisplayableManager::vtkMRMLMarkupsDisplayableManager()
 {
-  this->Focus.insert("vtkMRMLMarkupsAngleNode");
-  this->Focus.insert("vtkMRMLMarkupsFiducialNode");
-  this->Focus.insert("vtkMRMLMarkupsLineNode");
-  this->Focus.insert("vtkMRMLMarkupsCurveNode");
-  this->Focus.insert("vtkMRMLMarkupsClosedCurveNode");
-  this->Focus.insert("vtkMRMLMarkupsPlaneNode");
+  this->RegisterMarkup(vtkMRMLMarkupsAngleNode::New(), vtkSlicerAngleWidget::New(), "A");
+  this->RegisterMarkup(vtkMRMLMarkupsFiducialNode::New(), vtkSlicerPointsWidget::New(), "F");
+  this->RegisterMarkup(vtkMRMLMarkupsLineNode::New(), vtkSlicerLineWidget::New(), "L");
+  this->RegisterMarkup(vtkMRMLMarkupsCurveNode::New(), vtkSlicerCurveWidget::New(), "C" );
+  this->RegisterMarkup(vtkMRMLMarkupsClosedCurveNode::New(), vtkSlicerClosedCurveWidget::New(), "C");
+  this->RegisterMarkup(vtkMRMLMarkupsPlaneNode::New(), vtkSlicerPlaneWidget::New(), "P");
 
   this->Helper = vtkMRMLMarkupsDisplayableManagerHelper::New();
   this->Helper->SetDisplayableManager(this);
   this->DisableInteractorStyleEventsProcessing = 0;
 
-  this->Focus.insert("vtkMRMLMarkupsNode");
+  //NOTE: I think this should be removed. Every node handled by
+  //this DM requires an associated widget
+  //this->Focus.insert("vtkMRMLMarkupsNode");
 
   // by default, this displayableManager handles a 2d view, so the SliceNode
   // must be set when it's assigned to a viewer
@@ -119,6 +121,14 @@ vtkMRMLMarkupsDisplayableManager::~vtkMRMLMarkupsDisplayableManager()
   this->Helper->Delete();
 
   this->SliceNode = nullptr;
+
+  for (const auto& item : this->MarkupsNodesWidgets)
+    {
+    item.second->Delete();
+    }
+
+  this->MarkupsNodesWidgets.clear();
+  this->MarkupsNames.clear();
 }
 
 //---------------------------------------------------------------------------
@@ -136,6 +146,21 @@ void vtkMRMLMarkupsDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << indent << "No slice node" << std::endl;
     }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsDisplayableManager::RegisterMarkup(vtkMRMLMarkupsNode* node,
+                                                      vtkSlicerMarkupsWidget* widget,
+                                                      const std::string& name)
+{
+  if (!node)
+    {
+    vtkErrorMacro("RegisterMarkup: invalid node.");
+    }
+
+  this->MarkupsNodesWidgets[node->GetClassName()] = widget;
+  this->MarkupsNames[node->GetClassName()] = name;
+  node->Delete();
 }
 
 //---------------------------------------------------------------------------
@@ -167,7 +192,7 @@ void vtkMRMLMarkupsDisplayableManager::RequestRender()
 void vtkMRMLMarkupsDisplayableManager::UpdateFromMRML()
 {
   // this gets called from RequestRender, so make sure to jump out quickly if possible
-  if (this->GetMRMLScene() == nullptr || this->Focus.empty())
+  if (this->GetMRMLScene() == nullptr || this->MarkupsNodesWidgets.empty())
     {
     return;
     }
@@ -561,51 +586,37 @@ bool vtkMRMLMarkupsDisplayableManager::IsCorrectDisplayableManager()
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsDisplayableManager::IsManageable(vtkMRMLNode* node)
 {
-  return (this->Focus.find(node->GetClassName()) != this->Focus.end());
+  return (this->MarkupsNodesWidgets.find(node->GetClassName()) != this->MarkupsNodesWidgets.end());
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsDisplayableManager::IsManageable(const char* nodeClassName)
 {
-  return nodeClassName && (this->Focus.find(nodeClassName) != this->Focus.end());
+  return nodeClassName && (this->MarkupsNodesWidgets.find(nodeClassName) != this->MarkupsNodesWidgets.end());
 }
 
 //---------------------------------------------------------------------------
 vtkMRMLMarkupsNode* vtkMRMLMarkupsDisplayableManager::CreateNewMarkupsNode(
   const std::string &markupsNodeClassName)
 {
-  // create the MRML node
   std::string nodeName = "M";
-  if (markupsNodeClassName == "vtkMRMLMarkupsFiducialNode")
+
+  for (const auto &item : this->MarkupsNames)
     {
-    nodeName = "F";
+    if (markupsNodeClassName == item.first)
+      {
+      nodeName = item.second;
+      break;
+      }
     }
-  else if (markupsNodeClassName == "vtkMRMLMarkupsAngleNode")
-    {
-    nodeName = "A";
-    }
-  else if (markupsNodeClassName == "vtkMRMLMarkupsLineNode")
-    {
-    nodeName = "L";
-    }
-  else if (markupsNodeClassName == "vtkMRMLMarkupsCurveNode")
-    {
-    nodeName = "C";
-    }
-  else if (markupsNodeClassName == "vtkMRMLMarkupsClosedCurveNode")
-    {
-    nodeName = "C";
-    }
-  else if (markupsNodeClassName == "vtkMRMLMarkupsPlaneNode")
-    {
-    nodeName = "P";
-    }
+
   nodeName = this->GetMRMLScene()->GenerateUniqueName(nodeName);
 
   vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(
     this->GetMRMLScene()->AddNewNodeByClass(markupsNodeClassName, nodeName));
   markupsNode->AddDefaultStorageNode();
   markupsNode->CreateDefaultDisplayNodes();
+
   return markupsNode;
 }
 
@@ -942,39 +953,23 @@ vtkSlicerMarkupsWidget * vtkMRMLMarkupsDisplayableManager::CreateWidget(vtkMRMLM
   vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(this->GetMRMLDisplayableNode());
   vtkRenderer* renderer = this->GetRenderer();
 
+  // Create a widget of the associated type if the node matches the registered nodes
   vtkSlicerMarkupsWidget* widget = nullptr;
-  if (vtkMRMLMarkupsAngleNode::SafeDownCast(markupsNode))
+  for (const auto& item: this->MarkupsNodesWidgets)
     {
-    widget = vtkSlicerAngleWidget::New();
-    }
-  else if (vtkMRMLMarkupsFiducialNode::SafeDownCast(markupsNode))
-    {
-    widget = vtkSlicerPointsWidget::New();
-    }
-  else if (vtkMRMLMarkupsLineNode::SafeDownCast(markupsNode))
-    {
-    widget = vtkSlicerLineWidget::New();
-    }
-  else if (vtkMRMLMarkupsCurveNode::SafeDownCast(markupsNode))
-    {
-    widget = vtkSlicerCurveWidget::New();
-    }
-  else if (vtkMRMLMarkupsClosedCurveNode::SafeDownCast(markupsNode))
-    {
-    widget = vtkSlicerClosedCurveWidget::New();
-    }
-  else if (vtkMRMLMarkupsPlaneNode::SafeDownCast(markupsNode))
-    {
-    widget = vtkSlicerPlaneWidget::New();
-    }
-  else
-    {
-    vtkErrorMacro("vtkMRMLMarkupsDisplayableManager::CreateWidget failed: invalid display node class " << markupsNode->GetClassName());
-    return nullptr;
+    if (item.first == markupsNode->GetClassName())
+      {
+      widget = (item.second)->CreateInstance();
+      break;
+      }
     }
 
-  widget->SetMRMLApplicationLogic(this->GetMRMLApplicationLogic());
-  widget->CreateDefaultRepresentation(markupsDisplayNode, viewNode, renderer);
+  // If the widget was successfully createdc
+  if (widget)
+    {
+    widget->SetMRMLApplicationLogic(this->GetMRMLApplicationLogic());
+    widget->CreateDefaultRepresentation(markupsDisplayNode, viewNode, renderer);
+    }
 
   return widget;
 }

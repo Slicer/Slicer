@@ -52,6 +52,9 @@ public:
   /// Create the default widget representation and initializes the widget and representation.
   virtual void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) = 0;
 
+  /// Create instance of the markups widget
+  virtual vtkSlicerMarkupsWidget* CreateInstance() const = 0;
+
   /// Widget states
   enum
   {

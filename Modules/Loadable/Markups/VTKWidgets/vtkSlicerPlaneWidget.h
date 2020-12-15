@@ -45,6 +45,9 @@ public:
   /// Standard methods for a VTK class.
   vtkTypeMacro(vtkSlicerPlaneWidget,vtkSlicerMarkupsWidget);
 
+  /// Create instance of the markups widget
+  virtual vtkSlicerMarkupsWidget* CreateInstance() const;
+
   /// Widget states
   enum
   {

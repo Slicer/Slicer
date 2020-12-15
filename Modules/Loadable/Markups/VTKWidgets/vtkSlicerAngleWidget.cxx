@@ -39,6 +39,12 @@ vtkSlicerAngleWidget::vtkSlicerAngleWidget()
 vtkSlicerAngleWidget::~vtkSlicerAngleWidget() = default;
 
 //----------------------------------------------------------------------
+vtkSlicerMarkupsWidget* vtkSlicerAngleWidget::CreateInstance() const
+{
+  return vtkSlicerAngleWidget::New();
+}
+
+//----------------------------------------------------------------------
 void vtkSlicerAngleWidget::CreateDefaultRepresentation(
   vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
 {

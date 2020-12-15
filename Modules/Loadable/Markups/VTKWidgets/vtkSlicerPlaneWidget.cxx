@@ -45,6 +45,12 @@ vtkSlicerPlaneWidget::vtkSlicerPlaneWidget()
 vtkSlicerPlaneWidget::~vtkSlicerPlaneWidget() = default;
 
 //----------------------------------------------------------------------
+vtkSlicerMarkupsWidget* vtkSlicerPlaneWidget::CreateInstance() const
+{
+  return vtkSlicerPlaneWidget::New();
+}
+
+//----------------------------------------------------------------------
 void vtkSlicerPlaneWidget::CreateDefaultRepresentation(
   vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
 {

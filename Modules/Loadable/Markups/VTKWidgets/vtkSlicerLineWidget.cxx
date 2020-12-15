@@ -40,6 +40,12 @@ vtkSlicerLineWidget::vtkSlicerLineWidget()
 vtkSlicerLineWidget::~vtkSlicerLineWidget() = default;
 
 //----------------------------------------------------------------------
+vtkSlicerMarkupsWidget* vtkSlicerLineWidget::CreateInstance() const
+{
+  return vtkSlicerLineWidget::New();
+}
+
+//----------------------------------------------------------------------
 void vtkSlicerLineWidget::CreateDefaultRepresentation(
   vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
 {

@@ -61,6 +61,12 @@ void vtkSlicerClosedCurveWidget::CreateDefaultRepresentation(
 }
 
 //----------------------------------------------------------------------
+vtkSlicerMarkupsWidget* vtkSlicerClosedCurveWidget::CreateInstance() const
+{
+  return vtkSlicerClosedCurveWidget::New();
+}
+
+//----------------------------------------------------------------------
 void vtkSlicerClosedCurveWidget::AddPointOnCurveAction(vtkAbstractWidget *vtkNotUsed(w))
 {
   /* TODO: implement this

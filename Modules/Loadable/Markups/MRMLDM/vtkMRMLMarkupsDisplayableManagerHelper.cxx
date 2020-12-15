@@ -286,14 +286,16 @@ void vtkMRMLMarkupsDisplayableManagerHelper::AddDisplayNode(vtkMRMLMarkupsDispla
   // There should not be a widget for the new node
   if (this->GetWidget(markupsDisplayNode) != nullptr)
     {
-    vtkErrorMacro("vtkMRMLMarkupsDisplayableManager2D: A widget is already associated to this node");
+    vtkErrorMacro("vtkMRMLMarkupsDisplayableManager: A widget is already associated to "
+                  << markupsDisplayNode->GetMarkupsNode()->GetNodeTagName());
     return;
     }
 
   vtkSlicerMarkupsWidget* newWidget = this->DisplayableManager->CreateWidget(markupsDisplayNode);
   if (!newWidget)
     {
-    vtkErrorMacro("vtkMRMLMarkupsDisplayableManager2D: Failed to create widget");
+    vtkErrorMacro("vtkMRMLMarkupsDisplayableManager: Failed to create widget for node "
+                  << markupsDisplayNode->GetMarkupsNode()->GetNodeTagName());
     return;
     }
 
