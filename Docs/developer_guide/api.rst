@@ -2,6 +2,11 @@
 Slicer API
 ==========
 
+Tutorials
+---------
+
+Check out these [developer tutorials](https://www.slicer.org/wiki/Documentation/Nightly/Training#PerkLab.27s_Slicer_bootcamp_training_materials) to get started with customizing and extending 3D Slicer using Python scripting or C++.
+
 C++
 ---
 
