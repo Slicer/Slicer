@@ -77,6 +77,7 @@ msg_first() {
   firstSixLetters=$(echo "$line" | cut -c1-6)
   if [ "${firstSixLetters:0:4}" == "BUG:" -o \
     "${firstSixLetters:0:4}" == "ENH:" -o \
+    "${firstSixLetters:0:4}" == "DOC:" -o \
     "${firstSixLetters:0:5}" == "COMP:" -o \
     "${firstSixLetters:0:5}" == "PERF:" -o \
     "$firstSixLetters" == "STYLE:" ]; then
@@ -91,10 +92,14 @@ Valid commit types are:
   BUG:   - a change made to fix a runtime issue
   (crash, segmentation fault, exception, or incorrect result,
   COMP:  - a fix for a compilation issue, error or warning,
+  DOC:   - a change made to documentation files,
   ENH:   - new functionality added to the project,
   PERF:  - a performance improvement,
-  STYLE: - a change that does not impact the logic or execution of the code.
-  (improve coding style, comments, documentation).
+  STYLE: - a code change that does not impact the logic or execution of the code.
+  (improve coding style, comments, documentation in source code).
+
+Also consider adding reference to related issue by adding "See #123" (without quotes,
+replace 123 by the actual issue number) somewhere in the commit comment body.
 
 The Git command to commit the change is:
 
