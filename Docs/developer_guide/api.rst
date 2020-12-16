@@ -5,7 +5,7 @@ Slicer API
 Tutorials
 ---------
 
-Check out these `developer tutorials<https://www.slicer.org/wiki/Documentation/Nightly/Training#PerkLab.27s_Slicer_bootcamp_training_materials>`_ to get started with customizing and extending 3D Slicer using Python scripting or C++.
+Check out these `developer tutorials <https://www.slicer.org/wiki/Documentation/Nightly/Training#PerkLab.27s_Slicer_bootcamp_training_materials>`_ to get started with customizing and extending 3D Slicer using Python scripting or C++.
 
 C++
 ---
@@ -39,8 +39,8 @@ Documentation of these classes is available at: http://apidocs.slicer.org/master
 
 This documentation is generated using the Doxygen tool, which uses C++ syntax. The following rules can help in interpreting this documentation for Python:
 
--  Qt classes (class name starts with ``q``): for example, `qSlicerMarkupsPlaceWidget<http://apidocs.slicer.org/master/classqSlicerMarkupsPlaceWidget.html>`_
--  VTK classes VTK classes (class name starts with ``vtk``): for example, `vtkMRMLModelDisplayNode<http://apidocs.slicer.org/master/classvtkMRMLModelDisplayNode.html>`_
+-  Qt classes (class name starts with ``q``): for example, `qSlicerMarkupsPlaceWidget <http://apidocs.slicer.org/master/classqSlicerMarkupsPlaceWidget.html>`_
+-  VTK classes VTK classes (class name starts with ``vtk``): for example, `vtkMRMLModelDisplayNode <http://apidocs.slicer.org/master/classvtkMRMLModelDisplayNode.html>`_
 -  Public Types: most commonly used for specifying enumerated values (indicated by ``enum`` type).
    These values can be accessed as ``slicer.className.typeName``, for example ``slicer.qSlicerMarkupsPlaceWidget.HidePlaceMultipleMarkupsOption``
 -  Properties: these are values that are accessible as object attributes in Python and can be read and written as ``objectName.propertyName``. For example:
