@@ -38,9 +38,21 @@ Toolbar provides quick access to commonly used functions. Individual toolbar pan
 
 ### Status bar
 
-This panel may display application status, such as current operation in progress. Clicking the little **X** icons displays the Erro Log window.
+This panel may display application status, such as current operation in progress. Clicking the little **X** icons displays the Error Log window.
 
-## Interacting with views
+## Review loaded data
+
+Data available in Slicer can be reviewed in the Data module, which can be found on the toolbar or the modules list ![](../../Modules/Loadable/Data/Resources/Icons/SubjectHierarchy.png). More details about the module can be found on the [Slicer wiki](https://www.slicer.org/wiki/Documentation/Nightly/Modules/Data).
+
+The Data module's default Subject hierarchy tab can show the datasets in a tree hierarchy, arranged as patient/study/series as typical in DICOM, or any other folder structure:
+
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/data_loading_and_saving_subject_hier.png)
+
+The Subject hierarchy view contains numerous built-in functions for all types of data. These functions can be accessed by right-clicking the node in the tree. The list of actions differs for each data type, so it is useful to explore the options.
+
+Medical imaging data comes in various forms and representations, which may confuse people just starting in the field. The following diagram gives a brief overview about the most typical data types encountered when using Slicer, especially in a workflow that involves segmentation.
+
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/data_loading_and_saving_formats.png)
 
 ### Selecting displayed data
 
@@ -53,6 +65,8 @@ Multiple items can be selected in the subject hierarchy tree using Ctrl-Left-Cli
 If a view is displayed only in selected views, you can right-click on the item and select "Show in all views" to quickly show in all views.
 
 If view link is enabled for a slice view then dragging a volume to any of the views will show the volume in all the views in that group.
+
+## Interacting with views
 
 ### View Cross-Reference
 

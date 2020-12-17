@@ -106,6 +106,10 @@ You can customize views (show orientation marker, ruler, change orientation, tra
 - [Models](modules/models): Loads and adjusts display parameters of models. Allows the user to change the appearance of and organize 3D surface models.
 - [Transforms](modules/transforms): This module is used for creating and editing transformation matrices. You can establish these relations by moving nodes from the Transformable list to the Transformed list or by dragging the nodes under the Transformation nodes in the Data module.
 
+#### Save data
+
+Data sets loaded into the application can be saved using Save data dialog or exported to DICOM format using DICOM module. Detailes are described in [Data loading and saving section](data_loading_and_saving).
+
 #### Extensions
 
 3D Slicer supports plug-ins that are called extensions. An extension could be seen as a delivery package bundling together one or more Slicer modules. After installing an extension, the associated modules will be presented to the user as built-in ones. Extensions can be downloaded from the extensions manager to selectively install features that are useful for the end-user.

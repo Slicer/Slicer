@@ -53,7 +53,7 @@ Since DICOM files are often located in several folders, they can cross-reference
 
 #### DICOM import
 
-1. Make sure that all required Slicer extensions are installed. Slicer core contains DICOM import plugin for importing images, but additional extensions may be needed for other information objects. For example, *SlicerRT extension is needed for importing/exporting radiation therapy information objects (RT structure set, dose, image, plan). Quantitative reporting extension is needed to import export DICOM segmentation objects, structured reports, and parametric maps.* See complete list in [Supported data formats page](../supported_data_formats).
+1. Make sure that all required Slicer extensions are installed. Slicer core contains DICOM import plugin for importing images, but additional extensions may be needed for other information objects. For example, *SlicerRT extension is needed for importing/exporting radiation therapy information objects (RT structure set, dose, image, plan). Quantitative reporting extension is needed to import export DICOM segmentation objects, structured reports, and parametric maps.* See complete list in [supported data formats section](../data_loading_and_saving.html#supported-data-formats).
 2. Go to DICOM module
 3. Select folders that contain DICOM files
     - Option A: Drag-and-drop the folder that contains DICOM files to the Slicer application window.
