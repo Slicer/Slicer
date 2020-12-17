@@ -1,13 +1,33 @@
 # Data Loading and Saving
 
-There are two major types of data that can be loaded to Slicer:
+There are two major types of data that can be loaded to Slicer: DICOM and non-DICOM.
 
-- **DICOM**, which is a widely used and sophisticated set of standards for digital radiology. DICOM data can be loaded in two steps: 1. import files into the application's DICOM database (by switching to DICOM module and drag-and-dropping files to the application window), 2. load data objects (by double-clicking on items in the DICOM browser). The DICOM browser is accessible from the toolbar using the DICOM button ![](../../Base/QTGUI/Resources/Icons/Medium/SlicerLoadDICOM.png). More information about DICOM can be found on the [Slicer wiki](https://www.slicer.org/wiki/Documentation/Nightly/Modules/DICOM).
+## DICOM data
 
-- **Non-DICOM**, covering all types of data ranging from images and models to tables and point lists.
+DICOM is a widely used and sophisticated set of standards for digital radiology.
 
-  - Loading can happen in two ways: drag&drop file on the Slicer window, or by using the Load Data button on the toolbar ![](../../Base/QTGUI/Resources/Icons/Medium/SlicerLoadData.png).
+Data can be loaded from DICOM files into the scene in two steps:
+
+1. Import: add files into the application's DICOM database, by switching to DICOM module and drag-and-dropping files to the application window
+2. Load: get data objects into the scene, by double-clicking on items in the DICOM browser. The DICOM browser is accessible from the toolbar using the DICOM button ![](../../Base/QTGUI/Resources/Icons/Medium/SlicerLoadDICOM.png). More information about DICOM can be found on the [Slicer wiki](https://www.slicer.org/wiki/Documentation/Nightly/Modules/DICOM).
+
+Data in the scene can be saved to DICOM files in two steps:
+
+1. Export to database: save data from the scene into the application's DICOM database
+2. Export to file system: copy DICOM files from the database to a chosen folder in the file system
+
+More details are provided in the [DICOM module documentation](modules/dicom).
+
+## Non-DICOM data
+
+Non-DICOM data, covering all types of data ranging from images (nrrd, nii.gz, ...) and models (stl, ply, obj, ...) to tables (csv, txt) and point lists (json).
+
+  - Loading can happen in two ways: drag&drop file on the application window, or by using the Load Data button on the toolbar ![](../../Base/QTGUI/Resources/Icons/Medium/SlicerLoadData.png).
   - Saving happens with the Save Data toolbar button ![](../../Base/QTGUI/Resources/Icons/Medium/SlicerSave.png).
+
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/data_loading_and_saving_save_dialog.png)
+
+## Review loaded data
 
 Data available in Slicer can be reviewed in the Data module, which can be found on the toolbar or the modules list ![](../../Modules/Loadable/Data/Resources/Icons/SubjectHierarchy.png). More details about the module can be found on the [Slicer wiki](https://www.slicer.org/wiki/Documentation/Nightly/Modules/Data).
 
