@@ -144,6 +144,11 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   QObject::connect(this->FramerateSliderWidget, SIGNAL(valueChanged(double)),
                    q, SLOT(onCurrentFramerateChanged(double)));
 
+  QObject::connect(this->AutoReleaseGraphicsResourcesCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(onAutoReleaseGraphicsResourcesCheckBoxToggled(bool)));
+
+  void onAutoReleaseGraphicsResourcesChanged(bool autoRelease);
+
   // Volume Properties
   this->PresetComboBox->setMRMLScene(volumeRenderingLogic->GetPresetsScene());
   this->PresetComboBox->setCurrentNode(nullptr);
@@ -406,6 +411,8 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
   d->RenderingMethodComboBox->setCurrentIndex(d->RenderingMethodComboBox->findData(currentRenderingMethod) );
   d->MemorySizeComboBox->setCurrentGPUMemory(firstViewNode ? firstViewNode->GetGPUMemorySize() : 0);
   d->QualityControlComboBox->setCurrentIndex(firstViewNode ? firstViewNode->GetVolumeRenderingQuality() : -1);
+  d->AutoReleaseGraphicsResourcesCheckBox->setChecked(firstViewNode ? firstViewNode->GetAutoReleaseGraphicsResources() : false);
+
   if (firstViewNode)
     {
     d->FramerateSliderWidget->setValue(firstViewNode->GetExpectedFPS());
@@ -640,6 +647,29 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentQualityControlChanged(int inde
     if (displayNode->IsDisplayableInView(viewNode->GetID()))
       {
       viewNode->SetVolumeRenderingQuality(index);
+      }
+    }
+
+  this->updateWidgetFromMRML();
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::onAutoReleaseGraphicsResourcesCheckBoxToggled(bool autoRelease)
+{
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
+  if (!displayNode)
+    {
+    return;
+    }
+
+  std::vector<vtkMRMLNode*> viewNodes;
+  displayNode->GetScene()->GetNodesByClass("vtkMRMLViewNode", viewNodes);
+  for (std::vector<vtkMRMLNode*>::iterator it=viewNodes.begin(); it!=viewNodes.end(); ++it)
+    {
+    vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(*it);
+    if (displayNode->IsDisplayableInView(viewNode->GetID()))
+      {
+      viewNode->SetAutoReleaseGraphicsResources(autoRelease);
       }
     }
 

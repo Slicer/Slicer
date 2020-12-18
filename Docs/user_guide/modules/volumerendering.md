@@ -59,6 +59,7 @@ This is accomplished by specifying color and opacity for each voxel, based on it
         - Interactive speed: Ensure the given frame per second (FPS) is enforced in the views during interaction. The higher the FPS, the lower the resolution of the volume rendering
       - Normal (default): fixed rendering quality, should work well for volumes that the renderer can handle without difficulties.
       - Maximum: oversamples the image to achieve higher image quality, at the cost of slowing down the rendering.
+    - Auto-release resources: When a volume is shown using volume rendering then graphics resources are allocated (GPU memory, precomputed gradient and space leaping volumes, etc.). This flag controls if these resources are automatically released when the volume is hidden. Releasing the resources reduces memory usage, but it increases the time required to show the volume again. Default value can be set in application settings Volume Rendering panel.
     - Technique:
       - Composite with shading (default): display as a shaded surface
       - Maximum intensity projection: display brightest voxel value encountered in each projection line

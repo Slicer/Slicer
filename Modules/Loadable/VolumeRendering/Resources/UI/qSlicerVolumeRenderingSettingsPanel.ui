@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>345</width>
-    <height>155</height>
+    <height>156</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -99,6 +99,23 @@
     <widget class="QCheckBox" name="SurfaceSmoothingCheckBox">
      <property name="toolTip">
       <string>Reduce wood grain artifact to make surfaces appear smoother.</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="FramerateLabel_2">
+     <property name="text">
+      <string>Auto-release resources:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QCheckBox" name="AutoReleaseGraphicsResourcesCheckBox">
+     <property name="toolTip">
+      <string>Immediately unload volumes from graphics memory when not visible. Reduces memory usage but makes toggling volume visibility slower.</string>
      </property>
      <property name="text">
       <string/>

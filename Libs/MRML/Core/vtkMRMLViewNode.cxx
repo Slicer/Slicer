@@ -56,6 +56,7 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->OrientationMarkerEnabled = true;
   this->RulerEnabled = true;
   this->GPUMemorySize = 0; // Means application default
+  this->AutoReleaseGraphicsResources = false;
   this->ExpectedFPS = 8.;
   this->VolumeRenderingQuality = vtkMRMLViewNode::Normal;
   this->RaycastTechnique = vtkMRMLViewNode::Composite;
@@ -101,6 +102,7 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLEnumMacro(renderMode, RenderMode);
   vtkMRMLWriteXMLIntMacro(useDepthPeeling, UseDepthPeeling);
   vtkMRMLWriteXMLIntMacro(gpuMemorySize, GPUMemorySize);
+  vtkMRMLWriteXMLBooleanMacro(autoReleaseGraphicsResources, AutoReleaseGraphicsResources);
   vtkMRMLWriteXMLFloatMacro(expectedFPS, ExpectedFPS);
   vtkMRMLWriteXMLEnumMacro(volumeRenderingQuality, VolumeRenderingQuality);
   vtkMRMLWriteXMLEnumMacro(raycastTechnique, RaycastTechnique);
@@ -137,6 +139,7 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLEnumMacro(renderMode, RenderMode);
   vtkMRMLReadXMLIntMacro(useDepthPeeling, UseDepthPeeling);
   vtkMRMLReadXMLIntMacro(gpuMemorySize, GPUMemorySize);
+  vtkMRMLReadXMLBooleanMacro(autoReleaseGraphicsResources, AutoReleaseGraphicsResources);
   vtkMRMLReadXMLFloatMacro(expectedFPS, ExpectedFPS);
   vtkMRMLReadXMLEnumMacro(volumeRenderingQuality, VolumeRenderingQuality);
   vtkMRMLReadXMLEnumMacro(raycastTechnique, RaycastTechnique);
@@ -174,6 +177,7 @@ void vtkMRMLViewNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
   vtkMRMLCopyEnumMacro(RenderMode);
   vtkMRMLCopyIntMacro(UseDepthPeeling);
   vtkMRMLCopyIntMacro(GPUMemorySize);
+  vtkMRMLCopyBooleanMacro(AutoReleaseGraphicsResources);
   vtkMRMLCopyFloatMacro(ExpectedFPS);
   vtkMRMLCopyIntMacro(VolumeRenderingQuality);
   vtkMRMLCopyIntMacro(RaycastTechnique);
@@ -208,6 +212,7 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintEnumMacro(RenderMode);
   vtkMRMLPrintIntMacro(UseDepthPeeling);
   vtkMRMLPrintIntMacro(GPUMemorySize);
+  vtkMRMLPrintBooleanMacro(AutoReleaseGraphicsResources);
   vtkMRMLPrintFloatMacro(ExpectedFPS);
   vtkMRMLPrintIntMacro(VolumeRenderingQuality);
   vtkMRMLPrintIntMacro(RaycastTechnique);
