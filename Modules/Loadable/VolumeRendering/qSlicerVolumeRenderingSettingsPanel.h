@@ -39,6 +39,8 @@ class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingSettingsPa
   Q_PROPERTY(QString defaultQuality READ defaultQuality WRITE setDefaultQuality NOTIFY defaultQualityChanged)
   Q_PROPERTY(int defaultInteractiveSpeed READ defaultInteractiveSpeed WRITE setDefaultInteractiveSpeed NOTIFY defaultInteractiveSpeedChanged)
   Q_PROPERTY(bool defaultSurfaceSmoothing READ defaultSurfaceSmoothing WRITE setDefaultSurfaceSmoothing NOTIFY defaultSurfaceSmoothingChanged)
+  Q_PROPERTY(bool defaultAutoReleaseGraphicsResources READ defaultAutoReleaseGraphicsResources \
+    WRITE setDefaultAutoReleaseGraphicsResources NOTIFY defaultAutoReleaseGraphicsResourcesChanged)
   Q_PROPERTY(QString gpuMemory READ gpuMemory WRITE setGPUMemory NOTIFY gpuMemoryChanged)
 
 public:
@@ -60,6 +62,7 @@ public:
   QString defaultQuality()const;
   int defaultInteractiveSpeed()const;
   bool defaultSurfaceSmoothing()const;
+  bool defaultAutoReleaseGraphicsResources()const;
   QString gpuMemory()const;
 
 public slots:
@@ -67,6 +70,7 @@ public slots:
   void setDefaultQuality(const QString& quality);
   void setDefaultInteractiveSpeed(int interactiveSpeed);
   void setDefaultSurfaceSmoothing(bool surfaceSmoothing);
+  void setDefaultAutoReleaseGraphicsResources(bool autoRelease);
   void setGPUMemory(const QString& gpuMemory);
 
 signals:
@@ -74,6 +78,7 @@ signals:
   void defaultQualityChanged(const QString&);
   void defaultInteractiveSpeedChanged(int);
   void defaultSurfaceSmoothingChanged(bool);
+  void defaultAutoReleaseGraphicsResourcesChanged(bool);
   void gpuMemoryChanged(QString);
 
 protected slots:
@@ -83,6 +88,7 @@ protected slots:
   void onDefaultQualityChanged(int);
   void onDefaultInteractiveSpeedChanged(double);
   void onDefaultSurfaceSmoothingChanged(bool);
+  void onDefaultAutoReleaseGraphicsResourcesChanged(bool);
   void onGPUMemoryChanged();
   void updateDefaultViewNodeFromWidget();
 

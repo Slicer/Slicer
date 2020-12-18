@@ -142,6 +142,18 @@ public:
   vtkGetMacro(GPUMemorySize, int);
   vtkSetMacro(GPUMemorySize, int);
 
+  ///@{
+  /// Enable/Disable automatic immediate release of graphics resources
+  /// when not in use. If GPU volume rendering is used, enabling this option
+  /// makes the volume immediately unloaded from GPU memory when visibility
+  /// is turned off.
+  /// Disabled by default to allow faster toggling of visibility.
+  vtkSetMacro(AutoReleaseGraphicsResources, bool);
+  vtkGetMacro(AutoReleaseGraphicsResources, bool);
+  vtkBooleanMacro(AutoReleaseGraphicsResources, bool);
+  ///@}
+
+
   /// Expected FPS
   vtkSetMacro(ExpectedFPS, double);
   vtkGetMacro(ExpectedFPS, double);
@@ -343,6 +355,9 @@ protected:
   /// Not saved into scene file because different machines may have different GPU memory values.
   /// A value of 0 indicates to use the default value in the settings
   int GPUMemorySize;
+
+  /// Immediately release graphics resources when they are not in use.
+  bool AutoReleaseGraphicsResources;
 
   /// Expected frame per second rendered
   double ExpectedFPS;

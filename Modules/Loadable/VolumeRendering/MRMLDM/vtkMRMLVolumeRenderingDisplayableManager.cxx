@@ -350,11 +350,15 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::IsVisible(vtkMRMLVol
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::RemoveOrphanPipelines()
 {
+  vtkMRMLViewNode* viewNode = this->External->GetMRMLViewNode();
+  bool autoRelease = viewNode && viewNode->GetAutoReleaseGraphicsResources();
   PipelineListType::iterator it;
   for (it = this->DisplayPipelines.begin(); it != this->DisplayPipelines.end();)
     {
     Pipeline* pipeline = *it;
-    if (!pipeline->DisplayNode.GetPointer() || !pipeline->DisplayNode->GetDisplayableNode())
+    if (!pipeline->DisplayNode.GetPointer() || !pipeline->DisplayNode->GetDisplayableNode()
+      || (autoRelease && pipeline->DisplayNode &&
+        (!pipeline->DisplayNode->IsDisplayableInView(viewNode->GetID()) || !this->IsVisible(pipeline->DisplayNode))))
       {
       it = this->RemovePipelineIt(it);
       }
@@ -585,7 +589,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::RemoveDisplayNode(vt
     {
     return;
     }
-  
+
   PipelineListType::iterator pipelineIt = this->GetPipelineIt(displayNode);
   if (pipelineIt == this->DisplayPipelines.end())
     {
@@ -657,7 +661,7 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineTransf
   // Update the pipeline for all tracked DisplayableNode
   bool pipelineModified = false;
   for (auto pipeline : this->DisplayPipelines)
-  {
+    {
     if (!pipeline->DisplayNode)
       {
       continue;
@@ -1294,6 +1298,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneEndClose()
 void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneEndBatchProcess()
 {
   this->SetUpdateFromMRMLRequested(true);
+  this->Internal->RemoveOrphanPipelines();
   this->RequestRender();
 }
 
@@ -1487,6 +1492,8 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLNodesEvents(vtkObject*
     {
     this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
     }
+
+  this->Internal->RemoveOrphanPipelines();
 }
 
 //----------------------------------------------------------------------------

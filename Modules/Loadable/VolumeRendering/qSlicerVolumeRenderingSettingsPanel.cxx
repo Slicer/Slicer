@@ -110,6 +110,14 @@ void qSlicerVolumeRenderingSettingsPanelPrivate::init()
                       "defaultSurfaceSmoothing", SIGNAL(defaultSurfaceSmoothingChanged(bool)));
 
   //
+  // Auto-release graphics resources
+  //
+  QObject::connect(this->AutoReleaseGraphicsResourcesCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(onDefaultAutoReleaseGraphicsResourcesChanged(bool)));
+  q->registerProperty("VolumeRendering/DefaultAutoReleaseGraphicsResources", q,
+                      "defaultAutoReleaseGraphicsResources", SIGNAL(defaultAutoReleaseGraphicsResourcesChanged(bool)));
+
+  //
   // GPU memory
   //
 
@@ -452,6 +460,49 @@ void qSlicerVolumeRenderingSettingsPanel::onDefaultSurfaceSmoothingChanged(bool 
 }
 
 // --------------------------------------------------------------------------
+bool qSlicerVolumeRenderingSettingsPanel::defaultAutoReleaseGraphicsResources()const
+{
+  Q_D(const qSlicerVolumeRenderingSettingsPanel);
+  bool autoRelease = d->AutoReleaseGraphicsResourcesCheckBox->isChecked();
+  return autoRelease;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingSettingsPanel::setDefaultAutoReleaseGraphicsResources(bool autoRelease)
+{
+  Q_D(qSlicerVolumeRenderingSettingsPanel);
+  d->AutoReleaseGraphicsResourcesCheckBox->setChecked(autoRelease);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingSettingsPanel::onDefaultAutoReleaseGraphicsResourcesChanged(bool autoRelease)
+{
+  Q_D(qSlicerVolumeRenderingSettingsPanel);
+  if (!d->mrmlScene())
+    {
+    return;
+    }
+
+  // Set to default view node
+  vtkMRMLViewNode* defaultViewNode = d->defaultMrmlViewNode();
+  if (defaultViewNode)
+    {
+    defaultViewNode->SetAutoReleaseGraphicsResources(autoRelease);
+    }
+
+  // Set to all existing view nodes
+  std::vector<vtkMRMLNode*> viewNodes;
+  d->mrmlScene()->GetNodesByClass("vtkMRMLViewNode", viewNodes);
+  for (std::vector<vtkMRMLNode*>::iterator it=viewNodes.begin(); it!=viewNodes.end(); ++it)
+    {
+    vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(*it);
+    viewNode->SetAutoReleaseGraphicsResources(autoRelease);
+    }
+
+  emit defaultAutoReleaseGraphicsResourcesChanged(autoRelease);
+}
+
+// --------------------------------------------------------------------------
 void qSlicerVolumeRenderingSettingsPanel::updateDefaultViewNodeFromWidget()
 {
   Q_D(qSlicerVolumeRenderingSettingsPanel);
@@ -459,5 +510,6 @@ void qSlicerVolumeRenderingSettingsPanel::updateDefaultViewNodeFromWidget()
   this->onDefaultQualityChanged(d->QualityControlComboBox->currentIndex());
   this->onDefaultInteractiveSpeedChanged(d->InteractiveSpeedSlider->value());
   this->onDefaultSurfaceSmoothingChanged(d->SurfaceSmoothingCheckBox->isChecked());
+  this->onDefaultAutoReleaseGraphicsResourcesChanged(d->AutoReleaseGraphicsResourcesCheckBox->isChecked());
   this->onGPUMemoryChanged();
 }

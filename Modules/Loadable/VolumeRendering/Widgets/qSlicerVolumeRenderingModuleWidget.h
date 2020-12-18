@@ -78,6 +78,7 @@ protected slots:
   void onCurrentMemorySizeChanged();
   void onCurrentQualityControlChanged(int index);
   void onCurrentFramerateChanged(double fps);
+  void onAutoReleaseGraphicsResourcesCheckBoxToggled(bool autoRelease);
 
   void updateWidgetFromMRML();
   void updateWidgetFromROINode();
