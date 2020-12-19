@@ -146,6 +146,8 @@ vtkMRMLSliceLayerLogic::vtkMRMLSliceLayerLogic()
   this->ResliceUVW->GenerateStencilOutputOn();
 
   this->UpdatingTransforms = 0;
+
+  this->InterpolationMode = VTK_RESLICE_LINEAR;
 }
 
 //----------------------------------------------------------------------------
@@ -671,8 +673,8 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
     }
   else
     {
-    this->Reslice->SetInterpolationModeToLinear();
-    this->ResliceUVW->SetInterpolationModeToLinear();
+    this->Reslice->SetInterpolationMode(this->InterpolationMode);
+    this->ResliceUVW->SetInterpolationMode(this->InterpolationMode);
     }
 
   // for tensors reassign scalar data

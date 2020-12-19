@@ -129,6 +129,11 @@ public:
   /// The current reslice transform XYToIJK
   vtkGetObjectMacro (XYToIJKTransform, vtkGeneralTransform);
 
+  ///
+  /// Get/set interpolation mode used in image reslicer (when interpolation is enabled).
+  /// By default it uses VTK_RESLICE_LINEAR and can be set to VTK_RESLICE_CUBIC for higher quality interpolation.
+  vtkGetMacro(InterpolationMode, int);
+  vtkSetMacro(InterpolationMode, int);
 
 protected:
   vtkMRMLSliceLayerLogic();
@@ -182,6 +187,8 @@ protected:
   int IsLabelLayer;
 
   int UpdatingTransforms;
+
+  int InterpolationMode;
 };
 
 #endif
