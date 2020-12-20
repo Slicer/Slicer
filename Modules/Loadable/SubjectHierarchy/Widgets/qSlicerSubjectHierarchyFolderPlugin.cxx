@@ -648,25 +648,3 @@ void qSlicerSubjectHierarchyFolderPlugin::setApplyColorToBranchEnabledForItem(vt
 
   folderDisplayNode->SetApplyDisplayPropertiesOnBranch(enabled);
 }
-
-//-----------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyFolderPlugin::showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow)
-{
-  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
-  if (!shNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return false;
-    }
-
-  std::vector<vtkIdType> folderContentItemIDs;
-  shNode->GetItemChildren(itemID, folderContentItemIDs, true);
-  for (auto childItem : folderContentItemIDs)
-    {
-    qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(childItem);
-    if (ownerPlugin)
-      {
-      ownerPlugin->showItemInView(childItem, viewNode, allItemsToShow);
-      }
-    }
-}

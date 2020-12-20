@@ -684,13 +684,42 @@ void qSlicerSubjectHierarchyPluginHandler::showItemsInView(vtkIdList* itemIDsToS
     {
     return;
     }
+  if (!this->m_MRMLScene || !this->m_MRMLScene->GetSubjectHierarchyNode())
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy node";
+    return;
+    }
+
+  // Collect all items that will be shown
+  vtkMRMLSubjectHierarchyNode* shNode = m_MRMLScene->GetSubjectHierarchyNode();
+  QSet<vtkIdType> allItemIDsSet;
   for (int index = 0; index < itemIDsToShow->GetNumberOfIds(); ++index)
     {
-    vtkIdType itemID = itemIDsToShow->GetId(index);
+    vtkIdType currentItemID = itemIDsToShow->GetId(index);
+    // Add item itself
+    allItemIDsSet << currentItemID;
+    // Add child items recursively
+    std::vector<vtkIdType> childItemIDs;
+    shNode->GetItemChildren(currentItemID, childItemIDs, true);
+    for (auto childItem : childItemIDs)
+      {
+      allItemIDsSet << childItem;
+      }
+    }
+  vtkNew<vtkIdList> allItemIDsToShow;
+  foreach (vtkIdType itemID, allItemIDsSet)
+    {
+    allItemIDsToShow->InsertNextId(itemID);
+    }
+
+  // Show each dropped item and their children
+  for (int index = 0; index < allItemIDsToShow->GetNumberOfIds(); ++index)
+    {
+    vtkIdType itemID = allItemIDsToShow->GetId(index);
     qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin = this->getOwnerPluginForSubjectHierarchyItem(itemID);
     if (ownerPlugin)
       {
-      ownerPlugin->showItemInView(itemID, viewNode, itemIDsToShow);
+      ownerPlugin->showItemInView(itemID, viewNode, allItemIDsToShow);
       }
     }
 }

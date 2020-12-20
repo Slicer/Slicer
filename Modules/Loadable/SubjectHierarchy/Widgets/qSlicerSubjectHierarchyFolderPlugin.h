@@ -137,9 +137,6 @@ public:
   /// \param itemID Subject Hierarchy item to show the visibility context menu items for
   void showVisibilityContextMenuActionsForItem(vtkIdType itemID) override;
 
-  /// Show the contents of the colder in a selected view.
-  bool showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow) override;
-
 public:
   /// Create folder under specified item
   /// \param parentNode Parent item for folder to create
