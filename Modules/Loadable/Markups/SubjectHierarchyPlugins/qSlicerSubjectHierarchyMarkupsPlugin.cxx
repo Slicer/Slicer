@@ -33,6 +33,9 @@
 #include "qSlicerTerminologyItemDelegate.h"
 #include "vtkSlicerTerminologiesModuleLogic.h"
 
+// MRML markups includes
+#include "vtkMRMLMarkupsFiducialNode.h"
+
 // MRML widgets includes
 #include "qMRMLNodeComboBox.h"
 
@@ -43,6 +46,9 @@
 #include <vtkMRMLMarkupsROIDisplayNode.h>
 #include <vtkMRMLMarkupsNode.h>
 #include <vtkMRMLScene.h>
+
+//Logic includes
+#include <vtkSlicerMarkupsLogic.h>
 
 // vtkSegmentationCore includes
 #include <vtkSegment.h>
@@ -61,6 +67,7 @@
 
 // Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
+#include "qSlicerApplication.h"
 
 //-----------------------------------------------------------------------------
 const char* INTERACTION_HANDLE_TYPE_PROPERTY = "InteractionHandleType";
@@ -210,7 +217,7 @@ qSlicerSubjectHierarchyMarkupsPlugin::qSlicerSubjectHierarchyMarkupsPlugin(QObje
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyMarkupsPlugin::~qSlicerSubjectHierarchyMarkupsPlugin() = default;
 
-//----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyMarkupsPlugin::canAddNodeToSubjectHierarchy(
   vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
 {
@@ -220,18 +227,35 @@ double qSlicerSubjectHierarchyMarkupsPlugin::canAddNodeToSubjectHierarchy(
     qCritical() << Q_FUNC_INFO << ": Input node is NULL";
     return 0.0;
     }
-  else if (node->IsA("vtkMRMLMarkupsFiducialNode") ||
-           node->IsA("vtkMRMLMarkupsLineNode") ||
-           node->IsA("vtkMRMLMarkupsAngleNode") ||
-           node->IsA("vtkMRMLMarkupsCurveNode") ||
-           node->IsA("vtkMRMLMarkupsClosedCurveNode") ||
-           node->IsA("vtkMRMLMarkupsPlaneNode") ||
-           node->IsA("vtkMRMLMarkupsROINode")
-           )
+
+  vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
+  if (!appLogic)
     {
-    // Item is a markup
+    qCritical() << Q_FUNC_INFO << ": cannot get application logic";
+    return 0.0;
+    }
+
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(appLogic->GetModuleLogic("Markups"));
+  if (!markupsLogic)
+    {
+    qCritical() << Q_FUNC_INFO << ": could not get the Markups module logic.";
+    return 0.0;
+    }
+
+  vtkMRMLMarkupsNode* markupsNode= vtkMRMLMarkupsNode::SafeDownCast(node);
+  if (!markupsNode)
+    {
+    return 0.0;
+    }
+
+  bool registered = markupsLogic->GetWidgetByMarkupsType(markupsNode->GetMarkupType()) ? true : false;
+  if (registered)
+    {
+    // Item is a registered markup
     return 0.5;
     }
+
+  // Item is not a registered markup
   return 0.0;
 }
 
@@ -252,19 +276,38 @@ double qSlicerSubjectHierarchyMarkupsPlugin::canOwnSubjectHierarchyItem(vtkIdTyp
 
   // Markup
   vtkMRMLNode* associatedNode = shNode->GetItemDataNode(itemID);
-  if (associatedNode &&
-      (associatedNode->IsA("vtkMRMLMarkupsFiducialNode") ||
-       associatedNode->IsA("vtkMRMLMarkupsLineNode") ||
-       associatedNode->IsA("vtkMRMLMarkupsAngleNode") ||
-       associatedNode->IsA("vtkMRMLMarkupsCurveNode") ||
-       associatedNode->IsA("vtkMRMLMarkupsClosedCurveNode") ||
-       associatedNode->IsA("vtkMRMLMarkupsPlaneNode") ||
-       associatedNode->IsA("vtkMRMLMarkupsROINode")))
+  if (!associatedNode)
     {
-    // Item is a markup
-    return 0.5;
+    //NOTE: should there be a warning here?
+    return 0.0;
     }
 
+  vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
+  if (!appLogic)
+    {
+    qCritical() << Q_FUNC_INFO << ": cannot get application logic";
+    return 0.0;
+    }
+
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(appLogic->GetModuleLogic("Markups"));
+  if (!markupsLogic)
+    {
+    qCritical() << Q_FUNC_INFO << ": could not get the Markups module logic.";
+    return 0.0;
+    }
+
+  vtkMRMLMarkupsNode* associatedMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(associatedNode);
+  if (!associatedMarkupsNode)
+    {
+    return 0.0;
+    }
+  bool registered = markupsLogic->GetWidgetByMarkupsType(associatedMarkupsNode->GetMarkupType()) ? true : false;
+  if (registered)
+    {
+    // Item is a registered markup
+    return 0.5;
+    }
+  // Item is not a registered markup
   return 0.0;
 }
 
@@ -300,36 +343,14 @@ QIcon qSlicerSubjectHierarchyMarkupsPlugin::icon(vtkIdType itemID)
     {
     return QIcon();
     }
-  if (node->IsA("vtkMRMLMarkupsFiducialNode"))
+
+  vtkMRMLMarkupsNode *markupsNode = vtkMRMLMarkupsNode::SafeDownCast(node);
+  if (markupsNode == nullptr)
     {
-    return QIcon(":Icons/MarkupsFiducial.png");
+    return QIcon();
     }
-  else if (node->IsA("vtkMRMLMarkupsLineNode"))
-    {
-    return QIcon(":Icons/MarkupsLine.png");
-    }
-  else if (node->IsA("vtkMRMLMarkupsAngleNode"))
-    {
-    return QIcon(":Icons/MarkupsAngle.png");
-    }
-  else if (node->IsA("vtkMRMLMarkupsClosedCurveNode"))
-    {
-    // closed curve is a child class of curve node,
-    return QIcon(":Icons/MarkupsClosedCurve.png");
-    }
-  else if (node->IsA("vtkMRMLMarkupsCurveNode"))
-    {
-    return QIcon(":Icons/MarkupsOpenCurve.png");
-    }
-  else if (node->IsA("vtkMRMLMarkupsPlaneNode"))
-    {
-    return QIcon(":Icons/MarkupsPlane.png");
-    }
-  else if (node->IsA("vtkMRMLMarkupsROINode"))
-    {
-    return QIcon(":Icons/MarkupsROI.png");
-    }
-  return QIcon();
+
+  return QIcon(markupsNode->GetIcon());
 }
 
 //---------------------------------------------------------------------------

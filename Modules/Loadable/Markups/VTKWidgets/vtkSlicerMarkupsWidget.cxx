@@ -38,6 +38,7 @@
 #include <vtkRenderWindow.h>
 #include <vtkRenderer.h>
 #include <vtkTransform.h>
+#include <vtkObjectFactory.h>
 
 // MRML includes
 #include "vtkMRMLTransformNode.h"

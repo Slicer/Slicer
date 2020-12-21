@@ -52,6 +52,9 @@ public:
   /// Create the default widget representation and initializes the widget and representation.
   virtual void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) = 0;
 
+  /// Create instance of the markups widget
+  virtual vtkSlicerMarkupsWidget* CreateInstance() const = 0;
+
   /// Widget states
   enum
   {
@@ -186,5 +189,34 @@ private:
   vtkSlicerMarkupsWidget(const vtkSlicerMarkupsWidget&) = delete;
   void operator=(const vtkSlicerMarkupsWidget&) = delete;
 };
+
+//----------------------------------------------------------------------
+// CREATE INSTANCE MACRO
+
+#ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
+#define vtkSlicerMarkupsWidgetCreateInstanceMacro(type) \
+vtkSlicerMarkupsWidget* CreateInstance() const \
+{ \
+  vtkObject* ret = vtkObjectFactory::CreateInstance(#type); \
+  if(ret) \
+    { \
+    return static_cast<type *>(ret); \
+    } \
+  type* result = new type; \
+  result->InitializeObjectBase(); \
+  return result; \
+}
+#else
+#define vtkSlicerMarkupsWidgetCreateInstanceMacro(type) \
+vtkSlicerMarkupsWidget* CreateInstance() const \
+{ \
+  vtkObject* ret = vtkObjectFactory::CreateInstance(#type); \
+  if(ret) \
+    { \
+    return static_cast<type *>(ret); \
+    } \
+  return new type; \
+}
+#endif
 
 #endif

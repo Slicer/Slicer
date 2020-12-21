@@ -412,7 +412,7 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
 
   // ROI tab
   d->AnnotationROIWidget->setMRMLAnnotationROINode(annotationROINode);
-  d->MarkupsROIWidget->setMRMLMarkupsROINode(markupsROINode);
+  d->MarkupsROIWidget->setMRMLMarkupsNode(markupsROINode);
   if (annotationROINode && !markupsROINode)
     {
     d->AnnotationROIWidget->setVisible(true);

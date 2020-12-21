@@ -18,8 +18,17 @@ set(${KIT}_SRCS
   qMRML${MODULE_NAME}InteractionHandleWidget.h
   qMRML${MODULE_NAME}ROIWidget.cxx
   qMRML${MODULE_NAME}ROIWidget.h
-  qSlicerMarkupsPlaceWidget.cxx
-  qSlicerMarkupsPlaceWidget.h
+  qSlicer${MODULE_NAME}AdditionalOptionsWidget_p.h
+  qSlicer${MODULE_NAME}AdditionalOptionsWidget.cxx
+  qSlicer${MODULE_NAME}AdditionalOptionsWidget.h
+  qSlicer${MODULE_NAME}AngleMeasurementsWidget.h
+  qSlicer${MODULE_NAME}AngleMeasurementsWidget.cxx
+  qSlicer${MODULE_NAME}CurveSettingsWidget.h
+  qSlicer${MODULE_NAME}CurveSettingsWidget.cxx
+  qSlicer${MODULE_NAME}AdditionalOptionsWidgetsFactory.h
+  qSlicer${MODULE_NAME}AdditionalOptionsWidgetsFactory.cxx
+  qSlicer${MODULE_NAME}PlaceWidget.cxx
+  qSlicer${MODULE_NAME}PlaceWidget.h
   qSlicerSimpleMarkupsWidget.cxx
   qSlicerSimpleMarkupsWidget.h
   )
@@ -29,7 +38,11 @@ set(${KIT}_MOC_SRCS
   qMRML${MODULE_NAME}FiducialProjectionPropertyWidget.h
   qMRML${MODULE_NAME}InteractionHandleWidget.h
   qMRML${MODULE_NAME}ROIWidget.h
-  qSlicerMarkupsPlaceWidget.h
+  qSlicer${MODULE_NAME}AdditionalOptionsWidget.h
+  qSlicer${MODULE_NAME}AngleMeasurementsWidget.h
+  qSlicer${MODULE_NAME}CurveSettingsWidget.h
+  qSlicer${MODULE_NAME}AdditionalOptionsWidgetsFactory.h
+  qSlicer${MODULE_NAME}PlaceWidget.h
   qSlicerSimpleMarkupsWidget.h
   )
 
@@ -38,7 +51,9 @@ set(${KIT}_UI_SRCS
   Resources/UI/qMRML${MODULE_NAME}FiducialProjectionPropertyWidget.ui
   Resources/UI/qMRML${MODULE_NAME}InteractionHandleWidget.ui
   Resources/UI/qMRML${MODULE_NAME}ROIWidget.ui
-  Resources/UI/qSlicerMarkupsPlaceWidget.ui
+  Resources/UI/qSlicer${MODULE_NAME}AngleMeasurementsWidget.ui
+  Resources/UI/qSlicer${MODULE_NAME}CurveSettingsWidget.ui
+  Resources/UI/qSlicer${MODULE_NAME}PlaceWidget.ui
   Resources/UI/qSlicerSimpleMarkupsWidget.ui
   )
 

@@ -39,7 +39,9 @@ public:
   static vtkMRMLMarkupsClosedCurveNode *New();
   vtkTypeMacro(vtkMRMLMarkupsClosedCurveNode, vtkMRMLMarkupsCurveNode);
 
-  const char* GetIcon() override {return ":/Icons/MarkupsCurveMouseModePlace.png";}
+  const char* GetIcon() override {return ":/Icons/MarkupsClosedCurve.png";}
+  const char* GetAddIcon() override {return ":/Icons/MarkupsClosedCurveMouseModePlace.png";}
+  const char* GetPlaceAddIcon() override {return ":/Icons/MarkupsClosedCurveMouseModePlaceAdd.png";}
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -48,6 +50,12 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "MarkupsClosedCurve";}
+
+  /// Get markup short name
+  const char* GetMarkupType() override {return "ClosedCurve";};
+
+  /// Get markup short name
+  const char* GetDefaultNodeNamePrefix() override {return "CC";};
 
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent

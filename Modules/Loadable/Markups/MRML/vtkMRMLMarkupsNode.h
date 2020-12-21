@@ -130,7 +130,9 @@ public:
 
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual const char* GetIcon() {return "";};
+  virtual const char* GetIcon() {return ":/Icons/MarkupsGeneric.png";}
+  virtual const char* GetAddIcon() {return ":/Icons/MarkupsGenericMouseModePlace.png";}
+  virtual const char* GetPlaceAddIcon() {return ":/Icons/MarkupsGenericMouseModePlaceAdd.png";}
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -139,6 +141,12 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "Markups";};
+
+  /// Get markup name
+  virtual const char* GetMarkupType() {return "Markup";};
+
+  /// Get markup short name
+  virtual const char* GetDefaultNodeNamePrefix() {return "M";};
 
   /// Read node attributes from XML file
   void ReadXMLAttributes( const char** atts) override;

@@ -106,7 +106,7 @@ public:
   const char* GetNodeTagName() override {return "MarkupsCurve";}
 
   /// Get markup name
-  const char* GetMarkupName() override {return "Curve";};
+  const char* GetMarkupType() override {return "Curve";};
 
   /// Get markup short name
   const char* GetDefaultNodeNamePrefix() override {return "OC";};
