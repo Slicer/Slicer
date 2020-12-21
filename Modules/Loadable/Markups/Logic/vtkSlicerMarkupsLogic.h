@@ -27,10 +27,12 @@
 // Slicer includes
 #include "vtkSlicerModuleLogic.h"
 
-// MRML includes
+// Widgets includes
+#include "vtkSlicerMarkupsWidget.h"
 
 // STD includes
 #include <cstdlib>
+#include <string>
 
 #include "vtkSlicerMarkupsModuleLogicExport.h"
 
@@ -50,6 +52,11 @@ class VTK_SLICER_MARKUPS_MODULE_LOGIC_EXPORT vtkSlicerMarkupsLogic :
   public vtkSlicerModuleLogic
 {
 public:
+
+  enum Events{
+    MarkupRegistered = vtkCommand::UserEvent + 1,
+    MarkupUnregistered
+  };
 
   static vtkSlicerMarkupsLogic *New();
   vtkTypeMacro(vtkSlicerMarkupsLogic,vtkSlicerModuleLogic);
@@ -244,7 +251,50 @@ public:
   void RegisterJsonStorageNodeForMarkupsType(std::string markupsType, std::string storageNodeClassName);
   vtkMRMLMarkupsJsonStorageNode* AddNewJsonStorageNodeForMarkupsType(std::string markupsType);
 
+  /// Registers a markup and its corresponding widget to be handled by the Markups module
+  /// For a markup to be handled by this module (processed by the displayable
+  /// manager, UI and subject hierarchy) it needs to be registered using this function.
+  /// \param markupsNode MRMLMarkups node to be registered.
+  /// \param markupsWidget vtkSlicerWidget associated to the MRMLMarkups node registered.
+  void RegisterMarkupsNode(vtkMRMLMarkupsNode* markupsNode,
+                           vtkSlicerMarkupsWidget* markupsWidget,
+                           bool createPushButton=true);
+
+  /// Unregisters a markup and its corresponding widget. This will trigger the
+  /// vtkSlicerMarkupsLogic::MarkupUnregistered event.
+  /// \param markupsNode MRMLMakrups node to be unregistered.
+  void UnregisterMarkupsNode(vtkMRMLMarkupsNode*  markupsNode);
+
+  /// This returns an instance to a corresponding vtkSlicerMarkupsWidget associated
+  /// to the indicated markups name.
+  /// \param markupsType registered class to retrieve the associated widget.
+  /// \return pointer to associated vtkSLicerMarkupsWidget or nullptr if the MRML node
+  /// class is not registered.
+  vtkSlicerMarkupsWidget* GetWidgetByMarkupsType(const char* markupsType) const;
+
+  /// This returns an instance to a corresponding vtkMRMLMarkupsNode associated
+  /// to the indicated markups name.
+  /// \param makrupsType registered class to retrieve the associated widget.
+  /// \return pointer to associated vtkSLicerMarkupsWidget or nullptr if the MRML node
+  /// class is not registered.
+  vtkMRMLMarkupsNode* GetNodeByMarkupsType(const char* markupsType) const;
+
+  /// This returns the list of the markups registered in the logic
+  const std::list<std::string>& GetRegisteredMarkupsTypes() const;
+
+  /// This returns the flags that indicates whether the GUI push button should be created.
+  bool GetCreateMarkupsPushButton(const char* markupName) const;
+
 protected:
+
+  // This keeps the elements that can be registered to a node type
+  struct MarkupEntry
+  {
+    vtkSmartPointer<vtkSlicerMarkupsWidget> MarkupsWidget;
+    vtkSmartPointer<vtkMRMLMarkupsNode> MarkupsNode;
+    bool CreatePushButton;
+  };
+
   vtkSlicerMarkupsLogic();
   ~vtkSlicerMarkupsLogic() override;
 
@@ -261,6 +311,12 @@ protected:
 
   std::map<std::string, std::string> MarkupsTypeStorageNodes;
   vtkMRMLSelectionNode* SelectionNode{nullptr};
+
+  /// Keeps track of the registered nodes and corresponding widgets
+  std::map<std::string, vtkSlicerMarkupsLogic::MarkupEntry> MarkupTypeToMarkupEntry;
+
+  /// Keeps track of the order in which the markups were registered
+  std::list<std::string> RegisteredMarkupsOrder;
 
 private:
 

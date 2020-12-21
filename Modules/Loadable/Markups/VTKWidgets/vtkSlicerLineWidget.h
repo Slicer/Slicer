@@ -46,6 +46,9 @@ public:
   /// Create the default widget representation and initializes the widget and representation.
   void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) override;
 
+  /// Create instance of the markups widget
+  vtkSlicerMarkupsWidgetCreateInstanceMacro(vtkSlicerLineWidget);
+
 protected:
   vtkSlicerLineWidget();
   ~vtkSlicerLineWidget() override;

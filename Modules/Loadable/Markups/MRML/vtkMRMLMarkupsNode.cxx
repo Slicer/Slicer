@@ -1550,6 +1550,8 @@ void vtkMRMLMarkupsNode::SetMarkupLabelFormat(std::string format)
 std::string vtkMRMLMarkupsNode::ReplaceListNameInMarkupLabelFormat()
 {
   std::string newFormatString = this->MarkupLabelFormat;
+
+  // Long-name replacement
   size_t replacePos = newFormatString.find("%N");
   if (replacePos != std::string::npos)
     {
@@ -1562,6 +1564,21 @@ std::string vtkMRMLMarkupsNode::ReplaceListNameInMarkupLabelFormat()
       }
     newFormatString.replace(replacePos, 2, name);
     }
+
+  // Short-name replacement
+  replacePos = newFormatString.find("%S");
+  if (replacePos != std::string::npos)
+    {
+    // replace the special character with the list name, or an empty string if
+    // no list name is set
+    std::string name;
+    if (this->GetDefaultNodeNamePrefix() != nullptr)
+      {
+      name = std::string(this->GetDefaultNodeNamePrefix());
+      }
+    newFormatString.replace(replacePos, 2, name);
+    }
+
   return newFormatString;
 }
 

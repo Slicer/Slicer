@@ -16,8 +16,8 @@ set(${KIT}_SRCS
   qMRML${MODULE_NAME}InteractionHandleWidgetPlugin.h
   qMRML${MODULE_NAME}ROIWidgetPlugin.cxx
   qMRML${MODULE_NAME}ROIWidgetPlugin.h
-  qSlicerMarkupsPlaceWidgetPlugin.cxx
-  qSlicerMarkupsPlaceWidgetPlugin.h
+  qSlicer${MODULE_NAME}PlaceWidgetPlugin.cxx
+  qSlicer${MODULE_NAME}PlaceWidgetPlugin.h
   qSlicerSimpleMarkupsWidgetPlugin.cxx
   qSlicerSimpleMarkupsWidgetPlugin.h
   )

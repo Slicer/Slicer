@@ -64,6 +64,9 @@ public:
   /// Used when the user drags an ROI handle accross the ROI origin.
   void FlipROIHandles(bool flipLRHandle, bool flipAPHandle, bool flipISHandle);
 
+  /// Create instance of the markups widget
+  vtkSlicerMarkupsWidgetCreateInstanceMacro(vtkSlicerROIWidget);
+
 protected:
   vtkSlicerROIWidget();
   ~vtkSlicerROIWidget() override;
