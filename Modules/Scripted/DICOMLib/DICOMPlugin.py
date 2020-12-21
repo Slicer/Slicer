@@ -85,6 +85,30 @@ class DICOMPlugin(object):
     self.tags['seriesDescription'] = "0008,103E"
     self.tags['seriesNumber'] = "0020,0011"
 
+  def findPrivateTag(self, ds, group, element, privateCreator):
+    """Helper function to get private tag from private creator name.
+    Example:
+        ds = pydicom.read_file(...)
+        tag = self.findPrivateTag(ds, 0x0021, 0x40, "General Electric Company 01")
+        value = ds[tag].value
+    """
+    for tag, data_element in ds.items():
+      if (tag.group == group) and (tag.element < 0x0100):
+        data_element_value = data_element.value
+        if type(data_element.value) == bytes:
+          data_element_value = data_element_value.decode()
+        if data_element_value.rstrip() == privateCreator:
+          import pydicom as dicom
+          return dicom.tag.Tag(group, (tag.element << 8) + element)
+    return None
+
+  def isDetailedLogging(self):
+    """Helper function that returns True if detailed DICOM logging is enabled.
+    If enabled then the plugin can log as many details as it wants, even if it
+    makes loading slower or adds lots of information to the application log.
+    """
+    return slicer.util.settingsValue('DICOM/detailedLogging', False, converter=slicer.util.toBool)
+
   def hashFiles(self,files):
     """Create a hash key for a list of files"""
     try:
