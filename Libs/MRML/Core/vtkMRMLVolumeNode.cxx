@@ -935,9 +935,11 @@ void vtkMRMLVolumeNode::GetBoundsInternal(double bounds[6],
   transform->Concatenate(ijkToRAS.GetPointer());
 
   vtkMRMLTransformNode *transformNode = this->GetParentTransformNode();
+  bool isTransformLinear = true;
 
   if ( useTransform && transformNode )
     {
+    isTransformLinear = transformNode->IsTransformToWorldLinear();
     vtkNew<vtkGeneralTransform> worldTransform;
     worldTransform->Identity();
     transformNode->GetTransformToWorld(worldTransform.GetPointer());
@@ -952,31 +954,47 @@ void vtkMRMLVolumeNode::GetBoundsInternal(double bounds[6],
   volumeImage->GetDimensions(dimensions);
   double doubleDimensions[4] = { 0, 0, 0, 1 };
   vtkBoundingBox boundingBox;
-  for (int i=0; i<2; i++)
+
+  // If volume is linearly transformed, it is enough to get bounds of the 8 corner points,
+  // but if non-linear transform is applied then sides of the volume may bulge out, therefore
+  // we need to take samples all over the volume.
+  // Note: In most cases, it would be enough to take samples from the volume boundaries,
+  // but in some cases non-linear transform may transform the internals of the volume outside its boundaries,
+  // so it is more robust to sample the internals as well. Since taking samples all over the volume only approximately
+  // doubles number of point samples compared to sampling only the surface, the additional computation time is
+  // not likely to cause any performance issues. Also, the number of samples (8x8x8 = 512 samples) is negligible
+  // compared to the number of points that are resampled when an image is transformed (hundreds of thousand of points per single slice).
+  int numberOfSubdivisions = isTransformLinear ? 2 : 8;
+  double positionScale[3] = { 1.0, 1.0, 1.0 };
+  double positionOffset = 0.0;
+  if (useVoxelCenter)
     {
-    for (int j=0; j<2; j++)
+    positionScale[0] = dimensions[0] / (numberOfSubdivisions - 1.0) - 1;
+    positionScale[1] = dimensions[1] / (numberOfSubdivisions - 1.0) - 1;
+    positionScale[2] = dimensions[2] / (numberOfSubdivisions - 1.0) - 1;
+    }
+  else
+    {
+    positionScale[0] = dimensions[0] / (numberOfSubdivisions - 1.0);
+    positionScale[1] = dimensions[1] / (numberOfSubdivisions - 1.0);
+    positionScale[2] = dimensions[2] / (numberOfSubdivisions - 1.0);
+    positionOffset = -0.5;
+    }
+  for (int i=0; i < numberOfSubdivisions; i++)
+    {
+    for (int j=0; j < numberOfSubdivisions; j++)
       {
-      for (int k=0; k<2; k++)
+      for (int k=0; k < numberOfSubdivisions; k++)
         {
-        if (useVoxelCenter)
-          {
-          doubleDimensions[0] = i * (dimensions[0] - 1);
-          doubleDimensions[1] = j * (dimensions[1] - 1);
-          doubleDimensions[2] = k * (dimensions[2] - 1);
-          double* rasHDimensions = transform->TransformDoublePoint(doubleDimensions);
-          boundingBox.AddPoint(rasHDimensions);
-          }
-        else
-          {
-          doubleDimensions[0] = i * dimensions[0] - 0.5;
-          doubleDimensions[1] = j * dimensions[1] - 0.5;
-          doubleDimensions[2] = k * dimensions[2] - 0.5;
-          double* rasHDimensions = transform->TransformDoublePoint(doubleDimensions);
-          boundingBox.AddPoint(rasHDimensions);
-          }
+        doubleDimensions[0] = i * positionScale[0] + positionOffset;
+        doubleDimensions[1] = j * positionScale[1] + positionOffset;
+        doubleDimensions[2] = k * positionScale[2] + positionOffset;
+        double* rasHDimensions = transform->TransformDoublePoint(doubleDimensions);
+        boundingBox.AddPoint(rasHDimensions);
         }
       }
     }
+
   boundingBox.GetBounds(bounds);
 }
 
@@ -1058,10 +1076,20 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
     }
   reslice->SetBackgroundColor(backgroundColor);
 
-  // Enable AutoCropOutput to compute extent, origin, and spacing to avoid clipping.
-  // This requires that extent, origin, and spacing are not set manually
-  // (SetOutputOrigin, SetOutputSpacing, SetOutputExtent must not be called).
-  reslice->AutoCropOutputOn();
+  // Do not use vtkImageReslice::AutoCropOutput because that computes bounding box
+  // by transforming the 8 corners of the volume, therefore all parts of the volume
+  // that bulge out (due to the warping transform) would be cut off.
+  // GetBoundsInternal method takes samples all over the volume, therefore the
+  // complete transformed volume is included in the output.
+  double transformedBounds[6] = { 0.0,-1.0,0.0,-1.0,0.0,-1.0 };
+  this->GetBoundsInternal(transformedBounds, rasToIJK, true);
+  double spacing[3] = { 1.0, 1.0, 1.0 }; // output is specified in IJK coordinate system
+  reslice->SetOutputOrigin(transformedBounds[0] - 0.5 * spacing[0], transformedBounds[2] - 0.5 * spacing[1], transformedBounds[4] - 0.5 * spacing[2]);
+  reslice->SetOutputSpacing(spacing);
+  reslice->SetOutputExtent(
+    0, ceil((transformedBounds[1] - transformedBounds[0]) / spacing[0]),
+    0, ceil((transformedBounds[3] - transformedBounds[2]) / spacing[1]),
+    0, ceil((transformedBounds[5] - transformedBounds[4]) / spacing[2]));
 
   // Keep output spacing (1,1,1)
   reslice->TransformInputSamplingOff();
@@ -1136,18 +1164,18 @@ void vtkMRMLVolumeNode::ShiftImageDataExtentToZeroStart()
 double vtkMRMLVolumeNode::GetImageBackgroundScalarComponentAsDouble(int component)
 {
   vtkImageData* imageData = this->GetImageData();
-  if (!imageData)
-  {
+  if (!imageData || component >= imageData->GetNumberOfScalarComponents())
+    {
     return 0.0;
-  }
+    }
 
   int extent[6] = { 0,-1,0,-1,0,-1 };
   imageData->GetExtent(extent);
 
   if (extent[0] > extent[1] || extent[2] > extent[3] || extent[4] > extent[5])
-  {
+    {
     return 0.0;
-  }
+    }
 
   std::vector<double> scalarValues;
   scalarValues.push_back(imageData->GetScalarComponentAsDouble(extent[0], extent[2], extent[4], component));
