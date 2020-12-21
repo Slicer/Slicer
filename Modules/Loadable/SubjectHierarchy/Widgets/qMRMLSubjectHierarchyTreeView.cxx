@@ -2054,7 +2054,11 @@ void qMRMLSubjectHierarchyTreeView::onSubjectHierarchyItemTransformModified(vtkO
           {
           item->setBackground(Qt::transparent);
           }
-        d->HighlightedItems.removeAt(d->HighlightedItems.indexOf(transformItem));
+        int transformItemIndex = d->HighlightedItems.indexOf(transformItem);
+        if (transformItemIndex >= 0)
+          {
+          d->HighlightedItems.removeAt(transformItemIndex);
+          }
         }
       }
 
