@@ -109,10 +109,7 @@ cliNode.AddObserver('ModifiedEvent', onProcessingStatusUpdate)
 
 # If you need to cancel the CLI, call
 # cliNode.Cancel()
-
 ```
-
-To get the log info for the process you can call `cliNode.GetOutputText()</pre> and <pre>cliNode.GetErrorText()</pre>.
 
 ### How to find a Python function for any Slicer features
 
