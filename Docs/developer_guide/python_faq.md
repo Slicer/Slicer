@@ -7,21 +7,32 @@ Frequently asked questions about how to write Python scripts for Slicer.
 Here's an example to create a model from a volume using the "Grayscale Model Maker" module:
 
 ```python
-def grayModel(volumeNode):
+def createModelFromVolume(inputVolumeNode):
+  """Create surface mesh from volume node using CLI module"""
+  # Set parameters
   parameters = {}
-  parameters["InputVolume"] = volumeNode.GetID()
-  outModel = slicer.vtkMRMLModelNode()
-  slicer.mrmlScene.AddNode(outModel)
-  parameters["OutputGeometry"] = outModel.GetID()
+  parameters["InputVolume"] = inputVolumeNode
+  outputModelNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode")
+  parameters["OutputGeometry"] = outputModelNode
+  # Execute
   grayMaker = slicer.modules.grayscalemodelmaker
-  return slicer.cli.runSync(grayMaker, None, parameters)
+  cliNode = slicer.cli.runSync(grayMaker, None, parameters)
+  # Process results
+  if cliNode.GetStatus() & cliNode.ErrorsMask:
+    # error
+    errorText = cliNode.GetErrorText()
+    slicer.mrmlScene.RemoveNode(cliNode)
+    raise ValueError("CLI execution failed: " + errorText)
+  # success
+  slicer.mrmlScene.RemoveNode(cliNode)
+  return outputModelNode
 ```
 
 To try this, download the MRHead dataset using "Sample Data" module and paste the code above into the Python console and then run this:
 
 ```python
-v = getNode('MRHead')
-cliNode = grayModel(v)
+volumeNode = getNode('MRHead')
+modelNode = createModelFromVolume(volumeNode)
 ```
 
 A complete example for running a CLI module from a scripted module is available [here](https://github.com/fedorov/ChangeTrackerPy/blob/master/ChangeTracker/ChangeTrackerWizard/ChangeTrackerRegistrationStep.py#L56-L67)
@@ -34,8 +45,10 @@ The following script prints all the parameter names of a CLI parameter node:
 cliModule = slicer.modules.grayscalemodelmaker
 n=cliModule.cliModuleLogic().CreateNode()
 for groupIndex in range(n.GetNumberOfParameterGroups()):
+  print(f'Group: {n.GetParameterGroupLabel(groupIndex)}')
   for parameterIndex in range(n.GetNumberOfParametersInGroup(groupIndex)):
-    print('Parameter ({0}/{1}): {2} ({3})'.format(groupIndex, parameterIndex, n.GetParameterName(groupIndex, parameterIndex), n.GetParameterLabel(groupIndex, parameterIndex)))
+    print('  {0} [{1}]: {2}'.format(n.GetParameterName(groupIndex, parameterIndex),
+      n.GetParameterTag(groupIndex, parameterIndex),n.GetParameterLabel(groupIndex, parameterIndex)))
 ```
 
 ### Passing markups iducials to CLIs
@@ -60,25 +73,46 @@ cliNode = slicer.cli.runSync(slicer.modules.simpleregiongrowingsegmentation, Non
 
 ### Running CLI in the background
 
-If the CLI module is executed using slicer.cli.run method then the CLI module runs in a background thread, so the call to grayModel will return right away and the user interface will not be blocked. The slicer.cli.run call returns a cliNode (an instance of [http://slicer.org/doc/html/classvtkMRMLCommandLineModuleNode.html vtkMRMLCommandLineModuleNode]) which can be used to monitor the progress of the module.
+If the CLI module is executed using `slicer.cli.run` method then the CLI module runs in a background thread, so the call to `startProcessing` will return right away and the user interface will not be blocked. The `slicer.cli.run` call returns a cliNode (an instance of [vtkMRMLCommandLineModuleNode](http://slicer.org/doc/html/classvtkMRMLCommandLineModuleNode.html)) which can be used to monitor the progress of the module.
 
-In this example we create a simple callback that will be called whenever the cliNode is modified.  The status will tell you if the nodes is Pending, Running, or Completed.
+In this example we create a simple callback `onProcessingStatusUpdate` that will be called whenever the cliNode is modified.  The status will tell you if the nodes is Pending, Running, or Completed.
 
 ```python
-def printStatus(caller, event):
-  print("Got a %s from a %s" % (event, caller.GetClassName()))
-  if caller.IsA('vtkMRMLCommandLineModuleNode'):
-    print("Status is %s" % caller.GetStatusString())
+def startProcessing(inputVolumeNode):
+  """Create surface mesh from volume node using CLI module"""
+  # Set parameters
+  parameters = {}
+  parameters["InputVolume"] = inputVolumeNode
+  outputModelNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode")
+  parameters["OutputGeometry"] = outputModelNode
+  # Start execution in the background
+  grayMaker = slicer.modules.grayscalemodelmaker
+  cliNode = slicer.cli.run(grayMaker, None, parameters)
+  return cliNode
 
-cliNode.AddObserver('ModifiedEvent', printStatus)
+def onProcessingStatusUpdate(cliNode, event):
+  print("Got a %s from a %s" % (event, cliNode.GetClassName()))
+  if cliNode.IsA('vtkMRMLCommandLineModuleNode'):
+    print("Status is %s" % cliNode.GetStatusString())
+  if cliNode.GetStatus() & cliNode.Completed:
+    if cliNode.GetStatus() & cliNode.ErrorsMask:
+      # error
+      errorText = cliNode.GetErrorText()
+      print("CLI execution failed: " + errorText)
+    else:
+      # success
+      print("CLI execution succeeded. Output model node ID: "+cliNode.GetParameterAsString("OutputGeometry"))
+
+volumeNode = getNode('MRHead')
+cliNode = startProcessing(volumeNode)
+cliNode.AddObserver('ModifiedEvent', onProcessingStatusUpdate)
+
+# If you need to cancel the CLI, call
+# cliNode.Cancel()
+
 ```
 
-If you need to cancel the CLI, call
-```
-cliNode.Cance()
-```
-
-To get the log info for the process you can call <pre>cliNode.GetOutputText()</pre> and <pre>cliNode.GetErrorText()</pre>.
+To get the log info for the process you can call `cliNode.GetOutputText()</pre> and <pre>cliNode.GetErrorText()</pre>.
 
 ### How to find a Python function for any Slicer features
 
