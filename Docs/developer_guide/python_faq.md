@@ -2,6 +2,84 @@
 
 Frequently asked questions about how to write Python scripts for Slicer.
 
+## How to run a CLI module from Python
+
+Here's an example to create a model from a volume using the "Grayscale Model Maker" module:
+
+```python
+def grayModel(volumeNode):
+  parameters = {}
+  parameters["InputVolume"] = volumeNode.GetID()
+  outModel = slicer.vtkMRMLModelNode()
+  slicer.mrmlScene.AddNode(outModel)
+  parameters["OutputGeometry"] = outModel.GetID()
+  grayMaker = slicer.modules.grayscalemodelmaker
+  return slicer.cli.runSync(grayMaker, None, parameters)
+```
+
+To try this, download the MRHead dataset using "Sample Data" module and paste the code above into the Python console and then run this:
+
+```python
+v = getNode('MRHead')
+cliNode = grayModel(v)
+```
+
+A complete example for running a CLI module from a scripted module is available [here](https://github.com/fedorov/ChangeTrackerPy/blob/master/ChangeTracker/ChangeTrackerWizard/ChangeTrackerRegistrationStep.py#L56-L67)
+
+### Get list of parameter names
+
+The following script prints all the parameter names of a CLI parameter node:
+
+```python
+cliModule = slicer.modules.grayscalemodelmaker
+n=cliModule.cliModuleLogic().CreateNode()
+for groupIndex in range(n.GetNumberOfParameterGroups()):
+  for parameterIndex in range(n.GetNumberOfParametersInGroup(groupIndex)):
+    print('Parameter ({0}/{1}): {2} ({3})'.format(groupIndex, parameterIndex, n.GetParameterName(groupIndex, parameterIndex), n.GetParameterLabel(groupIndex, parameterIndex)))
+```
+
+### Passing markups iducials to CLIs
+
+```python
+import SampleData
+sampleDataLogic = SampleData.SampleDataLogic()
+head = sampleDataLogic.downloadMRHead()
+volumesLogic = slicer.modules.volumes.logic()
+headLabel = volumesLogic.CreateLabelVolume(slicer.mrmlScene, head, 'head-label')
+
+fiducialNode = slicer.vtkMRMLAnnotationFiducialNode()
+fiducialNode.SetFiducialWorldCoordinates((1,0,5))
+fiducialNode.SetName('Seed Point')
+fiducialNode.Initialize(slicer.mrmlScene)
+fiducialsList = getNode('Fiducials List')
+
+params = {'inputVolume': head.GetID(), 'outputVolume': headLabel.GetID(), 'seed' : fiducialsList.GetID(), 'iterations' : 2} 
+
+cliNode = slicer.cli.runSync(slicer.modules.simpleregiongrowingsegmentation, None, params)
+```
+
+### Running CLI in the background
+
+If the CLI module is executed using slicer.cli.run method then the CLI module runs in a background thread, so the call to grayModel will return right away and the user interface will not be blocked. The slicer.cli.run call returns a cliNode (an instance of [http://slicer.org/doc/html/classvtkMRMLCommandLineModuleNode.html vtkMRMLCommandLineModuleNode]) which can be used to monitor the progress of the module.
+
+In this example we create a simple callback that will be called whenever the cliNode is modified.  The status will tell you if the nodes is Pending, Running, or Completed.
+
+```python
+def printStatus(caller, event):
+  print("Got a %s from a %s" % (event, caller.GetClassName()))
+  if caller.IsA('vtkMRMLCommandLineModuleNode'):
+    print("Status is %s" % caller.GetStatusString())
+
+cliNode.AddObserver('ModifiedEvent', printStatus)
+```
+
+If you need to cancel the CLI, call
+```
+cliNode.Cance()
+```
+
+To get the log info for the process you can call <pre>cliNode.GetOutputText()</pre> and <pre>cliNode.GetErrorText()</pre>.
+
 ### How to find a Python function for any Slicer features
 
 All features of Slicer are available via Python scripts. [Slicer script repository](https://www.slicer.org/wiki/Documentation/Nightly/ScriptRepository) contains examples for the most commonly used features.
