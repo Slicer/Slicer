@@ -111,7 +111,7 @@ cliNode.AddObserver('ModifiedEvent', onProcessingStatusUpdate)
 # cliNode.Cancel()
 ```
 
-### How to find a Python function for any Slicer features
+## How to find a Python function for any Slicer features
 
 All features of Slicer are available via Python scripts. [Slicer script repository](https://www.slicer.org/wiki/Documentation/Nightly/ScriptRepository) contains examples for the most commonly used features.
 
@@ -132,7 +132,7 @@ sliceNode = slicer.mrmlScene.GetNodeByID('vtkMRMLSliceNodeRed')
 sliceNode.SetSliceResolutionMode(slicer.vtkMRMLSliceNode.SliceResolutionMatchVolumes)
 ```
 
-### How to type file paths in Python
+## How to type file paths in Python
 
 New Python users on Windows often suprised when they enter a path that contain backslash character (`\`) and it just does not work. Since backslash (`\`) is an escape character in Python, it requires special attention when used in string literals. For example, this is incorrect:
 
@@ -152,7 +152,7 @@ In most places, unix-type separators can be used instead of backslash. This is c
 
 See more information in Python documentation: https://docs.python.org/3/tutorial/introduction.html?#strings
 
-### How to include Python modules in an extension
+## How to include Python modules in an extension
 
 Sometimes, it is convenient to add Python modules to the Slicer scripted loadable modules.
 For example, the files associated with a Slicer module could look like this:
