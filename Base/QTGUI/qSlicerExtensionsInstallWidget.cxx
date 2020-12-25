@@ -117,12 +117,18 @@ void qSlicerExtensionsInstallWidgetPrivate::setFailurePage(const QStringList& er
       "    <!-- It is originally covered by http://mozilla.org/MPL/2.0/ license -->"
       "    <!-- MPL 2.0 license is compatible with Slicer (BSD-like) license -->"
       "    <div class='error'>"
-      "      <div id='errorTitle'><h1>Ooops. Extensions can not be installed !</h1></div>"
+      "      <div id='errorTitle'><h1>Extensions can not be installed.</h1></div>"
       "      <div id='errorDescription'>"
       "        <ul>"
       "%1"
-      "          <li>Check that <b>3D Slicer</b> is properly installed. "
-      "<a href='http://www.slicer.org/slicerWiki/index.php/Documentation/Slicer/Install'>Read more ?</a></li>"
+#ifdef Q_OS_MAC
+    "          <li><b>Extensions manager requires <em>3D Slicer</em> to be installed. "
+    "Open the disk image (.dmg) file, drag <em>Slicer.app</em> into the the <em>Applications</em> folder, "
+    "and launch <em>3D Slicer</em> from the <em>Applications</em> folder.</b> "
+#else
+    "          <li>Check that <b>3D Slicer</b> is properly installed. "
+#endif
+      "<a href='https://slicer.readthedocs.io/en/latest/user_guide/getting_started.html#installing-3d-slicer'>Read more...</a></li>"
       "        </ul>"
       "        <button id='errorTryAgain' onclick='window.extensions_install_widget.refresh();' autofocus='true'>Try Again</button>"
       "      </div>"
