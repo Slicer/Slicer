@@ -1254,7 +1254,15 @@ int Rotate( parameters & list )
   SetOutputParameters<ImageType>( list, resample, vectorOfImage[0] );
   TransformType::Pointer transform;
   // Load transforms and compute a merged transform
-  transform = SetAllTransform<ImageType>( list, resample, vectorOfImage[0] );
+  try
+    {
+    transform = SetAllTransform<ImageType>(list, resample, vectorOfImage[0]);
+    }
+  catch (itk::ExceptionObject& exception)
+    {
+    std::cerr << exception << std::endl;
+    return EXIT_FAILURE;
+    }
   if( !transform )
     {
     return EXIT_FAILURE;
