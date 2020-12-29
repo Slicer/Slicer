@@ -73,6 +73,7 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   // use the ctk color dialog on the color picker buttons
   this->selectedColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
   this->unselectedColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
+  this->activeColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
 
   // set up the display properties
   QObject::connect(this->VisibilityCheckBox, SIGNAL(toggled(bool)),
@@ -81,6 +82,8 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
     q, SLOT(onSelectedColorPickerButtonChanged(QColor)));
   QObject::connect(this->unselectedColorPickerButton, SIGNAL(colorChanged(QColor)),
     q, SLOT(onUnselectedColorPickerButtonChanged(QColor)));
+  QObject::connect(this->activeColorPickerButton, SIGNAL(colorChanged(QColor)),
+    q, SLOT(onActiveColorPickerButtonChanged(QColor)));
   QObject::connect(this->glyphTypeComboBox, SIGNAL(currentIndexChanged(QString)),
     q, SLOT(onGlyphTypeComboBoxChanged(QString)));
   QObject::connect(this->glyphSizeIsAbsoluteButton, SIGNAL(toggled(bool)),
@@ -265,6 +268,8 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
   d->selectedColorPickerButton->setColor(QColor::fromRgbF(color[0], color[1], color[2]));
   color = markupsDisplayNode->GetColor();
   d->unselectedColorPickerButton->setColor(QColor::fromRgbF(color[0], color[1], color[2]));
+  color = markupsDisplayNode->GetActiveColor();
+  d->activeColorPickerButton->setColor(QColor::fromRgbF(color[0], color[1], color[2]));
   d->opacitySliderWidget->setValue(markupsDisplayNode->GetOpacity());
 
   // glyph type
@@ -517,6 +522,17 @@ void qMRMLMarkupsDisplayNodeWidget::onUnselectedColorPickerButtonChanged(QColor 
     return;
     }
   d->MarkupsDisplayNode->SetColor(color.redF(), color.greenF(), color.blueF());
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::onActiveColorPickerButtonChanged(QColor color)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+    {
+    return;
+    }
+  d->MarkupsDisplayNode->SetActiveColor(color.redF(), color.greenF(), color.blueF());
 }
 
 //-----------------------------------------------------------------------------

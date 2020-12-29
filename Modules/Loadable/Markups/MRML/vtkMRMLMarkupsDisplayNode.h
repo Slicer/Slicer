@@ -397,6 +397,11 @@ public:
   /// This function should always return a valid vtkTextProperty pointer.
   vtkGetObjectMacro(TextProperty, vtkTextProperty);
 
+  /// Set the active color of the markup. This color is used when the mouse pointer hovers over a markup.
+  vtkSetVector3Macro(ActiveColor, double);
+  /// Get the active color of the markup. This color is used when the mouse pointer hovers over a markup.
+  vtkGetVector3Macro(ActiveColor, double);
+
   /// The visibility and interactability of the interaction handles
   vtkGetMacro(HandlesInteractive, bool);
   vtkSetMacro(HandlesInteractive, bool);
@@ -478,6 +483,8 @@ protected:
   double OccludedOpacity;
 
   vtkTextProperty* TextProperty;
+
+  double ActiveColor[3];
 
   bool HandlesInteractive;
 };

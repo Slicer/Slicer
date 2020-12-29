@@ -110,6 +110,8 @@ void qSlicerMarkupsSettingsPanel
                          "defaultSelectedColor", SIGNAL(defaultSelectedColorChanged(QColor)));
   this->registerProperty("Markups/UnselectedColor", this,
                          "defaultUnselectedColor", SIGNAL(defaultUnselectedColorChanged(QColor)));
+  this->registerProperty("Markups/ActiveColor", this,
+                         "defaultActiveColor", SIGNAL(defaultActiveColorChanged(QColor)));
   this->registerProperty("Markups/GlyphScale", this,
                          "defaultGlyphScale", SIGNAL(defaultGlyphScaleChanged(double)));
   this->registerProperty("Markups/TextScale", this,
@@ -205,6 +207,16 @@ QColor qSlicerMarkupsSettingsPanel::defaultSelectedColor()const
 }
 
 // --------------------------------------------------------------------------
+QColor qSlicerMarkupsSettingsPanel::defaultActiveColor()const
+{
+  Q_D(const qSlicerMarkupsSettingsPanel);
+
+  QColor color = d->defaultActiveColorPickerButton->color();
+
+  return color;
+}
+
+// --------------------------------------------------------------------------
 double qSlicerMarkupsSettingsPanel::defaultGlyphScale()const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
@@ -261,6 +273,14 @@ void qSlicerMarkupsSettingsPanel::setDefaultSelectedColor(const QColor color)
   Q_D(qSlicerMarkupsSettingsPanel);
 
   d->defaultSelectedColorPickerButton->setColor(color);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerMarkupsSettingsPanel::setDefaultActiveColor(const QColor color)
+{
+  Q_D(qSlicerMarkupsSettingsPanel);
+
+  d->defaultActiveColorPickerButton->setColor(color);
 }
 
 // --------------------------------------------------------------------------

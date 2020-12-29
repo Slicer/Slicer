@@ -35,6 +35,7 @@ class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsSettingsPanel
   Q_PROPERTY(QString defaultGlyphType READ defaultGlyphType WRITE setDefaultGlyphType NOTIFY defaultGlyphTypeChanged)
   Q_PROPERTY(QColor defaultUnselectedColor READ defaultUnselectedColor WRITE setDefaultUnselectedColor NOTIFY defaultUnselectedColorChanged)
   Q_PROPERTY(QColor defaultSelectedColor READ defaultSelectedColor WRITE setDefaultSelectedColor NOTIFY defaultSelectedColorChanged)
+  Q_PROPERTY(QColor defaultActiveColor READ defaultActiveColor WRITE setDefaultActiveColor NOTIFY defaultActiveColorChanged)
   Q_PROPERTY(double defaultGlyphScale READ defaultGlyphScale WRITE setDefaultGlyphScale NOTIFY defaultGlyphScaleChanged)
   Q_PROPERTY(double defaultTextScale READ defaultTextScale WRITE setDefaultTextScale NOTIFY defaultTextScaleChanged)
   Q_PROPERTY(double defaultOpacity READ defaultOpacity WRITE setDefaultOpacity NOTIFY defaultOpacityChanged)
@@ -62,6 +63,7 @@ public:
   QString defaultGlyphType() const;
   QColor defaultUnselectedColor() const;
   QColor defaultSelectedColor() const;
+  QColor defaultActiveColor() const;
   double defaultGlyphScale() const;
   double defaultTextScale() const;
   double defaultOpacity() const;
@@ -70,6 +72,7 @@ public slots:
   void setDefaultGlyphType(const QString& type);
   void setDefaultUnselectedColor(const QColor color);
   void setDefaultSelectedColor(const QColor color);
+  void setDefaultActiveColor(const QColor color);
   void setDefaultGlyphScale(const double scale);
   void setDefaultTextScale(const double scale);
   void setDefaultOpacity(const double scale);
@@ -78,6 +81,7 @@ signals:
   void defaultGlyphTypeChanged(const QString&);
   void defaultUnselectedColorChanged(QColor);
   void defaultSelectedColorChanged(QColor);
+  void defaultActiveColorChanged(QColor);
   void defaultGlyphScaleChanged(const double);
   void defaultTextScaleChanged(const double);
   void defaultOpacityChanged(const double);

@@ -214,6 +214,12 @@ void qSlicerMarkupsModule::readDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDispl
     QColor qcolor = variant.value<QColor>();
     markupsDisplayNode->SetColor(qcolor.redF(), qcolor.greenF(), qcolor.blueF());
     }
+  if (settings.contains("Markups/ActiveColor"))
+    {
+    QVariant variant = settings.value("Markups/ActiveColor");
+    QColor qcolor = variant.value<QColor>();
+    markupsDisplayNode->SetColor(qcolor.redF(), qcolor.greenF(), qcolor.blueF());
+    }
   if (settings.contains("Markups/UseGlyphScale"))
     {
     markupsDisplayNode->SetUseGlyphScale(settings.value("Markups/UseGlyphScale").toBool());
@@ -267,6 +273,8 @@ void qSlicerMarkupsModule::writeDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDisp
   settings.setValue("Markups/SelectedColor", QColor::fromRgbF(color[0], color[1], color[2]));
   color = markupsDisplayNode->GetColor();
   settings.setValue("Markups/UnselectedColor", QColor::fromRgbF(color[0], color[1], color[2]));
+  color = markupsDisplayNode->GetActiveColor();
+  settings.setValue("Markups/ActiveColor", QColor::fromRgbF(color[0], color[1], color[2]));
   settings.setValue("Markups/UseGlyphScale", markupsDisplayNode->GetUseGlyphScale());
   settings.setValue("Markups/GlyphScale", markupsDisplayNode->GetGlyphScale());
   settings.setValue("Markups/GlyphSize", markupsDisplayNode->GetGlyphSize());

@@ -526,6 +526,14 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsDisplayNodeFromJso
       displayNode->SetSelectedColor(color);
       }
     }
+  if (displayItem.HasMember("activeColor"))
+    {
+    double color[3] = { 0.5, 0.5, 0.5 };
+    if (this->ReadVector(displayItem["activeColor"], color))
+      {
+      displayNode->SetActiveColor(color);
+      }
+    }
   if (displayItem.HasMember("propertiesLabelVisibility"))
     {
     displayNode->SetPropertiesLabelVisibility(displayItem["propertiesLabelVisibility"].GetBool());
@@ -826,6 +834,7 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteDisplayProperties(
 
   writer.Key("color"); this->WriteVector(writer, markupsDisplayNode->GetColor());
   writer.Key("selectedColor"); this->WriteVector(writer, markupsDisplayNode->GetSelectedColor());
+  writer.Key("activeColor"); this->WriteVector(writer, markupsDisplayNode->GetActiveColor());
 
   writer.Key("propertiesLabelVisibility"); writer.Bool(markupsDisplayNode->GetPropertiesLabelVisibility());
   writer.Key("pointLabelsVisibility"); writer.Bool(markupsDisplayNode->GetPointLabelsVisibility());

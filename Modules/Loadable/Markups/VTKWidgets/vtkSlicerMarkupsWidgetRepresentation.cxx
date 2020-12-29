@@ -624,7 +624,6 @@ bool vtkSlicerMarkupsWidgetRepresentation::GetAllControlPointsSelected()
 double* vtkSlicerMarkupsWidgetRepresentation::GetWidgetColor(int controlPointType)
 {
   static double invalidColor[3] = { 0.5, 0.5, 0.5 }; // gray
-  static double activeColor[3] = { 0.4, 1.0, 0. }; // bright green
   static double color[3];
 
   if (!this->MarkupsDisplayNode)
@@ -640,10 +639,10 @@ double* vtkSlicerMarkupsWidgetRepresentation::GetWidgetColor(int controlPointTyp
       vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(displayableNode);
     if (overrideHierarchyDisplayNode)
       {
-      overrideHierarchyDisplayNode->GetColor(color);
       if (controlPointType == Active)
         {
-        return activeColor;
+        this->MarkupsDisplayNode->GetActiveColor(color);
+        return color;
         }
       else
         {
@@ -664,7 +663,9 @@ double* vtkSlicerMarkupsWidgetRepresentation::GetWidgetColor(int controlPointTyp
     case Selected:
       this->MarkupsDisplayNode->GetSelectedColor(color);
       break;
-    case Active: return activeColor;
+    case Active:
+      this->MarkupsDisplayNode->GetActiveColor(color);
+      break;
     case Project:
       if (this->MarkupsDisplayNode->GetSliceProjectionUseFiducialColor())
         {
