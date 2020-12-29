@@ -901,6 +901,7 @@ void vtkSlicerMarkupsLogic::CopyBasicDisplayProperties(vtkMRMLMarkupsDisplayNode
   MRMLNodeModifyBlocker blocker(targetDisplayNode);
   targetDisplayNode->SetSelectedColor(sourceDisplayNode->GetSelectedColor());
   targetDisplayNode->SetColor(sourceDisplayNode->GetColor());
+  targetDisplayNode->SetActiveColor(sourceDisplayNode->GetActiveColor());
   targetDisplayNode->SetOpacity(sourceDisplayNode->GetOpacity());
   targetDisplayNode->SetGlyphType(sourceDisplayNode->GetGlyphType());
   targetDisplayNode->SetGlyphScale(sourceDisplayNode->GetGlyphScale());
