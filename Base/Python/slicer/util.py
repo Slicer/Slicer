@@ -2062,13 +2062,13 @@ def messageBox(text, parent=None, **kwargs):
 def createProgressDialog(parent=None, value=0, maximum=100, labelText="", windowTitle="Processing...", **kwargs):
   """Display a modal QProgressDialog.
 
-  Go to `QProgressDialog documentation <http://pyqt.sourceforge.net/Docs/PyQt4/qprogressdialog.html>`_ to
+  Go to `QProgressDialog documentation <https://doc.qt.io/qt-5/qprogressdialog.html>`_ to
   learn about the available keyword arguments.
 
   Examples::
 
     # Prevent progress dialog from automatically closing
-    progressbar = createProgressIndicator(autoClose=False)
+    progressbar = createProgressDialog(autoClose=False)
 
     # Update progress value
     progressbar.value = 50
