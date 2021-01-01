@@ -31,6 +31,7 @@ if(NOT Slicer_USE_SYSTEM_QT)
   set(SlicerBlockInstallQtPlugins_subdirectories
     audio
     imageformats
+    printsupport
     sqldrivers
     )
     if(Slicer_BUILD_WEBENGINE_SUPPORT)
