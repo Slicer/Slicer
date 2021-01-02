@@ -11,5 +11,6 @@ Modules usually interact with each other only indirectly, by making changes and 
 
     markups.md
     segmenteditor.md
+    transforms.md
     volumerendering.md
     volumes.md
