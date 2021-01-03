@@ -80,9 +80,15 @@ language = None
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # Set EXCLUDE_DEVELOPER_GUIDE=True environment variable to exclude developer guide.
-# It is useful for quicker documentation generation while eiditin user manual.
-if os.environ.get('EXCLUDE_DEVELOPER_GUIDE', None) == 'True':
-    exclude_patterns.append('developer_guide/*')
+# It is useful for quicker documentation generation while eiditing user manual.
+if os.environ.get('EXCLUDE_API_REFERENCE', False) == 'True':
+    print("API reference is excluded from documentation.")
+    exclude_patterns.append('developer_guide/saferef.rst')
+    exclude_patterns.append('developer_guide/teem.rst')
+    exclude_patterns.append('developer_guide/vtkAddon.rst')
+    exclude_patterns.append('developer_guide/vtkITK.rst')
+    exclude_patterns.append('developer_guide/slicer.rst')
+    exclude_patterns.append('developer_guide/mrml.rst')
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'

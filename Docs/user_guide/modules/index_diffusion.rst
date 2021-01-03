@@ -1,7 +1,7 @@
 .. _modules_index_diffusion:
 
 #########
-Diffusion
+Diffusion modules
 #########
 
 .. toctree::

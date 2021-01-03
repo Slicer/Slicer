@@ -1,14 +1,11 @@
 .. _modules_index_segmentation:
 
 ############
-Segmentation
+Segmentation modules
 ############
 
 .. toctree::
 
-    segmentations.md
-    segmenteditor.md
-    segmentstatistics.md
     simpleregiongrowingsegmentation.md
     brainsroiauto.md
     robuststatisticssegmenter.md

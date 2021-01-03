@@ -6,8 +6,20 @@ Modules
 
 .. toctree::
 
-    overview.md
-    index_main.rst
+    annotations.md
+    data.md
+    dicom.md
+    markups.md
+    models.md
+    sceneviews.md
+    segmentations.md
+    segmenteditor.md
+    transforms.md
+    viewcontrollers.md
+    volumerendering.md
+    volumes.md
+    welcome.md
+
     index_wizards.rst
     index_informatics.rst
     index_registration.rst

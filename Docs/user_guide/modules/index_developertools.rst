@@ -1,7 +1,7 @@
 .. _modules_index_developertools:
 
 ###############
-Developer tools
+Developer tool modules
 ###############
 
 .. toctree::

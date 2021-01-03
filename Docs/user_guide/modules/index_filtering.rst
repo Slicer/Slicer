@@ -1,7 +1,7 @@
 .. _modules_index_filtering:
 
 #########
-Filtering
+Filtering modules
 #########
 
 .. toctree::

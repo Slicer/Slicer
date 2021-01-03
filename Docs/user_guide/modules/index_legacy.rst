@@ -1,7 +1,7 @@
 .. _modules_index_legacy:
 
 #########
-Legacy
+Legacy modules
 #########
 
 .. toctree::

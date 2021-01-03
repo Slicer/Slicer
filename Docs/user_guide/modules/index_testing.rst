@@ -1,7 +1,7 @@
 .. _modules_index_testing:
 
 #########
-Testing
+Testing modules
 #########
 
 .. toctree::

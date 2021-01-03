@@ -1,7 +1,7 @@
 .. _modules_index_quantification:
 
 ##############
-Quantification
+Quantification modules
 ##############
 
 .. toctree::

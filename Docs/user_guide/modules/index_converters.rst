@@ -1,7 +1,7 @@
 .. _modules_index_converters:
 
 ##########
-Converters
+Converter modules
 ##########
 
 .. toctree::

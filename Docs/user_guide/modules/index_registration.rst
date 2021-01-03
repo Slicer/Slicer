@@ -1,7 +1,7 @@
 .. _modules_index_registration:
 
 ############
-Registration
+Registration modules
 ############
 
 .. toctree::
@@ -11,7 +11,6 @@ Registration
     performmetrictest.md
     brainsresample.md
     brainsresize.md
-    transforms.md
 
     acpctransform.md
     brainsdemonwarp.md

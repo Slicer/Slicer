@@ -1,7 +1,7 @@
 .. _modules_index_wizards:
 
 #########
-Wizards
+Wizard  modules
 #########
 
 .. toctree::

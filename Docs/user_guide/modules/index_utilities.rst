@@ -1,7 +1,7 @@
 .. _modules_index_utilities:
 
 #########
-Utilities
+Utility modules
 #########
 
 .. toctree::
@@ -11,6 +11,5 @@ Utilities
     dicompatcher.md
     endoscopy.md
     screencapture.md
-    emsegmenttransformtonewformat.md
 
     brainstransformconvert.md

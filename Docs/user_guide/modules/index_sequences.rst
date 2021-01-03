@@ -1,7 +1,7 @@
 .. _modules_index_sequences:
 
 #########
-Sequences
+Sequences modules
 #########
 
 .. toctree::
