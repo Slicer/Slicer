@@ -11,6 +11,7 @@
 #define __vtkMRMLNodePropertyMacros_h
 
 #include <sstream> // needed for std::stringstream
+#include <vtksys/SystemTools.hxx> // needed for vtksys::SystemTools functions
 
 /// @file
 
@@ -121,7 +122,7 @@
     vectorType<std::string> vector = Get##propertyName(); \
     for (vectorType<std::string>::iterator it=vector.begin(); it!=vector.end(); it++) \
       { \
-      if (it==vector.begin()) \
+      if (it!=vector.begin()) \
         { \
         xmlWriteOutputStream << ";"; \
         } \
@@ -322,29 +323,22 @@
       separatorPosition = valueString.find(" "); \
       } \
     this->Set##propertyName(vector); \
-  }
+    }
 
 /// Macro for reading an iterable container (of std::string) node property from XML.
 #define vtkMRMLReadXMLStdStringVectorMacro(xmlAttributeName, propertyName, vectorType) \
   if (!strcmp(xmlReadAttName, #xmlAttributeName)) \
     { \
-    vectorType<std::string> vector; \
+    vectorType<std::string> attributeValues; \
     std::string valueString(xmlReadAttValue); \
-    size_t separatorPosition = valueString.find(";"); \
-    while(separatorPosition != std::string::npos) \
+    std::vector<vtksys::String> splitXmlReadAttValue = vtksys::SystemTools::SplitString(valueString, ';'); \
+    for (std::string attributeValue : splitXmlReadAttValue) \
       { \
-      std::string attributeValue = valueString.substr(0,separatorPosition); \
       vtksys::SystemTools::ReplaceString(attributeValue, "%3B", ";"); \
       vtksys::SystemTools::ReplaceString(attributeValue, "%25", "%"); \
-      vector.insert(vector.end(), attributeValue); \
-      valueString = valueString.substr(separatorPosition+1); \
-      separatorPosition = valueString.find(";"); \
+      attributeValues.emplace_back(attributeValue); \
       } \
-    if (!valueString.empty()) \
-      { \
-      vector.push_back(valueString); \
-      } \
-    this->Set##propertyName(vector); \
+    this->Set##propertyName(attributeValues); \
     }
 
 /// Macro for reading a vtkMatrix4x4* node property from XML.

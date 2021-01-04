@@ -2861,18 +2861,20 @@ int TestReadWriteXMLProperties()
   node1->SetTestingFloatVector(testingFloatVector);
 
   std::vector<int> testingIntVector;
-  testingFloatVector.push_back(0);
-  testingFloatVector.push_back(1);
-  testingFloatVector.push_back(2);
-  testingFloatVector.push_back(3);
-  testingFloatVector.push_back(4);
-  testingFloatVector.push_back(5);
+  testingIntVector.push_back(0);
+  testingIntVector.push_back(1);
+  testingIntVector.push_back(2);
+  testingIntVector.push_back(3);
+  testingIntVector.push_back(4);
+  testingIntVector.push_back(5);
   node1->SetTestingIntVector(testingIntVector);
 
   std::stringstream ss;
   ss << "<MRMLNode ";
   node1->WriteXML(ss, 0);
   ss << " />";
+  std::cout << "Scene XML: " << ss.str() << std::endl;
+
   vtkSmartPointer<vtkXMLDataElement> element = vtkSmartPointer<vtkXMLDataElement>::Take(vtkXMLUtilities::ReadElementFromStream(ss));
 
   const char *atts[] = {
@@ -2886,7 +2888,16 @@ int TestReadWriteXMLProperties()
 
   if (node1->GetTestingStringVector() != node2->GetTestingStringVector())
     {
-    return EXIT_FAILURE;
+    std::cout << "Node 1 string vector:" << std::endl;
+    for (auto s : node1->GetTestingStringVector())
+      {
+      std::cout << "  " << s << std::endl;
+      }
+    std::cout << "Node 2 string vector:" << std::endl;
+    for (auto s : node2->GetTestingStringVector())
+      {
+      std::cout << "  " << s << std::endl;
+      }
     }
 
   if (node1->GetTestingFloatVector() != node2->GetTestingFloatVector())
