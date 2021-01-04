@@ -2506,20 +2506,27 @@ def plot(narray, xColumnIndex = -1, columnNames = None, title = None, show = Tru
 
   return chartNode
 
-def launchConsoleProcess(args, useStartupEnvironment=True, cwd=None):
+def launchConsoleProcess(args, useStartupEnvironment=True, updateEnvironment=None, cwd=None):
   """Launch a process. Hiding the console and captures the process output.
   The console window is hidden when running on Windows.
   :param args: executable name, followed by command-line arguments
   :param useStartupEnvironment: launch the process in the original environment as the original Slicer process
+  :param updateEnvironment: map containing optional additional environment variables (existing variables are overwritten)
   :param cwd: current working directory
   :return: process object.
   """
   import subprocess
+  import os
   if useStartupEnvironment:
     startupEnv = startupEnvironment()
+    if updateEnvironment:
+      startupEnv.update(updateEnvironment)
   else:
-    startupEnv = None
-  import os
+    if updateEnvironment:
+      startupEnv = os.environ.copy()
+      startupEnv.update(updateEnvironment)
+    else:
+      startupEnv = None
   if os.name == 'nt':
     # Hide console window (only needed on Windows)
     info = subprocess.STARTUPINFO()
