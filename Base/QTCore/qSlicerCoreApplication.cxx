@@ -342,13 +342,18 @@ void qSlicerCoreApplicationPrivate::init()
   this->initDataIO();
 
   // Create MRML scene
-  vtkNew<vtkMRMLScene> scene;
-  q->setMRMLScene(scene.GetPointer());
+  vtkMRMLScene* scene = vtkMRMLScene::New();
+  q->setMRMLScene(scene);
+  // Scene is not owned by this class. Remove the local variable because
+  // handlePreApplicationCommandLineArguments() may cause quick exit from the application
+  // and we would have memory leaks if we still hold a reference to the scene in a
+  // local variable.
+  scene->UnRegister(nullptr);
 
   // Instantiate moduleManager
   this->ModuleManager = QSharedPointer<qSlicerModuleManager>(new qSlicerModuleManager);
   this->ModuleManager->factoryManager()->setAppLogic(this->AppLogic.GetPointer());
-  this->ModuleManager->factoryManager()->setMRMLScene(scene.GetPointer());
+  this->ModuleManager->factoryManager()->setMRMLScene(scene);
   q->connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                  this->ModuleManager->factoryManager(), SLOT(setMRMLScene(vtkMRMLScene*)));
 
@@ -413,6 +418,19 @@ void qSlicerCoreApplicationPrivate::init()
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplicationPrivate::quickExit(int exitCode)
 {
+  Q_Q(qSlicerCoreApplication);
+
+  // Delete VTK objects to exit cleanly, without memory leaks
+  this->AppLogic = nullptr;
+  this->MRMLRemoteIOLogic = nullptr;
+  this->DataIOManagerLogic = nullptr;
+#ifdef Slicer_BUILD_DICOM_SUPPORT
+  // Make sure the DICOM database is closed properly
+  this->DICOMDatabase.clear();
+#endif
+  q->setMRMLScene(nullptr);
+  q->qvtkDisconnectAll();
+
   // XXX When supporting exclusively C++11, replace with std::quick_exit
 #ifdef Q_OS_WIN32
   ExitProcess(exitCode);
@@ -1064,24 +1082,27 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
 {
   Q_D(qSlicerCoreApplication);
   if (d->MRMLScene == newMRMLScene)
-    {
+  {
     return;
-    }
+  }
 
   // Set the default scene save directory
-  newMRMLScene->SetRootDirectory(this->defaultScenePath().toUtf8());
+  if (newMRMLScene)
+    {
+    newMRMLScene->SetRootDirectory(this->defaultScenePath().toUtf8());
 
 #ifdef Slicer_BUILD_CLI_SUPPORT
-  // Register the node type for the command line modules
-  // TODO: should probably done in the command line logic
-  vtkNew<vtkMRMLCommandLineModuleNode> clmNode;
-  newMRMLScene->RegisterNodeClass(clmNode.GetPointer());
+    // Register the node type for the command line modules
+    // TODO: should probably done in the command line logic
+    vtkNew<vtkMRMLCommandLineModuleNode> clmNode;
+    newMRMLScene->RegisterNodeClass(clmNode.GetPointer());
 #endif
 
-  // First scene needs a crosshair to be added manually
-  vtkNew<vtkMRMLCrosshairNode> crosshair;
-  crosshair->SetCrosshairName("default");
-  newMRMLScene->AddNode(crosshair.GetPointer());
+    // First scene needs a crosshair to be added manually
+    vtkNew<vtkMRMLCrosshairNode> crosshair;
+    crosshair->SetCrosshairName("default");
+    newMRMLScene->AddNode(crosshair.GetPointer());
+    }
 
   if (d->AppLogic.GetPointer())
     {
