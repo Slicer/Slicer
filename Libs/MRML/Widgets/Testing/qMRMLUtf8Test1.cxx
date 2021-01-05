@@ -111,8 +111,15 @@ int qMRMLUtf8Test1(int argc, char * argv [] )
   QString filenameWithSpecialChars = expectedDisplayNodeName + ".nrrd";
   storageNode->SetFileName(filenameWithSpecialChars.toUtf8().constData());
   QFile::remove(QString::fromUtf8(myScene->GetRootDirectory()) + QDir::separator() + filenameWithSpecialChars);
+
+  // ITK's NIFTI writer (NiftiImageIO ::CanWriteFile) throws an assert if the last 7 characters of a filename
+  // contains non-ascii characters
+  // (File : minkernel\crts\ucrt\src\appcrt\convert\isctype.cpp / Line : 36 / Expression : c >= -1 && c <= 255).
+  // Therefore we only test image writing/reading in release mode.
+#ifdef NDEBUG
   CHECK_INT(storageNode->WriteData(volumeNode), 1);
   CHECK_INT(storageNode->ReadData(volumeNode), 1);
+#endif
 
   // Check that unicode string can be get/set as node name and saved into file
   // (when the application exits, the string that is typed in the editbox is saved in the scene as camera node name)
