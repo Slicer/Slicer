@@ -408,7 +408,7 @@ bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyDat
 
 //---------------------------------------------------------------------------
 void vtkCurveMeasurementsCalculator::OnControlPointArrayModified(
-  vtkObject* caller, unsigned long vtkNotUsed(eid), void* clientData, void* callData)
+  vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
 {
   vtkCurveMeasurementsCalculator* self = reinterpret_cast<vtkCurveMeasurementsCalculator*>(clientData);
   self->Modified();

@@ -33,7 +33,7 @@ double valueForIndex(int i)
   return i * 1234.567890;
 }
 
-int vtkMRMLSequenceBrowserNodeTest1(int argc, char* argv[])
+int vtkMRMLSequenceBrowserNodeTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   vtkNew<vtkMRMLScene> scene;
 

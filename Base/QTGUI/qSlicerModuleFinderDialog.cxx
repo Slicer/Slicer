@@ -70,9 +70,6 @@ void qSlicerModuleFinderDialogPrivate::init()
 
   this->setupUi(q);
 
-  qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
-  qSlicerAbstractModuleFactoryManager* factoryManager = coreApp->moduleManager()->factoryManager();
-
   qSlicerModuleFactoryFilterModel* filterModel = this->ModuleListView->filterModel();
 
   // Hide modules that do not have GUI (user cannot switch to them)
@@ -108,7 +105,6 @@ void qSlicerModuleFinderDialogPrivate::init()
 // --------------------------------------------------------------------------
 void qSlicerModuleFinderDialogPrivate::makeSelectedItemVisible()
 {
-  Q_Q(qSlicerModuleFinderDialog);
   qSlicerModuleFactoryFilterModel* filterModel = this->ModuleListView->filterModel();
 
   // Make sure that an item is selected

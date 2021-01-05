@@ -50,7 +50,6 @@ int testSingleSelection(qMRMLSegmentSelectorWidget* segmentSelectorWidget)
   segmentSelectorWidget->setMRMLScene(scene.GetPointer());
 
   vtkNew<vtkMRMLSegmentationNode> segmentationNode;
-  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
   scene->AddNode(segmentationNode);
 
   QSignalSpy nodeChangedSpy(segmentSelectorWidget, SIGNAL(currentNodeChanged(vtkMRMLNode*)));
@@ -109,7 +108,6 @@ int testMultiSelection(qMRMLSegmentSelectorWidget* segmentSelectorWidget)
   segmentSelectorWidget->setMRMLScene(scene.GetPointer());
 
   vtkNew<vtkMRMLSegmentationNode> segmentationNode;
-  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
   scene->AddNode(segmentationNode);
 
   QSignalSpy nodeChangedSpy(segmentSelectorWidget, SIGNAL(currentNodeChanged(vtkMRMLNode*)));

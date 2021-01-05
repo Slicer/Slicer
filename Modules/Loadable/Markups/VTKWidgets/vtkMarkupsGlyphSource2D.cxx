@@ -223,7 +223,8 @@ void vtkMarkupsGlyphSource2D::CreateVertex(vtkPoints *pts, vtkCellArray *verts,
 
 //----------------------------------------------------------------------------
 void vtkMarkupsGlyphSource2D::CreateCross(vtkPoints *pts, vtkCellArray *lines,
-                                          vtkCellArray *polys, vtkUnsignedCharArray *colors,
+                                          vtkCellArray *vtkNotUsed(polys),
+                                          vtkUnsignedCharArray *colors,
                                           double scale, bool dot)
 {
   vtkIdType ptIds[4];
@@ -436,7 +437,7 @@ void vtkMarkupsGlyphSource2D::CreateDiamond(vtkPoints *pts, vtkCellArray *lines,
 
 //----------------------------------------------------------------------------
 void vtkMarkupsGlyphSource2D::CreateArrow(vtkPoints *pts, vtkCellArray *lines,
-                                          vtkCellArray *polys, vtkUnsignedCharArray *colors)
+                                          vtkCellArray *vtkNotUsed(polys), vtkUnsignedCharArray *colors)
 {
     //stem
     vtkIdType ptIds[3];
