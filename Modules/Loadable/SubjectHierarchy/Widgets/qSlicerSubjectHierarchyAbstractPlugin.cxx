@@ -348,7 +348,7 @@ void qSlicerSubjectHierarchyAbstractPlugin::hideAllContextMenuActions()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyAbstractPlugin::showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow)
+bool qSlicerSubjectHierarchyAbstractPlugin::showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* vtkNotUsed(allItemsToShow))
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)

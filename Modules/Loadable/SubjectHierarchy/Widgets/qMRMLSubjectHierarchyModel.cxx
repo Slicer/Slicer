@@ -656,7 +656,6 @@ QMimeData* qMRMLSubjectHierarchyModel::mimeData(const QModelIndexList& indexes)c
     }
   QList<QUrl> selectedShItemUrls;
   QModelIndexList allColumnsIndexes;
-  vtkMRMLSubjectHierarchyNode* shNode = this->subjectHierarchyNode();
   foreach(const QModelIndex& index, indexes)
     {
     QModelIndex parent = index.parent();

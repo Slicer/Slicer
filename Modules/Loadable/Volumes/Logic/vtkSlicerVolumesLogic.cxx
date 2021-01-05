@@ -452,7 +452,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::GetActiveVolumeNode()const
 //----------------------------------------------------------------------------
 void vtkSlicerVolumesLogic
 ::SetAndObserveColorToDisplayNode(vtkMRMLDisplayNode * displayNode,
-                                  int labelMap, const char* filename)
+                                  int labelMap, const char* vtkNotUsed(filename))
 {
   vtkMRMLColorLogic * colorLogic = this->GetColorLogic();
   if (colorLogic == nullptr)

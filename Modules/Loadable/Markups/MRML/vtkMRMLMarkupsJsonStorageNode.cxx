@@ -400,6 +400,7 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements(rapidjson::Val
         double* values = controlPointValues->GetPointer(0);
         for (auto& value : controlPointValuesItem.GetArray())
           {
+          (void)value; // unused
           bool success = this->ReadVector(controlPointValuesItem, values, numberOfComponents);
           if (!success)
             {

@@ -438,6 +438,7 @@ void qSlicerExtensionsManagerWidget::onInstallUrlChanged(const QUrl& newUrl)
 // --------------------------------------------------------------------------
 void qSlicerExtensionsManagerWidget::onSearchTextChanged(const QString& newText)
 {
+  Q_UNUSED(newText);
   Q_D(qSlicerExtensionsManagerWidget);
   if (d->searchTimerId)
     {
