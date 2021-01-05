@@ -94,9 +94,9 @@ Surface or volumetric meshes.
 
 ### Segmentations
 
-- **Segmentation labelmap representation** (.seg.nrrd, .nrrd, .nii, .nii.gz, .hdr): 3D volume (4D volume if there are overlapping segments) with [custom fields](https://apidocs.slicer.org/master/classvtkMRMLSegmentationStorageNode.html) specifying segment names, terminology, colors, etc.
+- **Segmentation labelmap representation** (.seg.nrrd, .nrrd, .seg.nhdr, .nhdr, .nii, .nii.gz, .hdr): 3D volume (4D volume if there are overlapping segments) with [custom fields](https://apidocs.slicer.org/master/classvtkMRMLSegmentationStorageNode.html) specifying segment names, terminology, colors, etc.
 - **Segmentation closed surface representation** (.vtm): saved as VTK multiblock data set, contains [custom fields](https://apidocs.slicer.org/master/classvtkMRMLSegmentationStorageNode.html) specifying segment names, terminology, colors, etc.
-- **Labelmap volume** (.nrrd, .nii, .nii.gz, .hdr): segment names can be defined by using a color table. To write segmentation in these formats, segmentation node has to be exported to labelmap volume.
+- **Labelmap volume** (.nrrd, .nhdr, .nii, .nii.gz, .hdr): segment names can be defined by using a color table. To write segmentation in NIFTI formats, use Export to file feature or export the segmentation node to labelmap volume.
 - **Closed surface** (.stl, .obj): Single segment can be read from each file. Segmentation module's `Export to files` feature can be used to export directly to these formats.
 - SlicerOpenAnatomy extension:
   - **GL Transmission Format** (.glTF, writing only)
