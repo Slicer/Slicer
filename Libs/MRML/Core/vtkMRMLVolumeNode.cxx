@@ -1300,8 +1300,13 @@ bool vtkMRMLVolumeNode::AddCenteringTransform()
   vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
   if (shNode)
     {
-    vtkIdType volumeParentItemId = shNode->GetItemParent(shNode->GetItemByDataNode(this));
-    shNode->SetItemParent(shNode->GetItemByDataNode(centeringTransform), volumeParentItemId);
+    vtkIdType volumeItemId = shNode->GetItemByDataNode(this);
+    if (volumeItemId != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+      {
+      // Volume is in subject hierarchy
+      vtkIdType volumeParentItemId = shNode->GetItemParent(volumeItemId);
+      shNode->SetItemParent(shNode->GetItemByDataNode(centeringTransform), volumeParentItemId);
+      }
     }
   return true;
 }
