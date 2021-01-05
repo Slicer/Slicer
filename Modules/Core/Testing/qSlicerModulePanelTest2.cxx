@@ -117,6 +117,7 @@ int qSlicerModulePanelTest2(int argc, char * argv[] )
 
   if (argc < 2 || QString(argv[1]) != "-I")
     {
+    modulePanel->setModule("");
     QTimer::singleShot(100, qApp, SLOT(quit()));
     }
 
