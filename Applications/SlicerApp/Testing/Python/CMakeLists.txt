@@ -415,7 +415,6 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   slicer_add_python_unittest(SCRIPT SlicerRestoreSceneViewCrashIssue3445.py)
   slicer_add_python_unittest(SCRIPT RSNAVisTutorial.py)
   slicer_add_python_unittest(SCRIPT RSNAQuantTutorial.py)
-  slicer_add_python_unittest(SCRIPT slicerCloseCrashBug2590.py)
   slicer_add_python_unittest(SCRIPT SlicerOrientationSelectorTest.py)
   slicer_add_python_unittest(SCRIPT SlicerTransformInteractionTest1.py)
   slicer_add_python_unittest(SCRIPT UtilTest.py)
@@ -441,7 +440,6 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     ScenePerformance.py
     RSNAVisTutorial.py
     RSNAQuantTutorial.py
-    slicerCloseCrashBug2590.py
     SlicerOrientationSelectorTest.py
     SlicerTransformInteractionTest1.py
     ViewControllersSliceInterpolationBug1926.py
