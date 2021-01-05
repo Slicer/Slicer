@@ -574,51 +574,52 @@ int vtkCurveGenerator::GeneratePoints(vtkPoints* inputPoints, vtkPolyData* input
 int vtkCurveGenerator::GeneratePointsFromFunction(vtkPoints* inputPoints, vtkPoints* outputPoints, vtkDoubleArray* outputPedigreeIdArray)
 {
   int numberOfInputPoints = inputPoints->GetNumberOfPoints();
-  if (numberOfInputPoints <= 1)
-    {
-    return 0;
-    }
-
-  switch (this->CurveType)
-    {
-    case vtkCurveGenerator::CURVE_TYPE_LINEAR_SPLINE:
+  int numberOfSegments = 0;
+  int totalNumberOfPoints = 0;
+  if (numberOfInputPoints >= 2)
+  {
+    switch (this->CurveType)
       {
-      this->SetParametricFunctionToLinearSpline(inputPoints);
-      break;
+      case vtkCurveGenerator::CURVE_TYPE_LINEAR_SPLINE:
+        {
+        this->SetParametricFunctionToLinearSpline(inputPoints);
+        break;
+        }
+      case vtkCurveGenerator::CURVE_TYPE_CARDINAL_SPLINE:
+        {
+        this->SetParametricFunctionToCardinalSpline(inputPoints);
+        break;
+        }
+      case vtkCurveGenerator::CURVE_TYPE_KOCHANEK_SPLINE:
+        {
+        this->SetParametricFunctionToKochanekSpline(inputPoints);
+        break;
+        }
+      case vtkCurveGenerator::CURVE_TYPE_POLYNOMIAL:
+        {
+        this->SetParametricFunctionToPolynomial(inputPoints);
+        break;
+        }
+      default:
+        {
+        vtkErrorMacro("Error: Unrecognized curve type: " << this->CurveType << ".");
+        break;
+        }
       }
-    case vtkCurveGenerator::CURVE_TYPE_CARDINAL_SPLINE:
+    if (this->CurveIsClosed && this->CurveType != vtkCurveGenerator::CURVE_TYPE_POLYNOMIAL)
       {
-      this->SetParametricFunctionToCardinalSpline(inputPoints);
-      break;
+      numberOfSegments = numberOfInputPoints;
       }
-    case vtkCurveGenerator::CURVE_TYPE_KOCHANEK_SPLINE:
+    else
       {
-      this->SetParametricFunctionToKochanekSpline(inputPoints);
-      break;
+      numberOfSegments = (numberOfInputPoints - 1);
       }
-    case vtkCurveGenerator::CURVE_TYPE_POLYNOMIAL:
-      {
-      this->SetParametricFunctionToPolynomial(inputPoints);
-      break;
-      }
-    default:
-      {
-      vtkErrorMacro("Error: Unrecognized curve type: " << this->CurveType << ".");
-      break;
-      }
-    }
-
-  int numberOfSegments = 0; // temporary value
-  if (this->CurveIsClosed && this->CurveType != vtkCurveGenerator::CURVE_TYPE_POLYNOMIAL)
-    {
-    numberOfSegments = numberOfInputPoints;
+    totalNumberOfPoints = this->NumberOfPointsPerInterpolatingSegment * numberOfSegments + 1;
     }
   else
     {
-    numberOfSegments = (numberOfInputPoints - 1);
+    numberOfInputPoints = 0;
     }
-
-  int totalNumberOfPoints = this->NumberOfPointsPerInterpolatingSegment * numberOfSegments + 1;
 
   // Initialize pedigree ID array
   outputPedigreeIdArray->Initialize();
@@ -629,7 +630,7 @@ int vtkCurveGenerator::GeneratePointsFromFunction(vtkPoints* inputPoints, vtkPoi
   double previousPoint[3] = { 0.0 };
   for (int pointIndex = 0; pointIndex < totalNumberOfPoints; pointIndex++)
     {
-    double sampleParameter = pointIndex / (double)(totalNumberOfPoints - 1);
+    double sampleParameter = double(pointIndex) / ((double)(totalNumberOfPoints - 1));
     double curvePoint[3];
     this->ParametricFunction->Evaluate(&sampleParameter, curvePoint, nullptr);
     outputPoints->InsertNextPoint(curvePoint);
