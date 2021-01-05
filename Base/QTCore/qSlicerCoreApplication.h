@@ -155,18 +155,18 @@ public:
   ///
   /// \note Using this function will ensure that the environment is up-to-date for
   /// processes started using QProcess or other alternative methods.
-  void setEnvironmentVariable(const QString& key, const QString& value);
+  Q_INVOKABLE void setEnvironmentVariable(const QString& key, const QString& value);
 
   /// Returns True if environment variable identified by \a key is set to \a value
-  bool isEnvironmentVariableValueSet(const QString& key, const QString& value);
+  Q_INVOKABLE bool isEnvironmentVariableValueSet(const QString& key, const QString& value);
 
   /// Convenient function allowing to prepend \a value to environment variable identified by
   /// by \a key using \a separator
-  void prependEnvironmentVariable(const QString& key, const QString& value, QChar separator = ';');
+  Q_INVOKABLE void prependEnvironmentVariable(const QString& key, const QString& value, QChar separator = ';');
 
   /// Convenient function allowing to append \a value to environment variable identified by
   /// by \a key using \a separator
-  void appendEnvironmentVariable(const QString& key, const QString& value, QChar separator = ';');
+  Q_INVOKABLE void appendEnvironmentVariable(const QString& key, const QString& value, QChar separator = ';');
 
   /// Parse arguments
   /// \note If exitWhenDone is True, it's your responsibility to exit the application

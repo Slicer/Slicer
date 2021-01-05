@@ -7,8 +7,7 @@ def testMRMLCreateNodeByClassWithoutSetReferenceCount():
   # would report leaks in a popup window that has to be closed manually
   # (or wait a long time for timeout) when run from VisualStudio by
   # building the RUN_TESTS project.
-  import os
-  os.environ["DASHBOARD_TEST_FROM_CTEST"] = "1"
+  slicer.app.setEnvironmentVariable("DASHBOARD_TEST_FROM_CTEST", "1")
 
   n = slicer.mrmlScene.CreateNodeByClass('vtkMRMLViewNode')
   slicer.mrmlScene.AddNode(n)
