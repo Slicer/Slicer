@@ -144,6 +144,7 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DModule_ITKReview:BOOL=ON
       -DModule_MGHIO:BOOL=ON
       -DModule_ITKIOMINC:BOOL=ON
+      -DModule_IOScanco:BOOL=ON
       -DModule_MorphologicalContourInterpolation:BOOL=ON
       -DModule_SimpleITKFilters:BOOL=${Slicer_USE_SimpleITK}
       -DBUILD_SHARED_LIBS:BOOL=ON

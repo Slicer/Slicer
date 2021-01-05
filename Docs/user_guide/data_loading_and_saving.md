@@ -60,6 +60,7 @@ Readers may support 2D, 3D, and 4D images of various types, such as scalar, vect
 - **Brains2** (.mask)
 - **GIPL** (.gipl, .gipl.gz)
 - **LSM** (.lsm)
+- **Scanco** (.isq)
 - **Stimulate** (.spr)
 - **MGH-NMR** (.mgz)
 - **MRC Electron Density** (.mrc)
