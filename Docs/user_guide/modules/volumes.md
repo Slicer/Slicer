@@ -49,8 +49,9 @@ By default, a single-component image is loaded as scalar volume. To make Slicer 
   This makes `LabelMap` checked by default.
 - C. Load the file as scalar volume, and then convert it to labelmap volume by clicking `Convert` button at the bottom of `Volume information` section
 
-If the goal is to load an image as labelmap volume so that it can be converted to segmentation, then there is simpler option available: choose `Segmentation`
-in `Description` column in `Add data...` window. This only available for nrrd and nifti images.
+If the goal is to load an image as labelmap volume so that it can be converted to segmentation, then simpler options available:
+- A. Choose `Segmentation` in `Description` column in `Add data...` window. This only works for nrrd and nifti images.
+- B. Sve the volume in nrrd file format and rename it to have `.seg.nrrd` extension, for example: `something.seg.nrrd`. This makes the file loaded as `Segmentation` by default.
 
 ### Load a series of png, jpeg, or tiff images as volume
 
