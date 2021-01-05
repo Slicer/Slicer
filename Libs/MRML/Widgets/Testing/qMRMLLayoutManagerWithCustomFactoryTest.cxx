@@ -162,7 +162,7 @@ public:
     return "vtkMRMLCustomViewNode";
   }
 
-  vtkWeakPointer<vtkMRMLSliceNode> LastNode;
+  vtkWeakPointer<vtkMRMLCustomViewNode> LastNode;
 
 protected:
 
@@ -177,7 +177,7 @@ protected:
     // There must be a unique Custom widget per node
     Q_ASSERT(!this->viewWidget(viewNode));
 
-    this->LastNode = vtkMRMLSliceNode::SafeDownCast(viewNode);
+    this->LastNode = vtkMRMLCustomViewNode::SafeDownCast(viewNode);
 
     QLabel* label = new QLabel();
     label->setText("This is a custom view");
