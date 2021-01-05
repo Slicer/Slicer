@@ -73,7 +73,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         "fileName": "Mouse-MR-example-where-GDCM_fails.zip",
         "name": "Mouse-MR-example-where-GDCM_fails",
         "seriesUID": "1.3.6.1.4.1.9590.100.1.2.366426457713813178933224342280246227461",
-        # GDCM rejects loading. 
+        # GDCM rejects loading.
         # DCMTK reads it but then ITK rejects loading the image with 0 spacing.
         "expectedFailures": ["GDCM", "Archetype", "DCMTK", "GDCM with DCMTK fallback"],
         "voxelValueQuantity": "(110852, DCM, \"MR signal intensity\")",
@@ -128,10 +128,16 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         #
         # select the series
         #
+
         browserWidget.onSeriesSelected([dataset['seriesUID']])
         # load the data by series UID
         browserWidget.examineForLoading()
-        loadable = list(browserWidget.getAllSelectedLoadables().keys())[0]
+        # Get first selected loadable
+        for plugin in browserWidget.loadablesByPlugin:
+          for loadable in browserWidget.loadablesByPlugin[plugin]:
+            if loadable.selected:
+              # found the first selected loadable
+              break
 
         #
         # try loading using each of the selected readers, fail
@@ -272,7 +278,13 @@ reloadScriptedModule('DICOMReaders'); import DICOMReaders; tester = DICOMReaders
       browserWidget.onSeriesSelected([seriesUID])
       # load the data by series UID
       browserWidget.examineForLoading()
-      loadable = list(browserWidget.getAllSelectedLoadables().keys())[0]
+      # Get first selected loadable
+      for plugin in browserWidget.loadablesByPlugin:
+        for loadable in browserWidget.loadablesByPlugin[plugin]:
+          if loadable.selected:
+            # found the first selected loadable
+            break
+
 
       if len(loadable.warning) == 0:
         raise Exception("Expected warning about geometry issues due to missing slices!")
@@ -296,6 +308,6 @@ reloadScriptedModule('DICOMReaders'); import DICOMReaders; tester = DICOMReaders
 
     self.delayDisplay("Restoring original database directory")
     DICOMUtils.closeTemporaryDatabase(originalDatabaseDirectory)
-    slicer.util.selectModule('DICOMReaders')
+    slicer.util.selectModule('')
 
     return testPass
