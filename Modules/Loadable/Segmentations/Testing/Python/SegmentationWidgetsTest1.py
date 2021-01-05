@@ -327,12 +327,9 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     self.assertEqual(self.getForegroundVoxelCount(geometryImageData), 5229164)
 
     # ROI source
-    roiNode = slicer.vtkMRMLAnnotationROINode()
-    roiNode.SetName('SourceROI')
-    slicer.mrmlScene.AddNode(roiNode)
-    roiNode.UnRegister(None)
-    xyz = [0]*3
-    center = [0]*3
+    roiNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLAnnotationROINode", 'SourceROI')
+    xyz = [0.0, 0.0, 0.0]
+    center = [0.0, 0.0, 0.0]
     slicer.vtkMRMLSliceLogic.GetVolumeRASBox(tinyVolumeNode, xyz, center)
     radius = [x/2.0 for x in xyz]
     roiNode.SetXYZ(center)
