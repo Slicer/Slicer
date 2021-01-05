@@ -137,10 +137,9 @@ vtkMRMLNode* qMRMLSceneFactoryWidget::generateNode()
   if (nodeClassName.isEmpty())
     {
     int numClasses = d->MRMLScene->GetNumberOfRegisteredNodeClasses();
-    int classNumber = d->RandomGenerator.generate() % numClasses;
-    vtkMRMLNode* node = d->MRMLScene->GetNthRegisteredNodeClass(classNumber);
-    Q_ASSERT(node);
-    while (node->GetSingletonTag())
+    int classNumber = 0;
+    vtkMRMLNode* node = nullptr;
+    while (!node || node->GetSingletonTag() || node->IsA("vtkMRMLSubjectHierarchyNode"))
       {
       classNumber = d->RandomGenerator.generate() % numClasses;
       node = d->MRMLScene->GetNthRegisteredNodeClass(classNumber);
