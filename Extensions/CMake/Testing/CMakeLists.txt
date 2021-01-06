@@ -27,9 +27,13 @@ add_cmakescript_test(
   slicer_extract_extension_description_test
   Extensions/CMake/SlicerFunctionExtractExtensionDescription.cmake)
 
-add_cmakescript_test(
-  slicer_generate_extension_description_test
-  Extensions/CMake/SlicerFunctionGenerateExtensionDescription.cmake)
+# SlicerFunctionGenerateExtensionDescription.cmake uses --ignore-eol
+# option of CMake compare_files command, which was introduced in CMake-3.14.
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.14")
+  add_cmakescript_test(
+    slicer_generate_extension_description_test
+    Extensions/CMake/SlicerFunctionGenerateExtensionDescription.cmake)
+endif()
 
 #
 # Add extension build system tests
