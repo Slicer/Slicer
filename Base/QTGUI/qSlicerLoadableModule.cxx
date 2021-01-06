@@ -117,9 +117,9 @@ bool qSlicerLoadableModule::addModuleToSlicerModules(
   pythonManager->addObjectToPythonMain("_tmp_module_variable", module);
   pythonManager->executeString(
         QString("import __main__;"
-                "setattr( slicer.modules, '%1', __main__._tmp_module_variable);"
+                "setattr( slicer.modules, %1, __main__._tmp_module_variable);"
                 "del __main__._tmp_module_variable").arg(
-          moduleName.toLower()));
+          qSlicerCorePythonManager::toPythonStringLiteral(moduleName.toLower())));
   return !pythonManager->pythonErrorOccured();
 #else
   Q_UNUSED(pythonManager);
@@ -141,8 +141,9 @@ bool qSlicerLoadableModule::addModuleNameToSlicerModuleNames(
     }
   pythonManager->executeString(
         QString("import __main__;"
-                "setattr( slicer.moduleNames, '%1', '%2')").arg(
-          moduleName.toLower()).arg(moduleName));
+                "setattr( slicer.moduleNames, %1, %2)")
+                .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName.toLower()))
+                .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName)));
   return !pythonManager->pythonErrorOccured();
 #else
   Q_UNUSED(pythonManager);

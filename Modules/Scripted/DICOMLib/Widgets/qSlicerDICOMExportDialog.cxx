@@ -591,9 +591,9 @@ bool qSlicerDICOMExportDialog::exportSeries(const QDir& outputFolder)
   PythonQtObjectPtr exportContext = PythonQt::self()->getMainModule();
   exportContext.addVariable("exportables", exportableList);
   exportContext.evalScript( QString(
-    "plugin = slicer.modules.dicomPlugins['%1']()\n"
+    "plugin = slicer.modules.dicomPlugins[%1]()\n"
     "errorMessage = plugin.export(exportables)\n" )
-    .arg(d->DICOMTagEditorWidget->exportables()[0]->pluginClass()) );
+    .arg(qSlicerCorePythonManager::toPythonStringLiteral(d->DICOMTagEditorWidget->exportables()[0]->pluginClass())));
   QApplication::restoreOverrideCursor();
 
   // Extract error message from python

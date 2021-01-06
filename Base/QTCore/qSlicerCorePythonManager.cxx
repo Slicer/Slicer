@@ -125,8 +125,5 @@ void qSlicerCorePythonManager::appendPythonPaths(const QStringList& paths)
 //-----------------------------------------------------------------------------
 QString qSlicerCorePythonManager::toPythonStringLiteral(QString path)
 {
-  path = path.replace("\\", "\\\\");
-  path = path.replace("'", "\\'");
-  // since we enclose string in single quotes, double-quotes do not require escaping
-  return "'" + path + "'";
+  return ctkAbstractPythonManager::toPythonStringLiteral(path);
 }

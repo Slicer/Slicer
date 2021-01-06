@@ -60,11 +60,8 @@ public:
   /// Backslash, single-quote characters are escaped
   /// and the string is enclosed between single quotes.
   ///
-  /// Examples:
-  ///   some simple string   => 'some simple string'
-  ///   some " string        => 'some " string'
-  ///   some other ' string  => 'some other \' string'
-  ///   some backslash \ str => 'some backslash \\ str'
+  /// Deprecated. Use ctkAbstractPythonManager::toPythonStringLiteral() method instead.
+  ///
   Q_INVOKABLE static QString toPythonStringLiteral(QString path);
 
 protected:

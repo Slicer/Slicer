@@ -551,7 +551,9 @@ void qSlicerCoreApplicationPrivate::setPythonOsEnviron(const QString& key, const
     return;
     }
   this->CorePythonManager->executeString(
-        QString("import os; os.environ['%1']='%2'; del os").arg(key).arg(value));
+        QString("import os; os.environ[%1]=%2; del os")
+          .arg(qSlicerCorePythonManager::toPythonStringLiteral(key))
+          .arg(qSlicerCorePythonManager::toPythonStringLiteral(value)));
 }
 #endif
 
@@ -967,7 +969,8 @@ void qSlicerCoreApplication::handleCommandLineArguments()
 
     // Set 'sys.executable' so that Slicer can be used as a "regular" python interpreter
     this->corePythonManager()->executeString(
-          QString("import sys; sys.executable = '%1'; del sys").arg(QStandardPaths::findExecutable("PythonSlicer"))
+          QString("import sys; sys.executable = %1; del sys").arg(
+            qSlicerCorePythonManager::toPythonStringLiteral(QStandardPaths::findExecutable("PythonSlicer")))
           );
 
     // Clean memory
