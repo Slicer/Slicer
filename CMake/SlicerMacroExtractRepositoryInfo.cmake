@@ -111,24 +111,28 @@ macro(SlicerMacroExtractRepositoryInfo)
       if(${wc_info_prefix}_WC_GITSVN)
         set(${wc_info_prefix}_WC_TYPE svn)
       endif()
-   
+
     else()
 
-      find_package(Subversion REQUIRED)
+      find_package(Subversion)
+      if (${Subversion_FOUND})
+        # Is <SOURCE_DIR> a svn working copy ?
+        execute_process(COMMAND ${Subversion_SVN_EXECUTABLE} info
+          WORKING_DIRECTORY ${MY_SOURCE_DIR}
+          RESULT_VARIABLE Subversion_result
+          OUTPUT_QUIET
+          ERROR_QUIET)
 
-      # Is <SOURCE_DIR> a svn working copy ?
-      execute_process(COMMAND ${Subversion_SVN_EXECUTABLE} info
-        WORKING_DIRECTORY ${MY_SOURCE_DIR}
-        RESULT_VARIABLE Subversion_result
-        OUTPUT_QUIET
-        ERROR_QUIET)
+        if(${Subversion_result} EQUAL 0)
 
-      if(${Subversion_result} EQUAL 0)
+          set(${wc_info_prefix}_WC_TYPE svn)
+          Subversion_WC_INFO(${MY_SOURCE_DIR} ${wc_info_prefix})
 
-        set(${wc_info_prefix}_WC_TYPE svn)
-        Subversion_WC_INFO(${MY_SOURCE_DIR} ${wc_info_prefix})
-
+        endif()
+      else()
+        message(WARNING "Subversion is not found. Cannot extract information from SVN repositories.")
       endif()
+
     endif()
   endif()
 

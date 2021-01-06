@@ -352,7 +352,7 @@ if(NOT DEFINED CTEST_SVN_COMMAND)
   find_program(CTEST_SVN_COMMAND NAMES svn)
 endif()
 if(NOT EXISTS "${CTEST_SVN_COMMAND}")
-  message(FATAL_ERROR "CTEST_SVN_COMMAND is set to a non-existent path [${CTEST_SVN_COMMAND}]")
+  message(WARNING "CTEST_SVN_COMMAND is set to a non-existent path [${CTEST_SVN_COMMAND}]")
 endif()
 message(STATUS "CTEST_SVN_COMMAND: ${CTEST_SVN_COMMAND}")
 

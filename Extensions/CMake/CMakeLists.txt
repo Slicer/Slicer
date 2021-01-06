@@ -54,7 +54,7 @@ set(Slicer_EXTENSIONS_TRACK_QUALIFIER "master" CACHE STRING "CDash extensions tr
 include(ExternalProject)
 find_package(Slicer REQUIRED)
 find_package(Git REQUIRED)
-find_package(Subversion REQUIRED)
+find_package(Subversion)
 
 #-----------------------------------------------------------------------------
 # Set a default build type if none was specified
