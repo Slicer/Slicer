@@ -97,7 +97,7 @@ make package
 
 ## Common errors
 
-See list of issues common to all operating systems on [Common errors](common_errors) page.
+See list of issues common to all operating systems on [Common errors](common_errors.md) page.
 
 ### error while configuring PCRE: "cannot run C compiled program"
 
