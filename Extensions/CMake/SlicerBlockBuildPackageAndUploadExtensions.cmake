@@ -24,7 +24,6 @@ set(expected_existing_vars
   Slicer_DIR
   Slicer_EXTENSION_DESCRIPTION_DIR
   Slicer_LOCAL_EXTENSIONS_DIR
-  Subversion_SVN_EXECUTABLE
   )
 foreach(var ${expected_existing_vars})
   if(NOT EXISTS "${${var}}")
