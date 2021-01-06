@@ -648,12 +648,13 @@ include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScri
 
     for extensionName in ['TestExtA', 'TestExtB', 'TestExtC', 'TestExtInvalidSCM']:
 
-      # Upload configure/build/test results to CDash
+      # Upload configure results to CDash
       check_cdash_request(parse_request(next(requests)), 'PUT', r'.+' + extensionName + r'.+Configure\.xml')
       if extensionName == 'TestExtInvalidSCM':
         continue
+
+      # Upload build results to CDash
       check_cdash_request(parse_request(next(requests)), 'PUT', r'.+' + extensionName + r'.+Build\.xml')
-      check_cdash_request(parse_request(next(requests)), 'PUT', r'.+' + extensionName + r'.+Test\.xml')
 
       if test_upload:
         # Upload package to midas
@@ -666,6 +667,9 @@ include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScri
       if test_upload:
         # Upload url to CDash
         check_cdash_request(parse_request(next(requests)), 'PUT', r'.+' + extensionName + r'.+Upload\.xml')
+
+      # Upload test results to CDash
+      check_cdash_request(parse_request(next(requests)), 'PUT', r'.+' + extensionName + r'.+Test\.xml')
 
     if with_ctest:
       # Upload top-level build results and notes to CDash
