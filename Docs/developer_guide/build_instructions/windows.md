@@ -144,4 +144,4 @@ See [Python scripting page](https://www.slicer.org/wiki/Documentation/Nightly/De
 
 ## Common errors
 
-See list of issues common to all operating systems on [Common errors](common_errors) page.
+See list of issues common to all operating systems on [Common errors](common_errors.md) page.

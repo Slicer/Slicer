@@ -97,19 +97,9 @@ make package
 
 ## Common errors
 
-See list of issues common to all operating systems on [Common errors](common_errors) page.
+See list of issues common to all operating systems on [Common errors](common_errors.md) page.
 
-### CMake complains during configuration
-
-CMake may not directly show what's wrong; try to look for log files of the form BUILD/CMakeFiles/*.log (where BUILD is your build directory) to glean further information.
-
-### 'QSslSocket' : is not a class or namespace name
-
-This error message occurs if Slicer is configured to use SSL but Qt is built without SSL support.
-
-Either set Slicer_USE_PYTHONQT_WITH_OPENSSL to OFF when configuring Slicer build in CMake, or build Qt with SSL support.
-
-### macOS: error while configuring PCRE: "cannot run C compiled program"
+### error while configuring PCRE: "cannot run C compiled program"
 
 If the XCode command line tools are not properly set up on macOS, PCRE could fail to build in the Superbuild process with the errors like below:
 ```
@@ -122,6 +112,6 @@ To install XCode command line tools, use the following command from the terminal
 xcode-select --install
 ```
 
-### macOS: dyld: malformed mach-o: load commands size (...) > 32768
+### dyld: malformed mach-o: load commands size (...) > 32768
 
 Path of source or build folder is too long. For example building Slicer in */User/somebody/projects/something/dev/slicer/slicer-qt5-rel* may fail with malformed mach-o error, while it succeeds in */sq5* folder. To resolve this error, move source and binary files into a folder with shorter full path and restart the build from scratch (the build tree is not relocatable).
