@@ -153,7 +153,7 @@ function(slicer_generate_extension_description_test)
     EXTENSION_STATUS "Development"
     )
   execute_process(
-    COMMAND ${CMAKE_COMMAND} -E compare_files
+    COMMAND ${CMAKE_COMMAND} -E compare_files --ignore-eol
       ${CMAKE_CURRENT_BINARY_DIR}/SlicerToKiwiExporter.s4ext
       ${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_without_depends.s4ext
     ERROR_VARIABLE error
@@ -173,7 +173,7 @@ function(slicer_generate_extension_description_test)
     EXTENSION_STATUS ""
     )
   execute_process(
-    COMMAND ${CMAKE_COMMAND} -E compare_files
+    COMMAND ${CMAKE_COMMAND} -E compare_files --ignore-eol
       ${CMAKE_CURRENT_BINARY_DIR}/SlicerToKiwiExporter.s4ext
       ${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_with_depends.s4ext
     ERROR_VARIABLE error
@@ -193,7 +193,7 @@ function(slicer_generate_extension_description_test)
     EXTENSION_STATUS ""
     )
   execute_process(
-    COMMAND ${CMAKE_COMMAND} -E compare_files
+    COMMAND ${CMAKE_COMMAND} -E compare_files --ignore-eol
       ${CMAKE_CURRENT_BINARY_DIR}/SlicerToKiwiExporter.s4ext
       ${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_with_depends.s4ext
     ERROR_VARIABLE error
