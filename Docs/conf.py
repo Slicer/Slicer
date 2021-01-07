@@ -40,6 +40,7 @@ extensions = [
     'workaround_recommonmark_issue_191',
     'recommonmark',
     'sphinx_markdown_tables',
+    'notfound.extension',  # Show a better 404 page when an invlid address is entered
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -89,6 +90,17 @@ if os.environ.get('EXCLUDE_API_REFERENCE', False) == 'True':
     exclude_patterns.append('developer_guide/vtkITK.rst')
     exclude_patterns.append('developer_guide/slicer.rst')
     exclude_patterns.append('developer_guide/mrml.rst')
+
+# sphinx-notfound-page
+# https://github.com/readthedocs/sphinx-notfound-page
+notfound_context = {
+    'title': 'Page Not Found',
+    'body': '''
+<h1>Page Not Found</h1>
+<p>Sorry, we couldn't find that page.</p>
+<p>Try using the search box or go to the homepage.</p>
+''',
+}
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
