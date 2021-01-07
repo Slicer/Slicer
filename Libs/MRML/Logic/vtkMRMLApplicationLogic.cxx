@@ -56,6 +56,7 @@
 
 // STD includes
 #include <cassert>
+#include <map>
 #include <sstream>
 
 // For LoadDefaultParameterSets
@@ -86,7 +87,7 @@ public:
   vtkSmartPointer<vtkMRMLViewLinkLogic> ViewLinkLogic;
   vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
   std::string TemporaryPath;
-
+  std::map<std::string, vtkWeakPointer<vtkMRMLAbstractLogic> > ModuleLogicMap;
 };
 
 //----------------------------------------------------------------------------
@@ -822,4 +823,49 @@ void vtkMRMLApplicationLogic::EditNode(vtkMRMLNode* node)
 {
   // Observers in qSlicerCoreApplication listen for this event
   this->InvokeEvent(EditNodeEvent, node);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::SetModuleLogic(const char* moduleName,
+                                             vtkMRMLAbstractLogic* moduleLogic)
+{
+  if (!moduleName)
+    {
+    vtkErrorMacro("AddModuleLogic: invalid module name.");
+    return;
+    }
+
+  // If no logic is provided, erase the module-logic association.
+  if (!moduleLogic)
+    {
+    this->Internal->ModuleLogicMap.erase(moduleName);
+    return;
+    }
+
+  // Check that the module has not any registered logic.
+  if (this->Internal->ModuleLogicMap.count(moduleName))
+    {
+    vtkWarningMacro("AddModuleLogic: Logic already register for " << moduleName);
+    return;
+    }
+
+  this->Internal->ModuleLogicMap[moduleName] = moduleLogic;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLAbstractLogic* vtkMRMLApplicationLogic::GetModuleLogic(const char* moduleName) const
+{
+  if (!moduleName)
+    {
+    vtkErrorMacro("GetModuleLogic: invalid module name");
+    return nullptr;
+    }
+
+  //Check that the logic is registered.
+  if (this->Internal->ModuleLogicMap.count(moduleName) == 0)
+    {
+    return nullptr;
+    }
+
+  return this->Internal->ModuleLogicMap.at(moduleName);
 }

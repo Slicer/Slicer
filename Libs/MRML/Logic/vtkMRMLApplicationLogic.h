@@ -235,6 +235,19 @@ public:
   /// Requests the application to show user interface for editing a node.
   virtual void EditNode(vtkMRMLNode* node);
 
+  /// Sets a module with its corresponding logic to the application logic.
+  /// \param moduleName name of the module.
+  /// \param moduleLogic pointer to logic to be associated to the module. If this
+  /// parameter is nullptr, then the module logic will be removed from the application
+  /// logic.
+  void SetModuleLogic(const char* moduleName, vtkMRMLAbstractLogic* moduleLogic);
+
+  /// Gets a constant pointer to module logic associated with a given module
+  /// \param moduleName name of the module associated to the logic
+  /// \return constant pointer to vtkMRMLAbstractLogic corresponding to the
+  /// logic associated to th logic
+  vtkMRMLAbstractLogic* GetModuleLogic(const char* moduleName) const;
+
 protected:
 
   vtkMRMLApplicationLogic();
