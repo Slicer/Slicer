@@ -4,4 +4,5 @@ recommonmark
 sphinx
 sphinx-issues
 sphinx-markdown-tables
+sphinx-notfound-page
 sphinx_rtd_theme
