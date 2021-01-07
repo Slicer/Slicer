@@ -39,6 +39,7 @@ int SliceLogicsTest();
 int SliceOrientationPresetInitializationTest();
 int TemporaryPathTest();
 int CreateUniqueFileNameTest(std::string tempDir);
+int AddModuleLogicTest();
 
 //-----------------------------------------------------------------------------
 int vtkMRMLApplicationLogicTest1(int argc, char *argv [])
@@ -57,6 +58,7 @@ int vtkMRMLApplicationLogicTest1(int argc, char *argv [])
   CHECK_EXIT_SUCCESS(SliceOrientationPresetInitializationTest());
   CHECK_EXIT_SUCCESS(TemporaryPathTest());
   CHECK_EXIT_SUCCESS(CreateUniqueFileNameTest(tempDir));
+  CHECK_EXIT_SUCCESS(AddModuleLogicTest());
   return EXIT_SUCCESS;
 }
 
@@ -238,4 +240,70 @@ int CreateUniqueFileNameTest(std::string tempDir)
     tempDir + "/CreateUniqueFileNameTest_2.nii.gz");
 
   return EXIT_SUCCESS;
+}
+
+
+//-----------------------------------------------------------------------------
+int AddModuleLogicTest()
+{
+  vtkNew<vtkMRMLApplicationLogic> appLogic;
+  std::string module_name = "TestModule";
+
+  // Registration of a module logic should work
+  {
+    vtkNew<vtkMRMLAbstractLogic> moduleLogic;
+    appLogic->SetModuleLogic(module_name.c_str(), moduleLogic.GetPointer());
+
+    CHECK_POINTER(appLogic->GetModuleLogic(module_name.c_str()),
+                  moduleLogic.GetPointer());
+  }
+
+  // Getting a pointer to a logic that it is gone should give nullptr.
+  // Note that moduleLogic from last scope is gone. GetModuleLogic should return nullptr
+  {
+    CHECK_NULL(appLogic->GetModuleLogic(module_name.c_str()));
+  }
+
+  // Trying to register a module logic associated to an already registered module
+  // should trigger an error.
+  {
+    vtkNew<vtkMRMLAbstractLogic> moduleLogic;
+    TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
+    appLogic->SetModuleLogic(module_name.c_str(), moduleLogic.GetPointer());
+    TESTING_OUTPUT_ASSERT_WARNINGS(1);
+    TESTING_OUTPUT_ASSERT_WARNINGS_END();
+  }
+
+  // Trying to get a logic that has not been registered should return nullptr
+  {
+    const vtkMRMLAbstractLogic* retval = appLogic->GetModuleLogic((module_name+"a").c_str());
+
+    // return value should be nullptr
+    CHECK_NULL(retval);
+  }
+
+  // Passing nullptr to GetModuleLogic should trigger an error and return nullptr
+  {
+    // Triggers an error
+    TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+    const vtkMRMLAbstractLogic* retval = appLogic->GetModuleLogic(nullptr);
+    TESTING_OUTPUT_ASSERT_ERRORS(1);
+    TESTING_OUTPUT_ASSERT_ERRORS_END();
+
+    // return value should be nullptr
+    CHECK_NULL(retval);
+  }
+
+  // Trying to unregister a non-registered module logic
+  {
+    appLogic->SetModuleLogic((module_name+"a").c_str(), nullptr);
+  }
+
+  // Removeing an already registered module logic should succeed
+  {
+    // Successfully removes module logic association
+    appLogic->SetModuleLogic(module_name.c_str(), nullptr);
+
+    const vtkMRMLAbstractLogic* retval = appLogic->GetModuleLogic((module_name).c_str());
+  }
 }
