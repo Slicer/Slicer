@@ -90,7 +90,6 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerSegmentationsModuleLogic);
-vtkCxxSetObjectMacro(vtkSlicerSegmentationsModuleLogic, TerminologiesLogic, vtkSlicerTerminologiesModuleLogic);
 
 //----------------------------------------------------------------------------
 vtkSlicerSegmentationsModuleLogic::vtkSlicerSegmentationsModuleLogic()
@@ -109,7 +108,6 @@ vtkSlicerSegmentationsModuleLogic::~vtkSlicerSegmentationsModuleLogic()
     this->SubjectHierarchyUIDCallbackCommand->Delete();
     this->SubjectHierarchyUIDCallbackCommand = nullptr;
     }
-  this->SetTerminologiesLogic(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -1931,7 +1929,10 @@ bool vtkSlicerSegmentationsModuleLogic::SetTerminologyToSegmentationFromLabelmap
     {
     return true;
     }
-  if (!this->TerminologiesLogic)
+
+  vtkSlicerTerminologiesModuleLogic* terminologiesLogic =
+    vtkSlicerTerminologiesModuleLogic::SafeDownCast(this->GetMRMLApplicationLogic()->GetModuleLogic("Terminologies"));
+  if (!terminologiesLogic)
     {
     vtkErrorMacro("SetTerminologyToSegmentationFromLabelmapNode: Terminology logic cannot be accessed");
     return false;
@@ -1963,7 +1964,7 @@ bool vtkSlicerSegmentationsModuleLogic::SetTerminologyToSegmentationFromLabelmap
   // Get first terminology entry. This is set to segments that cannot be matched to labels, and when
   // label names are not found in 3dSlicerLabel attributes in terminology types within the context.
   std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier> categories;
-  this->TerminologiesLogic->GetCategoriesInTerminology(terminologyContextName, categories);
+  terminologiesLogic->GetCategoriesInTerminology(terminologyContextName, categories);
   if (categories.empty())
     {
     vtkErrorMacro("SetTerminologyToSegmentationFromLabelmapNode: Terminology context " << terminologyContextName << " is empty");
@@ -1973,7 +1974,7 @@ bool vtkSlicerSegmentationsModuleLogic::SetTerminologyToSegmentationFromLabelmap
   int firstNonEmptyCategoryIndex = -1;
   do
     {
-    this->TerminologiesLogic->GetTypesInTerminologyCategory(terminologyContextName, categories[++firstNonEmptyCategoryIndex], typesInFirstCategory);
+    terminologiesLogic->GetTypesInTerminologyCategory(terminologyContextName, categories[++firstNonEmptyCategoryIndex], typesInFirstCategory);
     }
   while (typesInFirstCategory.empty() && firstNonEmptyCategoryIndex < static_cast<int>(categories.size()));
   if (typesInFirstCategory.empty())
@@ -1985,14 +1986,14 @@ bool vtkSlicerSegmentationsModuleLogic::SetTerminologyToSegmentationFromLabelmap
   vtkSmartPointer<vtkSlicerTerminologyEntry> firstTerminologyEntry = vtkSmartPointer<vtkSlicerTerminologyEntry>::New();
   firstTerminologyEntry->SetTerminologyContextName(terminologyContextName.c_str());
   vtkSmartPointer<vtkSlicerTerminologyCategory> firstCategory = vtkSmartPointer<vtkSlicerTerminologyCategory>::New();
-  this->TerminologiesLogic->GetCategoryInTerminology(
+  terminologiesLogic->GetCategoryInTerminology(
     terminologyContextName, categories[firstNonEmptyCategoryIndex], firstCategory );
   firstTerminologyEntry->GetCategoryObject()->Copy(firstCategory);
   vtkSmartPointer<vtkSlicerTerminologyType> firstType = vtkSmartPointer<vtkSlicerTerminologyType>::New();
-  this->TerminologiesLogic->GetTypeInTerminologyCategory(
+  terminologiesLogic->GetTypeInTerminologyCategory(
     terminologyContextName, categories[firstNonEmptyCategoryIndex], typesInFirstCategory[0], firstType );
   firstTerminologyEntry->GetTypeObject()->Copy(firstType);
-  std::string firstTerminologyString = this->TerminologiesLogic->SerializeTerminologyEntry(firstTerminologyEntry);
+  std::string firstTerminologyString = terminologiesLogic->SerializeTerminologyEntry(firstTerminologyEntry);
 
   MRMLNodeModifyBlocker blocker(segmentationNode);
 
@@ -2014,9 +2015,9 @@ bool vtkSlicerSegmentationsModuleLogic::SetTerminologyToSegmentationFromLabelmap
       }
 
     // Search for the 3dSlicerLabel attribute in the specified terminology context
-    if (this->TerminologiesLogic->FindTypeInTerminologyBy3dSlicerLabel(terminologyContextName, segment->GetName(), foundTerminologyEntry))
+    if (terminologiesLogic->FindTypeInTerminologyBy3dSlicerLabel(terminologyContextName, segment->GetName(), foundTerminologyEntry))
       {
-      std::string foundTerminologyString = this->TerminologiesLogic->SerializeTerminologyEntry(foundTerminologyEntry);
+      std::string foundTerminologyString = terminologiesLogic->SerializeTerminologyEntry(foundTerminologyEntry);
       segment->SetTag(vtkSegment::GetTerminologyEntryTagName(), foundTerminologyString);
       }
     else

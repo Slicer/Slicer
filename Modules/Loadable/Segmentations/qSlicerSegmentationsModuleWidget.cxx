@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Segmentations includes
+#include "Logic/vtkSlicerSegmentationsModuleLogic.h"
 #include "qMRMLSortFilterSegmentsProxyModel.h"
 #include "qSlicerSegmentationsModuleWidget.h"
 #include "ui_qSlicerSegmentationsModule.h"
@@ -77,9 +78,6 @@ public:
   ///   QMRMLCombobox selects the first instance of the specified node type when initializing
   bool ModuleWindowInitialized;
 
-  /// Terminologies module logic
-  vtkSlicerTerminologiesModuleLogic* TerminologiesLogic;
-
   /// Import/export buttons
   QButtonGroup* ImportExportOperationButtonGroup;
   /// Model/labelmap buttons
@@ -93,7 +91,6 @@ public:
 qSlicerSegmentationsModuleWidgetPrivate::qSlicerSegmentationsModuleWidgetPrivate(qSlicerSegmentationsModuleWidget& object)
   : q_ptr(&object)
   , ModuleWindowInitialized(false)
-  , TerminologiesLogic(nullptr)
   , ImportExportOperationButtonGroup(nullptr)
   , ImportExportTypeButtonGroup(nullptr)
 {
@@ -113,15 +110,20 @@ qSlicerSegmentationsModuleWidgetPrivate::logic() const
 //-----------------------------------------------------------------------------
 void qSlicerSegmentationsModuleWidgetPrivate::populateTerminologyContextComboBox()
 {
+  Q_Q(const qSlicerWidget);
+
   this->ComboBox_TerminologyContext->clear();
 
-  if (!this->TerminologiesLogic)
+  vtkSlicerTerminologiesModuleLogic* terminologiesLogic =
+    vtkSlicerTerminologiesModuleLogic::SafeDownCast(q->appLogic()->GetModuleLogic("Terminologies"));
+  if (!terminologiesLogic)
     {
+    qCritical() << Q_FUNC_INFO << ": Terminologies module is not found";
     return;
     }
 
   std::vector<std::string> terminologyNames;
-  this->TerminologiesLogic->GetLoadedTerminologyNames(terminologyNames);
+  terminologiesLogic->GetLoadedTerminologyNames(terminologyNames);
   for (std::vector<std::string>::iterator termIt=terminologyNames.begin(); termIt!=terminologyNames.end(); ++termIt)
     {
     this->ComboBox_TerminologyContext->addItem(termIt->c_str());
@@ -1160,11 +1162,4 @@ void qSlicerSegmentationsModuleWidget::onSegmentationNodeReferenceChanged()
   d->label_ReferenceVolumeName->setText(referenceVolumeNode->GetName());
 
   d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->setCurrentNode(referenceVolumeNode);
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSegmentationsModuleWidget::setTerminologiesLogic(vtkSlicerTerminologiesModuleLogic* logic)
-{
-  Q_D(qSlicerSegmentationsModuleWidget);
-  d->TerminologiesLogic = logic;
 }

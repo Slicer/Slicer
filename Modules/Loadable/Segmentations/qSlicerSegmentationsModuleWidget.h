@@ -38,7 +38,6 @@ class vtkMRMLSegmentationDisplayNode;
 class vtkMRMLSubjectHierarchyNode;
 class vtkMRMLNodeReference;
 class vtkMRMLNode;
-class vtkSlicerTerminologiesModuleLogic;
 class QItemSelection;
 class Ui_qSlicerSegmentationsModule;
 
@@ -59,9 +58,6 @@ public:
 
   /// Support of node editing. Selects node in user interface that the user wants to edit
   bool setEditedNode(vtkMRMLNode* node, QString role=QString(), QString context=QString()) override;
-
-  /// Set Terminologies module logic
-  void setTerminologiesLogic(vtkSlicerTerminologiesModuleLogic* logic);
 
 public slots:
   /// Update widget GUI from parameter node
