@@ -421,23 +421,6 @@ void vtkSlicerVolumesLogic::ProcessMRMLNodesEvents(vtkObject *vtkNotUsed(caller)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumesLogic::SetColorLogic(vtkMRMLColorLogic *colorLogic)
-{
-  if (this->ColorLogic == colorLogic)
-    {
-    return;
-    }
-  this->ColorLogic = colorLogic;
-  this->Modified();
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLColorLogic* vtkSlicerVolumesLogic::GetColorLogic()const
-{
-  return this->ColorLogic;
-}
-
-//----------------------------------------------------------------------------
 void vtkSlicerVolumesLogic::SetActiveVolumeNode(vtkMRMLVolumeNode *activeNode)
 {
   vtkSetMRMLNodeMacro(this->ActiveVolumeNode, activeNode);
@@ -454,9 +437,12 @@ void vtkSlicerVolumesLogic
 ::SetAndObserveColorToDisplayNode(vtkMRMLDisplayNode * displayNode,
                                   int labelMap, const char* vtkNotUsed(filename))
 {
-  vtkMRMLColorLogic * colorLogic = this->GetColorLogic();
+  vtkMRMLColorLogic* colorLogic =
+    vtkMRMLColorLogic::SafeDownCast(this->GetMRMLApplicationLogic()->GetModuleLogic("Colors"));
+
   if (colorLogic == nullptr)
     {
+    vtkErrorMacro("SetAndObserveColorToDisplayNode: invalid Colors module logic.");
     return;
     }
   if (labelMap)
