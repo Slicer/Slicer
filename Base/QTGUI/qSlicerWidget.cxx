@@ -23,28 +23,42 @@
 
 #include "qSlicerWidget.h"
 
+// MRML includes
+#include <vtkSlicerApplicationLogic.h>
+
 // VTK includes
 
 //-----------------------------------------------------------------------------
 class qSlicerWidgetPrivate
 {
+  Q_DECLARE_PUBLIC(qSlicerWidget);
+protected:
+  qSlicerWidget* const q_ptr;
+
 public:
+  qSlicerWidgetPrivate(qSlicerWidget& object);
+
   QPointer<QWidget>                          ParentContainer;
+  vtkSlicerApplicationLogic*                 AppLogic;
 };
+
+//-----------------------------------------------------------------------------
+qSlicerWidgetPrivate::qSlicerWidgetPrivate(qSlicerWidget& object)
+  : q_ptr(&object)
+{
+  this->AppLogic = nullptr;
+}
 
 //-----------------------------------------------------------------------------
 qSlicerWidget::qSlicerWidget(QWidget * _parent, Qt::WindowFlags f)
   :QWidget(_parent, f)
-  , d_ptr(new qSlicerWidgetPrivate)
+  , d_ptr(new qSlicerWidgetPrivate(*this))
 {
 }
 
 //-----------------------------------------------------------------------------
 qSlicerWidget::~qSlicerWidget() = default;
 
-//-----------------------------------------------------------------------------
-//CTK_SET_CPP(qSlicerWidget, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
-//CTK_GET_CPP(qSlicerWidget, vtkSlicerApplicationLogic*, appLogic, AppLogic);
 //-----------------------------------------------------------------------------
 
 void qSlicerWidget::setMRMLScene(vtkMRMLScene* scene)
@@ -55,4 +69,18 @@ void qSlicerWidget::setMRMLScene(vtkMRMLScene* scene)
     {
     emit mrmlSceneChanged(scene);
     }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerWidget::setAppLogic(vtkSlicerApplicationLogic* logic)
+{
+  Q_D(qSlicerWidget);
+  d->AppLogic = logic;
+}
+
+//-----------------------------------------------------------------------------
+vtkSlicerApplicationLogic* qSlicerWidget::appLogic()const
+{
+  Q_D(const qSlicerWidget);
+  return d->AppLogic;
 }
