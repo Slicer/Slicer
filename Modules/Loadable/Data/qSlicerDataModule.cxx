@@ -17,6 +17,8 @@
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
+// Qt includes
+#include <QDebug>
 
 // Slicer includes
 #include "qSlicerApplication.h"
@@ -48,7 +50,6 @@
 //-----------------------------------------------------------------------------
 class qSlicerDataModulePrivate
 {
-public:
 };
 
 //-----------------------------------------------------------------------------
@@ -85,12 +86,19 @@ QStringList qSlicerDataModule::dependencies() const
 //-----------------------------------------------------------------------------
 void qSlicerDataModule::setup()
 {
+  Q_D(const qSlicerDataModule);
+
   this->Superclass::setup();
 
-  qSlicerAbstractCoreModule* camerasModule =
-    qSlicerCoreApplication::application()->moduleManager()->module("Cameras");
   vtkSlicerCamerasModuleLogic* camerasLogic =
-    vtkSlicerCamerasModuleLogic::SafeDownCast(camerasModule ? camerasModule->logic() : nullptr);
+    vtkSlicerCamerasModuleLogic::SafeDownCast(this->appLogic()->GetModuleLogic("Cameras"));
+  // NOTE: here we assume that camerasLogic with a nullptr value can be passed
+  // to the qSlicerSceneReader. Therefore we trigger a warning but don't return
+  // immediately.
+  if (!camerasLogic)
+    {
+    qCritical() << Q_FUNC_INFO << ": Cameras module is not found";
+    }
 
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
 
