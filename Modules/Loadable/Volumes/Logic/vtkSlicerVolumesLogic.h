@@ -85,9 +85,6 @@ public:
   /// initialize the storage node with the "options".
   typedef ArchetypeVolumeNodeSet (*ArchetypeVolumeNodeSetFactory)(std::string& volumeName, vtkMRMLScene* scene, int options);
 
-  virtual void SetColorLogic(vtkMRMLColorLogic* colorLogic);
-  vtkMRMLColorLogic* GetColorLogic()const;
-
   /// Examine the file name to see if the extension is one of the supported
   /// freesurfer volume formats. Used to assign the proper colour node to label maps.
   int IsFreeSurferVolume(const char* filename);
@@ -318,8 +315,6 @@ protected:
 
 protected:
   vtkSmartPointer<vtkMRMLVolumeNode> ActiveVolumeNode;
-
-  vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
 
   NodeSetFactoryRegistry VolumeRegistry;
 

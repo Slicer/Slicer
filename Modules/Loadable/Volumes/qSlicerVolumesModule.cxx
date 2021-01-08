@@ -17,6 +17,7 @@
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
+#include <QDebug>
 
 // Slicer includes
 #include <qSlicerCoreApplication.h>
@@ -124,16 +125,9 @@ QStringList qSlicerVolumesModule::dependencies() const
 void qSlicerVolumesModule::setup()
 {
   this->Superclass::setup();
+
   vtkSlicerVolumesLogic* volumesLogic =
     vtkSlicerVolumesLogic::SafeDownCast(this->logic());
-  qSlicerAbstractCoreModule* colorsModule =
-    qSlicerCoreApplication::application()->moduleManager()->module("Colors");
-  if (colorsModule)
-    {
-    vtkMRMLColorLogic* colorLogic =
-      vtkMRMLColorLogic::SafeDownCast(colorsModule->logic());
-    volumesLogic->SetColorLogic(colorLogic);
-    }
 
   qSlicerCoreIOManager* ioManager =
     qSlicerCoreApplication::application()->coreIOManager();
