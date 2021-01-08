@@ -427,10 +427,6 @@ public:
   static void GenerateMergedLabelmapInReferenceGeometry(vtkMRMLSegmentationNode* segmentationNode, vtkMRMLVolumeNode* referenceVolumeNode,
     vtkStringArray* segmentIDs, int extentComputationMode, vtkOrientedImageData* mergedLabelmap_Reference);
 
-public:
-  /// Set Terminologies module logic
-  void SetTerminologiesLogic(vtkSlicerTerminologiesModuleLogic* terminologiesLogic);
-
 protected:
   void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
 
@@ -463,9 +459,6 @@ protected:
 
   /// Command handling subject hierarchy UID added events
   vtkCallbackCommand* SubjectHierarchyUIDCallbackCommand;
-
-  /// Terminologies module logic
-  vtkSlicerTerminologiesModuleLogic* TerminologiesLogic{nullptr};
 
 private:
   vtkSlicerSegmentationsModuleLogic(const vtkSlicerSegmentationsModuleLogic&) = delete;
