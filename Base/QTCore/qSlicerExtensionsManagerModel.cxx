@@ -1050,7 +1050,7 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
     if (!errorText.isEmpty())
       {
       this->critical(QString("Error retrieving extension metadata: %1 (%2)")
-        .arg(parameters.values().join(', '))
+        .arg(parameters.values().join(", "))
         .arg(errorText));
       return ExtensionMetadataType();
       }
