@@ -179,14 +179,42 @@ Use this tool to create a unique segment for each connected region of the select
 
 Apply Boolean operators to selected segment or combine segments.
 
-## Hints
+## Tips
 
 - A large radius paint brush with threshold painting is often a very fast way to segment anatomy that is consistently brighter or darker than the surrounding region, but partially connected to similar nearby structures (this happens a lot).
 - Use the slice viewer menus to control the label map opacity and display mode (to show outlines only or full volume).
-- When you create a segmentation, internal labelmap geometry (extent, origin, spacing, axis directions) is determined from the master volume that you choose first. You cannot paint outside this extent. If you want to extend the segmentation to a larger region then you need to modify segmentation's geometry using "Specify geometry" button.
-- The spacing of the internal binary labelmap representation in the segmentation must be 2-5x smaller than your maximum acceptable surface error in the produced surface. If the input volume's resolution is highly anisotropic (spacing value is not the same along the 3 axis) or its spacing is not small enough then it is recommended to either
-  - A. crop and resample the input volume using Crop volume module (make spacing smaller and isotropic and crop the volume to keep the data size under control), or
-  - B. use “Specify geometry” button in Segment Editor to specify finer resolution for the internal labelmap representation than the input image.
+
+## Frequently asked questions
+
+### Cannot paint outside some boundaries
+
+When you create a segmentation, internal labelmap geometry (extent, origin, spacing, axis directions) is determined from the master volume *that you choose first*. You cannot paint outside this extent.
+
+If you want to extend the segmentation to a larger region then you need to modify segmentation's geometry using "Specify geometry" button.
+
+### Segmentation is not accurate enough
+
+If details cannot be accurately depicted during segmentation or the exported surface has non-negligible errors (there are gaps or overlap between segments), then it is necessary to reduce the segmentation's spacing (more accurately: spacing of the internal binary labelmap representation in the segmentation node). *Spacing* is also known as *voxel size* or may be referred to as *resoution* (which is inverse of spacing - higher resolution means smaller spacing).
+
+As a general rule, segmentation's spacing needs to be 2-5x smaller than the size of the smallest relevant detail or the maximum acceptable surface error in the generated surface. 
+
+By default, segmentation's spacing is set from the *master volume that is selected first after the segmentation is created*. If the first selected master volume's resolution is not sufficient or highly anisotropic (spacing value is not the same along the 3 axes) then one of the followings is recommended:
+  - Option A. Crop and resample the input volume using *Crop volume* module before starting segmentation. Make spacing smaller (small enough to represent all details but not too small to slow things down and consume too much memory) and isotropic. Crop the volume to minimum necessary size to reduce memory usage and make editing faster.
+  - Option B. Click “Specify geometry” button in Segment Editor any time to specify smaller spacing. After adjusting the spacing, it is recommended to smooth segments. If segments do not overlap then all segments can be smoothed at once using Joint smoothing method in Smoothing effect.
+
+### Generated surface contains step artifacts
+
+If 3D surface generated from the segmentation contains step artifacts (looks "blocky") then it is necessary to increase smoothing and/or reduce segmentation's spacing.
+
+Users need to choose between having *smooth surface* vs. *no gaps or overlap between segments*. It is impossible to have both. To achieve the desired results, there are two parameters to control: segmentation's spacing and surface smoothing factor:
+
+1. Choose spacing that allows accurate segmentation ([see *Segmentation is not accurate enough* section above](#segmentation-is-not-accurate-enough))
+2. Choose smoothing value that removes staircase artifacts but still preserves all details that you are interested in.
+3. If you find that the surface smoothing value that is high enough to remove staircase artifacts also removes relevant details then further reduce spacing.
+
+### Paint affects neighbor slices or stripes appear in painted segments
+
+Segment Editor allows editing of segmentation on slices of arbitrary orientation. However, since edited segments are stored as binary labelmaps, "striping" artifacts may appear on thin segments or near boundary of any segments. See [*Oblique segmentation* segmentation recipe](https://lassoan.github.io/SlicerSegmentationRecipes/ObliqueSliceSegmentation/) for more details and instructions on how to deal with these artifacts.
 
 ## Limitations
 
