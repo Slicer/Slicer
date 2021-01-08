@@ -208,9 +208,13 @@ If 3D surface generated from the segmentation contains step artifacts (looks "bl
 
 Users need to choose between having *smooth surface* vs. *no gaps or overlap between segments*. It is impossible to have both. To achieve the desired results, there are two parameters to control: segmentation's spacing and surface smoothing factor:
 
-1. Choose spacing that allows accurate segmentation ([see above](#generated-surface-contains-step-artifacts))
+1. Choose spacing that allows accurate segmentation ([see *Segmentation is not accurate enough* section above](#segmentation-is-not-accurate-enough))
 2. Choose smoothing value that removes staircase artifacts but still preserves all details that you are interested in.
 3. If you find that the surface smoothing value that is high enough to remove staircase artifacts also removes relevant details then further reduce spacing.
+
+### Paint affects neighbor slices or stripes appear in painted segments
+
+Segment Editor allows editing of segmentation on slices of arbitrary orientation. However, since edited segments are stored as binary labelmaps, "striping" artifacts may appear on thin segments or near boundary of any segments. See [*Oblique segmentation* segmentation recipe](https://lassoan.github.io/SlicerSegmentationRecipes/ObliqueSliceSegmentation/) for more details and instructions on how to deal with these artifacts.
 
 ## Limitations
 
