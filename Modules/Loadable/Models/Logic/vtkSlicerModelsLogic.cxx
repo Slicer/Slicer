@@ -8,7 +8,6 @@
 =========================================================================auto=*/
 
 /// Slicer logic includes
-#include "vtkSlicerColorLogic.h"
 #include "vtkSlicerModelsLogic.h"
 #include "vtkMRMLSliceLogic.h"
 
@@ -41,23 +40,12 @@
 #include <cassert>
 
 vtkStandardNewMacro(vtkSlicerModelsLogic);
-vtkCxxSetObjectMacro(vtkSlicerModelsLogic, ColorLogic, vtkMRMLColorLogic);
 
 //----------------------------------------------------------------------------
-vtkSlicerModelsLogic::vtkSlicerModelsLogic()
-{
-  this->ColorLogic = nullptr;
-}
+vtkSlicerModelsLogic::vtkSlicerModelsLogic()=default;
 
 //----------------------------------------------------------------------------
-vtkSlicerModelsLogic::~vtkSlicerModelsLogic()
-{
-  if (this->ColorLogic != nullptr)
-    {
-    this->ColorLogic->Delete();
-    this->ColorLogic = nullptr;
-    }
-}
+vtkSlicerModelsLogic::~vtkSlicerModelsLogic()=default;
 
 //----------------------------------------------------------------------------
 void vtkSlicerModelsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
@@ -389,13 +377,7 @@ int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode *mod
 void vtkSlicerModelsLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);
-
   os << indent << "vtkSlicerModelsLogic:             " << this->GetClassName() << "\n";
-  if (this->ColorLogic)
-    {
-    os << indent << "ColorLogic: ";
-    this->ColorLogic->PrintSelf(os, indent);
-    }
 }
 
 //----------------------------------------------------------------------------

@@ -41,11 +41,6 @@ class VTK_SLICER_MODELS_MODULE_LOGIC_EXPORT vtkSlicerModelsLogic
   vtkTypeMacro(vtkSlicerModelsLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  /// The color logic is used to retrieve the default color node ID for
-  /// model nodes.
-  virtual void SetColorLogic(vtkMRMLColorLogic* colorLogic);
-  vtkGetObjectMacro(ColorLogic, vtkMRMLColorLogic);
-
   /// Add into the scene a new mrml model node with an existing polydata
   /// A display node is also added into the scene.
   ///param polyData surface mesh in RAS coordinate system.
@@ -100,10 +95,6 @@ protected:
   void ObserveMRMLScene() override;
 
   void OnMRMLSceneEndImport() override;
-
-  /// Color logic
-  vtkMRMLColorLogic* ColorLogic;
-
 };
 
 #endif
