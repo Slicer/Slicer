@@ -61,17 +61,10 @@ class vtkSlicerCropVolumeLogic::vtkInternal
 {
 public:
   vtkInternal();
-
-  vtkSlicerVolumesLogic* VolumesLogic;
-  vtkSlicerCLIModuleLogic* ResampleLogic;
 };
 
 //----------------------------------------------------------------------------
-vtkSlicerCropVolumeLogic::vtkInternal::vtkInternal()
-{
-  this->VolumesLogic = nullptr;
-  this->ResampleLogic = nullptr;
-}
+vtkSlicerCropVolumeLogic::vtkInternal::vtkInternal()=default;
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerCropVolumeLogic);
@@ -86,30 +79,6 @@ vtkSlicerCropVolumeLogic::vtkSlicerCropVolumeLogic()
 vtkSlicerCropVolumeLogic::~vtkSlicerCropVolumeLogic()
 {
   delete this->Internal;
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerCropVolumeLogic::SetVolumesLogic(vtkSlicerVolumesLogic* logic)
-{
-  this->Internal->VolumesLogic = logic;
-}
-
-//----------------------------------------------------------------------------
-vtkSlicerVolumesLogic* vtkSlicerCropVolumeLogic::GetVolumesLogic()
-{
-  return this->Internal->VolumesLogic;
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerCropVolumeLogic::SetResampleLogic(vtkSlicerCLIModuleLogic* logic)
-{
-  this->Internal->ResampleLogic = logic;
-}
-
-//----------------------------------------------------------------------------
-vtkSlicerCLIModuleLogic* vtkSlicerCropVolumeLogic::GetResampleLogic()
-{
-  return this->Internal->ResampleLogic;
 }
 
 //----------------------------------------------------------------------------
@@ -175,15 +144,19 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
     }
   else
     {
+
+    vtkSlicerVolumesLogic* volumesLogic =
+      vtkSlicerVolumesLogic::SafeDownCast(this->GetMRMLApplicationLogic()->GetModuleLogic("Volumes"));
+
     // Create compatible output volume
-    if (!this->Internal->VolumesLogic)
+    if (!volumesLogic)
       {
       vtkErrorMacro("CropVolume: invalid Volumes logic");
       return -2;
       }
     std::ostringstream outSS;
     outSS << (inputVolume->GetName() ? inputVolume->GetName() : "Volume") << " cropped";
-    outputVolume = this->Internal->VolumesLogic->CloneVolume(this->GetMRMLScene(), inputVolume, outSS.str().c_str());
+    outputVolume = volumesLogic->CloneVolume(this->GetMRMLScene(), inputVolume, outSS.str().c_str());
     if (!outputVolume)
       {
       vtkErrorMacro("CropVolume: failed to create output volume");
@@ -427,7 +400,9 @@ int vtkSlicerCropVolumeLogic::CropInterpolated(vtkMRMLAnnotationROINode* roi, vt
     return -1;
     }
 
-  if (this->Internal->ResampleLogic == nullptr)
+  vtkSlicerCLIModuleLogic* resampleLogic =
+    vtkSlicerCLIModuleLogic::SafeDownCast(this->GetMRMLApplicationLogic()->GetModuleLogic("ResampleScalarVectorDWIVolume"));
+  if (!resampleLogic)
     {
     vtkErrorMacro("CropVolume: resample logic is not set");
     return -3;
@@ -490,7 +465,7 @@ int vtkSlicerCropVolumeLogic::CropInterpolated(vtkMRMLAnnotationROINode* roi, vt
     outputSpacing[column] = vtkMath::Normalize(outputDirectionColRow[column]);
     }
 
-  vtkMRMLCommandLineModuleNode* cmdNode = this->Internal->ResampleLogic->CreateNodeInScene();
+  vtkMRMLCommandLineModuleNode* cmdNode = resampleLogic->CreateNodeInScene();
   if (cmdNode == nullptr)
     {
     vtkErrorMacro("CropVolume: failed to create resample node");
@@ -585,7 +560,7 @@ int vtkSlicerCropVolumeLogic::CropInterpolated(vtkMRMLAnnotationROINode* roi, vt
 
   cmdNode->SetParameterAsDouble("defaultPixelValue", fillValue);
 
-  this->Internal->ResampleLogic->ApplyAndWait(cmdNode, false);
+  resampleLogic->ApplyAndWait(cmdNode, false);
 
   this->GetMRMLScene()->RemoveNode(cmdNode);
   this->GetMRMLScene()->RemoveNode(originMarkupNode.GetPointer());

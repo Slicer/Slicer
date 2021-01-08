@@ -88,35 +88,6 @@ QStringList qSlicerCropVolumeModule::dependencies()const
 void qSlicerCropVolumeModule::setup()
 {
   this->Superclass::setup();
-
-  vtkSlicerCropVolumeLogic* cropVolumeLogic =
-    vtkSlicerCropVolumeLogic::SafeDownCast(this->logic());
-
-  qSlicerAbstractCoreModule* volumesModule =
-    qSlicerCoreApplication::application()->moduleManager()->module("Volumes");
-  if (volumesModule)
-    {
-    vtkSlicerVolumesLogic* volumesLogic =
-      vtkSlicerVolumesLogic::SafeDownCast(volumesModule->logic());
-    cropVolumeLogic->SetVolumesLogic(volumesLogic);
-    }
-  else
-    {
-    qWarning() << "Volumes module is not found";
-    }
-
-  qSlicerAbstractCoreModule* resampleModule =
-    qSlicerCoreApplication::application()->moduleManager()->module("ResampleScalarVectorDWIVolume");
-  if (resampleModule)
-    {
-    vtkSlicerCLIModuleLogic* resampleLogic =
-      vtkSlicerCLIModuleLogic::SafeDownCast(resampleModule->logic());
-    cropVolumeLogic->SetResampleLogic(resampleLogic);
-    }
-  else
-    {
-    qWarning() << "ResampleScalarVectorDWIVolume module is not found";
-    }
 }
 
 //-----------------------------------------------------------------------------
