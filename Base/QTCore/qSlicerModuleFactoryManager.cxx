@@ -24,6 +24,8 @@
 
 #include "vtkSlicerConfigure.h" // XXX For modulePaths() function.
 
+#include <vtkSlicerApplicationLogic.h>
+
 // STD includes
 #include <algorithm>
 
@@ -168,12 +170,16 @@ bool qSlicerModuleFactoryManager::loadModule(const QString& name, const QString&
   // Update internal Map
   d->LoadedModules << name;
 
+  // Sets the logic for the module in the application logic
+  d->AppLogic->SetModuleLogic(name.toStdString().c_str(), instance->logic());
+
   // Initialize module
   instance->initialize(d->AppLogic);
 
   // Check the module has a title (required)
   if (instance->title().isEmpty())
     {
+    d->AppLogic->SetModuleLogic(name.toStdString().c_str(), nullptr);
     qWarning() << "Failed to retrieve module title corresponding to module name: " << name;
     Q_ASSERT(!instance->title().isEmpty());
     return false;
@@ -245,6 +251,10 @@ void qSlicerModuleFactoryManager::unloadModule(const QString& name)
   emit this->moduleAboutToBeUnloaded(name);
   d->LoadedModules.removeOne(name);
   this->uninstantiateModule(name);
+
+  // Remove the registration of module logic in application logic.
+  d->AppLogic->SetModuleLogic(name.toStdString().c_str(), nullptr);
+
   emit this->moduleUnloaded(name);
 }
 
