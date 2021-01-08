@@ -71,12 +71,6 @@ public:
   vtkTypeMacro(vtkSlicerCropVolumeLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  void SetVolumesLogic(vtkSlicerVolumesLogic* logic);
-  vtkSlicerVolumesLogic* GetVolumesLogic();
-
-  void SetResampleLogic(vtkSlicerCLIModuleLogic* logic);
-  vtkSlicerCLIModuleLogic* GetResampleLogic();
-
   /// Crop input volume using the specified ROI node.
   int Apply(vtkMRMLCropVolumeParametersNode*);
 
