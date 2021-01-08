@@ -137,14 +137,6 @@ void qSlicerModelsModule::setup()
     vtkSlicerModelsLogic::SafeDownCast(this->logic());
   if (qSlicerApplication::application())
     {
-    qSlicerAbstractCoreModule* colorsModule =
-      qSlicerCoreApplication::application()->moduleManager()->module("Colors");
-    if (colorsModule)
-      {
-      vtkMRMLColorLogic* colorLogic =
-        vtkMRMLColorLogic::SafeDownCast(colorsModule->logic());
-      modelsLogic->SetColorLogic(colorLogic);
-      }
     // Register IOs
     qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
     ioManager->registerIO(new qSlicerModelsReader(modelsLogic, this));
