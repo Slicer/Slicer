@@ -56,7 +56,6 @@ public:
   virtual void setupUi(qSlicerMarkupsPlaceWidget*);
 
 public:
-  vtkWeakPointer<vtkSlicerMarkupsLogic> MarkupsLogic;
   vtkWeakPointer<vtkMRMLMarkupsNode> CurrentMarkupsNode;
   vtkWeakPointer<vtkMRMLSelectionNode> SelectionNode;
   vtkWeakPointer<vtkMRMLInteractionNode> InteractionNode;
@@ -113,20 +112,12 @@ void qSlicerMarkupsPlaceWidget::setup()
 {
   Q_D(qSlicerMarkupsPlaceWidget);
 
-  // This cannot be called by the constructor, because Slicer may not exist when the constructor is called
-  d->MarkupsLogic = nullptr;
-  if (qSlicerApplication::application() != nullptr && qSlicerApplication::application()->moduleManager() != nullptr)
-    {
-    qSlicerAbstractCoreModule* markupsModule = qSlicerApplication::application()->moduleManager()->module( "Markups" );
-    if ( markupsModule != nullptr )
-      {
-      d->MarkupsLogic = vtkSlicerMarkupsLogic::SafeDownCast( markupsModule->logic() );
-      }
-    }
-  if (d->MarkupsLogic == nullptr)
+  vtkSlicerMarkupsLogic* markupsLogic= vtkSlicerMarkupsLogic::SafeDownCast(this->appLogic()->GetModuleLogic("Markups"));
+  if (!markupsLogic)
     {
     qCritical() << Q_FUNC_INFO << ": Markups module is not found, some markup manipulation features will not be available";
     }
+
   d->setupUi(this);
 
   d->OptionsWidgets << d->ColorButton << d->PlaceButton << d->DeleteButton << d->MoreButton;
@@ -272,14 +263,16 @@ void qSlicerMarkupsPlaceWidget::deleteAllMarkups()
 bool qSlicerMarkupsPlaceWidget::currentNodeActive() const
 {
   Q_D(const qSlicerMarkupsPlaceWidget);
+
   vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
-  if (d->MarkupsLogic == nullptr || this->mrmlScene() == nullptr ||
+  vtkSlicerMarkupsLogic* markupsLogic= vtkSlicerMarkupsLogic::SafeDownCast(this->appLogic()->GetModuleLogic("Markups"));
+  if (markupsLogic == nullptr || this->mrmlScene() == nullptr ||
       currentMarkupsNode == nullptr || d->InteractionNode == nullptr ||
       d->SelectionNode == nullptr)
     {
     return false;
     }
-  bool currentNodeActive = (d->MarkupsLogic->GetActiveListID().compare( currentMarkupsNode->GetID() ) == 0);
+  bool currentNodeActive = (markupsLogic->GetActiveListID().compare( currentMarkupsNode->GetID() ) == 0);
   const char* activePlaceNodeClassName = d->SelectionNode->GetActivePlaceNodeClassName();
   bool placeNodeClassNameMatches = activePlaceNodeClassName && std::string(activePlaceNodeClassName).compare(currentMarkupsNode->GetClassName())==0;
   return placeNodeClassNameMatches && currentNodeActive;
@@ -289,7 +282,9 @@ bool qSlicerMarkupsPlaceWidget::currentNodeActive() const
 void qSlicerMarkupsPlaceWidget::setCurrentNodeActive(bool active)
 {
   Q_D(qSlicerMarkupsPlaceWidget);
-  if (d->MarkupsLogic == nullptr || this->mrmlScene() == nullptr || d->InteractionNode == nullptr)
+
+  vtkSlicerMarkupsLogic* markupsLogic= vtkSlicerMarkupsLogic::SafeDownCast(this->appLogic()->GetModuleLogic("Markups"));
+  if (markupsLogic == nullptr || this->mrmlScene() == nullptr || d->InteractionNode == nullptr)
     {
     if (active)
       {
@@ -302,11 +297,11 @@ void qSlicerMarkupsPlaceWidget::setCurrentNodeActive(bool active)
     {
     if (active)
       {
-      d->MarkupsLogic->SetActiveListID(this->currentMarkupsNode());
+      markupsLogic->SetActiveListID(this->currentMarkupsNode());
       }
     else
       {
-      d->MarkupsLogic->SetActiveListID(nullptr);
+      markupsLogic->SetActiveListID(nullptr);
       d->InteractionNode->SetCurrentInteractionMode( vtkMRMLInteractionNode::ViewTransform );
       }
     }
@@ -335,7 +330,9 @@ bool qSlicerMarkupsPlaceWidget::placeModeEnabled() const
 void qSlicerMarkupsPlaceWidget::setPlaceModeEnabled(bool placeEnable)
 {
   Q_D(qSlicerMarkupsPlaceWidget);
-  if (d->MarkupsLogic == nullptr || this->mrmlScene() == nullptr ||
+
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(this->appLogic()->GetModuleLogic("Markups"));
+  if (markupsLogic == nullptr || this->mrmlScene() == nullptr ||
       d->InteractionNode == nullptr || this->currentMarkupsNode() == nullptr)
     {
     if (placeEnable)
@@ -350,7 +347,7 @@ void qSlicerMarkupsPlaceWidget::setPlaceModeEnabled(bool placeEnable)
     // activate and set place mode
     if (!wasActive)
       {
-      d->MarkupsLogic->SetActiveListID(this->currentMarkupsNode());
+      markupsLogic->SetActiveListID(this->currentMarkupsNode());
       }
     if (d->PlaceMultipleMarkups == ForcePlaceSingleMarkup)
       {
@@ -398,8 +395,9 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
 {
   Q_D(qSlicerMarkupsPlaceWidget);
 
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(this->appLogic()->GetModuleLogic("Markups"));
   vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
-  if (d->MarkupsLogic == nullptr || this->mrmlScene() == nullptr ||
+  if (markupsLogic == nullptr || this->mrmlScene() == nullptr ||
       d->InteractionNode == nullptr || currentMarkupsNode == nullptr)
     {
     d->ColorButton->setEnabled(false);
@@ -489,10 +487,11 @@ void qSlicerMarkupsPlaceWidget::setMRMLScene(vtkMRMLScene* scene)
   vtkMRMLSelectionNode* selectionNode = nullptr;
   vtkMRMLInteractionNode *interactionNode = nullptr;
 
-  if (d->MarkupsLogic != nullptr && d->MarkupsLogic->GetMRMLScene() != nullptr)
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(this->appLogic()->GetModuleLogic("Markups"));
+  if (markupsLogic != nullptr && markupsLogic->GetMRMLScene() != nullptr)
     {
-    selectionNode = vtkMRMLSelectionNode::SafeDownCast( d->MarkupsLogic->GetMRMLScene()->GetNodeByID( d->MarkupsLogic->GetSelectionNodeID() ) );
-    interactionNode = vtkMRMLInteractionNode::SafeDownCast( d->MarkupsLogic->GetMRMLScene()->GetNodeByID( "vtkMRMLInteractionNodeSingleton" ) );
+    selectionNode = vtkMRMLSelectionNode::SafeDownCast( markupsLogic->GetMRMLScene()->GetNodeByID( markupsLogic->GetSelectionNodeID() ) );
+    interactionNode = vtkMRMLInteractionNode::SafeDownCast( markupsLogic->GetMRMLScene()->GetNodeByID( "vtkMRMLInteractionNodeSingleton" ) );
     }
 
   this->setInteractionNode(interactionNode);

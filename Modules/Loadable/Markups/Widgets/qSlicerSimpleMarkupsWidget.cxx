@@ -66,7 +66,6 @@ public:
   bool JumpToSliceEnabled;
   int ViewGroup;
 
-  vtkWeakPointer<vtkSlicerMarkupsLogic> MarkupsLogic;
   vtkWeakPointer<vtkMRMLMarkupsNode> CurrentMarkupsNode;
 };
 
@@ -109,20 +108,6 @@ void qSlicerSimpleMarkupsWidget::setup()
 {
   Q_D(qSlicerSimpleMarkupsWidget);
 
-  // This cannot be called by the constructor, because Slicer may not exist when the constructor is called
-  d->MarkupsLogic = nullptr;
-  if (qSlicerApplication::application() != nullptr && qSlicerApplication::application()->moduleManager() != nullptr)
-    {
-    qSlicerAbstractCoreModule* markupsModule = qSlicerApplication::application()->moduleManager()->module( "Markups" );
-    if ( markupsModule != nullptr )
-      {
-      d->MarkupsLogic = vtkSlicerMarkupsLogic::SafeDownCast( markupsModule->logic() );
-      }
-    }
-  if (d->MarkupsLogic == nullptr)
-    {
-    qCritical("qSlicerSimpleMarkupsWidget::setup: Markups module is not found, some markup manipulation features will not be available");
-    }
   d->setupUi(this);
 
   connect( d->MarkupsNodeComboBox, SIGNAL( currentNodeChanged( vtkMRMLNode* ) ), this, SLOT( onMarkupsNodeChanged() ) );
@@ -379,7 +364,8 @@ void qSlicerSimpleMarkupsWidget::onMarkupsNodeAdded( vtkMRMLNode* newNode )
 {
   Q_D(qSlicerSimpleMarkupsWidget);
 
-  if (d->MarkupsLogic == nullptr)
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(this->appLogic()->GetModuleLogic("Markups"));
+  if (markupsLogic == nullptr)
     {
     qCritical("qSlicerSimpleMarkupsWidget::onMarkupsNodeAdded failed: Markups module logic is invalid");
     return;
@@ -389,7 +375,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsNodeAdded( vtkMRMLNode* newNode )
   if (newMarkupsNode->GetDisplayNode()==nullptr)
     {
     // Make sure there is an associated display node
-    d->MarkupsLogic->AddNewDisplayNodeForMarkupsNode( newMarkupsNode );
+    markupsLogic->AddNewDisplayNodeForMarkupsNode( newMarkupsNode );
     }
   d->MarkupsNodeComboBox->setCurrentNode( newMarkupsNode );
   this->setNodeColor( defaultNodeColor() );
@@ -401,7 +387,8 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointsTableContextMenu(const QP
 {
   Q_D(qSlicerSimpleMarkupsWidget);
 
-  if (d->MarkupsLogic == nullptr)
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(this->appLogic()->GetModuleLogic("Markups"));
+  if (markupsLogic == nullptr)
     {
     qCritical("qSlicerSimpleMarkupsWidget::onMarkupsControlPointsTableContextMenu failed: Markups module logic is invalid");
     return;
@@ -473,7 +460,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointsTableContextMenu(const QP
 
   if ( selectedAction == jumpAction )
     {
-    d->MarkupsLogic->JumpSlicesToNthPointInMarkup(this->currentNode()->GetID(), currentControlPoint, true /* centered */, d->ViewGroup);
+    markupsLogic->JumpSlicesToNthPointInMarkup(this->currentNode()->GetID(), currentControlPoint, true /* centered */, d->ViewGroup);
     }
 
   this->updateWidget();
@@ -487,18 +474,21 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointSelected(int row, int colu
 
   if (d->JumpToSliceEnabled)
     {
-    vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( this->currentNode() );
-    if ( currentMarkupsNode == nullptr )
+    vtkMRMLMarkupsNode *currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->currentNode());
+    if (currentMarkupsNode == nullptr)
       {
       return;
       }
-    if (d->MarkupsLogic == nullptr)
+
+    vtkSlicerMarkupsLogic *markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(this->appLogic()->GetModuleLogic("Markups"));
+    if (markupsLogic == nullptr)
       {
-      qCritical("qSlicerSimpleMarkupsWidget::onMarkupsControlPointSelected failed: Cannot jump, markups module logic is invalid");
+      qCritical("qSlicerSimpleMarkupsWidget::onMarkupsControlPointSelected "
+                "failed: Cannot jump, markups module logic is invalid");
       return;
       }
-    d->MarkupsLogic->JumpSlicesToNthPointInMarkup(currentMarkupsNode->GetID(), row, true /* centered */, d->ViewGroup);
-    }
+    markupsLogic->JumpSlicesToNthPointInMarkup(currentMarkupsNode->GetID(), row, true /* centered */, d->ViewGroup);
+  }
 
   emit currentMarkupsControlPointSelectionChanged(row);
   emit currentMarkupsFiducialSelectionChanged(row);
@@ -557,13 +547,15 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
 {
   Q_D(qSlicerSimpleMarkupsWidget);
 
-  if (d->MarkupsLogic == nullptr || this->mrmlScene() == nullptr)
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(this->appLogic()->GetModuleLogic("Markups"));
+
+  if (markupsLogic == nullptr || this->mrmlScene() == nullptr)
     {
     qCritical("qSlicerSimpleMarkupsWidget::updateWidget failed: Markups module logic or scene is invalid");
     }
 
   vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( d->MarkupsNodeComboBox->currentNode() );
-  if ( currentMarkupsNode == nullptr || d->MarkupsLogic == nullptr)
+  if ( currentMarkupsNode == nullptr || markupsLogic == nullptr)
     {
     d->MarkupsControlPointsTableWidget->clear();
     d->MarkupsControlPointsTableWidget->setRowCount( 0 );
