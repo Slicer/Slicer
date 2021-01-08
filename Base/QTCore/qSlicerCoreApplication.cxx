@@ -127,6 +127,20 @@
 #endif
 
 //-----------------------------------------------------------------------------
+// Helper function
+
+namespace
+{
+wchar_t* QStringToPythonWCharPointer(QString str)
+  {
+  wchar_t* res = (wchar_t*)PyMem_RawMalloc(str.size()+1);
+  int len = str.toWCharArray(res);
+  res[len] = 0; // ensure zero termination
+  return res;
+  }
+}
+
+//-----------------------------------------------------------------------------
 // qSlicerCoreApplicationPrivate methods
 
 //-----------------------------------------------------------------------------
@@ -954,14 +968,10 @@ void qSlicerCoreApplication::handleCommandLineArguments()
 
     int pythonArgc = 1 /*scriptname*/ + scriptArgs.count();
     wchar_t** pythonArgv = new wchar_t*[pythonArgc];
-    //pythonArgv[0] = new wchar_t[pythonScript.size() + 1];
-    //pythonScript.toWCharArray(pythonArgv[0]);
-    pythonArgv[0] = Py_DecodeLocale(pythonScript.toUtf8(), nullptr);
+    pythonArgv[0] = QStringToPythonWCharPointer(pythonScript);
     for(int i = 0; i < scriptArgs.count(); ++i)
       {
-      //pythonArgv[i + 1] = new wchar_t[scriptArgs.at(i).size() + 1];
-      //scriptArgs.at(i).toWCharArray(pythonArgv[i + 1]);
-      pythonArgv[i + 1] = Py_DecodeLocale(scriptArgs.at(i).toUtf8(), nullptr);
+      pythonArgv[i + 1] = QStringToPythonWCharPointer(scriptArgs.at(i));
       }
 
     // See http://docs.python.org/c-api/init.html
