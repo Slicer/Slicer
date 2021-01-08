@@ -414,7 +414,7 @@ int vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetNextAvailableMulti
         {
         continue;
         }
-      if (pipelineMulti->ActorPortIndex == port)
+      if (pipelineMulti->ActorPortIndex == static_cast<unsigned int>(port))
         {
         portIsUsed = true;
         break;

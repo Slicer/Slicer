@@ -121,7 +121,7 @@ void vtkMRMLAbstractWidget::SetKeyboardEventTranslation(
 //-------------------------------------------------------------------------
 vtkWidgetEventTranslator* vtkMRMLAbstractWidget::GetEventTranslator(int widgetState)
 {
-  if (widgetState < 0 || widgetState >= this->EventTranslators.size())
+  if (widgetState < 0 || widgetState >= static_cast<int>(this->EventTranslators.size()))
     {
     return nullptr;
     }
