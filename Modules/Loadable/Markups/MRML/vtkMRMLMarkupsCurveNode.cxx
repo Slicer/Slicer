@@ -1299,7 +1299,7 @@ void vtkMRMLMarkupsCurveNode::SetSurfaceDistanceWeightingFunction(const char* fu
 {
   const char* currentFunction = this->SurfaceScalarCalculator->GetFunction();
   if ((currentFunction && function && strcmp(this->SurfaceScalarCalculator->GetFunction(), function) == 0) ||
-    currentFunction == nullptr && function == nullptr)
+    (currentFunction == nullptr && function == nullptr))
     {
     return;
     }
