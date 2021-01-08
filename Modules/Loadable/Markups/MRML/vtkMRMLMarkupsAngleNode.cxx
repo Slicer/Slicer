@@ -35,8 +35,8 @@ vtkMRMLNodeNewMacro(vtkMRMLMarkupsAngleNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsAngleNode::vtkMRMLMarkupsAngleNode()
-  : AngleMeasurementMode(Minimal)
-  , OrientationRotationAxis{0.0, 0.0, 1.0}
+  : OrientationRotationAxis{0.0, 0.0, 1.0}
+  , AngleMeasurementMode(Minimal)
 {
   this->MaximumNumberOfControlPoints = 3;
   this->RequiredNumberOfControlPoints = 3;
