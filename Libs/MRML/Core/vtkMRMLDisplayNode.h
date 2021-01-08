@@ -316,28 +316,21 @@ public:
   /// \sa SliceIntersectionThickness, SetSliceIntersectionThickness()
   vtkGetMacro(SliceIntersectionThickness, int);
 
-  /// Set the backface culling of the display node.
-  /// \sa FrontfaceCulling, GetFrontfaceCulling(), FrontfaceCullingOn(),
-  /// FrontfaceCullingOff()
+  ///@{
+  /// Enable/disable rendering of cells facing the camera (frontface)
+  /// or facing away from the camera (backface). By culling (excluding from rendering)
+  /// rendering performance of very complex models may be improved and it may also
+  /// simplify appearance of semitransparent models.
+  /// However, if cells are not oriented consistently then enabling culling may make
+  /// a surface appear turned inside out or not just partially rendered.
+  /// Disabled (all faces are rendered) by default.
   vtkSetMacro(FrontfaceCulling, int);
-  /// Get the backface culling of the display node.
-  /// \sa FrontfaceCulling, SetFrontfaceCulling(), FrontfaceCullingOn(),
-  /// FrontfaceCullingOff()
   vtkGetMacro(FrontfaceCulling, int);
-  /// Set the backface culling of the display node.
-  /// \sa FrontfaceCulling, SetFrontfaceCulling(), GetFrontfaceCulling()
   vtkBooleanMacro(FrontfaceCulling, int);
-  /// Set the backface culling of the display node.
-  /// \sa BackfaceCulling, GetBackfaceCulling(), BackfaceCullingOn(),
-  /// BackfaceCullingOff()
   vtkSetMacro(BackfaceCulling, int);
-  /// Get the backface culling of the display node.
-  /// \sa BackfaceCulling, SetBackfaceCulling(), BackfaceCullingOn(),
-  /// BackfaceCullingOff()
   vtkGetMacro(BackfaceCulling, int);
-  /// Set the backface culling of the display node.
-  /// \sa BackfaceCulling, SetBackfaceCulling(), GetBackfaceCulling()
   vtkBooleanMacro(BackfaceCulling, int);
+  ///@}
 
   /// Enable/Disable lighting of the display node.
   /// \sa Lighting, GetLighting(), LightingOn(),

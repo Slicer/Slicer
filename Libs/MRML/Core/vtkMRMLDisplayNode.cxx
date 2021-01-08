@@ -63,7 +63,10 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
   this->Clipping = 0;
   this->SliceIntersectionThickness = 1;
   this->FrontfaceCulling = 0;
-  this->BackfaceCulling = 1;
+  // Backface culling can make rendering faster but it can cause partial rendering
+  // if the surface is cut, semi-transparent, or faces are not oriented consistently,
+  // therefore it is disabled by default.
+  this->BackfaceCulling = 0;
   this->ScalarVisibility = 0;
   this->VectorVisibility = 0;
   this->TensorVisibility = 0;
