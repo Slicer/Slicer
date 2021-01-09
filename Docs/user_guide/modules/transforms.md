@@ -20,7 +20,7 @@ Supported transform types:
 "Applying a transform" means setting parent transform to a node to translate, rotate, and/or warp it. If the parent transform is changed then the position or shape of the node is automatically updated. If the transform is removed then original (non-transformed) state of the node is restored.
 
 A transform can be applied to a node in multiple ways:
-- Method A: In Data module's Subject hierarchy tab, right-click on the "Transform" column and choose a transform. See [demo](https://youtu.be/bbikx7Edv4g).
+- Method A: In Data module's Subject hierarchy tab, right-click on the "Transform" column and choose a transform (or "Create new transform"). The transform can be interactively edited in 3D views by right-click on "Transform" column and choosing "Interaction in 3D view". See this **[short demonstration video](https://youtu.be/bbikx7Edv4g)**.
 - Method B: In Data module's Transform hierarchy tab, drag the nodes under a transform.
 - Method C: In Transforms module's "Apply transform" section move nodes from the Transformable list to the Transformed list by selecting them and click the arrow button between them.
 
@@ -42,7 +42,7 @@ If non-linear transform is hardened on a volume then the volume is resampled usi
 - Split: a composite transform can be split to multiple transform nodes (so that each component is stored in a separate transform node) by clicking "Split" button in Transforms module's Edit section.
 - Change translation/rotation:
   - linear transforms can be edited using translation and rotation sliders Transforms module's Edit section. "Translation in global or local reference frame" button controls if translation is performed in the parent coordinate system or the rotated coordinate system.
-  - translation and rotation of a linear transform can be interactively edited in 3D by enabling "Visible in 3D view" in Transform's module Display / Interaction section.
+  - translation and rotation of a linear transform can be interactively edited in 3D by enabling "Visible in 3D view" in Transform's module Display / Interaction section. See this **[short demonstration video](https://youtu.be/bbikx7Edv4g)**.
 - Edit warping transform: to specify/edit a warping transform that translates a set of points to specified positions, you can use [semi-automatic registration methods](../registration.html#semi-automatic-registration)
 
 ### Compute transform
