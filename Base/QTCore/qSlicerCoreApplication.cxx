@@ -133,7 +133,7 @@ namespace
 {
 wchar_t* QStringToPythonWCharPointer(QString str)
   {
-  wchar_t* res = (wchar_t*)PyMem_RawMalloc(str.size()+1);
+  wchar_t* res = (wchar_t*)PyMem_RawMalloc((str.size() + 1) * sizeof(wchar_t));
   int len = str.toWCharArray(res);
   res[len] = 0; // ensure zero termination
   return res;
