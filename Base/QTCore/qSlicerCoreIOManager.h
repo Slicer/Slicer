@@ -36,6 +36,7 @@
 #include <qSlicerIO.h>
 #include "qSlicerBaseQTCoreExport.h"
 
+class vtkMRMLMessageCollection;
 class vtkMRMLNode;
 class vtkMRMLStorableNode;
 class vtkMRMLStorageNode;
@@ -95,47 +96,60 @@ public:
   /// fileName (QString or QStringList) or fileNames (QStringList).
   /// More specific parameters could also be set. For example, the volume reader qSlicerVolumesIO
   /// could also be called with the following parameters: LabelMap (bool), Center (bool)
+  /// If a valid pointer is passed to userMessages additional error or warning information may be returned in it.
   /// \note Make also sure the case of parameter name is respected
   /// \sa qSlicerIO::IOProperties, qSlicerIO::IOFileType, saveNodes()
   Q_INVOKABLE virtual bool loadNodes(const qSlicerIO::IOFileType& fileType,
                                      const qSlicerIO::IOProperties& parameters,
-                                     vtkCollection* loadedNodes = nullptr);
+                                     vtkCollection* loadedNodes = nullptr,
+                                     vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Utility function that loads a bunch of files. The "fileType" attribute should
   /// in the parameter map for each node to load.
+  /// If a valid pointer is passed to userMessages additional error or warning information may be returned in it.
   virtual bool loadNodes(const QList<qSlicerIO::IOProperties>& files,
-                         vtkCollection* loadedNodes = nullptr);
+                         vtkCollection* loadedNodes = nullptr,
+                         vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Load a list of node corresponding to \a fileType and return the first loaded node.
   /// This function is provided for convenience and is equivalent to call loadNodes
   /// with a vtkCollection parameter and retrieve the first element.
+  /// If a valid pointer is passed to userMessages additional error or warning information may be returned in it.
   vtkMRMLNode* loadNodesAndGetFirst(qSlicerIO::IOFileType fileType,
-                                    const qSlicerIO::IOProperties& parameters);
+                                    const qSlicerIO::IOProperties& parameters,
+                                    vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Load/import a scene corresponding to \a fileName
   /// This function is provided for convenience and is equivalent to call
-  /// loadNodes function with QString("SceneFile")
-  Q_INVOKABLE bool loadScene(const QString& fileName, bool clear = true);
+  /// loadNodes function with QString("SceneFile").
+  /// If a valid pointer is passed to userMessages additional error or warning information may be returned in it.
+  Q_INVOKABLE bool loadScene(const QString& fileName, bool clear = true,
+    vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Convenient function to load a file. All the options (e.g. filetype) are
   /// chosen by default.
-  Q_INVOKABLE bool loadFile(const QString& fileName);
+  /// If a valid pointer is passed to userMessages additional error or warning information may be returned in it.
+  Q_INVOKABLE bool loadFile(const QString& fileName, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Save nodes (or scene) using the registered writers.
   /// Return true on success, false otherwise.
   /// Attributes are typically:
   /// For all: QString fileName (or QStringList fileNames)
   /// For nodes: QString nodeID, bool useCompression
+  /// If a valid pointer is passed to userMessages additional error or warning information may be returned in it.
   /// \sa qSlicerNodeWriter, qSlicerIO::IOProperties, qSlicerIO::IOFileType,
   /// loadNodes()
   Q_INVOKABLE bool saveNodes(qSlicerIO::IOFileType fileType,
-                             const qSlicerIO::IOProperties& parameters);
+                             const qSlicerIO::IOProperties& parameters,
+                              vtkMRMLMessageCollection* userMessages=nullptr);
 
   /// Save a scene corresponding to \a fileName
   /// This function is provided for convenience and is equivalent to call
   /// saveNodes function with QString("SceneFile") with the fileName
   /// and screenShot set as properties.
-  Q_INVOKABLE bool saveScene(const QString& fileName, QImage screenShot);
+  /// If a valid pointer is passed to userMessages additional error or warning information may be returned in it.
+  Q_INVOKABLE bool saveScene(const QString& fileName, QImage screenShot,
+    vtkMRMLMessageCollection* userMessages=nullptr);
 
   /// Create default storage nodes for all storable nodes that are to be saved
   /// with the scene and do not have a storage node already

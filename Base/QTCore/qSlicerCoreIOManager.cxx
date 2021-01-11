@@ -33,6 +33,7 @@
 
 // MRML includes
 #include <vtkMRMLApplicationLogic.h>
+#include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLStorableNode.h>
@@ -426,26 +427,27 @@ QString qSlicerCoreIOManager::completeSlicerWritableFileNameSuffix(vtkMRMLStorab
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreIOManager::loadScene(const QString& fileName, bool clear)
+bool qSlicerCoreIOManager::loadScene(const QString& fileName, bool clear, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   qSlicerIO::IOProperties properties;
   properties["fileName"] = fileName;
   properties["clear"] = clear;
-  return this->loadNodes(QString("SceneFile"), properties);
+  return this->loadNodes(QString("SceneFile"), properties, nullptr, userMessages);
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreIOManager::loadFile(const QString& fileName)
+bool qSlicerCoreIOManager::loadFile(const QString& fileName, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   qSlicerIO::IOProperties properties;
   properties["fileName"] = fileName;
-  return this->loadNodes(this->fileType(fileName), properties);
+  return this->loadNodes(this->fileType(fileName), properties, nullptr, userMessages);
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
                                      const qSlicerIO::IOProperties& parameters,
-                                     vtkCollection* loadedNodes)
+                                     vtkCollection* loadedNodes,
+                                     vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   Q_D(qSlicerCoreIOManager);
 
@@ -465,7 +467,7 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
         fileParameters["name"] = nameId < names.size() ? names[nameId] : names.last();
         ++nameId;
         }
-      res &= this->loadNodes(fileType, fileParameters, loadedNodes);
+      res &= this->loadNodes(fileType, fileParameters, loadedNodes, userMessages);
       }
     return res;
     }
@@ -489,7 +491,13 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
       {
       continue;
       }
-    if (!reader->load(parameters))
+    bool currentFileSuccess = reader->load(parameters);
+    if (userMessages)
+      {
+      QString prefix = parameters["fileName"].toString() + ": ";
+      userMessages->AddMessages(reader->userMessages(), prefix.toStdString());
+      }
+    if (!currentFileSuccess)
       {
       continue;
       }
@@ -525,17 +533,15 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreIOManager::
-loadNodes(const QList<qSlicerIO::IOProperties>& files,
-          vtkCollection* loadedNodes)
+bool qSlicerCoreIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
+          vtkCollection* loadedNodes, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   bool res = true;
   foreach(qSlicerIO::IOProperties fileProperties, files)
     {
     res = this->loadNodes(
       static_cast<qSlicerIO::IOFileType>(fileProperties["fileType"].toString()),
-      fileProperties,
-      loadedNodes)
+      fileProperties, loadedNodes, userMessages)
 
       && res;
     }
@@ -543,12 +549,11 @@ loadNodes(const QList<qSlicerIO::IOProperties>& files,
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLNode* qSlicerCoreIOManager::loadNodesAndGetFirst(
-  qSlicerIO::IOFileType fileType,
-  const qSlicerIO::IOProperties& parameters)
+vtkMRMLNode* qSlicerCoreIOManager::loadNodesAndGetFirst(qSlicerIO::IOFileType fileType,
+  const qSlicerIO::IOProperties& parameters, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   vtkNew<vtkCollection> loadedNodes;
-  this->loadNodes(fileType, parameters, loadedNodes.GetPointer());
+  this->loadNodes(fileType, parameters, loadedNodes.GetPointer(), userMessages);
 
   vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(loadedNodes->GetItemAsObject(0));
   Q_ASSERT(node);
@@ -630,7 +635,7 @@ void qSlicerCoreIOManager::addDefaultStorageNodes()
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
-                                     const qSlicerIO::IOProperties& parameters)
+  const qSlicerIO::IOProperties& parameters, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   Q_D(qSlicerCoreIOManager);
 
@@ -651,7 +656,13 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
   foreach (qSlicerFileWriter* writer, writers)
     {
     writer->setMRMLScene(d->currentScene());
-    if (!writer->write(parameters))
+    writer->userMessages()->ClearMessages();
+    bool currentWriterSuccess = writer->write(parameters);
+    if (userMessages)
+      {
+      userMessages->AddMessages(writer->userMessages());
+      }
+    if (!currentWriterSuccess)
       {
       continue;
       }
@@ -678,13 +689,14 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreIOManager::saveScene(const QString& fileName, QImage screenShot)
+bool qSlicerCoreIOManager::saveScene(const QString& fileName, QImage screenShot,
+  vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   qSlicerIO::IOProperties properties;
   properties["fileName"] = fileName;
   properties["screenShot"] = screenShot;
 
-  return this->saveNodes(QString("SceneFile"), properties);
+  return this->saveNodes(QString("SceneFile"), properties, userMessages);
 }
 
 //-----------------------------------------------------------------------------

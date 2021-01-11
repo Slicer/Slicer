@@ -34,6 +34,8 @@
 #include "qSlicerObject.h"
 
 class qSlicerIOOptions;
+class qSlicerIOPrivate;
+class vtkMRMLMessageCollection;
 
 /// Base class for qSlicerFileReader and qSlicerFileWriter
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerIO
@@ -62,7 +64,14 @@ public:
   /// options
   virtual qSlicerIOOptions* options()const;
 
+  /// Additional warning or error messages occurred during IO operation.
+  vtkMRMLMessageCollection* userMessages()const;
+
+protected:
+  QScopedPointer<qSlicerIOPrivate> d_ptr;
+
 private:
+  Q_DECLARE_PRIVATE(qSlicerIO);
   Q_DISABLE_COPY(qSlicerIO);
 };
 

@@ -407,8 +407,8 @@ void qSlicerIOManager::registerDialog(qSlicerFileDialog* dialog)
 
 //-----------------------------------------------------------------------------
 bool qSlicerIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
-                                 const qSlicerIO::IOProperties& parameters,
-                                 vtkCollection* loadedNodes)
+  const qSlicerIO::IOProperties& parameters, vtkCollection* loadedNodes,
+  vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   Q_D(qSlicerIOManager);
 
@@ -420,7 +420,7 @@ bool qSlicerIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
     d->ProgressDialog->setValue(25);
     }
 
-  bool res = this->qSlicerCoreIOManager::loadNodes(fileType, parameters, loadedNodes);
+  bool res = this->qSlicerCoreIOManager::loadNodes(fileType, parameters, loadedNodes, userMessages);
   if (needStop)
     {
     d->stopProgressDialog();
@@ -431,7 +431,7 @@ bool qSlicerIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
 
 //-----------------------------------------------------------------------------
 bool qSlicerIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
-                                 vtkCollection* loadedNodes)
+  vtkCollection* loadedNodes, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   Q_D(qSlicerIOManager);
 
@@ -442,7 +442,7 @@ bool qSlicerIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
     res = this->loadNodes(
       static_cast<qSlicerIO::IOFileType>(fileProperties["fileType"].toString()),
       fileProperties,
-      loadedNodes) && res;
+      loadedNodes, userMessages) && res;
 
     this->updateProgressDialog();
     if (d->ProgressDialog->wasCanceled())

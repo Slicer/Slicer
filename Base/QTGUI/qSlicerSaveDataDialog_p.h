@@ -97,7 +97,8 @@ protected:
   bool              mustSceneBeSaved()const;
   void              setSceneRootDirectory(const QString& rootDirectory);
   void              updateOptionsWidget(int row);
-  void              updateStatusIconFromStorageNode(int row);
+  void              updateStatusIconFromStorageNode(int row, bool success);
+  void              updateStatusIconFromMessageCollection(int row, vtkMRMLMessageCollection* userMessages, bool success);
   void              setStatusIcon(int row, const QIcon& icon, const QString& message);
 
   QString           sceneFileFormat()const;

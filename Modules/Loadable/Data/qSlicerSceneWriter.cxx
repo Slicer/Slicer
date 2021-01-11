@@ -37,6 +37,7 @@
 
 // MRML includes
 #include <vtkMRMLScene.h>
+#include <vtkMRMLMessageCollection.h>
 
 // VTK includes
 #include <vtkCollection.h>
@@ -89,6 +90,15 @@ bool qSlicerSceneWriter::write(const qSlicerIO::IOProperties& properties)
 
   Q_ASSERT(!properties["fileName"].toString().isEmpty());
   QFileInfo fileInfo(properties["fileName"].toString());
+  QString baseDir = fileInfo.absolutePath();
+  if (!QFileInfo(baseDir).isWritable())
+    {
+    qWarning() << "Failed to save" << fileInfo.absoluteFilePath() << ":"
+      << "Path" << baseDir << "is not writable";
+    this->userMessages()->AddMessage(vtkCommand::ErrorEvent,
+      tr("Failed to save scene as %1 (path %2 is not writeable)").arg(fileInfo.absoluteFilePath()).arg(baseDir).toStdString());
+    return 0;
+    }
   bool res = false;
   if (fileInfo.suffix() == "mrml")
     {
@@ -131,7 +141,11 @@ bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
 
   // write out the mrml file
   bool res = this->mrmlScene()->Commit();
-
+  if (!res)
+    {
+    this->userMessages()->AddMessage(vtkCommand::ErrorEvent,
+      tr("Failed to save scene as %1").arg(fileInfo.absoluteFilePath()).toStdString());
+    }
   return res;
 }
 
@@ -157,8 +171,8 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
     {
     qWarning() << "Failed to save" << fileInfo.absoluteFilePath() << ":"
                << "Path" << baseDir << "is not writable";
-    QMessageBox::critical(nullptr, tr("Save scene as MRB"),
-      tr("Failed to save scene as %1 (path %2 is not writeable)").arg(fileInfo.absoluteFilePath()).arg(baseDir));
+    this->userMessages()->AddMessage(vtkCommand::ErrorEvent,
+      tr("Failed to save scene as %1 (path %2 is not writeable)").arg(fileInfo.absoluteFilePath()).arg(baseDir).toStdString());
     return false;
     }
 
@@ -171,11 +185,11 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
     qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), thumbnail);
     }
 
-  bool success = this->mrmlScene()->WriteToMRB(fullPath.toUtf8(), thumbnail);
+  bool success = this->mrmlScene()->WriteToMRB(fullPath.toUtf8(), thumbnail, this->userMessages());
   if (!success)
     {
-    QMessageBox::critical(nullptr, tr("Save scene as MRB"),
-      tr("Failed to save scene as %1").arg(fileInfo.absoluteFilePath()));
+    this->userMessages()->AddMessage(vtkCommand::ErrorEvent,
+      tr("Failed to save scene as %1").arg(fileInfo.absoluteFilePath()).toStdString());
     return false;
     }
 

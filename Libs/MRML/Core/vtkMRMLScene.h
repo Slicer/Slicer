@@ -44,6 +44,7 @@ class vtkCollection;
 class vtkGeneralTransform;
 class vtkImageData;
 class vtkURIHandler;
+class vtkMRMLMessageCollection;
 class vtkMRMLNode;
 class vtkMRMLSceneViewNode;
 class vtkMRMLSubjectHierarchyNode;
@@ -750,8 +751,10 @@ public:
 
   /// \brief Write the scene to a MRML scene bundle (.mrb) file.
   /// If thumbnail image is provided then it is saved in the scene's root folder.
+  /// If userMessages is not nullptr then the method may add messages to it about issues
+  /// encountered during the operation.
   /// Returns false if the save failed
-  bool WriteToMRB(const char* filename, vtkImageData* thumbnail=nullptr);
+  bool WriteToMRB(const char* filename, vtkImageData* thumbnail=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
 
   /// \brief Read the scene from a MRML scene bundle (.mrb) file
   bool ReadFromMRB(const char* fullName, bool clear=false);
@@ -763,8 +766,10 @@ public:
 
   /// \brief Save the scene into a self contained directory, sdbDir
   /// If thumbnail image is provided then it is saved in the scene's root folder.
+  /// If userMessages is not nullptr then the method may add messages to it about issues
+  /// encountered during the operation.
   /// Returns false if the save failed
-  bool SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkImageData* thumbnail = nullptr);
+  bool SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkImageData* thumbnail=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
 
   /// \brief Utility function to write the scene thumbnail to a file in the scene's root folder.
   void SaveSceneScreenshot(vtkImageData* thumbnail);
@@ -861,8 +866,12 @@ protected:
 
   virtual void SetSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode*);
 
-  void SaveStorableNodeToSlicerDataBundleDirectory(vtkMRMLStorableNode* storableNode, std::string& dataDir,
-    std::map<vtkMRMLStorageNode*, std::vector<std::string> > originalStorageNodeFileNames);
+  /// Saves a storable node while storing original filenames.
+  /// Returns true on success (written successfully or no need to write the node).
+  /// If userMessages is not nullptr then the method may add messages to it about issues
+  /// encountered during the operation.
+  bool SaveStorableNodeToSlicerDataBundleDirectory(vtkMRMLStorableNode* storableNode, std::string& dataDir,
+    std::map<vtkMRMLStorageNode*, std::vector<std::string> > &originalStorageNodeFileNames, vtkMRMLMessageCollection* userMessages);
 
   vtkCollection*  Nodes;
 

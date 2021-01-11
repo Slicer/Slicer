@@ -42,6 +42,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLLayoutNode.h"
 #include "vtkMRMLLinearTransformSequenceStorageNode.h"
 #include "vtkMRMLLinearTransformNode.h"
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelStorageNode.h"
@@ -3701,7 +3702,7 @@ void vtkMRMLScene::TrimUndoStack()
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail/*=nullptr*/)
+bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail/*=nullptr*/, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   //
   // make a temp directory to save the scene into - this will
@@ -3727,6 +3728,10 @@ bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail/*=nu
     if (!vtksys::SystemTools::RemoveADirectory(bundleDir))
       {
       vtkErrorMacro("Failed to save " << filename << ": Could not clean temporary directory " << bundleDir);
+      if (userMessages)
+        {
+        userMessages->AddMessage(vtkCommand::ErrorEvent, std::string("Failed to save ") + filename + ": Could not clean temporary directory " + bundleDir);
+        }
       return false;
       }
     }
@@ -3734,6 +3739,10 @@ bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail/*=nu
   if (!vtksys::SystemTools::MakeDirectory(bundleDir))
     {
     vtkErrorMacro("Failed to save " << filename << ": Could not create temporary directory " << bundleDir);
+    if (userMessages)
+      {
+      userMessages->AddMessage(vtkCommand::ErrorEvent, std::string("Failed to save ") + filename + ": Could not create temporary directory " + bundleDir);
+      }
     return false;
     }
 
@@ -3741,10 +3750,14 @@ bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail/*=nu
   // Now save the scene into the bundle directory and then make a zip (mrb) file
   // in the user's selected file location
   //
-  bool retval = this->SaveSceneToSlicerDataBundleDirectory(bundleDir.c_str(), thumbnail);
+  bool retval = this->SaveSceneToSlicerDataBundleDirectory(bundleDir.c_str(), thumbnail, userMessages);
   if (!retval)
     {
-    vtkErrorMacro("Failed to save " << filename << ": Filed to create bundle");
+    vtkErrorMacro("Failed to save " << filename << ": Failed to save scene to data bundle directory");
+    if (userMessages)
+      {
+      userMessages->AddMessage(vtkCommand::ErrorEvent, "Failed to save scene to data bundle directory");
+      }
     return false;
     }
 
@@ -3752,6 +3765,10 @@ bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail/*=nu
   if (!vtkArchive::Zip(mrbFilePath.c_str(), bundleDir.c_str()))
     {
     vtkErrorMacro("Failed to save " << filename << ": Could not compress bundle");
+    if (userMessages)
+      {
+      userMessages->AddMessage(vtkCommand::ErrorEvent, "Failed to compress bundle");
+      }
     return false;
     }
 
@@ -3761,6 +3778,10 @@ bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail/*=nu
   if (!vtksys::SystemTools::RemoveADirectory(tempDir))
     {
     vtkWarningMacro("Error while saving " << filename << ": Could not clean temporary directory " << bundleDir);
+    if (userMessages)
+      {
+      userMessages->AddMessage(vtkCommand::WarningEvent, "Could not clean temporary direcotry " + bundleDir);
+      }
     }
 
   vtkDebugMacro("Saved " << mrbFilePath);
@@ -3904,7 +3925,8 @@ std::string vtkMRMLScene::UnpackSlicerDataBundle(const char* sdbFilePath, const 
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkImageData* screenShot)
+bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir,
+  vtkImageData* screenShot/*=nullptr*/, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   // Overview:
   // - confirm the arguments are valid and create directories if needed
@@ -3920,6 +3942,11 @@ bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkI
   if (!sdbDir)
     {
     vtkErrorMacro("SaveSceneToSlicerDataBundleDirectory failed: invalid subdirectory");
+    if (userMessages)
+      {
+      userMessages->AddMessage(vtkCommand::ErrorEvent,
+        "SaveSceneToSlicerDataBundleDirectory failed: invalid subdirectory");
+      }
     return false;
     }
 
@@ -3927,12 +3954,22 @@ bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkI
   if (!vtksys::SystemTools::FileIsFullPath(sdbDir))
     {
     vtkErrorMacro("SaveSceneToSlicerDataBundleDirectory failed: given directory is not a full path: " << sdbDir);
+    if (userMessages)
+      {
+      userMessages->AddMessage(vtkCommand::ErrorEvent,
+        std::string("SaveSceneToSlicerDataBundleDirectory failed: given directory is not a full path: ") + sdbDir);
+      }
     return false;
     }
   // is it a directory?
   if (!vtksys::SystemTools::FileIsDirectory(sdbDir))
     {
     vtkErrorMacro("SaveSceneToSlicerDataBundleDirectory failed: given directory name is not actually a directory" << sdbDir);
+    if (userMessages)
+      {
+      userMessages->AddMessage(vtkCommand::ErrorEvent,
+        std::string("SaveSceneToSlicerDataBundleDirectory failed: given directory name is not actually a directory") + sdbDir);
+      }
     return false;
     }
   std::string rootDir = std::string(sdbDir);
@@ -3947,6 +3984,11 @@ bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkI
     if (!vtksys::SystemTools::RemoveADirectory(rootDir.c_str()))
       {
       vtkErrorMacro("SaveSceneToSlicerDataBundleDirectory failed: Error removing SDB scene directory " << rootDir.c_str() << ", cannot make a fresh archive.");
+      if (userMessages)
+        {
+        userMessages->AddMessage(vtkCommand::ErrorEvent,
+          "SaveSceneToSlicerDataBundleDirectory failed: Error removing SDB scene directory " + rootDir + ", cannot make a fresh archive.");
+        }
       return false;
       }
     }
@@ -3956,6 +3998,10 @@ bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkI
     if (!vtksys::SystemTools::MakeDirectory(rootDir.c_str()))
       {
       vtkErrorMacro("SaveSceneToSlicerDataBundleDirectory failed: Unable to make temporary directory " << rootDir);
+      if (userMessages)
+        {
+        userMessages->AddMessage(vtkCommand::ErrorEvent, "SaveSceneToSlicerDataBundleDirectory failed: Unable to make temporary directory " + rootDir);
+        }
       return false;
       }
     }
@@ -3988,6 +4034,10 @@ bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkI
     if (!vtksys::SystemTools::MakeDirectory(dataDir.c_str()))
       {
       vtkErrorMacro("SaveSceneToSlicerDataBundleDirectory failed: Unable to make data directory " << dataDir);
+      if (userMessages)
+        {
+        userMessages->AddMessage(vtkCommand::ErrorEvent, "SaveSceneToSlicerDataBundleDirectory failed: Unable to make data directory " + dataDir);
+        }
       return false;
       }
     }
@@ -4012,8 +4062,8 @@ bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkI
   // from GetNthFileName(n).
   std::map<vtkMRMLStorageNode*, std::vector<std::string> > originalStorageNodeFileNames;
 
+  bool success = true;
   std::map<std::string, vtkMRMLNode *> storableNodes;
-
   int numNodes = this->GetNumberOfNodes();
   for (int i = 0; i < numNodes; ++i)
     {
@@ -4028,9 +4078,10 @@ bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkI
       // get all storable nodes in the main scene
       // and store them in the map by ID to avoid duplicates for the scene views
       vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(mrmlNode);
-
-      this->SaveStorableNodeToSlicerDataBundleDirectory(storableNode, dataDir, originalStorageNodeFileNames);
-
+      if (!this->SaveStorableNodeToSlicerDataBundleDirectory(storableNode, dataDir, originalStorageNodeFileNames, userMessages))
+        {
+        success = false;
+        }
       storableNodes[std::string(storableNode->GetID())] = storableNode;
       }
     }
@@ -4057,7 +4108,10 @@ bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkI
         // this storable node has been deleted from the main scene: save it
         storableNode->SetAddToScene(1);
         storableNode->UpdateScene(this);
-        this->SaveStorableNodeToSlicerDataBundleDirectory(storableNode, dataDir, originalStorageNodeFileNames);
+        if (!this->SaveStorableNodeToSlicerDataBundleDirectory(storableNode, dataDir, originalStorageNodeFileNames, userMessages))
+          {
+          success = false;
+          }
         storableNodes[std::string(storableNode->GetID())] = storableNode;
         storableNode->SetAddToScene(0);
         }
@@ -4173,7 +4227,7 @@ bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkI
   this->SetURL(origURL.c_str());
   this->SetRootDirectory(origRootDirectory.c_str());
 
-  return true;
+  return success;
 }
 
 //----------------------------------------------------------------------------
@@ -4268,12 +4322,12 @@ std::string vtkMRMLScene::CreateUniqueFileName(const std::string& filename, cons
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLScene::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRMLStorableNode* storableNode, std::string &dataDir,
-  std::map<vtkMRMLStorageNode*, std::vector<std::string> > originalStorageNodeFileNames)
+bool vtkMRMLScene::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRMLStorableNode* storableNode, std::string &dataDir,
+  std::map<vtkMRMLStorageNode*, std::vector<std::string> > &originalStorageNodeFileNames, vtkMRMLMessageCollection* userMessages)
 {
   if (!storableNode || !storableNode->GetSaveWithScene())
     {
-    return;
+    return true;
     }
   // adjust the file paths for storable nodes
   vtkMRMLStorageNode* storageNode = storableNode->GetStorageNode();
@@ -4285,7 +4339,7 @@ void vtkMRMLScene::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRMLStorableNo
     if (!storageNode)
       {
       // no need for storage node to store this node
-      return;
+      return true;
       }
     }
 
@@ -4342,7 +4396,15 @@ void vtkMRMLScene::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRMLStorableNo
     storageNode->SetFileName(uniqueFileName.c_str());
     }
 
-  storageNode->WriteData(storableNode);
+  storageNode->GetUserMessages()->ClearMessages();
+  int success = storageNode->WriteData(storableNode);
+  if (userMessages)
+    {
+    std::string messagePrefix = std::string(storableNode->GetName() ? storableNode->GetName() : "unknown") + " ("
+      + (storableNode->GetID() ? storableNode->GetID() : "none") + "): ";
+    userMessages->AddMessages(storageNode->GetUserMessages(), messagePrefix);
+    }
+  return success;
  }
 
 //----------------------------------------------------------------------------

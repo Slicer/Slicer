@@ -122,3 +122,28 @@ vtkMRMLMessageCollection::vtkMRMLMessageCollection()
 vtkMRMLMessageCollection::~vtkMRMLMessageCollection()
 {
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLMessageCollection::DeepCopy(vtkMRMLMessageCollection* source)
+{
+  if (!source)
+    {
+    vtkErrorMacro("vtkMRMLMessageCollection::DeepCopy failed: invalid source");
+    return;
+    }
+  this->Messages = source->Messages;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMessageCollection::AddMessages(vtkMRMLMessageCollection* source, const std::string& prefix)
+{
+  if (!source)
+    {
+    vtkErrorMacro("vtkMRMLMessageCollection::AddMessages failed: invalid source");
+    return;
+    }
+  for (int i = 0; i < source->GetNumberOfMessages(); i++)
+    {
+    this->AddMessage(source->GetNthMessageType(i), prefix + source->GetNthMessageText(i));
+    }
+}

@@ -61,14 +61,13 @@ public:
   /// There is no way to know in advance how long the loading will take, so the
   /// progress dialog listens to the scene and increment the progress anytime
   /// a node is added.
-  Q_INVOKABLE bool loadNodes(const qSlicerIO::IOFileType& fileType,
-                                     const qSlicerIO::IOProperties& parameters,
-                                     vtkCollection* loadedNodes = nullptr) override;
+  Q_INVOKABLE bool loadNodes(const qSlicerIO::IOFileType& fileType, const qSlicerIO::IOProperties& parameters,
+    vtkCollection* loadedNodes = nullptr, vtkMRMLMessageCollection* userMessages = nullptr) override;
   /// If you have a list of nodes to load, it's best to use this function
   /// in order to have a unique progress dialog instead of multiple ones.
   /// It internally calls loadNodes() for each file.
-  bool loadNodes(const QList<qSlicerIO::IOProperties>& files,
-                         vtkCollection* loadedNodes = nullptr) override;
+  bool loadNodes(const QList<qSlicerIO::IOProperties>& files, vtkCollection* loadedNodes = nullptr,
+    vtkMRMLMessageCollection* userMessages = nullptr) override;
 
   /// dragEnterEvents can be forwarded to the IOManager, if a registered dialog
   /// supports it, the event is accepted, otherwise ignored.

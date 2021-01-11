@@ -853,7 +853,7 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
   for (int row = 0; row < this->FileWidget->rowCount(); ++row)
     {
     // only save nodes here
-    if (row == sceneRow)
+    if (row == sceneRow || this->FileWidget->isRowHidden(row))
       {
       continue;
       }
@@ -874,7 +874,7 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
 
     // don't save unchecked nodes
     if (selectItem->checkState() != Qt::Checked ||
-        (selectItem->flags() & Qt::ItemIsEnabled) == 0)
+        this->FileWidget->isRowHidden(row))
       {
       continue;
       }
@@ -943,7 +943,7 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
         // Make sure an error message is added if saving returns with error
         snode->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent,
           (tr("Cannot write data file: %1.").arg(file.absoluteFilePath())).toStdString());
-        this->updateStatusIconFromStorageNode(row);
+        this->updateStatusIconFromStorageNode(row, success);
         }
       else
         {
@@ -962,7 +962,7 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
         {
         doneWithSaveDataDialog = false;
         }
-      this->updateStatusIconFromStorageNode(row);
+      this->updateStatusIconFromStorageNode(row, success);
       }
 
     selectItem->setCheckState(
@@ -1168,10 +1168,11 @@ bool qSlicerSaveDataDialogPrivate::saveScene()
     properties.unite(options->properties());
     }
 
+  vtkNew<vtkMRMLMessageCollection> userMessages;
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-  bool success = qSlicerApplication::application()->coreIOManager()->saveNodes(QString("SceneFile"), properties);
+  bool success = qSlicerApplication::application()->coreIOManager()->saveNodes(QString("SceneFile"), properties, userMessages);
   QApplication::restoreOverrideCursor();
-
+  this->updateStatusIconFromMessageCollection(row, userMessages, success);
   if (success)
     {
     qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
@@ -1180,11 +1181,6 @@ bool qSlicerSaveDataDialogPrivate::saveScene()
       {
       coreIOManager->setDefaultSceneFileType(this->sceneFileFormat());
       }
-    this->setStatusIcon(row, QIcon(), QString());
-    }
-  else
-    {
-    this->setStatusIcon(row, this->ErrorIcon, tr("Cannot write scene file: %1.").arg(file.absoluteFilePath()));
     }
 
   return success;
@@ -1338,8 +1334,7 @@ void qSlicerSaveDataDialogPrivate::updateOptionsWidget(int row)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSaveDataDialogPrivate
-::updateStatusIconFromStorageNode(int row)
+void qSlicerSaveDataDialogPrivate::updateStatusIconFromStorageNode(int row, bool success)
 {
   vtkMRMLStorableNode * const node = vtkMRMLStorableNode::SafeDownCast(this->object(row));
 
@@ -1347,17 +1342,30 @@ void qSlicerSaveDataDialogPrivate
   bool warningFound = false;
   bool errorFound = false;
 
-  const vtkMRMLStorageNode* const snode = node ? node->GetStorageNode() : nullptr;
-  if (snode && snode->GetUserMessages()->GetNumberOfMessages() > 0)
+  vtkMRMLMessageCollection* userMessages = nullptr;
+  if (node && node->GetStorageNode())
+    {
+    userMessages = node->GetStorageNode()->GetUserMessages();
+    }
+  this->updateStatusIconFromMessageCollection(row, userMessages, success);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSaveDataDialogPrivate::updateStatusIconFromMessageCollection(int row, vtkMRMLMessageCollection* userMessages, bool success)
+{
+  QString messagesStr;
+  bool warningFound = false;
+  bool errorFound = false;
+
+  if (userMessages && userMessages->GetNumberOfMessages() > 0)
     {
     // There is at least one message from the storage node.
-    const vtkMRMLMessageCollection* const messageCollection = snode->GetUserMessages();
-    const int numberOfMessages = messageCollection->GetNumberOfMessages();
+    const int numberOfMessages = userMessages->GetNumberOfMessages();
 
     for (int index = 0; index < numberOfMessages; ++index)
       {
-      const unsigned long messageType = messageCollection->GetNthMessageType(index);
-      const std::string messageText = messageCollection->GetNthMessageText(index);
+      const unsigned long messageType = userMessages->GetNthMessageType(index);
+      const std::string messageText = userMessages->GetNthMessageText(index);
       if (!messageText.empty() && numberOfMessages > 1)
         {
         messagesStr += "- ";
@@ -1390,7 +1398,7 @@ void qSlicerSaveDataDialogPrivate
       }
     }
 
-  this->setStatusIcon(row, errorFound ? this->ErrorIcon : (warningFound ? this->WarningIcon : QIcon()), messagesStr);
+  this->setStatusIcon(row, (!success || errorFound) ? this->ErrorIcon : (warningFound ? this->WarningIcon : QIcon()), messagesStr);
 }
 
 //-----------------------------------------------------------------------------
@@ -1498,19 +1506,18 @@ void qSlicerSaveDataDialogPrivate::enableNodes(bool enable)
       {
       continue;
       }
-    QTableWidgetItem* fileNameItem = this->FileWidget->item(i, FileNameColumn);
+    // When scene is saved as .mrb then item selection state,
+    // file format, and options may be ignored. To indicate
+    // this clearly to the users, we only show the scene in the table
+    // and hide all the other storable nodes.
     if (enable)
       {
-      fileNameItem->setFlags(fileNameItem->flags() | Qt::ItemIsEnabled);
+      this->FileWidget->showRow(i);
       }
     else
       {
-      fileNameItem->setFlags(fileNameItem->flags() & ~Qt::ItemIsEnabled);
+      this->FileWidget->hideRow(i);
       }
-    QWidget* fileFormatWidget = this->FileWidget->cellWidget(i, FileFormatColumn);
-    fileFormatWidget->setEnabled(enable);
-    QWidget* fileDirectoryWidget = this->FileWidget->cellWidget(i, FileDirectoryColumn);
-    fileDirectoryWidget->setEnabled(enable);
     }
 }
 

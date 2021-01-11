@@ -42,29 +42,33 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
   static vtkMRMLMessageCollection* New();
 
-  ///
   /// Return the total number of reported messages.
   virtual int GetNumberOfMessages() const;
 
-  ///
-  /// Return the number of reported messages of the specified event
-  /// type
+  /// Return the number of reported messages of the specified event type.
   virtual int GetNumberOfMessagesOfType(unsigned long messageType) const;
 
-  ///
-  /// Return the number of reported messages of the specified event
-  /// type
+  /// Get the number of reported messages of the specified event type.
   virtual int GetNumberOfMessagesOfType(const char *eventName) const;
 
-  // Get the Nth message from the message vector
+  /// Get text of a message from the message vector.
   virtual unsigned long GetNthMessageType(int index) const;
+
+  /// Get event type of a message from the message vector.
   virtual std::string GetNthMessageText(int index) const;
 
-  // Append a message to the message vector
+  /// Append a message to the message vector
   virtual void AddMessage(unsigned long messageType, const std::string &messageText);
 
-  // Clear the message vector
+  /// Copy all messages from another collection.
+  /// If prefix is specified then that string is prepended to each copied message.
+  virtual void AddMessages(vtkMRMLMessageCollection* source, const std::string& prefix=std::string());
+
+  /// Clear the message vector.
   virtual void ClearMessages();
+
+  /// Copy all messages from another collection.
+  virtual void DeepCopy(vtkMRMLMessageCollection* source);
 
 protected:
   vtkMRMLMessageCollection();
