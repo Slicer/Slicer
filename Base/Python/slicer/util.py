@@ -1281,18 +1281,24 @@ def arrayFromModelPointsModified(modelNode):
   # Trigger re-render
   modelNode.GetDisplayNode().Modified()
 
-def _vtkArrayFromModelPointData(modelNode, arrayName):
+def _vtkArrayFromModelData(modelNode, arrayName, location):
   """Helper function for getting VTK point data array that throws exception
   with informative error message if the data array is not found.
+  Point or cell data can be selected by setting 'location' argument to 'point' or 'cell'.
   """
-  pointData = modelNode.GetPolyData().GetPointData()
-  if not pointData or pointData.GetNumberOfArrays() == 0:
-    raise ValueError("Input modelNode does not contain point data")
-  arrayVtk = pointData.GetArray(arrayName)
+  if location=='point':
+    modelData = modelNode.GetMesh().GetPointData()
+  elif location=='cell':
+    modelData = modelNode.GetMesh().GetCellData()
+  else:
+    raise ValueError("Location attribute must be set to 'point' or 'cell'")
+  if not modelData or modelData.GetNumberOfArrays() == 0:
+    raise ValueError(f"Input modelNode does not contain {location} data")
+  arrayVtk = modelData.GetArray(arrayName)
   if not arrayVtk:
-    availableArrayNames = [pointData.GetArrayName(i) for i in range(pointData.GetNumberOfArrays())]
-    raise ValueError("Input modelNode does not contain data array '{0}'. Available array names: '{1}'".format(
-      arrayName, "', '".join(availableArrayNames)))
+    availableArrayNames = [modelData.GetArrayName(i) for i in range(modelData.GetNumberOfArrays())]
+    raise ValueError("Input modelNode does not contain {0} data array '{1}'. Available array names: '{2}'".format(
+      location, arrayName, "', '".join(availableArrayNames)))
   return arrayVtk
 
 def arrayFromModelPointData(modelNode, arrayName):
@@ -1303,13 +1309,30 @@ def arrayFromModelPointData(modelNode, arrayName):
     See :py:meth:`arrayFromVolume` for details.
   """
   import vtk.util.numpy_support
-  arrayVtk = _vtkArrayFromModelPointData(modelNode, arrayName)
+  arrayVtk = _vtkArrayFromModelData(modelNode, arrayName, 'point')
   narray = vtk.util.numpy_support.vtk_to_numpy(arrayVtk)
   return narray
 
 def arrayFromModelPointDataModified(modelNode, arrayName):
   """Indicate that modification of a numpy array returned by :py:meth:`arrayFromModelPointData` has been completed."""
-  arrayVtk = _vtkArrayFromModelPointData(modelNode, arrayName)
+  arrayVtk = _vtkArrayFromModelData(modelNode, arrayName, 'point')
+  arrayVtk.Modified()
+
+def arrayFromModelCellData(modelNode, arrayName):
+  """Return cell data array of a model node as numpy array.
+
+  .. warning:: Important: memory area of the returned array is managed by VTK,
+    therefore values in the array may be changed, but the array must not be reallocated.
+    See :py:meth:`arrayFromVolume` for details.
+  """
+  import vtk.util.numpy_support
+  arrayVtk = _vtkArrayFromModelData(modelNode, arrayName, 'cell')
+  narray = vtk.util.numpy_support.vtk_to_numpy(arrayVtk)
+  return narray
+
+def arrayFromModelCellDataModified(modelNode, arrayName):
+  """Indicate that modification of a numpy array returned by :py:meth:`arrayFromModelCellData` has been completed."""
+  arrayVtk = _vtkArrayFromModelData(modelNode, arrayName, 'cell')
   arrayVtk.Modified()
 
 def arrayFromMarkupsControlPointData(markupsNode, arrayName):
