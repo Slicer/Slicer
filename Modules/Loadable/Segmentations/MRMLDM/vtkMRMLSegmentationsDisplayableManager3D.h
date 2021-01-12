@@ -42,6 +42,16 @@ public:
   vtkTypeMacro(vtkMRMLSegmentationsDisplayableManager3D,vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
+  /// Find display node managed by the displayable manager at a specified world RAS position.
+  /// \return Non-zero in case a node is found at the position, 0 otherwise
+  int Pick3D(double ras[3]) override;
+
+  /// Get the MRML ID of the picked node, returns empty string if no pick
+  const char* GetPickedNodeID() override;
+
+  /// Get the ID of the picked segment, returns empty string if no pick
+  virtual const char* GetPickedSegmentID();
+
 protected:
 
   vtkMRMLSegmentationsDisplayableManager3D();
@@ -62,16 +72,6 @@ protected:
 
   /// Initialize the displayable manager
   void Create() override;
-
-  /// Find display node managed by the displayable manager at a specified world RAS position.
-  /// \return Non-zero in case a node is found at the position, 0 otherwise
-  int Pick3D(double ras[3]) override;
-
-  /// Get the MRML ID of the picked node, returns empty string if no pick
-  const char* GetPickedNodeID() override;
-
-  /// Get the ID of the picked segment, returns empty string if no pick
-  virtual const char* GetPickedSegmentID();
 
 private:
 
