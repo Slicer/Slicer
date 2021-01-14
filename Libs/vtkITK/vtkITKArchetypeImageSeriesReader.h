@@ -259,6 +259,10 @@ public:
   /// Returns the Measurement frame matrix
   vtkMatrix4x4* GetMeasurementFrameMatrix();
 
+  /// Defines how to interpret voxel components
+  vtkSetMacro(VoxelVectorType, int);
+  vtkGetMacro(VoxelVectorType, int);
+
   ///
   /// Return the MetaDataDictionary from the ITK layer
   const itk::MetaDataDictionary &GetMetaDataDictionary() const;
@@ -896,6 +900,8 @@ protected:
   std::vector<long int> IndexSliceLocation;
   std::vector<long int> IndexImageOrientationPatient;
   std::vector<long int> IndexImagePositionPatient;
+
+  int VoxelVectorType;
 
 private:
   vtkITKArchetypeImageSeriesReader(const vtkITKArchetypeImageSeriesReader&) = delete;

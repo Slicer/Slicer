@@ -14,6 +14,7 @@
 
 // VTKITK includes
 #include "vtkITKArchetypeImageSeriesReader.h"
+#include "vtkITKImageWriter.h"
 
 // VTK includes
 #include <vtkDataArray.h>
@@ -106,6 +107,8 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
 
   this->SetNumberOfInputPorts(0);
   this->SetNumberOfOutputPorts(1);
+
+  this->VoxelVectorType = vtkITKImageWriter::VoxelVectorTypeUndefined;
 }
 
 //----------------------------------------------------------------------------
@@ -971,6 +974,23 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
                                               scalarType,
                                               numberOfComponents);
 
+  if (imageIO->GetPixelType() == itk::IOPixelEnum::RGB)
+    {
+    this->VoxelVectorType = vtkITKImageWriter::VoxelVectorTypeColorRGB;
+    }
+  else if (imageIO->GetPixelType() == itk::IOPixelEnum::RGBA)
+    {
+    this->VoxelVectorType = vtkITKImageWriter::VoxelVectorTypeColorRGBA;
+    }
+  else if (imageIO->GetPixelType() == itk::IOPixelEnum::COVARIANTVECTOR)
+    {
+    this->VoxelVectorType = vtkITKImageWriter::VoxelVectorTypeSpatial;
+    }
+  else
+    {
+    this->VoxelVectorType = vtkITKImageWriter::VoxelVectorTypeUndefined;
+    }
+
   // Copy the MetaDataDictionary from the ITK layer to the VTK layer
   if (imageIO.GetPointer() != nullptr)
     {
@@ -1054,7 +1074,7 @@ void vtkITKArchetypeImageSeriesReader::SetMetaDataScalarRangeToPointDataInfo( vt
   if (nbrOfComponents != this->MetaDataScalarRangeMinima.size() ||
       nbrOfComponents != this->MetaDataScalarRangeMaxima.size())
     {
-    vtkWarningMacro("Mismatch between image data and meta data number of scalar components, ignoring metada scalar range.");
+    // Mismatch between image data and meta data number of scalar components, ignoring metada scalar range
     return;
     }
 

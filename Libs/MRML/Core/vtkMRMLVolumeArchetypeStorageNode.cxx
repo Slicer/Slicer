@@ -53,6 +53,32 @@ Version:   $Revision: 1.6 $
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLVolumeArchetypeStorageNode);
 
+int ConvertVoxelVectorTypeMRMLToVTKITK(int vtkitk)
+{
+  switch (vtkitk)
+    {
+    case vtkITKImageWriter::VoxelVectorTypeUndefined: return vtkMRMLVolumeNode::VoxelVectorTypeUndefined;
+    case vtkITKImageWriter::VoxelVectorTypeSpatial: return vtkMRMLVolumeNode::VoxelVectorTypeSpatial;
+    case vtkITKImageWriter::VoxelVectorTypeColorRGB: return vtkMRMLVolumeNode::VoxelVectorTypeColorRGB;
+    case vtkITKImageWriter::VoxelVectorTypeColorRGBA: return vtkMRMLVolumeNode::VoxelVectorTypeColorRGBA;
+    default:
+      return vtkMRMLVolumeNode::VoxelVectorTypeUndefined;
+    }
+}
+
+int ConvertVoxelVectorTypeVTKITKToMRML(int vtkitk)
+{
+  switch (vtkitk)
+    {
+    case vtkMRMLVolumeNode::VoxelVectorTypeUndefined: return vtkITKImageWriter::VoxelVectorTypeUndefined;
+    case vtkMRMLVolumeNode::VoxelVectorTypeSpatial: return vtkITKImageWriter::VoxelVectorTypeSpatial;
+    case vtkMRMLVolumeNode::VoxelVectorTypeColorRGB: return vtkITKImageWriter::VoxelVectorTypeColorRGB;
+    case vtkMRMLVolumeNode::VoxelVectorTypeColorRGBA: return vtkITKImageWriter::VoxelVectorTypeColorRGBA;
+    default:
+      return vtkMRMLVolumeNode::VoxelVectorTypeUndefined;
+    }
+}
+
 //----------------------------------------------------------------------------
 vtkMRMLVolumeArchetypeStorageNode::vtkMRMLVolumeArchetypeStorageNode()
 {
@@ -462,15 +488,25 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     return 0;
     }
 
-  vtkNew<vtkImageData> iciOutputCopy;
-  iciOutputCopy->ShallowCopy(ici->GetOutput());
-  volNode->SetAndObserveImageData(iciOutputCopy.GetPointer());
+  vtkNew<vtkImageData> outputImage;
+  outputImage->ShallowCopy(ici->GetOutput());
+  volNode->SetAndObserveImageData(outputImage.GetPointer());
+
+  int voxelVectorType = ConvertVoxelVectorTypeVTKITKToMRML(reader->GetVoxelVectorType());
+  volNode->SetVoxelVectorType(voxelVectorType);
+
+  // If voxel values store spatial vectors then we need to convert from LPS to RAS
+  if (voxelVectorType == vtkMRMLVolumeNode::VoxelVectorTypeSpatial
+    && outputImage->GetNumberOfScalarComponents() == 3)
+    {
+    this->ConvertSpatialVectorVoxelsBetweenRasLps(outputImage);
+    }
 
   // Log volume size to the application log. It helps to identify potential out-of-memory issues.
   vtkInfoMacro(<<"Loaded volume from file: "<<fullName \
-    <<". Dimensions: "<<iciOutputCopy->GetDimensions()[0]<<"x"<<iciOutputCopy->GetDimensions()[1]<<"x"<<iciOutputCopy->GetDimensions()[2] \
-    <<". Number of components: "<<iciOutputCopy->GetNumberOfScalarComponents() \
-    <<". Pixel type: "<<vtkImageScalarTypeNameMacro(iciOutputCopy->GetScalarType())<<".");
+    <<". Dimensions: "<<outputImage->GetDimensions()[0]<<"x"<<outputImage->GetDimensions()[1]<<"x"<<outputImage->GetDimensions()[2] \
+    <<". Number of components: "<<outputImage->GetNumberOfScalarComponents() \
+    <<". Pixel type: "<<vtkImageScalarTypeNameMacro(outputImage->GetScalarType())<<".");
 
   vtkMatrix4x4* mat = reader->GetRasToIjkMatrix();
   if ( mat == nullptr )
@@ -493,7 +529,12 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
   int result = 1;
 
-  vtkMRMLVolumeNode *volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
+  vtkMRMLVolumeNode *volNode = vtkMRMLVolumeNode::SafeDownCast(refNode);
+  if (!volNode)
+    {
+    vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal failed: refNode is invalid");
+    return 0;
+    }
 
   if (volNode->GetImageData() == nullptr)
     {
@@ -504,12 +545,33 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   // update the file list
   std::string moveFromDir = this->UpdateFileList(refNode, 1);
 
-
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
     {
     vtkErrorMacro("WriteData: File name not specified");
     return 0;
+    }
+
+  if (volNode->GetVoxelVectorType() == vtkMRMLVolumeNode::VoxelVectorTypeSpatial)
+    {
+    if (volNode->GetImageData()->GetNumberOfScalarComponents() != 3)
+      {
+      vtkWarningMacro("vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal: " \
+        "Voxel vector type is spatial but number of scalar components is not 3. Saved vector type will be non-spatial.");
+      this->GetUserMessages()->AddMessage(vtkCommand::WarningEvent,
+        "Voxel vector type is spatial but number of scalar components is not 3. Saved vector type will be non-spatial.");
+      }
+    else
+      {
+      std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
+      if (extension != ".nrrd" && extension != ".nhdr")
+        {
+        vtkWarningMacro("vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal: spatial vectors wll be written to non-nrrd file format " << extension);
+        this->GetUserMessages()->AddMessage(vtkCommand::WarningEvent,
+          "Voxels are saved as regular vectors in this file format. If the file is imported again then vector axis directions may be flipped." \
+          "\nIt is recommended to save volumes that contain spatial vectors into NRRD file format.");
+        }
+      }
     }
 
   bool moveSucceeded = true;
@@ -543,7 +605,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
         if (vtksys::SystemTools::FileExists(targetFile.c_str(), true))
           {
           // remove it
-          vtkWarningMacro("WriteData: removing old version of file " << targetFile);
+          vtkInfoMacro("WriteData: removing old version of file " << targetFile);
           if (!vtksys::SystemTools::RemoveFile(targetFile.c_str()))
             {
             vtkErrorMacro("WriteData: unable to remove old version of file " << targetFile);
@@ -555,7 +617,6 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
         int renameReturn = std::rename(sourceFile.c_str(), targetFile.c_str());
         if (renameReturn != 0 )
           {
-          perror( "Error renaming file" );
           vtkErrorMacro( "WriteData: Error renaming file to " << targetFile << ", renameReturn = " << renameReturn );
           // fall back to doing a second write
           moveSucceeded = false;
@@ -600,6 +661,19 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     volNode->GetRASToIJKMatrix(mat.GetPointer());
     writer->SetRasToIJKMatrix(mat.GetPointer());
 
+    // Pass on voxel type to the writer
+    int voxelVectorType = volNode->GetVoxelVectorType();
+    writer->SetVoxelVectorType(ConvertVoxelVectorTypeMRMLToVTKITK(voxelVectorType));
+    // If voxel values store spatial vectors then we need to convert from LPS to RAS
+    bool writeVoxelValuesAsLps = (
+      voxelVectorType == vtkMRMLVolumeNode::VoxelVectorTypeSpatial
+      && volNode->GetImageData()
+      && volNode->GetImageData()->GetNumberOfScalarComponents() == 3);
+    if (writeVoxelValuesAsLps)
+      {
+      // temporarily switch image voxel values from RAS to LPS
+      this->ConvertSpatialVectorVoxelsBetweenRasLps(volNode->GetImageData());
+      }
     try
       {
       writer->Write();
@@ -607,6 +681,11 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     catch (...)
       {
       result = 0;
+      }
+    if (writeVoxelValuesAsLps)
+      {
+      // revert temporary LPS values back to RAS
+      this->ConvertSpatialVectorVoxelsBetweenRasLps(volNode->GetImageData());
       }
     }
 
@@ -758,13 +837,31 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   volNode->GetRASToIJKMatrix(mat.GetPointer());
   writer->SetRasToIJKMatrix(mat.GetPointer());
 
+  // Pass on voxel type to the writer
+  int voxelVectorType = volNode->GetVoxelVectorType();
+  writer->SetVoxelVectorType(ConvertVoxelVectorTypeMRMLToVTKITK(voxelVectorType));
+  // If voxel values store spatial vectors then we need to convert from LPS to RAS
+  bool writeVoxelValuesAsLps = (
+    voxelVectorType == vtkMRMLVolumeNode::VoxelVectorTypeSpatial
+    && volNode->GetImageData()
+    && volNode->GetImageData()->GetNumberOfScalarComponents() == 3);
+  if (writeVoxelValuesAsLps)
+    {
+    // temporarily switch image voxel values from RAS to LPS
+    this->ConvertSpatialVectorVoxelsBetweenRasLps(volNode->GetImageData());
+    }
   try
     {
     writer->Write();
     }
-    catch (...)
+  catch (...)
     {
     result = false;
+    }
+  if (writeVoxelValuesAsLps)
+    {
+    // revert temporary LPS values back to RAS
+    this->ConvertSpatialVectorVoxelsBetweenRasLps(volNode->GetImageData());
     }
 
   if (!result)
@@ -938,5 +1035,37 @@ void vtkMRMLVolumeArchetypeStorageNode::SetMetaDataDictionaryFromReader(vtkMRMLV
   if (volNode && reader)
     {
     volNode->SetMetaDataDictionary( reader->GetMetaDataDictionary() );
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeArchetypeStorageNode::ConvertSpatialVectorVoxelsBetweenRasLps(vtkImageData* imageData)
+{
+  vtkIdType numberOfTuples = imageData->GetPointData()->GetScalars()->GetNumberOfTuples();
+  if (imageData->GetScalarType() == VTK_DOUBLE)
+    {
+    double* displacementVectors = reinterpret_cast<double*>(imageData->GetScalarPointer());
+    for (vtkIdType tuple = 0; tuple < numberOfTuples; tuple++)
+      {
+      *displacementVectors = -(*displacementVectors); displacementVectors++;
+      *displacementVectors = -(*displacementVectors); displacementVectors++;
+      displacementVectors++;
+      }
+    imageData->GetPointData()->GetScalars()->Modified();
+    }
+  else if (imageData->GetScalarType() == VTK_FLOAT)
+    {
+    float* displacementVectors = reinterpret_cast<float*>(imageData->GetScalarPointer());
+    for (vtkIdType tuple = 0; tuple < numberOfTuples; tuple++)
+      {
+      *displacementVectors = -(*displacementVectors); displacementVectors++;
+      *displacementVectors = -(*displacementVectors); displacementVectors++;
+      displacementVectors++;
+      }
+    imageData->GetPointData()->GetScalars()->Modified();
+    }
+  else
+    {
+    vtkWarningMacro("Displacements are expected to be stored as double or float. Vector values will not be converted from LPS to RAS.");
     }
 }

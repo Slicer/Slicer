@@ -32,6 +32,15 @@ public:
   vtkTypeMacro(vtkITKImageWriter,vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
+  enum
+    {
+    VoxelVectorTypeUndefined,
+    VoxelVectorTypeSpatial,
+    VoxelVectorTypeColorRGB,
+    VoxelVectorTypeColorRGBA,
+    VoxelVectorType_Last // must be last
+    };
+
   ///
   /// Specify file name for the image file. You should specify either
   /// a FileName or a FilePrefix. Use FilePrefix if the data is stored
@@ -67,6 +76,10 @@ public:
     MeasurementFrameMatrix = mat;
   }
 
+  /// Defines how to interpret voxel components
+  vtkSetMacro(VoxelVectorType, int);
+  vtkGetMacro(VoxelVectorType, int);
+
 protected:
   vtkITKImageWriter();
   ~vtkITKImageWriter() override;
@@ -76,6 +89,7 @@ protected:
   vtkMatrix4x4* MeasurementFrameMatrix;
   int UseCompression;
   char* ImageIOClassName;
+  int VoxelVectorType;
 
 private:
   vtkITKImageWriter(const vtkITKImageWriter&) = delete;
