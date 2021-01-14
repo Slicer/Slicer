@@ -24,9 +24,10 @@
 #include <qSlicerModuleFactoryManager.h>
 #include <qSlicerCoreModuleFactory.h>
 #include <qSlicerCoreApplication.h>
+#include <vtkSlicerApplicationLogic.h>
 
-// STD includes
-
+// VTK includes
+#include <vtkNew.h>
 
 int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
 {
@@ -34,6 +35,9 @@ int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
   Q_UNUSED(app);
 
   qSlicerModuleFactoryManager moduleFactoryManager;
+
+  vtkNew<vtkSlicerApplicationLogic> appLogic;
+  moduleFactoryManager.setAppLogic(appLogic);
 
   // Register factories
   moduleFactoryManager.registerFactory(new qSlicerCoreModuleFactory());

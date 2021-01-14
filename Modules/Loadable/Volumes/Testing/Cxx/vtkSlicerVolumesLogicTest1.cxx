@@ -23,6 +23,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 
 // MRML includes
+#include <vtkMRMLColorLogic.h>
 #include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLScene.h>
@@ -63,7 +64,17 @@ int vtkSlicerVolumesLogicTest1( int argc, char * argv[] )
   itk::itkFactoryRegistration();
 
   vtkNew<vtkMRMLScene> scene;
+
+  vtkNew<vtkSlicerApplicationLogic> appLogic;
+
+  // Add Color logic (used by volumes logic)
+  vtkNew<vtkMRMLColorLogic> colorLogic;
+  colorLogic->SetMRMLScene(scene.GetPointer());
+  colorLogic->SetMRMLApplicationLogic(appLogic);
+  appLogic->SetModuleLogic("Colors", colorLogic);
+
   vtkNew<vtkSlicerVolumesLogic> logic;
+  logic->SetMRMLApplicationLogic(appLogic);
 
   if (argc < 2)
     {

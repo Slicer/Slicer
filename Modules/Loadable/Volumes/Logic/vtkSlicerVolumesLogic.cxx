@@ -437,25 +437,23 @@ void vtkSlicerVolumesLogic
 ::SetAndObserveColorToDisplayNode(vtkMRMLDisplayNode * displayNode,
                                   int labelMap, const char* vtkNotUsed(filename))
 {
-  vtkMRMLColorLogic* colorLogic =
-    vtkMRMLColorLogic::SafeDownCast(this->GetMRMLApplicationLogic()->GetModuleLogic("Colors"));
-
+  if (displayNode->GetColorNodeID())
+    {
+    // only set default color node ID if it was not set already (by default volume node stored in the scene)
+    return;
+    }
+  vtkMRMLColorLogic* colorLogic = vtkMRMLColorLogic::SafeDownCast(this->GetModuleLogic("Colors"));
   if (colorLogic == nullptr)
     {
-    vtkErrorMacro("SetAndObserveColorToDisplayNode: invalid Colors module logic.");
+    vtkErrorMacro("SetAndObserveColorToDisplayNode failed: invalid Colors module logic.");
     return;
     }
   if (labelMap)
     {
-    if (displayNode->GetColorNodeID() == nullptr)
-      {
-      // only set default color node ID if it was not set already (by default volume node stored in the scene)
-      displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
-      }
+    displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
     }
-  else if (displayNode->GetColorNodeID() == nullptr)
+  else
     {
-    // only set default color node ID if it was not set already (by default volume node stored in the scene)
     displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
     }
 }

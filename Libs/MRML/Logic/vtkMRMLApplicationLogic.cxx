@@ -834,22 +834,15 @@ void vtkMRMLApplicationLogic::SetModuleLogic(const char* moduleName,
     vtkErrorMacro("AddModuleLogic: invalid module name.");
     return;
     }
-
-  // If no logic is provided, erase the module-logic association.
-  if (!moduleLogic)
+  if (moduleLogic)
     {
+    this->Internal->ModuleLogicMap[moduleName] = moduleLogic;
+    }
+  else
+    {
+    // If no logic is provided, erase the module-logic association.
     this->Internal->ModuleLogicMap.erase(moduleName);
-    return;
     }
-
-  // Check that the module has not any registered logic.
-  if (this->Internal->ModuleLogicMap.count(moduleName))
-    {
-    vtkWarningMacro("AddModuleLogic: Logic already register for " << moduleName);
-    return;
-    }
-
-  this->Internal->ModuleLogicMap[moduleName] = moduleLogic;
 }
 
 //----------------------------------------------------------------------------
@@ -860,12 +853,10 @@ vtkMRMLAbstractLogic* vtkMRMLApplicationLogic::GetModuleLogic(const char* module
     vtkErrorMacro("GetModuleLogic: invalid module name");
     return nullptr;
     }
-
   //Check that the logic is registered.
   if (this->Internal->ModuleLogicMap.count(moduleName) == 0)
     {
     return nullptr;
     }
-
-  return this->Internal->ModuleLogicMap.at(moduleName);
+  return this->Internal->ModuleLogicMap[moduleName];
 }

@@ -87,8 +87,8 @@ int SliceLogicsTest()
     vtkMTimeType mtime = appLogic->GetMTime();
     vtkNew<vtkCollection> logics;
     logics->AddItem(vtkSmartPointer<vtkObject>::New());
-    appLogic->SetSliceLogics(logics.GetPointer());
-    CHECK_POINTER(appLogic->GetSliceLogics(), logics.GetPointer());
+    appLogic->SetSliceLogics(logics);
+    CHECK_POINTER(appLogic->GetSliceLogics(), logics);
     CHECK_INT(appLogic->GetSliceLogics()->GetNumberOfItems(), 1);
     CHECK_BOOL(appLogic->GetMTime() > mtime, true);
   }
@@ -104,14 +104,14 @@ int SliceLogicsTest()
   {
     vtkNew<vtkCollection> logics;
     logics->AddItem(vtkSmartPointer<vtkObject>::New());
-    appLogic->SetSliceLogics(logics.GetPointer());
+    appLogic->SetSliceLogics(logics);
   }
 
   // Set an empty collection.
   {
     vtkMTimeType mtime = appLogic->GetMTime();
     vtkNew<vtkCollection> logics;
-    appLogic->SetSliceLogics(logics.GetPointer());
+    appLogic->SetSliceLogics(logics);
     CHECK_NOT_NULL(appLogic->GetSliceLogics());
     CHECK_INT(appLogic->GetSliceLogics()->GetNumberOfItems(), 0);
     CHECK_BOOL(appLogic->GetMTime() > mtime, true);
@@ -138,7 +138,7 @@ int SliceOrientationPresetInitializationTest()
   {
     vtkNew<vtkMRMLScene> scene;
     vtkNew<vtkMRMLApplicationLogic> appLogic;
-    appLogic->SetMRMLScene(scene.GetPointer());
+    appLogic->SetMRMLScene(scene);
     vtkMRMLSliceNode * defaultSliceNode =
         vtkMRMLSliceNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceNode"));
     CHECK_INT(defaultSliceNode->GetNumberOfSliceOrientationPresets(), 3);
@@ -252,10 +252,9 @@ int AddModuleLogicTest()
   // Registration of a module logic should work
   {
     vtkNew<vtkMRMLAbstractLogic> moduleLogic;
-    appLogic->SetModuleLogic(module_name.c_str(), moduleLogic.GetPointer());
+    appLogic->SetModuleLogic(module_name.c_str(), moduleLogic);
 
-    CHECK_POINTER(appLogic->GetModuleLogic(module_name.c_str()),
-                  moduleLogic.GetPointer());
+    CHECK_POINTER(appLogic->GetModuleLogic(module_name.c_str()), moduleLogic);
   }
 
   // Getting a pointer to a logic that it is gone should give nullptr.
@@ -264,14 +263,11 @@ int AddModuleLogicTest()
     CHECK_NULL(appLogic->GetModuleLogic(module_name.c_str()));
   }
 
-  // Trying to register a module logic associated to an already registered module
-  // should trigger an error.
+  // Updating module logic with a new object can be useful for dynamic reloading of modules.
   {
     vtkNew<vtkMRMLAbstractLogic> moduleLogic;
-    TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
-    appLogic->SetModuleLogic(module_name.c_str(), moduleLogic.GetPointer());
-    TESTING_OUTPUT_ASSERT_WARNINGS(1);
-    TESTING_OUTPUT_ASSERT_WARNINGS_END();
+    appLogic->SetModuleLogic(module_name.c_str(), moduleLogic);
+    CHECK_POINTER(appLogic->GetModuleLogic(module_name.c_str()), moduleLogic);
   }
 
   // Trying to get a logic that has not been registered should return nullptr
@@ -299,11 +295,13 @@ int AddModuleLogicTest()
     appLogic->SetModuleLogic((module_name+"a").c_str(), nullptr);
   }
 
-  // Removeing an already registered module logic should succeed
+  // Removing an already registered module logic should succeed
   {
     // Successfully removes module logic association
     appLogic->SetModuleLogic(module_name.c_str(), nullptr);
 
     const vtkMRMLAbstractLogic* retval = appLogic->GetModuleLogic((module_name).c_str());
   }
+
+  return EXIT_SUCCESS;
 }

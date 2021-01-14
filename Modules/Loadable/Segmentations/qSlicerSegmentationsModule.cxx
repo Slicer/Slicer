@@ -209,7 +209,6 @@ void qSlicerSegmentationsModule::setup()
 qSlicerAbstractModuleRepresentation* qSlicerSegmentationsModule::createWidgetRepresentation()
 {
   qSlicerSegmentationsModuleWidget* moduleWidget = new qSlicerSegmentationsModuleWidget();
-  moduleWidget->setAppLogic(this->appLogic());
   return moduleWidget;
 }
 
