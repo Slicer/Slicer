@@ -23,6 +23,8 @@
 #include <QTimer>
 
 // Slicer includes
+#include "vtkMRMLApplicationLogic.h"
+#include "vtkMRMLColorLogic.h"
 #include "vtkSlicerConfigure.h"
 
 // Volumes includes
@@ -60,9 +62,22 @@ int qSlicerDTISliceDisplayWidgetTest2( int argc, char * argv[] )
     }
   std::cout << "file: " << argv[1] << std::endl;
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-  vtkSmartPointer<vtkSlicerVolumesLogic> volumesLogic = vtkSmartPointer<vtkSlicerVolumesLogic>::New();
+  vtkNew<vtkMRMLScene> scene;
+
+  vtkNew<vtkSlicerApplicationLogic> appLogic;
+
+  // Add Color logic (used by volumes logic)
+  vtkNew<vtkMRMLColorLogic> colorLogic;
+  colorLogic->SetMRMLScene(scene.GetPointer());
+  colorLogic->SetMRMLApplicationLogic(appLogic);
+  appLogic->SetModuleLogic("Colors", colorLogic);
+
+  // Add Volumes logic
+  vtkNew<vtkSlicerVolumesLogic> volumesLogic;
   volumesLogic->SetMRMLScene(scene);
+  volumesLogic->SetMRMLApplicationLogic(appLogic);
+  appLogic->SetModuleLogic("Volumes", volumesLogic);
+
   vtkMRMLVolumeNode* volumeNode = volumesLogic->AddArchetypeVolume(argv[1], "dti");
   if (!volumeNode)
     {
@@ -70,11 +85,9 @@ int qSlicerDTISliceDisplayWidgetTest2( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode> propertiesNode =
-    vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode>::New();
+  vtkNew<vtkMRMLDiffusionTensorDisplayPropertiesNode> propertiesNode;
   scene->AddNode(propertiesNode);
-  vtkSmartPointer<vtkMRMLDiffusionTensorVolumeSliceDisplayNode> displayNode =
-    vtkSmartPointer<vtkMRMLDiffusionTensorVolumeSliceDisplayNode>::New();
+  vtkNew<vtkMRMLDiffusionTensorVolumeSliceDisplayNode> displayNode;
   displayNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(propertiesNode->GetID());
   scene->AddNode(displayNode);
   volumeNode->AddAndObserveDisplayNodeID(displayNode->GetID());

@@ -37,6 +37,7 @@
 
 // Qt includes
 #include <QAction>
+#include <QDebug>
 #include <QMenu>
 #include <QTableWidgetItem>
 
@@ -62,6 +63,7 @@ public:
   virtual void setupUi(qSlicerSimpleMarkupsWidget*);
 
 public:
+  vtkWeakPointer<vtkSlicerMarkupsLogic> MarkupsLogic;
   bool EnterPlaceModeOnNodeChange;
   bool JumpToSliceEnabled;
   int ViewGroup;
@@ -107,6 +109,12 @@ qSlicerSimpleMarkupsWidget::~qSlicerSimpleMarkupsWidget()
 void qSlicerSimpleMarkupsWidget::setup()
 {
   Q_D(qSlicerSimpleMarkupsWidget);
+
+  d->MarkupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(this->moduleLogic("Markups"));
+  if (!d->MarkupsLogic)
+    {
+    qCritical() << Q_FUNC_INFO << ": Markups module is not found, some markup manipulation features will not be available";
+    }
 
   d->setupUi(this);
 
@@ -363,9 +371,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsNodeChanged()
 void qSlicerSimpleMarkupsWidget::onMarkupsNodeAdded( vtkMRMLNode* newNode )
 {
   Q_D(qSlicerSimpleMarkupsWidget);
-
-  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(this->appLogic()->GetModuleLogic("Markups"));
-  if (markupsLogic == nullptr)
+  if (d->MarkupsLogic == nullptr)
     {
     qCritical("qSlicerSimpleMarkupsWidget::onMarkupsNodeAdded failed: Markups module logic is invalid");
     return;
@@ -375,7 +381,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsNodeAdded( vtkMRMLNode* newNode )
   if (newMarkupsNode->GetDisplayNode()==nullptr)
     {
     // Make sure there is an associated display node
-    markupsLogic->AddNewDisplayNodeForMarkupsNode( newMarkupsNode );
+    d->MarkupsLogic->AddNewDisplayNodeForMarkupsNode( newMarkupsNode );
     }
   d->MarkupsNodeComboBox->setCurrentNode( newMarkupsNode );
   this->setNodeColor( defaultNodeColor() );
@@ -387,8 +393,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointsTableContextMenu(const QP
 {
   Q_D(qSlicerSimpleMarkupsWidget);
 
-  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(this->appLogic()->GetModuleLogic("Markups"));
-  if (markupsLogic == nullptr)
+  if (d->MarkupsLogic == nullptr)
     {
     qCritical("qSlicerSimpleMarkupsWidget::onMarkupsControlPointsTableContextMenu failed: Markups module logic is invalid");
     return;
@@ -460,7 +465,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointsTableContextMenu(const QP
 
   if ( selectedAction == jumpAction )
     {
-    markupsLogic->JumpSlicesToNthPointInMarkup(this->currentNode()->GetID(), currentControlPoint, true /* centered */, d->ViewGroup);
+    d->MarkupsLogic->JumpSlicesToNthPointInMarkup(this->currentNode()->GetID(), currentControlPoint, true /* centered */, d->ViewGroup);
     }
 
   this->updateWidget();
@@ -480,14 +485,13 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointSelected(int row, int colu
       return;
       }
 
-    vtkSlicerMarkupsLogic *markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(this->appLogic()->GetModuleLogic("Markups"));
-    if (markupsLogic == nullptr)
+    if (d->MarkupsLogic == nullptr)
       {
       qCritical("qSlicerSimpleMarkupsWidget::onMarkupsControlPointSelected "
                 "failed: Cannot jump, markups module logic is invalid");
       return;
       }
-    markupsLogic->JumpSlicesToNthPointInMarkup(currentMarkupsNode->GetID(), row, true /* centered */, d->ViewGroup);
+    d->MarkupsLogic->JumpSlicesToNthPointInMarkup(currentMarkupsNode->GetID(), row, true /* centered */, d->ViewGroup);
   }
 
   emit currentMarkupsControlPointSelectionChanged(row);
@@ -547,15 +551,13 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
 {
   Q_D(qSlicerSimpleMarkupsWidget);
 
-  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(this->appLogic()->GetModuleLogic("Markups"));
-
-  if (markupsLogic == nullptr || this->mrmlScene() == nullptr)
+  if (d->MarkupsLogic == nullptr || this->mrmlScene() == nullptr)
     {
     qCritical("qSlicerSimpleMarkupsWidget::updateWidget failed: Markups module logic or scene is invalid");
     }
 
   vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( d->MarkupsNodeComboBox->currentNode() );
-  if ( currentMarkupsNode == nullptr || markupsLogic == nullptr)
+  if ( currentMarkupsNode == nullptr || d->MarkupsLogic == nullptr)
     {
     d->MarkupsControlPointsTableWidget->clear();
     d->MarkupsControlPointsTableWidget->setRowCount( 0 );

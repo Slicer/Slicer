@@ -277,6 +277,9 @@ public:
   void setAppLogic(vtkSlicerApplicationLogic* appLogic);
   vtkSlicerApplicationLogic* appLogic() const;
 
+  /// Convenience method for getting another module's logic from appLogic.
+  vtkMRMLAbstractLogic* moduleLogic(const QString& moduleName) const;
+
   /// This method allows to get a pointer to the module logic.
   /// If no moduleLogic already exists, one will be created calling
   /// the 'createLogic' method.

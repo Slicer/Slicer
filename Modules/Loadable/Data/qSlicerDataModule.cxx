@@ -91,7 +91,7 @@ void qSlicerDataModule::setup()
   this->Superclass::setup();
 
   vtkSlicerCamerasModuleLogic* camerasLogic =
-    vtkSlicerCamerasModuleLogic::SafeDownCast(this->appLogic()->GetModuleLogic("Cameras"));
+    vtkSlicerCamerasModuleLogic::SafeDownCast(this->moduleLogic("Cameras"));
   // NOTE: here we assume that camerasLogic with a nullptr value can be passed
   // to the qSlicerSceneReader. Therefore we trigger a warning but don't return
   // immediately.

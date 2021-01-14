@@ -193,6 +193,16 @@ void qSlicerAbstractCoreModule::setAppLogic(vtkSlicerApplicationLogic* newAppLog
 CTK_GET_CPP(qSlicerAbstractCoreModule, vtkSlicerApplicationLogic*, appLogic, AppLogic);
 
 //-----------------------------------------------------------------------------
+vtkMRMLAbstractLogic* qSlicerAbstractCoreModule::moduleLogic(const QString& moduleName) const
+{
+  if (!this->appLogic())
+    {
+    return nullptr;
+    }
+  return this->appLogic()->GetModuleLogic(moduleName.toUtf8());
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerAbstractCoreModule::isHidden()const
 {
   return this->isWidgetRepresentationCreationEnabled() ? false : true;

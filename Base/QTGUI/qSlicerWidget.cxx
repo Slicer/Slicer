@@ -23,6 +23,9 @@
 
 #include "qSlicerWidget.h"
 
+// Slicer includes
+#include <qSlicerApplication.h>
+
 // MRML includes
 #include <vtkSlicerApplicationLogic.h>
 
@@ -39,14 +42,12 @@ public:
   qSlicerWidgetPrivate(qSlicerWidget& object);
 
   QPointer<QWidget>                          ParentContainer;
-  vtkSlicerApplicationLogic*                 AppLogic;
 };
 
 //-----------------------------------------------------------------------------
 qSlicerWidgetPrivate::qSlicerWidgetPrivate(qSlicerWidget& object)
   : q_ptr(&object)
 {
-  this->AppLogic = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -72,15 +73,24 @@ void qSlicerWidget::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerWidget::setAppLogic(vtkSlicerApplicationLogic* logic)
-{
-  Q_D(qSlicerWidget);
-  d->AppLogic = logic;
-}
-
-//-----------------------------------------------------------------------------
 vtkSlicerApplicationLogic* qSlicerWidget::appLogic()const
 {
   Q_D(const qSlicerWidget);
-  return d->AppLogic;
+  if (!qSlicerApplication::application())
+    {
+    return nullptr;
+    }
+  return qSlicerApplication::application()->applicationLogic();
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLAbstractLogic* qSlicerWidget::moduleLogic(const QString& moduleName)const
+{
+  Q_D(const qSlicerWidget);
+  vtkSlicerApplicationLogic* applicationLogic = this->appLogic();
+  if (!applicationLogic)
+    {
+    return nullptr;
+    }
+  return applicationLogic->GetModuleLogic(moduleName.toUtf8());
 }

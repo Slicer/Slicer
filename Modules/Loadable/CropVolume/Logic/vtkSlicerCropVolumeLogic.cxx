@@ -146,7 +146,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
     {
 
     vtkSlicerVolumesLogic* volumesLogic =
-      vtkSlicerVolumesLogic::SafeDownCast(this->GetMRMLApplicationLogic()->GetModuleLogic("Volumes"));
+      vtkSlicerVolumesLogic::SafeDownCast(this->GetModuleLogic("Volumes"));
 
     // Create compatible output volume
     if (!volumesLogic)
@@ -401,7 +401,7 @@ int vtkSlicerCropVolumeLogic::CropInterpolated(vtkMRMLAnnotationROINode* roi, vt
     }
 
   vtkSlicerCLIModuleLogic* resampleLogic =
-    vtkSlicerCLIModuleLogic::SafeDownCast(this->GetMRMLApplicationLogic()->GetModuleLogic("ResampleScalarVectorDWIVolume"));
+    vtkSlicerCLIModuleLogic::SafeDownCast(this->GetModuleLogic("ResampleScalarVectorDWIVolume"));
   if (!resampleLogic)
     {
     vtkErrorMacro("CropVolume: resample logic is not set");

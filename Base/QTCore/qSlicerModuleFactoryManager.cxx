@@ -126,6 +126,12 @@ bool qSlicerModuleFactoryManager::loadModule(const QString& name, const QString&
     return false;
     }
 
+  if (!d->AppLogic)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: application logic must be set before loading modules";
+    return false;
+    }
+
   // A module should be registered when attempting to load it
   if (!this->isRegistered(name) ||
       !this->isInstantiated(name))

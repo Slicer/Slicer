@@ -1931,7 +1931,7 @@ bool vtkSlicerSegmentationsModuleLogic::SetTerminologyToSegmentationFromLabelmap
     }
 
   vtkSlicerTerminologiesModuleLogic* terminologiesLogic =
-    vtkSlicerTerminologiesModuleLogic::SafeDownCast(this->GetMRMLApplicationLogic()->GetModuleLogic("Terminologies"));
+    vtkSlicerTerminologiesModuleLogic::SafeDownCast(this->GetModuleLogic("Terminologies"));
   if (!terminologiesLogic)
     {
     vtkErrorMacro("SetTerminologyToSegmentationFromLabelmapNode: Terminology logic cannot be accessed");
