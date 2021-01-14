@@ -101,6 +101,8 @@ protected:
 
   vtkITKArchetypeImageSeriesReader* InstantiateVectorVolumeReader(const std::string &fullName);
 
+  void ConvertSpatialVectorVoxelsBetweenRasLps(vtkImageData* imageData);
+
   /// Read data and set it in the referenced node
   int ReadDataInternal(vtkMRMLNode *refNode) override;
 

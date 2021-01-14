@@ -43,6 +43,15 @@ public:
   vtkTypeMacro(vtkMRMLVolumeNode,vtkMRMLDisplayableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
+  enum
+    {
+    VoxelVectorTypeUndefined,
+    VoxelVectorTypeSpatial,
+    VoxelVectorTypeColorRGB,
+    VoxelVectorTypeColorRGBA,
+    VoxelVectorType_Last // must be last
+    };
+
   vtkMRMLNode* CreateNodeInstance() override = 0;
 
   ///
@@ -230,6 +239,19 @@ public:
   /// Returns true if the parent transform is changed.
   bool AddCenteringTransform();
 
+  /// Get/Set how to interpret a scalar components of a voxel.
+  /// VoxelVectorTypeUndefined: voxel type is not specified, scalar or independent scalar components.
+  /// VoxelVectorTypeSpatialVector: 3-component spatial vector with RAS components,
+  ///   (sign of first two values are inverted when stored in files as LPS)/
+  /// VoxelVectorTypeColorRGB: 3-component vector stores red, green, blue values.
+  /// VoxelVectorTypeColorRGBA: 4-component vector stores red, green, blue, alpha values.
+  vtkGetMacro(VoxelVectorType, int);
+  vtkSetMacro(VoxelVectorType, int);
+
+  /// Convert between voxel type ID and name
+  static const char *GetVoxelVectorTypeAsString(int id);
+  static int GetVoxelVectorTypeFromString(const char *name);
+
 protected:
   vtkMRMLVolumeNode();
   ~vtkMRMLVolumeNode() override;
@@ -273,6 +295,7 @@ protected:
   vtkAlgorithmOutput* ImageDataConnection;
   vtkEventForwarderCommand* DataEventForwarder;
 
+  int VoxelVectorType;
   itk::MetaDataDictionary Dictionary;
 };
 

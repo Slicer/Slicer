@@ -48,28 +48,28 @@ Version:   $Revision: 1.14 $
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode::vtkMRMLVolumeNode()
 {
-  int i,j;
-
-  for(i=0; i<3; i++)
+  for(int i=0; i<3; i++)
     {
-    for(j=0; j<3; j++)
+    for(int j=0; j<3; j++)
       {
       this->IJKToRASDirections[i][j] = (i == j) ? 1.0 : 0.0;
       }
     }
 
-  for(i=0; i<3; i++)
+  for(int i=0; i<3; i++)
     {
     this->Spacing[i] = 1.0;
     }
 
-  for(i=0; i<3; i++)
+  for(int i=0; i<3; i++)
     {
     this->Origin[i] = 0.0;
     }
 
   this->ImageDataConnection = nullptr;
   this->DataEventForwarder = nullptr;
+
+  this->VoxelVectorType = vtkMRMLVolumeNode::VoxelVectorTypeUndefined;
 
   this->ContentModifiedEvents->InsertNextValue(vtkMRMLVolumeNode::ImageDataModifiedEvent);
 }
@@ -89,6 +89,12 @@ void vtkMRMLVolumeNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLVectorMacro(spacing, Spacing, double, 3);
+  vtkMRMLWriteXMLVectorMacro(origin, Origin, double, 3);
+  vtkMRMLWriteXMLEnumMacro(voxelVectorType, VoxelVectorType);
+
+  // IJKToRASDirections 3x3 C array
   std::stringstream ss;
   for(int i=0; i<3; i++)
     {
@@ -103,11 +109,7 @@ void vtkMRMLVolumeNode::WriteXML(ostream& of, int nIndent)
     }
   of << " ijkToRASDirections=\"" << ss.str() << "\"";
 
-  of << " spacing=\""
-    << this->Spacing[0] << " " << this->Spacing[1] << " " << this->Spacing[2] << "\"";
-
-  of << " origin=\""
-    << this->Origin[0] << " " << this->Origin[1] << " " << this->Origin[2] << "\"";
+  vtkMRMLWriteXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -117,13 +119,18 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
 
   Superclass::ReadXMLAttributes(atts);
 
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLVectorMacro(spacing, Spacing, double, 3);
+  vtkMRMLReadXMLVectorMacro(origin, Origin, double, 3);
+  vtkMRMLReadXMLEnumMacro(voxelVectorType, VoxelVectorType);
+  vtkMRMLReadXMLEndMacro();
+
   const char* attName;
   const char* attValue;
   while (*atts != nullptr)
     {
     attName = *(atts++);
     attValue = *(atts++);
-
     if (!strcmp(attName, "ijkToRASDirections"))
       {
       std::stringstream ss;
@@ -139,32 +146,6 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
           }
         }
       this->SetIJKToRASDirections(dirs);
-      }
-    if (!strcmp(attName, "spacing"))
-      {
-      std::stringstream ss;
-      double val;
-      double spacing[3];
-      ss << attValue;
-      for(int i=0; i<3; i++)
-        {
-        ss >> val;
-        spacing[i] = val;
-        }
-      this->SetSpacing(spacing);
-      }
-    if (!strcmp(attName, "origin"))
-      {
-      std::stringstream ss;
-      double val;
-      double origin[3];
-      ss << attValue;
-      for(int i=0; i<3; i++)
-        {
-        ss >> val;
-        origin[i] = val;
-        }
-      this->SetOrigin(origin);
       }
    }
 
@@ -200,6 +181,7 @@ void vtkMRMLVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 
   // targetScalarVolumeNode->SetAndObserveTransformNodeID is not called, as we want to keep the currently applied transform
   this->CopyOrientation(node);
+  this->SetVoxelVectorType(node->GetVoxelVectorType());
 }
 
 //----------------------------------------------------------------------------
@@ -214,32 +196,21 @@ void vtkMRMLVolumeNode::CopyOrientation(vtkMRMLVolumeNode *node)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
-  // Matrices
+  Superclass::PrintSelf(os, indent);
+
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintVectorMacro(Spacing, double, 3);
+  vtkMRMLPrintVectorMacro(Origin, double, 3);
+  vtkMRMLPrintEnumMacro(VoxelVectorType);
+
   os << "IJKToRASDirections:\n";
-
-  int i,j;
-
-  for(i=0; i<3; i++)
+  for (int i = 0; i < 3; i++)
     {
-    for(j=0; j<3; j++)
+    for (int j = 0; j < 3; j++)
       {
       os << indent << " " << this->IJKToRASDirections[i][j];
       }
-      os << indent << "\n";
-    }
-  os << "\n";
-
-  os << "Origin:";
-  for(j=0; j<3; j++)
-    {
-    os << indent << " " << this->Origin[j];
-    }
-  os << "\n";
-  os << "Spacing:";
-  for(j=0; j<3; j++)
-    {
-    os << indent << " " << this->Spacing[j];
+    os << indent << "\n";
     }
   os << "\n";
 
@@ -248,6 +219,8 @@ void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << "ImageData:\n";
     this->GetImageData()->PrintSelf(os, indent.GetNextIndent());
     }
+
+  vtkMRMLPrintEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -1309,4 +1282,39 @@ bool vtkMRMLVolumeNode::AddCenteringTransform()
       }
     }
   return true;
+}
+
+//-----------------------------------------------------------
+const char* vtkMRMLVolumeNode::GetVoxelVectorTypeAsString(int id)
+{
+  switch (id)
+  {
+  case VoxelVectorTypeUndefined: return "undefined";
+  case VoxelVectorTypeSpatial: return "spatial";
+  case VoxelVectorTypeColorRGB: return "colorRGB";
+  case VoxelVectorTypeColorRGBA: return "colorRGBA";
+  default:
+    // invalid id
+    return "";
+  }
+}
+
+//-----------------------------------------------------------
+int vtkMRMLVolumeNode::GetVoxelVectorTypeFromString(const char* name)
+{
+  if (name == nullptr)
+  {
+    // invalid name
+    return -1;
+  }
+  for (int ii = 0; ii < VoxelVectorType_Last; ii++)
+  {
+    if (strcmp(name, vtkMRMLVolumeNode::GetVoxelVectorTypeAsString(ii)) == 0)
+    {
+      // found a matching name
+      return ii;
+    }
+  }
+  // unknown name
+  return -1;
 }

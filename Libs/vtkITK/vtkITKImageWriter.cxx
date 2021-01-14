@@ -211,7 +211,7 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
     itkImporter->GetOutput()->Update();
     itkImporter->GetOutput()->SetOrigin(origin);
     itkImporter->GetOutput()->SetSpacing(mag);
-    itkImageWriter->SetFileName( fileName );
+    itkImageWriter->SetFileName(fileName);
     itkImageWriter->Update();
     }
   catch (itk::ExceptionObject& exception)
@@ -246,6 +246,7 @@ vtkITKImageWriter::vtkITKImageWriter()
   this->MeasurementFrameMatrix = nullptr;
   this->UseCompression = 0;
   this->ImageIOClassName = nullptr;
+  this->VoxelVectorType = vtkITKImageWriter::VoxelVectorTypeUndefined;
 }
 
 
@@ -405,70 +406,173 @@ void vtkITKImageWriter::Write()
     } // scalar
   else if (inputNumberOfScalarComponents == 3)
     {
-    // take into consideration the scalar type
-    switch (inputDataType)
+    if (this->VoxelVectorType == vtkITKImageWriter::VoxelVectorTypeColorRGB)
       {
-      case VTK_DOUBLE:
+      switch (inputDataType)
         {
-        typedef itk::Vector<double, 3> VectorPixelType;
-        ITKWriteVTKImage<VectorPixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+        case VTK_DOUBLE:
+          {
+          typedef itk::RGBPixel<double> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+          }
+          break;
+        case VTK_FLOAT:
+          {
+          typedef itk::RGBPixel<float> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+          }
+          break;
+        case VTK_UNSIGNED_SHORT:
+          {
+          typedef itk::RGBPixel<unsigned short> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+          }
+          break;
+        case VTK_UNSIGNED_CHAR:
+          {
+          typedef itk::RGBPixel<unsigned char> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+          }
+          break;
+        default:
+          vtkErrorMacro(<< "Execute: Unknown output ScalarType");
+          return;
         }
-        break;
-      case VTK_FLOAT:
+      }
+    else if (this->VoxelVectorType == vtkITKImageWriter::VoxelVectorTypeSpatial)
+      {
+      switch (inputDataType)
         {
-        typedef itk::Vector<float, 3> VectorPixelType;
-        ITKWriteVTKImage<VectorPixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+        case VTK_DOUBLE:
+          {
+          typedef itk::CovariantVector<double,3> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+          }
+          break;
+        case VTK_FLOAT:
+          {
+          typedef itk::CovariantVector<float, 3> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+          }
+          break;
+        case VTK_UNSIGNED_SHORT:
+          {
+          typedef itk::CovariantVector<unsigned short, 3> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+          }
+          break;
+        case VTK_UNSIGNED_CHAR:
+          {
+          typedef itk::CovariantVector<unsigned char, 3> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+          }
+          break;
+        default:
+          vtkErrorMacro(<< "Execute: Unknown output ScalarType");
+          return;
         }
-        break;
-      case VTK_UNSIGNED_SHORT:
+      }
+    else
+      {
+      switch (inputDataType)
         {
-        typedef itk::Vector<unsigned short, 3> VectorPixelType;
-        ITKWriteVTKImage<VectorPixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+        case VTK_DOUBLE:
+          {
+          typedef itk::Vector<double, 3> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+          }
+          break;
+        case VTK_FLOAT:
+          {
+          typedef itk::Vector<float, 3> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+          }
+          break;
+        case VTK_UNSIGNED_SHORT:
+          {
+          typedef itk::Vector<unsigned short, 3> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+          }
+          break;
+        case VTK_UNSIGNED_CHAR:
+          {
+          typedef itk::Vector<unsigned char, 3> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+          }
+          break;
+        default:
+          vtkErrorMacro(<< "Execute: Unknown output ScalarType");
+          return;
         }
-        break;
-      case VTK_UNSIGNED_CHAR:
-        {
-        typedef itk::Vector<unsigned char, 3> VectorPixelType;
-        ITKWriteVTKImage<VectorPixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
-        }
-        break;
-      default:
-        vtkErrorMacro(<< "Execute: Unknown output ScalarType");
-        return;
       }
     } // vector
   else if (inputNumberOfScalarComponents == 4)
     {
-    // take into consideration the scalar type
-    switch (inputDataType)
+    if (this->VoxelVectorType == vtkITKImageWriter::VoxelVectorTypeColorRGBA)
       {
-      case VTK_DOUBLE:
+      switch (inputDataType)
         {
-        typedef itk::Vector<double, 4> VectorPixelType;
-        ITKWriteVTKImage<VectorPixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+        case VTK_DOUBLE:
+          {
+          typedef itk::RGBAPixel<double> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+          }
+          break;
+        case VTK_FLOAT:
+          {
+          typedef itk::RGBAPixel<float> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+          }
+          break;
+        case VTK_UNSIGNED_SHORT:
+          {
+          typedef itk::RGBAPixel<unsigned short> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+          }
+          break;
+        case VTK_UNSIGNED_CHAR:
+          {
+          typedef itk::RGBAPixel<unsigned char> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+          }
+          break;
+        default:
+          vtkErrorMacro(<< "Execute: Unknown output ScalarType");
+          return;
         }
-        break;
-      case VTK_FLOAT:
+      }
+    else
+      {
+      switch (inputDataType)
         {
-        typedef itk::Vector<float, 4> VectorPixelType;
-        ITKWriteVTKImage<VectorPixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+        case VTK_DOUBLE:
+          {
+          typedef itk::Vector<double, 4> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+          }
+          break;
+        case VTK_FLOAT:
+          {
+          typedef itk::Vector<float, 4> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+          }
+          break;
+        case VTK_UNSIGNED_SHORT:
+          {
+          typedef itk::Vector<unsigned short, 4> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+          }
+          break;
+        case VTK_UNSIGNED_CHAR:
+          {
+          typedef itk::Vector<unsigned char, 4> PixelType;
+          ITKWriteVTKImage<PixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
+          }
+          break;
+        default:
+          vtkErrorMacro(<< "Execute: Unknown output ScalarType");
+          return;
         }
-        break;
-      case VTK_UNSIGNED_SHORT:
-        {
-        typedef itk::Vector<unsigned short, 4> VectorPixelType;
-        ITKWriteVTKImage<VectorPixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
-        }
-        break;
-      case VTK_UNSIGNED_CHAR:
-        {
-        typedef itk::Vector<unsigned char, 4> VectorPixelType;
-        ITKWriteVTKImage<VectorPixelType>(this, inputImage, this->GetFileName(), this->RasToIJKMatrix);
-        }
-        break;
-      default:
-        vtkErrorMacro(<< "Execute: Unknown output ScalarType");
-        return;
       }
     } // 4-vector
   else if (inputNumberOfScalarComponents == 9)
@@ -478,7 +582,7 @@ void vtkITKImageWriter::Write()
       {
       case VTK_FLOAT:
         {
-        typedef itk::DiffusionTensor3D<float> TensorPixelType;
+        typedef itk::DiffusionTensor3D<float> PixelType;
         vtkNew<vtkImageData> outImage;
         outImage->SetDimensions(inputImage->GetDimensions());
         outImage->SetOrigin(0, 0, 0);
@@ -501,7 +605,7 @@ void vtkITKImageWriter::Write()
           out->SetTuple(i, outValue);
           }
 
-        ITKWriteVTKImage<TensorPixelType>(this, outImage.GetPointer(),
+        ITKWriteVTKImage<PixelType>(this, outImage.GetPointer(),
           this->GetFileName(), this->RasToIJKMatrix, this->MeasurementFrameMatrix);
         }
         inputImage->GetPointData()->SetScalars(nullptr);

@@ -520,10 +520,13 @@ vtkMRMLVolumeNode* vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransfor
   if (magnitude)
   {
     vtkSlicerTransformLogic::GetTransformedPointSamplesAsMagnitudeImage(outputVolume, inputTransformNode, ijkToRas.GetPointer());
+    outputVolumeNode->SetVoxelVectorType(vtkMRMLVolumeNode::VoxelVectorTypeUndefined);
   }
   else
   {
     vtkSlicerTransformLogic::GetTransformedPointSamplesAsVectorImage(outputVolume, inputTransformNode, ijkToRas.GetPointer());
+    // This indicates that the voxel values should be transformed to LPS when written to file
+    outputVolumeNode->SetVoxelVectorType(vtkMRMLVolumeNode::VoxelVectorTypeSpatial);
   }
 
   if (outputVolumeNode->GetDisplayNode() == nullptr)
