@@ -37,7 +37,8 @@ Once downloaded, follow the instructions below to complete installation:
 
 ### Windows
 
-- Run the installer
+- Run the installer.
+  - Current limitation: Installation path must only contain English ([ASCII printable](https://en.wikipedia.org/wiki/ASCII#Printable_characters)) characters because otherwise some Python packages may not load correctly (see this [issue](https://github.com/Slicer/Slicer/issues/5383) for more details).
 - Run Slicer from the Windows start menu
 - Use "Apps & features" in Windows settings to remove the application
 
