@@ -102,10 +102,10 @@ To re-convert an existing representation (to use different conversion path or pa
 See Script repository's [Segmentations section](https://www.slicer.org/wiki/Documentation/Nightly/ScriptRepository#Segmentations) for examples.
 
 ### DICOM export
-- The master representation is used when exporting into DICOM
-- DICOM RT structure set export is available if `SlicerRT` extension is installed
+- The master representation is used when exporting into DICOM, therefore you need to select a master volume, create binary labelmap representation and set it as master
 - DICOM Segmentation Object export if `QuantitativeReporting` extension is installed
-
+- Legacy DICOM RT structure set export is available if `SlicerRT` extension is installed. RT structure sets are not recommended for storing segmentations, as they cannot store arbitrarily complex 3D shapes.
+- Follow [these instructions](dicom.html#export-data-from-the-scene-to-dicom-database) for exporting data in DICOM format.
 
 ## Panels and their use
 
