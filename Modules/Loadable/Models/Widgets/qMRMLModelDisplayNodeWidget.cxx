@@ -301,7 +301,7 @@ void qMRMLModelDisplayNodeWidget::setCurrentSubjectHierarchyItemID(vtkIdType cur
 
   qSlicerSubjectHierarchyFolderPlugin* folderPlugin = qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(
     qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder") );
-  if (folderPlugin->canOwnSubjectHierarchyItem(currentItemID) > 0.0)
+  if (folderPlugin && folderPlugin->canOwnSubjectHierarchyItem(currentItemID) > 0.0)
     {
     displayNode = folderPlugin->createDisplayNodeForItem(currentItemID);
     }
