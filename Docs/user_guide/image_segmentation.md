@@ -27,11 +27,9 @@ Each segment stored in multiple `representations`. One representation is designa
 
 Binary labelmap representation is probably the most commonly used representation because this representation is the easiest to edit. Most software that use this representation, store all segments in a single 3D array, therefore each voxel can belong to a single segment: segments cannot overlap. In 3D Slicer, overlapping between segments is allowed. To store overlapping segments in binary labelmaps, segments are organized into `layers`. Each layer is stored internally as a separate 3D volume, and one volume may be shared between many non-overlapping segments to conserve memory.
 
-## 3D Slicer modules for segmentation
+There are many modules in 3D Slicer for manipulating segmentations. Overview of the most important is provided below.
 
-There are many modules in 3D Slicer for manipulating segmentations.
-
-### Segmentations module
+## Segmentations module overview
 
 Adjust display properties of segmentations, manage segment representations and layers, copy/move segments between segmentation nodes, convert between segmentation and models and labelmap volumes, export to files.
 
@@ -39,23 +37,25 @@ See more information in [Segmentations module documentation](modules/segmentatio
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/image_segmentation_segmentations_module.png)
 
-### Segment editor module
+## Segment editor module overview
 
 Create and edit segmentations from volumes using manual (paint, draw, ...), semi-automatic (thresholding, region growing, interpolation, ...) and automatic (NVidia AIAA,...) tools. A number of editor effects are built into the Segment Editor module and many more are provided by extensions (in Segmentations category in the Extensions Manager).
 
-To get started, check out [segmentation tutorials](https://www.slicer.org/wiki/Documentation/Nightly/Training#Segmentation) and [Segment Editor module documentation](modules/segmenteditor).
+To get started, check out these pages:
+- [Segmentation tutorials](https://www.slicer.org/wiki/Documentation/Nightly/Training#Segmentation): step by step slide and video tutorials
+- [Segment Editor module documentation](modules/segmenteditor): detailed description of Segment Editor user interface and effects
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/image_segmentation_segment_editor_module.png)
 
-### Segment statistics module
+## Segment statistics module overview
 
 Computes intensity and geometric properties for each segment, such as volume, surface, mininum/maximum/mean intensity, oriented boudning box, sphericity, etc. See more information in [Segment statistics module documentation](modules/segmentstatistics).
 
-### Segment comparison module
+## Segment comparison module overview
 
 Compute similarity between two segments based on metrics such as Hausdorff distance and Dice coefficient. Provided by SlicerRT extension. See more information in [Segment comparison module documentation](https://www.slicer.org/wiki/Documentation/Nightly/Modules/SegmentComparison).
 
-### Segment registration module
+## Segment registration module overview
 
 Compute rigid or deformable transform that aligns two selected segments. Provided by SegmentRegistration extension.
 See more information in [Segment registration module documentation](https://github.com/SlicerRt/SegmentRegistration).
