@@ -252,27 +252,25 @@ vtkMRMLDisplayNode* vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(
 
   // Get effective display node from hierarchy:
   // go through parents and return display node of first that applies color
-  vtkIdType currentParentId = nodeShId;
-  bool applyDisplayPropertiesToBranch = false;
-  while (!applyDisplayPropertiesToBranch)
-    {
-    // Get next parent
-    currentParentId = shNode->GetItemParent(currentParentId);
-    if (!currentParentId)
-      {
-      // Did not find an ancestor with apply display properties to branch flag on
-      return nullptr;
-      }
 
-    vtkMRMLFolderDisplayNode* folderDisplayNode = vtkMRMLFolderDisplayNode::SafeDownCast(
-      shNode->GetItemDataNode(currentParentId) );
+  vtkIdType overridingFolderId = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+  for (vtkIdType currentParentId = shNode->GetItemParent(nodeShId); currentParentId != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+    currentParentId = shNode->GetItemParent(currentParentId))
+    {
+    vtkMRMLFolderDisplayNode* folderDisplayNode = vtkMRMLFolderDisplayNode::SafeDownCast(shNode->GetItemDataNode(currentParentId) );
     if (folderDisplayNode)
       {
-      applyDisplayPropertiesToBranch = folderDisplayNode->GetApplyDisplayPropertiesOnBranch();
+      if (folderDisplayNode->GetApplyDisplayPropertiesOnBranch())
+        {
+        overridingFolderId = currentParentId;
+        }
       }
     }
-
-  return vtkMRMLDisplayNode::SafeDownCast(shNode->GetItemDataNode(currentParentId));
+  if (overridingFolderId == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    return nullptr;
+    }
+  return vtkMRMLDisplayNode::SafeDownCast(shNode->GetItemDataNode(overridingFolderId));
 }
 
 //---------------------------------------------------------------------------
