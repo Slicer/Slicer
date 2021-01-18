@@ -71,11 +71,10 @@ void vtkMRMLMeasurement::ClearValue()
   this->SetValue(0.0);
   this->ValueDefined = false;
 
-  // Note: this->SetControlPointValues(nullptr); is not called here, because if we clear
-  // this then every time certain things in the markups node changes that calls
-  // curveGenerator->Modified() (e.g. SetInterpolateControlPointMeasurement), which is
-  // supposed to use just these control point values, the UpdateMeasurementsInternal
-  // call clears the value, thus deleting the control point data.
+  // Note: this->SetControlPointValues(nullptr); is not called here, because if we clear it here
+  // then every time something in the markups node changes that calls curveGenerator->Modified()
+  // that is supposed to use just these control point values, the UpdateMeasurementsInternal call
+  // clears the value, thus deleting the control point data.
 }
 
 //----------------------------------------------------------------------------

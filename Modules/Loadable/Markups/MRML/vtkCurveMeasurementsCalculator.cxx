@@ -84,7 +84,6 @@ void vtkCurveMeasurementsCalculator::PrintSelf(std::ostream &os, vtkIndent inden
 {
   Superclass::PrintSelf(os, indent);
   os << indent << "CalculateCurvature: " << this->CalculateCurvature << std::endl;
-  os << indent << "InterpolateControlPointMeasurement: " << this->InterpolateControlPointMeasurement << std::endl;
 }
 
 //----------------------------------------------------------------------------------
@@ -156,12 +155,8 @@ int vtkCurveMeasurementsCalculator::RequestData(
     outputPolyData->GetPointData()->RemoveArray("Curvature");
     }
 
-  // If interpolating measurements is enabled then go through measurements, and
-  // interpolate those that contain control point data and are enabled
-  if (this->InterpolateControlPointMeasurement)
-    {
-    this->InterpolateControlPointMeasurementToPolyData(outputPolyData);
-    }
+  // Go through measurements, and interpolate those that contain control point data and are enabled
+  this->InterpolateControlPointMeasurementToPolyData(outputPolyData);
 
   outputPolyData->Squeeze();
   return 1;

@@ -61,13 +61,6 @@ public:
   vtkBooleanMacro(CalculateCurvature, bool);
   //@}
 
-  //@{
-  /// Set/Get flag determining whether to interpolate control point measurements
-  vtkSetMacro(InterpolateControlPointMeasurement, bool);
-  vtkGetMacro(InterpolateControlPointMeasurement, bool);
-  vtkBooleanMacro(InterpolateControlPointMeasurement, bool);
-  //@}
-
   /// Get name of mean curvature measurement
   static const char* GetMeanCurvatureName() { return "curvature mean"; };
   /// Get name of max curvature measurement
@@ -90,9 +83,6 @@ protected:
 
   /// Flag determining whether the filter should calculate curvature
   bool CalculateCurvature{false};
-
-  /// Flag determining whether the filter should interpolate control point measurements
-  bool InterpolateControlPointMeasurement{false};
 
   /// Command handling data array modified events
   vtkCallbackCommand* ControlPointArrayModifiedCallbackCommand;
