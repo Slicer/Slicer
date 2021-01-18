@@ -1460,25 +1460,6 @@ void vtkMRMLMarkupsCurveNode::SetCalculateCurvature(bool on)
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLMarkupsCurveNode::GetInterpolateControlPointMeasurement()
-{
-  return this->CurveMeasurementsCalculator->GetInterpolateControlPointMeasurement();
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLMarkupsCurveNode::SetInterpolateControlPointMeasurement(bool on)
-{
-  if (on == this->CurveMeasurementsCalculator->GetInterpolateControlPointMeasurement())
-    {
-    return;
-    }
-
-  this->CurveMeasurementsCalculator->SetInterpolateControlPointMeasurement(on);
-  this->CurveGenerator->Modified();
-  this->CurveMeasurementsCalculator->Update();
-}
-
-//---------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::UpdateAssignedAttribute()
 {
   vtkMRMLMarkupsDisplayNode* displayNode = this->GetMarkupsDisplayNode();

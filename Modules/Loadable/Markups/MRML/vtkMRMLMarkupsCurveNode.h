@@ -258,12 +258,6 @@ public:
   void SetCalculateCurvature(bool on);
   //@}
 
-  //@{
-  /// Set/Get flag determining whether to interpolate control point measurements
-  bool GetInterpolateControlPointMeasurement();
-  void SetInterpolateControlPointMeasurement(bool on);
-  //@}
-
   /// Update scalar range and update markups pipeline when the active scalar array is changed
   virtual void UpdateAssignedAttribute() override;
 
