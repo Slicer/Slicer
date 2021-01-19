@@ -1,5 +1,5 @@
-# vtk DataFile Version 3.0
-vtk output
+# vtk DataFile Version 4.2
+3D Slicer output. SPACE=RAS
 ASCII
 DATASET UNSTRUCTURED_GRID
 POINTS 401 double
@@ -562,7 +562,7 @@ CELL_TYPES 210
 16
 
 CELL_DATA 210
-SCALARS scalar1 unsigned_long
+SCALARS scalar1 unsigned_int
 LOOKUP_TABLE default
 1 2 3 4 5 6 7 8 9 
 10 11 12 13 14 15 16 17 18 
@@ -588,6 +588,9 @@ LOOKUP_TABLE default
 190 191 192 193 194 195 196 197 198 
 199 200 201 202 203 204 205 206 207 
 208 209 210 
+METADATA
+INFORMATION 0
+
 POINT_DATA 401
 SCALARS scalar2 float
 LOOKUP_TABLE default
@@ -636,3 +639,5 @@ LOOKUP_TABLE default
 1 1 1 1 1 1 1 1 1 
 1 1 1 1 1 1 1 1 1 
 1 1 1 1 1 
+METADATA
+INFORMATION 0
