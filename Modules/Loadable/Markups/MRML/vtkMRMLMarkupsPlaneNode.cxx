@@ -789,9 +789,9 @@ vtkMatrix4x4* vtkMRMLMarkupsPlaneNode::GetPlaneToPlaneOffsetMatrix()
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::UpdateInteractionHandleToWorldMatrix()
 {
-  double handleX_World[3] = { 0.0 };
-  double handleY_World[3] = { 0.0 };
-  double handleZ_World[3] = { 0.0 };
+  double handleX_World[3] = { 0.0, 0.0, 0.0 };
+  double handleY_World[3] = { 0.0, 0.0, 0.0 };
+  double handleZ_World[3] = { 0.0, 0.0, 0.0 };
   if (this->GetNumberOfControlPoints() < 3)
     {
     return;
@@ -799,8 +799,8 @@ void vtkMRMLMarkupsPlaneNode::UpdateInteractionHandleToWorldMatrix()
 
   this->GetAxesWorld(handleX_World, handleY_World, handleZ_World);
 
-  double origin_Local[3] = { 0 };
-  this->GetOrigin(origin_Local);
+  double origin_World[3] = { 0.0, 0.0, 0.0 };
+  this->GetOriginWorld(origin_World);
 
   vtkNew<vtkMatrix4x4> handleToWorldMatrix;
   for (int i = 0; i < 3; ++i)
@@ -808,7 +808,7 @@ void vtkMRMLMarkupsPlaneNode::UpdateInteractionHandleToWorldMatrix()
     handleToWorldMatrix->SetElement(i, 0, handleX_World[i]);
     handleToWorldMatrix->SetElement(i, 1, handleY_World[i]);
     handleToWorldMatrix->SetElement(i, 2, handleZ_World[i]);
-    handleToWorldMatrix->SetElement(i, 3, origin_Local[i]);
+    handleToWorldMatrix->SetElement(i, 3, origin_World[i]);
     }
   this->InteractionHandleToWorldMatrix->DeepCopy(handleToWorldMatrix);
 }
