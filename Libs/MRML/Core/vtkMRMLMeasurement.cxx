@@ -17,7 +17,6 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 
 //----------------------------------------------------------------------------
 vtkMRMLMeasurement::vtkMRMLMeasurement()
-  : InputMRMLNode(nullptr)
 {
   this->SetPrintFormat("%5.3f %s");
 }

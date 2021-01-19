@@ -66,6 +66,8 @@ public:
   /// Get name of max curvature measurement
   static const char* GetMaxCurvatureName() { return "curvature max"; };
 
+  vtkMTimeType GetMTime() override;
+
 protected:
   bool CalculatePolyDataCurvature(vtkPolyData* polyData);
   bool InterpolateControlPointMeasurementToPolyData(vtkPolyData* outputPolyData);

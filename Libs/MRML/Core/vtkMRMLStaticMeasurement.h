@@ -15,8 +15,8 @@
 
 ==============================================================================*/
 
-#ifndef __vtkMRMLMeasurementConstant_h
-#define __vtkMRMLMeasurementConstant_h
+#ifndef __vtkMRMLStaticMeasurement_h
+#define __vtkMRMLStaticMeasurement_h
 
 // MRML includes
 #include "vtkMRMLMeasurement.h"
@@ -27,21 +27,21 @@
 /// MRML node. This class is to be able to store constant measurements.
 ///
 /// \ingroup Slicer_QtModules_Markups
-class VTK_MRML_EXPORT vtkMRMLMeasurementConstant : public vtkMRMLMeasurement
+class VTK_MRML_EXPORT vtkMRMLStaticMeasurement : public vtkMRMLMeasurement
 {
 public:
-  static vtkMRMLMeasurementConstant *New();
-  vtkTypeMacro(vtkMRMLMeasurementConstant, vtkMRMLMeasurement);
+  static vtkMRMLStaticMeasurement *New();
+  vtkTypeMacro(vtkMRMLStaticMeasurement, vtkMRMLMeasurement);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Do nothing to compute the measurement as it is static
   void Compute() override;
 
 protected:
-  vtkMRMLMeasurementConstant();
-  ~vtkMRMLMeasurementConstant() override;
-  vtkMRMLMeasurementConstant(const vtkMRMLMeasurementConstant&);
-  void operator=(const vtkMRMLMeasurementConstant&);
+  vtkMRMLStaticMeasurement();
+  ~vtkMRMLStaticMeasurement() override;
+  vtkMRMLStaticMeasurement(const vtkMRMLStaticMeasurement&);
+  void operator=(const vtkMRMLStaticMeasurement&);
 };
 
 #endif

@@ -132,6 +132,11 @@ private:
   QAction*    pasteAction;
 
   QTimer*     editScalarFunctionDelay;
+
+  QPixmap     SlicerLockIcon;
+  QPixmap     SlicerUnlockIcon;
+  QPixmap     SlicerVisibleIcon;
+  QPixmap     SlicerInvisibleIcon;
 };
 
 //-----------------------------------------------------------------------------
@@ -161,6 +166,11 @@ qSlicerMarkupsModuleWidgetPrivate::qSlicerMarkupsModuleWidgetPrivate(qSlicerMark
   this->pasteAction = nullptr;
 
   this->editScalarFunctionDelay = nullptr;
+
+  this->SlicerLockIcon = QPixmap(":/Icons/Small/SlicerLock.png");
+  this->SlicerUnlockIcon = QPixmap(":/Icons/Small/SlicerUnlock.png");
+  this->SlicerVisibleIcon = QPixmap(":/Icons/Small/SlicerVisible.png");
+  this->SlicerInvisibleIcon = QPixmap(":/Icons/Small/SlicerInvisible.png");
 }
 
 //-----------------------------------------------------------------------------
@@ -1106,12 +1116,12 @@ void qSlicerMarkupsModuleWidget::updateRow(int m)
   if (markupsNode->GetNthControlPointLocked(m))
     {
     lockedItem->setData(Qt::UserRole, QVariant(true));
-    lockedItem->setData(Qt::DecorationRole, QPixmap(":/Icons/Small/SlicerLock.png"));
+    lockedItem->setData(Qt::DecorationRole, d->SlicerLockIcon);
     }
   else
     {
     lockedItem->setData(Qt::UserRole, QVariant(false));
-    lockedItem->setData(Qt::DecorationRole, QPixmap(":/Icons/Small/SlicerUnlock.png"));
+    lockedItem->setData(Qt::DecorationRole, d->SlicerUnlockIcon);
     }
   int lockedIndex = d->columnIndex("Locked");
   if (d->activeMarkupTableWidget->item(m,lockedIndex) == nullptr ||
@@ -1130,12 +1140,12 @@ void qSlicerMarkupsModuleWidget::updateRow(int m)
   if (markupsNode->GetNthControlPointVisibility(m))
     {
     visibleItem->setData(Qt::UserRole, QVariant(true));
-    visibleItem->setData(Qt::DecorationRole, QPixmap(":/Icons/Small/SlicerVisible.png"));
+    visibleItem->setData(Qt::DecorationRole, d->SlicerVisibleIcon);
     }
   else
     {
     visibleItem->setData(Qt::UserRole, QVariant(false));
-    visibleItem->setData(Qt::DecorationRole, QPixmap(":/Icons/Small/SlicerInvisible.png"));
+    visibleItem->setData(Qt::DecorationRole, d->SlicerInvisibleIcon);
     }
     int visibleIndex = d->columnIndex("Visible");
    if (d->activeMarkupTableWidget->item(m,visibleIndex) == nullptr ||

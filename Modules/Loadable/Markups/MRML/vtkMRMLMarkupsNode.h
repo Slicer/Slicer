@@ -178,6 +178,7 @@ public:
   int GetNumberOfMeasurements();
   int GetNumberOfEnabledMeasurements();
   vtkMRMLMeasurement* GetNthMeasurement(int id);
+  vtkMRMLMeasurement* GetMeasurement(const char* name);
   void AddMeasurement(vtkMRMLMeasurement* measurement);
   void RemoveNthMeasurement(int id);
   void ClearValueForAllMeasurements();

@@ -21,7 +21,7 @@
 #include "vtkCurveGenerator.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsStorageNode.h"
-#include "vtkMRMLMeasurementConstant.h"
+#include "vtkMRMLStaticMeasurement.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLUnitNode.h"
@@ -1949,6 +1949,25 @@ vtkMRMLMeasurement* vtkMRMLMarkupsNode::GetNthMeasurement(int id)
 }
 
 //---------------------------------------------------------------------------
+vtkMRMLMeasurement* vtkMRMLMarkupsNode::GetMeasurement(const char* name)
+{
+  if (!name)
+    {
+    return nullptr;
+    }
+  for (int measurementIndex = 0; measurementIndex < this->GetNumberOfMeasurements(); measurementIndex++)
+    {
+    vtkMRMLMeasurement* measurement = this->GetNthMeasurement(measurementIndex);
+    if (measurement->GetName() && strcmp(name, measurement->GetName()) == 0)
+      {
+      // found
+      return measurement;
+      }
+    }
+  return nullptr;
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::SetNthMeasurement(int id, vtkMRMLMeasurement* measurement)
 {
   if (id < 0 || id > this->GetNumberOfMeasurements())
@@ -1984,15 +2003,15 @@ void vtkMRMLMarkupsNode::SetNthMeasurement(int id,
     vtkErrorMacro("vtkMRMLMarkupsNode::SetNthMeasurement failed: id out of range");
     return;
     }
-  vtkSmartPointer<vtkMRMLMeasurementConstant> measurement;
+  vtkSmartPointer<vtkMRMLStaticMeasurement> measurement;
   if (id >= this->GetNumberOfMeasurements())
     {
-    measurement = vtkSmartPointer<vtkMRMLMeasurementConstant>::New();
+    measurement = vtkSmartPointer<vtkMRMLStaticMeasurement>::New();
     this->Measurements->AddItem(measurement);
     }
   else
     {
-    measurement = vtkMRMLMeasurementConstant::SafeDownCast(this->Measurements->GetItemAsObject(id));
+    measurement = vtkMRMLStaticMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(id));
     if (measurement == nullptr)
       {
       vtkErrorMacro("SetNthMeasurement: Cannot set non-constant measurement manually (ID: " << id << ")");
@@ -2061,7 +2080,7 @@ void vtkMRMLMarkupsNode::UpdateMeasurementsInternal()
   for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
     {
     vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
-    if (currentMeasurement && currentMeasurement->GetEnabled() && !currentMeasurement->IsA("vtkMRMLMeasurementConstant"))
+    if (currentMeasurement && currentMeasurement->GetEnabled() && !currentMeasurement->IsA("vtkMRMLStaticMeasurement"))
       {
       currentMeasurement->ClearValue();
       currentMeasurement->Compute();

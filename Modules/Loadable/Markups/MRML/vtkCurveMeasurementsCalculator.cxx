@@ -94,6 +94,7 @@ void vtkCurveMeasurementsCalculator::SetMeasurements(vtkCollection* measurements
     return;
     }
   this->Measurements = measurements;
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------------
@@ -289,16 +290,16 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
   for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
     {
     vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
-    if (!currentMeasurement || !currentMeasurement->GetEnabled())
+    if (!currentMeasurement || !currentMeasurement->GetName() || !currentMeasurement->GetEnabled())
       {
       continue;
       }
-    if (currentMeasurement->GetName() && !strcmp(currentMeasurement->GetName(), this->GetMeanCurvatureName()))
+    if (!strcmp(currentMeasurement->GetName(), this->GetMeanCurvatureName()))
       {
       currentMeasurement->SetValue(meanKappa);
       currentMeasurement->Compute(); // Have the measurement set the computation result to OK
       }
-    else if (currentMeasurement->GetName() && !strcmp(currentMeasurement->GetName(), this->GetMaxCurvatureName()))
+    else if (!strcmp(currentMeasurement->GetName(), this->GetMaxCurvatureName()))
       {
       currentMeasurement->SetValue(maxKappa);
       currentMeasurement->Compute(); // Have the measurement set the computation result to OK
@@ -366,7 +367,7 @@ bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyDat
     this->ObservedControlPointArrays->AddItem(controlPointArrayWeakPointer);
 
     vtkNew<vtkDoubleArray> interpolatedMeasurement;
-    std::string arrayName = std::string("Interpolated:") + (currentMeasurement->GetName() ? std::string(currentMeasurement->GetName()) : "Unknown");
+    std::string arrayName = currentMeasurement->GetName() ? currentMeasurement->GetName() : "Unnamed";
     interpolatedMeasurement->SetName(arrayName.c_str());
     interpolatedMeasurement->SetNumberOfComponents(1);
     interpolatedMeasurement->SetNumberOfTuples(numberOfPoints);
@@ -407,4 +408,29 @@ void vtkCurveMeasurementsCalculator::OnControlPointArrayModified(
 {
   vtkCurveMeasurementsCalculator* self = reinterpret_cast<vtkCurveMeasurementsCalculator*>(clientData);
   self->Modified();
+}
+
+//---------------------------------------------------------------------------
+vtkMTimeType vtkCurveMeasurementsCalculator::GetMTime()
+{
+  vtkMTimeType mTime = this->Superclass::GetMTime();
+  // Modified time is the latest modified time of all measurements
+  if (this->Measurements)
+    {
+    vtkMTimeType collectionMTime = this->Measurements->GetMTime();
+    if (collectionMTime > mTime)
+      {
+      mTime = collectionMTime;
+      }
+    vtkObject* obj = nullptr;
+    for (this->Measurements->InitTraversal(); obj = this->Measurements->GetNextItemAsObject();)
+      {
+      vtkMTimeType objMTime = obj->GetMTime();
+      if (objMTime > mTime)
+        {
+        mTime = objMTime;
+        }
+      }
+    }
+  return mTime;
 }

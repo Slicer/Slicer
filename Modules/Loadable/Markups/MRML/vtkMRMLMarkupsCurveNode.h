@@ -252,12 +252,6 @@ public:
   void SetNumberOfPointsPerInterpolatingSegment(int pointsPerSegment);
   //@}
 
-  //@{
-  /// Set/Get flag determining whether to calculate curvature
-  bool GetCalculateCurvature();
-  void SetCalculateCurvature(bool on);
-  //@}
-
   /// Update scalar range and update markups pipeline when the active scalar array is changed
   virtual void UpdateAssignedAttribute() override;
 

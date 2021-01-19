@@ -18,7 +18,7 @@
 // MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLMarkupsNode.h"
-#include "vtkMRMLMeasurementConstant.h"
+#include "vtkMRMLStaticMeasurement.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLStorageNode.h"
 
@@ -46,7 +46,7 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
   std::string formatTest = node1->ReplaceListNameInMarkupLabelFormat();
   CHECK_STD_STRING(formatTest, "testingname-%d");
 
-  vtkNew<vtkMRMLMeasurementConstant> measurement1;
+  vtkNew<vtkMRMLStaticMeasurement> measurement1;
   measurement1->SetName("Diameter");
   measurement1->SetValue(15.0);
   measurement1->SetUnits("mm2");

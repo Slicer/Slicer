@@ -16,30 +16,30 @@
 ==============================================================================*/
 
 // MRML includes
-#include "vtkMRMLMeasurementConstant.h"
+#include "vtkMRMLStaticMeasurement.h"
 
-vtkStandardNewMacro(vtkMRMLMeasurementConstant);
+vtkStandardNewMacro(vtkMRMLStaticMeasurement);
 
 //----------------------------------------------------------------------------
-vtkMRMLMeasurementConstant::vtkMRMLMeasurementConstant()
+vtkMRMLStaticMeasurement::vtkMRMLStaticMeasurement()
 {
   this->LastComputationResult = vtkMRMLMeasurement::OK;
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLMeasurementConstant::~vtkMRMLMeasurementConstant() = default;
+vtkMRMLStaticMeasurement::~vtkMRMLStaticMeasurement() = default;
 
 //----------------------------------------------------------------------------
-void vtkMRMLMeasurementConstant::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLStaticMeasurement::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMeasurementConstant::Compute()
+void vtkMRMLStaticMeasurement::Compute()
 {
   // No action is needed because this class is a constant variant of the dynamic
   // vtkMRMLMeasurement. Typically all measurements calculate their own value from
-  // its input MRML node. This class is to be able to store constant measurements.
+  // its input MRML node. This class is to be able to store static measurements.
   this->LastComputationResult = vtkMRMLMeasurement::OK;
 }

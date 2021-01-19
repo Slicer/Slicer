@@ -19,7 +19,7 @@
 #include "vtkMRMLMarkupsJsonStorageNode.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsNode.h"
-#include "vtkMRMLMeasurementConstant.h"
+#include "vtkMRMLStaticMeasurement.h"
 
 #include "vtkMRMLScene.h"
 #include "vtkSlicerVersionConfigure.h"
@@ -174,7 +174,8 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints(rapidjson::Va
     vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints failed: invalid controlPoints item");
     return false;
     }
-
+  bool wasUpdatingPoints = markupsNode->IsUpdatingPoints;
+  markupsNode->IsUpdatingPoints = true;
   for (rapidjson::SizeType controlPointIndex = 0; controlPointIndex < controlPointsArray.Size(); ++controlPointIndex)
     {
     rapidjson::Value& controlPointItem = controlPointsArray[controlPointIndex];
@@ -261,6 +262,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints(rapidjson::Va
     markupsNode->AddControlPoint(cp, false);
     }
 
+  markupsNode->IsUpdatingPoints = wasUpdatingPoints;
+  markupsNode->UpdateMeasurements();
+
   return true;
 }
 
@@ -289,22 +293,11 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements(rapidjson::Val
       }
 
     const char* measurementName = measurementItem["name"].GetString();
-    vtkSmartPointer<vtkMRMLMeasurement> measurement;
-
     // Lookup measurements and see if an existing one needs to be updated or a new one added
-    int numberOfMeasurementsInMarkup = markupsNode->GetNumberOfMeasurements();
-    for (int markupMeasurementIndex = 0; markupMeasurementIndex < numberOfMeasurementsInMarkup; markupMeasurementIndex++)
-      {
-      vtkMRMLMeasurement* currentMeasurement = markupsNode->GetNthMeasurement(markupMeasurementIndex);
-      if (currentMeasurement && currentMeasurement->GetName() && !strcmp(measurementName, currentMeasurement->GetName()))
-        {
-        measurement = currentMeasurement;
-        break;
-        }
-      }
+    vtkSmartPointer<vtkMRMLMeasurement> measurement = markupsNode->GetMeasurement(measurementName);
     if (measurement.GetPointer() == nullptr)
       {
-      measurement = vtkSmartPointer<vtkMRMLMeasurementConstant>::New();
+      measurement = vtkSmartPointer<vtkMRMLStaticMeasurement>::New();
       measurement->SetName(measurementName);
       markupsNode->AddMeasurement(measurement);
       }
@@ -380,6 +373,7 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements(rapidjson::Val
         }
       rapidjson::Value& firstControlPointValue = controlPointValuesItem.GetArray()[0];
       vtkNew<vtkDoubleArray> controlPointValues;
+      controlPointValues->SetName(measurementName);
       if (firstControlPointValue.IsDouble())
         {
         controlPointValues->SetNumberOfValues(numberOfTuples);

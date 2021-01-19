@@ -22,7 +22,7 @@
 #include "vtkCurveMeasurementsCalculator.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMeasurementLength.h"
-#include "vtkMRMLMeasurementConstant.h"
+#include "vtkMRMLStaticMeasurement.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLUnitNode.h"
@@ -122,13 +122,13 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   std::string inverseLengthUnit = (lengthUnitNode ? lengthUnitNode->GetSuffix() : "mm");
   inverseLengthUnit.append("-1");
 
-  vtkNew<vtkMRMLMeasurementConstant> curvatureMeanMeasurement;
+  vtkNew<vtkMRMLStaticMeasurement> curvatureMeanMeasurement;
   curvatureMeanMeasurement->SetName(this->CurveMeasurementsCalculator->GetMeanCurvatureName());
   curvatureMeanMeasurement->SetUnits(inverseLengthUnit.c_str());
   curvatureMeanMeasurement->SetEnabled(false); // Curvature calculation is off by default
   this->Measurements->AddItem(curvatureMeanMeasurement);
 
-  vtkNew<vtkMRMLMeasurementConstant> curvatureMaxMeasurement;
+  vtkNew<vtkMRMLStaticMeasurement> curvatureMaxMeasurement;
   curvatureMaxMeasurement->SetName(this->CurveMeasurementsCalculator->GetMaxCurvatureName());
   curvatureMaxMeasurement->SetUnits(inverseLengthUnit.c_str());
   curvatureMaxMeasurement->SetEnabled(false); // Curvature calculation is off by default
@@ -1425,41 +1425,6 @@ void vtkMRMLMarkupsCurveNode::UpdateSurfaceScalarVariables()
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLMarkupsCurveNode::GetCalculateCurvature()
-{
-  return this->CurveMeasurementsCalculator->GetCalculateCurvature();
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLMarkupsCurveNode::SetCalculateCurvature(bool on)
-{
-  if (on == this->CurveMeasurementsCalculator->GetCalculateCurvature())
-    {
-    return;
-    }
-
-  this->CurveMeasurementsCalculator->SetCalculateCurvature(on);
-
-  for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
-    {
-    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
-    if ( currentMeasurement->GetName()
-      && ( !strcmp(currentMeasurement->GetName(), this->CurveMeasurementsCalculator->GetMeanCurvatureName())
-        || !strcmp(currentMeasurement->GetName(), this->CurveMeasurementsCalculator->GetMaxCurvatureName()) ) )
-      {
-      currentMeasurement->SetEnabled(on);
-      if (!on)
-        {
-        currentMeasurement->ClearValue();
-        }
-      }
-    }
-
-  this->CurveGenerator->Modified();
-  this->CurveMeasurementsCalculator->Update();
-}
-
-//---------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::UpdateAssignedAttribute()
 {
   vtkMRMLMarkupsDisplayNode* displayNode = this->GetMarkupsDisplayNode();
@@ -1491,33 +1456,50 @@ void vtkMRMLMarkupsCurveNode::OnCurvatureMeasurementModified(
   vtkObject* caller, unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
 {
   vtkMRMLMarkupsCurveNode* self = reinterpret_cast<vtkMRMLMarkupsCurveNode*>(clientData);
-  vtkMRMLMeasurementConstant* measurement = reinterpret_cast<vtkMRMLMeasurementConstant*>(caller);
+  vtkMRMLStaticMeasurement* measurement = reinterpret_cast<vtkMRMLStaticMeasurement*>(caller);
   if (!self || !measurement)
     {
     return;
     }
 
-  // If a measurement was enabled or disabled
-  bool newEnabledState = measurement->GetEnabled();
-  if (self->CurveMeasurementsCalculator->GetCalculateCurvature() != newEnabledState)
+  if (!measurement->GetEnabled())
     {
-    // Propagate enabled state to curve measurements calculator
-    self->SetCalculateCurvature(measurement->GetEnabled());
-
-    // Make sure the enabled state is toggled for the other curvature measurement as well, because they are calculated together
-    for (int index=0; index<self->Measurements->GetNumberOfItems(); ++index)
+    // measurement is disabled
+    measurement->ClearValue();
+    if (!self->CurveMeasurementsCalculator->GetCalculateCurvature())
+      {
+      // no need to compute and it was not computed, nothing to do
+      return;
+      }
+    // Disable curve measurement calculator if no curvature metric is needed anymore
+    bool isCurvatureComputationNeeded = false;
+    for (int index = 0; index < self->Measurements->GetNumberOfItems(); ++index)
       {
       vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(self->Measurements->GetItemAsObject(index));
-      if ( currentMeasurement->GetName()
-        && ( !strcmp(currentMeasurement->GetName(), self->CurveMeasurementsCalculator->GetMeanCurvatureName())
-          || !strcmp(currentMeasurement->GetName(), self->CurveMeasurementsCalculator->GetMaxCurvatureName()) ) )
+      if (currentMeasurement->GetEnabled() && currentMeasurement->GetName()
+        && (!strcmp(currentMeasurement->GetName(), self->CurveMeasurementsCalculator->GetMeanCurvatureName())
+          || !strcmp(currentMeasurement->GetName(), self->CurveMeasurementsCalculator->GetMaxCurvatureName())))
         {
-        currentMeasurement->SetEnabled(newEnabledState);
-        if (!newEnabledState)
-          {
-          currentMeasurement->ClearValue();
-          }
+        isCurvatureComputationNeeded = true;
+        break;
         }
       }
+    if (!isCurvatureComputationNeeded)
+      {
+      self->CurveMeasurementsCalculator->SetCalculateCurvature(false);
+      self->CurveMeasurementsCalculator->Update();
+      }
+    return;
     }
+
+  // measurement is enabled
+  if (self->CurveMeasurementsCalculator->GetCalculateCurvature() && measurement->GetValueDefined())
+    {
+    // measurement was already on, nothing to do
+    return;
+    }
+
+  // trigger a recompute
+  self->CurveMeasurementsCalculator->SetCalculateCurvature(true);
+  self->CurveMeasurementsCalculator->Update();
 }
