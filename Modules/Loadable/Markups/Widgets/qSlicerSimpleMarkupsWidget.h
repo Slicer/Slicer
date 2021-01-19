@@ -104,7 +104,7 @@ public slots:
   void setCurrentNode(vtkMRMLNode* currentNode);
 
   /// Set the default name of the markups node created in the combo box.
-  void setNodeBaseName(QString newNodeBaseName);
+  void setNodeBaseName(const QString& newNodeBaseName);
 
   /// Set interaction node used to update the widget.
   /// \sa interactionNode()

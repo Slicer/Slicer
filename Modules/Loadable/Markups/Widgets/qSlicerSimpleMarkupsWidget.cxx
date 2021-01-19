@@ -207,7 +207,7 @@ void qSlicerSimpleMarkupsWidget::setInteractionNode(vtkMRMLInteractionNode* inte
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSimpleMarkupsWidget::setNodeBaseName(QString newNodeBaseName)
+void qSlicerSimpleMarkupsWidget::setNodeBaseName(const QString& newNodeBaseName)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
   d->MarkupsNodeComboBox->setBaseName(newNodeBaseName);
