@@ -696,12 +696,12 @@ bool vtkSlicerApplicationLogic::IsEmbeddedModule(const std::string& filePath,
 {
   if (filePath.empty())
     {
-    vtkGenericWarningMacro( << "filePath is an empty string !");
+    vtkGenericWarningMacro("vtkSlicerApplicationLogic::IsEmbeddedModule failed: filePath argument is empty");
     return false;
     }
   if (applicationHomeDir.empty())
     {
-    vtkGenericWarningMacro( << "applicationHomeDir is an empty string !");
+    vtkGenericWarningMacro("vtkSlicerApplicationLogic::IsEmbeddedModule failed: applicationHomeDir argument is empty");
     return false;
     }
   std::string extensionPath = itksys::SystemTools::GetFilenamePath(filePath);
@@ -740,12 +740,12 @@ bool vtkSlicerApplicationLogic::IsPluginInstalled(const std::string& filePath,
 {
   if (filePath.empty())
     {
-    vtkGenericWarningMacro( << "filePath is an empty string !");
+    vtkGenericWarningMacro("vtkSlicerApplicationLogic::IsPluginInstalled failed: filePath argument is empty");
     return false;
     }
   if (applicationHomeDir.empty())
     {
-    vtkGenericWarningMacro( << "applicationHomeDir is an empty string !");
+    vtkGenericWarningMacro("vtkSlicerApplicationLogic::IsPluginInstalled failed: applicationHomeDir argument is empty");
     return false;
     }
 
@@ -781,12 +781,12 @@ bool vtkSlicerApplicationLogic::IsPluginBuiltIn(const std::string& filePath,
 {
   if (filePath.empty())
     {
-    vtkGenericWarningMacro( << "filePath is an empty string !");
+    vtkGenericWarningMacro("vtkSlicerApplicationLogic::IsPluginBuiltIn failed: filePath argument is empty");
     return false;
     }
   if (applicationHomeDir.empty())
     {
-    vtkGenericWarningMacro( << "applicationHomeDir is an empty string !");
+    vtkGenericWarningMacro("vtkSlicerApplicationLogic::IsPluginBuiltIn failed: applicationHomeDir argument is empty");
     return false;
     }
 
@@ -822,7 +822,7 @@ std::string GetModuleHomeDirectory(const std::string& filePath,
 {
   if (filePath.empty())
     {
-    vtkGenericWarningMacro( << "filePath is an empty string !");
+    vtkGenericWarningMacro("GetModuleHomeDirectory failed: filePath argument is empty");
     return std::string();
     }
 
@@ -844,7 +844,7 @@ std::string GetModuleHomeDirectory(const std::string& filePath,
   if (components.size() < 5)
     {
     // At least 5 components are expected to be able to compute the module home directory
-    vtkGenericWarningMacro( << "Failed to compute module home directory given filePath: " << filePath);
+    vtkGenericWarningMacro("GetModuleHomeDirectory: failed to compute module home directory given filePath: " << filePath);
     return std::string();
     }
 
@@ -877,12 +877,12 @@ std::string vtkSlicerApplicationLogic::GetModuleShareDirectory(const std::string
 {
   if (moduleName.empty())
     {
-    vtkGenericWarningMacro( << "moduleName is an empty string !");
+    vtkGenericWarningMacro("vtkSlicerApplicationLogic::GetModuleShareDirectory failed: moduleName argument is empty");
     return std::string();
     }
   if (filePath.empty())
     {
-    vtkGenericWarningMacro( << "filePath is an empty string !");
+    vtkGenericWarningMacro("vtkSlicerApplicationLogic::GetModuleShareDirectory failed: filePath argument is empty");
     return std::string();
     }
 
@@ -911,7 +911,7 @@ std::string vtkSlicerApplicationLogic::GetModuleSlicerXYShareDirectory(const std
 {
   if (filePath.empty())
     {
-    vtkGenericWarningMacro( << "filePath is an empty string !");
+    vtkGenericWarningMacro("vtkSlicerApplicationLogic::GetModuleSlicerXYShareDirectory failed: filePath argument is empty");
     return std::string();
     }
   std::string slicerSubDir;
@@ -934,7 +934,7 @@ std::string vtkSlicerApplicationLogic::GetModuleSlicerXYLibDirectory(const std::
 {
   if (filePath.empty())
     {
-    vtkGenericWarningMacro( << "filePath is an empty string !");
+    vtkGenericWarningMacro("vtkSlicerApplicationLogic::GetModuleSlicerXYLibDirectory failed: filePath argument is empty");
     return std::string();
     }
   std::string slicerSubDir;
@@ -968,7 +968,8 @@ void vtkSlicerApplicationLogic::SetCurrentThreadPriorityToBackground()
       }
     catch(...)
       {
-      vtkWarningMacro("Invalid SLICER_BACKGROUND_THREAD_PRIORITY value (" << priorityStr << "), expected an integer");
+      vtkWarningMacro("vtkSlicerApplicationLogic::SetCurrentThreadPriorityToBackground failed: " \
+        "Invalid SLICER_BACKGROUND_THREAD_PRIORITY value (" << priorityStr << "), expected an integer");
       }
     }
 
@@ -977,7 +978,7 @@ void vtkSlicerApplicationLogic::SetCurrentThreadPriorityToBackground()
   bool ret = SetThreadPriority(GetCurrentThread(), isPriorityEnvSet ? processingThreadPriority : THREAD_PRIORITY_BELOW_NORMAL);
   if (!ret)
     {
-    vtkWarningMacro("SetThreadPriority did not succeed.");
+    vtkWarningMacro("vtkSlicerApplicationLogic::SetCurrentThreadPriorityToBackground failed: setThreadPriority did not succeed.");
     }
 #endif
 
@@ -989,7 +990,8 @@ void vtkSlicerApplicationLogic::SetCurrentThreadPriorityToBackground()
   int ret = setpriority(which, pid, priority);
   if (ret != 0)
     {
-    vtkWarningMacro("setpriority did not succeed. You need root privileges to set a priority < 0.");
+    vtkWarningMacro("vtkSlicerApplicationLogic::SetCurrentThreadPriorityToBackground failed: " \
+      "setpriority did not succeed. You need root privileges to set a priority < 0.");
     }
 #endif
 }

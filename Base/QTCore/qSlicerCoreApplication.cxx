@@ -1969,3 +1969,15 @@ QStringList qSlicerCoreApplication::toSlicerHomeRelativePaths(const QStringList&
     }
   return relativePaths;
 }
+
+//-----------------------------------------------------------------------------
+vtkMRMLAbstractLogic* qSlicerCoreApplication::moduleLogic(const QString& moduleName)const
+{
+  Q_D(const qSlicerCoreApplication);
+  vtkSlicerApplicationLogic* applicationLogic = this->applicationLogic();
+  if (!applicationLogic)
+    {
+    return nullptr;
+    }
+  return applicationLogic->GetModuleLogic(moduleName.toUtf8());
+}

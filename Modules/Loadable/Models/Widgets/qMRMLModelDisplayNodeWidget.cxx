@@ -299,6 +299,7 @@ void qMRMLModelDisplayNodeWidget::setCurrentSubjectHierarchyItemID(vtkIdType cur
     displayNode = modelNode->GetDisplayNode();
     }
 
+  // get folder plugin (can fail if subject hierarchy logic is not instantiated)
   qSlicerSubjectHierarchyFolderPlugin* folderPlugin = qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(
     qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder") );
   if (folderPlugin && folderPlugin->canOwnSubjectHierarchyItem(currentItemID) > 0.0)

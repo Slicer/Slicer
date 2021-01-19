@@ -114,11 +114,11 @@ void qSlicerSegmentationsModuleWidgetPrivate::populateTerminologyContextComboBox
 
   this->ComboBox_TerminologyContext->clear();
 
-  vtkSlicerTerminologiesModuleLogic* terminologiesLogic =
-    vtkSlicerTerminologiesModuleLogic::SafeDownCast(q->moduleLogic("Terminologies"));
+  vtkSlicerTerminologiesModuleLogic* terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(
+    qSlicerCoreApplication::application()->moduleLogic("Terminologies"));
   if (!terminologiesLogic)
     {
-    qCritical() << Q_FUNC_INFO << ": Terminologies module is not found";
+    qCritical() << Q_FUNC_INFO << ": Terminologies logic is not found";
     return;
     }
 

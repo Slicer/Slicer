@@ -53,6 +53,7 @@ class qSlicerExtensionsManagerModel;
 #endif
 class vtkDataIOManagerLogic;
 class vtkSlicerApplicationLogic;
+class vtkMRMLAbstractLogic;
 class vtkMRMLApplicationLogic;
 class vtkMRMLRemoteIOLogic;
 class vtkMRMLScene;
@@ -211,6 +212,9 @@ public:
 
   /// Get application logic
   Q_INVOKABLE vtkSlicerApplicationLogic* applicationLogic() const;
+
+  // Convenience method for getting a module logic from the application logic.
+  Q_INVOKABLE vtkMRMLAbstractLogic* moduleLogic(const QString& moduleName)const;
 
   /// Get slicer home directory
   /// \sa slicerHome

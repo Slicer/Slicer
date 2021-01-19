@@ -1321,14 +1321,9 @@ void vtkSlicerTerminologiesModuleLogic::LoadDefaultAnatomicContexts()
 //---------------------------------------------------------------------------
 void vtkSlicerTerminologiesModuleLogic::LoadUserContexts()
 {
-  if (!this->UserContextsPath)
+  if (!this->UserContextsPath || !vtksys::SystemTools::FileExists(this->UserContextsPath, false))
     {
-    vtkErrorMacro("LoadUserContexts: User settings directory '"
-      << (this->UserContextsPath ? this->UserContextsPath : "None") << "' does not exist");
-    return;
-    }
-  if (!vtksys::SystemTools::FileExists(this->UserContextsPath, false))
-    {
+    // user contexts path is not set or the folder does not exist
     return;
     }
 

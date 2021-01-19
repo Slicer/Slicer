@@ -191,14 +191,8 @@ vtkSlicerTerminologiesModuleLogic* qMRMLSubjectHierarchyModelPrivate::terminolog
     {
     return this->TerminologiesModuleLogic;
     }
-
-  vtkSlicerTerminologiesModuleLogic* terminologiesLogic = nullptr;
-  qSlicerAbstractCoreModule* terminologiesModule =
-    qSlicerCoreApplication::application()->moduleManager()->module("Terminologies");
-  if (terminologiesModule)
-    {
-    terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(terminologiesModule->logic());
-    }
+    vtkSlicerTerminologiesModuleLogic* terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(
+      qSlicerCoreApplication::application()->moduleLogic("Terminologies"));
   return terminologiesLogic;
 }
 

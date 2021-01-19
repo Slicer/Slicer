@@ -74,14 +74,11 @@ void qSlicerSegmentationsSettingsPanelPrivate::init()
 
   this->setupUi(q);
 
-  qSlicerAbstractCoreModule* terminologiesModule = qSlicerCoreApplication::application()->moduleManager()->module("Terminologies");
-  if (terminologiesModule)
+  this->TerminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(
+    qSlicerCoreApplication::application()->moduleLogic("Terminologies"));
+  if (!this->TerminologiesLogic)
     {
-    this->TerminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(terminologiesModule->logic());
-    }
-  else
-    {
-    qCritical() << Q_FUNC_INFO << ": Terminologies module is not found";
+    qCritical() << Q_FUNC_INFO << ": Terminologies logic is not found";
     }
 
   // Default values

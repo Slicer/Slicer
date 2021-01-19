@@ -317,24 +317,13 @@ void qSlicerTerminologyNavigatorWidgetPrivate::init()
 //-----------------------------------------------------------------------------
 vtkSlicerTerminologiesModuleLogic* qSlicerTerminologyNavigatorWidgetPrivate::terminologyLogic()
 {
-  if (!qSlicerCoreApplication::application()
-    || !qSlicerCoreApplication::application()->moduleManager())
+  vtkSlicerTerminologiesModuleLogic* terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(
+    qSlicerCoreApplication::application()->moduleLogic("Terminologies"));
+  if (!terminologiesLogic)
     {
-    qCritical() << Q_FUNC_INFO << ": Module manager is not found";
-    return nullptr;
+    qCritical() << Q_FUNC_INFO << ": Terminologies logic is not found";
     }
-  qSlicerAbstractCoreModule* terminologiesModule = qSlicerCoreApplication::application()->moduleManager()->module("Terminologies");
-  if (!terminologiesModule)
-    {
-    return nullptr; // No error log because it makes test fail
-    }
-  vtkSlicerTerminologiesModuleLogic* terminologyLogic =
-    vtkSlicerTerminologiesModuleLogic::SafeDownCast(terminologiesModule->logic());
-  if (!terminologyLogic)
-    {
-    qCritical() << Q_FUNC_INFO << ": Terminologies module logic is invalid";
-    }
-  return terminologyLogic;
+  return terminologiesLogic;
 }
 
 //-----------------------------------------------------------------------------

@@ -1032,15 +1032,11 @@ QString qMRMLSegmentsModel::terminologyTooltipForSegment(vtkSegment* segment)
     }
 
   // Get terminologies module logic
-  vtkSlicerTerminologiesModuleLogic* terminologiesLogic = nullptr;
-  qSlicerAbstractCoreModule* terminologiesModule = qSlicerCoreApplication::application()->moduleManager()->module("Terminologies");
-  if (terminologiesModule)
+  vtkSlicerTerminologiesModuleLogic* terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(
+    qSlicerCoreApplication::application()->moduleLogic("Terminologies"));
+  if (!terminologiesLogic)
     {
-    terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(terminologiesModule->logic());
-    }
-  else
-    {
-    qCritical() << Q_FUNC_INFO << ": Terminologies module is not found";
+    qCritical() << Q_FUNC_INFO << ": Terminologies logic is not found";
     return QString();
     }
 
