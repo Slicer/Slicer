@@ -10,8 +10,13 @@ This is accomplished by specifying color and opacity for each voxel, based on it
 
 ### Display a CT or MRI volume
 
-- Load a data set (for example, use `Sample Data` module to load `CTChest` data set)
-- Go to `Data` module and right-click on the eye icon, and choose "Show in 3D views as volume rendering"
+- Load a data set (for example, use `Sample Data` module to load "CTChest" data set)
+- Go to `Data` module
+- Show volume rendering:
+  - Option A: drag-and-drop the volume in the subject hierarchy tree into a 3D view
+  - Option B: right-click on the eye icon, and choose "Show in 3D views as volume rendering"
+
+To adjust volume rendering settings
 - Right-click on the eye icon and choose "Volume rendering options" to switch to edit visualization options in Volume rendering module
 - Choose a different preset in Display section,
 - Adjust "Offset" slider to change what image intensity range is visible
@@ -20,13 +25,20 @@ This is accomplished by specifying color and opacity for each voxel, based on it
 
 ### Render different volumes in two views
 
+Switch to a layout with multiple 3D views (for example "Dual 3D") using the toolbar and then use one of the two options below.
+
+Option A:
+- Go to `Data` module and drag-and-drop each volume into the 3D view
+
+Option B:
+- Go to `Volume Rendering` module
 - Open the "Inputs" section
 - Select the first volume
 - Click View list and uncheck "View2" (only "View1" should be checked)
-- Click the eye icon for the volume to show up in View1
+- Click the eye icon for the volume to show up in "View1"
 - Select the second volume
 - Click View list and uncheck "View1" (only "View2" should be checked)
-- Click the eye icon for the volume to show up in View2
+- Click the eye icon for the volume to show up in "View2"
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_volumerendering_multiview.png)
 
