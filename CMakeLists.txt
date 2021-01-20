@@ -1012,11 +1012,15 @@ set(Slicer_EXTENSION_CPACK ${Slicer_SOURCE_DIR}/CMake/SlicerExtensionCPack.cmake
 
 set(extensions_build_dir "${Slicer_BINARY_DIR}/E")
 
-# Configure a no-op SlicerConfig for bundled projects
+# Configure a no-op SlicerConfig and SlicerConfigVersion for bundled projects
 set(Slicer_DIR ${extensions_build_dir})
 configure_file(
   ${Slicer_SOURCE_DIR}/CMake/SlicerConfig.cmake.in
   ${Slicer_DIR}/SlicerConfig.cmake @ONLY)
+
+configure_file(
+  ${Slicer_SOURCE_DIR}/CMake/SlicerConfigVersion.cmake.in
+  ${Slicer_DIR}/SlicerConfigVersion.cmake @ONLY)
 
 #
 # Directories can be set in three ways:
