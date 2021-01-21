@@ -325,6 +325,12 @@ public:
   /// Get control point position status (PositionUndefined, PositionPreview, PositionDefined)
   int GetNthControlPointPositionStatus(int pointIndex);
 
+  /// Get index of N-th control point of the specified status.
+  /// (for example, get index of N-th placed control point).
+  /// pointIndex is zero-based, so to get index of the first control point, use pointIndex=0.
+  /// Return -1 if no such control point is found.
+  int GetNthControlPointIndexByPositionStatus(int pointIndex, int positionStatus);
+
   /// Set control point status to undefined.
   void UnsetNthControlPointPosition(int pointIndex);
 

@@ -27,6 +27,8 @@
 #include "vtkProperty.h"
 #include "vtkRenderer.h"
 #include "vtkSlicerCurveRepresentation3D.h"
+#include <vtkTextActor.h>
+#include <vtkTextProperty.h>
 #include "vtkTubeFilter.h"
 
 // MRML includes
@@ -83,6 +85,31 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
 
   this->VisibilityOn();
 
+  // Properties label display
+
+  if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
+    && markupsNode->GetNumberOfDefinedControlPoints(true) > 0) // including preview
+    {
+    int controlPointIndex = 0;
+    int numberOfDefinedControlPoints = markupsNode->GetNumberOfDefinedControlPoints(); // excluding previewed point
+    if (numberOfDefinedControlPoints > 0)
+      {
+      // there is at least one placed point
+      controlPointIndex = markupsNode->GetNthControlPointIndexByPositionStatus((numberOfDefinedControlPoints - 1) / 2, vtkMRMLMarkupsNode::PositionDefined);
+      }
+    else
+      {
+      // we only have a preview point
+      controlPointIndex = markupsNode->GetNthControlPointIndexByPositionStatus(0, vtkMRMLMarkupsNode::PositionPreview);
+      }
+    markupsNode->GetNthControlPointPositionWorld(controlPointIndex, this->TextActorPositionWorld);
+    this->TextActor->SetVisibility(true);
+    }
+  else
+    {
+    this->TextActor->SetVisibility(false);
+    }
+
   // Line display
 
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
@@ -121,6 +148,8 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
     controlPointType = allControlPointsSelected ? Selected : Unselected;
     }
   this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
+
+  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
 
   this->LineOccludedActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->OccludedProperty);
   this->LineOccludedActor->SetVisibility(this->MarkupsDisplayNode
@@ -217,6 +246,7 @@ void vtkSlicerCurveRepresentation3D::GetActors(vtkPropCollection *pc)
   this->Superclass::GetActors(pc);
   this->LineActor->GetActors(pc);
   this->LineOccludedActor->GetActors(pc);
+  this->TextActor->GetActors(pc);
 }
 
 //----------------------------------------------------------------------
@@ -226,6 +256,7 @@ void vtkSlicerCurveRepresentation3D::ReleaseGraphicsResources(
   this->Superclass::ReleaseGraphicsResources(win);
   this->LineActor->ReleaseGraphicsResources(win);
   this->LineOccludedActor->ReleaseGraphicsResources(win);
+  this->TextActor->ReleaseGraphicsResources(win);
 }
 
 //----------------------------------------------------------------------

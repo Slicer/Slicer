@@ -114,6 +114,7 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
 
   // Setup measurements calculated for this markup type
   vtkNew<vtkMRMLMeasurementLength> lengthMeasurement;
+  lengthMeasurement->SetEnabled(false);
   lengthMeasurement->SetName("length");
   lengthMeasurement->SetInputMRMLNode(this);
   this->Measurements->AddItem(lengthMeasurement);

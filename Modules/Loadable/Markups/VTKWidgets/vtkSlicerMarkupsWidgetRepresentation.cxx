@@ -543,7 +543,17 @@ void vtkSlicerMarkupsWidgetRepresentation::UpdateFromMRML(
 
   if (this->MarkupsNode)
     {
-    this->TextActor->SetInput(this->MarkupsNode->GetPropertiesLabelText().c_str());
+    std::string labelText;
+    if (this->MarkupsNode->GetName())
+      {
+      labelText = this->MarkupsNode->GetName();
+      }
+    std::string properties = this->MarkupsNode->GetPropertiesLabelText();
+    if (!properties.empty())
+      {
+      labelText += ":" + properties;
+      }
+    this->TextActor->SetInput(labelText.c_str());
     }
   else
     {

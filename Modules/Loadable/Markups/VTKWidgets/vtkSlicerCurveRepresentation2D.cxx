@@ -113,6 +113,7 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
     controlPointType = allControlPointsSelected ? Selected : Unselected;
     }
   this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
+  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
 
   if (this->MarkupsDisplayNode->GetLineColorNode() && this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction())
     {
@@ -121,7 +122,7 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
     }
   else
     {
-    // if there is no line color node, build the color mapping from few varibales
+    // if there is no line color node, build the color mapping from few variables
     // (color, opacity, distance fading, saturation and hue offset) stored in the display node
     this->UpdateDistanceColorMap(this->LineColorMap, this->LineActor->GetProperty()->GetColor());
     this->LineMapper->SetLookupTable(this->LineColorMap);
@@ -163,6 +164,34 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
       this->GetControlPointsPipeline(centerControlPointType)->Actor->VisibilityOn();
       this->GetControlPointsPipeline(centerControlPointType)->LabelsActor->VisibilityOff();
       }
+    }
+
+    // Properties label display
+
+  if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
+    && this->AnyPointVisibilityOnSlice
+    && markupsNode->GetNumberOfDefinedControlPoints(true) > 0) // including preview
+    {
+    int controlPointIndex = 0;
+    int numberOfDefinedControlPoints = markupsNode->GetNumberOfDefinedControlPoints(); // excluding previewed point
+    if (numberOfDefinedControlPoints > 0)
+      {
+      // there is at least one placed point
+      controlPointIndex = markupsNode->GetNthControlPointIndexByPositionStatus((numberOfDefinedControlPoints - 1) / 2, vtkMRMLMarkupsNode::PositionDefined);
+      }
+    else
+      {
+      // we only have a preview point
+      controlPointIndex = markupsNode->GetNthControlPointIndexByPositionStatus(0, vtkMRMLMarkupsNode::PositionPreview);
+      }
+    double textPos[3] = { 0.0,  0.0, 0.0 };
+    this->GetNthControlPointDisplayPosition(controlPointIndex, textPos);
+    this->TextActor->SetDisplayPosition(static_cast<int>(textPos[0]), static_cast<int>(textPos[1]));
+    this->TextActor->SetVisibility(true);
+    }
+  else
+    {
+    this->TextActor->SetVisibility(false);
     }
 }
 

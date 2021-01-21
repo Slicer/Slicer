@@ -2121,28 +2121,42 @@ vtkMRMLUnitNode* vtkMRMLMarkupsNode::GetUnitNode(const char* quantity)
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::WriteMeasurementsToDescription()
 {
-  this->PropertiesLabelText.clear();
-  if (this->GetName())
-    {
-    this->PropertiesLabelText += this->GetName();
-    if (this->GetNumberOfEnabledMeasurements() > 0)
-      {
-      this->PropertiesLabelText += ":";
-      }
-    }
-
+  int numberOfValidMeasurements = 0;
+  std::string properties;
   std::string description;
   vtkMRMLMeasurement* currentMeasurement = nullptr;
   vtkCollectionSimpleIterator it;
+  std::string measurementText;
   for (this->Measurements->InitTraversal(it);
       (currentMeasurement=vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetNextItemAsObject(it)));)
     {
-    if (!currentMeasurement->GetEnabled() || !currentMeasurement->GetName() || !currentMeasurement->GetPrintFormat())
+    if (!currentMeasurement->GetEnabled() || !currentMeasurement->GetName() || !currentMeasurement->GetValueDefined())
       {
       continue;
       }
 
-    std::string measurementText = currentMeasurement->GetName() + std::string(": ") + currentMeasurement->GetValueWithUnitsAsPrintableString();
+    std::string measurementValue = currentMeasurement->GetValueWithUnitsAsPrintableString();
+    if (measurementValue.empty())
+      {
+      continue;
+      }
+    numberOfValidMeasurements++;
+
+    // properties label special cases
+    if (numberOfValidMeasurements == 1)
+      {
+      // if there is only one measurement then show it in the same line
+      // and don't include the measurement to make display more compact
+      properties = " " + currentMeasurement->GetValueWithUnitsAsPrintableString();
+      }
+    else if (numberOfValidMeasurements == 2)
+      {
+      // rewrite first measurement
+      // we still have the full text of the last measurement, use it
+      properties = "\n" + measurementText;
+      }
+
+    measurementText = currentMeasurement->GetName() + std::string(": ") + measurementValue;
 
     // description
     if (!description.empty())
@@ -2153,18 +2167,20 @@ void vtkMRMLMarkupsNode::WriteMeasurementsToDescription()
     description += measurementText;
 
     // properties label
-    if (this->Measurements->GetNumberOfItems() == 1)
+    if (numberOfValidMeasurements > 1)
       {
-      // if there is only one measurement then show it in the same line
-      // and don't include the measurement to make display more compact
-      this->PropertiesLabelText += " " + currentMeasurement->GetValueWithUnitsAsPrintableString();
-      }
-    else
-      {
-      this->PropertiesLabelText += "\n" + measurementText;
+      // rewrite first measurement
+      // we still have the full text of the last measurement, use it
+      properties += "\n" + measurementText;
       }
     }
+
   this->SetDescription(description.c_str());
+  if (properties != this->PropertiesLabelText)
+    {
+    this->PropertiesLabelText = properties;
+    this->Modified();
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -2289,4 +2305,23 @@ int vtkMRMLMarkupsNode::GetPositionStatusFromString(const char* name)
 std::string vtkMRMLMarkupsNode::GetPropertiesLabelText()
 {
   return this->PropertiesLabelText;
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLMarkupsNode::GetNthControlPointIndexByPositionStatus(int pointIndex, int positionStatus)
+{
+  int foundControlPoints = 0;
+  for (ControlPointsListType::iterator controlPointIt = this->ControlPoints.begin();
+    controlPointIt != this->ControlPoints.end(); ++controlPointIt)
+    {
+    if ((*controlPointIt)->PositionStatus == positionStatus)
+      {
+      if (foundControlPoints == pointIndex)
+        {
+        return controlPointIt - this->ControlPoints.begin();
+        }
+      foundControlPoints++;
+      }
+    }
+  return -1;
 }
