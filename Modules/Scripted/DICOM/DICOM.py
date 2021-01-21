@@ -262,7 +262,9 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
     if viewArrangement == self.currentViewArrangement:
       return
 
-    self.previousViewArrangement = self.currentViewArrangement
+    if (self.currentViewArrangement != slicer.vtkMRMLLayoutNode.SlicerLayoutNone and
+      self.currentViewArrangement != slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView):
+      self.previousViewArrangement = self.currentViewArrangement
     self.currentViewArrangement = viewArrangement
 
     if self.browserWidget is None:
@@ -279,9 +281,19 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
 
 
   def onBrowserWidgetClosed(self):
-    if (self.currentViewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView and
-        self.previousViewArrangement != slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView):
-      slicer.app.layoutManager().setLayout(self.previousViewArrangement)
+    if (self.currentViewArrangement != slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView and
+      self.currentViewArrangement != slicer.vtkMRMLLayoutNode.SlicerLayoutNone):
+      # current layout is a valid layout that is not the DICOM browser view, so nothing to do
+      return
+
+    layoutId = self.previousViewArrangement
+
+    # Use a default layout if this layout is not valid
+    if (layoutId == slicer.vtkMRMLLayoutNode.SlicerLayoutNone
+      or layoutId == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView):
+      layoutId = qt.QSettings().value("MainWindow/layout", slicer.vtkMRMLLayoutNode.SlicerLayoutInitialView)
+
+    slicer.app.layoutManager().setLayout(layoutId)
 
 
   def _onModuleAboutToBeUnloaded(self, moduleName):
