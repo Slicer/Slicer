@@ -29,6 +29,7 @@
 #include <vtkMRMLCameraNode.h>
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLDisplayableNode.h>
+#include <vtkMRMLSliceLogic.h>
 
 // VTK includes
 #include <vtkBoundingBox.h>
@@ -178,10 +179,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRASBounds(double bounds[6
     {
     vtkMRMLDisplayableNode* displayableNode =
       vtkMRMLDisplayableNode::SafeDownCast(nodes[n]);
-    if (!displayableNode ||
-        strcmp(displayableNode->GetName(), "Red Volume Slice") == 0 ||
-        strcmp(displayableNode->GetName(), "Green Volume Slice") == 0 ||
-        strcmp(displayableNode->GetName(), "Yellow Volume Slice") == 0 )
+    if (!displayableNode || vtkMRMLSliceLogic::IsSliceModelNode(displayableNode))
       {
       continue;
       }

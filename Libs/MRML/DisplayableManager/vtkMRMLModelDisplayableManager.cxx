@@ -24,6 +24,7 @@
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
+#include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLSubjectHierarchyConstants.h>
 #include <vtkMRMLSubjectHierarchyNode.h>
@@ -899,8 +900,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
   vtkMRMLScene *scene = this->GetMRMLScene();
   vtkMRMLNode *node = nullptr;
   std::vector<vtkMRMLDisplayableNode *> slices;
-  static const int NUMBER_OF_SLICE_MODEL_NODES = 3;
-  static const char* SLICE_MODEL_NODE_NAMES[NUMBER_OF_SLICE_MODEL_NODES] = { "Red Volume Slice", "Green Volume Slice", "Yellow Volume Slice" };
+  std::vector<vtkMRMLDisplayableNode *> nonSlices;
 
   // find volume slices
   bool clearDisplayedModels = scene ? false : true;
@@ -913,15 +913,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
     vtkMRMLDisplayableNode *model = vtkMRMLDisplayableNode::SafeDownCast(node);
     // render slices last so that transparent objects are rendered in front of them
     bool isSliceNode = false;
-    for (int sliceIndex = 0; sliceIndex < NUMBER_OF_SLICE_MODEL_NODES; sliceIndex++)
-      {
-      if (!strcmp(model->GetName(), SLICE_MODEL_NODE_NAMES[sliceIndex]))
-        {
-        isSliceNode = true;
-        break;
-        }
-      }
-    if (isSliceNode)
+    if (vtkMRMLSliceLogic::IsSliceModelNode(model))
       {
       slices.push_back(model);
 
@@ -931,25 +923,24 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
         vtkMRMLDisplayNode *dnode = model->GetNthDisplayNode(i);
         if (dnode && this->Internal->DisplayedActors.find(dnode->GetID()) == this->Internal->DisplayedActors.end())
           {
+          // it is a new slice display node, therefore we need to remove all existing model node actors
+          // and insert this slice actor before them
           clearDisplayedModels = true;
           break;
           }
         }
       }
-    if (clearDisplayedModels && slices.size() == NUMBER_OF_SLICE_MODEL_NODES)
+    else
       {
-      // We have found all the slice nodes and we'll remove all existing display nodes anyway,
-      // so there is no point in continuing.
-      break;
+      nonSlices.push_back(model);
       }
     }
 
   if (clearDisplayedModels)
     {
-    std::map<std::string, vtkProp3D *>::iterator iter;
-    for (iter = this->Internal->DisplayedActors.begin(); iter != this->Internal->DisplayedActors.end(); iter++)
+    for (std::pair< const std::string, vtkProp3D* > iter : this->Internal->DisplayedActors)
       {
-      this->GetRenderer()->RemoveViewProp(iter->second);
+      this->GetRenderer()->RemoveViewProp(iter.second);
       }
     this->RemoveModelObservers(1);
     this->Internal->DisplayedActors.clear();
@@ -959,9 +950,8 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
     }
 
   // render slices first
-  for (unsigned int i=0; i<slices.size(); i++)
+  for (vtkMRMLDisplayableNode * model : slices)
     {
-    vtkMRMLDisplayableNode *model = slices[i];
     // add nodes that are not in the list yet
     int ndnodes = model->GetNumberOfDisplayNodes();
     for (int i = 0; i<ndnodes; i++)
@@ -977,27 +967,9 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
     }
 
   // render the rest of the models
-  for (int n=0; n<nnodes; n++)
+  for (vtkMRMLDisplayableNode* model : nonSlices)
     {
-    vtkMRMLDisplayableNode *model = vtkMRMLDisplayableNode::SafeDownCast(dnodes[n]);
-    // render slices last so that transparent objects are rendered in front of them
-    if (model)
-      {
-      bool isSliceNode = false;
-      for (int sliceIndex = 0; sliceIndex < NUMBER_OF_SLICE_MODEL_NODES; sliceIndex++)
-        {
-        if (!strcmp(model->GetName(), SLICE_MODEL_NODE_NAMES[sliceIndex]))
-          {
-          isSliceNode = true;
-          break;
-          }
-        }
-      if (isSliceNode)
-        {
-        continue;
-        }
-      this->UpdateModifiedModel(model);
-      }
+    this->UpdateModifiedModel(model);
     }
   this->Internal->IsUpdatingModelsFromMRML = false;
 }
