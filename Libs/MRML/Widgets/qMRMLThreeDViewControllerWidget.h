@@ -44,6 +44,8 @@ class QMRML_WIDGETS_EXPORT qMRMLThreeDViewControllerWidget
 {
   Q_OBJECT
   QVTK_OBJECT
+  Q_PROPERTY(QColor viewColor READ viewColor WRITE setViewColor)
+  Q_PROPERTY(QString viewLabel READ viewLabel WRITE setViewLabel)
 public:
   /// Superclass typedef
   typedef qMRMLViewControllerBar Superclass;

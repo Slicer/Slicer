@@ -1864,13 +1864,6 @@ QString qMRMLSliceControllerWidget::sliceViewLabel()const
 void qMRMLSliceControllerWidget::setSliceViewColor(const QColor& newSliceViewColor)
 {
   Q_D(qMRMLSliceControllerWidget);
-
-  if (d->MRMLSliceNode)
-    {
-    qCritical() << "qMRMLSliceControllerWidget::setSliceViewColor should be called before setMRMLSliceNode";
-    return;
-    }
-
   d->setColor(newSliceViewColor);
 }
 

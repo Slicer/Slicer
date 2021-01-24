@@ -878,13 +878,6 @@ void qMRMLThreeDViewControllerWidget::setRulerColor(int newRulerColor)
 void qMRMLThreeDViewControllerWidget::setViewColor(const QColor& newViewColor)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
-
-  if (d->ViewNode)
-    {
-    qCritical() << "qMRMLThreeDViewControllerWidget::setViewColor should be called before setMRMLSliceNode";
-    return;
-    }
-
   d->setColor(newViewColor);
 }
 
