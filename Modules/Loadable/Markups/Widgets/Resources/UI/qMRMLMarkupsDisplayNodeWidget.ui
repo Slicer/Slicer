@@ -681,5 +681,37 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>curveLineSizeIsAbsoluteButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>curveLineThicknessSliderWidget</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>227</x>
+     <y>249</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>270</x>
+     <y>257</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>curveLineSizeIsAbsoluteButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>curveLineDiameterSliderWidget</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>249</x>
+     <y>245</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>315</x>
+     <y>245</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>
