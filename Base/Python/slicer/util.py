@@ -412,14 +412,21 @@ def updateParameterEditWidgetsFromNode(parameterEditWidgets, parameterNode):
 
   for (widget, parameterName) in parameterEditWidgets:
     widgetClassName = widget.className()
+    parameterValue = parameterNode.GetParameter(parameterName)
     if widgetClassName=="QSpinBox":
-      widget.value = int(float(parameterNode.GetParameter(parameterName)))
+      if parameterValue:
+        widget.value = int(float(parameterValue))
+      else:
+        widget.value = 0
     if widgetClassName=="ctkSliderWidget":
-      widget.value = float(parameterNode.GetParameter(parameterName))
+      if parameterValue:
+        widget.value = float(parameterValue)
+      else:
+        widget.value = 0.0
     elif widgetClassName=="QCheckBox" or widgetClassName=="QPushButton":
-      widget.checked = parameterNode.GetParameter(parameterName) == "true"
+      widget.checked = (parameterValue == "true")
     elif widgetClassName=="QComboBox":
-      widget.setCurrentText(parameterNode.GetParameter(parameterName))
+      widget.setCurrentText(parameterValue)
     elif widgetClassName=="qMRMLNodeComboBox":
       widget.currentNodeID = parameterNode.GetNodeReferenceID(parameterName)
 
