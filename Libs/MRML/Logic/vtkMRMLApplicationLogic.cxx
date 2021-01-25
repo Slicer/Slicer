@@ -396,7 +396,16 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
   // Add default slice orientation presets
   vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(newScene);
 
-  this->Superclass::SetMRMLSceneInternal(newScene);
+  vtkNew<vtkIntArray> sceneEvents;
+  sceneEvents->InsertNextValue(vtkMRMLScene::StartBatchProcessEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::EndBatchProcessEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::StartCloseEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::EndCloseEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::StartImportEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::EndImportEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::StartRestoreEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::EndRestoreEvent);
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents.GetPointer());
 
   this->Internal->SliceLinkLogic->SetMRMLScene(newScene);
   this->Internal->ViewLinkLogic->SetMRMLScene(newScene);
@@ -863,4 +872,40 @@ vtkMRMLAbstractLogic* vtkMRMLApplicationLogic::GetModuleLogic(const char* module
     return nullptr;
     }
   return this->Internal->ModuleLogicMap[moduleName];
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::OnMRMLSceneStartBatchProcess()
+{
+  this->PauseRender();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::OnMRMLSceneEndBatchProcess()
+{
+  this->ResumeRender();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::OnMRMLSceneStartImport()
+{
+  this->PauseRender();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::OnMRMLSceneEndImport()
+{
+  this->ResumeRender();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::OnMRMLSceneStartRestore()
+{
+  this->PauseRender();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::OnMRMLSceneEndRestore()
+{
+  this->ResumeRender();
 }

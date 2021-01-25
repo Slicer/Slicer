@@ -912,7 +912,51 @@ void vtkMRMLModelSliceDisplayableManager::UpdateFromMRML()
     vtkDebugMacro( "vtkMRMLModelSliceDisplayableManager->UpdateFromMRML: Scene is not set.");
     return;
     }
-  this->Internal->ClearDisplayableNodes();
+
+  // Find the display nodes that need to be removed
+  // (not deleted immediately because it would invalidate the pipeline iteration)
+  std::set< vtkMRMLDisplayableNode* > displayableNodesToRemove;
+  std::deque< vtkMRMLDisplayNode* > displayNodesToRemove;
+  for (auto modelToDisplayNode : this->Internal->DisplayPipelines)
+    {
+    vtkMRMLDisplayNode* displayNode = modelToDisplayNode.first;
+    if (!displayNode)
+      {
+      continue;
+      }
+    if (!scene->IsNodePresent(displayNode))
+      {
+      // the display node is deleted
+      displayNodesToRemove.push_back(displayNode);
+      continue;
+      }
+    vtkMRMLDisplayableNode* displayableNode = displayNode->GetDisplayableNode();
+    if (displayableNodesToRemove.find(displayableNode) != displayableNodesToRemove.end())
+      {
+      // already marked for removal
+      continue;
+      }
+    if (!this->Internal->UseDisplayableNode(displayableNode))
+      {
+      // the displayable node is deleted or not applicable anymore
+      displayableNodesToRemove.insert(displayableNode);
+      continue;
+      }
+    if (!this->Internal->UseDisplayNode(displayNode))
+      {
+      // the displayable node is deleted or not applicable anymore
+      displayNodesToRemove.push_back(displayNode);
+      continue;
+      }
+    }
+  for (vtkMRMLDisplayableNode* displayableNodeToRemove : displayableNodesToRemove)
+    {
+    this->RemoveDisplayableNode(displayableNodeToRemove);
+    }
+  for (vtkMRMLDisplayNode* displayNodeToRemove : displayNodesToRemove)
+    {
+    this->Internal->RemoveDisplayNode(displayNodeToRemove);
+    }
 
   vtkMRMLDisplayableNode* mNode = nullptr;
   std::vector<vtkMRMLNode *> mNodes;

@@ -260,6 +260,13 @@ protected:
 
   void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
+  void OnMRMLSceneStartBatchProcess() override;
+  void OnMRMLSceneEndBatchProcess() override;
+  void OnMRMLSceneStartImport() override;
+  void OnMRMLSceneEndImport() override;
+  void OnMRMLSceneStartRestore() override;
+  void OnMRMLSceneEndRestore() override;
+
 private:
 
   vtkMRMLApplicationLogic(const vtkMRMLApplicationLogic&) = delete;
