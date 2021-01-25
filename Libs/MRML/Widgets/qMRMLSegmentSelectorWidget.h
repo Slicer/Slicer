@@ -52,6 +52,8 @@ public:
   Q_PROPERTY(bool multiSelection READ multiSelection WRITE setMultiSelection)
   Q_PROPERTY(bool horizontalLayout READ horizontalLayout WRITE setHorizontalLayout)
   Q_PROPERTY(bool selectNodeUponCreation READ selectNodeUponCreation WRITE setSelectNodeUponCreation)
+  Q_PROPERTY(QString currentNodeID READ currentNodeID WRITE setCurrentNodeID DESIGNABLE false)
+  Q_PROPERTY(QString currentSegmentID READ currentSegmentID WRITE setCurrentSegmentID DESIGNABLE false)
 
 public:
   /// Superclass typedef
@@ -65,11 +67,11 @@ public:
   /// Get currently selected segmentation MRML node
   Q_INVOKABLE vtkMRMLNode* currentNode();
   /// Get currently selected segmentation node's ID
-  Q_INVOKABLE QString currentNodeID();
+  QString currentNodeID();
 
   /// Get segment ID of selected segment.
   /// Returns empty string if multi-selection is enabled (when \sa multiSelection is true)
-  Q_INVOKABLE QString currentSegmentID();
+  QString currentSegmentID();
   /// Get segment IDs of selected segments.
   /// Returns empty string in case of single selection (when \sa multiSelection is false)
   Q_INVOKABLE QStringList selectedSegmentIDs();
@@ -119,11 +121,11 @@ public slots:
   /// Set segmentation MRML node
   Q_INVOKABLE void setCurrentNode(vtkMRMLNode* node);
   /// Set segmentation MRML node by its ID
-  Q_INVOKABLE void setCurrentNodeID(const QString& nodeID);
+  void setCurrentNodeID(const QString& nodeID);
 
   /// Select segment with given ID.
   /// Does nothing in case multi-selection is enabled (when \sa multiSelection is true)
-  Q_INVOKABLE void setCurrentSegmentID(QString segmentID);
+  void setCurrentSegmentID(QString segmentID);
   /// Select segments with given IDs.
   /// Does nothing in case of single selection (when \sa multiSelection is false)
   Q_INVOKABLE void setSelectedSegmentIDs(QStringList segmentIDList);

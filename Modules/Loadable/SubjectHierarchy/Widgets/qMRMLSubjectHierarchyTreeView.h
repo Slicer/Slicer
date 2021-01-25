@@ -69,6 +69,8 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
   Q_PROPERTY(QString nameFilter READ nameFilter WRITE setNameFilter)
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
   Q_PROPERTY(QStringList hideChildNodeTypes READ hideChildNodeTypes WRITE setHideChildNodeTypes)
+  Q_PROPERTY(vtkIdType currentItem READ currentItem WRITE setCurrentItem DESIGNABLE false)
+  Q_PROPERTY(QList<vtkIdType> currentItems READ currentItems WRITE setCurrentItems DESIGNABLE false)
 
 public:
   typedef QTreeView Superclass;
@@ -80,7 +82,7 @@ public:
   Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
 
   /// Get current (=selected) item. If there are multiple items selected, then the first one is returned
-  Q_INVOKABLE vtkIdType currentItem()const;
+  vtkIdType currentItem()const;
   /// Get current (=selected) items.
   QList<vtkIdType> currentItems();
   /// Get current (=selected) items.
