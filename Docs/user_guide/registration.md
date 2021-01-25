@@ -4,7 +4,7 @@ Goal of registration is to align position and orientation of images, models, and
 
 ## Manual registration
 
-Any data nodes (images, models, markups, etc.) can be placed under a transform and the transform can be adjusted interactively in [Transforms](https://www.slicer.org/wiki/Documentation/Nightly/Modules/Transforms) module (using sliders) or in 3D views.
+Any data nodes (images, models, markups, etc.) can be placed under a transform and the transform can be adjusted interactively in [Transforms](modules/transforms) module (using sliders) or in 3D views.
 
 Advantage of this approach is that it is simple, applicable to any data type, and approximate alignment can be reached very quickly. However, achieving accurate registration using this approach is tedious and time-consuming, because many fine adjustments steps are needed, with visual checks in multiple orientations after each adjustment.
 
