@@ -441,7 +441,10 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
         break;
         }
       }
-
+    if (!pointVisible)
+      {
+      continue;
+      }
     if (interactionEventData->IsDisplayPositionValid())
       {
       double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(centerPosWorld)
@@ -451,7 +454,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
       this->Renderer->GetDisplayPoint(centerPosDisplay);
       centerPosDisplay[2] = 0.0;
       double dist2 = vtkMath::Distance2BetweenPoints(centerPosDisplay, displayPosition3);
-      if (dist2 < pixelTolerance * pixelTolerance && dist2 < closestDistance2 && pointVisible)
+      if (dist2 < pixelTolerance * pixelTolerance && dist2 < closestDistance2)
         {
         closestDistance2 = dist2;
         foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentControlPoint;
@@ -464,7 +467,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
       double worldTolerance = this->ControlPointSize / 2.0 +
         this->PickingTolerance / interactionEventData->GetWorldToPhysicalScale();
       double dist2 = vtkMath::Distance2BetweenPoints(centerPosWorld, worldPosition);
-      if (dist2 < worldTolerance * worldTolerance && dist2 < closestDistance2 && pointVisible)
+      if (dist2 < worldTolerance * worldTolerance && dist2 < closestDistance2)
         {
         closestDistance2 = dist2;
         foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentControlPoint;

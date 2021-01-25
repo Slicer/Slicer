@@ -1303,7 +1303,21 @@ void qMRMLLayoutManager::setRenderPaused(bool pause)
   foreach(const QString& viewName, sliceViewFactory->viewNodeNames())
     {
     ctkVTKAbstractView* view = this->sliceWidget(viewName)->sliceView();
-    view->setRenderPaused(pause);
+    if (!pause && !view->isRenderPaused())
+      {
+      // This view is already resumed and a resume is requested.
+      // This is probably because the view has just been added
+      // and so it missed a few PauseRender requests.
+      // Do not try to resume render to avoid logging of a warning,
+      // and just log a debug message here to help with troubleshooting if
+      // any problem comes up related to pausing rendering.
+      qDebug() << Q_FUNC_INFO << "Resume render request is ignored for view "
+        << viewName << ", probably the view has just been created";
+      }
+    else
+      {
+      view->setRenderPaused(pause);
+      }
     }
 
   qMRMLLayoutViewFactory* threeDViewFactory = this->mrmlViewFactory("vtkMRMLViewNode");

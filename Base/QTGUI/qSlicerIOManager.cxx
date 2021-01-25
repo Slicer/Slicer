@@ -429,7 +429,13 @@ bool qSlicerIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
   vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   Q_D(qSlicerIOManager);
-
+  qSlicerApplication* application = qSlicerApplication::application();
+  if (application)
+    {
+    // speed up data loading by disabling re-rendering
+    // (it can make a big difference if hundreds of nodes are loaded)
+    application->pauseRender();
+    }
   bool needStop = d->startProgressDialog(1);
   d->ProgressDialog->setLabelText(
     "Loading file " + parameters.value("fileName").toString() + " ...");
@@ -443,6 +449,10 @@ bool qSlicerIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
     {
     d->stopProgressDialog();
     }
+  if (application)
+    {
+    application->resumeRender();
+    }
   return res;
 }
 
@@ -452,7 +462,13 @@ bool qSlicerIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
   vtkCollection* loadedNodes, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   Q_D(qSlicerIOManager);
-
+  qSlicerApplication* application = qSlicerApplication::application();
+  if (application)
+    {
+    // speed up data loading by disabling re-rendering
+    // (it can make a big difference if hundreds of nodes are loaded)
+    application->pauseRender();
+    }
   bool needStop = d->startProgressDialog(files.count());
   bool success = true;
   foreach(qSlicerIO::IOProperties fileProperties, files)
@@ -479,7 +495,10 @@ bool qSlicerIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
     {
     d->stopProgressDialog();
     }
-
+  if (application)
+    {
+    application->resumeRender();
+    }
   return success;
 }
 
