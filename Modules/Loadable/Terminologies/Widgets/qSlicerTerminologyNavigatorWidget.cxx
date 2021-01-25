@@ -317,8 +317,14 @@ void qSlicerTerminologyNavigatorWidgetPrivate::init()
 //-----------------------------------------------------------------------------
 vtkSlicerTerminologiesModuleLogic* qSlicerTerminologyNavigatorWidgetPrivate::terminologyLogic()
 {
-  vtkSlicerTerminologiesModuleLogic* terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(
-    qSlicerCoreApplication::application()->moduleLogic("Terminologies"));
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  if (!app)
+    {
+    // this happens when the widget is instantiated by Qt Designer plugin
+    qCritical() << Q_FUNC_INFO << ": Terminologies logic is not found (not a Slicer core application instance)";
+    return nullptr;
+    }
+  vtkSlicerTerminologiesModuleLogic* terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(app->moduleLogic("Terminologies"));
   if (!terminologiesLogic)
     {
     qCritical() << Q_FUNC_INFO << ": Terminologies logic is not found";

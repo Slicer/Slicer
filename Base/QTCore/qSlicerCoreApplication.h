@@ -105,7 +105,9 @@ public:
   qSlicerCoreApplication(int &argc, char **argv);
   ~qSlicerCoreApplication() override;
 
-  /// Return a reference to the application singleton
+  /// Return a reference to the application singleton.
+  /// It returns nullptr if the current application is not based on qSlicerCoreApplication class
+  /// (for example, in Qt Designer executable loads widget plugins).
   static qSlicerCoreApplication* application();
 
   /// Used in addition to existing QCoreApplication attribute.
