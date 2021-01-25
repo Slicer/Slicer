@@ -195,6 +195,8 @@ If you have trouble importing DICOM data here are some steps to try:
 - Make sure the Slicer temporary folder is writeable. Temporary folder can be selected in menu: Edit / Application Settings / Modules / Temporary directory.
 - Try moving the data and the database directory to a path that includes only US English characters (ASCII) to avoid possible parsing errors. No special, international characters are allowed.
 - Make sure the database directory is on a drive that has enough free space (1GB free space should be enough). If you are running out of space then you may see this error message in an "Internal Error" popup window: *Exception thrown in event: Calling methods on uninitialized ctkDICOMItem*
+- Import the files from local storage - physical drive or USB stick connected directly to the computer (not network drive, shared drive, cloud drive, google drive, virtual file system, etc.)
+- Make sure filename is not very long (below a few ten characters) and full file path on Windows is below about 200 characters
 - To confirm that your installation of Sicer is reading data correctly, try loading other data, such as [this anonymized sample DICOM series (CT scan)](https://s3.amazonaws.com/IsomicsPublic/SampleData/QIN-HEADNECK-01-0024-CT.zip)
 - Try import using different DICOM readers: in Application settings / DICOM / DICOMScalarVolumePlugin / DICOM reader approach: switch from DCMTK to GDCM (or GDCM to DCMTK), restart Slicer, and attempt to load the data set again.
 - See if the SlicerDcm2nii extension will convert your images. You can install this module using the Extension manager. Once installed you will be able to use the Dcm2niixGUI module from slicer.
