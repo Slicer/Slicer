@@ -85,7 +85,7 @@ int qSlicerModelsModuleWidgetTest1( int argc, char * argv[] )
   shModuleLogic->SetMRMLScene(scene);
   QScopedPointer<qSlicerSubjectHierarchyPluginLogic> pluginLogic(new qSlicerSubjectHierarchyPluginLogic());
   pluginLogic->setMRMLScene(scene);
-  qSlicerSubjectHierarchyPluginHandler::instance()->setPluginLogic(pluginLogic.get());
+  qSlicerSubjectHierarchyPluginHandler::instance()->setPluginLogic(pluginLogic.data());
   qSlicerSubjectHierarchyPluginHandler::instance()->setMRMLScene(scene);
 
   // Add a model node
