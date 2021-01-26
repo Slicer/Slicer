@@ -1337,11 +1337,6 @@ void qSlicerSaveDataDialogPrivate::updateOptionsWidget(int row)
 void qSlicerSaveDataDialogPrivate::updateStatusIconFromStorageNode(int row, bool success)
 {
   vtkMRMLStorableNode * const node = vtkMRMLStorableNode::SafeDownCast(this->object(row));
-
-  QString messagesStr;
-  bool warningFound = false;
-  bool errorFound = false;
-
   vtkMRMLMessageCollection* userMessages = nullptr;
   if (node && node->GetStorageNode())
     {

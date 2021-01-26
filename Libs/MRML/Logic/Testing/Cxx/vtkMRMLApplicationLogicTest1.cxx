@@ -301,6 +301,7 @@ int AddModuleLogicTest()
     appLogic->SetModuleLogic(module_name.c_str(), nullptr);
 
     const vtkMRMLAbstractLogic* retval = appLogic->GetModuleLogic((module_name).c_str());
+    CHECK_NULL(retval);
   }
 
   return EXIT_SUCCESS;

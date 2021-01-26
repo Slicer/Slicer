@@ -912,7 +912,6 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
     node = dnodes[n];
     vtkMRMLDisplayableNode *model = vtkMRMLDisplayableNode::SafeDownCast(node);
     // render slices last so that transparent objects are rendered in front of them
-    bool isSliceNode = false;
     if (vtkMRMLSliceLogic::IsSliceModelNode(model))
       {
       slices.push_back(model);
