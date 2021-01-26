@@ -75,59 +75,92 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  of << " backgroundVolumeID=\"" <<
-   (this->BackgroundVolumeID ? this->BackgroundVolumeID : "") << "\"";
-  of << " foregroundVolumeID=\"" <<
-   (this->ForegroundVolumeID ? this->ForegroundVolumeID : "") << "\"";
-  of << " labelVolumeID=\"" <<
-   (this->LabelVolumeID ? this->LabelVolumeID : "") << "\"";
+  vtkMRMLWriteXMLBeginMacro(of);
+  vtkMRMLWriteXMLStringMacro(backgroundVolumeID, BackgroundVolumeID);
+  vtkMRMLWriteXMLStringMacro(foregroundVolumeID, ForegroundVolumeID);
+  vtkMRMLWriteXMLStringMacro(labelVolumeID, LabelVolumeID);
+  vtkMRMLWriteXMLIntMacro(compositing, Compositing);
+  vtkMRMLWriteXMLFloatMacro(foregroundOpacity, ForegroundOpacity);
+  vtkMRMLWriteXMLFloatMacro(labelOpacity, LabelOpacity);
+  vtkMRMLWriteXMLIntMacro(linkedControl, LinkedControl);
+  vtkMRMLWriteXMLIntMacro(fiducialVisibility, FiducialVisibility);
+  vtkMRMLWriteXMLIntMacro(fiducialLabelVisibility, FiducialLabelVisibility);
+  vtkMRMLWriteXMLIntMacro(sliceIntersectionVisibility, SliceIntersectionVisibility);
+  vtkMRMLWriteXMLStringMacro(layoutName, LayoutName);
+  vtkMRMLWriteXMLEnumMacro(annotationSpace, AnnotationSpace);
+  vtkMRMLWriteXMLEnumMacro(annotationMode, AnnotationMode);
+  vtkMRMLWriteXMLIntMacro(doPropagateVolumeSelection, DoPropagateVolumeSelection);
+  vtkMRMLWriteXMLEndMacro();
+}
 
-  of << " compositing=\"" << this->Compositing << "\"";
-  of << " foregroundOpacity=\"" << this->ForegroundOpacity << "\"";
-  of << " labelOpacity=\"" << this->LabelOpacity << "\"";
-  of << " linkedControl=\"" << this->LinkedControl << "\"";
-  of << " fiducialVisibility=\"" << this->FiducialVisibility << "\"";
-  of << " fiducialLabelVisibility=\"" << this->FiducialLabelVisibility << "\"";
-  of << " sliceIntersectionVisibility=\"" << this->SliceIntersectionVisibility << "\"";
-  if (this->GetLayoutName() != nullptr)
+//-----------------------------------------------------------
+const char* vtkMRMLSliceCompositeNode::GetAnnotationSpaceAsString(int id)
     {
-    of << " layoutName=\"" << this->GetLayoutName() << "\"";
-    }
-
-  if ( this->AnnotationSpace == vtkMRMLSliceCompositeNode::XYZ)
-    {
-    of << " annotationSpace=\"" << "xyz" << "\"";
-    }
-  else if ( this->AnnotationSpace == vtkMRMLSliceCompositeNode::IJK)
-    {
-    of << " annotationSpace=\"" << "ijk" << "\"";
-    }
-  else if ( this->AnnotationSpace == vtkMRMLSliceCompositeNode::RAS)
-    {
-    of << " annotationSpace=\"" << "RAS" << "\"";
-    }
-  else if ( this->AnnotationSpace == vtkMRMLSliceCompositeNode::IJKAndRAS)
-    {
-    of << " annotationSpace=\"" << "IJKAndRAS" << "\"";
+  switch (id)
+  {
+  case vtkMRMLSliceCompositeNode::XYZ: return "xyz";
+  case vtkMRMLSliceCompositeNode::IJK: return "ijk";
+  case vtkMRMLSliceCompositeNode::RAS: return "RAS";
+  case vtkMRMLSliceCompositeNode::IJKAndRAS: return "IJKAndRAS";
+  default:
+    // invalid id
+    return "";
+  }
     }
 
-  if ( this->AnnotationMode == vtkMRMLSliceCompositeNode::NoAnnotation )
+//-----------------------------------------------------------
+int vtkMRMLSliceCompositeNode::GetAnnotationSpaceFromString(const char* name)
+{
+  if (name == nullptr)
     {
-    of << " annotationMode=\"" << "NoAnnotation" << "\"";
+    // invalid name
+    return -1;
     }
-  else if ( this->AnnotationMode == vtkMRMLSliceCompositeNode::All )
+  for (int i = 0; i < AnnotationSpace_Last; i++)
     {
-    of << " annotationMode=\"" << "All" << "\"";
-    }
-  if ( this->AnnotationMode == vtkMRMLSliceCompositeNode::LabelValuesOnly )
+    if (strcmp(name, this->GetAnnotationSpaceAsString(i)) == 0)
     {
-    of << " annotationMode=\"" << "LabelValuesOnly" << "\"";
+      // found a matching name
+      return i;
     }
-  if ( this->AnnotationMode == vtkMRMLSliceCompositeNode::LabelAndVoxelValuesOnly )
+  }
+  // unknown name
+  return -1;
+}
+
+//-----------------------------------------------------------
+const char* vtkMRMLSliceCompositeNode::GetAnnotationModeAsString(int id)
+{
+  switch (id)
+  {
+  case vtkMRMLSliceCompositeNode::NoAnnotation: return "NoAnnotation";
+  case vtkMRMLSliceCompositeNode::All: return "All";
+  case vtkMRMLSliceCompositeNode::LabelValuesOnly: return "LabelValuesOnly";
+  case vtkMRMLSliceCompositeNode::LabelAndVoxelValuesOnly: return "LabelAndVoxelValuesOnly";
+  default:
+    // invalid id
+    return "";
+  }
+}
+
+//-----------------------------------------------------------
+int vtkMRMLSliceCompositeNode::GetAnnotationModeFromString(const char* name)
+{
+  if (name == nullptr)
+  {
+    // invalid name
+    return -1;
+  }
+  for (int i = 0; i < AnnotationMode_Last; i++)
+  {
+    if (strcmp(name, this->GetAnnotationModeAsString(i)) == 0)
     {
-    of << " annotationMode=\"" << "LabelAndVoxelValuesOnly" << "\"";
+      // found a matching name
+      return i;
     }
-  of << " doPropagateVolumeSelection=\"" << (int)this->DoPropagateVolumeSelection << "\"";
+  }
+  // unknown name
+  return -1;
 }
 
 //-----------------------------------------------------------
@@ -212,128 +245,23 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
 
   Superclass::ReadXMLAttributes(atts);
 
-  const char* attName;
-  const char* attValue;
-  while (*atts != nullptr)
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName, "backgroundVolumeID"))
-      {
-      if (attValue && *attValue == '\0')
-        {
-        this->SetBackgroundVolumeID(nullptr);
-        }
-      else
-        {
-        this->SetBackgroundVolumeID(attValue);
-        //this->Scene->AddReferencedNodeID(this->BackgroundVolumeID, this);
-        }
-      }
-    else if (!strcmp(attName, "foregroundVolumeID"))
-      {
-      if (attValue && *attValue == '\0')
-        {
-        this->SetForegroundVolumeID(nullptr);
-        }
-      else
-        {
-        this->SetForegroundVolumeID(attValue);
-        //this->Scene->AddReferencedNodeID(this->ForegroundVolumeID, this);
-        }
-      }
-    else if (!strcmp(attName, "labelVolumeID"))
-      {
-      if (attValue && *attValue == '\0')
-        {
-        this->SetLabelVolumeID(nullptr);
-        }
-      else
-        {
-        this->SetLabelVolumeID(attValue);
-        //this->Scene->AddReferencedNodeID(this->LabelVolumeID, this);
-        }
-      }
-    else if (!strcmp(attName, "compositing"))
-      {
-      this->SetCompositing( atoi(attValue) );
-      }
-    else if (!strcmp(attName, "foregroundOpacity"))
-      {
-      this->SetForegroundOpacity( atof(attValue) );
-      }
-    else if (!strcmp(attName, "labelOpacity"))
-      {
-      this->SetLabelOpacity( atof(attValue) );
-      }
-    else if (!strcmp(attName, "linkedControl"))
-      {
-      this->SetLinkedControl( atoi(attValue) );
-      }
-    else if (!strcmp(attName, "hotLinkedControl"))
-      {
-      this->SetHotLinkedControl( atoi(attValue) );
-      }
-    else if (!strcmp(attName, "fiducialVisibility"))
-      {
-      this->SetFiducialVisibility( atoi(attValue) );
-      }
-    else if (!strcmp(attName, "fiducialLabelVisibility"))
-      {
-      this->SetFiducialLabelVisibility( atoi(attValue) );
-      }
-    else if (!strcmp(attName, "sliceIntersectionVisibility"))
-      {
-      this->SetSliceIntersectionVisibility( atoi(attValue) );
-      }
-   else if (!strcmp(attName, "layoutName"))
-      {
-      this->SetLayoutName( attValue );
-      }
-
-    else if(!strcmp (attName, "annotationSpace" ))
-      {
-      if (!strcmp (attValue, "xyz"))
-        {
-        this->SetAnnotationSpace (vtkMRMLSliceCompositeNode::XYZ);
-        }
-      else if (!strcmp (attValue, "ijk"))
-        {
-        this->SetAnnotationSpace (vtkMRMLSliceCompositeNode::IJK);
-        }
-      else if (!strcmp (attValue, "RAS"))
-        {
-        this->SetAnnotationSpace  (vtkMRMLSliceCompositeNode::RAS);
-        }
-      else if (!strcmp (attValue, "IJKAndRAS"))
-        {
-        this->SetAnnotationSpace  (vtkMRMLSliceCompositeNode::IJKAndRAS);
-        }
-      }
-    else if(!strcmp (attName, "annotationMode" ))
-      {
-      if (!strcmp (attValue, "NoAnnotation"))
-        {
-        this->SetAnnotationMode (vtkMRMLSliceCompositeNode::NoAnnotation);
-        }
-      else if (!strcmp (attValue, "All"))
-        {
-        this->SetAnnotationMode (vtkMRMLSliceCompositeNode::All);
-        }
-      else if (!strcmp (attValue, "LabelValuesOnly"))
-        {
-        this->SetAnnotationMode (vtkMRMLSliceCompositeNode::LabelValuesOnly);
-        }
-      else if (!strcmp (attValue, "LabelAndVoxelValuesOnly"))
-        {
-        this->SetAnnotationMode (vtkMRMLSliceCompositeNode::LabelAndVoxelValuesOnly);
-        }
-      }
-    else if(!strcmp (attName, "doPropagateVolumeSelection" ))
-      {
-      this->SetDoPropagateVolumeSelection(atoi(attValue)?true:false);
-      }
-    }
+  vtkMRMLReadXMLBeginMacro(atts);
+  vtkMRMLReadXMLStringMacro(backgroundVolumeID, BackgroundVolumeID);
+  vtkMRMLReadXMLStringMacro(foregroundVolumeID, ForegroundVolumeID);
+  vtkMRMLReadXMLStringMacro(labelVolumeID, LabelVolumeID);
+  vtkMRMLReadXMLIntMacro(compositing, Compositing);
+  vtkMRMLReadXMLFloatMacro(foregroundOpacity, ForegroundOpacity);
+  vtkMRMLReadXMLFloatMacro(labelOpacity, LabelOpacity);
+  vtkMRMLReadXMLIntMacro(linkedControl, LinkedControl);
+  vtkMRMLReadXMLIntMacro(hotLinkedControl, HotLinkedControl);
+  vtkMRMLReadXMLIntMacro(fiducialVisibility, FiducialVisibility);
+  vtkMRMLReadXMLIntMacro(fiducialLabelVisibility, FiducialLabelVisibility);
+  vtkMRMLReadXMLIntMacro(sliceIntersectionVisibility, SliceIntersectionVisibility);
+  vtkMRMLReadXMLStringMacro(layoutName, LayoutName);
+  vtkMRMLReadXMLEnumMacro(annotationSpace, AnnotationSpace);
+  vtkMRMLReadXMLEnumMacro(annotationMode, AnnotationMode);
+  vtkMRMLReadXMLIntMacro(doPropagateVolumeSelection, DoPropagateVolumeSelection);
+  vtkMRMLReadXMLEndMacro();
 
   this->EndModify(disabledModify);
 }
@@ -346,19 +274,21 @@ void vtkMRMLSliceCompositeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
 
   vtkMRMLSliceCompositeNode *node = vtkMRMLSliceCompositeNode::SafeDownCast(anode);
 
-  this->SetBackgroundVolumeID(node->GetBackgroundVolumeID());
-  this->SetForegroundVolumeID(node->GetForegroundVolumeID());
-  this->SetLabelVolumeID(node->GetLabelVolumeID());
-  this->SetCompositing(node->GetCompositing());
-  this->SetForegroundOpacity(node->GetForegroundOpacity());
-  this->SetLabelOpacity(node->GetLabelOpacity());
-  this->SetLinkedControl (node->GetLinkedControl());
-  this->SetHotLinkedControl (node->GetHotLinkedControl());
-  this->SetFiducialVisibility ( node->GetFiducialVisibility ( ) );
-  this->SetFiducialLabelVisibility ( node->GetFiducialLabelVisibility ( ) );
-  this->SetAnnotationSpace ( node->GetAnnotationSpace() );
-  this->SetAnnotationMode ( node->GetAnnotationMode() );
-  this->SetDoPropagateVolumeSelection (node->GetDoPropagateVolumeSelection());
+  vtkMRMLCopyBeginMacro(node);
+  vtkMRMLCopyStringMacro(BackgroundVolumeID);
+  vtkMRMLCopyStringMacro(ForegroundVolumeID);
+  vtkMRMLCopyStringMacro(LabelVolumeID);
+  vtkMRMLCopyIntMacro(Compositing);
+  vtkMRMLCopyFloatMacro(ForegroundOpacity);
+  vtkMRMLCopyFloatMacro(LabelOpacity);
+  vtkMRMLCopyIntMacro(LinkedControl);
+  vtkMRMLCopyIntMacro(HotLinkedControl);
+  vtkMRMLCopyIntMacro(FiducialVisibility);
+  vtkMRMLCopyIntMacro(FiducialLabelVisibility);
+  vtkMRMLCopyEnumMacro(AnnotationSpace);
+  vtkMRMLCopyEnumMacro(AnnotationMode);
+  vtkMRMLCopyIntMacro(DoPropagateVolumeSelection);
+  vtkMRMLCopyEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -366,23 +296,23 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
 
-  os << indent << "BackgroundVolumeID: " <<
-   (this->BackgroundVolumeID ? this->BackgroundVolumeID : "(none)") << "\n";
-  os << indent << "ForegroundVolumeID: " <<
-   (this->ForegroundVolumeID ? this->ForegroundVolumeID : "(none)") << "\n";
-  os << indent << "LabelVolumeID: " <<
-    (this->LabelVolumeID ? this->LabelVolumeID : "(none)") << "\n";
-  os << indent << "Compositing: " << this->Compositing << "\n";
-  os << indent << "ForegroundOpacity: " << this->ForegroundOpacity << "\n";
-  os << indent << "LabelOpacity: " << this->LabelOpacity << "\n";
-  os << indent << "LinkedControl: " << this->LinkedControl << "\n";
-  os << indent << "HotLinkedControl: " << this->HotLinkedControl << "\n";
-  os << indent << "FiducialVisibility: " << this->FiducialVisibility << "\n";
-  os << indent << "FiducialLabelVisibility: " << this->FiducialLabelVisibility << "\n";
-  os << indent << "SliceIntersectionVisibility: " << this->SliceIntersectionVisibility << "\n";
-  os << indent << "AnnotationSpace: " << this->AnnotationSpace << "\n";
-  os << indent << "AnnotationMode: " << this->AnnotationMode << "\n";
-  os << indent << "DoPropagateVolumeSelection: " << this->DoPropagateVolumeSelection << "\n";
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintStringMacro(BackgroundVolumeID);
+  vtkMRMLPrintStringMacro(ForegroundVolumeID);
+  vtkMRMLPrintStringMacro(LabelVolumeID);
+  vtkMRMLPrintIntMacro(Compositing);
+  vtkMRMLPrintFloatMacro(ForegroundOpacity);
+  vtkMRMLPrintFloatMacro(LabelOpacity);
+  vtkMRMLPrintIntMacro(LinkedControl);
+  vtkMRMLPrintIntMacro(HotLinkedControl);
+  vtkMRMLPrintIntMacro(FiducialVisibility);
+  vtkMRMLPrintIntMacro(FiducialLabelVisibility);
+  vtkMRMLPrintIntMacro(SliceIntersectionVisibility);
+  vtkMRMLPrintEnumMacro(AnnotationSpace);
+  vtkMRMLPrintEnumMacro(AnnotationMode);
+  vtkMRMLPrintIntMacro(DoPropagateVolumeSelection);
+  vtkMRMLPrintEndMacro();
+
   os << indent << "Interacting: " <<
     (this->Interacting ? "on" : "off") << "\n";
 }
