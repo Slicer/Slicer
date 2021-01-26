@@ -83,6 +83,7 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLFloatMacro(foregroundOpacity, ForegroundOpacity);
   vtkMRMLWriteXMLFloatMacro(labelOpacity, LabelOpacity);
   vtkMRMLWriteXMLIntMacro(linkedControl, LinkedControl);
+  vtkMRMLWriteXMLIntMacro(hotLinkedControl, HotLinkedControl);
   vtkMRMLWriteXMLIntMacro(fiducialVisibility, FiducialVisibility);
   vtkMRMLWriteXMLIntMacro(fiducialLabelVisibility, FiducialLabelVisibility);
   vtkMRMLWriteXMLIntMacro(sliceIntersectionVisibility, SliceIntersectionVisibility);
