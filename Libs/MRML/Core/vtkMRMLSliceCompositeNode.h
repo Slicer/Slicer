@@ -166,7 +166,8 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
       XYZ = 0,
       IJK,
       RAS,
-      IJKAndRAS
+      IJKAndRAS,
+      AnnotationSpace_Last // insert values above this line
     };
 
   /// Annotation mode
@@ -175,7 +176,8 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
       NoAnnotation = 0,
       All,
       LabelValuesOnly,
-      LabelAndVoxelValuesOnly
+      LabelAndVoxelValuesOnly,
+      AnnotationMode_Last // insert values above this line
     };
 
   /// Modes for compositing
@@ -236,8 +238,16 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   /// broadcast when composite slice nodes are linked).
   void ResetInteractionFlagsModifier();
 
+  /// Convert between annotation space ID and name
+  const char* GetAnnotationSpaceAsString(int id);
+  int GetAnnotationSpaceFromString(const char* name);
+
+  /// Convert between annotation mode ID and name
+  const char* GetAnnotationModeAsString(int id);
+  int GetAnnotationModeFromString(const char* name);
 
 protected:
+
   vtkMRMLSliceCompositeNode();
   ~vtkMRMLSliceCompositeNode() override;
   vtkMRMLSliceCompositeNode(const vtkMRMLSliceCompositeNode&);
