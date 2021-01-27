@@ -18,13 +18,17 @@ Version:   $Revision: 1.2 $
 
 // VTK includes
 #include "vtkObjectFactory.h"
+#include "vtkCommand.h"
 
 // STD includes
 #include <sstream>
 
-vtkCxxSetReferenceStringMacro(vtkMRMLSliceCompositeNode, BackgroundVolumeID);
-vtkCxxSetReferenceStringMacro(vtkMRMLSliceCompositeNode, ForegroundVolumeID);
-vtkCxxSetReferenceStringMacro(vtkMRMLSliceCompositeNode, LabelVolumeID);
+static const char* BackgroundVolumeNodeReferenceRole = "backgroundVolume";
+static const char* BackgroundVolumeNodeReferenceMRMLAttributeName = "backgroundVolumeID";
+static const char* ForegroundVolumeNodeReferenceRole = "foregroundVolume";
+static const char* ForegroundVolumeNodeReferenceMRMLAttributeName = "foregroundVolumeID";
+static const char* LabelVolumeNodeReferenceRole = "labelVolume";
+static const char* LabelVolumeNodeReferenceMRMLAttributeName = "labelVolumeID";
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLSliceCompositeNode);
@@ -34,9 +38,10 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
 {
   this->HideFromEditors = 1;
 
-  this->BackgroundVolumeID = nullptr;
-  this->ForegroundVolumeID = nullptr;
-  this->LabelVolumeID = nullptr;
+  this->AddNodeReferenceRole(BackgroundVolumeNodeReferenceRole, BackgroundVolumeNodeReferenceMRMLAttributeName);
+  this->AddNodeReferenceRole(ForegroundVolumeNodeReferenceRole, ForegroundVolumeNodeReferenceMRMLAttributeName);
+  this->AddNodeReferenceRole(LabelVolumeNodeReferenceRole, LabelVolumeNodeReferenceMRMLAttributeName);
+
   this->Compositing = 0;
   this->ForegroundOpacity = 0.0; // start by showing only the background volume
   this->LabelOpacity = 1.0; // Show the label if there is one
@@ -56,18 +61,6 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
 //----------------------------------------------------------------------------
 vtkMRMLSliceCompositeNode::~vtkMRMLSliceCompositeNode()
 {
-  if (this->BackgroundVolumeID)
-    {
-    this->SetBackgroundVolumeID(nullptr);
-    }
-  if (this->ForegroundVolumeID)
-    {
-    this->SetForegroundVolumeID(nullptr);
-    }
-  if (this->LabelVolumeID)
-    {
-    this->SetLabelVolumeID(nullptr);
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -76,9 +69,6 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
 
   vtkMRMLWriteXMLBeginMacro(of);
-  vtkMRMLWriteXMLStringMacro(backgroundVolumeID, BackgroundVolumeID);
-  vtkMRMLWriteXMLStringMacro(foregroundVolumeID, ForegroundVolumeID);
-  vtkMRMLWriteXMLStringMacro(labelVolumeID, LabelVolumeID);
   vtkMRMLWriteXMLIntMacro(compositing, Compositing);
   vtkMRMLWriteXMLFloatMacro(foregroundOpacity, ForegroundOpacity);
   vtkMRMLWriteXMLFloatMacro(labelOpacity, LabelOpacity);
@@ -192,53 +182,6 @@ void vtkMRMLSliceCompositeNode::ResetInteractionFlagsModifier()
   this->InteractionFlagsModifier = (unsigned int) -1;
 }
 
-//-----------------------------------------------------------
-void vtkMRMLSliceCompositeNode::SetSceneReferences()
-{
-   Superclass::SetSceneReferences();
-   this->Scene->AddReferencedNodeID(this->BackgroundVolumeID, this);
-   this->Scene->AddReferencedNodeID(this->ForegroundVolumeID, this);
-   this->Scene->AddReferencedNodeID(this->LabelVolumeID, this);
-}
-
-//-----------------------------------------------------------
-void vtkMRMLSliceCompositeNode::UpdateReferences()
-{
-   Superclass::UpdateReferences();
-
-  if (this->BackgroundVolumeID != nullptr && this->Scene->GetNodeByID(this->BackgroundVolumeID) == nullptr)
-    {
-    this->SetBackgroundVolumeID(nullptr);
-    }
-  if (this->ForegroundVolumeID != nullptr && this->Scene->GetNodeByID(this->ForegroundVolumeID) == nullptr)
-    {
-    this->SetForegroundVolumeID(nullptr);
-    }
-  if (this->LabelVolumeID != nullptr && this->Scene->GetNodeByID(this->LabelVolumeID) == nullptr)
-    {
-    this->SetLabelVolumeID(nullptr);
-    }
-
-
-}
-//----------------------------------------------------------------------------
-void vtkMRMLSliceCompositeNode::UpdateReferenceID(const char *oldID, const char *newID)
-{
-  Superclass::UpdateReferenceID(oldID, newID);
-  if (this->BackgroundVolumeID && !strcmp(oldID, this->BackgroundVolumeID))
-    {
-    this->SetBackgroundVolumeID(newID);
-    }
-  if (this->ForegroundVolumeID && !strcmp(oldID, this->ForegroundVolumeID))
-    {
-    this->SetForegroundVolumeID(newID);
-    }
-  if (this->LabelVolumeID && !strcmp(oldID, this->LabelVolumeID))
-    {
-    this->SetLabelVolumeID(newID);
-    }
-}
-
 //----------------------------------------------------------------------------
 void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
 {
@@ -247,9 +190,6 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
   Superclass::ReadXMLAttributes(atts);
 
   vtkMRMLReadXMLBeginMacro(atts);
-  vtkMRMLReadXMLStringMacro(backgroundVolumeID, BackgroundVolumeID);
-  vtkMRMLReadXMLStringMacro(foregroundVolumeID, ForegroundVolumeID);
-  vtkMRMLReadXMLStringMacro(labelVolumeID, LabelVolumeID);
   vtkMRMLReadXMLIntMacro(compositing, Compositing);
   vtkMRMLReadXMLFloatMacro(foregroundOpacity, ForegroundOpacity);
   vtkMRMLReadXMLFloatMacro(labelOpacity, LabelOpacity);
@@ -276,9 +216,6 @@ void vtkMRMLSliceCompositeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
   vtkMRMLSliceCompositeNode *node = vtkMRMLSliceCompositeNode::SafeDownCast(anode);
 
   vtkMRMLCopyBeginMacro(node);
-  vtkMRMLCopyStringMacro(BackgroundVolumeID);
-  vtkMRMLCopyStringMacro(ForegroundVolumeID);
-  vtkMRMLCopyStringMacro(LabelVolumeID);
   vtkMRMLCopyIntMacro(Compositing);
   vtkMRMLCopyFloatMacro(ForegroundOpacity);
   vtkMRMLCopyFloatMacro(LabelOpacity);
@@ -323,4 +260,38 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
     (this->Interacting ? "on" : "off") << "\n";
 }
 
-// End
+//-----------------------------------------------------------
+void vtkMRMLSliceCompositeNode::SetBackgroundVolumeID(const char* id)
+{
+  this->SetNodeReferenceID(BackgroundVolumeNodeReferenceRole, id);
+}
+
+//-----------------------------------------------------------
+const char* vtkMRMLSliceCompositeNode::GetBackgroundVolumeID()
+{
+  return this->GetNodeReferenceID(BackgroundVolumeNodeReferenceRole);
+}
+
+//-----------------------------------------------------------
+void vtkMRMLSliceCompositeNode::SetForegroundVolumeID(const char* id)
+{
+  this->SetNodeReferenceID(ForegroundVolumeNodeReferenceRole, id);
+}
+
+//-----------------------------------------------------------
+const char* vtkMRMLSliceCompositeNode::GetForegroundVolumeID()
+{
+  return this->GetNodeReferenceID(ForegroundVolumeNodeReferenceRole);
+}
+
+//-----------------------------------------------------------
+void vtkMRMLSliceCompositeNode::SetLabelVolumeID(const char* id)
+{
+  this->SetNodeReferenceID(LabelVolumeNodeReferenceRole, id);
+}
+
+//-----------------------------------------------------------
+const char* vtkMRMLSliceCompositeNode::GetLabelVolumeID()
+{
+  return this->GetNodeReferenceID(LabelVolumeNodeReferenceRole);
+}

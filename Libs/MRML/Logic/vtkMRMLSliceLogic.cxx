@@ -1419,7 +1419,7 @@ vtkMRMLVolumeNode *vtkMRMLSliceLogic::GetLayerVolumeNode(int layer)
     return (nullptr);
     }
 
-  char *id = nullptr;
+  const char *id = nullptr;
   switch (layer)
     {
     case LayerBackground:
