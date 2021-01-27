@@ -41,7 +41,6 @@ vtkStandardNewMacro(vtkSlicerCamerasModuleLogic);
 //----------------------------------------------------------------------------
 vtkSlicerCamerasModuleLogic::vtkSlicerCamerasModuleLogic()
 {
-  this->CopyImportedCameras = true;
 }
 
 //----------------------------------------------------------------------------
@@ -92,8 +91,7 @@ void vtkSlicerCamerasModuleLogic
 {
   this->Superclass::ProcessMRMLSceneEvents(caller, event, callData);
   if (event == vtkMRMLScene::NodeAboutToBeAddedEvent &&
-      this->GetMRMLScene()->IsImporting() &&
-      this->CopyImportedCameras)
+      this->GetMRMLScene()->IsImporting())
     {
     vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(
       reinterpret_cast<vtkObject*>(callData));
