@@ -62,7 +62,6 @@ int vtkMRMLSliceViewDisplayableManagerFactoryTest(int vtkNotUsed(argc), char* vt
   viewNode->Delete();
 
   vtkMRMLSliceLogic * sliceLogic = vtkMRMLSliceLogic::New();
-  sliceLogic->SetName("Red");
   sliceLogic->SetMRMLScene(scene.GetPointer());
   sliceLogic->SetSliceNode(viewNode);
   sliceLogic->UpdateSliceNode();

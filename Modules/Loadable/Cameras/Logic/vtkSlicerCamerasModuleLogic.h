@@ -53,9 +53,6 @@ protected:
   vtkSlicerCamerasModuleLogic();
   ~vtkSlicerCamerasModuleLogic() override;
 
-  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
-  void ProcessMRMLSceneEvents(vtkObject *, unsigned long, void *) override;
-
 private:
   vtkSlicerCamerasModuleLogic(const vtkSlicerCamerasModuleLogic&) = delete;
   void operator=(const vtkSlicerCamerasModuleLogic&) = delete;

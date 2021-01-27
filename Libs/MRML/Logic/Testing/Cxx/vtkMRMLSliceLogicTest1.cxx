@@ -37,8 +37,8 @@ int vtkMRMLSliceLogicTest1(int , char * [] )
   // Add default slice orientation presets
   vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(scene.GetPointer());
 
-  logic->SetName("Green");
   logic->SetMRMLScene(scene.GetPointer());
+  logic->AddSliceNode("Green");
 
   vtkNew<vtkMRMLSliceNode> SliceNode;
   TEST_SET_GET_VALUE(logic, SliceNode, SliceNode.GetPointer());

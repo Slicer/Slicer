@@ -45,9 +45,6 @@ public:
 
   vtkMRMLCameraNode* GetCameraNode();
 
-//  void AddCameraObservers();
-//  void RemoveCameraObservers();
-
   /// Events
   enum
   {

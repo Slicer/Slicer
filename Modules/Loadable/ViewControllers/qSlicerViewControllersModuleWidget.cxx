@@ -123,27 +123,21 @@ qSlicerViewControllersModuleWidgetPrivate::createController(vtkMRMLNode *n, qSli
   vtkMRMLViewNode *vn = vtkMRMLViewNode::SafeDownCast(n);
   if (vn)
     {
-    qMRMLThreeDViewControllerWidget *widget =
-      new qMRMLThreeDViewControllerWidget(this->ThreeDViewControllersCollapsibleButton);
-    widget->setViewLabel( vn->GetLayoutLabel() );
-    widget->setMRMLViewNode( vn );
-    widget->setLayoutBehavior( qMRMLViewControllerBar::Panel );
-
     // ThreeDViewController needs to now the ThreeDView
     qMRMLThreeDWidget *viewWidget = dynamic_cast<qMRMLThreeDWidget*>(layoutManager->viewWidget( vn ));
     if (viewWidget)
       {
-      widget->setThreeDView( viewWidget->threeDView() );
+      qMRMLThreeDViewControllerWidget* widget =
+        new qMRMLThreeDViewControllerWidget(this->ThreeDViewControllersCollapsibleButton);
+      widget->setLayoutBehavior(qMRMLViewControllerBar::Panel);
       widget->setMRMLScene(q->mrmlScene());
+      widget->setThreeDView( viewWidget->threeDView() );
       // qMRMLThreeDViewControllerWidget needs to know the ViewLogic(s)
-      widget->setViewLogics(layoutManager->mrmlViewLogics());
       widget->setViewLogic(viewWidget->threeDController()->viewLogic());
+      // add the widget to the display
+      this->ThreeDViewControllersLayout->addWidget(widget);
+      barWidget = widget;
       }
-
-    // add the widget to the display
-    this->ThreeDViewControllersLayout->addWidget(widget);
-
-    barWidget = widget;
     }
 
   vtkMRMLPlotViewNode *pn = vtkMRMLPlotViewNode::SafeDownCast(n);

@@ -70,8 +70,8 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
   vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(scene.GetPointer());
 
   vtkNew<vtkMRMLSliceLogic> sliceLogic;
-  sliceLogic->SetName("Green");
   sliceLogic->SetMRMLScene(scene.GetPointer());
+  sliceLogic->AddSliceNode("Green");
 
   vtkMRMLSliceNode* sliceNode = sliceLogic->GetSliceNode();
   vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceLogic->GetSliceCompositeNode();

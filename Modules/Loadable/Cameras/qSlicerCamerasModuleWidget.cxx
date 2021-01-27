@@ -110,7 +110,7 @@ void qSlicerCamerasModuleWidget::setCameraToCurrentView(vtkMRMLNode* mrmlNode)
     {
     return;
     }
-  currentCameraNode->SetActiveTag(currentViewNode->GetID());
+  currentCameraNode->SetLayoutName(currentViewNode->GetLayoutName());
 }
 
 //-----------------------------------------------------------------------------
@@ -122,7 +122,7 @@ void qSlicerCamerasModuleWidget::onCameraNodeAdded(vtkMRMLNode* mrmlNode)
     //Q_ASSERT(cameraNode);
     return;
     }
-  this->qvtkConnect(cameraNode, vtkMRMLCameraNode::ActiveTagModifiedEvent,
+  this->qvtkConnect(cameraNode, vtkMRMLCameraNode::LayoutNameModifiedEvent,
                     this, SLOT(synchronizeCameraWithView()));
 }
 
@@ -135,7 +135,7 @@ void qSlicerCamerasModuleWidget::onCameraNodeRemoved(vtkMRMLNode* mrmlNode)
     //Q_ASSERT(cameraNode);
     return;
     }
-  this->qvtkDisconnect(cameraNode, vtkMRMLCameraNode::ActiveTagModifiedEvent,
+  this->qvtkDisconnect(cameraNode, vtkMRMLCameraNode::LayoutNameModifiedEvent,
                        this, SLOT(synchronizeCameraWithView()));
 }
 
@@ -168,7 +168,8 @@ bool qSlicerCamerasModuleWidget::setEditedNode(vtkMRMLNode* node,
   if (vtkMRMLCameraNode::SafeDownCast(node))
     {
     vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(node);
-    vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(this->mrmlScene()->GetNodeByID(cameraNode->GetActiveTag()));
+    vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(
+      this->mrmlScene()->GetSingletonNode(cameraNode->GetLayoutName(), "vtkMRMLViewNode"));
     if (!viewNode)
       {
       return false;

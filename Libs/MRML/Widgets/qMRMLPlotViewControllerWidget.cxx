@@ -355,6 +355,8 @@ void qMRMLPlotViewControllerWidget::updateWidgetFromMRML()
     return;
     }
 
+  this->setViewLabel(d->PlotViewNode->GetLayoutLabel());
+
   // PlotChartNode selector
   vtkMRMLPlotChartNode* mrmlPlotChartNode = d->GetPlotChartNodeFromView();
 

@@ -349,6 +349,8 @@ void qMRMLTableViewControllerWidget::updateWidgetFromMRML()
     return;
     }
 
+  this->setViewLabel(d->TableViewNode->GetLayoutLabel());
+
   vtkMRMLTableNode *tableNode
     = vtkMRMLTableNode::SafeDownCast(this->mrmlScene()->GetNodeByID(d->TableViewNode->GetTableNodeID()));
 

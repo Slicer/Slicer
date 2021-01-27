@@ -342,9 +342,10 @@ void qMRMLSliceView::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode)
     vtkCommand::ModifiedEvent, d, SLOT(updateWidgetFromMRML()));
 
   d->MRMLSliceNode = newSliceNode;
+  d->updateWidgetFromMRML();
+
   d->DisplayableManagerGroup->SetMRMLDisplayableNode(newSliceNode);
 
-  d->updateWidgetFromMRML();
   // Enable/disable widget
   this->setEnabled(newSliceNode != nullptr);
 }

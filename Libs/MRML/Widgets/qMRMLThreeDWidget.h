@@ -92,9 +92,6 @@ public:
   /// \sa viewColor()
   void setViewColor(const QColor& newViewColor);
 
-  /// propagates the logics to the qMRMLThreeDControllerWidget
-  Q_INVOKABLE void setViewLogics(vtkCollection* logics);
-
 public slots:
   void setMRMLScene(vtkMRMLScene* newScene) override;
 
