@@ -310,6 +310,7 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintIntMacro(FiducialVisibility);
   vtkMRMLPrintIntMacro(FiducialLabelVisibility);
   vtkMRMLPrintIntMacro(SliceIntersectionVisibility);
+  vtkMRMLPrintStringMacro(LayoutName);
   vtkMRMLPrintEnumMacro(AnnotationSpace);
   vtkMRMLPrintEnumMacro(AnnotationMode);
   vtkMRMLPrintIntMacro(DoPropagateVolumeSelection);
