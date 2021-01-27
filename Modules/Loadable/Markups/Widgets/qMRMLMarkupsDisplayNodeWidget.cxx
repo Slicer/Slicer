@@ -98,6 +98,8 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
     q, SLOT(onCurveLineThicknessSliderWidgetChanged(double)));
   QObject::connect(this->curveLineDiameterSliderWidget, SIGNAL(valueChanged(double)),
     q, SLOT(onCurveLineDiameterSliderWidgetChanged(double)));
+  QObject::connect(this->PropertiesLabelVisibilityCheckBox, SIGNAL(toggled(bool)),
+    q, SLOT(setPropertiesLabelVisibility(bool)));
   QObject::connect(this->PointLabelsVisibilityCheckBox, SIGNAL(toggled(bool)),
     q, SLOT(setPointLabelsVisibility(bool)));
   QObject::connect(this->textScaleSliderWidget, SIGNAL(valueChanged(double)),
@@ -116,6 +118,10 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   QObject::connect(this->OutlineOpacitySliderWidget, SIGNAL(valueChanged(double)),
     q, SLOT(onOutlineOpacitySliderWidgetChanged(double)));
 
+  this->SnapModeComboBox->addItem(tr("unconstrained"), vtkMRMLMarkupsDisplayNode::SnapModeUnconstrained);
+  this->SnapModeComboBox->addItem(tr("snap to visible surface"), vtkMRMLMarkupsDisplayNode::SnapModeToVisibleSurface);
+  QObject::connect(this->SnapModeComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(onSnapModeWidgetChanged()));
+
   QObject::connect(this->OccludedVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setOccludedVisibility(bool)));
   QObject::connect(this->OccludedOpacitySliderWidget, SIGNAL(valueChanged(double)),
     q, SLOT(setOccludedOpacity(double)));
@@ -126,12 +132,12 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   this->TextFontFamilyComboBox->addItem(vtkTextProperty::GetFontFamilyAsString(VTK_COURIER), VTK_COURIER);
   this->TextFontFamilyComboBox->addItem(vtkTextProperty::GetFontFamilyAsString(VTK_TIMES), VTK_TIMES);
 
-  QObject::connect(this->TextFontFamilyComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(setTextProperty()));
-  QObject::connect(this->TextBoldCheckBox,   SIGNAL(toggled(bool)), q, SLOT(setTextProperty()));
-  QObject::connect(this->TextItalicCheckBox, SIGNAL(toggled(bool)), q, SLOT(setTextProperty()));
-  QObject::connect(this->TextShadowCheckBox, SIGNAL(toggled(bool)), q, SLOT(setTextProperty()));
-  QObject::connect(this->TextBackgroundColorPickerButton, SIGNAL(colorChanged(QColor)), q, SLOT(setTextProperty()));
-  QObject::connect(this->TextBackgroundOpacitySlider, SIGNAL(valueChanged(double)), q, SLOT(setTextProperty()));
+  QObject::connect(this->TextFontFamilyComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(onTextPropertyWidgetsChanged()));
+  QObject::connect(this->TextBoldCheckBox,   SIGNAL(toggled(bool)), q, SLOT(onTextPropertyWidgetsChanged()));
+  QObject::connect(this->TextItalicCheckBox, SIGNAL(toggled(bool)), q, SLOT(onTextPropertyWidgetsChanged()));
+  QObject::connect(this->TextShadowCheckBox, SIGNAL(toggled(bool)), q, SLOT(onTextPropertyWidgetsChanged()));
+  QObject::connect(this->TextBackgroundColorPickerButton, SIGNAL(colorChanged(QColor)), q, SLOT(onTextPropertyWidgetsChanged()));
+  QObject::connect(this->TextBackgroundOpacitySlider, SIGNAL(valueChanged(double)), q, SLOT(onTextPropertyWidgetsChanged()));
 
   // populate the glyph type combo box
   if (this->glyphTypeComboBox->count() == 0)
@@ -328,6 +334,8 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
   d->curveLineThicknessSliderWidget->setEnabled(lineSizeEnabled);
   d->curveLineDiameterSliderWidget->setMRMLScene(markupsDisplayNode->GetScene());
 
+  d->PropertiesLabelVisibilityCheckBox->setChecked(markupsDisplayNode->GetPropertiesLabelVisibility());
+
   d->PointLabelsVisibilityCheckBox->setChecked(markupsDisplayNode->GetPointLabelsVisibility());
 
   // text scale
@@ -344,70 +352,60 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
 
   bool wasBlocking = false;
   wasBlocking = d->FillVisibilityCheckBox->blockSignals(true);
-  d->FillVisibilityCheckBox->setChecked(d->MarkupsDisplayNode ? d->MarkupsDisplayNode->GetFillVisibility() : false);
+  d->FillVisibilityCheckBox->setChecked(markupsDisplayNode->GetFillVisibility());
   d->FillVisibilityCheckBox->blockSignals(wasBlocking);
 
   wasBlocking = d->OutlineVisibilityCheckBox->blockSignals(true);
-  d->OutlineVisibilityCheckBox->setChecked(d->MarkupsDisplayNode ? d->MarkupsDisplayNode->GetOutlineVisibility() : false);
+  d->OutlineVisibilityCheckBox->setChecked(markupsDisplayNode->GetOutlineVisibility());
   d->OutlineVisibilityCheckBox->blockSignals(wasBlocking);
 
   wasBlocking = d->FillOpacitySliderWidget->blockSignals(true);
-  d->FillOpacitySliderWidget->setValue(d->MarkupsDisplayNode ? d->MarkupsDisplayNode->GetFillOpacity() : 0.0);
+  d->FillOpacitySliderWidget->setValue(markupsDisplayNode->GetFillOpacity());
   d->FillOpacitySliderWidget->blockSignals(wasBlocking);
 
   wasBlocking = d->OutlineOpacitySliderWidget->blockSignals(true);
-  d->OutlineOpacitySliderWidget->setValue(d->MarkupsDisplayNode ? d->MarkupsDisplayNode->GetOutlineOpacity() : 0.0);
+  d->OutlineOpacitySliderWidget->setValue(markupsDisplayNode->GetOutlineOpacity());
   d->OutlineOpacitySliderWidget->blockSignals(wasBlocking);
 
   wasBlocking = d->OccludedVisibilityCheckBox->blockSignals(true);
-  d->OccludedVisibilityCheckBox->setChecked(d->MarkupsDisplayNode ? d->MarkupsDisplayNode->GetOccludedVisibility() : false);
+  d->OccludedVisibilityCheckBox->setChecked(markupsDisplayNode->GetOccludedVisibility());
   d->OccludedVisibilityCheckBox->blockSignals(wasBlocking);
 
+  wasBlocking = d->SnapModeComboBox->blockSignals(true);
+  int snapModeIndex = d->SnapModeComboBox->findData(markupsDisplayNode->GetSnapMode());
+  d->SnapModeComboBox->setCurrentIndex(snapModeIndex);
+  d->SnapModeComboBox->blockSignals(wasBlocking);
+
   wasBlocking = d->OccludedOpacitySliderWidget->blockSignals(true);
-  d->OccludedOpacitySliderWidget->setValue(d->MarkupsDisplayNode ? d->MarkupsDisplayNode->GetOccludedOpacity() : 0.0);
+  d->OccludedOpacitySliderWidget->setValue(markupsDisplayNode->GetOccludedOpacity());
   d->OccludedOpacitySliderWidget->blockSignals(wasBlocking);
 
-  int fontFamily = VTK_ARIAL;
-  bool textBold = false;
-  bool textItalic = false;
-  bool textShadow = false;
-  double backgroundOpacity = 0.0;
-  double textBackgroundColorF[3] = { 0.0, 0.0, 0.0 };
-
-  if (markupsDisplayNode)
-    {
-    vtkTextProperty* property = markupsDisplayNode->GetTextProperty();
-    fontFamily = property->GetFontFamily();
-    textBold = property->GetBold();
-    textItalic = property->GetItalic();
-    textShadow = property->GetShadow();
-    backgroundOpacity = property->GetBackgroundOpacity();
-    property->GetBackgroundColor(textBackgroundColorF);
-    }
+  vtkTextProperty* property = markupsDisplayNode->GetTextProperty(); // always returns valid pointer
 
   wasBlocking = d->TextFontFamilyComboBox->blockSignals(true);
-  int fontFamilyIndex = 0;
-  fontFamilyIndex = d->TextFontFamilyComboBox->findData(fontFamily);
+  int fontFamilyIndex = d->TextFontFamilyComboBox->findData(property->GetFontFamily());
   d->TextFontFamilyComboBox->setCurrentIndex(fontFamilyIndex);
   d->TextFontFamilyComboBox->blockSignals(wasBlocking);
 
   wasBlocking = d->TextBoldCheckBox->blockSignals(true);
-  d->TextBoldCheckBox->setChecked(textBold);
+  d->TextBoldCheckBox->setChecked(property->GetBold());
   d->TextBoldCheckBox->blockSignals(wasBlocking);
 
   wasBlocking = d->TextItalicCheckBox->blockSignals(true);
-  d->TextItalicCheckBox->setChecked(textItalic);
+  d->TextItalicCheckBox->setChecked(property->GetItalic());
   d->TextItalicCheckBox->blockSignals(wasBlocking);
 
   wasBlocking = d->TextShadowCheckBox->blockSignals(true);
-  d->TextShadowCheckBox->setChecked(textShadow);
+  d->TextShadowCheckBox->setChecked(property->GetShadow());
   d->TextShadowCheckBox->blockSignals(wasBlocking);
 
   wasBlocking = d->TextBackgroundOpacitySlider->blockSignals(true);
-  d->TextBackgroundOpacitySlider->setValue(backgroundOpacity);
+  d->TextBackgroundOpacitySlider->setValue(property->GetBackgroundOpacity());
   d->TextBackgroundOpacitySlider->blockSignals(wasBlocking);
 
   wasBlocking = d->TextBackgroundColorPickerButton->blockSignals(true);
+  double textBackgroundColorF[3] = { 0.0, 0.0, 0.0 };
+  property->GetBackgroundColor(textBackgroundColorF);
   d->TextBackgroundColorPickerButton->setColor(QColor::fromRgbF(textBackgroundColorF[0], textBackgroundColorF[1], textBackgroundColorF[2]));
   d->TextBackgroundColorPickerButton->blockSignals(wasBlocking);
 
@@ -448,6 +446,17 @@ bool qMRMLMarkupsDisplayNodeWidget::visibility()const
 }
 
 //------------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::setPropertiesLabelVisibility(bool visible)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode.GetPointer())
+    {
+    return;
+    }
+  d->MarkupsDisplayNode->SetPropertiesLabelVisibility(visible);
+}
+
+//------------------------------------------------------------------------------
 void qMRMLMarkupsDisplayNodeWidget::setPointLabelsVisibility(bool visible)
 {
   Q_D(qMRMLMarkupsDisplayNodeWidget);
@@ -456,6 +465,13 @@ void qMRMLMarkupsDisplayNodeWidget::setPointLabelsVisibility(bool visible)
     return;
     }
   d->MarkupsDisplayNode->SetPointLabelsVisibility(visible);
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLMarkupsDisplayNodeWidget::propertiesLabelVisibility()const
+{
+  Q_D(const qMRMLMarkupsDisplayNodeWidget);
+  return d->PropertiesLabelVisibilityCheckBox->isChecked();
 }
 
 //------------------------------------------------------------------------------
@@ -720,7 +736,7 @@ void qMRMLMarkupsDisplayNodeWidget::setOccludedOpacity(double OccludedOpacity)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLMarkupsDisplayNodeWidget::setTextProperty()
+void qMRMLMarkupsDisplayNodeWidget::onTextPropertyWidgetsChanged()
 {
   Q_D(qMRMLMarkupsDisplayNodeWidget);
   if (!d->MarkupsDisplayNode)
@@ -737,11 +753,23 @@ void qMRMLMarkupsDisplayNodeWidget::setTextProperty()
   double backgroundColorF[3] = { backgroundColor.redF(), backgroundColor.greenF(), backgroundColor.blueF() };
 
   MRMLNodeModifyBlocker blocker(d->MarkupsDisplayNode);
-  vtkSmartPointer<vtkTextProperty> textProperty = d->MarkupsDisplayNode->GetTextProperty();
+  vtkSmartPointer<vtkTextProperty> textProperty = d->MarkupsDisplayNode->GetTextProperty(); // always returns valid pointer
   textProperty->SetFontFamily(fontFamily);
   textProperty->SetBold(textBold);
   textProperty->SetItalic(textItalic);
   textProperty->SetShadow(textShadow);
   textProperty->SetBackgroundOpacity(backgroundOpacity);
   textProperty->SetBackgroundColor(backgroundColorF);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::onSnapModeWidgetChanged()
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+    {
+    return;
+    }
+  int snapMode = d->SnapModeComboBox->currentData().toInt();
+  d->MarkupsDisplayNode->SetSnapMode(snapMode);
 }

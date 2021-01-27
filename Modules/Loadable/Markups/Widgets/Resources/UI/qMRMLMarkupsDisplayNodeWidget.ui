@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>353</width>
-    <height>156</height>
+    <width>359</width>
+    <height>689</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,6 +30,9 @@
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QCheckBox" name="VisibilityCheckBox">
+       <property name="toolTip">
+        <string>Overall visibility of the selected node in all views</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -56,6 +59,9 @@
    </item>
    <item row="8" column="1">
     <widget class="QCheckBox" name="interactionCheckBox">
+     <property name="toolTip">
+      <string>Show handles to interactively translate and rotate</string>
+     </property>
      <property name="text">
       <string/>
      </property>
@@ -154,10 +160,10 @@
       <string>Advanced</string>
      </property>
      <property name="checked">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="collapsed">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <property name="topMargin">
@@ -170,287 +176,6 @@
        <number>0</number>
       </property>
       <item row="12" column="0" colspan="2">
-       <widget class="ctkCollapsibleGroupBox" name="ThreeDDisplayGroupBox">
-        <property name="title">
-         <string>3D Display</string>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_3">
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>5</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item row="0" column="0">
-          <widget class="QLabel" name="OccludedVisibilityLabel">
-           <property name="text">
-            <string>Occluded Visibility:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout_6">
-           <item>
-            <widget class="QCheckBox" name="OccludedVisibilityCheckBox">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="OpacityLabel">
-             <property name="text">
-              <string>Opacity:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="ctkSliderWidget" name="OccludedOpacitySliderWidget">
-             <property name="singleStep">
-              <double>0.010000000000000</double>
-             </property>
-             <property name="pageStep">
-              <double>0.100000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>1.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="13" column="0" colspan="2">
-       <widget class="ctkCollapsibleGroupBox" name="TwoDDisplayGroupBox">
-        <property name="title">
-         <string>2D Display</string>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_4">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item row="0" column="0">
-          <widget class="qMRMLMarkupsFiducialProjectionPropertyWidget" name="pointFiducialProjectionWidget"/>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="7" column="0">
-       <widget class="QLabel" name="FillLabel">
-        <property name="text">
-         <string>Fill:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="10" column="1">
-       <widget class="QCheckBox" name="PointLabelsVisibilityCheckBox">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="unselectedColorLabel">
-        <property name="text">
-         <string>Unselected Color:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="DisplayNodeViewLabel">
-        <property name="text">
-         <string>View:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
-        <item>
-         <widget class="QCheckBox" name="FillVisibilityCheckBox">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="OpacityLabel3">
-          <property name="text">
-           <string>Opacity:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="ctkSliderWidget" name="FillOpacitySliderWidget">
-          <property name="singleStep">
-           <double>0.010000000000000</double>
-          </property>
-          <property name="pageStep">
-           <double>0.100000000000000</double>
-          </property>
-          <property name="maximum">
-           <double>1.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="4" column="1">
-       <widget class="QComboBox" name="glyphTypeComboBox"/>
-      </item>
-      <item row="2" column="1">
-       <widget class="ctkColorPickerButton" name="unselectedColorPickerButton">
-        <property name="displayColorName">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="glyphTypeLabel">
-        <property name="text">
-         <string>Glyph Type:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="ctkColorPickerButton" name="selectedColorPickerButton">
-        <property name="displayColorName">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <item>
-         <widget class="QCheckBox" name="OutlineVisibilityCheckBox">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="OpacityLabel2">
-          <property name="text">
-           <string>Opacity:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="ctkSliderWidget" name="OutlineOpacitySliderWidget">
-          <property name="singleStep">
-           <double>0.010000000000000</double>
-          </property>
-          <property name="pageStep">
-           <double>0.100000000000000</double>
-          </property>
-          <property name="maximum">
-           <double>1.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="selectedColorLabel">
-        <property name="text">
-         <string>Selected Color:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <widget class="QPushButton" name="curveLineSizeIsAbsoluteButton">
-          <property name="toolTip">
-           <string>If button is pressed then line thickness is specified in physical length unit, otherwise as percentage of glyph size</string>
-          </property>
-          <property name="text">
-           <string>absolute</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="ctkSliderWidget" name="curveLineThicknessSliderWidget">
-          <property name="singleStep">
-           <double>1.000000000000000</double>
-          </property>
-          <property name="pageStep">
-           <double>5.000000000000000</double>
-          </property>
-          <property name="maximum">
-           <double>100.000000000000000</double>
-          </property>
-          <property name="value">
-           <double>20.000000000000000</double>
-          </property>
-          <property name="suffix">
-           <string> %</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="qMRMLSliderWidget" name="curveLineDiameterSliderWidget">
-          <property name="singleStep">
-           <double>0.100000000000000</double>
-          </property>
-          <property name="pageStep">
-           <double>1.000000000000000</double>
-          </property>
-          <property name="value">
-           <double>5.000000000000000</double>
-          </property>
-          <property name="quantity">
-           <string>length</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="10" column="0">
-       <widget class="QLabel" name="PointLabelsVisibilityLabel">
-        <property name="text">
-         <string>Point Labels:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0">
-       <widget class="QLabel" name="lineThicknessLabel">
-        <property name="text">
-         <string>Line Thickness:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="0">
-       <widget class="QLabel" name="OutlineLabel">
-        <property name="text">
-         <string>Outline:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="qMRMLDisplayNodeViewComboBox" name="DisplayNodeViewComboBox">
-        <property name="toolTip">
-         <string>Select views in which to show this node. All unchecked shows in all 3D and 2D views.</string>
-        </property>
-       </widget>
-      </item>
-      <item row="11" column="0" colspan="2">
        <widget class="ctkCollapsibleGroupBox" name="TextDisplayGroupBox">
         <property name="title">
          <string>Text Display</string>
@@ -538,10 +263,13 @@
         </layout>
        </widget>
       </item>
-      <item row="3" column="1">
-       <widget class="ctkColorPickerButton" name="activeColorPickerButton">
-        <property name="displayColorName">
-         <bool>false</bool>
+      <item row="4" column="1">
+       <widget class="QComboBox" name="glyphTypeComboBox"/>
+      </item>
+      <item row="0" column="1">
+       <widget class="qMRMLDisplayNodeViewComboBox" name="DisplayNodeViewComboBox">
+        <property name="toolTip">
+         <string>Select views in which to show this node. All unchecked shows in all 3D and 2D views.</string>
         </property>
        </widget>
       </item>
@@ -549,6 +277,314 @@
        <widget class="QLabel" name="activeColorPickerLabel">
         <property name="text">
          <string>Active Color:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="14" column="0" colspan="2">
+       <widget class="ctkCollapsibleGroupBox" name="TwoDDisplayGroupBox">
+        <property name="title">
+         <string>2D Display</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="qMRMLMarkupsFiducialProjectionPropertyWidget" name="pointFiducialProjectionWidget"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="FillLabel">
+        <property name="text">
+         <string>Fill:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="glyphTypeLabel">
+        <property name="text">
+         <string>Glyph Type:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QCheckBox" name="OutlineVisibilityCheckBox">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="OpacityLabel2">
+          <property name="text">
+           <string>Opacity:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="ctkSliderWidget" name="OutlineOpacitySliderWidget">
+          <property name="singleStep">
+           <double>0.010000000000000</double>
+          </property>
+          <property name="pageStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>1.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="DisplayNodeViewLabel">
+        <property name="text">
+         <string>View:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="unselectedColorLabel">
+        <property name="text">
+         <string>Unselected Color:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="OutlineLabel">
+        <property name="text">
+         <string>Outline:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="1">
+       <widget class="QCheckBox" name="PointLabelsVisibilityCheckBox">
+        <property name="toolTip">
+         <string>Show control point labels</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="ctkColorPickerButton" name="selectedColorPickerButton">
+        <property name="displayColorName">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QPushButton" name="curveLineSizeIsAbsoluteButton">
+          <property name="toolTip">
+           <string>If button is pressed then line thickness is specified in physical length unit, otherwise as percentage of glyph size</string>
+          </property>
+          <property name="text">
+           <string>absolute</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="ctkSliderWidget" name="curveLineThicknessSliderWidget">
+          <property name="singleStep">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="pageStep">
+           <double>5.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>100.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>20.000000000000000</double>
+          </property>
+          <property name="suffix">
+           <string> %</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="qMRMLSliderWidget" name="curveLineDiameterSliderWidget">
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="pageStep">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>5.000000000000000</double>
+          </property>
+          <property name="quantity">
+           <string>length</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="lineThicknessLabel">
+        <property name="text">
+         <string>Line Thickness:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="selectedColorLabel">
+        <property name="text">
+         <string>Selected Color:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QCheckBox" name="FillVisibilityCheckBox">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="OpacityLabel3">
+          <property name="text">
+           <string>Opacity:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="ctkSliderWidget" name="FillOpacitySliderWidget">
+          <property name="singleStep">
+           <double>0.010000000000000</double>
+          </property>
+          <property name="pageStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>1.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="11" column="0">
+       <widget class="QLabel" name="PointLabelsVisibilityLabel">
+        <property name="text">
+         <string>Point Labels:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="ctkColorPickerButton" name="unselectedColorPickerButton">
+        <property name="displayColorName">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="0" colspan="2">
+       <widget class="ctkCollapsibleGroupBox" name="ThreeDDisplayGroupBox">
+        <property name="title">
+         <string>3D Display</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>5</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="1" column="0">
+          <widget class="QLabel" name="OccludedVisibilityLabel">
+           <property name="text">
+            <string>Occluded Visibility:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
+           <item>
+            <widget class="QCheckBox" name="OccludedVisibilityCheckBox">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="OpacityLabel">
+             <property name="text">
+              <string>Opacity:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="ctkSliderWidget" name="OccludedOpacitySliderWidget">
+             <property name="singleStep">
+              <double>0.010000000000000</double>
+             </property>
+             <property name="pageStep">
+              <double>0.100000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>1.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="PointLabelsVisibilityLabel_2">
+           <property name="text">
+            <string>Placement mode:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="SnapModeComboBox"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QLabel" name="PropertiesLabelVisibilityLabel">
+        <property name="text">
+         <string>Properties Label:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="ctkColorPickerButton" name="activeColorPickerButton">
+        <property name="displayColorName">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="1">
+       <widget class="QCheckBox" name="PropertiesLabelVisibilityCheckBox">
+        <property name="toolTip">
+         <string>Show node name and measurements</string>
+        </property>
+        <property name="text">
+         <string/>
         </property>
        </widget>
       </item>
@@ -574,6 +610,22 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkColorPickerButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkColorPickerButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>qMRMLCheckableNodeComboBox</class>
    <extends>qMRMLNodeComboBox</extends>
    <header>qMRMLCheckableNodeComboBox.h</header>
@@ -592,6 +644,12 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>qMRMLScalarsDisplayWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLScalarsDisplayWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>qMRMLSliderWidget</class>
    <extends>ctkSliderWidget</extends>
    <header>qMRMLSliderWidget.h</header>
@@ -606,28 +664,6 @@
    <class>qMRMLMarkupsFiducialProjectionPropertyWidget</class>
    <extends>qMRMLWidget</extends>
    <header>qMRMLMarkupsFiducialProjectionPropertyWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>ctkCollapsibleGroupBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkColorPickerButton</class>
-   <extends>QPushButton</extends>
-   <header>ctkColorPickerButton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkSliderWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkSliderWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLScalarsDisplayWidget</class>
-   <extends>qMRMLWidget</extends>
-   <header>qMRMLScalarsDisplayWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

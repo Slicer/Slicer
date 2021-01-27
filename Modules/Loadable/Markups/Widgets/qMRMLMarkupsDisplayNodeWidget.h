@@ -52,6 +52,7 @@ public:
   bool glyphSizeIsAbsolute()const;
   bool curveLineSizeIsAbsolute()const;
 
+  bool propertiesLabelVisibility()const;
   bool pointLabelsVisibility()const;
 
 signals:
@@ -77,7 +78,8 @@ public slots:
   void setGlyphSizeIsAbsolute(bool absolute);
   void setCurveLineSizeIsAbsolute(bool absolute);
 
-  void setPointLabelsVisibility(bool);
+  void setPropertiesLabelVisibility(bool visible);
+  void setPointLabelsVisibility(bool visible);
 
   void setMaximumMarkupsScale(double maxScale);
   void setMaximumMarkupsSize(double maxScale);
@@ -103,8 +105,8 @@ protected slots:
   void onCurveLineDiameterSliderWidgetChanged(double value);
   void onTextScaleSliderWidgetChanged(double value);
   void onOpacitySliderWidgetChanged(double value);
-
-  void setTextProperty();
+  void onSnapModeWidgetChanged();
+  void onTextPropertyWidgetsChanged();
 
   void onInteractionCheckBoxChanged(int state);
 
