@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // QtCore includes
+#include <QDebug>
 #include <QMessageBox>
 
 #include "qSlicerSceneReader.h"
@@ -99,12 +100,11 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
     }
   else
     {
-    bool wasCopying = d->CamerasLogic->GetCopyImportedCameras();
-    bool copyCameras = properties.value("copyCameras", wasCopying).toBool();
-    d->CamerasLogic->SetCopyImportedCameras(copyCameras);
-    qDebug("Import into main MRML scene");
+    if (properties.value("copyCameras", true).toBool() == false)
+      {
+      qWarning() << Q_FUNC_INFO << ": copyCameras=false property is ignored, cameras are now always replaced in the scene";
+      }
     res = this->mrmlScene()->Import();
-    d->CamerasLogic->SetCopyImportedCameras(wasCopying);
     }
 
   if (this->mrmlScene()->GetLastLoadedVersion() &&

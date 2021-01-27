@@ -27,16 +27,6 @@
      </property>
     </widget>
    </item>
-   <item>
-    <widget class="QCheckBox" name="CopyCameraCheckBox">
-     <property name="text">
-      <string>Replace active camera</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -49,21 +39,5 @@
  </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>ClearSceneCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>CopyCameraCheckBox</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>66</x>
-     <y>8</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>156</x>
-     <y>9</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
 </ui>

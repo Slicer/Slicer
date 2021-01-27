@@ -50,8 +50,6 @@ qSlicerSceneIOOptionsWidget::qSlicerSceneIOOptionsWidget(QWidget* parentWidget)
 
   connect(d->ClearSceneCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(updateProperties()));
-  connect(d->CopyCameraCheckBox, SIGNAL(toggled(bool)),
-          this, SLOT(updateProperties()));
 
   this->updateProperties();
 }
@@ -65,7 +63,6 @@ void qSlicerSceneIOOptionsWidget::updateProperties()
   Q_D(qSlicerSceneIOOptionsWidget);
 
   d->Properties["clear"] = d->ClearSceneCheckBox->isChecked();
-  d->Properties["copyCameras"] = d->CopyCameraCheckBox->isChecked();
 }
 
 //------------------------------------------------------------------------------
@@ -76,9 +73,5 @@ void qSlicerSceneIOOptionsWidget::updateGUI(const qSlicerIO::IOProperties& ioPro
   if (ioProperties.contains("clear"))
     {
     d->ClearSceneCheckBox->setChecked(ioProperties["clear"].toBool());
-    }
-  if (ioProperties.contains("copyCameras"))
-    {
-    d->CopyCameraCheckBox->setChecked(ioProperties["copyCameras"].toBool());
     }
 }

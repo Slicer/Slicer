@@ -32,22 +32,20 @@
 #include <cassert>
 
 //----------------------------------------------------------------------------
-bool TestCopyImportedCameras(bool clear, bool copy);
+bool TestCopyImportedCameras(bool clear);
 
 //----------------------------------------------------------------------------
 int vtkSlicerCamerasModuleLogicCopyImportedCamerasTest(int vtkNotUsed(argc),
                                                        char* vtkNotUsed(argv)[])
 {
   bool res = true;
-  res = TestCopyImportedCameras(false, false) && res;
-  res = TestCopyImportedCameras(false, true) && res;
-  res = TestCopyImportedCameras(true, false) && res;
-  res = TestCopyImportedCameras(true, true) && res;
+  res = TestCopyImportedCameras(false) && res;
+  res = TestCopyImportedCameras(true) && res;
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 //----------------------------------------------------------------------------
-bool TestCopyImportedCameras(bool clear, bool copy)
+bool TestCopyImportedCameras(bool clear)
 {
   double camera1Pos[3] = {10., 10., 10.};
   double camera2Pos[3] = {10., 10., 10.};
@@ -65,7 +63,6 @@ bool TestCopyImportedCameras(bool clear, bool copy)
 
   vtkNew<vtkSlicerCamerasModuleLogic> logic;
   logic->SetMRMLScene(scene.GetPointer());
-  logic->SetCopyImportedCameras(copy);
 
   std::string sceneXML =
 "<MRML  version=\"Slicer4\" userTags=\"\">\n"
@@ -105,19 +102,21 @@ bool TestCopyImportedCameras(bool clear, bool copy)
     {
     expectedFirstCamera = importedCamera1Pos;
     }
-  else if (copy)
+  else
     {
     expectedCamera1Pos = importedCamera1Pos;
     expectedFirstCamera = importedCamera1Pos;
     }
+
   vtkMRMLCameraNode* firstCamera = vtkMRMLCameraNode::SafeDownCast(
     scene->GetFirstNodeByClass("vtkMRMLCameraNode"));
+
   if (camera1->GetPosition()[0] != expectedCamera1Pos[0] ||
       camera2->GetPosition()[0] != expectedCamera2Pos[0] ||
       firstCamera->GetPosition()[0] != expectedFirstCamera[0])
     {
     std::cout << "vtkSlicerCamerasModuleLogic::CopyImportedCameras failed.\n"
-              << "Clear: " << clear << " Copy: " << copy
+              << "Clear: " << clear
               << " Cam1: " << camera1->GetPosition()[0]
               << " Exp: " << expectedCamera1Pos[0]
               << " Cam2: " << camera2->GetPosition()[0]
