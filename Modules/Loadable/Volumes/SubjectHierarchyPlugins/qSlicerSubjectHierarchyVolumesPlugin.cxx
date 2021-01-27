@@ -488,9 +488,9 @@ void qSlicerSubjectHierarchyVolumesPlugin::hideVolumeFromAllViews(vtkMRMLScalarV
   for (int i=0; i<numberOfCompositeNodes; i++)
     {
     compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(scene->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
-    char* backgroundVolumeID = compositeNode->GetBackgroundVolumeID();
-    char* foregroundVolumeID = compositeNode->GetForegroundVolumeID();
-    char* labelVolumeID = compositeNode->GetLabelVolumeID();
+    const char* backgroundVolumeID = compositeNode->GetBackgroundVolumeID();
+    const char* foregroundVolumeID = compositeNode->GetForegroundVolumeID();
+    const char* labelVolumeID = compositeNode->GetLabelVolumeID();
     if (backgroundVolumeID && !strcmp(backgroundVolumeID, volumeNodeID))
       {
       compositeNode->SetBackgroundVolumeID(nullptr);
