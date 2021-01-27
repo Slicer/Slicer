@@ -64,6 +64,8 @@ vtkSlicerCurveRepresentation3D::vtkSlicerCurveRepresentation3D()
   this->LineOccludedActor->SetProperty(this->GetControlPointsPipeline(Unselected)->OccludedProperty);
 
   this->CurvePointLocator = vtkSmartPointer<vtkCellLocator>::New();
+
+  this->HideTextActorIfAllPointsOccluded = true;
 }
 
 //----------------------------------------------------------------------
@@ -86,7 +88,7 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   this->VisibilityOn();
 
   // Properties label display
-
+  // Display if there is at least one control point (even if preview)
   if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
     && markupsNode->GetNumberOfDefinedControlPoints(true) > 0) // including preview
     {
@@ -102,6 +104,10 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
       // we only have a preview point
       controlPointIndex = markupsNode->GetNthControlPointIndexByPositionStatus(0, vtkMRMLMarkupsNode::PositionPreview);
       }
+    // It would be better to show the properties label near a visible segment of the curve
+    // but then we may need to iterate through many points whenever the camera rotates, so it may not worth the trouble.
+    // Especially because labels could be still poorly positioned. Probably some more sophisticated auto-placement
+    // with option for manual label position adjustment (and maybe anchor position adjustment) would be the best.
     markupsNode->GetNthControlPointPositionWorld(controlPointIndex, this->TextActorPositionWorld);
     this->TextActor->SetVisibility(true);
     }

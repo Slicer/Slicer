@@ -817,7 +817,7 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOverlay(vtkViewport *viewport)
       int numberOfControlPoints = this->MarkupsNode->GetNumberOfControlPoints();
       for (int i = 0; i < numberOfControlPoints; i++)
       {
-        if (this->GetNthControlPointViewVisibility(0))
+        if (this->GetNthControlPointViewVisibility(i))
         {
           this->TextActorOccluded = false;
           break;
