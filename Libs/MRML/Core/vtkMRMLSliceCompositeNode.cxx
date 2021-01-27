@@ -286,6 +286,7 @@ void vtkMRMLSliceCompositeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
   vtkMRMLCopyIntMacro(HotLinkedControl);
   vtkMRMLCopyIntMacro(FiducialVisibility);
   vtkMRMLCopyIntMacro(FiducialLabelVisibility);
+  vtkMRMLCopyIntMacro(SliceIntersectionVisibility);
   vtkMRMLCopyEnumMacro(AnnotationSpace);
   vtkMRMLCopyEnumMacro(AnnotationMode);
   vtkMRMLCopyIntMacro(DoPropagateVolumeSelection);
