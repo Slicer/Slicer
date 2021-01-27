@@ -60,10 +60,6 @@ public:
 
   void setMRMLScene(vtkMRMLScene* scene);
 
-  /// Loop over all CameraNode from the scene and return the one having
-  /// its activeTag matching \a viewNode ID
-//  vtkMRMLCameraNode* lookUpMRMLCameraNode(vtkMRMLViewNode* viewNode);
-
 public slots:
   /// Handle MRML scene event
   void onSceneStartProcessing();

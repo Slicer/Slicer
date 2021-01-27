@@ -161,30 +161,6 @@ void qMRMLThreeDViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
     this->MRMLScene != nullptr && !this->MRMLScene->IsBatchProcessing());
 }
 
-//---------------------------------------------------------------------------
-//vtkMRMLCameraNode* qMRMLThreeDViewPrivate::lookUpMRMLCameraNode(vtkMRMLViewNode* viewNode)
-//{
-//  Q_ASSERT(viewNode);
-//
-//  QString viewNodeID(viewNode->GetID());
-//  Q_ASSERT(!viewNodeID.isEmpty());
-//
-//  std::vector<vtkMRMLNode*> cameraNodes;
-//  int cameraNodeCount = this->MRMLScene->GetNodesByClass("vtkMRMLCameraNode", cameraNodes);
-//  for (int n=0; n < cameraNodeCount; n++)
-//    {
-//    vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(cameraNodes[n]);
-//    Q_ASSERT(cameraNode);
-//    QString activeTag(cameraNode->GetActiveTag());
-//    if (activeTag == viewNodeID)
-//      {
-//      Q_ASSERT(this->MRMLScene->GetNodeByID(cameraNode->GetID()));
-//      return cameraNode;
-//      }
-//    }
-//  return 0;
-//}
-
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewPrivate::onSceneStartProcessing()
 {
