@@ -130,7 +130,7 @@ void qMRMLThreeDWidget::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
     return;
     }
   d->ThreeDView->setMRMLViewNode(newViewNode);
-  viewLogic->SetName(newViewNode->GetName());
+  viewLogic->SetName(newViewNode->GetLayoutName());
 }
 
 // --------------------------------------------------------------------------
