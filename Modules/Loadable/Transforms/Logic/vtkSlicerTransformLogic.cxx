@@ -504,8 +504,13 @@ vtkMRMLVolumeNode* vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransfor
     }
     else
     {
-      vtkWarningMacro("vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransform: non-linearly transformed reference volume is not supported.\
-                              Harden or remove the transform from of the reference volume.");
+      vtkErrorMacro("vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransform: non-linearly transformed reference volume is not supported." \
+        " Harden or remove the transform from of the reference volume.");
+      if (outputVolumeNode != existingOutputVolumeNode)
+        {
+        scene->RemoveNode(outputVolumeNode);
+        }
+      return nullptr;
     }
     outputVolumeNode->SetIJKToRASMatrix(ijkToRas.GetPointer());
     outputVolume->SetExtent(referenceVolumeNode->GetImageData()->GetExtent());
@@ -561,8 +566,8 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::ConvertToGridTransform(vtkMRMLTra
   }
   if ((referenceVolumeNode == nullptr || referenceVolumeNode->GetImageData() == nullptr) && (existingOutputTransformNode == nullptr))
   {
-    vtkErrorMacro("vtkSlicerTransformLogic::ConvertToGridTransform failed: either a valid reference volume node \
-                        or an existing output transform node has to be specified");
+    vtkErrorMacro("vtkSlicerTransformLogic::ConvertToGridTransform failed: either a valid reference volume node" \
+                  " or an existing output transform node has to be specified");
     return nullptr;
   }
   vtkMRMLScene* scene = this->GetMRMLScene();
@@ -619,8 +624,13 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::ConvertToGridTransform(vtkMRMLTra
     }
     else
     {
-      vtkWarningMacro("vtkSlicerTransformLogic::ConvertToGridTransform: non-linearly transformed reference volume \
-                              is not supported. Harden or remove the transform from of the reference volume.");
+      vtkErrorMacro("vtkSlicerTransformLogic::ConvertToGridTransform: non-linearly transformed reference volume" \
+       " is not supported. Harden or remove the transform from of the reference volume.");
+      if (outputGridTransformNode != existingOutputTransformNode)
+        {
+        scene->RemoveNode(outputGridTransformNode);
+        }
+      return nullptr;
     }
     double origin[3] = { 0, 0, 0 };
     double spacing[3] = { 1, 1, 1 };

@@ -23,6 +23,7 @@
 #include <QFileDialog>
 #include <QApplication>
 #include <QClipboard>
+#include <QMessageBox>
 #include <QStringBuilder>
 #include <QTableWidgetItem>
 
@@ -579,24 +580,29 @@ void qSlicerTransformsModuleWidget::convert()
   vtkMRMLTransformNode* outputTransformNode = vtkMRMLTransformNode::SafeDownCast(d->ConvertOutputDisplacementFieldNodeComboBox->currentNode());
   vtkMRMLVolumeNode* referenceVolumeNode = vtkMRMLVolumeNode::SafeDownCast(d->ConvertReferenceVolumeNodeComboBox->currentNode());
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+  vtkMRMLNode* resultNode = nullptr;
   if (vectorOutputVolumeNode)
     {
     // this must be checked before scalarOutputVolumeNode, as vtkMRMLVectorVolumeNode is a vtkMRMLScalarVolumeNode as well
-    d->logic()->CreateDisplacementVolumeFromTransform(d->MRMLTransformNode, referenceVolumeNode, false /*magnitudeOnly*/, vectorOutputVolumeNode);
+    resultNode = d->logic()->CreateDisplacementVolumeFromTransform(d->MRMLTransformNode, referenceVolumeNode, false /*magnitudeOnly*/, vectorOutputVolumeNode);
     }
   else if (scalarOutputVolumeNode)
     {
-    d->logic()->CreateDisplacementVolumeFromTransform(d->MRMLTransformNode, referenceVolumeNode, true /*magnitudeOnly*/, scalarOutputVolumeNode);
+    resultNode = d->logic()->CreateDisplacementVolumeFromTransform(d->MRMLTransformNode, referenceVolumeNode, true /*magnitudeOnly*/, scalarOutputVolumeNode);
     }
   else if (outputTransformNode)
     {
-    d->logic()->ConvertToGridTransform(d->MRMLTransformNode, referenceVolumeNode, outputTransformNode);
+    resultNode = d->logic()->ConvertToGridTransform(d->MRMLTransformNode, referenceVolumeNode, outputTransformNode);
     }
   else
     {
     qWarning("qSlicerTransformsModuleWidget::convert failed: invalid output node type");
     }
   QApplication::restoreOverrideCursor();
+  if (resultNode == nullptr)
+    {
+    QMessageBox::warning(this, tr("Conversion failed"), tr("Failed to convert transform. See application log for details."));
+    }
 }
 
 //-----------------------------------------------------------------------------
