@@ -252,6 +252,8 @@ void qSlicerTerminologyNavigatorWidgetPrivate::init()
     q, SLOT(onCategorySelectionChanged()) );
   QObject::connect(this->tableWidget_Type, SIGNAL(currentItemChanged(QTableWidgetItem*,QTableWidgetItem*)),
     q, SLOT(onTypeSelected(QTableWidgetItem*,QTableWidgetItem*)) );
+  QObject::connect(this->tableWidget_Type, SIGNAL(cellDoubleClicked(int,int)),
+    q, SLOT(onTypeCellDoubleClicked(int,int)) );
   QObject::connect(this->ComboBox_TypeModifier, SIGNAL(currentIndexChanged(int)),
     q, SLOT(onTypeModifierSelectionChanged(int)) );
   QObject::connect(this->SearchBox_Category, SIGNAL(textChanged(QString)),
@@ -1658,6 +1660,14 @@ void qSlicerTerminologyNavigatorWidget::onTypeSelected(QTableWidgetItem* current
     {
     d->setRecommendedColorFromCurrentTerminology();
     }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTerminologyNavigatorWidget::onTypeCellDoubleClicked(int row, int column)
+{
+  Q_UNUSED(row);
+  Q_UNUSED(column);
+  emit typeDoubleClicked();
 }
 
 //-----------------------------------------------------------------------------
