@@ -176,6 +176,7 @@ protected slots:
   void onTerminologySelectionChanged(int);
   void onCategorySelectionChanged();
   void onTypeSelected(QTableWidgetItem*, QTableWidgetItem*);
+  void onTypeCellDoubleClicked(int, int);
   void onTypeModifierSelectionChanged(int);
   void onCategorySearchTextChanged(QString);
   void onTypeSearchTextChanged(QString);
@@ -201,6 +202,8 @@ protected slots:
 signals:
   /// Emitted when selection becomes valid (true argument) or invalid (false argument)
   void selectionValidityChanged(bool);
+  /// Emitted when type is double clicked. It can be interpreted as having made a selection
+  void typeDoubleClicked();
 
 protected:
   QScopedPointer<qSlicerTerminologyNavigatorWidgetPrivate> d_ptr;
