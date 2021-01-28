@@ -303,7 +303,7 @@ std::string vtkSegmentationConverter::GetConversionParameterDescription(const st
 //----------------------------------------------------------------------------
 vtkSegmentationConverter::ConversionPathType vtkSegmentationConverter::GetCheapestPath(const ConversionPathAndCostListType &pathsCosts)
 {
-  unsigned int cheapestPathCost = vtkSegmentationConverterRule::GetConversionInfiniteCost();
+  unsigned int cheapestPathCost = VTK_UNSIGNED_INT_MAX;
   unsigned int cheapestPathNumberOfConversions = 0;
   ConversionPathType cheapestPath;
   for (ConversionPathAndCostListType::const_iterator pathIt = pathsCosts.begin(); pathIt != pathsCosts.end(); ++pathIt)
