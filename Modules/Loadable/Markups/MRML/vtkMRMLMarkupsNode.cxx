@@ -668,13 +668,6 @@ bool vtkMRMLMarkupsNode::InsertControlPoint(ControlPoint *controlPoint, int targ
     controlPoint->ID = this->GenerateUniqueControlPointID();
     }
 
-  /* do not generate labels for inserted points
-  if (controlPoint->Label.empty())
-    {
-    controlPoint->Label = this->GenerateControlPointLabel(targetIndex);
-    }
-    */
-
   int listSize = this->GetNumberOfControlPoints();
   int destIndex = targetIndex;
   if (targetIndex < 0)
