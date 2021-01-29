@@ -430,35 +430,40 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
         sNode->UpdateMatrices();
         }
 
-      // Resetting the field of view does not require the
-      // orientations to match
+      // Setting field of view and orientation of slice views do not require the orientations to match
+
+      // Order of operations are important: reset rotation, snap to volume axis, reset FOV
+
       if ((sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
-          & vtkMRMLSliceNode::ResetFieldOfViewFlag)
-          && this->GetMRMLApplicationLogic()->GetSliceLogics())
+          & vtkMRMLSliceNode::ResetOrientationFlag))
         {
-        // need the logic for this slice (sNode)
-        vtkMRMLSliceLogic* logic;
-        vtkCollectionSimpleIterator it;
-        vtkCollection* logics = this->GetMRMLApplicationLogic()->GetSliceLogics();
-        for (logics->InitTraversal(it);
-              (logic=vtkMRMLSliceLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
+        sNode->SetOrientationToDefault();
+        }
+
+      if ((sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
+        & vtkMRMLSliceNode::RotateToBackgroundVolumePlaneFlag)
+        && this->GetMRMLApplicationLogic()->GetSliceLogics())
+        {
+        vtkMRMLSliceLogic* logic = this->GetMRMLApplicationLogic()->GetSliceLogic(sNode);
+        if (logic)
           {
-          if (logic->GetSliceNode() == sNode)
-            {
-            logic->FitSliceToAll();
-            sNode->UpdateMatrices();
-            break;
-            }
+          logic->RotateSliceToLowestVolumeAxes();
           }
         }
 
-      // Resetting the orientations to default does not require the
+      // Resetting the field of view does not require the
       // orientations to match
       if ((sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
-          & vtkMRMLSliceNode::ResetOrientationFlag)
-          && this->GetMRMLApplicationLogic()->GetSliceLogics())
+        & vtkMRMLSliceNode::ResetFieldOfViewFlag)
+        && this->GetMRMLApplicationLogic()->GetSliceLogics())
         {
-        sNode->SetOrientationToDefault();
+        // need the logic for this slice (sNode)
+        vtkMRMLSliceLogic* logic = this->GetMRMLApplicationLogic()->GetSliceLogic(sNode);
+        if (logic)
+          {
+          logic->FitSliceToAll();
+          sNode->UpdateMatrices();
+          }
         }
 
       // Broadcasting the rotation from a ReformatWidget

@@ -136,8 +136,13 @@ protected slots:
   void onSliceCompositeNodeModified();
 
   /// Toggle flag determining whether field of view in slice views is reset when showing a volume
-  /// in subject hierarchy. By default it is off. State is stored in the application settings.
+  /// in subject hierarchy. By default it is on. State is stored in the application settings.
   void toggleResetFieldOfViewOnShowAction(bool);
+
+  /// Toggle flag determining whether orientation slice views should be reset to background volume axis
+  /// closest to the view's default view axis when showing a volume in subject hierarchy.
+  /// By default it is on. State is stored in the application settings.
+  void toggleResetViewOrientationOnShowAction(bool);
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyVolumesPluginPrivate> d_ptr;

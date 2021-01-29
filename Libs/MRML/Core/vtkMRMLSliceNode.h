@@ -471,6 +471,7 @@ public:
     SliceVisibleFlag = 128,
     SliceSpacingFlag = 256,
     ResetOrientationFlag = 512,
+    RotateToBackgroundVolumePlaneFlag = 1024
   };
 
   /// Get/Set a flag indicating what parameters are being manipulated
