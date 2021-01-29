@@ -24,6 +24,7 @@ class vtkMRMLVolumeNode;
 class vtkMRMLDiffusionWeightedVolumeNode;
 class vtkMRMLDiffusionImageVolumeNode;
 class vtkImageData;
+class vtkMRMLNode;
 
 namespace itk
 {
@@ -120,6 +121,8 @@ protected:
    *  transfer this volume to a Slicer node */
   void SetDTNodeValues(vtkMRMLDiffusionImageVolumeNode *di,
                        MetaDataDictionary &dict);
+
+  void RequestModified(vtkMRMLNode* modifiedObject);
 
 private:
   MRMLIDImageIO(const Self&) = delete;
