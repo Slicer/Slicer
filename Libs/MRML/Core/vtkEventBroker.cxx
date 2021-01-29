@@ -23,6 +23,7 @@
 #include <vtkTimerLog.h>
 
 vtkCxxSetObjectMacro(vtkEventBroker, TimerLog, vtkTimerLog);
+vtkCxxSetObjectMacro(vtkEventBroker, RequestModifiedCallback, vtkCallbackCommand);
 
 //----------------------------------------------------------------------------
 // The IO manager singleton.
@@ -98,6 +99,7 @@ vtkEventBroker::vtkEventBroker()
   this->LogFileName = nullptr;
   this->ScriptHandler = nullptr;
   this->ScriptHandlerClientData = nullptr;
+  this->RequestModifiedCallback = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -116,6 +118,11 @@ vtkEventBroker::~vtkEventBroker()
   if (this->TimerLog)
     {
     this->TimerLog->Delete();
+    }
+
+  if (this->RequestModifiedCallback)
+    {
+    this->RequestModifiedCallback->Delete();
     }
   //cout << "vtkEventBroker singleton Deleted" << endl;
 }
@@ -924,4 +931,15 @@ void vtkEventBroker::classFinalize()
 {
   vtkEventBrokerInstance->Delete();
   vtkEventBrokerInstance = nullptr;
+}
+
+//----------------------------------------------------------------------------
+bool vtkEventBroker::RequestModified(vtkObject* object)
+{
+  if (!this->RequestModifiedCallback)
+    {
+    return false;
+    }
+  this->RequestModifiedCallback->Execute(this, vtkCommand::ModifiedEvent, object);
+  return true;
 }

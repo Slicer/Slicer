@@ -16,6 +16,7 @@ Version:   $Revision: 1.18 $
 #include "itkMetaDataObject.h"
 
 // MRML includes
+#include "vtkEventBroker.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLDisplayNode.h"
@@ -592,108 +593,133 @@ void
 MRMLIDImageIO
 ::Write(const void *buffer)
 {
-  vtkMRMLVolumeNode *node;
-
-  node = this->FileNameToVolumeNodePtr( m_FileName.c_str() );
-  if (node)
+  vtkMRMLVolumeNode *node = this->FileNameToVolumeNodePtr( m_FileName.c_str() );
+  if (!node)
     {
-    int wasModifying = node->StartModify();
-    std::map<std::string, int> wereModifyingDisplayNodes;
-    for (int i = 0; i < node->GetNumberOfDisplayNodes(); ++i)
+    return;
+    }
+  // Prevent firing modified events from this thread (we are not in main thread now), because via event observers a lot of
+  // additional methods could be called, which can lead to crashes or other unpredictable behavior.
+  // Instead, we disable modification and then request an update on the main thread once all modifications are done.
+  int wasModifying = node->GetDisableModifiedEvent();
+  node->DisableModifiedEventOn();
+  std::map<std::string, int> wereModifyingDisplayNodes;
+  for (int i = 0; i < node->GetNumberOfDisplayNodes(); ++i)
+    {
+    vtkMRMLDisplayNode* displayNode = node->GetNthDisplayNode(i);
+    if (displayNode)
       {
-      vtkMRMLDisplayNode* displayNode = node->GetNthDisplayNode(i);
-      if (displayNode)
-        {
-        wereModifyingDisplayNodes[displayNode->GetID()] = displayNode->StartModify();
-        }
+      wereModifyingDisplayNodes[displayNode->GetID()] = displayNode->GetDisableModifiedEvent();
+      displayNode->DisableModifiedEventOn();
       }
+    }
 
-    // Need to create a VTK ImageData to hang off the node if there is
-    // not one already there
-    //
-    vtkImageData *img = node->GetImageData();
-    if (!img)
+  // Need to create a VTK ImageData to hang off the node if there is
+  // not one already there
+  //
+  vtkImageData *img = node->GetImageData();
+  if (!img)
+    {
+    img = vtkImageData::New();
+    }
+  else
+    {
+    // Disconnect the observers from the image to prevent calling events on the main thread
+    img->Register(nullptr);  // keep a handle
+    node->SetAndObserveImageData(nullptr);
+    }
+
+  // Configure the information on the node/image data
+  //
+  //
+  int scalarType = VTK_SHORT;
+  int numberOfScalarComponents = 1;
+  this->WriteImageInformation(node, img, &scalarType, &numberOfScalarComponents);
+
+  // Allocate the data, copy the data
+  //
+  //
+  if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node) == nullptr)
+    {
+    // Everything but tensor images are passed in the scalars
+    img->AllocateScalars(scalarType, numberOfScalarComponents);
+
+    memcpy(img->GetScalarPointer(), buffer,
+            img->GetPointData()->GetScalars()->GetNumberOfComponents() *
+            img->GetPointData()->GetScalars()->GetNumberOfTuples() *
+            img->GetPointData()->GetScalars()->GetDataTypeSize()
+      );
+    }
+  else
+    {
+    // Tensor image
+    unsigned long imagesizeinpixels = this->GetImageSizeInPixels();
+
+    // Allocate tensor image (number of components set in WriteInformation())
+    img->GetPointData()->GetTensors()->SetNumberOfTuples(imagesizeinpixels);
+
+    // Tensors coming from ITK will be 6 components.  Need to
+    // convert to 9 components for VTK
+    void *mptr = img->GetPointData()->GetTensors()->GetVoidPointer(0);
+    const void *bptr = buffer;
+
+    short csize =img->GetPointData()->GetTensors()->GetDataTypeSize();
+    for (unsigned long i=0; i < imagesizeinpixels; ++i)
       {
-      img = vtkImageData::New();
+      memcpy((char*)mptr, (char*)bptr, csize);
+      memcpy((char*)mptr+csize, (char*)bptr+csize, csize);
+      memcpy((char*)mptr+2*csize, (char*)bptr+2*csize, csize);
+      memcpy((char*)mptr+3*csize, (char*)bptr+1*csize, csize);
+      memcpy((char*)mptr+4*csize, (char*)bptr+3*csize, csize);
+      memcpy((char*)mptr+5*csize, (char*)bptr+4*csize, csize);
+      memcpy((char*)mptr+6*csize, (char*)bptr+2*csize, csize);
+      memcpy((char*)mptr+7*csize, (char*)bptr+4*csize, csize);
+      memcpy((char*)mptr+8*csize, (char*)bptr+5*csize, csize);
+      mptr = (char*)mptr + 9*csize;
+      bptr = (char*)bptr + 6*csize;
       }
-    else
+    }
+
+  // Connect the observers to the image
+  node->SetAndObserveImageData( img );
+  img->UnRegister(nullptr); // release the handle
+
+  // Re-enable Modified events
+  for (int i = 0; i < node->GetNumberOfDisplayNodes(); ++i)
+    {
+    vtkMRMLDisplayNode* displayNode = node->GetNthDisplayNode(i);
+    if (displayNode)
       {
-      // Disconnect the observers from the image to prevent calling events on the main thread
-      img->Register(nullptr);  // keep a handle
-      node->SetAndObserveImageData(nullptr);
+      displayNode->SetDisableModifiedEvent(wereModifyingDisplayNodes[displayNode->GetID()]);
       }
+    }
 
-    // Configure the information on the node/image data
-    //
-    //
-    int scalarType = VTK_SHORT;
-    int numberOfScalarComponents = 1;
-    this->WriteImageInformation(node, img, &scalarType, &numberOfScalarComponents);
-
-    // Allocate the data, copy the data
-    //
-    //
-    if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node) == nullptr)
+  node->SetDisableModifiedEvent(wasModifying);
+  // Invoke modified events on the main thread
+  for (int i = 0; i < node->GetNumberOfDisplayNodes(); ++i)
+    {
+    vtkMRMLDisplayNode* displayNode = node->GetNthDisplayNode(i);
+    if (displayNode)
       {
-      // Everything but tensor images are passed in the scalars
-      img->AllocateScalars(scalarType, numberOfScalarComponents);
-
-      memcpy(img->GetScalarPointer(), buffer,
-             img->GetPointData()->GetScalars()->GetNumberOfComponents() *
-             img->GetPointData()->GetScalars()->GetNumberOfTuples() *
-             img->GetPointData()->GetScalars()->GetDataTypeSize()
-        );
+      this->RequestModified(displayNode);
       }
-    else
-      {
-      // Tensor image
-      unsigned long imagesizeinpixels = this->GetImageSizeInPixels();
+    }
+  this->RequestModified(node);
+}
 
-      // Allocate tensor image (number of components set in WriteInformation())
-      img->GetPointData()->GetTensors()->SetNumberOfTuples(imagesizeinpixels);
-
-      // Tensors coming from ITK will be 6 components.  Need to
-      // convert to 9 components for VTK
-      void *mptr = img->GetPointData()->GetTensors()->GetVoidPointer(0);
-      const void *bptr = buffer;
-
-      short csize =img->GetPointData()->GetTensors()->GetDataTypeSize();
-      for (unsigned long i=0; i < imagesizeinpixels; ++i)
-        {
-        memcpy((char*)mptr, (char*)bptr, csize);
-        memcpy((char*)mptr+csize, (char*)bptr+csize, csize);
-        memcpy((char*)mptr+2*csize, (char*)bptr+2*csize, csize);
-        memcpy((char*)mptr+3*csize, (char*)bptr+1*csize, csize);
-        memcpy((char*)mptr+4*csize, (char*)bptr+3*csize, csize);
-        memcpy((char*)mptr+5*csize, (char*)bptr+4*csize, csize);
-        memcpy((char*)mptr+6*csize, (char*)bptr+2*csize, csize);
-        memcpy((char*)mptr+7*csize, (char*)bptr+4*csize, csize);
-        memcpy((char*)mptr+8*csize, (char*)bptr+5*csize, csize);
-        mptr = (char*)mptr + 9*csize;
-        bptr = (char*)bptr + 6*csize;
-        }
-      }
-
-    // Connect the observers to the image
-    node->SetAndObserveImageData( img );
-    img->UnRegister(nullptr); // release the handle
-
-    for (int i = 0; i < node->GetNumberOfDisplayNodes(); ++i)
-      {
-      vtkMRMLDisplayNode* displayNode = node->GetNthDisplayNode(i);
-      if (displayNode)
-        {
-        // WARNING! node->EndModify() may call methods on the main thread (and we are in another thread now), which can lead to crashes or other unpredictable behavior
-        // TODO: instead of modifying the scene from this thread, a request should be sent to the main thread to read the data
-        displayNode->EndModify(
-          wereModifyingDisplayNodes[displayNode->GetID()]);
-        }
-      }
-    // Enable Modified events
-    //
-    // WARNING! node->EndModify() may call methods on the main thread (and we are in another thread now), which can lead to crashes or other unpredictable behavior
-    // TODO: instead of modifying the scene from this thread, a request should be sent to the main thread to read the data
-    node->EndModify(wasModifying);
+//----------------------------------------------------------------------------
+void MRMLIDImageIO::RequestModified(vtkMRMLNode* modifiedObject)
+{
+  if (!vtkEventBroker::GetInstance()->RequestModified(modifiedObject))
+    {
+    // Request modification failed, assuming that the modified request callback
+    // is not set because there is only a single thread and so calling modified
+    // directly from this thread.
+    // Call Start/EndModify instead of a simple Modified()
+    // to invoke all other pending modified events.
+    bool wasModified = modifiedObject->StartModify();
+    modifiedObject->Modified();
+    modifiedObject->EndModify(wasModified);
     }
 }
 

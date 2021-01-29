@@ -241,6 +241,17 @@ public:
     this->ScriptHandlerClientData = clientData;
     }
 
+  /// Request invoking modified event.
+  /// Modified event is called later (e.g., when the application becomes idle)
+  /// on the main thread (therefore it is safe to call this method from any thread).
+  /// Returns true if the request was successfully submitted.
+  virtual bool RequestModified(vtkObject* object);
+
+  /// Set callback command for RequestModified. This command must be implemented so that
+  /// it is safe to be called from any thread.
+  virtual void SetRequestModifiedCallback(vtkCallbackCommand* callback);
+  vtkGetObjectMacro(RequestModifiedCallback, vtkCallbackCommand);
+
 protected:
   vtkEventBroker();
   ~vtkEventBroker() override;
@@ -287,6 +298,9 @@ protected:
   int CompressCallData;
 
   std::ofstream LogFile;
+
+  vtkCallbackCommand* RequestModifiedCallback;
+
 private:
   /// DetachObservations is a fast (but dangerous) method to delete all the
   /// observations. It leaves the event broker in an inconsistent state:

@@ -221,6 +221,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// Values are allowed to be modified.
   vtkPersonInformation* GetUserInformation();
 
+  /// Callback function to request invoking a modified event on the main thread.
+  /// This function may be called from any thread.
+  static void RequestModifiedCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
+
 protected:
 
   vtkSlicerApplicationLogic();

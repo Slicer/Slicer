@@ -87,6 +87,7 @@
 
 // MRML includes
 #include <vtkCacheManager.h>
+#include <vtkEventBroker.h>
 #include <vtkMRMLCrosshairNode.h>
 #ifdef Slicer_BUILD_CLI_SUPPORT
 # include <vtkMRMLCommandLineModuleNode.h>
@@ -101,6 +102,7 @@
 #include <ctkAppLauncherSettings.h>
 
 // VTK includes
+#include <vtkCallbackCommand.h>
 #include <vtkNew.h>
 #include <vtksys/SystemTools.hxx>
 
@@ -312,6 +314,14 @@ void qSlicerCoreApplicationPrivate::init()
 
   // Create the application Logic object,
   this->AppLogic = vtkSmartPointer<vtkSlicerApplicationLogic>::New();
+
+  // Create callback function that allows invoking VTK object modified requests from any thread.
+  // This is used for example in MRMLIDImageIO to indicate that image update is completed.
+  vtkNew<vtkCallbackCommand> modifiedRequestCallback;
+  modifiedRequestCallback->SetClientData(this->AppLogic);
+  modifiedRequestCallback->SetCallback(vtkSlicerApplicationLogic::RequestModifiedCallback);
+  vtkEventBroker::GetInstance()->SetRequestModifiedCallback(modifiedRequestCallback);
+
   this->AppLogic->SetTemporaryPath(q->temporaryPath().toUtf8());
   vtkPersonInformation* userInfo = this->AppLogic->GetUserInformation();
   if (userInfo)

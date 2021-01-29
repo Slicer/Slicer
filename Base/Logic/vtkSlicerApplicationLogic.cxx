@@ -597,7 +597,19 @@ void vtkSlicerApplicationLogic::ProcessModified()
   //  - decrement reference count that was increased when it was added to the queue
   if (obj.GetPointer())
     {
-    obj->Modified();
+    vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(obj);
+    if (node)
+      {
+      // use Start/EndModify to also invoke all pending events that might have been
+      // accumulated because of previous use of SetDisableModifiedEvent (e.g., in itkMRMLIDImageIO).
+      bool wasModified = node->StartModify();
+      node->Modified();
+      node->EndModify(wasModified);
+      }
+    else
+      {
+      obj->Modified();
+      }
     obj->Delete();
     obj = nullptr;
     }
@@ -994,4 +1006,17 @@ void vtkSlicerApplicationLogic::SetCurrentThreadPriorityToBackground()
       "setpriority did not succeed. You need root privileges to set a priority < 0.");
     }
 #endif
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationLogic::RequestModifiedCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData)
+{
+  // Note: This method may be called from any thread
+  if (clientData == nullptr || callData == nullptr)
+    {
+    return;
+    }
+  vtkSlicerApplicationLogic* appLogic = static_cast<vtkSlicerApplicationLogic*>(clientData);
+  vtkObject* modifiedObject = static_cast<vtkObject*>(callData);
+  appLogic->RequestModified(modifiedObject);
 }
