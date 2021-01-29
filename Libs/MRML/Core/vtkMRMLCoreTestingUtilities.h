@@ -60,6 +60,11 @@ bool CheckNodeIdAndName(int line, vtkMRMLNode* node,
 template<typename Type>
 std::string ToString(Type value);
 
+/// Return list of node that should be added to the scene
+VTK_MRML_EXPORT
+int GetExpectedNodeAddedClassNames(
+    const char * sceneFilePath, std::vector<std::string>& expectedNodeAddedClassNames);
+
 /// Test basic VTK object methods (print, superclass, etc.)
 VTK_MRML_EXPORT
 int ExerciseBasicObjectMethods(vtkObject* object);

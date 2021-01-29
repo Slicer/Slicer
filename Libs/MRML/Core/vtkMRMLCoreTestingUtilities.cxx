@@ -40,6 +40,7 @@
 #include <vtkStringArray.h>
 #include <vtkTestErrorObserver.h>
 #include <vtkURIHandler.h>
+#include <vtkXMLDataParser.h>
 
 namespace vtkMRMLCoreTestingUtilities
 {
@@ -115,6 +116,43 @@ bool CheckNodeIdAndName(int line, vtkMRMLNode* node,
     return false;
     }
   return true;
+}
+
+// ----------------------------------------------------------------------------
+int GetExpectedNodeAddedClassNames(const char * sceneFilePath, std::vector<std::string>& expectedNodeAddedClassNames)
+{
+  vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkXMLDataParser> xmlParser;
+  xmlParser->SetFileName(sceneFilePath);
+  CHECK_BOOL(xmlParser->Parse() !=0 , true);
+  int expectedNumberOfNode = xmlParser->GetRootElement()->GetNumberOfNestedElements();
+  CHECK_BOOL(expectedNumberOfNode > 0, true);
+
+  // Loop though all exepcted node and populate expectedNodeAddedClassNames vector
+  // Note that node that can't be instantiated using CreateNodeByClass are not expected
+  for(int i=0; i < xmlParser->GetRootElement()->GetNumberOfNestedElements(); ++i)
+    {
+    std::string className = "vtkMRML";
+    className += xmlParser->GetRootElement()->GetNestedElement(i)->GetName();
+    // Append 'Node' prefix only if required
+    if (className.find("Node") != className.size() - 4)
+      {
+      className += "Node";
+      }
+    vtkSmartPointer<vtkMRMLNode> nodeSmartPointer;
+    nodeSmartPointer.TakeReference(scene->CreateNodeByClass(className.c_str()));
+    if (!nodeSmartPointer)
+      {
+      std::cout << "className:" << className << std::endl;
+      --expectedNumberOfNode;
+      }
+    else
+      {
+      expectedNodeAddedClassNames.push_back(className);
+      }
+    }
+  CHECK_BOOL(expectedNumberOfNode == static_cast<int>(expectedNodeAddedClassNames.size()), true);
+  return EXIT_SUCCESS;
 }
 
 // ----------------------------------------------------------------------------
