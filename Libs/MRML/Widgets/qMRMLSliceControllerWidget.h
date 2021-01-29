@@ -206,8 +206,8 @@ public slots:
   /// there is a segmentation node in the scene
   void updateSegmentationControlsVisibility();
 
-  /// Rotate to volume plane
-  void rotateSliceToBackground();
+  /// Rotate to volume plane (first of background, foreground, or label)
+  void rotateSliceToLowestVolumeAxes();
 
   void setSegmentationHidden(bool hide);
   void setLabelMapHidden(bool hide);
