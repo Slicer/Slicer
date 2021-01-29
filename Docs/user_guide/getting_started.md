@@ -55,6 +55,9 @@ Installing Preview Release: Currently, preview release packages are not signed. 
 - Open the tar.gz archive and copy directory to the location of your choice. Run the Slicer executable.
 - Remove the directory to uninstall
 
+**Note:** Slicer is expected to work on the vast majority of desktop and server Linux distributions. The system is required to provide at least GLIBC 2.17 and GLIBCCC 3.4.19. For more details, read [here](https://www.python.org/dev/peps/pep-0599/#the-manylinux2014-policy).
+
+#### Debian / Ubuntu
 The following may be needed on fresh debian or ubuntu:
 
     sudo apt-get install libpulse-dev libnss3 libglu1-mesa
@@ -64,7 +67,8 @@ To run Slicer-4.11-2020-09-30 on older debian (e.g. debian 9) you may also need:
 
     sudo apt-get install libxcb-icccm4-dev libxcb-image0-dev libxcb-keysyms1-dev libxcb-randr0 libxcb-render-util0 libxcb-xkb-dev libxkbcommon-x11-dev
 
-**Note:** Slicer is expected to work on the vast majority of desktop and server Linux distributions. The system is required to provide at least GLIBC 2.17 and GLIBCCC 3.4.19. For more details, read [here](https://www.python.org/dev/peps/pep-0599/#the-manylinux2014-policy).
+#### ArchLinux
+ArchLinux runs the `strip` utility by default; this needs to be disabled in order to run Slicer binaries.  For more information see [this thread on the Slicer Forum](https://discourse.slicer.org/t/could-not-load-dicom-data/14211/5).
 
 ## Using Slicer
 
