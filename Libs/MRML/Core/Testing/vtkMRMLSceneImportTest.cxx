@@ -24,6 +24,7 @@
 
 // VTK includes
 #include <vtkNew.h>
+#include <vtkXMLDataParser.h>
 
 //---------------------------------------------------------------------------
 int vtkMRMLSceneImportTest(int argc, char * argv[] )
@@ -36,6 +37,18 @@ int vtkMRMLSceneImportTest(int argc, char * argv[] )
     }
   const char* sceneFilePath = argv[1];
 
+  //---------------------------------------------------------------------------
+  // Extract list of node that should be added to the scene
+  //---------------------------------------------------------------------------
+  std::vector<std::string> expectedNodeAddedClassNames;
+  CHECK_EXIT_SUCCESS(vtkMRMLCoreTestingUtilities::GetExpectedNodeAddedClassNames(
+                       sceneFilePath, expectedNodeAddedClassNames));
+  bool hasCameraNode = std::find(
+        expectedNodeAddedClassNames.begin(),
+        expectedNodeAddedClassNames.end(),
+        "vtkMRMLCameraNode") != expectedNodeAddedClassNames.end();
+
+  //---------------------------------------------------------------------------
   vtkNew<vtkMRMLScene> scene;
 
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
@@ -58,7 +71,17 @@ int vtkMRMLSceneImportTest(int argc, char * argv[] )
   scene->Import();
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
+
+  if (hasCameraNode)
+    {
+    TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
+    }
   CHECK_EXIT_SUCCESS(vtkMRMLCoreTestingUtilities::ExerciseSceneLoadingMethods(sceneFilePath));
+  if (hasCameraNode)
+    {
+    TESTING_OUTPUT_ASSERT_WARNINGS(4); // vtkMRMLCameraNode::GetActiveTag() is deprecated.
+    TESTING_OUTPUT_ASSERT_WARNINGS_END();
+    }
 
   return EXIT_SUCCESS;
 }
