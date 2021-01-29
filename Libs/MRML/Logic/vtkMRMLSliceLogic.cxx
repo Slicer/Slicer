@@ -2436,3 +2436,28 @@ vtkImageBlend* vtkMRMLSliceLogic::GetBlendUVW()
 {
   return this->PipelineUVW->Blend.GetPointer();
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::RotateSliceToLowestVolumeAxes()
+{
+  vtkMRMLVolumeNode* volumeNode;
+  for (int layer = 0; layer < 3; layer++)
+    {
+    volumeNode = this->GetLayerVolumeNode(layer);
+    if (volumeNode)
+      {
+      break;
+      }
+    }
+  if (!volumeNode)
+    {
+    return;
+    }
+  vtkMRMLSliceNode* sliceNode = this->GetSliceNode();
+  if (!sliceNode)
+    {
+    return;
+    }
+  sliceNode->RotateToVolumePlane(volumeNode);
+  this->SnapSliceOffsetToIJK();
+}

@@ -239,6 +239,9 @@ public:
   ///   be used to calculate the range (e.g. of a slider) that operates in slice space
   void GetBackgroundSliceBounds(double sliceBounds[6]);
 
+  /// Rotate slice view to match axes of the lowest volume layer (background, foreground, label).
+  void RotateSliceToLowestVolumeAxes();
+
   ///
   /// adjust the node's field of view to match the extent of current background volume
   void FitSliceToBackground(int width, int height);

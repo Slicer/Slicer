@@ -2187,8 +2187,10 @@ void vtkMRMLSliceNode::RotateToAxes(vtkMatrix4x4 *referenceToRAS, int sliceNorma
   // 8 combinations of X, Y vector directions, 2 vectors (slice X and Y)
   double sliceXAxisDirection[3] = { 0.0 };
   double sliceYAxisDirection[3] = { 0.0 };
+  double sliceZAxisDirection[3] = { 0.0 };
   vtkAddonMathUtilities::GetOrientationMatrixColumn(this->SliceToRAS, 0, sliceXAxisDirection);
   vtkAddonMathUtilities::GetOrientationMatrixColumn(this->SliceToRAS, 1, sliceYAxisDirection);
+  vtkAddonMathUtilities::GetOrientationMatrixColumn(this->SliceToRAS, 2, sliceZAxisDirection);
   double minAngleDiff = -1;
   for (int testedDirectionIndexX = 0; testedDirectionIndexX < 6; testedDirectionIndexX++)
     {
@@ -2209,11 +2211,23 @@ void vtkMRMLSliceNode::RotateToAxes(vtkMatrix4x4 *referenceToRAS, int sliceNorma
         }
       double sliceXAxisVolumeAxisDirection[4] = { 0.0 };
       double sliceYAxisVolumeAxisDirection[4] = { 0.0 };
+      double sliceZAxisVolumeAxisDirection[4] = { 0.0 };
       referenceToRAS->MultiplyPoint(testedDirections[testedDirectionIndexX], sliceXAxisVolumeAxisDirection);
       referenceToRAS->MultiplyPoint(testedDirections[testedDirectionIndexY], sliceYAxisVolumeAxisDirection);
+      vtkMath::Cross(sliceXAxisVolumeAxisDirection, sliceYAxisVolumeAxisDirection, sliceZAxisVolumeAxisDirection);
 
-      double angleDiff = vtkMath::AngleBetweenVectors(sliceXAxisVolumeAxisDirection, sliceXAxisDirection)
-        + vtkMath::AngleBetweenVectors(sliceYAxisVolumeAxisDirection, sliceYAxisDirection);
+      // Comparison metric is sum of angle between x, y, z axis
+      double zAxisAngleDiff = fabs(vtkMath::AngleBetweenVectors(sliceZAxisVolumeAxisDirection, sliceZAxisDirection));
+      if (zAxisAngleDiff > vtkMath::Pi()/2.0)
+        {
+        // we ignore z axis flip (we will compute final z direction from on x and y axes and sliceToRasRightHanded)
+        zAxisAngleDiff = vtkMath::Pi() - zAxisAngleDiff;
+        }
+      double angleDiff =
+        fabs(vtkMath::AngleBetweenVectors(sliceXAxisVolumeAxisDirection, sliceXAxisDirection))
+        + fabs(vtkMath::AngleBetweenVectors(sliceYAxisVolumeAxisDirection, sliceYAxisDirection))
+        + zAxisAngleDiff;
+
       if (angleDiff < minAngleDiff || minAngleDiff < 0.)
         {
         minAngleDiff = angleDiff;
@@ -2229,7 +2243,6 @@ void vtkMRMLSliceNode::RotateToAxes(vtkMatrix4x4 *referenceToRAS, int sliceNorma
   vtkAddonMathUtilities::GetOrientationMatrixColumn(this->SliceToRAS, 0, sliceXAxisDirection);
   vtkAddonMathUtilities::GetOrientationMatrixColumn(this->SliceToRAS, 1, sliceYAxisDirection);
   // Set slice Z axis
-  double sliceZAxisDirection[3] = { 0.0 };
   if (sliceToRasRightHanded)
     {
     vtkMath::Cross(sliceXAxisDirection, sliceYAxisDirection, sliceZAxisDirection);

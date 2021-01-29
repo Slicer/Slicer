@@ -194,7 +194,7 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   QObject::connect(this->actionFit_to_window, SIGNAL(triggered()),
                    q, SLOT(fitSliceToBackground()));
   QObject::connect(this->actionRotate_to_volume_plane, SIGNAL(triggered()),
-                   q, SLOT(rotateSliceToBackground()));
+                   q, SLOT(rotateSliceToLowestVolumeAxes()));
   QObject::connect(this->actionShow_reformat_widget, SIGNAL(triggered(bool)),
                    q, SLOT(showReformatWidget(bool)));
   QObject::connect(this->actionCompositingAlpha_blend, SIGNAL(triggered()),
@@ -2124,7 +2124,7 @@ void qMRMLSliceControllerWidget::moveBackgroundComboBox(bool more)
 }
 
 //---------------------------------------------------------------------------
-void qMRMLSliceControllerWidget::rotateSliceToBackground()
+void qMRMLSliceControllerWidget::rotateSliceToLowestVolumeAxes()
 {
   Q_D(qMRMLSliceControllerWidget);
   vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceNode");
@@ -2132,19 +2132,9 @@ void qMRMLSliceControllerWidget::rotateSliceToBackground()
     {
     return;
     }
-  vtkMRMLSliceNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceNode*>(
-                                   nodes->GetNextItemAsObject(it)));)
-    {
-    vtkMRMLSliceLogic* nodeLogic = d->sliceNodeLogic(node);
-    if (nodeLogic && (nodeLogic == d->SliceLogic.GetPointer() || this->isLinked()))
-      {
-      vtkMRMLVolumeNode* backgroundNode = nodeLogic->GetLayerVolumeNode(0);
-      node->RotateToVolumePlane(backgroundNode);
-      nodeLogic->SnapSliceOffsetToIJK();
-      }
-    }
+  d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::RotateToBackgroundVolumePlaneFlag);
+  d->SliceLogic->RotateSliceToLowestVolumeAxes();
+  d->SliceLogic->EndSliceNodeInteraction();
 }
 
 //---------------------------------------------------------------------------
