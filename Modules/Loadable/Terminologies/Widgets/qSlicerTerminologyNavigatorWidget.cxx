@@ -128,13 +128,17 @@ public:
   /// Reset current type modifier name and container object
   void resetCurrentTypeModifier();
 
-  // Set name from current selection and set it to name text box
+  /// Set name from current selection and set it to name text box
   void setNameFromCurrentTerminology();
-  // Set recommended color from current selection to color picker
+  /// Set recommended color from current selection to color picker
   void setRecommendedColorFromCurrentTerminology();
-  // Get recommended color stored in terminology.
-  // Return invalid color if type is not selected or the selected type has modifiers but no modifier is selected.
+  /// Get recommended color stored in terminology.
+  /// Return invalid color if type is not selected or the selected type has modifiers but no modifier is selected.
   QColor terminologyRecommendedColor();
+  /// Get recommended color for given type.
+  /// If the type does not have a color but has modifiers, then the first valid color from the modifier is returned.
+  /// If no color is found then an invalid color object is returned
+  QColor recommendedColorForType(std::string terminologyName, vtkSlicerTerminologyCategory* category, vtkSlicerTerminologyType* type);
 
   /// Reset current region name and container object
   void resetCurrentRegion();
@@ -429,7 +433,7 @@ QColor qSlicerTerminologyNavigatorWidgetPrivate::terminologyRecommendedColor()
 void qSlicerTerminologyNavigatorWidgetPrivate::setRecommendedColorFromCurrentTerminology()
 {
   // Set 'invalid' gray color if type is not selected or the selected type has modifiers but no modifier is selected
-  QColor color = qSlicerTerminologyNavigatorWidgetPrivate::terminologyRecommendedColor();
+  QColor color = this->terminologyRecommendedColor();
   if (!color.isValid())
     {
     this->ColorPickerButton_RecommendedRGB->blockSignals(true); // The callback function is to save the user's custom color selection
@@ -448,6 +452,57 @@ void qSlicerTerminologyNavigatorWidgetPrivate::setRecommendedColorFromCurrentTer
   this->ColorPickerButton_RecommendedRGB->blockSignals(true); // The callback function is to save the user's custom color selection
   this->ColorPickerButton_RecommendedRGB->setColor(color);
   this->ColorPickerButton_RecommendedRGB->blockSignals(false);
+}
+
+//-----------------------------------------------------------------------------
+QColor qSlicerTerminologyNavigatorWidgetPrivate::recommendedColorForType(
+  std::string terminologyName, vtkSlicerTerminologyCategory* category, vtkSlicerTerminologyType* type)
+{
+  if (terminologyName.empty() || !category || !type)
+    {
+    return QColor();
+    }
+  vtkSlicerTerminologiesModuleLogic* logic = this->terminologyLogic();
+  if (!logic)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access terminology logic";
+    return QColor();
+    }
+
+  unsigned char* colorArray = type->GetRecommendedDisplayRGBValue();
+  QColor color = QColor::fromRgb(colorArray[0], colorArray[1], colorArray[2]);
+  if (color.isValid()
+    && ( colorArray[0] != vtkSlicerTerminologyType::INVALID_COLOR[0]
+      || colorArray[1] != vtkSlicerTerminologyType::INVALID_COLOR[1]
+      || colorArray[2] != vtkSlicerTerminologyType::INVALID_COLOR[2] ))
+    {
+    return color;
+    }
+
+  // If color was invalid check its modifiers
+  if (!type->GetHasModifiers())
+    {
+    return QColor();
+    }
+  std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier> typeModifiers;
+  vtkSlicerTerminologiesModuleLogic::CodeIdentifier categoryId = vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(category);
+  vtkSlicerTerminologiesModuleLogic::CodeIdentifier typeId = vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType(type);
+  logic->GetTypeModifiersInTerminologyType(terminologyName.c_str(), categoryId, typeId, typeModifiers);
+  vtkNew<vtkSlicerTerminologyType> typeModifierObject;
+  for (auto modifierId : typeModifiers)
+    {
+    logic->GetTypeModifierInTerminologyType(terminologyName, categoryId, typeId, modifierId, typeModifierObject);
+    colorArray = typeModifierObject->GetRecommendedDisplayRGBValue();
+    color = QColor::fromRgb(colorArray[0], colorArray[1], colorArray[2]);
+    if (color.isValid()
+      && ( colorArray[0] != vtkSlicerTerminologyType::INVALID_COLOR[0]
+        || colorArray[1] != vtkSlicerTerminologyType::INVALID_COLOR[1]
+        || colorArray[2] != vtkSlicerTerminologyType::INVALID_COLOR[2] ))
+      {
+      return color;
+      }
+    }
+  return QColor();
 }
 
 //-----------------------------------------------------------------------------
@@ -1172,49 +1227,61 @@ void qSlicerTerminologyNavigatorWidget::populateTypeTable()
     ++categoryIndex;
     }
 
-    QTableWidgetItem* selectedItem = nullptr;
+  QTableWidgetItem* selectedItem = nullptr;
 
-    // Show none item only if search term is empty (if user is searching then they want an actual type)
-    int noneTypeExists = 0;
-    QTableWidgetItem* noneItem = nullptr;
-    if (searchTerm.empty())
+  // Show none item only if search term is empty (if user is searching then they want an actual type)
+  int noneTypeExists = 0;
+  QTableWidgetItem* noneItem = nullptr;
+  if (searchTerm.empty())
     {
-      noneTypeExists = 1;
-      noneItem = new QTableWidgetItem(d->NoneItemName);
-      d->tableWidget_Type->setRowCount(types.size() + noneTypeExists);
-      d->tableWidget_Type->setItem(0, 0, noneItem);
+    noneTypeExists = 1;
+    noneItem = new QTableWidgetItem(d->NoneItemName);
+    d->tableWidget_Type->setRowCount(types.size() + noneTypeExists);
+    d->tableWidget_Type->setItem(0, 0, noneItem);
     }
-    else
+  else
     {
-      d->tableWidget_Type->setRowCount(types.size());
+    d->tableWidget_Type->setRowCount(types.size());
     }
 
-    // Add type items to table
-    typeIndex = 0;
-    for (idIt=types.begin(); idIt!=types.end(); ++idIt, ++typeIndex)
+  // Add type items to table
+  typeIndex = 0;
+  vtkNew<vtkSlicerTerminologyType> typeObject;
+  for (idIt=types.begin(); idIt!=types.end(); ++idIt, ++typeIndex)
+    {
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifier addedTypeId = (*idIt);
+    QString addedTypeName(addedTypeId.CodeMeaning.c_str());
+    QTableWidgetItem* addedTypeItem = new QTableWidgetItem(addedTypeName);
+    addedTypeItem->setData(CodingSchemeDesignatorRole, QString(addedTypeId.CodingSchemeDesignator.c_str()));
+    addedTypeItem->setData(CodeValueRole, QString(addedTypeId.CodeValue.c_str()));
+    // Reference containing category so that it can be set when type is selected
+    vtkSlicerTerminologyCategory* category = selectedCategories[typeIndexToCategoryIndexMap[typeIndex]];
+    addedTypeItem->setData(CategoryCodingSchemeDesignatorRole, QString(category->GetCodingSchemeDesignator()));
+    addedTypeItem->setData(CategoryCodeValueRole, QString(category->GetCodeValue()));
+    addedTypeItem->setData(CategoryCodeMeaningRole, QString(category->GetCodeMeaning()));
+    QString tooltip = QString("Category: %1 (anatomy:%2)").arg(category->GetCodeMeaning()).arg(
+      (category->GetShowAnatomy() ? "available" : "N/A") );
+    addedTypeItem->setToolTip(tooltip);
+    // Set color preview (Note: does not show anything if colors are only stored in the type modifiers)
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifier categoryId = vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(category);
+    if (logic->GetTypeInTerminologyCategory(
+      d->CurrentTerminologyName.toUtf8().constData(), categoryId, addedTypeId, typeObject))
       {
-      vtkSlicerTerminologiesModuleLogic::CodeIdentifier addedTypeId = (*idIt);
-      QString addedTypeName(addedTypeId.CodeMeaning.c_str());
-      QTableWidgetItem* addedTypeItem = new QTableWidgetItem(addedTypeName);
-      addedTypeItem->setData(CodingSchemeDesignatorRole, QString(addedTypeId.CodingSchemeDesignator.c_str()));
-      addedTypeItem->setData(CodeValueRole, QString(addedTypeId.CodeValue.c_str()));
-      // Reference containing category so that it can be set when type is selected
-      vtkSlicerTerminologyCategory* category = selectedCategories[typeIndexToCategoryIndexMap[typeIndex]];
-      addedTypeItem->setData(CategoryCodingSchemeDesignatorRole, QString(category->GetCodingSchemeDesignator()));
-      addedTypeItem->setData(CategoryCodeValueRole, QString(category->GetCodeValue()));
-      addedTypeItem->setData(CategoryCodeMeaningRole, QString(category->GetCodeMeaning()));
-      QString tooltip = QString("Category: %1 (anatomy:%2)").arg(category->GetCodeMeaning()).arg(
-        (category->GetShowAnatomy() ? "available" : "N/A") );
-      addedTypeItem->setToolTip(tooltip);
-      // Insert type item
-      d->tableWidget_Type->setItem(typeIndex + noneTypeExists, 0, addedTypeItem);
-
-      if ( d->CurrentTypeObject->GetCodingSchemeDesignator() && !addedTypeId.CodingSchemeDesignator.compare(d->CurrentTypeObject->GetCodingSchemeDesignator())
-        && d->CurrentTypeObject->GetCodeValue() && !addedTypeId.CodeValue.compare(d->CurrentTypeObject->GetCodeValue()) )
+      QColor color = d->recommendedColorForType(d->CurrentTerminologyName.toUtf8().constData(), category, typeObject);
+      if (color.isValid())
         {
-        selectedItem = addedTypeItem;
+        addedTypeItem->setData(Qt::DecorationRole, color);
         }
       }
+    // Insert type item
+    d->tableWidget_Type->setItem(typeIndex + noneTypeExists, 0, addedTypeItem);
+
+    if ( d->CurrentTypeObject->GetCodingSchemeDesignator() && !addedTypeId.CodingSchemeDesignator.compare(d->CurrentTypeObject->GetCodingSchemeDesignator())
+      && d->CurrentTypeObject->GetCodeValue() && !addedTypeId.CodeValue.compare(d->CurrentTypeObject->GetCodeValue()) )
+      {
+      selectedItem = addedTypeItem;
+      }
+    }
 
   if (selectedItem)
     {
