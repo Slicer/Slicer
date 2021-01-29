@@ -1261,7 +1261,7 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     this->SliceModelDisplayNode->SetColor(1,1,1);
     std::string displayName = "Slice Display";
     std::string modelNodeName = "Slice " + this->SLICE_MODEL_NODE_NAME_SUFFIX;
-    if (this->SliceNode)
+    if (this->SliceNode && this->SliceNode->GetLayoutName())
       {
       // Auto-set the colors based on the slice node
       this->SliceModelDisplayNode->SetColor(this->SliceNode->GetLayoutColor());
