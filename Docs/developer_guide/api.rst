@@ -82,5 +82,7 @@ This documentation is generated using the Doxygen tool, which uses C++ syntax. T
       The called method can modify the object.
    -  ``int``, ``char``, ``short`` (with optional ``signed`` or ``unsigned`` prefix) -> Python: ``int``
    -  ``float``, ``double`` -> Python: ``float``
-   -  ``const char *``, ``std::string``, ``QString``, ``const QString&``  -> Python: ``str``
+   -  ``double[3]`` -> Python: initialize a variable before the method call as ``point = np.zeros(3)`` (or ``point = [0.0, 0.0, 0.0]``) and use it as argument in the function
+-  ``const char *``, ``std::string``, ``QString``, ``const QString&``  -> Python: ``str``
    -  ``bool`` -> Python: ``bool``
+   
