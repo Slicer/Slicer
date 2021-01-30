@@ -18,6 +18,7 @@ set(SegmentEditorEffects_PYTHON_SCRIPTS
   SegmentEditorLevelTracingEffect
   SegmentEditorLogicalEffect
   SegmentEditorMarginEffect
+  SegmentEditorMaskVolumeEffect
   SegmentEditorSmoothingEffect
   SegmentEditorThresholdEffect
   )
@@ -31,6 +32,7 @@ set(SegmentEditorEffects_PYTHON_RESOURCES
   Resources/Icons/LevelTracing.png
   Resources/Icons/Logical.png
   Resources/Icons/Margin.png
+  Resources/Icons/MaskVolume.png
   Resources/Icons/Smoothing.png
   Resources/Icons/Threshold.png
   )

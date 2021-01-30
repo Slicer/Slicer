@@ -336,7 +336,8 @@ qMRMLSegmentEditorWidgetPrivate::qMRMLSegmentEditorWidgetPrivate(qMRMLSegmentEdi
     // Global processing
     << "Threshold" << "Margin" << "Hollow" << "Smoothing"
     // Global splitting, merging
-    << "Scissors" << "Islands" << "Logical operators";
+    << "Scissors" << "Islands" << "Logical operators"
+    << "Mask volume";
   this->UnorderedEffectsVisible = true;
   this->DefaultTerminologyEntrySettingsKey = "Segmentations/DefaultTerminologyEntry";
 }

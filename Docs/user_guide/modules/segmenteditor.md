@@ -179,6 +179,15 @@ Use this tool to create a unique segment for each connected region of the select
 
 Apply Boolean operators to selected segment or combine segments.
 
+### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_mask_volume.png) Mask volume
+
+Blank out inside/outside of a segment in a volume or create a binary mask. Result can be saved into a new volume or overwrite the input volume.
+This is useful for removing irrelevant details from an image (for example remove patient table; or crop the volume to arbitrary shape for volume rendering) or create masks for image processing operations (such as registration or intensity correction).
+
+- Fill inside: set all voxels of the selected volume to the specified value inside the selected segment
+- Fill outside: set all voxels of the selected volume to the specified value outside the selected segment
+- Fill inside and outside: create a binary labelmap volume as output. Most image procesing operations require background (outside, ignored) region to be filled with 0 value.
+
 ## Tips
 
 - A large radius paint brush with threshold painting is often a very fast way to segment anatomy that is consistently brighter or darker than the surrounding region, but partially connected to similar nearby structures (this happens a lot).

@@ -12,6 +12,7 @@ from .SegmentEditorIslandsEffect import *
 from .SegmentEditorLevelTracingEffect import *
 from .SegmentEditorLogicalEffect import *
 from .SegmentEditorMarginEffect import *
+from .SegmentEditorMaskVolumeEffect import *
 from .SegmentEditorSmoothingEffect import *
 from .SegmentEditorThresholdEffect import *
 
@@ -29,6 +30,7 @@ editorEffectNames = [
   "SegmentEditorLevelTracingEffect",
   "SegmentEditorLogicalEffect",
   "SegmentEditorMarginEffect",
+  "SegmentEditorMaskVolumeEffect",
   "SegmentEditorSmoothingEffect",
   "SegmentEditorThresholdEffect"
   ]
