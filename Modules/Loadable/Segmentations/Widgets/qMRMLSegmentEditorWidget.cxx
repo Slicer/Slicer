@@ -331,12 +331,16 @@ qMRMLSegmentEditorWidgetPrivate::qMRMLSegmentEditorWidgetPrivate(qMRMLSegmentEdi
 
   // Define default effect order
   this->EffectNameOrder
+    // Thresholding is the the starting point for most segmentations
+    // (it can often create usable segmentation by itself, or used to define intensity range for painting)
+    << "Threshold"
     // Local painting
     << "Paint" << "Draw" << "Erase" << "Level tracing" << "Grow from seeds" << "Fill between slices"
     // Global processing
-    << "Threshold" << "Margin" << "Hollow" << "Smoothing"
+    << "Margin" << "Hollow" << "Smoothing"
     // Global splitting, merging
     << "Scissors" << "Islands" << "Logical operators"
+    // Operating on volumes
     << "Mask volume";
   this->UnorderedEffectsVisible = true;
   this->DefaultTerminologyEntrySettingsKey = "Segmentations/DefaultTerminologyEntry";
