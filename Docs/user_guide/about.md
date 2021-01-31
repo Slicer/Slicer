@@ -9,7 +9,7 @@
 **Note:** There is no restriction on use, but Slicer is **NOT** approved for clinical use and the distributed application is intended for research use. Permissions and compliance with applicable rules are the responsibility of the user. For details on the license see [here](https://www.slicer.org/wiki/License).
 
 Highlights:
-- Free, [open-source](http://en.wikipedia.org/wiki/Open_source>) software available on multiple operating systems: Linux, MacOSX and Windows.
+- Free, [open-source](http://en.wikipedia.org/wiki/Open_source>) software available on multiple operating systems: Linux, macOS and Windows.
 - Multi organ: from head to toe.
 - Support for multi-modality imaging including, MRI, CT, US, nuclear medicine, and microscopy.
 - Real-time interface for medical devices, such as surgical navigation systems, imaging systems, robotic devices, and sensors.
@@ -26,7 +26,7 @@ To use Slicer, please read the [3D Slicer Software License Agreement](https://gi
 
 ### 3D Slicer as a platform
 
-To acknowledge 3D Slicer as a platform, please cite the [Slicer web site](http://www.slicer.org/) and the following publications when publishing work that uses or incorporates 3D Slicer: 
+To acknowledge 3D Slicer as a platform, please cite the [Slicer web site](http://www.slicer.org/) and the following publications when publishing work that uses or incorporates 3D Slicer:
 
 **Fedorov A., Beichel R., Kalpathy-Cramer J., Finet J., Fillion-Robin J-C., Pujol S., Bauer C., Jennings D., Fennessy F.M., Sonka M., Buatti J., Aylward S.R., Miller J.V., Pieper S., Kikinis R. [3D Slicer as an Image Computing Platform for the Quantitative Imaging Network](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3466397/pdf/nihms383480.pdf). Magn Reson Imaging. 2012 Nov;30(9):1323-41. PMID: 22770690. PMCID: PMC3466397.**
 
@@ -111,7 +111,7 @@ _Listed in alphabetical order._
 
 ### 3D Slicer based products
 
-Many companies prefer not to disclose what software components they use in their products, therefore here we can only list a few commercial products that are based on 3D Slicer: 
+Many companies prefer not to disclose what software components they use in their products, therefore here we can only list a few commercial products that are based on 3D Slicer:
 
 - Allen Institute for Brain Science: [Cell Locator](https://github.com/BICCN/cell-locator/#readme), Desktop application for manually aligning specimens to annotated 3D spaces.
 - Radiopharmaceutical Imaging and Dosimetry: RPTDose, a 3D Slicer-based application that streamlines and integrates quantitative imaging analysis and dose estimation techniques to guide and optimize the use of radiopharmaceutical therapy agents in clinical trials. See more information on this [Kitware blog](https://blog.kitware.com/kitware-customer-highlight-radiopharmaceutical-imaging-and-dosimetry-llc-rapid/).

@@ -133,7 +133,7 @@ blog post.
 #### Nightly tests
 
 After changes are integrated, every evening at 10pm EST (3am UTC), Slicer build bots (aka factories)
-will build, test and package the Slicer application and all its extensions on Linux, MacOSX
+will build, test and package the Slicer application and all its extensions on Linux, macOS
 and Windows. Results are published daily on CDash ([Stable](http://slicer.cdash.org/index.php?project=Slicer4) & [Preview](http://slicer.cdash.org/index.php?project=SlicerPreview))
 and developers that introduced changes resulting in build or test failures are notified by
 email.
