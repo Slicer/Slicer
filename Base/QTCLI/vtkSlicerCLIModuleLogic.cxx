@@ -48,10 +48,6 @@
 // Qt includes
 #include <QDebug>
 
-#if defined(__APPLE__) && (MAC_OS_X_VERSION_MAX_ALLOWED >= 1030)
-// needed to hack around itksys to override defaults used by Mac OS X
-#endif
-
 // STL includes
 #include <algorithm>
 #include <cassert>
