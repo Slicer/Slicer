@@ -30,6 +30,8 @@ set(${KIT}_SRCS
   vtkLinearSpline.h
   vtkMRMLMeasurementAngle.cxx
   vtkMRMLMeasurementAngle.h
+  vtkMRMLMeasurementArea.cxx
+  vtkMRMLMeasurementArea.h
   vtkMRMLMeasurementLength.cxx
   vtkMRMLMeasurementLength.h
   vtkParametricPolynomialApproximation.cxx

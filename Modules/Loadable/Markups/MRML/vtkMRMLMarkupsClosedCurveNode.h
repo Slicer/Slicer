@@ -53,6 +53,17 @@ public:
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentDefaultMacro(vtkMRMLMarkupsClosedCurveNode);
 
+
+  //@{
+  /// For internal use only.
+  /// Moved here temporarily until pluggable markups will be implemented.
+  /// Then the methods will be moved back to markups logic.
+  static double GetClosedCurveSurfaceArea(vtkMRMLMarkupsClosedCurveNode* curveNode, vtkPolyData* surface = nullptr, bool projectWarp = true);
+  static bool FitSurfaceProjectWarp(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor = 1.0);
+  static bool FitSurfaceDiskWarp(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor = 1.0);
+  static bool IsPolygonClockwise(vtkPoints* points);
+  //@}
+
 protected:
   vtkMRMLMarkupsClosedCurveNode();
   ~vtkMRMLMarkupsClosedCurveNode() override;
