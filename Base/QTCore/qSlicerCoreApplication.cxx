@@ -234,7 +234,7 @@ void qSlicerCoreApplicationPrivate::init()
   this->SlicerHome = this->discoverSlicerHomeDirectory();
 
   // Save the environment if no launcher is used (this is for example the case
-  // on MacOSX when slicer is started from an install tree)
+  // on macOS when slicer is started from an install tree)
   if (ctkAppLauncherEnvironment::currentLevel() == 0)
     {
     QProcessEnvironment updatedEnv;

@@ -103,7 +103,7 @@
 #
 # If GP_RPATH_DIR variable is set then item matching '@rpath' are
 # resolved using the provided directory. Currently setting this variable
-# has an effect only on MacOSX when fixing up application bundle. The directory
+# has an effect only on macOS when fixing up application bundle. The directory
 # are also assumed to be located within the application bundle. It is
 # usually the directory passed to the 'rpath' linker option.
 #

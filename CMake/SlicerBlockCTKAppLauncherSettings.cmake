@@ -209,7 +209,7 @@ endif()
 #  Do not use Slicer_INSTALL_* variables
 #  -------------------------------------
 #
-#  Indeed, on MacOSX, since Slicer_INSTALL_* variables already includes
+#  Indeed, on macOS, since Slicer_INSTALL_* variables already includes
 #  Slicer_BUNDLE_LOCATION (<appname>.app/Contents) they can *NOT*
 #  be used to reference paths from <APPLAUNCHER_SETTINGS_DIR> which is itself
 #  set to /path/to/<appname>.app/Contents/bin.

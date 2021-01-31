@@ -53,7 +53,7 @@
 #define Slicer_OS_LINUX_NAME "@Slicer_OS_LINUX_NAME@"
 
 /// \def Slicer_OS_MAC_NAME
-/// String describing MacOSX operating system.
+/// String describing macOS operating system.
 #define Slicer_OS_MAC_NAME "@Slicer_OS_MAC_NAME@"
 
 /// \def Slicer_OS_WIN_NAME

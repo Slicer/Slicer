@@ -696,7 +696,7 @@ macro(slicerMacroBuildApplication)
       endif()
 
       #
-      # On MacOSX, the installed launcher settings are *only* read directly by the
+      # On macOS, the installed launcher settings are *only* read directly by the
       # qSlicerCoreApplication using the LauncherLib.
       #
       # On Linux and Windows, the installed launcher settings are first read by the

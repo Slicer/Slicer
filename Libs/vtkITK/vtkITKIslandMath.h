@@ -15,7 +15,7 @@
 
 /// \brief ITK-based utilities for manipulating connected regions in label maps.
 /// Limitation: The filter does not work correctly with input volume that has
-/// unsigned long scalar type on Linux and MacOSX.
+/// unsigned long scalar type on Linux and macOS.
 ///
 class VTK_ITK_EXPORT vtkITKIslandMath : public vtkSimpleImageToImageFilter
 {

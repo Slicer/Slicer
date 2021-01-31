@@ -12,7 +12,7 @@ def haveGit():
   """Return True if git is available.
 
   A side effect of `import git` is that it shows a popup window on
-  MacOSX, asking the user to install XCode (if git is not installed already),
+  macOS, asking the user to install XCode (if git is not installed already),
   therefore this method should only be called if git is actually needed.
   """
 
