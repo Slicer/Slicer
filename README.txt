@@ -1,12 +1,12 @@
-Slicer, or 3D Slicer, is a free, open source software package for visualization and 
-image analysis. 
+Slicer, or 3D Slicer, is a free, open source software package for visualization and
+image analysis.
 
-3D Slicer is natively designed to be available on multiple platforms, 
-including Windows, Linux and Mac Os X. 
+3D Slicer is natively designed to be available on multiple platforms,
+including Windows, Linux and macOS.
 
 Build instructions for all platforms are available on the Slicer wiki:
 
-                      https://www.slicer.org/wiki/Documentation/Nightly/Developers/Build_Instructions
+                      https://slicer.readthedocs.io/en/latest/developer_guide/build_instructions/index.html
 
 For Slicer community announcements and support, visit:
 

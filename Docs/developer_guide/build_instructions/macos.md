@@ -1,4 +1,4 @@
-# Mac OS
+# macOS
 
 ## Prerequisites
 
@@ -19,7 +19,7 @@ xcode-select --install
 
 Notes:
 - While it is not enforced, we strongly recommend you to *avoid* the use of *spaces* for both the `source directory` and the `build directory`.
-- Due to maximum path length limitations during build the build process, source and build folders must be located in a folder with very short total path length. This is expecially critical on Windows and MacOS. For example, `/sq5` has been confirmed to work on MacOS.
+- Due to maximum path length limitations during build the build process, source and build folders must be located in a folder with very short total path length. This is expecially critical on Windows and macOS. For example, `/sq5` has been confirmed to work on macOS.
 
 Check out the code using `git`:
 - Clone the github repository</p>

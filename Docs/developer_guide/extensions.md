@@ -52,7 +52,7 @@ If you shared your extension by using the ExtensionWizard, make sure you know ab
 
 ![](http://slicer.cdash.org/index.php?project=Slicer4&display=project)
 
-The dashboard will attempt to check out the source code of your extension, build, test and package it on Linux, MacOSX and Windows platforms.
+The dashboard will attempt to check out the source code of your extension, build, test and package it on Linux, macOS and Windows platforms.
 
 To find your extension, use the following link replacing `SlicerMyExtension` with the name of your extension:
 
