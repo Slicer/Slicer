@@ -14,7 +14,7 @@
 
   This file was originally developed by Kyle Sunderland, PerkLab, Queen's University
   and was supported through CANARIE's Research Software Program, Cancer
-  Care Ontario, OpenAnatomy, and Brigham and Women’s Hospital through NIH grant R01MH112748.
+  Care Ontario, OpenAnatomy, and Brigham and Womenï¿½s Hospital through NIH grant R01MH112748.
 
 ==============================================================================*/
 
@@ -26,7 +26,7 @@
 
 /// \brief ITK-based utilities for manipulating connected regions in label maps.
 /// Limitation: The filter does not work correctly with input volume that has
-/// unsigned long scalar type on Linux and MacOSX.
+/// unsigned long scalar type on Linux and macOS.
 ///
 class VTK_ITK_EXPORT vtkITKImageMargin : public vtkSimpleImageToImageFilter
 {

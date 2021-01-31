@@ -807,7 +807,7 @@ function(fixup_bundle app libs dirs)
   if(valid)
     get_filename_component(exepath "${executable}" PATH)
 
-    # TODO: Extract list of rpath dirs automatically. On MacOSX, the following could be
+    # TODO: Extract list of rpath dirs automatically. On macOS, the following could be
     #       done: otool -l path/to/executable | grep -A 3 LC_RPATH | grep path
     #       See http://www.mikeash.com/pyblog/friday-qa-2009-11-06-linking-and-install-names.html#comment-87ea054b4839586412727dcfc94c79d2
     set(GP_RPATH_DIR ${bundle}/Contents)

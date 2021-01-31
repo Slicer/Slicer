@@ -77,15 +77,6 @@ vtkMRMLScene* qMRMLWidget::mrmlScene() const
 //-----------------------------------------------------------------------------
 void qMRMLWidget::preInitializeApplication()
 {
-  #ifdef Q_OS_MACX
-  if (QSysInfo::MacintoshVersion > QSysInfo::MV_10_8)
-    {
-    // Fix Mac OS X 10.9 (mavericks) font issue
-    // https://bugreports.qt-project.org/browse/QTBUG-32789
-    QFont::insertSubstitution(".Lucida Grande UI", "Lucida Grande");
-    }
-#endif
-
 #ifdef _WIN32
   // Qt windows defaults to the PROCESS_PER_MONITOR_DPI_AWARE for DPI display
   // on windows. Unfortunately, this doesn't work well on multi-screens setups.

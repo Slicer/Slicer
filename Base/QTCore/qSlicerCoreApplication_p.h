@@ -114,7 +114,7 @@ public:
   ///         | Build tree | Install tree
   /// --------| -----------|---------------
   /// Linux   |  true      |  true
-  /// MacOSX  |  true      |  false
+  /// macOS   |  true      |  false
   /// Windows |  true      |  true
   ///
   bool isUsingLauncher()const;

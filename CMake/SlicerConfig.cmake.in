@@ -8,7 +8,7 @@
 #
 
 #
-# When manually building extension on MacOSX, in addition to the usual configure
+# When manually building extension on macOS, in addition to the usual configure
 # option (CMAKE_BUILD_TYPE, ...), the developer is also expected to
 # configure it passing the variables:
 #   CMAKE_OSX_ARCHITECTURES

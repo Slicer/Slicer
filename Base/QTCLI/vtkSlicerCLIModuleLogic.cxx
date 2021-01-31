@@ -48,10 +48,6 @@
 // Qt includes
 #include <QDebug>
 
-#if defined(__APPLE__) && (MAC_OS_X_VERSION_MAX_ALLOWED >= 1030)
-// needed to hack around itksys to override defaults used by Mac OS X
-#endif
-
 // STL includes
 #include <algorithm>
 #include <cassert>
@@ -779,7 +775,7 @@ void vtkSlicerCLIModuleLogic
 //       typedef int (*ModuleEntryPoint)(int argc, char* argv[]);
 //
 // #if defined(__APPLE__) && (MAC_OS_X_VERSION_MAX_ALLOWED >= 1030)
-//       // Mac OS X defaults to RTLD_GLOBAL and there is no way to
+//       // macOS defaults to RTLD_GLOBAL and there is no way to
 //       // override in itksys. So make the direct call to dlopen().
 //       itksys::DynamicLoader::LibraryHandle lib
 //         = dlopen(moduleDescriptionObject.GetLocation().c_str(), RTLD_LAZY | RTLD_LOCAL);

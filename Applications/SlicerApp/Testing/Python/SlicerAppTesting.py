@@ -44,7 +44,7 @@ def dropcache():
   if sys.platform in ["linux", "linux2"]:
     run('/usr/bin/sudo', ['sysctl', 'vm.drop_caches=1'], drop_cache=False)
   else:
-    # XXX Implement other platform (Windows: EmptyStandbyList ?, MacOSX: Purge ?)
+    # XXX Implement other platform (Windows: EmptyStandbyList ?, macOS: Purge ?)
     raise Exception("--drop-cache is not supported on %s" % sys.platform)
 
 def run(executable, arguments=[], verbose=True, shell=False, drop_cache=False):

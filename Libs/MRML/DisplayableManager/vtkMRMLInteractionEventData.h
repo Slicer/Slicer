@@ -134,7 +134,7 @@ protected:
 
   // Gesture events
   //@{
-  /// MacOSX touchpad events
+  /// macOS touchpad events
   double Rotation;
   double LastRotation;
   double Scale;
