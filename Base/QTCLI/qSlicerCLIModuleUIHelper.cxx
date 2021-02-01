@@ -551,8 +551,6 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createPointTagWidget(const ModuleParam
   qMRMLNodeComboBox* widget = new qMRMLNodeComboBox;
   QStringList nodeTypes;
   nodeTypes += "vtkMRMLMarkupsFiducialNode";
-  //TODO - specify to point hierarchy
-  nodeTypes += "vtkMRMLAnnotationHierarchyNode";
 
   widget->setNodeTypes(nodeTypes);
   //TODO - title + " FiducialList"
@@ -634,7 +632,6 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createRegionTagWidget(const ModulePara
   qMRMLNodeComboBox* widget = new qMRMLNodeComboBox;
   QStringList nodeTypes;
   nodeTypes += "vtkMRMLROIListNode";
-  nodeTypes += "vtkMRMLAnnotationHierarchyNode";
   nodeTypes += "vtkMRMLAnnotationROINode";
   widget->setNodeTypes(QStringList(nodeTypes));
   //TODO - title + " RegionList"

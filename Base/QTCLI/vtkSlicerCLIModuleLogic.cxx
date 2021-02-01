@@ -649,9 +649,17 @@ vtkSlicerCLIModuleLogic
   if (tag == "pointfile")
     {
     // fiducial files are always passed via files
-    std::string ext = ".fcsv";
+    // use .json extension by default
+    std::string ext = ".json";
+    // for backward compatibility, use .fcsv by default for fiducial points
+    if (type.empty() || type == "point")
+      {
+      ext = ".fcsv";
+      }
     if (extensions.size() != 0)
       {
+      // the module definition contains file formats,
+      // use the first one as write format
       ext = extensions[0];
       }
     fname = fname + ext;
@@ -983,7 +991,12 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           vtkMRMLNode *nodeToFlag = this->GetMRMLScene()->GetNodeByID(id.c_str());
           if (nodeToFlag)
             {
+            // Disable modified event, because we would not want to emit a node modified event from this
+            // worker thread.
+            bool wasDisableModified = nodeToFlag->GetDisableModifiedEvent();
+            nodeToFlag->SetDisableModifiedEvent(true);
             nodeToFlag->SetAttribute("Markups.CoordinateSystem", coordinateSystemStr.c_str());
+            nodeToFlag->SetDisableModifiedEvent(wasDisableModified);
             }
           }
         }
@@ -1025,7 +1038,35 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     vtkMRMLStorableNode *sn = dynamic_cast<vtkMRMLStorableNode *>(nd);
     if (sn)
       {
-      defaultOut.TakeReference(sn->CreateDefaultStorageNode());
+
+      if (!sn->IsA("vtkMRMLMarkupsNode"))
+        {
+        defaultOut.TakeReference(sn->CreateDefaultStorageNode());
+        }
+      else
+        {
+        // Markups storage node is a special case as we still support the old fcsv format
+        // for backward compatibility, which uses a non-default storage node.
+        std::string extension = vtksys::SystemTools::LowerCase(vtksys::SystemTools::GetFilenameLastExtension((*id2fn0).second));
+        if (extension == ".fcsv")
+          {
+          // special case for backward compatibility
+          defaultOut.TakeReference(vtkMRMLStorageNode::SafeDownCast(
+            this->GetMRMLScene()->CreateNodeByClass("vtkMRMLMarkupsFiducialStorageNode")));
+          }
+        else
+          {
+          defaultOut.TakeReference(sn->CreateDefaultStorageNode());
+          }
+        // Set requested coordinate system
+        vtkMRMLMarkupsStorageNode* markupsStorage = vtkMRMLMarkupsStorageNode::SafeDownCast(defaultOut);
+        if (markupsStorage)
+          {
+          int coordinateSystem = this->GetCoordinateSystemFromString(nd->GetAttribute("Markups.CoordinateSystem"));
+          markupsStorage->SetCoordinateSystem(coordinateSystem);
+          }
+        }
+
       if (defaultOut)
         {
         defaultOut->ConfigureForDataExchange();
@@ -1090,18 +1131,6 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     if (mhnd)
       {
       this->AddCompleteModelHierarchyToMiniScene(miniscene.GetPointer(), mhnd, &sceneToMiniSceneMap, filesToDelete);
-      }
-
-    // check for a point file that may need to set a coordinate system flag
-    if (out && out->IsA("vtkMRMLMarkupsStorageNode"))
-      {
-      // Set requested coordinate system
-      int coordinateSystem = this->GetCoordinateSystemFromString(nd->GetAttribute("Markups.CoordinateSystem"));
-      vtkMRMLMarkupsStorageNode *markupsStorage = vtkMRMLMarkupsStorageNode::SafeDownCast(out);
-      if (markupsStorage)
-        {
-        markupsStorage->SetCoordinateSystem(coordinateSystem);
-        }
       }
 
     // if the file is to be written, then write it
