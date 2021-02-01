@@ -42,6 +42,9 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
     self.browserWidget = None  # SlicerDICOMBrowser instance (ctkDICOMBrowser with additional section for loading the selected items)
     self.browserSettingsWidget = None
     self.currentViewArrangement = 0
+    # This variable is set to true if we temporarily
+    # hide the data probe (and so we need to restore its visibility).
+    self.dataProbeHasBeenTemporarilyHidden = False
 
   def setup(self):
     # Tasks to execute after the application has started up
@@ -80,9 +83,6 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
       # add the settings options
       self.settingsPanel = DICOMSettingsPanel()
       slicer.app.settingsDialog().addPanel("DICOM", self.settingsPanel)
-
-      dataProbe = slicer.util.mainWindow().findChild("QWidget", "DataProbeCollapsibleWidget")
-      self.wasDataProbeVisible = dataProbe.isVisible()
 
       layoutManager = slicer.app.layoutManager()
       layoutManager.layoutChanged.connect(self.onLayoutChanged)
@@ -272,12 +272,22 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
     dataProbe = slicer.util.mainWindow().findChild("QWidget", "DataProbeCollapsibleWidget")
     if self.currentViewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView:
       # View has been changed to the DICOM browser view
-      self.wasDataProbeVisible = dataProbe.isVisible()
       self.browserWidget.show()
-      dataProbe.setVisible(False)
-    elif self.previousViewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView:
+      # If we are in DICOM module, hide the Data Probe to have more space for the module
+      try:
+        inDicomModule = slicer.modules.dicom.widgetRepresentation().isEntered
+      except AttributeError:
+        # Slicer is shutting down
+        inDicomModule = False
+      if inDicomModule and dataProbe and dataProbe.isVisible():
+        dataProbe.setVisible(False)
+        self.dataProbeHasBeenTemporarilyHidden = True
+    else:
       # View has been changed from the DICOM browser view
-      dataProbe.setVisible(self.wasDataProbeVisible)
+      if self.dataProbeHasBeenTemporarilyHidden:
+        # DataProbe was temporarily hidden, restore its visibility now
+        dataProbe.setVisible(True)
+        self.dataProbeHasBeenTemporarilyHidden = False
 
 
   def onBrowserWidgetClosed(self):
