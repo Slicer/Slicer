@@ -139,9 +139,9 @@ void vtkMRMLCameraNode::ReadXMLAttributes(const char** atts)
         vtkMRMLViewNode* vnode = vtkMRMLViewNode::SafeDownCast(
           this->Scene->GetFirstNodeByClass("vtkMRMLViewNode"));
         if (vnode)
-        {
+          {
           this->SetActiveTag(vnode->GetID());
-        }
+          }
         }
       }
     else if (!strcmp(attName, "appliedTransform"))
