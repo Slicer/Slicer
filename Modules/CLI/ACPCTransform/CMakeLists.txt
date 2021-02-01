@@ -16,12 +16,21 @@ SEMMacroBuildCLI(
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   ADDITIONAL_SRCS
     vtkPrincipalAxesAlign.cxx
-  TARGET_LIBRARIES ModuleDescriptionParser ${ITK_LIBRARIES} vtkTeem MRMLCore SlicerBaseCLI ${VTK_LIBRARIES}
+  TARGET_LIBRARIES
+    ModuleDescriptionParser
+    ${ITK_LIBRARIES}
+    vtkTeem
+    MRMLCore
+    SlicerBaseCLI
+    ${VTK_LIBRARIES}
+    vtkSlicerMarkupsModuleMRML
   INCLUDE_DIRECTORIES
     ${vtkTeem_INCLUDE_DIRS}
     ${MRMLCore_INCLUDE_DIRS}
     ${vtkITK_INCLUDE_DIRS}
-    ${SlicerBaseCLI_SOURCE_DIR} ${SlicerBaseCLI_BINARY_DIR}
+    ${SlicerBaseCLI_SOURCE_DIR}
+    ${SlicerBaseCLI_BINARY_DIR}
+    ${vtkSlicerMarkupsModuleMRML_INCLUDE_DIRS}
   )
 
 #-----------------------------------------------------------------------------

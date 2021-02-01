@@ -19,6 +19,11 @@
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLTransformStorageNode.h>
 
+// Markups includes
+#include <vtkMRMLMarkupsFiducialNode.h>
+#include <vtkMRMLMarkupsJsonStorageNode.h>
+#include <vtkMRMLMarkupsLineNode.h>
+
 // VTK includes
 #include <vtkMath.h>
 #include <vtkNew.h>
@@ -40,9 +45,32 @@ int main(int argc, char * argv[])
 {
   PARSE_ARGS;
 
-  if (ACPC.empty() && Midline.empty())
+  vtkNew<vtkMRMLMarkupsLineNode> acpcLineNode;
+  if (!ACPC.empty())
     {
-    std::cerr << "ACPC Line or Midline points must be specified" << std::endl;
+    vtkNew<vtkMRMLMarkupsJsonStorageNode> storageNode;
+    storageNode->SetFileName(ACPC.c_str());
+    if (!storageNode->ReadData(acpcLineNode))
+      {
+      std::cerr << "Failed to read ACPC line from file " << ACPC << std::endl;
+      }
+    }
+
+  vtkNew<vtkMRMLMarkupsFiducialNode> midlinePointsNode;
+  if (!Midline.empty())
+    {
+    vtkNew<vtkMRMLMarkupsJsonStorageNode> storageNode;
+    storageNode->SetFileName(Midline.c_str());
+    if (!storageNode->ReadData(midlinePointsNode))
+      {
+      std::cerr << "Failed to read midline points from file " << Midline << std::endl;
+      }
+    }
+
+  if (acpcLineNode->GetNumberOfControlPoints() == 0
+    && midlinePointsNode->GetNumberOfControlPoints() == 0)
+    {
+    std::cerr << "At least ACPC line or midline points must be specified" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -50,26 +78,21 @@ int main(int argc, char * argv[])
   vtkNew<vtkTransform> transformToApply;
   transformToApply->PostMultiply();
 
-  if( Midline.size() > 0 )
+  if (midlinePointsNode->GetNumberOfControlPoints() > 0)
     {
-    if (Midline.size() < 3)
-    {
-      std::cerr << "Midline expected to contain at least 3 points" << std::endl;
-      return EXIT_FAILURE;
-    }
-    vtkNew<vtkPolyData> midlinePolydata;
-    vtkNew<vtkPoints>   midlinePoints;
-    midlinePoints->SetDataTypeToDouble();
-    size_t x = Midline.size();
-    midlinePoints->SetNumberOfPoints(x);
-    for( size_t i = 0; i < x; ++i )
+    if (midlinePointsNode->GetNumberOfControlPoints() < 3)
       {
-      midlinePoints->SetPoint(i, Midline[i][0], Midline[i][1], Midline[i][2]);
+      std::cerr << "Midline must contain at least 3 points" << std::endl;
+      return EXIT_FAILURE;
       }
+
+    vtkNew<vtkPolyData> midlinePolydata;
+    vtkNew<vtkPoints> midlinePoints;
+    midlinePointsNode->GetControlPointPositionsWorld(midlinePoints);
     midlinePolydata->SetPoints(midlinePoints.GetPointer());
 
     vtkNew<vtkPrincipalAxesAlign> pa;
-    pa->SetInputData(midlinePolydata.GetPointer());
+    pa->SetInputData(midlinePolydata);
     pa->Update();
 
     double *normal = pa->GetZAxis();
@@ -115,15 +138,19 @@ int main(int argc, char * argv[])
     }
 
   // need at least two points
-  if( ACPC.size() > 0 )
+  if (acpcLineNode->GetNumberOfControlPoints() > 0)
     {
-    if (ACPC.size() != 2)
+    if (acpcLineNode->GetNumberOfControlPoints() != 2)
       {
-      std::cerr << "If ACPC line is specified then it must have exactly 2 points" << std::endl;
+      std::cerr << "If ACPC line is specified then it must be specified by exactly 2 points" << std::endl;
       return EXIT_FAILURE;
       }
-    double top = ACPC[0][2] - ACPC[1][2];
-    double bot = ACPC[0][1] - ACPC[1][1];
+    double pointA[3] = { 0.0 };
+    double pointB[3] = { 0.0 };
+    acpcLineNode->GetNthControlPointPosition(0, pointA);
+    acpcLineNode->GetNthControlPointPosition(1, pointB);
+    double top = pointA[2] - pointB[2];
+    double bot = pointA[1] - pointB[1];
     double tangent = atan(top / bot) * (180.0 / (4.0 * atan(1.0) ) );
     transformToApply->RotateX(tangent * -1.0);
     }

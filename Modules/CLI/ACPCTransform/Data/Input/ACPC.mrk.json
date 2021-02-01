@@ -1,0 +1,8 @@
+{"@schema": "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1.0.0.json#",
+"markups": [{
+    "type": "Line",
+    "coordinateSystem": "LPS",
+    "controlPoints": [
+        { "label": "ACPC0", "position": [-0.5, 21.5, -9.5]},
+        { "label": "ACPC1", "position": [2.5, -4.5, -16.5]}
+]}]}

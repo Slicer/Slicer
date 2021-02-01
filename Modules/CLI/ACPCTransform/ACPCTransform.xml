@@ -12,20 +12,20 @@
   <parameters>
     <label>Transform panel</label>
     <description><![CDATA[Calculate a transform from midline and ACPC fiducial lists.]]></description>
-    <point multiple="true" coordinateSystem="ras">
+    <pointfile type="line" fileExtensions=".json" coordinateSystem="ras">
       <name>ACPC</name>
       <label>ACPC Line</label>
       <longflag>--acpc</longflag>
-      <description><![CDATA[ACPC line, a list of two fiducial points, one at the anterior commissure and one at the posterior commissure.]]></description>
-      <default>0,0,0</default>
-    </point>
-    <point multiple="true" coordinateSystem="ras">
+      <description><![CDATA[ACPC line, connecting a point at the anterior commissure with a point at the posterior commissure.]]></description>
+      <channel>input</channel>
+    </pointfile>
+    <pointfile type="point" fileExtensions=".json" coordinateSystem="ras">
       <name>Midline</name>
       <label>Midline</label>
       <longflag>--midline</longflag>
-      <description><![CDATA[The midline is a series of points (at least 3) defining the division between the hemispheres of the brain (the mid sagittal plane).]]></description>
-      <default>0,0,0</default>
-    </point>
+      <description><![CDATA[The midline is a series of points defining the division between the hemispheres of the brain (the mid sagittal plane).]]></description>
+      <channel>input</channel>
+    </pointfile>
     <transform fileExtensions=".txt">
       <name>OutputTransform</name>
       <longflag>--outputTransform</longflag>
