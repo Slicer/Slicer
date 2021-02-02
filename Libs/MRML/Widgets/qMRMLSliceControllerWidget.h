@@ -102,9 +102,6 @@ public:
   /// Get slice view name
   QString sliceViewName()const;
 
-  /// Return the color associated to the slice view
-  Q_INVOKABLE static QColor sliceViewColor(const QString& sliceViewName);
-
   /// Convenience function to set the abbreviated name for the slice view.
   /// This is equivalent to call vtkMRMLSliceNode::SetLayoutLabel()
   /// If no SliceNode is set, this is a no-op.

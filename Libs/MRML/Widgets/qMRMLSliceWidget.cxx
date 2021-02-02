@@ -155,17 +155,6 @@ void qMRMLSliceWidget::setSliceViewName(const QString& newSliceViewName)
 {
   Q_D(qMRMLSliceWidget);
   d->SliceController->setSliceViewName(newSliceViewName);
-
-  // QColor sliceViewColor =
-  //   qMRMLSliceControllerWidget::sliceViewColor(newSliceViewName);
-
-//Don't apply the color of the slice to the highlight box
-//  double highlightedBoxColor[3];
-//  highlightedBoxColor[0] = sliceViewColor.redF();
-//  highlightedBoxColor[1] = sliceViewColor.greenF();
-//  highlightedBoxColor[2] = sliceViewColor.blueF();
-//  // Set the color associated with the highlightedBox
-//  d->SliceView->setHighlightedBoxColor(highlightedBoxColor);
 }
 
 //---------------------------------------------------------------------------
