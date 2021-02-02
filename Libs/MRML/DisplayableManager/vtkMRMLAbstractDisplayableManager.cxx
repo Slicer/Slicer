@@ -670,7 +670,7 @@ vtkMRMLInteractionNode* vtkMRMLAbstractDisplayableManager::GetInteractionNode()
 //---------------------------------------------------------------------------
 vtkMRMLSelectionNode* vtkMRMLAbstractDisplayableManager::GetSelectionNode()
 {
-  return vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+  return this->GetMRMLScene() ? vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton")): nullptr;
 }
 
 //---------------------------------------------------------------------------
