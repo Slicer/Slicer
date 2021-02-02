@@ -383,7 +383,7 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLViewLogic()
   vtkMRMLCameraNode* cameraNode = (d->ViewLogic ? d->ViewLogic->GetCameraNode() : nullptr);
   if (cameraNode != d->CameraNode)
     {
-    this->qvtkReconnect(d->CameraNode, vtkMRMLCameraNode::CameraInteractionEvent,
+    this->qvtkReconnect(d->CameraNode, cameraNode, vtkMRMLCameraNode::CameraInteractionEvent,
       this, SLOT(updateViewFromMRMLCamera()));
     d->CameraNode = cameraNode;
     this->updateViewFromMRMLCamera();
