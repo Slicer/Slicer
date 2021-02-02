@@ -123,6 +123,11 @@ void qMRMLThreeDWidget::addDisplayableManager(const QString& dManager)
 void qMRMLThreeDWidget::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
 {
   Q_D(qMRMLThreeDWidget);
+  if (!newViewNode)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: view node is invalid";
+    return;
+    }
   vtkMRMLViewLogic* viewLogic = this->viewLogic();
   if (!viewLogic)
     {
