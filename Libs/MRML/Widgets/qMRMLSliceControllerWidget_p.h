@@ -172,7 +172,6 @@ public:
   vtkCollection*                      SliceLogics;
   vtkWeakPointer<vtkAlgorithmOutput>  ImageDataConnection;
   QHash<QString, qMRMLOrientation>    SliceOrientationToDescription;
-  QString                             SliceViewName;
   QButtonGroup*                       ControllerButtonGroup;
 
   QToolButton*                        FitToWindowToolButton;

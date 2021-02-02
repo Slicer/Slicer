@@ -1594,7 +1594,6 @@ void qMRMLSliceControllerWidgetPrivate::onSegmentVisibilitySelectionChanged(QStr
 
 //---------------------------------------------------------------------------
 CTK_GET_CPP(qMRMLSliceControllerWidget, vtkMRMLSliceLogic*, sliceLogic, SliceLogic);
-CTK_GET_CPP(qMRMLSliceControllerWidget, QString, sliceViewName, SliceViewName);
 CTK_GET_CPP(qMRMLSliceControllerWidget, vtkAlgorithmOutput*, imageDataConnection, ImageDataConnection);
 CTK_GET_CPP(qMRMLSliceControllerWidget, vtkMRMLSliceCompositeNode*,
             mrmlSliceCompositeNode, MRMLSliceCompositeNode);
@@ -1766,6 +1765,19 @@ void qMRMLSliceControllerWidget::setSliceViewSize(const QSize& newSize)
     return;
     }
   d->SliceLogic->ResizeSliceNode(newSize.width(), newSize.height());
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLSliceControllerWidget::sliceViewName() const
+{
+  Q_D(const qMRMLSliceControllerWidget);
+
+  if (!d->MRMLSliceNode)
+    {
+    qCritical() << "qMRMLSliceControllerWidget::setSliceViewName failed: MRMLSliceNode is invalid";
+    return QString();
+    }
+  return QString::fromUtf8(d->MRMLSliceNode->GetLayoutName());
 }
 
 //---------------------------------------------------------------------------
