@@ -160,12 +160,25 @@ class CropVolumeSequenceLogic(ScriptedLoadableModuleLogic):
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
+  def transformForSequence(self, volumeSeq):
+    seqBrowser = slicer.modules.sequences.logic().GetFirstBrowserNodeForSequenceNode(volumeSeq)
+    if not seqBrowser:
+      return None
+    proxyVolume = seqBrowser.GetProxyNode(volumeSeq)
+    if not proxyVolume:
+      return None
+    return proxyVolume.GetTransformNodeID()
+
   def run(self, inputVolSeq, outputVolSeq, cropParameters):
     """
     Run the actual algorithm
     """
 
     logging.info('Processing started')
+
+    # Get original parent transform, if any (before creating the new sequence browser)
+    inputVolTransformNodeID = self.transformForSequence(inputVolSeq)
+    outputVolTransformNodeID = None
 
     seqBrowser = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSequenceBrowserNode")
     seqBrowser.SetAndObserveMasterSequenceNodeID(inputVolSeq.GetID())
@@ -175,23 +188,39 @@ class CropVolumeSequenceLogic(ScriptedLoadableModuleLogic):
     slicer.modules.sequences.logic().UpdateAllProxyNodes()
     slicer.app.processEvents()
     inputVolume = seqBrowser.GetProxyNode(inputVolSeq)
-
+    inputVolume.SetAndObserveTransformNodeID(inputVolTransformNodeID)
     cropParameters.SetInputVolumeNodeID(inputVolume.GetID())
 
     if outputVolSeq == inputVolSeq:
       outputVolSeq = None
 
     if outputVolSeq:
+      # Get original parent transform, if any (before erasing all the proxy nodes)
+      outputVolTransformNodeID = self.transformForSequence(outputVolSeq)
+
       # Initialize output sequence
       outputVolSeq.RemoveAllDataNodes()
       outputVolSeq.SetIndexType(inputVolSeq.GetIndexType())
       outputVolSeq.SetIndexName(inputVolSeq.GetIndexName())
       outputVolSeq.SetIndexUnit(inputVolSeq.GetIndexUnit())
       outputVolume = slicer.mrmlScene.AddNewNodeByClass(inputVolume.GetClassName())
+      outputVolume.SetAndObserveTransformNodeID(outputVolTransformNodeID)
       cropParameters.SetOutputVolumeNodeID(outputVolume.GetID())
     else:
       outputVolume = None
       cropParameters.SetOutputVolumeNodeID(inputVolume.GetID())
+
+    # Make sure we can record data into the output sequence is not overwritten by any browser nodes
+    browserNodesForOutputSequence = vtk.vtkCollection()
+    playSuspendedForBrowserNodes = []
+    slicer.modules.sequences.logic().GetBrowserNodesForSequenceNode(outputVolSeq, browserNodesForOutputSequence)
+    for i in range(browserNodesForOutputSequence.GetNumberOfItems()):
+      browserNodeForOutputSequence = browserNodesForOutputSequence.GetItemAsObject(i)
+      if browserNodeForOutputSequence == seqBrowser:
+        continue
+      if browserNodeForOutputSequence.GetPlayback(outputVolSeq):
+        browserNodeForOutputSequence.SetPlayback(outputVolSeq, False)
+        playSuspendedForBrowserNodes.append(browserNodeForOutputSequence)
 
     try:
       qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
@@ -218,24 +247,31 @@ class CropVolumeSequenceLogic(ScriptedLoadableModuleLogic):
 
       # Move output sequence node in the same browser node as the input volume sequence
       # if not in a sequence browser node already.
-      if outputVolSeq and (slicer.modules.sequences.logic().GetFirstBrowserNodeForSequenceNode(outputVolSeq) is None):
+      if outputVolSeq:
 
-        # Add output sequence to a sequence browser
-        seqBrowser = slicer.modules.sequences.logic().GetFirstBrowserNodeForSequenceNode(inputVolSeq)
-        if seqBrowser:
-          seqBrowser.AddSynchronizedSequenceNode(outputVolSeq)
+        if slicer.modules.sequences.logic().GetFirstBrowserNodeForSequenceNode(outputVolSeq) is None:
+          # Add output sequence to a sequence browser
+          seqBrowser = slicer.modules.sequences.logic().GetFirstBrowserNodeForSequenceNode(inputVolSeq)
+          if seqBrowser:
+            seqBrowser.AddSynchronizedSequenceNode(outputVolSeq)
+          else:
+            seqBrowser = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSequenceBrowserNode")
+            seqBrowser.SetAndObserveMasterSequenceNodeID(outputVolSeq.GetID())
+          seqBrowser.SetOverwriteProxyName(outputVolSeq, True)
+
+          # Show output in slice views
+          slicer.modules.sequences.logic().UpdateAllProxyNodes()
+          slicer.app.processEvents()
+          outputVolume = seqBrowser.GetProxyNode(outputVolSeq)
+          outputVolume.SetAndObserveTransformNodeID(outputVolTransformNodeID)
+          slicer.util.setSliceViewerLayers(background=outputVolume)
+
         else:
-          seqBrowser = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSequenceBrowserNode")
-          seqBrowser.SetAndObserveMasterSequenceNodeID(outputVolSeq.GetID())
-        seqBrowser.SetOverwriteProxyName(outputVolSeq, True)
+          # Restore play enabled states
+          for playSuspendedForBrowserNode in playSuspendedForBrowserNodes:
+            playSuspendedForBrowserNode.SetPlayback(outputVolSeq, True)
 
-        # Show output in slice views
-        slicer.modules.sequences.logic().UpdateAllProxyNodes()
-        slicer.app.processEvents()
-        outputVolume = seqBrowser.GetProxyNode(outputVolSeq)
-        slicer.util.setSliceViewerLayers(background=outputVolume)
-
-      elif not outputVolSeq:
+      else:
         # Refresh proxy node
         seqBrowser = slicer.modules.sequences.logic().GetFirstBrowserNodeForSequenceNode(inputVolSeq)
         slicer.modules.sequences.logic().UpdateProxyNodesFromSequences(seqBrowser)
