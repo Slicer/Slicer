@@ -928,6 +928,7 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
   applicationLogic->SetMRMLScene(scene);
   // Add ViewNode
   vtkNew<vtkMRMLViewNode> viewNode;
+  viewNode->SetLayoutName("1");
   scene->AddNode(viewNode.GetPointer());
 
   vtkNew<vtkMRMLDisplayableManagerGroup> displayableManagerGroup;
