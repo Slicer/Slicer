@@ -260,17 +260,19 @@ void vtkMRMLViewLogic::EndViewNodeInteraction()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLViewLogic::AddViewNode(const char* layoutName)
+vtkMRMLViewNode* vtkMRMLViewLogic::AddViewNode(const char* layoutName)
 {
   if (!this->GetMRMLScene())
     {
     vtkErrorMacro("vtkMRMLViewLogic::AddViewNode failed: scene is not set");
-    return;
+    return nullptr;
     }
   vtkSmartPointer<vtkMRMLViewNode> node = vtkSmartPointer<vtkMRMLViewNode>::Take(
     vtkMRMLViewNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLViewNode")));
   node->SetLayoutName(layoutName);
+  this->GetMRMLScene()->AddNode(node);
   this->SetViewNode(node);
+  return node;
 }
 
 //----------------------------------------------------------------------------

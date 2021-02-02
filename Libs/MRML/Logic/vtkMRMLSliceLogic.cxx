@@ -601,20 +601,21 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::AddSliceNode(const char* layoutName)
+vtkMRMLSliceNode* vtkMRMLSliceLogic::AddSliceNode(const char* layoutName)
 {
   if (!this->GetMRMLScene())
     {
     vtkErrorMacro("vtkMRMLSliceLogic::AddSliceNode failed: scene is not set");
-    return;
+    return nullptr;
     }
-  vtkMRMLSliceNode* node = vtkMRMLSliceNode::SafeDownCast(
-    this->GetMRMLScene()->CreateNodeByClass("vtkMRMLSliceNode"));
+  vtkSmartPointer<vtkMRMLSliceNode> node = vtkSmartPointer<vtkMRMLSliceNode>::Take(
+    vtkMRMLSliceNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLSliceNode")));
   node->SetName(layoutName);
   node->SetLayoutName(layoutName);
+  this->GetMRMLScene()->AddNode(node);
   this->SetSliceNode(node);
   this->UpdateSliceNodeFromLayout();
-  node->Delete();
+  return node;
 }
 
 //----------------------------------------------------------------------------

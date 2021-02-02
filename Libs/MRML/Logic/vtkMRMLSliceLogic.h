@@ -82,7 +82,7 @@ public:
   void SetSliceNode (vtkMRMLSliceNode * newSliceNode);
 
   /// Convenience function for adding a slice node and setting it in this logic
-  void AddSliceNode(const char* layoutName);
+  vtkMRMLSliceNode* AddSliceNode(const char* layoutName);
 
   ///
   /// The MRML slice node for this slice logic

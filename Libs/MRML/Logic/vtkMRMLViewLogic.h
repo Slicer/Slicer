@@ -87,7 +87,7 @@ public:
   void EndViewNodeInteraction();
 
   /// Convenience function for adding a view node and setting it in this logic
-  void AddViewNode(const char* layoutName);
+  vtkMRMLViewNode* AddViewNode(const char* layoutName);
 
   /// Convenient method to get the view node from scene and name of the Logic.
   /// The name of the Logic is the same of the widget one to which it is associated
