@@ -248,10 +248,6 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
   CHECK_EXIT_SUCCESS(vtkMRMLCoreTestingUtilities::GetExpectedNodeAddedClassNames(
                        sceneFilePath, expectedNodeAddedClassNames));
   int expectedNumberOfNode = static_cast<int>(expectedNodeAddedClassNames.size());
-  bool hasCameraNode = std::find(
-        expectedNodeAddedClassNames.begin(),
-        expectedNodeAddedClassNames.end(),
-        "vtkMRMLCameraNode") != expectedNodeAddedClassNames.end();
 
   //---------------------------------------------------------------------------
   // Check if the correct number of Events are sent - Also Keep track # of Singleton node
@@ -260,17 +256,7 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
 
   // Load the scene
   scene->SetURL( argv[1] );
-
-  if(hasCameraNode)
-    {
-    TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
-    }
   scene->Connect();
-  if(hasCameraNode)
-    {
-    TESTING_OUTPUT_ASSERT_WARNINGS(1); // vtkMRMLCameraNode::GetActiveTag() is deprecated.
-    TESTING_OUTPUT_ASSERT_WARNINGS_END();
-    }
 
   CHECK_EXIT_SUCCESS(callback->CheckStatus());
 

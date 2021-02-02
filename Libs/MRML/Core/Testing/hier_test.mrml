@@ -6,7 +6,7 @@
 <View
  id="vtkMRMLViewNode1" name="vtkMRMLViewNode1"  hideFromEditors="true"  selectable="true"  active="false" fieldOfView="200" letterSize="0.05" boxVisible="true" fiducialsVisible="true" fiducialLabelsVisible="true" axisLabelsVisible="true" backgroundColor="0.70196 0.70196 0.90588" animationMode="Off" viewAxisMode="LookFrom" spinDegrees="2" spinMs="5" spinDirection="YawLeft" rotateDegrees="5" rockLength="200" rockCount="0" stereoType="NoStereo" renderMode="Perspective"></View>
 <Camera
- id="vtkMRMLCameraNode1" name="Camera1"  hideFromEditors="true"  selectable="true"  position="0 159.315 0" focalPoint="0 0 0" viewUp="0 0 1" parallelProjection="false" parallelScale="1" active="false"></Camera>
+ id="vtkMRMLCameraNode1" name="Camera1"  hideFromEditors="true"  selectable="true"  position="0 159.315 0" focalPoint="0 0 0" viewUp="0 0 1" parallelProjection="false" parallelScale="1"></Camera>
 <Slice
  id="filevtkMRMLSliceNode3" name="redCoronal"  hideFromEditors="true"  selectable="true" fieldOfView="291.992 269.531 250" dimensions="299 276 1" sliceToRAS="-1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1" layoutName="Red" orientation="Axial"  sliceVisibility="false"></Slice>
 <SliceComposite
