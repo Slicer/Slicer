@@ -527,7 +527,7 @@ void vtkMRMLTransformsDisplayableManager2D::ProcessMRMLNodesEvents(vtkObject* ca
 {
   vtkMRMLScene* scene = this->GetMRMLScene();
 
-  if ( scene->IsBatchProcessing() )
+  if (scene == nullptr || scene->IsBatchProcessing())
     {
     return;
     }

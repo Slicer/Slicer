@@ -821,7 +821,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::ProcessMRMLNodesEvents(vtkObject*
 {
   vtkMRMLScene* scene = this->GetMRMLScene();
 
-  if ( scene->IsBatchProcessing() )
+  if (scene == nullptr || scene->IsBatchProcessing())
     {
     return;
     }
