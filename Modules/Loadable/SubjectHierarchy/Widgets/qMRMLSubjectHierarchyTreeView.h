@@ -69,6 +69,11 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
   Q_PROPERTY(QString nameFilter READ nameFilter WRITE setNameFilter)
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
   Q_PROPERTY(QStringList hideChildNodeTypes READ hideChildNodeTypes WRITE setHideChildNodeTypes)
+  Q_PROPERTY(bool visibilityColumnVisible READ visibilityColumnVisible WRITE setVisibilityColumnVisible)
+  Q_PROPERTY(bool idColumnVisible READ idColumnVisible WRITE setIdColumnVisible)
+  Q_PROPERTY(bool colorColumnVisible READ colorColumnVisible WRITE setColorColumnVisible)
+  Q_PROPERTY(bool transformColumnVisible READ transformColumnVisible WRITE setTransformColumnVisible)
+  Q_PROPERTY(bool descriptionColumnVisible READ descriptionColumnVisible WRITE setDescriptionColumnVisible)
 
 public:
   typedef QTreeView Superclass;
@@ -137,6 +142,22 @@ public:
   bool contextMenuEnabled()const;
   bool editMenuActionVisible()const;
   bool selectRoleSubMenuVisible()const;
+
+  /// Set visibility column visibility
+  void setVisibilityColumnVisible(bool visible);
+  bool visibilityColumnVisible();
+  /// Set ID column visibility
+  void setIdColumnVisible(bool visible);
+  bool idColumnVisible();
+  /// Set color column visibility
+  void setColorColumnVisible(bool visible);
+  bool colorColumnVisible();
+  /// Set transform column visibility
+  void setTransformColumnVisible(bool visible);
+  bool transformColumnVisible();
+  /// Set description column visibility
+  void setDescriptionColumnVisible(bool visible);
+  bool descriptionColumnVisible();
 
 public slots:
   /// Set MRML scene
