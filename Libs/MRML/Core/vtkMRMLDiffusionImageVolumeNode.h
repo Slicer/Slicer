@@ -46,7 +46,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionImageVolumeNode : public vtkMRMLTensorVolu
 
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent
-  vtkMRMLCopyContentDefaultMacro(vtkMRMLLabelMapVolumeDisplayNode);
+  vtkMRMLCopyContentDefaultMacro(vtkMRMLDiffusionImageVolumeNode);
 
   ///
   /// Get node XML tag name (like Volume, Model)

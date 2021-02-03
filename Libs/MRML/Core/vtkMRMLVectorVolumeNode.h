@@ -31,6 +31,10 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeNode : public vtkMRMLTensorVolumeNode
 
   vtkMRMLNode* CreateNodeInstance() override;
 
+  /// Copy node content (excludes basic data, such as name and node references).
+  /// \sa vtkMRMLNode::CopyContent
+  vtkMRMLCopyContentDefaultMacro(vtkMRMLVectorVolumeNode);
+
   ///
   /// Set node attributes
   void ReadXMLAttributes( const char** atts) override;

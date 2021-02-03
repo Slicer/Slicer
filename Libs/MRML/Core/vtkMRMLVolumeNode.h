@@ -64,7 +64,7 @@ public:
 
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent
-  vtkMRMLCopyContentMacro(vtkMRMLVectorVolumeDisplayNode);
+  vtkMRMLCopyContentMacro(vtkMRMLVolumeNode);
 
   ///
   /// Copy the node's attributes to this object
