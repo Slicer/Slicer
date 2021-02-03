@@ -671,6 +671,14 @@ if(CMAKE_CONFIGURATION_TYPES)
 endif()
 add_custom_target(Experimental ${CMAKE_CTEST_COMMAND} ${__conf_types} -D Experimental)
 
+if(Slicer_SUPERBUILD)
+  set(_slicer_dir ${CMAKE_BINARY_DIR}/${Slicer_BINARY_INNER_SUBDIR})
+else()
+  set(_slicer_dir ${Slicer_BINARY_DIR})
+endif()
+set(Slicer_LAUNCHER_EXECUTABLE ${_slicer_dir}/${Slicer_MAIN_PROJECT_APPLICATION_NAME}${CMAKE_EXECUTABLE_SUFFIX})
+set(Slicer_LAUNCH_COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --launch)
+
 #-----------------------------------------------------------------------------
 # ExternalData Object Stores configuration
 #-----------------------------------------------------------------------------
@@ -754,9 +762,6 @@ set(Slicer_ExternalData_URL_TEMPLATES ${ExternalData_URL_TEMPLATES})
 #-----------------------------------------------------------------------------
 # Testing
 #-----------------------------------------------------------------------------
-set(Slicer_LAUNCHER_EXECUTABLE ${Slicer_BINARY_DIR}/${Slicer_MAIN_PROJECT_APPLICATION_NAME}${CMAKE_EXECUTABLE_SUFFIX})
-set(Slicer_LAUNCH_COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --launch)
-
 include(SlicerMacroConfigureModuleCxxTestDriver)
 include(SlicerMacroSimpleTest)
 include(SlicerMacroPythonTesting)
