@@ -78,9 +78,14 @@ void vtkMRMLSliceViewInteractorStyle::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 bool vtkMRMLSliceViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(vtkEventData* inputEventData)
 {
-  if (!this->DisplayableManagers || !inputEventData)
+  if (!this->SliceLogic || !this->DisplayableManagers || !inputEventData)
     {
     //this->SetMouseCursor(VTK_CURSOR_DEFAULT);
+    return false;
+    }
+  vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
+  if (!sliceNode)
+    {
     return false;
     }
   vtkMRMLApplicationLogic* appLogic = nullptr;
@@ -102,7 +107,6 @@ bool vtkMRMLSliceViewInteractorStyle::DelegateInteractionEventToDisplayableManag
     0.0,
     1.0
     };
-  vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
   vtkMatrix4x4 * xyToRasMatrix = sliceNode->GetXYToRAS();
   double worldPosition[4] = { 0.0, 0.0, 0.0, 1.0 };
   xyToRasMatrix->MultiplyPoint(displayPosition, worldPosition);
