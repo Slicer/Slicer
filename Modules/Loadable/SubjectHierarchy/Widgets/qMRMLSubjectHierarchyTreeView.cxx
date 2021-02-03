@@ -1068,6 +1068,66 @@ QStringList qMRMLSubjectHierarchyTreeView::hideChildNodeTypes()const
   return this->sortFilterProxyModel()->hideChildNodeTypes();
 }
 
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setVisibilityColumnVisible(bool visible)
+{
+  this->setColumnHidden(this->model()->visibilityColumn(), !visible);
+}
+
+//--------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyTreeView::visibilityColumnVisible()
+{
+  return !this->isColumnHidden(this->model()->visibilityColumn());
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setIdColumnVisible(bool visible)
+{
+  this->setColumnHidden(this->model()->idColumn(), !visible);
+}
+
+//--------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyTreeView::idColumnVisible()
+{
+  return !this->isColumnHidden(this->model()->idColumn());
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setColorColumnVisible(bool visible)
+{
+  this->setColumnHidden(this->model()->colorColumn(), !visible);
+}
+
+//--------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyTreeView::colorColumnVisible()
+{
+  return !this->isColumnHidden(this->model()->colorColumn());
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setTransformColumnVisible(bool visible)
+{
+  this->setColumnHidden(this->model()->transformColumn(), !visible);
+}
+
+//--------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyTreeView::transformColumnVisible()
+{
+  return !this->isColumnHidden(this->model()->transformColumn());
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setDescriptionColumnVisible(bool visible)
+{
+  this->setColumnHidden(this->model()->descriptionColumn(), !visible);
+}
+
+//--------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyTreeView::descriptionColumnVisible()
+{
+  return !this->isColumnHidden(this->model()->descriptionColumn());
+}
+
 //------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::toggleSubjectHierarchyItemVisibility(vtkIdType itemID)
 {
