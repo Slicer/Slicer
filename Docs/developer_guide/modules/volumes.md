@@ -48,3 +48,4 @@ The following options can be passed to load volumes programmatically when using 
 - `center` (bool, default=false): Apply a transform that places the volume in the patient coordinate system origin
 - `discardOrientation` (bool, default=false): Discard file orientation information.
 - `fileNames` (string list): List of files to be loaded as a volume
+- `colorNodeID` (string): ID of the color node used to display the volume. Default is `vtkMRMLColorTableNodeGrey` for scalar volume and `vtkMRMLColorTableNodeFileGenericColors.txt` for labelmap volume.
