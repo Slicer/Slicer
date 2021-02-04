@@ -142,7 +142,7 @@ bool TestCopyImportedCameras(bool clear, bool legacy)
   if (clear)
     {
     expectedFirstCamera = importedCamera1Pos;
-    if (not legacy)
+    if (!legacy)
       {
       expectedCamera1Pos = importedCamera1Pos;
       expectedCamera2Pos = importedCamera2Pos;
