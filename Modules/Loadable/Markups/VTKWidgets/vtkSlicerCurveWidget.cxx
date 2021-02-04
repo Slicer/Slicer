@@ -38,6 +38,9 @@ vtkSlicerCurveWidget::vtkSlicerCurveWidget()
   this->SetEventTranslationClickAndDrag(WidgetStateOnWidget, vtkCommand::RightButtonPressEvent, vtkEvent::AltModifier,
     WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
 
+  // Accept Ctrl+MouseMove (and process as simple mouse move) so that this widget keeps the focus when the user moves
+  // the mouse while holding down Ctrl key for inserting a point.
+  this->SetEventTranslation(WidgetStateOnWidget, vtkCommand::MouseMoveEvent, vtkEvent::ControlModifier, WidgetEventMouseMove);
   this->SetEventTranslation(WidgetStateOnWidget, vtkCommand::LeftButtonPressEvent, vtkEvent::ControlModifier, WidgetEventControlPointInsert);
 }
 

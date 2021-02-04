@@ -366,9 +366,13 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventDataToDisplayableManage
 
   if (!canProcessEvent)
     {
-    // none of the displayable managers can process the event, just ignore it
-    //this->SetMouseCursor(VTK_CURSOR_DEFAULT);
-    this->DisplayableManagers->GetNthDisplayableManager(0)->SetMouseCursor(VTK_CURSOR_DEFAULT);
+    // None of the displayable managers can process the event, just ignore it.
+    // If click events (non-keyboard events) cannot be processed here then
+    // indicate this by setting the mouse cursor to default.
+    if (eventData->GetType() != vtkCommand::KeyPressEvent && eventData->GetType() != vtkCommand::KeyReleaseEvent)
+      {
+      this->DisplayableManagers->GetNthDisplayableManager(0)->SetMouseCursor(VTK_CURSOR_DEFAULT);
+      }
     return false;
     }
 
