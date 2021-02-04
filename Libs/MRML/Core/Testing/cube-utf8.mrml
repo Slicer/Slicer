@@ -9,8 +9,7 @@
         focalPoint="0 0 0"
         viewUp="-0.566328 0.729902 -0.382773"
         parallelProjection="false"
-        parallelScale="0"
-        active="true">
+        parallelScale="0">
     </Camera>
 
     <VolumeArchetypeStorage

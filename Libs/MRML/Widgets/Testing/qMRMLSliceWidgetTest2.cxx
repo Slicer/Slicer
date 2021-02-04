@@ -109,6 +109,7 @@ int qMRMLSliceWidgetTest2(int argc, char * argv [] )
   QSize viewSize(256, 256);
   qMRMLSliceWidget sliceWidget;
   sliceWidget.setMRMLScene(scene.GetPointer());
+  sliceWidget.sliceLogic()->AddSliceNode("Red");
 
   sliceWidget.resize(viewSize.width(), sliceWidget.sliceController()->height() + viewSize.height() );
 

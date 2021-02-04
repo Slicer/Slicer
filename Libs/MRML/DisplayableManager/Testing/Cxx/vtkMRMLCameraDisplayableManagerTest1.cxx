@@ -516,6 +516,8 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
 
   // Add ViewNode
   vtkNew<vtkMRMLViewNode> viewNode;
+  viewNode->SetLayoutName("1");
+  viewNode->SetLayoutLabel("1");
   vtkMRMLNode * nodeAdded = scene->AddNode(viewNode.GetPointer());
   if (!nodeAdded)
     {

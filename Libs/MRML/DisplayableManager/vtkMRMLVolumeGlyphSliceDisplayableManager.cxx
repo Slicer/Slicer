@@ -182,15 +182,17 @@ vtkMRMLSliceCompositeNode* vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInterna
     {
     vtkMRMLSliceCompositeNode* sliceCompositeNode =
       vtkMRMLSliceCompositeNode::SafeDownCast(node);
-    if (sliceCompositeNode && sliceCompositeNode->GetLayoutName() &&
-        !strcmp(sliceCompositeNode->GetLayoutName(),
-                this->GetSliceNode()->GetLayoutName()) )
+    if (sliceCompositeNode)
       {
-      return sliceCompositeNode;
+      const char* compositeLayoutName = sliceCompositeNode->GetLayoutName();
+      const char* sliceLayoutName = this->GetSliceNode()->GetLayoutName();
+      if (compositeLayoutName && !strcmp(compositeLayoutName, sliceLayoutName))
+        {
+        return sliceCompositeNode;
+        }
       }
     }
   // no matching slice composite node is found
-  assert(0);
   return nullptr;
 }
 

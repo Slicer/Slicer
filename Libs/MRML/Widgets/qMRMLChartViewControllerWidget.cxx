@@ -324,6 +324,8 @@ void qMRMLChartViewControllerWidget::updateWidgetFromMRML()
     return;
     }
 
+  this->setViewLabel(d->ChartViewNode->GetLayoutLabel());
+
   vtkMRMLChartNode *chartNode = d->chartNode();
   if (!chartNode)
     {

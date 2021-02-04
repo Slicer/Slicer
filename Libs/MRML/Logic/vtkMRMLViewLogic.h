@@ -60,17 +60,15 @@ public:
   vtkTypeMacro(vtkMRMLViewLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  /// Set / Get SliceLogic name
-  vtkSetStringMacro(Name);
-  vtkGetStringMacro(Name);
+  /// Set/Get layout name. This is used for finding the camera and view node in the scene.
+  virtual void SetName(const char* name);
+  virtual const char* GetName() const;
 
   /// The MRML View node for this View logic
   vtkGetObjectMacro (ViewNode, vtkMRMLViewNode);
-  void SetViewNode (vtkMRMLViewNode* newViewNode);
 
   /// The MRML camera node for this View logic
   vtkGetObjectMacro (CameraNode, vtkMRMLCameraNode);
-  void SetCameraNode (vtkMRMLCameraNode* newCameraNode);
 
   /// Indicate an interaction with the camera node is beginning. The
   /// parameters of the camera node being manipulated are passed as a
@@ -88,11 +86,8 @@ public:
   /// Indicate an interaction with the view node has been completed
   void EndViewNodeInteraction();
 
-  /// Manage and synchronise the CameraNode
-  void UpdateCameraNode();
-
-  /// Manage and synchronise the ViewNode
-  void UpdateViewNode();
+  /// Convenience function for adding a view node and setting it in this logic
+  vtkMRMLViewNode* AddViewNode(const char* layoutName);
 
   /// Convenient method to get the view node from scene and name of the Logic.
   /// The name of the Logic is the same of the widget one to which it is associated
@@ -109,6 +104,8 @@ protected:
   ~vtkMRMLViewLogic() override;
 
   void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
+  void SetViewNode(vtkMRMLViewNode* newViewNode);
+  void SetCameraNode(vtkMRMLCameraNode* newCameraNode);
 
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
@@ -116,9 +113,12 @@ protected:
 
   void UpdateMRMLNodes();
 
-  char* Name;
+  // View and camera nodes are looked up from the scene based on the layout name.
+  std::string Name;
+
   vtkMRMLViewNode* ViewNode;
   vtkMRMLCameraNode* CameraNode;
+  bool UpdatingMRMLNodes;
 
 private:
   vtkMRMLViewLogic(const vtkMRMLViewLogic&) = delete;

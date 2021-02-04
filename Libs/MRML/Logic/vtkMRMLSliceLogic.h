@@ -76,14 +76,13 @@ public:
     LayerLabel = 2
     };
 
-  /// Set / Get SliceLogic name
-  vtkSetStringMacro(Name);
-  vtkGetStringMacro(Name);
-
   ///
   /// The MRML slice node for this slice logic
   vtkGetObjectMacro (SliceNode, vtkMRMLSliceNode);
   void SetSliceNode (vtkMRMLSliceNode * newSliceNode);
+
+  /// Convenience function for adding a slice node and setting it in this logic
+  vtkMRMLSliceNode* AddSliceNode(const char* layoutName);
 
   ///
   /// The MRML slice node for this slice logic
@@ -410,7 +409,6 @@ protected:
 
   bool                        AddingSliceModelNodes;
 
-  char *                      Name;
   vtkMRMLSliceNode *          SliceNode;
   vtkMRMLSliceCompositeNode * SliceCompositeNode;
   vtkMRMLSliceLayerLogic *    BackgroundLayer;

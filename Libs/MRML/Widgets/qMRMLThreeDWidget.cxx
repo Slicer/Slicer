@@ -36,6 +36,8 @@
 
 // MRML includes
 #include <vtkMRMLScene.h>
+#include <vtkMRMLViewLogic.h>
+#include <vtkMRMLViewNode.h>
 
 // VTK includes
 #include <vtkCollection.h>
@@ -121,15 +123,26 @@ void qMRMLThreeDWidget::addDisplayableManager(const QString& dManager)
 void qMRMLThreeDWidget::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
 {
   Q_D(qMRMLThreeDWidget);
+  if (!newViewNode)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: view node is invalid";
+    return;
+    }
+  vtkMRMLViewLogic* viewLogic = this->viewLogic();
+  if (!viewLogic)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: view logic is invalid";
+    return;
+    }
   d->ThreeDView->setMRMLViewNode(newViewNode);
-  d->ThreeDController->setMRMLViewNode(newViewNode);
+  viewLogic->SetName(newViewNode->GetLayoutName());
 }
 
 // --------------------------------------------------------------------------
 vtkMRMLViewNode* qMRMLThreeDWidget::mrmlViewNode()const
 {
   Q_D(const qMRMLThreeDWidget);
-    return d->ThreeDView->mrmlViewNode();
+  return d->ThreeDView->mrmlViewNode();
 }
 
 // --------------------------------------------------------------------------
@@ -158,7 +171,24 @@ qMRMLThreeDViewControllerWidget* qMRMLThreeDWidget::threeDController() const
 void qMRMLThreeDWidget::setViewLabel(const QString& newViewLabel)
 {
   Q_D(qMRMLThreeDWidget);
-  d->ThreeDController->setViewLabel(newViewLabel);
+  if (!this->viewLogic() || !this->viewLogic()->GetViewNode())
+    {
+    qWarning() << Q_FUNC_INFO << " failed: view node is invalid";
+    return;
+    }
+  this->viewLogic()->GetViewNode()->SetLayoutLabel(newViewLabel.toLatin1().constData());
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLThreeDWidget::viewLabel()const
+{
+  Q_D(const qMRMLThreeDWidget);
+  if (!this->viewLogic() || !this->viewLogic()->GetViewNode())
+    {
+    qWarning() << Q_FUNC_INFO << " failed: view node is invalid";
+    return QString();
+    }
+  return this->viewLogic()->GetViewNode()->GetLayoutLabel();
 }
 
 //---------------------------------------------------------------------------
@@ -169,24 +199,31 @@ void qMRMLThreeDWidget::setQuadBufferStereoSupportEnabled(bool value)
 }
 
 //---------------------------------------------------------------------------
-QString qMRMLThreeDWidget::viewLabel()const
-{
-  Q_D(const qMRMLThreeDWidget);
-  return d->ThreeDController->viewLabel();
-}
-
-//---------------------------------------------------------------------------
 void qMRMLThreeDWidget::setViewColor(const QColor& newViewColor)
 {
   Q_D(qMRMLThreeDWidget);
-  d->ThreeDController->setViewColor(newViewColor);
+  if (!this->viewLogic() || !this->viewLogic()->GetViewNode())
+    {
+    qWarning() << Q_FUNC_INFO << " failed: view node is invalid";
+    return;
+    }
+
+  double layoutColor[3] = { newViewColor.redF(), newViewColor.greenF(), newViewColor.blueF() };
+  this->viewLogic()->GetViewNode()->SetLayoutColor(layoutColor);
 }
 
 //---------------------------------------------------------------------------
-void qMRMLThreeDWidget::setViewLogics(vtkCollection* logics)
+QColor qMRMLThreeDWidget::viewColor()const
 {
-  Q_D(qMRMLThreeDWidget);
-  d->ThreeDController->setViewLogics(logics);
+  Q_D(const qMRMLThreeDWidget);
+  if (!this->viewLogic() || !this->viewLogic()->GetViewNode())
+    {
+    qWarning() << Q_FUNC_INFO << " failed: view node is invalid";
+    return QColor(127, 127, 127);
+    }
+  double* layoutColorVtk = this->viewLogic()->GetViewNode()->GetLayoutColor();
+  QColor layoutColor = QColor::fromRgbF(layoutColorVtk[0], layoutColorVtk[1], layoutColorVtk[2]);
+  return layoutColor;
 }
 
 //---------------------------------------------------------------------------
@@ -195,13 +232,6 @@ void qMRMLThreeDWidget::setMRMLScene(vtkMRMLScene* newScene)
   Q_D(qMRMLThreeDWidget);
 
   this->Superclass::setMRMLScene(newScene);
-}
-
-//---------------------------------------------------------------------------
-QColor qMRMLThreeDWidget::viewColor()const
-{
-  Q_D(const qMRMLThreeDWidget);
-  return d->ThreeDController->viewColor();
 }
 
 //------------------------------------------------------------------------------

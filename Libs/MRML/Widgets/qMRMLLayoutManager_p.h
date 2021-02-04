@@ -168,7 +168,6 @@ public:
   QString viewClassName()const override;
 
   vtkCollection* viewLogics()const;
-  void setViewLogics(vtkCollection* viewLogics);
 
 protected:
   QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode) override;
@@ -242,7 +241,6 @@ public:
   QString viewClassName()const override;
 
   vtkCollection* sliceLogics()const;
-  void setSliceLogics(vtkCollection* sliceLogics);
 
 protected:
   QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode) override;

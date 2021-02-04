@@ -72,7 +72,6 @@ public:
   qMRMLThreeDView*                    ThreeDView;
 
   vtkSmartPointer<vtkMRMLViewLogic>   ViewLogic;
-  vtkCollection*                      ViewLogics;
 
   ctkSignalMapper*                    StereoTypesMapper;
   ctkButtonGroup*                     AnimateViewButtonGroup;
@@ -81,7 +80,6 @@ public:
   ctkSignalMapper*                    RulerTypesMapper;
   ctkSignalMapper*                    RulerColorMapper;
 
-  QString                             ThreeDViewLabel;
   QToolButton*                        CenterToolButton;
 
 protected:

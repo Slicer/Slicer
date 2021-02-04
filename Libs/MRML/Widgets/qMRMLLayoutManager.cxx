@@ -72,7 +72,8 @@ qMRMLLayoutThreeDViewFactory::qMRMLLayoutThreeDViewFactory(QObject* parent)
 //------------------------------------------------------------------------------
 qMRMLLayoutThreeDViewFactory::~qMRMLLayoutThreeDViewFactory()
 {
-  this->setViewLogics(nullptr);
+  this->ViewLogics->Delete();
+  this->ViewLogics = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -88,36 +89,6 @@ vtkCollection* qMRMLLayoutThreeDViewFactory::viewLogics() const
 }
 
 //------------------------------------------------------------------------------
-void qMRMLLayoutThreeDViewFactory::setViewLogics(vtkCollection* viewLogics)
-{
-  if (viewLogics == this->ViewLogics)
-    {
-    return;
-    }
-  if (this->ViewLogics)
-    {
-    for (int viewIndex = 0; viewIndex < this->viewCount(); ++viewIndex)
-      {
-      qMRMLThreeDWidget* threeDWidget =
-        qobject_cast<qMRMLThreeDWidget*>(viewWidget(viewIndex));
-      vtkMRMLViewLogic* viewLogic =
-        threeDWidget ? threeDWidget->viewLogic() : nullptr;
-      if (viewLogics)
-        {
-        viewLogics->AddItem(viewLogic);
-        }
-      this->ViewLogics->RemoveItem(viewLogic);
-      }
-    this->ViewLogics->Delete();
-    }
-  this->ViewLogics = viewLogics;
-  if (this->ViewLogics)
-    {
-    this->ViewLogics->Register(this->ViewLogics);
-    }
-}
-
-//------------------------------------------------------------------------------
 QWidget* qMRMLLayoutThreeDViewFactory::createViewFromNode(vtkMRMLAbstractViewNode* viewNode)
 {
   if (!viewNode || !this->layoutManager() || !this->layoutManager()->viewport())
@@ -130,17 +101,9 @@ QWidget* qMRMLLayoutThreeDViewFactory::createViewFromNode(vtkMRMLAbstractViewNod
   Q_ASSERT(!this->viewWidget(viewNode));
 
   qMRMLThreeDWidget* threeDWidget = new qMRMLThreeDWidget(this->layoutManager()->viewport());
-  threeDWidget->setObjectName(QString("ThreeDWidget%1").arg(viewNode->GetLayoutLabel()));
-  threeDWidget->setViewLabel(viewNode->GetLayoutLabel());
-  QColor layoutColor = QColor::fromRgbF(viewNode->GetLayoutColor()[0],
-                                        viewNode->GetLayoutColor()[1],
-                                        viewNode->GetLayoutColor()[2]);
-  threeDWidget->setViewColor(layoutColor);
+  threeDWidget->setObjectName(QString("ThreeDWidget%1").arg(viewNode->GetLayoutName()));
   threeDWidget->setMRMLScene(this->mrmlScene());
-  vtkMRMLViewNode* threeDViewNode = vtkMRMLViewNode::SafeDownCast(viewNode);
-  threeDWidget->setMRMLViewNode(threeDViewNode);
-
-  threeDWidget->setViewLogics(this->viewLogics());
+  threeDWidget->setMRMLViewNode(vtkMRMLViewNode::SafeDownCast(viewNode));
 
   this->viewLogics()->AddItem(threeDWidget->viewLogic());
 
@@ -205,14 +168,10 @@ QWidget* qMRMLLayoutChartViewFactory::createViewFromNode(vtkMRMLAbstractViewNode
   Q_ASSERT(!this->viewWidget(viewNode));
 
   qMRMLChartWidget* chartWidget = new qMRMLChartWidget(this->layoutManager()->viewport());
-  QString layoutName(viewNode->GetLayoutName());
-  chartWidget->setObjectName(QString("qMRMLChartWidget" + layoutName));
-  chartWidget->setViewLabel(viewNode->GetLayoutLabel());
-  /// \todo move color logic to view factory.
-  chartWidget->setColorLogic(this->colorLogic());
+  chartWidget->setObjectName(QString("qMRMLChartWidget%1").arg(viewNode->GetLayoutName()));
+  chartWidget->setColorLogic(this->colorLogic()); /// \todo move color logic to view factory.
   chartWidget->setMRMLScene(this->mrmlScene());
-  vtkMRMLChartViewNode* chartNode = vtkMRMLChartViewNode::SafeDownCast(viewNode);
-  chartWidget->setMRMLChartViewNode(chartNode);
+  chartWidget->setMRMLChartViewNode(vtkMRMLChartViewNode::SafeDownCast(viewNode));
 
   return chartWidget;
 }
@@ -245,12 +204,9 @@ QWidget* qMRMLLayoutTableViewFactory::createViewFromNode(vtkMRMLAbstractViewNode
   Q_ASSERT(!this->viewWidget(viewNode));
 
   qMRMLTableWidget* tableWidget = new qMRMLTableWidget(this->layoutManager()->viewport());
-  QString layoutName(viewNode->GetLayoutName());
-  tableWidget->setObjectName(QString("qMRMLTableWidget" + layoutName));
-  tableWidget->setViewLabel(viewNode->GetLayoutLabel());
+  tableWidget->setObjectName(QString("qMRMLTableWidget%1").arg(viewNode->GetLayoutName()));
   tableWidget->setMRMLScene(this->mrmlScene());
-  vtkMRMLTableViewNode* tableNode = vtkMRMLTableViewNode::SafeDownCast(viewNode);
-  tableWidget->setMRMLTableViewNode(tableNode);
+  tableWidget->setMRMLTableViewNode(vtkMRMLTableViewNode::SafeDownCast(viewNode));
 
   return tableWidget;
 }
@@ -282,12 +238,9 @@ QWidget* qMRMLLayoutPlotViewFactory::createViewFromNode(vtkMRMLAbstractViewNode*
   Q_ASSERT(!this->viewWidget(viewNode));
 
   qMRMLPlotWidget* plotWidget = new qMRMLPlotWidget(this->layoutManager()->viewport());
-  QString layoutName(viewNode->GetLayoutName());
-  plotWidget->setObjectName(QString("qMRMLPlotWidget" + layoutName));
-  plotWidget->setViewLabel(viewNode->GetLayoutLabel());
+  plotWidget->setObjectName(QString("qMRMLPlotWidget%1").arg(viewNode->GetLayoutName()));
   plotWidget->setMRMLScene(this->mrmlScene());
-  vtkMRMLPlotViewNode* plotViewNode = vtkMRMLPlotViewNode::SafeDownCast(viewNode);
-  plotWidget->setMRMLPlotViewNode(plotViewNode);
+  plotWidget->setMRMLPlotViewNode(vtkMRMLPlotViewNode::SafeDownCast(viewNode));
 
   return plotWidget;
 }
@@ -307,7 +260,8 @@ qMRMLLayoutSliceViewFactory::qMRMLLayoutSliceViewFactory(QObject* parent)
 //------------------------------------------------------------------------------
 qMRMLLayoutSliceViewFactory::~qMRMLLayoutSliceViewFactory()
 {
-  this->setSliceLogics(nullptr);
+  this->SliceLogics->Delete();
+  this->SliceLogics = nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -320,36 +274,6 @@ QString qMRMLLayoutSliceViewFactory::viewClassName()const
 vtkCollection* qMRMLLayoutSliceViewFactory::sliceLogics()const
 {
   return this->SliceLogics;
-}
-
-// --------------------------------------------------------------------------
-void qMRMLLayoutSliceViewFactory::setSliceLogics(vtkCollection* sliceLogics)
-{
-  if (sliceLogics == this->SliceLogics)
-    {
-    return;
-    }
-  if (this->SliceLogics)
-    {
-    for (int i = 0; i < this->viewCount(); ++i)
-      {
-      qMRMLSliceWidget* sliceWidget =
-        qobject_cast<qMRMLSliceWidget*>(viewWidget(i));
-      vtkMRMLSliceLogic* sliceLogic =
-        sliceWidget ? sliceWidget->sliceLogic() : nullptr;
-      if (sliceLogics)
-        {
-        sliceLogics->AddItem(sliceLogic);
-        }
-      this->SliceLogics->RemoveItem(sliceLogic);
-      }
-    this->SliceLogics->Delete();
-    }
-  this->SliceLogics = sliceLogics;
-  if (this->SliceLogics)
-    {
-    this->SliceLogics->Register(this->SliceLogics);
-    }
 }
 
 // --------------------------------------------------------------------------
@@ -366,18 +290,9 @@ QWidget* qMRMLLayoutSliceViewFactory::createViewFromNode(vtkMRMLAbstractViewNode
 
   qMRMLSliceWidget * sliceWidget = new qMRMLSliceWidget(this->layoutManager()->viewport());
   sliceWidget->sliceController()->setControllerButtonGroup(this->SliceControllerButtonGroup);
-  QString sliceLayoutName(viewNode->GetLayoutName());
-  QString sliceViewLabel(viewNode->GetLayoutLabel());
-  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(viewNode);
-  QColor sliceLayoutColor = QColor::fromRgbF(sliceNode->GetLayoutColor()[0],
-                                             sliceNode->GetLayoutColor()[1],
-                                             sliceNode->GetLayoutColor()[2]);
-  sliceWidget->setSliceViewName(sliceLayoutName);
-  sliceWidget->setObjectName(QString("qMRMLSliceWidget" + sliceLayoutName));
-  sliceWidget->setSliceViewLabel(sliceViewLabel);
-  sliceWidget->setSliceViewColor(sliceLayoutColor);
+  sliceWidget->setObjectName(QString("qMRMLSliceWidget%1").arg(viewNode->GetLayoutName()));
   sliceWidget->setMRMLScene(this->mrmlScene());
-  sliceWidget->setMRMLSliceNode(sliceNode);
+  sliceWidget->setMRMLSliceNode(vtkMRMLSliceNode::SafeDownCast(viewNode));
   sliceWidget->setSliceLogics(this->sliceLogics());
   vtkMRMLApplicationLogic* applicationLogic = vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic();
   sliceWidget->sliceLogic()->SetMRMLApplicationLogic(applicationLogic);

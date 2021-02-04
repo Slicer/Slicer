@@ -256,7 +256,6 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
 
   // Load the scene
   scene->SetURL( argv[1] );
-
   scene->Connect();
 
   CHECK_EXIT_SUCCESS(callback->CheckStatus());

@@ -36,6 +36,7 @@ int vtkMRMLSceneImportTest(int argc, char * argv[] )
     }
   const char* sceneFilePath = argv[1];
 
+  //---------------------------------------------------------------------------
   vtkNew<vtkMRMLScene> scene;
 
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();

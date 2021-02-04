@@ -31,13 +31,12 @@ class qMRMLThreeDViewControllerWidgetPrivate;
 class qMRMLThreeDView;
 
 // MRML includes
-class vtkMRMLViewNode;
 
 // MRMLLogic includes
 class vtkMRMLViewLogic;
+class vtkMRMLViewNode;
 
 // VTK includes
-class vtkCollection;
 
 class QMRML_WIDGETS_EXPORT qMRMLThreeDViewControllerWidget
   : public qMRMLViewControllerBar
@@ -52,19 +51,6 @@ public:
   explicit qMRMLThreeDViewControllerWidget(QWidget* parent = nullptr);
   ~qMRMLThreeDViewControllerWidget() override;
 
-  /// Set the label for the 3D view (abbreviation for the view
-  /// name)
-  void setViewLabel(const QString& newViewLabel);
-
-  /// Get the label for the view (abbreviation for the view name)
-  QString viewLabel()const;
-
-  /// Set the color for the view
-  void setViewColor(const QColor& newViewColor);
-
-  /// Get the color for the view
-  QColor viewColor()const;
-
   void setQuadBufferStereoSupportEnabled(bool value);
 
   /// Get ViewLogic
@@ -74,17 +60,11 @@ public:
   /// Use if two instances of the controller need to observe the same logic.
   void setViewLogic(vtkMRMLViewLogic* newViewLogic);
 
-  /// TODO:
-  /// Ideally the view logics should be retrieved by the viewLogic
-  /// until then, we manually set them.
-  void setViewLogics(vtkCollection* logics);
-
 public slots:
 
   void setMRMLScene(vtkMRMLScene* newScene) override;
 
   void setThreeDView(qMRMLThreeDView* threeDView);
-  void setMRMLViewNode(vtkMRMLViewNode* viewNode);
 
   /// Link/Unlink the view controls and the cameras across all viewes
   void setViewLink(bool linked);
@@ -132,8 +112,12 @@ public slots:
   void setRulerColor(int color);
 
 protected slots:
+  void updateWidgetFromMRMLViewLogic();
   void updateWidgetFromMRMLView();
   void updateViewFromMRMLCamera();
+
+protected:
+  void setMRMLViewNode(vtkMRMLViewNode* viewNode);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLThreeDViewControllerWidget);

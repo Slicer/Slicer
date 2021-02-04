@@ -31,6 +31,7 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLViewNode.h>
+#include <vtkMRMLViewLogic.h>
 
 // VTK includes
 #include <vtkCamera.h>
@@ -927,12 +928,13 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
   vtkMRMLApplicationLogic* applicationLogic = vtkMRMLApplicationLogic::New();
   applicationLogic->SetMRMLScene(scene);
   // Add ViewNode
-  vtkNew<vtkMRMLViewNode> viewNode;
-  scene->AddNode(viewNode.GetPointer());
+  vtkNew<vtkMRMLViewLogic> viewLogic;
+  viewLogic->SetMRMLScene(scene);
+  vtkMRMLViewNode* viewNode = viewLogic->AddViewNode("1");
 
   vtkNew<vtkMRMLDisplayableManagerGroup> displayableManagerGroup;
   displayableManagerGroup->SetRenderer(renderer.GetPointer());
-  displayableManagerGroup->SetMRMLDisplayableNode(viewNode.GetPointer());
+  displayableManagerGroup->SetMRMLDisplayableNode(viewNode);
 
   vtkNew<vtkRenderCallback> renderCallback;
   renderCallback->RenderWindow = renderWindow;
