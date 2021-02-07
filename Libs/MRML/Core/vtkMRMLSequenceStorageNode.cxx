@@ -15,8 +15,10 @@ limitations under the License.
 
 ==============================================================================*/
 
-#include "vtkMRMLSequenceNode.h"
 #include "vtkMRMLSequenceStorageNode.h"
+
+#include "vtkMRMLMessageCollection.h"
+#include "vtkMRMLSequenceNode.h"
 #include "vtkMRMLScene.h"
 
 // VTK includes
@@ -65,16 +67,18 @@ int vtkMRMLSequenceStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   vtkMRMLSequenceNode *sequenceNode = dynamic_cast <vtkMRMLSequenceNode *> (refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
-  if (fullName == std::string(""))
+  if (fullName.empty())
     {
-    vtkErrorMacro("ReadDataInternal: File name not specified");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSequenceStorageNode::ReadDataInternal",
+      "Reading sequence node file failed: file name not specified.");
     return 0;
     }
 
   // check that the file exists
   if (vtksys::SystemTools::FileExists(fullName.c_str()) == false)
     {
-    vtkErrorMacro("ReadDataInternal: model file '" << fullName.c_str() << "' not found.");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSequenceStorageNode::ReadDataInternal",
+      "Reading sequence node file failed: file '" << fullName << "' not found.");
     return 0;
     }
 
@@ -82,7 +86,8 @@ int vtkMRMLSequenceStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
   if( extension.empty() )
     {
-    vtkErrorMacro("ReadData: no file extension specified: " << fullName.c_str());
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSequenceStorageNode::ReadDataInternal",
+      "Reading sequence node file failed: no file extension specified in filename '" << fullName << "'");
     return 0;
     }
 
@@ -93,16 +98,20 @@ int vtkMRMLSequenceStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   if (this->GetScene() && sequenceNode->GetSequenceScene())
     {
     this->GetScene()->CopyRegisteredNodesToScene(sequenceNode->GetSequenceScene());
+    // Data IO manager is needed so that we can get a remote cache data directory for temporary storage
+    sequenceNode->GetSequenceScene()->SetDataIOManager(this->GetScene()->GetDataIOManager());
     }
   else
     {
-    vtkErrorMacro("Cannot register nodes in the sequence node");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSequenceStorageNode::ReadDataInternal",
+      "Reading sequence node file failed: invalid scene");
     }
 
   int success = false;
   if (extension == std::string(".mrb"))
     {
     vtkMRMLScene* sequenceScene = sequenceNode->GetSequenceScene();
+    sequenceScene->SetErrorMessage("");
     success = sequenceScene->ReadFromMRB(fullName.c_str());
     if (success)
       {
@@ -124,6 +133,16 @@ int vtkMRMLSequenceStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         // Convert node IDs to node pointers
         sequenceNode->UpdateSequenceIndex();
         sequenceScene->RemoveNode(embeddedSequenceNode);
+        }
+      }
+    else
+      {
+      // Error is already logged but if a user message is set in the scene then
+      // we add it as a user message to show it to the user.
+      std::string errorMessage = sequenceScene->GetErrorMessage();
+      if (!errorMessage.empty())
+        {
+        this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, errorMessage);
         }
       }
     }

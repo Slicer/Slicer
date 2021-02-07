@@ -14,6 +14,7 @@
 /// MRML includes
 #include <vtkCacheManager.h>
 #include <vtkMRMLClipModelsNode.h>
+#include "vtkMRMLMessageCollection.h"
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
@@ -209,7 +210,8 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(vtkAlgorithmOutput* polyData)
 
 //----------------------------------------------------------------------------
 int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix,
-  int coordinateSystem /*=vtkMRMLStorageNode::CoordinateSystemLPS*/)
+  int coordinateSystem /*=vtkMRMLStorageNode::CoordinateSystemLPS*/,
+  vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   std::string ssuf = suffix;
   itksys::Directory dir;
@@ -226,7 +228,7 @@ int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix,
         {
         std::string fullPath = std::string(dir.GetPath())
             + "/" + filename;
-        if (this->AddModel(fullPath.c_str(), coordinateSystem) == nullptr)
+        if (this->AddModel(fullPath.c_str(), coordinateSystem, userMessages) == nullptr)
           {
           res = 0;
           }
@@ -238,11 +240,13 @@ int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix,
 
 //----------------------------------------------------------------------------
 vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(const char* filename,
-  int coordinateSystem /*=vtkMRMLStorageNode::CoordinateSystemLPS*/)
+  int coordinateSystem /*=vtkMRMLStorageNode::CoordinateSystemLPS*/,
+  vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
-  if (this->GetMRMLScene() == nullptr ||
-      filename == nullptr)
+  if (this->GetMRMLScene() == nullptr || filename == nullptr)
     {
+    vtkErrorToMessageCollectionMacro(userMessages, "vtkSlicerModelsLogic::AddModel",
+      "Invalid scene or filename");
     return nullptr;
     }
   vtkNew<vtkMRMLModelNode> modelNode;
@@ -278,7 +282,7 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(const char* filename,
   // check to see which node can read this type of file
   if (mStorageNode->SupportedFileType(name.c_str()))
     {
-    storageNode = mStorageNode.GetPointer();
+    storageNode = mStorageNode;
     mStorageNode->SetCoordinateSystem(coordinateSystem);
     }
 
@@ -288,36 +292,39 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(const char* filename,
     storageNode = mStorageNode;
     }
   */
-  if (storageNode != nullptr)
+  if (!storageNode)
     {
-    std::string baseName = storageNode->GetFileNameWithoutExtension(fname.c_str());
-    std::string uname( this->GetMRMLScene()->GetUniqueNameByString(baseName.c_str()));
-    modelNode->SetName(uname.c_str());
-
-    this->GetMRMLScene()->AddNode(storageNode.GetPointer());
-    this->GetMRMLScene()->AddNode(displayNode.GetPointer());
-
-    // Set the scene so that SetAndObserve[Display|Storage]NodeID can find the
-    // node in the scene (so that DisplayNodes return something not empty)
-    modelNode->SetScene(this->GetMRMLScene());
-    modelNode->SetAndObserveStorageNodeID(storageNode->GetID());
-    modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
-
-    this->GetMRMLScene()->AddNode(modelNode.GetPointer());
-
-    // now set up the reading
-    vtkDebugMacro("AddModel: calling read on the storage node");
-    int retval = storageNode->ReadData(modelNode.GetPointer());
-    if (retval != 1)
-      {
-      vtkErrorMacro("AddModel: error reading " << filename);
-      this->GetMRMLScene()->RemoveNode(modelNode.GetPointer());
-      return nullptr;
-      }
+    vtkErrorToMessageCollectionMacro(userMessages, "vtkSlicerModelsLogic::AddModel",
+      "Could not find a suitable storage node for file '" << filename << "'.");
+    return nullptr;
     }
-  else
+  std::string baseName = storageNode->GetFileNameWithoutExtension(fname.c_str());
+  std::string uname( this->GetMRMLScene()->GetUniqueNameByString(baseName.c_str()));
+  modelNode->SetName(uname.c_str());
+
+  this->GetMRMLScene()->AddNode(storageNode.GetPointer());
+  this->GetMRMLScene()->AddNode(displayNode.GetPointer());
+
+  // Set the scene so that SetAndObserve[Display|Storage]NodeID can find the
+  // node in the scene (so that DisplayNodes return something not empty)
+  modelNode->SetScene(this->GetMRMLScene());
+  modelNode->SetAndObserveStorageNodeID(storageNode->GetID());
+  modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
+
+  this->GetMRMLScene()->AddNode(modelNode.GetPointer());
+
+  // now set up the reading
+  vtkDebugMacro("AddModel: calling read on the storage node");
+  storageNode->GetUserMessages()->ClearMessages();
+  int success = storageNode->ReadData(modelNode.GetPointer());
+  if (!success)
     {
-    vtkErrorMacro("Couldn't read file: " << filename);
+    vtkErrorMacro("AddModel: error reading " << filename);
+    if (userMessages)
+      {
+      userMessages->AddMessages(storageNode->GetUserMessages());
+      }
+    this->GetMRMLScene()->RemoveNode(modelNode.GetPointer());
     return nullptr;
     }
 
@@ -326,16 +333,15 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(const char* filename,
 
 //----------------------------------------------------------------------------
 int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode *modelNode,
-  int coordinateSystem/*=-1*/)
+  int coordinateSystem/*=-1*/, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
    if (modelNode == nullptr || filename == nullptr)
-    {
-    vtkErrorMacro("SaveModel: unable to proceed, filename is " <<
-                  (filename == nullptr ? "null" : filename) <<
-                  ", model node is " <<
-                  (modelNode == nullptr ? "null" : modelNode->GetID()));
-    return 0;
-    }
+     {
+     vtkErrorToMessageCollectionMacro(userMessages, "vtkSlicerModelsLogic::SaveModel",
+       "Failed to save model node " << ((modelNode && modelNode->GetID()) ? modelNode->GetID() : "(null)")
+       << " into file '" << (filename ? filename : "(null)") << "'.");
+     return 0;
+     }
 
   vtkMRMLModelStorageNode *storageNode = nullptr;
   vtkMRMLStorageNode *snode = modelNode->GetStorageNode();
@@ -345,11 +351,8 @@ int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode *mod
     }
   if (storageNode == nullptr)
     {
-    storageNode = vtkMRMLModelStorageNode::New();
-    storageNode->SetScene(this->GetMRMLScene());
-    this->GetMRMLScene()->AddNode(storageNode);
+    storageNode = vtkMRMLModelStorageNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLModelStorageNode"));
     modelNode->SetAndObserveStorageNodeID(storageNode->GetID());
-    storageNode->Delete();
     }
 
   if (coordinateSystem >= 0)
@@ -368,9 +371,16 @@ int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode *mod
     storageNode->SetFileName(filename);
     }
 
-  int res = storageNode->WriteData(modelNode);
-
-  return res;
+  int success = storageNode->WriteData(modelNode);
+  if (!success)
+    {
+    vtkErrorMacro("vtkSlicerModelsLogic::SaveModel: error saving " << filename);
+    if (userMessages)
+      {
+      userMessages->AddMessages(storageNode->GetUserMessages());
+      }
+    }
+  return success;
 }
 
 //----------------------------------------------------------------------------

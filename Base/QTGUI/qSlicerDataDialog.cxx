@@ -30,6 +30,7 @@
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
 #include <ctkCheckableModelHelper.h>
+#include <ctkMessageBox.h>
 
 /// Slicer includes
 #include "vtkArchive.h"
@@ -40,6 +41,10 @@
 #include "qSlicerDataDialog_p.h"
 #include "qSlicerIOManager.h"
 #include "qSlicerIOOptionsWidget.h"
+#include "vtkMRMLMessageCollection.h"
+
+/// VTK includes
+#include <vtkNew.h>
 
 //-----------------------------------------------------------------------------
 qSlicerDataDialogPrivate::qSlicerDataDialogPrivate(QWidget* _parent)
@@ -579,21 +584,30 @@ bool qSlicerDataDialog::exec(const qSlicerIO::IOProperties& readerProperties)
       }
     }
 
-  bool res = false;
+  bool success = false;
   if (d->exec() != QDialog::Accepted)
     {
     d->reset();
-    return res;
+    return success;
     }
   QList<qSlicerIO::IOProperties> files = d->selectedFiles();
   for (int i = 0; i < files.count(); ++i)
     {
     files[i].unite(readerProperties);
     }
-  res = qSlicerCoreApplication::application()->coreIOManager()
-    ->loadNodes(files);
+  vtkNew<vtkMRMLMessageCollection> userMessages;
+  success = qSlicerCoreApplication::application()->coreIOManager()->loadNodes(files, nullptr, userMessages);
+  if (!success)
+    {
+    ctkMessageBox messageBox;
+    messageBox.setIcon(QMessageBox::Critical);
+    messageBox.setWindowTitle(tr("Adding data failed"));
+    messageBox.setText(tr("Error occurred while loading the selected files. Click 'Show details' button and check the application log for more information."));
+    messageBox.setDetailedText(QString::fromStdString(userMessages->GetAllMessagesAsString()));
+    messageBox.exec();
+    }
   d->reset();
-  return res;
+  return success;
 }
 
 //-----------------------------------------------------------------------------

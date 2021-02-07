@@ -1351,48 +1351,10 @@ void qSlicerSaveDataDialogPrivate::updateStatusIconFromMessageCollection(int row
   QString messagesStr;
   bool warningFound = false;
   bool errorFound = false;
-
-  if (userMessages && userMessages->GetNumberOfMessages() > 0)
+  if (userMessages)
     {
-    // There is at least one message from the storage node.
-    const int numberOfMessages = userMessages->GetNumberOfMessages();
-
-    for (int index = 0; index < numberOfMessages; ++index)
-      {
-      const unsigned long messageType = userMessages->GetNthMessageType(index);
-      const std::string messageText = userMessages->GetNthMessageText(index);
-      if (!messageText.empty() && numberOfMessages > 1)
-        {
-        messagesStr += "- ";
-        }
-      switch (messageType)
-        {
-      case vtkCommand::WarningEvent:
-        warningFound = true;
-        if (!messageText.empty())
-          {
-          messagesStr.append(tr("Warning: "));
-          }
-        break;
-      case vtkCommand::ErrorEvent:
-        errorFound = true;
-        if (!messageText.empty())
-          {
-          messagesStr.append(tr("Error: "));
-          }
-        break;
-        }
-      if (!messageText.empty())
-        {
-        messagesStr.append(tr(messageText.c_str()));
-        if (index < numberOfMessages - 1)
-          {
-          messagesStr.append("\n");
-          }
-        }
-      }
+    messagesStr = QString::fromStdString(userMessages->GetAllMessagesAsString(&errorFound, &warningFound));
     }
-
   this->setStatusIcon(row, (!success || errorFound) ? this->ErrorIcon : (warningFound ? this->WarningIcon : QIcon()), messagesStr);
 }
 

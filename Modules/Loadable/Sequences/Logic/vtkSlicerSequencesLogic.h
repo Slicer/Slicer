@@ -34,6 +34,7 @@
 
 #include "vtkSlicerSequencesModuleLogicExport.h"
 
+class vtkMRMLMessageCollection;
 class vtkMRMLNode;
 class vtkMRMLSequenceNode;
 class vtkMRMLSequenceBrowserNode;
@@ -50,9 +51,11 @@ public:
 
   ///
   /// Add into the scene a new mrml sequence node and
-  /// read its data from a specified file
-  /// A storage node is also added into the scene
-  vtkMRMLSequenceNode* AddSequence(const char* filename);
+  /// read its data from a specified file.
+  /// A storage node is also added into the scene.
+  /// User-displayable warning or error messages can be received if userMessages object is
+  /// specified.
+  vtkMRMLSequenceNode* AddSequence(const char* filename, vtkMRMLMessageCollection* userMessages=nullptr);
 
   /// Refreshes the output of all the active browser nodes. Called regularly by a timer.
   void UpdateAllProxyNodes();

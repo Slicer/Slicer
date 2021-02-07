@@ -32,6 +32,7 @@
 // MRML includes
 #include <vtkMRMLScene.h>
 #include <vtkMRMLStorageNode.h>
+#include <vtkMRMLMessageCollection.h>
 
 // MRML Logic includes
 #include <vtkMRMLApplicationLogic.h>
@@ -89,8 +90,9 @@ bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
     clear = properties["clear"].toBool();
     }
 
+  this->mrmlScene()->SetErrorMessage("");
   bool success = this->mrmlScene()->ReadFromMRB(file.toUtf8(), clear);
-
+  this->userMessages()->AddMessage(vtkCommand::ErrorEvent, this->mrmlScene()->GetErrorMessage());
   if (success)
     {
     // Set default scene file format to mrb

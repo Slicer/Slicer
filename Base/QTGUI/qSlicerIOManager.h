@@ -103,6 +103,7 @@ public slots:
 
 protected slots:
   void updateProgressDialog();
+  void execDelayedFileDialog();
 
 protected:
   friend class qSlicerFileDialog;

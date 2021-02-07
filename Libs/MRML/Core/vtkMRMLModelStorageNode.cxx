@@ -12,9 +12,11 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLDisplayNode.h"
-#include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelStorageNode.h"
+
+#include "vtkMRMLDisplayNode.h"
+#include "vtkMRMLMessageCollection.h"
+#include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"
 
 // VTK includes
@@ -197,8 +199,10 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     if (extension == std::string(".g") || extension == std::string(".byu"))
       {
       vtkNew<vtkBYUReader> reader;
+      this->GetUserMessages()->SetObservedObject(reader);
       reader->SetGeometryFileName(fullName.c_str());
       reader->Update();
+      this->GetUserMessages()->SetObservedObject(nullptr);
       meshFromFile = reader->GetOutput();
       }
     else if (extension == std::string(".vtk"))
@@ -217,8 +221,10 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         reader->ReadAllColorScalarsOn();
         reader->ReadAllTCoordsOn();
         reader->ReadAllFieldsOn();
+        this->GetUserMessages()->SetObservedObject(reader);
         reader->Update();
         meshFromFile = reader->GetOutput();
+        this->GetUserMessages()->SetObservedObject(nullptr);
         }
       else if (unstructuredGridReader->IsFileUnstructuredGrid())
         {
@@ -229,53 +235,66 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         unstructuredGridReader->ReadAllColorScalarsOn();
         unstructuredGridReader->ReadAllTCoordsOn();
         unstructuredGridReader->ReadAllFieldsOn();
+        this->GetUserMessages()->SetObservedObject(unstructuredGridReader);
         unstructuredGridReader->Update();
         meshFromFile = unstructuredGridReader->GetOutput();
+        this->GetUserMessages()->SetObservedObject(nullptr);
         }
       else
         {
-        vtkErrorMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): file " << fullName.c_str()
-                      << " is not recognized as polydata nor as an unstructured grid.");
+        vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
+          "Failed to load model from VTK file " << fullName << " as it does not contain polydata nor unstructured grid."
+          << " The file might be loadable as a volume.");
         }
       coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFileHeader(reader->GetHeader());
       }
     else if (extension == std::string(".vtp"))
       {
       vtkNew<vtkXMLPolyDataReader> reader;
+      this->GetUserMessages()->SetObservedObject(reader);
       reader->SetFileName(fullName.c_str());
       reader->Update();
       meshFromFile = reader->GetOutput();
+      this->GetUserMessages()->SetObservedObject(nullptr);
       coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFieldData(meshFromFile);
       }
     else if (extension == std::string(".ucd"))
       {
       vtkNew<vtkAVSucdReader> reader;
+      this->GetUserMessages()->SetObservedObject(reader);
       reader->SetFileName(fullName.c_str());
       reader->Update();
       meshFromFile = reader->GetOutput();
+      this->GetUserMessages()->SetObservedObject(nullptr);
       }
     else if (extension == std::string(".vtu"))
       {
       vtkNew<vtkXMLUnstructuredGridReader> reader;
+      this->GetUserMessages()->SetObservedObject(reader);
       reader->SetFileName(fullName.c_str());
       reader->Update();
       meshFromFile = reader->GetOutput();
+      this->GetUserMessages()->SetObservedObject(nullptr);
       coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFieldData(meshFromFile);
       }
     else if (extension == std::string(".stl"))
       {
       vtkNew<vtkSTLReader> reader;
+      this->GetUserMessages()->SetObservedObject(reader);
       reader->SetFileName(fullName.c_str());
       reader->Update();
       meshFromFile = reader->GetOutput();
+      this->GetUserMessages()->SetObservedObject(nullptr);
       coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFileHeader(reader->GetHeader());
       }
     else if (extension == std::string(".ply"))
       {
       vtkNew<vtkPLYReader> reader;
+      this->GetUserMessages()->SetObservedObject(reader);
       reader->SetFileName(fullName.c_str());
       reader->Update();
       meshFromFile = reader->GetOutput();
+      this->GetUserMessages()->SetObservedObject(nullptr);
       vtkStringArray* comments = reader->GetComments();
       for (int commentIndex = 0; commentIndex < comments->GetNumberOfValues(); commentIndex++)
         {
@@ -290,9 +309,11 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     else if (extension == std::string(".obj"))
       {
       vtkNew<vtkOBJReader> reader;
+      this->GetUserMessages()->SetObservedObject(reader);
       reader->SetFileName(fullName.c_str());
       reader->Update();
       meshFromFile = reader->GetOutput();
+      this->GetUserMessages()->SetObservedObject(nullptr);
       coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFileHeader(reader->GetComment());
       }
     else if (extension == std::string(".meta"))  // model in meta format
@@ -313,7 +334,8 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         }
       catch(itk::ExceptionObject &ex)
         {
-        std::cout<<ex.GetDescription()<<std::endl;
+        vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
+          "Failed to load model from ITK .meta file " << fullName << ": " << ex.GetDescription());
         return 0;
         }
       vtkNew<vtkPolyData> vtkMesh;
@@ -356,14 +378,21 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       }
     else
       {
-      vtkDebugMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)")
-        << "): Cannot read model file '" << fullName.c_str() << "' (extension = " << extension.c_str() << ")");
+      vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
+        "Failed to load model: unrecognized file extension '" << extension << "' of file '" << fullName << "'.");
       return 0;
       }
     }
   catch (...)
     {
-    vtkErrorMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): unknown exception while trying to read file: " << fullName.c_str());
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
+      "Failed to load model: unknown exception while trying to load the file '" << fullName << "'.");
+    return 0;
+    }
+
+  if (this->GetUserMessages()->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) > 0)
+    {
+    // User messages are already logged, no need for logging more
     return 0;
     }
 

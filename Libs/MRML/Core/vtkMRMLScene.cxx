@@ -766,7 +766,11 @@ int vtkMRMLScene::Import()
   timer->StartTimer();
 #endif
   this->SetErrorCode(0);
-  this->SetErrorMessage(std::string(""));
+  this->SetErrorMessage("");
+  // Scene error messages are overwritten by each node, we use errorMessages variable
+  // to accumulate all the messages.
+  std::string errorMessages;
+  bool success = true;
 
   bool undoFlag = this->GetUndoFlag();
 
@@ -775,11 +779,8 @@ int vtkMRMLScene::Import()
   this->ReferencedIDChanges.clear();
 
   // read nodes into a temp scene
-  vtkSmartPointer<vtkCollection> loadedNodes = vtkSmartPointer<vtkCollection>::New();
-
-  int parsingSuccess = this->LoadIntoScene(loadedNodes);
-
-  if (parsingSuccess)
+  vtkNew<vtkCollection> loadedNodes;
+  if (this->LoadIntoScene(loadedNodes))
     {
     /// In case the scene needs to change the ID of some nodes to add, the new
     /// ID should not be one already existing in the scene nor one of the
@@ -814,6 +815,14 @@ int vtkMRMLScene::Import()
     this->UpdateNodeReferences(addedNodes);
     this->RemoveReservedIDs();
 
+    if (this->GetErrorCode() != 0)
+      {
+      success = false;
+      errorMessages.append(this->GetErrorMessage()+"\n");
+      this->SetErrorCode(0);
+      this->SetErrorMessage("");
+      }
+
     this->InvokeEvent(vtkMRMLScene::NewSceneEvent, nullptr);
 
     // Notify the imported nodes about that all nodes are created
@@ -829,14 +838,17 @@ int vtkMRMLScene::Import()
         {
         node->UpdateScene(this);
         }
-      if (this->GetErrorCode() == 1)
+      if (this->GetErrorCode() != 0)
         {
         //vtkErrorMacro("Import: error updating node " << node->GetID());
         // TODO: figure out the best way to deal with an error (encountering
         // it when fail to read a file), removing a node isn't quite right
         // (nodes are still in the scene when save it later)
         // this->RemoveNode(node);
-        // this->SetErrorCode(0);
+        success = false;
+        errorMessages.append(this->GetErrorMessage() + "\n");
+        this->SetErrorCode(0);
+        this->SetErrorMessage("");
         }
       }
 
@@ -849,7 +861,9 @@ int vtkMRMLScene::Import()
   else
     {
     // parsing was not successful
-    this->SetErrorMessage (std::string("Error parsing scene file"));
+    success = false;
+    errorMessages.append("Error parsing scene file.");
+    errorMessages.append("\n");
     this->ReferencedIDChanges.clear();
     }
 
@@ -864,12 +878,6 @@ int vtkMRMLScene::Import()
   importingTimer->StopTimer();
 #endif
 
-  int returnCode = parsingSuccess; // nonzero = success
-  if (this->GetErrorCode() != 0)
-    {
-    // error was reported, return with 0 (failure)
-    returnCode = 0;
-    }
 #ifdef MRMLSCENE_VERBOSE
   timer->StopTimer();
   std::cerr << "vtkMRMLScene::Import()::AddNodes:" << addNodesTimer->GetElapsedTime() << std::endl;
@@ -886,7 +894,15 @@ int vtkMRMLScene::Import()
   // Once the import is finished, give the SH a chance to ensure consistency
   this->SetSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(this));
 
-  return returnCode;
+  if (this->GetErrorCode())
+    {
+    success = false;
+    errorMessages.append(this->GetErrorMessage()+"\n");
+    }
+
+  this->SetErrorCode(success ? 0 : 1);
+  this->SetErrorMessage(errorMessages);
+  return success ? 1 : 0;
 }
 
 //------------------------------------------------------------------------------
@@ -3798,6 +3814,11 @@ bool vtkMRMLScene::ReadFromMRB(const char* fullName, bool clear/*=false*/)
     {
     tempBaseDir = this->GetDataIOManager()->GetCacheManager()->GetRemoteCacheDirectory();
     }
+  else
+    {
+    vtkErrorMacro("vtkMRMLScene::ReadFromMRB failed: cannot retrieve remote cache directory from DataIOManager");
+    return false;
+    }
   std::stringstream unpackDirStr;
   unpackDirStr << tempBaseDir << "/" << vtksys::SystemTools::GetCurrentDateTime("__BundleLoadTemp-%F_%H%M%S_") << (this->RandomGenerator() % 1000);
   std::string unpackDir = unpackDirStr.str();
@@ -3807,12 +3828,22 @@ bool vtkMRMLScene::ReadFromMRB(const char* fullName, bool clear/*=false*/)
     {
     if (!vtksys::SystemTools::RemoveADirectory(unpackDir.c_str()))
       {
+      std::string msg = std::string("Cannot remove directory '") + unpackDir + "'."
+        + " Check that remote cache directory that is specified in application setting is writeable.";
+      vtkErrorMacro("vtkMRMLScene::ReadFromMRB failed: " << msg);
+      this->SetErrorCode(1);
+      this->SetErrorMessage(msg);
       return false;
       }
     }
 
   if (!vtksys::SystemTools::MakeDirectory(unpackDir.c_str()))
     {
+    std::string msg = std::string("Cannot create directory '") + unpackDir + "'."
+      + " Check that remote cache directory that is specified in application setting is writeable.";
+    vtkErrorMacro("vtkMRMLScene::ReadFromMRB failed: " << msg);
+    this->SetErrorCode(1);
+    this->SetErrorMessage(msg);
     return false;
     }
 
@@ -3829,6 +3860,7 @@ bool vtkMRMLScene::ReadFromMRB(const char* fullName, bool clear/*=false*/)
     }
   if (!vtksys::SystemTools::RemoveADirectory(unpackDir))
     {
+    vtkErrorMacro("vtkMRMLScene::ReadFromMRB failed: cannot remove directory '" << unpackDir << "'");
     return false;
     }
 

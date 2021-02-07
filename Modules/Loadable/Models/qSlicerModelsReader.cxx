@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QDebug>
 #include <QFileInfo>
 
 // Slicer includes
@@ -29,6 +30,7 @@
 #include "vtkSlicerModelsLogic.h"
 
 // MRML includes
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLModelNode.h"
 #include <vtkMRMLScene.h>
 
@@ -104,8 +106,9 @@ bool qSlicerModelsReader::load(const IOProperties& properties)
   QString fileName = properties["fileName"].toString();
 
   this->setLoadedNodes(QStringList());
-  if (d->ModelsLogic.GetPointer() == nullptr)
+  if (!d->ModelsLogic)
     {
+    qCritical() << Q_FUNC_INFO << (" failed: Models logic is invalid.");
     return false;
     }
   int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS; // default
@@ -113,10 +116,12 @@ bool qSlicerModelsReader::load(const IOProperties& properties)
     {
     coordinateSystem = properties["coordinateSystem"].toInt();
     }
+  this->userMessages()->ClearMessages();
   vtkMRMLModelNode* node = d->ModelsLogic->AddModel(
-    fileName.toUtf8(), coordinateSystem);
+    fileName.toUtf8(), coordinateSystem, this->userMessages());
   if (!node)
     {
+    // errors are already logged and userMessages contain details that can be displayed to users
     return false;
     }
   this->setLoadedNodes( QStringList(QString(node->GetID())) );

@@ -22,6 +22,7 @@
 #include "vtkSlicerModelsLogic.h"
 
 // MRML includes
+#include "vtkMRMLCoreTestingMacros.h"
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLScene.h>
 
@@ -95,7 +96,9 @@ bool testAddEmptyFile(const char * filePath)
 bool testAddFile(const char * filePath)
 {
   vtkNew<vtkSlicerModelsLogic> modelsLogic;
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   vtkMRMLModelNode* model = modelsLogic->AddModel(filePath);
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
   if (model != nullptr)
     {
     std::cerr << "Error line " << __LINE__
