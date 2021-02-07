@@ -188,14 +188,6 @@ void vtkMRMLLayoutNode::SetViewArrangement(int arrNew)
     return;
     }
   this->ViewArrangement = arrNew;
-#if 1
-  if (!this->IsLayoutDescription(this->ViewArrangement))
-    {
-    vtkWarningMacro(<< "View arrangement " << this->ViewArrangement
-                    << " is not recognized, register it with "
-                    << "AddLayoutDescription()");
-    }
-#endif
   int wasModifying = this->StartModify();
   this->UpdateCurrentLayoutDescription();
   this->Modified();
@@ -261,7 +253,15 @@ void vtkMRMLLayoutNode::UpdateCurrentLayoutDescription()
     {
     return;
     }
-  std::string description = this->GetLayoutDescription(this->ViewArrangement);
+  int viewArrangement = this->ViewArrangement;
+  if (!this->IsLayoutDescription(viewArrangement))
+    {
+    vtkWarningMacro(<< "View arrangement " << this->ViewArrangement
+      << " is not recognized, register it with "
+      << "AddLayoutDescription()");
+    viewArrangement = vtkMRMLLayoutNode::SlicerLayoutDefaultView;
+    }
+  std::string description = this->GetLayoutDescription(viewArrangement);
   if (this->GetCurrentLayoutDescription() &&
       description == this->GetCurrentLayoutDescription())
     {
