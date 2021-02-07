@@ -13,6 +13,7 @@ Version:   $Revision: 1.3 $
 =========================================================================auto=*/
 
 // MRML includes
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLStorableNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSequenceStorageNode.h"
@@ -276,8 +277,10 @@ void vtkMRMLStorableNode::UpdateScene(vtkMRMLScene *scene)
     return;
     }
 
-  int numStorageNodes = this->GetNumberOfNodeReferences(this->GetStorageNodeReferenceRole());
+  bool success = true;
+  std::string errorMessages;
 
+  int numStorageNodes = this->GetNumberOfNodeReferences(this->GetStorageNodeReferenceRole());
   vtkDebugMacro("UpdateScene: going through the storage node ids: " <<  numStorageNodes);
   for (int i=0; i < numStorageNodes; i++)
     {
@@ -296,11 +299,20 @@ void vtkMRMLStorableNode::UpdateScene(vtkMRMLScene *scene)
         fname = std::string(pnode->GetURI());
         }
       vtkDebugMacro("UpdateScene: calling ReadData, fname = " << fname.c_str());
+      pnode->GetUserMessages()->ClearMessages();
       if (pnode->ReadData(this) == 0)
         {
-        scene->SetErrorCode(1);
-        std::string msg = std::string("Error reading file ") + fname;
-        scene->SetErrorMessage(msg);
+        success = false;
+        std::string msg = std::string("Failed to read node ") + (this->GetName() ? this->GetName() : "(null)")
+          + " (" + (this->GetID() ? this->GetID() : "(null)") + ") using storage node "
+          + (pnode->GetID() ? pnode->GetID() : "(null)") + ".";
+        vtkErrorMacro("vtkMRMLStorableNode::UpdateScene failed: " << msg);
+        errorMessages += msg;
+        std::string details = pnode->GetUserMessages()->GetAllMessagesAsString();
+        if (!details.empty())
+          {
+          errorMessages += " Details:\n" + details;
+          }
         }
       else
         {
@@ -311,6 +323,11 @@ void vtkMRMLStorableNode::UpdateScene(vtkMRMLScene *scene)
       {
       vtkErrorMacro("UpdateScene: error getting " << i << "th storage node, id = " << (this->GetNthStorageNodeID(i) == nullptr ? "null" : this->GetNthStorageNodeID(i)));
       }
+    }
+  if (!success)
+    {
+    scene->SetErrorCode(1);
+    scene->SetErrorMessage(errorMessages);
     }
 }
 

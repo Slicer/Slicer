@@ -7,6 +7,7 @@
 #include <QMetaProperty>
 #include <QProgressDialog>
 #include <QSettings>
+#include <QTimer>
 
 // CTK includes
 #include "ctkScreenshotDialog.h"
@@ -24,6 +25,7 @@
 /// MRML includes
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLMessageCollection.h>
 
 /// VTK includes
 #include <vtkCollection.h>
@@ -53,13 +55,16 @@ public:
   qSlicerFileDialog* findDialog(qSlicerIO::IOFileType fileType,
                                 qSlicerFileDialog::IOAction)const;
 
-  QStringList                       History;
-  QList<QUrl>                       Favorites;
-  QList<qSlicerFileDialog*>         ReadDialogs;
-  QList<qSlicerFileDialog*>         WriteDialogs;
+  QStringList History;
+  QList<QUrl> Favorites;
+  QList<qSlicerFileDialog*> ReadDialogs;
+  QList<qSlicerFileDialog*> WriteDialogs;
 
   QSharedPointer<ctkScreenshotDialog> ScreenshotDialog;
-  QProgressDialog*                    ProgressDialog;
+  QProgressDialog* ProgressDialog{nullptr};
+
+  /// File dialog that next call of execDelayedFileDialog signal will execute
+  qSlicerFileDialog* DelayedFileDialog{nullptr};
 };
 
 //-----------------------------------------------------------------------------
@@ -67,9 +72,8 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerIOManagerPrivate::qSlicerIOManagerPrivate(qSlicerIOManager& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
-  this->ProgressDialog = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -336,10 +340,24 @@ void qSlicerIOManager::dropEvent(QDropEvent *event)
       dialog->dropEvent(event);
       if (event->isAccepted())
         {
-        dialog->exec();
+        // If we immediately executed the dialog here then we would block the application
+        // that initiated the drag-and-drop operation. Therefore we return and open the dialog
+        // with a timer.
+        d->DelayedFileDialog = dialog;
+        QTimer::singleShot(0, this, SLOT(execDelayedFileDialog()));
         break;
         }
       }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerIOManager::execDelayedFileDialog()
+{
+  Q_D(qSlicerIOManager);
+  if (d->DelayedFileDialog)
+    {
+    d->DelayedFileDialog->exec();
     }
 }
 
@@ -436,18 +454,23 @@ bool qSlicerIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
   Q_D(qSlicerIOManager);
 
   bool needStop = d->startProgressDialog(files.count());
-  bool res = true;
+  bool success = true;
   foreach(qSlicerIO::IOProperties fileProperties, files)
     {
-    res = this->loadNodes(
+    int numberOfUserMessagesBefore = userMessages ? userMessages->GetNumberOfMessages() : 0;
+    success = this->loadNodes(
       static_cast<qSlicerIO::IOFileType>(fileProperties["fileType"].toString()),
       fileProperties,
-      loadedNodes, userMessages) && res;
+      loadedNodes, userMessages) && success;
+    if (userMessages && userMessages->GetNumberOfMessages() > numberOfUserMessagesBefore)
+      {
+      userMessages->AddSeparator();
+      }
 
     this->updateProgressDialog();
     if (d->ProgressDialog->wasCanceled())
       {
-      res = false;
+      success = false;
       break;
       }
     }
@@ -457,7 +480,7 @@ bool qSlicerIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
     d->stopProgressDialog();
     }
 
-  return res;
+  return success;
 }
 
 //-----------------------------------------------------------------------------

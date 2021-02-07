@@ -480,12 +480,15 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
 
   // If no readers were able to read and load the file(s), success will remain false
   bool success = false;
+  int numberOfUserMessagesBefore = userMessages ? userMessages->GetNumberOfMessages() : 0;
+  QString userMessagePrefix = QString("Loading %1 - ").arg(parameters["fileName"].toString());
 
   QStringList nodes;
   foreach (qSlicerFileReader* reader, readers)
     {
     QTime timeProbe;
     timeProbe.start();
+    reader->userMessages()->ClearMessages();
     reader->setMRMLScene(d->currentScene());
     if (!reader->canLoadFile(parameters["fileName"].toString()))
       {
@@ -494,8 +497,7 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
     bool currentFileSuccess = reader->load(parameters);
     if (userMessages)
       {
-      QString prefix = parameters["fileName"].toString() + ": ";
-      userMessages->AddMessages(reader->userMessages(), prefix.toStdString());
+      userMessages->AddMessages(reader->userMessages(), userMessagePrefix.toStdString());
       }
     if (!currentFileSuccess)
       {
@@ -509,6 +511,12 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
     nodes << reader->loadedNodes();
     success = true;
     break;
+    }
+
+  if (!success && userMessages != nullptr && userMessages->GetNumberOfMessages() == numberOfUserMessagesBefore)
+    {
+    // Make sure that at least one message is logged if reading failed.
+    userMessages->AddMessage(vtkCommand::ErrorEvent, (QString(tr("%1 load failed.")).arg(userMessagePrefix)).toStdString());
     }
 
   loadedFileParameters.insert("nodeIDs", nodes);
@@ -536,16 +544,21 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
 bool qSlicerCoreIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
           vtkCollection* loadedNodes, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
-  bool res = true;
+  bool success = true;
   foreach(qSlicerIO::IOProperties fileProperties, files)
     {
-    res = this->loadNodes(
+    int numberOfUserMessagesBefore = userMessages ? userMessages->GetNumberOfMessages() : 0;
+    success = this->loadNodes(
       static_cast<qSlicerIO::IOFileType>(fileProperties["fileType"].toString()),
       fileProperties, loadedNodes, userMessages)
-
-      && res;
+      && success;
+    // Add a separator between nodes
+    if (userMessages && userMessages->GetNumberOfMessages() > numberOfUserMessagesBefore)
+      {
+      userMessages->AddSeparator();
+      }
     }
-  return res;
+  return success;
 }
 
 //-----------------------------------------------------------------------------

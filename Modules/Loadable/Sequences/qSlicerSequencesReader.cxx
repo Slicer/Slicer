@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QFileInfo>
+#include <QDebug>
 
 // Slicer includes
 #include "qSlicerSequencesReader.h"
@@ -104,11 +105,13 @@ bool qSlicerSequencesReader::load(const IOProperties& properties)
   this->setLoadedNodes(QStringList());
   if (d->SequencesLogic.GetPointer() == 0)
     {
+    qCritical() << Q_FUNC_INFO << (" failed: Sequences logic is invalid.");
     return false;
     }
-  vtkMRMLSequenceNode* node = d->SequencesLogic->AddSequence(fileName.toLatin1());
+  vtkMRMLSequenceNode* node = d->SequencesLogic->AddSequence(fileName.toUtf8(), this->userMessages());
   if (!node)
     {
+    // errors are already logged and userMessages contain details that can be displayed to users
     return false;
     }
 

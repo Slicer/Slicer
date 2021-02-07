@@ -23,6 +23,11 @@
 // MRML includes
 #include "vtkCommand.h"
 
+namespace
+{
+  const int SEPARATOR_MESSAGE_TYPE = vtkCommand::PropertyModifiedEvent;
+}
+
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLMessageCollection);
 
@@ -106,6 +111,12 @@ vtkMRMLMessageCollection
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLMessageCollection::AddSeparator()
+{
+  this->AddMessage(SEPARATOR_MESSAGE_TYPE, "\n--------\n");
+}
+
+//----------------------------------------------------------------------------
 void
 vtkMRMLMessageCollection
 ::ClearMessages()
@@ -116,11 +127,15 @@ vtkMRMLMessageCollection
 //----------------------------------------------------------------------------
 vtkMRMLMessageCollection::vtkMRMLMessageCollection()
 {
+  this->CallbackCommand = vtkSmartPointer<vtkCallbackCommand>::New();
+  this->CallbackCommand->SetCallback(vtkMRMLMessageCollection::CallbackFunction);
+  this->CallbackCommand->SetClientData(this);
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLMessageCollection::~vtkMRMLMessageCollection()
 {
+  this->SetObservedObject(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -145,5 +160,119 @@ void vtkMRMLMessageCollection::AddMessages(vtkMRMLMessageCollection* source, con
   for (int i = 0; i < source->GetNumberOfMessages(); i++)
     {
     this->AddMessage(source->GetNthMessageType(i), prefix + source->GetNthMessageText(i));
+    }
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLMessageCollection::GetAllMessagesAsString(bool* errorFoundPtr/*=nullptr*/, bool* warningFoundPtr/*=nullptr*/)
+{
+  std::string messagesStr;
+  bool warningFound = false;
+  bool errorFound = false;
+
+  // Check if we need to display bullet-point list
+  // (yes, if there are at least two non-separator messages)
+  bool showAsBulletPointList = false;
+  int numberOfNonSeparatorMessages = 0;
+  const int numberOfMessages = this->GetNumberOfMessages();
+  for (int index = 0; index < numberOfMessages; ++index)
+    {
+    const unsigned long messageType = this->GetNthMessageType(index);
+    if (messageType != SEPARATOR_MESSAGE_TYPE)
+      {
+      numberOfNonSeparatorMessages++;
+      }
+    if (numberOfNonSeparatorMessages >= 2)
+      {
+      showAsBulletPointList = true;
+      break;
+      }
+    }
+
+  // There is at least one message from the storage node.
+  for (int index = 0; index < numberOfMessages; ++index)
+    {
+    const unsigned long messageType = this->GetNthMessageType(index);
+    const std::string messageText = this->GetNthMessageText(index);
+    if (messageType == SEPARATOR_MESSAGE_TYPE)
+      {
+      // do not print separator at the end of the message list
+      if (index == numberOfMessages - 1)
+        {
+        continue;
+        }
+      }
+    else if (!messageText.empty() && showAsBulletPointList)
+      {
+      messagesStr += "- ";
+      }
+    switch (messageType)
+      {
+    case vtkCommand::WarningEvent:
+      warningFound = true;
+      if (!messageText.empty())
+        {
+        messagesStr.append("Warning: ");
+        }
+      break;
+    case vtkCommand::ErrorEvent:
+      errorFound = true;
+      if (!messageText.empty())
+        {
+        messagesStr.append("Error: ");
+        }
+      break;
+      }
+    if (!messageText.empty())
+      {
+      messagesStr.append(messageText.c_str());
+      messagesStr.append("\n");
+      }
+    }
+
+  if (errorFoundPtr)
+    {
+    *errorFoundPtr = errorFound;
+    }
+  if (warningFoundPtr)
+    {
+    *warningFoundPtr = warningFound;
+    }
+  return messagesStr;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMessageCollection::CallbackFunction(vtkObject* vtkNotUsed(caller),
+  long unsigned int eventId, void* clientData, void* callData)
+{
+  vtkMRMLMessageCollection* self = reinterpret_cast<vtkMRMLMessageCollection*>(clientData);
+  if (!self || !callData)
+    {
+    return;
+    }
+  std::string msg = reinterpret_cast<char*>(callData);
+  const std::string chars = "\t\n\v\f\r ";
+  msg.erase(msg.find_last_not_of(chars) + 1);
+  self->AddMessage(eventId, msg);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMessageCollection::SetObservedObject(vtkObject* observedObject)
+{
+  if (observedObject == this->ObservedObject)
+    {
+    // no change
+    return;
+    }
+  if (this->ObservedObject)
+    {
+    this->ObservedObject->RemoveObservers(vtkCommand::ErrorEvent, this->CallbackCommand);
+    this->ObservedObject->RemoveObservers(vtkCommand::WarningEvent, this->CallbackCommand);
+    }
+  this->ObservedObject = observedObject;
+  if (this->ObservedObject)
+    {
+    this->ObservedObject->AddObserver(vtkCommand::ErrorEvent, this->CallbackCommand);
+    this->ObservedObject->AddObserver(vtkCommand::WarningEvent, this->CallbackCommand);
     }
 }

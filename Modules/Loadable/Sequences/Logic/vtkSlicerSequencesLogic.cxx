@@ -32,6 +32,7 @@
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLLabelMapVolumeNode.h"
 #include "vtkMRMLMarkupsFiducialNode.h"
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
@@ -136,7 +137,7 @@ void vtkSlicerSequencesLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLSequenceNode* vtkSlicerSequencesLogic::AddSequence(const char* filename)
+vtkMRMLSequenceNode* vtkSlicerSequencesLogic::AddSequence(const char* filename, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   if (this->GetMRMLScene() == nullptr || filename == nullptr)
     {
@@ -157,7 +158,8 @@ vtkMRMLSequenceNode* vtkSlicerSequencesLogic::AddSequence(const char* filename)
     }
   else
     {
-    vtkErrorMacro("vtkSlicerSequencesLogic::AddSequence failed: unrecognized file extension");
+    vtkErrorToMessageCollectionMacro(userMessages, "vtkSlicerSequencesLogic::AddSequence",
+      "Failed to read sequence. Unsupported file type: " << filename);
     return nullptr;
     }
 
@@ -184,7 +186,7 @@ vtkMRMLSequenceNode* vtkSlicerSequencesLogic::AddSequence(const char* filename)
   // the sequence name is based on the file name (vtksys call should work even if
   // file is not on disk yet)
   std::string name = vtksys::SystemTools::GetFilenameName(fname);
-  vtkDebugMacro("AddModel: got Sequence name = " << name.c_str());
+  vtkDebugMacro("AddSequence: got Sequence name = " << name.c_str());
 
   // check to see which node can read this type of file
   if (storageNode->SupportedFileType(name.c_str()))
@@ -205,10 +207,14 @@ vtkMRMLSequenceNode* vtkSlicerSequencesLogic::AddSequence(const char* filename)
 
     // now set up the reading
     vtkDebugMacro("AddSequence: calling read on the storage node");
-    int retval = storageNode->ReadData(sequenceNode);
-    if (retval != 1)
+    int success = storageNode->ReadData(sequenceNode);
+    if (!success)
       {
       vtkErrorMacro("AddSequence: error reading " << filename);
+      if (userMessages)
+        {
+        userMessages->AddMessages(storageNode->GetUserMessages());
+        }
       this->GetMRMLScene()->RemoveNode(sequenceNode);
       this->GetMRMLScene()->RemoveNode(storageNode);
       return nullptr;

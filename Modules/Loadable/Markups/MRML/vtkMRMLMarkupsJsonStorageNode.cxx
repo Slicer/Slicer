@@ -19,6 +19,7 @@
 #include "vtkMRMLMarkupsJsonStorageNode.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsNode.h"
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLStaticMeasurement.h"
 
 #include "vtkMRMLScene.h"
@@ -102,7 +103,8 @@ rapidjson::Document* vtkMRMLMarkupsJsonStorageNode::vtkInternal::CreateJsonDocum
   FILE* fp = fopen(filePath, "r");
   if (!fp)
     {
-    vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::ReadDataInternal failed: error opening the file '" << filePath);
+    vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::ReadDataInternal",
+      "Error opening the file '" << filePath << "'");
     return nullptr;
     }
   rapidjson::Document* jsonRoot = new rapidjson::Document;
@@ -110,7 +112,8 @@ rapidjson::Document* vtkMRMLMarkupsJsonStorageNode::vtkInternal::CreateJsonDocum
   rapidjson::FileReadStream fs(fp, buffer, sizeof(buffer));
   if (jsonRoot->ParseStream(fs).HasParseError())
   {
-    vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::ReadDataInternal failed: error parsing the file  '" << filePath);
+    vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::ReadDataInternal",
+      "Error parsing the file'" << filePath << "'");
     delete jsonRoot;
     fclose(fp);
     return nullptr;
@@ -120,16 +123,16 @@ rapidjson::Document* vtkMRMLMarkupsJsonStorageNode::vtkInternal::CreateJsonDocum
   // Verify schema
   if (!(*jsonRoot).HasMember("@schema"))
     {
-    vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::ReadDataInternal failed: file "
-      << filePath << " does not contain schema information");
+    vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::ReadDataInternal",
+      "File reading failed. File '" << filePath << "' does not contain schema information");
     delete jsonRoot;
     return nullptr;
     }
   rapidjson::Value& schema = (*jsonRoot)["@schema"];
   if (schema.GetString() != MARKUPS_SCHEMA)
     {
-    vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::ReadDataInternal failed: file "
-      << filePath << " is expected to contain @schema: " + MARKUPS_SCHEMA);
+    vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::ReadDataInternal",
+      "File reading failed. File '" << filePath << "' is expected to contain @schema: " << MARKUPS_SCHEMA);
     delete jsonRoot;
     return nullptr;
     }
@@ -166,12 +169,16 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints(rapidjson::Va
 {
   if (!markupsNode)
     {
-    vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints failed: invalid markupsNode");
+    vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+      "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints",
+      "File reading failed: invalid markups node");
     return false;
     }
   if (!controlPointsArray.IsArray())
     {
-    vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints failed: invalid controlPoints item");
+    vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+      "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints",
+      "File reading failed: invalid controlPoints item (it is expected to be an array).");
     return false;
     }
   bool wasUpdatingPoints = markupsNode->IsUpdatingPoints;
@@ -202,7 +209,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints(rapidjson::Va
       int positionStatus = vtkMRMLMarkupsNode::GetPositionStatusFromString(controlPointItem["positionStatus"].GetString());
       if (positionStatus < 0)
         {
-        vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonDocument failed: invalid positionStatus");
+        vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+          "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints",
+          "File reading failed: invalid positionStatus '" << controlPointItem["positionStatus"].GetString()  << "'.");
         return false;
         }
       cp->PositionStatus = positionStatus;
@@ -212,8 +221,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints(rapidjson::Va
       rapidjson::Value& positionItem = controlPointItem["position"];
       if (!this->ReadVector(positionItem, cp->Position))
         {
-        vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonDocument failed:"
-          << " position must be a 3-element numeric array");
+        vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+          "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints",
+          "File reading failed: each control point position must be a 3-element numeric array.");
         return false;
         }
       if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
@@ -232,8 +242,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints(rapidjson::Va
       rapidjson::Value& orientationItem = controlPointItem["orientation"];
       if (!this->ReadVector(orientationItem, cp->OrientationMatrix, 9))
         {
-        vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonDocument failed: "
-          << " position must be a 3-element numeric array");
+        vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+          "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints",
+          "File reading failed: each control point position must be a 3-element numeric array.");
         return false;
         }
       if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
@@ -273,12 +284,16 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements(rapidjson::Val
 {
   if (!markupsNode)
     {
-    vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements failed: invalid markupsNode");
+    vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+      "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements",
+      "Markups measurement reading failed: invalid markups node.");
     return false;
     }
   if (!measurementsArray.IsArray())
     {
-    vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements failed: invalid measurements item");
+    vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+       "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements",
+      "Markups measurement reading failed: invalid measurements item (expected it to be an array).");
     return false;
     }
 
@@ -288,7 +303,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements(rapidjson::Val
 
     if (!measurementItem.HasMember("name"))
       {
-      vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements failed: skipping measurement with no name defined");
+      vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+        "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements",
+        "Skipped measurement with missing 'name' attribute.");
       continue;
       }
 
@@ -361,8 +378,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements(rapidjson::Val
       rapidjson::Value& controlPointValuesItem = measurementItem["controlPointValues"];
       if (!controlPointValuesItem.IsArray())
         {
-        vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements failed:"
-          << " controlPointValues must be an array in measurement " << measurementName);
+        vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+          "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements",
+          "Measurement reading failed: controlPointValues must be an array in measurement " << measurementName);
         continue;
         }
       int numberOfTuples = controlPointValuesItem.GetArray().Size();
@@ -381,8 +399,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements(rapidjson::Val
         bool success = this->ReadVector(controlPointValuesItem, values, numberOfTuples);
         if (!success)
           {
-          vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements failed:"
-            << " error while reading controlPointValues array from measurement " << measurementName);
+          vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+            "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements",
+            "Measurement reading failed: error while reading controlPointValues array from measurement " << measurementName);
           continue;
           }
         }
@@ -398,8 +417,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements(rapidjson::Val
           bool success = this->ReadVector(controlPointValuesItem, values, numberOfComponents);
           if (!success)
             {
-            vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements failed:"
-              << " error while reading controlPointValues array (all items are expected to contain the same number of components)"
+            vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+              "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements",
+              "Measurement reading failed: error while reading controlPointValues array (all items are expected to contain the same number of components)"
               << " in measurement " << measurementName);
             continue;
             }
@@ -408,8 +428,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements(rapidjson::Val
         }
       else
         {
-        vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements failed:"
-          << " invalid controlPointValues content (must contain array of doubles or arrays) in measurement " << measurementName);
+        vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+          "vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements",
+          "Measurement reading failed: invalid controlPointValues content (must contain array of doubles or arrays) in measurement " << measurementName);
         continue;
         }
       measurement->SetControlPointValues(controlPointValues);
@@ -424,7 +445,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue(
 {
   if (!markupsNode)
     {
-    vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonDocument failed: invalid markupsNode");
+    vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+      "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue",
+      "Markups reading failed: invalid markupsNode");
     return false;
     }
 
@@ -459,8 +482,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue(
     {
     if (!this->ReadControlPoints(markupObject["controlPoints"], coordinateSystem, markupsNode))
       {
-      vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonDocument failed:"
-        << " invalid controlPoints item");
+      vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+        "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue",
+        "Markups reading failed: invalid controlPoints item.");
       return  false;
       }
     }
@@ -469,8 +493,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue(
     {
     if (!this->ReadMeasurements(markupObject["measurements"], markupsNode))
       {
-      vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonDocument failed:"
-        << " invalid measurements item");
+      vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+        "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue",
+        "Markups reading failed: invalid measurements item.");
       return  false;
       }
     }
@@ -484,16 +509,18 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsDisplayNodeFromJso
 {
   if (!displayNode)
     {
-    vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsDisplayNodeFromJsonDocument failed:"
-      << " invalid displayNode");
+    vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+      "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsDisplayNodeFromJsonValue",
+      "Markups reading failed: invalid invalid display node.");
     return false;
     }
 
   rapidjson::Value& displayItem = markupObject["display"];
   if (!displayItem.IsObject())
     {
-    vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsDisplayNodeFromJsonDocument failed:"
-      << " invalid display item is not found");
+    vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+      "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsDisplayNodeFromJsonValue",
+      "Markups reading failed: display item is not found.");
     return false;
     }
 
@@ -639,7 +666,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteBasicProperties(
     }
   if (markupsType.empty())
     {
-    vtkErrorWithObjectMacro(this->External, "WriteData failed: invalid class name");
+    vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+      "vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteBasicProperties",
+      "Writing failed: invalid class name '" << markupsType << "'");
     return false;
     }
   writer.Key("type"); writer.String(markupsType.c_str());
@@ -671,8 +700,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteControlPoints(
   if (coordinateSystem != vtkMRMLStorageNode::CoordinateSystemRAS
     && coordinateSystem != vtkMRMLStorageNode::CoordinateSystemLPS)
     {
-    vtkErrorWithObjectMacro(this->External, "vtkMRMLMarkupsJsonStorageNode::WriteControlPoints failed:"
-      << " Invalid coordinate system: " << coordinateSystem);
+    vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+      "vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteControlPoints",
+      "Writing failed: Invalid coordinate system '" << coordinateSystem << "'");
     return false;
     }
 
@@ -937,33 +967,42 @@ vtkMRMLMarkupsNode* vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile(con
   vtkMRMLScene* scene = this->GetScene();
   if (!scene)
     {
-    vtkErrorMacro("vtkMRMLMarkupsJsonStorageNode::AddMarkupsNodeFromFile failed: invalid scene");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+      "vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile",
+      "Adding markups node from file failed: invalid scene.");
     return nullptr;
     }
   if (!filePath)
     {
-    vtkErrorMacro("vtkMRMLMarkupsStorageNode::ReadDataInternal failed: invalid filename");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+      "vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile",
+      "Adding markups node from file failed: invalid filename.");
     return nullptr;
     }
   rapidjson::Document* jsonRoot = this->Internal->CreateJsonDocumentFromFile(filePath);
   if (!jsonRoot)
     {
-    vtkErrorMacro("vtkMRMLMarkupsStorageNode::ReadDataInternal failed: error opening the file '" << filePath);
+    // error is already logged
     return nullptr;
     }
 
   rapidjson::Value& markups = (*jsonRoot)["markups"];
   if (!markups.IsArray())
     {
-    vtkErrorMacro("vtkMRMLMarkupsStorageNode::AddNewMarkupsNodeFromFile failed: cannot read markup from file " << filePath
-      << " (does not contain valid 'markups' array)");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+      "vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile",
+      "Adding markups node from file failed: no valid valid 'markups' array is found"
+      << " in file '" << filePath << "'.");
     delete jsonRoot;
     return nullptr;
     }
   if (markupIndex >= static_cast<int>(markups.GetArray().Size()))
     {
-    vtkErrorMacro("vtkMRMLMarkupsStorageNode::AddNewMarkupsNodeFromFile failed: cannot read markup from file " << filePath
-      << " requested markup index " << markupIndex << " is not found (number of available markups: " << markups.GetArray().Size());
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+      "vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile",
+      "Adding markups node from file failed: requested markup index" << markupIndex << " not found"
+      << " (number of available markups: " << markups.GetArray().Size()
+      << " in file '" << filePath << "'.");
     delete jsonRoot;
     return nullptr;
     }
@@ -972,7 +1011,10 @@ vtkMRMLMarkupsNode* vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile(con
   std::string className = this->Internal->GetMarkupsClassNameFromJsonValue(markup);
   if (!markup.HasMember("type"))
     {
-    vtkErrorMacro("vtkMRMLMarkupsStorageNode::AddNewMarkupsNodeFromFile failed: cannot find required 'type' value");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+      "vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile",
+      "Adding markups node from file failed: required 'type' value is not found"
+      << " in file '" << filePath << "'.");
     delete jsonRoot;
     return nullptr;
     }
@@ -990,7 +1032,10 @@ vtkMRMLMarkupsNode* vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile(con
   vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(scene->AddNewNodeByClass(className.c_str(), newNodeName));
   if (!markupsNode)
     {
-    vtkErrorMacro("vtkMRMLMarkupsStorageNode::ReadDataInternal failed: cannot instantiate class '" << className);
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+      "vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile",
+      "Adding markups node from file failed: cannot instantiate class '" << className
+      << " in file '" << filePath << "'.");
     delete jsonRoot;
     return nullptr;
     }
@@ -1033,20 +1078,22 @@ int vtkMRMLMarkupsJsonStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
   if (!refNode)
     {
-    vtkErrorMacro("ReadDataInternal: null reference node!");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::ReadDataInternal",
+      "Reading markups node file failed: null reference node.");
     return 0;
     }
 
   const char* filePath = this->GetFileName();
   if (!filePath)
     {
-    vtkErrorMacro("vtkMRMLMarkupsStorageNode::ReadDataInternal failed: invalid filename");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::ReadDataInternal",
+      "Reading markups node file failed: invalid filename.");
     return 0;
     }
   rapidjson::Document* jsonRoot = this->Internal->CreateJsonDocumentFromFile(filePath);
   if (!jsonRoot)
     {
-    vtkErrorMacro("vtkMRMLMarkupsStorageNode::ReadDataInternal failed: error opening the file '" << filePath);
+    // error is already logged
     return 0;
     }
 
@@ -1063,8 +1110,9 @@ int vtkMRMLMarkupsJsonStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   std::string className = this->Internal->GetMarkupsClassNameFromJsonValue(markup);
   if (className != refNode->GetClassName())
     {
-    vtkErrorMacro("vtkMRMLMarkupsStorageNode::ReadDataInternal failed: cannot read " << refNode->GetClassName()
-      << " markups class from file " << filePath << " (it contains " << className << ")");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::ReadDataInternal",
+      "Reading markups node file failed: cannot read " << refNode->GetClassName()
+      << " markups class from file " << filePath << " (it contains " << className << ").");
     return 0;
     }
 
@@ -1082,7 +1130,8 @@ int vtkMRMLMarkupsJsonStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
     {
-    vtkErrorMacro("vtkMRMLMarkupsJsonStorageNode: File name not specified");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::WriteDataInternal",
+      "Writing markups node file failed: file name not specified.");
     return 0;
     }
   vtkDebugMacro("WriteDataInternal: have file name " << fullName.c_str());
@@ -1096,7 +1145,8 @@ int vtkMRMLMarkupsJsonStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 
   if (markupsNode == nullptr)
     {
-    vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a known markups node");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::WriteDataInternal",
+      "Writing markups node file failed: unable to cast input node " << refNode->GetID() << " to a known markups node.");
     return 0;
     }
 
@@ -1104,7 +1154,8 @@ int vtkMRMLMarkupsJsonStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   FILE* fp = fopen(fullName.c_str(), "wb");
   if (!fp)
     {
-    vtkErrorMacro("WriteData: unable to open file " << fullName.c_str() << " for writing");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::WriteDataInternal",
+      "Writing markups node file failed: unable to open file '" << fullName.c_str() << "' for writing.");
     return 0;
     }
 

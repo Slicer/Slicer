@@ -25,6 +25,7 @@
 // VTK includes
 #include <vtkVersion.h>
 
+class vtkMRMLMessageCollection;
 class vtkMRMLModelNode;
 class vtkMRMLStorageNode;
 class vtkMRMLTransformNode;
@@ -56,19 +57,28 @@ class VTK_SLICER_MODELS_MODULE_LOGIC_EXPORT vtkSlicerModelsLogic
   /// A display node and a storage node are also added into the scene
   /// \param coordinateSystem If coordinate system is not specified
   ///   in the file then this coordinate system is used. Default is LPS.
-  vtkMRMLModelNode* AddModel(const char* filename, int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS);
+  /// \param userMessages User-displayable warning or error messages can be received if userMessages object is
+  ///   specified.
+  vtkMRMLModelNode* AddModel(const char* filename, int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS,
+    vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Create model nodes and
   /// read their polydata from a specified directory
   /// \param coordinateSystem If coordinate system is not specified
   ///   in the file then this coordinate system is used. Default is LPS.
-  int AddModels(const char* dirname, const char* suffix, int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS);
+  /// \param userMessages User-displayable warning or error messages can be received if userMessages object is
+  ///   specified.
+  int AddModels(const char* dirname, const char* suffix, int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS,
+    vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Write model's polydata  to a specified file
   /// \param coordinateSystem If coordinate system is not specified
   ///   in the file then this coordinate system is used. Default is -1, which means that
   ///   the coordinate system specified in the storage node will be used.
-  int SaveModel(const char* filename, vtkMRMLModelNode *modelNode, int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS);
+  /// \param userMessages User-displayable warning or error messages can be received if userMessages object is
+  ///   specified.
+  int SaveModel(const char* filename, vtkMRMLModelNode *modelNode, int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS,
+    vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Transform models's polydata
   static void TransformModel(vtkMRMLTransformNode *tnode,
