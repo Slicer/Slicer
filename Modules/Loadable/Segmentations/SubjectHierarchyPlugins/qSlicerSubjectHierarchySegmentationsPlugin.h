@@ -127,6 +127,9 @@ public slots:
   /// Renames per-segment subject hierarchy node if necessary
   void onSegmentModified(vtkObject* caller, void* callData);
 
+  ///  Called when segmentation display node is modified
+  void onDisplayNodeModified(vtkObject* caller);
+
   /// Called when a subject hierarchy item is modified.
   /// Renames segment if the modified item belongs to a segment
   void onSubjectHierarchyItemModified(vtkObject* caller, void* callData);
