@@ -1188,6 +1188,31 @@ class NodeModify(object):
   def __exit__(self, type, value, traceback):
     self.node.EndModify(self.wasModifying)
 
+
+
+#
+# Subject hierarchy
+#
+def getSubjectHierarchyItemChildren(parentItem=None, recursive=False):
+  """Convenience method to get children of a subject hierarchy item.
+  :param vtkIdType parentItem: Item for which to get children for. If omitted
+         or None then use scene item (i.e. get all items)
+  :param bool recursive: Whether the query is recursive. False by default
+  :return: List of child item IDs
+  """
+  children = []
+  shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
+  # Use scene as parent item if not given
+  if not parentItem:
+    parentItem = shNode.GetSceneItemID()
+  childrenIdList = vtk.vtkIdList()
+  shNode.GetItemChildren(parentItem, childrenIdList, recursive)
+  for childIndex in range(childrenIdList.GetNumberOfIds()):
+    children.append(childrenIdList.GetId(childIndex))
+  return children
+
+
+
 #
 # MRML-numpy
 #

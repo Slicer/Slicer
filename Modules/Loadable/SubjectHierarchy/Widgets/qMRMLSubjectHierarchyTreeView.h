@@ -63,8 +63,6 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
   Q_PROPERTY(bool selectRoleSubMenuVisible READ selectRoleSubMenuVisible WRITE setSelectRoleSubMenuVisible)
   /// Flag determining whether multiple items can be selected
   Q_PROPERTY(bool multiSelection READ multiSelection WRITE setMultiSelection)
-  Q_PROPERTY(QString attributeNameFilter READ attributeNameFilter WRITE setAttributeNameFilter)
-  Q_PROPERTY(QString attributeValueFilter READ attributeValueFilter WRITE setAttributeValueFilter)
   Q_PROPERTY(QStringList levelFilter READ levelFilter WRITE setLevelFilter)
   Q_PROPERTY(QString nameFilter READ nameFilter WRITE setNameFilter)
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
@@ -74,6 +72,26 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
   Q_PROPERTY(bool colorColumnVisible READ colorColumnVisible WRITE setColorColumnVisible)
   Q_PROPERTY(bool transformColumnVisible READ transformColumnVisible WRITE setTransformColumnVisible)
   Q_PROPERTY(bool descriptionColumnVisible READ descriptionColumnVisible WRITE setDescriptionColumnVisible)
+
+  /// Filter to show only items that contain any of the given attributes with this name. Empty by default
+  Q_PROPERTY(QStringList includeItemAttributeNamesFilter READ includeItemAttributeNamesFilter WRITE setIncludeItemAttributeNamesFilter)
+  /// Filter to show only items for data nodes that contain any of the given attributes with this name. Empty by default
+  Q_PROPERTY(QStringList includeNodeAttributeNamesFilter READ includeNodeAttributeNamesFilter WRITE setIncludeNodeAttributeNamesFilter)
+  /// Filter to hide items that contain any of the given attributes with this name. Empty by default
+  /// Overrides \sa includeItemAttributeNamesFilter
+  Q_PROPERTY(QStringList excludeItemAttributeNamesFilter READ excludeItemAttributeNamesFilter WRITE setExcludeItemAttributeNamesFilter)
+  /// Filter to hide items for data nodes that contain any of the given attributes with this name. Empty by default
+  /// Overrides \sa includeNodeAttributeNamesFilter
+  Q_PROPERTY(QStringList excludeNodeAttributeNamesFilter READ excludeNodeAttributeNamesFilter WRITE setExcludeNodeAttributeNamesFilter)
+
+  /// Filter to show only items that contain an attribute with this name. Empty by default
+  /// Note: Deprecated, kept only for backwards compatibility. Sets and returns the first attribute in \sa includeNodeAttributeNamesFilter
+  Q_PROPERTY(QString attributeNameFilter READ attributeNameFilter WRITE setAttributeNameFilter)
+  /// Filter to show only items that contain any attribute given in \sa includeItemAttributeNamesFilter with the value.
+  /// If empty, then existence of the attributes is enough to show.
+  /// Exact match is required. Empty by default
+  /// Note: Deprecated, kept only for backwards compatibility. Works consistently with the previous operation.
+  Q_PROPERTY(QString attributeValueFilter READ attributeValueFilter WRITE setAttributeValueFilter)
 
 public:
   typedef QTreeView Superclass;
@@ -103,6 +121,12 @@ public:
   /// Get whether multi-selection is enabled
   bool multiSelection();
 
+  QStringList includeItemAttributeNamesFilter()const;
+  QStringList includeNodeAttributeNamesFilter()const;
+  QStringList excludeItemAttributeNamesFilter()const;
+  QStringList excludeNodeAttributeNamesFilter()const;
+  QString attributeValueFilter()const;
+  QString attributeNameFilter()const;
   /// Set attribute filter that allows showing only items that have the specified attribute and their parents.
   /// \param attributeName Name of the attribute by which the items are filtered
   /// \param attributeValue Value of the specified attribute that needs to match this given value in order
@@ -110,10 +134,32 @@ public:
   Q_INVOKABLE void setAttributeFilter(const QString& attributeName, const QVariant& attributeValue=QVariant());
   /// Remove item attribute filtering \sa setAttribute
   Q_INVOKABLE void removeAttributeFilter();
-  void setAttributeNameFilter(const QString& attributeName);
-  void setAttributeValueFilter(const QString& attributeValue);
-  QString attributeNameFilter()const;
-  QString attributeValueFilter()const;
+  /// Add single item attribute filter specifying attribute name, value, include/exclude, and class name
+  /// \param attributeName Name of the item attribute to filter
+  /// \param attributeValue Value of the item attribute to filter
+  /// \param include Flag indicating whether this is an include filter or exclude filter.
+  ///   - Include filter means that only the items are shown that match the filter.
+  ///   - Exclude filter hides items that match the filter. Overrides include filters.
+  ///   True by default (i.e. include filter).
+  Q_INVOKABLE void addItemAttributeFilter(QString attributeName, QVariant attributeValue=QString(), bool include=true);
+  /// Remove single item attribute filter specifying each attribute \sa addAttributeFilter
+  Q_INVOKABLE void removeItemAttributeFilter(QString attributeName, QVariant attributeValue, bool include);
+  /// Remove all item attribute filters specifying a given attribute name and include flag
+  Q_INVOKABLE void removeItemAttributeFilter(QString attributeName, bool include);
+  /// Add single node attribute filter specifying attribute name, value, include/exclude, and class name
+  /// \param attributeName Name of the node attribute to filter
+  /// \param attributeValue Value of the node attribute to filter
+  /// \param include Flag indicating whether this is an include filter or exclude filter.
+  ///   - Include filter means that only the items are shown that match the filter.
+  ///   - Exclude filter hides items that match the filter. Overrides include filters.
+  ///   True by default (i.e. include filter).
+  /// \param className Only filter attributes on a certain type. Empty by default (i.e. allow all classes)
+  Q_INVOKABLE void addNodeAttributeFilter(QString attributeName, QVariant attributeValue=QString(), bool include=true, QString className=QString());
+  /// Remove single node attribute filter specifying each attribute \sa addAttributeFilter
+  Q_INVOKABLE void removeNodeAttributeFilter(QString attributeName, QVariant attributeValue, bool include, QString className);
+  /// Remove all node attribute filters specifying a given attribute name and include flag
+  Q_INVOKABLE void removeNodeAttributeFilter(QString attributeName, bool include);
+
 
   /// Set level filter that allows showing only items at a specified level and their parents. Show all items if empty
   void setLevelFilter(QStringList &levelFilter);
@@ -266,6 +312,13 @@ protected slots:
   virtual void onTransformInteractionInViewToggled(bool show);
   virtual void onTransformEditProperties();
   virtual void onCreateNewTransform();
+
+  void setIncludeItemAttributeNamesFilter(QStringList filter);
+  void setIncludeNodeAttributeNamesFilter(QStringList filter);
+  void setExcludeItemAttributeNamesFilter(QStringList filter);
+  void setExcludeNodeAttributeNamesFilter(QStringList filter);
+  void setAttributeNameFilter(QString& filter);
+  void setAttributeValueFilter(QString& filter);
 
 protected:
   /// Set the subject hierarchy node found in the given scene. Called only internally.

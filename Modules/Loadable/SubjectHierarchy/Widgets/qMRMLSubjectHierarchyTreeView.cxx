@@ -899,7 +899,7 @@ void qMRMLSubjectHierarchyTreeView::updateRootItem()
   Q_D(qMRMLSubjectHierarchyTreeView);
 
   // The scene might have been updated, need to update root item as well to restore view
-  this->setRootItem(d->RootItemID);
+  this->setRootItem(this->rootItem());
 }
 
 //--------------------------------------------------------------------------
@@ -958,6 +958,66 @@ void qMRMLSubjectHierarchyTreeView::setSelectRoleSubMenuVisible(bool visible)
   d->SelectRoleSubMenuVisible = visible;
 }
 
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setIncludeItemAttributeNamesFilter(QStringList filter)
+{
+  this->sortFilterProxyModel()->setIncludeItemAttributeNamesFilter(filter);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  this->updateRootItem();
+}
+
+//-----------------------------------------------------------------------------
+QStringList qMRMLSubjectHierarchyTreeView::includeItemAttributeNamesFilter()const
+{
+  return this->sortFilterProxyModel()->includeItemAttributeNamesFilter();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setIncludeNodeAttributeNamesFilter(QStringList filter)
+{
+  this->sortFilterProxyModel()->setIncludeNodeAttributeNamesFilter(filter);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  this->updateRootItem();
+}
+
+//-----------------------------------------------------------------------------
+QStringList qMRMLSubjectHierarchyTreeView::includeNodeAttributeNamesFilter()const
+{
+  return this->sortFilterProxyModel()->includeNodeAttributeNamesFilter();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setExcludeItemAttributeNamesFilter(QStringList filter)
+{
+  this->sortFilterProxyModel()->setExcludeItemAttributeNamesFilter(filter);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  this->updateRootItem();
+}
+
+//-----------------------------------------------------------------------------
+QStringList qMRMLSubjectHierarchyTreeView::excludeItemAttributeNamesFilter()const
+{
+  return this->sortFilterProxyModel()->excludeItemAttributeNamesFilter();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setExcludeNodeAttributeNamesFilter(QStringList filter)
+{
+  this->sortFilterProxyModel()->setExcludeNodeAttributeNamesFilter(filter);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  this->updateRootItem();
+}
+
+//-----------------------------------------------------------------------------
+QStringList qMRMLSubjectHierarchyTreeView::excludeNodeAttributeNamesFilter()const
+{
+  return this->sortFilterProxyModel()->excludeNodeAttributeNamesFilter();
+}
+
 //--------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::setAttributeFilter(const QString& attributeName, const QVariant& attributeValue/*=QVariant()*/)
 {
@@ -965,16 +1025,16 @@ void qMRMLSubjectHierarchyTreeView::setAttributeFilter(const QString& attributeN
   this->sortFilterProxyModel()->setAttributeValueFilter(attributeValue.toString());
 
   // Reset root item, as it may have been corrupted, when tree became empty due to the filter
-  this->setRootItem(this->rootItem());
+  this->updateRootItem();
 }
 
 //--------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::setAttributeNameFilter(const QString& attributeName)
+void qMRMLSubjectHierarchyTreeView::setAttributeNameFilter(QString& attributeName)
 {
   this->sortFilterProxyModel()->setAttributeNameFilter(attributeName);
 
   // Reset root item, as it may have been corrupted, when tree became empty due to the filter
-  this->setRootItem(this->rootItem());
+  this->updateRootItem();
 }
 
 //--------------------------------------------------------------------------
@@ -984,12 +1044,12 @@ QString qMRMLSubjectHierarchyTreeView::attributeNameFilter()const
 }
 
 //--------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::setAttributeValueFilter(const QString& attributeValue)
+void qMRMLSubjectHierarchyTreeView::setAttributeValueFilter(QString& attributeValue)
 {
   this->sortFilterProxyModel()->setAttributeValueFilter(attributeValue);
 
   // Reset root item, as it may have been corrupted, when tree became empty due to the filter
-  this->setRootItem(this->rootItem());
+  this->updateRootItem();
 }
 
 //--------------------------------------------------------------------------
@@ -1005,7 +1065,68 @@ void qMRMLSubjectHierarchyTreeView::removeAttributeFilter()
   this->sortFilterProxyModel()->setAttributeValueFilter(QString());
 
   // Reset root item, as it may have been corrupted, when tree became empty due to the filter
-  this->setRootItem(this->rootItem());
+  this->updateRootItem();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::addItemAttributeFilter(QString attributeName, QVariant attributeValue/*=QString()*/, bool include/*=true*/)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  this->sortFilterProxyModel()->addItemAttributeFilter(attributeName, attributeValue, include);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  this->updateRootItem();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::removeItemAttributeFilter(QString attributeName, QVariant attributeValue, bool include)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  this->sortFilterProxyModel()->removeItemAttributeFilter(attributeName, attributeValue, include);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  this->updateRootItem();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::removeItemAttributeFilter(QString attributeName, bool include)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  this->sortFilterProxyModel()->removeItemAttributeFilter(attributeName, include);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  this->updateRootItem();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::addNodeAttributeFilter(
+  QString attributeName, QVariant attributeValue/*=QString()*/, bool include/*=true*/, QString className/*=QString()*/)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  this->sortFilterProxyModel()->addNodeAttributeFilter(attributeName, attributeValue, include, className);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  this->updateRootItem();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::removeNodeAttributeFilter(QString attributeName, QVariant attributeValue, bool include, QString className)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  this->sortFilterProxyModel()->removeNodeAttributeFilter(attributeName, attributeValue, include, className);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  this->updateRootItem();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::removeNodeAttributeFilter(QString attributeName, bool include)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  this->sortFilterProxyModel()->removeNodeAttributeFilter(attributeName, include);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  this->updateRootItem();
 }
 
 //--------------------------------------------------------------------------
@@ -1014,7 +1135,7 @@ void qMRMLSubjectHierarchyTreeView::setLevelFilter(QStringList &levelFilter)
   this->sortFilterProxyModel()->setLevelFilter(levelFilter);
 
   // Reset root item, as it may have been corrupted, when tree became empty due to the filter
-  this->setRootItem(this->rootItem());
+  this->updateRootItem();
 }
 
 //--------------------------------------------------------------------------
@@ -1029,7 +1150,7 @@ void qMRMLSubjectHierarchyTreeView::setNameFilter(QString &nameFilter)
   this->sortFilterProxyModel()->setNameFilter(nameFilter);
 
   // Reset root item, as it may have been corrupted, when tree became empty due to the filter
-  this->setRootItem(this->rootItem());
+  this->updateRootItem();
 }
 
 //--------------------------------------------------------------------------
@@ -1044,7 +1165,7 @@ void qMRMLSubjectHierarchyTreeView::setNodeTypes(const QStringList& types)
   this->sortFilterProxyModel()->setNodeTypes(types);
 
   // Reset root item, as it may have been corrupted, when tree became empty due to the filter
-  this->setRootItem(this->rootItem());
+  this->updateRootItem();
 }
 
 //--------------------------------------------------------------------------
@@ -1059,7 +1180,7 @@ void qMRMLSubjectHierarchyTreeView::setHideChildNodeTypes(const QStringList& typ
   this->sortFilterProxyModel()->setHideChildNodeTypes(types);
 
   // Reset root item, as it may have been corrupted, when tree became empty due to the filter
-  this->setRootItem(this->rootItem());
+  this->updateRootItem();
 }
 
 //--------------------------------------------------------------------------

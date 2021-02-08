@@ -263,18 +263,161 @@ void qMRMLSubjectHierarchyComboBox::disablePlugin(QString plugin)
   d->TreeView->disablePlugin(plugin);
 }
 
-//--------------------------------------------------------------------------
-void qMRMLSubjectHierarchyComboBox::setAttributeFilter(const QString& attributeName, const QVariant& attributeValue/*=QVariant()*/)
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::setIncludeItemAttributeNamesFilter(QStringList filter)
 {
   Q_D(qMRMLSubjectHierarchyComboBox);
-  d->TreeView->setAttributeFilter(attributeName, attributeValue);
+  this->sortFilterProxyModel()->setIncludeItemAttributeNamesFilter(filter);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  d->TreeView->setRootItem(d->TreeView->rootItem());
 }
 
-//--------------------------------------------------------------------------
-void qMRMLSubjectHierarchyComboBox::removeAttributeFilter()
+//-----------------------------------------------------------------------------
+QStringList qMRMLSubjectHierarchyComboBox::includeItemAttributeNamesFilter()const
+{
+  return this->sortFilterProxyModel()->includeItemAttributeNamesFilter();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::setIncludeNodeAttributeNamesFilter(QStringList filter)
 {
   Q_D(qMRMLSubjectHierarchyComboBox);
-  d->TreeView->removeAttributeFilter();
+  this->sortFilterProxyModel()->setIncludeNodeAttributeNamesFilter(filter);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  d->TreeView->setRootItem(d->TreeView->rootItem());
+}
+
+//-----------------------------------------------------------------------------
+QStringList qMRMLSubjectHierarchyComboBox::includeNodeAttributeNamesFilter()const
+{
+  return this->sortFilterProxyModel()->includeNodeAttributeNamesFilter();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::setExcludeItemAttributeNamesFilter(QStringList filter)
+{
+  Q_D(qMRMLSubjectHierarchyComboBox);
+  this->sortFilterProxyModel()->setExcludeItemAttributeNamesFilter(filter);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  d->TreeView->setRootItem(d->TreeView->rootItem());
+}
+
+//-----------------------------------------------------------------------------
+QStringList qMRMLSubjectHierarchyComboBox::excludeItemAttributeNamesFilter()const
+{
+  return this->sortFilterProxyModel()->excludeItemAttributeNamesFilter();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::setExcludeNodeAttributeNamesFilter(QStringList filter)
+{
+  Q_D(qMRMLSubjectHierarchyComboBox);
+  this->sortFilterProxyModel()->setExcludeNodeAttributeNamesFilter(filter);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  d->TreeView->setRootItem(d->TreeView->rootItem());
+}
+
+//-----------------------------------------------------------------------------
+QStringList qMRMLSubjectHierarchyComboBox::excludeNodeAttributeNamesFilter()const
+{
+  return this->sortFilterProxyModel()->excludeNodeAttributeNamesFilter();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::setAttributeNameFilter(QString& filter)
+{
+  Q_D(qMRMLSubjectHierarchyComboBox);
+  this->sortFilterProxyModel()->setAttributeNameFilter(filter);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  d->TreeView->setRootItem(d->TreeView->rootItem());
+}
+
+//-----------------------------------------------------------------------------
+QString qMRMLSubjectHierarchyComboBox::attributeNameFilter()const
+{
+  return this->sortFilterProxyModel()->attributeNameFilter();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::setAttributeValueFilter(QString& filter)
+{
+  Q_D(qMRMLSubjectHierarchyComboBox);
+  this->sortFilterProxyModel()->setAttributeValueFilter(filter);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  d->TreeView->setRootItem(d->TreeView->rootItem());
+}
+
+//-----------------------------------------------------------------------------
+QString qMRMLSubjectHierarchyComboBox::attributeValueFilter()const
+{
+  return this->sortFilterProxyModel()->attributeValueFilter();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::addItemAttributeFilter(QString attributeName, QVariant attributeValue/*=QString()*/, bool include/*=true*/)
+{
+  Q_D(qMRMLSubjectHierarchyComboBox);
+  this->sortFilterProxyModel()->addItemAttributeFilter(attributeName, attributeValue, include);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  d->TreeView->setRootItem(d->TreeView->rootItem());
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::removeItemAttributeFilter(QString attributeName, QVariant attributeValue, bool include)
+{
+  Q_D(qMRMLSubjectHierarchyComboBox);
+  this->sortFilterProxyModel()->removeItemAttributeFilter(attributeName, attributeValue, include);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  d->TreeView->setRootItem(d->TreeView->rootItem());
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::removeItemAttributeFilter(QString attributeName, bool include)
+{
+  Q_D(qMRMLSubjectHierarchyComboBox);
+  this->sortFilterProxyModel()->removeItemAttributeFilter(attributeName, include);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  d->TreeView->setRootItem(d->TreeView->rootItem());
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::addNodeAttributeFilter(
+  QString attributeName, QVariant attributeValue/*=QString()*/, bool include/*=true*/, QString className/*=QString()*/)
+{
+  Q_D(qMRMLSubjectHierarchyComboBox);
+  this->sortFilterProxyModel()->addNodeAttributeFilter(attributeName, attributeValue, include, className);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  d->TreeView->setRootItem(d->TreeView->rootItem());
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::removeNodeAttributeFilter(QString attributeName, QVariant attributeValue, bool include, QString className)
+{
+  Q_D(qMRMLSubjectHierarchyComboBox);
+  this->sortFilterProxyModel()->removeNodeAttributeFilter(attributeName, attributeValue, include, className);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  d->TreeView->setRootItem(d->TreeView->rootItem());
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyComboBox::removeNodeAttributeFilter(QString attributeName, bool include)
+{
+  Q_D(qMRMLSubjectHierarchyComboBox);
+  this->sortFilterProxyModel()->removeNodeAttributeFilter(attributeName, include);
+
+  // Reset root item, as it may have been corrupted, when tree became empty due to the filter
+  d->TreeView->setRootItem(d->TreeView->rootItem());
 }
 
 //--------------------------------------------------------------------------
