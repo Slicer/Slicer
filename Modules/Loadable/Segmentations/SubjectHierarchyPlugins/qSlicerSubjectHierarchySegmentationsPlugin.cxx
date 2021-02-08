@@ -805,6 +805,18 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentModified(vtkObject* ca
 }
 
 //---------------------------------------------------------------------------
+void qSlicerSubjectHierarchySegmentationsPlugin::onDisplayNodeModified(vtkObject* caller)
+{
+  // Get segmentation node
+  vtkMRMLSegmentationNode* segmentationNode = reinterpret_cast<vtkMRMLSegmentationNode*>(caller);
+  if (!segmentationNode)
+    {
+    return;
+    }
+  this->updateAllSegmentsFromMRML(segmentationNode);
+}
+
+//---------------------------------------------------------------------------
 void qSlicerSubjectHierarchySegmentationsPlugin::onSubjectHierarchyItemModified(vtkObject* caller, void* callData)
 {
   vtkMRMLSubjectHierarchyNode* shNode = reinterpret_cast<vtkMRMLSubjectHierarchyNode*>(caller);

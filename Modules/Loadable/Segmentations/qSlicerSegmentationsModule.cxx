@@ -246,6 +246,8 @@ void qSlicerSegmentationsModule::onNodeAdded(vtkObject* sceneObject, vtkObject* 
       segmentationsPlugin, SLOT( onSegmentRemoved(vtkObject*,void*) ) );
     qvtkConnect( segmentationNode, vtkSegmentation::SegmentModified,
       segmentationsPlugin, SLOT( onSegmentModified(vtkObject*,void*) ) );
+    qvtkConnect(segmentationNode, vtkMRMLSegmentationNode::DisplayModifiedEvent,
+      segmentationsPlugin, SLOT( onDisplayNodeModified(vtkObject*) ) );
     }
 
   // Connect subject hierarchy modified event to handle renaming segments from subject hierarchy
