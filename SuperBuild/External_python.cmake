@@ -91,7 +91,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
       )
   elseif(UNIX)
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS
-        #Fixes segfault in some linux distributions
+        # Avoid segfault on Linux distributions including an incompatible version of libffi
         -DBUILTIN_CTYPES:BOOL=ON
       )
   endif()
