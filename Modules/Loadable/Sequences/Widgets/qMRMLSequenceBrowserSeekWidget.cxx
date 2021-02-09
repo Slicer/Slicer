@@ -125,7 +125,7 @@ void qMRMLSequenceBrowserSeekWidget::onIndexDisplayFormatModified()
   Q_D(qMRMLSequenceBrowserSeekWidget);
   // Reset the fixed width of the label
   QFontMetrics fontMetrics = QFontMetrics(d->label_IndexValue->font());
-  d->label_IndexValue->setFixedWidth(fontMetrics.width(d->label_IndexValue->text()));
+  d->label_IndexValue->setFixedWidth(fontMetrics.horizontalAdvance(d->label_IndexValue->text()));
 }
 
 //-----------------------------------------------------------------------------
@@ -188,7 +188,7 @@ void qMRMLSequenceBrowserSeekWidget::updateWidgetFromMRML()
     d->label_IndexValue->setText(indexValue);
     d->label_IndexUnit->setText(indexUnit);
 
-    d->label_IndexValue->setFixedWidth(std::max(fontMetrics.width(indexValue), d->label_IndexValue->width()));
+    d->label_IndexValue->setFixedWidth(std::max(fontMetrics.horizontalAdvance(indexValue), d->label_IndexValue->width()));
     d->slider_IndexValue->setValue(selectedItemNumber);
     }
   else

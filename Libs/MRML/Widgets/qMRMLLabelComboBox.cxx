@@ -130,14 +130,14 @@ qMRMLLabelComboBox::~qMRMLLabelComboBox() = default;
 void qMRMLLabelComboBox::printAdditionalInfo()
 {
   Q_D(qMRMLLabelComboBox);
-  qDebug().nospace() << "qMRMLLabelComboBox:" << this << endl
-      << " MRMLColorNode:" << d->ColorNode << endl
-      << "  ClassName:" << (d->ColorNode ? d->ColorNode->GetClassName() : "null") << endl
-      << "  ID:" << (d->ColorNode ? d->ColorNode->GetID() : "null") << endl
-      << "  Type:" << (d->ColorNode ? d->ColorNode->GetTypeAsString() : "null") << endl
-      << " CurrentColor:" << d->CurrentColor << endl
-      << " NoneEnabled:" << d->NoneEnabled << endl
-      << " ColorNameVisible:" << d->ColorNameVisible << endl;
+  qDebug().nospace() << "qMRMLLabelComboBox:" << this << Qt::endl
+      << " MRMLColorNode:" << d->ColorNode << Qt::endl
+      << "  ClassName:" << (d->ColorNode ? d->ColorNode->GetClassName() : "null") << Qt::endl
+      << "  ID:" << (d->ColorNode ? d->ColorNode->GetID() : "null") << Qt::endl
+      << "  Type:" << (d->ColorNode ? d->ColorNode->GetTypeAsString() : "null") << Qt::endl
+      << " CurrentColor:" << d->CurrentColor << Qt::endl
+      << " NoneEnabled:" << d->NoneEnabled << Qt::endl
+      << " ColorNameVisible:" << d->ColorNameVisible << Qt::endl;
 }
 
 // ---------------------------------------------------------------------------------
