@@ -89,6 +89,11 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
         -DBUILTIN_BINASCII:BOOL=OFF
         -DBUILTIN_ZLIB:BOOL=OFF
       )
+  elseif(UNIX)
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS
+        # Avoid segfault on Linux distributions including an incompatible version of libffi
+        -DBUILTIN_CTYPES:BOOL=ON
+      )
   endif()
 
   # Force python build to "Release"
