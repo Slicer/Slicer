@@ -156,8 +156,11 @@ int qSlicerApplicationHelper::postInitializeApplication(
              << moduleFactoryManager->instantiatedModuleNames().count();
     }
 
-  QStringList failedToBeInstantiatedModuleNames = QStringList::fromSet(
-        moduleFactoryManager->registeredModuleNames().toSet() - moduleFactoryManager->instantiatedModuleNames().toSet());
+  QStringList registeredModuleNames = moduleFactoryManager->registeredModuleNames();
+  QStringList instantiatedModuleNames = moduleFactoryManager->instantiatedModuleNames();
+  QSet<QString> registeredModuleNamesSet = QSet<QString>(registeredModuleNames.begin(), registeredModuleNames.end());
+  QSet<QString> instantiatedModuleNamesSet = QSet<QString>(instantiatedModuleNames.begin(), instantiatedModuleNames.end());
+  QSet<QString> failedToBeInstantiatedModuleNames = registeredModuleNamesSet - instantiatedModuleNamesSet;
   if (!failedToBeInstantiatedModuleNames.isEmpty())
     {
     qCritical() << "The following modules failed to be instantiated:";
