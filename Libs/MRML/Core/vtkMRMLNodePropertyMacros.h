@@ -582,16 +582,34 @@
 #define vtkMRMLPrintMatrix4x4Macro(propertyName) \
   { \
     vtkMatrix4x4* matrix = this->Get##propertyName(); \
-    printOutputStream << printOutputIndent << #propertyName " :\n"; \
+    printOutputStream << printOutputIndent << #propertyName ":"; \
     if (matrix) \
       { \
-      matrix->PrintSelf(printOutputStream, printOutputIndent.GetNextIndent().GetNextIndent()); \
+      printOutputStream << "\n"; \
+      matrix->PrintSelf(printOutputStream, printOutputIndent.GetNextIndent()); \
       } \
     else \
       { \
-      printOutputStream << "None"; \
+      printOutputStream << " (none)\n"; \
       } \
   }
+
+#define vtkMRMLPrintObjectMacro(propertyName) \
+  { \
+    vtkObject* obj = this->Get##propertyName(); \
+    printOutputStream << printOutputIndent << #propertyName ":"; \
+    if (obj) \
+      { \
+      printOutputStream << "\n"; \
+      obj->PrintSelf(printOutputStream, printOutputIndent.GetNextIndent()); \
+      } \
+    else \
+      { \
+      printOutputStream << " (none)\n"; \
+      } \
+  }
+
+
 /// @}
 
 #endif // __vtkMRMLNodePropertyMacros_h
