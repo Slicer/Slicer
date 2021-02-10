@@ -194,8 +194,7 @@ def lookupTopLevelWidget(objectName, verbose = True):
     if hasattr(w,'objectName'):
       if w.objectName == objectName: return w
   if verbose:
-    import sys
-    print("Failed to obtain reference to '%s'" % objectName, file=sys.stderr)
+    raise RuntimeError("Failed to obtain reference to '%s'" % objectName)
   return None
 
 def mainWindow(verbose = True):
@@ -205,7 +204,7 @@ def pythonShell(verbose = True):
   from slicer import app
   console = app.pythonConsole()
   if not console and verbose:
-    print("Failed to obtain reference to python shell", file=sys.stderr)
+    raise RuntimeError("Failed to obtain reference to python shell")
   return console
 
 def showStatusMessage(message, duration = 0):
@@ -928,64 +927,131 @@ def saveScene(filename, properties={}):
 #
 
 def moduleSelector():
+  """Return module selector widget.
+  Throws a RuntimeError exception if there is no module selector (for example, the application runs without a main window).
+  :return: module widget object
+  """
   w = mainWindow()
   if not w:
-    import sys
-    print("Could not find main window", file=sys.stderr)
-    return None
+    raise RuntimeError("Could not find main window")
   return w.moduleSelector()
 
 def selectModule(module):
+  """Set currently active module.
+  Throws a RuntimeError exception in case of failure (no such module or the application runs without a main window).
+  :param module: module name or object
+  """
   moduleName = module
   if not isinstance(module, str):
     moduleName = module.name
   selector = moduleSelector()
   if not selector:
-    import sys
-    print("Could not find moduleSelector in the main window", file=sys.stderr)
-    return None
+    raise RuntimeError("Could not find moduleSelector in the main window")
   moduleSelector().selectModule(moduleName)
 
 def selectedModule():
+  """Return currently active module.
+  Throws a RuntimeError exception in case of failure (no such module or the application runs without a main window).
+  :return: module object
+  """
   selector = moduleSelector()
   if not selector:
-    import sys
-    print("Could not find moduleSelector in the main window", file=sys.stderr)
-    return None
+    raise RuntimeError("Could not find moduleSelector in the main window")
   return selector.selectedModule
 
 def moduleNames():
+  """Get list containing name of all successfully loaded modules.
+  :return: list of module names
+  """
   from slicer import app
   return app.moduleManager().factoryManager().loadedModuleNames()
 
 def getModule(moduleName):
+  """Get module object from module name.
+  Throws a RuntimeError exception in case of failure (no such module).
+  :return: module object
+  """
   from slicer import app
   module = app.moduleManager().module(moduleName)
   if not module:
-    import sys
-    print("Could not find module with name '%s" % moduleName, file=sys.stderr)
-    return None
+    raise RuntimeError("Could not find module with name '%s'" % moduleName)
   return module
 
 def getModuleGui(module):
+  """Deprecated. Use getModuleWidget function instead"""
+  return getModuleWidget(module)
+
+def getNewModuleGui(module):
+  """Deprecated. Use getNewModuleWidget function instead"""
+  return getNewModuleWidget(module)
+
+def getModuleWidget(module):
+  """Return module widget (user interface) object for a module.
+  Throws a RuntimeError exception if the module does not have widget.
+  :param module: module name or module object
+  :return: module widget object
+  """
   if isinstance(module, str):
     module = getModule(module)
   widgetRepr = module.widgetRepresentation()
   if not widgetRepr:
-    import sys
-    print("Could not find module widget representation with name '%s" % module.name, file=sys.stderr)
-  return widgetRepr
+    raise RuntimeError("Could not find module widget representation with name '%s'" % module.name)
+  if isinstance(widgetRepr, slicer.qSlicerScriptedLoadableModuleWidget):
+    # Scripted module, return the Python class
+    return widgetRepr.self()
+  else:
+    # C++ module
+    return widgetRepr
 
-def getNewModuleGui(module):
+def getNewModuleWidget(module):
+  """Create new module widget instance.
+  In general, not recommended, as module widget may be developed expecting that there is only a single
+  instance of this widget. Instead, of instantiating a complete module GUI, it is recommended to create
+  only selected widgets that are used in the module GUI.
+  Throws a RuntimeError exception if the module does not have widget.
+  :param module: module name or module object
+  :return: module widget object
+  """
   if isinstance(module, str):
     module = getModule(module)
   widgetRepr = module.createNewWidgetRepresentation()
   if not widgetRepr:
-    import sys
-    print("Could not find module widget representation with name '%s" % module.name, file=sys.stderr)
-  return widgetRepr
+    raise RuntimeError("Could not find module widget representation with name '%s'" % module.name)
+  if isinstance(widgetRepr, slicer.qSlicerScriptedLoadableModuleWidget):
+    # Scripted module, return the Python class
+    return widgetRepr.self()
+  else:
+    # C++ module
+    return widgetRepr
+
+def getModuleLogic(module):
+  """Get module logic object.
+  Module logic allows a module to use features offered by another module.
+  Throws a RuntimeError exception if the module does not have widget.
+  :param module: module name or module object
+  :return: module logic object
+  """
+  if isinstance(module, str):
+    module = getModule(module)
+  if isinstance(module, slicer.qSlicerScriptedLoadableModule):
+    try:
+      logic = getModuleGui(module).logic
+    except AttributeError:
+      # This widget does not have a logic instance in its widget class
+      logic = None
+  else:
+    logic = module.logic()
+  if not logic:
+    raise RuntimeError("Could not find module widget representation with name '%s'" % module.name)
+  return logic
 
 def modulePath(moduleName):
+  """Get module logic object.
+  Module logic allows a module to use features offered by another module.
+  Throws a RuntimeError exception if the module does not have widget.
+  :param moduleName: module name
+  :return: file path of the module
+  """
   import slicer
   return eval('slicer.modules.%s.path' % moduleName.lower())
 
