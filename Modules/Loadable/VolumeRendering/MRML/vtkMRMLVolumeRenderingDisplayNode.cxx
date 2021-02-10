@@ -13,15 +13,16 @@ Version:   $Revision: 1.2 $
 =========================================================================auto=*/
 
 // Annotations includes
-#include "vtkMRMLAnnotationROINode.h"
+#include "vtkMRMLMarkupsROINode.h"
 
 // MRML includes
+#include "vtkMRMLAnnotationROINode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLShaderPropertyNode.h"
+#include "vtkMRMLViewNode.h"
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumePropertyNode.h"
-#include "vtkMRMLShaderPropertyNode.h"
 #include "vtkMRMLVolumeRenderingDisplayNode.h"
-#include "vtkMRMLViewNode.h"
 
 // VTK includes
 #include <vtkCommand.h>
@@ -231,6 +232,12 @@ vtkMRMLAnnotationROINode* vtkMRMLVolumeRenderingDisplayNode::GetROINode()
   return vtkMRMLAnnotationROINode::SafeDownCast(this->GetNodeReference(ROINodeReferenceRole));
 }
 
+//----------------------------------------------------------------------------
+vtkMRMLMarkupsROINode* vtkMRMLVolumeRenderingDisplayNode::GetMarkupsROINode()
+{
+  return vtkMRMLMarkupsROINode::SafeDownCast(this->GetNodeReference(ROINodeReferenceRole));
+}
+
 //-----------------------------------------------------------------------------
 vtkMRMLViewNode* vtkMRMLVolumeRenderingDisplayNode::GetFirstViewNode()
 {
@@ -302,6 +309,13 @@ void vtkMRMLVolumeRenderingDisplayNode::ProcessMRMLEvents(vtkObject *caller,
   vtkMRMLAnnotationROINode* roiNode = this->GetROINode();
   if (roiNode != nullptr &&
       roiNode == vtkMRMLAnnotationROINode::SafeDownCast(caller) &&
+      event == vtkCommand::ModifiedEvent)
+    {
+    this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
+    }
+  vtkMRMLMarkupsROINode* markupRoiNode = this->GetMarkupsROINode();
+  if (markupRoiNode != nullptr &&
+      markupRoiNode == vtkMRMLMarkupsROINode::SafeDownCast(caller) &&
       event == vtkCommand::ModifiedEvent)
     {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);

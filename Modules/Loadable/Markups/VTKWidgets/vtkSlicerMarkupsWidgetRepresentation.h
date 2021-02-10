@@ -150,17 +150,9 @@ public:
   //@}
 
   /// Get the axis for the handle specified by the index
-  virtual void GetInteractionHandleAxisWorld(int index, double axis[3]);
+  virtual void GetInteractionHandleAxisWorld(int type, int index, double axis[3]);
   /// Get the origin of the interaction handle widget
   virtual void GetInteractionHandleOriginWorld(double origin[3]);
-  /// Get the position of the interaction handle in world coordinates
-  /// Type is specified using vtkMRMLMarkupsDisplayNode::ComponentType
-  virtual void GetInteractionHandlePositionWorld(int type, int index, double position[3]);
-  /// Get the direction vector of the interaction handle from the interaction origin
-  /// Type is specified using vtkMRMLMarkupsDisplayNode::ComponentType
-  virtual void GetInteractionHandleVector(int type, int index, double axis[3]);
-  /// Get the direction vector of the interaction handle from the interaction origin in world coordinates
-  virtual void GetInteractionHandleVectorWorld(int type, int index, double axis[3]);
 
 protected:
   vtkSlicerMarkupsWidgetRepresentation();
@@ -205,18 +197,20 @@ protected:
     vtkSmartPointer<vtkArcSource>                       AxisRotationArcSource;
     vtkSmartPointer<vtkTubeFilter>                      AxisRotationTubeFilter;
     vtkSmartPointer<vtkAppendPolyData>                  AxisRotationGlyphSource;
+    vtkSmartPointer<vtkPolyData>                        RotationHandlePoints;
+    vtkSmartPointer<vtkTransformPolyDataFilter>         RotationScaleTransform;
+    vtkSmartPointer<vtkTensorGlyph>                     AxisRotationGlypher;
 
     vtkSmartPointer<vtkArrowSource>                     AxisTranslationGlyphSource;
     vtkSmartPointer<vtkTransformPolyDataFilter>         AxisTranslationGlyphTransformer;
-
-    vtkSmartPointer<vtkPolyData>                        RotationHandlePoints;
     vtkSmartPointer<vtkPolyData>                        TranslationHandlePoints;
-
-    vtkSmartPointer<vtkTransformPolyDataFilter>         RotationScaleTransform;
     vtkSmartPointer<vtkTransformPolyDataFilter>         TranslationScaleTransform;
-
-    vtkSmartPointer<vtkTensorGlyph>                     AxisRotationGlypher;
     vtkSmartPointer<vtkGlyph3D>                         AxisTranslationGlypher;
+
+    vtkSmartPointer<vtkSphereSource>                    AxisScaleHandleSource;
+    vtkSmartPointer<vtkPolyData>                        ScaleHandlePoints;
+    vtkSmartPointer<vtkTransformPolyDataFilter>         ScaleScaleTransform;
+    vtkSmartPointer<vtkGlyph3D>                         AxisScaleGlypher;
 
     vtkSmartPointer<vtkAppendPolyData>                  Append;
     vtkSmartPointer<vtkTransformPolyDataFilter>         HandleToWorldTransformFilter;
@@ -232,6 +226,7 @@ protected:
     virtual void InitializePipeline();
     virtual void CreateRotationHandles();
     virtual void CreateTranslationHandles();
+    virtual void CreateScaleHandles();
     virtual void UpdateHandleColors();
 
     /// Set the scale of the interaction handles in world coordinates
@@ -240,14 +235,21 @@ protected:
     /// Type is specified using vtkMRMLMarkupsDisplayNode::ComponentType
     virtual void GetHandleColor(int type, int index, double color[4]);
     /// Get the opacity of the specified handle
-    virtual double GetOpacity(int type, int index);
+    virtual double GetHandleOpacity(int type, int index);
 
-    /// Get the direction of the specified axis in world coordinates
-    virtual void GetInteractionHandleAxisWorld(int index, double axis[3]);
-    /// Get the origin of the interaction widget in world coordinates
-    virtual void GetInteractionHandleOriginWorld(double origin[3]);
     /// Get the view plane normal for the widget in world coordinates
     virtual void GetViewPlaneNormal(double normal[3]);
+
+    /// Get the position of the interaction handle in world coordinates
+    /// Type is specified using vtkMRMLMarkupsDisplayNode::ComponentType
+    virtual void GetInteractionHandlePositionWorld(int type, int index, double position[3]);
+    /// Get the direction vector of the interaction handle from the interaction origin
+    /// Type is specified using vtkMRMLMarkupsDisplayNode::ComponentType
+    virtual void GetInteractionHandleAxis(int type, int index, double axis[3]);
+    /// Get the direction vector of the interaction handle from the interaction origin in world coordinates
+    virtual void GetInteractionHandleAxisWorld(int type, int index, double axis[3]);
+    /// Get the interaction handle origin
+    virtual void GetInteractionHandleOriginWorld(double origin[3]);
 
     struct HandleInfo
     {
@@ -283,7 +285,7 @@ protected:
     };
 
     /// Get the list of info for all interaction handles
-    std::vector<HandleInfo> GetHandleInfoList();
+    virtual std::vector<HandleInfo> GetHandleInfoList();
   };
   typedef std::vector<MarkupsInteractionPipeline::HandleInfo> HandleInfoList;
 

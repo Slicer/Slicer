@@ -6,5 +6,6 @@
     <file>Icons/MarkupsOpenCurve.png</file>
     <file>Icons/MarkupsClosedCurve.png</file>
     <file>Icons/MarkupsPlane.png</file>
+    <file>Icons/MarkupsROI.png</file>
   </qresource>
 </RCC>

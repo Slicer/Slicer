@@ -159,6 +159,7 @@ public slots:
   void onCreateMarkupsOpenCurve();
   void onCreateMarkupsClosedCurve();
   void onCreateMarkupsPlane();
+  void onCreateMarkupsROI();
 
   /// Toggle the markups node visibility flag
   void onListVisibileInvisiblePushButtonClicked();
@@ -232,6 +233,9 @@ public slots:
 
   /// Change in a widget related to a surface curve type parameter
   void onCurveTypeParameterChanged();
+
+  /// Change in ROI parameter widget
+  void onROITypeParameterChanged();
 
   /// Make sure all measurements in the current markups node are observed
   void observeMeasurementsInCurrentMarkupsNode();

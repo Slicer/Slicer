@@ -29,6 +29,7 @@
 
 // MRML includes
 #include "vtkMRMLAnnotationROINode.h"
+#include "vtkMRMLMarkupsROINode.h"
 #include "vtkMRMLFolderDisplayNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLScalarVolumeNode.h"
@@ -978,18 +979,31 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineROIs(
     vtkErrorWithObjectMacro(this->External, "UpdatePipelineROIs: Unable to get volume mapper");
     return;
     }
-  if (!displayNode || displayNode->GetROINode() == nullptr || !displayNode->GetCroppingEnabled())
+  if (!displayNode || displayNode->GetROINodeID() == nullptr || !displayNode->GetCroppingEnabled())
     {
     volumeMapper->RemoveAllClippingPlanes();
     return;
     }
 
-  // Make sure the ROI node's inside out flag is on
-  displayNode->GetROINode()->InsideOutOn();
-
-  // Calculate and set clipping planes
+  vtkMRMLAnnotationROINode* roiNode = displayNode->GetROINode();
+  vtkMRMLMarkupsROINode* markupsROINode = displayNode->GetMarkupsROINode();
   vtkNew<vtkPlanes> planes;
-  displayNode->GetROINode()->GetTransformedPlanes(planes.GetPointer());
+  if (roiNode)
+    {
+    // Make sure the ROI node's inside out flag is on
+    roiNode->InsideOutOn();
+
+    // Calculate and set clipping planes
+    roiNode->GetTransformedPlanes(planes.GetPointer());
+    }
+  else if (markupsROINode)
+    {
+    // Make sure the ROI node's inside out flag is on
+    markupsROINode->InsideOutOn();
+
+    // Calculate and set clipping planes
+    markupsROINode->GetTransformedPlanes(planes.GetPointer());
+    }
   volumeMapper->SetClippingPlanes(planes.GetPointer());
 }
 

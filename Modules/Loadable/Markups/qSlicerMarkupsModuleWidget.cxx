@@ -63,6 +63,7 @@
 #include "vtkMRMLMarkupsClosedCurveNode.h"
 #include "vtkMRMLMarkupsFiducialStorageNode.h"
 #include "vtkMRMLMarkupsNode.h"
+#include "vtkMRMLMarkupsROINode.h"
 #include "vtkSlicerMarkupsLogic.h"
 #include "vtkSlicerDijkstraGraphGeodesicPath.h"
 
@@ -337,6 +338,8 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
     q, SLOT(onCreateMarkupsClosedCurve()));
   QObject::connect(this->createPlanePushButton, SIGNAL(clicked()),
     q, SLOT(onCreateMarkupsPlane()));
+  QObject::connect(this->createROIPushButton, SIGNAL(clicked()),
+    q, SLOT(onCreateMarkupsROI()));
 
   // Make sure that the Jump to Slices radio buttons match the default of the
   // MRML slice node
@@ -490,6 +493,15 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
     q, SLOT(onCurveTypeParameterChanged()));
   QObject::connect(this->scalarFunctionLineEdit, SIGNAL(textChanged(QString)),
     this->editScalarFunctionDelay, SLOT(start()));
+
+  this->roiSettingsCollapseButton->setVisible(false);
+  this->roiTypeComboBox->clear();
+  for (int roiType = 0; roiType < vtkMRMLMarkupsROINode::ROIType_Last; ++roiType)
+    {
+    this->roiTypeComboBox->addItem(vtkMRMLMarkupsROINode::GetROITypeAsString(roiType), roiType);
+    }
+  QObject::connect(this->roiTypeComboBox, SIGNAL(currentIndexChanged(int)),
+    q, SLOT(onROITypeParameterChanged()));
 
   // hide measurement settings table until markups node containing measurement is set
   this->measurementSettingsTableWidget->setVisible(false);
@@ -924,10 +936,13 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
 
   vtkMRMLMarkupsCurveNode* markupsCurveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(d->MarkupsNode);
   vtkMRMLMarkupsAngleNode* markupsAngleNode = vtkMRMLMarkupsAngleNode::SafeDownCast(d->MarkupsNode);
+  vtkMRMLMarkupsROINode* markupsROINode = vtkMRMLMarkupsROINode::SafeDownCast(d->MarkupsNode);
 
   d->resampleCurveCollapsibleButton->setVisible(markupsCurveNode != nullptr);
   d->angleMeasurementModeCollapsibleButton->setVisible(markupsAngleNode != nullptr);
   d->curveSettingsCollapseButton->setVisible(markupsCurveNode != nullptr);
+  d->roiSettingsCollapseButton->setVisible(markupsROINode != nullptr);
+
   if (markupsCurveNode)
     {
     // Update displayed node types.
@@ -995,6 +1010,7 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
     d->scalarFunctionPrefixLabel->setText(prefixString);
     d->scalarFunctionSuffixLabel->setText(suffixString);
     }
+
   if (markupsAngleNode)
     {
     double axisVector[3] = {0.0, 0.0, 0.0};
@@ -1004,6 +1020,14 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
     d->rotationAxisCoordinatesWidget->blockSignals(wasBlocked);
     d->rotationAxisCoordinatesWidget->setEnabled(markupsAngleNode->GetAngleMeasurementMode() != vtkMRMLMarkupsAngleNode::Minimal);
     }
+
+  if (markupsROINode)
+    {
+    wasBlocked = d->roiTypeComboBox->blockSignals(true);
+    d->roiTypeComboBox->setCurrentIndex(d->roiTypeComboBox->findData(markupsROINode->GetROIType()));
+    d->roiTypeComboBox->blockSignals(wasBlocked);
+    }
+  d->roiWidget->setMRMLMarkupsROINode(markupsROINode);
 
   if (markupsCurveNode && markupsCurveNode->GetCurveType() == vtkCurveGenerator::CURVE_TYPE_SHORTEST_DISTANCE_ON_SURFACE)
     {
@@ -1643,6 +1667,15 @@ void qSlicerMarkupsModuleWidget::onCreateMarkupsPlane()
     {
     this->onActiveMarkupMRMLNodeAdded(this->mrmlScene()->AddNewNodeByClass("vtkMRMLMarkupsPlaneNode"));
     }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onCreateMarkupsROI()
+{
+  if (this->mrmlScene())
+  {
+    this->onActiveMarkupMRMLNodeAdded(this->mrmlScene()->AddNewNodeByClass("vtkMRMLMarkupsROINode"));
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -2710,6 +2743,19 @@ void qSlicerMarkupsModuleWidget::onCurveTypeParameterChanged()
   std::string functionString = d->scalarFunctionLineEdit->text().toStdString();
   curveNode->SetSurfaceCostFunctionType(d->costFunctionComboBox->currentData().toInt());
   curveNode->SetSurfaceDistanceWeightingFunction(functionString.c_str());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onROITypeParameterChanged()
+{
+  Q_D(qSlicerMarkupsModuleWidget);
+  vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(d->MarkupsNode);
+  if (!roiNode)
+    {
+    return;
+    }
+  MRMLNodeModifyBlocker blocker(roiNode);
+  roiNode->SetROIType(d->roiTypeComboBox->currentData().toInt());
 }
 
 //-----------------------------------------------------------------------------

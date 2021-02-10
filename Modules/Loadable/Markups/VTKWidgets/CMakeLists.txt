@@ -52,6 +52,12 @@ set(${KIT}_SRCS
   vtkSlicerPlaneRepresentation3D.h
   vtkSlicerPlaneWidget.cxx
   vtkSlicerPlaneWidget.h
+  vtkSlicerROIRepresentation2D.cxx
+  vtkSlicerROIRepresentation2D.h
+  vtkSlicerROIRepresentation3D.cxx
+  vtkSlicerROIRepresentation3D.h
+  vtkSlicerROIWidget.cxx
+  vtkSlicerROIWidget.h
   )
 
 set(${KIT}_TARGET_LIBRARIES

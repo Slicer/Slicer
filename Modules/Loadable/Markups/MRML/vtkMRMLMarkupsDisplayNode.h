@@ -96,6 +96,7 @@ public:
     ComponentPlane,
     ComponentRotationHandle,
     ComponentTranslationHandle,
+    ComponentScaleHandle,
     };
   struct ComponentInfo
     {

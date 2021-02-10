@@ -38,6 +38,7 @@ class vtkMatrix4x4;
 class vtkMRMLMarkupsNode;
 class vtkMRMLMarkupsClosedCurveNode;
 class vtkMRMLMarkupsDisplayNode;
+class vtkMRMLMarkupsJsonStorageNode;
 class vtkPlane;
 class vtkPoints;
 class vtkPolyData;
@@ -237,6 +238,10 @@ public:
   /// Get best fit plane for a markup
   static bool GetBestFitPlane(vtkMRMLMarkupsNode* curveNode, vtkPlane* plane);
 
+  std::string GetClassNameForMarkupType(std::string markupType);
+  void RegisterMarkupTypeStorageNode(std::string markupType, std::string storageNodeClassName);
+  vtkMRMLMarkupsJsonStorageNode* AddNewStorageNodeForMarkupType(std::string markupType);
+
 protected:
   vtkSlicerMarkupsLogic();
   ~vtkSlicerMarkupsLogic() override;
@@ -250,6 +255,8 @@ protected:
   void UpdateFromMRMLScene() override;
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
+
+  std::map<std::string, std::string> MarkupTypeStorageNodes;
 
 private:
 

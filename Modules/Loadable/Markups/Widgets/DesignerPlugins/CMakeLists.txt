@@ -12,6 +12,8 @@ set(${KIT}_SRCS
   qMRML${MODULE_NAME}DisplayNodeWidgetPlugin.h
   qMRML${MODULE_NAME}FiducialProjectionPropertyWidgetPlugin.cxx
   qMRML${MODULE_NAME}FiducialProjectionPropertyWidgetPlugin.h
+  qMRML${MODULE_NAME}ROIWidgetPlugin.cxx
+  qMRML${MODULE_NAME}ROIWidgetPlugin.h
   qSlicerMarkupsPlaceWidgetPlugin.cxx
   qSlicerMarkupsPlaceWidgetPlugin.h
   qSlicerSimpleMarkupsWidgetPlugin.cxx
@@ -22,6 +24,7 @@ set(${KIT}_MOC_SRCS
   qSlicer${MODULE_NAME}ModuleWidgetsPlugin.h
   qMRML${MODULE_NAME}DisplayNodeWidgetPlugin.h
   qMRML${MODULE_NAME}FiducialProjectionPropertyWidgetPlugin.h
+  qMRML${MODULE_NAME}ROIWidgetPlugin.h
   qSlicerMarkupsPlaceWidgetPlugin.h
   qSlicerSimpleMarkupsWidgetPlugin.h
   )

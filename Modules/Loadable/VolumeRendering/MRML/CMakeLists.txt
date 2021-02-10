@@ -8,6 +8,7 @@ find_package(JsonCpp REQUIRED)
 
 set(${KIT}_INCLUDE_DIRECTORIES
   ${JsonCpp_INCLUDE_DIR}
+  ${vtkSlicerMarkupsModuleMRML_SOURCE_DIR}
   )
 
 set(${KIT}_SRCS
@@ -34,6 +35,7 @@ set(${KIT}_TARGET_LIBRARIES
   ${JsonCpp_LIBRARY}
   ${MRML_LIBRARIES}
   vtkSlicerAnnotationsModuleMRML
+  vtkSlicerMarkupsModuleMRML
   )
 
 #-----------------------------------------------------------------------------

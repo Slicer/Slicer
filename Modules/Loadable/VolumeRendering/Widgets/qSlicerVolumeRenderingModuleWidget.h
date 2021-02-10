@@ -32,10 +32,11 @@ class qSlicerVolumeRenderingPropertiesWidget;
 class qSlicerVolumeRenderingModuleWidgetPrivate;
 class vtkMRMLAnnotationROINode;
 class vtkMRMLNode;
-class vtkMRMLVolumeNode;
+class vtkMRMLMarkupsROINode;
 class vtkMRMLViewNode;
-class vtkMRMLVolumeRenderingDisplayNode;
+class vtkMRMLVolumeNode;
 class vtkMRMLVolumePropertyNode;
+class vtkMRMLVolumeRenderingDisplayNode;
 
 /// \ingroup Slicer_QtModules_VolumeRendering
 class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerVolumeRenderingModuleWidget :
@@ -51,6 +52,7 @@ public:
 
   Q_INVOKABLE vtkMRMLVolumeNode* mrmlVolumeNode()const;
   Q_INVOKABLE vtkMRMLAnnotationROINode* mrmlROINode()const;
+  Q_INVOKABLE vtkMRMLMarkupsROINode* mrmlMarkupsROINode()const;
   Q_INVOKABLE vtkMRMLVolumePropertyNode* mrmlVolumePropertyNode()const;
   Q_INVOKABLE vtkMRMLVolumeRenderingDisplayNode* mrmlDisplayNode()const;
 

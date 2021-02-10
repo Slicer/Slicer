@@ -326,8 +326,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
-    || !this->GetVisibility() || !interactionEventData )
+  if ( !markupsNode || markupsNode->GetLocked() || !this->GetVisibility() || !interactionEventData )
     {
     return;
     }

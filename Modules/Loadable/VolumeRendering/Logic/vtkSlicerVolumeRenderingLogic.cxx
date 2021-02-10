@@ -25,6 +25,9 @@
 // Annotations includes
 #include <vtkMRMLAnnotationROINode.h>
 
+// Markups includes
+#include <vtkMRMLMarkupsROINode.h>
+
 // MRML includes
 #include <vtkCacheManager.h>
 #include <vtkMRMLColorNode.h>
@@ -68,6 +71,7 @@ vtkSlicerVolumeRenderingLogic::vtkSlicerVolumeRenderingLogic()
   this->DefaultRenderingMethod = nullptr;
   this->UseLinearRamp = true;
   this->PresetsScene = nullptr;
+  this->DefaultROIClassName = "vtkMRMLAnnotationROINode";
 
   this->RegisterRenderingMethod("VTK CPU Ray Casting",
     "vtkMRMLCPURayCastVolumeRenderingDisplayNode");
@@ -764,27 +768,48 @@ void vtkSlicerVolumeRenderingLogic::CopyLabelMapDisplayToVolumeRenderingDisplayN
 void vtkSlicerVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
   // Resize the ROI to fit the volume
-  vtkMRMLAnnotationROINode *roiNode = vtkMRMLAnnotationROINode::SafeDownCast(vspNode->GetROINode());
   vtkMRMLScalarVolumeNode *volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode());
 
-  if (volumeNode && roiNode)
-  {
-    int disabledModify = roiNode->StartModify();
+  if (!volumeNode)
+    {
+    return;
+    }
+
+  vtkMRMLAnnotationROINode* roiNode = vspNode->GetROINode();
+  vtkMRMLMarkupsROINode* markupsROINode = vspNode->GetMarkupsROINode();
+  if (roiNode)
+    {
+    MRMLNodeModifyBlocker blocker(roiNode);
 
     double xyz[3] = {0.0};
     double center[3] = {0.0};
 
     vtkMRMLSliceLogic::GetVolumeRASBox(volumeNode, xyz, center);
     for (int i = 0; i < 3; i++)
-    {
+      {
       xyz[i] *= 0.5;
-    }
+      }
 
     roiNode->SetXYZ(center);
     roiNode->SetRadiusXYZ(xyz);
+    }
+  else if (markupsROINode)
+    {
+    MRMLNodeModifyBlocker blocker(markupsROINode);
 
-    roiNode->EndModify(disabledModify);
-  }
+    double xyz[3] = { 0.0 };
+    double center[3] = { 0.0 };
+
+    vtkMRMLSliceLogic::GetVolumeRASBox(volumeNode, xyz, center);
+    for (int i = 0; i < 3; i++)
+      {
+      xyz[i] *= 0.5;
+      }
+
+    markupsROINode->GetROIToLocalMatrix()->Identity();
+    markupsROINode->SetXYZ(center);
+    markupsROINode->SetRadiusXYZ(xyz);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -997,7 +1022,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRende
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic
-::GetFirstVolumeRenderingDisplayNodeByROINode(vtkMRMLAnnotationROINode* roiNode)
+::GetFirstVolumeRenderingDisplayNodeByROINode(vtkMRMLNode* roiNode)
 {
   if (roiNode == nullptr || roiNode->GetScene() == nullptr)
   {
@@ -1019,49 +1044,61 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic
 
 // Description:
 // Update vtkMRMLVolumeRenderingDisplayNode from VolumeNode,
-// if needed create vtkMRMLVolumePropertyNode and vtkMRMLAnnotationROINode
+// if needed create vtkMRMLVolumePropertyNode and vtkMRMLMarkupsROINode
 // and initialize them from VolumeNode
 //----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::UpdateDisplayNodeFromVolumeNode(
   vtkMRMLVolumeRenderingDisplayNode *displayNode, vtkMRMLVolumeNode *volumeNode,
-  vtkMRMLVolumePropertyNode *propNode /*=nullptr*/, vtkMRMLAnnotationROINode *roiNode /*=nullptr*/ )
+  vtkMRMLVolumePropertyNode *propNode /*=nullptr*/, vtkMRMLNode *roiNode /*=nullptr*/ )
 {
   if (displayNode == nullptr)
-  {
+    {
     vtkErrorMacro("vtkSlicerVolumeRenderingLogic::UpdateDisplayNodeFromVolumeNode: display node pointer is null.");
     return;
-  }
+    }
 
   if (volumeNode == nullptr)
-  {
+    {
     return;
-  }
+    }
 
   if (propNode == nullptr && displayNode->GetVolumePropertyNode() == nullptr)
-  {
+    {
     propNode = vtkMRMLVolumePropertyNode::New();
     this->GetMRMLScene()->AddNode(propNode);
     propNode->Delete();
-  }
+    }
   if (propNode != nullptr)
-  {
+    {
     displayNode->SetAndObserveVolumePropertyNodeID(propNode->GetID());
-  }
+    }
 
   if (roiNode == nullptr && displayNode->GetROINode() == nullptr)
-  {
-    roiNode = vtkMRMLAnnotationROINode::New();
-    // By default, the ROI is interactive. It could be an application setting.
-    roiNode->SetInteractiveMode(1);
-    roiNode->Initialize(this->GetMRMLScene());
-    // by default, show the ROI only if cropping is enabled
-    roiNode->SetDisplayVisibility(displayNode->GetCroppingEnabled());
-    roiNode->Delete();
-  }
+    {
+    roiNode = this->GetMRMLScene()->AddNewNodeByClass(this->DefaultROIClassName);
+    vtkMRMLAnnotationROINode* annotationROINode = vtkMRMLAnnotationROINode::SafeDownCast(roiNode);
+    vtkMRMLMarkupsROINode* markupsROINode = vtkMRMLMarkupsROINode::SafeDownCast(roiNode);
+    if (annotationROINode)
+      {
+      annotationROINode->CreateDefaultDisplayNodes();
+      annotationROINode->SetInteractiveMode(1);
+      annotationROINode->SetDisplayVisibility(displayNode->GetCroppingEnabled());
+      }
+    else if (markupsROINode)
+      {
+      vtkMRMLMarkupsDisplayNode* markupsDisplayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(markupsROINode->GetDisplayNode());
+      if (markupsDisplayNode)
+        {
+        markupsDisplayNode->SetHandlesInteractive(true);
+        }
+      // by default, show the ROI only if cropping is enabled
+      markupsROINode->SetDisplayVisibility(displayNode->GetCroppingEnabled());
+      }
+    }
   if (roiNode != nullptr)
-  {
+    {
     displayNode->SetAndObserveROINodeID(roiNode->GetID());
-  }
+    }
 
   this->CopyDisplayToVolumeRenderingDisplayNode(displayNode);
 

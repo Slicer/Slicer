@@ -506,8 +506,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteract(
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!sliceNode || !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
-    || !this->GetVisibility() || !interactionEventData)
+  if (!sliceNode || !markupsNode || markupsNode->GetLocked() || !this->GetVisibility() || !interactionEventData)
     {
     return;
     }
@@ -1299,16 +1298,16 @@ void vtkSlicerMarkupsWidgetRepresentation2D::MarkupsInteractionPipeline2D::GetVi
     return;
     }
 
-  double tempNormal[4] = { 0, 0, 1, 0 };
+  double viewPlaneNormal4[4] = { 0, 0, 1, 0 };
   if (this->Representation)
     {
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(this->Representation->GetViewNode());
     if (sliceNode)
       {
-      sliceNode->GetSliceToRAS()->MultiplyPoint(tempNormal, tempNormal);
+      sliceNode->GetSliceToRAS()->MultiplyPoint(viewPlaneNormal4, viewPlaneNormal4);
       }
     }
-  viewPlaneNormal[0] = tempNormal[0];
-  viewPlaneNormal[1] = tempNormal[1];
-  viewPlaneNormal[2] = tempNormal[2];
+  viewPlaneNormal[0] = viewPlaneNormal4[0];
+  viewPlaneNormal[1] = viewPlaneNormal4[1];
+  viewPlaneNormal[2] = viewPlaneNormal4[2];
 }

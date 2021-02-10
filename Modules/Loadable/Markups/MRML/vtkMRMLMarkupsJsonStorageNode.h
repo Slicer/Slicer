@@ -57,6 +57,10 @@ public:
 
   bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
 
+  /// Returns a list of all markup types ("Curve", "ClosedCurve", "Angle", "Plane", etc.) in the json file.
+  /// The types are ordered by the index in which they appear in the Json file.
+  void GetMarkupTypesInFile(const char* filePath, std::vector<std::string>& outputMarkupTypes);
+
 protected:
   vtkMRMLMarkupsJsonStorageNode();
   ~vtkMRMLMarkupsJsonStorageNode() override;

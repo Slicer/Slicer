@@ -59,6 +59,7 @@ public:
     WidgetStateTranslateControlPoint, // translating the active point by mouse move
     WidgetStateOnTranslationHandle, // hovering over a translation interaction handle
     WidgetStateOnRotationHandle, // hovering over a rotation interaction handle
+    WidgetStateOnScaleHandle, // hovering over a scale interaction handle
   };
 
   /// Widget events

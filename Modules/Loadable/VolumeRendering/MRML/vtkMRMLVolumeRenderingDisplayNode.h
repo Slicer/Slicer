@@ -20,13 +20,13 @@
 
 // MRML includes
 #include "vtkMRMLDisplayNode.h"
+class vtkIntArray;
 class vtkMRMLAnnotationROINode;
-class vtkMRMLVolumeNode;
-class vtkMRMLVolumePropertyNode;
+class vtkMRMLMarkupsROINode;
 class vtkMRMLShaderPropertyNode;
 class vtkMRMLViewNode;
-
-class vtkIntArray;
+class vtkMRMLVolumeNode;
+class vtkMRMLVolumePropertyNode;
 
 /// \ingroup Slicer_QtModules_VolumeRendering
 /// \name vtkMRMLVolumeRenderingDisplayNode
@@ -62,6 +62,7 @@ public:
   const char* GetROINodeID();
   void SetAndObserveROINodeID(const char *roiNodeID);
   vtkMRMLAnnotationROINode* GetROINode();
+  vtkMRMLMarkupsROINode* GetMarkupsROINode();
 
   vtkMRMLViewNode* GetFirstViewNode();
 

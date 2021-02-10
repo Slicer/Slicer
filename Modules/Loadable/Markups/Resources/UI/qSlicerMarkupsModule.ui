@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>300</width>
-    <height>425</height>
+    <height>433</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -110,6 +110,17 @@
        <property name="icon">
         <iconset resource="../qSlicerMarkupsModule.qrc">
          <normaloff>:/Icons/MarkupsPlaneMouseModePlaceAdd.png</normaloff>:/Icons/MarkupsPlaneMouseModePlaceAdd.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="createROIPushButton">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../qSlicerMarkupsModule.qrc">
+         <normaloff>:/Icons/MarkupsROIModePlaceAdd.png</normaloff>:/Icons/MarkupsROIModePlaceAdd.png</iconset>
        </property>
       </widget>
      </item>
@@ -981,6 +992,37 @@
     </widget>
    </item>
    <item>
+    <widget class="ctkCollapsibleButton" name="roiSettingsCollapseButton">
+     <property name="text">
+      <string>ROI Settings</string>
+     </property>
+     <property name="collapsed">
+      <bool>true</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="1" colspan="2">
+       <widget class="QComboBox" name="roiTypeComboBox"/>
+      </item>
+      <item row="3" column="0" colspan="3">
+       <widget class="qMRMLMarkupsROIWidget" name="roiWidget"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_10">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>ROI type:</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="ctkCollapsibleButton" name="resampleCurveCollapsibleButton">
      <property name="toolTip">
       <string>Resample a curve and optionally constrain the points to a node</string>
@@ -1268,6 +1310,11 @@
    <class>qMRMLMarkupsDisplayNodeWidget</class>
    <extends>qMRMLWidget</extends>
    <header>qMRMLMarkupsDisplayNodeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLMarkupsROIWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLMarkupsROIWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLSubjectHierarchyTreeView</class>
