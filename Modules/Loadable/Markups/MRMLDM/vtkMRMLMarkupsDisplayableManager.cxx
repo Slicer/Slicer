@@ -11,6 +11,7 @@
 #include <vtkMRMLMarkupsLineNode.h>
 #include <vtkMRMLMarkupsNode.h>
 #include <vtkMRMLMarkupsPlaneNode.h>
+#include <vtkMRMLMarkupsROINode.h>
 
 // MarkupsModule/VTKWidgets includes
 #include <vtkSlicerLineWidget.h>
@@ -27,6 +28,7 @@
 #include <vtkSlicerPointsWidget.h>
 #include <vtkSlicerPointsRepresentation2D.h>
 #include <vtkSlicerPointsRepresentation3D.h>
+#include <vtkSlicerROIWidget.h>
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLDisplayableManagerGroup.h>
@@ -94,6 +96,7 @@ vtkMRMLMarkupsDisplayableManager::vtkMRMLMarkupsDisplayableManager()
   this->Focus.insert("vtkMRMLMarkupsCurveNode");
   this->Focus.insert("vtkMRMLMarkupsClosedCurveNode");
   this->Focus.insert("vtkMRMLMarkupsPlaneNode");
+  this->Focus.insert("vtkMRMLMarkupsROINode");
 
   this->Helper = vtkMRMLMarkupsDisplayableManagerHelper::New();
   this->Helper->SetDisplayableManager(this);
@@ -600,6 +603,10 @@ vtkMRMLMarkupsNode* vtkMRMLMarkupsDisplayableManager::CreateNewMarkupsNode(
     {
     nodeName = "P";
     }
+  else if (markupsNodeClassName == "vtkMRMLMarkupsROINode")
+    {
+    nodeName = "R";
+    }
   nodeName = this->GetMRMLScene()->GenerateUniqueName(nodeName);
 
   vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(
@@ -966,6 +973,10 @@ vtkSlicerMarkupsWidget * vtkMRMLMarkupsDisplayableManager::CreateWidget(vtkMRMLM
   else if (vtkMRMLMarkupsPlaneNode::SafeDownCast(markupsNode))
     {
     widget = vtkSlicerPlaneWidget::New();
+    }
+  else if (vtkMRMLMarkupsROINode::SafeDownCast(markupsNode))
+    {
+    widget = vtkSlicerROIWidget::New();
     }
   else
     {

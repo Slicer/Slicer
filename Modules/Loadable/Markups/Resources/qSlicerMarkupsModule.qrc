@@ -26,5 +26,7 @@
         <file>Icons/MarkupsClosedCurveMouseModePlaceAdd.png</file>
         <file>Icons/MarkupsPlaneMouseModePlace.png</file>
         <file>Icons/MarkupsPlaneMouseModePlaceAdd.png</file>
+        <file>Icons/MarkupsROIModePlace.png</file>
+        <file>Icons/MarkupsROIModePlaceAdd.png</file>
     </qresource>
 </RCC>

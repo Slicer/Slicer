@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>456</width>
-    <height>677</height>
+    <height>689</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -121,6 +121,7 @@
         <property name="nodeTypes">
          <stringlist>
           <string>vtkMRMLAnnotationROINode</string>
+          <string>vtkMRMLMarkupsROINode</string>
          </stringlist>
         </property>
         <property name="noneEnabled">
@@ -490,8 +491,11 @@
           <property name="fieldGrowthPolicy">
            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
           </property>
+          <item row="1" column="0" colspan="2">
+           <widget class="qMRMLMarkupsROIWidget" name="MarkupsROIWidget"/>
+          </item>
           <item row="0" column="0" colspan="2">
-           <widget class="qMRMLAnnotationROIWidget" name="ROIWidget"/>
+           <widget class="qMRMLAnnotationROIWidget" name="AnnotationROIWidget"/>
           </item>
          </layout>
         </widget>
@@ -503,6 +507,54 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>qMRMLCheckableNodeComboBox</class>
+   <extends>qMRMLNodeComboBox</extends>
+   <header>qMRMLCheckableNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLDisplayNodeViewComboBox</class>
+   <extends>qMRMLCheckableNodeComboBox</extends>
+   <header>qMRMLDisplayNodeViewComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLAnnotationROIWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLAnnotationROIWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLMarkupsROIWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLMarkupsROIWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLVolumePropertyNodeWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLVolumePropertyNodeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerVolumeRenderingPresetComboBox</class>
+   <extends>qSlicerWidget</extends>
+   <header>qSlicerVolumeRenderingPresetComboBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerGPUMemoryComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qSlicerGPUMemoryComboBox.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>ctkCheckablePushButton</class>
    <extends>ctkPushButton</extends>
@@ -540,51 +592,9 @@
    <extends>QWidget</extends>
    <header>ctkSliderWidget.h</header>
   </customwidget>
-  <customwidget>
-   <class>qMRMLCheckableNodeComboBox</class>
-   <extends>qMRMLNodeComboBox</extends>
-   <header>qMRMLCheckableNodeComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLDisplayNodeViewComboBox</class>
-   <extends>qMRMLCheckableNodeComboBox</extends>
-   <header>qMRMLDisplayNodeViewComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLNodeComboBox</class>
-   <extends>QWidget</extends>
-   <header>qMRMLNodeComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLAnnotationROIWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLAnnotationROIWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerWidget</class>
-   <extends>QWidget</extends>
-   <header>qSlicerWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLVolumePropertyNodeWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLVolumePropertyNodeWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerVolumeRenderingPresetComboBox</class>
-   <extends>qSlicerWidget</extends>
-   <header>qSlicerVolumeRenderingPresetComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerGPUMemoryComboBox</class>
-   <extends>QComboBox</extends>
-   <header>qSlicerGPUMemoryComboBox.h</header>
-   <container>1</container>
-  </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../Annotations/Resources/qSlicerAnnotationModule.qrc"/>
+  <include location="../../../Markups/Resources/qSlicerMarkupsModule.qrc"/>
   <include location="../../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc"/>
  </resources>
  <connections>
@@ -607,8 +617,8 @@
   <connection>
    <sender>ROINodeComboBox</sender>
    <signal>currentNodeChanged(vtkMRMLNode*)</signal>
-   <receiver>ROIWidget</receiver>
-   <slot>setMRMLAnnotationROINode(vtkMRMLNode*)</slot>
+   <receiver>MarkupsROIWidget</receiver>
+   <slot>setMRMLMarkupsROINode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>446</x>
@@ -841,6 +851,22 @@
     <hint type="destinationlabel">
      <x>105</x>
      <y>305</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ROINodeComboBox</sender>
+   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
+   <receiver>AnnotationROIWidget</receiver>
+   <slot>setMRMLAnnotationROINode(vtkMRMLNode*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>253</x>
+     <y>86</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>226</x>
+     <y>367</y>
     </hint>
    </hints>
   </connection>

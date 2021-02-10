@@ -32,11 +32,12 @@
 #include "qSlicerGPUMemoryComboBox.h"
 
 // MRML includes
+#include "vtkMRMLAnnotationROINode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLVolumePropertyNode.h"
-#include "vtkMRMLAnnotationROINode.h"
+#include "vtkMRMLMarkupsROINode.h"
 
 // VTK includes
 #include <vtkVolumeProperty.h>
@@ -171,6 +172,9 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
                    q, SLOT(setFollowVolumeDisplayNode(bool)));
   QObject::connect(this->IgnoreVolumesThresholdCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setIgnoreVolumesThreshold(bool)));
+
+  // Disable markups ROI widget by default
+  this->MarkupsROIWidget->setVisible(false);
 
   // Default values
   this->InputsCollapsibleButton->setCollapsed(true);
@@ -374,7 +378,13 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
   // Input section
   vtkMRMLVolumePropertyNode* volumePropertyNode = (displayNode ? displayNode->GetVolumePropertyNode() : nullptr);
   d->VolumePropertyNodeComboBox->setCurrentNode(volumePropertyNode);
-  vtkMRMLAnnotationROINode* roiNode = (displayNode ? displayNode->GetROINode() : nullptr);
+  vtkMRMLAnnotationROINode* annotationROINode = (displayNode ? displayNode->GetROINode() : nullptr);
+  vtkMRMLMarkupsROINode* markupsROINode = (displayNode ? displayNode->GetMarkupsROINode() : nullptr);
+  vtkMRMLNode* roiNode = annotationROINode;
+  if (!roiNode)
+    {
+    roiNode = markupsROINode;
+    }
   bool wasBlocking = d->ROINodeComboBox->blockSignals(true);
   d->ROINodeComboBox->setCurrentNode(roiNode);
   d->ROINodeComboBox->blockSignals(wasBlocking);
@@ -401,7 +411,18 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
   d->VolumePropertyNodeWidget->setEnabled(volumePropertyNode != nullptr);
 
   // ROI tab
-  d->ROIWidget->setMRMLAnnotationROINode(roiNode);
+  d->AnnotationROIWidget->setMRMLAnnotationROINode(annotationROINode);
+  d->MarkupsROIWidget->setMRMLMarkupsROINode(markupsROINode);
+  if (annotationROINode && !markupsROINode)
+    {
+    d->AnnotationROIWidget->setVisible(true);
+    d->MarkupsROIWidget->setVisible(false);
+    }
+  else if (markupsROINode && !annotationROINode)
+    {
+    d->MarkupsROIWidget->setVisible(true);
+    d->AnnotationROIWidget->setVisible(false);
+    }
 
   // Techniques tab
   QSettings settings;
@@ -450,13 +471,16 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
 void qSlicerVolumeRenderingModuleWidget::updateWidgetFromROINode()
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
-  if (!d->ROIWidget->mrmlROINode())
+  if (d->AnnotationROIWidget->mrmlROINode())
     {
-    return;
+    // ROI visibility
+    d->ROICropDisplayCheckBox->setChecked(d->AnnotationROIWidget->mrmlROINode()->GetDisplayVisibility());
     }
-
-  // ROI visibility
-  d->ROICropDisplayCheckBox->setChecked(d->ROIWidget->mrmlROINode()->GetDisplayVisibility());
+  else if (d->MarkupsROIWidget->mrmlROINode())
+    {
+    // ROI visibility
+    d->ROICropDisplayCheckBox->setChecked(d->MarkupsROIWidget->mrmlROINode()->GetDisplayVisibility());
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -483,21 +507,31 @@ void qSlicerVolumeRenderingModuleWidget::fitROIToVolume()
   // Fit ROI to volume
   vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic())->FitROIToVolume(displayNode);
 
-  if ( d->ROIWidget->mrmlROINode() != this->mrmlROINode()
-    || d->ROIWidget->mrmlROINode() != displayNode->GetROINode() )
+  vtkMRMLAnnotationROINode* annotationROINode = displayNode->GetROINode();
+  vtkMRMLMarkupsROINode* markupsROINode = displayNode->GetMarkupsROINode();
+  if (annotationROINode &&
+     (d->AnnotationROIWidget->mrmlROINode() != this->mrmlROINode()
+     || d->AnnotationROIWidget->mrmlROINode() != annotationROINode))
+    {
+    qCritical() << Q_FUNC_INFO << ": ROI node mismatch";
+    return;
+    }
+  if (markupsROINode &&
+     (d->MarkupsROIWidget->mrmlROINode() != this->mrmlMarkupsROINode()
+     || d->MarkupsROIWidget->mrmlROINode() != markupsROINode))
     {
     qCritical() << Q_FUNC_INFO << ": ROI node mismatch";
     return;
     }
 
   // Update ROI widget extent
-  if (d->ROIWidget->mrmlROINode())
+  if (annotationROINode && d->AnnotationROIWidget->mrmlROINode())
     {
     double xyz[3] = {0.0};
     double rxyz[3] = {0.0};
 
-    d->ROIWidget->mrmlROINode()->GetXYZ(xyz);
-    d->ROIWidget->mrmlROINode()->GetRadiusXYZ(rxyz);
+    d->AnnotationROIWidget->mrmlROINode()->GetXYZ(xyz);
+    d->AnnotationROIWidget->mrmlROINode()->GetRadiusXYZ(rxyz);
 
     double bounds[6] = {0.0};
     for (int i=0; i < 3; ++i)
@@ -505,9 +539,27 @@ void qSlicerVolumeRenderingModuleWidget::fitROIToVolume()
       bounds[i]   = xyz[i]-rxyz[i];
       bounds[3+i] = xyz[i]+rxyz[i];
       }
-    d->ROIWidget->setExtent(bounds[0], bounds[3],
+    d->AnnotationROIWidget->setExtent(bounds[0], bounds[3],
                             bounds[1], bounds[4],
                             bounds[2], bounds[5]);
+    }
+  else if (markupsROINode && d->MarkupsROIWidget->mrmlROINode())
+    {
+    double xyz[3] = { 0.0 };
+    double rxyz[3] = { 0.0 };
+
+    d->MarkupsROIWidget->mrmlROINode()->GetXYZ(xyz);
+    d->MarkupsROIWidget->mrmlROINode()->GetRadiusXYZ(rxyz);
+
+    double bounds[6] = { 0.0 };
+    for (int i = 0; i < 3; ++i)
+      {
+      bounds[i] = xyz[i] - rxyz[i];
+      bounds[3 + i] = xyz[i] + rxyz[i];
+      }
+    d->MarkupsROIWidget->setExtent(bounds[0], bounds[3],
+      bounds[1], bounds[4],
+      bounds[2], bounds[5]);
     }
 }
 
@@ -555,6 +607,13 @@ vtkMRMLAnnotationROINode* qSlicerVolumeRenderingModuleWidget::mrmlROINode()const
 }
 
 // --------------------------------------------------------------------------
+vtkMRMLMarkupsROINode* qSlicerVolumeRenderingModuleWidget::mrmlMarkupsROINode()const
+{
+  Q_D(const qSlicerVolumeRenderingModuleWidget);
+  return vtkMRMLMarkupsROINode::SafeDownCast(d->ROINodeComboBox->currentNode());
+}
+
+// --------------------------------------------------------------------------
 void qSlicerVolumeRenderingModuleWidget::setMRMLROINode(vtkMRMLNode* roiNode)
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
@@ -569,11 +628,17 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLROINodeChanged(vtkMRMLNode
     {
     return;
     }
-  vtkMRMLAnnotationROINode *roiNode = vtkMRMLAnnotationROINode::SafeDownCast(node);
-  this->qvtkReconnect( displayNode->GetROINode(), roiNode,
+
+  vtkMRMLNode* oldROINode = displayNode->GetROINode();
+  if (!oldROINode)
+    {
+    displayNode->GetMarkupsROINode();
+    }
+
+  this->qvtkReconnect(oldROINode, node,
     vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT(updateWidgetFromROINode()) );
 
-  displayNode->SetAndObserveROINodeID(roiNode ? roiNode->GetID() : nullptr);
+  displayNode->SetAndObserveROINodeID(node ? node->GetID() : nullptr);
   this->updateWidgetFromROINode();
 }
 
@@ -754,20 +819,30 @@ void qSlicerVolumeRenderingModuleWidget::onROICropDisplayCheckBoxToggled(bool to
     displayNode->SetCroppingEnabled(toggle);
     }
 
-  int numberOfDisplayNodes = d->ROIWidget->mrmlROINode()->GetNumberOfDisplayNodes();
+  vtkMRMLDisplayableNode* roiNode = d->AnnotationROIWidget->mrmlROINode();
+  if (!roiNode)
+    {
+    roiNode = d->MarkupsROIWidget->mrmlROINode();
+    }
+  if (!roiNode)
+    {
+    return;
+    }
+
+  int numberOfDisplayNodes = roiNode->GetNumberOfDisplayNodes();
 
   std::vector<int> wasModifying(numberOfDisplayNodes);
 
   for(int index = 0; index < numberOfDisplayNodes; index++)
     {
-    wasModifying[index] = d->ROIWidget->mrmlROINode()->GetNthDisplayNode(index)->StartModify();
+    wasModifying[index] = roiNode->GetNthDisplayNode(index)->StartModify();
     }
 
-  d->ROIWidget->mrmlROINode()->SetDisplayVisibility(toggle);
+  roiNode->SetDisplayVisibility(toggle);
 
   for(int index = 0; index < numberOfDisplayNodes; index++)
     {
-    d->ROIWidget->mrmlROINode()->GetNthDisplayNode(index)->EndModify(wasModifying[index]);
+    roiNode->GetNthDisplayNode(index)->EndModify(wasModifying[index]);
     }
 }
 
@@ -825,7 +900,7 @@ bool qSlicerVolumeRenderingModuleWidget::setEditedNode(vtkMRMLNode* node,
       }
     }
 
-  if (vtkMRMLAnnotationROINode::SafeDownCast(node))
+  if (vtkMRMLMarkupsROINode::SafeDownCast(node))
     {
     vtkSlicerVolumeRenderingLogic* volumeRenderingLogic = vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
     if (!volumeRenderingLogic)
@@ -834,7 +909,7 @@ bool qSlicerVolumeRenderingModuleWidget::setEditedNode(vtkMRMLNode* node,
       return false;
       }
     vtkMRMLVolumeRenderingDisplayNode* displayNode = volumeRenderingLogic->GetFirstVolumeRenderingDisplayNodeByROINode(
-      vtkMRMLAnnotationROINode::SafeDownCast(node));
+      vtkMRMLMarkupsROINode::SafeDownCast(node));
     if (!displayNode)
       {
       return false;
@@ -859,7 +934,7 @@ double qSlicerVolumeRenderingModuleWidget::nodeEditable(vtkMRMLNode* node)
     {
     return 0.5;
     }
-  else if (vtkMRMLAnnotationROINode::SafeDownCast(node))
+  else if (vtkMRMLMarkupsROINode::SafeDownCast(node))
     {
     vtkSlicerVolumeRenderingLogic* volumeRenderingLogic = vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
     if (!volumeRenderingLogic)
@@ -867,7 +942,7 @@ double qSlicerVolumeRenderingModuleWidget::nodeEditable(vtkMRMLNode* node)
       qWarning() << Q_FUNC_INFO << " failed: Invalid logic";
       return 0.0;
       }
-    if (volumeRenderingLogic->GetFirstVolumeRenderingDisplayNodeByROINode(vtkMRMLAnnotationROINode::SafeDownCast(node)))
+    if (volumeRenderingLogic->GetFirstVolumeRenderingDisplayNodeByROINode(vtkMRMLMarkupsROINode::SafeDownCast(node)))
       {
       // This ROI node is a clipping ROI for volume rendering - claim it with higher confidence than the generic 0.5
       return 0.6;

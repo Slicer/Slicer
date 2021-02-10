@@ -28,9 +28,11 @@
 #include "vtkMRMLMarkupsFiducialNode.h"
 #include "vtkMRMLMarkupsFiducialStorageNode.h"
 #include "vtkMRMLMarkupsJsonStorageNode.h"
+#include "vtkMRMLMarkupsROIJsonStorageNode.h"
 #include "vtkMRMLMarkupsLineNode.h"
 #include "vtkMRMLMarkupsNode.h"
 #include "vtkMRMLMarkupsPlaneNode.h"
+#include "vtkMRMLMarkupsROINode.h"
 #include "vtkMRMLMarkupsStorageNode.h"
 
 // Annotation MRML includes
@@ -97,6 +99,7 @@ public:
 vtkSlicerMarkupsLogic::vtkSlicerMarkupsLogic()
 {
   this->AutoCreateDisplayNodes = true;
+  this->RegisterMarkupTypeStorageNode("ROI", "vtkMRMLMarkupsROIJsonStorageNode");
 }
 
 //----------------------------------------------------------------------------
@@ -114,8 +117,6 @@ void vtkSlicerMarkupsLogic::ProcessMRMLNodesEvents(vtkObject *caller,
                                                    void *callData)
 {
   vtkDebugMacro("ProcessMRMLNodesEvents: Event " << event);
-
-//  vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*> (callData);
 
   vtkMRMLMarkupsDisplayNode *markupsDisplayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(caller);
   if (markupsDisplayNode)
@@ -192,6 +193,7 @@ void vtkSlicerMarkupsLogic::ObserveMRMLScene()
     selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLMarkupsCurveNode", ":/Icons/MarkupsCurveMouseModePlace.png", "Open Curve");
     selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLMarkupsClosedCurveNode", ":/Icons/MarkupsClosedCurveMouseModePlace.png", "Closed Curve");
     selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLMarkupsPlaneNode", ":/Icons/MarkupsPlaneMouseModePlace.png", "Plane");
+    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLMarkupsROINode", ":/Icons/MarkupsROIModePlace.png", "ROI");
 
     // trigger an update on the mouse mode toolbar
     this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
@@ -215,6 +217,7 @@ void vtkSlicerMarkupsLogic::RegisterNodes()
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsCurveNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsClosedCurveNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsPlaneNode>::New());
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsROINode>::New());
 
   // Display nodes
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsDisplayNode>::New());
@@ -224,6 +227,7 @@ void vtkSlicerMarkupsLogic::RegisterNodes()
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsStorageNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsFiducialStorageNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsJsonStorageNode>::New());
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsROIJsonStorageNode>::New());
 }
 
 //---------------------------------------------------------------------------
@@ -249,7 +253,7 @@ void vtkSlicerMarkupsLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
     vtkObserveMRMLNodeEventsMacro(node, events.GetPointer());
     }
   // a node could have been added by a node selector's create new node method,
-  // but make sure that the scen eis not batch processing before responding to
+  // but make sure that the scene is not batch processing before responding to
   // the event
   if (!node->IsA("vtkMRMLMarkupsNode"))
     {
@@ -716,21 +720,46 @@ char* vtkSlicerMarkupsLogic::LoadMarkupsFromJson(const char* fileName, const cha
   vtkDebugMacro("LoadMarkups, file name = " << fileName << ", nodeName = " << (nodeName ? nodeName : "null"));
 
   // make a storage node and fiducial node and set the file name
-  vtkMRMLMarkupsJsonStorageNode* storageNode = vtkMRMLMarkupsJsonStorageNode::SafeDownCast(
+  vtkMRMLMarkupsJsonStorageNode* tempStorageNode = vtkMRMLMarkupsJsonStorageNode::SafeDownCast(
     this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLMarkupsJsonStorageNode"));
-  if (!storageNode)
+  if (!tempStorageNode)
     {
     vtkErrorMacro("LoadMarkups: failed to instantiate markups storage node by class vtkMRMLMarkupsJsonStorageNode");
     return nullptr;
     }
 
-  vtkMRMLMarkupsNode* markupsNode = storageNode->AddNewMarkupsNodeFromFile(fileName, nodeName);
-  if (!markupsNode)
+  std::vector<std::string> markupTypes;
+  tempStorageNode->GetMarkupTypesInFile(fileName, markupTypes);
+  this->GetMRMLScene()->RemoveNode(tempStorageNode);
+
+  vtkMRMLMarkupsNode* importedMarkupsNode = nullptr;
+  for(int markupIndex = 0; markupIndex < markupTypes.size(); ++markupIndex)
+    {
+    std::string markupType = markupTypes[markupIndex];
+    vtkMRMLMarkupsJsonStorageNode* storageNode = this->AddNewStorageNodeForMarkupType(markupType);
+    if (!storageNode)
+      {
+      vtkErrorMacro("LoadMarkupsFromJson: Could not create storage node for markup type: " << markupType);
+      continue;
+      }
+
+    vtkMRMLMarkupsNode* markupsNode = storageNode->AddNewMarkupsNodeFromFile(fileName, nodeName, markupIndex);
+    if (!importedMarkupsNode)
+      {
+      importedMarkupsNode = markupsNode;
+      }
+    if (!markupsNode)
+      {
+      this->GetMRMLScene()->RemoveNode(storageNode);
+      }
+    }
+
+  if (!importedMarkupsNode)
     {
     return nullptr;
     }
 
-  return markupsNode->GetID();
+  return importedMarkupsNode->GetID();
 }
 
 //---------------------------------------------------------------------------
@@ -1470,4 +1499,28 @@ bool vtkSlicerMarkupsLogic::GetBestFitPlane(vtkMRMLMarkupsNode* curveNode, vtkPl
     return false;
     }
   return vtkAddonMathUtilities::FitPlaneToPoints(curvePointsWorld, plane);
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerMarkupsLogic::RegisterMarkupTypeStorageNode(std::string markupType, std::string storageNodeClassName)
+{
+  this->MarkupTypeStorageNodes[markupType] = storageNodeClassName;
+}
+
+//---------------------------------------------------------------------------
+std::string vtkSlicerMarkupsLogic::GetClassNameForMarkupType(std::string markupType)
+{
+  auto markupStorageNodeIt = this->MarkupTypeStorageNodes.find(markupType);
+  if (markupStorageNodeIt == this->MarkupTypeStorageNodes.end())
+    {
+    return "";
+    }
+  return markupStorageNodeIt->second;
+}
+
+
+//---------------------------------------------------------------------------
+vtkMRMLMarkupsJsonStorageNode* vtkSlicerMarkupsLogic::AddNewStorageNodeForMarkupType(std::string markupType)
+{
+  return vtkMRMLMarkupsJsonStorageNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass(this->GetClassNameForMarkupType(markupType)));
 }
