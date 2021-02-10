@@ -371,7 +371,7 @@ void qSlicerExtensionsRestoreWidgetPrivate
     else
       {
       itemDescription = qSlicerExtensionsRestoreWidget::tr(
-            "not compatible with current Slicer version (was last used in Slicer version %1)").arg(usedLastInRevision);
+            "not found for current Slicer version (was last used in Slicer version %1)").arg(usedLastInRevision);
       }
 
     extensionItem->setData(qSlicerRestoreExtensions::IdRole, currentInfo.value("ExtensionId").toString());
