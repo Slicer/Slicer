@@ -25,6 +25,9 @@
 
 namespace
 {
+  // This message type is chosen arbitrary and used only inside this class
+  // (this event is chosen because it has a name that is remotely related
+  // to separation between groups of messages, and unlikely to be used otherwise).
   const int SEPARATOR_MESSAGE_TYPE = vtkCommand::PropertyModifiedEvent;
 }
 
