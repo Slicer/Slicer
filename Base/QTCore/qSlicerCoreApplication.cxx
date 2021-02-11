@@ -262,7 +262,7 @@ void qSlicerCoreApplicationPrivate::init()
     {
     q->setEnvironmentVariable(key, envVars.value(key));
     }
-  // Path environment variables (includes PATH and/or (DY)LD_LIBRARY_PATH)
+  // Path environment variables (includes PATH, (DY)LD_LIBRARY_PATH and variables like PYTHONPATH)
   QHash<QString, QStringList> pathsEnvVars = appLauncherSettings.pathsEnvVars();
   foreach(const QString& key, pathsEnvVars.keys())
     {
