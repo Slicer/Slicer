@@ -56,7 +56,6 @@ static const double INTERACTION_HANDLE_RADIUS = 0.0625;
 static const double INTERACTION_HANDLE_DIAMETER = INTERACTION_HANDLE_RADIUS * 2.0;
 static const double INTERACTION_HANDLE_ROTATION_ARC_TUBE_RADIUS = INTERACTION_HANDLE_RADIUS * 0.4;
 static const double INTERACTION_HANDLE_ROTATION_ARC_RADIUS = 0.80;
-static const double INTERACTION_HANDLE_SCALE_FACTOR = 3.5;
 
 //----------------------------------------------------------------------
 vtkSlicerMarkupsWidgetRepresentation::ControlPointsPipeline::ControlPointsPipeline()
@@ -839,7 +838,7 @@ int vtkSlicerMarkupsWidgetRepresentation::RenderOpaqueGeometry(vtkViewport* view
   if (this->InteractionPipeline && this->InteractionPipeline->Actor->GetVisibility())
     {
     this->InteractionPipeline->UpdateHandleColors();
-    double interactionWidgetScale = INTERACTION_HANDLE_SCALE_FACTOR * this->ControlPointSize;
+    double interactionWidgetScale = this->InteractionPipeline->InteractionHandleScaleFactor * this->ControlPointSize;
     this->InteractionPipeline->SetWidgetScale(interactionWidgetScale);
     count += this->InteractionPipeline->Actor->RenderOpaqueGeometry(viewport);
     }

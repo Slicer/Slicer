@@ -761,7 +761,8 @@ int vtkSlicerMarkupsWidgetRepresentation2D::RenderOpaqueGeometry(
   if (this->InteractionPipeline && this->InteractionPipeline->Actor->GetVisibility())
     {
     this->InteractionPipeline->UpdateHandleColors();
-    double interactionWidgetScale = 7.0 * this->ControlPointSize * this->ViewScaleFactorMmPerPixel;
+    double interactionWidgetScale = this->InteractionPipeline->InteractionHandleScaleFactor *
+      this->ControlPointSize * this->ViewScaleFactorMmPerPixel;
     this->InteractionPipeline->SetWidgetScale(interactionWidgetScale);
     count += this->InteractionPipeline->Actor->RenderOpaqueGeometry(viewport);
     }

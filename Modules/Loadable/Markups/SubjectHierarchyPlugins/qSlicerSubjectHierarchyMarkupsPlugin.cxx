@@ -75,6 +75,7 @@ public:
   QAction* RenamePointAction;
   QAction* DeletePointAction;
   QAction* ToggleSelectPointAction;
+  QAction* ToggleCurrentItemHandleInteractive;
   QAction* ToggleHandleInteractive;
 
   QVariantMap ViewMenuEventData;
@@ -89,6 +90,7 @@ qSlicerSubjectHierarchyMarkupsPluginPrivate::qSlicerSubjectHierarchyMarkupsPlugi
 , RenamePointAction(nullptr)
 , DeletePointAction(nullptr)
 , ToggleSelectPointAction(nullptr)
+, ToggleCurrentItemHandleInteractive(nullptr)
 , ToggleHandleInteractive(nullptr)
 {
 }
@@ -109,6 +111,11 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
   this->ToggleSelectPointAction = new QAction("Toggle select point", q);
   this->ToggleSelectPointAction->setObjectName("ToggleSelectPointAction");
   QObject::connect(this->ToggleSelectPointAction, SIGNAL(triggered()), q, SLOT(toggleSelectPoint()));
+
+  this->ToggleCurrentItemHandleInteractive = new QAction("Interaction handles visible");
+  this->ToggleCurrentItemHandleInteractive->setObjectName("ToggleCurrentItemHandleInteractive");
+  this->ToggleCurrentItemHandleInteractive->setCheckable(true);
+  QObject::connect(this->ToggleCurrentItemHandleInteractive, SIGNAL(triggered()), q, SLOT(toggleCurrentItemHandleInteractive()));
 
   this->ToggleHandleInteractive = new QAction("Interaction handles visible");
   this->ToggleHandleInteractive->setObjectName("ToggleHandleInteractive");
@@ -430,8 +437,10 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
     d->ViewMenuEventData["NodeID"] = QVariant(associatedNode->GetID());
 
     int componentType = d->ViewMenuEventData["ComponentType"].toInt();
-    bool handlesSelected = componentType == vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle ||
-      componentType == vtkMRMLMarkupsDisplayNode::ComponentRotationHandle;
+    bool handlesSelected =
+      componentType == vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle ||
+      componentType == vtkMRMLMarkupsDisplayNode::ComponentRotationHandle ||
+      componentType == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle;
 
     d->RenamePointAction->setVisible(!handlesSelected);
     d->DeletePointAction->setVisible(!handlesSelected);
@@ -442,6 +451,46 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
     if (displayNode)
       {
       d->ToggleHandleInteractive->setChecked(displayNode->GetHandlesInteractive());
+      }
+    }
+}
+
+//-----------------------------------------------------------------------------
+QList<QAction*> qSlicerSubjectHierarchyMarkupsPlugin::visibilityContextMenuActions() const
+{
+  Q_D(const qSlicerSubjectHierarchyMarkupsPlugin);
+
+  QList<QAction*> actions;
+  actions << d->ToggleCurrentItemHandleInteractive;
+  return actions;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyMarkupsPlugin::showVisibilityContextMenuActionsForItem(vtkIdType itemID)
+{
+  Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
+
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid input item";
+    return;
+    }
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+
+  // Markup
+  vtkMRMLMarkupsNode* associatedNode = vtkMRMLMarkupsNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  if (associatedNode)
+    {
+    vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(associatedNode->GetDisplayNode());
+    d->ToggleCurrentItemHandleInteractive->setVisible(displayNode != nullptr);
+    if (displayNode)
+      {
+      d->ToggleCurrentItemHandleInteractive->setChecked(displayNode->GetHandlesInteractive());
       }
     }
 }
@@ -588,5 +637,42 @@ void qSlicerSubjectHierarchyMarkupsPlugin::toggleHandleInteractive()
     qCritical() << Q_FUNC_INFO << ": Failed to get display node for " << nodeID;
     return;
     }
+  displayNode->SetHandlesInteractive(!displayNode->GetHandlesInteractive());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyMarkupsPlugin::toggleCurrentItemHandleInteractive()
+{
+  Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
+
+  // Get currently selected node and scene
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+    }
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (!currentItemID)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current subject hierarchy item";
+    return;
+    }
+
+  vtkMRMLMarkupsNode* markupNode = vtkMRMLMarkupsNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
+  if (!markupNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid markup node";
+    return;
+    }
+
+  markupNode->CreateDefaultDisplayNodes();
+  vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(markupNode->GetDisplayNode());
+  if (!displayNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid display node";
+    return;
+    }
+
   displayNode->SetHandlesInteractive(!displayNode->GetHandlesInteractive());
 }

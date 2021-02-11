@@ -220,8 +220,9 @@ protected:
     vtkSmartPointer<vtkActor2D>                         Actor;
     vtkSmartPointer<vtkProperty2D>                      Property;
 
-    double                                              StartFadeAngle;
-    double                                              EndFadeAngle;
+    double                                              StartFadeAngle{30};
+    double                                              EndFadeAngle{20};
+    double                                              InteractionHandleScaleFactor{7.0};
 
     virtual void InitializePipeline();
     virtual void CreateRotationHandles();

@@ -21,6 +21,7 @@
 #include "vtkMRMLMarkupsROINode.h"
 
 // MRML includes
+#include <vtkMRMLMarkupsROIDisplayNode.h>
 #include <vtkMRMLMarkupsROIJsonStorageNode.h>
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTransformNode.h"
@@ -108,6 +109,30 @@ vtkMRMLStorageNode* vtkMRMLMarkupsROINode::CreateDefaultStorageNode()
     }
   return vtkMRMLStorageNode::SafeDownCast(
     scene->CreateNodeByClass("vtkMRMLMarkupsROIJsonStorageNode"));
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsROINode::CreateDefaultDisplayNodes()
+{
+  if (this->GetDisplayNode() != nullptr &&
+    vtkMRMLMarkupsROIDisplayNode::SafeDownCast(this->GetDisplayNode()) != nullptr)
+    {
+    // display node already exists
+    return;
+    }
+  if (this->GetScene() == nullptr)
+    {
+    vtkErrorMacro("vtkMRMLMarkupsROINode::CreateDefaultDisplayNodes failed: scene is invalid");
+    return;
+    }
+  vtkMRMLMarkupsROIDisplayNode* dispNode = vtkMRMLMarkupsROIDisplayNode::SafeDownCast(
+    this->GetScene()->AddNewNodeByClass("vtkMRMLMarkupsROIDisplayNode"));
+  if (!dispNode)
+    {
+    vtkErrorMacro("vtkMRMLMarkupsROINode::CreateDefaultDisplayNodes failed: scene failed to instantiate a vtkMRMLMarkupsROIDisplayNode node");
+    return;
+    }
+  this->SetAndObserveDisplayNodeID(dispNode->GetID());
 }
 
 //----------------------------------------------------------------------------
@@ -238,7 +263,7 @@ void vtkMRMLMarkupsROINode::ProcessMRMLEvents(vtkObject* caller, unsigned long e
     this->UpdateInteractionHandleToWorldMatrix();
     this->Modified();
     }
-  else if (caller = this->InteractionHandleToWorldMatrix)
+  else if (caller == this->InteractionHandleToWorldMatrix.GetPointer())
     {
     vtkNew<vtkMatrix4x4> worldToLocalTransform;
     if (this->GetParentTransformNode())

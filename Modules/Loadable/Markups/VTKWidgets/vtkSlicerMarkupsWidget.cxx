@@ -615,7 +615,10 @@ bool vtkSlicerMarkupsWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventD
 //-------------------------------------------------------------------------
 bool vtkSlicerMarkupsWidget::ProcessWidgetMenu(vtkMRMLInteractionEventData* eventData)
 {
-  if ((this->WidgetState != WidgetStateOnWidget && this->WidgetState != WidgetStateOnTranslationHandle && this->WidgetState != WidgetStateOnRotationHandle)
+  if ((this->WidgetState != WidgetStateOnWidget &&
+       this->WidgetState != WidgetStateOnTranslationHandle &&
+       this->WidgetState != WidgetStateOnRotationHandle &&
+       this->WidgetState != WidgetStateOnScaleHandle)
     || !this->MousePressedSinceMarkupPlace)
     {
     return false;

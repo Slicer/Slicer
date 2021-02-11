@@ -24,6 +24,8 @@
 #include <vtkCubeSource.h>
 #include <vtkDoubleArray.h>
 #include <vtkGlyph3D.h>
+#include <vtkOutlineFilter.h>
+#include <vtkPassThroughFilter.h>
 #include <vtkPointData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
@@ -46,17 +48,54 @@ vtkStandardNewMacro(vtkSlicerROIRepresentation3D);
 vtkSlicerROIRepresentation3D::vtkSlicerROIRepresentation3D()
 {
   this->ROISource = nullptr;
+
+  this->ROIPipelineInputFilter = vtkSmartPointer<vtkPassThroughFilter>::New();
+
+  this->ROIToWorldTransform = vtkSmartPointer<vtkTransform>::New();
+  this->ROITransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   this->ROITransformFilter->SetTransform(this->ROIToWorldTransform);
+  this->ROITransformFilter->SetInputConnection(this->ROIPipelineInputFilter->GetOutputPort());
+
+  this->ROIMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->ROIMapper->SetInputConnection(this->ROITransformFilter->GetOutputPort());
+  this->ROIProperty = vtkSmartPointer<vtkProperty>::New();
   this->ROIProperty->DeepCopy(this->GetControlPointsPipeline(Selected)->Property);
+  this->ROIActor = vtkSmartPointer<vtkActor>::New();
   this->ROIActor->SetMapper(this->ROIMapper);
   this->ROIActor->SetProperty(this->ROIProperty);
 
+  this->ROIOccludedMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->ROIOccludedMapper->SetInputConnection(this->ROITransformFilter->GetOutputPort());
+  this->ROIOccludedProperty = vtkSmartPointer<vtkProperty>::New();
   this->ROIOccludedProperty->DeepCopy(this->ROIProperty);
+  this->ROIOccludedActor = vtkSmartPointer<vtkActor>::New();
   this->ROIOccludedActor->SetMapper(this->ROIOccludedMapper);
   this->ROIOccludedActor->SetProperty(this->ROIOccludedProperty);
-  this->ROIOccludedActor->SetMapper(this->ROIOccludedMapper);
+
+  this->ROIOutlineFilter = vtkSmartPointer<vtkOutlineFilter>::New();
+  this->ROIOutlineFilter->SetInputConnection(this->ROIPipelineInputFilter->GetOutputPort());
+
+  this->ROIOutlineTransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  this->ROIOutlineTransformFilter->SetTransform(this->ROIToWorldTransform);
+  this->ROIOutlineTransformFilter->SetInputConnection(this->ROIOutlineFilter->GetOutputPort());
+
+  this->ROIOutlineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  this->ROIOutlineMapper->SetInputConnection(this->ROIOutlineTransformFilter->GetOutputPort());
+  this->ROIOutlineProperty = vtkSmartPointer<vtkProperty>::New();
+  this->ROIOutlineProperty->DeepCopy(this->GetControlPointsPipeline(Selected)->Property);
+  this->ROIOutlineActor = vtkSmartPointer<vtkActor>::New();
+  this->ROIOutlineActor->SetMapper(this->ROIOutlineMapper);
+  this->ROIOutlineActor->SetProperty(this->ROIOutlineProperty);
+
+  this->ROIOutlineOccludedMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  this->ROIOutlineOccludedMapper->SetInputConnection(this->ROIOutlineTransformFilter->GetOutputPort());
+  this->ROIOutlineOccludedProperty = vtkSmartPointer<vtkProperty>::New();
+  this->ROIOutlineOccludedProperty->DeepCopy(this->ROIOutlineProperty);
+  this->ROIOutlineOccludedActor = vtkSmartPointer<vtkActor>::New();
+  this->ROIOutlineOccludedActor->SetMapper(this->ROIOutlineOccludedMapper);
+  this->ROIOutlineOccludedActor->SetProperty(this->ROIOutlineOccludedProperty);
+  this->ROIOutlineOccludedActor->SetMapper(this->ROIOutlineOccludedMapper);
+
 }
 
 //----------------------------------------------------------------------
@@ -107,6 +146,16 @@ void vtkSlicerROIRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned 
   this->ROIOccludedProperty->SetOpacity(opacity * fillOpacity * occludedOpacity);
 
   this->UpdateRelativeCoincidentTopologyOffsets(this->ROIMapper, this->ROIOccludedMapper);
+
+  double outlineOpacity = this->MarkupsDisplayNode->GetOutlineVisibility()
+    ? opacity * this->MarkupsDisplayNode->GetOutlineOpacity() : 0.0;
+  this->ROIOutlineProperty->DeepCopy(this->GetControlPointsPipeline(controlPointType)->Property);
+  this->ROIOutlineProperty->SetOpacity(outlineOpacity);
+
+  this->ROIOutlineOccludedProperty->DeepCopy(this->ROIOutlineProperty);
+  this->ROIOutlineOccludedProperty->SetOpacity(opacity * fillOpacity * occludedOpacity);
+
+  this->UpdateRelativeCoincidentTopologyOffsets(this->ROIOutlineMapper, this->ROIOutlineOccludedMapper);
 }
 
 //----------------------------------------------------------------------
@@ -115,11 +164,11 @@ void vtkSlicerROIRepresentation3D::SetROISource(vtkPolyDataAlgorithm* roiSource)
   this->ROISource = roiSource;
   if (this->ROISource)
     {
-    this->ROITransformFilter->SetInputConnection(roiSource->GetOutputPort());
+    this->ROIPipelineInputFilter->SetInputConnection(roiSource->GetOutputPort());
     }
   else
     {
-    this->ROITransformFilter->RemoveAllInputConnections(0);
+    this->ROIPipelineInputFilter->RemoveAllInputConnections(0);
     }
 }
 
@@ -150,6 +199,8 @@ void vtkSlicerROIRepresentation3D::GetActors(vtkPropCollection *pc)
 {
   this->ROIActor->GetActors(pc);
   this->ROIOccludedActor->GetActors(pc);
+  this->ROIOutlineActor->GetActors(pc);
+  this->ROIOutlineOccludedActor->GetActors(pc);
   this->Superclass::GetActors(pc);
 }
 
@@ -159,6 +210,8 @@ void vtkSlicerROIRepresentation3D::ReleaseGraphicsResources(
 {
   this->ROIActor->ReleaseGraphicsResources(win);
   this->ROIOccludedActor->ReleaseGraphicsResources(win);
+  this->ROIOutlineActor->ReleaseGraphicsResources(win);
+  this->ROIOutlineOccludedActor->ReleaseGraphicsResources(win);
   this->Superclass::ReleaseGraphicsResources(win);
 }
 
@@ -173,6 +226,14 @@ int vtkSlicerROIRepresentation3D::RenderOverlay(vtkViewport *viewport)
   if (this->ROIOccludedActor->GetVisibility())
     {
     count += this->ROIOccludedActor->RenderOverlay(viewport);
+    }
+  if (this->ROIOutlineActor->GetVisibility())
+    {
+    count += this->ROIOutlineActor->RenderOverlay(viewport);
+    }
+  if (this->ROIOutlineOccludedActor->GetVisibility())
+    {
+    count += this->ROIOutlineOccludedActor->RenderOverlay(viewport);
     }
   count += this->Superclass::RenderOverlay(viewport);
   return count;
@@ -190,6 +251,14 @@ int vtkSlicerROIRepresentation3D::RenderOpaqueGeometry(
   if (this->ROIOccludedActor->GetVisibility())
     {
     count += this->ROIOccludedActor->RenderOpaqueGeometry(viewport);
+    }
+  if (this->ROIOutlineActor->GetVisibility())
+    {
+    count += this->ROIOutlineActor->RenderOpaqueGeometry(viewport);
+    }
+  if (this->ROIOutlineOccludedActor->GetVisibility())
+    {
+    count += this->ROIOutlineOccludedActor->RenderOpaqueGeometry(viewport);
     }
   count += this->Superclass::RenderOpaqueGeometry(viewport);
   return count;
@@ -210,6 +279,16 @@ int vtkSlicerROIRepresentation3D::RenderTranslucentPolygonalGeometry(
     this->ROIOccludedActor->SetPropertyKeys(this->GetPropertyKeys());
     count += this->ROIOccludedActor->RenderTranslucentPolygonalGeometry(viewport);
     }
+  if (this->ROIOutlineActor->GetVisibility())
+    {
+    this->ROIOutlineActor->SetPropertyKeys(this->GetPropertyKeys());
+    count += this->ROIOutlineActor->RenderTranslucentPolygonalGeometry(viewport);
+    }
+  if (this->ROIOutlineOccludedActor->GetVisibility())
+    {
+    this->ROIOutlineOccludedActor->SetPropertyKeys(this->GetPropertyKeys());
+    count += this->ROIOutlineOccludedActor->RenderTranslucentPolygonalGeometry(viewport);
+    }
   count += this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
   return count;
 }
@@ -226,6 +305,14 @@ vtkTypeBool vtkSlicerROIRepresentation3D::HasTranslucentPolygonalGeometry()
     return true;
     }
   if (this->ROIOccludedActor->GetVisibility() && this->ROIOccludedActor->HasTranslucentPolygonalGeometry())
+    {
+    return true;
+    }
+  if (this->ROIOutlineActor->GetVisibility() && this->ROIOutlineActor->HasTranslucentPolygonalGeometry())
+    {
+    return true;
+    }
+  if (this->ROIOutlineOccludedActor->GetVisibility() && this->ROIOutlineOccludedActor->HasTranslucentPolygonalGeometry())
     {
     return true;
     }
