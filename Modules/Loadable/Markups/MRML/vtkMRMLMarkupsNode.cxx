@@ -19,14 +19,13 @@
 
 // MRML includes
 #include "vtkCurveGenerator.h"
+#include <vtkEventBroker.h>
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsStorageNode.h"
 #include "vtkMRMLStaticMeasurement.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLUnitNode.h"
-
-// Slicer MRML includes
 #include "vtkMRMLScene.h"
 
 // vtkAddon includes
@@ -93,6 +92,7 @@ vtkMRMLMarkupsNode::vtkMRMLMarkupsNode()
   this->ContentModifiedEvents->InsertNextValue(vtkMRMLMarkupsNode::PointModifiedEvent);
 
   this->Measurements = vtkCollection::New();
+  this->Measurements->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
 }
 
 //----------------------------------------------------------------------------
@@ -103,6 +103,7 @@ vtkMRMLMarkupsNode::~vtkMRMLMarkupsNode()
 
   if (this->Measurements)
     {
+    this->Measurements->RemoveObserver(this->MRMLCallbackCommand);
     this->Measurements->Delete();
     this->Measurements = nullptr;
     }
@@ -236,6 +237,23 @@ void vtkMRMLMarkupsNode::ProcessMRMLEvents(vtkObject *caller,
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
     this->StorableModifiedTime.Modified();
     this->Modified();
+    }
+  else if (caller == this->Measurements)
+    {
+    vtkEventBroker* broker = vtkEventBroker::GetInstance();
+    vtkCollectionSimpleIterator it;
+    vtkObject* measurementObject = nullptr;
+    for (this->Measurements->InitTraversal(it); (measurementObject = this->Measurements->GetNextItemAsObject(it)) ;)
+      {
+      if (!broker->GetObservationExist(measurementObject, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand))
+        {
+        broker->AddObservation(measurementObject, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand);
+        }
+      }
+    }
+  else if (caller->IsA("vtkMRMLMeasurement"))
+    {
+    this->UpdateMeasurements();
     }
   Superclass::ProcessMRMLEvents(caller, event, callData);
 }
