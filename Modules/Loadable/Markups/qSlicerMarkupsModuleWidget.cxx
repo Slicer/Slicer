@@ -2925,7 +2925,4 @@ void qSlicerMarkupsModuleWidget::onMeasurementEnabledCheckboxToggled(bool on)
       currentMeasurement->SetEnabled(on);
       }
     }
-
-  // Make sure the subject hierarchy description is updated as well
-  d->MarkupsNode->UpdateMeasurements();
 }
