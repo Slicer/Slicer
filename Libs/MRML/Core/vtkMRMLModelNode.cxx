@@ -138,27 +138,10 @@ void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
-  os << indent << "\nUnstructured Grid:";
-  if (vtkUnstructuredGrid* unstructuredGrid = this->GetUnstructuredGrid())
-    {
-    os << "\n";
-    unstructuredGrid->PrintSelf(os, indent.GetNextIndent());
-    }
-  else
-    {
-    os << " none";
-    }
-
-  os << indent << "\nPoly Data:";
-  if (vtkPolyData* polyData = this->GetPolyData())
-    {
-    os << "\n";
-    polyData->PrintSelf(os, indent.GetNextIndent());
-    }
-  else
-    {
-    os << " none";
-    }
+  vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintObjectMacro(UnstructuredGrid);
+  vtkMRMLPrintObjectMacro(PolyData);
+  vtkMRMLPrintEndMacro();
 }
 
 //----------------------------------------------------------------------------

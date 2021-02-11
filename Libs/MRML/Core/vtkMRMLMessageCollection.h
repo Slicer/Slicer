@@ -107,9 +107,12 @@ public:
   virtual std::string GetNthMessageText(int index) const;
 
   /// Append a message to the message vector
+  /// To mark a message as error or warning, set messageType to
+  /// vtkCommand::ErrorEvent or vtkCommand::WarningEvent.
   virtual void AddMessage(unsigned long messageType, const std::string &messageText);
 
-  /// Add a separator, for example to create message groups
+  /// Add a separator, for example to create message groups.
+  /// (internally vtkCommand::PropertyModifiedEvent is used as messageType)
   virtual void AddSeparator();
 
   /// Copy all messages from another collection.
@@ -155,6 +158,5 @@ protected:
   vtkSmartPointer<vtkCallbackCommand> CallbackCommand;
   std::vector<Message> Messages;
 };
-
 
 #endif
