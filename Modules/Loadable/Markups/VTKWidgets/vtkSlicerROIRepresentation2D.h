@@ -88,35 +88,20 @@ protected:
 
   void SetROISource(vtkPolyDataAlgorithm* roiSource);
 
-  vtkSmartPointer<vtkPolyDataAlgorithm> ROISource;
-  vtkSmartPointer<vtkTransformPolyDataFilter> ROITransformFilter;
+  vtkSmartPointer<vtkPolyDataAlgorithm>       ROISource;
   vtkSmartPointer<vtkTransform>               ROIToWorldTransform;
-  vtkSmartPointer<vtkContourTriangulator>     ROIIntersectionTriangulator;
   vtkSmartPointer<vtkTransformPolyDataFilter> ROIToWorldTransformFilter;
-  vtkSmartPointer<vtkPolyDataMapper2D> ROIMapper;
-  vtkSmartPointer<vtkProperty2D> ROIProperty;
-  vtkSmartPointer<vtkActor2D> ROIActor;
-
-  vtkSmartPointer<vtkClipPolyData> OutlineClipperSlicePlane;
-  vtkSmartPointer<vtkClipPolyData> OutlineClipperStartFadeNear;
-  vtkSmartPointer<vtkClipPolyData> OutlineClipperEndFadeNear;
-  vtkSmartPointer<vtkClipPolyData> OutlineClipperStartFadeFar;
-  vtkSmartPointer<vtkClipPolyData> OutlineClipperEndFadeFar;
-  vtkSmartPointer<vtkAppendPolyData> OutlineAppend;
-  vtkSmartPointer<vtkTransformPolyDataFilter> OutlineROIWorldToSliceTransformFilter;
-  vtkSmartPointer<vtkTransformPolyDataFilter> ROIWorldToSliceTransformFilter;
-  vtkSmartPointer<vtkOutlineFilter> OutlineFilter;
-
-  vtkSmartPointer<vtkAppendPolyData> ROIAppend;
-
-  vtkSmartPointer<vtkSampleImplicitFunctionFilter> OutlineDistanceFilter;
-
-  vtkSmartPointer<vtkCutter> ROIOutlineCutter;
+  vtkSmartPointer<vtkCutter>                  ROIOutlineCutter;
   vtkSmartPointer<vtkTransformPolyDataFilter> ROIOutlineWorldToSliceTransformFilter;
+  vtkSmartPointer<vtkContourTriangulator>     ROIIntersectionTriangulator;
+
+  vtkSmartPointer<vtkPolyDataMapper2D> ROIMapper;
+  vtkSmartPointer<vtkProperty2D>       ROIProperty;
+  vtkSmartPointer<vtkActor2D>          ROIActor;
+
   vtkSmartPointer<vtkPolyDataMapper2D> ROIOutlineMapper;
-  vtkSmartPointer<vtkDiscretizableColorTransferFunction> OutlineColorMap;
-  vtkSmartPointer<vtkProperty2D> ROIOutlineProperty;
-  vtkSmartPointer<vtkActor2D> ROIOutlineActor;
+  vtkSmartPointer<vtkProperty2D>       ROIOutlineProperty;
+  vtkSmartPointer<vtkActor2D>          ROIOutlineActor;
 
   class MarkupsInteractionPipelineROI2D : public vtkSlicerROIRepresentation3D::MarkupsInteractionPipelineROI
   {

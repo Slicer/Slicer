@@ -20,51 +20,32 @@
 
 // VTK includes
 #include <vtkActor2D.h>
-#include <vtkAppendPolyData.h>
-#include <vtkClipPolyData.h>
 #include <vtkContourTriangulator.h>
-#include <vtkDiscretizableColorTransferFunction.h>
+#include <vtkCubeSource.h>
+#include <vtkCutter.h>
 #include <vtkDoubleArray.h>
-#include <vtkGlyph2D.h>
-#include <vtkLine.h>
 #include <vtkMath.h>
 #include <vtkMatrix4x4.h>
 #include <vtkObjectFactory.h>
 #include <vtkOutlineFilter.h>
-#include <vtkParametricEllipsoid.h>
-#include <vtkParametricFunctionSource.h>
-#include <vtkPiecewiseFunction.h>
 #include <vtkPlane.h>
-#include <vtkPlaneCutter.h>
-#include <vtkPlaneSource.h>
 #include <vtkPoints.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper2D.h>
 #include <vtkProperty2D.h>
-#include <vtkRenderer.h>
-#include <vtkSampleImplicitFunctionFilter.h>
-#include <vtkSlicerROIRepresentation2D.h>
-#include <vtkTextActor.h>
-#include <vtkTextProperty.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
+
+// Markups VTK widgets includes
+#include <vtkSlicerROIRepresentation2D.h>
 
 // MRML includes
 #include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsROINode.h"
-#include "vtkMRMLProceduralColorNode.h"
-
-#include "vtkMRMLMarkupsPlaneNode.h"
-
-#include "vtkMarkupsGlyphSource2D.h"
-
-#include <vtkCutter.h>
 
 vtkStandardNewMacro(vtkSlicerROIRepresentation2D);
-
-#include <vtkCubeSource.h>
 
 //----------------------------------------------------------------------
 vtkSlicerROIRepresentation2D::vtkSlicerROIRepresentation2D()
@@ -72,78 +53,19 @@ vtkSlicerROIRepresentation2D::vtkSlicerROIRepresentation2D()
   this->ROISource = nullptr;
 
   this->ROIToWorldTransform = vtkSmartPointer<vtkTransform>::New();
-  this->ROITransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  this->ROITransformFilter->SetTransform(this->ROIToWorldTransform);
+  this->ROIToWorldTransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  this->ROIToWorldTransformFilter->SetTransform(this->ROIToWorldTransform);
 
   this->ROIOutlineCutter = vtkSmartPointer<vtkCutter>::New();
-  this->ROIOutlineCutter->SetInputConnection(this->ROITransformFilter->GetOutputPort());
+  this->ROIOutlineCutter->SetInputConnection(this->ROIToWorldTransformFilter->GetOutputPort());
   this->ROIOutlineCutter->SetCutFunction(this->SlicePlane);
 
   this->ROIOutlineWorldToSliceTransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   this->ROIOutlineWorldToSliceTransformFilter->SetInputConnection(this->ROIOutlineCutter->GetOutputPort());
   this->ROIOutlineWorldToSliceTransformFilter->SetTransform(this->WorldToSliceTransform);
 
-  this->OutlineFilter = vtkSmartPointer<vtkOutlineFilter>::New();
-
-  this->ROIToWorldTransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  this->ROIToWorldTransformFilter->SetInputConnection(this->OutlineFilter->GetOutputPort());
-  this->ROIToWorldTransformFilter->SetTransform(this->ROIToWorldTransform);
-
-  this->OutlineClipperSlicePlane = vtkSmartPointer<vtkClipPolyData>::New();
-  this->OutlineClipperSlicePlane->SetInputConnection(this->ROIToWorldTransformFilter->GetOutputPort());
-  this->OutlineClipperSlicePlane->SetClipFunction(this->SlicePlane);
-  this->OutlineClipperSlicePlane->GenerateClippedOutputOn();
-
-  this->OutlineClipperStartFadeNear = vtkSmartPointer<vtkClipPolyData>::New();
-  this->OutlineClipperStartFadeNear->SetInputConnection(this->OutlineClipperSlicePlane->GetOutputPort(0));
-  this->OutlineClipperStartFadeNear->SetClipFunction(this->SlicePlane);
-  this->OutlineClipperStartFadeNear->GenerateClippedOutputOn();
-
-  this->OutlineClipperEndFadeNear = vtkSmartPointer<vtkClipPolyData>::New();
-  this->OutlineClipperEndFadeNear->SetInputConnection(this->OutlineClipperStartFadeNear->GetOutputPort(0));
-  this->OutlineClipperEndFadeNear->SetClipFunction(this->SlicePlane);
-  this->OutlineClipperEndFadeNear->GenerateClippedOutputOn();
-
-  this->OutlineClipperStartFadeFar = vtkSmartPointer<vtkClipPolyData>::New();
-  this->OutlineClipperStartFadeFar->SetInputConnection(this->OutlineClipperSlicePlane->GetOutputPort(1));
-  this->OutlineClipperStartFadeFar->SetClipFunction(this->SlicePlane);
-  this->OutlineClipperStartFadeFar->GenerateClippedOutputOn();
-
-  this->OutlineClipperEndFadeFar = vtkSmartPointer<vtkClipPolyData>::New();
-  this->OutlineClipperEndFadeFar->SetInputConnection(this->OutlineClipperStartFadeFar->GetOutputPort(1));
-  this->OutlineClipperEndFadeFar->SetClipFunction(this->SlicePlane);
-  this->OutlineClipperEndFadeFar->GenerateClippedOutputOn();
-
-  this->OutlineAppend = vtkSmartPointer<vtkAppendPolyData>::New();
-  this->OutlineAppend->AddInputConnection(this->OutlineClipperStartFadeNear->GetOutputPort(1));
-  this->OutlineAppend->AddInputConnection(this->OutlineClipperEndFadeNear->GetOutputPort(0));
-  this->OutlineAppend->AddInputConnection(this->OutlineClipperEndFadeNear->GetOutputPort(1));
-  this->OutlineAppend->AddInputConnection(this->OutlineClipperStartFadeFar->GetOutputPort(0));
-  this->OutlineAppend->AddInputConnection(this->OutlineClipperEndFadeFar->GetOutputPort(0));
-  this->OutlineAppend->AddInputConnection(this->OutlineClipperEndFadeFar->GetOutputPort(1));
-  this->OutlineAppend->AddInputConnection(this->ROIOutlineCutter->GetOutputPort());
-
-  this->OutlineROIWorldToSliceTransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  this->OutlineROIWorldToSliceTransformFilter->SetInputConnection(this->OutlineAppend->GetOutputPort());
-  this->OutlineROIWorldToSliceTransformFilter->SetTransform(this->ROIToWorldTransform);
-
-  this->ROIAppend = vtkSmartPointer<vtkAppendPolyData>::New();
-  this->ROIAppend->AddInputConnection(this->OutlineAppend->GetOutputPort());
-  this->ROIAppend->AddInputConnection(this->ROIOutlineCutter->GetOutputPort());
-
-  this->OutlineDistanceFilter = vtkSmartPointer<vtkSampleImplicitFunctionFilter>::New();
-  this->OutlineDistanceFilter->SetImplicitFunction(this->SlicePlane);
-  this->OutlineDistanceFilter->SetInputConnection(this->ROIAppend->GetOutputPort());
-
-  this->ROIWorldToSliceTransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  this->ROIWorldToSliceTransformFilter->SetInputConnection(this->OutlineDistanceFilter->GetOutputPort());
-  this->ROIWorldToSliceTransformFilter->SetTransform(this->WorldToSliceTransform);
-
-  this->OutlineColorMap = vtkSmartPointer<vtkDiscretizableColorTransferFunction>::New();
-
   this->ROIOutlineMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
-  this->ROIOutlineMapper->SetInputConnection(this->ROIWorldToSliceTransformFilter->GetOutputPort());
-  this->ROIOutlineMapper->SetLookupTable(this->OutlineColorMap);
+  this->ROIOutlineMapper->SetInputConnection(this->ROIOutlineWorldToSliceTransformFilter->GetOutputPort());
   this->ROIOutlineProperty = vtkSmartPointer<vtkProperty2D>::New();
   this->ROIOutlineProperty->DeepCopy(this->GetControlPointsPipeline(Unselected)->Property);
   this->ROIOutlineActor = vtkSmartPointer<vtkActor2D>::New();
@@ -195,28 +117,6 @@ void vtkSlicerROIRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned 
 
   this->ROIToWorldTransform->SetMatrix(roiNode->GetInteractionHandleToWorldMatrix());
 
-  // To avoid "No input data" error messages from vtkTransformPolyDataFilter, we need to check that the input is not empty.
-  this->ROIOutlineCutter->Update();
-  vtkPolyData* roiPolyData = vtkPolyData::SafeDownCast(this->ROISource->GetOutput());
-  vtkPolyData* outlinePolyData = this->ROIOutlineCutter->GetOutput();
-  if (roiPolyData && roiPolyData->GetNumberOfPoints() > 0 && outlinePolyData && outlinePolyData->GetNumberOfPoints() > 0)
-    {
-    this->ROIWorldToSliceTransformFilter->Update();
-    double sliceNormal_XY[4] = { 0.0, 0.0, 1.0, 0.0 };
-    double sliceNormal_World[4] = { 0, 0, 1, 0 };
-    vtkMatrix4x4* xyToRAS = this->GetSliceNode()->GetXYToRAS();
-    xyToRAS->MultiplyPoint(sliceNormal_XY, sliceNormal_World);
-    double sliceThicknessMm = vtkMath::Norm(sliceNormal_World);
-    double* scalarRange = ROIWorldToSliceTransformFilter->GetOutput()->GetScalarRange();
-    // If the closest point on the plane is further than a half-slice thickness, then hide the plane
-    if (scalarRange[0] > 0.5 * sliceThicknessMm || scalarRange[1] < -0.5 * sliceThicknessMm)
-      {
-      this->VisibilityOff();
-      return;
-      }
-    }
-  this->VisibilityOn();
-
   int controlPointType = Selected;
 
   double opacity = this->MarkupsDisplayNode->GetOpacity();
@@ -230,45 +130,6 @@ void vtkSlicerROIRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned 
     ? opacity * this->MarkupsDisplayNode->GetOutlineOpacity() : 0.0;
   this->ROIOutlineProperty->DeepCopy(this->GetControlPointsPipeline(controlPointType)->Property);
   this->ROIOutlineProperty->SetOpacity(outlineOpacity);
-
-  if (this->MarkupsDisplayNode->GetLineColorNode() && this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction())
-    {
-    // Update the line color mapping from the colorNode stored in the markups display node
-    this->ROIOutlineMapper->SetLookupTable(this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction());
-    }
-  else
-    {
-    // if there is no line color node, build the color mapping from few varibales
-    // (color, opacity, distance fading, saturation and hue offset) stored in the display node
-    this->UpdateDistanceColorMap(this->OutlineColorMap, this->ROIOutlineActor->GetProperty()->GetColor());
-    this->ROIOutlineMapper->SetLookupTable(this->OutlineColorMap);
-    }
-
-  vtkMRMLMarkupsDisplayNode* displayNode = this->GetMarkupsDisplayNode();
-
-  vtkNew<vtkPlane> planeStartFadeNear;
-  planeStartFadeNear->SetOrigin(this->SlicePlane->GetOrigin());
-  planeStartFadeNear->SetNormal(this->SlicePlane->GetNormal());
-  planeStartFadeNear->Push(displayNode->GetLineColorFadingStart());
-  this->OutlineClipperStartFadeNear->SetClipFunction(planeStartFadeNear);
-
-  vtkNew<vtkPlane> planeEndFadeNear;
-  planeEndFadeNear->SetOrigin(this->SlicePlane->GetOrigin());
-  planeEndFadeNear->SetNormal(this->SlicePlane->GetNormal());
-  planeEndFadeNear->Push(displayNode->GetLineColorFadingEnd());
-  this->OutlineClipperEndFadeNear->SetClipFunction(planeEndFadeNear);
-
-  vtkNew<vtkPlane> planeStartFadeFar;
-  planeStartFadeFar->SetOrigin(this->SlicePlane->GetOrigin());
-  planeStartFadeFar->SetNormal(this->SlicePlane->GetNormal());
-  planeStartFadeFar->Push(-1.0 * displayNode->GetLineColorFadingStart());
-  this->OutlineClipperStartFadeFar->SetClipFunction(planeStartFadeFar);
-
-  vtkNew<vtkPlane> planeEndFadeFar;
-  planeEndFadeFar->SetOrigin(this->SlicePlane->GetOrigin());
-  planeEndFadeFar->SetNormal(this->SlicePlane->GetNormal());
-  planeEndFadeFar->Push(-1.0 * displayNode->GetLineColorFadingEnd());
-  this->OutlineClipperEndFadeFar->SetClipFunction(planeEndFadeFar);
 }
 
 //----------------------------------------------------------------------
@@ -277,12 +138,11 @@ void vtkSlicerROIRepresentation2D::SetROISource(vtkPolyDataAlgorithm* roiSource)
   this->ROISource = roiSource;
   if (this->ROISource)
     {
-    this->ROITransformFilter->SetInputConnection(roiSource->GetOutputPort());
-    this->OutlineFilter->SetInputConnection(roiSource->GetOutputPort());
+    this->ROIToWorldTransformFilter->SetInputConnection(roiSource->GetOutputPort());
     }
   else
     {
-    this->ROITransformFilter->RemoveAllInputConnections(0);
+    this->ROIToWorldTransformFilter->RemoveAllInputConnections(0);
     }
 }
 
@@ -421,7 +281,17 @@ void vtkSlicerROIRepresentation2D::UpdateInteractionPipeline()
 {
   Superclass::UpdateInteractionPipeline();
   vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->GetMarkupsNode());
-  if (!roiNode || !this->MarkupsDisplayNode)
+  if (!roiNode || !this->MarkupsDisplayNode || !this->ROISource)
+    {
+    this->InteractionPipeline->Actor->SetVisibility(false);
+    return;
+    }
+
+  // To avoid "No input data" error messages from vtkTransformPolyDataFilter, we need to check that the input is not empty.
+  this->ROIOutlineCutter->Update();
+  vtkPolyData* roiPolyData = vtkPolyData::SafeDownCast(this->ROISource->GetOutput());
+  vtkPolyData* outlinePolyData = this->ROIOutlineCutter->GetOutput();
+  if ((roiPolyData && roiPolyData->GetNumberOfPoints() == 0) || (outlinePolyData && outlinePolyData->GetNumberOfPoints() == 0))
     {
     this->InteractionPipeline->Actor->SetVisibility(false);
     return;

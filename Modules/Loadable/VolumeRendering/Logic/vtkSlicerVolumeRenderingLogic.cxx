@@ -1090,6 +1090,7 @@ void vtkSlicerVolumeRenderingLogic::UpdateDisplayNodeFromVolumeNode(
       if (markupsDisplayNode)
         {
         markupsDisplayNode->SetHandlesInteractive(true);
+        markupsDisplayNode->SetFillVisibility(false);
         }
       // by default, show the ROI only if cropping is enabled
       markupsROINode->SetDisplayVisibility(displayNode->GetCroppingEnabled());

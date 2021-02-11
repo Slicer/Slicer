@@ -23,8 +23,8 @@ set(${KIT}_SRCS
   vtkMRML${MODULE_NAME}Node.cxx
   vtkMRML${MODULE_NAME}PlaneNode.cxx
   vtkMRML${MODULE_NAME}ROINode.cxx
+  vtkMRML${MODULE_NAME}ROIDisplayNode.cxx
   vtkMRML${MODULE_NAME}ROIJsonStorageNode.cxx
-  vtkMRML${MODULE_NAME}ROIJsonStorageNode.h
   vtkCurveGenerator.cxx
   vtkCurveGenerator.h
   vtkCurveMeasurementsCalculator.cxx

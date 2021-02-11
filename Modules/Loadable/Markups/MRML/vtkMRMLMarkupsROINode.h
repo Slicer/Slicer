@@ -159,6 +159,9 @@ public:
   /// Create default storage node or nullptr if does not have one
   vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
+  /// Create default storage node or nullptr if does not have one
+  void CreateDefaultDisplayNodes() override;
+
   ///
   /// Legacy vtkMRMLAnnotationROINode methods
   ///

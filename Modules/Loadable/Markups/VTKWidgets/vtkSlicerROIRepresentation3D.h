@@ -42,15 +42,15 @@ class vtkArrowSource;
 class vtkGlyph3DMapper;
 class vtkLookupTable;
 class vtkMRMLInteractionEventData;
+class vtkMRMLMarkupsROINode;
+class vtkOutlineFilter;
+class vtkPassThroughFilter;
 class vtkPlaneSource;
+class vtkPolyDataAlgorithm;
 class vtkPolyDataMapper;
 class vtkPolyData;
 class vtkTransformPolyDataFilter;
 class vtkTubeFilter;
-
-class vtkPolyDataAlgorithm;
-class vtkMRMLMarkupsROINode;
-
 
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerROIRepresentation3D : public vtkSlicerMarkupsWidgetRepresentation3D
 {
@@ -94,17 +94,31 @@ protected:
   void SetROISource(vtkPolyDataAlgorithm* roiSource);
 
   vtkSmartPointer<vtkPolyDataAlgorithm> ROISource;
-  vtkNew<vtkTransformPolyDataFilter>    ROITransformFilter;
-  vtkNew<vtkTransform>                  ROIToWorldTransform;
 
-  vtkNew<vtkPolyDataMapper>             ROIMapper;
-  vtkNew<vtkPolyDataMapper>             ROIOccludedMapper;
+  vtkSmartPointer<vtkPassThroughFilter> ROIPipelineInputFilter;
 
-  vtkNew<vtkActor>                      ROIActor;
-  vtkNew<vtkActor>                      ROIOccludedActor;
+  vtkSmartPointer<vtkTransformPolyDataFilter>    ROITransformFilter;
+  vtkSmartPointer<vtkTransform>                  ROIToWorldTransform;
 
-  vtkNew<vtkProperty>                   ROIProperty;
-  vtkNew<vtkProperty>                   ROIOccludedProperty;
+  vtkSmartPointer<vtkPolyDataMapper>             ROIMapper;
+  vtkSmartPointer<vtkProperty>                   ROIProperty;
+  vtkSmartPointer<vtkActor>                      ROIActor;
+
+  vtkSmartPointer<vtkPolyDataMapper>             ROIOccludedMapper;
+  vtkSmartPointer<vtkProperty>                   ROIOccludedProperty;
+  vtkSmartPointer<vtkActor>                      ROIOccludedActor;
+
+  vtkSmartPointer<vtkOutlineFilter>              ROIOutlineFilter;
+
+  vtkSmartPointer<vtkTransformPolyDataFilter>    ROIOutlineTransformFilter;
+
+  vtkSmartPointer<vtkPolyDataMapper>             ROIOutlineMapper;
+  vtkSmartPointer<vtkProperty>                   ROIOutlineProperty;
+  vtkSmartPointer<vtkActor>                      ROIOutlineActor;
+
+  vtkSmartPointer<vtkPolyDataMapper>             ROIOutlineOccludedMapper;
+  vtkSmartPointer<vtkProperty>                   ROIOutlineOccludedProperty;
+  vtkSmartPointer<vtkActor>                      ROIOutlineOccludedActor;
 
   class MarkupsInteractionPipelineROI : public MarkupsInteractionPipeline
   {
