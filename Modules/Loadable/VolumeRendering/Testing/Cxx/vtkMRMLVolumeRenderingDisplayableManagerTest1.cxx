@@ -32,7 +32,9 @@
 #include <vtkMRMLApplicationLogic.h>
 
 // MRML includes
+#include <vtkMRMLAnnotationROINode.h>
 #include <vtkMRMLCoreTestingMacros.h>
+#include <vtkMRMLMarkupsROINode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
@@ -84,8 +86,13 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
   // move back far enough to see the reformat widgets
   //renderer->GetActiveCamera()->SetPosition(0,0,-500.);
 
+  vtkNew<vtkMRMLAnnotationROINode> annotationROINode;
+  vtkNew<vtkMRMLMarkupsROINode> markupsROINode;
+
   // MRML scene
   vtkMRMLScene* scene = vtkMRMLScene::New();
+  scene->RegisterNodeClass(annotationROINode);
+  scene->RegisterNodeClass(markupsROINode);
 
   // Application logic - Handle creation of vtkMRMLSelectionNode and vtkMRMLInteractionNode
   vtkMRMLApplicationLogic* applicationLogic = vtkMRMLApplicationLogic::New();
