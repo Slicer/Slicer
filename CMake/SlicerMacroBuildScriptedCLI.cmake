@@ -66,7 +66,6 @@ macro(SlicerMacroBuildScriptedCLI)
         ${cli_xml_file}
       DESTINATION "${Slicer_INSTALL_CLIMODULES_BIN_DIR}"
       COMPONENT Runtime
-      USE_SOURCE_PERMISSIONS
       )
   endif()
 
