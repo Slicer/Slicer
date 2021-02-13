@@ -161,7 +161,7 @@ void qSlicerSettingsModulesPanelPrivate::init()
                       "showModules", SIGNAL(showModulesChanged(QStringList)));
   qSlicerRelativePathMapper* relativePathMapper = new qSlicerRelativePathMapper(
     this->TemporaryDirectoryButton, "directory", SIGNAL(directoryChanged(QString)));
-  q->registerProperty("Modules/TemporaryDirectory", relativePathMapper,
+  q->registerProperty("TemporaryPath", relativePathMapper,
                       "relativePath", SIGNAL(relativePathChanged(QString)));
   q->registerProperty("Modules/ShowHiddenModules", this->ShowHiddenModulesCheckBox,
                       "checked", SIGNAL(toggled(bool)));
