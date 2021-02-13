@@ -109,28 +109,28 @@ void qSlicerUnitsSettingsPanelPrivate
 
   q->registerProperty(quantity + "/id", unitWidget->unitComboBox(),
     "currentNodeID", SIGNAL(currentNodeIDChanged(QString)),
-    QString(), ctkSettingsPanel::OptionNone, app->revisionUserSettings());
+    QString(), ctkSettingsPanel::OptionNone, app->userSettings());
   q->registerProperty(quantity + "/prefix", unitWidget->unitWidget(),
     "prefix", SIGNAL(prefixChanged(QString)),
-    QString(), ctkSettingsPanel::OptionNone, app->revisionUserSettings());
+    QString(), ctkSettingsPanel::OptionNone, app->userSettings());
   q->registerProperty(quantity + "/suffix", unitWidget->unitWidget(),
     "suffix", SIGNAL(suffixChanged(QString)),
-    QString(), ctkSettingsPanel::OptionNone, app->revisionUserSettings());
+    QString(), ctkSettingsPanel::OptionNone, app->userSettings());
   q->registerProperty(quantity + "/precision", unitWidget->unitWidget(),
     "precision", SIGNAL(precisionChanged(int)),
-    QString(), ctkSettingsPanel::OptionNone, app->revisionUserSettings());
+    QString(), ctkSettingsPanel::OptionNone, app->userSettings());
   q->registerProperty(quantity + "/minimum", unitWidget->unitWidget(),
     "minimum", SIGNAL(minimumChanged(double)),
-    QString(), ctkSettingsPanel::OptionNone, app->revisionUserSettings());
+    QString(), ctkSettingsPanel::OptionNone, app->userSettings());
   q->registerProperty(quantity + "/maximum", unitWidget->unitWidget(),
     "maximum", SIGNAL(maximumChanged(double)),
-    QString(), ctkSettingsPanel::OptionNone, app->revisionUserSettings());
+    QString(), ctkSettingsPanel::OptionNone, app->userSettings());
   q->registerProperty(quantity + "/coefficient", unitWidget->unitWidget(),
     "coefficient", SIGNAL(coefficientChanged(double)),
-    QString(), ctkSettingsPanel::OptionNone, app->revisionUserSettings());
+    QString(), ctkSettingsPanel::OptionNone, app->userSettings());
   q->registerProperty(quantity + "/offset", unitWidget->unitWidget(),
     "offset", SIGNAL(offsetChanged(double)),
-    QString(), ctkSettingsPanel::OptionNone, app->revisionUserSettings());
+    QString(), ctkSettingsPanel::OptionNone, app->userSettings());
 }
 
 // ---------------------------------------------------------------------------
