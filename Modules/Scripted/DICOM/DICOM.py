@@ -269,7 +269,8 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
 
     if self.browserWidget is None:
       return
-    dataProbe = slicer.util.mainWindow().findChild("QWidget", "DataProbeCollapsibleWidget")
+    mw = slicer.util.mainWindow()
+    dataProbe = mw.findChild("QWidget", "DataProbeCollapsibleWidget") if mw else None
     if self.currentViewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView:
       # View has been changed to the DICOM browser view
       self.browserWidget.show()
@@ -664,11 +665,15 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
     self.addListenerObservers()
     self.onListenerStateChanged()
     # While DICOM module is active, drag-and-drop always performs DICOM import
-    slicer.util.mainWindow().installEventFilter(self.dragAndDropEventFilter)
+    mw = slicer.util.mainWindow()
+    if mw:
+      mw.installEventFilter(self.dragAndDropEventFilter)
 
 
   def exit(self):
-    slicer.util.mainWindow().removeEventFilter(self.dragAndDropEventFilter)
+    mw = slicer.util.mainWindow()
+    if mw:
+      mw.removeEventFilter(self.dragAndDropEventFilter)
     self.removeListenerObservers()
     self.browserWidget.close()
 
