@@ -165,9 +165,7 @@ qSlicerSequencesModule::~qSlicerSequencesModule() = default;
 //-----------------------------------------------------------------------------
 QString qSlicerSequencesModule::helpText()const
 {
-  return "This is a module for creating, recording, and replaying node sequences."
-    " See more information in the  <a href=\"http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/Sequences\">"
-    " online documentation</a>.";
+  return "This is a module for creating, recording, and replaying node sequences.";
 }
 
 //-----------------------------------------------------------------------------

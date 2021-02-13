@@ -7,12 +7,12 @@
  * These pages document the source code of Slicer.
  *
  * \subsection implinks Important Links
- * - <a href="http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Developers">Development documents</a> on our wiki.
- * - <a href="http://na-mic.org/Mantis">Bug tracker</a>
- * - <a href="http://slicer.cdash.org/index.php?project=Slicer4">CDash quality dashboard</a>
+ * - <a href="https://slicer.readthedocs.io/en/latest/developer_guide/index.html">Developer Guide</a>
+ * - <a href="https://github.com/Slicer/Slicer/issues">Issue tracker</a>
+ * - <a href="http://slicer.cdash.org/index.php?project=SlicerPreview">CDash quality dashboard</a>
  *
  * \subsection other Other
- * For more information on using Slicer browse to http://www.slicer.org
+ * For more information on using Slicer browse to https://www.slicer.org
  *
  */
 
