@@ -797,12 +797,12 @@ int qSlicerApplication::numberOfRecentLogFilesToKeep()
 {
   Q_D(qSlicerApplication);
 
-  QSettings* revisionUserSettings = this->revisionUserSettings();
+  QSettings* userSettings = this->userSettings();
 
   // Read number of log files to store value. If this value is missing,
   // then the group considered non-existent
   bool groupExists = false;
-  int numberOfFilesToKeep = revisionUserSettings->value(
+  int numberOfFilesToKeep = userSettings->value(
     "LogFiles/NumberOfFilesToKeep").toInt(&groupExists);
   if (!groupExists)
     {
@@ -820,20 +820,20 @@ int qSlicerApplication::numberOfRecentLogFilesToKeep()
 // --------------------------------------------------------------------------
 QStringList qSlicerApplication::recentLogFiles()
 {
-  QSettings* revisionUserSettings = this->revisionUserSettings();
+  QSettings* userSettings = this->userSettings();
   QStringList logFilePaths;
-  revisionUserSettings->beginGroup("LogFiles");
+  userSettings->beginGroup("LogFiles");
   int numberOfFilesToKeep = numberOfRecentLogFilesToKeep();
   for (int fileNumber = 0; fileNumber < numberOfFilesToKeep; ++fileNumber)
     {
     QString paddedFileNumber = QString("%1").arg(fileNumber, 3, 10, QChar('0')).toUpper();
-    QString filePath = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePath(revisionUserSettings->value(paddedFileNumber, "").toString());
+    QString filePath = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePath(userSettings->value(paddedFileNumber, "").toString());
     if (!filePath.isEmpty())
       {
       logFilePaths.append(filePath);
       }
     }
-  revisionUserSettings->endGroup();
+  userSettings->endGroup();
   return logFilePaths;
 }
 
@@ -869,16 +869,17 @@ void qSlicerApplication::setupFileLogging()
 
   // Save settings
   int fileNumber = 0;
-  QSettings* revisionUserSettings = this->revisionUserSettings();
-  revisionUserSettings->beginGroup("LogFiles");
-  revisionUserSettings->setValue("NumberOfFilesToKeep", numberOfFilesToKeep);
+  QSettings* userSettings = this->userSettings();
+  userSettings->beginGroup("LogFiles");
+  userSettings->setValue("NumberOfFilesToKeep", numberOfFilesToKeep);
+
   foreach (QString filePath, logFilePaths)
     {
     // If the file is to keep then save it in the settings
     if (fileNumber < numberOfFilesToKeep)
       {
       QString paddedFileNumber = QString("%1").arg(fileNumber, 3, 10, QChar('0')).toUpper();
-      revisionUserSettings->setValue(paddedFileNumber, qSlicerCoreApplication::application()->toSlicerHomeRelativePath(filePath));
+      userSettings->setValue(paddedFileNumber, qSlicerCoreApplication::application()->toSlicerHomeRelativePath(filePath));
       }
     // Otherwise delete file
     else
@@ -887,7 +888,7 @@ void qSlicerApplication::setupFileLogging()
       }
     ++fileNumber;
     }
-  revisionUserSettings->endGroup();
+  userSettings->endGroup();
 
   // Set current log file path
   d->ErrorLogModel->setFilePath(currentLogFilePath);
