@@ -2,7 +2,7 @@ Contributing to Slicer
 ======================
 
 There are many ways to contribute to Slicer, with varying levels of effort.  Do try to
-look through the [documentation](https://www.slicer.org/wiki/Documentation/Nightly/Developers) first if something is unclear, and let us know how we can
+look through the [documentation](https://slicer.readthedocs.io/en/latest/index.html) first if something is unclear, and let us know how we can
 do better.
 
   * Ask a question on the [Slicer forum][slicer-forum]
@@ -151,7 +151,7 @@ email.
    page are usually a good ground for such summary.
 
 4. Announce on the [Slicer forum][slicer-forum] the in-depth discussion of the topic for the
-   [Slicer Community hangout](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Meetings),
+   [Slicer Community hangout](https://discourse.slicer.org/c/community/hangout),
    encourage anyone that is interested in weighing in on the topic to join the
    discussion. If there is someone who is interested to participate in the discussion,
    but cannot join the meeting due to conflict, they should notify the leaders of
@@ -165,7 +165,7 @@ email.
 
 #### Benevolent dictators for life
 
-The [benevolent dictators](https://en.wikipedia.org/wiki/Benevolent_dictator_for_life) can
+The [benevolent dictators](https://slicer.readthedocs.io/en/latest/developer_guide/contributing.html#benevolent-dictators-for-life) can
 integrate changes to keep the platform healthy and help interpret
 or address conflict related to the contribution guidelines.
 
@@ -183,4 +183,4 @@ developer and then a BDFL. This happens with hard work and approval of the exist
 BDFL.
 
 [slicer-forum]: https://discourse.slicer.org
-[slicer-issues]: https://issues.slicer.org
+[slicer-issues]: https://github.com/Slicer/Slicer/issues

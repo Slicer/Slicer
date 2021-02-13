@@ -140,7 +140,7 @@ Once VisualStudio is open with the Slicer environment loaded, it is possible to 
 
 ### Debugging Python scripts
 
-See [Python scripting page](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Python_scripting#How_can_I_use_a_visual_debugger_for_step-by-step_debugging) for detailed instructions.
+See [Python scripting page](https://slicer.readthedocs.io/en/latest/developer_guide/build_instructions/windows.html#debugging-python-scripts) for detailed instructions.
 
 ## Common errors
 

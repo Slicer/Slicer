@@ -221,12 +221,12 @@ void qSlicerAppMainWindow::on_HelpInterfaceDocumentationAction_triggered()
   QString url;
   if (qSlicerApplication::application()->releaseType() == "Stable")
     {
-    url = QString("http://www.slicer.org/slicerWiki/index.php/Documentation/%1.%2")
+    url = QString("https://slicer.readthedocs.io/en/v%1.%2/")
                     .arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
     }
   else
     {
-    url = QString("http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly");
+    url = QString("https://slicer.readthedocs.io/en/latest/");
     }
   QDesktopServices::openUrl(QUrl(url));
 }
