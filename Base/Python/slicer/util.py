@@ -585,13 +585,9 @@ def setStatusBarVisible(visible):
   If there is no main window or status bar then the function has no effect.
   """
   mw = mainWindow()
-  if mw is None:
+  if not mw or not mw.statusBar:
     return
-  statusBar = mw.statusBar()  # returns None if not found
-  if statusBar is None:
-    # there is no status bar
-    return
-  statusBar.setVisible(visible)
+  mw.statusBar.setVisible(visible)
 
 def setViewControllersVisible(visible):
   """Show/hide view controller toolbar at the top of slice and 3D views"""
