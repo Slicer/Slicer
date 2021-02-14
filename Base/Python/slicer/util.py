@@ -627,9 +627,9 @@ def loadNodeFromFile(filename, filetype, properties={}, returnNode=False):
   :param properties: map containing additional parameters for the loading.
   :param returnNode: Deprecated. If set to true then the method returns status flag and node
     instead of signalling error by throwing an exception.
-  :raises RuntimeError: in case of failure
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
     If returnNode is True then a status flag and loaded node are returned.
+  :raises RuntimeError: in case of failure
   """
   from slicer import app
   from vtk import vtkCollection
@@ -659,8 +659,8 @@ def loadNodesFromFile(filename, filetype, properties={}, returnNode=False):
   :param filename: full path of the file to load.
   :param filetype: specifies the file type, which determines which IO class will load the file.
   :param properties: map containing additional parameters for the loading.
-  :raises RuntimeError: in case of failure
   :return: loaded node(s) in an iterator object.
+  :raises RuntimeError: in case of failure
   """
   from slicer import app
   from vtk import vtkCollection
@@ -986,8 +986,8 @@ def saveScene(filename, properties={}):
 def moduleSelector():
   """Return module selector widget.
 
-  :raises RuntimeError: if there is no module selector (for example, the application runs without a main window).
   :return: module widget object
+  :raises RuntimeError: if there is no module selector (for example, the application runs without a main window).
   """
   mw = mainWindow()
   if not mw:
@@ -1012,8 +1012,8 @@ def selectModule(module):
 def selectedModule():
   """Return currently active module.
 
-  :raises RuntimeError: in case of failure (no such module or the application runs without a main window).
   :return: module object
+  :raises RuntimeError: in case of failure (no such module or the application runs without a main window).
   """
   selector = moduleSelector()
   if not selector:
@@ -1031,8 +1031,8 @@ def moduleNames():
 def getModule(moduleName):
   """Get module object from module name.
 
-  :raises RuntimeError: in case of failure (no such module).
   :return: module object
+  :raises RuntimeError: in case of failure (no such module).
   """
   from slicer import app
   module = app.moduleManager().module(moduleName)
@@ -1060,8 +1060,8 @@ def getModuleWidget(module):
   """Return module widget (user interface) object for a module.
 
   :param module: module name or module object
-  :raises RuntimeError: if the module does not have widget.
   :return: module widget object
+  :raises RuntimeError: if the module does not have widget.
   """
   if isinstance(module, str):
     module = getModule(module)
@@ -1083,8 +1083,8 @@ def getNewModuleWidget(module):
   only selected widgets that are used in the module GUI.
 
   :param module: module name or module object
-  :raises RuntimeError: if the module does not have widget.
   :return: module widget object
+  :raises RuntimeError: if the module does not have widget.
   """
   if isinstance(module, str):
     module = getModule(module)
@@ -1104,8 +1104,8 @@ def getModuleLogic(module):
   Module logic allows a module to use features offered by another module.
 
   :param module: module name or module object
-  :raises RuntimeError: if the module does not have widget.
   :return: module logic object
+  :raises RuntimeError: if the module does not have widget.
   """
   if isinstance(module, str):
     module = getModule(module)
@@ -1675,8 +1675,8 @@ def arrayFromTransformMatrix(transformNode, toWorld=False):
 
   :param toWorld: if set to True then the transform to world coordinate system is returned
     (effect of parent transform to the node is applied), otherwise transform to parent transform is returned.
-  :raises RuntimeError: in case of failure
   :return: numpy array
+  :raises RuntimeError: in case of failure
 
   The returned array is just a copy and so any modification in the array will not affect the transform node.
 
