@@ -33,12 +33,24 @@ endif()
 if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
+  # [chardet]
   chardet==3.0.4 --hash=sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691
+  # [/chardet]
+  # [CouchDB]
   couchdb==1.2 --hash=sha256:13a28a1159c49f8346732e8724b9a4d65cba54bec017c4a7eeb1499fe88151d1
+  # [/CouchDB]
+  # [gitdb]
   gitdb==4.0.5 --hash=sha256:91f36bfb1ab7949b3b40e23736db18231bf7593edada2ba5c3a174a7b23657ac
+  # [/gitdb]
+  # [smmap]
   smmap==3.0.4 --hash=sha256:54c44c197c819d5ef1991799a7e30b662d1e520f2ac75c9efbeb54a742214cf4
+  # [/smmap]
+  # [GitPython]
   GitPython==3.1.11 --hash=sha256:6eea89b655917b500437e9668e4a12eabdcf00229a0df1762aabd692ef9b746b
+  # [/GitPython]
+  # [six]
   six==1.15.0 --hash=sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced
+  # [/six]
   ]===])
 
   ExternalProject_Add(${proj}
