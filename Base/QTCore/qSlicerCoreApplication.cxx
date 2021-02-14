@@ -329,7 +329,7 @@ void qSlicerCoreApplicationPrivate::init()
     {
     QString newTempFolder = q->defaultTemporaryPath();
     qWarning() << Q_FUNC_INFO << "Setting temporary folder to " << newTempFolder
-      << " because previously set " << q->temporaryPath() << " folder was not writeable";
+      << " because previously set " << q->temporaryPath() << " folder is not writable";
     q->setTemporaryPath(newTempFolder);
     }
 
