@@ -587,9 +587,8 @@ def setStatusBarVisible(visible):
   mw = mainWindow()
   if mw is None:
     return
-  try:
-    statusBar = mw.statusBar()
-  except:
+  statusBar = mw.statusBar()  # returns None if not found
+  if statusBar is None:
     # there is no status bar
     return
   statusBar.setVisible(visible)
@@ -627,12 +626,12 @@ def forceRenderAllViews():
 def loadNodeFromFile(filename, filetype, properties={}, returnNode=False):
   """Load node into the scene from a file.
 
-  :raises RuntimeError: in case of failure
   :param filename: full path of the file to load.
   :param filetype: specifies the file type, which determines which IO class will load the file.
   :param properties: map containing additional parameters for the loading.
   :param returnNode: Deprecated. If set to true then the method returns status flag and node
     instead of signalling error by throwing an exception.
+  :raises RuntimeError: in case of failure
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
     If returnNode is True then a status flag and loaded node are returned.
   """
@@ -661,10 +660,10 @@ def loadNodesFromFile(filename, filetype, properties={}, returnNode=False):
 
   It differs from `loadNodeFromFile` in that it returns loaded node(s) in an iterator.
 
-  :raises RuntimeError: in case of failure
   :param filename: full path of the file to load.
   :param filetype: specifies the file type, which determines which IO class will load the file.
   :param properties: map containing additional parameters for the loading.
+  :raises RuntimeError: in case of failure
   :return: loaded node(s) in an iterator object.
   """
   from slicer import app
@@ -1003,8 +1002,8 @@ def selectModule(module):
   """Set currently active module.
 
   Throws a RuntimeError exception in case of failure (no such module or the application runs without a main window).
-  :raises RuntimeError: in case of failure
   :param module: module name or object
+  :raises RuntimeError: in case of failure
   """
   moduleName = module
   if not isinstance(module, str):
@@ -1064,8 +1063,8 @@ def getNewModuleGui(module):
 def getModuleWidget(module):
   """Return module widget (user interface) object for a module.
 
-  :raises RuntimeError: if the module does not have widget.
   :param module: module name or module object
+  :raises RuntimeError: if the module does not have widget.
   :return: module widget object
   """
   if isinstance(module, str):
@@ -1087,8 +1086,8 @@ def getNewModuleWidget(module):
   instance of this widget. Instead, of instantiating a complete module GUI, it is recommended to create
   only selected widgets that are used in the module GUI.
 
-  :raises RuntimeError: if the module does not have widget.
   :param module: module name or module object
+  :raises RuntimeError: if the module does not have widget.
   :return: module widget object
   """
   if isinstance(module, str):
@@ -1108,8 +1107,8 @@ def getModuleLogic(module):
 
   Module logic allows a module to use features offered by another module.
 
-  :raises RuntimeError: if the module does not have widget.
   :param module: module name or module object
+  :raises RuntimeError: if the module does not have widget.
   :return: module logic object
   """
   if isinstance(module, str):
@@ -1634,8 +1633,8 @@ def arrayFromVTKMatrix(vmatrix):
 def vtkMatrixFromArray(narray):
   """Create VTK matrix from a 3x3 or 4x4 numpy array.
 
-  :raises RuntimeError: in case of failure
   :param narray: input numpy array
+  :raises RuntimeError: in case of failure
 
   The returned matrix is just a copy and so any modification in the array will not affect the output matrix.
   To set numpy array from VTK matrix, use :py:meth:`arrayFromVTKMatrix`.
@@ -1657,9 +1656,9 @@ def vtkMatrixFromArray(narray):
 def updateVTKMatrixFromArray(vmatrix, narray):
   """Update VTK matrix values from a numpy array.
 
-  :raises RuntimeError: in case of failure
   :param vmatrix: VTK matrix (vtkMatrix4x4 or vtkMatrix3x3) that will be update
   :param narray: input numpy array
+  :raises RuntimeError: in case of failure
 
   To set numpy array from VTK matrix, use :py:meth:`arrayFromVTKMatrix`.
   """
@@ -1678,9 +1677,10 @@ def updateVTKMatrixFromArray(vmatrix, narray):
 def arrayFromTransformMatrix(transformNode, toWorld=False):
   """Return 4x4 transformation matrix as numpy array.
 
-  :raises RuntimeError: in case of failure
   :param toWorld: if set to True then the transform to world coordinate system is returned
     (effect of parent transform to the node is applied), otherwise transform to parent transform is returned.
+  :raises RuntimeError: in case of failure
+  :return: numpy array
 
   The returned array is just a copy and so any modification in the array will not affect the transform node.
 
@@ -1700,10 +1700,10 @@ def arrayFromTransformMatrix(transformNode, toWorld=False):
 def updateTransformMatrixFromArray(transformNode, narray, toWorld = False):
   """Set transformation matrix from a numpy array of size 4x4 (toParent).
 
-  :raises RuntimeError: in case of failure
   :param world: if set to True then the transform will be set so that transform
     to world matrix will be equal to narray; otherwise transform to parent will be
     set as narray.
+  :raises RuntimeError: in case of failure
   """
   import numpy as np
   from vtk import vtkMatrix4x4
@@ -1819,8 +1819,8 @@ def arrayFromMarkupsControlPoints(markupsNode, world = False):
 def updateMarkupsControlPointsFromArray(markupsNode, narray, world = False):
   """Sets control point positions in a markups node from a numpy array of size Nx3.
 
-  :raises RuntimeError: in case of failure
   :param world: if set to True then the control point coordinates are expected in world coordinate system.
+  :raises RuntimeError: in case of failure
 
   All previous content of the node is deleted.
   """
@@ -1987,8 +1987,8 @@ def arrayFromTableColumnModified(tableNode, columnName):
 def updateTableFromArray(tableNode, narrays, columnNames=None):
   """Set values in a table node from a numpy array.
 
-  :raises ValueError: in case of failure
   :param columnNames: may contain a string or list of strings that will be used as column name(s).
+  :raises ValueError: in case of failure
 
   Values are copied, therefore if the numpy array  is modified after calling this method,
   values in the table node will not change.
@@ -2385,11 +2385,11 @@ def settingsValue(key, default, converter=lambda v: v, settings=None):
 def clickAndDrag(widget,button='Left',start=(10,10),end=(10,40),steps=20,modifiers=[]):
   """Send synthetic mouse events to the specified widget (qMRMLSliceWidget or qMRMLThreeDView)
 
-  :raises RuntimeError: in case of failure
   :param button: "Left", "Middle", "Right", or "None"
    start, end : window coordinates for action
   :param steps: number of steps to move in, if <2 then mouse jumps to the end position
   :param modifiers: list containing zero or more of "Shift" or "Control"
+  :raises RuntimeError: in case of failure
 
   .. hint::
 
