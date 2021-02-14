@@ -322,6 +322,17 @@ void qSlicerCoreApplicationPrivate::init()
   modifiedRequestCallback->SetCallback(vtkSlicerApplicationLogic::RequestModifiedCallback);
   vtkEventBroker::GetInstance()->SetRequestModifiedCallback(modifiedRequestCallback);
 
+  // Check if temporary folder is writeable
+  QTemporaryFile fileInTemporaryPathFolder(
+    QFileInfo(q->temporaryPath(), "_write_test_XXXXXX.tmp").absolutePath());
+  if (!fileInTemporaryPathFolder.open())
+    {
+    QString newTempFolder = q->defaultTemporaryPath();
+    qWarning() << Q_FUNC_INFO << "Setting temporary folder to " << newTempFolder
+      << " because previously set " << q->temporaryPath() << " folder is not writable";
+    q->setTemporaryPath(newTempFolder);
+    }
+
   this->AppLogic->SetTemporaryPath(q->temporaryPath().toUtf8());
   vtkPersonInformation* userInfo = this->AppLogic->GetUserInformation();
   if (userInfo)
