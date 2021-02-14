@@ -41,18 +41,18 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
   # [pydicom]
-  pydicom==2.0.0 --hash=sha256:667c5bf9ca52f440e538c9d03ce86b04555c10d069472a5db53103fe40d310c0
+  pydicom==2.1.2 --hash=sha256:d97f53a7b269dbd7414d18342f1b70f80d7d35dc4e479316bab146daac0e0c15
   # [/pydicom]
   # [Pillow]
   # Hashes correspond to the following packages:
-  #  - Pillow-8.0.1-cp36-cp36m-win_amd64.whl
-  #  - Pillow-8.0.1-cp36-cp36m-macosx_10_10_x86_64.whl
-  #  - Pillow-8.0.1-cp36-cp36m-manylinux1_x86_64.whl
-  #  - Pillow-8.0.1-cp36-cp36m-manylinux2014_aarch64.whl
-  pillow==8.0.1 --hash=sha256:7ba0ba61252ab23052e642abdb17fd08fdcfdbbf3b74c969a30c58ac1ade7cd3 \
-                --hash=sha256:b63d4ff734263ae4ce6593798bcfee6dbfb00523c82753a3a03cbc05555a9cc3 \
-                --hash=sha256:6b4a8fd632b4ebee28282a9fef4c341835a1aa8671e2770b6f89adc8e8c2703c \
-                --hash=sha256:cc3ea6b23954da84dbee8025c616040d9aa5eaf34ea6895a0a762ee9d3e12e11
+  #  - Pillow-8.1.2-cp36-cp36m-macosx_10_10_x86_64.whl
+  #  - Pillow-8.1.2-cp36-cp36m-manylinux1_x86_64.whl
+  #  - Pillow-8.1.2-cp36-cp36m-manylinux2014_aarch64.whl
+  #  - Pillow-8.1.2-cp36-cp36m-win_amd64.whl
+  Pillow==8.1.2 --hash=sha256:5cf03b9534aca63b192856aa601c68d0764810857786ea5da652581f3a44c2b0 \
+                --hash=sha256:5762ebb4436f46b566fc6351d67a9b5386b5e5de4e58fdaa18a1c83e0e20f1a8 \
+                --hash=sha256:e2cd8ac157c1e5ae88b6dd790648ee5d2777e76f1e5c7d184eaddb2938594f34 \
+                --hash=sha256:d1d6bca39bb6dd94fba23cdb3eeaea5e30c7717c5343004d900e2a63b132c341
   # [/Pillow]
   # [six]
   six==1.15.0 --hash=sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced
@@ -61,7 +61,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   retrying==1.3.3 --hash=sha256:08c039560a6da2fe4f2c426d0766e284d3b736e355f8dd24b37367b0bb41973b
   # [/retrying]
   # [dicomweb-client]
-  dicomweb-client==0.50.2 --hash=sha256:e839b925a89e213c9e1f3b5b9046071c50b291e3d54f975e422ee39edd06c3f8
+  dicomweb-client==0.52.0 --hash=sha256:2fd1e6f599198246ca082f25561dce406d9ec32fda0bcec757910c79481e54c9
   # [/dicomweb-client]
   ]===])
 

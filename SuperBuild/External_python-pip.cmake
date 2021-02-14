@@ -27,7 +27,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
   # [pip]
-  pip==20.3.3 --hash=sha256:fab098c8a1758295dd9f57413c199f23571e8fde6cc39c22c78c961b4ac6286d
+  pip==21.0.1 --hash=sha256:37fd50e056e2aed635dec96594606f0286640489b0db0ce7607f7e51890372d5
   # [/pip]
   ]===])
 
