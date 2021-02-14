@@ -42,6 +42,9 @@ macro(SlicerMacroBuildScriptedCLI)
   set(cli_xml_file "${CMAKE_CURRENT_SOURCE_DIR}/${LOCAL_SEM_NAME}.xml")
 
   set(binary_dir "${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_BIN_DIR}")
+  if(CMAKE_CONFIGURATION_TYPES)
+    set(binary_dir "${binary_dir}/$<CONFIG>")
+  endif()
 
   add_custom_command(
     OUTPUT "${binary_dir}/${LOCAL_SEM_NAME}.py" "${binary_dir}/${LOCAL_SEM_NAME}.xml"
