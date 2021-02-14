@@ -29,7 +29,10 @@ endif()
 if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
+  # [nose]
   nose==1.3.7 --hash=sha256:9ff7c6cc443f8c51994b34a667bbcf45afd6d945be7477b52e97516fd17c53ac  # needed for NumPy unit tests
+  # [/nose]
+  # [numpy]
   # Hashes correspond to the following packages:
   # - numpy-1.19.2-cp36-cp36m-win_amd64.whl
   # - numpy-1.19.2-cp36-cp36m-macosx_10_9_x86_64.whl
@@ -41,6 +44,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
                 --hash=sha256:3733640466733441295b0d6d3dcbf8e1ffa7e897d4d82903169529fd3386919a \
                 --hash=sha256:7c6646314291d8f5ea900a7ea9c4261f834b5b62159ba2abe3836f4fa6705526 \
                 --hash=sha256:7118f0a9f2f617f921ec7d278d981244ba83c85eea197be7c5a4f84af80a9c3c
+  # [/numpy]
   ]===])
 
   ExternalProject_Add(${proj}

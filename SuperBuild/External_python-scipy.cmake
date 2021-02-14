@@ -29,6 +29,7 @@ endif()
 if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
+  # [scipy]
   # Hashes correspond to the following packages:
   # - scipy-1.5.3-cp36-cp36m-win_amd64.whl
   # - scipy-1.5.3-cp36-cp36m-macosx_10_9_x86_64.whl
@@ -38,6 +39,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
                --hash=sha256:f574558f1b774864516f3c3fe072ebc90a29186f49b720f60ed339294b7f32ac \
                --hash=sha256:b9751b39c52a3fa59312bd2e1f40144ee26b51404db5d2f0d5259c511ff6f614 \
                --hash=sha256:d5e3cc60868f396b78fc881d2c76460febccfe90f6d2f082b9952265c79a8788
+  # [/scipy]
   ]===])
 
   ExternalProject_Add(${proj}
