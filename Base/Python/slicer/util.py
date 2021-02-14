@@ -206,13 +206,13 @@ def lookupTopLevelWidget(objectName):
   raise RuntimeError("Failed to obtain reference to '%s'" % objectName)
 
 def mainWindow():
-  """Get Python console widget (ctkPythonConsole object)
+  """Get main window widget (qSlicerMainWindow object)
 
-  :return: main window object, or None if there is no main window
+  :return: main window widget, or ``None`` if there is no main window
   """
   try:
     mw = lookupTopLevelWidget('qSlicerMainWindow')
-  except:
+  except RuntimeError:
     # main window not found, return None
     # Note: we do not raise an exception so that this function can be conveniently used
     # in expressions such as `parent if parent else mainWindow()`
@@ -231,7 +231,7 @@ def pythonShell():
   return console
 
 def showStatusMessage(message, duration = 0):
-  """Display message in the status bar.
+  """Display ``message`` in the status bar.
   """
   mw = mainWindow()
   if not mw or not mw.statusBar:
@@ -362,7 +362,7 @@ def addParameterEditWidgetConnections(parameterEditWidgets, updateParameterNodeF
 
   The function is useful for calling updateParameterNodeFromGUI method in scripted module widgets.
 
-  Note: Not all widget classes are supported yet. Report any missing classes at discourse.slicer.org.
+  .. note:: Not all widget classes are supported yet. Report any missing classes at https://discourse.slicer.org.
 
   Example::
 
@@ -585,7 +585,7 @@ def setStatusBarVisible(visible):
   If there is no main window or status bar then the function has no effect.
   """
   mw = mainWindow()
-  if not mw:
+  if mw is None:
     return
   try:
     statusBar = mw.statusBar()
@@ -1209,7 +1209,7 @@ def setModulePanelTitleVisible(visible):
   If there is no main window then the function has no effect.
   """
   mw = mainWindow()
-  if not mw:
+  if mw is None:
     return
   modulePanelDockWidget = mw.findChildren('QDockWidget','PanelDockWidget')[0]
   if visible:
@@ -1224,7 +1224,7 @@ def setApplicationLogoVisible(visible):
   If there is no main window then the function has no effect.
   """
   mw = mainWindow()
-  if not mw:
+  if mw is None:
     return
   widget = findChild(mw, "LogoLabel")
   widget.setVisible(visible)
@@ -1235,7 +1235,7 @@ def setModuleHelpSectionVisible(visible):
   If there is no main window then the function has no effect.
   """
   mw = mainWindow()
-  if not mw:
+  if mw is None:
     return
   modulePanel = findChild(mw, "ModulePanel")
   modulePanel.helpAndAcknowledgmentVisible = visible
@@ -1246,7 +1246,7 @@ def setDataProbeVisible(visible):
   If there is no main window then the function has no effect.
   """
   mw = mainWindow()
-  if not mw:
+  if mw is None:
     return
   widget = findChild(mw, "DataProbeCollapsibleWidget")
   widget.setVisible(visible)
