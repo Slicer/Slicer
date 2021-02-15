@@ -27,6 +27,7 @@ def quit():
 
 def exit(status=EXIT_SUCCESS):
   """Exits the application with the specified exit code.
+
   The method does not stops the process immediately but lets
   pending events to be processed.
   If exit() is called again while processing pending events,
@@ -50,6 +51,11 @@ def exit(status=EXIT_SUCCESS):
   app.exit(status)
 
 def restart():
+  """Restart the application.
+
+  No confirmation popup is displayed.
+  """
+
   from slicer import app
   app.restart()
 
@@ -186,29 +192,48 @@ def importModuleObjects(from_module_name, dest_module_name, type_info):
 # UI
 #
 
-def lookupTopLevelWidget(objectName, verbose = True):
+def lookupTopLevelWidget(objectName):
   """Loop over all top level widget associated with 'slicer.app' and
-  return the one matching 'objectName'"""
+  return the one matching 'objectName'
+
+  :raises RuntimeError: if no top-level widget is found by that name
+  """
   from slicer import app
   for w in app.topLevelWidgets():
     if hasattr(w,'objectName'):
       if w.objectName == objectName: return w
-  if verbose:
-    raise RuntimeError("Failed to obtain reference to '%s'" % objectName)
-  return None
+  # not found
+  raise RuntimeError("Failed to obtain reference to '%s'" % objectName)
 
-def mainWindow(verbose = True):
-  return lookupTopLevelWidget('qSlicerMainWindow', verbose)
+def mainWindow():
+  """Get main window widget (qSlicerMainWindow object)
 
-def pythonShell(verbose = True):
+  :return: main window widget, or ``None`` if there is no main window
+  """
+  try:
+    mw = lookupTopLevelWidget('qSlicerMainWindow')
+  except RuntimeError:
+    # main window not found, return None
+    # Note: we do not raise an exception so that this function can be conveniently used
+    # in expressions such as `parent if parent else mainWindow()`
+    mw = None
+  return mw
+
+def pythonShell():
+  """Get Python console widget (ctkPythonConsole object)
+
+  :raises RuntimeError: if not found
+  """
   from slicer import app
   console = app.pythonConsole()
-  if not console and verbose:
+  if not console:
     raise RuntimeError("Failed to obtain reference to python shell")
   return console
 
 def showStatusMessage(message, duration = 0):
-  mw = mainWindow(verbose=False)
+  """Display ``message`` in the status bar.
+  """
+  mw = mainWindow()
   if not mw or not mw.statusBar:
     return False
   mw.statusBar().showMessage(message, duration)
@@ -216,6 +241,7 @@ def showStatusMessage(message, duration = 0):
 
 def findChildren(widget=None, name="", text="", title="", className=""):
   """ Return a list of child widgets that meet all the given criteria.
+
   If no criteria are provided, the function will return all widgets descendants.
   If no widget is provided, slicer.util.mainWindow() is used.
   :param widget: parent widget where the widgets will be searched
@@ -264,10 +290,9 @@ def findChildren(widget=None, name="", text="", title="", className=""):
   return children
 
 def findChild(widget, name):
-  """
-  Convenience method to access a widget by its ``name``.
-  A ``RuntimeError`` exception is raised if the widget with the
-  given ``name`` does not exist.
+  """Convenience method to access a widget by its ``name``.
+
+  :raises RuntimeError: if the widget with the given ``name`` does not exist.
   """
   errorMessage = "Widget named " + str(name) + " does not exists."
   child = None
@@ -337,7 +362,7 @@ def addParameterEditWidgetConnections(parameterEditWidgets, updateParameterNodeF
 
   The function is useful for calling updateParameterNodeFromGUI method in scripted module widgets.
 
-  Note: Only a few widget classes are supported now. More will be added later. Report any missing classes at discourse.slicer.org.
+  .. note:: Not all widget classes are supported yet. Report any missing classes at https://discourse.slicer.org.
 
   Example::
 
@@ -509,10 +534,13 @@ def setSliceViewerLayers(background='keep-current', foreground='keep-current', l
           sliceLogic.FitSliceToAll()
 
 def setToolbarsVisible(visible, ignore=None):
-  """Show/hide all existing toolbars, except those listed in
-  ignore list.
-  """
+  """Show/hide all existing toolbars, except those listed in ignore list.
 
+  If there is no main window then the function has no effect.
+  """
+  mw = mainWindow()
+  if not mw:
+    return
   for toolbar in mainWindow().findChildren('QToolBar'):
     if ignore is not None and toolbar in ignore:
       continue
@@ -529,20 +557,37 @@ def setToolbarsVisible(visible, ignore=None):
     pass
 
 def setMenuBarsVisible(visible, ignore=None):
-  """Show/hide all menu bars, except those listed in
-  ignore list."""
-  for menubar in mainWindow().findChildren('QMenuBar'):
+  """Show/hide all menu bars, except those listed in ignore list.
+
+  If there is no main window then the function has no effect.
+  """
+  mw = mainWindow()
+  if not mw:
+    return
+  for menubar in mw.findChildren('QMenuBar'):
     if ignore is not None and menubar in ignore:
       continue
     menubar.setVisible(visible)
 
 def setPythonConsoleVisible(visible):
-  """Show/hide Python console."""
-  mainWindow().pythonConsole().parent().setVisible(visible)
+  """Show/hide Python console.
+
+  If there is no main window then the function has no effect.
+  """
+  mw = mainWindow()
+  if not mw:
+    return
+  mw.pythonConsole().parent().setVisible(visible)
 
 def setStatusBarVisible(visible):
-  """Show/hide status bar"""
-  mainWindow(verbose=False).statusBar().setVisible(visible)
+  """Show/hide status bar
+
+  If there is no main window or status bar then the function has no effect.
+  """
+  mw = mainWindow()
+  if not mw or not mw.statusBar:
+    return
+  mw.statusBar.setVisible(visible)
 
 def setViewControllersVisible(visible):
   """Show/hide view controller toolbar at the top of slice and 3D views"""
@@ -584,6 +629,7 @@ def loadNodeFromFile(filename, filetype, properties={}, returnNode=False):
     instead of signalling error by throwing an exception.
   :return: loaded node (if multiple nodes are loaded then a list of nodes).
     If returnNode is True then a status flag and loaded node are returned.
+  :raises RuntimeError: in case of failure
   """
   from slicer import app
   from vtk import vtkCollection
@@ -614,6 +660,7 @@ def loadNodesFromFile(filename, filetype, properties={}, returnNode=False):
   :param filetype: specifies the file type, which determines which IO class will load the file.
   :param properties: map containing additional parameters for the loading.
   :return: loaded node(s) in an iterator object.
+  :raises RuntimeError: in case of failure
   """
   from slicer import app
   from vtk import vtkCollection
@@ -688,7 +735,10 @@ def loadAnnotationROI(filename, returnNode=False):
   return loadNodeFromFile(filename, 'AnnotationFile', {'roi': 1}, returnNode)
 
 def loadMarkupsFiducialList(filename, returnNode=False):
-  """Deprecated. Use loadMarkups function instead.
+  """Load markups fiducials from file.
+
+  .. deprecated:: 4.13.0
+    Use the universal :func:`loadMarkups` function instead.
   """
   if returnNode:
     return loadMarkups(filename)
@@ -697,12 +747,18 @@ def loadMarkupsFiducialList(filename, returnNode=False):
     return [node is not None, node]
 
 def loadMarkupsCurve(filename):
-  """Deprecated. Use loadMarkups function instead.
+  """Load markups curve from file.
+
+  .. deprecated:: 4.13.0
+    Use the universal :func:`loadMarkups` function instead.
   """
   return loadMarkups(filename)
 
 def loadMarkupsClosedCurve(filename):
-  """Deprecated. Use loadMarkups function instead.
+  """Load markups closed curve from file.
+
+  .. deprecated:: 4.13.0
+    Use the universal :func:`loadMarkups` function instead.
   """
   return loadMarkups(filename)
 
@@ -756,6 +812,7 @@ def loadTransform(filename, returnNode=False):
 
 def loadTable(filename):
   """Load table node from file.
+
   :param filename: full path of the file to load.
   :return: loaded table node
   """
@@ -928,18 +985,21 @@ def saveScene(filename, properties={}):
 
 def moduleSelector():
   """Return module selector widget.
-  Throws a RuntimeError exception if there is no module selector (for example, the application runs without a main window).
+
   :return: module widget object
+  :raises RuntimeError: if there is no module selector (for example, the application runs without a main window).
   """
-  w = mainWindow()
-  if not w:
+  mw = mainWindow()
+  if not mw:
     raise RuntimeError("Could not find main window")
-  return w.moduleSelector()
+  return mw.moduleSelector()
 
 def selectModule(module):
   """Set currently active module.
+
   Throws a RuntimeError exception in case of failure (no such module or the application runs without a main window).
   :param module: module name or object
+  :raises RuntimeError: in case of failure
   """
   moduleName = module
   if not isinstance(module, str):
@@ -951,8 +1011,9 @@ def selectModule(module):
 
 def selectedModule():
   """Return currently active module.
-  Throws a RuntimeError exception in case of failure (no such module or the application runs without a main window).
+
   :return: module object
+  :raises RuntimeError: in case of failure (no such module or the application runs without a main window).
   """
   selector = moduleSelector()
   if not selector:
@@ -961,6 +1022,7 @@ def selectedModule():
 
 def moduleNames():
   """Get list containing name of all successfully loaded modules.
+
   :return: list of module names
   """
   from slicer import app
@@ -968,8 +1030,9 @@ def moduleNames():
 
 def getModule(moduleName):
   """Get module object from module name.
-  Throws a RuntimeError exception in case of failure (no such module).
+
   :return: module object
+  :raises RuntimeError: in case of failure (no such module).
   """
   from slicer import app
   module = app.moduleManager().module(moduleName)
@@ -978,18 +1041,27 @@ def getModule(moduleName):
   return module
 
 def getModuleGui(module):
-  """Deprecated. Use getModuleWidget function instead"""
+  """Get module widget.
+
+  .. deprecated:: 4.13.0
+    Use the universal :func:`getModuleWidget` function instead.
+  """
   return getModuleWidget(module)
 
 def getNewModuleGui(module):
-  """Deprecated. Use getNewModuleWidget function instead"""
+  """Create new module widget.
+
+  .. deprecated:: 4.13.0
+    Use the universal :func:`getNewModuleWidget` function instead.
+  """
   return getNewModuleWidget(module)
 
 def getModuleWidget(module):
   """Return module widget (user interface) object for a module.
-  Throws a RuntimeError exception if the module does not have widget.
+
   :param module: module name or module object
   :return: module widget object
+  :raises RuntimeError: if the module does not have widget.
   """
   if isinstance(module, str):
     module = getModule(module)
@@ -1005,12 +1077,14 @@ def getModuleWidget(module):
 
 def getNewModuleWidget(module):
   """Create new module widget instance.
+
   In general, not recommended, as module widget may be developed expecting that there is only a single
   instance of this widget. Instead, of instantiating a complete module GUI, it is recommended to create
   only selected widgets that are used in the module GUI.
-  Throws a RuntimeError exception if the module does not have widget.
+
   :param module: module name or module object
   :return: module widget object
+  :raises RuntimeError: if the module does not have widget.
   """
   if isinstance(module, str):
     module = getModule(module)
@@ -1026,10 +1100,12 @@ def getNewModuleWidget(module):
 
 def getModuleLogic(module):
   """Get module logic object.
+
   Module logic allows a module to use features offered by another module.
-  Throws a RuntimeError exception if the module does not have widget.
+
   :param module: module name or module object
   :return: module logic object
+  :raises RuntimeError: if the module does not have widget.
   """
   if isinstance(module, str):
     module = getModule(module)
@@ -1047,6 +1123,7 @@ def getModuleLogic(module):
 
 def modulePath(moduleName):
   """Get module logic object.
+
   Module logic allows a module to use features offered by another module.
   Throws a RuntimeError exception if the module does not have widget.
   :param moduleName: module name
@@ -1120,9 +1197,16 @@ def reloadScriptedModule(moduleName):
 
 def setModulePanelTitleVisible(visible):
   """Show/hide module panel title bar at the top of module panel.
+
   If the title bar is not visible then it is not possible to drag and dock the
-  module panel to a different location."""
-  modulePanelDockWidget = mainWindow().findChildren('QDockWidget','PanelDockWidget')[0]
+  module panel to a different location.
+
+  If there is no main window then the function has no effect.
+  """
+  mw = mainWindow()
+  if mw is None:
+    return
+  modulePanelDockWidget = mw.findChildren('QDockWidget','PanelDockWidget')[0]
   if visible:
     modulePanelDockWidget.setTitleBarWidget(None)
   else:
@@ -1130,18 +1214,36 @@ def setModulePanelTitleVisible(visible):
     modulePanelDockWidget.setTitleBarWidget(qt.QWidget(modulePanelDockWidget))
 
 def setApplicationLogoVisible(visible):
-  """Show/hide application logo at the top of module panel."""
-  widget = findChild(mainWindow(), "LogoLabel")
+  """Show/hide application logo at the top of module panel.
+
+  If there is no main window then the function has no effect.
+  """
+  mw = mainWindow()
+  if mw is None:
+    return
+  widget = findChild(mw, "LogoLabel")
   widget.setVisible(visible)
 
 def setModuleHelpSectionVisible(visible):
-  """Show/hide Help section at the top of module panel."""
-  modulePanel = findChild(mainWindow(), "ModulePanel")
+  """Show/hide Help section at the top of module panel.
+
+  If there is no main window then the function has no effect.
+  """
+  mw = mainWindow()
+  if mw is None:
+    return
+  modulePanel = findChild(mw, "ModulePanel")
   modulePanel.helpAndAcknowledgmentVisible = visible
 
 def setDataProbeVisible(visible):
-  """Show/hide Data probe at the bottom of module panel."""
-  widget = findChild(mainWindow(), "DataProbeCollapsibleWidget")
+  """Show/hide Data probe at the bottom of module panel.
+
+  If there is no main window then the function has no effect.
+  """
+  mw = mainWindow()
+  if mw is None:
+    return
+  widget = findChild(mw, "DataProbeCollapsibleWidget")
   widget.setVisible(visible)
 
 #
@@ -1149,14 +1251,12 @@ def setDataProbeVisible(visible):
 #
 
 def resetThreeDViews():
-  """Reset focal view around volumes
-  """
+  """Reset focal view around volumes"""
   import slicer
   slicer.app.layoutManager().resetThreeDViews()
 
 def resetSliceViews():
-  """Reset focal view around volumes
-  """
+  """Reset focal view around volumes"""
   import slicer
   manager = slicer.app.layoutManager().resetSliceViews()
 
@@ -1165,8 +1265,7 @@ def resetSliceViews():
 #
 
 class MRMLNodeNotFoundException(Exception):
-  """Exception raised when a requested MRML node was not found.
-  """
+  """Exception raised when a requested MRML node was not found."""
   pass
 
 def getNodes(pattern="*", scene=None, useLists=False):
@@ -1211,8 +1310,7 @@ def getNode(pattern="*", index=0, scene=None):
   return list(nodes.values())[index]
 
 def getNodesByClass(className, scene=None):
-  """Return all nodes in the scene of the specified class.
-  """
+  """Return all nodes in the scene of the specified class."""
   import slicer
   if scene is None:
     scene = slicer.mrmlScene
@@ -1227,8 +1325,7 @@ def getNodesByClass(className, scene=None):
   return nodeList
 
 def getFirstNodeByClassByName(className, name, scene=None):
-  """Return the first node in the scene that matches the specified node name and node class.
-  """
+  """Return the first node in the scene that matches the specified node name and node class."""
   import slicer
   if scene is None:
     scene = slicer.mrmlScene
@@ -1244,8 +1341,7 @@ def getFirstNodeByName(name, className=None):
   return scene.GetFirstNode(name, className, False, False)
 
 class NodeModify(object):
-  """Context manager to conveniently compress mrml node modified event.
-  """
+  """Context manager to conveniently compress mrml node modified event."""
   def __init__(self, node):
     self.node = node
   def __enter__(self):
@@ -1261,6 +1357,7 @@ class NodeModify(object):
 #
 def getSubjectHierarchyItemChildren(parentItem=None, recursive=False):
   """Convenience method to get children of a subject hierarchy item.
+
   :param vtkIdType parentItem: Item for which to get children for. If omitted
          or None then use scene item (i.e. get all items)
   :param bool recursive: Whether the query is recursive. False by default
@@ -1285,7 +1382,10 @@ def getSubjectHierarchyItemChildren(parentItem=None, recursive=False):
 
 def array(pattern = "", index = 0):
   """Return the array you are "most likely to want" from the indexth
+
   MRML node that matches the pattern.
+
+  :raises RuntimeError: if the node cannot be accessed as an array.
 
   .. warning::
 
@@ -1317,6 +1417,8 @@ def arrayFromVolume(volumeNode):
   Voxels values are not copied. Voxel values in the volume node can be modified
   by changing values in the numpy array.
   After all modifications has been completed, call :py:meth:`arrayFromVolumeModified`.
+
+  :raises RuntimeError: in case of failure
 
   .. warning:: Memory area of the returned array is managed by VTK, therefore
     values in the array may be changed, but the array must not be reallocated
@@ -1360,6 +1462,7 @@ def arrayFromVolumeModified(volumeNode):
 
 def arrayFromModelPoints(modelNode):
   """Return point positions of a model node as numpy array.
+
   Point coordinates can be modified by modifying the numpy array.
   After all modifications has been completed, call :py:meth:`arrayFromModelPointsModified`.
 
@@ -1381,8 +1484,11 @@ def arrayFromModelPointsModified(modelNode):
 
 def _vtkArrayFromModelData(modelNode, arrayName, location):
   """Helper function for getting VTK point data array that throws exception
+
   with informative error message if the data array is not found.
   Point or cell data can be selected by setting 'location' argument to 'point' or 'cell'.
+
+  :raises ValueError: in case of failure
   """
   if location=='point':
     modelData = modelNode.GetMesh().GetPointData()
@@ -1481,6 +1587,7 @@ def arrayFromModelPolyIds(modelNode):
 
 def arrayFromGridTransform(gridTransformNode):
   """Return voxel array from transform node as numpy array.
+
   Vector values are not copied. Values in the transform node can be modified
   by changing values in the numpy array.
   After all modifications has been completed, call :py:meth:`arrayFromGridTransformModified`.
@@ -1499,6 +1606,9 @@ def arrayFromGridTransform(gridTransformNode):
 
 def arrayFromVTKMatrix(vmatrix):
   """Return vtkMatrix4x4 or vtkMatrix3x3 elements as numpy array.
+
+  :raises RuntimeError: in case of failure
+
   The returned array is just a copy and so any modification in the array will not affect the input matrix.
   To set VTK matrix from a numpy array, use :py:meth:`vtkMatrixFromArray` or
   :py:meth:`updateVTKMatrixFromArray`.
@@ -1518,7 +1628,10 @@ def arrayFromVTKMatrix(vmatrix):
 
 def vtkMatrixFromArray(narray):
   """Create VTK matrix from a 3x3 or 4x4 numpy array.
+
   :param narray: input numpy array
+  :raises RuntimeError: in case of failure
+
   The returned matrix is just a copy and so any modification in the array will not affect the output matrix.
   To set numpy array from VTK matrix, use :py:meth:`arrayFromVTKMatrix`.
   """
@@ -1538,8 +1651,11 @@ def vtkMatrixFromArray(narray):
 
 def updateVTKMatrixFromArray(vmatrix, narray):
   """Update VTK matrix values from a numpy array.
+
   :param vmatrix: VTK matrix (vtkMatrix4x4 or vtkMatrix3x3) that will be update
   :param narray: input numpy array
+  :raises RuntimeError: in case of failure
+
   To set numpy array from VTK matrix, use :py:meth:`arrayFromVTKMatrix`.
   """
   from vtk import vtkMatrix4x4
@@ -1559,6 +1675,8 @@ def arrayFromTransformMatrix(transformNode, toWorld=False):
 
   :param toWorld: if set to True then the transform to world coordinate system is returned
     (effect of parent transform to the node is applied), otherwise transform to parent transform is returned.
+  :return: numpy array
+  :raises RuntimeError: in case of failure
 
   The returned array is just a copy and so any modification in the array will not affect the transform node.
 
@@ -1581,6 +1699,7 @@ def updateTransformMatrixFromArray(transformNode, narray, toWorld = False):
   :param world: if set to True then the transform will be set so that transform
     to world matrix will be equal to narray; otherwise transform to parent will be
     set as narray.
+  :raises RuntimeError: in case of failure
   """
   import numpy as np
   from vtk import vtkMatrix4x4
@@ -1605,19 +1724,23 @@ def arrayFromGridTransformModified(gridTransformNode):
   displacementGrid.Modified()
 
 def arrayFromSegment(segmentationNode, segmentId):
-  """
+  """Get segment as numpy array.
+
+  .. warning:: Important: binary labelmap representation may be shared between multiple segments.
+
+  .. deprecated:: 4.13.0
+    Use arrayFromSegmentBinaryLabelmap to access a copy of the binary labelmap that will not modify the original labelmap."
+    Use arrayFromSegmentInternalBinaryLabelmap to access a modifiable internal lablemap representation that may be shared"
+    between multiple segments.
   """
   import logging
-  logging.warning("arrayFromSegment is deprecated! Binary labelmap representation may be shared between multiple segments!"
-                  " Use arrayFromSegmentBinaryLabelmap to access a copy of the binary labelmap that will not modify the original labelmap."
-                  " Use arrayFromSegmentInternalBinaryLabelmap to access a modifiable internal lablemap representation that may be shared"
-                  " between multiple segments.")
+  logging.warning("arrayFromSegment is deprecated. Binary labelmap representation may be shared between multiple segments.")
   return arrayFromSegmentBinaryLabelmap(segmentationNode, segmentId)
 
 def arrayFromSegmentInternalBinaryLabelmap(segmentationNode, segmentId):
   """Return voxel array of a segment's binary labelmap representation as numpy array.
-  Voxels values are not copied.
 
+  Voxels values are not copied.
   The labelmap containing the specified segment may be a shared labelmap containing multiple segments.
 
   To get and modify the array for a single segment, calling::
@@ -1693,6 +1816,7 @@ def updateMarkupsControlPointsFromArray(markupsNode, narray, world = False):
   """Sets control point positions in a markups node from a numpy array of size Nx3.
 
   :param world: if set to True then the control point coordinates are expected in world coordinate system.
+  :raises RuntimeError: in case of failure
 
   All previous content of the node is deleted.
   """
@@ -1742,6 +1866,9 @@ def arrayFromMarkupsCurvePoints(markupsNode, world = False):
 
 def updateVolumeFromArray(volumeNode, narray):
   """Sets voxels of a volume node from a numpy array.
+
+  :raises RuntimeError: in case of failure
+
   Voxels values are deep-copied, therefore if the numpy array
   is modified after calling this method, voxel values in the volume node will not change.
   Dimensions and data size of the source numpy array does not have to match the current
@@ -1788,6 +1915,7 @@ def updateVolumeFromArray(volumeNode, narray):
 
 def addVolumeFromArray(narray, ijkToRAS=None, name=None, nodeClassName=None):
   """Create a new volume node from content of a numpy array and add it to the scene.
+
   Voxels values are deep-copied, therefore if the numpy array
   is modified after calling this method, voxel values in the volume node will not change.
 
@@ -1810,9 +1938,7 @@ def addVolumeFromArray(narray, ijkToRAS=None, name=None, nodeClassName=None):
     import numpy as np
     volumeNode = slicer.util.addVolumeFromArray(np.ones((30, 40, 50), 'int8') * 120,
       np.diag([0.2, 0.2, 0.5, 1.0]), nodeClassName="vtkMRMLLabelMapVolumeNode")
-
   """
-
   import slicer
   from vtk import vtkMatrix4x4
   import numpy as np
@@ -1834,6 +1960,7 @@ def addVolumeFromArray(narray, ijkToRAS=None, name=None, nodeClassName=None):
 
 def arrayFromTableColumn(tableNode, columnName):
   """Return values of a table node's column as numpy array.
+
   Values can be modified by modifying the numpy array.
   After all modifications has been completed, call :py:meth:`arrayFromTableColumnModified`.
 
@@ -1856,7 +1983,9 @@ def arrayFromTableColumnModified(tableNode, columnName):
 def updateTableFromArray(tableNode, narrays, columnNames=None):
   """Set values in a table node from a numpy array.
 
-  columnNames may contain a string or list of strings that will be used as column name(s).
+  :param columnNames: may contain a string or list of strings that will be used as column name(s).
+  :raises ValueError: in case of failure
+
   Values are copied, therefore if the numpy array  is modified after calling this method,
   values in the table node will not change.
   All previous content of the table is deleted.
@@ -1867,7 +1996,6 @@ def updateTableFromArray(tableNode, narrays, columnNames=None):
     histogram = np.histogram(arrayFromVolume(getNode('MRHead')))
     tableNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
     updateTableFromArray(tableNode, histogram, ["Count", "Intensity"])
-
   """
   import numpy as np
   import vtk.util.numpy_support
@@ -1898,6 +2026,7 @@ def updateTableFromArray(tableNode, narrays, columnNames=None):
 
 def dataframeFromTable(tableNode):
   """Convert table node content to pandas dataframe.
+
   Table content is copied. Therefore, changes in table node do not affect the dataframe,
   and dataframe changes do not affect the original table node.
   """
@@ -1933,6 +2062,7 @@ def dataframeFromTable(tableNode):
 
 def dataframeFromMarkups(markupsNode):
   """Convert table node content to pandas dataframe.
+
   Table content is copied. Therefore, changes in table node do not affect the dataframe,
   and dataframe changes do not affect the original table node.
   """
@@ -2016,18 +2146,19 @@ class VTKObservationMixin(object):
     return None
 
 def toVTKString(text):
-  """This method is deprecated. It converted unicode string into VTK string, but
-  since now VTK assumes that all strings are in UTF-8 and all strings in Slicer are UTF-8, too,
-  conversion is no longer necessary.
-  The method is only kept for backward compatibility and will be removed in the future.
+  """Convert unicode string into VTK string.
+
+  .. deprecated:: 4.11.0
+    Since now VTK assumes that all strings are in UTF-8 and all strings in Slicer are UTF-8, too,
+    conversion is no longer necessary.
+    The method is only kept for backward compatibility and will be removed in the future.
   """
   import logging
   logging.warning("toVTKString is deprecated! Conversion is no longer necessary.")
   return text
 
 def toLatin1String(text):
-  """Convert string to latin1 encoding.
-  """
+  """Convert string to latin1 encoding."""
   vtkStr = ""
   for c in text:
     try:
@@ -2043,9 +2174,10 @@ def toLatin1String(text):
 
 def tempDirectory(key='__SlicerTemp__',tempDir=None,includeDateTime=True):
   """Come up with a unique directory name in the temp dir and make it and return it
-  # TODO: switch to QTemporaryDir in Qt5.
+
   Note: this directory is not automatically cleaned up
   """
+  # TODO: switch to QTemporaryDir in Qt5.
   import qt, slicer
   if not tempDir:
     tempDir = qt.QDir(slicer.app.temporaryPath)
@@ -2088,46 +2220,51 @@ def delayDisplay(message, autoCloseMsec=1000):
 
 def infoDisplay(text, windowTitle=None, parent=None, standardButtons=None, **kwargs):
   """Display popup with a info message.
+
+  If there is no main window then the text is only logged (at info level).
   """
   import qt, slicer
   import logging
   if not windowTitle:
     windowTitle = slicer.app.applicationName + " information"
   logging.info(text)
-  if mainWindow(verbose=False):
+  mw = mainWindow()
+  if mw:
     standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
-    messageBox(text, parent, windowTitle=windowTitle, icon=qt.QMessageBox.Information, standardButtons=standardButtons,
-               **kwargs)
+    messageBox(text, parent, windowTitle=windowTitle, icon=qt.QMessageBox.Information, standardButtons=standardButtons, **kwargs)
 
 def warningDisplay(text, windowTitle=None, parent=None, standardButtons=None, **kwargs):
   """Display popup with a warning message.
+
+  If there is no main window then the text is only logged (at warning level).
   """
   import qt, slicer
   import logging
   if not windowTitle:
     windowTitle = slicer.app.applicationName + " warning"
   logging.warning(text)
-  if mainWindow(verbose=False):
+  mw = mainWindow()
+  if mw:
     standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
-    messageBox(text, parent, windowTitle=windowTitle, icon=qt.QMessageBox.Warning, standardButtons=standardButtons,
-               **kwargs)
+    messageBox(text, parent, windowTitle=windowTitle, icon=qt.QMessageBox.Warning, standardButtons=standardButtons, **kwargs)
 
 def errorDisplay(text, windowTitle=None, parent=None, standardButtons=None, **kwargs):
   """Display an error popup.
+
+  If there is no main window then the text is only logged (at error level).
   """
   import qt, slicer
   import logging
   if not windowTitle:
     windowTitle = slicer.app.applicationName + " error"
   logging.error(text)
-  if mainWindow(verbose=False):
+  mw = mainWindow()
+  if mw:
     standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
-    messageBox(text, parent, windowTitle=windowTitle, icon=qt.QMessageBox.Critical, standardButtons=standardButtons,
-               **kwargs)
+    messageBox(text, parent, windowTitle=windowTitle, icon=qt.QMessageBox.Critical, standardButtons=standardButtons, **kwargs)
 
 def confirmOkCancelDisplay(text, windowTitle=None, parent=None, **kwargs):
-  """Display an confirmation popup. Return if confirmed with OK.
-  """
+  """Display an confirmation popup. Return if confirmed with OK."""
   import qt, slicer
   if not windowTitle:
     windowTitle = slicer.app.applicationName + " confirmation"
@@ -2136,8 +2273,7 @@ def confirmOkCancelDisplay(text, windowTitle=None, parent=None, **kwargs):
   return result == qt.QMessageBox.Ok
 
 def confirmYesNoDisplay(text, windowTitle=None, parent=None, **kwargs):
-  """Display an confirmation popup. Return if confirmed with Yes.
-  """
+  """Display an confirmation popup. Return if confirmed with Yes."""
   import qt, slicer
   if not windowTitle:
     windowTitle = slicer.app.applicationName + " confirmation"
@@ -2146,8 +2282,7 @@ def confirmYesNoDisplay(text, windowTitle=None, parent=None, **kwargs):
   return result == qt.QMessageBox.Yes
 
 def confirmRetryCloseDisplay(text, windowTitle=None, parent=None, **kwargs):
-  """Display an confirmation popup. Return if confirmed with Retry.
-  """
+  """Display an confirmation popup. Return if confirmed with Retry."""
   import qt, slicer
   if not windowTitle:
     windowTitle = slicer.app.applicationName + " error"
@@ -2244,13 +2379,13 @@ def settingsValue(key, default, converter=lambda v: v, settings=None):
   return converter(settings.value(key)) if settings.contains(key) else default
 
 def clickAndDrag(widget,button='Left',start=(10,10),end=(10,40),steps=20,modifiers=[]):
-  """
-  Send synthetic mouse events to the specified widget (qMRMLSliceWidget or qMRMLThreeDView)
+  """Send synthetic mouse events to the specified widget (qMRMLSliceWidget or qMRMLThreeDView)
 
   :param button: "Left", "Middle", "Right", or "None"
    start, end : window coordinates for action
   :param steps: number of steps to move in, if <2 then mouse jumps to the end position
   :param modifiers: list containing zero or more of "Shift" or "Control"
+  :raises RuntimeError: in case of failure
 
   .. hint::
 
@@ -2281,7 +2416,7 @@ def clickAndDrag(widget,button='Left',start=(10,10),end=(10,40),steps=20,modifie
     down = lambda : None
     up = lambda : None
   else:
-    raise Exception("Bad button - should be Left or Right, not %s" % button)
+    raise RuntimeError("Bad button - should be Left or Right, not %s" % button)
   if 'Shift' in modifiers:
     interactor.SetShiftKey(1)
   if 'Control' in modifiers:
@@ -2303,7 +2438,7 @@ def clickAndDrag(widget,button='Left',start=(10,10),end=(10,40),steps=20,modifie
   interactor.SetControlKey(0)
 
 def downloadFile(url, targetFilePath, checksum=None, reDownloadIfChecksumInvalid=True):
-  """ Download ``url`` to local storage as ``targetFilePath``
+  """Download ``url`` to local storage as ``targetFilePath``
 
   Target file path needs to indicate the file name and extension as well
 
@@ -2415,8 +2550,7 @@ def computeChecksum(algo, filePath):
     return hash.hexdigest()
 
 def extractAlgoAndDigest(checksum):
-  """Given a checksum string formatted as ``<algo>:<digest>`` returns
-  the tuple ``(algo, digest)``.
+  """Given a checksum string formatted as ``<algo>:<digest>`` returns the tuple ``(algo, digest)``.
 
   ``<algo>`` is expected to be `SHA256`, `SHA512`, or `MD5`.
   ``<digest>`` is expected to be the full length hexdecimal digest.
@@ -2474,8 +2608,7 @@ def downloadAndExtractArchive(url, archiveFilePath, outputDir, \
   return False
 
 def getFilesInDirectory(directory, absolutePath=True):
-  """ Collect all files in a directory and its subdirectories in a list
-  """
+  """Collect all files in a directory and its subdirectories in a list."""
   import os
   allFiles=[]
   for root, subdirs, files in os.walk(directory):
@@ -2488,7 +2621,7 @@ def getFilesInDirectory(directory, absolutePath=True):
   return allFiles
 
 def plot(narray, xColumnIndex = -1, columnNames = None, title = None, show = True, nodes = None):
-  """ Create a plot from a numpy array that contains two or more columns.
+  """Create a plot from a numpy array that contains two or more columns.
 
   :param narray: input numpy array containing data series in columns.
   :param xColumnIndex: index of column that will be used as x axis.
@@ -2537,7 +2670,6 @@ def plot(narray, xColumnIndex = -1, columnNames = None, title = None, show = Tru
     # Update plot
     histogram = np.histogram(arrayFromVolume(volumeNode), bins=40)
     plot(histogram, xColumnIndex = 1, nodes = plotNodes)
-
   """
   import slicer
 
@@ -2629,7 +2761,9 @@ def plot(narray, xColumnIndex = -1, columnNames = None, title = None, show = Tru
 
 def launchConsoleProcess(args, useStartupEnvironment=True, updateEnvironment=None, cwd=None):
   """Launch a process. Hiding the console and captures the process output.
+
   The console window is hidden when running on Windows.
+
   :param args: executable name, followed by command-line arguments
   :param useStartupEnvironment: launch the process in the original environment as the original Slicer process
   :param updateEnvironment: map containing optional additional environment variables (existing variables are overwritten)
@@ -2660,6 +2794,7 @@ def launchConsoleProcess(args, useStartupEnvironment=True, updateEnvironment=Non
 
 def logProcessOutput(proc):
   """Continuously write process output to the application log and the Python console.
+
   :param proc: process object.
   """
   from subprocess import Popen, PIPE, CalledProcessError
@@ -2683,7 +2818,10 @@ def logProcessOutput(proc):
 
 def _executePythonModule(module, args):
   """Execute a Python module as a script in Slicer's Python environment.
+
   Internally python -m is called with the module name and additional arguments.
+
+  :raises RuntimeError: in case of failure
   """
   # Determine pythonSlicerExecutablePath
   try:
@@ -2711,6 +2849,7 @@ def _executePythonModule(module, args):
 
 def pip_install(requirements):
   """Install python packages.
+
   Currently, the method simply calls ``python -m pip install`` but in the future further checks, optimizations,
   user confirmation may be implemented, therefore it is recommended to use this method call instead of a plain
   pip install.
@@ -2735,9 +2874,11 @@ def pip_install(requirements):
 
 def pip_uninstall(requirements):
   """Uninstall python packages.
+
   Currently, the method simply calls ``python -m pip uninstall`` but in the future further checks, optimizations,
   user confirmation may be implemented, therefore it is recommended to use this method call instead of a plain
   pip uninstall.
+
   :param requirements: requirement specifier, same format as used by pip (https://docs.python.org/3/installing/index.html)
 
   Example: calling from Slicer GUI
@@ -2758,8 +2899,8 @@ def pip_uninstall(requirements):
   _executePythonModule('pip', args)
 
 def longPath(path):
-  """
-  Make long paths work on Windows, where the maximum path length is 260 characters.
+  """Make long paths work on Windows, where the maximum path length is 260 characters.
+
   For example, the files in the DICOM database may have paths longer than this limit.
   Accessing these can be made safe by prefixing it with the UNC prefix ('\\?\').
 
