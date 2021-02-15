@@ -324,7 +324,7 @@ void qSlicerCoreApplicationPrivate::init()
 
   // Check if temporary folder is writeable
   QTemporaryFile fileInTemporaryPathFolder(
-    QFileInfo(q->temporaryPath(), "_write_test_XXXXXX.tmp").absolutePath());
+    QFileInfo(q->temporaryPath(), "_write_test_XXXXXX.tmp").absoluteFilePath());
   if (!fileInTemporaryPathFolder.open())
     {
     QString newTempFolder = q->defaultTemporaryPath();
