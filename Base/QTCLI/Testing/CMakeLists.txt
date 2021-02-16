@@ -19,25 +19,13 @@ SEMMacroBuildCLI(
   )
 
 #-----------------------------------------------------------------------------
-set(pycli_build_dir ${SlicerExecutionModel_DEFAULT_CLI_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR})
-set(pycli_files
-  ${CMAKE_CURRENT_SOURCE_DIR}/PyCLIModule4Test.py
-  ${CMAKE_CURRENT_SOURCE_DIR}/PyCLIModule4Test.xml
+SlicerMacroBuildScriptedCLI(
+  NAME PyCLIModule4Test
+  FOLDER "Core-Base"
+  NO_INSTALL
   )
 
-add_custom_target(InstallPyCLITest4 ALL
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${pycli_build_dir}
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${pycli_files} ${pycli_build_dir}
-  )
-
-if(NOT WIN32)
-  add_custom_target(InstallPyCLITest4Chmod ALL
-    COMMAND chmod u+x "${pycli_build_dir}/PyCLIModule4Test.py"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    DEPENDS InstallPyCLITest4
-  )
-endif()
-
+#-----------------------------------------------------------------------------
 set(KIT_TEST_SRCS
   qSlicerCLIExecutableModuleFactoryTest1.cxx
   qSlicerCLILoadableModuleFactoryTest1.cxx
