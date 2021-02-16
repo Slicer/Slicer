@@ -57,12 +57,12 @@ macro(SlicerMacroBuildScriptedCLI)
     COMMAND "${CMAKE_COMMAND}" -E copy "${cli_script_file}" "${binary_dir}"
     COMMAND "${CMAKE_COMMAND}" -E copy "${cli_xml_file}" "${binary_dir}"
     DEPENDS "${cli_script_file}" "${cli_xml_file}"
+    COMMENT "Copying ${LOCAL_SEM_NAME} files to ${binary_dir}"
     )
 
   add_custom_target(${LOCAL_SEM_NAME} ALL
     SOURCES "${cli_script_file}" "${cli_xml_file}"
     DEPENDS "${binary_dir}/${LOCAL_SEM_NAME}.py" "${binary_dir}/${LOCAL_SEM_NAME}.xml"
-    COMMENT "Copying ${LOCAL_SEM_NAME} files to ${binary_dir}"
     )
 
   set(cli_targets ${LOCAL_SEM_NAME})
