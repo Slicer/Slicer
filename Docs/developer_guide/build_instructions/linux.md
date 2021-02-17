@@ -91,6 +91,7 @@ After obtaining the source code, we need to set up the development environment:
 ```
 cd Slicer
 ./Utilities/SetupForDevelopment.sh
+cd ..
 ```
 
 [comment]: <> (TODO: Link to the readthedocs equivalent of https://www.slicer.org/wiki/Documentation/Nightly/Developers/DevelopmentWithGit)
@@ -105,7 +106,15 @@ of build (Debug or Release mode), whether to use system-installed libraries,
 let the build process fetch and compile own libraries, or enable/disable some of
 the software components and functionalities of Slicer.
 
-To obtain a default configuration of the Slicer build project use `cmake`:
+The following folders will be used in the instructions below:
+
+| Folder          | Path   |
+|-----------------|--------|
+| **source**      | `~/Slicer` |
+| **build**       |  `~/Slicer-SuperBuild-Debug` |
+| **inner-build** |  `~/Slicer-SuperBuild-Debug/Slicer-build` |
+
+To obtain a default configuration of the Slicer build project, create the **build** folder and use `cmake`:
 
 ```
 mkdir Slicer-SuperBuild-Debug
@@ -136,10 +145,9 @@ cmake -DCMAKE_BUILD_TYPE:STRING=Release ../Slicer
 ## Build Slicer
 
 Once the Slicer build project files have been generated, the Slicer project can
-be build:
+be built by running this command in the **build** folder
 
 ```
-cd Slicer-SuperBuild-Debug
 make
 ```
 
@@ -190,23 +198,27 @@ make
 ## Run Slicer
 
 After the building process has successfully completed, the executable file to
-run slicer will be located in `./Slicer-build/Slicer`
+run Slicer will be located in the **inner-build** folder.
+
+The application can be launched by these commands:
+```
+cd Slicer-build
+./Slicer`
+```
 
 ## Test Slicer
 
-After building, run the tests in the  `Slicer-SuperBuild/Slicer-build` directory.
+After building, run the tests in the **inner-build** folder.
 
-Start a terminal and type the following (you can replace 4 by the number of processor cores in the computer):
+Type the following (you can replace 4 by the number of processor cores in the computer):
 ```
-cd Slicer-SuperBuild-Debug/Slicer-build
 ctest -j4
 ```
 
 ## Package Slicer
 
-Start a terminal and type the following:
+Start a terminal and type the following in the **inner-build** folder:
 ```
-cd Slicer-SuperBuild-Debug/Slicer-build
 make package
 ```
 
