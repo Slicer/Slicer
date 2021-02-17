@@ -114,7 +114,7 @@ The following folders will be used in the instructions below:
 | **build**       |  `~/Slicer-SuperBuild-Debug` |
 | **inner-build** |  `~/Slicer-SuperBuild-Debug/Slicer-build` |
 
-To obtain a default configuration of the Slicer build project, create the build folder and use `cmake`:
+To obtain a default configuration of the Slicer build project, create the **build** folder and use `cmake`:
 
 ```
 mkdir Slicer-SuperBuild-Debug
