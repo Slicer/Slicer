@@ -208,7 +208,7 @@ cd Slicer-build
 
 ## Test Slicer
 
-After building, run the tests in the inner-build folder.
+After building, run the tests in the **inner-build** folder.
 
 Type the following (you can replace 4 by the number of processor cores in the computer):
 ```
