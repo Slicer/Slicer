@@ -217,7 +217,7 @@ ctest -j4
 
 ## Package Slicer
 
-Start a terminal and type the following in the inner-build folder:
+Start a terminal and type the following in the **inner-build** folder:
 ```
 make package
 ```
