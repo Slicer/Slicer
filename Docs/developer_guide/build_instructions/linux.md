@@ -108,9 +108,11 @@ the software components and functionalities of Slicer.
 
 The following folders will be used in the instructions below:
 
-- source folder: ~/Slicer
-- build folder: ~/Slicer-SuperBuild-Debug
-- inner-build folder: ~/Slicer-SuperBuild-Debug/Slicer-build
+| Folder          | Path   |
+|-----------------|--------|
+| **source**      | `~/Slicer` |
+| **build**       |  `~/Slicer-SuperBuild-Debug` |
+| **inner-build** |  `~/Slicer-SuperBuild-Debug/Slicer-build` |
 
 To obtain a default configuration of the Slicer build project, create the build folder and use `cmake`:
 
