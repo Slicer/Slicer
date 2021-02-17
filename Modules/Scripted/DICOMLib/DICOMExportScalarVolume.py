@@ -2,6 +2,7 @@ from __future__ import print_function
 import os
 import glob
 import slicer
+import logging
 
 #########################################################
 #
@@ -155,6 +156,7 @@ class DICOMExportScalarVolume(object):
     # - use the GUI's Logic to invoke the task
     #
     if not hasattr(slicer.modules, 'createdicomseries'):
+      logging.error("CreateDICOMSeries module is not found")
       return False
     dicomWrite = slicer.modules.createdicomseries
     cliNode = slicer.cli.run(dicomWrite, None, cliparameters, wait_for_completion=True)
