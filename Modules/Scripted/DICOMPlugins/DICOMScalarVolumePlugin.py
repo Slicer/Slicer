@@ -576,7 +576,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       # naming of the DICOM files is static
       directoryName = 'ScalarVolume_' + str(exportable.subjectHierarchyItemID)
       directoryDir = qt.QDir(exportable.directory)
-      directoryDir.mkdir(directoryName)
+      directoryDir.mkpath(directoryName)
       directoryDir.cd(directoryName)
       directory = directoryDir.absolutePath()
       logging.info("Export scalar volume '" + volumeNode.GetName() + "' to directory " + directory)
@@ -627,7 +627,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
       # Perform export
       exporter = DICOMExportScalarVolume(tags['Study ID'], volumeNode, tags, directory)
-      exporter.export()
+      if not exporter.export():
+        return "Creating DICOM files from scalar volume failed"
 
     # Success
     return ""

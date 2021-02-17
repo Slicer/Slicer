@@ -2,6 +2,7 @@ from __future__ import print_function
 import os
 import glob
 import slicer
+import logging
 
 #########################################################
 #
@@ -128,8 +129,14 @@ class DICOMExportScalarVolume(object):
     # Image
     displayNode = self.volumeNode.GetDisplayNode()
     if displayNode:
-      cliparameters['windowCenter'] = str(displayNode.GetLevel())
-      cliparameters['windowWidth'] = str(displayNode.GetWindow())
+      if displayNode.IsA('vtkMRMLScalarVolumeDisplayNode'):
+        cliparameters['windowCenter'] = str(displayNode.GetLevel())
+        cliparameters['windowWidth'] = str(displayNode.GetWindow())
+      else:
+        # labelmap volume
+        scalarRange = displayNode.GetScalarRange()
+        cliparameters['windowCenter'] = str((scalarRange[0]+scalarRange[0])/2.0)
+        cliparameters['windowWidth'] = str(scalarRange[1]-scalarRange[0])
     cliparameters['contentDate'] = self.tags['Content Date']
     cliparameters['contentTime'] = self.tags['Content Time']
 
@@ -149,6 +156,7 @@ class DICOMExportScalarVolume(object):
     # - use the GUI's Logic to invoke the task
     #
     if not hasattr(slicer.modules, 'createdicomseries'):
+      logging.error("CreateDICOMSeries module is not found")
       return False
     dicomWrite = slicer.modules.createdicomseries
     cliNode = slicer.cli.run(dicomWrite, None, cliparameters, wait_for_completion=True)
