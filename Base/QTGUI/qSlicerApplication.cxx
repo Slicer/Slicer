@@ -1002,11 +1002,22 @@ void qSlicerApplication::logApplicationInformation() const
     .arg(qSlicerApplication::windowsActiveCodePage())
     .arg(systemInfo->Is64Bits() ? "64-bit" : "32-bit"));
 #else
-  qDebug("%s: %s / %s / %s - %s",
+  // Get name of the codec that Qt uses for current locale.
+  // We log this value to diagnose character encoding issues.
+  // There may be problems if the value is not UTF-8
+  // or if `locale charmap` command output is not UTF-8.
+  QString localeCodecName("unknown");
+  QTextCodec* localeCodec = QTextCodec::codecForLocale();
+  if (localeCodec)
+    {
+    localeCodecName = localeCodec->toUnicode(localeCodec->name());
+    }
+  qDebug("%s: %s / %s / %s / %s - %s",
     qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
     systemInfo->GetOSName() ? systemInfo->GetOSName() : "unknown",
     systemInfo->GetOSRelease() ? systemInfo->GetOSRelease() : "unknown",
     systemInfo->GetOSVersion() ? systemInfo->GetOSVersion() : "unknown",
+    qPrintable(localeCodecName),
     systemInfo->Is64Bits() ? "64-bit" : "32-bit");
 #endif
 
