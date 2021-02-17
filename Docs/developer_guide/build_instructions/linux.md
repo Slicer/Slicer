@@ -198,7 +198,7 @@ make
 ## Run Slicer
 
 After the building process has successfully completed, the executable file to
-run Slicer will be located in the inner-build folder.
+run Slicer will be located in the **inner-build** folder.
 
 The application can be launched by these commands:
 ```
