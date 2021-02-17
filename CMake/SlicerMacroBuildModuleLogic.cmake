@@ -71,7 +71,7 @@ macro(SlicerMacroBuildModuleLogic)
       qSlicerBaseQTCLI
       )
     # HACK Explicitly list transitive VTK dependencies because _get_dependencies_recurse
-    # used in vtkAddon/CMake/vtkMacroKitPythonWrap.cmake does not recurse over dependencies
+    # used in vtkAddon/CMake/vtkMacroKitPythonWrap.cmake only recurses over dependencies
     # that are VTK python wrapped.
     if(NOT ${MODULELOGIC_DISABLE_WRAP_PYTHON} AND VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
       list(APPEND MODULELOGIC_TARGET_LIBRARIES
