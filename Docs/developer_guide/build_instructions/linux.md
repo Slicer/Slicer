@@ -145,7 +145,7 @@ cmake -DCMAKE_BUILD_TYPE:STRING=Release ../Slicer
 ## Build Slicer
 
 Once the Slicer build project files have been generated, the Slicer project can
-be built by running this command in the build folder:
+be built by running this command in the **build** folder
 
 ```
 make
