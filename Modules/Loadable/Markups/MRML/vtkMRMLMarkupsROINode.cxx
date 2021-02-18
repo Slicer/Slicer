@@ -51,13 +51,8 @@ vtkMRMLMarkupsROINode::vtkMRMLMarkupsROINode()
 {
   this->PropertiesLabelText = "";
 
-  this->ROIType = vtkMRMLMarkupsROINode::ROITypeBox;
   this->RequiredNumberOfControlPoints = NUMBER_OF_BOX_CONTROL_POINTS;
-
-  this->Size[0] = 0.0;
-  this->Size[1] = 0.0;
-  this->Size[2] = 0.0;
-
+  this->MaximumNumberOfControlPoints = 0;
   this->IsUpdatingControlPointsFromROI = false;
   this->IsUpdatingROIFromControlPoints = false;
 
@@ -66,8 +61,6 @@ vtkMRMLMarkupsROINode::vtkMRMLMarkupsROINode()
   this->ROIToLocalMatrix->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
 
   this->InteractionHandleToWorldMatrix->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
-
-  this->InsideOut = false;
 }
 
 //----------------------------------------------------------------------------
@@ -255,7 +248,6 @@ void vtkMRMLMarkupsROINode::ProcessMRMLEvents(vtkObject* caller, unsigned long e
 {
   if (caller == this->CurveInputPoly->GetPoints() || caller == this->GetParentTransformNode())
     {
-    // TODO: Update handles from parent transform
     this->UpdateROIFromControlPoints();
     }
   else if (caller == this->ROIToLocalMatrix.GetPointer() && event == vtkCommand::ModifiedEvent)
@@ -293,9 +285,11 @@ void vtkMRMLMarkupsROINode::SetROIType(int roiType)
     {
     case vtkMRMLMarkupsROINode::ROITypeBox:
       this->RequiredNumberOfControlPoints = NUMBER_OF_BOX_CONTROL_POINTS;
+      this->MaximumNumberOfControlPoints = 0;
       break;
     case vtkMRMLMarkupsROINode::ROITypeBoundingBox:
       this->RequiredNumberOfControlPoints = NUMBER_OF_BOUNDING_BOX_CONTROL_POINTS;
+      this->MaximumNumberOfControlPoints = NUMBER_OF_BOUNDING_BOX_CONTROL_POINTS;
       break;
     default:
       break;
@@ -451,28 +445,32 @@ void vtkMRMLMarkupsROINode::UpdateBoxROIFromControlPoints()
     return;
     }
 
+  double oldSize[3] = { 0.0, 0.0, 0.0 };
+  this->GetSize(oldSize);
+
   this->UpdateBoundingBoxROIFromControlPoints();
-
-  // Find the shortest non-zero roi axis to pad the ROI if we need to give it some thickness.
-  double newSize[3] = { 0.0, 0.0, 0.0 };
-  this->GetSize(newSize);
-  double minimumSize = VTK_DOUBLE_MAX;
-  for (int i = 0; i < 3; ++i)
+  if (this->GetNumberOfControlPoints() >= NUMBER_OF_BOX_CONTROL_POINTS)
     {
-    if (newSize[i] <= 0.0)
+    double newSize[3] = { 0.0, 0.0, 0.0 };
+    this->GetSize(newSize);
+
+    // Find the shortest non-zero roi axis to pad the ROI if we need to give it some thickness.
+    double minimumSize = VTK_DOUBLE_MAX;
+    for (int i = 0; i < 3; ++i)
       {
-      continue;
+      if (newSize[i] <= 0.0)
+        {
+        continue;
+        }
+      minimumSize = std::min(minimumSize, newSize[i]);
       }
-    minimumSize = std::min(minimumSize, newSize[i]);
-    }
-  if (minimumSize == VTK_DOUBLE_MAX)
-    {
-    minimumSize = 0.0;
-    }
 
-  // If the requied control points exist, then we should give the ROI some thickness along the 3rd axis.
-  if (this->GetNumberOfControlPoints() == NUMBER_OF_BOX_CONTROL_POINTS)
-    {
+    if (minimumSize == VTK_DOUBLE_MAX)
+      {
+      minimumSize = 0.0;
+      }
+
+    // If the requied control points exist, then we should give the ROI some thickness along the 3rd axis.
     if (newSize[0] == 0.0)
       {
       newSize[0] = minimumSize;
@@ -485,18 +483,21 @@ void vtkMRMLMarkupsROINode::UpdateBoxROIFromControlPoints()
       {
       newSize[2] = minimumSize;
       }
+    this->SetSize(newSize);
     }
-  this->SetSize(newSize);
+  else if (this->GetNumberOfDefinedControlPoints() == this->RequiredNumberOfControlPoints)
+    {
+    this->SetSize(oldSize);
+    }
 
   // If all of the control points have been defined, then the ROI has been defined. The control points can be removed.
-  if (this->GetNumberOfDefinedControlPoints() == NUMBER_OF_BOX_CONTROL_POINTS)
+  if (this->GetNumberOfDefinedControlPoints() >= NUMBER_OF_BOX_CONTROL_POINTS)
     {
-    this->RequiredNumberOfControlPoints = 0; // Leave place mode
-    this->RemoveAllControlPoints();
+    this->UpdateControlPointsFromBoxROI();
     }
-  else
+  else if (this->GetNumberOfDefinedControlPoints() == 0)
     {
-    this->RequiredNumberOfControlPoints = NUMBER_OF_BOX_CONTROL_POINTS;
+    this->MaximumNumberOfControlPoints = NUMBER_OF_BOX_CONTROL_POINTS;
     }
 }
 
@@ -564,6 +565,9 @@ void vtkMRMLMarkupsROINode::UpdateControlPointsFromROI()
 
     switch (this->ROIType)
       {
+      case vtkMRMLMarkupsROINode::ROITypeBox:
+        this->UpdateControlPointsFromBoxROI();
+        break;
       case vtkMRMLMarkupsROINode::ROITypeBoundingBox:
         this->UpdateControlPointsFromBoundingBoxROI();
         break;
@@ -638,6 +642,23 @@ void vtkMRMLMarkupsROINode::UpdateControlPointsFromBoundingBoxROI()
   localToWorldTransformFilter->Update();
 
   this->SetControlPointPositionsWorld(localToWorldTransformFilter->GetOutput()->GetPoints());
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsROINode::UpdateControlPointsFromBoxROI()
+{
+  if (vtkMath::Norm(this->Size) == 0.0)
+    {
+    return;
+    }
+
+  double center_World[3] = { 0.0, 0.0, 0.0 };
+  this->GetCenterWorld(center_World);
+  vtkNew<vtkPoints> points_World;
+  points_World->InsertNextPoint(center_World);
+  this->SetControlPointPositionsWorld(points_World);
+  this->MaximumNumberOfControlPoints = 1;
+  this->RequiredNumberOfControlPoints = 1;
 }
 
 //---------------------------------------------------------------------------

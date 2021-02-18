@@ -71,6 +71,12 @@ public:
   /// Return the bounds of the representation
   double *GetBounds() override;
 
+  void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
+    int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
+
+  void CanInteractWithROI(vtkMRMLInteractionEventData* interactionEventData,
+    int& foundComponentType, int& foundComponentIndex, double& closestDistance2);
+
   // Update visibility of interaction handles for representation
   void UpdateInteractionPipeline() override;
 
@@ -89,6 +95,8 @@ protected:
   void SetROISource(vtkPolyDataAlgorithm* roiSource);
 
   vtkSmartPointer<vtkPolyDataAlgorithm>       ROISource;
+
+  vtkSmartPointer<vtkPassThroughFilter>       ROIPipelineInputFilter;
   vtkSmartPointer<vtkTransform>               ROIToWorldTransform;
   vtkSmartPointer<vtkTransformPolyDataFilter> ROIToWorldTransformFilter;
   vtkSmartPointer<vtkCutter>                  ROIOutlineCutter;

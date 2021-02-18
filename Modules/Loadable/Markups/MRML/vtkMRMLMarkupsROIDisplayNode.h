@@ -48,6 +48,12 @@ public:
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentDefaultMacro(vtkMRMLMarkupsROIDisplayNode);
 
+  enum
+  {
+    ComponentROI = vtkMRMLMarkupsDisplayNode::Component_Last,
+    ComponentROI_Last
+  };
+
 protected:
   vtkMRMLMarkupsROIDisplayNode();
   ~vtkMRMLMarkupsROIDisplayNode() override;

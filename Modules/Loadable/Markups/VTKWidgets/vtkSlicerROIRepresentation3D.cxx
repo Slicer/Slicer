@@ -21,6 +21,7 @@
 // VTK includes
 #include <vtkActor2D.h>
 #include <vtkAppendPolyData.h>
+#include <vtkCellLocator.h>
 #include <vtkCubeSource.h>
 #include <vtkDoubleArray.h>
 #include <vtkGlyph3D.h>
@@ -38,7 +39,7 @@
 
 // MRML includes
 #include "vtkMRMLInteractionEventData.h"
-#include "vtkMRMLMarkupsDisplayNode.h"
+#include "vtkMRMLMarkupsROIDisplayNode.h"
 #include "vtkMRMLMarkupsROINode.h"
 #include "vtkMRMLScene.h"
 
@@ -132,9 +133,11 @@ void vtkSlicerROIRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned 
   this->VisibilityOn();
   this->PickableOn();
 
-  int controlPointType = Unselected;
-  // TODO: Active
-  controlPointType = this->GetAllControlPointsSelected() ? vtkSlicerMarkupsWidgetRepresentation::Selected : vtkSlicerMarkupsWidgetRepresentation::Unselected;
+  int controlPointType = Active;
+  if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsROIDisplayNode::ComponentROI)
+    {
+    controlPointType = this->GetAllControlPointsSelected() ? vtkSlicerMarkupsWidgetRepresentation::Selected : vtkSlicerMarkupsWidgetRepresentation::Unselected;
+    }
 
   double opacity = displayNode->GetOpacity();
   double fillOpacity = this->MarkupsDisplayNode->GetFillVisibility() ? displayNode->GetFillOpacity() : 0.0;
@@ -334,6 +337,76 @@ void vtkSlicerROIRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)
 {
   //Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
   this->Superclass::PrintSelf(os, indent);
+}
+
+
+//----------------------------------------------------------------------
+void vtkSlicerROIRepresentation3D::CanInteract(
+  vtkMRMLInteractionEventData* interactionEventData,
+  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
+{
+  foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
+  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  if (!markupsNode || markupsNode->GetLocked() || !interactionEventData || !this->GetVisibility())
+    {
+    return;
+    }
+
+  Superclass::CanInteract(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
+  if (foundComponentType != vtkMRMLMarkupsDisplayNode::ComponentNone)
+    {
+    return;
+    }
+
+  this->CanInteractWithROI(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerROIRepresentation3D::CanInteractWithROI(
+  vtkMRMLInteractionEventData* interactionEventData,
+  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
+{
+  this->ROIOutlineFilter->Update();
+  if (this->ROIOutlineFilter->GetOutput() && this->ROIOutlineFilter->GetOutput()->GetNumberOfPoints() == 0)
+    {
+    return;
+    }
+
+  // Create the tree
+  vtkNew<vtkCellLocator> cellLocator;
+  cellLocator->SetDataSet(this->ROIOutlineFilter->GetOutput());
+  cellLocator->BuildLocator();
+
+  vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->MarkupsNode);
+  if (!roiNode)
+    {
+    return;
+    }
+
+  const double* worldPosition = interactionEventData->GetWorldPosition();
+  double localPosition[3] = { 0.0, 0.0, 0.0 };
+  roiNode->TransformPointFromWorld(worldPosition, localPosition);
+
+  vtkNew<vtkTransform> localToROI;
+  localToROI->Concatenate(roiNode->GetROIToLocalMatrix());
+  localToROI->Inverse();
+
+  double roiPosition[3] = { 0.0, 0.0, 0.0 };
+  localToROI->TransformPoint(localPosition, roiPosition);
+
+  double closestPoint[3]; //the coordinates of the closest point will be returned here
+  double distance2; //the squared distance to the closest point will be returned here
+  vtkIdType cellId; //the cell id of the cell containing the closest point will be returned here
+  int subId; //this is rarely used (in triangle strips only, I believe)
+  cellLocator->FindClosestPoint(roiPosition, closestPoint, cellId, subId, distance2);
+
+  double toleranceWorld = this->ControlPointSize / 2.0;
+  if (distance2 < toleranceWorld)
+    {
+    closestDistance2 = distance2;
+    foundComponentType = vtkMRMLMarkupsROIDisplayNode::ComponentROI;
+    foundComponentIndex = 0;
+    }
 }
 
 //-----------------------------------------------------------------------------

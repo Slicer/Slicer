@@ -118,6 +118,7 @@ public:
   /// Calculate the position of control points from the ROI
   virtual void UpdateControlPointsFromROI();
   virtual void UpdateControlPointsFromBoundingBoxROI();
+  virtual void UpdateControlPointsFromBoxROI();
 
   // ROI type enum defines the calculation method that should be used to convert to and from control points.
   enum
@@ -200,15 +201,15 @@ public:
   vtkBooleanMacro(InsideOut, bool);
 
 protected:
+  bool InsideOut{false};
+  int ROIType{vtkMRMLMarkupsROINode::ROITypeBox};
 
-  bool InsideOut;
-  int ROIType;
+  double Size[3]{ 0.0, 0.0, 0.0 };
 
-  double Size[3];
+  bool IsUpdatingControlPointsFromROI{false};
+  bool IsUpdatingROIFromControlPoints{false};
+
   vtkSmartPointer<vtkMatrix4x4> ROIToLocalMatrix;
-
-  bool IsUpdatingControlPointsFromROI;
-  bool IsUpdatingROIFromControlPoints;
 
   vtkMRMLMarkupsROINode();
   ~vtkMRMLMarkupsROINode() override;
