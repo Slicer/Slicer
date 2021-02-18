@@ -29,6 +29,7 @@
 #include <QRandomGenerator>
 #include <QSurfaceFormat>
 #include <QSysInfo>
+#include <QTextCodec>
 #include <QVBoxLayout>
 
 #if defined(Q_OS_WIN32)
