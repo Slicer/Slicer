@@ -20,6 +20,7 @@
 
 // VTK includes
 #include <vtkActor2D.h>
+#include <vtkCellLocator.h>
 #include <vtkContourTriangulator.h>
 #include <vtkCubeSource.h>
 #include <vtkCutter.h>
@@ -28,6 +29,7 @@
 #include <vtkMatrix4x4.h>
 #include <vtkObjectFactory.h>
 #include <vtkOutlineFilter.h>
+#include <vtkPassThroughFilter.h>
 #include <vtkPlane.h>
 #include <vtkPoints.h>
 #include <vtkPointData.h>
@@ -42,18 +44,20 @@
 
 // MRML includes
 #include "vtkMRMLInteractionEventData.h"
-#include "vtkMRMLMarkupsDisplayNode.h"
+#include "vtkMRMLMarkupsROIDisplayNode.h"
 #include "vtkMRMLMarkupsROINode.h"
 
 vtkStandardNewMacro(vtkSlicerROIRepresentation2D);
-
 //----------------------------------------------------------------------
 vtkSlicerROIRepresentation2D::vtkSlicerROIRepresentation2D()
 {
   this->ROISource = nullptr;
 
+  this->ROIPipelineInputFilter = vtkSmartPointer<vtkPassThroughFilter>::New();
+
   this->ROIToWorldTransform = vtkSmartPointer<vtkTransform>::New();
   this->ROIToWorldTransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  this->ROIToWorldTransformFilter->SetInputConnection(this->ROIPipelineInputFilter->GetOutputPort());
   this->ROIToWorldTransformFilter->SetTransform(this->ROIToWorldTransform);
 
   this->ROIOutlineCutter = vtkSmartPointer<vtkCutter>::New();
@@ -117,7 +121,11 @@ void vtkSlicerROIRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned 
 
   this->ROIToWorldTransform->SetMatrix(roiNode->GetInteractionHandleToWorldMatrix());
 
-  int controlPointType = Selected;
+  int controlPointType = Active;
+  if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsROIDisplayNode::ComponentROI)
+    {
+    controlPointType = this->GetAllControlPointsSelected() ? vtkSlicerMarkupsWidgetRepresentation::Selected : vtkSlicerMarkupsWidgetRepresentation::Unselected;
+    }
 
   double opacity = this->MarkupsDisplayNode->GetOpacity();
 
@@ -138,11 +146,11 @@ void vtkSlicerROIRepresentation2D::SetROISource(vtkPolyDataAlgorithm* roiSource)
   this->ROISource = roiSource;
   if (this->ROISource)
     {
-    this->ROIToWorldTransformFilter->SetInputConnection(roiSource->GetOutputPort());
+    this->ROIPipelineInputFilter->SetInputConnection(roiSource->GetOutputPort());
     }
   else
     {
-    this->ROIToWorldTransformFilter->RemoveAllInputConnections(0);
+    this->ROIPipelineInputFilter->RemoveAllInputConnections(0);
     }
 }
 
@@ -267,6 +275,73 @@ void vtkSlicerROIRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
 {
   //Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
   this->Superclass::PrintSelf(os, indent);
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerROIRepresentation2D::CanInteract(
+  vtkMRMLInteractionEventData* interactionEventData,
+  int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
+{
+  foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
+  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  if (!markupsNode || markupsNode->GetLocked() || !interactionEventData)
+    {
+    return;
+    }
+
+  Superclass::CanInteract(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
+  if (foundComponentType != vtkMRMLMarkupsDisplayNode::ComponentNone)
+    {
+    return;
+    }
+
+  this->CanInteractWithROI(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerROIRepresentation2D::CanInteractWithROI(
+  vtkMRMLInteractionEventData* interactionEventData,
+  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
+{
+  if (!this->ROISource)
+    {
+    return;
+    }
+
+  this->ROIPipelineInputFilter->Update();
+  if (this->ROIPipelineInputFilter->GetOutput() && this->ROIPipelineInputFilter->GetOutput()->GetNumberOfPoints() == 0)
+    {
+    return;
+    }
+
+  // Create the tree
+  vtkNew<vtkCellLocator> cellLocator;
+  cellLocator->SetDataSet(this->ROIToWorldTransformFilter->GetOutput());
+  cellLocator->BuildLocator();
+
+  vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->MarkupsNode);
+  if (!roiNode)
+    {
+    return;
+    }
+
+  const double* worldPosition = interactionEventData->GetWorldPosition();
+  double localPosition[3] = { 0.0, 0.0, 0.0 };
+  roiNode->TransformPointFromWorld(worldPosition, localPosition);
+
+  double closestPoint[3]; //the coordinates of the closest point will be returned here
+  double distance2; //the squared distance to the closest point will be returned here
+  vtkIdType cellId; //the cell id of the cell containing the closest point will be returned here
+  int subId; //this is rarely used (in triangle strips only, I believe)
+  cellLocator->FindClosestPoint(worldPosition, closestPoint, cellId, subId, distance2);
+
+  double toleranceWorld = this->ControlPointSize / 2.0;
+  if (distance2 < toleranceWorld)
+    {
+    closestDistance2 = distance2;
+    foundComponentType = vtkMRMLMarkupsROIDisplayNode::ComponentROI;
+    foundComponentIndex = 0;
+    }
 }
 
 //----------------------------------------------------------------------

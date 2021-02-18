@@ -40,6 +40,7 @@
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLMarkupsDisplayNode.h>
+#include <vtkMRMLMarkupsROIDisplayNode.h>
 #include <vtkMRMLMarkupsNode.h>
 #include <vtkMRMLScene.h>
 
@@ -437,14 +438,16 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
     d->ViewMenuEventData["NodeID"] = QVariant(associatedNode->GetID());
 
     int componentType = d->ViewMenuEventData["ComponentType"].toInt();
-    bool handlesSelected =
+    bool pointActionsDisabled =
       componentType == vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle ||
       componentType == vtkMRMLMarkupsDisplayNode::ComponentRotationHandle ||
-      componentType == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle;
+      componentType == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle ||
+      componentType == vtkMRMLMarkupsDisplayNode::ComponentPlane ||
+      componentType == vtkMRMLMarkupsROIDisplayNode::ComponentROI;
 
-    d->RenamePointAction->setVisible(!handlesSelected);
-    d->DeletePointAction->setVisible(!handlesSelected);
-    d->ToggleSelectPointAction->setVisible(!handlesSelected);
+    d->RenamePointAction->setVisible(!pointActionsDisabled);
+    d->DeletePointAction->setVisible(!pointActionsDisabled);
+    d->ToggleSelectPointAction->setVisible(!pointActionsDisabled);
 
     vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(associatedNode->GetDisplayNode());
     d->ToggleHandleInteractive->setVisible(displayNode != nullptr);

@@ -81,6 +81,12 @@ public:
   /// Return the bounds of the representation
   double *GetBounds() override;
 
+  void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
+    int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
+
+  void CanInteractWithROI(vtkMRMLInteractionEventData* interactionEventData,
+    int& foundComponentType, int& foundComponentIndex, double& closestDistance2);
+
 protected:
   vtkSlicerROIRepresentation3D();
   ~vtkSlicerROIRepresentation3D() override;
