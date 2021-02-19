@@ -71,7 +71,7 @@ int qMRMLColorPickerWidgetTest2(int argc, char * argv [])
     // quits the getColor dialog event loop.
     QTimer::singleShot(200, &app, SLOT(quit()));
     }
-  ctkColorDialog::getColor(Qt::red, nullptr, "", nullptr);
+  ctkColorDialog::getColor(Qt::red, nullptr, "", QColorDialog::ColorDialogOptions());
   return EXIT_SUCCESS;
 }
 

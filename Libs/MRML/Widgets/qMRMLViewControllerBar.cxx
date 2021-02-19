@@ -115,7 +115,7 @@ void qMRMLViewControllerBarPrivate::init()
   this->ViewLabel = new QLabel(q);
   this->ViewLabel->setObjectName("ViewLabel");
   this->ViewLabel->setAlignment(Qt::AlignHCenter | Qt::AlignCenter);
-  this->ViewLabel->setMinimumWidth(this->ViewLabel->fontMetrics().width("XX"));
+  this->ViewLabel->setMinimumWidth(this->ViewLabel->fontMetrics().horizontalAdvance("XX"));
   this->ViewLabel->setAutoFillBackground(true);
   this->BarLayout->addWidget(this->ViewLabel);
 

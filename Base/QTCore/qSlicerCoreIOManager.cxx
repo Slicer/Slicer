@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QElapsedTimer>
 #include <QFileInfo>
 
 // CTK includes
@@ -486,7 +487,7 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
   QStringList nodes;
   foreach (qSlicerFileReader* reader, readers)
     {
-    QTime timeProbe;
+    QElapsedTimer timeProbe;
     timeProbe.start();
     reader->userMessages()->ClearMessages();
     reader->setMRMLScene(d->currentScene());

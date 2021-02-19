@@ -432,7 +432,7 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
     if (!node.contains("fileName"))
       {
       //set n(fileName) [format $n(filePattern) $n(filePrefix)]
-      node["fileName"].sprintf(
+      node["fileName"].asprintf(
         node["filePattern"].toUtf8(),
         node["filePrefix"].toUtf8().data());
       }

@@ -132,10 +132,8 @@ QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> qSlicerDiffusionTensorVolumeDispl
     {
     return QList<vtkMRMLGlyphableVolumeSliceDisplayNode*>();
     }
-  QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> res
-    = QList<vtkMRMLGlyphableVolumeSliceDisplayNode*>::fromVector(
-      QVector<vtkMRMLGlyphableVolumeSliceDisplayNode*>::fromStdVector(
-        displayNode->GetSliceGlyphDisplayNodes(d->VolumeNode)));
+  std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*> glyphableDisplayNodes = displayNode->GetSliceGlyphDisplayNodes(d->VolumeNode);
+  auto res = QList<vtkMRMLGlyphableVolumeSliceDisplayNode*>(glyphableDisplayNodes.begin(), glyphableDisplayNodes.end());
   return res;
 }
 
