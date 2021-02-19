@@ -234,7 +234,7 @@ def showStatusMessage(message, duration = 0):
   """Display ``message`` in the status bar.
   """
   mw = mainWindow()
-  if not mw or not mw.statusBar:
+  if not mw or not mw.statusBar():
     return False
   mw.statusBar().showMessage(message, duration)
   return True
@@ -585,9 +585,9 @@ def setStatusBarVisible(visible):
   If there is no main window or status bar then the function has no effect.
   """
   mw = mainWindow()
-  if not mw or not mw.statusBar:
+  if not mw or not mw.statusBar():
     return
-  mw.statusBar.setVisible(visible)
+  mw.statusBar().setVisible(visible)
 
 def setViewControllersVisible(visible):
   """Show/hide view controller toolbar at the top of slice and 3D views"""
