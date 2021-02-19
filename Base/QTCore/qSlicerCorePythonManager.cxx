@@ -90,7 +90,7 @@ void qSlicerCorePythonManager::preInitialization()
 void qSlicerCorePythonManager::addVTKObjectToPythonMain(const QString& name, vtkObject * object)
 {
   // Split name using '.'
-  QStringList moduleNameList = name.split('.', QString::SkipEmptyParts);
+  QStringList moduleNameList = name.split('.', Qt::SkipEmptyParts);
 
   // Remove the last part
   QString attributeName = moduleNameList.takeLast();

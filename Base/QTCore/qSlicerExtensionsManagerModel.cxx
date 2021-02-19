@@ -2648,7 +2648,7 @@ qSlicerExtensionsManagerModel::parseExtensionDescriptionFile(const QString& file
       {
       continue;
       }
-    QStringList components = line.split(" ", QString::SkipEmptyParts);
+    QStringList components = line.split(" ", Qt::SkipEmptyParts);
     if (components.size() == 0)
       {
       continue;
