@@ -1261,6 +1261,14 @@ void qMRMLSubjectHierarchyTreeView::toggleSubjectHierarchyItemVisibility(vtkIdTy
     {
     return;
     }
+  qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin =
+    qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(itemID);
+  if (!ownerPlugin)
+    {
+    qCritical() << Q_FUNC_INFO << ": Subject hierarchy item " << itemID << " (named "
+      << d->SubjectHierarchyNode->GetItemName(itemID).c_str() << ") is not owned by any plugin";
+    return;
+    }
 
   // If more than 10 item visibilities are changed, then enter in batch processing state
   vtkNew<vtkIdList> childItemsList;
@@ -1269,15 +1277,6 @@ void qMRMLSubjectHierarchyTreeView::toggleSubjectHierarchyItemVisibility(vtkIdTy
   if (batchProcessing)
     {
     d->SubjectHierarchyNode->GetScene()->StartState(vtkMRMLScene::BatchProcessState);
-    }
-
-  qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin =
-    qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(itemID);
-  if (!ownerPlugin)
-    {
-    qCritical() << Q_FUNC_INFO << ": Subject hierarchy item " << itemID << " (named "
-      << d->SubjectHierarchyNode->GetItemName(itemID).c_str() << ") is not owned by any plugin";
-    return;
     }
 
   int visible = (ownerPlugin->getDisplayVisibility(itemID) > 0 ? 0 : 1);
