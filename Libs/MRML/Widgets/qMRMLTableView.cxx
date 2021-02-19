@@ -164,18 +164,18 @@ bool qMRMLTableViewPrivate::verifyTableModelAndNode(const char* methodName) cons
 void qMRMLTableViewPrivate::updateWidgetFromViewNode()
 {
   Q_Q(qMRMLTableView);
-  if (!this->MRMLScene || !this->MRMLTableViewNode)
+  if (!this->MRMLTableViewNode)
     {
+    // this view is used without view node (table node is set directly)
+    return;
+    }
+  if (!this->MRMLScene
+    || this->MRMLScene != this->MRMLTableViewNode->GetScene())
+    {
+    // the view node is not in the scene anymore, do not show the table
     q->setMRMLTableNode((vtkMRMLNode*)nullptr);
-    return;
     }
-
-  if (!q->isEnabled())
-    {
-    return;
-    }
-
-  // Get the TableNode
+  // Update the TableNode
   q->setMRMLTableNode(this->MRMLTableViewNode->GetTableNode());
 }
 
