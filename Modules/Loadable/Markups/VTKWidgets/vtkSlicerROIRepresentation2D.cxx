@@ -14,7 +14,7 @@
 
   This file was originally developed by Kyle Sunderland, PerkLab, Queen's University
   and was supported through CANARIE's Research Software Program, Cancer
-  Care Ontario, OpenAnatomy, and Brigham and Women’s Hospital through NIH grant R01MH112748.
+  Care Ontario, OpenAnatomy, and Brigham and Womenâ€™s Hospital through NIH grant R01MH112748.
 
 ==============================================================================*/
 
@@ -36,6 +36,8 @@
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper2D.h>
 #include <vtkProperty2D.h>
+#include <vtkTextActor.h>
+#include <vtkTextProperty.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 
@@ -138,6 +140,22 @@ void vtkSlicerROIRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned 
     ? opacity * this->MarkupsDisplayNode->GetOutlineOpacity() : 0.0;
   this->ROIOutlineProperty->DeepCopy(this->GetControlPointsPipeline(controlPointType)->Property);
   this->ROIOutlineProperty->SetOpacity(outlineOpacity);
+
+  // Properties label display
+  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
+  if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
+    && this->AnyPointVisibilityOnSlice
+    && roiNode->GetNumberOfDefinedControlPoints(true) > 0) // including preview
+    {
+    double textPos[3] = { 0.0,  0.0, 0.0 };
+    this->GetNthControlPointDisplayPosition(0, textPos);
+    this->TextActor->SetDisplayPosition(static_cast<int>(textPos[0]), static_cast<int>(textPos[1]));
+    this->TextActor->SetVisibility(true);
+    }
+  else
+    {
+    this->TextActor->SetVisibility(false);
+    }
 }
 
 //----------------------------------------------------------------------

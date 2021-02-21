@@ -252,7 +252,6 @@ void vtkSlicerCurveRepresentation3D::GetActors(vtkPropCollection *pc)
   this->Superclass::GetActors(pc);
   this->LineActor->GetActors(pc);
   this->LineOccludedActor->GetActors(pc);
-  this->TextActor->GetActors(pc);
 }
 
 //----------------------------------------------------------------------
@@ -262,7 +261,6 @@ void vtkSlicerCurveRepresentation3D::ReleaseGraphicsResources(
   this->Superclass::ReleaseGraphicsResources(win);
   this->LineActor->ReleaseGraphicsResources(win);
   this->LineOccludedActor->ReleaseGraphicsResources(win);
-  this->TextActor->ReleaseGraphicsResources(win);
 }
 
 //----------------------------------------------------------------------

@@ -201,6 +201,21 @@ void vtkSlicerPlaneRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   this->PlaneOutlineActor->SetVisibility(visible);
   this->ArrowActor->SetVisibility(visible);
 
+  // Properties label display
+  if (visible && this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
+    && this->AnyPointVisibilityOnSlice
+    && markupsNode->GetNumberOfDefinedControlPoints(true) > 0) // including preview
+    {
+    double textPos[3] = { 0.0,  0.0, 0.0 };
+    this->GetNthControlPointDisplayPosition(0, textPos);
+    this->TextActor->SetDisplayPosition(static_cast<int>(textPos[0]), static_cast<int>(textPos[1]));
+    this->TextActor->SetVisibility(true);
+    }
+  else
+    {
+    this->TextActor->SetVisibility(false);
+    }
+
   if (!visible)
     {
     return;

@@ -37,6 +37,8 @@ set(${KIT}_SRCS
   vtkMRMLMeasurementArea.h
   vtkMRMLMeasurementLength.cxx
   vtkMRMLMeasurementLength.h
+  vtkMRMLMeasurementVolume.cxx
+  vtkMRMLMeasurementVolume.h
   vtkParametricPolynomialApproximation.cxx
   vtkParametricPolynomialApproximation.h
   vtkSlicerDijkstraGraphGeodesicPath.cxx

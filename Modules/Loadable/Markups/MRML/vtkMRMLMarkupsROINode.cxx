@@ -23,11 +23,13 @@
 // MRML includes
 #include <vtkMRMLMarkupsROIDisplayNode.h>
 #include <vtkMRMLMarkupsROIJsonStorageNode.h>
+#include "vtkMRMLMeasurementVolume.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTransformNode.h"
 
 // VTK includes
 #include <vtkCallbackCommand.h>
+#include <vtkCollection.h>
 #include <vtkCommand.h>
 #include <vtkDoubleArray.h>
 #include <vtkGeneralTransform.h>
@@ -61,6 +63,13 @@ vtkMRMLMarkupsROINode::vtkMRMLMarkupsROINode()
   this->ROIToLocalMatrix->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
 
   this->InteractionHandleToWorldMatrix->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
+
+  // Setup measurements calculated for this markup type
+  vtkNew<vtkMRMLMeasurementVolume> volumeMeasurement;
+  volumeMeasurement->SetEnabled(false);
+  volumeMeasurement->SetName("volume");
+  volumeMeasurement->SetInputMRMLNode(this);
+  this->Measurements->AddItem(volumeMeasurement);
 }
 
 //----------------------------------------------------------------------------
