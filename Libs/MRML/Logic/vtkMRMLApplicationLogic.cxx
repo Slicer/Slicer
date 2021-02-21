@@ -538,7 +538,7 @@ void vtkMRMLApplicationLogic::FitSliceToAll(bool onlyIfPropagateVolumeSelectionA
     // Set to default orientation before rotation so that the view is snapped
     // closest to the default orientation of this slice view.
     sliceNode->SetOrientationToDefault();
-    sliceLogic->RotateSliceToLowestVolumeAxes();
+    sliceLogic->RotateSliceToLowestVolumeAxes(false);
     int* dims = sliceNode->GetDimensions();
     sliceLogic->FitSliceToAll(dims[0], dims[1]);
     sliceLogic->SnapSliceOffsetToIJK();

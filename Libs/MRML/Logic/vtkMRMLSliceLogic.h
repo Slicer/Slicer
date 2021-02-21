@@ -239,7 +239,10 @@ public:
   void GetBackgroundSliceBounds(double sliceBounds[6]);
 
   /// Rotate slice view to match axes of the lowest volume layer (background, foreground, label).
-  void RotateSliceToLowestVolumeAxes();
+  /// \param forceSlicePlaneToSingleSlice If the volume is single-slice and forceSlicePlaneToSingleSlice
+  /// is enabled then slice view will be aligned with the volume's slice plane. If the flag is disabled
+  /// of the volume has more than one slice then the slice view will be rotated to the closest orthogonal axis.
+  void RotateSliceToLowestVolumeAxes(bool forceSlicePlaneToSingleSlice = true);
 
   ///
   /// adjust the node's field of view to match the extent of current background volume

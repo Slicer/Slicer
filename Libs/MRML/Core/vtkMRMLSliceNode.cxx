@@ -2114,7 +2114,7 @@ void vtkMRMLSliceNode::SetSliceOffset(double offset)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode)
+void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode, bool forceSlicePlaneToSingleSlice/*=true*/)
 {
   if (volumeNode == nullptr)
     {
@@ -2141,7 +2141,7 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode)
     }
 
   int volumeAxisIndexForSliceZ = -1;
-  if (volumeNode->GetImageData() != nullptr)
+  if (forceSlicePlaneToSingleSlice && volumeNode->GetImageData() != nullptr)
     {
     int dims[3] = { 0, 0, 0 };
     volumeNode->GetImageData()->GetDimensions(dims);
