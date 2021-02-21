@@ -277,9 +277,6 @@ void vtkSlicerPlaneRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   this->PlaneActor->SetVisibility(markupsNode->GetNumberOfControlPoints() >= 3);
   this->PlaneOccludedActor->SetVisibility(this->PlaneActor->GetVisibility() && displayNode->GetOccludedVisibility());
 
-  this->TextActor->SetVisibility(this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
-    && markupsNode->GetNumberOfControlPoints() > 0);
-
   this->UpdateRelativeCoincidentTopologyOffsets(this->PlaneMapper, this->PlaneOccludedMapper);
 
   int controlPointType = Active;
@@ -289,7 +286,19 @@ void vtkSlicerPlaneRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
     }
   this->PlaneActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
   this->PlaneOccludedActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->OccludedProperty);
+
+  // Properties label display
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
+  if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
+    && markupsNode->GetNumberOfDefinedControlPoints(true) > 0) // including preview
+    {
+    markupsNode->GetNthControlPointPositionWorld(0, this->TextActorPositionWorld);
+    this->TextActor->SetVisibility(true);
+    }
+  else
+    {
+    this->TextActor->SetVisibility(false);
+    }
 
   double color[3] = { 0.0 };
   this->GetControlPointsPipeline(controlPointType)->Property->GetColor(color);
@@ -324,7 +333,6 @@ void vtkSlicerPlaneRepresentation3D::GetActors(vtkPropCollection *pc)
   this->Superclass::GetActors(pc);
   this->PlaneActor->GetActors(pc);
   this->PlaneOccludedActor->GetActors(pc);
-  this->TextActor->GetActors(pc);
 }
 
 //----------------------------------------------------------------------
@@ -334,7 +342,6 @@ void vtkSlicerPlaneRepresentation3D::ReleaseGraphicsResources(
   this->Superclass::ReleaseGraphicsResources(win);
   this->PlaneActor->ReleaseGraphicsResources(win);
   this->PlaneOccludedActor->ReleaseGraphicsResources(win);
-  this->TextActor->ReleaseGraphicsResources(win);
 }
 
 //----------------------------------------------------------------------
@@ -348,10 +355,6 @@ int vtkSlicerPlaneRepresentation3D::RenderOverlay(vtkViewport *viewport)
   if (this->PlaneOccludedActor->GetVisibility())
     {
     count += this->PlaneOccludedActor->RenderOverlay(viewport);
-    }
-  if (this->TextActor->GetVisibility())
-    {
-    count += this->TextActor->RenderOverlay(viewport);
     }
   return count;
 }
@@ -370,10 +373,6 @@ int vtkSlicerPlaneRepresentation3D::RenderOpaqueGeometry(
   if (this->PlaneOccludedActor->GetVisibility())
     {
     count += this->PlaneOccludedActor->RenderOpaqueGeometry(viewport);
-    }
-  if (this->TextActor->GetVisibility())
-    {
-    count += this->TextActor->RenderOpaqueGeometry(viewport);
     }
   return count;
 }
@@ -397,10 +396,6 @@ int vtkSlicerPlaneRepresentation3D::RenderTranslucentPolygonalGeometry(
     this->PlaneOccludedActor->SetPropertyKeys(this->GetPropertyKeys());
     count += this->PlaneOccludedActor->RenderTranslucentPolygonalGeometry(viewport);
     }
-  if (this->TextActor->GetVisibility())
-    {
-    count += this->TextActor->RenderTranslucentPolygonalGeometry(viewport);
-    }
   return count;
 }
 
@@ -416,10 +411,6 @@ vtkTypeBool vtkSlicerPlaneRepresentation3D::HasTranslucentPolygonalGeometry()
     return true;
     }
   if (this->PlaneOccludedActor->GetVisibility() && this->PlaneOccludedActor->HasTranslucentPolygonalGeometry())
-    {
-    return true;
-    }
-  if (this->TextActor->GetVisibility() && this->TextActor->HasTranslucentPolygonalGeometry())
     {
     return true;
     }
@@ -504,13 +495,5 @@ void vtkSlicerPlaneRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)
   else
     {
     os << indent << "Plane Visibility: (none)\n";
-    }
-  if (this->TextActor)
-    {
-    os << indent << "Text Visibility: " << this->TextActor->GetVisibility() << "\n";
-    }
-  else
-    {
-    os << indent << "Text Visibility: (none)\n";
     }
 }

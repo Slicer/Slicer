@@ -33,6 +33,16 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 class VTK_MRML_EXPORT vtkMRMLMeasurement : public vtkObject
 {
 public:
+  /// Measurement computation status
+  /// \sa LastComputationResult, GetLastComputationResult(),
+  /// GetLastComputationResultAsString()
+  enum ComputationResult
+  {
+    NoChange, ///< can be used to indicate to keep the current value
+    OK, ///< success
+    InsufficientInput,
+    InternalError
+  };
 
   vtkTypeMacro(vtkMRMLMeasurement, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -42,20 +52,10 @@ public:
 
   /// Clear measured value
   /// Note: per-control-point values are not cleared
-  virtual void ClearValue();
+  virtual void ClearValue(ComputationResult computationResult=NoChange);
 
   /// Copy one type into another (deep copy)
   virtual void Copy(vtkMRMLMeasurement* aEntry);
-
-  /// Measurement computation status
-  /// \sa LastComputationResult, GetLastComputationResult(),
-  /// GetLastComputationResultAsString()
-  enum ComputationResult
-  {
-    OK = 0,
-    InsufficientInput,
-    InternalError
-  };
 
   /// Perform calculation on \sa InputMRMLNode and store the result internally.
   /// The subclasses need to implement this function

@@ -21,6 +21,7 @@
 
 // Markups includes
 #include "vtkMRMLMarkupsClosedCurveNode.h"
+#include "vtkMRMLMarkupsPlaneNode.h"
 
 vtkStandardNewMacro(vtkMRMLMeasurementArea);
 
@@ -41,32 +42,45 @@ void vtkMRMLMeasurementArea::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkMRMLMeasurementArea::Compute()
 {
-  this->ClearValue();
   if (!this->InputMRMLNode)
     {
-    this->LastComputationResult = vtkMRMLMeasurement::InsufficientInput;
+    this->ClearValue(vtkMRMLMeasurement::InsufficientInput);
     return;
     }
-
-  vtkMRMLMarkupsClosedCurveNode* curveNode = vtkMRMLMarkupsClosedCurveNode::SafeDownCast(this->InputMRMLNode);
-  if (!curveNode)
-    {
-    vtkErrorMacro("Compute: Markup type not supported by this measurement: " << this->InputMRMLNode->GetClassName());
-    this->LastComputationResult = vtkMRMLMeasurement::InsufficientInput;
-    return;
-    }
-  if (curveNode->GetNumberOfDefinedControlPoints(true) < 3)
-      {
-      vtkDebugMacro("Compute: Curve nodes must have more than one control points ("
-        << curveNode->GetNumberOfDefinedControlPoints(true) << " found)");
-      this->LastComputationResult = vtkMRMLMeasurement::InsufficientInput;
-      return;
-      }
-  double area = vtkMRMLMarkupsClosedCurveNode::GetClosedCurveSurfaceArea(curveNode);
 
   // We derive area unit from length unit, but it may be better to introduce
   // an area unit node to be able to specify more human-friendly format.
-  vtkMRMLUnitNode* lengthUnitNode = curveNode->GetUnitNode("length");
+  vtkMRMLUnitNode* lengthUnitNode = nullptr;
+  double area = 0.0;
+
+  vtkMRMLMarkupsClosedCurveNode* curveNode = vtkMRMLMarkupsClosedCurveNode::SafeDownCast(this->InputMRMLNode);
+  vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->InputMRMLNode);
+  if (curveNode)
+    {
+    if (curveNode->GetNumberOfDefinedControlPoints(true) < 3)
+      {
+      vtkDebugMacro("Compute: Curve nodes must have more than one control points ("
+        << curveNode->GetNumberOfDefinedControlPoints(true) << " found)");
+      this->ClearValue(vtkMRMLMeasurement::InsufficientInput);
+      return;
+      }
+    area = vtkMRMLMarkupsClosedCurveNode::GetClosedCurveSurfaceArea(curveNode);
+    lengthUnitNode = curveNode->GetUnitNode("length");
+    }
+  else if (planeNode)
+    {
+    double bounds[6] = { 0.0 };
+    planeNode->GetPlaneBounds(bounds);
+    area = (bounds[1] - bounds[0]) * (bounds[3] - bounds[2]);
+    lengthUnitNode = planeNode->GetUnitNode("length");
+    }
+  else
+    {
+    vtkErrorMacro("Compute: Markup type not supported by this measurement: " << this->InputMRMLNode->GetClassName());
+    this->ClearValue(vtkMRMLMeasurement::InsufficientInput);
+    return;
+    }
+
   std::string printFormat = "%-#4.4gmm2";
   std::string unit = "mm2";
   if (lengthUnitNode)
@@ -76,7 +90,7 @@ void vtkMRMLMeasurementArea::Compute()
     if (lengthUnitNode->GetDisplayOffset() != 0.0)
       {
       vtkErrorMacro("vtkMRMLMeasurementArea::Compute error: length unit display offset is non-zero, computation");
-      this->LastComputationResult = vtkMRMLMeasurement::InternalError;
+      this->ClearValue(vtkMRMLMeasurement::InternalError);
       return;
       }
     area = lengthUnitNode->GetDisplayCoefficient() * lengthUnitNode->GetDisplayCoefficient() * area;

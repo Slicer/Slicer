@@ -15,8 +15,8 @@
 
 ==============================================================================*/
 
-#ifndef __vtkMRMLMeasurementArea_h
-#define __vtkMRMLMeasurementArea_h
+#ifndef __vtkMRMLMeasurementVolume_h
+#define __vtkMRMLMeasurementVolume_h
 
 // MRML includes
 #include "vtkMRMLMeasurement.h"
@@ -24,23 +24,23 @@
 // Markups includes
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 
-/// \brief Measurement class calculating area of a plane or enclosed by a closed curve
+/// \brief Measurement class calculating Volume enclosed in a ROI
 /// \ingroup Slicer_QtModules_Markups
-class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMeasurementArea : public vtkMRMLMeasurement
+class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMeasurementVolume : public vtkMRMLMeasurement
 {
 public:
-  static vtkMRMLMeasurementArea *New();
-  vtkTypeMacro(vtkMRMLMeasurementArea, vtkMRMLMeasurement);
+  static vtkMRMLMeasurementVolume *New();
+  vtkTypeMacro(vtkMRMLMeasurementVolume, vtkMRMLMeasurement);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  /// Calculate area of \sa InputMRMLNode plane or closed curve markup node and store the result internally
+  /// Calculate Volume of \sa InputMRMLNode markups ROI node and store the result internally
   void Compute() override;
 
 protected:
-  vtkMRMLMeasurementArea();
-  ~vtkMRMLMeasurementArea() override;
-  vtkMRMLMeasurementArea(const vtkMRMLMeasurementArea&);
-  void operator=(const vtkMRMLMeasurementArea&);
+  vtkMRMLMeasurementVolume();
+  ~vtkMRMLMeasurementVolume() override;
+  vtkMRMLMeasurementVolume(const vtkMRMLMeasurementVolume&);
+  void operator=(const vtkMRMLMeasurementVolume&);
 };
 
 #endif

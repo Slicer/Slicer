@@ -21,10 +21,12 @@
 // MRML includes
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsPlaneNode.h"
+#include "vtkMRMLMeasurementArea.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTransformNode.h"
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkGeneralTransform.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
@@ -50,6 +52,13 @@ vtkMRMLMarkupsPlaneNode::vtkMRMLMarkupsPlaneNode()
     this->PlaneBounds[i] = 0.0;
     }
   this->PlaneToPlaneOffsetMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+
+  // Setup measurements calculated for this markup type
+  vtkNew<vtkMRMLMeasurementArea> areaMeasurement;
+  areaMeasurement->SetEnabled(false);
+  areaMeasurement->SetName("area");
+  areaMeasurement->SetInputMRMLNode(this);
+  this->Measurements->AddItem(areaMeasurement);
 }
 
 //----------------------------------------------------------------------------

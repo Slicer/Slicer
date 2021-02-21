@@ -65,10 +65,31 @@ void vtkMRMLMeasurement::Initialize()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMeasurement::ClearValue()
+void vtkMRMLMeasurement::ClearValue(ComputationResult computationResult/*=NoChange*/)
 {
-  this->SetValue(0.0);
-  this->ValueDefined = false;
+  bool modified = false;
+  if (computationResult != NoChange)
+    {
+    if (this->LastComputationResult != computationResult)
+      {
+      this->LastComputationResult = computationResult;
+      modified = true;
+      }
+    }
+  if (this->Value != 0.0)
+    {
+    this->Value = 0.0;
+    modified = true;
+    }
+  if (this->ValueDefined)
+    {
+    this->ValueDefined = false;
+    modified = true;
+    }
+  if (modified)
+    {
+    this->Modified();
+    }
 
   // Note: this->SetControlPointValues(nullptr); is not called here, because if we clear it here
   // then every time something in the markups node changes that calls curveGenerator->Modified()

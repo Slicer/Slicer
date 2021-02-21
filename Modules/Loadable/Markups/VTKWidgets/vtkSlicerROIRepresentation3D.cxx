@@ -31,6 +31,8 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 #include <vtkRenderer.h>
+#include <vtkTextActor.h>
+#include <vtkTextProperty.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 
@@ -137,6 +139,19 @@ void vtkSlicerROIRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller, unsigned 
   if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsROIDisplayNode::ComponentROI)
     {
     controlPointType = this->GetAllControlPointsSelected() ? vtkSlicerMarkupsWidgetRepresentation::Selected : vtkSlicerMarkupsWidgetRepresentation::Unselected;
+    }
+
+  // Properties label display
+  this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
+  if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
+    && roiNode->GetNumberOfDefinedControlPoints(true) > 0) // including preview
+    {
+    roiNode->GetNthControlPointPositionWorld(0, this->TextActorPositionWorld);
+    this->TextActor->SetVisibility(true);
+    }
+  else
+    {
+    this->TextActor->SetVisibility(false);
     }
 
   double opacity = displayNode->GetOpacity();
