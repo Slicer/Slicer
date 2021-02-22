@@ -93,6 +93,8 @@ template <class T> bool areValidNodes(const std::vector<T>& nodes,
 {
   std::vector<std::string> unitNodeIDs;
   unitNodeIDs.emplace_back("vtkMRMLUnitNodeApplicationLength");
+  unitNodeIDs.emplace_back("vtkMRMLUnitNodeApplicationArea");
+  unitNodeIDs.emplace_back("vtkMRMLUnitNodeApplicationVolume");
   unitNodeIDs.emplace_back("vtkMRMLUnitNodeApplicationTime");
   unitNodeIDs.emplace_back("vtkMRMLUnitNodeApplicationFrequency");
   unitNodeIDs.emplace_back("vtkMRMLUnitNodeApplicationVelocity");

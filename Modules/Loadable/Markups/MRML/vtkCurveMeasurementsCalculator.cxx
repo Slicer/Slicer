@@ -290,16 +290,16 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
   for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
     {
     vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
-    if (!currentMeasurement || !currentMeasurement->GetName() || !currentMeasurement->GetEnabled())
+    if (!currentMeasurement || currentMeasurement->GetName().empty() || !currentMeasurement->GetEnabled())
       {
       continue;
       }
-    if (!strcmp(currentMeasurement->GetName(), this->GetMeanCurvatureName()))
+    if (currentMeasurement->GetName() == this->GetMeanCurvatureName())
       {
       currentMeasurement->SetValue(meanKappa);
       currentMeasurement->Compute(); // Have the measurement set the computation result to OK
       }
-    else if (!strcmp(currentMeasurement->GetName(), this->GetMaxCurvatureName()))
+    else if (currentMeasurement->GetName() == this->GetMaxCurvatureName())
       {
       currentMeasurement->SetValue(maxKappa);
       currentMeasurement->Compute(); // Have the measurement set the computation result to OK
@@ -367,7 +367,7 @@ bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyDat
     this->ObservedControlPointArrays->AddItem(controlPointArrayWeakPointer);
 
     vtkNew<vtkDoubleArray> interpolatedMeasurement;
-    std::string arrayName = currentMeasurement->GetName() ? currentMeasurement->GetName() : "Unnamed";
+    std::string arrayName = !currentMeasurement->GetName().empty() ? currentMeasurement->GetName() : "Unnamed";
     interpolatedMeasurement->SetName(arrayName.c_str());
     interpolatedMeasurement->SetNumberOfComponents(1);
     interpolatedMeasurement->SetNumberOfTuples(numberOfPoints);

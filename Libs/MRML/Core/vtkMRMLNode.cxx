@@ -1300,10 +1300,28 @@ vtkMRMLNode* vtkMRMLNode::SetAndObserveNthNodeReferenceID(const char* referenceR
       }
 
     // Update node observations
-    // If no events are specified then use the default events specified for the role
-    if (events == nullptr && this->NodeReferenceEvents[referenceRole] && this->NodeReferenceEvents[referenceRole]->GetNumberOfTuples() > 0)
+    if (events == nullptr)
       {
-      events = this->NodeReferenceEvents[referenceRole];
+      // If no events are specified then use the default events specified for the role.
+      if (this->NodeReferenceEvents[referenceRole] && this->NodeReferenceEvents[referenceRole]->GetNumberOfTuples() > 0)
+        {
+        events = this->NodeReferenceEvents[referenceRole];
+        }
+      else
+        {
+        // Node reference events can be specified for a group of reference role, specified as group/item,
+        // for example units/length, units/area.
+        std::string referenceRoleStr(referenceRole);
+        std::size_t groupSeparatorPos = referenceRoleStr.find('/');
+        if (groupSeparatorPos != std::string::npos)
+          {
+          std::string referenceRoleGroup = referenceRoleStr.substr(0, groupSeparatorPos + 1);
+          if (this->NodeReferenceEvents[referenceRoleGroup] && this->NodeReferenceEvents[referenceRoleGroup]->GetNumberOfTuples() > 0)
+            {
+            events = this->NodeReferenceEvents[referenceRoleGroup];
+            }
+          }
+        }
       }
     this->UpdateNodeReferenceEventObserver(oldReferencedNode, referencedNode, events, referenceIt->GetPointer());
 

@@ -55,48 +55,28 @@ void vtkMRMLMeasurementVolume::Compute()
     return;
     }
 
-  /*
-  if (curveNode->GetNumberOfDefinedControlPoints(true) < 3)
-      {
-      vtkDebugMacro("Compute: Curve nodes must have more than one control points ("
-        << curveNode->GetNumberOfDefinedControlPoints(true) << " found)");
-      this->LastComputationResult = vtkMRMLMeasurement::InsufficientInput;
-      return;
-      }
-      */
-
   double size[3] = { 0.0, 0.0, 0.0 };
   roiNode->GetSize(size);
   double volume = size[0] * size[1] * size[2];
 
-  // We derive volume unit from length unit, but it may be better to introduce
-  // an volume unit node to be able to specify more human-friendly format.
-  vtkMRMLUnitNode* lengthUnitNode = roiNode->GetUnitNode("length");
-  std::string printFormat = "%-#4.4gmm3";
-  std::string unit = "mm3";
-  if (lengthUnitNode)
+  vtkMRMLUnitNode* unitNode = roiNode->GetUnitNode("volume");
+  std::string printFormat;
+  std::string unit;
+  if (unitNode)
     {
-    // Derive Volume unit from length unit.
-    // This could be made a feature of unit nodes.
-    if (lengthUnitNode->GetDisplayOffset() != 0.0)
+    if (unitNode->GetSuffix())
       {
-      vtkErrorMacro("vtkMRMLMeasurementVolume::Compute error: length unit display offset is non-zero, computation");
-      this->LastComputationResult = vtkMRMLMeasurement::InternalError;
-      this->ClearValue(vtkMRMLMeasurement::InternalError);
-      return;
+      unit = unitNode->GetSuffix();
       }
-    volume *= lengthUnitNode->GetDisplayCoefficient() * lengthUnitNode->GetDisplayCoefficient() * lengthUnitNode->GetDisplayCoefficient();
-    unit = lengthUnitNode->GetSuffix() ? lengthUnitNode->GetSuffix() : "";
-
-    std::stringstream strstream;
-    strstream << lengthUnitNode->GetPrefix() << "%."
-      << 3 * lengthUnitNode->GetPrecision() << "g" // precision is 2x as volume is length^3
-      << lengthUnitNode->GetSuffix() << "3"; // square
-    strstream >> printFormat;
+    volume = unitNode->GetDisplayValueFromValue(volume);
+    printFormat = unitNode->GetDisplayStringFormat();
+    }
+  else
+    {
+    unit = "cm3"; // mm3 would be too small for most clinical values
+    volume *= 0.001; // length unit is mm by default, so display coefficient for cm3 is 0.001
+    printFormat = "%-#4.4gcm3";
     }
 
-  this->LastComputationResult = vtkMRMLMeasurement::OK;
-  this->SetValue(volume);
-  this->SetUnits(unit.c_str());
-  this->SetPrintFormat(printFormat.c_str());
+  this->SetValue(volume, unit, printFormat, vtkMRMLMeasurement::OK);
 }

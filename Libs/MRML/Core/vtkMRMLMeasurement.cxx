@@ -30,7 +30,7 @@ vtkMRMLMeasurement::~vtkMRMLMeasurement()
 //----------------------------------------------------------------------------
 std::string vtkMRMLMeasurement::GetValueWithUnitsAsPrintableString()
 {
-  if (!this->PrintFormat)
+  if (this->PrintFormat.empty())
     {
     return "";
     }
@@ -39,7 +39,7 @@ std::string vtkMRMLMeasurement::GetValueWithUnitsAsPrintableString()
     return "(undefined)";
     }
   char buf[80] = { 0 };
-  snprintf(buf, sizeof(buf) - 1, this->PrintFormat, this->Value, this->Units);
+  snprintf(buf, sizeof(buf) - 1, this->PrintFormat.c_str(), this->Value, this->Units);
   return buf;
 }
 
@@ -47,12 +47,9 @@ std::string vtkMRMLMeasurement::GetValueWithUnitsAsPrintableString()
 void vtkMRMLMeasurement::Initialize()
 {
   this->SetEnabled(true);
-  this->SetName(nullptr);
   this->SetValue(0.0);
   this->ValueDefined = false;
-  this->SetUnits(nullptr);
   this->SetPrintFormat("%5.3f %s");
-  this->SetDescription(nullptr);
   this->SetQuantityCode(nullptr);
   this->SetDerivationCode(nullptr);
   this->SetUnitsCode(nullptr);
@@ -102,13 +99,13 @@ void vtkMRMLMeasurement::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
   os << indent << "Enabled: " << (this->Enabled ? "true" : "false") << "\n";
-  os << indent << "Name: " << (this->Name ? this->Name : "(none)") << "\n";
+  os << indent << "Name: " << this->Name << "\n";
   os << indent << "PrintableValue: " << this->GetValueWithUnitsAsPrintableString();
   os << indent << "Value: " << this->Value << "\n";
   os << indent << "ValueDefined: " << (this->ValueDefined ? "true" : "false") << "\n";
-  os << indent << "Units: " << (this->Units ? this->Units : "(none)") << "\n";
-  os << indent << "PrintFormat: " << (this->PrintFormat ? this->PrintFormat : "(none)") << "\n";
-  os << indent << "Description: " << (this->Description ? this->Description : "(none)") << "\n";
+  os << indent << "Units: " << this->Units << "\n";
+  os << indent << "PrintFormat: " << this->PrintFormat << "\n";
+  os << indent << "Description: " << this->Description << "\n";
   if (this->QuantityCode)
     {
     os << indent << "Quantity: " << this->QuantityCode->GetAsPrintableString() << std::endl;
@@ -381,10 +378,58 @@ const char* vtkMRMLMeasurement::GetLastComputationResultAsPrintableString()
 void vtkMRMLMeasurement::SetValue(double value)
 {
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Value to " << value);
+  bool modified = false;
   if (this->Value != value)
-  {
+    {
     this->Value = value;
+    modified = true;
+    }
+  if (this->ValueDefined != true)
+    {
     this->ValueDefined = true;
+    modified = true;
+    }
+  if (modified)
+    {
     this->Modified();
-  }
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMeasurement::SetValue(double value, const std::string &units, const std::string& printFormat, int lastComputationResult)
+{
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Value to " << value);
+  bool modified = false;
+  if (this->Value != value)
+    {
+    this->Value = value;
+    modified = true;
+    }
+  if (this->ValueDefined != true)
+    {
+    this->ValueDefined = true;
+    modified = true;
+    }
+  if (this->Units != units)
+    {
+    this->Units = units;
+    modified = true;
+    }
+  if (this->PrintFormat != printFormat)
+    {
+    this->PrintFormat = printFormat;
+    modified = true;
+    }
+  if (lastComputationResult != ComputationResult::NoChange)
+    {
+    if (this->LastComputationResult != static_cast<ComputationResult>(lastComputationResult))
+      {
+      this->LastComputationResult = static_cast<ComputationResult>(lastComputationResult);
+      modified = true;
+      }
+    }
+  if (modified)
+    {
+    this->Modified();
+    }
 }

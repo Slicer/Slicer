@@ -635,6 +635,8 @@ public:
   /// Use this method to add new reference types to a node.
   /// This method is typically called in the constructors of each subclass.
   /// The optional events argument specifies what events should be observed by default (e.g., when loading the scene from file).
+  /// If referenceRole ends with '/' character then events are used for all roles names begins with this role name (for example,
+  /// events specified for referenceRole='unit/' will be used for referenceRole='unit/length', referenceRole='unit/area', etc).
   /// \sa GetReferenceNodeFromMRMLAttributeName()
   void AddNodeReferenceRole(const char *referenceRole, const char *mrmlAttributeName=nullptr, vtkIntArray *events=nullptr);
 

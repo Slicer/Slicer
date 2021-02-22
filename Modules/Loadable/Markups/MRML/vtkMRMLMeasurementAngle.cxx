@@ -101,9 +101,5 @@ void vtkMRMLMeasurementAngle::Compute()
     printFormat = "%3.1f%s";
     }
 
-  this->SetValue(angle);
-  this->SetUnits(unit.c_str());
-  this->SetPrintFormat(printFormat.c_str());
-
-  this->LastComputationResult = vtkMRMLMeasurement::OK;
+  this->SetValue(angle, unit, printFormat, vtkMRMLMeasurement::OK);
 }

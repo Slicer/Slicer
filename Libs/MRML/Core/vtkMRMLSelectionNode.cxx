@@ -47,7 +47,9 @@ vtkMRMLSelectionNode::vtkMRMLSelectionNode()
   this->SetSingletonTag("Singleton");
   this->ActivePlaceNodeClassName = nullptr;
 
-  this->AddNodeReferenceRole(UNIT_NODE_REFERENCE_ROLE, "UnitNodeRef");
+  vtkNew<vtkIntArray> unitNodeModifiedEvents;
+  unitNodeModifiedEvents->InsertNextValue(vtkCommand::ModifiedEvent);
+  this->AddNodeReferenceRole(UNIT_NODE_REFERENCE_ROLE, "UnitNodeRef", unitNodeModifiedEvents);
   this->AddNodeReferenceRole(ACTIVE_VOLUME_REFERENCE_ROLE, "activeVolumeID");
   this->AddNodeReferenceRole(SECONDARY_VOLUME_REFERENCE_ROLE, "secondaryVolumeID");
   this->AddNodeReferenceRole(ACTIVE_LABEL_VOLUME_REFERENCE_ROLE, "ActiveLabelVolumeID");

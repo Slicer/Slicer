@@ -37,12 +37,12 @@ public:
   /// \sa LastComputationResult, GetLastComputationResult(),
   /// GetLastComputationResultAsString()
   enum ComputationResult
-  {
-    NoChange, ///< can be used to indicate to keep the current value
+    {
+    NoChange=0, ///< can be used to indicate to keep the current value
     OK, ///< success
     InsufficientInput,
     InternalError
-  };
+    };
 
   vtkTypeMacro(vtkMRMLMeasurement, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -67,27 +67,31 @@ public:
   vtkBooleanMacro(Enabled, bool);
 
   /// Measurement name
-  vtkGetStringMacro(Name);
-  vtkSetStringMacro(Name);
+  vtkGetMacro(Name, std::string);
+  vtkSetMacro(Name, std::string);
 
   /// Measured quantity value
   vtkGetMacro(Value, double);
   void SetValue(double value);
 
+  /// Set quantity value and units with a singel modified event
+  /// lastComputationResult type is ComputationResult (int type is used for compatibility with Python wrapper)
+  void SetValue(double value, const std::string& units, const std::string& printFormat, int lastComputationResult);
+
   /// Value defined flag (whether a computed value has been set or not)
   vtkGetMacro(ValueDefined, bool);
 
   /// Measurement unit
-  vtkGetStringMacro(Units);
-  vtkSetStringMacro(Units);
+  vtkGetMacro(Units, std::string);
+  vtkSetMacro(Units, std::string);
 
   /// Informal description of the measurement
-  vtkGetStringMacro(Description);
-  vtkSetStringMacro(Description);
+  vtkGetMacro(Description, std::string);
+  vtkSetMacro(Description, std::string);
 
   /// Formatting string for displaying measurement value and units
-  vtkGetStringMacro(PrintFormat);
-  vtkSetStringMacro(PrintFormat);
+  vtkGetMacro(PrintFormat, std::string);
+  vtkSetMacro(PrintFormat, std::string);
 
   /// Copy content of coded entry
   void SetQuantityCode(vtkCodedEntry* entry);
@@ -143,12 +147,12 @@ protected:
 
 protected:
   bool Enabled{true};
-  char* Name{nullptr};
+  std::string Name;
   double Value{0.0};
   bool ValueDefined{false};
-  char* Units{nullptr};
-  char* Description{nullptr};
-  char* PrintFormat{nullptr}; // for value (double), unit (string)
+  std::string Units;
+  std::string Description;
+  std::string PrintFormat; // for value (double), unit (string)
   vtkCodedEntry* QuantityCode{nullptr};   // volume
   vtkCodedEntry* DerivationCode{nullptr}; // min/max/mean
   vtkCodedEntry* UnitsCode{nullptr};      // cubic millimeter

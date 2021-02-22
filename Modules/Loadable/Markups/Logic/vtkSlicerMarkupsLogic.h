@@ -39,6 +39,7 @@ class vtkMRMLMarkupsNode;
 class vtkMRMLMarkupsClosedCurveNode;
 class vtkMRMLMarkupsDisplayNode;
 class vtkMRMLMarkupsJsonStorageNode;
+class vtkMRMLSelectionNode;
 class vtkPlane;
 class vtkPoints;
 class vtkPolyData;
@@ -249,6 +250,7 @@ protected:
   /// Initialize listening to MRML events
   void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
   void ObserveMRMLScene() override;
+  void SetAndObserveSelectionNode(vtkMRMLSelectionNode* selectionNode);
 
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
   void RegisterNodes() override;
@@ -257,6 +259,7 @@ protected:
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
 
   std::map<std::string, std::string> MarkupsTypeStorageNodes;
+  vtkMRMLSelectionNode* SelectionNode{nullptr};
 
 private:
 

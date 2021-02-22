@@ -52,10 +52,10 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
   measurement1->SetUnits("mm2");
   node1->AddMeasurement(measurement1);
   CHECK_INT(node1->GetNumberOfMeasurements(), 1);
-  CHECK_STRING(node1->GetNthMeasurement(0)->GetName(), "Diameter");
+  CHECK_STD_STRING(node1->GetNthMeasurement(0)->GetName(), "Diameter");
 
   node1->SetNthMeasurement(0, "Radius", 11.1, "cm");
-  CHECK_STRING(node1->GetNthMeasurement(0)->GetName(), "Radius");
+  CHECK_STD_STRING(node1->GetNthMeasurement(0)->GetName(), "Radius");
 
   node1->RemoveNthMeasurement(0);
   CHECK_INT(node1->GetNumberOfMeasurements(), 0);
@@ -67,8 +67,8 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
 
   node1->RemoveNthMeasurement(0);
   CHECK_INT(node1->GetNumberOfMeasurements(), 2);
-  CHECK_STRING(node1->GetNthMeasurement(0)->GetName(), "Volume");
-  CHECK_STRING(node1->GetNthMeasurement(1)->GetName(), "Length");
+  CHECK_STD_STRING(node1->GetNthMeasurement(0)->GetName(), "Volume");
+  CHECK_STD_STRING(node1->GetNthMeasurement(1)->GetName(), "Length");
 
   //
   // test methods with no markups

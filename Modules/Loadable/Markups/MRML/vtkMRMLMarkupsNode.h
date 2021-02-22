@@ -183,6 +183,11 @@ public:
   void RemoveNthMeasurement(int id);
   void ClearValueForAllMeasurements();
   //@}
+
+  /// Update all measurements.
+  /// It should not be necessary for users to call this method.
+  void UpdateAllMeasurements();
+
   //@{
   /**
    * Set measurement data, such as length, angle, diameter, cross-section area.
@@ -643,9 +648,6 @@ protected:
   virtual void UpdateCurvePolyFromControlPoints();
 
   void OnTransformNodeReferenceChanged(vtkMRMLTransformNode* transformNode) override;
-
-  /// Calls UpdateMeasurementsInternal()
-  void UpdateMeasurements();
 
   /// Calculate the updated measurements.
   /// May be overridden in subclasses to compute special measurements (for example that apply on the curve polydata).

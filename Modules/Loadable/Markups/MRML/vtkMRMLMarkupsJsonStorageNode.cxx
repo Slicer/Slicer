@@ -247,7 +247,7 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadControlPoints(rapidjson::Va
     }
 
   markupsNode->IsUpdatingPoints = wasUpdatingPoints;
-  markupsNode->UpdateMeasurements();
+  markupsNode->UpdateAllMeasurements();
 
   return true;
 }
@@ -766,16 +766,16 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteMeasurements(
 
     writer.StartObject();
 
-    writer.Key("name"); writer.String(measurement->GetName());
+    writer.Key("name"); writer.String(measurement->GetName().c_str());
     writer.Key("enabled"); writer.Bool(measurement->GetEnabled());
     writer.Key("value"); writer.Double(measurement->GetValue());
-    if (measurement->GetDescription())
+    if (!measurement->GetDescription().empty())
       {
-      writer.Key("description"); writer.String(measurement->GetDescription());
+      writer.Key("description"); writer.String(measurement->GetDescription().c_str());
       }
-    if (measurement->GetPrintFormat())
+    if (!measurement->GetPrintFormat().empty())
       {
-      writer.Key("printFormat"); writer.String(measurement->GetPrintFormat());
+      writer.Key("printFormat"); writer.String(measurement->GetPrintFormat().c_str());
       }
 
     if (measurement->GetQuantityCode())

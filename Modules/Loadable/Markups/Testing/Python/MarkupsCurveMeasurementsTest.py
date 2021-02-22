@@ -131,7 +131,7 @@ for i in range(centerlinePolyData.GetNumberOfPoints()):
 radiusMeasurement = slicer.vtkMRMLStaticMeasurement()
 radiusMeasurement.SetName('Radius')
 radiusMeasurement.SetUnits('mm')
-radiusMeasurement.SetPrintFormat(None) # Prevent from showing up in SH Description
+radiusMeasurement.SetPrintFormat('')  # Prevent from showing up in SH Description
 radiusMeasurement.SetControlPointValues(centerlinePolyData.GetPointData().GetArray('Radius'))
 centerlineCurve.AddMeasurement(radiusMeasurement)
 

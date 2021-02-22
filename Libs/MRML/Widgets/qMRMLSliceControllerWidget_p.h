@@ -59,6 +59,7 @@ class qMRMLSliderWidget;
 class vtkMRMLSliceNode;
 class vtkObject;
 class vtkMRMLSegmentationDisplayNode;
+class vtkMRMLSelectionNode;
 
 //-----------------------------------------------------------------------------
 struct QMRML_WIDGETS_EXPORT qMRMLOrientation
@@ -124,6 +125,9 @@ public slots:
   /// Update widget state using the associated MRML slice composite node
   void updateWidgetFromMRMLSliceCompositeNode();
 
+  /// Update step size when unit changes
+  void updateWidgetFromUnitNode();
+
   /// Called after a foreground layer volume node is selected
   /// using the associated qMRMLNodeComboBox
   void onForegroundLayerNodeSelected(vtkMRMLNode* node);
@@ -164,10 +168,12 @@ protected:
   void setupPopupUi() override;
   virtual void setMRMLSliceNodeInternal(vtkMRMLSliceNode* sliceNode);
   void setMRMLSliceCompositeNodeInternal(vtkMRMLSliceCompositeNode* sliceComposite);
+  void setAndObserveSelectionNode();
 
 public:
   vtkMRMLSliceNode*                   MRMLSliceNode;
   vtkMRMLSliceCompositeNode*          MRMLSliceCompositeNode;
+  vtkMRMLSelectionNode*               SelectionNode{nullptr};
   vtkSmartPointer<vtkMRMLSliceLogic>  SliceLogic;
   vtkCollection*                      SliceLogics;
   vtkWeakPointer<vtkAlgorithmOutput>  ImageDataConnection;
@@ -176,6 +182,8 @@ public:
 
   QToolButton*                        FitToWindowToolButton;
   qMRMLSliderWidget*                  SliceOffsetSlider;
+  /// Slicer offset resolution without applying display scaling.
+  double                              SliceOffsetResolution{1.0};
   double                              LastLabelMapOpacity;
   double                              LastForegroundOpacity;
   double                              LastBackgroundOpacity;
