@@ -422,9 +422,10 @@ public:
   /// native space of the image data so that no oblique resampling
   /// occurs when rendering (helps to see original acquisition data
   /// and for oblique volumes with few slices).
-  /// For single-slice volume, slice normal is aligned to the volume
-  /// plane's normal.
-  void RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode);
+  /// \param forceSlicePlaneToSingleSlice If the volume is single-slice and forceSlicePlaneToSingleSlice
+  /// is enabled then slice view will be aligned with the volume's slice plane. If the flag is disabled
+  /// or the volume has more than one slice then the slice view will be rotated to the closest orthogonal axis.
+  void RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode, bool forceSlicePlaneToSingleSlice=true);
 
   /// Adjusts the slice node to align with the
   /// axes of the provided reference coordinate system

@@ -2375,7 +2375,7 @@ vtkImageBlend* vtkMRMLSliceLogic::GetBlendUVW()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::RotateSliceToLowestVolumeAxes()
+void vtkMRMLSliceLogic::RotateSliceToLowestVolumeAxes(bool forceSlicePlaneToSingleSlice/*=true*/)
 {
   vtkMRMLVolumeNode* volumeNode;
   for (int layer = 0; layer < 3; layer++)
@@ -2395,6 +2395,6 @@ void vtkMRMLSliceLogic::RotateSliceToLowestVolumeAxes()
     {
     return;
     }
-  sliceNode->RotateToVolumePlane(volumeNode);
+  sliceNode->RotateToVolumePlane(volumeNode, forceSlicePlaneToSingleSlice);
   this->SnapSliceOffsetToIJK();
 }

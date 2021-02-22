@@ -28,7 +28,7 @@
 // Slicer includes
 #include "qMRMLSliceWidget.h"
 #include "qSlicerApplication.h"
-#include "qSlicerLayoutManager.h" 
+#include "qSlicerLayoutManager.h"
 #include "vtkSlicerApplicationLogic.h"
 
 // MRML includes
@@ -460,7 +460,10 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumeInAllViews(
           // Set to default orientation before rotation so that the view is snapped
           // closest to the default orientation of this slice view.
           sliceNode->SetOrientationToDefault();
-          sliceWidget->sliceLogic()->RotateSliceToLowestVolumeAxes();
+          // If the volume is shown in only one view and the volume is a single slice then
+          // make sure the view is aligned with that, otherwise just snap to closest view.
+          bool forceSlicePlaneToSingleSlice = (numberOfCompositeNodes == 1);
+          sliceWidget->sliceLogic()->RotateSliceToLowestVolumeAxes(forceSlicePlaneToSingleSlice);
           }
         if (resetFov)
           {
