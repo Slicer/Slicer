@@ -19,7 +19,7 @@ Recommended modules:
 
 ## Automatic image registration
 
-Grayscale images can be automatically aligned to each other using intensity-based registration methods.
+Grayscale images can be automatically aligned to each other using intensity-based registration methods. If an image does not show up in the input image selector then most likely it is a color image, which can be converted to grayscale using *Vector to scalar volume* module.
 
 Intensity-based image registration methods require reasonable initial alignment, typically less than a few centimeter translation and less than 10-20 degrees rotation error. Some registration methods can perform initial position alignment (e.g., using center of gravity) and orientation alignment (e.g., matching moments). If automatic alignment is not robust then manual or semi-automatic registration methods can be used as a first step.
 
