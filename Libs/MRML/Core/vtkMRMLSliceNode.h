@@ -424,7 +424,7 @@ public:
   /// and for oblique volumes with few slices).
   /// \param forceSlicePlaneToSingleSlice If the volume is single-slice and forceSlicePlaneToSingleSlice
   /// is enabled then slice view will be aligned with the volume's slice plane. If the flag is disabled
-  /// of the volume has more than one slice then the slice view will be rotated to the closest orthogonal axis.
+  /// or the volume has more than one slice then the slice view will be rotated to the closest orthogonal axis.
   void RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode, bool forceSlicePlaneToSingleSlice=true);
 
   /// Adjusts the slice node to align with the
