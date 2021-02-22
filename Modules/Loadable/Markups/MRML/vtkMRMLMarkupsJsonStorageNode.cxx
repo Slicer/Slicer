@@ -953,7 +953,7 @@ bool vtkMRMLMarkupsJsonStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsJsonStorageNode::GetMarkupTypesInFile(const char* filePath, std::vector<std::string>& outputMarkupTypes)
+void vtkMRMLMarkupsJsonStorageNode::GetMarkupsTypesInFile(const char* filePath, std::vector<std::string>& outputMarkupsTypes)
 {
   rapidjson::Document* jsonRoot = this->Internal->CreateJsonDocumentFromFile(filePath);
   rapidjson::Value& markups = (*jsonRoot)["markups"];
@@ -964,7 +964,7 @@ void vtkMRMLMarkupsJsonStorageNode::GetMarkupTypesInFile(const char* filePath, s
       {
       rapidjson::Value& markup = markups.GetArray()[markupIndex];
       std::string markupsType = markup["type"].GetString();
-      outputMarkupTypes.push_back(markupsType);
+      outputMarkupsTypes.push_back(markupsType);
       }
     }
 }
