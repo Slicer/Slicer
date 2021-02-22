@@ -51,9 +51,11 @@
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLSegmentationNode.h>
 #include <vtkMRMLSegmentationDisplayNode.h>
+#include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
+#include <vtkMRMLUnitNode.h>
 
 // VTK includes
 #include <vtkNew.h>
@@ -436,6 +438,25 @@ void qMRMLSliceControllerWidgetPrivate::init()
 
   vtkNew<vtkMRMLSliceLogic> defaultLogic;
   q->setSliceLogic(defaultLogic.GetPointer());
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::setAndObserveSelectionNode()
+{
+  Q_Q(qMRMLSliceControllerWidget);
+
+  vtkMRMLSelectionNode* selectionNode = nullptr;
+  vtkMRMLScene* scene = q->mrmlScene();
+  if (scene)
+    {
+    selectionNode = vtkMRMLSelectionNode::SafeDownCast(scene->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+    }
+
+  this->qvtkReconnect(this->SelectionNode, selectionNode,
+    vtkMRMLSelectionNode::UnitModifiedEvent,
+    this, SLOT(updateWidgetFromUnitNode()));
+  this->SelectionNode = selectionNode;
+  this->updateWidgetFromUnitNode();
 }
 
 // --------------------------------------------------------------------------
@@ -1077,6 +1098,12 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
   this->enableLayerWidgets();
 }
 
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::updateWidgetFromUnitNode()
+{
+  Q_Q(qMRMLSliceControllerWidget);
+  q->setSliceOffsetResolution(q->sliceOffsetResolution());
+}
 
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected(vtkMRMLNode * node)
@@ -1656,6 +1683,8 @@ void qMRMLSliceControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
   d->LabelMapComboBox->blockSignals(labelmapBlockSignals);
   //d->SegmentSelectorWidget->blockSignals(segmentationBlockSignals); //TODO: See first blockSignals call above
 
+  d->setAndObserveSelectionNode();
+
   //d->updateWidgetFromMRMLSliceCompositeNode();
   if (this->mrmlScene())
     {
@@ -1860,16 +1889,26 @@ void qMRMLSliceControllerWidget::setSliceOffsetRange(double min, double max)
 void qMRMLSliceControllerWidget::setSliceOffsetResolution(double resolution)
 {
   Q_D(qMRMLSliceControllerWidget);
+  d->SliceOffsetResolution = resolution;
   resolution = qMax(resolution, 0.00000001);
-  d->SliceOffsetSlider->setSingleStep(resolution);
-  d->SliceOffsetSlider->setPageStep(resolution);
+  double displayCoeffiecient = 1.0;
+  if (d->SelectionNode && this->mrmlScene())
+    {
+    vtkMRMLUnitNode* unitNode = vtkMRMLUnitNode::SafeDownCast(this->mrmlScene()->GetNodeByID(d->SelectionNode->GetUnitNodeID("length")));
+    if (unitNode)
+      {
+      displayCoeffiecient = unitNode->GetDisplayCoefficient();
+      }
+    }
+  d->SliceOffsetSlider->setSingleStep(resolution * displayCoeffiecient);
+  d->SliceOffsetSlider->setPageStep(resolution * displayCoeffiecient);
 }
 
 //---------------------------------------------------------------------------
 double qMRMLSliceControllerWidget::sliceOffsetResolution()
 {
   Q_D(qMRMLSliceControllerWidget);
-  return d->SliceOffsetSlider->singleStep();
+  return d->SliceOffsetResolution;
 }
 
 // --------------------------------------------------------------------------

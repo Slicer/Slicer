@@ -2805,7 +2805,7 @@ void qSlicerMarkupsModuleWidget::onMeasurementModified(vtkObject* caller)
   vtkMRMLMeasurement* measurement = vtkMRMLMeasurement::SafeDownCast(caller);
   if (measurement)
     {
-    QString measurementName(measurement->GetName());
+    QString measurementName = QString::fromStdString(measurement->GetName());
     if (measurementName.isEmpty())
       {
       qWarning() << Q_FUNC_INFO << ": Cannot update settings UI for modified measurement because it has an empty name";
@@ -2842,7 +2842,7 @@ void qSlicerMarkupsModuleWidget::updateMeasurementsDescriptionLabel()
       {
       continue;
       }
-    measurementsString.append(currentMeasurement->GetName());
+    measurementsString.append(QString::fromStdString(currentMeasurement->GetName()));
     measurementsString.append(": ");
     if (currentMeasurement->GetLastComputationResult() == vtkMRMLMeasurement::OK)
       {
@@ -2885,12 +2885,12 @@ void qSlicerMarkupsModuleWidget::populateMeasurementSettingsTable()
       continue;
       }
 
-    QTableWidgetItem* nameItem = new QTableWidgetItem(currentMeasurement->GetName());
+    QTableWidgetItem* nameItem = new QTableWidgetItem(QString::fromStdString(currentMeasurement->GetName()));
     d->measurementSettingsTableWidget->setItem(i, 0, nameItem);
 
     QCheckBox* enabledCheckbox = new QCheckBox();
     enabledCheckbox->setChecked(currentMeasurement->GetEnabled());
-    enabledCheckbox->setProperty(NAME_PROPERTY, currentMeasurement->GetName());
+    enabledCheckbox->setProperty(NAME_PROPERTY, QString::fromStdString(currentMeasurement->GetName()));
     QObject::connect(enabledCheckbox, SIGNAL(toggled(bool)), this, SLOT(onMeasurementEnabledCheckboxToggled(bool)));
     d->measurementSettingsTableWidget->setCellWidget(i, 1, enabledCheckbox);
     d->measurementSettingsTableWidget->setRowHeight(i, enabledCheckbox->sizeHint().height());
@@ -2920,7 +2920,7 @@ void qSlicerMarkupsModuleWidget::onMeasurementEnabledCheckboxToggled(bool on)
       continue;
       }
 
-    if (!measurementName.compare(currentMeasurement->GetName()))
+    if (!measurementName.compare(QString::fromStdString(currentMeasurement->GetName())))
       {
       currentMeasurement->SetEnabled(on);
       }

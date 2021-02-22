@@ -109,9 +109,9 @@ GetSIPrefixCoefficient(const char* prefix)
 }
 
 //----------------------------------------------------------------------------
-double vtkSlicerUnitsLogic::GetDisplayCoefficient(const char* prefix, const char* basePrefix)
+double vtkSlicerUnitsLogic::GetDisplayCoefficient(const char* prefix, const char* basePrefix, double power/*=1*/)
 {
-  return GetSIPrefixCoefficient(basePrefix) / GetSIPrefixCoefficient(prefix);
+  return pow(GetSIPrefixCoefficient(basePrefix) / GetSIPrefixCoefficient(prefix), power);
 }
 
 //----------------------------------------------------------------------------
@@ -167,6 +167,16 @@ void vtkSlicerUnitsLogic::AddDefaultsUnits()
   node->SetSaveWithScene(false);
   this->SetDefaultUnit(node->GetQuantity(), node->GetID());
 
+  node = this->AddUnitNode("ApplicationArea", "area", "", "cm2", 4);
+  node->SetDisplayCoefficient(Self::GetDisplayCoefficient("centi", "milli", 2));
+  node->SetSaveWithScene(false);
+  this->SetDefaultUnit(node->GetQuantity(), node->GetID());
+
+  node = this->AddUnitNode("ApplicationVolume", "volume", "", "cm3", 5);
+  node->SetDisplayCoefficient(Self::GetDisplayCoefficient("centi", "milli", 3));
+  node->SetSaveWithScene(false);
+  this->SetDefaultUnit(node->GetQuantity(), node->GetID());
+
   node = this->AddUnitNode("ApplicationTime", "time", "", "s", 3);
   node->SetSaveWithScene(false);
   this->SetDefaultUnit(node->GetQuantity(), node->GetID());
@@ -198,15 +208,37 @@ void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
 
   // in Slicer, "length" quantity values are always expressed in millimeters.
   this->AddUnitNodeToScene(scene,
-    "Meter", "length", "", "m", 3, -10000., 10000., Self::GetDisplayCoefficient("", "milli"), 0.);
+    "Meter", "length", "", "m", 4, -10000., 10000., Self::GetDisplayCoefficient("", "milli"), 0.);
   this->AddUnitNodeToScene(scene,
-    "Centimeter", "length", "", "cm", 3, -10000., 10000., Self::GetDisplayCoefficient("centi", "milli"), 0.);
+    "Centimeter", "length", "", "cm", 4, -10000., 10000., Self::GetDisplayCoefficient("centi", "milli"), 0.);
   this->AddUnitNodeToScene(scene,
-    "Millimeter", "length", "", "mm", 3, -10000., 10000., Self::GetDisplayCoefficient("milli", "milli"), 0.);
+    "Millimeter", "length", "", "mm", 4, -10000., 10000., Self::GetDisplayCoefficient("milli", "milli"), 0.);
   this->AddUnitNodeToScene(scene,
-    "Micrometer", "length", "", u8"\u00b5m", 3, -10000., 10000., Self::GetDisplayCoefficient("micro", "milli"), 0.);
+    "Micrometer", "length", "", u8"\u00b5m", 4, -10000., 10000., Self::GetDisplayCoefficient("micro", "milli"), 0.);
   this->AddUnitNodeToScene(scene,
-    "Nanometer", "length", "", "nm", 3, -10000., 10000., Self::GetDisplayCoefficient("nano", "milli"), 0.);
+    "Nanometer", "length", "", "nm", 4, -10000., 10000., Self::GetDisplayCoefficient("nano", "milli"), 0.);
+
+  this->AddUnitNodeToScene(scene,
+    "Square Meter", "area", "", "m2", 4, -10000., 10000., Self::GetDisplayCoefficient("", "milli", 2), 0.);
+  this->AddUnitNodeToScene(scene,
+    "Square Centimeter", "area", "", "cm2", 4, -10000., 10000., Self::GetDisplayCoefficient("centi", "milli", 2), 0.);
+  this->AddUnitNodeToScene(scene,
+    "Square Millimeter", "area", "", "mm2", 4, -10000., 10000., Self::GetDisplayCoefficient("milli", "milli", 2), 0.);
+  this->AddUnitNodeToScene(scene,
+    "Square Micrometer", "area", "", u8"\u00b5m2", 4, -10000., 10000., Self::GetDisplayCoefficient("micro", "milli", 2), 0.);
+  this->AddUnitNodeToScene(scene,
+    "Square Nanometer", "area", "", "nm2", 4, -10000., 10000., Self::GetDisplayCoefficient("nano", "milli", 2), 0.);
+
+  this->AddUnitNodeToScene(scene,
+    "Cubic Meter", "volume", "", "m3", 5, -10000., 10000., Self::GetDisplayCoefficient("", "milli", 3), 0.);
+  this->AddUnitNodeToScene(scene,
+    "Cubic Centimeter", "volume", "", "cm3", 5, -10000., 10000., Self::GetDisplayCoefficient("centi", "milli", 3), 0.);
+  this->AddUnitNodeToScene(scene,
+    "Cubic Millimeter", "volume", "", "mm3", 5, -10000., 10000., Self::GetDisplayCoefficient("milli", "milli", 3), 0.);
+  this->AddUnitNodeToScene(scene,
+    "Cubic Micrometer", "volume", "", u8"\u00b5m3", 5, -10000., 10000., Self::GetDisplayCoefficient("micro", "milli", 3), 0.);
+  this->AddUnitNodeToScene(scene,
+    "Cubic Nanometer", "volume", "", "nm3", 5, -10000., 10000., Self::GetDisplayCoefficient("nano", "milli", 3), 0.);
 
   // 30.436875 is average number of days in a month
   this->AddUnitNodeToScene(scene,

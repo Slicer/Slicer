@@ -104,7 +104,10 @@ vtkSlicerMarkupsLogic::vtkSlicerMarkupsLogic()
 }
 
 //----------------------------------------------------------------------------
-vtkSlicerMarkupsLogic::~vtkSlicerMarkupsLogic() = default;
+vtkSlicerMarkupsLogic::~vtkSlicerMarkupsLogic()
+{
+  this->SetAndObserveSelectionNode(nullptr);
+}
 
 //----------------------------------------------------------------------------
 void vtkSlicerMarkupsLogic::PrintSelf(ostream& os, vtkIndent indent)
@@ -161,6 +164,24 @@ void vtkSlicerMarkupsLogic::ProcessMRMLNodesEvents(vtkObject *caller,
         true /* centered */, viewGroup, sliceNode);
       }
     }
+
+  // Update all measurements if units changed.
+  // This makes display format, precision, etc. changes reflected immediately.
+  if (event == vtkMRMLSelectionNode::UnitModifiedEvent && this->GetMRMLScene())
+    {
+    // units modified, update all measurements
+    std::vector<vtkMRMLNode*> nodes;
+    this->GetMRMLScene()->GetNodesByClass("vtkMRMLMarkupsNode", nodes);
+    for (vtkMRMLNode* node : nodes)
+      {
+      vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(node);
+      if (!markupsNode)
+        {
+        continue;
+        }
+      markupsNode->UpdateAllMeasurements();
+      }
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -171,6 +192,13 @@ void vtkSlicerMarkupsLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   events->InsertNextValue(vtkMRMLScene::EndBatchProcessEvent);
   this->SetAndObserveMRMLSceneEventsInternal(newScene, events.GetPointer());
+
+  vtkMRMLSelectionNode* selectionNode = nullptr;
+  if (this->GetMRMLScene())
+    {
+    selectionNode = vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->GetSelectionNodeID().c_str()));
+    }
+  this->SetAndObserveSelectionNode(selectionNode);
 }
 
 //---------------------------------------------------------------------------
@@ -201,6 +229,14 @@ void vtkSlicerMarkupsLogic::ObserveMRMLScene()
     }
 
  this->Superclass::ObserveMRMLScene();
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerMarkupsLogic::SetAndObserveSelectionNode(vtkMRMLSelectionNode* selectionNode)
+{
+  vtkNew<vtkIntArray> selectionEvents;
+  selectionEvents->InsertNextValue(vtkMRMLSelectionNode::UnitModifiedEvent);
+  vtkSetAndObserveMRMLNodeEventsMacro(this->SelectionNode, selectionNode, selectionEvents.GetPointer());
 }
 
 //-----------------------------------------------------------------------------

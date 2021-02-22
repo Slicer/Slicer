@@ -119,12 +119,14 @@ public:
   /// are assumed to be in millimeter the display coefficient should be computed
   /// specifying `milli` as \a valuePrefix.
   ///
-  /// \a prefix and \a basePrefix can be any value documented in GetSIPrefixCoefficient().
+  /// \a displayPrefix and \a valuePrefix can be any value documented in GetSIPrefixCoefficient().
+  /// \a power return value raised to this power, which is useful for compute display coefficient for derived
+  ///  unit, for example getting display prefix for cm2.
   ///
   /// \sa GetSIPrefixCoefficient()
   /// \sa AddUnitNodeToScene()
   /// \sa AddDefaultsUnits(), AddBuiltInUnits()
-  static double GetDisplayCoefficient(const char* displayPrefix, const char* valuePrefix = "");
+  static double GetDisplayCoefficient(const char* displayPrefix, const char* valuePrefix = "", double power=1);
 
 protected:
   vtkSlicerUnitsLogic();

@@ -1183,7 +1183,7 @@ void vtkMRMLMarkupsCurveNode::ProcessMRMLEvents(vtkObject* caller,
     }
   else if (caller == this->SurfaceScalarCalculator.GetPointer())
     {
-    this->UpdateMeasurements();
+    this->UpdateAllMeasurements();
     int n = -1;
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
     this->StorableModifiedTime.Modified();
@@ -1306,7 +1306,7 @@ void vtkMRMLMarkupsCurveNode::SetSurfaceDistanceWeightingFunction(const char* fu
     }
   this->SurfaceScalarCalculator->SetFunction(function);
   this->UpdateSurfaceScalarVariables();
-  this->UpdateMeasurements();
+  this->UpdateAllMeasurements();
   this->Modified();
 }
 
@@ -1477,9 +1477,9 @@ void vtkMRMLMarkupsCurveNode::OnCurvatureMeasurementModified(
     for (int index = 0; index < self->Measurements->GetNumberOfItems(); ++index)
       {
       vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(self->Measurements->GetItemAsObject(index));
-      if (currentMeasurement->GetEnabled() && currentMeasurement->GetName()
-        && (!strcmp(currentMeasurement->GetName(), self->CurveMeasurementsCalculator->GetMeanCurvatureName())
-          || !strcmp(currentMeasurement->GetName(), self->CurveMeasurementsCalculator->GetMaxCurvatureName())))
+      if (currentMeasurement->GetEnabled()
+        && (currentMeasurement->GetName() == self->CurveMeasurementsCalculator->GetMeanCurvatureName()
+          || currentMeasurement->GetName() == self->CurveMeasurementsCalculator->GetMaxCurvatureName()))
         {
         isCurvatureComputationNeeded = true;
         break;

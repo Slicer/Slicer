@@ -60,7 +60,7 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
   // test with a scene
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   logic1->SetMRMLScene(scene);
-  TESTING_OUTPUT_ASSERT_ERRORS(1); // one error is expected to be reported due to lack of selection node
+  TESTING_OUTPUT_ASSERT_ERRORS(2); // one error is expected to be reported due to lack of selection node
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   const char *testName = "Test node 2";

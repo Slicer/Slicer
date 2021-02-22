@@ -100,9 +100,5 @@ void vtkMRMLMeasurementLength::Compute()
     printFormat = "%-#4.4gmm";
     }
 
-  this->SetValue(length);
-  this->SetUnits(unit.c_str());
-  this->SetPrintFormat(printFormat.c_str());
-
-  this->LastComputationResult = vtkMRMLMeasurement::OK;
+  this->SetValue(length, unit, printFormat, vtkMRMLMeasurement::OK);
 }

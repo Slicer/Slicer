@@ -50,7 +50,7 @@ void vtkMRMLMeasurementArea::Compute()
 
   // We derive area unit from length unit, but it may be better to introduce
   // an area unit node to be able to specify more human-friendly format.
-  vtkMRMLUnitNode* lengthUnitNode = nullptr;
+  vtkMRMLUnitNode* unitNode = nullptr;
   double area = 0.0;
 
   vtkMRMLMarkupsClosedCurveNode* curveNode = vtkMRMLMarkupsClosedCurveNode::SafeDownCast(this->InputMRMLNode);
@@ -65,14 +65,14 @@ void vtkMRMLMeasurementArea::Compute()
       return;
       }
     area = vtkMRMLMarkupsClosedCurveNode::GetClosedCurveSurfaceArea(curveNode);
-    lengthUnitNode = curveNode->GetUnitNode("length");
+    unitNode = curveNode->GetUnitNode("area");
     }
   else if (planeNode)
     {
     double bounds[6] = { 0.0 };
     planeNode->GetPlaneBounds(bounds);
     area = (bounds[1] - bounds[0]) * (bounds[3] - bounds[2]);
-    lengthUnitNode = planeNode->GetUnitNode("length");
+    unitNode = planeNode->GetUnitNode("area");
     }
   else
     {
@@ -81,30 +81,23 @@ void vtkMRMLMeasurementArea::Compute()
     return;
     }
 
-  std::string printFormat = "%-#4.4gmm2";
-  std::string unit = "mm2";
-  if (lengthUnitNode)
+  std::string printFormat;
+  std::string unit;
+  if (unitNode)
     {
-    // Derive area unit from length unit.
-    // This could be made a feature of unit nodes.
-    if (lengthUnitNode->GetDisplayOffset() != 0.0)
+    if (unitNode->GetSuffix())
       {
-      vtkErrorMacro("vtkMRMLMeasurementArea::Compute error: length unit display offset is non-zero, computation");
-      this->ClearValue(vtkMRMLMeasurement::InternalError);
-      return;
+      unit = unitNode->GetSuffix();
       }
-    area = lengthUnitNode->GetDisplayCoefficient() * lengthUnitNode->GetDisplayCoefficient() * area;
-    unit = lengthUnitNode->GetSuffix() ? lengthUnitNode->GetSuffix() : "";
-
-    std::stringstream strstream;
-    strstream << lengthUnitNode->GetPrefix() << "%."
-      << 2 * lengthUnitNode->GetPrecision() << "g" // precision is 2x as area is length^2
-      << lengthUnitNode->GetSuffix() << "2"; // square
-    strstream >> printFormat;
+    area = unitNode->GetDisplayValueFromValue(area);
+    printFormat = unitNode->GetDisplayStringFormat();
+    }
+  else
+    {
+    unit = "cm2"; // mm2 would be too small for most clinical values
+    area *= 0.01; // length unit is mm by default, so display coefficient for cm2 is 0.01
+    printFormat = "%-#4.4gcm2";
     }
 
-  this->LastComputationResult = vtkMRMLMeasurement::OK;
-  this->SetValue(area);
-  this->SetUnits(unit.c_str());
-  this->SetPrintFormat(printFormat.c_str());
+  this->SetValue(area, unit, printFormat, vtkMRMLMeasurement::OK);
 }
