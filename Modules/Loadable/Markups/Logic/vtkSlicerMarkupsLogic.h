@@ -238,9 +238,9 @@ public:
   /// Get best fit plane for a markup
   static bool GetBestFitPlane(vtkMRMLMarkupsNode* curveNode, vtkPlane* plane);
 
-  std::string GetClassNameForMarkupType(std::string markupType);
-  void RegisterMarkupTypeStorageNode(std::string markupType, std::string storageNodeClassName);
-  vtkMRMLMarkupsJsonStorageNode* AddNewStorageNodeForMarkupType(std::string markupType);
+  std::string GetJsonStorageNodeClassNameForMarkupsType(std::string markupsType);
+  void RegisterJsonStorageNodeForMarkupsType(std::string markupsType, std::string storageNodeClassName);
+  vtkMRMLMarkupsJsonStorageNode* AddNewJsonStorageNodeForMarkupsType(std::string markupsType);
 
 protected:
   vtkSlicerMarkupsLogic();
@@ -256,7 +256,7 @@ protected:
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
 
-  std::map<std::string, std::string> MarkupTypeStorageNodes;
+  std::map<std::string, std::string> MarkupsTypeStorageNodes;
 
 private:
 
