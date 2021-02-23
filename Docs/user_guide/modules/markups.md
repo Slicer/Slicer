@@ -37,6 +37,13 @@ To pick a markups node in a viewer so that its properties can be edited in Marku
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_markups_context_menu_properties.png)
 
+### Edit ROI markups
+
+- ROI size can be changed using handles on the corners and faces of the ROI.
+- If the handles are not visible, right-click on the ROI outline, or on a control point, and check "Interaction handles visible".
+- Left-click-and-drag on interaction handles to change the ROI size.
+- Alt + Left-click-and-drag to symmetrically adjust the ROI size without changing the position of the center.
+
 ## Panels and their use
 
 - Create: click on any of the buttons to create a new markup. Click in any of the viewers to place markup points.
