@@ -299,6 +299,10 @@ bool vtkSlicerMarkupsWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* vt
     {
     this->SetWidgetState(WidgetStateOnRotationHandle);
     }
+  else if (activeComponentType == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle)
+    {
+    this->SetWidgetState(WidgetStateOnScaleHandle);
+    }
   else
     {
     this->SetWidgetState(WidgetStateOnWidget);

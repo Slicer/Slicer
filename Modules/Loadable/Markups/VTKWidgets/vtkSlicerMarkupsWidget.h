@@ -60,6 +60,7 @@ public:
     WidgetStateOnTranslationHandle, // hovering over a translation interaction handle
     WidgetStateOnRotationHandle, // hovering over a rotation interaction handle
     WidgetStateOnScaleHandle, // hovering over a scale interaction handle
+    WidgetStateMarkups_Last
   };
 
   /// Widget events
@@ -73,7 +74,8 @@ public:
     WidgetEventControlPointMoveEnd,
     WidgetEventControlPointDelete,
     WidgetEventControlPointInsert,
-    WidgetEventControlPointSnapToSlice
+    WidgetEventControlPointSnapToSlice,
+    WidgetEventMarkups_Last
   };
 
   // Returns true if one of the markup points are just being previewed and not placed yet.

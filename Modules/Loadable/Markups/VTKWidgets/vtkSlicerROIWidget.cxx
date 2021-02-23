@@ -38,7 +38,11 @@
 vtkStandardNewMacro(vtkSlicerROIWidget);
 
 //----------------------------------------------------------------------
-vtkSlicerROIWidget::vtkSlicerROIWidget() = default;
+vtkSlicerROIWidget::vtkSlicerROIWidget()
+{
+  this->SetEventTranslationClickAndDrag(WidgetStateOnScaleHandle, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier,
+    WidgetStateSymmetricScale, WidgetEventSymmetricScaleStart, WidgetEventSymmetricScaleEnd);
+}
 
 //----------------------------------------------------------------------
 vtkSlicerROIWidget::~vtkSlicerROIWidget() = default;
@@ -63,8 +67,139 @@ void vtkSlicerROIWidget::CreateDefaultRepresentation(
   rep->UpdateFromMRML(nullptr, 0); // full update
 }
 
+//-----------------------------------------------------------------------------
+bool vtkSlicerROIWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2)
+{
+  unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
+  if (widgetEvent == WidgetEventNone)
+    {
+    return false;
+    }
+  vtkSlicerMarkupsWidgetRepresentation* rep = this->GetMarkupsRepresentation();
+  if (!rep)
+    {
+    return false;
+    }
+
+  // If we are placing markups or dragging the mouse then we interact everywhere
+  if (this->WidgetState == WidgetStateSymmetricScale)
+    {
+    distance2 = 0.0;
+    return true;
+    }
+
+  return Superclass::CanProcessInteractionEvent(eventData, distance2);
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerROIWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
+{
+  unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
+
+  bool processedEvent = false;
+  switch (widgetEvent)
+    {
+    case WidgetEventSymmetricScaleStart:
+      processedEvent = ProcessWidgetSymmetricScaleStart(eventData);
+      break;
+    case WidgetEventSymmetricScaleEnd:
+      processedEvent = ProcessEndMouseDrag(eventData);
+      break;
+    }
+
+  if (!processedEvent)
+    {
+    processedEvent = Superclass::ProcessInteractionEvent(eventData);
+    }
+  return processedEvent;
+}
+
+//-------------------------------------------------------------------------
+bool vtkSlicerROIWidget::ProcessWidgetSymmetricScaleStart(vtkMRMLInteractionEventData* eventData)
+{
+  if ((this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateOnWidget && this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateOnScaleHandle)
+    || this->IsAnyControlPointLocked())
+    {
+    return false;
+    }
+
+  this->SetWidgetState(WidgetStateSymmetricScale);
+  this->StartWidgetInteraction(eventData);
+  return true;
+}
+
+//-------------------------------------------------------------------------
+bool vtkSlicerROIWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* eventData)
+{
+  if (!this->WidgetRep)
+    {
+    return false;
+    }
+
+  if (this->WidgetState != vtkSlicerROIWidget::WidgetStateSymmetricScale)
+    {
+    return Superclass::ProcessEndMouseDrag(eventData);
+    }
+
+  int activeComponentType = this->GetActiveComponentType();
+  if (activeComponentType == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle)
+    {
+    this->SetWidgetState(WidgetStateOnScaleHandle);
+    }
+  else
+    {
+    this->SetWidgetState(WidgetStateOnWidget);
+    }
+
+  this->EndWidgetInteraction();
+  return true;
+}
+
+
+//-------------------------------------------------------------------------
+bool vtkSlicerROIWidget::ProcessMouseMove(vtkMRMLInteractionEventData* eventData)
+{
+  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  vtkSlicerMarkupsWidgetRepresentation* rep = this->GetMarkupsRepresentation();
+  if (!rep || !markupsNode || !eventData)
+    {
+    return false;
+    }
+
+  int state = this->WidgetState;
+  if (state != WidgetStateSymmetricScale)
+    {
+    return Superclass::ProcessMouseMove(eventData);
+    }
+
+  // Process the motion
+  // Based on the displacement vector (computed in display coordinates) and
+  // the cursor state (which corresponds to which part of the widget has been
+  // selected), the widget points are modified.
+  // First construct a local coordinate system based on the display coordinates
+  // of the widget.
+  double eventPos[2]
+    {
+    static_cast<double>(eventData->GetDisplayPosition()[0]),
+    static_cast<double>(eventData->GetDisplayPosition()[1]),
+    };
+
+  this->ScaleWidget(eventPos, true);
+
+  this->LastEventPosition[0] = eventPos[0];
+  this->LastEventPosition[1] = eventPos[1];
+
+  return true;
+}
+
 //----------------------------------------------------------------------
 void vtkSlicerROIWidget::ScaleWidget(double eventPos[2])
+{
+  this->ScaleWidget(eventPos, false);
+}
+
+//----------------------------------------------------------------------
+void vtkSlicerROIWidget::ScaleWidget(double eventPos[2], bool symmetricScale)
 {
   vtkMRMLMarkupsDisplayNode* displayNode = this->GetMarkupsDisplayNode();
   vtkMRMLMarkupsROINode* markupsNode = vtkMRMLMarkupsROINode::SafeDownCast(this->GetMarkupsNode());
@@ -165,6 +300,10 @@ void vtkSlicerROIWidget::ScaleWidget(double eventPos[2])
       case vtkMRMLMarkupsROINode::HandleLPSCorner:
       case vtkMRMLMarkupsROINode::HandleLASCorner:
         bounds_ROI[0] += scaleVector_ROI[0];
+        if (symmetricScale)
+          {
+          bounds_ROI[1] -= scaleVector_ROI[0];
+          }
         break;
       case vtkMRMLMarkupsROINode::HandleRFace:
       case vtkMRMLMarkupsROINode::HandleRPICorner:
@@ -172,6 +311,10 @@ void vtkSlicerROIWidget::ScaleWidget(double eventPos[2])
       case vtkMRMLMarkupsROINode::HandleRPSCorner:
       case vtkMRMLMarkupsROINode::HandleRASCorner:
         bounds_ROI[1] += scaleVector_ROI[0];
+        if (symmetricScale)
+          {
+          bounds_ROI[0] -= scaleVector_ROI[0];
+          }
         break;
       default:
         break;
@@ -185,6 +328,10 @@ void vtkSlicerROIWidget::ScaleWidget(double eventPos[2])
       case vtkMRMLMarkupsROINode::HandleLPSCorner:
       case vtkMRMLMarkupsROINode::HandleRPSCorner:
         bounds_ROI[2] += scaleVector_ROI[1];
+        if (symmetricScale)
+          {
+          bounds_ROI[3] -= scaleVector_ROI[1];
+          }
         break;
       case vtkMRMLMarkupsROINode::HandleAFace:
       case vtkMRMLMarkupsROINode::HandleLAICorner:
@@ -192,6 +339,10 @@ void vtkSlicerROIWidget::ScaleWidget(double eventPos[2])
       case vtkMRMLMarkupsROINode::HandleLASCorner:
       case vtkMRMLMarkupsROINode::HandleRASCorner:
         bounds_ROI[3] += scaleVector_ROI[1];
+        if (symmetricScale)
+          {
+          bounds_ROI[2] -= scaleVector_ROI[1];
+          }
         break;
       default:
         break;
@@ -205,6 +356,10 @@ void vtkSlicerROIWidget::ScaleWidget(double eventPos[2])
       case vtkMRMLMarkupsROINode::HandleLAICorner:
       case vtkMRMLMarkupsROINode::HandleRAICorner:
         bounds_ROI[4] += scaleVector_ROI[2];
+        if (symmetricScale)
+          {
+          bounds_ROI[5] -= scaleVector_ROI[2];
+          }
         break;
       case vtkMRMLMarkupsROINode::HandleSFace:
       case vtkMRMLMarkupsROINode::HandleLPSCorner:
@@ -212,6 +367,10 @@ void vtkSlicerROIWidget::ScaleWidget(double eventPos[2])
       case vtkMRMLMarkupsROINode::HandleLASCorner:
       case vtkMRMLMarkupsROINode::HandleRASCorner:
         bounds_ROI[5] += scaleVector_ROI[2];
+        if (symmetricScale)
+          {
+          bounds_ROI[4] -= scaleVector_ROI[2];
+          }
         break;
       default:
         break;
@@ -228,7 +387,6 @@ void vtkSlicerROIWidget::ScaleWidget(double eventPos[2])
     vtkNew<vtkTransform> roiToWorldTransform;
     roiToWorldTransform->SetMatrix(worldToROIMatrix);
     roiToWorldTransform->Inverse();
-
     double newOrigin_World[3] = { 0.0, 0.0, 0.0 };
     roiToWorldTransform->TransformPoint(newOrigin_ROI, newOrigin_World);
     markupsNode->SetCenterWorld(newOrigin_World);

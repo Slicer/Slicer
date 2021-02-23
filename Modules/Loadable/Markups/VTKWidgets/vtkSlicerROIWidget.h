@@ -41,6 +41,21 @@ public:
   /// Standard methods for a VTK class.
   vtkTypeMacro(vtkSlicerROIWidget,vtkSlicerMarkupsWidget);
 
+  /// Widget states
+  enum
+  {
+    WidgetStateSymmetricScale = WidgetStateMarkups_Last,
+    WidgetStateMarkupsROI_Last
+  };
+
+  // Widget events
+  enum
+  {
+    WidgetEventSymmetricScaleStart = WidgetEventMarkups_Last,
+    WidgetEventSymmetricScaleEnd,
+    WidgetEventMarkupsROI_Last
+  };
+
   /// Create the default widget representation and initializes the widget and representation.
   void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) override;
 
@@ -53,7 +68,14 @@ protected:
   vtkSlicerROIWidget();
   ~vtkSlicerROIWidget() override;
 
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) override;
+  bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
+  bool ProcessWidgetSymmetricScaleStart(vtkMRMLInteractionEventData* eventData);
+  bool ProcessMouseMove(vtkMRMLInteractionEventData* eventData) override;
+  bool ProcessEndMouseDrag(vtkMRMLInteractionEventData* eventData);
+
   void ScaleWidget(double eventPos[2]) override;
+  void ScaleWidget(double eventPos[2], bool symmetricScale);
 
 private:
   vtkSlicerROIWidget(const vtkSlicerROIWidget&) = delete;
