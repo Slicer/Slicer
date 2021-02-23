@@ -39,7 +39,7 @@ std::string vtkMRMLMeasurement::GetValueWithUnitsAsPrintableString()
     return "(undefined)";
     }
   char buf[80] = { 0 };
-  snprintf(buf, sizeof(buf) - 1, this->PrintFormat.c_str(), this->Value, this->Units);
+  snprintf(buf, sizeof(buf) - 1, this->PrintFormat.c_str(), this->Value, this->Units.c_str());
   return buf;
 }
 
