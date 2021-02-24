@@ -37,6 +37,37 @@
 #include <vtksys/SystemTools.hxx>
 
 //------------------------------------------------------------------------------
+// Helper class to be able to read tables that have "\" characters in them.
+//
+// vtkDelimitedTextReader uses "\" as escape character therefore "\" is always
+// processed together with the subsequent character(s) as an escape sequence,
+// which prevents loading tables that use backslash characters in the text.
+// Since there is no API to change the escape character we use this modified class
+// to read tables.
+// Using "\" as escape character does not even survive a roundtrip with
+// vtkDelimitedTextWriter and vtkDelimitedTextReader because the writer does not
+// convert "\" to escaped "\\", so we simply not use escape characters.
+// Since we assume UTF-8 everywhere, not using a special escape character
+// should not be an issue.
+class vtkNoEscapeDelimitedTextReader : public vtkDelimitedTextReader
+{
+public:
+  static vtkNoEscapeDelimitedTextReader* New();
+  vtkTypeMacro(vtkNoEscapeDelimitedTextReader, vtkDelimitedTextReader);
+
+protected:
+  vtkNoEscapeDelimitedTextReader()
+    {
+    this->UnicodeEscapeCharacter.clear();
+    }
+  ~vtkNoEscapeDelimitedTextReader() = default;
+  vtkNoEscapeDelimitedTextReader(const vtkNoEscapeDelimitedTextReader&);
+  void operator=(const vtkNoEscapeDelimitedTextReader&);
+};
+
+vtkStandardNewMacro(vtkNoEscapeDelimitedTextReader);
+
+//------------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLTableStorageNode);
 
 const char* COMPONENT_SEPERATOR = "_";
@@ -527,7 +558,7 @@ bool vtkMRMLTableStorageNode::ReadSchema(std::string filename, vtkMRMLTableNode*
     return false;
     }
 
-  vtkNew<vtkDelimitedTextReader> reader;
+  vtkNew<vtkNoEscapeDelimitedTextReader> reader;
   reader->SetFileName(filename.c_str());
   reader->SetHaveHeaders(true);
   reader->SetFieldDelimiterCharacters(this->GetFieldDelimiterCharacters(filename).c_str());
@@ -564,7 +595,7 @@ bool vtkMRMLTableStorageNode::ReadSchema(std::string filename, vtkMRMLTableNode*
 //----------------------------------------------------------------------------
 bool vtkMRMLTableStorageNode::ReadTable(std::string filename, vtkMRMLTableNode* tableNode)
 {
-  vtkNew<vtkDelimitedTextReader> reader;
+  vtkNew<vtkNoEscapeDelimitedTextReader> reader;
   reader->SetFileName(filename.c_str());
   reader->SetHaveHeaders(true);
   reader->SetFieldDelimiterCharacters(this->GetFieldDelimiterCharacters(filename).c_str());
