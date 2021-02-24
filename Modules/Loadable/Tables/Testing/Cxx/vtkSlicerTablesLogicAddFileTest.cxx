@@ -30,6 +30,7 @@
 // VTK includes
 #include <vtkNew.h>
 #include <vtkPolyData.h>
+#include <vtkStringArray.h>
 #include <vtkTable.h>
 
 #include "vtkTestingOutputWindow.h"
@@ -120,6 +121,10 @@ int testAddFile(const char * filePath)
   CHECK_INT(table->GetColumnByName("TestInt")->GetDataType(), VTK_INT);
   CHECK_INT(table->GetColumnByName("TestDouble")->GetDataType(), VTK_DOUBLE);
   CHECK_INT(table->GetColumnByName("TestFloat")->GetDataType(), VTK_FLOAT);
+
+  // Verify that files that contain backslsh are read correctly
+  vtkStringArray* stringArray = vtkStringArray::SafeDownCast(table->GetColumnByName("TestString"));
+  CHECK_STRING(stringArray->GetValue(4), "some\\escape\\characters\\n\\t");
 
   std::cout << "Test passed." << std::endl;
   return EXIT_SUCCESS;
