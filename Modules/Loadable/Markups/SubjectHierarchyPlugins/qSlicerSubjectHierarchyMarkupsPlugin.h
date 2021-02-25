@@ -117,6 +117,10 @@ protected slots:
   void toggleHandleInteractive();
   /// toggle handle interactive for the current subject hierarchy item
   void toggleCurrentItemHandleInteractive();
+  /// toggle the visibility of the interaction handle type for the current subject hierarchy item
+  void toggleCurrentItemHandleTypeVisibility();
+  /// toggle the visibility of the interaction handle type for the active node in view
+  void toggleHandleTypeVisibility();
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyMarkupsPluginPrivate> d_ptr;

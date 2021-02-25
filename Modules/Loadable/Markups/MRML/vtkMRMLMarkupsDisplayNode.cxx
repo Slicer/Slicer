@@ -125,6 +125,9 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->ActiveColor[2] = 0.0;
 
   this->HandlesInteractive = false;
+  this->TranslationHandleVisibility = true;
+  this->RotationHandleVisibility = true;
+  this->ScaleHandleVisibility = true;
 
   // Line color node
   vtkNew<vtkIntArray> events;
@@ -168,6 +171,9 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLFloatMacro(lineColorFadingSaturation, LineColorFadingSaturation);
   vtkMRMLWriteXMLFloatMacro(lineColorFadingHueOffset, LineColorFadingHueOffset);
   vtkMRMLWriteXMLBooleanMacro(handlesInteractive, HandlesInteractive);
+  vtkMRMLWriteXMLBooleanMacro(translationHandleVisibility, TranslationHandleVisibility);
+  vtkMRMLWriteXMLBooleanMacro(rotationHandleVisibility, RotationHandleVisibility);
+  vtkMRMLWriteXMLBooleanMacro(scaleHandleVisibility, ScaleHandleVisibility);
   vtkMRMLWriteXMLBooleanMacro(fillVisibility, FillVisibility);
   vtkMRMLWriteXMLBooleanMacro(outlineVisibility, OutlineVisibility);
   vtkMRMLWriteXMLFloatMacro(fillOpacity, FillOpacity);
@@ -211,6 +217,9 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLFloatMacro(lineColorFadingSaturation, LineColorFadingSaturation);
   vtkMRMLReadXMLFloatMacro(lineColorFadingHueOffset, LineColorFadingHueOffset);
   vtkMRMLReadXMLBooleanMacro(handlesInteractive, HandlesInteractive);
+  vtkMRMLReadXMLBooleanMacro(translationHandleVisibility, TranslationHandleVisibility);
+  vtkMRMLReadXMLBooleanMacro(rotationHandleVisibility, RotationHandleVisibility);
+  vtkMRMLReadXMLBooleanMacro(scaleHandleVisibility, ScaleHandleVisibility);
   vtkMRMLReadXMLBooleanMacro(fillVisibility, FillVisibility);
   vtkMRMLReadXMLBooleanMacro(outlineVisibility, OutlineVisibility);
   vtkMRMLReadXMLFloatMacro(fillOpacity, FillOpacity);
@@ -277,6 +286,9 @@ void vtkMRMLMarkupsDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
   vtkMRMLCopyFloatMacro(LineColorFadingSaturation);
   vtkMRMLCopyFloatMacro(LineColorFadingHueOffset);
   vtkMRMLCopyBooleanMacro(HandlesInteractive);
+  vtkMRMLCopyBooleanMacro(TranslationHandleVisibility);
+  vtkMRMLCopyBooleanMacro(RotationHandleVisibility);
+  vtkMRMLCopyBooleanMacro(ScaleHandleVisibility);
   vtkMRMLCopyBooleanMacro(FillVisibility);
   vtkMRMLCopyBooleanMacro(OutlineVisibility);
   vtkMRMLCopyFloatMacro(FillOpacity);
@@ -459,6 +471,9 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintFloatMacro(LineColorFadingSaturation);
   vtkMRMLPrintFloatMacro(LineColorFadingHueOffset);
   vtkMRMLPrintBooleanMacro(HandlesInteractive);
+  vtkMRMLPrintBooleanMacro(TranslationHandleVisibility);
+  vtkMRMLPrintBooleanMacro(RotationHandleVisibility);
+  vtkMRMLPrintBooleanMacro(ScaleHandleVisibility);
   vtkMRMLPrintBooleanMacro(FillVisibility);
   vtkMRMLPrintBooleanMacro(OutlineVisibility);
   vtkMRMLPrintFloatMacro(FillOpacity);
@@ -1003,4 +1018,41 @@ void vtkMRMLMarkupsDisplayNode::UpdateAssignedAttribute()
   this->UpdateScalarRange();
 
   this->GetMarkupsNode()->UpdateAssignedAttribute();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsDisplayNode::SetHandleVisibility(int componentType, bool visibility)
+{
+  switch (componentType)
+    {
+    case vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle:
+      this->SetTranslationHandleVisibility(visibility);
+      break;
+    case vtkMRMLMarkupsDisplayNode::ComponentRotationHandle:
+      this->SetRotationHandleVisibility(visibility);
+      break;
+    case vtkMRMLMarkupsDisplayNode::ComponentScaleHandle:
+      this->SetScaleHandleVisibility(visibility);
+      break;
+    default:
+      vtkErrorMacro("Unknown handle type");
+      break;
+    }
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLMarkupsDisplayNode::GetHandleVisibility(int componentType)
+{
+  switch (componentType)
+    {
+    case vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle:
+      return this->GetTranslationHandleVisibility();
+    case vtkMRMLMarkupsDisplayNode::ComponentRotationHandle:
+      return this->GetRotationHandleVisibility();
+    case vtkMRMLMarkupsDisplayNode::ComponentScaleHandle:
+      return this->GetScaleHandleVisibility();
+    default:
+      vtkErrorMacro("Unknown handle type");
+    }
+  return false;
 }

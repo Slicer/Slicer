@@ -516,9 +516,11 @@ void vtkSlicerROIRepresentation2D::MarkupsInteractionPipelineROI2D::UpdateScaleH
   vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(
     vtkSlicerMarkupsWidgetRepresentation::SafeDownCast(this->Representation)->GetMarkupsNode());
   if (!roiNode)
-  {
+    {
     return;
-  }
+    }
+
+  vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(roiNode->GetDisplayNode());
 
   double viewPlaneOrigin4[4] = { 0.0, 0.0, 0.0, 1.0 };
   double viewPlaneNormal4[4] = { 0.0, 0.0, 1.0, 0.0 };
@@ -551,7 +553,7 @@ void vtkSlicerROIRepresentation2D::MarkupsInteractionPipelineROI2D::UpdateScaleH
 
   vtkIdTypeArray* visibilityArray = vtkIdTypeArray::SafeDownCast(this->ScaleHandlePoints->GetPointData()->GetArray("visibility"));
   visibilityArray->SetNumberOfValues(roiPoints->GetNumberOfPoints());
-  visibilityArray->Fill(1);
+  visibilityArray->Fill(displayNode ? displayNode->GetScaleHandleVisibility() : 1.0);
 
   vtkNew<vtkPlane> plane;
   plane->SetNormal(viewPlaneNormal_ROI);

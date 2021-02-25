@@ -27,6 +27,7 @@
 // Markups includes
 #include "qMRMLMarkupsDisplayNodeWidgetPlugin.h"
 #include "qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin.h"
+#include "qMRMLMarkupsInteractionHandleWidgetPlugin.h"
 #include "qMRMLMarkupsROIWidgetPlugin.h"
 #include "qSlicerMarkupsPlaceWidgetPlugin.h"
 #include "qSlicerSimpleMarkupsWidgetPlugin.h"
@@ -46,6 +47,7 @@ public:
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qMRMLMarkupsDisplayNodeWidgetPlugin;
     plugins << new qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin;
+    plugins << new qMRMLMarkupsInteractionHandleWidgetPlugin;
     plugins << new qMRMLMarkupsROIWidgetPlugin;
     plugins << new qSlicerMarkupsPlaceWidgetPlugin;
     plugins << new qSlicerSimpleMarkupsWidgetPlugin;

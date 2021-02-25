@@ -56,6 +56,9 @@ static const double INTERACTION_HANDLE_RADIUS = 0.0625;
 static const double INTERACTION_HANDLE_DIAMETER = INTERACTION_HANDLE_RADIUS * 2.0;
 static const double INTERACTION_HANDLE_ROTATION_ARC_TUBE_RADIUS = INTERACTION_HANDLE_RADIUS * 0.4;
 static const double INTERACTION_HANDLE_ROTATION_ARC_RADIUS = 0.80;
+static const double INTERACTION_TRANSLATION_HANDLE_RADIUS = INTERACTION_HANDLE_RADIUS * 0.75;
+static const double INTERACTION_TRANSLATION_HANDLE_DIAMETER = INTERACTION_TRANSLATION_HANDLE_RADIUS * 2.0;
+static const double INTERACTION_TRANSLATION_HANDLE_SHAFT_RADIUS = INTERACTION_TRANSLATION_HANDLE_RADIUS * 0.5;
 
 //----------------------------------------------------------------------
 vtkSlicerMarkupsWidgetRepresentation::ControlPointsPipeline::ControlPointsPipeline()
@@ -1017,8 +1020,9 @@ void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::CreateRot
 void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::CreateTranslationHandles()
 {
   this->AxisTranslationGlyphSource = vtkSmartPointer<vtkArrowSource>::New();
-  this->AxisTranslationGlyphSource->SetTipRadius(INTERACTION_HANDLE_RADIUS);
-  this->AxisTranslationGlyphSource->SetTipLength(INTERACTION_HANDLE_DIAMETER);
+  this->AxisTranslationGlyphSource->SetTipRadius(INTERACTION_TRANSLATION_HANDLE_RADIUS);
+  this->AxisTranslationGlyphSource->SetTipLength(INTERACTION_TRANSLATION_HANDLE_DIAMETER);
+  this->AxisTranslationGlyphSource->SetShaftRadius(INTERACTION_TRANSLATION_HANDLE_SHAFT_RADIUS);
   this->AxisTranslationGlyphSource->SetTipResolution(16);
   this->AxisTranslationGlyphSource->SetShaftResolution(16);
   this->AxisTranslationGlyphSource->InvertOn();
@@ -1282,15 +1286,32 @@ void vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::GetHandle
 //----------------------------------------------------------------------
 double vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::GetHandleOpacity(int type, int index)
 {
-  double viewNormal[3] = { 0.0, 0.0, 0.0 };
-  this->GetViewPlaneNormal(viewNormal);
+  // Determine if the handle should be displayed
+  bool handleVisible = true;
+  vtkSlicerMarkupsWidgetRepresentation* markupsRepresentation = vtkSlicerMarkupsWidgetRepresentation::SafeDownCast(this->Representation);
+  vtkMRMLMarkupsDisplayNode* displayNode = nullptr;
+  if (markupsRepresentation)
+    {
+    displayNode = markupsRepresentation->GetMarkupsDisplayNode();
+    }
+  if (displayNode)
+    {
+    handleVisible = displayNode->GetHandleVisibility(type);
+    }
+  if (!handleVisible)
+    {
+    return 0.0;
+    }
 
   double opacity = 1.0;
   if (type == vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle && index == 3)
     {
-    // Free transform handle
+    // Free transform handle is always visible regardless of angle
     return opacity;
     }
+
+  double viewNormal[3] = { 0.0, 0.0, 0.0 };
+  this->GetViewPlaneNormal(viewNormal);
 
   double axis[3] = { 0.0, 0.0, 0.0 };
   this->GetInteractionHandleAxisWorld(type, index, axis);
