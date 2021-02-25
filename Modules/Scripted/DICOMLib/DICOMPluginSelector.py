@@ -22,13 +22,22 @@ class DICOMPluginSelector(qt.QWidget):
     super(DICOMPluginSelector, self).__init__(parent)
     self.setMinimumHeight(height)
     self.setMinimumWidth(width)
-    self.setLayout(qt.QVBoxLayout())
+    verticalBox = qt.QVBoxLayout()
     self.checkBoxByPlugin = {}
-    settings = qt.QSettings()
 
     for pluginClass in slicer.modules.dicomPlugins:
       self.checkBoxByPlugin[pluginClass] = qt.QCheckBox(pluginClass)
-      self.layout().addWidget(self.checkBoxByPlugin[pluginClass])
+      verticalBox.addWidget(self.checkBoxByPlugin[pluginClass])
+
+    # Pack vertical box with plugins into a scroll area widget
+    verticalBoxWidget = qt.QWidget()
+    scrollAreaBox = qt.QVBoxLayout()
+    verticalBoxWidget.setLayout(verticalBox)
+    scrollArea = qt.QScrollArea()
+    scrollArea.setWidget(verticalBoxWidget)
+    scrollAreaBox.addWidget(scrollArea)
+    self.setLayout(scrollAreaBox)
+    settings = qt.QSettings()
 
     if settings.contains('DICOM/disabledPlugins/size'):
       size = settings.beginReadArray('DICOM/disabledPlugins')
