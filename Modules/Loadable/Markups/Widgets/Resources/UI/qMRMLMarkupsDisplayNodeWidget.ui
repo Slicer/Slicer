@@ -57,54 +57,10 @@
      </item>
     </layout>
    </item>
-   <item row="8" column="1">
-    <widget class="QCheckBox" name="interactionCheckBox">
-     <property name="toolTip">
-      <string>Show handles to interactively translate and rotate</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="1">
-    <widget class="ctkSliderWidget" name="textScaleSliderWidget">
-     <property name="singleStep">
-      <double>0.100000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>20.000000000000000</double>
-     </property>
-     <property name="suffix">
-      <string> %</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0">
-    <widget class="QLabel" name="textScaleLabel">
-     <property name="text">
-      <string>Text Size:</string>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0">
     <widget class="QLabel" name="VisibilityLabel">
      <property name="text">
       <string>Visibility:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="glyphScaleLabel">
-     <property name="text">
-      <string>Glyph Size:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="0">
-    <widget class="QLabel" name="interactionLabel">
-     <property name="text">
-      <string>Interaction handles: </string>
      </property>
     </widget>
    </item>
@@ -154,7 +110,7 @@
      </item>
     </layout>
    </item>
-   <item row="9" column="0" colspan="2">
+   <item row="10" column="0" colspan="2">
     <widget class="ctkCollapsibleGroupBox" name="SliceDisplayCollapsibleGroupBox">
      <property name="title">
       <string>Advanced</string>
@@ -591,7 +547,34 @@
      </layout>
     </widget>
    </item>
-   <item row="10" column="0" colspan="2">
+   <item row="5" column="0">
+    <widget class="QLabel" name="glyphScaleLabel">
+     <property name="text">
+      <string>Glyph Size:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <widget class="ctkSliderWidget" name="textScaleSliderWidget">
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>20.000000000000000</double>
+     </property>
+     <property name="suffix">
+      <string> %</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="textScaleLabel">
+     <property name="text">
+      <string>Text Size:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0" colspan="2">
     <widget class="ctkCollapsibleGroupBox" name="ScalarsCollapsibleGroupBox">
      <property name="title">
       <string>Scalars</string>
@@ -606,25 +589,21 @@
      </layout>
     </widget>
    </item>
+   <item row="8" column="0" colspan="2">
+    <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox">
+     <property name="title">
+      <string>Interaction handles</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="qMRMLMarkupsInteractionHandleWidget" name="InteractionHandleWidget"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>ctkCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>ctkCollapsibleGroupBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkColorPickerButton</class>
-   <extends>QPushButton</extends>
-   <header>ctkColorPickerButton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkSliderWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkSliderWidget.h</header>
-  </customwidget>
   <customwidget>
    <class>qMRMLCheckableNodeComboBox</class>
    <extends>qMRMLNodeComboBox</extends>
@@ -665,6 +644,27 @@
    <extends>qMRMLWidget</extends>
    <header>qMRMLMarkupsFiducialProjectionPropertyWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLMarkupsInteractionHandleWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLMarkupsInteractionHandleWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkColorPickerButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkColorPickerButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -746,6 +746,22 @@
     <hint type="destinationlabel">
      <x>315</x>
      <y>245</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qMRMLMarkupsDisplayNodeWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>InteractionHandleWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>179</x>
+     <y>370</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>179</x>
+     <y>129</y>
     </hint>
    </hints>
   </connection>

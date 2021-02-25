@@ -463,11 +463,26 @@ vtkSlicerROIRepresentation3D::MarkupsInteractionPipelineROI::MarkupsInteractionP
 //----------------------------------------------------------------------
 double vtkSlicerROIRepresentation3D::MarkupsInteractionPipelineROI::GetHandleOpacity(int type, int index)
 {
+  double opacity = 1.0;
   if (type == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle && index > 5)
     {
-    return 1.0;
+    vtkSlicerMarkupsWidgetRepresentation* markupsRepresentation = vtkSlicerMarkupsWidgetRepresentation::SafeDownCast(this->Representation);
+    vtkMRMLMarkupsDisplayNode* displayNode = nullptr;
+    if (markupsRepresentation)
+      {
+      displayNode = markupsRepresentation->GetMarkupsDisplayNode();
+      }
+    if (displayNode)
+      {
+      opacity = displayNode->GetScaleHandleVisibility() ? 1.0 : 0.0;
+      }
     }
-  return MarkupsInteractionPipeline::GetHandleOpacity(type, index);
+  else
+    {
+    opacity = MarkupsInteractionPipeline::GetHandleOpacity(type, index);
+    }
+
+  return opacity;
 }
 
 //-----------------------------------------------------------------------------

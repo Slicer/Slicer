@@ -108,9 +108,6 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   QObject::connect(this->opacitySliderWidget, SIGNAL(valueChanged(double)),
     q, SLOT(onOpacitySliderWidgetChanged(double)));
 
-  QObject::connect(this->interactionCheckBox, SIGNAL(stateChanged(int)),
-    q, SLOT(onInteractionCheckBoxChanged(int)));
-
   QObject::connect(this->FillVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setFillVisibility(bool)));
   QObject::connect(this->OutlineVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setOutlineVisibility(bool)));
   QObject::connect(this->FillOpacitySliderWidget, SIGNAL(valueChanged(double)),
@@ -223,6 +220,7 @@ void qMRMLMarkupsDisplayNodeWidget::setMRMLMarkupsDisplayNode(vtkMRMLNode* node)
 //-----------------------------------------------------------------------------
 void qMRMLMarkupsDisplayNodeWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* node)
 {
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
   this->setMRMLMarkupsDisplayNode(
     node ? vtkMRMLMarkupsDisplayNode::SafeDownCast(node->GetDisplayNode()) : nullptr);
 }
@@ -247,6 +245,8 @@ void qMRMLMarkupsDisplayNodeWidget::setMRMLMarkupsDisplayNode(vtkMRMLMarkupsDisp
 
   // Set display node to scalars display widget
   d->ScalarsDisplayWidget->setMRMLDisplayNode(markupsDisplayNode);
+
+  d->InteractionHandleWidget->setMRMLDisplayNode(markupsDisplayNode);
 
   this->updateWidgetFromMRML();
 }
@@ -346,9 +346,6 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
     d->textScaleSliderWidget->setMaximum(textScale);
     }
   d->textScaleSliderWidget->setValue(textScale);
-
-  bool handlesInteractive = markupsDisplayNode->GetHandlesInteractive();
-  d->interactionCheckBox->setChecked(handlesInteractive);
 
   bool wasBlocking = false;
   wasBlocking = d->FillVisibilityCheckBox->blockSignals(true);

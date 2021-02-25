@@ -408,6 +408,17 @@ public:
   vtkGetMacro(HandlesInteractive, bool);
   vtkSetMacro(HandlesInteractive, bool);
   vtkBooleanMacro(HandlesInteractive, bool);
+  vtkGetMacro(TranslationHandleVisibility, bool);
+  vtkSetMacro(TranslationHandleVisibility, bool);
+  vtkBooleanMacro(TranslationHandleVisibility, bool);
+  vtkGetMacro(RotationHandleVisibility, bool);
+  vtkSetMacro(RotationHandleVisibility, bool);
+  vtkBooleanMacro(RotationHandleVisibility, bool);
+  vtkGetMacro(ScaleHandleVisibility, bool);
+  vtkSetMacro(ScaleHandleVisibility, bool);
+  vtkBooleanMacro(ScaleHandleVisibility, bool);
+  void SetHandleVisibility(int handleType, bool visibility);
+  bool GetHandleVisibility(int handleType);
 
   /// Get data set containing the scalar arrays for this node type.
   /// For markups it is the curve poly data
@@ -489,5 +500,8 @@ protected:
   double ActiveColor[3];
 
   bool HandlesInteractive;
+  bool TranslationHandleVisibility;
+  bool RotationHandleVisibility;
+  bool ScaleHandleVisibility;
 };
 #endif

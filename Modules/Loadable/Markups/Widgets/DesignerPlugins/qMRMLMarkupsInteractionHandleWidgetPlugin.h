@@ -1,7 +1,8 @@
 /*==============================================================================
 
-  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
-  Queen's University, Kingston, ON, Canada. All Rights Reserved.
+  Program: 3D Slicer
+
+  Copyright (c) Kitware Inc.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -18,21 +19,25 @@
 
 ==============================================================================*/
 
-// MRML includes
-#include "vtkMRMLMarkupsROIDisplayNode.h"
+#ifndef __qMRMLMarkupsInteractionHandleWidgetPlugin_h
+#define __qMRMLMarkupsInteractionHandleWidgetPlugin_h
 
-//----------------------------------------------------------------------------
-vtkMRMLNodeNewMacro(vtkMRMLMarkupsROIDisplayNode);
+#include "qSlicerMarkupsModuleWidgetsAbstractPlugin.h"
 
-//----------------------------------------------------------------------------
-vtkMRMLMarkupsROIDisplayNode::vtkMRMLMarkupsROIDisplayNode()
+class Q_SLICER_MODULE_MARKUPS_WIDGETS_PLUGINS_EXPORT qMRMLMarkupsInteractionHandleWidgetPlugin
+    : public QObject, public qSlicerMarkupsModuleWidgetsAbstractPlugin
 {
-  this->FillOpacity = 0.2;
-  this->HandlesInteractive = true;
-  this->TranslationHandleVisibility = false;
-  this->RotationHandleVisibility= false;
-  this->ScaleHandleVisibility = true;
-}
+  Q_OBJECT
 
-//----------------------------------------------------------------------------
-vtkMRMLMarkupsROIDisplayNode::~vtkMRMLMarkupsROIDisplayNode() = default;
+public:
+  qMRMLMarkupsInteractionHandleWidgetPlugin(QObject *_parent = nullptr);
+
+  QWidget *createWidget(QWidget *_parent) override;
+  QString  domXml() const override;
+  QString  includeFile() const override;
+  bool     isContainer() const override;
+  QString  name() const override;
+
+};
+
+#endif
