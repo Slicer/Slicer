@@ -41,11 +41,13 @@
 
 // VTK includes
 #include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
+#include "vtkAddonMathUtilities.h"
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkCallbackCommand.h>
 #include <vtkFixedPointVolumeRayCastMapper.h>
 #include <vtkGPUVolumeRayCastMapper.h>
+#include <vtkImageChangeInformation.h>
 #include <vtkInteractorStyle.h>
 #include <vtkMatrix4x4.h>
 #include <vtkPlane.h>
@@ -101,8 +103,11 @@ public:
     PipelineCPU() : Pipeline()
     {
       this->RayCastMapperCPU = vtkSmartPointer<vtkFixedPointVolumeRayCastMapper>::New();
+      this->VolumeScaling = vtkSmartPointer<vtkImageChangeInformation>::New();
+      this->RayCastMapperCPU->SetInputConnection(0, this->VolumeScaling->GetOutputPort());
     }
     vtkSmartPointer<vtkFixedPointVolumeRayCastMapper> RayCastMapperCPU;
+    vtkSmartPointer<vtkImageChangeInformation> VolumeScaling;
   };
   //-------------------------------------------------------------------------
   class PipelineGPU : public Pipeline
@@ -505,9 +510,9 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::AddDisplayNode(vtkMR
     pipelineCpu->DisplayNode = displayNode;
     // Set volume to the mapper
     // Reconnection is expensive operation, therefore only do it if needed
-    if (pipelineCpu->RayCastMapperCPU->GetInputConnection(0, 0) != volumeNode->GetImageDataConnection())
+    if (pipelineCpu->VolumeScaling->GetInputConnection(0, 0) != volumeNode->GetImageDataConnection())
       {
-      pipelineCpu->RayCastMapperCPU->SetInputConnection(0, volumeNode->GetImageDataConnection());
+      pipelineCpu->VolumeScaling->SetInputConnection(0, volumeNode->GetImageDataConnection());
       }
     // Add volume actor to renderer and local cache
     this->External->GetRenderer()->AddVolume(pipelineCpu->VolumeActor);
@@ -677,7 +682,23 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineTransf
 
     // Calculate and apply transform matrix
     this->GetVolumeTransformToWorld(currentVolumeNode, pipeline->IJKToWorldMatrix);
-    pipeline->VolumeActor->SetUserMatrix(pipeline->IJKToWorldMatrix.GetPointer());
+    if (pipeline->DisplayNode->IsA("vtkMRMLCPURayCastVolumeRenderingDisplayNode"))
+      {
+      const PipelineCPU* pipelineCpu = dynamic_cast<const PipelineCPU*>(pipeline);
+      if (pipelineCpu)
+        {
+        vtkNew<vtkMatrix4x4> unscaledIJKToWorldMatrix;
+        unscaledIJKToWorldMatrix->DeepCopy(pipeline->IJKToWorldMatrix);
+        double scale[3] = { 1.0 };
+        vtkAddonMathUtilities::NormalizeOrientationMatrixColumns(unscaledIJKToWorldMatrix, scale);
+        pipelineCpu->VolumeScaling->SetSpacingScale(scale);
+        pipeline->VolumeActor->SetUserMatrix(unscaledIJKToWorldMatrix);
+        }
+      }
+    else
+      {
+      pipeline->VolumeActor->SetUserMatrix(pipeline->IJKToWorldMatrix.GetPointer());
+      }
     pipelineModified = true;
     }
   return pipelineModified;
@@ -848,10 +869,14 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
     // Make sure the correct mapper is set to the volume
     pipeline->VolumeActor->SetMapper(mapper);
     // Make sure the correct volume is set to the mapper
-    // Reconnection is expensive operation, therefore only do it if needed
-    if (mapper->GetInputConnection(0, 0) != volumeNode->GetImageDataConnection())
+    const PipelineCPU* pipelineCpu = dynamic_cast<const PipelineCPU*>(pipeline);
+    if (pipelineCpu)
       {
-      mapper->SetInputConnection(0, volumeNode->GetImageDataConnection());
+      // Reconnection is expensive operation, therefore only do it if needed
+      if (pipelineCpu->VolumeScaling->GetInputConnection(0, 0) != volumeNode->GetImageDataConnection())
+        {
+        pipelineCpu->VolumeScaling->SetInputConnection(0, volumeNode->GetImageDataConnection());
+        }
       }
     }
   else if (displayNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode"))
