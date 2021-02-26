@@ -322,18 +322,21 @@ void qSlicerCoreApplicationPrivate::init()
   modifiedRequestCallback->SetCallback(vtkSlicerApplicationLogic::RequestModifiedCallback);
   vtkEventBroker::GetInstance()->SetRequestModifiedCallback(modifiedRequestCallback);
 
-  // Check if temporary folder is writeable
-  QTemporaryFile fileInTemporaryPathFolder(
-    QFileInfo(q->temporaryPath(), "_write_test_XXXXXX.tmp").absoluteFilePath());
-  if (!fileInTemporaryPathFolder.open())
-    {
-    QString newTempFolder = q->defaultTemporaryPath();
-    qWarning() << Q_FUNC_INFO << "Setting temporary folder to " << newTempFolder
-      << " because previously set " << q->temporaryPath() << " folder is not writable";
-    q->setTemporaryPath(newTempFolder);
-    }
-
+  // Ensure that temporary folder is writable
+  {
+    // QTemporaryFile is deleted automatically when leaving this scope
+    QTemporaryFile fileInTemporaryPathFolder(
+      QFileInfo(q->temporaryPath(), "_write_test_XXXXXX.tmp").absoluteFilePath());
+    if (!fileInTemporaryPathFolder.open())
+      {
+      QString newTempFolder = q->defaultTemporaryPath();
+      qWarning() << Q_FUNC_INFO << "Setting temporary folder to " << newTempFolder
+        << " because previously set " << q->temporaryPath() << " folder is not writable";
+      q->setTemporaryPath(newTempFolder);
+      }
+  }
   this->AppLogic->SetTemporaryPath(q->temporaryPath().toUtf8());
+
   vtkPersonInformation* userInfo = this->AppLogic->GetUserInformation();
   if (userInfo)
     {
@@ -485,10 +488,21 @@ void qSlicerCoreApplicationPrivate::initDataIO()
 
   // Create MRMLRemoteIOLogic
   this->MRMLRemoteIOLogic = vtkSmartPointer<vtkMRMLRemoteIOLogic>::New();
-  // Default cache location, can be changed in settings.
-  this->MRMLRemoteIOLogic->GetCacheManager()->SetRemoteCacheDirectory(
-    QFileInfo(q->temporaryPath(), "RemoteIO").
-    absoluteFilePath().toUtf8());
+
+  // Ensure cache folder is writable
+  {
+    // QTemporaryFile is deleted automatically when leaving this scope
+    QTemporaryFile fileInCacheFolder(
+      QFileInfo(q->cachePath(), "_write_test_XXXXXX.tmp").absoluteFilePath());
+    if (!fileInCacheFolder.open())
+    {
+      QString newCacheFolder = q->defaultCachePath();
+      qWarning() << Q_FUNC_INFO << "Setting cache folder to " << newCacheFolder
+        << " because previously set " << q->cachePath() << " folder is not writable";
+      q->setCachePath(newCacheFolder);
+    }
+  }
+  this->MRMLRemoteIOLogic->GetCacheManager()->SetRemoteCacheDirectory(q->cachePath().toUtf8());
 
   this->DataIOManagerLogic = vtkSmartPointer<vtkDataIOManagerLogic>::New();
   this->DataIOManagerLogic->SetMRMLApplicationLogic(this->AppLogic);
@@ -1243,6 +1257,52 @@ QString qSlicerCoreApplication::temporaryPath() const
     appSettings->value("TemporaryPath", this->defaultTemporaryPath()).toString());
   d->createDirectory(temporaryPath, "temporary"); // Make sure the path exists
   return temporaryPath;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::defaultCachePath() const
+{
+  QString cachePath = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+  // According to Qt documentation: Returns a directory location where user-specific
+  // non-essential (cached) data should be written. This is an application-specific directory.
+  // The returned path is never empty.
+  //
+  // Examples:
+  // - Windows: C:/Users/username/AppData/Local/NA-MIC/Slicer/cache
+  // - Linux: /home/username/.cache/NA-MIC/Slicer
+  // - macOS: /Users/username/Library/Caches/NA-MIC/Slicer
+  //
+  // This is already a user and application specific folder, but various software components
+  // may place files there (e.g., QWebEngine), therefore we create a subfolder (SlicerIO)
+  // that Slicer manager (cleans up, etc).
+  return QFileInfo(cachePath, this->applicationName() + "IO").absoluteFilePath();
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::cachePath() const
+{
+  Q_D(const qSlicerCoreApplication);
+  QSettings* appSettings = this->userSettings();
+  Q_ASSERT(appSettings);
+  QString cachePath = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePath(
+    appSettings->value("Cache/Path", this->defaultCachePath()).toString());
+  d->createDirectory(cachePath, "cache"); // Make sure the path exists
+  return cachePath;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::setCachePath(const QString& path)
+{
+  Q_D(qSlicerCoreApplication);
+  QSettings* appSettings = this->userSettings();
+  Q_ASSERT(appSettings);
+  appSettings->setValue("Cache/Path", this->toSlicerHomeRelativePath(path));
+  if (!d->MRMLRemoteIOLogic)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: invalid MRMLRemoteIOLogic";
+    return;
+    }
+  d->MRMLRemoteIOLogic->GetCacheManager()->SetRemoteCacheDirectory(this->cachePath().toUtf8());
 }
 
 //-----------------------------------------------------------------------------

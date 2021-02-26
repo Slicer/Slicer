@@ -1063,6 +1063,7 @@ def getModuleWidget(module):
   :return: module widget object
   :raises RuntimeError: if the module does not have widget.
   """
+  import slicer
   if isinstance(module, str):
     module = getModule(module)
   widgetRepr = module.widgetRepresentation()
@@ -1086,6 +1087,7 @@ def getNewModuleWidget(module):
   :return: module widget object
   :raises RuntimeError: if the module does not have widget.
   """
+  import slicer
   if isinstance(module, str):
     module = getModule(module)
   widgetRepr = module.createNewWidgetRepresentation()
@@ -1107,6 +1109,7 @@ def getModuleLogic(module):
   :return: module logic object
   :raises RuntimeError: if the module does not have widget.
   """
+  import slicer
   if isinstance(module, str):
     module = getModule(module)
   if isinstance(module, slicer.qSlicerScriptedLoadableModule):
