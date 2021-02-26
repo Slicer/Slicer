@@ -72,6 +72,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   Q_PROPERTY(QString defaultScenePath READ defaultScenePath WRITE setDefaultScenePath)
   Q_PROPERTY(QString slicerSharePath READ slicerSharePath CONSTANT)
   Q_PROPERTY(QString temporaryPath READ temporaryPath WRITE setTemporaryPath)
+  Q_PROPERTY(QString cachePath READ cachePath WRITE setCachePath)
   Q_PROPERTY(QString launcherExecutableFilePath READ launcherExecutableFilePath CONSTANT)
   Q_PROPERTY(QString launcherSettingsFilePath READ launcherSettingsFilePath CONSTANT)
   Q_PROPERTY(QString slicerDefaultSettingsFilePath READ slicerDefaultSettingsFilePath CONSTANT)
@@ -251,6 +252,19 @@ public:
 
   /// Set slicer temporary directory
   void setTemporaryPath(const QString& path);
+
+  /// Get default cache directory.
+  /// \sa cachePath()
+  QString defaultCachePath() const;
+
+  /// Get cache directory.
+  /// It is a temporary folder that contains files that can be useful to be kept between application sessions.
+  /// For example, files downloaded from network, which may not need to be downloaded again if stored locally.
+  QString cachePath() const;
+
+  /// Set cache directory.
+  /// \sa cachePath()
+  void setCachePath(const QString& path);
 
   /// If any, return slicer launcher executable file path.
   QString launcherExecutableFilePath()const;
