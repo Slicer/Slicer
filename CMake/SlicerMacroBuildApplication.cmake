@@ -272,6 +272,7 @@ endmacro()
 macro(slicerMacroBuildApplication)
   set(options
     CONFIGURE_LAUNCHER
+    SPLASHSCREEN_DISABLED
     )
   set(oneValueArgs
     NAME
@@ -307,11 +308,15 @@ macro(slicerMacroBuildApplication)
 
   set(expected_defined_vars
     NAME
-    LAUNCHER_SPLASHSCREEN_FILE
     APPLE_ICON_FILE
     WIN_ICON_FILE
     LICENSE_FILE
     )
+  if(NOT SLICERAPP_SPLASHSCREEN_DISABLED)
+    list(APPEND expected_defined_vars
+      LAUNCHER_SPLASHSCREEN_FILE
+      )
+  endif()
   foreach(var ${expected_defined_vars})
     if(NOT DEFINED SLICERAPP_${var})
       message(FATAL_ERROR "${var} is mandatory")
@@ -344,7 +349,9 @@ macro(slicerMacroBuildApplication)
     _set_app_property(${varname})
   endmacro()
 
-  _set_path_var(LAUNCHER_SPLASHSCREEN_FILE)
+  if(NOT SLICERAPP_SPLASHSCREEN_DISABLED)
+    _set_path_var(LAUNCHER_SPLASHSCREEN_FILE)
+  endif()
   _set_path_var(APPLE_ICON_FILE)
   _set_path_var(WIN_ICON_FILE)
   _set_path_var(LICENSE_FILE)
@@ -601,6 +608,16 @@ macro(slicerMacroBuildApplication)
 
       include(SlicerBlockCTKAppLauncherSettings)
 
+      if(SLICERAPP_SPLASHSCREEN_DISABLED)
+        set(_launcher_splashscreen_args SPLASHSCREEN_DISABLED)
+      else()
+        set(_launcher_splashscreen_args
+          SPLASH_IMAGE_PATH ${SLICERAPP_LAUNCHER_SPLASHSCREEN_FILE}
+          SPLASH_IMAGE_INSTALL_SUBDIR ${Slicer_BIN_DIR}
+          SPLASHSCREEN_HIDE_DELAY_MS 3000
+          )
+      endif()
+
       ctkAppLauncherConfigureForTarget(
         # Executable target associated with the launcher
         TARGET ${slicerapp_target}
@@ -613,9 +630,7 @@ macro(slicerMacroBuildApplication)
         ORGANIZATION_NAME ${Slicer_ORGANIZATION_NAME}
         USER_ADDITIONAL_SETTINGS_FILEBASENAME ${SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME}
         # Splash screen
-        SPLASH_IMAGE_PATH ${SLICERAPP_LAUNCHER_SPLASHSCREEN_FILE}
-        SPLASH_IMAGE_INSTALL_SUBDIR ${Slicer_BIN_DIR}
-        SPLASHSCREEN_HIDE_DELAY_MS 3000
+        ${_launcher_splashscreen_args}
         # Slicer arguments triggering display of launcher help
         HELP_SHORT_ARG "-h"
         HELP_LONG_ARG "--help"
@@ -688,11 +703,13 @@ macro(slicerMacroBuildApplication)
             )
         endif()
 
-        install(
-          FILES ${SLICERAPP_LAUNCHER_SPLASHSCREEN_FILE}
-          DESTINATION ${Slicer_INSTALL_BIN_DIR}
-          COMPONENT Runtime
-          )
+        if(NOT SLICERAPP_SPLASHSCREEN_DISABLED)
+          install(
+            FILES ${SLICERAPP_LAUNCHER_SPLASHSCREEN_FILE}
+            DESTINATION ${Slicer_INSTALL_BIN_DIR}
+            COMPONENT Runtime
+            )
+        endif()
       endif()
 
       #
