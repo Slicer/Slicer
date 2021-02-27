@@ -172,25 +172,10 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
     self.dicomBrowser.dicomTableManager().connect('seriesSelectionChanged(QStringList)', self.onSeriesSelected)
 
     #
-    # Plugin selection widget
+    # Loadable table widget (advanced)
+    # DICOM Plugins selection widget is moved to module panel
     #
-    self.pluginSelector = DICOMLib.DICOMPluginSelector(self)
-    self.pluginSelector.visible = False
-    loadableTableRowLayout = qt.QHBoxLayout()
-    self.pluginSelectorExpandButton = ctk.ctkExpandButton()
-    self.pluginSelectorExpandButton.mirrorOnExpand = True
-    self.pluginSelectorExpandButton.connect('toggled(bool)', self.pluginSelector, 'setVisible(bool)')
-    loadableTableRowLayout.addWidget(self.pluginSelector)
-    loadableTableRowLayout.addWidget(self.pluginSelectorExpandButton)
-    loadableTableRowLayout.addWidget(self.loadableTable)
-    self.loadableTableLayout.addLayout(loadableTableRowLayout)
-    self.checkBoxByPlugins = []
-
-    for pluginClass in slicer.modules.dicomPlugins:
-      self.checkBox = self.pluginSelector.checkBoxByPlugin[pluginClass]
-      self.checkBox.connect('stateChanged(int)', self.onPluginStateChanged)
-      self.checkBoxByPlugins.append(self.checkBox)
-
+    self.loadableTableLayout.addWidget(self.loadableTable)
     self.updateButtonStates()
 
   def updateButtonStates(self):
@@ -310,22 +295,6 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
               extensionsToOffer.append(extension)
     return extensionsToOffer
 
-  def onPluginStateChanged(self, state):
-    self.settings.beginWriteArray('DICOM/disabledPlugins')
-
-    for key in self.settings.allKeys():
-      self.settings.remove(key)
-
-    plugins = self.pluginSelector.selectedPlugins()
-    arrayIndex = 0
-    for pluginClass in slicer.modules.dicomPlugins:
-      if pluginClass not in plugins:
-        self.settings.setArrayIndex(arrayIndex)
-        self.settings.setValue(pluginClass, 'disabled')
-        arrayIndex += 1
-
-    self.settings.endArray()
-
   def setBrowserPersistence(self, state):
     self.browserPersistent = state
     self.settings.setValue('DICOM/BrowserPersistent', bool(self.browserPersistent))
@@ -427,6 +396,28 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
     loadablesByPlugin = {}
     loadEnabled = False
 
+    # Get selected plugins from application settings
+    # Settings are filled in DICOMWidget using DICOMPluginSelector
+    settings = qt.QSettings()
+    selectedPlugins = []
+    if settings.contains('DICOM/disabledPlugins/size'):
+      size = settings.beginReadArray('DICOM/disabledPlugins')
+      disabledPlugins = []
+
+      for i in range(size):
+        settings.setArrayIndex(i)
+        disabledPlugins.append(str(settings.allKeys()[0]))
+      settings.endArray()
+
+      for pluginClass in slicer.modules.dicomPlugins:
+        if pluginClass not in disabledPlugins:
+           selectedPlugins.append(pluginClass)
+    else:
+      # All DICOM plugins would be enabled by default
+      for pluginClass in slicer.modules.dicomPlugins:
+        selectedPlugins.append(pluginClass)
+
+
     allFileCount = missingFileCount = 0
     for fileList in fileLists:
       for filePath in fileList:
@@ -449,7 +440,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         cancelled = progressDialog.wasCanceled
         return cancelled
 
-      loadablesByPlugin, loadEnabled = DICOMLib.getLoadablesFromFileLists(fileLists, self.pluginSelector.selectedPlugins(), messages,
+      loadablesByPlugin, loadEnabled = DICOMLib.getLoadablesFromFileLists(fileLists, selectedPlugins, messages,
         lambda progressLabel, progressValue, progressDialog=progressDialog: progressCallback(progressDialog, progressLabel, progressValue),
         self.pluginInstances)
 

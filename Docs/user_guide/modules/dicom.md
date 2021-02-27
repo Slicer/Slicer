@@ -137,7 +137,7 @@ Slicer supports sending of DICOM items to a remote server using DICOMweb protoco
 - **Load**: click this button to load currently selected loadables into slicer.
 - **Loaded data**: shows all content currently loaded into the scene, which can be displayed in viewers by clicking the eye icon
 
-![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_dicom_basic.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_dicom_basic_rev02.png)
 
 Additional options:
 
@@ -151,11 +151,11 @@ Additional options:
 Advanced loading (allows loading DICOM data sets using non-default options):
 
 - **Advanced:** check this checkbox to show advanced loading options
-- **Plugin selector section:** you can choose which plugins will be allowed to examine the selected series for loading. This section is displayed if the double-arrow button on the left side of loadable items list is pushed.
+- **Plugin selector section:** you can choose which plugins will be allowed to examine the selected series for loading. This section is displayed if you click on "DICOM plugins" collapsable button at the bottom of DICOM module panel.
 - **Examine button:** Runs each of the DICOM Plugins on the currently selected series and offers the result in the Loadable items list table.
 - **Loadable items list:** displays all possible interpretations of the selected series by the selected plugins.  The plugin that most likely interprets the series correctly, is selected by default. You can override the defaults if you want to load the data in a different way. There will not always be a one-to-one mapping of selected series to list of loadable items.
 
-![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_dicom_advanced.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_dicom_advanced_rev02.png)
 
 DICOM module settings:
 
@@ -231,7 +231,7 @@ Note that if Slicer displays a warning about non-uniform slice spacing then it m
 
 - [Add data](../data_loading_and_saving) dialog can be used to load some DICOM images directly, with bypassing the DICOM database. This may be faster in some cases, but it is not recommended, as it only supports certain kind of images and consistency and correctness of the data is not verified.
 - [Quantitative Reporting](https://github.com/QIICR/QuantitativeReporting#summary) extension reads and writes DICOM Segmentation Objects (label maps), structured reports, and parametric maps.
-- [SlicerRT](http://www.slicerrt.org/) extension reads and write DICOM Radiation Therapy objects (RT structure set, dose, image, plan, etc.) and provides tools for visualizing and anlyizing them.
+- [SlicerRT](http://www.slicerrt.org/) extension reads and write DICOM Radiation Therapy objects (RT structure set, dose, image, plan, etc.) and provides tools for visualizing and analyzing them.
 - [LongitudinalPETCT](https://github.com/QIICR/LongitudinalPETCT#longitudinalpetct) extension reads all PET/CT studies for a selected patient and provides tools for tracking metabolic activity detected by PET tracers.
 - [DICOM Patcher](dicompatcher) module can be used before importing to fix common DICOM non-compliance errors.
 
