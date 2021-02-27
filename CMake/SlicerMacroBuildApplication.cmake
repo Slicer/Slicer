@@ -286,6 +286,8 @@ macro(slicerMacroBuildApplication)
     LICENSE_FILE
 
     TARGET_NAME_VAR
+
+    APPLICATION_DEFAULT_ARGUMENTS # space separated list
     )
   set(multiValueArgs
     SRCS
@@ -610,12 +612,14 @@ macro(slicerMacroBuildApplication)
 
       if(SLICERAPP_SPLASHSCREEN_DISABLED)
         set(_launcher_splashscreen_args SPLASHSCREEN_DISABLED)
+        set(_launcher_application_default_arguments "--no-splash ${SLICERAPP_APPLICATION_DEFAULT_ARGUMENTS}")
       else()
         set(_launcher_splashscreen_args
           SPLASH_IMAGE_PATH ${SLICERAPP_LAUNCHER_SPLASHSCREEN_FILE}
           SPLASH_IMAGE_INSTALL_SUBDIR ${Slicer_BIN_DIR}
           SPLASHSCREEN_HIDE_DELAY_MS 3000
           )
+        set(_launcher_application_default_arguments "${SLICERAPP_APPLICATION_DEFAULT_ARGUMENTS}")
       endif()
 
       ctkAppLauncherConfigureForTarget(
@@ -631,6 +635,8 @@ macro(slicerMacroBuildApplication)
         USER_ADDITIONAL_SETTINGS_FILEBASENAME ${SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME}
         # Splash screen
         ${_launcher_splashscreen_args}
+        # Slicer default arguments
+        APPLICATION_DEFAULT_ARGUMENTS ${_launcher_application_default_arguments}
         # Slicer arguments triggering display of launcher help
         HELP_SHORT_ARG "-h"
         HELP_LONG_ARG "--help"
