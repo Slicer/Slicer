@@ -331,6 +331,9 @@ popd > /dev/null
 echo "Copy ${TEMPDIR}/ssl/ca-bundle.crt to ${DESTDIR}/Slicer.crt"
 cp "${TEMPDIR}/ssl/ca-bundle.crt" "${DESTDIR}/Slicer.crt"
 
+# Remove trailing whitespaces
+sed -i 's/[ \t]*$//' "${DESTDIR}/Slicer.crt"
+
 # Clean up the mess
 rm -rf "${TEMPDIR}"
 
