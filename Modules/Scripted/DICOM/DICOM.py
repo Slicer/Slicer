@@ -659,6 +659,35 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
     self.databaseRefreshRequestTimer.setInterval(2000)
     self.databaseRefreshRequestTimer.connect('timeout()', self.requestDatabaseRefresh)
 
+    #
+    # DICOM Plugins selection widget
+    #
+    self.ui.dicomPluginsFrame.collapsed = True
+    self.pluginSelector = DICOMLib.DICOMPluginSelector(self.ui.dicomPluginsFrame)
+    self.ui.dicomPluginsFrame.layout().addWidget(self.pluginSelector)
+    self.checkBoxByPlugins = []
+
+    for pluginClass in slicer.modules.dicomPlugins:
+      self.checkBox = self.pluginSelector.checkBoxByPlugin[pluginClass]
+      self.checkBox.connect('stateChanged(int)', self.onPluginStateChanged)
+      self.checkBoxByPlugins.append(self.checkBox)
+
+  def onPluginStateChanged(self, state):
+    settings = qt.QSettings()
+    settings.beginWriteArray('DICOM/disabledPlugins')
+
+    for key in settings.allKeys():
+      settings.remove(key)
+
+    plugins = self.pluginSelector.selectedPlugins()
+    arrayIndex = 0
+    for pluginClass in slicer.modules.dicomPlugins:
+      if pluginClass not in plugins:
+        settings.setArrayIndex(arrayIndex)
+        settings.setValue(pluginClass, 'disabled')
+        arrayIndex += 1
+
+    settings.endArray()
 
   def enter(self):
     self.onOpenBrowserWidget()
