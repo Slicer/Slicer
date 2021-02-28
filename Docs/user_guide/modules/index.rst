@@ -10,6 +10,7 @@ You can find more module documentation in the
 
 .. toctree::
 
+    acpctransform.md
     annotations.md
     data.md
     dicom.md
@@ -96,7 +97,6 @@ You can find more module documentation in the
     brainsstriprotation.md
     brainstransformconvert.md
     - Registration/specialized
-    acpctransform.md
     brainsdemonwarp.md
     fiducialregistration.md
     reformat.md

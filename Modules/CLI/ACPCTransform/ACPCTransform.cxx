@@ -37,7 +37,6 @@
 //
 namespace
 {
-
 } // end of anonymous namespace
 
 //-----------------------------------------------------------------------------
@@ -76,7 +75,20 @@ int main(int argc, char * argv[])
 
   // fill in this transform with either the output or input matrix
   vtkNew<vtkTransform> transformToApply;
+  transformToApply->Identity();
   transformToApply->PostMultiply();
+
+  if (centerVolume)
+    {
+    if (acpcLineNode->GetNumberOfControlPoints() < 1)
+      {
+      std::cerr << "Centering requires specification of ACPC line." << std::endl;
+      return EXIT_FAILURE;
+      }
+    double pointAC[3] = { 0.0 };
+    acpcLineNode->GetNthControlPointPosition(0, pointAC);
+    transformToApply->Translate(-pointAC[0], -pointAC[1], -pointAC[2]);
+    }
 
   if (midlinePointsNode->GetNumberOfControlPoints() > 0)
     {
@@ -117,8 +129,7 @@ int main(int argc, char * argv[])
 
     // prepare the rotation matrix
     vtkNew<vtkMatrix4x4> mat;
-    mat->Identity();
-    for( size_t p = 0; p < 4; p++ )
+    for( size_t p = 0; p < 3; p++ )
       {
       double point = normal[p];
       mat->SetElement(static_cast<int>(p), 0, (sign * point) );
@@ -132,9 +143,9 @@ int main(int argc, char * argv[])
     mat->SetElement(2, 2, (1.0  - (mat->GetElement(2, 0) * (mat->GetElement(2, 0) / oneAndAlpha) ) ) );
 
     vtkNew<vtkMatrix4x4> matInverse;
-    matInverse->DeepCopy(mat.GetPointer());
-    matInverse->Invert();
-    transformToApply->SetMatrix(matInverse.GetPointer());
+    vtkMatrix4x4::Invert(mat, matInverse);
+
+    transformToApply->Concatenate(matInverse);
     }
 
   // need at least two points
@@ -145,12 +156,12 @@ int main(int argc, char * argv[])
       std::cerr << "If ACPC line is specified then it must be specified by exactly 2 points" << std::endl;
       return EXIT_FAILURE;
       }
-    double pointA[3] = { 0.0 };
-    double pointB[3] = { 0.0 };
-    acpcLineNode->GetNthControlPointPosition(0, pointA);
-    acpcLineNode->GetNthControlPointPosition(1, pointB);
-    double top = pointA[2] - pointB[2];
-    double bot = pointA[1] - pointB[1];
+    double pointAC[3] = { 0.0 };
+    double pointPC[3] = { 0.0 };
+    acpcLineNode->GetNthControlPointPosition(0, pointAC);
+    acpcLineNode->GetNthControlPointPosition(1, pointPC);
+    double top = pointAC[2] - pointPC[2];
+    double bot = pointAC[1] - pointPC[1];
     double tangent = atan(top / bot) * (180.0 / (4.0 * atan(1.0) ) );
     transformToApply->RotateX(tangent * -1.0);
     }
