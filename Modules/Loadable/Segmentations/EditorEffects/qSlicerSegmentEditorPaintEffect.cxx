@@ -1006,6 +1006,7 @@ void qSlicerSegmentEditorPaintEffect::deactivate()
 {
   Q_D(qSlicerSegmentEditorPaintEffect);
   Superclass::deactivate();
+  d->IsPainting = false;
   d->clearBrushPipelines();
   d->PaintCoordinates_World->Reset();
   d->ActiveViewWidget = nullptr;
