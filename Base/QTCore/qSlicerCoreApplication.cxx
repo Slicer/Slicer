@@ -32,6 +32,7 @@
 #include <QSettings>
 #include <QTranslator>
 #include <QStandardPaths>
+#include <QTemporaryFile>
 
 // For:
 //  - Slicer_QTLOADABLEMODULES_LIB_DIR
