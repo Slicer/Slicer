@@ -113,6 +113,8 @@ protected:
   vtkNew<vtkPolyDataMapper2D> PlaneOutlineMapper;
   vtkNew<vtkActor2D> PlaneOutlineActor;
 
+  vtkNew<vtkAppendPolyData> PlanePickingAppend;
+
   vtkNew<vtkGlyphSource2D> ArrowFilter;
   vtkNew<vtkGlyph2D> ArrowGlypher;
   vtkNew<vtkPolyDataMapper2D> ArrowMapper;

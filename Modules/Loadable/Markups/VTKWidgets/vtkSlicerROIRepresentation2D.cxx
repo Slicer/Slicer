@@ -25,6 +25,7 @@
 #include <vtkCubeSource.h>
 #include <vtkCutter.h>
 #include <vtkDoubleArray.h>
+#include <vtkLine.h>
 #include <vtkMath.h>
 #include <vtkMatrix4x4.h>
 #include <vtkObjectFactory.h>
@@ -321,42 +322,66 @@ void vtkSlicerROIRepresentation2D::CanInteractWithROI(
   vtkMRMLInteractionEventData* interactionEventData,
   int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
-  if (!this->ROISource)
-    {
-    return;
-    }
-
-  this->ROIPipelineInputFilter->Update();
-  if (this->ROIPipelineInputFilter->GetOutput() && this->ROIPipelineInputFilter->GetOutput()->GetNumberOfPoints() == 0)
-    {
-    return;
-    }
-
-  // Create the tree
-  vtkNew<vtkCellLocator> cellLocator;
-  cellLocator->SetDataSet(this->ROIToWorldTransformFilter->GetOutput());
-  cellLocator->BuildLocator();
-
   vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->MarkupsNode);
-  if (!roiNode)
+  if (!roiNode
+    || !this->Visibility
+    || !this->ROIActor->GetVisibility()
+    || !this->ROISource)
     {
     return;
     }
 
-  const double* worldPosition = interactionEventData->GetWorldPosition();
-  double localPosition[3] = { 0.0, 0.0, 0.0 };
-  roiNode->TransformPointFromWorld(worldPosition, localPosition);
-
-  double closestPoint[3]; //the coordinates of the closest point will be returned here
-  double distance2; //the squared distance to the closest point will be returned here
-  vtkIdType cellId; //the cell id of the cell containing the closest point will be returned here
-  int subId; //this is rarely used (in triangle strips only, I believe)
-  cellLocator->FindClosestPoint(worldPosition, closestPoint, cellId, subId, distance2);
-
-  double toleranceWorld = this->ControlPointSize / 2.0;
-  if (distance2 < toleranceWorld)
+  this->ROIOutlineCutter->Update();
+  if (this->ROIOutlineCutter->GetOutput() && this->ROIOutlineCutter->GetOutput()->GetNumberOfPoints() == 0)
     {
-    closestDistance2 = distance2;
+    return;
+    }
+
+  double closestPointWorld[3] = { 0.0, 0.0, 0.0 };
+  if (interactionEventData->IsWorldPositionValid())
+    {
+    const double* worldPosition = interactionEventData->GetWorldPosition();
+
+    double dist2World = VTK_DOUBLE_MAX;
+
+    vtkPolyData* roiSliceIntersection = this->ROIOutlineCutter->GetOutput();
+    for (int lineIndex = 0; lineIndex < roiSliceIntersection->GetNumberOfCells(); ++lineIndex)
+      {
+      vtkLine* line = vtkLine::SafeDownCast(roiSliceIntersection->GetCell(lineIndex));
+      if (!line)
+        {
+        continue;
+        }
+
+      double edgePoint0World[3] = { 0.0, 0.0, 0.0 };
+      line->GetPoints()->GetPoint(0, edgePoint0World);
+
+      double edgePoint1World[3] = { 0.0, 0.0, 0.0 };
+      line->GetPoints()->GetPoint(1, edgePoint1World);
+
+      double t;
+      double currentClosestPointWorld[3] = { 0.0, 0.0, 0.0 };
+      double currentDist2World = vtkLine::DistanceToLine(worldPosition, edgePoint0World, edgePoint1World, t, currentClosestPointWorld);
+      if (currentDist2World < dist2World)
+        {
+        dist2World = currentDist2World;
+        closestPointWorld[0] = currentClosestPointWorld[0];
+        closestPointWorld[1] = currentClosestPointWorld[1];
+        closestPointWorld[2] = currentClosestPointWorld[2];
+        }
+      }
+    }
+
+  double closestPointDisplay[3] = { 0.0, 0.0, 0.0 };
+  this->GetWorldToSliceCoordinates(closestPointWorld, closestPointDisplay);
+
+  double pixelTolerance = this->PickingTolerance * this->ScreenScaleFactor;
+  const int* displayPosition = interactionEventData->GetDisplayPosition();
+  double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
+  double dist2Display = vtkMath::Distance2BetweenPoints(displayPosition3, closestPointDisplay);
+  if (dist2Display < pixelTolerance * pixelTolerance)
+    {
+    closestDistance2 = dist2Display;
     foundComponentType = vtkMRMLMarkupsROIDisplayNode::ComponentROI;
     foundComponentIndex = 0;
     }

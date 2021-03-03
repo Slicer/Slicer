@@ -25,6 +25,7 @@
 #include <vtkCubeSource.h>
 #include <vtkDoubleArray.h>
 #include <vtkGlyph3D.h>
+#include <vtkLine.h>
 #include <vtkOutlineFilter.h>
 #include <vtkPassThroughFilter.h>
 #include <vtkPointData.h>
@@ -387,40 +388,70 @@ void vtkSlicerROIRepresentation3D::CanInteractWithROI(
     return;
     }
 
-  // Create the tree
-  vtkNew<vtkCellLocator> cellLocator;
-  cellLocator->SetDataSet(this->ROIOutlineFilter->GetOutput());
-  cellLocator->BuildLocator();
-
   vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->MarkupsNode);
   if (!roiNode)
     {
     return;
     }
 
-  const double* worldPosition = interactionEventData->GetWorldPosition();
-  double localPosition[3] = { 0.0, 0.0, 0.0 };
-  roiNode->TransformPointFromWorld(worldPosition, localPosition);
-
-  vtkNew<vtkTransform> localToROI;
-  localToROI->Concatenate(roiNode->GetROIToLocalMatrix());
-  localToROI->Inverse();
-
-  double roiPosition[3] = { 0.0, 0.0, 0.0 };
-  localToROI->TransformPoint(localPosition, roiPosition);
-
-  double closestPoint[3]; //the coordinates of the closest point will be returned here
-  double distance2; //the squared distance to the closest point will be returned here
-  vtkIdType cellId; //the cell id of the cell containing the closest point will be returned here
-  int subId; //this is rarely used (in triangle strips only, I believe)
-  cellLocator->FindClosestPoint(roiPosition, closestPoint, cellId, subId, distance2);
-
-  double toleranceWorld = this->ControlPointSize / 2.0;
-  if (distance2 < toleranceWorld)
+  if (interactionEventData->IsDisplayPositionValid())
     {
-    closestDistance2 = distance2;
-    foundComponentType = vtkMRMLMarkupsROIDisplayNode::ComponentROI;
-    foundComponentIndex = 0;
+    int displayPosition[2] = { 0, 0 };
+    interactionEventData->GetDisplayPosition(displayPosition);
+
+    double displayPosition3[3] = { 0.0, 0.0, 0.0 };
+    displayPosition3[0] = static_cast<double>(displayPosition[0]);
+    displayPosition3[1] = static_cast<double>(displayPosition[1]);
+
+    vtkNew<vtkTransform> roiToLocal;
+    roiToLocal->Concatenate(roiNode->GetROIToLocalMatrix());
+
+    double distance2Display = VTK_DOUBLE_MAX;
+
+    vtkPolyData* roiOutline = this->ROIOutlineFilter->GetOutput();
+    for (int lineIndex = 0; lineIndex < roiOutline->GetNumberOfCells(); ++lineIndex)
+      {
+      vtkLine* line = vtkLine::SafeDownCast(roiOutline->GetCell(lineIndex));
+      if (!line)
+        {
+        continue;
+        }
+
+      double edgePoint0Display[3] = { 0.0, 0.0, 0.0 };
+      line->GetPoints()->GetPoint(0, edgePoint0Display);
+      roiToLocal->TransformPoint(edgePoint0Display, edgePoint0Display);
+      roiNode->TransformPointToWorld(edgePoint0Display, edgePoint0Display);
+      this->Renderer->SetWorldPoint(edgePoint0Display);
+      this->Renderer->WorldToDisplay();
+      this->Renderer->GetDisplayPoint(edgePoint0Display);
+      edgePoint0Display[2] = 0.0;
+
+      double edgePoint1Display[3] = { 0.0, 0.0, 0.0 };
+      line->GetPoints()->GetPoint(1, edgePoint1Display);
+      roiToLocal->TransformPoint(edgePoint1Display, edgePoint1Display);
+      roiNode->TransformPointToWorld(edgePoint1Display, edgePoint1Display);
+      this->Renderer->SetWorldPoint(edgePoint1Display);
+      this->Renderer->WorldToDisplay();
+      this->Renderer->GetDisplayPoint(edgePoint1Display);
+      edgePoint1Display[2] = 0.0;
+
+      double t;
+      double currentClosestPointDisplay[3] = { 0.0, 0.0, 0.0 };
+      double currentDist2Display = vtkLine::DistanceToLine(displayPosition3, edgePoint0Display, edgePoint1Display, t, currentClosestPointDisplay);
+      if (currentDist2Display < distance2Display)
+        {
+        distance2Display = currentDist2Display;
+        }
+      }
+
+    double pixelTolerance = this->PickingTolerance * this->ScreenScaleFactor;
+    if (distance2Display < VTK_DOUBLE_MAX && distance2Display < pixelTolerance * pixelTolerance && distance2Display < closestDistance2)
+      {
+      closestDistance2 = distance2Display;
+      foundComponentType = vtkMRMLMarkupsROIDisplayNode::ComponentROI;
+      foundComponentIndex = 0;
+      return;
+      }
     }
 }
 
