@@ -108,12 +108,15 @@ vtkSlicerPlaneRepresentation2D::vtkSlicerPlaneRepresentation2D()
   this->PlaneFillActor->SetMapper(this->PlaneFillMapper);
   this->PlaneFillActor->SetProperty(this->GetControlPointsPipeline(Unselected)->Property);
 
+  this->PlaneOutlineFilter->SetInputConnection(this->PlaneFilter->GetOutputPort());
+
+  this->PlanePickingAppend->AddInputConnection(this->PlaneOutlineFilter->GetOutputPort());
+  this->PlanePickingAppend->AddInputConnection(this->PlaneCompositeFilter->GetOutputPort());
+
   this->PlaneOutlineWorldToSliceTransformer->SetTransform(this->WorldToSliceTransform);
-  this->PlaneOutlineWorldToSliceTransformer->SetInputConnection(this->PlaneFilter->GetOutputPort());
+  this->PlaneOutlineWorldToSliceTransformer->SetInputConnection(this->PlaneOutlineFilter->GetOutputPort());
 
-  this->PlaneOutlineFilter->SetInputConnection(this->PlaneOutlineWorldToSliceTransformer->GetOutputPort());
-
-  this->PlaneOutlineMapper->SetInputConnection(this->PlaneOutlineFilter->GetOutputPort());
+  this->PlaneOutlineMapper->SetInputConnection(this->PlaneOutlineWorldToSliceTransformer->GetOutputPort());
   this->PlaneOutlineMapper->SetScalarVisibility(true);
 
   this->PlaneOutlineActor->SetMapper(this->PlaneOutlineMapper);
@@ -319,29 +322,84 @@ void vtkSlicerPlaneRepresentation2D::CanInteractWithPlane(
   vtkMRMLInteractionEventData* interactionEventData,
   int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
-  // Create the tree
-  vtkSmartPointer<vtkCellLocator> cellLocator =
-    vtkSmartPointer<vtkCellLocator>::New();
+  vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->MarkupsNode);
+  if (!planeNode
+    || !this->Visibility
+    || !this->PlaneOutlineActor->GetVisibility())
+    {
+    return;
+    }
+
   this->PlaneFilter->Update();
   if (this->PlaneFilter->GetOutput() && this->PlaneFilter->GetOutput()->GetNumberOfPoints() == 0)
     {
     return;
     }
 
-  cellLocator->SetDataSet(this->PlaneFilter->GetOutput());
-  cellLocator->BuildLocator();
+  this->PlanePickingAppend->Update();
 
-  const double* eventData_World = interactionEventData->GetWorldPosition();
-  double closestPoint_World[3];
-  double distance2;
-  vtkIdType cellId; //the cell id of the cell containing the closest point will be returned here
-  int subId; //this is rarely used (in triangle strips only, I believe)
-  cellLocator->FindClosestPoint(eventData_World, closestPoint_World, cellId, subId, distance2);
+  double closestPointWorld[3] = { 0.0, 0.0, 0.0 };
 
-  double toleranceWorld = this->ControlPointSize / 2;
-  if (distance2 < toleranceWorld)
+  if (interactionEventData->IsWorldPositionValid())
     {
-    closestDistance2 = distance2;
+    double planeOrigin[3] = { 0.0, 0.0, 0.0 };
+    planeNode->GetOrigin(planeOrigin);
+
+    double planeNormal[3] = { 0.0, 0.0, 0.0 };
+    planeNode->GetNormal(planeNormal);
+
+    vtkNew<vtkPlane> plane;
+    plane->SetOrigin(planeOrigin);
+    plane->SetNormal(planeNormal);
+
+    const double* worldPosition0 = interactionEventData->GetWorldPosition();
+    double worldPosition1[3] = { worldPosition0[0], worldPosition0[1], worldPosition0[2] };
+    vtkMath::Add(worldPosition1, this->SlicePlane->GetNormal(), worldPosition1);
+
+    double worldPosition[3] = { 0.0, 0.0, 0.0 };
+    double t;
+    plane->IntersectWithLine(worldPosition0, worldPosition1, t, worldPosition);
+
+    double dist2World = VTK_DOUBLE_MAX;
+
+    vtkPolyData* planeSliceIntersection = this->PlanePickingAppend->GetOutput();
+    for (int lineIndex = 0; lineIndex < planeSliceIntersection->GetNumberOfCells(); ++lineIndex)
+      {
+      vtkLine* line = vtkLine::SafeDownCast(planeSliceIntersection->GetCell(lineIndex));
+      if (!line)
+        {
+        continue;
+        }
+
+      double edgePoint0World[3] = { 0.0, 0.0, 0.0 };
+      double edgePoint1World[3] = { 0.0, 0.0, 0.0 };
+
+      line->GetPoints()->GetPoint(0, edgePoint0World);
+      line->GetPoints()->GetPoint(1, edgePoint1World);
+
+      double t;
+      double currentClosestPointWorld[3] = { 0.0, 0.0, 0.0 };
+      double currentDist2World = vtkLine::DistanceToLine(worldPosition, edgePoint0World, edgePoint1World, t, currentClosestPointWorld);
+      if (currentDist2World < dist2World)
+        {
+        dist2World = currentDist2World;
+        closestPointWorld[0] = currentClosestPointWorld[0];
+        closestPointWorld[1] = currentClosestPointWorld[1];
+        closestPointWorld[2] = currentClosestPointWorld[2];
+        }
+      }
+    }
+
+  double closestPointDisplay[3] = { 0.0, 0.0, 0.0 };
+  this->GetWorldToSliceCoordinates(closestPointWorld, closestPointDisplay);
+
+  double pixelTolerance = this->PickingTolerance * this->ScreenScaleFactor;
+  const int* displayPosition = interactionEventData->GetDisplayPosition();
+  double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
+  double dist2Display = vtkMath::Distance2BetweenPoints(displayPosition3, closestPointDisplay);
+  if (dist2Display < pixelTolerance * pixelTolerance && dist2Display < closestDistance2)
+    {
+    closestDistance2 = dist2Display;
     foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentPlane;
     foundComponentIndex = 0;
     }

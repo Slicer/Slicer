@@ -19,15 +19,14 @@
 ==============================================================================*/
 
 // VTK includes
-#include <vtkActor2D.h>
 #include <vtkAppendPolyData.h>
 #include <vtkArcSource.h>
 #include <vtkArrayCalculator.h>
 #include <vtkArrowSource.h>
-#include <vtkCellLocator.h>
 #include <vtkDoubleArray.h>
 #include <vtkEllipseArcSource.h>
 #include <vtkGlyph3DMapper.h>
+#include <vtkLine.h>
 #include <vtkLookupTable.h>
 #include <vtkPlaneSource.h>
 #include <vtkPolyDataMapper.h>
@@ -455,30 +454,75 @@ void vtkSlicerPlaneRepresentation3D::CanInteractWithPlane(
   int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
   // Create the tree
-  vtkSmartPointer<vtkCellLocator> cellLocator =
-    vtkSmartPointer<vtkCellLocator>::New();
-  this->PlaneFillFilter->Update();
-  if (this->PlaneFillFilter->GetOutput() && this->PlaneFillFilter->GetOutput()->GetNumberOfPoints() == 0)
+  this->PlaneOutlineFilter->Update();
+  if (this->PlaneOutlineFilter->GetOutput() && this->PlaneOutlineFilter->GetOutput()->GetNumberOfPoints() == 0)
     {
     return;
     }
 
-  cellLocator->SetDataSet(this->PlaneFillFilter->GetOutput());
-  cellLocator->BuildLocator();
-
-  const double* worldPosition = interactionEventData->GetWorldPosition();
-  double closestPoint[3];//the coordinates of the closest point will be returned here
-  double distance2; //the squared distance to the closest point will be returned here
-  vtkIdType cellId; //the cell id of the cell containing the closest point will be returned here
-  int subId; //this is rarely used (in triangle strips only, I believe)
-  cellLocator->FindClosestPoint(worldPosition, closestPoint, cellId, subId, distance2);
-
-  double toleranceWorld = this->ControlPointSize / 2;
-  if (distance2 < toleranceWorld)
+  if (interactionEventData->IsDisplayPositionValid())
     {
-    closestDistance2 = distance2;
-    foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentPlane;
-    foundComponentIndex = 0;
+    int displayPosition[2] = { 0, 0 };
+    interactionEventData->GetDisplayPosition(displayPosition);
+
+    double displayPosition3[3] = { 0.0, 0.0, 0.0 };
+    displayPosition3[0] = static_cast<double>(displayPosition[0]);
+    displayPosition3[1] = static_cast<double>(displayPosition[1]);
+
+    double dist2Display = VTK_DOUBLE_MAX;
+    double closestPointDisplay[3] = { 0.0, 0.0, 0.0 };
+
+    vtkPolyData* planeOutline = vtkPolyData::SafeDownCast(this->PlaneOutlineFilter->GetInputDataObject(0, 0));
+    if (planeOutline)
+      {
+      for (int pointIndex = 0; pointIndex < planeOutline->GetNumberOfPoints(); ++pointIndex)
+        {
+        double edgePoint0Display[3] = { 0.0, 0.0, 0.0 };
+        planeOutline->GetPoints()->GetPoint(pointIndex, edgePoint0Display);
+        this->Renderer->SetWorldPoint(edgePoint0Display);
+        this->Renderer->WorldToDisplay();
+        this->Renderer->GetDisplayPoint(edgePoint0Display);
+
+        double edgePoint1Display[3] = { 0.0, 0.0, 0.0 };
+        if (pointIndex < planeOutline->GetNumberOfPoints() - 1)
+          {
+          planeOutline->GetPoints()->GetPoint(pointIndex + 1, edgePoint1Display);
+          }
+        else
+          {
+          planeOutline->GetPoints()->GetPoint(0, edgePoint1Display);
+          }
+        this->Renderer->SetWorldPoint(edgePoint1Display);
+        this->Renderer->WorldToDisplay();
+        this->Renderer->GetDisplayPoint(edgePoint1Display);
+
+        double t;
+        double currentClosestPointDisplay[3] = { 0.0, 0.0, 0.0 };
+        double currentDistDisplay = vtkLine::DistanceToLine(displayPosition3, edgePoint0Display, edgePoint1Display, t, currentClosestPointDisplay);
+        if (currentDistDisplay < dist2Display)
+          {
+          dist2Display = currentDistDisplay;
+          closestPointDisplay[0] = currentClosestPointDisplay[0];
+          closestPointDisplay[1] = currentClosestPointDisplay[1];
+          closestPointDisplay[2] = currentClosestPointDisplay[2];
+          }
+        }
+      }
+
+    double closestPointWorld[3] = { 0.0, 0.0, 0.0 };
+    this->Renderer->SetDisplayPoint(closestPointDisplay);
+    this->Renderer->DisplayToWorld();
+    this->Renderer->GetWorldPoint(closestPointWorld);
+
+    double pixelTolerance = this->PlaneOutlineFilter->GetRadius() / 2.0 / this->GetViewScaleFactorAtPosition(closestPointWorld)
+      + this->PickingTolerance * this->ScreenScaleFactor;
+    if (dist2Display < pixelTolerance * pixelTolerance && dist2Display < closestDistance2)
+      {
+      closestDistance2 = dist2Display;
+      foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentPlane;
+      foundComponentIndex = 0;
+      return;
+      }
     }
 }
 
