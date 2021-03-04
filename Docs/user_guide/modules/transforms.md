@@ -63,7 +63,7 @@ Transforms are usually computed using [spatial registration tools](../registrati
 Traansforms are saved into [ITK](https://itk.org/) transform file format. ITK always saves transform "from parent", as this is the direction that is necessary for transforming images.
 
 If a transform node in Slicer has a transformation with "to parent" direction (e.g., it was computed like that or a "from parent" transform got inverted) then:
-- linear transforms: the transform is automatically converted to "from parent" direction. See [developer page](See examples and other developer information in [Developer guide](../../developer_guide/modules/transforms.html#transform_files) for more details about this conversion.
+- linear transforms: the transform is automatically converted to "from parent" direction.
 - warping transforms: the transform is saved as special inverse transform class that most ITK-based applications cannot interpret. If compatibility with other applications is needed, the transform can be converted to a displacement field before saving.
 
 A quick way to export a linear transform to another software or to text files is to copy the homogeneous transformation matrix values to the clipboard by clicking "Copy" button in Edit section in Transforms module.
@@ -193,7 +193,7 @@ This section can sample the active transform on a grid (specified by the selecte
 
 ## Information for developers
 
-See examples and other developer information in [Developer guide](../../developer_guide/modules/transforms) and [Script repository](https://www.slicer.org/wiki/Documentation/Nightly/ScriptRepository#Markups).
+See examples and other developer information in [Developer guide](../../developer_guide/modules/transforms) and [Script repository](https://www.slicer.org/wiki/Documentation/Nightly/ScriptRepository).
 
 ## Contributors
 
