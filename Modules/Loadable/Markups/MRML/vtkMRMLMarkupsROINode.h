@@ -163,6 +163,9 @@ public:
   /// Create default storage node or nullptr if does not have one
   void CreateDefaultDisplayNodes() override;
 
+  void GetRASBounds(double bounds[6]) override;
+  void GetBounds(double bounds[6]) override;
+
   ///
   /// Legacy vtkMRMLAnnotationROINode methods
   ///
@@ -210,6 +213,9 @@ protected:
   bool IsUpdatingROIFromControlPoints{false};
 
   vtkSmartPointer<vtkMatrix4x4> ROIToLocalMatrix;
+
+  /// Fills the specified vtkPoints with the points for all of the box ROI corners
+  void GenerateBoxBounds(double bounds[6], double xAxis[3], double yAxis[3], double zAxis[3], double center[3], double size[3]);
 
   vtkMRMLMarkupsROINode();
   ~vtkMRMLMarkupsROINode() override;
