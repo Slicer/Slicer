@@ -28,6 +28,7 @@
 #include "vtkMRMLTransformNode.h"
 
 // VTK includes
+#include <vtkBoundingBox.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
 #include <vtkCommand.h>
@@ -135,6 +136,113 @@ void vtkMRMLMarkupsROINode::CreateDefaultDisplayNodes()
     return;
     }
   this->SetAndObserveDisplayNodeID(dispNode->GetID());
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsROINode::GetRASBounds(double bounds[6])
+{
+  if (!bounds)
+    {
+    vtkErrorMacro("Invalid bounds argument");
+    return;
+    }
+
+  if (this->ROIType == ROITypeBox || this->ROIType == ROITypeBoundingBox)
+    {
+    double xAxisWorld[3] = { 0.0, 0.0, 0.0 };
+    this->GetXAxisWorld(xAxisWorld);
+    double yAxisWorld[3] = { 0.0, 0.0, 0.0 };
+    this->GetYAxisWorld(yAxisWorld);
+    double zAxisWorld[3] = { 0.0, 0.0, 0.0 };
+    this->GetZAxisWorld(zAxisWorld);
+    double centerWorld[3] = { 0.0, 0.0, 0.0 };
+    this->GetCenterWorld(centerWorld);
+    this->GenerateBoxBounds(bounds, xAxisWorld, yAxisWorld, zAxisWorld, centerWorld, this->Size);
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsROINode::GetBounds(double bounds[6])
+{
+  if (!bounds)
+    {
+    vtkErrorMacro("Invalid bounds argument");
+    return;
+    }
+
+  if (this->ROIType == ROITypeBox || this->ROIType == ROITypeBoundingBox)
+    {
+    double xAxisLocal[3] = { 0.0, 0.0, 0.0 };
+    this->GetXAxisLocal(xAxisLocal);
+    double yAxisLocal[3] = { 0.0, 0.0, 0.0 };
+    this->GetYAxisLocal(yAxisLocal);
+    double zAxisLocal[3] = { 0.0, 0.0, 0.0 };
+    this->GetZAxisLocal(zAxisLocal);
+    double centerLocal[3] = { 0.0, 0.0, 0.0 };
+    this->GetCenter(centerLocal);
+    this->GenerateBoxBounds(bounds, xAxisLocal, yAxisLocal, zAxisLocal, centerLocal, this->Size);
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsROINode::GenerateBoxBounds(double bounds[6], double xAxis[3], double yAxis[3], double zAxis[3], double center[3], double size[3])
+{
+  if (!bounds || !xAxis || !yAxis || !zAxis || !center || !size)
+    {
+    vtkErrorMacro("Invalid arguments");
+    return;
+    }
+
+  double xFaceVector[3] = { xAxis[0], xAxis[1], xAxis[2] };
+  vtkMath::MultiplyScalar(xFaceVector, 0.5 * size[0]);
+
+  double yFaceVector[3] = { yAxis[0], yAxis[1], yAxis[2] };
+  vtkMath::MultiplyScalar(yFaceVector, 0.5 * size[1]);
+
+  double zFaceVector[3] = { zAxis[0], zAxis[1], zAxis[2] };
+  vtkMath::MultiplyScalar(zFaceVector, 0.5 * size[2]);
+
+  vtkBoundingBox box;
+  for (int k = 0; k < 2; ++k)
+    {
+    for (int j = 0; j < 2; ++j)
+      {
+      for (int i = 0; i < 2; ++i)
+        {
+        double cornerPoint[3] = { 0.0, 0.0, 0.0 };
+        vtkMath::Add(cornerPoint, center, cornerPoint);
+        if (i == 0)
+          {
+          vtkMath::Subtract(cornerPoint, xFaceVector, cornerPoint);
+          }
+        else
+          {
+          vtkMath::Add(cornerPoint, xFaceVector, cornerPoint);
+          }
+
+        if (j == 0)
+          {
+          vtkMath::Subtract(cornerPoint, yFaceVector, cornerPoint);
+          }
+        else
+          {
+          vtkMath::Add(cornerPoint, yFaceVector, cornerPoint);
+          }
+
+        if (k == 0)
+          {
+          vtkMath::Subtract(cornerPoint, zFaceVector, cornerPoint);
+          }
+        else
+          {
+          vtkMath::Add(cornerPoint, zFaceVector, cornerPoint);
+          }
+
+        box.AddPoint(cornerPoint);
+        }
+      }
+    }
+  box.GetBounds(bounds);
 }
 
 //----------------------------------------------------------------------------
