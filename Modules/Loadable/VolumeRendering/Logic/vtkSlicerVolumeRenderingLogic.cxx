@@ -1362,7 +1362,7 @@ bool vtkSlicerVolumeRenderingLogic::IsDifferentFunction(vtkColorTransferFunction
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumeRenderingLogic::AddPreset(vtkMRMLVolumePropertyNode* preset, vtkImageData* icon /* = nullptr */)
+void vtkSlicerVolumeRenderingLogic::AddPreset(vtkMRMLVolumePropertyNode* preset, vtkImageData* icon/*=nullptr*/, bool appendToEnd/*=false*/)
 {
   if (preset == nullptr)
   {
@@ -1390,7 +1390,14 @@ void vtkSlicerVolumeRenderingLogic::AddPreset(vtkMRMLVolumePropertyNode* preset,
     // is available immediately when the node is added (otherwise widgets may add the item without an icon)
     preset->SetNodeReferenceID(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole(), addedIconNode->GetID());
   }
-  presetScene->AddNode(preset);
+  if (appendToEnd || presetScene->GetNumberOfNodes() == 0)
+    {
+    presetScene->AddNode(preset);
+    }
+  else
+    {
+    presetScene->InsertBeforeNode(presetScene->GetNthNode(0), preset);
+    }
 }
 
 //---------------------------------------------------------------------------
