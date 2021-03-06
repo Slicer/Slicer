@@ -516,21 +516,26 @@ bool vtkMRMLCameraWidget::ProcessSetCrosshair(vtkMRMLInteractionEventData* event
     return false;
     }
 
-  // Make sure we have accurate world position (by default, world position is retrieved from Z buffer, which may be inaccurate)
-  eventData->ComputeAccurateWorldPosition();
-  if (!eventData->IsWorldPositionValid())
-    {
-    return false;
-    }
-  double worldPos[3] = { 0.0 };
-  eventData->GetWorldPosition(worldPos);
-
   vtkMRMLScene* scene = this->GetCameraNode()->GetScene();
   vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(scene);
   if (!crosshairNode)
     {
     return false;
     }
+
+  if (!crosshairNode->GetFastPick3D())
+    {
+    // Get accurate world position (by default FastPick3D is false
+    // because fast picking from Z buffer of the renderer is inaccurate
+    // especially when semi-transparent actors are visible)
+    eventData->ComputeAccurateWorldPosition();
+    }
+  if (!eventData->IsWorldPositionValid())
+    {
+    return false;
+    }
+  double worldPos[3] = { 0.0 };
+  eventData->GetWorldPosition(worldPos);
 
   crosshairNode->SetCrosshairRAS(worldPos);
   crosshairNode->SetCursorPositionRAS(worldPos);
