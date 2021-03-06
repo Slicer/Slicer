@@ -54,17 +54,29 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "Crosshair";};
 
-  ///
-  /// configures the crosshair appearance and behavior
+  ///@{
+  /// Configure crosshair appearance.
   vtkGetMacro (CrosshairMode, int );
   vtkSetMacro (CrosshairMode, int );
-  vtkGetMacro (CrosshairBehavior, int );
-  vtkSetMacro (CrosshairBehavior, int );
-  vtkSetClampMacro (CrosshairThickness, int, 1, 3);
-  vtkGetMacro (CrosshairThickness, int);
+  static const char* GetCrosshairModeAsString(int id);
+  static int GetCrosshairModeFromString(const char* name);
+
+  vtkSetClampMacro(CrosshairThickness, int, 1, 3);
+  vtkGetMacro(CrosshairThickness, int);
   void SetCrosshairToFine() { this->SetCrosshairThickness(1); }
   void SetCrosshairToMedium() { this->SetCrosshairThickness(2); }
   void SetCrosshairToThick() { this->SetCrosshairThickness(3); }
+  static const char* GetCrosshairThicknessAsString(int id);
+  static int GetCrosshairThicknessFromString(const char* name);
+  ///@}
+
+  ///@{
+  /// Configure crosshair behavior.
+  vtkGetMacro (CrosshairBehavior, int );
+  vtkSetMacro (CrosshairBehavior, int );
+  static const char* GetCrosshairBehaviorAsString(int id);
+  static int GetCrosshairBehaviorFromString(const char* name);
+  ///@}
 
   ///
   /// Set cursor position in 3D.
@@ -127,13 +139,15 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
       ShowHashmarks,
       ShowAll,
       ShowSmallBasic,
-      ShowSmallIntersection
+      ShowSmallIntersection,
+      CrosshairMode_Last
     };
   enum
     {
       Fine = 1,
       Medium,
-      Thick
+      Thick,
+      CrosshairThickness_Last
     };
   /// Behavior when crosshair position is changed.
   enum
@@ -142,8 +156,22 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
       OffsetJumpSlice = 1,
       CenteredJumpSlice = 2,
       Normal = 1,   ///< \deprecated Use OffsetJumpSlice instead
-      JumpSlice = 1 ///< \deprecated Use CenterdJumpSlice instead
+      JumpSlice = 1, ///< \deprecated Use CenterdJumpSlice instead
+      CrosshairBehavior_Last
     };
+
+  ///@{
+  /// Experimental feature to choose between fast or accurate position computation in 3D views.
+  /// If fast option is chosen then Z-buffer in the renderer may be used for determining position
+  /// along the view line in 3D views, which is very fast but may not give optimal results
+  /// because semi-transparent objects, such as semi-transparent models or
+  /// volume-rendered images are ignored.
+  /// This property is only for evaluation of this feature and the value
+  /// is not stored persistently in the scene file.
+  vtkSetMacro(FastPick3D, bool);
+  vtkGetMacro(FastPick3D, bool);
+  vtkBooleanMacro(FastPick3D, bool);
+  ///@}
 
 protected:
   vtkMRMLCrosshairNode();
@@ -151,27 +179,27 @@ protected:
   vtkMRMLCrosshairNode(const vtkMRMLCrosshairNode&);
   void operator=(const vtkMRMLCrosshairNode&);
 
-  int CrosshairMode;
-  int CrosshairThickness;
-  int CrosshairBehavior;
+  int CrosshairMode{NoCrosshair};
+  int CrosshairThickness{Fine};
+  int CrosshairBehavior{OffsetJumpSlice};
 
-  double CrosshairRAS[3];
-  int LightBoxPane;
+  double CrosshairRAS[3]{0.0, 0.0, 0.0};
+  int LightBoxPane{0};
 
   /// Last known cursor position in RAS coordinate system.
   /// If CursorPositionValid is false then this position is not up-to-date anymore.
-  double CursorPositionRAS[3];
+  double CursorPositionRAS[3]{0.0, 0.0, 0.0};
   /// Last known cursor position in XYZ coordinate system.
   /// If CursorSliceNode is nullptr then this position is not up-to-date anymore.
-  double CursorPositionXYZ[3];
+  double CursorPositionXYZ[3]{0.0, 0.0, 0.0};
   /// CursorSliceNode points to the slice where the cursor is. It is not stored as a MRML node reference
   /// as its value is not saved with the scene and also it changes frequently therefore it is better
   /// to keep a lightweight reference.
   vtkWeakPointer<vtkMRMLSliceNode> CursorSliceNode;
 
   /// Set to false if the cursor is not in a view
-  bool CursorPositionRASValid;
+  bool CursorPositionRASValid{false};
+  bool FastPick3D{false};
 };
 
 #endif
-
