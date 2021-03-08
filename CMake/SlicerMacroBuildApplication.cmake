@@ -272,7 +272,6 @@ endmacro()
 macro(slicerMacroBuildApplication)
   set(options
     CONFIGURE_LAUNCHER
-    SPLASHSCREEN_DISABLED
     )
   set(oneValueArgs
     NAME
@@ -280,6 +279,7 @@ macro(slicerMacroBuildApplication)
     APPLICATION_NAME
 
     DEFAULT_SETTINGS_FILE
+    SPLASHSCREEN_ENABLED
     LAUNCHER_SPLASHSCREEN_FILE
     APPLE_ICON_FILE
     WIN_ICON_FILE
@@ -308,13 +308,19 @@ macro(slicerMacroBuildApplication)
     message(FATAL_ERROR "Unknown keywords given to slicerMacroBuildApplication(): \"${SLICERAPP_UNPARSED_ARGUMENTS}\"")
   endif()
 
+  # Set defaults
+  if(NOT DEFINED SLICERAPP_SPLASHSCREEN_ENABLED)
+    set(SLICERAPP_SPLASHSCREEN_ENABLED TRUE)
+  endif()
+
+  # Check expected variables
   set(expected_defined_vars
     NAME
     APPLE_ICON_FILE
     WIN_ICON_FILE
     LICENSE_FILE
     )
-  if(NOT SLICERAPP_SPLASHSCREEN_DISABLED)
+  if(SLICERAPP_SPLASHSCREEN_ENABLED)
     list(APPEND expected_defined_vars
       LAUNCHER_SPLASHSCREEN_FILE
       )
@@ -351,7 +357,7 @@ macro(slicerMacroBuildApplication)
     _set_app_property(${varname})
   endmacro()
 
-  if(NOT SLICERAPP_SPLASHSCREEN_DISABLED)
+  if(SLICERAPP_SPLASHSCREEN_ENABLED)
     _set_path_var(LAUNCHER_SPLASHSCREEN_FILE)
   endif()
   _set_path_var(APPLE_ICON_FILE)
@@ -610,16 +616,16 @@ macro(slicerMacroBuildApplication)
 
       include(SlicerBlockCTKAppLauncherSettings)
 
-      if(SLICERAPP_SPLASHSCREEN_DISABLED)
-        set(_launcher_splashscreen_args SPLASHSCREEN_DISABLED)
-        set(_launcher_application_default_arguments "--no-splash ${SLICERAPP_APPLICATION_DEFAULT_ARGUMENTS}")
-      else()
+      if(SLICERAPP_SPLASHSCREEN_ENABLED)
         set(_launcher_splashscreen_args
           SPLASH_IMAGE_PATH ${SLICERAPP_LAUNCHER_SPLASHSCREEN_FILE}
           SPLASH_IMAGE_INSTALL_SUBDIR ${Slicer_BIN_DIR}
           SPLASHSCREEN_HIDE_DELAY_MS 3000
           )
         set(_launcher_application_default_arguments "${SLICERAPP_APPLICATION_DEFAULT_ARGUMENTS}")
+      else()
+        set(_launcher_splashscreen_args SPLASHSCREEN_DISABLED)
+        set(_launcher_application_default_arguments "--no-splash ${SLICERAPP_APPLICATION_DEFAULT_ARGUMENTS}")
       endif()
 
       ctkAppLauncherConfigureForTarget(
@@ -709,7 +715,7 @@ macro(slicerMacroBuildApplication)
             )
         endif()
 
-        if(NOT SLICERAPP_SPLASHSCREEN_DISABLED)
+        if(SLICERAPP_SPLASHSCREEN_ENABLED)
           install(
             FILES ${SLICERAPP_LAUNCHER_SPLASHSCREEN_FILE}
             DESTINATION ${Slicer_INSTALL_BIN_DIR}
