@@ -287,8 +287,9 @@ public:
   /// If the optional icon image is specified then that will be used to
   /// in preset selector widgets. The icon is stored as a volume node
   /// in the preset scene.
+  /// \param appendToEnd controls if the preset is added befor or after existing presets.
   /// \sa GetPresetsScene(), GetIconVolumeReferenceRole()
-  void AddPreset(vtkMRMLVolumePropertyNode* preset, vtkImageData* icon = nullptr);
+  void AddPreset(vtkMRMLVolumePropertyNode* preset, vtkImageData* icon = nullptr, bool appendToEnd=false);
 
   /// Removes a preset and its associated icon (if specified) from the preset scene.
   /// \sa GetPresetsScene(), GetIconVolumeReferenceRole()
