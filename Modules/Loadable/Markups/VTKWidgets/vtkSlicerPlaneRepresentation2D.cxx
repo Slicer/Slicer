@@ -179,24 +179,10 @@ void vtkSlicerPlaneRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigne
   if (visible && !this->MarkupsDisplayNode->GetSliceProjection())
     {
     this->PlaneSliceDistance->Update();
-    vtkPolyData* plane = vtkPolyData::SafeDownCast(this->PlaneSliceDistance->GetOutput());
-    if (!plane)
+    if (!this->IsRepresentationIntersectingSlice(vtkPolyData::SafeDownCast(this->PlaneSliceDistance->GetOutput()),
+                                                 this->PlaneSliceDistance->GetScalarArrayName()))
       {
       visible = false;
-      }
-    else
-      {
-      double sliceNormal_XY[4] = { 0.0, 0.0, 1.0, 0.0 };
-      double sliceNormal_World[4] = { 0, 0, 1, 0 };
-      vtkMatrix4x4* xyToRAS = this->GetSliceNode()->GetXYToRAS();
-      xyToRAS->MultiplyPoint(sliceNormal_XY, sliceNormal_World);
-      double sliceThicknessMm = vtkMath::Norm(sliceNormal_World);
-      double* scalarRange = plane->GetScalarRange();
-      // If the closest point on the plane is further than a half-slice thickness, then hide the plane
-      if (scalarRange[0] > 0.5 * sliceThicknessMm || scalarRange[1] < -0.5 * sliceThicknessMm)
-        {
-        visible = false;
-        }
       }
     }
 
