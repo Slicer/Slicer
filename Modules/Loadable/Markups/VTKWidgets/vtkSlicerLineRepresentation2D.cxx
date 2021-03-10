@@ -101,6 +101,13 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned
 
   this->LineActor->SetVisibility(markupsNode->GetNumberOfDefinedControlPoints(true) == 2);
 
+  // Hide the line actor if it doesn't intersect the current slice
+  this->SliceDistance->Update();
+  if (!this->IsRepresentationIntersectingSlice(vtkPolyData::SafeDownCast(this->SliceDistance->GetOutput()), this->SliceDistance->GetScalarArrayName()))
+    {
+    this->LineActor->SetVisibility(false);
+    }
+
   if (markupsNode->GetNumberOfDefinedControlPoints(true) == 2)
     {
     double p1[3] = { 0.0 };

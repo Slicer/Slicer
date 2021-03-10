@@ -140,6 +140,9 @@ protected:
   void GetWorldToDisplayCoordinates(double r, double a, double s, double * displayCoordinates);
   void GetWorldToDisplayCoordinates(double * worldCoordinates, double * displayCoordinates);
 
+  /// Check if the representation polydata intersects the slice
+  bool IsRepresentationIntersectingSlice(vtkPolyData* representation, const char* arrayName);
+
   class ControlPointsPipeline2D : public ControlPointsPipeline
   {
   public:

@@ -1261,6 +1261,35 @@ double vtkSlicerMarkupsWidgetRepresentation2D::GetMaximumControlPointPickingDist
 }
 
 //----------------------------------------------------------------------
+bool vtkSlicerMarkupsWidgetRepresentation2D::IsRepresentationIntersectingSlice(vtkPolyData* representation, const char* arrayName)
+{
+  if (!representation || !representation->GetPointData() || representation->GetNumberOfPoints() <= 0)
+    {
+    return false;
+    }
+
+  double sliceNormal_XY[4] = { 0.0, 0.0, 1.0, 0.0 };
+  double sliceNormal_World[4] = { 0, 0, 1, 0 };
+  vtkMatrix4x4* xyToRAS = this->GetSliceNode()->GetXYToRAS();
+  xyToRAS->MultiplyPoint(sliceNormal_XY, sliceNormal_World);
+  double sliceThicknessMm = vtkMath::Norm(sliceNormal_World);
+
+  vtkDataArray* distanceArray = representation->GetPointData()->GetArray(arrayName);
+  if (!distanceArray)
+    {
+    return false;
+    }
+  double* scalarRange = distanceArray->GetRange();
+
+  // If the closest point on the line is further than a half-slice thickness, then hide the markup in 2D
+  if (scalarRange[0] > 0.5 * sliceThicknessMm || scalarRange[1] < -0.5 * sliceThicknessMm)
+    {
+    return false;
+    }
+  return true;
+}
+
+//----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation2D::SetupInteractionPipeline()
 {
   this->InteractionPipeline = new MarkupsInteractionPipeline2D(this);
