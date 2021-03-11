@@ -18,6 +18,7 @@
 #include "qSlicerModelsDialog.h"
 #include "qSlicerSaveDataDialog.h"
 #include "qSlicerApplication.h"
+#include "qSlicerCoreApplication.h"
 #include "qSlicerLayoutManager.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerAbstractCoreModule.h"
@@ -429,13 +430,9 @@ bool qSlicerIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
   vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   Q_D(qSlicerIOManager);
-  qSlicerApplication* application = qSlicerApplication::application();
-  if (application)
-    {
-    // speed up data loading by disabling re-rendering
-    // (it can make a big difference if hundreds of nodes are loaded)
-    application->pauseRender();
-    }
+  // speed up data loading by disabling re-rendering
+  // (it can make a big difference if hundreds of nodes are loaded)
+  SlicerRenderBlocker renderBlocker;
   bool needStop = d->startProgressDialog(1);
   d->ProgressDialog->setLabelText(
     "Loading file " + parameters.value("fileName").toString() + " ...");
@@ -449,10 +446,6 @@ bool qSlicerIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
     {
     d->stopProgressDialog();
     }
-  if (application)
-    {
-    application->resumeRender();
-    }
   return res;
 }
 
@@ -462,13 +455,9 @@ bool qSlicerIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
   vtkCollection* loadedNodes, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   Q_D(qSlicerIOManager);
-  qSlicerApplication* application = qSlicerApplication::application();
-  if (application)
-    {
-    // speed up data loading by disabling re-rendering
-    // (it can make a big difference if hundreds of nodes are loaded)
-    application->pauseRender();
-    }
+  // Speed up data loading by disabling re-rendering
+  // (it can make a big difference if hundreds of nodes are loaded)
+  SlicerRenderBlocker renderBlocker;
   bool needStop = d->startProgressDialog(files.count());
   bool success = true;
   foreach(qSlicerIO::IOProperties fileProperties, files)
@@ -494,10 +483,6 @@ bool qSlicerIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
   if (needStop)
     {
     d->stopProgressDialog();
-    }
-  if (application)
-    {
-    application->resumeRender();
     }
   return success;
 }
