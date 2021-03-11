@@ -104,7 +104,6 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     -DITK_LEGACY_REMOVE:BOOL=OFF   #<-- Allow LEGACY ITKv4 features for now.
     -DITK_LEGACY_SILENT:BOOL=ON    #<-- Silence for initial ITKv5 migration.
     -DModule_ITKDeprecated:BOOL=ON #<-- Needed for ITKv5 now. (itkMultiThreader.h and MutexLock backwards compatibility.)
-    -DModule_SimpleITKFilters:BOOL=${Slicer_USE_SimpleITK}
     )
 
 
@@ -146,6 +145,8 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DModule_ITKReview:BOOL=ON
       -DModule_MGHIO:BOOL=ON
       -DModule_ITKIOMINC:BOOL=ON
+      -DModule_MorphologicalContourInterpolation:BOOL=ON
+      -DModule_SimpleITKFilters:BOOL=${Slicer_USE_SimpleITK}
       -DBUILD_SHARED_LIBS:BOOL=ON
       -DITK_INSTALL_NO_DEVELOPMENT:BOOL=ON
       -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel
