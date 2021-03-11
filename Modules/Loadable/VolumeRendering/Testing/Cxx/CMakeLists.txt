@@ -20,7 +20,6 @@ include(${ITK_USE_FILE})
 set(MRML_CORE_INPUT "${MRMLCore_SOURCE_DIR}/Testing/TestData/")
 set(INPUT ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Input)
 set(TEMP "${CMAKE_BINARY_DIR}/Testing/Temporary")
-message("VolumeRendering CXX tests: TEMP var: ${TEMP}")
 
 #-----------------------------------------------------------------------------
 set(KIT_TEST_SRCS
