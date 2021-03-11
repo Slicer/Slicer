@@ -207,7 +207,7 @@ void vtkSlicerROIRepresentation3D::UpdateCubeSourceFromMRML(vtkMRMLMarkupsROINod
     }
 
   double sideLengths[3] = { 0.0, 0.0, 0.0 };
-  roiNode->GetSize(sideLengths);
+  roiNode->GetSizeWorld(sideLengths);
   cubeSource->SetXLength(sideLengths[0]);
   cubeSource->SetYLength(sideLengths[1]);
   cubeSource->SetZLength(sideLengths[2]);
@@ -641,7 +641,7 @@ void vtkSlicerROIRepresentation3D::MarkupsInteractionPipelineROI::UpdateScaleHan
     }
 
   double sideLengths[3] = { 0.0,  0.0, 0.0 };
-  roiNode->GetSize(sideLengths);
+  roiNode->GetSizeWorld(sideLengths);
   vtkMath::MultiplyScalar(sideLengths, 0.5);
 
   vtkNew<vtkPoints> roiPoints;
@@ -660,25 +660,7 @@ void vtkSlicerROIRepresentation3D::MarkupsInteractionPipelineROI::UpdateScaleHan
   roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleRPSCorner, sideLengths[0],  -sideLengths[1],  sideLengths[2]);
   roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleLASCorner, -sideLengths[0],  sideLengths[1],  sideLengths[2]);
   roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleRASCorner, sideLengths[0],   sideLengths[1],  sideLengths[2]);
-
-  vtkMatrix4x4* roiToWorldMatrix = roiNode->GetInteractionHandleToWorldMatrix();
-  vtkNew<vtkTransform> worldToHandleTransform;
-  worldToHandleTransform->DeepCopy(this->HandleToWorldTransform);
-  worldToHandleTransform->Inverse();
-
-  vtkNew<vtkTransform> roiToHandleTransform;
-  roiToHandleTransform->Concatenate(roiToWorldMatrix);
-  roiToHandleTransform->Concatenate(worldToHandleTransform);
-
-  vtkNew<vtkPolyData> scaleHandlePoints;
-  scaleHandlePoints->SetPoints(roiPoints);
-
-  vtkNew<vtkTransformPolyDataFilter> transform;
-  transform->SetInputData(scaleHandlePoints);
-  transform->SetTransform(roiToHandleTransform);
-  transform->Update();
-
-  this->ScaleHandlePoints->SetPoints(transform->GetOutput()->GetPoints());
+  this->ScaleHandlePoints->SetPoints(roiPoints);
 
   vtkIdTypeArray* visibilityArray = vtkIdTypeArray::SafeDownCast(this->ScaleHandlePoints->GetPointData()->GetArray("visibility"));
   visibilityArray->SetNumberOfValues(roiPoints->GetNumberOfPoints());

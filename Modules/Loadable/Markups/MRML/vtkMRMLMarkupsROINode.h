@@ -72,10 +72,16 @@ public:
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentMacro(vtkMRMLMarkupsROINode);
 
+  /// Apply the passed transformation to the ROI
+  void ApplyTransform(vtkAbstractTransform* transform) override;
+
   /// Length of the ROI sides
   vtkGetVector3Macro(Size, double);
   void SetSize(const double size[3]);
   void SetSize(double x, double y, double z);
+  void GetSizeWorld(double size_World[3]);
+  void SetSizeWorld(const double size_World[3]);
+  void SetSizeWorld(double x_World, double y_World, double z_World);
 
   /// Center of the ROI
   void GetCenter(double center[3]);
@@ -211,6 +217,7 @@ protected:
 
   bool IsUpdatingControlPointsFromROI{false};
   bool IsUpdatingROIFromControlPoints{false};
+  bool IsUpdatingInteractionHandleToWorldMatrix{false};
 
   vtkSmartPointer<vtkMatrix4x4> ROIToLocalMatrix;
 

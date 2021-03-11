@@ -139,6 +139,62 @@ void vtkMRMLMarkupsROINode::CreateDefaultDisplayNodes()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLMarkupsROINode::ApplyTransform(vtkAbstractTransform* transform)
+{
+  if (!transform)
+    {
+    vtkErrorMacro("ApplyTransform: Invalid transform");
+    return;
+    }
+
+  MRMLNodeModifyBlocker blocker(this);
+
+  bool wasUpdatingControlPointsFromROI = this->IsUpdatingControlPointsFromROI;
+  this->IsUpdatingControlPointsFromROI = true;
+
+  bool wasUpdatingROIFromControlPoints = this->IsUpdatingROIFromControlPoints;
+  this->IsUpdatingROIFromControlPoints = true;
+
+  double center_Local[3] = { 0.0, 0.0, 0.0 };
+  this->GetCenter(center_Local);
+
+  double xAxis_Local[3] = { 1.0, 0.0, 0.0 };
+  this->GetXAxisLocal(xAxis_Local);
+  transform->TransformVectorAtPoint(center_Local, xAxis_Local, xAxis_Local);
+  double xAxisSize = vtkMath::Normalize(xAxis_Local);
+
+  double yAxis_Local[3] = { 0.0, 1.0, 0.0 };
+  this->GetYAxisLocal(yAxis_Local);
+  transform->TransformVectorAtPoint(center_Local, yAxis_Local, yAxis_Local);
+  double yAxisSize = vtkMath::Normalize(yAxis_Local);
+
+  double zAxis_Local[3] = { 0.0, 0.0, 1.0 };
+  this->GetZAxisLocal(zAxis_Local);
+  transform->TransformVectorAtPoint(center_Local, zAxis_Local, zAxis_Local);
+  double zAxisSize = vtkMath::Normalize(zAxis_Local);
+
+  transform->TransformPoint(center_Local, center_Local);
+
+  Superclass::ApplyTransform(transform);
+
+  vtkNew<vtkMatrix4x4> newROIToLocalMatrix;
+  for (int i = 0; i < 3; ++i)
+    {
+    newROIToLocalMatrix->SetElement(i, 0, xAxis_Local[i]);
+    newROIToLocalMatrix->SetElement(i, 1, yAxis_Local[i]);
+    newROIToLocalMatrix->SetElement(i, 2, zAxis_Local[i]);
+    newROIToLocalMatrix->SetElement(i, 3, center_Local[i]);
+    }
+  this->ROIToLocalMatrix->DeepCopy(newROIToLocalMatrix);
+  this->Size[0] *= xAxisSize;
+  this->Size[1] *= yAxisSize;
+  this->Size[2] *= zAxisSize;
+
+  this->IsUpdatingControlPointsFromROI = wasUpdatingControlPointsFromROI;
+  this->IsUpdatingROIFromControlPoints = wasUpdatingROIFromControlPoints;
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLMarkupsROINode::GetRASBounds(double bounds[6])
 {
   if (!bounds)
@@ -315,6 +371,7 @@ void vtkMRMLMarkupsROINode::GetAxisWorld(int axisIndex, double axis_World[3])
   double center_Local[3] = { 0.0, 0.0, 0.0 };
   this->GetCenter(center_Local);
   localToWorldTransform->TransformVectorAtPoint(center_Local, axis_Local, axis_World);
+  vtkMath::Normalize(axis_World);
 }
 
 //----------------------------------------------------------------------------
@@ -372,18 +429,54 @@ void vtkMRMLMarkupsROINode::ProcessMRMLEvents(vtkObject* caller, unsigned long e
     this->UpdateInteractionHandleToWorldMatrix();
     this->Modified();
     }
-  else if (caller == this->InteractionHandleToWorldMatrix.GetPointer())
+  else if (caller == this->InteractionHandleToWorldMatrix.GetPointer() && !this->IsUpdatingInteractionHandleToWorldMatrix)
     {
-    vtkNew<vtkMatrix4x4> worldToLocalTransform;
-    if (this->GetParentTransformNode())
+    // InteractionHandleToWorldMatrix was modified externally,
+    // align the ROIToLocal matrix to the interaction handle directions.
+
+    double center_World[4] = { 0.0, 0.0, 0.0, 1.0 };
+    this->InteractionHandleToWorldMatrix->MultiplyPoint(center_World, center_World);
+
+    vtkNew<vtkGeneralTransform> worldToLocal;
+    vtkMRMLTransformNode::GetTransformBetweenNodes(nullptr, this->GetParentTransformNode(), worldToLocal);
+
+    double xAxis_World[3] = {
+      this->InteractionHandleToWorldMatrix->GetElement(0, 0),
+      this->InteractionHandleToWorldMatrix->GetElement(1, 0),
+      this->InteractionHandleToWorldMatrix->GetElement(2, 0) };
+    double xAxis_Local[3] = { 1.0, 0.0, 0.0 };
+    worldToLocal->TransformVectorAtPoint(center_World, xAxis_World, xAxis_Local);
+    vtkMath::Normalize(xAxis_Local);
+
+    double yAxis_World[3] = {
+      this->InteractionHandleToWorldMatrix->GetElement(0, 1),
+      this->InteractionHandleToWorldMatrix->GetElement(1, 1),
+      this->InteractionHandleToWorldMatrix->GetElement(2, 1) };
+    double yAxis_Local[3] = { 0.0, 1.0, 0.0 };
+    worldToLocal->TransformVectorAtPoint(center_World, yAxis_World, yAxis_Local);
+    vtkMath::Normalize(yAxis_Local);
+
+    double zAxis_World[3] = {
+      this->InteractionHandleToWorldMatrix->GetElement(0, 2),
+      this->InteractionHandleToWorldMatrix->GetElement(1, 2),
+      this->InteractionHandleToWorldMatrix->GetElement(2, 2) };
+    double zAxis_Local[3] = { 0.0, 0.0, 1.0 };
+    worldToLocal->TransformVectorAtPoint(center_World, zAxis_World, zAxis_Local);
+    vtkMath::Normalize(zAxis_Local);
+
+    double center_Local[3] = { 0.0, 0.0, 0.0 };
+    worldToLocal->TransformPoint(center_World, center_Local);
+
+    vtkNew<vtkMatrix4x4> roiToLocalMatrix;
+    for (int i = 0; i < 3; ++i)
       {
-      this->GetParentTransformNode()->GetMatrixTransformFromWorld(worldToLocalTransform);
+      roiToLocalMatrix->SetElement(i, 0, xAxis_Local[i]);
+      roiToLocalMatrix->SetElement(i, 1, yAxis_Local[i]);
+      roiToLocalMatrix->SetElement(i, 2, zAxis_Local[i]);
+      roiToLocalMatrix->SetElement(i, 3, center_Local[i]);
       }
 
-    vtkNew<vtkTransform> roiToLocalTransform;
-    roiToLocalTransform->Concatenate(worldToLocalTransform);
-    roiToLocalTransform->Concatenate(this->InteractionHandleToWorldMatrix);
-    this->ROIToLocalMatrix->DeepCopy(roiToLocalTransform->GetMatrix());
+    this->ROIToLocalMatrix->DeepCopy(roiToLocalMatrix);
     this->Modified();
     }
   Superclass::ProcessMRMLEvents(caller, event, callData);
@@ -509,6 +602,78 @@ void vtkMRMLMarkupsROINode::SetSize(double x, double y, double z)
   this->Size[2] = z;
   this->UpdateControlPointsFromROI();
   this->Modified();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsROINode::GetSizeWorld(double size_World[3])
+{
+  vtkNew<vtkGeneralTransform> localToWorldTransform;
+  vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), nullptr, localToWorldTransform);
+  double center_Local[3] = { 0.0, 0.0, 0.0 };
+  this->GetCenter(center_Local);
+
+  double xAxis_Local[3] = { 1.0, 0.0, 0.0 };
+  double xAxis_World[3] = { 1.0, 0.0, 0.0 };
+  this->GetXAxisLocal(xAxis_Local);
+  localToWorldTransform->TransformVectorAtPoint(center_Local, xAxis_Local, xAxis_World);
+
+  double yAxis_Local[3] = { 0.0, 1.0, 0.0 };
+  double yAxis_World[3] = { 0.0, 1.0, 0.0 };
+  this->GetYAxisLocal(yAxis_Local);
+  localToWorldTransform->TransformVectorAtPoint(center_Local, yAxis_Local, yAxis_World);
+
+  double zAxis_Local[3] = { 0.0, 0.0, 1.0 };
+  double zAxis_World[3] = { 0.0, 0.0, 1.0 };
+  this->GetZAxisLocal(zAxis_Local);
+  localToWorldTransform->TransformVectorAtPoint(center_Local, zAxis_Local, zAxis_World);
+
+  size_World[0] = this->Size[0] * vtkMath::Norm(xAxis_World);
+  size_World[1] = this->Size[1] * vtkMath::Norm(yAxis_World);
+  size_World[2] = this->Size[2] * vtkMath::Norm(zAxis_World);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsROINode::SetSizeWorld(const double size_World[3])
+{
+  this->SetSizeWorld(size_World[0], size_World[1], size_World[2]);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsROINode::SetSizeWorld(double x_World, double y_World, double z_World)
+{
+  vtkNew<vtkGeneralTransform> localToWorldTransform;
+  vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), nullptr, localToWorldTransform);
+  double center_Local[3] = { 0.0, 0.0, 0.0 };
+  this->GetCenter(center_Local);
+
+  double xAxis_Local[3] = { 1.0, 0.0, 0.0 };
+  double xAxis_World[3] = { 1.0, 0.0, 0.0 };
+  this->GetXAxisLocal(xAxis_Local);
+  localToWorldTransform->TransformVectorAtPoint(center_Local, xAxis_Local, xAxis_World);
+
+  double yAxis_Local[3] = { 0.0, 1.0, 0.0 };
+  double yAxis_World[3] = { 0.0, 1.0, 0.0 };
+  this->GetXAxisLocal(yAxis_Local);
+  localToWorldTransform->TransformVectorAtPoint(center_Local, yAxis_Local, yAxis_World);
+
+  double zAxis_Local[3] = { 0.0, 0.0, 1.0 };
+  double zAxis_World[3] = { 0.0, 0.0, 1.0 };
+  this->GetXAxisLocal(zAxis_Local);
+  localToWorldTransform->TransformVectorAtPoint(center_Local, zAxis_Local, zAxis_World);
+
+  double xAxis_Scale = vtkMath::Norm(xAxis_World);
+  double yAxis_Scale = vtkMath::Norm(yAxis_World);
+  double zAxis_Scale = vtkMath::Norm(zAxis_World);
+  if (xAxis_Scale == 0.0 || yAxis_Scale == 0.0 || zAxis_Scale == 0.0)
+    {
+    return;
+    }
+
+  double size_Local[3] = { 0.0, 0.0, 0.0 };
+  size_Local[0] = x_World / xAxis_Scale;
+  size_Local[1] = y_World / yAxis_Scale;
+  size_Local[2] = z_World / zAxis_Scale;
+  this->SetSize(size_Local);
 }
 
 //----------------------------------------------------------------------------
@@ -781,30 +946,44 @@ void vtkMRMLMarkupsROINode::UpdateControlPointsFromBoxROI()
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsROINode::UpdateInteractionHandleToWorldMatrix()
 {
-  vtkNew<vtkMatrix4x4> localToWorldMatrix;
-  if (this->GetParentTransformNode())
-    {
-    this->GetParentTransformNode()->GetMatrixTransformBetweenNodes(this->GetParentTransformNode(), nullptr, localToWorldMatrix);
-    }
+  bool wasUpdatingInteractionHandleToWorldMatrix = this->IsUpdatingInteractionHandleToWorldMatrix;
+  this->IsUpdatingInteractionHandleToWorldMatrix = true;
 
-  // The InteractionHandleToWorld matrix is equivalent to the ROIToWorld matrix.
-  vtkNew<vtkTransform> handleToWorldMatrix;
-  handleToWorldMatrix->Concatenate(localToWorldMatrix);
-  handleToWorldMatrix->Concatenate(this->ROIToLocalMatrix);
-  this->InteractionHandleToWorldMatrix->DeepCopy(handleToWorldMatrix->GetMatrix());
+  vtkNew<vtkMatrix4x4> newInteractionHandleToWorldMatrix;
+
+  double xAxis_World[3] = { 1.0, 0.0, 0.0 };
+  this->GetXAxisWorld(xAxis_World);
+
+  double yAxis_World[3] = { 0.0, 1.0, 0.0 };
+  this->GetYAxisWorld(yAxis_World);
+
+  double zAxis_World[3] = { 0.0, 0.0, 1.0 };
+  this->GetZAxisWorld(zAxis_World);
+
+  double origin_World[3] = { 0.0, 0.0, 0.0 };
+  this->GetCenterWorld(origin_World);
+  for (int i = 0; i < 3; ++i)
+    {
+    newInteractionHandleToWorldMatrix->SetElement(i, 0, xAxis_World[i]);
+    newInteractionHandleToWorldMatrix->SetElement(i, 1, yAxis_World[i]);
+    newInteractionHandleToWorldMatrix->SetElement(i, 2, zAxis_World[i]);
+    newInteractionHandleToWorldMatrix->SetElement(i, 3, origin_World[i]);
+    }
+  this->InteractionHandleToWorldMatrix->DeepCopy(newInteractionHandleToWorldMatrix);
+  this->IsUpdatingInteractionHandleToWorldMatrix = wasUpdatingInteractionHandleToWorldMatrix;
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsROINode::GetXYZ(double center[3])
 {
-  this->GetCenterWorld(center);
+  this->GetCenter(center);
   return true;
 }
 
 //---------------------------------------------------------------------------
 int vtkMRMLMarkupsROINode::SetXYZ(double center[3])
 {
-  this->SetCenterWorld(center);
+  this->SetCenter(center);
   return true;
 }
 

@@ -274,7 +274,7 @@ void vtkSlicerROIWidget::ScaleWidget(double eventPos[2], bool symmetricScale)
       }
 
     double oldSize[3] = { 0.0, 0.0, 0.0 };
-    markupsNode->GetSize(oldSize);
+    markupsNode->GetSizeWorld(oldSize);
 
     double scaleVector_World[3] = { 0.0, 0.0, 0.0 };
     vtkMath::Subtract(eventPos_World, lastEventPos_World, scaleVector_World);

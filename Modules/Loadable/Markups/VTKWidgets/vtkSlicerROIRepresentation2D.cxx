@@ -190,7 +190,7 @@ void vtkSlicerROIRepresentation2D::UpdateCubeSourceFromMRML(vtkMRMLMarkupsROINod
     }
 
   double sideLengths[3] = { 0.0, 0.0, 0.0 };
-  roiNode->GetSize(sideLengths);
+  roiNode->GetSizeWorld(sideLengths);
   cubeSource->SetXLength(sideLengths[0]);
   cubeSource->SetYLength(sideLengths[1]);
   cubeSource->SetZLength(sideLengths[2]);
@@ -570,7 +570,7 @@ void vtkSlicerROIRepresentation2D::MarkupsInteractionPipelineROI2D::UpdateScaleH
   worldToROITransform->TransformVector(viewPlaneNormal4, viewPlaneNormal_ROI);
 
   double sideLengths[3] = { 0.0,  0.0, 0.0 };
-  roiNode->GetSize(sideLengths);
+  roiNode->GetSizeWorld(sideLengths);
   vtkMath::MultiplyScalar(sideLengths, 0.5);
 
   vtkNew<vtkPoints> roiPoints;
@@ -698,21 +698,5 @@ void vtkSlicerROIRepresentation2D::MarkupsInteractionPipelineROI2D::UpdateScaleH
     }
   roiPoints->SetPoint(vtkMRMLMarkupsROINode::HandleSFace, sFacePoint_ROI);
 
-  vtkNew<vtkTransform> worldToHandleTransform;
-  worldToHandleTransform->DeepCopy(this->HandleToWorldTransform);
-  worldToHandleTransform->Inverse();
-
-  vtkNew<vtkTransform> roiToHandleTransform;
-  roiToHandleTransform->Concatenate(roiToWorldMatrix);
-  roiToHandleTransform->Concatenate(worldToHandleTransform);
-
-  vtkNew<vtkPolyData> scaleHandlePoints;
-  scaleHandlePoints->SetPoints(roiPoints);
-
-  vtkNew<vtkTransformPolyDataFilter> transformHandlesWorldToHandleFilter;
-  transformHandlesWorldToHandleFilter->SetInputData(scaleHandlePoints);
-  transformHandlesWorldToHandleFilter->SetTransform(roiToHandleTransform);
-  transformHandlesWorldToHandleFilter->Update();
-
-  this->ScaleHandlePoints->SetPoints(transformHandlesWorldToHandleFilter->GetOutput()->GetPoints());
+  this->ScaleHandlePoints->SetPoints(roiPoints);
 }
