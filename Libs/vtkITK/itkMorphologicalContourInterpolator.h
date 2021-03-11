@@ -22,7 +22,7 @@
 #include "itkConnectedComponentImageFilter.h"
 #include "itkExtractImageFilter.h"
 #include "itkImageToImageFilter.h"
-#include "itksys/hash_map.hxx"
+#include <unordered_map>
 
 namespace itk
 {
@@ -69,7 +69,7 @@ class MorphologicalContourInterpolator:
   friend class MorphologicalContourInterpolatorParallelInvoker;
 
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(MorphologicalContourInterpolator);
+  ITK_DISALLOW_COPY_AND_MOVE(MorphologicalContourInterpolator);
 
   /** Standard class type alias. */
   using Self = MorphologicalContourInterpolator;
@@ -207,7 +207,7 @@ public:
   }
 
   // each label gets a set of slices in which it is present
-  using LabeledSlicesType = itksys::hash_map< typename TImage::PixelType, SliceSetType >;
+  using LabeledSlicesType = std::unordered_map< typename TImage::PixelType, SliceSetType >;
   using SliceIndicesType = std::vector< LabeledSlicesType >;
 
   /** Slice indices between which interpolation is done. */
@@ -364,7 +364,7 @@ protected:
     typename SliceType::Pointer& jConn,
     const PixelList& jRegionIds );
 
-  using BoundingBoxesType = itksys::hash_map< typename TImage::PixelType, typename TImage::RegionType >;
+  using BoundingBoxesType = std::unordered_map< typename TImage::PixelType, typename TImage::RegionType >;
   BoundingBoxesType m_BoundingBoxes; // bounding box for each label
 
   /** Calculates a bounding box of non-zero pixels. */
