@@ -312,10 +312,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
     threshold.ReplaceInOn()
     threshold.ThresholdByLower(0)
     threshold.SetOutputScalarType(vtk.VTK_UNSIGNED_CHAR)
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      threshold.SetInput(allSegmentsLabelmapNode.GetImageData())
-    else:
-      threshold.SetInputData(allSegmentsLabelmapNode.GetImageData())
+    threshold.SetInputData(allSegmentsLabelmapNode.GetImageData())
     threshold.Update()
     allSegmentsLabelmapNode.GetImageData().ShallowCopy(threshold.GetOutput())
     labelSegment = slicer.vtkSlicerSegmentationsModuleLogic.CreateSegmentFromLabelmapVolumeNode(allSegmentsLabelmapNode)
