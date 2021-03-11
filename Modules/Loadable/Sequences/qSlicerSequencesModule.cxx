@@ -293,18 +293,10 @@ void qSlicerSequencesModule::updateAllVirtualOutputNodes()
   vtkSlicerSequencesLogic* sequencesLogic = vtkSlicerSequencesLogic::SafeDownCast(l);
   if (sequencesLogic)
     {
-    qSlicerApplication* application = qSlicerApplication::application();
-    if (application)
-      {
-      application->pauseRender();
-      }
+    SlicerRenderBlocker renderBlocker;
     // update proxies then request another singleShot timer
     sequencesLogic->UpdateAllProxyNodes();
     d->UpdateAllVirtualOutputNodesTimer.start(UPDATE_VIRTUAL_OUTPUT_NODES_PERIOD_SEC*1000.0);
-    if (application)
-      {
-      application->resumeRender();
-      }
     }
 }
 

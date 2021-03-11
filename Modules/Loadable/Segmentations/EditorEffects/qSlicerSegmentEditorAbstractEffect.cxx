@@ -49,6 +49,7 @@
 #include "qMRMLSliceView.h"
 #include "qMRMLThreeDWidget.h"
 #include "qMRMLThreeDView.h"
+#include "qSlicerCoreApplication.h"
 #include "vtkMRMLSliceLogic.h"
 
 // MRML includes
@@ -295,6 +296,9 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
     this->defaultModifierLabelmap();
     return;
     }
+
+  // Prevent disappearing and reappearing of 3D representation during update
+  SlicerRenderBlocker renderBlocker;
 
   vtkSmartPointer<vtkOrientedImageData> modifierLabelmap = modifierLabelmapInput;
   if ((!bypassMasking && parameterSetNode->GetMaskMode() != vtkMRMLSegmentEditorNode::PaintAllowedEverywhere) ||

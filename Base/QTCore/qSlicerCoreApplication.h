@@ -605,4 +605,32 @@ private:
 
 Q_DECLARE_METATYPE(qSlicerCoreApplication::ReturnCode)
 
+/// \brief Safe replacement of qSlicerCoreApplication::pauseRender/resumeRender.
+///
+/// SlicerRenderBlocker can be used wherever you would otherwise use
+/// a pair of calls to app->pauseRender() and app->resumeRender().
+/// It pauses rendering in its constructor and in the destructor it
+/// restores previous rendering state.
+///
+class Q_SLICER_BASE_QTCORE_EXPORT SlicerRenderBlocker
+{
+public:
+  qSlicerCoreApplication* Application;
+  SlicerRenderBlocker()
+  {
+    this->Application = qSlicerCoreApplication::application();
+    if (this->Application)
+      {
+      this->Application->pauseRender();
+      }
+  };
+  ~SlicerRenderBlocker()
+  {
+    if (this->Application)
+      {
+      this->Application->resumeRender();
+      }
+  }
+};
+
 #endif
