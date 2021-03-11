@@ -22,6 +22,7 @@
 // Volume Rendering includes
 #include "vtkMRMLVolumeRenderingDisplayableManager.h"
 
+#include "vtkSlicerConfigure.h" // For Slicer_VTK_RENDERING_USE_OpenGL2_BACKEND
 #include "vtkSlicerVolumeRenderingLogic.h"
 #include "vtkMRMLCPURayCastVolumeRenderingDisplayNode.h"
 #include "vtkMRMLGPURayCastVolumeRenderingDisplayNode.h"
@@ -66,6 +67,16 @@
 #include <vtkImageData.h> //TODO: Used for workaround. Remove when fixed
 #include <vtkTrivialProducer.h> //TODO: Used for workaround. Remove when fixed
 #include <vtkPiecewiseFunction.h> //TODO: Used for workaround. Remove when fixed
+
+// Register VTK object factory overrides
+#include <vtkAutoInit.h>
+#if defined(Slicer_VTK_RENDERING_USE_OpenGL2_BACKEND)
+VTK_MODULE_INIT(vtkRenderingContextOpenGL2);
+VTK_MODULE_INIT(vtkRenderingVolumeOpenGL2);
+#else
+VTK_MODULE_INIT(vtkRenderingContextOpenGL);
+VTK_MODULE_INIT(vtkRenderingVolumeOpenGL);
+#endif
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLVolumeRenderingDisplayableManager);
