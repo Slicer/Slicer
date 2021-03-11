@@ -59,24 +59,7 @@ void vtkMRMLMeasurementVolume::Compute()
   roiNode->GetSize(size);
   double volume = size[0] * size[1] * size[2];
 
-  vtkMRMLUnitNode* unitNode = roiNode->GetUnitNode("volume");
-  std::string printFormat;
-  std::string unit;
-  if (unitNode)
-    {
-    if (unitNode->GetSuffix())
-      {
-      unit = unitNode->GetSuffix();
-      }
-    volume = unitNode->GetDisplayValueFromValue(volume);
-    printFormat = unitNode->GetDisplayStringFormat();
-    }
-  else
-    {
-    unit = "cm3"; // mm3 would be too small for most clinical values
-    volume *= 0.001; // length unit is mm by default, so display coefficient for cm3 is 0.001
-    printFormat = "%-#4.4gcm3";
-    }
-
-  this->SetValue(volume, unit, printFormat, vtkMRMLMeasurement::OK);
+  // Default unit is cm3 because mm3 would be too small for most clinical values.
+  // Accordingly, since length unit is mm by default, display coefficient for cm3 is 0.001.
+  this->SetValue(volume, roiNode->GetUnitNode("volume"), vtkMRMLMeasurement::OK, "cm3", 0.001, "%-#4.4g%s");
 }

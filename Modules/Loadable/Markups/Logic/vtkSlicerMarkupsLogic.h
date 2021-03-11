@@ -39,6 +39,7 @@ class vtkMRMLMarkupsNode;
 class vtkMRMLMarkupsClosedCurveNode;
 class vtkMRMLMarkupsDisplayNode;
 class vtkMRMLMarkupsJsonStorageNode;
+class vtkMRMLMessageCollection;
 class vtkMRMLSelectionNode;
 class vtkPlane;
 class vtkPoints;
@@ -113,13 +114,13 @@ public:
   /// Load a markups fiducial list from fileName, return nullptr on error, node ID string
   /// otherwise. Adds the appropriate storage and display nodes to the scene
   /// as well.
-  char* LoadMarkups(const char* fileName, const char* fidsName=nullptr);
+  char* LoadMarkups(const char* fileName, const char* fidsName=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
 
   /// This method is deprecated. It is kept for backward compatibility only, it does the same as LoadMarkups method.
-  char* LoadMarkupsFiducials(const char* fileName, const char* fidsName = nullptr);
+  char* LoadMarkupsFiducials(const char* fileName, const char* fidsName=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
 
-  char* LoadMarkupsFromFcsv(const char* fileName, const char* nodeName/*=nullptr*/);
-  char* LoadMarkupsFromJson(const char* fileName, const char* nodeName/*=nullptr*/);
+  char* LoadMarkupsFromFcsv(const char* fileName, const char* nodeName=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
+  char* LoadMarkupsFromJson(const char* fileName, const char* nodeName=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
 
   /// Utility methods to operate on all markups in a markups node
   void SetAllMarkupsVisibility(vtkMRMLMarkupsNode *node, bool flag);

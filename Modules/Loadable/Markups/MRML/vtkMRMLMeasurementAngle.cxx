@@ -48,8 +48,8 @@ void vtkMRMLMeasurementAngle::Compute()
     }
 
   vtkMRMLMarkupsAngleNode* angleNode = vtkMRMLMarkupsAngleNode::SafeDownCast(this->InputMRMLNode);
-  vtkMRMLUnitNode* unitNode = nullptr;
 
+  vtkMRMLUnitNode* unitNode = nullptr;
   double angle = 0.0;
   if (angleNode)
     {
@@ -85,21 +85,5 @@ void vtkMRMLMeasurementAngle::Compute()
     return;
     }
 
-  std::string printFormat;
-  std::string unit = "deg";
-  if (unitNode)
-    {
-    if (unitNode->GetSuffix())
-      {
-      unit = unitNode->GetSuffix();
-      }
-    angle = unitNode->GetDisplayValueFromValue(angle);
-    printFormat = unitNode->GetDisplayStringFormat();
-    }
-  else
-    {
-    printFormat = "%3.1f%s";
-    }
-
-  this->SetValue(angle, unit, printFormat, vtkMRMLMeasurement::OK);
+  this->SetValue(angle, angleNode->GetUnitNode("angle"), vtkMRMLMeasurement::OK, "deg", 1.0, "%3.1f%s");
 }

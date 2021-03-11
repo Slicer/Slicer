@@ -22,6 +22,8 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
+class vtkMRMLUnitNode;
+
 /// \brief Class for storing well-defined measurement results, using coded entries.
 ///
 /// This stores all important information about a measurement using standard coded entries.
@@ -74,9 +76,11 @@ public:
   vtkGetMacro(Value, double);
   void SetValue(double value);
 
-  /// Set quantity value and units with a singel modified event
+  /// Set quantity value and units with a single modified event.
+  /// If unitNode is nullptr then defaultUnits, defaultDisplayCoefficient, defaultPrintFormat is used
   /// lastComputationResult type is ComputationResult (int type is used for compatibility with Python wrapper)
-  void SetValue(double value, const std::string& units, const std::string& printFormat, int lastComputationResult);
+  void SetValue(double value, vtkMRMLUnitNode* unitNode, int lastComputationResult,
+    const std::string& defaultUnits, double defaultDisplayCoefficient, const std::string& defaultPrintFormat);
 
   /// Value defined flag (whether a computed value has been set or not)
   vtkGetMacro(ValueDefined, bool);
@@ -116,13 +120,6 @@ public:
 
   /// Get measurement value and units as a single human-readable string.
   std::string GetValueWithUnitsAsPrintableString();
-
-  /// Get content of the object as a single machine-readable string.
-  std::string GetAsString();
-
-  /// Set content of the object from a single machine-readable string.
-  /// \return true on success
-  bool SetFromString(const std::string& content);
 
   /// Set the per-control point measurement values
   void SetControlPointValues(vtkDoubleArray* inputValues);

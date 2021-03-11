@@ -21,6 +21,7 @@
 #include "vtkMRMLMarkupsNode.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLStaticMeasurement.h"
+#include "vtkMRMLUnitNode.h"
 
 #include "vtkMRMLScene.h"
 #include "vtkSlicerVersionConfigure.h"
@@ -28,6 +29,7 @@
 #include "vtkDoubleArray.h"
 #include "vtkObjectFactory.h"
 #include "vtkStringArray.h"
+#include <vtksys/RegularExpression.hxx>
 #include <vtksys/SystemTools.hxx>
 
 #include "itkNumberToString.h"
@@ -50,7 +52,9 @@
 namespace
 {
   const std::string MARKUPS_SCHEMA =
-    "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1.0.0.json#";
+    "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1.0.1.json#";
+  const std::string ACCEPTED_MARKUPS_SCHEMA_REGEX =
+    "^https://raw\\.githubusercontent\\.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1\\.[0-9]+\\.[0-9]+\\.json#";
 }
 
 #include <vtkMRMLMarkupsJsonStorageNode_Private.h>
@@ -67,6 +71,25 @@ vtkMRMLMarkupsJsonStorageNode::vtkInternal::vtkInternal(vtkMRMLMarkupsJsonStorag
 //---------------------------------------------------------------------------
 vtkMRMLMarkupsJsonStorageNode::vtkInternal::~vtkInternal()
 {
+}
+
+//---------------------------------------------------------------------------
+std::string vtkMRMLMarkupsJsonStorageNode::vtkInternal::GetCoordinateUnitsFromSceneAsString(vtkMRMLMarkupsNode* markupsNode)
+{
+  vtkMRMLUnitNode* unitNode = nullptr;
+  if (markupsNode)
+    {
+    unitNode = markupsNode->GetUnitNode("length");
+    }
+  std::string unit = "mm";
+  if (unitNode)
+    {
+    if (unitNode->GetSuffix())
+      {
+      unit = unitNode->GetSuffix();
+      }
+    }
+  return unit;
 }
 
 //---------------------------------------------------------------------------
@@ -102,10 +125,13 @@ rapidjson::Document* vtkMRMLMarkupsJsonStorageNode::vtkInternal::CreateJsonDocum
     return nullptr;
     }
   rapidjson::Value& schema = (*jsonRoot)["@schema"];
-  if (schema.GetString() != MARKUPS_SCHEMA)
+
+  vtksys::RegularExpression filterProgressRegExp(ACCEPTED_MARKUPS_SCHEMA_REGEX);
+  if (!filterProgressRegExp.find(schema.GetString()))
     {
     vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::ReadDataInternal",
-      "File reading failed. File '" << filePath << "' is expected to contain @schema: " << MARKUPS_SCHEMA);
+      "File reading failed. File '" << filePath << "' is expected to contain @schema: "
+      << MARKUPS_SCHEMA << " (different minor and patch version numbers are accepted).");
     delete jsonRoot;
     return nullptr;
     }
@@ -300,6 +326,38 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements(rapidjson::Val
       {
       measurement->SetValue(measurementItem["value"].GetDouble());
       }
+    if (measurementItem.HasMember("units"))
+      {
+      rapidjson::Value& unitsItem = measurementItem["units"];
+      std::string unitsValue;
+      std::string unitsScheme = "UCUM";
+      std::string unitsMeaning;
+      vtkSmartPointer<vtkCodedEntry> unitsCode;
+      if (unitsItem.IsArray() && unitsItem.Size()>0)
+        {
+        unitsCode = measurement->GetUnitsCode();
+        if (!unitsCode)
+          {
+          unitsCode = vtkSmartPointer<vtkCodedEntry>::New();
+          }
+        unitsValue = unitsItem[0].GetString();
+        if (unitsItem.Size() > 1)
+          {
+          unitsScheme = unitsItem[1].GetString();
+          }
+        if (unitsItem.Size() > 2)
+          {
+          unitsMeaning = unitsItem[2].GetString();
+          }
+        unitsCode->SetValueSchemeMeaning(unitsValue, unitsScheme, unitsMeaning);
+        }
+      else if (unitsItem.IsString())
+        {
+        unitsValue = unitsItem.GetString();
+        }
+      measurement->SetUnits(unitsValue);
+      measurement->SetUnitsCode(unitsCode);
+      }
     if (measurementItem.HasMember("description"))
       {
       measurement->SetDescription(measurementItem["description"].GetString());
@@ -311,39 +369,83 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::ReadMeasurements(rapidjson::Val
 
     if (measurementItem.HasMember("quantityCode"))
       {
-      if (!measurement->GetQuantityCode())
+      rapidjson::Value& codedItem = measurementItem["quantityCode"];
+      if (codedItem.IsArray() && codedItem.Size()>1)
         {
-        vtkNew<vtkCodedEntry> quantityCode;
-        measurement->SetQuantityCode(quantityCode);
+        if (!measurement->GetQuantityCode())
+          {
+          vtkNew<vtkCodedEntry> quantityCode;
+          measurement->SetQuantityCode(quantityCode);
+          }
+        std::string codedMeaning;
+        if (codedItem.Size() > 2)
+          {
+          codedMeaning = codedItem[2].GetString();
+          }
+        measurement->GetQuantityCode()->SetValueSchemeMeaning(codedItem[0].GetString(), codedItem[1].GetString(), codedMeaning);
         }
-      measurement->GetQuantityCode()->SetFromString(measurementItem["quantityCode"].GetString());
+      else
+        {
+        measurement->SetQuantityCode(nullptr);
+        }
       }
+    else
+      {
+      measurement->SetQuantityCode(nullptr);
+      }
+
     if (measurementItem.HasMember("derivationCode"))
       {
-      if (!measurement->GetDerivationCode())
+      rapidjson::Value& codedItem = measurementItem["derivationCode"];
+      if (codedItem.IsArray() && codedItem.Size()>1)
         {
-        vtkNew<vtkCodedEntry> derivationCode;
-        measurement->SetDerivationCode(derivationCode);
+        if (!measurement->GetDerivationCode())
+          {
+          vtkNew<vtkCodedEntry> quantityCode;
+          measurement->SetDerivationCode(quantityCode);
+          }
+        std::string codedMeaning;
+        if (codedItem.Size() > 2)
+          {
+          codedMeaning = codedItem[2].GetString();
+          }
+        measurement->GetDerivationCode()->SetValueSchemeMeaning(codedItem[0].GetString(), codedItem[1].GetString(), codedMeaning);
         }
-      measurement->GetDerivationCode()->SetFromString(measurementItem["derivationCode"].GetString());
+      else
+        {
+        measurement->SetDerivationCode(nullptr);
+        }
       }
-    if (measurementItem.HasMember("unitsCode"))
+    else
       {
-      if (!measurement->GetUnitsCode())
-        {
-        vtkNew<vtkCodedEntry> unitsCode;
-        measurement->SetUnitsCode(unitsCode);
-        }
-      measurement->GetUnitsCode()->SetFromString(measurementItem["unitsCode"].GetString());
+      measurement->SetDerivationCode(nullptr);
       }
+
     if (measurementItem.HasMember("methodCode"))
       {
-      if (!measurement->GetMethodCode())
+      rapidjson::Value& codedItem = measurementItem["methodCode"];
+      if (codedItem.IsArray() && codedItem.Size()>1)
         {
-        vtkNew<vtkCodedEntry> methodCode;
-        measurement->SetMethodCode(methodCode);
+        if (!measurement->GetMethodCode())
+          {
+          vtkNew<vtkCodedEntry> quantityCode;
+          measurement->SetMethodCode(quantityCode);
+          }
+        std::string codedMeaning;
+        if (codedItem.Size() > 2)
+          {
+          codedMeaning = codedItem[2].GetString();
+          }
+        measurement->GetMethodCode()->SetValueSchemeMeaning(codedItem[0].GetString(), codedItem[1].GetString(), codedMeaning);
         }
-      measurement->GetMethodCode()->SetFromString(measurementItem["methodCode"].GetString());
+      else
+        {
+        measurement->SetMethodCode(nullptr);
+        }
+      }
+    else
+      {
+      measurement->SetMethodCode(nullptr);
       }
 
     if (measurementItem.HasMember("controlPointValues"))
@@ -441,6 +543,49 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue(
     this->External->SetCoordinateSystem(coordinateSystemFlag);
     }
   int coordinateSystem = this->External->GetCoordinateSystem();
+
+  std::string coordinateUnits;
+  if (markupObject.HasMember("coordinateUnits"))
+    {
+    rapidjson::Value& unitsItem = markupObject["coordinateUnits"];
+    vtkSmartPointer<vtkCodedEntry> unitsCode;
+    if (unitsItem.IsArray() && unitsItem.Size()>0)
+      {
+      coordinateUnits = unitsItem[0].GetString();
+      if (unitsItem.Size() > 1)
+        {
+        std::string unitsScheme = unitsItem[1].GetString();
+        if (!unitsScheme.empty())
+          {
+          if (unitsScheme != "UCUM")
+            {
+            vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+              "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue",
+              "Markups reading failed: only UCUM coding scheme is supported for coordinateUnits, got " << unitsScheme << " instead");
+            return false;
+            }
+          }
+        }
+      }
+    else if (unitsItem.IsString())
+      {
+      coordinateUnits = unitsItem.GetString();
+      }
+    }
+  if (!coordinateUnits.empty())
+    {
+    std::string coordinateUnitsInScene = this->GetCoordinateUnitsFromSceneAsString(markupsNode);
+    if (!coordinateUnitsInScene.empty() && coordinateUnits != coordinateUnitsInScene)
+      {
+      // We should scale the coordinate values if there is a mismatch but for now we just refuse to load the markups
+      // if units do not match.
+      vtkErrorToMessageCollectionWithObjectMacro(this->External, this->External->GetUserMessages(),
+        "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue",
+        "Markups reading failed: length unit in the scene (" << coordinateUnitsInScene
+          << ") does not match coordinate system unit in the markups file (" << coordinateUnits << ").");
+      return false;
+      }
+    }
 
   if (markupObject.HasMember("locked"))
     {
@@ -668,6 +813,9 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteBasicProperties(
   writer.Key("coordinateSystem");
   writer.String(this->External->GetCoordinateSystemAsString(this->External->GetCoordinateSystem()));
 
+  writer.Key("coordinateUnits");
+  writer.String(this->GetCoordinateUnitsFromSceneAsString(markupsNode).c_str());
+
   writer.Key("locked");
   writer.Bool(markupsNode->GetLocked());
 
@@ -768,7 +916,18 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteMeasurements(
 
     writer.Key("name"); writer.String(measurement->GetName().c_str());
     writer.Key("enabled"); writer.Bool(measurement->GetEnabled());
-    writer.Key("value"); writer.Double(measurement->GetValue());
+    if (measurement->GetValueDefined())
+      {
+      writer.Key("value"); writer.Double(measurement->GetValue());
+      }
+    if (measurement->GetUnitsCode())
+      {
+      writer.Key("units"); writer.String(measurement->GetUnitsCode()->GetAsString().c_str());
+      }
+    else if (!measurement->GetUnits().empty())
+      {
+      writer.Key("units"); writer.String(measurement->GetUnits().c_str());
+      }
     if (!measurement->GetDescription().empty())
       {
       writer.Key("description"); writer.String(measurement->GetDescription().c_str());
@@ -785,10 +944,6 @@ bool vtkMRMLMarkupsJsonStorageNode::vtkInternal::WriteMeasurements(
     if (measurement->GetDerivationCode())
       {
       writer.Key("derivationCode"); writer.String(measurement->GetDerivationCode()->GetAsString().c_str());
-      }
-    if (measurement->GetUnitsCode())
-      {
-      writer.Key("unitsCode"); writer.String(measurement->GetUnitsCode()->GetAsString().c_str());
       }
     if (measurement->GetMethodCode())
       {
@@ -956,6 +1111,11 @@ bool vtkMRMLMarkupsJsonStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 void vtkMRMLMarkupsJsonStorageNode::GetMarkupsTypesInFile(const char* filePath, std::vector<std::string>& outputMarkupsTypes)
 {
   rapidjson::Document* jsonRoot = this->Internal->CreateJsonDocumentFromFile(filePath);
+  if (!jsonRoot)
+    {
+    // error is already logged
+    return;
+    }
   rapidjson::Value& markups = (*jsonRoot)["markups"];
   if (markups.IsArray())
     {

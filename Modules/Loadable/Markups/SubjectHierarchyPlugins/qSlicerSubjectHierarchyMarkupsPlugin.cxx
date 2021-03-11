@@ -57,6 +57,7 @@
 #include <QInputDialog>
 #include <QMenu>
 #include <QStandardItem>
+#include <QTimer>
 
 // Slicer includes
 #include "qSlicerAbstractModuleWidget.h"
@@ -77,23 +78,26 @@ public:
   void init();
 
 public:
-  QAction* RenamePointAction;
-  QAction* DeletePointAction;
-  QAction* ToggleSelectPointAction;
-  QAction* ToggleCurrentItemHandleInteractive;
-  QAction* ToggleHandleInteractive;
+  QAction* RenamePointAction{nullptr};
+  QAction* DeletePointAction{nullptr};
+  QAction* DeleteNodeAction{nullptr};
+  QAction* ToggleSelectPointAction{nullptr};
+  QAction* ToggleCurrentItemHandleInteractive{nullptr};
+  QAction* ToggleHandleInteractive{nullptr};
 
-  QMenu* CurrentItemHandleVisibilityMenu;
-  QAction* CurrentItemHandleVisibilityAction;
-  QAction* ToggleCurrentItemTranslateHandleVisible;
-  QAction* ToggleCurrentItemRotateHandleVisible;
-  QAction* ToggleCurrentItemScaleHandleVisible;
+  QMenu* CurrentItemHandleVisibilityMenu{nullptr};
+  QAction* CurrentItemHandleVisibilityAction{nullptr};
+  QAction* ToggleCurrentItemTranslateHandleVisible{nullptr};
+  QAction* ToggleCurrentItemRotateHandleVisible{nullptr};
+  QAction* ToggleCurrentItemScaleHandleVisible{nullptr};
 
-  QMenu* HandleVisibilityMenu;
-  QAction* HandleVisibilityAction;
-  QAction* ToggleTranslateHandleVisible;
-  QAction* ToggleRotateHandleVisible;
-  QAction* ToggleScaleHandleVisible;
+  QMenu* HandleVisibilityMenu{nullptr};
+  QAction* HandleVisibilityAction{nullptr};
+  QAction* ToggleTranslateHandleVisible{nullptr};
+  QAction* ToggleRotateHandleVisible{nullptr};
+  QAction* ToggleScaleHandleVisible{nullptr};
+
+  QList< vtkWeakPointer<vtkMRMLMarkupsNode> > NodesToDelete;
 
   QVariantMap ViewMenuEventData;
 };
@@ -104,11 +108,6 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyMarkupsPluginPrivate::qSlicerSubjectHierarchyMarkupsPluginPrivate(qSlicerSubjectHierarchyMarkupsPlugin& object)
 : q_ptr(&object)
-, RenamePointAction(nullptr)
-, DeletePointAction(nullptr)
-, ToggleSelectPointAction(nullptr)
-, ToggleCurrentItemHandleInteractive(nullptr)
-, ToggleHandleInteractive(nullptr)
 {
 }
 
@@ -124,6 +123,10 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
   this->DeletePointAction = new QAction("Delete point", q);
   this->DeletePointAction->setObjectName("DeletePointAction");
   QObject::connect(this->DeletePointAction, SIGNAL(triggered()), q, SLOT(deletePoint()));
+
+  this->DeleteNodeAction = new QAction("Delete markup", q);
+  this->DeleteNodeAction->setObjectName("DeleteNodeAction");
+  QObject::connect(this->DeleteNodeAction, SIGNAL(triggered()), q, SLOT(requestDeleteNode()));
 
   this->ToggleSelectPointAction = new QAction("Toggle select point", q);
   this->ToggleSelectPointAction->setObjectName("ToggleSelectPointAction");
@@ -472,7 +475,9 @@ QList<QAction*> qSlicerSubjectHierarchyMarkupsPlugin::viewContextMenuActions()co
   Q_D(const qSlicerSubjectHierarchyMarkupsPlugin);
 
   QList<QAction*> actions;
-  actions << d->RenamePointAction << d->DeletePointAction << d->ToggleSelectPointAction << d->ToggleHandleInteractive << d->HandleVisibilityAction;
+  actions << d->RenamePointAction << d->ToggleSelectPointAction
+    << d->DeletePointAction << d->DeleteNodeAction
+    << d->ToggleHandleInteractive << d->HandleVisibilityAction;
   return actions;
 }
 
@@ -510,6 +515,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
 
     d->RenamePointAction->setVisible(!pointActionsDisabled);
     d->DeletePointAction->setVisible(!pointActionsDisabled);
+    d->DeleteNodeAction->setVisible(true);
     d->ToggleSelectPointAction->setVisible(!pointActionsDisabled);
 
     vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(associatedNode->GetDisplayNode());
@@ -645,6 +651,63 @@ void qSlicerSubjectHierarchyMarkupsPlugin::deletePoint()
   int componentIndex = d->ViewMenuEventData["ComponentIndex"].toInt();
 
   markupsNode->RemoveNthControlPoint(componentIndex);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyMarkupsPlugin::requestDeleteNode()
+{
+  Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
+
+  if (d->ViewMenuEventData.find("NodeID") == d->ViewMenuEventData.end())
+    {
+    qCritical() << Q_FUNC_INFO << ": No node ID found in the view menu event data";
+    return;
+    }
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access MRML scene";
+    return;
+    }
+
+  // Get markups node
+  QString nodeID = d->ViewMenuEventData["NodeID"].toString();
+  vtkMRMLNode* node = scene->GetNodeByID(nodeID.toUtf8().constData());
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(node);
+  if (!markupsNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to get markups node by ID " << nodeID;
+    return;
+    }
+
+  d->NodesToDelete.push_back(markupsNode);
+  QTimer::singleShot(0, this, SLOT(removeNodesToBeDeleted()));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyMarkupsPlugin::removeNodesToBeDeleted()
+{
+  Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
+  if (!scene)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access MRML scene";
+    return;
+    }
+  if (scene->IsClosing())
+    {
+    return;
+    }
+
+  foreach(vtkWeakPointer<vtkMRMLMarkupsNode> markupsNode, d->NodesToDelete)
+    {
+    if (!markupsNode)
+      {
+      continue;
+      }
+    scene->RemoveNode(markupsNode);
+    }
+  d->NodesToDelete.clear();
 }
 
 //-----------------------------------------------------------------------------

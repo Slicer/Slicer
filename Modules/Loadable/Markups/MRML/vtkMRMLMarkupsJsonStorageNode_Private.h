@@ -32,6 +32,8 @@
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/filewritestream.h"
 
+#include <deque>
+
 //---------------------------------------------------------------------------
 class vtkMRMLMarkupsJsonStorageNode::vtkInternal
 {
@@ -56,6 +58,8 @@ public:
   virtual bool WriteMeasurements(rapidjson::PrettyWriter<rapidjson::FileWriteStream> &writer, vtkMRMLMarkupsNode* markupsNode);
   virtual bool WriteDisplayProperties(rapidjson::PrettyWriter<rapidjson::FileWriteStream> &writer, vtkMRMLMarkupsDisplayNode* markupsDisplayNode);
   void WriteVector(rapidjson::PrettyWriter<rapidjson::FileWriteStream>& writer, double* v, int numberOfComponents = 3);
+
+  std::string GetCoordinateUnitsFromSceneAsString(vtkMRMLMarkupsNode* markupsNode);
 
 protected:
   vtkMRMLMarkupsJsonStorageNode* External;

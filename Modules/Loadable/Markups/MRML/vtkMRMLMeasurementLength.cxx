@@ -50,8 +50,8 @@ void vtkMRMLMeasurementLength::Compute()
 
   vtkMRMLMarkupsCurveNode* curveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(this->InputMRMLNode);
   vtkMRMLMarkupsLineNode* lineNode = vtkMRMLMarkupsLineNode::SafeDownCast(this->InputMRMLNode);
-  vtkMRMLUnitNode* unitNode = nullptr;
 
+  vtkMRMLUnitNode* unitNode = nullptr;
   double length = 0.0;
   if (curveNode)
     {
@@ -84,21 +84,5 @@ void vtkMRMLMeasurementLength::Compute()
     return;
     }
 
-  std::string printFormat;
-  std::string unit = "mm";
-  if (unitNode)
-    {
-    if (unitNode->GetSuffix())
-      {
-      unit = unitNode->GetSuffix();
-      }
-    length = unitNode->GetDisplayValueFromValue(length);
-    printFormat = unitNode->GetDisplayStringFormat();
-    }
-  else
-    {
-    printFormat = "%-#4.4gmm";
-    }
-
-  this->SetValue(length, unit, printFormat, vtkMRMLMeasurement::OK);
+  this->SetValue(length, unitNode, vtkMRMLMeasurement::OK, "mm", 1.0, "%-#4.4g%s");
 }

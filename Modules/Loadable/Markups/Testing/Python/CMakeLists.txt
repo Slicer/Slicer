@@ -46,3 +46,7 @@ slicer_add_python_unittest(SCRIPT MarkupsInViewsSelfTest.py
 # Test curvature computation
 slicer_add_python_test(SCRIPT MarkupsCurveMeasurementsTest.py
                        SLICER_ARGS --disable-cli-modules)
+
+# Test other measurements
+slicer_add_python_test(SCRIPT MarkupsMeasurementsTest.py
+                       SLICER_ARGS --disable-cli-modules)
