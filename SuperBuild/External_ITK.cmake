@@ -91,7 +91,6 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
       -DSWIG_EXECUTABLE:PATH=${SWIG_EXECUTABLE}
       -DITK_USE_SYSTEM_SWIG:BOOL=ON
-      -DITK_LEGACY_SILENT:BOOL=ON
       -DWRAP_ITK_INSTALL_COMPONENT_IDENTIFIER:STRING=${Slicer_WRAP_ITK_INSTALL_COMPONENT_IDENTIFIER}
       -DPY_SITE_PACKAGES_PATH:STRING=${PY_SITE_PACKAGES_PATH}
       )
@@ -102,7 +101,7 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
     -DITK_LEGACY_REMOVE:BOOL=OFF   #<-- Allow LEGACY ITKv4 features for now.
-    -DITK_LEGACY_SILENT:BOOL=ON    #<-- Silence for initial ITKv5 migration.
+    -DITK_LEGACY_SILENT:BOOL=OFF   #<-- Use of legacy code will produce compiler warnings
     -DModule_ITKDeprecated:BOOL=ON #<-- Needed for ITKv5 now. (itkMultiThreader.h and MutexLock backwards compatibility.)
     )
 
