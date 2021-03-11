@@ -14,7 +14,7 @@
 #include <vtkMRMLMarkupsFiducialNode.h>
 #include <vtkMRMLMarkupsFiducialStorageNode.h>
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 
@@ -33,36 +33,36 @@ int main(int argc, char *argv[])
   std::string            transform1Filename, transform2Filename;
   std::string            transform1ID, transform2ID;
 
-  if( transform1.empty() )
+  if (transform1.empty())
     {
     std::cerr << "transform1 parameter is required" << std::endl;
     return EXIT_FAILURE;
     }
 
-  if( transform2.empty() )
+  if (transform2.empty())
     {
     std::cerr << "transform2 parameter is required" << std::endl;
     return EXIT_FAILURE;
     }
 
   loc = transform1.find_last_of("#");
-  if( loc != std::string::npos )
+  if (loc != std::string::npos)
     {
     transform1Filename = std::string(transform1.begin(),
                                      transform1.begin() + loc);
     loc++;
 
-    transform1ID = std::string(transform1.begin() + loc, transform1.end() );
+    transform1ID = std::string(transform1.begin() + loc, transform1.end());
     }
 
   loc = transform2.find_last_of("#");
-  if( loc != std::string::npos )
+  if (loc != std::string::npos)
     {
     transform2Filename = std::string(transform2.begin(),
                                      transform2.begin() + loc);
     loc++;
 
-    transform2ID = std::string(transform2.begin() + loc, transform2.end() );
+    transform2ID = std::string(transform2.begin() + loc, transform2.end());
     }
 
   std::cout << "Transform1 filename: " << transform1Filename << std::endl;
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
   std::cout << "Transform2 filename: " << transform2Filename << std::endl;
   std::cout << "Transform2 ID: " << transform2ID << std::endl;
 
-  if( transform1Filename != transform2Filename )
+  if (transform1Filename != transform2Filename)
     {
     std::cerr << "Module only accepts transforms from the same scene. Two scenes were specified: "
               << transform1Filename << " and " << transform2Filename << std::endl;
@@ -78,18 +78,18 @@ int main(int argc, char *argv[])
     }
 
   vtkNew<vtkMRMLScene> scene;
-  scene->SetURL( transform1Filename.c_str() );
+  scene->SetURL(transform1Filename.c_str());
   scene->Import();
 
-  vtkMRMLNode *node = scene->GetNodeByID( transform1ID );
-  if( node )
+  vtkMRMLNode* node = scene->GetNodeByID(transform1ID);
+  if (node)
     {
-    vtkMRMLNode *outNode = scene->GetNodeByID( transform2ID );
+    vtkMRMLNode* outNode = scene->GetNodeByID(transform2ID);
 
-    if( outNode )
+    if (outNode)
       {
-      outNode->Copy( node );
-      scene->Commit( transform2Filename.c_str() );
+      outNode->Copy(node);
+      scene->Commit(transform2Filename.c_str());
       }
     else
       {
@@ -142,12 +142,15 @@ int main(int argc, char *argv[])
       }
     }
   // write out the copy
-  vtkNew<vtkMRMLMarkupsFiducialStorageNode> outputFiducialStorageNode;
-  outputFiducialStorageNode->SetFileName(seedsOutFile.c_str());
-  // the .xml file specifies that it expects the output file in LPS
-  // coordinate system
-  outputFiducialStorageNode->UseLPSOn();
-  outputFiducialStorageNode->WriteData(copiedFiducialNode.GetPointer());
+  if (!seedsOutFile.empty())
+    {
+    vtkNew<vtkMRMLMarkupsFiducialStorageNode> outputFiducialStorageNode;
+    outputFiducialStorageNode->SetFileName(seedsOutFile.c_str());
+    // the .xml file specifies that it expects the output file in LPS
+    // coordinate system
+    outputFiducialStorageNode->UseLPSOn();
+    outputFiducialStorageNode->WriteData(copiedFiducialNode.GetPointer());
+    }
 
   // generic tables
 
