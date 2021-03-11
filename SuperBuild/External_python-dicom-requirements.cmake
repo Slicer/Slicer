@@ -52,7 +52,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
                 --hash=sha256:cc3ea6b23954da84dbee8025c616040d9aa5eaf34ea6895a0a762ee9d3e12e11
   six==1.15.0 --hash=sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced
   retrying==1.3.3 --hash=sha256:08c039560a6da2fe4f2c426d0766e284d3b736e355f8dd24b37367b0bb41973b
-  dicomweb-client==0.50.2 --hash=sha256:e839b925a89e213c9e1f3b5b9046071c50b291e3d54f975e422ee39edd06c3f8
+  dicomweb-client==0.52.0 --hash=sha256:2fd1e6f599198246ca082f25561dce406d9ec32fda0bcec757910c79481e54c9
   ]===])
 
   ExternalProject_Add(${proj}
