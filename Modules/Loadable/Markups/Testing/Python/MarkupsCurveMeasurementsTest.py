@@ -208,4 +208,16 @@ if abs(closedCurveNode.GetMeasurement("curvature max").GetValue() - 1/radius) > 
   exceptionMessage = "Unexpected curvature max value: " + str(closedCurveNode.GetMeasurement("curvature max").GetValue())
   raise Exception(exceptionMessage)
 
+# Check length and area
+
+closedCurveNode.GetMeasurement("length").SetEnabled(True)
+if closedCurveNode.GetMeasurement("length").GetValueWithUnitsAsPrintableString() != '219.9mm':
+  exceptionMessage = "Unexpected curve length value: " + closedCurveNode.GetMeasurement("length").GetValueWithUnitsAsPrintableString()
+  raise Exception(exceptionMessage)
+
+closedCurveNode.GetMeasurement("area").SetEnabled(True)
+if closedCurveNode.GetMeasurement("area").GetValueWithUnitsAsPrintableString() != '38.48cm2':
+  exceptionMessage = "Unexpected curve area value: " + closedCurveNode.GetMeasurement("area").GetValueWithUnitsAsPrintableString()
+  raise Exception(exceptionMessage)
+
 print('Radius of curvature computation is verified successfully')

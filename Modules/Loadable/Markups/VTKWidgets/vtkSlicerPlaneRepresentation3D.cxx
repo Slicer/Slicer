@@ -509,7 +509,7 @@ void vtkSlicerPlaneRepresentation3D::CanInteractWithPlane(
         }
       }
 
-    double closestPointWorld[3] = { 0.0, 0.0, 0.0 };
+    double closestPointWorld[4] = { 0.0, 0.0, 0.0, 1.0 };
     this->Renderer->SetDisplayPoint(closestPointDisplay);
     this->Renderer->DisplayToWorld();
     this->Renderer->GetWorldPoint(closestPointWorld);

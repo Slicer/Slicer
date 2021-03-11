@@ -45,6 +45,7 @@
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLHierarchyNode.h"
 #include "vtkMRMLInteractionNode.h"
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
@@ -707,7 +708,7 @@ void vtkSlicerMarkupsLogic::FocusCameraOnNthPointInMarkup(
 }
 
 //---------------------------------------------------------------------------
-char* vtkSlicerMarkupsLogic::LoadMarkups(const char* fileName, const char* nodeName/*=nullptr*/)
+char* vtkSlicerMarkupsLogic::LoadMarkups(const char* fileName, const char* nodeName/*=nullptr*/, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   if (!fileName)
     {
@@ -726,11 +727,11 @@ char* vtkSlicerMarkupsLogic::LoadMarkups(const char* fileName, const char* nodeN
   //
   if (extension == std::string(".json"))
     {
-    return this->LoadMarkupsFromJson(fileName, nodeName);
+    return this->LoadMarkupsFromJson(fileName, nodeName, userMessages);
     }
   else if (extension == std::string(".fcsv"))
     {
-    return this->LoadMarkupsFromFcsv(fileName, nodeName);
+    return this->LoadMarkupsFromFcsv(fileName, nodeName, userMessages);
     }
   else
     {
@@ -740,14 +741,13 @@ char* vtkSlicerMarkupsLogic::LoadMarkups(const char* fileName, const char* nodeN
 }
 
 //---------------------------------------------------------------------------
-char* vtkSlicerMarkupsLogic::LoadMarkupsFiducials(const char* fileName, const char* fidsName/*=nullptr*/)
+char* vtkSlicerMarkupsLogic::LoadMarkupsFiducials(const char* fileName, const char* fidsName/*=nullptr*/, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
-
-  return this->LoadMarkups(fileName, fidsName);
+  return this->LoadMarkups(fileName, fidsName, userMessages);
 }
 
 //---------------------------------------------------------------------------
-char* vtkSlicerMarkupsLogic::LoadMarkupsFromJson(const char* fileName, const char* nodeName/*=nullptr*/)
+char* vtkSlicerMarkupsLogic::LoadMarkupsFromJson(const char* fileName, const char* nodeName/*=nullptr*/, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   if (!fileName)
     {
@@ -757,6 +757,7 @@ char* vtkSlicerMarkupsLogic::LoadMarkupsFromJson(const char* fileName, const cha
 
   vtkDebugMacro("LoadMarkups, file name = " << fileName << ", nodeName = " << (nodeName ? nodeName : "null"));
 
+  std::vector<std::string> markupsTypes;
   // make a storage node and fiducial node and set the file name
   vtkMRMLMarkupsJsonStorageNode* tempStorageNode = vtkMRMLMarkupsJsonStorageNode::SafeDownCast(
     this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLMarkupsJsonStorageNode"));
@@ -765,9 +766,11 @@ char* vtkSlicerMarkupsLogic::LoadMarkupsFromJson(const char* fileName, const cha
     vtkErrorMacro("LoadMarkups: failed to instantiate markups storage node by class vtkMRMLMarkupsJsonStorageNode");
     return nullptr;
     }
-
-  std::vector<std::string> markupsTypes;
   tempStorageNode->GetMarkupsTypesInFile(fileName, markupsTypes);
+  if (userMessages)
+    {
+    userMessages->AddMessages(tempStorageNode->GetUserMessages());
+    }
   this->GetMRMLScene()->RemoveNode(tempStorageNode);
 
   vtkMRMLMarkupsNode* importedMarkupsNode = nullptr;
@@ -788,6 +791,10 @@ char* vtkSlicerMarkupsLogic::LoadMarkupsFromJson(const char* fileName, const cha
       }
     if (!markupsNode)
       {
+      if (userMessages)
+        {
+        userMessages->AddMessages(storageNode->GetUserMessages());
+        }
       this->GetMRMLScene()->RemoveNode(storageNode);
       }
     }
@@ -801,7 +808,7 @@ char* vtkSlicerMarkupsLogic::LoadMarkupsFromJson(const char* fileName, const cha
 }
 
 //---------------------------------------------------------------------------
-char * vtkSlicerMarkupsLogic::LoadMarkupsFromFcsv(const char* fileName, const char* nodeName/*=nullptr*/)
+char * vtkSlicerMarkupsLogic::LoadMarkupsFromFcsv(const char* fileName, const char* nodeName/*=nullptr*/, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   if (!fileName)
     {
@@ -831,6 +838,10 @@ char * vtkSlicerMarkupsLogic::LoadMarkupsFromFcsv(const char* fileName, const ch
   if (!markupsNode)
     {
     vtkErrorMacro("LoadMarkups: failed to instantiate markups node by class vtkMRMLMarkupsFiducialNode");
+    if (userMessages)
+      {
+      userMessages->AddMessages(storageNode->GetUserMessages());
+      }
     this->GetMRMLScene()->RemoveNode(storageNode);
     return nullptr;
     }
@@ -847,6 +858,10 @@ char * vtkSlicerMarkupsLogic::LoadMarkupsFromFcsv(const char* fileName, const ch
     }
   else
     {
+    if (userMessages)
+      {
+      userMessages->AddMessages(storageNode->GetUserMessages());
+      }
     this->GetMRMLScene()->RemoveNode(storageNode);
     this->GetMRMLScene()->RemoveNode(markupsNode);
     }

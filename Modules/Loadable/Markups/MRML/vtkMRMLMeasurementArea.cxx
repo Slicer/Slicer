@@ -81,23 +81,7 @@ void vtkMRMLMeasurementArea::Compute()
     return;
     }
 
-  std::string printFormat;
-  std::string unit;
-  if (unitNode)
-    {
-    if (unitNode->GetSuffix())
-      {
-      unit = unitNode->GetSuffix();
-      }
-    area = unitNode->GetDisplayValueFromValue(area);
-    printFormat = unitNode->GetDisplayStringFormat();
-    }
-  else
-    {
-    unit = "cm2"; // mm2 would be too small for most clinical values
-    area *= 0.01; // length unit is mm by default, so display coefficient for cm2 is 0.01
-    printFormat = "%-#4.4gcm2";
-    }
-
-  this->SetValue(area, unit, printFormat, vtkMRMLMeasurement::OK);
+  // Default unit is "cm2" because mm2 would be too small for most clinical values.
+  // Accordingly, display coefficient is 0.01 because length unit is mm by default.
+  this->SetValue(area, unitNode, vtkMRMLMeasurement::OK, "cm2", 0.01, "%-#4.4g%s");
 }

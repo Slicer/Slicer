@@ -30,6 +30,9 @@
 #include "vtkMRMLScene.h"
 #include "vtkPolyData.h"
 
+// MRMLLogic includes
+#include <vtkMRMLApplicationLogic.h>
+
 // VTK includes
 #include <vtkNew.h>
 #include <vtkTestingOutputWindow.h>
@@ -50,6 +53,11 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
 
   // set up a scene
   vtkNew<vtkMRMLScene> scene;
+
+  // Application logic - Handle creation of vtkMRMLSelectionNode and vtkMRMLInteractionNode
+  vtkNew<vtkMRMLApplicationLogic> applicationLogic;
+  applicationLogic->SetMRMLScene(scene);
+
   scene->AddNode(markupsNode);
 
   vtkNew<vtkMRMLMarkupsDisplayNode> dispNode;
@@ -126,7 +134,12 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
 
   vtkSmartPointer<vtkMRMLMarkupsNode> markupsNode2 = vtkSmartPointer<vtkMRMLMarkupsNode>::Take(
     vtkMRMLMarkupsNode::SafeDownCast(markupsNode->CreateNodeInstance()));
+
   vtkNew<vtkMRMLScene> scene2;
+  // Application logic - Handle creation of vtkMRMLSelectionNode and vtkMRMLInteractionNode
+  vtkNew<vtkMRMLApplicationLogic> applicationLogic2;
+  applicationLogic2->SetMRMLScene(scene2);
+
   vtkSmartPointer<vtkMRMLMarkupsStorageNode> snode2 = vtkSmartPointer<vtkMRMLMarkupsStorageNode>::Take(
     vtkMRMLMarkupsStorageNode::SafeDownCast(storageNode->CreateNodeInstance()));
 
@@ -279,6 +292,9 @@ int vtkMRMLMarkupsStorageNodeTest2(int argc, char* argv[])
 
   // Test if markups node can be instantiated correctly
   vtkNew<vtkMRMLScene> scene;
+  // Application logic - Handle creation of vtkMRMLSelectionNode and vtkMRMLInteractionNode
+  vtkNew<vtkMRMLApplicationLogic> applicationLogic;
+  applicationLogic->SetMRMLScene(scene);
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsLineNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsAngleNode>::New());

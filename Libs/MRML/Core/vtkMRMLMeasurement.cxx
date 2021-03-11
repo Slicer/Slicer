@@ -9,6 +9,9 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 
 #include "vtkMRMLMeasurement.h"
 
+// MRML include
+#include "vtkMRMLUnitNode.h"
+
 // VTK include
 #include <vtkObjectFactory.h>
 
@@ -147,84 +150,6 @@ void vtkMRMLMeasurement::Copy(vtkMRMLMeasurement* src)
 #ifdef USE_POLYDATA_MEASUREMENTS
   this->SetPolyDataValues(src->PolyDataValues);
 #endif
-}
-
-//----------------------------------------------------------------------------
-std::string vtkMRMLMeasurement::GetAsString()
-{
-  std::string str;
-  /* TODO: implement
-  if (this->CodeValue)
-    {
-    str += "CodeValue:";
-    str += this->CodeValue;
-    }
-  if (this->CodingSchemeDesignator)
-    {
-    if (!str.empty())
-      {
-      str += "|";
-      }
-    str += "CodingSchemeDesignator:";
-    str += this->CodingSchemeDesignator;
-    }
-  if (this->CodeMeaning)
-    {
-    if (!str.empty())
-      {
-      str += "|";
-      }
-    str += "CodeMeaning:";
-    str += this->CodeMeaning;
-    }
-    */
-  return str;
-}
-
-//----------------------------------------------------------------------------
-bool vtkMRMLMeasurement::SetFromString(const std::string& vtkNotUsed(content))
-{
-  this->Initialize();
-  bool success = true;
-  /* TODO: implement
-  std::stringstream attributes(content);
-  std::string attribute;
-  while (std::getline(attributes, attribute, '|'))
-    {
-    int colonIndex = attribute.find(':');
-    std::string name = attribute.substr(0, colonIndex);
-    std::string value = attribute.substr(colonIndex + 1);
-    if (name == "CodeValue")
-      {
-      this->SetCodeValue(value.c_str());
-      }
-    else if (name == "CodingSchemeDesignator")
-      {
-      this->SetCodingSchemeDesignator(value.c_str());
-      }
-    else if (name == "CodeMeaning")
-      {
-      this->SetCodeMeaning(value.c_str());
-      }
-    else
-      {
-      vtkWarningMacro("Parsing coded entry string failed: unknown name " << name << " in " + content);
-      success = false;
-      }
-    }
-  if (this->GetCodeValue() == nullptr)
-    {
-    vtkWarningMacro("Parsing coded entry string failed: CodeValue is not specified in " + content);
-    success = false;
-    }
-  if (this->GetCodingSchemeDesignator() == nullptr)
-    {
-    vtkWarningMacro("Parsing coded entry string failed: CodingSchemeDesignator is not specified in " + content);
-    success = false;
-    }
-  // CodeMeaning is optional
-  */
-  return success;
 }
 
 //----------------------------------------------------------------------------
@@ -396,9 +321,29 @@ void vtkMRMLMeasurement::SetValue(double value)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMeasurement::SetValue(double value, const std::string &units, const std::string& printFormat, int lastComputationResult)
+void vtkMRMLMeasurement::SetValue(double value, vtkMRMLUnitNode* unitNode, int lastComputationResult,
+  const std::string& defaultUnits, double defaultDisplayCoefficient, const std::string& defaultPrintFormat)
 {
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Value to " << value);
+
+  std::string printFormat;
+  std::string units;
+  if (unitNode)
+    {
+    if (unitNode->GetSuffix())
+      {
+      units = unitNode->GetSuffix();
+      }
+    value = unitNode->GetDisplayValueFromValue(value);
+    printFormat = unitNode->GetDisplayStringFormat();
+    }
+  else
+    {
+    units = defaultUnits;
+    value *= defaultDisplayCoefficient;
+    printFormat = defaultPrintFormat;
+    }
+
   bool modified = false;
   if (this->Value != value)
     {

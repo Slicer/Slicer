@@ -26,6 +26,7 @@
 #include "vtkSlicerMarkupsLogic.h"
 
 // MRML includes
+#include "vtkMRMLMessageCollection.h"
 
 // VTK includes
 #include <vtkNew.h>
@@ -114,7 +115,8 @@ bool qSlicerMarkupsReader::load(const IOProperties& properties)
     }
 
   // pass to logic to do the loading
-  char * nodeIDs = d->MarkupsLogic->LoadMarkups(fileName.toUtf8(), name.toUtf8());
+  this->userMessages()->ClearMessages();
+  char * nodeIDs = d->MarkupsLogic->LoadMarkups(fileName.toUtf8(), name.toUtf8(), this->userMessages());
   if (nodeIDs)
     {
     // returned a comma separated list of ids of the nodes that were loaded
