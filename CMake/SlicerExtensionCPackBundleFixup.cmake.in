@@ -316,7 +316,7 @@ function(fixup_slicer_extension)
 
   if(Slicer_USE_PYTHONQT AND ${Slicer_VTK_VERSION_MAJOR} VERSION_GREATER_EQUAL 9)
     list(APPEND candidates_pattern
-      "${ext_dir}/Contents/@Slicer_BUNDLE_EXTENSIONS_LOCATION@bin/Python/vtkmodules/vtk*.so"
+      "${ext_dir}/Contents/@Slicer_BUNDLE_EXTENSIONS_LOCATION@bin/Python/vtkmodules/*.so"
       )
   endif()
 
