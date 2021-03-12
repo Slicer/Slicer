@@ -31,8 +31,8 @@ vtkITKDistanceTransform::~vtkITKDistanceTransform() = default;
 
 template <class T>
 void vtkITKDistanceTransformExecute(vtkITKDistanceTransform *self, vtkImageData* input,
-                vtkImageData* vtkNotUsed(output),
-                T* inPtr, T* outPtr)
+                vtkImageData* output,
+                T* inPtr, T* vtkNotUsed(outPtr))
 {
 
   int dims[3];
@@ -60,7 +60,7 @@ void vtkITKDistanceTransformExecute(vtkITKDistanceTransform *self, vtkImageData*
 
 
   // Calculate the distance transform
-  typedef itk::Image<T,3> DistanceImageType;
+  typedef itk::Image<float,3> DistanceImageType;
   typedef itk::SignedMaurerDistanceMapImageFilter<ImageType, DistanceImageType> DistanceType;
   typename DistanceType::Pointer dist = DistanceType::New();
 
@@ -73,7 +73,9 @@ void vtkITKDistanceTransformExecute(vtkITKDistanceTransform *self, vtkImageData*
   dist->Update();
 
   // Copy to the output
-  memcpy(outPtr, dist->GetOutput()->GetBufferPointer(),
+  output->AllocateScalars(VTK_FLOAT, 1);  // in case the image being worked on is not float type
+  void * oPtr = output->GetScalarPointer();
+  memcpy(oPtr, dist->GetOutput()->GetBufferPointer(),
          dist->GetOutput()->GetBufferedRegion().GetNumberOfPixels() * sizeof(T));
 
 }
