@@ -49,7 +49,6 @@ void vtkMRMLMeasurementAngle::Compute()
 
   vtkMRMLMarkupsAngleNode* angleNode = vtkMRMLMarkupsAngleNode::SafeDownCast(this->InputMRMLNode);
 
-  vtkMRMLUnitNode* unitNode = nullptr;
   double angle = 0.0;
   if (angleNode)
     {
@@ -76,7 +75,6 @@ void vtkMRMLMeasurementAngle::Compute()
       }
 
     angle = angleNode->GetAngleDegrees();
-    unitNode = angleNode->GetUnitNode("angle");
     }
   else
     {
