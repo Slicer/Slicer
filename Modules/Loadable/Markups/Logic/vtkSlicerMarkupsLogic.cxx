@@ -774,7 +774,7 @@ char* vtkSlicerMarkupsLogic::LoadMarkupsFromJson(const char* fileName, const cha
   this->GetMRMLScene()->RemoveNode(tempStorageNode);
 
   vtkMRMLMarkupsNode* importedMarkupsNode = nullptr;
-  for(int markupsIndex = 0; markupsIndex < markupsTypes.size(); ++markupsIndex)
+  for(int markupsIndex = 0; markupsIndex < static_cast<int>(markupsTypes.size()); ++markupsIndex)
     {
     std::string markupsType = markupsTypes[markupsIndex];
     vtkMRMLMarkupsJsonStorageNode* storageNode = this->AddNewJsonStorageNodeForMarkupsType(markupsType);
