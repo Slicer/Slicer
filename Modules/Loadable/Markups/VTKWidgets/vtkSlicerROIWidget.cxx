@@ -214,7 +214,6 @@ void vtkSlicerROIWidget::ScaleWidget(double eventPos[2], bool symmetricScale)
   double eventPos_World[3] = { 0.0 };
   double orientation_World[9] = { 0.0 };
 
-  vtkSlicerMarkupsWidgetRepresentation* rep = vtkSlicerMarkupsWidgetRepresentation::SafeDownCast(this->WidgetRep);
   vtkSlicerROIRepresentation2D* rep2d = vtkSlicerROIRepresentation2D::SafeDownCast(this->WidgetRep);
   vtkSlicerROIRepresentation3D* rep3d = vtkSlicerROIRepresentation3D::SafeDownCast(this->WidgetRep);
   if (rep2d)
