@@ -44,8 +44,12 @@ To create a Slicer package including python libraries, you can *NOT* provide you
     REGEX "/test/" EXCLUDE
     ${extra_exclude_pattern}
     )
+  # Strip symbols of selected libraries for which ones (1) stripping has a
+  # significant impact and (2) stripping does not prevent the import of
+  # of the module.
+  # See https://github.com/Slicer/Slicer/issues/5474
   slicerStripInstalledLibrary(
-    PATTERN "${Slicer_INSTALL_ROOT}lib/Python/${PYTHON_STDLIB_SUBDIR}/*.so"
+    PATTERN "${Slicer_INSTALL_ROOT}lib/Python/${PYTHON_STDLIB_SUBDIR}/_SimpleITK.*.so"
     COMPONENT Runtime
     )
 
