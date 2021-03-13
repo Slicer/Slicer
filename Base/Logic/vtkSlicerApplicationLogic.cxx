@@ -1009,7 +1009,7 @@ void vtkSlicerApplicationLogic::SetCurrentThreadPriorityToBackground()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerApplicationLogic::RequestModifiedCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData)
+void vtkSlicerApplicationLogic::RequestModifiedCallback(vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(eid), void* clientData, void* callData)
 {
   // Note: This method may be called from any thread
   if (clientData == nullptr || callData == nullptr)
