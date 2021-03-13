@@ -423,7 +423,7 @@ vtkMTimeType vtkCurveMeasurementsCalculator::GetMTime()
       mTime = collectionMTime;
       }
     vtkObject* obj = nullptr;
-    for (this->Measurements->InitTraversal(); obj = this->Measurements->GetNextItemAsObject();)
+    for (this->Measurements->InitTraversal(); (obj = this->Measurements->GetNextItemAsObject());)
       {
       vtkMTimeType objMTime = obj->GetMTime();
       if (objMTime > mTime)
