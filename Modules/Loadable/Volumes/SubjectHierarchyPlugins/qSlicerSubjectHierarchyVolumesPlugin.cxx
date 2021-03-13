@@ -428,7 +428,6 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumeInAllViews(
   this->collectShownVolumes(subjectHierarchyItemsToUpdate, layer);
   subjectHierarchyItemsToUpdate.insert(shNode->GetItemByDataNode(node));
 
-  vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
   vtkMRMLSliceCompositeNode* compositeNode = nullptr;
   int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
   for (int i=0; i<numberOfCompositeNodes; i++)
