@@ -528,9 +528,6 @@ void vtkSlicerROIRepresentation3D::MarkupsInteractionPipelineROI::GetHandleColor
   double red[4]       = { 1.00, 0.00, 0.00, 1.00 };
   double green[4]     = { 0.00, 1.00, 0.00, 1.00 };
   double blue[4]      = { 0.00, 0.00, 1.00, 1.00 };
-  double orange[4]    = { 1.00, 0.50, 0.00, 1.00 };
-  double purple[4]    = { 1.00, 0.00, 1.00, 1.00 };
-  double white[4]     = { 1.00, 1.00, 1.00, 1.00 };
   double yellow[4]    = { 1.00, 1.00, 0.00, 1.00 };
   double lightGrey[4] = { 0.90, 0.90, 0.90, 1.00 };
 
