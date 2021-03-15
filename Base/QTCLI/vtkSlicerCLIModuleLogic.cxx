@@ -529,13 +529,6 @@ vtkSlicerCLIModuleLogic
   pid = pidString.str();
   std::transform(pid.begin(), pid.end(), pid.begin(), DigitsToCharacters());
 
-  // Because Python is responsible for looking up the MRML Object,
-  // we can simply return the MRML Id.
-  if ( commandType == PythonModule )
-    {
-    return fname;
-    }
-
   // To avoid confusing the Archetype readers, convert any
   // numbers in the filename to characters [0-9]->[A-J]
   std::transform(fname.begin(), fname.end(),
@@ -701,12 +694,6 @@ void vtkSlicerCLIModuleLogic::KillProcesses()
 void vtkSlicerCLIModuleLogic::Apply ( vtkMRMLCommandLineModuleNode* node, bool updateDisplay )
 {
   bool ret;
-
-  if ( node->GetModuleDescription().GetType() == "PythonModule" )
-    {
-    this->ApplyAndWait ( node );
-    return;
-    }
 
   vtkNew<vtkSlicerTask> task;
   task->SetTypeToProcessing();
@@ -896,12 +883,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       vtkWarningMacro("Module reports that it is a Shared Object Module but does not have a shared object module target. " << target.c_str());
       }
     }
-  else if ( node0->GetModuleDescription().GetType() == "PythonModule" )
-    {
-    // vtkSlicerApplication::GetInstance()->InformationMessage
-    qDebug() << "Found Python Module";
-    commandType = PythonModule;
-    }
+
   // vtkSlicerApplication::GetInstance()->InformationMessage
   qDebug() << "ModuleType:" << node0->GetModuleDescription().GetType().c_str();
 
@@ -1078,11 +1060,6 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     // other image types so that we only write nodes to disk if we are
     // running as a command line executable (and all image types will
     // go through memory in shared object modules).
-    if ( commandType == PythonModule )
-      {
-      // No need to write anything out with Python
-      continue;
-      }
     if ((commandType == CommandLineModule) && defaultOut)
       {
       // Default case for CommandLineModule is to use a storage node
@@ -1356,19 +1333,9 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           }
         if ((*pit).GetTag() == "boolean")
           {
-          // booleans only have a flag (no value) in non-Python modules
-          if ( commandType != PythonModule )
+          if ((*pit).GetValue() == "true")
             {
-            if ((*pit).GetValue() == "true")
-              {
-              commandLineAsString.push_back(prefix + flag);
-              }
-            }
-          else
-            {
-            // For Python, if the flag is true or false, specify that
-            commandLineAsString.push_back ( prefix + flag );
-            commandLineAsString.push_back ( (*pit).GetValue() );
+            commandLineAsString.push_back(prefix + flag);
             }
           continue;
           }
@@ -2239,83 +2206,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       std::cerr.rdbuf( origcerrrdbuf );
       }
     }
-  else if ( commandType == PythonModule )
-    {
-    // For the moment, ignore the output and just run the module
-    // vtkSlicerApplication::GetInstance()->InformationMessage
-    qDebug() << "Preparing to execute Python Module";
 
-    // Now, call Python properly.  For the moment, make a big string...
-    // ...later we'll want to do this through the Python API
-    std::string ExecuteModuleString =
-      "import sys\n"
-      "import Slicer\n"
-      "import inspect\n"
-      "ModuleName = \"" + node0->GetModuleDescription().GetTarget() + "\"\n"
-      "ModuleArgs = []\n"
-      "ArgTags = []\n"
-      "ArgFlags = []\n"
-      "ArgMultiples = []\n";
-
-    //cout<<"-----------------------Individial command line items---------------------"<<endl;
-    // Now add the individual command line items
-    for (std::vector<std::string>::size_type i=1; i < commandLineAsString.size(); ++i)
-      {
-      ExecuteModuleString += "ModuleArgs.append ( '" + commandLineAsString[i] + "' );\n";
-      }
-    for (pgit = pgbeginit; pgit != pgendit; ++pgit)
-      {
-      // iterate over each parameter in this group
-      std::vector<ModuleParameter>::const_iterator pbeginit
-        = (*pgit).GetParameters().begin();
-      std::vector<ModuleParameter>::const_iterator pendit
-        = (*pgit).GetParameters().end();
-      std::vector<ModuleParameter>::const_iterator pit;
-      for (pit = pbeginit; pit != pendit; ++pit)
-        {
-        ExecuteModuleString += "ArgTags.append ( '" + (*pit).GetTag() + "' )\n";
-        ExecuteModuleString += "ArgFlags.append ( '" + (*pit).GetLongFlag() + "' )\n";
-        ExecuteModuleString += "ArgMultiples.append ( '" + (*pit).GetMultiple() + "' )\n";
-        }
-      }
-    // TODO: FlagArgs, PositionalArgs, Arguments are in global scope - potential name clash
-    ExecuteModuleString +=
-      "FlagArgs, PositionalArgs = Slicer.ParseArgs ( ModuleArgs, ArgTags , ArgFlags, ArgMultiples )\n"
-      "Module = __import__ ( ModuleName )\n"
-      "reload ( Module )\n"
-      "Arguments = inspect.getargspec(Module.Execute)[0]\n"
-      "if 'commandLineModuleNode' in Arguments:\n"
-      "  FlagArgs['commandLineModuleNode'] = '";
-    ExecuteModuleString += std::string(node0->GetID()) + "'\n";
-    ExecuteModuleString += "Module.Execute ( *PositionalArgs, **FlagArgs )\n";
-
-// #ifdef Slicer_USE_PYTHON
-//     PyObject* v;
-//     v = PyRun_String(
-//       ExecuteModuleString.c_str(),
-//       Py_file_input,
-//       (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()),
-//       (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()));
-//
-//     if (v == nullptr || PyErr_Occurred())
-//       {
-//       node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
-//       PyErr_Print();
-//       }
-//     else
-//       {
-//       node0->SetStatus(vtkMRMLCommandLineModuleNode::Completed, false);
-//       if (Py_FlushLine())
-//         {
-//         PyErr_Clear();
-//         }
-//       }
-// #else
-    vtkErrorMacro("Attempting to execute a Python Module without Python support enabled");
-// #endif
-
-    this->GetApplicationLogic()->RequestModified( node0 );
-    }
   if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelling)
     {
     node0->SetStatus(vtkMRMLCommandLineModuleNode::Cancelled, false);
