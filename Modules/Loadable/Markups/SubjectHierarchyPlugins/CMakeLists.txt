@@ -28,10 +28,6 @@ set(${KIT}_MOC_SRCS
 set(${KIT}_UI_SRCS
   )
 
-set(${KIT}_RESOURCES
-  Resources/${KIT}.qrc
-  )
-
 #-----------------------------------------------------------------------------
 set(${KIT}_TARGET_LIBRARIES
   vtkSlicer${MODULE_NAME}ModuleMRML
