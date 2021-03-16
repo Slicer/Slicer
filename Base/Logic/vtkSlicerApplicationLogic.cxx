@@ -58,7 +58,6 @@ vtkStandardNewMacro(vtkSlicerApplicationLogic);
 vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
 {
   this->ProcessingThreader = itk::PlatformMultiThreader::New();
-  this->ProcessingThreadId = -1;
   this->ProcessingThreadActive = false;
 
   this->ModifiedQueueActive = false;
@@ -79,20 +78,9 @@ vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
 //----------------------------------------------------------------------------
 vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
 {
-  // Note that TerminateThread does not kill a thread, it only waits
-  // for the thread to finish.  We need to signal the thread that we
-  // want to terminate
-  if (this->ProcessingThreadId != -1 && this->ProcessingThreader)
+  if (this->ProcessingThreader)
     {
-    // Signal the processingThread that we are terminating.
-    this->ProcessingThreadActiveLock.lock();
-    this->ProcessingThreadActive = false;
-    this->ProcessingThreadActiveLock.unlock();
-
-    // Wait for the thread to finish and clean up the state of the threader
-    this->ProcessingThreader->TerminateThread( this->ProcessingThreadId );
-
-    this->ProcessingThreadId = -1;
+    this->TerminateProcessingThread();
     }
 
   delete this->InternalTaskQueue;
@@ -105,6 +93,7 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
     obj->Delete(); // decrement ref count
     }
   this->ModifiedQueueLock.unlock();
+
   delete this->InternalModifiedQueue;
   delete this->InternalReadDataQueue;
   delete this->InternalWriteDataQueue;
@@ -163,16 +152,20 @@ void vtkSlicerApplicationLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::CreateProcessingThread()
 {
-  if (this->ProcessingThreadId == -1)
+  if (this->ProcessingThreadIDs.size() == 0)
     {
     this->ProcessingThreadActiveLock.lock();
     this->ProcessingThreadActive = true;
     this->ProcessingThreadActiveLock.unlock();
 
-    this->ProcessingThreadId
-      = this->ProcessingThreader
-      ->SpawnThread(vtkSlicerApplicationLogic::ProcessingThreaderCallback,
-                    this);
+    // Start processing threads (TODO: make the number of threads a setting)
+    int numberOfProcessingThreads = 2;
+    for(int idx = 0; idx < numberOfProcessingThreads; ++idx)
+      {
+      (void)idx;
+      this->ProcessingThreadIDs.push_back(
+            this->ProcessingThreader->SpawnThread(vtkSlicerApplicationLogic::ProcessingThreaderCallback, this));
+      }
 
     // Start four network threads (TODO: make the number of threads a setting)
     this->NetworkingThreadIDs.push_back ( this->ProcessingThreader
@@ -215,8 +208,12 @@ void vtkSlicerApplicationLogic::CreateProcessingThread()
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::TerminateProcessingThread()
 {
-  if (this->ProcessingThreadId != -1)
+  if (this->ProcessingThreadIDs.size() > 0)
     {
+    // Note that TerminateThread does not kill a thread, it only waits
+    // for the thread to finish.  We need to signal the thread that we
+    // want to terminate by setting the Active flags.
+
     this->ModifiedQueueActiveLock.lock();
     this->ModifiedQueueActive = false;
     this->ModifiedQueueActiveLock.unlock();
@@ -233,10 +230,18 @@ void vtkSlicerApplicationLogic::TerminateProcessingThread()
     this->ProcessingThreadActive = false;
     this->ProcessingThreadActiveLock.unlock();
 
-    this->ProcessingThreader->TerminateThread( this->ProcessingThreadId );
-    this->ProcessingThreadId = -1;
-
     std::vector<int>::const_iterator idIterator;
+
+    // Terminate processing threads
+    idIterator = this->ProcessingThreadIDs.begin();
+    while (idIterator != this->ProcessingThreadIDs.end())
+      {
+      this->ProcessingThreader->TerminateThread( *idIterator );
+      ++idIterator;
+      }
+    this->ProcessingThreadIDs.clear();
+
+    // Terminate networking threads
     idIterator = this->NetworkingThreadIDs.begin();
     while (idIterator != this->NetworkingThreadIDs.end())
       {
