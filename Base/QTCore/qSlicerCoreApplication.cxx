@@ -1314,7 +1314,8 @@ QString qSlicerCoreApplication::launcherExecutableFilePath()const
     {
     return QString();
     }
-  return this->slicerHome() + "/Slicer" + qSlicerUtils::executableExtension();
+  QString appName = this->applicationName().replace("-tmp", "");
+  return this->slicerHome() + "/" + appName + qSlicerUtils::executableExtension();
 }
 
 //-----------------------------------------------------------------------------
