@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>359</width>
-    <height>689</height>
+    <width>368</width>
+    <height>186</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -116,10 +116,10 @@
       <string>Advanced</string>
      </property>
      <property name="checked">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="collapsed">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <property name="topMargin">
@@ -646,11 +646,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qMRMLMarkupsInteractionHandleWidget</class>
-   <extends>qMRMLWidget</extends>
-   <header>qMRMLMarkupsInteractionHandleWidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>ctkCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
    <header>ctkCollapsibleGroupBox.h</header>
@@ -665,6 +660,12 @@
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
    <header>ctkSliderWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLMarkupsInteractionHandleWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLMarkupsInteractionHandleWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
