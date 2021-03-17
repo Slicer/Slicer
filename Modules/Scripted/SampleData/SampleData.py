@@ -288,11 +288,9 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
     Download buttons are organized in collapsible GroupBox with one GroupBox
     per category.
     """
-    numberOfColumns = 3
     iconPath = os.path.join(os.path.dirname(__file__).replace('\\','/'), 'Resources','Icons')
-    desktop = qt.QDesktopWidget()
-    mainScreenSize = desktop.availableGeometry(desktop.primaryScreen)
-    iconSize = qt.QSize(int(mainScreenSize.width()/15),int(mainScreenSize.height()/10))
+    mainWindow = slicer.util.mainWindow()
+    iconSize = qt.QSize(int(mainWindow.width/8),int(mainWindow.height/6))
 
     categories = sorted(dataSources.keys())
 
@@ -310,9 +308,9 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
       categoryLayout.addWidget(frame)
       frame.title = category
       frame.name = '%sCollapsibleGroupBox' % category
-      layout = qt.QGridLayout(frame)
-      columnIndex = 0
-      rowIndex = 0
+      layout = ctk.ctkFlowLayout()
+      layout.preferredExpandingDirections = qt.Qt.Vertical
+      frame.setLayout(layout)
       for source in dataSources[category]:
         name = source.sampleDescription
         if not name:
@@ -345,11 +343,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
         b.setSizePolicy(qSize)
 
         b.name = '%sPushButton' % name
-        layout.addWidget(b, rowIndex, columnIndex)
-        columnIndex += 1
-        if columnIndex==numberOfColumns:
-          rowIndex += 1
-          columnIndex = 0
+        layout.addWidget(b)
         if source.customDownloader:
           b.connect('clicked()', lambda s=source: s.customDownloader(s))
         else:
