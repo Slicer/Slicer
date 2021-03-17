@@ -289,9 +289,8 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
     per category.
     """
     iconPath = os.path.join(os.path.dirname(__file__).replace('\\','/'), 'Resources','Icons')
-    desktop = qt.QDesktopWidget()
-    mainScreenSize = desktop.availableGeometry(desktop.primaryScreen)
-    iconSize = qt.QSize(int(mainScreenSize.width()/15),int(mainScreenSize.height()/10))
+    mainWindow = slicer.util.mainWindow()
+    iconSize = qt.QSize(int(mainWindow.width/8),int(mainWindow.height/6))
 
     categories = sorted(dataSources.keys())
 
