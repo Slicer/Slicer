@@ -245,13 +245,13 @@ void vtkMRMLMarkupsNode::ProcessMRMLEvents(vtkObject *caller,
     vtkObject* measurementObject = nullptr;
     for (this->Measurements->InitTraversal(it); (measurementObject = this->Measurements->GetNextItemAsObject(it)) ;)
       {
-      if (!broker->GetObservationExist(measurementObject, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand))
+      if (!broker->GetObservationExist(measurementObject, vtkMRMLMeasurement::InputDataModifiedEvent, this, this->MRMLCallbackCommand))
         {
-        broker->AddObservation(measurementObject, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand);
+        broker->AddObservation(measurementObject, vtkMRMLMeasurement::InputDataModifiedEvent, this, this->MRMLCallbackCommand);
         }
       }
     }
-  else if (caller->IsA("vtkMRMLMeasurement"))
+  else if (caller->IsA("vtkMRMLMeasurement") && event == vtkMRMLMeasurement::InputDataModifiedEvent)
     {
     this->UpdateAllMeasurements();
     }

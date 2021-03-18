@@ -153,6 +153,54 @@ void vtkMRMLMeasurement::Copy(vtkMRMLMeasurement* src)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLMeasurement::SetEnabled(bool enabled)
+{
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Enabled to " << enabled);
+  if (this->Enabled != enabled)
+    {
+    this->Enabled = enabled;
+    this->Modified();
+    this->InvokeEvent(InputDataModifiedEvent);
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMeasurement::EnabledOn()
+{
+  this->SetEnabled(true);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMeasurement::EnabledOff()
+{
+  this->SetEnabled(false);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMeasurement::SetUnits(std::string units)
+{
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Units to " << units);
+  if (this->Units != units)
+    {
+    this->Units = units;
+    this->Modified();
+    this->InvokeEvent(InputDataModifiedEvent);
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMeasurement::SetPrintFormat(std::string format)
+{
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting PrintFormat to " << format);
+  if (this->PrintFormat != format)
+    {
+    this->PrintFormat = format;
+    this->Modified();
+    this->InvokeEvent(InputDataModifiedEvent);
+    }
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLMeasurement::SetQuantityCode(vtkCodedEntry* entry)
 {
   if (!entry)
@@ -271,7 +319,12 @@ void vtkMRMLMeasurement::SetPolyDataValues(vtkPolyData* inputValues)
 //----------------------------------------------------------------------------
 void vtkMRMLMeasurement::SetInputMRMLNode(vtkMRMLNode* node)
 {
-  this->InputMRMLNode = node;
+  if (this->InputMRMLNode != node)
+    {
+    this->InputMRMLNode = node;
+    this->Modified();
+    this->InvokeEvent(InputDataModifiedEvent);
+    }
 }
 
 //----------------------------------------------------------------------------

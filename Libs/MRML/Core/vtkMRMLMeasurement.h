@@ -17,6 +17,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include "vtkMRMLNode.h"
 
 // VTK includes
+#include <vtkCommand.h>
 #include <vtkDoubleArray.h>
 #include <vtkObject.h>
 #include <vtkPolyData.h>
@@ -46,6 +47,15 @@ public:
     InternalError
     };
 
+  enum Events
+  {
+    /// The node stores both inputs (e.g., input node, enabled, unit, etc.) and computed measurement.
+    /// InputDataModifiedEvent is only invoked when input parameters are changed.
+    /// In contrast, ModifiedEvent event is called if either an input or output parameter is changed.
+    // vtkCommand::UserEvent + 555 is just a random value that is very unlikely to be used for anything else in this class
+    InputDataModifiedEvent = vtkCommand::UserEvent + 555
+  };
+
   vtkTypeMacro(vtkMRMLMeasurement, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -64,9 +74,10 @@ public:
   virtual void Compute() = 0;
 
   /// Enabled
-  vtkSetMacro(Enabled, bool);
   vtkGetMacro(Enabled, bool);
-  vtkBooleanMacro(Enabled, bool);
+  virtual void SetEnabled(bool enabled);
+  virtual void EnabledOn();
+  virtual void EnabledOff();
 
   /// Measurement name
   vtkGetMacro(Name, std::string);
@@ -87,7 +98,7 @@ public:
 
   /// Measurement unit
   vtkGetMacro(Units, std::string);
-  vtkSetMacro(Units, std::string);
+  virtual void SetUnits(std::string units);
 
   /// Informal description of the measurement
   vtkGetMacro(Description, std::string);
@@ -95,7 +106,7 @@ public:
 
   /// Formatting string for displaying measurement value and units
   vtkGetMacro(PrintFormat, std::string);
-  vtkSetMacro(PrintFormat, std::string);
+  virtual void SetPrintFormat(std::string format);
 
   /// Copy content of coded entry
   void SetQuantityCode(vtkCodedEntry* entry);
