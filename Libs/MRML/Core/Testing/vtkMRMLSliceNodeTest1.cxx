@@ -57,21 +57,21 @@ void AddSliceOrientationPresets(vtkMRMLSliceNode* sliceNode)
 {
   {
     vtkNew<vtkMatrix3x3> preset;
-    vtkMRMLSliceNode::InitializeAxialMatrix(preset.GetPointer());
+    vtkMRMLSliceNode::GetAxialSliceToRASMatrix(preset.GetPointer());
 
     sliceNode->AddSliceOrientationPreset("Axial", preset.GetPointer());
   }
 
   {
     vtkNew<vtkMatrix3x3> preset;
-    vtkMRMLSliceNode::InitializeSagittalMatrix(preset.GetPointer());
+    vtkMRMLSliceNode::GetSagittalSliceToRASMatrix(preset.GetPointer());
 
     sliceNode->AddSliceOrientationPreset("Sagittal", preset.GetPointer());
   }
 
   {
     vtkNew<vtkMatrix3x3> preset;
-    vtkMRMLSliceNode::InitializeCoronalMatrix(preset.GetPointer());
+    vtkMRMLSliceNode::GetCoronalSliceToRASMatrix(preset.GetPointer());
 
     sliceNode->AddSliceOrientationPreset("Coronal", preset.GetPointer());
   }
@@ -295,10 +295,10 @@ int GetSliceOrientationPresetNameTest()
   vtkNew<vtkMRMLSliceNode> sliceNode;
 
   vtkNew<vtkMatrix3x3> originalPreset;
-  vtkMRMLSliceNode::InitializeAxialMatrix(originalPreset.GetPointer());
+  vtkMRMLSliceNode::GetAxialSliceToRASMatrix(originalPreset.GetPointer());
 
   vtkNew<vtkMatrix3x3> preset;
-  vtkMRMLSliceNode::InitializeAxialMatrix(preset.GetPointer());
+  vtkMRMLSliceNode::GetAxialSliceToRASMatrix(preset.GetPointer());
   sliceNode->AddSliceOrientationPreset("Axial", preset.GetPointer());
 
 
@@ -413,15 +413,15 @@ int SetOrientationTest()
 int InitializeDefaultMatrixTest()
 {
   vtkNew<vtkMatrix3x3> axial;
-  vtkMRMLSliceNode::InitializeAxialMatrix(axial.GetPointer());
+  vtkMRMLSliceNode::GetAxialSliceToRASMatrix(axial.GetPointer());
   CHECK_NOT_NULL(axial.GetPointer());
 
   vtkNew<vtkMatrix3x3> coronal;
-  vtkMRMLSliceNode::InitializeCoronalMatrix(coronal.GetPointer());
+  vtkMRMLSliceNode::GetCoronalSliceToRASMatrix(coronal.GetPointer());
   CHECK_NOT_NULL(coronal.GetPointer());
 
   vtkNew<vtkMatrix3x3> sagittal;
-  vtkMRMLSliceNode::InitializeSagittalMatrix(sagittal.GetPointer());
+  vtkMRMLSliceNode::GetSagittalSliceToRASMatrix(sagittal.GetPointer());
   CHECK_NOT_NULL(sagittal.GetPointer());
 
   return EXIT_SUCCESS;

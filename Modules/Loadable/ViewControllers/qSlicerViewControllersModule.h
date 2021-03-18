@@ -57,7 +57,7 @@ public:
 
   /// Read default slice view settings from application settings (.ini file)
   /// into defaultViewNode.
-  static void readDefaultSliceViewSettings(vtkMRMLSliceNode* defaultViewNode);
+  void readDefaultSliceViewSettings(vtkMRMLSliceNode* defaultViewNode);
 
   /// Read default 3D view settings from application settings (.ini file)
   /// into defaultViewNode.

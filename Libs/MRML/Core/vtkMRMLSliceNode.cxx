@@ -433,8 +433,8 @@ bool vtkMRMLSliceNode::AddSliceOrientationPreset(const std::string &name, vtkMat
     {
     if (it->first == name)
       {
-      vtkDebugMacro("AddSliceOrientationPreset: the orientation preset " << name << " is already stored.");
-      return false;
+      it->second->DeepCopy(orientationMatrix);
+      return true;
       }
     }
 
@@ -517,61 +517,116 @@ bool vtkMRMLSliceNode::HasSliceOrientationPreset(const std::string &name)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::InitializeAxialMatrix(vtkMatrix3x3* orientationMatrix)
+void vtkMRMLSliceNode::GetAxialSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft/*=true*/)
 {
   if (!orientationMatrix)
     {
     return;
     }
-  orientationMatrix->SetElement(0, 0, -1.0);
-  orientationMatrix->SetElement(1, 0,  0.0);
-  orientationMatrix->SetElement(2, 0,  0.0);
-  orientationMatrix->SetElement(0, 1,  0.0);
-  orientationMatrix->SetElement(1, 1,  1.0);
-  orientationMatrix->SetElement(2, 1,  0.0);
-  orientationMatrix->SetElement(0, 2,  0.0);
-  orientationMatrix->SetElement(1, 2,  0.0);
-  orientationMatrix->SetElement(2, 2,  1.0);
+  if (patientRightIsScreenLeft)
+    {
+    // L
+    orientationMatrix->SetElement(0, 0, -1.0);
+    orientationMatrix->SetElement(1, 0,  0.0);
+    orientationMatrix->SetElement(2, 0,  0.0);
+
+    // A
+    orientationMatrix->SetElement(0, 1,  0.0);
+    orientationMatrix->SetElement(1, 1,  1.0);
+    orientationMatrix->SetElement(2, 1,  0.0);
+
+    // I = cross(L, A)
+    orientationMatrix->SetElement(0, 2,  0.0);
+    orientationMatrix->SetElement(1, 2,  0.0);
+    orientationMatrix->SetElement(2, 2, -1.0);
+    }
+  else
+    {
+    // R
+    orientationMatrix->SetElement(0, 0, 1.0);
+    orientationMatrix->SetElement(1, 0, 0.0);
+    orientationMatrix->SetElement(2, 0, 0.0);
+
+    // A
+    orientationMatrix->SetElement(0, 1, 0.0);
+    orientationMatrix->SetElement(1, 1, 1.0);
+    orientationMatrix->SetElement(2, 1, 0.0);
+
+    // S = cross(R, A)
+    orientationMatrix->SetElement(0, 2, 0.0);
+    orientationMatrix->SetElement(1, 2, 0.0);
+    orientationMatrix->SetElement(2, 2, 1.0);
+    }
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::InitializeSagittalMatrix(vtkMatrix3x3* orientationMatrix)
+void vtkMRMLSliceNode::GetSagittalSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool /*patientRightIsScreenLeft=true*/)
 {
   if (!orientationMatrix)
     {
     return;
     }
+  // P
   orientationMatrix->SetElement(0, 0,  0.0);
   orientationMatrix->SetElement(1, 0,  -1.0);
   orientationMatrix->SetElement(2, 0,  0.0);
+
+  // S
   orientationMatrix->SetElement(0, 1,  0.0);
   orientationMatrix->SetElement(1, 1,  0.0);
   orientationMatrix->SetElement(2, 1,  1.0);
-  orientationMatrix->SetElement(0, 2,  1.0);
+
+  // L = cross(P, S)
+  orientationMatrix->SetElement(0, 2, -1.0);
   orientationMatrix->SetElement(1, 2,  0.0);
   orientationMatrix->SetElement(2, 2,  0.0);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::InitializeCoronalMatrix(vtkMatrix3x3* orientationMatrix)
+void vtkMRMLSliceNode::GetCoronalSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft/*=true*/)
 {
   if (!orientationMatrix)
     {
     return;
     }
-  orientationMatrix->SetElement(0, 0, -1.0);
-  orientationMatrix->SetElement(1, 0,  0.0);
-  orientationMatrix->SetElement(2, 0,  0.0);
-  orientationMatrix->SetElement(0, 1,  0.0);
-  orientationMatrix->SetElement(1, 1,  0.0);
-  orientationMatrix->SetElement(2, 1,  1.0);
-  orientationMatrix->SetElement(0, 2,  0.0);
-  orientationMatrix->SetElement(1, 2,  1.0);
-  orientationMatrix->SetElement(2, 2,  0.0);
+  if (patientRightIsScreenLeft)
+    {
+    // L
+    orientationMatrix->SetElement(0, 0, -1.0);
+    orientationMatrix->SetElement(1, 0,  0.0);
+    orientationMatrix->SetElement(2, 0,  0.0);
+
+    // S
+    orientationMatrix->SetElement(0, 1,  0.0);
+    orientationMatrix->SetElement(1, 1,  0.0);
+    orientationMatrix->SetElement(2, 1,  1.0);
+
+    // A = cross (L, S)
+    orientationMatrix->SetElement(0, 2,  0.0);
+    orientationMatrix->SetElement(1, 2,  1.0);
+    orientationMatrix->SetElement(2, 2,  0.0);
+    }
+  else
+    {
+    // R
+    orientationMatrix->SetElement(0, 0,  1.0);
+    orientationMatrix->SetElement(1, 0,  0.0);
+    orientationMatrix->SetElement(2, 0,  0.0);
+
+    // S
+    orientationMatrix->SetElement(0, 1,  0.0);
+    orientationMatrix->SetElement(1, 1,  0.0);
+    orientationMatrix->SetElement(2, 1,  1.0);
+
+    // P = cross(R, S)
+    orientationMatrix->SetElement(0, 2,  0.0);
+    orientationMatrix->SetElement(1, 2, -1.0);
+    orientationMatrix->SetElement(2, 2,  0.0);
+    }
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(vtkMRMLScene* scene)
+void vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(vtkMRMLScene* scene, bool patientRightIsScreenLeft/*=true*/)
 {
   if (!scene)
     {
@@ -580,13 +635,13 @@ void vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(vtkMRMLScene* scene)
 
   // Setting Orientation Matrices presets
   vtkNew<vtkMatrix3x3> axialSliceToRAS;
-  vtkMRMLSliceNode::InitializeAxialMatrix(axialSliceToRAS.GetPointer());
+  vtkMRMLSliceNode::GetAxialSliceToRASMatrix(axialSliceToRAS, patientRightIsScreenLeft);
 
   vtkNew<vtkMatrix3x3> sagittalSliceToRAS;
-  vtkMRMLSliceNode::InitializeSagittalMatrix(sagittalSliceToRAS.GetPointer());
+  vtkMRMLSliceNode::GetSagittalSliceToRASMatrix(sagittalSliceToRAS, patientRightIsScreenLeft);
 
   vtkNew<vtkMatrix3x3> coronalSliceToRAS;
-  vtkMRMLSliceNode::InitializeCoronalMatrix(coronalSliceToRAS.GetPointer());
+  vtkMRMLSliceNode::GetCoronalSliceToRASMatrix(coronalSliceToRAS, patientRightIsScreenLeft);
 
   // Setting a Slice Default Node
   vtkSmartPointer<vtkMRMLNode> defaultNode = scene->GetDefaultNodeByClass("vtkMRMLSliceNode");
@@ -596,9 +651,9 @@ void vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(vtkMRMLScene* scene)
     scene->AddDefaultNode(defaultNode);
     }
   vtkMRMLSliceNode * defaultSliceNode = vtkMRMLSliceNode::SafeDownCast(defaultNode);
-  defaultSliceNode->AddSliceOrientationPreset("Axial", axialSliceToRAS.GetPointer());
-  defaultSliceNode->AddSliceOrientationPreset("Sagittal", sagittalSliceToRAS.GetPointer());
-  defaultSliceNode->AddSliceOrientationPreset("Coronal", coronalSliceToRAS.GetPointer());
+  defaultSliceNode->AddSliceOrientationPreset("Axial", axialSliceToRAS);
+  defaultSliceNode->AddSliceOrientationPreset("Sagittal", sagittalSliceToRAS);
+  defaultSliceNode->AddSliceOrientationPreset("Coronal", coronalSliceToRAS);
 }
 
 //----------------------------------------------------------------------------

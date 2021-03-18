@@ -27,6 +27,7 @@
 
 // CTK includes
 #include <ctkVTKAbstractView.h>
+#include <ctkComboBox.h>
 
 // --------------------------------------------------------------------------
 // qSlicerSettingsViewsPanelPrivate
@@ -100,6 +101,15 @@ void qSlicerSettingsViewsPanelPrivate::init()
                       "sliceRulerType", SIGNAL(currentSliceRulerTypeChanged(QString)),
                       "Slice view ruler type",
                       ctkSettingsPanel::OptionRequireRestart);
+
+  this->SliceViewOrientationComboBox->addItem(QWidget::tr("patient right is screen left (default)"), QString("PatientRightIsScreenLeft"));
+  this->SliceViewOrientationComboBox->addItem(QWidget::tr("patient right is screen right"), QString("PatientRightIsScreenRight"));
+  q->registerProperty("DefaultSliceView/Orientation", this->SliceViewOrientationComboBox,
+    "currentUserDataAsString", SIGNAL(currentIndexChanged(int)),
+    "Default slice view orientation",
+    ctkSettingsPanel::OptionRequireRestart);
+  QObject::connect(this->SliceViewOrientationComboBox, SIGNAL(activated(int)),
+    q, SLOT(sliceViewOrientationChangedByUser()));
 
   q->registerProperty("Default3DView/BoxVisibility", this->ThreeDBoxVisibilityCheckBox,
                       "checked", SIGNAL(toggled(bool)),
@@ -274,4 +284,19 @@ void qSlicerSettingsViewsPanel::setThreeDRulerType(const QString& text)
   Q_D(qSlicerSettingsViewsPanel);
   // default to first item if conversion fails
   d->ThreeDRulerTypeComboBox->setCurrentIndex(qMax(d->ThreeDRulerTypeComboBox->findText(text), 0));
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsViewsPanel::sliceViewOrientationChangedByUser()
+{
+  Q_D(qSlicerSettingsViewsPanel);
+  if (d->SliceViewOrientationComboBox->currentUserDataAsString() == "PatientRightIsScreenRight")
+    {
+    if (d->SliceOrientationMarkerTypeComboBox->currentText() == "none")
+      {
+      // Non-default orientation is chosen and no orientation marker is displayed.
+      // To ensure that there is no accidental mixup of orientations, show the orientation marker.
+      d->SliceOrientationMarkerTypeComboBox->setCurrentText("axes");
+      }
+    }
 }
