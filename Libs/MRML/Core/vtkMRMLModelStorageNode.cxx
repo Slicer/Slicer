@@ -507,11 +507,13 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     if (modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType)
       {
       writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+      writer->SetFileVersion(42);
       writer->SetInputData(meshToWrite);
       }
     else
       {
       writer = vtkSmartPointer<vtkUnstructuredGridWriter>::New();
+      writer->SetFileVersion(42);
       writer->SetInputData(meshToWrite);
       }
 
