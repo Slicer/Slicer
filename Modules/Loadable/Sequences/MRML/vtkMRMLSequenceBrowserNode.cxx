@@ -598,7 +598,13 @@ std::string vtkMRMLSequenceBrowserNode::GetSynchronizationPostfixFromSequenceID(
     rolePostfixIt != this->SynchronizationPostfixes.end(); ++rolePostfixIt)
     {
     std::string sequenceNodeRef = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
-    if (strcmp(this->GetNodeReferenceID(sequenceNodeRef.c_str()), sequenceNodeID) == 0)
+    const char* foundNodeID = this->GetNodeReferenceID(sequenceNodeRef.c_str());
+    if (!foundNodeID)
+      {
+      // probably the referenced sequence node was deleted from the scene
+      continue;
+      }
+    if (strcmp(foundNodeID, sequenceNodeID) == 0)
       {
       return (*rolePostfixIt);
       }
@@ -1127,6 +1133,26 @@ void vtkMRMLSequenceBrowserNode::OnNodeReferenceAdded(vtkMRMLNodeReference* node
     this->SetAndObserveNodeReferenceID( nodeReference->GetReferenceRole(), nodeReference->GetReferencedNodeID(),
       nodeReference->GetReferencedNode()->GetContentModifiedEvents());
     // TODO: check if nodeReference->GetReferencedNode() is already valid here
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSequenceBrowserNode::OnNodeReferenceRemoved(vtkMRMLNodeReference* nodeReference)
+{
+  vtkMRMLNode::OnNodeReferenceRemoved(nodeReference);
+  for (std::vector< std::string >::iterator rolePostfixIt = this->SynchronizationPostfixes.begin();
+    rolePostfixIt != this->SynchronizationPostfixes.end(); )
+    {
+    std::string sequenceNodeRef = SEQUENCE_NODE_REFERENCE_ROLE_BASE + (*rolePostfixIt);
+    const char* foundNodeId = this->GetNodeReferenceID(sequenceNodeRef.c_str());
+    if (foundNodeId == nullptr)
+      {
+      rolePostfixIt = this->SynchronizationPostfixes.erase(rolePostfixIt);
+      }
+    else
+      {
+      ++rolePostfixIt;
+      }
     }
 }
 
