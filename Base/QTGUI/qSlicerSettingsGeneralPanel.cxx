@@ -122,8 +122,7 @@ void qSlicerSettingsGeneralPanelPrivate::init()
   qSlicerRelativePathMapper* relativePathMapper = new qSlicerRelativePathMapper(this->DefaultScenePathButton, "directory", SIGNAL(directoryChanged(QString)));
   q->registerProperty("DefaultScenePath", relativePathMapper, "relativePath",
                       SIGNAL(relativePathChanged(QString)),
-                      "Default scene path",
-                     ctkSettingsPanel::OptionRequireRestart);
+                      "Default scene path");
   QObject::connect(this->DefaultScenePathButton, SIGNAL(directoryChanged(QString)),
                    q, SLOT(setDefaultScenePath(QString)));
 
