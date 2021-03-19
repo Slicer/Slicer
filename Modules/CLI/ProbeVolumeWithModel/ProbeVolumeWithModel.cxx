@@ -8,8 +8,6 @@
 #include <vtkImageData.h>
 #include <vtkNew.h>
 #include <vtkPolyData.h>
-#include <vtkPolyDataReader.h>
-#include <vtkPolyDataWriter.h>
 #include <vtkProbeFilter.h>
 #include <vtkTransform.h>
 #include <vtkTransformFilter.h>

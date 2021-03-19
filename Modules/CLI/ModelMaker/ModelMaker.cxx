@@ -1177,6 +1177,7 @@ int main(int argc, char * argv[])
       if (SaveIntermediateModels)
         {
         writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+        writer->SetFileVersion(42);
         std::string            commentSaveCubes = "Writing intermediate model after marching cubes " + labelName;
         vtkPluginFilterWatcher watchWriter(writer,
                                            commentSaveCubes.c_str(),
