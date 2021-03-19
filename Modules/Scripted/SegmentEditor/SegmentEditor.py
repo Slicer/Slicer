@@ -93,29 +93,23 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.parameterSetNode = segmentEditorNode
     self.editor.setMRMLSegmentEditorNode(self.parameterSetNode)
 
-  def getCompositeNode(self, layoutName):
-    """ use the Red slice composite node to define the active volumes """
-    count = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceCompositeNode')
-    for n in range(count):
-      compNode = slicer.mrmlScene.GetNthNodeByClass(n, 'vtkMRMLSliceCompositeNode')
-      if layoutName and compNode.GetLayoutName() != layoutName:
-        continue
-      return compNode
-
   def getDefaultMasterVolumeNodeID(self):
     layoutManager = slicer.app.layoutManager()
-    # Use first background volume node in any of the displayed layouts
-    for layoutName in layoutManager.sliceViewNames():
-      compositeNode = self.getCompositeNode(layoutName)
+    firstForegroundVolumeID = None
+    # Use first background volume node in any of the displayed layouts.
+    # If no beackground volume node is in any slice view then use the first
+    # foreground volume node.
+    for sliceViewName in layoutManager.sliceViewNames():
+      sliceWidget = layoutManager.sliceWidget(sliceViewName)
+      if not sliceWidget:
+        continue
+      compositeNode = sliceWidget.mrmlSliceCompositeNode()
       if compositeNode.GetBackgroundVolumeID():
         return compositeNode.GetBackgroundVolumeID()
-    # Use first background volume node in any of the displayed layouts
-    for layoutName in layoutManager.sliceViewNames():
-      compositeNode = self.getCompositeNode(layoutName)
-      if compositeNode.GetForegroundVolumeID():
-        return compositeNode.GetForegroundVolumeID()
-    # Not found anything
-    return None
+      if compositeNode.GetForegroundVolumeID() and not firstForegroundVolumeID:
+        firstForegroundVolumeID = compositeNode.GetForegroundVolumeID()
+    # No background volume was found, so use the foreground volume (if any was found)
+    return firstForegroundVolumeID
 
   def enter(self):
     """Runs whenever the module is reopened
