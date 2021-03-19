@@ -315,6 +315,9 @@ protected:
   /// Called whenever a new node reference is added
   void OnNodeReferenceAdded(vtkMRMLNodeReference* nodeReference) override;
 
+  /// Called whenever a node reference is removed
+  void OnNodeReferenceRemoved(vtkMRMLNodeReference* nodeReference) override;
+
   std::string GenerateSynchronizationPostfix();
   std::string GetSynchronizationPostfixFromSequence(vtkMRMLSequenceNode* sequenceNode);
   std::string GetSynchronizationPostfixFromSequenceID(const char* sequenceNodeID);
