@@ -290,7 +290,13 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
     """
     iconPath = os.path.join(os.path.dirname(__file__).replace('\\','/'), 'Resources','Icons')
     mainWindow = slicer.util.mainWindow()
-    iconSize = qt.QSize(int(mainWindow.width/8),int(mainWindow.height/6))
+    if mainWindow:
+      iconSize = qt.QSize(int(mainWindow.width/8),int(mainWindow.height/6))
+    else:
+      # There is no main window in the automated tests
+      desktop = qt.QDesktopWidget()
+      mainScreenSize = desktop.availableGeometry(desktop.primaryScreen)
+      iconSize = qt.QSize(int(mainScreenSize.width()/15),int(mainScreenSize.height()/10))
 
     categories = sorted(dataSources.keys())
 
