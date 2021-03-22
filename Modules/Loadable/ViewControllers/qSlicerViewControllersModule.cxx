@@ -30,9 +30,12 @@
 
 #include "vtkSlicerViewControllersLogic.h"
 
+#include <vtkAddonMathUtilities.h>
+#include <vtkMatrix3x3.h>
 #include <vtkMRMLPlotViewNode.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLViewNode.h>
+#include <vtkNew.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerViewControllersModulePrivate
@@ -200,6 +203,23 @@ void qSlicerViewControllersModule::readDefaultSliceViewSettings(vtkMRMLSliceNode
     }
   QSettings settings;
   settings.beginGroup("DefaultSliceView");
+  if (settings.contains("Orientation"))
+    {
+    QString defaultSliceOrientation = settings.value("Orientation").toString();
+    if (defaultSliceOrientation == "PatientRightIsScreenLeft")
+      {
+      vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(this->mrmlScene(), true);
+      }
+    else if (defaultSliceOrientation == "PatientRightIsScreenRight")
+      {
+      vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(this->mrmlScene(), false);
+      }
+    else
+      {
+      qWarning() << Q_FUNC_INFO << ": Unknown DefaultSliceView/Orientation setting " << defaultSliceOrientation << ", using PatientRightIsScreenLeft instead.";
+      vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(this->mrmlScene(), true);
+      }
+    }
   readCommonViewSettings(defaultViewNode, settings);
 }
 
@@ -213,6 +233,17 @@ void qSlicerViewControllersModule::writeDefaultSliceViewSettings(vtkMRMLSliceNod
     }
   QSettings settings;
   settings.beginGroup("DefaultSliceView");
+
+  vtkNew<vtkMatrix3x3> axialOrientationForPatientRightIsScreenRight;
+  vtkMRMLSliceNode::GetAxialSliceToRASMatrix(axialOrientationForPatientRightIsScreenRight, false);
+  vtkMatrix3x3* axialOrientation = defaultViewNode->GetSliceOrientationPreset("Axial");
+  QString defaultSliceOrientation("PatientRightIsScreenLeft");
+  if (vtkAddonMathUtilities::MatrixAreEqual(axialOrientation, axialOrientationForPatientRightIsScreenRight))
+    {
+    defaultSliceOrientation = "PatientRightIsScreenRight";
+    }
+  settings.setValue("Orientation", defaultSliceOrientation);
+
   writeCommonViewSettings(defaultViewNode, settings);
 }
 

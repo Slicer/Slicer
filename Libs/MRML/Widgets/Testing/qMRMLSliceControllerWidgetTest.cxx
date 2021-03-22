@@ -87,7 +87,7 @@ void qMRMLSliceControllerWidgetTester::init()
   vtkNew<vtkMRMLSliceNode> sliceNode;
   sliceNode->SetLayoutName("Red");
   vtkNew<vtkMatrix3x3> axialSliceToRAS;
-  vtkMRMLSliceNode::InitializeAxialMatrix(axialSliceToRAS.GetPointer());
+  vtkMRMLSliceNode::GetAxialSliceToRASMatrix(axialSliceToRAS.GetPointer());
 
   sliceNode->AddSliceOrientationPreset("Axial", axialSliceToRAS.GetPointer());
   sliceNode->SetOrientation("Axial");

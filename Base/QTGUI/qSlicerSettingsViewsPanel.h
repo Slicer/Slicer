@@ -72,6 +72,7 @@ public slots:
   void setThreeDOrientationMarkerType(const QString&);
   void setThreeDOrientationMarkerSize(const QString&);
   void setThreeDRulerType(const QString&);
+  void sliceViewOrientationChangedByUser();
 
 signals:
   /// Signal emitted when the current value is changed

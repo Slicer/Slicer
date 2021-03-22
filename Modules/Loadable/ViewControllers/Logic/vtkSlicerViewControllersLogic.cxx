@@ -133,7 +133,13 @@ void vtkSlicerViewControllersLogic::ResetAllViewNodesToDefault()
   scene->GetNodesByClass("vtkMRMLSliceNode", viewNodes);
   for (std::vector< vtkMRMLNode* >::iterator it = viewNodes.begin(); it != viewNodes.end(); ++it)
     {
-    (*it)->Reset(defaultSliceViewNode);
+    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(*it);
+    if (!sliceNode)
+      {
+      continue;
+      }
+    sliceNode->Reset(defaultSliceViewNode);
+    sliceNode->SetOrientationToDefault();
     }
   viewNodes.clear();
   vtkMRMLViewNode* defaultThreeDViewNode = GetDefaultThreeDViewNode();

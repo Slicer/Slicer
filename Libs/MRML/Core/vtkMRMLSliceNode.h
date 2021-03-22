@@ -205,7 +205,7 @@ public:
   /// \sa AddSliceOrientationPreset(const std::string& name, vtkMatrix3x3* orientationMatrix)
   int GetNumberOfSliceOrientationPresets() const;
 
-  /// \brief Add an orientation preset.
+  /// \brief Add or update an orientation preset.
   ///
   /// \sa RenameSliceOrientationPreset(const std::string& name, const std::string& updatedName)
   /// \sa RemoveSliceOrientationPreset(const std::string& name)
@@ -231,21 +231,26 @@ public:
   static const char* GetReformatOrientationName() { return "Reformat"; }
 
   /// \brief Initialize \a orientationMatrix as an `Axial` orientation matrix.
-  static void InitializeAxialMatrix(vtkMatrix3x3* orientationMatrix);
+  /// \param patientRightIsScreenLeft chooses between radiology (default, patient right is left side on the screen)
+  /// and neurology (patient right is right side on the screen) view orientation conventions.
+  static void GetAxialSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft=true);
 
   /// \brief Initialize \a orientationMatrix as a `Sagittal` orientation matrix.
-  static void InitializeSagittalMatrix(vtkMatrix3x3* orientationMatrix);
+  /// \param patientRightIsScreenLeft chooses between radiology (default, patient right is left side on the screen)
+  /// and neurology (patient right is right side on the screen) view orientation conventions.
+  static void GetSagittalSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft=true);
 
   /// \brief Initialize \a orientationMatrix as a `Coronal` orientation matrix.
-  static void InitializeCoronalMatrix(vtkMatrix3x3* orientationMatrix);
+  /// \param patientRightIsScreenLeft chooses between radiology (default, patient right is left side on the screen)
+  /// and neurology (patient right is right side on the screen) view orientation conventions.
+  static void GetCoronalSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft=true);
 
   /// \brief Add default slice orientation presets to \a scene.
-  ///
+  /// \param patientRightIsScreenLeft chooses between radiology (default, patient right is left side on the screen)
+  /// and neurology (patient right is right side on the screen) view orientation conventions.
   /// \sa vtkMRMLScene::AddDefaultNode(vtkMRMLNode* node)
-  /// \sa InitializeAxialMatrix(vtkMatrix3x3* orientationMatrix)
-  /// \sa InitializeSagittalMatrix(vtkMatrix3x3* orientationMatrix)
-  /// \sa InitializeCoronalMatrix(vtkMatrix3x3* orientationMatrix)
-  static void AddDefaultSliceOrientationPresets(vtkMRMLScene* scene);
+  /// \sa GetAxialSliceToRASMatrix, GetSagittalSliceToRASMatrix, GetCoronalSliceToRASMatrix
+  static void AddDefaultSliceOrientationPresets(vtkMRMLScene* scene, bool patientRightIsScreenLeft=true);
 
   ///
   /// Size of the slice plane in millimeters
