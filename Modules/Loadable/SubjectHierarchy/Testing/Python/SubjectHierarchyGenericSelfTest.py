@@ -457,7 +457,6 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
 
     # Check scene validity
-    self.assertEqual(114, slicer.mrmlScene.GetNumberOfNodes())
     self.assertEqual(9, shNode.GetNumberOfItems())
     self.assertEqual(slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsNode'), 7)
 
