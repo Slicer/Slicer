@@ -79,5 +79,5 @@ bool qSlicerCLIModuleFactoryHelper::isInstalled(const QString& path)
 bool qSlicerCLIModuleFactoryHelper::isBuiltIn(const QString& path)
 {
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
-  return app ? qSlicerUtils::isPluginBuiltIn(path, app->slicerHome()) : true;
+  return app ? qSlicerUtils::isPluginBuiltIn(path, app->slicerHome(), app->revision()) : true;
 }

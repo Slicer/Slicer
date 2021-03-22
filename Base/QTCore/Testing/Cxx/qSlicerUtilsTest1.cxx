@@ -32,6 +32,7 @@
 
 // Slicer includes
 #include "vtkSlicerConfigure.h"
+#include "vtkSlicerVersionConfigure.h"
 
 // STD includes
 #include <cstdlib>
@@ -82,7 +83,7 @@ bool isPluginInstalledTest(int line, bool expectedResult,
 bool isPluginBuiltInTest(int line, bool expectedResult,
                            const QString& path, const QString& applicationHomeDir)
 {
-  bool res = qSlicerUtils::isPluginBuiltIn(path, applicationHomeDir);
+  bool res = qSlicerUtils::isPluginBuiltIn(path, applicationHomeDir, QString::fromUtf8(Slicer_REVISION));
   if (res != expectedResult)
     {
     QString msg("Line %1 - Problem with isPluginBuiltIn()\n\tpath: %2\n\tapplicationHomeDir: %3");

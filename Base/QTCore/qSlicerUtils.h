@@ -92,7 +92,7 @@ public:
   static bool isPluginInstalled(const QString& filePath, const QString& applicationHomeDir);
 
   /// Return \a true if the plugin identified with its \a filePath is a built-in Slicer module.
-  static bool isPluginBuiltIn(const QString& filePath, const QString& applicationHomeDir);
+  static bool isPluginBuiltIn(const QString& filePath, const QString& applicationHomeDir, const QString& applicationRevision);
 
   /// Return the path without the intermediate directory or return \a path if there is no
   /// expected "IntDir".
