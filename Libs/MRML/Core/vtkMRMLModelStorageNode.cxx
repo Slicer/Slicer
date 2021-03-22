@@ -516,7 +516,10 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     else
       {
       writer = vtkSmartPointer<vtkUnstructuredGridWriter>::New();
+#if VTK_MAJOR_VERSION >= 9
+      // version 5.1 is not compatible with earlier Slicer versions and most other software
       writer->SetFileVersion(42);
+#endif
       writer->SetInputData(meshToWrite);
       }
 
