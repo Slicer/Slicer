@@ -507,7 +507,10 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     if (modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType)
       {
       writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+#if VTK_MAJOR_VERSION >= 9
+      // version 5.1 is not compatible with earlier Slicer versions and most other software
       writer->SetFileVersion(42);
+#endif
       writer->SetInputData(meshToWrite);
       }
     else

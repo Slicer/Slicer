@@ -1177,7 +1177,10 @@ int main(int argc, char * argv[])
       if (SaveIntermediateModels)
         {
         writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+#if VTK_MAJOR_VERSION >= 9
+        // version 5.1 is not compatible with earlier Slicer versions and most other software
         writer->SetFileVersion(42);
+#endif
         std::string            commentSaveCubes = "Writing intermediate model after marching cubes " + labelName;
         vtkPluginFilterWatcher watchWriter(writer,
                                            commentSaveCubes.c_str(),
