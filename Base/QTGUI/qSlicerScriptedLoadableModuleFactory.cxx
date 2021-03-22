@@ -75,7 +75,7 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
 
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
   module->setInstalled(qSlicerUtils::isPluginInstalled(this->path(), app->slicerHome()));
-  module->setBuiltIn(qSlicerUtils::isPluginBuiltIn(this->path(), app->slicerHome()));
+  module->setBuiltIn(qSlicerUtils::isPluginBuiltIn(this->path(), app->slicerHome(), app->revision()));
 
   bool ret = module->setPythonSource(this->path());
   if (!ret)

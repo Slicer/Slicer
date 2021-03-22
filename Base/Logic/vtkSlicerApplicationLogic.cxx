@@ -719,24 +719,13 @@ bool vtkSlicerApplicationLogic::IsEmbeddedModule(const std::string& filePath,
   std::string extensionPath = itksys::SystemTools::GetFilenamePath(filePath);
   bool isEmbedded = itksys::SystemTools::StringStartsWith(extensionPath.c_str(), applicationHomeDir.c_str());
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  // If settings are stored in application home directory then extensions are installed within the home directory
-  // in <applicationHomeDir>/<Slicer_ORGANIZATION_NAME/DOMAIN>/<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>.
-  // Therefore we consider the module not embedded it it is within <Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision> folder.
-  // It would be even more robust if we checked <organization>/<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>
-  // subfolder, but getting organization folder name from Slicer_ORGANIZATION_NAME/Slicer_ORGANIZATION_DOMAIN values is not a trivial,
-  // so for now we do not check the organization.
-#ifdef Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR
+  // Extensions may be stored in the application home directory (it is always the case on macOS and for Windows/Linux
+  // if Slicer_BUILD_EXTENSIONMANAGER_SUPPORT is enabled), therefore we need to detect these folders as extensions:
+  // - Windows/Linux: <applicationHomeDir>/<Slicer_ORGANIZATION_NAME/DOMAIN>/<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>
+  // - macOS: <applicationName>.app/Contents/<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>
+  // We just check for <Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision> folder name, as it is simple to do, and
+  // it is specific enough.
   if (isEmbedded && extensionPath.find(Slicer_EXTENSIONS_DIRBASENAME "-" + slicerRevision) != std::string::npos)
-    {
-    isEmbedded = false;
-    }
-#endif
-  // On macOS extensions are installed in the "<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>"
-  // folder being a sub directory of the application dir, an extra test is required to make sure the
-  // tested filePath doesn't belong to that "<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>" folder.
-  // BUG 2848: Since package name can be rename from "Slicer.app" to "Something.app", let's compare
-  // using ".app/Contents/" instead of "Slicer_BUNDLE_LOCATION" which is "Slicer.app/Contents/"
-  if (isEmbedded && extensionPath.find(".app/Contents/" Slicer_EXTENSIONS_DIRBASENAME "-" + slicerRevision) != std::string::npos)
     {
     isEmbedded = false;
     }
@@ -789,7 +778,7 @@ bool vtkSlicerApplicationLogic::IsPluginInstalled(const std::string& filePath,
 
 //----------------------------------------------------------------------------
 bool vtkSlicerApplicationLogic::IsPluginBuiltIn(const std::string& filePath,
-                                                  const std::string& applicationHomeDir)
+  const std::string& applicationHomeDir, const std::string& slicerRevision)
 {
   if (filePath.empty())
     {
@@ -812,17 +801,21 @@ bool vtkSlicerApplicationLogic::IsPluginBuiltIn(const std::string& filePath,
         canonicalPath.c_str(), canonicalApplicationHomeDir.c_str());
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  // On macOS extensions are installed in the "<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>"
-  // folder being a sub directory of the application dir, an extra test is required to make sure the
-  // tested filePath doesn't belong to that "<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>" folder.
-  // Since package name can be rename from "Slicer.app" to "Something.app", let's compare
-  // using ".app/Contents/" instead of "Slicer_BUNDLE_LOCATION" which is "Slicer.app/Contents/"
-  bool macExtension = (canonicalPath.find(".app/Contents/" Slicer_EXTENSIONS_DIRBASENAME "-") != std::string::npos);
+  // Extensions may be stored in the application home directory (it is always the case on macOS and for Windows/Linux
+  // if Slicer_BUILD_EXTENSIONMANAGER_SUPPORT is enabled), therefore we need to detect these folders as extensions:
+  // - Windows/Linux: <applicationHomeDir>/<Slicer_ORGANIZATION_NAME/DOMAIN>/<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>
+  // - macOS: <applicationName>.app/Contents/<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>
+  // We just check for <Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision> folder name, as it is simple to do, and
+  // it is specific enough.
+  if (isBuiltIn && canonicalPath.find(Slicer_EXTENSIONS_DIRBASENAME "-" + slicerRevision) != std::string::npos)
+    {
+    isBuiltIn = false;
+    }
 #else
-  bool macExtension = false;
+  (void)slicerRevision;
 #endif
 
-  return  isBuiltIn && !macExtension;
+  return  isBuiltIn;
 }
 
 namespace

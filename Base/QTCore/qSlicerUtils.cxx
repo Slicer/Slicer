@@ -206,9 +206,9 @@ bool qSlicerUtils::isPluginInstalled(const QString& filePath, const QString& app
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerUtils::isPluginBuiltIn(const QString& filePath, const QString& applicationHomeDir)
+bool qSlicerUtils::isPluginBuiltIn(const QString& filePath, const QString& applicationHomeDir, const QString& applicationRevision)
 {
-  return vtkSlicerApplicationLogic::IsPluginBuiltIn(filePath.toStdString(), applicationHomeDir.toStdString());
+  return vtkSlicerApplicationLogic::IsPluginBuiltIn(filePath.toStdString(), applicationHomeDir.toStdString(), applicationRevision.toStdString());
 }
 
 //-----------------------------------------------------------------------------
