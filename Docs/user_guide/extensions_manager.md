@@ -91,8 +91,8 @@ This can be due to several reasons:
   - Recommended action: wait a few hours until the extension becomes available.
   - Alternative solution A: [install Slicer Preview Release created the day before](https://download.slicer.org/?offset=-1) (this is a special link that uses `offset=-1` to request builds from a day before)
   - Alternative solution B: [install latest Slicer Stable Release](https://download.slicer.org).
-- Extensions manager does not have network access: most often it is due to network configuration issues
-  - Recommended action: Make sure system proxy settings are set correctly or set proxy in environment variables `http_proxy` and `https_proxy`. See more details [here](https://doc.qt.io/qt-5/qnetworkproxyfactory.html#systemProxyForQuery).
+- Extensions manager does not have network access
+  - Recommended action: Make sure you have internet access. Check your system proxy settings (Slicer uses these system proxy settings by default) and/or set proxy server information in environment variables `http_proxy` and `https_proxy` ([more information](https://doc.qt.io/qt-5/qnetworkproxyfactory.html#systemProxyForQuery)). On Windows, it may be necessary to re-apply the proxy settings by disabling and re-enabling "Automatically detect settings".
   - Alternative solution: download extension package using a web browser (possibly on a different computer) and install the extension manually. See instructions [here](#install-extensions-without-network-connection).
 
 ### Extension is not found for current Slicer version
