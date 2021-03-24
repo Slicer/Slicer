@@ -20,7 +20,7 @@
 #include "vtkMRMLNode.h"
 #include "vtkSlicerCropVolumeModuleMRMLExport.h"
 
-class vtkMRMLAnnotationROINode;
+class vtkMRMLDisplayableNode;
 class vtkMRMLTransformNode;
 class vtkMRMLVolumeNode;
 
@@ -67,11 +67,12 @@ public:
   const char* GetOutputVolumeNodeID();
   vtkMRMLVolumeNode* GetOutputVolumeNode();
 
-  /// Set cropping region of interest
+  /// Set cropping region of interest.
+  /// It can be either vtkMRMLAnnotationROINode or vtkMRMLMarkupsROINode.
   void SetROINodeID(const char *nodeID);
   /// Get cropping region of interest
   const char* GetROINodeID();
-  vtkMRMLAnnotationROINode* GetROINode();
+  vtkMRMLDisplayableNode* GetROINode();
 
   /// Set transform node that may be used for aligning
   /// the ROI with the input volume.
