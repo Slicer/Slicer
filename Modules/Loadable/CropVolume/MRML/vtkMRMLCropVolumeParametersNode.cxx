@@ -21,7 +21,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include "vtkMRMLCropVolumeParametersNode.h"
 
 // AnnotationModuleMRML includes
-#include "vtkMRMLAnnotationROINode.h"
+#include "vtkMRMLDisplayableNode.h"
 
 // STD includes
 
@@ -176,9 +176,9 @@ const char * vtkMRMLCropVolumeParametersNode::GetROINodeID()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLAnnotationROINode* vtkMRMLCropVolumeParametersNode::GetROINode()
+vtkMRMLDisplayableNode* vtkMRMLCropVolumeParametersNode::GetROINode()
 {
-  return vtkMRMLAnnotationROINode::SafeDownCast(this->GetNodeReference(ROINodeReferenceRole));
+  return vtkMRMLDisplayableNode::SafeDownCast(this->GetNodeReference(ROINodeReferenceRole));
 }
 
 //----------------------------------------------------------------------------

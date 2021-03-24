@@ -516,13 +516,9 @@ void vtkMRMLMarkupsROINode::GetCenter(double center_Local[3])
     vtkErrorMacro("GetCenter: Invalid origin argument");
     return;
     }
-
-  double center_Local4[4] = { 0.0, 0.0, 0.0, 1.0 };
-  this->ROIToLocalMatrix->MultiplyPoint(center_Local4, center_Local4);
-
-  center_Local[0] = center_Local4[0];
-  center_Local[1] = center_Local4[1];
-  center_Local[2] = center_Local4[2];
+  center_Local[0] = this->ROIToLocalMatrix->GetElement(0, 3);
+  center_Local[1] = this->ROIToLocalMatrix->GetElement(1, 3);
+  center_Local[2] = this->ROIToLocalMatrix->GetElement(2, 3);
 }
 
 //----------------------------------------------------------------------------
@@ -583,9 +579,9 @@ void vtkMRMLMarkupsROINode::SetCenter(const double center_Local[3])
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsROINode::SetSize(const double center[3])
+void vtkMRMLMarkupsROINode::SetSize(const double size[3])
 {
-  this->SetSize(center[0], center[1], center[2]);
+  this->SetSize(size[0], size[1], size[2]);
 }
 
 //----------------------------------------------------------------------------

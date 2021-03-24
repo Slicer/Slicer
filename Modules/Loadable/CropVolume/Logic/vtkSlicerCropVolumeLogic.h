@@ -26,7 +26,7 @@
 class vtkSlicerCLIModuleLogic;
 class vtkSlicerVolumesLogic;
 class vtkMRMLVolumeNode;
-class vtkMRMLAnnotationROINode;
+class vtkMRMLDisplayableNode;
 // vtk includes
 class vtkMatrix4x4;
 // CropVolumes includes
@@ -76,20 +76,20 @@ public:
 
   /// Perform non-interpolated (voxel-based) cropping.
   /// If limitToInputExtent is set to true (default) then the extent can only be smaller than the input volume.
-  static int CropVoxelBased(vtkMRMLAnnotationROINode* roi, vtkMRMLVolumeNode* inputVolume,
+  static int CropVoxelBased(vtkMRMLDisplayableNode* roi, vtkMRMLVolumeNode* inputVolume,
     vtkMRMLVolumeNode* outputNode, bool limitToInputExtent=true, double fillValue=0.0);
 
   /// Compute non-interpolated (voxel-based) cropping output volume geometry (without actually cropping the image).
   /// If limitToInputExtent is set to true (default) then the extent can only be smaller than the input volume.
-  static bool GetVoxelBasedCropOutputExtent(vtkMRMLAnnotationROINode* roi, vtkMRMLVolumeNode* inputVolume,
+  static bool GetVoxelBasedCropOutputExtent(vtkMRMLDisplayableNode* roi, vtkMRMLVolumeNode* inputVolume,
     int outputExtent[6], bool limitToInputExtent=false);
 
   /// Perform interpolated cropping.
-  int CropInterpolated(vtkMRMLAnnotationROINode* roi, vtkMRMLVolumeNode* inputVolume, vtkMRMLVolumeNode* outputNode,
+  int CropInterpolated(vtkMRMLDisplayableNode* roi, vtkMRMLVolumeNode* inputVolume, vtkMRMLVolumeNode* outputNode,
     bool isotropicResampling, double spacingScale, int interpolationMode, double fillValue);
 
   /// Computes output volume geometry for interpolated cropping (without actually cropping the image).
-  static bool GetInterpolatedCropOutputGeometry(vtkMRMLAnnotationROINode* roi, vtkMRMLVolumeNode* inputVolume,
+  static bool GetInterpolatedCropOutputGeometry(vtkMRMLDisplayableNode* roi, vtkMRMLVolumeNode* inputVolume,
     bool isotropicResampling, double spacingScale, int outputExtent[6], double outputSpacing[3]);
 
   /// Sets ROI to fit to input volume.

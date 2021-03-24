@@ -5,6 +5,11 @@
 // CTK includes
 #include <ctkFlowLayout.h>
 
+// VTK includes
+#include <vtkNew.h>
+#include <vtkMatrix4x4.h>
+#include <vtkImageData.h>
+
 // Slicer includes
 #include <qSlicerAbstractCoreModule.h>
 #include <qSlicerApplication.h>
@@ -21,24 +26,16 @@
 #include <qMRMLNodeFactory.h>
 #include <qMRMLSliceWidget.h>
 
-// MRMLAnnotation includes
-#include <vtkMRMLAnnotationROINode.h>
-
-// MRMLLogic includes
-#include <vtkMRMLApplicationLogic.h>
-#include <vtkMRMLSliceLogic.h>
-
-#include <vtkNew.h>
-#include <vtkMatrix4x4.h>
-#include <vtkImageData.h>
-
-
 // MRML includes
+#include <vtkMRMLAnnotationROINode.h>
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLCropVolumeParametersNode.h>
-#include <vtkMRMLVolumeNode.h>
-#include <vtkMRMLSliceCompositeNode.h>
+#include <vtkMRMLMarkupsROINode.h>
 #include <vtkMRMLSelectionNode.h>
+#include <vtkMRMLSliceCompositeNode.h>
+#include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLTransformNode.h>
+#include <vtkMRMLVolumeNode.h>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_CropVolume
@@ -59,7 +56,7 @@ public:
 
   vtkWeakPointer<vtkMRMLCropVolumeParametersNode> ParametersNode;
   vtkWeakPointer<vtkMRMLVolumeNode> InputVolumeNode;
-  vtkWeakPointer<vtkMRMLAnnotationROINode> InputROINode;
+  vtkWeakPointer<vtkMRMLTransformableNode> InputROINode;
 };
 
 //-----------------------------------------------------------------------------
@@ -302,7 +299,8 @@ void qSlicerCropVolumeModuleWidget::enter()
       }
 
     // Use first visible ROI node (or last ROI node, if all are invisible)
-    vtkMRMLAnnotationROINode* foundROINode = nullptr;
+    vtkMRMLDisplayableNode* foundROINode = nullptr;
+    bool foundROINodeVisible = false;
     std::vector<vtkMRMLNode *> roiNodes;
     scene->GetNodesByClass("vtkMRMLAnnotationROINode", roiNodes);
     for (unsigned int i = 0; i < roiNodes.size(); ++i)
@@ -315,7 +313,26 @@ void qSlicerCropVolumeModuleWidget::enter()
       foundROINode = roiNode;
       if (foundROINode->GetDisplayVisibility())
         {
+        foundROINodeVisible = true;
         break;
+        }
+      }
+    if (!foundROINodeVisible)
+      {
+      roiNodes.clear();
+      scene->GetNodesByClass("vtkMRMLMarkupsROINode", roiNodes);
+      for (unsigned int i = 0; i < roiNodes.size(); ++i)
+        {
+        vtkMRMLDisplayableNode* roiNode = vtkMRMLDisplayableNode::SafeDownCast(roiNodes[i]);
+        if (!roiNode)
+          {
+          continue;
+          }
+        foundROINode = roiNode;
+        if (foundROINode->GetDisplayVisibility())
+          {
+          break;
+          }
         }
       }
     if (foundROINode)
@@ -357,7 +374,11 @@ void qSlicerCropVolumeModuleWidget::initializeInputROI(vtkMRMLNode *n)
 {
   Q_D(const qSlicerCropVolumeModuleWidget);
   vtkMRMLScene* scene = qobject_cast<qMRMLNodeFactory*>(this->sender())->mrmlScene();
-  vtkMRMLAnnotationROINode::SafeDownCast(n)->Initialize(scene);
+  vtkMRMLAnnotationROINode* annotationROI = vtkMRMLAnnotationROINode::SafeDownCast(n);
+  if (annotationROI)
+    {
+    annotationROI->Initialize(scene);
+    }
   if (d->ParametersNode && d->ParametersNode->GetInputVolumeNode())
     {
     this->setInputROI(n);
@@ -418,7 +439,7 @@ void qSlicerCropVolumeModuleWidget::setInputVolume(vtkMRMLNode* volumeNode)
     return;
     }
 
-  qvtkReconnect(d->InputVolumeNode, volumeNode, vtkCommand::ModifiedEvent, this, SLOT(updateVolumeInfo()));
+  qvtkReconnect(d->InputVolumeNode, volumeNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
   d->InputVolumeNode = vtkMRMLVolumeNode::SafeDownCast(volumeNode);
   d->ParametersNode->SetInputVolumeNodeID(volumeNode ? volumeNode->GetID() : nullptr);
 }
@@ -454,8 +475,12 @@ void qSlicerCropVolumeModuleWidget::setInputROI(vtkMRMLNode* node)
       }
     return;
     }
-  vtkMRMLAnnotationROINode* roiNode = vtkMRMLAnnotationROINode::SafeDownCast(node);
-  qvtkReconnect(d->InputROINode, roiNode, vtkCommand::ModifiedEvent, this, SLOT(updateVolumeInfo()));
+  vtkMRMLTransformableNode* roiNode = nullptr;
+  if (vtkMRMLAnnotationROINode::SafeDownCast(node) || vtkMRMLMarkupsROINode::SafeDownCast(node))
+    {
+    roiNode = vtkMRMLTransformableNode::SafeDownCast(node);
+    }
+  qvtkReconnect(d->InputROINode, roiNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
   d->InputROINode = roiNode;
   d->ParametersNode->SetROINodeID(roiNode ? roiNode->GetID() : nullptr);
 }
