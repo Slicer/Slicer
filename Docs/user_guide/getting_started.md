@@ -4,7 +4,9 @@ Welcome to the 3D Slicer community. This page contains information that you need
 
 ## System requirements
 
-3D Slicer runs on any Windows, Mac, or Linux computer that was released in the last 5 years. Older computers may work (depending mainly on graphics capabilites). Slicer can also run on virtual machines and docker containers.
+3D Slicer runs on any Windows, Mac, or Linux computer that was released in the last 5 years. Older computers may work (depending mainly on graphics capabilites).
+
+Slicer can also run on virtual machines and docker containers. For example, [3D Slicer + Jupyter notebook in a web browser](https://mybinder.org/v2/gh/Slicer/SlicerNotebooks/master?filepath=SlicerWeb.ipynb) is available for free via Binder service (no installation needed, the application can run in any web browser).
 
 ### Operating system versions
 
