@@ -56,17 +56,6 @@ const int DEFAULT_LABEL_VALUE = 1;
 vtkStandardNewMacro(vtkSegmentation);
 
 //----------------------------------------------------------------------------
-template<class T>
-struct MapValueCompare : public std::binary_function<typename T::value_type, typename T::mapped_type, bool>
-{
-public:
-  bool operator() (typename T::value_type &pair, typename T::mapped_type value) const
-    {
-    return pair.second == value;
-    }
-};
-
-//----------------------------------------------------------------------------
 vtkSegmentation::vtkSegmentation()
 {
   this->Converter = vtkSegmentationConverter::New();
@@ -467,8 +456,8 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
 
   if (!representationsCreated)
     {
-    SegmentMap::iterator segmentIt = std::find_if(
-      this->Segments.begin(), this->Segments.end(), std::bind2nd(MapValueCompare<SegmentMap>(), segment));
+    SegmentMap::iterator segmentIt = std::find_if(this->Segments.begin(), this->Segments.end(),
+      [&segment](const std::pair<std::string, vtkSmartPointer<vtkSegment> >& segmentIdPtr) { return segmentIdPtr.second == segment; });
     if (segmentIt != this->Segments.end())
       {
       this->Segments.erase(segmentIt);
@@ -534,8 +523,8 @@ void vtkSegmentation::RemoveSegment(vtkSegment* segment)
     return;
     }
 
-  SegmentMap::iterator segmentIt = std::find_if(
-    this->Segments.begin(), this->Segments.end(), std::bind2nd(MapValueCompare<SegmentMap>(), segment) );
+  SegmentMap::iterator segmentIt = std::find_if(this->Segments.begin(), this->Segments.end(),
+    [&segment](const std::pair<std::string, vtkSmartPointer<vtkSegment> >& segmentIdPtr) { return segmentIdPtr.second == segment; });
   if (segmentIt == this->Segments.end())
     {
     vtkWarningMacro("RemoveSegment: Segment to remove cannot be found!");
@@ -833,8 +822,8 @@ std::string vtkSegmentation::GetSegmentIdBySegment(vtkSegment* segment)
     return "";
     }
 
-  SegmentMap::iterator segmentIt = std::find_if(
-    this->Segments.begin(), this->Segments.end(), std::bind2nd(MapValueCompare<SegmentMap>(), segment) );
+  SegmentMap::iterator segmentIt = std::find_if(this->Segments.begin(), this->Segments.end(),
+    [&segment](const std::pair<std::string, vtkSmartPointer<vtkSegment> >& segmentIdPtr) { return segmentIdPtr.second == segment; });
   if (segmentIt == this->Segments.end())
     {
     vtkDebugMacro("GetSegmentIdBySegment: Segment cannot be found!");
