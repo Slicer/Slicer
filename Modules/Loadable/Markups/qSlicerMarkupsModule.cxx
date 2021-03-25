@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-==============================================================================*/
+  ==============================================================================*/
 
 // Qt includes
 #include <QDebug>
@@ -68,7 +68,7 @@
 
 // DisplayableManager initialization
 #include <vtkAutoInit.h>
-VTK_MODULE_INIT(vtkSlicerMarkupsModuleMRMLDisplayableManager)
+VTK_MODULE_INIT(vtkSlicerMarkupsModuleMRMLDisplayableManager);
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Markups
@@ -89,8 +89,7 @@ qSlicerMarkupsModulePrivate::qSlicerMarkupsModulePrivate() = default;
 
 //-----------------------------------------------------------------------------
 qSlicerMarkupsModule::qSlicerMarkupsModule(QObject* _parent)
-  : Superclass(_parent)
-  , d_ptr(new qSlicerMarkupsModulePrivate)
+  : Superclass(_parent), d_ptr(new qSlicerMarkupsModulePrivate)
 {
 }
 
@@ -183,12 +182,12 @@ void qSlicerMarkupsModule::setup()
 
   // settings
   /*
-  if (qSlicerApplication::application())
+    if (qSlicerApplication::application())
     {
     qSlicerMarkupsSettingsPanel* panel =
-      new qSlicerMarkupsSettingsPanel;
+    new qSlicerMarkupsSettingsPanel;
     qSlicerApplication::application()->settingsDialog()->addPanel(
-      "Markups", panel);
+    "Markups", panel);
     panel->setMarkupsLogic(vtkSlicerMarkupsLogic::SafeDownCast(this->logic()));
     }
   */

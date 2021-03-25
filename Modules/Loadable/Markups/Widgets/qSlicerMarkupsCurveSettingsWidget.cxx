@@ -16,7 +16,7 @@
   Oslo University Hospital) and was supported by The Research Council of Norway
   through the ALive project (grant nr. 311393).
 
-==============================================================================*/
+  ==============================================================================*/
 
 #include "qSlicerMarkupsCurveSettingsWidget.h"
 #include "qSlicerMarkupsAdditionalOptionsWidget_p.h"
@@ -34,8 +34,8 @@
 
 // --------------------------------------------------------------------------
 class qSlicerMarkupsCurveSettingsWidgetPrivate
-: public qSlicerMarkupsAdditionalOptionsWidgetPrivate,
-  public Ui_qSlicerMarkupsCurveSettingsWidget
+  : public qSlicerMarkupsAdditionalOptionsWidgetPrivate,
+    public Ui_qSlicerMarkupsCurveSettingsWidget
 {
   Q_DECLARE_PUBLIC(qSlicerMarkupsCurveSettingsWidget);
 
@@ -94,17 +94,17 @@ void qSlicerMarkupsCurveSettingsWidgetPrivate::setupUi(qSlicerMarkupsCurveSettin
   this->editScalarFunctionDelay->setSingleShot(true);
 
   QObject::connect(this->editScalarFunctionDelay, SIGNAL(timeout()),
-    q, SLOT(onCurveTypeParameterChanged()));
+                   q, SLOT(onCurveTypeParameterChanged()));
   QObject::connect(this->curveTypeComboBox, SIGNAL(currentIndexChanged(int)),
-    q, SLOT(onCurveTypeParameterChanged()));
+                   q, SLOT(onCurveTypeParameterChanged()));
   QObject::connect(this->modelNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-    q, SLOT(onCurveTypeParameterChanged()));
+                   q, SLOT(onCurveTypeParameterChanged()));
   QObject::connect(this->costFunctionComboBox, SIGNAL(currentIndexChanged(int)),
-    q, SLOT(onCurveTypeParameterChanged()));
+                   q, SLOT(onCurveTypeParameterChanged()));
   QObject::connect(this->scalarFunctionLineEdit, SIGNAL(textChanged(QString)),
-    this->editScalarFunctionDelay, SLOT(start()));
+                   this->editScalarFunctionDelay, SLOT(start()));
   QObject::connect(this->resampleCurveButton, SIGNAL(clicked()),
-    q, SLOT(onApplyCurveResamplingPushButtonClicked()));
+                   q, SLOT(onApplyCurveResamplingPushButtonClicked()));
 }
 
 //------------------------------------------------------------------------------
@@ -171,7 +171,7 @@ const char* qSlicerMarkupsCurveSettingsWidgetPrivate::getCostFunctionAsHumanRead
 // --------------------------------------------------------------------------
 qSlicerMarkupsCurveSettingsWidget::
 qSlicerMarkupsCurveSettingsWidget(QWidget *parent)
-: Superclass(*new qSlicerMarkupsCurveSettingsWidgetPrivate(this), parent)
+  : Superclass(*new qSlicerMarkupsCurveSettingsWidgetPrivate(this), parent)
 {
   this->setup();
 }
@@ -179,7 +179,7 @@ qSlicerMarkupsCurveSettingsWidget(QWidget *parent)
 // --------------------------------------------------------------------------
 qSlicerMarkupsCurveSettingsWidget::
 qSlicerMarkupsCurveSettingsWidget(qSlicerMarkupsCurveSettingsWidgetPrivate &d,QWidget *parent)
-: Superclass(d, parent)
+  : Superclass(d, parent)
 {
   this->setup();
 }
