@@ -56,17 +56,6 @@
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLAbstractDisplayableManager);
 
-
-struct EventEquals
-{
-  typedef int first_argument_type;
-  typedef std::pair<int,float> second_argument_type;
-  typedef bool result_type;
-  bool operator()(const int& a, std::pair<int,float>& b) const
-  { return a == b.first; }
-};
-
-
 //----------------------------------------------------------------------------
 class vtkMRMLAbstractDisplayableManager::vtkInternal
 {
@@ -370,7 +359,8 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::DoInteractorStyleCallback(
 //----------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager::vtkInternal::UpdateInteractorStyle(int eventIdToObserve, int eventIdToUnObserve, float priority)
 {
-  // TODO The following code could be factorized in shorter and simpler functions
+  // TODO: The following code could be factorized in shorter and simpler functions,
+  // or may be replaced by using vtkEventBroker.
   bool updateObserver = false;
   if (this->MRMLInteractionNode)
     {
@@ -399,11 +389,9 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::UpdateInteractorStyle(int e
   if (eventIdToObserve != vtkCommand::NoEvent)
     {
     // Check if the ObservableEvent has already been registered
-    std::vector<std::pair<int,float> >::iterator it = std::find_if(
-        this->InteractorStyleObservableEvents.begin(),
-        this->InteractorStyleObservableEvents.end(),
-        std::bind1st(EventEquals(), eventIdToObserve));
-
+    std::vector< std::pair<int, float> >::iterator it = std::find_if(
+      this->InteractorStyleObservableEvents.begin(), this->InteractorStyleObservableEvents.end(),
+      [&eventIdToObserve](const std::pair<int, float>& eventIdPriorityPtr) { return eventIdPriorityPtr.first == eventIdToObserve; });
     if (it != this->InteractorStyleObservableEvents.end())
       {
       vtkWarningWithObjectMacro(this->External, << "UpdateInteractorStyle - eventid:" << eventIdToObserve
@@ -418,11 +406,9 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::UpdateInteractorStyle(int e
   if (eventIdToUnObserve != vtkCommand::NoEvent)
     {
     // Check if the ObservableEvent has already been registered
-    std::vector<std::pair<int,float> >::iterator it = std::find_if(
-        this->InteractorStyleObservableEvents.begin(),
-        this->InteractorStyleObservableEvents.end(),
-        std::bind1st(EventEquals(), eventIdToUnObserve));
-
+    std::vector< std::pair<int, float> >::iterator it = std::find_if(
+      this->InteractorStyleObservableEvents.begin(), this->InteractorStyleObservableEvents.end(),
+      [&eventIdToUnObserve](const std::pair<int, float>& eventIdPriorityPtr) { return eventIdPriorityPtr.first == eventIdToUnObserve; });
     if (it == this->InteractorStyleObservableEvents.end())
       {
       vtkWarningWithObjectMacro(this->External, << "UpdateInteractorStyle - eventid:" << eventIdToUnObserve
@@ -438,7 +424,8 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::UpdateInteractorStyle(int e
 //----------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager::vtkInternal::UpdateInteractor(int eventIdToObserve, int eventIdToUnObserve, float priority)
 {
-  // TODO The following code could be factorized in shorter and simpler functions
+  // TODO: The following code could be factorized in shorter and simpler functions,
+  // or may be replaced by using vtkEventBroker.
   bool updateObserver = false;
   if (this->MRMLInteractionNode)
     {
@@ -474,11 +461,9 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::UpdateInteractor(int eventI
   if (eventIdToObserve != vtkCommand::NoEvent)
     {
     // Check if the ObservableEvent has already been registered
-    std::vector<std::pair<int,float> >::iterator it = std::find_if(
-        this->InteractorObservableEvents.begin(),
-        this->InteractorObservableEvents.end(),
-        std::bind1st(EventEquals(), eventIdToObserve));
-
+    std::vector< std::pair<int, float> >::iterator it = std::find_if(
+      this->InteractorStyleObservableEvents.begin(), this->InteractorStyleObservableEvents.end(),
+      [&eventIdToObserve](const std::pair<int, float>& eventIdPriorityPtr) { return eventIdPriorityPtr.first == eventIdToObserve; });
     if (it != this->InteractorObservableEvents.end())
       {
       vtkWarningWithObjectMacro(this->External, << "UpdateInteractor - eventid:" << eventIdToObserve
@@ -493,11 +478,9 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::UpdateInteractor(int eventI
   if (eventIdToUnObserve != vtkCommand::NoEvent)
     {
     // Check if the ObservableEvent has already been registered
-    std::vector<std::pair<int,float> >::iterator it = std::find_if(
-        this->InteractorObservableEvents.begin(),
-        this->InteractorObservableEvents.end(),
-        std::bind1st(EventEquals(), eventIdToUnObserve));
-
+    std::vector< std::pair<int, float> >::iterator it = std::find_if(
+      this->InteractorStyleObservableEvents.begin(), this->InteractorStyleObservableEvents.end(),
+      [&eventIdToUnObserve](const std::pair<int, float>& eventIdPriorityPtr) { return eventIdPriorityPtr.first == eventIdToUnObserve; });
     if (it == this->InteractorObservableEvents.end())
       {
       vtkWarningWithObjectMacro(this->External, << "UpdateInteractor - eventid:" << eventIdToUnObserve
