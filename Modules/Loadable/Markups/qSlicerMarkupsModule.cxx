@@ -208,7 +208,7 @@ qSlicerAbstractModuleRepresentation* qSlicerMarkupsModule::createWidgetRepresent
   auto optionsWidgetFactory = qSlicerMarkupsAdditionalOptionsWidgetsFactory::instance();
   optionsWidgetFactory->registerAdditionalOptionsWidget(new qSlicerMarkupsAngleMeasurementsWidget());
   optionsWidgetFactory->registerAdditionalOptionsWidget(new qSlicerMarkupsCurveSettingsWidget());
-  optionsWidgetFactory->registerAdditionalOptionsWidget(new qMRMLMarkupsROIWidget());
+  optionsWidgetFactory->registerAdditionalOptionsWidget(new qSlicerMarkupsROIWidget());
 
   // Set the number of columns for the grid of "add markups buttons" to the number of markups
   // regitered in this module.
