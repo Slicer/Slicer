@@ -19,44 +19,44 @@
 
 ==============================================================================*/
 
-#include "qMRMLMarkupsROIWidgetPlugin.h"
-#include "qMRMLMarkupsROIWidget.h"
+#include "qSlicerMarkupsROIWidgetPlugin.h"
+#include "qSlicerMarkupsROIWidget.h"
 
 //-----------------------------------------------------------------------------
-qMRMLMarkupsROIWidgetPlugin::qMRMLMarkupsROIWidgetPlugin(QObject *_parent)
+qSlicerMarkupsROIWidgetPlugin::qSlicerMarkupsROIWidgetPlugin(QObject *_parent)
   : QObject(_parent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLMarkupsROIWidgetPlugin::createWidget(QWidget *_parent)
+QWidget *qSlicerMarkupsROIWidgetPlugin::createWidget(QWidget *_parent)
 {
-  qMRMLMarkupsROIWidget* _widget = new qMRMLMarkupsROIWidget(_parent);
+  qSlicerMarkupsROIWidget* _widget = new qSlicerMarkupsROIWidget(_parent);
   return _widget;
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLMarkupsROIWidgetPlugin::domXml() const
+QString qSlicerMarkupsROIWidgetPlugin::domXml() const
 {
-  return "<widget class=\"qMRMLMarkupsROIWidget\" \
+  return "<widget class=\"qSlicerMarkupsROIWidget\" \
           name=\"MRMLMarkupsROIWidget\">\n"
           "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLMarkupsROIWidgetPlugin::includeFile() const
+QString qSlicerMarkupsROIWidgetPlugin::includeFile() const
 {
-  return "qMRMLMarkupsROIWidget.h";
+  return "qSlicerMarkupsROIWidget.h";
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLMarkupsROIWidgetPlugin::isContainer() const
+bool qSlicerMarkupsROIWidgetPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLMarkupsROIWidgetPlugin::name() const
+QString qSlicerMarkupsROIWidgetPlugin::name() const
 {
-  return "qMRMLMarkupsROIWidget";
+  return "qSlicerMarkupsROIWidget";
 }

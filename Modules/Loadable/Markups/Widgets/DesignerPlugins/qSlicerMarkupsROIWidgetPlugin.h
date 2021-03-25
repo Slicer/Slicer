@@ -19,18 +19,18 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLMarkupsROIWidgetPlugin_h
-#define __qMRMLMarkupsROIWidgetPlugin_h
+#ifndef __qSlicerMarkupsROIWidgetPlugin_h
+#define __qSlicerMarkupsROIWidgetPlugin_h
 
 #include "qSlicerMarkupsModuleWidgetsAbstractPlugin.h"
 
-class Q_SLICER_MODULE_MARKUPS_WIDGETS_PLUGINS_EXPORT qMRMLMarkupsROIWidgetPlugin
+class Q_SLICER_MODULE_MARKUPS_WIDGETS_PLUGINS_EXPORT qSlicerMarkupsROIWidgetPlugin
     : public QObject, public qSlicerMarkupsModuleWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  qMRMLMarkupsROIWidgetPlugin(QObject *_parent = nullptr);
+  qSlicerMarkupsROIWidgetPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent) override;
   QString  domXml() const override;

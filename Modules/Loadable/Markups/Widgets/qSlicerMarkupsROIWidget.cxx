@@ -23,8 +23,8 @@
 #include "qSlicerMarkupsAdditionalOptionsWidget_p.h"
 
 // qMRML includes
-#include "qMRMLMarkupsROIWidget.h"
-#include "ui_qMRMLMarkupsROIWidget.h"
+#include "qSlicerMarkupsROIWidget.h"
+#include "ui_qSlicerMarkupsROIWidget.h"
 
 // MRML includes
 #include <vtkMRMLMarkupsROINode.h>
@@ -37,24 +37,24 @@
 #define SLIDERS_EPSILON 0.001
 
 // --------------------------------------------------------------------------
-class qMRMLMarkupsROIWidgetPrivate:
+class qSlicerMarkupsROIWidgetPrivate:
   public qSlicerMarkupsAdditionalOptionsWidgetPrivate,
-  public Ui_qMRMLMarkupsROIWidget
+  public Ui_qSlicerMarkupsROIWidget
 {
-  Q_DECLARE_PUBLIC(qMRMLMarkupsROIWidget);
+  Q_DECLARE_PUBLIC(qSlicerMarkupsROIWidget);
 protected:
-  qMRMLMarkupsROIWidget* const q_ptr;
+  qSlicerMarkupsROIWidget* const q_ptr;
 public:
 
-  qMRMLMarkupsROIWidgetPrivate(qMRMLMarkupsROIWidget* object);
-  void setupUi(qMRMLMarkupsROIWidget* widget);
+  qSlicerMarkupsROIWidgetPrivate(qSlicerMarkupsROIWidget* object);
+  void setupUi(qSlicerMarkupsROIWidget* widget);
 
   bool IsProcessingOnMRMLNodeModified;
   bool AutoRange;
 };
 
 // --------------------------------------------------------------------------
-qMRMLMarkupsROIWidgetPrivate::qMRMLMarkupsROIWidgetPrivate(qMRMLMarkupsROIWidget* object)
+qSlicerMarkupsROIWidgetPrivate::qSlicerMarkupsROIWidgetPrivate(qSlicerMarkupsROIWidget* object)
   : q_ptr(object)
 {
   this->MarkupsNode = nullptr;
@@ -63,11 +63,11 @@ qMRMLMarkupsROIWidgetPrivate::qMRMLMarkupsROIWidgetPrivate(qMRMLMarkupsROIWidget
 }
 
 // --------------------------------------------------------------------------
-void qMRMLMarkupsROIWidgetPrivate::setupUi(qMRMLMarkupsROIWidget* widget)
+void qSlicerMarkupsROIWidgetPrivate::setupUi(qSlicerMarkupsROIWidget* widget)
 {
-  Q_Q(qMRMLMarkupsROIWidget);
+  Q_Q(qSlicerMarkupsROIWidget);
 
-  this->Ui_qMRMLMarkupsROIWidget::setupUi(widget);
+  this->Ui_qSlicerMarkupsROIWidget::setupUi(widget);
 
   this->roiSettingsCollapseButton->setVisible(false);
   this->roiTypeComboBox->clear();
@@ -92,45 +92,45 @@ void qMRMLMarkupsROIWidgetPrivate::setupUi(qMRMLMarkupsROIWidget* widget)
 }
 
 // --------------------------------------------------------------------------
-// qMRMLMarkupsROIWidget methods
+// qSlicerMarkupsROIWidget methods
 
 // --------------------------------------------------------------------------
-qMRMLMarkupsROIWidget::
-qMRMLMarkupsROIWidget(QWidget* parent)
-  : Superclass(*new qMRMLMarkupsROIWidgetPrivate(this), parent)
+qSlicerMarkupsROIWidget::
+qSlicerMarkupsROIWidget(QWidget* parent)
+  : Superclass(*new qSlicerMarkupsROIWidgetPrivate(this), parent)
 {
   this->setup();
 }
 
 // --------------------------------------------------------------------------
-qMRMLMarkupsROIWidget::
-qMRMLMarkupsROIWidget(qMRMLMarkupsROIWidgetPrivate &d, QWidget* parent)
+qSlicerMarkupsROIWidget::
+qSlicerMarkupsROIWidget(qSlicerMarkupsROIWidgetPrivate &d, QWidget* parent)
   : Superclass(d, parent)
 {
  this->setup();
 }
 
 // --------------------------------------------------------------------------
-qMRMLMarkupsROIWidget::~qMRMLMarkupsROIWidget() = default;
+qSlicerMarkupsROIWidget::~qSlicerMarkupsROIWidget() = default;
 
 // --------------------------------------------------------------------------
-void qMRMLMarkupsROIWidget::setup()
+void qSlicerMarkupsROIWidget::setup()
 {
-  Q_D(qMRMLMarkupsROIWidget);
+  Q_D(qSlicerMarkupsROIWidget);
   d->setupUi(this);
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLMarkupsROINode* qMRMLMarkupsROIWidget::mrmlROINode()const
+vtkMRMLMarkupsROINode* qSlicerMarkupsROIWidget::mrmlROINode()const
 {
-  Q_D(const qMRMLMarkupsROIWidget);
+  Q_D(const qSlicerMarkupsROIWidget);
   return vtkMRMLMarkupsROINode::SafeDownCast(d->MarkupsNode);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLMarkupsROIWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode)
+void qSlicerMarkupsROIWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode)
 {
-  Q_D(qMRMLMarkupsROIWidget);
+  Q_D(qSlicerMarkupsROIWidget);
 
   Superclass::setMRMLMarkupsNode(markupsNode);
 
@@ -146,15 +146,15 @@ void qMRMLMarkupsROIWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLMarkupsROIWidget::setMRMLMarkupsNode(vtkMRMLNode* node)
+void qSlicerMarkupsROIWidget::setMRMLMarkupsNode(vtkMRMLNode* node)
 {
   this->setMRMLMarkupsNode(vtkMRMLMarkupsROINode::SafeDownCast(node));
 }
 
 // --------------------------------------------------------------------------
-void qMRMLMarkupsROIWidget::onMRMLNodeModified()
+void qSlicerMarkupsROIWidget::onMRMLNodeModified()
 {
-  Q_D(qMRMLMarkupsROIWidget);
+  Q_D(qSlicerMarkupsROIWidget);
 
   vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(d->MarkupsNode);
   if (!roiNode)
@@ -210,26 +210,26 @@ void qMRMLMarkupsROIWidget::onMRMLNodeModified()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLMarkupsROIWidget::setExtent(double min, double max)
+void qSlicerMarkupsROIWidget::setExtent(double min, double max)
 {
   this->setExtent(min, max, min, max, min, max);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLMarkupsROIWidget::setExtent(double minLR, double maxLR,
+void qSlicerMarkupsROIWidget::setExtent(double minLR, double maxLR,
                                       double minPA, double maxPA,
                                       double minIS, double maxIS)
 {
-  Q_D(qMRMLMarkupsROIWidget);
+  Q_D(qSlicerMarkupsROIWidget);
   d->LRRangeWidget->setRange(minLR, maxLR);
   d->PARangeWidget->setRange(minPA, maxPA);
   d->ISRangeWidget->setRange(minIS, maxIS);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLMarkupsROIWidget::updateWidgetFromMRML()
+void qSlicerMarkupsROIWidget::updateWidgetFromMRML()
 {
-  Q_D(qMRMLMarkupsROIWidget);
+  Q_D(qSlicerMarkupsROIWidget);
 
   if (!this->canManageMRMLMarkupsNode(d->MarkupsNode))
     {
@@ -249,9 +249,9 @@ void qMRMLMarkupsROIWidget::updateWidgetFromMRML()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLMarkupsROIWidget::setDisplayClippingBox(bool visible)
+void qSlicerMarkupsROIWidget::setDisplayClippingBox(bool visible)
 {
-  Q_D(qMRMLMarkupsROIWidget);
+  Q_D(qSlicerMarkupsROIWidget);
 
   int numberOfDisplayNodes = d->MarkupsNode->GetNumberOfDisplayNodes();
 
@@ -270,9 +270,9 @@ void qMRMLMarkupsROIWidget::setDisplayClippingBox(bool visible)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLMarkupsROIWidget::setInteractiveMode(bool interactive)
+void qSlicerMarkupsROIWidget::setInteractiveMode(bool interactive)
 {
-  Q_D(qMRMLMarkupsROIWidget);
+  Q_D(qSlicerMarkupsROIWidget);
   if (!d->MarkupsNode->GetDisplayNode())
     {
     d->MarkupsNode->CreateDefaultDisplayNodes();
@@ -281,9 +281,9 @@ void qMRMLMarkupsROIWidget::setInteractiveMode(bool interactive)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLMarkupsROIWidget::updateROI()
+void qSlicerMarkupsROIWidget::updateROI()
 {
-  Q_D(qMRMLMarkupsROIWidget);
+  Q_D(qSlicerMarkupsROIWidget);
 
   // Ignore the calls from onMRMLNodeModified() as it
   // could set the node in an inconsistent state (except for
@@ -314,9 +314,9 @@ void qMRMLMarkupsROIWidget::updateROI()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLMarkupsROIWidget::onMRMLDisplayNodeModified()
+void qSlicerMarkupsROIWidget::onMRMLDisplayNodeModified()
 {
-  Q_D(qMRMLMarkupsROIWidget);
+  Q_D(qSlicerMarkupsROIWidget);
 
   if (!d->MarkupsNode)
     {
@@ -328,9 +328,9 @@ void qMRMLMarkupsROIWidget::onMRMLDisplayNodeModified()
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLMarkupsROIWidget::onROITypeParameterChanged()
+void qSlicerMarkupsROIWidget::onROITypeParameterChanged()
 {
-  Q_D(qMRMLMarkupsROIWidget);
+  Q_D(qSlicerMarkupsROIWidget);
   vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(d->MarkupsNode);
   if (!roiNode)
     {
@@ -341,9 +341,9 @@ void qMRMLMarkupsROIWidget::onROITypeParameterChanged()
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLMarkupsROIWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const
+bool qSlicerMarkupsROIWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const
 {
-  Q_D(const qMRMLMarkupsROIWidget);
+  Q_D(const qSlicerMarkupsROIWidget);
 
   vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(markupsNode);
   if (!roiNode)
