@@ -95,7 +95,7 @@ We invite commercial entities to use 3D Slicer.
 
 ### Slicer's License makes Commercial Use Available
 
-- 3D Slicer is a Free Open Source Software distributed under a BSD style license.
+- 3D Slicer is a free open source software distributed under a BSD style license.
 - The license does not impose restrictions on the use of the software.
 - 3D Slicer is NOT FDA approved. It is the users responsibility to ensure compliance with applicable rules and regulations.
 - For details, please see the 3D Slicer Software License Agreement.
