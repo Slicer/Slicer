@@ -16,7 +16,7 @@
   Oslo University Hospital) and was supported by The Research Council of Norway
   through the ALive project (grant nr. 311393).
 
-==============================================================================*/
+  ==============================================================================*/
 
 #include "qSlicerMarkupsAngleMeasurementsWidget.h"
 #include "ui_qSlicerMarkupsAngleMeasurementsWidget.h"
@@ -64,15 +64,15 @@ void qSlicerMarkupsAngleMeasurementsWidgetPrivate::setupUi(qSlicerMarkupsAngleMe
   this->angleMeasurementModeCollapsibleButton->setVisible(false);
 
   QObject::connect(this->angleMeasurementModeComboBox, SIGNAL(currentIndexChanged(int)),
-    q, SLOT(onAngleMeasurementModeChanged()));
+                   q, SLOT(onAngleMeasurementModeChanged()));
   QObject::connect(this->rotationAxisCoordinatesWidget, SIGNAL(coordinatesChanged(double*)),
-    q, SLOT(onRotationAxisChanged()));
+                   q, SLOT(onRotationAxisChanged()));
 }
 
 // --------------------------------------------------------------------------
 qSlicerMarkupsAngleMeasurementsWidget::
 qSlicerMarkupsAngleMeasurementsWidget(QWidget *parent)
-: Superclass(* new qSlicerMarkupsAngleMeasurementsWidgetPrivate(this), parent)
+  : Superclass(* new qSlicerMarkupsAngleMeasurementsWidgetPrivate(this), parent)
 {
   this->setup();
 }
@@ -80,7 +80,7 @@ qSlicerMarkupsAngleMeasurementsWidget(QWidget *parent)
 // --------------------------------------------------------------------------
 qSlicerMarkupsAngleMeasurementsWidget::
 qSlicerMarkupsAngleMeasurementsWidget(qSlicerMarkupsAngleMeasurementsWidgetPrivate &d, QWidget *parent)
-: Superclass(d, parent)
+  : Superclass(d, parent)
 {
   this->setup();
 }

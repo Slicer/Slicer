@@ -41,7 +41,7 @@ qSlicerMarkupsAdditionalOptionsWidgetPrivate:: qSlicerMarkupsAdditionalOptionsWi
 //-----------------------------------------------------------------------------
 qSlicerMarkupsAdditionalOptionsWidget::
 qSlicerMarkupsAdditionalOptionsWidget(QWidget* parent)
-: Superclass(parent), d_ptr(new qSlicerMarkupsAdditionalOptionsWidgetPrivate)
+  : Superclass(parent), d_ptr(new qSlicerMarkupsAdditionalOptionsWidgetPrivate)
 {
 
 }
@@ -49,7 +49,7 @@ qSlicerMarkupsAdditionalOptionsWidget(QWidget* parent)
 //-----------------------------------------------------------------------------
 qSlicerMarkupsAdditionalOptionsWidget::
 qSlicerMarkupsAdditionalOptionsWidget(qSlicerMarkupsAdditionalOptionsWidgetPrivate &d, QWidget* parent)
-: Superclass(parent), d_ptr(&d)
+  : Superclass(parent), d_ptr(&d)
 {
 
 }

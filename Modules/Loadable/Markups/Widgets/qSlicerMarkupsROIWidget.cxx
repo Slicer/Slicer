@@ -17,7 +17,7 @@
   and was supported through CANARIE's Research Software Program, Cancer
   Care Ontario, OpenAnatomy, and Brigham and Women's Hospital through NIH grant R01MH112748.
 
-==============================================================================*/
+  ==============================================================================*/
 
 // Markups widgets includes
 #include "qSlicerMarkupsAdditionalOptionsWidget_p.h"
@@ -77,7 +77,7 @@ void qSlicerMarkupsROIWidgetPrivate::setupUi(qSlicerMarkupsROIWidget* widget)
     }
 
   QObject::connect(this->roiTypeComboBox, SIGNAL(currentIndexChanged(int)),
-    q, SLOT(onROITypeParameterChanged()));
+                   q, SLOT(onROITypeParameterChanged()));
   QObject::connect(this->DisplayClippingBoxButton, SIGNAL(toggled(bool)),
                    q, SLOT(setDisplayClippingBox(bool)));
   QObject::connect(this->InteractiveModeCheckBox, SIGNAL(toggled(bool)),
@@ -107,7 +107,7 @@ qSlicerMarkupsROIWidget::
 qSlicerMarkupsROIWidget(qSlicerMarkupsROIWidgetPrivate &d, QWidget* parent)
   : Superclass(d, parent)
 {
- this->setup();
+  this->setup();
 }
 
 // --------------------------------------------------------------------------
@@ -217,8 +217,8 @@ void qSlicerMarkupsROIWidget::setExtent(double min, double max)
 
 // --------------------------------------------------------------------------
 void qSlicerMarkupsROIWidget::setExtent(double minLR, double maxLR,
-                                      double minPA, double maxPA,
-                                      double minIS, double maxIS)
+                                        double minPA, double maxPA,
+                                        double minIS, double maxIS)
 {
   Q_D(qSlicerMarkupsROIWidget);
   d->LRRangeWidget->setRange(minLR, maxLR);
@@ -240,7 +240,7 @@ void qSlicerMarkupsROIWidget::updateWidgetFromMRML()
   d->roiSettingsCollapseButton->setVisible(true);
   vtkMRMLMarkupsROINode* markupsROINode = vtkMRMLMarkupsROINode::SafeDownCast(d->MarkupsNode);
   if (markupsROINode)
-  {
+    {
     bool wasBlocked = d->roiTypeComboBox->blockSignals(true);
     d->roiTypeComboBox->setCurrentIndex(d->roiTypeComboBox->findData(markupsROINode->GetROIType()));
     d->roiTypeComboBox->blockSignals(wasBlocked);
@@ -306,11 +306,11 @@ void qSlicerMarkupsROIWidget::updateROI()
 
   MRMLNodeModifyBlocker blocker(roiNode);
   roiNode->SetXYZ(0.5*(bounds[1]+bounds[0]),
-                     0.5*(bounds[3]+bounds[2]),
-                     0.5*(bounds[5]+bounds[4]));
+                  0.5*(bounds[3]+bounds[2]),
+                  0.5*(bounds[5]+bounds[4]));
   roiNode->SetRadiusXYZ(0.5*(bounds[1]-bounds[0]),
-                           0.5*(bounds[3]-bounds[2]),
-                           0.5*(bounds[5]-bounds[4]));
+                        0.5*(bounds[3]-bounds[2]),
+                        0.5*(bounds[5]-bounds[4]));
 }
 
 // --------------------------------------------------------------------------

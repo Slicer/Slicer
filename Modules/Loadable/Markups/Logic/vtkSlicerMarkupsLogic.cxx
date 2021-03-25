@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-==============================================================================*/
+  ==============================================================================*/
 
 // Markups includes
 #include "vtkSlicerMarkupsLogic.h"
@@ -164,7 +164,7 @@ void vtkSlicerMarkupsLogic::ProcessMRMLNodesEvents(vtkObject *caller,
         }
       // Jump centered in all other slices in the view group
       this->JumpSlicesToNthPointInMarkup(markupsDisplayNode->GetDisplayableNode()->GetID(), controlPointIndex,
-        true /* centered */, viewGroup, sliceNode);
+                                         true /* centered */, viewGroup, sliceNode);
       }
     }
 
@@ -239,7 +239,7 @@ void vtkSlicerMarkupsLogic::ObserveMRMLScene()
     this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
     }
 
- this->Superclass::ObserveMRMLScene();
+  this->Superclass::ObserveMRMLScene();
 }
 
 //---------------------------------------------------------------------------
@@ -438,7 +438,7 @@ void vtkSlicerMarkupsLogic::SetActiveListID(vtkMRMLMarkupsNode *markupsNode)
       {
       selectionNode->SetReferenceActivePlaceNodeID(nullptr);
       vtkSmartPointer<vtkCollection> interactionNodes = vtkSmartPointer<vtkCollection>::Take
-            (this->GetMRMLScene()->GetNodesByClass("vtkMRMLInteractionNode"));
+        (this->GetMRMLScene()->GetNodesByClass("vtkMRMLInteractionNode"));
       for(int interactionNodeIndex = 0; interactionNodeIndex < interactionNodes->GetNumberOfItems(); ++interactionNodeIndex)
         {
         vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(interactionNodes->GetItemAsObject(interactionNodeIndex));
@@ -455,7 +455,7 @@ void vtkSlicerMarkupsLogic::SetActiveListID(vtkMRMLMarkupsNode *markupsNode)
   const char *activePlaceNodeClassName = selectionNode->GetActivePlaceNodeClassName();
   if (!activePlaceNodeClassName ||
       (activePlaceNodeClassName &&
-        strcmp(activePlaceNodeClassName, markupsNode->GetClassName()) != 0))
+       strcmp(activePlaceNodeClassName, markupsNode->GetClassName()) != 0))
     {
     // call the set reference to make sure the event is invoked
     selectionNode->SetReferenceActivePlaceNodeClassName(markupsNode->GetClassName());
@@ -606,7 +606,7 @@ int vtkSlicerMarkupsLogic::AddFiducial(double r, double a, double s)
 
 //---------------------------------------------------------------------------
 void vtkSlicerMarkupsLogic::JumpSlicesToLocation(double x, double y, double z, bool centered,
-  int viewGroup /* =-1 */, vtkMRMLSliceNode* exclude /* =nullptr */)
+                                                 int viewGroup /* =-1 */, vtkMRMLSliceNode* exclude /* =nullptr */)
 {
   if (!this->GetMRMLScene())
     {
@@ -621,7 +621,7 @@ void vtkSlicerMarkupsLogic::JumpSlicesToLocation(double x, double y, double z, b
 
 //---------------------------------------------------------------------------
 void vtkSlicerMarkupsLogic::JumpSlicesToNthPointInMarkup(const char *id, int n, bool centered,
-  int viewGroup /* =-1 */, vtkMRMLSliceNode* exclude /* =nullptr */)
+                                                         int viewGroup /* =-1 */, vtkMRMLSliceNode* exclude /* =nullptr */)
 {
   if (!id)
     {
@@ -671,7 +671,7 @@ void vtkSlicerMarkupsLogic::FocusCamerasOnNthPointInMarkup(const char *id, int n
 }
 //---------------------------------------------------------------------------
 void vtkSlicerMarkupsLogic::FocusCameraOnNthPointInMarkup(
-    const char *cameraNodeID, const char *markupNodeID, int n)
+  const char *cameraNodeID, const char *markupNodeID, int n)
 {
   if (!cameraNodeID || !markupNodeID)
     {
@@ -711,10 +711,10 @@ void vtkSlicerMarkupsLogic::FocusCameraOnNthPointInMarkup(
     return;
     }
 
-    double point[4];
-    markup->GetNthControlPointPositionWorld(n, point);
-    // and focus the camera there
-    cameraNode->SetFocalPoint(point[0], point[1], point[2]);
+  double point[4];
+  markup->GetNthControlPointPositionWorld(n, point);
+  // and focus the camera there
+  cameraNode->SetFocalPoint(point[0], point[1], point[2]);
 }
 
 //---------------------------------------------------------------------------
@@ -971,7 +971,7 @@ void vtkSlicerMarkupsLogic::ToggleAllMarkupsSelected(vtkMRMLMarkupsNode *node)
 
 //---------------------------------------------------------------------------
 void vtkSlicerMarkupsLogic::CopyBasicDisplayProperties(vtkMRMLMarkupsDisplayNode *sourceDisplayNode,
-  vtkMRMLMarkupsDisplayNode *targetDisplayNode)
+                                                       vtkMRMLMarkupsDisplayNode *targetDisplayNode)
 {
   if (!sourceDisplayNode || !targetDisplayNode)
     {
@@ -1261,7 +1261,7 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationFiducialsToMarkups()
           }
         markupsNode->SetNthControlPointSelected(fidIndex, annotNode->GetSelected());
         markupsNode->SetNthControlPointVisibility(fidIndex,
-                                            annotNode->GetDisplayVisibility());
+                                                  annotNode->GetDisplayVisibility());
         markupsNode->SetNthControlPointLocked(fidIndex, annotNode->GetLocked());
         const char *assocNodeID = annotNode->GetAttribute("AssociatedNodeID");
         if (assocNodeID)
@@ -1311,7 +1311,7 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationFiducialsToMarkups()
         // remove the display nodes
         if (pointDisplayNode)
           {
-        scene->RemoveNode(pointDisplayNode);
+          scene->RemoveNode(pointDisplayNode);
           }
         if (textDisplayNode)
           {
@@ -1439,7 +1439,7 @@ bool vtkSlicerMarkupsLogic::StartPlaceMode(bool persistent, vtkMRMLInteractionNo
   if (!interactionNode)
     {
     interactionNode = vtkMRMLInteractionNode::SafeDownCast(
-          this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
+      this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
     }
   if (!interactionNode)
     {
@@ -1540,7 +1540,7 @@ vtkMRMLMarkupsDisplayNode* vtkSlicerMarkupsLogic::GetDefaultMarkupsDisplayNode()
     }
   vtkSmartPointer<vtkMRMLMarkupsDisplayNode> newDefaultNode =
     vtkSmartPointer<vtkMRMLMarkupsDisplayNode>::Take(vtkMRMLMarkupsDisplayNode::SafeDownCast(
-      this->GetMRMLScene()->CreateNodeByClass("vtkMRMLMarkupsDisplayNode")));
+                                                       this->GetMRMLScene()->CreateNodeByClass("vtkMRMLMarkupsDisplayNode")));
   if (!newDefaultNode)
     {
     return nullptr;
@@ -1551,7 +1551,7 @@ vtkMRMLMarkupsDisplayNode* vtkSlicerMarkupsLogic::GetDefaultMarkupsDisplayNode()
 
 //---------------------------------------------------------------------------
 double vtkSlicerMarkupsLogic::GetClosedCurveSurfaceArea(vtkMRMLMarkupsClosedCurveNode* curveNode,
-  vtkPolyData* inputSurface /*=nullptr*/, bool projectWarp /*=true*/)
+                                                        vtkPolyData* inputSurface /*=nullptr*/, bool projectWarp /*=true*/)
 {
   return vtkMRMLMarkupsClosedCurveNode::GetClosedCurveSurfaceArea(curveNode, inputSurface, projectWarp);
 }

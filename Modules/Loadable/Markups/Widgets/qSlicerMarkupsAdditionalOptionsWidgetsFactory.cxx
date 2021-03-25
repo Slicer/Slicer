@@ -35,13 +35,15 @@ public:
   inline void use()   {   }
 
   ~qSlicerMarkupsAdditionalOptionsWidgetsFactoryCleanup()
-    {
+  {
     if (qSlicerMarkupsAdditionalOptionsWidgetsFactory::Instance)
       {
       qSlicerMarkupsAdditionalOptionsWidgetsFactory::setInstance(nullptr);
       }
-    }
+  }
 };
+
+//-----------------------------------------------------------------------------
 static qSlicerMarkupsAdditionalOptionsWidgetsFactoryCleanup qSlicerMarkupsAdditionalOptionsWidgetsFactoryCleanupGlobal;
 
 //-----------------------------------------------------------------------------
@@ -63,11 +65,13 @@ void qSlicerMarkupsAdditionalOptionsWidgetsFactory::setInstance(qSlicerMarkupsAd
     {
     return;
     }
+
   // Preferably this will be nullptr
   if (qSlicerMarkupsAdditionalOptionsWidgetsFactory::Instance)
     {
     delete qSlicerMarkupsAdditionalOptionsWidgetsFactory::Instance;
     }
+
   qSlicerMarkupsAdditionalOptionsWidgetsFactory::Instance = instance;
   if (!instance)
     {
@@ -125,10 +129,10 @@ bool qSlicerMarkupsAdditionalOptionsWidgetsFactory::registerAdditionalOptionsWid
     if (registeredWidget->getAdditionalOptionsWidgetTypeName() ==
         widget->getAdditionalOptionsWidgetTypeName())
       {
-        qWarning() << Q_FUNC_INFO << ": Additional options widget type "
-        << QString(widget->getAdditionalOptionsWidgetTypeName())
-        << " already registered.";
-        return false;
+      qWarning() << Q_FUNC_INFO << ": Additional options widget type "
+                 << QString(widget->getAdditionalOptionsWidgetTypeName())
+                 << " already registered.";
+      return false;
       }
     }
 
