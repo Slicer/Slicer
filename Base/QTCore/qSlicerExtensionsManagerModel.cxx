@@ -435,10 +435,10 @@ namespace
 // --------------------------------------------------------------------------
 bool hasPath(const QStringList& paths, const QString& pathToCheck)
 {
-  QDir dirToCheck(pathToCheck);
+  QString dirToCheck = QDir::cleanPath(pathToCheck);
   foreach(const QString& path, paths)
     {
-    if (dirToCheck == QDir(path))
+    if (dirToCheck == QDir::cleanPath(path))
       {
       return true;
       }
@@ -452,10 +452,17 @@ QStringList appendToPathList(const QStringList& paths, const QStringList& pathsT
   QStringList updatedPaths(paths);
   foreach(const QString& pathToAppend, pathsToAppend)
     {
-    if (!hasPath(paths, pathToAppend) && shouldExist ? QDir(pathToAppend).exists() : true)
+    if (hasPath(updatedPaths, pathToAppend))
       {
-      updatedPaths << pathToAppend;
+      // already inserted, skip it
+      continue;
       }
+    if (shouldExist && !QDir(pathToAppend).exists())
+      {
+      // only existing paths are asked to be added and this one does not exist, skip it
+      continue;
+      }
+    updatedPaths << pathToAppend;
     }
   return updatedPaths;
 }

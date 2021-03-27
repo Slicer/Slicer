@@ -110,7 +110,13 @@ void qSlicerCorePythonManager::addVTKObjectToPythonMain(const QString& name, vtk
 void qSlicerCorePythonManager::appendPythonPath(const QString& path)
 {
   // TODO Make sure PYTHONPATH is updated
-  this->executeString(QString("import sys; sys.path.append(%1); del sys").arg(qSlicerCorePythonManager::toPythonStringLiteral(path)));
+  this->executeString(QString(
+    "import sys, os\n"
+    "___path = os.path.abspath(%1)\n"
+    "if ___path not in sys.path:\n"
+    "  sys.path.append(___path)\n"
+    "del sys, os"
+    ).arg(qSlicerCorePythonManager::toPythonStringLiteral(path)));
 }
 
 //-----------------------------------------------------------------------------
