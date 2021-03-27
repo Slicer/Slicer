@@ -12,7 +12,7 @@ The Slicer community maintains a website referred to as the [Slicer Extensions C
 
 ### Install extensions
 
-- Open Extensions manager using menu: View / Extensions manager.
+- Open Extensions manager using menu: View / Extensions manager. On macOS, Extensions manager requires the [application to be installed](getting_started.html#mac).
 - To restore previously installed extensions:
   - Go to "Restore Extensions" tab
   - Check the checkbox on the left side of each extension that should be installed. If the extension that you want to install is disabled and has "not found for current Slicer version" message is displayed below its name then follow instructions in [troubleshooting section](#extension-is-not-found-for-current-slicer-version).
@@ -85,6 +85,7 @@ When starting the extensions manager, the "Extensions manager is starting, pleas
 ### Extensions manager does not show any extensions
 
 This can be due to several reasons:
+- On macOS: Extensions manager displays the message "Extensions can not be installed" if the application is not installed. See [application installation instructions](getting_started.html#mac).
 - Extensions Catalog server is temporarily overloaded (indicated by extensions manager taking several minutes to start)
   - Recommended action: retry installing extensions later.
 - Extensions have not yet been built for the installed Slicer Preview Release (extensions are made available for latest Slicer Preview Release each day at around 12pm EST)
@@ -94,6 +95,8 @@ This can be due to several reasons:
 - Extensions manager does not have network access
   - Recommended action: Make sure you have internet access. Check your system proxy settings (Slicer uses these system proxy settings by default) and/or set proxy server information in environment variables `http_proxy` and `https_proxy` ([more information](https://doc.qt.io/qt-5/qnetworkproxyfactory.html#systemProxyForQuery)). On Windows, it may be necessary to re-apply the proxy settings by disabling and re-enabling "Automatically detect settings".
   - Alternative solution: download extension package using a web browser (possibly on a different computer) and install the extension manually. See instructions [here](#install-extensions-without-network-connection).
+- On macOS: on some older macbooks, the extension manager window appears very bright, washed out (more information is in [this issue](https://github.com/Slicer/Slicer/issues/5118))
+  - Recommended action: setting the operating system to dark mode fixed the issue for several users.
 
 ### Extension is not found for current Slicer version
 
