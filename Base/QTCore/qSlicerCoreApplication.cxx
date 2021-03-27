@@ -267,19 +267,19 @@ void qSlicerCoreApplicationPrivate::init()
   QHash<QString, QStringList> pathsEnvVars = appLauncherSettings.pathsEnvVars();
   foreach(const QString& key, pathsEnvVars.keys())
     {
-    QString value = pathsEnvVars.value(key).join(appLauncherSettings.pathSep());
+    QString value;
     if (this->Environment.contains(key))
       {
-      if (!this->Environment.value(key).contains(value))
-        {
-        value = QString("%1%2%3").arg(value, appLauncherSettings.pathSep(), this->Environment.value(key));
-        q->setEnvironmentVariable(key, value);
-        }
+      QStringList consolidatedPaths;
+      consolidatedPaths << pathsEnvVars.value(key) << this->Environment.value(key).split(appLauncherSettings.pathSep());
+      consolidatedPaths.removeDuplicates();
+      value = consolidatedPaths.join(appLauncherSettings.pathSep());
       }
     else
       {
-      q->setEnvironmentVariable(key, value);
+      value = pathsEnvVars.value(key).join(appLauncherSettings.pathSep());
       }
+    q->setEnvironmentVariable(key, value);
     }
 
 #ifdef Slicer_USE_PYTHONQT_WITH_OPENSSL
