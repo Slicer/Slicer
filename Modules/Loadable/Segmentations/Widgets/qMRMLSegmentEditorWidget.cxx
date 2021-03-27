@@ -738,8 +738,9 @@ bool qMRMLSegmentEditorWidgetPrivate::updateAlignedMasterVolume()
   vtkNew<vtkGeneralTransform> masterVolumeToSegmentationTransform;
   vtkMRMLTransformNode::GetTransformBetweenNodes(masterVolumeNode->GetParentTransformNode(), segmentationNode->GetParentTransformNode(), masterVolumeToSegmentationTransform.GetPointer());
 
-  vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(masterVolume.GetPointer(), referenceImage.GetPointer(), this->AlignedMasterVolume,
-    /*linearInterpolation=*/true, /*padImage=*/false, masterVolumeToSegmentationTransform.GetPointer());
+  double backgroundValue = masterVolumeNode->GetImageBackgroundScalarComponentAsDouble(0);
+  vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(masterVolume, referenceImage, this->AlignedMasterVolume,
+    /*linearInterpolation=*/true, /*padImage=*/false, masterVolumeToSegmentationTransform, backgroundValue);
 
   this->AlignedMasterVolumeUpdateMasterVolumeNode = masterVolumeNode;
   this->AlignedMasterVolumeUpdateMasterVolumeNodeTransform = masterVolumeNode->GetParentTransformNode();
