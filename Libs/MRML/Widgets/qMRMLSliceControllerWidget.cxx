@@ -1595,10 +1595,16 @@ void qMRMLSliceControllerWidgetPrivate::onSegmentVisibilitySelectionChanged(QStr
 
   std::vector<std::string> allSegmentIDs;
   segmentationNode->GetSegmentation()->GetSegmentIDs(allSegmentIDs);
+  QStringList segmentIdsInSegmentSelectorWidget(this->SegmentSelectorWidget->segmentIDs());
   std::vector<std::string>::iterator segmentIDIt;
   for (segmentIDIt = allSegmentIDs.begin(); segmentIDIt != allSegmentIDs.end(); ++segmentIDIt)
     {
     QString segmentID(segmentIDIt->c_str());
+    if (!segmentIdsInSegmentSelectorWidget.contains(segmentID))
+      {
+      // the segment selector widget does not know about this segment yet, so do not update the MRML node from it
+      continue;
+      }
     bool segmentVisibile = displayNode->GetSegmentVisibility(*segmentIDIt);
     // Hide segment that is visible but its checkbox has been unchecked
     if (segmentVisibile && !selectedSegmentIDs.contains(segmentID))

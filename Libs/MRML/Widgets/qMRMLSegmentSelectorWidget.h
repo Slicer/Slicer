@@ -74,6 +74,12 @@ public:
   /// Returns empty string in case of single selection (when \sa multiSelection is false)
   Q_INVOKABLE QStringList selectedSegmentIDs();
 
+  /// Get all segment IDs that this widget displays.
+  /// This list may differ from the list of segments in the segmentation node
+  /// during adding/removing of segments, because the segment list in the widget is only
+  /// updated when the segmentation node modification event is invoked.
+  Q_INVOKABLE QStringList segmentIDs();
+
   /// Return true if the "none" is in the segmentation node comboBox list, false otherwise.
   /// \sa noneEnabled, setNoneEnabled()
   bool noneEnabled()const;
