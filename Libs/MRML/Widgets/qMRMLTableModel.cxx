@@ -648,7 +648,7 @@ int qMRMLTableModel::removeSelectionFromMRML(QModelIndexList selection, bool rem
       }
     }
   // reverse sort to start removing last index first to keep remaining indices valid
-  qSort(mrmlIndexList.begin(), mrmlIndexList.end(), qGreater<int>());
+  std::sort(mrmlIndexList.begin(), mrmlIndexList.end(), qGreater<int>());
 
   // block modified events to prevent updating of the table during processing
   int wasModified = d->MRMLTableNode->StartModify();

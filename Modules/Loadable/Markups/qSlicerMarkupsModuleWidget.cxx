@@ -1510,7 +1510,7 @@ void qSlicerMarkupsModuleWidget::onDeleteMarkupPushButtonClicked(bool confirm /*
     rows << row;
     }
   // sort the list
-  qSort(rows);
+  std::sort(rows.begin(), rows.end());
 
   if (confirm)
     {
@@ -2029,7 +2029,7 @@ void qSlicerMarkupsModuleWidget::addSelectedCoordinatesToMenu(QMenu *menu)
       }
     }
   // sort the list
-  qSort(rows);
+  std::sort(rows.begin(), rows.end());
 
   // keep track of point to point distance
   double distance = 0.0;
@@ -2234,7 +2234,7 @@ void qSlicerMarkupsModuleWidget::copySelectedToClipboard()
     rows << row;
     }
   // sort the list
-  qSort(rows);
+  std::sort(rows.begin(), rows.end());
 
   vtkNew<vtkMRMLMarkupsFiducialStorageNode> storageNode;
   // Excel recognizes tab character as field separator,
