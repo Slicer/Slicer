@@ -387,7 +387,7 @@ void qMRMLAnnotationTreeView::selectedAsCollection(vtkCollection* collection)
     return;
     }
 
-  qSort(selected.begin(),selected.end());
+  std::sort(selected.begin(), selected.end());
 
   for (int i = 0; i < selected.size(); ++i)
     {
