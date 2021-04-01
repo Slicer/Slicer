@@ -39,10 +39,7 @@ class MultiVolumeIntensityChartView(object):
 
   @staticmethod
   def setExtractInput(extract, mvImage):
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      extract.SetInput(mvImage)
-    else:
-      extract.SetInputData(mvImage)
+    extract.SetInputData(mvImage)
 
   @property
   def chartView(self):
@@ -426,7 +423,7 @@ class LabeledImageChartView(object):
 
   def identifyLabeledVoxels(self):
     img = self.labelNode.GetImageData()
-    extent = img.GetWholeExtent() if vtk.VTK_MAJOR_VERSION <= 5 else img.GetExtent()
+    extent = img.GetExtent()
     self.labeledVoxels = {}
     for i in range(extent[1]+1):
       for j in range(extent[3]+1):

@@ -20,10 +20,7 @@ class qSlicerMultiVolumeExplorerModuleHelper( object ):
     # Extract the image data
     mvImage = multiVolumeNode.GetImageData()
     extract = vtk.vtkImageExtractComponents()
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      extract.SetInput(mvImage)
-    else:
-      extract.SetInputData(mvImage)
+    extract.SetInputData(mvImage)
     extract.SetComponents(frameId)
     extract.Update()
 
