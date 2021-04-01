@@ -231,12 +231,7 @@ class MultiVolumeImporterWidget(ScriptedLoadableModuleWidget):
     # allocate multivolume
     mvImage = vtk.vtkImageData()
     mvImage.SetExtent(frame0Extent)
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      mvImage.SetNumberOfScalarComponents(nFrames)
-      mvImage.SetScalarType(frame0.GetImageData().GetScalarType())
-      mvImage.AllocateScalars()
-    else:
-      mvImage.AllocateScalars(frame0.GetImageData().GetScalarType(), nFrames)
+    mvImage.AllocateScalars(frame0.GetImageData().GetScalarType(), nFrames)
 
     extent = frame0.GetImageData().GetExtent()
     numPixels = float(extent[1]+1)*(extent[3]+1)*(extent[5]+1)*nFrames
