@@ -79,6 +79,14 @@ protected:
   static void SeparateModifiedSegmentFromSharedLabelmap(vtkOrientedImageData* labelmap, vtkSegmentation* segmentation, std::string segmentID,
     const int extent[6], const std::vector<std::string>& segmentIDsToOverwrite);
 
+  /// Get the intersection of two extents.
+  /// If any of the input extents are nullptr or empty (extent[i*2]>extent[i*2+1])
+  /// then the extent is considered to be infinite.
+  /// \param extentA first input extent
+  /// \param extentA second input extent
+  /// \param extentIntersection computed intersection of the two input extents
+  static void GetExtentIntersection(const int extentA[6], const int extentB[6], int extentIntersection[6]);
+
 protected:
   vtkSegmentationModifier();
   ~vtkSegmentationModifier() override;
