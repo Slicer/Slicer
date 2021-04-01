@@ -79,6 +79,13 @@ protected:
   static void SeparateModifiedSegmentFromSharedLabelmap(vtkOrientedImageData* labelmap, vtkSegmentation* segmentation, std::string segmentID,
     const int extent[6], const std::vector<std::string>& segmentIDsToOverwrite);
 
+  /// Get the intersection of the input LabelMap's extent and the input extent.
+  /// If the input extent is null, returns the LabelMap's extent.
+  /// \param labelmap LabelMap with a valid extent
+  /// \param extent Extent within the LabelMap extent (may be nullptr)
+  /// \param extentIntersection Output extent intersection
+  static void GetExtentIntersection(vtkOrientedImageData *labelmap, const int extent[6], int extentIntersection[6]);
+
 protected:
   vtkSegmentationModifier();
   ~vtkSegmentationModifier() override;

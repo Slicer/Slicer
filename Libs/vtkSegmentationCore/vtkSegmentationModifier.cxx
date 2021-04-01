@@ -199,6 +199,24 @@ void vtkSegmentationModifier::SeparateModifiedSegmentFromSharedLabelmap(vtkOrien
 }
 
 //-----------------------------------------------------------------------------
+void vtkSegmentationModifier::GetExtentIntersection(vtkOrientedImageData *labelmap, const int *extent, int extentIntersection[6])
+{
+  if (extent)
+    {
+    extentIntersection[0] = std::max(extent[0], labelmap->GetExtent()[0]);
+    extentIntersection[1] = std::min(extent[1], labelmap->GetExtent()[1]);
+    extentIntersection[2] = std::max(extent[2], labelmap->GetExtent()[2]);
+    extentIntersection[3] = std::min(extent[3], labelmap->GetExtent()[3]);
+    extentIntersection[4] = std::max(extent[4], labelmap->GetExtent()[4]);
+    extentIntersection[5] = std::min(extent[5], labelmap->GetExtent()[5]);
+    }
+  else
+    {
+    std::copy_n(labelmap->GetExtent(), 6, extentIntersection);
+    }
+}
+
+//-----------------------------------------------------------------------------
 bool vtkSegmentationModifier::AppendLabelmapToSegment(vtkOrientedImageData* labelmap, vtkSegmentation* segmentation, std::string segmentID, int mergeMode,
   const int extent[6], bool minimumOfAllSegments, std::vector<std::string>* modifiedSegmentIDs, bool& segmentLabelmapModified)
 {
@@ -255,6 +273,12 @@ bool vtkSegmentationModifier::AppendLabelmapToSegment(vtkOrientedImageData* labe
       vtkSmartPointer<vtkOrientedImageData> modifierLabelmap = labelmap;
       if (labelValue != 1)
         {
+        // Get the intersection between the labelmap and the current modification extent.
+        // The threshold is a vtkThreadedImageAlgorithm. Use static int to avoid any crash if the Algorithm is applied
+        // after this variable goes out of scope.
+        static int extentIntersection[6]{};
+        vtkSegmentationModifier::GetExtentIntersection(labelmap, extent, extentIntersection);
+
         // If the label value is not the same as the modifier (which should be 1), change the label value of the modifier labelmap to be
         // the same as the segment label value.
         vtkNew<vtkImageThreshold> threshold;
@@ -262,7 +286,7 @@ bool vtkSegmentationModifier::AppendLabelmapToSegment(vtkOrientedImageData* labe
         threshold->ThresholdByLower(0);
         threshold->SetInValue(0);
         threshold->SetOutValue(labelValue);
-        threshold->Update();
+        threshold->UpdateExtent(extentIntersection);
         modifierLabelmap = vtkSmartPointer<vtkOrientedImageData>::New();
         modifierLabelmap->ShallowCopy(threshold->GetOutput());
         modifierLabelmap->CopyDirections(labelmap);
@@ -299,13 +323,18 @@ bool vtkSegmentationModifier::AppendLabelmapToSegment(vtkOrientedImageData* labe
     vtkSmartPointer<vtkOrientedImageData> modifierLabelmap = labelmap;
     if (operation == vtkOrientedImageDataResample::OPERATION_MINIMUM)
       {
+      // Get the intersection between the labelmap and the current modification extent.
+      // The threshold is a vtkThreadedImageAlgorithm. Use static int to avoid any crash if the Algorithm is applied
+      // after this variable goes out of scope.
+      static int extentIntersection[6]{};
+      vtkSegmentationModifier::GetExtentIntersection(labelmap, extent, extentIntersection);
       vtkNew<vtkImageThreshold> threshold;
       threshold->SetInputData(labelmap);
       threshold->ThresholdByLower(0);
       threshold->SetInValue(0);
       threshold->SetOutValue(segmentLabelmap->GetScalarTypeMax());
       threshold->SetOutputScalarType(segmentLabelmap->GetScalarType());
-      threshold->Update();
+      threshold->UpdateExtent(extentIntersection);
       modifierLabelmap = vtkSmartPointer<vtkOrientedImageData>::New();
       modifierLabelmap->ShallowCopy(threshold->GetOutput());
       modifierLabelmap->CopyDirections(labelmap);
@@ -337,6 +366,11 @@ bool vtkSegmentationModifier::AppendLabelmapToSegment(vtkOrientedImageData* labe
 
     if (operation == vtkOrientedImageDataResample::OPERATION_MINIMUM && !minimumOfAllSegments)
       {
+      // Get the intersection between the labelmap and the current modification extent.
+      // The threshold is a vtkThreadedImageAlgorithm. Use static int to avoid any crash if the Algorithm is applied
+      // after this variable goes out of scope.
+      static int extentIntersection[6]{};
+      vtkSegmentationModifier::GetExtentIntersection(resampledSegmentLabelmap, extent, extentIntersection);
       vtkNew<vtkOrientedImageData> segmentMask;
       vtkNew<vtkImageThreshold> thresholdSegment;
       thresholdSegment->SetInputData(resampledSegmentLabelmap);
@@ -344,9 +378,10 @@ bool vtkSegmentationModifier::AppendLabelmapToSegment(vtkOrientedImageData* labe
       thresholdSegment->SetInValue(1);
       thresholdSegment->SetOutValue(0);
       thresholdSegment->SetOutputScalarTypeToUnsignedChar();
-      thresholdSegment->Update();
+      thresholdSegment->UpdateExtent(extentIntersection);
       segmentMask->ShallowCopy(thresholdSegment->GetOutput());
       segmentMask->CopyDirections(resampledSegmentLabelmap);
+
       vtkOrientedImageDataResample::ApplyImageMask(modifierLabelmap, segmentMask, modifierLabelmap->GetScalarTypeMax());
       }
 
