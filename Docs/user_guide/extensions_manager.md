@@ -86,8 +86,8 @@ When starting the extensions manager, the "Extensions manager is starting, pleas
 
 This can be due to several reasons:
 - On macOS: Extensions manager displays the message "Extensions can not be installed" if the application is not installed. See [application installation instructions](getting_started.html#mac).
-- Extensions Catalog server is temporarily overloaded (indicated by extensions manager taking several minutes to start)
-  - Recommended action: retry installing extensions later.
+- Extensions Catalog server is temporarily overloaded (indicated by extensions manager taking several minutes to start and having dozens of `Error retrieving extension metadata` messages in the application log)
+  - Recommended action: retry installing extensions an hour later.
 - Extensions have not yet been built for the installed Slicer Preview Release (extensions are made available for latest Slicer Preview Release each day at around 12pm EST)
   - Recommended action: wait a few hours until the extension becomes available.
   - Alternative solution A: [install Slicer Preview Release created the day before](https://download.slicer.org/?offset=-1) (this is a special link that uses `offset=-1` to request builds from a day before)
