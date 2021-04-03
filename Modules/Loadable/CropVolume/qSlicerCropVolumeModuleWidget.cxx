@@ -100,6 +100,19 @@ bool qSlicerCropVolumeModuleWidgetPrivate::checkInputs(bool& autoFixAvailable, Q
     return false;
     }
 
+  if (this->ParametersNode->GetOutputVolumeNode() && this->ParametersNode->GetInputVolumeNode()
+    && strcmp(this->ParametersNode->GetOutputVolumeNode()->GetClassName(), this->ParametersNode->GetInputVolumeNode()->GetClassName()) != 0)
+    {
+    message = qSlicerCropVolumeModuleWidget::tr("Output volume type does not match input volume type.");
+    autoFixAvailable = true;
+    if (autoFixProblems)
+      {
+      // create new node automatically
+      this->ParametersNode->SetOutputVolumeNodeID(nullptr);
+      }
+    return false;
+    }
+
   bool roiExists = true;
   bool inputVolumeTransformValid = true;
   bool roiTransformValid = true;
