@@ -27,7 +27,7 @@ It is highly recommended to crop the input images to cover approximately the sam
 
 Recommended modules:
 - [General registration (Elastix) (in SlicerElastix extension)](https://github.com/lassoan/SlicerElastix#slicerelastix): Its default registration presets work without the need for any parameter adjustments.
-- [General registration (BRAINS)](https://www.slicer.org/w/index.php/Documentation/Nightly/Modules/BRAINSFit): recomended for brain MRIs but with parameter tuning it can work on any other imaging modelities and anatomical regions.
+- [General registration (BRAINS)](https://www.slicer.org/w/index.php/Documentation/Nightly/Modules/BRAINSFit): recomended for brain MRIs but with parameter tuning it can work on any other imaging modalities and anatomical regions.
 - [Sequence registration](https://github.com/moselhy/SlicerSequenceRegistration#volume-sequence-registration-for-3d-slicer): Automatic 4D image (3D image time sequence) registration using Elastix. Can be used for tracking position and shape changes of structures in time, or for motion compensation (register all time points to a selected time point).
 
 ## Segmentation and binary image registration
@@ -36,6 +36,14 @@ Registration of segmentation and binary images are very different from grayscale
 
 Recommended module:
 - [Segment registration (in SegmentRegistration extension)](https://github.com/SlicerRt/SegmentRegistration#segment-registration): registers a selected pair of segments fully automatically. Supports rigid, affine, and deformable registration. Binary images can be registered by converting to segmentation nodes first.
+
+## Model registration
+
+During registration of models containing surface meshes, only the boundaries can guide the alignment process.
+
+Recommended modules:
+- [Segment registration (in SegmentRegistration extension)](https://github.com/SlicerRt/SegmentRegistration#segment-registration): this module can be used after importing a model to a segmentation node. See details in the section above.
+- [Model registration (in SlicerIGT extension)](https://github.com/SlicerIGT/SlicerIGT#model-registration): uses iterative closest points. this method tends to get stuck in a local optimum, therefore it is important to start it from a good initial position (e.g., computed using manual or semi-automatic registration).
 
 ## More information
 
