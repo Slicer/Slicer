@@ -766,8 +766,12 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
   from dicomweb_client.api import DICOMwebClient
   import random
 
+  progressDialog = slicer.util.createProgressDialog(parent=slicer.util.mainWindow(), value=0, maximum=100)
+  progressDialog.labelText = f'Retrieving series list...'
+  slicer.app.processEvents()
+
   if accessToken is None:
-    client = DICOMwebClient(url = dicomWebEndpoint)
+    client = DICOMwebClient(url = dicomWebEndpoint, callback=progressCallback)
   else:
     client = DICOMwebClient(
               url = dicomWebEndpoint,
@@ -784,10 +788,19 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
       seriesInstanceUIDs.append(currentSeriesInstanceUID)
 
   fileNumber = 0
-  for currentSeriesInstanceUID in seriesInstanceUIDs:
+  cancelled = False
+  for seriesIndex, currentSeriesInstanceUID in enumerate(seriesInstanceUIDs):
+    progressDialog.labelText = f'Retrieving series {seriesIndex+1} of {len(seriesInstanceUIDs)}...'
+    slicer.app.processEvents()
     instances = client.retrieve_series(
       study_instance_uid=studyInstanceUID,
       series_instance_uid=currentSeriesInstanceUID)
+
+    progressDialog.setValue(int(100*seriesIndex/len(seriesInstanceUIDs)))
+    slicer.app.processEvents()
+    cancelled = progressDialog.wasCanceled
+    if cancelled:
+      break
 
     outputDirectoryBase = slicer.dicomDatabase.databaseDirectory + "/DICOMweb"
     if not os.access(outputDirectoryBase, os.F_OK):
@@ -797,36 +810,34 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
     outputDirectory.setAutoRemove(False)
     outputDirectoryPath = outputDirectory.path()
 
-    for instance in instances:
+    for instanceIndex, instance in enumerate(instances):
       filename = outputDirectoryPath + "/" + str(fileNumber) + ".dcm"
       instance.save_as(filename)
       fileNumber += 1
-      slicer.app.processEvents()
-    importDicom(outputDirectoryPath)
 
+    importDicom(outputDirectoryPath)
+    if cancelled:
+      break
+
+  progressDialog.close()
   return seriesInstanceUIDs
 
 def registerSlicerURLHandler():
   """
-  Registers slicer:// protocol with this executable.
+  Registers file associations and applicationName:// protocol (e.g., Slicer://)
+  with this executable. This allows Kheops (https://demo.kheops.online) open
+  images selected in the web browser directly in Slicer.
   For now, only implemented on Windows.
   """
   if os.name == 'nt':
-    slicerLauncherPath = os.path.abspath(slicer.app.launcherExecutableFilePath)
-    urlHandlerRegFile = r"""Windows Registry Editor Version 5.00
-[HKEY_CLASSES_ROOT\Slicer]
-@="URL:Slicer Slicer Protocol"
-"URL Protocol"=""
-[HKEY_CLASSES_ROOT\Slicer\DefaultIcon]
-@="Slicer.exe,1"
-[HKEY_CLASSES_ROOT\Slicer\shell]
-[HKEY_CLASSES_ROOT\Slicer\shell\open]
-[HKEY_CLASSES_ROOT\Slicer\shell\open\command]
-@="\"{0}\" \"%1\""
-""".format(slicerLauncherPath.replace("\\","\\\\"))
-    urlHandlerRegFilePath = slicer.app.temporaryPath+"registerSlicerUrlHandler.reg"
-    with open(urlHandlerRegFilePath, "wt") as f:
-      f.write(urlHandlerRegFile)
-    slicer.qSlicerApplicationHelper().runAsAdmin("Regedt32.exe", "/s "+urlHandlerRegFilePath)
+    launcherPath = qt.QDir.toNativeSeparators(qt.QFileInfo(slicer.app.launcherExecutableFilePath).absoluteFilePath())
+    reg = qt.QSettings(f"HKEY_CURRENT_USER\\Software\\Classes", qt.QSettings.NativeFormat)
+    reg.setValue(f"{slicer.app.applicationName}/.",f"{slicer.app.applicationName} supported file")
+    reg.setValue(f"{slicer.app.applicationName}/URL protocol","")
+    reg.setValue(f"{slicer.app.applicationName}/shell/open/command/.",f"\"{launcherPath}\" \"%1\"")
+    reg.setValue(f"{slicer.app.applicationName}/DefaultIcon/.",f"{slicer.app.applicationName}.exe,0")
+    for ext in ['mrml', 'mrb']:
+      reg.setValue(f".{ext}/.",f"{slicer.app.applicationName}")
+      reg.setValue(f".{ext}/Content Type", f"application/x-{ext}")
   else:
     raise NotImplementedError()

@@ -112,7 +112,9 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
 
     url = qt.QUrl(urlString)
     if (url.authority().lower() != "viewer"):
+      logging.debug("DICOM module ignores non-viewer URL: "+urlString)
       return
+    logging.info("DICOM module received URL: "+urlString)
     query = qt.QUrlQuery(url)
     queryMap = {}
     for key, value in query.queryItems(qt.QUrl.FullyDecoded):
