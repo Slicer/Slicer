@@ -163,6 +163,10 @@ public:
                                    unsigned long /*event*/,
                                    void * /*callData*/ ) override;
 
+  /// \brief End modifying the node.
+  /// Updates pending measurements and other updates.
+  /// \sa StartModify()
+  int EndModify(int previousDisableModifiedEventState) override;
 
   /// Create default storage node or nullptr if does not have one
   vtkMRMLStorageNode* CreateDefaultStorageNode() override;
