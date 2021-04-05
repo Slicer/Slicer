@@ -130,7 +130,7 @@ void vtkMRMLMarkupsNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
 
   this->RemoveAllControlPoints();
   this->ClearValueForAllMeasurements();
@@ -156,8 +156,6 @@ void vtkMRMLMarkupsNode::ReadXMLAttributes(const char** atts)
       }
     }
   */
-
-  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -256,6 +254,31 @@ void vtkMRMLMarkupsNode::ProcessMRMLEvents(vtkObject *caller,
     this->UpdateAllMeasurements();
     }
   Superclass::ProcessMRMLEvents(caller, event, callData);
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLMarkupsNode::EndModify(int previousDisableModifiedEventState)
+{
+  bool processPendingPointModifiedEvents = !previousDisableModifiedEventState &&
+    (this->GetModifiedEventPending() > 0
+    || this->GetCustomModifiedEventPending(vtkMRMLMarkupsNode::PointModifiedEvent) > 0
+    || this->GetCustomModifiedEventPending(vtkMRMLMarkupsNode::PointAddedEvent) > 0
+    || this->GetCustomModifiedEventPending(vtkMRMLMarkupsNode::PointRemovedEvent) > 0
+    || this->GetCustomModifiedEventPending(vtkMRMLMarkupsNode::PointPositionDefinedEvent) > 0
+    || this->GetCustomModifiedEventPending(vtkMRMLMarkupsNode::PointPositionUndefinedEvent) > 0);
+  if (processPendingPointModifiedEvents)
+    {
+    this->UpdateCurvePolyFromControlPoints();
+    this->UpdateInteractionHandleToWorldMatrix();
+    }
+
+  int wasModified = Superclass::EndModify(previousDisableModifiedEventState);
+
+  if (processPendingPointModifiedEvents)
+    {
+    this->UpdateAllMeasurements();
+    }
+  return wasModified;
 }
 
 //----------------------------------------------------------------------------
@@ -358,17 +381,23 @@ void vtkMRMLMarkupsNode::RemoveAllControlPoints()
 
   this->ControlPoints.clear();
 
-  this->CurveInputPoly->GetPoints()->Reset();
-  this->CurveInputPoly->GetPoints()->Squeeze();
-
-  this->UpdateInteractionHandleToWorldMatrix();
+  if (!this->GetDisableModifiedEvent())
+    {
+    this->CurveInputPoly->GetPoints()->Reset();
+    this->CurveInputPoly->GetPoints()->Squeeze();
+    this->UpdateInteractionHandleToWorldMatrix();
+    }
 
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointRemovedEvent);
   if (definedPointsExisted)
     {
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionUndefinedEvent);
     }
-  this->UpdateAllMeasurements();
+
+  if (!this->GetDisableModifiedEvent())
+    {
+    this->UpdateAllMeasurements();
+    }
 }
 
 //-------------------------------------------------------------------------
@@ -517,12 +546,14 @@ int vtkMRMLMarkupsNode::AddControlPoint(ControlPoint *controlPoint, bool autoLab
 
   this->ControlPoints.push_back(controlPoint);
 
-  // Add point to CurveInputPoly
-  // TODO: set point mask based on PositionStatus
-  this->CurveInputPoly->GetPoints()->InsertNextPoint(controlPoint->Position);
-  this->CurveInputPoly->GetPoints()->Modified();
-
-  this->UpdateInteractionHandleToWorldMatrix();
+  if (!this->GetDisableModifiedEvent())
+    {
+    // Add point to CurveInputPoly
+    // TODO: set point mask based on PositionStatus
+    this->CurveInputPoly->GetPoints()->InsertNextPoint(controlPoint->Position);
+    this->CurveInputPoly->GetPoints()->Modified();
+    this->UpdateInteractionHandleToWorldMatrix();
+    }
 
   int controlPointIndex = this->GetNumberOfControlPoints() - 1;
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointAddedEvent,  static_cast<void*>(&controlPointIndex));
@@ -531,8 +562,12 @@ int vtkMRMLMarkupsNode::AddControlPoint(ControlPoint *controlPoint, bool autoLab
     {
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionDefinedEvent, static_cast<void*>(&controlPointIndex));
     }
+
   this->StorableModifiedTime.Modified();
-  this->UpdateAllMeasurements();
+  if (!this->GetDisableModifiedEvent())
+    {
+    this->UpdateAllMeasurements();
+    }
   return controlPointIndex;
 }
 
@@ -664,9 +699,11 @@ void vtkMRMLMarkupsNode::RemoveNthControlPoint(int pointIndex)
   delete this->ControlPoints[static_cast<unsigned int> (pointIndex)];
   this->ControlPoints.erase(this->ControlPoints.begin() + pointIndex);
 
-  this->UpdateCurvePolyFromControlPoints();
-  this->UpdateInteractionHandleToWorldMatrix();
-
+  if (!this->GetDisableModifiedEvent())
+    {
+    this->UpdateCurvePolyFromControlPoints();
+    this->UpdateInteractionHandleToWorldMatrix();
+    }
   if (positionWasDefined)
     {
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionUndefinedEvent, static_cast<void*>(&pointIndex));
@@ -674,7 +711,10 @@ void vtkMRMLMarkupsNode::RemoveNthControlPoint(int pointIndex)
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&pointIndex));
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointRemovedEvent, static_cast<void*>(&pointIndex));
   this->StorableModifiedTime.Modified();
-  this->UpdateAllMeasurements();
+  if (!this->GetDisableModifiedEvent())
+    {
+    this->UpdateAllMeasurements();
+    }
 }
 
 //-----------------------------------------------------------
@@ -700,16 +740,21 @@ bool vtkMRMLMarkupsNode::InsertControlPoint(ControlPoint *controlPoint, int targ
   std::vector < ControlPoint* >::iterator pos = this->ControlPoints.begin() + destIndex;
   std::vector < ControlPoint* >::iterator result = this->ControlPoints.insert(pos, controlPoint);
 
-  this->UpdateCurvePolyFromControlPoints();
-  this->UpdateInteractionHandleToWorldMatrix();
-
+  if (!this->GetDisableModifiedEvent())
+    {
+    this->UpdateCurvePolyFromControlPoints();
+    this->UpdateInteractionHandleToWorldMatrix();
+    }
   // let observers know that a markup was added
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointAddedEvent, static_cast<void*>(&targetIndex));
   if (controlPoint->PositionStatus == vtkMRMLMarkupsNode::PositionDefined)
     {
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionDefinedEvent, static_cast<void*>(&targetIndex));
     }
-  this->UpdateAllMeasurements();
+  if (!this->GetDisableModifiedEvent())
+    {
+    this->UpdateAllMeasurements();
+    }
   return true;
 }
 
@@ -741,6 +786,10 @@ void vtkMRMLMarkupsNode::UpdateCurvePolyFromControlPoints()
   vtkPoints* points = this->CurveInputPoly->GetPoints();
   points->Reset();
   int numberOfControlPoints = this->GetNumberOfControlPoints();
+  if (numberOfControlPoints == 0)
+    {
+    points->Squeeze();
+    }
   for (int i = 0; i < numberOfControlPoints; i++)
     {
     points->InsertNextPoint(this->ControlPoints[i]->Position);
@@ -766,14 +815,20 @@ void vtkMRMLMarkupsNode::SwapControlPoints(int m1, int m2)
   // and copy the backup of the first one into the second
   *controlPoint2 = controlPoint1Backup;
 
-  this->UpdateCurvePolyFromControlPoints();
-  this->UpdateInteractionHandleToWorldMatrix();
+  if (!this->GetDisableModifiedEvent())
+    {
+    this->UpdateCurvePolyFromControlPoints();
+    this->UpdateInteractionHandleToWorldMatrix();
+    }
 
   // and let listeners know that two control points have changed
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&m1));
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&m2));
   this->StorableModifiedTime.Modified();
-  this->UpdateAllMeasurements();
+  if (!this->GetDisableModifiedEvent())
+    {
+    this->UpdateAllMeasurements();
+    }
 }
 
 //-----------------------------------------------------------
@@ -815,11 +870,13 @@ void vtkMRMLMarkupsNode::SetNthControlPointPosition(const int pointIndex,
   int oldPositionStatus = controlPoint->PositionStatus;
   controlPoint->PositionStatus = positionStatus;
 
-  vtkPoints* points = this->CurveInputPoly->GetPoints();
-  points->SetPoint(pointIndex, x, y, z);
-  points->Modified();
-
-  this->UpdateInteractionHandleToWorldMatrix();
+  if (!this->GetDisableModifiedEvent())
+    {
+    vtkPoints* points = this->CurveInputPoly->GetPoints();
+    points->SetPoint(pointIndex, x, y, z);
+    points->Modified();
+    this->UpdateInteractionHandleToWorldMatrix();
+    }
 
   // throw an event to let listeners know the position has changed
   int n = pointIndex;
@@ -834,8 +891,10 @@ void vtkMRMLMarkupsNode::SetNthControlPointPosition(const int pointIndex,
     }
   this->StorableModifiedTime.Modified();
 
-  this->UpdateAllMeasurements();
-
+  if (!this->GetDisableModifiedEvent())
+    {
+    this->UpdateAllMeasurements();
+    }
   if (this->GetDisplayNode())
     {
     this->GetDisplayNode()->UpdateScalarRange();
@@ -895,11 +954,13 @@ void vtkMRMLMarkupsNode::SetNthControlPointPositionOrientationWorldFromArray(
     controlPoint->AssociatedNodeID.clear();
     }
 
-  vtkPoints* points = this->CurveInputPoly->GetPoints();
-  points->SetPoint(pointIndex, controlPoint->Position);
-  points->Modified();
-
-  this->UpdateInteractionHandleToWorldMatrix();
+  if (!this->GetDisableModifiedEvent())
+    {
+    vtkPoints* points = this->CurveInputPoly->GetPoints();
+    points->SetPoint(pointIndex, controlPoint->Position);
+    points->Modified();
+    this->UpdateInteractionHandleToWorldMatrix();
+    }
 
   // throw an event to let listeners know the position has changed
   int n = pointIndex;
@@ -913,7 +974,10 @@ void vtkMRMLMarkupsNode::SetNthControlPointPositionOrientationWorldFromArray(
     this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointPositionUndefinedEvent, static_cast<void*>(&n));
   }
   this->StorableModifiedTime.Modified();
-  this->UpdateAllMeasurements();
+  if (!this->GetDisableModifiedEvent())
+    {
+    this->UpdateAllMeasurements();
+    }
 }
 
 //-----------------------------------------------------------
@@ -1007,7 +1071,10 @@ void vtkMRMLMarkupsNode::SetNthControlPointOrientation(int n, double w, double x
 
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
   this->StorableModifiedTime.Modified();
-  this->UpdateAllMeasurements();
+  if (!this->GetDisableModifiedEvent())
+    {
+    this->UpdateAllMeasurements();
+    }
 }
 
 //-----------------------------------------------------------
@@ -1130,7 +1197,10 @@ void vtkMRMLMarkupsNode::SetNthControlPointAssociatedNodeID(int n, std::string i
   controlPoint->AssociatedNodeID = std::string(id.c_str());
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
   this->StorableModifiedTime.Modified();
-  this->UpdateAllMeasurements();
+  if (!this->GetDisableModifiedEvent())
+    {
+    this->UpdateAllMeasurements();
+    }
 }
 
 //-----------------------------------------------------------
@@ -1221,7 +1291,10 @@ void vtkMRMLMarkupsNode::SetNthControlPointSelected(int n, bool flag)
   controlPoint->Selected = flag;
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
   this->StorableModifiedTime.Modified();
-  this->UpdateAllMeasurements();
+  if (!this->GetDisableModifiedEvent())
+    {
+    this->UpdateAllMeasurements();
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -1757,7 +1830,10 @@ void vtkMRMLMarkupsNode::UnsetNthControlPointPosition(int n)
   controlPoint->PositionStatus = PositionUndefined;
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, static_cast<void*>(&n));
   this->StorableModifiedTime.Modified();
-  this->UpdateAllMeasurements();
+  if (!this->GetDisableModifiedEvent())
+    {
+    this->UpdateAllMeasurements();
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -1864,7 +1940,8 @@ void vtkMRMLMarkupsNode::SetControlPointPositionsWorld(vtkPoints* points)
     }
 
   this->IsUpdatingPoints = false;
-  this->UpdateAllMeasurements();
+  // No need to call UpdateAllMeasurements(), because it is automatically
+  // called in EndModify().
   this->EndModify(wasModified);
 }
 

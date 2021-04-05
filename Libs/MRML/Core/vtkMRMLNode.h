@@ -473,6 +473,24 @@ public:
   /// \sa GetDisableModifiedEvent()
   vtkGetMacro(ModifiedEventPending, int);
 
+  /// Returns the number of times a custom modified event is requested
+  /// but not yet invoked on the node.
+  /// A modified even is pending (not yet invoked) if it was requested
+  /// after a StartModify() call and EndModify() is not called yet.
+  /// \sa GetModifiedEventPending()
+  int GetCustomModifiedEventPending(int eventId)
+    {
+    std::map< int, int >::iterator it = this->CustomModifiedEventPending.find(eventId);
+    if (it == this->CustomModifiedEventPending.end())
+      {
+      return 0;
+      }
+    else
+      {
+      return it->second;
+      }
+    }
+
   /// \brief Customized version of Modified() allowing to compress
   /// vtkCommand::ModifiedEvent.
   ///
