@@ -38,7 +38,7 @@
 #include <vtkCallbackCommand.h>
 #include <vtkCellLocator.h>
 #include <vtkCollection.h>
-#include <vtkFrenetSerretFrame.h>
+#include <vtkParallelTransportFrame.h>
 #include <vtkGeneralTransform.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
@@ -82,7 +82,7 @@ vtkMRMLMarkupsNode::vtkMRMLMarkupsNode()
   this->CurvePolyToWorldTransformer->SetInputConnection(this->CurveGenerator->GetOutputPort());
   this->CurvePolyToWorldTransformer->SetTransform(this->CurvePolyToWorldTransform);
 
-  this->CurveCoordinateSystemGeneratorWorld = vtkSmartPointer<vtkFrenetSerretFrame>::New();
+  this->CurveCoordinateSystemGeneratorWorld = vtkSmartPointer<vtkParallelTransportFrame>::New();
   // Curve coordinate system is computed at the very end of the pipeline so that it is only computed
   // if needed (it is not recomputed when a control point or the world transformation is modified).
   this->CurveCoordinateSystemGeneratorWorld->SetInputConnection(this->CurvePolyToWorldTransformer->GetOutputPort());
