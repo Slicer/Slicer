@@ -468,7 +468,9 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       # initialize color lookup table
       modality = self.mapSOPClassUIDToModality(sopClassUID)
       if modality == "PT":
-        displayNode.SetAndObserveColorNodeID(slicer.modules.colors.logic().GetPETColorNodeID(slicer.vtkMRMLPETProceduralColorNode.PETheat))
+        displayNode = volumeNode.GetDisplayNode()
+        if displayNode:
+          displayNode.SetAndObserveColorNodeID(slicer.modules.colors.logic().GetPETColorNodeID(slicer.vtkMRMLPETProceduralColorNode.PETheat))
 
       # initialize quantity and units codes
       (quantity,units) = self.mapSOPClassUIDToDICOMQuantityAndUnits(sopClassUID)
