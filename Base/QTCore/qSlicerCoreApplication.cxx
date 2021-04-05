@@ -961,6 +961,7 @@ void qSlicerCoreApplication::handleCommandLineArguments()
       QUrl url = QUrl(fileName);
       if (url.scheme().toLower() == this->applicationName().toLower()) // Scheme is case insensitive
         {
+        qDebug() << "URL received via command-line: " << fileName;
         emit urlReceived(fileName);
         continue;
         }
@@ -968,6 +969,7 @@ void qSlicerCoreApplication::handleCommandLineArguments()
       QFileInfo file(fileName);
       if (file.exists())
         {
+        qDebug() << "Local filepath received via command-line: " << fileName;
         qSlicerCoreIOManager* ioManager =this->coreIOManager();
         qSlicerIO::IOFileType fileType = ioManager->fileType(fileName);
         qSlicerIO::IOProperties fileProperties;
@@ -976,7 +978,10 @@ void qSlicerCoreApplication::handleCommandLineArguments()
         // relative to the current working directory)
         fileProperties.insert("fileName", file.absoluteFilePath());
         ioManager->loadNodes(fileType, fileProperties);
+        continue;
         }
+
+      qDebug() << "Ignore argument received via command-line (not a valid URL or existing local file): " << fileName;
       }
     }
 

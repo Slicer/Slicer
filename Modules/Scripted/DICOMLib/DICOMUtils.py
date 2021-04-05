@@ -824,25 +824,20 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
 
 def registerSlicerURLHandler():
   """
-  Registers slicer:// protocol with this executable.
+  Registers file associations and applicationName:// protocol (e.g., Slicer://)
+  with this executable. This allows Kheops (https://demo.kheops.online) open
+  images selected in the web browser directly in Slicer.
   For now, only implemented on Windows.
   """
   if os.name == 'nt':
-    slicerLauncherPath = os.path.abspath(slicer.app.launcherExecutableFilePath)
-    urlHandlerRegFile = r"""Windows Registry Editor Version 5.00
-[HKEY_CLASSES_ROOT\Slicer]
-@="URL:Slicer Slicer Protocol"
-"URL Protocol"=""
-[HKEY_CLASSES_ROOT\Slicer\DefaultIcon]
-@="Slicer.exe,1"
-[HKEY_CLASSES_ROOT\Slicer\shell]
-[HKEY_CLASSES_ROOT\Slicer\shell\open]
-[HKEY_CLASSES_ROOT\Slicer\shell\open\command]
-@="\"{0}\" \"%1\""
-""".format(slicerLauncherPath.replace("\\","\\\\"))
-    urlHandlerRegFilePath = slicer.app.temporaryPath+"registerSlicerUrlHandler.reg"
-    with open(urlHandlerRegFilePath, "wt") as f:
-      f.write(urlHandlerRegFile)
-    slicer.qSlicerApplicationHelper().runAsAdmin("Regedt32.exe", "/s "+urlHandlerRegFilePath)
+    launcherPath = qt.QDir.toNativeSeparators(qt.QFileInfo(slicer.app.launcherExecutableFilePath).absoluteFilePath())
+    reg = qt.QSettings(f"HKEY_CURRENT_USER\\Software\\Classes", qt.QSettings.NativeFormat)
+    reg.setValue(f"{slicer.app.applicationName}/.",f"{slicer.app.applicationName} supported file")
+    reg.setValue(f"{slicer.app.applicationName}/URL protocol","")
+    reg.setValue(f"{slicer.app.applicationName}/shell/open/command/.",f"\"{launcherPath}\" \"%1\"")
+    reg.setValue(f"{slicer.app.applicationName}/DefaultIcon/.",f"{slicer.app.applicationName}.exe,0")
+    for ext in ['mrml', 'mrb']:
+      reg.setValue(f".{ext}/.",f"{slicer.app.applicationName}")
+      reg.setValue(f".{ext}/Content Type", f"application/x-{ext}")
   else:
     raise NotImplementedError()
