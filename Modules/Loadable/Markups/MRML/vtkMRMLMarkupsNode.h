@@ -31,7 +31,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkVector.h>
 
-class vtkFrenetSerretFrame;
+class vtkParallelTransportFrame;
 class vtkMRMLUnitNode;
 
 /// \brief MRML node to represent an interactive widget.
@@ -683,7 +683,7 @@ protected:
   /// It provides a fully specified coordinate system at each point of the curve,
   /// which is useful for image reslicing or defining camera pose.
   /// Curve is defined in the world coordinate system.
-  vtkSmartPointer<vtkFrenetSerretFrame> CurveCoordinateSystemGeneratorWorld;
+  vtkSmartPointer<vtkParallelTransportFrame> CurveCoordinateSystemGeneratorWorld;
 
   /// Stores control point positions in a polydata (in local coordinate system).
   /// Line cells connect all points into a curve.

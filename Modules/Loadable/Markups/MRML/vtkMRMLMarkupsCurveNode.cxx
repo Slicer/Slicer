@@ -38,7 +38,7 @@
 #include <vtkCommand.h>
 #include <vtkCutter.h>
 #include <vtkDoubleArray.h>
-#include <vtkFrenetSerretFrame.h>
+#include <vtkParallelTransportFrame.h>
 #include <vtkGeneralTransform.h>
 #include <vtkGenericCell.h>
 #include <vtkLine.h>
@@ -1006,9 +1006,12 @@ bool vtkMRMLMarkupsCurveNode::GetCurvePointToWorldTransformAtPointIndex(vtkIdTyp
     {
     return false;
     }
-  vtkDoubleArray* normals = vtkDoubleArray::SafeDownCast(pointData->GetAbstractArray("FSNormals"));
-  vtkDoubleArray* binormals = vtkDoubleArray::SafeDownCast(pointData->GetArray("FSBinormals"));
-  vtkDoubleArray* tangents = vtkDoubleArray::SafeDownCast(pointData->GetArray("FSTangents"));
+  vtkDoubleArray* normals = vtkDoubleArray::SafeDownCast(
+    pointData->GetAbstractArray(this->CurveCoordinateSystemGeneratorWorld->GetNormalsArrayName()));
+  vtkDoubleArray* binormals = vtkDoubleArray::SafeDownCast(
+    pointData->GetAbstractArray(this->CurveCoordinateSystemGeneratorWorld->GetBinormalsArrayName()));
+  vtkDoubleArray* tangents = vtkDoubleArray::SafeDownCast(
+    pointData->GetAbstractArray(this->CurveCoordinateSystemGeneratorWorld->GetTangentsArrayName()));
   if (!tangents || !normals || !binormals)
     {
     return false;
