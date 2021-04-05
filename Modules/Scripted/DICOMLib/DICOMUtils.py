@@ -766,8 +766,12 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
   from dicomweb_client.api import DICOMwebClient
   import random
 
+  progressDialog = slicer.util.createProgressDialog(parent=slicer.util.mainWindow(), value=0, maximum=100)
+  progressDialog.labelText = f'Retrieving series list...'
+  slicer.app.processEvents()
+
   if accessToken is None:
-    client = DICOMwebClient(url = dicomWebEndpoint)
+    client = DICOMwebClient(url = dicomWebEndpoint, callback=progressCallback)
   else:
     client = DICOMwebClient(
               url = dicomWebEndpoint,
@@ -784,10 +788,19 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
       seriesInstanceUIDs.append(currentSeriesInstanceUID)
 
   fileNumber = 0
-  for currentSeriesInstanceUID in seriesInstanceUIDs:
+  cancelled = False
+  for seriesIndex, currentSeriesInstanceUID in enumerate(seriesInstanceUIDs):
+    progressDialog.labelText = f'Retrieving series {seriesIndex+1} of {len(seriesInstanceUIDs)}...'
+    slicer.app.processEvents()
     instances = client.retrieve_series(
       study_instance_uid=studyInstanceUID,
       series_instance_uid=currentSeriesInstanceUID)
+
+    progressDialog.setValue(int(100*seriesIndex/len(seriesInstanceUIDs)))
+    slicer.app.processEvents()
+    cancelled = progressDialog.wasCanceled
+    if cancelled:
+      break
 
     outputDirectoryBase = slicer.dicomDatabase.databaseDirectory + "/DICOMweb"
     if not os.access(outputDirectoryBase, os.F_OK):
@@ -797,13 +810,16 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
     outputDirectory.setAutoRemove(False)
     outputDirectoryPath = outputDirectory.path()
 
-    for instance in instances:
+    for instanceIndex, instance in enumerate(instances):
       filename = outputDirectoryPath + "/" + str(fileNumber) + ".dcm"
       instance.save_as(filename)
       fileNumber += 1
-      slicer.app.processEvents()
-    importDicom(outputDirectoryPath)
 
+    importDicom(outputDirectoryPath)
+    if cancelled:
+      break
+
+  progressDialog.close()
   return seriesInstanceUIDs
 
 def registerSlicerURLHandler():
