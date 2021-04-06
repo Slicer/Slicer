@@ -122,7 +122,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "460f9c1553621b649f376bb1c07c94d4bdf6f055"  # March 2nd 2021
+    "1062acf7705dd53f0cf01789b7c4a3b4a1bf15a0"  # April 5th 2021
     QUIET
     )
 
