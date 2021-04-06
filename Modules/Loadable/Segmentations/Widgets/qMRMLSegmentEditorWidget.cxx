@@ -1268,9 +1268,7 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
   this->updateEffectsSectionFromMRML();
 
   // Undo/redo section
-
-  d->UndoButton->setEnabled(!d->Locked);
-  d->RedoButton->setEnabled(!d->Locked);
+  this->updateUndoRedoButtonsState();
 
   // Masking section
   this->updateMaskingSection();
@@ -3116,11 +3114,17 @@ void qMRMLSegmentEditorWidget::redo()
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSegmentEditorWidget::onSegmentationHistoryChanged()
+void qMRMLSegmentEditorWidget::updateUndoRedoButtonsState()
 {
   Q_D(qMRMLSegmentEditorWidget);
-  d->UndoButton->setEnabled(d->SegmentationHistory->IsRestorePreviousStateAvailable());
-  d->RedoButton->setEnabled(d->SegmentationHistory->IsRestoreNextStateAvailable());
+  d->UndoButton->setEnabled(!d->Locked && d->SegmentationHistory->IsRestorePreviousStateAvailable());
+  d->RedoButton->setEnabled(!d->Locked && d->SegmentationHistory->IsRestoreNextStateAvailable());
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::onSegmentationHistoryChanged()
+{
+  this->updateUndoRedoButtonsState();
 }
 
 //-----------------------------------------------------------------------------

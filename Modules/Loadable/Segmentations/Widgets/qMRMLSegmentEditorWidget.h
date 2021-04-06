@@ -209,7 +209,7 @@ public:
   QString defaultTerminologyEntrySettingsKey() const;
 
   /// Set terminology entry string that is used for the first segment by default.
-  /// The value is alwo written to application settings, if defaultTerminologyEntrySettingsKey is not empty.
+  /// The value is also written to application settings, if defaultTerminologyEntrySettingsKey is not empty.
   void setDefaultTerminologyEntry(const QString& terminologyEntry);
   /// Get terminology entry string that is used for the first segment by default.
   /// The value is read from application settings, if defaultTerminologyEntrySettingsKey is not empty.
@@ -404,6 +404,9 @@ protected slots:
 
   /// Set default parameters in parameter set node (after setting or closing scene)
   void initializeParameterSetNode();
+
+  /// Update undo/redo button states
+  void updateUndoRedoButtonsState();
 
   /// Update GUI if segmentation history is changed (e.g., undo/redo button states)
   void onSegmentationHistoryChanged();
