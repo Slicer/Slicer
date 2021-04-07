@@ -39,7 +39,6 @@ public:
   ~qMRMLCollapsibleButton() override = default;
 protected:
   void changeEvent(QEvent* event) override;
-  void computePalette();
 };
 
 #endif
