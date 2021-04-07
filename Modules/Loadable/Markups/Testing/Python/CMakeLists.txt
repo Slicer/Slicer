@@ -54,3 +54,11 @@ slicer_add_python_test(SCRIPT MarkupsCurveCoordinateFrameTest.py
 # Test other measurements
 slicer_add_python_test(SCRIPT MarkupsMeasurementsTest.py
                        SLICER_ARGS --disable-cli-modules)
+
+# Test markups pluggable architecture
+slicerMacroBuildScriptedModule(
+  NAME PluggableMarkupsSelfTest
+  SCRIPTS PluggableMarkupsSelfTest.py
+  RESOURCES ${MARKUPS_PYTHON_RESOURCES}
+  )
+slicer_add_python_unittest(SCRIPT PluggableMarkupsSelfTest.py)
