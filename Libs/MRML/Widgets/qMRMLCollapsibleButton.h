@@ -27,6 +27,8 @@
 // qMRMLWidget includes
 #include "qMRMLWidgetsExport.h"
 
+/// This class is intended to improve visual appearance of ctkCollapsibleButton,
+/// but currently it works exactly as its base class ctkCollapsibleButton.
 class QMRML_WIDGETS_EXPORT qMRMLCollapsibleButton : public ctkCollapsibleButton
 {
   Q_OBJECT
@@ -37,9 +39,6 @@ public:
   /// Constructors
   explicit qMRMLCollapsibleButton(QWidget* parent = nullptr);
   ~qMRMLCollapsibleButton() override = default;
-protected:
-  void changeEvent(QEvent* event) override;
-  void computePalette();
 };
 
 #endif
