@@ -284,6 +284,15 @@ void vtkMRMLLinearTransformsDisplayableManager3D::vtkInternal::RemoveDisplayNode
     }
   this->RemoveDisplayObservations(displayNode);
   Pipeline* pipeline = actorsIt->second;
+  if (pipeline->Widget)
+    {
+    // The widget must be disabled because that removes its internal KeyEventCallbackCommand observer.
+    // Without this, a keypress event in the 3D view would call vtkBoxWidget2::ProcessKeyEvents method
+    // of the deleted widget, making the application crash.
+    pipeline->Widget->SetEnabled(false);
+    // Remove the widget observers that this class has added.
+    pipeline->Widget->RemoveAllObservers();
+    }
   this->WidgetMap.erase(pipeline->Widget);
   delete pipeline;
   this->DisplayPipelines.erase(actorsIt);
@@ -318,8 +327,8 @@ void vtkMRMLLinearTransformsDisplayableManager3D::vtkInternal::AddDisplayNode(vt
   // Interaction VTK
   //  - Widget
   pipeline->Widget = vtkSmartPointer<vtkBoxWidget2>::New();
-  vtkNew<vtkBoxRepresentation> WidgetRep;
-  pipeline->Widget->SetRepresentation(WidgetRep.GetPointer());
+  vtkNew<vtkBoxRepresentation> widgetRep;
+  pipeline->Widget->SetRepresentation(widgetRep);
   //  - Transform
   pipeline->WidgetDisplayTransform = vtkSmartPointer<vtkTransform>::New();
   // - Widget events
@@ -342,14 +351,13 @@ void vtkMRMLLinearTransformsDisplayableManager3D::vtkInternal::AddDisplayNode(vt
   this->WidgetMap.insert( std::make_pair(pipeline->Widget, displayNode) );
 
   // add the callback
-  vtkLinearTransformWidgetCallback *widgetCallback = vtkLinearTransformWidgetCallback::New();
+  vtkNew<vtkLinearTransformWidgetCallback> widgetCallback;
   widgetCallback->SetNode(mNode);
   widgetCallback->SetWidget(pipeline->Widget);
   widgetCallback->SetDisplayableManager(this->External);
   pipeline->Widget->AddObserver(vtkCommand::StartInteractionEvent, widgetCallback);
   pipeline->Widget->AddObserver(vtkCommand::EndInteractionEvent, widgetCallback);
   pipeline->Widget->AddObserver(vtkCommand::InteractionEvent, widgetCallback);
-  widgetCallback->Delete();
 
   // Update cached matrices. Calls UpdateDisplayNodePipeline
   this->UpdateDisplayableTransforms(mNode, true);
