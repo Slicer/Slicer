@@ -111,7 +111,7 @@ def getDatabasePatientUIDByPatientID(patientID):
     seriesUIDs = [uid for uidList in series for uid in uidList]
     if len(seriesUIDs) == 0:
       continue
-    filePaths = slicer.dicomDatabase.filesForSeries(seriesUIDs[0])
+    filePaths = slicer.dicomDatabase.filesForSeries(seriesUIDs[0], 1)
     if len(filePaths) == 0:
       continue
     firstFile = filePaths[0]

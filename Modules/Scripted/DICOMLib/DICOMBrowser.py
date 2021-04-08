@@ -271,7 +271,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
     for patient in slicer.dicomDatabase.patients():
       for study in slicer.dicomDatabase.studiesForPatient(patient):
         for series in slicer.dicomDatabase.seriesForStudy(study):
-          instance0 = slicer.dicomDatabase.filesForSeries(series)[0]
+          instance0 = slicer.dicomDatabase.filesForSeries(series, 1)[0]
           modality = slicer.dicomDatabase.fileValue(instance0, modalityTag)
           sopClassUID = slicer.dicomDatabase.fileValue(instance0, sopClassUIDTag)
           modalities.add(modality)

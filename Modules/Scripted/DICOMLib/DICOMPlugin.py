@@ -173,7 +173,7 @@ class DICOMPlugin(object):
   def defaultSeriesNodeName(self,seriesUID):
     """Generate a name suitable for use as a mrml node name based
     on the series level data in the database"""
-    instanceFilePaths = slicer.dicomDatabase.filesForSeries(seriesUID)
+    instanceFilePaths = slicer.dicomDatabase.filesForSeries(seriesUID, 1)
     if len(instanceFilePaths) == 0:
       return "Unnamed Series"
     seriesDescription = slicer.dicomDatabase.fileValue(instanceFilePaths[0],self.tags['seriesDescription'])
