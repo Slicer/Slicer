@@ -529,16 +529,6 @@ void vtkMRMLSliceNode::GetAxialSliceToRASMatrix(vtkMatrix3x3* orientationMatrix,
     orientationMatrix->SetElement(0, 0, -1.0);
     orientationMatrix->SetElement(1, 0,  0.0);
     orientationMatrix->SetElement(2, 0,  0.0);
-
-    // A
-    orientationMatrix->SetElement(0, 1,  0.0);
-    orientationMatrix->SetElement(1, 1,  1.0);
-    orientationMatrix->SetElement(2, 1,  0.0);
-
-    // I = cross(L, A)
-    orientationMatrix->SetElement(0, 2,  0.0);
-    orientationMatrix->SetElement(1, 2,  0.0);
-    orientationMatrix->SetElement(2, 2, -1.0);
     }
   else
     {
@@ -546,21 +536,21 @@ void vtkMRMLSliceNode::GetAxialSliceToRASMatrix(vtkMatrix3x3* orientationMatrix,
     orientationMatrix->SetElement(0, 0, 1.0);
     orientationMatrix->SetElement(1, 0, 0.0);
     orientationMatrix->SetElement(2, 0, 0.0);
-
-    // A
-    orientationMatrix->SetElement(0, 1, 0.0);
-    orientationMatrix->SetElement(1, 1, 1.0);
-    orientationMatrix->SetElement(2, 1, 0.0);
-
-    // S = cross(R, A)
-    orientationMatrix->SetElement(0, 2, 0.0);
-    orientationMatrix->SetElement(1, 2, 0.0);
-    orientationMatrix->SetElement(2, 2, 1.0);
     }
+
+  // A
+  orientationMatrix->SetElement(0, 1,  0.0);
+  orientationMatrix->SetElement(1, 1,  1.0);
+  orientationMatrix->SetElement(2, 1,  0.0);
+
+  // S (to make arrow up/right to go superior)
+  orientationMatrix->SetElement(0, 2,  0.0);
+  orientationMatrix->SetElement(1, 2,  0.0);
+  orientationMatrix->SetElement(2, 2,  1.0);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::GetSagittalSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool /*patientRightIsScreenLeft=true*/)
+void vtkMRMLSliceNode::GetSagittalSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft/*=true*/)
 {
   if (!orientationMatrix)
     {
@@ -576,10 +566,20 @@ void vtkMRMLSliceNode::GetSagittalSliceToRASMatrix(vtkMatrix3x3* orientationMatr
   orientationMatrix->SetElement(1, 1,  0.0);
   orientationMatrix->SetElement(2, 1,  1.0);
 
-  // L = cross(P, S)
-  orientationMatrix->SetElement(0, 2, -1.0);
-  orientationMatrix->SetElement(1, 2,  0.0);
-  orientationMatrix->SetElement(2, 2,  0.0);
+  if (patientRightIsScreenLeft)
+    {
+    // L (to make arrow up/right to go left)
+    orientationMatrix->SetElement(0, 2, -1.0);
+    orientationMatrix->SetElement(1, 2,  0.0);
+    orientationMatrix->SetElement(2, 2,  0.0);
+    }
+  else
+    {
+    // R (to make arrow up/right to go right)
+    orientationMatrix->SetElement(0, 2,  1.0);
+    orientationMatrix->SetElement(1, 2,  0.0);
+    orientationMatrix->SetElement(2, 2,  0.0);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -595,16 +595,6 @@ void vtkMRMLSliceNode::GetCoronalSliceToRASMatrix(vtkMatrix3x3* orientationMatri
     orientationMatrix->SetElement(0, 0, -1.0);
     orientationMatrix->SetElement(1, 0,  0.0);
     orientationMatrix->SetElement(2, 0,  0.0);
-
-    // S
-    orientationMatrix->SetElement(0, 1,  0.0);
-    orientationMatrix->SetElement(1, 1,  0.0);
-    orientationMatrix->SetElement(2, 1,  1.0);
-
-    // A = cross (L, S)
-    orientationMatrix->SetElement(0, 2,  0.0);
-    orientationMatrix->SetElement(1, 2,  1.0);
-    orientationMatrix->SetElement(2, 2,  0.0);
     }
   else
     {
@@ -612,17 +602,17 @@ void vtkMRMLSliceNode::GetCoronalSliceToRASMatrix(vtkMatrix3x3* orientationMatri
     orientationMatrix->SetElement(0, 0,  1.0);
     orientationMatrix->SetElement(1, 0,  0.0);
     orientationMatrix->SetElement(2, 0,  0.0);
-
-    // S
-    orientationMatrix->SetElement(0, 1,  0.0);
-    orientationMatrix->SetElement(1, 1,  0.0);
-    orientationMatrix->SetElement(2, 1,  1.0);
-
-    // P = cross(R, S)
-    orientationMatrix->SetElement(0, 2,  0.0);
-    orientationMatrix->SetElement(1, 2, -1.0);
-    orientationMatrix->SetElement(2, 2,  0.0);
     }
+
+  // S
+  orientationMatrix->SetElement(0, 1,  0.0);
+  orientationMatrix->SetElement(1, 1,  0.0);
+  orientationMatrix->SetElement(2, 1,  1.0);
+
+  // A (to make arrow up/right to go anterior)
+  orientationMatrix->SetElement(0, 2,  0.0);
+  orientationMatrix->SetElement(1, 2,  1.0);
+  orientationMatrix->SetElement(2, 2,  0.0);
 }
 
 //----------------------------------------------------------------------------
