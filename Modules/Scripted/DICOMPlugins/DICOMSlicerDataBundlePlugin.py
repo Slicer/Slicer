@@ -193,7 +193,7 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
         # Series is selected
         seriesInstanceUid = dicomUid
       # Get first file of the series
-      dicomFiles = slicer.dicomDatabase.filesForSeries(seriesInstanceUid)
+      dicomFiles = slicer.dicomDatabase.filesForSeries(seriesInstanceUid, 1)
       if not dicomFiles:
         continue
       break

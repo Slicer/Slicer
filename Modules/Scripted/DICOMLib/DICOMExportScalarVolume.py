@@ -62,7 +62,7 @@ class DICOMExportScalarVolume(object):
       # series = slicer.dicomDatabase.seriesForStudy(studyUID)
       # # first find a unique series number
       # for serie in series:
-        # files = slicer.dicomDatabase.filesForSeries(serie)
+        # files = slicer.dicomDatabase.filesForSeries(serie, 1)
         # if len(files):
           # slicer.dicomDatabase.loadFileHeader(files[0])
           # dump = slicer.dicomDatabase.headerValue('0020,0011')
@@ -79,7 +79,7 @@ class DICOMExportScalarVolume(object):
       # # now find the other values from any file (use first file in first series)
       # if len(series):
         # p['Series Number'] = str(len(series)+1) # doesn't need to be unique, but we try
-        # files = slicer.dicomDatabase.filesForSeries(series[0])
+        # files = slicer.dicomDatabase.filesForSeries(series[0], 1)
         # if len(files):
           # self.referenceFile = files[0]
           # slicer.dicomDatabase.loadFileHeader(self.referenceFile)

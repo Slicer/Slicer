@@ -76,7 +76,7 @@ class DICOMRecentActivityWidget(qt.QWidget):
     for patient in self.dicomDatabase.patients():
       for study in self.dicomDatabase.studiesForPatient(patient):
         for series in self.dicomDatabase.seriesForStudy(study):
-          files = self.dicomDatabase.filesForSeries(series)
+          files = self.dicomDatabase.filesForSeries(series, 1)
           if len(files) > 0:
             instance = self.dicomDatabase.instanceForFile(files[0])
             seriesTime = self.dicomDatabase.insertDateTimeForInstance(instance)
