@@ -29,6 +29,7 @@
 #include <vtkSlicerCamerasModuleLogic.h>
 
 // MRML includes
+#include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLScene.h>
 
 // Slicer includes
@@ -106,18 +107,19 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
       }
     res = this->mrmlScene()->Import();
     }
-
+  if (!this->mrmlScene()->GetErrorMessage().empty())
+    {
+    this->userMessages()->AddMessage(vtkCommand::ErrorEvent, "\n\n" + this->mrmlScene()->GetErrorMessage());
+    }
   if (this->mrmlScene()->GetLastLoadedVersion() &&
      this->mrmlScene()->GetVersion() &&
       strcmp(this->mrmlScene()->GetLastLoadedVersion(),
              this->mrmlScene()->GetVersion()) > 0 )
     {
-      std::string msg = "Warning: scene file " + file.toStdString() + " has version " +
-        std::string(this->mrmlScene()->GetLastLoadedVersion()) + " greater than Slicer4 version " +
-        std::string(this->mrmlScene()->GetVersion()) + ".";
-
-      QMessageBox::warning(nullptr, tr("Reading MRML Scene..."),
-                              tr(msg.c_str()) );
+    std::string msg = "Warning: scene file " + file.toStdString() + " has version " +
+      std::string(this->mrmlScene()->GetLastLoadedVersion()) + " greater than Slicer version " +
+      std::string(this->mrmlScene()->GetVersion()) + ".";
+    this->userMessages()->AddMessage(vtkCommand::WarningEvent, msg);
     }
 
   return res;
