@@ -547,26 +547,28 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     frameOrigins = []
 
     scalarVolumePlugin = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin']()
+    firstFrameOrigin = None
     for frameNumber in range(nFrames):
       frameFileList = files[frameNumber*filesPerFrame:(frameNumber+1)*filesPerFrame]
+
       # sv plugin will sort the filenames by geometric order
       svs = scalarVolumePlugin.examine([frameFileList])
       if len(svs) == 0:
         return False
 
       positionTag = slicer.dicomDatabase.fileValue(svs[0].files[0], self.tags['position'])
-
       if positionTag == '':
         return False
+      origin = [float(zz) for zz in positionTag.split('\\')]
 
-      frameOrigins.append([float(zz) for zz in positionTag.split('\\')])
-
-    # compare frame origins with the origin of the first frame
-    firstO = frameOrigins[0]
-    for o in frameOrigins[1:]:
-      if abs(o[0]-firstO[0])>self.epsilon or abs(o[1]-firstO[1])>self.epsilon or abs(o[2]-firstO[2])>self.epsilon:
-        # frames have mismatching origins
-        return False
+      if firstFrameOrigin is None:
+        # this is the first frame, just record the origin
+        firstFrameOrigin = origin
+      else:
+        # compare this frame's origin to the origin of the first frame
+        if abs(origin[0]-firstFrameOrigin[0])>self.epsilon or abs(origin[1]-firstFrameOrigin[1])>self.epsilon or abs(origin[2]-firstFrameOrigin[2])>self.epsilon:
+          # frames have mismatching origins
+          return False
 
     return True
 
@@ -787,12 +789,18 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     multivolumes = []
 
     if prescribedTags == None:
-      consideredTags = self.multiVolumeTags.keys()
+      consideredTags = list(self.multiVolumeTags.keys())
     else:
-      consideredTags = prescribedTags
+      consideredTags = list(prescribedTags)
 
     # iterate over all files
+    tagsToIgnore = []
     for file in files:
+
+      # Remove tags that were not found in the previous iteration
+      for frameTag in tagsToIgnore:
+        consideredTags.remove(frameTag)
+      tagsToIgnore = []
 
       # iterate over the tags that can be used to separate individual frames
       for frameTag in consideredTags:
@@ -805,6 +813,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         tagValueStr = slicer.dicomDatabase.fileValue(file,self.tags[frameTag])
         if tagValueStr == '':
           # not found?
+          tagsToIgnore.append(frameTag)
           continue
 
         if frameTag == 'AcquisitionTime' or frameTag == 'SeriesTime' or frameTag == 'ContentTime':
@@ -841,7 +850,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
           tagValue2FileList[tagValue] = [file]
 
     # iterate over the parsed items and decide which ones can qualify as mv
-    for frameTag in self.multiVolumeTags.keys():
+    for frameTag in consideredTags:
 
       try:
         tagValue2FileList = tag2ValueFileList[frameTag]
