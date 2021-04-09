@@ -54,7 +54,9 @@ Installing Preview Release: Currently, preview release packages are not signed. 
 
 ### Linux
 
-- Open the tar.gz archive and copy directory to the location of your choice. Run the Slicer executable.
+- Open the tar.gz archive and copy directory to the location of your choice.
+- Installation of additional packages may be necessary depending on the Linux distribution and version, as described in subsections below.
+- Run the `Slicer` executable.
 - Remove the directory to uninstall
 
 **Note:** Slicer is expected to work on the vast majority of desktop and server Linux distributions. The system is required to provide at least GLIBC 2.17 and GLIBCCC 3.4.19. For more details, read [here](https://www.python.org/dev/peps/pep-0599/#the-manylinux2014-policy).
