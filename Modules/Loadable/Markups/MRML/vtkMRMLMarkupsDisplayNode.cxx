@@ -254,6 +254,15 @@ void vtkMRMLMarkupsDisplayNode::ReadXMLAttributes(const char** atts)
         this->SetPointLabelsVisibility(true);
         }
       }
+    else if (!strcmp(attName, "sliceIntersectionVisibility"))
+      {
+      // Presence of this attribute means that this is an old scene (created with Slicer version before September 2019).
+      // In these Slicer versions, markups were always displayed in slice view (regardless of
+      // sliceIntersectionVisibility value), but the vtkMRMLDisplayNode base class sets 2D visibility
+      // based on sliceIntersectionVisibility value. This would result markups fiducial points being
+      // hidden in 2D views by default. To prevent this, we restore visibility now.
+      this->SetVisibility2D(true);
+      }
     }
 }
 
