@@ -118,6 +118,8 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   vtkNew<vtkTextProperty> textProperty;
   textProperty->SetBackgroundOpacity(0.0);
   textProperty->SetFontSize(5);
+  textProperty->BoldOn();
+  textProperty->ShadowOn();
   vtkSetAndObserveMRMLObjectMacro(this->TextProperty, textProperty);
 
   this->ActiveColor[0] = 0.4; // bright green
