@@ -198,11 +198,129 @@ void qSlicerMarkupsModule::readDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDispl
     return;
     }
   QSettings settings;
+
+  if (settings.contains("Markups/SnapMode"))
+    {
+    markupsDisplayNode->SetSnapMode(vtkMRMLMarkupsDisplayNode::GetSnapModeFromString(
+      settings.value("Markups/SnapMode").toString().toUtf8()));
+    }
+  if (settings.contains("Markups/PropertiesLabelVisibility"))
+    {
+    markupsDisplayNode->SetPropertiesLabelVisibility(settings.value("Markups/PropertiesLabelVisibility").toBool());
+    }
+  if (settings.contains("Markups/PointLabelsVisibility"))
+    {
+    markupsDisplayNode->SetPointLabelsVisibility(settings.value("Markups/PointLabelsVisibility").toBool());
+    }
+  if (settings.contains("Markups/FillVisibility"))
+    {
+    markupsDisplayNode->SetFillVisibility(settings.value("Markups/FillVisibility").toBool());
+    }
+  if (settings.contains("Markups/OutlineVisibility"))
+    {
+    markupsDisplayNode->SetOutlineVisibility(settings.value("Markups/OutlineVisibility").toBool());
+    }
+  if (settings.contains("Markups/FillOpacity"))
+    {
+    markupsDisplayNode->SetFillOpacity(settings.value("Markups/FillOpacity").toDouble());
+    }
+  if (settings.contains("Markups/OutlineOpacity"))
+    {
+    markupsDisplayNode->SetOutlineOpacity(settings.value("Markups/OutlineOpacity").toDouble());
+    }
+  if (settings.contains("Markups/TextScale"))
+    {
+    markupsDisplayNode->SetTextScale(settings.value("Markups/TextScale").toDouble());
+    }
   if (settings.contains("Markups/GlyphType"))
     {
     markupsDisplayNode->SetGlyphType(vtkMRMLMarkupsDisplayNode::GetGlyphTypeFromString(
       settings.value("Markups/GlyphType").toString().toUtf8()));
     }
+  if (settings.contains("Markups/GlyphScale"))
+    {
+    markupsDisplayNode->SetGlyphScale(settings.value("Markups/GlyphScale").toDouble());
+    }
+  if (settings.contains("Markups/GlyphSize"))
+    {
+    markupsDisplayNode->SetGlyphSize(settings.value("Markups/GlyphSize").toDouble());
+    }
+  if (settings.contains("Markups/UseGlyphScale"))
+    {
+    markupsDisplayNode->SetUseGlyphScale(settings.value("Markups/UseGlyphScale").toBool());
+    }
+
+  if (settings.contains("Markups/SliceProjection"))
+    {
+    markupsDisplayNode->SetSliceProjection(settings.value("Markups/SliceProjection").toBool());
+    }
+  if (settings.contains("Markups/SliceProjectionUseFiducialColor"))
+    {
+    markupsDisplayNode->SetSliceProjectionUseFiducialColor(settings.value("Markups/SliceProjectionUseFiducialColor").toBool());
+    }
+  if (settings.contains("Markups/SliceProjectionOutlinedBehindSlicePlane"))
+    {
+    markupsDisplayNode->SetSliceProjectionOutlinedBehindSlicePlane(settings.value("Markups/SliceProjectionOutlinedBehindSlicePlane").toBool());
+    }
+  if (settings.contains("Markups/SliceProjectionColor"))
+    {
+    QVariant variant = settings.value("Markups/SliceProjectionColor");
+    QColor qcolor = variant.value<QColor>();
+    markupsDisplayNode->SetSliceProjectionColor(qcolor.redF(), qcolor.greenF(), qcolor.blueF());
+    }
+  if (settings.contains("Markups/SliceProjectionOpacity"))
+    {
+    markupsDisplayNode->SetSliceProjectionOpacity(settings.value("Markups/SliceProjectionOpacity").toDouble());
+    }
+
+
+  if (settings.contains("Markups/CurveLineSizeMode"))
+    {
+    markupsDisplayNode->SetCurveLineSizeMode(vtkMRMLMarkupsDisplayNode::GetCurveLineSizeModeFromString(
+      settings.value("Markups/CurveLineSizeMode").toString().toUtf8()));
+    }
+  if (settings.contains("Markups/LineThickness"))
+    {
+    markupsDisplayNode->SetLineThickness(settings.value("Markups/LineThickness").toDouble());
+    }
+  if (settings.contains("Markups/LineDiameter"))
+    {
+    markupsDisplayNode->SetLineDiameter(settings.value("Markups/LineDiameter").toDouble());
+    }
+
+  if (settings.contains("Markups/LineColorFadingStart"))
+    {
+    markupsDisplayNode->SetLineColorFadingStart(settings.value("Markups/LineColorFadingStart").toDouble());
+    }
+  if (settings.contains("Markups/LineColorFadingEnd"))
+    {
+    markupsDisplayNode->SetLineColorFadingEnd(settings.value("Markups/LineColorFadingEnd").toDouble());
+    }
+  if (settings.contains("Markups/LineColorFadingSaturation"))
+    {
+    markupsDisplayNode->SetLineColorFadingSaturation(settings.value("Markups/LineColorFadingSaturation").toDouble());
+    }
+  if (settings.contains("Markups/LineColorFadingHueOffset"))
+    {
+    markupsDisplayNode->SetLineColorFadingHueOffset(settings.value("Markups/LineColorFadingHueOffset").toDouble());
+    }
+
+  if (settings.contains("Markups/OccludedVisibility"))
+    {
+    markupsDisplayNode->SetOccludedVisibility(settings.value("Markups/OccludedVisibility").toBool());
+    }
+  if (settings.contains("Markups/OccludedOpacity"))
+    {
+    markupsDisplayNode->SetOccludedOpacity(settings.value("Markups/OccludedOpacity").toDouble());
+    }
+
+  if (settings.contains("Markups/TextProperty"))
+    {
+    vtkMRMLMarkupsDisplayNode::UpdateTextPropertyFromString(
+      settings.value("Markups/TextProperty").toString().toStdString(),
+      markupsDisplayNode->GetTextProperty());
+    }
+
   if (settings.contains("Markups/SelectedColor"))
     {
     QVariant variant = settings.value("Markups/SelectedColor");
@@ -221,39 +339,9 @@ void qSlicerMarkupsModule::readDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDispl
     QColor qcolor = variant.value<QColor>();
     markupsDisplayNode->SetColor(qcolor.redF(), qcolor.greenF(), qcolor.blueF());
     }
-  if (settings.contains("Markups/UseGlyphScale"))
-    {
-    markupsDisplayNode->SetUseGlyphScale(settings.value("Markups/UseGlyphScale").toBool());
-    }
-  if (settings.contains("Markups/GlyphScale"))
-    {
-    markupsDisplayNode->SetGlyphScale(settings.value("Markups/GlyphScale").toDouble());
-    }
-  if (settings.contains("Markups/GlyphSize"))
-    {
-    markupsDisplayNode->SetGlyphSize(settings.value("Markups/GlyphSize").toDouble());
-    }
-  if (settings.contains("Markups/TextScale"))
-    {
-    markupsDisplayNode->SetTextScale(settings.value("Markups/TextScale").toDouble());
-    }
   if (settings.contains("Markups/Opacity"))
     {
     markupsDisplayNode->SetOpacity(settings.value("Markups/Opacity").toDouble());
-    }
-  if (settings.contains("Markups/SliceProjection"))
-    {
-    markupsDisplayNode->SetSliceProjection(settings.value("Markups/SliceProjection").toBool());
-    }
-  if (settings.contains("Markups/SliceProjectionColor"))
-    {
-    QVariant variant = settings.value("Markups/SliceProjectionColor");
-    QColor qcolor = variant.value<QColor>();
-    markupsDisplayNode->SetSliceProjectionColor(qcolor.redF(), qcolor.greenF(), qcolor.blueF());
-    }
-  if (settings.contains("Markups/SliceProjectionOpacity"))
-    {
-    markupsDisplayNode->SetSliceProjectionOpacity(settings.value("Markups/SliceProjectionOpacity").toDouble());
     }
 }
 
@@ -267,23 +355,49 @@ void qSlicerMarkupsModule::writeDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDisp
     }
   QSettings settings;
 
-  settings.setValue("Markups/GlyphType", vtkMRMLMarkupsDisplayNode::GetGlyphTypeAsString(
-    markupsDisplayNode->GetGlyphType()));
+  settings.setValue("Markups/SnapMode", vtkMRMLMarkupsDisplayNode::GetSnapModeAsString(
+    markupsDisplayNode->GetSnapMode()));
+  settings.setValue("Markups/PropertiesLabelVisibility", markupsDisplayNode->GetPropertiesLabelVisibility());
 
-  double* color = markupsDisplayNode->GetSelectedColor();
+  settings.setValue("Markups/PointLabelsVisibility", markupsDisplayNode->GetPointLabelsVisibility());
+  settings.setValue("Markups/FillVisibility", markupsDisplayNode->GetFillVisibility());
+  settings.setValue("Markups/OutlineVisibility", markupsDisplayNode->GetOutlineVisibility());
+  settings.setValue("Markups/FillOpacity", markupsDisplayNode->GetFillOpacity());
+  settings.setValue("Markups/OutlineOpacity", markupsDisplayNode->GetOutlineOpacity());
+  settings.setValue("Markups/TextScale", markupsDisplayNode->GetTextScale());
+
+  settings.setValue("Markups/GlyphType", vtkMRMLMarkupsDisplayNode::GetGlyphTypeAsString(markupsDisplayNode->GetGlyphType()));
+  settings.setValue("Markups/GlyphScale", markupsDisplayNode->GetGlyphScale());
+  settings.setValue("Markups/GlyphSize", markupsDisplayNode->GetGlyphSize());
+  settings.setValue("Markups/UseGlyphScale", markupsDisplayNode->GetUseGlyphScale());
+
+  settings.setValue("Markups/SliceProjection", markupsDisplayNode->GetSliceProjection());
+  settings.setValue("Markups/SliceProjectionUseFiducialColor", markupsDisplayNode->GetSliceProjectionUseFiducialColor());
+  settings.setValue("Markups/SliceProjectionOutlinedBehindSlicePlane", markupsDisplayNode->GetSliceProjectionOutlinedBehindSlicePlane());
+  double* color = markupsDisplayNode->GetSliceProjectionColor();
+  settings.setValue("Markups/SliceProjectionColor", QColor::fromRgbF(color[0], color[1], color[2]));
+  settings.setValue("Markups/SliceProjectionOpacity", markupsDisplayNode->GetSliceProjectionOpacity());
+
+  settings.setValue("Markups/CurveLineSizeMode", vtkMRMLMarkupsDisplayNode::GetCurveLineSizeModeAsString(markupsDisplayNode->GetCurveLineSizeMode()));
+  settings.setValue("Markups/LineThickness", markupsDisplayNode->GetLineThickness());
+  settings.setValue("Markups/LineDiameter", markupsDisplayNode->GetLineDiameter());
+
+  settings.setValue("Markups/LineColorFadingStart", markupsDisplayNode->GetLineColorFadingStart());
+  settings.setValue("Markups/LineColorFadingEnd", markupsDisplayNode->GetLineColorFadingEnd());
+  settings.setValue("Markups/LineColorFadingSaturation", markupsDisplayNode->GetLineColorFadingSaturation());
+  settings.setValue("Markups/LineLineColorFadingHueOffset", markupsDisplayNode->GetLineColorFadingHueOffset());
+
+  settings.setValue("Markups/OccludedVisibility", markupsDisplayNode->GetOccludedVisibility());
+  settings.setValue("Markups/OccludedOpacity", markupsDisplayNode->GetOccludedOpacity());
+
+  settings.setValue("Markups/TextProperty", QString::fromStdString(
+    vtkMRMLMarkupsDisplayNode::GetTextPropertyAsString(markupsDisplayNode->GetTextProperty())));
+
+  color = markupsDisplayNode->GetSelectedColor();
   settings.setValue("Markups/SelectedColor", QColor::fromRgbF(color[0], color[1], color[2]));
   color = markupsDisplayNode->GetColor();
   settings.setValue("Markups/UnselectedColor", QColor::fromRgbF(color[0], color[1], color[2]));
   color = markupsDisplayNode->GetActiveColor();
   settings.setValue("Markups/ActiveColor", QColor::fromRgbF(color[0], color[1], color[2]));
-  settings.setValue("Markups/UseGlyphScale", markupsDisplayNode->GetUseGlyphScale());
-  settings.setValue("Markups/GlyphScale", markupsDisplayNode->GetGlyphScale());
-  settings.setValue("Markups/GlyphSize", markupsDisplayNode->GetGlyphSize());
-  settings.setValue("Markups/TextScale", markupsDisplayNode->GetTextScale());
   settings.setValue("Markups/Opacity", markupsDisplayNode->GetOpacity());
-
-  settings.setValue("Markups/SliceProjection", markupsDisplayNode->GetSliceProjection());
-  color = markupsDisplayNode->GetSliceProjectionColor();
-  settings.setValue("Markups/SliceProjectionColor", QColor::fromRgbF(color[0], color[1], color[2]));
-  settings.setValue("Markups/SliceProjectionOpacity", markupsDisplayNode->GetSliceProjectionOpacity());
 }

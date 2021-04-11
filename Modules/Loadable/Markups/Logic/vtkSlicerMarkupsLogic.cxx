@@ -969,18 +969,44 @@ void vtkSlicerMarkupsLogic::CopyBasicDisplayProperties(vtkMRMLMarkupsDisplayNode
     return;
     }
   MRMLNodeModifyBlocker blocker(targetDisplayNode);
-  targetDisplayNode->SetSelectedColor(sourceDisplayNode->GetSelectedColor());
-  targetDisplayNode->SetColor(sourceDisplayNode->GetColor());
-  targetDisplayNode->SetActiveColor(sourceDisplayNode->GetActiveColor());
-  targetDisplayNode->SetOpacity(sourceDisplayNode->GetOpacity());
+  targetDisplayNode->SetSnapMode(sourceDisplayNode->GetSnapMode());
+  targetDisplayNode->SetPropertiesLabelVisibility(sourceDisplayNode->GetPropertiesLabelVisibility());
+  targetDisplayNode->SetPointLabelsVisibility(sourceDisplayNode->GetPointLabelsVisibility());
+  targetDisplayNode->SetFillVisibility(sourceDisplayNode->GetFillVisibility());
+  targetDisplayNode->SetOutlineVisibility(sourceDisplayNode->GetOutlineVisibility());
+  targetDisplayNode->SetFillOpacity(sourceDisplayNode->GetFillOpacity());
+  targetDisplayNode->SetOutlineOpacity(sourceDisplayNode->GetOutlineOpacity());
+  targetDisplayNode->SetTextScale(sourceDisplayNode->GetTextScale());
+
   targetDisplayNode->SetGlyphType(sourceDisplayNode->GetGlyphType());
   targetDisplayNode->SetGlyphScale(sourceDisplayNode->GetGlyphScale());
   targetDisplayNode->SetGlyphSize(sourceDisplayNode->GetGlyphSize());
   targetDisplayNode->SetUseGlyphScale(sourceDisplayNode->GetUseGlyphScale());
-  targetDisplayNode->SetTextScale(sourceDisplayNode->GetTextScale());
+
   targetDisplayNode->SetSliceProjection(sourceDisplayNode->GetSliceProjection());
+  targetDisplayNode->SetSliceProjectionUseFiducialColor(sourceDisplayNode->GetSliceProjectionUseFiducialColor());
+  targetDisplayNode->SetSliceProjectionOutlinedBehindSlicePlane(sourceDisplayNode->GetSliceProjectionOutlinedBehindSlicePlane());
   targetDisplayNode->SetSliceProjectionColor(sourceDisplayNode->GetSliceProjectionColor());
   targetDisplayNode->SetSliceProjectionOpacity(sourceDisplayNode->GetSliceProjectionOpacity());
+
+  targetDisplayNode->SetCurveLineSizeMode(sourceDisplayNode->GetCurveLineSizeMode());
+  targetDisplayNode->SetLineThickness(sourceDisplayNode->GetLineThickness());
+  targetDisplayNode->SetLineDiameter(sourceDisplayNode->GetLineDiameter());
+
+  targetDisplayNode->SetLineColorFadingStart(sourceDisplayNode->GetLineColorFadingStart());
+  targetDisplayNode->SetLineColorFadingEnd(sourceDisplayNode->GetLineColorFadingEnd());
+  targetDisplayNode->SetLineColorFadingSaturation(sourceDisplayNode->GetLineColorFadingSaturation());
+  targetDisplayNode->SetLineColorFadingHueOffset(sourceDisplayNode->GetLineColorFadingHueOffset());
+
+  targetDisplayNode->SetOccludedVisibility(sourceDisplayNode->GetOccludedVisibility());
+  targetDisplayNode->SetOccludedOpacity(sourceDisplayNode->GetOccludedOpacity());
+  std::string textPropertyStr = vtkMRMLMarkupsDisplayNode::GetTextPropertyAsString(sourceDisplayNode->GetTextProperty());
+  vtkMRMLMarkupsDisplayNode::UpdateTextPropertyFromString(textPropertyStr, targetDisplayNode->GetTextProperty());
+
+  targetDisplayNode->SetSelectedColor(sourceDisplayNode->GetSelectedColor());
+  targetDisplayNode->SetColor(sourceDisplayNode->GetColor());
+  targetDisplayNode->SetActiveColor(sourceDisplayNode->GetActiveColor());
+  targetDisplayNode->SetOpacity(sourceDisplayNode->GetOpacity());
 }
 
 //---------------------------------------------------------------------------
