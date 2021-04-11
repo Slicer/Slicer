@@ -825,8 +825,8 @@ std::string vtkMRMLMarkupsDisplayNode::GetTextPropertyAsString(vtkTextProperty* 
     }
   ss << (textProperty->GetFrame() ? "1.0" : "0.0") << ");";
   ss << "text-shadow:";
-  ss << textProperty->GetShadowOffset()[0] << "px " << textProperty->GetShadowOffset()[0] << "px ";
-  ss << "0px "; // blur radius
+  ss << textProperty->GetShadowOffset()[0] << "px " << textProperty->GetShadowOffset()[1] << "px ";
+  ss << "2px "; // blur radius (used in CSS but not supported in VTK yet)
   ss << "rgba(0,0,0," << (textProperty->GetShadow() ? "1.0" : "0.0") << ");";
   return ss.str();
 }
@@ -916,11 +916,11 @@ void vtkMRMLMarkupsDisplayNode::UpdateTextPropertyFromString(std::string inputSt
     else if (key == "text-shadow")
       {
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
-      std::vector<std::string> shadowProperties = vtksys::SystemTools::SplitString(textPropertyString, ' ');
+      std::vector<std::string> shadowProperties = vtksys::SystemTools::SplitString(keyValue[1], ' ');
 #else
-      std::vector<vtksys::String> shadowProperties = vtksys::SystemTools::SplitString(textPropertyString, ' ');
+      std::vector<vtksys::String> shadowProperties = vtksys::SystemTools::SplitString(keyValue[1], ' ');
 #endif
-      int shadowOffset[2] = { 0,0 };
+      int shadowOffset[2] = { 2, 2 };
       int shadowPropertyIndex = 0;
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
       for (std::string shadowProperty : shadowProperties)
