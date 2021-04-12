@@ -447,7 +447,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
   def onShowCreatedOutputFile(self):
     if not self.createdOutputFile:
       return
-    qt.QDesktopServices().openUrl(qt.QUrl("file:///"+self.createdOutputFile, qt.QUrl.TolerantMode));
+    qt.QDesktopServices().openUrl(qt.QUrl("file:///"+self.createdOutputFile, qt.QUrl.TolerantMode))
 
   def updateOutputType(self, selectionIndex=0):
     isVideo = self.outputTypeWidget.currentText == "video"
@@ -965,7 +965,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     sliceLogic = self.getSliceLogicFromSliceNode(sliceNode)
 
     sliceOffsetResolution = 1.0
-    sliceSpacing = sliceLogic.GetLowestVolumeSliceSpacing();
+    sliceSpacing = sliceLogic.GetLowestVolumeSliceSpacing()
     if sliceSpacing is not None and sliceSpacing[2]>0:
       sliceOffsetResolution = sliceSpacing[2]
 

@@ -231,7 +231,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
       dicomRetrieve.setCalledAETitle('DCMTK')
       dicomRetrieve.setPort(12345)
       dicomRetrieve.setHost('localhost')
-      dicomRetrieve.getStudy('1.2.124.113932.1.170.223.162.178.20050502.160340.12640015');
+      dicomRetrieve.getStudy('1.2.124.113932.1.170.223.162.178.20050502.160340.12640015')
       popen.kill()
 
       # Select first patient
@@ -281,7 +281,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
       self.delayDisplay('Conventional, Link, Slice Model')
       layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
       redWidget.sliceController().setSliceLink(True)
-      redWidget.sliceController().setSliceVisible(True);
+      redWidget.sliceController().setSliceVisible(True)
 
       self.delayDisplay('Rotate')
       threeDView = layoutManager.threeDWidget(0).threeDView()
@@ -330,7 +330,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
 
       self.delayDisplay('Models and Slice Model')
       mainWindow.moduleSelector().selectModule('Models')
-      redWidget.sliceController().setSliceVisible(True);
+      redWidget.sliceController().setSliceVisible(True)
 
       self.delayDisplay('Scroll Slices')
       for offset in range(-20,20,2):
@@ -347,7 +347,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
       skull.GetDisplayNode().SetVisibility(0)
 
       self.delayDisplay('Green slice and Clipping')
-      greenWidget.sliceController().setSliceVisible(True);
+      greenWidget.sliceController().setSliceVisible(True)
       hemispheric_white_matter = slicer.util.getNode(pattern='hemispheric_white_matter.vtk')
       hemispheric_white_matter.GetDisplayNode().SetClipping(1)
       clip = slicer.mrmlScene.GetFirstNodeByClass('vtkMRMLClipModelsNode')
@@ -422,7 +422,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
       cameraNode.GetCamera().Elevation(-30)
 
       segmentVII = slicer.util.getNode('LiverSegment_II')
-      redWidget.sliceController().setSliceVisible(True);
+      redWidget.sliceController().setSliceVisible(True)
 
       self.delayDisplay('Middle Hepatic')
       models = slicer.util.getNodes('vtkMRMLModelNode*')
@@ -435,7 +435,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
         modelNode = slicer.util.getNode(nodeName)
         modelNode.GetDisplayNode().SetOpacity(0.5)
         modelNode.GetDisplayNode().SetVisibility(1)
-      redWidget.sliceController().setSliceVisible(True);
+      redWidget.sliceController().setSliceVisible(True)
       cameraNode.GetCamera().Azimuth(30)
       cameraNode.GetCamera().Elevation(-20)
 
@@ -480,7 +480,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
       self.delayDisplay('View Question 1')
       cameraNode.GetCamera().Azimuth(-100)
       cameraNode.GetCamera().Elevation(-40)
-      redWidget.sliceController().setSliceVisible(True);
+      redWidget.sliceController().setSliceVisible(True)
       lungs = slicer.util.getNode('chestCT_lungs')
       lungs.GetDisplayNode().SetVisibility(0)
 
@@ -494,7 +494,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
       self.delayDisplay('View Question 3')
       cameraNode.GetCamera().Azimuth(-165)
       cameraNode.GetCamera().Elevation(-10)
-      redWidget.sliceController().setSliceVisible(False);
+      redWidget.sliceController().setSliceVisible(False)
 
       self.delayDisplay('View Question 4')
       cameraNode.GetCamera().Azimuth(20)

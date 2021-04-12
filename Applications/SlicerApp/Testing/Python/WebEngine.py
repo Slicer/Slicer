@@ -168,7 +168,7 @@ class WebEngineTest(ScriptedLoadableModuleTest):
     self.delayDisplay('Slicer setting a javascript value')
 
     webWidget.evalJS("const valueFromSlicer = 42;")
-    webWidget.evalJS("valueFromSlicer;");
+    webWidget.evalJS("valueFromSlicer;")
 
     iteration = 0
     while not self.gotResponse and iteration < 3:

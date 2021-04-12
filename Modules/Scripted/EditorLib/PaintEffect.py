@@ -717,7 +717,7 @@ class PaintEffectTool(LabelEffectTool):
             zVoxelSize_mm = int(distanceSpannedBy100Slices / 100)
         # --
         # Compute number of slices spanned by sphere
-        nNumSlicesInEachDirection=int(brushRadius / zVoxelSize_mm);
+        nNumSlicesInEachDirection=int(brushRadius / zVoxelSize_mm)
         nNumSlicesInEachDirection=nNumSlicesInEachDirection-1
         sliceOffsetArray=numpy.concatenate((-1*numpy.arange(1,nNumSlicesInEachDirection+1,),  numpy.arange(1,nNumSlicesInEachDirection+1)))
         for iSliceOffset in sliceOffsetArray:
@@ -726,7 +726,7 @@ class PaintEffectTool(LabelEffectTool):
             iBrushCenter = xyToRAS.MultiplyPoint( (x, y, iSliceOffset, 1) )[:3]
             self.painter.SetBrushCenter( iBrushCenter[0], iBrushCenter[1], iBrushCenter[2] )
             # [ ] Need to just continue (pass this loop iteration if the brush center is not within the volume
-            zOffset_mm=zVoxelSize_mm*iSliceOffset;
+            zOffset_mm=zVoxelSize_mm*iSliceOffset
             brushRadiusOffset=sqrt(brushRadius*brushRadius - zOffset_mm*zOffset_mm)
             self.painter.SetBrushRadius( brushRadiusOffset )
 

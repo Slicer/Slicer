@@ -125,7 +125,7 @@ class SlicerMRBSaveRestoreCheckPaths(ScriptedLoadableModuleTest):
     numberOfSceneViews = scene.GetNumberOfNodesByClass('vtkMRMLSceneViewNode')
     slicer.util.delayDisplay("Number of scene views = " + str(numberOfSceneViews))
     if numberOfSceneViews == 0:
-      return;
+      return
     for n in range(numberOfSceneViews):
       sceneViewNode = slicer.mrmlScene.GetNthNodeByClass(n, 'vtkMRMLSceneViewNode')
       slicer.util.delayDisplay('\nChecking scene view ' + sceneViewNode.GetName() + ', id = ' + sceneViewNode.GetID())

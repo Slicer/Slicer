@@ -252,7 +252,7 @@ class TemplateManager(object):
     .. seealso:: :meth:`templates`, :meth:`.listTemplates`
     """
 
-    return list(_templateCategories);
+    return list(_templateCategories)
 
   #---------------------------------------------------------------------------
   def templates(self, category=None):

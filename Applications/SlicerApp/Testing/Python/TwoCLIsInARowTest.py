@@ -123,7 +123,7 @@ class TwoCLIsInARowTestTest(ScriptedLoadableModuleTest):
   def test_TwoCLIsInARowTest(self):
     self.delayDisplay('Running two CLIs in a row Test')
 
-    tempFile = qt.QTemporaryFile("TwoCLIsInARowTest-outputFile-XXXXXX");
+    tempFile = qt.QTemporaryFile("TwoCLIsInARowTest-outputFile-XXXXXX")
     self.assertTrue(tempFile.open())
 
     logic = TwoCLIsInARowTestLogic()

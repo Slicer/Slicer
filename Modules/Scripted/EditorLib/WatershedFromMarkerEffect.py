@@ -247,7 +247,7 @@ class WatershedFromMarkerEffectLogic(LabelEffectLogic):
     if self.undoRedo:
       self.undoRedo.saveState()
 
-    featureImage = sitk.GradientMagnitudeRecursiveGaussian( backgroundImage, float(self.sigma) );
+    featureImage = sitk.GradientMagnitudeRecursiveGaussian( backgroundImage, float(self.sigma) )
     del backgroundImage
     f = sitk.MorphologicalWatershedFromMarkersImageFilter()
     f.SetMarkWatershedLine( False )

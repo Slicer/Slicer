@@ -151,7 +151,7 @@ class PlotsSelfTestTest(ScriptedLoadableModuleTest):
 
     # Create plot view node
     plotViewNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotViewNode")
-    plotViewNode.SetPlotChartNodeID(plotChartNode.GetID());
+    plotViewNode.SetPlotChartNodeID(plotChartNode.GetID())
 
     # Create plotWidget
     plotWidget = slicer.qMRMLPlotWidget()

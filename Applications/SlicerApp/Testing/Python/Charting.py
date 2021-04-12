@@ -187,7 +187,7 @@ class ChartingTest(ScriptedLoadableModuleTest):
     cn.SetProperty('default', 'title', 'A bar chart')
     cn.SetProperty('default', 'xAxisLabel', 'time')
     cn.SetProperty('default', 'yAxisLabel', 'velocity')
-    cn.SetProperty('default', 'type', 'Bar');
+    cn.SetProperty('default', 'type', 'Bar')
 
     # Set the chart to display
     cvn.SetChartNodeID(cn.GetID())
@@ -225,7 +225,7 @@ class ChartingTest(ScriptedLoadableModuleTest):
     cn.SetProperty('default', 'xAxisLabel', 'date')
     cn.SetProperty('default', 'xAxisType', 'date')
     cn.SetProperty('default', 'yAxisLabel', 'size (cm)')
-    cn.SetProperty('default', 'type', 'Bar');
+    cn.SetProperty('default', 'type', 'Bar')
 
     # Set the chart to display
     cvn.SetChartNodeID(cn.GetID())
@@ -262,7 +262,7 @@ class ChartingTest(ScriptedLoadableModuleTest):
     cn.SetProperty('default', 'xAxisLabel', 'structure')
     cn.SetProperty('default', 'xAxisType', 'categorical')
     cn.SetProperty('default', 'yAxisLabel', 'size (cm)')
-    cn.SetProperty('default', 'type', 'Bar');
+    cn.SetProperty('default', 'type', 'Bar')
     cn.SetProperty('Volumes', 'lookupTable', slicer.util.getNode('GenericAnatomyColors').GetID() )
 
     # Set the chart to display
@@ -319,7 +319,7 @@ class ChartingTest(ScriptedLoadableModuleTest):
     cn.SetProperty('default', 'xAxisLabel', 'population')
     cn.SetProperty('default', 'xAxisType', 'categorical')
     cn.SetProperty('default', 'yAxisLabel', 'size (ml)')
-    cn.SetProperty('default', 'type', 'Box');
+    cn.SetProperty('default', 'type', 'Box')
 
     # Set the chart to display
     cvn.SetChartNodeID(cn.GetID())

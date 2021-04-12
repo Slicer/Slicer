@@ -193,7 +193,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
       # show slices
       redWidget = layoutManager.sliceWidget('Red')
       redWidget.sliceController().setSliceLink(True)
-      redWidget.sliceController().setSliceVisible(True);
+      redWidget.sliceController().setSliceVisible(True)
 
 
       logic.takeScreenshot('Ruler','Ruler used to measure tumor diameter',-1)
@@ -399,7 +399,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
       logic.takeScreenshot('ChangeTracker-GoForward','Go Forward',-1)
 
       self.delayDisplay('Look!')
-      redWidget.sliceController().setSliceVisible(True);
+      redWidget.sliceController().setSliceVisible(True)
 
 
       self.delayDisplay('Crosshairs')

@@ -465,7 +465,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
       # Disable smoothing for closed surface generation to make it fast
       previewNode.GetSegmentation().SetConversionParameter(
         slicer.vtkBinaryLabelmapToClosedSurfaceConversionRule.GetSmoothingFactorParameterName(),
-        "-0.5");
+        "-0.5")
 
       inputContainsClosedSurfaceRepresentation = segmentationNode.GetSegmentation().ContainsRepresentation(
         slicer.vtkSegmentationConverter.GetSegmentationClosedSurfaceRepresentationName())
@@ -519,7 +519,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
       thresh.SetInValue(1)
       thresh.SetOutValue(0)
       labelValue = index + 1 # n-th segment label value = n + 1 (background label value is 0)
-      thresh.ThresholdBetween(labelValue, labelValue);
+      thresh.ThresholdBetween(labelValue, labelValue)
       thresh.SetOutputScalarType(vtk.VTK_UNSIGNED_CHAR)
       thresh.SetInputData(outputLabelmap)
       thresh.Update()
