@@ -316,6 +316,20 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
       "Maximum number of images to be captured (without backward steps and repeating).")
     advancedFormLayout.addRow("Maximum number of images:", self.maxFramesWidget)
 
+    self.volumeNodeComboBox = slicer.qMRMLNodeComboBox()
+    self.volumeNodeComboBox.nodeTypes = ["vtkMRMLVectorVolumeNode"]
+    self.volumeNodeComboBox.baseName = "Screenshot"
+    self.volumeNodeComboBox.renameEnabled = True
+    self.volumeNodeComboBox.noneEnabled = True
+    self.volumeNodeComboBox.setToolTip("Select a volume node to store the captured image in the scene instead of just writing immediately to disk. Requires output 'Number of images' to be set to 1.")
+    self.volumeNodeComboBox.setMRMLScene(slicer.mrmlScene)
+    advancedFormLayout.addRow("Output volume node:", self.volumeNodeComboBox)
+
+    self.showViewControllersCheckBox = qt.QCheckBox(" ")
+    self.showViewControllersCheckBox.checked = False
+    self.showViewControllersCheckBox.setToolTip("If checked, images will be captured with view controllers visible.")
+    advancedFormLayout.addRow("View controllers:", self.showViewControllersCheckBox)
+
     self.transparentBackgroundCheckBox = qt.QCheckBox(" ")
     self.transparentBackgroundCheckBox.checked = False
     self.transparentBackgroundCheckBox.setToolTip("If checked, images will be captured with transparent background.")
@@ -423,10 +437,10 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.sequenceEndItemIndexWidget.connect('valueChanged(double)', self.setSequenceItemIndex)
     self.outputTypeWidget.connect('currentIndexChanged(int)', self.updateOutputType)
     self.videoFormatWidget.connect("currentIndexChanged(int)", self.updateVideoFormat)
-    self.singleStepButton.connect('toggled(bool)', self.numberOfStepsSliderWidget, 'setDisabled(bool)')
     self.maxFramesWidget.connect('valueChanged(int)', self.maxFramesChanged)
     self.videoLengthSliderWidget.connect('valueChanged(double)', self.setVideoLength)
     self.videoFrameRateSliderWidget.connect('valueChanged(double)', self.setVideoFrameRate)
+    self.singleStepButton.connect('toggled(bool)', self.setForceSingleStep)
     self.numberOfStepsSliderWidget.connect('valueChanged(double)', self.setNumberOfSteps)
     self.watermarkEnabledCheckBox.connect('toggled(bool)', self.watermarkPositionWidget, 'setEnabled(bool)')
     self.watermarkEnabledCheckBox.connect('toggled(bool)', self.watermarkSizeSliderWidget, 'setEnabled(bool)')
@@ -569,8 +583,14 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
       self.sequenceEndItemIndexWidget.enabled = sequenceItemCount>0
 
     numberOfSteps = int(self.numberOfStepsSliderWidget.value)
+    forceSingleStep = self.singleStepButton.checked
+    if forceSingleStep:
+      numberOfSteps = 1
+    self.numberOfStepsSliderWidget.setDisabled(forceSingleStep)
     self.forwardBackwardCheckBox.enabled = (numberOfSteps > 1)
     self.repeatSliderWidget.enabled = (numberOfSteps > 1)
+    self.volumeNodeComboBox.setEnabled(numberOfSteps == 1)
+
 
   def setSliceOffset(self, offset):
     sliceLogic = self.logic.getSliceLogicFromSliceNode(self.viewNodeSelector.currentNode())
@@ -586,8 +606,12 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.videoLengthSliderWidget.value = self.numberOfStepsSliderWidget.value / self.videoFrameRateSliderWidget.value
     self.videoFrameRateSliderWidget.blockSignals(wasBlocked)
 
-  def setNumberOfSteps(self, frameRateFps):
+  def setNumberOfSteps(self, steps):
     self.setVideoLength()
+    self.updateViewOptions()
+
+  def setForceSingleStep(self, force):
+    self.updateViewOptions()
 
   def setSequenceItemIndex(self, index):
     sequenceBrowserNode = self.sequenceBrowserNodeSelectorWidget.currentNode()
@@ -671,16 +695,26 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     slicer.app.setOverrideCursor(qt.Qt.WaitCursor)
     captureAllViews = self.captureAllViewsCheckBox.checked
     transparentBackground = self.transparentBackgroundCheckBox.checked
+    showViewControllers = self.showViewControllersCheckBox.checked
     if captureAllViews:
-      self.logic.showViewControllers(False)
+      self.logic.showViewControllers(showViewControllers)
+    elif showViewControllers:
+      logging.warning("View controllers are only available to be shown when capturing all views.")
     try:
       if numberOfSteps < 2:
         if imageFileNamePattern != self.snapshotFileNamePattern or outputDir != self.snapshotOutputDir:
           self.snapshotIndex = 0
-        [filename, self.snapshotIndex] = self.logic.getNextAvailableFileName(outputDir, imageFileNamePattern, self.snapshotIndex)
+        if outputDir:
+          [filename, self.snapshotIndex] = self.logic.getNextAvailableFileName(outputDir, imageFileNamePattern, self.snapshotIndex)
+        else:
+          filename = None
         view = None if captureAllViews else self.logic.viewFromNode(viewNode)
-        self.logic.captureImageFromView(view, filename, transparentBackground)
-        self.logic.addLog("Write "+filename)
+        volumeNode = None if numberOfSteps>1 else self.volumeNodeComboBox.currentNode()
+        self.logic.captureImageFromView(view, filename, transparentBackground, volumeNode=volumeNode)
+        if filename:
+          self.logic.addLog("Write "+filename)
+        if volumeNode:
+          self.logic.addLog(f"Write to volume node '{volumeNode.GetName()}'")
       elif self.animationModeWidget.currentText == "slice sweep":
         self.logic.captureSliceSweep(viewNode, self.sliceStartOffsetSliderWidget.value,
           self.sliceEndOffsetSliderWidget.value, numberOfSteps, outputDir, imageFileNamePattern,
@@ -971,8 +1005,15 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     return sliceOffsetResolution
 
-  def captureImageFromView(self, view, filename, transparentBackground=False):
+  def captureImageFromView(self, view, filename=None, transparentBackground=False, volumeNode=None):
+    """
+    Capture an image of the specified view and store in the specified object.
 
+    :param view: View to capture. If none, all views are captured.
+    :param filename: Filename of the desired output file. If none, no file will be written.
+    :param transparentBackground: Set the background to be transparent for single-view captures.
+    :param volumeNode: Vector volume node to store the capture image. If none, no vector volume node will be updated.
+    """
     slicer.app.processEvents()
     if view:
       if type(view)==slicer.qMRMLSliceView or type(view)==slicer.qMRMLThreeDView:
@@ -1036,7 +1077,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       # image is too small, most likely it is invalid
       raise ValueError('Capture image from view failed')
 
-    # Make sure image witdth and height is even, otherwise encoding may fail
+    # Make sure image width and height is even, otherwise encoding may fail
     imageWidthOdd = (imageSize[0] & 1 == 1)
     imageHeightOdd = (imageSize[1] & 1 == 1)
     if imageWidthOdd or imageHeightOdd:
@@ -1050,10 +1091,25 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       imageClipper.Update()
       capturedImage = imageClipper.GetOutput()
 
-    writer = self.createImageWriter(filename)
-    writer.SetInputData(self.addWatermark(capturedImage))
-    writer.SetFileName(filename)
-    writer.Write()
+    capturedImage = self.addWatermark(capturedImage)
+    if volumeNode is not None:
+      if isinstance(volumeNode, slicer.vtkMRMLVectorVolumeNode):
+        ijkToRas = vtk.vtkMatrix4x4()
+        ijkToRas.SetElement(0, 0, -1)
+        ijkToRas.SetElement(1, 1, -1)
+        volumeNode.SetIJKToRASMatrix(ijkToRas)
+        vflip = vtk.vtkImageFlip()
+        vflip.SetInputData(capturedImage)
+        vflip.SetFilteredAxis(1)
+        vflip.Update()
+        volumeNode.SetAndObserveImageData(vflip.GetOutput())
+      else:
+        raise ValueError("Invalid vector volume node.")
+    if filename:
+      writer = self.createImageWriter(filename)
+      writer.SetInputData(capturedImage)
+      writer.SetFileName(filename)
+      writer.Write()
 
   def createImageWriter(self, filename):
     name, extension = os.path.splitext(filename)
@@ -1458,6 +1514,7 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
     self.test_SliceSweep()
     self.test_SliceFade()
     self.test_3dViewRotation()
+    self.test_VolumeNodeUpdate()
 
   def test_SliceSweep(self):
     self.delayDisplay("Testing SliceSweep")
@@ -1482,3 +1539,13 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
     self.logic.capture3dViewRotation(viewNode, -180, 180, self.numberOfImages, AXIS_YAW, self.tempDir, self.imageFileNamePattern)
     self.verifyAndDeleteWrittenFiles()
     self.delayDisplay('Testing 3D view rotation completed successfully')
+
+  def test_VolumeNodeUpdate(self):
+    self.delayDisplay("Testing VolumeNode update")
+    viewNode = None  # Capture All Views
+    volumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLVectorVolumeNode")
+    self.assertIsNotNone(volumeNode)
+    self.assertIsNone(volumeNode.GetImageData())
+    self.logic.captureImageFromView(viewNode, volumeNode=volumeNode)
+    self.assertIsNotNone(volumeNode.GetImageData())
+    self.delayDisplay('Testing VolumeNode update completed successfully')
