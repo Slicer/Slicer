@@ -45,6 +45,8 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkSmartPointer.h>
+#include <vtkTransform.h>
+#include <vtkTransformPolyDataFilter.h>
 #include <vtkVectorText.h>
 
 // STD includes
@@ -79,6 +81,7 @@ public:
 
   std::vector<vtkSmartPointer<vtkFollower> > AxisLabelActors;
   std::vector<vtkSmartPointer<vtkVectorText> > AxisLabelTexts;
+  std::vector<vtkSmartPointer<vtkTransformPolyDataFilter> > CenterAxisLabelTexts;
   vtkSmartPointer<vtkActor>                  BoxAxisActor;
   vtkBoundingBox*                            BoxAxisBoundingBox;
   vtkMRMLViewDisplayableManager*             External;
@@ -118,6 +121,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::CreateAxis()
 
   this->AxisLabelActors.clear();
   this->AxisLabelTexts.clear();
+  this->CenterAxisLabelTexts.clear();
 
   // default labels, will be overridden by view node AxisLabels
   const char* labels[6] = {"R", "A", "S", "L", "P", "I"};
@@ -128,8 +132,12 @@ void vtkMRMLViewDisplayableManager::vtkInternal::CreateAxis()
     axisText->SetText(labels[i]);
     this->AxisLabelTexts.emplace_back(axisText.GetPointer());
 
+    vtkNew<vtkTransformPolyDataFilter> centerAxisText;
+    this->CenterAxisLabelTexts.emplace_back(centerAxisText.GetPointer());
+    centerAxisText->SetInputConnection(axisText->GetOutputPort());
+
     vtkNew<vtkPolyDataMapper> axisMapper;
-    axisMapper->SetInputConnection(axisText->GetOutputPort());
+    axisMapper->SetInputConnection(centerAxisText->GetOutputPort());
 
     vtkNew<vtkFollower> axisActor;
     axisActor->SetMapper(axisMapper.GetPointer());
@@ -302,23 +310,44 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
     this->BoxAxisActor->SetMapper(boxMapper.GetPointer());
     this->BoxAxisActor->SetScale(1.0, 1.0, 1.0);
 
+    // Letter size as fraction of bounding box size
     double letterSize = viewNode->GetLetterSize();
+    // Letter size in world coordinate system
+    double letterSizeWorld = this->BoxAxisBoundingBox->GetMaxLength() * letterSize;
 
     for(std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
       {
       vtkFollower* actor = this->AxisLabelActors[i];
-      actor->SetScale(
-        this->BoxAxisBoundingBox->GetMaxLength() * letterSize,
-        this->BoxAxisBoundingBox->GetMaxLength() * letterSize,
-        this->BoxAxisBoundingBox->GetMaxLength() * letterSize);
-      actor->SetOrigin(.5, .5,.5);
+      actor->SetScale(letterSizeWorld, letterSizeWorld, letterSizeWorld);
+      // Apply a transform so that center of the letter is in (0,0,0) position.
+      // This is needed because the actor's origin is only used for center of
+      // actor scaling and rotation. vtkFollower always places the actor's
+      // (0,0,0) position to the followed position.
+      // Small errors may lead to huge misalignments when the view needs to be
+      // zoomed in a lot (for example, for displaying a volume with 0.001 spacing).
+      double offsetToCenter[3] = { 0.0, 0.0, 0.0 };
+      this->AxisLabelTexts[i]->Update();
+      vtkPolyData* textPoly = this->AxisLabelTexts[i]->GetOutput();
+      if (textPoly)
+        {
+        double bounds[6] = { 0.0, 1.0, 0.0, 1.0, 0.0, 1.0 };
+        textPoly->GetBounds(bounds);
+        offsetToCenter[0] = -(bounds[0] + bounds[1]) / 2.0;
+        offsetToCenter[1] = -(bounds[2] + bounds[3]) / 2.0;
+        offsetToCenter[2] = -(bounds[4] + bounds[5]) / 2.0;
+        }
+      vtkNew<vtkTransform> transform;
+      transform->Translate(offsetToCenter);
+      this->CenterAxisLabelTexts[i]->SetTransform(transform);
       }
 
     // Position the axis labels
     double center[3];
     this->BoxAxisBoundingBox->GetCenter(center);
 
-    double offset = this->BoxAxisBoundingBox->GetMaxLength() * letterSize * 1.5;
+    // Offset the center of the label by 1.5-letter distance
+    // (to have an approximately one-letter space between the label and the box).
+    double offset = letterSizeWorld * 1.5;
     this->AxisLabelActors[0]->SetPosition(               // R
       bounds[1] + offset,
       center[1],
