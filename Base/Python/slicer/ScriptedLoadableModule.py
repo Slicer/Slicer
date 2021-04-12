@@ -301,12 +301,12 @@ class ScriptedLoadableModuleLogic(object):
     """
     slicer.util.clickAndDrag(widget,button=button,start=start,end=end,steps=steps,modifiers=modifiers)
 
-  def takeScreenshot(self,name,description,type=-1):
+  def takeScreenshot(self,name,description,type=-1,displayDescription=True):
     """ Take a screenshot of the selected viewport and store as and
     annotation snapshot node. Convenience method for automated testing.
 
-    If self.enableScreenshots is False then only a message is displayed but screenshot
-    is not stored. Screenshots are scaled by self.screenshotScaleFactor.
+    If self.enableScreenshots is False a screenshot is not stored.
+    Screenshots are scaled by self.screenshotScaleFactor.
 
     :param name: snapshot node name
     :param description: description of the node
@@ -314,10 +314,11 @@ class ScriptedLoadableModuleLogic(object):
       Valid values: slicer.qMRMLScreenShotDialog.FullLayout,
       slicer.qMRMLScreenShotDialog.ThreeD, slicer.qMRMLScreenShotDialog.Red,
       slicer.qMRMLScreenShotDialog.Yellow, slicer.qMRMLScreenShotDialog.Green.
+    :param displayDiscription: whether to show description in a delayDisplay
     """
-
-    # show the message even if not taking a screen shot
-    slicer.util.delayDisplay(description)
+    if displayDescription:
+      # Displaying a description is allowed even if not taking a screenshot
+      slicer.util.delayDisplay(description)
 
     if not self.enableScreenshots:
       return
