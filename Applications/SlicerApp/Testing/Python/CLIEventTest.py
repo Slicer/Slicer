@@ -105,7 +105,7 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
   def _testCLIStatusEventTest(self, wait_for_completion):
     self.delayDisplay('Testing status events for a normal execution of a CLI')
 
-    tempFile = qt.QTemporaryFile("CLIEventTest-outputFile-XXXXXX");
+    tempFile = qt.QTemporaryFile("CLIEventTest-outputFile-XXXXXX")
     self.assertTrue(tempFile.open())
 
     logic = CLIEventTestLogic()
@@ -147,7 +147,7 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
   def _testCLIStatusEventOnErrorTest(self, wait_for_completion):
     self.delayDisplay('Testing status events for a bad execution of a CLI')
 
-    tempFile = qt.QTemporaryFile("CLIEventTest-outputFile-XXXXXX");
+    tempFile = qt.QTemporaryFile("CLIEventTest-outputFile-XXXXXX")
     self.assertTrue(tempFile.open())
 
     logic = CLIEventTestLogic()
@@ -183,7 +183,7 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
   def test_CLIStatusEventTestCancel(self):
     self.delayDisplay('Testing status events when cancelling the execution of a CLI')
 
-    tempFile = qt.QTemporaryFile("CLIEventTest-outputFile-XXXXXX");
+    tempFile = qt.QTemporaryFile("CLIEventTest-outputFile-XXXXXX")
     self.assertTrue(tempFile.open())
 
     logic = CLIEventTestLogic()

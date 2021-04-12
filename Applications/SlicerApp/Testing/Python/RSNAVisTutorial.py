@@ -254,7 +254,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
 
       self.delayDisplay('Skipping Move the Shift slider')
 
-      redWidget.sliceController().setSliceVisible(False);
+      redWidget.sliceController().setSliceVisible(False)
       logic.takeScreenshot('VolumeRendering-SlicesOff','Turn off visibility of slices in 3D',-1)
 
       threeDView = layoutManager.threeDWidget(0).threeDView()
@@ -322,13 +322,13 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       greenController = greenWidget.sliceController()
 
       mainWindow.moduleSelector().selectModule('Models')
-      redWidget.sliceController().setSliceVisible(True);
+      redWidget.sliceController().setSliceVisible(True)
       logic.takeScreenshot('Head-ModelsAndSliceModel','Models and Slice Model',-1)
 
       slicer.util.clickAndDrag(threeDView)
       logic.takeScreenshot('Head-Rotate','Rotate',-1)
 
-      redController.setSliceVisible(True);
+      redController.setSliceVisible(True)
       logic.takeScreenshot('Head-AxialSlice','Display Axial Slice',-1)
 
       layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
@@ -352,7 +352,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
 
       skull = slicer.util.getNode(pattern='skull_bone.vtk')
 
-      greenWidget.sliceController().setSliceVisible(True);
+      greenWidget.sliceController().setSliceVisible(True)
       logic.takeScreenshot('Head-GreenSlice','Display Coronal Slice',-1)
 
       # hemispheric_white_matter.GetDisplayNode().SetClipping(1)
@@ -444,7 +444,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       segmentII.GetDisplayNode().SetVisibility(0)
       cameraNode.GetCamera().Azimuth(180)
       cameraNode.GetCamera().Elevation(-30)
-      redWidget.sliceController().setSliceVisible(True);
+      redWidget.sliceController().setSliceVisible(True)
       logic.takeScreenshot('Liver-ViewAdrenal','View Adrenal',-1)
 
       models = slicer.util.getNodes('vtkMRMLModelNode*')
@@ -458,7 +458,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
         modelNode.GetDisplayNode().SetVisibility(1)
       cameraNode.GetCamera().Azimuth(30)
       cameraNode.GetCamera().Elevation(-20)
-      redWidget.sliceController().setSliceVisible(True);
+      redWidget.sliceController().setSliceVisible(True)
       logic.takeScreenshot('Liver-MiddleHepatic','Middle Hepatic',-1)
 
       self.delayDisplay('Test passed!')
@@ -507,7 +507,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
 
       cameraNode.GetCamera().Azimuth(-100)
       cameraNode.GetCamera().Elevation(-40)
-      redWidget.sliceController().setSliceVisible(True);
+      redWidget.sliceController().setSliceVisible(True)
       lungs = slicer.util.getNode('chestCT_lungs')
       lungs.GetDisplayNode().SetVisibility(0)
       logic.takeScreenshot('Lung-Question1','View Question 1',-1)
@@ -521,7 +521,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
 
       cameraNode.GetCamera().Azimuth(-165)
       cameraNode.GetCamera().Elevation(-10)
-      redWidget.sliceController().setSliceVisible(False);
+      redWidget.sliceController().setSliceVisible(False)
       logic.takeScreenshot('Lung-Question3','View Question 3',-1)
 
       cameraNode.GetCamera().Azimuth(20)

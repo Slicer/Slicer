@@ -999,7 +999,7 @@ class SampleDataTest(ScriptedLoadableModuleTest):
 
   def test_downloadFromSource_loadMRMLFile(self):
     logic = SampleDataLogic()
-    tempFile = qt.QTemporaryFile(slicer.app.temporaryPath + "/SampleDataTest-loadSceneFile-XXXXXX.mrml");
+    tempFile = qt.QTemporaryFile(slicer.app.temporaryPath + "/SampleDataTest-loadSceneFile-XXXXXX.mrml")
     tempFile.open()
     tempFile.write(textwrap.dedent("""
       <?xml version="1.0" encoding="UTF-8"?>
@@ -1028,7 +1028,7 @@ class SampleDataTest(ScriptedLoadableModuleTest):
 
   def test_downloadFromSource_downloadMRMLFile(self):
     logic = SampleDataLogic()
-    tempFile = qt.QTemporaryFile(slicer.app.temporaryPath + "/SampleDataTest-loadSceneFile-XXXXXX.mrml");
+    tempFile = qt.QTemporaryFile(slicer.app.temporaryPath + "/SampleDataTest-loadSceneFile-XXXXXX.mrml")
     tempFile.open()
     tempFile.write(textwrap.dedent("""
       <?xml version="1.0" encoding="UTF-8"?>

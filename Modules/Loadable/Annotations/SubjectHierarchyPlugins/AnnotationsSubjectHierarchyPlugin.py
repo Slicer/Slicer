@@ -60,7 +60,7 @@ class AnnotationsSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin):
     import os
     pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
     shNode = pluginHandlerSingleton.subjectHierarchyNode()
-    associatedNode = shNode.GetItemDataNode(itemID);
+    associatedNode = shNode.GetItemDataNode(itemID)
     if associatedNode is not None:
       # ROI
       if associatedNode.IsA("vtkMRMLAnnotationROINode"):

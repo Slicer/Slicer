@@ -89,7 +89,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
     column.InsertNextValue("data")
     column.InsertNextValue("in this")
     column.InsertNextValue("column")
-    tableNode.Modified();
+    tableNode.Modified()
 
     # Check table
     table = tableNode.GetTable()

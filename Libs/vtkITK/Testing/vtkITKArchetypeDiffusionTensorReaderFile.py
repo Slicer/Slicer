@@ -23,7 +23,7 @@ class vtkITKReaderAgainstNRRDReader(unittest.TestCase):
 
         self.ritk = vtkITK.vtkITKArchetypeDiffusionTensorImageReaderFile()
         self.ritk.SetUseOrientationFromFile(True)
-        self.ritk.SetUseNativeOriginOn();
+        self.ritk.SetUseNativeOriginOn()
         self.ritk.SetOutputScalarTypeToNative()
         self.ritk.SetDesiredCoordinateOrientationToNative()
         self.ritk.SetArchetype(self.file_name)

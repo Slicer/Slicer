@@ -105,7 +105,7 @@ class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
     # test difference in display location and then in RAS if this is too fine
     self.maximumDisplayDifference = 1.0
     # for future testing: take into account the volume voxel size
-    self.maximumRASDifference = 1.0;
+    self.maximumRASDifference = 1.0
 
   def getFiducialSliceDisplayableManagerHelper(self,sliceName='Red'):
     sliceWidget = slicer.app.layoutManager().sliceWidget(sliceName)

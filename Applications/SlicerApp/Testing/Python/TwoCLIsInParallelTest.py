@@ -113,7 +113,7 @@ class TwoCLIsInParallelTestTest(ScriptedLoadableModuleTest):
   def test_TwoCLIsInParallelTest(self):
     self.delayDisplay('Running two CLIs in a row Test')
 
-    tempFile = qt.QTemporaryFile("TwoCLIsInParallelTest-outputFile-XXXXXX");
+    tempFile = qt.QTemporaryFile("TwoCLIsInParallelTest-outputFile-XXXXXX")
     self.assertTrue(tempFile.open())
 
     logic = TwoCLIsInParallelTestLogic()

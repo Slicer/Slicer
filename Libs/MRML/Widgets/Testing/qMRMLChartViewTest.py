@@ -75,4 +75,4 @@ cn.AddArray('Periodic', dn3.GetID())
 cn.SetProperty('default', 'title', 'A bar chart')
 cn.SetProperty('default', 'xAxisLabel', 'time')
 cn.SetProperty('default', 'yAxisLabel', 'velocity')
-cn.SetProperty('default', 'type', 'Bar');
+cn.SetProperty('default', 'type', 'Bar')

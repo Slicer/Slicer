@@ -217,7 +217,7 @@ class DataProbeInfoWidget(object):
 
     # populate the widgets
     self.viewerColor.setText( " " )
-    rgbColor = sliceNode.GetLayoutColor();
+    rgbColor = sliceNode.GetLayoutColor()
     color = qt.QColor.fromRgbF(rgbColor[0], rgbColor[1], rgbColor[2])
     if hasattr(color, 'name'):
       self.viewerColor.setStyleSheet('QLabel {background-color : %s}' % color.name())

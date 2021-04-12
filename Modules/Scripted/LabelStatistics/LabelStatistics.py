@@ -429,13 +429,13 @@ class LabelStatisticsLogic(ScriptedLoadableModuleLogic):
     chartNode.SetProperty('default', 'title', 'Label Statistics')
     chartNode.SetProperty('default', 'xAxisLabel', 'Label')
     chartNode.SetProperty('default', 'yAxisLabel', valueToPlot)
-    chartNode.SetProperty('default', 'type', 'Bar');
+    chartNode.SetProperty('default', 'type', 'Bar')
     chartNode.SetProperty('default', 'xAxisType', 'categorical')
     chartNode.SetProperty('default', 'showLegend', 'off')
 
     # series level properties
     if labelNode.GetDisplayNode() is not None and self.getColorNode() is not None:
-      chartNode.SetProperty(valueToPlot, 'lookupTable', self.getColorNode().GetID());
+      chartNode.SetProperty(valueToPlot, 'lookupTable', self.getColorNode().GetID())
 
     chartNode.EndModify(state)
 
