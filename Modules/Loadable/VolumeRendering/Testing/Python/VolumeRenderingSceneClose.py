@@ -96,28 +96,28 @@ class VolumeRenderingSceneCloseLogic(ScriptedLoadableModuleLogic):
     layoutManager = slicer.app.layoutManager()
     layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
 
-    self.delayDisplay('Running the aglorithm')
+    slicer.util.delayDisplay('Running the aglorithm')
 
     import SampleData
     ctVolume = SampleData.downloadSample('CTChest')
-    self.delayDisplay('Downloaded CT sample data')
+    slicer.util.delayDisplay('Downloaded CT sample data')
 
     # go to the volume rendering module
     slicer.util.mainWindow().moduleSelector().selectModule('VolumeRendering')
-    self.delayDisplay('Volume Rendering module')
+    slicer.util.delayDisplay('Volume Rendering module')
 
     # turn it on
     volumeRenderingWidgetRep = slicer.modules.volumerendering.widgetRepresentation()
     volumeRenderingWidgetRep.setMRMLVolumeNode(ctVolume)
     volumeRenderingNode = slicer.mrmlScene.GetFirstNodeByName('VolumeRendering')
     volumeRenderingNode.SetVisibility(1)
-    self.delayDisplay('Volume Rendering')
+    slicer.util.delayDisplay('Volume Rendering')
 
     # set up a cropping ROI
     volumeRenderingNode.SetCroppingEnabled(1)
     annotationROI = slicer.mrmlScene.GetFirstNodeByName('AnnotationROI')
     annotationROI.SetDisplayVisibility(1)
-    self.delayDisplay('Cropping')
+    slicer.util.delayDisplay('Cropping')
 
     # close the scene
     slicer.mrmlScene.Clear(0)

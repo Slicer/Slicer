@@ -174,10 +174,8 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
   def test_Part1DICOM(self,enableScreenshotsFlag=0,screenshotScaleFactor=1):
     """ Test the DICOM part of the test using the head atlas
     """
-
-    logic = RSNAVisTutorialLogic()
-    logic.enableScreenshots = enableScreenshotsFlag
-    logic.screenshotScaleFactor = screenshotScaleFactor
+    self.enableScreenshots = enableScreenshotsFlag
+    self.screenshotScaleFactor = screenshotScaleFactor
 
     import os
     self.delayDisplay("Starting the DICOM test")
@@ -207,81 +205,81 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       self.delayDisplay('Loading Selection')
       browserWidget.loadCheckedLoadables()
 
-      logic.takeScreenshot('LoadingADICOMVolume-Loaded','Loaded DICOM Volume',-1)
+      self.takeScreenshot('LoadingADICOMVolume-Loaded','Loaded DICOM Volume',-1)
 
       layoutManager = slicer.app.layoutManager()
       redWidget = layoutManager.sliceWidget('Red')
       slicer.util.clickAndDrag(redWidget,start=(10,10),end=(10,40))
       slicer.util.clickAndDrag(redWidget,start=(10,10),end=(40,10))
 
-      logic.takeScreenshot('LoadingADICOMVolume-WL','Changed level and window',-1)
+      self.takeScreenshot('LoadingADICOMVolume-WL','Changed level and window',-1)
 
       redWidget.sliceController().setSliceLink(True)
       redWidget.sliceController().setSliceVisible(True)
-      logic.takeScreenshot('LoadingADICOMVolume-LinkView','Linked and visible',-1)
+      self.takeScreenshot('LoadingADICOMVolume-LinkView','Linked and visible',-1)
 
       slicer.util.clickAndDrag(redWidget,button='Right',start=(10,10),end=(10,40))
-      logic.takeScreenshot('LoadingADICOMVolume-Zoom','Zoom',-1)
+      self.takeScreenshot('LoadingADICOMVolume-Zoom','Zoom',-1)
 
       threeDView = layoutManager.threeDWidget(0).threeDView()
       slicer.util.clickAndDrag(threeDView)
-      logic.takeScreenshot('LoadingADICOMVolume-Rotate','Rotate',-1)
+      self.takeScreenshot('LoadingADICOMVolume-Rotate','Rotate',-1)
 
       threeDView.resetFocalPoint()
-      logic.takeScreenshot('LoadingADICOMVolume-Center','Center the view',-1)
+      self.takeScreenshot('LoadingADICOMVolume-Center','Center the view',-1)
 
       layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalWidescreenView)
-      logic.takeScreenshot('LoadingADICOMVolume-ConventionalWidescreen','Conventional Widescreen Layout',-1)
+      self.takeScreenshot('LoadingADICOMVolume-ConventionalWidescreen','Conventional Widescreen Layout',-1)
 
       slicer.util.mainWindow().moduleSelector().selectModule('VolumeRendering')
-      logic.takeScreenshot('VolumeRendering-Module','Volume Rendering',-1)
+      self.takeScreenshot('VolumeRendering-Module','Volume Rendering',-1)
 
       volumeRenderingWidgetRep = slicer.modules.volumerendering.widgetRepresentation()
       abdomenVolume = slicer.mrmlScene.GetFirstNodeByName('6: CT_Thorax_Abdomen')
       volumeRenderingWidgetRep.setMRMLVolumeNode(abdomenVolume)
-      logic.takeScreenshot('VolumeRendering-SelectVolume','Select the volume 6: CT_Thorax_Abdomen',-1)
+      self.takeScreenshot('VolumeRendering-SelectVolume','Select the volume 6: CT_Thorax_Abdomen',-1)
 
       presetsScene = slicer.modules.volumerendering.logic().GetPresetsScene()
       ctCardiac3 = presetsScene.GetFirstNodeByName('CT-Cardiac3')
       volumeRenderingWidgetRep.mrmlVolumePropertyNode().Copy(ctCardiac3)
-      logic.takeScreenshot('VolumeRendering-SelectPreset','Select the Preset CT-Cardiac-3')
+      self.takeScreenshot('VolumeRendering-SelectPreset','Select the Preset CT-Cardiac-3')
 
       self.delayDisplay('Skipping: Select VTK CPU Ray Casting')
 
       volumeRenderingNode = slicer.mrmlScene.GetFirstNodeByName('VolumeRendering')
       volumeRenderingNode.SetVisibility(1)
-      logic.takeScreenshot('VolumeRendering-ViewRendering','View Volume Rendering',-1)
+      self.takeScreenshot('VolumeRendering-ViewRendering','View Volume Rendering',-1)
 
       self.delayDisplay('Skipping Move the Shift slider')
 
       redWidget.sliceController().setSliceVisible(False)
-      logic.takeScreenshot('VolumeRendering-SlicesOff','Turn off visibility of slices in 3D',-1)
+      self.takeScreenshot('VolumeRendering-SlicesOff','Turn off visibility of slices in 3D',-1)
 
       threeDView = layoutManager.threeDWidget(0).threeDView()
       slicer.util.clickAndDrag(threeDView)
-      logic.takeScreenshot('VolumeRendering-RotateVolumeRendering','Rotate volume rendered image',-1)
+      self.takeScreenshot('VolumeRendering-RotateVolumeRendering','Rotate volume rendered image',-1)
 
       volumeRenderingNode.SetVisibility(0)
-      logic.takeScreenshot('VolumeRendering-TurnOffVolumeRendering','Turn off volume rendered image',-1)
+      self.takeScreenshot('VolumeRendering-TurnOffVolumeRendering','Turn off volume rendered image',-1)
 
       volumeRenderingNode.SetCroppingEnabled(1)
       annotationROI = slicer.mrmlScene.GetFirstNodeByName('AnnotationROI')
       annotationROI.SetDisplayVisibility(1)
-      logic.takeScreenshot('VolumeRendering-DisplayROI','Enable cropping and display ROI',-1)
+      self.takeScreenshot('VolumeRendering-DisplayROI','Enable cropping and display ROI',-1)
 
       redWidget.sliceController().setSliceVisible(True)
-      logic.takeScreenshot('VolumeRendering-SlicesOn','Turn on visibility of slices in 3D',-1)
+      self.takeScreenshot('VolumeRendering-SlicesOn','Turn on visibility of slices in 3D',-1)
 
       annotationROI.SetXYZ(-79.61,154.16,-232.591)
       annotationROI.SetRadiusXYZ(43.4,65.19,70.5)
-      logic.takeScreenshot('VolumeRendering-SizedROI','Position the ROI over a kidney',-1)
+      self.takeScreenshot('VolumeRendering-SizedROI','Position the ROI over a kidney',-1)
 
       volumeRenderingNode.SetVisibility(1)
-      logic.takeScreenshot('VolumeRendering-ROIRendering','ROI volume rendered',-1)
+      self.takeScreenshot('VolumeRendering-ROIRendering','ROI volume rendered',-1)
 
       annotationROI.SetXYZ(15,146,-186)
       annotationROI.SetRadiusXYZ(138,57,61)
-      logic.takeScreenshot('VolumeRendering-BothKidneys','Rendered both kidneys',-1)
+      self.takeScreenshot('VolumeRendering-BothKidneys','Rendered both kidneys',-1)
 
       self.delayDisplay('Test passed!')
     except Exception as e:
@@ -295,9 +293,8 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
   def test_Part2Head(self,enableScreenshotsFlag=0,screenshotScaleFactor=1):
     """ Test using the head atlas - may not be needed - Slicer4Minute is already tested
     """
-    logic = RSNAVisTutorialLogic()
-    logic.enableScreenshots = enableScreenshotsFlag
-    logic.screenshotScaleFactor = screenshotScaleFactor
+    self.enableScreenshots = enableScreenshotsFlag
+    self.screenshotScaleFactor = screenshotScaleFactor
 
     self.delayDisplay("Starting the test")
     #
@@ -310,7 +307,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       uris=TESTING_DATA_URL + 'SHA256/6785e481925c912a5a3940e9c9b71935df93a78a871e10f66ab71f8478229e68',
       checksums='SHA256:6785e481925c912a5a3940e9c9b71935df93a78a871e10f66ab71f8478229e68')
 
-    logic.takeScreenshot('Head-Downloaded','Finished with download and loading',-1)
+    self.takeScreenshot('Head-Downloaded','Finished with download and loading',-1)
 
     try:
       mainWindow = slicer.util.mainWindow()
@@ -323,16 +320,16 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
 
       mainWindow.moduleSelector().selectModule('Models')
       redWidget.sliceController().setSliceVisible(True)
-      logic.takeScreenshot('Head-ModelsAndSliceModel','Models and Slice Model',-1)
+      self.takeScreenshot('Head-ModelsAndSliceModel','Models and Slice Model',-1)
 
       slicer.util.clickAndDrag(threeDView)
-      logic.takeScreenshot('Head-Rotate','Rotate',-1)
+      self.takeScreenshot('Head-Rotate','Rotate',-1)
 
       redController.setSliceVisible(True)
-      logic.takeScreenshot('Head-AxialSlice','Display Axial Slice',-1)
+      self.takeScreenshot('Head-AxialSlice','Display Axial Slice',-1)
 
       layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
-      logic.takeScreenshot('Head-ConventionalView','Conventional Layout',-1)
+      self.takeScreenshot('Head-ConventionalView','Conventional Layout',-1)
 
       viewNode = threeDView.mrmlViewNode()
       cameras = slicer.util.getNodes('vtkMRMLCameraNode*')
@@ -345,15 +342,15 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       # turn off skin and skull
       skin = slicer.util.getNode(pattern='Skin.vtk')
       skin.GetDisplayNode().SetOpacity(0.5)
-      logic.takeScreenshot('Head-SkinOpacity','Skin Opacity to 0.5',-1)
+      self.takeScreenshot('Head-SkinOpacity','Skin Opacity to 0.5',-1)
 
       skin.GetDisplayNode().SetVisibility(0)
-      logic.takeScreenshot('Head-SkinOpacityZero','Skin Opacity to 0',-1)
+      self.takeScreenshot('Head-SkinOpacityZero','Skin Opacity to 0',-1)
 
       skull = slicer.util.getNode(pattern='skull_bone.vtk')
 
       greenWidget.sliceController().setSliceVisible(True)
-      logic.takeScreenshot('Head-GreenSlice','Display Coronal Slice',-1)
+      self.takeScreenshot('Head-GreenSlice','Display Coronal Slice',-1)
 
       # hemispheric_white_matter.GetDisplayNode().SetClipping(1)
       skull.GetDisplayNode().SetClipping(1)
@@ -361,22 +358,22 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       clip.SetRedSliceClipState(0)
       clip.SetYellowSliceClipState(0)
       clip.SetGreenSliceClipState(2)
-      logic.takeScreenshot('Head-SkullClipping','Turn on clipping for skull model',-1)
+      self.takeScreenshot('Head-SkullClipping','Turn on clipping for skull model',-1)
 
       for offset in range(-20,20,2):
         greenController.setSliceOffsetValue(offset)
-      logic.takeScreenshot('Head-ScrollCoronal','Scroll through coronal slices',-1)
+      self.takeScreenshot('Head-ScrollCoronal','Scroll through coronal slices',-1)
 
       skull.GetDisplayNode().SetVisibility(0)
-      logic.takeScreenshot('Head-HideSkull','Make the skull invisible',-1)
+      self.takeScreenshot('Head-HideSkull','Make the skull invisible',-1)
 
       for offset in range(-40,-20,2):
         greenController.setSliceOffsetValue(offset)
-      logic.takeScreenshot('Head-ScrollCoronalWhiteMatter','Scroll through coronal slices to show white matter',-1)
+      self.takeScreenshot('Head-ScrollCoronalWhiteMatter','Scroll through coronal slices to show white matter',-1)
 
       hemispheric_white_matter = slicer.util.getNode(pattern='hemispheric_white_matter.vtk')
       hemispheric_white_matter.GetDisplayNode().SetVisibility(0)
-      logic.takeScreenshot('Head-HideWhiteMatter','Turn off white matter',-1)
+      self.takeScreenshot('Head-HideWhiteMatter','Turn off white matter',-1)
 
       self.delayDisplay('Rotate')
       slicer.util.clickAndDrag(threeDView)
@@ -384,7 +381,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       self.delayDisplay('Zoom')
       threeDView = layoutManager.threeDWidget(0).threeDView()
       slicer.util.clickAndDrag(threeDView,button='Right')
-      logic.takeScreenshot('Head-Zoom','Zoom',-1)
+      self.takeScreenshot('Head-Zoom','Zoom',-1)
 
       self.delayDisplay('Test passed!')
     except Exception as e:
@@ -396,9 +393,8 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
   def test_Part3Liver(self,enableScreenshotsFlag=0,screenshotScaleFactor=1):
     """ Test using the liver example data
     """
-    logic = RSNAVisTutorialLogic()
-    logic.enableScreenshots = enableScreenshotsFlag
-    logic.screenshotScaleFactor = screenshotScaleFactor
+    self.enableScreenshots = enableScreenshotsFlag
+    self.screenshotScaleFactor = screenshotScaleFactor
 
     self.delayDisplay("Starting the test")
     #
@@ -411,10 +407,9 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       uris=TESTING_DATA_URL + 'SHA256/ff797140c13a5988a7b72920adf0d2dab390a9babeab9161d5c52613328249f7',
       checksums='SHA256:ff797140c13a5988a7b72920adf0d2dab390a9babeab9161d5c52613328249f7')
 
-    logic.takeScreenshot('Liver-Loaded','Loaded Liver scene',-1)
+    self.takeScreenshot('Liver-Loaded','Loaded Liver scene',-1)
 
     try:
-      logic = RSNAVisTutorialLogic()
       mainWindow = slicer.util.mainWindow()
       layoutManager = slicer.app.layoutManager()
       threeDView = layoutManager.threeDWidget(0).threeDView()
@@ -427,25 +422,25 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
           break
 
       mainWindow.moduleSelector().selectModule('Models')
-      logic.takeScreenshot('Liver-Models','Models module',-1)
+      self.takeScreenshot('Liver-Models','Models module',-1)
 
       segmentII = slicer.util.getNode('LiverSegment_II')
       segmentII.GetDisplayNode().SetVisibility(0)
       slicer.util.clickAndDrag(threeDView,start=(10,200),end=(10,10))
-      logic.takeScreenshot('Liver-SegmentII','Segment II invisible',-1)
+      self.takeScreenshot('Liver-SegmentII','Segment II invisible',-1)
 
       segmentII.GetDisplayNode().SetVisibility(1)
-      logic.takeScreenshot('Liver-SegmentII','Segment II visible',-1)
+      self.takeScreenshot('Liver-SegmentII','Segment II visible',-1)
 
       cameraNode.GetCamera().Azimuth(0)
       cameraNode.GetCamera().Elevation(0)
-      logic.takeScreenshot('Liver-SuperiorView','Superior view',-1)
+      self.takeScreenshot('Liver-SuperiorView','Superior view',-1)
 
       segmentII.GetDisplayNode().SetVisibility(0)
       cameraNode.GetCamera().Azimuth(180)
       cameraNode.GetCamera().Elevation(-30)
       redWidget.sliceController().setSliceVisible(True)
-      logic.takeScreenshot('Liver-ViewAdrenal','View Adrenal',-1)
+      self.takeScreenshot('Liver-ViewAdrenal','View Adrenal',-1)
 
       models = slicer.util.getNodes('vtkMRMLModelNode*')
       for modelNode in models.values():
@@ -459,7 +454,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       cameraNode.GetCamera().Azimuth(30)
       cameraNode.GetCamera().Elevation(-20)
       redWidget.sliceController().setSliceVisible(True)
-      logic.takeScreenshot('Liver-MiddleHepatic','Middle Hepatic',-1)
+      self.takeScreenshot('Liver-MiddleHepatic','Middle Hepatic',-1)
 
       self.delayDisplay('Test passed!')
     except Exception as e:
@@ -470,9 +465,8 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
   def test_Part4Lung(self,enableScreenshotsFlag=0,screenshotScaleFactor=1):
     """ Test using the lung data
     """
-    logic = RSNAVisTutorialLogic()
-    logic.enableScreenshots = enableScreenshotsFlag
-    logic.screenshotScaleFactor = screenshotScaleFactor
+    self.enableScreenshots = enableScreenshotsFlag
+    self.screenshotScaleFactor = screenshotScaleFactor
 
     self.delayDisplay("Starting the test")
     #
@@ -485,7 +479,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
       uris=TESTING_DATA_URL + 'SHA256/89ffc6cabd76a17dfa6beb404a5901a4b4e4b4f2f4ee46c2d5f4d34459f554a1',
       checksums='SHA256:89ffc6cabd76a17dfa6beb404a5901a4b4e4b4f2f4ee46c2d5f4d34459f554a1')
 
-    logic.takeScreenshot('Lung-Loaded','Finished with download and loading',-1)
+    self.takeScreenshot('Lung-Loaded','Finished with download and loading',-1)
 
     try:
       mainWindow = slicer.util.mainWindow()
@@ -500,29 +494,29 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
           break
 
       threeDView.resetFocalPoint()
-      logic.takeScreenshot('Lung-ResetView','Reset view',-1)
+      self.takeScreenshot('Lung-ResetView','Reset view',-1)
 
       mainWindow.moduleSelector().selectModule('Models')
-      logic.takeScreenshot('Lung-Models','Models module',-1)
+      self.takeScreenshot('Lung-Models','Models module',-1)
 
       cameraNode.GetCamera().Azimuth(-100)
       cameraNode.GetCamera().Elevation(-40)
       redWidget.sliceController().setSliceVisible(True)
       lungs = slicer.util.getNode('chestCT_lungs')
       lungs.GetDisplayNode().SetVisibility(0)
-      logic.takeScreenshot('Lung-Question1','View Question 1',-1)
+      self.takeScreenshot('Lung-Question1','View Question 1',-1)
 
       cameraNode.GetCamera().Azimuth(-65)
       cameraNode.GetCamera().Elevation(-20)
       lungs.GetDisplayNode().SetVisibility(1)
       lungs.GetDisplayNode().SetOpacity(0.24)
       redController.setSliceOffsetValue(-50)
-      logic.takeScreenshot('Lung-Question2','View Question 2',-1)
+      self.takeScreenshot('Lung-Question2','View Question 2',-1)
 
       cameraNode.GetCamera().Azimuth(-165)
       cameraNode.GetCamera().Elevation(-10)
       redWidget.sliceController().setSliceVisible(False)
-      logic.takeScreenshot('Lung-Question3','View Question 3',-1)
+      self.takeScreenshot('Lung-Question3','View Question 3',-1)
 
       cameraNode.GetCamera().Azimuth(20)
       cameraNode.GetCamera().Elevation(-10)
@@ -533,7 +527,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
           displayNode = lowerLobeNodes[node].GetDisplayNode()
           if displayNode:
             displayNode.SetVisibility(1 if node == showNode else 0)
-      logic.takeScreenshot('Lung-Question4','View Question 4',-1)
+      self.takeScreenshot('Lung-Question4','View Question 4',-1)
 
       self.delayDisplay('Test passed!')
     except Exception as e:

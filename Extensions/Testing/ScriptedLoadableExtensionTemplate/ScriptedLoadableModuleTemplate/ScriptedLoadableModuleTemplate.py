@@ -175,7 +175,7 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
       return False
     return True
 
-  def run(self, inputVolume, outputVolume, imageThreshold, enableScreenshots=0):
+  def run(self, inputVolume, outputVolume, imageThreshold):
     """
     Run the actual algorithm
     """
@@ -189,10 +189,6 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
     # Compute the thresholded output volume using the Threshold Scalar Volume CLI module
     cliParams = {'InputVolume': inputVolume.GetID(), 'OutputVolume': outputVolume.GetID(), 'ThresholdValue' : imageThreshold, 'ThresholdType' : 'Above'}
     cliNode = slicer.cli.run(slicer.modules.thresholdscalarvolume, None, cliParams, wait_for_completion=True)
-
-    # Capture screenshot
-    if enableScreenshots:
-      self.takeScreenshot('ScriptedLoadableModuleTemplateTest-Start','MyScreenshot',-1)
 
     logging.info('Processing completed')
 
@@ -243,4 +239,5 @@ class ScriptedLoadableModuleTemplateTest(ScriptedLoadableModuleTest):
 
     logic = ScriptedLoadableModuleTemplateLogic()
     self.assertIsNotNone( logic.hasImageData(volumeNode) )
+    self.takeScreenshot('ScriptedLoadableModuleTemplateTest-Start','MyScreenshot',-1)
     self.delayDisplay('Test passed!')

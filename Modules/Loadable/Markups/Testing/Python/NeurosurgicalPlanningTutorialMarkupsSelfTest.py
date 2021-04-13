@@ -119,10 +119,35 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic(ScriptedLoadableModuleLo
 
     return (int(displayCoords[0]), int(displayCoords[1]))
 
-  def run(self):
+
+class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTest):
+  """
+  This is the test case for your scripted module.
+  """
+
+  def setUp(self):
+    """ Do whatever is needed to reset the state - typically a scene clear will be enough.
     """
-    Run the actual algorithm
+    slicer.mrmlScene.Clear(0)
+    # reset to conventional layout
+    lm = slicer.app.layoutManager()
+    lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
+
+  def runTest(self):
+    """Run as few or as many tests as needed here.
     """
+    self.setUp()
+    self.test_NeurosurgicalPlanningTutorialMarkupsSelfTest1()
+
+  def test_NeurosurgicalPlanningTutorialMarkupsSelfTest1(self):
+
+    self.delayDisplay("Starting the Neurosurgical Planning Tutorial Markups test")
+
+    # start in the welcome module
+    m = slicer.util.mainWindow()
+    m.moduleSelector().selectModule('Welcome')
+
+    logic = NeurosurgicalPlanningTutorialMarkupsSelfTestLogic()
     self.delayDisplay('Running test of the Neurosurgical Planning tutorial')
 
     # conventional layout
@@ -253,7 +278,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic(ScriptedLoadableModuleLo
     currentCoords = None
     for clickCoords in clickCoordsList:
       if currentCoords:
-        slicer.util.clickAndDrag(sliceWidget, start=self.rasToDisplay(*currentCoords), end=self.rasToDisplay(*clickCoords), steps=10)
+        slicer.util.clickAndDrag(sliceWidget, start=logic.rasToDisplay(*currentCoords), end=logic.rasToDisplay(*clickCoords), steps=10)
       currentCoords = clickCoords
 
     self.takeScreenshot('NeurosurgicalPlanning-PaintCystic','Paint cystic part of tumor')
@@ -262,7 +287,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic(ScriptedLoadableModuleLo
     # paint in solid part of tumor
     #
     segmentEditorNode.SetSelectedSegmentID(region2SegmentId)
-    slicer.util.clickAndDrag(sliceWidget, start=self.rasToDisplay(-0.5, 118.5, sliceOffset), end=self.rasToDisplay(-7.4, 116, sliceOffset), steps=10)
+    slicer.util.clickAndDrag(sliceWidget, start=logic.rasToDisplay(-0.5, 118.5, sliceOffset), end=logic.rasToDisplay(-7.4, 116, sliceOffset), steps=10)
     self.takeScreenshot('NeurosurgicalPlanning-PaintSolid','Paint solid part of tumor')
 
     #
@@ -279,7 +304,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic(ScriptedLoadableModuleLo
     currentCoords = None
     for clickCoords in clickCoordsList:
       if currentCoords:
-        slicer.util.clickAndDrag(sliceWidget, start=self.rasToDisplay(*currentCoords), end=self.rasToDisplay(*clickCoords), steps=30)
+        slicer.util.clickAndDrag(sliceWidget, start=logic.rasToDisplay(*currentCoords), end=logic.rasToDisplay(*clickCoords), steps=30)
       currentCoords = clickCoords
     self.takeScreenshot('NeurosurgicalPlanning-PaintAround','Paint around tumor')
 
@@ -323,7 +348,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic(ScriptedLoadableModuleLo
     segmentEditorWidget.setActiveEffectByName("Islands")
     effect = segmentEditorWidget.activeEffect()
     effect.setParameter("Operation","KEEP_SELECTED_ISLAND")
-    slicer.util.clickAndDrag(sliceWidget, start=self.rasToDisplay(25.3, 5.8, sliceOffset), end=self.rasToDisplay(25.3, 5.8, sliceOffset), steps=1)
+    slicer.util.clickAndDrag(sliceWidget, start=logic.rasToDisplay(25.3, 5.8, sliceOffset), end=logic.rasToDisplay(25.3, 5.8, sliceOffset), steps=1)
     self.takeScreenshot('NeurosurgicalPlanning-SaveIsland','Ventricles save island')
 
     #
@@ -352,38 +377,5 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic(ScriptedLoadableModuleLo
     effect.setParameter("MarginSizeMm", 3.0)
     effect.self().onApply()
     self.takeScreenshot('NeurosurgicalPlanning-Dilated','Dilated tumor')
-
-    return True
-
-
-class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTest):
-  """
-  This is the test case for your scripted module.
-  """
-
-  def setUp(self):
-    """ Do whatever is needed to reset the state - typically a scene clear will be enough.
-    """
-    slicer.mrmlScene.Clear(0)
-    # reset to conventional layout
-    lm = slicer.app.layoutManager()
-    lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
-
-  def runTest(self):
-    """Run as few or as many tests as needed here.
-    """
-    self.setUp()
-    self.test_NeurosurgicalPlanningTutorialMarkupsSelfTest1()
-
-  def test_NeurosurgicalPlanningTutorialMarkupsSelfTest1(self):
-
-    self.delayDisplay("Starting the Neurosurgical Planning Tutorial Markups test")
-
-    # start in the welcome module
-    m = slicer.util.mainWindow()
-    m.moduleSelector().selectModule('Welcome')
-
-    logic = NeurosurgicalPlanningTutorialMarkupsSelfTestLogic()
-    logic.run()
 
     self.delayDisplay('Test passed!')

@@ -111,10 +111,6 @@ class AddStorableDataAfterSceneViewTestLogic(ScriptedLoadableModuleLogic):
       errorMessage = "Add storable data after scene view test: Exception!\n\n" + str(e) + "\n\nSee Python Console for Stack Trace"
       slicer.util.errorDisplay(errorMessage)
 
-    # Capture screenshot
-    if enableScreenshots:
-      self.takeScreenshot('AddStorableDataAfterSceneViewTest-Start','MyScreenshot',-1)
-
     logging.info('Processing completed')
 
     return True

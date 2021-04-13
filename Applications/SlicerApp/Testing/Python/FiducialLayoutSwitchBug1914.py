@@ -102,10 +102,6 @@ class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
   """
   def __init__(self):
     ScriptedLoadableModuleLogic.__init__(self)
-    # test difference in display location and then in RAS if this is too fine
-    self.maximumDisplayDifference = 1.0
-    # for future testing: take into account the volume voxel size
-    self.maximumRASDifference = 1.0
 
   def getFiducialSliceDisplayableManagerHelper(self,sliceName='Red'):
     sliceWidget = slicer.app.layoutManager().sliceWidget(sliceName)
@@ -118,16 +114,36 @@ class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
        return m.GetHelper()
     return None
 
-  def run(self,enableScreenshots=0,screenshotScaleFactor=1):
+
+class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
+  """
+  This is the test case for your scripted module.
+  """
+
+  def __init__(self):
+    # test difference in display location and then in RAS if this is too fine
+    self.maximumDisplayDifference = 1.0
+    # for future testing: take into account the volume voxel size
+    self.maximumRASDifference = 1.0
+
+  def setUp(self):
+    """ Do whatever is needed to reset the state - typically a scene clear will be enough.
     """
-    Run the actual algorithm
+    slicer.mrmlScene.Clear(0)
+
+  def runTest(self):
+    """Run as few or as many tests as needed here.
     """
+    self.setUp()
+    self.test_FiducialLayoutSwitchBug1914()
+
+  def test_FiducialLayoutSwitchBug1914(self):
+    self.enableScreenshots = 0
+    self.screenshotScaleFactor = 1
+    logic = FiducialLayoutSwitchBug1914Logic()
+    logging.info("ctest, please don't truncate my output: CTEST_FULL_OUTPUT")
 
     self.delayDisplay('Running the algorithm')
-
-    self.enableScreenshots = enableScreenshots
-    self.screenshotScaleFactor = screenshotScaleFactor
-
     # Start in conventional layout
     lm = slicer.app.layoutManager()
     lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
@@ -158,7 +174,7 @@ class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
 
     # Get the seed widget seed location
     startingSeedDisplayCoords = [0.0, 0.0, 0.0]
-    helper = self.getFiducialSliceDisplayableManagerHelper('Red')
+    helper = logic.getFiducialSliceDisplayableManagerHelper('Red')
     if helper is not None:
      seedWidget = helper.GetWidget(fidNode)
      seedRepresentation = seedWidget.GetSeedRepresentation()
@@ -179,7 +195,7 @@ class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
 
     # Get the current seed widget seed location
     endingSeedDisplayCoords = [0.0, 0.0, 0.0]
-    helper = self.getFiducialSliceDisplayableManagerHelper('Red')
+    helper = logic.getFiducialSliceDisplayableManagerHelper('Red')
     if helper is not None:
      seedWidget = helper.GetWidget(fidNode)
      seedRepresentation = seedWidget.GetSeedRepresentation()
@@ -203,10 +219,10 @@ class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
       rasDiff = math.pow((seedRAS[0] - volumeRAS[0]),2) + math.pow((seedRAS[1] - volumeRAS[1]),2) + math.pow((seedRAS[2] - volumeRAS[2]),2)
       if rasDiff != 0.0:
         rasDiff = math.sqrt(rasDiff)
-      print('Checking the difference between fiducial RAS position',seedRAS,'and volume RAS as derived from the fiducial display position',volumeRAS,': ',rasDiff)
+      print('Checking the difference between fiducial RAS position',seedRAS,
+            'and volume RAS as derived from the fiducial display position',volumeRAS,': ',rasDiff)
       if rasDiff > self.maximumRASDifference:
-        self.delayDisplay("RAS coordinate difference is too large as well!\nExpected < %g but got %g" % (self.maximumRASDifference, rasDiff))
-        return False
+        raise Exception("RAS coordinate difference is too large as well!\nExpected < %g but got %g" % (self.maximumRASDifference, rasDiff))
       else:
         self.delayDisplay("RAS coordinate difference is %g which is < %g, test passes." % (rasDiff, self.maximumRASDifference))
 
@@ -224,7 +240,8 @@ class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
       shotDiff = imageMath.GetOutput()
       # save it as a scene view
       annotationLogic = slicer.modules.annotations.logic()
-      annotationLogic.CreateSnapShot("FiducialLayoutSwitchBug1914-Diff", "Difference between starting and ending fiducial seed positions",slicer.qMRMLScreenShotDialog.Red, screenshotScaleFactor, shotDiff)
+      annotationLogic.CreateSnapShot("FiducialLayoutSwitchBug1914-Diff", "Difference between starting and ending fiducial seed positions",
+                                     slicer.qMRMLScreenShotDialog.Red, screenshotScaleFactor, shotDiff)
       # calculate the image difference
       imageStats = vtk.vtkImageHistogramStatistics()
       imageStats.SetInput(shotDiff)
@@ -233,38 +250,7 @@ class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
       meanVal = imageStats.GetMean()
       self.delayDisplay("Mean of image difference = %g" % meanVal)
       if meanVal > 5.0:
-        # raise Exception("Image difference is too great!\nExpected <= 5.0, but got %g" % (meanVal))
-        print("Image difference is too great!\nExpected <= 5.0, but got %g" % (meanVal))
-        return False
+        raise Exception("Image difference is too great!\nExpected <= 5.0, but got %g" % (meanVal))
 
     self.delayDisplay('Test passed!')
-    return True
-
-
-class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
-  """
-  This is the test case for your scripted module.
-  """
-
-  def setUp(self):
-    """ Do whatever is needed to reset the state - typically a scene clear will be enough.
-    """
-    slicer.mrmlScene.Clear(0)
-
-  def runTest(self):
-    """Run as few or as many tests as needed here.
-    """
-    self.setUp()
-    self.test_FiducialLayoutSwitchBug19141()
-
-  def test_FiducialLayoutSwitchBug19141(self):
-    logging.info("ctest, please don't truncate my output: CTEST_FULL_OUTPUT")
-    logic = FiducialLayoutSwitchBug1914Logic()
-    returnFlag = logic.run()
-    if returnFlag == True:
-      self.delayDisplay('Test passed!')
-    else:
-      self.delayDisplay('Test failed!')
-    self.assertTrue(returnFlag)
-
 
