@@ -281,15 +281,6 @@ class ScriptedLoadableModuleLogic(object):
     node.SetName(slicer.mrmlScene.GenerateUniqueName(self.moduleName))
     return node
 
-  def clickAndDrag(self,widget,button='Left',start=(10,10),end=(10,40),steps=20,modifiers=[]):
-    """
-    Send synthetic mouse events to the specified widget (qMRMLSliceWidget or qMRMLThreeDView).
-    It is recommended to directly use slicer.util.clickAndDrag function.
-    This method is only kept for backward compatibility and may be removed in the future.
-    """
-    slicer.util.clickAndDrag(widget,button=button,start=start,end=end,steps=steps,modifiers=modifiers)
-
-
 
 class ScriptedLoadableModuleTest(unittest.TestCase):
   """
