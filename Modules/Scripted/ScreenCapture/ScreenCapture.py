@@ -324,6 +324,11 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.volumeNodeComboBox.setMRMLScene(slicer.mrmlScene)
     advancedFormLayout.addRow("Output volume node:", self.volumeNodeComboBox)
 
+    self.showViewControllersCheckBox = qt.QCheckBox(" ")
+    self.showViewControllersCheckBox.checked = False
+    self.showViewControllersCheckBox.setToolTip("If checked, images will be captured with view controllers visible.")
+    advancedFormLayout.addRow("View controllers:", self.showViewControllersCheckBox)
+
     self.transparentBackgroundCheckBox = qt.QCheckBox(" ")
     self.transparentBackgroundCheckBox.checked = False
     self.transparentBackgroundCheckBox.setToolTip("If checked, images will be captured with transparent background.")
@@ -684,8 +689,11 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     slicer.app.setOverrideCursor(qt.Qt.WaitCursor)
     captureAllViews = self.captureAllViewsCheckBox.checked
     transparentBackground = self.transparentBackgroundCheckBox.checked
+    showViewControllers = self.showViewControllersCheckBox.checked
     if captureAllViews:
-      self.logic.showViewControllers(False)
+      self.logic.showViewControllers(showViewControllers)
+    elif showViewControllers:
+      logging.warning("View controllers are only available to be shown when capturing all views.")
     try:
       if numberOfSteps < 2:
         if imageFileNamePattern != self.snapshotFileNamePattern or outputDir != self.snapshotOutputDir:
