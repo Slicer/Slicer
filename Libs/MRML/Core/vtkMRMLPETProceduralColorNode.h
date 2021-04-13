@@ -58,12 +58,20 @@ public:
   /// The list of valid types
   /// PETheat to display PET overlay with red to orange to yellow to white.
   /// PETrainbow to display PET overlay with cool to warm to white.
+  /// PETrainbow2 is absed on the PET lookup-table of Fiji PET-CT plugin (https://sourceforge.net/projects/bifijiplugins/files/extraLUT/).
+  /// PETDICOM is based on the DICOM standard PET color palette
+  /// (http://dicom.nema.org/medical/dicom/current/output/html/part06.html#sect_B.1.2).
+  /// PEThotMetalBlue is based on the DICOM standard Hot Metal Blue color palette
+  /// (http://dicom.nema.org/medical/dicom/current/output/html/part06.html#sect_B.1.3).
   /// PETMIP to display PET overlay  with white to black.
   enum
   {
     PETheat = 0,
     PETrainbow = 1,
-    PETMIP = 2
+    PETrainbow2 = 2,
+    PETDICOM = 3,
+    PEThotMetalBlue = 4,
+    PETMIP = 5
   };
 
   /// Return the lowest and the highest integers, for use in looping
@@ -73,7 +81,10 @@ public:
   const char *GetTypeAsString() override;
   void SetTypeToHeat();
   void SetTypeToRainbow();
+  void SetTypeToRainbow2();
   void SetTypeToMIP();
+  void SetTypeToDICOM();
+  void SetTypeToHotMetalBlue();
 
 protected:
   vtkMRMLPETProceduralColorNode();
