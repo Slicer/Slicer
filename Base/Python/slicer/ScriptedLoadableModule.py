@@ -225,10 +225,6 @@ class ScriptedLoadableModuleLogic(object):
     # to allow having multiple parameter nodes in the scene.
     self.isSingletonParameterNode = True
 
-    # takeScreenshot default parameters
-    self.enableScreenshots = False
-    self.screenshotScaleFactor = 1.0
-
   def getParameterNode(self):
     """
     Return the first available parameter node for this module
@@ -285,14 +281,6 @@ class ScriptedLoadableModuleLogic(object):
     node.SetName(slicer.mrmlScene.GenerateUniqueName(self.moduleName))
     return node
 
-  def delayDisplay(self,message,msec=1000):
-    """
-    Display a message in a popup window for a short time.
-    It is recommended to directly use slicer.util.delayDisplay function.
-    This method is only kept for backward compatibility and may be removed in the future.
-    """
-    slicer.util.delayDisplay(message, msec)
-
   def clickAndDrag(self,widget,button='Left',start=(10,10),end=(10,40),steps=20,modifiers=[]):
     """
     Send synthetic mouse events to the specified widget (qMRMLSliceWidget or qMRMLThreeDView).
@@ -301,58 +289,7 @@ class ScriptedLoadableModuleLogic(object):
     """
     slicer.util.clickAndDrag(widget,button=button,start=start,end=end,steps=steps,modifiers=modifiers)
 
-  def takeScreenshot(self,name,description,type=-1):
-    """ Take a screenshot of the selected viewport and store as and
-    annotation snapshot node. Convenience method for automated testing.
 
-    If self.enableScreenshots is False then only a message is displayed but screenshot
-    is not stored. Screenshots are scaled by self.screenshotScaleFactor.
-
-    :param name: snapshot node name
-    :param description: description of the node
-    :param type: which viewport to capture. If not specified then captures the entire window.
-      Valid values: slicer.qMRMLScreenShotDialog.FullLayout,
-      slicer.qMRMLScreenShotDialog.ThreeD, slicer.qMRMLScreenShotDialog.Red,
-      slicer.qMRMLScreenShotDialog.Yellow, slicer.qMRMLScreenShotDialog.Green.
-    """
-
-    # show the message even if not taking a screen shot
-    slicer.util.delayDisplay(description)
-
-    if not self.enableScreenshots:
-      return
-
-    lm = slicer.app.layoutManager()
-    # switch on the type to get the requested window
-    widget = 0
-    if type == slicer.qMRMLScreenShotDialog.FullLayout:
-      # full layout
-      widget = lm.viewport()
-    elif type == slicer.qMRMLScreenShotDialog.ThreeD:
-      # just the 3D window
-      widget = lm.threeDWidget(0).threeDView()
-    elif type == slicer.qMRMLScreenShotDialog.Red:
-      # red slice window
-      widget = lm.sliceWidget("Red")
-    elif type == slicer.qMRMLScreenShotDialog.Yellow:
-      # yellow slice window
-      widget = lm.sliceWidget("Yellow")
-    elif type == slicer.qMRMLScreenShotDialog.Green:
-      # green slice window
-      widget = lm.sliceWidget("Green")
-    else:
-      # default to using the full window
-      widget = slicer.util.mainWindow()
-      # reset the type so that the node is set correctly
-      type = slicer.qMRMLScreenShotDialog.FullLayout
-
-    # grab and convert to vtk image data
-    qimage = ctk.ctkWidgetsUtils.grabWidget(widget)
-    imageData = vtk.vtkImageData()
-    slicer.qMRMLUtils().qImageToVtkImageData(qimage,imageData)
-
-    annotationLogic = slicer.modules.annotations.logic()
-    annotationLogic.CreateSnapShot(name, description, type, self.screenshotScaleFactor, imageData)
 
 class ScriptedLoadableModuleTest(unittest.TestCase):
   """
@@ -363,6 +300,10 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
 
   def __init__(self, *args, **kwargs):
     super(ScriptedLoadableModuleTest, self).__init__(*args, **kwargs)
+
+    # takeScreenshot default parameters
+    self.enableScreenshots = False
+    self.screenshotScaleFactor = 1.0
 
   def delayDisplay(self,message,requestedDelay=None,msec=None):
     """
@@ -399,6 +340,59 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
       msec = 100
 
     slicer.util.delayDisplay(message, msec)
+
+  def takeScreenshot(self,name,description,type=-1):
+    """ Take a screenshot of the selected viewport and store as and
+    annotation snapshot node. Convenience method for automated testing.
+
+    If self.enableScreenshots is False then only a message is displayed but screenshot
+    is not stored. Screenshots are scaled by self.screenshotScaleFactor.
+
+    :param name: snapshot node name
+    :param description: description of the node
+    :param type: which viewport to capture. If not specified then captures the entire window.
+      Valid values: slicer.qMRMLScreenShotDialog.FullLayout,
+      slicer.qMRMLScreenShotDialog.ThreeD, slicer.qMRMLScreenShotDialog.Red,
+      slicer.qMRMLScreenShotDialog.Yellow, slicer.qMRMLScreenShotDialog.Green.
+    """
+
+    # show the message even if not taking a screen shot
+    self.delayDisplay(description)
+
+    if not self.enableScreenshots:
+      return
+
+    lm = slicer.app.layoutManager()
+    # switch on the type to get the requested window
+    widget = 0
+    if type == slicer.qMRMLScreenShotDialog.FullLayout:
+      # full layout
+      widget = lm.viewport()
+    elif type == slicer.qMRMLScreenShotDialog.ThreeD:
+      # just the 3D window
+      widget = lm.threeDWidget(0).threeDView()
+    elif type == slicer.qMRMLScreenShotDialog.Red:
+      # red slice window
+      widget = lm.sliceWidget("Red")
+    elif type == slicer.qMRMLScreenShotDialog.Yellow:
+      # yellow slice window
+      widget = lm.sliceWidget("Yellow")
+    elif type == slicer.qMRMLScreenShotDialog.Green:
+      # green slice window
+      widget = lm.sliceWidget("Green")
+    else:
+      # default to using the full window
+      widget = slicer.util.mainWindow()
+      # reset the type so that the node is set correctly
+      type = slicer.qMRMLScreenShotDialog.FullLayout
+
+    # grab and convert to vtk image data
+    qimage = ctk.ctkWidgetsUtils.grabWidget(widget)
+    imageData = vtk.vtkImageData()
+    slicer.qMRMLUtils().qImageToVtkImageData(qimage,imageData)
+
+    annotationLogic = slicer.modules.annotations.logic()
+    annotationLogic.CreateSnapShot(name, description, type, self.screenshotScaleFactor, imageData)
 
   def runTest(self):
     """

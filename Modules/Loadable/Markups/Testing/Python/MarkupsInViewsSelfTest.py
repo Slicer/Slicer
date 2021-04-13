@@ -209,12 +209,12 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     for tag in fidNodeObserverTags:
       fidNode.RemoveObserver(tag)
 
-    self.delayDisplay("Placed 3 fiducials")
+    slicer.util.delayDisplay("Placed 3 fiducials")
 
     # self.printViewAndSliceNodes()
 
     if not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode1', controlPointIndex):
-      self.delayDisplay("Test failed: widget is not visible in view 1")
+      slicer.util.delayDisplay("Test failed: widget is not visible in view 1")
       # self.printViewNodeIDs(displayNode)
       return False
 
@@ -222,7 +222,7 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     # switch to 2 3D views layout
     #
     lm.setLayout(15)
-    self.delayDisplay("Switched to 2 3D views")
+    slicer.util.delayDisplay("Switched to 2 3D views")
     # self.printViewAndSliceNodes()
 
     controlPointIndex = 0
@@ -231,7 +231,7 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
 
     if (not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode1', controlPointIndex)
         or not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode2', controlPointIndex)):
-      self.delayDisplay("Test failed: widget is not visible in view 1 and 2")
+      slicer.util.delayDisplay("Test failed: widget is not visible in view 1 and 2")
       # self.printViewNodeIDs(displayNode)
       return False
 
@@ -239,13 +239,13 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     # show only in view 2
     #
     displayNode.AddViewNodeID("vtkMRMLViewNode2")
-    self.delayDisplay("Showing only in view 2")
+    slicer.util.delayDisplay("Showing only in view 2")
     if self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode1', controlPointIndex):
-      self.delayDisplay("Test failed: widget is not supposed to be visible in view 1")
+      slicer.util.delayDisplay("Test failed: widget is not supposed to be visible in view 1")
       # self.printViewNodeIDs(displayNode)
       return False
     if not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode2', controlPointIndex):
-      self.delayDisplay("Test failed: widget is not visible in view 2")
+      slicer.util.delayDisplay("Test failed: widget is not visible in view 2")
       # self.printViewNodeIDs(displayNode)
       return False
 
@@ -253,10 +253,10 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     # remove it so show in all
     #
     displayNode.RemoveAllViewNodeIDs()
-    self.delayDisplay("Showing in both views")
+    slicer.util.delayDisplay("Showing in both views")
     if (not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode1', controlPointIndex)
         or not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode2', controlPointIndex)):
-      self.delayDisplay("Test failed: widget is not visible in view 1 and 2")
+      slicer.util.delayDisplay("Test failed: widget is not visible in view 1 and 2")
       self.printViewNodeIDs(displayNode)
       return False
 
@@ -264,19 +264,19 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     # show only in view 1
     #
     displayNode.AddViewNodeID("vtkMRMLViewNode1")
-    self.delayDisplay("Showing only in view 1")
+    slicer.util.delayDisplay("Showing only in view 1")
     if self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode2', controlPointIndex):
-      self.delayDisplay("Test failed: widget is not supposed to be visible in view 2")
+      slicer.util.delayDisplay("Test failed: widget is not supposed to be visible in view 2")
       # self.printViewNodeIDs(displayNode)
       return False
     if not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode1', controlPointIndex):
-      self.delayDisplay("Test failed: widget is not visible in view 1")
+      slicer.util.delayDisplay("Test failed: widget is not visible in view 1")
       # self.printViewNodeIDs(displayNode)
       return False
 
     # switch back to conventional
     lm.setLayout(2)
-    self.delayDisplay("Switched back to conventional layout")
+    slicer.util.delayDisplay("Switched back to conventional layout")
     # self.printViewAndSliceNodes()
 
     # test of the visibility in slice views
@@ -289,9 +289,9 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
 
     # show only in red
     displayNode.AddViewNodeID('vtkMRMLSliceNodeRed')
-    self.delayDisplay("Show only in red slice")
+    slicer.util.delayDisplay("Show only in red slice")
     if not self.controlPointVisibleSlice(fidNode,'vtkMRMLSliceNodeRed', controlPointIndex):
-      self.delayDisplay("Test failed: widget not displayed on red slice")
+      slicer.util.delayDisplay("Test failed: widget not displayed on red slice")
       # self.printViewNodeIDs(displayNode)
       return False
 
@@ -302,10 +302,10 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     # print 'after removed all'
     # self.printViewNodeIDs(displayNode)
     displayNode.AddViewNodeID('vtkMRMLSliceNodeGreen')
-    self.delayDisplay('Show only in green slice')
+    slicer.util.delayDisplay('Show only in green slice')
     if (self.controlPointVisibleSlice(fidNode,'vtkMRMLSliceNodeRed', controlPointIndex)
         or not self.controlPointVisibleSlice(fidNode,'vtkMRMLSliceNodeGreen', controlPointIndex)):
-      self.delayDisplay("Test failed: widget not displayed only on green slice")
+      slicer.util.delayDisplay("Test failed: widget not displayed only on green slice")
       print('\tred = ',self.controlPointVisibleSlice(fidNode,'vtkMRMLSliceNodeRed', controlPointIndex))
       print('\tgreen =',self.controlPointVisibleSlice(fidNode,'vtkMRMLSliceNodeGreen', controlPointIndex))
       self.printViewNodeIDs(displayNode)

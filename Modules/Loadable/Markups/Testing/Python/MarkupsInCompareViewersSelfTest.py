@@ -127,13 +127,13 @@ class MarkupsInCompareViewersSelfTestLogic(ScriptedLoadableModuleLogic):
     index = fidNode.AddFiducialFromArray(nose)
     fidNode.SetNthFiducialLabel(index, "nose")
 
-    self.delayDisplay("Placed 3 fiducials")
+    slicer.util.delayDisplay("Placed 3 fiducials")
 
     #
     # switch to 2 viewers compare layout
     #
     lm.setLayout(12)
-    self.delayDisplay("Switched to Compare 2 viewers")
+    slicer.util.delayDisplay("Switched to Compare 2 viewers")
 
     #
     # get compare slice composite node
@@ -153,7 +153,7 @@ class MarkupsInCompareViewersSelfTestLogic(ScriptedLoadableModuleLogic):
     compareLogic1.StartSliceOffsetInteraction()
     compareLogic1.SetSliceOffset(eye1[2])
     compareLogic1.EndSliceOffsetInteraction()
-    self.delayDisplay("MH Head in background, scrolled to a fiducial")
+    slicer.util.delayDisplay("MH Head in background, scrolled to a fiducial")
 
     # scroll around through the range of points
     offset = nose[2]
@@ -162,21 +162,21 @@ class MarkupsInCompareViewersSelfTestLogic(ScriptedLoadableModuleLogic):
       compareLogic1.SetSliceOffset(offset)
       compareLogic1.EndSliceOffsetInteraction()
       msg = "Scrolled to " + str(offset)
-      self.delayDisplay(msg,250)
+      slicer.util.delayDisplay(msg,250)
       offset += 1.0
 
     # switch back to conventional
     lm.setLayout(2)
-    self.delayDisplay("Switched back to conventional layout")
+    slicer.util.delayDisplay("Switched back to conventional layout")
 
     # switch to compare grid
     lm.setLayout(23)
     compareLogic1.FitSliceToAll()
-    self.delayDisplay("Switched to Compare grid")
+    slicer.util.delayDisplay("Switched to Compare grid")
 
     # switch back to conventional
     lm.setLayout(2)
-    self.delayDisplay("Switched back to conventional layout")
+    slicer.util.delayDisplay("Switched back to conventional layout")
 
     return True
 

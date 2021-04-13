@@ -99,19 +99,19 @@ class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
 
   def __checkPushButtonExists(self, widget, name):
     pushButtonObjectName = "Create%sPushButton" % name
-    #self.delayDisplay("Checking wether '%s' exists" % pushButtonObjectName)
+    #slicer.util.delayDisplay("Checking wether '%s' exists" % pushButtonObjectName)
     if widget.findChild(qt.QPushButton, pushButtonObjectName):
       return True
     return False
 
   def __checkWidgetExists(self, widget, name):
-    #self.delayDisplay("Checking wether '%s' exists" % name)
+    #slicer.util.delayDisplay("Checking wether '%s' exists" % name)
     if widget.findChild(qt.QWidget, name):
       return True
     return False
 
   def __checkWidgetVisibility(self, widget, name):
-    #self.delayDisplay("Checking wether '%s' is visible" % pushButtonObjectName)
+    #slicer.util.delayDisplay("Checking wether '%s' is visible" % pushButtonObjectName)
     w = widget.findChild(qt.QWidget, name)
     return w.isVisible()
 
@@ -155,7 +155,7 @@ class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
 
     # Unregister Markups and check the buttons are gone
     for markupNode in self.markupsNodes():
-      self.delayDisplay("Unregistering %s" % markupNode.GetMarkupType())
+      slicer.util.delayDisplay("Unregistering %s" % markupNode.GetMarkupType())
       markupsLogic.UnregisterMarkupsNode(markupNode)
       if self.__checkPushButtonExists(markupsWidget, markupNode.GetMarkupType()):
        raise Exception("Create PushButton for %s is present after unregistration" % markupNode.GetMarkupType())
@@ -176,7 +176,7 @@ class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
 
     #Check Markups module standard nodes are registered
     for markupNode in markupsNodes:
-      self.delayDisplay("Registering %s" % markupNode.GetMarkupType())
+      slicer.util.delayDisplay("Registering %s" % markupNode.GetMarkupType())
       markupsLogic.RegisterMarkupsNode(markupNode, markupsNodes[markupNode])
       if self.__checkPushButtonExists(markupsWidget, markupNode.GetMarkupType()) is None:
         raise Exception("Create PushButton for %s is not present" % markupNode.GetMarkupType())
@@ -218,7 +218,7 @@ class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
       raise Exception("Could't get the Markups module widget")
 
     for additionalOptionsWidget in self.additionalOptionsWidgets():
-      self.delayDisplay("Registering %s" % additionalOptionsWidget.objectName)
+      slicer.util.delayDisplay("Registering %s" % additionalOptionsWidget.objectName)
       additionalOptionsWidgetsFactory.registerAdditionalOptionsWidget(additionalOptionsWidget)
 
       # Check the widget exists
@@ -230,7 +230,7 @@ class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
     """
     Run the tests
     """
-    self.delayDisplay('Running integration tests for Pluggable Markups')
+    slicer.util.delayDisplay('Running integration tests for Pluggable Markups')
 
     self.test_unregister_existing_markups()
     self.test_register_markups()

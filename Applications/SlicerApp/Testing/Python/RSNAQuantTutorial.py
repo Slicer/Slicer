@@ -149,9 +149,8 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
   def test_Part1Ruler(self,enableScreenshotsFlag=0,screenshotScaleFactor=1):
     """ Test using rulers
     """
-    logic = RSNAQuantTutorialLogic()
-    logic.enableScreenshots = enableScreenshotsFlag
-    logic.screenshotScaleFactor = screenshotScaleFactor
+    self.enableScreenshots = enableScreenshotsFlag
+    self.screenshotScaleFactor = screenshotScaleFactor
 
     self.delayDisplay("Starting the test")
 
@@ -196,7 +195,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
       redWidget.sliceController().setSliceVisible(True)
 
 
-      logic.takeScreenshot('Ruler','Ruler used to measure tumor diameter',-1)
+      self.takeScreenshot('Ruler','Ruler used to measure tumor diameter',-1)
 
       self.delayDisplay('Test passed!')
     except Exception as e:
@@ -208,9 +207,8 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
   def test_Part3PETCT(self,enableScreenshotsFlag=0,screenshotScaleFactor=1):
     """ Test using the PETCT module
     """
-    logic = RSNAQuantTutorialLogic()
-    logic.enableScreenshots = enableScreenshotsFlag
-    logic.screenshotScaleFactor = screenshotScaleFactor
+    self.enableScreenshots = enableScreenshotsFlag
+    self.screenshotScaleFactor = screenshotScaleFactor
 
     self.delayDisplay("Starting the test")
 
@@ -226,7 +224,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Loading PET_CT_pre-treatment.mrb")
     preTreatmentPath = extractPath + '/PET_CT_pre-treatment.mrb'
     slicer.util.loadScene(preTreatmentPath)
-    logic.takeScreenshot('PETCT-LoadedPre','Loaded pre-treatement scene',-1)
+    self.takeScreenshot('PETCT-LoadedPre','Loaded pre-treatement scene',-1)
 
     try:
       mainWindow = slicer.util.mainWindow()
@@ -248,19 +246,19 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
       slicer.util.clickAndDrag(threeDView,button='Right')
       redWidget.sliceController().setSliceVisible(True)
       yellowWidget.sliceController().setSliceVisible(True)
-      logic.takeScreenshot('PETCT-ConfigureView','Configure View',-1)
+      self.takeScreenshot('PETCT-ConfigureView','Configure View',-1)
 
       mainWindow.moduleSelector().selectModule('Volumes')
       compositNode = redWidget.mrmlSliceCompositeNode()
       compositNode.SetForegroundOpacity(0.2)
-      logic.takeScreenshot('PETCT-ShowVolumes','Show Volumes with lesion',-1)
+      self.takeScreenshot('PETCT-ShowVolumes','Show Volumes with lesion',-1)
 
       compositNode.SetForegroundOpacity(0.5)
-      logic.takeScreenshot('PETCT-CTOpacity','CT1 volume opacity to 0.5',-1)
+      self.takeScreenshot('PETCT-CTOpacity','CT1 volume opacity to 0.5',-1)
 
       yellowWidget.sliceController().setSliceVisible(False)
       greenWidget.sliceController().setSliceVisible(True)
-      logic.takeScreenshot('PETCT-ShowSlices','Show axial and sagittal slices',-1)
+      self.takeScreenshot('PETCT-ShowSlices','Show axial and sagittal slices',-1)
 
       self.delayDisplay('SUV Computation')
       if not hasattr(slicer.modules, 'petstandarduptakevaluecomputation'):
@@ -285,16 +283,16 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
       self.delayDisplay("Loading PET_CT_post-treatment.mrb")
       postTreatmentPath = extractPath + '/PET_CT_post-treatment.mrb'
       slicer.util.loadScene(postTreatmentPath)
-      logic.takeScreenshot('PETCT-LoadedPost','Loaded post-treatement scene',-1)
+      self.takeScreenshot('PETCT-LoadedPost','Loaded post-treatement scene',-1)
 
       compositNode.SetForegroundOpacity(0.5)
-      logic.takeScreenshot('PETCT-CT2Opacity','CT2 volume opacity to 0.5',-1)
+      self.takeScreenshot('PETCT-CT2Opacity','CT2 volume opacity to 0.5',-1)
 
       redController.setSliceOffsetValue(-165.01)
-      logic.takeScreenshot('PETCT-LarynxUptake','Mild uptake in the larynx and pharynx',-1)
+      self.takeScreenshot('PETCT-LarynxUptake','Mild uptake in the larynx and pharynx',-1)
 
       redController.setSliceOffsetValue(-106.15)
-      logic.takeScreenshot('PETCT-TumorUptake','No uptake in the area of the primary tumor',-1)
+      self.takeScreenshot('PETCT-TumorUptake','No uptake in the area of the primary tumor',-1)
 
       self.delayDisplay('Test passed!')
     except Exception as e:
@@ -306,10 +304,8 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
   def test_Part2ChangeTracker(self,enableScreenshotsFlag=0,screenshotScaleFactor=1):
     """ Test the ChangeTracker module
     """
-
-    logic = RSNAQuantTutorialLogic()
-    logic.enableScreenshots = enableScreenshotsFlag
-    logic.screenshotScaleFactor = screenshotScaleFactor
+    self.enableScreenshots = enableScreenshotsFlag
+    self.screenshotScaleFactor = screenshotScaleFactor
 
     self.delayDisplay("Starting the test")
 
@@ -326,7 +322,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
       loadFiles=True,
       uris=TESTING_DATA_URL + 'SHA256/64734cbbf8ebafe4a52f551d1510a8f6f3d0625eb5b6c1e328be117c48e2c653',
       checksums='SHA256:64734cbbf8ebafe4a52f551d1510a8f6f3d0625eb5b6c1e328be117c48e2c653')
-    logic.takeScreenshot('ChangeTracker-Loaded','Finished with download and loading',-1)
+    self.takeScreenshot('ChangeTracker-Loaded','Finished with download and loading',-1)
 
     try:
       mainWindow = slicer.util.mainWindow()
@@ -342,7 +338,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
 
       self.delayDisplay('Configure Module')
       mainWindow.moduleSelector().selectModule('ChangeTracker')
-      logic.takeScreenshot('ChangeTracker-ModuleGUI','Select the ChangeTracker module',-1)
+      self.takeScreenshot('ChangeTracker-ModuleGUI','Select the ChangeTracker module',-1)
 
       changeTracker = slicer.modules.changetracker.widgetRepresentation().self()
 
@@ -350,53 +346,53 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
       followupNode = slicer.util.getNode('2007-spgr1')
       changeTracker.selectScansStep._ChangeTrackerSelectScansStep__baselineVolumeSelector.setCurrentNode(baselineNode)
       changeTracker.selectScansStep._ChangeTrackerSelectScansStep__followupVolumeSelector.setCurrentNode(followupNode)
-      logic.takeScreenshot('ChangeTracker-SetInputs','Select input scans',-1)
+      self.takeScreenshot('ChangeTracker-SetInputs','Select input scans',-1)
 
       changeTracker.workflow.goForward()
-      logic.takeScreenshot('ChangeTracker-GoForward','Go Forward',-1)
+      self.takeScreenshot('ChangeTracker-GoForward','Go Forward',-1)
 
       slicer.util.clickAndDrag(redWidget,button='Right')
-      logic.takeScreenshot('ChangeTracker-Zoom','Inspect - zoom',-1)
+      self.takeScreenshot('ChangeTracker-Zoom','Inspect - zoom',-1)
 
       slicer.util.clickAndDrag(redWidget,button='Middle')
-      logic.takeScreenshot('ChangeTracker-Pan','Inspect - pan',-1)
+      self.takeScreenshot('ChangeTracker-Pan','Inspect - pan',-1)
 
       for offset in range(-20,20,2):
         redController.setSliceOffsetValue(offset)
-      logic.takeScreenshot('ChangeTracker-Scroll','Inspect - scroll',-1)
+      self.takeScreenshot('ChangeTracker-Scroll','Inspect - scroll',-1)
 
       self.delayDisplay('Set ROI')
       roi = changeTracker.defineROIStep._ChangeTrackerDefineROIStep__roi
       roi.SetXYZ(-2.81037, 28.7629, 28.4536)
-      logic.takeScreenshot('ChangeTracker-SetROICenter','Center VOI',-1)
+      self.takeScreenshot('ChangeTracker-SetROICenter','Center VOI',-1)
       roi.SetRadiusXYZ(22.6467, 22.6804, 22.9897)
-      logic.takeScreenshot('ChangeTracker-SetROIExtent','Resize the VOI',-1)
+      self.takeScreenshot('ChangeTracker-SetROIExtent','Resize the VOI',-1)
 
       layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalWidescreenView)
-      logic.takeScreenshot('ChangeTracker-ConventionalWidescreen','Select the viewing mode Conventional Widescreen',-1)
+      self.takeScreenshot('ChangeTracker-ConventionalWidescreen','Select the viewing mode Conventional Widescreen',-1)
 
       slicer.util.clickAndDrag(redWidget,button='Right')
-      logic.takeScreenshot('ChangeTracker-ZoomVOI','Zoom',-1)
+      self.takeScreenshot('ChangeTracker-ZoomVOI','Zoom',-1)
 
       layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutFourUpView)
-      logic.takeScreenshot('ChangeTracker-FourUpLayout','Go back to Four-Up layout',-1)
+      self.takeScreenshot('ChangeTracker-FourUpLayout','Go back to Four-Up layout',-1)
 
       changeTracker.workflow.goForward()
-      logic.takeScreenshot('ChangeTracker-GoForward','Go Forward',-1)
+      self.takeScreenshot('ChangeTracker-GoForward','Go Forward',-1)
 
       changeTracker.segmentROIStep._ChangeTrackerSegmentROIStep__threshRange.minimumValue = 120
-      logic.takeScreenshot('ChangeTracker-Threshold','Set threshold',-1)
+      self.takeScreenshot('ChangeTracker-Threshold','Set threshold',-1)
 
       changeTracker.workflow.goForward()
-      logic.takeScreenshot('ChangeTracker-GoForward','Go Forward',-1)
+      self.takeScreenshot('ChangeTracker-GoForward','Go Forward',-1)
 
       checkList = changeTracker.analyzeROIStep._ChangeTrackerAnalyzeROIStep__metricCheckboxList
       index = list(checkList.values()).index('IntensityDifferenceMetric')
       list(checkList.keys())[index].checked = True
-      logic.takeScreenshot('ChangeTracker-PickMetric','Select the ROI analysis method',-1)
+      self.takeScreenshot('ChangeTracker-PickMetric','Select the ROI analysis method',-1)
 
       changeTracker.workflow.goForward()
-      logic.takeScreenshot('ChangeTracker-GoForward','Go Forward',-1)
+      self.takeScreenshot('ChangeTracker-GoForward','Go Forward',-1)
 
       self.delayDisplay('Look!')
       redWidget.sliceController().setSliceVisible(True)
@@ -421,7 +417,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
       for offset in range(10,30,2):
         compareController.setSliceOffsetValue(offset)
 
-      logic.takeScreenshot('ChangeTracker-InspectResults','Inspected results',-1)
+      self.takeScreenshot('ChangeTracker-InspectResults','Inspected results',-1)
 
       self.delayDisplay('Test passed!')
     except Exception as e:
