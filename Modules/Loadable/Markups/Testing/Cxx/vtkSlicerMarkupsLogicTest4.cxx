@@ -63,19 +63,19 @@ int vtkSlicerMarkupsLogicTest4(int , char*[])
   unregisteredCallbackCommand->SetCallback(UnregisteredEventDetectionCallback);
   logic4->AddObserver(vtkSlicerMarkupsLogic::MarkupUnregistered, unregisteredCallbackCommand);
 
-  // Test registrtation of a Markups Node with correct node and widget
+  // Test registration of a Markups Node with correct node and widget
   logic4->RegisterMarkupsNode(vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New(),
                               vtkSmartPointer<vtkSlicerPointsWidget>::New());
   CHECK_BOOL(registeredEventReceived, true);
 
-  // Test registrtation of a Markups Node with nullptr node
+  // Test registration of a Markups Node with nullptr node
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   registeredEventReceived = false;
   logic4->RegisterMarkupsNode(nullptr, vtkSmartPointer<vtkSlicerPointsWidget>::New(), false);
   TESTING_OUTPUT_ASSERT_ERRORS_END();
   CHECK_BOOL(registeredEventReceived, false);
 
-  // Test registrtation of a Markups Node with nullptr widget
+  // Test registration of a Markups Node with nullptr widget
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   registeredEventReceived = false;
   logic4->RegisterMarkupsNode(vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New(), nullptr, false);
@@ -109,10 +109,10 @@ int vtkSlicerMarkupsLogicTest4(int , char*[])
   TESTING_OUTPUT_ASSERT_WARNINGS_END();
   CHECK_BOOL(unregisteredEventReceived, false);
 
-  auto markupsFiducialNode = vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New();
-  auto markupsAngleNode = vtkSmartPointer<vtkMRMLMarkupsAngleNode>::New();
-  auto markupsPointsWidget = vtkSmartPointer<vtkSlicerPointsWidget>::New();
-  auto markupsAngleWidget = vtkSmartPointer<vtkSlicerAngleWidget>::New();
+  vtkNew<vtkMRMLMarkupsFiducialNode> markupsFiducialNode;
+  vtkNew<vtkMRMLMarkupsAngleNode> markupsAngleNode;
+  vtkNew<vtkSlicerPointsWidget> markupsPointsWidget;
+  vtkNew<vtkSlicerAngleWidget> markupsAngleWidget;
 
   // Register non-registered valid nodes and retrieve the values
   registeredEventReceived = false;
