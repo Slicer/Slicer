@@ -13,4 +13,4 @@ configure_file(
 include(SlicerExtensionTemplatesGenerator)
 
 # See https://github.com/Slicer/Slicer/issues/5589#issuecomment-820645257
-add_subdirectory(Modules/PluggableMarkupsTestModule)
+add_subdirectory(Modules/LoadableCustomMarkups)
