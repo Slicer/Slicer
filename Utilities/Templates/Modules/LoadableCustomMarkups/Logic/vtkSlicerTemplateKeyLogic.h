@@ -23,19 +23,19 @@
 
 #include <vtkSlicerMarkupsLogic.h>
 
-#include "vtkSlicerPluggableMarkupsTestModuleLogicExport.h"
+#include "vtkSlicerTemplateKeyModuleLogicExport.h"
 
-class VTK_SLICER_PLUGGABLEMARKUPSTEST_MODULE_LOGIC_EXPORT vtkSlicerPluggableMarkupsTestLogic:
+class VTK_SLICER_TEMPLATEKEY_MODULE_LOGIC_EXPORT vtkSlicerTemplateKeyLogic:
   public vtkSlicerMarkupsLogic
 {
 public:
-  static vtkSlicerPluggableMarkupsTestLogic* New();
-  vtkTypeMacro(vtkSlicerPluggableMarkupsTestLogic, vtkSlicerMarkupsLogic);
+  static vtkSlicerTemplateKeyLogic* New();
+  vtkTypeMacro(vtkSlicerTemplateKeyLogic, vtkSlicerMarkupsLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
-  vtkSlicerPluggableMarkupsTestLogic();
-  ~vtkSlicerPluggableMarkupsTestLogic() override;
+  vtkSlicerTemplateKeyLogic();
+  ~vtkSlicerTemplateKeyLogic() override;
 
   void ObserveMRMLScene() override;
   void RegisterNodes() override;
@@ -43,8 +43,8 @@ protected:
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
 
 private:
-  vtkSlicerPluggableMarkupsTestLogic(const vtkSlicerPluggableMarkupsTestLogic&) = delete;
-  void operator=(const vtkSlicerPluggableMarkupsTestLogic&) = delete;
+  vtkSlicerTemplateKeyLogic(const vtkSlicerTemplateKeyLogic&) = delete;
+  void operator=(const vtkSlicerTemplateKeyLogic&) = delete;
 };
 
 #endif // __vtkslicerlivermarkupslogic_h_

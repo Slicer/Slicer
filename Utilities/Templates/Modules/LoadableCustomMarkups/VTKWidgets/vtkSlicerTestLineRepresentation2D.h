@@ -40,7 +40,7 @@
 #ifndef __vtkslicertestlinerepresentation2d_h_
 #define __vtkslicertestlinerepresentation2d_h_
 
-#include "vtkSlicerPluggableMarkupsTestModuleVTKWidgetsExport.h"
+#include "vtkSlicerTemplateKeyModuleVTKWidgetsExport.h"
 
 // Markups VTKWidgets includes
 #include "vtkSlicerLineRepresentation2D.h"
@@ -63,7 +63,7 @@ class vtkActor2D;
  * @sa
  * vtkSlicerMarkupsWidgetRepresentation2D vtkMRMLAbstractWidget
 */
-class VTK_SLICER_PLUGGABLEMARKUPSTEST_MODULE_VTKWIDGETS_EXPORT vtkSlicerTestLineRepresentation2D
+class VTK_SLICER_TEMPLATEKEY_MODULE_VTKWIDGETS_EXPORT vtkSlicerTestLineRepresentation2D
 : public vtkSlicerLineRepresentation2D
 {
 public:

@@ -23,12 +23,12 @@
 
 // Markups widgets includes
 #include "qSlicerMarkupsAdditionalOptionsWidget.h"
-#include "qSlicerPluggableMarkupsTestModuleWidgetsExport.h"
+#include "qSlicerTemplateKeyModuleWidgetsExport.h"
 
 class qSlicerMarkupsTestLineWidgetPrivate;
 class vtkMRMLMarkupsNode;
 
-class Q_SLICER_MODULE_PLUGGABLEMARKUPSTEST_WIDGETS_EXPORT
+class Q_SLICER_MODULE_TEMPLATEKEY_WIDGETS_EXPORT
 qSlicerMarkupsTestLineWidget : public qSlicerMarkupsAdditionalOptionsWidget
 {
   Q_OBJECT

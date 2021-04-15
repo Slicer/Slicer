@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 
-#include "vtkSlicerPluggableMarkupsTestLogic.h"
+#include "vtkSlicerTemplateKeyLogic.h"
 
 // Liver Markups MRML includes
 #include "vtkMRMLMarkupsTestLineNode.h"
@@ -40,25 +40,25 @@
 #include <vtkObjectFactory.h>
 
 //----------------------------------------------------------------------------
-vtkStandardNewMacro(vtkSlicerPluggableMarkupsTestLogic);
+vtkStandardNewMacro(vtkSlicerTemplateKeyLogic);
 
 //---------------------------------------------------------------------------
-vtkSlicerPluggableMarkupsTestLogic::vtkSlicerPluggableMarkupsTestLogic()
+vtkSlicerTemplateKeyLogic::vtkSlicerTemplateKeyLogic()
 {
 
 }
 
 //---------------------------------------------------------------------------
-vtkSlicerPluggableMarkupsTestLogic::~vtkSlicerPluggableMarkupsTestLogic() = default;
+vtkSlicerTemplateKeyLogic::~vtkSlicerTemplateKeyLogic() = default;
 
 //---------------------------------------------------------------------------
-void vtkSlicerPluggableMarkupsTestLogic::PrintSelf(ostream& os, vtkIndent indent)
+void vtkSlicerTemplateKeyLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerPluggableMarkupsTestLogic::RegisterNodes()
+void vtkSlicerTemplateKeyLogic::RegisterNodes()
 {
   assert(this->GetMRMLScene() != nullptr);
 
@@ -69,7 +69,7 @@ void vtkSlicerPluggableMarkupsTestLogic::RegisterNodes()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerPluggableMarkupsTestLogic::ObserveMRMLScene()
+void vtkSlicerTemplateKeyLogic::ObserveMRMLScene()
 {
   if (!this->GetMRMLScene())
     {
@@ -120,7 +120,7 @@ void vtkSlicerPluggableMarkupsTestLogic::ObserveMRMLScene()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerPluggableMarkupsTestLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
+void vtkSlicerTemplateKeyLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
   Superclass::OnMRMLSceneNodeAdded(node);
 }
