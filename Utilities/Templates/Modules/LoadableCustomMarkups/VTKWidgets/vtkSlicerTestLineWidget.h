@@ -21,11 +21,11 @@
 #ifndef __vtkslicerslicingcontourwidget_h_
 #define __vtkslicerslicingcontourwidget_h_
 
-#include "vtkSlicerPluggableMarkupsTestModuleVTKWidgetsExport.h"
+#include "vtkSlicerTemplateKeyModuleVTKWidgetsExport.h"
 
 #include <vtkSlicerLineWidget.h>
 
-class VTK_SLICER_PLUGGABLEMARKUPSTEST_MODULE_VTKWIDGETS_EXPORT vtkSlicerTestLineWidget
+class VTK_SLICER_TEMPLATEKEY_MODULE_VTKWIDGETS_EXPORT vtkSlicerTestLineWidget
 : public vtkSlicerLineWidget
 {
 public:

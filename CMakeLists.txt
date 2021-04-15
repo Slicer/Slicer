@@ -960,7 +960,6 @@ add_subdirectory(Resources)
 add_subdirectory(Utilities/Scripts)
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   add_subdirectory(Utilities/Scripts/SlicerWizard)
-  add_subdirectory(Utilities/Templates)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -989,6 +988,13 @@ add_subdirectory(
   ${Slicer_APPLICATIONS_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}/Applications
   )
+
+#-----------------------------------------------------------------------------
+# Templates
+#-----------------------------------------------------------------------------
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  add_subdirectory(Utilities/Templates)
+endif()
 
 #-----------------------------------------------------------------------------
 set(Slicer_USE_FILE ${Slicer_BINARY_DIR}/UseSlicer.cmake)

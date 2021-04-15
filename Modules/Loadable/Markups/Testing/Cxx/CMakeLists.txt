@@ -58,5 +58,3 @@ SIMPLE_TEST( vtkSlicerMarkupsLogicTest4 )
 # test Slicer4 annotation fiducials in a mrml file
 # TODO: remove this after annotation fiducials have been removed
 SIMPLE_TEST( vtkMarkupsAnnotationSceneTest ${INPUT}/AnnotationTest/AnnotationFiducialsTest.mrml )
-
-add_subdirectory(PluggableMarkupsTestModule)

@@ -21,7 +21,7 @@
 #ifndef __vtkslicertestlinerepresentation3d_h_
 #define __vtkslicertestlinerepresentation3d_h_
 
-#include "vtkSlicerPluggableMarkupsTestModuleVTKWidgetsExport.h"
+#include "vtkSlicerTemplateKeyModuleVTKWidgetsExport.h"
 
 // Markups VTKWidgets includes
 #include "vtkSlicerLineRepresentation3D.h"
@@ -44,7 +44,7 @@ class vtkPlane;
  * vtkSlicerMarkupsWidgetRepresentation2D vtkMRMLAbstractWidget
 */
 
-class VTK_SLICER_PLUGGABLEMARKUPSTEST_MODULE_VTKWIDGETS_EXPORT vtkSlicerTestLineRepresentation3D
+class VTK_SLICER_TEMPLATEKEY_MODULE_VTKWIDGETS_EXPORT vtkSlicerTestLineRepresentation3D
 : public vtkSlicerLineRepresentation3D
 {
 public:
