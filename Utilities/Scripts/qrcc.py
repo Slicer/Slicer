@@ -64,7 +64,7 @@ def compileResources(in_path, out_file, args):
 
     os.remove(tmp_path)
 
-  _data = base64.encodestring(data).rstrip().decode()
+  _data = base64.encodebytes(data).rstrip().decode()
 
   # Write output script
   out_file.write(_header)
