@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 
-#include "vtkSlicerPluggableMarkupsTestLogic.h"
+#include "vtkSlicerPMTestLogic.h"
 
 // Liver Markups MRML includes
 #include "vtkMRMLMarkupsTestLineNode.h"
@@ -40,25 +40,25 @@
 #include <vtkObjectFactory.h>
 
 //----------------------------------------------------------------------------
-vtkStandardNewMacro(vtkSlicerPluggableMarkupsTestLogic);
+vtkStandardNewMacro(vtkSlicerPMTestLogic);
 
 //---------------------------------------------------------------------------
-vtkSlicerPluggableMarkupsTestLogic::vtkSlicerPluggableMarkupsTestLogic()
+vtkSlicerPMTestLogic::vtkSlicerPMTestLogic()
 {
 
 }
 
 //---------------------------------------------------------------------------
-vtkSlicerPluggableMarkupsTestLogic::~vtkSlicerPluggableMarkupsTestLogic() = default;
+vtkSlicerPMTestLogic::~vtkSlicerPMTestLogic() = default;
 
 //---------------------------------------------------------------------------
-void vtkSlicerPluggableMarkupsTestLogic::PrintSelf(ostream& os, vtkIndent indent)
+void vtkSlicerPMTestLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerPluggableMarkupsTestLogic::RegisterNodes()
+void vtkSlicerPMTestLogic::RegisterNodes()
 {
   assert(this->GetMRMLScene() != nullptr);
 
@@ -69,7 +69,7 @@ void vtkSlicerPluggableMarkupsTestLogic::RegisterNodes()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerPluggableMarkupsTestLogic::ObserveMRMLScene()
+void vtkSlicerPMTestLogic::ObserveMRMLScene()
 {
   if (!this->GetMRMLScene())
     {
@@ -120,7 +120,7 @@ void vtkSlicerPluggableMarkupsTestLogic::ObserveMRMLScene()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerPluggableMarkupsTestLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
+void vtkSlicerPMTestLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
   Superclass::OnMRMLSceneNodeAdded(node);
 }

@@ -15,19 +15,19 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerPluggableMarkupsTestModule_h
-#define __qSlicerPluggableMarkupsTestModule_h
+#ifndef __qSlicerPMTestModule_h
+#define __qSlicerPMTestModule_h
 
 // Slicer includes
 #include "qSlicerLoadableModule.h"
 
-#include "qSlicerPluggableMarkupsTestModuleExport.h"
+#include "qSlicerPMTestModuleExport.h"
 
-class qSlicerPluggableMarkupsTestModulePrivate;
+class qSlicerPMTestModulePrivate;
 class vtkMRMLScene;
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class Q_SLICER_QTMODULES_PLUGGABLEMARKUPSTEST_EXPORT qSlicerPluggableMarkupsTestModule
+class Q_SLICER_QTMODULES_PMTEST_EXPORT qSlicerPMTestModule
   : public qSlicerLoadableModule
 {
   Q_OBJECT
@@ -37,8 +37,8 @@ class Q_SLICER_QTMODULES_PLUGGABLEMARKUPSTEST_EXPORT qSlicerPluggableMarkupsTest
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerPluggableMarkupsTestModule(QObject *parent=0);
-  virtual ~qSlicerPluggableMarkupsTestModule();
+  explicit qSlicerPMTestModule(QObject *parent=0);
+  virtual ~qSlicerPMTestModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
@@ -67,11 +67,11 @@ protected:
   virtual vtkMRMLAbstractLogic* createLogic();
 
 protected:
-  QScopedPointer<qSlicerPluggableMarkupsTestModulePrivate> d_ptr;
+  QScopedPointer<qSlicerPMTestModulePrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerPluggableMarkupsTestModule);
-  Q_DISABLE_COPY(qSlicerPluggableMarkupsTestModule);
+  Q_DECLARE_PRIVATE(qSlicerPMTestModule);
+  Q_DISABLE_COPY(qSlicerPMTestModule);
 
 };
 

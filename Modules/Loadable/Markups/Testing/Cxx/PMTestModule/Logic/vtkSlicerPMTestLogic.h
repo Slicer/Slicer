@@ -23,19 +23,19 @@
 
 #include <vtkSlicerMarkupsLogic.h>
 
-#include "vtkSlicerPluggableMarkupsTestModuleLogicExport.h"
+#include "vtkSlicerPMTestModuleLogicExport.h"
 
-class VTK_SLICER_PLUGGABLEMARKUPSTEST_MODULE_LOGIC_EXPORT vtkSlicerPluggableMarkupsTestLogic:
+class VTK_SLICER_PMTEST_MODULE_LOGIC_EXPORT vtkSlicerPMTestLogic:
   public vtkSlicerMarkupsLogic
 {
 public:
-  static vtkSlicerPluggableMarkupsTestLogic* New();
-  vtkTypeMacro(vtkSlicerPluggableMarkupsTestLogic, vtkSlicerMarkupsLogic);
+  static vtkSlicerPMTestLogic* New();
+  vtkTypeMacro(vtkSlicerPMTestLogic, vtkSlicerMarkupsLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
-  vtkSlicerPluggableMarkupsTestLogic();
-  ~vtkSlicerPluggableMarkupsTestLogic() override;
+  vtkSlicerPMTestLogic();
+  ~vtkSlicerPMTestLogic() override;
 
   void ObserveMRMLScene() override;
   void RegisterNodes() override;
@@ -43,8 +43,8 @@ protected:
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
 
 private:
-  vtkSlicerPluggableMarkupsTestLogic(const vtkSlicerPluggableMarkupsTestLogic&) = delete;
-  void operator=(const vtkSlicerPluggableMarkupsTestLogic&) = delete;
+  vtkSlicerPMTestLogic(const vtkSlicerPMTestLogic&) = delete;
+  void operator=(const vtkSlicerPMTestLogic&) = delete;
 };
 
 #endif // __vtkslicerlivermarkupslogic_h_

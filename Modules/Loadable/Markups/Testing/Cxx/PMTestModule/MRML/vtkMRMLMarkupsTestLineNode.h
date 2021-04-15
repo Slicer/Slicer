@@ -23,10 +23,10 @@
 
 #include <vtkMRMLMarkupsLineNode.h>
 
-#include "vtkSlicerPluggableMarkupsTestModuleMRMLExport.h"
+#include "vtkSlicerPMTestModuleMRMLExport.h"
 
 //-----------------------------------------------------------------------------
-class VTK_SLICER_PLUGGABLEMARKUPSTEST_MODULE_MRML_EXPORT vtkMRMLMarkupsTestLineNode
+class VTK_SLICER_PMTEST_MODULE_MRML_EXPORT vtkMRMLMarkupsTestLineNode
 : public vtkMRMLMarkupsLineNode
 {
 public:

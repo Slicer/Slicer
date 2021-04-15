@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 
-#include "qSlicerPluggableMarkupsTestModule.h"
+#include "qSlicerPMTestModule.h"
 
 #include "vtkMRMLMarkupsTestLineNode.h"
 #include "qSlicerMarkupsTestLineWidget.h"
@@ -28,7 +28,7 @@
 #include <QDebug>
 
 // Liver Markups Logic includes
-#include "vtkSlicerPluggableMarkupsTestLogic.h"
+#include "vtkSlicerPMTestLogic.h"
 
 // Markups Logic includes
 #include <vtkSlicerMarkupsLogic.h>
@@ -44,49 +44,49 @@
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class qSlicerPluggableMarkupsTestModulePrivate
+class qSlicerPMTestModulePrivate
 {
 public:
-  qSlicerPluggableMarkupsTestModulePrivate();
+  qSlicerPMTestModulePrivate();
 };
 
 //-----------------------------------------------------------------------------
-// qSlicerPluggableMarkupsTestModulePrivate methods
+// qSlicerPMTestModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerPluggableMarkupsTestModulePrivate::qSlicerPluggableMarkupsTestModulePrivate()
+qSlicerPMTestModulePrivate::qSlicerPMTestModulePrivate()
 {
 }
 
 //-----------------------------------------------------------------------------
-// qSlicerPluggableMarkupsTestModule methods
+// qSlicerPMTestModule methods
 
 //-----------------------------------------------------------------------------
-qSlicerPluggableMarkupsTestModule::qSlicerPluggableMarkupsTestModule(QObject* _parent)
+qSlicerPMTestModule::qSlicerPMTestModule(QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerPluggableMarkupsTestModulePrivate)
+  , d_ptr(new qSlicerPMTestModulePrivate)
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerPluggableMarkupsTestModule::~qSlicerPluggableMarkupsTestModule()
+qSlicerPMTestModule::~qSlicerPMTestModule()
 {
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerPluggableMarkupsTestModule::helpText() const
+QString qSlicerPMTestModule::helpText() const
 {
   return "This module contains fundamental markups to be used in the Slicer-Liver extension.";
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerPluggableMarkupsTestModule::acknowledgementText() const
+QString qSlicerPMTestModule::acknowledgementText() const
 {
   return "This work has been partially funded by The Research Council of Norway (grant nr. 311393)";
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerPluggableMarkupsTestModule::contributors() const
+QStringList qSlicerPMTestModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Rafael Palomar (Oslo University Hospital / NTNU)");
@@ -94,25 +94,25 @@ QStringList qSlicerPluggableMarkupsTestModule::contributors() const
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerPluggableMarkupsTestModule::icon() const
+QIcon qSlicerPMTestModule::icon() const
 {
   return QIcon(":/Icons/PluggableMarkupsTest.png");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerPluggableMarkupsTestModule::categories() const
+QStringList qSlicerPMTestModule::categories() const
 {
   return QStringList() << "Testing.TestCases";
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerPluggableMarkupsTestModule::dependencies() const
+QStringList qSlicerPMTestModule::dependencies() const
 {
   return QStringList() << "Markups";
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerPluggableMarkupsTestModule::setup()
+void qSlicerPMTestModule::setup()
 {
   this->Superclass::setup();
 
@@ -147,30 +147,30 @@ void qSlicerPluggableMarkupsTestModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation* qSlicerPluggableMarkupsTestModule
+qSlicerAbstractModuleRepresentation* qSlicerPMTestModule
 ::createWidgetRepresentation()
 {
     return nullptr;
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLAbstractLogic* qSlicerPluggableMarkupsTestModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerPMTestModule::createLogic()
 {
-  return vtkSlicerPluggableMarkupsTestLogic::New();
+  return vtkSlicerPMTestLogic::New();
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerPluggableMarkupsTestModule::associatedNodeTypes() const
+QStringList qSlicerPMTestModule::associatedNodeTypes() const
 {
  return QStringList() << "vtkMRMLMarkupsTestLineNode";
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerPluggableMarkupsTestModule::setMRMLScene(vtkMRMLScene* scene)
+void qSlicerPMTestModule::setMRMLScene(vtkMRMLScene* scene)
 {
   this->Superclass::setMRMLScene(scene);
-  vtkSlicerPluggableMarkupsTestLogic* logic =
-    vtkSlicerPluggableMarkupsTestLogic::SafeDownCast(this->logic());
+  vtkSlicerPMTestLogic* logic =
+    vtkSlicerPMTestLogic::SafeDownCast(this->logic());
   if (!logic)
     {
     qCritical() << Q_FUNC_INFO << " failed: logic is invalid";
