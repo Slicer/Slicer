@@ -118,6 +118,8 @@ protected slots:
   void removeNodesToBeDeleted();
   /// Called when clicking on toggle select point action
   void toggleSelectPoint();
+  /// Called when clicking on set terminology action
+  void setTerminology();
   /// Called when clicking on handle interactive action in view
   void toggleHandleInteractive();
   /// toggle handle interactive for the current subject hierarchy item
