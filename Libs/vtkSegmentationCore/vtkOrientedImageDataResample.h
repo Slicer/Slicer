@@ -29,6 +29,7 @@
 
 // std includes
 #include <vector>
+#include <cmath> // for fabs
 
 class vtkImageData;
 class vtkMatrix4x4;
