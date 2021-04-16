@@ -9,6 +9,7 @@
 
 // STD includes
 #include <cassert>
+#include <cmath> // for fabs
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkImageRectangularSource);
