@@ -7,7 +7,7 @@ set(${KIT}_EXPORT_DIRECTIVE "Q_SLICER_MODULE_${MODULE_NAME_UPPER}_WIDGETS_EXPORT
 set(${KIT}_INCLUDE_DIRECTORIES
   ${vtkSlicer${MODULE_NAME}ModuleLogic_SOURCE_DIR}
   ${vtkSlicer${MODULE_NAME}ModuleLogic_BINARY_DIR}
-  ${vtkSlicerMarkupsModuleWidgets_INCLUDE_DIRS}
+  ${qSlicerMarkupsModuleWidgets_INCLUDE_DIRS}
   )
 
 set(${KIT}_SRCS
