@@ -135,10 +135,9 @@ void qSlicerPluggableMarkupsTestModule::setup()
   bool isTestingEnabled = qSlicerApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting);
   if (isTestingEnabled)
     {
-    auto markupsTestLineNode = vtkSmartPointer<vtkMRMLMarkupsTestLineNode>::New();
-    auto testLineWidget = vtkSmartPointer<vtkSlicerTestLineWidget>::New();
-
     // Register markups
+    vtkNew<vtkMRMLMarkupsTestLineNode> markupsTestLineNode;
+    vtkNew<vtkSlicerTestLineWidget> testLineWidget;
     markupsLogic->RegisterMarkupsNode(markupsTestLineNode, testLineWidget);
     }
 

@@ -144,30 +144,35 @@ void qSlicerMarkupsModule::setup()
     return;
     }
 
-  auto fiducialNode = vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New();
-  auto lineNode = vtkSmartPointer<vtkMRMLMarkupsLineNode>::New();
-  auto angleNode = vtkSmartPointer<vtkMRMLMarkupsAngleNode>::New();
-  auto curveNode = vtkSmartPointer<vtkMRMLMarkupsCurveNode>::New();
-  auto closedCurveNode = vtkSmartPointer<vtkMRMLMarkupsClosedCurveNode>::New();
-  auto planeNode = vtkSmartPointer<vtkMRMLMarkupsPlaneNode>::New();
-  auto roiNode = vtkSmartPointer<vtkMRMLMarkupsROINode>::New();
-
-  auto pointsWidget = vtkSmartPointer<vtkSlicerPointsWidget>::New();
-  auto lineWidget =  vtkSmartPointer<vtkSlicerLineWidget>::New();
-  auto angleWidget = vtkSmartPointer<vtkSlicerAngleWidget>::New();
-  auto curveWidget = vtkSmartPointer<vtkSlicerCurveWidget>::New();
-  auto closedCurveWidget = vtkSmartPointer<vtkSlicerClosedCurveWidget>::New();
-  auto planeWidget = vtkSmartPointer<vtkSlicerPlaneWidget>::New();
-  auto roiWidget = vtkSmartPointer<vtkSlicerROIWidget>::New();
-
   // Register markups
   // NOTE: the order of registration determines the order of the create push buttons in the GUI
+
+  vtkNew<vtkMRMLMarkupsFiducialNode> fiducialNode;
+  vtkNew<vtkSlicerPointsWidget> pointsWidget;
   logic->RegisterMarkupsNode(fiducialNode, pointsWidget);
+
+  vtkNew<vtkMRMLMarkupsLineNode> lineNode;
+  vtkNew<vtkSlicerLineWidget> lineWidget;
   logic->RegisterMarkupsNode(lineNode, lineWidget);
+
+  vtkNew<vtkMRMLMarkupsAngleNode> angleNode;
+  vtkNew<vtkSlicerAngleWidget> angleWidget;
   logic->RegisterMarkupsNode(angleNode, angleWidget);
+
+  vtkNew<vtkMRMLMarkupsCurveNode> curveNode;
+  vtkNew<vtkSlicerCurveWidget> curveWidget;
   logic->RegisterMarkupsNode(curveNode, curveWidget);
+
+  vtkNew<vtkMRMLMarkupsClosedCurveNode> closedCurveNode;
+  vtkNew<vtkSlicerClosedCurveWidget> closedCurveWidget;
   logic->RegisterMarkupsNode(closedCurveNode, closedCurveWidget);
+
+  vtkNew<vtkMRMLMarkupsPlaneNode> planeNode;
+  vtkNew<vtkSlicerPlaneWidget> planeWidget;
   logic->RegisterMarkupsNode(planeNode, planeWidget);
+
+  vtkNew<vtkMRMLMarkupsROINode> roiNode;
+  vtkNew<vtkSlicerROIWidget> roiWidget;
   logic->RegisterMarkupsNode(roiNode, roiWidget);
 
   // Register displayable managers (same displayable manager handles both slice and 3D views)
@@ -199,18 +204,17 @@ void qSlicerMarkupsModule::setup()
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation* qSlicerMarkupsModule::createWidgetRepresentation()
 {
-
-  // Create and configure module widget.
-  auto moduleWidget = new qSlicerMarkupsModuleWidget();
-
   // Create and configure the additional widgets
   auto optionsWidgetFactory = qSlicerMarkupsAdditionalOptionsWidgetsFactory::instance();
   optionsWidgetFactory->registerAdditionalOptionsWidget(new qSlicerMarkupsAngleMeasurementsWidget());
   optionsWidgetFactory->registerAdditionalOptionsWidget(new qSlicerMarkupsCurveSettingsWidget());
   optionsWidgetFactory->registerAdditionalOptionsWidget(new qSlicerMarkupsROIWidget());
 
+  // Create and configure module widget.
+  auto moduleWidget = new qSlicerMarkupsModuleWidget();
   // Set the number of columns for the grid of "add markups buttons" to the number of markups
-  // regitered in this module.
+  // registered in this module.
+
   moduleWidget->setCreateMarkupsButtonsColumns(7);
 
   return moduleWidget;

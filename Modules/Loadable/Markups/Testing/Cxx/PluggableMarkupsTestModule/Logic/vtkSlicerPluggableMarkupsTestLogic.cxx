@@ -105,7 +105,7 @@ void vtkSlicerPluggableMarkupsTestLogic::ObserveMRMLScene()
       // bar is triggered when leave it
       this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
 
-      auto testLineNode = vtkSmartPointer<vtkMRMLMarkupsTestLineNode>::New();
+      vtkNew<vtkMRMLMarkupsTestLineNode> testLineNode;
 
       selectionNode->AddNewPlaceNodeClassNameToList(testLineNode->GetClassName(),
                                                     testLineNode->GetAddIcon(),
