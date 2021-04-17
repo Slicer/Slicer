@@ -147,6 +147,14 @@ public:
     UseNativeOrigin = false;
   }
 
+  ///
+  /// Name of the point data array that voxel data will be stored in.
+  /// Setting a custom value may be useful for example when probing the
+  /// image because then the probing result will be stored using this array name.
+  /// Default value is NRRDImage.
+  vtkSetMacro(DataArrayName, std::string);
+  vtkGetMacro(DataArrayName, std::string);
+
   int NrrdToVTKScalarType( const int nrrdPixelType ) const
   {
   switch( nrrdPixelType )
@@ -256,6 +264,7 @@ protected:
   int DataType;
   int NumberOfComponents;
   bool UseNativeOrigin;
+  std::string DataArrayName;
 
   std::map <std::string, std::string> HeaderKeyValue;
   std::string HeaderKeys; // buffer for returning key list

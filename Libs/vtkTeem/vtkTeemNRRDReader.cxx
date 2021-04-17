@@ -66,6 +66,7 @@ vtkTeemNRRDReader::vtkTeemNRRDReader()
   this->PointDataType = -1;
   this->DataType = -1;
   this->NumberOfComponents = -1;
+  this->DataArrayName = "NRRDImage";
 }
 
 //----------------------------------------------------------------------------
@@ -932,21 +933,21 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject *output, vtkInf
   switch(this->PointDataType)
     {
     case vtkDataSetAttributes::SCALARS:
-      imageData->GetPointData()->GetScalars()->SetName("NRRDImage");
+      imageData->GetPointData()->GetScalars()->SetName(this->DataArrayName.c_str());
       //get pointer
       ptr = imageData->GetPointData()->GetScalars()->GetVoidPointer(0);
       break;
     case vtkDataSetAttributes::VECTORS:
-      imageData->GetPointData()->GetVectors()->SetName("NRRDImage");
+      imageData->GetPointData()->GetVectors()->SetName(this->DataArrayName.c_str());
       //get pointer
       ptr = imageData->GetPointData()->GetVectors()->GetVoidPointer(0);
       break;
     case vtkDataSetAttributes::NORMALS:
-      imageData->GetPointData()->GetNormals()->SetName("NRRDImage");
+      imageData->GetPointData()->GetNormals()->SetName(this->DataArrayName.c_str());
       ptr = imageData->GetPointData()->GetNormals()->GetVoidPointer(0);
       break;
     case vtkDataSetAttributes::TENSORS:
-      imageData->GetPointData()->GetTensors()->SetName("NRRDImage");
+      imageData->GetPointData()->GetTensors()->SetName(this->DataArrayName.c_str());
       ptr = imageData->GetPointData()->GetTensors()->GetVoidPointer(0);
       break;
     }
