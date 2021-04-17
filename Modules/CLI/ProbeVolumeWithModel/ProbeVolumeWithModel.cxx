@@ -26,6 +26,7 @@ int main(int argc, char* argv[])
   // Use vtkTeemNRRDReader because it supports both scalar and vector volumes.
   vtkNew<vtkTeemNRRDReader> readerVol;
   readerVol->SetFileName(InputVolume.c_str());
+  readerVol->SetDataArrayName(OutputArrayName);
   readerVol->Update();
   vtkImageData* volume = readerVol->GetOutput();
   int* extent = volume->GetExtent();

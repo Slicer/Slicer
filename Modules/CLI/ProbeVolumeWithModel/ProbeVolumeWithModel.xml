@@ -13,24 +13,31 @@
     <description><![CDATA[Input/output parameters]]></description>
     <image type="any">
       <name>InputVolume</name>
-      <label>Input Volume</label>
+      <label>Input volume</label>
       <channel>input</channel>
       <index>0</index>
       <description><![CDATA[Volume to use to "paint" the model]]></description>
     </image>
     <geometry fileExtensions=".vtk,.vtp,.vtu">
       <name>InputModel</name>
-      <label>Input Model</label>
+      <label>Input model</label>
       <channel>input</channel>
       <index>1</index>
       <description><![CDATA[Input model]]></description>
     </geometry>
     <geometry fileExtensions=".vtk,.vtp,.vtu" reference="InputModel" >
       <name>OutputModel</name>
-      <label>Output Model</label>
+      <label>Output model</label>
       <channel>output</channel>
       <index>2</index>
       <description><![CDATA[Output "painted" model]]></description>
     </geometry>
+    <string>
+      <name>OutputArrayName</name>
+      <label>Output array name</label>
+      <longflag>--outputArrayName</longflag>
+      <description><![CDATA[Name of the array that will contain the voxel values.]]></description>
+      <default>NRRDImage</default>
+    </string>
   </parameters>
 </executable>
