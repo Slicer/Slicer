@@ -30,6 +30,7 @@
 #include <vtkObjectFactory.h>
 #include <vtkOBJReader.h>
 #include <vtkOBJExporter.h>
+#include <vtkPointData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkPLYReader.h>
 #include <vtkPLYWriter.h>
@@ -619,6 +620,34 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     vtkNew<vtkPLYWriter> writer;
     writer->SetFileName(fullName.c_str());
     writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII );
+    // VTK's PLY writer can save RGB or RGBA unsigned char color array.
+    // If we find such an array then we configure the writer to include that array.
+    if (meshToWrite->GetPointData())
+      {
+      vtkPointData* pointData = meshToWrite->GetPointData();
+      for (int arrayIndex = 0; arrayIndex < pointData->GetNumberOfArrays(); arrayIndex++)
+        {
+        vtkUnsignedCharArray* dataArray = vtkUnsignedCharArray::SafeDownCast(pointData->GetArray(arrayIndex));
+        if (!dataArray || !dataArray->GetName())
+          {
+          continue;
+          }
+        if (dataArray->GetNumberOfComponents() == 3)
+          {
+          // Found a suitable RGB array
+          writer->SetArrayName(dataArray->GetName());
+          writer->EnableAlphaOff();
+          break;
+          }
+        else if (dataArray->GetNumberOfComponents() == 4)
+          {
+          // Found a suitable RGBA array
+          writer->SetArrayName(dataArray->GetName());
+          writer->EnableAlphaOn();
+          break;
+          }
+        }
+      }
     triangulator->SetInputData(meshToWrite);
     writer->SetInputConnection( triangulator->GetOutputPort() );
     std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;

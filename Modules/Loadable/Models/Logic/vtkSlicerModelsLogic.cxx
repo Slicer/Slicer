@@ -177,16 +177,14 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(vtkPolyData* polyData)
     {
     return nullptr;
     }
-
-  vtkNew<vtkMRMLModelDisplayNode> display;
-  this->GetMRMLScene()->AddNode(display.GetPointer());
-
-  vtkNew<vtkMRMLModelNode> model;
+  vtkMRMLModelNode* model = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLModelNode"));
+  if (!model)
+    {
+    return nullptr;
+    }
   model->SetAndObservePolyData(polyData);
-  model->SetAndObserveDisplayNodeID(display->GetID());
-  this->GetMRMLScene()->AddNode(model.GetPointer());
-
-  return model.GetPointer();
+  model->CreateDefaultDisplayNodes();
+  return model;
 }
 
 //----------------------------------------------------------------------------
@@ -196,16 +194,14 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(vtkAlgorithmOutput* polyData)
     {
     return nullptr;
     }
-
-  vtkNew<vtkMRMLModelDisplayNode> display;
-  this->GetMRMLScene()->AddNode(display.GetPointer());
-
-  vtkNew<vtkMRMLModelNode> model;
+  vtkMRMLModelNode* model = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLModelNode"));
+  if (!model)
+    {
+    return nullptr;
+    }
   model->SetPolyDataConnection(polyData);
-  model->SetAndObserveDisplayNodeID(display->GetID());
-  this->GetMRMLScene()->AddNode(model.GetPointer());
-
-  return model.GetPointer();
+  model->CreateDefaultDisplayNodes();
+  return model;
 }
 
 //----------------------------------------------------------------------------
@@ -240,7 +236,7 @@ int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix,
 
 //----------------------------------------------------------------------------
 vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(const char* filename,
-  int coordinateSystem /*=vtkMRMLStorageNode::CoordinateSystemLPS*/,
+  int coordinateSystem/*=vtkMRMLStorageNode::CoordinateSystemLPS*/,
   vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   if (this->GetMRMLScene() == nullptr || filename == nullptr)
@@ -249,74 +245,57 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(const char* filename,
       "Invalid scene or filename");
     return nullptr;
     }
-  vtkNew<vtkMRMLModelNode> modelNode;
-  vtkNew<vtkMRMLModelDisplayNode> displayNode;
-  vtkNew<vtkMRMLModelStorageNode> mStorageNode;
-  vtkSmartPointer<vtkMRMLStorageNode> storageNode;
 
-  // check for local or remote files
+  // Determine local filename
+  vtkNew<vtkMRMLModelStorageNode> storageNode;
   int useURI = 0; // false;
   if (this->GetMRMLScene()->GetCacheManager() != nullptr)
     {
     useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);
     vtkDebugMacro("AddModel: file name is remote: " << filename);
     }
-  const char *localFile=nullptr;
+  std::string localFile;
   if (useURI)
     {
-    mStorageNode->SetURI(filename);
+    storageNode->SetURI(filename);
     // reset filename to the local file name
-    localFile = ((this->GetMRMLScene())->GetCacheManager())->GetFilenameFromURI(filename);
+    const char* localFilePtr = this->GetMRMLScene()->GetCacheManager()->GetFilenameFromURI(filename);
+    if (localFilePtr)
+      {
+      localFile = localFilePtr;
+      }
     }
   else
     {
-    mStorageNode->SetFileName(filename);
+    storageNode->SetFileName(filename);
     localFile = filename;
     }
-  const std::string fname(localFile?localFile:"");
-  // the model name is based on the file name (itksys call should work even if
-  // file is not on disk yet)
-  std::string name = itksys::SystemTools::GetFilenameName(fname);
+
+  // Check if we can read this type of file.
+  // The model name is based on the file name (itksys call should work even if
+  // file is not on disk yet).
+  std::string name = itksys::SystemTools::GetFilenameName(localFile);
   vtkDebugMacro("AddModel: got model name = " << name.c_str());
-
-  // check to see which node can read this type of file
-  if (mStorageNode->SupportedFileType(name.c_str()))
-    {
-    storageNode = mStorageNode;
-    mStorageNode->SetCoordinateSystem(coordinateSystem);
-    }
-
-  /* don't read just yet, need to add to the scene first for remote reading
-  if (mStorageNode->ReadData(modelNode) != 0)
-    {
-    storageNode = mStorageNode;
-    }
-  */
-  if (!storageNode)
+  if (!storageNode->SupportedFileType(name.c_str()))
     {
     vtkErrorToMessageCollectionMacro(userMessages, "vtkSlicerModelsLogic::AddModel",
       "Could not find a suitable storage node for file '" << filename << "'.");
     return nullptr;
     }
-  std::string baseName = storageNode->GetFileNameWithoutExtension(fname.c_str());
-  std::string uname( this->GetMRMLScene()->GetUniqueNameByString(baseName.c_str()));
-  modelNode->SetName(uname.c_str());
 
-  this->GetMRMLScene()->AddNode(storageNode.GetPointer());
-  this->GetMRMLScene()->AddNode(displayNode.GetPointer());
+  // Create model node
+  std::string baseName = storageNode->GetFileNameWithoutExtension(localFile.c_str());
+  std::string uniqueName(this->GetMRMLScene()->GetUniqueNameByString(baseName.c_str()));
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLModelNode", uniqueName.c_str()));
+  if (!modelNode)
+    {
+    return nullptr;
+    }
 
-  // Set the scene so that SetAndObserve[Display|Storage]NodeID can find the
-  // node in the scene (so that DisplayNodes return something not empty)
-  modelNode->SetScene(this->GetMRMLScene());
-  modelNode->SetAndObserveStorageNodeID(storageNode->GetID());
-  modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
-
-  this->GetMRMLScene()->AddNode(modelNode.GetPointer());
-
-  // now set up the reading
+  // Read the model file
   vtkDebugMacro("AddModel: calling read on the storage node");
-  storageNode->GetUserMessages()->ClearMessages();
-  int success = storageNode->ReadData(modelNode.GetPointer());
+  storageNode->SetCoordinateSystem(coordinateSystem);
+  int success = storageNode->ReadData(modelNode);
   if (!success)
     {
     vtkErrorMacro("AddModel: error reading " << filename);
@@ -324,11 +303,18 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(const char* filename,
       {
       userMessages->AddMessages(storageNode->GetUserMessages());
       }
-    this->GetMRMLScene()->RemoveNode(modelNode.GetPointer());
+    this->GetMRMLScene()->RemoveNode(modelNode);
     return nullptr;
     }
 
-  return modelNode.GetPointer();
+  // Associate with storage node
+  this->GetMRMLScene()->AddNode(storageNode);
+  modelNode->SetAndObserveStorageNodeID(storageNode->GetID());
+
+  // Add display node
+  modelNode->CreateDefaultDisplayNodes();
+
+  return modelNode;
 }
 
 //----------------------------------------------------------------------------

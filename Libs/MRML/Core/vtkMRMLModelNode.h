@@ -251,6 +251,13 @@ public:
   /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
   bool GetModifiedSinceRead() override;
 
+  /// Determine if the mesh stores scalar data data that the user may want to see and if
+  /// such data is found then display it.
+  /// Currently, it displays single-component scalar array (with a colormap),
+  /// and 3 or 4 component unsigned char array as RGB or RGBA value (with direct mapping).
+  /// Return true if suitable scalar data was found and set to be displayed.
+  bool ShowDefaultScalarData();
+
 protected:
   vtkMRMLModelNode();
   ~vtkMRMLModelNode() override;
