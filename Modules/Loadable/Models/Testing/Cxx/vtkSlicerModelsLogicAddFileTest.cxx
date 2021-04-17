@@ -31,121 +31,107 @@
 #include <vtkPolyData.h>
 
 //-----------------------------------------------------------------------------
-bool testAddEmptyFile(const char* filePath);
-bool testAddFile(const char* filePath);
-bool testAddModelWithPolyData(bool withPolyData);
+int testAddEmptyFile(const char* filePath);
+int testAddFile(const char* filePath);
+int testAddModelWithPolyData(bool withPolyData);
 
 //-----------------------------------------------------------------------------
 int vtkSlicerModelsLogicAddFileTest( int argc, char * argv[] )
 {
-  bool res = true;
-  /*
-  std::cout << ">>>>>>>>>>>>>>>>>> "
-            << "The following can print errors and warnings"
-            << " <<<<<<<<<<<<<<<<<<" << std::endl;
-  res = testAddEmptyFile(0) && res;
-  res = testAddEmptyFile("") && res;
-  res = testAddEmptyFile("non existing file.badextension") && res;
-  res = testAddEmptyFile("non existing file.vtk") && res;
-  std::cout << ">>>>>>>>>>>>>>>>>> "
-            << "end of normal errors and warnings"
-            << " <<<<<<<<<<<<<<<<<<" << std::endl;
-  */
+  // Test failure cases
+
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  CHECK_EXIT_SUCCESS(testAddEmptyFile(0));
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
+
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  CHECK_EXIT_SUCCESS(testAddEmptyFile(""));
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
+
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  CHECK_EXIT_SUCCESS(testAddEmptyFile("non existing file.badextension"));
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
+
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  CHECK_EXIT_SUCCESS(testAddEmptyFile("non existing file.vtk"));
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
+
+  // Test success cases
+
   if (argc > 1)
     {
-    res = testAddFile(argv[1]) && res;
+    CHECK_EXIT_SUCCESS(testAddFile(argv[1]));
     }
-  res = testAddModelWithPolyData(false) && res;
-  res = testAddModelWithPolyData(true) && res;
-  return res ? EXIT_SUCCESS : EXIT_FAILURE;
+  CHECK_EXIT_SUCCESS(testAddModelWithPolyData(false));
+  CHECK_EXIT_SUCCESS(testAddModelWithPolyData(true));
+
+  return EXIT_SUCCESS;
 }
 
 //-----------------------------------------------------------------------------
-bool testAddEmptyFile(const char * filePath)
+int testAddEmptyFile(const char * filePath)
 {
   vtkNew<vtkSlicerModelsLogic> modelsLogic;
   vtkMRMLModelNode* model = modelsLogic->AddModel(filePath);
-  if (model != nullptr)
-    {
-    std::cerr << "Error line " << __LINE__
-              << ": Adding an invalid file shall not return a valid model"
-              << std::endl;
-    return false;
-    }
+
+  // Adding an invalid file shall not return a valid model
+  CHECK_NULL(model);
 
   vtkNew<vtkMRMLScene> scene;
-  modelsLogic->SetMRMLScene(scene.GetPointer());
-  int nodeCount = scene->GetNumberOfNodes();
-
+  modelsLogic->SetMRMLScene(scene);
+  int nodeCountBefore = scene->GetNumberOfNodes();
   model = modelsLogic->AddModel(filePath);
+  int nodeCountAfter = scene->GetNumberOfNodes();
 
-  if (model != nullptr ||
-      scene->GetNumberOfNodes() != nodeCount)
-    {
-    std::cerr << "Error line " << __LINE__
-              << ": Adding an invalid file shall not add nodes in scene. "
-              << scene->GetNumberOfNodes() << " vs " << nodeCount
-              << std::endl;
-    return false;
-    }
+  // Adding an invalid file shall not return a valid model
+  CHECK_NULL(model);
+  // Adding an invalid file shall not leave any nodes in the scene
+  CHECK_INT(nodeCountAfter - nodeCountBefore, 0);
 
-  return true;
+  return EXIT_SUCCESS;
 }
 
 //-----------------------------------------------------------------------------
-bool testAddFile(const char * filePath)
+int testAddFile(const char * filePath)
 {
   vtkNew<vtkSlicerModelsLogic> modelsLogic;
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   vtkMRMLModelNode* model = modelsLogic->AddModel(filePath);
   TESTING_OUTPUT_ASSERT_ERRORS_END();
-  if (model != nullptr)
-    {
-    std::cerr << "Error line " << __LINE__
-              << ": File can't be loaded if no scene is set."
-              << std::endl;
-    return false;
-    }
+
+  // File can't be loaded if no scene is set.
+  CHECK_NULL(model);
 
   vtkNew<vtkMRMLScene> scene;
-  modelsLogic->SetMRMLScene(scene.GetPointer());
-  int nodeCount = scene->GetNumberOfNodes();
+  modelsLogic->SetMRMLScene(scene);
+  int nodeCountBefore = scene->GetNumberOfNodes();
   model = modelsLogic->AddModel(filePath);
+  int nodeCountAfter = scene->GetNumberOfNodes();
 
-  if (model == nullptr ||
-      scene->GetNumberOfNodes() != nodeCount + 3)
-    {
-    std::cerr << "Adding an model should create 3 nodes" << std::endl;
-    return false;
-    }
+  // Valid model node is expected
+  CHECK_NOT_NULL(model);
+  // 3 new nodes are expected: model, display, storage node
+  CHECK_INT(nodeCountAfter - nodeCountBefore, 3);
 
-  return true;
+  return EXIT_SUCCESS;
 }
 
 //-----------------------------------------------------------------------------
-bool testAddModelWithPolyData(bool withPolyData)
+int testAddModelWithPolyData(bool withPolyData)
 {
   vtkNew<vtkPolyData> polyData;
   vtkPolyData* poly = (withPolyData ? polyData.GetPointer() : nullptr);
   vtkNew<vtkSlicerModelsLogic> modelsLogic;
-  if (modelsLogic->AddModel(poly) != nullptr)
-    {
-    std::cout << "Error line " << __LINE__
-      <<": vtkSlicerModelsLogic::AddModel(vtkPolyData*) failed."
-      << std::endl;
-    return false;
-    }
+
+  // Empty input should fail
+  CHECK_NULL(modelsLogic->AddModel(poly));
+
   vtkNew<vtkMRMLScene> scene;
-  modelsLogic->SetMRMLScene(scene.GetPointer());
+  modelsLogic->SetMRMLScene(scene);
   vtkMRMLModelNode* model = modelsLogic->AddModel(poly);
-  if (model->GetPolyData() != poly ||
-      model->GetModelDisplayNode() == nullptr)
-    {
-    std::cout << "Error line " << __LINE__
-      <<": vtkSlicerModelsLogic::AddModel(vtkPolyData*) failed."
-      << std::endl;
-    return false;
-    }
-  return true;
+  CHECK_POINTER(model->GetPolyData(), poly);
+  CHECK_NOT_NULL(model->GetModelDisplayNode());
+
+  return EXIT_SUCCESS;
 }
 

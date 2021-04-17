@@ -23,6 +23,8 @@
 #include <QFileInfo>
 
 // Slicer includes
+#include "qSlicerApplication.h"
+#include "qSlicerLayoutManager.h"
 #include "qSlicerModelsIOOptionsWidget.h"
 #include "qSlicerModelsReader.h"
 
@@ -30,6 +32,7 @@
 #include "vtkSlicerModelsLogic.h"
 
 // MRML includes
+#include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLModelNode.h"
 #include <vtkMRMLScene.h>
@@ -131,5 +134,31 @@ bool qSlicerModelsReader::load(const IOProperties& properties)
       properties["name"].toString().toUtf8());
     node->SetName(uname.c_str());
     }
+
+  // If no other nodes are displayed then reset the field of view
+  bool otherNodesAreAlreadyVisible = false;
+  vtkSmartPointer<vtkCollection> displayNodes = vtkSmartPointer<vtkCollection>::Take(
+    this->mrmlScene()->GetNodesByClass("vtkMRMLDisplayNode"));
+  for(int displayNodeIndex = 0; displayNodeIndex < displayNodes->GetNumberOfItems(); ++displayNodeIndex)
+    {
+    vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(
+      displayNodes->GetItemAsObject(displayNodeIndex));
+    if (displayNode->GetDisplayableNode()
+      && displayNode->GetVisibility()
+      && displayNode->GetDisplayableNode() != node)
+      {
+      otherNodesAreAlreadyVisible = true;
+      break;
+      }
+    }
+  if (!otherNodesAreAlreadyVisible)
+    {
+    qSlicerApplication* app = qSlicerApplication::application();
+    if (app && app->layoutManager())
+      {
+      app->layoutManager()->resetThreeDViews();
+      }
+    }
+
   return true;
 }
