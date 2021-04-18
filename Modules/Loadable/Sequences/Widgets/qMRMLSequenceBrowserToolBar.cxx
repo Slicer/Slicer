@@ -136,6 +136,13 @@ void qMRMLSequenceBrowserToolBar::setMRMLScene(vtkMRMLScene* scene)
 }
 
 // --------------------------------------------------------------------------
+vtkMRMLSequenceBrowserNode* qMRMLSequenceBrowserToolBar::activeBrowserNode()
+{
+  Q_D(qMRMLSequenceBrowserToolBar);
+  return vtkMRMLSequenceBrowserNode::SafeDownCast(d->SequenceBrowserNodeSelector->currentNode());
+}
+
+// --------------------------------------------------------------------------
 void qMRMLSequenceBrowserToolBar::setActiveBrowserNode(vtkMRMLSequenceBrowserNode * newActiveBrowserNode)
 {
   Q_D(qMRMLSequenceBrowserToolBar);

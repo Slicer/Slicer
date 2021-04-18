@@ -63,8 +63,9 @@ public:
   virtual ~qSlicerSequencesModulePrivate();
   QTimer UpdateAllVirtualOutputNodesTimer;
   qMRMLSequenceBrowserToolBar* ToolBar;
-  bool SequenceBrowserModuleOwnsToolBar{true};
+  bool SequencesModuleOwnsToolBar{true};
   bool AutoShowToolBar{true};
+  vtkWeakPointer<vtkMRMLSequenceBrowserNode> SequenceBrowserToShow;
 
 };
 
@@ -83,7 +84,7 @@ qSlicerSequencesModulePrivate::qSlicerSequencesModulePrivate()
 //-----------------------------------------------------------------------------
 qSlicerSequencesModulePrivate::~qSlicerSequencesModulePrivate()
 {
-  if (this->SequenceBrowserModuleOwnsToolBar)
+  if (this->SequencesModuleOwnsToolBar)
     {
     // the toolbar has not been added to the main window
     // so it is still owned by this class, therefore
@@ -105,8 +106,12 @@ void qSlicerSequencesModulePrivate::addToolBar()
 
   this->ToolBar->setWindowTitle("Sequence browser");
   this->ToolBar->setObjectName("SequenceBrowserToolBar");
+  // Add a toolbar break to make the sequence toolbar appear in a separate row
+  // (it is a long toolbar and would make many toolbar buttons disappear from
+  // all the standard toolbars if they are all displayed in a single row).
+  mainWindow->addToolBarBreak();
   mainWindow->addToolBar(this->ToolBar);
-  this->SequenceBrowserModuleOwnsToolBar = false;
+  this->SequencesModuleOwnsToolBar = false;
   foreach (QMenu* toolBarMenu,mainWindow->findChildren<QMenu*>())
     {
     if(toolBarMenu->objectName()==QString("WindowToolBarsMenu"))
@@ -250,13 +255,55 @@ void qSlicerSequencesModule::onNodeAddedEvent(vtkObject*, vtkObject* node)
   Q_D(qSlicerSequencesModule);
 
   vtkMRMLSequenceBrowserNode* sequenceBrowserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(node);
-  if (sequenceBrowserNode)
+  if (!sequenceBrowserNode)
     {
-    // If the timer is not active, so it should be turned on
-    if (!d->UpdateAllVirtualOutputNodesTimer.isActive())
+    return;
+    }
+
+  // If the timer is not active, so it should be turned on
+  if (!d->UpdateAllVirtualOutputNodesTimer.isActive())
+    {
+    d->UpdateAllVirtualOutputNodesTimer.start(UPDATE_VIRTUAL_OUTPUT_NODES_PERIOD_SEC*1000.0);
+    }
+
+  // If toolbar does not show a valid browser node already then queue the newly added sequence node to be
+  // shown in the toolbar.
+  if (this->autoShowToolBar() && this->mrmlScene()->IsImporting())
+    {
+    // If there is a sequence node that is playing then select that, if there is none
+    // then select the one that has sequence nodes; otherwise just choose the last newly added
+    // sequence node.
+    if (!d->SequenceBrowserToShow)
       {
-      d->UpdateAllVirtualOutputNodesTimer.start(UPDATE_VIRTUAL_OUTPUT_NODES_PERIOD_SEC*1000.0);
+      d->SequenceBrowserToShow = sequenceBrowserNode;
       }
+    else
+      {
+      if (d->SequenceBrowserToShow->GetPlaybackActive())
+        {
+        // only replace current browser node to show if the new browser node is showing active playback, too
+        if (sequenceBrowserNode->GetPlaybackActive())
+          {
+          d->SequenceBrowserToShow = sequenceBrowserNode;
+          }
+        }
+      else if (d->SequenceBrowserToShow->GetNumberOfSynchronizedSequenceNodes() > 0)
+        {
+        // only replace current browser node to show if the new browser node has sequences, too
+        if (sequenceBrowserNode->GetNumberOfSynchronizedSequenceNodes() > 0)
+          {
+          d->SequenceBrowserToShow = sequenceBrowserNode;
+          }
+        }
+      else
+        {
+        d->SequenceBrowserToShow = sequenceBrowserNode;
+        }
+      }
+    // showSequenceBrowser is not called here directly because when the nodes are just being added
+    // the toolbar's node selector may not have the newly added browser node in its scene model,
+    // and it is more efficient anyway to update the selected browser node when scene loading or batch
+    // processing is completed.
     }
 }
 
@@ -297,6 +344,15 @@ void qSlicerSequencesModule::updateAllVirtualOutputNodes()
     // update proxies then request another singleShot timer
     sequencesLogic->UpdateAllProxyNodes();
     d->UpdateAllVirtualOutputNodesTimer.start(UPDATE_VIRTUAL_OUTPUT_NODES_PERIOD_SEC*1000.0);
+
+    if (d->SequenceBrowserToShow)
+      {
+      if (this->mrmlScene() && !this->mrmlScene()->IsImporting())
+        {
+        this->showSequenceBrowser(d->SequenceBrowserToShow);
+        d->SequenceBrowserToShow = nullptr;
+        }
+      }
     }
 }
 
@@ -353,11 +409,11 @@ bool  qSlicerSequencesModule::showSequenceBrowser(vtkMRMLSequenceBrowserNode* br
     qCritical("Sequences module is not available");
     return false;
     }
-  qSlicerSequencesModule* sequenceBrowserModule = dynamic_cast<qSlicerSequencesModule*>(app->moduleManager()->module("Sequences"));
-  if (sequenceBrowserModule->autoShowToolBar())
+  qSlicerSequencesModule* sequencesModule = dynamic_cast<qSlicerSequencesModule*>(app->moduleManager()->module("Sequences"));
+  if (sequencesModule->autoShowToolBar())
     {
-    sequenceBrowserModule->setToolBarActiveBrowserNode(browserNode);
-    sequenceBrowserModule->setToolBarVisible(true);
+    sequencesModule->setToolBarActiveBrowserNode(browserNode);
+    sequencesModule->setToolBarVisible(true);
     }
   return true;
 }
