@@ -51,6 +51,8 @@ public:
   qMRMLSequenceBrowserToolBar(QWidget* parent = 0);
   ~qMRMLSequenceBrowserToolBar() override;
 
+  vtkMRMLSequenceBrowserNode* activeBrowserNode();
+
 public slots:
   virtual void setMRMLScene(vtkMRMLScene* newScene);
   void setActiveBrowserNode(vtkMRMLSequenceBrowserNode* newActiveBrowserNode);
