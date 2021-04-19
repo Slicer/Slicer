@@ -51,7 +51,7 @@
 const char* conventionalView =
   "<layout type=\"vertical\" split=\"true\" >"
   " <item splitSize=\"500\">"
-  "  <view class=\"vtkMRMLViewNode\" singletontag=\"1\" verticalStretch=\"0\">"
+  "  <view class=\"vtkMRMLViewNode\" singletontag=\"1\">"
   "    <property name=\"viewlabel\" action=\"default\">1</property>"
   "  </view>"
   " </item>"
