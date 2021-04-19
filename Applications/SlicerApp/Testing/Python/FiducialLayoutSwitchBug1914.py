@@ -33,61 +33,6 @@ class FiducialLayoutSwitchBug1914Widget(ScriptedLoadableModuleWidget):
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
 
-    # Instantiate and connect widgets ...
-
-    #
-    # Parameters Area
-    #
-    parametersCollapsibleButton = ctk.ctkCollapsibleButton()
-    parametersCollapsibleButton.text = "Parameters"
-    self.layout.addWidget(parametersCollapsibleButton)
-
-    # Layout within the dummy collapsible button
-    parametersFormLayout = qt.QFormLayout(parametersCollapsibleButton)
-
-    #
-    # check box to trigger taking screen shots for later use in tutorials
-    #
-    self.enableScreenshotsFlagCheckBox = qt.QCheckBox()
-    self.enableScreenshotsFlagCheckBox.checked = 1
-    self.enableScreenshotsFlagCheckBox.setToolTip("If checked, take screen shots for tutorials. Use Save Data to write them to disk.")
-    parametersFormLayout.addRow("Enable Screenshots", self.enableScreenshotsFlagCheckBox)
-
-    #
-    # scale factor for screen shots
-    #
-    self.screenshotScaleFactorSliderWidget = ctk.ctkSliderWidget()
-    self.screenshotScaleFactorSliderWidget.singleStep = 1.0
-    self.screenshotScaleFactorSliderWidget.minimum = 1.0
-    self.screenshotScaleFactorSliderWidget.maximum = 50.0
-    self.screenshotScaleFactorSliderWidget.value = 1.0
-    self.screenshotScaleFactorSliderWidget.setToolTip("Set scale factor for the screen shots.")
-    parametersFormLayout.addRow("Screenshot scale factor", self.screenshotScaleFactorSliderWidget)
-
-    #
-    # Apply Button
-    #
-    self.applyButton = qt.QPushButton("Apply")
-    self.applyButton.toolTip = "Run the algorithm."
-    self.applyButton.enabled = True
-    parametersFormLayout.addRow(self.applyButton)
-
-    # connections
-    self.applyButton.connect('clicked(bool)', self.onApplyButton)
-
-    # Add vertical spacer
-    self.layout.addStretch(1)
-
-  def cleanup(self):
-    pass
-
-  def onApplyButton(self):
-    logic = FiducialLayoutSwitchBug1914Logic()
-    enableScreenshotsFlag = self.enableScreenshotsFlagCheckBox.checked
-    screenshotScaleFactor = int(self.screenshotScaleFactorSliderWidget.value)
-    print("Run the algorithm")
-    logic.run(enableScreenshotsFlag,screenshotScaleFactor)
-
 
 #
 # FiducialLayoutSwitchBug1914Logic
@@ -119,13 +64,6 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
   """
   This is the test case for your scripted module.
   """
-
-  def __init__(self):
-    # test difference in display location and then in RAS if this is too fine
-    self.maximumDisplayDifference = 1.0
-    # for future testing: take into account the volume voxel size
-    self.maximumRASDifference = 1.0
-
   def setUp(self):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
     """
@@ -138,8 +76,14 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
     self.test_FiducialLayoutSwitchBug1914()
 
   def test_FiducialLayoutSwitchBug1914(self):
-    self.enableScreenshots = 0
-    self.screenshotScaleFactor = 1
+    # test difference in display location and then in RAS if this is too fine
+    maximumDisplayDifference = 1.0
+    # for future testing: take into account the volume voxel size
+    maximumRASDifference = 1.0
+
+    enableScreenshots = 0
+    screenshotScaleFactor = 1
+
     logic = FiducialLayoutSwitchBug1914Logic()
     logging.info("ctest, please don't truncate my output: CTEST_FULL_OUTPUT")
 
@@ -210,7 +154,7 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
       diff = math.sqrt(diff)
     self.delayDisplay("Difference between starting and ending seed display coordinates = %g" % diff)
 
-    if diff > self.maximumDisplayDifference:
+    if diff > maximumDisplayDifference:
       # double check against the RAS coordinates of the underlying volume since the display could have changed with a FOV adjustment.
       sliceView = sliceWidget.sliceView()
       volumeRAS = sliceView.convertXYZToRAS(endingSeedDisplayCoords)
@@ -221,10 +165,10 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
         rasDiff = math.sqrt(rasDiff)
       print('Checking the difference between fiducial RAS position',seedRAS,
             'and volume RAS as derived from the fiducial display position',volumeRAS,': ',rasDiff)
-      if rasDiff > self.maximumRASDifference:
-        raise Exception("RAS coordinate difference is too large as well!\nExpected < %g but got %g" % (self.maximumRASDifference, rasDiff))
+      if rasDiff > maximumRASDifference:
+        raise Exception("RAS coordinate difference is too large as well!\nExpected < %g but got %g" % (maximumRASDifference, rasDiff))
       else:
-        self.delayDisplay("RAS coordinate difference is %g which is < %g, test passes." % (rasDiff, self.maximumRASDifference))
+        self.delayDisplay("RAS coordinate difference is %g which is < %g, test passes." % (rasDiff, maximumRASDifference))
 
     if enableScreenshots == 1:
       # compare the screen snapshots
