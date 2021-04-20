@@ -1,6 +1,9 @@
 import vtk, slicer
+from vtk.util.numpy_support import vtk_to_numpy
 from SegmentStatisticsPlugins import SegmentStatisticsPluginBase
 from functools import reduce
+import numpy as np
+import qt
 
 
 class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
@@ -35,6 +38,44 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
       # Input grayscale node does not contain valid image data
       return {}
 
+    voxelsInSegment = self.getVoxelsInSegment(segmentationNode, segmentID, grayscaleNode)
+
+    # If option enabled, compute stats using voxels within the display node thresholds for the volume
+    pluginName = self.__class__.__name__
+    if self.parameterNode.GetParameter(pluginName+'.ApplyThresholds.enabled') == "True":
+      threshold_min = grayscaleNode.GetDisplayNode().GetLowerThreshold()
+      threshold_max = grayscaleNode.GetDisplayNode().GetUpperThreshold()
+      arrayThresholded = voxelsInSegment[voxelsInSegment >= threshold_min]
+      arrayThresholded = arrayThresholded[arrayThresholded <= threshold_max]
+    else:
+      arrayThresholded = voxelsInSegment
+
+    cubicMMPerVoxel = reduce(lambda x,y: x*y, grayscaleNode.GetSpacing())
+    ccPerCubicMM = 0.001
+
+    # create statistics list
+    stats = {}
+    if "voxel_count" in requestedKeys:
+      stats["voxel_count"] = len(voxelsInSegment)
+    if "volume_mm3" in requestedKeys:
+      stats["volume_mm3"] = len(voxelsInSegment) * cubicMMPerVoxel
+    if "volume_cm3" in requestedKeys:
+      stats["volume_cm3"] = len(voxelsInSegment) * cubicMMPerVoxel * ccPerCubicMM
+    if len(arrayThresholded)>0:
+      if "min" in requestedKeys:
+        stats["min"] = arrayThresholded.min()
+      if "max" in requestedKeys:
+        stats["max"] = arrayThresholded.max()
+      if "mean" in requestedKeys:
+        stats["mean"] = arrayThresholded.mean()
+      if "stdev" in requestedKeys:
+        stats["stdev"] = np.std(arrayThresholded)
+      if "median" in requestedKeys:
+        stats["median"] = np.median(arrayThresholded)
+    return stats
+
+  def getVoxelsInSegment(self, segmentationNode, segmentID, grayscaleNode):
+    import vtkSegmentationCorePython as vtkSegmentationCore
     # Get geometry of grayscale volume node as oriented image data
     # reference geometry in reference node coordinate system
     referenceGeometry_Reference = vtkSegmentationCore.vtkOrientedImageData()
@@ -47,9 +88,6 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
     segmentationToReferenceGeometryTransform = vtk.vtkGeneralTransform()
     slicer.vtkMRMLTransformNode.GetTransformBetweenNodes(segmentationNode.GetParentTransformNode(),
       grayscaleNode.GetParentTransformNode(), segmentationToReferenceGeometryTransform)
-
-    cubicMMPerVoxel = reduce(lambda x,y: x*y, referenceGeometry_Reference.GetSpacing())
-    ccPerCubicMM = 0.001
 
     segmentLabelmap = vtkSegmentationCore.vtkOrientedImageData()
     segmentationNode.GetBinaryLabelmapRepresentation(segmentID, segmentLabelmap)
@@ -83,36 +121,41 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
     stencil.ThresholdByUpper(labelValue)
     stencil.Update()
 
-    stat = vtk.vtkImageAccumulate()
-    stat.SetInputData(grayscaleNode.GetImageData())
-    stat.SetStencilData(stencil.GetOutput())
-    stat.Update()
+    # Apply stencil mask to the volume, everything outside of the stencil is set to -inf
+    image_cast = vtk.vtkImageCast()
+    image_cast.SetOutputScalarTypeToDouble()
+    image_cast.SetInputData(grayscaleNode.GetImageData())
+    image_cast.Update()
 
-    medians = vtk.vtkImageHistogramStatistics()
-    medians.SetInputData(grayscaleNode.GetImageData())
-    medians.SetStencilData(stencil.GetOutput())
-    medians.Update()
+    reslice = vtk.vtkImageReslice()
+    reslice.SetStencilData(stencil.GetOutput())
+    reslice.SetBackgroundLevel(float('-inf'))
+    reslice.SetInputData(image_cast.GetOutput())
+    reslice.Update()
 
-    # create statistics list
-    stats = {}
-    if "voxel_count" in requestedKeys:
-      stats["voxel_count"] = stat.GetVoxelCount()
-    if "volume_mm3" in requestedKeys:
-      stats["volume_mm3"] = stat.GetVoxelCount() * cubicMMPerVoxel
-    if "volume_cm3" in requestedKeys:
-      stats["volume_cm3"] = stat.GetVoxelCount() * cubicMMPerVoxel * ccPerCubicMM
-    if stat.GetVoxelCount()>0:
-      if "min" in requestedKeys:
-        stats["min"] = stat.GetMin()[0]
-      if "max" in requestedKeys:
-        stats["max"] = stat.GetMax()[0]
-      if "mean" in requestedKeys:
-        stats["mean"] = stat.GetMean()[0]
-      if "stdev" in requestedKeys:
-        stats["stdev"] = stat.GetStandardDeviation()[0]
-      if "median" in requestedKeys:
-        stats["median"] = medians.GetMedian()
-    return stats
+    array = vtk_to_numpy(reslice.GetOutput().GetPointData().GetScalars())
+    array = array[array > float('-inf')]
+
+    return array
+
+  def createDefaultOptionsWidget(self):
+    super().createDefaultOptionsWidget()
+    self.enableThresholdCheckbox = qt.QCheckBox("Apply volume thresholds to statistics")
+    self.optionsWidget.layout().insertRow(1, self.enableThresholdCheckbox)
+    self.enableThresholdCheckbox.connect('stateChanged(int)', self.updateParameterNodeFromGui)
+
+  def updateParameterNodeFromGui(self):
+    super().updateParameterNodeFromGui()
+    pluginName = self.__class__.__name__
+    self.parameterNode.SetParameter(pluginName+'.ApplyThresholds.enabled', str(self.enableThresholdCheckbox.checked))
+
+  def updateGuiFromParameterNode(self, caller=None, event=None):
+    super().updateGuiFromParameterNode(caller=None, event=None)
+    pluginName = self.__class__.__name__
+    value = self.parameterNode.GetParameter(pluginName+'.ApplyThresholds.enabled')=='True'
+    previousState = self.enableThresholdCheckbox.blockSignals(True)
+    self.enableThresholdCheckbox.checked = value
+    self.enableThresholdCheckbox.blockSignals(previousState)
 
   def getMeasurementInfo(self, key):
     """Get information (name, description, units, ...) about the measurement for the given key"""
