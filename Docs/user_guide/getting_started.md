@@ -41,23 +41,45 @@ Once downloaded, follow the instructions below to complete installation:
 
 - Run the installer.
   - Current limitation: Installation path must only contain English ([ASCII printable](https://en.wikipedia.org/wiki/ASCII#Printable_characters)) characters because otherwise some Python packages may not load correctly (see this [issue](https://github.com/Slicer/Slicer/issues/5383) for more details).
-- Run Slicer from the Windows start menu
-- Use "Apps & features" in Windows settings to remove the application
+- Run Slicer from the Windows start menu.
+- Use "Apps & features" in Windows settings to remove the application.
 
 ### Mac
 
-- Drag the Slicer application (Slicer.app) to your Applications folder or other location of your choice.
-- You cannot install extensions into the read-only volume so you must copy before installing extensions.
-- Delete the Slicer.app folder to uninstall
+- Open the install package (.dmg file).
+- Drag the Slicer application (Slicer.app) to your Applications folder (or other location of your choice).
+  - This step is necessary because content of a .dmg file is opened as a read-only volume, and you cannot install extensions or Python packages into a read-only volume.
+- Delete the Slicer.app folder to uninstall.
 
-Installing Preview Release: Currently, preview release packages are not signed. Therefore, when the application is started the first time the following message is displayed: "Slicer... can't be opened because it is from an unidentified developer". To resolve this error, locate the application in Finder and right-click (two-finger click) and click `Open`. When it says `This app can’t be opened` go ahead and hit cancel. Right click again and say `Open` (yes, you need to repeat the same as you did before - the outcome will be different than the first time). Click the `Open` (or `Open anyway`) button to start the application. See more explanation and alternative techniques [here](https://support.apple.com/en-my/guide/mac-help/mh40616/mac).
+Note for installing a Preview Release: Currently, preview release packages are not signed. Therefore, when the application is started the first time the following message is displayed: "Slicer... can't be opened because it is from an unidentified developer". To resolve this error, locate the application in Finder and right-click (two-finger click) and click `Open`. When it says `This app can’t be opened` go ahead and hit cancel. Right click again and say `Open` (yes, you need to repeat the same as you did before - the outcome will be different than the first time). Click the `Open` (or `Open anyway`) button to start the application. See more explanation and alternative techniques [here](https://support.apple.com/en-my/guide/mac-help/mh40616/mac).
+
+#### Installing using Homebrew
+
+Slicer can be installed with a single terminal command using the [Homebrew](https://brew.sh/) package manager:
+
+```shell
+brew install --cask slicer  # to install
+brew upgrade slicer         # to upgrade
+brew uninstall slicer       # to uninstall
+```
+
+This procedure avoids the typical google-download-mount-drag process to install macOS applications.
+
+Preview releases can be installed using [`homebrew-cask-versions`](https://github.com/Homebrew/homebrew-cask-versions):
+
+```shell
+brew tap homebrew/cask-versions     # needs to be run once
+brew install --cask slicer-preview  # to install
+brew upgrade slicer-preview         # to upgrade
+brew uninstall slicer-preview       # to uninstall
+```
 
 ### Linux
 
 - Open the tar.gz archive and copy directory to the location of your choice.
 - Installation of additional packages may be necessary depending on the Linux distribution and version, as described in subsections below.
 - Run the `Slicer` executable.
-- Remove the directory to uninstall
+- Remove the directory to uninstall.
 
 **Note:** Slicer is expected to work on the vast majority of desktop and server Linux distributions. The system is required to provide at least GLIBC 2.17 and GLIBCCC 3.4.19. For more details, read [here](https://www.python.org/dev/peps/pep-0599/#the-manylinux2014-policy).
 
@@ -66,7 +88,7 @@ The following may be needed on fresh debian or ubuntu:
 
     sudo apt-get install libpulse-dev libnss3 libglu1-mesa
     sudo apt-get install --reinstall libxcb-xinerama0
-    
+
 To run Slicer-4.11-2020-09-30 on older debian (e.g. debian 9) you may also need:
 
     sudo apt-get install libxcb-icccm4-dev libxcb-image0-dev libxcb-keysyms1-dev libxcb-randr0 libxcb-render-util0 libxcb-xkb-dev libxkbcommon-x11-dev
