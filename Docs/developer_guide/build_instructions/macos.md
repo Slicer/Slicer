@@ -60,7 +60,7 @@ cmake \
   - Instead of `cmake`, you can use `ccmake` or `cmake-gui` to visually inspect and edit configure options.
   - Using top-level directory name like `/opt/sr` for Release or `/opt/s` for Debug is recommended. If `/opt` does not exist on your machine you need to use sudo for `mkdir` and `chown` in `/opt`.
   - [Step-by-step debug instuctions](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Tutorials/Debug_Instructions)
-  - Additional configuration options to customize the application are described [here](overview.md#Custom_builds).
+  - Additional configuration options to customize the application are described [here](overview.html#Custom_builds).
 
 ### General information
 
@@ -175,6 +175,28 @@ Library not loaded: /usr/local/opt/zstd/lib/libzstd.1.dylib
 
 It means that `libarchive` has has found homebrew versions of some of it's requirements, rather than local ones. For the packaged version of Slicer to run on other machines none of the prerequisites should be installed via homebrew. For example `lz4` and `zstd` are bundled with `subversion` and `rsync` so if you have these two application installed via homebrew, `libarchive` will grab them from `/usr/local/opt/` and the packaged Slicer will not run on other machines. The solution is either to remove them from from homebrew with `brew remove lz4` and `brew remove zsdt` or to change the `$PATH` so that the local build folder goes before `/usr/local/opt/`. After doing this Slicer should be rebuilt and repackaged.
 See [Relevant issue that's tracking this error](https://github.com/Slicer/Slicer/issues/5415)
+
+## Update Homebrew packages
+
+Slicer can be installed with a single command using [Homebrew](https://brew.sh/), as described in the [installation documentation](../../user_guide/getting_started.html#installing-using-homebrew).
+
+Specifically, the `cask` extension is used, which allows management of graphical applications from the command line.
+Casks are Ruby files (`.rb`) describing the metadata necessary to download, check and install the package.
+
+The [cask for the Preview version of Slicer](https://github.com/Homebrew/homebrew-cask-versions/blob/master/Casks/slicer-preview.rb) does not need maintenance, as it automatically downloads the latest binaries and therefore the exact version does not need to be specified in the cask.
+However, the [cask for the stable version](https://github.com/Homebrew/homebrew-cask/blob/master/Casks/slicer.rb), which has traditionally been [maintained by Slicer users](https://github.com/Homebrew/homebrew-cask/commits/master/Casks/slicer.rb), needs to be manually updated every time a new stable version of Slicer is released.
+Instructions to update Homebrew casks can be found on the [`homebrew-cask` repository](https://github.com/Homebrew/homebrew-cask/blob/HEAD/CONTRIBUTING.md#updating-a-cask).
+This is an example of a command that can be used to update the cask for a Stable release:
+
+```shell
+$ brew bump-cask-pr --version 4.11.20210226,1442768 slicer
+```
+
+To install `brew`, the following command can be run:
+
+```shell
+$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
 
 ## Common errors
 
