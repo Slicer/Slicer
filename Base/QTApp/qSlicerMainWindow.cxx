@@ -130,7 +130,7 @@ void qSlicerMainWindowPrivate::init()
   this->setupStatusBar();
   q->setupMenuActions();
   this->StartupState = q->saveState();
-  this->readSettings();
+  q->restoreGUIState();
 }
 
 //-----------------------------------------------------------------------------
@@ -534,48 +534,6 @@ void qSlicerMainWindowPrivate::updatePythonConsolePalette()
 #endif
 }
 
-//-----------------------------------------------------------------------------
-void qSlicerMainWindowPrivate::readSettings()
-{
-  Q_Q(qSlicerMainWindow);
-  QSettings settings;
-  settings.beginGroup("MainWindow");
-  q->setToolButtonStyle(settings.value("ShowToolButtonText").toBool()
-                        ? Qt::ToolButtonTextUnderIcon : Qt::ToolButtonIconOnly);
-  bool restore = settings.value("RestoreGeometry", false).toBool();
-  if (restore)
-    {
-    q->restoreGeometry(settings.value("geometry").toByteArray());
-    q->restoreState(settings.value("windowState").toByteArray());
-    this->LayoutManager->setLayout(settings.value("layout").toInt());
-    }
-  settings.endGroup();
-  this->FavoriteModules << settings.value("Modules/FavoriteModules").toStringList();
-
-  foreach(const qSlicerIO::IOProperties& fileProperty, Self::readRecentlyLoadedFiles())
-    {
-    this->RecentlyLoadedFileProperties.enqueue(fileProperty);
-    }
-  this->filterRecentlyLoadedFileProperties();
-  this->setupRecentlyLoadedMenu(this->RecentlyLoadedFileProperties);
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerMainWindowPrivate::writeSettings()
-{
-  Q_Q(qSlicerMainWindow);
-  QSettings settings;
-  settings.beginGroup("MainWindow");
-  bool restore = settings.value("RestoreGeometry", false).toBool();
-  if (restore)
-    {
-    settings.setValue("geometry", q->saveGeometry());
-    settings.setValue("windowState", q->saveState());
-    settings.setValue("layout", this->LayoutManager->layout());
-    }
-  settings.endGroup();
-  Self::writeRecentlyLoadedFiles(this->RecentlyLoadedFileProperties);
-}
 
 //-----------------------------------------------------------------------------
 void qSlicerMainWindowPrivate::setupRecentlyLoadedMenu(const QList<qSlicerIO::IOProperties>& fileProperties)
@@ -1147,7 +1105,7 @@ void qSlicerMainWindow::closeEvent(QCloseEvent *event)
     // before writing settings.
     d->ModuleSelectorToolBar->selectModule("");
 
-    d->writeSettings();
+    this->saveGUIState();
     event->accept();
 
     QTimer::singleShot(0, qApp, SLOT(closeAllWindows()));
@@ -1604,6 +1562,49 @@ void qSlicerMainWindow::dragEnterEvent(QDragEnterEvent *event)
 void qSlicerMainWindow::dropEvent(QDropEvent *event)
 {
   qSlicerApplication::application()->ioManager()->dropEvent(event);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::restoreGUIState(bool force/*=false*/)
+{
+  Q_D(qSlicerMainWindow);
+  QSettings settings;
+  settings.beginGroup("MainWindow");
+  this->setToolButtonStyle(settings.value("ShowToolButtonText").toBool()
+                        ? Qt::ToolButtonTextUnderIcon : Qt::ToolButtonIconOnly);
+  bool restore = settings.value("RestoreGeometry", false).toBool();
+  if (restore || force)
+    {
+    this->restoreGeometry(settings.value("geometry").toByteArray());
+    this->restoreState(settings.value("windowState").toByteArray());
+    d->LayoutManager->setLayout(settings.value("layout").toInt());
+    }
+  settings.endGroup();
+  d->FavoriteModules << settings.value("Modules/FavoriteModules").toStringList();
+
+  foreach(const qSlicerIO::IOProperties& fileProperty, qSlicerMainWindowPrivate::readRecentlyLoadedFiles())
+    {
+    d->RecentlyLoadedFileProperties.enqueue(fileProperty);
+    }
+  d->filterRecentlyLoadedFileProperties();
+  d->setupRecentlyLoadedMenu(d->RecentlyLoadedFileProperties);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::saveGUIState(bool force/*=false*/)
+{
+  Q_D(qSlicerMainWindow);
+  QSettings settings;
+  settings.beginGroup("MainWindow");
+  bool restore = settings.value("RestoreGeometry", false).toBool();
+  if (restore || force)
+    {
+    settings.setValue("geometry", this->saveGeometry());
+    settings.setValue("windowState", this->saveState());
+    settings.setValue("layout", d->LayoutManager->layout());
+    }
+  settings.endGroup();
+  qSlicerMainWindowPrivate::writeRecentlyLoadedFiles(d->RecentlyLoadedFileProperties);
 }
 
 //---------------------------------------------------------------------------
