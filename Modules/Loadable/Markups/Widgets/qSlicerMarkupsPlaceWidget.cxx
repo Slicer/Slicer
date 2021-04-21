@@ -399,6 +399,7 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
     {
     d->ColorButton->setEnabled(false);
     d->PlaceButton->setEnabled(false);
+    d->PlaceButton->setIcon(QIcon(":/Icons/MarkupsGenericMouseModePlace.png"));
     d->DeleteButton->setEnabled(false);
     d->MoreButton->setEnabled(false);
     bool wasBlockedColorButton = d->ColorButton->blockSignals(true);
@@ -460,6 +461,7 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
   bool wasBlockedPlaceButton = d->PlaceButton->blockSignals( true );
   d->PlaceButton->setChecked(placeModeEnabled());
   d->PlaceButton->blockSignals( wasBlockedPlaceButton );
+  d->PlaceButton->setIcon(QIcon(currentMarkupsNode->GetAddIcon()));
 
   bool wasBlockedPersistencyAction = d->ActionPersistent->blockSignals( true );
   d->ActionPersistent->setChecked(placeModePersistency());
