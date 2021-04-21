@@ -14,7 +14,6 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
     #... developer may add extra options to configure other parameters
 
   def computeStatistics(self, segmentID):
-    import vtkSegmentationCorePython as vtkSegmentationCore
     requestedKeys = self.getRequestedKeys()
 
     segmentationNode = slicer.mrmlScene.GetNodeByID(self.getParameterNode().GetParameter("Segmentation"))
@@ -23,65 +22,12 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
     if len(requestedKeys)==0:
       return {}
 
-    containsLabelmapRepresentation = segmentationNode.GetSegmentation().ContainsRepresentation(
-      vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName())
-    if not containsLabelmapRepresentation:
+    stencil = self.getStencilForVolume(segmentationNode, segmentID, grayscaleNode)
+    if not stencil:
       return {}
 
-    if (not grayscaleNode
-      or not grayscaleNode.GetImageData()
-      or not grayscaleNode.GetImageData().GetPointData()
-      or not grayscaleNode.GetImageData().GetPointData().GetScalars()):
-      # Input grayscale node does not contain valid image data
-      return {}
-
-    # Get geometry of grayscale volume node as oriented image data
-    # reference geometry in reference node coordinate system
-    referenceGeometry_Reference = vtkSegmentationCore.vtkOrientedImageData()
-    referenceGeometry_Reference.SetExtent(grayscaleNode.GetImageData().GetExtent())
-    ijkToRasMatrix = vtk.vtkMatrix4x4()
-    grayscaleNode.GetIJKToRASMatrix(ijkToRasMatrix)
-    referenceGeometry_Reference.SetGeometryFromImageToWorldMatrix(ijkToRasMatrix)
-
-    # Get transform between grayscale volume and segmentation
-    segmentationToReferenceGeometryTransform = vtk.vtkGeneralTransform()
-    slicer.vtkMRMLTransformNode.GetTransformBetweenNodes(segmentationNode.GetParentTransformNode(),
-      grayscaleNode.GetParentTransformNode(), segmentationToReferenceGeometryTransform)
-
-    cubicMMPerVoxel = reduce(lambda x,y: x*y, referenceGeometry_Reference.GetSpacing())
+    cubicMMPerVoxel = reduce(lambda x,y: x*y, grayscaleNode.GetSpacing())
     ccPerCubicMM = 0.001
-
-    segmentLabelmap = vtkSegmentationCore.vtkOrientedImageData()
-    segmentationNode.GetBinaryLabelmapRepresentation(segmentID, segmentLabelmap)
-    if (not segmentLabelmap
-      or not segmentLabelmap.GetPointData()
-      or not segmentLabelmap.GetPointData().GetScalars()):
-      # No input label data
-      return {}
-
-    segmentLabelmap_Reference = vtkSegmentationCore.vtkOrientedImageData()
-    vtkSegmentationCore.vtkOrientedImageDataResample.ResampleOrientedImageToReferenceOrientedImage(
-      segmentLabelmap, referenceGeometry_Reference, segmentLabelmap_Reference,
-      False, # nearest neighbor interpolation
-      False, # no padding
-      segmentationToReferenceGeometryTransform)
-
-    # We need to know exactly the value of the segment voxels, apply threshold to make force the selected label value
-    labelValue = 1
-    backgroundValue = 0
-    thresh = vtk.vtkImageThreshold()
-    thresh.SetInputData(segmentLabelmap_Reference)
-    thresh.ThresholdByLower(0)
-    thresh.SetInValue(backgroundValue)
-    thresh.SetOutValue(labelValue)
-    thresh.SetOutputScalarType(vtk.VTK_UNSIGNED_CHAR)
-    thresh.Update()
-
-    #  Use binary labelmap as a stencil
-    stencil = vtk.vtkImageToImageStencil()
-    stencil.SetInputData(thresh.GetOutput())
-    stencil.ThresholdByUpper(labelValue)
-    stencil.Update()
 
     stat = vtk.vtkImageAccumulate()
     stat.SetInputData(grayscaleNode.GetImageData())
@@ -113,6 +59,68 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
       if "median" in requestedKeys:
         stats["median"] = medians.GetMedian()
     return stats
+
+  def getStencilForVolume(self, segmentationNode, segmentID, grayscaleNode):
+    import vtkSegmentationCorePython as vtkSegmentationCore
+
+    containsLabelmapRepresentation = segmentationNode.GetSegmentation().ContainsRepresentation(
+      vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName())
+    if not containsLabelmapRepresentation:
+      return None
+
+    if (not grayscaleNode
+      or not grayscaleNode.GetImageData()
+      or not grayscaleNode.GetImageData().GetPointData()
+      or not grayscaleNode.GetImageData().GetPointData().GetScalars()):
+      # Input grayscale node does not contain valid image data
+      return None
+
+    # Get geometry of grayscale volume node as oriented image data
+    # reference geometry in reference node coordinate system
+    referenceGeometry_Reference = vtkSegmentationCore.vtkOrientedImageData()
+    referenceGeometry_Reference.SetExtent(grayscaleNode.GetImageData().GetExtent())
+    ijkToRasMatrix = vtk.vtkMatrix4x4()
+    grayscaleNode.GetIJKToRASMatrix(ijkToRasMatrix)
+    referenceGeometry_Reference.SetGeometryFromImageToWorldMatrix(ijkToRasMatrix)
+
+    # Get transform between grayscale volume and segmentation
+    segmentationToReferenceGeometryTransform = vtk.vtkGeneralTransform()
+    slicer.vtkMRMLTransformNode.GetTransformBetweenNodes(segmentationNode.GetParentTransformNode(),
+      grayscaleNode.GetParentTransformNode(), segmentationToReferenceGeometryTransform)
+
+    segmentLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+    segmentationNode.GetBinaryLabelmapRepresentation(segmentID, segmentLabelmap)
+    if (not segmentLabelmap
+      or not segmentLabelmap.GetPointData()
+      or not segmentLabelmap.GetPointData().GetScalars()):
+      # No input label data
+      return None
+
+    segmentLabelmap_Reference = vtkSegmentationCore.vtkOrientedImageData()
+    vtkSegmentationCore.vtkOrientedImageDataResample.ResampleOrientedImageToReferenceOrientedImage(
+      segmentLabelmap, referenceGeometry_Reference, segmentLabelmap_Reference,
+      False, # nearest neighbor interpolation
+      False, # no padding
+      segmentationToReferenceGeometryTransform)
+
+    # We need to know exactly the value of the segment voxels, apply threshold to make force the selected label value
+    labelValue = 1
+    backgroundValue = 0
+    thresh = vtk.vtkImageThreshold()
+    thresh.SetInputData(segmentLabelmap_Reference)
+    thresh.ThresholdByLower(0)
+    thresh.SetInValue(backgroundValue)
+    thresh.SetOutValue(labelValue)
+    thresh.SetOutputScalarType(vtk.VTK_UNSIGNED_CHAR)
+    thresh.Update()
+
+    #  Use binary labelmap as a stencil
+    stencil = vtk.vtkImageToImageStencil()
+    stencil.SetInputData(thresh.GetOutput())
+    stencil.ThresholdByUpper(labelValue)
+    stencil.Update()
+
+    return stencil
 
   def getMeasurementInfo(self, key):
     """Get information (name, description, units, ...) about the measurement for the given key"""
