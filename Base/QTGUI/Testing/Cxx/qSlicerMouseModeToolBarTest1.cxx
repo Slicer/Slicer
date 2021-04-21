@@ -78,7 +78,7 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
     // add the new annotation types to it
     selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPointWithArrow.png", "Fiducial");
     selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png", "Ruler");
-    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLMarkupsFiducialNode", ":/Icons/MarkupsMouseModePlace.png");
+    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLMarkupsFiducialNode", ":/Icons/MarkupsFiducialMouseModePlace.png");
 
     selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLAnnotationFiducialNode");
     activeActionText = activePlaceActionText(mouseToolBar);
