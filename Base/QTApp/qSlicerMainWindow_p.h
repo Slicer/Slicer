@@ -52,9 +52,6 @@ public:
   virtual void setupUi(QMainWindow * mainWindow);
   virtual void setupStatusBar();
 
-  virtual void readSettings();
-  virtual void writeSettings();
-
   virtual void setupRecentlyLoadedMenu(const QList<qSlicerIO::IOProperties>& fileProperties);
 
   virtual void filterRecentlyLoadedFileProperties();

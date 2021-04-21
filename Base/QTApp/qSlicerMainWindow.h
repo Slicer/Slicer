@@ -117,6 +117,22 @@ public slots:
   virtual void on_PasteAction_triggered();
   virtual void on_ViewExtensionsManagerAction_triggered();
 
+  /// Read GUI state from application settings and update the user interface accordingly.
+  ///
+  /// GUI state includes:
+  /// - main window state and geometry (only if MainWindow/geometry application setting is
+  ///   enabled or force argument is set to true)
+  /// - current view layout ID
+  /// - favorite modules
+  /// - recently loaded files
+  ///
+  /// \sa restoreGUIState()
+  virtual void saveGUIState(bool force=false);
+
+  /// Write GUI state to application settings.
+  /// \sa saveGUIState()
+  virtual void restoreGUIState(bool force=false);
+
 signals:
   /// Emitted when the window is first shown to the user.
   /// \sa showEvent(QShowEvent *)
