@@ -64,6 +64,18 @@ public:
   /// \sa moduleSelector(), pythonConsole()
   Q_INVOKABLE ctkErrorLogWidget* errorLogWidget()const;
 
+  /// Read windows settings and update user interface.
+  ///
+  /// \sa writeSettings()
+  /// \sa qSlicerMainWindowPrivate::setupRecentlyLoadedMenu
+  Q_INVOKABLE void readSettings();
+
+  /// Write windows settings
+  ///
+  /// \sa readSettings()
+  /// \sa qSlicerMainWindowPrivate::writeRecentlyLoadedFiles()
+  Q_INVOKABLE void writeSettings();
+
 public slots:
   virtual void setHomeModuleCurrent();
   virtual void restoreToolbars();
