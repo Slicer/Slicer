@@ -95,3 +95,7 @@ Common parameters must be set using `setCommonParameter` method (others can be s
 | BrushType | enum | no | CIRCLE | CIRCLE, BOX, DRAW, LINE |
 | HistogramSetLower | enum | no | LOWER | MINIMUM, LOWER, AVERAGE |
 | HistogramSetUpper | enum | no | UPPER | AVERAGE, UPPER, MAXIMUM |
+
+## Examples
+
+Examples for common operations on segmentations are provided in the [script repository](../script_repository.html#segmentations).

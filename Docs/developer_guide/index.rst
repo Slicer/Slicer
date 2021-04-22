@@ -12,6 +12,7 @@ Developer Guide
    modules/index.rst
    extensions
    python_faq
+   script_repository
    build_instructions/index.rst
    contributing
    authors

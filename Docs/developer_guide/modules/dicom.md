@@ -25,3 +25,7 @@ There are many different kind of DICOM information objects and import/export of 
 ## References
 
 See the [CTK web site](http://commontk.org) for more information on the internals of the DICOM implementation. This tool uses the [DCMTK DICOM library](http://dicom.offis.de).
+
+## Examples
+
+Examples for common DICOM operations are provided in the [script repository](../script_repository.html#dicom).
