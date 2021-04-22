@@ -29,6 +29,7 @@
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
+#include "vtkVersionMacros.h"
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLViewInteractorStyle);
@@ -476,6 +477,7 @@ void vtkMRMLViewInteractorStyle::SetInteractor(vtkRenderWindowInteractor *intera
 {
   this->Superclass::SetInteractor(interactor);
 
+#if VTK_MAJOR_VERSION < 9
   // There is no observer for double-click events in superclass, add them now
   if (this->Interactor)
     {
@@ -489,4 +491,5 @@ void vtkMRMLViewInteractorStyle::SetInteractor(vtkRenderWindowInteractor *intera
     this->Interactor->AddObserver(vtkCommand::StartPanEvent, this->EventCallbackCommand, this->Priority);
     this->Interactor->AddObserver(vtkCommand::EndPanEvent, this->EventCallbackCommand, this->Priority);
     }
+#endif
 }

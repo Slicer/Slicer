@@ -661,7 +661,7 @@ bool vtkSlicerMarkupsWidget::ProcessWidgetMenu(vtkMRMLInteractionEventData* even
 }
 
 //-------------------------------------------------------------------------
-bool vtkSlicerMarkupsWidget::ProcessWidgetAction(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
+bool vtkSlicerMarkupsWidget::ProcessWidgetAction(vtkMRMLInteractionEventData* eventData)
 {
   if (this->WidgetState != WidgetStateOnWidget || !this->MousePressedSinceMarkupPlace)
     {
@@ -687,12 +687,29 @@ bool vtkSlicerMarkupsWidget::ProcessWidgetAction(vtkMRMLInteractionEventData* vt
     }
   markupsNode->GetScene()->SaveStateForUndo();
 
+  // Convert widget action to display node event
+  unsigned long displayNodeEvent = vtkMRMLMarkupsDisplayNode::ActionEvent;
+  unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
+  switch (widgetEvent)
+  {
+  case WidgetEventCustomAction1: displayNodeEvent = vtkMRMLMarkupsDisplayNode::CustomActionEvent1; break;
+  case WidgetEventCustomAction2: displayNodeEvent = vtkMRMLMarkupsDisplayNode::CustomActionEvent2; break;
+  case WidgetEventCustomAction3: displayNodeEvent = vtkMRMLMarkupsDisplayNode::CustomActionEvent3; break;
+  case WidgetEventCustomAction4: displayNodeEvent = vtkMRMLMarkupsDisplayNode::CustomActionEvent4; break;
+  case WidgetEventCustomAction5: displayNodeEvent = vtkMRMLMarkupsDisplayNode::CustomActionEvent5; break;
+  case WidgetEventCustomAction6: displayNodeEvent = vtkMRMLMarkupsDisplayNode::CustomActionEvent6; break;
+  case WidgetEventAction:
+  default:
+    displayNodeEvent = vtkMRMLMarkupsDisplayNode::ActionEvent;
+    break;
+  }
+
   vtkNew<vtkMRMLInteractionEventData> actionEventData;
-  actionEventData->SetType(vtkMRMLMarkupsDisplayNode::ActionEvent);
+  actionEventData->SetType(displayNodeEvent);
   actionEventData->SetComponentType(vtkMRMLMarkupsDisplayNode::ComponentControlPoint);
   actionEventData->SetComponentIndex(controlPointIndex);
   actionEventData->SetViewNode(this->WidgetRep->GetViewNode());
-  markupsDisplayNode->InvokeEvent(vtkMRMLMarkupsDisplayNode::ActionEvent, actionEventData);
+  markupsDisplayNode->InvokeEvent(displayNodeEvent, actionEventData);
   return true;
 }
 
@@ -719,6 +736,9 @@ bool vtkSlicerMarkupsWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData
       processedEvent = ProcessWidgetMenu(eventData);
       break;
     case WidgetEventAction:
+    case WidgetEventCustomAction1:
+    case WidgetEventCustomAction2:
+    case WidgetEventCustomAction3:
       processedEvent = ProcessWidgetAction(eventData);
       break;
     case WidgetEventControlPointSnapToSlice:

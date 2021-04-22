@@ -280,9 +280,27 @@ public:
     ResetToDefaultsEvent = 19001, //< reset this node to the default values, request completed by markups logic
     JumpToPointEvent, /**< request jump to a selected control point, request completed by markups logic,
                       event data is vtkMRMLInteractionEventData*/
-    ActionEvent, /**< default action on the point is requested (mapped to double-click by default),
-                 event data is vtkMRMLInteractionEventData */
-    };
+    ActionEvent, /**< this event is invoked in on the display node if the widget performs WidgetEventAction action
+                 (mapped to double-click interaction event by default), event data is vtkMRMLInteractionEventData */
+    CustomActionEvent1, /**< this event is invoked in on the display node if the widget performs WidgetEventCustomAction1 action
+                 (not mapped to any interaction event by default but it can be specified by modules to specify additional
+                 actions for a widget), event data is vtkMRMLInteractionEventData */
+    CustomActionEvent2, /**< this event is invoked in on the display node if the widget performs WidgetEventCustomAction2 action
+                (not mapped to any interaction event by default but it can be specified by modules to specify additional
+                actions for a widget), event data is vtkMRMLInteractionEventData */
+    CustomActionEvent3, /**< this event is invoked in on the display node if the widget performs WidgetEventCustomAction3 action
+                  (not mapped to any interaction event by default but it can be specified by modules to specify additional
+                  actions for a widget), event data is vtkMRMLInteractionEventData */
+    CustomActionEvent4, /**< this event is invoked in on the display node if the widget performs WidgetEventCustomAction4 action
+                  (not mapped to any interaction event by default but it can be specified by modules to specify additional
+                  actions for a widget), event data is vtkMRMLInteractionEventData */
+    CustomActionEvent5, /**< this event is invoked in on the display node if the widget performs WidgetEventCustomAction5 action
+                  (not mapped to any interaction event by default but it can be specified by modules to specify additional
+                  actions for a widget), event data is vtkMRMLInteractionEventData */
+    CustomActionEvent6, /**< this event is invoked in on the display node if the widget performs WidgetEventCustomAction6 action
+                  (not mapped to any interaction event by default but it can be specified by modules to specify additional
+                  actions for a widget), event data is vtkMRMLInteractionEventData */
+  };
 
   /// Set SliceProjection flag that controls if the projection of markups
   /// is visible or not in 2D viewers on slices on which it is normally
