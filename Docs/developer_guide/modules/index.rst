@@ -9,8 +9,9 @@ Modules usually interact with each other only indirectly, by making changes and 
 .. toctree::
     :maxdepth: 2
 
-    markups.md
-    segmenteditor.md
-    transforms.md
-    volumerendering.md
-    volumes.md
+    dicom
+    markups
+    segmenteditor
+    transforms
+    volumerendering
+    volumes

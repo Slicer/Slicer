@@ -1,0 +1,1094 @@
+Launch Slicer
+~~~~~~~~~~~~~
+
+Open a file with Slicer at the command line
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Open ``imagefile.nrrd`` file in Slicer:
+
+::
+
+   Slicer.exe /full/path/to/imagefile.nrrd
+
+.. note::
+
+   It may be necessary to specify full path to the Slicer executable and to the file that needs to be loaded.
+
+To load a file with non-default options, you can use ``--python-code`` option to run ``slicer.util.load...`` commands.
+
+Open an .mrb file with Slicer at the command line
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+   Slicer.exe --python-code "slicer.util.loadScene('f:/2013-08-23-Scene.mrb')"
+
+Run Python commands in the Slicer environment
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Run Python commands, without showing any graphical user interface:
+
+::
+
+   Slicer.exe --python-code "doSomething; doSomethingElse; etc." --testing --no-splash --no-main-window
+
+Slicer exits when the commands are completed because ``--testing`` options is specified.
+
+Run a Python script file in the Slicer environment
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Run a Python script (stored in script file), without showing any graphical user interface:
+
+::
+
+   Slicer.exe --python-script "/full/path/to/myscript.py" --no-splash --no-main-window
+
+To make Slicer exit when the script execution is completed, call ``sys.exit(errorCode)`` (where ``errorCode`` is set 0 for success and other value to indicate error).
+
+MRML scene
+~~~~~~~~~~
+
+Get MRML node from the scene
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Get markups fiducial node named ``F`` (useful for quickly getting access to a MRML node in the Python console):
+
+.. code-block:: python
+
+   fidsNode = getNode('F')
+   # do something with the node... let's remove the first control point in it
+   fidsNode.RemoveNthControlPoint(0)
+
+Getting the first volume node without knowing its name (useful if there is only one volume loaded):
+
+.. code-block:: python
+
+   volumeNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLScalarVolumeNode")
+   # do something with the node... let's change its display window/level
+   volumeNode.GetDisplayNode().SetAutoWindowLevel(False)
+   volumeNode.GetDisplayNode().SetWindowLevelMinMax(100, 200)
+
+.. note::
+
+   -  :func:`slicer.util.getNode()` is recommended **only for interactive debugging** in the Python console/Jupyter notebook
+
+      -  its input is intentionally defined vaguely (it can be either node ID or name and you can use wildcards such as ``*``), which is good because it make it simpler to use, but the uncertain behavior is not good for general-purpose use in a module
+      -  throws an exception so that the developer knows immediately that there was a typo or other unexpected error
+
+   -  ``slicer.mrmlScene.GetNodeByID()`` is more appropriate when a module needs to access a MRML node:
+
+      -  its behavior is more predictable: it only accepts node ID as input. ``slicer.mrmlScene.GetFirstNodeByName()`` can be used to get a node by its name, but since multiple nodes in the scene can have the same name, it is not recommended to keep reference to a node by its name. Since node IDs may change when a scene is saved and reloaded, node ID should not be stored persistently, but `node references <mrml_overview.html#mrml-node-references>`__ must be used instead
+      -  if node is not found it returns ``None`` (instead of throwing an exception), because this is often not considered an error in module code (it is just used to check existence of a node) and using return value for not-found nodes allows simpler syntax
+
+Clone a node
+^^^^^^^^^^^^
+
+This example shows how to make a copy of any node that appears in Subject Hierarchy (in Data module).
+
+.. code-block:: python
+
+   # Get a node from SampleData that we will clone
+   import SampleData
+   nodeToClone = SampleData.SampleDataLogic().downloadMRHead()
+
+   # Clone the node
+   shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+   itemIDToClone = shNode.GetItemByDataNode(nodeToClone)
+   clonedItemID = slicer.modules.subjecthierarchy.logic().CloneSubjectHierarchyItem(shNode, itemIDToClone)
+   clonedNode = shNode.GetItemDataNode(clonedItemID)
+
+Save a node to file
+^^^^^^^^^^^^^^^^^^^
+
+Save a transform node to file (should work with any other node type, if file extension is set to a supported one):
+
+.. code-block:: python
+
+   myNode = getNode("LinearTransform_3")
+
+   myStorageNode = myNode.CreateDefaultStorageNode()
+   myStorageNode.SetFileName("c:/tmp/something.tfm")
+   myStorageNode.WriteData(myNode)
+
+Save the scene into a single MRB file
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   # Generate file name
+   import time
+   sceneSaveFilename = slicer.app.temporaryPath + "/saved-scene-" + time.strftime("%Y%m%d-%H%M%S") + ".mrb"
+
+   # Save scene
+   if slicer.util.saveScene(sceneSaveFilename):
+     logging.info("Scene saved to: {0}".format(sceneSaveFilename))
+   else:
+     logging.error("Scene saving failed")
+
+Save the scene into a new directory
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   # Create a new directory where the scene will be saved into
+   import time
+   sceneSaveDirectory = slicer.app.temporaryPath + "/saved-scene-" + time.strftime("%Y%m%d-%H%M%S")
+   if not os.access(sceneSaveDirectory, os.F_OK):
+     os.makedirs(sceneSaveDirectory)
+
+   # Save the scene
+   if slicer.app.applicationLogic().SaveSceneToSlicerDataBundleDirectory(sceneSaveDirectory, None):
+     logging.info("Scene saved to: {0}".format(sceneSaveDirectory))
+   else:
+     logging.error("Scene saving failed")
+
+Override default scene save dialog
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Place this class in the scripted module file to override
+
+.. code-block:: python
+
+   class MyModuleFileDialog ():
+      """This specially named class is detected by the scripted loadable
+      module and is the target for optional drag and drop operations.
+      See: Base/QTGUI/qSlicerScriptedFileDialog.h.
+
+      This class is used for overriding default scene save dialog
+      with simple saving the scene without asking anything.
+      """
+
+      def __init__(self,qSlicerFileDialog ):
+        self.qSlicerFileDialog = qSlicerFileDialog
+        qSlicerFileDialog.fileType = "NoFile"
+        qSlicerFileDialog.description = "Save scene"
+        qSlicerFileDialog.action = slicer.qSlicerFileDialog.Write
+
+      def execDialog(self):
+        # Implement custom scene save operation here.
+        # Return True if saving completed successfully,
+        # return False if saving was cancelled.
+        ...
+        return saved
+
+Override application close behavior
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When application close is requested then by default confirmation popup is displayed. To customize this behavior (for example, allow application closing without displaying default confirmation popup) an event filter can be installed for the close event on the main window:
+
+.. code-block:: python
+
+   class CloseApplicationEventFilter(qt.QWidget):
+     def eventFilter(self, object, event):
+       if event.type() == qt.QEvent.Close:
+         event.accept()
+         return True
+       return False
+
+   filter = CloseApplicationEventFilter()
+   slicer.util.mainWindow().installEventFilter(filter)
+
+Change default output file type for new nodes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This script changes default output file format for nodes that have not been saved yet (do not have storage node yet).
+
+Default node can be specified that will be used as a basis of all new storage nodes. This can be used for setting default file extension. For example, change file format to PLY for model nodes:
+
+.. code-block:: python
+
+   defaultModelStorageNode = slicer.vtkMRMLModelStorageNode()
+   defaultModelStorageNode.SetDefaultWriteFileExtension("ply")
+   slicer.mrmlScene.AddDefaultNode(defaultModelStorageNode)
+
+To permanently change default file extension on your computer, copy-paste the code above into your application startup script (you can find its location in menu: Edit / Application settings / General / Application startup script).
+
+Change file type for saving for existing nodes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This script changes output file types for nodes that have been already saved (they already have storage node).
+
+If it is not necessary to preserve file paths then the simplest is to configure default storage node (as shown in the example above), then delete all existing storage nodes. When save dialog is opened, default storage nodes will be recreated.
+
+.. code-block:: python
+
+   # Delete existing model storage nodes so that they will be recreated with default settings
+   existingModelStorageNodes = slicer.util.getNodesByClass("vtkMRMLModelStorageNode")
+   for modelStorageNode in existingModelStorageNodes:
+     slicer.mrmlScene.RemoveNode(modelStorageNode)
+
+To update existing storage nodes to use new file extension (but keep all other parameters unchanged) you can use this approach (example is for volume storage):
+
+.. code-block:: python
+
+   requiredFileExtension = ".nia"
+   originalFileExtension = ".nrrd"
+   volumeNodes = slicer.util.getNodesByClass("vtkMRMLScalarVolumeNode")
+   for volumeNode in volumeNodes:
+     volumeStorageNode = volumeNode.GetStorageNode()
+     if not volumeStorageNode:
+       volumeNode.AddDefaultStorageNode()
+       volumeStorageNode = volumeNode.GetStorageNode()
+       volumeStorageNode.SetFileName(volumeNode.GetName()+requiredFileExtension)
+     else:
+       volumeStorageNode.SetFileName(volumeStorageNode.GetFileName().replace(originalFileExtension, requiredFileExtension))
+
+To set all volume nodes to save uncompressed by default (add this to `.slicerrc.py file <../user_guide/settings.html#application-startup-file>`__ so it takes effect for the whole session):
+
+.. code-block:: python
+
+   #set the default volume storage to not compress by default
+   defaultVolumeStorageNode = slicer.vtkMRMLVolumeArchetypeStorageNode()
+   defaultVolumeStorageNode.SetUseCompression(0)
+   slicer.mrmlScene.AddDefaultNode(defaultVolumeStorageNode)
+   logging.info("Volume nodes will be stored uncompressed by default")
+
+Same thing as above, but applied to all segmentations instead of volumes:
+
+.. code-block:: python
+
+   #set the default volume storage to not compress by default
+   defaultVolumeStorageNode = slicer.vtkMRMLSegmentationStorageNode()
+   defaultVolumeStorageNode.SetUseCompression(0)
+   slicer.mrmlScene.AddDefaultNode(defaultVolumeStorageNode)
+   logging.info("Segmentation nodes will be stored uncompressed
+
+Module selection
+~~~~~~~~~~~~~~~~
+
+Switch to a different module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This utility function can be used to open a different module:
+
+.. code-block:: python
+
+   slicer.util.selectModule("DICOM")
+
+Set a new default module at startup
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Instead of the default Welcome module:
+
+.. code-block:: python
+
+   qt.QSettings().setValue("Modules/HomeModule", "Data")
+
+Views
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Display text in a 3D view or slice view
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The easiest way to show information overlaid on a viewer is to use corner annotations.
+
+.. code-block:: python
+
+   view=slicer.app.layoutManager().threeDWidget(0).threeDView()
+   # Set text to "Something"
+   view.cornerAnnotation().SetText(vtk.vtkCornerAnnotation.UpperRight,"Something")
+   # Set color to red
+   view.cornerAnnotation().GetTextProperty().SetColor(1,0,0)
+   # Update the view
+   view.forceRender()
+
+To display text in slice views, replace the first line by this line (and consider hiding slice view annotations, to prevent them from overwriting the text you place there):
+
+.. code-block:: python
+
+   view=slicer.app.layoutManager().sliceWidget("Red").sliceView()
+
+Show orientation marker in all views
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   viewNodes = slicer.util.getNodesByClass("vtkMRMLAbstractViewNode")
+   for viewNode in viewNodes:
+     viewNode.SetOrientationMarkerType(slicer.vtkMRMLAbstractViewNode.OrientationMarkerTypeAxes)
+
+Change view axis labels
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   labels = ["x", "X", "y", "Y", "z", "Z"]
+   viewNode = slicer.app.layoutManager().threeDWidget(0).mrmlViewNode()
+   # for slice view:
+   # viewNode = slicer.app.layoutManager().sliceWidget("Red").mrmlSliceNode()
+   for index, label in enumerate(labels):
+     viewNode.SetAxisLabel(index, label)
+
+Hide view controller bars
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   slicer.app.layoutManager().threeDWidget(0).threeDController().setVisible(False)
+   slicer.app.layoutManager().sliceWidget("Red").sliceController().setVisible(False)
+   slicer.app.layoutManager().plotWidget(0).plotController().setVisible(False)
+   slicer.app.layoutManager().tableWidget(0).tableController().setVisible(False)
+
+Hide Slicer logo from main window
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This script increases vertical space available in the module panel by hiding the Slicer application logo.
+
+.. code-block:: python
+
+   slicer.util.findChild(slicer.util.mainWindow(), "LogoLabel").visible = False
+
+Customize widgets in view controller bars
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   sliceController = slicer.app.layoutManager().sliceWidget("Red").sliceController()
+
+   # hide what is not needed
+   sliceController.pinButton().hide()
+   #sliceController.viewLabel().hide()
+   sliceController.fitToWindowToolButton().hide()
+   sliceController.sliceOffsetSlider().hide()
+
+   # add custom widgets
+   myButton = qt.QPushButton("My custom button")
+   sliceController.barLayout().addWidget(myButton)
+
+Get current mouse coordinates in a slice view
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can get 3D (RAS) coordinates of the current mouse cursor from the crosshair singleton node as shown in the example below:
+
+.. code-block:: python
+
+   def onMouseMoved(observer,eventid):
+     ras=[0,0,0]
+     crosshairNode.GetCursorPositionRAS(ras)
+     print(ras)
+
+   crosshairNode=slicer.util.getNode("Crosshair")
+   crosshairNode.AddObserver(slicer.vtkMRMLCrosshairNode.CursorPositionModifiedEvent, onMouseMoved)
+
+Display mouse pointer coordinates in alternative coordinate system
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The Data probe only shows coordinate values in the world coordinate system. You can make the world coordinate system mean anything you want (e.g., MNI) by applying a transform to the volume that transforms it into that space. See more details in `here <https://discourse.slicer.org/t/setting-an-mni-origo-to-a-volume/16164/4>`__.
+
+.. code-block:: python
+
+   def onMouseMoved(observer,eventid):
+     mniToWorldTransformNode = getNode("LinearTransform_3")  # replace this by the name of your actual MNI to world transform
+     worldToMniTransform = vtk.vtkGeneralTransform()
+     mniToWorldTransformNode.GetTransformToWorld(worldToMniTransform)
+     ras=[0,0,0]
+     mni=[0,0,0]
+     crosshairNode.GetCursorPositionRAS(ras)
+     worldToMniTransform.TransformPoint(ras, mni)
+     _ras = "; ".join([str(k) for k in ras])
+     _mni = "; ".join([str(k) for k in mni])
+     slicer.util.showStatusMessage(f"RAS={_ras}   MNI={_mni}")
+
+   crosshairNode=slicer.util.getNode("Crosshair")
+   observationId = crosshairNode.AddObserver(slicer.vtkMRMLCrosshairNode.CursorPositionModifiedEvent, onMouseMoved)
+
+   # Run this to stop displaying values:
+   # crosshairNode.RemoveObserver(observationId)
+
+Get DataProbe text
+^^^^^^^^^^^^^^^^^^
+
+You can get the mouse location in pixel coordinates along with the pixel value at the mouse by hitting the ``.`` (period) key in a slice view after pasting in the following code.
+
+.. code-block:: python
+
+   def printDataProbe():
+     infoWidget = slicer.modules.DataProbeInstance.infoWidget
+     for layer in ("B", "F", "L"):
+       print(infoWidget.layerNames[layer].text, infoWidget.layerIJKs[layer].text, infoWidget.layerValues[layer].text)
+
+   s = qt.QShortcut(qt.QKeySequence("."), mainWindow())
+   s.connect("activated()", printDataProbe)
+
+Create custom color table
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This example shows how to create a new color table, for example with inverted color range from the default Ocean color table.
+
+.. code-block:: python
+
+   invertedocean = slicer.vtkMRMLColorTableNode()
+   invertedocean.SetTypeToUser()
+   invertedocean.SetNumberOfColors(256)
+   invertedocean.SetName("InvertedOcean")
+
+   for i in range(0,255):
+     invertedocean.SetColor(i, 0.0, 1 - (i+1e-16)/255.0, 1.0, 1.0)
+
+   slicer.mrmlScene.AddNode(invertedocean)
+
+Show color scalar bar in slice views
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Display color bar for background volume in slice views (managed by DataProbe):
+
+.. code-block:: python
+
+   sliceAnnotations = slicer.modules.DataProbeInstance.infoWidget.sliceAnnotations
+   sliceAnnotations.sliceViewAnnotationsEnabled = True
+   sliceAnnotations.scalarBarEnabled = 1
+   sliceAnnotations.scalarBarSelectedLayer = "background"  # alternative is "foreground"
+   sliceAnnotations.rangeLabelFormat = "test %G"
+   sliceAnnotations.updateSliceViewFromGUI()
+
+Display color scalar bar in 3D views
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   colorTableRangeMm = 40
+   title ="Radial\nCompression\n"
+   labelsFormat = "%4.1f mm"
+
+   # Create color node
+   colorNode = slicer.mrmlScene.CreateNodeByClass("vtkMRMLProceduralColorNode")
+   colorNode.UnRegister(None)  # to prevent memory leaks
+   colorNode.SetName(slicer.mrmlScene.GenerateUniqueName("MyColormap"))
+   colorNode.SetAttribute("Category", "MyModule")
+   # The color node is a procedural color node, which is saved using a storage node.
+   # Hidden nodes are not saved if they use a storage node, therefore
+   # the color node must be visible.
+   colorNode.SetHideFromEditors(False)
+   slicer.mrmlScene.AddNode(colorNode)
+
+   # Specify colormap
+   colorMap = colorNode.GetColorTransferFunction()
+   colorMap.RemoveAllPoints()
+   colorMap.AddRGBPoint(colorTableRangeMm * 0.0, 0.0, 0.0, 1.0)
+   colorMap.AddRGBPoint(colorTableRangeMm * 0.2, 0.0, 1.0, 1.0)
+   colorMap.AddRGBPoint(colorTableRangeMm * 0.5, 1.0, 1.0, 0.0)
+   colorMap.AddRGBPoint(colorTableRangeMm * 1.0, 1.0, 0.0, 0.0)
+
+   # Display color scalar bar
+   colorWidget = slicer.modules.colors.widgetRepresentation()
+   colorWidget.setCurrentColorNode(colorNode)
+   ctkScalarBarWidget = slicer.util.findChildren(colorWidget, name="VTKScalarBar")[0]
+   ctkScalarBarWidget.setDisplay(1)
+   ctkScalarBarWidget.setTitle(title)
+   ctkScalarBarWidget.setMaxNumberOfColors(256)
+   ctkScalarBarWidget.setLabelsFormat(labelsFormat)
+
+Customize view layout
+^^^^^^^^^^^^^^^^^^^^^
+
+Show a custom layout of a 3D view on top of the red slice view:
+
+.. code-block:: python
+
+   customLayout = """
+   <layout type="vertical" split="true">
+     <item>
+      <view class="vtkMRMLViewNode" singletontag="1">
+        <property name="viewlabel" action="default">1</property>
+      </view>
+     </item>
+     <item>
+      <view class="vtkMRMLSliceNode" singletontag="Red">
+       <property name="orientation" action="default">Axial</property>
+       <property name="viewlabel" action="default">R</property>
+       <property name="viewcolor" action="default">#F34A33</property>
+      </view>
+     </item>
+   </layout>
+   """
+
+   # Built-in layout IDs are all below 100, so you can choose any large random number
+   # for your custom layout ID.
+   customLayoutId=501
+
+   layoutManager = slicer.app.layoutManager()
+   layoutManager.layoutLogic().GetLayoutNode().AddLayoutDescription(customLayoutId, customLayout)
+
+   # Switch to the new custom layout
+   layoutManager.setLayout(customLayoutId)
+
+See description of standard layouts (that can be used as examples) here: https://github.com/Slicer/Slicer/blob/master/Libs/MRML/Logic/vtkMRMLLayoutLogic.cxx
+
+You can use this code snippet to add a button to the layout selector toolbar:
+
+.. code-block:: python
+
+   # Add button to layout selector toolbar for this custom layout
+   viewToolBar = mainWindow().findChild("QToolBar", "ViewToolBar")
+   layoutMenu = viewToolBar.widgetForAction(viewToolBar.actions()[0]).menu()
+   layoutSwitchActionParent = layoutMenu  # use `layoutMenu` to add inside layout list, use `viewToolBar` to add next the standard layout list
+   layoutSwitchAction = layoutSwitchActionParent.addAction("My view") # add inside layout list
+   layoutSwitchAction.setData(layoutId)
+   layoutSwitchAction.setIcon(qt.QIcon(":Icons/Go.png"))
+   layoutSwitchAction.setToolTip("3D and slice view")
+
+Turn on slice intersections
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   viewNodes = slicer.util.getNodesByClass("vtkMRMLSliceCompositeNode")
+   for viewNode in viewNodes:
+     viewNode.SetSliceIntersectionVisibility(1)
+
+.. note::
+
+   How to find code corresponding to a user interface widget?
+
+   For this one I searched for "slice intersections" text in the whole slicer source code, found that the function is implemented in ``Base\QTGUI\qSlicerViewersToolBar.cxx``, then translated the ``qSlicerViewersToolBarPrivate::setSliceIntersectionVisible(bool visible)`` method to Python.
+
+Hide slice view annotations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This script can hide node name, patient information displayed in corners of slice views (managed by DataProbe module).
+
+.. code-block:: python
+
+   # Disable slice annotations immediately
+   sliceAnnotations = slicer.modules.DataProbeInstance.infoWidget.sliceAnnotations
+   sliceAnnotations.sliceViewAnnotationsEnabled=False
+   sliceAnnotations.updateSliceViewFromGUI()
+   # Disable slice annotations persistently (after Slicer restarts)
+   settings = qt.QSettings()
+   settings.setValue("DataProbe/sliceViewAnnotations.enabled", 0)
+
+Change slice offset
+^^^^^^^^^^^^^^^^^^^
+
+Equivalent to moving the slider in slice view controller.
+
+.. code-block:: python
+
+   layoutManager = slicer.app.layoutManager()
+   red = layoutManager.sliceWidget("Red")
+   redLogic = red.sliceLogic()
+   # Print current slice offset position
+   print(redLogic.GetSliceOffset())
+   # Change slice position
+   redLogic.SetSliceOffset(20)
+
+Change slice orientation
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Get ``Red`` slice node and rotate around ``X`` and ``Y`` axes.
+
+.. code-block:: python
+
+   sliceNode = slicer.app.layoutManager().sliceWidget("Red").mrmlSliceNode()
+   sliceToRas = sliceNode.GetSliceToRAS()
+   transform=vtk.vtkTransform()
+   transform.SetMatrix(SliceToRAS)
+   transform.RotateX(20)
+   transform.RotateY(15)
+   sliceToRas.DeepCopy(transform.GetMatrix())
+   sliceNode.UpdateMatrices()
+
+Measure angle between two slice planes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Measure angle between red and yellow slice nodes. Whenever any of the slice nodes are moved, the updated angle is printed on the console.
+
+.. code-block:: python
+
+   sliceNodeIds = ["vtkMRMLSliceNodeRed", "vtkMRMLSliceNodeYellow"]
+
+   # Print angles between slice nodes
+   def ShowAngle(unused1=None, unused2=None):
+     sliceNormalVector = []
+     for sliceNodeId in sliceNodeIds:
+       sliceToRAS = slicer.mrmlScene.GetNodeByID(sliceNodeId).GetSliceToRAS()
+       sliceNormalVector.append([sliceToRAS.GetElement(0,2), sliceToRAS.GetElement(1,2), sliceToRAS.GetElement(2,2)])
+     angleRad = vtk.vtkMath.AngleBetweenVectors(sliceNormalVector[0], sliceNormalVector[1])
+     angleDeg = vtk.vtkMath.DegreesFromRadians(angleRad)
+     print("Angle between slice planes = {0:0.3f}".format(angleDeg))
+
+   # Observe slice node changes
+   for sliceNodeId in sliceNodeIds:
+     slicer.mrmlScene.GetNodeByID(sliceNodeId).AddObserver(vtk.vtkCommand.ModifiedEvent, ShowAngle)
+
+   # Print current angle
+   ShowAngle()
+
+Set slice position and orientation from a normal vector and position
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This code snippet shows how to display a slice view defined by a normal vector and position in an anatomically sensible way: rotating slice view so that "up" direction (or "right" direction) is towards an anatomical axis.
+
+.. code-block:: python
+
+   def setSlicePoseFromSliceNormalAndPosition(sliceNode, sliceNormal, slicePosition, defaultViewUpDirection=None, backupViewRightDirection=None):
+     """
+     Set slice pose from the provided plane normal and position. View up direction is determined automatically,
+     to make view up point towards defaultViewUpDirection.
+     :param defaultViewUpDirection Slice view will be spinned in-plane to match point approximately this up direction. Default: patient superior.
+     :param backupViewRightDirection Slice view will be spinned in-plane to match point approximately this right direction
+       if defaultViewUpDirection is too similar to sliceNormal. Default: patient left.
+     """
+     # Fix up input directions
+     if defaultViewUpDirection is None:
+       defaultViewUpDirection = [0,0,1]
+     if backupViewRightDirection is None:
+       backupViewRightDirection = [-1,0,0]
+     if sliceNormal[1]>=0:
+       sliceNormalStandardized = sliceNormal
+     else:
+       sliceNormalStandardized = [-sliceNormal[0], -sliceNormal[1], -sliceNormal[2]]
+     # Compute slice axes
+     sliceNormalViewUpAngle = vtk.vtkMath.AngleBetweenVectors(sliceNormalStandardized, defaultViewUpDirection)
+     angleTooSmallThresholdRad = 0.25 # about 15 degrees
+     if sliceNormalViewUpAngle > angleTooSmallThresholdRad and sliceNormalViewUpAngle < vtk.vtkMath.Pi() - angleTooSmallThresholdRad:
+       viewUpDirection = defaultViewUpDirection
+       sliceAxisY = viewUpDirection
+       sliceAxisX = [0, 0, 0]
+       vtk.vtkMath.Cross(sliceAxisY, sliceNormalStandardized, sliceAxisX)
+     else:
+       sliceAxisX = backupViewRightDirection
+     # Set slice axes
+     sliceNode.SetSliceToRASByNTP(sliceNormalStandardized[0], sliceNormalStandardized[1], sliceNormalStandardized[2],
+       sliceAxisX[0], sliceAxisX[1], sliceAxisX[2],
+       slicePosition[0], slicePosition[1], slicePosition[2], 0)
+
+   # Example usage:
+   sliceNode = getNode("vtkMRMLSliceNodeRed")
+   transformNode = getNode("Transform_3")
+   transformMatrix = vtk.vtkMatrix4x4()
+   transformNode.GetMatrixTransformToParent(transformMatrix)
+   sliceNormal = [transformMatrix.GetElement(0,2), transformMatrix.GetElement(1,2), transformMatrix.GetElement(2,2)]
+   slicePosition = [transformMatrix.GetElement(0,3), transformMatrix.GetElement(1,3), transformMatrix.GetElement(2,3)]
+   setSlicePoseFromSliceNormalAndPosition(sliceNode, sliceNormal, slicePosition)
+
+Show slice views in 3D window
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Equivalent to clicking 'eye' icon in the slice view controller.
+
+.. code-block:: python
+
+   layoutManager = slicer.app.layoutManager()
+   for sliceViewName in layoutManager.sliceViewNames():
+     controller = layoutManager.sliceWidget(sliceViewName).sliceController()
+     controller.setSliceVisible(True)
+
+Change default slice view orientation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can left-right "flip" slice view orientation presets (show patient left side on left/right side of the screen) by copy-pasting the script below to your `.slicerrc.py file <../user_guide/settings.html#application-startup-file>`__.
+
+.. code-block:: python
+
+   # Axial slice axes:
+   #  1 0 0
+   #  0 1 0
+   #  0 0 1
+   axialSliceToRas=vtk.vtkMatrix3x3()
+
+   # Coronal slice axes:
+   #  1 0 0
+   #  0 0 -1
+   #  0 1 0
+   coronalSliceToRas=vtk.vtkMatrix3x3()
+   coronalSliceToRas.SetElement(1,1, 0)
+   coronalSliceToRas.SetElement(1,2, -1)
+   coronalSliceToRas.SetElement(2,1, 1)
+   coronalSliceToRas.SetElement(2,2, 0)
+
+   # Replace orientation presets in all existing slice nodes and in the default slice node
+   sliceNodes = slicer.util.getNodesByClass("vtkMRMLSliceNode")
+   sliceNodes.append(slicer.mrmlScene.GetDefaultNodeByClass("vtkMRMLSliceNode"))
+   for sliceNode in sliceNodes:
+     orientationPresetName = sliceNode.GetOrientation()
+     sliceNode.RemoveSliceOrientationPreset("Axial")
+     sliceNode.AddSliceOrientationPreset("Axial", axialSliceToRas)
+     sliceNode.RemoveSliceOrientationPreset("Coronal")
+     sliceNode.AddSliceOrientationPreset("Coronal", coronalSliceToRas)
+     sliceNode.SetOrientation(orientationPresetName)
+
+Set all slice views linked by default
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can make slice views linked by default (when application starts or the scene is cleared) by copy-pasting the script below to your `.slicerrc.py file <../user_guide/settings.html#application-startup-file>`__.
+
+.. code-block:: python
+
+   # Set linked slice views  in all existing slice composite nodes and in the default node
+   sliceCompositeNodes = slicer.util.getNodesByClass("vtkMRMLSliceCompositeNode")
+   defaultSliceCompositeNode = slicer.mrmlScene.GetDefaultNodeByClass("vtkMRMLSliceCompositeNode")
+   if not defaultSliceCompositeNode:
+     defaultSliceCompositeNode = slicer.mrmlScene.CreateNodeByClass("vtkMRMLSliceCompositeNode")
+     defaultSliceCompositeNode.UnRegister(None)  # CreateNodeByClass is factory method, need to unregister the result to prevent memory leaks
+     slicer.mrmlScene.AddDefaultNode(defaultSliceCompositeNode)
+   sliceCompositeNodes.append(defaultSliceCompositeNode)
+   for sliceCompositeNode in sliceCompositeNodes:
+     sliceCompositeNode.SetLinkedControl(True)
+
+Set crosshair jump mode to centered by default
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can change default slice jump mode (when application starts or the scene is cleared) by copy-pasting the script below to your `.slicerrc.py file <../user_guide/settings.html#application-startup-file>`__.
+
+.. code-block:: python
+
+   crosshair=slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLCrosshairNode")
+   crosshair.SetCrosshairBehavior(crosshair.CenteredJumpSlice)
+
+Set up custom units in slice view ruler
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For microscopy or micro-CT images you may want to switch unit to micrometer instead of the default mm. To do that, 1. change the unit in Application settings / Units and 2. update ruler display settings using the script below (it can be copied to your Application startup script):
+
+.. code-block:: python
+
+   lm = slicer.app.layoutManager()
+   for sliceViewName in lm.sliceViewNames():
+     sliceView = lm.sliceWidget(sliceViewName).sliceView()
+     displayableManager = sliceView.displayableManagerByClassName("vtkMRMLRulerDisplayableManager")
+     displayableManager.RemoveAllRulerScalePresets()
+     displayableManager.AddRulerScalePreset(   0.001, 5, 2, "nm", 1000.0)
+     displayableManager.AddRulerScalePreset(   0.010, 5, 2, "nm", 1000.0)
+     displayableManager.AddRulerScalePreset(   0.100, 5, 2, "nm", 1000.0)
+     displayableManager.AddRulerScalePreset(   0.500, 5, 1, "nm", 1000.0)
+     displayableManager.AddRulerScalePreset(   1.0,   5, 2, "um",    1.0)
+     displayableManager.AddRulerScalePreset(   5.0,   5, 1, "um",    1.0)
+     displayableManager.AddRulerScalePreset(  10.0,   5, 2, "um",    1.0)
+     displayableManager.AddRulerScalePreset(  50.0,   5, 1, "um",    1.0)
+     displayableManager.AddRulerScalePreset( 100.0,   5, 2, "um",    1.0)
+     displayableManager.AddRulerScalePreset( 500.0,   5, 1, "um",    1.0)
+     displayableManager.AddRulerScalePreset(1000.0,   5, 2, "mm",    0.001)
+
+Center the 3D view on the scene
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   layoutManager = slicer.app.layoutManager()
+   threeDWidget = layoutManager.threeDWidget(0)
+   threeDView = threeDWidget.threeDView()
+   threeDView.resetFocalPoint()
+
+Rotate the 3D View
+^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   layoutManager = slicer.app.layoutManager()
+   threeDWidget = layoutManager.threeDWidget(0)
+   threeDView = threeDWidget.threeDView()
+   threeDView.yaw()
+
+Change 3D view background color
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   viewNode = slicer.app.layoutManager().threeDWidget(0).mrmlViewNode()
+   viewNode.SetBackgroundColor(1,0,0)
+   viewNode.SetBackgroundColor2(1,0,0)
+
+Show a slice view outside the view layout
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   # layout name is used to create and identify the underlying slice node and  should be set to a value that is not used in any of the layouts owned by the layout manager
+   layoutName = "TestSlice1"
+   layoutLabel = "TS1"
+   layoutColor = [1.0, 1.0, 0.0]
+   # ownerNode manages this view instead of the layout manager (it can be any node in the scene)
+   viewOwnerNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScriptedModuleNode")
+
+   # Create MRML nodes
+   viewLogic = slicer.vtkMRMLSliceLogic()
+   viewLogic.SetMRMLScene(slicer.mrmlScene)
+   viewNode = viewLogic.AddSliceNode(layoutName)
+   viewNode.SetLayoutLabel(layoutLabel)
+   viewNode.SetLayoutColor(layoutColor)
+   viewNode.SetAndObserveParentLayoutNodeID(viewOwnerNode.GetID())
+
+   # Create widget
+   viewWidget = slicer.qMRMLSliceWidget()
+   viewWidget.setMRMLScene(slicer.mrmlScene)
+   viewWidget.setMRMLSliceNode(viewNode)
+   sliceLogics = slicer.app.applicationLogic().GetSliceLogics()
+   viewWidget.setSliceLogics(sliceLogics)
+   sliceLogics.AddItem(viewWidget.sliceLogic())
+   viewWidget.show()
+
+Show a 3D view outside the view layout
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   # layout name is used to create and identify the underlying view node and  should be set to a value that is not used in any of the layouts owned by the layout manager
+   layoutName = "Test3DView"
+   layoutLabel = "T3"
+   layoutColor = [1.0, 1.0, 0.0]
+   # ownerNode manages this view instead of the layout manager (it can be any node in the scene)
+   viewOwnerNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScriptedModuleNode")
+
+   # Create MRML node
+   viewLogic = slicer.vtkMRMLViewLogic()
+   viewLogic.SetMRMLScene(slicer.mrmlScene)
+   viewNode = viewLogic.AddViewNode(layoutName)
+   viewNode.SetLayoutLabel(layoutLabel)
+   viewNode.SetLayoutColor(layoutColor)
+   viewNode.SetAndObserveParentLayoutNodeID(viewOwnerNode.GetID())
+
+   # Create widget
+   viewWidget = slicer.qMRMLThreeDWidget()
+   viewWidget.setMRMLScene(slicer.mrmlScene)
+   viewWidget.setMRMLViewNode(viewNode)
+   viewWidget.show()
+
+Access VTK rendering classes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Accesss VTK views, renderers, and cameras
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Iterate through all 3D views in current layout:
+
+.. code-block:: python
+
+   layoutManager = slicer.app.layoutManager()
+   for threeDViewIndex in range(layoutManager.threeDViewCount) :
+     view = layoutManager.threeDWidget(threeDViewIndex).threeDView()
+     threeDViewNode = view.mrmlViewNode()
+     cameraNode = slicer.modules.cameras.logic().GetViewActiveCameraNode(threeDViewNode)
+     print("View node for 3D widget " + str(threeDViewIndex))
+     print("  Name: " + threeDViewNode .GetName())
+     print("  ID: " + threeDViewNode .GetID())
+     print("  Camera ID: " + cameraNode.GetID())
+
+Iterate through all slice views in current layout:
+
+.. code-block:: python
+
+   layoutManager = slicer.app.layoutManager()
+   for sliceViewName in layoutManager.sliceViewNames():
+     view = layoutManager.sliceWidget(sliceViewName).sliceView()
+     sliceNode = view.mrmlSliceNode()
+     sliceLogic = slicer.app.applicationLogic().GetSliceLogic(sliceNode)
+     compositeNode = sliceLogic.GetSliceCompositeNode()
+     print("Slice view " + str(sliceViewName))
+     print("  Name: " + sliceNode.GetName())
+     print("  ID: " + sliceNode.GetID())
+     print("  Background volume: {0}".format(compositeNode.GetBackgroundVolumeID()))
+     print("  Foreground volume: {0} (opacity: {1})".format(compositeNode.GetForegroundVolumeID(), compositeNode.GetForegroundOpacity()))
+     print("  Label volume: {0} (opacity: {1})".format(compositeNode.GetLabelVolumeID(), compositeNode.GetLabelOpacity()))
+
+For low-level manipulation of views, it is possible to access VTK render windows, renderers and cameras of views in the current layout.
+
+.. code-block:: python
+
+   renderWindow = view.renderWindow()
+   renderers = renderWindow.GetRenderers()
+   renderer = renderers.GetItemAsObject(0)
+   camera = cameraNode.GetCamera()
+
+Get displayable manager of a certain type for a certain view
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Displayable managers are responsible for creating VTK filters, mappers, and actors to display MRML nodes in renderers. Input to filters and mappers are VTK objects stored in MRML data nodes. Filter and actor properties are set based on display options specified in MRML display nodes.
+
+Accessing displayable managers is useful for troubleshooting or for testing new features that are not exposed via MRML classes yet, as they provide usually allow low-level access to VTK actors.
+
+.. code-block:: python
+
+   threeDViewWidget = slicer.app.layoutManager().threeDWidget(0)
+   modelDisplayableManager = threeDViewWidget.threeDView().displayableManagerByClassName("vtkMRMLModelDisplayableManager")
+   if modelDisplayableManager is None:
+     logging.error("Failed to find the model displayable manager")
+
+Access VTK actor properties
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This example shows how to access and modify VTK actor properties to experiment with physically-based rendering.
+
+.. code-block:: python
+
+   modelNode = slicer.util.getNode("MyModel")
+
+   threeDViewWidget = slicer.app.layoutManager().threeDWidget(0)
+   modelDisplayableManager = threeDViewWidget.threeDView().displayableManagerByClassName("vtkMRMLModelDisplayableManager")
+   actor=modelDisplayableManager.GetActorByID(modelNode.GetDisplayNode().GetID())
+   property=actor.GetProperty()
+   property.SetInterpolationToPBR()
+   property.SetMetallic(0.5)
+   property.SetRoughness(0.5)
+   property.SetColor(0.5,0.5,0.9)
+   slicer.util.forceRenderAllViews()
+
+See more information on physically based rendering in VTK here: https://blog.kitware.com/vtk-pbr/
+
+
+Keyboard shortcuts and mouse gestures
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Customize keyboard shortcuts
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Keyboard shortcuts can be specified for activating any Slicer feature by adding a couple of lines to your `.slicerrc.py file <../user_guide/settings.html#application-startup-file>`__.
+
+For example, this script registers *Ctrl+b*, *Ctrl+n*, *Ctrl+m*, *Ctrl+,* keyboard shortcuts to switch between red, yellow, green, and 4-up view layouts.
+
+.. code-block:: python
+
+   shortcuts = [
+       ("Ctrl+b", lambda: slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSliceView)),
+       ("Ctrl+n", lambda: slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpYellowSliceView)),
+       ("Ctrl+m", lambda: slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpGreenSliceView)),
+       ("Ctrl+,", lambda: slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutFourUpView))
+       ]
+
+   for (shortcutKey, callback) in shortcuts:
+       shortcut = qt.QShortcut(slicer.util.mainWindow())
+       shortcut.setKey(qt.QKeySequence(shortcutKey))
+       shortcut.connect( "activated()", callback)
+
+Here's an example for cycling through Segment Editor effects (requested `on the forum <https://discourse.slicer.org/t/is-there-a-keystroke-to-cycle-through-effects-in-segment-editor/10117/2>`__ for the `SlicerMorph <http://slicermorph.org>`__ project).
+
+.. code-block:: python
+
+   def cycleEffect(delta=1):
+     try:
+       orderedNames = list(slicer.modules.SegmentEditorWidget.editor.effectNameOrder())
+       allNames = slicer.modules.SegmentEditorWidget.editor.availableEffectNames()
+       for name in allNames:
+         try:
+           orderedNames.index(name)
+         except ValueError:
+           orderedNames.append(name)
+       orderedNames.insert(0, None)
+       activeEffect = slicer.modules.SegmentEditorWidget.editor.activeEffect()
+       if activeEffect:
+         activeName = slicer.modules.SegmentEditorWidget.editor.activeEffect().name
+       else:
+         activeName = None
+       newIndex = (orderedNames.index(activeName) + delta) % len(orderedNames)
+       slicer.modules.SegmentEditorWidget.editor.setActiveEffectByName(orderedNames[newIndex])
+     except AttributeError:
+       # module not active
+       pass
+
+   shortcuts = [
+     ("`", lambda: cycleEffect(-1)),
+     ("~", lambda: cycleEffect(1)),
+     ]
+
+   for (shortcutKey, callback) in shortcuts:
+     shortcut = qt.QShortcut(slicer.util.mainWindow())
+     shortcut.setKey(qt.QKeySequence(shortcutKey))
+     shortcut.connect( "activated()", callback)
+
+Customize keyboard/mouse gestures in viewers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Example for making the 3D view rotate using right-click-and-drag:
+
+.. code-block:: python
+
+   threeDViewWidget = slicer.app.layoutManager().threeDWidget(0)
+   cameraDisplayableManager = threeDViewWidget.threeDView().displayableManagerByClassName("vtkMRMLCameraDisplayableManager")
+   cameraWidget = cameraDisplayableManager.GetCameraWidget()
+
+   # Remove old mapping from right-click-and-drag
+   cameraWidget.SetEventTranslationClickAndDrag(cameraWidget.WidgetStateIdle, vtk.vtkCommand.RightButtonPressEvent, vtk.vtkEvent.NoModifier,
+     cameraWidget.WidgetStateRotate, vtk.vtkWidgetEvent.NoEvent, vtk.vtkWidgetEvent.NoEvent)
+
+   # Make right-click-and-drag rotate the view
+   cameraWidget.SetEventTranslationClickAndDrag(cameraWidget.WidgetStateIdle, vtk.vtkCommand.RightButtonPressEvent, vtk.vtkEvent.NoModifier,
+     cameraWidget.WidgetStateRotate, cameraWidget.WidgetEventRotateStart, cameraWidget.WidgetEventRotateEnd)
+
+Disable certain user interactions in slice views
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For example, disable slice browsing using mouse wheel and keyboard shortcuts in the red slice viewer:
+
+.. code-block:: python
+
+   interactorStyle = slicer.app.layoutManager().sliceWidget("Red").sliceView().sliceViewInteractorStyle()
+   interactorStyle.SetActionEnabled(interactorStyle.BrowseSlice, False)
+
+Hide all slice view controllers:
+
+.. code-block:: python
+
+   lm = slicer.app.layoutManager()
+   for sliceViewName in lm.sliceViewNames():
+     lm.sliceWidget(sliceViewName).sliceController().setVisible(False)
+
+Hide all 3D view controllers:
+
+.. code-block:: python
+
+   lm = slicer.app.layoutManager()
+   for viewIndex in range(slicer.app.layoutManager().threeDViewCount):
+     lm.threeDWidget(0).threeDController().setVisible(False)
+
+Add keyboard shortcut to jump to center or world coordinate system
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can copy-paste this into the Python console to jump slice views to (0,0,0) position on (Ctrl+e):
+
+.. code-block:: python
+
+   shortcut = qt.QShortcut(qt.QKeySequence("Ctrl+e"), slicer.util.mainWindow())
+   shortcut.connect("activated()",
+     lambda: slicer.modules.markups.logic().JumpSlicesToLocation(0,0,0, True))
+
+Launch external applications
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+How to run external applications from Slicer.
+
+Launch external process in startup environment
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When a process is launched from Slicer then by default Slicer"s ITK, VTK, Qt, etc. libraries are used. If an external application has its own version of these libraries, then the application is expected to crash. To prevent crashing, the application must be run in the environment where Slicer started up (without all Slicer-specific library paths). This startup environment can be retrieved using :func:`slicer.util.startupEnvironment()`.
+
+Example: run Python3 script from Slicer:
+
+.. code-block:: python
+
+   command_to_execute = ["/usr/bin/python3", "-c", "print("hola")"]
+   from subprocess import check_output
+   check_output(
+     command_to_execute,
+     env=slicer.util.startupEnvironment()
+     )
+
+will output:
+
+.. code-block:: python
+
+   "hola\n"
+
+On some systems, *shell=True* must be specified as well.
+
+Manage extensions
+~~~~~~~~~~~~~~~~~
+
+Download and install extension
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   extensionName = 'SlicerIGT'
+   em = slicer.app.extensionsManagerModel()
+   if not em.isExtensionInstalled(extensionName):
+     extensionMetaData = em.retrieveExtensionMetadataByName(extensionName)
+     url = em.serverUrl().toString()+'/download/item/'+extensionMetaData['item_id']
+     extensionPackageFilename = slicer.app.temporaryPath+'/'+extensionMetaData['md5']
+     slicer.util.downloadFile(url, extensionPackageFilename)
+     em.installExtension(extensionPackageFilename)
+     slicer.util.restart()
+
+Install a module directly from a git repository
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This `code snippet <https://gist.github.com/pieper/a9c0ba57de3833c9f5aea68247bda597>`__ can be useful for sharing code in development without requiring a restart of Slicer.
