@@ -97,6 +97,14 @@ public:
   /// use GetBrowserNodesForSequenceNode instead.
   vtkMRMLSequenceBrowserNode* GetFirstBrowserNodeForSequenceNode(vtkMRMLSequenceNode* sequenceNode);
 
+  /// Get collection of browser nodes that use a specific proxy node.
+  void GetBrowserNodesForProxyNode(vtkMRMLNode* proxyNode, vtkCollection* foundBrowserNodes);
+
+  /// Get first browser node that use a specific proxy node. This is a convenience method for
+  /// cases when it is known that a proxy node is only used in one browser node. In general case,
+  /// use GetBrowserNodesForProxyNode instead.
+  vtkMRMLSequenceBrowserNode* GetFirstBrowserNodeForProxyNode(vtkMRMLNode* proxyNode);
+
 protected:
   vtkSlicerSequencesLogic();
   ~vtkSlicerSequencesLogic() override;
