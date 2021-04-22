@@ -92,7 +92,7 @@ public:
   QAction* DeletePointAction{nullptr};
   QAction* DeleteNodeAction{nullptr};
   QAction* ToggleSelectPointAction{nullptr};
-  QAction* SetTerminologyAction{nullptr};
+  QAction* EditNodeTerminologyAction{nullptr};
   QAction* ToggleCurrentItemHandleInteractive{nullptr};
   QAction* ToggleHandleInteractive{nullptr};
 
@@ -143,9 +143,9 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
   this->ToggleSelectPointAction->setObjectName("ToggleSelectPointAction");
   QObject::connect(this->ToggleSelectPointAction, SIGNAL(triggered()), q, SLOT(toggleSelectPoint()));
 
-  this->SetTerminologyAction = new QAction("Set markup terminology", q);
-  this->SetTerminologyAction->setObjectName("SetTerminologyAction");
-  QObject::connect(this->SetTerminologyAction, SIGNAL(triggered()), q, SLOT(setTerminology()));
+  this->EditNodeTerminologyAction = new QAction("Edit markup terminology...", q);
+  this->EditNodeTerminologyAction->setObjectName("editNodeTerminologyAction");
+  QObject::connect(this->EditNodeTerminologyAction, SIGNAL(triggered()), q, SLOT(editNodeTerminology()));
 
   this->ToggleCurrentItemHandleInteractive = new QAction("Interaction");
   this->ToggleCurrentItemHandleInteractive->setObjectName("ToggleCurrentItemHandleInteractive");
@@ -505,7 +505,7 @@ QList<QAction*> qSlicerSubjectHierarchyMarkupsPlugin::viewContextMenuActions()co
 
   QList<QAction*> actions;
   actions << d->RenamePointAction << d->ToggleSelectPointAction
-    << d->SetTerminologyAction << d->DeletePointAction << d->DeleteNodeAction
+    << d->DeletePointAction << d->DeleteNodeAction << d->EditNodeTerminologyAction
     << d->ToggleHandleInteractive << d->HandleVisibilityAction;
   return actions;
 }
@@ -546,7 +546,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
     d->DeletePointAction->setVisible(!pointActionsDisabled);
     d->DeleteNodeAction->setVisible(true);
     d->ToggleSelectPointAction->setVisible(!pointActionsDisabled);
-    d->SetTerminologyAction->setVisible(!pointActionsDisabled);
+    d->EditNodeTerminologyAction->setVisible(!pointActionsDisabled);
 
     vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(associatedNode->GetDisplayNode());
     d->ToggleHandleInteractive->setVisible(displayNode != nullptr);
@@ -774,7 +774,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::toggleSelectPoint()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyMarkupsPlugin::setTerminology()
+void qSlicerSubjectHierarchyMarkupsPlugin::editNodeTerminology()
 {
   Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
 
@@ -812,6 +812,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::setTerminology()
     qCritical() << Q_FUNC_INFO << ": Failed to get markups node by ID " << nodeID;
     return;
     }
+  // Make sure display node exists to be able to access and set color based on terminology
   markupsNode->CreateDefaultDisplayNodes();
   vtkMRMLDisplayNode* displayNode = markupsNode->GetDisplayNode();
   if (!displayNode)
