@@ -745,3 +745,60 @@ vtkMRMLSequenceBrowserNode* vtkSlicerSequencesLogic::GetFirstBrowserNodeForSeque
     }
   return nullptr;
 }
+
+//---------------------------------------------------------------------------
+void vtkSlicerSequencesLogic::GetBrowserNodesForProxyNode(vtkMRMLNode* proxyNode, vtkCollection* foundBrowserNodes)
+{
+  if (foundBrowserNodes == nullptr)
+    {
+    vtkErrorMacro("foundBrowserNodes is invalid");
+    return;
+    }
+  foundBrowserNodes->RemoveAllItems();
+  if (this->GetMRMLScene() == nullptr)
+    {
+    vtkErrorMacro("Scene is invalid");
+    return;
+    }
+  if (proxyNode == nullptr || proxyNode->GetID() == nullptr)
+    {
+    vtkErrorMacro("proxyNode is invalid");
+    return;
+    }
+  std::vector< vtkMRMLNode* > browserNodes;
+  this->GetMRMLScene()->GetNodesByClass("vtkMRMLSequenceBrowserNode", browserNodes);
+  for (std::vector< vtkMRMLNode* >::iterator browserNodeIt = browserNodes.begin(); browserNodeIt != browserNodes.end(); ++browserNodeIt)
+    {
+    vtkMRMLSequenceBrowserNode* browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(*browserNodeIt);
+    if (browserNode->IsProxyNodeID(proxyNode->GetID()))
+      {
+      foundBrowserNodes->AddItem(browserNode);
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLSequenceBrowserNode* vtkSlicerSequencesLogic::GetFirstBrowserNodeForProxyNode(vtkMRMLNode* proxyNode)
+{
+  if (this->GetMRMLScene() == nullptr)
+    {
+    vtkErrorMacro("Scene is invalid");
+    return nullptr;
+    }
+  if (proxyNode == nullptr || proxyNode->GetID() == nullptr)
+    {
+    vtkErrorMacro("proxyNode is invalid");
+    return nullptr;
+    }
+  std::vector< vtkMRMLNode* > browserNodes;
+  this->GetMRMLScene()->GetNodesByClass("vtkMRMLSequenceBrowserNode", browserNodes);
+  for (std::vector< vtkMRMLNode* >::iterator browserNodeIt = browserNodes.begin(); browserNodeIt != browserNodes.end(); ++browserNodeIt)
+    {
+    vtkMRMLSequenceBrowserNode* browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(*browserNodeIt);
+    if (browserNode->IsProxyNodeID(proxyNode->GetID()))
+      {
+      return browserNode;
+      }
+    }
+  return nullptr;
+}
