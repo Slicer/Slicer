@@ -66,8 +66,11 @@ Readers may support 2D, 3D, and 4D images of various types, such as scalar, vect
 - [SlicerRT extension](http://www.slicerrt.org/)
   - **Vista cone beam optical scanner volume** (.vff)
   - **DOSXYZnrc 3D dose** (.3ddose)
-- [SlicerHeart extension](https://github.com/SlicerHeart/SlicerHeart): 2D/3D/4D ultrasound (GE, Philips, Eigen Artemis, and other)
+- [SlicerHeart extension](https://github.com/SlicerHeart/SlicerHeart): 2D/3D/4D ultrasound (GE, Philips, Eigen Artemis, and other; reading only)
+  - **Philips 4D ultrasound**: from Cartesian DICOM exported from QLab
   - **GE Kretz 3D ultrasound** (.vol, .v01)
+  - **Eigen Artemis 3D ultrasound**
+  - Any 3D/4D ultrasound image and ECG signal: if the user obtains [Image3dAPI](https://github.com/SlicerHeart/SlicerHeart#open-image3d-api) plugin from the vendor (GE Voluson, Philips, Siemens, etc.)
 - [RawImageGuess extension](https://github.com/acetylsalicyl/SlicerRawImageGuess)
   - **RAW volume** (.raw): requires manual setting of header parameters
   - **Samsung 3D ultrasound** (.mvl): requires manual setting of header parameters
@@ -90,7 +93,9 @@ Surface or volumetric meshes.
 - **UCD** (.ucd; reading only): Coordinate system: LPS.
 - **ITK meta** (.meta; reading only): Coordinate system: LPS.
 - [FreeSurfer extension](https://github.com/PerkLab/SlicerFreeSurfer):
-  - **Freesurfer surfaces** (.orig, .inflated, .sphere, .white, .smoothwm, .pial; read-only)
+  - **Freesurfer surfaces** (.orig, .inflated, .sphere, .white, .smoothwm, .pial; reading only)
+- [SlicerHeart extension](https://github.com/SlicerHeart/SlicerHeart:
+  - **CARTO surface model** (.vtk; writing only): special .vtk polydata file format variant, which contains patient name and ID to allow import into CARTO cardiac electrophysiology mapping systems
 
 ### Segmentations
 
