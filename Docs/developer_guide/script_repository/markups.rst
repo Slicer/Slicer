@@ -488,7 +488,7 @@ Change color of a markups node
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Markups have ``Color`` and ``SelectedColor`` properties. ``SelectedColor`` is used if all control points are in "selected" state, which is the default. So, in most cases ``SetSelectedColor`` method must be used to change markups node color.
-   
+
 Display list of control points in my module's GUI
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -568,7 +568,7 @@ Use markups json files in Python - outside Slicer
 
 The examples below show how to use markups json files outside Slicer, in any Python environment.
 
-To access content of a json file it can be either read as a json document or directly into a `pandas <https://pandas.pydata.org/>`__ dataframe using a single command. 
+To access content of a json file it can be either read as a json document or directly into a `pandas <https://pandas.pydata.org/>`__ dataframe using a single command.
 
 Get a table of control point labels and positions
 '''''''''''''''''''''''''''''''''''''''''''''''''
@@ -614,3 +614,55 @@ Resulting csv file:
    0,F-1,-53.388409961685824,-73.33572796934868,0.0
    1,F-2,49.8682950191571,-88.58955938697324,0.0
    2,F-3,-25.22749042145594,59.255268199233726,0.0
+
+Assign custom actions to markups
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Custom actions can be assigned to markups, which can be triggered by any interaction event (mouse or keyboard action). The actions can be detected by adding observers to the markup node's display node.
+
+.. code-block:: python
+
+   # This example adds an action to the default double-click action on a markup
+   # and defines two new custom actions. It is done for all existing markups in the first 3D view.
+   #
+   # How to use:
+   # 1. Create markups nodes.
+   # 2. Run the script below.
+   # 3. Double-click on the markup -> this triggers toggleLabelVisibilty.
+   # 4. Hover the mouse over a markup then pressing `q` and `w` keys -> this triggers shrinkControlPoints and growControlPoints.
+
+   threeDViewWidget = slicer.app.layoutManager().threeDWidget(0)
+   markupsDisplayableManager = threeDViewWidget.threeDView().displayableManagerByClassName('vtkMRMLMarkupsDisplayableManager')
+
+   def shrinkControlPoints(caller, eventId):
+       markupsDisplayNode = caller
+       markupsDisplayNode.SetGlyphScale(markupsDisplayNode.GetGlyphScale()/1.1)
+
+   def growControlPoints(caller, eventId):
+       markupsDisplayNode = caller
+       markupsDisplayNode.SetGlyphScale(markupsDisplayNode.GetGlyphScale()*1.1)
+
+   def toggleLabelVisibility(caller, eventId):
+       markupsDisplayNode = caller
+       markupsDisplayNode.SetPointLabelsVisibility(not markupsDisplayNode.GetPointLabelsVisibility())
+
+   observations = []  # store the observations so that later can be removed
+   markupsDisplayNodes = slicer.util.getNodesByClass("vtkMRMLMarkupsDisplayNode")
+   for markupsDisplayNode in markupsDisplayNodes:
+       # Assign keyboard shortcut to trigger custom actions
+       markupsWidget = markupsDisplayableManager.GetWidget(markupsDisplayNode)
+       # Left double-click interaction event is translated to markupsWidget.WidgetEventAction by default,
+       # therefore we don't need to add an event translation for that. We just add two keyboard event translation for two custom actions
+       markupsWidget.SetKeyboardEventTranslation(markupsWidget.WidgetStateOnWidget, vtk.vtkEvent.NoModifier, '\0', 0, "q", markupsWidget.WidgetEventCustomAction1)
+       markupsWidget.SetKeyboardEventTranslation(markupsWidget.WidgetStateOnWidget, vtk.vtkEvent.NoModifier, '\0', 0, "w", markupsWidget.WidgetEventCustomAction2)
+       # Add observer to custom actions
+       observations.append([markupsDisplayNode, markupsDisplayNode.AddObserver(markupsDisplayNode.ActionEvent, toggleLabelVisibility)])
+       observations.append([markupsDisplayNode, markupsDisplayNode.AddObserver(markupsDisplayNode.CustomActionEvent1, shrinkControlPoints)])
+       observations.append([markupsDisplayNode, markupsDisplayNode.AddObserver(markupsDisplayNode.CustomActionEvent2, growControlPoints)])
+
+Remove observations when custom actions are not needed anymore by uncommenting these lines:
+
+.. code-block:: python
+
+   for observedNode, observation in observations:
+       observedNode.RemoveObserver(observation)
