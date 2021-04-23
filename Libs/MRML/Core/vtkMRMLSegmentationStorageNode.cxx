@@ -26,6 +26,7 @@
 #include "vtkOrientedImageDataResample.h"
 
 // MRML includes
+#include "vtkMRMLMessageCollection.h"
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLScene.h>
 #include "vtkMRMLSegmentationNode.h"
@@ -248,7 +249,8 @@ int vtkMRMLSegmentationStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(refNode);
   if (!segmentationNode)
     {
-    vtkErrorMacro("ReadDataInternal: Reference node is not a segmentation node");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadDataInternal",
+      "Node for storing reading result (" << (this->ID ? this->ID : "(unknown)") << ") is not a valid segmentation node.");
     return 0;
     }
 
@@ -257,14 +259,16 @@ int vtkMRMLSegmentationStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
     {
-    vtkErrorMacro("ReadDataInternal: File name not specified");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadDataInternal",
+      "Filename is not specified (" << (this->ID ? this->ID : "(unknown)") << ").");
     return 0;
     }
 
   // Check that the file exists
   if (vtksys::SystemTools::FileExists(fullName.c_str()) == false)
     {
-    vtkErrorMacro("ReadDataInternal: segmentation file '" << fullName.c_str() << "' not found.");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadDataInternal",
+      "Segmentation file '" << fullName.c_str() << "' is not found while trying to read node (" << (this->ID ? this->ID : "(unknown)") << ").");
     return 0;
     }
 
@@ -294,7 +298,9 @@ int vtkMRMLSegmentationStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   if (!success)
     {
     // Failed to read
-    vtkErrorMacro("ReadDataInternal: File " << fullName << " could not be read neither as labelmap nor poly data");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadDataInternal",
+      "File '" << fullName << "' could not be read neither as labelmap nor polydata"
+      << " while trying to read node (" << (this->ID ? this->ID : "(unknown)") << ").");
     return 0;
     }
 
@@ -307,14 +313,16 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation4DSpatial(vt
 {
   if (!vtksys::SystemTools::FileExists(path.c_str()))
     {
-    vtkErrorMacro("ReadBinaryLabelmapRepresentation: Input file " << path << " does not exist!");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation4DSpatial",
+      "Input file " << path << " does not exist.");
     return 0;
     }
 
   // Set up output segmentation
   if (!segmentationNode || segmentationNode->GetSegmentation()->GetNumberOfSegments() > 0)
     {
-    vtkErrorMacro("ReadBinaryLabelmapRepresentation: Output segmentation must exist and must be empty!");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation4DSpatial",
+      "Output segmentation must exist and must be empty.");
     return 0;
     }
   vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
@@ -506,14 +514,16 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
 {
   if (!vtksys::SystemTools::FileExists(path.c_str()))
     {
-    vtkErrorMacro("ReadBinaryLabelmapRepresentation: Input file " << path << " does not exist!");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation",
+      "Input file " << path << " does not exist.");
     return 0;
     }
 
   // Set up output segmentation
   if (!segmentationNode || segmentationNode->GetSegmentation()->GetNumberOfSegments() > 0)
     {
-    vtkErrorMacro("ReadBinaryLabelmapRepresentation: Output segmentation must exist and must be empty!");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation",
+      "Output segmentation must exist and must be empty.");
     return 0;
     }
   vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
@@ -540,10 +550,13 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
   if (archetypeImageReader->CanReadFile(path.c_str()))
     {
     // Read the volume
+    this->GetUserMessages()->SetObservedObject(archetypeImageReader);
     archetypeImageReader->Update();
+    this->GetUserMessages()->SetObservedObject(nullptr);
     if (archetypeImageReader->GetErrorCode() != vtkErrorCode::NoError)
       {
-      vtkErrorMacro("ReadBinaryLabelmapRepresentation: Error reading image!");
+      vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation",
+        "Error reading image.");
       return 0;
       }
 
@@ -622,7 +635,8 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
 
   if (imageData == nullptr)
     {
-    vtkErrorMacro("vtkMRMLVolumeSequenceStorageNode::ReadDataInternal: invalid image data");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation",
+      "Error reading image: invalid image data.");
     return 0;
     }
   int numberOfFrames = imageData->GetNumberOfScalarComponents();
@@ -762,7 +776,8 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
             }
           else
             {
-            vtkWarningMacro("Segment extent is missing for segment " << segmentIndex);
+            vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation",
+              "Segment extent is missing for segment " << segmentIndex);
             for (int i = 0; i < 6; i++)
               {
               currentSegmentExtent[i] = imageExtentInFile[i];
@@ -813,7 +828,8 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
     vtkSegment* currentSegment = segments[segmentIndex];
     if (!currentSegment)
       {
-      vtkErrorMacro("Could not find segment" << segmentIndex);
+      vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation",
+        "Could not find segment" << segmentIndex);
       continue;
       }
 
@@ -841,7 +857,8 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
           }
 
         currentSegmentID = segmentation->GenerateUniqueSegmentID("Segment");
-        vtkWarningMacro("Segment ID is missing for segment " << segmentIndex << " adding segment with ID: " << currentSegmentID);
+        vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation",
+          "Segment ID is missing for segment " << segmentIndex << " adding segment with ID: " << currentSegmentID);
         }
 
       // Name
@@ -852,7 +869,8 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
         }
       else
         {
-        vtkWarningMacro("Segment name is missing for segment " << segmentIndex);
+        vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation",
+          "Segment name is missing for segment " << segmentIndex);
         currentSegment->SetName(currentSegmentID.c_str());
         }
       }
@@ -890,14 +908,16 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
 {
   if (!vtksys::SystemTools::FileExists(path.c_str()))
     {
-    vtkErrorMacro("ReadPolyDataRepresentation: Input file " << path << " does not exist!");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation",
+      "ReadPolyDataRepresentation: Input file " << path << " does not exist.");
     return 0;
     }
 
   // Set up output segmentation
   if (!segmentationNode || segmentationNode->GetSegmentation()->GetNumberOfSegments() > 0)
     {
-    vtkErrorMacro("ReadPolyDataRepresentation: Output segmentation must exist and must be empty!");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation",
+      "Output segmentation must exist and must be empty.");
     return 0;
     }
   vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
@@ -912,7 +932,8 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
   vtkMultiBlockDataSet* multiBlockDataset = vtkMultiBlockDataSet::SafeDownCast(reader->GetOutput());
   if (!multiBlockDataset || multiBlockDataset->GetNumberOfBlocks()==0)
     {
-    vtkErrorMacro("ReadPolyDataRepresentation: Failed to read file " << path);
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation",
+      "ReadPolyDataRepresentation: Failed to read file " << path);
     return 0;
     }
 
@@ -928,7 +949,8 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
     vtkPolyData* currentPolyData = vtkPolyData::SafeDownCast(multiBlockDataset->GetBlock(blockIndex));
     if (!currentPolyData)
       {
-      vtkErrorMacro("ReadPolyDataRepresentation: Could not read block " << blockIndex);
+      vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation",
+        "Could not read block " << blockIndex);
       continue;
       }
 
@@ -940,7 +962,8 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
         currentPolyData->GetFieldData()->GetAbstractArray(GetSegmentationMetaDataKey(KEY_SEGMENTATION_MASTER_REPRESENTATION).c_str()));
       if (!masterRepresentationArray)
         {
-        vtkErrorMacro("ReadPolyDataRepresentation: Unable to find master representation for segmentation in file " << path);
+        vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation",
+          "Unable to find master representation for segmentation in file " << path);
         return 0;
         }
       masterRepresentationName = masterRepresentationArray->GetValue(0);
@@ -978,7 +1001,8 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
       }
     else
       {
-      vtkWarningMacro("ReadPolyDataRepresentation: Segment ID property not found when reading segment " << blockIndex << " from file " << path);
+      vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation",
+        "Segment ID property not found when reading segment " << blockIndex << " from file " << path);
       }
 
     std::string currentSegmentName;
@@ -990,7 +1014,8 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
       }
     else
       {
-      vtkWarningMacro("ReadPolyDataRepresentation: Segment Name property not found when reading segment " << blockIndex << " from file " << path);
+      vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation",
+        "Segment Name property not found when reading segment " << blockIndex << " from file " << path);
       std::stringstream ssCurrentSegmentName;
       ssCurrentSegmentName << "Segment " << blockIndex;
       currentSegmentName = ssCurrentSegmentName.str();
@@ -1012,7 +1037,8 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
       }
     else
       {
-      vtkWarningMacro("ReadPolyDataRepresentation: Segment color property not found when reading segment " << blockIndex << " from file " << path);
+      vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation",
+        "Segment color property not found when reading segment " << blockIndex << " from file " << path);
       }
     currentSegment->SetColor(color);
 
@@ -1070,20 +1096,23 @@ int vtkMRMLSegmentationStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
     {
-    vtkErrorMacro("vtkMRMLModelNode: File name not specified");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteDataInternal",
+      "File name not specified");
     return 0;
     }
 
   vtkMRMLSegmentationNode *segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(refNode);
   if (segmentationNode == nullptr)
     {
-    vtkErrorMacro("Segmentation node expected. Unable to write node to file.");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteDataInternal",
+      "Segmentation node expected. Unable to write node to file.");
     return 0;
     }
 
   if (segmentationNode->GetSegmentation() == nullptr)
     {
-    vtkErrorMacro("Segmentation node does not contain segmentation object. Unable to write node to file.");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteDataInternal",
+      "Segmentation node does not contain segmentation object. Unable to write node to file.");
     return 0;
     }
 
@@ -1097,7 +1126,8 @@ int vtkMRMLSegmentationStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     return this->WritePolyDataRepresentation(segmentationNode, fullName);
     }
 
-  vtkErrorMacro("Segmentation master representation " << segmentationNode->GetSegmentation()->GetMasterRepresentationName()
+  vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteDataInternal",
+    "Segmentation master representation " << segmentationNode->GetSegmentation()->GetMasterRepresentationName()
     << " cannot be written to file");
   return 0;
 }
@@ -1107,7 +1137,8 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
 {
   if (!segmentationNode)
     {
-    vtkErrorMacro("WriteBinaryLabelmapRepresentation: Invalid segmentation to write to disk");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation",
+      "Invalid segmentation to write to disk");
     return 0;
     }
   vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
@@ -1116,7 +1147,8 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
   // Get and check master representation
   if (!segmentationNode->GetSegmentation()->IsMasterRepresentationImageData())
     {
-    vtkErrorMacro("WriteBinaryLabelmapRepresentation: Invalid master representation to write as image data");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation",
+      "Invalid master representation to write as image data");
     return 0;
     }
 
@@ -1219,7 +1251,8 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
       currentSegment->GetRepresentation(segmentationNode->GetSegmentation()->GetMasterRepresentationName()));
     if (!currentBinaryLabelmap)
       {
-      vtkErrorMacro("WriteBinaryLabelmapRepresentation: Failed to retrieve master representation from segment " << currentSegmentID);
+      vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation",
+        "Failed to retrieve master representation from segment " << currentSegmentID);
       continue;
       }
 
@@ -1249,7 +1282,8 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
         currentBinaryLabelmap, commonGeometryImage, resampledCurrentBinaryLabelmap);
       if (!success)
         {
-        vtkWarningMacro("WriteBinaryLabelmapRepresentation: Segment " << currentSegmentID << " cannot be resampled to common geometry!");
+        vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation",
+          "Segment " << currentSegmentID << " cannot be resampled to common geometry");
         continue;
         }
 
@@ -1303,6 +1337,7 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
 
     } // For each segment
 
+  this->GetUserMessages()->SetObservedObject(writer);
   if (segmentationNode->GetSegmentation()->GetNumberOfSegments() > 0)
     {
     appender->Update();
@@ -1317,14 +1352,16 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
     }
 
   writer->Write();
-  int writeFlag = 1;
+  this->GetUserMessages()->SetObservedObject(nullptr);
+  int writeSuccess = true;
   if (writer->GetWriteError())
     {
-    vtkErrorMacro("ERROR writing NRRD file " << (writer->GetFileName() == nullptr ? "null" : writer->GetFileName()));
-    writeFlag = 0;
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation",
+      "Error writing NRRD file " << (writer->GetFileName() == nullptr ? "null" : writer->GetFileName()));
+    writeSuccess = false;
     }
 
-  return writeFlag;
+  return (writeSuccess ? 1 : 0);
 }
 
 //----------------------------------------------------------------------------
@@ -1332,7 +1369,8 @@ int vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation(vtkMRMLSegmentat
 {
   if (!segmentationNode || segmentationNode->GetSegmentation()->GetNumberOfSegments() == 0)
     {
-    vtkErrorMacro("WritePolyDataRepresentation: Invalid segmentation to write to disk");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation",
+      "Invalid segmentation to write to disk");
     return 0;
     }
   vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
@@ -1340,7 +1378,8 @@ int vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation(vtkMRMLSegmentat
   // Get and check master representation
   if (!segmentationNode->GetSegmentation()->IsMasterRepresentationPolyData())
     {
-    vtkErrorMacro("WritePolyDataRepresentation: Invalid master representation to write as poly data");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation",
+      "Invalid master representation to write as poly data");
     return 0;
     }
 
@@ -1362,7 +1401,8 @@ int vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation(vtkMRMLSegmentat
       segmentationNode->GetSegmentation()->GetMasterRepresentationName()));
     if (!currentPolyData)
       {
-      vtkErrorMacro("WritePolyDataRepresentation: Failed to retrieve master representation from segment " << currentSegmentID);
+      vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation",
+        "Failed to retrieve master representation from segment " << currentSegmentID);
       continue;
       }
     // Make temporary duplicate of the poly data so that adding the metadata does not cause invalidating the other
@@ -1464,7 +1504,10 @@ int vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation(vtkMRMLSegmentat
     writer->SetDataModeToAscii();
     writer->SetCompressorTypeToNone();
     }
+
+  this->GetUserMessages()->SetObservedObject(writer);
   writer->Write();
+  this->GetUserMessages()->SetObservedObject(nullptr);
 
   // Add all files to storage node (multiblock dataset writes segments to individual files in a separate folder)
   this->AddPolyDataFileNames(path, segmentation);
@@ -1477,7 +1520,7 @@ void vtkMRMLSegmentationStorageNode::AddPolyDataFileNames(std::string path, vtkS
 {
   if (!segmentation)
     {
-    vtkErrorMacro("AddPolyDataFileNames: Invalid segmentation!");
+    vtkErrorMacro("AddPolyDataFileNames: Invalid segmentation");
     return;
     }
 
@@ -1500,7 +1543,7 @@ std::string vtkMRMLSegmentationStorageNode::SerializeContainedRepresentationName
 {
   if (!segmentation)
     {
-    vtkErrorMacro("SerializeContainedRepresentationNames: Invalid segmentation!");
+    vtkErrorMacro("SerializeContainedRepresentationNames: Invalid segmentation");
     return "";
     }
 
@@ -1521,7 +1564,7 @@ void vtkMRMLSegmentationStorageNode::CreateRepresentationsBySerializedNames(vtkS
 {
   if (!segmentation)
     {
-    vtkErrorMacro("CreateRepresentationsBySerializedNames: Invalid segmentation!");
+    vtkErrorMacro("CreateRepresentationsBySerializedNames: Invalid segmentation");
     return;
     }
   if (segmentation->GetNumberOfSegments() == 0)

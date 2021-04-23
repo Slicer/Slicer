@@ -165,21 +165,24 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   vtkMRMLModelNode *modelNode = dynamic_cast <vtkMRMLModelNode *> (refNode);
   if (!modelNode)
     {
-    vtkErrorMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): refNode is not a valid mode node");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
+      "Node for storing reading result (" << (this->ID ? this->ID : "(unknown)") << ") is not a valid model node.");
     return 0;
     }
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
     {
-    vtkErrorMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): File name not specified");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
+      "Filename is not specified (" << (this->ID ? this->ID : "(unknown)") << ").");
     return 0;
     }
 
   // check that the file exists
   if (vtksys::SystemTools::FileExists(fullName.c_str()) == false)
     {
-    vtkErrorMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): model file '" << fullName.c_str() << "' not found.");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
+      "Model file '" << fullName.c_str() << "' is not found while trying to read node (" << (this->ID ? this->ID : "(unknown)") << ").");
     return 0;
     }
 
@@ -187,7 +190,8 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
   if( extension.empty() )
     {
-    vtkErrorMacro("ReadData: no file extension specified: " << fullName.c_str());
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
+      "Model file '" << fullName.c_str() << "' has no file extension while trying to read node (" << (this->ID ? this->ID : "(unknown)") << ").");
     return 0;
     }
 
