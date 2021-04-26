@@ -853,7 +853,7 @@ void qMRMLNodeComboBox::setCurrentNodeID(const QString& nodeID)
     // it (in popup()), however we want the view to be always synchronized
     // with the currentIndex as we use it to know if it has changed. This is
     // why we set it here.
-    QModelIndex noneIndex = sceneIndex.child(0, d->ComboBox->modelColumn());
+    const QModelIndex &noneIndex = d->ComboBox->model()->index(0, d->ComboBox->modelColumn(), sceneIndex);
     d->ComboBox->view()->setCurrentIndex(
       d->NoneEnabled ? noneIndex : sceneIndex);
     d->ComboBox->setCurrentIndex(d->NoneEnabled ? 0 : -1);

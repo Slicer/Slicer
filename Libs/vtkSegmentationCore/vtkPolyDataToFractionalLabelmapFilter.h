@@ -93,7 +93,7 @@ public:
   using Superclass::SetOutputOrigin;
   void SetOutputOrigin(const double origin[3]) override;
 #else
-  void SetOutputOrigin(double origin[3]);
+  void SetOutputOrigin(double origin[3]) override;
 #endif
   void SetOutputOrigin(double x, double y, double z) override;
 
@@ -105,7 +105,7 @@ public:
   using Superclass::SetOutputSpacing;
   void SetOutputSpacing(const double spacing[3]) override;
 #else
-  void SetOutputSpacing(double spacing[3]);
+  void SetOutputSpacing(double spacing[3]) override;
 #endif
   void SetOutputSpacing(double x, double y, double z) override;
 

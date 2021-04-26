@@ -64,20 +64,20 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem *download)
     {
     // start the download into Slicer's temp directory
     qDebug() << "Load...";
-    QString fileName = QFileInfo(download->path()).fileName();
+    QString fileName = QFileInfo(download->downloadFileName()).fileName();
     QDir directory = QDir(qSlicerCoreApplication::application()->temporaryPath());
-    download->setPath(QFileInfo(directory, fileName).absoluteFilePath());
+    download->setDownloadFileName(QFileInfo(directory, fileName).absoluteFilePath());
     }
   else if (messageBox->clickedButton() == saveButton)
     {
     qDebug() << "Save...";
-    QString filePath = QFileDialog::getSaveFileName(this, tr("Save File"), download->path());
+    QString filePath = QFileDialog::getSaveFileName(this, tr("Save File"), download->downloadFileName());
     if (filePath.isEmpty())
       {
       download->cancel();
       return;
       }
-    download->setPath(filePath);
+    download->setDownloadFileName(filePath);
     this->show();
   } else if (messageBox->clickedButton() == abortlButton) {
       qDebug() << "Cancel download...";
@@ -85,7 +85,7 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem *download)
       return;
   }
 
-  qDebug() << "Saving to " << download->path();
+  qDebug() << "Saving to " << download->downloadFileName();
   download->accept();
   this->show();
 
@@ -96,7 +96,7 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem *download)
   this->setLayout(layout);
 
   QLabel *label = new QLabel();
-  label->setText(QString("Downloading %1").arg(QFileInfo(download->path()).fileName()));
+  label->setText(QString("Downloading %1").arg(QFileInfo(download->downloadFileName()).fileName()));
   layout->addWidget(label);
 
   QProgressBar *progressBar = new QProgressBar();
@@ -129,7 +129,7 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem *download)
     if (messageBox->clickedButton() == loadButton)
       {
       qSlicerDataDialog *dataDialog = new qSlicerDataDialog(this->parent());
-      dataDialog->addFile(download->path());
+      dataDialog->addFile(download->downloadFileName());
       dataDialog->exec();
       }
     else

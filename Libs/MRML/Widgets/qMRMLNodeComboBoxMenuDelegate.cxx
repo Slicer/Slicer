@@ -43,7 +43,7 @@ void qMRMLNodeComboBoxMenuDelegate::paint(QPainter *painter,
 {
     QStyleOptionMenuItem opt = this->getStyleOption(option, index);
 #ifndef Q_WS_S60
-    painter->fillRect(option.rect, opt.palette.background());
+    painter->fillRect(option.rect, opt.palette.window());
 #endif
     this->mCombo->style()->drawControl(QStyle::CE_MenuItem, &opt, painter,
                                        this->mCombo);

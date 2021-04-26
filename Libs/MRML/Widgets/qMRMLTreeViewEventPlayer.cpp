@@ -34,7 +34,7 @@
 QModelIndex qMRMLTreeViewEventPlayerGetIndex(const QString& str_index,
   QTreeView* treeView, bool &error)
 {
-  QStringList indices = str_index.split(".",QString::SkipEmptyParts);
+  QStringList indices = str_index.split(".",Qt::SkipEmptyParts);
   QModelIndex index;
   for (int cc=0; (cc+1) < indices.size(); cc+=2)
     {

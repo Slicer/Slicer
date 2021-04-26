@@ -85,7 +85,7 @@ QStandardItem* qMRMLSceneCategoryModel::itemFromCategory(const QString& category
 //------------------------------------------------------------------------------
 int qMRMLSceneCategoryModel::categoryCount()const
 {
-  return this->match(this->mrmlSceneIndex().child(0,0),
+  return this->match(this->index(0,0,this->mrmlSceneIndex()),
                      qMRMLSceneModel::UIDRole,
                      QString("category"),
                      -1,
@@ -102,7 +102,7 @@ QStandardItem* qMRMLSceneCategoryModel::insertCategory(const QString& category, 
   categoryItems << new QStandardItem;
   this->updateItemFromCategory(categoryItems[0], category);
   categoryItems << new QStandardItem;
-  categoryItems[1]->setFlags(nullptr);
+  categoryItems[1]->setFlags(Qt::NoItemFlags);
 
   this->mrmlSceneItem()->insertRow(row, categoryItems);
   Q_ASSERT(this->mrmlSceneItem()->columnCount() == 2);

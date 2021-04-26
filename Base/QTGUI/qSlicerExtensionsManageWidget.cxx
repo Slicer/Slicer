@@ -375,7 +375,7 @@ public:
       int margin = this->margin() * 2;
       if (!this->ExtensionId.isEmpty())
         {
-        margin += this->fontMetrics().width(" More");
+        margin += this->fontMetrics().horizontalAdvance(" More");
         }
       this->prepareText(
         this->fontMetrics().elidedText(this->ExtensionDescription,
