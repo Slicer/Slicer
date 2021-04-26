@@ -370,6 +370,22 @@ You can get 3D (RAS) coordinates of the current mouse cursor from the crosshair 
    crosshairNode=slicer.util.getNode("Crosshair")
    crosshairNode.AddObserver(slicer.vtkMRMLCrosshairNode.CursorPositionModifiedEvent, onMouseMoved)
 
+Display crosshair at a 3D position
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   position_RAS = [23.4, 5.6, 78.9]
+   crosshairNode = slicer.util.getNode("Crosshair")
+   # Set crosshair position
+   crosshairNode.SetCrosshairRAS(position_RAS)
+   # Center the position in all slice views
+   slicer.vtkMRMLSliceNode.JumpAllSlices(slicer.mrmlScene, *position_RAS, slicer.vtkMRMLSliceNode.CenteredJumpSlice)
+   
+.. note::
+
+   Crosshair node stores two positions: Cursor position is the current position of the mouse pointer in a slice or 3D view (modules should only read this position). Crosshair position is the location of the visible crosshair in views (modules can read or write this position).
+
 Display mouse pointer coordinates in alternative coordinate system
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
