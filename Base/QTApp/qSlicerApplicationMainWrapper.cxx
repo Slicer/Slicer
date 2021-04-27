@@ -21,14 +21,32 @@
 // Slicer includes
 #include "vtkSlicerConfigure.h"
 
+#ifdef _WIN32
+
+#include <shobjidl_core.h>
+#include <vtksys/Encoding.hxx>
+void SetAppUserModelID()
+{
+  // Set AppUserModelID to group Slicer windows under the same icon on the taskbar.
+  // It allows pinning the Slicer application launcher to the taskbar (instead SlicerApp-real
+  // which is not suitable for starting the application).
+  // The same ID is set in the launcher's shortcut in SlicerCPack.cmake.
+  std::wstring aumid = vtksys::Encoding::ToWide(Slicer_WIN32_APP_USER_MODEL_ID);
+  SetCurrentProcessExplicitAppUserModelID(aumid.c_str());
+}
+
+#endif
+
 #if defined (_WIN32) && !defined (Slicer_BUILD_WIN32_CONSOLE)
 # include <windows.h>
-# include <vtksys/Encoding.hxx>
 
 int __stdcall WinMain(HINSTANCE hInstance,
                       HINSTANCE hPrevInstance,
                       LPSTR lpCmdLine, int nShowCmd)
 {
+#ifdef _WIN32
+  SetAppUserModelID();
+#endif
   Q_UNUSED(hInstance);
   Q_UNUSED(hPrevInstance);
   Q_UNUSED(nShowCmd);
@@ -53,6 +71,9 @@ int __stdcall WinMain(HINSTANCE hInstance,
 #else
 int main(int argc, char *argv[])
 {
+#ifdef _WIN32
+  SetAppUserModelID();
+#endif
   return SlicerAppMain(argc, argv);
 }
 #endif

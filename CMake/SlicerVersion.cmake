@@ -150,3 +150,11 @@ if(NOT "${Slicer_MAIN_PROJECT_APPLICATION_NAME}" STREQUAL "Slicer")
   message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} version [${Slicer_MAIN_PROJECT_VERSION_FULL}]")
   message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} revision [${Slicer_MAIN_PROJECT_REVISION}]")
 endif()
+
+#-----------------------------------------------------------------------------
+# Set AppUserModelID for Windows taskbar grouping and pinning
+#-----------------------------------------------------------------------------
+if(WIN32)
+  set(Slicer_WIN32_APP_USER_MODEL_ID ${Slicer_ORGANIZATION_NAME}.${Slicer_MAIN_PROJECT_APPLICATION_NAME}.${Slicer_MAIN_PROJECT_VERSION_FULL})
+  message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} AppUserModelID for Windows [${Slicer_WIN32_APP_USER_MODEL_ID}]")
+endif()
