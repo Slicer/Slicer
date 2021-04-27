@@ -53,7 +53,6 @@
 
 // Makrups vtk widgets includes
 #include "vtkSlicerAngleWidget.h"
-#include "vtkSlicerClosedCurveWidget.h"
 #include "vtkSlicerCurveWidget.h"
 #include "vtkSlicerLineWidget.h"
 #include "vtkSlicerPlaneWidget.h"
@@ -164,7 +163,7 @@ void qSlicerMarkupsModule::setup()
   logic->RegisterMarkupsNode(curveNode, curveWidget);
 
   vtkNew<vtkMRMLMarkupsClosedCurveNode> closedCurveNode;
-  vtkNew<vtkSlicerClosedCurveWidget> closedCurveWidget;
+  vtkNew<vtkSlicerCurveWidget> closedCurveWidget;
   logic->RegisterMarkupsNode(closedCurveNode, closedCurveWidget);
 
   vtkNew<vtkMRMLMarkupsPlaneNode> planeNode;

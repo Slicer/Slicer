@@ -118,7 +118,7 @@ class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
   def markupsNodes(self):
     return {
       slicer.vtkMRMLMarkupsAngleNode(): slicer.vtkSlicerAngleWidget(),
-      slicer.vtkMRMLMarkupsClosedCurveNode(): slicer.vtkSlicerClosedCurveWidget(),
+      slicer.vtkMRMLMarkupsClosedCurveNode(): slicer.vtkSlicerCurveWidget(),
       slicer.vtkMRMLMarkupsCurveNode(): slicer.vtkSlicerCurveWidget(),
       slicer.vtkMRMLMarkupsFiducialNode(): slicer.vtkSlicerPointsWidget(),
       slicer.vtkMRMLMarkupsLineNode(): slicer.vtkSlicerLineWidget(),
