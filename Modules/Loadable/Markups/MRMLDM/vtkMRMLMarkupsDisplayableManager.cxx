@@ -2,36 +2,8 @@
 
 #include "vtkMRMLAbstractSliceViewDisplayableManager.h"
 
-// MarkupsModule/MRML includes
-#include <vtkMRMLMarkupsAngleNode.h>
-#include <vtkMRMLMarkupsClosedCurveNode.h>
-#include <vtkMRMLMarkupsCurveNode.h>
-#include <vtkMRMLMarkupsDisplayNode.h>
-#include <vtkMRMLMarkupsFiducialNode.h>
-#include <vtkMRMLMarkupsLineNode.h>
-#include <vtkMRMLMarkupsNode.h>
-#include <vtkMRMLMarkupsPlaneNode.h>
-#include <vtkMRMLMarkupsROINode.h>
-
 // MarkupsModule/Logic includes
 #include <vtkSlicerMarkupsLogic.h>
-
-// MarkupsModule/VTKWidgets includes
-#include <vtkSlicerLineWidget.h>
-#include <vtkSlicerLineRepresentation2D.h>
-#include <vtkSlicerLineRepresentation3D.h>
-#include <vtkSlicerClosedCurveWidget.h>
-#include <vtkSlicerCurveWidget.h>
-#include <vtkSlicerCurveRepresentation2D.h>
-#include <vtkSlicerCurveRepresentation3D.h>
-#include <vtkSlicerAngleWidget.h>
-#include <vtkSlicerAngleRepresentation2D.h>
-#include <vtkSlicerAngleRepresentation3D.h>
-#include <vtkSlicerPlaneWidget.h>
-#include <vtkSlicerPointsWidget.h>
-#include <vtkSlicerPointsRepresentation2D.h>
-#include <vtkSlicerPointsRepresentation3D.h>
-#include <vtkSlicerROIWidget.h>
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLDisplayableManagerGroup.h>
@@ -93,13 +65,9 @@ vtkStandardNewMacro (vtkMRMLMarkupsDisplayableManager);
 //---------------------------------------------------------------------------
 vtkMRMLMarkupsDisplayableManager::vtkMRMLMarkupsDisplayableManager()
 {
-  this->Helper = vtkMRMLMarkupsDisplayableManagerHelper::New();
+  this->Helper = vtkSmartPointer<vtkMRMLMarkupsDisplayableManagerHelper>::New();
   this->Helper->SetDisplayableManager(this);
   this->DisableInteractorStyleEventsProcessing = 0;
-
-  // by default, this displayableManager handles a 2d view, so the SliceNode
-  // must be set when it's assigned to a viewer
-  this->SliceNode = nullptr;
 
   this->LastClickWorldCoordinates[0]=0.0;
   this->LastClickWorldCoordinates[1]=0.0;
@@ -111,10 +79,6 @@ vtkMRMLMarkupsDisplayableManager::vtkMRMLMarkupsDisplayableManager()
 vtkMRMLMarkupsDisplayableManager::~vtkMRMLMarkupsDisplayableManager()
 {
   this->DisableInteractorStyleEventsProcessing = 0;
-
-  this->Helper->Delete();
-
-  this->SliceNode = nullptr;
 }
 
 //---------------------------------------------------------------------------

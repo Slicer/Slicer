@@ -145,7 +145,7 @@ protected:
   /// Accessor for internal flag that disables interactor style event processing
   vtkGetMacro(DisableInteractorStyleEventsProcessing, int);
 
-  vtkMRMLMarkupsDisplayableManagerHelper * Helper;
+  vtkSmartPointer<vtkMRMLMarkupsDisplayableManagerHelper> Helper;
 
   double LastClickWorldCoordinates[4];
 
@@ -159,7 +159,9 @@ private:
 
   int DisableInteractorStyleEventsProcessing;
 
-  vtkMRMLSliceNode * SliceNode;
+  // by default, this displayableManager handles a 2d view, so the SliceNode
+  // must be set when it's assigned to a viewer
+  vtkWeakPointer<vtkMRMLSliceNode> SliceNode;
 };
 
 #endif
