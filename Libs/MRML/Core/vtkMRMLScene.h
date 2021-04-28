@@ -815,6 +815,9 @@ protected:
   ///   only directly referenced nodes if false. Default is true.
   void AddReferencedNodes(vtkMRMLNode *node, vtkCollection *refNodes, bool recursive=true);
 
+  /// Remove invalid node references after scene import
+  void RemoveInvalidNodeReferences(vtkCollection* checkNodes, const std::set<std::string> &validNodeIDs);
+
   /// Handle vtkMRMLScene::DeleteEvent: clear the scene.
   static void SceneCallback(vtkObject *caller, unsigned long eid, void *clientData, void *callData);
 

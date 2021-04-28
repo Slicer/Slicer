@@ -120,7 +120,7 @@ vtkMRMLDiffusionTensorVolumeDisplayNode* qSlicerDiffusionTensorVolumeDisplayWidg
 {
   vtkMRMLDiffusionTensorVolumeNode* volumeNode = this->volumeNode();
   return volumeNode ? vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(
-    volumeNode->GetDisplayNode()) : nullptr;
+    volumeNode->GetVolumeDisplayNode()) : nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -152,7 +152,7 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLDiffusi
 
   vtkMRMLDiffusionTensorVolumeDisplayNode* oldVolumeDisplayNode = this->volumeDisplayNode();
 
-  qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetDisplayNode() :nullptr,
+  qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetVolumeDisplayNode() :nullptr,
                 vtkCommand::ModifiedEvent,
                 this, SLOT(updateWidgetFromMRML()));
   d->VolumeNode = volumeNode;

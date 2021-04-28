@@ -810,6 +810,18 @@ int vtkMRMLScene::Import()
     addNodesTimer->StopTimer();
     updateSceneTimer->StartTimer();
 #endif
+
+    // Remove node references from the newly added nodes that refer
+    // to other than the newly added nodes. We don't want references in
+    // the newly loaded created to existing nodes in the main
+    // scene just becase there happens to be node IDs matching these
+    // invalid references.
+    // Invalid references can be present in a saved scene if a referenced node ID
+    // is added but no corresponding node exist in the scene.
+    // ReservedIDs now contains IDs of all newly added nodes, therefore we can
+    // use it as a set of valid nodes that the added nodes can reference.
+    this->RemoveInvalidNodeReferences(addedNodes, this->ReservedIDs);
+
     // Update the node references to the changed node IDs
     // (that conflicted in the current scene and the imported scene)
     this->UpdateNodeReferences(addedNodes);
@@ -1443,11 +1455,14 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
 
   this->InvokeEvent(vtkMRMLScene::NodeRemovedEvent, n);
 
-  if (!this->IsBatchProcessing() && !this->IsClosing())
+  // Node references must be deleted immediately, even during batch processing.
+  // Otherwise node IDs would remain in the node references and next time when that node ID is created
+  // the node reference would become valid again, pointing to a completely unrelated node.
+  // Node references will be all removed for the removed node and for
+  // all the nodes that the deleted node referred to.
+
+  if (!this->IsClosing())
     {
-    // We are not doing batch processing, so update the node references now.
-    // Node references will be all removed for the removed node and for
-    // all the nodes that the deleted node referred to.
     this->RemoveNodeReferences(n);
     // Notify nodes that referred to the deleted node to update their references
     NodeReferencesType::iterator referencedNodeIdIt=this->NodeReferences.find(nid);
@@ -3144,6 +3159,22 @@ void vtkMRMLScene::UpdateNodeReferences(vtkCollection* checkNodes/*=nullptr*/)
         }
       node->UpdateReferenceID(oldID.c_str(), newID.c_str());
       }
+    }
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::RemoveInvalidNodeReferences(vtkCollection* checkNodes, const std::set<std::string> &validNodeIDs)
+{
+  // An imported scene may contain orphan references to nodes that did not exist
+  // in the imported scene. To prevent these node references to establish connections
+  // with nodes that were already in the scene or nodes that are later added to the scene
+  // these node refernces must be removed.
+  vtkMRMLNode* node = nullptr;
+  vtkCollectionSimpleIterator it;
+  for (checkNodes->InitTraversal(it);
+    (node = vtkMRMLNode::SafeDownCast(checkNodes->GetNextItemAsObject(it)));)
+    {
+    node->RemoveInvalidReferences(this->ReservedIDs);
     }
 }
 

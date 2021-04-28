@@ -176,9 +176,10 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
     if (properties.contains("colorNodeID"))
       {
       QString colorNodeID = properties["colorNodeID"].toString();
-      if (node->GetDisplayNode())
+      vtkMRMLVolumeDisplayNode* displayNode = node->GetVolumeDisplayNode();
+      if (displayNode)
         {
-        node->GetDisplayNode()->SetAndObserveColorNodeID(colorNodeID.toUtf8());
+        displayNode->SetAndObserveColorNodeID(colorNodeID.toUtf8());
         }
       }
     if (propagateVolumeSelection)
