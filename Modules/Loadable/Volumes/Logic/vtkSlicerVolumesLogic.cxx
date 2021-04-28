@@ -868,12 +868,10 @@ vtkSlicerVolumesLogic::CreateLabelVolumeFromVolume(vtkMRMLScene *scene,
 
   // Create a display node if the label node does not have one
   vtkMRMLLabelMapVolumeDisplayNode* displayNode =
-    vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(outputVolume->GetDisplayNode());
+    vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(outputVolume->GetVolumeDisplayNode());
   if (displayNode == nullptr)
     {
-    displayNode = vtkMRMLLabelMapVolumeDisplayNode::New();
-    scene->AddNode(displayNode);
-    displayNode->Delete();
+    displayNode = vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLLabelMapVolumeDisplayNode"));
     // Set the display node to have a label map lookup table
     this->SetAndObserveColorToDisplayNode(displayNode,
       /* labelMap = */ 1, /* filename= */ nullptr);
@@ -1177,7 +1175,7 @@ CloneVolumeGeneric (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const ch
     }
 
   // clone the 1st display node if possible
-  vtkMRMLDisplayNode* originalDisplayNode = volumeNode->GetDisplayNode();
+  vtkMRMLDisplayNode* originalDisplayNode = volumeNode->GetVolumeDisplayNode();
   vtkSmartPointer<vtkMRMLDisplayNode> clonedDisplayNode;
   if (originalDisplayNode)
     {

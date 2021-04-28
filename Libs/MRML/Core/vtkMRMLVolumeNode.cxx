@@ -832,7 +832,16 @@ void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 vtkMRMLVolumeDisplayNode* vtkMRMLVolumeNode::GetVolumeDisplayNode()
 {
-  return vtkMRMLVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
+  int ndnodes = this->GetNumberOfDisplayNodes();
+  for (int i = 0; i < ndnodes; i++)
+    {
+    vtkMRMLVolumeDisplayNode* dnode = vtkMRMLVolumeDisplayNode::SafeDownCast(this->GetNthDisplayNode(i));
+    if (dnode)
+      {
+      return dnode;
+      }
+  }
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------

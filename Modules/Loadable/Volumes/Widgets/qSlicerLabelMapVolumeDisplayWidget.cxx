@@ -94,7 +94,7 @@ vtkMRMLLabelMapVolumeDisplayNode* qSlicerLabelMapVolumeDisplayWidget::volumeDisp
 {
   Q_D(const qSlicerLabelMapVolumeDisplayWidget);
   return d->VolumeNode ? vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(
-    d->VolumeNode->GetDisplayNode()) : nullptr;
+    d->VolumeNode->GetVolumeDisplayNode()) : nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -109,7 +109,7 @@ void qSlicerLabelMapVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNo
   Q_D(qSlicerLabelMapVolumeDisplayWidget);
   vtkMRMLLabelMapVolumeDisplayNode* oldVolumeDisplayNode = this->volumeDisplayNode();
 
-  qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetDisplayNode() : nullptr,
+  qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetVolumeDisplayNode() : nullptr,
                 vtkCommand::ModifiedEvent,
                 this, SLOT(updateWidgetFromMRML()));
   d->VolumeNode = volumeNode;

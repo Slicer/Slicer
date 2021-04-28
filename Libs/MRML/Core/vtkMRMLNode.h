@@ -885,6 +885,11 @@ protected:
   /// \sa UpdateNthNodeReference
   virtual void UpdateNodeReferences(const char* referenceRole = nullptr);
 
+  /// Remove node references that refer to nodes that are not in the list of
+  /// valid node IDs. This is useful for removing invalid references when importing
+  /// a scene.
+  void RemoveInvalidReferences(const std::set<std::string>& validNodeIDs);
+
   /// Updates references and event observations on the selected referenced node.
   /// Update is necessary because at the time the reference was added the referenced node might not have been
   /// available in the scene yet.

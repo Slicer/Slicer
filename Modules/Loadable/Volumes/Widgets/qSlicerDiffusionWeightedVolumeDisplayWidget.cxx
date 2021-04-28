@@ -101,7 +101,7 @@ vtkMRMLDiffusionWeightedVolumeDisplayNode* qSlicerDiffusionWeightedVolumeDisplay
 {
   vtkMRMLDiffusionWeightedVolumeNode* volumeNode = this->volumeNode();
   return volumeNode ? vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(
-    volumeNode->GetDisplayNode()) : nullptr;
+    volumeNode->GetVolumeDisplayNode()) : nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -118,7 +118,7 @@ void qSlicerDiffusionWeightedVolumeDisplayWidget
 
   vtkMRMLDiffusionWeightedVolumeDisplayNode* oldVolumeDisplayNode = this->volumeDisplayNode();
 
-  qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetDisplayNode() :nullptr,
+  qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetVolumeDisplayNode() :nullptr,
                 vtkCommand::ModifiedEvent,
                 this, SLOT(updateWidgetFromDisplayNode()));
   qvtkReconnect(d->VolumeNode, volumeNode,

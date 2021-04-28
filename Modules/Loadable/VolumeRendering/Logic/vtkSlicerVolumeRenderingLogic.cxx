@@ -295,34 +295,48 @@ void vtkSlicerVolumeRenderingLogic::ChangeVolumeRenderingMethod(const char* disp
 void vtkSlicerVolumeRenderingLogic::UpdateVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* node)
 {
   if (!node)
-  {
+    {
     vtkWarningMacro("UpdateVolumeRenderingDisplayNode: Volume Rendering display node does not exist.");
     return;
-  }
-  if (!node->GetVolumeNode())
-  {
-    return;
-  }
-  vtkMRMLVolumeDisplayNode* displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(
-    node->GetVolumeNode()->GetDisplayNode() );
-  if (!displayNode)
-  {
-    return;
-  }
-  if (node->GetFollowVolumeDisplayNode())
-  {
-    // observe display node if not already observing it
-    if (!this->GetMRMLNodesObserverManager()->GetObservationsCount(displayNode))
-    {
-      vtkObserveMRMLNodeMacro(displayNode);
     }
+  vtkMRMLVolumeNode* volumeNode = node->GetVolumeNode();
+  if (!volumeNode)
+    {
+    return;
+    }
+  vtkMRMLVolumeDisplayNode* volumeDisplayNode = volumeNode->GetVolumeDisplayNode();
+  if (!volumeDisplayNode)
+    {
+    return;
+    }
+  if (node->GetFollowVolumeDisplayNode())
+    {
+    // observe display node if not already observing it
+    if (!this->GetMRMLNodesObserverManager()->GetObservationsCount(volumeDisplayNode))
+      {
+      vtkObserveMRMLNodeMacro(volumeDisplayNode);
+      }
     this->CopyDisplayToVolumeRenderingDisplayNode(node);
-  }
+    }
   else
-  {
-    // unobserve display node
-    vtkUnObserveMRMLNodeMacro(displayNode);
-  }
+    {
+    // unobserve display node if no volume rendering display nodes follow it anymore
+    bool needToObserveVolumeDisplayNode = false;
+    int ndnodes = volumeNode->GetNumberOfDisplayNodes();
+    for (int i = 0; i < ndnodes; i++)
+      {
+      vtkMRMLVolumeRenderingDisplayNode* vrDisplayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(i));
+      if (vrDisplayNode && node->GetFollowVolumeDisplayNode())
+        {
+        needToObserveVolumeDisplayNode = true;
+        break;
+        }
+      }
+    if (!needToObserveVolumeDisplayNode)
+      {
+      vtkUnObserveMRMLNodeMacro(volumeDisplayNode);
+      }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -365,24 +379,30 @@ void vtkSlicerVolumeRenderingLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 //----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::OnMRMLNodeModified(vtkMRMLNode* node)
 {
+
+  // If volume rendering display node changes then we may need to
+  // add/remove volume display node observer.
   vtkMRMLVolumeRenderingDisplayNode* vrDisplayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node);
   if (vrDisplayNode)
-  {
+    {
     this->UpdateVolumeRenderingDisplayNode(vrDisplayNode);
-  }
+    }
+
+
+  // If volume display node is changed then update all volume rendering display nodes that follow it
   vtkMRMLVolumeDisplayNode* volumeDisplayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(node);
   if (volumeDisplayNode)
-  {
-    for (unsigned int i = 0; i < this->DisplayNodes.size(); ++i)
     {
-      vrDisplayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(this->DisplayNodes[i]);
-      if (vrDisplayNode->GetVolumeNode()->GetDisplayNode() == volumeDisplayNode &&
-        vrDisplayNode->GetFollowVolumeDisplayNode())
+    for (unsigned int i = 0; i < this->DisplayNodes.size(); ++i)
       {
-        this->CopyDisplayToVolumeRenderingDisplayNode(vrDisplayNode, volumeDisplayNode);
+      vrDisplayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(this->DisplayNodes[i]);
+      if (!vrDisplayNode || !vrDisplayNode->GetFollowVolumeDisplayNode())
+        {
+        continue;
+        }
+      this->CopyDisplayToVolumeRenderingDisplayNode(vrDisplayNode, volumeDisplayNode);
       }
     }
-  }
 }
 
 //----------------------------------------------------------------------------
@@ -647,7 +667,7 @@ void vtkSlicerVolumeRenderingLogic::CopyDisplayToVolumeRenderingDisplayNode(
       vtkWarningMacro("CopyDisplayToVolumeRenderingDisplayNode: Volume Rendering display node does not reference a volume node.");
       return;
     }
-    displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(volumeNode->GetDisplayNode());
+    displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(volumeNode->GetVolumeDisplayNode());
   }
   if (!displayNode)
   {
@@ -681,7 +701,7 @@ void vtkSlicerVolumeRenderingLogic::CopyScalarDisplayToVolumeRenderingDisplayNod
 
   if (!vpNode)
   {
-    vpNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(vspNode->GetVolumeNode()->GetDisplayNode());
+    vpNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(vspNode->GetVolumeNode()->GetVolumeDisplayNode());
   }
 
   if (!vpNode)
@@ -742,7 +762,7 @@ void vtkSlicerVolumeRenderingLogic::CopyLabelMapDisplayToVolumeRenderingDisplayN
 
   if (!vpNode)
   {
-    vpNode = vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(vspNode->GetVolumeNode()->GetDisplayNode());
+    vpNode = vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(vspNode->GetVolumeNode()->GetVolumeDisplayNode());
   }
   if (!vpNode)
   {
@@ -949,27 +969,29 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRende
 vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetFirstVolumeRenderingDisplayNode(vtkMRMLVolumeNode *volumeNode)
 {
   if (volumeNode == nullptr)
-  {
-    return nullptr;
-  }
-  int ndnodes = volumeNode->GetNumberOfDisplayNodes();
-  for (int i=0; i<ndnodes; i++)
-  {
-    vtkMRMLVolumeRenderingDisplayNode *dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(i));
-    if (!dnode)
     {
+    return nullptr;
+    }
+  int ndnodes = volumeNode->GetNumberOfDisplayNodes();
+  for (int displayNodeIndex = 0; displayNodeIndex < ndnodes; displayNodeIndex++)
+    {
+    vtkMRMLVolumeRenderingDisplayNode *dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(displayNodeIndex));
+    if (!dnode)
+      {
       // not a volume rendering display node
       continue;
-    }
+      }
     if (dnode->GetVolumeNode() != volumeNode)
-    {
-      // Invalid volume node reference, ignore it (it would show a display node on the GUI that cannot be used to show a volume).
-      // TODO: volume node reference is supposed to be always valid, but in some cases it becomes invalid.
-      //   Mechanism that links volume node to display node would need to be redesigned to be more stable.
-      continue;
-    }
+      {
+      // This display node is associated with another volume node as well.
+      // Root cause is fixed in scene loading, so this should not happen anymore, but
+      // log an error to help debugging in case this happens anyway.
+      vtkErrorMacro("Invalid scene: " << dnode->GetID() << " is used by multiple volume nodes ("
+        << (dnode->GetVolumeNode() && dnode->GetVolumeNode()->GetID() ? dnode->GetVolumeNode()->GetID() : "(unknown)")
+        << " and " << (volumeNode && volumeNode->GetID() ? volumeNode->GetID() : "(unknown)") << ")");
+      }
     return dnode;
-  }
+    }
   return nullptr;
 }
 
@@ -1064,9 +1086,7 @@ void vtkSlicerVolumeRenderingLogic::UpdateDisplayNodeFromVolumeNode(
 
   if (propNode == nullptr && displayNode->GetVolumePropertyNode() == nullptr)
     {
-    propNode = vtkMRMLVolumePropertyNode::New();
-    this->GetMRMLScene()->AddNode(propNode);
-    propNode->Delete();
+    propNode = vtkMRMLVolumePropertyNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLVolumePropertyNode"));
     }
   if (propNode != nullptr)
     {

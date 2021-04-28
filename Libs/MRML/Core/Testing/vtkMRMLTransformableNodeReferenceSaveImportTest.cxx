@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // MRML includes
+#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLTransformableNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
@@ -26,13 +27,12 @@
 
 // VTK includes
 #include <vtkNew.h>
-#include <vtkSmartPointer.h>
 
 namespace
 {
 
-void populateScene(vtkMRMLScene* scene);
-bool import();
+int TestImportIntoEmptyScene();
+int TestImportIntoSceneWithNodeIdConflict();
 
 } // end of anonymous namespace
 
@@ -40,11 +40,8 @@ bool import();
 int vtkMRMLTransformableNodeReferenceSaveImportTest(int vtkNotUsed(argc),
                                        char * vtkNotUsed(argv)[] )
 {
-  if (!import())
-    {
-    std::cerr << "import call not successful." << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_EXIT_SUCCESS(TestImportIntoEmptyScene());
+  CHECK_EXIT_SUCCESS(TestImportIntoSceneWithNodeIdConflict());
   return EXIT_SUCCESS;
 }
 
@@ -52,67 +49,124 @@ namespace
 {
 
 //---------------------------------------------------------------------------
-void populateScene(vtkMRMLScene* scene)
+int TestImportIntoEmptyScene()
 {
+  // Create scene1
 
-  vtkNew<vtkMRMLScalarVolumeNode> trnsformableableNode;
-  scene->AddNode(trnsformableableNode.GetPointer());
+  vtkNew<vtkMRMLScene> scene1;
 
-  vtkNew<vtkMRMLLinearTransformNode> trnsformNode;
-  scene->AddNode(trnsformNode.GetPointer());
+  vtkNew<vtkMRMLScalarVolumeNode> scene1TransformableNode1;
+  scene1TransformableNode1->SetName("Transformable1");
+  scene1->AddNode(scene1TransformableNode1);
 
-  trnsformableableNode->SetAndObserveTransformNodeID(trnsformNode->GetID());
+  vtkNew<vtkMRMLLinearTransformNode> scene1TransformNode1;
+  scene1TransformNode1->SetName("Transform1");
+  scene1->AddNode(scene1TransformNode1);
+  scene1TransformableNode1->SetAndObserveTransformNodeID(scene1TransformNode1->GetID());
 
-}
+  // scene1:
+  //   +-Transformable1 -> Transform1
+  //   +-Transform1
 
-//---------------------------------------------------------------------------
-bool import()
-{
-  // Save a scene containing a viewnode and a sceneview node.
-  vtkNew<vtkMRMLScene> scene;
-  populateScene(scene.GetPointer());
+  // Write scene1 to string
+  scene1->SetSaveToXMLString(1);
+  scene1->Commit();
+  std::string xmlScene1 = scene1->GetSceneXMLString();
+  std::cout << xmlScene1 << std::endl;
 
-  scene->SetSaveToXMLString(1);
-  scene->Commit();
-  std::string xmlScene = scene->GetSceneXMLString();
-  std::cout << xmlScene << std::endl;
-
-  // Simulate another scene
+  // Import scene1 into scene2
   vtkNew<vtkMRMLScene> scene2;
-
   scene2->SetLoadFromXMLString(1);
-  scene2->SetSceneXMLString(xmlScene);
+  scene2->SetSceneXMLString(xmlScene1);
   scene2->Import();
 
   // Check transform node IDs
-  vtkMRMLNode* trnsformNode =
-    scene2->GetFirstNodeByClass("vtkMRMLLinearTransformNode");
-  if (!trnsformNode || strcmp(trnsformNode->GetID(), "vtkMRMLLinearTransformNode1") != 0
-      )
-    {
-    std::cerr << __LINE__ << ": import failed." << std::endl
-              << "    transform node ID is " << trnsformNode->GetID()
-              << " instead of vtkMRMLLinearTransformNode1." << std::endl;
-
-    return false;
-    }
+  vtkMRMLLinearTransformNode* scene2TransformNode1 =
+    vtkMRMLLinearTransformNode::SafeDownCast(scene2->GetFirstNodeByName("Transform1"));
+  CHECK_NOT_NULL(scene2TransformNode1);
+  CHECK_STRING(scene2TransformNode1->GetID(), "vtkMRMLLinearTransformNode1");
 
   // Check references
-  vtkMRMLTransformableNode* trnsformableNode =
-    vtkMRMLTransformableNode::SafeDownCast(scene2->GetFirstNodeByClass("vtkMRMLTransformableNode"));
+  vtkMRMLTransformableNode* scene2TransformableNode1 =
+    vtkMRMLTransformableNode::SafeDownCast(scene2->GetFirstNodeByName("Transformable1"));
+  CHECK_NOT_NULL(scene2TransformableNode1);
+  CHECK_STRING(scene2TransformableNode1->GetTransformNodeID(), scene2TransformNode1->GetID());
 
-  if (strcmp(trnsformableNode->GetTransformNodeID(),
-             trnsformNode->GetID()) != 0)
-    {
-    std::cerr << __LINE__ << ": import failed." << std::endl
-              << "    Transformable node references are not updated. "
-              << "Transform node ID reference is "
-              << trnsformableNode->GetTransformNodeID()
-              << " instead of " << trnsformNode->GetID() << std::endl;
-    return false;
-    }
+  return EXIT_SUCCESS;
+}
 
-  return true;
+//---------------------------------------------------------------------------
+int TestImportIntoSceneWithNodeIdConflict()
+{
+  // Create scene1
+
+  vtkNew<vtkMRMLScene> scene1;
+
+  vtkNew<vtkMRMLScalarVolumeNode> scene1TransformableNode1;
+  scene1TransformableNode1->SetName("Transformable1");
+  scene1->AddNode(scene1TransformableNode1);
+
+  vtkNew<vtkMRMLLinearTransformNode> scene1TransformNode1;
+  scene1TransformNode1->SetName("Transform1");
+  scene1->AddNode(scene1TransformNode1);
+  scene1TransformableNode1->SetAndObserveTransformNodeID(scene1TransformNode1->GetID());
+
+  // scene1:
+  //   +-Transformable1 -> Transform1
+  //   +-Transform1
+
+  // Write scene1 to string
+  scene1->SetSaveToXMLString(1);
+  scene1->Commit();
+  std::string xmlScene1 = scene1->GetSceneXMLString();
+
+  // Create scene2
+
+  vtkNew<vtkMRMLScene> scene2;
+
+  vtkNew<vtkMRMLScalarVolumeNode> scene2TransformableNode2;
+  scene2TransformableNode2->SetName("Transformable2");
+  scene2->AddNode(scene2TransformableNode2);
+
+  vtkNew<vtkMRMLLinearTransformNode> scene2TransformNode2;
+  scene2TransformNode2->SetName("Transform2");
+  scene2->AddNode(scene2TransformNode2);
+  scene2TransformableNode2->SetAndObserveTransformNodeID(scene2TransformNode2->GetID());
+
+  // scene2:
+  //   +-Transformable2 -> Transform2
+  //   +-Transform2
+
+  // Import scene1 into scene2
+  scene2->SetLoadFromXMLString(1);
+  scene2->SetSceneXMLString(xmlScene1);
+  scene2->Import();
+
+  // scene2:
+  //   +-Transformable2 -> Transform2
+  //   +-Transform2
+  //   +-Transformable1 -> Transform1
+  //   +-Transform1
+
+  // Check transform1
+  vtkMRMLLinearTransformNode* scene2TransformNode1 =
+    vtkMRMLLinearTransformNode::SafeDownCast(scene2->GetFirstNodeByName("Transform1"));
+  CHECK_NOT_NULL(scene2TransformNode1);
+  CHECK_STRING_DIFFERENT(scene2TransformNode1->GetID(), "vtkMRMLLinearTransformNode1");
+
+  // Check transform1 references
+  vtkMRMLTransformableNode* scene2TransformableNode1 =
+    vtkMRMLTransformableNode::SafeDownCast(scene2->GetFirstNodeByName("Transformable1"));
+  CHECK_NOT_NULL(scene2TransformableNode1);
+  CHECK_STRING(scene2TransformableNode1->GetTransformNodeID(), scene2TransformNode1->GetID());
+
+  // Check transform2
+  CHECK_STRING(scene2TransformNode2->GetID(), "vtkMRMLLinearTransformNode1");
+
+  // Check transform2 references
+  CHECK_STRING(scene2TransformableNode2->GetTransformNodeID(), scene2TransformNode2->GetID());
+
+  return EXIT_SUCCESS;
 }
 
 }
