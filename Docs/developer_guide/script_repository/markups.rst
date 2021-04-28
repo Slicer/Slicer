@@ -493,7 +493,76 @@ Display list of control points in my module's GUI
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The `qSlicerSimpleMarkupsWidget <http://apidocs.slicer.org/master/classqSlicerSimpleMarkupsWidget.html>`__ can be integrated into module widgets to display list of markups control points and initiate placement. An example of this use is in `Gel Dosimetry module <https://www.slicer.org/wiki/Documentation/Nightly/Modules/GelDosimetry>`__.
-   
+
+Pre-populate the scene with measurements
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This code snippet creates a set of predefined line markups (named A, B, C, D) in the scene when the user hits Ctrl+N.
+How to use this:
+
+1. Customize the code (replace A, B, C, D with your measurement names) and copy-paste the code into the Python console. This has to be done only once after Slicer is started. Add it to `.slicerrc.py file <../user_guide/settings.html#application-startup-file>`__ so that it persists even if Slicer is restarted.
+2. Load the data set that has to be measured
+3. Hit Ctrl+N to create all the measurements
+4. Go to Markups module to see the list of measurements
+5. For each measurement: select it in the data tree, click on the place button on the toolbar then click in slice or 3D views
+
+.. code-block:: python
+
+   sliceNode = slicer.mrmlScene.GetNodeByID("vtkMRMLSliceNodeRed")
+   def createMeasurements():
+     for nodeName in ['A', 'B', 'C', 'D']:
+       lineNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsLineNode", nodeName)
+       lineNode.CreateDefaultDisplayNodes()
+       dn = lineNode.GetDisplayNode()
+       # Use crosshair glyph to allow more accurate point placement
+       dn.SetGlyphTypeFromString("CrossDot2D")
+       # Hide measurement result while markup up
+       lineNode.GetMeasurement('length').SetEnabled(False)
+
+   shortcut1 = qt.QShortcut(slicer.util.mainWindow())
+   shortcut1.setKey(qt.QKeySequence("Ctrl+n"))
+   shortcut1.connect( 'activated()', createMeasurements)
+
+Copy all measurements in the scene to Excel
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This code snippet creates a set of predefined line markups (named A, B, C, D) in the scene when the user hits Ctrl+N.
+How to use this:
+
+1. Copy-paste the code into the Python console. This has to be done only once after Slicer is started. Add it to `.slicerrc.py file <../user_guide/settings.html#application-startup-file>`__ so that it persists even if Slicer is restarted.
+2. Load the data set that has to be measured and place line markups (you can use the "Pre-populate the scene with measurements" script above to help with this)
+3. Hit Ctrl+M to copy all line measurents to the clipboard
+4. Switch to Excel and hit Ctrl+V to paste the results there
+5. Save the scene, just in case later you need to review your measurements
+
+.. code-block:: python
+
+   def copyLineMeasurementsToClipboard():
+     measurements = []
+     # Collect all line measurements from the scene
+     lineNodes = getNodesByClass('vtkMRMLMarkupsLineNode')
+     for lineNode in lineNodes:
+       # Get node filename that the length was measured on
+       try:
+         volumeNode = slicer.mrmlScene.GetNodeByID(lineNode.GetNthMarkupAssociatedNodeID(0))
+         imagePath = volumeNode.GetStorageNode().GetFileName()
+       except:
+         imagePath = ''
+       # Get line node n
+       measurementName = lineNode.GetName()
+       # Get length measurement
+       lineNode.GetMeasurement('length').SetEnabled(True)
+       length = str(lineNode.GetMeasurement('length').GetValue())
+       # Add fields to results
+       measurements.append('\t'.join([imagePath, measurementName, length]))
+     # Copy all measurements to clipboard (to be pasted into Excel)
+     slicer.app.clipboard().setText("\n".join(measurements))
+     slicer.util.delayDisplay(f"Copied {len(measurements)} length measurements to the clipboard.")
+
+   shortcut2 = qt.QShortcut(slicer.util.mainWindow())
+   shortcut2.setKey(qt.QKeySequence("Ctrl+m"))
+   shortcut2.connect( 'activated()', copyLineMeasurementsToClipboard)
+
 Use markups json files in Python - outside Slicer
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
