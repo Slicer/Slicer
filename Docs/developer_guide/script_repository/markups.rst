@@ -532,8 +532,8 @@ How to use this:
 1. Copy-paste the code into the Python console. This has to be done only once after Slicer is started. Add it to `.slicerrc.py file <../user_guide/settings.html#application-startup-file>`__ so that it persists even if Slicer is restarted.
 2. Load the data set that has to be measured and place line markups (you can use the "Pre-populate the scene with measurements" script above to help with this)
 3. Hit Ctrl+M to copy all line measurents to the clipboard
-5. Switch to Excel and hit Ctrl+V to paste the results there
-6. Save the scene, just in case later you need to review your measurements
+4. Switch to Excel and hit Ctrl+V to paste the results there
+5. Save the scene, just in case later you need to review your measurements
 
 .. code-block:: python
 
