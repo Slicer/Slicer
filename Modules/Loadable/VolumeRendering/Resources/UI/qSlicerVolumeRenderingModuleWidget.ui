@@ -618,7 +618,7 @@
    <sender>ROINodeComboBox</sender>
    <signal>currentNodeChanged(vtkMRMLNode*)</signal>
    <receiver>MarkupsROIWidget</receiver>
-   <slot>setMRMLMarkupsROINode(vtkMRMLNode*)</slot>
+   <slot>setMRMLMarkupsNode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>446</x>
